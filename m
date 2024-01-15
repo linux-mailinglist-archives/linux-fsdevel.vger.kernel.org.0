@@ -1,73 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-8009-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6857B82E285
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 23:22:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD5782E29E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 23:32:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F28C283AE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 22:22:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE14EB221AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 22:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FA11B7E5;
-	Mon, 15 Jan 2024 22:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196C71B5BA;
+	Mon, 15 Jan 2024 22:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CtGckjyW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHNlsJs1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06A11B7E0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 22:22:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=QiGKtmgcE8jzkuRaruVyoA8kGC+xawHe1zvf8F3VIFE=; b=CtGckjyWPR83vmNWxm+0loi4/N
-	vEPZDV4dRdG5ullRCAKvExs8coIprvxH7yWnm7EXHw6V4MOoZXn6dpNvv4D2ySeWOj+RcjA0zYESK
-	BRKkS4RRqMrJDzpTSAclNa3KqVFeCxOkf7PU+CwiMOhsHaBC/rrbaSOl4LFqtYrx8Ml7i7iHj7IqI
-	qhXUA8JM4HCKQCnNxtXpvrbTMwC56SoCaRWaxjFn+SwlFOxbIAhqCqegbHOFuDt+AXFHz2b2zJeMs
-	Fc55WIe63Xi+aIf4i7CB+Y3ShlabidzmlBG9d8CLccHks9fXTwlauHQwseAbBr97YnsF8NoTFS2FC
-	T7hMmVPw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rPVLY-003Vrs-2M;
-	Mon, 15 Jan 2024 22:22:20 +0000
-Date: Mon, 15 Jan 2024 22:22:20 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Bruno Haible <bruno@clisp.org>
-Cc: Evgeniy Dushistov <dushistov@mail.ru>, linux-fsdevel@vger.kernel.org
-Subject: Re: ufs filesystem cannot mount NetBSD/arm64 partition
-Message-ID: <20240115222220.GH1674809@ZenIV>
-References: <4014963.3daJWjYHZt@nimes>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752A11AAA1
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 22:31:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5B3AC433C7;
+	Mon, 15 Jan 2024 22:31:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705357909;
+	bh=lFu9N+7owBnohO6lAaXpYI2oRbQwKjzA85Bkr1m1JCk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VHNlsJs1UC44o6Gg47oKFydkQD88sULZBMNBG1FA3J+KhqYbPYkf5LNFRlHhPg+YK
+	 Zaahorr1tZlOn+IQpOnwLjzjbr0tdrcbdS84s2w5V+NZm6orlYpohycXqFNgjwQ96k
+	 E2GUF9Zs9nylrgPyl8Kup/mZtw6DnGYh0dOQ98QGwTYqqbTwUvYBXDeSiavPuwTBjn
+	 w9HmFAaf/lqx5rvKJsqJ9fPUeSw3Cxwl7th8Wjt6+QuCJ9Ekf7i2jcy+xwSy+RPxQl
+	 dSccbWW24bLGwZ5jjOJKinQh0sFyELujPg/i/fQr2n27wQ1kD/PxKOrZaCLWlMkyX4
+	 tTw2dpIMRPGUA==
+Message-ID: <0e4ecb6c-dec8-414e-b55a-53478657c461@kernel.org>
+Date: Tue, 16 Jan 2024 07:31:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4014963.3daJWjYHZt@nimes>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [LSF/MM/BPF TOPIC] : Current status of ZNS SSD support in file
+ systems
+Content-Language: en-US
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+ naohiro.aota@wdc.com, Matias.Bjorling@wdc.com, javier.gonz@samsung.com,
+ bvanassche@acm.org, slava@dubeiko.com
+References: <20240115082236.151315-1-slava@dubeyko.com>
+ <hqjm3bftitx2wpu74za4oq3sqifonpf7fc7mrwb4a7dbxzkm7h@stpm4dpahofc>
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <hqjm3bftitx2wpu74za4oq3sqifonpf7fc7mrwb4a7dbxzkm7h@stpm4dpahofc>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 15, 2024 at 11:05:51PM +0100, Bruno Haible wrote:
-
-> Whereas this partition can be mounted fine on FreeBSD, NetBSD, OpenBSD.
-> FreeBSD 11:
-> # mount -r -t ufs /dev/ada1s2 /mnt
-> NetBSD 9.3:
-> # mount -r -t ffs /dev/wd1a /mnt
-> OpenBSD 7.4:
-> # mount -r -t ffs /dev/wd1j /mnt
+On 1/16/24 02:35, Kent Overstreet wrote:
+> On Mon, Jan 15, 2024 at 11:22:36AM +0300, Viacheslav Dubeyko wrote:
+>> Hello,
+>>
+>> I would like to suggest the discussion related to current
+>> status of ZNS SSD support in file systems. There is ongoing
+>> process of ZNS SSD support in bcachefs, btrfs, ssdfs.
+>> The primary intention is to have a meeting place among
+>> file system developers and ZNS SSD manufactures for sharing
+>> and discussing the status of ZNS SSD support, existing issues,
+>> and potential new features.
+>>
+>> The goals of the discussion are:
+>> (1) share the current status of ZNS SSD support,
+>> (2) discuss any potential issues of ZNS SSD support in file systems,
+>> (3) discuss file system's techniques required for ZNS SSD support,
+>> (4) discuss potential re-using/sharing of implemented logic/primitives,
+>> (5) share the priliminary estimation of having stable ZNS SSD support,
+>> (6) performance, reliability estimation comparing ZNS and conventional SSDs.
+>>
+>> Also, it will be great to hear any news from ZNS SSD vendors
+>> related to new features of ZNS SSDs (zone size, open/active zone
+>> limitation, and so on). Do we have any progress with increasing
+>> number of open/active zones? Any hope to have various zone sizes, etc?
+>>
+>> POTENTIAL ATTENDEES:
+>> bcachefs - Kent Overstreet
+>> btrfs - Naohiro Aota
+>> ssdfs - Viacheslav Dubeyko
+>> WDC - Matias Bjørling
+>> Samsung - Javier González
+>>
+>> Anybody else would like to join the discussion?
+>>
+>> Thanks,
+>> Slava
 > 
-> The source code line which emits the
->   ufs: ufs_fill_super(): fragment size 8192 is too large
-> error is obviously linux/fs/ufs/super.c:1083.
+> There's also SMR hard drives to consider. For SMR, the much bigger zones
+> means that we don't want to burn entire zones on the superblock (plural;
+> we need two so that one will be alive while the other is being erased).
 
-Lovely...  Does it really have 8Kb fragments?  That would be painful
-to deal with - a plenty of places in there assume that fragment fits
-into a page...
+Hmmm... The zone size of SMR drives is actually much smaller than that of ZNS
+drives: 256 MB vs over 1GB for ZNS. All host-managed SMR drives that I know of
+use 256 MB zone size. One exception is 128 MB zone size that some user prefer
+over the regular 256 MB. Depending on the drive, this can be changed with the
+FORMAT WITH PRESET command, if the drive support that command of course.
+
+btrfs superblock (and its copies) are handled as you describe: 2 zones per copy
+used as a circular write ring. The write pointer location of the zones indicate
+where the latest superblock is. Sure that wastes a little space. But that is not
+much considering the total number of zones of a drive. The latest 28 TB SMR
+drives have over 100,000 zones.
+
+> We've got provisions for variable sized zones, are SMR hard drives doing
+> anything with this? Or perhaps for a normal, random-overwritable zone at
+> the start?
+
+No, variable zone size is not a thing with SMR. bcachefs may support it, but in
+general, that makes zone management much harder and the kernel does not allow
+this (blk_revalidate_disk_zones() will return an error if it sees such drive).
+
+Host managed SMR drives generally have a small number of conventional zones
+(randomly writeable) at LBA 0. Generally about 1% of the total capacity/number
+of zones, so about 1000 conventional zones. This is optional though but most
+drives I know have that, except the special 128MB zone size one mentioned above
+which is all SMR zones.
+
+-- 
+Damien Le Moal
+Western Digital Research
+
 
