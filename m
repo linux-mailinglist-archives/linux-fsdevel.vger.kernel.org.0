@@ -1,94 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-7949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B133682DB8C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 15:43:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB02782DBA1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 15:47:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82DA1C21BFF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 14:43:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 785A71F22302
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 14:47:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27189179BE;
-	Mon, 15 Jan 2024 14:40:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624AD175AC;
+	Mon, 15 Jan 2024 14:46:53 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A80017995;
-	Mon, 15 Jan 2024 14:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE1C17596;
+	Mon, 15 Jan 2024 14:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0W-j1yLV_1705329597;
-Received: from 30.27.74.27(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W-j1yLV_1705329597)
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W-j2-v8_1705329996;
+Received: from e69b19392.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W-j2-v8_1705329996)
           by smtp.aliyun-inc.com;
-          Mon, 15 Jan 2024 22:39:59 +0800
-Message-ID: <931bcf87-efdf-478f-869b-fcb1260ac1cc@linux.alibaba.com>
-Date: Mon, 15 Jan 2024 22:39:57 +0800
+          Mon, 15 Jan 2024 22:46:41 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-cachefs@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org,
+	David Howells <dhowells@redhat.com>,
+	Christian Brauner <christian@brauner.io>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Chao Yu <chao@kernel.org>,
+	Yue Hu <huyue2@coolpad.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH v3 3/4] erofs: Don't use certain unnecessary folio_*() functions
+Date: Mon, 15 Jan 2024 22:46:35 +0800
+Message-Id: <20240115144635.1931422-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.3
+In-Reply-To: <20240115083337.1355191-1-hsiangkao@linux.alibaba.com>
+References: <20240115083337.1355191-1-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] erofs: Don't use certain internal folio_*()
- functions
-To: Matthew Wilcox <willy@infradead.org>
-Cc: linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, David Howells <dhowells@redhat.com>,
- Christian Brauner <christian@brauner.io>, Jeff Layton <jlayton@kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, Chao Yu <chao@kernel.org>,
- Yue Hu <huyue2@coolpad.com>, Jeffle Xu <jefflexu@linux.alibaba.com>
-References: <20240115083337.1355191-1-hsiangkao@linux.alibaba.com>
- <ZaU75cT0jx9Ya+6G@casper.infradead.org>
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <ZaU75cT0jx9Ya+6G@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi Matthew,
+From: David Howells <dhowells@redhat.com>
 
-On 2024/1/15 22:06, Matthew Wilcox wrote:
-> On Mon, Jan 15, 2024 at 04:33:37PM +0800, Gao Xiang wrote:
->> From: David Howells <dhowells@redhat.com>
->>
->> Filesystems should use folio->index and folio->mapping, instead of
->> folio_index(folio), folio_mapping() and folio_file_mapping() since
->> they know that it's in the pagecache.
->>
->> Change this automagically with:
->>
->> perl -p -i -e 's/folio_mapping[(]([^)]*)[)]/\1->mapping/g' fs/erofs/*.c
->> perl -p -i -e 's/folio_file_mapping[(]([^)]*)[)]/\1->mapping/g' fs/erofs/*.c
->> perl -p -i -e 's/folio_index[(]([^)]*)[)]/\1->index/g' fs/erofs/*.c
->>
->> Reported-by: Matthew Wilcox <willy@infradead.org>
->> Signed-off-by: David Howells <dhowells@redhat.com>
->> Reviewed-by: Jeff Layton <jlayton@kernel.org>
->> Cc: Chao Yu <chao@kernel.org>
->> Cc: Yue Hu <huyue2@coolpad.com>
->> Cc: Jeffle Xu <jefflexu@linux.alibaba.com>
->> Cc: linux-erofs@lists.ozlabs.org
->> Cc: linux-fsdevel@vger.kernel.org
->> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
->> ---
->> Hi folks,
->>
->> I tend to apply this patch upstream since compressed data fscache
->> adaption touches this part too.  If there is no objection, I'm
->> going to take this patch separately for -next shortly..
-> 
-> Could you change the subject?  It's not that the functions are
-> "internal", it's that filesystems don't need to use them because they're
-> guaranteed to not see swap pages.  Maybe just s/internal/unnecessary/
+Filesystems should use folio->index and folio->mapping, instead of
+folio_index(folio), folio_mapping() and folio_file_mapping() since
+they know that it's in the pagecache.
 
-Yes, the subject line was inherited from the original one.
+Change this automagically with:
 
-Such helpers are useful if the type of a folio is unknown,
-let me revise it.
+perl -p -i -e 's/folio_mapping[(]([^)]*)[)]/\1->mapping/g' fs/erofs/*.c
+perl -p -i -e 's/folio_file_mapping[(]([^)]*)[)]/\1->mapping/g' fs/erofs/*.c
+perl -p -i -e 's/folio_index[(]([^)]*)[)]/\1->index/g' fs/erofs/*.c
 
-Thanks,
-Gao Xiang
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Cc: Chao Yu <chao@kernel.org>
+Cc: Yue Hu <huyue2@coolpad.com>
+Cc: Jeffle Xu <jefflexu@linux.alibaba.com>
+Cc: linux-erofs@lists.ozlabs.org
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+change since v2:
+ - update the words s/internal/unnecessary/ in the subject line
+   pointed out by Matthew.
+
+ fs/erofs/fscache.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+index 87ff35bff8d5..bc12030393b2 100644
+--- a/fs/erofs/fscache.c
++++ b/fs/erofs/fscache.c
+@@ -165,10 +165,10 @@ static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
+ static int erofs_fscache_meta_read_folio(struct file *data, struct folio *folio)
+ {
+ 	int ret;
+-	struct erofs_fscache *ctx = folio_mapping(folio)->host->i_private;
++	struct erofs_fscache *ctx = folio->mapping->host->i_private;
+ 	struct erofs_fscache_request *req;
+ 
+-	req = erofs_fscache_req_alloc(folio_mapping(folio),
++	req = erofs_fscache_req_alloc(folio->mapping,
+ 				folio_pos(folio), folio_size(folio));
+ 	if (IS_ERR(req)) {
+ 		folio_unlock(folio);
+@@ -276,7 +276,7 @@ static int erofs_fscache_read_folio(struct file *file, struct folio *folio)
+ 	struct erofs_fscache_request *req;
+ 	int ret;
+ 
+-	req = erofs_fscache_req_alloc(folio_mapping(folio),
++	req = erofs_fscache_req_alloc(folio->mapping,
+ 			folio_pos(folio), folio_size(folio));
+ 	if (IS_ERR(req)) {
+ 		folio_unlock(folio);
+-- 
+2.39.3
+
 
