@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-7966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDFA82DF47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:22:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F25D082DF53
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:22:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C20B1F22CE2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 18:22:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 610CB1F22D26
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 18:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2970419463;
-	Mon, 15 Jan 2024 18:20:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C30199C6;
+	Mon, 15 Jan 2024 18:21:01 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECB871944E;
-	Mon, 15 Jan 2024 18:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B9818B02;
+	Mon, 15 Jan 2024 18:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TDKng3JN7z9xrnT;
-	Tue, 16 Jan 2024 02:05:59 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TDKnx4b4pz9xrcl;
+	Tue, 16 Jan 2024 02:06:13 +0800 (CST)
 Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id C9ED41404FC;
-	Tue, 16 Jan 2024 02:20:31 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 51AF4140A11;
+	Tue, 16 Jan 2024 02:20:45 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAXBCjzdqVl8DKbAA--.57127S10;
-	Mon, 15 Jan 2024 19:20:31 +0100 (CET)
+	by APP2 (Coremail) with SMTP id GxC2BwAXBCjzdqVl8DKbAA--.57127S11;
+	Mon, 15 Jan 2024 19:20:44 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -61,9 +61,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v9 08/25] evm: Align evm_inode_post_setxattr() definition with LSM infrastructure
-Date: Mon, 15 Jan 2024 19:17:52 +0100
-Message-Id: <20240115181809.885385-9-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v9 09/25] security: Align inode_setattr hook definition with EVM
+Date: Mon, 15 Jan 2024 19:17:53 +0100
+Message-Id: <20240115181809.885385-10-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
 References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
@@ -74,10 +74,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwAXBCjzdqVl8DKbAA--.57127S10
-X-Coremail-Antispam: 1UD129KBjvJXoWxGw4rCrWDuFW7AFWUJr1xuFg_yoW5uw18pF
-	ZxK3WDCw1rtFyUWryvyF4xu34v9ayrWryjk3yDKw1IyFn3t3s2qrWxAr1j9ryrJr48GFnY
-	qa1avrsYk3W3X3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:GxC2BwAXBCjzdqVl8DKbAA--.57127S11
+X-Coremail-Antispam: 1UD129KBjvJXoWxAw47tr4fJFWrKr17ury7Awb_yoW5ur18pF
+	4UJ3ZxGr4rXFy7Wr1vkF45ua1S9FWfurWUArWjgw1SyF92qr1IgFyxGr1jkF15GrWUGrnF
+	qFsFvrs8Wr15ArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUBvb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
@@ -91,91 +91,85 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxGw4rCrWDuFW7AFWUJr1xuFg_yoW5uw18pF
 	AIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI
 	42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z2
 	80aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZo7tUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5iRywACs3
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5iRzQAAsz
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-Change evm_inode_post_setxattr() definition, so that it can be registered
-as implementation of the inode_post_setxattr hook.
+Add the idmap parameter to the definition, so that evm_inode_setattr() can
+be registered as this hook implementation.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- include/linux/evm.h               | 8 +++++---
- security/integrity/evm/evm_main.c | 4 +++-
- security/security.c               | 2 +-
- 3 files changed, 9 insertions(+), 5 deletions(-)
+ include/linux/lsm_hook_defs.h | 3 ++-
+ security/security.c           | 2 +-
+ security/selinux/hooks.c      | 3 ++-
+ security/smack/smack_lsm.c    | 4 +++-
+ 4 files changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/evm.h b/include/linux/evm.h
-index 7de24c1ada90..3faabdd47852 100644
---- a/include/linux/evm.h
-+++ b/include/linux/evm.h
-@@ -31,7 +31,8 @@ extern int evm_inode_setxattr(struct mnt_idmap *idmap,
- extern void evm_inode_post_setxattr(struct dentry *dentry,
- 				    const char *xattr_name,
- 				    const void *xattr_value,
--				    size_t xattr_value_len);
-+				    size_t xattr_value_len,
-+				    int flags);
- extern int evm_inode_copy_up_xattr(const char *name);
- extern int evm_inode_removexattr(struct mnt_idmap *idmap,
- 				 struct dentry *dentry, const char *xattr_name);
-@@ -56,7 +57,7 @@ static inline void evm_inode_post_set_acl(struct dentry *dentry,
- 					  const char *acl_name,
- 					  struct posix_acl *kacl)
- {
--	return evm_inode_post_setxattr(dentry, acl_name, NULL, 0);
-+	return evm_inode_post_setxattr(dentry, acl_name, NULL, 0, 0);
- }
- 
- int evm_inode_init_security(struct inode *inode, struct inode *dir,
-@@ -115,7 +116,8 @@ static inline int evm_inode_setxattr(struct mnt_idmap *idmap,
- static inline void evm_inode_post_setxattr(struct dentry *dentry,
- 					   const char *xattr_name,
- 					   const void *xattr_value,
--					   size_t xattr_value_len)
-+					   size_t xattr_value_len,
-+					   int flags)
- {
- 	return;
- }
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 12ba3207fd31..d35143179699 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -753,6 +753,7 @@ bool evm_revalidate_status(const char *xattr_name)
-  * @xattr_name: pointer to the affected extended attribute name
-  * @xattr_value: pointer to the new extended attribute value
-  * @xattr_value_len: pointer to the new extended attribute value length
-+ * @flags: flags to pass into filesystem operations
-  *
-  * Update the HMAC stored in 'security.evm' to reflect the change.
-  *
-@@ -761,7 +762,8 @@ bool evm_revalidate_status(const char *xattr_name)
-  * i_mutex lock.
-  */
- void evm_inode_post_setxattr(struct dentry *dentry, const char *xattr_name,
--			     const void *xattr_value, size_t xattr_value_len)
-+			     const void *xattr_value, size_t xattr_value_len,
-+			     int flags)
- {
- 	if (!evm_revalidate_status(xattr_name))
- 		return;
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index 185924c56378..a843bb5f6f4b 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -135,7 +135,8 @@ LSM_HOOK(int, 0, inode_readlink, struct dentry *dentry)
+ LSM_HOOK(int, 0, inode_follow_link, struct dentry *dentry, struct inode *inode,
+ 	 bool rcu)
+ LSM_HOOK(int, 0, inode_permission, struct inode *inode, int mask)
+-LSM_HOOK(int, 0, inode_setattr, struct dentry *dentry, struct iattr *attr)
++LSM_HOOK(int, 0, inode_setattr, struct mnt_idmap *idmap, struct dentry *dentry,
++	 struct iattr *attr)
+ LSM_HOOK(int, 0, inode_getattr, const struct path *path)
+ LSM_HOOK(int, 0, inode_setxattr, struct mnt_idmap *idmap,
+ 	 struct dentry *dentry, const char *name, const void *value,
 diff --git a/security/security.c b/security/security.c
-index f0d1f8f0da80..ab847af2c74d 100644
+index ab847af2c74d..1d332e294704 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -2367,7 +2367,7 @@ void security_inode_post_setxattr(struct dentry *dentry, const char *name,
+@@ -2215,7 +2215,7 @@ int security_inode_setattr(struct mnt_idmap *idmap,
+ 
  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return;
- 	call_void_hook(inode_post_setxattr, dentry, name, value, size, flags);
--	evm_inode_post_setxattr(dentry, name, value, size);
-+	evm_inode_post_setxattr(dentry, name, value, size, flags);
+ 		return 0;
+-	ret = call_int_hook(inode_setattr, 0, dentry, attr);
++	ret = call_int_hook(inode_setattr, 0, idmap, dentry, attr);
+ 	if (ret)
+ 		return ret;
+ 	return evm_inode_setattr(idmap, dentry, attr);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 179540441115..dae53d7778bb 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3128,7 +3128,8 @@ static int selinux_inode_permission(struct inode *inode, int mask)
+ 	return rc;
  }
  
+-static int selinux_inode_setattr(struct dentry *dentry, struct iattr *iattr)
++static int selinux_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
++				 struct iattr *iattr)
+ {
+ 	const struct cred *cred = current_cred();
+ 	struct inode *inode = d_backing_inode(dentry);
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index c126f6a16de4..9b75216d4a58 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1232,12 +1232,14 @@ static int smack_inode_permission(struct inode *inode, int mask)
+ 
  /**
+  * smack_inode_setattr - Smack check for setting attributes
++ * @idmap: idmap of the mount
+  * @dentry: the object
+  * @iattr: for the force flag
+  *
+  * Returns 0 if access is permitted, an error code otherwise
+  */
+-static int smack_inode_setattr(struct dentry *dentry, struct iattr *iattr)
++static int smack_inode_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
++			       struct iattr *iattr)
+ {
+ 	struct smk_audit_info ad;
+ 	int rc;
 -- 
 2.34.1
 
