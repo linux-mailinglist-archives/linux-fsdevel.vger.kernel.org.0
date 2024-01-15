@@ -1,258 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-7929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8485382D594
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 10:12:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA0D782D609
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 10:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 055691F21128
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 09:12:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC5CA1C2152E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 09:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E617CC150;
-	Mon, 15 Jan 2024 09:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224E2D308;
+	Mon, 15 Jan 2024 09:33:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1033FC120
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 09:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7bc32b2225aso365026639f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 01:12:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705309937; x=1705914737;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NR63WllAbDQWcrgD+VPWnAQ+Z0eUm8TNkhH/S7k/Ubo=;
-        b=NwJlOA5wmXA+3Zntcze6JhvrmvW4+VmjflYT/k9gf5tcq/IBoWwysHHNLZzOFWcpiA
-         fdHiT+itu4hxHQIvCv/Hq08TNV8qwfzqZ0WpR6SxlhqvCc9LoRjJZlzJUjlwcxcCC05G
-         eONioTvrSpbC1JMxZwWG3EUyo+mZHN9vvIrp/ZKzFaoDG7RC/NVLbVCosZnrydnJ22nZ
-         dBFPFQHqzkO/CRHqewL7dUfL2Knx60acCPXku8U68DCLoRftEU+weekLIvJbu0R/quX6
-         j8ktpA5dmLk/QPcArUZ8cBpPmh2ZS9e/+TTWIWfmK/+vlWuTHCIZ2b1fF1d8Hlc4yJFB
-         GJ6Q==
-X-Gm-Message-State: AOJu0Yxi0r2uzimakMukstx9BxpvNRVHoY0lMllz0JJNnNvz369mH7v0
-	hodQ38jaj9I7hOjbKrQf0Ah7dmlBKovQlpmQ9HXxWPfdKKZq
-X-Google-Smtp-Source: AGHT+IGBB+aGI4iyzkTSra0B6/PtIxnXPEYbJsRyx6an5sejJWvEYm8rbxFgZOJOAgWUUPcVCTw25hMvzfg+8Tilv5ih+Ihl/UX+
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9473ABE74;
+	Mon, 15 Jan 2024 09:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F10B72F4;
+	Mon, 15 Jan 2024 01:34:24 -0800 (PST)
+Received: from [10.57.76.47] (unknown [10.57.76.47])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7E5F53F6C4;
+	Mon, 15 Jan 2024 01:33:36 -0800 (PST)
+Message-ID: <398fdb16-b8c5-4d02-bb5d-d4c9b8f9bf89@arm.com>
+Date: Mon, 15 Jan 2024 09:33:35 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:db0d:0:b0:7be:dc77:d176 with SMTP id
- t13-20020a6bdb0d000000b007bedc77d176mr110226ioc.1.1705309937288; Mon, 15 Jan
- 2024 01:12:17 -0800 (PST)
-Date: Mon, 15 Jan 2024 01:12:17 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000b4e27060ef8694c@google.com>
-Subject: [syzbot] [f2fs?] KASAN: slab-use-after-free Read in f2fs_filemap_fault
-From: syzbot <syzbot+763afad57075d3f862f2@syzkaller.appspotmail.com>
-To: chao@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1] mm/filemap: Allow arch to request folio size for
+ exec memory
+Content-Language: en-GB
+To: Barry Song <21cnbao@gmail.com>, Matthew Wilcox <willy@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20240111154106.3692206-1-ryan.roberts@arm.com>
+ <CAGsJ_4xPgmgt57sw2c5==bPN+YL23zn=hZweu8u2ceWei7+q4g@mail.gmail.com>
+ <654df189-e472-4a75-b2be-6faa8ba18a08@arm.com>
+ <CAGsJ_4zyK4kSF4XYWwLTLN8816KL+u=p6WhyEsRu8PMnQTNRUg@mail.gmail.com>
+ <CAGsJ_4y8ovLPp51NcrhTXTAE0DZvSPYTJs8nu6-ny_ierLx-pw@mail.gmail.com>
+ <ZaHFbJ2Osd/tpPqN@casper.infradead.org>
+ <CAGsJ_4wZzjprAs42LMw8s8C_iz4v7m6fiO7-7nBS2BxkU9u8QA@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAGsJ_4wZzjprAs42LMw8s8C_iz4v7m6fiO7-7nBS2BxkU9u8QA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 13/01/2024 00:11, Barry Song wrote:
+> On Sat, Jan 13, 2024 at 12:04 PM Matthew Wilcox <willy@infradead.org> wrote:
+>>
+>> On Sat, Jan 13, 2024 at 11:54:23AM +1300, Barry Song wrote:
+>>>>> Perhaps an alternative would be to double ra->size and set ra->async_size to
+>>>>> (ra->size / 2)? That would ensure we always have 64K aligned blocks but would
+>>>>> give us an async portion so readahead can still happen.
+>>>>
+>>>> this might be worth to try as PMD is exactly doing this because async
+>>>> can decrease
+>>>> the latency of subsequent page faults.
+>>>>
+>>>> #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>>>>         /* Use the readahead code, even if readahead is disabled */
+>>>>         if (vm_flags & VM_HUGEPAGE) {
+>>>>                 fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+>>>>                 ractl._index &= ~((unsigned long)HPAGE_PMD_NR - 1);
+>>>>                 ra->size = HPAGE_PMD_NR;
+>>>>                 /*
+>>>>                  * Fetch two PMD folios, so we get the chance to actually
+>>>>                  * readahead, unless we've been told not to.
+>>>>                  */
+>>>>                 if (!(vm_flags & VM_RAND_READ))
+>>>>                         ra->size *= 2;
+>>>>                 ra->async_size = HPAGE_PMD_NR;
+>>>>                 page_cache_ra_order(&ractl, ra, HPAGE_PMD_ORDER);
+>>>>                 return fpin;
+>>>>         }
+>>>> #endif
+>>>>
+>>>
+>>> BTW, rather than simply always reading backwards,  we did something very
+>>> "ugly" to simulate "read-around" for CONT-PTE exec before[1]
+>>>
+>>> if page faults happen in the first half of cont-pte, we read this 64KiB
+>>> and its previous 64KiB. otherwise, we read it and its next 64KiB.
 
-syzbot found the following issue on:
+I actually tried something very similar to this while prototyping. I found that
+it was about 10% less effective at getting text into 64K folios as the approach
+I posted. I didn't investigate why, as I came to the conclusion that text
+unlikely benefits from readahead anyway.
 
-HEAD commit:    052d534373b7 Merge tag 'exfat-for-6.8-rc1' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14bb9913e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=490fc2f9d4ae426c
-dashboard link: https://syzkaller.appspot.com/bug?extid=763afad57075d3f862f2
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15d9fbcbe80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1422d5ebe80000
+>>
+>> I don't think that makes sense.  The CPU executes instructions forwards,
+>> not "around".  I honestly think we should treat text as "random access"
+>> because function A calls function B and functions A and B might well be
+>> very far apart from each other.  The only time I see you actually
+>> getting "readahead" hits is if a function is split across two pages (for
+>> whatever size of page), but that's a false hit!  The function is not,
+>> generally, 64kB long, so doing readahead is no more likely to bring in
+>> the next page of text that we want than reading any other random page.
+>>
+> 
+> it seems you are in favor of Ryan's modification even for filesystems
+> which don't support large mapping?
+> 
+>> Unless somebody finds the GNU Rope source code from 1998, or recreates it:
+>> https://lwn.net/1998/1029/als/rope.html
+>> Then we might actually have some locality.
+>>
+>> Did you actually benchmark what you did?  Is there really some locality
+>> between the code at offset 256-288kB in the file and then in the range
+>> 192kB-256kB?
+> 
+> I really didn't have benchmark data, at that point I was like,
+> instinctively didn’t
+> want to break the logic of read-around, so made the code just that.
+> The info your provide makes me re-think if the read-around code is necessary,
+> thanks!
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/51de89c7a81e/disk-052d5343.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7e03b92536a3/vmlinux-052d5343.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3d91124eb5ff/bzImage-052d5343.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/f67519526788/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/7e871268c842/mount_7.gz
+As a quick experiment, I modified my thpmaps script to collect data *only* for
+executable mappings. This is run *without* my change:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+763afad57075d3f862f2@syzkaller.appspotmail.com
+| File-backed exec folios |    Speedometer | Kernel Compile |
+|=========================|================|================|
+|file-thp-aligned-16kB    |            56% |            46% |
+|file-thp-aligned-32kB    |             2% |             3% |
+|file-thp-aligned-64kB    |             4% |             5% |
+|file-thp-unaligned-16kB  |             0% |             3% |
+|file-thp-unaligned-128kB |             2% |             0% |
+|file-thp-partial         |             0% |             0% |
 
-==================================================================
-BUG: KASAN: slab-use-after-free in f2fs_filemap_fault+0xd1/0x2c0 fs/f2fs/file.c:49
-Read of size 8 at addr ffff88807bb22680 by task syz-executor184/5058
+It's implied that the rest of the memory (up to 100%) is small (single page)
+folios. I think the only reason we would see small folios is if we would
+otherwise run off the end of the file?
 
-CPU: 0 PID: 5058 Comm: syz-executor184 Not tainted 6.7.0-syzkaller-09928-g052d534373b7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2d0 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x163/0x540 mm/kasan/report.c:488
- kasan_report+0x142/0x170 mm/kasan/report.c:601
- f2fs_filemap_fault+0xd1/0x2c0 fs/f2fs/file.c:49
- __do_fault+0x131/0x450 mm/memory.c:4376
- do_shared_fault mm/memory.c:4798 [inline]
- do_fault mm/memory.c:4872 [inline]
- do_pte_missing mm/memory.c:3745 [inline]
- handle_pte_fault mm/memory.c:5144 [inline]
- __handle_mm_fault+0x23b7/0x72b0 mm/memory.c:5285
- handle_mm_fault+0x27e/0x770 mm/memory.c:5450
- do_user_addr_fault arch/x86/mm/fault.c:1364 [inline]
- handle_page_fault arch/x86/mm/fault.c:1507 [inline]
- exc_page_fault+0x456/0x870 arch/x86/mm/fault.c:1563
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
-RIP: 0033:0x7f808e742b50
-Code: 20 bf 02 00 00 00 e8 9f 24 04 00 48 83 f8 ff 0f 84 08 fa ff ff 48 89 05 e6 65 0c 00 e9 fc f9 ff ff 66 0f 1f 84 00 00 00 00 00 <c7> 04 25 40 00 00 20 66 32 66 73 c6 04 25 44 00 00 20 00 e9 0f fa
-RSP: 002b:00007f808e735170 EFLAGS: 00010246
+If so, then I think any text in folios > 16K is a rough proxy for how effective
+readahead is for text: Not very.
 
-RAX: 0000000000000000 RBX: 00007f808e80b6e8 RCX: 00007f808e784fe9
-RDX: 86d0f56bab720225 RSI: 0000000000000000 RDI: 00007f808e7355a0
-RBP: 00007f808e80b6e0 R08: 0000000000000000 R09: 00007f808e7356c0
-R10: 00007f808e80b6e0 R11: 0000000000000246 R12: 00007f808e80b6ec
-R13: 0000000000000000 R14: 00007fff41e6fc30 R15: 00007fff41e6fd18
- </TASK>
-
-Allocated by task 5058:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x70 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:314 [inline]
- __kasan_slab_alloc+0x66/0x70 mm/kasan/common.c:340
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3813 [inline]
- slab_alloc_node mm/slub.c:3860 [inline]
- kmem_cache_alloc+0x16f/0x340 mm/slub.c:3867
- vm_area_alloc+0x24/0x1d0 kernel/fork.c:465
- mmap_region+0xbd8/0x1f90 mm/mmap.c:2804
- do_mmap+0x76b/0xde0 mm/mmap.c:1379
- vm_mmap_pgoff+0x1e2/0x420 mm/util.c:556
- ksys_mmap_pgoff+0x4ff/0x6d0 mm/mmap.c:1425
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-
-Freed by task 5064:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x70 mm/kasan/common.c:68
- kasan_save_free_info+0x4e/0x60 mm/kasan/generic.c:634
- poison_slab_object+0xa6/0xe0 mm/kasan/common.c:241
- __kasan_slab_free+0x34/0x60 mm/kasan/common.c:257
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2121 [inline]
- slab_free mm/slub.c:4299 [inline]
- kmem_cache_free+0x102/0x2a0 mm/slub.c:4363
- rcu_do_batch kernel/rcu/tree.c:2158 [inline]
- rcu_core+0xad8/0x17c0 kernel/rcu/tree.c:2433
- __do_softirq+0x2b8/0x939 kernel/softirq.c:553
-
-Last potentially related work creation:
- kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
- __kasan_record_aux_stack+0xae/0x100 mm/kasan/generic.c:580
- __call_rcu_common kernel/rcu/tree.c:2683 [inline]
- call_rcu+0x167/0xa80 kernel/rcu/tree.c:2797
- remove_vma mm/mmap.c:148 [inline]
- remove_mt mm/mmap.c:2283 [inline]
- do_vmi_align_munmap+0x159d/0x1930 mm/mmap.c:2629
- do_vmi_munmap+0x24d/0x2d0 mm/mmap.c:2693
- mmap_region+0x677/0x1f90 mm/mmap.c:2744
- do_mmap+0x76b/0xde0 mm/mmap.c:1379
- vm_mmap_pgoff+0x1e2/0x420 mm/util.c:556
- ksys_mmap_pgoff+0x4ff/0x6d0 mm/mmap.c:1425
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-
-The buggy address belongs to the object at ffff88807bb22660
- which belongs to the cache vm_area_struct of size 192
-The buggy address is located 32 bytes inside of
- freed 192-byte region [ffff88807bb22660, ffff88807bb22720)
-
-The buggy address belongs to the physical page:
-page:ffffea0001eec880 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7bb22
-flags: 0xfff00000000800(slab|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffffff()
-raw: 00fff00000000800 ffff8880142a1b40 dead000000000122 0000000000000000
-raw: 0000000000000000 00000000800f000f 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 5039, tgid 5039 (sshd), ts 50202976366, free_ts 44674399535
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x1e6/0x210 mm/page_alloc.c:1533
- prep_new_page mm/page_alloc.c:1540 [inline]
- get_page_from_freelist+0x33ea/0x3570 mm/page_alloc.c:3311
- __alloc_pages+0x255/0x680 mm/page_alloc.c:4567
- __alloc_pages_node include/linux/gfp.h:238 [inline]
- alloc_pages_node include/linux/gfp.h:261 [inline]
- alloc_slab_page+0x5f/0x160 mm/slub.c:2190
- allocate_slab mm/slub.c:2354 [inline]
- new_slab+0x84/0x2f0 mm/slub.c:2407
- ___slab_alloc+0xd17/0x13d0 mm/slub.c:3540
- __slab_alloc mm/slub.c:3625 [inline]
- __slab_alloc_node mm/slub.c:3678 [inline]
- slab_alloc_node mm/slub.c:3850 [inline]
- kmem_cache_alloc+0x249/0x340 mm/slub.c:3867
- vm_area_dup+0x27/0x280 kernel/fork.c:480
- dup_mmap kernel/fork.c:695 [inline]
- dup_mm kernel/fork.c:1685 [inline]
- copy_mm+0xd90/0x21b0 kernel/fork.c:1734
- copy_process+0x1d6f/0x3fb0 kernel/fork.c:2496
- kernel_clone+0x222/0x840 kernel/fork.c:2901
- __do_sys_clone kernel/fork.c:3044 [inline]
- __se_sys_clone kernel/fork.c:3028 [inline]
- __x64_sys_clone+0x258/0x2a0 kernel/fork.c:3028
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-page last free pid 5037 tgid 5037 stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1140 [inline]
- free_unref_page_prepare+0x959/0xa80 mm/page_alloc.c:2346
- free_unref_page+0x37/0x3f0 mm/page_alloc.c:2486
- pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
- pipe_update_tail fs/pipe.c:234 [inline]
- pipe_read+0x6ee/0x13e0 fs/pipe.c:354
- call_read_iter include/linux/fs.h:2079 [inline]
- new_sync_read fs/read_write.c:395 [inline]
- vfs_read+0x662/0x900 fs/read_write.c:476
- ksys_read+0x1a0/0x2c0 fs/read_write.c:619
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf5/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-
-Memory state around the buggy address:
- ffff88807bb22580: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff88807bb22600: 00 00 fc fc fc fc fc fc fc fc fc fc fa fb fb fb
->ffff88807bb22680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff88807bb22700: fb fb fb fb fc fc fc fc fc fc fc fc fc fc 00 00
- ffff88807bb22780: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
+Intuitively, I agree with Matthew that readahead doesn't make much sense for
+text, and this rough data seems to agree.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> was using filesystems without large-mapping support but worked around
+> the problem by
+> 1. preparing 16*n normals pages
+> 2. insert normal pages into xa
+> 3. let filesystem read 16 normal pages
+> 4. after all IO completion, transform 16 pages into mTHP and reinsert
+> mTHP to xa
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I had a go at something like this too, but was doing it in the dynamic loader
+and having it do MADV_COLLAPSE to generate PMD-sized THPs for the text. I
+actaully found this to be even faster for the use cases I was measuring. But of
+course its using more memory due to the 2M page size, and I expect it is slowing
+down app load time because it is potentially reading in a lot more text than is
+actually faulting. Ultimately I think the better strategy is to make the
+filesystems large folio capable.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> 
+> that was very painful and finally made no improvement probably because
+> of due to various sync overhead. so  ran away and didn't dig more data.
+> 
+> Thanks
+> Barry
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
