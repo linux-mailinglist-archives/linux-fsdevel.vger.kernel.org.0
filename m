@@ -1,298 +1,279 @@
-Return-Path: <linux-fsdevel+bounces-7989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA52F82E021
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:39:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43B1E82E033
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:43:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB75B1C22080
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 18:39:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBB9C286C9A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 18:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9931945B;
-	Mon, 15 Jan 2024 18:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1320118AF4;
+	Mon, 15 Jan 2024 18:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UrYLCeRE"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IpLDVZvS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1999F18EC9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 18:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-5e744f7ca3bso140981057b3.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 10:38:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1705343927; x=1705948727; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=21zH497B8+dg0O/C7EwYJfD0SYQoqr7syeq2JJc4d60=;
-        b=UrYLCeREsFnwAxoJC+umUFKYt2DuQ3CNnswQf7APYA2WgQWK5V8XPnb95quE5NoFwE
-         83zrG5dhCYFJxsVLPJCIdm493/BXW7HXchO7TjTw9BCTqQBHsefT6v2e8qVHzj4efQmH
-         1HQOGvPo37nTrw4veIPGkRNtVEWJjYGNwqGA7jIpv/YiZjI2SwCApeEQX9z1V+tJ28j5
-         5nL+WaXh/9aBG3pq2ECFqqQxosXJFi8mzNiJ6AzT9jAlNSngk0Fa+kgsq5GB1TiBBvF7
-         cGFQoFgJmVvr3mtRpSxipoIfXN5Ao6V+4Rbqbgr8Gu6SgNKdb7u1MwQXHwUG1osMDJzG
-         Ol4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705343927; x=1705948727;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=21zH497B8+dg0O/C7EwYJfD0SYQoqr7syeq2JJc4d60=;
-        b=RM9jlVM5J3VQqOyhzhOgqfCqsmSiZV2zzN2k+JEUhRgnh5aY6JdW66WjJTrVASd6Jx
-         35Qok9Gt4/Z+PtA/y4aM/4AVQlU0JeGMPtnX38iCsbIlGhuQVY64qY+08fU7QOP93Jed
-         Ut3gX8/aYrsb7WRdamo0rTnYB/aD8nwbGIMdyVfGStdpwQsytwloqJIJFfz/Pi9m6VpL
-         /Xy7wlcycj6Vlfgmzp1uhxUDv3NmxpLD8Z8bIlRZugJchstoU31WKapO4Uyyh0EJ07eq
-         /UrmtqXIUt09/NypWbcFv2G2kiJasToRQNpKvBDjx0PrFImqkTBqDbGjoFTAe9NfrF2k
-         l3wQ==
-X-Gm-Message-State: AOJu0YxG42cOivkrqrx8SLKLeSvHhqjy5xXi/GHbUbYHFNeoVCy/Ox+4
-	bFZUBG7XMgCIEP5QJ8NHatMgyrN6LNeNW3NOhw==
-X-Google-Smtp-Source: AGHT+IFB8/hnPbdwsoiv7tQuwUtxLgPQDLNW02byS+mXpmjbpqM8r5SRgtD+OQwpIXqVBxjlqXtVMNNKQrk=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:3af2:e48e:2785:270])
- (user=surenb job=sendgmr) by 2002:a05:690c:805:b0:5fc:4ef9:9d6b with SMTP id
- bx5-20020a05690c080500b005fc4ef99d6bmr2038449ywb.9.1705343927162; Mon, 15 Jan
- 2024 10:38:47 -0800 (PST)
-Date: Mon, 15 Jan 2024 10:38:36 -0800
-In-Reply-To: <20240115183837.205694-1-surenb@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C2A18C08;
+	Mon, 15 Jan 2024 18:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 15 Jan 2024 13:42:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1705344178;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/DL5zGXc3f2lpK8C4qhcgo7eUWR/Jh/Vtp9T4Cor5uM=;
+	b=IpLDVZvSJhL58OrZM3y4plEp15GKp3sH/cEtdM/RRm1JKJ5jP/wvoQDDb2KZSaQm0RCErB
+	38eENewE7y2ZiY53GxCiPxw14LfmtHrCS86RqxyNLyqjegH8kSeJ/MIazeX8JEmZcXcr5T
+	YwX/t9fFPFQo4ECD8TPw7pl+cD0N2og=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Mark Brown <broonie@kernel.org>
+Cc: Neal Gompa <neal@gompa.dev>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org, 
+	Nikolai Kondrashov <spbnick@gmail.com>, Philip Li <philip.li@intel.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [GIT PULL] bcachefs updates for 6.8
+Message-ID: <2uh4sgj5mqqkuv7h7fjlpigwjurcxoo6mqxz7cjyzh4edvqdhv@h2y6ytnh37tj>
+References: <202401101525.112E8234@keescook>
+ <6pbl6vnzkwdznjqimowfssedtpawsz2j722dgiufi432aldjg4@6vn573zspwy3>
+ <202401101625.3664EA5B@keescook>
+ <xlynx7ydht5uixtbkrg6vgt7likpg5az76gsejfgluxkztukhf@eijjqp4uxnjk>
+ <be2fa62f-f4d3-4b1c-984d-698088908ff3@sirena.org.uk>
+ <gaxigrudck7pr3iltgn3fp5cdobt3ieqjwohrnkkmmv67fctla@atcpcc4kdr3o>
+ <f8023872-662f-4c3f-9f9b-be73fd775e2c@sirena.org.uk>
+ <olmilpnd7jb57yarny6poqnw6ysqfnv7vdkc27pqxefaipwbdd@4qtlfeh2jcri>
+ <CAEg-Je8=RijGLavvYDvw3eOf+CtvQ_fqdLZ3DOZfoHKu34LOzQ@mail.gmail.com>
+ <40bcbbe5-948e-4c92-8562-53e60fd9506d@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240115183837.205694-1-surenb@google.com>
-X-Mailer: git-send-email 2.43.0.381.gb435a96ce8-goog
-Message-ID: <20240115183837.205694-4-surenb@google.com>
-Subject: [RFC 3/3] mm/maps: read proc/pid/maps under RCU
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	dchinner@redhat.com, casey@schaufler-ca.com, ben.wolsieffer@hefring.com, 
-	paulmck@kernel.org, david@redhat.com, avagin@google.com, 
-	usama.anjum@collabora.com, peterx@redhat.com, hughd@google.com, 
-	ryan.roberts@arm.com, wangkefeng.wang@huawei.com, Liam.Howlett@Oracle.com, 
-	yuzhao@google.com, axelrasmussen@google.com, lstoakes@gmail.com, 
-	talumbau@google.com, willy@infradead.org, vbabka@suse.cz, 
-	mgorman@techsingularity.net, jhubbard@nvidia.com, vishal.moola@gmail.com, 
-	mathieu.desnoyers@efficios.com, dhowells@redhat.com, jgg@ziepe.ca, 
-	sidhartha.kumar@oracle.com, andriy.shevchenko@linux.intel.com, 
-	yangxingui@huawei.com, keescook@chromium.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, kernel-team@android.com, 
-	surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <40bcbbe5-948e-4c92-8562-53e60fd9506d@sirena.org.uk>
+X-Migadu-Flow: FLOW_OUT
 
-With maple_tree supporting vma tree traversal under RCU and per-vma locks
-making vma access RCU-safe, /proc/pid/maps can be read under RCU and
-without the need to read-lock mmap_lock. However vma content can change
-from under us, therefore we need to pin pointer fields used when
-generating the output (currently only vm_file and anon_name).
-In addition, we validate data before publishing it to the user using new
-seq_file validate interface. This way we keep this mechanism consistent
-with the previous behavior where data tearing is possible only at page
-boundaries.
-This change is designed to reduce mmap_lock contention and prevent a
-process reading /proc/pid/maps files (often a low priority task, such as
-monitoring/data collection services) from blocking address space updates.
+On Fri, Jan 12, 2024 at 06:22:55PM +0000, Mark Brown wrote:
+> This depends a lot on the area of the kernel you're looking at - some
+> things are very amenable to testing in a VM but there's plenty of code
+> where you really do want to ensure that at some point you're running
+> with some actual hardware, ideally as wide a range of it with diverse
+> implementation decisions as you can manage.  OTOH some things can only
+> be tested virtually because the hardware doesn't exist yet!
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- fs/proc/internal.h |   3 ++
- fs/proc/task_mmu.c | 130 ++++++++++++++++++++++++++++++++++++++++-----
- 2 files changed, 120 insertions(+), 13 deletions(-)
+Surface wise, there are a lot of drivers that need real hardware; but if
+you look at where the complexity is, the hard complex algorithmic stuff
+that really needs to be tested thoroughly - that's all essentially
+library code that doesn't need specific drivers to test.
 
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index a71ac5379584..47233408550b 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -290,6 +290,9 @@ struct proc_maps_private {
- 	struct task_struct *task;
- 	struct mm_struct *mm;
- 	struct vma_iterator iter;
-+	int mm_lock_seq;
-+	struct anon_vma_name *anon_name;
-+	struct file *vm_file;
- #ifdef CONFIG_NUMA
- 	struct mempolicy *task_mempolicy;
- #endif
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 62b16f42d5d2..d4305cfdca58 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -141,6 +141,22 @@ static struct vm_area_struct *proc_get_vma(struct proc_maps_private *priv,
- 	return vma;
- }
- 
-+static const struct seq_operations proc_pid_maps_op;
-+
-+static inline bool needs_mmap_lock(struct seq_file *m)
-+{
-+#ifdef CONFIG_PER_VMA_LOCK
-+	/*
-+	 * smaps and numa_maps perform page table walk, therefore require
-+	 * mmap_lock but maps can be read under RCU.
-+	 */
-+	return m->op != &proc_pid_maps_op;
-+#else
-+	/* Without per-vma locks VMA access is not RCU-safe */
-+	return true;
-+#endif
-+}
-+
- static void *m_start(struct seq_file *m, loff_t *ppos)
- {
- 	struct proc_maps_private *priv = m->private;
-@@ -162,11 +178,17 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
- 		return NULL;
- 	}
- 
--	if (mmap_read_lock_killable(mm)) {
--		mmput(mm);
--		put_task_struct(priv->task);
--		priv->task = NULL;
--		return ERR_PTR(-EINTR);
-+	if (needs_mmap_lock(m)) {
-+		if (mmap_read_lock_killable(mm)) {
-+			mmput(mm);
-+			put_task_struct(priv->task);
-+			priv->task = NULL;
-+			return ERR_PTR(-EINTR);
-+		}
-+	} else {
-+		/* For memory barrier see the comment for mm_lock_seq in mm_struct */
-+		priv->mm_lock_seq = smp_load_acquire(&priv->mm->mm_lock_seq);
-+		rcu_read_lock();
- 	}
- 
- 	vma_iter_init(&priv->iter, mm, last_addr);
-@@ -195,7 +217,10 @@ static void m_stop(struct seq_file *m, void *v)
- 		return;
- 
- 	release_task_mempolicy(priv);
--	mmap_read_unlock(mm);
-+	if (needs_mmap_lock(m))
-+		mmap_read_unlock(mm);
-+	else
-+		rcu_read_unlock();
- 	mmput(mm);
- 	put_task_struct(priv->task);
- 	priv->task = NULL;
-@@ -283,8 +308,10 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
- 	start = vma->vm_start;
- 	end = vma->vm_end;
- 	show_vma_header_prefix(m, start, end, flags, pgoff, dev, ino);
--	if (mm)
--		anon_name = anon_vma_name(vma);
-+	if (mm) {
-+		anon_name = needs_mmap_lock(m) ? anon_vma_name(vma) :
-+				anon_vma_name_get_rcu(vma);
-+	}
- 
- 	/*
- 	 * Print the dentry name for named mappings, and a
-@@ -338,19 +365,96 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
- 		seq_puts(m, name);
- 	}
- 	seq_putc(m, '\n');
-+	if (anon_name && !needs_mmap_lock(m))
-+		anon_vma_name_put(anon_name);
-+}
-+
-+/*
-+ * Pin vm_area_struct fields used by show_map_vma. We also copy pinned fields
-+ * into proc_maps_private because by the time put_vma_fields() is called, VMA
-+ * might have changed and these fields might be pointing to different objects.
-+ */
-+static bool get_vma_fields(struct vm_area_struct *vma, struct proc_maps_private *priv)
-+{
-+	if (vma->vm_file) {
-+		priv->vm_file =  get_file_rcu(&vma->vm_file);
-+		if (!priv->vm_file)
-+			return false;
-+
-+	} else
-+		priv->vm_file = NULL;
-+
-+	if (vma->anon_name) {
-+		priv->anon_name = anon_vma_name_get_rcu(vma);
-+		if (!priv->anon_name) {
-+			if (priv->vm_file) {
-+				fput(priv->vm_file);
-+				return false;
-+			}
-+		}
-+	} else
-+		priv->anon_name = NULL;
-+
-+	return true;
-+}
-+
-+static void put_vma_fields(struct proc_maps_private *priv)
-+{
-+	if (priv->anon_name)
-+		anon_vma_name_put(priv->anon_name);
-+	if (priv->vm_file)
-+		fput(priv->vm_file);
- }
- 
- static int show_map(struct seq_file *m, void *v)
- {
--	show_map_vma(m, v);
-+	struct proc_maps_private *priv = m->private;
-+
-+	if (needs_mmap_lock(m))
-+		show_map_vma(m, v);
-+	else {
-+		/*
-+		 * Stop immediately if the VMA changed from under us.
-+		 * Validation step will prevent publishing already cached data.
-+		 */
-+		if (!get_vma_fields(v, priv))
-+			return -EAGAIN;
-+
-+		show_map_vma(m, v);
-+		put_vma_fields(priv);
-+	}
-+
- 	return 0;
- }
- 
-+static int validate_map(struct seq_file *m, void *v)
-+{
-+	if (!needs_mmap_lock(m)) {
-+		struct proc_maps_private *priv = m->private;
-+		int mm_lock_seq;
-+
-+		/* For memory barrier see the comment for mm_lock_seq in mm_struct */
-+		mm_lock_seq = smp_load_acquire(&priv->mm->mm_lock_seq);
-+		if (mm_lock_seq != priv->mm_lock_seq) {
-+			/*
-+			 * mmap_lock contention is detected. Wait for mmap_lock
-+			 * write to be released, discard stale data and retry.
-+			 */
-+			mmap_read_lock(priv->mm);
-+			mmap_read_unlock(priv->mm);
-+			return -EAGAIN;
-+		}
-+	}
-+	return 0;
-+
-+}
-+
- static const struct seq_operations proc_pid_maps_op = {
--	.start	= m_start,
--	.next	= m_next,
--	.stop	= m_stop,
--	.show	= show_map
-+	.start		= m_start,
-+	.next		= m_next,
-+	.stop		= m_stop,
-+	.show		= show_map,
-+	.validate	= validate_map,
- };
- 
- static int pid_maps_open(struct inode *inode, struct file *file)
--- 
-2.43.0.381.gb435a96ce8-goog
+More broadly, whenever testing comes up the "special cases and special
+hardware" keeps distracting us from making progress on the basics; which
+is making sure as much of the kernel as possible can be tested in a
+virtual machine, with no special setup.
 
+And if we were better at that, it would be a good nudge towards driver
+developers to make their stuff easier to test, perhaps by getting a
+virtualized implementation into qemu, or to make the individual drivers
+thinner and move heavy logic into easier to test library code.
+
+> Yeah, similar with a lot of the more hardware focused or embedded stuff
+> - running something on the machine that's in front of you is seldom the
+> bit that causes substantial issues.  Most of the exceptions I've
+> personally dealt with involved testing hardware (from simple stuff like
+> wiring the audio inputs and outputs together to verify that they're
+> working to attaching fancy test equipment to simulate things or validate
+> that desired physical parameters are being achieved).
+
+Is that sort of thing a frequent source of regressions?
+
+That sounds like the sort of thing that should be a simple table, and
+not something I would expect to need heavy regression testing - but, my
+experience with driver development was nearly 15 years ago; not a lot of
+day to day. How badly are typical kernel refactorings needing regression
+testing in individual drivers?
+
+Filesystem development, OTOH, needs _heavy_ regression testing for
+everything we do. Similarly with mm, scheduler; many subtle interactions
+going on.
+
+> > > > of the existing systems fit well.  Anecdotally it seems much more common
+> > > > to see people looking for things to reuse in order to save time than it
+> > > > is to see people going off and reinventing the world.
+> 
+> > > It's a basic lack of leadership. Yes, the younger engineers are always
+> > > going to be doing the new and shiny, and always going to want to build
+> > > something new instead of finishing off the tests or integrating with
+> > > something existing. Which is why we're supposed to have managers saying
+> > > "ok, what do I need to prioritize for my team be able to develop
+> > > effectively".
+> 
+> That sounds more like a "(reproducible) tests don't exist" complaint
+> which is a different thing again to people going off and NIHing fancy
+> frameworks.
+
+No, it's a leadership/mentorship thing.
+
+And this is something that's always been lacking in kernel culture.
+Witness the kind of general grousing that goes on at maintainer summits;
+maintainers complain about being overworked and people not stepping up
+to help with the grungy responsibilities, while simultaneously we still
+very much have a "fuck off if you haven't proven yourself" attitude
+towards newcomers. Understandable given the historical realities (this
+shit is hard and the penalties of fucking up are high, so there does
+need to be a barrier to entry), but it's left us with some real gaps.
+
+We don't have enough a people in the senier engineer role who lay out
+designs and organise people to take on projects that are bigger than one
+single person can do, or that are necessary but not "fun".
+
+Tests and test infrastructure fall into the necessary but not fun
+category, so they languish.
+
+They are also things that you don't really learn the value of until
+you've been doing this stuff for a decade or so and you've learned by
+experience that yes, good tests really make life easier, as well as how
+to write effective tests, and that's knowledge that needs to be
+instilled.
+
+> 
+> > > > That does assume that you're building and running everything directly on
+> > > > the system under test and are happy to have the test in a VM which isn't
+> > > > an assumption that holds universally, and also that whoever's doing the
+> > > > testing doesn't want to do something like use their own distro or
+> > > > something - like I say none of it looks too unreasonable for
+> > > > filesystems.
+> 
+> > > No, I'm doing it that way because technically that's the simplest way to
+> > > do it.
+> 
+> > > All you guys building crazy contraptions for running tests on Google
+> > > Cloud or Amazon or whatever - you're building technical workarounds for
+> > > broken procurement.
+> 
+> I think you're addressing some specific stuff that I'm not super
+> familiar with here?  My own stuff (and most of the stuff I end up
+> looking at) involves driving actual hardware.
+
+Yeah that's fair; that was addressed more towards what's been going on
+in the filesystem testing world, where I still (outside of my own stuff)
+haven't seen a CI with a proper dashboard of test results; instead a lot
+of code has been burned on multi-distro, highly configurable stuff that
+targets multiple clouds, but - I want simple and functional, not
+whiz-bang features.
+
+> > > Just requisition the damn machines.
+> 
+> There's some assumptions there which are true for a lot of people
+> working on the kernel but not all of them...
+
+$500 a month for my setup (and this is coming out of my patreon funding
+right now!). It's a matter of priorities, and being willing to present
+this as _necessary_ to the people who control the purse strings.
+
+> > Running in the cloud does not mean it has to be complicated. It can be
+> > a simple Buildbot or whatever that knows how to spawn spot instances
+> > for tests and destroy them when they're done *if the test passed*. If
+> > a test failed on an instance, it could hold onto them for a day or two
+> > for someone to debug if needed.
+> 
+> > (I mention Buildbot because in a previous life, I used that to run
+> > tests for the dattobd out-of-tree kernel module before. That was the
+> > strategy I used for it.)
+> 
+> Yeah, or if your thing runs in a Docker container rather than a VM then
+> throwing it at a Kubernetes cluster using a batch job isn't a big jump.
+
+Kubernetes might be next level; I'm not a kubernetes guy so I can't say
+if it would simplify things over what I've got. But if it meant running
+on existing kubernetes clouds, that would make requisitioning hardware
+easier.
+
+> > > I'd also really like to get automated performance testing going too,
+> > > which would have similar requirements in that jobs would need to be
+> > > scheduled on specific dedicated machines. I think what you're doing
+> > > could still build off of some common infrastructure.
+> 
+> It does actually - like quite a few test labs mine is based around LAVA,
+> labgrid is the other popular option (people were actually thinking about
+> integrating the two recently since labgrid is a bit lower level than
+> LAVA and they could conceptually play nicely with each other).  Since
+> the control API is internet accessible this means that it's really
+> simple for me to to donate spare time on the boards to KernelCI as it
+> understands how to drive LAVA, testing that I in turn use myself.  Both
+> my stuff and KernelCI use a repository of glue which knows how to drive
+> various testsuites inside a LAVA job, that's also used by other systems
+> using LAVA like LKFT.
+> 
+> The custom stuff I have is all fairly thin (and quite janky), mostly
+> just either things specific to my physical lab or managing which tests I
+> want to run and what results I expect.  What I've got is *much* more
+> limited than I'd like, and frankly if I wasn't able to pick up huge
+> amounts of preexisting work most of this stuff would not be happening.
+
+That's interesting. Do you have or would you be willing to write an
+overview of what you've got? The way you describe it I wonder if we've
+got some commonality.
+
+The short overview of my system: tests are programs that expose
+subcommends for listing depencies (i.e. virtual machine options, kernel
+config options) and for listing and running subtests. Tests themselves
+are shell scripts, with various library code for e.g. standard
+kernel/vm config options, hooking up tracing, core dump catching, etc.
+
+The idea is for tests to be entirely self contained and need no outside
+configuration.
+
+The test framework knows how to
+ - build an appropriately configured kernel
+ - launch a VM, which needs no prior configuration besides creation of a
+   RO root filesystem image (single command, as mentioned)
+ - exposes subcommands for qemu's gdb interface, kgdb, ssh access, etc.
+   for when running interactively
+ - implements watchdogs/test timeouts
+
+and the CI, on top of all that, watches various git repositories and -
+as you saw - tests every commit, newest to oldest, and provides the
+results in a git log format.
+
+The last one, "results in git log format", is _huge_. I don't know why I
+haven't seen anyone else do that - it was a must-have feature for any
+system over 10 years ago, and it never appeared so I finally built it
+myself.
+
+We (inherently!) have lots of issues with tests that only sometimes fail
+making it hard to know when a regression was introduced, but running all
+the tests on every commit with a good way to see the results makes this
+nearly a non issue - that is, with a weak and noisy signal (tests
+results) we just have to gather enough data and present the results
+properly to make the signal stand out (which commit(s) were buggy).
+
+I write a lot of code (over 200 commits for bcachefs this merge window
+alone), and this is a huge part of why I'm able to - I never have to do
+manual bisection anymore, and thanks to a codebase that's littered with
+assertions and debugging tools I don't spend that much time bug hunting
+either.
+
+> > > > I'd also note that the 9 hour turnaround time for that test set you're
+> > > > pointing at isn't exactly what I'd associate with immediate feedback.
+> 
+> > > My CI shards at the subtest level, and like I mentioned I run 10 VMs per
+> > > physical machine, so with just 2 of the 80 core Ampere boxes I get full
+> > > test runs done in ~20 minutes.
+> 
+> > This design, ironically, is way more cloud-friendly than a lot of
+> > testing system designs I've seen in the past. :)
+> 
+> Sounds like a small private cloud to me!  :P
+
+Yep :)
 
