@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-7969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86CE82DF67
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:23:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC67482DF6F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:24:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A3FD283733
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 18:23:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B20071C22102
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 18:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01A718E32;
-	Mon, 15 Jan 2024 18:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62DC18EBC;
+	Mon, 15 Jan 2024 18:22:44 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922D718C05;
-	Mon, 15 Jan 2024 18:22:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F29182D4;
+	Mon, 15 Jan 2024 18:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TDKqg5vyCz9xqxT;
-	Tue, 16 Jan 2024 02:07:43 +0800 (CST)
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TDKqy3JTNz9xrdN;
+	Tue, 16 Jan 2024 02:07:58 +0800 (CST)
 Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id A257D1406BE;
-	Tue, 16 Jan 2024 02:22:16 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 176101406AE;
+	Tue, 16 Jan 2024 02:22:30 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwDn0ia8d6VlgjybAA--.56873S3;
-	Mon, 15 Jan 2024 19:22:16 +0100 (CET)
+	by APP2 (Coremail) with SMTP id GxC2BwDn0ia8d6VlgjybAA--.56873S4;
+	Mon, 15 Jan 2024 19:22:29 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -61,9 +61,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v9 11/25] security: Introduce inode_post_removexattr hook
-Date: Mon, 15 Jan 2024 19:17:55 +0100
-Message-Id: <20240115181809.885385-12-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v9 12/25] security: Introduce file_post_open hook
+Date: Mon, 15 Jan 2024 19:17:56 +0100
+Message-Id: <20240115181809.885385-13-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
 References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
@@ -74,132 +74,145 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwDn0ia8d6VlgjybAA--.56873S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxurykWFy7KF4UWF4fJr1fWFg_yoWrCrW7pF
-	s8K3Z0gr4rJFy7WryktF1Duw4I9FWfWry7A3y2gw1IvFnrJr1IqrZIkF1UCry5JryjgF1q
-	qFnFkrs5Cr15JwUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBab4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
+X-CM-TRANSID:GxC2BwDn0ia8d6VlgjybAA--.56873S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxCw4rWFWkJrW5WFyfCrW3ZFb_yoWrZF48pF
+	ZYy3WUGFW8GFy7Wrn7AF47ua4ag39agryUWrZ5u3sIyF1vqrnYgFs0yF1Ykr15JrZ5JFyI
+	q3W2grW3Cr1DZrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUXw
 	A2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
 	w2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
 	W8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2
-	WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkE
-	bVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJwCI42IY
-	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aV
-	CY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UZzVbUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5iR0QAAsv
+	6F4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ew
+	Av7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY
+	6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UMIIF0xvE
+	42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6x
+	kF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1fHUDUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5iR0QABsu
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
-In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-the inode_post_removexattr hook.
+In preparation to move IMA and EVM to the LSM infrastructure, introduce the
+file_post_open hook. Also, export security_file_post_open() for NFS.
 
-At inode_removexattr hook, EVM verifies the file's existing HMAC value. At
-inode_post_removexattr, EVM re-calculates the file's HMAC with the passed
-xattr removed and other file metadata.
+Based on policy, IMA calculates the digest of the file content and
+extends the TPM with the digest, verifies the file's integrity based on
+the digest, and/or includes the file digest in the audit log.
 
-Other LSMs could similarly take some action after successful xattr removal.
+LSMs could similarly take action depending on the file content and the
+access mask requested with open().
 
-The new hook cannot return an error and cannot cause the operation to be
-reverted.
+The new hook returns a value and can cause the open to be aborted.
 
 Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 ---
- fs/xattr.c                    |  9 +++++----
- include/linux/lsm_hook_defs.h |  2 ++
- include/linux/security.h      |  5 +++++
- security/security.c           | 14 ++++++++++++++
- 4 files changed, 26 insertions(+), 4 deletions(-)
+ fs/namei.c                    |  2 ++
+ fs/nfsd/vfs.c                 |  6 ++++++
+ include/linux/lsm_hook_defs.h |  1 +
+ include/linux/security.h      |  6 ++++++
+ security/security.c           | 17 +++++++++++++++++
+ 5 files changed, 32 insertions(+)
 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 09d927603433..f891c260a971 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -552,11 +552,12 @@ __vfs_removexattr_locked(struct mnt_idmap *idmap,
+diff --git a/fs/namei.c b/fs/namei.c
+index 71c13b2990b4..fb93d3e13df6 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -3620,6 +3620,8 @@ static int do_open(struct nameidata *nd,
+ 	error = may_open(idmap, &nd->path, acc_mode, open_flag);
+ 	if (!error && !(file->f_mode & FMODE_OPENED))
+ 		error = vfs_open(&nd->path, file);
++	if (!error)
++		error = security_file_post_open(file, op->acc_mode);
+ 	if (!error)
+ 		error = ima_file_check(file, op->acc_mode);
+ 	if (!error && do_truncate)
+diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+index fbbea7498f02..b0c3f07a8bba 100644
+--- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -877,6 +877,12 @@ __nfsd_open(struct svc_rqst *rqstp, struct svc_fh *fhp, umode_t type,
  		goto out;
+ 	}
  
- 	error = __vfs_removexattr(idmap, dentry, name);
-+	if (error)
-+		return error;
- 
--	if (!error) {
--		fsnotify_xattr(dentry);
--		evm_inode_post_removexattr(dentry, name);
--	}
-+	fsnotify_xattr(dentry);
-+	security_inode_post_removexattr(dentry, name);
-+	evm_inode_post_removexattr(dentry, name);
- 
- out:
- 	return error;
++	host_err = security_file_post_open(file, may_flags);
++	if (host_err) {
++		fput(file);
++		goto out;
++	}
++
+ 	host_err = ima_file_check(file, may_flags);
+ 	if (host_err) {
+ 		fput(file);
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index e1731d0b63f8..fbca96523c18 100644
+index fbca96523c18..c3fecc7dcb0b 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
-@@ -149,6 +149,8 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
- LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
- LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
- 	 struct dentry *dentry, const char *name)
-+LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
-+	 const char *name)
- LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
- 	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
- LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
+@@ -191,6 +191,7 @@ LSM_HOOK(int, 0, file_send_sigiotask, struct task_struct *tsk,
+ 	 struct fown_struct *fown, int sig)
+ LSM_HOOK(int, 0, file_receive, struct file *file)
+ LSM_HOOK(int, 0, file_open, struct file *file)
++LSM_HOOK(int, 0, file_post_open, struct file *file, int mask)
+ LSM_HOOK(int, 0, file_truncate, struct file *file)
+ LSM_HOOK(int, 0, task_alloc, struct task_struct *task,
+ 	 unsigned long clone_flags)
 diff --git a/include/linux/security.h b/include/linux/security.h
-index 56c841aa3994..84ae03690340 100644
+index 84ae03690340..97f2212c13b6 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -380,6 +380,7 @@ int security_inode_getxattr(struct dentry *dentry, const char *name);
- int security_inode_listxattr(struct dentry *dentry);
- int security_inode_removexattr(struct mnt_idmap *idmap,
- 			       struct dentry *dentry, const char *name);
-+void security_inode_post_removexattr(struct dentry *dentry, const char *name);
- int security_inode_need_killpriv(struct dentry *dentry);
- int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry);
- int security_inode_getsecurity(struct mnt_idmap *idmap,
-@@ -942,6 +943,10 @@ static inline int security_inode_removexattr(struct mnt_idmap *idmap,
- 	return cap_inode_removexattr(idmap, dentry, name);
+@@ -411,6 +411,7 @@ int security_file_send_sigiotask(struct task_struct *tsk,
+ 				 struct fown_struct *fown, int sig);
+ int security_file_receive(struct file *file);
+ int security_file_open(struct file *file);
++int security_file_post_open(struct file *file, int mask);
+ int security_file_truncate(struct file *file);
+ int security_task_alloc(struct task_struct *task, unsigned long clone_flags);
+ void security_task_free(struct task_struct *task);
+@@ -1074,6 +1075,11 @@ static inline int security_file_open(struct file *file)
+ 	return 0;
  }
  
-+static inline void security_inode_post_removexattr(struct dentry *dentry,
-+						   const char *name)
-+{ }
++static inline int security_file_post_open(struct file *file, int mask)
++{
++	return 0;
++}
 +
- static inline int security_inode_need_killpriv(struct dentry *dentry)
+ static inline int security_file_truncate(struct file *file)
  {
- 	return cap_inode_need_killpriv(dentry);
+ 	return 0;
 diff --git a/security/security.c b/security/security.c
-index 06ffe0bcf711..d9d2636104db 100644
+index d9d2636104db..f3d92bffd02f 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -2452,6 +2452,20 @@ int security_inode_removexattr(struct mnt_idmap *idmap,
- 	return evm_inode_removexattr(idmap, dentry, name);
+@@ -2972,6 +2972,23 @@ int security_file_open(struct file *file)
+ 	return fsnotify_perm(file, MAY_OPEN);
  }
  
 +/**
-+ * security_inode_post_removexattr() - Update the inode after a removexattr op
-+ * @dentry: file
-+ * @name: xattr name
++ * security_file_post_open() - Evaluate a file after it has been opened
++ * @file: the file
++ * @mask: access mask
 + *
-+ * Update the inode after a successful removexattr operation.
++ * Evaluate an opened file and the access mask requested with open(). The hook
++ * is useful for LSMs that require the file content to be available in order to
++ * make decisions.
++ *
++ * Return: Returns 0 if permission is granted.
 + */
-+void security_inode_post_removexattr(struct dentry *dentry, const char *name)
++int security_file_post_open(struct file *file, int mask)
 +{
-+	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-+		return;
-+	call_void_hook(inode_post_removexattr, dentry, name);
++	return call_int_hook(file_post_open, 0, file, mask);
 +}
++EXPORT_SYMBOL_GPL(security_file_post_open);
 +
  /**
-  * security_inode_need_killpriv() - Check if security_inode_killpriv() required
-  * @dentry: associated dentry
+  * security_file_truncate() - Check if truncating a file is allowed
+  * @file: file
 -- 
 2.34.1
 
