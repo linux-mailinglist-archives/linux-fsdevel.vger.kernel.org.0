@@ -1,48 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-7925-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85D7182D520
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 09:35:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4C8C82D548
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 09:47:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE85F281B2A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 08:35:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5616CB21141
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 08:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A4D63B6;
-	Mon, 15 Jan 2024 08:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EA9C123;
+	Mon, 15 Jan 2024 08:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="mrJr1WKx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out199-10.us.a.mail.aliyun.com (out199-10.us.a.mail.aliyun.com [47.90.199.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B28256A;
-	Mon, 15 Jan 2024 08:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R401e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W-eSTCt_1705307687;
-Received: from e69b19392.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W-eSTCt_1705307687)
-          by smtp.aliyun-inc.com;
-          Mon, 15 Jan 2024 16:34:48 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-cachefs@redhat.com,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352DE882F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 08:46:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-50eaabc36bcso10333918e87.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 00:46:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1705308412; x=1705913212; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=af0c4qw0ceHWmNUQwBLGyaQWzbBLs0yH9j68AMi/ymM=;
+        b=mrJr1WKxJ7BRhwXIMQlAIDZhNNwh6HPwY8oGKhaTMNgYoZQM8k3E6VV3EYGkWy9wsh
+         bg7vzl0vQ5NrFT34yRUsWKs1bSgktjeShsLP4sn7/SWXSuQ8EtYD5HkDQLgQzYSl3fCd
+         wUnCH4TU80jTvjKkUDDB+QbXafgneqkyNM9jCWvyG9pRjbY6utZivtaou320oYL99nzt
+         jOIRK8VKBvqVQQUd2NcMna7i4NtBYaX9/GbChAn4NvAw1SckAaQNLwch22Hg2pB1JTYc
+         7Jxyjw17LugKrNVoO7e4u8yQTOSolQChKBXLP+Yxih04UgfVLjllbITJOpikAODpx1Q0
+         nUug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705308412; x=1705913212;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=af0c4qw0ceHWmNUQwBLGyaQWzbBLs0yH9j68AMi/ymM=;
+        b=lMWcoyG+FicbrFfl8/ApFiXRvtQgVnnhyzqr1r+UnW/Wu5O7zXGdQl6Uqt85VtsjLh
+         G8gvNGoFjkbrvEvf4WanY+riF9braCJU6bn+z79a+OdNM8/XhrpL4PNVBju7h5/oPd0t
+         16253upvlkIcYiKwfY2LsgtGmLym+aYLHXT2WZfIJDXlQBtuOGQI/rqwLz54DRlSRNzm
+         34MQ+3GwXHAXntnAOtMgAlmEeMEzJF36RkH52ieCBPE2urI6eyi2FscQtMpTfqHR+5M1
+         ir7w8anmZNgwO+19SAHMWJ97BK89CgpdOO/jExaqCemgSQFspKHTkK3uywxJx+Y2yT4/
+         Dy1A==
+X-Gm-Message-State: AOJu0YxmDB6UrhTGJFQxJOdEzKzY6hzYHgniENF2qdszht6GNXIDJmSQ
+	FujI3Vn1j9XedY71C75nA5UKo7HP6Opj3w==
+X-Google-Smtp-Source: AGHT+IGK8MH+CazDutDh5KhUA91iPm2QS3HgOT+gj3DZbv72Ccmc46G2CeN6HPpan13U+rWLqo9+kg==
+X-Received: by 2002:a05:6512:234e:b0:50e:6457:2bc2 with SMTP id p14-20020a056512234e00b0050e64572bc2mr3307332lfu.71.1705308411949;
+        Mon, 15 Jan 2024 00:46:51 -0800 (PST)
+Received: from system76-pc.. ([2a00:1370:81a4:169c:b283:d681:9baf:afcf])
+        by smtp.gmail.com with ESMTPSA id y22-20020a056512335600b0050eea9541casm970160lfd.44.2024.01.15.00.46.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jan 2024 00:46:51 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: lsf-pc@lists.linux-foundation.org,
 	linux-fsdevel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org,
-	David Howells <dhowells@redhat.com>,
-	Christian Brauner <christian@brauner.io>,
-	Jeff Layton <jlayton@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Chao Yu <chao@kernel.org>,
-	Yue Hu <huyue2@coolpad.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH v2 3/4] erofs: Don't use certain internal folio_*() functions
-Date: Mon, 15 Jan 2024 16:34:45 +0800
-Message-Id: <20240115083445.1356899-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240109180117.1669008-4-dhowells@redhat.com>
-References: <20240109180117.1669008-4-dhowells@redhat.com>
+	javier.gonz@samsung.com
+Cc: a.manzanares@samsung.com,
+	linux-scsi@vger.kernel.org,
+	linux-nvme@lists.infradead.org,
+	linux-block@vger.kernel.org,
+	slava@dubeiko.com,
+	Viacheslav Dubeyko <slava@dubeyko.com>
+Subject: [LSF/MM/BPF TOPIC] : Flexible Data Placement (FDP) availability for kernel space file systems
+Date: Mon, 15 Jan 2024 11:46:31 +0300
+Message-Id: <20240115084631.152835-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -51,70 +78,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: David Howells <dhowells@redhat.com>
+Hi Javier,
 
-Filesystems should use folio->index and folio->mapping, instead of
-folio_index(folio), folio_mapping() and folio_file_mapping() since
-they know that it's in the pagecache.
+Samsung introduced Flexible Data Placement (FDP) technology
+pretty recently. As far as I know, currently, this technology
+is available for user-space solutions only. I assume it will be
+good to have discussion how kernel-space file systems could
+work with SSDs that support FDP technology by employing
+FDP benefits.
 
-Change this automagically with:
+How soon FDP API will be available for kernel-space file systems?
+How kernel-space file systems can adopt FDP technology?
+How FDP technology can improve efficiency and reliability of
+kernel-space file system?
+Which new challenges FDP technology introduces for kernel-space
+file systems?
 
-perl -p -i -e 's/folio_mapping[(]([^)]*)[)]/\1->mapping/g' fs/erofs/*.c
-perl -p -i -e 's/folio_file_mapping[(]([^)]*)[)]/\1->mapping/g' fs/erofs/*.c
-perl -p -i -e 's/folio_index[(]([^)]*)[)]/\1->index/g' fs/erofs/*.c
-
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Cc: Chao Yu <chao@kernel.org>
-Cc: Yue Hu <huyue2@coolpad.com>
-Cc: Jeffle Xu <jefflexu@linux.alibaba.com>
-Cc: linux-erofs@lists.ozlabs.org
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
-Hi folks,
-
-I tend to apply this patch upstream since compressed data fscache
-adaption touches this part too.  If there is no objection, I'm
-going to take this patch separately for -next shortly..
+Could we have such discussion leading from Samsung side?
 
 Thanks,
-Gao Xiang
-
-Change since v1:
- - a better commit message pointed out by Jeff Layton.
-
- fs/erofs/fscache.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-index 87ff35bff8d5..bc12030393b2 100644
---- a/fs/erofs/fscache.c
-+++ b/fs/erofs/fscache.c
-@@ -165,10 +165,10 @@ static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
- static int erofs_fscache_meta_read_folio(struct file *data, struct folio *folio)
- {
- 	int ret;
--	struct erofs_fscache *ctx = folio_mapping(folio)->host->i_private;
-+	struct erofs_fscache *ctx = folio->mapping->host->i_private;
- 	struct erofs_fscache_request *req;
- 
--	req = erofs_fscache_req_alloc(folio_mapping(folio),
-+	req = erofs_fscache_req_alloc(folio->mapping,
- 				folio_pos(folio), folio_size(folio));
- 	if (IS_ERR(req)) {
- 		folio_unlock(folio);
-@@ -276,7 +276,7 @@ static int erofs_fscache_read_folio(struct file *file, struct folio *folio)
- 	struct erofs_fscache_request *req;
- 	int ret;
- 
--	req = erofs_fscache_req_alloc(folio_mapping(folio),
-+	req = erofs_fscache_req_alloc(folio->mapping,
- 			folio_pos(folio), folio_size(folio));
- 	if (IS_ERR(req)) {
- 		folio_unlock(folio);
--- 
-2.39.3
-
+Slava
 
