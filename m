@@ -1,199 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-7994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7995-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFD6482E086
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 20:16:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28C7F82E090
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 20:21:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FD511F2211C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:16:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D31F1C2217D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8B018E38;
-	Mon, 15 Jan 2024 19:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C9TtCpNg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="olYl/WN2";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="C9TtCpNg";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="olYl/WN2"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1640318C15;
+	Mon, 15 Jan 2024 19:21:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05olkn2018.outbound.protection.outlook.com [40.92.89.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C5518E08;
-	Mon, 15 Jan 2024 19:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A02FD220BE;
-	Mon, 15 Jan 2024 19:16:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1705346169;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/ypO2u2HswE5GLQFEg6yrwIulDt47JQWATqj+vtBrcQ=;
-	b=C9TtCpNg2LDrMuXcm76WCzl4QXoAJxdaDL8lWOdyZoEpRq1pDRioxEucsmBtxULarTet9J
-	Bojvd2/ODlG91ZUanKgTfM3hs47KufAijnWAxUSYjQq5+Ec7xf+WYQkClYo9N+2ig6FTfb
-	YVErgQEPagPVmO8S5ZhTovP908c7ZZg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1705346169;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/ypO2u2HswE5GLQFEg6yrwIulDt47JQWATqj+vtBrcQ=;
-	b=olYl/WN27MYcJT3sF7KuUtiC23urv+V4Q6DPPy0QQGK0ax5ZUYfU9tvzUNtsFR2KEiepGa
-	ROI3LawfgCE5+YDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1705346169;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/ypO2u2HswE5GLQFEg6yrwIulDt47JQWATqj+vtBrcQ=;
-	b=C9TtCpNg2LDrMuXcm76WCzl4QXoAJxdaDL8lWOdyZoEpRq1pDRioxEucsmBtxULarTet9J
-	Bojvd2/ODlG91ZUanKgTfM3hs47KufAijnWAxUSYjQq5+Ec7xf+WYQkClYo9N+2ig6FTfb
-	YVErgQEPagPVmO8S5ZhTovP908c7ZZg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1705346169;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/ypO2u2HswE5GLQFEg6yrwIulDt47JQWATqj+vtBrcQ=;
-	b=olYl/WN27MYcJT3sF7KuUtiC23urv+V4Q6DPPy0QQGK0ax5ZUYfU9tvzUNtsFR2KEiepGa
-	ROI3LawfgCE5+YDg==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 7C3BE139D2;
-	Mon, 15 Jan 2024 19:16:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id 5tnPHXmEpWXuEQAAn2gu4w
-	(envelope-from <dsterba@suse.cz>); Mon, 15 Jan 2024 19:16:09 +0000
-Date: Mon, 15 Jan 2024 20:15:52 +0100
-From: David Sterba <dsterba@suse.cz>
-To: syzbot <syzbot+4a4f1eba14eb5c3417d1@syzkaller.appspotmail.com>
-Cc: axboe@kernel.dk, clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
-	kristian@klausen.dk, linux-btrfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_issue_discard
-Message-ID: <20240115191551.GW31555@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <0000000000008d7a36060eff419e@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3902818B06;
+	Mon, 15 Jan 2024 19:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gL13MTG1jBs/bOZwWbe99GtS7RqPFove1yz7oKIeEFu+4+sdh1YJqzHZRzhj3a7s4QbpsuFz0r3TeOG95xgbxhIJFYtk2/6eQvkqRkhfS4Z8dd8mQmrrkuC9UA/5irDAW5hxool+TNOLFk9cQE9UwxXFCdrvs5Vf5JcKc4Ry+7M0tRXnLpZlo+ZMUxApjuKfZkMGJB93Hnm9/r+ujN2mf2riDOMKnodpKMH1ehjCH61rRsPPT1F/QkdvEOJCtNGy8SPE3P92Jn2zr2ksIkaaN4pYMxnDlKYXVsssAtFxmasG2JA7Q3ocN4O0C2xSIl9da3sFq/v52SErj+1P3O7rEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=prKcv9FFHnoPvw/RQdUAK33x217BpS9lQMjRrsTAOTs=;
+ b=APzSbBSDeZgUcWHONOA3UXWeG90/BLLRoy7ELx5sYv4JoWxE6qKoFXC0yhTSWQOWjPlWERoV0TBndsdySPc8c2oaA3OrCULBj8nUYibDfpbD/xwhvv1Awjmtg6LZPs2qdagzC0EBBc8YnzDt4EndvVCNU1bKKpOeUBLZpsN/tD7svxcYDgJqw0DQXAKcvVk6p602p9yh1FnLFLDkJADCjRldbaegHLxeIfzxcTSO4d9O5p2uhAiw+Vyt7nHIjTa6aeKQcgYDU9pL0Zj+TmNxAB2C+hKPWF9N+eB9gNE5+9eR9NrQn5w7nUIDAdMWZ6Fbkqgt4yL4UF4oCh+FPGT1yw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+Received: from AS8P193MB1285.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:333::21)
+ by AM0P193MB0769.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:16d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7181.23; Mon, 15 Jan
+ 2024 19:21:05 +0000
+Received: from AS8P193MB1285.EURP193.PROD.OUTLOOK.COM
+ ([fe80::897e:cfd5:b29b:c611]) by AS8P193MB1285.EURP193.PROD.OUTLOOK.COM
+ ([fe80::897e:cfd5:b29b:c611%6]) with mapi id 15.20.7181.019; Mon, 15 Jan 2024
+ 19:21:05 +0000
+Message-ID:
+ <AS8P193MB1285304CE97348D62021C878E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+Date: Mon, 15 Jan 2024 20:22:01 +0100
+User-Agent: Mozilla Thunderbird
+From: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Subject: [PATCH v2] Fix error handling in begin_new_exec
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>,
+ "Eric W. Biederman" <ebiederm@xmission.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ linux-mm@kvack.org,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+References: <AM8PR10MB47081071E64EAAB343196D5AE4399@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+Content-Language: en-US
+In-Reply-To: <AM8PR10MB47081071E64EAAB343196D5AE4399@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TMN: [SHb+zh4RstG5HI6Uz4EIV8cNfO6mMuavuQoYeNtxz0ZHc25xJCfsSIX4ELUrdsGJ]
+X-ClientProxiedBy: FR3P281CA0205.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:a5::17) To AS8P193MB1285.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:20b:333::21)
+X-Microsoft-Original-Message-ID:
+ <70d177c8-9bfd-4dd9-bf05-50b9d0f968d8@hotmail.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000008d7a36060eff419e@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=C9TtCpNg;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="olYl/WN2"
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.21 / 50.00];
-	 HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 REPLYTO_ADDR_EQ_FROM(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[10];
-	 NEURAL_HAM_SHORT(-0.20)[-0.992];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-3.00)[100.00%];
-	 SUBJECT_HAS_QUESTION(0.00)[];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCVD_DKIM_ARC_DNSWL_HI(-1.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=8e557b1c0a57d2c0];
-	 TAGGED_RCPT(0.00)[4a4f1eba14eb5c3417d1];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[appspotmail.com:email,suse.cz:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 RCVD_IN_DNSWL_HI(-0.50)[2a07:de40:b281:104:10:150:64:98:from];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Score: -3.21
-X-Rspamd-Queue-Id: A02FD220BE
-X-Spam-Flag: NO
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8P193MB1285:EE_|AM0P193MB0769:EE_
+X-MS-Office365-Filtering-Correlation-Id: 02e9d96b-5296-4a6c-a742-08dc15ff1e19
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	qsgKRZUqQTFb0YD5iFDICxYFdJvPAy56QXkEB2QVnlxk5Ii3HEO3TZckaty8ixaTBX5V8R4831XfBN9Rb3Z+BbcGB0mOJXDQflZxCDN7+BsdNejzHejnzcpCyqViJSj1QZNH6rejj103c/fFf2xSflIjsR7QvURXH8mXCrNjXo9p9FyYJQ4YJZOFNoZhx/RbXCkJooXyiJfg0TBfhAweELpQKbxYCaHEcxkZ50iAJNYtcmq10fqiv/WsdrwGMCvJpdwMXddRwGbt2bTgbljSR0bg7l3HGqQoqHu/vofKdUtWs8HU3xmrIZXdOFWBViXXTchjYfJUfOFiLmOU86/xxdKtCVkJx759xWBkZ5i8qeDqN50gSsnjgsL57ArnHP6WMqU9BMivQrstR2jIAYqgXUR70O4+s3jFTT8sn/f0g9zdnqCE1f+BtpXu1xxpR0sO6e9K14PJQWd8u4tJPfj9+S/i4iyxLapatXziJUoS8HTic00HAynk/pLIscPz89XKJYXHff1ei3d1Yr0ChSabYJHBHDONEeegMlSOrZ4p6fMNG/KNZpLpyv/obE+u7hBU6UEcbX1OCj5RJ+0axvi8BMm8ajG8r3NE350y8fN6eNg=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?YTA0MW5KTmlhQUtnU0t1VnpsU0l5OFhaTUtJR01FeThwL3JPTmtNRmErQWU1?=
+ =?utf-8?B?Q2V3UVhIdGRoODFtZW5iZVlMODVZcmJuL3VrOU0xUmxCRko3bDRzT0ZwMWhk?=
+ =?utf-8?B?aU4vcE9HaUtScW8xbk5tY3NIRFlpYmZlWjYyRWNsaWV3ajBQdTMrbFJudjFz?=
+ =?utf-8?B?R1JaS0taYWhjNTNmNmR1VFIrdWkzdmcydFhSME1xYTBrbUJtL3VabkEyaTFI?=
+ =?utf-8?B?S2tycHN0R00vZmlOeFh4QkhJWW1TL1ZIVFA1Z0tKVUJmVm1OdVg2SE1RbmlF?=
+ =?utf-8?B?QXQ1WjBvTElxRGhUcHhIM1ozWWZKQnBRUmJDeVNmaU5SRk50RGpVb1l5Z1JI?=
+ =?utf-8?B?aEJMTlpnVFdqU2xmRTlSaHZDMmZJNUhpTk51YktOTFREaTUzTlBuMWdaZWtU?=
+ =?utf-8?B?RVJUelFGd0lXcmJZTUc1bWZFT0h0NGgzUDgyK1BHM0o5aTl2aTBqTzJhZUhq?=
+ =?utf-8?B?NGJsa3I2V2oxcTBybkl1T3dHTnJobm9ZVzhXeDFSOHRieFRtS2ZldkpoSFJK?=
+ =?utf-8?B?dWU4QytDYko2bVk4dWI5MjFsRVg5M3NpNkY1dDJnUnFzNVBGK1UvcnBYdlRw?=
+ =?utf-8?B?aUtYd1hMcUZGQWNRazlUNmVEWnZNeHYvVW8wUGxjK0E4KzhYaW5vUWRXUEpn?=
+ =?utf-8?B?YjBpeDIrS2s1ejQ4dythQzNzUUNvYmZjZjVVbStpMXg1QlJVc2R0Ny9jMVk0?=
+ =?utf-8?B?V0VOdFNTZ3RKSENHSzdCSFBmcU9FdjNiN2x0ZVFUSWxpTXhPNGJ1VHdtR1Vo?=
+ =?utf-8?B?OFNtcnREU2FXMytDSE5FMEZGUHdoMFU0MnBhMHF0aXhKclBGTzNJWk1oaFFv?=
+ =?utf-8?B?bk5jS1ZJMTlRMisvY1JvNEI0TkVoa3poK2FKUExsUm5STnFVb1lWditKcnhD?=
+ =?utf-8?B?T2dhVldFdmV2S1dONUpsSzQwRkpNa2RvUHJrdnF0NDFrSDFPK0tNV1F6VDQ0?=
+ =?utf-8?B?WSs1NThEYyt3MTdvMnN6V09yUjB4KzE5T09mNi9iNllaR2lTcUlDb1Z6bFNr?=
+ =?utf-8?B?QWtMZmdXZ0dTcGIyVmo4cGhRMDNLTy8vZWU5NDkwOUEwdkJYMlhmaWFmUnJ2?=
+ =?utf-8?B?UG1mMEpqU0oyNWQxN1lOQkJUOWdYK3o2dHVLWElHb1lyd1ErMVEycVRubnBS?=
+ =?utf-8?B?OERhSmhtcTk0L1J6V3E3dnNNNFhDV1FYNHlISGNvU3VrOC9rOVJNRlVZVFpy?=
+ =?utf-8?B?Vktla1JZdDYxSlY2SGFxRStVQmNzR2RXNm1CRVJlYmRyR0VVb0pCYmI3UEtz?=
+ =?utf-8?B?S0luV1FUZ1g3bWEzMnhLcXhsaUdXMnUyTThwZU95aCtpTXZ2WTZEeE00OXRH?=
+ =?utf-8?B?RE93c0RPTGhTdUVjOEdBTFErelhpV1hnWWhBcktsYWNWZHRLUFgvMXliL0lI?=
+ =?utf-8?B?bDRxbjQxakp3WHVUTTZMVEl4YjlMSWtMN1NaRHVWOEVCSUJqUDdwU0RoSng5?=
+ =?utf-8?B?YlQ5Q1h5dFpiQmo5SFI5Q2ZkcVVMRFRDMVhuVCtpc1JHQ013ZUxNcmkyckpR?=
+ =?utf-8?B?eVJhaHVYdlplMXNFOW1Gek5tQk1PWDZWN2tCK0dPK1cyTHlqSDhKaEFnYmJ5?=
+ =?utf-8?B?c2pKZnNEeTAzWHdmd2VaT0MxYlA0VUxLVHVNZll1OUEwTnpIR2J4SVpyaktF?=
+ =?utf-8?B?SUdxRDB5QVFWZDhZdHVLbXhEZWlTNEZPOER1bHMwcnF1RVlBbVdMTXB6cnE2?=
+ =?utf-8?B?WmJZVFh2NXZUSVZTVWRETFg0R2JKdUozdFk2YUkrdkhSeEdOTWN2V0xXWi9U?=
+ =?utf-8?Q?6vDfcgrwhLPrFpisks=3D?=
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-80ceb.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 02e9d96b-5296-4a6c-a742-08dc15ff1e19
+X-MS-Exchange-CrossTenant-AuthSource: AS8P193MB1285.EURP193.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jan 2024 19:21:04.9906
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0P193MB0769
 
-On Mon, Jan 15, 2024 at 09:22:19AM -0800, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    3e7aeb78ab01 Merge tag 'net-next-6.8' of git://git.kernel...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13f61d33e80000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=8e557b1c0a57d2c0
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4a4f1eba14eb5c3417d1
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16bdfc0be80000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177f3c83e80000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/4c8a9f091067/disk-3e7aeb78.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/8cb663b518a5/vmlinux-3e7aeb78.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/bc6d189cfcf3/bzImage-3e7aeb78.xz
-> mounted in repro #1: https://storage.googleapis.com/syzbot-assets/e37fd964ba01/mount_0.gz
-> mounted in repro #2: https://storage.googleapis.com/syzbot-assets/174ce0bdbd5e/mount_4.gz
-> 
-> The issue was bisected to:
-> 
-> commit 2b9ac22b12a266eb4fec246a07b504dd4983b16b
-> Author: Kristian Klausen <kristian@klausen.dk>
-> Date:   Fri Jun 18 11:51:57 2021 +0000
-> 
->     loop: Fix missing discard support when using LOOP_CONFIGURE
+If get_unused_fd_flags() fails, the error handling is incomplete
+because bprm->cred is already set to NULL, and therefore
+free_bprm will not unlock the cred_guard_mutex.
+Note there are two error conditions which end up here,
+one before and one after bprm->cred is cleared.
 
-This only adds proper discard support to loop device so it makes the
-problem visible.
+Fixes: b8a61c9e7b4a ("exec: Generic execfd support")
 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=111924a5e80000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=131924a5e80000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=151924a5e80000
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+4a4f1eba14eb5c3417d1@syzkaller.appspotmail.com
-> Fixes: 2b9ac22b12a2 ("loop: Fix missing discard support when using LOOP_CONFIGURE")
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 5071 at fs/btrfs/extent-tree.c:1263 btrfs_issue_discard+0x5ba/0x5e0 fs/btrfs/extent-tree.c:1263
+Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
 
-1256 static int btrfs_issue_discard(struct block_device *bdev, u64 start, u64 len,
-1257                                u64 *discarded_bytes)
-1258 {
-1259         int j, ret = 0;
-1260         u64 bytes_left, end;
-1261         u64 aligned_start = ALIGN(start, 1 << SECTOR_SHIFT);
-1262
-1263         if (WARN_ON(start != aligned_start)) {
-^^^^
+Acked-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+ fs/exec.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-1264                 len -= aligned_start - start;
-1265                 len = round_down(len, 1 << SECTOR_SHIFT);
-1266                 start = aligned_start;
-1267         }
+v2: rebased to v6.7, retested and updated the commit message
+to fix a checkpatch.pl style nit about the too short sha1 hash
+in the Fixes: statement.
+And retained Eric's Acked-by from:
+https://lore.kernel.org/lkml/87mts2kcrm.fsf@disp2133/
 
-The alignment check was added in 4d89d377bbb0 ("btrfs: btrfs_issue_discard
-ensure offset/length are aligned to sector boundaries"), with the
-WARN_ON. It seems that syzbot is testing unaligned discard requests,
-which is probably ok but the warning is excessive as there's a fallback.
+
+Thanks
+Bernd.
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 4aa19b24f281..6d9ed2d765ef 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1408,6 +1408,9 @@ int begin_new_exec(struct linux_binprm * bprm)
+ 
+ out_unlock:
+ 	up_write(&me->signal->exec_update_lock);
++	if (!bprm->cred)
++		mutex_unlock(&me->signal->cred_guard_mutex);
++
+ out:
+ 	return retval;
+ }
+-- 
+2.39.2
 
