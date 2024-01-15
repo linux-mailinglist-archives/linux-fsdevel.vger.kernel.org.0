@@ -1,68 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-7986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C6FD82E01A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:38:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808E882E01C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:39:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA7C41F223E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 18:38:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1396B285DCB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 18:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B9918E0D;
-	Mon, 15 Jan 2024 18:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFF318EA0;
+	Mon, 15 Jan 2024 18:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PWFanYlo"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p74byPgz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31C918E0A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 18:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FB918E1D
+	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 18:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dbed0713422so7030454276.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 10:38:41 -0800 (PST)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dbe9c7932b3so13992979276.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 10:38:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1705343921; x=1705948721; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=h71RO1NDquEnr4gtDmmeh0KDfuRnGTvN/5LqJWciXao=;
-        b=PWFanYloImSYzyDoqoTyA69nj7jbjEpC6UyPJdXM6KZvqfEvuQYJGsgGyxRkmvLDmP
-         HGMGLjvb0eD1Dps13pQEcAEU/J5JOGKYT3Ic+abp7Tff/RoDLrF2N7SUNO6vwuY017OA
-         wmMKxssPsj/Ic3P8PQTq6zbaJlhCxGnehTQcs/fMp/eMvaiRCRR1Pn/mcQTsyoAUK6F5
-         QVpq1v/PlYWNHDPDXOSBH9f6LzS/mryaqRQgJ17LbnsVTEmTbqHoTfMxjLss26TqMGWf
-         mEdI8B281lEW+/IxLMMva/jFGcBObMN7P2HK3xfN/yDRX8aXfY7+EEyClt+xV1INvmZi
-         MfjA==
+        d=google.com; s=20230601; t=1705343923; x=1705948723; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oLlMsVPwk9YFRfJ1xkZa3gURgHKOqqqaOLfJjGTa1Bw=;
+        b=p74byPgz+dtfmyc2Mci897DKkR+m9CFVuXWEUMpI/9zbFHW+i3VJk1TmMonhR67NQP
+         EA3jqiVrcAUnodwE/e/sqHUNWr+8WZsjqqeZOfBLV9leh4Aoh5Vp65L5mRtPZkCnd2Vr
+         qQ/pRb9jy+L2tq5pwDaluDl4vsiGbEENgKDSH4n7nb4mOwgFnXU94kqMCKxOz1rZTqcI
+         X6FhfuCQtAGWTby0uPZuFGwf89jUk45W7ycUVKanPQPlKF94By7TIN3VUaNqk6i02VRa
+         M/kILqSzbLDbqWYkd//QJ+WFzzQzGuwqpoCQDaN/OtlvO3FaTf6sRR+8yRceHP4tEAH/
+         FWOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705343921; x=1705948721;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h71RO1NDquEnr4gtDmmeh0KDfuRnGTvN/5LqJWciXao=;
-        b=pfXAEuueKU+nBJFT9rU9MoguxCEmQxPIcrCylzCjnHDR22BD3Lj/6T7/JgB3mVB4GJ
-         O2yjn5erWgiMt56kfLwetp+VtgTVZoyow7zv96AeBCRwvnxglyHaM92FbIHUwrLPGudh
-         J3GvTfNUeHxkXq2wriRftNKpHD6yj1RxVvCr9dulvWoQQ3SjrM0Sps8GzlxMc7SFpXFU
-         yYTibOIdISzLqI4Qzr4yJ/XOxbeplC+4o/9INnFoh1zxFePfP01n9F16ipkr96GTGGUT
-         RIy/00FP3v519Ls2Or2L5jqJiUf2lpv/z8zHk9vDIiahlErnwIods8j83hLyyyxpZM1Q
-         g1OA==
-X-Gm-Message-State: AOJu0Yx3EwdGTV2qKu3PLe/FXFPyKVNsJJY9Xxl8qm3x2HbM9/CGXypY
-	Btt5pezFITZjUmlH9mKWKBA53TN5wVDqZdl+2Q==
-X-Google-Smtp-Source: AGHT+IEasZ8zke0C8rGvXIloFTS/ZxsYcfACcxs//8QPDynbwpqTjoH00TTO/N1uZn7b+i3uXt1z2YeGMvw=
+        d=1e100.net; s=20230601; t=1705343923; x=1705948723;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oLlMsVPwk9YFRfJ1xkZa3gURgHKOqqqaOLfJjGTa1Bw=;
+        b=JnMu5Z+gPLXbEogwlV9M6g6OipUEeo0LGWpVko/kcbbkH1vgIMXtrn2h4lLsmOEIka
+         LGluSrckIkt6jqGeRdvASgHiGo+ZPVCRHF/buUv/1waHJYNC7RSjIojvZICzWfvYm3CZ
+         wbc6AVYIxKM8Q+i3Yi4hWGnrZRTNn1VysDn1mofNJJ7qAKoJwl4eCXj4m2lLaovHNKZO
+         clvK0BFoEfBAd/Ed5K0kvftqJ/GjA2wXAuE8kq6vgQneaMm7zUl3ksNvX+R4a/DZFkJ1
+         3LeeYHkVhOOvqQSCNKAiGy8kipH42PvCs1Vp4QmHLRytcDrRC+3cDWan6Cful/KyA8it
+         WF2A==
+X-Gm-Message-State: AOJu0YxjIGk/XsK6tliCfhU8hoHMn5oqY7VTL9hjQ66vq3ZQGiE0ZGHr
+	dkobwQlmYMBubXyKe6SUOYdR8GAVcR4mYSRoWw==
+X-Google-Smtp-Source: AGHT+IETYM+vP+GcA1bz5ffGAn7xpFLG8rQcpZyAKLVas4y2HqU4DVH4yHlOoP/EqERN0tEXwr857q4NqX0=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:3af2:e48e:2785:270])
- (user=surenb job=sendgmr) by 2002:a05:6902:2490:b0:dbe:f1e8:ae66 with SMTP id
- ds16-20020a056902249000b00dbef1e8ae66mr231824ybb.5.1705343920890; Mon, 15 Jan
- 2024 10:38:40 -0800 (PST)
-Date: Mon, 15 Jan 2024 10:38:33 -0800
+ (user=surenb job=sendgmr) by 2002:a25:a292:0:b0:dc1:f71f:a0ad with SMTP id
+ c18-20020a25a292000000b00dc1f71fa0admr1244231ybi.13.1705343922947; Mon, 15
+ Jan 2024 10:38:42 -0800 (PST)
+Date: Mon, 15 Jan 2024 10:38:34 -0800
+In-Reply-To: <20240115183837.205694-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240115183837.205694-1-surenb@google.com>
 X-Mailer: git-send-email 2.43.0.381.gb435a96ce8-goog
-Message-ID: <20240115183837.205694-1-surenb@google.com>
-Subject: [RFC 0/3] reading proc/pid/maps under RCU
+Message-ID: <20240115183837.205694-2-surenb@google.com>
+Subject: [RFC 1/3] mm: make vm_area_struct anon_name field RCU-safe
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
@@ -80,53 +82,140 @@ Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
 	surenb@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-The issue this patchset is trying to address is mmap_lock contention when
-a low priority task (monitoring, data collecting, etc.) blocks a higher
-priority task from making updated to the address space. The contention is
-due to the mmap_lock being held for read when reading proc/pid/maps.
-With maple_tree introduction, VMA tree traversals are RCU-safe and per-vma
-locks make VMA access RCU-safe. this provides an opportunity for lock-less
-reading of proc/pid/maps. We still need to overcome a couple obstacles:
-1. Make all VMA pointer fields used for proc/pid/maps content generation
-RCU-safe;
-2. Ensure that proc/pid/maps data tearing, which is currently possible at
-page boundaries only, does not get worse.
+For lockless /proc/pid/maps reading we have to ensure all the fields
+used when generating the output are RCU-safe. The only pointer fields
+in vm_area_struct which are used to generate that file's output are
+vm_file and anon_name. vm_file is RCU-safe but anon_name is not. Make
+anon_name RCU-safe as well.
 
-The patchset deals with these issues but there is a downside which I would
-like to get input on:
-This change introduces unfairness towards the reader of proc/pid/maps,
-which can be blocked by an overly active/malicious address space modifyer.
-A couple of ways I though we can address this issue are:
-1. After several lock-less retries (or some time limit) to fall back to
-taking mmap_lock.
-2. Employ lock-less reading only if the reader has low priority,
-indicating that blocking it is not critical.
-3. Introducing a separate procfs file which publishes the same data in
-lock-less manner.
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+---
+ include/linux/mm_inline.h | 10 +++++++++-
+ include/linux/mm_types.h  |  3 ++-
+ mm/madvise.c              | 30 ++++++++++++++++++++++++++----
+ 3 files changed, 37 insertions(+), 6 deletions(-)
 
-I imagine a combination of these approaches can also be employed.
-I would like to get feedback on this from the Linux community.
-
-Note: mmap_read_lock/mmap_read_unlock sequence inside validate_map()
-can be replaced with more efficiend rwsem_wait() proposed by Matthew
-in [1].
-
-[1] https://lore.kernel.org/all/ZZ1+ZicgN8dZ3zj3@casper.infradead.org/
-
-Suren Baghdasaryan (3):
-  mm: make vm_area_struct anon_name field RCU-safe
-  seq_file: add validate() operation to seq_operations
-  mm/maps: read proc/pid/maps under RCU
-
- fs/proc/internal.h        |   3 +
- fs/proc/task_mmu.c        | 130 ++++++++++++++++++++++++++++++++++----
- fs/seq_file.c             |  24 ++++++-
- include/linux/mm_inline.h |  10 ++-
- include/linux/mm_types.h  |   3 +-
- include/linux/seq_file.h  |   1 +
- mm/madvise.c              |  30 +++++++--
- 7 files changed, 181 insertions(+), 20 deletions(-)
-
+diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
+index f4fe593c1400..bbdb0ca857f1 100644
+--- a/include/linux/mm_inline.h
++++ b/include/linux/mm_inline.h
+@@ -389,7 +389,7 @@ static inline void dup_anon_vma_name(struct vm_area_struct *orig_vma,
+ 	struct anon_vma_name *anon_name = anon_vma_name(orig_vma);
+ 
+ 	if (anon_name)
+-		new_vma->anon_name = anon_vma_name_reuse(anon_name);
++		rcu_assign_pointer(new_vma->anon_name, anon_vma_name_reuse(anon_name));
+ }
+ 
+ static inline void free_anon_vma_name(struct vm_area_struct *vma)
+@@ -411,6 +411,8 @@ static inline bool anon_vma_name_eq(struct anon_vma_name *anon_name1,
+ 		!strcmp(anon_name1->name, anon_name2->name);
+ }
+ 
++struct anon_vma_name *anon_vma_name_get_rcu(struct vm_area_struct *vma);
++
+ #else /* CONFIG_ANON_VMA_NAME */
+ static inline void anon_vma_name_get(struct anon_vma_name *anon_name) {}
+ static inline void anon_vma_name_put(struct anon_vma_name *anon_name) {}
+@@ -424,6 +426,12 @@ static inline bool anon_vma_name_eq(struct anon_vma_name *anon_name1,
+ 	return true;
+ }
+ 
++static inline
++struct anon_vma_name *anon_vma_name_get_rcu(struct vm_area_struct *vma)
++{
++	return NULL;
++}
++
+ #endif  /* CONFIG_ANON_VMA_NAME */
+ 
+ static inline void init_tlb_flush_pending(struct mm_struct *mm)
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index b2d3a88a34d1..1f0a30c00795 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -545,6 +545,7 @@ struct vm_userfaultfd_ctx {};
+ 
+ struct anon_vma_name {
+ 	struct kref kref;
++	struct rcu_head rcu;
+ 	/* The name needs to be at the end because it is dynamically sized. */
+ 	char name[];
+ };
+@@ -699,7 +700,7 @@ struct vm_area_struct {
+ 	 * terminated string containing the name given to the vma, or NULL if
+ 	 * unnamed. Serialized by mmap_lock. Use anon_vma_name to access.
+ 	 */
+-	struct anon_vma_name *anon_name;
++	struct anon_vma_name __rcu *anon_name;
+ #endif
+ #ifdef CONFIG_SWAP
+ 	atomic_long_t swap_readahead_info;
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 912155a94ed5..0f222d464254 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -88,14 +88,15 @@ void anon_vma_name_free(struct kref *kref)
+ {
+ 	struct anon_vma_name *anon_name =
+ 			container_of(kref, struct anon_vma_name, kref);
+-	kfree(anon_name);
++	kfree_rcu(anon_name, rcu);
+ }
+ 
+ struct anon_vma_name *anon_vma_name(struct vm_area_struct *vma)
+ {
+ 	mmap_assert_locked(vma->vm_mm);
+ 
+-	return vma->anon_name;
++	return rcu_dereference_protected(vma->anon_name,
++		rwsem_is_locked(&vma->vm_mm->mmap_lock));
+ }
+ 
+ /* mmap_lock should be write-locked */
+@@ -105,7 +106,7 @@ static int replace_anon_vma_name(struct vm_area_struct *vma,
+ 	struct anon_vma_name *orig_name = anon_vma_name(vma);
+ 
+ 	if (!anon_name) {
+-		vma->anon_name = NULL;
++		rcu_assign_pointer(vma->anon_name, NULL);
+ 		anon_vma_name_put(orig_name);
+ 		return 0;
+ 	}
+@@ -113,11 +114,32 @@ static int replace_anon_vma_name(struct vm_area_struct *vma,
+ 	if (anon_vma_name_eq(orig_name, anon_name))
+ 		return 0;
+ 
+-	vma->anon_name = anon_vma_name_reuse(anon_name);
++	rcu_assign_pointer(vma->anon_name, anon_vma_name_reuse(anon_name));
+ 	anon_vma_name_put(orig_name);
+ 
+ 	return 0;
+ }
++
++/*
++ * Returned anon_vma_name is stable due to elevated refcount but not guaranteed
++ * to be assigned to the original VMA after the call.
++ */
++struct anon_vma_name *anon_vma_name_get_rcu(struct vm_area_struct *vma)
++{
++	struct anon_vma_name __rcu *anon_name;
++
++	WARN_ON_ONCE(!rcu_read_lock_held());
++
++	anon_name = rcu_dereference(vma->anon_name);
++	if (!anon_name)
++		return NULL;
++
++	if (unlikely(!kref_get_unless_zero(&anon_name->kref)))
++		return NULL;
++
++	return anon_name;
++}
++
+ #else /* CONFIG_ANON_VMA_NAME */
+ static int replace_anon_vma_name(struct vm_area_struct *vma,
+ 				 struct anon_vma_name *anon_name)
 -- 
 2.43.0.381.gb435a96ce8-goog
 
