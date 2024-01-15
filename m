@@ -1,93 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-7943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3130D82DA5B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 14:42:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5022982DAF0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 15:07:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE29AB21961
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 13:42:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6660B21985
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 14:06:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296601862F;
-	Mon, 15 Jan 2024 13:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B98C1758F;
+	Mon, 15 Jan 2024 14:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="msSEKnM2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jm5offHg";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="msSEKnM2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jm5offHg"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vATJg++B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C3C18622;
-	Mon, 15 Jan 2024 13:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5AF3821EC2;
-	Mon, 15 Jan 2024 13:42:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1705326148; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JctaG+RAw/QJiVZZcVRMYh+/2tbE9PXTDPR2pEygJ5s=;
-	b=msSEKnM2i/qWGCxQn23LtvtB/MFntQOOTrzP9njtHgw4h5dIaUCZ0Ehhxumd+NJFFUe64x
-	M3ZDGEwQXh3tYo1qkfQmSlind1+i6dP1ppF2cK15xhrxY5u5nIAd4V4zllDj6Nbyvr4u60
-	vADplLPUvGAPA9s06JBIeLcnjbTB8y0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1705326148;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JctaG+RAw/QJiVZZcVRMYh+/2tbE9PXTDPR2pEygJ5s=;
-	b=Jm5offHgUuqdEXex/jp1LqnOgiaIRM1Xt0ELsez0cHE5SHtpXsbsXX4rtqZzKbglApEnjj
-	yDQu8TsWQVRnKjAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1705326148; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JctaG+RAw/QJiVZZcVRMYh+/2tbE9PXTDPR2pEygJ5s=;
-	b=msSEKnM2i/qWGCxQn23LtvtB/MFntQOOTrzP9njtHgw4h5dIaUCZ0Ehhxumd+NJFFUe64x
-	M3ZDGEwQXh3tYo1qkfQmSlind1+i6dP1ppF2cK15xhrxY5u5nIAd4V4zllDj6Nbyvr4u60
-	vADplLPUvGAPA9s06JBIeLcnjbTB8y0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1705326148;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JctaG+RAw/QJiVZZcVRMYh+/2tbE9PXTDPR2pEygJ5s=;
-	b=Jm5offHgUuqdEXex/jp1LqnOgiaIRM1Xt0ELsez0cHE5SHtpXsbsXX4rtqZzKbglApEnjj
-	yDQu8TsWQVRnKjAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 50E11136F5;
-	Mon, 15 Jan 2024 13:42:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /zq2E0Q2pWXoZAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 15 Jan 2024 13:42:28 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 19A03A07EA; Mon, 15 Jan 2024 14:42:28 +0100 (CET)
-Date: Mon, 15 Jan 2024 14:42:28 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+c1056fdfe414463fdb33@syzkaller.appspotmail.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, dave.kleikamp@oracle.com,
-	ghandatmanas@gmail.com, jack@suse.cz,
-	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	linux-kernel@vger.kernel.org, shaggy@kernel.org,
-	syzkaller-bugs@googlegroups.com, syzkaller@googlegroups.com
-Subject: Re: [syzbot] [jfs?] UBSAN: array-index-out-of-bounds in diWrite
-Message-ID: <20240115134228.vk73b4lkk7lxkgyr@quack3>
-References: <00000000000027993305eb841df8@google.com>
- <000000000000c746f0060ee2b23a@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97FA17584;
+	Mon, 15 Jan 2024 14:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=k+DYOQ+yWRd2pgMIRz/5wGINWA2P7yC/o6J+Q7W5b70=; b=vATJg++BpawwIU6E3l3nCyM/fl
+	CR1jGpmQB/8Vq7OxY1+wQ2R/Hf3ne8n0WN2AvXfif1DigL2m2rVPRPfBIGHsnUly6m2P18LQsHeeE
+	pv+B6kcZ03YpFkpKUaN87vnGX7uiFbMHtRfudt/fZlAfUY3gjxMPFrspblYKei4oeLsyxJS6XNYy4
+	LqB76AJULX5LYDl+H6w6rAl7am/wUSRx0JzXHryKNdYAP90XSPckLxOj9SUfy7eZIE7Kyi9Iei+Yr
+	r2XvhpG935/rETqKfQZjY4lEZGAuxuj/0flXZIbbrxN+farXylvZfJ9RJiRByx9wkGofpA3ZAue1Z
+	aDzeDz7g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rPNbh-009rfH-Cs; Mon, 15 Jan 2024 14:06:29 +0000
+Date: Mon, 15 Jan 2024 14:06:29 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org, David Howells <dhowells@redhat.com>,
+	Christian Brauner <christian@brauner.io>,
+	Jeff Layton <jlayton@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, Chao Yu <chao@kernel.org>,
+	Yue Hu <huyue2@coolpad.com>, Jeffle Xu <jefflexu@linux.alibaba.com>
+Subject: Re: [PATCH v2 3/4] erofs: Don't use certain internal folio_*()
+ functions
+Message-ID: <ZaU75cT0jx9Ya+6G@casper.infradead.org>
+References: <20240115083337.1355191-1-hsiangkao@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -96,72 +55,77 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000c746f0060ee2b23a@google.com>
-X-Spam-Level: *
-X-Spamd-Bar: +
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=msSEKnM2;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Jm5offHg
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [1.24 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 TO_DN_SOME(0.00)[];
-	 R_RATELIMIT(0.00)[to_ip_from(RLjmuxkameenh34oafz4d4fopd)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.25)[73.41%];
-	 SUBJECT_HAS_QUESTION(0.00)[];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=d19f5d16783f901];
-	 TAGGED_RCPT(0.00)[c1056fdfe414463fdb33];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[13];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[kernel.dk,kernel.org,oracle.com,gmail.com,suse.cz,lists.sourceforge.net,vger.kernel.org,lists.linuxfoundation.org,googlegroups.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Score: 1.24
-X-Rspamd-Queue-Id: 5AF3821EC2
-X-Spam-Flag: NO
+In-Reply-To: <20240115083337.1355191-1-hsiangkao@linux.alibaba.com>
 
-On Sat 13-01-24 23:18:05, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+On Mon, Jan 15, 2024 at 04:33:37PM +0800, Gao Xiang wrote:
+> From: David Howells <dhowells@redhat.com>
 > 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
+> Filesystems should use folio->index and folio->mapping, instead of
+> folio_index(folio), folio_mapping() and folio_file_mapping() since
+> they know that it's in the pagecache.
 > 
->     fs: Block writes to mounted block devices
+> Change this automagically with:
 > 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17ec162be80000
-> start commit:   493ffd6605b2 Merge tag 'ucount-rlimits-cleanups-for-v5.19'..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d19f5d16783f901
-> dashboard link: https://syzkaller.appspot.com/bug?extid=c1056fdfe414463fdb33
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12f431d2880000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1208894a880000
+> perl -p -i -e 's/folio_mapping[(]([^)]*)[)]/\1->mapping/g' fs/erofs/*.c
+> perl -p -i -e 's/folio_file_mapping[(]([^)]*)[)]/\1->mapping/g' fs/erofs/*.c
+> perl -p -i -e 's/folio_index[(]([^)]*)[)]/\1->index/g' fs/erofs/*.c
 > 
-> If the result looks correct, please mark the issue as fixed by replying with:
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Cc: Chao Yu <chao@kernel.org>
+> Cc: Yue Hu <huyue2@coolpad.com>
+> Cc: Jeffle Xu <jefflexu@linux.alibaba.com>
+> Cc: linux-erofs@lists.ozlabs.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+> ---
+> Hi folks,
+> 
+> I tend to apply this patch upstream since compressed data fscache
+> adaption touches this part too.  If there is no objection, I'm
+> going to take this patch separately for -next shortly..
 
-Makes sense:
+Could you change the subject?  It's not that the functions are
+"internal", it's that filesystems don't need to use them because they're
+guaranteed to not see swap pages.  Maybe just s/internal/unnecessary/
 
-#syz fix: fs: Block writes to mounted block devices
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Thanks,
+> Gao Xiang
+> 
+> Change since v1:
+>  - a better commit message pointed out by Jeff Layton.
+> 
+>  fs/erofs/fscache.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+> index 87ff35bff8d5..bc12030393b2 100644
+> --- a/fs/erofs/fscache.c
+> +++ b/fs/erofs/fscache.c
+> @@ -165,10 +165,10 @@ static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
+>  static int erofs_fscache_meta_read_folio(struct file *data, struct folio *folio)
+>  {
+>  	int ret;
+> -	struct erofs_fscache *ctx = folio_mapping(folio)->host->i_private;
+> +	struct erofs_fscache *ctx = folio->mapping->host->i_private;
+>  	struct erofs_fscache_request *req;
+>  
+> -	req = erofs_fscache_req_alloc(folio_mapping(folio),
+> +	req = erofs_fscache_req_alloc(folio->mapping,
+>  				folio_pos(folio), folio_size(folio));
+>  	if (IS_ERR(req)) {
+>  		folio_unlock(folio);
+> @@ -276,7 +276,7 @@ static int erofs_fscache_read_folio(struct file *file, struct folio *folio)
+>  	struct erofs_fscache_request *req;
+>  	int ret;
+>  
+> -	req = erofs_fscache_req_alloc(folio_mapping(folio),
+> +	req = erofs_fscache_req_alloc(folio->mapping,
+>  			folio_pos(folio), folio_size(folio));
+>  	if (IS_ERR(req)) {
+>  		folio_unlock(folio);
+> -- 
+> 2.39.3
+> 
 
