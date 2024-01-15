@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-7974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2580682DF91
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:25:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AD9F82DF99
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 19:26:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55681F23B9E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 18:25:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A699B216C2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 18:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E0718EA6;
-	Mon, 15 Jan 2024 18:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E21418EB6;
+	Mon, 15 Jan 2024 18:24:03 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5837318C35;
-	Mon, 15 Jan 2024 18:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E37618C35;
+	Mon, 15 Jan 2024 18:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4TDKn627sgz9xxn9;
-	Tue, 16 Jan 2024 02:05:30 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4TDKsW3QJHz9yJj0;
+	Tue, 16 Jan 2024 02:09:19 +0800 (CST)
 Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id C47491407FA;
-	Tue, 16 Jan 2024 02:23:35 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 2D58014066B;
+	Tue, 16 Jan 2024 02:23:49 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwDn0ia8d6VlgjybAA--.56873S9;
-	Mon, 15 Jan 2024 19:23:35 +0100 (CET)
+	by APP2 (Coremail) with SMTP id GxC2BwDn0ia8d6VlgjybAA--.56873S10;
+	Mon, 15 Jan 2024 19:23:48 +0100 (CET)
 From: Roberto Sassu <roberto.sassu@huaweicloud.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -61,9 +61,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org,
 	Roberto Sassu <roberto.sassu@huawei.com>,
 	Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v9 17/25] security: Introduce inode_post_remove_acl hook
-Date: Mon, 15 Jan 2024 19:18:01 +0100
-Message-Id: <20240115181809.885385-18-roberto.sassu@huaweicloud.com>
+Subject: [PATCH v9 18/25] security: Introduce key_post_create_or_update hook
+Date: Mon, 15 Jan 2024 19:18:02 +0100
+Message-Id: <20240115181809.885385-19-roberto.sassu@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
 References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
@@ -74,10 +74,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:GxC2BwDn0ia8d6VlgjybAA--.56873S9
-X-Coremail-Antispam: 1UD129KBjvJXoWxuryDCFW3JF48AF4rArWfAFb_yoWrCr1UpF
-	43K3Z8Ww4rXFy7WryktF4Uuw1IvFWFgry7A39Fgw4IyFn2yr1jqFsxKFyjkry5ArW8KF1q
-	qF1aqrsxC345Jr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:GxC2BwDn0ia8d6VlgjybAA--.56873S10
+X-Coremail-Antispam: 1UD129KBjvJXoWxGr43CFW3tF15Aw1kWw4xXrb_yoWrur4Dpa
+	yYk3W5t3ykKFyaqrZ3AF17KayrK3y8Kr17K39xWryjyFnYqw4xXr42kFn8CrW5AryrJry0
+	vw42vr43Gr1qyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUBIb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
 	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
 	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
@@ -91,19 +91,18 @@ X-Coremail-Antispam: 1UD129KBjvJXoWxuryDCFW3JF48AF4rArWfAFb_yoWrCr1UpF
 	vE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26F4UJVW0owCI42IY
 	6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aV
 	CY1x0267AKxVWxJr0_GcJvcSsGvfC2KfnxnUUI43ZEXa7IU1hiSPUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5iR2AAAsm
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQADBF1jj5iR2AADsl
 
 From: Roberto Sassu <roberto.sassu@huawei.com>
 
 In preparation for moving IMA and EVM to the LSM infrastructure, introduce
-the inode_post_remove_acl hook.
+the key_post_create_or_update hook.
 
-At inode_remove_acl hook, EVM verifies the file's existing HMAC value. At
-inode_post_remove_acl, EVM re-calculates the file's HMAC with the passed
-POSIX ACL removed and other file metadata.
+Depending on policy, IMA measures the key content after creation or update,
+so that remote verifiers are aware of the operation.
 
-Other LSMs could similarly take some action after successful POSIX ACL
-removal.
+Other LSMs could similarly take some action after successful key creation
+or update.
 
 The new hook cannot return an error and cannot cause the operation to be
 reverted.
@@ -113,91 +112,113 @@ Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- fs/posix_acl.c                |  1 +
- include/linux/lsm_hook_defs.h |  2 ++
- include/linux/security.h      |  8 ++++++++
- security/security.c           | 17 +++++++++++++++++
- 4 files changed, 28 insertions(+)
+ include/linux/lsm_hook_defs.h |  3 +++
+ include/linux/security.h      | 11 +++++++++++
+ security/keys/key.c           |  7 ++++++-
+ security/security.c           | 19 +++++++++++++++++++
+ 4 files changed, 39 insertions(+), 1 deletion(-)
 
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 58e3c1e2fbbc..e3fbe1a9f3f5 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -1246,6 +1246,7 @@ int vfs_remove_acl(struct mnt_idmap *idmap, struct dentry *dentry,
- 		error = -EIO;
- 	if (!error) {
- 		fsnotify_xattr(dentry);
-+		security_inode_post_remove_acl(idmap, dentry, acl_name);
- 		evm_inode_post_remove_acl(idmap, dentry, acl_name);
- 	}
- 
 diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index e1a9a4e0760c..47dc633090a4 100644
+index 47dc633090a4..f8c4ec008263 100644
 --- a/include/linux/lsm_hook_defs.h
 +++ b/include/linux/lsm_hook_defs.h
-@@ -163,6 +163,8 @@ LSM_HOOK(int, 0, inode_get_acl, struct mnt_idmap *idmap,
- 	 struct dentry *dentry, const char *acl_name)
- LSM_HOOK(int, 0, inode_remove_acl, struct mnt_idmap *idmap,
- 	 struct dentry *dentry, const char *acl_name)
-+LSM_HOOK(void, LSM_RET_VOID, inode_post_remove_acl, struct mnt_idmap *idmap,
-+	 struct dentry *dentry, const char *acl_name)
- LSM_HOOK(int, 0, inode_need_killpriv, struct dentry *dentry)
- LSM_HOOK(int, 0, inode_killpriv, struct mnt_idmap *idmap,
- 	 struct dentry *dentry)
+@@ -405,6 +405,9 @@ LSM_HOOK(void, LSM_RET_VOID, key_free, struct key *key)
+ LSM_HOOK(int, 0, key_permission, key_ref_t key_ref, const struct cred *cred,
+ 	 enum key_need_perm need_perm)
+ LSM_HOOK(int, 0, key_getsecurity, struct key *key, char **buffer)
++LSM_HOOK(void, LSM_RET_VOID, key_post_create_or_update, struct key *keyring,
++	 struct key *key, const void *payload, size_t payload_len,
++	 unsigned long flags, bool create)
+ #endif /* CONFIG_KEYS */
+ 
+ #ifdef CONFIG_AUDIT
 diff --git a/include/linux/security.h b/include/linux/security.h
-index c372797e1617..4b03c76b91f1 100644
+index 4b03c76b91f1..8436f9abf43d 100644
 --- a/include/linux/security.h
 +++ b/include/linux/security.h
-@@ -378,6 +378,9 @@ int security_inode_get_acl(struct mnt_idmap *idmap,
- 			   struct dentry *dentry, const char *acl_name);
- int security_inode_remove_acl(struct mnt_idmap *idmap,
- 			      struct dentry *dentry, const char *acl_name);
-+void security_inode_post_remove_acl(struct mnt_idmap *idmap,
-+				    struct dentry *dentry,
-+				    const char *acl_name);
- void security_inode_post_setxattr(struct dentry *dentry, const char *name,
- 				  const void *value, size_t size, int flags);
- int security_inode_getxattr(struct dentry *dentry, const char *name);
-@@ -936,6 +939,11 @@ static inline int security_inode_remove_acl(struct mnt_idmap *idmap,
+@@ -2004,6 +2004,9 @@ void security_key_free(struct key *key);
+ int security_key_permission(key_ref_t key_ref, const struct cred *cred,
+ 			    enum key_need_perm need_perm);
+ int security_key_getsecurity(struct key *key, char **_buffer);
++void security_key_post_create_or_update(struct key *keyring, struct key *key,
++					const void *payload, size_t payload_len,
++					unsigned long flags, bool create);
+ 
+ #else
+ 
+@@ -2031,6 +2034,14 @@ static inline int security_key_getsecurity(struct key *key, char **_buffer)
  	return 0;
  }
  
-+static inline void security_inode_post_remove_acl(struct mnt_idmap *idmap,
-+						  struct dentry *dentry,
-+						  const char *acl_name)
++static inline void security_key_post_create_or_update(struct key *keyring,
++						      struct key *key,
++						      const void *payload,
++						      size_t payload_len,
++						      unsigned long flags,
++						      bool create)
 +{ }
 +
- static inline void security_inode_post_setxattr(struct dentry *dentry,
- 		const char *name, const void *value, size_t size, int flags)
- { }
+ #endif
+ #endif /* CONFIG_KEYS */
+ 
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 0260a1902922..f75fe66c2f03 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -935,6 +935,8 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
+ 		goto error_link_end;
+ 	}
+ 
++	security_key_post_create_or_update(keyring, key, payload, plen, flags,
++					   true);
+ 	ima_post_key_create_or_update(keyring, key, payload, plen,
+ 				      flags, true);
+ 
+@@ -968,10 +970,13 @@ static key_ref_t __key_create_or_update(key_ref_t keyring_ref,
+ 
+ 	key_ref = __key_update(key_ref, &prep);
+ 
+-	if (!IS_ERR(key_ref))
++	if (!IS_ERR(key_ref)) {
++		security_key_post_create_or_update(keyring, key, payload, plen,
++						   flags, false);
+ 		ima_post_key_create_or_update(keyring, key,
+ 					      payload, plen,
+ 					      flags, false);
++	}
+ 
+ 	goto error_free_prep;
+ }
 diff --git a/security/security.c b/security/security.c
-index 82da3667c4ae..617acfaa44d1 100644
+index 617acfaa44d1..d2a1226e6e69 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -2413,6 +2413,23 @@ int security_inode_remove_acl(struct mnt_idmap *idmap,
- 	return evm_inode_remove_acl(idmap, dentry, acl_name);
+@@ -5424,6 +5424,25 @@ int security_key_getsecurity(struct key *key, char **buffer)
+ 	*buffer = NULL;
+ 	return call_int_hook(key_getsecurity, 0, key, buffer);
  }
- 
-+/**
-+ * security_inode_post_remove_acl() - Update inode security after rm posix acls
-+ * @idmap: idmap of the mount
-+ * @dentry: file
-+ * @acl_name: acl name
-+ *
-+ * Update inode security data after successfully removing posix acls on
-+ * @dentry in @idmap. The posix acls are identified by @acl_name.
-+ */
-+void security_inode_post_remove_acl(struct mnt_idmap *idmap,
-+				    struct dentry *dentry, const char *acl_name)
-+{
-+	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-+		return;
-+	call_void_hook(inode_post_remove_acl, idmap, dentry, acl_name);
-+}
 +
- /**
-  * security_inode_post_setxattr() - Update the inode after a setxattr operation
-  * @dentry: file
++/**
++ * security_key_post_create_or_update() - Notification of key create or update
++ * @keyring: keyring to which the key is linked to
++ * @key: created or updated key
++ * @payload: data used to instantiate or update the key
++ * @payload_len: length of payload
++ * @flags: key flags
++ * @create: flag indicating whether the key was created or updated
++ *
++ * Notify the caller of a key creation or update.
++ */
++void security_key_post_create_or_update(struct key *keyring, struct key *key,
++					const void *payload, size_t payload_len,
++					unsigned long flags, bool create)
++{
++	call_void_hook(key_post_create_or_update, keyring, key, payload,
++		       payload_len, flags, create);
++}
+ #endif	/* CONFIG_KEYS */
+ 
+ #ifdef CONFIG_AUDIT
 -- 
 2.34.1
 
