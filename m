@@ -1,112 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-7950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB02782DBA1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 15:47:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2C682DBE5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 15:53:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 785A71F22302
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 14:47:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0847D282032
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 14:53:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624AD175AC;
-	Mon, 15 Jan 2024 14:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA0D199AA;
+	Mon, 15 Jan 2024 14:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ImWYwdwW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE1C17596;
-	Mon, 15 Jan 2024 14:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0W-j2-v8_1705329996;
-Received: from e69b19392.et15sqa.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0W-j2-v8_1705329996)
-          by smtp.aliyun-inc.com;
-          Mon, 15 Jan 2024 22:46:41 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-cachefs@redhat.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-erofs@lists.ozlabs.org,
-	David Howells <dhowells@redhat.com>,
-	Christian Brauner <christian@brauner.io>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	Yue Hu <huyue2@coolpad.com>,
-	Jeffle Xu <jefflexu@linux.alibaba.com>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH v3 3/4] erofs: Don't use certain unnecessary folio_*() functions
-Date: Mon, 15 Jan 2024 22:46:35 +0800
-Message-Id: <20240115144635.1931422-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240115083337.1355191-1-hsiangkao@linux.alibaba.com>
-References: <20240115083337.1355191-1-hsiangkao@linux.alibaba.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AA7199A4;
+	Mon, 15 Jan 2024 14:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=DMqbdyi4eLyG/P84atg6xw7sLhpYbrXTR+c3A3qjimU=; b=ImWYwdwWIEfyR5eMq3znGWSWKz
+	FrW8akY+9YiHOJjUSfxiMSp06YI3QteLOa2bzj+HwYKXKReTMO3l0Bmv/6occdwozYUVUFnSdo05x
+	Y+cfLQEvFUcxbhEcv1x37XfDqIGL3z1wSJS+D93PouzIvpUSj7bduOrCIbzTOwkWAyUKaJCqIXUv3
+	dDqjuYHJuzWdNs7cOTAs55UW08BeElvHj6qGHGafJq74AeOQvN28RWWQdySvYLgY7rRFX3/bv+VII
+	zGFBEA37bAvBoAMspWlIRZilliqsMBBFyaqbltmSX6Q+7aHtjJNfJ2TzjLnMnRJoIobvEb9b9R1rT
+	XwYCDuxg==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+	id 1rPOH9-009yaj-8k; Mon, 15 Jan 2024 14:49:19 +0000
+Date: Mon, 15 Jan 2024 14:49:19 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Anton Altaparmakov <anton@tuxera.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
+	Namjae Jeon <linkinjeon@kernel.org>
+Subject: Re: [PATCH] fs: Remove NTFS classic
+Message-ID: <ZaVF72QxQm/cN5yy@casper.infradead.org>
+References: <20240115072025.2071931-1-willy@infradead.org>
+ <8a5d4fcb-f6dc-4c7e-a26c-0b0e91430104@tuxera.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8a5d4fcb-f6dc-4c7e-a26c-0b0e91430104@tuxera.com>
 
-From: David Howells <dhowells@redhat.com>
+On Mon, Jan 15, 2024 at 11:00:35AM +0000, Anton Altaparmakov wrote:
+> Hi Matthew,
+> 
+> On 15/01/2024 07:20, Matthew Wilcox (Oracle) wrote:
+> > The replacement, NTFS3, was merged over two years ago.  It is now time to
+> > remove the original from the tree as it is the last user of several APIs,
+> > and it is not worth changing.
+> 
+> It was my impression that people are complaining ntfs3 is causing a whole
+> lot of problems including corrupting people's data.  Also, it appears the
+> maintainer has basically disappeared after it got merged.
 
-Filesystems should use folio->index and folio->mapping, instead of
-folio_index(folio), folio_mapping() and folio_file_mapping() since
-they know that it's in the pagecache.
+I'm not terribly happy with how the maintainer behaves either, but
+you've also been missing in action for nine years (if we're counting
+code authored by you) or two years (if a R-b is enough).
 
-Change this automagically with:
+According to your documentation, you don't support creating new files
+or directories, so I'd suggest that your code has never been put through
+the xfstests wringer in the way that ntfs3 has.
 
-perl -p -i -e 's/folio_mapping[(]([^)]*)[)]/\1->mapping/g' fs/erofs/*.c
-perl -p -i -e 's/folio_file_mapping[(]([^)]*)[)]/\1->mapping/g' fs/erofs/*.c
-perl -p -i -e 's/folio_index[(]([^)]*)[)]/\1->index/g' fs/erofs/*.c
+> Also, which APIs are you referring to?  I can take a look into those.
 
-Reported-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
-Cc: Chao Yu <chao@kernel.org>
-Cc: Yue Hu <huyue2@coolpad.com>
-Cc: Jeffle Xu <jefflexu@linux.alibaba.com>
-Cc: linux-erofs@lists.ozlabs.org
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
----
-change since v2:
- - update the words s/internal/unnecessary/ in the subject line
-   pointed out by Matthew.
+The biggest one for me is the folio work.  Everywhere in your code that
+use a struct page needs to be converted to a struct folio.  Support for
+large folios is optional, and I wouldn't bother trying to add that.
+Take a look at, eg, nilfs2, ext4, ext2, iomap, NFS, AFS for some
+filesystems which have been (at least mostly) converted.
 
- fs/erofs/fscache.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Any functions in mm/folio-compat.c should no longer be called.
 
-diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-index 87ff35bff8d5..bc12030393b2 100644
---- a/fs/erofs/fscache.c
-+++ b/fs/erofs/fscache.c
-@@ -165,10 +165,10 @@ static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
- static int erofs_fscache_meta_read_folio(struct file *data, struct folio *folio)
- {
- 	int ret;
--	struct erofs_fscache *ctx = folio_mapping(folio)->host->i_private;
-+	struct erofs_fscache *ctx = folio->mapping->host->i_private;
- 	struct erofs_fscache_request *req;
- 
--	req = erofs_fscache_req_alloc(folio_mapping(folio),
-+	req = erofs_fscache_req_alloc(folio->mapping,
- 				folio_pos(folio), folio_size(folio));
- 	if (IS_ERR(req)) {
- 		folio_unlock(folio);
-@@ -276,7 +276,7 @@ static int erofs_fscache_read_folio(struct file *file, struct folio *folio)
- 	struct erofs_fscache_request *req;
- 	int ret;
- 
--	req = erofs_fscache_req_alloc(folio_mapping(folio),
-+	req = erofs_fscache_req_alloc(folio->mapping,
- 			folio_pos(folio), folio_size(folio));
- 	if (IS_ERR(req)) {
- 		folio_unlock(folio);
--- 
-2.39.3
-
+If we're being really ambitious, filesystems should stop using the
+buffer cache and switch to using iomap.  There's a lot of work going
+on and unmaintained filesystems are holding us back.
 
