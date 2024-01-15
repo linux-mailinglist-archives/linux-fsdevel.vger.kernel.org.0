@@ -1,121 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-7933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-7934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4F582D81B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 12:08:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACA182D854
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 12:30:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10F82B21584
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 11:08:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FE551F221F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 11:30:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB21F27701;
-	Mon, 15 Jan 2024 11:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AE062C68D;
+	Mon, 15 Jan 2024 11:30:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sp514pR8"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZOeTiQzg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="SYeCE1Ml";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0LUkx/s3";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vVs3ogSY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEFE1E867
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 11:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-50eaaf2c7deso9652601e87.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 03:08:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705316911; x=1705921711; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=n8zZPv16a04c2JrdAylXruCjxboLXHW/YtOK6cugPVg=;
-        b=Sp514pR8VQZceOOmNIHrZ2aT1/poR8nPNTliEVOC5NkghlP1XLJIYWcW+geI4nqQCJ
-         HTcIMv1eeDFese6ySz+lh6G4IfaPwIW3FCnb6xJ3rwCbcLkFMazHt+Ic9QKtmw+WYqOO
-         qi8kimZ/m7523Wiflu+bzC4hIXgeqrxxgfh/M8jOmkadDEGM31mCb60LPDWizil3shLE
-         oeBG6yD5I6NOmD5ZK08YzxfUMbK5TGSFkC7Z2vehJOevQDEc/9AC+Zj0ev2VeAk8FTgk
-         YATXyJeqemWFTbtrqeFSAmxVLhlOxCP7yZPFiTgqjeUNHnn5mOcPw9HpDDMKGjChdWhj
-         NVxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705316911; x=1705921711;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=n8zZPv16a04c2JrdAylXruCjxboLXHW/YtOK6cugPVg=;
-        b=WBKKhv1N1Upy+nl0CAqeJB+SxbM/M5lPEMqL9ybQ1messXPVBjnGUDG1+qnGmkT1K3
-         F8avSdn0vIZJHlHzQjOBtXObokLsPLxO/9AnY23rUZrY+uVYGW04muSJJbsZNbtB97OR
-         MmWqnSFisLq3W4Nef/xjYSPojk1/RB/bP+vR6+n65awX1EvF7K+EP1Q5+uY+0jhm4DM2
-         /jNw1gZ4F8ED3aTU3gvfXT/61qftR4WYIdRqjfQtTU+GkHn+XwYGLHmIerh4VbSUoRNX
-         jRlQtHMyNH5NX3WfcSHG+2+CYJLIhCNxXmifDrLgpXlf0u0g7MAvzxkxSKoaVY7Tmrpg
-         fjsw==
-X-Gm-Message-State: AOJu0YwhtV14c7x18YsR/mNcf6xuaUB9rQqUbG6NegsgvSUhCx/E9a+K
-	7CAN4g8yfacVcACtV3grtqI=
-X-Google-Smtp-Source: AGHT+IGgAdKBX9EYgL2//c8WYkYqgwnBhB0dF1GytNx0iq9EFmXcKA0+uYVXLhqreQWLJzhUle94nQ==
-X-Received: by 2002:ac2:5b1a:0:b0:50e:e1dc:9f20 with SMTP id v26-20020ac25b1a000000b0050ee1dc9f20mr2285955lfn.28.1705316910442;
-        Mon, 15 Jan 2024 03:08:30 -0800 (PST)
-Received: from rivendell (static.167.156.21.65.clients.your-server.de. [65.21.156.167])
-        by smtp.gmail.com with ESMTPSA id dw13-20020a0565122c8d00b0050e7bc67cf7sm1444188lfb.138.2024.01.15.03.08.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 15 Jan 2024 03:08:29 -0800 (PST)
-Date: Mon, 15 Jan 2024 12:08:29 +0100 (CET)
-From: Enrico Mioso <mrkiko.rs@gmail.com>
-To: Anton Altaparmakov <anton@tuxera.com>
-cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-    Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-    linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev, 
-    Namjae Jeon <linkinjeon@kernel.org>
-Subject: Re: [PATCH] fs: Remove NTFS classic
-In-Reply-To: <8a5d4fcb-f6dc-4c7e-a26c-0b0e91430104@tuxera.com>
-Message-ID: <00906203-9df2-ee5b-da37-b45073373ee0@gmail.com>
-References: <20240115072025.2071931-1-willy@infradead.org> <8a5d4fcb-f6dc-4c7e-a26c-0b0e91430104@tuxera.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED592208A;
+	Mon, 15 Jan 2024 11:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7928C1F8AA;
+	Mon, 15 Jan 2024 11:30:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1705318237; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ds0QNZdlqOPWM3wbiQOUG4rSsjMSm36pA7PawZRmBsQ=;
+	b=ZOeTiQzgPG8a/6cCLSQq7I6S7pMWL6yHQ2I54XwXl9owzF3eMVTjzSXDvVSNKva3fuwKQN
+	GY7ziMTYo0bAFPHAVzxLZ1tnTSvmHiVY0PMZu0Hd0zRPslumOsKcvpZigPD0pzOh9Iippf
+	M6xMFUTjq2dm/l8NCN6uUCUDK7QiBig=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1705318237;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ds0QNZdlqOPWM3wbiQOUG4rSsjMSm36pA7PawZRmBsQ=;
+	b=SYeCE1MlmyIGUkI6htYZDGN2UMfQCYApyzBv2LrzpsGe5AOhk5fcuw4RvZ16zt6+249OJz
+	PkYSNAY22Vu8TmCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1705318236; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ds0QNZdlqOPWM3wbiQOUG4rSsjMSm36pA7PawZRmBsQ=;
+	b=0LUkx/s3v+D/Of5qr+0Gb4jEUf3Eagrj9cZWvmcQuAFgKIObfB5ycV1xcmHswXNOSNXnX1
+	RO7uE1Bs2VuK7MrI17rTxA+gDUOnSYrN9CuUTyXqxy7RfXOMh2Jsfo37t5QGU0ysIOw3TS
+	Cr0aNQvdK2ozcNqPUcf0Q/amNtqxY4A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1705318236;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ds0QNZdlqOPWM3wbiQOUG4rSsjMSm36pA7PawZRmBsQ=;
+	b=vVs3ogSYAcHdWhQhauBRc2Rc5HTxq2aDPKel0gEYkGm1p1pgA10qINxdZLDkF8GeSp4C/x
+	eZeozyLDGQbbhoDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6E9C913712;
+	Mon, 15 Jan 2024 11:30:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kCj8GlwXpWVAPQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 15 Jan 2024 11:30:36 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 2067FA07F7; Mon, 15 Jan 2024 12:30:36 +0100 (CET)
+Date: Mon, 15 Jan 2024 12:30:36 +0100
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+3699edf4da1e736b317b@syzkaller.appspotmail.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz,
+	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, shaggy@kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [jfs?] kernel BUG in txEnd
+Message-ID: <20240115113036.bkgeheh3556cy7g6@quack3>
+References: <0000000000009e798305fe8e95ac@google.com>
+ <00000000000032d485060ec9b172@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000032d485060ec9b172@google.com>
+X-Spam-Level: *
+X-Spamd-Bar: +
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="0LUkx/s3";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=vVs3ogSY
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [1.30 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[9];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-0.19)[70.91%];
+	 SUBJECT_HAS_QUESTION(0.00)[];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=e74b395fe4978721];
+	 TAGGED_RCPT(0.00)[3699edf4da1e736b317b];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Score: 1.30
+X-Rspamd-Queue-Id: 7928C1F8AA
+X-Spam-Flag: NO
 
-
-
-On Mon, 15 Jan 2024, Anton Altaparmakov wrote:
-
-> Date: Mon, 15 Jan 2024 12:00:35
-> From: Anton Altaparmakov <anton@tuxera.com>
-> To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
->     Christian Brauner <brauner@kernel.org>
-> Cc: linux-fsdevel@vger.kernel.org, linux-ntfs-dev@lists.sourceforge.net,
->     ntfs3@lists.linux.dev, Namjae Jeon <linkinjeon@kernel.org>
-> Subject: Re: [PATCH] fs: Remove NTFS classic
+On Fri 12-01-24 17:28:04, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
 > 
-> Hi Matthew,
->
-> On 15/01/2024 07:20, Matthew Wilcox (Oracle) wrote:
->> The replacement, NTFS3, was merged over two years ago.  It is now time to
->> remove the original from the tree as it is the last user of several APIs,
->> and it is not worth changing.
->
-> It was my impression that people are complaining ntfs3 is causing a whole lot 
-> of problems including corrupting people's data.  Also, it appears the 
-> maintainer has basically disappeared after it got merged.
+> commit 6f861765464f43a71462d52026fbddfc858239a5
+> Author: Jan Kara <jack@suse.cz>
+> Date:   Wed Nov 1 17:43:10 2023 +0000
+> 
+>     fs: Block writes to mounted block devices
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1280b62be80000
+> start commit:   692b7dc87ca6 Merge tag 'hyperv-fixes-signed-20230619' of g..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e74b395fe4978721
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3699edf4da1e736b317b
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16b373a7280000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1749e8f3280000
+> 
+> If the result looks correct, please mark the issue as fixed by replying with:
 
-To be fair - it's more like "intermittent" maintenance rather than "no maintenance".
-Konstantin - would it be OK for you to have a co-maintainer to help out?
+Makes sense:
+ 
+#syz fix: fs: Block writes to mounted block devices
 
-Enrico
+									Honza
 
->
-> Is it really such a good idea to remove the original ntfs driver which 
-> actually works fine and does not cause any problems when the replacement is 
-> so poor and unmaintained?
->
-> Also, which APIs are you referring to?  I can take a look into those.
->
-> Best regards,
->
-> 	Anton
-> -- 
-> Anton Altaparmakov <anton at tuxera.com> (replace at with @)
-> Lead in File System Development, Tuxera Inc., http://www.tuxera.com/
-> Linux NTFS maintainer
->
->
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
