@@ -1,33 +1,33 @@
-Return-Path: <linux-fsdevel+bounces-8123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014C382FD0D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 23:40:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE5CC82FD1C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 23:42:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AF1E1F2F238
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 22:40:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87D8E29342F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 22:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BA7219EA;
-	Tue, 16 Jan 2024 22:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AA723747;
+	Tue, 16 Jan 2024 22:23:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FD1F1EB53;
-	Tue, 16 Jan 2024 22:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9466C23744;
+	Tue, 16 Jan 2024 22:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705443441; cv=none; b=E7UVpWekq3f8aXurlkm/A671T+7ViRBkTCrpQLi3Wjsbeqa1G6OQSTmbZ5KM6AsFl8Ihd3tR3vrt1KK+TyVCKmMozOYukUWgZLSKnlBBvvI/dWDV/e1MMy5aOor3MNZnqB2oFX5cLcYxvOAkRWttRZXGX+GdwiHf7PZ+9nbJzJU=
+	t=1705443807; cv=none; b=qz/cTAAI4r/nUFJDyTVOSkfR14ztOuwd8QNL1nUFJs96BVGSrPE5d536ygmsIc3TNrltvjFSpxdCY2dE0JHBXPojYzUzZkWHEfACSWf/BM9pGFdFygCUHZQCIgfsXB7mgzq2LbJ3Nt0Lq9seML2RsHcfXtLuavVyk/JQQ2MUCbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705443441; c=relaxed/simple;
-	bh=c9fNxQOO0OpCqCDvyOc4cQBH2+/Y/B7I7wB7BdxBEPg=;
+	s=arc-20240116; t=1705443807; c=relaxed/simple;
+	bh=+9So/8C/UHwU34J+AJWGCIa/pW2jaEdlYaVwPROAc40=;
 	h=Received:Received:Received:Content-Type:Content-Transfer-Encoding:
 	 MIME-Version:From:To:Cc:Subject:In-reply-to:References:Date:
-	 Message-id:X-Spam-Level:X-Rspamd-Server:X-Spamd-Result:
-	 X-Spam-Score:X-Rspamd-Queue-Id:X-Spam-Flag; b=X8ZUwfICVWMg9BB0Z7YrkygIq7QWPW7+nTskNWT9JqEeaNHkult29MaoMT2n+SDDMINWLTElLlMkMWMFQUJfwtFwv0uGa85QLga0TXTizINUW6JqFDxmMmjigbFX+BXAd8oxY+8xezaLO/ozb/9+xznoaGfSDconcTn7Y3kIbEY=
+	 Message-id:X-Spamd-Result:X-Rspamd-Server:X-Rspamd-Queue-Id:
+	 X-Spam-Level:X-Spam-Score:X-Spam-Flag; b=dlnlsl2pvH+zXrNgsBcGn3Gbl4Ddn2OEdJgB0WuEoCpUM+UAhGstUmpxmDJaSapYqbF6NXGh4tlcJTHhcSZHpqwFEDEurfgOSesQSNR4rwwbicBFZ2qMYn7sVnx+g916viP0qdSWlinhd0TFOwS/O9qScx/lpZ8onq16roTO6Ek=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
@@ -35,18 +35,18 @@ Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5484A221D7;
-	Tue, 16 Jan 2024 22:17:17 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CAC4A221E8;
+	Tue, 16 Jan 2024 22:23:23 +0000 (UTC)
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C4DE713751;
-	Tue, 16 Jan 2024 22:17:03 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2693A13751;
+	Tue, 16 Jan 2024 22:23:09 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([10.150.64.162])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3eSDHl8Ap2XCegAAD6G6ig
-	(envelope-from <neilb@suse.de>); Tue, 16 Jan 2024 22:17:03 +0000
+	id SEsoM80Bp2UZfAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 16 Jan 2024 22:23:09 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -87,188 +87,158 @@ Cc: "Christian Brauner" <brauner@kernel.org>,
  linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev,
  linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
  linux-trace-kernel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>
-Subject:
- Re: [PATCH 11/20] filelock: convert the IS_* macros to take file_lock_core
-In-reply-to: <20240116-flsplit-v1-11-c9d0f4370a5d@kernel.org>
+Subject: Re: [PATCH 12/20] filelock: make __locks_delete_block and
+ __locks_wake_up_blocks take file_lock_core
+In-reply-to: <20240116-flsplit-v1-12-c9d0f4370a5d@kernel.org>
 References: <20240116-flsplit-v1-0-c9d0f4370a5d@kernel.org>,
- <20240116-flsplit-v1-11-c9d0f4370a5d@kernel.org>
-Date: Wed, 17 Jan 2024 09:16:56 +1100
-Message-id: <170544341684.23031.11038222640477022046@noble.neil.brown.name>
-X-Spam-Level: 
+ <20240116-flsplit-v1-12-c9d0f4370a5d@kernel.org>
+Date: Wed, 17 Jan 2024 09:23:07 +1100
+Message-id: <170544378717.23031.5597414508293858294@noble.neil.brown.name>
 Authentication-Results: smtp-out1.suse.de;
 	none
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Spamd-Result: default: False [-4.00 / 50.00];
 	 REPLY(-4.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: CAC4A221E8
+X-Spam-Level: 
 X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 5484A221D7
 X-Spam-Flag: NO
 
 On Wed, 17 Jan 2024, Jeff Layton wrote:
-> I couldn't get them to work properly as macros, so convert them
-> to static inlines instead (which is probably better for the type safety
-> anyway).
+> Convert __locks_delete_block and __locks_wake_up_blocks to take a struct
+> file_lock_core pointer. Note that to accomodate this, we need to add a
+> new file_lock() wrapper to go from file_lock_core to file_lock.
+
+Actually we don't need it.... see below.
+
 >=20
 > Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  fs/locks.c | 46 +++++++++++++++++++++++++++++++++-------------
->  1 file changed, 33 insertions(+), 13 deletions(-)
+>  fs/locks.c | 43 ++++++++++++++++++++++++++-----------------
+>  1 file changed, 26 insertions(+), 17 deletions(-)
 >=20
 > diff --git a/fs/locks.c b/fs/locks.c
-> index 770aaa5809ba..eddf4d767d5d 100644
+> index eddf4d767d5d..6b8e8820dec9 100644
 > --- a/fs/locks.c
 > +++ b/fs/locks.c
-> @@ -70,10 +70,26 @@
+> @@ -92,6 +92,11 @@ static inline bool IS_LEASE(struct file_lock_core *flc)
 > =20
->  #include <linux/uaccess.h>
+>  #define IS_REMOTELCK(fl)	(fl->fl_core.fl_pid <=3D 0)
 > =20
-> -#define IS_POSIX(fl)	(fl->fl_core.fl_flags & FL_POSIX)
-Used 3 times... once as
-	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
-Can an IS_POSIX lock also be IS_OFDLCK ??
+> +struct file_lock *file_lock(struct file_lock_core *flc)
+> +{
+> +	return container_of(flc, struct file_lock, fl_core);
+> +}
+> +
+>  static bool lease_breaking(struct file_lock *fl)
+>  {
+>  	return fl->fl_core.fl_flags & (FL_UNLOCK_PENDING | FL_DOWNGRADE_PENDING);
+> @@ -677,31 +682,35 @@ static void locks_delete_global_blocked(struct file_l=
+ock_core *waiter)
+>   *
+>   * Must be called with blocked_lock_lock held.
+>   */
+> -static void __locks_delete_block(struct file_lock *waiter)
+> +static void __locks_delete_block(struct file_lock_core *waiter)
+>  {
+> -	locks_delete_global_blocked(&waiter->fl_core);
+> -	list_del_init(&waiter->fl_core.fl_blocked_member);
+> +	locks_delete_global_blocked(waiter);
+> +	list_del_init(&waiter->fl_blocked_member);
+>  }
+> =20
+> -static void __locks_wake_up_blocks(struct file_lock *blocker)
+> +static void __locks_wake_up_blocks(struct file_lock_core *blocker)
+>  {
+> -	while (!list_empty(&blocker->fl_core.fl_blocked_requests)) {
+> -		struct file_lock *waiter;
+> +	while (!list_empty(&blocker->fl_blocked_requests)) {
+> +		struct file_lock_core *waiter;
+> +		struct file_lock *fl;
+> +
+> +		waiter =3D list_first_entry(&blocker->fl_blocked_requests,
+> +					  struct file_lock_core, fl_blocked_member);
+> =20
+> -		waiter =3D list_first_entry(&blocker->fl_core.fl_blocked_requests,
+> -					  struct file_lock, fl_core.fl_blocked_member);
 
+> +		fl =3D file_lock(waiter);
 
-> -#define IS_FLOCK(fl)	(fl->fl_core.fl_flags & FL_FLOCK)
-Used once.
+		fl =3D list_first_entry(&blocker->fl_core.fl_blocked_requests,
+				      struct file_lock, fl_core.fl_blocked_member);
 
-> -#define IS_LEASE(fl)	(fl->fl_core.fl_flags & (FL_LEASE|FL_DELEG|FL_LAYOUT))
-Used twice.  Either "IS_LEASE" approves things that aren't leases, or
-FL_LEASE is not set on all leases.... Names could be improved.
+                waiter =3D &fl->fl_core;
 
-> -#define IS_OFDLCK(fl)	(fl->fl_core.fl_flags & FL_OFDLCK)
+achieves the same result without needing file_lock().
 
-used 4 times - a clear winner :-)
+If you really want to add file_lock() then do so, but you need a better
+justification :-)
 
-If it would me, I would simply discard these macros and open-code the
-tests.  I don't think IS_FLOCK() is easier to read for someone who knows
-the code, and I think IS_LEASE() is actually harder to read for someone
-who doesn't know the code, as that it does it not really obvious.
-
-But this is just a suggestion, I won't push it.
-
-Thanks,
 NeilBrown
 
 
-> +static inline bool IS_POSIX(struct file_lock_core *flc)
-> +{
-> +	return flc->fl_flags & FL_POSIX;
-> +}
-> +
-> +static inline bool IS_FLOCK(struct file_lock_core *flc)
-> +{
-> +	return flc->fl_flags & FL_FLOCK;
-> +}
-> +
-> +static inline bool IS_OFDLCK(struct file_lock_core *flc)
-> +{
-> +	return flc->fl_flags & FL_OFDLCK;
-> +}
-> +
-> +static inline bool IS_LEASE(struct file_lock_core *flc)
-> +{
-> +	return flc->fl_flags & (FL_LEASE|FL_DELEG|FL_LAYOUT);
-> +}
-> +
->  #define IS_REMOTELCK(fl)	(fl->fl_core.fl_pid <=3D 0)
+
+>  		__locks_delete_block(waiter);
+> -		if (waiter->fl_lmops && waiter->fl_lmops->lm_notify)
+> -			waiter->fl_lmops->lm_notify(waiter);
+> +		if ((IS_POSIX(waiter) || IS_FLOCK(waiter)) &&
+> +		    fl->fl_lmops && fl->fl_lmops->lm_notify)
+> +			fl->fl_lmops->lm_notify(fl);
+>  		else
+> -			wake_up(&waiter->fl_core.fl_wait);
+> +			wake_up(&waiter->fl_wait);
 > =20
->  static bool lease_breaking(struct file_lock *fl)
-> @@ -761,6 +777,7 @@ static void __locks_insert_block(struct file_lock *bloc=
+>  		/*
+>  		 * The setting of fl_blocker to NULL marks the "done"
+>  		 * point in deleting a block. Paired with acquire at the top
+>  		 * of locks_delete_block().
+>  		 */
+> -		smp_store_release(&waiter->fl_core.fl_blocker, NULL);
+> +		smp_store_release(&waiter->fl_blocker, NULL);
+>  	}
+>  }
+> =20
+> @@ -743,8 +752,8 @@ int locks_delete_block(struct file_lock *waiter)
+>  	spin_lock(&blocked_lock_lock);
+>  	if (waiter->fl_core.fl_blocker)
+>  		status =3D 0;
+> -	__locks_wake_up_blocks(waiter);
+> -	__locks_delete_block(waiter);
+> +	__locks_wake_up_blocks(&waiter->fl_core);
+> +	__locks_delete_block(&waiter->fl_core);
+> =20
+>  	/*
+>  	 * The setting of fl_blocker to NULL marks the "done" point in deleting
+> @@ -799,7 +808,7 @@ static void __locks_insert_block(struct file_lock *bloc=
 ker,
->  					       struct file_lock *))
->  {
->  	struct file_lock *fl;
-> +	struct file_lock_core *bflc;
->  	BUG_ON(!list_empty(&waiter->fl_core.fl_blocked_member));
-> =20
->  new_blocker:
-> @@ -773,7 +790,9 @@ static void __locks_insert_block(struct file_lock *bloc=
-ker,
->  	waiter->fl_core.fl_blocker =3D blocker;
->  	list_add_tail(&waiter->fl_core.fl_blocked_member,
->  		      &blocker->fl_core.fl_blocked_requests);
-> -	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
-> +
-> +	bflc =3D &blocker->fl_core;
-> +	if (IS_POSIX(bflc) && !IS_OFDLCK(bflc))
->  		locks_insert_global_blocked(&waiter->fl_core);
-> =20
->  	/* The requests in waiter->fl_blocked are known to conflict with
-> @@ -998,6 +1017,7 @@ static int posix_locks_deadlock(struct file_lock *call=
-er_fl,
->  				struct file_lock *block_fl)
->  {
->  	int i =3D 0;
-> +	struct file_lock_core *flc =3D &caller_fl->fl_core;
-> =20
->  	lockdep_assert_held(&blocked_lock_lock);
-> =20
-> @@ -1005,7 +1025,7 @@ static int posix_locks_deadlock(struct file_lock *cal=
-ler_fl,
->  	 * This deadlock detector can't reasonably detect deadlocks with
->  	 * FL_OFDLCK locks, since they aren't owned by a process, per-se.
+>  	 * waiter, but might not conflict with blocker, or the requests
+>  	 * and lock which block it.  So they all need to be woken.
 >  	 */
-> -	if (IS_OFDLCK(caller_fl))
-> +	if (IS_OFDLCK(flc))
->  		return 0;
+> -	__locks_wake_up_blocks(waiter);
+> +	__locks_wake_up_blocks(&waiter->fl_core);
+>  }
 > =20
->  	while ((block_fl =3D what_owner_is_waiting_for(block_fl))) {
-> @@ -2157,7 +2177,7 @@ static pid_t locks_translate_pid(struct file_lock *fl=
-, struct pid_namespace *ns)
->  	pid_t vnr;
->  	struct pid *pid;
+>  /* Must be called with flc_lock held. */
+> @@ -831,7 +840,7 @@ static void locks_wake_up_blocks(struct file_lock *bloc=
+ker)
+>  		return;
 > =20
-> -	if (IS_OFDLCK(fl))
-> +	if (IS_OFDLCK(&fl->fl_core))
->  		return -1;
->  	if (IS_REMOTELCK(fl))
->  		return fl->fl_core.fl_pid;
-> @@ -2721,19 +2741,19 @@ static void lock_get_status(struct seq_file *f, str=
-uct file_lock *fl,
->  	if (repeat)
->  		seq_printf(f, "%*s", repeat - 1 + (int)strlen(pfx), pfx);
+>  	spin_lock(&blocked_lock_lock);
+> -	__locks_wake_up_blocks(blocker);
+> +	__locks_wake_up_blocks(&blocker->fl_core);
+>  	spin_unlock(&blocked_lock_lock);
+>  }
 > =20
-> -	if (IS_POSIX(fl)) {
-> +	if (IS_POSIX(&fl->fl_core)) {
->  		if (fl->fl_core.fl_flags & FL_ACCESS)
->  			seq_puts(f, "ACCESS");
-> -		else if (IS_OFDLCK(fl))
-> +		else if (IS_OFDLCK(&fl->fl_core))
->  			seq_puts(f, "OFDLCK");
->  		else
->  			seq_puts(f, "POSIX ");
-> =20
->  		seq_printf(f, " %s ",
->  			     (inode =3D=3D NULL) ? "*NOINODE*" : "ADVISORY ");
-> -	} else if (IS_FLOCK(fl)) {
-> +	} else if (IS_FLOCK(&fl->fl_core)) {
->  		seq_puts(f, "FLOCK  ADVISORY  ");
-> -	} else if (IS_LEASE(fl)) {
-> +	} else if (IS_LEASE(&fl->fl_core)) {
->  		if (fl->fl_core.fl_flags & FL_DELEG)
->  			seq_puts(f, "DELEG  ");
->  		else
-> @@ -2748,7 +2768,7 @@ static void lock_get_status(struct seq_file *f, struc=
-t file_lock *fl,
->  	} else {
->  		seq_puts(f, "UNKNOWN UNKNOWN  ");
->  	}
-> -	type =3D IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_core.fl_type;
-> +	type =3D IS_LEASE(&fl->fl_core) ? target_leasetype(fl) : fl->fl_core.fl_t=
-ype;
-> =20
->  	seq_printf(f, "%s ", (type =3D=3D F_WRLCK) ? "WRITE" :
->  			     (type =3D=3D F_RDLCK) ? "READ" : "UNLCK");
-> @@ -2760,7 +2780,7 @@ static void lock_get_status(struct seq_file *f, struc=
-t file_lock *fl,
->  	} else {
->  		seq_printf(f, "%d <none>:0 ", fl_pid);
->  	}
-> -	if (IS_POSIX(fl)) {
-> +	if (IS_POSIX(&fl->fl_core)) {
->  		if (fl->fl_end =3D=3D OFFSET_MAX)
->  			seq_printf(f, "%Ld EOF\n", fl->fl_start);
->  		else
+> @@ -1186,7 +1195,7 @@ static int posix_lock_inode(struct inode *inode, stru=
+ct file_lock *request,
+>  			 * Ensure that we don't find any locks blocked on this
+>  			 * request during deadlock detection.
+>  			 */
+> -			__locks_wake_up_blocks(request);
+> +			__locks_wake_up_blocks(&request->fl_core);
+>  			if (likely(!posix_locks_deadlock(request, fl))) {
+>  				error =3D FILE_LOCK_DEFERRED;
+>  				__locks_insert_block(fl, request,
 >=20
 > --=20
 > 2.43.0
