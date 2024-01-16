@@ -1,210 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-8081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B9182F38D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 18:58:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B027282F3BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 19:11:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F1DF285ACD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 17:58:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D79E31C23801
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 18:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC7F1CD1E;
-	Tue, 16 Jan 2024 17:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f/JUfKl5"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AFF1CD25;
+	Tue, 16 Jan 2024 18:11:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BFF1CABE
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 17:57:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C6A1CD0B;
+	Tue, 16 Jan 2024 18:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705427870; cv=none; b=d38soOGPi0MTdSpMTYum2eQyLgdF3PL14xk15axfUkeUKL9X5zpHeKn3IhRRnxsIiKo3JTeies0/nuadu+GUmOqrNWp6NpnREMP0huDYnOvj1E+epEVVxCbgkbh0E5kiG/KlxSd5A0CwPA0BLdWxOh/rLiHFecgTDTrPZMKX1y8=
+	t=1705428675; cv=none; b=c6nseegCZ9VSREN7Qic0+PQyKZzcWq/4Qlslov94vBWtJzeqzD5CLzlmTDBYAadoiUjGoVHSm/fr1l9eP7FR9gHzmKYvpRgjDO6+V3BuBMm+3RyErNePdG6yMBixFTfQ2xKOR4ZBxjV9La+8IiagH2MkIfpVYMctpFAGtjyfe4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705427870; c=relaxed/simple;
-	bh=yUAHuj8vVj8IUFVbFycTjbLEQJVq0uuFYF6xO/bIKQk=;
-	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:MIME-Version:
-	 References:In-Reply-To:From:Date:Message-ID:Subject:To:Cc:
-	 Content-Type:Content-Transfer-Encoding; b=g6RFLDlnwI/NuCai2sVqm5jldrNa8BubfPihdlhIdDs+mJ3gdTueLJCDGht8bl98eZFEPZfwY7yKWYoSLhyQf/qYvv+oDHNLUOa988qXU6UJLZlgQkCGPb/8Ab7mibyJfbWn7GUI8PWY5SuKN0UERhRDnlM5ilffCkZ/5gKRmJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f/JUfKl5; arc=none smtp.client-ip=209.85.128.182
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-5ebca94cf74so96960187b3.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 09:57:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1705427867; x=1706032667; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9z9i/7IxW+vD8oAmdqNGi8gKSOYfLZrN80TxMX3ACrg=;
-        b=f/JUfKl5Q1BxzhHkzXbL3WJzt9ong+kA44jQ8KmrFUrYr9Q64j5GLTjn0Kss9yGljz
-         S6ygarJQQ/1DfIrA69jhT2ULQXWni2pp/dOEZO0dPx6o5O9Jrmwt8ZqZmzEeE5Rdhavp
-         bwv7uPUALw+56Tid6hsMYGrewmR1pPsdQ2V08qaG33QdA2vNaySAa/it374iIwuFZoPe
-         YV5dq3qZXE0rIoUsA1A4tJnGlRguql+StFakIrTfLDExs/d7CvxoCMpzdHXyQXGrG78Y
-         v0Fnl93zQ5Bbqs+Lkqpdtro1eSVsM/TqCtd2z9squzkYG/W/GedcsvhiaCOC8NlkvTcT
-         W+RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705427867; x=1706032667;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9z9i/7IxW+vD8oAmdqNGi8gKSOYfLZrN80TxMX3ACrg=;
-        b=N5/ZDRCa2i+U5/u6NLHlimxuvxCttMLpYLL2VrYH2FltCKMVciYoaBkYTZeVjgn1ea
-         674CInYHtRbQXF4whIAsm5r37jPXIIMFVBWXbYkcPoatnRLwaAXvjcL54tWZvCwYb4nL
-         k/mjZflLgN1HFzEC4GDe3WQj7UojTChIJ5JuAJVcuUDL7FeZd4+zALE6C+BEBrl7+vpH
-         /Ir+V06SyWy2T0ug0PA+OYm3mEDHYS534SYQoBawFG5BqJDGYaJMieN8H10JWCh09++M
-         DcUpGt2Wbzwnf3WVnsnTa7a+IoCuK2w6fxINaGzNu+kK6j5X4teeRP+G6cCOYJczoval
-         Gbug==
-X-Gm-Message-State: AOJu0Yy7M7HZHRhi0tYhCMRWB6HIO8iB9rNsvVk1XipKXhQ7wuBKnsAB
-	3APSFjOj4ducVqOW+MM3t+rQhNbLnaKupoMZxjn1DhzLHi+U
-X-Google-Smtp-Source: AGHT+IFyVFz3b29oTWOr9F5UxV+4etmI5OtR+C0TA+Mosl5koGhrgqlF3uiF6vK/YTAobFtxglozaPMX3P532Tcex2E=
-X-Received: by 2002:a81:ad5b:0:b0:5ff:6117:3df9 with SMTP id
- l27-20020a81ad5b000000b005ff61173df9mr263299ywk.71.1705427866742; Tue, 16 Jan
- 2024 09:57:46 -0800 (PST)
+	s=arc-20240116; t=1705428675; c=relaxed/simple;
+	bh=HF08xReEYJVEYlyq4VqGFGWbxcsg4P7vW27ttWr2NEg=;
+	h=Received:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
+	 References:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding; b=Yqv5zaMQ2+XkJZGANimrYL1L84VNuXIg35fqK7SWvzE14Zf4kK/9oiDy7ctNT835UaLrbeyl95vtTXC+aFYxMnURnboeXpLexFyU0NU+ECmxDn+XCMnwjOI/kGsEHXtNskJX05WWlzNy2O9/V43yypikr5FtPXJJhr/+JOW0yVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE5D4C433F1;
+	Tue, 16 Jan 2024 18:11:13 +0000 (UTC)
+Date: Tue, 16 Jan 2024 13:12:28 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+ kernel test robot <oliver.sang@intel.com>, Ajay Kaher <akaher@vmware.com>,
+ Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] eventfs: Create dentries and inodes at dir open
+Message-ID: <20240116131228.3ed23d37@gandalf.local.home>
+In-Reply-To: <CAHk-=wjna5QYoWE+v3BWDwvs8N=QWjNN=EgxTN4dBbmySc-jcg@mail.gmail.com>
+References: <20240116114711.7e8637be@gandalf.local.home>
+	<CAHk-=wjna5QYoWE+v3BWDwvs8N=QWjNN=EgxTN4dBbmySc-jcg@mail.gmail.com>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240115183837.205694-1-surenb@google.com> <1bc8a5df-b413-4869-8931-98f5b9e82fe5@suse.cz>
- <74005ee1-b6d8-4ab5-ba97-92bec302cc4b@suse.cz>
-In-Reply-To: <74005ee1-b6d8-4ab5-ba97-92bec302cc4b@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 16 Jan 2024 09:57:31 -0800
-Message-ID: <CAJuCfpGTVEy=ZURbL3c7k+CduDR8wSfqsujN+OecPwuns7LiGQ@mail.gmail.com>
-Subject: Re: [RFC 0/3] reading proc/pid/maps under RCU
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	jack@suse.cz, dchinner@redhat.com, casey@schaufler-ca.com, 
-	ben.wolsieffer@hefring.com, paulmck@kernel.org, david@redhat.com, 
-	avagin@google.com, usama.anjum@collabora.com, peterx@redhat.com, 
-	hughd@google.com, ryan.roberts@arm.com, wangkefeng.wang@huawei.com, 
-	Liam.Howlett@oracle.com, yuzhao@google.com, axelrasmussen@google.com, 
-	lstoakes@gmail.com, talumbau@google.com, willy@infradead.org, 
-	mgorman@techsingularity.net, jhubbard@nvidia.com, vishal.moola@gmail.com, 
-	mathieu.desnoyers@efficios.com, dhowells@redhat.com, jgg@ziepe.ca, 
-	sidhartha.kumar@oracle.com, andriy.shevchenko@linux.intel.com, 
-	yangxingui@huawei.com, keescook@chromium.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jan 16, 2024 at 6:46=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 1/16/24 15:42, Vlastimil Babka wrote:
-> > On 1/15/24 19:38, Suren Baghdasaryan wrote:
-> >
-> > Hi,
-> >
-> >> The issue this patchset is trying to address is mmap_lock contention w=
-hen
-> >> a low priority task (monitoring, data collecting, etc.) blocks a highe=
-r
-> >> priority task from making updated to the address space. The contention=
- is
-> >> due to the mmap_lock being held for read when reading proc/pid/maps.
-> >> With maple_tree introduction, VMA tree traversals are RCU-safe and per=
--vma
-> >> locks make VMA access RCU-safe. this provides an opportunity for lock-=
-less
-> >> reading of proc/pid/maps. We still need to overcome a couple obstacles=
-:
-> >> 1. Make all VMA pointer fields used for proc/pid/maps content generati=
-on
-> >> RCU-safe;
-> >> 2. Ensure that proc/pid/maps data tearing, which is currently possible=
- at
-> >> page boundaries only, does not get worse.
-> >
-> > Hm I thought we were to only choose this more complicated in case addit=
-ional
-> > tearing becomes a problem, and at first assume that if software can dea=
-l
-> > with page boundary tearing, it can deal with sub-page tearing too?
+On Tue, 16 Jan 2024 09:55:15 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-Hi Vlastimil,
-Thanks for the feedback!
-Yes, originally I thought we wouldn't be able to avoid additional
-tearing without a big change but then realized it's not that hard, so
-I tried to keep the change in behavior transparent to the userspace.
+> [ html crud because I still don't have power or real Internet, just trying
+> to keep an eye on things on my phone. Mailing lists removed to avoid
+> bounces, please put them back in replies that don't have my horrible
+> formatting ]
+> 
+> No.
+> 
+> Christ, you're making things worse again
+> 
+> The reason for the bug is that you're still messing with the dentries at
+> readdir() time.
 
-> >
-> >> The patchset deals with these issues but there is a downside which I w=
-ould
-> >> like to get input on:
-> >> This change introduces unfairness towards the reader of proc/pid/maps,
-> >> which can be blocked by an overly active/malicious address space modif=
-yer.
-> >
-> > So this is a consequence of the validate() operation, right? We could a=
-void
-> > this if we allowed sub-page tearing.
+I may have deleted the comment, but the only reason I created the
+inodes/destries is to keep the consistent inode number as it's created at
+the time the inodes and dentries are.
 
-Yes, if we don't care about sub-page tearing then we could get rid of
-validate step and this issue with updaters blocking the reader would
-go away. If we choose that direction there will be one more issue to
-fix, namely the maple_tree temporary inconsistent state when a VMA is
-replaced with another one and we might observe NULL there. We might be
-able to use Matthew's rwsem_wait() to deal with that issue.
+Ah I did delete the comment, but it is still applicable :-/
 
-> >
-> >> A couple of ways I though we can address this issue are:
-> >> 1. After several lock-less retries (or some time limit) to fall back t=
-o
-> >> taking mmap_lock.
-> >> 2. Employ lock-less reading only if the reader has low priority,
-> >> indicating that blocking it is not critical.
-> >> 3. Introducing a separate procfs file which publishes the same data in
-> >> lock-less manner.
->
-> Oh and if this option 3 becomes necessary, then such new file shouldn't
-> validate() either, and whoever wants to avoid the reader contention and
-> converts their monitoring to the new file will have to account for this
-> possible extra tearing from the start. So I would suggest trying to chang=
-e
-> the existing file with no validate() first, and if existing userspace get=
-s
-> broken, employ option 3. This would mean no validate() in either case?
+       /*
+-        * Need to create the dentries and inodes to have a consistent
+-        * inode number.
++        * Need to make a struct eventfs_dent array, start by
++        * allocating enough for just the files, which is a fixed
++        * array. Then use realloc via add_entry() for the directories
++        * which is stored in a linked list.
+         */
 
-Yes but I was trying to avoid introducing additional file which
-publishes the same content in a slightly different way. We will have
-to explain when userspace should use one vs the other and that would
-require going into low level implementation details, I think. Don't
-know if that's acceptable/preferable.
-Thanks,
-Suren.
+So if for some reason, user space did a getdents() and used the inode
+numbers to match what it found, they would likely be the same.
 
->
-> >> I imagine a combination of these approaches can also be employed.
-> >> I would like to get feedback on this from the Linux community.
-> >>
-> >> Note: mmap_read_lock/mmap_read_unlock sequence inside validate_map()
-> >> can be replaced with more efficiend rwsem_wait() proposed by Matthew
-> >> in [1].
-> >>
-> >> [1] https://lore.kernel.org/all/ZZ1+ZicgN8dZ3zj3@casper.infradead.org/
-> >>
-> >> Suren Baghdasaryan (3):
-> >>   mm: make vm_area_struct anon_name field RCU-safe
-> >>   seq_file: add validate() operation to seq_operations
-> >>   mm/maps: read proc/pid/maps under RCU
-> >>
-> >>  fs/proc/internal.h        |   3 +
-> >>  fs/proc/task_mmu.c        | 130 ++++++++++++++++++++++++++++++++++---=
--
-> >>  fs/seq_file.c             |  24 ++++++-
-> >>  include/linux/mm_inline.h |  10 ++-
-> >>  include/linux/mm_types.h  |   3 +-
-> >>  include/linux/seq_file.h  |   1 +
-> >>  mm/madvise.c              |  30 +++++++--
-> >>  7 files changed, 181 insertions(+), 20 deletions(-)
-> >>
-> >
->
+> 
+> Just stop it. Readdir should not be creating dentries. Readdir should not
+> be even *looking* at dentries. You're not a virtual filesystem, the
+> dentries are just caches for filename lookup, and have *nothing* to do with
+> readdir.
+
+Actually, it's not looking at them. I did it as a way to just have the
+inode numbers be consistent.
+
+	dents[cnt].ino = d->d_inode->i_ino;
+
+Yes, that's the only reason I create them. The dentry/inode is not used for
+anything outside of that.
+
+> 
+> So just iterate over your own internal data structures in readdir. DO NOT
+> CREATE DENTRIES OR INODES FOR READDIR.
+> 
+> I've told you before, and I'll tell you again: either you are a real and
+> proper virtual filesystem and you let the vfs layer manage *everything*,
+> and the dentries and inodes are all you have. Or you are a *real*
+> filesystem and you maintain your own data structures and the dentries and
+> inodes are just the in-memory caches.
+> 
+> This "do both" is UNACCEPTABLE.
+> 
+
+The dentries were created for the inode numbers so that I did not need to
+add them to meta data. They are generated at creation time.
+
+I don't know how important inode numbers are. If they can all just have
+random inode numbers and it doesn't break user space, where an inode number
+will be one value at one read and another shortly after, is that going to
+cause a problem?
+
+Maybe I can just use a hash to generate he inode numbers from the name?
+Hopefully there will be no collisions. Then I don't need the dentry
+creation at all.
+
+I do realize that if the dentries get freed due to reclaim and recreated,
+their inode numbers will be different. But for a virtual file system, I
+don't know how important having consistent inode numbers is.
+
+-- Steve
+
 
