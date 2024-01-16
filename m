@@ -1,103 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-8035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9AC582EB21
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 09:48:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17FFA82EB3E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 10:04:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2077D285533
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 08:48:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96C1B1F24129
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 09:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9786F125DB;
-	Tue, 16 Jan 2024 08:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4421125D9;
+	Tue, 16 Jan 2024 09:04:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XJHz/uxT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E17125B0;
-	Tue, 16 Jan 2024 08:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4TDhy80gLFz9xvNW;
-	Tue, 16 Jan 2024 16:29:36 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 8282314025A;
-	Tue, 16 Jan 2024 16:47:52 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwC38CSpQqZlOdikAA--.3968S2;
-	Tue, 16 Jan 2024 09:47:51 +0100 (CET)
-Message-ID: <3b440f064a1ae04d69f7e85f4077f8406c0eac67.camel@huaweicloud.com>
-Subject: Re: [PATCH v9 13/25] security: Introduce file_release hook
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Al Viro <viro@zeniv.linux.org.uk>, casey@schaufler-ca.com
-Cc: brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
- neilb@suse.de,  kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
- paul@paul-moore.com,  jmorris@namei.org, serge@hallyn.com,
- zohar@linux.ibm.com,  dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
- dhowells@redhat.com,  jarkko@kernel.org, stephen.smalley.work@gmail.com,
- eparis@parisplace.org,  shuah@kernel.org, mic@digikod.net,
- linux-kernel@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
- linux-nfs@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org,  keyrings@vger.kernel.org,
- selinux@vger.kernel.org,  linux-kselftest@vger.kernel.org, Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Tue, 16 Jan 2024 09:47:34 +0100
-In-Reply-To: <20240115191508.GG1674809@ZenIV>
-References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
-	 <20240115181809.885385-14-roberto.sassu@huaweicloud.com>
-	 <20240115191508.GG1674809@ZenIV>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81F510782;
+	Tue, 16 Jan 2024 09:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-680a13af19bso60737736d6.0;
+        Tue, 16 Jan 2024 01:04:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705395863; x=1706000663; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uWDRecvJH/tBfBcAESVK7bhkquoB7rKpSpOtLZHAkmI=;
+        b=XJHz/uxTVccqxXc10c9YAwijh6zQMggb2Rh23pRqe50E9h9Z0wQ+oZuR47Oszrf1o7
+         //KHCMudYE9LeKDc7K1/lLQ/i2tMTgcILyAqmwke733WOcKYqMupQQy6YdbsvS4XRi4w
+         nAqLd1LRykoVjVbfSg2hpVqMJGI2GXu5OWtR/C8GRS+PPBKQZ8CRNxZ8rVecaF5BPR/e
+         E2vIGzS+FRAwS5Y2FJtEcZzXpAiFUdCBcl027vbVFbmK6KEcHgyl7Zp8IFr0hCYJKtxF
+         T5CpwktsnPFDjxNI6NC7VjcH2UVR8hB473FDVdd2rfXjNcNGHnhEFV5t61BJL8nFMKG6
+         uISw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705395863; x=1706000663;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uWDRecvJH/tBfBcAESVK7bhkquoB7rKpSpOtLZHAkmI=;
+        b=BRY79LsY2KsRJZ4bb+hEHn6lkBywzXivq7ZEzScU7S74lF5d8x/SMcPKLsZ4uqZu2u
+         Uckp+TavTuqp47Z2ZwV6toNajsZX2CnqXHpPfPYd1h/o0k4mdqh/c1FJ9k8ranpT7tQS
+         GytvRKYu5YjmaMhsNPpN/tiTV/0BmbfAsYKKq4/mASoOufybeVx+K3A53eKASBuYJD4X
+         fmwiQHAiGcHK3o44ijoomctFmpr7ne0yJKEnmhuRQW1jnai5oStPJGvhtnsigrw3sEiM
+         VXx0VYG9G60x30xUmMNakmPEd//84z6Tes4ACEZB6SeVyM0eoKkdaYy2bYBAQaRafxNe
+         +9+A==
+X-Gm-Message-State: AOJu0Yyhx0fWwyPoFo0sU4kjUEi2fI/Fu2sl5kkaztM/zCa+bNSoNDVX
+	yrnTQ+0BRhLpxC0KqvDtwtkj7zBL9Z6VCVbKlfo=
+X-Google-Smtp-Source: AGHT+IGWKyufLse5EGJdpy8ol/yrNSirXSN+1lIVNC17PLfzyN9+ty3GRnNxFXtaHlcfbAOD1P+pzX+ag9nf4PZ+BR8=
+X-Received: by 2002:ad4:5c49:0:b0:67f:2ab2:d8b3 with SMTP id
+ a9-20020ad45c49000000b0067f2ab2d8b3mr10157636qva.30.1705395863540; Tue, 16
+ Jan 2024 01:04:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwC38CSpQqZlOdikAA--.3968S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw1DZr4xZrWxZr48XF43Wrg_yoWxArX_ur
-	yqkw1kC398CF47A3sruF1fZrZ2qFW8AF15X390qrnxWayfGa4IkFWF9rZ5Z348GF4IyF9I
-	gFn0vF4xKr1agjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb7xYFVCjjxCrM7AC8VAFwI0_Wr0E3s1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04
-	k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQZ2-UUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAEBF1jj5iWWAABsn
+References: <20240115232611.209265-1-sashal@kernel.org> <20240115232611.209265-12-sashal@kernel.org>
+In-Reply-To: <20240115232611.209265-12-sashal@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 16 Jan 2024 11:04:12 +0200
+Message-ID: <CAOQ4uxgGY1949dr0-rt5wuNu-LH=DiRSZrJnamD9bgUtGM9hKQ@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 6.1 12/14] add unique mount ID
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Miklos Szeredi <mszeredi@redhat.com>, Ian Kent <raven@themaw.net>, 
+	Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-01-15 at 19:15 +0000, Al Viro wrote:
-> On Mon, Jan 15, 2024 at 07:17:57PM +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > In preparation for moving IMA and EVM to the LSM infrastructure, introd=
-uce
-> > the file_release hook.
-> >=20
-> > IMA calculates at file close the new digest of the file content and wri=
-tes
-> > it to security.ima, so that appraisal at next file access succeeds.
-> >=20
-> > An LSM could implement an exclusive access scheme for files, only allow=
-ing
-> > access to files that have no references.
->=20
-> Elaborate that last part, please.
+On Tue, Jan 16, 2024 at 1:46=E2=80=AFAM Sasha Levin <sashal@kernel.org> wro=
+te:
+>
+> From: Miklos Szeredi <mszeredi@redhat.com>
+>
+> [ Upstream commit 98d2b43081972abeb5bb5a087bc3e3197531c46e ]
+>
+> If a mount is released then its mnt_id can immediately be reused.  This i=
+s
+> bad news for user interfaces that want to uniquely identify a mount.
+>
 
-Apologies, I didn't understand that either. Casey?
+Sasha,
 
-Thanks
+This is a new API, not a bug fix.
+Maybe AUTOSEL was triggered by the words "This is bad news for user...."?
 
-Roberto
+You have also selected this to other 6.*.y kernels.
 
+Thanks,
+Amir.
+
+
+> Implementing a unique mount ID is trivial (use a 64bit counter).
+> Unfortunately userspace assumes 32bit size and would overflow after the
+> counter reaches 2^32.
+>
+> Introduce a new 64bit ID alongside the old one.  Initialize the counter t=
+o
+> 2^32, this guarantees that the old and new IDs are never mixed up.
+>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> Link: https://lore.kernel.org/r/20231025140205.3586473-2-mszeredi@redhat.=
+com
+> Reviewed-by: Ian Kent <raven@themaw.net>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  fs/mount.h                | 3 ++-
+>  fs/namespace.c            | 4 ++++
+>  fs/stat.c                 | 9 +++++++--
+>  include/uapi/linux/stat.h | 1 +
+>  4 files changed, 14 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/mount.h b/fs/mount.h
+> index 130c07c2f8d2..a14f762b3f29 100644
+> --- a/fs/mount.h
+> +++ b/fs/mount.h
+> @@ -72,7 +72,8 @@ struct mount {
+>         struct fsnotify_mark_connector __rcu *mnt_fsnotify_marks;
+>         __u32 mnt_fsnotify_mask;
+>  #endif
+> -       int mnt_id;                     /* mount identifier */
+> +       int mnt_id;                     /* mount identifier, reused */
+> +       u64 mnt_id_unique;              /* mount ID unique until reboot *=
+/
+>         int mnt_group_id;               /* peer group identifier */
+>         int mnt_expiry_mark;            /* true if marked for expiry */
+>         struct hlist_head mnt_pins;
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index e04a9e9e3f14..12c8e2eeda91 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -68,6 +68,9 @@ static u64 event;
+>  static DEFINE_IDA(mnt_id_ida);
+>  static DEFINE_IDA(mnt_group_ida);
+>
+> +/* Don't allow confusion with old 32bit mount ID */
+> +static atomic64_t mnt_id_ctr =3D ATOMIC64_INIT(1ULL << 32);
+> +
+>  static struct hlist_head *mount_hashtable __read_mostly;
+>  static struct hlist_head *mountpoint_hashtable __read_mostly;
+>  static struct kmem_cache *mnt_cache __read_mostly;
+> @@ -130,6 +133,7 @@ static int mnt_alloc_id(struct mount *mnt)
+>         if (res < 0)
+>                 return res;
+>         mnt->mnt_id =3D res;
+> +       mnt->mnt_id_unique =3D atomic64_inc_return(&mnt_id_ctr);
+>         return 0;
+>  }
+>
+> diff --git a/fs/stat.c b/fs/stat.c
+> index ef50573c72a2..a003e891a682 100644
+> --- a/fs/stat.c
+> +++ b/fs/stat.c
+> @@ -232,8 +232,13 @@ static int vfs_statx(int dfd, struct filename *filen=
+ame, int flags,
+>
+>         error =3D vfs_getattr(&path, stat, request_mask, flags);
+>
+> -       stat->mnt_id =3D real_mount(path.mnt)->mnt_id;
+> -       stat->result_mask |=3D STATX_MNT_ID;
+> +       if (request_mask & STATX_MNT_ID_UNIQUE) {
+> +               stat->mnt_id =3D real_mount(path.mnt)->mnt_id_unique;
+> +               stat->result_mask |=3D STATX_MNT_ID_UNIQUE;
+> +       } else {
+> +               stat->mnt_id =3D real_mount(path.mnt)->mnt_id;
+> +               stat->result_mask |=3D STATX_MNT_ID;
+> +       }
+>
+>         if (path.mnt->mnt_root =3D=3D path.dentry)
+>                 stat->attributes |=3D STATX_ATTR_MOUNT_ROOT;
+> diff --git a/include/uapi/linux/stat.h b/include/uapi/linux/stat.h
+> index 7cab2c65d3d7..2f2ee82d5517 100644
+> --- a/include/uapi/linux/stat.h
+> +++ b/include/uapi/linux/stat.h
+> @@ -154,6 +154,7 @@ struct statx {
+>  #define STATX_BTIME            0x00000800U     /* Want/got stx_btime */
+>  #define STATX_MNT_ID           0x00001000U     /* Got stx_mnt_id */
+>  #define STATX_DIOALIGN         0x00002000U     /* Want/got direct I/O al=
+ignment info */
+> +#define STATX_MNT_ID_UNIQUE    0x00004000U     /* Want/got extended stx_=
+mount_id */
+>
+>  #define STATX__RESERVED                0x80000000U     /* Reserved for f=
+uture struct statx expansion */
+>
+> --
+> 2.43.0
+>
+>
 
