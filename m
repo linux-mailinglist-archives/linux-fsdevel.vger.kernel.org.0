@@ -1,99 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-8037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256C282EB4C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 10:12:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D660B82EB6C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 10:25:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3F47B21DB7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 09:12:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6396B1F23DF8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 09:25:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C542D12B7A;
-	Tue, 16 Jan 2024 09:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A1B12B82;
+	Tue, 16 Jan 2024 09:25:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1UCSgVcN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A358612B60;
-	Tue, 16 Jan 2024 09:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 4720e67c28c74a629f859878749d6007-20240116
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.35,REQID:8f024591-b385-43f6-b9d7-3d5c201cf8a5,IP:10,
-	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:30
-X-CID-INFO: VERSION:1.1.35,REQID:8f024591-b385-43f6-b9d7-3d5c201cf8a5,IP:10,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:30
-X-CID-META: VersionHash:5d391d7,CLOUDID:8e0f4e8e-e2c0-40b0-a8fe-7c7e47299109,B
-	ulkID:240116171145JGHZDUJ7,BulkQuantity:0,Recheck:0,SF:101|17|38|24|100|19
-	|42|74|66|102,TC:nil,Content:0,EDM:5,IP:-2,URL:0,File:nil,Bulk:nil,QS:nil,
-	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS
-X-UUID: 4720e67c28c74a629f859878749d6007-20240116
-Received: from mail.kylinos.cn [(39.156.73.10)] by mailgw
-	(envelope-from <chentao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1565199830; Tue, 16 Jan 2024 17:11:43 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id C0AD6E000EBA;
-	Tue, 16 Jan 2024 17:11:42 +0800 (CST)
-X-ns-mid: postfix-65A6484E-552022199
-Received: from kernel.. (unknown [172.20.15.234])
-	by mail.kylinos.cn (NSMail) with ESMTPA id D80DAE000EB9;
-	Tue, 16 Jan 2024 17:11:38 +0800 (CST)
-From: Kunwu Chan <chentao@kylinos.cn>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kunwu Chan <chentao@kylinos.cn>
-Subject: [PATCH] buffer: Use KMEM_CACHE instead of kmem_cache_create()
-Date: Tue, 16 Jan 2024 17:11:37 +0800
-Message-Id: <20240116091137.92375-1-chentao@kylinos.cn>
-X-Mailer: git-send-email 2.39.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA8312B61
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 09:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1d47fae33e0so355635ad.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 01:25:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1705397100; x=1706001900; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uKa6o7frE7cAq4cWeMN0RRhba2ve9NcMTWMZZZ/7rLg=;
+        b=1UCSgVcN3J5ZBZyv0E6V74mSHAYrBp6qhfr/3qW+E6PC7WCnO5PFeRkzWD+oxULWrH
+         1i31SnfhhleHzQ98BEHpHxcn1IUTGGrmHgp3tWTzW/veRxUezN8WFRwTbpAQw+fzS4UT
+         gEfvc9tPpWzz//8nIjU37vFoiigkt3ffF38RWWRtGC7YcSNz4xqrBcvWgjR+xmzicN5I
+         cp/CRVwqlGqqtLTfaO5VWsN8m9a9tcptp4GaFWXS39winiv/ga20xO8K5PsKnkHaBcQH
+         ZuaRZo0TG55nfRb0Jpi53ZuNmijz8m72xy9XZE5pvMHuAkFDK2CuNw3i7BTNVzaJliD4
+         /jvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705397100; x=1706001900;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uKa6o7frE7cAq4cWeMN0RRhba2ve9NcMTWMZZZ/7rLg=;
+        b=CP8Vpp49zK3aK2cdWAnJ7lUMdiaMRb2wRj9SXnJsHXJl2/PWdYq8Ar6VIJLfsg8Jee
+         0a9Pr94slqUp5YilICgwwwLjvMuE1ge+gB2ajiAaNyHIC2jR6kV97Qf/NlPjF0hyavf8
+         uhSIFGbHqs+LVZbVpl80r7vlIkg9ptqf76lZt6cERWi+thEetQo6axKcDWUuhUHy3ojX
+         ahtCWyfPjadaztZnabvUsthoXBgVzvX/gCNuym+GCZhp2V9svdLds7aDV1UZ/zQHwQ6J
+         LOS+DIz5BO/uUBjWZzIGxvgDLUAWoLqWmTQW8xrg9noD4tDjkai+gANTNxA8YzYFZMNe
+         ILVQ==
+X-Gm-Message-State: AOJu0Yx10wgzNwrczD1ikc8kY21MdkN6QsjBFKU+KI8OUb/tHnMGHlUg
+	C20ARq5YJRoVRysn1p/vj2sWS1FAYqvcbc8dcYSZC7ivubY3
+X-Google-Smtp-Source: AGHT+IH2N+LXlQ1VOCyauXZQF1qVOnbGiJyJ6dzx3F/X3/F1giNPKttpEmDP+89ak1lCUrtIkPCBp85ezYuDsYasAK4=
+X-Received: by 2002:a17:902:fc46:b0:1d5:ad0f:7354 with SMTP id
+ me6-20020a170902fc4600b001d5ad0f7354mr508581plb.21.1705397099900; Tue, 16 Jan
+ 2024 01:24:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <000000000000653bb6060afad327@google.com> <0000000000004d67e4060f0bcc7b@google.com>
+In-Reply-To: <0000000000004d67e4060f0bcc7b@google.com>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Tue, 16 Jan 2024 10:24:48 +0100
+Message-ID: <CANp29Y4Aq4SteF7HqnexK4azquKrUbV9-dcfBqsxFf3snMJrew@mail.gmail.com>
+Subject: Re: [syzbot] [bfs?] general protection fault in bfs_get_block (2)
+To: syzbot <syzbot+dc6ed11a88fb40d6e184@syzkaller.appspotmail.com>
+Cc: aivazian.tigran@gmail.com, axboe@kernel.dk, brauner@kernel.org, 
+	jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, yuran.pereira@hotmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Use the new KMEM_CACHE() macro instead of direct kmem_cache_create
-to simplify the creation of SLAB caches.
+#syz fix: fs: Block writes to mounted block devices
 
-Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
----
- fs/buffer.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/fs/buffer.c b/fs/buffer.c
-index d3bcf601d3e5..9c8156cce9b7 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -3121,12 +3121,8 @@ void __init buffer_init(void)
- 	unsigned long nrpages;
- 	int ret;
-=20
--	bh_cachep =3D kmem_cache_create("buffer_head",
--			sizeof(struct buffer_head), 0,
--				(SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|
--				SLAB_MEM_SPREAD),
--				NULL);
--
-+	bh_cachep =3D KMEM_CACHE(buffer_head,
-+				SLAB_RECLAIM_ACCOUNT|SLAB_PANIC|SLAB_MEM_SPREAD);
- 	/*
- 	 * Limit the bh occupancy to 10% of ZONE_NORMAL
- 	 */
---=20
-2.39.2
-
+On Tue, Jan 16, 2024 at 9:20=E2=80=AFAM syzbot
+<syzbot+dc6ed11a88fb40d6e184@syzkaller.appspotmail.com> wrote:
+>
+> syzbot suspects this issue was fixed by commit:
+>
+> commit 6f861765464f43a71462d52026fbddfc858239a5
+> Author: Jan Kara <jack@suse.cz>
+> Date:   Wed Nov 1 17:43:10 2023 +0000
+>
+>     fs: Block writes to mounted block devices
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D16c3c513e8=
+0000
+> start commit:   98b1cc82c4af Linux 6.7-rc2
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Daec35c1281ec0=
+aaf
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Ddc6ed11a88fb40d=
+6e184
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D16783b84e80=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D165172a0e8000=
+0
+>
+> If the result looks correct, please mark the issue as fixed by replying w=
+ith:
+>
+> #syz fix: fs: Block writes to mounted block devices
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
+>
 
