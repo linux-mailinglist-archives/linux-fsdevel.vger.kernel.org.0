@@ -1,165 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-8074-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171FB82F249
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 17:19:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB61682F27E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 17:38:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EA481C2353A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 16:19:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20D1AB23634
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 16:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C31A1C6B4;
-	Tue, 16 Jan 2024 16:19:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211881C6AB;
+	Tue, 16 Jan 2024 16:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qo/1JOmo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4751C6A3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 16:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-360a416bb22so61100625ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 08:19:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705421958; x=1706026758;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xx2NiXfEC2f9ShTuPE2ICSF2WxhDPgmMA0aZZzN7CeY=;
-        b=Y1VitscZHI0dLEDag/KLcXfD4AHnXdTSktlS2rwHy0cRzU/xr9Vx1YUCKesSucXfD7
-         FinZhkY97zFo7CFvRpt+f23letcuiceI8fwlGIvLYTNK5YMpfo74so1/J/tVWG9kCLMy
-         ODaM5Hs/782fsQNFWvqkaxWfdAhLkb7CvhYfTmN2iK+oAlRMbKOrGIBEXvf8fDAGm098
-         hJWr8JNrsXEqpdUhKJsgo60gTGemHLgh9ffqS99MJDr953qknOTUB6yrth/xi9Og18F4
-         GHOTpgHY0rGfSfTUFeWWxoxWDEIbV01p+BPcUfhXFm0V8rIKGVm2RbAS5mJpyZby//Dv
-         1UAg==
-X-Gm-Message-State: AOJu0YwRkP+PAz72n5AlhJAAqFubywyE5oo44S+LW5RzuPYLhmW+5cX1
-	BwzejKQatPQI3T5Capzq3LUl68MNKR3o+ZDU56cRbiycNtW9
-X-Google-Smtp-Source: AGHT+IGPXIwfcx+ZEzWEl/c87WEvLS1rOC2xBs8/tlG/IpXlFdlUU8PqTyvIuo3HXMRs9HjU3v5toRNTOexomQETgrSp6qHTErtk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C451CA83;
+	Tue, 16 Jan 2024 16:37:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85C53C433F1;
+	Tue, 16 Jan 2024 16:37:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705423065;
+	bh=jre5ipGlkss5zAu1aIdBqL+hSwB+mdQlTFI/dlhzA6c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qo/1JOmobPmFtak/7HKTx0XejNptaXUIipjwln1OdfT3drLtS0ju3ZCDZ8sbscoY3
+	 4w4l/W4KVXVwszFTlZlVW6GiSdpXfV8m2kdN2LXG/LWTRktlE1nXOiKWKVMehdMgq/
+	 YSCXgjMlSkfUewRXwJhrywSfxDJPTmgTlXrgty2B2R4paYEzJt9t8abuG6BVMWRbcQ
+	 VahL2b5MDPJ3rrb6XOVsaS6+Lz6ihmZIC0J83Hxq6cSQwnTmonnERgAypkCcgBWhY+
+	 YG408WTKIX6WfbU2m4LVeQyQnNixVSn84OGSHw8OczrSxWtNm28O0rPGIy/gdCxoq1
+	 hwfo9TCSBIXqg==
+Date: Tue, 16 Jan 2024 17:37:39 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Linus Torvalds <torvalds@linuxfoundation.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, netdev@vger.kernel.org, paul@paul-moore.com, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH bpf-next 03/29] bpf: introduce BPF token object
+Message-ID: <20240116-gradmesser-labeln-9a1d9918c92e@brauner>
+References: <20240109-tausend-tropenhelm-2a9914326249@brauner>
+ <CAEf4BzaAoXYb=qnj6rvDw8VewhvYNrs5oxe=q7VBe0jjWXivhg@mail.gmail.com>
+ <20240110-nervt-monopol-6d307e2518f4@brauner>
+ <CAEf4BzYOU5ZVqnTDTEmrHL-+tYY76kz4LO_0XauWibnhtzCFXg@mail.gmail.com>
+ <20240111-amten-stiefel-043027f9520f@brauner>
+ <CAEf4BzYcec97posh6N3LM8tJLsxrSLiFYq9csRWcy8=VnTJ23A@mail.gmail.com>
+ <20240112-unpraktisch-kuraufenthalt-4fef655deab2@brauner>
+ <CAEf4Bza7UKjv1Hh_kcyBVJw22LDv4ZNA5uV7+WBdnhsM9O7uGQ@mail.gmail.com>
+ <20240112-hetzt-gepard-5110cf759a34@brauner>
+ <CAEf4BzYNRNbaNNGRSUCaY3OQrzXPAdR6gGB0PmXhwsn8rUAs0Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12ea:b0:361:9322:6ae0 with SMTP id
- l10-20020a056e0212ea00b0036193226ae0mr27848iln.6.1705421958506; Tue, 16 Jan
- 2024 08:19:18 -0800 (PST)
-Date: Tue, 16 Jan 2024 08:19:18 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000007728e060f127eaf@google.com>
-Subject: [syzbot] [exfat?] kernel BUG in iov_iter_revert
-From: syzbot <syzbot+fd404f6b03a58e8bc403@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzYNRNbaNNGRSUCaY3OQrzXPAdR6gGB0PmXhwsn8rUAs0Q@mail.gmail.com>
 
-Hello,
+On Sat, Jan 13, 2024 at 06:29:33PM -0800, Andrii Nakryiko wrote:
+> On Fri, Jan 12, 2024 at 11:17 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > > > My point is that the capable logic will walk upwards the user namespace
+> > > > hierarchy from the token->userns until the user namespace of the caller
+> > > > and terminate when it reached the init_user_ns.
+> > > >
+> > > > A caller is located in some namespace at the point where they call this
+> > > > function. They provided a token. The caller isn't capable in the
+> > > > namespace of the token so the function falls back to init_user_ns. Two
+> > > > interesting cases:
+> > > >
+> > > > (1) The caller wasn't in an ancestor userns of the token. If that's the
+> > > >     case then it follows that the caller also wasn't in the init_user_ns
+> > > >     because the init_user_ns is a descendant of all other user
+> > > >     namespaces. So falling back will fail.
+> > >
+> > > agreed
+> > >
+> > > >
+> > > > (2) The caller was in the same or an ancestor user namespace of the
+> > > >     token but didn't have the capability in that user namespace:
+> > > >
+> > > >      (i) They were in a non-init_user_ns. Therefore they can't be
+> > > >          privileged in init_user_ns.
+> > > >     (ii) They were in init_user_ns. Therefore, they lacked privileges in
+> > > >          the init_user_ns.
+> > > >
+> > > > In both cases your fallback will do nothing iiuc.
+> > >
+> > > agreed as well
+> > >
+> > > And I agree in general that there isn't a *practically useful* case
+> > > where this would matter much. But there is still (at least one) case
+> > > where there could be a regression: if token is created in
+> > > init_user_ns, caller has CAP_BPF in init_user_ns, caller passes that
+> > > token to BPF_PROG_LOAD, and LSM policy rejects that token in
+> > > security_bpf_token_capable(). Without the above implementation such
+> > > operation will be rejected, even though if there was no token passed
+> > > it would succeed. With my implementation above it will succeed as
+> > > expected.
+> >
+> > If that's the case then prevent the creation of tokens in the
+> > init_user_ns and be done with it. If you fallback anyway then this is
+> > the correct solution.
+> >
+> > Make this change, please. I'm not willing to support this weird fallback
+> > stuff which is even hard to reason about.
+> 
+> Alright, added an extra check. Ok, so in summary I have the changes
+> below compared to v1 (plus a few extra LSM-related test cases added):
+> 
+> diff --git a/kernel/bpf/token.c b/kernel/bpf/token.c
+> index a86fccd57e2d..7d04378560fd 100644
+> --- a/kernel/bpf/token.c
+> +++ b/kernel/bpf/token.c
+> @@ -9,18 +9,22 @@
+>  #include <linux/user_namespace.h>
+>  #include <linux/security.h>
+> 
+> +static bool bpf_ns_capable(struct user_namespace *ns, int cap)
+> +{
+> +       return ns_capable(ns, cap) || (cap != CAP_SYS_ADMIN &&
+> ns_capable(ns, CAP_SYS_ADMIN));
+> +}
+> +
+>  bool bpf_token_capable(const struct bpf_token *token, int cap)
+>  {
+> -       /* BPF token allows ns_capable() level of capabilities, but only if
+> -        * token's userns is *exactly* the same as current user's userns
+> -        */
+> -       if (token && current_user_ns() == token->userns) {
+> -               if (ns_capable(token->userns, cap) ||
+> -                   (cap != CAP_SYS_ADMIN && ns_capable(token->userns,
+> CAP_SYS_ADMIN)))
+> -                       return security_bpf_token_capable(token, cap) == 0;
+> -       }
+> -       /* otherwise fallback to capable() checks */
+> -       return capable(cap) || (cap != CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN));
+> +       struct user_namespace *userns;
+> +
+> +       /* BPF token allows ns_capable() level of capabilities */
+> +       userns = token ? token->userns : &init_user_ns;
+> +       if (!bpf_ns_capable(userns, cap))
+> +               return false;
+> +       if (token && security_bpf_token_capable(token, cap) < 0)
+> +               return false;
+> +       return true;
+>  }
+> 
+>  void bpf_token_inc(struct bpf_token *token)
+> @@ -32,7 +36,7 @@ static void bpf_token_free(struct bpf_token *token)
+>  {
+>         security_bpf_token_free(token);
+>         put_user_ns(token->userns);
+> -       kvfree(token);
+> +       kfree(token);
+>  }
+> 
+>  static void bpf_token_put_deferred(struct work_struct *work)
+> @@ -152,6 +156,12 @@ int bpf_token_create(union bpf_attr *attr)
+>                 goto out_path;
+>         }
+> 
+> +       /* Creating BPF token in init_user_ns doesn't make much sense. */
+> +       if (current_user_ns() == &init_user_ns) {
+> +               err = -EOPNOTSUPP;
+> +               goto out_path;
+> +       }
+> +
+>         mnt_opts = path.dentry->d_sb->s_fs_info;
+>         if (mnt_opts->delegate_cmds == 0 &&
+>             mnt_opts->delegate_maps == 0 &&
+> @@ -179,7 +189,7 @@ int bpf_token_create(union bpf_attr *attr)
+>                 goto out_path;
+>         }
+> 
+> -       token = kvzalloc(sizeof(*token), GFP_USER);
+> +       token = kzalloc(sizeof(*token), GFP_USER);
+>         if (!token) {
+>                 err = -ENOMEM;
+>                 goto out_file;
 
-syzbot found the following issue on:
+Thank you! Looks good,
 
-HEAD commit:    052d534373b7 Merge tag 'exfat-for-6.8-rc1' of git://git.ke..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=108ca8b3e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7c8840a4a09eab8
-dashboard link: https://syzkaller.appspot.com/bug?extid=fd404f6b03a58e8bc403
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1558210be80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d39debe80000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b1b0ffd73481/disk-052d5343.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c25614b900ba/vmlinux-052d5343.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7dd1842e2ad4/bzImage-052d5343.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/291ad1624ec1/mount_3.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+fd404f6b03a58e8bc403@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at lib/iov_iter.c:582!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 5043 Comm: syz-executor166 Not tainted 6.7.0-syzkaller-09928-g052d534373b7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
-RIP: 0010:iov_iter_revert lib/iov_iter.c:582 [inline]
-RIP: 0010:iov_iter_revert+0x328/0x360 lib/iov_iter.c:567
-Code: 8e 94 78 fd e9 8f fd ff ff e8 e4 94 78 fd e9 de fe ff ff e8 ba 94 78 fd eb a2 e8 d3 94 78 fd e9 12 fe ff ff e8 b9 8c 21 fd 90 <0f> 0b e8 c1 94 78 fd e9 23 fe ff ff e8 b7 94 78 fd e9 64 fe ff ff
-RSP: 0018:ffffc9000337f9e0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 00000000001bca00 RCX: ffffffff84656a77
-RDX: ffff888019313b80 RSI: ffffffff84656c97 RDI: 0000000000000001
-RBP: ffffc9000337fb30 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: fffffffffffffdef R14: 0000000000000000 R15: ffff888047da8740
-FS:  0000555555c9a380(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000056518e8170a8 CR3: 0000000048309000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- exfat_direct_IO+0x320/0x510 fs/exfat/inode.c:538
- generic_file_read_iter+0x1dd/0x450 mm/filemap.c:2759
- call_read_iter include/linux/fs.h:2079 [inline]
- aio_read+0x318/0x4d0 fs/aio.c:1597
- __io_submit_one fs/aio.c:1998 [inline]
- io_submit_one+0x1480/0x1de0 fs/aio.c:2047
- __do_sys_io_submit fs/aio.c:2106 [inline]
- __se_sys_io_submit fs/aio.c:2076 [inline]
- __x64_sys_io_submit+0x1c3/0x350 fs/aio.c:2076
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xd3/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-RIP: 0033:0x7f6eb9491c79
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdb9c8bf78 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
-RAX: ffffffffffffffda RBX: 00007ffdb9c8bf80 RCX: 00007f6eb9491c79
-RDX: 0000000020000540 RSI: 0000000000003f0a RDI: 00007f6eb944a000
-RBP: 00007f6eb9506610 R08: 65732f636f72702f R09: 65732f636f72702f
-R10: 65732f636f72702f R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffdb9c8c1b8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:iov_iter_revert lib/iov_iter.c:582 [inline]
-RIP: 0010:iov_iter_revert+0x328/0x360 lib/iov_iter.c:567
-Code: 8e 94 78 fd e9 8f fd ff ff e8 e4 94 78 fd e9 de fe ff ff e8 ba 94 78 fd eb a2 e8 d3 94 78 fd e9 12 fe ff ff e8 b9 8c 21 fd 90 <0f> 0b e8 c1 94 78 fd e9 23 fe ff ff e8 b7 94 78 fd e9 64 fe ff ff
-RSP: 0018:ffffc9000337f9e0 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 00000000001bca00 RCX: ffffffff84656a77
-RDX: ffff888019313b80 RSI: ffffffff84656c97 RDI: 0000000000000001
-RBP: ffffc9000337fb30 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: fffffffffffffdef R14: 0000000000000000 R15: ffff888047da8740
-FS:  0000555555c9a380(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6eb944a000 CR3: 0000000048309000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Acked-by: Christian Brauner <brauner@kernel.org>
 
