@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-8105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA8A82F75C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 21:21:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE2A82F761
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 21:21:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D25FB1C24479
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 20:21:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4864F1F20FE0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 20:21:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258C77C089;
-	Tue, 16 Jan 2024 19:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E6B7C0BB;
+	Tue, 16 Jan 2024 19:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFfTZRBl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzcsdZNn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6694E37719;
-	Tue, 16 Jan 2024 19:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B3F7C090;
+	Tue, 16 Jan 2024 19:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705434446; cv=none; b=MImqtbtvBbpoTW8ukNFTDqYxLzOARcUD2Jhg4dO/jxMaiVKvNZEgARXdyk3J/BUPu2TtkdoLueX6zy1nUnLxDaYufv8nBW/rQ3XRGTwesTAcxYtKqiBdQJeEJvFBTvQNbM+UhRWgBjNYUdZvIiTnjp8hGPOsYPlTbQrvknCH8PA=
+	t=1705434450; cv=none; b=sz9dLmM+TWpNoP6Gkk3d05TSiiQ6S20DkYRqnDO9mK1QP2iMnrK1TpxovFjthvyadTA+i1IZ+rx9/PhgjZPRFM5E7oTIq8oF4LAy6INYQogf0lWKG5wpJ70i1EyjCJp/kyEVKvYkY2BOKPbJnPtNxJ9JwRD4ZCDd+Z0poOWmMAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705434446; c=relaxed/simple;
-	bh=66rpBBxRF2rJb303Mt/pEYvt97DkJ3vkW26GZ/SUUu8=;
+	s=arc-20240116; t=1705434450; c=relaxed/simple;
+	bh=hDNBllLWV7rE28a4tOW8PqqKsyO/cQNheeJo5XTQ5lQ=;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
 	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	b=ZEpaDpvNhGz86FUCZr8mmI/PUg5hEjnR0luvLl43BtzvGab7p9OWS6QjPoySaMOMMBWZ6HP/F4V0A9SEVcg8x2E1joLvEtqzP5d1IU4q2+4uffhFvXQeLYxI9UMpiD/zcXIo+4Sj9sR8M3JZKm4btVYTxq9wE6HkRWB+eXG3mEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFfTZRBl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F4F6C43399;
-	Tue, 16 Jan 2024 19:47:22 +0000 (UTC)
+	b=f0QuNc4RgukpEp8zkrstK3AJoT9jKriX4rRrCC3ZR+bInF+ki36h7SAMkBa8lBbmZW4G/GtqUoBN/kTAA9hQFvGZk7bNOqmG2M4Logzu2Y1yQZ+LX2D3u7s9EA6V4Agon5UlvN5FIN6SNgtaxjieo+cO+1k+gjI3APLbR8OjTvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzcsdZNn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A334C43609;
+	Tue, 16 Jan 2024 19:47:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705434446;
-	bh=66rpBBxRF2rJb303Mt/pEYvt97DkJ3vkW26GZ/SUUu8=;
+	s=k20201202; t=1705434450;
+	bh=hDNBllLWV7rE28a4tOW8PqqKsyO/cQNheeJo5XTQ5lQ=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=tFfTZRBlkiCk9Eab2eEQSMGmc8OV/LJsjXpZlKXSKlldgNFXLvc7bC4usSVlvaW9i
-	 Gkg6WfRCh4Olf6lZcfwtO+XwV+irXRZQ+Y6ZxIlWrG2+VLXv0aJYjPdJAXoNIpjKXn
-	 dgeDVmNkhzPt282Zja4kOLVK+mylOvOUy/lLahMNq5K/YV4NU7mquEmoMeVy50mZSv
-	 fK8klBfP3WI8Hphmx/ooWaS75ivWuPXCb3UTg3hFTlCOFxgRzaod9pKbtjbVsbgrM9
-	 U/yi/ERcULhVKac/eILSgveCKb8IkiBAk+5CWmQi6TL0pxwSyZrSP673CqT95KZdSO
-	 sGheVeaPna3EQ==
+	b=kzcsdZNnwtOwDz+0ScxdCgLnAXucXNw7pUfdtWDuahWCJ7bHfkRUMtfY6tW9uFCRv
+	 0Xtqh8iUkDN13I8l8shnWGlj+o+zcpmjyOpb1sgBdGn7Y3ZyL/ulTeR5AuqnDEe7j0
+	 xT+TxTRPGklIuXvF/YYUpO0joYz4Dp/+pQpfOr/GK1QG/XkciN2+QNWytsueK4FCPi
+	 r7iqT5aCProcxW19BTUCkdfn4U3HnjrCJvDQUnVTu7ZdHG96LkSDYX1CMcMvf2ThBE
+	 MAnnPuenyKlNFCUf1jJQA0xj/bvMxMk3FETk6Fja7sdct35OA6hb+BaEvrhZPXMAX4
+	 oPdHxej0qesCA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 16 Jan 2024 14:46:06 -0500
-Subject: [PATCH 10/20] filelock: convert
- locks_{insert,delete}_global_blocked
+Date: Tue, 16 Jan 2024 14:46:07 -0500
+Subject: [PATCH 11/20] filelock: convert the IS_* macros to take
+ file_lock_core
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240116-flsplit-v1-10-c9d0f4370a5d@kernel.org>
+Message-Id: <20240116-flsplit-v1-11-c9d0f4370a5d@kernel.org>
 References: <20240116-flsplit-v1-0-c9d0f4370a5d@kernel.org>
 In-Reply-To: <20240116-flsplit-v1-0-c9d0f4370a5d@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -89,77 +89,154 @@ Cc: linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
  linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
  linux-trace-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1939; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=66rpBBxRF2rJb303Mt/pEYvt97DkJ3vkW26GZ/SUUu8=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlpt0hPQuRA/Abxngx548TLejvptzB1l9nP03DR
- GO9Nuqe4y2JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZabdIQAKCRAADmhBGVaC
- FQUSD/9S5nDMSLzIoBx9vB361eiaIcOC3TmbdtceOtF+KCiAi9eWXt4DhFqbNtdbqC9rpx+3IfC
- mLhS6/Zw4mAZqZBPGcURkFfRoVmhyYCzug5fY+rVF1MyrrNkaDNSOcz05S9bmJ9wITmBnfEYZjb
- sM6jHMAaYV5xpLQBGgWvfVaZLK83fi8FqNXgW2DG7qoAvvzIFfPD5bM0aQQ0Pqj27m3W6YmvObC
- uoJbVbWj8pq/ZETS5jQiQ4zsqlNb2ZyQEgJmkrcTZ/XiXng62F03RXAay1dDJ5/8l2qN96Lo+qO
- 96PGNAOfmuRcdJ+us2i4GxlR1JYpfGR2TkoTJH87evlOXL8h2GPijHylqikofsvPulBK7/N6ABi
- RjbWHWgeBNspA7JR0yTo4yYy+iChvBMbnCEGPBGNIeaR9Z4UNFOjjIpdfA/5hmp4yXksPPmAdwF
- g9qc89zKVTHrYh8NHS4MdyOVSFeSFn9HBsM79eH7BQcZSFJOMcJrBEcq8ZJZhmTD51FbhVNnqeo
- X/4w9YASaRiLmBARrAg6RvXwBjENPIg5lu0iZu/UOCokCgi+F4qDGNUXfL/uTT5Cxw4i7KsduQi
- m9ZOIiArcBNp765MHY8i4z+pdh4K1jQdLgw/lKAcYqzNUs11fbNKTSljL7FwC9SWzTUN9zzQmIg
- 0W+NZaNYeCIrsZw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4374; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=hDNBllLWV7rE28a4tOW8PqqKsyO/cQNheeJo5XTQ5lQ=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlpt0h/L8At3nBU2VgP+pUsnh2pXoFcx9uKIWpb
+ Hqa7gddCUGJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZabdIQAKCRAADmhBGVaC
+ FYM9D/4/y07BKDV0bDKK4dYeYFXbGjF1XoU54+6uRIu/8Wtx0wBs9naTPAB/E6sCv7BGMv9W+x1
+ b1wcPq336mQ8WcP8VafWXEQa6y9kffgjyqsFmcaSXYxPWp3ulvEUAUtni0gfT5isyVIt9oYooyA
+ qYrYbKllZHg46JotkIK/E0cX2zHl2/kaWWxuufxRFPItIQ1Oet34OZKF5hkQFqlwCGcTAfZIDnz
+ urWXdczSOzfxHf7XDY9H4Lv8qNROKN95Fl82IJ+31zTIoM17iI+vzxyBjKX5yCiUL6bzlgwNIBb
+ fZvAYQ3mNJtJwXD+am8GOFC++hBSMEZbkOhgiUy1zBH/4F7rjkUJH5Rv8jiq+2syNyIS6ffo/8A
+ 9xW+8ANWLZ+ASuPDGI7psXJCwhT944/Afp1pjfUTH66dd+dvNqq95m26KxYlKLizNMYTi8L8AtW
+ H5pDBZlFt30Y6jZkmwyMPfLEq6mCWCVMKBjpVYPx2AAFjDu928AMd3SECwfdF3NEEys/eX4Vo4M
+ vcyItUEyGVwpXH9HOeNuyCpYMXq2sH4ZzY71JpDYuZxYbA7MncxxewQXScLup3Rv2fe5Ij9F4Mi
+ ZXFaATkQE9c4mvpn8IMRbuyGsmrJPM3xSi6ZKqzTeaI4+6clsh1Jl8/OILx0h5MG8pTP8WdZwS1
+ wThFLIR2rQGY4Hw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Have locks_insert_global_blocked and locks_delete_global_blocked take a
-struct file_lock_core pointer.
+I couldn't get them to work properly as macros, so convert them
+to static inlines instead (which is probably better for the type safety
+anyway).
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/locks.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ fs/locks.c | 46 +++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 33 insertions(+), 13 deletions(-)
 
 diff --git a/fs/locks.c b/fs/locks.c
-index 5fe54f48b9c1..770aaa5809ba 100644
+index 770aaa5809ba..eddf4d767d5d 100644
 --- a/fs/locks.c
 +++ b/fs/locks.c
-@@ -642,19 +642,18 @@ posix_owner_key(struct file_lock_core *flc)
- 	return (unsigned long) flc->fl_owner;
- }
+@@ -70,10 +70,26 @@
  
--static void locks_insert_global_blocked(struct file_lock *waiter)
-+static void locks_insert_global_blocked(struct file_lock_core *waiter)
+ #include <linux/uaccess.h>
+ 
+-#define IS_POSIX(fl)	(fl->fl_core.fl_flags & FL_POSIX)
+-#define IS_FLOCK(fl)	(fl->fl_core.fl_flags & FL_FLOCK)
+-#define IS_LEASE(fl)	(fl->fl_core.fl_flags & (FL_LEASE|FL_DELEG|FL_LAYOUT))
+-#define IS_OFDLCK(fl)	(fl->fl_core.fl_flags & FL_OFDLCK)
++static inline bool IS_POSIX(struct file_lock_core *flc)
++{
++	return flc->fl_flags & FL_POSIX;
++}
++
++static inline bool IS_FLOCK(struct file_lock_core *flc)
++{
++	return flc->fl_flags & FL_FLOCK;
++}
++
++static inline bool IS_OFDLCK(struct file_lock_core *flc)
++{
++	return flc->fl_flags & FL_OFDLCK;
++}
++
++static inline bool IS_LEASE(struct file_lock_core *flc)
++{
++	return flc->fl_flags & (FL_LEASE|FL_DELEG|FL_LAYOUT);
++}
++
+ #define IS_REMOTELCK(fl)	(fl->fl_core.fl_pid <= 0)
+ 
+ static bool lease_breaking(struct file_lock *fl)
+@@ -761,6 +777,7 @@ static void __locks_insert_block(struct file_lock *blocker,
+ 					       struct file_lock *))
  {
- 	lockdep_assert_held(&blocked_lock_lock);
+ 	struct file_lock *fl;
++	struct file_lock_core *bflc;
+ 	BUG_ON(!list_empty(&waiter->fl_core.fl_blocked_member));
  
--	hash_add(blocked_hash, &waiter->fl_core.fl_link,
--		 posix_owner_key(&waiter->fl_core));
-+	hash_add(blocked_hash, &waiter->fl_link, posix_owner_key(waiter));
- }
- 
--static void locks_delete_global_blocked(struct file_lock *waiter)
-+static void locks_delete_global_blocked(struct file_lock_core *waiter)
- {
- 	lockdep_assert_held(&blocked_lock_lock);
- 
--	hash_del(&waiter->fl_core.fl_link);
-+	hash_del(&waiter->fl_link);
- }
- 
- /* Remove waiter from blocker's block list.
-@@ -664,7 +663,7 @@ static void locks_delete_global_blocked(struct file_lock *waiter)
-  */
- static void __locks_delete_block(struct file_lock *waiter)
- {
--	locks_delete_global_blocked(waiter);
-+	locks_delete_global_blocked(&waiter->fl_core);
- 	list_del_init(&waiter->fl_core.fl_blocked_member);
- }
- 
-@@ -775,7 +774,7 @@ static void __locks_insert_block(struct file_lock *blocker,
+ new_blocker:
+@@ -773,7 +790,9 @@ static void __locks_insert_block(struct file_lock *blocker,
+ 	waiter->fl_core.fl_blocker = blocker;
  	list_add_tail(&waiter->fl_core.fl_blocked_member,
  		      &blocker->fl_core.fl_blocked_requests);
- 	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
--		locks_insert_global_blocked(waiter);
-+		locks_insert_global_blocked(&waiter->fl_core);
+-	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
++
++	bflc = &blocker->fl_core;
++	if (IS_POSIX(bflc) && !IS_OFDLCK(bflc))
+ 		locks_insert_global_blocked(&waiter->fl_core);
  
  	/* The requests in waiter->fl_blocked are known to conflict with
- 	 * waiter, but might not conflict with blocker, or the requests
+@@ -998,6 +1017,7 @@ static int posix_locks_deadlock(struct file_lock *caller_fl,
+ 				struct file_lock *block_fl)
+ {
+ 	int i = 0;
++	struct file_lock_core *flc = &caller_fl->fl_core;
+ 
+ 	lockdep_assert_held(&blocked_lock_lock);
+ 
+@@ -1005,7 +1025,7 @@ static int posix_locks_deadlock(struct file_lock *caller_fl,
+ 	 * This deadlock detector can't reasonably detect deadlocks with
+ 	 * FL_OFDLCK locks, since they aren't owned by a process, per-se.
+ 	 */
+-	if (IS_OFDLCK(caller_fl))
++	if (IS_OFDLCK(flc))
+ 		return 0;
+ 
+ 	while ((block_fl = what_owner_is_waiting_for(block_fl))) {
+@@ -2157,7 +2177,7 @@ static pid_t locks_translate_pid(struct file_lock *fl, struct pid_namespace *ns)
+ 	pid_t vnr;
+ 	struct pid *pid;
+ 
+-	if (IS_OFDLCK(fl))
++	if (IS_OFDLCK(&fl->fl_core))
+ 		return -1;
+ 	if (IS_REMOTELCK(fl))
+ 		return fl->fl_core.fl_pid;
+@@ -2721,19 +2741,19 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+ 	if (repeat)
+ 		seq_printf(f, "%*s", repeat - 1 + (int)strlen(pfx), pfx);
+ 
+-	if (IS_POSIX(fl)) {
++	if (IS_POSIX(&fl->fl_core)) {
+ 		if (fl->fl_core.fl_flags & FL_ACCESS)
+ 			seq_puts(f, "ACCESS");
+-		else if (IS_OFDLCK(fl))
++		else if (IS_OFDLCK(&fl->fl_core))
+ 			seq_puts(f, "OFDLCK");
+ 		else
+ 			seq_puts(f, "POSIX ");
+ 
+ 		seq_printf(f, " %s ",
+ 			     (inode == NULL) ? "*NOINODE*" : "ADVISORY ");
+-	} else if (IS_FLOCK(fl)) {
++	} else if (IS_FLOCK(&fl->fl_core)) {
+ 		seq_puts(f, "FLOCK  ADVISORY  ");
+-	} else if (IS_LEASE(fl)) {
++	} else if (IS_LEASE(&fl->fl_core)) {
+ 		if (fl->fl_core.fl_flags & FL_DELEG)
+ 			seq_puts(f, "DELEG  ");
+ 		else
+@@ -2748,7 +2768,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+ 	} else {
+ 		seq_puts(f, "UNKNOWN UNKNOWN  ");
+ 	}
+-	type = IS_LEASE(fl) ? target_leasetype(fl) : fl->fl_core.fl_type;
++	type = IS_LEASE(&fl->fl_core) ? target_leasetype(fl) : fl->fl_core.fl_type;
+ 
+ 	seq_printf(f, "%s ", (type == F_WRLCK) ? "WRITE" :
+ 			     (type == F_RDLCK) ? "READ" : "UNLCK");
+@@ -2760,7 +2780,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
+ 	} else {
+ 		seq_printf(f, "%d <none>:0 ", fl_pid);
+ 	}
+-	if (IS_POSIX(fl)) {
++	if (IS_POSIX(&fl->fl_core)) {
+ 		if (fl->fl_end == OFFSET_MAX)
+ 			seq_printf(f, "%Ld EOF\n", fl->fl_start);
+ 		else
 
 -- 
 2.43.0
