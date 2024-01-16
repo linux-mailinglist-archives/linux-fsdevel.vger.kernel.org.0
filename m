@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-8104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD0E82F757
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 21:20:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACA8A82F75C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 21:21:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6684F283E2C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 20:20:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D25FB1C24479
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 20:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B83D376F7;
-	Tue, 16 Jan 2024 19:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258C77C089;
+	Tue, 16 Jan 2024 19:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z3Roeunt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFfTZRBl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCFF21A13;
-	Tue, 16 Jan 2024 19:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6694E37719;
+	Tue, 16 Jan 2024 19:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705434442; cv=none; b=iHV08Vm7ohmOFFqSbQrN7ws1ko6yTJWd2MZwG7D7zT2a9JW/wcWX/kKexwoyc7IDgPsrPK6yGG3qDe++0hFCRAj57CK9m9Yk0KDC734sDJJeQRpF6PcOAbvYCMg4XB1/fQI/2cBXJ2yz780gjiJ93ZEDamUcMyIv7VEft/HxKsE=
+	t=1705434446; cv=none; b=MImqtbtvBbpoTW8ukNFTDqYxLzOARcUD2Jhg4dO/jxMaiVKvNZEgARXdyk3J/BUPu2TtkdoLueX6zy1nUnLxDaYufv8nBW/rQ3XRGTwesTAcxYtKqiBdQJeEJvFBTvQNbM+UhRWgBjNYUdZvIiTnjp8hGPOsYPlTbQrvknCH8PA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705434442; c=relaxed/simple;
-	bh=lyhSP5HzeA0ph/whZtydwjXJ8veikzHXxSTgaLspo7s=;
+	s=arc-20240116; t=1705434446; c=relaxed/simple;
+	bh=66rpBBxRF2rJb303Mt/pEYvt97DkJ3vkW26GZ/SUUu8=;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
 	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	b=l0oMNL8JpxLf5dhE+PScMGl8ezeFKq58ASAKdVkhAVp7SuREJBaMgWUGYW329PRU6POqZB4nZYQOTmviC7/bs/NpZuPJfJ5Dbj7yfZpj7TcmDb8UXo3B18r+pNpLTt4i1ij5ExsOx92t+7Q3aR2tiE4JPhPkClz2VQ/diPDe3LM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z3Roeunt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4C87C43390;
-	Tue, 16 Jan 2024 19:47:18 +0000 (UTC)
+	b=ZEpaDpvNhGz86FUCZr8mmI/PUg5hEjnR0luvLl43BtzvGab7p9OWS6QjPoySaMOMMBWZ6HP/F4V0A9SEVcg8x2E1joLvEtqzP5d1IU4q2+4uffhFvXQeLYxI9UMpiD/zcXIo+4Sj9sR8M3JZKm4btVYTxq9wE6HkRWB+eXG3mEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFfTZRBl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F4F6C43399;
+	Tue, 16 Jan 2024 19:47:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705434442;
-	bh=lyhSP5HzeA0ph/whZtydwjXJ8veikzHXxSTgaLspo7s=;
+	s=k20201202; t=1705434446;
+	bh=66rpBBxRF2rJb303Mt/pEYvt97DkJ3vkW26GZ/SUUu8=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Z3RoeuntzeKcYRnwrOeyfzDfHrTbafuIVNtokBNKPYnLbxpquCCGkbRE54bmxCMdP
-	 zUT1NjRDe5bk5bRh0mXfLpmtcUmhmeuh5eoqPdzqOP3TaoMx/sV6Lm/3ef8rPR0yWi
-	 sGSzzZM8trRr5wUaZINMwa9jCvz3DmgjFL+AzLYFdrQ4+Z4RJx1hx3OMpxR9KqlN3w
-	 65bmHvEcbqOzfqYXYye8w1xIT3mBPsoVriqq6ckMkDGz6nepq7wWOwf+K9SitNyPBt
-	 l6v/HE/DXZAX7h24J+K7Pb+mUSrg7P2bhb2D9APZeBF/EVns9Bf4qENSIFQvhhvNXh
-	 BSC12xLkllPvA==
+	b=tFfTZRBlkiCk9Eab2eEQSMGmc8OV/LJsjXpZlKXSKlldgNFXLvc7bC4usSVlvaW9i
+	 Gkg6WfRCh4Olf6lZcfwtO+XwV+irXRZQ+Y6ZxIlWrG2+VLXv0aJYjPdJAXoNIpjKXn
+	 dgeDVmNkhzPt282Zja4kOLVK+mylOvOUy/lLahMNq5K/YV4NU7mquEmoMeVy50mZSv
+	 fK8klBfP3WI8Hphmx/ooWaS75ivWuPXCb3UTg3hFTlCOFxgRzaod9pKbtjbVsbgrM9
+	 U/yi/ERcULhVKac/eILSgveCKb8IkiBAk+5CWmQi6TL0pxwSyZrSP673CqT95KZdSO
+	 sGheVeaPna3EQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 16 Jan 2024 14:46:05 -0500
-Subject: [PATCH 09/20] filelock: make locks_{insert,delete}_global_locks
- take file_lock_core arg
+Date: Tue, 16 Jan 2024 14:46:06 -0500
+Subject: [PATCH 10/20] filelock: convert
+ locks_{insert,delete}_global_blocked
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240116-flsplit-v1-9-c9d0f4370a5d@kernel.org>
+Message-Id: <20240116-flsplit-v1-10-c9d0f4370a5d@kernel.org>
 References: <20240116-flsplit-v1-0-c9d0f4370a5d@kernel.org>
 In-Reply-To: <20240116-flsplit-v1-0-c9d0f4370a5d@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -89,91 +89,77 @@ Cc: linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
  linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
  linux-trace-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2249; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=lyhSP5HzeA0ph/whZtydwjXJ8veikzHXxSTgaLspo7s=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlpt0hz1Ko0HqQBzrZ/7Hx3siPwo6L37SNYA3Wx
- p/570vr4B2JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZabdIQAKCRAADmhBGVaC
- FRnDD/9vyfqWXL7+QxBzzsMwaHgDFWjgRUcBj6KcaxIxXKrTh52QtoRwHc0kjuBbcTuSRsWtULp
- Xdweq1h4P/ng7LluanZRzSHFUXoV9tIIDGq+vrXGsn2vm1U2ClzZ95nwP1j7+kuQvmzTdFve8X8
- FriQhEXfxg8xnvIPDg/hie+7n/lTJHdIVPrycU0FWd/YkM4kHA5O6IJoChB5GtjhDVggeN64jGC
- E/tz8qLYwaY3jOY8jR6kp00CCxbFmK5fYH9lX7S3K24pPw1NYIO/x2Vsr9hJhB46TZ2xgMoUora
- itaIOxnxJAwbg98WuOjg8vV96Jpd3g6b7fr+kS00ZjlEpmo/YkGNxSxpaHWNgIRFpe+X3jHz+Xi
- kV9wH2ZBi7hExCvRLJMi9AT9VO/iyO3YmB8JAMjSNOFDPCNv+WlEBScgBpKvhU4YFooDexJV6By
- Gecje1jtMb3112xFqhWWC2/2p1wQL8KhuZpBFE7eIRykNEttkwvpWCRlB4Co6DtYbt67EfaRg55
- m57z7XXJ3Xff80/L7NNrtSNdZVVjG7SsCBI6oHxSx+LNNFFvenFybi5sYxw5fAi3i3rlXIRpUjF
- w9w9M97hVus/hh7GImpOmOujIsjrELVG+O7+T8HIBKH6mwk+laWdHC5YmjMfJzASRIXSEmo/bOe
- N/vgaPByfpQn6MA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1939; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=66rpBBxRF2rJb303Mt/pEYvt97DkJ3vkW26GZ/SUUu8=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlpt0hPQuRA/Abxngx548TLejvptzB1l9nP03DR
+ GO9Nuqe4y2JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZabdIQAKCRAADmhBGVaC
+ FQUSD/9S5nDMSLzIoBx9vB361eiaIcOC3TmbdtceOtF+KCiAi9eWXt4DhFqbNtdbqC9rpx+3IfC
+ mLhS6/Zw4mAZqZBPGcURkFfRoVmhyYCzug5fY+rVF1MyrrNkaDNSOcz05S9bmJ9wITmBnfEYZjb
+ sM6jHMAaYV5xpLQBGgWvfVaZLK83fi8FqNXgW2DG7qoAvvzIFfPD5bM0aQQ0Pqj27m3W6YmvObC
+ uoJbVbWj8pq/ZETS5jQiQ4zsqlNb2ZyQEgJmkrcTZ/XiXng62F03RXAay1dDJ5/8l2qN96Lo+qO
+ 96PGNAOfmuRcdJ+us2i4GxlR1JYpfGR2TkoTJH87evlOXL8h2GPijHylqikofsvPulBK7/N6ABi
+ RjbWHWgeBNspA7JR0yTo4yYy+iChvBMbnCEGPBGNIeaR9Z4UNFOjjIpdfA/5hmp4yXksPPmAdwF
+ g9qc89zKVTHrYh8NHS4MdyOVSFeSFn9HBsM79eH7BQcZSFJOMcJrBEcq8ZJZhmTD51FbhVNnqeo
+ X/4w9YASaRiLmBARrAg6RvXwBjENPIg5lu0iZu/UOCokCgi+F4qDGNUXfL/uTT5Cxw4i7KsduQi
+ m9ZOIiArcBNp765MHY8i4z+pdh4K1jQdLgw/lKAcYqzNUs11fbNKTSljL7FwC9SWzTUN9zzQmIg
+ 0W+NZaNYeCIrsZw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Convert these functions to take a file_lock_core instead of a file_lock.
+Have locks_insert_global_blocked and locks_delete_global_blocked take a
+struct file_lock_core pointer.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/locks.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ fs/locks.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/fs/locks.c b/fs/locks.c
-index 6432bcfb55a0..5fe54f48b9c1 100644
+index 5fe54f48b9c1..770aaa5809ba 100644
 --- a/fs/locks.c
 +++ b/fs/locks.c
-@@ -603,20 +603,20 @@ static int posix_same_owner(struct file_lock_core *fl1, struct file_lock_core *f
+@@ -642,19 +642,18 @@ posix_owner_key(struct file_lock_core *flc)
+ 	return (unsigned long) flc->fl_owner;
  }
  
- /* Must be called with the flc_lock held! */
--static void locks_insert_global_locks(struct file_lock *fl)
-+static void locks_insert_global_locks(struct file_lock_core *flc)
+-static void locks_insert_global_blocked(struct file_lock *waiter)
++static void locks_insert_global_blocked(struct file_lock_core *waiter)
  {
- 	struct file_lock_list_struct *fll = this_cpu_ptr(&file_lock_list);
+ 	lockdep_assert_held(&blocked_lock_lock);
  
- 	percpu_rwsem_assert_held(&file_rwsem);
- 
- 	spin_lock(&fll->lock);
--	fl->fl_core.fl_link_cpu = smp_processor_id();
--	hlist_add_head(&fl->fl_core.fl_link, &fll->hlist);
-+	flc->fl_link_cpu = smp_processor_id();
-+	hlist_add_head(&flc->fl_link, &fll->hlist);
- 	spin_unlock(&fll->lock);
+-	hash_add(blocked_hash, &waiter->fl_core.fl_link,
+-		 posix_owner_key(&waiter->fl_core));
++	hash_add(blocked_hash, &waiter->fl_link, posix_owner_key(waiter));
  }
  
- /* Must be called with the flc_lock held! */
--static void locks_delete_global_locks(struct file_lock *fl)
-+static void locks_delete_global_locks(struct file_lock_core *flc)
+-static void locks_delete_global_blocked(struct file_lock *waiter)
++static void locks_delete_global_blocked(struct file_lock_core *waiter)
  {
- 	struct file_lock_list_struct *fll;
+ 	lockdep_assert_held(&blocked_lock_lock);
  
-@@ -627,12 +627,12 @@ static void locks_delete_global_locks(struct file_lock *fl)
- 	 * is done while holding the flc_lock, and new insertions into the list
- 	 * also require that it be held.
- 	 */
--	if (hlist_unhashed(&fl->fl_core.fl_link))
-+	if (hlist_unhashed(&flc->fl_link))
- 		return;
- 
--	fll = per_cpu_ptr(&file_lock_list, fl->fl_core.fl_link_cpu);
-+	fll = per_cpu_ptr(&file_lock_list, flc->fl_link_cpu);
- 	spin_lock(&fll->lock);
--	hlist_del_init(&fl->fl_core.fl_link);
-+	hlist_del_init(&flc->fl_link);
- 	spin_unlock(&fll->lock);
+-	hash_del(&waiter->fl_core.fl_link);
++	hash_del(&waiter->fl_link);
  }
  
-@@ -821,13 +821,13 @@ static void
- locks_insert_lock_ctx(struct file_lock *fl, struct list_head *before)
+ /* Remove waiter from blocker's block list.
+@@ -664,7 +663,7 @@ static void locks_delete_global_blocked(struct file_lock *waiter)
+  */
+ static void __locks_delete_block(struct file_lock *waiter)
  {
- 	list_add_tail(&fl->fl_core.fl_list, before);
--	locks_insert_global_locks(fl);
-+	locks_insert_global_locks(&fl->fl_core);
+-	locks_delete_global_blocked(waiter);
++	locks_delete_global_blocked(&waiter->fl_core);
+ 	list_del_init(&waiter->fl_core.fl_blocked_member);
  }
  
- static void
- locks_unlink_lock_ctx(struct file_lock *fl)
- {
--	locks_delete_global_locks(fl);
-+	locks_delete_global_locks(&fl->fl_core);
- 	list_del_init(&fl->fl_core.fl_list);
- 	locks_wake_up_blocks(fl);
- }
+@@ -775,7 +774,7 @@ static void __locks_insert_block(struct file_lock *blocker,
+ 	list_add_tail(&waiter->fl_core.fl_blocked_member,
+ 		      &blocker->fl_core.fl_blocked_requests);
+ 	if (IS_POSIX(blocker) && !IS_OFDLCK(blocker))
+-		locks_insert_global_blocked(waiter);
++		locks_insert_global_blocked(&waiter->fl_core);
+ 
+ 	/* The requests in waiter->fl_blocked are known to conflict with
+ 	 * waiter, but might not conflict with blocker, or the requests
 
 -- 
 2.43.0
