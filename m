@@ -1,210 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-8041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF2AF82EB79
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 10:27:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4888282EB99
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 10:34:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7442A2826D8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 09:27:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECD162850C9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 09:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B25D12B8C;
-	Tue, 16 Jan 2024 09:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A24D12B8B;
+	Tue, 16 Jan 2024 09:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nO2AItRA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AEB712B72
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 09:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3618c6a1cceso1883425ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 01:27:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705397241; x=1706002041;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jOsxNLpBRTGiUU6lZBOr9zV8xafpZmwbpi5r0C8L1zg=;
-        b=AZdorMzbJ3ST6A2v3nJFWlJdg8RpH7OKuTWRzxVgOK0BEdFNKPVbljnhTIBqOVZi61
-         GMkTo6O5GbKOzrAGAd/jPmKyxV/kpFwEn+V0nkoQPYarP6s7Oq3MJSvPUfnEf/wTHJo9
-         EPVOvfT+dGjuZWLz3vOuumkWt5DgUBJMlVup8zQEgDLnllgLWJqMpIsPX6JcnMNC5E+N
-         z9KesiVD2JNYJBRPIeY7zZ0LuAJ4MbJB/PVk+u+xFuct8d/fgbxp5EhXJpw5fyx4Vv56
-         6BWKw1l9JatUBLLPDs7xs1pGX4BdJyJCNo2wVyPjNog3d8m7jjIrOqW2RcmLReDrV30s
-         wmTA==
-X-Gm-Message-State: AOJu0YzaUbUmdVqLTT4h2ZxkISn3SHRHK6ruX8+AThropi3S74sgkwje
-	8INKVkVeFWUDEL0yed7aWSlDQ3Nn5Ade+M16/5INcIDo/oNW
-X-Google-Smtp-Source: AGHT+IFSriItWy/h+LU6Lr8mhhRE9S5UJnpA1nLIi1CBILH2BJvuTvAJglPqCxymAvNQo4joBj6nnYdmsRVo4L5SxnTw7Mqn9f44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD0612B7B;
+	Tue, 16 Jan 2024 09:34:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04642C433C7;
+	Tue, 16 Jan 2024 09:34:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705397650;
+	bh=hmCmYEgqz59L8XvQn3RmH21Xr8NvEzN3ZqWmfeSuhRQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=nO2AItRAwKSzZUnTc/U/CXtKR/QHWmKoSfiaW1stIwv01/U41sU07zK8tTtDghlI7
+	 bxL/2KHjYqjWueMZEap6a2bSfExm2AoiSnYHOClyFQFsjfiJd3qRk5skrovupOPySB
+	 fqFXvL3mr9XI22N9/iloCbQg0tieBc/L2056g/754TRCLOA+gZTkVqMIPTtU8ckmYd
+	 P6FI0AnEBB6KiGwTNCDn+ynm0r5C8ktnhRIsMF1rzPz89X5pHzdhGqlUw4PIKd3YS9
+	 +T8f+ZBjU1mvB8hS+OYZ3ALuPU4CtjAKGO3viL2y1CkMvTtGNkHhdSbeG6jUF5KRQq
+	 sDvxmAAA12hwg==
+From: Christian Brauner <brauner@kernel.org>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-ntfs-dev@lists.sourceforge.net,
+	ntfs3@lists.linux.dev,
+	Anton Altaparmakov <anton@tuxera.com>,
+	Namjae Jeon <linkinjeon@kernel.org>
+Subject: Re: [PATCH] fs: Remove NTFS classic
+Date: Tue, 16 Jan 2024 10:33:49 +0100
+Message-ID: <20240116-fernbedienung-vorwort-a21384fd7962@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240115072025.2071931-1-willy@infradead.org>
+References: <20240115072025.2071931-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a07:b0:35f:d5ea:8a86 with SMTP id
- s7-20020a056e021a0700b0035fd5ea8a86mr937528ild.5.1705397240898; Tue, 16 Jan
- 2024 01:27:20 -0800 (PST)
-Date: Tue, 16 Jan 2024 01:27:20 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000beadc4060f0cbc23@google.com>
-Subject: [syzbot] [btrfs?] memory leak in corrupted
-From: syzbot <syzbot+ebe64cc5950868e77358@syzkaller.appspotmail.com>
-To: a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org, clm@fb.com, 
-	davem@davemloft.net, dsterba@suse.com, edumazet@google.com, 
-	josef@toxicpanda.com, kuba@kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mareklindner@neomailbox.ch, netdev@vger.kernel.org, pabeni@redhat.com, 
-	sven@narfation.org, sw@simonwunderlich.de, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1152; i=brauner@kernel.org; h=from:subject:message-id; bh=hmCmYEgqz59L8XvQn3RmH21Xr8NvEzN3ZqWmfeSuhRQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQu821+Y3k3N+zavn1r/H6ceFtc8MzkdWdE9gf9UquKB /JL7giodZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkoTEjw4EbMss+i66Nj1ma ZhO1YbXTu83PRVp/zd+3XE11raHt8wuMDA+rLt70zZhb6hh259ABOd0LQs3CO/kmx17lXBdcvHU zNxsA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On Mon, 15 Jan 2024 07:20:25 +0000, Matthew Wilcox (Oracle) wrote:
+> The replacement, NTFS3, was merged over two years ago.  It is now time to
+> remove the original from the tree as it is the last user of several APIs,
+> and it is not worth changing.
+> 
+> 
 
-syzbot found the following issue on:
-
-HEAD commit:    052d534373b7 Merge tag 'exfat-for-6.8-rc1' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14620debe80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=a7031f9e71583b4a
-dashboard link: https://syzkaller.appspot.com/bug?extid=ebe64cc5950868e77358
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a344c1e80000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/82a7201eef4c/disk-052d5343.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ca12b4c31826/vmlinux-052d5343.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3f07360ba5a8/bzImage-052d5343.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ebe64cc5950868e77358@syzkaller.appspotmail.com
-
-BUG: memory leak
-unreferenced object 0xffff88811c71a980 (size 64):
-  comm "syz-executor.7", pid 5063, jiffies 4294953937
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 20 8e 7e 1c 81 88 ff ff  ........ .~.....
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace (crc 9f8721dd):
-    [<ffffffff815f7d53>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
-    [<ffffffff815f7d53>] slab_post_alloc_hook mm/slub.c:3817 [inline]
-    [<ffffffff815f7d53>] slab_alloc_node mm/slub.c:3860 [inline]
-    [<ffffffff815f7d53>] kmalloc_trace+0x283/0x330 mm/slub.c:4007
-    [<ffffffff84aae617>] kmalloc include/linux/slab.h:590 [inline]
-    [<ffffffff84aae617>] kzalloc include/linux/slab.h:711 [inline]
-    [<ffffffff84aae617>] batadv_tvlv_handler_register+0xf7/0x2a0 net/batman-adv/tvlv.c:560
-    [<ffffffff84a8d09f>] batadv_mcast_init+0x4f/0xc0 net/batman-adv/multicast.c:1926
-    [<ffffffff84a895b9>] batadv_mesh_init+0x209/0x2f0 net/batman-adv/main.c:231
-    [<ffffffff84a9fa88>] batadv_softif_init_late+0x1f8/0x280 net/batman-adv/soft-interface.c:812
-    [<ffffffff83f48559>] register_netdevice+0x189/0xca0 net/core/dev.c:10188
-    [<ffffffff84a9f255>] batadv_softif_newlink+0x55/0x70 net/batman-adv/soft-interface.c:1088
-    [<ffffffff83f61dc0>] rtnl_newlink_create net/core/rtnetlink.c:3515 [inline]
-    [<ffffffff83f61dc0>] __rtnl_newlink+0xb10/0xec0 net/core/rtnetlink.c:3735
-    [<ffffffff83f621bc>] rtnl_newlink+0x4c/0x70 net/core/rtnetlink.c:3748
-    [<ffffffff83f5cd1f>] rtnetlink_rcv_msg+0x22f/0x5b0 net/core/rtnetlink.c:6615
-    [<ffffffff84093291>] netlink_rcv_skb+0x91/0x1d0 net/netlink/af_netlink.c:2543
-    [<ffffffff84092242>] netlink_unicast_kernel net/netlink/af_netlink.c:1341 [inline]
-    [<ffffffff84092242>] netlink_unicast+0x2c2/0x440 net/netlink/af_netlink.c:1367
-    [<ffffffff84092701>] netlink_sendmsg+0x341/0x690 net/netlink/af_netlink.c:1908
-    [<ffffffff83ef2912>] sock_sendmsg_nosec net/socket.c:730 [inline]
-    [<ffffffff83ef2912>] __sock_sendmsg+0x52/0xa0 net/socket.c:745
-    [<ffffffff83ef5af4>] __sys_sendto+0x164/0x1e0 net/socket.c:2191
-    [<ffffffff83ef5b98>] __do_sys_sendto net/socket.c:2203 [inline]
-    [<ffffffff83ef5b98>] __se_sys_sendto net/socket.c:2199 [inline]
-    [<ffffffff83ef5b98>] __x64_sys_sendto+0x28/0x30 net/socket.c:2199
-
-BUG: memory leak
-unreferenced object 0xffff88811c8561c0 (size 64):
-  comm "syz-executor.0", pid 5062, jiffies 4294953941
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 20 ce 7e 1c 81 88 ff ff  ........ .~.....
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace (crc 7256c890):
-    [<ffffffff815f7d53>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
-    [<ffffffff815f7d53>] slab_post_alloc_hook mm/slub.c:3817 [inline]
-    [<ffffffff815f7d53>] slab_alloc_node mm/slub.c:3860 [inline]
-    [<ffffffff815f7d53>] kmalloc_trace+0x283/0x330 mm/slub.c:4007
-    [<ffffffff84aae617>] kmalloc include/linux/slab.h:590 [inline]
-    [<ffffffff84aae617>] kzalloc include/linux/slab.h:711 [inline]
-    [<ffffffff84aae617>] batadv_tvlv_handler_register+0xf7/0x2a0 net/batman-adv/tvlv.c:560
-    [<ffffffff84a8d09f>] batadv_mcast_init+0x4f/0xc0 net/batman-adv/multicast.c:1926
-    [<ffffffff84a895b9>] batadv_mesh_init+0x209/0x2f0 net/batman-adv/main.c:231
-    [<ffffffff84a9fa88>] batadv_softif_init_late+0x1f8/0x280 net/batman-adv/soft-interface.c:812
-    [<ffffffff83f48559>] register_netdevice+0x189/0xca0 net/core/dev.c:10188
-    [<ffffffff84a9f255>] batadv_softif_newlink+0x55/0x70 net/batman-adv/soft-interface.c:1088
-    [<ffffffff83f61dc0>] rtnl_newlink_create net/core/rtnetlink.c:3515 [inline]
-    [<ffffffff83f61dc0>] __rtnl_newlink+0xb10/0xec0 net/core/rtnetlink.c:3735
-    [<ffffffff83f621bc>] rtnl_newlink+0x4c/0x70 net/core/rtnetlink.c:3748
-    [<ffffffff83f5cd1f>] rtnetlink_rcv_msg+0x22f/0x5b0 net/core/rtnetlink.c:6615
-    [<ffffffff84093291>] netlink_rcv_skb+0x91/0x1d0 net/netlink/af_netlink.c:2543
-    [<ffffffff84092242>] netlink_unicast_kernel net/netlink/af_netlink.c:1341 [inline]
-    [<ffffffff84092242>] netlink_unicast+0x2c2/0x440 net/netlink/af_netlink.c:1367
-    [<ffffffff84092701>] netlink_sendmsg+0x341/0x690 net/netlink/af_netlink.c:1908
-    [<ffffffff83ef2912>] sock_sendmsg_nosec net/socket.c:730 [inline]
-    [<ffffffff83ef2912>] __sock_sendmsg+0x52/0xa0 net/socket.c:745
-    [<ffffffff83ef5af4>] __sys_sendto+0x164/0x1e0 net/socket.c:2191
-    [<ffffffff83ef5b98>] __do_sys_sendto net/socket.c:2203 [inline]
-    [<ffffffff83ef5b98>] __se_sys_sendto net/socket.c:2199 [inline]
-    [<ffffffff83ef5b98>] __x64_sys_sendto+0x28/0x30 net/socket.c:2199
-
-BUG: memory leak
-unreferenced object 0xffff88811cd88cc0 (size 64):
-  comm "syz-executor.5", pid 5078, jiffies 4294953981
-  hex dump (first 32 bytes):
-    00 00 00 00 00 00 00 00 20 8e 05 1d 81 88 ff ff  ........ .......
-    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-  backtrace (crc a919e6d6):
-    [<ffffffff815f7d53>] kmemleak_alloc_recursive include/linux/kmemleak.h:42 [inline]
-    [<ffffffff815f7d53>] slab_post_alloc_hook mm/slub.c:3817 [inline]
-    [<ffffffff815f7d53>] slab_alloc_node mm/slub.c:3860 [inline]
-    [<ffffffff815f7d53>] kmalloc_trace+0x283/0x330 mm/slub.c:4007
-    [<ffffffff84aae617>] kmalloc include/linux/slab.h:590 [inline]
-    [<ffffffff84aae617>] kzalloc include/linux/slab.h:711 [inline]
-    [<ffffffff84aae617>] batadv_tvlv_handler_register+0xf7/0x2a0 net/batman-adv/tvlv.c:560
-    [<ffffffff84a8d09f>] batadv_mcast_init+0x4f/0xc0 net/batman-adv/multicast.c:1926
-    [<ffffffff84a895b9>] batadv_mesh_init+0x209/0x2f0 net/batman-adv/main.c:231
-    [<ffffffff84a9fa88>] batadv_softif_init_late+0x1f8/0x280 net/batman-adv/soft-interface.c:812
-    [<ffffffff83f48559>] register_netdevice+0x189/0xca0 net/core/dev.c:10188
-    [<ffffffff84a9f255>] batadv_softif_newlink+0x55/0x70 net/batman-adv/soft-interface.c:1088
-    [<ffffffff83f61dc0>] rtnl_newlink_create net/core/rtnetlink.c:3515 [inline]
-    [<ffffffff83f61dc0>] __rtnl_newlink+0xb10/0xec0 net/core/rtnetlink.c:3735
-    [<ffffffff83f621bc>] rtnl_newlink+0x4c/0x70 net/core/rtnetlink.c:3748
-    [<ffffffff83f5cd1f>] rtnetlink_rcv_msg+0x22f/0x5b0 net/core/rtnetlink.c:6615
-    [<ffffffff84093291>] netlink_rcv_skb+0x91/0x1d0 net/netlink/af_netlink.c:2543
-    [<ffffffff84092242>] netlink_unicast_kernel net/netlink/af_netlink.c:1341 [inline]
-    [<ffffffff84092242>] netlink_unicast+0x2c2/0x440 net/netlink/af_netlink.c:1367
-    [<ffffffff84092701>] netlink_sendmsg+0x341/0x690 net/netlink/af_netlink.c:1908
-    [<ffffffff83ef2912>] sock_sendmsg_nosec net/socket.c:730 [inline]
-    [<ffffffff83ef2912>] __sock_sendmsg+0x52/0xa0 net/socket.c:745
-    [<ffffffff83ef5af4>] __sys_sendto+0x164/0x1e0 net/socket.c:2191
-    [<ffffffff83ef5b98>] __do_sys_sendto net/socket.c:2203 [inline]
-    [<ffffffff83ef5b98>] __se_sys_sendto net/socket.c:2199 [inline]
-    [<ffffffff83ef5b98>] __x64_sys_sendto+0x28/0x30 net/socket.c:2199
-
-
+I see no reason to not at least try and remove it given that we have
+ntfs3 as a replacement. Worst case is we have to put it back in. Let's
+try it.
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Applied to the vfs.fs branch of the vfs/vfs.git tree.
+Patches in the vfs.fs branch should appear in linux-next soon.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fs
 
-If you want to undo deduplication, reply with:
-#syz undup
+[1/1] fs: Remove NTFS classic
+      https://git.kernel.org/vfs/vfs/c/9c67092ed339
 
