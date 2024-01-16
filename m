@@ -1,73 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-8023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F25EC82E40A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 00:45:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72FFE82E686
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 02:18:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD14C1C2237C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 15 Jan 2024 23:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87AAB287F50
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 01:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F6B21B804;
-	Mon, 15 Jan 2024 23:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84D1913AE4;
+	Tue, 16 Jan 2024 01:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="h8ix9tk6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oBI7ctPJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BB11B7E2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 15 Jan 2024 23:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=R5ucLr/3IM+gB1p8F52Nb7v6+r4MpbFsAw5djm5e7lc=; b=h8ix9tk6mOZ/6fLiTx5+B1G3tK
-	RB8yZJUaujZ5GswcwrNkM9ruSG0oj+GtWMSIQ6SvSJreR+tP6Xd7YQRoN5CnMJlgVOHSwreUbCSyd
-	LJQVPfejdn3LV7goPMtcCSFWruMAqqpXL7N8hLkQ8KzRoNzQbjFBZmA4RwIJ0EoPIF0WOef0VgtTh
-	QuwCI6m3TF2WO8KACsuWiroj50kwr7nM/VXf6Mf3QG14vnN8JBu5eIYekAMHhAJVP0vBV3kqTEbLL
-	+WbeyqUSA/u1380xAHqjrMC1tdbpGHseOLXPDx0dluxHv8EQox6fGoyedReDOGKY0detQyZGRpRpW
-	TjJ1xIlw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rPWVj-003aZq-1P;
-	Mon, 15 Jan 2024 23:36:55 +0000
-Date: Mon, 15 Jan 2024 23:36:55 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Bruno Haible <bruno@clisp.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Evgeniy Dushistov <dushistov@mail.ru>,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E694813AC0;
+	Tue, 16 Jan 2024 01:04:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7E47C43390;
+	Tue, 16 Jan 2024 01:04:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705367093;
+	bh=1B67+FbtvCxrXZpewuzlXourIRMY9Lo8S5rLpbWKidA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=oBI7ctPJkWlx980sLutVNqoDZzxsRsCkLdlqkcx4IzLlfsaTVt9Q1LluashORloGv
+	 lisk2pbhAHqI7z4sRjkHHeuVYTnnj2tOZW6/VDb/doSaJ/lmBSgFDjz7WTkv1anMQy
+	 pHw2UduuetX5u/OPB5lpLuUbsThpTvZSgWeYfb0HFHH+oCFgQtu8dQrmOvUDeoMkbk
+	 OvGDqNElirUYc0LfO7+D1+H2QwNrpJQV7KFuNmZnKeCexJZfR6eBER09/A/Pw4n33q
+	 2vr0CXhSib4iJ9osNZkJ3C/b7ICvmpZinFwDNAOPXrUX/CRPB6UiIfvWcS0Y3d2Rz0
+	 P/kV1Xvv/9RDg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Joel Granados <j.granados@samsung.com>,
+	kernel test robot <oliver.sang@intel.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	keescook@chromium.org,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: ufs filesystem cannot mount NetBSD/arm64 partition
-Message-ID: <20240115233655.GK1674809@ZenIV>
-References: <4014963.3daJWjYHZt@nimes>
- <20240115223300.GI1674809@ZenIV>
- <ZaW6/bFaN9HEANW+@casper.infradead.org>
- <2807230.6YUMPnJmAY@nimes>
+Subject: [PATCH AUTOSEL 6.7 09/21] sysctl: Fix out of bounds access for empty sysctl registers
+Date: Mon, 15 Jan 2024 20:03:46 -0500
+Message-ID: <20240116010422.217925-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240116010422.217925-1-sashal@kernel.org>
+References: <20240116010422.217925-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2807230.6YUMPnJmAY@nimes>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.7
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jan 16, 2024 at 12:29:54AM +0100, Bruno Haible wrote:
-> Matthew Wilcox wrote:
-> > Wouldn't surprise me if netbsd/arm64 had decided to go with 64kB
-> > PAGE_SIZE and 8kB fragments ...
-> 
-> getpagesize() on NetBSD 9.3/arm64 is 4096.
+From: Joel Granados <j.granados@samsung.com>
 
-It's not impossible to do on Linux side; the main trouble is in the
-Cthulhu-awful set of helpers that needs to be untangled before we
-can realistically do any kind of massage in there.  What I want to
-do one of those days is to do an iomap conversion and see how well
-does that work.  ETOOMUCHOTHERSHITE...
+[ Upstream commit 315552310c7de92baea4e570967066569937a843 ]
+
+When registering tables to the sysctl subsystem there is a check to see
+if header is a permanently empty directory (used for mounts). This check
+evaluates the first element of the ctl_table. This results in an out of
+bounds evaluation when registering empty directories.
+
+The function register_sysctl_mount_point now passes a ctl_table of size
+1 instead of size 0. It now relies solely on the type to identify
+a permanently empty register.
+
+Make sure that the ctl_table has at least one element before testing for
+permanent emptiness.
+
+Signed-off-by: Joel Granados <j.granados@samsung.com>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202311201431.57aae8f3-oliver.sang@intel.com
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/proc/proc_sysctl.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 8064ea76f80b..84abf98340a0 100644
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -44,7 +44,7 @@ static struct ctl_table sysctl_mount_point[] = {
+  */
+ struct ctl_table_header *register_sysctl_mount_point(const char *path)
+ {
+-	return register_sysctl_sz(path, sysctl_mount_point, 0);
++	return register_sysctl(path, sysctl_mount_point);
+ }
+ EXPORT_SYMBOL(register_sysctl_mount_point);
+ 
+@@ -233,7 +233,8 @@ static int insert_header(struct ctl_dir *dir, struct ctl_table_header *header)
+ 		return -EROFS;
+ 
+ 	/* Am I creating a permanently empty directory? */
+-	if (sysctl_is_perm_empty_ctl_table(header->ctl_table)) {
++	if (header->ctl_table_size > 0 &&
++	    sysctl_is_perm_empty_ctl_table(header->ctl_table)) {
+ 		if (!RB_EMPTY_ROOT(&dir->root))
+ 			return -EINVAL;
+ 		sysctl_set_perm_empty_ctl_header(dir_h);
+@@ -1213,6 +1214,10 @@ static bool get_links(struct ctl_dir *dir,
+ 	struct ctl_table_header *tmp_head;
+ 	struct ctl_table *entry, *link;
+ 
++	if (header->ctl_table_size == 0 ||
++	    sysctl_is_perm_empty_ctl_table(header->ctl_table))
++		return true;
++
+ 	/* Are there links available for every entry in table? */
+ 	list_for_each_table_entry(entry, header) {
+ 		const char *procname = entry->procname;
+-- 
+2.43.0
+
 
