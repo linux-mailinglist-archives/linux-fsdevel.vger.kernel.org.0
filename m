@@ -1,86 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-8121-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF80182FCF5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 23:35:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8472082FD04
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 23:37:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DD551F29AC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 22:35:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9980D1C2821A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 22:37:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D08541C6E;
-	Tue, 16 Jan 2024 22:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC31605A7;
+	Tue, 16 Jan 2024 22:07:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF151DA2C;
-	Tue, 16 Jan 2024 22:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991F2604C3;
+	Tue, 16 Jan 2024 22:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705442441; cv=none; b=eE9gYjU6Q9zYxnSZe4vgK9FCaFl4uUSQVq1p7pzC4qS0b58bjGNd9kWvB/eIlptFWjDjfU9lvO2qnYkIcfu6443SpYeuBIT/qrN1KbI0NGG4PkbseFH8zYx/DaFed6RZb1CN3xRcVVOAkXYJxaDFHt0jR752c/uqFeIEYD0FtJg=
+	t=1705442842; cv=none; b=mxA/fBe0P7/k1b/gR4jrApKQvmo2A/g4J4NaB5GXODTEbtUlFeVYyEfSykWWeU87L/JW3I2KM+CXz2r2K1T9i0crFFVtmQWPE1TK83fq/r1OTnpAYlwCfzA2aNbAOgYg1WsWlZxn85NRsC1cQz0PcCJEYS0DaXwPRnFRz6raDQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705442441; c=relaxed/simple;
-	bh=rBdhBSdBHxB0phUx9UosP1F8D0qiFA4eia10mackJ5s=;
-	h=Received:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding; b=i0hSf/z3n0Upn7KH2g1RylzL4Fd/NPorGlwiVb5rVG2f3HL52t6j00n0tSBJYK3ZQlfgYSG3LufG1x8CCtKluTzZ5svXu0MWYcRZ6j6cMdBc1Z62wsqORcSoAqr/6KQNTtV/fe5iusO4KRhMozYtH5R1XEg4E14l9XnuNJYuDp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28402C433F1;
-	Tue, 16 Jan 2024 22:00:40 +0000 (UTC)
-Date: Tue, 16 Jan 2024 17:01:54 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Trace
- Kernel <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Christian Brauner
- <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, Ajay Kaher
- <ajay.kaher@broadcom.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH v2 2/2] eventfs: Create list of files and directories at
- dir open
-Message-ID: <20240116170154.5bf0a250@gandalf.local.home>
-In-Reply-To: <CAHk-=wgjSuapZoWfQZMyFi80wJE6a=vjOdgpy_k+YaWwbX9Pig@mail.gmail.com>
-References: <20240116211217.968123837@goodmis.org>
-	<20240116211353.573784051@goodmis.org>
-	<CAHk-=wgjSuapZoWfQZMyFi80wJE6a=vjOdgpy_k+YaWwbX9Pig@mail.gmail.com>
-X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1705442842; c=relaxed/simple;
+	bh=IYYnR2EFburvoZquoTc+yWa7KgPsEyYwG1E6dao281I=;
+	h=Received:Received:Received:Content-Type:Content-Transfer-Encoding:
+	 MIME-Version:From:To:Cc:Subject:In-reply-to:References:Date:
+	 Message-id:X-Spamd-Result:X-Rspamd-Server:X-Rspamd-Queue-Id:
+	 X-Spam-Level:X-Spam-Score:X-Spam-Flag; b=pDF6nvhUZZq3diTsTd1xPhM1zGrgIy4BzgfRcKZKyhhZW8ye8fSbyg7NuJIU2ye13gL69oO2YSqpXR+85pE6OMgaSIZy2M/TKCmL+snyjGwgJIEr0puHO5M+9Tfhy5vYPmc08w2RBJGUCt5TJCzn0riVgvXPKwziVEucDK032Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B7C1322168;
+	Tue, 16 Jan 2024 22:07:18 +0000 (UTC)
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2BB4613751;
+	Tue, 16 Jan 2024 22:07:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0xBrNAj+pmWWeAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Tue, 16 Jan 2024 22:07:04 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From: "NeilBrown" <neilb@suse.de>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Eric Van Hensbergen" <ericvh@kernel.org>,
+ "Latchesar Ionkov" <lucho@ionkov.net>,
+ "Dominique Martinet" <asmadeus@codewreck.org>,
+ "Christian Schoenebeck" <linux_oss@crudebyte.com>,
+ "David Howells" <dhowells@redhat.com>,
+ "Marc Dionne" <marc.dionne@auristor.com>, "Xiubo Li" <xiubli@redhat.com>,
+ "Ilya Dryomov" <idryomov@gmail.com>, "Alexander Aring" <aahringo@redhat.com>,
+ "David Teigland" <teigland@redhat.com>, "Miklos Szeredi" <miklos@szeredi.hu>,
+ "Andreas Gruenbacher" <agruenba@redhat.com>,
+ "Trond Myklebust" <trond.myklebust@hammerspace.com>,
+ "Anna Schumaker" <anna@kernel.org>, "Chuck Lever" <chuck.lever@oracle.com>,
+ "Olga Kornievskaia" <kolga@netapp.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, "Jan Kara" <jack@suse.cz>,
+ "Mark Fasheh" <mark@fasheh.com>, "Joel Becker" <jlbec@evilplan.org>,
+ "Joseph Qi" <joseph.qi@linux.alibaba.com>, "Steve French" <sfrench@samba.org>,
+ "Paulo Alcantara" <pc@manguebit.com>, "Ronnie Sahlberg" <lsahlber@redhat.com>,
+ "Shyam Prasad N" <sprasad@microsoft.com>,
+ "Namjae Jeon" <linkinjeon@kernel.org>,
+ "Sergey Senozhatsky" <senozhatsky@chromium.org>,
+ "Steven Rostedt" <rostedt@goodmis.org>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>,
+ "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>,
+ linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+ gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+ linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ linux-trace-kernel@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>
+Subject:
+ Re: [PATCH 01/20] filelock: split common fields into struct file_lock_core
+In-reply-to: <20240116-flsplit-v1-1-c9d0f4370a5d@kernel.org>
+References: <20240116-flsplit-v1-0-c9d0f4370a5d@kernel.org>,
+ <20240116-flsplit-v1-1-c9d0f4370a5d@kernel.org>
+Date: Wed, 17 Jan 2024 09:07:02 +1100
+Message-id: <170544282220.23031.10628392788633554158@noble.neil.brown.name>
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	 REPLY(-4.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: B7C1322168
+X-Spam-Level: 
+X-Spam-Score: -4.00
+X-Spam-Flag: NO
 
-On Tue, 16 Jan 2024 13:39:38 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> I don't understand why your still insist on this pointless open wrapper.
-
-I just liked the consistency of it.
-
+On Wed, 17 Jan 2024, Jeff Layton wrote:
+> In a future patch, we're going to split file leases into their own
+> structure. Since a lot of the underlying machinery uses the same fields
+> move those into a new file_lock_core, and embed that inside struct
+> file_lock.
 > 
-> Just do this all at iterate time. No open wrappers. No nothing. Just
-> iterate over the days structures your have.
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  include/linux/filelock.h | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 > 
-> IOW, instead of iterating in open to create the array, just iterate in -
-> look, it's in the *name* for chrissake - iterate_shared.
-> 
-> No array. No random allocation for said array.
-> 
-> If you can iterate at open time, you can iterate at iterate_shared time.
-> Stop creating a list that your already have.
-> 
-> And nobody cares if you do a readdir at the same time as modifying the
-> directory. This isn't a real filesystem with strict POSIX semantics.
+> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+> index 95e868e09e29..7825511c1c11 100644
+> --- a/include/linux/filelock.h
+> +++ b/include/linux/filelock.h
+> @@ -85,8 +85,9 @@ bool opens_in_grace(struct net *);
+>   *
+>   * Obviously, the last two criteria only matter for POSIX locks.
+>   */
+> -struct file_lock {
+> -	struct file_lock *fl_blocker;	/* The lock, that is blocking us */
+> +
+> +struct file_lock_core {
+> +	struct file_lock *fl_blocker;	/* The lock that is blocking us */
+>  	struct list_head fl_list;	/* link into file_lock_context */
+>  	struct hlist_node fl_link;	/* node in global lists */
+>  	struct list_head fl_blocked_requests;	/* list of requests with
+> @@ -102,6 +103,10 @@ struct file_lock {
+>  	int fl_link_cpu;		/* what cpu's list is this on? */
+>  	wait_queue_head_t fl_wait;
+>  	struct file *fl_file;
+> +};
+> +
+> +struct file_lock {
+> +	struct file_lock_core fl_core;
+>  	loff_t fl_start;
+>  	loff_t fl_end;
+>  
 
-OK, I can do that.
+If I we doing this, I would rename all the fields in file_lock_core to
+have an "flc_" prefix, and add some #defines like
 
--- Steve
+ #define fl_list fl_core.flc_list
 
+so there would be no need to squash this with later patches to achieve
+bisectability.
+
+The #defines would be removed after the coccinelle scripts etc are
+applied.
+
+I would also do the "convert some internal functions" patches *before*
+the bulk conversion of fl_foo to fl_code.flc_foo so that those functions
+don't get patched twice.
+
+But this is all personal preference.  If you prefer your approach,
+please leave it that way.  The only clear benefit of my approach is that
+you don't need to squash patches together, and that is probably not a
+big deal.
+
+Thanks,
+NeilBrown
 
