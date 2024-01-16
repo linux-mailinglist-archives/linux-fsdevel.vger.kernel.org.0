@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-8096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC84082F70E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 21:14:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D776882F71A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 21:15:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C50E285136
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 20:14:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59692284808
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 20:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128806BB3C;
-	Tue, 16 Jan 2024 19:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929AE7317F;
+	Tue, 16 Jan 2024 19:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdIgnA3S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2pWv0r7"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46AF46A343;
-	Tue, 16 Jan 2024 19:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95186EB6D;
+	Tue, 16 Jan 2024 19:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705434411; cv=none; b=EPDh47pLb8mUmPE3ew2h0XJGAtHcMh9ekvmQvJ8+loyN567dZVqk3Gp/vjYOaox2QAF3EMUoLLa/33HmKMG7XozgpS7lcRBIBIy9KUnw/rX6VmTgM1uG+/8snWUfMExm2yM7p6NAQ+u6hrsPn42ITIYO/iW3zZoOJthpqP8/DJA=
+	t=1705434415; cv=none; b=j5oz3xRz9Urwa+YTybpN4KwWTZJOCis62HqkCr3IZDw9KKkoddLjFX0gEzaNyeZMmo3hz/CupZvR5tuHFFgTmooAnkTrQq4RQ5CHYb5wFM5eyT0SDtvyfLp8ol1Px3hh8+9VylOdXPNZSWw4d3CRtT1sw8JFa1ggT6fiAsGq0sQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705434411; c=relaxed/simple;
-	bh=YjY34dM1H484nLiPhaWW57Fe2QttFCAJUqyuIWnNlwk=;
+	s=arc-20240116; t=1705434415; c=relaxed/simple;
+	bh=Zuc5pqQZA4yFDsa5+cs+KGgtjnisDfvU7E2gkuENnu0=;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
 	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	b=NSYCohscd1I1IXFgwfzPGmpozHsjN+cO0IENNUOONGMs5KpfHT9/ZbQFr92vAn1UAXLoxcSQj7GNMk0pgnOFZ668gw5rRLtv1WPqdNgrepVeEROTrLmx2XqgB1pphRZYOAIyrti9eMpjSKHBLb8oJZJ7cwngsbyCW7ifplXqx9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdIgnA3S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C20FC43394;
-	Tue, 16 Jan 2024 19:46:47 +0000 (UTC)
+	b=j+Q2TyoXzdZsPg5DZdpAkEN71hsTDXQevqYdZOja873PoKglnxixPGsbBrNdFz7wIorNa85zzH4/LpgzTh1GIIDgMT6olTclH0W73ln9Qkpv2e7ZEoOyNbjQYR7BCaYWJsca42p+LkLlDdZM5pnPdkvTH6ML3rTr8AZqhpk+WiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2pWv0r7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A414C43142;
+	Tue, 16 Jan 2024 19:46:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705434410;
-	bh=YjY34dM1H484nLiPhaWW57Fe2QttFCAJUqyuIWnNlwk=;
+	s=k20201202; t=1705434414;
+	bh=Zuc5pqQZA4yFDsa5+cs+KGgtjnisDfvU7E2gkuENnu0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cdIgnA3S5spCJgft8bPEQ2cSRTib2CYHHHVTd9QZbp7rSSRir0PSNW/5pJArEoBOp
-	 CCG7ZV4Vty+k0+LnwzyzCXPuNbf/8D+kc0cn1XIGDhoEK0V9QjYdH3xj2RkTgSl2lb
-	 nKJxdH5EQfZYvkItb+H9yEGXstuSVAYobGuep5JUV2yLZ8cuGe8ISrjja2efG0L1CX
-	 eUBZRsaNMBemw6nMOEd0JDq6UsttMvH0N8yJg9jh2A5zGwnRNRN9QzvwuzO9M43y8K
-	 Epuiddlc0Ogss/9Cuf5AY5kKRT6sacFBhZXaU3FSGvGhrWvuz+Z1m0l7ChNftHZ5/j
-	 4nucu9vZGs3EA==
+	b=j2pWv0r7LdBzbHVH8+EBNEcNxIw97N3r8CjxZHjqsvtNyXBIjYaKYX/GPXLu38znn
+	 3ThFK21AMa7tomaFHwkRZsWQFlBrkEscqE3uuJEV9tsAXMcH7myVMGNNfgfgxF7GpI
+	 MfPHetbc7OcD4B1wHTW1oxZ5hHnVzA1IUwlMFcsCIxx46Hih4dYOSxPFMFtYYRul5a
+	 u3TeRGziT+ZMaddafMzrmVRCXpAG0M5NrVUhiPbnmZt95ImoI3SqVcrm6W+bwUdT3F
+	 E0hONLbn7h4Mj4rmNxEZ190nq2Cu97DyaVswUZ9ePWFzTy7x/wMmMSQtep5jCt+r6j
+	 s8XpnZqa+lE1Q==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 16 Jan 2024 14:45:57 -0500
-Subject: [PATCH 01/20] filelock: split common fields into struct
- file_lock_core
+Date: Tue, 16 Jan 2024 14:45:58 -0500
+Subject: [PATCH 02/20] filelock: add coccinelle scripts to move fields to
+ struct file_lock_core
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240116-flsplit-v1-1-c9d0f4370a5d@kernel.org>
+Message-Id: <20240116-flsplit-v1-2-c9d0f4370a5d@kernel.org>
 References: <20240116-flsplit-v1-0-c9d0f4370a5d@kernel.org>
 In-Reply-To: <20240116-flsplit-v1-0-c9d0f4370a5d@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -89,60 +89,219 @@ Cc: linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
  linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
  linux-trace-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1316; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=YjY34dM1H484nLiPhaWW57Fe2QttFCAJUqyuIWnNlwk=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlpt0grorncqc9kLnslpuIZeyPyWu2iH2b3i5B2
- QhRt5u8LPSJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZabdIAAKCRAADmhBGVaC
- FbMvEACDnTZd0WkyKZFXw33wk0c2b7uo3MRrbTaAJ3SXB53MT5tXPsMrx/2rbi364MuRnoPP6bi
- Ys3m9vycKLXirGtEGtajbM2rYOPbebP7S9O+g1VFohLR1yLsN5joqExpg9aENC5dPj/lNHnSdr9
- 75WIVLpf7G0qyG78AxC9PJuPduxUntrA1wqjADiLA90eF1lozTSG9oLqgqpQ6VMOBwd0Kbs0a5i
- NDCVod8SRF0fiNddU9JOiAdT1FDgumShOCW9PUCd6uU5PV0N0dLx6JHt+7PTVPYoLT3lssNET7u
- VAWTej8G43paeJujEHZDrxniexM9BSVGH8c9xjv/H6lwcsOHrK2oYuNDvd7yDMty+3zHYgY62TT
- /hJ/tchNR3PxSGmvY+aeE4i7yty4fiJh0enq1fG/6/BPMvrpK0LqzHM/sLb4p8L0/7er89TolW/
- 8m7NYvGWmzilgVDsLPfyaMzjOeP+YiFRh5XSrCh3Cq1tNsfW+6sr4MAucKQLcLXaxE2PQ/wXVP2
- RVo6Q0PshEsg48lhuMGKOuyTjoKvVODmGMHNO92/xDemnCiZia4nc7lTSD8Px72ehl7408vGs6g
- amJflorwhY/bA5eWVETGdMDw7nt/06zb8dMl8qmXvG9sz/S54+3MvlnfNH842ZBqeaS3lrLhWLC
- n4OPtwY7WrvAqgw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3928; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=Zuc5pqQZA4yFDsa5+cs+KGgtjnisDfvU7E2gkuENnu0=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlpt0g8OD2WzitEXeN7LiiOMhKmguOki1VVqGqH
+ ZmSsKqxGxeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZabdIAAKCRAADmhBGVaC
+ FXSWD/9bZgoEqI8ZEftXS3u6TWrIG0t8R4wW2XlKcdNNKP6xtKYghCHQCiMP5Vww3T+3ZfIydtW
+ kPZ3hfcd76g/khDE4o/055hlYgI9Rlq2py3uNweBQkxUdm+vWgXdoCsEoMANv2WXaGVMAla2JZh
+ IV/aCqYSWUNDhQ5TY1UmU5d+cB81sRzK6PtIpLldoT7bHHq0M6EukLOGqI+Flt8ycuyhENil2t4
+ QjzGeCDniVnMWeeNF/+Ts5e5wKpw0TS+x5r+D7bI/brkW31m/5sDgC6MW/i7lpG0E0bm1l0Uha3
+ F2wx03gujaodVFAti5nCwC/gUw2vhowmFFixJLQyUk3FXl0ZWRFMjcdsUaec8zXyu0dpPeoIdEq
+ llr8srK/yOFPUXnmhkUVeVPOJwdzf9czrAdn81unv1jHShSkKGIC1Qcok2lR1YuciiE4voYMpHo
+ ofwia965HNSKIAGez3Raiz23QprdwsZcZo4mIU7PZDf2KocsUdsWLa+MpxfUTN54hZcA2AVoV90
+ jm+G7UttCVDuu2Uah4vZFA8luC5nZtD+STB1eD4vBswzHwLJ2ycJbImHkCvVDaVSbNJMmDoZnhq
+ N6cf6IvnzL5L6yqu8KkHNagJUpRWKMOi1B9JOvaCQ9FQUFi3M0RmZ3r/DILyWq97icxunvB8gOo
+ LDnH+Nylx5MxtDQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-In a future patch, we're going to split file leases into their own
-structure. Since a lot of the underlying machinery uses the same fields
-move those into a new file_lock_core, and embed that inside struct
-file_lock.
+Add some coccinelle scripts to handle the move of several fields from
+struct file_lock to struct file_lock_core.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- include/linux/filelock.h | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ cocci/filelock.cocci  | 81 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ cocci/filelock2.cocci |  6 ++++
+ cocci/nlm.cocci       | 81 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 168 insertions(+)
 
-diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-index 95e868e09e29..7825511c1c11 100644
---- a/include/linux/filelock.h
-+++ b/include/linux/filelock.h
-@@ -85,8 +85,9 @@ bool opens_in_grace(struct net *);
-  *
-  * Obviously, the last two criteria only matter for POSIX locks.
-  */
--struct file_lock {
--	struct file_lock *fl_blocker;	/* The lock, that is blocking us */
+diff --git a/cocci/filelock.cocci b/cocci/filelock.cocci
+new file mode 100644
+index 000000000000..b84151ba091a
+--- /dev/null
++++ b/cocci/filelock.cocci
+@@ -0,0 +1,81 @@
++@@
++struct file_lock *fl;
++@@
++(
++- fl->fl_blocker
+++ fl->fl_core.fl_blocker
++|
++- fl->fl_list
+++ fl->fl_core.fl_list
++|
++- fl->fl_link
+++ fl->fl_core.fl_link
++|
++- fl->fl_blocked_requests
+++ fl->fl_core.fl_blocked_requests
++|
++- fl->fl_blocked_member
+++ fl->fl_core.fl_blocked_member
++|
++- fl->fl_owner
+++ fl->fl_core.fl_owner
++|
++- fl->fl_flags
+++ fl->fl_core.fl_flags
++|
++- fl->fl_type
+++ fl->fl_core.fl_type
++|
++- fl->fl_pid
+++ fl->fl_core.fl_pid
++|
++- fl->fl_link_cpu
+++ fl->fl_core.fl_link_cpu
++|
++- fl->fl_wait
+++ fl->fl_core.fl_wait
++|
++- fl->fl_file
+++ fl->fl_core.fl_file
++)
 +
-+struct file_lock_core {
-+	struct file_lock *fl_blocker;	/* The lock that is blocking us */
- 	struct list_head fl_list;	/* link into file_lock_context */
- 	struct hlist_node fl_link;	/* node in global lists */
- 	struct list_head fl_blocked_requests;	/* list of requests with
-@@ -102,6 +103,10 @@ struct file_lock {
- 	int fl_link_cpu;		/* what cpu's list is this on? */
- 	wait_queue_head_t fl_wait;
- 	struct file *fl_file;
-+};
++@@
++struct file_lock fl;
++@@
++(
++- fl.fl_blocker
+++ fl.fl_core.fl_blocker
++|
++- fl.fl_list
+++ fl.fl_core.fl_list
++|
++- fl.fl_link
+++ fl.fl_core.fl_link
++|
++- fl.fl_blocked_requests
+++ fl.fl_core.fl_blocked_requests
++|
++- fl.fl_blocked_member
+++ fl.fl_core.fl_blocked_member
++|
++- fl.fl_owner
+++ fl.fl_core.fl_owner
++|
++- fl.fl_flags
+++ fl.fl_core.fl_flags
++|
++- fl.fl_type
+++ fl.fl_core.fl_type
++|
++- fl.fl_pid
+++ fl.fl_core.fl_pid
++|
++- fl.fl_link_cpu
+++ fl.fl_core.fl_link_cpu
++|
++- fl.fl_wait
+++ fl.fl_core.fl_wait
++|
++- fl.fl_file
+++ fl.fl_core.fl_file
++)
+diff --git a/cocci/filelock2.cocci b/cocci/filelock2.cocci
+new file mode 100644
+index 000000000000..0154a14e81ca
+--- /dev/null
++++ b/cocci/filelock2.cocci
+@@ -0,0 +1,6 @@
++@@
++struct file_lock *fl;
++struct list_head *li;
++@@
++- list_for_each_entry(fl, li, fl_list)
+++ list_for_each_entry(fl, li, fl_core.fl_list)
+diff --git a/cocci/nlm.cocci b/cocci/nlm.cocci
+new file mode 100644
+index 000000000000..8ec5d02871e1
+--- /dev/null
++++ b/cocci/nlm.cocci
+@@ -0,0 +1,81 @@
++@@
++struct nlm_lock *nlck;
++@@
++(
++- nlck->fl.fl_blocker
+++ nlck->fl.fl_core.fl_blocker
++|
++- nlck->fl.fl_list
+++ nlck->fl.fl_core.fl_list
++|
++- nlck->fl.fl_link
+++ nlck->fl.fl_core.fl_link
++|
++- nlck->fl.fl_blocked_requests
+++ nlck->fl.fl_core.fl_blocked_requests
++|
++- nlck->fl.fl_blocked_member
+++ nlck->fl.fl_core.fl_blocked_member
++|
++- nlck->fl.fl_owner
+++ nlck->fl.fl_core.fl_owner
++|
++- nlck->fl.fl_flags
+++ nlck->fl.fl_core.fl_flags
++|
++- nlck->fl.fl_type
+++ nlck->fl.fl_core.fl_type
++|
++- nlck->fl.fl_pid
+++ nlck->fl.fl_core.fl_pid
++|
++- nlck->fl.fl_link_cpu
+++ nlck->fl.fl_core.fl_link_cpu
++|
++- nlck->fl.fl_wait
+++ nlck->fl.fl_core.fl_wait
++|
++- nlck->fl.fl_file
+++ nlck->fl.fl_core.fl_file
++)
 +
-+struct file_lock {
-+	struct file_lock_core fl_core;
- 	loff_t fl_start;
- 	loff_t fl_end;
- 
++@@
++struct nlm_args *argp;
++@@
++(
++- argp->lock.fl.fl_blocker
+++ argp->lock.fl.fl_core.fl_blocker
++|
++- argp->lock.fl.fl_list
+++ argp->lock.fl.fl_core.fl_list
++|
++- argp->lock.fl.fl_link
+++ argp->lock.fl.fl_core.fl_link
++|
++- argp->lock.fl.fl_blocked_requests
+++ argp->lock.fl.fl_core.fl_blocked_requests
++|
++- argp->lock.fl.fl_blocked_member
+++ argp->lock.fl.fl_core.fl_blocked_member
++|
++- argp->lock.fl.fl_owner
+++ argp->lock.fl.fl_core.fl_owner
++|
++- argp->lock.fl.fl_flags
+++ argp->lock.fl.fl_core.fl_flags
++|
++- argp->lock.fl.fl_type
+++ argp->lock.fl.fl_core.fl_type
++|
++- argp->lock.fl.fl_pid
+++ argp->lock.fl.fl_core.fl_pid
++|
++- argp->lock.fl.fl_link_cpu
+++ argp->lock.fl.fl_core.fl_link_cpu
++|
++- argp->lock.fl.fl_wait
+++ argp->lock.fl.fl_core.fl_wait
++|
++- argp->lock.fl.fl_file
+++ argp->lock.fl.fl_core.fl_file
++)
 
 -- 
 2.43.0
