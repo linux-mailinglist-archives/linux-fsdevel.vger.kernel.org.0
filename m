@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-8090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D786D82F4F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 20:04:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 986B682F58B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 20:39:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC3031C23A79
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 19:04:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFE881C23B5A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 19:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FDE21D526;
-	Tue, 16 Jan 2024 19:03:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B446E1D555;
+	Tue, 16 Jan 2024 19:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="gfJ1J0me"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FVOyippu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sonic315-27.consmr.mail.ne1.yahoo.com (sonic315-27.consmr.mail.ne1.yahoo.com [66.163.190.153])
+Received: from sonic302-28.consmr.mail.ne1.yahoo.com (sonic302-28.consmr.mail.ne1.yahoo.com [66.163.186.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF071CFBC
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 19:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54FF01D52B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 19:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.153
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705431822; cv=none; b=fXd/felDjaTO7wZ0KmKYwdA1uKToUDLg7BoQngMpgsKiMabvQ0agJLy+VvzSl9IN6JUyBL8I3VQ2YyYY+pM1r885CeLzjIyPK92xpM9J4moRbm7dNF/oW3gTC42NGxUlSvO8nO4J62G6zBjJ9WJ5LQv5AQTizgAdxSNLoe5se1Y=
+	t=1705433950; cv=none; b=nesbHZcLe/qdsMFjLzALNMSrhYYLaAKl/BfLFQndFiIEbqj8Y5MYFO2Thx8jO8zh2Kgg7eS1UjY1JNCkARgrEGv9IL/yQDVunrCT5QIZs/JkXn9VxIBSic+iEoOm93MToLP2v6I9xkCEE+hKLBDrUJb30k0qHPiBIWdlApE40cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705431822; c=relaxed/simple;
-	bh=LP3JFUleL5tgrEt+FYX6R+NjZb6uZ96M1GAySEcCltA=;
+	s=arc-20240116; t=1705433950; c=relaxed/simple;
+	bh=yOYFzHOuTO6VrRPZgrSLiqLBvjIs0QRPGE1Mbu2QmoU=;
 	h=DKIM-Signature:X-SONIC-DKIM-SIGN:X-YMail-OSG:X-Sonic-MF:
 	 X-Sonic-ID:Received:Received:Message-ID:Date:MIME-Version:
 	 User-Agent:Subject:Content-Language:To:Cc:References:From:
-	 In-Reply-To:Content-Type:Content-Transfer-Encoding:X-Mailer; b=TVYPgS13Y/wFP7s+S7076uJDinCpgrv3PDuYW9ugJocLJw9Xk1knjEIEMSTKRqMkm8PVYRrSinLknZcVXuvu5F9LqMNQP6Q1P/M7xogr27P/0WSctzLPOOJ812DuFbuaObXAqoClfS22orqIL4ZVup+RD6hDdGU9L1GJhfho1oY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=gfJ1J0me; arc=none smtp.client-ip=66.163.190.153
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1705431820; bh=bmM3zqWDq47hwxFfMaTYAE8RyedabxO1GzYz/ZL707w=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=gfJ1J0me/hyQMHATFli5OPXC0ZOqpRJ8pZW/DKYbGDiRyK5HuXWepb+AOkAHmFwapbreYp1DrB2x/hNkmwXN+xPFOLwwgkUYe8/1IqQC11EX6jR4rZV5AGvkZIxWXVXBjfRq2oIMygue21zzQTuNjF5Jso51GowPxTiTqcZicNJfKso2mEkxLvJy6QUt44SoMwzLqVjyEVI+NVyL0MKteqO8zO5A2X8JsHt4TYSYZHCm6o5o4Tl0QJLXhhD0/8H2+Dnz62k82lQzy9h8R3XCzZO8UBhaqjOu9Z7dJhadCh2zGgYgtFkBoWFX/IeGRa2IEO0BrT9ev+uvBC2GMHZDPQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1705431820; bh=yVpQHVA656PKzID8E+1S2n14b2EDzsNVO4IaOWQQoyk=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=UbJfFRhGnqgR8kqeokxWE2c3aJ0Bw+0p9zZaihqxTrPZ/tRPIlhIlNFFfJy80rmcDlNzF9kGjnwTVaPTf4Eohx4iba1C6+N5aQjY2z1jFIyKrg08/ECzIefDEJfQ43ckAH35jQ+8mGPYf+s4qvl6vRuiyA3p/7P2C/o8/oehsaC30mVucE/47/Efo+oEyB6cbT2tlCHUdp4GdTcBv21PGltW3KRyBDSa2DRImge3Y8yEcHpcese5mzdCLlvI6hqXCmOJRTquBHVJkWcSVQGrEuujeAqzkQ7mnJKZd7uV1+gFcnWR8lOJAJFpErZcvVctTsJQeHm66zFc34L5nNsYzQ==
-X-YMail-OSG: HzhZVqMVM1k0wdhgORxZEIa0BEoxW7ThWD3oZB3wtO4Lu5jtoGTZjWih_bmlbfY
- hgH745BXuLQIMRDRUty4hPvnD7LWJRPMNumDXmwXdiVLWqqPr4Up4xp1WX8p7PEmTISUk5Co37FO
- 2snZxspE.QbmEaCFQxP8cKz9.G2AXzmYV4GvA4dEsTBTF0oyZJkhHJFPHZJPWIrdCPRNSSsfbEOt
- ze2P1dCCbkDwJg.Fgm.qhrwkwuh3GbD5DYnyVuknQB23XvqbDrQLpA9dneErIrnXlKlG5_3XSgB6
- kuOVyxVzluO3Ia4enOIu3V0PK4U_Aam7jV4oFeWaEFLn6xLEe90SV4EHyQbq1eVc42MbXd0oOK33
- OdPyJY07rEjVVF2G5E8AccGZYjyzWbo42Cy10DYwdx6TvQuQ4APFoDJtPx1AYSuB_nAaaaodEzcn
- W0TT9lrbuoZ7OcNuiDDVeZ98rsy0Eze9gi54nC8Hycy2QsBs1OOBcO2TYPGKuUq7wMwT8eHEi0..
- 9P7DZJuZ5AjLPIt4MK9Dj0Xz_sORmKHm1Bo2i5Rmrxwav26BAHLUFDb.atk4fZagD8havmS9ks92
- IiuantOofFSSVLfLtdZ5op5wbTpN1cdldLwAE6tyVneK.Yvvfdq1vNvYeLG7C77iMy0Xnl6RApGj
- pEsBHoSkGtSb12WdCFP6xv84SwEyNnIJgrpKyppICQ_iL.pof.gJcQ5ZuxVGm7dfbmRkOBX5Xw2g
- dnK6fwr6QdRdsjh1J8uv6gOXXVRoMIrXxEc6A3N_hhpb3qQV2NsLKRyopS3C_YK5TNkJG8b1gBcN
- 58h_sQj.8FRuqeF2tK1VgVgEloVfpe5bqAW.NknZDhJOkLEESpuEG2QI4KJvNz4R8gIXooExI.o5
- pUKeAMR6Ox_VuAe6iZNHIAuDxxXYwB0ipY22Rdr35JxX61A6TY6rBjTFPnZdyAViW_WthJPML8Aq
- gTtG6dLe1gXrw2GSaupJbWsa4e6Dy.tEabnyUimkHx8ZUQFurG4jpo_QTgNZZ.OPviill5ynTjVI
- fZl9zeSPUHgO2aI6EcJKHd.I9b16.xxrfM5bjwaKZdi46Brk62AT2GPjjrvUiZSXQZLn2fpSD4xQ
- mIx9aCp0JMxPUx3qVnZ9sfyIrxzApTN.QZ714LxeHyhV66ddIqBwxVQzlSgeh7DTGbztwcsn.3T5
- bmlpmRhOEQ0aDE4Z_nZVGJHIDF6sA2qryWFS1qsHOa2ICl452N4Pz0.0xv0hm4Lw1fyl0n8QkUY3
- p_fS5wDQFc2nlJ2lRAM5weKsFILIQpXo_SBxd2dyzZRplHAsczFmeaPHIECLPbWl1YQNz.FoXamN
- H4cyWjvZCWRvGISiht6Q2xMpj2Y8CbcT9ghIN_nQzQXVQwAt9uegefwiufaspjh.5BsvdOUmq.7j
- x79QCptFtlC7T17vMorxbckW476FvRk0.LiBMCdqHVfU.KE4nB8V.KYcauFswTWPiuhUmn9h4WcX
- Hx9T3u6eSiA7HfaxZbQgMJJi4pJiTQYI4P6v.y5ESO3kZG_POJiTbVZTGHZ1wsPeOO0j9cK6lvuF
- 9rcLfdJGBtE8VO0JSQSmcWbivCtXZI0eES2n.r2QNqgDB2ZiAOCoYURhxNwP08MWYTDPAoafr0cM
- FNjoS9tHZi.ANpu0_kPagQM9EJbRKvPSzHVFba9.Jf.yfyUjNC0I1Ae_Si1GhbyLPiy2o_q_ko2E
- 8zXtRzaRTMjH6bK89OCDXAxWrR0WEQ_fAORU7_IJ1mkk3OpJNgDifmrsWOP_5oQNVQPTPAMSA8uE
- b_vzK8D0W7B4B.arIy3uhe5Xca0YNjMZog56xHEBgOXLwqtP_YeaCGgkEB_5tNSTLbeK_Wr2nGtB
- jDAQJOJocLrb8Johhy.JQ2QICZJ9jAKdi8nabKWSgLDD5EhHgoab6_NYLSFhscXu_p3Ao5jcl0U2
- g7UpVgRW2nVH0REA525_ugBQYZYA9z_dGMu94JyttuWWDFK23_GwPI2DnjjvfxKz5Fe7tWu3u0Zb
- QTgkOgQPGThaHKyaKxdowYDYFwCns7pY6hrmhiO9JbUfoJRuTyEbNZ8rTC0Wf8QR_zSxL2BYf0fr
- hZFWt1Kd1ur9cEVDINsJSCEV9esyC8dFneS9mFG5HuUCfhqWA_3GVAGWYec9CS_l1nDU7ZT71AwR
- mPtwX6dP0sFCrabksP0j2Q1UfuNqCfHrT29RPbTa95h.eP5KkKdofD9S_mzIL_XS_9i6Inxi_vYT
- HBSHxF9co27xEaLDD9DzzGWcFj1FVX7IIm0pbbd6gcsSVLiH_7KjWdlbPMgiJWbRfVbLYxw--
+	 In-Reply-To:Content-Type:Content-Transfer-Encoding:X-Mailer; b=RjokmIu0D7ZFBAIwq6g37C9j1HY/4vS81jSmiDAcvDJQVN41rplK+kGBuQZvS3PZmCimRZStXLwJUAZGdPYF92BKABXOIxE2TjUnDrq6G/ZN2eHP03rdyQO523bknpYPWhZGRR0kgplaFXLBNiKlJfOY3xNw+VDRe2JitLsHiG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=FVOyippu; arc=none smtp.client-ip=66.163.186.154
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1705433946; bh=RiUglubP9qNWL5GzrvRiXCW/GFkHve/7zdA3FMCkSBg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=FVOyippupHovAsecVgk9mo/z8SJ6HufkcpEAFWM1T+kup6FCbxXKPCZhb8+/aRSKA+nO9sMvLAtZvxJe9Cqt1vRtTwiaksqMKDq7diepIsv32h90cB3GexsEZec7GRpDeTo0qLdCzQdwVtlUNeIVRXqOmldHV64jkYaigh3yaNNni3PQn+iiZoVWbmjmbVM7qZJPVqQ1XCY9pmPB2+nIZpW1A4w5iJx2ew3J30E2Axxo/DNzDG3GCgikuHOfLJfkzwK3hW+wTDPzsd97CqpATxZXwmjkvD1PcdrJCMgBPIl3V6116sGONwzmXIe6PhW4fP6I63603rNhY9qTEhatpA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1705433946; bh=GwkN94/XIb5zBWM8kioZwMqphYVStpq2rIaNU/yrUkD=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=MoasUze4qOxAbOYFFpe0chksMNJKqL5lNfAsMuMSdi83zyJTr3K2OrRkxf9L3yQnFjnsRiZxeYzeU/pVdFqtxOZt+7QO4ORrDX2sABExMO5MxOAlOBoOY3j1z6kHFEeNk+HjNzPGiTwdUb+cS2CsP/SlJ3zCQssSLIIPSsDEGDzGtyPbwWyEa1pMQmF2uHSnIrB6w1MWY3c80ROx/gRpgZBnbaTlndrqedybYM1ShTm47kLinRtzlkjjvDOPgVNiMCQEQw5N6HEx1BQ5JK7sXxdfMDfUZS2FIlcNzuXvx2xDgf17ei+Au9GXiYlDJZMnelWfD7fVUds0vKdtkA9cmg==
+X-YMail-OSG: JqI4QEsVM1l5xt8rq.qZQJGy1.cmebL3bxyY5_SvbESb3wl.zVRXAmzeti2TE8r
+ 1v0Fw6TsauPx7mbyVDeB.Il03jqK7gteseSX6GqJ4cOf.AOuoIz1U4APcYJvql8zNYP71TdaSAd5
+ kW28HnlwDuuXsmM2pL0Jn4Zp0gffzI3AUYsQD4RxNCGLnW7053spvl2REzd7uVQnt09VhXUpWr5P
+ 5mRRB7khDnAeDxlUL8yGIyqr28dTvZ3hF.rUCGQixbbMlo8t7As7pdCBXU15Jh1_wh2Bj8yfFYgP
+ .XdDh7VKCqM_2L8RXd6bR8ueQNPqspa1WoPfOEMM8Ozu9sOXr98sAS4xhsToTiRj.NRfMnsqHQSz
+ P6MyPfNyLnc9s5RSpYOHklMLWwdkd6ugpY6ycHm0xBFnJ3Isuxb0.1p18Kh0Jx.cPP0ANpENLpBN
+ AdyLDLzt932_Gpujh0GnlqQbUphlzpjbQE4C1Hg0TVt.OmnNg7Lzbg9W9LRp2kik1DGtDeMZLxDm
+ JfVnu4igZXdjcw8rJxoydpZ6Ct_yZle_JQciYFF3bIrUCtVLW65hrE8xygTuu6mRNvwKuMH1HCNZ
+ pH0IGqEzQRLsADR5OZaGiD9c57Q9NfzyGwprFS0w_7d9DlP1Rz.G0Oi_FDZEmlDmGgaOy8cXxl8b
+ ywyHGcwaOB44HDcdq41iCioYsPCHnNgvQw5OptzA2zwKceyvpRZsu812SA5JVbpz03ArtghriWYC
+ cI._KDs9zXC4MCORSHhUQ_3oTVf8PjZZVGMlIL1VpW.Y0LH9FsguCx362l6LNIY3AyZUZqZR2Pd.
+ b3MwUy.EwkzIeCFbTft6bKrKl3sWlI6vM659HbhSJ8gR5JmU7IW0ETZPGkP6XEJkdUnX1uBJ0H_b
+ fQwoGn4xp_vC5_lHupTmtKJcvrQvHUYOgAgwR0t_0Mw.qV9pR3G_Z39yo0M_2rcE6EYvsaMtDmj1
+ 9bUvuHj8.AAlTdhpYDuXr5bM4Gp9IRXEEJKrXPEkkhYWId0NDNS48D7qbmqgEecklUDoQ7fzH2x1
+ mUl.9gVX3dgu.SXs4MALwHoPm2dZk58NF4eBdcDWMCtV866PiC2oL9yBwQprSdmdHIh8GWWe3_kM
+ 4I.1W.Ezz5byAOLihgffZhIzg882VOwJ9ZH.ICRTDgWmOIxmLHXMQ7YJV_0JD8QZ38YbvC.ZztxQ
+ sts_13ziGuEKfHVDbDD0dB12dWBMGmGoF6EYsewydDwYtRlgr5PAeckeXkFeyf1SawrcEEMdgsOu
+ GEIygrSLeeoIxL_btDZXS.HCp8WnW6PBuvmr849vWtKSiC3Ic_4CFBz0_mq.zEmEhAFU2GAPJpCX
+ ZUhZTtEAc4KXfRVlhY7JHZFC_VPyX6Z2jjOoZWJ6HbkPcaeuZhSQ97YOOCSmeuX46KuanHiSQtvV
+ SWgK36PSfRckKsjGf9YPpprPnK54aRiip._nVLdwTUBi0skUJdSKHo..Gz3qTjluZISmYB2JEu91
+ 3AbxAsx1jf2_ip8r3rIg5NCojTOVKzY3gRdUd_MO319VXzFUDsZCsREbjvuvy4A5rxCIj0Ka2RZm
+ KcniRFIs8J3eVK.NrPCgWerRPkqRoGS41brJNWAd66BwS5l97_pZwracupXezKzvaGj63vXf1IDN
+ trbnUY75Mc5810ncjiztxMo5x1eBozfuttmpKxGfHFWqDpp6alwRRwqPXUNJ.Rym3.jRQ8I3i46O
+ pmktFdhrl_1cuhfILnZx_J0XSgdLoI6QvREQOv_8aY4zEcg70UozTdraJdM3CJWYClTIvkJYTrS6
+ LD.0k.SFaDfwuxqlcFer7gCVu7zQXV_J_d2njKkicF4qGZeMeJTCvD0u_tQDYH4BT5p86m2HmNEj
+ 7OkYR.OgwGu5iCCyQU36gsX4nHGgcxBVlik1MKjpPQ8vqSn.NuD6Sz50nJJZB_4njiJKbTKJ__T1
+ ex0WOKbfQzhqUPXOrUxKRZTDMWRI5gmtfmwrV.V.npjDo.d9_fEg3XQr8rlDpOHZQJ1Kh9Bp4bqt
+ wVQpSsodfqTX23I.p_dTeWJ9Ny7azr9FVjNGzsIc57PS0tQ5kB1vZBtBHuu2lq7yD3Fjo8sZQpnI
+ HLoI1PdS4JRaeYeA1ygDwc8FOxkfTqV317W9urlL3mDZ.k8k7oFtKf1fmtj1ZCDg6EXfyRtD1rn8
+ BLSMG5uuiw7TUv._z7wqq03E0vmManzOPLhOv1dzWv..ZmJb_CilgCr8C9P71AW15hm9Lxk0WUfN
+ O5L5FreqAgocpW7MWeugMKFYCR69Lz4xS0h2QCCp2taKSiof98ppg5pHXe66U.iUufCvfDZs-
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: d0a23db9-8c45-41d9-843b-159616e635b6
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.ne1.yahoo.com with HTTP; Tue, 16 Jan 2024 19:03:40 +0000
-Received: by hermes--production-gq1-78d49cd6df-t49qq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b9e58974c20c0628bd9811e4fdefae14;
-          Tue, 16 Jan 2024 19:03:37 +0000 (UTC)
-Message-ID: <5259a6a3-5f9a-4c41-851b-ffd6bd245be3@schaufler-ca.com>
-Date: Tue, 16 Jan 2024 11:03:34 -0800
+X-Sonic-ID: 158c8b8e-e7e6-4d95-b7c3-8d60ecdbee93
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Tue, 16 Jan 2024 19:39:06 +0000
+Received: by hermes--production-gq1-78d49cd6df-tswkb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a6dcb4c61eac71b6ef7500d2bae378b3;
+          Tue, 16 Jan 2024 19:39:03 +0000 (UTC)
+Message-ID: <0a5b99b9-0839-4f76-abb4-1fc9e5a6cb49@schaufler-ca.com>
+Date: Tue, 16 Jan 2024 11:39:01 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,7 +80,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 21/25] ima: Move IMA-Appraisal to LSM infrastructure
+Subject: Re: [PATCH v9 23/25] evm: Make it independent from 'integrity' LSM
 Content-Language: en-US
 To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
  brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
@@ -94,12 +94,11 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
  selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
  Roberto Sassu <roberto.sassu@huawei.com>,
- Stefan Berger <stefanb@linux.ibm.com>,
  Casey Schaufler <casey@schaufler-ca.com>
 References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
- <20240115181809.885385-22-roberto.sassu@huaweicloud.com>
+ <20240115181809.885385-24-roberto.sassu@huaweicloud.com>
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240115181809.885385-22-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240115181809.885385-24-roberto.sassu@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.22010 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
@@ -107,285 +106,361 @@ X-Mailer: WebService/1.1.22010 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz
 On 1/15/2024 10:18 AM, Roberto Sassu wrote:
 > From: Roberto Sassu <roberto.sassu@huawei.com>
 >
-> A few additional IMA hooks are needed to reset the cached appraisal
-> status, causing the file's integrity to be re-evaluated on next access.
-> Register these IMA-appraisal only functions separately from the rest of IMA
-> functions, as appraisal is a separate feature not necessarily enabled in
-> the kernel configuration.
+> Define a new structure for EVM-specific metadata, called evm_iint_cache,
+> and embed it in the inode security blob. Introduce evm_iint_inode() to
+> retrieve metadata, and register evm_inode_alloc_security() for the
+> inode_alloc_security LSM hook, to initialize the structure (before
+> splitting metadata, this task was done by iint_init_always()).
 >
-> Reuse the same approach as for other IMA functions, move hardcoded calls
-> from various places in the kernel to the LSM infrastructure. Declare the
-> functions as static and register them as hook implementations in
-> init_ima_appraise_lsm(), called by init_ima_lsm().
+> Keep the non-NULL checks after calling evm_iint_inode() except in
+> evm_inode_alloc_security(), to take into account inodes for which
+> security_inode_alloc() was not called. When using shared metadata,
+> obtaining a NULL pointer from integrity_iint_find() meant that the file
+> wasn't in the IMA policy. Now, because IMA and EVM use disjoint metadata,
+> the EVM status has to be stored for every inode regardless of the IMA
+> policy.
 >
-> Also move the inline function ima_inode_remove_acl() from the public ima.h
-> header to ima_appraise.c.
+> Given that from now on EVM relies on its own metadata, remove the iint
+> parameter from evm_verifyxattr(). Also, directly retrieve the iint in
+> evm_verify_hmac(), called by both evm_verifyxattr() and
+> evm_verify_current_integrity(), since now there is no performance penalty
+> in retrieving EVM metadata (constant time).
+>
+> Replicate the management of the IMA_NEW_FILE flag, by introducing
+> evm_post_path_mknod() and evm_file_release() to respectively set and clear
+> the newly introduced flag EVM_NEW_FILE, at the same time IMA does. Like for
+> IMA, select CONFIG_SECURITY_PATH when EVM is enabled, to ensure that files
+> are marked as new.
+>
+> Unlike ima_post_path_mknod(), evm_post_path_mknod() cannot check if a file
+> must be appraised. Thus, it marks all affected files. Also, it does not
+> clear EVM_NEW_FILE depending on i_version, but that is not a problem
+> because IMA_NEW_FILE is always cleared when set in ima_check_last_writer().
+>
+> Move the EVM-specific flag EVM_IMMUTABLE_DIGSIG to
+> security/integrity/evm/evm.h, since that definition is now unnecessary in
+> the common integrity layer.
+>
+> Finally, switch to the LSM reservation mechanism for the EVM xattr, and
+> consequently decrement by one the number of xattrs to allocate in
+> security_inode_init_security().
 >
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
 Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
 
 > ---
->  fs/attr.c                             |  2 -
->  include/linux/ima.h                   | 55 ---------------------------
->  security/integrity/ima/ima.h          |  5 +++
->  security/integrity/ima/ima_appraise.c | 38 +++++++++++++-----
->  security/integrity/ima/ima_main.c     |  1 +
->  security/security.c                   | 13 -------
->  6 files changed, 35 insertions(+), 79 deletions(-)
+>  include/linux/evm.h                   |  8 +--
+>  security/integrity/evm/Kconfig        |  1 +
+>  security/integrity/evm/evm.h          | 19 +++++++
+>  security/integrity/evm/evm_crypto.c   |  4 +-
+>  security/integrity/evm/evm_main.c     | 76 ++++++++++++++++++++-------
+>  security/integrity/ima/ima_appraise.c |  2 +-
+>  security/integrity/integrity.h        |  1 -
+>  security/security.c                   |  4 +-
+>  8 files changed, 83 insertions(+), 32 deletions(-)
 >
-> diff --git a/fs/attr.c b/fs/attr.c
-> index 221d2bb0a906..38841f3ebbcb 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -17,7 +17,6 @@
->  #include <linux/filelock.h>
->  #include <linux/security.h>
->  #include <linux/evm.h>
-> -#include <linux/ima.h>
+> diff --git a/include/linux/evm.h b/include/linux/evm.h
+> index cb481eccc967..d48d6da32315 100644
+> --- a/include/linux/evm.h
+> +++ b/include/linux/evm.h
+> @@ -12,15 +12,12 @@
+>  #include <linux/integrity.h>
+>  #include <linux/xattr.h>
 >  
->  #include "internal.h"
->  
-> @@ -503,7 +502,6 @@ int notify_change(struct mnt_idmap *idmap, struct dentry *dentry,
->  	if (!error) {
->  		fsnotify_change(dentry, ia_valid);
->  		security_inode_post_setattr(idmap, dentry, ia_valid);
-> -		ima_inode_post_setattr(idmap, dentry, ia_valid);
->  		evm_inode_post_setattr(idmap, dentry, ia_valid);
->  	}
->  
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 23ae24b60ecf..0bae61a15b60 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -92,66 +92,11 @@ static inline void ima_add_kexec_buffer(struct kimage *image)
->  
->  #ifdef CONFIG_IMA_APPRAISE
->  extern bool is_ima_appraise_enabled(void);
-> -extern void ima_inode_post_setattr(struct mnt_idmap *idmap,
-> -				   struct dentry *dentry, int ia_valid);
-> -extern int ima_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> -			      const char *xattr_name, const void *xattr_value,
-> -			      size_t xattr_value_len, int flags);
-> -extern int ima_inode_set_acl(struct mnt_idmap *idmap,
-> -			     struct dentry *dentry, const char *acl_name,
-> -			     struct posix_acl *kacl);
-> -static inline int ima_inode_remove_acl(struct mnt_idmap *idmap,
-> -				       struct dentry *dentry,
-> -				       const char *acl_name)
-> -{
-> -	return ima_inode_set_acl(idmap, dentry, acl_name, NULL);
-> -}
+> -struct integrity_iint_cache;
 > -
-> -extern int ima_inode_removexattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> -				 const char *xattr_name);
->  #else
->  static inline bool is_ima_appraise_enabled(void)
+>  #ifdef CONFIG_EVM
+>  extern int evm_set_key(void *key, size_t keylen);
+>  extern enum integrity_status evm_verifyxattr(struct dentry *dentry,
+>  					     const char *xattr_name,
+>  					     void *xattr_value,
+> -					     size_t xattr_value_len,
+> -					     struct integrity_iint_cache *iint);
+> +					     size_t xattr_value_len);
+>  int evm_inode_init_security(struct inode *inode, struct inode *dir,
+>  			    const struct qstr *qstr, struct xattr *xattrs,
+>  			    int *xattr_count);
+> @@ -48,8 +45,7 @@ static inline int evm_set_key(void *key, size_t keylen)
+>  static inline enum integrity_status evm_verifyxattr(struct dentry *dentry,
+>  						    const char *xattr_name,
+>  						    void *xattr_value,
+> -						    size_t xattr_value_len,
+> -					struct integrity_iint_cache *iint)
+> +						    size_t xattr_value_len)
 >  {
->  	return 0;
+>  	return INTEGRITY_UNKNOWN;
 >  }
-> -
-> -static inline void ima_inode_post_setattr(struct mnt_idmap *idmap,
-> -					  struct dentry *dentry, int ia_valid)
-> -{
-> -	return;
-> -}
-> -
-> -static inline int ima_inode_setxattr(struct mnt_idmap *idmap,
-> -				     struct dentry *dentry,
-> -				     const char *xattr_name,
-> -				     const void *xattr_value,
-> -				     size_t xattr_value_len,
-> -				     int flags)
-> -{
-> -	return 0;
-> -}
-> -
-> -static inline int ima_inode_set_acl(struct mnt_idmap *idmap,
-> -				    struct dentry *dentry, const char *acl_name,
-> -				    struct posix_acl *kacl)
-> -{
-> -
-> -	return 0;
-> -}
-> -
-> -static inline int ima_inode_removexattr(struct mnt_idmap *idmap,
-> -					struct dentry *dentry,
-> -					const char *xattr_name)
-> -{
-> -	return 0;
-> -}
-> -
-> -static inline int ima_inode_remove_acl(struct mnt_idmap *idmap,
-> -				       struct dentry *dentry,
-> -				       const char *acl_name)
-> -{
-> -	return 0;
-> -}
->  #endif /* CONFIG_IMA_APPRAISE */
+> diff --git a/security/integrity/evm/Kconfig b/security/integrity/evm/Kconfig
+> index fba9ee359bc9..861b3bacab82 100644
+> --- a/security/integrity/evm/Kconfig
+> +++ b/security/integrity/evm/Kconfig
+> @@ -6,6 +6,7 @@ config EVM
+>  	select CRYPTO_HMAC
+>  	select CRYPTO_SHA1
+>  	select CRYPTO_HASH_INFO
+> +	select SECURITY_PATH
+>  	default n
+>  	help
+>  	  EVM protects a file's security extended attributes against
+> diff --git a/security/integrity/evm/evm.h b/security/integrity/evm/evm.h
+> index 53bd7fec93fa..eb1a2c343bd7 100644
+> --- a/security/integrity/evm/evm.h
+> +++ b/security/integrity/evm/evm.h
+> @@ -32,6 +32,25 @@ struct xattr_list {
+>  	bool enabled;
+>  };
 >  
->  #if defined(CONFIG_IMA_APPRAISE) && defined(CONFIG_INTEGRITY_TRUSTED_KEYRING)
-> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> index c0412100023e..a27fc10f84f7 100644
-> --- a/security/integrity/ima/ima.h
-> +++ b/security/integrity/ima/ima.h
-> @@ -334,6 +334,7 @@ enum hash_algo ima_get_hash_algo(const struct evm_ima_xattr_data *xattr_value,
->  				 int xattr_len);
->  int ima_read_xattr(struct dentry *dentry,
->  		   struct evm_ima_xattr_data **xattr_value, int xattr_len);
-> +void __init init_ima_appraise_lsm(const struct lsm_id *lsmid);
->  
->  #else
->  static inline int ima_check_blacklist(struct integrity_iint_cache *iint,
-> @@ -385,6 +386,10 @@ static inline int ima_read_xattr(struct dentry *dentry,
->  	return 0;
->  }
->  
-> +static inline void __init init_ima_appraise_lsm(const struct lsm_id *lsmid)
-> +{
-> +}
+> +#define EVM_NEW_FILE			0x00000001
+> +#define EVM_IMMUTABLE_DIGSIG		0x00000002
 > +
->  #endif /* CONFIG_IMA_APPRAISE */
->  
->  #ifdef CONFIG_IMA_APPRAISE_MODSIG
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index 36abc84ba299..076451109637 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -636,8 +636,8 @@ void ima_update_xattr(struct integrity_iint_cache *iint, struct file *file)
->   * This function is called from notify_change(), which expects the caller
->   * to lock the inode's i_mutex.
->   */
-> -void ima_inode_post_setattr(struct mnt_idmap *idmap,
-> -			    struct dentry *dentry, int ia_valid)
-> +static void ima_inode_post_setattr(struct mnt_idmap *idmap,
-> +				   struct dentry *dentry, int ia_valid)
->  {
->  	struct inode *inode = d_backing_inode(dentry);
->  	struct integrity_iint_cache *iint;
-> @@ -750,9 +750,9 @@ static int validate_hash_algo(struct dentry *dentry,
->  	return -EACCES;
->  }
->  
-> -int ima_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> -		       const char *xattr_name, const void *xattr_value,
-> -		       size_t xattr_value_len, int flags)
-> +static int ima_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> +			      const char *xattr_name, const void *xattr_value,
-> +			      size_t xattr_value_len, int flags)
->  {
->  	const struct evm_ima_xattr_data *xvalue = xattr_value;
->  	int digsig = 0;
-> @@ -781,8 +781,8 @@ int ima_inode_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
->  	return result;
->  }
->  
-> -int ima_inode_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-> -		      const char *acl_name, struct posix_acl *kacl)
-> +static int ima_inode_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-> +			     const char *acl_name, struct posix_acl *kacl)
->  {
->  	if (evm_revalidate_status(acl_name))
->  		ima_reset_appraise_flags(d_backing_inode(dentry), 0);
-> @@ -790,8 +790,8 @@ int ima_inode_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
->  	return 0;
->  }
->  
-> -int ima_inode_removexattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> -			  const char *xattr_name)
-> +static int ima_inode_removexattr(struct mnt_idmap *idmap, struct dentry *dentry,
-> +				 const char *xattr_name)
->  {
->  	int result;
->  
-> @@ -803,3 +803,23 @@ int ima_inode_removexattr(struct mnt_idmap *idmap, struct dentry *dentry,
->  	}
->  	return result;
->  }
-> +
-> +static int ima_inode_remove_acl(struct mnt_idmap *idmap, struct dentry *dentry,
-> +				const char *acl_name)
-> +{
-> +	return ima_inode_set_acl(idmap, dentry, acl_name, NULL);
-> +}
-> +
-> +static struct security_hook_list ima_appraise_hooks[] __ro_after_init = {
-> +	LSM_HOOK_INIT(inode_post_setattr, ima_inode_post_setattr),
-> +	LSM_HOOK_INIT(inode_setxattr, ima_inode_setxattr),
-> +	LSM_HOOK_INIT(inode_set_acl, ima_inode_set_acl),
-> +	LSM_HOOK_INIT(inode_removexattr, ima_inode_removexattr),
-> +	LSM_HOOK_INIT(inode_remove_acl, ima_inode_remove_acl),
+> +/* EVM integrity metadata associated with an inode */
+> +struct evm_iint_cache {
+> +	unsigned long flags;
+> +	enum integrity_status evm_status:4;
 > +};
 > +
-> +void __init init_ima_appraise_lsm(const struct lsm_id *lsmid)
+> +extern struct lsm_blob_sizes evm_blob_sizes;
+> +
+> +static inline struct evm_iint_cache *evm_iint_inode(const struct inode *inode)
 > +{
-> +	security_add_hooks(ima_appraise_hooks, ARRAY_SIZE(ima_appraise_hooks),
-> +			   lsmid);
+> +	if (unlikely(!inode->i_security))
+> +		return NULL;
+> +
+> +	return inode->i_security + evm_blob_sizes.lbs_inode;
 > +}
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 483ccd24e214..77d0d4e4b582 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -1178,6 +1178,7 @@ static const struct lsm_id ima_lsmid = {
->  static int __init init_ima_lsm(void)
+> +
+>  extern int evm_initialized;
+>  
+>  #define EVM_ATTR_FSUUID		0x0001
+> diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+> index b1ffd4cc0b44..7552d49d0725 100644
+> --- a/security/integrity/evm/evm_crypto.c
+> +++ b/security/integrity/evm/evm_crypto.c
+> @@ -322,10 +322,10 @@ int evm_calc_hash(struct dentry *dentry, const char *req_xattr_name,
+>  static int evm_is_immutable(struct dentry *dentry, struct inode *inode)
 >  {
->  	security_add_hooks(ima_hooks, ARRAY_SIZE(ima_hooks), &ima_lsmid);
-> +	init_ima_appraise_lsm(&ima_lsmid);
+>  	const struct evm_ima_xattr_data *xattr_data = NULL;
+> -	struct integrity_iint_cache *iint;
+> +	struct evm_iint_cache *iint;
+>  	int rc = 0;
+>  
+> -	iint = integrity_iint_find(inode);
+> +	iint = evm_iint_inode(inode);
+>  	if (iint && (iint->flags & EVM_IMMUTABLE_DIGSIG))
+>  		return 1;
+>  
+> diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+> index f65dbf3e9256..14c8f38e61d6 100644
+> --- a/security/integrity/evm/evm_main.c
+> +++ b/security/integrity/evm/evm_main.c
+> @@ -178,14 +178,14 @@ static int is_unsupported_fs(struct dentry *dentry)
+>  static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+>  					     const char *xattr_name,
+>  					     char *xattr_value,
+> -					     size_t xattr_value_len,
+> -					     struct integrity_iint_cache *iint)
+> +					     size_t xattr_value_len)
+>  {
+>  	struct evm_ima_xattr_data *xattr_data = NULL;
+>  	struct signature_v2_hdr *hdr;
+>  	enum integrity_status evm_status = INTEGRITY_PASS;
+>  	struct evm_digest digest;
+> -	struct inode *inode;
+> +	struct inode *inode = d_backing_inode(dentry);
+> +	struct evm_iint_cache *iint = evm_iint_inode(inode);
+>  	int rc, xattr_len, evm_immutable = 0;
+>  
+>  	if (iint && (iint->evm_status == INTEGRITY_PASS ||
+> @@ -254,8 +254,6 @@ static enum integrity_status evm_verify_hmac(struct dentry *dentry,
+>  					(const char *)xattr_data, xattr_len,
+>  					digest.digest, digest.hdr.length);
+>  		if (!rc) {
+> -			inode = d_backing_inode(dentry);
+> -
+>  			if (xattr_data->type == EVM_XATTR_PORTABLE_DIGSIG) {
+>  				if (iint)
+>  					iint->flags |= EVM_IMMUTABLE_DIGSIG;
+> @@ -403,7 +401,6 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+>   * @xattr_name: requested xattr
+>   * @xattr_value: requested xattr value
+>   * @xattr_value_len: requested xattr value length
+> - * @iint: inode integrity metadata
+>   *
+>   * Calculate the HMAC for the given dentry and verify it against the stored
+>   * security.evm xattr. For performance, use the xattr value and length
+> @@ -416,8 +413,7 @@ int evm_read_protected_xattrs(struct dentry *dentry, u8 *buffer,
+>   */
+>  enum integrity_status evm_verifyxattr(struct dentry *dentry,
+>  				      const char *xattr_name,
+> -				      void *xattr_value, size_t xattr_value_len,
+> -				      struct integrity_iint_cache *iint)
+> +				      void *xattr_value, size_t xattr_value_len)
+>  {
+>  	if (!evm_key_loaded() || !evm_protected_xattr(xattr_name))
+>  		return INTEGRITY_UNKNOWN;
+> @@ -425,13 +421,8 @@ enum integrity_status evm_verifyxattr(struct dentry *dentry,
+>  	if (is_unsupported_fs(dentry))
+>  		return INTEGRITY_UNKNOWN;
+>  
+> -	if (!iint) {
+> -		iint = integrity_iint_find(d_backing_inode(dentry));
+> -		if (!iint)
+> -			return INTEGRITY_UNKNOWN;
+> -	}
+>  	return evm_verify_hmac(dentry, xattr_name, xattr_value,
+> -				 xattr_value_len, iint);
+> +				 xattr_value_len);
+>  }
+>  EXPORT_SYMBOL_GPL(evm_verifyxattr);
+>  
+> @@ -448,7 +439,7 @@ static enum integrity_status evm_verify_current_integrity(struct dentry *dentry)
+>  
+>  	if (!evm_key_loaded() || !S_ISREG(inode->i_mode) || evm_fixmode)
+>  		return INTEGRITY_PASS;
+> -	return evm_verify_hmac(dentry, NULL, NULL, 0, NULL);
+> +	return evm_verify_hmac(dentry, NULL, NULL, 0);
+>  }
+>  
+>  /*
+> @@ -526,14 +517,14 @@ static int evm_protect_xattr(struct mnt_idmap *idmap,
+>  
+>  	evm_status = evm_verify_current_integrity(dentry);
+>  	if (evm_status == INTEGRITY_NOXATTRS) {
+> -		struct integrity_iint_cache *iint;
+> +		struct evm_iint_cache *iint;
+>  
+>  		/* Exception if the HMAC is not going to be calculated. */
+>  		if (evm_hmac_disabled())
+>  			return 0;
+>  
+> -		iint = integrity_iint_find(d_backing_inode(dentry));
+> -		if (iint && (iint->flags & IMA_NEW_FILE))
+> +		iint = evm_iint_inode(d_backing_inode(dentry));
+> +		if (iint && (iint->flags & EVM_NEW_FILE))
+>  			return 0;
+>  
+>  		/* exception for pseudo filesystems */
+> @@ -735,9 +726,9 @@ static int evm_inode_remove_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+>  
+>  static void evm_reset_status(struct inode *inode)
+>  {
+> -	struct integrity_iint_cache *iint;
+> +	struct evm_iint_cache *iint;
+>  
+> -	iint = integrity_iint_find(inode);
+> +	iint = evm_iint_inode(inode);
+>  	if (iint)
+>  		iint->evm_status = INTEGRITY_UNKNOWN;
+>  }
+> @@ -1019,6 +1010,42 @@ int evm_inode_init_security(struct inode *inode, struct inode *dir,
+>  }
+>  EXPORT_SYMBOL_GPL(evm_inode_init_security);
+>  
+> +static int evm_inode_alloc_security(struct inode *inode)
+> +{
+> +	struct evm_iint_cache *iint = evm_iint_inode(inode);
+> +
+> +	/* Called by security_inode_alloc(), it cannot be NULL. */
+> +	iint->flags = 0UL;
+> +	iint->evm_status = INTEGRITY_UNKNOWN;
+> +
+> +	return 0;
+> +}
+> +
+> +static void evm_file_release(struct file *file)
+> +{
+> +	struct inode *inode = file_inode(file);
+> +	struct evm_iint_cache *iint = evm_iint_inode(inode);
+> +	fmode_t mode = file->f_mode;
+> +
+> +	if (!S_ISREG(inode->i_mode) || !(mode & FMODE_WRITE))
+> +		return;
+> +
+> +	if (iint && atomic_read(&inode->i_writecount) == 1)
+> +		iint->flags &= ~EVM_NEW_FILE;
+> +}
+> +
+> +static void evm_post_path_mknod(struct mnt_idmap *idmap, struct dentry *dentry)
+> +{
+> +	struct inode *inode = d_backing_inode(dentry);
+> +	struct evm_iint_cache *iint = evm_iint_inode(inode);
+> +
+> +	if (!S_ISREG(inode->i_mode))
+> +		return;
+> +
+> +	if (iint)
+> +		iint->flags |= EVM_NEW_FILE;
+> +}
+> +
+>  #ifdef CONFIG_EVM_LOAD_X509
+>  void __init evm_load_x509(void)
+>  {
+> @@ -1071,6 +1098,9 @@ static struct security_hook_list evm_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(inode_removexattr, evm_inode_removexattr),
+>  	LSM_HOOK_INIT(inode_post_removexattr, evm_inode_post_removexattr),
+>  	LSM_HOOK_INIT(inode_init_security, evm_inode_init_security),
+> +	LSM_HOOK_INIT(inode_alloc_security, evm_inode_alloc_security),
+> +	LSM_HOOK_INIT(file_release, evm_file_release),
+> +	LSM_HOOK_INIT(path_post_mknod, evm_post_path_mknod),
+>  };
+>  
+>  static const struct lsm_id evm_lsmid = {
+> @@ -1084,10 +1114,16 @@ static int __init init_evm_lsm(void)
 >  	return 0;
 >  }
 >  
+> +struct lsm_blob_sizes evm_blob_sizes __ro_after_init = {
+> +	.lbs_inode = sizeof(struct evm_iint_cache),
+> +	.lbs_xattr_count = 1,
+> +};
+> +
+>  DEFINE_LSM(evm) = {
+>  	.name = "evm",
+>  	.init = init_evm_lsm,
+>  	.order = LSM_ORDER_LAST,
+> +	.blobs = &evm_blob_sizes,
+>  };
+>  
+>  late_initcall(init_evm);
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> index 076451109637..1dd6ee72a20a 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -520,7 +520,7 @@ int ima_appraise_measurement(enum ima_hooks func,
+>  	}
+>  
+>  	status = evm_verifyxattr(dentry, XATTR_NAME_IMA, xattr_value,
+> -				 rc < 0 ? 0 : rc, iint);
+> +				 rc < 0 ? 0 : rc);
+>  	switch (status) {
+>  	case INTEGRITY_PASS:
+>  	case INTEGRITY_PASS_IMMUTABLE:
+> diff --git a/security/integrity/integrity.h b/security/integrity/integrity.h
+> index 59eaddd84434..7a97c269a072 100644
+> --- a/security/integrity/integrity.h
+> +++ b/security/integrity/integrity.h
+> @@ -37,7 +37,6 @@
+>  #define IMA_DIGSIG_REQUIRED	0x01000000
+>  #define IMA_PERMIT_DIRECTIO	0x02000000
+>  #define IMA_NEW_FILE		0x04000000
+> -#define EVM_IMMUTABLE_DIGSIG	0x08000000
+>  #define IMA_FAIL_UNVERIFIABLE_SIGS	0x10000000
+>  #define IMA_MODSIG_ALLOWED	0x20000000
+>  #define IMA_CHECK_BLACKLIST	0x40000000
 > diff --git a/security/security.c b/security/security.c
-> index aa17b47d44c1..c07ad3c5f767 100644
+> index a44740640a9a..f811cc376a7a 100644
 > --- a/security/security.c
 > +++ b/security/security.c
-> @@ -20,7 +20,6 @@
->  #include <linux/kernel_read_file.h>
->  #include <linux/lsm_hooks.h>
->  #include <linux/integrity.h>
-> -#include <linux/ima.h>
->  #include <linux/evm.h>
->  #include <linux/fsnotify.h>
->  #include <linux/mman.h>
-> @@ -2308,9 +2307,6 @@ int security_inode_setxattr(struct mnt_idmap *idmap,
+> @@ -1716,8 +1716,8 @@ int security_inode_init_security(struct inode *inode, struct inode *dir,
+>  		return 0;
 >  
->  	if (ret == 1)
->  		ret = cap_inode_setxattr(dentry, name, value, size, flags);
-> -	if (ret)
-> -		return ret;
-> -	ret = ima_inode_setxattr(idmap, dentry, name, value, size, flags);
->  	if (ret)
->  		return ret;
->  	return evm_inode_setxattr(idmap, dentry, name, value, size, flags);
-> @@ -2338,9 +2334,6 @@ int security_inode_set_acl(struct mnt_idmap *idmap,
->  		return 0;
->  	ret = call_int_hook(inode_set_acl, 0, idmap, dentry, acl_name,
->  			    kacl);
-> -	if (ret)
-> -		return ret;
-> -	ret = ima_inode_set_acl(idmap, dentry, acl_name, kacl);
->  	if (ret)
->  		return ret;
->  	return evm_inode_set_acl(idmap, dentry, acl_name, kacl);
-> @@ -2401,9 +2394,6 @@ int security_inode_remove_acl(struct mnt_idmap *idmap,
->  	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->  		return 0;
->  	ret = call_int_hook(inode_remove_acl, 0, idmap, dentry, acl_name);
-> -	if (ret)
-> -		return ret;
-> -	ret = ima_inode_remove_acl(idmap, dentry, acl_name);
->  	if (ret)
->  		return ret;
->  	return evm_inode_remove_acl(idmap, dentry, acl_name);
-> @@ -2503,9 +2493,6 @@ int security_inode_removexattr(struct mnt_idmap *idmap,
->  	ret = call_int_hook(inode_removexattr, 1, idmap, dentry, name);
->  	if (ret == 1)
->  		ret = cap_inode_removexattr(idmap, dentry, name);
-> -	if (ret)
-> -		return ret;
-> -	ret = ima_inode_removexattr(idmap, dentry, name);
->  	if (ret)
->  		return ret;
->  	return evm_inode_removexattr(idmap, dentry, name);
+>  	if (initxattrs) {
+> -		/* Allocate +1 for EVM and +1 as terminator. */
+> -		new_xattrs = kcalloc(blob_sizes.lbs_xattr_count + 2,
+> +		/* Allocate +1 as terminator. */
+> +		new_xattrs = kcalloc(blob_sizes.lbs_xattr_count + 1,
+>  				     sizeof(*new_xattrs), GFP_NOFS);
+>  		if (!new_xattrs)
+>  			return -ENOMEM;
 
