@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-8113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95C082F789
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 21:24:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52A9382F78F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 21:25:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29A771F25A25
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 20:24:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A2DD1C20ED4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 20:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BDFB224C3;
-	Tue, 16 Jan 2024 19:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90C782D86;
+	Tue, 16 Jan 2024 19:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRFGk3F8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sTC5ufjj"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E54823C7;
-	Tue, 16 Jan 2024 19:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F059682D66;
+	Tue, 16 Jan 2024 19:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705434477; cv=none; b=SYAfvFWViDwxVLJdlzyC0xtbPol55UaGB/iC3R73l1tXEp5zSS7zyJ/WYL6LxwUB/yx8Qktugnl4CETKe7R+kJCWKyVziHNtep6pNhsJIeu2LonCRyNtrLbkENCVhYaHoCVzEBC1iguAibFoAkpodVVcV17THjqJeQKczY0MU3w=
+	t=1705434482; cv=none; b=arPw67AywXCa4NkKQYb/SMnjO8R7uWRYkedX8OPCpKGYf3P8tKZgj5E46BDTFpHb1sw8dWVTUPi5D/nxsGbwkmyR7Rf1OiZwrLPHH5Z7sON/7/g8DG7fZI01Bbdg5wVB2+RaJQKAioAG1nY2FFNBqAvMESRKQ96CdmDPF+ft6wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705434477; c=relaxed/simple;
-	bh=cAmIIbMPxRZTJqkY9XtG7e1FF5ZQvaw1I6KUw0Tops8=;
+	s=arc-20240116; t=1705434482; c=relaxed/simple;
+	bh=D+ddUFLduMUtoR3H6uRS8KrhCxNq0OONqJND5QMi4fg=;
 	h=Received:DKIM-Signature:From:Date:Subject:MIME-Version:
 	 Content-Type:Content-Transfer-Encoding:Message-Id:References:
 	 In-Reply-To:To:Cc:X-Mailer:X-Developer-Signature:X-Developer-Key;
-	b=hnMdH1XOIwMlc9PXz+L5gIst2eUUgkrDk3jqpLkjcWYiGflnPujVe2lucHF+Jk8iNd59oaIqh0vq5L6XjIj9JcliUna5GdMtBKf6+qe8hYbKTlgCav2PvS95GO4/H8gZyX6wQEsBGWsuNQZOPbuWlj60CdlovlH/7VZbmzz4RtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRFGk3F8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7F3EC433B2;
-	Tue, 16 Jan 2024 19:47:53 +0000 (UTC)
+	b=tItFlqfY/twuJwJPDcwgyCF/1EiptCSUpmqolesJPCxVBq215beRvkifhFa2SWP/9YDJ+zTACuFhxgzu+6WGhiewrhVAnTLT7uSnmak7sjvfd6nVIsztCHtNv8mujSf28eTexIYkI4Ch/dzb/AV800e+Cp+KkqlJTRyDk/bbER0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sTC5ufjj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3038C43330;
+	Tue, 16 Jan 2024 19:47:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705434477;
-	bh=cAmIIbMPxRZTJqkY9XtG7e1FF5ZQvaw1I6KUw0Tops8=;
+	s=k20201202; t=1705434481;
+	bh=D+ddUFLduMUtoR3H6uRS8KrhCxNq0OONqJND5QMi4fg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=CRFGk3F8SExbxOElcBSBKajj6soClSjjeedXHJ8MjMqo98s9dqZpn6TU+QEbb4IwP
-	 mQ2m3I8sbdnIKIJf081yXe2px46aPyWSxFzPXshqq71eJBNaIbWOyklczaVKNn2pX3
-	 wehtXnMqsN8nxRvBZIbPKeAWgALOgX4CyfW6AZjcOSyu2A20+6ulb5SQfwQhHvOZ6m
-	 PwkyZQYR2+XpgnKbVLgLtqIBJFqsfelrd4Ohtezw5xFnXMhSSOehqZbwIa6BwNiSL+
-	 38qfSwkA+4kChPa+TrLwg561uqfaCVEGK0ub46qfNS3Q7xajSUh3zIjAf++Ef1GYv1
-	 dx3PZZm8uM4Xw==
+	b=sTC5ufjj0Mc666R2y5KyCLFPtD20KG9nYgjmgbKCBuDBPdpqauox9nHrJiifar+YI
+	 SxQVqXV1gVeLk3HrazU3qwp1uavYce0Kk49R/uwF4JAQg/Fhp0ba15DZmb0txz+RU3
+	 4B/2Q+ZmMgT4T2ihOBeVeDWUCzG+Kkdl0YVVUAxoLg9udsSN13duYWIyl/4JcEbmRs
+	 GBx7lRJwj+g9uHUtkr6J0vLkFqcUhHBNVINeVCHaX2hj2ifQSFsEesuqnuyUYdOr4U
+	 2X0bwToYcWJ5frEEQXwVNZLwAqprKDWrn2OTpDKgrwEGkXv5s3bBD2uBgCBNAA12T2
+	 iekJuuLT/msHA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 16 Jan 2024 14:46:14 -0500
-Subject: [PATCH 18/20] filelock: convert locks_wake_up_blocks to take a
- file_lock_core pointer
+Date: Tue, 16 Jan 2024 14:46:15 -0500
+Subject: [PATCH 19/20] filelock: convert locks_insert_lock_ctx and
+ locks_delete_lock_ctx
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240116-flsplit-v1-18-c9d0f4370a5d@kernel.org>
+Message-Id: <20240116-flsplit-v1-19-c9d0f4370a5d@kernel.org>
 References: <20240116-flsplit-v1-0-c9d0f4370a5d@kernel.org>
 In-Reply-To: <20240116-flsplit-v1-0-c9d0f4370a5d@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -89,89 +89,175 @@ Cc: linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
  linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
  linux-trace-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2246; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=cAmIIbMPxRZTJqkY9XtG7e1FF5ZQvaw1I6KUw0Tops8=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlpt0iQy2Q/95WI9t43Bv7XN421VQLJ+2klLwZK
- nR6pvJi1PWJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZabdIgAKCRAADmhBGVaC
- FVRcD/4yTAkRFFLlCV//Lye7K/pHQlvdc0FyTNkTZ4pThskhFPpBbutOCB+hVuzj1WKVGWd4gVr
- 58c7ALPSStiS0wBkN5bpu0z6mYymzdmP34GNrebPcxb6GUm1dp0i3YieUr7dpp4wR91F+YgEOnz
- JIM+Vdz5sx6hP2yQcxd88ttqJXuRXIn2kkFVUu8pFbE9vKl9kt8fAhrwHzGFykv42RjA8T+j382
- Yy9VfBYN7d442yEBepNbMHJR74Cjqay27P4wagefbfbnFSC/2m2CM/+YaNRADrn2x8JsXTRonUF
- ny61DccrUhajMycRsq+1xlB98zlW0aC50beGixktdDzbqU4jRJTUq46JHcjUM9FVMdUhgye5BOa
- /POc/VDgXJHe67TtZjhnPy3MdKrDDO34FkHDHbuIPyGQvgZwAn/NL9WzHUTRyzuj1vwsPfSAwx4
- JOgD5fLKd2Lw/7FKOPcH/a4cE+UK0xkozI8+zSO9KQpbSS/apOuCJbcU5/DJvelU8Aj2gHBw1Ll
- NlY/iSj8XDRUo+Qq6YNBNOTaJWkHs5gqWob/kiGQN0UNSdbnwCsGXDvrTOmj9hlQchN7GY91uAg
- ZEJftHwe2r54pBoYAyTw7qqhHeFYz1q4IJTBL2lFxD/khLmOva63vfBGnYeOz8IuF4Q7tcOncY5
- H9f83H00tXTG+sA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5364; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=D+ddUFLduMUtoR3H6uRS8KrhCxNq0OONqJND5QMi4fg=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlpt0iAOTSqzyEvswjyEJ+QZM7pJ+eGv1g/Av5x
+ XUh1X6QyeaJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZabdIgAKCRAADmhBGVaC
+ FYqQEADVZYP89CCK/zSJeNpFTmTeeF6KQbmYj4Vw1eRi0yq/ji5gBnAUbpXIWmap7bF5wzaNy54
+ ZbFhdN1MOWO8EjIg67wiBJSoinfW6xWDmtpbpZSs93FRzz4yS/yvVVv6MFheg4ygNVAaCzc/6tV
+ vWcavcOB6TTQMVuG+NZYssu5GD+5i/gxSYhkfkLwpfeh9soB+RFMsB7gOcteloxd7/B1hg6mLIV
+ 4bjPu+CnJUqZRSOG2skqaXvmDg9YGN+7ey6bIwBkEqKrsKKfZoqAjxF7ri9E1Ff9JBrbKWsAPII
+ QkBQrh/J7U2X4qAiNxqX3DGKPR3o7UMnmiif4TshXb1EAmP7ylvRS6KwVE72YkxHitQxj2yG8L0
+ VNYNVEWWWKUSVAVSRFc3yMwR6Xu9BQmEh9kO0UTsuFWwBKPrRmMQmVp0PLo1mrLUMIY40vaUc+j
+ iqx4yKyzhtT8AsSIvqn4OHQk1KDdVLmu8OEC1r2gAibK4edj0lKMgvIXBZjIwRCxmLfuYwFKSep
+ q/MtuIlCSMN3B7Gc8g0o343qHmDQKZK7PEyr4q24pnPOgI1NLWykLDmXbBjdYYsXw9VyWU3lJau
+ Bf+S1aLHAnrocxE6YEjzoWEBR5bk1WK+MBsE+hgmD4LDfYUR2T2ufSFDNK8X+SgXNzE3cSuZtU4
+ 6OBW1sKhyVqwqKQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Have locks_wake_up_blocks take a file_lock_core pointer, and fix up the
-callers to pass one in.
+Have these functions take a file_lock_core pointer instead of a
+file_lock.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/locks.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ fs/locks.c | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
 diff --git a/fs/locks.c b/fs/locks.c
-index 4a1e9457c430..88c72eb4672e 100644
+index 88c72eb4672e..6d24cf2525ec 100644
 --- a/fs/locks.c
 +++ b/fs/locks.c
-@@ -829,7 +829,7 @@ static void locks_insert_block(struct file_lock_core *blocker,
-  *
-  * Must be called with the inode->flc_lock held!
-  */
--static void locks_wake_up_blocks(struct file_lock *blocker)
-+static void locks_wake_up_blocks(struct file_lock_core *blocker)
- {
- 	/*
- 	 * Avoid taking global lock if list is empty. This is safe since new
-@@ -838,11 +838,11 @@ static void locks_wake_up_blocks(struct file_lock *blocker)
- 	 * fl_blocked_requests list does not require the flc_lock, so we must
- 	 * recheck list_empty() after acquiring the blocked_lock_lock.
- 	 */
--	if (list_empty(&blocker->fl_core.fl_blocked_requests))
-+	if (list_empty(&blocker->fl_blocked_requests))
- 		return;
- 
- 	spin_lock(&blocked_lock_lock);
--	__locks_wake_up_blocks(&blocker->fl_core);
-+	__locks_wake_up_blocks(blocker);
- 	spin_unlock(&blocked_lock_lock);
- }
- 
-@@ -858,7 +858,7 @@ locks_unlink_lock_ctx(struct file_lock *fl)
- {
- 	locks_delete_global_locks(&fl->fl_core);
- 	list_del_init(&fl->fl_core.fl_list);
--	locks_wake_up_blocks(fl);
-+	locks_wake_up_blocks(&fl->fl_core);
+@@ -847,28 +847,28 @@ static void locks_wake_up_blocks(struct file_lock_core *blocker)
  }
  
  static void
-@@ -1351,11 +1351,11 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
- 			locks_insert_lock_ctx(left, &fl->fl_core.fl_list);
+-locks_insert_lock_ctx(struct file_lock *fl, struct list_head *before)
++locks_insert_lock_ctx(struct file_lock_core *fl, struct list_head *before)
+ {
+-	list_add_tail(&fl->fl_core.fl_list, before);
+-	locks_insert_global_locks(&fl->fl_core);
++	list_add_tail(&fl->fl_list, before);
++	locks_insert_global_locks(fl);
+ }
+ 
+ static void
+-locks_unlink_lock_ctx(struct file_lock *fl)
++locks_unlink_lock_ctx(struct file_lock_core *fl)
+ {
+-	locks_delete_global_locks(&fl->fl_core);
+-	list_del_init(&fl->fl_core.fl_list);
+-	locks_wake_up_blocks(&fl->fl_core);
++	locks_delete_global_locks(fl);
++	list_del_init(&fl->fl_list);
++	locks_wake_up_blocks(fl);
+ }
+ 
+ static void
+-locks_delete_lock_ctx(struct file_lock *fl, struct list_head *dispose)
++locks_delete_lock_ctx(struct file_lock_core *fl, struct list_head *dispose)
+ {
+ 	locks_unlink_lock_ctx(fl);
+ 	if (dispose)
+-		list_add(&fl->fl_core.fl_list, dispose);
++		list_add(&fl->fl_list, dispose);
+ 	else
+-		locks_free_lock(fl);
++		locks_free_lock(file_lock(fl));
+ }
+ 
+ /* Determine if lock sys_fl blocks lock caller_fl. Common functionality
+@@ -1095,7 +1095,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
+ 		if (request->fl_core.fl_type == fl->fl_core.fl_type)
+ 			goto out;
+ 		found = true;
+-		locks_delete_lock_ctx(fl, &dispose);
++		locks_delete_lock_ctx(&fl->fl_core, &dispose);
+ 		break;
+ 	}
+ 
+@@ -1120,7 +1120,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
+ 		goto out;
+ 	locks_copy_lock(new_fl, request);
+ 	locks_move_blocks(new_fl, request);
+-	locks_insert_lock_ctx(new_fl, &ctx->flc_flock);
++	locks_insert_lock_ctx(&new_fl->fl_core, &ctx->flc_flock);
+ 	new_fl = NULL;
+ 	error = 0;
+ 
+@@ -1259,7 +1259,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+ 			else
+ 				request->fl_end = fl->fl_end;
+ 			if (added) {
+-				locks_delete_lock_ctx(fl, &dispose);
++				locks_delete_lock_ctx(&fl->fl_core, &dispose);
+ 				continue;
+ 			}
+ 			request = fl;
+@@ -1288,7 +1288,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+ 				 * one (This may happen several times).
+ 				 */
+ 				if (added) {
+-					locks_delete_lock_ctx(fl, &dispose);
++					locks_delete_lock_ctx(&fl->fl_core, &dispose);
+ 					continue;
+ 				}
+ 				/*
+@@ -1305,9 +1305,9 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+ 				locks_move_blocks(new_fl, request);
+ 				request = new_fl;
+ 				new_fl = NULL;
+-				locks_insert_lock_ctx(request,
++				locks_insert_lock_ctx(&request->fl_core,
+ 						      &fl->fl_core.fl_list);
+-				locks_delete_lock_ctx(fl, &dispose);
++				locks_delete_lock_ctx(&fl->fl_core, &dispose);
+ 				added = true;
+ 			}
+ 		}
+@@ -1336,7 +1336,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+ 		}
+ 		locks_copy_lock(new_fl, request);
+ 		locks_move_blocks(new_fl, request);
+-		locks_insert_lock_ctx(new_fl, &fl->fl_core.fl_list);
++		locks_insert_lock_ctx(&new_fl->fl_core, &fl->fl_core.fl_list);
+ 		fl = new_fl;
+ 		new_fl = NULL;
+ 	}
+@@ -1348,7 +1348,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+ 			left = new_fl2;
+ 			new_fl2 = NULL;
+ 			locks_copy_lock(left, right);
+-			locks_insert_lock_ctx(left, &fl->fl_core.fl_list);
++			locks_insert_lock_ctx(&left->fl_core, &fl->fl_core.fl_list);
  		}
  		right->fl_start = request->fl_end + 1;
--		locks_wake_up_blocks(right);
-+		locks_wake_up_blocks(&right->fl_core);
+ 		locks_wake_up_blocks(&right->fl_core);
+@@ -1448,7 +1448,7 @@ int lease_modify(struct file_lock *fl, int arg, struct list_head *dispose)
+ 			printk(KERN_ERR "locks_delete_lock: fasync == %p\n", fl->fl_fasync);
+ 			fl->fl_fasync = NULL;
+ 		}
+-		locks_delete_lock_ctx(fl, dispose);
++		locks_delete_lock_ctx(&fl->fl_core, dispose);
  	}
- 	if (left) {
- 		left->fl_end = request->fl_start - 1;
--		locks_wake_up_blocks(left);
-+		locks_wake_up_blocks(&left->fl_core);
+ 	return 0;
+ }
+@@ -1581,7 +1581,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+ 			fl->fl_downgrade_time = break_time;
+ 		}
+ 		if (fl->fl_lmops->lm_break(fl))
+-			locks_delete_lock_ctx(fl, &dispose);
++			locks_delete_lock_ctx(&fl->fl_core, &dispose);
  	}
-  out:
- 	spin_unlock(&ctx->flc_lock);
-@@ -1437,7 +1437,7 @@ int lease_modify(struct file_lock *fl, int arg, struct list_head *dispose)
- 	if (error)
- 		return error;
- 	lease_clear_pending(fl, arg);
--	locks_wake_up_blocks(fl);
-+	locks_wake_up_blocks(&fl->fl_core);
- 	if (arg == F_UNLCK) {
- 		struct file *filp = fl->fl_core.fl_file;
+ 
+ 	if (list_empty(&ctx->flc_lease))
+@@ -1839,7 +1839,7 @@ generic_add_lease(struct file *filp, int arg, struct file_lock **flp, void **pri
+ 	if (!leases_enable)
+ 		goto out;
+ 
+-	locks_insert_lock_ctx(lease, &ctx->flc_lease);
++	locks_insert_lock_ctx(&lease->fl_core, &ctx->flc_lease);
+ 	/*
+ 	 * The check in break_lease() is lockless. It's possible for another
+ 	 * open to race in after we did the earlier check for a conflicting
+@@ -1852,7 +1852,7 @@ generic_add_lease(struct file *filp, int arg, struct file_lock **flp, void **pri
+ 	smp_mb();
+ 	error = check_conflicting_open(filp, arg, lease->fl_core.fl_flags);
+ 	if (error) {
+-		locks_unlink_lock_ctx(lease);
++		locks_unlink_lock_ctx(&lease->fl_core);
+ 		goto out;
+ 	}
  
 
 -- 
