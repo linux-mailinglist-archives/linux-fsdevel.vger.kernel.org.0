@@ -1,135 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-8082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B027282F3BF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 19:11:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 438FD82F3D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 19:14:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D79E31C23801
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 18:11:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F41B1C238DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 18:14:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AFF1CD25;
-	Tue, 16 Jan 2024 18:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765801D55E;
+	Tue, 16 Jan 2024 18:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qEnfWUNm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75C6A1CD0B;
-	Tue, 16 Jan 2024 18:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB0601D559
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 18:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705428675; cv=none; b=c6nseegCZ9VSREN7Qic0+PQyKZzcWq/4Qlslov94vBWtJzeqzD5CLzlmTDBYAadoiUjGoVHSm/fr1l9eP7FR9gHzmKYvpRgjDO6+V3BuBMm+3RyErNePdG6yMBixFTfQ2xKOR4ZBxjV9La+8IiagH2MkIfpVYMctpFAGtjyfe4Y=
+	t=1705428767; cv=none; b=YW96/XGhLiuRLs4KlewYppTU2XiRekmEFJzOyA4dOw/Bp5zN7DHkKJFnLc2GojmusE8V3dfpNY2P5/BI7GSwukWOnY6+FP9gstEBITHvlib774gEemp5YZ6If0u8/P7L3RwD7t4KfAu7ccjNm+vLRUoaKqhboO5XRGlxxU1sKMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705428675; c=relaxed/simple;
-	bh=HF08xReEYJVEYlyq4VqGFGWbxcsg4P7vW27ttWr2NEg=;
-	h=Received:Date:From:To:Cc:Subject:Message-ID:In-Reply-To:
-	 References:X-Mailer:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding; b=Yqv5zaMQ2+XkJZGANimrYL1L84VNuXIg35fqK7SWvzE14Zf4kK/9oiDy7ctNT835UaLrbeyl95vtTXC+aFYxMnURnboeXpLexFyU0NU+ECmxDn+XCMnwjOI/kGsEHXtNskJX05WWlzNy2O9/V43yypikr5FtPXJJhr/+JOW0yVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE5D4C433F1;
-	Tue, 16 Jan 2024 18:11:13 +0000 (UTC)
-Date: Tue, 16 Jan 2024 13:12:28 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
- kernel test robot <oliver.sang@intel.com>, Ajay Kaher <akaher@vmware.com>,
- Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] eventfs: Create dentries and inodes at dir open
-Message-ID: <20240116131228.3ed23d37@gandalf.local.home>
-In-Reply-To: <CAHk-=wjna5QYoWE+v3BWDwvs8N=QWjNN=EgxTN4dBbmySc-jcg@mail.gmail.com>
-References: <20240116114711.7e8637be@gandalf.local.home>
-	<CAHk-=wjna5QYoWE+v3BWDwvs8N=QWjNN=EgxTN4dBbmySc-jcg@mail.gmail.com>
-X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1705428767; c=relaxed/simple;
+	bh=dqm+7C7+r/P/ZG+9at5ofCBUlCIeqrq9u0Xyvah7w4Q=;
+	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To; b=WhS2zO+IF7DNXDuTQrcm9HW+xw7eP2Xw3gEmcuXRx1/+hGtTM8wg+Wfk8x6SKH0SVQAtlm7bbXsy3mabuGHgBMMlgYU1qzVVJYDNzcpEjkTOgRUEACNU0Hcl9MaMsjFaiiiOxzJjaA7wkyuMjnAUYTFLPpK7I64kuUcQOi1lBNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qEnfWUNm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BAEDC433C7;
+	Tue, 16 Jan 2024 18:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705428767;
+	bh=dqm+7C7+r/P/ZG+9at5ofCBUlCIeqrq9u0Xyvah7w4Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qEnfWUNmAgYHEu9FKy9sjM9TWoUlGLx8QPkNHyUcPHmbW55jQSM2IFbTIKd5MYdG+
+	 fMktQ+6rt9lHFO7sKj/67wnmCeVufbQ5Ed2z5b1p0MsQTGeQpRWuDa9Yh2XV/2giMh
+	 nDmCx/VWWFJmxzFquH8TaSfiGXyH8IOsndaMhwPr8mUTzdSFunv4PfzsNwjWdWCVLs
+	 NeMKEcsv/8vTeckJt1JpZxehYwR9kKf4U5wWaTF+SoAUP38GB9Dbttf6d+al9/a1zV
+	 j0/Ad33xgM6qaonION4zxgNi3ioF2KjmRuiY4cy6hJaXA2Xht+wlyu4IctX8Ugoegk
+	 QA9VGQgO2Hk2Q==
+Date: Tue, 16 Jan 2024 10:12:45 -0800
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+Cc: Bart Van Assche <bvanassche@acm.org>, lsf-pc@lists.linux-foundation.org,
+	Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>, naohiro.aota@wdc.com,
+	Matias =?iso-8859-1?Q?Bj=F8rling?= <Matias.Bjorling@wdc.com>,
+	Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
+	dlemoal@kernel.org, slava@dubeiko.com
+Subject: Re: [LSF/MM/BPF TOPIC] : Current status of ZNS SSD support in file
+ systems
+Message-ID: <ZabHHby_VlvysDLc@google.com>
+References: <20240115082236.151315-1-slava@dubeyko.com>
+ <0ea56c32-c71b-4997-b1c7-6d9bbc49a1dd@acm.org>
+ <8012184C-DF1F-421B-93CA-07B27C0B39C9@dubeyko.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8012184C-DF1F-421B-93CA-07B27C0B39C9@dubeyko.com>
 
-On Tue, 16 Jan 2024 09:55:15 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> [ html crud because I still don't have power or real Internet, just trying
-> to keep an eye on things on my phone. Mailing lists removed to avoid
-> bounces, please put them back in replies that don't have my horrible
-> formatting ]
+On 01/16, Viacheslav Dubeyko wrote:
 > 
-> No.
 > 
-> Christ, you're making things worse again
+> > On Jan 16, 2024, at 5:58 AM, Bart Van Assche <bvanassche@acm.org> wrote:
+> > 
+> > On 1/15/24 00:22, Viacheslav Dubeyko wrote:
+> >> POTENTIAL ATTENDEES:
+> >> bcachefs - Kent Overstreet
+> >> btrfs - Naohiro Aota
+> >> ssdfs - Viacheslav Dubeyko
+> >> WDC - Matias Bjørling
+> >> Samsung - Javier González
+> >> Anybody else would like to join the discussion?
+> > 
+> > Since F2FS has a mature zoned storage implementation, you may want to
+> > include the F2FS maintainer.
+> > 
 > 
-> The reason for the bug is that you're still messing with the dentries at
-> readdir() time.
+> Sure. Jaegeuk, would you like to join the discussion?
 
-I may have deleted the comment, but the only reason I created the
-inodes/destries is to keep the consistent inode number as it's created at
-the time the inodes and dentries are.
-
-Ah I did delete the comment, but it is still applicable :-/
-
-       /*
--        * Need to create the dentries and inodes to have a consistent
--        * inode number.
-+        * Need to make a struct eventfs_dent array, start by
-+        * allocating enough for just the files, which is a fixed
-+        * array. Then use realloc via add_entry() for the directories
-+        * which is stored in a linked list.
-         */
-
-So if for some reason, user space did a getdents() and used the inode
-numbers to match what it found, they would likely be the same.
+Not a new topic tho, I already shoot an invite request. Let's see.
 
 > 
-> Just stop it. Readdir should not be creating dentries. Readdir should not
-> be even *looking* at dentries. You're not a virtual filesystem, the
-> dentries are just caches for filename lookup, and have *nothing* to do with
-> readdir.
-
-Actually, it's not looking at them. I did it as a way to just have the
-inode numbers be consistent.
-
-	dents[cnt].ino = d->d_inode->i_ino;
-
-Yes, that's the only reason I create them. The dentry/inode is not used for
-anything outside of that.
-
-> 
-> So just iterate over your own internal data structures in readdir. DO NOT
-> CREATE DENTRIES OR INODES FOR READDIR.
-> 
-> I've told you before, and I'll tell you again: either you are a real and
-> proper virtual filesystem and you let the vfs layer manage *everything*,
-> and the dentries and inodes are all you have. Or you are a *real*
-> filesystem and you maintain your own data structures and the dentries and
-> inodes are just the in-memory caches.
-> 
-> This "do both" is UNACCEPTABLE.
-> 
-
-The dentries were created for the inode numbers so that I did not need to
-add them to meta data. They are generated at creation time.
-
-I don't know how important inode numbers are. If they can all just have
-random inode numbers and it doesn't break user space, where an inode number
-will be one value at one read and another shortly after, is that going to
-cause a problem?
-
-Maybe I can just use a hash to generate he inode numbers from the name?
-Hopefully there will be no collisions. Then I don't need the dentry
-creation at all.
-
-I do realize that if the dentries get freed due to reclaim and recreated,
-their inode numbers will be different. But for a virtual file system, I
-don't know how important having consistent inode numbers is.
-
--- Steve
-
+> Thanks,
+> Slava.
 
