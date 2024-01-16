@@ -1,129 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-8065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EEBE82F172
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 16:25:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7A382F1AB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 16:37:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BC50283EBD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 15:25:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A295285DF0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 15:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A411C298;
-	Tue, 16 Jan 2024 15:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="tXYH13F7";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="tXYH13F7"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2AA1C2B3;
+	Tue, 16 Jan 2024 15:37:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D13A91BF59;
-	Tue, 16 Jan 2024 15:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1705418723;
-	bh=MvWh+67ftiWh2+3eSFJmv3mJL/+4kfnHoljEwqdxTPw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=tXYH13F7f9/A2kjZUfgcLq4Xw+gQVdGFIUdRYIZ5VtDKmcoc9XR1Ce2tI4o0xdzwC
-	 R5NGKecPG+8lXOghqb7ohkUIEQt4OiNrdy+9uAtfyoM2AzA/TErDC76D04PYrjW/4C
-	 LlxOo0M6PMBGIaAXCITzQvQyqcnsMjFwb4PCPIEU=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 61F911280773;
-	Tue, 16 Jan 2024 10:25:23 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id c3eCd6WnbF3W; Tue, 16 Jan 2024 10:25:23 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1705418723;
-	bh=MvWh+67ftiWh2+3eSFJmv3mJL/+4kfnHoljEwqdxTPw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=tXYH13F7f9/A2kjZUfgcLq4Xw+gQVdGFIUdRYIZ5VtDKmcoc9XR1Ce2tI4o0xdzwC
-	 R5NGKecPG+8lXOghqb7ohkUIEQt4OiNrdy+9uAtfyoM2AzA/TErDC76D04PYrjW/4C
-	 LlxOo0M6PMBGIaAXCITzQvQyqcnsMjFwb4PCPIEU=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 5E5FD1280473;
-	Tue, 16 Jan 2024 10:25:22 -0500 (EST)
-Message-ID: <458822c2889a4fce54a07ce80d001e998ca56b48.camel@HansenPartnership.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Dropping page cache of individual fs
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Christian Brauner <brauner@kernel.org>, lsf-pc@lists.linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-btrfs@vger.kernel.org, linux-block@vger.kernel.org, Matthew Wilcox
-	 <willy@infradead.org>, Jan Kara <jack@suse.cz>, Christoph Hellwig
-	 <hch@infradead.org>
-Date: Tue, 16 Jan 2024 10:25:20 -0500
-In-Reply-To: <20240116-tagelang-zugnummer-349edd1b5792@brauner>
-References: <20240116-tagelang-zugnummer-349edd1b5792@brauner>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1061C296
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 15:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7bb454e1d63so1081800839f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 07:37:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705419424; x=1706024224;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/IxXmg2QTH1uWatAty5Se5XI+hxlkbNQTXE25GkvfTM=;
+        b=oUmipLiEw7eQVWWlKs64FhKotAD/AOpxFpAKAg2Q2G9vqDj9IvGK3CPKgoB8COBYxs
+         E69vzlXHmbD7x7sGX/yhlpTy5oSdLyDeWSxzzajQ40hlNSogrq15V375hvZKCocGUcMy
+         My2Nx5MAB5n0rbunLt4ZM80Z/VZGAnlRSutH2RrFeBBlxtZruOGwrj5sNXv5ip2178MV
+         D4jB4jWVLCm7V++E8v+ChVbcaDS/cItB8QlzSRpSk76SofKvvgHHqX/C3DI4lgDKbVfo
+         PsRP3JxZwkNTssy8k2dzo36DZgRDWIFX12ccYQ2fPEW8LaaRpu3ZxvtJ/LYSAyq2ulZ7
+         WWAQ==
+X-Gm-Message-State: AOJu0YwD/yypERZ6jhDWx923KJWGrtK1ygZPwSAOpVXZMwM334UE8HbU
+	TxXZRtqY1jocU0CKy/B51zmxM6cyfTApsoX20tGmo4/37RFn
+X-Google-Smtp-Source: AGHT+IFkr77m41MddNLivOqVYoFsRpCfpZaVtjAZlEHbGZMEqdO2VMYndx5OOcv+/QAr/YvNJs/1Bvf/czPIeXGWVZJjNamsryFO
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:2b12:b0:46e:3890:4cc9 with SMTP id
+ fm18-20020a0566382b1200b0046e38904cc9mr531817jab.4.1705419423891; Tue, 16 Jan
+ 2024 07:37:03 -0800 (PST)
+Date: Tue, 16 Jan 2024 07:37:03 -0800
+In-Reply-To: <000000000000743ce2060060e5ce@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f447a1060f11e6ed@google.com>
+Subject: Re: [syzbot] [ext4?] INFO: task hung in find_inode_fast (2)
+From: syzbot <syzbot+adfd362e7719c02b3015@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, axboe@kernel.dk, brauner@kernel.org, 
+	jack@suse.cz, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2024-01-16 at 11:50 +0100, Christian Brauner wrote:
-> So when we say luksSuspend we really mean block layer initiated
-> freeze. The overall goal or expectation of userspace is that after a
-> luksSuspend call all sensitive material has been evicted from
-> relevant caches to harden against various attacks. And luksSuspend
-> does wipe the encryption key and suspend the block device. However,
-> the encryption key can still be available clear-text in the page
-> cache. To illustrate this problem more simply:
-> 
-> truncate -s 500M /tmp/img
-> echo password | cryptsetup luksFormat /tmp/img --force-password
-> echo password | cryptsetup open /tmp/img test
-> mkfs.xfs /dev/mapper/test
-> mount /dev/mapper/test /mnt
-> echo "secrets" > /mnt/data
-> cryptsetup luksSuspend test
-> cat /mnt/data
+syzbot suspects this issue was fixed by commit:
 
-Not really anything to do with the drop caches problem, but luks can
-use the kernel keyring API for this.  That should ensure the key itself
-can be shredded on suspend without replication anywhere in memory.  Of
-course the real problem is likely that the key has or is derived from a
-password and that password is in the user space gnome-keyring, which
-will be much harder to purge ... although if the keyring were using
-secret memory it would be way easier ...
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-So perhaps before we start bending the kernel out of shape in the name
-of security, we should also ensure that the various user space
-components are secured first.  The most important thing to get right
-first is key management (lose the key and someone who can steal the
-encrypted data can access it).  Then you can worry about data leaks due
-to the cache, which are somewhat harder to exploit easily (to exploit
-this you have to get into the cache in the first place, which is
-harder).
+    fs: Block writes to mounted block devices
 
-> This will still happily print the contents of /mnt/data even though
-> the block device and the owning filesystem are frozen because the
-> data is still in the page cache.
-> 
-> To my knowledge, the only current way to get the contents of
-> /mnt/data or the encryption key out of the page cache is via
-> /proc/sys/vm/drop_caches which is a big hammer.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17852f7be80000
+start commit:   2a5a4326e583 Merge tag 'scsi-misc' of git://git.kernel.org..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d5e7bcb9a41fc9b3
+dashboard link: https://syzkaller.appspot.com/bug?extid=adfd362e7719c02b3015
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d27994680000
 
-To be honest, why is this too big a hammer?  Secret data could be
-sprayed all over the cache, so killing all of it (assuming we can as
-Jan points out) would be a security benefit.  I'm sure people would be
-willing to pay the additional start up time of an entirely empty cache
-on resume in exchange for the nicely evaluateable security guarantee it
-gives.  In other words, dropping caches by device is harder to analyse
-from security terms (because now you have to figure out where secret
-data is and which caches you need to drop) and it's not clear it really
-has much advantage in terms of faster resume for the complexity it
-would introduce.
+If the result looks correct, please mark the issue as fixed by replying with:
 
-James
+#syz fix: fs: Block writes to mounted block devices
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
