@@ -1,405 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-8076-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9309B82F28E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 17:46:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 987ED82F29E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 17:51:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC0D41C231E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 16:46:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0184B235A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 16:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4757E1C290;
-	Tue, 16 Jan 2024 16:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B765D1CA82;
+	Tue, 16 Jan 2024 16:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="A7u7ADJq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic302-27.consmr.mail.ne1.yahoo.com (sonic302-27.consmr.mail.ne1.yahoo.com [66.163.186.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E77EC747F;
-	Tue, 16 Jan 2024 16:46:06 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C0C7C433F1;
-	Tue, 16 Jan 2024 16:46:05 +0000 (UTC)
-Date: Tue, 16 Jan 2024 11:47:11 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Linus Torvalds
- <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, Al
- Viro <viro@ZenIV.linux.org.uk>, linux-fsdevel@vger.kernel.org, kernel test
- robot <oliver.sang@intel.com>, Ajay Kaher <akaher@vmware.com>
-Subject: [PATCH] eventfs: Create dentries and inodes at dir open
-Message-ID: <20240116114711.7e8637be@gandalf.local.home>
-X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05F71CA84
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 16:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1705423879; bh=3SJp5s3Z+exCH+4UfHcT4UCsjWtziANQFAalTNp3V4c=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=A7u7ADJqhucDT/inj+zEnSMaejTIONrsEM1yaVmWrmsNg+aNwf2yDcsjf0DHwehiGogDbZlGAA1PU97UbzGCBUOmEDpzwgLtf5a4QhXNiUvCvbanOiJ1ol3UXeP0ITEmwrQPyUr58NPzGMBh+ySGQWZIGaqM/lJm8g50+tEuznMw3u58zCylW9KD7uHlXfCt98KpVJR4H3DXY7mYfUFE2dBJasazPAsGPfVhh8pNVfSw8RaWpNvu9SxPGg4X9uHMDlZO2DQJsk0RintUKlP7vFyv7IYJXaoq8ZlP7X3dDzFukyGLkbMBY71ByEc8vizGgpVmAUVUD0YKQ4hMNIgSQA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1705423879; bh=6g1/Z5dhwtw34v2/raI1RfnLcnZRJC7llHW1yzDrq7O=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=HHPu3liBO2n+pM1rPTxEPcgtbTjb14gZHzeduQaiNR7QcXvwLrW+t19dNENBguBJWqkIMOEDCoE9WqWAMVYDjb1dEdqVYWZTgB6LHvkbPVwrMxmKuILTs9DNUuu2xEWZxtN/gFLh/PSJU1Iw1RMmfGK08EflKNKlFlpewDbFgZ17NRY1vaPebOtf11My02lwuMj+e+XKX56Pihp9FQuwaR9UfNUCBwpOWW4/4uSlYnEzEWwrDU/CB0VZp1VPhD2jzfR6stYT1bix9ZBwFO8CUBin9Jahhp+0jgZoyxe3rX6hL9OVFM4w+rr3Xye+D63bIGmPVfd6afBBGg+xop8G9g==
+X-YMail-OSG: A5CgyOEVM1k7T20.uer7oRuubZ6Y.egXrwI9sExA1NznFEIXkWCZcUCJBQRI5z0
+ dUVoM9vL8JUmxqY.WM2kmbbrxV.NfunHNLhqt27_Td7Qp8mDDtF8yKJtMEwlwRlQqFtI0uc6UNuy
+ v_t3cIW12YNMGiUmM6FM4nPaT9nu2e6onqnHWVYEP7jb61S0dwwoMh__F8x2QCcICqwKrK6hMHU_
+ pqxG7IcbsGCV0pbHfJO00Y8.sGYefulMmQgbRxUbeZvdZ6BpGK6hqnLVM1wdlTUaMdsYfOGgdIIK
+ IUearccrrWHBGkDy3PmPk8lzrQhbRNQ1LiuIKGfgD6B1ywCC2nTjtE6HrQjoIfTB8acmrUDOowAo
+ BmigJ1K9guUkP55v9SyMzPXid.6ClEW.cVDO8SBwoc1fLktaQhOEt95B.o00s35aPT6juJVzHPbw
+ lY1dHEVUmWNd5YynMOegvFdy1Z2oO1BSMEDt1NrLGPBUY1mbUA4H55YgUYT_5cWSL9UXu7ApG_NQ
+ 74s40GkbeWfg1w2cBEPnfkaysIBp96g.o4Is_0HnhHo6ABa7j0VZUxSVKN7XOQ5DcNwfIRsveNif
+ 5sHuJIOJBI2dnzkuw1HloeLo1jRayxwz3me4iqG_8kSJOBDug9WqGgR_ItxTwaaf7l91eq6a7.JP
+ Oz66mhWnRGJjQpmcZeHcaurCHDLhfiXw8eq2tHNBCod9.2LNVd9wPKMSb1xktR4bqElOr2syyum2
+ 7LeMoURNNR7lPicU5dXVjnvE0lMHs.pbHx10gQNWgkhOL_ooOFif23zY52KjLihVBfohWM3IyiwN
+ N.h3r1huoQ_60cNOv3A8OSSYgeNeKX_Jsa1LEQw4aZKZAQbEuYmJuzTwT6G6FiPcYT7k8ODiPyZ6
+ 5uytBjv3N4S5fFaqaDtF6KZ1wUsPGJuefm62Fde3xRnjK1q0fyAZ3bqi08cm32JsMg.h_fGSIUdB
+ 6aIAjWdqU1W4HFqTQ.lHZC2SSdWvUMfQ.97VPLKZmc1chzt8NmnLud2oh4rdQ7MGE1ynInKRZdTs
+ cPH6m8O7vLOyaPUfZoZOgZi5kmvj0WW7OBGHR5AKh8KtUnTyGCPz8FDRRjexQ_y33Nh4fGagXtfG
+ YLCjiXLVC7rBZiw0.jqkV3Anp7Exz6SsyRvEBuraPG6StqmvWItzASprjkpeERwr431mfouJ2QRo
+ NEHC_oLtPECK9h6ORbFRW7Bn1aDwDQKW_6DzKKC72GtjxqQSQhrPqx1bULiTykszuG2tRsjyDbZI
+ GFIFhYPq9gQLI0HQsToaiZ.aGz8hRFRImH4_UBqEdAk.cbTASyHqPHVdHcRtTKaF0i7RKOrpFFRD
+ DCieCh7SftO0cdeDtn4qS1T_jaOPDAelXyJThAcR1wJV948czh6gM586k1N8IGG4ce2vb5TWgmC9
+ x8J.b4.k9ZakLNmtAM_oC7P5UI9iWQOa2RMfW6YQhldAiMki.6cZw6HcfOsoxUqIB4wahHwyF.Oz
+ H3Gs1wqS.aQXtEdgQYKQTTn63BrWPjIH4VY3a9CfgoCyYmMatopckhvT4SUFtiyHHbnzV5b8Rj1U
+ jxO5FhDkUsZKkp_HQIIK_0iNBx_7iSBTjt4xz6I6IP9gvW8S_VxfRPlJ.pC0UdbabMngDaiCgcTZ
+ FjmkuXQtO3yqbDd4emfoZxh6uO3XQtSRMHe2a0xBQtyzobBh3Be3n0IvlF7HhnfJm7Rb4PpLNmaO
+ yrSEZ7RIqnQOGZSt.lP0DnTI0jpc4vMNEsaWCvK73hMiQjva_ajuJaDhXYATCWd_wQYn3in9en8C
+ LAuiLXdQDl2Q1jjGMcf2nt5vObnJnzirYjod8N2IYulsifjIU0wgapS4JTDLIqDraLMyXG7sP3xq
+ vYCeABKYECZJkxZ1kspcltO0yfr.E0f5zAHLuajake8Hj9k300IvFqAJhL_IqnfyDnXEUAt39QME
+ qbdxglOjBmjP2OC.yivvwfak_unL4S6GUKypZOtfifFzTXH8Rmn63WTf64F39y45aCUdy9QVF4r5
+ 3xq.HH0id_rBFNbce9gsI6P8Sz0IWxV6C.iA_OLzb3p0E2FA5Y6AZFFmdacSnrfStmeVX1NUeuHp
+ meURET0zgC18FcL7e7_b7AoBWmElfXF7Pg7maB9re_.PPQp15DeeDq1HR7q6fcs4VOFkIQbnq2va
+ Rg1VWn9PiQrAiarWNFi0yClhqn_tw8kWJ5QaIMOeovQ8Ut.Itbsg.PbSbKaa0zFJHTjaD3hKaYE_
+ zDfVfk0qF2Ns_9Le9GQ75eJD3ybiOYwPFOwK2.5Ap.5BLgwkZjhJHJLGXSE4a
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 15ae8b31-4e9c-4be6-9dc6-e6e06b3d0f25
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Tue, 16 Jan 2024 16:51:19 +0000
+Received: by hermes--production-gq1-78d49cd6df-mvdth (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 44515f8eb2e2b5946457ba67dd58da86;
+          Tue, 16 Jan 2024 16:51:14 +0000 (UTC)
+Message-ID: <00b7ff22-f213-471a-a604-658a9af80d59@schaufler-ca.com>
+Date: Tue, 16 Jan 2024 08:51:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 13/25] security: Introduce file_release hook
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+ Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+ neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+ paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+ dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com,
+ eparis@parisplace.org, shuah@kernel.org, mic@digikod.net,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+ selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+ <20240115181809.885385-14-roberto.sassu@huaweicloud.com>
+ <20240115191508.GG1674809@ZenIV>
+ <3b440f064a1ae04d69f7e85f4077f8406c0eac67.camel@huaweicloud.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <3b440f064a1ae04d69f7e85f4077f8406c0eac67.camel@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22010 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+On 1/16/2024 12:47 AM, Roberto Sassu wrote:
+> On Mon, 2024-01-15 at 19:15 +0000, Al Viro wrote:
+>> On Mon, Jan 15, 2024 at 07:17:57PM +0100, Roberto Sassu wrote:
+>>> From: Roberto Sassu <roberto.sassu@huawei.com>
+>>>
+>>> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+>>> the file_release hook.
+>>>
+>>> IMA calculates at file close the new digest of the file content and writes
+>>> it to security.ima, so that appraisal at next file access succeeds.
+>>>
+>>> An LSM could implement an exclusive access scheme for files, only allowing
+>>> access to files that have no references.
+>> Elaborate that last part, please.
+> Apologies, I didn't understand that either. Casey?
 
-The original eventfs code added a wrapper around the dcache_readdir open
-callback and created all the dentries and inodes at open, and increment
-their ref count. A wrapper was added around the dcache_readdir release
-function to decrement all the ref counts of those created inodes and
-dentries. But this proved to be buggy[1] for when a kprobe was created
-during a dir read, it would create a dentry between the open and the
-release, and because the release would decrement all ref counts of all
-files and directories, that would include the kprobe directory that was
-not there to have its ref count incremented in open. This would cause the
-ref count to go to negative and later crash the kernel.
+Just a hypothetical notion that if an LSM wanted to implement an
+exclusive access scheme it might find the proposed hook helpful.
+I don't have any plan to create such a scheme, nor do I think that
+a file_release hook would be the only thing you'd need.
 
-To solve this, the dentries and inodes that were created and had their ref
-count upped in open needed to be saved. That list needed to be passed from
-the open to the release, so that the release would only decrement the ref
-counts of the entries that were incremented in the open.
-
-Unfortunately, the dcache_readdir logic was already using the
-file->private_data, which is the only field that can be used to pass
-information from the open to the release. What was done was the eventfs
-created another descriptor that had a void pointer to save the
-dcache_readdir pointer, and it wrapped all the callbacks, so that it could
-save the list of entries that had their ref counts incremented in the
-open, and pass it to the release. The wrapped callbacks would just put
-back the dcache_readdir pointer and call the functions it used so it could
-still use its data[2].
-
-But Linus had an issue with the "hijacking" of the file->private_data
-(unfortunately this discussion was on a security list, so no public link).
-Which we finally agreed on doing everything within the iterate_shared
-callback and leave the dcache_readdir out of it[3]. All the information
-needed for the getents() could be created then.
-
-But this ended up being buggy too[4]. The iterate_shared callback was not
-the right place to create the dentries and inodes. Even Christian Brauner
-had issues with that[5].
-
-The real fix should be to go back to creating the inodes and dentries at
-the open, create an array to store the information in the
-file->private_data, and pass that information to the other callbacks.
-
-The difference between this and the original method, is that it does not
-use dcache_readdir. It also does not up the ref counts of the dentries and
-pass them. Instead, it creates an array of a structure that saves the
-dentry's name and inode number. That information is used in the
-iterate_shared callback, and the array is freed in the dir release. The
-dentries and inodes created in the open are not used for the iterate_share
-or release callbacks. Just their names and inode numbers.
-
-This means that the state of the eventfs at the dir open remains the same
-from the point of view of the getdents() function, until the dir is closed.
-This also means that the getdents() will not fail. If there's an issue, it
-fails at the dir open.
-
-[1] https://lore.kernel.org/linux-trace-kernel/20230919211804.230edf1e@gandalf.local.home/
-[2] https://lore.kernel.org/linux-trace-kernel/20230922163446.1431d4fa@gandalf.local.home/
-[3] https://lore.kernel.org/linux-trace-kernel/20240104015435.682218477@goodmis.org/
-[4] https://lore.kernel.org/all/202401152142.bfc28861-oliver.sang@intel.com/
-[5] https://lore.kernel.org/all/20240111-unzahl-gefegt-433acb8a841d@brauner/
-
-Fixes: 493ec81a8fb8 ("eventfs: Stop using dcache_readdir() for getdents()")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202401152142.bfc28861-oliver.sang@intel.com
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- fs/tracefs/event_inode.c | 209 ++++++++++++++++++++++++++++-----------
- 1 file changed, 153 insertions(+), 56 deletions(-)
-
-diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
-index fdff53d5a1f8..50b37f31d835 100644
---- a/fs/tracefs/event_inode.c
-+++ b/fs/tracefs/event_inode.c
-@@ -53,7 +53,9 @@ enum {
- static struct dentry *eventfs_root_lookup(struct inode *dir,
- 					  struct dentry *dentry,
- 					  unsigned int flags);
-+static int eventfs_dir_open(struct inode *inode, struct file *file);
- static int eventfs_iterate(struct file *file, struct dir_context *ctx);
-+static int eventfs_dir_release(struct inode *inode, struct file *file);
- 
- static void update_attr(struct eventfs_attr *attr, struct iattr *iattr)
- {
-@@ -212,7 +214,9 @@ static const struct inode_operations eventfs_file_inode_operations = {
- 
- static const struct file_operations eventfs_file_operations = {
- 	.read		= generic_read_dir,
-+	.open		= eventfs_dir_open,
- 	.iterate_shared	= eventfs_iterate,
-+	.release	= eventfs_dir_release,
- 	.llseek		= generic_file_llseek,
- };
- 
-@@ -706,34 +710,71 @@ static struct dentry *eventfs_root_lookup(struct inode *dir,
- 	return ret;
- }
- 
-+struct eventfs_dents {
-+	const char		*name;
-+	int			ino;
-+	int			type;
-+};
-+
-+struct eventfs_list {
-+	struct eventfs_dents	*dents;
-+	int			count;
-+};
-+
-+static int update_entry(struct eventfs_dents *dents, struct dentry *d,
-+		     int type, int cnt)
-+{
-+	dents[cnt].name = kstrdup_const(d->d_name.name, GFP_KERNEL);
-+	if (!dents[cnt].name)
-+		return -ENOMEM;
-+	dents[cnt].ino = d->d_inode->i_ino;
-+	dents[cnt].type = type;
-+	return 0;
-+}
-+
-+static int add_entry(struct eventfs_dents **edents, struct dentry *d,
-+		     int type, int cnt)
-+{
-+	struct eventfs_dents *tmp;
-+
-+	tmp = krealloc(*edents, sizeof(**edents) * (cnt + 1), GFP_NOFS);
-+	if (!tmp)
-+		return -ENOMEM;
-+	*edents = tmp;
-+
-+	return update_entry(tmp, d, type, cnt);
-+}
-+
- /*
-  * Walk the children of a eventfs_inode to fill in getdents().
-  */
--static int eventfs_iterate(struct file *file, struct dir_context *ctx)
-+static int eventfs_dir_open(struct inode *inode, struct file *file)
- {
- 	const struct file_operations *fops;
- 	struct inode *f_inode = file_inode(file);
- 	const struct eventfs_entry *entry;
-+	struct eventfs_list *edents;
- 	struct eventfs_inode *ei_child;
- 	struct tracefs_inode *ti;
- 	struct eventfs_inode *ei;
-+	struct eventfs_dents *dents;
- 	struct dentry *ei_dentry = NULL;
- 	struct dentry *dentry;
- 	const char *name;
- 	umode_t mode;
-+	void *data;
-+	int cnt = 0;
- 	int idx;
--	int ret = -EINVAL;
--	int ino;
--	int i, r, c;
--
--	if (!dir_emit_dots(file, ctx))
--		return 0;
-+	int ret;
-+	int i;
-+	int r;
- 
- 	ti = get_tracefs(f_inode);
- 	if (!(ti->flags & TRACEFS_EVENT_INODE))
- 		return -EINVAL;
- 
--	c = ctx->pos - 2;
-+	if (WARN_ON_ONCE(file->private_data))
-+		return -EINVAL;
- 
- 	idx = srcu_read_lock(&eventfs_srcu);
- 
-@@ -743,80 +784,136 @@ static int eventfs_iterate(struct file *file, struct dir_context *ctx)
- 		ei_dentry = READ_ONCE(ei->dentry);
- 	mutex_unlock(&eventfs_mutex);
- 
--	if (!ei || !ei_dentry)
--		goto out;
-+	if (!ei_dentry) {
-+		srcu_read_unlock(&eventfs_srcu, idx);
-+		return -ENOENT;
-+	}
-+
-+	data = ei->data;
-+
-+	edents = kmalloc(sizeof(*edents), GFP_KERNEL);
-+	if (!edents) {
-+		srcu_read_unlock(&eventfs_srcu, idx);
-+		return -ENOMEM;
-+	}
- 
- 	/*
--	 * Need to create the dentries and inodes to have a consistent
--	 * inode number.
-+	 * Need to make a struct eventfs_dent array, start by
-+	 * allocating enough for just the files, which is a fixed
-+	 * array. Then use realloc via add_entry() for the directories
-+	 * which is stored in a linked list.
- 	 */
--	ret = 0;
--
--	/* Start at 'c' to jump over already read entries */
--	for (i = c; i < ei->nr_entries; i++, ctx->pos++) {
--		void *cdata = ei->data;
-+	dents = kcalloc(ei->nr_entries, sizeof(*dents), GFP_KERNEL);
-+	if (!dents) {
-+		srcu_read_unlock(&eventfs_srcu, idx);
-+		kfree(edents);
-+		return -ENOMEM;
-+	}
- 
-+	inode_lock(ei_dentry->d_inode);
-+	for (i = 0; i < ei->nr_entries; i++) {
-+		void *cdata = data;
- 		entry = &ei->entries[i];
- 		name = entry->name;
--
- 		mutex_lock(&eventfs_mutex);
--		/* If ei->is_freed then just bail here, nothing more to do */
--		if (ei->is_freed) {
--			mutex_unlock(&eventfs_mutex);
--			goto out;
--		}
--		r = entry->callback(name, &mode, &cdata, &fops);
-+		/* If ei->is_freed, then the event itself may be too */
-+		if (!ei->is_freed)
-+			r = entry->callback(name, &mode, &cdata, &fops);
-+		else
-+			r = -1;
- 		mutex_unlock(&eventfs_mutex);
--		if (r <= 0)
-+		/* If the ei is being freed, no need to continue */
-+		if (r < 0) {
-+			ret = -ENOENT;
-+			goto fail;
-+		}
-+		/* callbacks returning zero just means skip this file */
-+		if (r == 0)
- 			continue;
--
- 		dentry = create_file_dentry(ei, i, ei_dentry, name, mode, cdata, fops);
- 		if (!dentry)
--			goto out;
--		ino = dentry->d_inode->i_ino;
-+			continue;
-+
-+		ret = update_entry(dents, dentry, DT_REG, cnt);
- 		dput(dentry);
- 
--		if (!dir_emit(ctx, name, strlen(name), ino, DT_REG))
--			goto out;
--	}
-+		if (ret < 0)
-+		    goto fail;
- 
--	/* Subtract the skipped entries above */
--	c -= min((unsigned int)c, (unsigned int)ei->nr_entries);
-+		cnt++;
-+	}
- 
- 	list_for_each_entry_srcu(ei_child, &ei->children, list,
- 				 srcu_read_lock_held(&eventfs_srcu)) {
--
--		if (c > 0) {
--			c--;
-+		dentry = create_dir_dentry(ei, ei_child, ei_dentry);
-+		if (!dentry)
- 			continue;
--		}
- 
--		ctx->pos++;
-+		ret = add_entry(&dents, dentry, DT_DIR, cnt);
-+		dput(dentry);
-+		if (ret < 0)
-+			goto fail;
-+		cnt++;
-+	}
- 
--		if (ei_child->is_freed)
--			continue;
-+	edents->count = cnt;
-+	edents->dents = dents;
- 
--		name = ei_child->name;
-+	inode_unlock(ei_dentry->d_inode);
-+	srcu_read_unlock(&eventfs_srcu, idx);
-+	file->private_data = edents;
-+	return 0;
-+ fail:
-+	inode_unlock(ei_dentry->d_inode);
-+	srcu_read_unlock(&eventfs_srcu, idx);
-+	for (; cnt >= 0; cnt--)
-+		kfree_const(dents[cnt].name);
-+	kfree(dents);
-+	kfree(edents);
-+	return ret;
-+}
- 
--		dentry = create_dir_dentry(ei, ei_child, ei_dentry);
--		if (!dentry)
--			goto out_dec;
--		ino = dentry->d_inode->i_ino;
--		dput(dentry);
-+static int eventfs_dir_release(struct inode *inode, struct file *file)
-+{
-+	struct eventfs_list *edents = file->private_data;
-+	struct tracefs_inode *ti;
-+	int i;
-+
-+	ti = get_tracefs(inode);
-+	if (!(ti->flags & TRACEFS_EVENT_INODE))
-+		return -EINVAL;
- 
--		if (!dir_emit(ctx, name, strlen(name), ino, DT_DIR))
--			goto out_dec;
-+	if (WARN_ON_ONCE(!edents))
-+		return -EINVAL;
-+
-+	for (i = 0; i < edents->count; i++) {
-+		kfree_const(edents->dents[i].name);
- 	}
--	ret = 1;
-- out:
--	srcu_read_unlock(&eventfs_srcu, idx);
- 
--	return ret;
-+	kfree(edents->dents);
-+	kfree(edents);
-+	return 0;
-+}
- 
-- out_dec:
--	/* Incremented ctx->pos without adding something, reset it */
--	ctx->pos--;
--	goto out;
-+static int eventfs_iterate(struct file *file, struct dir_context *ctx)
-+{
-+	struct eventfs_list *edents = file->private_data;
-+	int i, c;
-+
-+	if (!dir_emit_dots(file, ctx))
-+		return 0;
-+
-+	c = ctx->pos - 2;
-+
-+	/* Start at 'c' to jump over already read entries */
-+	for (i = c; i < edents->count; i++, ctx->pos++) {
-+
-+		if (!dir_emit(ctx, edents->dents[i].name,
-+			      strlen(edents->dents[i].name),
-+			      edents->dents[i].ino, edents->dents[i].type))
-+			break;
-+	}
-+	return 0;
- }
- 
- /**
--- 
-2.43.0
-
+>
+> Thanks
+>
+> Roberto
+>
 
