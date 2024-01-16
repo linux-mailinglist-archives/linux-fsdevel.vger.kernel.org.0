@@ -1,121 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-8070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16DB382F1FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 16:56:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD59782F1FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 16:56:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB661284FB9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 15:56:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF6D51C224CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 15:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CBAA1C694;
-	Tue, 16 Jan 2024 15:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C231C698;
+	Tue, 16 Jan 2024 15:56:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UUuys75n"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QBKMT6dU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CBD1BF3A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 15:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1705420558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EkaObLRiZU2WVUtOEp3KCOMnmv+FaFDDWJ1dwMpQFZ4=;
-	b=UUuys75nzd0ticNVRFUOAow5I4Y6pue7CxfVAR134eZlmYIREULnggiDUNNgFDdFTf0m3e
-	/Bg8SSQDcjhNbbcUb8TeVseFu7mCrVb6GdrA/QpqhzQ/yJrT6VzhlT8Krfn01/R0MNwyjr
-	7x0Smcuy2YinVUww945BjTLxGjc+t1A=
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
- [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-68-Kr0BV9oMN6WD-pINyyPXqw-1; Tue, 16 Jan 2024 10:55:56 -0500
-X-MC-Unique: Kr0BV9oMN6WD-pINyyPXqw-1
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-5ca4ee5b97aso3873925a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 07:55:56 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADC71C686
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 15:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1d5ebcbe873so109365ad.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 07:56:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1705420600; x=1706025400; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BQbY8Mrxi51oRnesHl3OqUsTVue+4Gtvh2bYWjGB6WA=;
+        b=QBKMT6dUgLRzgFYYm7KfYvmiVdMDDPRKLRQioHU4Xk4pVe0IR1ntkUAeOccIEMJ5ji
+         7U0IIPd8Tf8cHxE8aRBzKv/PKIwaAKdWTm45aH4csGrMqkbUMZoydDqU5liiYI4EnUI0
+         lCgCGUg2bwVN8WcZEa2ikKgldhQDRRiATB13oxtaYHd88/5rBzrvQUGKofdqNDHtQR3x
+         LErFu/ETXgM+JRSZZ83NRKy8uDE7MLWkR/PLc/1UqvDp4q52G5WEIWNMb0tg/gKwDtDF
+         JA+ljdgD8vF4JzW8qf35mi4gNqAj0EAXBKVEVX9G1LTr5fZxHKws7IYTKY5ZcEjm9ltd
+         aC5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705420555; x=1706025355;
+        d=1e100.net; s=20230601; t=1705420600; x=1706025400;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EkaObLRiZU2WVUtOEp3KCOMnmv+FaFDDWJ1dwMpQFZ4=;
-        b=CXXeJIxy4i0qzziq8eHgb7KfIGWT03YEFXWwYws44fQagvxdrNUDLGK1qahB/+KTAG
-         dvyJB0jaVK2epp9CP5PVp/zrKNL+8AnW9/zDZNStIYO2Y9c/iYdMkL4HBzRFlx78X7YA
-         NVT1WA2d0Y64G/5Ly//vbAXvz5LQ04uNbZ+9MFKEfwHEJEsE7MpgWHcjdoXTDcLEMg3u
-         OpmAfcdIZogai5uMTNV6qU/btxXAFz+K5Kkp15rfm8A2ht9LHwyn4HGmUvsTp5Cb5a0m
-         WPMBURVnuAmDFXhK7zhgQfFscMuf5uMOx4ik3dQPV1xzpo2ivBdvaSLB7E7GfEQZqtnK
-         HoAg==
-X-Gm-Message-State: AOJu0YyCjSZ0mWC/QboI03+S85C8Nr96q8IQUsBBhSrjYVogQ3sQzol7
-	o4B2BVz0prYWhyqRTs8aU7GRgKlowMQyC0NZlGGIYTJXB08Ha+yFP3nOBVSHFcQp2aV3VEqtTyE
-	/LvSsmaJb5wUnJdsuk11psk2BWtodQMP4nLwULriJxG/r0NzrTw==
-X-Received: by 2002:a17:902:a98b:b0:1d4:672f:4809 with SMTP id bh11-20020a170902a98b00b001d4672f4809mr3966894plb.129.1705420555678;
-        Tue, 16 Jan 2024 07:55:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHZQrzkzOTwvJXIqY16Mk/9F/L79khIzMK3iukN9JqmT78QTW3UdlrX8fmF1HTGkx/EuRv2R27m2byQtY34e3Y=
-X-Received: by 2002:a17:902:a98b:b0:1d4:672f:4809 with SMTP id
- bh11-20020a170902a98b00b001d4672f4809mr3966881plb.129.1705420555426; Tue, 16
- Jan 2024 07:55:55 -0800 (PST)
+        bh=BQbY8Mrxi51oRnesHl3OqUsTVue+4Gtvh2bYWjGB6WA=;
+        b=GwWwovkZ/hWd6RoKyZpJMLCUMj/KdGObu8MuKMWRgu3LNzRS/kYaUh6uQcTlIW1jfY
+         JyWn8emU1N7a+QVRDLfajEIZ+hJUt6sgrd8vLJX3tflyhwpCzkRyOI+rwR4yIhDc9Cre
+         W7TJncTcQjYFm+mbUc2aih9XMnDyGanmoB8z9mxRYZwfNX/LJID1dpch19npym1tyyYu
+         8EKOBpJg6EDgYcMk+o/fEb2eT0Iebc6bqa3f+u/TbXsUVQT5G5yRvKYSgXClsB0n9oPP
+         W1dexHTv5DmaP1DH6rBGnWfJmA9dP2Y92OceoiYYZwkhLBUYiTe9RfwxjzI7irDGXRNv
+         N4sg==
+X-Gm-Message-State: AOJu0Yy51Pv4l/KllDWoo/XzM3wRpUztMVG3LljU1H3videkN1TNZnyV
+	h36SuAbLmLbAq5Q1kjjX1vauD5ae1SkAqpOVO2xh+SpppA37
+X-Google-Smtp-Source: AGHT+IEFpSNk4yBS3FQmOkIM6MlBaIX6qNQNXfqDHiHknuvALzTkBvr0USexOou2u5DTtKnzkASC4edoT/chV8i6aJg=
+X-Received: by 2002:a17:903:191:b0:1d4:ceab:58ba with SMTP id
+ z17-20020a170903019100b001d4ceab58bamr6868plg.10.1705420600448; Tue, 16 Jan
+ 2024 07:56:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000057049306049e0525@google.com> <000000000000fa7c3b060f07d0ab@google.com>
- <20240116103300.bpv233hnhvfk3uvf@quack3>
-In-Reply-To: <20240116103300.bpv233hnhvfk3uvf@quack3>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Tue, 16 Jan 2024 16:55:43 +0100
-Message-ID: <CAHc6FU6wzkniuMormDzthUpj3fCap-iFFRfa_skEAvp6fwBOJA@mail.gmail.com>
-Subject: Re: [syzbot] [gfs2?] BUG: sleeping function called from invalid
- context in glock_hash_walk
-To: Jan Kara <jack@suse.cz>
-Cc: syzbot <syzbot+10c6178a65acf04efe47@syzkaller.appspotmail.com>, axboe@kernel.dk, 
-	brauner@kernel.org, cluster-devel@redhat.com, gfs2@lists.linux.dev, 
+References: <0000000000008d00ec05f06bcb35@google.com> <000000000000ac2378060f12234c@google.com>
+In-Reply-To: <000000000000ac2378060f12234c@google.com>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Tue, 16 Jan 2024 16:56:28 +0100
+Message-ID: <CANp29Y4J+bAFu5r8-hATpmsyNJ+insC5Qhws_qops5N38+Fiyw@mail.gmail.com>
+Subject: Re: [syzbot] [gfs2?] BUG: unable to handle kernel NULL pointer
+ dereference in gfs2_rindex_update
+To: syzbot <syzbot+2b32df23ff6b5b307565@syzkaller.appspotmail.com>
+Cc: agruenba@redhat.com, axboe@kernel.dk, brauner@kernel.org, 
+	cluster-devel@redhat.com, gfs2@lists.linux.dev, jack@suse.cz, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	rpeterso@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 16, 2024 at 11:33=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
-> On Mon 15-01-24 19:35:05, syzbot wrote:
-> > syzbot suspects this issue was fixed by commit:
-> >
-> > commit 6f861765464f43a71462d52026fbddfc858239a5
-> > Author: Jan Kara <jack@suse.cz>
-> > Date:   Wed Nov 1 17:43:10 2023 +0000
-> >
-> >     fs: Block writes to mounted block devices
-> >
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D165bebf5=
-e80000
-> > start commit:   3f86ed6ec0b3 Merge tag 'arc-6.6-rc1' of git://git.kerne=
-l.o..
-> > git tree:       upstream
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dff0db7a15ba=
-54ead
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3D10c6178a65acf=
-04efe47
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D13e4ea146=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D13f76f10680=
-000
-> >
-> > If the result looks correct, please mark the issue as fixed by replying=
- with:
-> >
+#syz fix: fs: Block writes to mounted block devices
+
+On Tue, Jan 16, 2024 at 4:54=E2=80=AFPM syzbot
+<syzbot+2b32df23ff6b5b307565@syzkaller.appspotmail.com> wrote:
 >
-> Makes sense.
+> syzbot suspects this issue was fixed by commit:
+>
+> commit 6f861765464f43a71462d52026fbddfc858239a5
+> Author: Jan Kara <jack@suse.cz>
+> Date:   Wed Nov 1 17:43:10 2023 +0000
+>
+>     fs: Block writes to mounted block devices
+>
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D12452f7be8=
+0000
+> start commit:   0a924817d2ed Merge tag '6.2-rc-smb3-client-fixes-part2' o=
+f..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D4e2d7bfa2d6d5=
+a76
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D2b32df23ff6b5b3=
+07565
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14860f08480=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D174d24b048000=
+0
+>
+> If the result looks correct, please mark the issue as fixed by replying w=
+ith:
 >
 > #syz fix: fs: Block writes to mounted block devices
-
-Thank you, Jan.
-
-Andreas
-
+>
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
+>
 
