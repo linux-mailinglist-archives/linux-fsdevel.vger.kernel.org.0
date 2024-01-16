@@ -1,131 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-8031-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351CB82EA5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 08:53:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DAF982EAC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 09:20:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8DA5284FBE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 07:53:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E55A283F49
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 16 Jan 2024 08:20:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC040111AC;
-	Tue, 16 Jan 2024 07:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE1511CBC;
+	Tue, 16 Jan 2024 08:20:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA61111A0;
-	Tue, 16 Jan 2024 07:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R461e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W-lNVmJ_1705391621;
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W-lNVmJ_1705391621)
-          by smtp.aliyun-inc.com;
-          Tue, 16 Jan 2024 15:53:42 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org
-Cc: willy@infradead.org,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs: improve dump_mapping() robustness
-Date: Tue, 16 Jan 2024 15:53:35 +0800
-Message-Id: <937ab1f87328516821d39be672b6bc18861d9d3e.1705391420.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.39.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA3F11C84
+	for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 08:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-360a49993dfso58464725ab.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 16 Jan 2024 00:20:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705393207; x=1705998007;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=P4AGGCWKnuT2bwg8lZv/N9IC2unP9VYmjMc7v61ESxY=;
+        b=wWCUPKjt9bSHmB5skUNQqmpBfiBAWkQPoiSDaw2liQticwqjeSblm0rjkvEfUWklR4
+         j+eafbjhFjRFBPUioYb37VevMMNzQatwPSxbIS6PNaM8/spDW+4dMqU7486keEgnxlau
+         wAFKQkXjphHnpaVzEnzN8RytGjAFOtL31WBeUpLSwkDNTJalr+pVS+RF3Igjx116taVd
+         uVQ2eApbsQYNAt9FGXchXTbWTl/x45uU3pT8twtJAcihO78dtQT4QUsKcOiJex7+SQTJ
+         lJz80KDgMGMChIEUhPhHEZ4gJK/X81LQa4ENjdC7pUUYNyIAVTPei5vWdLld8lNea6Hp
+         TFpA==
+X-Gm-Message-State: AOJu0YzhjbwmVMpNsL7QCXA2VchV4VdCzlp3DtWJQOry9V5r1/6Rovl0
+	VMvDW/td6+mzgl8ZiGfEDrmcKaZA5UXmVrL1Tw01Pb1cEmFN
+X-Google-Smtp-Source: AGHT+IEb61hugOjJ5e8Jm0bjn5QogKBHjP7P1Is1XXv85ADzC6t1Ye75sSF5jszE4L8o1PWkAbSf388qLvDMVz7EDpzCwogHqtfj
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:3206:b0:35f:ebc7:6065 with SMTP id
+ cd6-20020a056e02320600b0035febc76065mr971207ilb.1.1705393206943; Tue, 16 Jan
+ 2024 00:20:06 -0800 (PST)
+Date: Tue, 16 Jan 2024 00:20:06 -0800
+In-Reply-To: <000000000000653bb6060afad327@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004d67e4060f0bcc7b@google.com>
+Subject: Re: [syzbot] [bfs?] general protection fault in bfs_get_block (2)
+From: syzbot <syzbot+dc6ed11a88fb40d6e184@syzkaller.appspotmail.com>
+To: aivazian.tigran@gmail.com, axboe@kernel.dk, brauner@kernel.org, 
+	jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, yuran.pereira@hotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-We met a kernel crash issue when running stress-ng testing, and the
-system crashes when printing the dentry name in dump_mapping().
+syzbot suspects this issue was fixed by commit:
 
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
-pc : dentry_name+0xd8/0x224
-lr : pointer+0x22c/0x370
-sp : ffff800025f134c0
-......
-Call trace:
-  dentry_name+0xd8/0x224
-  pointer+0x22c/0x370
-  vsnprintf+0x1ec/0x730
-  vscnprintf+0x2c/0x60
-  vprintk_store+0x70/0x234
-  vprintk_emit+0xe0/0x24c
-  vprintk_default+0x3c/0x44
-  vprintk_func+0x84/0x2d0
-  printk+0x64/0x88
-  __dump_page+0x52c/0x530
-  dump_page+0x14/0x20
-  set_migratetype_isolate+0x110/0x224
-  start_isolate_page_range+0xc4/0x20c
-  offline_pages+0x124/0x474
-  memory_block_offline+0x44/0xf4
-  memory_subsys_offline+0x3c/0x70
-  device_offline+0xf0/0x120
-  ......
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-The root cause is that, one thread is doing page migration, and we will
-use the target page's ->mapping field to save 'anon_vma' pointer between
-page unmap and page move, and now the target page is locked and refcount
-is 1.
+    fs: Block writes to mounted block devices
 
-Currently, there is another stress-ng thread performing memory hotplug,
-attempting to offline the target page that is being migrated. It discovers
-that the refcount of this target page is 1, preventing the offline operation,
-thus proceeding to dump the page. However, page_mapping() of the target
-page may return an incorrect file mapping to crash the system in dump_mapping(),
-since the target page->mapping only saves 'anon_vma' pointer without setting
-PAGE_MAPPING_ANON flag.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16c3c513e80000
+start commit:   98b1cc82c4af Linux 6.7-rc2
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=aec35c1281ec0aaf
+dashboard link: https://syzkaller.appspot.com/bug?extid=dc6ed11a88fb40d6e184
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16783b84e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=165172a0e80000
 
-The page migration issue has been fixed by commit d1adb25df711 ("mm: migrate:
-fix getting incorrect page mapping during page migration"). In addition,
-Matthew suggested we should also improve dump_mapping()'s robustness to
-resilient against the kernel crash [1].
+If the result looks correct, please mark the issue as fixed by replying with:
 
-With checking the 'dentry.parent' and 'dentry.d_name.name' used by
-dentry_name(), I can see dump_mapping() will output the invalid dentry
-instead of crashing the system when this issue is reproduced again.
+#syz fix: fs: Block writes to mounted block devices
 
-[12211.189128] page:fffff7de047741c0 refcount:1 mapcount:0 mapping:ffff989117f55ea0 index:0x1 pfn:0x211dd07
-[12211.189144] aops:0x0 ino:1 invalid dentry:74786574206e6870
-[12211.189148] flags: 0x57ffffc0000001(locked|node=1|zone=2|lastcpupid=0x1fffff)
-[12211.189150] page_type: 0xffffffff()
-[12211.189153] raw: 0057ffffc0000001 0000000000000000 dead000000000122 ffff989117f55ea0
-[12211.189154] raw: 0000000000000001 0000000000000001 00000001ffffffff 0000000000000000
-[12211.189155] page dumped because: unmovable page
-
-[1] https://lore.kernel.org/all/ZXxn%2F0oixJxxAnpF@casper.infradead.org/
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- fs/inode.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 99d8754a74a3..3093e3b3fd12 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -589,7 +589,8 @@ void dump_mapping(const struct address_space *mapping)
- 	}
- 
- 	dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
--	if (get_kernel_nofault(dentry, dentry_ptr)) {
-+	if (get_kernel_nofault(dentry, dentry_ptr) ||
-+	    !dentry.d_parent || !dentry.d_name.name) {
- 		pr_warn("aops:%ps ino:%lx invalid dentry:%px\n",
- 				a_ops, ino, dentry_ptr);
- 		return;
--- 
-2.39.3
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
