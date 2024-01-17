@@ -1,215 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-8206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCCBD830F2F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 23:29:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED53830F42
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 23:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52180B240D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 22:29:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1E0D1C21ACE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 22:38:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF5F286B4;
-	Wed, 17 Jan 2024 22:29:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF8128DA0;
+	Wed, 17 Jan 2024 22:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TMRRDo65";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6bG3T+Vo";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="TMRRDo65";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6bG3T+Vo"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ok3Hd9sQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B0725569
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 22:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D66B1E886
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 22:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705530542; cv=none; b=cnG34c/6Ai3aHfx3tEqx7/lrSR1khjcj4VisZLjdpxJZ/o6IyjmBmoDamqA5EVE7Yph4oGWQCglOd+1txY9gutppr3SfPH3ZJF09iqhxvhgTyXzv24K/svGr4hE+y9oxmFS1+bv5XssHqeTuo1BzyTaKSc1ie5b0OAeNZtBL2CI=
+	t=1705531061; cv=none; b=OZj5Y121jt0J0nxW1w2p3S6JW4rowZI2PgsEX1dQRm2grQOt3eD+DHKh8Hs8jofoiUR/3IPdFbrwn7JnxxXJwANmB6mAEzS0Q1FIsP7PTy2MGIWqTdo5MFF6p7cbfOx14ObeRDxTcHG2Cevf2j+7Bed0wKRR5W1mew9CMA1zey0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705530542; c=relaxed/simple;
-	bh=vDc0J/J131zuk5Xssw7kyCwIlAdX0r4qUKnK5Xp7cIc=;
-	h=Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
-	 DKIM-Signature:Received:Received:From:To:Cc:Subject:Date:
-	 Message-ID:X-Mailer:MIME-Version:Content-Transfer-Encoding:
-	 X-Spamd-Result:X-Spam-Level:X-Spam-Score:X-Spam-Flag; b=aP/0CfSZlEp4Y3AQl9TPm3jMsZlID4o8mFyJo5npcmL0pdf5AJKFHsUTXA8cgaIkpjb0hnKrL3OvrNHwyXMCZ5hLP9Q9HhrEdFYEObuP4uU3XZSdPsGwuQYoSKQQ9pwy5V5Krgm3xoBqAzC3pMqz/Tjen4LLIyP0KcZVvUkQgnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TMRRDo65; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6bG3T+Vo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=TMRRDo65; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6bG3T+Vo; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7F8D121F6D;
-	Wed, 17 Jan 2024 22:28:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1705530538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=56Zi2+OC43dvCoXN5VWO4gOvQqcFhBpoynTAfbhXVkc=;
-	b=TMRRDo65XoAouq2JynBoMRk/hmvOi+12kZmiCSbcSlOrOsR6MettUGnqigW+VoM5jxl9LC
-	cL+hwcz4hZg0PozpJ/2MeCuLu1NGBED7AXGi0C9KdN474RXUoIWrDRKFhehs/YOMae/5qc
-	RX9fM4d3sKaJWrrfGHDuAQK6f7ZjZL0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1705530538;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=56Zi2+OC43dvCoXN5VWO4gOvQqcFhBpoynTAfbhXVkc=;
-	b=6bG3T+VoHL7k/4x7Sxrbym0D++MGwP8jHgne/1yA10OfRk1jhqoFO4A1rsCC3cY1H+vqBI
-	JV+v7mCQ9EbtawAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1705530538; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=56Zi2+OC43dvCoXN5VWO4gOvQqcFhBpoynTAfbhXVkc=;
-	b=TMRRDo65XoAouq2JynBoMRk/hmvOi+12kZmiCSbcSlOrOsR6MettUGnqigW+VoM5jxl9LC
-	cL+hwcz4hZg0PozpJ/2MeCuLu1NGBED7AXGi0C9KdN474RXUoIWrDRKFhehs/YOMae/5qc
-	RX9fM4d3sKaJWrrfGHDuAQK6f7ZjZL0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1705530538;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=56Zi2+OC43dvCoXN5VWO4gOvQqcFhBpoynTAfbhXVkc=;
-	b=6bG3T+VoHL7k/4x7Sxrbym0D++MGwP8jHgne/1yA10OfRk1jhqoFO4A1rsCC3cY1H+vqBI
-	JV+v7mCQ9EbtawAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EA3F013751;
-	Wed, 17 Jan 2024 22:28:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id na6DKKlUqGVHFQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Wed, 17 Jan 2024 22:28:57 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: ebiggers@kernel.org,
-	tytso@mit.edu
-Cc: linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	jaegeuk@kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH] libfs: Attempt exact-match comparison first during casefold lookup
-Date: Wed, 17 Jan 2024 19:28:36 -0300
-Message-ID: <20240117222836.11086-1-krisman@suse.de>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1705531061; c=relaxed/simple;
+	bh=1PCGZ1uJiBtLoi7xA68BT5A/oeoNiduCk3gfJe1K/aI=;
+	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Date:
+	 Mime-Version:X-Mailer:Message-ID:Subject:From:To:Cc:Content-Type;
+	b=IDF05xyBQs+c9/VpnJeELocRz1vBB1kTQJxFfHSf1UT4J89oHQ3Qki3fvb6HVGCxgtXmGImHkrAQz/haUcJ01LG9t4dk+ikkKykGglL1nGqyxHZxJ2YuFvEz5PdULf3vlwNXW1DPMkrtLxtWGXeeWAA2JoAJ2kR9VE/hQK4CEBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--lokeshgidra.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ok3Hd9sQ; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--lokeshgidra.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-d9a541b720aso16733883276.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 14:37:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1705531058; x=1706135858; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qtcsSAi8pdfsx6Ojh55+8gPZOJc0hPQeptf8eZpqdHg=;
+        b=Ok3Hd9sQ9D7vhb9N5JOxwYsb9vDc0LJN1SJS1xq4O4VOZS2uBDFUwjO/WVsL2aKD/R
+         AwiehzjV6X70hTCPJckxsWBKkIMlTL90o9Gs2fo3jI0fFFc2iUwORnwBLsax728nwZLY
+         d9Zj3meyfeqduY+yfwzNDJ4EOWxpby+mXhysYENtW3aWaq+bDq7jPD1VjEi0vFjs9M6h
+         xf3eB1FTPxav5tzcIC0AcoChW9fYdyw7j63p4HqzrKsf6Pw/Q2HHaFvqzX+WlYt9/ytT
+         RxB2oyW9Tuepnbz6r6l4Y9O67lPGJRaOwZqM5rYsulDx9AyC2sLpm5j0vOZX2xM0TN/v
+         T2Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705531058; x=1706135858;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qtcsSAi8pdfsx6Ojh55+8gPZOJc0hPQeptf8eZpqdHg=;
+        b=d42lJj+8AlWSzDLmjVWnBqxAeZqZR4/N+h4J4fUgtc0LtU55UsMxmvTEcbOCnXJAxy
+         CKqijBU6pkC978J/iFkHQFHW3GzuMbJYCV1Y+kjhnvWC6QEnpAcp5PizcuZ2u9xaaJj5
+         b6QgQW3Bw5n+qMQ+Nod7cxsf80Ur5y1Mw0+hDxoQyX8ZWqvd8QVKwMJe9LPQPj8cwfzV
+         m1BT4Pn0DjiZb2L6dnzVf8w6RdKXCRD7jeynWJyv0J0/kWxS2P7USifIo8j0IJNMw+YE
+         tsMug9EXmZnTfxMPf1DLjcOTZvZSXtiQFyZwmdt3imZm0uctyNARdYaT4YUngAPf9C5y
+         rQ3Q==
+X-Gm-Message-State: AOJu0YzCakvXTSUiu4+1X3NjBn/lUHpmYnd8vHY8LNirg2I6U3i8lMYY
+	1CO0lW+H8BCBFjCpzYHpyFbBW6hhBhCfr/20eIM59j6N
+X-Google-Smtp-Source: AGHT+IEHkEc2SNjgZpjAMRGfksbyD0+FFJUxQNmhwyp5v2dGwz3Ua29YR2phjpTtpCOeyHZkxZBYOa5Q8VSwmMY5Jw==
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:9c18:2400:c024:5c4e])
+ (user=lokeshgidra job=sendgmr) by 2002:a25:81c6:0:b0:dc2:23d8:722d with SMTP
+ id n6-20020a2581c6000000b00dc223d8722dmr1380648ybm.13.1705531058526; Wed, 17
+ Jan 2024 14:37:38 -0800 (PST)
+Date: Wed, 17 Jan 2024 14:37:29 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spamd-Result: default: False [1.90 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 R_MISSING_CHARSET(2.50)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 BROKEN_CONTENT_TYPE(1.50)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 RCPT_COUNT_SEVEN(0.00)[7];
-	 MID_CONTAINS_FROM(1.00)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,linux-foundation.org:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Level: *
-X-Spam-Score: 1.90
-X-Spam-Flag: NO
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
+Message-ID: <20240117223729.1444522-1-lokeshgidra@google.com>
+Subject: [PATCH] userfaultfd: fix mmap_changing checking in mfill_atomic_hugetlb
+From: Lokesh Gidra <lokeshgidra@google.com>
+To: akpm@linux-foundation.org
+Cc: lokeshgidra@google.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, surenb@google.com, 
+	kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com, 
+	david@redhat.com, axelrasmussen@google.com, bgeffon@google.com, 
+	willy@infradead.org, jannh@google.com, kaleshsingh@google.com, 
+	ngeoffray@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-Casefolded comparisons are (obviously) way more costly than a simple
-memcmp.  Try the case-sensitive comparison first, falling-back to the
-case-insensitive lookup only when needed.  This allows any exact-match
-lookup to complete without having to walk the utf8 trie.
+In mfill_atomic_hugetlb(), mmap_changing isn't being checked
+again if we drop mmap_lock and reacquire it. When the lock is not held,
+mmap_changing could have been incremented. This is also inconsistent
+with the behavior in mfill_atomic().
 
-Note that, for strict mode, generic_ci_d_compare used to reject an
-invalid UTF-8 string, which would now be considered valid if it
-exact-matches the disk-name.  But, if that is the case, the filesystem
-is corrupt.  More than that, it really doesn't matter in practice,
-because the name-under-lookup will have already been rejected by
-generic_ci_d_hash and we won't even get here.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
 ---
- fs/libfs.c | 40 ++++++++++++++++++++++++----------------
- 1 file changed, 24 insertions(+), 16 deletions(-)
+ mm/userfaultfd.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index eec6031b0155..d17a8adb4a35 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1704,17 +1704,28 @@ bool is_empty_dir_inode(struct inode *inode)
- static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
- 				const char *str, const struct qstr *name)
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 20e3b0d9cf7e..75fcf1f783bc 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -357,6 +357,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
+ 					      unsigned long dst_start,
+ 					      unsigned long src_start,
+ 					      unsigned long len,
++					      atomic_t *mmap_changing,
+ 					      uffd_flags_t flags)
  {
--	const struct dentry *parent = READ_ONCE(dentry->d_parent);
--	const struct inode *dir = READ_ONCE(parent->d_inode);
--	const struct super_block *sb = dentry->d_sb;
--	const struct unicode_map *um = sb->s_encoding;
--	struct qstr qstr = QSTR_INIT(str, len);
-+	const struct dentry *parent;
-+	const struct inode *dir;
- 	char strbuf[DNAME_INLINE_LEN];
-+	struct qstr qstr;
- 	int ret;
+ 	struct mm_struct *dst_mm = dst_vma->vm_mm;
+@@ -472,6 +473,15 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
+ 				goto out;
+ 			}
+ 			mmap_read_lock(dst_mm);
++			/*
++			 * If memory mappings are changing because of non-cooperative
++			 * operation (e.g. mremap) running in parallel, bail out and
++			 * request the user to retry later
++			 */
++			if (mmap_changing && atomic_read(mmap_changing)) {
++				err = -EAGAIN;
++				break;
++			}
  
-+	/*
-+	 * Attempt a case-sensitive match first. It is cheaper and
-+	 * should cover most lookups, including all the sane
-+	 * applications that expect a case-sensitive filesystem.
-+	 */
-+	if (len == name->len && !memcmp(str, name->name, len))
-+		return 0;
-+
-+	parent = READ_ONCE(dentry->d_parent);
-+	dir = READ_ONCE(parent->d_inode);
- 	if (!dir || !IS_CASEFOLDED(dir))
--		goto fallback;
-+		return 1;
-+
- 	/*
-+	 * Finally, try the case-insensitive match.
-+	 *
- 	 * If the dentry name is stored in-line, then it may be concurrently
- 	 * modified by a rename.  If this happens, the VFS will eventually retry
- 	 * the lookup, so it doesn't matter what ->d_compare() returns.
-@@ -1724,20 +1735,17 @@ static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
- 	if (len <= DNAME_INLINE_LEN - 1) {
- 		memcpy(strbuf, str, len);
- 		strbuf[len] = 0;
--		qstr.name = strbuf;
-+		str = strbuf;
- 		/* prevent compiler from optimizing out the temporary buffer */
- 		barrier();
- 	}
--	ret = utf8_strncasecmp(um, name, &qstr);
--	if (ret >= 0)
--		return ret;
--
--	if (sb_has_strict_encoding(sb))
-+	qstr.len = len;
-+	qstr.name = str;
-+	ret = utf8_strncasecmp(dentry->d_sb->s_encoding, name, &qstr);
-+	if (ret < 0)
- 		return -EINVAL;
--fallback:
--	if (len != name->len)
--		return 1;
--	return !!memcmp(str, name->name, len);
-+
-+	return ret;
- }
+ 			dst_vma = NULL;
+ 			goto retry;
+@@ -506,6 +516,7 @@ extern ssize_t mfill_atomic_hugetlb(struct vm_area_struct *dst_vma,
+ 				    unsigned long dst_start,
+ 				    unsigned long src_start,
+ 				    unsigned long len,
++				    atomic_t *mmap_changing,
+ 				    uffd_flags_t flags);
+ #endif /* CONFIG_HUGETLB_PAGE */
  
- /**
+@@ -622,8 +633,8 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
+ 	 * If this is a HUGETLB vma, pass off to appropriate routine
+ 	 */
+ 	if (is_vm_hugetlb_page(dst_vma))
+-		return  mfill_atomic_hugetlb(dst_vma, dst_start,
+-					     src_start, len, flags);
++		return  mfill_atomic_hugetlb(dst_vma, dst_start, src_start,
++					     len, mmap_changing, flags);
+ 
+ 	if (!vma_is_anonymous(dst_vma) && !vma_is_shmem(dst_vma))
+ 		goto out_unlock;
 -- 
-2.43.0
+2.43.0.429.g432eaa2c6b-goog
 
 
