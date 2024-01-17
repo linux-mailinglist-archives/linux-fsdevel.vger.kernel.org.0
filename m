@@ -1,135 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-8139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E31830010
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 07:18:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA042830050
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 08:00:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A23F2287F05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 06:18:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFF4288D61
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 07:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE008F5F;
-	Wed, 17 Jan 2024 06:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B36F9465;
+	Wed, 17 Jan 2024 07:00:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="bezi/DVB"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dC045jYB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAD28C09
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 06:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3738D8821;
+	Wed, 17 Jan 2024 07:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705472320; cv=none; b=sbw5LwJgGz7FGz+ufqv21wp0JYvOr9fLregou/XIC1tvatOkmWZSbljAw2reYZgPtId7jt28DF3PzWUbTvG+YGxl6PQmE50zmTsEMpeYYjfAydgMZ2bMdk39WfZIvySdliq+Jlu9IUk4PKfgKoKiRr/nMM0TSsfvONf09KpmR1I=
+	t=1705474816; cv=none; b=X4eyEruQAFuZpqfVpiKIeAV0/0b1KpA6uLhSwwbekBpHcwZ+EIiaoDBx8YrJAK67hNVeLe92gXyuNYfqStxVYyK16r2b3ZYx/GMiyYsqxyi6YzLqbs15nIfrdxnl5Gsb1YGqYnlUyb6lM1tLsRAqFc87xtZLELOnLlYZsWkK0W4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705472320; c=relaxed/simple;
-	bh=wWBlwK0CZynAtmtGyN5rU69lkaqCaZm33b6Q4u8TbJY=;
-	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=GXREq1xlczKm2asnoBB5oIovp5UNCaGteUbW9GtJOddpwor+PZ9gYi/iCCnrP4DXY0sXI9ql2xOKu+IlEYVOhIPp4uvoKVnMD6nwQn4hrbhTMB9wxobh3z/t7vgLXk4gPZi75vKnS9n8DVMtExWO7bSQho7tX0Hao6g1/9bQyKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=bezi/DVB; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-112-211.bstnma.fios.verizon.net [173.48.112.211])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 40H6HkWE025541
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jan 2024 01:17:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1705472270; bh=wtJ6zGFmfFqYubGpggJKb+cEki0Jbdw4QovrPcQik+s=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=bezi/DVBmAx96tmLOtiemMvJ/aAlYItBBXdzYMsK17Se8wA+6n4CSiQWKHJNixTB/
-	 Xjv1wsbeBBrLx3rYSWVeG9jjbVYaqGZ4IxW16ZdyQOByzM6DBn/bObSRPWvCNLIYiN
-	 SBK+PxgkENa9spPGqYt2U0pT9mFIVP2dBnuUM+4qo8DXR9r7rq6Ctz7GEW3hNgmpTw
-	 Fidvz8Gs2pvXce0V4YUgOCUu+ahaOsE1/eOg4Yt+DN+7nkBtSrfkdJdCdMhaBEcr0h
-	 h89mWh9WWU8qS8zELcPAU9GxNQ8heI1iAgjrRbxNqqy3pD7U2j24C9+2OIqGHLGbft
-	 fh4OBI1DjDy6w==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 3FD5F15C0278; Wed, 17 Jan 2024 01:17:42 -0500 (EST)
-Date: Wed, 17 Jan 2024 01:17:42 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christian Brauner <brauner@kernel.org>, lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-btrfs@vger.kernel.org, linux-block@vger.kernel.org,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Dropping page cache of individual fs
-Message-ID: <20240117061742.GM911245@mit.edu>
-References: <20240116-tagelang-zugnummer-349edd1b5792@brauner>
- <ZabtYQqakvxJVYjM@dread.disaster.area>
+	s=arc-20240116; t=1705474816; c=relaxed/simple;
+	bh=k7OAtGL+2nxEw5zXMvTzAkCupl6TNovUqU9pBszDoZw=;
+	h=DKIM-Signature:X-IronPort-AV:X-IronPort-AV:Received:X-ExtLoop1:
+	 X-IronPort-AV:X-IronPort-AV:Received:From:To:Cc:Subject:
+	 In-Reply-To:References:Date:Message-ID:User-Agent:MIME-Version:
+	 Content-Type; b=oVhji3qY2ZDASvFIeKR64K0/TqlePKmrPcoNxgjIaf+iTMJvCMlBQ3SWCZnK4coyIfQpp1/bTlKjiKZhPx0xcfsjlfz4JpA1xkGCeH3flywncCEddwIj96VxbsQ03KXvh863CUW0Hc898AWKk0Df4ZlrXdVyhK9F2Bdk8qv45QI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dC045jYB; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1705474814; x=1737010814;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=k7OAtGL+2nxEw5zXMvTzAkCupl6TNovUqU9pBszDoZw=;
+  b=dC045jYBJ/qgdV8IuFIERlO5KYgi4A3hOAEBcnDiXjd/LS+eSZ24PBno
+   ETE11v9wmP7J3vlX80uBPBwjpPsqtHRhOflpq9G4gaIP11PTLyC6lFHbu
+   cnirBb1/FLKhXPugVCVyf+bSw2bltCCtcCsuJsFQx0pdduwy0hvIhgAwK
+   /d+H1PobomQiJpViEpMp1sjjusqgps2k02xBuodsxj33tXVzK9Z1k2lm1
+   5MEwR21zzlxMC/UMwpaum4WiNG6FfYXujvrmrLjG0Ej2LOB+Kt/bGJ2ne
+   O2KMvPLlGa4/H4DbwBNL6G1+yYFK3gOBvQGFU9sk2/IiOJpHVDzIkZRBC
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10955"; a="6805784"
+X-IronPort-AV: E=Sophos;i="6.05,200,1701158400"; 
+   d="scan'208";a="6805784"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2024 23:00:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10955"; a="957456948"
+X-IronPort-AV: E=Sophos;i="6.05,200,1701158400"; 
+   d="scan'208";a="957456948"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2024 23:00:06 -0800
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Gregory Price <gregory.price@memverge.com>
+Cc: Gregory Price <gourry.memverge@gmail.com>,  <linux-mm@kvack.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-doc@vger.kernel.org>,
+  <linux-fsdevel@vger.kernel.org>,  <linux-api@vger.kernel.org>,
+  <corbet@lwn.net>,  <akpm@linux-foundation.org>,  <honggyu.kim@sk.com>,
+  <rakie.kim@sk.com>,  <hyeongtak.ji@sk.com>,  <mhocko@kernel.org>,
+  <vtavarespetr@micron.com>,  <jgroves@micron.com>,
+  <ravis.opensrc@micron.com>,  <sthanneeru@micron.com>,
+  <emirakhur@micron.com>,  <Hasan.Maruf@amd.com>,
+  <seungjun.ha@samsung.com>,  <hannes@cmpxchg.org>,
+  <dan.j.williams@intel.com>
+Subject: Re: [PATCH 1/3] mm/mempolicy: implement the sysfs-based
+ weighted_interleave interface
+In-Reply-To: <ZadkmWj3Rd483f68@memverge.com> (Gregory Price's message of "Wed,
+	17 Jan 2024 00:24:41 -0500")
+References: <20240112210834.8035-1-gregory.price@memverge.com>
+	<20240112210834.8035-2-gregory.price@memverge.com>
+	<87le8r1dzr.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<ZadkmWj3Rd483f68@memverge.com>
+Date: Wed, 17 Jan 2024 14:58:08 +0800
+Message-ID: <87o7dkzbsv.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZabtYQqakvxJVYjM@dread.disaster.area>
+Content-Type: text/plain; charset=ascii
 
-On Wed, Jan 17, 2024 at 07:56:01AM +1100, Dave Chinner wrote:
-> 
-> The wiping of secrets is completely orthogonal to the freezing of
-> the device and filesystem - the freeze does not need to occur to
-> allow the encryption keys and decrypted data to be purged. They
-> should not be conflated; purging needs to be a completely separate
-> operation that can be run regardless of device/fs freeze status.
-> 
-> FWIW, focussing on purging the page cache omits the fact that
-> having access to the directory structure is a problem - one can
-> still retrieve other user information that is stored in metadata
-> (e.g. xattrs) that isn't part of the page cache. Even the directory
-> structure that is cached in dentries could reveal secrets someone
-> wants to keep hidden (e.g code names for operations/products).
+Gregory Price <gregory.price@memverge.com> writes:
 
-Yeah, I think we need to really revisit the implicit requirements
-which were made upfront about wanting to protect against the page
-cache being exposed.
+> On Mon, Jan 15, 2024 at 11:18:00AM +0800, Huang, Ying wrote:
+>> Gregory Price <gourry.memverge@gmail.com> writes:
+>> 
+>> > +static struct iw_table default_iw_table;
+>> > +/*
+>> > + * iw_table is the sysfs-set interleave weight table, a value of 0
+>> > + * denotes that the default_iw_table value should be used.
+>> > + *
+>> > + * iw_table is RCU protected
+>> > + */
+>> > +static struct iw_table __rcu *iw_table;
+>> > +static DEFINE_MUTEX(iw_table_mtx);
+>> 
+>> I greped "mtx" in kernel/*.c and mm/*.c and found nothing.  To following
+>> the existing coding convention, better to name this as iw_table_mutex or
+>> iw_table_lock?
+>> 
+>
+> ack.
+>
+>> And, I think this is used to protect both iw_table and default_iw_table?
+>> If so, it deserves some comments.
+>> 
+>
+> Right now default_iw_table cannot be updated, and so it is neither
+> protected nor requires protection.
+>
+> I planned to add the protection comment in the next patch series, which
+> would implement the kernel-side interface for updating the default
+> weights during boot/hotplug.
+>
+> We haven't had the discussion on how/when this should happen yet,
+> though, and there's some research to be done.  (i.e. when should DRAM
+> weights be set? should the entire table be reweighted on hotplug? etc)
 
-What is the threat model that you are trying to protect against?  If
-the attacker has access to the memory of the suspended processor, then
-number of things you need to protect against becomes *vast*.  For one
-thing, if you're going to blow away the LUKS encryption on suspend,
-then during the resume process, *before* you allow general user
-processes to start running again (when they might try to read from the
-file system whose encryption key is no longer available, and thus will
-be treated to EIO errors), you're going to have to request that user
-to provide the encryption key, either directly or indirectly.
+Before that, I'm OK to remove default_iw_table and use hard coded "1" as
+default weight for now.
 
-And if the attacker has access to the suspended memory, is it
-read-only access, or can the attacker modify the memory image to
-include a trojan that records the encryption once it is demanded of
-the user, and then mails it off to Moscow or Beijing or Fort Meade?
+>> > +static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *attr,
+>> > +			  const char *buf, size_t count)
+>> > +{
+>> > +	struct iw_node_attr *node_attr;
+>> > +	struct iw_table __rcu *new;
+>> > +	struct iw_table __rcu *old;
+>> > +	u8 weight = 0;
+>> > +
+>> > +	node_attr = container_of(attr, struct iw_node_attr, kobj_attr);
+>> > +	if (count == 0 || sysfs_streq(buf, ""))
+>> > +		weight = 0;
+>> > +	else if (kstrtou8(buf, 0, &weight))
+>> > +		return -EINVAL;
+>> > +
+>> > +	new = kmalloc(sizeof(*new), GFP_KERNEL);
+>> > +	if (!new)
+>> > +		return -ENOMEM;
+>> > +
+>> > +	mutex_lock(&iw_table_mtx);
+>> > +	old = rcu_dereference_protected(iw_table,
+>> > +					lockdep_is_held(&iw_table_mtx));
+>> > +	/* If value is 0, revert to default weight */
+>> > +	weight = weight ? weight : default_iw_table.weights[node_attr->nid];
+>> 
+>> If we change the default weight in default_iw_table.weights[], how do we
+>> identify whether the weight has been customized by users via sysfs?  So,
+>> I suggest to use 0 in iw_table for not-customized weight.
+>> 
+>> And if so, we need to use RCU to access default_iw_table too.
+>>
+>
+> Dumb simplification on my part, I'll walk this back and add the 
+>
+> if (!weight) weight = default_iw_table[node]
+>
+> logic back into the allocator paths accordinly.
+>
+>> > +	memcpy(&new->weights, &old->weights, sizeof(new->weights));
+>> > +	new->weights[node_attr->nid] = weight;
+>> > +	rcu_assign_pointer(iw_table, new);
+>> > +	mutex_unlock(&iw_table_mtx);
+>> > +	kfree_rcu(old, rcu);
+>> 
+>> synchronize_rcu() should be OK here.  It's fast enough in this cold
+>> path.  This make it good to define iw_table as
+>> 
+> I'll take a look.
+>
+>> u8 __rcu *iw_table;
+>> 
+>> Then, we only need to allocate nr_node_ids elements now.
+>> 
+>
+> We need nr_possible_nodes to handle hotplug correctly.
 
-To address the whole set of problems, it might be that the answer
-might lie in something like confidential compute, where the all of the
-memory encrypted.  Now you don't need to worry about wiping the page
-cache, since it's all encrypted.  Of course, you still need to solve
-the problem of how to restablish the confidential compute keys after
-it has been wiped as part of the suspend, but you needed to solve that
-with the LUKS key anyway.
+nr_node_ids >= num_possible_nodes().  It's larger than any possible node
+ID.
 
-This also addresses Dave's concern of it might not being practical to
-drop all of the caches if their are millions of cached inodes and
-cached pages that all need to be dropped at suspend time.
+> I decided to simplify this down to MAX_NUMNODES *juuuuuust in case*
+> "true node hotplug" ever becomes a reality.  If that happens, then
+> only allocating space for possible nodes creates a much bigger
+> headache on hotplug.
+>
+> For the sake of that simplification, it seemed better to just eat the
+> 1KB.  If you really want me to do that, I will, but the MAX_NUMNODES
+> choice was an explicitly defensive choice.
 
+When "true node hotplug" becomes reality, we can make nr_node_ids ==
+MAX_NUMNODES.  So, it's safe to use it.  Please take a look at
+setup_nr_node_ids().
 
-Anoter potential approach is a bit more targetted, which is to mark
-certain files as containing keying information, so the system can
-focus on making sure those pages are wiped at suspend time.  It still
-has issues, such as how the desire to wipe them from the memory at
-suspend time interacts with mlock(), which is often done by programs
-to prevent them from getting written to swap.  And of course, we still
-need to worry about what to do if the file is pinned because it's
-being accessed by RDMA or by sendfile(2) --- but perhaps a keyfile has
-no business of being accessed via RDMA or blasted out (unencrypted!)
-at high speed to a network connection via sendfile(2) --- and so
-perhaps those sorts of things should be disallowed if the file is
-marked as "this file contains secret keys --- treat it specially".
+>> > +static int __init mempolicy_sysfs_init(void)
+>> > +{
+>> > +	/*
+>> > +	 * if sysfs is not enabled MPOL_WEIGHTED_INTERLEAVE defaults to
+>> > +	 * MPOL_INTERLEAVE behavior, but is still defined separately to
+>> > +	 * allow task-local weighted interleave and system-defaults to
+>> > +	 * operate as intended.
+>> > +	 *
+>> > +	 * In this scenario iw_table cannot (presently) change, so
+>> > +	 * there's no need to set up RCU / cleanup code.
+>> > +	 */
+>> > +	memset(&default_iw_table.weights, 1, sizeof(default_iw_table));
+>> 
+>> This depends on sizeof(default_iw_table.weights[0]) == 1, I think it's
+>> better to use explicit loop here to make the code more robust a little.
+>> 
+>
+> oh hm, you're right.  rookie mistake on my part.
+>
 
-	 		    	      	 - Ted
+--
+Best Regards,
+Huang, Ying
 
