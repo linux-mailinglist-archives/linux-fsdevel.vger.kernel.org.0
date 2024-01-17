@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-8150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0050B8305B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 13:42:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A412A8305D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 13:45:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87B2E286DAE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 12:42:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB3671C214CF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 12:45:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE19B1EA73;
-	Wed, 17 Jan 2024 12:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DBE1EA80;
+	Wed, 17 Jan 2024 12:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HABke5Jd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mb7vPeq0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359DA17FD;
-	Wed, 17 Jan 2024 12:42:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0E41DFDF;
+	Wed, 17 Jan 2024 12:45:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705495343; cv=none; b=IDi5wHtQISQ60nxqmdULKnQdCJ0bhM934grFSev7uHwmURz7fWBTiLqjZ1XqVNiG6tFY1OACSL57SU1VtafKg/1OciHzXz3Vz/lasJNJZzhj6bsFvCBcNeSDk65hne3N9Y7vuDSMPZjh+dIEZNVG4oycCzn5eD2syHsL/EHbybI=
+	t=1705495516; cv=none; b=G8YSVrxYD0nQnTykPtk8lojWxtuehR/gd7kuq1d+bPoiKw3iQC40BQ0+ZNv+Ev5TnQffKuGuf6hpMWUoFLjTmo0CCB7/6Ykvv3STsyeaXpmfjq0ujiT1YDq4QrbTSfk8N1AfO3Z2rDfX55Z4cQQp/6ksnXjRHGToXBPHKnfYYTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705495343; c=relaxed/simple;
-	bh=1EbSuph8LuKpqfBnp3td68y03Vl5vcH3XrJ0wjACK6g=;
+	s=arc-20240116; t=1705495516; c=relaxed/simple;
+	bh=6WaX0fapA22On0nOvZOB4A+7Fdd92LiutIG6sDmgXLk=;
 	h=Received:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
 	 In-Reply-To:References:Autocrypt:Content-Type:
-	 Content-Transfer-Encoding:User-Agent:MIME-Version; b=oyf/rgmoqihPywYMiRck4Z0iYnrMk7YUjAP7VqBtbgbKbnMk/keXLo/H7aXsFu2oV2EYwzfGSAJ3+DazS17rBmLroGSG3mPma0C4TlZvRCwMPPszExlxOdjcBFwm3/Ps3TU39zEF8j8tlYPLTPkdZ4FZkN+XT4v6ovhumdyVF5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HABke5Jd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2503C43394;
-	Wed, 17 Jan 2024 12:42:18 +0000 (UTC)
+	 Content-Transfer-Encoding:User-Agent:MIME-Version; b=Lk8jEgZG4hEjbz+/MQcR7egCx8yxeckMP+3vgZpHZQFIlg4PmfMG9UIkStVKf4Fu62ItqfYA3BRi6VY/4eEpXiP7sL79SNfeETB2BXjeT5xj7H5v5oaBvr4BwWqkN2IYy05KFgMLae49BV3wIfYmBgzXWTPOMKyLbC8UQEiMEgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mb7vPeq0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF889C433C7;
+	Wed, 17 Jan 2024 12:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705495342;
-	bh=1EbSuph8LuKpqfBnp3td68y03Vl5vcH3XrJ0wjACK6g=;
+	s=k20201202; t=1705495515;
+	bh=6WaX0fapA22On0nOvZOB4A+7Fdd92LiutIG6sDmgXLk=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=HABke5Jdr4JusDg5pdYjhsYqUfsbwTsHyILFvJQtlJnKB5zP6J7hr3Zzx3tNVGptO
-	 gornK8sUg/TuxJRSWojb/vsnqDcNCOhCFl9ZYIEOlI9Feq+DHBEMsy5S04VZpYGPLu
-	 fz2A3xUgk1hx2XqkXzKA5+t5zd3Fm1Lnsd95gzrziixbCy87icrdc1iEQ3l5XJ1Duo
-	 2r5RNd4WQYeDzHqnOswoyijfHSBxTHJGilPLdicy99aalnQBe5X6hdpOz9fiE460ty
-	 /TjqUJf0i0IOjoCdTgkPiHbVZLo7h+L66KtYL8ohnbLtRF7CsbbaNUR/Rwl3V4jKl4
-	 OP8a1hbYEFZSQ==
-Message-ID: <9b51f784851aefe107185234f1a806fc5cd88906.camel@kernel.org>
-Subject: Re: [PATCH 13/20] filelock: convert __locks_insert_block, conflict
- and deadlock checks to use file_lock_core
+	b=Mb7vPeq0HAWIestcwYzT7WTvdpECA2OP0smM2aFMRGKeLbZHP35UV1DtpofeuxG1i
+	 1bCFhnxq79DULc/ZSJZnTNMUUxnAfGeWVOMnjBaH0UihQQkqMkbYw3pV2TMYozTUGw
+	 uzKsW6nxBNhgIHOojdiR0rYQ9pNEybNw3+4Nc4Ntbu9nET8o8xMOvTAnDjSYwuIRgD
+	 RIiAk0Od/pp84Y0zI6dvRsKJZQyYdSsjhPcLzikpjPTT7NrZ5RYbbrwnBPRkPVjeHX
+	 1i193c2pXhBNf83tJO8e8nGRR/Ks2gUS8NDgtKXUJxKbUNEBC82dlD3YOh87hlXz5U
+	 J/W/acaOgA0iw==
+Message-ID: <e151657d74a09aea8fc6a9d0df05cf298f23e6d5.camel@kernel.org>
+Subject: Re: [PATCH 20/20] filelock: split leases out of struct file_lock
 From: Jeff Layton <jlayton@kernel.org>
 To: NeilBrown <neilb@suse.de>
 Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro
@@ -72,11 +71,11 @@ Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro
  linux-nfs@vger.kernel.org,  ocfs2-devel@lists.linux.dev,
  linux-cifs@vger.kernel.org,  samba-technical@lists.samba.org,
  linux-trace-kernel@vger.kernel.org
-Date: Wed, 17 Jan 2024 07:42:17 -0500
-In-Reply-To: <170544437475.23031.9738852723187400936@noble.neil.brown.name>
+Date: Wed, 17 Jan 2024 07:45:10 -0500
+In-Reply-To: <170544505284.23031.2594557379971928071@noble.neil.brown.name>
 References: <20240116-flsplit-v1-0-c9d0f4370a5d@kernel.org>
-	, <20240116-flsplit-v1-13-c9d0f4370a5d@kernel.org>
-	 <170544437475.23031.9738852723187400936@noble.neil.brown.name>
+	, <20240116-flsplit-v1-20-c9d0f4370a5d@kernel.org>
+	 <170544505284.23031.2594557379971928071@noble.neil.brown.name>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxwn8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1WvegyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqVT2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtVYrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8snVluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQcDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQfCBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sELZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/
 	r0kmR/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2BrQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRIONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZWf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQOlDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7RjiR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27XiQQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBMYXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9qLqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoac8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3FLpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx
@@ -96,47 +95,43 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Wed, 2024-01-17 at 09:32 +1100, NeilBrown wrote:
+On Wed, 2024-01-17 at 09:44 +1100, NeilBrown wrote:
 > On Wed, 17 Jan 2024, Jeff Layton wrote:
-> > Have both __locks_insert_block and the deadlock and conflict checking
-> > functions take a struct file_lock_core pointer instead of a struct
-> > file_lock one. Also, change posix_locks_deadlock to return bool.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/locks.c | 132 ++++++++++++++++++++++++++++++++---------------------=
---------
-> >  1 file changed, 70 insertions(+), 62 deletions(-)
-> >=20
+> > Add a new struct file_lease and move the lease-specific fields from
+> > struct file_lock to it. Convert the appropriate API calls to take
+> > struct file_lease instead, and convert the callers to use them.
 >=20
->=20
-> > =20
-> >  /* Must be called with the blocked_lock_lock held! */
-> > -static int posix_locks_deadlock(struct file_lock *caller_fl,
-> > -				struct file_lock *block_fl)
-> > +static bool posix_locks_deadlock(struct file_lock *caller_fl,
-> > +				 struct file_lock *block_fl)
-> >  {
-> > +	struct file_lock_core *caller =3D &caller_fl->fl_core;
-> > +	struct file_lock_core *blocker =3D &block_fl->fl_core;
-> >  	int i =3D 0;
-> > -	struct file_lock_core *flc =3D &caller_fl->fl_core;
-> > =20
-> >  	lockdep_assert_held(&blocked_lock_lock);
-> > =20
-> > @@ -1034,16 +1040,16 @@ static int posix_locks_deadlock(struct file_loc=
-k *caller_fl,
-> >  	 * This deadlock detector can't reasonably detect deadlocks with
-> >  	 * FL_OFDLCK locks, since they aren't owned by a process, per-se.
-> >  	 */
-> > -	if (IS_OFDLCK(flc))
-> > +	if (IS_OFDLCK(caller))
-> >  		return 0;
->=20
->       return false;
+> I think that splitting of struct lease_manager_operations out from
+> lock_manager_operations should be mentioned here too.
 >=20
 
-Good catch. Fixed in my local branch.
+Will do.
+
+>=20
+> > =20
+> > +struct file_lease {
+> > +	struct file_lock_core fl_core;
+> > +	struct fasync_struct *	fl_fasync; /* for lease break notifications */
+> > +	/* for lease breaks: */
+> > +	unsigned long fl_break_time;
+> > +	unsigned long fl_downgrade_time;
+> > +	const struct lease_manager_operations *fl_lmops;	/* Callbacks for loc=
+kmanagers */
+>=20
+> comment should be "Callbacks for leasemanagers".  Or maybe=20
+> "lease managers".=20
+>=20
+> It is unfortunate that "lock" and "lease" both start with 'l' as we now
+> have two quite different fields in different structures with the same
+> name - fl_lmops.
+>=20
+
+Hah, I had sort of considered that an advantage since I didn't need to
+change as many call sites! Still, I get your point that having distinct
+names is preferable.
+
+I can change this to be distinct. I'll just need to come up with a
+reasonable variable name (never my strong suit).
 
 --=20
 Jeff Layton <jlayton@kernel.org>
