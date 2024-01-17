@@ -1,106 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-8165-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78F88308C8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 15:54:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F09B18308D2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 15:55:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64131B22071
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 14:54:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 241AC1C23F5B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 14:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E534A21114;
-	Wed, 17 Jan 2024 14:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0192230C;
+	Wed, 17 Jan 2024 14:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n6u3ijme";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="j/qxEALU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wEuTXi3O";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ojf18tzd"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W4zMYe6n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24F8200CB
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 14:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7368720DD3;
+	Wed, 17 Jan 2024 14:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705503046; cv=none; b=jggagz0f/zlJz3WD61T+wBq376FUw+fzJ7ybrEkKtcnLTzQajaTsx5QO2pELncmoRxV7z8mzoUJOvl/0xajyv3B1BA3OTYJEuGxz29t4gKSxrWxlH72QlgY9j8KQTTp47hFENIX/KMnvgvxwldkMmQRB0ZtcZwIyWIGYhM+f10Y=
+	t=1705503157; cv=none; b=RWSDNIef/VEq7jAPfACxYrBFJa0UhDtSl78Noew3i0ZfZv4IqT2dekXTOFoqG84C+9b3EVG2GJYfjSFbooy/jUJv2Xm5NAJtN97RJwtPImlbwQ9irRMuouIi4dwot8GPZrpbmNzqbWl5wtF6CwStucDkDioBnc0iLIwWCsUuzDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705503046; c=relaxed/simple;
-	bh=+E0stD83cYH2RHdzMHBfAlTACynxesWTXhAqDESQp3w=;
-	h=Received:DKIM-Signature:DKIM-Signature:DKIM-Signature:
-	 DKIM-Signature:Received:Received:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:X-Spamd-Result:X-Spam-Level:
-	 X-Spam-Flag:X-Spam-Score; b=TOCM9bBVIIQf+4s0dlBraisA545abzkpS/2rP74iFeVFhJPHirKVTopmcADfEW4nk+PdqhGI/KSThaRzW1nnYw8/eS/5S0k6XSWqsusMIb2gWMgzM9jIoR+/qi4DXeIo1KLNaoAPhGKghFnMEWOmvNpHbFoYhYOQxS+5wS4o5dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n6u3ijme; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=j/qxEALU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wEuTXi3O; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ojf18tzd; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F066422030;
-	Wed, 17 Jan 2024 14:50:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1705503043; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L1wYK5hf4jrv+0E4pM71jnzrmmgt1nL13zyEwIW2G4o=;
-	b=n6u3ijme0K511MVIFT7yjTLkWQ5DgqHH1sURCnNF27AKE69Zw3akAXoLi9se6yAbw2bgID
-	AeqQQql496a9YPY0uO87htIp2MJXGz5WMZVWL1cAyjNp9N48ksTT6wqGSsokkrjI3a+GBj
-	aB5gUVTqQvTUnmVMolK5PIsj0IstrJ8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1705503043;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L1wYK5hf4jrv+0E4pM71jnzrmmgt1nL13zyEwIW2G4o=;
-	b=j/qxEALUTB2WAyseffqPIIeFbpkPnK8bam20XB1rfcPeKSgOnLFOMoPsolDwmgUxDg7zvV
-	/ZD8phouhn4TIwBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1705503042; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L1wYK5hf4jrv+0E4pM71jnzrmmgt1nL13zyEwIW2G4o=;
-	b=wEuTXi3Oq3/xMggKnttg1C6aTZsyQdL6PmUt1gWcdDjeKaHF/02ASgffUhYT3SMJBBm6S1
-	0uEOrv3TAuTExJO0ra3oM7VJk0FsJXw0QrByScQmA1RQ4y/exIREf6iv1U4tBOoUGFD8he
-	wmGjCsnp9CgRGl9CiBvZoDrMTxMEGvc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1705503042;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L1wYK5hf4jrv+0E4pM71jnzrmmgt1nL13zyEwIW2G4o=;
-	b=ojf18tzdwn2NHApC8XSpfhvAgSXm3qaN26Rg+9fOn+efkUVcSoXG2Aoh9oIO/xCyrrpDEZ
-	3rnCIGwN2cJJlmAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E4A0C13800;
-	Wed, 17 Jan 2024 14:50:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Vm3RN0Lpp2WHDAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 17 Jan 2024 14:50:42 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AC3D7A0803; Wed, 17 Jan 2024 15:50:42 +0100 (CET)
-Date: Wed, 17 Jan 2024 15:50:42 +0100
-From: Jan Kara <jack@suse.cz>
-To: Cyril Hrubis <chrubis@suse.cz>
-Cc: ltp@lists.linux.it, Matthew Wilcox <willy@infradead.org>,
-	amir73il@gmail.com, mszeredi@redhat.com, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	Richard Palethorpe <rpalethorpe@suse.com>,
-	Petr Vorel <pvorel@suse.cz>
-Subject: Re: [PATCH v3 4/4] syscalls: splice07: New splice tst_fd iterator
- test
-Message-ID: <20240117145042.xqs5b2twuhz7fr7o@quack3>
-References: <20240115125351.7266-1-chrubis@suse.cz>
- <20240115125351.7266-5-chrubis@suse.cz>
+	s=arc-20240116; t=1705503157; c=relaxed/simple;
+	bh=mk3Do3OGSoO3lYVK+3O445pImEvdyqK7uj6etB3B5lE=;
+	h=DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To; b=YEVr3eRRM5Gm7M42SVkliIpgbebkigBSo2soQDWifM7JAcdGEDdc5UD/IqWW6qGuy8pjBTa1X7/1TxKzTVNEDiQN/oBkXhPb5nTo54spJAcmEoTkX6M1FPSi2d+Dlo/87OUAN5vDCRGeoVQ3nDJ7ziDAd1oc5qCvYmfsNbr4eZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W4zMYe6n; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=p9m4ROoLCFI9ZSmSQlv4Jd9ZGwftV7SKWqQ5i1J2RlA=; b=W4zMYe6nwJgS22voMlQazvN+dB
+	12kqgxhCjyqVUVflB0+HtQt+H4fhuhKnXMLQVo9kpK1R8S4yeMIOIjM1nyWgChcNSEp2mDkXmllst
+	TC+R77/tF5NaawW7SG9qqIs+rvmCY9LlH9nn6s9Nr5tsJWYjIMPP0CEL9uNfGnhEh/7rPGJ5rD8mG
+	yHZ8RJPvYKHyutQ6kjWiJSer8Sze0t6CNyBAot108Ek4yRk4kGPsdOMIAx7gCpAKHAbNwdzhs/gIZ
+	R+lmFCpLqLZTwtHW2Mxu4Rup4sLIWM1zIjdUnXyfE3Oc8l9daY5AJa0qKkw7Wq+keUDPgzwGfB0Kp
+	1R7hBkVQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rQ7HM-00000000Cg9-1PbJ;
+	Wed, 17 Jan 2024 14:52:32 +0000
+Date: Wed, 17 Jan 2024 14:52:32 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-btrfs@vger.kernel.org,
+	linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Dropping page cache of individual fs
+Message-ID: <ZafpsO3XakIekWXx@casper.infradead.org>
+References: <20240116-tagelang-zugnummer-349edd1b5792@brauner>
+ <20240116114519.jcktectmk2thgagw@quack3>
+ <20240117-tupfen-unqualifiziert-173af9bc68c8@brauner>
+ <20240117143528.idmyeadhf4yzs5ck@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -109,157 +66,20 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240115125351.7266-5-chrubis@suse.cz>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spamd-Result: default: False [-2.60 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 RCPT_COUNT_SEVEN(0.00)[11];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-3.00)[100.00%];
-	 ARC_NA(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[lists.linux.it,infradead.org,gmail.com,redhat.com,kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,suse.com];
-	 RCVD_TLS_ALL(0.00)[]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -2.60
+In-Reply-To: <20240117143528.idmyeadhf4yzs5ck@quack3>
 
-On Mon 15-01-24 13:53:51, Cyril Hrubis wrote:
-> We loop over all possible combinations of file descriptors in the test
-> and filter out combinations that actually make sense and either block or
-> attempt to copy data.
-> 
-> The rest of invalid options produce either EINVAL or EBADF.
-> 
-> Signed-off-by: Cyril Hrubis <chrubis@suse.cz>
-> Reviewed-by: Richard Palethorpe <rpalethorpe@suse.com>
-> Reviewed-by: Petr Vorel <pvorel@suse.cz>
+On Wed, Jan 17, 2024 at 03:35:28PM +0100, Jan Kara wrote:
+> OK. So could we then define the effect of your desired call as calling
+> posix_fadvise(..., POSIX_FADV_DONTNEED) for every file? This is kind of
+> best-effort eviction which is reasonably well understood by everybody.
 
-Looks good to me. Feel free to add:
+I feel like we're in an XY trap [1].  What Christian actually wants is
+to not be able to access the contents of a file while the device it's
+on is suspended, and we've gone from there to "must drop the page cache".
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+We have numerous ways to intercept file reads and make them either
+block or fail.  The obvious one to me is security_file_permission()
+called from rw_verify_area().  Can we do everything we need with an LSM?
 
-								Honza
-
-> ---
->  runtest/syscalls                            |  1 +
->  testcases/kernel/syscalls/splice/.gitignore |  1 +
->  testcases/kernel/syscalls/splice/splice07.c | 70 +++++++++++++++++++++
->  3 files changed, 72 insertions(+)
->  create mode 100644 testcases/kernel/syscalls/splice/splice07.c
-> 
-> diff --git a/runtest/syscalls b/runtest/syscalls
-> index 5472c954b..6e2407879 100644
-> --- a/runtest/syscalls
-> +++ b/runtest/syscalls
-> @@ -1516,6 +1516,7 @@ splice03 splice03
->  splice04 splice04
->  splice05 splice05
->  splice06 splice06
-> +splice07 splice07
->  
->  tee01 tee01
->  tee02 tee02
-> diff --git a/testcases/kernel/syscalls/splice/.gitignore b/testcases/kernel/syscalls/splice/.gitignore
-> index 61e979ad6..88a8dff78 100644
-> --- a/testcases/kernel/syscalls/splice/.gitignore
-> +++ b/testcases/kernel/syscalls/splice/.gitignore
-> @@ -4,3 +4,4 @@
->  /splice04
->  /splice05
->  /splice06
-> +/splice07
-> diff --git a/testcases/kernel/syscalls/splice/splice07.c b/testcases/kernel/syscalls/splice/splice07.c
-> new file mode 100644
-> index 000000000..135c42e47
-> --- /dev/null
-> +++ b/testcases/kernel/syscalls/splice/splice07.c
-> @@ -0,0 +1,70 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +
-> +/*
-> + * Copyright (C) 2023-2024 Cyril Hrubis <chrubis@suse.cz>
-> + */
-> +
-> +/*\
-> + * [Description]
-> + *
-> + * Iterate over all kinds of file descriptors and feed splice() with all possible
-> + * combinations where at least one file descriptor is invalid. We do expect the
-> + * syscall to fail either with EINVAL or EBADF.
-> + */
-> +
-> +#define _GNU_SOURCE
-> +
-> +#include <sys/socket.h>
-> +#include <netinet/in.h>
-> +
-> +#include "tst_test.h"
-> +
-> +static void check_splice(struct tst_fd *fd_in, struct tst_fd *fd_out)
-> +{
-> +	/* These combinations just hang since the pipe is empty */
-> +	if (fd_in->type == TST_FD_PIPE_READ) {
-> +		switch (fd_out->type) {
-> +		case TST_FD_FILE:
-> +		case TST_FD_PIPE_WRITE:
-> +		case TST_FD_UNIX_SOCK:
-> +		case TST_FD_INET_SOCK:
-> +		case TST_FD_MEMFD:
-> +			return;
-> +		default:
-> +		break;
-> +		}
-> +	}
-> +
-> +	if (fd_out->type == TST_FD_PIPE_WRITE) {
-> +		switch (fd_in->type) {
-> +		/* While these combinations succeeed */
-> +		case TST_FD_FILE:
-> +		case TST_FD_MEMFD:
-> +			return;
-> +		/* And this complains about socket not being connected */
-> +		case TST_FD_INET_SOCK:
-> +			return;
-> +		default:
-> +		break;
-> +		}
-> +	}
-> +
-> +	const int exp_errnos[] = {EBADF, EINVAL};
-> +
-> +	TST_EXP_FAIL2_ARR(splice(fd_in->fd, NULL, fd_out->fd, NULL, 1, 0),
-> +		exp_errnos, "splice() on %s -> %s",
-> +		tst_fd_desc(fd_in), tst_fd_desc(fd_out));
-> +}
-> +
-> +static void verify_splice(void)
-> +{
-> +	TST_FD_FOREACH(fd_in) {
-> +		tst_res(TINFO, "%s -> ...", tst_fd_desc(&fd_in));
-> +		TST_FD_FOREACH(fd_out)
-> +			check_splice(&fd_in, &fd_out);
-> +	}
-> +}
-> +
-> +static struct tst_test test = {
-> +	.test_all = verify_splice,
-> +};
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+[1] https://meta.stackexchange.com/questions/66377/what-is-the-xy-problem
 
