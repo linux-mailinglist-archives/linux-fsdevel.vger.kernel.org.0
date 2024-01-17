@@ -1,335 +1,245 @@
-Return-Path: <linux-fsdevel+bounces-8146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60597830379
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 11:25:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2A818304D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 12:58:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99F4CB24100
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 10:25:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD681F24E35
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 11:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C6E1C6BA;
-	Wed, 17 Jan 2024 10:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EF8A1DFE9;
+	Wed, 17 Jan 2024 11:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FjhHRk4p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E7014A8E;
-	Wed, 17 Jan 2024 10:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F351DFCF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 11:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705487106; cv=none; b=fCZb4y8Ifr5sEdqFxjNgTGcIUW8UrtuQWppwCgOf05akmGmp20+KtGQVJqOPgigoB/Dm/knGvqIEIQfRT51LQ9EGB0UtKeKvRxLVgkQR1YgShEoLcEPxjsaCLpzyLjbfT3/D58KZA5ryxwuQ7V+15azZHKxipxfMtHIK06u1Qks=
+	t=1705492705; cv=none; b=e5de8yQwrFEAIqjHavY0kvkNSZkM5VgLpMZbqjEMZkqGT4ahA+BywqHL/pA/eHdZR6lHG37LpkQ1vpYhsSGIDUY1NA7zJRyMH2VkVkucvh1NOKnaX2UFVTbzAHnsZAnCXQe4uVbiDL8bWRnOHzw0lZd5HlXrBsiqwkJblN509Q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705487106; c=relaxed/simple;
-	bh=SRarDRTFPf89moiL7xFotDDOKQeYjHQLFvzfUyV4hyM=;
-	h=Received:Received:Received:Subject:To:Cc:References:From:
-	 Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:Content-Language:X-CM-TRANSID:
-	 X-Coremail-Antispam:X-CM-SenderInfo; b=df68TmVwc0hQfy74+VevSXDS4oTx6EjBL75ZU9iDNklDIP6laoDdXOuPb9N1iO8VM7RlbAX22eK5PAqZaqKLu9WMklTFWBF+vzElGFF2aLGOc+fI6UrRVmKU4eiiFh7OAorr/uzoMukBviWMKflElZYEcTgZcDikgr2A07tosCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TFMSj5wlkz4f3l1r;
-	Wed, 17 Jan 2024 18:24:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id E68001A09EF;
-	Wed, 17 Jan 2024 18:24:59 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP3 (Coremail) with SMTP id _Ch0CgB3OaH4qqdlG9BUBA--.36352S2;
-	Wed, 17 Jan 2024 18:24:59 +0800 (CST)
-Subject: Re: [PATCH] virtiofs: limit the length of ITER_KVEC dio by
- max_nopage_rw
-To: Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Vivek Goyal <vgoyal@redhat.com>,
- Stefan Hajnoczi <stefanha@redhat.com>, "Michael S . Tsirkin"
- <mst@redhat.com>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, houtao1@huawei.com
-References: <20240103105929.1902658-1-houtao@huaweicloud.com>
- <b6c0d521-bba8-447f-b114-0a679ca89e4b@fastmail.fm>
- <c71c80af-2813-dee5-a8e5-3782b34e9eb9@huaweicloud.com>
- <e6b866f1-4102-44aa-85cd-274d2ae0ab7e@fastmail.fm>
-From: Hou Tao <houtao@huaweicloud.com>
-Message-ID: <f9e94412-0613-29cd-2625-4f669bc9f826@huaweicloud.com>
-Date: Wed, 17 Jan 2024 18:24:56 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1705492705; c=relaxed/simple;
+	bh=SdB2TP1URh+2f5CnTPCtsm4BKecp5Qah44NrUZikOFc=;
+	h=Received:DKIM-Filter:DKIM-Signature:Received:Received:Received:
+	 Received:X-AuditID:Received:Received:Received:Date:From:To:CC:
+	 Subject:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 Content-Transfer-Encoding:In-Reply-To:X-Originating-IP:
+	 X-ClientProxiedBy:X-Brightmail-Tracker:X-Brightmail-Tracker:
+	 X-CMS-MailID:X-Msg-Generator:X-RootMTR:X-EPHeader:CMS-TYPE:
+	 X-CMS-RootMailID:References; b=ARjbRsa5ovyap6aiZQqmdUC1FmyAfIOezsyw+vqqlD5bGEoybJUjR/qlVUWplO1Jt8AnGK34BABRMHXA9BH8v0011HLx6lGdcV45i9R423V8QQRDcVJW7Wu8okKEhVSkkUKyPlo6oMFkG7T0w4q8bsF7aNjFKPOuDpbO6R6E/5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FjhHRk4p; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240117115815euoutp02c0193277b30bdd6724a7fe44480b4d4a~rIJIKy98s2172721727euoutp02E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 11:58:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240117115815euoutp02c0193277b30bdd6724a7fe44480b4d4a~rIJIKy98s2172721727euoutp02E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1705492695;
+	bh=SdB2TP1URh+2f5CnTPCtsm4BKecp5Qah44NrUZikOFc=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=FjhHRk4pVr1fiHdOiqsCeldOAHepgntE3+Cnd/uegzFM7/EC3A2n+lhe5HnfxvkVs
+	 +DtK20XM3Ul8AvWXKCbHSlVqUqVBhXPltEIht9ESr/4UEu+J4Amp5LtImImDNkM34m
+	 C5FkBwHhP6sqeKVb8X9zhfAl0ISI5DiNKeTFs1Jo=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240117115814eucas1p1c232c3b814b2f470041924f3bb0420fd~rIJHaaPx41464314643eucas1p1I;
+	Wed, 17 Jan 2024 11:58:14 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 61.9E.09552.6D0C7A56; Wed, 17
+	Jan 2024 11:58:14 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240117115814eucas1p28abc60e7ee127f6c587bea07b17a19b1~rIJG_Wgv10373303733eucas1p2O;
+	Wed, 17 Jan 2024 11:58:14 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240117115814eusmtrp11160c27c9b724ad22f73bc9c3a572296~rIJG9uAIB0851908519eusmtrp1H;
+	Wed, 17 Jan 2024 11:58:14 +0000 (GMT)
+X-AuditID: cbfec7f5-853ff70000002550-7c-65a7c0d6794d
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id C6.74.09146.6D0C7A56; Wed, 17
+	Jan 2024 11:58:14 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240117115813eusmtip2e394ff78bd8b3afa633aac65201743dc~rIJGvRZuJ0477204772eusmtip2X;
+	Wed, 17 Jan 2024 11:58:13 +0000 (GMT)
+Received: from localhost (106.110.32.122) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Wed, 17 Jan 2024 11:58:13 +0000
+Date: Wed, 17 Jan 2024 12:58:12 +0100
+From: Javier =?utf-8?B?R29uesOhbGV6?= <javier.gonz@samsung.com>
+To: Viacheslav Dubeyko <slava@dubeyko.com>
+CC: <lsf-pc@lists.linux-foundation.org>, Linux FS Devel
+	<linux-fsdevel@vger.kernel.org>, Adam Manzanares <a.manzanares@samsung.com>,
+	<linux-scsi@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
+	<linux-block@vger.kernel.org>, <slava@dubeiko.com>, Kanchan Joshi
+	<joshi.k@samsung.com>, Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [LSF/MM/BPF TOPIC] : Flexible Data Placement (FDP) availability
+ for kernel space file systems
+Message-ID: <20240117115812.e46ihed2qt67wdue@ArmHalley.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <e6b866f1-4102-44aa-85cd-274d2ae0ab7e@fastmail.fm>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"; format="flowed"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:_Ch0CgB3OaH4qqdlG9BUBA--.36352S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3try5JFW7WrykXw17trWrXwb_yoWDCF13pr
-	s7tFWjvrWfJFn3Cr17tF1UZryIyw18J3ZrXryrXFyxZrsFyrnF9F4UXr1q9Fy7JrW8Jr12
-	qr45Xry7Zr4Yv3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
-	k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+In-Reply-To: <86106963-0E22-46D6-B0BE-A1ABD58CE7D8@dubeyko.com>
+X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrEKsWRmVeSWpSXmKPExsWy7djP87rXDixPNdi3RtFi2oefzBZ7b2lb
+	7Nl7ksVi/rKn7Bbd13ewWex7vZfZ4tPlhUBiy2wmBw6Py1e8PR49OcjqcXD9GxaPzUvqPSbf
+	WM7o8XmTXABbFJdNSmpOZllqkb5dAlfG7KapjAVbNSqmb5vI2MD4QKGLkZNDQsBEYkXnXaYu
+	Ri4OIYEVjBIH2lYzQjhfGCXm9pxgg3A+M0rMen+DpYuRA6xl93s3iPhyRonZs7YiFL1+8w3K
+	2cIo8fzLEiaQJSwCqhKbNrcyg9hsAvYSl5bdArNFBLQkZu+bAracWeAUk8S/5U/YQVYIC+RI
+	tE/xBqnhFbCV6Po1nxnCFpQ4OfMJC4jNLGAl0fmhiRWknFlAWmL5Pw6IsLxE89bZzCBhTqBV
+	c4/UQbypJPH4xVtGCLtW4tSWW2BbJQSaOSWmdy1ghUi4SLz7/IEZwhaWeHV8CzuELSNxenIP
+	C4SdLXHxTDdUTYnE4vfHmCGBYi3RdyYHIuwocejOTkaIMJ/EjbeCEJfxSUzaNh2qmleio01o
+	AqPKLCRvzULy1iyEt2YheWsBI8sqRvHU0uLc9NRi47zUcr3ixNzi0rx0veT83E2MwGR0+t/x
+	rzsYV7z6qHeIkYmD8RCjBAezkgivv8GyVCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8qinyqUIC
+	6YklqdmpqQWpRTBZJg5OqQYmrtVZx+71GNl/ir7Q4y/pKnWpNUu1SPWMRpZhdvFVndCaf26m
+	Txwzgl4/EgndzJG4aumx5mnTvk3akpG1WTfbc8f5nKuT5JUtoybPaVmd0WWd5/vXNylp2mZ7
+	1S/rotLqNm6dtijhEjdPaZKKra71lIz+0E8c4Tv33mtIPW/+QTPTcYu05ct60wWJbT7WP7NK
+	bxxIMoh4sf712c81gid2tS1afSnr2NGS30Y9vMc18/mcg2/qfL+wrJnt7f519rP2N+zYFSsX
+	GNW+9tsxnRCd1S8Uk/Y28v3VipS1M/lUds/i+M110c+4L/PLcrFOYQor7Fv0vV1EJVpvYsqX
+	kmzbdTF7RTZyLK5/LJdttk6JpTgj0VCLuag4EQCISNjTtQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRmVeSWpSXmKPExsVy+t/xe7rXDixPNZjwg8Vi2oefzBZ7b2lb
+	7Nl7ksVi/rKn7Bbd13ewWex7vZfZ4tPlhUBiy2wmBw6Py1e8PR49OcjqcXD9GxaPzUvqPSbf
+	WM7o8XmTXABblJ5NUX5pSapCRn5xia1StKGFkZ6hpYWekYmlnqGxeayVkamSvp1NSmpOZllq
+	kb5dgl7G7KapjAVbNSqmb5vI2MD4QKGLkYNDQsBEYvd7ty5GLg4hgaWMEif2H2PtYuQEistI
+	bPxyFcoWlvhzrYsNougjo0Rn1x9GCGcLo8SdRUfBqlgEVCU2bW5lBrHZBOwlLi27BWaLCGhJ
+	zN43hQmkgVngFJPEv+VP2EFWCwvkSLRP8Qap4RWwlej6NZ8ZYuhvRolZW38zQyQEJU7OfMIC
+	YjMLWEjMnH+eEaSXWUBaYvk/DoiwvETz1tnMIGFOoL1zj9RBHK0k8fjFW0YIu1bi899njBMY
+	RWYhGToLydBZCENnIRm6gJFlFaNIamlxbnpusaFecWJucWleul5yfu4mRmC8bjv2c/MOxnmv
+	PuodYmTiYDzEKMHBrCTC62+wLFWINyWxsiq1KD++qDQntfgQoykwhCYyS4km5wMTRl5JvKGZ
+	gamhiZmlgamlmbGSOK9nQUeikEB6YklqdmpqQWoRTB8TB6dUA9N6nZBpjWH5CYG3ops/zkuT
+	VNVuyT+zMfy36IqNjVvLeM/qqL+suaEevOFllpjndU7Nmr+CzYdVeTeEqR17YnH65+w/zkWb
+	2Dyv5T63ChKLiffU3Lgxdc7KvRO+87p3vsjxORLn9zuE87Wf9dneo2GrZ+6r6P/9WLkkQ+5X
+	hMPT5evnxDe1Z3bPaZ23Qzf9b/F5qykPuCzZHryUuMQ7871iruaSMlnhkIT1B2VDnVsOOWTM
+	qtk+f2KG+evWjDcPH90/w7i8/aUUQ6n4g5Sl2zmeZq/Nv7ZVLm/ulsU27iUlj2Ll7ofN2Vla
+	13T//KzInvcS3afSkv7Utz34O6cg//BlnWd9uqul5EIDZhokBSmxFGckGmoxFxUnAgAFbueN
+	YAMAAA==
+X-CMS-MailID: 20240117115814eucas1p28abc60e7ee127f6c587bea07b17a19b1
+X-Msg-Generator: CA
+X-RootMTR: 20240115084656eucas1p219dd48243e2eaec4180e5e6ecf5e8ad9
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240115084656eucas1p219dd48243e2eaec4180e5e6ecf5e8ad9
+References: <CGME20240115084656eucas1p219dd48243e2eaec4180e5e6ecf5e8ad9@eucas1p2.samsung.com>
+	<20240115084631.152835-1-slava@dubeyko.com>
+	<20240115175445.pyxjxhyrmg7od6sc@mpHalley-2.localdomain>
+	<86106963-0E22-46D6-B0BE-A1ABD58CE7D8@dubeyko.com>
 
-Hi,
+On 16.01.2024 11:39, Viacheslav Dubeyko wrote:
+>
+>
+>> On Jan 15, 2024, at 8:54 PM, Javier González <javier.gonz@samsung.com> wrote:
+>>
+>> On 15.01.2024 11:46, Viacheslav Dubeyko wrote:
+>>> Hi Javier,
+>>>
+>>> Samsung introduced Flexible Data Placement (FDP) technology
+>>> pretty recently. As far as I know, currently, this technology
+>>> is available for user-space solutions only. I assume it will be
+>>> good to have discussion how kernel-space file systems could
+>>> work with SSDs that support FDP technology by employing
+>>> FDP benefits.
+>>
+>> Slava,
+>>
+>> Thanks for bringing this up.
+>>
+>> First, this is not a Samsung technology. Several vendors are building
+>> FDP and several customers are already deploying first product.
+>>
+>> We enabled FDP thtough I/O Passthru to avoid unnecesary noise in the
+>> block layer until we had a clear idea on use-cases. We have been
+>> following and reviewing Bart's write hint series and it covers all the
+>> block layer and interface needed to support FDP. Currently, we have
+>> patches with small changes to wire the NVMe driver. We plan to submit
+>> them after Bart's patches are applied. Now it is a good time since we
+>> have LSF and there are also 2 customers using FDP on block and file.
+>>
+>>>
+>>> How soon FDP API will be available for kernel-space file systems?
+>>
+>> The work is done. We will submit as Bart's patches are applied.
+>>
+>> Kanchan is doing this work.
+>>
+>>> How kernel-space file systems can adopt FDP technology?
+>>
+>> It is based on write hints. There is no FS-specific placement decisions.
+>> All the responsibility is in the application.
+>>
+>> Kanchan: Can you comment a bit more on this?
+>>
+>>> How FDP technology can improve efficiency and reliability of
+>>> kernel-space file system?
+>>
+>> This is an open problem. Our experience is that making data placement
+>> decisions on the FS is tricky (beyond the obvious data / medatadata). If
+>> someone has a good use-case for this, I think it is worth exploring.
+>> F2FS is a good candidate, but I am not sure FDP is of interest for
+>> mobile - here ZUFS seems to be the current dominant technology.
+>>
+>
+>If I understand the FDP technology correctly, I can see the benefits for
+>file systems. :)
+>
+>For example, SSDFS is based on segment concept and it has multiple
+>types of segments (superblock, mapping table, segment bitmap, b-tree
+>nodes, user data). So, at first, I can use hints to place different segment
+>types into different reclaim units.
 
-On 1/11/2024 6:34 AM, Bernd Schubert wrote:
->
->
-> On 1/10/24 02:16, Hou Tao wrote:
->> Hi,
->>
->> On 1/9/2024 9:11 PM, Bernd Schubert wrote:
->>>
->>>
->>> On 1/3/24 11:59, Hou Tao wrote:
->>>> From: Hou Tao <houtao1@huawei.com>
->>>>
->>>> When trying to insert a 10MB kernel module kept in a virtiofs with
->>>> cache
->>>> disabled, the following warning was reported:
->>>>
->>>>     ------------[ cut here ]------------
->>>>     WARNING: CPU: 2 PID: 439 at mm/page_alloc.c:4544 ......
->>>>     Modules linked in:
->>>>     CPU: 2 PID: 439 Comm: insmod Not tainted 6.7.0-rc7+ #33
->>>>     Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), ......
->>>>     RIP: 0010:__alloc_pages+0x2c4/0x360
->>>>     ......
->>>>     Call Trace:
->>>>      <TASK>
->>>>      ? __warn+0x8f/0x150
->>>>      ? __alloc_pages+0x2c4/0x360
->>>>      __kmalloc_large_node+0x86/0x160
->>>>      __kmalloc+0xcd/0x140
->>>>      virtio_fs_enqueue_req+0x240/0x6d0
->>>>      virtio_fs_wake_pending_and_unlock+0x7f/0x190
->>>>      queue_request_and_unlock+0x58/0x70
->>>>      fuse_simple_request+0x18b/0x2e0
->>>>      fuse_direct_io+0x58a/0x850
->>>>      fuse_file_read_iter+0xdb/0x130
->>>>      __kernel_read+0xf3/0x260
->>>>      kernel_read+0x45/0x60
->>>>      kernel_read_file+0x1ad/0x2b0
->>>>      init_module_from_file+0x6a/0xe0
->>>>      idempotent_init_module+0x179/0x230
->>>>      __x64_sys_finit_module+0x5d/0xb0
->>>>      do_syscall_64+0x36/0xb0
->>>>      entry_SYSCALL_64_after_hwframe+0x6e/0x76
->>>>      ......
->>>>      </TASK>
->>>>     ---[ end trace 0000000000000000 ]---
->>>>
->>>> The warning happened as follow. In copy_args_to_argbuf(), virtiofs
->>>> uses
->>>> kmalloc-ed memory as bound buffer for fuse args, but
->>>> fuse_get_user_pages() only limits the length of fuse arg by
->>>> max_read or
->>>> max_write for IOV_KVEC io (e.g., kernel_read_file from
->>>> finit_module()).
->>>> For virtiofs, max_read is UINT_MAX, so a big read request which is
->>>> about
->>>
->>>
->>> I find this part of the explanation a bit confusing. I guess you
->>> wanted to write something like
->>>
->>> fuse_direct_io() -> fuse_get_user_pages() is limited by
->>> fc->max_write/fc->max_read and fc->max_pages. For virtiofs max_pages
->>> does not apply as ITER_KVEC is used. As virtiofs sets fc->max_read to
->>> UINT_MAX basically no limit is applied at all.
->>
->> Yes, what you said is just as expected but it is not the root cause of
->> the warning. The culprit of the warning is kmalloc() in
->> copy_args_to_argbuf() just as said in commit message. vmalloc() is also
->> not acceptable, because the physical memory needs to be contiguous. For
->> the problem, because there is no page involved, so there will be extra
->> sg available, maybe we can use these sg to break the big read/write
->> request into page.
->
-> Hmm ok, I was hoping that contiguous memory is not needed.
-> I see that ENOMEM is handled, but how that that perform (or even
-> complete) on a really badly fragmented system? I guess splitting into
-> smaller pages or at least adding some reserve kmem_cache (or even
-> mempool) would make sense?
+Yes. This is what I meant with data / metadata. We have looked also into
+using 1 RUH for metadata and rest make available to applications. We
+decided to go with a simple solution to start with and complete as we
+see users.
 
-I don't think using kmem_cache will help, because direct IO initiated
-from kernel (ITER_KVEC io) needs big and contiguous memory chunk. I have
-written a draft patch in which it breaks the ITER_KVEC chunk into pages,
-uses these pages to initialize extra sgs and passes it to virtiofsd. It
-works but it is a bit complicated and I am not sure whether it is worthy
-the complexity. Anyway, I will beautify it and post it as v2.
+For SSDFS it makes sense.
 
->
->>>
->>> I also wonder if it wouldn't it make sense to set a sensible limit in
->>> virtio_fs_ctx_set_defaults() instead of introducing a new variable?
->>
->> As said in the commit message:
->>
->> A feasible solution is to limit the value of max_read for virtiofs, so
->> the length passed to kmalloc() will be limited. However it will affects
->> the max read size for ITER_IOVEC io and the value of max_write also
->> needs
->> limitation.
->>
->> It is a bit hard to set a reasonable value for both max_read and
->> max_write to handle both normal ITER_IOVEC io and ITER_KVEC io. And
->> considering ITER_KVEC io + dio case is uncommon, I think using a new
->> limitation is more reasonable.
->
-> For ITER_IOVEC max_pages applies - which is limited to
-> FUSE_MAX_MAX_PAGES - why can't this be used in
-> virtio_fs_ctx_set_defaults?
+>The first point is clear, I can place different
+>type of data/metadata (with different “hotness”) into different reclaim units.
+>Second point could be not so clear. SSDFS provides the way to define
+>the size of erase block. If it’s ZNS SSD, then mkfs tool uses the size of zone
+>that storage device exposes to mkfs tool. However, for the case of conventional
+>SSD, the size of erase block is defined by user. Technically speaking, this size
+>could be smaller or bigger that the real erase block inside of SSD. Also, FTL could
+>use a tricky mapping scheme that could combine LBAs in the way making
+>FS activity inefficient even by using erase block or segment concept. I can see
+>how FDP can help here. First of all, reclaim unit makes guarantee that erase
+>blocks or segments on file system side will match to erase blocks (reclaim units)
+>on SSD side. Also, I can use various sizes of logical erase blocks but the logical
+>erase blocks of the same segment type will be placed into the same reclaim unit.
+>It could guarantee the decreasing the write amplification and predictable reclaiming on
+>SSD side. The flexibility to use various logical erase block sizes provides
+>the better efficiency of file system because various workloads could require
+>different logical erase block sizes.
 
-It won't help too much. Under x86-64, max_read will be 256 * 4KB = 1MB,
-so it will try to do kmalloc(1MB, GFP_ATOMIC) and I think it still
-creates too much memory pressure for the system.
+Sounds good. I see you sent a proposal on SSDFS specificaly. It makes
+sense to cover this specific uses there.
 >
-> @Miklos, is there a reason why there is no upper fc->max_{read,write}
-> limit in process_init_reply()? Shouldn't both be limited to
-> (FUSE_MAX_MAX_PAGES * PAGE_SIZE). Or any other reasonable limit?
+>Technically speaking, any file system can place different types of metadata in
+>different reclaim units. However, user data is slightly more tricky case. Potentially,
+>file system logic can track “hotness” or frequency of updates of some user data
+>and try to direct the different types of user data in different reclaim units.
+>But, from another point of view, we have folders in file system namespace.
+>If application can place different types of data in different folders, then, technically
+>speaking, file system logic can place the content of different folders into different
+>reclaim units. But application needs to follow some “discipline” to store different
+>types of user data (different “hotness”, for example) in different folders.
 
-It seems that for all other read/write requests beside ITER_IOVEC direct
-io, max_pages_limit is honored implicitly.
->
->
-> Thanks,
-> Bernd
->
->
->
->>>
->>> Also, I guess the issue is kmalloc_array() in virtio_fs_enqueue_req?
->>> Wouldn't it make sense to use kvm_alloc_array/kvfree in that function?
->>>
->>>
->>> Thanks,
->>> Bernd
->>>
->>>
->>>> 10MB is passed to copy_args_to_argbuf(), kmalloc() is called in turn
->>>> with len=10MB, and triggers the warning in __alloc_pages():
->>>> WARN_ON_ONCE_GFP(order > MAX_ORDER, gfp)).
->>>>
->>>> A feasible solution is to limit the value of max_read for virtiofs, so
->>>> the length passed to kmalloc() will be limited. However it will
->>>> affects
->>>> the max read size for ITER_IOVEC io and the value of max_write also
->>>> needs
->>>> limitation. So instead of limiting the values of max_read and
->>>> max_write,
->>>> introducing max_nopage_rw to cap both the values of max_read and
->>>> max_write when the fuse dio read/write request is initiated from
->>>> kernel.
->>>>
->>>> Considering that fuse read/write request from kernel is uncommon
->>>> and to
->>>> decrease the demand for large contiguous pages, set max_nopage_rw as
->>>> 256KB instead of KMALLOC_MAX_SIZE - 4096 or similar.
->>>>
->>>> Fixes: a62a8ef9d97d ("virtio-fs: add virtiofs filesystem")
->>>> Signed-off-by: Hou Tao <houtao1@huawei.com>
->>>> ---
->>>>    fs/fuse/file.c      | 12 +++++++++++-
->>>>    fs/fuse/fuse_i.h    |  3 +++
->>>>    fs/fuse/inode.c     |  1 +
->>>>    fs/fuse/virtio_fs.c |  6 ++++++
->>>>    4 files changed, 21 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>>> index a660f1f21540..f1beb7c0b782 100644
->>>> --- a/fs/fuse/file.c
->>>> +++ b/fs/fuse/file.c
->>>> @@ -1422,6 +1422,16 @@ static int fuse_get_user_pages(struct
->>>> fuse_args_pages *ap, struct iov_iter *ii,
->>>>        return ret < 0 ? ret : 0;
->>>>    }
->>>>    +static size_t fuse_max_dio_rw_size(const struct fuse_conn *fc,
->>>> +                   const struct iov_iter *iter, int write)
->>>> +{
->>>> +    unsigned int nmax = write ? fc->max_write : fc->max_read;
->>>> +
->>>> +    if (iov_iter_is_kvec(iter))
->>>> +        nmax = min(nmax, fc->max_nopage_rw);
->>>> +    return nmax;
->>>> +}
->>>> +
->>>>    ssize_t fuse_direct_io(struct fuse_io_priv *io, struct iov_iter
->>>> *iter,
->>>>                   loff_t *ppos, int flags)
->>>>    {
->>>> @@ -1432,7 +1442,7 @@ ssize_t fuse_direct_io(struct fuse_io_priv *io,
->>>> struct iov_iter *iter,
->>>>        struct inode *inode = mapping->host;
->>>>        struct fuse_file *ff = file->private_data;
->>>>        struct fuse_conn *fc = ff->fm->fc;
->>>> -    size_t nmax = write ? fc->max_write : fc->max_read;
->>>> +    size_t nmax = fuse_max_dio_rw_size(fc, iter, write);
->>>>        loff_t pos = *ppos;
->>>>        size_t count = iov_iter_count(iter);
->>>>        pgoff_t idx_from = pos >> PAGE_SHIFT;
->>>> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
->>>> index 1df83eebda92..fc753cd34211 100644
->>>> --- a/fs/fuse/fuse_i.h
->>>> +++ b/fs/fuse/fuse_i.h
->>>> @@ -594,6 +594,9 @@ struct fuse_conn {
->>>>        /** Constrain ->max_pages to this value during feature
->>>> negotiation */
->>>>        unsigned int max_pages_limit;
->>>>    +    /** Maximum read/write size when there is no page in
->>>> request */
->>>> +    unsigned int max_nopage_rw;
->>>> +
->>>>        /** Input queue */
->>>>        struct fuse_iqueue iq;
->>>>    diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
->>>> index 2a6d44f91729..4cbbcb4a4b71 100644
->>>> --- a/fs/fuse/inode.c
->>>> +++ b/fs/fuse/inode.c
->>>> @@ -923,6 +923,7 @@ void fuse_conn_init(struct fuse_conn *fc, struct
->>>> fuse_mount *fm,
->>>>        fc->user_ns = get_user_ns(user_ns);
->>>>        fc->max_pages = FUSE_DEFAULT_MAX_PAGES_PER_REQ;
->>>>        fc->max_pages_limit = FUSE_MAX_MAX_PAGES;
->>>> +    fc->max_nopage_rw = UINT_MAX;
->>>>          INIT_LIST_HEAD(&fc->mounts);
->>>>        list_add(&fm->fc_entry, &fc->mounts);
->>>> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
->>>> index 5f1be1da92ce..3aac31d45198 100644
->>>> --- a/fs/fuse/virtio_fs.c
->>>> +++ b/fs/fuse/virtio_fs.c
->>>> @@ -1452,6 +1452,12 @@ static int virtio_fs_get_tree(struct
->>>> fs_context *fsc)
->>>>        /* Tell FUSE to split requests that exceed the virtqueue's
->>>> size */
->>>>        fc->max_pages_limit = min_t(unsigned int, fc->max_pages_limit,
->>>>                        virtqueue_size - FUSE_HEADER_OVERHEAD);
->>>> +    /* copy_args_to_argbuf() uses kmalloc-ed memory as bounce buffer
->>>> +     * for fuse args, so limit the total size of these args to
->>>> prevent
->>>> +     * the warning in __alloc_pages() and decrease the demand for
->>>> large
->>>> +     * contiguous pages.
->>>> +     */
->>>> +    fc->max_nopage_rw = min(fc->max_nopage_rw, 256U << 10);
->>>>          fsc->s_fs_info = fm;
->>>>        sb = sget_fc(fsc, virtio_fs_test_super, set_anon_super_fc);
->>> .
->>
->>
-
+Exactly. This is why I think it makes sense to look at specific FSs as
+there are real deployments that we can use to argue for changes that
+cover a large percentage of use-cases.
 
