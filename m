@@ -1,225 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-8140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA042830050
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 08:00:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2FCD830112
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 09:12:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CFF4288D61
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 07:00:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4277AB23912
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 08:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B36F9465;
-	Wed, 17 Jan 2024 07:00:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098D1D310;
+	Wed, 17 Jan 2024 08:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dC045jYB"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="Qdo3YOpE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3738D8821;
-	Wed, 17 Jan 2024 07:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB36CD26B
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 08:12:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705474816; cv=none; b=X4eyEruQAFuZpqfVpiKIeAV0/0b1KpA6uLhSwwbekBpHcwZ+EIiaoDBx8YrJAK67hNVeLe92gXyuNYfqStxVYyK16r2b3ZYx/GMiyYsqxyi6YzLqbs15nIfrdxnl5Gsb1YGqYnlUyb6lM1tLsRAqFc87xtZLELOnLlYZsWkK0W4=
+	t=1705479137; cv=none; b=jcd7FLKKEXguW8+qb+p5y2Cz6t1zbEHTu2vgiQ0tDVaT/FANrbcjJewj4C0dw6gRMCnzU6/XehHJ9R3o9tfB70+AcvEqfBzyGnHFZdpV5zcUYSlv7+q8ijPgER1LqyfaS5nyxD8azhEwSi/iNbcoTpGqEkLmheK5OEFDQQQaEhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705474816; c=relaxed/simple;
-	bh=k7OAtGL+2nxEw5zXMvTzAkCupl6TNovUqU9pBszDoZw=;
-	h=DKIM-Signature:X-IronPort-AV:X-IronPort-AV:Received:X-ExtLoop1:
-	 X-IronPort-AV:X-IronPort-AV:Received:From:To:Cc:Subject:
-	 In-Reply-To:References:Date:Message-ID:User-Agent:MIME-Version:
-	 Content-Type; b=oVhji3qY2ZDASvFIeKR64K0/TqlePKmrPcoNxgjIaf+iTMJvCMlBQ3SWCZnK4coyIfQpp1/bTlKjiKZhPx0xcfsjlfz4JpA1xkGCeH3flywncCEddwIj96VxbsQ03KXvh863CUW0Hc898AWKk0Df4ZlrXdVyhK9F2Bdk8qv45QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dC045jYB; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1705474814; x=1737010814;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=k7OAtGL+2nxEw5zXMvTzAkCupl6TNovUqU9pBszDoZw=;
-  b=dC045jYBJ/qgdV8IuFIERlO5KYgi4A3hOAEBcnDiXjd/LS+eSZ24PBno
-   ETE11v9wmP7J3vlX80uBPBwjpPsqtHRhOflpq9G4gaIP11PTLyC6lFHbu
-   cnirBb1/FLKhXPugVCVyf+bSw2bltCCtcCsuJsFQx0pdduwy0hvIhgAwK
-   /d+H1PobomQiJpViEpMp1sjjusqgps2k02xBuodsxj33tXVzK9Z1k2lm1
-   5MEwR21zzlxMC/UMwpaum4WiNG6FfYXujvrmrLjG0Ej2LOB+Kt/bGJ2ne
-   O2KMvPLlGa4/H4DbwBNL6G1+yYFK3gOBvQGFU9sk2/IiOJpHVDzIkZRBC
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10955"; a="6805784"
-X-IronPort-AV: E=Sophos;i="6.05,200,1701158400"; 
-   d="scan'208";a="6805784"
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2024 23:00:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10955"; a="957456948"
-X-IronPort-AV: E=Sophos;i="6.05,200,1701158400"; 
-   d="scan'208";a="957456948"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jan 2024 23:00:06 -0800
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Gregory Price <gregory.price@memverge.com>
-Cc: Gregory Price <gourry.memverge@gmail.com>,  <linux-mm@kvack.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-doc@vger.kernel.org>,
-  <linux-fsdevel@vger.kernel.org>,  <linux-api@vger.kernel.org>,
-  <corbet@lwn.net>,  <akpm@linux-foundation.org>,  <honggyu.kim@sk.com>,
-  <rakie.kim@sk.com>,  <hyeongtak.ji@sk.com>,  <mhocko@kernel.org>,
-  <vtavarespetr@micron.com>,  <jgroves@micron.com>,
-  <ravis.opensrc@micron.com>,  <sthanneeru@micron.com>,
-  <emirakhur@micron.com>,  <Hasan.Maruf@amd.com>,
-  <seungjun.ha@samsung.com>,  <hannes@cmpxchg.org>,
-  <dan.j.williams@intel.com>
-Subject: Re: [PATCH 1/3] mm/mempolicy: implement the sysfs-based
- weighted_interleave interface
-In-Reply-To: <ZadkmWj3Rd483f68@memverge.com> (Gregory Price's message of "Wed,
-	17 Jan 2024 00:24:41 -0500")
-References: <20240112210834.8035-1-gregory.price@memverge.com>
-	<20240112210834.8035-2-gregory.price@memverge.com>
-	<87le8r1dzr.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZadkmWj3Rd483f68@memverge.com>
-Date: Wed, 17 Jan 2024 14:58:08 +0800
-Message-ID: <87o7dkzbsv.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1705479137; c=relaxed/simple;
+	bh=+zYWbcvoAjP23imjGJNfMVtHCU1pJ09psuvoDn4c5VM=;
+	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
+	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:From:
+	 To:Cc:Subject:Date:Message-Id:X-Mailer:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding; b=P0s1d7dGKobb2d8kcqRXkT+JzT+o+h5wRCb0tFOGl733ePfXbvXr20g2w5HXcrg8ENmUxq0Ru29Cy4uXWfVG85R5dyYVrH5UjVC6rem8UulKX8+7Agp0mYdzvWFYKIweeQm0k8Au572gsf9kJEHCqAm6miAXlJKsHZ78yLUCj4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=Qdo3YOpE; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2cca5d81826so139938691fa.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 00:12:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1705479133; x=1706083933; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CL0/51SFyxSBXvd08BvIvd2GhG6gC9HlQXY+Oj5Agt8=;
+        b=Qdo3YOpEc7f9dm/H5FjiovYHb7u2/ztIlBYq+bHf+wRL5rkbTlfwNJ7k4UwPdohUXl
+         BZUcOrC8PLvlcSgTfotcMGZpYCAUJriI5/eV2+lQl15r0g9SYm3MmlpTZoVsTnNsjEfw
+         xmiCwCHDyXT4ZgaR96euqomny7tSTsPHZgYyMb2fYiCu2EPJVmJU2b7zOrGbhlfnSRec
+         vCY/2//Pp39Iz0HwRCkY1++Mji/ylmGiT82VmIr6rL0P/9MIOGRyQquLFHBqQYNkKgWD
+         Yuzztp4ad6ZVSz4PnLJrigB/Wkm4xsRWuWTBMOcHkWuRH/zZmY+nhXRYJIGJseGUY4UF
+         kLpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705479133; x=1706083933;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CL0/51SFyxSBXvd08BvIvd2GhG6gC9HlQXY+Oj5Agt8=;
+        b=Rh6OEMOdiOz1FHbtyoSVVs5ayr13cetmDiKWirHZ5ZwJI2okr7Ak+EKa81+Id/6k1Y
+         VDsPCJHD7WqQtXTFc1yVioSYYExtGoSfjzI8r8O0+wefSoj4BCSP561l63hoD2nPxWAU
+         Yt1+3td+pNG8ntxq+kC1Qk9FUwy87qIzaU2x7YAsSTQ3zxiwsf2TszF+1tmT4nqL/Gi/
+         z9aFG6MgGy/if+ZM70/0Cc4NCJGyT8cK11wZl9CUeCdFY2Jj1bmSntfXaqgpWPzVIo7P
+         cgu74yQ4+Prnwg8HSUDfC6AzOzrXKy9tssfZBvMQ2UJFDA8wvAXvI65VRjhrOhpVtTrC
+         Km3w==
+X-Gm-Message-State: AOJu0Yy1LSxufzwomIa2WNs00Ic/u7x5M5pvAjK0Q7fbShcQdiathKdJ
+	tXafUxt1KXwBc/8W3vN1EOGVVOU25CxUq+nuYrZGLRobbSoriQ==
+X-Google-Smtp-Source: AGHT+IGazDA1QaoGQDTGbuiVsSrXQlqefiKKn7cFUVXGcYQpcoY88lXP0Rkg357V03PgppCg09loHw==
+X-Received: by 2002:a2e:8514:0:b0:2cd:4a84:2b2f with SMTP id j20-20020a2e8514000000b002cd4a842b2fmr4489196lji.57.1705479132699;
+        Wed, 17 Jan 2024 00:12:12 -0800 (PST)
+Received: from system76-pc.. ([2a00:1370:81a4:169c:37e:4ad0:ef51:2844])
+        by smtp.gmail.com with ESMTPSA id f4-20020a2ea0c4000000b002cd9005979dsm1757937ljm.102.2024.01.17.00.12.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 17 Jan 2024 00:12:12 -0800 (PST)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: lsf-pc@lists.linux-foundation.org,
+	linux-fsdevel@vger.kernel.org
+Cc: Matias.Bjorling@wdc.com,
+	javier.gonz@samsung.com,
+	luka.perkov@sartura.hr,
+	bruno.banelli@sartura.hr,
+	slava@dubeiko.com,
+	Viacheslav Dubeyko <slava@dubeyko.com>
+Subject: [LSF/MM/BPF TOPIC] : SSDFS - flexible architecture for FDP, ZNS SSD, and SMR HDD
+Date: Wed, 17 Jan 2024 11:11:43 +0300
+Message-Id: <20240117081143.305317-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Gregory Price <gregory.price@memverge.com> writes:
+Hello,
 
-> On Mon, Jan 15, 2024 at 11:18:00AM +0800, Huang, Ying wrote:
->> Gregory Price <gourry.memverge@gmail.com> writes:
->> 
->> > +static struct iw_table default_iw_table;
->> > +/*
->> > + * iw_table is the sysfs-set interleave weight table, a value of 0
->> > + * denotes that the default_iw_table value should be used.
->> > + *
->> > + * iw_table is RCU protected
->> > + */
->> > +static struct iw_table __rcu *iw_table;
->> > +static DEFINE_MUTEX(iw_table_mtx);
->> 
->> I greped "mtx" in kernel/*.c and mm/*.c and found nothing.  To following
->> the existing coding convention, better to name this as iw_table_mutex or
->> iw_table_lock?
->> 
->
-> ack.
->
->> And, I think this is used to protect both iw_table and default_iw_table?
->> If so, it deserves some comments.
->> 
->
-> Right now default_iw_table cannot be updated, and so it is neither
-> protected nor requires protection.
->
-> I planned to add the protection comment in the next patch series, which
-> would implement the kernel-side interface for updating the default
-> weights during boot/hotplug.
->
-> We haven't had the discussion on how/when this should happen yet,
-> though, and there's some research to be done.  (i.e. when should DRAM
-> weights be set? should the entire table be reweighted on hotplug? etc)
+I would like to share the current status of SSDFS stabilization and
+new features implementation. Also I would like to discuss how
+kernel-space file systems can adopt FDP (Flexible Data Placement)
+technology on the example of SSDFS architecture.
 
-Before that, I'm OK to remove default_iw_table and use hard coded "1" as
-default weight for now.
+[DISCUSSION]
 
->> > +static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *attr,
->> > +			  const char *buf, size_t count)
->> > +{
->> > +	struct iw_node_attr *node_attr;
->> > +	struct iw_table __rcu *new;
->> > +	struct iw_table __rcu *old;
->> > +	u8 weight = 0;
->> > +
->> > +	node_attr = container_of(attr, struct iw_node_attr, kobj_attr);
->> > +	if (count == 0 || sysfs_streq(buf, ""))
->> > +		weight = 0;
->> > +	else if (kstrtou8(buf, 0, &weight))
->> > +		return -EINVAL;
->> > +
->> > +	new = kmalloc(sizeof(*new), GFP_KERNEL);
->> > +	if (!new)
->> > +		return -ENOMEM;
->> > +
->> > +	mutex_lock(&iw_table_mtx);
->> > +	old = rcu_dereference_protected(iw_table,
->> > +					lockdep_is_held(&iw_table_mtx));
->> > +	/* If value is 0, revert to default weight */
->> > +	weight = weight ? weight : default_iw_table.weights[node_attr->nid];
->> 
->> If we change the default weight in default_iw_table.weights[], how do we
->> identify whether the weight has been customized by users via sysfs?  So,
->> I suggest to use 0 in iw_table for not-customized weight.
->> 
->> And if so, we need to use RCU to access default_iw_table too.
->>
->
-> Dumb simplification on my part, I'll walk this back and add the 
->
-> if (!weight) weight = default_iw_table[node]
->
-> logic back into the allocator paths accordinly.
->
->> > +	memcpy(&new->weights, &old->weights, sizeof(new->weights));
->> > +	new->weights[node_attr->nid] = weight;
->> > +	rcu_assign_pointer(iw_table, new);
->> > +	mutex_unlock(&iw_table_mtx);
->> > +	kfree_rcu(old, rcu);
->> 
->> synchronize_rcu() should be OK here.  It's fast enough in this cold
->> path.  This make it good to define iw_table as
->> 
-> I'll take a look.
->
->> u8 __rcu *iw_table;
->> 
->> Then, we only need to allocate nr_node_ids elements now.
->> 
->
-> We need nr_possible_nodes to handle hotplug correctly.
+SSDFS is based on segment concept and it has multiple types of segments
+(superblock, mapping table, segment bitmap, b-tree nodes, user data).
+The first point of FDP employment is to use hints to place different segment
+types into different reclaim units. It means that different type of
+data/metadata (with different “hotness”) can be placed into different
+reclaim units. And it provides more efficient NAND flash management
+on SSD side.
 
-nr_node_ids >= num_possible_nodes().  It's larger than any possible node
-ID.
+Another important point of FDP, that it can guarantee the decreasing
+write amplification and predictable reclaiming on SSD side.
+SSDFS provides the way to define the size of erase block.
+If it’s ZNS SSD, then mkfs tool uses the size of zone that storage device
+exposes to mkfs tool. However, for the case of conventional SSD, the size of
+erase block is defined by user. Technically speaking, this size
+could be smaller or bigger that the real erase block inside of SSD.
+Also, FTL could use a tricky mapping scheme that could combine LBAs in
+the way making FS activity inefficient even by using erase block or
+segment concept. First of all, reclaim unit makes guarantee that erase
+blocks or segments on file system side will match to erase blocks
+(reclaim units) on SSD side. Also, end-user can use various sizes of
+logical erase blocks but the logical erase blocks of the same segment
+type will be placed into the same reclaim unit. FDP can guarantee that
+LBAs of the same logical erase block will go into the same reclaim
+unit but not to be distributed among various physical erase blocks.
+Important difference with ZNS SSD that end-user can define the size
+of logical erase block in flexible manner. The flexibility to use
+the various logical erase block sizes provides the better efficiency of
+file system because various workloads could require different logical
+erase block sizes.
 
-> I decided to simplify this down to MAX_NUMNODES *juuuuuust in case*
-> "true node hotplug" ever becomes a reality.  If that happens, then
-> only allocating space for possible nodes creates a much bigger
-> headache on hotplug.
->
-> For the sake of that simplification, it seemed better to just eat the
-> 1KB.  If you really want me to do that, I will, but the MAX_NUMNODES
-> choice was an explicitly defensive choice.
+Another interesting feature of FDP is reclaim group that can combine
+multiple reclaim units. SSDFS uses segment that could contain several
+logical erase blocks. Technically speaking, different logical erase
+blocks of the same segment can be located in different reclaim groups.
+It sounds like different NAND dies can process requests for different
+logical erase blocks in parallel. So, potentially, it can work as
+perfomance improvement feature.
 
-When "true node hotplug" becomes reality, we can make nr_node_ids ==
-MAX_NUMNODES.  So, it's safe to use it.  Please take a look at
-setup_nr_node_ids().
+Technically speaking, any file system can place different types of
+metadata in different reclaim units. However, user data is slightly
+more tricky case. Potentially, file system logic can track “hotness” or
+frequency of updates of some user data and try to direct the different
+types of user data in different reclaim units. But, from another point of view,
+we have folders in file system namespace. If application can place different
+types of data in different folders, then, technically speaking,
+file system logic can place the content of different folders into different
+reclaim units. But application needs to follow some “discipline”
+to store different types of user data (different “hotness”, for example)
+in different folders. SSDFS can easily to have several types of user
+data segments (cold, warm, hot data, for example). The main problem is
+how to define the type of data during the write operation.
 
->> > +static int __init mempolicy_sysfs_init(void)
->> > +{
->> > +	/*
->> > +	 * if sysfs is not enabled MPOL_WEIGHTED_INTERLEAVE defaults to
->> > +	 * MPOL_INTERLEAVE behavior, but is still defined separately to
->> > +	 * allow task-local weighted interleave and system-defaults to
->> > +	 * operate as intended.
->> > +	 *
->> > +	 * In this scenario iw_table cannot (presently) change, so
->> > +	 * there's no need to set up RCU / cleanup code.
->> > +	 */
->> > +	memset(&default_iw_table.weights, 1, sizeof(default_iw_table));
->> 
->> This depends on sizeof(default_iw_table.weights[0]) == 1, I think it's
->> better to use explicit loop here to make the code more robust a little.
->> 
->
-> oh hm, you're right.  rookie mistake on my part.
->
+However, SSDFS is log-structured file system and every log could contain
+up to three area types in the log's payload (main area, journal area, diff
+area). The main area can keep initial state of logical blocks (cold data).
+Any updates for initial state of logical blocks in main area can be stored
+as deltas or diffs into the diff area (hot data). The journal area is the
+space for compaction scheme that combines multiple small files or
+compressed logical blocks into one LBA ("NAND flash page"). As a result,
+journal area can be considered like warm data. Finally, all these areas
+can be stored in contiguous LBAs sequences inside of log's payload
+and for every area type is possible to provide the hint of placing
+the LBA range in particular reclaim unit. So, as far as I can see,
+this Diff-On-Write approach can provide better NAND flash management
+scheme even for user data.
 
---
-Best Regards,
-Huang, Ying
+So, I would like to discuss:
+(1) How kernel-space file systems can adopt FDP technology?
+(2) How FDP technology can improve efficiency and reliability of
+kernel-space file system?
+
+[CURRENT STATUS]
+
+(1) Issue with read-intensive nature has been fixed:
+    - compression of offset translation table has beed added
+    - offset translation table is stored in every log
+(2) SSDFS was completely reworked for using memory folio
+(3) 8K/16K/32K support is much more stable
+    (but still with some issues)
+(4) Multiple erase blocks in segment support is more stable
+    (but still with some issues)
+(5) Erase block inflation model has been implemented
+    (patch is under testing)
+(6) Erase block based deduplication has been introduced
+(7) recoverfs tool has been implemented
+    (not all features implemented yet)
+
+[CURRENT ISSUES]
+
+(1) ZNS support is still not fully stable;
+(2) b-tree operations have issues for some use-cases;
+(5) Delta-encoding support is not stable;
+(6) The fsck tool are not implemented yet;
+
+[PATCHSET]
+
+Current state of patchset for the review:
+https://github.com/dubeyko/ssdfs-driver/tree/master/patchset/linux-kernel-6.7.0
+
+SSDFS is an open-source, kernel-space LFS file system designed:
+(1) eliminate GC overhead, (2) prolong SSD lifetime, (3) natively support
+a strict append-only mode (ZNS SSD + SMR HDD compatible), (4) guarantee
+strong reliability, (5) guarantee stable performance.
+
+Benchmarking results show that SSDFS is capable:
+(1) generate smaller amount of write I/O requests compared with:
+    1.4x - 116x (ext4),
+    14x - 42x (xfs),
+    6.2x - 9.8x (btrfs),
+    1.5x - 41x (f2fs),
+    0.6x - 22x (nilfs2);
+(2) decrease the write amplification factor compared with:
+    1.3x - 116x (ext4),
+    14x - 42x (xfs),
+    6x - 9x (btrfs),
+    1.5x - 50x (f2fs),
+    1.2x - 20x (nilfs2);
+(3) prolong SSD lifetime compared with:
+    1.4x - 7.8x (ext4),
+    15x - 60x (xfs),
+    6x - 12x (btrfs),
+    1.5x - 7x (f2fs),
+    1x - 4.6x (nilfs2).
+
+[REFERENCES]
+[1] SSDFS tools: https://github.com/dubeyko/ssdfs-tools.git
+[2] SSDFS driver: https://github.com/dubeyko/ssdfs-driver.git
+[3] Linux kernel with SSDFS support: https://github.com/dubeyko/linux.git
+[4] SSDFS (paper): https://arxiv.org/abs/1907.11825
+[5] Linux Plumbers 2022: https://www.youtube.com/watch?v=sBGddJBHsIo
 
