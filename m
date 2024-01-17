@@ -1,104 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-8200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3696830E18
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 21:38:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A57830E3A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 21:51:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8892A1F28F9D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 20:38:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF16A285C83
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 20:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7462C250F0;
-	Wed, 17 Jan 2024 20:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qe4YR7qx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46012554E;
+	Wed, 17 Jan 2024 20:51:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from vps.thesusis.net (vps.thesusis.net [34.202.238.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C106E250E8
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 20:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE14B250F2;
+	Wed, 17 Jan 2024 20:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.238.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705523915; cv=none; b=RsrIfUIdeWxWlBETTKfdqzanUqxN2EN3yj9qyImlUIDhKKDNPYE3phUqHSJBuEtf0dXI31TrBO0MfWYJazNwKT+ATpx5cIoOEQqdFZXBJ/ftFxpwH0mgFYDghnvYEhiIHwP6/iBzjyyEXp4p9ZqydyfFlcz+E4Ot3bIVPGqO2lk=
+	t=1705524705; cv=none; b=FLHdsm4NSuiZVYPwLHDpAwIh95gcbHefK0lnbytrJ1GFYGeSwZZMUgIElbN8ZZfyidOSPad6pNxDwwJt82D7ViwtSTdE7TEFcWMsYGIKD6QFGd1nKj2DLfe7EqTRcoIzjD5Zjz9GBEWyks1dV2xmQDRC84yMwVLOXLlgJX04w3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705523915; c=relaxed/simple;
-	bh=0XYKUVxg9ZEPZXTXsvIPYMbxiM2HvWn24nBCY6JoJNY=;
-	h=DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To; b=qUfkCVkBXTk1W9c3Vj/u9BPfQSSw2siZnzp4lW0Cps29mq00UhUJ0ND8vxdhsli1U2TKluJLqzU1yGZ36rnVHSVWTbPdQz6p2nk0HIZmhlWgEtk+IG34ow4CeczM157uhMq155s1THufoc9Oc2Gr+7J6z0ajfHoybQIAXijdzI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Qe4YR7qx; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8KR7LDuJuULbvbkfkcg0Pw2uzyZFXH73CrNO1+XqHr4=; b=Qe4YR7qx2xbxXS54byCy3o9N7Z
-	eqQ7K538mxhgX2CrPfASvUzk90bcnIG89ow+XvVsXTxly3/QmT/UqbY64V+1kuDZ12lDtFiEx1v7R
-	FXC8tu17hbgN1oz35+I2xo/ipwgsisghxBiyKA3rrGZiz04Hi8hUGnYWHK2Qw0mbIbdEPJwx/x4yz
-	aaW4PwPjh2JDm+wVbSDZHCN292HgMWCKrRpne/iMUQ0qtAnyv+HablXB+DyMX4k6SsxIWazC7c7ih
-	h54bkRYJR2o8isOzjhpWrWV68bLOtwapjl6jYGXqXgN1WXd7Lvp98G5oDpv9dx46xCiZtqm546xYF
-	zFuAtOPQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rQCgA-00000000ibD-1sZY;
-	Wed, 17 Jan 2024 20:38:30 +0000
-Date: Wed, 17 Jan 2024 20:38:30 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Gabriel Ryan <gabe@cs.columbia.edu>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: Race in mm/readahead.c:140 file_ra_state_init /
- block/ioctl.c:497 blkdev_common_ioctl
-Message-ID: <Zag6xv3N7VZ_HFVT@casper.infradead.org>
-References: <CALbthtcbD1bDYrQC6iNk6rMgBXO8LvH0kqxFh3=0nUdqm35Lsg@mail.gmail.com>
+	s=arc-20240116; t=1705524705; c=relaxed/simple;
+	bh=4JnBt5A2h6l14DAoNYQRG+5RfhgnLIK8Ki9AnPYuK4I=;
+	h=Received:From:To:Cc:Subject:In-Reply-To:References:Date:
+	 Message-ID:MIME-Version:Content-Type; b=gDWooUZ1X33fowhVtioOCnF563QTdLi2z8dNSeQZIPmtXvzuiDiZ7y3N4yVm6EoN3carXTw/j9F5OPieMuh31bFIbmfETysxeBcwMtQWToMdWK648luW3z1yZDtUVM7O1ZjdUqbRWqfti6lca+RDbFYZBODRym7t+JqQaHIs6pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thesusis.net; spf=pass smtp.mailfrom=thesusis.net; arc=none smtp.client-ip=34.202.238.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=thesusis.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thesusis.net
+Received: by vps.thesusis.net (Postfix, from userid 1000)
+	id 3AF89153C25; Wed, 17 Jan 2024 15:51:37 -0500 (EST)
+From: Phillip Susi <phill@thesusis.net>
+To: Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+ lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-btrfs@vger.kernel.org,
+ linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Dropping page cache of individual fs
+In-Reply-To: <ZafpsO3XakIekWXx@casper.infradead.org>
+References: <20240116-tagelang-zugnummer-349edd1b5792@brauner>
+ <20240116114519.jcktectmk2thgagw@quack3>
+ <20240117-tupfen-unqualifiziert-173af9bc68c8@brauner>
+ <20240117143528.idmyeadhf4yzs5ck@quack3>
+ <ZafpsO3XakIekWXx@casper.infradead.org>
+Date: Wed, 17 Jan 2024 15:51:37 -0500
+Message-ID: <87il3rvg2u.fsf@vps.thesusis.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALbthtcbD1bDYrQC6iNk6rMgBXO8LvH0kqxFh3=0nUdqm35Lsg@mail.gmail.com>
+Content-Type: text/plain
 
-On Wed, Jan 17, 2024 at 03:08:47PM -0500, Gabriel Ryan wrote:
-> We found a race in the mm subsystem in kernel version v5.18-rc5 that
+Matthew Wilcox <willy@infradead.org> writes:
 
-What an odd kernel version to be analysing.  It's simultaneously almost
-two years old, and yet not an actual release.  You'd be better off
-choosing an LTS kernel as your version to analyse, something like v6.6
-or v6.1.  Or staying right on the bleeding edge and using something more
-recent like v6.7.
+> We have numerous ways to intercept file reads and make them either
+> block or fail.  The obvious one to me is security_file_permission()
+> called from rw_verify_area().  Can we do everything we need with an LSM?
 
-> appears to be potentially harmful using a race testing tool we are
-> developing. The race occurs between:
-> 
-> mm/readahead.c:140 file_ra_state_init
-> 
->     ra->ra_pages = inode_to_bdi(mapping->host)->ra_pages;
-> 
-> block/ioctl.c:497 blkdev_common_ioctl
-> 
->     bdev->bd_disk->bdi->ra_pages = (arg * 512) / PAGE_SIZE;
-> 
-> 
-> which both set the ra->ra_pages value. It appears this race could lead
-> to undefined behavior, if multiple threads set ra->ra_pages to
-> different values simultaneously for a single file inode.
+I like the idea.  That runs when someone opens a file right?  What about
+if they already had the file open or mapped before the volume was
+locked?  If not, is that OK?  Are we just trying to deny open requests
+of files while the volume is locked?
 
-Undefined behaviour from the C spec point of view, sure.  But from a
-realistic hardware/compiler point of view, not really.  These are going
-to be simple loads & stores. since bdi->ra_pages is an unsigned long.
-And if it does happen to be garbage, how much harm is really done?
-We'll end up with the wrong readahead value for a single open file.
-Performance might not be so great, but it's not like we're going to
-grant root access as a result.
+Is that in addition to, or instead of throwing out the key and
+suspending IO at the block layer?  If it is in addition, then that would
+mean that trying to open a file would fail cleanly, but accessing a page
+that is already mapped could hang the task.  In an unkillable state.
+For a long time.  Even the OOM killer can't kill a task blocked like
+that can it?  Or did that get fixed at some point?
 
-We should probably add READ_ONCE / WRITE_ONCE annotations to be
-certain the compiler doesn't get all clever, but that brings me to the
-question about why you're developing this tool.  We already have tooling
-to annoy people with these kinds of nitpicks (KCSAN).
 
