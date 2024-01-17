@@ -1,92 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-8178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D51830AE7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 17:20:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54DD7830AEB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 17:21:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8D9228F382
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 16:20:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38B561C268E8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 16:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C64322336;
-	Wed, 17 Jan 2024 16:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF07224C8;
+	Wed, 17 Jan 2024 16:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KbkJjw+O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E57BF219F6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 16:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1040C219F6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 16:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705508408; cv=none; b=soEZ4FWvIbTQheRoEcgAKl3Tl32EfhhApkPgJevHfXZ9j1SSbGCSlyLFw/lW9Qh5xIHs42KF+T/YXjPb698JlGwECiS8oMz3nm9NbSnLNnz3akYuMZ+7K199t+G9TehUEM+CpMUeDfk7IK2bV+dsuLAVhd9V8T9s+VWOz60mUOo=
+	t=1705508469; cv=none; b=ZZshxQZSFINh8mOGOGkjopAZ1/lgZlqmutO+Rg+7Z2OAjS16PQ2QAIUkusjoU/fKiRQDeDtQsv2rZLktqr3JrNMI/0RBi4zAMGU0NORnT2yUKwxgS2oyXqBUDIjIiXo1V/dwA8O8T6dFifw0iyFAP4nklu6talnrGXXJxZR8ens=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705508408; c=relaxed/simple;
-	bh=X9Tc8QKWPDLmksAWuVVFK0oDVNUWOymTX5v/tPTp/6w=;
-	h=Received:X-Google-DKIM-Signature:X-Gm-Message-State:
-	 X-Google-Smtp-Source:MIME-Version:X-Received:Date:In-Reply-To:
-	 X-Google-Appengine-App-Id:X-Google-Appengine-App-Id-Alias:
-	 Message-ID:Subject:From:To:Content-Type; b=fE8aescAwH2H8rdewbhF39c2oi1/jErQFDb8JgeDxbVHkaEDjr3KigSdeuCVvolH2EJSd+XveQzch/E+K6k3VW1bk7325XLX2OgLRRjV+iMjcNcvTTN2GwZnaoJFLsumEVbhXjKFYlyGtcQJ/7kf4YZJWYpYzYoyXxhb9kW13WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-361967b0a78so6522505ab.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 08:20:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705508406; x=1706113206;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CmRaJpPgBsO0jKDNyPLfd6NWiflAW4VynA5h/LQ9l80=;
-        b=eWmVE7sWRJevzCSPejLS24szKQgP2baDlPy2SPFRRV9iGTIE8Zm7OTb9QHhjbk9rWc
-         RqO+wr7S8gFhoj6FMt9BJMfdkBoG3QrUpB6UXKoOtxkzeIQnP/MyXkC+RJ3LS84uW6I0
-         PX+sGRz2SHSg/BTcIq2+pWVgz/gLUwaYxexS+zcHP+jcj0HcSGitYcUrG/77WxTgRHep
-         tTIdITZhVBa6JJhjxmPbvyMG/WcP9f3pjTo2jDFAW7UWPOjae+dM5QsYvIS9acV492bI
-         0kziTcNQB5e63AC99Y7LWFz0PGg+gaBNupdiMyYNMtJnbHf/8bCTKOv7f91zwc6V7ho+
-         ot6w==
-X-Gm-Message-State: AOJu0YwtI/aYDWbB3slhUj9V712nL/3NekALwrO8c12Gcm5DezOSbKCU
-	bEZBYfUbhR5PTU++qSyQIv/qmClxJY9tTPx1j/gkL1RRDaoa
-X-Google-Smtp-Source: AGHT+IGX33jfAR+ozaz9MIu9nM7Eu3lo1Imr5ETdadokM97tBJl+NUXFtldShbDVPwhuIfi/hlO665PnGpajP6nGijPWQP5CBM+x
+	s=arc-20240116; t=1705508469; c=relaxed/simple;
+	bh=flbXHwDCTp+j6stWsTGEWwJGNNEZkTEfymW8XvfG8QU=;
+	h=DKIM-Signature:Received:X-MC-Unique:Received:Received:
+	 Organization:From:In-Reply-To:References:Cc:Subject:MIME-Version:
+	 Content-Type:Content-ID:Content-Transfer-Encoding:Date:Message-ID:
+	 X-Scanned-By; b=EEdjvRB/Sm14UYCMMj700GZXyHMgYpwq/s/ddbRnAX1ZXoOLtFhhjledXn4gOq+nVwln8XpfKLLeZn2iobsXaaN5eCx5KjNRUlvDT9uM9dIzRSvUKNiFnYcZqdY8qZrrQouzj3T1fTxTDvtCOdBMJ0NzZHHPoNUj6WadKRoJ4vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KbkJjw+O; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1705508466;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=flbXHwDCTp+j6stWsTGEWwJGNNEZkTEfymW8XvfG8QU=;
+	b=KbkJjw+O9NUpd2Y+fzNf47ID31HSoVyH8vNl4EQg7pw2ZBT/N35EDbGfJL3tzSH7DYdk0z
+	PXwxhFLD9uXCRf6IPWC0Z0nlqIn327UQvF8kEMsChPgYrJIM53nom2fUnUFZe19xqVfEhH
+	YvHYC8fl7KLmCT66qUCB0nfyIk31TsI=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-324-qCUP_KtoMCmRpnD6WO-2jA-1; Wed,
+ 17 Jan 2024 11:21:04 -0500
+X-MC-Unique: qCUP_KtoMCmRpnD6WO-2jA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C5AF038149AF;
+	Wed, 17 Jan 2024 16:21:03 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 2B2EF2026D6F;
+	Wed, 17 Jan 2024 16:21:03 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <2929034.1705508082@warthog.procyon.org.uk>
+References: <2929034.1705508082@warthog.procyon.org.uk>
+Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs: Fix missing/incorrect unlocking of RCU read lock
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18ca:b0:360:2a3:7dc0 with SMTP id
- s10-20020a056e0218ca00b0036002a37dc0mr1332355ilu.2.1705508406145; Wed, 17 Jan
- 2024 08:20:06 -0800 (PST)
-Date: Wed, 17 Jan 2024 08:20:06 -0800
-In-Reply-To: <0000000000006308a805eaa57d87@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b5b973060f269eb3@google.com>
-Subject: Re: [syzbot] [reiserfs?] possible deadlock in chown_common
-From: syzbot <syzbot+3abaeed5039cc1c49c7c@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2929562.1705508462.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 17 Jan 2024 16:21:02 +0000
+Message-ID: <2929563.1705508462@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-syzbot suspects this issue was fixed by commit:
+David Howells <dhowells@redhat.com> wrote:
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+> In afs_proc_addr_prefs_show(), we need to unlock the RCU read lock in bo=
+th
+> places before returning (and not lock it again).
+> =
 
-    fs: Block writes to mounted block devices
+> Fixes: f94f70d39cc2 ("afs: Provide a way to configure address priorities=
+")
+> Reported-by: Marc Dionne <marc.dionne@auristor.com>
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14ecbc83e80000
-start commit:   2bca25eaeba6 Merge tag 'spi-v6.1' of git://git.kernel.org/..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9df203be43a870b5
-dashboard link: https://syzkaller.appspot.com/bug?extid=3abaeed5039cc1c49c7c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1539e7b8880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c6cb32880000
+Actually:
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Closes: https://lore.kernel.org/oe-lkp/202401172243.cd53d5f6-oliver.sang@i=
+ntel.com
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: linux-afs@lists.infradead.org
+> cc: linux-fsdevel@vger.kernel.org
 
-#syz fix: fs: Block writes to mounted block devices
+David
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
