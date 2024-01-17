@@ -1,63 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-8166-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8167-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F09B18308D2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 15:55:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC228308F9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 16:02:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 241AC1C23F5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 14:55:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 871B91F2598B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 17 Jan 2024 15:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0192230C;
-	Wed, 17 Jan 2024 14:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W4zMYe6n"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139042137D;
+	Wed, 17 Jan 2024 15:02:11 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7368720DD3;
-	Wed, 17 Jan 2024 14:52:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E701721347;
+	Wed, 17 Jan 2024 15:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705503157; cv=none; b=RWSDNIef/VEq7jAPfACxYrBFJa0UhDtSl78Noew3i0ZfZv4IqT2dekXTOFoqG84C+9b3EVG2GJYfjSFbooy/jUJv2Xm5NAJtN97RJwtPImlbwQ9irRMuouIi4dwot8GPZrpbmNzqbWl5wtF6CwStucDkDioBnc0iLIwWCsUuzDQ=
+	t=1705503730; cv=none; b=kCmqLwbD9xuENZ03d9duu+EVtrJLGyD8EW9GCFffS5L+m1dmaEuQ5iNkbmAN8Uz7rKXkxCMR5sLtEOJpeUuch0MrHgKvj+L4JhIb++ZoF3LZ4oUdMZGzZqt+NZNnSLYTijnD5RKMeQ2Uuu6+XNLqutVDb2CdmrS+sgT9KOkv2/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705503157; c=relaxed/simple;
-	bh=mk3Do3OGSoO3lYVK+3O445pImEvdyqK7uj6etB3B5lE=;
-	h=DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
-	 References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To; b=YEVr3eRRM5Gm7M42SVkliIpgbebkigBSo2soQDWifM7JAcdGEDdc5UD/IqWW6qGuy8pjBTa1X7/1TxKzTVNEDiQN/oBkXhPb5nTo54spJAcmEoTkX6M1FPSi2d+Dlo/87OUAN5vDCRGeoVQ3nDJ7ziDAd1oc5qCvYmfsNbr4eZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W4zMYe6n; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=p9m4ROoLCFI9ZSmSQlv4Jd9ZGwftV7SKWqQ5i1J2RlA=; b=W4zMYe6nwJgS22voMlQazvN+dB
-	12kqgxhCjyqVUVflB0+HtQt+H4fhuhKnXMLQVo9kpK1R8S4yeMIOIjM1nyWgChcNSEp2mDkXmllst
-	TC+R77/tF5NaawW7SG9qqIs+rvmCY9LlH9nn6s9Nr5tsJWYjIMPP0CEL9uNfGnhEh/7rPGJ5rD8mG
-	yHZ8RJPvYKHyutQ6kjWiJSer8Sze0t6CNyBAot108Ek4yRk4kGPsdOMIAx7gCpAKHAbNwdzhs/gIZ
-	R+lmFCpLqLZTwtHW2Mxu4Rup4sLIWM1zIjdUnXyfE3Oc8l9daY5AJa0qKkw7Wq+keUDPgzwGfB0Kp
-	1R7hBkVQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rQ7HM-00000000Cg9-1PbJ;
-	Wed, 17 Jan 2024 14:52:32 +0000
-Date: Wed, 17 Jan 2024 14:52:32 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-btrfs@vger.kernel.org,
-	linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Dropping page cache of individual fs
-Message-ID: <ZafpsO3XakIekWXx@casper.infradead.org>
-References: <20240116-tagelang-zugnummer-349edd1b5792@brauner>
- <20240116114519.jcktectmk2thgagw@quack3>
- <20240117-tupfen-unqualifiziert-173af9bc68c8@brauner>
- <20240117143528.idmyeadhf4yzs5ck@quack3>
+	s=arc-20240116; t=1705503730; c=relaxed/simple;
+	bh=InjtWWHIK+dxg9+ObW7eBrA9Bb+Q/V/aSLm4A24XvJo=;
+	h=Received:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+	 User-Agent; b=IHCP/xoz2BGkkjj42PPn6NVwAcbqKkZb6QyMdvRhuO7d0zn5xgni6odbG92llKC2ATOeGCXfG047qzXEW52JwiAokeORBnlPo5BUpATF5tr7vn+zy3X3TukBG0RDiqf1OcH3vgXIL8BZ0IrDrx19h+buMuNFm9/z3YgsNAbm+jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 4135968C7B; Wed, 17 Jan 2024 16:02:01 +0100 (CET)
+Date: Wed, 17 Jan 2024 16:02:00 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
+	axboe@kernel.dk, kbusch@kernel.org, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+	jack@suse.cz, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
+	ming.lei@redhat.com, jaswin@linux.ibm.com, bvanassche@acm.org
+Subject: Re: [PATCH v2 00/16] block atomic writes
+Message-ID: <20240117150200.GA30112@lst.de>
+References: <20231219151759.GA4468@lst.de> <fff50006-ccd2-4944-ba32-84cbb2dbd1f4@oracle.com> <20231221065031.GA25778@lst.de> <b60e39ce-04bf-4ff9-8879-d9e0cf5d84bd@oracle.com> <20231221121925.GB17956@lst.de> <df2b6c6e-6415-489d-be19-7e2217f79098@oracle.com> <20231221125713.GA24013@lst.de> <9bee0c1c-e657-4201-beb2-f8163bc945c6@oracle.com> <20231221132236.GB26817@lst.de> <6135eab3-50ce-4669-a692-b4221773bb20@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,20 +55,29 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240117143528.idmyeadhf4yzs5ck@quack3>
+In-Reply-To: <6135eab3-50ce-4669-a692-b4221773bb20@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Jan 17, 2024 at 03:35:28PM +0100, Jan Kara wrote:
-> OK. So could we then define the effect of your desired call as calling
-> posix_fadvise(..., POSIX_FADV_DONTNEED) for every file? This is kind of
-> best-effort eviction which is reasonably well understood by everybody.
+On Tue, Jan 16, 2024 at 11:35:47AM +0000, John Garry wrote:
+> As such, we then need to set atomic write unit max = min(queue max 
+> segments, BIO_MAX_VECS) * LBS. That would mean atomic write unit max 256 * 
+> 512 = 128K (for 512B LBS). For a DMA controller of max segments 64, for 
+> example, then we would have 32K. These seem too low.
 
-I feel like we're in an XY trap [1].  What Christian actually wants is
-to not be able to access the contents of a file while the device it's
-on is suspended, and we've gone from there to "must drop the page cache".
+I don't see how this would work if support multiple sectors.
 
-We have numerous ways to intercept file reads and make them either
-block or fail.  The obvious one to me is security_file_permission()
-called from rw_verify_area().  Can we do everything we need with an LSM?
+>
+> Alternative I'm thinking that we should just limit to 1x iovec always, and 
+> then atomic write unit max = (min(queue max segments, BIO_MAX_VECS) - 1) * 
+> PAGE_SIZE [ignoring first/last iovec contents]. It also makes support for 
+> non-enterprise NVMe drives more straightforward. If someone wants, they can 
+> introduce support for multi-iovec later, but it would prob require some 
+> more iovec length/alignment rules.
 
-[1] https://meta.stackexchange.com/questions/66377/what-is-the-xy-problem
+Supporting just a single iovec initially is fine with me, as extending
+that is pretty easy.  Just talk to your potential users that they can
+live with it.
+
+I'd probably still advertise the limits even if it currently always is 1.
+
 
