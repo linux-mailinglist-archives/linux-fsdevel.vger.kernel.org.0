@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-8246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5772B831B19
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 15:10:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F3C831B4C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 15:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFD0DB25553
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 14:10:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023521F26EC6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 14:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D3125773;
-	Thu, 18 Jan 2024 14:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC0428DAE;
+	Thu, 18 Jan 2024 14:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DSLfcV/8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HH2RHRMN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C6324B4B;
-	Thu, 18 Jan 2024 14:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B74528DA5;
+	Thu, 18 Jan 2024 14:27:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705586988; cv=none; b=mfy3Eu12gMspVJUZQRJGL19wrsDqE2Mauq2U3x9XF6SX48L8Kb3OsbgJh6vttNScauURw/KiDlEWofWKKPS0I3NbHDGfEnp8TWcKZUsNafonxyWnjOixd91/zmbXknPjIxEyVo9rfDszi1uiq10KAM/7BuZXI+rVmz0hnZtKPnA=
+	t=1705588024; cv=none; b=qRNCh3AGMR9crXaB+7HG2clNf5GaSKQf+cKlJhKifaGQRzVNJ03vgNeUEnHTr37BXSd2Gi0lBwnS0Ts1CmsNbSZKz0f+gNq4PisQasw/A3WlVjoac91RoxnAPI4btS7rpKwN5z7cD6ZKY+pOB6sN26ek3FfncPwVIiT8ppYSyjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705586988; c=relaxed/simple;
-	bh=+uFBRg+XaeNY1sPVwHQo/VqbyI65U/bod8Ks5LIqYek=;
+	s=arc-20240116; t=1705588024; c=relaxed/simple;
+	bh=YmGrZjWGN6bhVc62uzAhw2r6YpLLQ2rytwNdVlCo1/M=;
 	h=Received:DKIM-Signature:Date:From:To:Cc:Subject:Message-ID:
 	 References:MIME-Version:Content-Type:Content-Disposition:
-	 In-Reply-To; b=dT1VsbuvYOXPUppMRe4GMB8qX9ng9dE6MLeQXq1TlxHyZwIdbUvKZSk7fcfsJv2tPTGAtYjrB8KVibE+TA1dCmQQ8P6EkLEuuOY2DEbRs7umcXaYjqGsej8FSy8cP+SMzkK5ohGU1b+3eYnCGyltS9u6nerY9WYm0CP7f6xCxTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DSLfcV/8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C05BC433C7;
-	Thu, 18 Jan 2024 14:09:45 +0000 (UTC)
+	 In-Reply-To; b=bKhx9iYNCO40Eo37HX6JMcnKB1CeOx1ipSA4Vsw+sMppF9T/DqJsnEsPsbb4R4Wg8DS3Kb37Uj60N5O0ubs2obF8HD7uBWfAKfM4N/S/zEHeHGeP3hBgRYa61PDib7BwpfAiYMSNgYLLaWIi4mxWYc9JJSlcPeJL6w2BkW49c1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HH2RHRMN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74FBBC433C7;
+	Thu, 18 Jan 2024 14:27:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705586988;
-	bh=+uFBRg+XaeNY1sPVwHQo/VqbyI65U/bod8Ks5LIqYek=;
+	s=k20201202; t=1705588023;
+	bh=YmGrZjWGN6bhVc62uzAhw2r6YpLLQ2rytwNdVlCo1/M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DSLfcV/8yBbm5ZKTFUL/doJcqcL30ntPGL5eUWW/TeQoN3+eR18xeiODZBxQm/phq
-	 MvI2qyplIJVT4lioZi9Qsn3Bxa875gxGHedOjrayo+doO0D6kpFHloWjxREaTxRJm0
-	 bvHwOiooFm9wMJEHLlClXMob6KwfpLcexr47QGf1QIaZ4d8u/N7FhnQZ7BBeoBiUBF
-	 74ub4EOUPfPj3gveMAblHaarh2jWcCqV4rUTTJ4YJsNr+nVt7ylmBofxtmCshPONyE
-	 sb5r5cvstJGRU/wa6pT770I+bpWtWZbHaZFEuKx+tVbj7BVsMZAKVCUx2Sb9AlWo41
-	 lYc8CNKddhXfQ==
-Date: Thu, 18 Jan 2024 15:09:42 +0100
+	b=HH2RHRMN+Y7+lj4he2mWElpSDJ0MublcMwlr55tUM8QobMsA6lNCoeYvWviSAOOUW
+	 BtTxP2ba+8RN6ZGheqMnxTjTa+0OmZ5S730EKWDtXRSZgvaIY+r3r9jj6mbFJmPz91
+	 FMm3HgnYKa18q02+fWR93xSVJVLWvUbdLJpWPfzpyTdCO1J/oeEm9hZ2NgIq7REmRN
+	 RMcT9mcamKsvr0SB89zW2x1wg3tNawoghLeJX5ROKQE3+xTbXsSEyzvPOxkCpawdag
+	 ougFQkrQs7ZtfAlTsHaKwu2oWJgvfNtnhmQLF12gwtyBZo1paXJAZGDo6AwQ2s0NWo
+	 mcfvAH4Hb7X+g==
+Date: Thu, 18 Jan 2024 15:26:58 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-btrfs@vger.kernel.org, linux-block@vger.kernel.org, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, 
-	adrianvovk@gmail.com
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Jan Kara <jack@suse.cz>, lsf-pc@lists.linux-foundation.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-btrfs@vger.kernel.org, 
+	linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
 Subject: Re: [LSF/MM/BPF TOPIC] Dropping page cache of individual fs
-Message-ID: <20240118-wieweit-windschatten-19cfa8111b45@brauner>
+Message-ID: <20240118-lodern-einwohner-4b94d4153fd4@brauner>
 References: <20240116-tagelang-zugnummer-349edd1b5792@brauner>
- <ZabtYQqakvxJVYjM@dread.disaster.area>
- <20240117-yuppie-unflexibel-dbbb281cb948@brauner>
- <ZahUBkqYad0Lb3/V@dread.disaster.area>
+ <20240116114519.jcktectmk2thgagw@quack3>
+ <20240117-tupfen-unqualifiziert-173af9bc68c8@brauner>
+ <20240117143528.idmyeadhf4yzs5ck@quack3>
+ <ZafpsO3XakIekWXx@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,67 +63,49 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZahUBkqYad0Lb3/V@dread.disaster.area>
+In-Reply-To: <ZafpsO3XakIekWXx@casper.infradead.org>
 
-> > The fact that after a block layer initiated freeze - again mostly a
-> > device mapper problem - one may or may not be able to successfully read
-> > from the filesystem is annoying. Of course one can't write, that will
-> > hang one immediately. But if one still has some data in the page cache
-> > one can still dump the contents of that file. That's at least odd
-> > behavior from a users POV even if for us it's cleary why that's the
-> > case.
+On Wed, Jan 17, 2024 at 02:52:32PM +0000, Matthew Wilcox wrote:
+> On Wed, Jan 17, 2024 at 03:35:28PM +0100, Jan Kara wrote:
+> > OK. So could we then define the effect of your desired call as calling
+> > posix_fadvise(..., POSIX_FADV_DONTNEED) for every file? This is kind of
+> > best-effort eviction which is reasonably well understood by everybody.
 > 
-> A frozen filesystem doesn't prevent read operations from occurring.
-
-Yes, that's what I was saying. I'm not disputing that.
-
+> I feel like we're in an XY trap [1].  What Christian actually wants is
+> to not be able to access the contents of a file while the device it's
+> on is suspended, and we've gone from there to "must drop the page cache".
 > 
-> > And a freeze does do a sync_filesystem() and a sync_blockdev() to flush
-> > out any dirty data for that specific filesystem.
+> We have numerous ways to intercept file reads and make them either
+> block or fail.  The obvious one to me is security_file_permission()
+> called from rw_verify_area().  Can we do everything we need with an LSM?
 > 
-> Yes, it's required to do that - the whole point of freezing a
-> filesystem is to bring the filesystem into a *consistent physical
-> state on persistent storage* and to hold it in that state until it
-> is thawed.
-> 
-> > So it would be fitting
-> > to give users an api that allows them to also drop the page cache
-> > contents.
-> 
-> Not as part of a freeze operation.
+> [1] https://meta.stackexchange.com/questions/66377/what-is-the-xy-problem
 
-Yes, that's why I'd like to have a separate e.g., flag for fadvise.
+Nice idea and we do stuff like that in other scenarios such as [1] where
+we care about preventing _writes_ from occuring while a specific service
+hasn't been fully set up. So that has been going through my mind as
+well. And the LSM approach might be complementary. For example, if
+feasible, it could be activated _before_ the freeze operation only
+allowing the block layer initiated freeze. And then we can drop the page
+cache.
 
-> > For some use-cases like the Gnome use-case one wants to do a freeze and
-> > drop everything that one can from the page cache for that specific
-> > filesystem.
-> 
-> So they have to do an extra system call between FS_IOC_FREEZE and
-> FS_IOC_THAW. What's the problem with that? What are you trying to
-> optimise by colliding cache purging with FS_IOC_FREEZE?
-> 
-> If the user/application/infrastructure already has to iterate all
-> the mounted filesystems to freeze them, then it's trivial for them
-> to add a cache purging step to that infrastructure for the storage
-> configurations that might need it. I just don't see why this needs
-> to be part of a block device freeze operation, especially as the
-> "purge caches on this filesystem" operation has potential use cases
-> outside of the luksSuspend context....
+But in this case the LSM approach isn't easily workable or solves the
+problem for Gnome. It would force the usage of a bpf LSM most likely as
+well. And the LSM would have to be activated when the filesystem is
+frozen and then deactivated when it is unfrozen. I'm not even sure
+that's currently easily doable.
 
-Ah, I'm sorry I think we're accidently talking past each other... I'm
-_not_ trying to tie block layer freezing and cache purging. I'm trying
-to expose something like:
+But the Gnome use-case wants to be able to drop file contents before
+they suspend the system. So the thread-model is wider than just someone
+being able to read contents on an active systems. But it's best-effort
+of course. So failing and reporting an error would be totally fine and
+then policy could dictate whether to not even suspend. It actually might
+help userspace in general.
 
-posix_fadvise(fs_fd, [...], POSIX_FADV_FS_DONTNEED/DROP);
+The ability to drop the page cache of a specific filesystem is useful
+independent of the Gnome use-case especially in systems with thousands
+or ten-thousands of services that use separate filesystem images
+something that's not uncommon.
 
-The Gnome people could then do:
-
-cryptsetup luksSuspend
-posix_fadvise(fs_fd, [...], POSIX_FADV_FS_DONTNEED/DROP);
-
-as two separate operations.
-
-Because the dropping the caches step is useful to other users as well;
-completely independent of the block layer freeze that I used to
-motivate this.
+[1]: https://github.com/systemd/systemd/blob/74e6a7d84a40de18bb3b18eeef6284f870f30a6e/src/nsresourced/bpf/userns_restrict/userns-restrict.bpf.c
 
