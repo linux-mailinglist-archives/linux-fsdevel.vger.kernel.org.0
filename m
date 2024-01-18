@@ -1,152 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-8274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86BDA831FBE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 20:30:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 787BD832013
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 20:58:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37092284345
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 19:29:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01FF3B2617B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 19:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DB92E407;
-	Thu, 18 Jan 2024 19:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9622E642;
+	Thu, 18 Jan 2024 19:58:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZqsTfPCe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kOcnPxyT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487D02E3FB
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jan 2024 19:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89772E400;
+	Thu, 18 Jan 2024 19:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705606193; cv=none; b=mY2EkVvjIVvNeJbF75Tk9xtA0F0XUKh6zpu5S4I8Mektw3bIxEQd6hUGCscbPFNjlj4ey673VztxWFKIjYBlKok4lSJ1IB1t6Ran1JQ1dNZinu1xkkSFu2ir3Mmvw+2gd7hhLJDbebA/uRuKgenqJRyGmFr/hrKHaO5WosTPOsQ=
+	t=1705607922; cv=none; b=am45jjnvgUxY0IbhpoMTTS2lHa8F9DmTF8fL6IOLS5KIkuyMFqEyf/RqJ8YvfGzQ3sD+X7IcB8BSs4usaR4uSpUK771GHrUX/tZfBMv/abBRKGqTAVf0j51RcFu7LUv0yleDWHWD+2MxzC2CXImUA3yPlhc3qQArLKHGjFwyvOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705606193; c=relaxed/simple;
-	bh=xuRSN7NQz/fi5BfrOkzX+ImfdEzHw7bRMO31mZtMmJc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g7yMaCObujryClpbWn5NqUWy7AID+/JchMWhubS9TySfkmI7AYJAoPKwkw2xtKlrfstIGU44aFjv+E12YIylux7x1HZfsEUqesycL4aDBVyz+XbUk+xl+1xSr7vl9+Y7suVeHvp6jG/Wnt00mfnCgBcsP6jWKyJzvOltBZxFaiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZqsTfPCe; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-50eaaf2c7deso14471012e87.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jan 2024 11:29:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1705606189; x=1706210989; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=C7mbs8nJgeTzy4tzsS854RhwRMR+E+uBA1VIh9yLgEQ=;
-        b=ZqsTfPCe/02l+egs8d3LFTSpt/lWMXXcYHNYSV/Kye7KrI26HDhBvCUnK6IN76rP31
-         fuedU4fjvkWT5wBiiY5aJpGWlDgRNQfAJ3vuKdpEU4FuUAK9g68KzXQ9fMGsHqVjGp9W
-         jgSajDuvL0Oj5Hb65UqWCu7rIqTgMIX+Nm+QM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705606189; x=1706210989;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C7mbs8nJgeTzy4tzsS854RhwRMR+E+uBA1VIh9yLgEQ=;
-        b=Y4RJYkOzzF/pGwhtdzI5zmDSzVANZTN3NIamEiBwz2XvTIGiDU53x3ag03Y2oK4/r/
-         hqPgCf49xZ5O666XhZzh5r0L0lfpD3mCSyAjvqjxcRqT6t0jZw/nlbM+U/Zf+JHe6Rra
-         bflYtMHSl9WLjYmAGB79bYMi58DzL1xBO/clHizlPRdLbAY2T7jmh8v/kYRT71EYDb2N
-         YbHKFDyq7SPh3i/GmBmRSCCMWolLguy3a7wg5zE5jeMnvKrM21W6LxTbEeUWHOixdzl6
-         0X9MKRRKnBTqwVDdjUyU9qcxg5al1Z8ms/EoI7WEzw8Kf8VGVXeJw71ZBuHx/SD8B0le
-         R5HQ==
-X-Gm-Message-State: AOJu0YxPkfKIyBS+2lGaTxMiZubiEehNWrFmPs/9QMvp+SBCmNk/ZiWn
-	ZrSK+J8Slp9NQ71pk9MlMxkxYYUNQCCgHS/cb7jHustYp3W4vJIUJGh8DG/1OmqNFQiU8ZYFEj1
-	zuB0Sxg==
-X-Google-Smtp-Source: AGHT+IGNR5O7Zy5zLWw4pwG+Bdhm4zSoOyRHA+ZGq0TQCZcnRmMeldyHsgv0edNRUy9w6AGQIFRueQ==
-X-Received: by 2002:a05:6512:b92:b0:50e:7c9b:a8b7 with SMTP id b18-20020a0565120b9200b0050e7c9ba8b7mr92496lfv.99.1705606189123;
-        Thu, 18 Jan 2024 11:29:49 -0800 (PST)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id d3-20020a170906544300b00a2693ce340csm9372721ejp.59.2024.01.18.11.29.48
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jan 2024 11:29:48 -0800 (PST)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-559d95f1e69so2594288a12.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jan 2024 11:29:48 -0800 (PST)
-X-Received: by 2002:a50:99d1:0:b0:55a:196:6ed6 with SMTP id
- n17-20020a5099d1000000b0055a01966ed6mr865823edb.82.1705606187982; Thu, 18 Jan
- 2024 11:29:47 -0800 (PST)
+	s=arc-20240116; t=1705607922; c=relaxed/simple;
+	bh=dg8AYukbRIwcDM7XMhA2eAX0Vj/41D/3o41gR6bxNzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u2EqRnVsmsXg0for47OZ0wRfNZtlvsuBIIAGRYJCMCmGzn+2RbynZ+BBhp5U11b/Q6eZwORLctC568VTYu4LCpjZPochdJbTh0Jii4b/qzVZ1OcMVCSx0FBqiXQ/nL6Q/G3SNu4GEJl0FKHt4Ecgho3DkCkJ/K5NTjQSq+64WYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kOcnPxyT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50BF7C433C7;
+	Thu, 18 Jan 2024 19:58:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705607921;
+	bh=dg8AYukbRIwcDM7XMhA2eAX0Vj/41D/3o41gR6bxNzE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kOcnPxyTNJLXDXVOtyj99VAsOk5s0Rmh83NR1a9NOgU/OF5FOi72j3zLwSt210Nus
+	 Dj4P0dm5hTDZcazYWhWxYczQmqtNTEG43VEDdUXGPSaqLmzmR97NTuw8YTekBMF+OI
+	 ldipeDxBaXKpzY0ZaRVwUQbY/pusnuaIPwFnT8vd0t+Q4pG8AH3CLYak4Z4vUn0Ub/
+	 MDDl+enUsNxWgtsRxya+NNhRr7KdNGzGlzh7twIgvuG8k/M7SgqKtOQoy/Bk96yx28
+	 VpimFp2KEjfb1RkRd3mdE37KHbO4bTVMjTmEalTGSdvHcEBV3FsSLG7BuKppdoTIIP
+	 riNFJwlivNLUg==
+Date: Thu, 18 Jan 2024 19:58:32 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v7 34/39] kselftest/arm64: Add a GCS test program built
+ with the system libc
+Message-ID: <d5c8b071-dd68-4e5c-b0ba-10c5fdc0c730@sirena.org.uk>
+References: <20231122-arm64-gcs-v7-0-201c483bd775@kernel.org>
+ <20231122-arm64-gcs-v7-34-201c483bd775@kernel.org>
+ <875y1089i4.fsf@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240118004618.19707-1-krisman@suse.de> <20240118035053.GB1103@sol.localdomain>
- <8734uufy1o.fsf@mailhost.krisman.be>
-In-Reply-To: <8734uufy1o.fsf@mailhost.krisman.be>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 18 Jan 2024 11:29:31 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whgQXOouz7KVHKb_SYEo1qujH_1c9TjMLmaQmdbdRE_uw@mail.gmail.com>
-Message-ID: <CAHk-=whgQXOouz7KVHKb_SYEo1qujH_1c9TjMLmaQmdbdRE_uw@mail.gmail.com>
-Subject: Re: [PATCH v2] libfs: Attempt exact-match comparison first during
- casefold lookup
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: Eric Biggers <ebiggers@kernel.org>, tytso@mit.edu, linux-fsdevel@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, jaegeuk@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="J0lYyRO8meje2xTl"
+Content-Disposition: inline
+In-Reply-To: <875y1089i4.fsf@linaro.org>
+X-Cookie: FEELINGS are cascading over me!!!
 
-On Thu, 18 Jan 2024 at 07:42, Gabriel Krisman Bertazi <krisman@suse.de> wrote:
->
-> But I don't see how this could be a problem.  the str pointer itself
-> can't change since it's already a copy of the dentry->d_name pointer; if
-> the string is external, it is guaranteed to exist until the end of the
-> lookup; Finally, If it's inlined, the string can change concurrently
-> which, in the worst case scenario, gives us a false result. But then,
-> VFS will retry, like we do for the case-insensitive comparison right
-> below.
->
-> ..Right? :)
 
-Wrong, for two subtle reasons.
+--J0lYyRO8meje2xTl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The issue is not that the string can go away. The issue is that the
-string and the length have been loaded independently - and may not
-match.
+On Thu, Dec 14, 2023 at 11:50:11PM -0300, Thiago Jung Bauermann wrote:
 
-So when you do that
+> If I swap process_vm_readv() and process_vm_writev(), then the read
+> succeeds but the write fails:
 
-        if (len == name->len && !memcmp(str, name->name, len))
+The writes are intended to fail, for security reasons we explicitly
+block this API for GCS pages.  Given that process_vm_writev() is only
+available with similar permissions to ptrace() which does not have these
+restrictions this on first consideration feels like something that we
+should allow but it feels out of scope for this already very large
+series to do so so I'll fix the test.
 
-the 'name->len' you test for equality with 'len' may not match the
-length of the string allocated in 'name->name', because they are two
-different loads of two different values, and we do not hold the lock
-that makes them consistent.
+--J0lYyRO8meje2xTl
+Content-Type: application/pgp-signature; name="signature.asc"
 
-See the big comment (and the READ_ONCE()" in dentry_cmp(), and notice
-how dentry_cmp() intentionally doesn't use 'name->len' at all.
+-----BEGIN PGP SIGNATURE-----
 
-Subtle, subtle - but this is *incredibly* performance-critical code.
-Locks are completely out of the question - they would make the whole
-RCU pathwalk completely pointless, and the RCU path-walk with no
-stores to the dentry cache is what makes the dentry cache perform so
-well.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmWpgucACgkQJNaLcl1U
+h9CYvgf5AXvQCEOJft2rRvx77RKKR6OcqHq1nMW9gq0PedqzL0bOOJ8VUxLbblGi
+ODi9eMUiTzx/e+/d8/7JXSG4dg6mZmDLRZlgKYdl0wYK+D4AL1jb8Xm3KRcZPTYj
+9wXpkwLj3R/4slPoom0idK/+g7BmgwhhGKsmDPh279p1vXn4F3GdbFvta3KvvKB4
+f8jmwIVrllAaAXZsmg2eIvTd/lvna7Oa6C3UrHqN8QYaiokebhB+fvyY5LIRx6oW
+a0godJWG2XN83VL3A5Mgnk2v27ewHVAAQ5MeMKBJSYwLQYNyWlh1Y6J0s7jAYmhU
+pQqh3jZ7jg6I1WyqsYO12yX1KYXFTw==
+=FSEz
+-----END PGP SIGNATURE-----
 
-So it's not even that locks have contention, it's literally that RCU
-path lookup treats the dentries as read-only and you actually get
-shared cachelines and true parallel lookups. No reference count
-updates, no *nothing* like that.
-
-This is why dentry_cmp() does that magical dentry_string_cmp(), which
-is very subtle: it knows that regardless of *which* source of naem we
-have, the word-aligned reads of d_name->name are safe, because
- (a) the allocations are word-aligned
- (b) the dentry name allocations all end with a NUL byte (unlike the
-pathname ones that can have '/' at the end of the name)
- (c) the *pathname* length is reliable, and the previous word didn't
-have a NUL byte in it because that would have ended the compare
- (d) so that "read one word from cs" is safe, *despite* the fact that
-the length we have isn't something we can rely on (it comes from the
-pathname side, of course).
-
-And yes, this code is subtle. There are very few people who really
-understand all the dentry rules. But it is *the* most critical piece
-of code in the kernel for a lot of real-life loads. Looking up
-pathnames is pretty much "Job #1" of an OS - a lot of the rest is
-"details".
-
-                   Linus
+--J0lYyRO8meje2xTl--
 
