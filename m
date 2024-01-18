@@ -1,219 +1,301 @@
-Return-Path: <linux-fsdevel+bounces-8241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602848318EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 13:08:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A5D831939
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 13:37:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4684B2418E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 12:08:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AA7C1C22A19
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 12:37:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B12472421B;
-	Thu, 18 Jan 2024 12:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CFE24B3A;
+	Thu, 18 Jan 2024 12:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eukvsLbP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LYhAz02K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63FF24208
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jan 2024 12:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E78C241E2;
+	Thu, 18 Jan 2024 12:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705579721; cv=none; b=UoHkWg4AkF7Mduge5M17iwd3zeXxsXi6/DYtsDKB4mzln7ScPBmq9Px9kisWX8HAJFJGgr4w9E7ReuhioFIpkrCVGTuyrAJKTnBCAVr4hDMZ8Bd0Zky5p1x3cxpxXYKQNIO/LtPdO6rZD8hOKUHVPObDmlyrwLws5rh2aKTQIk8=
+	t=1705581458; cv=none; b=c4YzN0tRZxnv2RHGNrTBKMphT+yYdmUossnN22suqmVoA2GvaVks6daQmgbBchV6FutLdR10ndqcPFV2vkZ8bvTmIJHr3dj/NEbWWY9/7A4AYJcWgwtjCfD+qLYrVngvOs/dEj+TNIt7jLhyQlzN4c1emrLKqZNwZHliTsHqsuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705579721; c=relaxed/simple;
-	bh=+95s59nCbuH1MOEy/1XCExnsiS4mFy9bujBGao8WiZk=;
-	h=DKIM-Signature:Received:X-MC-Unique:Received:
-	 X-Google-DKIM-Signature:X-Gm-Message-State:X-Received:
-	 X-Google-Smtp-Source:X-Received:Received:Message-ID:Subject:From:
-	 To:Cc:Date:In-Reply-To:References:Autocrypt:Content-Type:
-	 Content-Transfer-Encoding:User-Agent:MIME-Version; b=P8WE/LlqhSCvNLwQ7PVgJ1R5FbGotHaqbJfmcY4P7JYySxg990V9/E1fM7FcLUQE/Rwq05qyvx+1e47/Z+n/GdgoSeLhCvwQO16C/5hVtAaf918KxBEHGyJG5BAbGgvm52H4OrP+S1jgmOwTVLkp78tJq/Dx0KyBOtkMsxfapB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eukvsLbP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1705579718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HicNea/y14HdyDm8+KfGOfVkker3KFDuhsgaoQsYzhg=;
-	b=eukvsLbP+aEvN60wFpowABrMMFFa5I0lvqXXmmWMB8TGs6J0153pGTtdPlnKF16kWxqtUw
-	KgRlfvmZMuZ6ch+ukLEBSMvrCMQh4M9aGG/HkmX+EnMNWguF4JgfGLLTp0LThVBfFQVo+Y
-	GmKcp74m/I0mFeFVFmo4X+qNgI7lhM8=
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
- [209.85.167.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-452-9h0vP5VjPxSasWKKQLK17A-1; Thu, 18 Jan 2024 07:08:37 -0500
-X-MC-Unique: 9h0vP5VjPxSasWKKQLK17A-1
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3bb8b66b091so13338014b6e.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jan 2024 04:08:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705579716; x=1706184516;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HicNea/y14HdyDm8+KfGOfVkker3KFDuhsgaoQsYzhg=;
-        b=ncUFa5mJlRXVyyJCfgJ+ijNb6UbY0G1bs2nOsSFot1vm8l+jY7aPd8oNauVpq28ZGa
-         fpvLEiuc7YGQmqSRQNDkMxGAQVhd+DvttwR2YTcc5CsXNjZpoqdtdhedhJXox8mAtWF1
-         QyvtHHa4if/BX8vmzzb+iLweebGHsEGWrYYBVivXO/DWfENTXWBlZ+Xs4KnRkonUT1eu
-         ptr5XeOZfKLkhRNMIN07gD1A14G0gCJPkADpeMeI1nfJHmWPhSfrnP+l5RbLNdm8uyon
-         DRWbDwLgCVY/0DZnk+7qA7ew4Wb0CyY/Du3pYeTXD5V059AHftAytDgcreF8HcusexFj
-         CAXw==
-X-Gm-Message-State: AOJu0YzKP+gwmRhtKbumkTzXJ/uc7TbcWMRYG+ftFOHdrpwxjrFqMbjs
-	vSdwD73LJCZzH6fmZTeWUhltrsw/kSVaIJJtGKgbez9NVefbtBpTsGYLv6hIpVBS/QD6kR7yceF
-	KBKWtGMdHEKMVP18STLt2rMR+/1JxrGffzo8dOQOoGMNjm9odS3hXLFb0LbF+2pw=
-X-Received: by 2002:a05:6808:120e:b0:3bd:9d1f:5c67 with SMTP id a14-20020a056808120e00b003bd9d1f5c67mr677140oil.16.1705579716430;
-        Thu, 18 Jan 2024 04:08:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF1H1W2iQF5nNRGcBiys4jbU34/AhvfzGEDnFZ8KwUp42BrE2hst7O8YgYATvn6cCQy+N61bA==
-X-Received: by 2002:a05:6808:120e:b0:3bd:9d1f:5c67 with SMTP id a14-20020a056808120e00b003bd9d1f5c67mr677137oil.16.1705579716209;
-        Thu, 18 Jan 2024 04:08:36 -0800 (PST)
-Received: from [172.31.0.10] (c-e6a5e255.022-110-73746f36.bbcust.telenor.se. [85.226.165.230])
-        by smtp.gmail.com with ESMTPSA id 90-20020a9f22e3000000b007ce85faac17sm1301114uan.38.2024.01.18.04.08.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jan 2024 04:08:35 -0800 (PST)
-Message-ID: <157a90d9b3a5469a003bc5981b0fdee17a55bc18.camel@redhat.com>
-Subject: Re: [PATCH] ovl: require xwhiteout feature flag on layer roots
-From: Alexander Larsson <alexl@redhat.com>
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
-Date: Thu, 18 Jan 2024 13:08:33 +0100
-In-Reply-To: <CAJfpegvhWwmHXzo3dd5VYLrCjUhxAesNAha-dOB+PCP8M2rM2g@mail.gmail.com>
-References: <20240118104144.465158-1-mszeredi@redhat.com>
-	 <CAOQ4uxgB3qhqtTGsvgLQ6x4taZ4m-V0MD9rXJ_zacTPrCR+bow@mail.gmail.com>
-	 <CAJfpegvhWwmHXzo3dd5VYLrCjUhxAesNAha-dOB+PCP8M2rM2g@mail.gmail.com>
-Autocrypt: addr=alexl@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 (3.50.3-1.fc39) 
+	s=arc-20240116; t=1705581458; c=relaxed/simple;
+	bh=ik1NHCtA8OUk9NpUop8jx5337jMu3I6UAWwHGVz7Eok=;
+	h=Received:DKIM-Signature:From:To:Cc:Subject:Date:Message-ID:
+	 X-Mailer:MIME-Version:X-Developer-Signature:X-Developer-Key:
+	 Content-Transfer-Encoding; b=rJaaG+YemG2u0XI2YAmjpET3UQvCtBouqU3XIfARlNX6NjrARLVIJkAs+Ga1y8/Zq0+STcnVx4Uaj3rg+JjH9448G6Dqy2/JEhtt5Wy8oQplW/Co9ViLu4W1pc+H8++2XU/3alKaWyeshotJmylNHlP9lysQK+tByP/7icvnsEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LYhAz02K; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6049EC433F1;
+	Thu, 18 Jan 2024 12:37:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705581457;
+	bh=ik1NHCtA8OUk9NpUop8jx5337jMu3I6UAWwHGVz7Eok=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LYhAz02KCsoY1p42ihq+y5OT+Pb/OO3Gwj32+EjZpDrGInOfzBUgy4wiFjEugpPiv
+	 2l1kMH9W7hdkrvMNUBFKlSbU4Ffl+v4ZajL7mz2e1MQuom+Q0GmPu723nXf0A1+e0f
+	 FEV9sdRT3mtlX8H7AzVo2Qv21XZQknMhNduQIskJGpE8Unt+ygBDLwrJ0OD+ujNN9U
+	 toB+1a407jaNdeQyLD0GJjsNC39IeoZEAiwckn3xcbosHVrQJ0O7GA0E2YBbO5wYg5
+	 aVcG7ctJQV1NMC6o1tBVa/Tkj4M189SGBKldwYga5tyYrmbFWQ8eBirNT/Mu3Eg/iK
+	 GtR0gSTrcLneA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs netfs updates
+Date: Thu, 18 Jan 2024 13:35:52 +0100
+Message-ID: <20240118-vfs-netfs-cf05da67fbe0@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12641; i=brauner@kernel.org; h=from:subject:message-id; bh=ik1NHCtA8OUk9NpUop8jx5337jMu3I6UAWwHGVz7Eok=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSulNZ2N97whTFERkiIZffNZzHebPVVzdqLlikUz8/gl piXNeVdRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwERuRzL8Zjef5ZYYJiFwOkhf W/r60rnbTnywr5SSk/i/MMxp6ZIl1owMq7fcsuN5XLz59yS1m8ESRfsKj/tN5JzA9MHa4Dl33xd nJgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Resending with plan text.
+Hey Linus,
 
-On Thu, 2024-01-18 at 12:39 +0100, Miklos Szeredi wrote:
-> On Thu, 18 Jan 2024 at 12:22, Amir Goldstein <amir73il@gmail.com>
-> wrote:
-> >=20
-> > On Thu, Jan 18, 2024 at 12:41=E2=80=AFPM Miklos Szeredi
-> > <mszeredi@redhat.com> wrote:
-> > >=20
-> > > Add a check on each layer for the xwhiteout feature.=C2=A0 This
-> > > prevents
-> > > unnecessary checking the overlay.whiteouts xattr when reading a
-> > > directory if this feature is not enabled, i.e. most of the time.
-> >=20
-> > Does it really have a significant cost or do you just not like the
-> > unneeded check?
->=20
-> It's probably insignificant.=C2=A0=C2=A0 But I don't know and it would be=
- hard
-> to prove.
->=20
-> > IIRC, we anyway check for ORIGIN xattr and IMPURE xattr on
-> > readdir.
->=20
-> We check those on lookup, not at readdir.=C2=A0 Might make sense to check
-> XWHITEOUTS at lookup regardless of this patch, just for consistency.
->=20
-> > > --- a/fs/overlayfs/overlayfs.h
-> > > +++ b/fs/overlayfs/overlayfs.h
-> > > @@ -51,6 +51,7 @@ enum ovl_xattr {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 OVL_XATTR_PROTATTR,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 OVL_XATTR_XWHITEOUT,
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 OVL_XATTR_XWHITEOUTS,
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 OVL_XATTR_FEATURE_XWHITEOUT,
-> >=20
-> > Can we not add a new OVL_XATTR_FEATURE_XWHITEOUT xattr.
-> >=20
-> > Setting OVL_XATTR_XWHITEOUTS on directories with xwhiteouts is
-> > anyway the responsibility of the layer composer.
-> >=20
-> > Let's just require the layer composer to set OVL_XATTR_XWHITEOUTS
-> > on the layer root even if it does not have any immediate xwhiteout
-> > children as "layer may have xwhiteouts" indication. ok?
->=20
-> Okay.
-> >=20
+Based on the discussions at Maintainer's Summit I've encouraged relevant
+people to provide pulls if they feel comfortable doing so. So same as
+vfs-6.8.rw this contains pulls.
 
-This will cause readdir() on the root dir to always look for whiteouts
-even though there are none, but that is probably fine.
+I've intentionally delayed sending this until the second week to be able
+to include a round of fixes merged beginning of January.
 
-It does mean we don't have to change xfstests, but I still have to
-change mkcomposefs.
+/* Summary */
+This extends the netfs helper library that network filesystems can use
+to replace their own implementations. Both afs and 9p are ported. cifs
+is ready as well but the patches are way bigger and will be routed
+separately once this is merged. That will remove lots of code as well.
 
+The overal goal is to get high-level I/O and knowledge of the page cache
+and ouf of the filesystem drivers. This includes knowledge about the
+existence of pages and folios
 
-> > > @@ -1414,6 +1414,17 @@ int ovl_fill_super(struct super_block *sb,
-> > > struct fs_context *fc)
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err)
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 goto out_free_oe;
-> > >=20
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D 0; i < ofs->numlayer=
-; i++) {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 struct path path =3D { .mnt =3D layers[i].mnt };
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (path.mnt) {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 path.den=
-try =3D path.mnt->mnt_root;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D =
-ovl_path_getxattr(ofs, &path,
-> > > OVL_XATTR_FEATURE_XWHITEOUT, NULL, 0);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err =
->=3D 0)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 layers[i].feature_xwhiteout =3D
-> > > true;
-> >=20
-> >=20
-> > Any reason not to do this in ovl_get_layers() when adding the
-> > layer?
->=20
-> Well, ovl_get_layers() is called form ovl_get_lowerstack() implying
-> that it's part of the lower layer setup.
->=20
-> Otherwise I don't see why it could not be in ovl_get_layers().=C2=A0=C2=
-=A0
-> Maybe
-> some renaming can help.
->=20
+The pull request converts afs and 9p. This removes about 800 lines of
+code from afs and 300 from 9p. For 9p it is now possible to do writes in
+larger than a page chunks. Additionally, multipage folio support can be
+turned on for 9p. Separate patches exist for cifs removing another 2000+
+lines. I've included detailed information in the individual pulls I
+took. Here is an overview:
 
-In the version I was preparing=20
-(https://github.com/alexlarsson/linux/tree/ovl-xattr-whiteouts-feature)
-it does the setup in ovl_get_layers(). The one difference this makes is
-that it doesn't apply feature_xwhiteout on the upperdir layer. I don't
-think we want to do xwhiteouts on the upperdir, but if we do it needs
-to be initialized in ovl_get_upper() too.
+* Add NFS-style (and Ceph-style) locking around DIO vs buffered I/O
+  calls to prevent these from happening at the same time.
+* Support for direct and unbuffered I/O.
+* Support for write-through caching in the page cache.
+* O_*SYNC and RWF_*SYNC writes use write-through rather than writing to
+  the page cache and then flushing afterwards.
+* Support for write-streaming.
+* Support for write grouping.
+* Skip reads for which the server could only return zeros or EOF.
+* The fscache module is now part of the netfs library and the
+  corresponding maintainer entry is updated.
+* Some helpers from the fscache subsystem are renamed to mark them as
+  belonging to the netfs library.
+* Follow-up fixes for the netfs library.
+* Follow-up fixes for the 9p conversion.
 
---=20
-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-=3D-=3D-=3D
- Alexander Larsson                                            Red Hat,
-Inc=20
-       alexl@redhat.com            alexander.larsson@gmail.com=20
-He's a fast talking alcoholic grifter searching for his wife's true=20
-killer. She's a wealthy communist Hell's Angel in the witness
-protection=20
-program. They fight crime!=20
+/* Testing */
+clang: Debian clang version 16.0.6 (19)
+gcc: (Debian 13.2.0-7) 13.2.0
 
+All patches are based on v6.7-rc4 and have been sitting in linux-next.
+
+/* Conflicts */
+This has two merge conflicts with mainline:
+
+[1] In the MAINTAINERS file as both the vfs-6.8.rw tag and the
+    vfs-6.8.netfs tag add new entries. The resolution is just additive.
+    IOW, vfs-6.8.rw added an entry and vfs-6.8.netfs does as well.
+[2] Mainline has the generic_error_remove_page() helper removed. This
+    helper was used in netfs_kill_pages() in fs/netfs/buffered_write.c.
+    It simply needs to be replaced with generic_error_remove_folio().
+[3] This is a minor merge conflict in fs/afs/write.c. The file as it is in
+    vfs-6.8.netfs is correct.
+
+Since mainline doesn't contain the fs/netfs/buffered_write.c where the
+helper mentioned in [2] needs to be replaced the resolution is
+ridiculously large so I've added the merge resolution for [1] to [3]
+here: https://gitlab.com/-/snippets/3640251
+
+The following changes since commit 861deac3b092f37b2c5e6871732f3e11486f7082:
+
+  Linux 6.7-rc7 (2023-12-23 16:25:56 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.8.netfs
+
+for you to fetch changes up to 1d5911d43cab5fb99229b02bce173b0c6d9da7d2:
+
+  Merge tag 'netfs-lib-20240109' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs into vfs.netfs (2024-01-11 12:22:33 +0100)
+
+Please consider pulling these changes from the signed vfs-6.8.netfs tag.
+
+Happy New Year!
+Christian
+
+----------------------------------------------------------------
+vfs-6.8.netfs
+
+----------------------------------------------------------------
+Christian Brauner (3):
+      Merge tag 'netfs-lib-20231228' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs
+      Merge tag 'netfs-lib-20240104' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs
+      Merge tag 'netfs-lib-20240109' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs into vfs.netfs
+
+David Howells (52):
+      afs: Remove whitespace before most ')' from the trace header
+      afs: Automatically generate trace tag enums
+      netfs, fscache: Move fs/fscache/* into fs/netfs/
+      netfs, fscache: Combine fscache with netfs
+      netfs, fscache: Remove ->begin_cache_operation
+      netfs, fscache: Move /proc/fs/fscache to /proc/fs/netfs and put in a symlink
+      netfs: Move pinning-for-writeback from fscache to netfs
+      netfs: Add a procfile to list in-progress requests
+      netfs: Allow the netfs to make the io (sub)request alloc larger
+      netfs: Add a ->free_subrequest() op
+      afs: Don't use folio->private to record partial modification
+      netfs: Provide invalidate_folio and release_folio calls
+      netfs: Implement unbuffered/DIO vs buffered I/O locking
+      netfs: Add iov_iters to (sub)requests to describe various buffers
+      netfs: Add support for DIO buffering
+      netfs: Provide tools to create a buffer in an xarray
+      netfs: Add func to calculate pagecount/size-limited span of an iterator
+      netfs: Limit subrequest by size or number of segments
+      netfs: Extend the netfs_io_*request structs to handle writes
+      netfs: Add a hook to allow tell the netfs to update its i_size
+      netfs: Make netfs_put_request() handle a NULL pointer
+      netfs: Make the refcounting of netfs_begin_read() easier to use
+      netfs: Prep to use folio->private for write grouping and streaming write
+      netfs: Dispatch write requests to process a writeback slice
+      netfs: Provide func to copy data to pagecache for buffered write
+      netfs: Make netfs_read_folio() handle streaming-write pages
+      netfs: Allocate multipage folios in the writepath
+      netfs: Implement unbuffered/DIO read support
+      netfs: Implement unbuffered/DIO write support
+      netfs: Implement buffered write API
+      netfs: Allow buffered shared-writeable mmap through netfs_page_mkwrite()
+      netfs: Provide netfs_file_read_iter()
+      netfs, cachefiles: Pass upper bound length to allow expansion
+      netfs: Provide a writepages implementation
+      netfs: Provide a launder_folio implementation
+      netfs: Implement a write-through caching option
+      netfs: Optimise away reads above the point at which there can be no data
+      netfs: Export the netfs_sreq tracepoint
+      afs: Use the netfs write helpers
+      9p: Use netfslib read/write_iter
+      cachefiles: Fix __cachefiles_prepare_write()
+      9p: Fix initialisation of netfs_inode for 9p
+      9p: Do a couple of cleanups
+      9p: Use length of data written to the server in preference to error
+      netfs: Rearrange netfs_io_subrequest to put request pointer first
+      netfs: Fix proc/fs/fscache symlink to point to "netfs" not "../netfs"
+      netfs: Mark netfs_unbuffered_write_iter_locked() static
+      netfs: Count DIO writes
+      netfs: Fix interaction between write-streaming and cachefiles culling
+      netfs: Fix the loop that unmarks folios after writing to the cache
+      cachefiles: Fix signed/unsigned mixup
+      netfs: Fix wrong #ifdef hiding wait
+
+ Documentation/filesystems/netfs_library.rst     |   23 +-
+ MAINTAINERS                                     |   21 +-
+ arch/arm/configs/mxs_defconfig                  |    3 +-
+ arch/csky/configs/defconfig                     |    3 +-
+ arch/mips/configs/ip27_defconfig                |    3 +-
+ arch/mips/configs/lemote2f_defconfig            |    3 +-
+ arch/mips/configs/loongson3_defconfig           |    3 +-
+ arch/mips/configs/pic32mzda_defconfig           |    3 +-
+ arch/s390/configs/debug_defconfig               |    3 +-
+ arch/s390/configs/defconfig                     |    3 +-
+ arch/sh/configs/sdk7786_defconfig               |    3 +-
+ fs/9p/v9fs_vfs.h                                |    1 +
+ fs/9p/vfs_addr.c                                |  353 ++-----
+ fs/9p/vfs_file.c                                |   89 +-
+ fs/9p/vfs_inode.c                               |   16 +-
+ fs/9p/vfs_inode_dotl.c                          |    8 +-
+ fs/9p/vfs_super.c                               |   14 +-
+ fs/Kconfig                                      |    1 -
+ fs/Makefile                                     |    1 -
+ fs/afs/dynroot.c                                |    2 +-
+ fs/afs/file.c                                   |  213 ++--
+ fs/afs/inode.c                                  |   28 +-
+ fs/afs/internal.h                               |   72 +-
+ fs/afs/super.c                                  |    2 +-
+ fs/afs/write.c                                  |  828 +--------------
+ fs/cachefiles/Kconfig                           |    2 +-
+ fs/cachefiles/internal.h                        |    2 +-
+ fs/cachefiles/io.c                              |   34 +-
+ fs/cachefiles/ondemand.c                        |    2 +-
+ fs/ceph/addr.c                                  |   25 +-
+ fs/ceph/cache.h                                 |   45 +-
+ fs/ceph/inode.c                                 |    4 +-
+ fs/erofs/Kconfig                                |    7 +-
+ fs/fs-writeback.c                               |   10 +-
+ fs/fscache/Kconfig                              |   40 -
+ fs/fscache/Makefile                             |   16 -
+ fs/fscache/internal.h                           |  277 -----
+ fs/netfs/Kconfig                                |   39 +
+ fs/netfs/Makefile                               |   22 +-
+ fs/netfs/buffered_read.c                        |  229 ++++-
+ fs/netfs/buffered_write.c                       | 1253 +++++++++++++++++++++++
+ fs/netfs/direct_read.c                          |  125 +++
+ fs/netfs/direct_write.c                         |  171 ++++
+ fs/{fscache/cache.c => netfs/fscache_cache.c}   |    0
+ fs/{fscache/cookie.c => netfs/fscache_cookie.c} |    0
+ fs/netfs/fscache_internal.h                     |   14 +
+ fs/{fscache/io.c => netfs/fscache_io.c}         |   42 +-
+ fs/{fscache/main.c => netfs/fscache_main.c}     |   25 +-
+ fs/{fscache/proc.c => netfs/fscache_proc.c}     |   23 +-
+ fs/{fscache/stats.c => netfs/fscache_stats.c}   |   13 +-
+ fs/{fscache/volume.c => netfs/fscache_volume.c} |    0
+ fs/netfs/internal.h                             |  284 +++++
+ fs/netfs/io.c                                   |  213 +++-
+ fs/netfs/iterator.c                             |   97 ++
+ fs/netfs/locking.c                              |  216 ++++
+ fs/netfs/main.c                                 |  109 ++
+ fs/netfs/misc.c                                 |  260 +++++
+ fs/netfs/objects.c                              |   59 +-
+ fs/netfs/output.c                               |  478 +++++++++
+ fs/netfs/stats.c                                |   42 +-
+ fs/nfs/Kconfig                                  |    4 +-
+ fs/nfs/fscache.c                                |    7 -
+ fs/nfs/fscache.h                                |    2 +-
+ fs/smb/client/cifsfs.c                          |    9 +-
+ fs/smb/client/file.c                            |   18 +-
+ fs/smb/client/fscache.c                         |    2 +-
+ include/linux/fs.h                              |    2 +-
+ include/linux/fscache-cache.h                   |    3 +
+ include/linux/fscache.h                         |   45 -
+ include/linux/netfs.h                           |  181 +++-
+ include/linux/writeback.h                       |    2 +-
+ include/trace/events/afs.h                      |  496 +++------
+ include/trace/events/netfs.h                    |  155 ++-
+ mm/filemap.c                                    |    2 +
+ 74 files changed, 4301 insertions(+), 2504 deletions(-)
+ delete mode 100644 fs/fscache/Kconfig
+ delete mode 100644 fs/fscache/Makefile
+ delete mode 100644 fs/fscache/internal.h
+ create mode 100644 fs/netfs/buffered_write.c
+ create mode 100644 fs/netfs/direct_read.c
+ create mode 100644 fs/netfs/direct_write.c
+ rename fs/{fscache/cache.c => netfs/fscache_cache.c} (100%)
+ rename fs/{fscache/cookie.c => netfs/fscache_cookie.c} (100%)
+ create mode 100644 fs/netfs/fscache_internal.h
+ rename fs/{fscache/io.c => netfs/fscache_io.c} (86%)
+ rename fs/{fscache/main.c => netfs/fscache_main.c} (84%)
+ rename fs/{fscache/proc.c => netfs/fscache_proc.c} (58%)
+ rename fs/{fscache/stats.c => netfs/fscache_stats.c} (90%)
+ rename fs/{fscache/volume.c => netfs/fscache_volume.c} (100%)
+ create mode 100644 fs/netfs/locking.c
+ create mode 100644 fs/netfs/misc.c
+ create mode 100644 fs/netfs/output.c
 
