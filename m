@@ -1,164 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-8228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7D2683122D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 05:39:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8229683127F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 06:49:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A88D2285152
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 04:39:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A6F72870CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 05:49:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D120F79E4;
-	Thu, 18 Jan 2024 04:39:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716628F63;
+	Thu, 18 Jan 2024 05:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eaC+mKo5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIJRhpwV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391F729A2;
-	Thu, 18 Jan 2024 04:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.134.136.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F9A749D;
+	Thu, 18 Jan 2024 05:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705552782; cv=none; b=iAo9rnV+QKsBrcA4XvmSLcveFgt0FIC4piMxFpecEu7FI9CHebP1zxb5lraDbfUcGJfsj2AQHOCqwWtErAdmIa0F5UrBIz4VFkN3j1hQ8jkIcMwdqQ1T9tFdRie8XzbUWZpx/U6dWKeUnKyLmdoMLXHTpaYYdF5gaJKCPsYmjyM=
+	t=1705556981; cv=none; b=KW0w4d3DxA0zgRNElXvkrYybHslYCPA8vzWfhF6z2GuPc5lNrDbyF54kqy4tr8I9e8fBJxBcDLT8mMI5W20c3NtQDgbzlP9HPbQGuHHh6ct8LvdLh4HJQpJt2hNzxvGaG+iWVsa+HWWWVVJ76r1TSmj3BaUt40yGc8WS7PYMV2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705552782; c=relaxed/simple;
-	bh=WNBz0nAGev6j0DP23tPtu2NqwCR+QLRtNKY/oIRIW4M=;
-	h=DKIM-Signature:X-IronPort-AV:X-IronPort-AV:Received:X-ExtLoop1:
-	 X-IronPort-AV:Received:From:To:Cc:Subject:In-Reply-To:References:
-	 Date:Message-ID:User-Agent:MIME-Version:Content-Type; b=G3OGJqLDGzZ/+NmC8ROcRHfzVoLmYW9Wr1pkJBUQMn7tepuNyHfWbnzPZ7nk52qevLZR+CrdgAX16rgyTnYraVrSHV3VctREByXFJzHvzqNQca8BfHNgMt4WnFS3sLh34b1m5Wf4ViKDkWSuhcNui2viGEtQiu2hWKghj3Qxdb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eaC+mKo5; arc=none smtp.client-ip=134.134.136.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1705552780; x=1737088780;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=WNBz0nAGev6j0DP23tPtu2NqwCR+QLRtNKY/oIRIW4M=;
-  b=eaC+mKo5/j399IO5PLQMlDI/plGuijrXP0ydOndcQkCCP8lwKNZ401Qi
-   EUrV8qvN46n5YddsZLGqcFvBayfIIPeEbFsUlwmFhn9yQQxoQRUfTreOL
-   6aBbbGm4g1ul3qMwhm3Z6xr7n1EgyAfnSMyA/9U1pB/IIF5nBkMJ79eZJ
-   toY0yePYEdli1DnqcOCd4ZrhVSfxiJy9NZ3t7GJVtEAiKCzaskDaculRz
-   7dU1XubXZCE9dl8KySMLOFitPQ/5bMN4Kh+nnjZb0tLLJg0TP1mejNCLN
-   9dKnl/jCeDGlcUMscCxJILqp51OvKVMISnbXuPVQhri2pa4PNtzp5kuP4
-   Q==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10956"; a="390796593"
-X-IronPort-AV: E=Sophos;i="6.05,201,1701158400"; 
-   d="scan'208";a="390796593"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2024 20:39:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.05,201,1701158400"; 
-   d="scan'208";a="26359903"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2024 20:39:34 -0800
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Gregory Price <gregory.price@memverge.com>
-Cc: Gregory Price <gourry.memverge@gmail.com>,  <linux-mm@kvack.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-doc@vger.kernel.org>,
-  <linux-fsdevel@vger.kernel.org>,  <linux-api@vger.kernel.org>,
-  <corbet@lwn.net>,  <akpm@linux-foundation.org>,  <honggyu.kim@sk.com>,
-  <rakie.kim@sk.com>,  <hyeongtak.ji@sk.com>,  <mhocko@kernel.org>,
-  <vtavarespetr@micron.com>,  <jgroves@micron.com>,
-  <ravis.opensrc@micron.com>,  <sthanneeru@micron.com>,
-  <emirakhur@micron.com>,  <Hasan.Maruf@amd.com>,
-  <seungjun.ha@samsung.com>,  <hannes@cmpxchg.org>,
-  <dan.j.williams@intel.com>
-Subject: Re: [PATCH 1/3] mm/mempolicy: implement the sysfs-based
- weighted_interleave interface
-In-Reply-To: <ZagSW5TXzZeKErlW@memverge.com> (Gregory Price's message of "Wed,
-	17 Jan 2024 12:46:03 -0500")
-References: <20240112210834.8035-1-gregory.price@memverge.com>
-	<20240112210834.8035-2-gregory.price@memverge.com>
-	<87le8r1dzr.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZadkmWj3Rd483f68@memverge.com>
-	<87o7dkzbsv.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZagSW5TXzZeKErlW@memverge.com>
-Date: Thu, 18 Jan 2024 12:37:36 +0800
-Message-ID: <87bk9jz27j.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1705556981; c=relaxed/simple;
+	bh=smVTYrpz7w+5HQWdbWbOy8VUmzkn+94GUCqw+7Dga5Y=;
+	h=Received:DKIM-Signature:References:User-agent:From:To:Cc:Subject:
+	 Date:In-reply-to:Message-ID:MIME-Version:Content-Type; b=IbYnEuVQpe1ESD4PZIk26tyF4AjPCAXYAi6rKyEHxH01HgukbbWN7uUpF9VBI8B26KsFPLutz9LYbVfua8HOvCqLRKanXjJQSLG4xpixVN1V9YXnOsH3ypOEXsdtQdR/XQ0buxZW8rYQpS7G332RViM8bKyvicxQ4L8bKtN1Rjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIJRhpwV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8A92C433F1;
+	Thu, 18 Jan 2024 05:49:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705556981;
+	bh=smVTYrpz7w+5HQWdbWbOy8VUmzkn+94GUCqw+7Dga5Y=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:From;
+	b=NIJRhpwVlSMzyIQv7cZAOp19MFxIxAdvwDkyMnVeDFcq1hMbF/8FJ5YDgAqsiqlxw
+	 bHGNqSSZ7bXp2R5ft2ZXBp0BuawNPhw/IhnkP4UThy9lzAoysszNVghNdPi6UUXfZR
+	 VZWpv+3o/rh625krmXjWcHS0GnDz6ImTYTAkYOTi0LmznODRwilN8jS3tjEneec/nc
+	 CLr0CTk7hkgn73zK0ucYLBjIKNn0QsNBFNfZuwQ0AGAWUXOzz5WUy9xh4eEwsnsG0i
+	 lXA4bUAIZdmBFUam24xb+AaE1TGIOQOwS1lo8mN95WHEzV2LapL0+OgNwTdF8zlV93
+	 MFZuHeia+CGTg==
+References: <87le96lorq.fsf@debian-BULLSEYE-live-builder-AMD64>
+ <20240104043420.GT361584@frogsfrogsfrogs>
+ <87sf3d8c0u.fsf@debian-BULLSEYE-live-builder-AMD64>
+User-agent: mu4e 1.10.8; emacs 27.1
+From: Chandan Babu R <chandanbabu@kernel.org>
+To: Chandan Babu R <chandanbabu@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>, linux-xfs@vger.kernel.org,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
+Subject: Re: [BUG REPORT] shrink_dcache_parent() loops indefinitely on a
+ next-20240102 kernel
+Date: Thu, 18 Jan 2024 10:59:06 +0530
+In-reply-to: <87sf3d8c0u.fsf@debian-BULLSEYE-live-builder-AMD64>
+Message-ID: <874jfbjimn.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain
 
-Gregory Price <gregory.price@memverge.com> writes:
+On Thu, Jan 04, 2024 at 06:40:43 PM +0530, Chandan Babu R wrote:
+> On Wed, Jan 03, 2024 at 08:34:20 PM -0800, Darrick J. Wong wrote:
+>> On Wed, Jan 03, 2024 at 12:12:12PM +0530, Chandan Babu R wrote:
+>>> Hi,
+>>> 
+>>> Executing fstests' recoveryloop test group on XFS on a next-20240102 kernel
+>>> sometimes causes the following hung task report to be printed on the console,
+>>> 
 
-> On Wed, Jan 17, 2024 at 02:58:08PM +0800, Huang, Ying wrote:
->> Gregory Price <gregory.price@memverge.com> writes:
->> 
->> > We haven't had the discussion on how/when this should happen yet,
->> > though, and there's some research to be done.  (i.e. when should DRAM
->> > weights be set? should the entire table be reweighted on hotplug? etc)
->> 
->> Before that, I'm OK to remove default_iw_table and use hard coded "1" as
->> default weight for now.
->> 
->
-> Can't quite do that. default_iw_table is a static structure because we
-> need a reliable default structure not subject to module initialization
-> failure.  Otherwise we can end up in a situation where iw_table is NULL
-> during some allocation path if the sysfs structure fails to setup fully.
+Meanwhile, I have executed some more experiments.
 
-As the first simplest implementation, we can avoid default_iw_table[].
-Becuse it's constant.
+The bug can be recreated on a next-20240102 kernel by executing either
+generic/388 or generic/475 for a maximum of 10 iterations. I tried to do a git
+bisect based on this observation i.e. I would mark a commit as 'good' if the
+bug does not get recreated within 10 iterations. This led to the following git
+bisect log,
 
-> There's no good reason to fail allocations just because sysfs failed to
-> initialization for some reason.  I'll leave default_iw_table with a size
-> of MAX_NUMNODES for now (nr_node_ids is set up at runtime per your
-> reference to `setup_nr_node_ids` below, so we can't use it for this).
+# git bisect log
+# bad: [ab0b3e6ef50d305278b1971891cf1d82ab050b35] Add linux-next specific files for 20240102
+# good: [33cc938e65a98f1d29d0a18403dbbee050dcad9a] Linux 6.7-rc4
+git bisect start 'HEAD' 'v6.7-rc4' 'fs/'
+# bad: [ca20194665a58bb541cc9e4dc7abcf96a7c96bd9] Merge branch 'main' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+git bisect bad ca20194665a58bb541cc9e4dc7abcf96a7c96bd9
+# good: [bb986dac9a56f88552418288c87e2223f8f448e3] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git
+git bisect good bb986dac9a56f88552418288c87e2223f8f448e3
+# bad: [964c80149d24b33bbddd222edbcc782be6eab841] Merge branch 'linux-next' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
+git bisect bad 964c80149d24b33bbddd222edbcc782be6eab841
+# good: [da9e5cca7e753dd96e07ae9212f4aeec1b9c68a6] Merge branch 'vfs.all' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+git bisect good da9e5cca7e753dd96e07ae9212f4aeec1b9c68a6
+# bad: [9e02829aa9d2e5f2e080ba0191c36a50a384acf1] Merge branch 'hwmon-next' of git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git
+git bisect bad 9e02829aa9d2e5f2e080ba0191c36a50a384acf1
+# bad: [3ac3331ea2c1826e3d30276e0a7e7e62fff519a8] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git
+git bisect bad 3ac3331ea2c1826e3d30276e0a7e7e62fff519a8
+# bad: [e01e3fb272cf7380dd5d70f52e955ac1122e2184] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git
+git bisect bad e01e3fb272cf7380dd5d70f52e955ac1122e2184
+# bad: [6d06b73bcd6eee6ca43f429a28e812ef2ad7a4ea] Merge branch 'work.simple_recursive_removal' into for-next
+git bisect bad 6d06b73bcd6eee6ca43f429a28e812ef2ad7a4ea
+# bad: [119dcc73a9c2df0da002054cdb2296cb32b7cb93] Merge branches 'work.dcache-misc' and 'work.dcache2' into work.dcache
+git bisect bad 119dcc73a9c2df0da002054cdb2296cb32b7cb93
+# good: [6367b491c17a34b28aece294bddfda1a36ec0377] retain_dentry(): introduce a trimmed-down lockless variant
+git bisect good 6367b491c17a34b28aece294bddfda1a36ec0377
+# good: [b33c14c8618edfc00bf8963e3b0c8a2b19c9eaa4] Merge branch 'no-rebase-overlayfs' into work.dcache-misc
+git bisect good b33c14c8618edfc00bf8963e3b0c8a2b19c9eaa4
+# good: [f9453a1ad1fadae29fd7db5ad8ea16f35e737276] Merge branch 'merged-selinux' into work.dcache-misc
+git bisect good f9453a1ad1fadae29fd7db5ad8ea16f35e737276
+# good: [57851607326a2beef21e67f83f4f53a90df8445a] get rid of DCACHE_GENOCIDE
+git bisect good 57851607326a2beef21e67f83f4f53a90df8445a
+# good: [ef69f0506d8f3a250ac5baa96746e17ae22c67b5] __d_unalias() doesn't use inode argument
+git bisect good ef69f0506d8f3a250ac5baa96746e17ae22c67b5
+# first bad commit: [119dcc73a9c2df0da002054cdb2296cb32b7cb93] Merge branches 'work.dcache-misc' and 'work.dcache2' into work.dcache
 
-We allocate memory during module initialization all over the places in
-kernel.  I don't think it will cause any issue in practice.  Just some
-additional checking for "default_iw_table == NULL".
+Looks like the bug is caused by changes that were made in two separate
+branches.
 
-And, we cannot make it just static, because we need to use RCU to keep
-it consistent.  Otherwise, it may be changed during reading.
+I have also confirmed that the bug was not present in the v6.7-rc4 kernel by
+executing generic/388 in a loop for 44 times.
 
->> >
->> >> u8 __rcu *iw_table;
->> >> 
->> >> Then, we only need to allocate nr_node_ids elements now.
->> >> 
->> >
->> > We need nr_possible_nodes to handle hotplug correctly.
->> 
->> nr_node_ids >= num_possible_nodes().  It's larger than any possible node
->> ID.
->>
->
-> nr_node_ids gets setup at runtime, while the default_iw_table needs
-> to be a static structure (see above).  I can make default_iw_table
-> MAX_NUMNODES and subsequent allocations of iw_table be nr_node_ids,
-> but that makes iw_table a different size at any given time.
->
-> This *will* break if "true hotplug" ever shows up and possible_nodes !=
-> MAX_NUMNODES. But I can write it up if it's a sticking point for you.
+I can also confirm that the issue can be recreated on a next-20240118 kernel.
 
-I don't think it is an issue for "true hotplug".  Because we can set
-nr_node_ids = MAX_NUMNODES even if there is something called "true
-hotplug".
-
-> Ultimately we're squabbling over, at most, about ~3kb of memory, just
-> keep that in mind. (I guess if you spawn 3000 threads and each tries a
-> concurrent write to sysfs/node1, you'd eat 3MB view briefly, but that
-> is a truly degenerate case and I can think of more denegerate things).
-
-Not just for memory wastage, it's about proper API too.
-
->> 
->> When "true node hotplug" becomes reality, we can make nr_node_ids ==
->> MAX_NUMNODES.  So, it's safe to use it.  Please take a look at
->> setup_nr_node_ids().
->> 
-
---
-Best Regards,
-Huang, Ying
+-- 
+Chandan
 
