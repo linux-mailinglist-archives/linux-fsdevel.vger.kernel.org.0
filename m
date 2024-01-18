@@ -1,127 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-8230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8229683127F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 06:49:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83CCB831277
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 06:35:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A6F72870CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 05:49:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 093EF284165
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 05:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716628F63;
-	Thu, 18 Jan 2024 05:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEE628F63;
+	Thu, 18 Jan 2024 05:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIJRhpwV"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MNtkIGsz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F9A749D;
-	Thu, 18 Jan 2024 05:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A24B79D4;
+	Thu, 18 Jan 2024 05:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705556981; cv=none; b=KW0w4d3DxA0zgRNElXvkrYybHslYCPA8vzWfhF6z2GuPc5lNrDbyF54kqy4tr8I9e8fBJxBcDLT8mMI5W20c3NtQDgbzlP9HPbQGuHHh6ct8LvdLh4HJQpJt2hNzxvGaG+iWVsa+HWWWVVJ76r1TSmj3BaUt40yGc8WS7PYMV2s=
+	t=1705556131; cv=none; b=ETgKGW8SM+XoiZmDzxT+VPqqQncqoxj2/usSM3vxbsNWO3A0/WeX2oisfbe0do81BLIPO0aCzHD3bFyrWgyGVkCvrQyn7TZvYgewVV5LbrEFPSxy0J2H3vLbX7ZPn8tM3seGuGo1t3pBDtLh94U+t1u2QGxx1z0w49ew4sh5Bf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705556981; c=relaxed/simple;
-	bh=smVTYrpz7w+5HQWdbWbOy8VUmzkn+94GUCqw+7Dga5Y=;
-	h=Received:DKIM-Signature:References:User-agent:From:To:Cc:Subject:
-	 Date:In-reply-to:Message-ID:MIME-Version:Content-Type; b=IbYnEuVQpe1ESD4PZIk26tyF4AjPCAXYAi6rKyEHxH01HgukbbWN7uUpF9VBI8B26KsFPLutz9LYbVfua8HOvCqLRKanXjJQSLG4xpixVN1V9YXnOsH3ypOEXsdtQdR/XQ0buxZW8rYQpS7G332RViM8bKyvicxQ4L8bKtN1Rjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIJRhpwV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8A92C433F1;
-	Thu, 18 Jan 2024 05:49:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705556981;
-	bh=smVTYrpz7w+5HQWdbWbOy8VUmzkn+94GUCqw+7Dga5Y=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:From;
-	b=NIJRhpwVlSMzyIQv7cZAOp19MFxIxAdvwDkyMnVeDFcq1hMbF/8FJ5YDgAqsiqlxw
-	 bHGNqSSZ7bXp2R5ft2ZXBp0BuawNPhw/IhnkP4UThy9lzAoysszNVghNdPi6UUXfZR
-	 VZWpv+3o/rh625krmXjWcHS0GnDz6ImTYTAkYOTi0LmznODRwilN8jS3tjEneec/nc
-	 CLr0CTk7hkgn73zK0ucYLBjIKNn0QsNBFNfZuwQ0AGAWUXOzz5WUy9xh4eEwsnsG0i
-	 lXA4bUAIZdmBFUam24xb+AaE1TGIOQOwS1lo8mN95WHEzV2LapL0+OgNwTdF8zlV93
-	 MFZuHeia+CGTg==
-References: <87le96lorq.fsf@debian-BULLSEYE-live-builder-AMD64>
- <20240104043420.GT361584@frogsfrogsfrogs>
- <87sf3d8c0u.fsf@debian-BULLSEYE-live-builder-AMD64>
-User-agent: mu4e 1.10.8; emacs 27.1
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: Chandan Babu R <chandanbabu@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel
- <linux-fsdevel@vger.kernel.org>, linux-xfs@vger.kernel.org,
- viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
-Subject: Re: [BUG REPORT] shrink_dcache_parent() loops indefinitely on a
- next-20240102 kernel
-Date: Thu, 18 Jan 2024 10:59:06 +0530
-In-reply-to: <87sf3d8c0u.fsf@debian-BULLSEYE-live-builder-AMD64>
-Message-ID: <874jfbjimn.fsf@debian-BULLSEYE-live-builder-AMD64>
+	s=arc-20240116; t=1705556131; c=relaxed/simple;
+	bh=LzhELx9h/U3h0sODMzPzGL+liQMJLMUOPLsau3AmHcA=;
+	h=DKIM-Signature:Received:Message-ID:Date:MIME-Version:User-Agent:
+	 Subject:Content-Language:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding; b=gRfXID9QmgchD2MeuHft24U/x941xut7A7r18vQ696j/1oiaV4A3VtGByjrvcx7dz6W0Ud+X0lUfIMugtZXszRRaNdYnrbNQx/AwuRXFXKhVJFW2KcomhnhQGViY7X45UTbaiGhkIHJIiWjxsnv7xkESitLYGvO1mpRR40xhXxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MNtkIGsz; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=dH6p9SMJNPi+ukFSRBSjYz3JqljL0xzAdUNPFPGLjN8=; b=MNtkIGszG0wjyKy69ZChUe34pJ
+	I9qgJLnzNof+kFnP30VaWjvapB5VfCSGR4/ZqawI3a9cwUWnHBsZtoIagpZ4gBI/etsgnJPKy9+Z+
+	24NfymFoezA1htxrNuWZiVSWhhcShszSc4bBaFEfoyAf2PdaYtOW0myN2BRnci8bpyqikpcrMyPy4
+	o4JmwO+S6B78p6hGvGplNaift93ECgd59muZJ9qncEM4/94+iBVml1Y+fSKhD8KYx4vK2YbhHZHYV
+	O5LIcd0nJtSn+VxI9hDufL4NGkV4im3AbZlqTM7ZEik1920mShuOQxa4m/XppLvv5rc3dd7cBIlN6
+	r2CdE+0w==;
+Received: from [50.53.46.231] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
+	id 1rQL3c-001iKd-19;
+	Thu, 18 Jan 2024 05:35:16 +0000
+Message-ID: <34862fc1-1cd9-47e3-b8e1-3fcce6ff7cf7@infradead.org>
+Date: Wed, 17 Jan 2024 21:35:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] bcachefs updates for 6.8
+Content-Language: en-US
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ Theodore Ts'o <tytso@mit.edu>, Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Greg KH <greg@kroah.com>, Mark Brown <broonie@kernel.org>,
+ Neal Gompa <neal@gompa.dev>, Kees Cook <keescook@chromium.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
+ Nikolai Kondrashov <spbnick@gmail.com>, Philip Li <philip.li@intel.com>,
+ Luis Chamberlain <mcgrof@kernel.org>
+References: <xlynx7ydht5uixtbkrg6vgt7likpg5az76gsejfgluxkztukhf@eijjqp4uxnjk>
+ <be2fa62f-f4d3-4b1c-984d-698088908ff3@sirena.org.uk>
+ <gaxigrudck7pr3iltgn3fp5cdobt3ieqjwohrnkkmmv67fctla@atcpcc4kdr3o>
+ <f8023872-662f-4c3f-9f9b-be73fd775e2c@sirena.org.uk>
+ <olmilpnd7jb57yarny6poqnw6ysqfnv7vdkc27pqxefaipwbdd@4qtlfeh2jcri>
+ <CAEg-Je8=RijGLavvYDvw3eOf+CtvQ_fqdLZ3DOZfoHKu34LOzQ@mail.gmail.com>
+ <40bcbbe5-948e-4c92-8562-53e60fd9506d@sirena.org.uk>
+ <2uh4sgj5mqqkuv7h7fjlpigwjurcxoo6mqxz7cjyzh4edvqdhv@h2y6ytnh37tj>
+ <2024011532-mortician-region-8302@gregkh>
+ <lr2wz4hos4pcavyrmswpvokiht5mmcww2e7eqyc2m7x5k6nbgf@6zwehwujgez3>
+ <20240117055457.GL911245@mit.edu>
+ <5b7154f86913a0957e0518b54365a1b0fce5fbea.camel@HansenPartnership.com>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <5b7154f86913a0957e0518b54365a1b0fce5fbea.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jan 04, 2024 at 06:40:43 PM +0530, Chandan Babu R wrote:
-> On Wed, Jan 03, 2024 at 08:34:20 PM -0800, Darrick J. Wong wrote:
->> On Wed, Jan 03, 2024 at 12:12:12PM +0530, Chandan Babu R wrote:
->>> Hi,
->>> 
->>> Executing fstests' recoveryloop test group on XFS on a next-20240102 kernel
->>> sometimes causes the following hung task report to be printed on the console,
->>> 
 
-Meanwhile, I have executed some more experiments.
 
-The bug can be recreated on a next-20240102 kernel by executing either
-generic/388 or generic/475 for a maximum of 10 iterations. I tried to do a git
-bisect based on this observation i.e. I would mark a commit as 'good' if the
-bug does not get recreated within 10 iterations. This led to the following git
-bisect log,
+On 1/17/24 05:03, James Bottomley wrote:
+> Finally testing infrastructure is how OSDL (the precursor to the Linux
+> foundation) got started and got its initial funding, so corporations
+> have been putting money into it for decades with not much return (and
+> pretty much nothing to show for a unified testing infrastructure ...
+> ten points to the team who can actually name the test infrastructure
+> OSDL produced) and have finally concluded it's not worth it, making it
+> a 10x harder sell now.
 
-# git bisect log
-# bad: [ab0b3e6ef50d305278b1971891cf1d82ab050b35] Add linux-next specific files for 20240102
-# good: [33cc938e65a98f1d29d0a18403dbbee050dcad9a] Linux 6.7-rc4
-git bisect start 'HEAD' 'v6.7-rc4' 'fs/'
-# bad: [ca20194665a58bb541cc9e4dc7abcf96a7c96bd9] Merge branch 'main' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
-git bisect bad ca20194665a58bb541cc9e4dc7abcf96a7c96bd9
-# good: [bb986dac9a56f88552418288c87e2223f8f448e3] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git
-git bisect good bb986dac9a56f88552418288c87e2223f8f448e3
-# bad: [964c80149d24b33bbddd222edbcc782be6eab841] Merge branch 'linux-next' of git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git
-git bisect bad 964c80149d24b33bbddd222edbcc782be6eab841
-# good: [da9e5cca7e753dd96e07ae9212f4aeec1b9c68a6] Merge branch 'vfs.all' of git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-git bisect good da9e5cca7e753dd96e07ae9212f4aeec1b9c68a6
-# bad: [9e02829aa9d2e5f2e080ba0191c36a50a384acf1] Merge branch 'hwmon-next' of git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git
-git bisect bad 9e02829aa9d2e5f2e080ba0191c36a50a384acf1
-# bad: [3ac3331ea2c1826e3d30276e0a7e7e62fff519a8] Merge branch 'next' of git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git
-git bisect bad 3ac3331ea2c1826e3d30276e0a7e7e62fff519a8
-# bad: [e01e3fb272cf7380dd5d70f52e955ac1122e2184] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git
-git bisect bad e01e3fb272cf7380dd5d70f52e955ac1122e2184
-# bad: [6d06b73bcd6eee6ca43f429a28e812ef2ad7a4ea] Merge branch 'work.simple_recursive_removal' into for-next
-git bisect bad 6d06b73bcd6eee6ca43f429a28e812ef2ad7a4ea
-# bad: [119dcc73a9c2df0da002054cdb2296cb32b7cb93] Merge branches 'work.dcache-misc' and 'work.dcache2' into work.dcache
-git bisect bad 119dcc73a9c2df0da002054cdb2296cb32b7cb93
-# good: [6367b491c17a34b28aece294bddfda1a36ec0377] retain_dentry(): introduce a trimmed-down lockless variant
-git bisect good 6367b491c17a34b28aece294bddfda1a36ec0377
-# good: [b33c14c8618edfc00bf8963e3b0c8a2b19c9eaa4] Merge branch 'no-rebase-overlayfs' into work.dcache-misc
-git bisect good b33c14c8618edfc00bf8963e3b0c8a2b19c9eaa4
-# good: [f9453a1ad1fadae29fd7db5ad8ea16f35e737276] Merge branch 'merged-selinux' into work.dcache-misc
-git bisect good f9453a1ad1fadae29fd7db5ad8ea16f35e737276
-# good: [57851607326a2beef21e67f83f4f53a90df8445a] get rid of DCACHE_GENOCIDE
-git bisect good 57851607326a2beef21e67f83f4f53a90df8445a
-# good: [ef69f0506d8f3a250ac5baa96746e17ae22c67b5] __d_unalias() doesn't use inode argument
-git bisect good ef69f0506d8f3a250ac5baa96746e17ae22c67b5
-# first bad commit: [119dcc73a9c2df0da002054cdb2296cb32b7cb93] Merge branches 'work.dcache-misc' and 'work.dcache2' into work.dcache
+What will ten points get me?  a weak cup of coffee?
 
-Looks like the bug is caused by changes that were made in two separate
-branches.
+Do I need a team to answer the question?
 
-I have also confirmed that the bug was not present in the v6.7-rc4 kernel by
-executing generic/388 in a loop for 44 times.
-
-I can also confirm that the issue can be recreated on a next-20240118 kernel.
+Anyway, Crucible.
 
 -- 
-Chandan
+#Randy
 
