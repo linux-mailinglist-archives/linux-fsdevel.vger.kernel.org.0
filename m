@@ -1,158 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-8220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0638B831172
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 03:34:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3933C831178
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 03:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 875521F25D8A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 02:34:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4843F1C224B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 02:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B178F7D;
-	Thu, 18 Jan 2024 02:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I5WI9hpW"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE032568B;
+	Thu, 18 Jan 2024 02:43:03 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2318C09
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jan 2024 02:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF225395;
+	Thu, 18 Jan 2024 02:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705545243; cv=none; b=DxjXuN+g5CAP0XgKPDgP0zUmZJDqebGunwqJ2JbTHO0tMoDeDeqQ856bdMWMsQ0FlBBoNBeZ14bEAgoqjf9XL0PIdZTYyEKCGzbpWq7zw0Q8GBGZoiVcXTu/Zats24J0FDFsdxdILlSD+1tRieBOkchNDioa7rx/ESUaY0WsheU=
+	t=1705545783; cv=none; b=dG/usc+xSI+IOiuohZ6Qjz+yya5+BiwnUGQd2m52UDp+sotUrkiOE6Q7TDtFN7UzY8FLScNekwDMFxmraV0pINz44e5q4gg8aWDPnZKwU8+ykonnHO9jyv8sm4Qe8SMObE+SsiKsT9emharBuizg71tmId2gxYhiLM4wB+UEzFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705545243; c=relaxed/simple;
-	bh=Fx0FZp/yriWUS/60rJIiJaDOE/GkdueDBQIxbv2+PDA=;
-	h=Received:DKIM-Signature:X-Google-DKIM-Signature:
-	 X-Gm-Message-State:X-Google-Smtp-Source:X-Received:Received:
-	 Received:X-Received:MIME-Version:References:In-Reply-To:From:Date:
-	 X-Gmail-Original-Message-ID:Message-ID:Subject:To:Cc:Content-Type;
-	b=Y4dijYrziphaYh+I5rr5oWuImfce6uFLC3wpqKo6BDEvzwoJ8k1FgZS32MUA58sguKx7c46TBPwrOtFIMCu9Hla0xsTnjJDN2JnfZCksWhhxZXRYmxoY3hybN5y2bC2XJKe+36tHfoj4JO6lg4YuwqxRiSKLjLuTvUQNOcXrXYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=I5WI9hpW; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-559dbeba085so1625536a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 18:34:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1705545239; x=1706150039; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZCb42IR8aKR+GNSKmqQtELI6hBL5y5IxUEk4iaV7Fw=;
-        b=I5WI9hpWk1TasqkgNmmCyGXmR86rx/o18FmIpDVKLUhYG50KfR2cwbZL2HPuE4qYs/
-         elVfHNpmq7QcCfFx2uT5nZdsjp9A8Uwgq2sIKrWFoNTV2F/qkmaqSmcOgqJw6HUsvGYA
-         OtltzS0rxg4SnTr2g1xB3CVfs01s8Ktc6Rngw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705545239; x=1706150039;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jZCb42IR8aKR+GNSKmqQtELI6hBL5y5IxUEk4iaV7Fw=;
-        b=LQVeLqgOcWxp4QTZC0u/hh/6/0htJcMnS4rqCacwkRetT7YR4l5p+bmrgkgFP9jVa7
-         4xzEBVu0U78BjLYVPUNp3eEX6hqDUs3H6iRPzbpQKgz3WHCTgs3E7KCfcjUvqgUb26P5
-         MzSez4tkozHpEmyueOGZDo6HjJAST3lMhPeJq07V9dqzjEqufr5NoQtM+kR/8ZzakcZx
-         8FkjYT2v53SgtvxsqBA42q/UlPX9ux8pGqa+JdaJKcwcArE3DtDavswWoEtEoxsQjx5n
-         nf3xLm+/ffOJCvee79Um+S9f3Jkx8PHK1p+gwOuGdPUc5tvSNQUvWmCps73x/Gy0rgGl
-         40aQ==
-X-Gm-Message-State: AOJu0Yxgdfs+7mKcAAWSB6gdWI5PAXFtEwQNDjddy4GmP+RJmtzBxvta
-	l5hAfcfGsjtfVHaBYqgdOpzrZ4UiEomFjgm/v+L31vo5oa6NWMyx1opCFhpVokI0Vv8HWRziOhR
-	u/z10GA==
-X-Google-Smtp-Source: AGHT+IEoGWv9nNAh+Quf+6CF03aeUKqt9NKUQPHZUKxiLpO0eWU4ipPoCmZQVySIFk15TocdjrtFhQ==
-X-Received: by 2002:a50:8ad7:0:b0:557:2069:db8c with SMTP id k23-20020a508ad7000000b005572069db8cmr128246edk.46.1705545238980;
-        Wed, 17 Jan 2024 18:33:58 -0800 (PST)
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com. [209.85.208.44])
-        by smtp.gmail.com with ESMTPSA id cn25-20020a0564020cb900b00559c8520f6bsm2062365edb.75.2024.01.17.18.33.58
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jan 2024 18:33:58 -0800 (PST)
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-559f80c9ab6so604984a12.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 18:33:58 -0800 (PST)
-X-Received: by 2002:aa7:da0e:0:b0:559:cc32:e087 with SMTP id
- r14-20020aa7da0e000000b00559cc32e087mr112756eds.20.1705545238057; Wed, 17 Jan
- 2024 18:33:58 -0800 (PST)
+	s=arc-20240116; t=1705545783; c=relaxed/simple;
+	bh=Sp48v75ABExvC+ONuT5IJSIo3WgvpDaJdKPbvchyrsY=;
+	h=X-Alimail-AntiSpam:Received:Message-ID:Date:MIME-Version:
+	 User-Agent:Subject:To:Cc:References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding; b=dzo50tGvOfyLt7V6dRAfUnHC00Hsgc6diCBf5M47PJ3V3DG/gDURpuCWj32yEMy5kLuTVY2dVYktbmkgNeHg5CjX8QYHCcRoVDr25ed15SbHBWOyT75IznsQg7BZfHUaQ26pbt8QZwJR5xcSqVgxRTcsP6jsx/9ehoRrsOGAcm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0W-r3A6E_1705545775;
+Received: from 30.97.48.47(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W-r3A6E_1705545775)
+          by smtp.aliyun-inc.com;
+          Thu, 18 Jan 2024 10:42:56 +0800
+Message-ID: <d5979f89-7a84-423a-a1c7-29bdbf7c2bc1@linux.alibaba.com>
+Date: Thu, 18 Jan 2024 10:43:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240117222836.11086-1-krisman@suse.de> <20240117223857.GN1674809@ZenIV>
- <87edeffr0k.fsf@mailhost.krisman.be> <CAHk-=wjd_uD4aHWEVZ735EKRcEU6FjUo8_aMXSxRA7AD8DapZA@mail.gmail.com>
- <20240118020554.GA1353741@mit.edu>
-In-Reply-To: <20240118020554.GA1353741@mit.edu>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 17 Jan 2024 18:33:40 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjkFcF4HKDhSf_fpsLNmDGMkD-ozaNdEhpEQ4JH=MsnNg@mail.gmail.com>
-Message-ID: <CAHk-=wjkFcF4HKDhSf_fpsLNmDGMkD-ozaNdEhpEQ4JH=MsnNg@mail.gmail.com>
-Subject: Re: [PATCH] libfs: Attempt exact-match comparison first during
- casefold lookup
-To: "Theodore Ts'o" <tytso@mit.edu>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>, Al Viro <viro@zeniv.linux.org.uk>, ebiggers@kernel.org, 
-	linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: improve dump_mapping() robustness
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: akpm@linux-foundation.org, willy@infradead.org, brauner@kernel.org,
+ jack@suse.cz, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <937ab1f87328516821d39be672b6bc18861d9d3e.1705391420.git.baolin.wang@linux.alibaba.com>
+ <20240118013857.GO1674809@ZenIV>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20240118013857.GO1674809@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 17 Jan 2024 at 18:06, Theodore Ts'o <tytso@mit.edu> wrote:
->
-> A file system which supports casefolding can support "strict" mode
 
-.. and we can support "shit" mode that craps all over your filesystem
-too. The fact that you can support something doesn't make it good.
 
-> This is what MacOS does, by the way.
+On 1/18/2024 9:38 AM, Al Viro wrote:
+> On Tue, Jan 16, 2024 at 03:53:35PM +0800, Baolin Wang wrote:
+> 
+>> With checking the 'dentry.parent' and 'dentry.d_name.name' used by
+>> dentry_name(), I can see dump_mapping() will output the invalid dentry
+>> instead of crashing the system when this issue is reproduced again.
+> 
+>>   	dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
+>> -	if (get_kernel_nofault(dentry, dentry_ptr)) {
+>> +	if (get_kernel_nofault(dentry, dentry_ptr) ||
+>> +	    !dentry.d_parent || !dentry.d_name.name) {
+>>   		pr_warn("aops:%ps ino:%lx invalid dentry:%px\n",
+>>   				a_ops, ino, dentry_ptr);
+>>   		return;
+> 
+> That's nowhere near enough.  Your ->d_name.name can bloody well be pointing
+> to an external name that gets freed right under you.  Legitimately so.
+> 
+> Think what happens if dentry has a long name (longer than would fit into
+> the embedded array) and gets renamed name just after you copy it into
+> a local variable.  Old name will get freed.  Yes, freeing is RCU-delayed,
+> but I don't see anything that would prevent your thread losing CPU
+> and not getting it back until after the sucker's been freed.
 
-The MacOS filesystem is the CVS of filesystems: if you see that it
-does something, the right thing is almost certainly to do the exact
-opposite.
+Yes, that's possible. And this appears to be a use-after-free issue in 
+the existing code, which is different from the issue that my patch 
+addressed.
 
-Case-folding is a horrible thing to do in the first place, but MacOS
-compounds on its bad ways by then using NFD normalization, AND
-EXPOSING THAT TO THE USER.
-
-IOW, MacOS actively changes and corrupts the data the user gave it for
-filenames.
-
-There are tons of Apple apologists out there that will make any number
-of excuses for it, but it's actively shit. It's broken garbage.
-
-So the fact that MacOS then has "strict" mode, really is an argument
-*against* it. The MacOS filesystem designers were fed the wrong kind
-of drugs, and I suspect they may not have been the brightest bunch to
-begin with.
-
-> So we don't need to worry about the user not being able to fix it,
-> because they won't have been able to create the file in the first
-> place.
-
-Yeah, that's a fine argument, until you have a bug or subtle bit flip
-data corruption, and now instead of having something you can recover,
-the system actively says "Nope".
-
-> I admit that when I discovered that MacOS errored out on illegal utf-8
-> characters it was mildly annoying,
-
-We may have to be able to interoperate with shit, but let's call it what it is.
-
-Nobody pretends FAT is a great filesystem that made great design
-decisions. That doesn't mean that we can't interoperate with it just
-fine.
-
-But we don't need to take those idiotic and bad design decisions to
-heart, and we don't need to hide the fact that they are horrendous
-design mistakes.
-
-So "strict" mode should mean that you can't *create* a misformed UTF-8 filename.
-
-It's that same "be conservative in what you do".
-
-But *dammit*, if "strict" mode means that you can't even read other
-peoples mistakes because your "->lookup()" function refuses to even
-look at it, then "strict" mode is GARBAGE.
-
-That's the "be liberal in what you accept" part. Do it, or be damned.
-
-Really. No excuses for shit modes.
-
-               Linus
+So how about adding a rcu_read_lock() before copying the dentry to a 
+local variable in case the old name is freed?
 
