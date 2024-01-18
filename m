@@ -1,67 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-8218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2278E83113F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 03:06:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1BCD83114D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 03:13:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 338361C208A7
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 02:06:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83176B214A3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 02:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B23853B5;
-	Thu, 18 Jan 2024 02:06:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5256B5395;
+	Thu, 18 Jan 2024 02:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="UF3PjnOu"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qezhMimt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63024699
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jan 2024 02:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1254422;
+	Thu, 18 Jan 2024 02:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705543569; cv=none; b=RTXew7/pzXJe8CfjsvI/e7CifsSZIYUgsM8M4H300fpQIn0tBGKOGEucwLUNcugW3mgZQrjPAMVn4lh7nD1SgtsSHyuY5HjyGwRTAEpyo6AbJAZCZGlRYoE/o1/y13sKAJUDy6VeoUz6L2w7UbTClduxmlwQOoa6Uu7+CyLp7is=
+	t=1705543975; cv=none; b=kDqF4EuqCbJVKbzqre3WgQWBny7d7CB442lbR+xk3bkSEsF7HTakAISlsuRZ8Y2cwIqQPqh7mWiCeIjLvMVpXMsP5/iz1Ph25Vyj1Z1AynAB76l35gpmhy4im3KQD74GR96Iaje/i7fpgrGqu/d7C3Gd1lPF8w2j43j/ykJFROM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705543569; c=relaxed/simple;
-	bh=sjhulmywinmZPP+TldxnvhakRoNud7Y3niJfj+wgFiM=;
-	h=Received:DKIM-Signature:Received:Date:From:To:Cc:Subject:
-	 Message-ID:References:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=iGFIgOc5DiCN8oRe1KFQ8Kk1zMGJWDW3sGqeg0DbV/VnneRkcLm/SZHi06qcBp/cSq//dk5IxNDZF8NwWQ35FzsSlUM2K28mu/VBOB1WiIXZATSKgda5bpvrS1bZtsHhYiho9If91N8yzeIF5NAQFGN+lXvLOfAznTrI/IBWMrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=UF3PjnOu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-112-211.bstnma.fios.verizon.net [173.48.112.211])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 40I25s1l032229
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jan 2024 21:05:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1705543556; bh=2Lit1G0EE/vYdp+cKOok2hgcuM8nLakSQAmk5/HsBQ8=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=UF3PjnOu2LbErSaLgnzkj0NaYpDfLfdAx4C1ZFdf6LugbfRUl78r2HCeQdhHSG7xl
-	 QEvGy1l3Rl5qYv7IfqecsrIFAWigmBurVvN8QT8qHr31+WM+po2qndA6gB+6FJmS8f
-	 gbqqCdgpaRqt0cqJjnpYSIqOjVIhRniWcQ1atHVromDM6CxRL4QL2KrY5OQUBeqt0s
-	 /L3Ht1izCimp3M7z+uPFLsI+teGy3ZR4W8A/ekj2FRotY/hqv6awTp1BKl/+Zc5owJ
-	 iwatuvERuiREUxi2ZDMPW4fCyVXqu9auLiYOm6yk5yZtXf6L6PonmzcxR5f5x9YXJ3
-	 oZ/Wm7vn1zNHQ==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 267AE15C0278; Wed, 17 Jan 2024 21:05:54 -0500 (EST)
-Date: Wed, 17 Jan 2024 21:05:54 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Gabriel Krisman Bertazi <krisman@suse.de>,
-        Al Viro <viro@zeniv.linux.org.uk>, ebiggers@kernel.org,
-        linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org
-Subject: Re: [PATCH] libfs: Attempt exact-match comparison first during
- casefold lookup
-Message-ID: <20240118020554.GA1353741@mit.edu>
-References: <20240117222836.11086-1-krisman@suse.de>
- <20240117223857.GN1674809@ZenIV>
- <87edeffr0k.fsf@mailhost.krisman.be>
- <CAHk-=wjd_uD4aHWEVZ735EKRcEU6FjUo8_aMXSxRA7AD8DapZA@mail.gmail.com>
+	s=arc-20240116; t=1705543975; c=relaxed/simple;
+	bh=4dC4ZDeDROF3nw9tpuL+mISXlMm7geDfxO16p6Xykz4=;
+	h=DKIM-Signature:Received:Date:From:To:Cc:Subject:Message-ID:
+	 References:MIME-Version:Content-Type:Content-Disposition:
+	 In-Reply-To; b=tFOKQO/UY+QTng68ig2t18x15d2mDYFF3ckMC2bT+Ajk1ubl7YBHRfgh/bb33Y5lC5xgJFjdYZyQ2VaWOSdYio3iyBMAlgjUDr/MwcrmjTYg9/wbwa43ol2ZAjUnO6VU/P2tAcXB05cVm7AnyCq3QFEa6CyBMzOcCfgd4ZRZl4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qezhMimt; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5l5efZNY73Qhq1tGWozeEdJ6d0fwUHOUFXbDlZJhdxc=; b=qezhMimtZvQP7WzzivmmK56dcC
+	LcTSdSHXVcQALW0kaZxu3T7uptCQcWE5xmul1tCGRFyV6jAxXS5/Hw/azDIY60pi1K7zew8nDRFOG
+	XCV2+DASY32Xkgll+ccpN+OipwjfHc8vcLoarGfreFT0YUqjDqtrw56/mM8QQcgEvCo01/w+ujiYu
+	sfx6Nx/o1+OVUIOWlTdPWjm9/RbXbGlQOA8yzfxhpgaN/NHdBHucYJ6T5CSn9GNhP6Ko4bndYRP6a
+	V4EiE+nxi5U+H4yYHWeMBUFea/gKEYQvjUan2Z7w2l7SmQPSDsWg7Ll56UgZFaHv6g3CgPQwh1ffD
+	NKta2JaA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rQHtg-00000001EVK-1zNv;
+	Thu, 18 Jan 2024 02:12:48 +0000
+Date: Thu, 18 Jan 2024 02:12:48 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+	brauner@kernel.org, jack@suse.cz, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: improve dump_mapping() robustness
+Message-ID: <ZaiJIIrzUR7qPkjC@casper.infradead.org>
+References: <937ab1f87328516821d39be672b6bc18861d9d3e.1705391420.git.baolin.wang@linux.alibaba.com>
+ <20240118013857.GO1674809@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,54 +63,41 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wjd_uD4aHWEVZ735EKRcEU6FjUo8_aMXSxRA7AD8DapZA@mail.gmail.com>
+In-Reply-To: <20240118013857.GO1674809@ZenIV>
 
-On Wed, Jan 17, 2024 at 04:40:17PM -0800, Linus Torvalds wrote:
-> Note that the whole "malformed utf-8 is an error" is actually wrong anyway.
+On Thu, Jan 18, 2024 at 01:38:57AM +0000, Al Viro wrote:
+> On Tue, Jan 16, 2024 at 03:53:35PM +0800, Baolin Wang wrote:
 > 
-> Yes, if you *output* utf-8, and your output is malformed, then that's
-> an error that needs fixing.
+> > With checking the 'dentry.parent' and 'dentry.d_name.name' used by
+> > dentry_name(), I can see dump_mapping() will output the invalid dentry
+> > instead of crashing the system when this issue is reproduced again.
 > 
-> But honestly, "malformed utf-8" on input is almost always just "oh, it
-> wasn't utf-8 to begin with, and somebody is still using Latin-1 or
-> Shift-JIS or whatever".
+> >  	dentry_ptr = container_of(dentry_first, struct dentry, d_u.d_alias);
+> > -	if (get_kernel_nofault(dentry, dentry_ptr)) {
+> > +	if (get_kernel_nofault(dentry, dentry_ptr) ||
+> > +	    !dentry.d_parent || !dentry.d_name.name) {
+> >  		pr_warn("aops:%ps ino:%lx invalid dentry:%px\n",
+> >  				a_ops, ino, dentry_ptr);
+> >  		return;
 > 
-> And then treating that as some kind of hard error is actually really
-> really wrong and annoying, and may end up meaning that the user cannot
-> *fix* it, because they can't access the data at all.
+> That's nowhere near enough.  Your ->d_name.name can bloody well be pointing
+> to an external name that gets freed right under you.  Legitimately so.
+> 
+> Think what happens if dentry has a long name (longer than would fit into
+> the embedded array) and gets renamed name just after you copy it into
+> a local variable.  Old name will get freed.  Yes, freeing is RCU-delayed,
+> but I don't see anything that would prevent your thread losing CPU
+> and not getting it back until after the sucker's been freed.
 
-A file system which supports casefolding can support "strict" mode
-(not the default) where attempts to create files that have invalid
-UTF-8 characters are rejected before a file or hard link is created
-(or renamed) with an error.
+Agreed that it's not enough.  It does usually work, and it's very
+helpful when it does.  We've had it since 2018 (1c6fb1d89e73) and we've
+been gradually making it more robust over time.  Part of my reason for
+splitting dump_mapping() out of dump_page() was so that it would get
+more review from people who understand the fs side of things ... and
+that seems to have worked.
 
-This is what MacOS does, by the way.  If you try to rsync a file from
-a Linux box where the file was created by unpacking a Windows Zip file
-created by downloading a directory hierarchy from a Microsoft
-Sharepoint, and then you try to scp or rsync it over to MacOS, MacOS
-will will refuse to allow the file to be created if it contains
-invalid UTF-8 characters, and rsync or scp will report an error.  I
-just ran into this earlier today...
-
-So we don't need to worry about the user not being able to fix it,
-because they won't have been able to create the file in the first
-place.  This is not the default, since we know there are a bunch of
-users who might be creating files using the unofficial "Klingon"
-characters (for example) that are not officially part of Unicode since
-Unicode will only allow characters used by human languages, and
-Klingon doesn't qualify.  I believe though that Android has elected to
-enable casefolding in strict mode, which is fine as far as I'm concerned.
-
-> I find libraries that just error out on "malformed utf-8" to be
-> actively harmful.
-
-I admit that when I discovered that MacOS errored out on illegal utf-8
-characters it was mildly annoying, but it wasn't that hard to fix it
-on the Linux side and then I retried the rsync.  It also turned out
-that if I unpacked the zip file on MacOS, the filename was created
-without the illegal utf-8 characters, so there may have been something
-funky going on with the zip userspace program on Linux.  I haven't
-cared enough to try to debug it...
-
-       		      	     	   	    - Ted
+Can I trouble you to suggest a more robust solution?  Bear in mind that
+dump_page() does get called on pointers which turn out not to even be
+pointers to struct page so this is all very much best-effort, and giving
+up and printing 'this is not a dentry" is always an option.
 
