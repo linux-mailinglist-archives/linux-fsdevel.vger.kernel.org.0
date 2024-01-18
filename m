@@ -1,248 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-8233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA5CA831304
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 08:12:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD9D83132C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 08:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C90B28232D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 07:12:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19202281F2D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 18 Jan 2024 07:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118D8B641;
-	Thu, 18 Jan 2024 07:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eApEPL3I"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88867BA34;
+	Thu, 18 Jan 2024 07:38:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BA38F60
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jan 2024 07:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F48B666
+	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jan 2024 07:38:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705561953; cv=none; b=XDy+g0NWZ6g+gaOYbpzlCKGUHZ8I0Ea0R7YqRNJrwj6msV8Xpo6UjyLIjvlkhrt1kuhuXa4Erj1SYie7CsoM3qV3Gs5zoGnDpnpj/pF2iDyFda0Z1fwZjTYlnKGTp8yflviB82l6ZWdHTbgYEdSIuhn0KuUBkpz665sOJZPoPuY=
+	t=1705563504; cv=none; b=rx9uCVAICvu7zJA8ttYA1hOv/0QiAmVAeY74P47+4CK2TM5Danqe/OqD2yq7Qou0a1mrFEl6UEUpNyn0Zrt6lgGJcf533jBD0UW7gDnUvUdHuggCHfyrsPaggpT6X3ZvOgkuUwdbbvw+NYkWS7J3QDYjXljS2udIBx11E7m6FE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705561953; c=relaxed/simple;
-	bh=+ndldX/st2sjnLiMkzNWFl0AgtOt9jiAWnKfij46FUQ=;
-	h=Received:DKIM-Filter:DKIM-Signature:Received:Received:Received:
-	 Received:X-AuditID:Received:Received:Received:Date:From:To:CC:
-	 Subject:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 Content-Transfer-Encoding:In-Reply-To:X-Originating-IP:
-	 X-ClientProxiedBy:X-Brightmail-Tracker:X-Brightmail-Tracker:
-	 X-CMS-MailID:X-Msg-Generator:X-RootMTR:X-EPHeader:CMS-TYPE:
-	 X-CMS-RootMailID:References; b=sVei2vfkdXGlv+7puhfyBYt+HAMU02wMmWkMB0PTu76piHibQphr+crrYKVaV0+WAHq3Awpr9ApJ65kdi/Al3szkzm9xSiLMl3H7R8RwZVWk6B9Zsu3kCSv6mHeBCjP0xkZdR9Bh76DNk3LexR928v3F+rDDUteHeFGdPlj+beQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eApEPL3I; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240118071229euoutp01f5df0dd93173903cf7636857edd03234~rX45tj5lK2452224522euoutp01i
-	for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jan 2024 07:12:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240118071229euoutp01f5df0dd93173903cf7636857edd03234~rX45tj5lK2452224522euoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1705561949;
-	bh=+ndldX/st2sjnLiMkzNWFl0AgtOt9jiAWnKfij46FUQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=eApEPL3IPDLgVwq3tIgVRRQMpWMAg0gN8JeAfP8UCE1DnRQ5fHmGi2BifnbRAol1Z
-	 4RqRO3NWBWjc+4B06LpFySG0UjDNTC7u6Ersrne7avwXx6sQO6kE63ewYMurVaeS8l
-	 1hDzoJQr+3Q9oQsKXCunzSHT7Pxf0UIqFrGGOyWA=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240118071228eucas1p171b1b91b48410c6b39693280dd80a72a~rX45e1wYc0829208292eucas1p1X;
-	Thu, 18 Jan 2024 07:12:28 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id D6.02.09552.C5FC8A56; Thu, 18
-	Jan 2024 07:12:28 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240118071228eucas1p222bfd790ac1019fbf68a5f2170e663e1~rX45CK0Rw2641626416eucas1p2w;
-	Thu, 18 Jan 2024 07:12:28 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240118071228eusmtrp25486a22febedbc9aba939cbaea7e9110~rX45BOZ961566915669eusmtrp2W;
-	Thu, 18 Jan 2024 07:12:28 +0000 (GMT)
-X-AuditID: cbfec7f5-83dff70000002550-68-65a8cf5cc9ab
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 68.10.09146.C5FC8A56; Thu, 18
-	Jan 2024 07:12:28 +0000 (GMT)
-Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240118071228eusmtip270875b1c152bce150956677843a96e5e~rX44z2cUf2497324973eusmtip2l;
-	Thu, 18 Jan 2024 07:12:28 +0000 (GMT)
-Received: from localhost (106.210.248.142) by CAMSVWEXC02.scsc.local
-	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Thu, 18 Jan 2024 07:12:27 +0000
-Date: Thu, 18 Jan 2024 08:12:25 +0100
-From: Javier =?utf-8?B?R29uesOhbGV6?= <javier.gonz@samsung.com>
-To: Dave Chinner <david@fromorbit.com>
-CC: Viacheslav Dubeyko <slava@dubeyko.com>,
-	<lsf-pc@lists.linux-foundation.org>, Linux FS Devel
-	<linux-fsdevel@vger.kernel.org>, Adam Manzanares <a.manzanares@samsung.com>,
-	<linux-scsi@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
-	<linux-block@vger.kernel.org>, <slava@dubeiko.com>, Kanchan Joshi
-	<joshi.k@samsung.com>, Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [LSF/MM/BPF TOPIC] : Flexible Data Placement (FDP) availability
- for kernel space file systems
-Message-ID: <20240118071225.7ioz3h2eewdgm2sb@ArmHalley.local>
+	s=arc-20240116; t=1705563504; c=relaxed/simple;
+	bh=b7v0ygaP+MzvZkGBhhH54avAWXFWQQ5h+kcdpoBWTzA=;
+	h=Received:X-Google-DKIM-Signature:X-Gm-Message-State:
+	 X-Google-Smtp-Source:MIME-Version:X-Received:Date:
+	 X-Google-Appengine-App-Id:X-Google-Appengine-App-Id-Alias:
+	 Message-ID:Subject:From:To:Content-Type; b=MnrvKF+NGqPs30vL3PBwdrxp59MwWin7JBIdlGzU9MRVF09VODFqikMtv+prUSEjnXcWJXNiYpMq+QH1fPhBP6rgHZEojaOIIvs8gtmwiQKm80Ckft4mWcDG8htGX1SsM5KBzmqo4hN0/b8B0RqBiW2UmSbbVbE4WJSnzELA47Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3606d19097dso109764525ab.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 17 Jan 2024 23:38:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705563502; x=1706168302;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3KgbGzjSSpHrnjSlJjwcWcpgEEZshzFZblPbklL8zxM=;
+        b=uxmLu41Htf4IEigDHMyO/j+zumGPuwvUPoRIS5xW39AjrsRzvGE4PfbHS2AmQAIDDY
+         SawpMa409NQX2vcYs32RMQZToiUs2nS3L2MFFledejnz437PGkd+Zs09PEwMJO/7v+UD
+         FObS4R7nGG6qxIaaAWmZHv5Yx8FqCBhiABHsAvyAoxh+KWxNoCb/wai4jy9/rqhH4Adr
+         WsOb1PqsyWGyJi2h0BtYoI1O9bG3uN5Eikxzlq2LexWI2IGh8OaSHfv4erZ1FEqX1J/K
+         9S7ML01c3l2lKss7PEwL7MRR8rx6T4rQSzVitS12wVWtJ+jPvcB27tWeOoEJDfoOsMjj
+         L9Bw==
+X-Gm-Message-State: AOJu0YwjNgBXEdit0VSZTEswnMd8iORd7eCKQlOJXr9qxWGNkndMO0eY
+	nURzAxd1eHabACDiXDbuKydh0ZUG6DWME/sxGExDioL26JX2Pe2DTibJrLrAbwZFJ5ZHafs4u2X
+	ZJ1yzbBgxTl/laHydLD0YRERwrmUnGd/YEja0qWFCGyuKoKAsjRR3qBw=
+X-Google-Smtp-Source: AGHT+IGxoXjwyvReRduhhfN5Fx9iFIHxtLN2VpRgWkKp+o1OATA7CQi7djI5xiY+c/JrIUIufKIj2EysyCa4ubWoTDfMgNWXq1xU
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format="flowed"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZahL6RKDt/B8O2Jk@dread.disaster.area>
-X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
-	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNKsWRmVeSWpSXmKPExsWy7djPc7ox51ekGuw+p2cx7cNPZostx+4x
-	Wuy9pW2xZ+9JFov5y56yW3Rf38Fmse/1XmaLT5cXAokts5kcOD0uX/H2ePTkIKvHwfVvWDxO
-	LZLw2Lyk3mPyjeWMHp83yQWwR3HZpKTmZJalFunbJXBlvHzTxFhwTqNi7v9JLA2MbxW6GDk5
-	JARMJOb2bWPuYuTiEBJYwSjx5/AaFgjnC6PE/T0tTBDOZ0aJK8+vsMG0TPx/jxUisZxRYvvs
-	a+xwVeuub4Jq2cooceRjB5DDwcEioCqx9XYGSDebgL3EpWW3mEFsEQE1iUmTdoAtZxb4wiTx
-	af5/sHphgRyJ9ineIDW8ArYSJ+a8ZoOwBSVOznzCAmIzC1hJdH5oYgUpZxaQllj+jwMiLC/R
-	vHU22HhOAWOJuc/7GEFKJASUJZZP94W4v1bi1JZbYFdKCEzmlGh+eYARIuEi8eP3HHYIW1ji
-	1fEtULaMxP+d85kg7GyJi2e6mSHsEonF748xQ8y3lug7kwMRdpQ4dGcn1Fo+iRtvBSEu45OY
-	tG06VDWvREeb0ARGlVlI3pqF5K1ZCG/NQvLWAkaWVYziqaXFuempxcZ5qeV6xYm5xaV56XrJ
-	+bmbGIHp6fS/4193MK549VHvECMTB+MhRgkOZiURXn+DZalCvCmJlVWpRfnxRaU5qcWHGKU5
-	WJTEeVVT5FOFBNITS1KzU1MLUotgskwcnFINTGm//jhd3chqdPz3reWGx6pOxS/0XWz2K+DL
-	d8u36VYLUu43O/+LS+M69ntOnOwf7x+ZWyfN+stevXHOp99f7HlyIyY9jbr5lyuDpaD6fO+Z
-	OunQz4F6Dz2mND1zOik19/zi8y41P6NY4nxUGdr8luXMvWnMubBW012BOajl6KYlXS/yiz8o
-	3fycvPHJZfM/V1i6bPVjdA8eyWubu/SkWUCC7hPDALeE+OhNdX9U1AwfL/i+qdr7wKE5yhfU
-	de8m+XYKPoi5qDohKOVSbUp0zaS/aZM/HXiyd/WF3+dOr/N9yHxKk+ds2GSdVUumOXILTGUS
-	2DTPMkLK1tp7KafnWWWHVbULD7rzHfRwVXjA5aHEUpyRaKjFXFScCACwyImCvgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGIsWRmVeSWpSXmKPExsVy+t/xe7ox51ekGmzrE7OY9uEns8WWY/cY
-	Lfbe0rbYs/cki8X8ZU/ZLbqv72Cz2Pd6L7PFp8sLgcSW2UwOnB6Xr3h7PHpykNXj4Po3LB6n
-	Fkl4bF5S7zH5xnJGj8+b5ALYo/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV
-	9O1sUlJzMstSi/TtEvQyXr5pYiw4p1Ex9/8klgbGtwpdjJwcEgImEhP/32PtYuTiEBJYyiix
-	Y/9ENoiEjMTGL1dZIWxhiT/Xutggij4ySvQdvArlbGWU2P1+GksXIwcHi4CqxNbbGSANbAL2
-	EpeW3WIGsUUE1CQmTdrBDFLPLPCFSeLT/P9MIPXCAjkS7VO8QWp4BWwlTsx5DTXzBpPEpHVf
-	2CESghInZz5hAbGZBSwkZs4/zwjSyywgLbH8HwdEWF6ieetssF2cAsYSc5/3gZVICChLLJ/u
-	C3F/rcTnv88YJzCKzEIydBaSobMQhs5CMnQBI8sqRpHU0uLc9NxiQ73ixNzi0rx0veT83E2M
-	wAjeduzn5h2M81591DvEyMTBeIhRgoNZSYTX32BZqhBvSmJlVWpRfnxRaU5q8SFGU2AATWSW
-	Ek3OB6aQvJJ4QzMDU0MTM0sDU0szYyVxXs+CjkQhgfTEktTs1NSC1CKYPiYOTqkGJvc3sarG
-	mwq+HYszaD+9a9VzEYera6/y5wWcfXFmf/63V2L3eU+lc2nufVIo9car9fuhC0vlhG+lbumL
-	lZqzT7j/x8GA0xf7k5QYVwjotofaqE9MZnnk4jtJzCcopWKu9iYx2e2/a7sD7Cetvecz9UlE
-	UljNVRbB+n1GdRfP6a5ZLfGQN+rJ/YOr/X9ckpy/wGPJHZvgjANHtj6Nfy3zIjL83ayFNgy7
-	9p1tYW5QVjomMV14T7bXwt2Rmyr7i/j4TvG8uNzAzib2Q3R18KNzkX9cFkvd2PzRd4KV29X6
-	z4kc2vIMk+6evmHWxmd/78jEIknmWXY3OJQnJTM6/33AvJqfVT5g/vlQjQMST6bt41JiKc5I
-	NNRiLipOBABUHj+2aQMAAA==
-X-CMS-MailID: 20240118071228eucas1p222bfd790ac1019fbf68a5f2170e663e1
-X-Msg-Generator: CA
-X-RootMTR: 20240115084656eucas1p219dd48243e2eaec4180e5e6ecf5e8ad9
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240115084656eucas1p219dd48243e2eaec4180e5e6ecf5e8ad9
-References: <CGME20240115084656eucas1p219dd48243e2eaec4180e5e6ecf5e8ad9@eucas1p2.samsung.com>
-	<20240115084631.152835-1-slava@dubeyko.com>
-	<20240115175445.pyxjxhyrmg7od6sc@mpHalley-2.localdomain>
-	<86106963-0E22-46D6-B0BE-A1ABD58CE7D8@dubeyko.com>
-	<20240117115812.e46ihed2qt67wdue@ArmHalley.local>
-	<ZahL6RKDt/B8O2Jk@dread.disaster.area>
+X-Received: by 2002:a05:6e02:2141:b0:35f:b715:ed36 with SMTP id
+ d1-20020a056e02214100b0035fb715ed36mr63785ilv.5.1705563501952; Wed, 17 Jan
+ 2024 23:38:21 -0800 (PST)
+Date: Wed, 17 Jan 2024 23:38:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ad0392060f337207@google.com>
+Subject: [syzbot] [jfs?] WARNING in dbAdjTree
+From: syzbot <syzbot+ab18fa9c959320611727@syzkaller.appspotmail.com>
+To: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 18.01.2024 08:51, Dave Chinner wrote:
->On Wed, Jan 17, 2024 at 12:58:12PM +0100, Javier González wrote:
->> On 16.01.2024 11:39, Viacheslav Dubeyko wrote:
->> > > On Jan 15, 2024, at 8:54 PM, Javier González <javier.gonz@samsung.com> wrote:
->> > > > How FDP technology can improve efficiency and reliability of
->> > > > kernel-space file system?
->> > >
->> > > This is an open problem. Our experience is that making data placement
->> > > decisions on the FS is tricky (beyond the obvious data / medatadata). If
->> > > someone has a good use-case for this, I think it is worth exploring.
->> > > F2FS is a good candidate, but I am not sure FDP is of interest for
->> > > mobile - here ZUFS seems to be the current dominant technology.
->> > >
->> >
->> > If I understand the FDP technology correctly, I can see the benefits for
->> > file systems. :)
->> >
->> > For example, SSDFS is based on segment concept and it has multiple
->> > types of segments (superblock, mapping table, segment bitmap, b-tree
->> > nodes, user data). So, at first, I can use hints to place different segment
->> > types into different reclaim units.
->>
->> Yes. This is what I meant with data / metadata. We have looked also into
->> using 1 RUH for metadata and rest make available to applications. We
->> decided to go with a simple solution to start with and complete as we
->> see users.
->
->XFS has an abstract type definition for metadata that is uses to
->prioritise cache reclaim (i.e. classifies what metadata is more
->important/hotter) and that could easily be extended to IO hints
->to indicate placement.
->
->We also have a separate journal IO path, and that is probably the
->hotest LBA region of the filesystem (circular overwrite region)
->which would stand to have it's own classification as well.
->
->We've long talked about making use of write IO hints for separating
->these things out, but requiring 10+ IO hint channels just for
->filesystem metadata to be robustly classified has been a show
->stopper. Doing nothing is almost always better than doing placement
->hinting poorly.
+Hello,
 
-I fully agree with the last statement.
+syzbot found the following issue on:
 
-In my experience, if doing something, it is probably better to target 2
-or 3 data streams that target what you would expect it to be the larger
-metric gap (be it data hotness, size, etc).
+HEAD commit:    052d534373b7 Merge tag 'exfat-for-6.8-rc1' of git://git.ke..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=140a08b3e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=36f64072074e3eab
+dashboard link: https://syzkaller.appspot.com/bug?extid=ab18fa9c959320611727
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b39935e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10d619f5e80000
 
-The difficult thing is identifying these small changes that can bring a
-percentage of the benefit without getting into corner cases that take
-most of the effort.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/395e14e0d581/disk-052d5343.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/d3c73d08be99/vmlinux-052d5343.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/80968415c40b/bzImage-052d5343.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/d58cff47d922/mount_0.gz
 
->
->> > Technically speaking, any file system can place different types of metadata in
->> > different reclaim units. However, user data is slightly more tricky case. Potentially,
->> > file system logic can track “hotness” or frequency of updates of some user data
->> > and try to direct the different types of user data in different reclaim units.
->
->*cough*
->
->We already do this in the LBA space via the filesytsem allocators.
->It's often configurable and generally called "allocation policies".
->
->> > But, from another point of view, we have folders in file system namespace.
->> > If application can place different types of data in different folders, then, technically
->> > speaking, file system logic can place the content of different folders into different
->> > reclaim units. But application needs to follow some “discipline” to store different
->> > types of user data (different “hotness”, for example) in different folders.
->
->Yup, XFS does this "physical locality is determined by parent
->directory" separation by default (the inode64 allocation policy).
->Every new directory inode is placed in a different allocation group
->(LBA space) based on a rotor mechanism. All the files within that
->directory are kept local to the directory (i.e. in the same AG/LBA
->space) as much as possible.
->
->Most filesystems have LBA locality policies like this because it is
->highly efficient on physical seek latency limited storage hardware.
->i.e. the storage hardware we've mostly been using since the early
->1980s.
->
->We could make allocation groups have different reclaim units,
->but then we are talking about needing an arbitrary number of
->different IO hints - XFS supports ~2^31 AGs if the filesystem is
->large enough, and there's no way we're going to try to support that
->many IO hints (software or hardware) in the foreseeable future.
->
->IF devices want to try to classify related data themselves, then
->using LBA locality internally to classify relationships below the
->level of IO hints, then that would be a much closer match to how
->filesystems have traditionally structured the data and metadata on
->disk. Related data and metadata tends to get written to the same LBA
->regions because that's the fastest way to access related and
->metadata on seek-limited hardware.
->
->Yeah, I know that these are SSDs we are talking about and they
->aren't seek limited, but when we already have filesystem
->implementations that try to clump related things to nearby LBA
->spaces, it might be best to try to leverage this behaviour rather
->than try to rely on kernel and userspace to correctly provide hints
->about their data patterns.
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-+1
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=142eec2be80000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=162eec2be80000
+console output: https://syzkaller.appspot.com/x/log.txt?x=122eec2be80000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ab18fa9c959320611727@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 109 at fs/jfs/jfs_dmap.c:2879 dbAdjTree+0x2d9/0x3d0 fs/jfs/jfs_dmap.c:2879
+Modules linked in:
+CPU: 0 PID: 109 Comm: jfsCommit Not tainted 6.7.0-syzkaller-09928-g052d534373b7 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
+RIP: 0010:dbAdjTree+0x2d9/0x3d0 fs/jfs/jfs_dmap.c:2879
+Code: e8 4c 13 8d fe 0f b6 14 24 38 da 0f 85 a1 fe ff ff 48 83 c4 18 5b 5d 41 5c 41 5d 41 5e 41 5f e9 7d 18 8d fe e8 78 18 8d fe 90 <0f> 0b 90 eb e2 e8 0d 8f e4 fe e9 52 fe ff ff e8 03 8f e4 fe e9 79
+RSP: 0018:ffffc900020bfa88 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 0000000000000155 RCX: ffffffff82faf5c9
+RDX: ffff8880197f3b80 RSI: ffffffff82faf828 RDI: 0000000000000004
+RBP: ffff8880231c4010 R08: 0000000000000004 R09: 0000000000000155
+R10: 0000000000030056 R11: ffffffff8acf1fa0 R12: 0000000000000004
+R13: 0000000000030056 R14: ffff8880231c4010 R15: 0000000000000001
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f67c3d5d130 CR3: 000000000cf79000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ dbJoin+0x267/0x2c0 fs/jfs/jfs_dmap.c:2847
+ dbFreeBits+0x15c/0x8f0 fs/jfs/jfs_dmap.c:2338
+ dbFreeDmap+0x62/0x1a0 fs/jfs/jfs_dmap.c:2087
+ dbFree+0x266/0x550 fs/jfs/jfs_dmap.c:409
+ txFreeMap+0x9a9/0xe60 fs/jfs/jfs_txnmgr.c:2534
+ txUpdateMap+0x3f1/0xd10 fs/jfs/jfs_txnmgr.c:2330
+ txLazyCommit fs/jfs/jfs_txnmgr.c:2664 [inline]
+ jfs_lazycommit+0x5e4/0xb20 fs/jfs/jfs_txnmgr.c:2733
+ kthread+0x2c6/0x3a0 kernel/kthread.c:388
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x11/0x20 arch/x86/entry/entry_64.S:242
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
