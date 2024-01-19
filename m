@@ -1,100 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-8305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDCF832992
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 13:35:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 52DA1832AA4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 14:40:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628D7283752
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 12:35:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C6F1285E89
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 13:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79EB51C2A;
-	Fri, 19 Jan 2024 12:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8D052F91;
+	Fri, 19 Jan 2024 13:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PIHLZzXQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TyvIawtr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PIHLZzXQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TyvIawtr"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="loPCJFKT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF97831A61;
-	Fri, 19 Jan 2024 12:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1DD4F21A;
+	Fri, 19 Jan 2024 13:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705667743; cv=none; b=euXTub2PsIXCRVNyERiHpp5gnhUwRWh0O9DrBt/DCxHTA49fPjXh3KfT8hTklzozEIgoUtQX5Mwycy5Hu03K5c6zFpuL+5fhtBUYLCVWLeA9AqjtrWt/L9ygCVUhWlaoia9VBsKm7YeNwUG/gOe3VJ+Db7JRDJR7mlsi1WfbNxY=
+	t=1705671616; cv=none; b=MSOFI8hCplHEZYbPkXmtjprybNtZjSyHRmE8G48y3tv+LbTzqPjxQfrDdm/8swusVURnRBkfnSIHRU/GVVwheJUu5a86TD0xhOXM90SChqqWRLU1PyAkMdGYoLwuuCT9v4/ar+N/PnlnTpIfribsnLKPkoQgPzaNBAvWJqKjlJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705667743; c=relaxed/simple;
-	bh=jffCLdTIcCbL45wgt6ffIq58KrNnm/BVIQW3BkJ5reA=;
+	s=arc-20240116; t=1705671616; c=relaxed/simple;
+	bh=Y4Mm6pe+e8cfQgYP7LhcO0HyBF1sGbEzf6pGZai00Is=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bxbmwEdkXkG29C9Ecs7UwsZABWLDKNS6qIJRol0K0eBNTA11C5uVwoFP45JYz5EGsxb08pAq/mu4DXbw0mDxi9UlhpYY+kClUVdEI34qFX1FH6Wd7TZ5PqLOs0xMQroCMTxERkUUp4/MsBUTNTtE/ji10Ma8DS8sptuBrT9H7so=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PIHLZzXQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TyvIawtr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PIHLZzXQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TyvIawtr; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 988731FD12;
-	Fri, 19 Jan 2024 12:35:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1705667739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sU34e5h97GyB4Ieq5hCIWgoIR3p0l2c/abRaH0dJLdU=;
-	b=PIHLZzXQscL8ilb/su55FeqP+6NLQxlTf8JT4rYUkl/QKbpDt8VPGrB9PhZQRy7qlFOcCd
-	9ZxrhzuuuppabX+Nz8e/RtlnYzFqwukVAGVr1y75vqKmTv0OHMJPowGOifO2GTvmjCpIaI
-	UQr505l5Vo34Wtb2k+G8QEePBhtN1kg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1705667739;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sU34e5h97GyB4Ieq5hCIWgoIR3p0l2c/abRaH0dJLdU=;
-	b=TyvIawtrrb+VKlnoLFwjoK/wBmqSj8HDPhHbCYhNDEZnfQla8zKMnDiwOdTWBvN3dV4oc2
-	/omv+eDX1T0aWZBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1705667739; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sU34e5h97GyB4Ieq5hCIWgoIR3p0l2c/abRaH0dJLdU=;
-	b=PIHLZzXQscL8ilb/su55FeqP+6NLQxlTf8JT4rYUkl/QKbpDt8VPGrB9PhZQRy7qlFOcCd
-	9ZxrhzuuuppabX+Nz8e/RtlnYzFqwukVAGVr1y75vqKmTv0OHMJPowGOifO2GTvmjCpIaI
-	UQr505l5Vo34Wtb2k+G8QEePBhtN1kg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1705667739;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sU34e5h97GyB4Ieq5hCIWgoIR3p0l2c/abRaH0dJLdU=;
-	b=TyvIawtrrb+VKlnoLFwjoK/wBmqSj8HDPhHbCYhNDEZnfQla8zKMnDiwOdTWBvN3dV4oc2
-	/omv+eDX1T0aWZBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 88B6813894;
-	Fri, 19 Jan 2024 12:35:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id X4pXIZtsqmVSDQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 19 Jan 2024 12:35:39 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0E04AA0803; Fri, 19 Jan 2024 13:35:39 +0100 (CET)
-Date: Fri, 19 Jan 2024 13:35:39 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+5dd35da975e32d9df9ab@syzkaller.appspotmail.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz,
-	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, shaggy@kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [jfs] WARNING in ea_get
-Message-ID: <20240119123539.xgws46tptxbrzavq@quack3>
-References: <000000000000e38e4105e9d6e741@google.com>
- <000000000000ab49d0060f4719a4@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NI6q77CDwdSlehDmfS20+rAa8i3FLYolv31g2Mphn63MYgNJp0NzeFBbMeQ7rYUwCVkZe/uO8jkOVIRHTEs6gqzZHmrUhymKMOGCJ5guCN2c7K3s+bcqhjK/xqJm1uevEdsr3xCqmutqTx6NHoaq7HA4/9r77fsNEGuA6+OSVlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=loPCJFKT; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=76lgfmwJ5lAYcq0PAI1xrtVyvSIBJZ52fv1km/3KaNM=; b=loPCJFKTwEltGKL8VA3mixmSyI
+	4GHzuOaE/EAFXlgjUaXBuj3hCYwOE9+cB07l8AbQnp5gemCpnPcnYnFIpOY10pN1hhRduDQGJQlZ1
+	Un6o56B8hPSc/N7bZ87+rAGn7E9fWpkpOgT7svw/Ur8l9j3pHUZFuMrrloTkbzHXHQSqvls1nAkTZ
+	dyrXN78WMTGf9xaQ2vOVLMQYqbH/drc3Oh6bIos+GlSwMFrj1QKMt6tV+6AOBFekukSEdAu14OypY
+	a2AC2qmfpySs8obaRUoKzm1Hc0urjgfUS0xk4FsixxNZ+hWM5GYiOELbNCtTLDjUAzaI7lR+e7mbN
+	EqiMH3Lw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rQp6N-000000056eE-1RV7;
+	Fri, 19 Jan 2024 13:40:07 +0000
+Date: Fri, 19 Jan 2024 13:40:07 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Peng Zhang <zhangpeng362@huawei.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	netdev@vger.kernel.org, akpm@linux-foundation.org,
+	edumazet@google.com, davem@davemloft.net, dsahern@kernel.org,
+	kuba@kernel.org, pabeni@redhat.com, arjunroy@google.com,
+	wangkefeng.wang@huawei.com
+Subject: Re: [RFC PATCH] filemap: add mapping_mapped check in
+ filemap_unaccount_folio()
+Message-ID: <Zap7t9GOLTM1yqjT@casper.infradead.org>
+References: <20240119092024.193066-1-zhangpeng362@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,58 +64,69 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000ab49d0060f4719a4@google.com>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [2.86 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-0.04)[59.02%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=ba0d23aa7e1ffaf5];
-	 TAGGED_RCPT(0.00)[5dd35da975e32d9df9ab];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_SEVEN(0.00)[9];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,syzkaller.appspot.com:url];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Level: **
-X-Spam-Score: 2.86
-X-Spam-Flag: NO
+In-Reply-To: <20240119092024.193066-1-zhangpeng362@huawei.com>
 
-On Thu 18-01-24 23:05:07, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+On Fri, Jan 19, 2024 at 05:20:24PM +0800, Peng Zhang wrote:
+> Recently, we discovered a syzkaller issue that triggers
+> VM_BUG_ON_FOLIO in filemap_unaccount_folio() with CONFIG_DEBUG_VM
+> enabled, or bad page without CONFIG_DEBUG_VM.
 > 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
-> 
->     fs: Block writes to mounted block devices
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12b95fdbe80000
-> start commit:   49c13ed0316d Merge tag 'soc-fixes-6.0-rc7' of git://git.ke..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ba0d23aa7e1ffaf5
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5dd35da975e32d9df9ab
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1173d7ff080000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16a2ea70880000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
- 
-Makes sense.
+> The specific scenarios are as follows:
+> (1) mmap: Use socket fd to create a TCP VMA.
+> (2) open(O_CREAT) + fallocate + sendfile: Read the ext4 file and create
+> the page cache. The mapping of the page cache is ext4 inode->i_mapping.
+> Send the ext4 page cache to the socket fd through sendfile.
+> (3) getsockopt TCP_ZEROCOPY_RECEIVE: Receive the ext4 page cache and use
+> vm_insert_pages() to insert the ext4 page cache to the TCP VMA. In this
+> case, mapcount changes from - 1 to 0. The page cache mapping is ext4
+> inode->i_mapping, but the VMA of the page cache is the TCP VMA and
+> folio->mapping->i_mmap is empty.
 
-#syz fix: fs: Block writes to mounted block devices
+I think this is the bug.  We shouldn't be incrementing the mapcount
+in this scenario.  Assuming we want to support doing this at all and
+we don't want to include something like ...
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+	if (folio->mapping) {
+		if (folio->mapping != vma->vm_file->f_mapping)
+			return -EINVAL;
+		if (page_to_pgoff(page) != linear_page_index(vma, address))
+			return -EINVAL;
+	}
+
+But maybe there's a reason for networking needing to map pages in this
+scenario?
+
+> (4) open(O_TRUNC): Deletes the ext4 page cache. In this case, the page
+> cache is still in the xarray tree of mapping->i_pages and these page
+> cache should also be deleted. However, folio->mapping->i_mmap is empty.
+> Therefore, truncate_cleanup_folio()->unmap_mapping_folio() can't unmap
+> i_mmap tree. In filemap_unaccount_folio(), the mapcount of the folio is
+> 0, causing BUG ON.
+> 
+> Syz log that can be used to reproduce the issue:
+> r3 = socket$inet_tcp(0x2, 0x1, 0x0)
+> mmap(&(0x7f0000ff9000/0x4000)=nil, 0x4000, 0x0, 0x12, r3, 0x0)
+> r4 = socket$inet_tcp(0x2, 0x1, 0x0)
+> bind$inet(r4, &(0x7f0000000000)={0x2, 0x4e24, @multicast1}, 0x10)
+> connect$inet(r4, &(0x7f00000006c0)={0x2, 0x4e24, @empty}, 0x10)
+> r5 = openat$dir(0xffffffffffffff9c, &(0x7f00000000c0)='./file0\x00',
+> 0x181e42, 0x0)
+> fallocate(r5, 0x0, 0x0, 0x85b8)
+> sendfile(r4, r5, 0x0, 0x8ba0)
+> getsockopt$inet_tcp_TCP_ZEROCOPY_RECEIVE(r4, 0x6, 0x23,
+> &(0x7f00000001c0)={&(0x7f0000ffb000/0x3000)=nil, 0x3000, 0x0, 0x0, 0x0,
+> 0x0, 0x0, 0x0, 0x0}, &(0x7f0000000440)=0x40)
+> r6 = openat$dir(0xffffffffffffff9c, &(0x7f00000000c0)='./file0\x00',
+> 0x181e42, 0x0)
+> 
+> In the current TCP zerocopy scenario, folio will be released normally .
+> When the process exits, if the page cache is truncated before the
+> process exits, BUG ON or Bad page occurs, which does not meet the
+> expectation.
+> To fix this issue, the mapping_mapped() check is added to
+> filemap_unaccount_folio(). In addition, to reduce the impact on
+> performance, no lock is added when mapping_mapped() is checked.
+
+NAK this patch, you're just preventing the assertion from firing.
+I think there's a deeper problem here.
 
