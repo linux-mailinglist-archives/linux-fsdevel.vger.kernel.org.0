@@ -1,101 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-8339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8342-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1705832F4B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 20:11:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC050832FBC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 21:26:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E761C23E7E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 19:11:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BCBC28499C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 20:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A7556472;
-	Fri, 19 Jan 2024 19:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EC456B7B;
+	Fri, 19 Jan 2024 20:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xEV3nzmU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7yV7JEs9";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xEV3nzmU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7yV7JEs9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from brightrain.aerifal.cx (brightrain.aerifal.cx [104.156.224.86])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF1C56440
-	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jan 2024 19:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=104.156.224.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C512341C98
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jan 2024 20:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705691449; cv=none; b=GRHn5QTTJBTQd9jy+rGCWvs0txVFqmGgDOhyD9oV8TmrH9r2gFTM6fKS520EqP2ILEstDrV4NErGSsc2jgNzfS50sVILoov9L2OFCu6rlMjJC/A8dYwbPN3JkxgkbSHSMtB8m5zCiIzmYDiiB+q+Ok6+eKuZ8k1AA3Y0ACik7RI=
+	t=1705695964; cv=none; b=nD9ANsI1FGmcy+v4s7ngFNEbrGhKR3a7BAhH31uqdd6aK/jK5eh+cdlZBH2LdXXxD/HTw76uRg0MuuWCoyuwHbC9oFpAEV+ToCTzhAX0QLPhUAfeHlvUuXaEC9H+ASV6n/eoqEgsy02+/G+gmCQum0kovpsnUIBX3cUx2BZ5C0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705691449; c=relaxed/simple;
-	bh=8PECGMhwm3BopdpqET6OaIAick528GtTNtZM1lUUtkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LN27PohP6SpJZkm9MgEJ23ZBxN+cN0jOBbZcQ96qYronyF0G1iNpU0iNZOWhhU9aXDyp3R2ExaIei8huuTlt2njE2lsorNOX81c2+S0dHrga+kf29RqEQjqn2w2LiQns+CmnLhG12OeR9YAVTeXHjRF0Y5y+1HMVcLCB+V5BRtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org; spf=pass smtp.mailfrom=libc.org; arc=none smtp.client-ip=104.156.224.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=libc.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=libc.org
-Date: Fri, 19 Jan 2024 14:10:54 -0500
-From: Rich Felker <dalias@libc.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	kernel list <linux-kernel@vger.kernel.org>,
-	Linux API <linux-api@vger.kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Jann Horn <jannh@google.com>
-Subject: Re: [PATCH v2] vfs: add RWF_NOAPPEND flag for pwritev2
-Message-ID: <20240119191053.GT22081@brightrain.aerifal.cx>
-References: <20200831153207.GO3265@brightrain.aerifal.cx>
- <20240119-neuverfilmung-aufregend-54a5bd5929dd@brauner>
+	s=arc-20240116; t=1705695964; c=relaxed/simple;
+	bh=8729KaF8lic5I8uIbskO0AP/o0A9IgjqvOMS2hCtY/w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tJDn2vKystb/8zCraVtdERFXtVi1P6zZP2QHx5JgfHRr/5GRCCH7HOQd6p7sfMU5kK+uGU7QPlT6QFQRPtupODPyu0PuAu5kdzd5uFOJp8uP0eP8sc3EFttXVVnzFcdNiYeGTFWv19Ojc6g2UxXwmF5mCbCbi3dCGebxxLtaM+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xEV3nzmU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7yV7JEs9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xEV3nzmU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7yV7JEs9; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F3D2221CD1;
+	Fri, 19 Jan 2024 20:25:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1705695950; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=OrJDAQiLNTkCMDxWISKfnPTZKagfYJo3bgpzRqerjOQ=;
+	b=xEV3nzmU5wh5eBp/u8TZf06t6AZ84GNDe5D6+F3nJTAyvCJS3p+sqMCumr7RzS1IeQ2aYg
+	q/B3rC7YwA+n89n+Ax5M9GMfkm/xzT0eI/xwGHz3wSSVgrbf/vB1kAUR9MxUYjBt4ihYQT
+	f0w2NEAO+usm73pGtZl6qaOlIRWeJo0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1705695950;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=OrJDAQiLNTkCMDxWISKfnPTZKagfYJo3bgpzRqerjOQ=;
+	b=7yV7JEs9Zx8SwEiXiSwWQBuOagoObSwjwVymPaUe9xr2diTPThFUpBZpiLc/CeFVb+HqBF
+	HtGNHUXGE33FV+CA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1705695950; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=OrJDAQiLNTkCMDxWISKfnPTZKagfYJo3bgpzRqerjOQ=;
+	b=xEV3nzmU5wh5eBp/u8TZf06t6AZ84GNDe5D6+F3nJTAyvCJS3p+sqMCumr7RzS1IeQ2aYg
+	q/B3rC7YwA+n89n+Ax5M9GMfkm/xzT0eI/xwGHz3wSSVgrbf/vB1kAUR9MxUYjBt4ihYQT
+	f0w2NEAO+usm73pGtZl6qaOlIRWeJo0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1705695950;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=OrJDAQiLNTkCMDxWISKfnPTZKagfYJo3bgpzRqerjOQ=;
+	b=7yV7JEs9Zx8SwEiXiSwWQBuOagoObSwjwVymPaUe9xr2diTPThFUpBZpiLc/CeFVb+HqBF
+	HtGNHUXGE33FV+CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 55029136F5;
+	Fri, 19 Jan 2024 20:25:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id t4glBs3aqmXnJQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Fri, 19 Jan 2024 20:25:49 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: ebiggers@kernel.org,
+	viro@zeniv.linux.org.uk,
+	torvalds@linux-foundation.org
+Cc: tytso@mit.edu,
+	linux-fsdevel@vger.kernel.org,
+	jaegeuk@kernel.org,
+	Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH v3 0/2] Try exact-match comparison ahead of case-insensitive match
+Date: Fri, 19 Jan 2024 17:25:41 -0300
+Message-ID: <20240119202544.19434-1-krisman@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240119-neuverfilmung-aufregend-54a5bd5929dd@brauner>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spamd-Result: default: False [4.90 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 R_MISSING_CHARSET(2.50)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 BROKEN_CONTENT_TYPE(1.50)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 RCPT_COUNT_SEVEN(0.00)[7];
+	 MID_CONTAINS_FROM(1.00)[];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-0.00)[38.78%]
+X-Spam-Level: ****
+X-Spam-Score: 4.90
+X-Spam-Flag: NO
 
-On Fri, Jan 19, 2024 at 03:33:32PM +0100, Christian Brauner wrote:
-> On Mon, 31 Aug 2020 11:32:08 -0400, Rich Felker wrote:
-> > The pwrite function, originally defined by POSIX (thus the "p"), is
-> > defined to ignore O_APPEND and write at the offset passed as its
-> > argument. However, historically Linux honored O_APPEND if set and
-> > ignored the offset. This cannot be changed due to stability policy,
-> > but is documented in the man page as a bug.
-> > 
-> > Now that there's a pwritev2 syscall providing a superset of the pwrite
-> > functionality that has a flags argument, the conforming behavior can
-> > be offered to userspace via a new flag. Since pwritev2 checks flag
-> > validity (in kiocb_set_rw_flags) and reports unknown ones with
-> > EOPNOTSUPP, callers will not get wrong behavior on old kernels that
-> > don't support the new flag; the error is reported and the caller can
-> > decide how to handle it.
-> > 
-> > [...]
-> 
-> The RWF_* and IOCB_* flags were
-> aligned so they could be set in one operation. So there was a merge
-> conflict when applying. I've resolved it. Please take a look and make
-> sure that it's all correct.
-> 
-> ---
-> 
-> Applied to the vfs.misc branch of the vfs/vfs.git tree.
-> Patches in the vfs.misc branch should appear in linux-next soon.
-> 
-> Please report any outstanding bugs that were missed during review in a
-> new review to the original patch series allowing us to drop it.
-> 
-> It's encouraged to provide Acked-bys and Reviewed-bys even though the
-> patch has now been applied. If possible patch trailers will be updated.
-> 
-> Note that commit hashes shown below are subject to change due to rebase,
-> trailer updates or similar. If in doubt, please check the listed branch.
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> branch: vfs.misc
-> 
-> [1/1] vfs: add RWF_NOAPPEND flag for pwritev2
->       https://git.kernel.org/vfs/vfs/c/31081ab305a1
+Linus, Al, Eric,
 
-LGTM. Thanks!
+This small series implement the exact-match comparison ahead of the
+case-insensitive comparison as suggested by Linus.  The first patch only
+exposes dentry_string_cmp in a header file so we can use it instead of
+memcmp and the second actually do the optimization in the
+case-insensitive comparison code.
+
+Gabriel Krisman Bertazi (2):
+  dcache: Expose dentry_string_cmp outside of dcache
+  libfs: Attempt exact-match comparison first during casefold lookup
+
+ fs/dcache.c            | 53 ------------------------------------------
+ fs/libfs.c             | 39 +++++++++++++++++--------------
+ include/linux/dcache.h | 53 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 75 insertions(+), 70 deletions(-)
+
+-- 
+2.43.0
+
 
