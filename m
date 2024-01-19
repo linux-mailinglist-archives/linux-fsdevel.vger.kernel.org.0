@@ -1,108 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-8285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A20678323C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 04:30:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3987B8323C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 04:32:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8AD3CB223AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 03:30:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5307286517
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 03:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2544A0C;
-	Fri, 19 Jan 2024 03:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053321FA6;
+	Fri, 19 Jan 2024 03:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gICT4nbM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HqMAVJL5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A7B4689;
-	Fri, 19 Jan 2024 03:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8A3184E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jan 2024 03:32:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705635026; cv=none; b=Sq2P+glbAkqPi/aA64PjrH5nNWtExpmOh+coNAb6OgiGr1n6qiPgvcU4kSPkYgRHs7ApjQJrvIcozARbQhKpnBL9WtaNsrlEk3zRZOnEwRGnOxKIh0PTbpTwFqj/RinNYlEXTPAUNyQkzzOERZf/9I0shTv5Pd/BZsdKIY1pmkU=
+	t=1705635149; cv=none; b=mL9EoanuqdT88uAhTjBRaXmi+f+Tb0gap8L+5B7qfUnVwHCFkdrbvO4n/MMCJEQHzc+kTW9nuU39lzfvo6yJcbPIvXXLuYIQzQ1OCAak2Gldkc/WD9KRrCfAkG5lO+KVAXcmj6fimapipXNNtodU5nqwU/A0wyZ46cIRAqCAUos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705635026; c=relaxed/simple;
-	bh=6uVWemlDtYvlezteOXZUIaD3rPg6lCbKvGRezvrDVgY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NkNE9r4KuyBRR6dmhefADgdrQsSXGauasTJzq3Ps68toqNjGpOMDIIp3X03U8APTP/NM9Sils2pTycP6wLsjmGScr08AHCFlbCi/hOeAtyuqZ7YIbRVGyUtbjV9J8ERTbjKYYKIs48awRpsQrp2sgs6FyiK20uwZEZ8CPFoMC60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gICT4nbM; arc=none smtp.client-ip=209.85.221.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-337cf4ac600so245557f8f.3;
-        Thu, 18 Jan 2024 19:30:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705635023; x=1706239823; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8PlDy6DohOlkWdet1eQDLhV72QW5bd7hQpgAlm4lFjA=;
-        b=gICT4nbMdbT3MQ1a3317yA3pCimBDQEWr8NAdsbfLZXPnW7rL6JVRJXUwc44cn2b4d
-         F1ox1OS/JrVgo0TbU6N1QdCjAbMlFaiPSUUl0RJyavG7WADhWS1Ga6tN4CiV9kpnpF/J
-         sWy7j4jsMvKjREhERpHpUCQYVCl/gl/c6XVImOp7Phe45iDJFH+5172S9sTLp4RUcWxi
-         Rvdf7afgwKXZovyOS6bC0/I3MyrysD4OlTtWI41uweVpONM6/xn8yw3gbzSaIR4H7CT7
-         wZLLd+APOYR6iOoH5bzdkevuGigmH84+/HXu9U3Nz0HgNqXrABDzrMCGPoJEcdU1Abi2
-         hNaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705635023; x=1706239823;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8PlDy6DohOlkWdet1eQDLhV72QW5bd7hQpgAlm4lFjA=;
-        b=XxSYNVrbPCPUX7W6K/dTohJNCHV9SOREpjMSsJA60QlKNtc98kHhIQvgkwhBHW+nn/
-         XfIKkrqmli1XHDbNtpBu44S5XuCgW6KY1Lj9N4xPGrWrT4pxLwh3O1Ils9o453JIN3tk
-         rC97nNxVGiZQr+td3+5zDVNa+bUUNUv51kRzWiJRkJAWzqZYL0lFPgqqn+vIHKUeHv9w
-         TvDL23ACUVAwHSg1mJ0Y20nBR1HAopY1qrcjPbmgn3l8HvNF7ccsMEq/vWqG1uUm0nH7
-         csL1m3lxwel6WGxeJ6/L3EideQAVlV/AYwG6RinghyllHY25vP4s98+BCsj7uEL39AfA
-         jmzw==
-X-Gm-Message-State: AOJu0YzwSUC1o4N18iwFHENw9i4lxxUJ8bwOJF8bOgGWoJkUEH4buoQv
-	nruac7oFMJE8U44qfsNrF92vnuji7qOamWxTU1wS2gfstednoYJBn9YIJaZckQkma2nS
-X-Google-Smtp-Source: AGHT+IGuGFh49pMYFibk584khzy5gXCLh3YZ6EM7bTpa/I4xkl2iUZvu6aho4nZPHkAylDpMkKJM7g==
-X-Received: by 2002:a5d:4489:0:b0:337:b479:8177 with SMTP id j9-20020a5d4489000000b00337b4798177mr885376wrq.123.1705635022775;
-        Thu, 18 Jan 2024 19:30:22 -0800 (PST)
-Received: from codespaces-9bcaa2.5l3qix2zsxyefcxo0oi5bwpr2d.zx.internal.cloudapp.net ([172.166.193.70])
-        by smtp.gmail.com with ESMTPSA id n5-20020adff085000000b00337b47ae539sm5355244wro.42.2024.01.18.19.30.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jan 2024 19:30:22 -0800 (PST)
-From: Suyao Qian <qiansuyao@gmail.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Suyao Qian <qiansuyao@gmail.com>
-Subject: [PATCH] proc: remove unnecessary comment since removal of no_llseek
-Date: Fri, 19 Jan 2024 03:30:04 +0000
-Message-ID: <20240119033004.52937-1-qiansuyao@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1705635149; c=relaxed/simple;
+	bh=BvKh3M6EVInsnKQ06RFn3GYgxIC+vXofvFdVf5K7/NM=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b+fE2P3p72sx5HKDesQ6X1D+E1nH0x6xmxaEvUQ2xn/Ex4NRM3VMrvJ7LCiZHed6wGAhHxSA+FL2cVzP0gAvJUZ8XxlF7aKDKiR3Fk/SrGvERKsh+wEoz8lLAfAxFVPvKOr8kPSz6uB/q5JmRIxzvBTRKJnnRidZdHGSQNcY7po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HqMAVJL5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBEAFC43394
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jan 2024 03:32:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705635149;
+	bh=BvKh3M6EVInsnKQ06RFn3GYgxIC+vXofvFdVf5K7/NM=;
+	h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+	b=HqMAVJL5nFmIUp4zPFxPFrPZtVpXxXVyu8ixywc0eTIHbXmDyih96+z088xi85SkG
+	 za7QSqJf6Xp3fkPyYpxVBJruOquITWLZAvRk1JD/HnU1/BP4fJV80bNTdzqwpumbZo
+	 58GqSwYUwTX8s6Cawn3kpqCt4rJc6aVZr8pahj1+Q5uh4V1qrDly/F4hw36wEXbR5B
+	 k3gJA3Oc2agHh0zsy7ROAzvf0oVgPoHSLkMO1gr7kME1S//dav3vf4FFwxArnTbqlw
+	 CnUpVk9bQSv3J7V3munp1scNmJAYPshUQ15r3Z2rTkvBK3eUrJjkg/XjKXsBhtve9K
+	 2jBT9exqBoZKA==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2053f5e97b2so256787fac.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 18 Jan 2024 19:32:28 -0800 (PST)
+X-Gm-Message-State: AOJu0YzAOzyd2Rx0MK0xglTAY21iT5rgTPKqqhPRBWkAOdf92DQR3Mf5
+	U12Tsqc32E9inauGClpvKjS/rm/jJ26h0BWjHX4SlEqklK/5LpWqsoIe5fAQj4reU5SySaeCNOM
+	uI9G618T3o7HUO8+HzLxBHWpv3cg=
+X-Google-Smtp-Source: AGHT+IFxNZphozSNRZ0FsssUqjMM83Gfo/AlC9fZWPYTjLWVoL0FMhUv8DF3e8ePBL4TTlqJuuVb/SAsph4th+Hwdg4=
+X-Received: by 2002:a05:6870:468a:b0:210:9fe7:37ee with SMTP id
+ a10-20020a056870468a00b002109fe737eemr2074541oap.3.1705635148293; Thu, 18 Jan
+ 2024 19:32:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: by 2002:ac9:6c8d:0:b0:513:8ad5:8346 with HTTP; Thu, 18 Jan 2024
+ 19:32:27 -0800 (PST)
+In-Reply-To: <PUZPR04MB631609520C4F2CE212A9A5F781712@PUZPR04MB6316.apcprd04.prod.outlook.com>
+References: <PUZPR04MB631609520C4F2CE212A9A5F781712@PUZPR04MB6316.apcprd04.prod.outlook.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Fri, 19 Jan 2024 12:32:27 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9V4thGjzFPnU1brokGf_uAdi9WSd4K8hAmTN_dhnAUmw@mail.gmail.com>
+Message-ID: <CAKYAXd9V4thGjzFPnU1brokGf_uAdi9WSd4K8hAmTN_dhnAUmw@mail.gmail.com>
+Subject: Re: [PATCH v1] exfat: fix zero the unwritten part for dio read
+To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc: "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "Andy.Wu@sony.com" <Andy.Wu@sony.com>, 
+	"Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
+Content-Type: text/plain; charset="UTF-8"
 
-proc_lseek of NULL is checked during proc_reg_open(). Hence no longer
-mandatory.
-
-Fixes: 3f61631d47f1 ("take care to handle NULL ->proc_lseek()")
-Signed-off-by: Suyao Qian <qiansuyao@gmail.com>
----
- include/linux/proc_fs.h | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/include/linux/proc_fs.h b/include/linux/proc_fs.h
-index de407e7c3b55..7ad73ed0cb8a 100644
---- a/include/linux/proc_fs.h
-+++ b/include/linux/proc_fs.h
-@@ -32,7 +32,6 @@ struct proc_ops {
- 	ssize_t	(*proc_read)(struct file *, char __user *, size_t, loff_t *);
- 	ssize_t (*proc_read_iter)(struct kiocb *, struct iov_iter *);
- 	ssize_t	(*proc_write)(struct file *, const char __user *, size_t, loff_t *);
--	/* mandatory unless nonseekable_open() or equivalent is used */
- 	loff_t	(*proc_lseek)(struct file *, loff_t, int);
- 	int	(*proc_release)(struct inode *, struct file *);
- 	__poll_t (*proc_poll)(struct file *, struct poll_table_struct *);
--- 
-2.43.0
-
+2024-01-18 18:43 GMT+09:00, Yuezhang.Mo@sony.com <Yuezhang.Mo@sony.com>:
+> For dio read, bio will be leave in flight when a successful partial
+> aio read have been setup, blockdev_direct_IO() will return
+> -EIOCBQUEUED. In the case, iter->iov_offset will be not advanced,
+> the oops reported by syzbot will occur if revert iter->iov_offset
+> with iov_iter_revert(). The unwritten part had been zeroed by aio
+> read, so there is no need to zero it in dio read.
+>
+> Reported-by: syzbot+fd404f6b03a58e8bc403@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=fd404f6b03a58e8bc403
+> Fixes: 11a347fb6cef ("exfat: change to get file size from DataLength")
+> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Applied, Thanks for your patch!
 
