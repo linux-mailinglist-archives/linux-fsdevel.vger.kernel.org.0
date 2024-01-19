@@ -1,95 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-8319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E1E832D8E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 17:55:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB8E832DAB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 18:05:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DA48B253E2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 16:55:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F0781F247AC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 17:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D00F55E54;
-	Fri, 19 Jan 2024 16:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B3455C29;
+	Fri, 19 Jan 2024 17:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aAs5qV0R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1758255784;
-	Fri, 19 Jan 2024 16:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C9B4C624;
+	Fri, 19 Jan 2024 17:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705683307; cv=none; b=HtiaZJmkG9ApnPLFs2kzGy3DKKGX5Pf44FiTjpXv+WhCQUopJRM7SWPJd3FjAZ55Bd32QnNo6/aAbz1TcK3krbEjUW2Iej+4rP1j30p2vsErqwsWqgK1PDmMGefCDU65iwqFapjXuIUqO7g78QaeRGWA247p+RiHKI84p5pwFsU=
+	t=1705683900; cv=none; b=TpS3suaInW+SPgr0a2IY0+9u0pOT33eZh0fUjP7090mpJhOVo9HKI5Ax2Px09xDGlckkwe8pZKoJhc+XDZIOso8rBpVQJX/RAFavCGwqjH7RtSQP0bm0ISe9yrGgzKX0wGnrFUgyU6tF1PWu06IOrfJ+6xomUIQP1x1QxTsbDlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705683307; c=relaxed/simple;
-	bh=su/Rz+5699sb7UQeTkajOvLoS6GIiWIG1/7YwxHT1uw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ad1h3bH5UnKZSqF8KlfA4C/Qm0HnQGv8ZSWW04PxnZ1TXO6HX9Rv8KpwXV3VFRg/cNea9mGm8x1JRZZvTiNUr7m6xoj7pEzhgAzfhbv2Ddtm9Bddk8PW8b37rZiK+TRArRVjTzSflLuPKF7uUCudd/yz7zXnOP7gPun5M/Z2z20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41FBEC433F1;
-	Fri, 19 Jan 2024 16:55:04 +0000 (UTC)
-Date: Fri, 19 Jan 2024 11:56:25 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Huang Yiwei <quic_hyiwei@quicinc.com>
-Cc: <mhiramat@kernel.org>, <mark.rutland@arm.com>, <mcgrof@kernel.org>,
- <keescook@chromium.org>, <j.granados@samsung.com>,
- <mathieu.desnoyers@efficios.com>, <corbet@lwn.net>,
- <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <quic_bjorande@quicinc.com>, <quic_tsoni@quicinc.com>,
- <quic_satyap@quicinc.com>, <quic_aiquny@quicinc.com>, <kernel@quicinc.com>,
- Ross Zwisler <zwisler@google.com>, Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH v3] tracing: Support to dump instance traces by
- ftrace_dump_on_oops
-Message-ID: <20240119115625.603188d1@gandalf.local.home>
-In-Reply-To: <20240119080824.907101-1-quic_hyiwei@quicinc.com>
-References: <20240119080824.907101-1-quic_hyiwei@quicinc.com>
-X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1705683900; c=relaxed/simple;
+	bh=OQZrjxKzIhKg+foJNv2n8JT3D+7G1NjqrJIhys/Imjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L43Db3HMiWYIxApRLPSecL7KT2AJ3j+6pp5KK0qwlwv8Q0GHafNVBniTQLwE8Hn1Wpr4x5rmP1/QRokeLI5U01Wnxv49eBv/sMpD5v9sYik+Z8g9SMcItHCnvanH7BBdGkB0A3ItfPbl08QSN+tp9H8b64WO1cr/l87LZD/a63s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aAs5qV0R; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=LLJKl+AAhGh5Pf+cmVaB+vB6xM+m/TjxoqlPtwqp82Y=; b=aAs5qV0R1R25DORcXY14HSEdj1
+	yyfgveXeG8pK/B7oxJxjhIL8/ufipq4KtMZLgZZVeS/ydew7vUWSjXdq+Vt2fGJXGTrGL2a50LpyL
+	1f06jFZRfy95zgVSMZSD/VDD370A4n7N54iUA+dt0ge/EHwRxvne//fbHSXQ0RHAJ5S/pX2FeqlRU
+	XRbUz+8iw/JkjoouqeQzedGdwpD/kIyhBAbfUjqpbO6dOgeGNV7v55Gl5UhDC6ow1liWD+FSr222R
+	Q36hS3jw/qp0gcifKR7Zo7vBznlQF4usXtVtdlRsrqdJCD+S7P9yo9l6Y5IVPhHvPnR5+aVzbGGkH
+	RZCtTnSA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rQsIa-00000005ofX-2S7M;
+	Fri, 19 Jan 2024 17:04:56 +0000
+Date: Fri, 19 Jan 2024 17:04:56 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] idr test suite: Remove usage of the deprecated
+ ida_simple_xx() API
+Message-ID: <ZaqruGVz734zjxrZ@casper.infradead.org>
+References: <81f44a41b7ccceb26a802af473f931799445821a.1705683269.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <81f44a41b7ccceb26a802af473f931799445821a.1705683269.git.christophe.jaillet@wanadoo.fr>
 
-On Fri, 19 Jan 2024 16:08:24 +0800
-Huang Yiwei <quic_hyiwei@quicinc.com> wrote:
+On Fri, Jan 19, 2024 at 05:54:44PM +0100, Christophe JAILLET wrote:
+> ida_alloc() and ida_free() should be preferred to the deprecated
+> ida_simple_get() and ida_simple_remove().
+> 
+> Note that the upper limit of ida_simple_get() is exclusive, but the one of
+> ida_alloc_range()/ida_alloc_max() is inclusive. But because of the ranges
+> used for the tests, there is no need to adjust them.
+> 
+> While at it remove some useless {}.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> It should be a question of weeks now before being able to remove the
+> ida_simple_*() API.
+> So it is time to convert the testing framework.
 
-> -	ftrace_dump_on_oops[=orig_cpu]
-> +	ftrace_dump_on_oops[=orig_cpu | =<instance>]
+Oh, that's fantastic news!  Thank you for finishing off this conversion!
 
-I wonder if we should have it be:
+I don't have anything pending for the IDA/IDR/XArray right now.  Either
+Andrew can grab this as a misc patch, or we can leave it for a cycle and
+I'll put it in along with the removal of the rest of the simple API.  If
+the former,
 
-	ftrace_dump_on_oops[=orig_cpu | =<instance> | =<instance>:orig_cpu ]
+Acked-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-Then last would be to only print out a specific CPU trace of the given instance.
-
-And if we really want to be fancy!
-
-	ftrace_dump_on_opps[=orig_cpu | =<instance> | =orig_cpu:<instance> ][,<instance> | ,<instance>:orig_cpu]
-
-That would allow dumping more than one instance.
-
-If you want to dump the main buffer and an instance foo:
-
-	ftrace_dump_on_opps,foo
-
-Where the ',' says to dump the top instance as well as the foo instance.
-
--- Steve
-
-
->  			[FTRACE] will dump the trace buffers on oops.
-> -			If no parameter is passed, ftrace will dump
-> -			buffers of all CPUs, but if you pass orig_cpu, it will
-> +			If no parameter is passed, ftrace will dump global
-> +			buffers of all CPUs, if you pass orig_cpu, it will
->  			dump only the buffer of the CPU that triggered the
-> -			oops.
-> +			oops, or specific instance will be dumped if instance
-> +			name is passed.
+> ---
+>  tools/testing/radix-tree/idr-test.c | 12 +++++-------
+>  1 file changed, 5 insertions(+), 7 deletions(-)
+> 
+> diff --git a/tools/testing/radix-tree/idr-test.c b/tools/testing/radix-tree/idr-test.c
+> index ca24f6839d50..bb41e93e2acd 100644
+> --- a/tools/testing/radix-tree/idr-test.c
+> +++ b/tools/testing/radix-tree/idr-test.c
+> @@ -503,14 +503,12 @@ void ida_simple_get_remove_test(void)
+>  	DEFINE_IDA(ida);
+>  	unsigned long i;
 >  
+> -	for (i = 0; i < 10000; i++) {
+> -		assert(ida_simple_get(&ida, 0, 20000, GFP_KERNEL) == i);
+> -	}
+> -	assert(ida_simple_get(&ida, 5, 30, GFP_KERNEL) < 0);
+> +	for (i = 0; i < 10000; i++)
+> +		assert(ida_alloc_max(&ida, 20000, GFP_KERNEL) == i);
+> +	assert(ida_alloc_range(&ida, 5, 30, GFP_KERNEL) < 0);
+>  
+> -	for (i = 0; i < 10000; i++) {
+> -		ida_simple_remove(&ida, i);
+> -	}
+> +	for (i = 0; i < 10000; i++)
+> +		ida_free(&ida, i);
+>  	assert(ida_is_empty(&ida));
+>  
+>  	ida_destroy(&ida);
+> -- 
+> 2.43.0
+> 
 
