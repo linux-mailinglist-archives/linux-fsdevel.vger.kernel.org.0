@@ -1,131 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-8346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9625832FFE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 21:49:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5634F833052
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 22:32:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C34D8B21F92
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 20:49:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0885A1F23FF7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 19 Jan 2024 21:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 101B15733C;
-	Fri, 19 Jan 2024 20:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAA25821B;
+	Fri, 19 Jan 2024 21:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEUmxWi1"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PgiUbtlK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6793B1DFCB;
-	Fri, 19 Jan 2024 20:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121F958123
+	for <linux-fsdevel@vger.kernel.org>; Fri, 19 Jan 2024 21:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705697381; cv=none; b=JfCDAF7N4sdi0MjLxN8Vjkgmm/g/bjVgHUWDEHKFwIupZLzbB7YBH67lsTmY7oQaOWTtopqhnczQka4D2sz2JIS3t0vOl2f+oGRLgCked26mluqz2D49V7WrB/QUn6cun+sQ0dgZGMuk7f1iikKyBeelVOIJ/MJ9VZ5ME8FpTyo=
+	t=1705699973; cv=none; b=PEWlHf4Pjtw/YBEkgkuldOVMMSBo1Cu5thsLOaan2I6L4IIc8WA13zQlO1hyElnX/Xj1Ag6wrEcMOtVWeVOYULzYf2+q4E9nOlGCEaul2vVur6SlCZEfkrCLMCM4steRKfUfNRa/afhcOomrvW+jx9U4JJMQ6HO/lELI72VziAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705697381; c=relaxed/simple;
-	bh=ULOIRBPrMeDfSN1D3IxraZwLRBgSo/f7XWxfB6Eofxw=;
+	s=arc-20240116; t=1705699973; c=relaxed/simple;
+	bh=rb/0RRAKqD0zgupgeIMpklHRq1/MvnRXbqIFVvvnzi0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y+cNibjmS/ecgOjY34jQjJUCRnNzlg77P5c+UqnHLZr8oNx33mNjD6N27tZCQprihhmznp+hN3xU5vEX04Te0NTN5DlvDwQcvOhUvH6z7hO8jyvLx7a6p4bYArIxJ5fu4vVFGREYAJl0A6rnmtjMIjFZane/hCFg93vjCilQytg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEUmxWi1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02B34C433F1;
-	Fri, 19 Jan 2024 20:49:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705697380;
-	bh=ULOIRBPrMeDfSN1D3IxraZwLRBgSo/f7XWxfB6Eofxw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QEUmxWi1MMVwOTWVYgyanV5UKKbnmqb37c28J6+QUSNp8xwj6WqpkrhqFFIqoKuA5
-	 8hShNIsHBy5UY9KBXm7JGR2R0f9/s/tTj7Xxcy634pVXDb/YVbPeEYFSsowwjh5Fdf
-	 QQVJdNyVRMFWSm/hfm81Cctw+tJRE22PrHvJWXPFMAWBg0VCnPdGdhpNHRAiiZTh0s
-	 kUmywlWgXOxT5bKFR9EpU0ALlAOzrCyyVJqgJCvo16FN0ZblbLp5IurgVhJpPk3BAr
-	 Y5ZIPkcZX2w8rj+Y4hNukwUGkl90mLkvpPOb5z42i6x7H9Y2L7TwDi3/58m/RsKR0m
-	 4B79Qe+aBxbcw==
-Date: Fri, 19 Jan 2024 13:49:37 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-	Viacheslav Dubeyko <slava@dubeyko.com>,
-	lsf-pc@lists.linux-foundation.org,
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-	Adam Manzanares <a.manzanares@samsung.com>,
-	linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-block@vger.kernel.org, slava@dubeiko.com,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [LSF/MM/BPF TOPIC] : Flexible Data Placement (FDP) availability
- for kernel space file systems
-Message-ID: <ZargYTc8HE47a0s7@kbusch-mbp.dhcp.thefacebook.com>
-References: <CGME20240115084656eucas1p219dd48243e2eaec4180e5e6ecf5e8ad9@eucas1p2.samsung.com>
- <20240115084631.152835-1-slava@dubeyko.com>
- <20240115175445.pyxjxhyrmg7od6sc@mpHalley-2.localdomain>
- <86106963-0E22-46D6-B0BE-A1ABD58CE7D8@dubeyko.com>
- <20240117115812.e46ihed2qt67wdue@ArmHalley.local>
- <ZahL6RKDt/B8O2Jk@dread.disaster.area>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T7uvM2MqNWT6VxuwvrygzaX8KTBu0iG1kyyqqXhdf4mpX+Oj+GwqsmRUA4dvExkDg8DPz++pOUrgp/hIudWIKjMwZ6sYdGYbTaExw3CX2U12K6E3NbqAvJWJGtZaZqntC/586LmVz3pxNXn+mZt6yJZT7tFgNlFNnULIGcol4lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PgiUbtlK; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 19 Jan 2024 16:32:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1705699969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FLomblPJcMeiSxlixDm3RulK3ybZSKceq36X6Ta4QV8=;
+	b=PgiUbtlKrppC7aYHRvo+rWp7WthBgUf+B0PYwy/3SIFxexUpCeA79apDrlK3JO2qMEsI9f
+	0ojmGVfhK3DfcM+21Ilht00/8pu7YLroHlo3wCwMsUAJnaGeWGOxx/BFY9QlP53e7NPynB
+	EtJyKwVNW4vB/DnGE1+WN+GoZBGIWWM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Christoph Hellwig <hch@lst.de>
+Cc: bfoster@redhat.com, linux-bcachefs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] bcachefs: fix incorrect usage of REQ_OP_FLUSH
+Message-ID: <ueeqal442uw77vrmonr5crix5jehetzg266725shaqi2oim6h7@4q4tlcm2y6k7>
+References: <20240111073655.2095423-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZahL6RKDt/B8O2Jk@dread.disaster.area>
+In-Reply-To: <20240111073655.2095423-1-hch@lst.de>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jan 18, 2024 at 08:51:37AM +1100, Dave Chinner wrote:
-> On Wed, Jan 17, 2024 at 12:58:12PM +0100, Javier González wrote:
-> > On 16.01.2024 11:39, Viacheslav Dubeyko wrote:
-> > > > On Jan 15, 2024, at 8:54 PM, Javier González <javier.gonz@samsung.com> wrote:
-> > > > > How FDP technology can improve efficiency and reliability of
-> > > > > kernel-space file system?
-> > > > 
-> > > > This is an open problem. Our experience is that making data placement
-> > > > decisions on the FS is tricky (beyond the obvious data / medatadata). If
-> > > > someone has a good use-case for this, I think it is worth exploring.
-> > > > F2FS is a good candidate, but I am not sure FDP is of interest for
-> > > > mobile - here ZUFS seems to be the current dominant technology.
-> > > > 
-> > > 
-> > > If I understand the FDP technology correctly, I can see the benefits for
-> > > file systems. :)
-> > > 
-> > > For example, SSDFS is based on segment concept and it has multiple
-> > > types of segments (superblock, mapping table, segment bitmap, b-tree
-> > > nodes, user data). So, at first, I can use hints to place different segment
-> > > types into different reclaim units.
-> > 
-> > Yes. This is what I meant with data / metadata. We have looked also into
-> > using 1 RUH for metadata and rest make available to applications. We
-> > decided to go with a simple solution to start with and complete as we
-> > see users.
+On Thu, Jan 11, 2024 at 08:36:55AM +0100, Christoph Hellwig wrote:
+> REQ_OP_FLUSH is only for internal use in the blk-mq and request based
+> drivers. File systems and other block layer consumers must use
+> REQ_OP_WRITE | REQ_PREFLUSH as documented in
+> Documentation/block/writeback_cache_control.rst.
 > 
-> XFS has an abstract type definition for metadata that is uses to
-> prioritise cache reclaim (i.e. classifies what metadata is more
-> important/hotter) and that could easily be extended to IO hints
-> to indicate placement.
->
-> We also have a separate journal IO path, and that is probably the
-> hotest LBA region of the filesystem (circular overwrite region)
-> which would stand to have it's own classification as well.
+> While REQ_OP_FLUSH appears to work for blk-mq drivers it does not
+> get the proper flush state machine handling, and completely fails
+> for any bio based drivers, including all the stacking drivers.  The
+> block layer will also get a check in 6.8 to reject this use case
+> entirely.
+> 
+> [Note: completely untested, but as this never got fixed since the
+> original bug report in November:
+> 
+>    https://bugzilla.kernel.org/show_bug.cgi?id=218184
+> 
+> and the the discussion in December:
+> 
+>     https://lore.kernel.org/all/20231221053016.72cqcfg46vxwohcj@moria.home.lan/T/
+> 
+> this seems to be best way to force it]
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Filesystem metadata is pretty small spatially in the LBA range, but
-seems to have higher overwrite frequency than other data, so this could
-be a great fit for FDP. Some of my _very_ early analysis though
-indicates REQ_META is too coarse to really get the benefits, so finer
-grain separation through new flag or hints should help.
- 
-> We've long talked about making use of write IO hints for separating
-> these things out, but requiring 10+ IO hint channels just for
-> filesystem metadata to be robustly classified has been a show
-> stopper. Doing nothing is almost always better than doing placement
-> hinting poorly.
+I've got a new bug report with this patch:
+https://www.reddit.com/r/bcachefs/comments/19a2u3c/error_writing_journal_entry/
 
-Yeah, a totally degenerate application could make things worse than just
-not using these write hints. NVMe's FDP has a standard defined feedback
-mechanism through log pages to see how well you're doing with respect to
-write amplification. If we assume applications using this optimization
-are acting in good faith, we should be able to tune the use cases. The
-FDP abstractions seem appropriate to provide generic solutions that
-don't tailor to just any one vendor.
+We seem to be geting -EOPNOTSUPP back from REQ_OP_FLUSH?
 
