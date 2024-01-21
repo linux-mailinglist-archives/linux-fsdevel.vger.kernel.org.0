@@ -1,79 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-8376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A22DC83581B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 23:24:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C079835854
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 23:43:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE728B21222
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 22:24:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54EE7281BF5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 22:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1127F38F8C;
-	Sun, 21 Jan 2024 22:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A0638FB3;
+	Sun, 21 Jan 2024 22:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzjwKgJM"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WFdc0s9x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6389F38DF9;
-	Sun, 21 Jan 2024 22:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6839038F96
+	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 22:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705875835; cv=none; b=pA1rvuXVND1AwBoIa3KBp8K7FT4Uf0ZbEKp8Y2tqknPQFfOK4bF1tzIlyhHNtqjZPS8K8T6zrB+TzKJv7feoQ4OlOoQoyds6J7et495ftUcH/2qk0SW93hJr6r8c+QU/IuBwr46Q3D272SOJI5gZOkHi0mJoyWOCzG6baL3yGhs=
+	t=1705876971; cv=none; b=kfY/oAq3KaypPgbGhwPGjLZipwUEpX5Hqm6tRr9XyAlZ3XvW4ftiShY+07yh8DVU2/MUkxNX8gmHwfmpymlL9asQxhu4nuGYKCxxwcKpl59rjziMSnnfJUKelI+2Vf3Q75lt8K51Ae6ixFu6QFemlp9nTN/GWn9wXjPlpRC3nZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705875835; c=relaxed/simple;
-	bh=xAds2pXHVZSmfZj/XJ/cxloKWSR1UFfu3kPTCn0RmQE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=nFjtdF2Qew4KlAt70QhyAmyZEAke0MaT/hDMtevsh/nBK/lNEIIAcJUd2YM3EAT7/gyPIKUIHHUG9+cRO/sLZqt0C6M7fnCSPSKAeHmwuFPNrPCIjfJ6GdWyQ6hhe/7F0cn3Z6KA81rj46PAwvmUYMtSp5c88C3LE0ude28+2y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzjwKgJM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E119BC433F1;
-	Sun, 21 Jan 2024 22:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705875834;
-	bh=xAds2pXHVZSmfZj/XJ/cxloKWSR1UFfu3kPTCn0RmQE=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=UzjwKgJMrS1kDL5oKnDUy5LDXRv8O4R+q+d0JnsHsu2i6FkFSEY+w3ewy2abMstL0
-	 iYdGD0GCPwehuKIC2b2XwfLuvYvg4hKEfDHWg0iJOhW6W8LI980WkIUQVPFvJ2G9hL
-	 QGfkI7M+bzZFA+p1IapjGDcHsTUjq20GjnIeX/EAqiG8mlokRVUCG/xoVIkQ+aan2r
-	 vekGBMzVQB7/DNzei2I+sMmaY363DiuqLXkthLZ+zjVcyDd3EGGLshpBswu8pAcWKe
-	 E9VbWSAunj/C8J0MW4QVkndlCoROJp2eBGv3HmKc6lQbYwco7i/LoKnizKOrZ26nlP
-	 lKHJEhHveDEpg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C433ED8C970;
-	Sun, 21 Jan 2024 22:23:54 +0000 (UTC)
+	s=arc-20240116; t=1705876971; c=relaxed/simple;
+	bh=mtq5Ct3DiF2+05ZYvmewRcHnK5+uLUY7o2GpBZ+pM0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SBLQH5uWJOgNUOYya+CX8PdRXKQZSTg/CEouDxTBX9E9a+A9UFNd5WsBlTYISuRzpI2EJPe/sFjpqGlA/skNeW9bDFkq3YIFDf3MFHX8WdmD4sCk+gxQhGnfkLG+Jw1za/Qg05gMOWehbBf5YxroDnAsRtTGVghuQ1NuU5OcoCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WFdc0s9x; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 21 Jan 2024 17:42:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1705876967;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K8eHWGuuA6Pwmzz/CjhK4EVo4x2Z5WhhRU/5WA4RF1s=;
+	b=WFdc0s9xUyn6nQEJNVxudMARxSnm7N014DcbqDkxHrMtM9UvqsxvsoscvY2tcL69HJI5ZY
+	3ihZAy4JTDeY8OhP9K8ZjUYKdrEbFcXjirw0Z7ZZ0REAAWZ+zuselHFLqksUbtzB/sl+ic
+	pHF42d6ehgj1JgxVpGpxROQgTZyFPfE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Subject: Re: [GIT PULL] More bcachefs updates for 6.8-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <a34bqdrz33jw26a5px4ul3eid5zudgaxavc2xqoftk2tywgi5w@ghgoiavnkhtd>
+Message-ID: <ianqurcjmgjvciii3k4dxr5bwargskiwspnfzzy4dqhbn2sdgp@r3v2ysfo5dqq>
 References: <a34bqdrz33jw26a5px4ul3eid5zudgaxavc2xqoftk2tywgi5w@ghgoiavnkhtd>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <a34bqdrz33jw26a5px4ul3eid5zudgaxavc2xqoftk2tywgi5w@ghgoiavnkhtd>
-X-PR-Tracked-Remote: https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-01-21
-X-PR-Tracked-Commit-Id: 249f441f83c546281f1c175756c81fac332bb64c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 35a4474b5c3dd4315f72bd53e87b97f128d9bb3d
-Message-Id: <170587583477.27364.7964231928269674267.pr-tracker-bot@kernel.org>
-Date: Sun, 21 Jan 2024 22:23:54 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+ <CAHk-=wjKjvytH19t2mMHZbkY2bpGurGbG4Tb7xmTjfzA71Lb7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjKjvytH19t2mMHZbkY2bpGurGbG4Tb7xmTjfzA71Lb7g@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-The pull request you sent on Sun, 21 Jan 2024 16:35:06 -0500:
+On Sun, Jan 21, 2024 at 02:05:55PM -0800, Linus Torvalds wrote:
+> On Sun, 21 Jan 2024 at 13:35, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> >
+> > Hi Linus, another small bcachefs pull. Some fixes, Some refactoring,
+> > some minor features.
+> 
+> I'm taking this, but only because bcachefs is new.
+> 
+> You need to be aware that the merge window is for *merging*. Not for
+> new development.
+> 
+> And almost all of the code here is new development.
+> 
+> What you send during the merge window is stuff that should all have
+> been ready *before* the merge window opened, not whatever random
+> changes you made during it.
+> 
+> Now, fixes happen any time, but for that argument to work they need to
+> be real fixes. Not "reorganize the code to make things easier to fix"
+> with the fix being something small on top of a big change.
 
-> https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-01-21
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/35a4474b5c3dd4315f72bd53e87b97f128d9bb3d
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+I thought the merge window was still open until tonight?
 
