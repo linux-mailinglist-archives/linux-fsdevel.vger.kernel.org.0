@@ -1,92 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-8373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2F58357F4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 22:38:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8BE8357FA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 22:51:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB518281BC0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 21:38:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4FAA1F219E5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 21:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B8C38DE6;
-	Sun, 21 Jan 2024 21:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EE738DE9;
+	Sun, 21 Jan 2024 21:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="XNuJOwDc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E6D393
-	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 21:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164CF36B04
+	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 21:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705873086; cv=none; b=UnBCWMmn8QmKrA2z2QLlLBrXwAeYJeQr1cU5fiW+LM8kpZIRtL9vgmYSox3+MNx7/fhz0m5s8MRTAn4oqB4OIKMw2R7rqior+AmWFKLEOFb7Tu0Uy1OwYjGPv0b1uoLp37CzrKB0VxNdL/2oMHh+1Rua173tmPUWeD3bUJ8XQjk=
+	t=1705873866; cv=none; b=sI1wisuiRVx9HFWn7jqN0xg8Muh2OXFUuudskBJS4y0KBFNEWFZtUtzFZPrnG887T5ndua3YzkowVuWvzPJxcKvRSHIHLPVf1SWSQnxuhFTp5D05Wmg0k9+wMpCe0KAUJWPjoPPJPmY+qptpFKomKDOIOjFc3yNCaizanGiOQwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705873086; c=relaxed/simple;
-	bh=ADtN1ZtRhdvwA5SdPpt6av/OuYK6N5Bzl984h3cTbck=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=elgvSNyZFv6VvQhxfB57QxTtR20+0fTbhaSy3EnKx80BJdpEy/Hc5kDYo52nJtgvgROo+mYQdS9/G/jphSkP6LD9r1u3c2kaUUWMF0lkPqsLgHvNdXLISAWVEmxS8qGpVCFUoIDtH25Sbs5t12+B4u6FvPxBN29EI54vXEr/ljI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7bee30dea21so248386039f.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 13:38:04 -0800 (PST)
+	s=arc-20240116; t=1705873866; c=relaxed/simple;
+	bh=e8/eHH/8Os+EruXNQHe/MytsP1WSv6RIhsXffvwgFmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tZqqoxi+D70YonOiXI4vGpRlS+bg+FM4BRH0JVKt5GGhd99ncgHYSLVc+kD8YzDxE6NkldJv5ylnbOon46+tdy3iCY4CweiguJ3qQ1AN8dLc9aYTWWTM+20BJBNLhsckIc6qC3UiAhQGKKBvKJ+/4xX15+0/IjO7JzwwhcR4JFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=XNuJOwDc; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7bedd61c587so79034839f.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 13:51:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1705873863; x=1706478663; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lIAOAmfmOn6HuODB3CsU29FgEopZmi1NGSSNaqzbpY0=;
+        b=XNuJOwDczQ+00LEoGo1VOwPkujnMOyy8J+aBrw4CLWRc5BscwtgrclzGIBVJy3RyBZ
+         6pquohWu7HYrdtmVCbOeDKYo0oIyICHm8OQtX+uVvcNQcZdqR7KP3Dcf7xJkBTFbD4TP
+         Nobr4od1FUfKNQDPqP0KN7WW6mnsQcz9xUGe7vSkZxBMOVLZ/Ly8QWQq+5DrbvC2Qa2x
+         i9utPHjPCpJrT2hD5gdMI1LhJyIL4/mo2v3UIf4aYFRhC+MqRj1BrnZFgBSd84H9O/kg
+         acgUOVJOtd4FoVS0qVmMSqoReuiSCvWgunztkCF561xLYi5cHVF41H5O+ZA2Kt/vfO8V
+         DP7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705873084; x=1706477884;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HfXiDPxljx4DtQYUMkH1jn3pRTh3NiwPfhc+Si6O028=;
-        b=KhyDJjWfenV2oXLJAA6X5YtPd9byrlJ9g0AeSIYmzpyfBdecvABc5FPSrxUzakhWpT
-         8jzkFkW7zRezlkCwEXtPV0iwzevZgtC2O44ntaBrgsXpVIc5ZPDF5dvqfCIlTtm/bpsS
-         NpC5Hiaj4R1SjZzmwF12td+v3Ngf3Is7SEZFaRKrHUIjk8r9J/jNljYMA+aqzidmmB9h
-         xdU0z2cS1Q2IoLFBzwN7z6+eFKHFVqFMY2t+AG8umuJerZ5cAo1WrOgROWW9HlbbZ+/l
-         0x5z36hU4GACNIHcb2Xj8ygZAiARiBjW5qO0PcAGvZ7fo0O0h04IVJD7E9SYoZVOkI/r
-         Q/LQ==
-X-Gm-Message-State: AOJu0Yy15u5q+RutmaVNOLn7VdkNzAj2R9SF9UGJplOteeH7tiMEYdNE
-	mHJGFJ9buD7MfRLswNfO8F1QTqdUvqkOkFlfVPbAC3I1l1hNJHrYOh8nIldBCnTDQQy12jjdP5B
-	5PJYUKTpzKoLHb1Vj1xrXKL36ELRDdKVCchneadA56quB+twkF7UgX3w=
-X-Google-Smtp-Source: AGHT+IFtw+I9gj7qbGr9UFRCY4KkCPGRElTHhUML0jEx0K8voDN5+lX4C6oO2F04Gf6gZ94y/s6i4OtORoTdBF4fRcEQyrmv4KZc
+        d=1e100.net; s=20230601; t=1705873863; x=1706478663;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lIAOAmfmOn6HuODB3CsU29FgEopZmi1NGSSNaqzbpY0=;
+        b=DiV9IWJOBOdu/A+aVP3c+XuQLteXk5KhEPVHmlghBmOtZAqQc7Dh2CgUfu89pIs/Gr
+         z6m89T8Mk/kvGrXmowwh668fMHQOtJJqvtVpy/sz9Bs7JQCaBbQk5ZixizjxQl/0IN56
+         AEu0A398augvLZuQQvWO2bcc3dqYrHBBEqFZ+MV1SDGCxzSOUXSw3F3sfsHO3CWdy6fm
+         VbAWrUL+ZT0eW+CEEXnnUSmeTTYK66MqgA3XBUMo4Mp0cQsfYDaWjI9y/Wi+imx9jk4a
+         gYP3hCmtZX5HExhLT6XhCVdQNk/Z/gv0g+osWDfWu65qosAVa5F68s6cqDjkLxMR3j3Y
+         OF2A==
+X-Gm-Message-State: AOJu0Yy97498WZIq2uJpzjFuX8ZGsTbfDW2ftzmYAKVycDAsVTEM+Lcj
+	MhVhDbZ2pkWqHDRT1EUgxOiM9/hVY8Njz/0iqFI3zufu0gTTXCRvfR7CM3i0DJE=
+X-Google-Smtp-Source: AGHT+IHQ6ry5vTW5x85A9d0dL7gYg/4lpV5q3/dH1PwN74lOagyItZ0zxUAVZk4ytaOcxGHrMcmOcQ==
+X-Received: by 2002:a5d:9b15:0:b0:7be:e36f:c84c with SMTP id y21-20020a5d9b15000000b007bee36fc84cmr3172078ion.6.1705873863167;
+        Sun, 21 Jan 2024 13:51:03 -0800 (PST)
+Received: from dread.disaster.area (pa49-180-249-6.pa.nsw.optusnet.com.au. [49.180.249.6])
+        by smtp.gmail.com with ESMTPSA id u8-20020a170903124800b001d60a70809bsm6144359plh.168.2024.01.21.13.51.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 21 Jan 2024 13:51:02 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rRfiW-00DV9k-0I;
+	Mon, 22 Jan 2024 08:51:00 +1100
+Date: Mon, 22 Jan 2024 08:51:00 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Askar Safin <safinaskar@zohomail.com>
+Cc: wedsonaf@gmail.com, brauner@kernel.org, gregkh@linuxfoundation.org,
+	kent.overstreet@gmail.com, linux-fsdevel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, viro@zeniv.linux.org.uk,
+	walmeida@microsoft.com, willy@infradead.org
+Subject: Re: [RFC PATCH 07/19] rust: fs: introduce `FileSystem::read_dir`
+Message-ID: <Za2RxF7iGOkI4A0e@dread.disaster.area>
+References: <20231018122518.128049-8-wedsonaf@gmail.com>
+ <20240121210049.3747-1-safinaskar@zohomail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:194b:b0:361:9a35:48f5 with SMTP id
- x11-20020a056e02194b00b003619a3548f5mr235049ilu.0.1705873084079; Sun, 21 Jan
- 2024 13:38:04 -0800 (PST)
-Date: Sun, 21 Jan 2024 13:38:04 -0800
-In-Reply-To: <0000000000005f0b2f05fdf309b3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003567b1060f7b8724@google.com>
-Subject: Re: [syzbot] [reiserfs?] kernel BUG in flush_journal_list
-From: syzbot <syzbot+7cc52cbcdeb02a4b0828@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	paul@paul-moore.com, reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240121210049.3747-1-safinaskar@zohomail.com>
 
-syzbot suspects this issue was fixed by commit:
+On Mon, Jan 22, 2024 at 12:00:49AM +0300, Askar Safin wrote:
+> Wedson Almeida Filho:
+> > +    /// White-out type.
+> > +    Wht = bindings::DT_WHT,
+> 
+> As well as I understand, filesystems supposed not to return
+> DT_WHT from readdir to user space. But I'm not sure. Please,
+> do expirement! Create whiteout on ext4 and see what readdir
+> will return. As well as I understand, it will return DT_CHR.
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+DT_WHT is defined in /usr/include/dirent.h, so it is actually
+present in the userspace support for readdir. If the kernel returns
+DT_WHT to userspace, applications should know what it is.
 
-    fs: Block writes to mounted block devices
+However, filesystems like ext4 and btrfs don't have DT_WHT on disk
+and few userspace applications support it. Way back when overlay
+required whiteout support to be added, the magical char device
+representation was invented for filesystems without DT_WHT and that
+was exposed to userspace.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1556b3dde80000
-start commit:   4652b8e4f3ff Merge tag '6.7-rc-ksmbd-server-fixes' of git:..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d855e3560c4c99c4
-dashboard link: https://syzkaller.appspot.com/bug?extid=7cc52cbcdeb02a4b0828
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103dee6f680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12883df7680000
+We're kind of stuck with it now, though there is nothign stopping
+filesysetms from returning DT_WHT to userspace instead of DT_CHR and
+requiring userspace to stat the inode to look at the major/minor
+numbers to determine if the dirent is a whiteout or not.  Indeed, it
+would be more optimal for overlay if filesystems returned DT_WHT
+instead of DT_CHR for whiteouts.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Put simply: DT_WHT is part of the readdir kernel and userspace API
+and therefore should be present in the Rust interfaces.
 
-#syz fix: fs: Block writes to mounted block devices
+Cheers,
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
