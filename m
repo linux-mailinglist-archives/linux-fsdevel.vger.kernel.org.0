@@ -1,111 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-8375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8506835808
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 23:06:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22DC83581B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 23:24:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE54D1C20CC0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 22:06:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE728B21222
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 22:24:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1274438DF6;
-	Sun, 21 Jan 2024 22:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1127F38F8C;
+	Sun, 21 Jan 2024 22:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GnUqPOHA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzjwKgJM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D479E383B9
-	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 22:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6389F38DF9;
+	Sun, 21 Jan 2024 22:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705874776; cv=none; b=YA7WsdclWOnQb2orVGC/KM74AnnqWyHDL/IjmultQo1teUcltBo0ks1paHyOVxVs0vg2OtHok8dHiTCQxEn6YjS11J0HaKLQque+j/Ylvp7OMZJ+M6Trc8tTaHfwQ+kRMYK44rB9SwuL6n0qo8UZqrrPrw/342cu9UbMFATp818=
+	t=1705875835; cv=none; b=pA1rvuXVND1AwBoIa3KBp8K7FT4Uf0ZbEKp8Y2tqknPQFfOK4bF1tzIlyhHNtqjZPS8K8T6zrB+TzKJv7feoQ4OlOoQoyds6J7et495ftUcH/2qk0SW93hJr6r8c+QU/IuBwr46Q3D272SOJI5gZOkHi0mJoyWOCzG6baL3yGhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705874776; c=relaxed/simple;
-	bh=eKWkdKMEDARbLDRUqfnzbi3sl/rOE8242LOsXnrFZJ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kcD0xb1fANdZxDX5DpIkgYFCMcq2PaOjQ2Bce95PIY9EwsssDd0zP6knxtGXLa1F76DUeDubEd/Fv4QV/kqiNP/sqPr5bCWQVYZYOl0aOhnwiH7om0QkPWtG0cmSYUE9KirrvbfXD+2cX94TjzJP6OHOwmCRGahLnwvP9qQWDfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GnUqPOHA; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-55a50649ff6so2623125a12.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 14:06:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1705874772; x=1706479572; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QlVOU0qgbHsfmWmBhtAfMlGMpRk/E6kiXNX1BeiPg/E=;
-        b=GnUqPOHACOv4PYToAApEQmo36jT+KsCI++EXCNa7Ki9UF8Ww/dpcOFMpcu2Yv5jhTj
-         yoFIKH+UxChATRuCgiX1FFeMSxEoDxNh56tqfH4X176HSyQOhZaZ9uDvkmS+oINfwMb3
-         En3gIaOBDci0BdUHoaEzTA1J+OfSnDd/FUPIM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705874772; x=1706479572;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QlVOU0qgbHsfmWmBhtAfMlGMpRk/E6kiXNX1BeiPg/E=;
-        b=daqTmkmYWTsXPAjIe7YYnBmG5a5ZhS4PkW5n9SbUPzwE3rapVciqS/lgGYOhy2abf6
-         Efkry0H/f4CYyYHNWQEMGYlSQE/H/kynYcDRbxaEsSU9Np2s9qWeZyptGFOmn+HHoiO4
-         vIWvBukskC9apNirw4COfpppVkXhSb9PLnWDVPUPWLvCQye6ht8Wij39ZgLxK8ljg+uc
-         9fMkANp9wz0o6T8Ta2q0hRsC4oxFfyexSRT2/wqU7/A+TeRx7ciZFTLa4kChp7ca1Jgp
-         F8Aep3IaCgwU1cNcbcPihGfeoQO3kJyNJoRuq5X/JcrfKTiriLgWCBl1qF5g2H0v26pj
-         /Xuw==
-X-Gm-Message-State: AOJu0Yy2i9axmv+hLGYBN5GfskD7omy1iurmWeVWYhITkMtvA7vfiSlL
-	4cnqlflHO7ObP9/jHQ80B6e14Z2QYKTUdvMPcbtn6BXSo+jPfA59b/pjLIgKD29WyRS9bAJomxU
-	PjGZJMA==
-X-Google-Smtp-Source: AGHT+IGQc0TN1RbSohMrzC6uNu5UlDm9dKEM51nf1KAk/woPJJI7sGE4rzgZMhz60+nr9dJ1eu2YTw==
-X-Received: by 2002:a05:6402:268b:b0:55c:3468:743a with SMTP id w11-20020a056402268b00b0055c3468743amr465166edd.21.1705874772624;
-        Sun, 21 Jan 2024 14:06:12 -0800 (PST)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id i16-20020aa7c9d0000000b005582b9d551csm13524734edt.30.2024.01.21.14.06.12
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 21 Jan 2024 14:06:12 -0800 (PST)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-55a50649ff6so2623114a12.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 14:06:12 -0800 (PST)
-X-Received: by 2002:a05:6402:1a2f:b0:55a:6d67:6319 with SMTP id
- be15-20020a0564021a2f00b0055a6d676319mr1539223edb.54.1705874771698; Sun, 21
- Jan 2024 14:06:11 -0800 (PST)
+	s=arc-20240116; t=1705875835; c=relaxed/simple;
+	bh=xAds2pXHVZSmfZj/XJ/cxloKWSR1UFfu3kPTCn0RmQE=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=nFjtdF2Qew4KlAt70QhyAmyZEAke0MaT/hDMtevsh/nBK/lNEIIAcJUd2YM3EAT7/gyPIKUIHHUG9+cRO/sLZqt0C6M7fnCSPSKAeHmwuFPNrPCIjfJ6GdWyQ6hhe/7F0cn3Z6KA81rj46PAwvmUYMtSp5c88C3LE0ude28+2y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzjwKgJM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E119BC433F1;
+	Sun, 21 Jan 2024 22:23:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705875834;
+	bh=xAds2pXHVZSmfZj/XJ/cxloKWSR1UFfu3kPTCn0RmQE=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=UzjwKgJMrS1kDL5oKnDUy5LDXRv8O4R+q+d0JnsHsu2i6FkFSEY+w3ewy2abMstL0
+	 iYdGD0GCPwehuKIC2b2XwfLuvYvg4hKEfDHWg0iJOhW6W8LI980WkIUQVPFvJ2G9hL
+	 QGfkI7M+bzZFA+p1IapjGDcHsTUjq20GjnIeX/EAqiG8mlokRVUCG/xoVIkQ+aan2r
+	 vekGBMzVQB7/DNzei2I+sMmaY363DiuqLXkthLZ+zjVcyDd3EGGLshpBswu8pAcWKe
+	 E9VbWSAunj/C8J0MW4QVkndlCoROJp2eBGv3HmKc6lQbYwco7i/LoKnizKOrZ26nlP
+	 lKHJEhHveDEpg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id C433ED8C970;
+	Sun, 21 Jan 2024 22:23:54 +0000 (UTC)
+Subject: Re: [GIT PULL] More bcachefs updates for 6.8-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <a34bqdrz33jw26a5px4ul3eid5zudgaxavc2xqoftk2tywgi5w@ghgoiavnkhtd>
+References: <a34bqdrz33jw26a5px4ul3eid5zudgaxavc2xqoftk2tywgi5w@ghgoiavnkhtd>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <a34bqdrz33jw26a5px4ul3eid5zudgaxavc2xqoftk2tywgi5w@ghgoiavnkhtd>
+X-PR-Tracked-Remote: https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-01-21
+X-PR-Tracked-Commit-Id: 249f441f83c546281f1c175756c81fac332bb64c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 35a4474b5c3dd4315f72bd53e87b97f128d9bb3d
+Message-Id: <170587583477.27364.7964231928269674267.pr-tracker-bot@kernel.org>
+Date: Sun, 21 Jan 2024 22:23:54 +0000
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <a34bqdrz33jw26a5px4ul3eid5zudgaxavc2xqoftk2tywgi5w@ghgoiavnkhtd>
-In-Reply-To: <a34bqdrz33jw26a5px4ul3eid5zudgaxavc2xqoftk2tywgi5w@ghgoiavnkhtd>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 21 Jan 2024 14:05:55 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjKjvytH19t2mMHZbkY2bpGurGbG4Tb7xmTjfzA71Lb7g@mail.gmail.com>
-Message-ID: <CAHk-=wjKjvytH19t2mMHZbkY2bpGurGbG4Tb7xmTjfzA71Lb7g@mail.gmail.com>
-Subject: Re: [GIT PULL] More bcachefs updates for 6.8-rc1
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 21 Jan 2024 at 13:35, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->
-> Hi Linus, another small bcachefs pull. Some fixes, Some refactoring,
-> some minor features.
+The pull request you sent on Sun, 21 Jan 2024 16:35:06 -0500:
 
-I'm taking this, but only because bcachefs is new.
+> https://evilpiepirate.org/git/bcachefs.git tags/bcachefs-2024-01-21
 
-You need to be aware that the merge window is for *merging*. Not for
-new development.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/35a4474b5c3dd4315f72bd53e87b97f128d9bb3d
 
-And almost all of the code here is new development.
+Thank you!
 
-What you send during the merge window is stuff that should all have
-been ready *before* the merge window opened, not whatever random
-changes you made during it.
-
-Now, fixes happen any time, but for that argument to work they need to
-be real fixes. Not "reorganize the code to make things easier to fix"
-with the fix being something small on top of a big change.
-
-                Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
