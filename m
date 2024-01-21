@@ -1,129 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-8374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C8BE8357FA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 22:51:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8506835808
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 23:06:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4FAA1F219E5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 21:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE54D1C20CC0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 22:06:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EE738DE9;
-	Sun, 21 Jan 2024 21:51:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1274438DF6;
+	Sun, 21 Jan 2024 22:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="XNuJOwDc"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GnUqPOHA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164CF36B04
-	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 21:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D479E383B9
+	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 22:06:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705873866; cv=none; b=sI1wisuiRVx9HFWn7jqN0xg8Muh2OXFUuudskBJS4y0KBFNEWFZtUtzFZPrnG887T5ndua3YzkowVuWvzPJxcKvRSHIHLPVf1SWSQnxuhFTp5D05Wmg0k9+wMpCe0KAUJWPjoPPJPmY+qptpFKomKDOIOjFc3yNCaizanGiOQwk=
+	t=1705874776; cv=none; b=YA7WsdclWOnQb2orVGC/KM74AnnqWyHDL/IjmultQo1teUcltBo0ks1paHyOVxVs0vg2OtHok8dHiTCQxEn6YjS11J0HaKLQque+j/Ylvp7OMZJ+M6Trc8tTaHfwQ+kRMYK44rB9SwuL6n0qo8UZqrrPrw/342cu9UbMFATp818=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705873866; c=relaxed/simple;
-	bh=e8/eHH/8Os+EruXNQHe/MytsP1WSv6RIhsXffvwgFmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tZqqoxi+D70YonOiXI4vGpRlS+bg+FM4BRH0JVKt5GGhd99ncgHYSLVc+kD8YzDxE6NkldJv5ylnbOon46+tdy3iCY4CweiguJ3qQ1AN8dLc9aYTWWTM+20BJBNLhsckIc6qC3UiAhQGKKBvKJ+/4xX15+0/IjO7JzwwhcR4JFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=XNuJOwDc; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-7bedd61c587so79034839f.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 13:51:03 -0800 (PST)
+	s=arc-20240116; t=1705874776; c=relaxed/simple;
+	bh=eKWkdKMEDARbLDRUqfnzbi3sl/rOE8242LOsXnrFZJ8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kcD0xb1fANdZxDX5DpIkgYFCMcq2PaOjQ2Bce95PIY9EwsssDd0zP6knxtGXLa1F76DUeDubEd/Fv4QV/kqiNP/sqPr5bCWQVYZYOl0aOhnwiH7om0QkPWtG0cmSYUE9KirrvbfXD+2cX94TjzJP6OHOwmCRGahLnwvP9qQWDfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GnUqPOHA; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-55a50649ff6so2623125a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 14:06:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1705873863; x=1706478663; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lIAOAmfmOn6HuODB3CsU29FgEopZmi1NGSSNaqzbpY0=;
-        b=XNuJOwDczQ+00LEoGo1VOwPkujnMOyy8J+aBrw4CLWRc5BscwtgrclzGIBVJy3RyBZ
-         6pquohWu7HYrdtmVCbOeDKYo0oIyICHm8OQtX+uVvcNQcZdqR7KP3Dcf7xJkBTFbD4TP
-         Nobr4od1FUfKNQDPqP0KN7WW6mnsQcz9xUGe7vSkZxBMOVLZ/Ly8QWQq+5DrbvC2Qa2x
-         i9utPHjPCpJrT2hD5gdMI1LhJyIL4/mo2v3UIf4aYFRhC+MqRj1BrnZFgBSd84H9O/kg
-         acgUOVJOtd4FoVS0qVmMSqoReuiSCvWgunztkCF561xLYi5cHVF41H5O+ZA2Kt/vfO8V
-         DP7g==
+        d=linux-foundation.org; s=google; t=1705874772; x=1706479572; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QlVOU0qgbHsfmWmBhtAfMlGMpRk/E6kiXNX1BeiPg/E=;
+        b=GnUqPOHACOv4PYToAApEQmo36jT+KsCI++EXCNa7Ki9UF8Ww/dpcOFMpcu2Yv5jhTj
+         yoFIKH+UxChATRuCgiX1FFeMSxEoDxNh56tqfH4X176HSyQOhZaZ9uDvkmS+oINfwMb3
+         En3gIaOBDci0BdUHoaEzTA1J+OfSnDd/FUPIM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705873863; x=1706478663;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lIAOAmfmOn6HuODB3CsU29FgEopZmi1NGSSNaqzbpY0=;
-        b=DiV9IWJOBOdu/A+aVP3c+XuQLteXk5KhEPVHmlghBmOtZAqQc7Dh2CgUfu89pIs/Gr
-         z6m89T8Mk/kvGrXmowwh668fMHQOtJJqvtVpy/sz9Bs7JQCaBbQk5ZixizjxQl/0IN56
-         AEu0A398augvLZuQQvWO2bcc3dqYrHBBEqFZ+MV1SDGCxzSOUXSw3F3sfsHO3CWdy6fm
-         VbAWrUL+ZT0eW+CEEXnnUSmeTTYK66MqgA3XBUMo4Mp0cQsfYDaWjI9y/Wi+imx9jk4a
-         gYP3hCmtZX5HExhLT6XhCVdQNk/Z/gv0g+osWDfWu65qosAVa5F68s6cqDjkLxMR3j3Y
-         OF2A==
-X-Gm-Message-State: AOJu0Yy97498WZIq2uJpzjFuX8ZGsTbfDW2ftzmYAKVycDAsVTEM+Lcj
-	MhVhDbZ2pkWqHDRT1EUgxOiM9/hVY8Njz/0iqFI3zufu0gTTXCRvfR7CM3i0DJE=
-X-Google-Smtp-Source: AGHT+IHQ6ry5vTW5x85A9d0dL7gYg/4lpV5q3/dH1PwN74lOagyItZ0zxUAVZk4ytaOcxGHrMcmOcQ==
-X-Received: by 2002:a5d:9b15:0:b0:7be:e36f:c84c with SMTP id y21-20020a5d9b15000000b007bee36fc84cmr3172078ion.6.1705873863167;
-        Sun, 21 Jan 2024 13:51:03 -0800 (PST)
-Received: from dread.disaster.area (pa49-180-249-6.pa.nsw.optusnet.com.au. [49.180.249.6])
-        by smtp.gmail.com with ESMTPSA id u8-20020a170903124800b001d60a70809bsm6144359plh.168.2024.01.21.13.51.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 21 Jan 2024 13:51:02 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rRfiW-00DV9k-0I;
-	Mon, 22 Jan 2024 08:51:00 +1100
-Date: Mon, 22 Jan 2024 08:51:00 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: wedsonaf@gmail.com, brauner@kernel.org, gregkh@linuxfoundation.org,
-	kent.overstreet@gmail.com, linux-fsdevel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, viro@zeniv.linux.org.uk,
-	walmeida@microsoft.com, willy@infradead.org
-Subject: Re: [RFC PATCH 07/19] rust: fs: introduce `FileSystem::read_dir`
-Message-ID: <Za2RxF7iGOkI4A0e@dread.disaster.area>
-References: <20231018122518.128049-8-wedsonaf@gmail.com>
- <20240121210049.3747-1-safinaskar@zohomail.com>
+        d=1e100.net; s=20230601; t=1705874772; x=1706479572;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QlVOU0qgbHsfmWmBhtAfMlGMpRk/E6kiXNX1BeiPg/E=;
+        b=daqTmkmYWTsXPAjIe7YYnBmG5a5ZhS4PkW5n9SbUPzwE3rapVciqS/lgGYOhy2abf6
+         Efkry0H/f4CYyYHNWQEMGYlSQE/H/kynYcDRbxaEsSU9Np2s9qWeZyptGFOmn+HHoiO4
+         vIWvBukskC9apNirw4COfpppVkXhSb9PLnWDVPUPWLvCQye6ht8Wij39ZgLxK8ljg+uc
+         9fMkANp9wz0o6T8Ta2q0hRsC4oxFfyexSRT2/wqU7/A+TeRx7ciZFTLa4kChp7ca1Jgp
+         F8Aep3IaCgwU1cNcbcPihGfeoQO3kJyNJoRuq5X/JcrfKTiriLgWCBl1qF5g2H0v26pj
+         /Xuw==
+X-Gm-Message-State: AOJu0Yy2i9axmv+hLGYBN5GfskD7omy1iurmWeVWYhITkMtvA7vfiSlL
+	4cnqlflHO7ObP9/jHQ80B6e14Z2QYKTUdvMPcbtn6BXSo+jPfA59b/pjLIgKD29WyRS9bAJomxU
+	PjGZJMA==
+X-Google-Smtp-Source: AGHT+IGQc0TN1RbSohMrzC6uNu5UlDm9dKEM51nf1KAk/woPJJI7sGE4rzgZMhz60+nr9dJ1eu2YTw==
+X-Received: by 2002:a05:6402:268b:b0:55c:3468:743a with SMTP id w11-20020a056402268b00b0055c3468743amr465166edd.21.1705874772624;
+        Sun, 21 Jan 2024 14:06:12 -0800 (PST)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id i16-20020aa7c9d0000000b005582b9d551csm13524734edt.30.2024.01.21.14.06.12
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 21 Jan 2024 14:06:12 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-55a50649ff6so2623114a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 14:06:12 -0800 (PST)
+X-Received: by 2002:a05:6402:1a2f:b0:55a:6d67:6319 with SMTP id
+ be15-20020a0564021a2f00b0055a6d676319mr1539223edb.54.1705874771698; Sun, 21
+ Jan 2024 14:06:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240121210049.3747-1-safinaskar@zohomail.com>
+References: <a34bqdrz33jw26a5px4ul3eid5zudgaxavc2xqoftk2tywgi5w@ghgoiavnkhtd>
+In-Reply-To: <a34bqdrz33jw26a5px4ul3eid5zudgaxavc2xqoftk2tywgi5w@ghgoiavnkhtd>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 21 Jan 2024 14:05:55 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjKjvytH19t2mMHZbkY2bpGurGbG4Tb7xmTjfzA71Lb7g@mail.gmail.com>
+Message-ID: <CAHk-=wjKjvytH19t2mMHZbkY2bpGurGbG4Tb7xmTjfzA71Lb7g@mail.gmail.com>
+Subject: Re: [GIT PULL] More bcachefs updates for 6.8-rc1
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jan 22, 2024 at 12:00:49AM +0300, Askar Safin wrote:
-> Wedson Almeida Filho:
-> > +    /// White-out type.
-> > +    Wht = bindings::DT_WHT,
-> 
-> As well as I understand, filesystems supposed not to return
-> DT_WHT from readdir to user space. But I'm not sure. Please,
-> do expirement! Create whiteout on ext4 and see what readdir
-> will return. As well as I understand, it will return DT_CHR.
+On Sun, 21 Jan 2024 at 13:35, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>
+> Hi Linus, another small bcachefs pull. Some fixes, Some refactoring,
+> some minor features.
 
-DT_WHT is defined in /usr/include/dirent.h, so it is actually
-present in the userspace support for readdir. If the kernel returns
-DT_WHT to userspace, applications should know what it is.
+I'm taking this, but only because bcachefs is new.
 
-However, filesystems like ext4 and btrfs don't have DT_WHT on disk
-and few userspace applications support it. Way back when overlay
-required whiteout support to be added, the magical char device
-representation was invented for filesystems without DT_WHT and that
-was exposed to userspace.
+You need to be aware that the merge window is for *merging*. Not for
+new development.
 
-We're kind of stuck with it now, though there is nothign stopping
-filesysetms from returning DT_WHT to userspace instead of DT_CHR and
-requiring userspace to stat the inode to look at the major/minor
-numbers to determine if the dirent is a whiteout or not.  Indeed, it
-would be more optimal for overlay if filesystems returned DT_WHT
-instead of DT_CHR for whiteouts.
+And almost all of the code here is new development.
 
-Put simply: DT_WHT is part of the readdir kernel and userspace API
-and therefore should be present in the Rust interfaces.
+What you send during the merge window is stuff that should all have
+been ready *before* the merge window opened, not whatever random
+changes you made during it.
 
-Cheers,
+Now, fixes happen any time, but for that argument to work they need to
+be real fixes. Not "reorganize the code to make things easier to fix"
+with the fix being something small on top of a big change.
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+                Linus
 
