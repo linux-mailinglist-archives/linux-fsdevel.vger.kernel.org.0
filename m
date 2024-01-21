@@ -1,179 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-8365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E5848356AB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 17:34:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD13D835729
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 18:51:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 144F71F22031
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 16:34:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C5ED281F88
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 21 Jan 2024 17:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691F436B15;
-	Sun, 21 Jan 2024 16:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AF61381D4;
+	Sun, 21 Jan 2024 17:51:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xMu7ZpZk";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bt3S6p1p";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xMu7ZpZk";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bt3S6p1p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZItkOn+b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C818E13FE2
-	for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 16:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1124381B2;
+	Sun, 21 Jan 2024 17:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705854860; cv=none; b=pXyBGtNY8fsqPWHU8BrCS8bOWRqsQPSp+rV4/Eo0VdbMXJaemLpX4UcD9EV7G3VcI5+BHZXD/4qEL5Uh496cbRaprUcIEz+tWyVHzIQMWXLMjMwoCEHXc1DsdV4Pi0wwrFcOsd9IIU2BNgxWknVA6AAyYAmM04mzBaFMz1rEsw8=
+	t=1705859462; cv=none; b=cjHeNsb4fQ14cg1pjVbJ4CR33DiBfEnktF5NiMlRHzdgvw0FYUhwkEyjoCe8iWe6UK9BvdhF1lNVVPoald7CMAGdtN1osQVmMvVoCfhjkgfNAL0GPTHOb+YCZ4fG2MFKwlmF8C+W3WsO4T+CrYoEPR7aNjzXqiAeo7KzJObE/Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705854860; c=relaxed/simple;
-	bh=4RHt3e8TM1yvQaFH1svvruN/gpLmVvwyy2z/LutN4Vg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JJmbAPRjBeTjNkSM8TZAh7j3tGrcURw/oQ6wVFNRnkWoUH3mkM052ndUpebhNNzqp1whkKacok9nZj67b3O6r3PR7dE8csX38b57Yd6ud6auissP8kobbxk5i+mME5AtkdYWdZ5k39VSgPDCKOBoiP9JQXFb0XIXdzrJcyZBTZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xMu7ZpZk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bt3S6p1p; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xMu7ZpZk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bt3S6p1p; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3605E1FBA8;
-	Sun, 21 Jan 2024 16:34:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1705854851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Go+rG5Q4H7/O7Kku1l06r1GPdr2LW3PZlv1WQzt3INk=;
-	b=xMu7ZpZkagrYpC4V1YXh7/8w2Fs0SUNxLYmKpbeMzadSvXqcKBgf1jigdtatFp0WQEHYtU
-	FU7JUQJkUV70re9Vfb+rGdM1k5m2CjNE0LR9dZ27z4Rf8RmYDoxTn1GV0revK9f4oQqmNJ
-	QH4PViVw4KQYiSxIDWsOfw1Sv7533cM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1705854851;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Go+rG5Q4H7/O7Kku1l06r1GPdr2LW3PZlv1WQzt3INk=;
-	b=bt3S6p1pIjlXlyLa5BX9xYxIgzLGEpD4//+bwnDZ/YnkoESElxq/6dNprnLIpUHorJRQNB
-	9gHPsU80yqHFhEBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1705854851; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Go+rG5Q4H7/O7Kku1l06r1GPdr2LW3PZlv1WQzt3INk=;
-	b=xMu7ZpZkagrYpC4V1YXh7/8w2Fs0SUNxLYmKpbeMzadSvXqcKBgf1jigdtatFp0WQEHYtU
-	FU7JUQJkUV70re9Vfb+rGdM1k5m2CjNE0LR9dZ27z4Rf8RmYDoxTn1GV0revK9f4oQqmNJ
-	QH4PViVw4KQYiSxIDWsOfw1Sv7533cM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1705854851;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Go+rG5Q4H7/O7Kku1l06r1GPdr2LW3PZlv1WQzt3INk=;
-	b=bt3S6p1pIjlXlyLa5BX9xYxIgzLGEpD4//+bwnDZ/YnkoESElxq/6dNprnLIpUHorJRQNB
-	9gHPsU80yqHFhEBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8ACC9136F5;
-	Sun, 21 Jan 2024 16:34:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bKZcD4JHrWVAfgAAD6G6ig
-	(envelope-from <krisman@suse.de>); Sun, 21 Jan 2024 16:34:10 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ebiggers@kernel.org,  viro@zeniv.linux.org.uk,  tytso@mit.edu,
-  linux-fsdevel@vger.kernel.org,  jaegeuk@kernel.org
-Subject: Re: [PATCH v3 1/2] dcache: Expose dentry_string_cmp outside of dcache
-In-Reply-To: <CAHk-=whW=jahYWDezh8PeudB5ozfjNpdHnek3scMAyWHT5+=Og@mail.gmail.com>
-	(Linus Torvalds's message of "Fri, 19 Jan 2024 12:48:51 -0800")
-Organization: SUSE
-References: <20240119202544.19434-1-krisman@suse.de>
-	<20240119202544.19434-2-krisman@suse.de>
-	<CAHk-=whW=jahYWDezh8PeudB5ozfjNpdHnek3scMAyWHT5+=Og@mail.gmail.com>
-Date: Sun, 21 Jan 2024 13:34:03 -0300
-Message-ID: <87mssywsqs.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1705859462; c=relaxed/simple;
+	bh=S2b2p/D2DNsbjy01O3hEZtYO4Xn+sshl3AvTraPHDG4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W4Q1ZK7Lbs7wKGjGP3MRPZ5LZgnyrHKYUSA+/GK86iWxP7CyPk/QJOVC3GG5mk0MGaA8Y2J90ZN8WAPRgdnudW5VTRp/QegjA1Ex43g+0TBOocWLCe0hvrxssbA2slDrA1a2K5KYRXzIe4pW/cZp5p8T7XWlm8j5tUcwHAdvXXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZItkOn+b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F017AC433C7;
+	Sun, 21 Jan 2024 17:50:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705859462;
+	bh=S2b2p/D2DNsbjy01O3hEZtYO4Xn+sshl3AvTraPHDG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZItkOn+b56ZHJYmcWMaPMMn+yRtStVFTj8GE5pxMCokoOm+Q24SwIJidnN7IEftlq
+	 7wUBwo/LP5Od8SixrDZKqFo+TRMGixpPL5afTrga1E1aTrp50VHsX6EZZaXmUsubh6
+	 UmJA8e9EKikw8PUr7YfuBhQmH8yerCLtX42u5W+CiVdyTcp4ksmdJSIar2GgtYg3VM
+	 ScZh0MxE3QA9pI9c0t3s+twqsYCjlxx3hyMmyA0x+yneN1aoCgRfhcdD5gLZi+iZqT
+	 OuCSpZlPYqzXJ37pE4a1bGmwpSaxuUky55iJGdCYhKvWKjnu/gawMXrXRpwccYSpeT
+	 C1wUVRnDDoJvQ==
+Date: Sun, 21 Jan 2024 18:50:57 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: mszeredi@redhat.com, stgraber@stgraber.org, 
+	linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
+	Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/9] fuse: basic support for idmapped mounts
+Message-ID: <20240121-pfeffer-erkranken-f32c63956aac@brauner>
+References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [-0.10 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCPT_COUNT_FIVE(0.00)[6];
-	 HAS_ORG_HEADER(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.00)[12.85%]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -0.10
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+On Mon, Jan 08, 2024 at 01:08:15PM +0100, Alexander Mikhalitsyn wrote:
+> Dear friends,
+> 
+> This patch series aimed to provide support for idmapped mounts
+> for fuse. We already have idmapped mounts support for almost all
+> widely-used filesystems:
+> * local (ext4, btrfs, xfs, fat, vfat, ntfs3, squashfs, f2fs, erofs, ZFS (out-of-tree))
+> * network (ceph)
+> 
+> Git tree (based on https://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git/log/?h=for-next):
+> v1: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts.v1
+> current: https://github.com/mihalicyn/linux/commits/fuse_idmapped_mounts
 
-> On Fri, 19 Jan 2024 at 12:25, Gabriel Krisman Bertazi <krisman@suse.de> wrote:
->>
->> In preparation to call these from libfs, expose dentry_string_cmp in the
->> header file.
->
-> Let's not make these header files bigger and more complex.
->
-> Particularly not for generic_ci_d_compare() to inline it, which makes
-> no sense: generic_ci_d_compare() is so heavy with a big stack frame
-> anyway, that the inlining of this would seem to be just in the noise.
->
-> And when I look closer, it turns out that __d_lookup_rcu_op_compare()
-> that does this all also does the proper sequence number magic to make
-> the name pointer and the length consistent.
+Great work!
 
-Ok. I see that we retry the read before calling d_compare here:
+> Things to discuss:
+> - we enable idmapped mounts support only if "default_permissions" mode is enabled,
+> because otherwise, we would need to deal with UID/GID mappings on the userspace side OR
+> provide the userspace with idmapped req->in.h.uid/req->in.h.gid values which is not
+> something that we probably want to do. Idmapped mounts philosophy is not about faking
+> caller uid/gid.
 
-    /* we want a consistent (name,len) pair */
-    if (read_seqcount_retry(&dentry->d_seq, seq)) {
-	cpu_relax();
-	goto seqretry;
-    }
+Having VFS idmaps but then outsourcing permission checking to userspace
+is conceptually strange so requiring default_permissions is the correct
+thing to do. 
 
-for RCU and for d_same_name we are holding the d_lock.
+> - We have a small offlist discussion with Christian about adding fs_type->allow_idmap
+> hook. Christian pointed out that it would be nice to have a superblock flag instead like
+> SB_I_NOIDMAP and we can set this flag during mount time if we see that the filesystem does not
+> support idmappings. But, unfortunately, I didn't succeed here because the kernel will
+> know if the filesystem supports idmapping or not after FUSE_INIT request, but FUSE_INIT request
+> is being sent at the end of the mounting process, so the mount and superblock will exist and
+> visible by the userspace in that time. It seems like setting SB_I_NOIDMAP flag, in this
+> case, is too late as a user may do the trick by creating an idmapped mount while it wasn't
+> restricted by SB_I_NOIDMAP. Alternatively, we can introduce a "positive" version SB_I_ALLOWIDMAP
 
-So, I guess I was right for the wrong reason in the earlier
-versions. which doesn't really do me any good.
+I see.
 
-> So I don't think we need the careful name compare after all, because
-> the caller has fixed the consistency issue.
->
-> I do also wonder if we should just move the "identical always compares
-> equal" case into __d_lookup_rcu_op_compare(), and not have
-> ->d_compare() have to worry about it at all?
+> and a "weak" version of FS_ALLOW_IDMAP like FS_MAY_ALLOW_IDMAP. So if FS_MAY_ALLOW_IDMAP is set,
+> then SB_I_ALLOWIDMAP has to be set on the superblock to allow the creation of an idmapped mount.
+> But that's a matter of our discussion.
 
-I considered that, and I can do it as a follow up.  I'd like to audit
-d_compare to ensure we can change its semantics by only calling it if
-the exact-match d_compare failed.  Is there a filesystem where that
-really matters?  If so, we can add a new ->d_weak_compare hook.
-Considering the ones I looked already will do fine with this change,
-it's likely possible.
+I dislike making adding a struct super_block method. Because it means that we
+call into the filesystem from generic mount code and specifically with the
+namespace semaphore held. If there's ever any network filesystem that e.g.,
+calls to a hung server it will lockup the whole system. So I'm opposed to
+calling into the filesystem here at all. It's also ugly because this is really
+a vfs level change. The only involvement should be whether the filesystem type
+can actually support this ideally.
 
-Are you ok with the earlier v2 of this patchset as-is, and I'll send a
-new series proposing this change?
+I think we should handle this within FUSE. So we allow the creation of idmapped
+mounts just based on FS_ALLOW_IDMAP. And if the server doesn't support the
+FUSE_OWNER_UID_GID_EXT then we simply refuse all creation requests originating
+from an idmapped mount. Either we return EOPNOSUPP or we return EOVERFLOW to
+indicate that we can't represent the owner correctly because the server is
+missing the required extension.
 
-Thank you,
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 3f37ba6a7a10..0726da21150a 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -606,8 +606,16 @@ static int get_create_ext(struct mnt_idmap *idmap,
+                err = get_security_context(dentry, mode, &ext);
+        if (!err && fc->create_supp_group)
+                err = get_create_supp_group(dir, &ext);
+-       if (!err && fc->owner_uid_gid_ext)
+-               err = get_owner_uid_gid(idmap, fc, &ext);
++       if (!err) {
++               /*
++                * If the server doesn't support FUSE_OWNER_UID_GID_EXT and
++                * this is a creation request from an idmapped mount refuse it.
++                */
++               if (fc->owner_uid_gid_ext)
++                       err = get_owner_uid_gid(idmap, fc, &ext);
++               else if (idmap != &nop_mnt_idmap)
++                       err = -EOPNOTSUPP;
++       }
 
--- 
-Gabriel Krisman Bertazi
+        if (!err && ext.size) {
+                WARN_ON(args->in_numargs >= ARRAY_SIZE(args->in_args));
 
