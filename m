@@ -1,161 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-8473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71828837355
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 20:57:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6B983737D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 21:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A50BA1C28748
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 19:57:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04FDC1F2BC99
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 20:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C2B405D6;
-	Mon, 22 Jan 2024 19:57:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MFp8+XZ+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="e40P8gO4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MFp8+XZ+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="e40P8gO4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26C7840BFC;
+	Mon, 22 Jan 2024 20:05:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B653FE54;
-	Mon, 22 Jan 2024 19:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960F93FE44;
+	Mon, 22 Jan 2024 20:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705953426; cv=none; b=W2sJwbveO4fy8s40aZqOG0st+LEIoscj3E1zxxNmmgsZVdl+8l9YGPy8wT/mHO+Mi61gowzh83SCtT52xYhxR11l23kTmGky8irjbf24FWfqEZa7CmdB5jDsO0B4gdeTd8ebHJLR1Z6Zp1/T24ViktdyVW1mouFL+4WhAKushgM=
+	t=1705953935; cv=none; b=TQQQbhSnlzC8Qxu4Ho6OUOFHAoiT5/o2QXm3lblXh5iPTccIb0FaHGAikNAK3RadzQ6TZnSE0Y3x+OOOadKQ6UUridiPPj3hTLZZXigYfYn3aVKjunCdbtvQvnItxBOSQsESm57M8IoyWwx5BQhDIejUOfAwaeHnIOFqmxK+/qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705953426; c=relaxed/simple;
-	bh=FbFM4tgoOL0B5ezyGbX4Uc9mlvqz8O4C5VRZIqNoXwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BCXp2sw8ztg+yZf3mRp0f7vUESrq+u6m7V7Da+1+IXnW04ozkEFzG4F6pvL17XrStOM36Yw2NHz6rRbXcZqUuAeUXDd5xSkOU+OLJX9nDvcrFUjRQtBujbGYAAK0cAKRrdZAjsI9VoVPaP+XY6qUJ5FnjSeScmRHAozIouV1dsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MFp8+XZ+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=e40P8gO4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MFp8+XZ+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=e40P8gO4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 79AE91FC31;
-	Mon, 22 Jan 2024 19:57:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1705953423; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=22xcc7q3S/Q3FHCMHrkfweD+r21TH2X17VVEB5XDWs0=;
-	b=MFp8+XZ+TiBY4V/7DMLPNwrCFcpRGgM01RCupOb0tI70qFM8oSOBhIFjOmMrrFN/urR7JL
-	dzZVksck61LhuhZtm4SOp/vCBR3NdiAxXrmwsBySy04VHnLmYu3Fe/NC7MP2N4m33XzhNW
-	/fB0q7ba0aW8UDACX0bxNpvrUuWLKUs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1705953423;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=22xcc7q3S/Q3FHCMHrkfweD+r21TH2X17VVEB5XDWs0=;
-	b=e40P8gO45PLhpg+ZHQs6acT8uwQDJtQ/qM5Zs/OaWBd4FM6ZCGJABbDXAZ3yrcKTLddY16
-	YqjQbEtnB17IRNBQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1705953423; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=22xcc7q3S/Q3FHCMHrkfweD+r21TH2X17VVEB5XDWs0=;
-	b=MFp8+XZ+TiBY4V/7DMLPNwrCFcpRGgM01RCupOb0tI70qFM8oSOBhIFjOmMrrFN/urR7JL
-	dzZVksck61LhuhZtm4SOp/vCBR3NdiAxXrmwsBySy04VHnLmYu3Fe/NC7MP2N4m33XzhNW
-	/fB0q7ba0aW8UDACX0bxNpvrUuWLKUs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1705953423;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=22xcc7q3S/Q3FHCMHrkfweD+r21TH2X17VVEB5XDWs0=;
-	b=e40P8gO45PLhpg+ZHQs6acT8uwQDJtQ/qM5Zs/OaWBd4FM6ZCGJABbDXAZ3yrcKTLddY16
-	YqjQbEtnB17IRNBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6B1C613995;
-	Mon, 22 Jan 2024 19:57:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id igrhGY/IrmVsOQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 22 Jan 2024 19:57:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0E943A0803; Mon, 22 Jan 2024 20:57:03 +0100 (CET)
-Date: Mon, 22 Jan 2024 20:57:03 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+7cc52cbcdeb02a4b0828@syzkaller.appspotmail.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	paul@paul-moore.com, reiserfs-devel@vger.kernel.org,
-	roberto.sassu@huawei.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [reiserfs?] kernel BUG in flush_journal_list
-Message-ID: <20240122195703.piynymm3ss3xyojs@quack3>
-References: <0000000000005f0b2f05fdf309b3@google.com>
- <0000000000003567b1060f7b8724@google.com>
+	s=arc-20240116; t=1705953935; c=relaxed/simple;
+	bh=KMfU13pO7wk9k2zkFFATZWe6HE92w9S7kkDhkNwNj54=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cjqzztfcUawwzpMGcWTeqaQWOZ9kaJ8J9eNjNJ9jyrFYAbBaFTitg2YN+aKjkJq+yLympfVi9Iw/bbj2IrqNVwdcQmtqUPuoV9L+KY69ZgUfhpTB700SEMYkE70qvT7cljd+tL4ATKr8tejCg6DDtEmOzjGA/sNm2vv4eji1ilI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-6dc1f02090fso289505b3a.0;
+        Mon, 22 Jan 2024 12:05:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705953934; x=1706558734;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Cr8LQYTS4LuxX0VHDB0eUkP92CbPkoPBe/FNUquwuo=;
+        b=FHW3Gwo0meqGrS6U/25lKmmhufVoZkSMDNLO8d5PebK2K6aOjDFF49+ECvhfX7iJ1v
+         t2719Owc+nc8owFNiENSiTbo0Hz4z91v4mfKyh5a+wbZrq6xiVJRGVwjs1IGWQnj1bgN
+         rNBQlKK+YhVgJh0JRLPvdtrFQgJ3GkbLoSaRfeoX6ajPdNPJ/xqugFYl4Tv8SdzYbsy1
+         GuOpXr8hF3J5ADmZEqccBreuwOMX6REg3MTXWhZivp6XxQUQj3R6zU5+Cnd5Jps4JH+r
+         xZP6jis1GOHViV8JF+qLrPReO2dYdqOqYlzMclmgzOviedf0wc4ztiB/QRVs2KYb1HHN
+         8amw==
+X-Gm-Message-State: AOJu0YyBDySozoDFCP13vlJZUOB1D788QagKTNIEJ0f+WxDrecwgJWWC
+	Jri4330ydef3mT4cW3yQ+KfnHBlncvQmpN5SVXsl65/LPkWTEYoa
+X-Google-Smtp-Source: AGHT+IHRZRBlwmWgNMZkoqfrroa/veYvawWaRVXjvClre7ZjcoKSdytGOqY+fiSJXTyRqSGOKx/X8w==
+X-Received: by 2002:a05:6a20:d90f:b0:19a:6d4c:a71c with SMTP id jd15-20020a056a20d90f00b0019a6d4ca71cmr5574107pzb.37.1705953933652;
+        Mon, 22 Jan 2024 12:05:33 -0800 (PST)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
+        by smtp.gmail.com with ESMTPSA id k4-20020aa78204000000b006d0a29ad0aasm9987906pfi.5.2024.01.22.12.05.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jan 2024 12:05:32 -0800 (PST)
+Message-ID: <bbaf780c-2807-44df-93b4-f3c9f6c43fad@acm.org>
+Date: Mon, 22 Jan 2024 12:05:30 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000003567b1060f7b8724@google.com>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [2.85 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-0.05)[60.02%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=d855e3560c4c99c4];
-	 TAGGED_RCPT(0.00)[7cc52cbcdeb02a4b0828];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_SEVEN(0.00)[10];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,syzkaller.appspot.com:url];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Level: **
-X-Spam-Score: 2.85
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 05/19] block, fs: Restore the per-bio/request data
+ lifetime fields
+Content-Language: en-US
+To: Kanchan Joshi <joshi.k@samsung.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Daejun Park <daejun7.park@samsung.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>
+References: <20231219000815.2739120-1-bvanassche@acm.org>
+ <CGME20231219000844epcas5p277a34c3a0e212b4a3abec0276ea9e6c6@epcas5p2.samsung.com>
+ <20231219000815.2739120-6-bvanassche@acm.org>
+ <23354a9b-dd1e-5eed-f537-6a2de9185d7a@samsung.com>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <23354a9b-dd1e-5eed-f537-6a2de9185d7a@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun 21-01-24 13:38:04, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+On 1/22/24 01:23, Kanchan Joshi wrote:
+> On 12/19/2023 5:37 AM, Bart Van Assche wrote:
 > 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
+>> diff --git a/block/fops.c b/block/fops.c
+>> index 0abaac705daf..787ce52bc2c6 100644
+>> --- a/block/fops.c
+>> +++ b/block/fops.c
+>> @@ -73,6 +73,7 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
+>>    		bio_init(&bio, bdev, vecs, nr_pages, dio_bio_write_op(iocb));
+>>    	}
+>>    	bio.bi_iter.bi_sector = pos >> SECTOR_SHIFT;
+>> +	bio.bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
+>>    	bio.bi_ioprio = iocb->ki_ioprio;
+>>    
+>>    	ret = bio_iov_iter_get_pages(&bio, iter);
+>> @@ -203,6 +204,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+>>    
+>>    	for (;;) {
+>>    		bio->bi_iter.bi_sector = pos >> SECTOR_SHIFT;
+>> +		bio->bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
+>>    		bio->bi_private = dio;
+>>    		bio->bi_end_io = blkdev_bio_end_io;
+>>    		bio->bi_ioprio = iocb->ki_ioprio;
+>> @@ -321,6 +323,7 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
+>>    	dio->flags = 0;
+>>    	dio->iocb = iocb;
+>>    	bio->bi_iter.bi_sector = pos >> SECTOR_SHIFT;
+>> +	bio->bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
 > 
->     fs: Block writes to mounted block devices
+> This (and two more places above) should rather be changed to:
 > 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1556b3dde80000
-> start commit:   4652b8e4f3ff Merge tag '6.7-rc-ksmbd-server-fixes' of git:..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=d855e3560c4c99c4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=7cc52cbcdeb02a4b0828
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=103dee6f680000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12883df7680000
+> bio.bi_write_hint = bdev_file_inode(iocb->ki_filp)->i_write_hint;
 > 
-> If the result looks correct, please mark the issue as fixed by replying with:
+> Note that at other places too (e.g., blkdev_fallocate, blkdev_mmap,
+> blkdev_lseek) bdev inode is used and not file inode.
 
-Makes sense.
- 
-#syz fix: fs: Block writes to mounted block devices
+Why should this code be changed? The above code has been tested and
+works fine.
 
-									Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+
+Bart.
 
