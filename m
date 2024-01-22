@@ -1,307 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-8392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 725FE835B73
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 08:14:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86554835B7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 08:17:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DED63B21506
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 07:14:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2784C1F219DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 07:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5141014A88;
-	Mon, 22 Jan 2024 07:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nv+KkvTo"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDE5FF505;
+	Mon, 22 Jan 2024 07:17:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-100.freemail.mail.aliyun.com (out30-100.freemail.mail.aliyun.com [115.124.30.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B4B111B4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 07:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73002564;
+	Mon, 22 Jan 2024 07:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705907615; cv=none; b=qP17LnchqeX5bvGHBweZLoMftL1QX3cki1JeQaZqbrHEQtYoO6x6PqIQcUu55q2lI2Kpj7s21qBJCARyaPS31PvdT1HzPgu8Q308lIPXqep8t9ZxAyWNagENI200h+Z2CLFp7+pr/HYZ5/xo063I6pzPoLItYcZ78K1HT8cNgC0=
+	t=1705907844; cv=none; b=p+/bz/pYTxFffi+s7eQLZqf2o3rIZmihJ/3xO6FWB4shGsbtQa9DuNI0sP/pkEWerEzukbzDoa/bmpVgKTTpW7UgLQj+kB2G5LIdsQ/dcax6Sjs7mr7fcYsf63EXsdwwLXabF0HR6omjKklA0WAede4VURO1lhjbknzkBAeY2RY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705907615; c=relaxed/simple;
-	bh=Q4c5kAQB/tihMQ4sonqfCtbk7g6WtRsFX1gU0E6agKU=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OZQiWHa4LCfoeA8Lmv5Q8iJUtLUHcUXzE+3XVBZxtcXbZHI48ngtLvMjWpT6TQWuoP2EvHlXSCl6lQtKhEWg+eyCEQtYSFhewGdrFA6gkx6k5pPgG8E7O1zQ7HcDMaU8iY0k+8NcRHiTRfc28YB0CGt0hbwEnyqoPSeLxz/2ocQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nv+KkvTo; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6000bbc9c8cso3391967b3.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 23:13:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1705907613; x=1706512413; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pm6LGPn0g5uP1lRXkRkuwE07r5wy4EXy2R/IId+4s5Y=;
-        b=Nv+KkvToXtL3NAC2LApO/y0zwVfomGjye0FD+j0U5teteYMGoGEa4/oaLHhUK6eBn0
-         bXPvDUHjwoGKWAZhCowMrIonl7J+yUwsyTEhHy6RDtD7SG0LWVOXlHzRyK9niqdw/Pw7
-         kpOzkGY+YkktZHQr/dr9ptU05NY/zvxr+Z+3G0seLVaT6QYjNU3HGzE2UJoSO4C/q5J2
-         TivSWrMUfRUh7MmnE0XacQi8X1svM4kWG+/4Xi13TOZaF3PRwy5yDW9miv+8uYyn92Wt
-         pV0FQSv3KsdThEEWfYaQwD6Cs/lx9wtxaF8FTAyAfAz4J55yZ/KGwnKE07rAn7C2ScJA
-         dp0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705907613; x=1706512413;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pm6LGPn0g5uP1lRXkRkuwE07r5wy4EXy2R/IId+4s5Y=;
-        b=lFXiIaUS4MNeeSwo/LUO6IYjt23GuxzRAcYa5DMSNGeiG8qDune8qYajsc3HkGonNR
-         JhirApW8FbkOzveV97JSgg0MCUYoI3l8IWL3/sN7KzDvJhKA7WrzrMts9Q1hHsj9uwGu
-         Q+bRJNMv2lkDgg0QNBk0r90Uxi9oLxRZBn+oaBIYjavN1Zm8LLRiJF694QeaH/r2DETm
-         JgId/LNZDFhLIMsig+Atg543HNJEs4YgI2qD7EGq5RwcggyuNhxxnSKU84hvVCCgWSiz
-         bep4bCCHN5DOUKgY/9Xfq9/+clJgpkosIjyiobtckgJG9aI0YDx+agqGizJhyyOgzXlE
-         9Z7A==
-X-Gm-Message-State: AOJu0YyEzNsLREOJPscgNYJdlCHeJx4yof8nc/1ihhH+36bo+KKXtfDe
-	n/S5zBjW3P31/6VwapG1dP59NpyaI1cDcdto1WUaoexZLT9S51ffGfiOKMs/bTSEP3uBsPzixco
-	N+w==
-X-Google-Smtp-Source: AGHT+IH/iYjVx28BB70L/Axhud1gI/xXkTJNuH9QVTuj4mqjLNYD8CKXEzHkMSgNYwCDkSwAyquSZSHHvqg=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:4979:1d79:d572:5708])
- (user=surenb job=sendgmr) by 2002:a81:9847:0:b0:5e7:12cc:a60f with SMTP id
- p68-20020a819847000000b005e712cca60fmr1362943ywg.6.1705907613421; Sun, 21 Jan
- 2024 23:13:33 -0800 (PST)
-Date: Sun, 21 Jan 2024 23:13:24 -0800
-In-Reply-To: <20240122071324.2099712-1-surenb@google.com>
+	s=arc-20240116; t=1705907844; c=relaxed/simple;
+	bh=EIzMyARXnac3YZNByVm9pg65cpv8PgZg6NgmGDtv5xY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dt5pZnRG0wfB0cH2M/P5w9q0VDDRovnTMoAALM0HdGhuOXN08LlJcwMNwclrm7xcssVIK2r1Znmu7nT8eVIs6A+zEdBpoMQTBT97h+MRD4Bu7pDqhP0GThQmuf82FtHXqLuP7ch3haFqYU9WeXZOKW+dF5Pae2M2y8tABjlr8Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; arc=none smtp.client-ip=115.124.30.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R441e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0W.2pzwi_1705907838;
+Received: from 30.97.48.66(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W.2pzwi_1705907838)
+          by smtp.aliyun-inc.com;
+          Mon, 22 Jan 2024 15:17:18 +0800
+Message-ID: <8f52414c-e0f2-4931-9b32-5c22f1d581f0@linux.alibaba.com>
+Date: Mon, 22 Jan 2024 15:17:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240122071324.2099712-1-surenb@google.com>
-X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
-Message-ID: <20240122071324.2099712-3-surenb@google.com>
-Subject: [PATCH 3/3] mm/maps: read proc/pid/maps under RCU
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	dchinner@redhat.com, casey@schaufler-ca.com, ben.wolsieffer@hefring.com, 
-	paulmck@kernel.org, david@redhat.com, avagin@google.com, 
-	usama.anjum@collabora.com, peterx@redhat.com, hughd@google.com, 
-	ryan.roberts@arm.com, wangkefeng.wang@huawei.com, Liam.Howlett@Oracle.com, 
-	yuzhao@google.com, axelrasmussen@google.com, lstoakes@gmail.com, 
-	talumbau@google.com, willy@infradead.org, vbabka@suse.cz, 
-	mgorman@techsingularity.net, jhubbard@nvidia.com, vishal.moola@gmail.com, 
-	mathieu.desnoyers@efficios.com, dhowells@redhat.com, jgg@ziepe.ca, 
-	sidhartha.kumar@oracle.com, andriy.shevchenko@linux.intel.com, 
-	yangxingui@huawei.com, keescook@chromium.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, kernel-team@android.com, 
-	surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: improve dump_mapping() robustness
+To: Charan Teja Kalla <quic_charante@quicinc.com>,
+ Al Viro <viro@zeniv.linux.org.uk>
+Cc: akpm@linux-foundation.org, willy@infradead.org, brauner@kernel.org,
+ jack@suse.cz, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <937ab1f87328516821d39be672b6bc18861d9d3e.1705391420.git.baolin.wang@linux.alibaba.com>
+ <20240118013857.GO1674809@ZenIV>
+ <d5979f89-7a84-423a-a1c7-29bdbf7c2bc1@linux.alibaba.com>
+ <c85fffe6-e455-d0fa-e332-87e81e0a0e86@quicinc.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <c85fffe6-e455-d0fa-e332-87e81e0a0e86@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-With maple_tree supporting vma tree traversal under RCU and per-vma locks
-making vma access RCU-safe, /proc/pid/maps can be read under RCU and
-without the need to read-lock mmap_lock. However vma content can change
-from under us, therefore we make a copy of the vma and we pin pointer
-fields used when generating the output (currently only vm_file and
-anon_name). Afterwards we check for concurrent address space
-modifications, wait for them to end and retry. That last check is needed
-to avoid possibility of missing a vma during concurrent maple_tree
-node replacement, which might report a NULL when a vma is replaced
-with another one. While we take the mmap_lock for reading during such
-contention, we do that momentarily only to record new mm_wr_seq counter.
-This change is designed to reduce mmap_lock contention and prevent a
-process reading /proc/pid/maps files (often a low priority task, such as
-monitoring/data collection services) from blocking address space updates.
 
-Note that this change has a userspace visible disadvantage: it allows for
-sub-page data tearing as opposed to the previous mechanism where data
-tearing could happen only between pages of generated output data.
-Since current userspace considers data tearing between pages to be
-acceptable, we assume is will be able to handle sub-page data tearing
-as well.
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- fs/proc/internal.h |   2 +
- fs/proc/task_mmu.c | 114 ++++++++++++++++++++++++++++++++++++++++++---
- 2 files changed, 109 insertions(+), 7 deletions(-)
+On 1/19/2024 11:48 PM, Charan Teja Kalla wrote:
+> Hi Matthew/Baolin,
+> 
+> On 1/18/2024 8:13 AM, Baolin Wang wrote:
+>>
+>>
+>> On 1/18/2024 9:38 AM, Al Viro wrote:
+>>> On Tue, Jan 16, 2024 at 03:53:35PM +0800, Baolin Wang wrote:
+>>>
+>>>> With checking the 'dentry.parent' and 'dentry.d_name.name' used by
+>>>> dentry_name(), I can see dump_mapping() will output the invalid dentry
+>>>> instead of crashing the system when this issue is reproduced again.
+>>>
+>>>>        dentry_ptr = container_of(dentry_first, struct dentry,
+>>>> d_u.d_alias);
+>>>> -    if (get_kernel_nofault(dentry, dentry_ptr)) {
+>>>> +    if (get_kernel_nofault(dentry, dentry_ptr) ||
+>>>> +        !dentry.d_parent || !dentry.d_name.name) {
+>>>>            pr_warn("aops:%ps ino:%lx invalid dentry:%px\n",
+>>>>                    a_ops, ino, dentry_ptr);
+>>>>            return;
+>>>
+>>> That's nowhere near enough.  Your ->d_name.name can bloody well be
+>>> pointing
+>>> to an external name that gets freed right under you.  Legitimately so.
+>>>
+>>> Think what happens if dentry has a long name (longer than would fit into
+>>> the embedded array) and gets renamed name just after you copy it into
+>>> a local variable.  Old name will get freed.  Yes, freeing is RCU-delayed,
+>>> but I don't see anything that would prevent your thread losing CPU
+>>> and not getting it back until after the sucker's been freed.
+>>
+>> Yes, that's possible. And this appears to be a use-after-free issue in
+>> the existing code, which is different from the issue that my patch
+>> addressed.
+>>
+>> So how about adding a rcu_read_lock() before copying the dentry to a
+>> local variable in case the old name is freed?
+>>
+> 
+> We too seen the below crash while printing the dentry name.
+> 
+> aops:shmem_aops ino:5e029 dentry name:"dev/zero"
+> flags:
+> 0x8000000000080006(referenced|uptodate|swapbacked|zone=2|kasantag=0x0)
+> raw: 8000000000080006 ffffffc033b1bb60 ffffffc033b1bb60 ffffff8862537600
+> raw: 0000000000000001 0000000000000000 00000003ffffffff ffffff807fe64000
+> page dumped because: migration failure
+> migrating pfn aef223 failed ret:1
+> page:000000009e72a120 refcount:3 mapcount:0 mapping:000000003325dda1
+> index:0x1 pfn:0xaef223
+> memcg:ffffff807fe64000
+> Unable to handle kernel NULL pointer dereference at virtual address
+> 0000000000000000
+> Mem abort info:
+>    ESR = 0x0000000096000005
+>    EC = 0x25: DABT (current EL), IL = 32 bits
+>    SET = 0, FnV = 0
+>    EA = 0, S1PTW = 0
+>    FSC = 0x05: level 1 translation fault
+> Data abort info:
+>    ISV = 0, ISS = 0x00000005
+>    CM = 0, WnR = 0
+> user pgtable: 4k pages, 39-bit VAs, pgdp=000000090c12d000
+> [0000000000000000] pgd=0000000000000000, p4d=0000000000000000,
+> pud=0000000000000000
+> Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+> 
+> dentry_name+0x1f8/0x3a8
+> pointer+0x3b0/0x6b8
+> vsnprintf+0x4a4/0x65c
+> vprintk_store+0x168/0x4a8
+> vprintk_emit+0x98/0x218
+> vprintk_default+0x44/0x70
+> vprintk+0xf0/0x138
+> _printk+0x54/0x80
+> dump_mapping+0x17c/0x188
+> dump_page+0x1d0/0x2e8
+> offline_pages+0x67c/0x898
+> 
+> 
+> 
+> Not much comfortable with block layer internals, TMK, the below is what
+> happening in the my case:
+> memoffline	     		dput()
+> (offline_pages)		 (as part of closing of the shmem file)
+> ------------		 --------------------------------------
+> 					.......
+> 			1) dentry_unlink_inode()
+> 			      hlist_del_init(&dentry->d_u.d_alias);
+> 
+> 			2) iput():
+> 			    a) inode->i_state |= I_FREEING
+> 				.....
+> 			    b) evict_inode()->..->shmem_undo_range
+> 			       1) get the folios with elevated refcount
+> 3) do_migrate_range():
+>     a) Because of the elevated
+>     refcount in 2.b.1, the
+>     migration of this page will
+>     be failed.
+> 
+> 			       2) truncate_inode_folio() ->
+> 				     filemap_remove_folio():
+>   				(deletes from the page cache,
+> 				 set page->mapping=NULL,
+> 				 decrement the refcount on folio)
+>    b) Call dump_page():
+>       1) mapping = page_mapping(page);
+>       2) dump_mapping(mapping)
+> 	  a) We unlinked the dentry in 1)
+>             thus dentry_ptr from host->i_dentry.first
+>             is not a proper one.
+> 
+>           b) dentry name print with %pd is resulting into
+> 	   the mentioned crash.
+> 
+> 
+> At least in this case, I think __this patchset in its current form can
+> help us__.
 
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index a71ac5379584..e0247225bb68 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -290,6 +290,8 @@ struct proc_maps_private {
- 	struct task_struct *task;
- 	struct mm_struct *mm;
- 	struct vma_iterator iter;
-+	unsigned long mm_wr_seq;
-+	struct vm_area_struct vma_copy;
- #ifdef CONFIG_NUMA
- 	struct mempolicy *task_mempolicy;
- #endif
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 3f78ebbb795f..3886d04afc01 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -126,11 +126,96 @@ static void release_task_mempolicy(struct proc_maps_private *priv)
- }
- #endif
- 
--static struct vm_area_struct *proc_get_vma(struct proc_maps_private *priv,
--						loff_t *ppos)
-+#ifdef CONFIG_PER_VMA_LOCK
-+
-+static const struct seq_operations proc_pid_maps_op;
-+/*
-+ * Take VMA snapshot and pin vm_file and anon_name as they are used by
-+ * show_map_vma.
-+ */
-+static int get_vma_snapshow(struct proc_maps_private *priv, struct vm_area_struct *vma)
- {
-+	struct vm_area_struct *copy = &priv->vma_copy;
-+	int ret = -EAGAIN;
-+
-+	memcpy(copy, vma, sizeof(*vma));
-+	if (copy->vm_file && !get_file_rcu(&copy->vm_file))
-+		goto out;
-+
-+	if (copy->anon_name && !anon_vma_name_get_rcu(copy))
-+		goto put_file;
-+
-+	if (priv->mm_wr_seq == mmap_write_seq_read(priv->mm))
-+		return 0;
-+
-+	/* Address space got modified, vma might be stale. Wait and retry. */
-+	rcu_read_unlock();
-+	ret = mmap_read_lock_killable(priv->mm);
-+	mmap_write_seq_record(priv->mm, &priv->mm_wr_seq);
-+	mmap_read_unlock(priv->mm);
-+	rcu_read_lock();
-+
-+	if (!ret)
-+		ret = -EAGAIN; /* no other errors, ok to retry */
-+
-+	if (copy->anon_name)
-+		anon_vma_name_put(copy->anon_name);
-+put_file:
-+	if (copy->vm_file)
-+		fput(copy->vm_file);
-+out:
-+	return ret;
-+}
-+
-+static void put_vma_snapshot(struct proc_maps_private *priv)
-+{
-+	struct vm_area_struct *vma = &priv->vma_copy;
-+
-+	if (vma->anon_name)
-+		anon_vma_name_put(vma->anon_name);
-+	if (vma->vm_file)
-+		fput(vma->vm_file);
-+}
-+
-+static inline bool needs_mmap_lock(struct seq_file *m)
-+{
-+	/*
-+	 * smaps and numa_maps perform page table walk, therefore require
-+	 * mmap_lock but maps can be read under RCU.
-+	 */
-+	return m->op != &proc_pid_maps_op;
-+}
-+
-+#else /* CONFIG_PER_VMA_LOCK */
-+
-+/* Without per-vma locks VMA access is not RCU-safe */
-+static inline bool needs_mmap_lock(struct seq_file *m) { return true; }
-+
-+#endif /* CONFIG_PER_VMA_LOCK */
-+
-+static struct vm_area_struct *proc_get_vma(struct seq_file *m, loff_t *ppos)
-+{
-+	struct proc_maps_private *priv = m->private;
- 	struct vm_area_struct *vma = vma_next(&priv->iter);
- 
-+#ifdef CONFIG_PER_VMA_LOCK
-+	if (vma && !needs_mmap_lock(m)) {
-+		int ret;
-+
-+		put_vma_snapshot(priv);
-+		while ((ret = get_vma_snapshow(priv, vma)) == -EAGAIN) {
-+			/* lookup the vma at the last position again */
-+			vma_iter_init(&priv->iter, priv->mm, *ppos);
-+			vma = vma_next(&priv->iter);
-+		}
-+
-+		if (ret) {
-+			put_vma_snapshot(priv);
-+			return NULL;
-+		}
-+		vma = &priv->vma_copy;
-+	}
-+#endif
- 	if (vma) {
- 		*ppos = vma->vm_start;
- 	} else {
-@@ -169,12 +254,20 @@ static void *m_start(struct seq_file *m, loff_t *ppos)
- 		return ERR_PTR(-EINTR);
- 	}
- 
-+	/* Drop mmap_lock if possible */
-+	if (!needs_mmap_lock(m)) {
-+		mmap_write_seq_record(priv->mm, &priv->mm_wr_seq);
-+		mmap_read_unlock(priv->mm);
-+		rcu_read_lock();
-+		memset(&priv->vma_copy, 0, sizeof(priv->vma_copy));
-+	}
-+
- 	vma_iter_init(&priv->iter, mm, last_addr);
- 	hold_task_mempolicy(priv);
- 	if (last_addr == -2UL)
- 		return get_gate_vma(mm);
- 
--	return proc_get_vma(priv, ppos);
-+	return proc_get_vma(m, ppos);
- }
- 
- static void *m_next(struct seq_file *m, void *v, loff_t *ppos)
-@@ -183,7 +276,7 @@ static void *m_next(struct seq_file *m, void *v, loff_t *ppos)
- 		*ppos = -1UL;
- 		return NULL;
- 	}
--	return proc_get_vma(m->private, ppos);
-+	return proc_get_vma(m, ppos);
- }
- 
- static void m_stop(struct seq_file *m, void *v)
-@@ -195,7 +288,10 @@ static void m_stop(struct seq_file *m, void *v)
- 		return;
- 
- 	release_task_mempolicy(priv);
--	mmap_read_unlock(mm);
-+	if (needs_mmap_lock(m))
-+		mmap_read_unlock(mm);
-+	else
-+		rcu_read_unlock();
- 	mmput(mm);
- 	put_task_struct(priv->task);
- 	priv->task = NULL;
-@@ -283,8 +379,10 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
- 	start = vma->vm_start;
- 	end = vma->vm_end;
- 	show_vma_header_prefix(m, start, end, flags, pgoff, dev, ino);
--	if (mm)
--		anon_name = anon_vma_name(vma);
-+	if (mm) {
-+		anon_name = needs_mmap_lock(m) ? anon_vma_name(vma) :
-+				anon_vma_name_get_rcu(vma);
-+	}
- 
- 	/*
- 	 * Print the dentry name for named mappings, and a
-@@ -338,6 +436,8 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
- 		seq_puts(m, name);
- 	}
- 	seq_putc(m, '\n');
-+	if (anon_name && !needs_mmap_lock(m))
-+		anon_vma_name_put(anon_name);
- }
- 
- static int show_map(struct seq_file *m, void *v)
--- 
-2.43.0.429.g432eaa2c6b-goog
-
+This looks another case of NULL pointer access. Thanks for the detailed 
+analysis. Could you provide a Tested-by or Reviewed-by tag if it can 
+solve your problem?
 
