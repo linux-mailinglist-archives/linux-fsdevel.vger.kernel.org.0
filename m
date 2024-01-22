@@ -1,162 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-8383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065E48358E6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 01:19:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 253FE83591C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 02:18:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FA001F224BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 00:19:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBCA5281D9E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 01:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB1863C;
-	Mon, 22 Jan 2024 00:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8F337E;
+	Mon, 22 Jan 2024 01:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="IbpenJg2"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="r15nLcb4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A911363
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 00:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9361036B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 01:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705882727; cv=none; b=ukriR25J+uSDgtmezw5K1p4wEXUdqPeNKldBIiKM2yl4FXcfrQK+QRs+NiwNAK35K21vGiqtXXASdRf9yafosCfiX2XwzD/UP8iFbjwQPIQLDidi0M28S8K+2RnhtQ9iKOEAnNr7Eo++E/JXi6T4uHhQqqBODD7F9gtKwmlLsyM=
+	t=1705886325; cv=none; b=PcyR3rZ9ipkXuptOsikt1EPq/jipJQz7uJGyHI1T5ho+iMUe9gQFchCTWz4j27nJxwT0Wun9zYYERtBoTtSAQo3ftEGaPieoGGwM/GIKRqeYH47xAL5isS7VN6BcQ5A/gpK4124IblvnwLMrdOQVOlK+JUT9D/MOZtwKM3wdVPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705882727; c=relaxed/simple;
-	bh=W/1x+TdeJYWgbMOU7ecXNAMiH1UftNucDIO6tqaUoUM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gANEIMHv0E2Tix+bet/fkwlmI1aW43NKOnn2govBmo2/fv5rysh9c4pdNr2NS7Ft0ixG3Cnym4dEOIHO9O07/pkFZRsYHpBw7PjGA9JzcH0BdbisKvdgaVWA1MBPnP2ALwD02WizLS7qnFib/OsmS421oHdDNxqEoOFpDNwDRrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=IbpenJg2; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-78376790dfbso282709885a.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 21 Jan 2024 16:18:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1705882725; x=1706487525; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6loqEtr8W4/MnoN9hv9zyuRQ/zMGZggVt2HpZC6HiwE=;
-        b=IbpenJg2fPEK2q6gnOZaEP5IZjGsgnWMy9orp4boyvc1mikrR0+6d2vh2TaI3HJb+j
-         3yjdV+H9PNN5RrSrarhvwOoA5ZE2Qk91pB6Ww/X9vJX1l2RFfPs9kfxI5cygKiroRVC+
-         cLI1ToTQsU/l5joDCDvMxrrL9axyHDIoV3VaHtcWfAvfCxwIIY5gUgFbngDPCICFSNT0
-         Mb1oL7SXVlFBIYAX3fdaNw2lEG6b+r3rC/JWM9shhWcOVxFzAxXOpB1QjzR2xxaLS/I3
-         P+3bId9067nIvQccpdCuJuRvZA+faJwHDI6QYyUvqHEEeOACxV25icmYN9jYsa9IVs8J
-         U/RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705882725; x=1706487525;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6loqEtr8W4/MnoN9hv9zyuRQ/zMGZggVt2HpZC6HiwE=;
-        b=U546dZYqSH6NCiPL7V3gB4xpxaVBZzY/eW/hluZSKbLn8v6i/UmJpX5hdOXOvdCIub
-         VdUVNvjBajx9hHTCzNsa+XovSEX+OtozMkEo2Bvk44TqFxE1JnDuOjtmMEXARX+Mw6dB
-         9KLZ0id0h5J5Pdi8NxnKaBruof2qjV32Me5zxPxZb9Cd9lxGmJ6Oj3E2sD7GF/h8HQzB
-         FcV655ZhSdf3VE7eFv4xMlpGWVH48hP791lJ7yL/4eFQNXfsi4ck9r28Aa4VzGFTkCBA
-         nKTYngjiglQbiHVdNG5zcq2CiHOqcGuVYpdNKgA5uVWQMsTAOEEgvLTrG5SwdKllFb+O
-         4hmA==
-X-Gm-Message-State: AOJu0YyXY1/awmyrYZLhCu8PqgemuRYquC6BbscCh/aG4CkU45novntL
-	DhRrXnY3QLkdKpsVFbnjXJuIMyZsCGe4DloT8rXBKHGskFS9d0PYNdeiR8jBQ/XbIEC9m9Yv1eo
-	R8e/ehzcO3sarywOa5yxXYtduUpAmkHpx9BicHA==
-X-Google-Smtp-Source: AGHT+IG+gZyrTFmxZcL/YVdEWM1zZYi9bYnrK6V7OnM6bduS/ZZQ1bpPfQMbiOpqPxopthUR3Y+1vPXte763Qg5XT3M=
-X-Received: by 2002:a05:620a:1035:b0:783:6e7a:c815 with SMTP id
- a21-20020a05620a103500b007836e7ac815mr6065985qkk.32.1705882725284; Sun, 21
- Jan 2024 16:18:45 -0800 (PST)
+	s=arc-20240116; t=1705886325; c=relaxed/simple;
+	bh=J3/J437+dknRFnmCgKj/LtRTTXPb5CI46BVtwub2dlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fm12UWpwjPdcAPvjg/v9uC1r0xy3YKzzw3mwnxGBpsFtZsQ+6MRE3Ks4oGz/4fMZkUPgxB5fXeeSzceUGeICBhHv0V9zsm3oQJPZ2sYirhw0y1rQfYmYAs5XLDRPzNtzrUp85iW6DLN5yXbt0DQwL4NWPBxewqDQ4PeIhiP4Miw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=r15nLcb4; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=w7rTMujnGS1vflDu+GGEO7dgVhJq77rHLVCuvhrlBNw=; b=r15nLcb4lZXOFEReq+PSbjJ7ng
+	xbkLbrT8GEn3W9lv3x7ZawzVQNgte8xYDo3b9WDLsFiWoiZWwSajIf45L7coeZNZ2RH+se+i7ny/2
+	Ucxw2lqlQqeCC3XbibYH/IyfhJ+jTy4SDrUoh5CeEIStE6KRWBf7pTStSfrxIGrSNt4FT9cYFSXwF
+	fa3dj5alJqdeq5orpv1178tOGbRRe6VAdGLgJFkvT57sM+qFCIvJZ9nK24zSpyZwCiWTpPcXWolkV
+	dPwYxK2e2JXXY5gd6mSkI9HvQhOXo0vY8qLmLrD/JzaTiBgaMjHJzgn87Yq0ffdTJgxssIxR3mfyR
+	hAMhHgcA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rRixQ-0000000EYbY-2NBf;
+	Mon, 22 Jan 2024 01:18:36 +0000
+Date: Mon, 22 Jan 2024 01:18:36 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Pasha Tatashin <pasha.tatashin@soleen.com>, g@casper.infradead.org
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Suren Baghdasaryan <surenb@google.com>,
+	lsf-pc@lists.linux-foundation.org,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	linux-mm <linux-mm@kvack.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Memory profiling using code tagging
+Message-ID: <Za3CbL5U7dFp6aL2@casper.infradead.org>
+References: <CAJuCfpHJX8zeQY6t5rrKps6GxbadRZBE+Pzk21wHfqZC8PFVCA@mail.gmail.com>
+ <115288f8-bd28-f01f-dd91-63015dcc635d@suse.cz>
+ <ZFvGP211N+CuGEUT@moria.home.lan>
+ <CA+CK2bBmqL5coj7=hXfyj2sBZ+go9ozjZihzp4hmykxpKfQphA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZaqiPSj1wMrTMdHa@casper.infradead.org> <b04b65df-b25f-4457-8952-018dd4479651@google.com>
- <Za2lS-jG1s-HCqbx@casper.infradead.org> <CA+CK2bCAPWhCd37X8syz9fHYSv_pQ0-k+khgXZc1uCPRBnFaWQ@mail.gmail.com>
- <Za2uq2L7_IU8RQWU@casper.infradead.org>
-In-Reply-To: <Za2uq2L7_IU8RQWU@casper.infradead.org>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Sun, 21 Jan 2024 19:18:09 -0500
-Message-ID: <CA+CK2bC8-f2hWqnK4feRYBtuwqjdRoN8=sdaipJOiHFSNos=mg@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] State Of The Page
-To: Matthew Wilcox <willy@infradead.org>
-Cc: David Rientjes <rientjes@google.com>, Pasha Tatashin <tatashin@google.com>, 
-	Sourav Panda <souravpanda@google.com>, lsf-pc@lists.linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-block@vger.kernel.org, linux-ide@vger.kernel.org, 
-	linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+CK2bBmqL5coj7=hXfyj2sBZ+go9ozjZihzp4hmykxpKfQphA@mail.gmail.com>
 
-On Sun, Jan 21, 2024 at 6:54=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
->
-> On Sun, Jan 21, 2024 at 06:31:48PM -0500, Pasha Tatashin wrote:
-> > On Sun, Jan 21, 2024 at 6:14=E2=80=AFPM Matthew Wilcox <willy@infradead=
-.org> wrote:
-> > > I can add a proposal for a topic on both the PCP and Buddy allocators
-> > > (I have a series of Thoughts on how the PCP allocator works in a memd=
-esc
-> > > world that I haven't written down & sent out yet).
+On Sun, Jan 21, 2024 at 06:39:26PM -0500, Pasha Tatashin wrote:
+> On Wed, May 10, 2023 at 12:28 PM Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+> > Hasn't been addressed yet, but we were just talking about moving the
+> > codetag pointer from page_ext to page last night for memory overhead
+> > reasons.
 > >
-> > Interesting, given that pcp are mostly allocated by kmalloc and use
-> > vmalloc for large allocations, how memdesc can be different for them
-> > compared to regular kmalloc allocations given that they are sub-page?
->
-> Oh!  I don't mean the mm/percpu.c allocator.  I mean the pcp allocator
-> in mm/page_alloc.c.
+> > The disadvantage then is that the memory overhead doesn't go down if you
+> > disable memory allocation profiling at boot time...
+> >
+> > But perhaps the performance overhead is low enough now that this is not
+> > something we expect to be doing as much?
+> >
+> > Choices, choices...
+> 
+> I would like to participate in this discussion, specifically to
 
-Nevermind, this makes perfect sense now :-)
+Umm, this is a discussion proposal for last year, not this.  I don't
+remember if a followup discussion has been proposed for this year?
 
-> I don't have any Thoughts on mm/percpu.c at this time.  I'm vaguely
-> aware that it exists ;-)
->
-> > > Thee's so much work to be done!  And it's mostly parallelisable and a=
-lmost
-> > > trivial.  It's just largely on the filesystem-page cache interaction,=
- so
-> > > it's not terribly interesting.  See, for example, the ext2, ext4, gfs=
-2,
-> > > nilfs2, ufs and ubifs patchsets I've done over the past few releases.
-> > > I have about half of an ntfs3 patchset ready to send.
-> >
-> > > There's a bunch of work to be done in DRM to switch from pages to fol=
-ios
-> > > due to their use of shmem.  You can also grep for 'page->mapping' (be=
-cause
-> > > fortunately we aren't too imaginative when it comes to naming variabl=
-es)
-> > > and find 270 places that need to be changed.  Some are comments, but
-> > > those still need to be updated!
-> > >
-> > > Anything using lock_page(), get_page(), set_page_dirty(), using
-> > > &folio->page, any of the functions in mm/folio-compat.c needs auditin=
-g.
-> > > We can make the first three of those work, but they're good indicator=
-s
-> > > that the code needs to be looked at.
-> > >
-> > > There is some interesting work to be done, and one of the things I'm
-> > > thinking hard about right now is how we're doing folio conversions
-> > > that make sense with today's code, and stop making sense when we get
-> > > to memdescs.  That doesn't apply to anything interacting with the pag=
-e
-> > > cache (because those are folios now and in the future), but it does a=
-pply
-> > > to one spot in ext4 where it allocates memory from slab and attaches =
-a
-> > > buffer_head to it ...
-> >
-> > There are many more drivers that would need the conversion. For
-> > example, IOMMU page tables can occupy gigabytes of space, have
-> > different implementations for AMD, X86, and several ARMs. Conversion
-> > to memdesc and unifying the IO page table management implementation
-> > for these platforms would be beneficial.
->
-> Understood; there's a lot of code that can benefit from larger
-> allocations.  I was listing the impediments to shrinking struct page
-> rather than the places which would most benefit from switching to larger
-> allocations.  They're complementary to a large extent; you can switch
-> to compound allocations today and get the benefit later.  And unifying
-> implementations is always a worthy project.
+> 2. Reducing the memory overhead by not using page_ext pointer, but
+> instead use n-bits in the page->flags.
+> 
+> The number of buckets is actually not that large, there is no need to
+> keep 8-byte pointer in page_ext, it could be an idx in an array of a
+> specific size. There could be buckets that contain several stacks.
+
+There are a lot of people using "n bits in page->flags" and I don't
+have a good feeling for how many we really have left.  MGLRU uses a
+variable number of bits.  There's PG_arch_2 and PG_arch_3.  There's
+PG_uncached.  There's PG_young and PG_idle.  And of course we have
+NUMA node (10 bits?), section (?), zone (3 bits?)  I count 28 bits
+allocated with all the CONFIG enabled, then 13 for node+zone, so it
+certainly seems like there's a lot free on 64-bit, but it'd be
+nice to have it written out properly.
+
+Related, what do we think is going to happen with page_ext in a memdesc
+world (also what's going to happen with the kmsan goop in struct page?)
+
+I see page_idle_ops, page_owner_ops and page_table_check_ops.
+page_idle_ops only uses the 8 byte flags.  page_owner_ops uses an extra
+64 bytes (!).  page_table_check uses an extra 8 bytes.
+
+page_idle looks to be for folios only.  page_table_check seems like
+it should be folded into pgdesc.  page_owner maybe gets added to every
+allocation rather than every page (but that's going to be interesting
+for memdescs which don't normally need an allocation).
+
+That seems to imply that we can get rid of page_ext entirely, which will
+be nice.  I don't understand kmsan well enough to understand what to
+do about it.  If it's per-allocation, we can handle it like page_owner.
+If it really is per-page, we can make it an ifdef in struct page itself.
+I think it's OK to grow struct page for such a rarely used debugging
+option.
 
