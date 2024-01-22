@@ -1,203 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-8484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4A058375E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 23:12:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C99B2837623
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 23:33:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E96A91C24D41
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 22:12:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C0A8283C38
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 22:33:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B0B48CC5;
-	Mon, 22 Jan 2024 22:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E75113FF4;
+	Mon, 22 Jan 2024 22:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oBW8M5Re"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eKU3HnG/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818303EA88
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 22:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3696812E64
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 22:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705961542; cv=none; b=OdObU0LOUbRbkbPq86NsGzowuntl4I1uwJMlewOe6vGGFH8Zil3Iq8zmPIrOQ86h1WyiUvnxczVflwk6uwL5OUNxGWTPhEJJl6i0xoYRaxRo+3LczpSRWP5By3fAF7wz6oa+ySf0eapnn54eWoX5aZYCyHgrqRp8LAqCUA6NGjM=
+	t=1705962760; cv=none; b=RUfPn4MUUu6MeVERuRm8uui04DvpWZu2rUzVa09ItjYtRg5UxAlfD0mUAxlMbnrgdscyoheM02az3XFdctpJX7qXtX2Adv5JuJcoMGLG8xnF3f5OIei5iBaF2rpk24pNBprx3+UV40k5evaCzgBW3yqgKTTOY5lljkwGxQLnhZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705961542; c=relaxed/simple;
-	bh=H0TX+YGFmUV2vdt6gKAxQ2gEdh/9M0IgctqZIGtMd/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jJTruBllcOLIgglgLkRY0OdnU3EeQigVBcNlHV2rQBAaGKV3MylaZi5tWOJyULyKDGIQSKHoQvmp9F5B56tvay4D72bOJUcHNfgvFLtzs00tqErQFTNLK2PCsX6CHK6Lxt8awinH4shJjyhktqvQDic6mHpCvR+adaU+PTZZeXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oBW8M5Re; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-20503dc09adso2368041fac.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 14:12:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1705961538; x=1706566338; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jgKcLWWKTY3O1sDjk0J47fn3O87zVjpZotecCA+zO1Y=;
-        b=oBW8M5ReQ3HJRaxQZRme9mm4epXsidcY8yA1Ikjq2HrKGcpqjtixTaNGSjmIRGVe9h
-         XIZnKJwtuvH/6DdDJeRSR4FgZVQlXDRrc6OZSfSbOsoN/5DsURvEj05qGMxvIllJG5Cj
-         ng46b+5uci1OF8PO7sFj1z60CBe3fUcvAbJMo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705961538; x=1706566338;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jgKcLWWKTY3O1sDjk0J47fn3O87zVjpZotecCA+zO1Y=;
-        b=XxTk1F2m6lNqZszci1+/uKeeR6CBQVXvmiTslUWj/S+n/JQdEhs5sfotAkzPZa6tjs
-         9NPOVF4qtXUGvmaXgVt4lela6A2CdjMD9xKNlCF1mWYQ+ORo9YXzn/UlQ4OFAKQYeMM8
-         WiIlA4lbUD18lI/dmnH2h9KeUIkcf8qd6pUI9WLdprU1c7dcgwab3zx4/mtErCgKpNk/
-         cR9cZpMiESHKV+lNjj64nNPX2B5d94SDQ1kanMhLZLgntEO9hR4oSUUX5d3iLV3UujIb
-         FanY2W+V63VHkfgEOwwm6f6FnqVo0aGf1wuEuvsJaaS6BmBHsCCxyizjuVWPk13VLY/8
-         R3sA==
-X-Gm-Message-State: AOJu0YzHDFLyIT9un1IipCIJUqb3Gs/p6SW1VFKtnvFH22Vnq6tAf8TX
-	gYWNeLvvHI69MWmrFqGmIW+HantEuWr1O8Syf/0jkb5k+Npbz0fNIxjr+rTTag==
-X-Google-Smtp-Source: AGHT+IEWjlQw+cSPVMJjT7U5wLtADDdKcUw+JASJ25omFvYBlW8fm+b/W7oPlH2U07JZhfioUWKK1w==
-X-Received: by 2002:a05:6870:5704:b0:210:b61d:7b81 with SMTP id k4-20020a056870570400b00210b61d7b81mr621218oap.38.1705961538623;
-        Mon, 22 Jan 2024 14:12:18 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id i191-20020a6387c8000000b005ced88aa031sm8852613pge.48.2024.01.22.14.12.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 14:12:18 -0800 (PST)
-Date: Mon, 22 Jan 2024 14:12:17 -0800
-From: Kees Cook <keescook@chromium.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Jan Bujak <j@exia.io>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: Recent-ish changes in binfmt_elf made my program segfault
-Message-ID: <202401221339.85DBD3931@keescook>
-References: <c7209e19-89c4-446a-b364-83100e30cc00@exia.io>
- <874jf5co8g.fsf@email.froward.int.ebiederm.org>
- <202401221226.DAFA58B78@keescook>
- <87v87laxrh.fsf@email.froward.int.ebiederm.org>
+	s=arc-20240116; t=1705962760; c=relaxed/simple;
+	bh=daZFC62S3UR5/eYOj7P2J+CoCIGhjBE2E3ZrLE+pFjQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fv7KFVQmA8J9godDoDpDkbWHkmhK4ux/k1ayVy5uXBSo1oL9/h0f8FChE7j6foNoQJ+Xq4PutXAud3NhYXWD2dzaDDcq/dax+vgG880NtcqLltYDoJWNoWU8e3jjn3EsoOoKk7WjO8kbpVzGM3dwidLlXsXVJ7cQqD3AHNFN31k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eKU3HnG/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1705962758;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6rMqtCN9Nns9gicLLQn3euoOj3eY7rsKvUOdFV5pAfA=;
+	b=eKU3HnG/G3v6dgfryRu4P2BOhEutBoNu/++OwmyqXzbMrhbrXNyx8TZdxmIcf1Qz+qRGy8
+	2kC7ALMtFjdLTguOKr05Dt+FYDnq0ffFU93fwYwuLdO2R/2k9Lz89H7fIK2M8lhixm5/dK
+	s+CCt+neT6d6LJZW5VnaRKHmt2KG0/Y=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-101-xVA4GeBNMjm4A_25AiODpA-1; Mon, 22 Jan 2024 17:32:35 -0500
+X-MC-Unique: xVA4GeBNMjm4A_25AiODpA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 03AE785A589;
+	Mon, 22 Jan 2024 22:32:34 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.67])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 48FAB5012;
+	Mon, 22 Jan 2024 22:32:32 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>
+Cc: David Howells <dhowells@redhat.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	netfs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/10] netfs, afs, cifs, cachefiles, erofs: Miscellaneous fixes
+Date: Mon, 22 Jan 2024 22:32:13 +0000
+Message-ID: <20240122223230.4000595-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <87v87laxrh.fsf@email.froward.int.ebiederm.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-On Mon, Jan 22, 2024 at 03:01:06PM -0600, Eric W. Biederman wrote:
-> Kees Cook <keescook@chromium.org> writes:
-> 
-> > On Mon, Jan 22, 2024 at 10:43:59AM -0600, Eric W. Biederman wrote:
-> >> Jan Bujak <j@exia.io> writes:
-> >> 
-> >> > Hi.
-> >> >
-> >> > I recently updated my kernel and one of my programs started segfaulting.
-> >> >
-> >> > The issue seems to be related to how the kernel interprets PT_LOAD headers;
-> >> > consider the following program headers (from 'readelf' of my reproduction):
-> >> >
-> >> > Program Headers:
-> >> >   Type  Offset   VirtAddr  PhysAddr  FileSiz  MemSiz   Flg Align
-> >> >   LOAD  0x001000 0x10000   0x10000   0x000010 0x000010 R   0x1000
-> >> >   LOAD  0x002000 0x11000   0x11000   0x000010 0x000010 RW  0x1000
-> >> >   LOAD  0x002010 0x11010   0x11010   0x000000 0x000004 RW  0x1000
-> >> >   LOAD  0x003000 0x12000   0x12000   0x0000d2 0x0000d2 R E 0x1000
-> >> >   LOAD  0x004000 0x20000   0x20000   0x000004 0x000004 RW  0x1000
-> >> >
-> >> > Old kernels load this ELF file in the following way ('/proc/self/maps'):
-> >> >
-> >> > 00010000-00011000 r--p 00001000 00:02 131  ./bug-reproduction
-> >> > 00011000-00012000 rw-p 00002000 00:02 131  ./bug-reproduction
-> >> > 00012000-00013000 r-xp 00003000 00:02 131  ./bug-reproduction
-> >> > 00020000-00021000 rw-p 00004000 00:02 131  ./bug-reproduction
-> >> >
-> >> > And new kernels do it like this:
-> >> >
-> >> > 00010000-00011000 r--p 00001000 00:02 131  ./bug-reproduction
-> >> > 00011000-00012000 rw-p 00000000 00:00 0
-> >> > 00012000-00013000 r-xp 00003000 00:02 131  ./bug-reproduction
-> >> > 00020000-00021000 rw-p 00004000 00:02 131  ./bug-reproduction
-> >> >
-> >> > That map between 0x11000 and 0x12000 is the program's '.data' and '.bss'
-> >> > sections to which it tries to write to, and since the kernel doesn't map
-> >> > them anymore it crashes.
-> >> >
-> >> > I bisected the issue to the following commit:
-> >> >
-> >> > commit 585a018627b4d7ed37387211f667916840b5c5ea
-> >> > Author: Eric W. Biederman <ebiederm@xmission.com>
-> >> > Date:   Thu Sep 28 20:24:29 2023 -0700
-> >> >
-> >> >     binfmt_elf: Support segments with 0 filesz and misaligned starts
-> >> >
-> >> > I can confirm that with this commit the issue reproduces, and with it
-> >> > reverted it doesn't.
-> >> >
-> >> > I have prepared a minimal reproduction of the problem available here,
-> >> > along with all of the scripts I used for bisecting:
-> >> >
-> >> > https://github.com/koute/linux-elf-loading-bug
-> >> >
-> >> > You can either compile it from source (requires Rust and LLD), or there's
-> >> > a prebuilt binary in 'bin/bug-reproduction` which you can run. (It's tiny,
-> >> > so you can easily check with 'objdump -d' that it isn't malicious).
-> >> >
-> >> > On old kernels this will run fine, and on new kernels it will
-> >> > segfault.
-> >> 
-> >> Frankly your ELF binary is buggy, and probably the best fix would be to
-> >> fix the linker script that is used to generate your binary.
-> >> 
-> >> The problem is the SYSV ABI defines everything in terms of pages and so
-> >> placing two ELF segments on the same page results in undefined behavior.
-> >> 
-> >> The code was fixed to honor your .bss segment and now your .data segment
-> >> is being stomped, because you defined them to overlap.
-> >> 
-> >> Ideally your linker script would place both your .data and .bss in
-> >> the same segment.  That would both fix the issue and give you a more
-> >> compact elf binary, while not changing the generated code at all.
-> >> 
-> >> 
-> >> That said regressions suck and it would be good if we could update the
-> >> code to do something reasonable in this case.
-> >> 
-> >> We can perhaps we can update the .bss segment to just memset an existing
-> >> page if one has already been mapped.  Which would cleanly handle a case
-> >> like yours.  I need to think about that for a moment to see what the
-> >> code would look like to do that.
-> >
-> > It's the "if one has already been mapped" part which might
-> > become expensive...
-> 
-> I am wondering if perhaps we can add MAP_FIXED_NOREPLACE and take
-> some appropriate action if there is already a mapping there.
+Hi Christian,
 
-Yeah, in the general case we had to back out MAP_FIXED_NOREPLACE usage
-for individual LOADs because there were so many cases of overlapping
-LOADs. :( Currently it's only used during the initial mapping (when
-"total_size" is set), to avoid colliding with the stack.
+Here are some miscellaneous fixes for netfslib and a number of filesystems:
 
-But, as you suggest, if we only use it for filesz==0, it could work.
+ (1) Replace folio_index() with folio->index in netfs, afs and cifs.
 
-> Such as printing a warning and skipping the action entirely for
-> a pure bss segment.  That would essentially replicate the previous
-> behavior.
+ (2) Fix an oops in fscache_put_cache().
 
-Instead of failing, perhaps we just fallback to not using
-MAP_FIXED_NOREPLACE and do the memset? (And maybe pr_warn_once?)
+ (3) Fix error handling in netfs_perform_write().
 
-> At a minimum adding MAP_FIXED_NOREPLACE should allow us to
-> deterministically detect and warn about problems, making it easier
-> for people to understand why their binary won't run.
+ (4) Fix an oops in cachefiles when not using erofs ondemand mode.
 
-Yeah, it seems like it's the vm_brk_flags() that is clobber the mapping,
-so we have to skip that for the MAP_FIXED_NOREPLACE fails on a filesz==0
-case?
+ (5) In afs, hide silly-rename files from getdents() to avoid problems with
+     tar and suchlike.
 
--- 
-Kees Cook
+ (6) In afs, fix error handling in lookup with a bulk status fetch.
+
+ (7) In afs, afs_dynroot_d_revalidate() is redundant, so remove it.
+
+ (8) In afs, fix the RCU unlocking in afs_proc_addr_prefs_show().
+
+The patches can also be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-fixes
+
+Thanks,
+David
+
+Changes
+=======
+ver #2)
+ - Update the commit messages of the don't-use-folio_index patches.
+ - Move check of object->ondemand into cachefiles_ondemand_init_object().
+
+
+Link: https://lore.kernel.org/r/20240122123845.3822570-1-dhowells@redhat.com/ # v1
+
+Dan Carpenter (2):
+  netfs, fscache: Prevent Oops in fscache_put_cache()
+  netfs: Fix a NULL vs IS_ERR() check in netfs_perform_write()
+
+David Howells (8):
+  netfs: Don't use certain unnecessary folio_*() functions
+  afs: Don't use certain unnecessary folio_*() functions
+  cifs: Don't use certain unnecessary folio_*() functions
+  cachefiles, erofs: Fix NULL deref in when cachefiles is not doing
+    ondemand-mode
+  afs: Hide silly-rename files from userspace
+  afs: Fix error handling with lookup via FS.InlineBulkStatus
+  afs: Remove afs_dynroot_d_revalidate() as it is redundant
+  afs: Fix missing/incorrect unlocking of RCU read lock
+
+ fs/afs/dir.c               | 30 ++++++++++++++++++++++--------
+ fs/afs/dynroot.c           |  9 ---------
+ fs/afs/proc.c              |  5 +++--
+ fs/cachefiles/ondemand.c   |  3 +++
+ fs/netfs/buffered_read.c   | 12 ++++++------
+ fs/netfs/buffered_write.c  | 15 ++++++++-------
+ fs/netfs/fscache_cache.c   |  3 ++-
+ fs/netfs/io.c              |  2 +-
+ fs/netfs/misc.c            |  2 +-
+ fs/smb/client/file.c       | 10 +++++-----
+ include/trace/events/afs.h | 25 +++++++++++++++++++++++++
+ 11 files changed, 76 insertions(+), 40 deletions(-)
+
 
