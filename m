@@ -1,92 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-8449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09109836BB4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:50:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 283B2836BCD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:52:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B9721C2567D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 16:50:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B5F31C23ECB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 16:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4274F40BF7;
-	Mon, 22 Jan 2024 15:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65C835BAC6;
+	Mon, 22 Jan 2024 15:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=exia.io header.i=@exia.io header.b="5IkZ9qyF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgcnszHe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from MTA-12-4.privateemail.com (mta-12-4.privateemail.com [198.54.127.107])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079A63D964;
-	Mon, 22 Jan 2024 15:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE193D967;
+	Mon, 22 Jan 2024 15:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705937033; cv=none; b=Fp3FFxWVlvoGYbpuEqbawMLEaAeQ96+iYVnewQoi9ij6sx+RlvvH6eqf+UDW/tgmiuCk0axntpZwGyVd8rHpb9z92IiJaLAr3U6Nd3CH2Pn25bGvTovEGHro9vf7695QFCxTqbCoVgoxfivD3qJSLhW9nSSDlrEYk59W7sEA4o4=
+	t=1705937155; cv=none; b=uIaebfcqVnUqgNyzZWUVz+kJE7veAlC+TNTx7vaH/OCJDasKSRUokXfUc67/Z6HDy5j8vSjAOTnzR0z9CAC0k+oSManKYP8DORzogAlUn4gBZ9EYNtTdUzgDmDzfdItE9T+Dcc4T8WOc9tDJb78nQEiQ+7voURuli5pgtg+4B44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705937033; c=relaxed/simple;
-	bh=08AzbJBDTNvT7ROIQXDEvrMtJP9y4Vc1P/92plU2FMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IsWUWVCT5pXfBtw1Ad1wqejyR5yLfXBeiGDfFOUExpgGmnDjWM8aVQny2MGYHJo/UEJU6F6YAGUcZO7PYiKKnDWONQKXaxV5MS49UCsalMgXk1WEoCi0WATiZwlLdOwVao4gvfWGDz+0xSMVacg6AwovZZIxP7AgznNXMQXJa6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exia.io; spf=pass smtp.mailfrom=exia.io; dkim=pass (2048-bit key) header.d=exia.io header.i=@exia.io header.b=5IkZ9qyF; arc=none smtp.client-ip=198.54.127.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exia.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exia.io
-Received: from mta-12.privateemail.com (localhost [127.0.0.1])
-	by mta-12.privateemail.com (Postfix) with ESMTP id A90DB18000AE;
-	Mon, 22 Jan 2024 10:23:44 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=exia.io; s=default;
-	t=1705937024; bh=08AzbJBDTNvT7ROIQXDEvrMtJP9y4Vc1P/92plU2FMo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=5IkZ9qyFHIk7pp99vhyLQ06zBRPufV1N+24fe8ZVDChfrZOR2vD14mdBd1TXW43m4
-	 0/BBsYPE9UBOfEudTdy29kv54FCCVzL7Me2hNJS/vTO+iQR0SF4zo921wKRcWDZccH
-	 +ZRzgssiVAw/nOU3vUlrGWf4xCaUiAHtPzyTSFHRxHvW/LpeDqhrnvU/lLjDPQaetE
-	 38EDGCdcutwWJiJwl8Gyob8M5PaAuMwu3X4946LgOyurhEt5tqLvKWRr6iah1Q48Nh
-	 6sWkWAe3ygvj13OTmVyeEsakWedyQoLMpulO8dQt+oWYh98+EkoISa1BdcAaLauO9C
-	 ULJbm+XegtNpw==
-Received: from [192.168.1.17] (M106073142161.v4.enabler.ne.jp [106.73.142.161])
-	by mta-12.privateemail.com (Postfix) with ESMTPA;
-	Mon, 22 Jan 2024 10:23:35 -0500 (EST)
-Message-ID: <f2ee9602-0a32-4f0c-a69b-274916abe27f@exia.io>
-Date: Tue, 23 Jan 2024 00:23:27 +0900
+	s=arc-20240116; t=1705937155; c=relaxed/simple;
+	bh=C8wjqeeCf8FT+5eE7w6W/zlZBQKoCYKXMmOWmrJ3NT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Za5U2UMA0Ft0K2VvppoSxpa2er4YX6weGiuEifgskX0LZkRK1ND2ajmEsDMVPF91c/C0jdrwsX9fz/7QEtsDE7ZQN6zkIFHVcu/Q6ZcTiA1AeZP6738CLIadvRxDscN+EedOxd+9EyU9kI7TNYgqPt/ah3sXPLP/GMWaqqKTcBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgcnszHe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21EA2C43394;
+	Mon, 22 Jan 2024 15:25:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705937155;
+	bh=C8wjqeeCf8FT+5eE7w6W/zlZBQKoCYKXMmOWmrJ3NT4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WgcnszHeIqZfVOkJTdGhrZ7/tCMb25qdwQFCYDCEa/sEgaws0v8FTqKz2nKPQOUd6
+	 PGORtsH0d/ZsIzYx7vSzFBeSEdrfDinh2l7txWv3km6m3y0iYtSpVy2vSAAIBKxUvU
+	 4pD0IdNdk6HiiJqt98eu4rTmBoHUkFrA+4274wjBGjdbDtXg7O6VW4pWjYs6qnEgT0
+	 qfZikyI4j59EMdJU07N86K2DfF6zXXAp7X+9XXDsAumJEi2akp6B/WeeDykW2KsIhP
+	 HjXwiBLG2cxwgneXwJQYrlUHJzOHEqSu95AODncSvsmza5XCBkjTYmXyq93ELvHzpu
+	 GPgZ3I06bCMYw==
+Date: Mon, 22 Jan 2024 16:25:50 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, 
+	netdev@vger.kernel.org, paul@paul-moore.com, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [GIT PULL] BPF token for v6.8
+Message-ID: <20240122-scheu-amtlich-2ecfb8501f84@brauner>
+References: <20240119050000.3362312-1-andrii@kernel.org>
+ <CAHk-=wg3BUNT1nmisracRWni9LzRYxeanj8sePCjya0HTEnCCQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Recent-ish changes in binfmt_elf made my program segfault
-Content-Language: en-US
-To: Pedro Falcato <pedro.falcato@gmail.com>
-Cc: ebiederm@xmission.com, keescook@chromium.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <c7209e19-89c4-446a-b364-83100e30cc00@exia.io>
- <CAKbZUD2=W0Ng=rFVDn3UwSxtGQ5c13tRwkpqm54pPCJO0BraWA@mail.gmail.com>
-From: Jan Bujak <j@exia.io>
-In-Reply-To: <CAKbZUD2=W0Ng=rFVDn3UwSxtGQ5c13tRwkpqm54pPCJO0BraWA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wg3BUNT1nmisracRWni9LzRYxeanj8sePCjya0HTEnCCQ@mail.gmail.com>
 
-On 1/22/24 23:54, Pedro Falcato wrote:
-> Hi!
->
-> Where did you get that linker script?
->
-> FWIW, I catched this possible issue in review, and this was already
-> discussed (see my email and Eric's reply):
-> https://lore.kernel.org/all/CAKbZUD3E2if8Sncy+M2YKncc_Zh08-86W6U5wR0ZMazShxbHHA@mail.gmail.com/
->
-> This was my original testcase
-> (https://github.com/heatd/elf-bug-questionmark), which convinced the
-> loader to map .data over a cleared .bss. Your bug seems similar, but
-> does the inverse: maps .bss over .data.
->
+> I think Christian's concerns were sorted out too, but in case I'm
+> mistaken, just holler.
 
-I wrote the linker script myself from scratch.
-
-Thank you for the link to the previous discussion. So assuming this
-breakage was intended my question here is - doesn't this run afoul
-of the "we do not break userspace" rule?
+Yes, I think everything is covered. Thanks for checking!
 
