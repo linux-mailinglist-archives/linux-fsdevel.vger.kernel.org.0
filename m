@@ -1,477 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-8396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4A5835C47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 09:06:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2EF2835CA9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 09:31:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEB1A1F22FA8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 08:06:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DB7A1F2199F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 08:31:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B3C1A70A;
-	Mon, 22 Jan 2024 08:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85FCA38F94;
+	Mon, 22 Jan 2024 08:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W8Z3j72X"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CAAU8ZOl";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="NkJM3Whj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.100])
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DF01A708;
-	Mon, 22 Jan 2024 08:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.134.136.100
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705910767; cv=none; b=ZAs3ITaIflru/LEQas5A/OgALpSrmBVnqL8ZMh05WoBJsDOPxhlxIZtsVzRnzf7sEM7gWz9F+aNMTz5/SgZmykj5y+snVb1KXIjjYcN77KgaTTgtdF6Nfv3YZt9RUrYHF7Vty/aB630q+OEr9uoHBaboBKpaV3yVnMI70lgIOkU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705910767; c=relaxed/simple;
-	bh=JBDKnQVL6tb8bqKv5trl9rQTUbWDE/j0qE8XT64uxq4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=C99bNP6GgQrL+KaM3AAIgEaQv83tT0nUr1T6JcKwEb0y0BZrlZHa+AkwTrZOSXr8R2ndZyPBbJpXd1SCJHq7PILZxgbtxq5he7HoaB3BSkMYPjXzJ+HTFJOjxo33mApXr+5ATMnQKh5UIXl/MKn09uf505lT2HQAmF4Jmlx6ZdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W8Z3j72X; arc=none smtp.client-ip=134.134.136.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1705910765; x=1737446765;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=JBDKnQVL6tb8bqKv5trl9rQTUbWDE/j0qE8XT64uxq4=;
-  b=W8Z3j72X/IPlrcQ0DxwPxI0GO14dQcq82ZNy5U+zXWVftXLbrahuEfm4
-   /mht+BJM4yg0x52aPHrKFfYvs18BaLdCi9hBfu9X9ihlhI+lRs5s2Crlz
-   +0H06TJbJRgMFtHDwSPzati1ZwKLrLzYAkzedZkMPfvINVz3JF+KbBasL
-   ywaIHfBPAgqLuk3hyqFb7PbcfnMddnFyWOeOT2WVCCwv1aIcnsMW2y48W
-   zUe13fGLxHzZBZJfmN7Rpui7POPVb0znNX0TipUuuY8hA06hrsXtJD6hI
-   2BvT49w0FLIkx5emJ+SgY7QU9OLGXk9/UR2l3Li/Hty43lKCZype8K/hS
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10960"; a="467511622"
-X-IronPort-AV: E=Sophos;i="6.05,211,1701158400"; 
-   d="scan'208";a="467511622"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2024 00:05:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.05,211,1701158400"; 
-   d="scan'208";a="1217287"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Jan 2024 00:05:49 -0800
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Gregory Price <gourry.memverge@gmail.com>
-Cc: linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-doc@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  linux-api@vger.kernel.org,  corbet@lwn.net,  akpm@linux-foundation.org,
-  gregory.price@memverge.com,  honggyu.kim@sk.com,  rakie.kim@sk.com,
-  hyeongtak.ji@sk.com,  mhocko@kernel.org,  vtavarespetr@micron.com,
-  jgroves@micron.com,  ravis.opensrc@micron.com,  sthanneeru@micron.com,
-  emirakhur@micron.com,  Hasan.Maruf@amd.com,  seungjun.ha@samsung.com,
-  hannes@cmpxchg.org,  dan.j.williams@intel.com
-Subject: Re: [PATCH v2 1/3] mm/mempolicy: implement the sysfs-based
- weighted_interleave interface
-In-Reply-To: <20240119175730.15484-2-gregory.price@memverge.com> (Gregory
-	Price's message of "Fri, 19 Jan 2024 12:57:28 -0500")
-References: <20240119175730.15484-1-gregory.price@memverge.com>
-	<20240119175730.15484-2-gregory.price@memverge.com>
-Date: Mon, 22 Jan 2024 16:03:53 +0800
-Message-ID: <875xzlx09i.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68F036120;
+	Mon, 22 Jan 2024 08:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1705912253; cv=fail; b=pmt81luxflaK/bxGz+GbC3hljTcalYHEAbfpC+ra7bem8AMMp++s6zDE6ikzrVGttMoq99aUn+WF/HAd2r7k6oP6Nie6t017AGhc0wVnr1dsvoztWJJiaDlbrkVI0k9p4DjWil2rMtrpEn8C9mEeQ+Wzu+hGvEiHdvuC3JIY0V0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1705912253; c=relaxed/simple;
+	bh=pyM/WiJIcuA5IzKZWhbZzIN+OcJnfdo5TPtpJsZKJ6Q=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=T3p6uNqXwaDJfETxtjX2wbnsa6BxpJsHZfBky3NpMNwLdIGj3UTia99KEResi4IyViWKkHr9OHu0OOWyFeXk0bijrLiBmrrU6g0laqSmNHZZz4nq5cPon4y8Mh+ElqgCYlvITDtQK+gYeo6xVAa84UECCPWUJrxCFZnvu6jdYxU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=CAAU8ZOl; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=NkJM3Whj; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40M7g1mY008112;
+	Mon, 22 Jan 2024 08:29:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=7p9q4Otjtl84UgQiGJyjQ1R9f/Z8EbiZYT4EZTUX0nI=;
+ b=CAAU8ZOlctxNIg2pC11gkRgOn5tpf3e8x9WUJJ391+mKqYfSnbSlH1pvuavZ8U0U5QUR
+ lgu8BXGivbL/2ODZF5ajgX+ySbpIczoaq/XDLl0wY8/DpRk+tRLjmcgVzwU0E+Xa0mO1
+ 0IYffaRmSHUVsVz/+VM06DwRIWLonThtUS/xi0cQ9m1mUTnOjRztaj1g8E9FNs9vlQ+R
+ Qw7T21DoiJpdBgb9QN9nIm3sQUkf7DGoCRZcXfranySoNChl1wkKmDW2ptpmYaFbN6pL
+ 9dm9J4x5mlDXZi+tQ047ssS1s3kXaOAzWisyCFexoHOTr+tBAxPmOg9Ee0muIYXoeMJm IQ== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3vr7cxtukr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 22 Jan 2024 08:29:36 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 40M8Fg4d039337;
+	Mon, 22 Jan 2024 08:29:35 GMT
+Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02lp2040.outbound.protection.outlook.com [104.47.51.40])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3vs36yatm4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 22 Jan 2024 08:29:35 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DYAF1BDde2P78aGvV1UIGDz8ZC5PfFNL8WEaJPV7RyGZkzMLXeji3KAiWmGXIphUPteKvk/3JFgQy2uMDkMKZjeL3rar9rwcXNZbFhH6fMZVlI+fH3TZXXoQXyA0PUkGDOnuKJ09vXZGT3qAAk0ZVNnytAgcuyTN3xyw3CVWLziRMvG1A5+N5DOO3uaif5Tcg54MDLyoE23VISb26BAuADSzr8BTeqpFJhqF3KMFN0Jvq59gC73PN0c5pNJLyGU+VU6rlC87K6N9mWjFJgyFWmbVkzJKZJ8o0kjIuh8HV14v7VAQ4aJ+8s1hRUTpXSlVMcMxB1cqAdmy6YCMj2cs5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7p9q4Otjtl84UgQiGJyjQ1R9f/Z8EbiZYT4EZTUX0nI=;
+ b=mwAEIxltpowflhCIKVWaO/63HApHT4w3ItoIl+wdsx0ZzeLxZCKvpQmOL1fpURIpOP61AzzkJ+ljIfwfI6fCcp0paajVNF4+Q7lbgwljjUPoVDMHSMR3uBayCnudpL+fzRbkX2l1mTL8APj1LriSV0t+TVUdvVzh+OjEWoZ0dzqrVw2N0Wgjwjl0DpJP2yqnzCiLvlmL5Vi72SmCLrCbBSUZvZxphBj1GG2za9ogtWWe/geIwJdhwK9eD3YZjhKXIEICkOZTmuQG7g+wZqo/NvK7aPrK56UMDhZDAcxfF4oxqw3ncJ+00xwiZdE76bJj5vglrYCWXdJACJSEu9zF4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7p9q4Otjtl84UgQiGJyjQ1R9f/Z8EbiZYT4EZTUX0nI=;
+ b=NkJM3WhjFhgNndl9JXm2t9IUozHE7JuyOQdE8uwYcTzsTt60ysvRRqyow4KlFl+mPylYS2KYTT9XAVf932E7DalVSwuBnJwtxhqFmCWvfM9sqo8fJ3GxB0K9RwDkq00Xh8G3u3RqOk+czZEEBkvaxVTvAt6G3FRiQcRz5J5fuSg=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by CH3PR10MB6692.namprd10.prod.outlook.com (2603:10b6:610:148::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7202.32; Mon, 22 Jan
+ 2024 08:29:33 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::f11:7303:66e7:286c]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::f11:7303:66e7:286c%4]) with mapi id 15.20.7202.031; Mon, 22 Jan 2024
+ 08:29:33 +0000
+Message-ID: <6c1c9cf1-9202-4cab-9ca7-404c2116b21a@oracle.com>
+Date: Mon, 22 Jan 2024 08:29:27 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 05/16] fs: Add RWF_ATOMIC and IOCB_ATOMIC flags for
+ atomic write support
+Content-Language: en-US
+To: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+        linux-scsi@vger.kernel.org, ming.lei@redhat.com, ojaswin@linux.ibm.com,
+        bvanassche@acm.org, Prasad Singamsetty <prasad.singamsetty@oracle.com>,
+        dchinner@redhat.com, djwong@kernel.org, axboe@kernel.dk,
+        kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
+        martin.petersen@oracle.com
+References: <20231212110844.19698-1-john.g.garry@oracle.com>
+ <20231212110844.19698-6-john.g.garry@oracle.com>
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20231212110844.19698-6-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0235.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:315::12) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CH3PR10MB6692:EE_
+X-MS-Office365-Filtering-Correlation-Id: c70fe653-62de-4f92-69d8-08dc1b24428e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	UHjBsGkwBy5EPISJCiwDsJqNY+2GfSbMaOQQB+o0nH2oyWAhG15I4EtlMsWEcmvwoqxJeRzpsxtzOekWqfhnkgZ7ZsyERDmVTgK2wUgMpmfL6KQueI3a8QYU/VCn8scHWhr6dMweL1sM7+C1/7ixdSzccEtjImTesDaGS+zBMmyAm6mK7N6eMwOo7+SPYn1kp4aD34AcIkKmSlOt/0yOiHc1oefLdxMdnGXE/FGvx0gj2fxkEmJbi+PglvQ+v8M8DDGrxhvUGFYFCliqZxoVJt/IaAafHT3LfsEzbigFLdgAXXmRSecGlPinNxz930jU/njXjE/9TrWgyVG78QeE51z4RXH78RcCEoIDd0PF4PE/Xa9z0JmpQ9o1vDPTzuDWJnRL2ctZRiOgwUCx+BUusk3jjD09zFQ5mipOBZ4sHpInkOJ3AQAxfVs2b7qd84tanM/vlulFLqtwTAyqtirx+9lNcQrOhTV4vjAI4Vygzz1cI0xP0kuyRpQ6YSRSc/c6CTHs3ytPQm8L139Myrink22xHWPKqGCAoIY7RxlXgqmX1Q9eol3FAaKPeFDZfKtW7YIwfBUad5k4ZwU6s2KMN3RtGhcvklAUYVrKFu0iq+pyAgoc/vPI1K4zVxEgYelv
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(39860400002)(136003)(376002)(396003)(346002)(230922051799003)(64100799003)(186009)(451199024)(1800799012)(36756003)(41300700001)(31696002)(86362001)(38100700002)(6512007)(478600001)(6666004)(36916002)(8676002)(8936002)(4326008)(6486002)(6506007)(66476007)(66946007)(966005)(7416002)(66556008)(26005)(2906002)(4744005)(316002)(107886003)(2616005)(53546011)(5660300002)(31686004)(43740500002)(45980500001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?SHZwY2ZuWndYS0RSSENTcDdyUmxaTW9LOVBpSWNBbkxzQ0FpSi9NNUppU0lv?=
+ =?utf-8?B?SktuNGdDTGdSQXphSzZMbjlsN3Irb3RJYzdOWWVjRmxqcDAzbFVJd3Iwdk5N?=
+ =?utf-8?B?U0ROb0xMVnB1dXI0OWhKOUVKS1ptVGNYQWJwRnhuUlhJT3k0OG1xeEd1WXdp?=
+ =?utf-8?B?U0ZDUzJRRTFUQkR5UjZ3a2lnTUtSTjVYTUplczVwYVdmUzY0SmJkenNzWEI1?=
+ =?utf-8?B?aXJEZGJhR0UrZGZvdU5WR0VKRXRDUWt5b2Y5eGkvVDJDalNQWmlmUlNTcHpv?=
+ =?utf-8?B?UHE2eXd0MUg1ZFpkREJJelQvSTVKWmJlMS9jVWFVVWc2bDdZZnRBYXQ2MEdS?=
+ =?utf-8?B?dCtKY2R3TTJCUmtXS3lrT1E3a0FmZkFxYS9wZ25zZFVycjBMeTRZYkhqZ0Vn?=
+ =?utf-8?B?UmJRdzVMZFdoMTBQTURyaVkxbWpCY1YzVUdjRmtQZjVpWmw3ZW5ISXNaWFFj?=
+ =?utf-8?B?MEhrSEZtbmFzN0NIc0dFL09lN3pwdlNtbzMxMUFTeVhQU2ZERjZTaUE0encw?=
+ =?utf-8?B?M05VMWlpR2RJdFlzTXRzUGdvTkRNempVZUNta2lsNGsvRHZaT0dkSEtvbzhC?=
+ =?utf-8?B?a3FWYmIvaFNJZmh0aE1VZmRKVno3UmQzNy9EZTVpWjNzOTNpcW9CZFRLMlFn?=
+ =?utf-8?B?N09DbFZMK2d3eFFSa2MzdTJVaDBocjBoVVEvdHhtTXMreU1TVnIzRnAwcWZn?=
+ =?utf-8?B?RkFCU3dHd0xhWWpyWEs5UnJMQ1ZSMFVJNHdjSWN5NzFieGFuZlpoSDdJcStH?=
+ =?utf-8?B?a3Q3dnBYMmcySXUrMmkxa29VRHFHR2VSK3VZZUtldjM4TDY0SDhyUE9nUXJO?=
+ =?utf-8?B?Z041cXZtczBFUDhVNjhBQzNMMFF0dk1LK0ExcEE2OCtFMm1vZ1dpWk9UeXdr?=
+ =?utf-8?B?MFlqZzArWFdaMit2b3FTalluNjRxTmd0dEt0MEZPRGpjODRXWjhhZ1o3UHFT?=
+ =?utf-8?B?dzNMejlLK2Ztbjh6a0VsYVNFWlc2RS9EcWx5ZE9DVHNPOUtXVDc1MjQxK0N5?=
+ =?utf-8?B?UC9sYzhoWlhLaDZUaTFoZGpxZndWWDhUMlBBRzI0MG84bTVKdVd0Ym5QOTZ0?=
+ =?utf-8?B?dE04U3AvMDhTTGU4VCtZYU0vRitCVE9EZ3dEdTJtNnpwMExXUVpyR2JhajBH?=
+ =?utf-8?B?UXg3UG5LcEFacUF6QmhDNnlvbjlxOWx3WWZOM0R4UmxwaUJ4YkhNWWRrbTlD?=
+ =?utf-8?B?V1JnMmsrdy9tZjdoSkljRTA1NUM0MVM3MVJrUDBvY3MwdDRmUmVackkwTnNM?=
+ =?utf-8?B?STE1MG1POGlITkxpQktUTkxDdElPUTV6UWEyeE5TZlE0ekpQNE41TnNPcmZY?=
+ =?utf-8?B?STB2c3lUQTVMaVJkeXVxRFJqLzlpYUZFR3lya0xTdGcxMlhZNHdRRHAzbUNT?=
+ =?utf-8?B?UWdmVjdUbnFmSWtudkJUNnd4blhJR0UwWE85MUJ5bThEQzZHWXU4dlVKSkpx?=
+ =?utf-8?B?eUF4MmV3SVVIU015NlhKL1U5QUhwMWdvbWl2MHRBUWYyL0JOOHY1cVltT05L?=
+ =?utf-8?B?cVRXVCtON1hQUlF4dEVJbFd0S0dOdWZWZzczRk1Vbzl3Y2hOM0NMUEdnOVoz?=
+ =?utf-8?B?dWc3MlA1NnVkSDBwQXhubk9IV3ZKWUQwUFM3Z3ZBUTJQeWJHSS9kT0kwSld2?=
+ =?utf-8?B?SXFFcld0RUxKMmthMFpZQTBwb29YcnhpQkV0bVRPVHlaMUFQWFI3ZzY0OTRP?=
+ =?utf-8?B?YTg5ZS9GM0FveVBudnJjakR4bW1pb2doWUtDaDdKanFmejZhVmljZUJzN3dI?=
+ =?utf-8?B?ay9IcDA0Q0NBWUpWbGVOVUprLzk1M2xxSXJkZHFnTnVJbG0rekNUMVV1dzhD?=
+ =?utf-8?B?Y09vTE5GMDIvMFJNZlB3UUNkQytUQUVUdlF0dFBYRmlEcnEwS0ZObndrUHli?=
+ =?utf-8?B?aHd1cXhUSWVhaVBZdVdhV1FBa3BUeWk3U1V2a1A3OTFCb0FyakNJclZ0Y0lo?=
+ =?utf-8?B?VlNIcmgxNGE4aG1NdGRsN1I4R3VOWlN2L0ZpUm5lbUxnM0h4M0RZakc4UGo3?=
+ =?utf-8?B?eWhTTzBwR1dQVWxqZVd5V0pRYmo2WHpET2NMMHpFTVJEOVhOK1lQT204L3NJ?=
+ =?utf-8?B?dEViTE9TU3R6cVd6aDU3cmgvb1kya09iSTZMQ0xORlozQldyaFRRZ2lCVFlv?=
+ =?utf-8?B?dTBFUzZ2MnZlRDZBblZGNXI4YnRLOWRjN3dqY3M4R3lJeU15ZGtBMCtJKzFT?=
+ =?utf-8?B?clE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	A0gj8r23v04k126YlQke4gv5wlJ0cJBW89IB08PNfvwvr8ZH7jgnz6otWcpVFwakEjPOiYyh/tyEdrO6TozFSf4QnLHIUoIvvH0ZD5cdZWJoKJaHAkgKNfTkp5K9AFNNXkF+lLvREVccwnmEajCRG/L0cpQzOcf/NrQlYtqZjnNI81H5TkIgM1SuriaxlVbHsb1vx9JYTb6t2Vd0zOcL4ahgZuW6f1/xSeL+0MR8+tl6wb4Wr563EqK17Nkm0ETH4F2Q8F59Zn8MIgsF+//22kYMZi3uFAHPCGSdeFZNF6BUZpat94EZJfuqq+uyg8ebyklFGlEpA2NsHzYBvp+/RdV/eUtc/wrO3LaetrDwd+evb8z7lJIyXsoOMKVJawEM0Ox3uSaDNeKcRQlx75PnBpUHgGuiwFmDvw7HsAebGkyP7tNH1n4sagtIUKwX094xKLiFiLFBswS2Q7vN0zpecCcAhDvQkfocHHn1WWXFYQWgMXM4y82hdqA7l+J65fvSihSPlWNoHp+ITUEMPxsX5E8W0nk2U36HjV0HWZcA51roYonU4jmk2Ou1LsFADqKafFJdqecJUoByzOdJYWMpIQIkKZFbKz99YLIVFfU3o/U=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c70fe653-62de-4f92-69d8-08dc1b24428e
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2024 08:29:33.1321
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /dEz0WwsTAJOFOdJ4kLLpNWFNvjxRlDYEcsTnvz+aj6lsBhfGhW2q+65FItUQgFxdU8Plh/DfQpx6K20qhuI6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB6692
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.997,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-21_04,2024-01-19_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=986
+ malwarescore=0 mlxscore=0 phishscore=0 bulkscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2401220060
+X-Proofpoint-ORIG-GUID: HXuY2HiYWUCfvmkb27FDlT3rsYJ0yJ0P
+X-Proofpoint-GUID: HXuY2HiYWUCfvmkb27FDlT3rsYJ0yJ0P
 
-Gregory Price <gourry.memverge@gmail.com> writes:
+On 12/12/2023 11:08, John Garry wrote:
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -301,9 +301,12 @@ typedef int __bitwise __kernel_rwf_t;
+>   /* per-IO O_APPEND */
+>   #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
+>   
+> +/* Atomic Write */
+> +#define RWF_ATOMIC	((__force __kernel_rwf_t)0x00000020)
+> +
 
-> From: Rakie Kim <rakie.kim@sk.com>
->
-> This patch provides a way to set interleave weight information under
-> sysfs at /sys/kernel/mm/mempolicy/weighted_interleave/nodeN
->
-> The sysfs structure is designed as follows.
->
->   $ tree /sys/kernel/mm/mempolicy/
->   /sys/kernel/mm/mempolicy/ [1]
->   =E2=94=94=E2=94=80=E2=94=80 weighted_interleave [2]
->       =E2=94=9C=E2=94=80=E2=94=80 node0 [3]
->       =E2=94=94=E2=94=80=E2=94=80 node1
->
-> Each file above can be explained as follows.
->
-> [1] mm/mempolicy: configuration interface for mempolicy subsystem
->
-> [2] weighted_interleave/: config interface for weighted interleave policy
->
-> [3] weighted_interleave/nodeN: weight for nodeN
->
-> If a node value is set to `0`, the system-default value will be used.
-> As of this patch, the system-default for all nodes is always 1.
->
-> Suggested-by: Huang Ying <ying.huang@intel.com>
-> Signed-off-by: Rakie Kim <rakie.kim@sk.com>
-> Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
-> Co-developed-by: Gregory Price <gregory.price@memverge.com>
-> Signed-off-by: Gregory Price <gregory.price@memverge.com>
-> Co-developed-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
-> Signed-off-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
-> ---
->  .../ABI/testing/sysfs-kernel-mm-mempolicy     |   4 +
->  ...fs-kernel-mm-mempolicy-weighted-interleave |  26 ++
->  mm/mempolicy.c                                | 231 ++++++++++++++++++
->  3 files changed, 261 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-kernel-mm-mempolicy
->  create mode 100644 Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-w=
-eighted-interleave
->
-> diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy b/Docume=
-ntation/ABI/testing/sysfs-kernel-mm-mempolicy
-> new file mode 100644
-> index 000000000000..2dcf24f4384a
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy
-> @@ -0,0 +1,4 @@
-> +What:		/sys/kernel/mm/mempolicy/
-> +Date:		December 2023
-> +Contact:	Linux memory management mailing list <linux-mm@kvack.org>
-> +Description:	Interface for Mempolicy
-> diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted=
--interleave b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-=
-interleave
-> new file mode 100644
-> index 000000000000..e6a38139bf0f
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interl=
-eave
-> @@ -0,0 +1,26 @@
-> +What:		/sys/kernel/mm/mempolicy/weighted_interleave/
-> +Date:		December 2023
+vfs maintainers, due to 
+https://lore.kernel.org/linux-fsdevel/20240119191053.GT22081@brightrain.aerifal.cx/T/#t, 
+I now plan to change this value to 0x40.
 
-May be not a big deal.  The date should be "January 2024"?
-
-> +Contact:	Linux memory management mailing list <linux-mm@kvack.org>
-> +Description:	Configuration Interface for the Weighted Interleave policy
-> +
-> +What:		/sys/kernel/mm/mempolicy/weighted_interleave/nodeN
-> +Date:		December 2023
-> +Contact:	Linux memory management mailing list <linux-mm@kvack.org>
-> +Description:	Weight configuration interface for nodeN
-> +
-> +		The interleave weight for a memory node (N). These weights are
-> +		utilized by processes which have set their mempolicy to
-
-s/processes/tasks or memory areas/
-
-> +		MPOL_WEIGHTED_INTERLEAVE and have opted into global weights by
-> +		omitting a task-local weight array.
-
-Now, we haven't introduced task-local weight array.  So, leave this
-until we introduce that?
-
-> +
-> +		These weights only affect new allocations, and changes at runtime
-> +		will not cause migrations on already allocated pages.
-> +
-> +		The minimum weight for a node is always 1.
-> +
-> +		Minimum weight: 1
-> +		Maximum weight: 255
-> +
-> +		Writing an empty string or `0` will reset the weight to the
-> +		system default. The system default may be set by the kernel
-> +		or drivers at boot or during hotplug events.
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index 10a590ee1c89..ae925216798f 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -131,6 +131,16 @@ static struct mempolicy default_policy =3D {
->=20=20
->  static struct mempolicy preferred_node_policy[MAX_NUMNODES];
->=20=20
-> +/*
-> + * iw_table is the sysfs-set interleave weight table, a value of 0 denot=
-es
-> + * system-default value should be used. Until system-defaults are implem=
-ented,
-> + * the system-default is always 1.
-> + *
-> + * iw_table is RCU protected
-> + */
-> +static u8 __rcu *iw_table;
-> +static DEFINE_MUTEX(iw_table_lock);
-> +
->  /**
->   * numa_nearest_node - Find nearest node by state
->   * @node: Node id to start the search
-> @@ -3067,3 +3077,224 @@ void mpol_to_str(char *buffer, int maxlen, struct=
- mempolicy *pol)
->  		p +=3D scnprintf(p, buffer + maxlen - p, ":%*pbl",
->  			       nodemask_pr_args(&nodes));
->  }
-> +
-> +#ifdef CONFIG_SYSFS
-> +struct iw_node_attr {
-> +	struct kobj_attribute kobj_attr;
-> +	int nid;
-> +};
-> +
-> +static ssize_t node_show(struct kobject *kobj, struct kobj_attribute *at=
-tr,
-> +			 char *buf)
-> +{
-> +	struct iw_node_attr *node_attr;
-> +	u8 weight;
-> +	u8 __rcu *table;
-> +
-> +	node_attr =3D container_of(attr, struct iw_node_attr, kobj_attr);
-> +
-> +	rcu_read_lock();
-> +	table =3D rcu_dereference(iw_table);
-> +	weight =3D table ? table[node_attr->nid] : 1;
-> +	rcu_read_unlock();
-> +
-> +	return sysfs_emit(buf, "%d\n", weight);
-> +}
-> +
-> +static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *a=
-ttr,
-> +			  const char *buf, size_t count)
-> +{
-> +	struct iw_node_attr *node_attr;
-> +	u8 __rcu *new;
-> +	u8 __rcu *old;
-> +	u8 weight =3D 0;
-> +
-> +	node_attr =3D container_of(attr, struct iw_node_attr, kobj_attr);
-> +	if (count =3D=3D 0 || sysfs_streq(buf, ""))
-> +		weight =3D 0;
-> +	else if (kstrtou8(buf, 0, &weight))
-> +		return -EINVAL;
-> +
-> +	/*
-> +	 * The default weight is 1 (for now), when the kernel-internal
-> +	 * default weight array is implemented, this should be updated to
-> +	 * collect the system-default weight of the node if the user passes 0.
-> +	 */
-> +	if (!weight)
-> +		weight =3D 1;
-
-From functionality point of view, it's OK to set "weight =3D 1" here now.
-But when we add system default weight table in the future, we need to
-use "weight =3D 0".  Otherwise, we cannot distinguish whether the default
-value have been customized via sysfs.  So, I suggest to use that rule.
-
-> +
-> +	/* We only need to allocate up to the number of possible nodes */
-
-This comment appears not necessary.
-
-> +	new =3D kmalloc(nr_node_ids, GFP_KERNEL);
-> +	if (!new)
-> +		return -ENOMEM;
-> +
-> +	mutex_lock(&iw_table_lock);
-> +	old =3D rcu_dereference_protected(iw_table,
-> +					lockdep_is_held(&iw_table_lock));
-> +	if (old)
-> +		memcpy(new, old, nr_node_ids);
-> +	else
-> +		memset(new, 1, nr_node_ids);
-
-With similar reason as above ("From functionality..."), I suggest to set
-"0" here.
-
-> +	new[node_attr->nid] =3D weight;
-> +	rcu_assign_pointer(iw_table, new);
-> +	mutex_unlock(&iw_table_lock);
-> +	synchronize_rcu();
-> +	kfree(old);
-> +	return count;
-> +}
-> +
-> +static struct iw_node_attr *node_attrs[MAX_NUMNODES];
-
-node_attrs[] can be allocated dynamically too.  Just a suggestion.
-
-> +
-> +static void sysfs_wi_node_release(struct iw_node_attr *node_attr,
-> +				  struct kobject *parent)
-> +{
-> +	if (!node_attr)
-> +		return;
-> +	sysfs_remove_file(parent, &node_attr->kobj_attr.attr);
-> +	kfree(node_attr->kobj_attr.attr.name);
-> +	kfree(node_attr);
-> +}
-> +
-> +static void sysfs_wi_release(struct kobject *wi_kobj)
-> +{
-> +	int i;
-> +
-> +	for (i =3D 0; i < MAX_NUMNODES; i++)
-
-Nitpick, nr_node_ids should be OK here.
-
-> +		sysfs_wi_node_release(node_attrs[i], wi_kobj);
-> +	kobject_put(wi_kobj);
-> +}
-> +
-> +static const struct kobj_type wi_ktype =3D {
-> +	.sysfs_ops =3D &kobj_sysfs_ops,
-> +	.release =3D sysfs_wi_release,
-> +};
-> +
-> +static int add_weight_node(int nid, struct kobject *wi_kobj)
-> +{
-> +	struct iw_node_attr *node_attr;
-> +	char *name;
-> +
-> +	node_attr =3D kzalloc(sizeof(*node_attr), GFP_KERNEL);
-> +	if (!node_attr)
-> +		return -ENOMEM;
-> +
-> +	name =3D kasprintf(GFP_KERNEL, "node%d", nid);
-> +	if (!name) {
-> +		kfree(node_attr);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	sysfs_attr_init(&node_attr->kobj_attr.attr);
-> +	node_attr->kobj_attr.attr.name =3D name;
-> +	node_attr->kobj_attr.attr.mode =3D 0644;
-> +	node_attr->kobj_attr.show =3D node_show;
-> +	node_attr->kobj_attr.store =3D node_store;
-> +	node_attr->nid =3D nid;
-> +
-> +	if (sysfs_create_file(wi_kobj, &node_attr->kobj_attr.attr)) {
-> +		kfree(node_attr->kobj_attr.attr.name);
-> +		kfree(node_attr);
-> +		pr_err("failed to add attribute to weighted_interleave\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	node_attrs[nid] =3D node_attr;
-> +	return 0;
-> +}
-> +
-> +static int add_weighted_interleave_group(struct kobject *root_kobj)
-> +{
-> +	struct kobject *wi_kobj;
-> +	int nid, err;
-> +
-> +	wi_kobj =3D kzalloc(sizeof(struct kobject), GFP_KERNEL);
-> +	if (!wi_kobj)
-> +		return -ENOMEM;
-> +
-> +	err =3D kobject_init_and_add(wi_kobj, &wi_ktype, root_kobj,
-> +				   "weighted_interleave");
-> +	if (err) {
-> +		kfree(wi_kobj);
-> +		return err;
-> +	}
-> +
-> +	memset(node_attrs, 0, sizeof(node_attrs));
-> +	for_each_node_state(nid, N_POSSIBLE) {
-> +		err =3D add_weight_node(nid, wi_kobj);
-> +		if (err) {
-> +			pr_err("failed to add sysfs [node%d]\n", nid);
-> +			break;
-> +		}
-> +	}
-> +	if (err)
-> +		kobject_put(wi_kobj);
-> +	return 0;
-> +}
-> +
-> +static void mempolicy_kobj_release(struct kobject *kobj)
-> +{
-> +	u8 __rcu *old;
-> +
-> +	mutex_lock(&iw_table_lock);
-> +	old =3D rcu_dereference_protected(iw_table,
-> +					lockdep_is_held(&iw_table_lock));
-> +	rcu_assign_pointer(iw_table, NULL);
-> +	mutex_unlock(&iw_table_lock);
-> +	synchronize_rcu();
-> +	/* Never free the default table, it's always in use */
-
-Obsolete comment?
-
-> +	kfree(old);
-
-It appears unnecessary to free iw_table in error path.  But this isn't a
-big deal because error path will almost never be executed in practice.
-
-> +	kfree(kobj);
-> +}
-> +
-> +static const struct kobj_type mempolicy_ktype =3D {
-> +	.release =3D mempolicy_kobj_release
-> +};
-> +
-> +static struct kobject *mempolicy_kobj;
-> +static int __init mempolicy_sysfs_init(void)
-> +{
-> +	int err;
-> +	struct kobject *mempolicy_kobj;
-
-This overrides the global "mempolicy_kobj" defined before function.  But
-I don't think we need the global definition.
-
-> +
-> +	/* A NULL iw_table is interpreted by interleave logic as "all 1s" */
-
-As I suggested above, it will be "all 0s", that is, use default weight.
-
-> +	iw_table =3D NULL;
-
-The default value is NULL already, it appears unnecessary to do this.
-
-> +	mempolicy_kobj =3D kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
-> +	if (!mempolicy_kobj) {
-> +		pr_err("failed to add mempolicy kobject to the system\n");
-> +		return -ENOMEM;
-> +	}
-> +	err =3D kobject_init_and_add(mempolicy_kobj, &mempolicy_ktype, mm_kobj,
-> +				   "mempolicy");
-> +	if (err) {
-> +		kfree(mempolicy_kobj);
-> +		return err;
-> +	}
-> +
-> +	err =3D add_weighted_interleave_group(mempolicy_kobj);
-> +
-> +	if (err) {
-> +		kobject_put(mempolicy_kobj);
-> +		return err;
-> +	}
-> +
-> +	return err;
-> +}
-> +
-> +static void __exit mempolicy_exit(void)
-> +{
-> +	if (mempolicy_kobj)
-> +		kobject_put(mempolicy_kobj);
-> +}
-> +
-> +#else
-> +static int __init mempolicy_sysfs_init(void)
-> +{
-> +	/* A NULL iw_table is interpreted by interleave logic as "all 1s" */
-> +	iw_table =3D NULL;
-> +	return 0;
-> +}
-> +
-> +static void __exit mempolicy_exit(void) { }
-> +#endif /* CONFIG_SYSFS */
-> +late_initcall(mempolicy_sysfs_init);
-> +module_exit(mempolicy_exit);
-
-mempolicy.c will not be compiled as module, so we don't need
-module_exit().
-
---
-Best Regards,
-Huang, Ying
+Thanks,
+John
 
