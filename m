@@ -1,215 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-8415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A17F8836222
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 12:41:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A43F5836297
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 12:51:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C654A1C210C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 11:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DA982867C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 11:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BDA4653F;
-	Mon, 22 Jan 2024 11:32:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B963C067;
+	Mon, 22 Jan 2024 11:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y2wktsU/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T6ZSrYT0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C69C482D9;
-	Mon, 22 Jan 2024 11:32:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2FA3B78B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 11:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705923134; cv=none; b=nXHtPWF0DN3o/o5ppbwFH9H5ZptweqMovV0KuZe95rfyeahIxk7QyLta/pHAA+ZzaYedbFhluuB0kZLcJSJu2MfFdAcdnGuvR9I5U0riDAtmKTIxJQGDrnB5d1DdSAfsKdwBVm/jxESn+S2Xm1c2lszgQr+hHepNKpQnGVEr5VE=
+	t=1705924218; cv=none; b=YYwifWTltoxb/y4yFgdnXN1VgAFVe1ylNoyDHyh9o8WMJqHGGgOF7VpFp3N3L4pmVMhOEC2wC5cx08+BXOflBgtAXRQdDEZCA/fCSczRdg/9buCsiUeI2bKPWohciYOApDTE/qScfVW2RxleqDk8C3t84ZWPnjxX7NPfPff25Jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705923134; c=relaxed/simple;
-	bh=jIWbdhazF1DtsVh0QU7A3sMXExHW1xlwHLYRk2ok3JI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mddYbSCA4fm/xHDpdi49hSpZaR99jBFaNSCnLTrJUhISyk44DKWcqcLxKJ0lmtyJMyiQPHoFkDfkDWZd4swTotke4bY76F/F/c7vfCaSg+7ONwrhGyZNy5U9G+cIN24MEoQSED20nRQ6e9K+F5IXlrTLNfPY/p9ayzBK1d8IMME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y2wktsU/; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-50ec948ad31so3218903e87.2;
-        Mon, 22 Jan 2024 03:32:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1705923130; x=1706527930; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DPbIVtQUATMQ9HXAYvqkNgY9ZzASBXmb6XQmjxVPQJI=;
-        b=Y2wktsU/SQyvf9cBbsO6aW9XDcAo/bjxm6+9SKSf15D2tULKCYhp2RQZ42MvtUSTt8
-         p/tEgv2f5b8xVJ/pmT4u9KKCIpMUWRd/RKgAxzRwMmTeTf9Rc+LWaL8EDpLjXGp+DXDV
-         mSYQfpbdn8kl2PIbvUzPH1SNzH17jbnNC9ACJcw04z65Hyo8Mgbf5xMmTnr6av2O3Gwj
-         8hafpuPUaoksQHJoUlTX9e0hKvMILOmGDnPt+CYlT46gQ86Gmkrqh/nhDsXX6nUEhSNg
-         gjg16c0Fx8XGC30BErSuvv0YdReUeFV+CKNCa5QHZvnqBXG087PxYZ2C6awTRunYB4vk
-         WytQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705923130; x=1706527930;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DPbIVtQUATMQ9HXAYvqkNgY9ZzASBXmb6XQmjxVPQJI=;
-        b=Z4kKvnBvLdlac3DMWHL2WOFRbnKbs1nn+uFlKINxlRegzg96EMs1sfXEihtKLlm/mv
-         Fgyi6WzrQcBxolyx1YQFR6OotyBP7b0oz1tR1VqaRZK6/dwixsjkN73bUUC1KBvMDoPs
-         l9BexicdJXpsMoLEc4zsljxaaXN/UT7mvU2qVkFIxe3bIfLSqZTQRU+qegIFMyY93yFC
-         IAWL4GXpeNU76huZFM3dau1NTDiGXigBi6CBbxA2eGxLh61sj04PIn5eMe6TreMtFomD
-         0Y3E5HmvB5H+IJtbgP+IXmmK6+X7LBV8jB0w7cWfG/IMyRCNoN5eRhwuRuGLiiP8MQ8E
-         a2iQ==
-X-Gm-Message-State: AOJu0Yw+rGDvdTkTdWFINXPbsayARwzEzm7i2zgjgsRIRfb+7+RsurF9
-	7WF7R5pqziykDtlkCXcfkfLvo8keoOKP4Zuq9aItuvqEdAmPh0tdccFHdDiEDjci+BCrTEFPWYi
-	ASBVcJGxXJ4QxyX4owO28+7sjtUE=
-X-Google-Smtp-Source: AGHT+IE8q+aq6bFKrhgG9BSySHiV+tD954Tn/cVZYKhwVGHb0K+uUjH7ovE9Bu9iAyd12VXTVTX6Bsn87zFzzMIkblM=
-X-Received: by 2002:a05:6512:3d1e:b0:50e:80db:3c35 with SMTP id
- d30-20020a0565123d1e00b0050e80db3c35mr1745864lfv.80.1705923130168; Mon, 22
- Jan 2024 03:32:10 -0800 (PST)
+	s=arc-20240116; t=1705924218; c=relaxed/simple;
+	bh=kFnATUc6YR+2EBGeiZ34YCxV4uvK7zx2v+t9COfwuaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TJK6LQdxn/fIapM6Gjqd7Fn0Q4SKzHVdC+phqhoir8maPfeqS8alGstm4ANr5MK4+t9JgadVHmymbjg7fb6yp9MBbn/4U+aWs408nBRZ3qq1zZIdRf55bsSV5ZaUpR9bFGdD6EU/hWOucHXP8sGq6GmNgE65ON9eFaPWXrSHw2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T6ZSrYT0; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1705924216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qWBG3EUB+eR+nnWK36e3AyikYbZKtHzO5qoTjiHlzFA=;
+	b=T6ZSrYT0MbLDGTZZu1mAPUXX/zVeK40825ATOBLFZW1GgNW7GjsrBZHxvco6SLv0DgGm7U
+	SivndpYE44PT4lP+b3wXxerpJlDcwYyDe8yuG0uG5lG1PxQy30GMa+3MVwXF10ewcBLnha
+	sBabuVhzfyQClIvCXX1cRZB/ilsv2Dc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-572-dkNhJT87Mlyeyizr-tyMEA-1; Mon, 22 Jan 2024 06:50:12 -0500
+X-MC-Unique: dkNhJT87Mlyeyizr-tyMEA-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0238684852A;
+	Mon, 22 Jan 2024 11:50:12 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.67])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id E527B111E40C;
+	Mon, 22 Jan 2024 11:50:09 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: netfs@lists.linux.dev
+Cc: David Howells <dhowells@redhat.com>,
+	Christian Brauner <christian@brauner.io>,
+	Jeff Layton <jlayton@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-cachefs@redhat.com,
+	linux-afs@lists.infradead.org,
+	linux-cifs@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
+	ceph-devel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-erofs@lists.ozlabs.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] netfs, cachefiles: Update MAINTAINERS records
+Date: Mon, 22 Jan 2024 11:49:59 +0000
+Message-ID: <20240122115007.3820330-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1850031.1704921100@warthog.procyon.org.uk> <CA+icZUUc_0M_6JU3dZzVqrUUrWJceY1uD8dO2yFMCwtHtkaa_Q@mail.gmail.com>
- <CA+icZUWYSxfFHf5A56h9b4uOYYaANNxo2Z+cpwP1Bs1pF8MXQQ@mail.gmail.com>
-In-Reply-To: <CA+icZUWYSxfFHf5A56h9b4uOYYaANNxo2Z+cpwP1Bs1pF8MXQQ@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Mon, 22 Jan 2024 12:31:32 +0100
-Message-ID: <CA+icZUV5zbsm4=wceT7+nzCrCw7S8SkKonTevFBpNTgvzbHT8g@mail.gmail.com>
-Subject: Re: [PATCH] keys, dns: Fix size check of V1 server-list header
-To: sedat.dilek@gmail.com
-Cc: David Howells <dhowells@redhat.com>, ceph-devel@vger.kernel.org, davem@davemloft.net, 
-	eadavis@qq.com, edumazet@google.com, horms@kernel.org, jaltman@auristor.com, 
-	jarkko@kernel.org, jlayton@redhat.com, keyrings@vger.kernel.org, 
-	kuba@kernel.org, linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, marc.dionne@auristor.com, markus.suvanto@gmail.com, 
-	netdev@vger.kernel.org, pabeni@redhat.com, pengfei.xu@intel.com, 
-	smfrench@gmail.com, stable@vger.kernel.org, torvalds@linux-foundation.org, 
-	wang840925@gmail.com, sashal@kernel.org, gregkh@linuxfoundation.org, 
-	pvorel@suse.cz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-On Mon, Jan 22, 2024 at 12:01=E2=80=AFPM Sedat Dilek <sedat.dilek@gmail.com=
-> wrote:
->
-> On Mon, Jan 22, 2024 at 8:33=E2=80=AFAM Petr Vorel <pvorel@suse.cz> wrote=
-:
-> >
-> > From: Sedat Dilek <sedat.dilek@gmail.com>
-> >
-> > On Wed, Jan 10, 2024 at 10:12=E2=80=AFPM David Howells <dhowells@redhat=
-.com> wrote:
-> > >
-> > >
-> > > Fix the size check added to dns_resolver_preparse() for the V1 server=
--list
-> > > header so that it doesn't give EINVAL if the size supplied is the sam=
-e as
-> > > the size of the header struct (which should be valid).
-> > >
-> > > This can be tested with:
-> > >
-> > >         echo -n -e '\0\0\01\xff\0\0' | keyctl padd dns_resolver desc =
-@p
-> > >
-> > > which will give "add_key: Invalid argument" without this fix.
-> > >
-> > > Fixes: 1997b3cb4217 ("keys, dns: Fix missing size check of V1 server-=
-list header")
-> >
-> > [ CC stable@vger.kernel.org ]
-> >
-> > Your (follow-up) patch is now upstream.
-> >
-> > https://git.kernel.org/linus/acc657692aed438e9931438f8c923b2b107aebf9
-> >
-> > This misses CC: Stable Tag as suggested by Linus.
-> >
-> > Looks like linux-6.1.y and linux-6.6.y needs it, too.
-> >
-> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit=
-/?h=3Dv6.6.11&id=3Dda89365158f6f656b28bcdbcbbe9eaf97c63c474
-> > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit=
-/?h=3Dv6.1.72&id=3D079eefaecfd7bbb8fcc30eccb0dfdf50c91f1805
-> >
-> > BG,
-> > -Sedat-
-> >
-> > Hi Greg, Sasa,
-> >
-> > could you please add this also to linux-6.1.y and linux-6.6.y?  (Easily
-> > applicable to both, needed for both.) Or is there any reason why it's n=
-ot
-> > being added?
-> >
->
-> Great!
->
-> I forgot to CC Greg and Sasha directly.
->
-> Thanks.
->
+Update the MAINTAINERS records for netfs and cachefiles to reflect a change of
+mailing list for both as Red Hat no longer archives the mailing list in a
+publicly accessible place.
 
-Addendum:
+Also add Jeff Layton as a reviewer.
 
-Linus says:
-"
-Bah. Obvious fix is obvious.
+The patches are here:
 
-Mind sending it as a proper patch with sign-off etc, and we'll get
-this fixed and marked for stable.
-"
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/
 
-https://lore.kernel.org/all/CAHk-=3DwiyG8BKKZmU7CDHC8+rmvBndrqNSgLV6LtuqN8W=
-_gL3hA@mail.gmail.com/
+tagged as netfs-lib-20240122.
 
--Sedat-
+Thanks,
+David
 
-> BG,
-> -Sedat-
->
-> > Kind regards,
-> > Petr
-> >
-> > > Reported-by: Pengfei Xu <pengfei.xu@intel.com>
-> > > Link: https://lore.kernel.org/r/ZZ4fyY4r3rqgZL+4@xpf.sh.intel.com/
-> > > Signed-off-by: David Howells <dhowells@redhat.com>
-> > > cc: Edward Adam Davis <eadavis@qq.com>
-> > > cc: Linus Torvalds <torvalds@linux-foundation.org>
-> > > cc: Simon Horman <horms@kernel.org>
-> > > Cc: Jarkko Sakkinen <jarkko@kernel.org>
-> > > Cc: Jeffrey E Altman <jaltman@auristor.com>
-> > > Cc: Wang Lei <wang840925@gmail.com>
-> > > Cc: Jeff Layton <jlayton@redhat.com>
-> > > Cc: Steve French <sfrench@us.ibm.com>
-> > > Cc: Marc Dionne <marc.dionne@auristor.com>
-> > > Cc: "David S. Miller" <davem@davemloft.net>
-> > > Cc: Eric Dumazet <edumazet@google.com>
-> > > Cc: Jakub Kicinski <kuba@kernel.org>
-> > > Cc: Paolo Abeni <pabeni@redhat.com>
-> > > ---
-> > >  net/dns_resolver/dns_key.c |    2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
-> > > index f18ca02aa95a..c42ddd85ff1f 100644
-> > > --- a/net/dns_resolver/dns_key.c
-> > > +++ b/net/dns_resolver/dns_key.c
-> > > @@ -104,7 +104,7 @@ dns_resolver_preparse(struct key_preparsed_payloa=
-d *prep)
-> > >                 const struct dns_server_list_v1_header *v1;
-> > >
-> > >                 /* It may be a server list. */
-> > > -               if (datalen <=3D sizeof(*v1))
-> > > +               if (datalen < sizeof(*v1))
-> > >                         return -EINVAL;
-> > >
-> > >                 v1 =3D (const struct dns_server_list_v1_header *)data=
-;
-> > >
-> > >
-> >
+David Howells (2):
+  netfs, cachefiles: Change mailing list
+  netfs: Add Jeff Layton as reviewer
+
+ MAINTAINERS | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
 
