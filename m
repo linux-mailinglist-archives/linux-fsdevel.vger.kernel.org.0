@@ -1,58 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-8478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8480-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B23983750F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 22:13:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B9A8837568
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 22:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C1961B24351
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 21:13:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90F181C25B40
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 21:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE27047F73;
-	Mon, 22 Jan 2024 21:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D25548783;
+	Mon, 22 Jan 2024 21:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IkJDf7l0"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="GxM2tPBt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A92547F5D;
-	Mon, 22 Jan 2024 21:13:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538C447F64
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 21:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705957994; cv=none; b=i82lsmEHghpdLbEXEwi6deAStDQi3eW2N1981+NGqt7/jgwg2HVCe+qo4+tMxoIwmEHU9Kjx5rCAKibEOaPVmto/Nz/Jqd0HQAjWp+dSLpJ2zfPc4LZNumvAKy1BffeSYckBGAOw74NLPwnAuGMbjHq04UBqkj6wjHpCE6aZ3m8=
+	t=1705959053; cv=none; b=CYneFNW/N+zQcRIPm4TCOVA7pamD6KgA1imo4cI5gwYY9otqPK7OWLEZJB9M/z56QYn2FqCMj1joKNS99XdZDeiitXTxjdB4yALIUgH23R2ZinktQOGiKeJWti2YP7AM7eA5WNSHEeIsAbm5s1EtUbtaEzyzuIk/3ReQ7IAJ79c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705957994; c=relaxed/simple;
-	bh=ZXyiGsWguy+RfxWlnQxaverivjM+wRLxZL1i2CYl7tM=;
+	s=arc-20240116; t=1705959053; c=relaxed/simple;
+	bh=zoiLe0GmgV6XcV8qaxVsWn9xPRi07vWQTIaZGAPTy18=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nelAopJm8H5hm7/8NkhOIC02bUy21OxHcjSBzSOaG9OLvfpSR8Pi9Ng9feFG37CstDfuv+32lqV9Qmc4PwWB0N4rxymXcyjwOQIPUanE3GGSpgPNHg97L+P1NtPIeiiFt4eMU8HlsYJBXywGlJVlpy6a+WDJUcl7ovu0XSHiekI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IkJDf7l0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5523CC43394;
-	Mon, 22 Jan 2024 21:13:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705957993;
-	bh=ZXyiGsWguy+RfxWlnQxaverivjM+wRLxZL1i2CYl7tM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IkJDf7l0+2OqvUYL7q9udltR+hyEJl3POQWYLMZXkPte/hX3V8K8MmdYeiDSe7kVH
-	 PdAoUoADWM3Oonf/gYOtYzNJsN5L3ZkHK5ZbCssmXdF/ZCfuDmeeq0k3/Sw5IaOjR1
-	 z2cHkM4JjIFCpbCaDZGfRY79/dbvV+N7JQfeVl+6Ir5gNSYO9hnYDTgAUl1mvYbbXl
-	 53DZ4PdPz5lJlTv7vo8555vN55/M9en/C80WBbKRcwM/M74WrOfj3/YGIeo0YOuF/k
-	 +zJ+fRgrl0NlOpV3ORBwlU6bj+YVKsJzFbbnv52vioud7aSwzZyWxvVrTBVfSRxVlQ
-	 TduxX3FC6oQrA==
-Date: Mon, 22 Jan 2024 15:13:12 -0600
-From: Seth Forshee <sforshee@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	mszeredi@redhat.com, stgraber@stgraber.org,
-	linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Bernd Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/9] fuse: basic support for idmapped mounts
-Message-ID: <Za7aaIuQDH92jel+@do-x1extreme>
-References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
- <20240121-pfeffer-erkranken-f32c63956aac@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YI3UmysWVr47mXmID9niklXX8f/f5dJ/uUh4v7XsUyforTYkl8Z9XYHZ3sbfsi6z0Jw3mM+Jizs3bo9gs85HmZKpToQCqF2kceme3f4t/Eunacoo92S4eCjG5pnB+gBqDU0ys/xWGn8poG//0TTBgxYPrCeMaSlah2heJHggXao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=GxM2tPBt; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-5ca29c131ebso2541032a12.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 13:30:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1705959052; x=1706563852; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xKEBr23rbJKu9h7vL24E+EIJQpc/iOsyibRTRHA5Xcc=;
+        b=GxM2tPBt1t3JBPCQCGXTtAnCdO9Ldc417Kde0DIbbhgYphNRBBiKN9zbbCXz77D7is
+         vu18prh4YboCsJTBQ6b6viJp2JevCfRUkbre9TgwaRSGPW4Hy0n9iENFSYJjj/Xnu3/4
+         KLp5uwlGwslDkrb2Y8a6FEy2e2pIjdNY9Rs+4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705959052; x=1706563852;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xKEBr23rbJKu9h7vL24E+EIJQpc/iOsyibRTRHA5Xcc=;
+        b=R+mtKn2h1dvAV463uDFUedVRuaQL8WEHvhYvSUHiFZ73QTFzwqAuhSmzfTiIZ+jzNn
+         +fhlKk2f0k+KG0vvvttHis/8K04el/6Cq0jm57JFJQ2l9TiyPN3mH6Kt9phIED1btbXW
+         HAU58GXnT7w6ehwspNkl5++cZ2ChXnjJcylGR0FmoQIYyoG6LlZEhTAGkPi0Z849wymw
+         AwHEyPzTMCKDDQ/GMd4sx9yntB8FiGr1e1AhGhLCSbQPoW0U7W0+/mTionRWY62j+0gJ
+         pnpZFkuivm9jmCzLU7uozG3+Wr6ojdK9spuIx52zkNtCcQw1sFtaZR5XKRaWzAdeGBrv
+         y+kg==
+X-Gm-Message-State: AOJu0YxdgxFl/2vF8VOcKm/zjIg3LDz2GWy2mN/4KLswSIT8vzYsg9qN
+	ZEMRYijoOVoqCKIX9/k1SLJvf1SLEe/K5TIwRvRi++740uSMPMc3St8qLGjc9w==
+X-Google-Smtp-Source: AGHT+IGuu8CRZ67T/sbZ33Kh3Gjp/4gDLn2p+VjWE9BT0X4ASe4DyFux9xBdjaYSy+LIQ61UuJTqIQ==
+X-Received: by 2002:a17:90b:1093:b0:28f:f706:f276 with SMTP id gj19-20020a17090b109300b0028ff706f276mr2415921pjb.80.1705959051711;
+        Mon, 22 Jan 2024 13:30:51 -0800 (PST)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id l17-20020a17090a409100b00290ae3bf8d7sm2167130pjg.21.2024.01.22.13.30.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 22 Jan 2024 13:30:51 -0800 (PST)
+Date: Mon, 22 Jan 2024 13:30:50 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Oleg Nesterov <oleg@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Zheng Yejian <zhengyejian1@huawei.com>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>
+Subject: Re: [PATCH v14] exec: Fix dead-lock in de_thread with ptrace_attach
+Message-ID: <202401221328.5E7A82C32@keescook>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <20240116152210.GA12342@redhat.com>
+ <AS8P193MB128538BC3833E654F56DA801E4722@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <20240117163739.GA32526@redhat.com>
+ <AS8P193MB1285FDD902CC57C781AF2770E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,41 +121,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240121-pfeffer-erkranken-f32c63956aac@brauner>
+In-Reply-To: <AS8P193MB1285FDD902CC57C781AF2770E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
 
-On Sun, Jan 21, 2024 at 06:50:57PM +0100, Christian Brauner wrote:
-> > - We have a small offlist discussion with Christian about adding fs_type->allow_idmap
-> > hook. Christian pointed out that it would be nice to have a superblock flag instead like
-> > SB_I_NOIDMAP and we can set this flag during mount time if we see that the filesystem does not
-> > support idmappings. But, unfortunately, I didn't succeed here because the kernel will
-> > know if the filesystem supports idmapping or not after FUSE_INIT request, but FUSE_INIT request
-> > is being sent at the end of the mounting process, so the mount and superblock will exist and
-> > visible by the userspace in that time. It seems like setting SB_I_NOIDMAP flag, in this
-> > case, is too late as a user may do the trick by creating an idmapped mount while it wasn't
-> > restricted by SB_I_NOIDMAP. Alternatively, we can introduce a "positive" version SB_I_ALLOWIDMAP
+On Mon, Jan 22, 2024 at 02:24:37PM +0100, Bernd Edlinger wrote:
+> The main concern was when a set-suid program is executed by execve.
+> Then it makes a difference if the current thread is traced before the
+> execve or not.  That means if the current thread is already traced,
+> the decision, which credentials will be used is different than otherwise.
 > 
-> I see.
+> So currently there are two possbilities, either the trace happens
+> before the execve, and the suid-bit will be ignored, or the trace
+> happens after the execve, but it is checked that the now potentially
+> more privileged credentials allow the tracer to proceed.
 > 
-> > and a "weak" version of FS_ALLOW_IDMAP like FS_MAY_ALLOW_IDMAP. So if FS_MAY_ALLOW_IDMAP is set,
-> > then SB_I_ALLOWIDMAP has to be set on the superblock to allow the creation of an idmapped mount.
-> > But that's a matter of our discussion.
-> 
-> I dislike making adding a struct super_block method. Because it means that we
-> call into the filesystem from generic mount code and specifically with the
-> namespace semaphore held. If there's ever any network filesystem that e.g.,
-> calls to a hung server it will lockup the whole system. So I'm opposed to
-> calling into the filesystem here at all. It's also ugly because this is really
-> a vfs level change. The only involvement should be whether the filesystem type
-> can actually support this ideally.
-> 
-> I think we should handle this within FUSE. So we allow the creation of idmapped
-> mounts just based on FS_ALLOW_IDMAP. And if the server doesn't support the
-> FUSE_OWNER_UID_GID_EXT then we simply refuse all creation requests originating
-> from an idmapped mount. Either we return EOPNOSUPP or we return EOVERFLOW to
-> indicate that we can't represent the owner correctly because the server is
-> missing the required extension.
+> With this patch we will have a third prossibility, that is in order
+> to avoid the possible dead-lock we allow the suid-bit to take effect,
+> but only if the tracer's privileges allow both to attach the current
+> credentials and the new credentials.  But I would only do that as
+> a last resort, to avoid the possible dead-lock, and not unless a dead-lock
+> is really expected to happen.
 
-Could fuse just set SB_I_NOIDMAP initially then clear it if the init
-reply indicates idmap support? This is like the "weak" FS_ALLOW_IDMAP
-option without requiring another file_system_type flag.
+Instead of doing this special cred check (which I am worried could
+become fragile -- I'd prefer all privilege checks happen in the same
+place and in the same way...), could we just fail the ptrace_attach of
+the execve?
+
+-- 
+Kees Cook
 
