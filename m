@@ -1,115 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-8413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AA098361B4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 12:31:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4882D83620D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 12:39:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85E7229173E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 11:31:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD4CD1F28190
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 11:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A5C46526;
-	Mon, 22 Jan 2024 11:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A641844392;
+	Mon, 22 Jan 2024 11:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgbT7NR+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PkrZTEWO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DB03BB25;
-	Mon, 22 Jan 2024 11:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9E4944383;
+	Mon, 22 Jan 2024 11:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705922352; cv=none; b=R4aplJk/b6MhYA7kqKUDrV5P0GfNeNiI4XZ+13OdIwLmPf+lndu39uwg+DQu/yZ1rIRnZF0PaEai8zqsWQiuGQSRn1gDX1lVs4T5ut+iZv1wvjIs4VgrL1M3dp5mC0eXLPvqgYJXwlqhvVwHhlrNN34eSmdcStxR2bcY7gfsUic=
+	t=1705923058; cv=none; b=m+DKwlEPI87nAvOa5DWviZWzgQ0b2YG59qNVINuwxfNQZQkFFf/jsqRnNQNIWvIORgKTAEAoIBWRB4nBrAhoRrlYrcXpeVIpc542d3QpxhEfFycKA5K2YVsV5DJAMvYmE9hTcdH+ej2mTuq2v86XN7UhoPYMtSinf7NGk8Z8XZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705922352; c=relaxed/simple;
-	bh=2SwUAmTtPmO5NuF/3z610QfGvtisw0LXRHtu+pxb/Sc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J20nQMY54b0Tq+kCW0cx2kvHiyXces/P+/slm69vQefg/uZTlueCVLwHXntLyc7W8Z6MRscSIGtiqK7IEguRCQhqNbl3Fh14T3DZoJ/v5qjQh8zQIL6bm97x0qxCxg4R1S3UP4fPl0TN8+J7HQKbA45YjVifMie7Z3lClfdQa2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgbT7NR+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAEC9C433F1;
-	Mon, 22 Jan 2024 11:19:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705922351;
-	bh=2SwUAmTtPmO5NuF/3z610QfGvtisw0LXRHtu+pxb/Sc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qgbT7NR+Wn6rwJWBDMuLlqDS3FbXPSRRVSDsVeZe1dVMAZajmXqa4APlq55a1cWNY
-	 aJkSSA5zMtNjsnPjldQLVYb8W3kXlhLVhssPSpxa5XxdU3oqffX+KXcyeS4hxp1TzN
-	 B8P2b9zosp+UlG7T0ay2KBEkbRTVXi7t+XRBoYtovZUPbSNFO+B566xkp4TMIR5kff
-	 mQEceZ8hbA4ImY6Z2RWE6b6K2/+h/VzpVQhciHYhSVfdTgXE2SvM+Y6LF94JWC2oBF
-	 JFlxjkdW35gV0047RQ7I/qcUkcIOGw1K3aIEWjhdwMbIHiGkahnG5BQyY9VsCLd8Mx
-	 TxbWxnP2uV7rg==
-From: Christian Brauner <brauner@kernel.org>
-To: Baokun Li <libaokun1@huawei.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	torvalds@linux-foundation.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	willy@infradead.org,
-	akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	yukuai3@huawei.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/2] fs: make the i_size_read/write helpers be smp_load_acquire/store_release()
-Date: Mon, 22 Jan 2024 12:14:52 +0100
-Message-ID: <20240122-gepokert-mitmachen-6d6ba8d2f0a8@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240122094536.198454-1-libaokun1@huawei.com>
-References: <20240122094536.198454-1-libaokun1@huawei.com>
+	s=arc-20240116; t=1705923058; c=relaxed/simple;
+	bh=zcVAxKfwOUmbMO3DAhPWLyj3eObc61sh4i9Uz8AGnCM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o7OV9GHJ0vBQxfjV2rTmoc97LMZ3iZpbP66UZZWDvoUm7C7HFrIYOMP/68wzedB87/97DmDym3hpUreymRLCBjlR8zhAfYLpcwdYbwbacTtQe8PEJUuqS5o5Dwut2RevcN9wF0rRc3p6IuwvEv+Lh9CdIWr/HVaugjAuBTnTmFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PkrZTEWO; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-4b71e8790efso691872e0c.3;
+        Mon, 22 Jan 2024 03:30:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1705923055; x=1706527855; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zcVAxKfwOUmbMO3DAhPWLyj3eObc61sh4i9Uz8AGnCM=;
+        b=PkrZTEWOnblMw5bi0A+MYH5inyYywPwFRuPpGqy1YUNYZHFN0V1X/GWkDoNzv62XTo
+         42q7/QHU/d+QJ/mBjBJ1GDjLY9p9DLmzUaq/LELTBnNeuZE7HutxGLHdt40Y7Zs28GF1
+         enOTDP11hFD5UcElmNaahh5DwQO+LSME/mKAU5sPQvpxld94IrMT+bOaFJG2w/fCEn1O
+         pQMkhVL1EgLvXRWXpshMHc1FmKvTmwgAOSJU9TnBuwIeGz+brbP18gbEB8LjN/q/GrSD
+         DlQwifTAlegu//liolPYNHXD1sn5wO2SwOmMKVkqA6WECbH7y1FA6kfyTdlni259+82r
+         ktPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705923055; x=1706527855;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zcVAxKfwOUmbMO3DAhPWLyj3eObc61sh4i9Uz8AGnCM=;
+        b=Pk8BDPM0Vc9BwBuuUyZiDxH0Z9SqGqpzzZ4mXGdmNQZUa64LaMeCtYPSB/1ELuswQ0
+         ql+SUAcJ8IB4gK6wBoTQehdzCA/a/b3/kY2fxIdp3x5h7GuvbCJGt6xaY7bgiNWU2B/e
+         yYQUF8/19cEv2Makdb6oSggUvVE2OZnITLGHpWDHsPMosmmyB6PLMovhwaEFrAuhQ/32
+         aubyARuxTN0JCGZwPeI5sHEnfLYqyHuKXo2xilSkWVqQ/E7Y4di2REemwm2ZVWLLUy/U
+         RZO/QTFDnD2AYMcBt+3+iLUlOuhc8Qm7wsr8BSTJ4QJwn6dWvkZ90wdY7hIkLyFcVl5U
+         9o7w==
+X-Gm-Message-State: AOJu0YxhGR1QZmiFieD15a7MXwyFbpDIMKYKaw+AoNOxSc0/xHMGl1UW
+	rmnib3WBXLOZMKEULoCCNykI/aYNARxYhp4DFwNfV3NVpdcpho83WKfgt1LOYHAMnuuMtyyKgZC
+	9g4kDslV4EXMprDDRmB9Y9wFR5LDbw1l4Es04wQ==
+X-Google-Smtp-Source: AGHT+IEi3nxGy7jjlcg0ZIYvmFU3xW6Uvz+kXbQpX+9XFZdTuB4+WUJm+uu8jld+pvbIEAETbV7tgQhf+5E/8LwkTNY=
+X-Received: by 2002:a05:6122:1789:b0:4b7:1685:9f99 with SMTP id
+ o9-20020a056122178900b004b716859f99mr1353510vkf.12.1705923055546; Mon, 22 Jan
+ 2024 03:30:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1819; i=brauner@kernel.org; h=from:subject:message-id; bh=2SwUAmTtPmO5NuF/3z610QfGvtisw0LXRHtu+pxb/Sc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSu81f9PSNp96uU9X1nFjJfYlh1U2q3r3TY5IvTnS44v Z15StxUtqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiGWcZGRZYR8pU6ScKL9nt 4s8lsn/Zl3MtygWyMfrL5S8+Lli5eCEjw457hbnTC862NH9S/eVy42ShhNrzH3l3vDLfuljNDq/ n5wYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20240119101454.532809-1-mszeredi@redhat.com> <CAOQ4uxiWtdgCQ+kBJemAYbwNR46ogP7DhjD29cqAw0qqLvQn4A@mail.gmail.com>
+ <5ee3a210f8f4fc89cb750b3d1a378a0ff0187c9f.camel@redhat.com>
+ <CAOQ4uxj_EWqa716+9xxu0zEd-ziEFpoGsv2OggUrb8_eGGkDDw@mail.gmail.com> <0473f5389dd1ada08c73479612a4e054c8023d94.camel@redhat.com>
+In-Reply-To: <0473f5389dd1ada08c73479612a4e054c8023d94.camel@redhat.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 22 Jan 2024 13:30:43 +0200
+Message-ID: <CAOQ4uxiYQp_1ftooE0z6MR4iqjf392QpaaptgRwT4ogaefo8aw@mail.gmail.com>
+Subject: Re: [PATCH v2] ovl: require xwhiteout feature flag on layer roots
+To: Alexander Larsson <alexl@redhat.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-unionfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 22 Jan 2024 17:45:34 +0800, Baokun Li wrote:
-> This patchset follows the linus suggestion to make the i_size_read/write
-> helpers be smp_load_acquire/store_release(), after which the extra smp_rmb
-> in filemap_read() is no longer needed, so it is removed.
-> 
-> Functional tests were performed and no new problems were found.
-> 
-> Here are the results of unixbench tests based on 6.7.0-next-20240118 on
-> arm64, with some degradation in single-threading and some optimization in
-> multi-threading, but overall the impact is not significant.
-> 
-> [...]
+> > Alex,
+> >
+> > As you can see, I posted v3 with an alternative approach that would
+> > not
+> > require marking all possible lower layer roots.
+> >
+> > However, I cannot help wondering if it wouldn't be better practice,
+> > when
+> > composing layers, to always be explicit, per-directory about whether
+> > the
+> > composed directory is a "base" or a "diff" layer.
+> >
+> > Isn't this information always known at composing time?
+>
+> Currently, composefs images are not layered as such. They normally only
+> have one or more lowerdata layers, and then the actual image as a
+> single lowerdir, and on top of that an optional upper if you want some
+> kind of writability.
+>
+> But, when composing the composefs the content of the image is opaque to
+> us. We're just given a directory with some files in it for the image.
+> It might contain some other lowerdirs, but the details are not know to
+> us at compose time.
+>
 
-Hm, we can certainly try but I wouldn't rule it out that someone will
-complain aobut the "non-significant" degradation in single-threading.
-We'll see. Let that performance bot chew on it for a bit as well.
+Got it, though I may need you to explain this again to me next time ;)
 
-But I agree that the smp_load_acquire()/smp_store_release() is clearer
-than the open-coded smp_rmb().
+If we were to change the tools that pack/extract overlayfs images to
+mark directories more explicitly, we would need to change other tools,
+not composefs.
 
----
+composefs has no knowledge of the fact that it is packing an overlayfs
+image, until it is asked to pack a whiteout or a file/dir that happens to
+have an overlay.* xattr, but lower layers do not typically have to contain
+files/dir with overlay.* xattrs.
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+> However, I think it may make sense to be able to mark non-lowest-layer
+> directories with either n or y.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+There is nothing stopping you from setting opaque=y on lowest layer dirs
+or setting opaque=n on merge dirs when packing composefs.
+Old kernels will not be bothered by these marks.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+However, I forgot about the consideration of xattr lookup performance that
+was the drive for erofs xattr bloom filter support.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+I guess erofs will pack much smaller without those explicit annotations and
+getxattr(opaque) will have better performance for no xattr case then with
+opaque=n.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/2] fs: make the i_size_read/write helpers be smp_load_acquire/store_release()
-      https://git.kernel.org/vfs/vfs/c/7d7825fde8ba
-[2/2] Revert "mm/filemap: avoid buffered read/write race to read inconsistent data"
-      https://git.kernel.org/vfs/vfs/c/83dfed690b90
+Thanks,
+Amir.
 
