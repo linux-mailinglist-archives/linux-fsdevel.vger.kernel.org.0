@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-8446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41A00836AC7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:34:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 208C9836B30
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:41:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C82551F25114
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 16:34:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7D6A1F21C86
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 16:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8847D146904;
-	Mon, 22 Jan 2024 15:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702BE14F526;
+	Mon, 22 Jan 2024 15:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itlaKQBM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o1UXf3CR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D261468F0;
-	Mon, 22 Jan 2024 15:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD53514F520;
+	Mon, 22 Jan 2024 15:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705936629; cv=none; b=ZzCc5TIZOGf2mjk46p4QN3LpfT1iTeInpwQECq30Yvikr4ZUsr4sp9hXoiHEDCTRW2OgFUi7AO1nSuIpITsnNt+6ZGqD2lp78pPvsFsOcGSxstiH9KPUu3aWKKbKt+pV19geRcmApKy12P1zs336hP3fPEq8GQD2aoJloiTNqKo=
+	t=1705936712; cv=none; b=I8a5AWPbK7Mfm8wsW+XCGtBoL18ou1yCxsGl0jp3OeAxlHzvdtdgcO31ltSCZaUVWWM4ecXKuWBVztKis3+zswmpoAFp/XMFiiQ0W+kPptWhALkyDWZGGgcNgVis8OMFAdM2VKUUsiDzsz3aZhgZkA6e/sykgk3aUB/mSR1swoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705936629; c=relaxed/simple;
-	bh=1EfDp5MH6ut9HONHsU9afbFH3rFz3umZncSRQ6fd9OE=;
+	s=arc-20240116; t=1705936712; c=relaxed/simple;
+	bh=ALKaufZN6SDBuhIIQFi0lxfUswU/xWTH+N5nXXJl2FE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wv9IYJfMNVfS5BOd42k5hja6VgqsArm3KsfUALjZiB/KCP/p40TsUGSq1HureitVbUDpBKRtD+gl6Ovu6HXbY+i8MsJT7U8Ngw3vgnAKqOooUIOBTI6BQf9fO7j7aoIFFrENNAmhhWVcsbT08yqtUc2n7v3CrIzQ0YWVLAqlEtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itlaKQBM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6D29C43399;
-	Mon, 22 Jan 2024 15:17:07 +0000 (UTC)
+	 MIME-Version; b=aOCgm+WWAQpAXxg1REDU1gk63vjVWlICsJ+G7ybARH75AtnTRg1iF8B+sr2QDseVNHUdMra45cvfMdKBIYSB+p6hdAygq1+w/7J/yYdyV0NOHHcn9xemlOVuM8QLjGF1EjSGy/0OWXDGeH1KTK94xafiLFFqd9KPD8Jrz+OQYYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o1UXf3CR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94918C43399;
+	Mon, 22 Jan 2024 15:18:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705936628;
-	bh=1EfDp5MH6ut9HONHsU9afbFH3rFz3umZncSRQ6fd9OE=;
+	s=k20201202; t=1705936712;
+	bh=ALKaufZN6SDBuhIIQFi0lxfUswU/xWTH+N5nXXJl2FE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=itlaKQBMjCL9Ppf8aFxcOxsB+lsaxNmeDUDUObpwNKqsEnj+AQrdTdj42RR8woTp3
-	 F6QFSqQpwKM28G7/8b5jXYZWFoKctiFGCKyTd0/S98noBTpX/a8ezNYYIRJQi9qTyA
-	 wY4yL4g8+bjvFCGSQBSML5E2Wz4H31K3xaD8uHLO7wtQAnAyFg6swgiLrNp7J9RCZW
-	 ZXWYxffdYHDWXBJO1+AykkyT0y15JIOsxZQ96PcZeHXs63N9hRb+jIfheFeRBiCIC2
-	 dIs1cJPLlIhCKwnsD5kkquVXIipT6h6LX9kNldAZdDRP4Cfwc5g7mKNvVStLxTIAoK
-	 V1z6E5rn57QqQ==
+	b=o1UXf3CRuQeUaoPmztnHHi1Mef+XA9rA6dKZ2NzeMkzqxxxd2A0FQEcNpHYdEINWg
+	 720kLlred4P+XM1Kus+ShiVDU/CECsapcCtMC5Bg1DbwwWGt7v4zW//qhXwVk5BbnP
+	 c/xSqccKbk1zIY4EFFi6FjH8yBGmebzU2mGz525au8bbVPiX27245dJZgbsUScedPM
+	 iHIf/T0T3sJvVj4AcvZI4GeQgbdWQMvGOH32BwfF58ZyYmv9tYMfKhgY+gdZ1Vbvdj
+	 D4T5TgA0b6FL9G2VgmCOwpY3Rw4NSXDJm/kGmczSss/nNoyaRqn2eH8jhT9uBxTGY0
+	 93tOt5RMrYj6A==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -48,12 +48,12 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 04/24] fast_dput(): handle underflows gracefully
-Date: Mon, 22 Jan 2024 10:16:18 -0500
-Message-ID: <20240122151659.997085-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 04/23] fast_dput(): handle underflows gracefully
+Date: Mon, 22 Jan 2024 10:17:44 -0500
+Message-ID: <20240122151823.997644-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240122151659.997085-1-sashal@kernel.org>
-References: <20240122151659.997085-1-sashal@kernel.org>
+In-Reply-To: <20240122151823.997644-1-sashal@kernel.org>
+References: <20240122151823.997644-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.267
+X-stable-base: Linux 4.19.305
 Content-Transfer-Encoding: 8bit
 
 From: Al Viro <viro@zeniv.linux.org.uk>
@@ -108,10 +108,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/fs/dcache.c b/fs/dcache.c
-index b2a7f1765f0b..43864a276faa 100644
+index 1897833a4668..4d96eb591f5d 100644
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
-@@ -740,12 +740,12 @@ static inline bool fast_dput(struct dentry *dentry)
+@@ -727,12 +727,12 @@ static inline bool fast_dput(struct dentry *dentry)
  	 */
  	if (unlikely(ret < 0)) {
  		spin_lock(&dentry->d_lock);
@@ -127,7 +127,7 @@ index b2a7f1765f0b..43864a276faa 100644
  	}
  
  	/*
-@@ -796,6 +796,7 @@ static inline bool fast_dput(struct dentry *dentry)
+@@ -783,6 +783,7 @@ static inline bool fast_dput(struct dentry *dentry)
  	 * else could have killed it and marked it dead. Either way, we
  	 * don't need to do anything else.
  	 */
