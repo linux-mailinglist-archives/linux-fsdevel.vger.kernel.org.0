@@ -1,143 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-8433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BBF78364A9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 14:46:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DCA58364B8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 14:48:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F1CE1C2217D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 13:46:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 710F11C23295
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 13:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C713D0CB;
-	Mon, 22 Jan 2024 13:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F9e0yXBE"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820643D0D2;
+	Mon, 22 Jan 2024 13:48:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC23F3D0B3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 13:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2733D0B4;
+	Mon, 22 Jan 2024 13:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705931180; cv=none; b=a/i/WkNS42ZLYeHWE0HJj2lymyaqD0D2A3FYqNdoawr/t/6BmpXbAoxE54hSUY83zAfbOHhd7/V8KGO6KhNDIf7OX5QP2ejlCfDY5eDSQ2ErsuzEUkTbVfLc1FtqvvOAu3qbYkqfskt2oB0xRsnEJzoA7o0/tjsEcF5dzfFBxb4=
+	t=1705931312; cv=none; b=UVMW1ky+tQamkKonBbunBGw1nVRvKqG0wxmdkbCqtlRJOQgyrHxZlbnBENLhgtbVjCS9hvmVm58g6hHYSE2p+6CpCBsbcLQPu96v0EFV0HdZb7fChqJN1Jv64HDQqs2snxZTi1FwmmTL4Se0Gsche4/fEshjSZ1ej9m1dbL4kxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705931180; c=relaxed/simple;
-	bh=TA5S6rkWrfMIGQh8b4nq6v9XJGxLaFmJwtdW6D84hqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QrtRY5VADb5JcSe4lCik71Uj9w1V2LyIOPKZDs5HEa+TkXb5Ak5i4+VNVV14jmuTYtjO/fTnmxZ5q67OOT15oZyVYf+E4zx0Juwlyz0Z6RsuHymv4FRjB+4tLrZPY30nQqp1HxPIP5guCLnxvhLTzeJdoPTtCiq5wmlDh0PoC6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F9e0yXBE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1705931178;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TA5S6rkWrfMIGQh8b4nq6v9XJGxLaFmJwtdW6D84hqc=;
-	b=F9e0yXBERwR3qcdv8kd0RCj3g7YWx+wIWnbEhJKdzvhsy8yI4Gcz+/Vuk3S1fh+iQPfxoo
-	ndDXXdDBlUMWukIsAwFbVSaxkF+VEnVwUpBPf4qPMeWRxuF0vLKTOPSCmticUVLLbNjLUw
-	5+oP1JUYY8Eh2DjJYSskiB7u5LW+7ZQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-584-rOsLYw9bNWC8ERd5q2uA1Q-1; Mon, 22 Jan 2024 08:46:14 -0500
-X-MC-Unique: rOsLYw9bNWC8ERd5q2uA1Q-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 27D14862CC5;
-	Mon, 22 Jan 2024 13:46:12 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.26])
-	by smtp.corp.redhat.com (Postfix) with SMTP id 14FC1C30BE1;
-	Mon, 22 Jan 2024 13:46:00 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 22 Jan 2024 14:44:58 +0100 (CET)
-Date: Mon, 22 Jan 2024 14:44:46 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Alexey Dobriyan <adobriyan@gmail.com>,
-	Kees Cook <keescook@chromium.org>,
-	Andy Lutomirski <luto@amacapital.net>,
-	Will Drewry <wad@chromium.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
-	James Morris <jamorris@linux.microsoft.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Adrian Reber <areber@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
-	tiozhang <tiozhang@didiglobal.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	YueHaibing <yuehaibing@huawei.com>,
-	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
-	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
-	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
-	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
-	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
-	Zheng Yejian <zhengyejian1@huawei.com>,
-	Elena Reshetova <elena.reshetova@intel.com>,
-	David Windsor <dwindsor@gmail.com>,
-	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Hans Liljestrand <ishkamiel@gmail.com>
-Subject: Re: [PATCH v14] exec: Fix dead-lock in de_thread with ptrace_attach
-Message-ID: <20240122134446.GB22901@redhat.com>
-References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
- <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <20240116152210.GA12342@redhat.com>
- <AS8P193MB128538BC3833E654F56DA801E4722@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
- <20240117163739.GA32526@redhat.com>
- <AS8P193MB1285FDD902CC57C781AF2770E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1705931312; c=relaxed/simple;
+	bh=BquSct0x/3PHrMNBVC2M3NsXYQeqttQn96LV68l/gxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K5wbwGUkLWqM8ZeBSLjYZ20kQtg4whTQDqGdElmajjA4VvHYI0xM/vG86SM1Ql3SRWrAaNacrifZ5VFcN0p3w8jAOdA549vhHWPN5Gt2QZTm2j88E0k1J/i0Bse9VcElw3QlcXoQLjw2kQc1n3yz+/SZbC2FdpRONqhnpE14bnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=18;SR=0;TI=SMTPD_---0W.9eXi4_1705931303;
+Received: from 30.221.145.129(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W.9eXi4_1705931303)
+          by smtp.aliyun-inc.com;
+          Mon, 22 Jan 2024 21:48:24 +0800
+Message-ID: <7790423f-665e-44cc-b4ae-d3f3d2996af5@linux.alibaba.com>
+Date: Mon, 22 Jan 2024 21:48:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AS8P193MB1285FDD902CC57C781AF2770E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/10] cachefiles, erofs: Fix NULL deref in when
+ cachefiles is not doing ondemand-mode
+Content-Language: en-US
+To: David Howells <dhowells@redhat.com>,
+ Christian Brauner <christian@brauner.io>
+Cc: Jeff Layton <jlayton@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ netfs@lists.linux.dev, linux-afs@lists.infradead.org,
+ linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+ ceph-devel@vger.kernel.org, v9fs@lists.linux.dev,
+ linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Marc Dionne <marc.dionne@auristor.com>, Gao Xiang <xiang@kernel.org>,
+ Chao Yu <chao@kernel.org>, Yue Hu <huyue2@coolpad.com>
+References: <20240122123845.3822570-1-dhowells@redhat.com>
+ <20240122123845.3822570-7-dhowells@redhat.com>
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20240122123845.3822570-7-dhowells@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-I'll try to read your email later, just one note for now...
 
-On 01/22, Bernd Edlinger wrote:
->
-> > I didn't say that t is a group leader. I said it can be a zombie sub-thread
-> > with ->exit_state != 0.
->
-> the condition here is
->
-> (t != tsk->group_leader || !t->exit_state)
->
-> so in other words, if t is a sub-thread, i.e. t != tsk->group_leader
-> then the t->exit_state does not count,
 
-Ah indeed, somehow I misread this check as if you skip the sub-threads
-with ->exit_state != 0.
+On 1/22/24 8:38 PM, David Howells wrote:
+> cachefiles_ondemand_init_object() as called from cachefiles_open_file() and
+> cachefiles_create_tmpfile() does not check if object->ondemand is set
+> before dereferencing it, leading to an oops something like:
+> 
+> 	RIP: 0010:cachefiles_ondemand_init_object+0x9/0x41
+> 	...
+> 	Call Trace:
+> 	 <TASK>
+> 	 cachefiles_open_file+0xc9/0x187
+> 	 cachefiles_lookup_cookie+0x122/0x2be
+> 	 fscache_cookie_state_machine+0xbe/0x32b
+> 	 fscache_cookie_worker+0x1f/0x2d
+> 	 process_one_work+0x136/0x208
+> 	 process_scheduled_works+0x3a/0x41
+> 	 worker_thread+0x1a2/0x1f6
+> 	 kthread+0xca/0xd2
+> 	 ret_from_fork+0x21/0x33
+> 
+> Fix this by making the calls to cachefiles_ondemand_init_object()
+> conditional.
+> 
+> Fixes: 3c5ecfe16e76 ("cachefiles: extract ondemand info field from cachefiles_object")
+> Reported-by: Marc Dionne <marc.dionne@auristor.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Gao Xiang <xiang@kernel.org>
+> cc: Chao Yu <chao@kernel.org>
+> cc: Yue Hu <huyue2@coolpad.com>
+> cc: Jeffle Xu <jefflexu@linux.alibaba.com>
+> cc: linux-erofs@lists.ozlabs.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+>  fs/cachefiles/namei.c | 16 ++++++++++------
+>  1 file changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+> index 7ade836beb58..180594d24c44 100644
+> --- a/fs/cachefiles/namei.c
+> +++ b/fs/cachefiles/namei.c
+> @@ -473,9 +473,11 @@ struct file *cachefiles_create_tmpfile(struct cachefiles_object *object)
+>  	if (!cachefiles_mark_inode_in_use(object, file_inode(file)))
+>  		WARN_ON(1);
+>  
+> -	ret = cachefiles_ondemand_init_object(object);
+> -	if (ret < 0)
+> -		goto err_unuse;
+> +	if (object->ondemand) {
+> +		ret = cachefiles_ondemand_init_object(object);
+> +		if (ret < 0)
+> +			goto err_unuse;
+> +	}
 
-Sorry for noise.
+I'm not sure if object->ondemand shall be checked by the caller or
+inside cachefiles_ondemand_init_object(), as
+cachefiles_ondemand_clean_object() is also called without checking
+object->ondemand. cachefiles_ondemand_clean_object() won't trigger the
+NULL oops as the called cachefiles_ondemand_send_req() will actually
+checks that.
 
-Oleg.
+Anyway this patch looks good to me.  Thanks.
 
+Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+
+>  
+>  	ni_size = object->cookie->object_size;
+>  	ni_size = round_up(ni_size, CACHEFILES_DIO_BLOCK_SIZE);
+> @@ -579,9 +581,11 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
+>  	}
+>  	_debug("file -> %pd positive", dentry);
+>  
+> -	ret = cachefiles_ondemand_init_object(object);
+> -	if (ret < 0)
+> -		goto error_fput;
+> +	if (object->ondemand) {
+> +		ret = cachefiles_ondemand_init_object(object);
+> +		if (ret < 0)
+> +			goto error_fput;
+> +	}
+>  
+>  	ret = cachefiles_check_auxdata(object, file);
+>  	if (ret < 0)
+
+-- 
+Thanks,
+Jingbo
 
