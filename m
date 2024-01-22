@@ -1,111 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-8418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2EF8362A3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 12:52:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F268362DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 13:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EA311F29F50
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 11:52:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5594E1F239C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 12:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2C13D976;
-	Mon, 22 Jan 2024 11:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CBB3BB32;
+	Mon, 22 Jan 2024 12:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hFSqq3rc"
+	dkim=pass (2048-bit key) header.d=exia.io header.i=@exia.io header.b="GqA3/afu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from h7.fbrelay.privateemail.com (h7.fbrelay.privateemail.com [162.0.218.230])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E77A3D0C3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 11:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B893BB21;
+	Mon, 22 Jan 2024 12:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.0.218.230
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705924225; cv=none; b=OaMdpAx5dABMUvZYqI2wRLVy+uJComDN88Rkg0Ym6sP6ZLeN0yC/bv+kXBmLbHsBQxNsteuwLEqycxvddNvojXbi/uoqXd2hlspNHHTpNYGIIBa/igo1EM9ZvGfmc94jPnTY2LtR0SIdrHz/7cJAIo0UnQfI2ZIezeCR1ZgXJs4=
+	t=1705925615; cv=none; b=hv79HNtHl4+hPSqVWK9WIbjdIGqyhPVRMyoOYsrTZaiKda+5KmYpzjh+KsJ9xjIySNvjAfAwruLuFWPJRAQSoPA1mhf3HdaGezY11Qlu/JbFLbJctQAibPEsPX+pQSv5p06uNjsJaeGhjDCaJ/+29CfhPQepPkx7oO3XG8BjYjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705924225; c=relaxed/simple;
-	bh=Su7A1i3HKqk5azEV0eLpu0T2S7uFiOiSyMb/yVBo57g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LBBhi6ZYNCTYRT0k3AYD798C6pLQRI/cOEwT8nOJbkuwPVHP9Auyqi46g1U9zvt/pIa7oPyK1aA2Ua7T6uqzKRTcD2+e6kTCF4FrqbGP4MhMHAg66FfoUdpATsirdsFt8LZA7Qa7pBS7QrB/SCH+t7U18pr5n85HomZ7zC/kEPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hFSqq3rc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1705924223;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KeeG0FfVujDf91nAvy13CDWA92gJt33lwcR42KZA7GE=;
-	b=hFSqq3rcsM6qB0gxfoQvpalzCDGpjr5stBkowgbygufn6GiS59CF6b+jAcHpSHRTLX13+o
-	GeA0/SISG7OMruWfISBbBKU6h45+YFoZ4qc6vf3Cb9w0XYpXjWMfPnZDD4Jny1OXTY4Hw4
-	sS94frJtr9n8L85xREvLYbPIUw2/4EA=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-562-AisSLAzPOYKrDxNVjIRW0w-1; Mon, 22 Jan 2024 06:50:18 -0500
-X-MC-Unique: AisSLAzPOYKrDxNVjIRW0w-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	s=arc-20240116; t=1705925615; c=relaxed/simple;
+	bh=E+GS8Dp2FPfxmyApAnU8fN/JeF+OsSo7QILwUiphDME=;
+	h=Message-ID:Date:MIME-Version:To:From:Cc:Subject:Content-Type; b=JFxFS1EPpfU14yMJhBz/EsuffFp+lUwy+Gqngl18Qij3mXGsk45FFgaAARHxrlcKNOQ0J4wO752EX8r6TV475DAje6yiyrlxlFx3lkJgtZ7YnQmukxu/WEKCQ2H/z5qG+mNGfVvY5qgP+7frng85vCPfavPZMywJSRyl0fBGf8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exia.io; spf=pass smtp.mailfrom=exia.io; dkim=pass (2048-bit key) header.d=exia.io header.i=@exia.io header.b=GqA3/afu; arc=none smtp.client-ip=162.0.218.230
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exia.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exia.io
+Received: from MTA-05-3.privateemail.com (mta-05.privateemail.com [198.54.127.60])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 50BEE80007C;
-	Mon, 22 Jan 2024 11:50:17 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.67])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 5369D400D7AB;
-	Mon, 22 Jan 2024 11:50:15 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: netfs@lists.linux.dev
-Cc: David Howells <dhowells@redhat.com>,
-	Christian Brauner <christian@brauner.io>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-cachefs@redhat.com,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] netfs: Add Jeff Layton as reviewer
-Date: Mon, 22 Jan 2024 11:50:01 +0000
-Message-ID: <20240122115007.3820330-3-dhowells@redhat.com>
-In-Reply-To: <20240122115007.3820330-1-dhowells@redhat.com>
-References: <20240122115007.3820330-1-dhowells@redhat.com>
+	by h7.fbrelay.privateemail.com (Postfix) with ESMTPSA id 08F64608CB;
+	Mon, 22 Jan 2024 07:01:29 -0500 (EST)
+Received: from mta-05.privateemail.com (localhost [127.0.0.1])
+	by mta-05.privateemail.com (Postfix) with ESMTP id 964DE18000BB;
+	Mon, 22 Jan 2024 07:01:21 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=exia.io; s=default;
+	t=1705924881; bh=E+GS8Dp2FPfxmyApAnU8fN/JeF+OsSo7QILwUiphDME=;
+	h=Date:To:From:Cc:Subject:From;
+	b=GqA3/afuwdRouPoodV9R1wlpLX5b/02R1XA+chUFOm3GDzzJBCr7S5XqlmFwayahv
+	 3CuADmEIdJb0qv0daT3OTWWye6iPGPzL1a0ecXMCj23Joi9MfUffzkdCiVBVPfdGw/
+	 V2jq/ph8+Ubg1kQrVEk0GKr17L6NnCx3SyHYiycAMOlqzBbaEKKbSn3v1vt5W8Ue/y
+	 3JYxcckn+2z8YYeC1/aMxTz/WYytsIWMi7BepkGL4sDdhhZkPLDLPHkiS0tSF4kwgI
+	 J4/EWYGrNJDTZk6KUrZ/JKAlC0A9u7GO82wP+r9gQNBVprtDmVm1GXgDD5UnnowU/q
+	 Gq8WLRJywFmLQ==
+Received: from [192.168.1.17] (M106073142161.v4.enabler.ne.jp [106.73.142.161])
+	by mta-05.privateemail.com (Postfix) with ESMTPA;
+	Mon, 22 Jan 2024 07:01:13 -0500 (EST)
+Message-ID: <c7209e19-89c4-446a-b364-83100e30cc00@exia.io>
+Date: Mon, 22 Jan 2024 21:01:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: ebiederm@xmission.com, keescook@chromium.org
+From: Jan Bujak <j@exia.io>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Recent-ish changes in binfmt_elf made my program segfault
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-Add Jeff Layton as a reviewer in the MAINTAINERS file.
+Hi.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-Acked-by: Jeff Layton <jlayton@kernel.org>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+I recently updated my kernel and one of my programs started segfaulting.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index ab5858d24ffc..2f4f4bf2e7f8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8223,6 +8223,7 @@ F:	include/linux/iomap.h
- 
- FILESYSTEMS [NETFS LIBRARY]
- M:	David Howells <dhowells@redhat.com>
-+R:	Jeff Layton <jlayton@kernel.org>
- L:	netfs@lists.linux.dev
- L:	linux-fsdevel@vger.kernel.org
- S:	Supported
+The issue seems to be related to how the kernel interprets PT_LOAD headers;
+consider the following program headers (from 'readelf' of my reproduction):
+
+Program Headers:
+   Type  Offset   VirtAddr  PhysAddr  FileSiz  MemSiz   Flg Align
+   LOAD  0x001000 0x10000   0x10000   0x000010 0x000010 R   0x1000
+   LOAD  0x002000 0x11000   0x11000   0x000010 0x000010 RW  0x1000
+   LOAD  0x002010 0x11010   0x11010   0x000000 0x000004 RW  0x1000
+   LOAD  0x003000 0x12000   0x12000   0x0000d2 0x0000d2 R E 0x1000
+   LOAD  0x004000 0x20000   0x20000   0x000004 0x000004 RW  0x1000
+
+Old kernels load this ELF file in the following way ('/proc/self/maps'):
+
+00010000-00011000 r--p 00001000 00:02 131  ./bug-reproduction
+00011000-00012000 rw-p 00002000 00:02 131  ./bug-reproduction
+00012000-00013000 r-xp 00003000 00:02 131  ./bug-reproduction
+00020000-00021000 rw-p 00004000 00:02 131  ./bug-reproduction
+
+And new kernels do it like this:
+
+00010000-00011000 r--p 00001000 00:02 131  ./bug-reproduction
+00011000-00012000 rw-p 00000000 00:00 0
+00012000-00013000 r-xp 00003000 00:02 131  ./bug-reproduction
+00020000-00021000 rw-p 00004000 00:02 131  ./bug-reproduction
+
+That map between 0x11000 and 0x12000 is the program's '.data' and '.bss'
+sections to which it tries to write to, and since the kernel doesn't map
+them anymore it crashes.
+
+I bisected the issue to the following commit:
+
+commit 585a018627b4d7ed37387211f667916840b5c5ea
+Author: Eric W. Biederman <ebiederm@xmission.com>
+Date:   Thu Sep 28 20:24:29 2023 -0700
+
+     binfmt_elf: Support segments with 0 filesz and misaligned starts
+
+I can confirm that with this commit the issue reproduces, and with it
+reverted it doesn't.
+
+I have prepared a minimal reproduction of the problem available here,
+along with all of the scripts I used for bisecting:
+
+https://github.com/koute/linux-elf-loading-bug
+
+You can either compile it from source (requires Rust and LLD), or there's
+a prebuilt binary in 'bin/bug-reproduction` which you can run. (It's tiny,
+so you can easily check with 'objdump -d' that it isn't malicious).
+
+On old kernels this will run fine, and on new kernels it will segfault.
+
+Thanks!
 
 
