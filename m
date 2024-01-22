@@ -1,184 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-8461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0166C836EBE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 19:01:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA3FC836DF5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 18:41:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256681C2964B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 18:01:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD751F24D93
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217F4612D0;
-	Mon, 22 Jan 2024 17:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807154776B;
+	Mon, 22 Jan 2024 16:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=memverge.com header.i=@memverge.com header.b="N2UdSnQi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2064.outbound.protection.outlook.com [40.107.243.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1737054BD7;
-	Mon, 22 Jan 2024 17:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705944282; cv=none; b=pWCta0azXIVQP4CbMftiMXZojWWTcbiAVKooD3rhoddPv12iMMBG90kkw8kskG6c50cLtHBxCTiKIk6H4ynn8vQKZimgsJchdKdWP9yJaDJlViM65qoK+j0AxvvJUARCY3ov0afO5FKZw6FhmMF9Jfjw1X/WOnK5IAsSbN/LLXU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705944282; c=relaxed/simple;
-	bh=8nUGe8Li9gSxAKAhNYilV377xCO4oLUVdvIXdSPhhd8=;
-	h=From:To:Cc:In-Reply-To:References:Date:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=hjh7AW0M+Oh4Hd+HDLvQWxm9PdTffyh0/VRs6vRs4xtPMDLfodV8nmiC14GKzoR4XvJ2Al4oEV8z5/wdmB49wQk4/XqCKVqtOx2cep4uDzQncrok/vWZ8SeFjLrOlPS8JyqpS2f88r20APessygqQBvo/Anjdxdl+FMHj6jaKXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:40338)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1rRxP4-0021o7-AB; Mon, 22 Jan 2024 09:44:06 -0700
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:39350 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1rRxP3-008l5j-AU; Mon, 22 Jan 2024 09:44:05 -0700
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Jan Bujak <j@exia.io>
-Cc: keescook@chromium.org,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  viro@zeniv.linux.org.uk,
-  brauner@kernel.org,  linux-fsdevel@vger.kernel.org
-In-Reply-To: <c7209e19-89c4-446a-b364-83100e30cc00@exia.io> (Jan Bujak's
-	message of "Mon, 22 Jan 2024 21:01:06 +0900")
-References: <c7209e19-89c4-446a-b364-83100e30cc00@exia.io>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
-Date: Mon, 22 Jan 2024 10:43:59 -0600
-Message-ID: <874jf5co8g.fsf@email.froward.int.ebiederm.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F363D979;
+	Mon, 22 Jan 2024 16:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1705942748; cv=fail; b=riYXz2JWb/R2tobnXObyTZt6Qw9gyENjG2IFVGoNkofeiVwERGlKEDqN1bkKB8ebQIQCHG8Q0pwODwIJgy6HWXoh8W4ALVVRy5PYyDjB7h7JaRwdi1hsXHXBJlG8Teyoz5NpSWPy8fpaxB1hYMl3t0lmg+3Yoza+4wtdalktHAc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1705942748; c=relaxed/simple;
+	bh=NEyIc1ZA8j2ft0W2vU4tsNVHuVyRXpOECbM0fGuhkoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=JTeO0TdjBHYjjsuAHsD/DXhbwH5DINaHpsevo1fkHV2Qua+lmxgNjOIwQP6tHR3ihW8afCYzXfvxvx3RXJpvlpE+mPyw5gH+wjnJTlou5lVT5h2sfXWen21c81RgoXqZuIfPWSTPJrfXHoH8aCvQVD+vHAycJpe+uviCCKqmVkg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=memverge.com; spf=pass smtp.mailfrom=memverge.com; dkim=pass (1024-bit key) header.d=memverge.com header.i=@memverge.com header.b=N2UdSnQi; arc=fail smtp.client-ip=40.107.243.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=memverge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=memverge.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=NfgLwPis64mExwESkqlU+9tD0FfKNJh4Qw7cOfY7ZZQStklC6r5L1MgKQwJnkH+dwizOMCyC3SzLkGcoelUE+sDNWgpkR5g2vfHIs0V4ddZ4rlOK6eemn6PQqNYYUa9FbvFab9m7dOA5hVoAK9mwazfsenkss7xcexB2ak35b+0AOwzvDA6uIZ09OYRe+9j/tzb2SF61AwcMCFy4Euor4m+A+qUOIZEuonu/zeN9fartzlMZDATZUfWOq0YZmr+GK1gC7vhFMLglyihntOoTgEYwpnYa47Lcgkno5ADXAiXgSELx9dHyOvmh2xD4X35Sv6dskJ74qPMuI6He8IqoyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GZftK7/1Nuelm1zubFQqGPPnw7SHv6l109c95ZMRkg0=;
+ b=IwKnR/maHRAs6LUhkY3/5Yl9PCs33DMjYS0bRZSiS5PTASbn+uEKBz2vD71jykNFO6U1VL069Wr+0EIwNchc5mpseMP6X2N7i5pv6sq9bfN5J01Aa1juYjFYv9prNW5P2IDYAx9qhHM21nljjSDUgF5cWXTBFbWjdI8KE+bYU5RezhhQpLdxix9OA1T+5HzGhxQJ8aZgu4GctpASWRLWuXriyjubALGu+ngJMK5ZXgj3PV7tcwPllDw3CLOa1iYAIqk3cNtNBTZH68gwTVPJM5cLHvXzTeHV/lqeDidvWDHFtBzGi7+yQl9tVcYy3siTl2ymhiBow+bd1ak6zlj6tg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=memverge.com; dmarc=pass action=none header.from=memverge.com;
+ dkim=pass header.d=memverge.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=memverge.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GZftK7/1Nuelm1zubFQqGPPnw7SHv6l109c95ZMRkg0=;
+ b=N2UdSnQioIz13rkLtQW5LEr5IIXwNoOHzSB5+q2+RTIxYLFYBVF4B3NbPFMKR0dwwOCLZIq4bHxMI0MN6d7597H+752TUOHwM+O/+qatfIBdyjExoQ6Eopz2n9JX0N7I6PRNaFfIE8S/f1TsiIb8kDCWc3oQw7za40RBsZBa7ng=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=memverge.com;
+Received: from SJ0PR17MB5512.namprd17.prod.outlook.com (2603:10b6:a03:394::19)
+ by DS0PR17MB6374.namprd17.prod.outlook.com (2603:10b6:8:135::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7202.32; Mon, 22 Jan
+ 2024 16:59:03 +0000
+Received: from SJ0PR17MB5512.namprd17.prod.outlook.com
+ ([fe80::7a04:dc86:2799:2f15]) by SJ0PR17MB5512.namprd17.prod.outlook.com
+ ([fe80::7a04:dc86:2799:2f15%5]) with mapi id 15.20.7202.034; Mon, 22 Jan 2024
+ 16:59:03 +0000
+Date: Mon, 22 Jan 2024 11:58:53 -0500
+From: Gregory Price <gregory.price@memverge.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Gregory Price <gourry.memverge@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+	corbet@lwn.net, akpm@linux-foundation.org, honggyu.kim@sk.com,
+	rakie.kim@sk.com, hyeongtak.ji@sk.com, mhocko@kernel.org,
+	vtavarespetr@micron.com, jgroves@micron.com,
+	ravis.opensrc@micron.com, sthanneeru@micron.com,
+	emirakhur@micron.com, Hasan.Maruf@amd.com, seungjun.ha@samsung.com,
+	hannes@cmpxchg.org, dan.j.williams@intel.com
+Subject: Re: [PATCH v2 1/3] mm/mempolicy: implement the sysfs-based
+ weighted_interleave interface
+Message-ID: <Za6ezSUjXc5Lyz/i@memverge.com>
+References: <20240119175730.15484-1-gregory.price@memverge.com>
+ <20240119175730.15484-2-gregory.price@memverge.com>
+ <875xzlx09i.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <875xzlx09i.fsf@yhuang6-desk2.ccr.corp.intel.com>
+X-ClientProxiedBy: SJ0PR03CA0233.namprd03.prod.outlook.com
+ (2603:10b6:a03:39f::28) To SJ0PR17MB5512.namprd17.prod.outlook.com
+ (2603:10b6:a03:394::19)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-XM-SPF: eid=1rRxP3-008l5j-AU;;;mid=<874jf5co8g.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/lma+EuFr0ycc+e9TktIXJpZ8FYTzs3UU=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4925]
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	*  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Jan Bujak <j@exia.io>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 445 ms - load_scoreonly_sql: 0.03 (0.0%),
-	signal_user_changed: 11 (2.5%), b_tie_ro: 10 (2.1%), parse: 1.21
-	(0.3%), extract_message_metadata: 18 (4.1%), get_uri_detail_list: 3.2
-	(0.7%), tests_pri_-2000: 14 (3.2%), tests_pri_-1000: 2.3 (0.5%),
-	tests_pri_-950: 1.20 (0.3%), tests_pri_-900: 0.99 (0.2%),
-	tests_pri_-90: 66 (14.8%), check_bayes: 64 (14.4%), b_tokenize: 9
-	(2.0%), b_tok_get_all: 10 (2.3%), b_comp_prob: 3.3 (0.7%),
-	b_tok_touch_all: 38 (8.6%), b_finish: 0.93 (0.2%), tests_pri_0: 317
-	(71.1%), check_dkim_signature: 0.58 (0.1%), check_dkim_adsp: 2.7
-	(0.6%), poll_dns_idle: 1.10 (0.2%), tests_pri_10: 3.0 (0.7%),
-	tests_pri_500: 8 (1.7%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: Recent-ish changes in binfmt_elf made my program segfault
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR17MB5512:EE_|DS0PR17MB6374:EE_
+X-MS-Office365-Filtering-Correlation-Id: 90a10807-d9fe-454c-9585-08dc1b6b6fea
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	Fmyd1Mon5dQL7t++hFNUtdRmxuzGf9SXL6zVA2a8repYOH1YYK6pYeXaR7H9yitje290+44GigG54NnvSYRBoJSq9zQcexhDCaUiJ9CfcfW8/dyUcJXNaIJejllHlWFJUbhw2HR99F5c223kbRrtWYHv05r3ZMXthavpjyArREqbPdjw+8LV0DdMEFYj4v5fVaeaoLUSwKZ4rcczttvxuwpoJwqLSC7pRyq6EInSGjzL6dZSkTa01JkxGeJ6jp0DZGs25ZOjQFGBhyA8Kz3rjquV4pFDTZFw7DFNUJFn4o6XEKIVdrUYQVPRAO2H+3cuyPp06qaHJuUNsbxuzuKeRYZqH2WKolwVs5KqvpT55mnUZcrl7wW6hJ8m/UwY9Y+pbLLBy/WWWjYiGRYe3m5mLu0bYA2KFo9vD9UC2J3meIEOt1HjXhLv9r7Bj3lu1RljYbFYyERlwksTa16rGqz1bIxzJYz7x2EgZo5jEyFE2t/LANMybxvUlN8lZuKS7+CJCawc6UnV6T04lkspkxfiR92pE1veKfQOhX/8aLz515yzB5lPnKx6vvXdKc0ZA24Bni2W29RZV/+qrFQX4YkHPf/2zl6zKU7w6EMHSdlcSS+qBaLoIJcgKBoCY1At6tkz
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR17MB5512.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39840400004)(136003)(366004)(396003)(376002)(346002)(230922051799003)(186009)(1800799012)(64100799003)(451199024)(6916009)(66556008)(2906002)(66946007)(66476007)(66899024)(26005)(6512007)(7416002)(6486002)(6506007)(4326008)(6666004)(478600001)(316002)(8936002)(8676002)(5660300002)(2616005)(44832011)(83380400001)(38100700002)(36756003)(86362001)(41300700001)(16393002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4hinJODD6RNziFdQiwp8OgPZPu71y65AtFHjkGJnUU4bcaRNXwYJHAp0lEz9?=
+ =?us-ascii?Q?rDiOT5cdUaHihL6eJP6PwTirDD/jBzZw/Cn6A/7kMy7XYl03EzDuUw3yqcU6?=
+ =?us-ascii?Q?vGjp6Uuxc7XcVZAFw98nqKR/az5Id8FmS9HJvmgstNw+gx0PS4H+3x2MhQLn?=
+ =?us-ascii?Q?utMmqHHxk7XH5tEKUPSBlDUDh6R/Nh5xS+QjumtmkaS2RKmLtM4bESXx8yT5?=
+ =?us-ascii?Q?u5x7YT+dqygGh6BAKGFoDyRwRxMKbMvzqGl5uNXxLBCgJZ/4SKUwi1lFPadx?=
+ =?us-ascii?Q?yclMqG1z2jK3kIyMouDXeYvL0neSgCH2cGiOCUjKRVQ0ypn5uqfWOPqC44sk?=
+ =?us-ascii?Q?OQ/F/pyA7BFgH5zouYKALcfHtnIgj8KmoW94TAiszsOD4sVL3yzvywf2o+/W?=
+ =?us-ascii?Q?NsU/DNIjiMVeVuSi3EutczygPw3+03RKaNk6ji2rsqib9IvbWzUSpjpmeTUM?=
+ =?us-ascii?Q?YeV+8GLMQK29+dsj6Pa91dPaiKqmeZRu6NJelKVWz3idqRqVwZpv/lpPWr5a?=
+ =?us-ascii?Q?unFoHov36FmipNkJkv/47zPxPiykGMgGH36g0DVvD41hLR3ZbTEsgtVehgpE?=
+ =?us-ascii?Q?HXfGh5iAqxeSseD2qtxohIcHh/SFUyNdu4VYGOq5iJLGROllLq/vZB/Ur3PQ?=
+ =?us-ascii?Q?bAzPbgQxPstYz40/6jTMECidE9Jd5x5OrmF8WjZeChAHu6ylFl3yShT3qOCh?=
+ =?us-ascii?Q?w9XJ9QGwdiJbD2uOZXSlOlLqfN6u1XpY4cF8YhUl5o1nWP20Q79/Fx9MIZZI?=
+ =?us-ascii?Q?IKpfrXFg96dlektI3sMh+zaHltFwys4Wd4Uezm0AC9AJUSgVOJn/xkv4ppF0?=
+ =?us-ascii?Q?r7XxHLp1Bm6CyvXk+OVFIpqu2z+GjKB9NUzuqtUcleMtDLSWWT/U9Nugxc1+?=
+ =?us-ascii?Q?7ClPFVoOVW4CLHUHM3gGPE3TQ74VdMO6CtpcYRuP9H2VRPcMtjyGbuEy7wwp?=
+ =?us-ascii?Q?hfaMOfiVRHdutjhGE8kLE77aToQViSWuzfoLWqWSv/ljdHHbt9IQNBuhSuY4?=
+ =?us-ascii?Q?tc5ZyDmp5eW/IIKmrbWCeCsrNWW+wKIbcaQLOOtjXjQNEKyPnY7P5U/fIZ2x?=
+ =?us-ascii?Q?s05OYof+MqHnqz2hGQ0Lh4hwaqPYNDtLE1/bzx2z9rFuNePH6AYshrnYw4Bb?=
+ =?us-ascii?Q?ayT3EHIdiA4phrPwCuANJ8ejkCwCUOWkO+m7aTSTkyTcHzWgGrEnLaRyoThH?=
+ =?us-ascii?Q?tCVZQwZvpWNnwKBqIwUSMnl6mWImXb8LuC3P8uXrNpO5hdzarQeouH0/IyJX?=
+ =?us-ascii?Q?aRIy5gYkQbwm/+DmFzJifb8tzqTOGlTULwxWFZldEivNC2wKyJuT32qUyFLM?=
+ =?us-ascii?Q?BxNgt1/gCFhRDTAMSjF3K0shmpwx6jwSAf0MA1MOR3CjNU9e14oqSs0bBgvG?=
+ =?us-ascii?Q?Sra1Caro2NZdSyJP273IEiIfc52i3AaKkboplymMT4Q2gCZuhlEmNOWzGjfH?=
+ =?us-ascii?Q?XCzqtfBCZW8IsJzWzb6+kMXN1QhUZr0VgPh/9mVVxqDvPkW3lK7JkQgw0eca?=
+ =?us-ascii?Q?j9q1u80dyYhtYFbGZ3q72DxCH4QBLh7hzPhwIB4Rw2s44LyEiuaNY4hJEYJE?=
+ =?us-ascii?Q?5dWGG9giDrDe/uiQl+ehMdbS1oRHCzrxAH1LiDz/3Vc8uHxA5jD/j9B2IQqf?=
+ =?us-ascii?Q?bg=3D=3D?=
+X-OriginatorOrg: memverge.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 90a10807-d9fe-454c-9585-08dc1b6b6fea
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR17MB5512.namprd17.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2024 16:59:03.3868
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5c90cb59-37e7-4c81-9c07-00473d5fb682
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: H4Bs/yE38EwfSQoV/Z7f0+9vraxxbktDjZTiAKcVFIFYYAjsLPiYPpmSfvZBqZtsYXLmTglQt0fB/RcyD7Pj/EKNdEMn685QlZskXA2UIsQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR17MB6374
 
-Jan Bujak <j@exia.io> writes:
+On Mon, Jan 22, 2024 at 04:03:53PM +0800, Huang, Ying wrote:
+> Gregory Price <gourry.memverge@gmail.com> writes:
+> 
+> > +	/*
+> > +	 * The default weight is 1 (for now), when the kernel-internal
+> > +	 * default weight array is implemented, this should be updated to
+> > +	 * collect the system-default weight of the node if the user passes 0.
+> > +	 */
+> > +	if (!weight)
+> > +		weight = 1;
+> 
+> From functionality point of view, it's OK to set "weight = 1" here now.
+> But when we add system default weight table in the future, we need to
+> use "weight = 0".  Otherwise, we cannot distinguish whether the default
+> value have been customized via sysfs.  So, I suggest to use that rule.
+>
+[... snip ...]
+> > +	else
+> > +		memset(new, 1, nr_node_ids);
+> 
+> With similar reason as above ("From functionality..."), I suggest to set
+> "0" here.
+> 
 
-> Hi.
->
-> I recently updated my kernel and one of my programs started segfaulting.
->
-> The issue seems to be related to how the kernel interprets PT_LOAD header=
-s;
-> consider the following program headers (from 'readelf' of my reproduction=
-):
->
-> Program Headers:
-> =C2=A0 Type=C2=A0 Offset=C2=A0=C2=A0 VirtAddr=C2=A0 PhysAddr=C2=A0 FileSi=
-z=C2=A0 MemSiz=C2=A0=C2=A0 Flg Align
-> =C2=A0 LOAD=C2=A0 0x001000 0x10000=C2=A0=C2=A0 0x10000=C2=A0=C2=A0 0x0000=
-10 0x000010 R=C2=A0=C2=A0 0x1000
-> =C2=A0 LOAD=C2=A0 0x002000 0x11000=C2=A0=C2=A0 0x11000=C2=A0=C2=A0 0x0000=
-10 0x000010 RW=C2=A0 0x1000
-> =C2=A0 LOAD=C2=A0 0x002010 0x11010=C2=A0=C2=A0 0x11010=C2=A0=C2=A0 0x0000=
-00 0x000004 RW=C2=A0 0x1000
-> =C2=A0 LOAD=C2=A0 0x003000 0x12000=C2=A0=C2=A0 0x12000=C2=A0=C2=A0 0x0000=
-d2 0x0000d2 R E 0x1000
-> =C2=A0 LOAD=C2=A0 0x004000 0x20000=C2=A0=C2=A0 0x20000=C2=A0=C2=A0 0x0000=
-04 0x000004 RW=C2=A0 0x1000
->
-> Old kernels load this ELF file in the following way ('/proc/self/maps'):
->
-> 00010000-00011000 r--p 00001000 00:02 131=C2=A0 ./bug-reproduction
-> 00011000-00012000 rw-p 00002000 00:02 131=C2=A0 ./bug-reproduction
-> 00012000-00013000 r-xp 00003000 00:02 131=C2=A0 ./bug-reproduction
-> 00020000-00021000 rw-p 00004000 00:02 131=C2=A0 ./bug-reproduction
->
-> And new kernels do it like this:
->
-> 00010000-00011000 r--p 00001000 00:02 131=C2=A0 ./bug-reproduction
-> 00011000-00012000 rw-p 00000000 00:00 0
-> 00012000-00013000 r-xp 00003000 00:02 131=C2=A0 ./bug-reproduction
-> 00020000-00021000 rw-p 00004000 00:02 131=C2=A0 ./bug-reproduction
->
-> That map between 0x11000 and 0x12000 is the program's '.data' and '.bss'
-> sections to which it tries to write to, and since the kernel doesn't map
-> them anymore it crashes.
->
-> I bisected the issue to the following commit:
->
-> commit 585a018627b4d7ed37387211f667916840b5c5ea
-> Author: Eric W. Biederman <ebiederm@xmission.com>
-> Date:=C2=A0=C2=A0 Thu Sep 28 20:24:29 2023 -0700
->
-> =C2=A0=C2=A0=C2=A0 binfmt_elf: Support segments with 0 filesz and misalig=
-ned starts
->
-> I can confirm that with this commit the issue reproduces, and with it
-> reverted it doesn't.
->
-> I have prepared a minimal reproduction of the problem available here,
-> along with all of the scripts I used for bisecting:
->
-> https://github.com/koute/linux-elf-loading-bug
->
-> You can either compile it from source (requires Rust and LLD), or there's
-> a prebuilt binary in 'bin/bug-reproduction` which you can run. (It's tiny,
-> so you can easily check with 'objdump -d' that it isn't malicious).
->
-> On old kernels this will run fine, and on new kernels it will
-> segfault.
+blah - the comment is misleading at best.  The future patch should pass
+0 through to the sysfs table and the allocators updated to collect the
+system-default weight of the node.
 
-Frankly your ELF binary is buggy, and probably the best fix would be to
-fix the linker script that is used to generate your binary.
+re: doing it this way right now -
 
-The problem is the SYSV ABI defines everything in terms of pages and so
-placing two ELF segments on the same page results in undefined behavior.
+I chose to do it this way for now because it ultimately simplifies the
+logic in the allocators - all of which will need to be updated with the
+future patch set regardless of our implementation choice now.
 
-The code was fixed to honor your .bss segment and now your .data segment
-is being stomped, because you defined them to overlap.
+e.g.
 
-Ideally your linker script would place both your .data and .bss in
-the same segment.  That would both fix the issue and give you a more
-compact elf binary, while not changing the generated code at all.
+rcu_read_lock();
+table = rcu_dereference(iw_table);
+if (!policy->wil.cur_weight)
+	policy->wil.cur_weight = table ? table[next] : 1;
+	                         ^^^ only need single conditional now
+rcu_read_unlock();
 
+This logic will need to be updated to use default table values, so I
+chose the simpler implementation and left the change to be explicit
+at the time the default table is implemented.
 
-That said regressions suck and it would be good if we could update the
-code to do something reasonable in this case.
+If you prefer it the other way now, I can change it, but this seemed
+cleaner and simpler for the time being.
 
-We can perhaps we can update the .bss segment to just memset an existing
-page if one has already been mapped.  Which would cleanly handle a case
-like yours.  I need to think about that for a moment to see what the
-code would look like to do that.
+> > +	new[node_attr->nid] = weight;
+> > +	rcu_assign_pointer(iw_table, new);
+> > +	mutex_unlock(&iw_table_lock);
+> > +	synchronize_rcu();
+> > +	kfree(old);
+> > +	return count;
+> > +}
+> > +
+> > +static struct iw_node_attr *node_attrs[MAX_NUMNODES];
+> 
+> node_attrs[] can be allocated dynamically too.  Just a suggestion.
+> 
 
-Eric
+ack to this and other references to nr_node_ids, will change.
+
+> > +	kfree(old);
+> 
+> It appears unnecessary to free iw_table in error path.  But this isn't a
+> big deal because error path will almost never be executed in practice.
+>
+
+checkpatch.pl yells at you if you do null checks before kfree :]
+
+> > +	int err;
+> > +	struct kobject *mempolicy_kobj;
+> 
+> This overrides the global "mempolicy_kobj" defined before function.  But
+> I don't think we need the global definition.
+> 
+
+Assuming the exit path isn't needed then yeah the global isn't needed.
+
+> > +static int __init mempolicy_sysfs_init(void)
+> > +{
+> > +	/* A NULL iw_table is interpreted by interleave logic as "all 1s" */
+> > +	iw_table = NULL;
+> > +	return 0;
+> > +}
+> > +
+> > +static void __exit mempolicy_exit(void) { }
+> > +#endif /* CONFIG_SYSFS */
+> > +late_initcall(mempolicy_sysfs_init);
+> > +module_exit(mempolicy_exit);
+> 
+> mempolicy.c will not be compiled as module, so we don't need
+> module_exit().
+> 
+
+ack
 
