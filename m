@@ -1,158 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-8481-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB3F98375B7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 22:59:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FB68375C4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 23:01:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED2E81C26F12
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 21:59:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAC64B2468F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 22:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81EFF482F9;
-	Mon, 22 Jan 2024 21:59:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF81248CD9;
+	Mon, 22 Jan 2024 22:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IoMi5e0X"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EDDq0GqU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87B248785;
-	Mon, 22 Jan 2024 21:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE6F48CC3
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 22:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705960772; cv=none; b=fc97gAPgb4cbCOEuaDAW0tcQvC9GO/hKGR2ZU9IT1vGhB7gK9CPZhKGhUlp7ffK24gF3F7TMzZbZvs+coE10CcDzJrCYkPwLARQQGB/0/8tjylGmUaUTt7CUsC8YXUupXGhe+gaNum1KygUZVpCZkNqQ0gTdG6OlOmOgKOsSC/4=
+	t=1705960891; cv=none; b=vCXbbJXKqjsZqmSlDwTx6xmJAAIAwEfhe95Rn2kHoNUZv2e0CmCPWMlM5lM7hms20VRUb4TcuAAE3UbQp/rFIFwiuDpo28Q+K+NrtF78Za3qNVuhW1rBXrZrEWKZQUMjMTNr0WcywCbMQe1HEMTEQOoiUUw7hfZsty4GJv0/GNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705960772; c=relaxed/simple;
-	bh=am4ve4KfU4jwHZ/TAyMBGpHozz+jSvRUqB01KMTKOg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rmat3DVTHF/uION8rdhqB/L/sVnZmbOY6JJpH7GrSi7lL9f5gdnLR8oeyiN+lmHqN95fW1bYS9sxMRWRiAw4pnMmdD9HXC4dvfkKkrxUBwiVObsyt+2jdKhiCgG2q6QlnDxEtRDQj2E9qu4IcANVpCUQALW3uyT3n17jjnJi/uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IoMi5e0X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53DEDC433F1;
-	Mon, 22 Jan 2024 21:59:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705960771;
-	bh=am4ve4KfU4jwHZ/TAyMBGpHozz+jSvRUqB01KMTKOg0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IoMi5e0X7Rlpq7H53Zg11damp7QnG6EsQ2EEEhMWJyKuXEzQesZVjAX0ZgQ9IlDYs
-	 k3Iv8Xf33n2v6YMRQ+Z86Dl23nhcG03P1llCa15NWVc6IQ1Q8d5GhBm0annOmHSv5t
-	 O35HYZe7hif6DetSEO3dgZ8JpPYGvix10JHArGSL2xDWzcnet9j4zbKHFioc7yrmye
-	 aWbBjn9XYRvkUkeEMAIukGR0/RRvY4zOXz1uJDioTPMdaXIUu5Ij9BAc2fHjkneNeZ
-	 03aDIIW1d9syjyH4i/9+E+0ktC3AxWvFHhc1o0bEIU2CEaA4FEFr+plIsc0CW1UvDj
-	 jvnQ1oGWbFoNw==
-Date: Mon, 22 Jan 2024 13:59:30 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Ajay Kaher <ajay.kaher@broadcom.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] eventfs: Have the inodes all for files and
- directories all be the same
-Message-ID: <20240122215930.GA6184@frogsfrogsfrogs>
-References: <20240116225531.681181743@goodmis.org>
- <20240116234014.459886712@goodmis.org>
+	s=arc-20240116; t=1705960891; c=relaxed/simple;
+	bh=V1yJVFjM67labChbznd10CJnK+mwAgP7GMH9rMtUC+s=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=JKqQoehaqwkmCa35UZpqclaYc40By5ZEGp4f0IvOi/MiSecdII0e/yYde20yfcchVTjFCuaIkbsfzrR6AOCCES4OEPC0yyNSljPsquuNwE1Ide+9/wywDhNGUkLqSNBSXayOHEMlKn5uuHu3aEXRLLrYaV+kxjC1cMRPHUQNEYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EDDq0GqU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1705960888;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YgorZ9y1ABigf+8AfYUUWexSMaoGg5QlyfBL6eKu5CY=;
+	b=EDDq0GqUgEUDONFlrrcfKEI8l1+mUFl6z1bu8pWclYnligWSWPmLipvcytVU+UKfe8vrMG
+	zPHZNoFtue+iGTDGgGJWAcXpCILT9fQ8ylizBTHeTnTPhpxMSudoxcLtK3UE8SadH8aPOR
+	5tRw+lW7GCILkY0/0WeW8+T3/2xD5RU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-653-FVBxaMfkOUaLwqIkj88Zsg-1; Mon, 22 Jan 2024 17:01:24 -0500
+X-MC-Unique: FVBxaMfkOUaLwqIkj88Zsg-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D9621845E60;
+	Mon, 22 Jan 2024 22:01:22 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 77F78492BC6;
+	Mon, 22 Jan 2024 22:01:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <7790423f-665e-44cc-b4ae-d3f3d2996af5@linux.alibaba.com>
+References: <7790423f-665e-44cc-b4ae-d3f3d2996af5@linux.alibaba.com> <20240122123845.3822570-1-dhowells@redhat.com> <20240122123845.3822570-7-dhowells@redhat.com>
+To: Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Jeff Layton <jlayton@kernel.org>,
+    Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+    linux-kernel@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
+    Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+    Yue Hu <huyue2@coolpad.com>
+Subject: Re: [PATCH 06/10] cachefiles, erofs: Fix NULL deref in when cachefiles is not doing ondemand-mode
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240116234014.459886712@goodmis.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3980815.1705960879.1@warthog.procyon.org.uk>
+Date: Mon, 22 Jan 2024 22:01:19 +0000
+Message-ID: <3980816.1705960879@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
 
-On Tue, Jan 16, 2024 at 05:55:32PM -0500, Steven Rostedt wrote:
-> From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-> 
-> The dentries and inodes are created in the readdir for the sole purpose of
-> getting a consistent inode number. Linus stated that is unnecessary, and
-> that all inodes can have the same inode number. For a virtual file system
-> they are pretty meaningless.
-> 
-> Instead use a single unique inode number for all files and one for all
-> directories.
-> 
-> Link: https://lore.kernel.org/all/20240116133753.2808d45e@gandalf.local.home/
-> Link: https://lore.kernel.org/linux-trace-kernel/20240116211353.412180363@goodmis.org
-> 
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Al  Viro <viro@ZenIV.linux.org.uk>
-> Cc: Ajay Kaher <ajay.kaher@broadcom.com>
-> Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  fs/tracefs/event_inode.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
-> index fdff53d5a1f8..5edf0b96758b 100644
-> --- a/fs/tracefs/event_inode.c
-> +++ b/fs/tracefs/event_inode.c
-> @@ -32,6 +32,10 @@
->   */
->  static DEFINE_MUTEX(eventfs_mutex);
->  
-> +/* Choose something "unique" ;-) */
-> +#define EVENTFS_FILE_INODE_INO		0x12c4e37
-> +#define EVENTFS_DIR_INODE_INO		0x134b2f5
-> +
->  /*
->   * The eventfs_inode (ei) itself is protected by SRCU. It is released from
->   * its parent's list and will have is_freed set (under eventfs_mutex).
-> @@ -352,6 +356,9 @@ static struct dentry *create_file(const char *name, umode_t mode,
->  	inode->i_fop = fop;
->  	inode->i_private = data;
->  
-> +	/* All files will have the same inode number */
-> +	inode->i_ino = EVENTFS_FILE_INODE_INO;
-> +
->  	ti = get_tracefs(inode);
->  	ti->flags |= TRACEFS_EVENT_INODE;
->  	d_instantiate(dentry, inode);
-> @@ -388,6 +395,9 @@ static struct dentry *create_dir(struct eventfs_inode *ei, struct dentry *parent
->  	inode->i_op = &eventfs_root_dir_inode_operations;
->  	inode->i_fop = &eventfs_file_operations;
->  
-> +	/* All directories will have the same inode number */
-> +	inode->i_ino = EVENTFS_DIR_INODE_INO;
+Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
 
-Regrettably, this leads to find failing on 6.8-rc1 (see xfs/55[89] in
-fstests):
-
-# find /sys/kernel/debug/tracing/ >/dev/null
-find: File system loop detected; ‘/sys/kernel/debug/tracing/events/initcall/initcall_finish’ is part of the same file system loop as ‘/sys/kernel/debug/tracing/events/initcall’.
-find: File system loop detected; ‘/sys/kernel/debug/tracing/events/initcall/initcall_start’ is part of the same file system loop as ‘/sys/kernel/debug/tracing/events/initcall’.
-find: File system loop detected; ‘/sys/kernel/debug/tracing/events/initcall/initcall_level’ is part of the same file system loop as ‘/sys/kernel/debug/tracing/events/initcall’.
-
-There were no such reports on 6.7.0; AFAICT find(1) is tripping over
-parent and child subdirectory having the same dev/i_ino.  Changing this
-line to the following:
-
-	/* All directories will NOT have the same inode number */
-	inode->i_ino = (unsigned long)inode;
-
-makes the messages about filesystem loops go away, though I don't think
-leaking raw kernel pointers is an awesome idea.
-
---D
-
-> +
->  	ti = get_tracefs(inode);
->  	ti->flags |= TRACEFS_EVENT_INODE;
->  
-> -- 
-> 2.43.0
+> > -	ret = cachefiles_ondemand_init_object(object);
+> > -	if (ret < 0)
+> > -		goto err_unuse;
+> > +	if (object->ondemand) {
+> > +		ret = cachefiles_ondemand_init_object(object);
+> > +		if (ret < 0)
+> > +			goto err_unuse;
+> > +	}
 > 
-> 
-> 
+> I'm not sure if object->ondemand shall be checked by the caller or
+> inside cachefiles_ondemand_init_object(), as
+> cachefiles_ondemand_clean_object() is also called without checking
+> object->ondemand. cachefiles_ondemand_clean_object() won't trigger the
+> NULL oops as the called cachefiles_ondemand_send_req() will actually
+> checks that.
+
+Meh.  The above doesn't actually build if CONFIG_CACHEFILES_ONDEMAND=N.  I
+think I have to push the check down into cachefiles_ondemand_init_object()
+instead.
+
+David
+
 
