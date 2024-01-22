@@ -1,95 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-8447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D99836B25
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:40:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09109836BB4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:50:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92E71F25BF0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 16:40:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B9721C2567D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 16:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CC514DB7B;
-	Mon, 22 Jan 2024 15:18:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4274F40BF7;
+	Mon, 22 Jan 2024 15:23:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eF9eAoxR"
+	dkim=pass (2048-bit key) header.d=exia.io header.i=@exia.io header.b="5IkZ9qyF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from MTA-12-4.privateemail.com (mta-12-4.privateemail.com [198.54.127.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B241B14DB5D;
-	Mon, 22 Jan 2024 15:18:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079A63D964;
+	Mon, 22 Jan 2024 15:23:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705936687; cv=none; b=qY2+g5yX+8NF0R0IdBb3I5Ern+35h6I+aEaWtdLT23t8Ti1MB8L1e4NPokDLHOUHRH5Y/8Xo7o9Wu/ywzAOBYnzdtkDn+vdizkJ1PXIrHb2XS+zzD5oXJp/7PFZaIs1gk4BJEZvY377T3YV+xYQx7My1RpKDB+QVUEBeV4tRf7U=
+	t=1705937033; cv=none; b=Fp3FFxWVlvoGYbpuEqbawMLEaAeQ96+iYVnewQoi9ij6sx+RlvvH6eqf+UDW/tgmiuCk0axntpZwGyVd8rHpb9z92IiJaLAr3U6Nd3CH2Pn25bGvTovEGHro9vf7695QFCxTqbCoVgoxfivD3qJSLhW9nSSDlrEYk59W7sEA4o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705936687; c=relaxed/simple;
-	bh=UQJgDJ1jQGsA5dFTTO+ji4AWSQKmt22PQx0vxvlz2bA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fU2ejLPfI0tVEx918kYMmwCXOlb/3rBsOYIsQFf1DKz1oMprpf3aszk47gWw2Ni/uNMByg6m2x7mGLxz2W243kqjOgOQenuyGEhld5XrZLFcEX4MakTAwsNuhDCm+1V0JoIycKsc1ARIAeQ2BfKt5qO7c9A2ArARepteN4Gmh1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eF9eAoxR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 816C1C4166A;
-	Mon, 22 Jan 2024 15:18:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705936687;
-	bh=UQJgDJ1jQGsA5dFTTO+ji4AWSQKmt22PQx0vxvlz2bA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eF9eAoxRJf/brDqvElgArHmgdPeNAo8ieOCn2xi4ufFMxorFWtZ69VUCmexzh/sTP
-	 +BUe+qq0YinH8u65eRct5dmhzAWFFKqlNJaJq3gORFxSLqWHaK8bmTm7uGQKDIW2iI
-	 BieFkdBIEZ3SEyP0Q+8D/ZiNvX3lytbJYySqYooKSLLOUvw4G1RmIOTPeoEcZGNtiJ
-	 A97D5pgdGQt06pSe+FpwzwaOzXbKSAnn7bA+4Rf6cYXtmesshM9PUMKkTZOUiNwyI8
-	 ApQJ9IXiznE6UZvl7XLRgjAysbckvDqpYHK+EfVEDTPw5+WgadpXzK1+9wg+AQRyM9
-	 wZsFayL+0k0lw==
-Date: Mon, 22 Jan 2024 16:18:00 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Christian Brauner <christian@brauner.io>, 
-	Jeff Layton <jlayton@kernel.org>, Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev, 
-	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/10] netfs, afs, cifs, cachefiles, erofs: Miscellaneous
- fixes
-Message-ID: <20240122-bezwingen-kanister-b56f5bc1bc84@brauner>
-References: <20240122123845.3822570-1-dhowells@redhat.com>
+	s=arc-20240116; t=1705937033; c=relaxed/simple;
+	bh=08AzbJBDTNvT7ROIQXDEvrMtJP9y4Vc1P/92plU2FMo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IsWUWVCT5pXfBtw1Ad1wqejyR5yLfXBeiGDfFOUExpgGmnDjWM8aVQny2MGYHJo/UEJU6F6YAGUcZO7PYiKKnDWONQKXaxV5MS49UCsalMgXk1WEoCi0WATiZwlLdOwVao4gvfWGDz+0xSMVacg6AwovZZIxP7AgznNXMQXJa6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exia.io; spf=pass smtp.mailfrom=exia.io; dkim=pass (2048-bit key) header.d=exia.io header.i=@exia.io header.b=5IkZ9qyF; arc=none smtp.client-ip=198.54.127.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=exia.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exia.io
+Received: from mta-12.privateemail.com (localhost [127.0.0.1])
+	by mta-12.privateemail.com (Postfix) with ESMTP id A90DB18000AE;
+	Mon, 22 Jan 2024 10:23:44 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=exia.io; s=default;
+	t=1705937024; bh=08AzbJBDTNvT7ROIQXDEvrMtJP9y4Vc1P/92plU2FMo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=5IkZ9qyFHIk7pp99vhyLQ06zBRPufV1N+24fe8ZVDChfrZOR2vD14mdBd1TXW43m4
+	 0/BBsYPE9UBOfEudTdy29kv54FCCVzL7Me2hNJS/vTO+iQR0SF4zo921wKRcWDZccH
+	 +ZRzgssiVAw/nOU3vUlrGWf4xCaUiAHtPzyTSFHRxHvW/LpeDqhrnvU/lLjDPQaetE
+	 38EDGCdcutwWJiJwl8Gyob8M5PaAuMwu3X4946LgOyurhEt5tqLvKWRr6iah1Q48Nh
+	 6sWkWAe3ygvj13OTmVyeEsakWedyQoLMpulO8dQt+oWYh98+EkoISa1BdcAaLauO9C
+	 ULJbm+XegtNpw==
+Received: from [192.168.1.17] (M106073142161.v4.enabler.ne.jp [106.73.142.161])
+	by mta-12.privateemail.com (Postfix) with ESMTPA;
+	Mon, 22 Jan 2024 10:23:35 -0500 (EST)
+Message-ID: <f2ee9602-0a32-4f0c-a69b-274916abe27f@exia.io>
+Date: Tue, 23 Jan 2024 00:23:27 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240122123845.3822570-1-dhowells@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Recent-ish changes in binfmt_elf made my program segfault
+Content-Language: en-US
+To: Pedro Falcato <pedro.falcato@gmail.com>
+Cc: ebiederm@xmission.com, keescook@chromium.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <c7209e19-89c4-446a-b364-83100e30cc00@exia.io>
+ <CAKbZUD2=W0Ng=rFVDn3UwSxtGQ5c13tRwkpqm54pPCJO0BraWA@mail.gmail.com>
+From: Jan Bujak <j@exia.io>
+In-Reply-To: <CAKbZUD2=W0Ng=rFVDn3UwSxtGQ5c13tRwkpqm54pPCJO0BraWA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Mon, Jan 22, 2024 at 12:38:33PM +0000, David Howells wrote:
-> Hi Christian,
-> 
-> Here are some miscellaneous fixes for netfslib and a number of filesystems:
-> 
->  (1) Replace folio_index() with folio->index in netfs, afs and cifs.
-> 
->  (2) Fix an oops in fscache_put_cache().
-> 
->  (3) Fix error handling in netfs_perform_write().
-> 
->  (4) Fix an oops in cachefiles when not using erofs ondemand mode.
-> 
->  (5) In afs, hide silly-rename files from getdents() to avoid problems with
->      tar and suchlike.
-> 
->  (6) In afs, fix error handling in lookup with a bulk status fetch.
-> 
->  (7) In afs, afs_dynroot_d_revalidate() is redundant, so remove it.
-> 
->  (8) In afs, fix the RCU unlocking in afs_proc_addr_prefs_show().
-> 
-> The patches can also be found here:
-> 
-> 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-fixes
+On 1/22/24 23:54, Pedro Falcato wrote:
+> Hi!
+>
+> Where did you get that linker script?
+>
+> FWIW, I catched this possible issue in review, and this was already
+> discussed (see my email and Eric's reply):
+> https://lore.kernel.org/all/CAKbZUD3E2if8Sncy+M2YKncc_Zh08-86W6U5wR0ZMazShxbHHA@mail.gmail.com/
+>
+> This was my original testcase
+> (https://github.com/heatd/elf-bug-questionmark), which convinced the
+> loader to map .data over a cleared .bss. Your bug seems similar, but
+> does the inverse: maps .bss over .data.
+>
 
-Thank you! I can pull this in right and will send a pr together with the
-other changes around Wednesday/Thursday for -rc2. So reviews before that
-would be nice.
+I wrote the linker script myself from scratch.
+
+Thank you for the link to the previous discussion. So assuming this
+breakage was intended my question here is - doesn't this run afoul
+of the "we do not break userspace" rule?
 
