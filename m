@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-8445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96162836A5D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:25:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41A00836AC7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:34:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FC1A283379
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 16:25:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C82551F25114
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 16:34:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18E5054F9C;
-	Mon, 22 Jan 2024 15:15:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8847D146904;
+	Mon, 22 Jan 2024 15:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQ+/wiVO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itlaKQBM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7347713AA32;
-	Mon, 22 Jan 2024 15:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D261468F0;
+	Mon, 22 Jan 2024 15:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705936532; cv=none; b=LU/2gC0RUEeQxB9uquZzbhxYD6OKk1I1biesWd6KtdPj52dhpW+fh/h10/OWyHWi3gPpF7/pBkmL+VE4b6Oc/8evceQ4SUlIbdUcgDlHQ876xGkwLhzO6yjao0Y+L8ZYZkiO0Q4LhMtzoHnfX/PKBTyZbRgWqtrfIXh1wLLmKeM=
+	t=1705936629; cv=none; b=ZzCc5TIZOGf2mjk46p4QN3LpfT1iTeInpwQECq30Yvikr4ZUsr4sp9hXoiHEDCTRW2OgFUi7AO1nSuIpITsnNt+6ZGqD2lp78pPvsFsOcGSxstiH9KPUu3aWKKbKt+pV19geRcmApKy12P1zs336hP3fPEq8GQD2aoJloiTNqKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705936532; c=relaxed/simple;
-	bh=7VhN0iTyQeeYjKbo+Sd5JHBGRDMOwlr7p8oOKT1opDA=;
+	s=arc-20240116; t=1705936629; c=relaxed/simple;
+	bh=1EfDp5MH6ut9HONHsU9afbFH3rFz3umZncSRQ6fd9OE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ds4QzWJzPKIqbvR6/jVGT/vOHsuJKuXkNitsp+eOhDppKhG2tOjAVHJQJTbrCw11CReSCxBvM8CJNlbIjM0VB1lQO6l8uAQwVgDwOs9YPKcN/QPbLy/elbcDs8Brp+ib49fwAusuzfkID/u0hQD6QjbtpvaRZm/JF6Shx4rvgY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQ+/wiVO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D2F2C433A6;
-	Mon, 22 Jan 2024 15:15:31 +0000 (UTC)
+	 MIME-Version; b=Wv9IYJfMNVfS5BOd42k5hja6VgqsArm3KsfUALjZiB/KCP/p40TsUGSq1HureitVbUDpBKRtD+gl6Ovu6HXbY+i8MsJT7U8Ngw3vgnAKqOooUIOBTI6BQf9fO7j7aoIFFrENNAmhhWVcsbT08yqtUc2n7v3CrIzQ0YWVLAqlEtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itlaKQBM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6D29C43399;
+	Mon, 22 Jan 2024 15:17:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705936532;
-	bh=7VhN0iTyQeeYjKbo+Sd5JHBGRDMOwlr7p8oOKT1opDA=;
+	s=k20201202; t=1705936628;
+	bh=1EfDp5MH6ut9HONHsU9afbFH3rFz3umZncSRQ6fd9OE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TQ+/wiVOrKiaa7peAKF8zXEyQQas3+Hbm3rWrY7HBcBMtBij+ad8tRiUwMc58vCTk
-	 uftL4EUKbout2aOunACSZFGwaPDzqXfWSneAD071UO+pKy5G0mVFLneVx7BxU+pw6l
-	 +vrRDqTkf8xV9M6j/ugfKbdLM3cCvkWzWcVD1mCYJKtNW0/zTDKGB5ac2hZ+9eWmG8
-	 qwZy8cqaxRbU3y3ayRKWjNOIjcGFJcN3Vbd+Jd05SYiiVDqWDFEWU5ImFyXfpDq1SX
-	 zROuJMXkUwLCfbZy97Q8T/XcScq5YEb+baPQXlrJywGNS4NoZgixJEPsfaJ21ismNj
-	 6wc42b3tHDT6Q==
+	b=itlaKQBMjCL9Ppf8aFxcOxsB+lsaxNmeDUDUObpwNKqsEnj+AQrdTdj42RR8woTp3
+	 F6QFSqQpwKM28G7/8b5jXYZWFoKctiFGCKyTd0/S98noBTpX/a8ezNYYIRJQi9qTyA
+	 wY4yL4g8+bjvFCGSQBSML5E2Wz4H31K3xaD8uHLO7wtQAnAyFg6swgiLrNp7J9RCZW
+	 ZXWYxffdYHDWXBJO1+AykkyT0y15JIOsxZQ96PcZeHXs63N9hRb+jIfheFeRBiCIC2
+	 dIs1cJPLlIhCKwnsD5kkquVXIipT6h6LX9kNldAZdDRP4Cfwc5g7mKNvVStLxTIAoK
+	 V1z6E5rn57QqQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -48,12 +48,12 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 05/28] fast_dput(): handle underflows gracefully
-Date: Mon, 22 Jan 2024 10:14:31 -0500
-Message-ID: <20240122151521.996443-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 04/24] fast_dput(): handle underflows gracefully
+Date: Mon, 22 Jan 2024 10:16:18 -0500
+Message-ID: <20240122151659.997085-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240122151521.996443-1-sashal@kernel.org>
-References: <20240122151521.996443-1-sashal@kernel.org>
+In-Reply-To: <20240122151659.997085-1-sashal@kernel.org>
+References: <20240122151659.997085-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,7 +62,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.208
+X-stable-base: Linux 5.4.267
 Content-Transfer-Encoding: 8bit
 
 From: Al Viro <viro@zeniv.linux.org.uk>
@@ -108,10 +108,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/fs/dcache.c b/fs/dcache.c
-index ea0485861d93..976c7474d62a 100644
+index b2a7f1765f0b..43864a276faa 100644
 --- a/fs/dcache.c
 +++ b/fs/dcache.c
-@@ -759,12 +759,12 @@ static inline bool fast_dput(struct dentry *dentry)
+@@ -740,12 +740,12 @@ static inline bool fast_dput(struct dentry *dentry)
  	 */
  	if (unlikely(ret < 0)) {
  		spin_lock(&dentry->d_lock);
@@ -127,7 +127,7 @@ index ea0485861d93..976c7474d62a 100644
  	}
  
  	/*
-@@ -815,6 +815,7 @@ static inline bool fast_dput(struct dentry *dentry)
+@@ -796,6 +796,7 @@ static inline bool fast_dput(struct dentry *dentry)
  	 * else could have killed it and marked it dead. Either way, we
  	 * don't need to do anything else.
  	 */
