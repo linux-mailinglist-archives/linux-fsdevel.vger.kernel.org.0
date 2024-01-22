@@ -1,104 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-8459-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA883836E36
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 18:47:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1148836EA4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 18:59:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6399328DF7E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 880761F2D10E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8BB84BA90;
-	Mon, 22 Jan 2024 17:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2E205101F;
+	Mon, 22 Jan 2024 17:22:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VfYbAlV6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Elw7hBqy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F834A9BC;
-	Mon, 22 Jan 2024 17:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74DC364A8
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 17:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705943554; cv=none; b=Bh7sXgf33Ijs/xEkNj329hwBpU1nE5MmISs+ZCy9MVsOdobRd7/pR1FBxMkwDn3nNMuawGMBFmLxkBml1bIrpS6UaauK10+0VSv6X0kRDo7pN9Ok52vmWOpPcVegudTANLwQP0/LPHfWDES7rlAg+CZt9+P9r//baL8yvtvxMiE=
+	t=1705944161; cv=none; b=Qk6UCRV8kf5DilFzRL4xFLBp4sVA2CdF71s2yqLXNOUOFr4ZMbb5EYSoL0re2+n2ROs36JaJggEXAZTi8V7e32s6J4EApDLhnDH+8bHEW/lBw9ZYUgcB5lB/6eK8wFHGEfdBjKZs0UfnliZLwiElDMYv5ewhmQpLgThqrcmpLyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705943554; c=relaxed/simple;
-	bh=1e0c7h65C7Y9VUpkVImG0ZmRYTbDxV8hwPaGMflR99E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TDLDUmIT/LhrszVckGPzEny7HyDlP0DCPGjkuC/CVkrwCisQghAghd1P+TPkTGY2jxwRBWR5Jrvuogm35kUTq71qc/ee/NwBEMmfZTfOxGu5FslXg1x4ZT56kIa6Tx60wyNov/3A21ZgQJmGzdgriJoRBcpslRmC47FIWp0BXkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VfYbAlV6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=OocAKhFNnuVz1CoUH7OyvE7TA9nNw+y+skld+4cN6dY=; b=VfYbAlV6K7QQZG9f9GC3tkEAyb
-	TEf8WQcrE1W2XPzRzNH8asCUM7MGml3nQQ2CtWuQHQtvubEJJvrTO/ryyGS5xqBdBcN9EJ0imzMWe
-	BXARefnokht4DEYts66ZIP7bchDA8iRMXFfsFygJ9t6FeFL1YTpSZyICQDl2yjVijDKCZJB1qpzQb
-	MX9td3CHd7INswtLh0wMUT7Cptr0dcMDaPsgmWO4vKmpSPK58tITReXY9L6FI8WpPVuLf7WbxJIiS
-	3ma82UEZ53WQp6PLnWaTD5y81ZoiCyoBvjZ233XsboBa8aDvabNvtwNLei4Cil7Bb/h2St041mwzN
-	PVa5GRzw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rRxqU-00000000Uz8-1SZ5;
-	Mon, 22 Jan 2024 17:12:26 +0000
-Date: Mon, 22 Jan 2024 17:12:26 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Eric Dumazet <edumazet@google.com>
-Cc: "zhangpeng (AS)" <zhangpeng362@huawei.com>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
-	akpm@linux-foundation.org, davem@davemloft.net, dsahern@kernel.org,
-	kuba@kernel.org, pabeni@redhat.com, arjunroy@google.com,
-	wangkefeng.wang@huawei.com
-Subject: Re: SECURITY PROBLEM: Any user can crash the kernel with TCP ZEROCOPY
-Message-ID: <Za6h-tB7plgKje5r@casper.infradead.org>
-References: <20240119092024.193066-1-zhangpeng362@huawei.com>
- <Zap7t9GOLTM1yqjT@casper.infradead.org>
- <5106a58e-04da-372a-b836-9d3d0bd2507b@huawei.com>
- <Za6SD48Zf0CXriLm@casper.infradead.org>
- <CANn89iL4qUXsVDRNGgBOweZbJ6ErWMsH+EpOj-55Lky8JEEhqQ@mail.gmail.com>
+	s=arc-20240116; t=1705944161; c=relaxed/simple;
+	bh=BK4/OCHtn9ZOarkwg23KKNRxOtPDGGPmaFy8ysvVxZ8=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=G/83Jn60SEeSAHIddZq3tZfaPhmp2nnIYOJuEl5PuhvuaqTNb4DRZUGEZFCWC19WHv10yi4ERYgsjvEx+nqh7lpM+7TUtF/kjraqXkH8069TO/rx+XZMj9KTPXSdE2bMmhwfsDEZR+wP214cx02r8CdG7VJwrsqPOnNfKy789C8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Elw7hBqy; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1705944159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dyL8HkrfuDx15VmmUYeIG1cK/wCgWeV9TZeHPttzNv8=;
+	b=Elw7hBqygp+L/3dAmcCElBWsjPP/GyQ7+plyiK+G80DqAzMSjZsCNufhyLX4tDh2z3hYUx
+	6STzNJQjDULR71Jk6aa6e1x7+oKDJWwPm4Y/Wfd/Ckl0cwiY2/gSfpfv9gcaFvOtavshMs
+	0PkN62unhPo+IIHM9Pm6sD5VkN4QauA=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-692-HhQdjMHnNSCeJf9HAxnqqg-1; Mon, 22 Jan 2024 12:22:35 -0500
+X-MC-Unique: HhQdjMHnNSCeJf9HAxnqqg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A236285A597;
+	Mon, 22 Jan 2024 17:22:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id B2C10C0FDCA;
+	Mon, 22 Jan 2024 17:22:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <c9091df8de30a2c79364698b72e67834d0ac87c7.camel@kernel.org>
+References: <c9091df8de30a2c79364698b72e67834d0ac87c7.camel@kernel.org> <20240122123845.3822570-1-dhowells@redhat.com> <20240122123845.3822570-2-dhowells@redhat.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
+    Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+    linux-kernel@vger.kernel.org, linux-cachefs@redhat.com
+Subject: Re: [PATCH 01/10] netfs: Don't use certain internal folio_*() functions
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iL4qUXsVDRNGgBOweZbJ6ErWMsH+EpOj-55Lky8JEEhqQ@mail.gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3931925.1705944151.1@warthog.procyon.org.uk>
+Date: Mon, 22 Jan 2024 17:22:32 +0000
+Message-ID: <3931926.1705944152@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-On Mon, Jan 22, 2024 at 05:30:18PM +0100, Eric Dumazet wrote:
-> On Mon, Jan 22, 2024 at 5:04 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > I'm disappointed to have no reaction from netdev so far.  Let's see if a
-> > more exciting subject line evinces some interest.
+Jeff Layton <jlayton@kernel.org> wrote:
+
+> > Filesystems should not be using folio->index not folio_index(folio) and
 > 
-> Hmm, perhaps some of us were enjoying their weekend ?
+> I think you mean "should be" here.
 
-I am all in favour of people taking time off!  However the report came
-in on Friday at 9am UTC so it had been more than a work day for anyone
-anywhere in the world without response.
+Ach.  I forgot to update the patch descriptions!
 
-> I don't really know what changed recently, all I know is that TCP zero
-> copy is for real network traffic.
-> 
-> Real trafic uses order-0 pages, 4K at a time.
-> 
-> If can_map_frag() needs to add another safety check, let's add it.
+David
 
-So it's your opinion that people don't actually use sendfile() from
-a local file, and we can make this fail to zerocopy?  That's good
-because I had a slew of questions about what expectations we had around
-cache coherency between pages mapped this way and write()/mmap() of
-the original file.  If we can just disallow this, we don't need to
-have a discussion about it.
-
-> syzbot is usually quite good at bisections, was a bug origin found ?
-
-I have the impression that Huawei run syzkaller themselves without
-syzbot.  I suspect this bug has been there for a good long time.
-Wonder why nobody's found it before; it doesn't seem complicated for a
-fuzzer to stumble into.
 
