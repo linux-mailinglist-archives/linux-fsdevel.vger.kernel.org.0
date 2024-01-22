@@ -1,487 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-8435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A494F8364E3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 14:57:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB05483658F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 15:36:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF5E31C21FC3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 13:57:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C9D01F23F7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 14:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF283D0DA;
-	Mon, 22 Jan 2024 13:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C5C3D551;
+	Mon, 22 Jan 2024 14:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EHUdOVzg"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ezw9RlgD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930B33D546;
-	Mon, 22 Jan 2024 13:56:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737C43D54C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 14:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705931817; cv=none; b=D4jnhRDuR+fSgCj1eCsAZysv3gYnYArhLzZGufqVaSo7Uc9ZeX5XlmHiTvn5uiw8H5wyGxXeOXAtc+AERriaj61LoALCrS+cXSwk199a/MU55RocHzv54jm2VR+B1tOEa2v0s7RqcXvqLrqZrKkg9wpqRwqcFniq3zEvQVxdyco=
+	t=1705934187; cv=none; b=bX3K4dORP1LXHr5S3MObe8r/lDCMLqiQNgc/fY1U5fCw8lHC9J1uBvgdpysPhqHAhCqqzWVafLolHAsot2gRaFch7Vj+y3bqVOtg1x4Lk5xxLGwZgKqyTppuNaKskvt3kSYJTq8M8IZ/dXVyRtu1q+dhn+2ZR2cVNBy3xTdO8pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705931817; c=relaxed/simple;
-	bh=ERv68mc0kAOOBrrsOQrSCKbNHTqfl4niUvp0iKwBJmk=;
-	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To:References; b=WTXHL0+cRYAys/r9vfL5ZbDnOySR8lfiKyQ2Qcf2c9ctIBGcW2YMUgd3/Zq66mOKu+LW6Q50feHxg4GWcE+uhN5DUtKb2hGE4gyqD3wgofj5OhuUrwg/M8n5SyshudPjqcv8LjKKDVeUjtl6zP9NnZNT+oOAmoyQzOrp52Lm3gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EHUdOVzg; arc=none smtp.client-ip=210.118.77.12
+	s=arc-20240116; t=1705934187; c=relaxed/simple;
+	bh=hWwnmdsaDIltjO/kAhSmxJjrD61/SefdAICjMEeaDQA=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type:
+	 References; b=oVnx+jh2BlkW7KEMcEi76BCwfaJB5KrOCZdzv2YY+dyrgD3dvBlouDl0R1Oorl5HHAnUANXZRQB7gJ+ZKrsA2mdhIMpmsKhGKZK3FeLnyDX1T0J/e5xU8cZ42h0E8LaPD+zn7gjK8hnSsba9YmD5wTAf89buXDg3nI0rpv0wMns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ezw9RlgD; arc=none smtp.client-ip=210.118.77.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240122135646euoutp02b2c04da39b6dd049ed94f6df9fa59afd~sr-CHuuo00164801648euoutp02M;
-	Mon, 22 Jan 2024 13:56:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240122135646euoutp02b2c04da39b6dd049ed94f6df9fa59afd~sr-CHuuo00164801648euoutp02M
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240122143621euoutp0216a17b8133534765466bacc4612cb29f~sshmDYNCD1302713027euoutp02H
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 14:36:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240122143621euoutp0216a17b8133534765466bacc4612cb29f~sshmDYNCD1302713027euoutp02H
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1705931806;
-	bh=lwXHUo3YOPn1e8acuxHZCDouH7gmWyeeZ78kTv3eatQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=EHUdOVzg5Cm7vMHaYYez4LrCYX/E6YDM9hvpDrupuOcyM8AA03wmS4fz67K21J6Cn
-	 I7tzPGfEEhjICgFLgQcbyvVX2kf1/jzKqdOBFPkQEcYNV3qBCrvX3NVJ0jdFbl+DoT
-	 mBhFBXjfkt8VfpOo3cHFRjDzndFt4glaN5H6aqV4=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	s=mail20170921; t=1705934181;
+	bh=NDzSNzUJOtudQVOrepQlpxa4rhFiebnysL6HB30n4Mg=;
+	h=Date:To:CC:Reply-To:From:Subject:References:From;
+	b=ezw9RlgD5WyRMZqzRUThh6JhtqSV4kGHHA+Rh51/a7NlIb/AaAfG0yJBv4BjiQJub
+	 SfYn/O/36EzgXHda3ges1IQQSQ4258XW/7OW1BsOLICi/VGxb61RRQnTHHDzN68AaQ
+	 lDuBgBo3lSEw8nAlz4DrVHoyGBWVwfIXsHJ0v5wA=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240122135646eucas1p18bf3873c150cdec6b7b96e195e8415e8~sr-B4F3PS1433914339eucas1p1A;
-	Mon, 22 Jan 2024 13:56:46 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id 58.00.09539.D147EA56; Mon, 22
-	Jan 2024 13:56:46 +0000 (GMT)
+	20240122143621eucas1p1bae07a8040ccdcdbf615621eeba15332~sshlph4ok2362223622eucas1p18;
+	Mon, 22 Jan 2024 14:36:21 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id D2.39.09552.46D7EA56; Mon, 22
+	Jan 2024 14:36:20 +0000 (GMT)
 Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
 	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240122135645eucas1p124f0705306531c0355ad222391c83e8b~sr-BRveqT2326523265eucas1p1e;
-	Mon, 22 Jan 2024 13:56:45 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	20240122143620eucas1p1017072128a3b497fd95b796ebaad71a2~sshlT8kSP0249002490eucas1p1B;
+	Mon, 22 Jan 2024 14:36:20 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
 	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240122135645eusmtrp1acfbecd5a701c4c205fa636bdc1b2dd3~sr-BQ3ySJ0064000640eusmtrp1_;
-	Mon, 22 Jan 2024 13:56:45 +0000 (GMT)
-X-AuditID: cbfec7f2-52bff70000002543-7c-65ae741d492e
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 83.51.10702.D147EA56; Mon, 22
-	Jan 2024 13:56:45 +0000 (GMT)
+	20240122143620eusmtrp1315c8ac6473241dd298d711659781130~sshlRR2Do2588225882eusmtrp1m;
+	Mon, 22 Jan 2024 14:36:20 +0000 (GMT)
+X-AuditID: cbfec7f5-83dff70000002550-a0-65ae7d64721d
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 78.F2.09146.46D7EA56; Mon, 22
+	Jan 2024 14:36:20 +0000 (GMT)
 Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240122135645eusmtip2bc20b6093e3b90c9e046a19826774474~sr-A_SoW81403014030eusmtip2d;
-	Mon, 22 Jan 2024 13:56:45 +0000 (GMT)
-Received: from localhost (106.110.32.133) by CAMSVWEXC02.scsc.local
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240122143620eusmtip117218ec26851728e8b496272f999794d~sshlD4nXc0437404374eusmtip17;
+	Mon, 22 Jan 2024 14:36:20 +0000 (GMT)
+Received: from [106.110.32.65] (106.110.32.65) by CAMSVWEXC02.scsc.local
 	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
-	Mon, 22 Jan 2024 13:56:44 +0000
-Date: Mon, 22 Jan 2024 14:56:45 +0100
-From: Joel Granados <j.granados@samsung.com>
-To: Huang Yiwei <quic_hyiwei@quicinc.com>
-CC: <rostedt@goodmis.org>, <mhiramat@kernel.org>, <mark.rutland@arm.com>,
-	<mcgrof@kernel.org>, <keescook@chromium.org>,
-	<mathieu.desnoyers@efficios.com>, <corbet@lwn.net>,
-	<linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<quic_bjorande@quicinc.com>, <quic_tsoni@quicinc.com>,
-	<quic_satyap@quicinc.com>, <quic_aiquny@quicinc.com>, <kernel@quicinc.com>,
-	Ross Zwisler <zwisler@google.com>, Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH v3] tracing: Support to dump instance traces by
- ftrace_dump_on_oops
-Message-ID: <20240122135645.danb777cc5e7i77z@localhost>
+	Mon, 22 Jan 2024 14:36:19 +0000
+Message-ID: <6b93a509-fbaa-4311-8ee9-fd98e2fd2546@samsung.com>
+Date: Mon, 22 Jan 2024 15:36:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="b6jh6rk622azxbdb"
-Content-Disposition: inline
-In-Reply-To: <20240119080824.907101-1-quic_hyiwei@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Matthew Wilcox <willy@infradead.org>
+CC: <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
+	<hughd@google.com>, <slava@dubeyko.com>, <kirill.shutemov@linux.intel.com>,
+	<mcgrof@kernel.org>, <hare@suse.com>, "Darrick J. Wong" <djwong@kernel.org>
+Reply-To: <20231206204442.771430-1-willy@infradead.org>
+From: Pankaj Raghav <p.raghav@samsung.com>
+Subject: [PATCH] mm: Support order-1 folios in the page cache
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) To
 	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDJsWRmVeSWpSXmKPExsWy7djPc7pyJetSDT5MZrZ4cqCd0WJZg6rF
-	me5ci1nrpjBaLGxbwmKxZ+9JFovLu+awWRxZf5bFYun1i0wWm8+eYba4MeEpo8Xi5WoW/d//
-	Mlk0Pp7BaPH59m9mi527NzFZ3L69k9ViX8cDJostnx8wOQh7rJm3htFjdsNFFo+lp9+webTs
-	u8XusWBTqcfCT19ZPTat6mTzWNw3mdVj4p46j8+b5AK4orhsUlJzMstSi/TtErgypvz8xFjw
-	Obli9alGlgbGu4FdjJwcEgImEk9a2tm7GLk4hARWMEqs6JoC5XxhlGi6OZkRwvnMKLHz1Bt2
-	mJbD/e3MEInljBI9P6aBJcCq3rfbQCS2MEo8v7EELMEioCrRMqmBEcRmE9CROP/mDjOILSKg
-	KXHqxE+wOLNAN4vEjysaILawQKTE2wl3wOK8AuYSTQ/fMEHYghInZz5h6WLkAKqvkJh9LxTC
-	lJZY/o8DpIJTwE7i4oReFog7lSS+vullhbBrJU5tucUEcpqEQBeXxJmvL6GKXCTedD+BKhKW
-	eHV8C9STMhKnJ/ewQDRMZpTY/+8DO4SzmlFiWeNXJogqa4mWK0+gOhwlps6dwgpykYQAn8SN
-	t4IQf/FJTNo2nRkizCvR0SYEUa0msfreG5YJjMqzkHw2C+GzWQifzQKboyOxYPcnNgxhbYll
-	C18zQ9i2EuvWvWdZwMi+ilE8tbQ4Nz212DAvtVyvODG3uDQvXS85P3cTIzDRnv53/NMOxrmv
-	PuodYmTiYDzEqALU/GjD6guMUix5+XmpSiK8NyTXpQrxpiRWVqUW5ccXleakFh9ilOZgURLn
-	VU2RTxUSSE8sSc1OTS1ILYLJMnFwSjUwmbIyrl8RqKq4t0grJd5n6YWSoPMcHo0sJ0MPH6s0
-	331dwqKL/8S/k4lMi77fPKPS3PHGqM/5waJ4s2bu0H7JDF+939umTW0UtWX8Vnu3pOVb/2/5
-	d5FrDnzu2RjBwFxxdccTY4PCecyZ1ZMSDqpOrrooOHn3e17jifMLWPY//bYzo+QIm/R9aenZ
-	+yarp7vuTH/pPlVWydJqfpxH25ueq3FfDz9KaORmYjDoezpbwL9aIdBeN35HM+faPkaRcPPy
-	+x/ne0WUPPk3VSbdyWran2tTCtM/h245+CWAvXjXl4SA1zpW6wMynS73CdYknxeTSJa+zuVu
-	JXj/j7uRm0pS1emktKP/+hIyD/349UWJpTgj0VCLuag4EQCCRfaeLwQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFKsWRmVeSWpSXmKPExsVy+t/xe7qyJetSDQ41SVk8OdDOaLGsQdXi
-	THeuxax1UxgtFrYtYbHYs/cki8XlXXPYLI6sP8tisfT6RSaLzWfPMFvcmPCU0WLxcjWL/u9/
-	mSwaH89gtPh8+zezxc7dm5gsbt/eyWqxr+MBk8WWzw+YHIQ91sxbw+gxu+Eii8fS02/YPFr2
-	3WL3WLCp1GPhp6+sHptWdbJ5LO6bzOoxcU+dx+dNcgFcUXo2RfmlJakKGfnFJbZK0YYWRnqG
-	lhZ6RiaWeobG5rFWRqZK+nY2Kak5mWWpRfp2CXoZW+ZvZi34mFzx+dsatgbG24FdjJwcEgIm
-	Eof725m7GLk4hASWMkqsOL6dESIhI7Hxy1VWCFtY4s+1LjaIoo+MEpderGGBcLYwSmw69JsJ
-	pIpFQFWiZVIDWDebgI7E+Td3mEFsEQFNiVMnfoLFmQW6WSR+XNEAsYUFIiXeTrgDFucVMJdo
-	evgGbI6QwERGibNbdCHighInZz5hgegtk3i3up+9i5EDyJaWWP6PAyTMKWAncXFCLwvEoUoS
-	X9/0Qh1dK/H57zPGCYzCs5BMmoVk0iyESRBhLYkb/14yYQhrSyxb+JoZwraVWLfuPcsCRvZV
-	jCKppcW56bnFRnrFibnFpXnpesn5uZsYgQln27GfW3Ywrnz1Ue8QIxMH4yFGFaDORxtWX2CU
-	YsnLz0tVEuG9IbkuVYg3JbGyKrUoP76oNCe1+BCjKTAQJzJLiSbnA1NhXkm8oZmBqaGJmaWB
-	qaWZsZI4r2dBR6KQQHpiSWp2ampBahFMHxMHp1QDU5Vm9w+Haf/yvqexXtk7SThXRepKx8TH
-	xWEXP5yc3tt5caM2959ZHG2zAz4mL7xiLdx6sbgvKn/TJvOWDxOtncvmWBhvq9xSoJ5jcbhb
-	8deUhdN+7923UyjZ0f/H7qZLIpuNLa3mzzVkuWBpVyqx/7bGnQsvbv9YV/jyVPwPj6M39+6Q
-	idHUXN0tvOZT3tSAPd+d1JMlj9/d6yYfcjyEwWxvtsFUKbUDs3q38MQt+lMWuVT/5yTW+26n
-	xTvWVrZxvDTxV2iwrV/E/3ZL1eyDvSKHz/c9Uwr9sWDmxAwxwZYPt5vKF7vcDO4XvGayPenZ
-	kpi0A6kLmUodS93nbGOZvCwvs9+osTxw7RLHZ+ekgpRYijMSDbWYi4oTAWRivTfNAwAA
-X-CMS-MailID: 20240122135645eucas1p124f0705306531c0355ad222391c83e8b
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SfVCLcRz32/O0Pc2tHkP7Kuwac+TMS+GJZNHxuBOF83pexp4StbqtKG7k
+	1J3CNsVhdczhSlKa9bKIk7tSojsmMy51erm6iMbFRbE9cf33ue/n5ff9fO9HYMJiD18iVpXE
+	qFWKOAmXj5fX/myao9QWM/PSWkKoV+1elKm3mkt19Otw6m1XHk49qK7HqZaiYQ/KbuhAVL8l
+	l0MN/sjjyj3pxyW9OG0yJ9P3CgJoc2Emlzb3Z/PoK/VRdInlNU47zVMjie38ECUTF3uIUc8N
+	3cPfb7t3A0u08lL0DVvS0KBHFvIkgAyCzowObhbiE0KyAEFuUSvPRQjJbwj015Qs4URgariI
+	/3OU5t5HLJGPwHEmA/1XtRif4KzdisD6QeDCAjIUTg1XcLIQQeCkFJ7qKHY8Duovt7vlE0kx
+	fHBccr+MkSJwtF91yyeQM6HXssAVj5HNCEprHuGuuZBcDAOmMBfkkgFwItPtHE8ug7aBJg6b
+	MgsyKgZHEsVQ8SkPY9f3h+y3fSPltdBgcXBc8UDmeELlkMn9LJDhkKWnWc146Kmz8Fg8GZ7l
+	nBk5w1HosA9irDf9762sJVzWuxR0jXEsDAPr3QMs9AL7p3HsNl6QXX4RMyCpcdQZjKOqG0cV
+	MI4qYEJ4IRIxyZr4GEYTqGIOyzSKeE2yKka2LyHejP5+qWdDdd8rUUHPV1kN4hCoBgGBSSYI
+	7JOKGaFAqUg9wqgTdquT4xhNDfIjcIlIIFWKGSEZo0hiDjJMIqP+x3IIT980jvfhhVt5bdKm
+	szDb5+jMjaqKxNCEhB5xsW/wev8L6Vpb1K0mfWDSkTel07wkIqszRWYr716XXXd7Q6FPYXiQ
+	uTlixvHosrYrkY2C05wImc/ASaHIb+90268Z6LngScvHTZ1mW7V8gXpf43vDjqoX3y58rn+f
+	XtbrvfPLu7AiOnd96vFmw67hKfpg6FoSKDdGODM735Q//cXP32nIX5s6tuR367na1ZNuUpU/
+	dKqbzpff7YvumKKObevfnDMUoYtWrXqYEuXX93Pza27sg/NVBcset/aJfbThkXkx8mmO5bdT
+	/Lu6V3Y/CpHKU4Orzk9Zs1Bbu9R7xVhT8Jay6UH+0ddfjbkkwTX7FfMDMLVG8QeTviJPwQMA
+	AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBIsWRmVeSWpSXmKPExsVy+t/xu7optetSDa4/ULS4/ITPYsGbvWwW
+	Tz/1sVjcfD6HxWLP3pMsFvfW/Ge1uDHhKaPFpy2zmSx+/5jD5sDpcXD9GxaPBZtKPTav0PLY
+	tKqTzWPTp0nsHvNOBnqs33KVxePzJrkAjig9m6L80pJUhYz84hJbpWhDCyM9Q0sLPSMTSz1D
+	Y/NYKyNTJX07m5TUnMyy1CJ9uwS9jCublzAX7GSv6D8V3sD4m7WLkZNDQsBEYuPs3YxdjFwc
+	QgJLGSXePG1kg0jISGz8chWqSFjiz7UusLiQwEdGid+/3SEadjJKXD74khEkwStgJ9HxfztT
+	FyMHB4uAqsSJPguIsKDEyZlPWEBsUQF5ifu3ZrCD2MwC4hK3nswHKxcR0JB4s8UIInyNUeLD
+	u1KQsJCAucT3BY4gJpuAlkRjJ1ijsICtxMPv55kgqjUlWrf/hhooL7H97RxmiIMVJSbdfA91
+	fK3E57/PGCcwisxCcs8sJDfMQjJqFpJRCxhZVjGKpJYW56bnFhvqFSfmFpfmpesl5+duYgRG
+	8bZjPzfvYJz36qPeIUYmDsZDjBIczEoivDck16UK8aYkVlalFuXHF5XmpBYfYjQFhslEZinR
+	5HxgGskriTc0MzA1NDGzNDC1NDNWEuf1LOhIFBJITyxJzU5NLUgtgulj4uCUamByeZKv+/jk
+	0uWL3rB+8FqcklIsOT/b6a7SzSvWSs0vmmpmnl8yo28Jo9XJb9H5lad//52anyGxpkTyxczX
+	Ime3ztu/dZakY0W6sJ923L3U9ZMsFu7U+n+aoef015y7cW7b8pkUwwQrjlmVTTGdaSd4+eSP
+	2mi5WUtL9/Geqd418f2iaWZntn5PEWlwjg4/MlVjxeljl2+mZR3YpjzPeWXjpksRR8+3Gv2+
+	NGHK90bF1IUMy2UWnVtt53uD8eXKegvbbTuzF5jVn9phHsxy4fp1/98hcyTWhG/p5fTdJdv6
+	+5O1vdGUo7JND440p91mjmP5FiW3/GPciudBrw8cMo1hvh6hyjerb+qbzsX65v+rTiqxFGck
+	GmoxFxUnAgBU84zFawMAAA==
+X-CMS-MailID: 20240122143620eucas1p1017072128a3b497fd95b796ebaad71a2
 X-Msg-Generator: CA
-X-RootMTR: 20240119080907eucas1p12c357eae722d3a60d82c66b81cfc05ba
+X-RootMTR: 20240122143620eucas1p1017072128a3b497fd95b796ebaad71a2
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20240119080907eucas1p12c357eae722d3a60d82c66b81cfc05ba
-References: <CGME20240119080907eucas1p12c357eae722d3a60d82c66b81cfc05ba@eucas1p1.samsung.com>
-	<20240119080824.907101-1-quic_hyiwei@quicinc.com>
+X-CMS-RootMailID: 20240122143620eucas1p1017072128a3b497fd95b796ebaad71a2
+References: <CGME20240122143620eucas1p1017072128a3b497fd95b796ebaad71a2@eucas1p1.samsung.com>
 
---b6jh6rk622azxbdb
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> Folios of order 1 have no space to store the deferred list.  This is
+> not a problem for the page cache as file-backed folios are never
+> placed on the deferred list.  All we need to do is prevent the core
+> MM from touching the deferred list for order 1 folios and remove the
+> code which prevented us from allocating order 1 folios.
+>
+> Link: https://lore.kernel.org/linux-mm/90344ea7-4eec-47ee-5996-0c22f42d6a6a@google.com/
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
-On Fri, Jan 19, 2024 at 04:08:24PM +0800, Huang Yiwei wrote:
-> Currently ftrace only dumps the global trace buffer on an OOPs. For
-> debugging a production usecase, instance trace will be helpful to
-> check specific problems since global trace buffer may be used for
-> other purposes.
->=20
-> This patch extend the ftrace_dump_on_oops parameter to dump a specific
-> trace instance:
->=20
->   - ftrace_dump_on_oops=3D0: as before -- don't dump
->   - ftrace_dump_on_oops[=3D1]: as before -- dump the global trace buffer
->   on all CPUs
->   - ftrace_dump_on_oops=3D2 or =3Dorig_cpu: as before -- dump the global
->   trace buffer on CPU that triggered the oops
->   - ftrace_dump_on_oops=3D<instance_name>: new behavior -- dump the
->   tracing instance matching <instance_name>
->=20
-> Also, the sysctl node can handle the input accordingly.
->=20
-> Cc: Ross Zwisler <zwisler@google.com>
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> Signed-off-by: Huang Yiwei <quic_hyiwei@quicinc.com>
-> ---
-> Link: https://lore.kernel.org/linux-trace-kernel/20221209125310.450aee97@=
-gandalf.local.home/
->=20
->  .../admin-guide/kernel-parameters.txt         |  9 +--
->  Documentation/admin-guide/sysctl/kernel.rst   | 11 ++--
->  include/linux/ftrace.h                        |  4 +-
->  include/linux/kernel.h                        |  1 +
->  kernel/sysctl.c                               |  4 +-
->  kernel/trace/trace.c                          | 64 ++++++++++++++-----
->  kernel/trace/trace_selftest.c                 |  2 +-
->  7 files changed, 65 insertions(+), 30 deletions(-)
->=20
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentat=
-ion/admin-guide/kernel-parameters.txt
-> index a36cf8cc582c..b3aa533253f1 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -1559,12 +1559,13 @@
->  			The above will cause the "foo" tracing instance to trigger
->  			a snapshot at the end of boot up.
-> =20
-> -	ftrace_dump_on_oops[=3Dorig_cpu]
-> +	ftrace_dump_on_oops[=3Dorig_cpu | =3D<instance>]
->  			[FTRACE] will dump the trace buffers on oops.
-> -			If no parameter is passed, ftrace will dump
-> -			buffers of all CPUs, but if you pass orig_cpu, it will
-> +			If no parameter is passed, ftrace will dump global
-> +			buffers of all CPUs, if you pass orig_cpu, it will
->  			dump only the buffer of the CPU that triggered the
-> -			oops.
-> +			oops, or specific instance will be dumped if instance
-> +			name is passed.
-> =20
->  	ftrace_filter=3D[function-list]
->  			[FTRACE] Limit the functions traced by the function
-> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/=
-admin-guide/sysctl/kernel.rst
-> index 6584a1f9bfe3..ecf036b63c48 100644
-> --- a/Documentation/admin-guide/sysctl/kernel.rst
-> +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> @@ -296,11 +296,12 @@ kernel panic). This will output the contents of the=
- ftrace buffers to
->  the console.  This is very useful for capturing traces that lead to
->  crashes and outputting them to a serial console.
-> =20
-> -=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> -0 Disabled (default).
-> -1 Dump buffers of all CPUs.
-> -2 Dump the buffer of the CPU that triggered the oops.
-> -=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +0           Disabled (default).
-> +1           Dump buffers of all CPUs.
-> +2(orig_cpu) Dump the buffer of the CPU that triggered the oops.
-> +<instance>  Dump the specific instance buffer.
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> =20
-> =20
->  ftrace_enabled, stack_tracer_enabled
-> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> index e8921871ef9a..f20de4621ec1 100644
-> --- a/include/linux/ftrace.h
-> +++ b/include/linux/ftrace.h
-> @@ -1151,7 +1151,9 @@ static inline void unpause_graph_tracing(void) { }
->  #ifdef CONFIG_TRACING
->  enum ftrace_dump_mode;
-> =20
-> -extern enum ftrace_dump_mode ftrace_dump_on_oops;
-> +#define MAX_TRACER_SIZE		100
-> +extern char ftrace_dump_on_oops[];
-> +extern enum ftrace_dump_mode get_ftrace_dump_mode(void);
->  extern int tracepoint_printk;
-> =20
->  extern void disable_trace_on_warning(void);
-> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-> index d9ad21058eed..de4a76036372 100644
-> --- a/include/linux/kernel.h
-> +++ b/include/linux/kernel.h
-> @@ -255,6 +255,7 @@ enum ftrace_dump_mode {
->  	DUMP_NONE,
->  	DUMP_ALL,
->  	DUMP_ORIG,
-> +	DUMP_INSTANCE,
->  };
-> =20
->  #ifdef CONFIG_TRACING
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 157f7ce2942d..81cc974913bb 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -1710,9 +1710,9 @@ static struct ctl_table kern_table[] =3D {
->  	{
->  		.procname	=3D "ftrace_dump_on_oops",
->  		.data		=3D &ftrace_dump_on_oops,
-> -		.maxlen		=3D sizeof(int),
-> +		.maxlen		=3D MAX_TRACER_SIZE,
->  		.mode		=3D 0644,
-> -		.proc_handler	=3D proc_dointvec,
-> +		.proc_handler	=3D proc_dostring,
->  	},
->  	{
->  		.procname	=3D "traceoff_on_warning",
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index a0defe156b57..9a76a278e5c3 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -130,9 +130,10 @@ cpumask_var_t __read_mostly	tracing_buffer_mask;
->   * /proc/sys/kernel/ftrace_dump_on_oops
->   * Set 1 if you want to dump buffers of all CPUs
->   * Set 2 if you want to dump the buffer of the CPU that triggered oops
-> + * Set instance name if you want to dump the specific trace instance
->   */
-> -
-> -enum ftrace_dump_mode ftrace_dump_on_oops;
-> +/* Set to string format zero to disable by default */
-> +char ftrace_dump_on_oops[MAX_TRACER_SIZE] =3D "0";
-> =20
->  /* When set, tracing will stop when a WARN*() is hit */
->  int __disable_trace_on_warning;
-> @@ -178,7 +179,6 @@ static void ftrace_trace_userstack(struct trace_array=
- *tr,
->  				   struct trace_buffer *buffer,
->  				   unsigned int trace_ctx);
-> =20
-> -#define MAX_TRACER_SIZE		100
->  static char bootup_tracer_buf[MAX_TRACER_SIZE] __initdata;
->  static char *default_bootup_tracer;
-> =20
-> @@ -201,19 +201,32 @@ static int __init set_cmdline_ftrace(char *str)
->  }
->  __setup("ftrace=3D", set_cmdline_ftrace);
-> =20
-> +enum ftrace_dump_mode get_ftrace_dump_mode(void)
-> +{
-> +	if (!strcmp("0", ftrace_dump_on_oops))
-Would using a strncmp be better in this case? And this question goes for
-all the strcmp in the patch. Something like strncmp("0",
-ftrace_dump_on_oops, 1); when they are equal, it would avoid 2
-assignments and two comparisons. Also might avoid runaway comparisons if
-the first string constant changes in the future.
+This is something I was looking forward to while developing the LBS support for XFS.
 
-Or maybe strncmp("0", ftrace_dump_on_oops, 2); if you want to check if
-they are both null terminated.
+As I am preparing the next version of LBS patches for XFS, I could add this patch on top
+and start running fstest for 8k block size on a system with 4k page size. I will let you
+know if something blows up.
 
-> +		return DUMP_NONE;
-> +	else if (!strcmp("1", ftrace_dump_on_oops))
-> +		return DUMP_ALL;
-> +	else if (!strcmp("orig_cpu", ftrace_dump_on_oops) ||
-> +			!strcmp("2", ftrace_dump_on_oops))
-> +		return DUMP_ORIG;
-> +	else
-> +		return DUMP_INSTANCE;
-> +}
-> +
->  static int __init set_ftrace_dump_on_oops(char *str)
->  {
-> -	if (*str++ !=3D '=3D' || !*str || !strcmp("1", str)) {
-> -		ftrace_dump_on_oops =3D DUMP_ALL;
-> +	if (!*str) {
-> +		strscpy(ftrace_dump_on_oops, "1", MAX_TRACER_SIZE);
->  		return 1;
->  	}
-> =20
-> -	if (!strcmp("orig_cpu", str) || !strcmp("2", str)) {
-> -		ftrace_dump_on_oops =3D DUMP_ORIG;
-> -                return 1;
-> -        }
-> +	if (*str++ =3D=3D '=3D') {
-> +		strscpy(ftrace_dump_on_oops, str, MAX_TRACER_SIZE);
-> +		return 1;
-> +	}
-> =20
-> -        return 0;
-> +	return 0;
->  }
->  __setup("ftrace_dump_on_oops", set_ftrace_dump_on_oops);
-> =20
-> @@ -10085,14 +10098,16 @@ static struct notifier_block trace_die_notifier=
- =3D {
->  static int trace_die_panic_handler(struct notifier_block *self,
->  				unsigned long ev, void *unused)
->  {
-> -	if (!ftrace_dump_on_oops)
-> +	enum ftrace_dump_mode dump_mode =3D get_ftrace_dump_mode();
-> +
-> +	if (!dump_mode)
->  		return NOTIFY_DONE;
-> =20
->  	/* The die notifier requires DIE_OOPS to trigger */
->  	if (self =3D=3D &trace_die_notifier && ev !=3D DIE_OOPS)
->  		return NOTIFY_DONE;
-> =20
-> -	ftrace_dump(ftrace_dump_on_oops);
-> +	ftrace_dump(dump_mode);
-> =20
->  	return NOTIFY_DONE;
->  }
-> @@ -10133,12 +10148,12 @@ trace_printk_seq(struct trace_seq *s)
->  	trace_seq_init(s);
->  }
-> =20
-> -void trace_init_global_iter(struct trace_iterator *iter)
-> +static void trace_init_iter(struct trace_iterator *iter, struct trace_ar=
-ray *tr)
->  {
-> -	iter->tr =3D &global_trace;
-> +	iter->tr =3D tr;
->  	iter->trace =3D iter->tr->current_trace;
->  	iter->cpu_file =3D RING_BUFFER_ALL_CPUS;
-> -	iter->array_buffer =3D &global_trace.array_buffer;
-> +	iter->array_buffer =3D &tr->array_buffer;
-> =20
->  	if (iter->trace && iter->trace->open)
->  		iter->trace->open(iter);
-> @@ -10158,6 +10173,11 @@ void trace_init_global_iter(struct trace_iterato=
-r *iter)
->  	iter->fmt_size =3D STATIC_FMT_BUF_SIZE;
->  }
-> =20
-> +void trace_init_global_iter(struct trace_iterator *iter)
-> +{
-> +	trace_init_iter(iter, &global_trace);
-> +}
-> +
->  void ftrace_dump(enum ftrace_dump_mode oops_dump_mode)
->  {
->  	/* use static because iter can be a bit big for the stack */
-> @@ -10168,6 +10188,15 @@ void ftrace_dump(enum ftrace_dump_mode oops_dump=
-_mode)
->  	unsigned long flags;
->  	int cnt =3D 0, cpu;
-> =20
-> +	if (oops_dump_mode =3D=3D DUMP_INSTANCE) {
-> +		tr =3D trace_array_find(ftrace_dump_on_oops);
-> +		if (!tr) {
-> +			printk(KERN_TRACE "Instance %s not found\n",
-> +				ftrace_dump_on_oops);
-> +			return;
-> +		}
-> +	}
-> +
->  	/* Only allow one dump user at a time. */
->  	if (atomic_inc_return(&dump_running) !=3D 1) {
->  		atomic_dec(&dump_running);
-> @@ -10182,12 +10211,12 @@ void ftrace_dump(enum ftrace_dump_mode oops_dum=
-p_mode)
->  	 * If the user does a sysrq-z, then they can re-enable
->  	 * tracing with echo 1 > tracing_on.
->  	 */
-> -	tracing_off();
-> +	tracer_tracing_off(tr);
-> =20
->  	local_irq_save(flags);
-> =20
->  	/* Simulate the iterator */
-> -	trace_init_global_iter(&iter);
-> +	trace_init_iter(&iter, tr);
-> =20
->  	for_each_tracing_cpu(cpu) {
->  		atomic_inc(&per_cpu_ptr(iter.array_buffer->data, cpu)->disabled);
-> @@ -10200,6 +10229,7 @@ void ftrace_dump(enum ftrace_dump_mode oops_dump_=
-mode)
-> =20
->  	switch (oops_dump_mode) {
->  	case DUMP_ALL:
-> +	case DUMP_INSTANCE:
->  		iter.cpu_file =3D RING_BUFFER_ALL_CPUS;
->  		break;
->  	case DUMP_ORIG:
-> diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
-> index 529590499b1f..a9750a680324 100644
-> --- a/kernel/trace/trace_selftest.c
-> +++ b/kernel/trace/trace_selftest.c
-> @@ -768,7 +768,7 @@ static int trace_graph_entry_watchdog(struct ftrace_g=
-raph_ent *trace)
->  	if (unlikely(++graph_hang_thresh > GRAPH_MAX_FUNC_TEST)) {
->  		ftrace_graph_stop();
->  		printk(KERN_WARNING "BUG: Function graph tracer hang!\n");
-> -		if (ftrace_dump_on_oops) {
-> +		if (get_ftrace_dump_mode()) {
->  			ftrace_dump(DUMP_ALL);
->  			/* ftrace_dump() disables tracing */
->  			tracing_on();
-> --=20
-> 2.25.1
->=20
+I haven't seen any new version of this series, so I will use this patch as a starting point
+to test 8k filesystem blocksize.
 
---=20
-
-Joel Granados
-
---b6jh6rk622azxbdb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmWudBYACgkQupfNUreW
-QU/Zqwv/UjKk+jF6A+KqQnvRrJSXNadeNCtlKCzVBzNn0nEVBNZ5fxm5pSCAMhC6
-mvAYTUkLw1p/fS4xyo8NJnjdr2davTii/xgBi59VORZoSmoM9MIJV/g/3/WeTHZ7
-5gCMZT9EsknmkX2MawqdrFqqObCljB+B8s0NJLHeGyP0YDNnDvE901pihdcnMyYd
-UfGOAN536WT/8+3IMgzL09JS2xvdhLDlgcEd+II4pyQR67+GDz0KWqTbYW+3Dnv4
-yh04q0oK+KCTm2MLV/RaJ9H54yiI03cKviNHk/GmDObs1pIbUXHi5e8LyMxJIXhr
-rYBQjX7BWDBuXWJSwHxQ9UGXWmenFAk2qSXhL2s3JApjBm4p6+brWp0eEjMlkfjb
-BCJWsTRIpxgqo+6ElKUOubgUo5v7RAOqj5NnhBPn4vsmoFc5UHPMTUiy8ei6CeTD
-P7mI92IDyy/+eJ6pqCcJoSPfrOGP4kmblOIlSeakVI6AnnCL4qm+3m/Z4Y1fy4gS
-FzL7uGST
-=C0pm
------END PGP SIGNATURE-----
-
---b6jh6rk622azxbdb--
+-- 
+Regards,
+Pankaj
 
