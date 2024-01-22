@@ -1,125 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-8495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3EF183765E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 23:37:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2898C837754
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 00:03:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69F991F215AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 22:37:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F9B11C25558
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 23:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0674D122;
-	Mon, 22 Jan 2024 22:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC5A47A4B;
+	Mon, 22 Jan 2024 23:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q7hyQnCV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fyCnRa+M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2E324CB49
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 22:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EDE38381;
+	Mon, 22 Jan 2024 23:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705962789; cv=none; b=GjYYv02JcHXFXnphNIa1fAjOOfhLi1lpTt98G8XSNwhHzrILMHe3jdYIYkLWrvxLDo7z3mEX1eohd+OFI/5Nsz/qyTzfVkQbwtgI4xSqsbDjkn+pA2mTqEQFHopubQQKIzRZ/o/k24NY5OQpvjzRtbqHeVtZdDlb1q01g/SKC00=
+	t=1705964599; cv=none; b=lEEunRSzIgP/v6rBcbg3TijKPY7874/AbSateu6LBiPkzrNdA72Y4p6CFgB6NvW2u2NBvZNWAKwxlIaRXfxzT0zBpvgTSymuQZu/dqNV3UOJyRargeWqfpeHJKgV1svVXi+LWwJZasfm1qRfB8uXg8K6O0YTkRnBIEW08f7ujjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705962789; c=relaxed/simple;
-	bh=BGYCQmdxuK36T0p5PfoL1bkyJdAK5JMIMZ5+TCMUjLU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=URlANSckTNYzEipp2piwu9MiQdV/tjX/srCupKHdTngK/jVkWupA024WxBhKHm5jYaQBrAsbYr2LNGhT1SBAfkgDIbyW6LENY6zkKIi9AHb8qvbE2l1i1GjNtSemI/PyJcMrn+Dh37VEmotC9ZySvBOmfo9mCxiyH/e0+DTZka4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q7hyQnCV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1705962787;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2EbxtrFCFvcK5IiuVsAPW/KUPjjRaC8uqKzNdD5mRDM=;
-	b=Q7hyQnCV4h6RGdy/5oB7d8KenQtE61HiCRbCdiua7LHAJsnLzwPaUuB100A+0Nel3ikHuM
-	oODTrnU6CZJlixkVslN9hH/jG7HS4yc/AdCVjcO97tACsfBJpFJxg2ixs108NkAnxN/9I2
-	Tyfcco+zYG0NgKjRsKkD7wdLkeJJTX8=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-646-7Wyv8Y6KNviaO9h4wF-rXg-1; Mon, 22 Jan 2024 17:33:03 -0500
-X-MC-Unique: 7Wyv8Y6KNviaO9h4wF-rXg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0FF28863062;
-	Mon, 22 Jan 2024 22:33:03 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.67])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id DC8335012;
-	Mon, 22 Jan 2024 22:33:00 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>
-Cc: David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH v2 10/10] afs: Fix missing/incorrect unlocking of RCU read lock
-Date: Mon, 22 Jan 2024 22:32:23 +0000
-Message-ID: <20240122223230.4000595-11-dhowells@redhat.com>
-In-Reply-To: <20240122223230.4000595-1-dhowells@redhat.com>
-References: <20240122223230.4000595-1-dhowells@redhat.com>
+	s=arc-20240116; t=1705964599; c=relaxed/simple;
+	bh=9E0yhn+Lc/Wf7cldLrsQEIy48JDSgVb+dkMEu7awprU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c708TkQUOuYt9ze6w+wtup3yiMS4KybDfdi+P8H7Xr9rGs0fbge2sdnyLg2ENQDzuCAJs9FgP00t2wbZ2EKOvAIkhQF7PX5FLU+nFAiS7vyltq4Qsmt/HDQYTaPmzADtTLbULfE6GWM1WespF8hb0tDzEf6LZmVXmvuBo4w1/3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fyCnRa+M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 452EAC433C7;
+	Mon, 22 Jan 2024 23:03:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1705964599;
+	bh=9E0yhn+Lc/Wf7cldLrsQEIy48JDSgVb+dkMEu7awprU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fyCnRa+Ml6gi8FoJ0a6Wq6z/wFvdFCzrnyDATRof2LBkIs88L/Sd/33c2abS/hhdC
+	 qk+zaRsnoLx0PPzhc41zxZGCgRRwjRHstBTywnHITBscZsZuZRXdhA9jJcthFcdzF3
+	 i9ZZPG7Bdmoo70ro+oI5JkXJHW9oHwih+XTNk3iq1HJ4eti4sww3MBu6X83JdBWeD/
+	 le7nD2jFAedef2UTYI3pmAFFucxpZmFJTo5+3UmYNBFcbjiTFmBGIIcTebhOsu61M5
+	 B5poRtVF71CKafkTabLE4+V5SA1c9PMt/v3RZggGpVhGBrqc7GRxPyC98sD5fcUbZM
+	 3ubMUyXmh90EA==
+Date: Mon, 22 Jan 2024 15:03:18 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Ajay Kaher <ajay.kaher@broadcom.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] eventfs: Have the inodes all for files and
+ directories all be the same
+Message-ID: <20240122230318.GC6226@frogsfrogsfrogs>
+References: <20240116225531.681181743@goodmis.org>
+ <20240116234014.459886712@goodmis.org>
+ <20240122215930.GA6184@frogsfrogsfrogs>
+ <CAHk-=wiODW+oNdoF4nMqG3Th7HhPGQNQekDvw16CvgKvaZArRg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiODW+oNdoF4nMqG3Th7HhPGQNQekDvw16CvgKvaZArRg@mail.gmail.com>
 
-In afs_proc_addr_prefs_show(), we need to unlock the RCU read lock in both
-places before returning (and not lock it again).
+On Mon, Jan 22, 2024 at 02:02:28PM -0800, Linus Torvalds wrote:
+> On Mon, 22 Jan 2024 at 13:59, Darrick J. Wong <djwong@kernel.org> wrote:
+> >
+> >          though I don't think
+> > leaking raw kernel pointers is an awesome idea.
+> 
+> Yeah, I wasn't all that comfortable even with trying to hash it
+> (because I think the number of source bits is small enough that even
+> with a crypto hash, it's trivially brute-forceable).
+> 
+> See
+> 
+>    https://lore.kernel.org/all/20240122152748.46897388@gandalf.local.home/
+> 
+> for the current patch under discussion (and it contains a link _to_
+> said discussion).
 
-Fixes: f94f70d39cc2 ("afs: Provide a way to configure address priorities")
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202401172243.cd53d5f6-oliver.sang@intel.com
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: linux-afs@lists.infradead.org
-cc: linux-fsdevel@vger.kernel.org
----
- fs/afs/proc.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Ah, cool, thank you!
 
-diff --git a/fs/afs/proc.c b/fs/afs/proc.c
-index 3bd02571f30d..15eab053af6d 100644
---- a/fs/afs/proc.c
-+++ b/fs/afs/proc.c
-@@ -166,7 +166,7 @@ static int afs_proc_addr_prefs_show(struct seq_file *m, void *v)
- 
- 	if (!preflist) {
- 		seq_puts(m, "NO PREFS\n");
--		return 0;
-+		goto out;
- 	}
- 
- 	seq_printf(m, "PROT SUBNET                                      PRIOR (v=%u n=%u/%u/%u)\n",
-@@ -191,7 +191,8 @@ static int afs_proc_addr_prefs_show(struct seq_file *m, void *v)
- 		}
- 	}
- 
--	rcu_read_lock();
-+out:
-+	rcu_read_unlock();
- 	return 0;
- }
- 
+--D
 
+>            Linus
 
