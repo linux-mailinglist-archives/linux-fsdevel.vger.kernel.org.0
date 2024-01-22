@@ -1,194 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-8456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237CF836D5C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 18:29:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AED3836D65
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 18:30:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A90371F23260
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:29:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D865728C361
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A1246E2AB;
-	Mon, 22 Jan 2024 16:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC271EEFB;
+	Mon, 22 Jan 2024 16:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="amU3C5ri"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kG4h/RxI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA266DD1E;
-	Mon, 22 Jan 2024 16:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E9BE1E481
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 16:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705940970; cv=none; b=k6UJcfqAbdYGbgv7iHtdofrEaCOq6XOMQjYUe6PB90vOzh4JrXulPygtLA2opWkyfzzlVieISjDMqSdvTZpxKOF+UldyeZTjXiA2al0oazUAIj9jiQEmQjxl1bFWqNgL46SSi/7BMjEJdmgaqJl/3fDQAsg78cU6aWWJ+iPbcEs=
+	t=1705941035; cv=none; b=HutmfMCcgZxEewFOGg7ZiOxYzw3vFDn4qgGaBmmrJOPTdh7YzGF9DP2lCnxpeifGoDFR0Or0Rd+S/GiP2vhXlz6E+g8g7FMCjrnIOquvBClgjCIFPZjVxozlXtzEBJxFisNnAepOGZ1kURYJyMnumtQqDalh1vJsANDpLrSX4GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705940970; c=relaxed/simple;
-	bh=vl+R0rWWXZHC8ghf5EWIkrJi2cNEQrmwA3Y9oRwhUbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lWMD3QrnglUAgk5Oui0GaOVlebrxYrQNuhJcBg5VbDDrxp0eJQVETMUEn/qJmTwrBuJ/47kq62Ph1Mt8s4T7w0tlUa7TitTRuoQiO3Ea4nc3w+2bpxGe/OZuUU/oQHpWGCDv/AvrXRQ1qgEL8ERyrowQjEDa65nxNqdqj3+evWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=amU3C5ri; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 40MDqQlp012522;
-	Mon, 22 Jan 2024 16:29:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=wRN+W7s0zbBB8ytoJUN8VhJYn1r1TrlpBUStEouQaMk=; b=am
-	U3C5riLs9hr5uu/u5qpOtjkte4r2hTJELgXhFY/YoHDB14kNINnS2yVfrRqP4opv
-	TKw/UoKcWaTZNi5GClGWCUUiuPwpiD0YvEKvsYW651ualr61LxYz4darcoLxW7Sr
-	lBX69vJYw2FqYmaQT8vMRdWqSAHo1KUSaF34AsCgzaS3Dz6+xI8k1969iVgvKNhv
-	mMugUtEGe4opUd2tndMeIyDlwxyioYdbb6DnnQzKHI3GQDZYs//zTaS2k75HQmRb
-	+7A/H7hiNLazzfKlFFUG1923d0d3iBMoIyUBQ6YvKO+SfFg/tYiOV579vn8yEWqp
-	9iOyO42qFHThPrBYbIXw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3vskn19bt3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jan 2024 16:29:06 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 40MGT52M014482
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 22 Jan 2024 16:29:05 GMT
-Received: from [10.216.2.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 22 Jan
- 2024 08:29:02 -0800
-Message-ID: <e095c3dd-42e0-fc4f-5670-7db6393e96a7@quicinc.com>
-Date: Mon, 22 Jan 2024 21:58:58 +0530
+	s=arc-20240116; t=1705941035; c=relaxed/simple;
+	bh=JVTLCUPB7iXC4eIrNg2d8NLxpE109zbJQBMJLtpUjg8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fHzvyQWi9ICdRJ+Tn1LxVN4cr8lxVbuLpbb8xfnWLfXT93wQrBVILV5JZp5EI845IOwyNQWT3TDoJG8eVA48Gbd+jdiFeFgBDcqAnqfBuimQIFx+1u8OuMyaNW2otBK2EW20uJ6DeR31enae66yICopRgyIDXfxP+wfV6FCBqgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kG4h/RxI; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-361b24d1a9eso334685ab.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 08:30:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1705941033; x=1706545833; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CjELHtowAv3ak1AQZT7BU/ZqYcvabtPwYrfG/ySOdno=;
+        b=kG4h/RxIVSe/4lT08ILuhReiNqWS/9H4Q4YeuobortaYHj76Y69ShIbCPhUgg6A2U9
+         kFOAsFBZ9ZCkOQPrGclTBFbaiZ+wcS3xIsj2l5vJW1+fiQyUGVR4BLyXgFb1uFqXUNrp
+         +MremtFoPnPi8g0ngiBo7b9Xijugs5d9RNujzEWh+ULvYS9m/moYHZ8ZLKpBawjtZ1po
+         iugryW2I5aZPO8y0aPaiJ0GwRvl/4uZ3JnHucnFH64rZPAAk6wbAEh3Hzd07DVn9jvpe
+         233fU6+m7GweDBve6LcrRzeGMLvA6QazORYWL5zd1nCUQPlu7KtVkosIOIoUeKsqKZ27
+         wnWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705941033; x=1706545833;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CjELHtowAv3ak1AQZT7BU/ZqYcvabtPwYrfG/ySOdno=;
+        b=VRnkOd7d3f91qeWsXPX/sjWRS1gaRMrOSw+ZDMzRHfLWTDsjKSigJeJy0ZNjsB6Yai
+         DlaMLawPHST88rvrjxslOCr8rYV5RKlu/YXF27wZ9vp3pELEiycyFrEQQed8zj+K7BZi
+         9e5a6pClLhGG7kWDruVuafyQdOePTKuylb7YY8EQJSZZoSceyLprrYM3kvFxloVDd6ZG
+         0Q3r+UypNBam9pRA7K8YaHXI4yNEyGxKxYJFwsAlBTo7pQ/xlu23YfW81JOzKkLhmqTC
+         yZEH4uXPMQ+sAcxCLgrzH+AkJj22RDX8XjDyolrNxYJN8uhbe9po7YYuKDLLWSUHauFK
+         Aorg==
+X-Gm-Message-State: AOJu0YxlzlvbCkHj6iNu8QAUjd4BA+e24oiNMyfmVgwiDr0T0p1vusUB
+	khG5r2yrGf/5fZuR+AiVkh0jpXw+SsLWP4z7byHThqiSeTaD
+X-Google-Smtp-Source: AGHT+IGC97gkTGATtf9M7kYTIQ90XsuuFjUZxJn7oFDh0SQFpWxPVfSenQKRQC4QLPOYii7BLctCq604l2+O3t2XXSA=
+X-Received: by 2002:a05:6e02:1c2c:b0:361:8079:2843 with SMTP id
+ m12-20020a056e021c2c00b0036180792843mr454962ilh.18.1705941033411; Mon, 22 Jan
+ 2024 08:30:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH] fs: improve dump_mapping() robustness
-Content-Language: en-US
-To: Baolin Wang <baolin.wang@linux.alibaba.com>,
-        Al Viro
-	<viro@zeniv.linux.org.uk>
-CC: <akpm@linux-foundation.org>, <willy@infradead.org>, <brauner@kernel.org>,
-        <jack@suse.cz>, <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <937ab1f87328516821d39be672b6bc18861d9d3e.1705391420.git.baolin.wang@linux.alibaba.com>
- <20240118013857.GO1674809@ZenIV>
- <d5979f89-7a84-423a-a1c7-29bdbf7c2bc1@linux.alibaba.com>
- <c85fffe6-e455-d0fa-e332-87e81e0a0e86@quicinc.com>
- <8f52414c-e0f2-4931-9b32-5c22f1d581f0@linux.alibaba.com>
-From: Charan Teja Kalla <quic_charante@quicinc.com>
-In-Reply-To: <8f52414c-e0f2-4931-9b32-5c22f1d581f0@linux.alibaba.com>
+References: <20240119092024.193066-1-zhangpeng362@huawei.com>
+ <Zap7t9GOLTM1yqjT@casper.infradead.org> <5106a58e-04da-372a-b836-9d3d0bd2507b@huawei.com>
+ <Za6SD48Zf0CXriLm@casper.infradead.org>
+In-Reply-To: <Za6SD48Zf0CXriLm@casper.infradead.org>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 22 Jan 2024 17:30:18 +0100
+Message-ID: <CANn89iL4qUXsVDRNGgBOweZbJ6ErWMsH+EpOj-55Lky8JEEhqQ@mail.gmail.com>
+Subject: Re: SECURITY PROBLEM: Any user can crash the kernel with TCP ZEROCOPY
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "zhangpeng (AS)" <zhangpeng362@huawei.com>, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org, 
+	akpm@linux-foundation.org, davem@davemloft.net, dsahern@kernel.org, 
+	kuba@kernel.org, pabeni@redhat.com, arjunroy@google.com, 
+	wangkefeng.wang@huawei.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dKDExpz0nIEfAfSqdeFPCW848sObxDsl
-X-Proofpoint-ORIG-GUID: dKDExpz0nIEfAfSqdeFPCW848sObxDsl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-01-22_07,2024-01-22_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- mlxlogscore=691 priorityscore=1501 impostorscore=0 phishscore=0
- spamscore=0 lowpriorityscore=0 clxscore=1015 adultscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2311290000 definitions=main-2401220113
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jan 22, 2024 at 5:04=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> I'm disappointed to have no reaction from netdev so far.  Let's see if a
+> more exciting subject line evinces some interest.
+
+Hmm, perhaps some of us were enjoying their weekend ?
+
+I also see '[RFC PATCH] filemap: add mapping_mapped check in
+filemap_unaccount_folio()',
+and during the merge window, network maintainers tend to prioritize
+their work based on tags.
+
+If a stack trace was added, perhaps our attention would have been caught.
+
+I don't really know what changed recently, all I know is that TCP zero
+copy is for real network traffic.
+
+Real trafic uses order-0 pages, 4K at a time.
+
+If can_map_frag() needs to add another safety check, let's add it.
+
+syzbot is usually quite good at bisections, was a bug origin found ?
 
 
-
-On 1/22/2024 12:47 PM, Baolin Wang wrote:
->>
->> We too seen the below crash while printing the dentry name.
->>
->> aops:shmem_aops ino:5e029 dentry name:"dev/zero"
->> flags:
->> 0x8000000000080006(referenced|uptodate|swapbacked|zone=2|kasantag=0x0)
->> raw: 8000000000080006 ffffffc033b1bb60 ffffffc033b1bb60 ffffff8862537600
->> raw: 0000000000000001 0000000000000000 00000003ffffffff ffffff807fe64000
->> page dumped because: migration failure
->> migrating pfn aef223 failed ret:1
->> page:000000009e72a120 refcount:3 mapcount:0 mapping:000000003325dda1
->> index:0x1 pfn:0xaef223
->> memcg:ffffff807fe64000
->> Unable to handle kernel NULL pointer dereference at virtual address
->> 0000000000000000
->> Mem abort info:
->>    ESR = 0x0000000096000005
->>    EC = 0x25: DABT (current EL), IL = 32 bits
->>    SET = 0, FnV = 0
->>    EA = 0, S1PTW = 0
->>    FSC = 0x05: level 1 translation fault
->> Data abort info:
->>    ISV = 0, ISS = 0x00000005
->>    CM = 0, WnR = 0
->> user pgtable: 4k pages, 39-bit VAs, pgdp=000000090c12d000
->> [0000000000000000] pgd=0000000000000000, p4d=0000000000000000,
->> pud=0000000000000000
->> Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
->>
->> dentry_name+0x1f8/0x3a8
->> pointer+0x3b0/0x6b8
->> vsnprintf+0x4a4/0x65c
->> vprintk_store+0x168/0x4a8
->> vprintk_emit+0x98/0x218
->> vprintk_default+0x44/0x70
->> vprintk+0xf0/0x138
->> _printk+0x54/0x80
->> dump_mapping+0x17c/0x188
->> dump_page+0x1d0/0x2e8
->> offline_pages+0x67c/0x898
->>
->>
->>
->> Not much comfortable with block layer internals, TMK, the below is what
->> happening in the my case:
->> memoffline                 dput()
->> (offline_pages)         (as part of closing of the shmem file)
->> ------------         --------------------------------------
->>                     .......
->>             1) dentry_unlink_inode()
->>                   hlist_del_init(&dentry->d_u.d_alias);
->>
->>             2) iput():
->>                 a) inode->i_state |= I_FREEING
->>                 .....
->>                 b) evict_inode()->..->shmem_undo_range
->>                    1) get the folios with elevated refcount
->> 3) do_migrate_range():
->>     a) Because of the elevated
->>     refcount in 2.b.1, the
->>     migration of this page will
->>     be failed.
->>
->>                    2) truncate_inode_folio() ->
->>                      filemap_remove_folio():
->>                   (deletes from the page cache,
->>                  set page->mapping=NULL,
->>                  decrement the refcount on folio)
->>    b) Call dump_page():
->>       1) mapping = page_mapping(page);
->>       2) dump_mapping(mapping)
->>       a) We unlinked the dentry in 1)
->>             thus dentry_ptr from host->i_dentry.first
->>             is not a proper one.
->>
->>           b) dentry name print with %pd is resulting into
->>        the mentioned crash.
->>
->>
->> At least in this case, I think __this patchset in its current form can
->> help us__.
-> 
-> This looks another case of NULL pointer access. Thanks for the detailed
-> analysis. Could you provide a Tested-by or Reviewed-by tag if it can
-> solve your problem?
-Seen this issue couple of times, over 3 months back. Not sure if we ever
-encounter this issue again. Still, will pick this and let you know the
-side effects of this patch, after thorough testing.
-
-Thanks.
+>
+> On Sat, Jan 20, 2024 at 02:46:49PM +0800, zhangpeng (AS) wrote:
+> > On 2024/1/19 21:40, Matthew Wilcox wrote:
+> >
+> > > On Fri, Jan 19, 2024 at 05:20:24PM +0800, Peng Zhang wrote:
+> > > > Recently, we discovered a syzkaller issue that triggers
+> > > > VM_BUG_ON_FOLIO in filemap_unaccount_folio() with CONFIG_DEBUG_VM
+> > > > enabled, or bad page without CONFIG_DEBUG_VM.
+> > > >
+> > > > The specific scenarios are as follows:
+> > > > (1) mmap: Use socket fd to create a TCP VMA.
+> > > > (2) open(O_CREAT) + fallocate + sendfile: Read the ext4 file and cr=
+eate
+> > > > the page cache. The mapping of the page cache is ext4 inode->i_mapp=
+ing.
+> > > > Send the ext4 page cache to the socket fd through sendfile.
+> > > > (3) getsockopt TCP_ZEROCOPY_RECEIVE: Receive the ext4 page cache an=
+d use
+> > > > vm_insert_pages() to insert the ext4 page cache to the TCP VMA. In =
+this
+> > > > case, mapcount changes from - 1 to 0. The page cache mapping is ext=
+4
+> > > > inode->i_mapping, but the VMA of the page cache is the TCP VMA and
+> > > > folio->mapping->i_mmap is empty.
+> > > I think this is the bug.  We shouldn't be incrementing the mapcount
+> > > in this scenario.  Assuming we want to support doing this at all and
+> > > we don't want to include something like ...
+> > >
+> > >     if (folio->mapping) {
+> > >             if (folio->mapping !=3D vma->vm_file->f_mapping)
+> > >                     return -EINVAL;
+> > >             if (page_to_pgoff(page) !=3D linear_page_index(vma, addre=
+ss))
+> > >                     return -EINVAL;
+> > >     }
+> > >
+> > > But maybe there's a reason for networking needing to map pages in thi=
+s
+> > > scenario?
+> >
+> > Agreed, and I'm also curious why.
+> >
+> > > > (4) open(O_TRUNC): Deletes the ext4 page cache. In this case, the p=
+age
+> > > > cache is still in the xarray tree of mapping->i_pages and these pag=
+e
+> > > > cache should also be deleted. However, folio->mapping->i_mmap is em=
+pty.
+> > > > Therefore, truncate_cleanup_folio()->unmap_mapping_folio() can't un=
+map
+> > > > i_mmap tree. In filemap_unaccount_folio(), the mapcount of the foli=
+o is
+> > > > 0, causing BUG ON.
+> > > >
+> > > > Syz log that can be used to reproduce the issue:
+> > > > r3 =3D socket$inet_tcp(0x2, 0x1, 0x0)
+> > > > mmap(&(0x7f0000ff9000/0x4000)=3Dnil, 0x4000, 0x0, 0x12, r3, 0x0)
+> > > > r4 =3D socket$inet_tcp(0x2, 0x1, 0x0)
+> > > > bind$inet(r4, &(0x7f0000000000)=3D{0x2, 0x4e24, @multicast1}, 0x10)
+> > > > connect$inet(r4, &(0x7f00000006c0)=3D{0x2, 0x4e24, @empty}, 0x10)
+> > > > r5 =3D openat$dir(0xffffffffffffff9c, &(0x7f00000000c0)=3D'./file0\=
+x00',
+> > > > 0x181e42, 0x0)
+> > > > fallocate(r5, 0x0, 0x0, 0x85b8)
+> > > > sendfile(r4, r5, 0x0, 0x8ba0)
+> > > > getsockopt$inet_tcp_TCP_ZEROCOPY_RECEIVE(r4, 0x6, 0x23,
+> > > > &(0x7f00000001c0)=3D{&(0x7f0000ffb000/0x3000)=3Dnil, 0x3000, 0x0, 0=
+x0, 0x0,
+> > > > 0x0, 0x0, 0x0, 0x0}, &(0x7f0000000440)=3D0x40)
+> > > > r6 =3D openat$dir(0xffffffffffffff9c, &(0x7f00000000c0)=3D'./file0\=
+x00',
+> > > > 0x181e42, 0x0)
+> > > >
+> > > > In the current TCP zerocopy scenario, folio will be released normal=
+ly .
+> > > > When the process exits, if the page cache is truncated before the
+> > > > process exits, BUG ON or Bad page occurs, which does not meet the
+> > > > expectation.
+> > > > To fix this issue, the mapping_mapped() check is added to
+> > > > filemap_unaccount_folio(). In addition, to reduce the impact on
+> > > > performance, no lock is added when mapping_mapped() is checked.
+> > > NAK this patch, you're just preventing the assertion from firing.
+> > > I think there's a deeper problem here.
+> >
+> > --
+> > Best Regards,
+> > Peng
+> >
+> >
 
