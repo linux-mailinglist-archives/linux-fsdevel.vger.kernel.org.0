@@ -1,173 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-8476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1B4837475
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 21:48:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DE68374A6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 21:53:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3ACAB26474
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 20:48:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FA831F24E11
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 20:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C55A47A61;
-	Mon, 22 Jan 2024 20:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B107F47F51;
+	Mon, 22 Jan 2024 20:53:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TS8zk41k"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TSxyO73Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB973F8F9
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 20:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA7247A47
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 20:53:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705956490; cv=none; b=tLUdxknht7x1n5Qo4tmt9AYIPB3UCN64Cs+ViPn1qHzeSDlUypNKYlx4fZKiD6e0srCfh41yozX+TvtL0uoT3Yy8VYtQuQCYN3HyDhCoUKDE6FGu5YimEmlP708CvRMbfiVLQ/L/LL68sg01Qq8PDW/GTsISyK0DJzGLbhp2SOY=
+	t=1705956819; cv=none; b=KkclGUYgQizWSvWRzNvp+MbstSLBOza6Dvi7232QYORW4216avxqLVnAGnyZsdHrijvh/MmaGG48lLeAr8kafFZTGOWf+/4+gYXBV0UBA0o1BhmdnmMvs9EEfIB9XlO7LU2AvNBHHDuF6Z85PPzWOayfx5Y0sUY2EgkEXwHYmAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705956490; c=relaxed/simple;
-	bh=RYQC2KkWpj9RT7UI3rcfTlQnhAUqT2n8BoXl2E7DtbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NvFVr7kIa95doSoY6sPzEuVeYILJ92SPqEu6ovqVwWj28OEOfhDGm/sRS/8K3OTP0+/AKYFMAbF5IQAA/qk4DrHOQ3TRZmZhZ0qAyAYK8x1X/0p/dZZ2hQhowQ4zAf6KIXp07nF0Pw7Jv1qptQ0jGi2p3Z9Cc0h/PIZeDmf1h5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TS8zk41k; arc=none smtp.client-ip=209.85.215.173
+	s=arc-20240116; t=1705956819; c=relaxed/simple;
+	bh=pQZ/0oJYyx8RBYUqEkKQbxBgGICsFMfIGmf7BMkDDnU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pYVtqHkMhR6qaqu3/Y8Eh5bXA2rNAKCTWToItKbux5ZKGw+Az7eJvhSEkzG4Pso2Ae+zIo1xhuXJIXawcpOLLMADzfVVTaOcvxma3DnnkV60ByF/JTJlkS5++dIZ0o2inTE/SBaPi4sPGSbKzvUMTRWuTgjulIe49mvWCuk6auc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=TSxyO73Q; arc=none smtp.client-ip=209.85.161.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-5cddfe0cb64so1688914a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 12:48:08 -0800 (PST)
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-598bcccca79so1971888eaf.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 12:53:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1705956488; x=1706561288; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=nXbpsEnHClGHGXt9fUpUqdjWwEkQ1678gxMm5C6Enb4=;
-        b=TS8zk41ko1gX7uuMYeezE8T11gdoSm+GFf/mBxOVnaV8QfnlcDBzWNEtReXADA5Lj4
-         zJPbad4UyJM3OOkc9J8Fl6upRnlqnejMKEMcK/6bGfj6KS/0cToI5FvNbG9Ey752XQcl
-         gpm0ntmYa8Iplfq9jTbr4QVqUiq1H/rcCHs0E=
+        d=chromium.org; s=google; t=1705956815; x=1706561615; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KHLpdc+s1DN3hjZ1+Wn70z3BiqgmQibATYm0MQ7joBo=;
+        b=TSxyO73QFgkNr/O5Ie6a+Vo14DtBPzY1FgYc0Q61r259bTdjX10ZFDQ8bJcOkYoRZx
+         AyeVPzUy4eeOm6fevtDySSMcM0Zsnhw9DuMkc2s31kPG2rMqEVrb42UVXVxEpN2LP83x
+         SxgWWKSNQfY0L/BndOpzGSQX1em3l6YRXlmcQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705956488; x=1706561288;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nXbpsEnHClGHGXt9fUpUqdjWwEkQ1678gxMm5C6Enb4=;
-        b=TTdsybSDHkXdp6dIxlPrPYcsEhay/ilcGboylELt+vZ3/EZb0lON4hHLoRmW50kWKx
-         TObK7JvTFsWk4GIVemmRRXeGJKMMStbC6HCZJlXr4CQy5UxPhwwn/qKBNbq7IafCXM8x
-         CS7eUwV7f5HfjR17LzigF63KW3yTfQtfNWsqJrPXg/LxFVnv/1lHKbCOftGajZ9D71bp
-         8ou8zg8iXvPdcF7qHLHXppJwOo+JVaybK8LqMud6usayycLmLXdGaZAbdwpB9rFjYMky
-         03uPxLqPb4MFAqb4X78QxVwL/zhj+574v78wCxvhWd0WA6Dyt4mEVn+vxI2knOHNhtdR
-         FHKQ==
-X-Gm-Message-State: AOJu0Ywb+R2XZKVPlJ4FM8KMZCw9vv+MT/BNihnDAUHLpycd5TIZSHru
-	5KVvqXS+GqeV+uLglQz5nSAgov7Ulul1oZvnQK4kNv3FXkCk1YQXLmcVQ+uE7Q==
-X-Google-Smtp-Source: AGHT+IFINZ8RYKV8rUEcCkP82iAD5yOfN/QLX5ecmImdhqK8CPCz1Jgle0iGvVw8/+T7qOUD2TEqMg==
-X-Received: by 2002:a17:90b:4007:b0:290:c6bb:4c59 with SMTP id ie7-20020a17090b400700b00290c6bb4c59mr436412pjb.40.1705956487910;
-        Mon, 22 Jan 2024 12:48:07 -0800 (PST)
+        d=1e100.net; s=20230601; t=1705956815; x=1706561615;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KHLpdc+s1DN3hjZ1+Wn70z3BiqgmQibATYm0MQ7joBo=;
+        b=hgi9kh0leCLhyBDhHlQFo2jEpKSoO46bLqnRQTSiVQJNmdjKv7P0rokSq+t2JN4f0P
+         Ulm1Avt/mfgeqBE0CldQcWIh+iuTVHAk980+K/YH1x2JGTGigxyEkYTLEaeHFMF4/2Ne
+         GgyAg5BMD5VOjrYw0CBH29Kxa67sYovNo3sXPWe57UQnxesEfaCOAQ242zdMqTdsrBp3
+         trUDvzWjBxaRkasHOW/F79CvEGfZI0LujMv0xoex6UOy/Bfbt72CMoK/YOFp+bS8Rylb
+         NvQwcbScvOoWZK4oirfWiinKDGXamybI/6rrrSldhPc8xsTzQGzo0qpi+WprvWmZ5mT3
+         B8hA==
+X-Gm-Message-State: AOJu0YxuYE6BwljKZL0zr+F7WJn+wVdGM4WpXv5YtFF0o0XMNNLXCSzh
+	fvGatqzdG1Sk8wvzuRNEq34CeZM44wjYYNKSv1T/X38dt4qMKIyZUf1HqXHvvQ==
+X-Google-Smtp-Source: AGHT+IG/TsXyZtkk1k/hwUr+fNS9q+PRnByIwu5fpMOy5PEaaP0vT1BkK07OjchmNIFEHImbtVdfaA==
+X-Received: by 2002:a05:6358:3a1c:b0:175:c7bb:5bbb with SMTP id g28-20020a0563583a1c00b00175c7bb5bbbmr2203322rwe.42.1705956815668;
+        Mon, 22 Jan 2024 12:53:35 -0800 (PST)
 Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id sb12-20020a17090b50cc00b0028cef2025ddsm10257875pjb.15.2024.01.22.12.48.07
+        by smtp.gmail.com with ESMTPSA id k31-20020a634b5f000000b005cfb2c44a3esm6884300pgl.3.2024.01.22.12.53.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jan 2024 12:48:07 -0800 (PST)
-Date: Mon, 22 Jan 2024 12:48:06 -0800
+        Mon, 22 Jan 2024 12:53:34 -0800 (PST)
 From: Kees Cook <keescook@chromium.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Jan Bujak <j@exia.io>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: Recent-ish changes in binfmt_elf made my program segfault
-Message-ID: <202401221226.DAFA58B78@keescook>
-References: <c7209e19-89c4-446a-b364-83100e30cc00@exia.io>
- <874jf5co8g.fsf@email.froward.int.ebiederm.org>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Kees Cook <keescook@chromium.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3] Fix error handling in begin_new_exec
+Date: Mon, 22 Jan 2024 12:53:03 -0800
+Message-Id: <170595678126.1295697.13621931577825110324.b4-ty@chromium.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <AS8P193MB128517ADB5EFF29E04389EDAE4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+References: <AM8PR10MB47081071E64EAAB343196D5AE4399@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM> <AS8P193MB1285304CE97348D62021C878E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM> <AS8P193MB128517ADB5EFF29E04389EDAE4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <874jf5co8g.fsf@email.froward.int.ebiederm.org>
 
-On Mon, Jan 22, 2024 at 10:43:59AM -0600, Eric W. Biederman wrote:
-> Jan Bujak <j@exia.io> writes:
-> 
-> > Hi.
-> >
-> > I recently updated my kernel and one of my programs started segfaulting.
-> >
-> > The issue seems to be related to how the kernel interprets PT_LOAD headers;
-> > consider the following program headers (from 'readelf' of my reproduction):
-> >
-> > Program Headers:
-> >   Type  Offset   VirtAddr  PhysAddr  FileSiz  MemSiz   Flg Align
-> >   LOAD  0x001000 0x10000   0x10000   0x000010 0x000010 R   0x1000
-> >   LOAD  0x002000 0x11000   0x11000   0x000010 0x000010 RW  0x1000
-> >   LOAD  0x002010 0x11010   0x11010   0x000000 0x000004 RW  0x1000
-> >   LOAD  0x003000 0x12000   0x12000   0x0000d2 0x0000d2 R E 0x1000
-> >   LOAD  0x004000 0x20000   0x20000   0x000004 0x000004 RW  0x1000
-> >
-> > Old kernels load this ELF file in the following way ('/proc/self/maps'):
-> >
-> > 00010000-00011000 r--p 00001000 00:02 131  ./bug-reproduction
-> > 00011000-00012000 rw-p 00002000 00:02 131  ./bug-reproduction
-> > 00012000-00013000 r-xp 00003000 00:02 131  ./bug-reproduction
-> > 00020000-00021000 rw-p 00004000 00:02 131  ./bug-reproduction
-> >
-> > And new kernels do it like this:
-> >
-> > 00010000-00011000 r--p 00001000 00:02 131  ./bug-reproduction
-> > 00011000-00012000 rw-p 00000000 00:00 0
-> > 00012000-00013000 r-xp 00003000 00:02 131  ./bug-reproduction
-> > 00020000-00021000 rw-p 00004000 00:02 131  ./bug-reproduction
-> >
-> > That map between 0x11000 and 0x12000 is the program's '.data' and '.bss'
-> > sections to which it tries to write to, and since the kernel doesn't map
-> > them anymore it crashes.
-> >
-> > I bisected the issue to the following commit:
-> >
-> > commit 585a018627b4d7ed37387211f667916840b5c5ea
-> > Author: Eric W. Biederman <ebiederm@xmission.com>
-> > Date:   Thu Sep 28 20:24:29 2023 -0700
-> >
-> >     binfmt_elf: Support segments with 0 filesz and misaligned starts
-> >
-> > I can confirm that with this commit the issue reproduces, and with it
-> > reverted it doesn't.
-> >
-> > I have prepared a minimal reproduction of the problem available here,
-> > along with all of the scripts I used for bisecting:
-> >
-> > https://github.com/koute/linux-elf-loading-bug
-> >
-> > You can either compile it from source (requires Rust and LLD), or there's
-> > a prebuilt binary in 'bin/bug-reproduction` which you can run. (It's tiny,
-> > so you can easily check with 'objdump -d' that it isn't malicious).
-> >
-> > On old kernels this will run fine, and on new kernels it will
-> > segfault.
-> 
-> Frankly your ELF binary is buggy, and probably the best fix would be to
-> fix the linker script that is used to generate your binary.
-> 
-> The problem is the SYSV ABI defines everything in terms of pages and so
-> placing two ELF segments on the same page results in undefined behavior.
-> 
-> The code was fixed to honor your .bss segment and now your .data segment
-> is being stomped, because you defined them to overlap.
-> 
-> Ideally your linker script would place both your .data and .bss in
-> the same segment.  That would both fix the issue and give you a more
-> compact elf binary, while not changing the generated code at all.
+On Mon, 22 Jan 2024 19:34:21 +0100, Bernd Edlinger wrote:
+> If get_unused_fd_flags() fails, the error handling is incomplete
+> because bprm->cred is already set to NULL, and therefore
+> free_bprm will not unlock the cred_guard_mutex.
+> Note there are two error conditions which end up here,
+> one before and one after bprm->cred is cleared.
 > 
 > 
-> That said regressions suck and it would be good if we could update the
-> code to do something reasonable in this case.
-> 
-> We can perhaps we can update the .bss segment to just memset an existing
-> page if one has already been mapped.  Which would cleanly handle a case
-> like yours.  I need to think about that for a moment to see what the
-> code would look like to do that.
+> [...]
 
-It's the "if one has already been mapped" part which might
-become expensive...
+Applied to for-next/execve, thanks!
+
+[1/1] Fix error handling in begin_new_exec
+      https://git.kernel.org/kees/c/84c39ec57d40
+
+Take care,
 
 -- 
 Kees Cook
+
 
