@@ -1,92 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-8399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22C5F835D4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 09:54:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B74D835E08
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 10:24:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD60D1F22162
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 08:54:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60D7EB26BF8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 09:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6656B3A1CA;
-	Mon, 22 Jan 2024 08:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EE939FCC;
+	Mon, 22 Jan 2024 09:23:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TzJtnGkQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27CA38FBC
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 08:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B70039ADD
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 09:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705913346; cv=none; b=nX50w4vp63IUeO8wU6KUY9nPXPW8UCQo4TKCfBaFcyqHcMxh+utcyM6XlRLvc7Wg+Q4KXIPIIWoRk5D8DNAql3G3rUAimHRWn3+FQYQF68I8H1h3SzDoCVIUGbsaNSFkOWR1++NR86LoROek+QlxuPoXQaI0sBSCwrw93o97hZc=
+	t=1705915429; cv=none; b=jNaTPA/RYbAwCNd/kSyL6lMTnaTysY+KaM5DMajcyNsm9hoxoja3vQXOo2sSlgJJ6m0jP5cP5gMxHv1H4qPHx73MOSePFVVNwSgSXcGNnhJrixTuckfIcj9ZByIzi0yd38G/9tlZOtHGEWR6GptWmQ+0B/xuPnVruyAdMBMtIRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705913346; c=relaxed/simple;
-	bh=R4ntAACS9EzHmtoY+v8OJQB2l8ziPJ7bgywydPrpGq0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=obUon38CJ5m+N2+QZLkV0CDMmDNJqvYz7r+j+HWahRXnxvzF+Kq5QSuHmlQWrGeIS9lWO6l6VtvAzH5McU6zcQ05WyStHHFSs5kvT4kb3AXH+i8XmeOCUNE7dmoPW7HAQVP29BrQlHAx42y9as6s6Mu/JbtDMT2n398xL9e8ezM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7bef5e512b6so328386539f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 00:49:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705913344; x=1706518144;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/8AVNdoQPWp2f+5W+nX8tickhqM+iD/Jmzv3V7hzGW8=;
-        b=T4wFmUVhix6jUO7xiSpxPfGMsYsdcs/j6qcykDNQJ4JonSbmgH6uZrvEfaWWcE2rQT
-         qWsFEWr4OLADECGFMt3+uz5U2IliXgsqMHqzS9QLU804SsRJTCVvYTeimvObxE51Tf2g
-         mzpA45OxFK9mtbm0NzN4TCR4ZaBMVoR+AF9j3btLm9jcB0rT/8U7+ga67Uy/Znon1e7C
-         un0z2aVl/FOKT5shyyrbo00VquH4aUK3RiZ9+wDPGMpsLgyIttbQHAPEGTKz7cUPZ8bP
-         ln4g5lwenlJugIfsZ4RBnP0cmiUme0xFrlMatW//Z5TX+Vnafn41175UKoGzHPP9FErz
-         spZQ==
-X-Gm-Message-State: AOJu0YxsWQV4y5e0RKCjwXWUob9qCXLIAaTvEG9HUS9TLpodp97Mm4vJ
-	ESkcVih5hnvzQWT0cp4TN2kf1vJHpF71CqhsOTPGedWz87/6zcPiUDxjYxzR7cntzUTqayCPw08
-	NyPZ7CvmMohgLEN6uM3ah0g/INinhE6SZes4Ni/BhWaaHtF5IIDRCumQ=
-X-Google-Smtp-Source: AGHT+IFaDWbAjrBpuywanw5LizNvNrqLAq0GCqWgR/4DCPzj4MqX6RfZ27xHLqW+RrSsPc5IGN3ykdyaOyQIVlVWBXdSpuPU9Ayb
+	s=arc-20240116; t=1705915429; c=relaxed/simple;
+	bh=SwrScSab5wWDwtOlpQAVOaOc78P6dsbBs5Xsj7XG6ww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=pTe7jXauq2RdNT8l85etI/BJfw86FUWN1v5mqGieid2pwJPh5WpZCfeZpk21fvICRnfUR4yxvQrMuVjx9sEBo3NdQlDJsGUg+qlB+TvK5bmG6iGLJoRnSRs8eVXcjpNmy7nhtwG1Hc36UwZ5nEFAhOJMr0mgTp43N7Z1BiB4rr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TzJtnGkQ; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240122092344epoutp039d8b0197b0733241afed51f5df7b2204~soQpFZWAh0790007900epoutp03d
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 09:23:44 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240122092344epoutp039d8b0197b0733241afed51f5df7b2204~soQpFZWAh0790007900epoutp03d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1705915424;
+	bh=zX0qWDTs/xgDr9Sr6z3Ege2Z/e+QPUCxSaBiFzBG1Fo=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=TzJtnGkQH6WxvI8ZnlqbYDSIo3pVlYoHOT6zewYErqx+tA0TRBepZ2fLKyyeQM6l4
+	 TgtC6PR0YjWZZVWi4q2iGj1eSsnvB3+4KvboLsdbysqFn0vfg2Mv7fb9p2MtD8U2bv
+	 z4MbdKON3M3JlOrI6nJ7TJHMySqaMVv/lTxH+pX8=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240122092343epcas5p3a328d02426eeb514cf7c94cb99ee7281~soQocDGwD1149711497epcas5p3z;
+	Mon, 22 Jan 2024 09:23:43 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4TJPsp0Tq3z4x9Pw; Mon, 22 Jan
+	2024 09:23:42 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9E.18.10009.D143EA56; Mon, 22 Jan 2024 18:23:41 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240122092341epcas5p47b118ee78ba8496ceea9e2d3ea4e04c4~soQmrwZ3w1654316543epcas5p4B;
+	Mon, 22 Jan 2024 09:23:41 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240122092341epsmtrp264a8600a5b35daf860e534a3be7002cf~soQmqSbsu0236302363epsmtrp2Q;
+	Mon, 22 Jan 2024 09:23:41 +0000 (GMT)
+X-AuditID: b6c32a4a-261fd70000002719-50-65ae341dba2b
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E5.EF.07368.D143EA56; Mon, 22 Jan 2024 18:23:41 +0900 (KST)
+Received: from [107.122.11.51] (unknown [107.122.11.51]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240122092340epsmtip2cdc2da648ebb8e30e6ba99435a2cbdc7~soQlKp2M40565805658epsmtip21;
+	Mon, 22 Jan 2024 09:23:40 +0000 (GMT)
+Message-ID: <23354a9b-dd1e-5eed-f537-6a2de9185d7a@samsung.com>
+Date: Mon, 22 Jan 2024 14:53:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2108:b0:46e:dc29:f36f with SMTP id
- n8-20020a056638210800b0046edc29f36fmr307033jaj.2.1705913344037; Mon, 22 Jan
- 2024 00:49:04 -0800 (PST)
-Date: Mon, 22 Jan 2024 00:49:04 -0800
-In-Reply-To: <00000000000020a5790609bb5db8@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e39a56060f84e6d9@google.com>
-Subject: Re: [syzbot] [reiserfs?] kernel BUG in direntry_check_right
-From: syzbot <syzbot+e57bfc56c27a9285a838@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	paul@paul-moore.com, reiserfs-devel@vger.kernel.org, roberto.sassu@huawei.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
+	Gecko/20100101 Thunderbird/91.8.1
+Subject: Re: [PATCH v8 05/19] block, fs: Restore the per-bio/request data
+ lifetime fields
+Content-Language: en-US
+To: Bart Van Assche <bvanassche@acm.org>, "Martin K . Petersen"
+	<martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Christoph
+	Hellwig <hch@lst.de>, Daejun Park <daejun7.park@samsung.com>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+From: Kanchan Joshi <joshi.k@samsung.com>
+In-Reply-To: <20231219000815.2739120-6-bvanassche@acm.org>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKJsWRmVeSWpSXmKPExsWy7bCmuq6sybpUgxV9Nhar7/azWbw+/InR
+	YtqHn8wWqx6EW6xcfZTJYu8tbYs9e0+yWHRf38Fmsfz4PyaL83+PszpweVy+4u1x+Wypx6ZV
+	nWweu282sHl8fHqLxaNvyypGj8+b5Dw2PXnLFMARlW2TkZqYklqkkJqXnJ+SmZduq+QdHO8c
+	b2pmYKhraGlhrqSQl5ibaqvk4hOg65aZA3SgkkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRW
+	KbUgJafApECvODG3uDQvXS8vtcTK0MDAyBSoMCE7o+XKH5aCdu6K7dtmMTcwdnJ2MXJySAiY
+	SPTc2MHUxcjFISSwm1HiQ/cjVgjnE6NE276DUM43RokFCz+yw7S8/3qZESKxl1GiYWcLM4Tz
+	llHi4OXvTCBVvAJ2Er09t5hBbBYBVYnFC46wQsQFJU7OfMICYosKJEn8ujqHEcQWFoiWaFs5
+	EWwDs4C4xK0n88HmiAjESbTOegW2jVlgBpPEutfXgIo4ONgENCUuTC4FqeEUsJKY0raaGaJX
+	XmL72zlgB0kI7OCQODljLStIvYSAi8T9D2oQHwhLvDq+BeobKYnP7/ayQdjJEpdmnmOCsEsk
+	Hu85CGXbS7Se6mcGGcMMtHb9Ln2IVXwSvb+fMEFM55XoaBOCqFaUuDfpKSuELS7xcMYSKNtD
+	4vKrh8zwcPvTdoB1AqPCLKRQmYXk+1lIvpmFsHkBI8sqRsnUguLc9NRi0wKjvNRyeIQn5+du
+	YgSnXy2vHYwPH3zQO8TIxMF4iFGCg1lJhPeG5LpUId6UxMqq1KL8+KLSnNTiQ4ymwOiZyCwl
+	mpwPzAB5JfGGJpYGJmZmZiaWxmaGSuK8r1vnpggJpCeWpGanphakFsH0MXFwSjUwCe8zV1C+
+	9TTXevqREx2Vx9+z/569jcHpqayuQnGimvqzaAeLcnvG73W+3ouSVvsfFcn8Fu6+ky3RcrbN
+	N+6/91UZfzxUqXX6b32Hb/7XPKt5iSInw51eijtFsit/Y1v2pZb70s3Qmlfc/w7P8PpoIC+0
+	MTRrZfHlz5v2/Xc//fzdF9+yfsclm7+v2z7BWvnIgo1lp9Wb0k3LfvcLXt9wTPfMQTMOz6Db
+	6WfOSJ2q3s+dvpdzgo37lzn2zI1zWS8yTOEsZpm/8pQMR7FVf7LIsaVvtH9OWVa8f19g7BFp
+	r01z96WdT9husiBLNTCsKUmU3/t3Z9f9IqWPr6bPnnYuOkHwx0eH1Bbek/u2LT8qrMRSnJFo
+	qMVcVJwIAMQkbcNIBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7bCSvK6sybpUg1lv1CxW3+1ns3h9+BOj
+	xbQPP5ktVj0It1i5+iiTxd5b2hZ79p5ksei+voPNYvnxf0wW5/8eZ3Xg8rh8xdvj8tlSj02r
+	Otk8dt9sYPP4+PQWi0ffllWMHp83yXlsevKWKYAjissmJTUnsyy1SN8ugSuj5cofloJ27ort
+	22YxNzB2cnYxcnJICJhIvP96mbGLkYtDSGA3o8Ts701sEAlxieZrP9ghbGGJlf+es0MUvWaU
+	mPlpKliCV8BOorfnFjOIzSKgKrF4wRFWiLigxMmZT1hAbFGBJIk99xuZQGxhgWiJtpUTwXqZ
+	gRbcejIfLC4iECdxeP8NsAXMArOYJJ6ff8gGsW0vo8TNFX+B7uPgYBPQlLgwuRSkgVPASmJK
+	22pmiEFmEl1buxghbHmJ7W/nME9gFJqF5I5ZSPbNQtIyC0nLAkaWVYySqQXFuem5yYYFhnmp
+	5XrFibnFpXnpesn5uZsYwdGmpbGD8d78f3qHGJk4GA8xSnAwK4nw3pBclyrEm5JYWZValB9f
+	VJqTWnyIUZqDRUmc13DG7BQhgfTEktTs1NSC1CKYLBMHp1QD0+ppZ67ar/zkXbq8L9Pg97mb
+	x3+l2+4022W3JuP9BdaVAS7yX4qcVz8LvNqvu9oiRitk6bN/0a/+bHn/n7Nvd+K5W6/2zihw
+	EBGeePbKyoO/ZKWkrey2Po5rbD08TfKayPd16v1SntvmPtx9p9nZ+e4XjXsZ0WWBojub9TP/
+	ZLvn9VWdzxLuOWn1vHnyMvPTC47/iqooDm27ek9i6XExJr9usVtXwv980jg+y/COd6+zE/Pk
+	Y7JKk9fUG157eHuld5L7q0KN1l2hPx/5blaa/XWb037VmTWtusEM23oPJmZE3Tsp7qPwIYnl
+	Euf9jNprj2z/8/7cvupFleLxo56HRdj/nH38ekK317L4TwuSSjWUWIozEg21mIuKEwGS6mrL
+	JQMAAA==
+X-CMS-MailID: 20240122092341epcas5p47b118ee78ba8496ceea9e2d3ea4e04c4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20231219000844epcas5p277a34c3a0e212b4a3abec0276ea9e6c6
+References: <20231219000815.2739120-1-bvanassche@acm.org>
+	<CGME20231219000844epcas5p277a34c3a0e212b4a3abec0276ea9e6c6@epcas5p2.samsung.com>
+	<20231219000815.2739120-6-bvanassche@acm.org>
 
-syzbot suspects this issue was fixed by commit:
+On 12/19/2023 5:37 AM, Bart Van Assche wrote:
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+> diff --git a/block/fops.c b/block/fops.c
+> index 0abaac705daf..787ce52bc2c6 100644
+> --- a/block/fops.c
+> +++ b/block/fops.c
+> @@ -73,6 +73,7 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
+>   		bio_init(&bio, bdev, vecs, nr_pages, dio_bio_write_op(iocb));
+>   	}
+>   	bio.bi_iter.bi_sector = pos >> SECTOR_SHIFT;
+> +	bio.bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
+>   	bio.bi_ioprio = iocb->ki_ioprio;
+>   
+>   	ret = bio_iov_iter_get_pages(&bio, iter);
+> @@ -203,6 +204,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
+>   
+>   	for (;;) {
+>   		bio->bi_iter.bi_sector = pos >> SECTOR_SHIFT;
+> +		bio->bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
+>   		bio->bi_private = dio;
+>   		bio->bi_end_io = blkdev_bio_end_io;
+>   		bio->bi_ioprio = iocb->ki_ioprio;
+> @@ -321,6 +323,7 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
+>   	dio->flags = 0;
+>   	dio->iocb = iocb;
+>   	bio->bi_iter.bi_sector = pos >> SECTOR_SHIFT;
+> +	bio->bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
 
-    fs: Block writes to mounted block devices
+This (and two more places above) should rather be changed to:
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14bedc9be80000
-start commit:   305230142ae0 Merge tag 'pm-6.7-rc1-2' of git://git.kernel...
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=beb32a598fd79db9
-dashboard link: https://syzkaller.appspot.com/bug?extid=e57bfc56c27a9285a838
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16cb0588e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16ce91ef680000
+bio.bi_write_hint = bdev_file_inode(iocb->ki_filp)->i_write_hint;
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Note that at other places too (e.g., blkdev_fallocate, blkdev_mmap, 
+blkdev_lseek) bdev inode is used and not file inode.
 
