@@ -1,73 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-8443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFB3836971
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:01:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 789978369F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 17:15:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB1E1283571
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 16:01:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BAAF1F2590F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 16:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F6281219;
-	Mon, 22 Jan 2024 15:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A34712F5BA;
+	Mon, 22 Jan 2024 15:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJv7WUTs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foA8sehM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BF14CB52
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 15:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E206112F5A8;
+	Mon, 22 Jan 2024 15:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705936240; cv=none; b=n+NaFMiPzRZUY6iJbU6dWwQqftBj963sHeUAZ4DhwoJlI7+qvkWqQUZQcE2Ol0uOrkxlRkSTIIdATrIZHoyikaZCW2qQSAtzr6ofP6o3g/dlPMyLoJUCkNyr8CKlzGHRs9STL/itinZqhG9hG0oKDGxh66vEhmiuSm4o7whCk3Y=
+	t=1705936396; cv=none; b=gvic44bOc2jqvrD+9r/C/FL5SNN9PN8PSAJ3hWABveC7rJgk4HUTnT3QsZHnxI1sWFEn3hkXZYlkBL+VUs7FZuEErNuXczkOzz9T58X/noQv01asM+N4w/o6v8YxJXKQzbj0FEtAybghYVo0UIXiSpEI6n2lqr7Vxz41jG100rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705936240; c=relaxed/simple;
-	bh=fSBeLj2FXGrY56pzMCxEoTq591DFXhn2WJr+AS9rKWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DiTtNjEMfdI2nH4Gv+eM8GtPe8FJgzjuL6XhMhP+KYn1Dg+rLxVrA8AL3Z/mqLRiH0se//x+VShwqoVkHYapYSxHFz7vM5HMqup3fDOOUAsX2rIwCrp1BrVNAy71g3jsFDPu0NPJimJF+FfD/2zn1UeBova+Lx2YsoCq22xNgc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJv7WUTs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58CC0C43390;
-	Mon, 22 Jan 2024 15:10:38 +0000 (UTC)
+	s=arc-20240116; t=1705936396; c=relaxed/simple;
+	bh=Z1WXDcDy73sgWFiRjFk8n/YIWxWnWBcmlLF83yFybvo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EZxo+vOakAfSWOBvEZVGoZXAG/LmopXnNVJlM6Sdksc8neRbyTcSs4g7F/WYPjMFi8RIIlbQlaJW69L1LzcvsmNiFSTvWw1YLm03uVVWy1u8IRj9nx5rDxwoyY0IT42OBb+yaLrG3g3xBR+K7Y9bjEKaPRj2JXOKcReOvtNquhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foA8sehM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD97FC43390;
+	Mon, 22 Jan 2024 15:13:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1705936240;
-	bh=fSBeLj2FXGrY56pzMCxEoTq591DFXhn2WJr+AS9rKWY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZJv7WUTsLSy9ByM4eev04JVS8+V8b85uf1BPn0B9w+0FR1lyrI1H8mDg2rsAupYLX
-	 18UVwR2wU3LhYODF6vEoKfV/L0UfF2C2KcolgYsJXP5fLFIfwipgfsCgQPZrCDC2bv
-	 B7bNY9KqEc/lNMkWxKzsnzEVqLS32WYfVr0kNVpOWhtOzFROtoSGHcx9dCdJ46z+cC
-	 jBp1F7djoAIPFI3atY9CNOoD7C6cZApPN38il5FkJ8lSJMQXHqvB6pr/HcS1tRicJi
-	 f5mtZtnPs1W9CC0EiMae+LaS36D67lnbWdt2QjwJvnK45kram274oJeVbs3yiwriU7
-	 tn9KkGIc1dUJA==
-Date: Mon, 22 Jan 2024 16:10:35 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Gabriel Ryan <gabe@cs.columbia.edu>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org
-Subject: Re: Race in fs/posix_acl.c posix_acl_update_mode and related checks
- on inode->i_mode in kernel v6.6
-Message-ID: <20240122-summieren-einchecken-4d9d27edcacc@brauner>
-References: <CALbthtcSSJig8dzTT0LNkhYOFEZCWZR1fvX8UCN2Z57_78oWnA@mail.gmail.com>
- <20240119-rastplatz-sauer-b8a809f0498c@brauner>
- <CALbthtcRoJ_mBRmEBUmyMDw-WPpLOyAEecpu6jj+1AFBEWrkoA@mail.gmail.com>
+	s=k20201202; t=1705936395;
+	bh=Z1WXDcDy73sgWFiRjFk8n/YIWxWnWBcmlLF83yFybvo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=foA8sehMtBLUflL8CmU4M9zpKHunJtNMwBcqfHmNooKBUmChYPkkO2zvnMiKgn+MV
+	 IcTKcQeRCeErshwGh/z7AbwJtF7vC107XjTSn9hkpym+wmJp8Xku+TveeDgaiqRkKp
+	 HyaB7CCCo9c9qVR1u8aq8pHIQYnpxLJCTuBPzwN6ZwaoBgDMcBCEzvccuQLtavGUSj
+	 CT0jNyAi+py+UdYvf990d7Y7y6zOt1NqsJCIR2+HnFaxOF0ofPHxfwsFvgD73kUT0r
+	 7WbkKDQJLfJNrz+dSXhFuW434VN4JqsYD4m16IA79iqQs/eHxSk3Dp4EO5YNOrHHyP
+	 X01sB3HpZSp0Q==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Sasha Levin <sashal@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.15 05/35] fast_dput(): handle underflows gracefully
+Date: Mon, 22 Jan 2024 10:12:02 -0500
+Message-ID: <20240122151302.995456-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240122151302.995456-1-sashal@kernel.org>
+References: <20240122151302.995456-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CALbthtcRoJ_mBRmEBUmyMDw-WPpLOyAEecpu6jj+1AFBEWrkoA@mail.gmail.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.15.147
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jan 19, 2024 at 10:24:59AM -0500, Gabriel Ryan wrote:
-> Thank you for your response Christian. I reported the race because it
-> appeared potentially harmful, but based on your response it sounds like the
-> race is almost certainly benign, and any potential issues would be
-> addressed with WRITE_ONCE() as you suggest.
+From: Al Viro <viro@zeniv.linux.org.uk>
 
-Ok. What I'm asking is whether you can confirm that the thing that your
-tool discovered is indeed a WRITE_ONCE() issue. Is there any trace and
-any more details?
+[ Upstream commit 504e08cebe1d4e1efe25f915234f646e74a364a8 ]
+
+If refcount is less than 1, we should just warn, unlock dentry and
+return true, so that the caller doesn't try to do anything else.
+
+Taking care of that leaves the rest of "lockref_put_return() has
+failed" case equivalent to "decrement refcount and rejoin the
+normal slow path after the point where we grab ->d_lock".
+
+NOTE: lockref_put_return() is strictly a fastpath thing - unlike
+the rest of lockref primitives, it does not contain a fallback.
+Caller (and it looks like fast_dput() is the only legitimate one
+in the entire kernel) has to do that itself.  Reasons for
+lockref_put_return() failures:
+	* ->d_lock held by somebody
+	* refcount <= 0
+	* ... or an architecture not supporting lockref use of
+cmpxchg - sparc, anything non-SMP, config with spinlock debugging...
+
+We could add a fallback, but it would be a clumsy API - we'd have
+to distinguish between:
+	(1) refcount > 1 - decremented, lock not held on return
+	(2) refcount < 1 - left alone, probably no sense to hold the lock
+	(3) refcount is 1, no cmphxcg - decremented, lock held on return
+	(4) refcount is 1, cmphxcg supported - decremented, lock *NOT* held
+	    on return.
+We want to return with no lock held in case (4); that's the whole point of that
+thing.  We very much do not want to have the fallback in case (3) return without
+a lock, since the caller might have to retake it in that case.
+So it wouldn't be more convenient than doing the fallback in the caller and
+it would be very easy to screw up, especially since the test coverage would
+suck - no way to test (3) and (4) on the same kernel build.
+
+Reviewed-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/dcache.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index cf871a81f4fd..422c440b492a 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -762,12 +762,12 @@ static inline bool fast_dput(struct dentry *dentry)
+ 	 */
+ 	if (unlikely(ret < 0)) {
+ 		spin_lock(&dentry->d_lock);
+-		if (dentry->d_lockref.count > 1) {
+-			dentry->d_lockref.count--;
++		if (WARN_ON_ONCE(dentry->d_lockref.count <= 0)) {
+ 			spin_unlock(&dentry->d_lock);
+ 			return true;
+ 		}
+-		return false;
++		dentry->d_lockref.count--;
++		goto locked;
+ 	}
+ 
+ 	/*
+@@ -825,6 +825,7 @@ static inline bool fast_dput(struct dentry *dentry)
+ 	 * else could have killed it and marked it dead. Either way, we
+ 	 * don't need to do anything else.
+ 	 */
++locked:
+ 	if (dentry->d_lockref.count) {
+ 		spin_unlock(&dentry->d_lock);
+ 		return true;
+-- 
+2.43.0
+
 
