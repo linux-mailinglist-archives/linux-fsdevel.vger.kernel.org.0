@@ -1,112 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-8482-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51FB68375C4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 23:01:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1C288375C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 23:03:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAC64B2468F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 22:01:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C971F24D16
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 22 Jan 2024 22:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF81248CD9;
-	Mon, 22 Jan 2024 22:01:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DE348783;
+	Mon, 22 Jan 2024 22:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EDDq0GqU"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Oiigjfjh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE6F48CC3
-	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 22:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13D1482ED
+	for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 22:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705960891; cv=none; b=vCXbbJXKqjsZqmSlDwTx6xmJAAIAwEfhe95Rn2kHoNUZv2e0CmCPWMlM5lM7hms20VRUb4TcuAAE3UbQp/rFIFwiuDpo28Q+K+NrtF78Za3qNVuhW1rBXrZrEWKZQUMjMTNr0WcywCbMQe1HEMTEQOoiUUw7hfZsty4GJv0/GNE=
+	t=1705960970; cv=none; b=OU1UDKfmWXB5IoO1Gs+meQQzbIK7kEujx7ybV4Hl1R/NoA1/h+uM2IAGLVgkzRdTBofcrOUZWjsJvBu99A/aKHElq4+bLzniCjk0ubPyAN7HgEGQCooJ0RxiT2P4Bk4CG1RtGFyQ+Tbjx3Yk3mMp30IUNF0P3CZvOGPHFuzsD4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705960891; c=relaxed/simple;
-	bh=V1yJVFjM67labChbznd10CJnK+mwAgP7GMH9rMtUC+s=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=JKqQoehaqwkmCa35UZpqclaYc40By5ZEGp4f0IvOi/MiSecdII0e/yYde20yfcchVTjFCuaIkbsfzrR6AOCCES4OEPC0yyNSljPsquuNwE1Ide+9/wywDhNGUkLqSNBSXayOHEMlKn5uuHu3aEXRLLrYaV+kxjC1cMRPHUQNEYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EDDq0GqU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1705960888;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YgorZ9y1ABigf+8AfYUUWexSMaoGg5QlyfBL6eKu5CY=;
-	b=EDDq0GqUgEUDONFlrrcfKEI8l1+mUFl6z1bu8pWclYnligWSWPmLipvcytVU+UKfe8vrMG
-	zPHZNoFtue+iGTDGgGJWAcXpCILT9fQ8ylizBTHeTnTPhpxMSudoxcLtK3UE8SadH8aPOR
-	5tRw+lW7GCILkY0/0WeW8+T3/2xD5RU=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-653-FVBxaMfkOUaLwqIkj88Zsg-1; Mon, 22 Jan 2024 17:01:24 -0500
-X-MC-Unique: FVBxaMfkOUaLwqIkj88Zsg-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D9621845E60;
-	Mon, 22 Jan 2024 22:01:22 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.67])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 77F78492BC6;
-	Mon, 22 Jan 2024 22:01:20 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <7790423f-665e-44cc-b4ae-d3f3d2996af5@linux.alibaba.com>
-References: <7790423f-665e-44cc-b4ae-d3f3d2996af5@linux.alibaba.com> <20240122123845.3822570-1-dhowells@redhat.com> <20240122123845.3822570-7-dhowells@redhat.com>
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: dhowells@redhat.com, Christian Brauner <christian@brauner.io>,
-    Jeff Layton <jlayton@kernel.org>,
-    Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
-    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
-    linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-    v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org,
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-    linux-kernel@vger.kernel.org, Marc Dionne <marc.dionne@auristor.com>,
-    Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
-    Yue Hu <huyue2@coolpad.com>
-Subject: Re: [PATCH 06/10] cachefiles, erofs: Fix NULL deref in when cachefiles is not doing ondemand-mode
+	s=arc-20240116; t=1705960970; c=relaxed/simple;
+	bh=0hp4qAvrOKY8LC7aAKY29ksp0u/TQ0p/ryQA8d1FRbw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pBazDBIQYZIqospg8TR5LUwkNNp5P2jg+mX96f2JfAIASa5mqpLeyxzkRimQF54Vo4mKNEi8lEtYx5qocNn40W8KOdD7TqqSZn0/a2gkBHzgRulOPKgRx3SnBreisbWUvu1Ih+dzZl6gxcQ5cmyPX5btUf3+Ie7+oeAftjgqxCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Oiigjfjh; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-50e78f1f41fso3645869e87.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 14:02:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1705960967; x=1706565767; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jOSAIaGnjvf6CCjF3fmWDAvl/DrTsNgSFwohRJOla+4=;
+        b=Oiigjfjh1FOT3dWADyiBvbCTmFIDuugvEH3QUxZafJns3L11Pt46kookMLfcfehMvY
+         IRympvnxlfV6KykDmEKM5TfLsQrCvFcbhsOTugbQJQLo3gL2zc39zwFew3mQjtNwZuRZ
+         xqMoofL4CzT+40rOdRkxhv9CY05jeScesslU8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1705960967; x=1706565767;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jOSAIaGnjvf6CCjF3fmWDAvl/DrTsNgSFwohRJOla+4=;
+        b=dyq+sN5omf38IzJ46VvxzCJjCea6yCwL01w3ae6zMys+lDg/VMmjvSgCoUSv46SNga
+         YPhIma1tNRJfd9Yx0gkcKBEfqKAV1jpCVbb8N//VDhYqzzPb8RgofYuJf9PdlWugCmtc
+         YtK0MdF+Anal+SP5TNMm+l+927P5YxAxkKcBlaqJzsxhNK5qKzEKZXwcTfhLPBbESId0
+         UeyVS65JkG4yQc4fCGlAthkiwY40tOISIiz9fEsl7sknPC/UW93/JH7If2O6iy2wN066
+         UEx1p97m0lqK3lN8qFH2JJyApWXYsqs+yMgY4O/a1bf4+ChC+T+6tC1suJnHyTBQELiE
+         5UQg==
+X-Gm-Message-State: AOJu0YyeNdesDBsY5NuEFCHXmRF3F3BVLX/vQCfvfm81d9rEKjo99SOW
+	SDRD2rHozjpXXcNmptuaqVIiBE62JT4cpZa936w0YPKGsgOuNlF5lFbkfyTWiY7/fl5p1EE+uRR
+	3kGr6fQ==
+X-Google-Smtp-Source: AGHT+IE0I+fi2v+QG0OzdXOV/pkkjDxJvd5UhA8nkFzDj11rXCtJiVDCrjkinjuSIh/BKso51ZKoMA==
+X-Received: by 2002:a05:6512:1320:b0:50e:4389:12c5 with SMTP id x32-20020a056512132000b0050e438912c5mr2304725lfu.14.1705960966948;
+        Mon, 22 Jan 2024 14:02:46 -0800 (PST)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id a25-20020ac25e79000000b0050ffb24cf99sm493475lfr.101.2024.01.22.14.02.45
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 22 Jan 2024 14:02:45 -0800 (PST)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ccae380df2so36141681fa.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 22 Jan 2024 14:02:45 -0800 (PST)
+X-Received: by 2002:a05:651c:1a25:b0:2cd:f914:bba7 with SMTP id
+ by37-20020a05651c1a2500b002cdf914bba7mr2536886ljb.34.1705960965293; Mon, 22
+ Jan 2024 14:02:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3980815.1705960879.1@warthog.procyon.org.uk>
-Date: Mon, 22 Jan 2024 22:01:19 +0000
-Message-ID: <3980816.1705960879@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.9
+References: <20240116225531.681181743@goodmis.org> <20240116234014.459886712@goodmis.org>
+ <20240122215930.GA6184@frogsfrogsfrogs>
+In-Reply-To: <20240122215930.GA6184@frogsfrogsfrogs>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 22 Jan 2024 14:02:28 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiODW+oNdoF4nMqG3Th7HhPGQNQekDvw16CvgKvaZArRg@mail.gmail.com>
+Message-ID: <CAHk-=wiODW+oNdoF4nMqG3Th7HhPGQNQekDvw16CvgKvaZArRg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] eventfs: Have the inodes all for files and
+ directories all be the same
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Ajay Kaher <ajay.kaher@broadcom.com>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+On Mon, 22 Jan 2024 at 13:59, Darrick J. Wong <djwong@kernel.org> wrote:
+>
+>          though I don't think
+> leaking raw kernel pointers is an awesome idea.
 
-> > -	ret = cachefiles_ondemand_init_object(object);
-> > -	if (ret < 0)
-> > -		goto err_unuse;
-> > +	if (object->ondemand) {
-> > +		ret = cachefiles_ondemand_init_object(object);
-> > +		if (ret < 0)
-> > +			goto err_unuse;
-> > +	}
-> 
-> I'm not sure if object->ondemand shall be checked by the caller or
-> inside cachefiles_ondemand_init_object(), as
-> cachefiles_ondemand_clean_object() is also called without checking
-> object->ondemand. cachefiles_ondemand_clean_object() won't trigger the
-> NULL oops as the called cachefiles_ondemand_send_req() will actually
-> checks that.
+Yeah, I wasn't all that comfortable even with trying to hash it
+(because I think the number of source bits is small enough that even
+with a crypto hash, it's trivially brute-forceable).
 
-Meh.  The above doesn't actually build if CONFIG_CACHEFILES_ONDEMAND=N.  I
-think I have to push the check down into cachefiles_ondemand_init_object()
-instead.
+See
 
-David
+   https://lore.kernel.org/all/20240122152748.46897388@gandalf.local.home/
 
+for the current patch under discussion (and it contains a link _to_
+said discussion).
+
+           Linus
 
