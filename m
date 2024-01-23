@@ -1,122 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-8519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E06838A73
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 10:37:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 843B7838A88
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 10:44:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58AC6B241E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 09:37:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B74B91C225C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 09:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B5E59B69;
-	Tue, 23 Jan 2024 09:37:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D545C5EF;
+	Tue, 23 Jan 2024 09:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="klyV34Le"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671A956478;
-	Tue, 23 Jan 2024 09:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2265BAE1;
+	Tue, 23 Jan 2024 09:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.143.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706002634; cv=none; b=nUA6aym/nynI3DBN0VLgtuuSqc0pFo7NnpITYUPBM57hTs3nsk8Z8IC6fSVzIK5rKt0DBGBk876zEjKX9S7p9u4qf+RT8JJ6+iU//f64zZRPQCKauLvahHiVSe8o/2co3OvoeN82d3NcFNORbAc97odYa29B40Ogh6c7NIJfPNE=
+	t=1706003042; cv=none; b=Msw3mbrXs7AjekOoFGLapTlF+1iTIohmZgncqgJy62Uc9EUdjSlWfiGony0QPJQjnn0GodvaUlS5IS4Oi0Mk8DUmTPK5LNmY9NoSigwLJiDKCZtixxFvBpRARgnOO1+a2vHEwRhTWhY4KHEdL1VNjfgU7BcP+BGbvYrIGWbgiHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706002634; c=relaxed/simple;
-	bh=9L2HdofWJcLlzgURvijzTLaL93o4p+E1h/gJ1Az/+I8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UKvNi9dJRw8kuf72aujyN9PRAfgpjXvJd9cAlss9vwTmEfTsqtlc9CPq+q/sZ1X7MQBhAmQKBQzfJJZ4ocF2ovQiXGnjZWqjrGR7ZORagxcu8nXBDC8ApVlP4pgxNGxegTNE7RcAAVVQhtZWfAsJK8LhKHJuUxZicbwtseZPXVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045170;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0W.CRkwM_1706002621;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W.CRkwM_1706002621)
-          by smtp.aliyun-inc.com;
-          Tue, 23 Jan 2024 17:37:02 +0800
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-To: miklos@szeredi.hu,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [RFC] fuse: disable support for file handle when FUSE_EXPORT_SUPPORT not configured
-Date: Tue, 23 Jan 2024 17:37:01 +0800
-Message-Id: <20240123093701.94166-1-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
+	s=arc-20240116; t=1706003042; c=relaxed/simple;
+	bh=/4h6qYS/eHpSlVim37uPdGcbFkvmnDTQ5JZLyrLcZnE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Bq7p31t/eidxr6Q622mS7e2KSbLszGFUwhvZVnh8kXw2SQseV6MjUgpkaS9+lmoGAmo9+eR5FPS8KRU5oHYuj8A8Acef/Qx0KEspKglQYCKq1dlw7D9i544HJUGYLW9CybdSJS7ufC9oz7OeDsUEP1YvaBYHwhpKBW2ac52CB0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=klyV34Le; arc=none smtp.client-ip=68.232.143.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1706003040; x=1737539040;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=/4h6qYS/eHpSlVim37uPdGcbFkvmnDTQ5JZLyrLcZnE=;
+  b=klyV34LehoM/bKGpsEoje1bsQvWnEdkBJm3CmcnxHI+HRti6ZJ/+u1HC
+   76xo81pd3t54FEBqSixPxSZsd4+ixpHRWPY1QeoerQ+TXk7dQRRE/0z/d
+   BdUk5ztm8cSHoDG+j0zrVHFVdqfFia+Q+iwBTDBwaxeoUwfTOwIKxyO/a
+   SnMwMXm4Q6mzQswYf2Mqjkh4M9p2UkvbwRXftOAS8HcD2XkB+qnyRJUQt
+   Toij5t7e3KHfBaDAXNfVRr4TQB2+egWSu5qhj2igJI0n4whAoJLGNukGL
+   9DcqMmmKYCT7f9nMS4XgxBNS3nXU0TXjgLG4HBK1YO7xiGWqIw6uz84Xp
+   A==;
+X-CSE-ConnectionGUID: fbbQ3aUnSa+jfjkiYUqLHg==
+X-CSE-MsgGUID: 9vYZCiNdSh+ZfSVKjIc7BA==
+X-IronPort-AV: E=Sophos;i="6.05,214,1701100800"; 
+   d="scan'208";a="7514644"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 23 Jan 2024 17:43:50 +0800
+IronPort-SDR: TwR3OQ6czbuBwupgP2Pw5/UU9AIJprA4iK31Yg5UGdeifAB7nVUszKOeanYCR1XWjuTUkYP9y8
+ XGwGimQPDegQ==
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 23 Jan 2024 00:53:53 -0800
+IronPort-SDR: zUnRHHmVsKHmYWHqPESmgsAEmU5gU8xkWm6MN/q4pTyWM+A4c3LciGXWMEKUbx1GLBqQ7hfn4G
+ QMsyEBuf/JKg==
+WDCIronportException: Internal
+Received: from unknown (HELO redsun91.ssa.fujisawa.hgst.com) ([10.149.66.6])
+  by uls-op-cesaip02.wdc.com with ESMTP; 23 Jan 2024 01:43:47 -0800
+From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH 0/5] block: remove gfp_mask for blkdev_zone_mgmt()
+Date: Tue, 23 Jan 2024 01:43:41 -0800
+Message-Id: <20240123-zonefs_nofs-v1-0-cc0b0308ef25@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE2Kr2UC/x3MMQqAMAxA0atIZgtpKA5eRUTUppqllQZELL27x
+ fEN/xdQzsIKY1cg8y0qKTbYvoP9XOPBRnwzEJJDa9G8KXLQJaagxnvLRBsxugFacWUO8vy3aa7
+ 1AzrU4INdAAAA
+To: Damien Le Moal <dlemoal@kernel.org>, 
+ Naohiro Aota <naohiro.aota@wdc.com>, Mike Snitzer <snitzer@kernel.org>, 
+ dm-devel@lists.linux.dev, Chris Mason <clm@fb.com>, 
+ Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+ Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>, 
+ Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
+ Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-btrfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net, 
+ linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
+ Johannes Thumshirn <johannes.thumshirn@wdc.com>, 
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1706003027; l=1540;
+ i=johannes.thumshirn@wdc.com; s=20230613; h=from:subject:message-id;
+ bh=/4h6qYS/eHpSlVim37uPdGcbFkvmnDTQ5JZLyrLcZnE=;
+ b=XWApU1yRY0zet3szE9Y5YwxO0lp/MB+nH+oGhmBdyhChEBIQpYa6r7zw4rgXKerbrVnIXc2mT
+ UtgASe05xPWAqN+bStf/4/hcrd6JLPpuUKW556WA7lZY9ZeLtErtKq6
+X-Developer-Key: i=johannes.thumshirn@wdc.com; a=ed25519;
+ pk=TGmHKs78FdPi+QhrViEvjKIGwReUGCfa+3LEnGoR2KM=
 
-I think this is more of an issue reporter.
+Fueled by the LSFMM discussion on removing GFP_NOFS initiated by Willy,
+I've looked into the sole GFP_NOFS allocation in zonefs. As it turned out,
+it is only done for zone management commands and can be removed.
 
-I'm not sure if it's a known issue, but we found that following a
-successful name_to_handle_at(2), open_by_handle_at(2) fails (-ESTALE,
-Stale file handle) with the given file handle when the fuse daemon is in
-"cache= none" mode.
+After digging into more callers of blkdev_zone_mgmt() I came to the
+conclusion that the gfp_mask parameter can be removed alltogether.
 
-It can be reproduced by the examples from the man page of
-name_to_handle_at(2) and open_by_handle_at(2) [1], along with the
-virtiofsd daemon (C implementation) in "cache= none" mode.
+So this series switches all callers of blkdev_zone_mgmt() to either use
+GFP_KERNEL where possible or grab a memalloc_no{fs,io} context.
 
-```
-./t_name_to_handle_at t_open_by_handle_at.c > /tmp/fh
-./t_open_by_handle_at < /tmp/fh
-t_open_by_handle_at: open_by_handle_at: Stale file handle
-```
+The final patch in this series is getting rid of the gfp_mask parameter.
 
-After investigation into this issue, I found the root cause is that,
-when virtiofsd is in "cache= none" mode, the entry_valid_timeout is
-configured as 0.  Thus the dput() called when name_to_handle_at(2)
-finishes will trigger iput -> evict(), in which FUSE_FORGET will be sent
-to the daemon.  The following open_by_handle_at(2) will trigger a new
-FUSE_LOOKUP request when no cached inode is found with the given file
-handle.  And then the fuse daemon fails the FUSE_LOOKUP request with
--ENOENT as the cached metadata of the requested inode has already been
-cleaned up among the previous FUSE_FORGET.
+Link: https://lore.kernel.org/all/ZZcgXI46AinlcBDP@casper.infradead.org/
 
-This indeed confuses the application, as open_by_handle_at(2) fails in
-the condition of the previous name_to_handle_at(2) succeeds, given the
-requested file is not deleted and ready there.  It is acceptable for the
-application folks to fail name_to_handle_at(2) early in this case, in
-which they will fallback to open(2) to access files.
-
-
-As for this RFC patch, the idea is that if the fuse daemon is configured
-with "cache=none" mode, FUSE_EXPORT_SUPPORT should also be explicitly
-disabled and the following name_to_handle_at(2) will all fail as a
-workaround of this issue.
-
-[1] https://man7.org/linux/man-pages/man2/open_by_handle_at.2.html
-
-Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 ---
- fs/fuse/inode.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Johannes Thumshirn (5):
+      zonefs: pass GFP_KERNEL to blkdev_zone_mgmt() call
+      dm: dm-zoned: pass GFP_KERNEL to blkdev_zone_mgmt
+      btrfs: zoned: call blkdev_zone_mgmt in nofs scope
+      f2fs: guard blkdev_zone_mgmt with nofs scope
+      block: remove gfp_flags from blkdev_zone_mgmt
 
-diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index 2a6d44f91729..9fed63be60fe 100644
---- a/fs/fuse/inode.c
-+++ b/fs/fuse/inode.c
-@@ -1025,6 +1025,7 @@ static struct dentry *fuse_get_dentry(struct super_block *sb,
- static int fuse_encode_fh(struct inode *inode, u32 *fh, int *max_len,
- 			   struct inode *parent)
- {
-+	struct fuse_conn *fc = get_fuse_conn(inode);
- 	int len = parent ? 6 : 3;
- 	u64 nodeid;
- 	u32 generation;
-@@ -1034,6 +1035,9 @@ static int fuse_encode_fh(struct inode *inode, u32 *fh, int *max_len,
- 		return  FILEID_INVALID;
- 	}
- 
-+	if (!fc->export_support)
-+		return -EOPNOTSUPP;
-+
- 	nodeid = get_fuse_inode(inode)->nodeid;
- 	generation = inode->i_generation;
- 
+ block/blk-zoned.c              | 19 ++++++++-----------
+ drivers/md/dm-zoned-metadata.c |  2 +-
+ drivers/nvme/target/zns.c      |  5 ++---
+ fs/btrfs/zoned.c               | 35 +++++++++++++++++++++++++----------
+ fs/f2fs/segment.c              | 15 ++++++++++++---
+ fs/zonefs/super.c              |  2 +-
+ include/linux/blkdev.h         |  2 +-
+ 7 files changed, 50 insertions(+), 30 deletions(-)
+---
+base-commit: 7ed2632ec7d72e926b9e8bcc9ad1bb0cd37274bf
+change-id: 20240110-zonefs_nofs-dd1e22b2e046
+
+Best regards,
 -- 
-2.19.1.6.gb485710b
+Johannes Thumshirn <johannes.thumshirn@wdc.com>
 
 
