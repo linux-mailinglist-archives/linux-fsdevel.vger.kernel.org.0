@@ -1,278 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-8592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8597-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C22B83929A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 16:26:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FB358392B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 16:29:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C12128AD1B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 15:26:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E789B22D0B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 15:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8912D6027C;
-	Tue, 23 Jan 2024 15:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sB2l91+F";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9HvmEOsb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sB2l91+F";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9HvmEOsb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 817FD5FEF3;
+	Tue, 23 Jan 2024 15:29:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE6955FDBA;
-	Tue, 23 Jan 2024 15:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD905FDD5;
+	Tue, 23 Jan 2024 15:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706023529; cv=none; b=EZnIsRYZrofPtdA2cvHV/tYtB2b3gLLGcUqHUnIBsXVFm9LM1v2hMQEF+8PbD1Cazr5EyN3aPfIiSKZLjTUdeD2xMqyA7PAjdqoj6/PCeDSu2DynDRMI5YuBFHOnQL4FU/KnezTmXyvwxQ06Lj9Qdg2P9vGOJhE75N0ZCC5hY/Y=
+	t=1706023753; cv=none; b=oSVzAtUQQs10uFTD997TScBjQrn3cyuFQcfiBiWXfeHKFbfE+rPq97N1jUqLN+Sk78xg71rWj0wrNuwD4pxoVcCb+SFVZOptCHIm6LqOAvXPEJHh1Mwa8SvVJnbPtO0TYotbvRYWcRytQCh2/QorQoVwmNREIxy1Z7vHCCPEzw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706023529; c=relaxed/simple;
-	bh=YBiQ8/ge7B0Cy2nRMqM5Ufe9ziq5MOCh7BlnVIaFXDk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VS6PKEP4ZD7E7HcNqiv9stlTtV0bHxRjrYrE/iZr5YksNWcr0XFyj9L6Qvjp219KYoUVafeuTDYhOrJQz6OI1MuUSJZqMUCNNuWQjlaljcbA/5zbkR34AuF48WGhgEq43eWcfqddvID52qwK5nvljlTs8nejEYzO1VpbDaY7qmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sB2l91+F; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9HvmEOsb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sB2l91+F; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9HvmEOsb; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 11AFC1FD81;
-	Tue, 23 Jan 2024 15:25:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706023526; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z8WIyV3lKxgxbFCSvhGPHax9kDia3vCA/+e3zP7Jyq4=;
-	b=sB2l91+FuTVjeyed8qpaEwKM2Rdb/yYqLC2wrEHxiEkIcHEHcBwdvYQIzG7jrtwWKbXbjs
-	pM3bA0hJH3hRTvrN3W6dwN8NXWta6ScVrhHsOe95Lcf0jp6P1AOQkeIVcxv616d11xqIZW
-	XqhDlDxfrjGQJS2K48YvYzWucGst44M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706023526;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z8WIyV3lKxgxbFCSvhGPHax9kDia3vCA/+e3zP7Jyq4=;
-	b=9HvmEOsbCvYRS3RvBN2XOVmNZJihYSpanBdQw6KuPE0/DlRiUlNQQdPIRJKbsBOjZkoXKW
-	lkaHk1w5WTv3eMCw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706023526; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z8WIyV3lKxgxbFCSvhGPHax9kDia3vCA/+e3zP7Jyq4=;
-	b=sB2l91+FuTVjeyed8qpaEwKM2Rdb/yYqLC2wrEHxiEkIcHEHcBwdvYQIzG7jrtwWKbXbjs
-	pM3bA0hJH3hRTvrN3W6dwN8NXWta6ScVrhHsOe95Lcf0jp6P1AOQkeIVcxv616d11xqIZW
-	XqhDlDxfrjGQJS2K48YvYzWucGst44M=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706023526;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z8WIyV3lKxgxbFCSvhGPHax9kDia3vCA/+e3zP7Jyq4=;
-	b=9HvmEOsbCvYRS3RvBN2XOVmNZJihYSpanBdQw6KuPE0/DlRiUlNQQdPIRJKbsBOjZkoXKW
-	lkaHk1w5WTv3eMCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 013D0139B9;
-	Tue, 23 Jan 2024 15:25:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id zVtPAGbar2WtdQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 23 Jan 2024 15:25:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1AC11A080F; Tue, 23 Jan 2024 16:25:21 +0100 (CET)
-From: Jan Kara <jack@suse.cz>
-To: <linux-fsdevel@vger.kernel.org>
-Cc: <linux-ext4@vger.kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH 9/9] quota: Drop GFP_NOFS instances under dquot->dq_lock and dqio_sem
-Date: Tue, 23 Jan 2024 16:25:08 +0100
-Message-Id: <20240123152520.4294-9-jack@suse.cz>
-X-Mailer: git-send-email 2.35.3
-In-Reply-To: <20240123152113.13352-1-jack@suse.cz>
-References: <20240123152113.13352-1-jack@suse.cz>
+	s=arc-20240116; t=1706023753; c=relaxed/simple;
+	bh=s6jgl5KcyFsafPQ+hFpzhVn26U7GR5BduKRkjTiqmyM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gu+VS20tsfdFPnDGVnoxf/RCo14ddGJ7kpi4ZAt5GOqcvOSA4yntzqo73B5ADQ/epIcZcthxfa+t7CiIkk/Gf5Q39DNZagViQBbA7K+tizmAPosVPPF7bQHPUEJbg2/wxvjexLrMcd+6HYEw6bn6hgzDauCq/bi81eNf9MEAMkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1d7232dcb3eso18829735ad.2;
+        Tue, 23 Jan 2024 07:29:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706023751; x=1706628551;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BEoXkdsFzObck9VQxVE2hGH3a3xF+qG8H5BqRHfrQRM=;
+        b=PBx9QDzWHnMhxgqxdNB2v0jFYL/URQfek/nb+AYQkQWZoZjnrlQMyLdukzMWs3bGq5
+         hTJ6yWzNNF7U1EVFRC2FE4EWSZLd1Hw5DhV0BU/G//uXeiNWD0lrF9BLppk4ufyiqHKa
+         AiS+tOsvlhiluuATKcI9+RE89eWEaWtHUDoA2J94LE03/YMNbNK3c+g3XcUpyvNTBUi8
+         wcS/DJ8GdXEd3fs/qyA/CUQ1kRCchVZtUtrtLd+gGEAYcUW9cWNjdAJwl5rSRb4yKqbV
+         9VNGycQb4vCv4yEnkTUuInD/iIyGu/RVe7+tdqcny5AiZLOhAMwBmukwavJJqAXkS1qC
+         /2sg==
+X-Gm-Message-State: AOJu0Yyl+UlVqdMbhOk/T+IzFSTSGns+FPXB7Utm0vwQ+KFsSJL4EoRk
+	+ge2pa0Twm52i3dEmFNx+LRlS3sMt37m3Rdk8lxxGUMKtV8RRpSs
+X-Google-Smtp-Source: AGHT+IESSOPXAtxeDnwtmAzzfqPO0vHSCSiFgAsWzZ1m6fJrkXNCGAF1nxYU6Vw1hCMO9M/5h+Bkqw==
+X-Received: by 2002:a17:903:1107:b0:1d7:2455:2e70 with SMTP id n7-20020a170903110700b001d724552e70mr3613598plh.21.1706023750906;
+        Tue, 23 Jan 2024 07:29:10 -0800 (PST)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
+        by smtp.gmail.com with ESMTPSA id d5-20020a170902ef0500b001d7244c8ee0sm6819370plx.117.2024.01.23.07.29.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 23 Jan 2024 07:29:10 -0800 (PST)
+Message-ID: <0d266548-b8dc-473c-9603-41f8adb2d3c1@acm.org>
+Date: Tue, 23 Jan 2024 07:29:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5634; i=jack@suse.cz; h=from:subject; bh=YBiQ8/ge7B0Cy2nRMqM5Ufe9ziq5MOCh7BlnVIaFXDk=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBlr9pTqJyC9l3eERdlefPakLL+cFswto4FqJf/5rH7 7lR804iJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCZa/aUwAKCRCcnaoHP2RA2XhMB/ 9oRJZmPqwsfDmk+ssiShGGcBKNORJNFlqiGbwaRUBBgowKps7UpxF/GodL6ZIV2/8qkiPq1VJIl3yX jXPT29jQMrAlkNaMubA9IMhjBble01hHDydt3G06+iBr6qdsSZgYpPc13e8H1YWt2DWKX7ZiXDfo7Z 0ou47UWkV+nQtl3UumRFVgplUcoEWPy+oXBrZMVtC7gOsZhvMQRlNNY+QfXTl1G9ke0Tx7Sb+6SHMN dV80KrdRSXeYDdu/U+cBHbmehAu8z1pGtJFicY5luNT4RYdi8sEQaqlXqgdsTKALvSC2oKEq25LPni d4UgWv8Z5S6bn4rJ0qdd9n27kcRtEw
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
-Content-Transfer-Encoding: 8bit
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: 0.70
-X-Spamd-Result: default: False [0.70 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 RCPT_COUNT_THREE(0.00)[4];
-	 R_MISSING_CHARSET(2.50)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 BROKEN_CONTENT_TYPE(1.50)[];
-	 TO_DN_SOME(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-0.998];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 MID_CONTAINS_FROM(1.00)[];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 06/19] block, fs: Propagate write hints to the block
+ device inode
+Content-Language: en-US
+To: Kanchan Joshi <joshi.k@samsung.com>, Christoph Hellwig <hch@lst.de>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+ linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Daejun Park <daejun7.park@samsung.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+ Chuck Lever <chuck.lever@oracle.com>
+References: <20231219000815.2739120-1-bvanassche@acm.org>
+ <20231219000815.2739120-7-bvanassche@acm.org> <20231228071206.GA13770@lst.de>
+ <00cf8ffa-8ad5-45e4-bf7c-28b07ab4de21@acm.org> <20240103090204.GA1851@lst.de>
+ <CGME20240103230906epcas5p468e1779bf14eeaa6f70f045be85afffc@epcas5p4.samsung.com>
+ <23753320-63e5-4d76-88e2-8f2c9a90505c@acm.org>
+ <b294a619-c37e-cb05-79a8-8a62aec88c7f@samsung.com>
+ <9b854847-d29e-4df2-8d5d-253b6e6afc33@acm.org>
+ <9fa04d79-0ba6-a2e0-6af7-d1c85f08923b@samsung.com>
+ <85be3166-1886-b56a-4910-7aff8a13ea3b@samsung.com>
+ <edefdfbc-8584-47ad-9cb0-19ecb94321a8@acm.org>
+ <4f36fc64-a93b-9b2c-7a12-79e25671b375@samsung.com>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <4f36fc64-a93b-9b2c-7a12-79e25671b375@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Quota code acquires dquot->dq_lock whenever reading / writing dquot.
-When reading / writing quota info we hold dqio_sem.  Since these locks
-can be acquired during inode reclaim (through dquot_drop() -> dqput() ->
-dquot_release()) we are setting nofs allocation context whenever
-acquiring these locks. Hence there's no need to use GFP_NOFS allocations
-in quota code doing IO. Just switch it to GFP_KERNEL.
+On 1/23/24 04:16, Kanchan Joshi wrote:
+> On 1/23/2024 1:39 AM, Bart Van Assche wrote:
+>> On 1/22/24 01:31, Kanchan Joshi wrote:
+>>> On 1/19/2024 7:26 PM, Kanchan Joshi wrote:
+>>>> On 1/19/2024 12:24 AM, Bart Van Assche wrote:
+>>>>> I think the above proposal would introduce a bug: it would break the
+>>>>> F_GET_RW_HINT implementation.
+>>>>
+>>>> Right. I expected to keep the exact change in GET, too, but that will
+>>>> not be free from the side-effect.
+>>>> The buffered-write path (block_write_full_page) picks the hint from one
+>>>> inode, and the direct-write path (__blkdev_direct_IO_simple) picks the
+>>>> hint from a different inode.
+>>>> So, updating both seems needed here.
+>>>
+>>> I stand corrected. It's possible to do away with two updates.
+>>> The direct-io code (patch 8) should rather be changed to pick the hint
+>>> from bdev inode (and not from file inode).
+>>> With that change, this patch only need to set the hint into only one
+>>> inode (bdev one). What do you think?
+>>
+>> I think that would break direct I/O submitted by a filesystem.
+> 
+> By breakage do you mean not being able to set/get the hint correctly?
+> I tested with XFS and Ext4 direct I/O. No breakage.
 
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/quota/quota_tree.c | 24 ++++++++++++------------
- fs/quota/quota_v2.c   |  2 +-
- 2 files changed, 13 insertions(+), 13 deletions(-)
+The approach that you proposed is wrong from a conceptual point of view.
+Zero, one or more block devices can be associated with a filesystem. It
+would be wrong to try to access all associated block devices from inside
+the F_SET_RW_HINT implementation. I don't think that there is any API in
+the Linux kernel for iterating over all the block devices associated with
+a filesystem.
 
-diff --git a/fs/quota/quota_tree.c b/fs/quota/quota_tree.c
-index 0f1493e0f6d0..ef0461542d3a 100644
---- a/fs/quota/quota_tree.c
-+++ b/fs/quota/quota_tree.c
-@@ -108,7 +108,7 @@ static int check_dquot_block_header(struct qtree_mem_dqinfo *info,
- /* Remove empty block from list and return it */
- static int get_free_dqblk(struct qtree_mem_dqinfo *info)
- {
--	char *buf = kmalloc(info->dqi_usable_bs, GFP_NOFS);
-+	char *buf = kmalloc(info->dqi_usable_bs, GFP_KERNEL);
- 	struct qt_disk_dqdbheader *dh = (struct qt_disk_dqdbheader *)buf;
- 	int ret, blk;
- 
-@@ -160,7 +160,7 @@ static int put_free_dqblk(struct qtree_mem_dqinfo *info, char *buf, uint blk)
- static int remove_free_dqentry(struct qtree_mem_dqinfo *info, char *buf,
- 			       uint blk)
- {
--	char *tmpbuf = kmalloc(info->dqi_usable_bs, GFP_NOFS);
-+	char *tmpbuf = kmalloc(info->dqi_usable_bs, GFP_KERNEL);
- 	struct qt_disk_dqdbheader *dh = (struct qt_disk_dqdbheader *)buf;
- 	uint nextblk = le32_to_cpu(dh->dqdh_next_free);
- 	uint prevblk = le32_to_cpu(dh->dqdh_prev_free);
-@@ -207,7 +207,7 @@ static int remove_free_dqentry(struct qtree_mem_dqinfo *info, char *buf,
- static int insert_free_dqentry(struct qtree_mem_dqinfo *info, char *buf,
- 			       uint blk)
- {
--	char *tmpbuf = kmalloc(info->dqi_usable_bs, GFP_NOFS);
-+	char *tmpbuf = kmalloc(info->dqi_usable_bs, GFP_KERNEL);
- 	struct qt_disk_dqdbheader *dh = (struct qt_disk_dqdbheader *)buf;
- 	int err;
- 
-@@ -255,7 +255,7 @@ static uint find_free_dqentry(struct qtree_mem_dqinfo *info,
- {
- 	uint blk, i;
- 	struct qt_disk_dqdbheader *dh;
--	char *buf = kmalloc(info->dqi_usable_bs, GFP_NOFS);
-+	char *buf = kmalloc(info->dqi_usable_bs, GFP_KERNEL);
- 	char *ddquot;
- 
- 	*err = 0;
-@@ -329,7 +329,7 @@ static uint find_free_dqentry(struct qtree_mem_dqinfo *info,
- static int do_insert_tree(struct qtree_mem_dqinfo *info, struct dquot *dquot,
- 			  uint *treeblk, int depth)
- {
--	char *buf = kmalloc(info->dqi_usable_bs, GFP_NOFS);
-+	char *buf = kmalloc(info->dqi_usable_bs, GFP_KERNEL);
- 	int ret = 0, newson = 0, newact = 0;
- 	__le32 *ref;
- 	uint newblk;
-@@ -410,7 +410,7 @@ int qtree_write_dquot(struct qtree_mem_dqinfo *info, struct dquot *dquot)
- 	int type = dquot->dq_id.type;
- 	struct super_block *sb = dquot->dq_sb;
- 	ssize_t ret;
--	char *ddquot = kmalloc(info->dqi_entry_size, GFP_NOFS);
-+	char *ddquot = kmalloc(info->dqi_entry_size, GFP_KERNEL);
- 
- 	if (!ddquot)
- 		return -ENOMEM;
-@@ -449,7 +449,7 @@ static int free_dqentry(struct qtree_mem_dqinfo *info, struct dquot *dquot,
- 			uint blk)
- {
- 	struct qt_disk_dqdbheader *dh;
--	char *buf = kmalloc(info->dqi_usable_bs, GFP_NOFS);
-+	char *buf = kmalloc(info->dqi_usable_bs, GFP_KERNEL);
- 	int ret = 0;
- 
- 	if (!buf)
-@@ -513,7 +513,7 @@ static int free_dqentry(struct qtree_mem_dqinfo *info, struct dquot *dquot,
- static int remove_tree(struct qtree_mem_dqinfo *info, struct dquot *dquot,
- 		       uint *blk, int depth)
- {
--	char *buf = kmalloc(info->dqi_usable_bs, GFP_NOFS);
-+	char *buf = kmalloc(info->dqi_usable_bs, GFP_KERNEL);
- 	int ret = 0;
- 	uint newblk;
- 	__le32 *ref = (__le32 *)buf;
-@@ -577,7 +577,7 @@ EXPORT_SYMBOL(qtree_delete_dquot);
- static loff_t find_block_dqentry(struct qtree_mem_dqinfo *info,
- 				 struct dquot *dquot, uint blk)
- {
--	char *buf = kmalloc(info->dqi_usable_bs, GFP_NOFS);
-+	char *buf = kmalloc(info->dqi_usable_bs, GFP_KERNEL);
- 	loff_t ret = 0;
- 	int i;
- 	char *ddquot;
-@@ -615,7 +615,7 @@ static loff_t find_block_dqentry(struct qtree_mem_dqinfo *info,
- static loff_t find_tree_dqentry(struct qtree_mem_dqinfo *info,
- 				struct dquot *dquot, uint blk, int depth)
- {
--	char *buf = kmalloc(info->dqi_usable_bs, GFP_NOFS);
-+	char *buf = kmalloc(info->dqi_usable_bs, GFP_KERNEL);
- 	loff_t ret = 0;
- 	__le32 *ref = (__le32 *)buf;
- 
-@@ -684,7 +684,7 @@ int qtree_read_dquot(struct qtree_mem_dqinfo *info, struct dquot *dquot)
- 		}
- 		dquot->dq_off = offset;
- 	}
--	ddquot = kmalloc(info->dqi_entry_size, GFP_NOFS);
-+	ddquot = kmalloc(info->dqi_entry_size, GFP_KERNEL);
- 	if (!ddquot)
- 		return -ENOMEM;
- 	ret = sb->s_op->quota_read(sb, type, ddquot, info->dqi_entry_size,
-@@ -728,7 +728,7 @@ EXPORT_SYMBOL(qtree_release_dquot);
- static int find_next_id(struct qtree_mem_dqinfo *info, qid_t *id,
- 			unsigned int blk, int depth)
- {
--	char *buf = kmalloc(info->dqi_usable_bs, GFP_NOFS);
-+	char *buf = kmalloc(info->dqi_usable_bs, GFP_KERNEL);
- 	__le32 *ref = (__le32 *)buf;
- 	ssize_t ret;
- 	unsigned int epb = info->dqi_usable_bs >> 2;
-diff --git a/fs/quota/quota_v2.c b/fs/quota/quota_v2.c
-index 48e0d610ceef..5eb0de8e7e40 100644
---- a/fs/quota/quota_v2.c
-+++ b/fs/quota/quota_v2.c
-@@ -121,7 +121,7 @@ static int v2_read_file_info(struct super_block *sb, int type)
- 			ret = -EIO;
- 		goto out;
- 	}
--	info->dqi_priv = kmalloc(sizeof(struct qtree_mem_dqinfo), GFP_NOFS);
-+	info->dqi_priv = kmalloc(sizeof(struct qtree_mem_dqinfo), GFP_KERNEL);
- 	if (!info->dqi_priv) {
- 		ret = -ENOMEM;
- 		goto out;
--- 
-2.35.3
-
+Bart.
 
