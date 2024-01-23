@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-8558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C1B0839001
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 14:31:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD839839003
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 14:31:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF455292007
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 13:31:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E3EF2922D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 13:31:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B7A60B9E;
-	Tue, 23 Jan 2024 13:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079A660BB6;
+	Tue, 23 Jan 2024 13:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rVNydM1x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttIxG4DJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654A860B8D;
-	Tue, 23 Jan 2024 13:27:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6029560B8B;
+	Tue, 23 Jan 2024 13:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706016451; cv=none; b=F4vcMhIvIEzuyBM188xc7fBrRyIfjPpzhCvLtLVEhkxjxeRxZ4GSjx7J6xEDisiJY69Y4A75qpj13rKkTnCc5QxYtQchd00HA4QjYGCkTZ/F4ZLmEiDJgqfFZzc2cn0znbj4z/w3Yw0zuR+fXaflLkr1quV3Sy/ZZr4ox4ZUofE=
+	t=1706016453; cv=none; b=AWuIiBHjgUxtLxobOtGFX1fXxyIqrcBFqU6hJ9QYxO4qHmuGHYKIIuwaDdoygr2fVyg4/2SAPk2ZKm7673tDhuxd5VLaFEJWL8YPcXtPPxRbKRT2Qw015eBR+4rEywb/7c5vxTGzlowmWkt6r9Ey8UpQ23vlUYcWdwGeOKIPzcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706016451; c=relaxed/simple;
-	bh=h8FU3r+cVFUvc6HDTBVeny/0GesaL0HXMLFocoEdmxQ=;
+	s=arc-20240116; t=1706016453; c=relaxed/simple;
+	bh=zvQJtorkoXXa/FXSil4w5qxpHrmga1OP6ymfQ7y/j7M=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=A2k2ww48HyniO518ly5Vs1gXAhbWAMqordwM3b9fScWAKu+gynvg6e0VZQSwKz0SQ3ad1kmp6dbuB3cmbXuhb723mhqw+NvffuIU6x+ZFPA4JDnf2oBEvo1VCeALy+45l2yJT1HCVDan2O34gKURS6B4yMJlmF/CriSEDLHN4Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rVNydM1x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1302C116B1;
-	Tue, 23 Jan 2024 13:27:28 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=fszKLYP+wkkCkAwDVpPzKLtmCGW7cN3ANA7C5sAcdFChhr4MihPT0ZH02jQ4UwcGfLzWKxt0X/DdvOqtAQYGDp9j5INFblsVxX5XTsLevSGfmt6ovwO7c/yp3jEM6mUH9UlYW1VflOC1YJEPYksVfweluPLPL+EHGOmZZesOpZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttIxG4DJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38DB3C4166A;
+	Tue, 23 Jan 2024 13:27:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706016450;
-	bh=h8FU3r+cVFUvc6HDTBVeny/0GesaL0HXMLFocoEdmxQ=;
+	s=k20201202; t=1706016452;
+	bh=zvQJtorkoXXa/FXSil4w5qxpHrmga1OP6ymfQ7y/j7M=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=rVNydM1xyBGmXednqT/ePlRheP6KyUpIBIWXlM0yA/CQCNHip72fzLimGmSWd0xcn
-	 hLgf3P5QYGvBgzHMqohZIglrNooDDkxBtaajTR8tLYPa7SemPplNA3xlWmDW4TEwJT
-	 BPSwDnVEeNPlSZ9Dskq471koY7ojc5KxJfZwrYek6HmV+1lIhS5PXXQEqlb9xDYKyC
-	 xD9u1dzGNxRKGTPGUzo0rGyNQccMO2uZSgXcSI/GWIptPFBCzULXGWadZE6EE1VAbR
-	 AnYWrAeAFDcedApizmTVtm/umwchUQIYF7uSPGGuyRpVpMp1Q1/LHn5jm+aCvvshSz
-	 VVIlar9nPkHNg==
+	b=ttIxG4DJrqTa9Qk1Y2P5PZrh8i6rs33vx2td4oqu47boylhZQDr5zXiClV3p62dFc
+	 RNHIzXdcqAsEIpqkzep9sumuEida8tVopTE8JkC28/7ZAiZ9ucXLggdlgprdDI+c/D
+	 qa6hK9lD2oycCSBiCwiM86pusHHHkWFY3FbmLSPy+lp8NkR1I3FBzpXyh6hiLZnmu0
+	 Kze55N0efGiZSu4Htl4ui4dKH2Znr9budXcAchS2yBqiOFMb3HgVNmt6lgps7sa4pP
+	 IpiNQjkTgZ3WH9CU8S+CjXxIZYN3AuCdJ+ts7FwOJGoPcq32AL9iv704Xy1S1G6WNC
+	 n5CVuJBZgQjhQ==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 23 Jan 2024 14:26:30 +0100
-Subject: [PATCH v2 13/34] bcache: port block device access to files
+Date: Tue, 23 Jan 2024 14:26:31 +0100
+Subject: [PATCH v2 14/34] block2mtd: port device access to files
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240123-vfs-bdev-file-v2-13-adbd023e19cc@kernel.org>
+Message-Id: <20240123-vfs-bdev-file-v2-14-adbd023e19cc@kernel.org>
 References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
 In-Reply-To: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
 To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
@@ -60,261 +60,156 @@ To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
 Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, 
  linux-block@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.13-dev-4e032
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8477; i=brauner@kernel.org;
- h=from:subject:message-id; bh=h8FU3r+cVFUvc6HDTBVeny/0GesaL0HXMLFocoEdmxQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSu3zd/mkD2LbW7LXHhqh96K/sP9m+TkZzw7/TvYzY9O
- 3/d/fVsZUcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBEbjgz/NO4axKV4Gh6u/li
- A5Pbq/A7/qfDvq4oPSRiyVmmuVhtvivD/wDrvdN0/15yalMx37D1y4KPmifnZu247skz2fuP1hm
- Wdk4A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5174; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=zvQJtorkoXXa/FXSil4w5qxpHrmga1OP6ymfQ7y/j7M=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSu3zdfOWuiQ2S/bKvO/9vfZt+9v1TO4sA/TwH+g4f4H
+ pnWfT/m3VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR1SsZGaZdOHJSnevSlp71
+ Gmv2beP5z/Vb+/Qmn1SrlStcGgKOCYgwMvzZ0XZULSG7Ly1Zf6tRX0pU0eqZDq8uBIrmJdtMluH
+ bxw8A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/md/bcache/bcache.h |  4 +--
- drivers/md/bcache/super.c  | 74 +++++++++++++++++++++++-----------------------
- 2 files changed, 39 insertions(+), 39 deletions(-)
+ drivers/mtd/devices/block2mtd.c | 46 +++++++++++++++++++----------------------
+ 1 file changed, 21 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
-index 6ae2329052c9..4e6afa89921f 100644
---- a/drivers/md/bcache/bcache.h
-+++ b/drivers/md/bcache/bcache.h
-@@ -300,7 +300,7 @@ struct cached_dev {
- 	struct list_head	list;
- 	struct bcache_device	disk;
- 	struct block_device	*bdev;
--	struct bdev_handle	*bdev_handle;
-+	struct file		*bdev_file;
- 
- 	struct cache_sb		sb;
- 	struct cache_sb_disk	*sb_disk;
-@@ -423,7 +423,7 @@ struct cache {
- 
- 	struct kobject		kobj;
- 	struct block_device	*bdev;
--	struct bdev_handle	*bdev_handle;
-+	struct file		*bdev_file;
- 
- 	struct task_struct	*alloc_thread;
- 
-diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
-index dc3f50f69714..d00b3abab133 100644
---- a/drivers/md/bcache/super.c
-+++ b/drivers/md/bcache/super.c
-@@ -1369,8 +1369,8 @@ static CLOSURE_CALLBACK(cached_dev_free)
- 	if (dc->sb_disk)
- 		put_page(virt_to_page(dc->sb_disk));
- 
--	if (dc->bdev_handle)
--		bdev_release(dc->bdev_handle);
-+	if (dc->bdev_file)
-+		fput(dc->bdev_file);
- 
- 	wake_up(&unregister_wait);
- 
-@@ -1445,7 +1445,7 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
- /* Cached device - bcache superblock */
- 
- static int register_bdev(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
--				 struct bdev_handle *bdev_handle,
-+				 struct file *bdev_file,
- 				 struct cached_dev *dc)
- {
- 	const char *err = "cannot allocate memory";
-@@ -1453,8 +1453,8 @@ static int register_bdev(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
- 	int ret = -ENOMEM;
- 
- 	memcpy(&dc->sb, sb, sizeof(struct cache_sb));
--	dc->bdev_handle = bdev_handle;
--	dc->bdev = bdev_handle->bdev;
-+	dc->bdev_file = bdev_file;
-+	dc->bdev = file_bdev(bdev_file);
- 	dc->sb_disk = sb_disk;
- 
- 	if (cached_dev_init(dc, sb->block_size << 9))
-@@ -2218,8 +2218,8 @@ void bch_cache_release(struct kobject *kobj)
- 	if (ca->sb_disk)
- 		put_page(virt_to_page(ca->sb_disk));
- 
--	if (ca->bdev_handle)
--		bdev_release(ca->bdev_handle);
-+	if (ca->bdev_file)
-+		fput(ca->bdev_file);
- 
- 	kfree(ca);
- 	module_put(THIS_MODULE);
-@@ -2339,18 +2339,18 @@ static int cache_alloc(struct cache *ca)
- }
- 
- static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
--				struct bdev_handle *bdev_handle,
-+				struct file *bdev_file,
- 				struct cache *ca)
- {
- 	const char *err = NULL; /* must be set for any error case */
- 	int ret = 0;
- 
- 	memcpy(&ca->sb, sb, sizeof(struct cache_sb));
--	ca->bdev_handle = bdev_handle;
--	ca->bdev = bdev_handle->bdev;
-+	ca->bdev_file = bdev_file;
-+	ca->bdev = file_bdev(bdev_file);
- 	ca->sb_disk = sb_disk;
- 
--	if (bdev_max_discard_sectors((bdev_handle->bdev)))
-+	if (bdev_max_discard_sectors(file_bdev(bdev_file)))
- 		ca->discard = CACHE_DISCARD(&ca->sb);
- 
- 	ret = cache_alloc(ca);
-@@ -2361,20 +2361,20 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
- 			err = "cache_alloc(): cache device is too small";
- 		else
- 			err = "cache_alloc(): unknown error";
--		pr_notice("error %pg: %s\n", bdev_handle->bdev, err);
-+		pr_notice("error %pg: %s\n", file_bdev(bdev_file), err);
- 		/*
- 		 * If we failed here, it means ca->kobj is not initialized yet,
- 		 * kobject_put() won't be called and there is no chance to
--		 * call bdev_release() to bdev in bch_cache_release(). So
--		 * we explicitly call bdev_release() here.
-+		 * call fput() to bdev in bch_cache_release(). So
-+		 * we explicitly call fput() on the block device here.
- 		 */
--		bdev_release(bdev_handle);
-+		fput(bdev_file);
- 		return ret;
- 	}
- 
--	if (kobject_add(&ca->kobj, bdev_kobj(bdev_handle->bdev), "bcache")) {
-+	if (kobject_add(&ca->kobj, bdev_kobj(file_bdev(bdev_file)), "bcache")) {
- 		pr_notice("error %pg: error calling kobject_add\n",
--			  bdev_handle->bdev);
-+			  file_bdev(bdev_file));
- 		ret = -ENOMEM;
- 		goto out;
- 	}
-@@ -2388,7 +2388,7 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
- 		goto out;
- 	}
- 
--	pr_info("registered cache device %pg\n", ca->bdev_handle->bdev);
-+	pr_info("registered cache device %pg\n", file_bdev(ca->bdev_file));
- 
- out:
- 	kobject_put(&ca->kobj);
-@@ -2446,7 +2446,7 @@ struct async_reg_args {
- 	char *path;
- 	struct cache_sb *sb;
- 	struct cache_sb_disk *sb_disk;
+diff --git a/drivers/mtd/devices/block2mtd.c b/drivers/mtd/devices/block2mtd.c
+index aa44a23ec045..97a00ec9a4d4 100644
+--- a/drivers/mtd/devices/block2mtd.c
++++ b/drivers/mtd/devices/block2mtd.c
+@@ -37,7 +37,7 @@
+ /* Info for the block device */
+ struct block2mtd_dev {
+ 	struct list_head list;
 -	struct bdev_handle *bdev_handle;
 +	struct file *bdev_file;
- 	void *holder;
+ 	struct mtd_info mtd;
+ 	struct mutex write_mutex;
  };
+@@ -55,8 +55,7 @@ static struct page *page_read(struct address_space *mapping, pgoff_t index)
+ /* erase a specified part of the device */
+ static int _block2mtd_erase(struct block2mtd_dev *dev, loff_t to, size_t len)
+ {
+-	struct address_space *mapping =
+-				dev->bdev_handle->bdev->bd_inode->i_mapping;
++	struct address_space *mapping = dev->bdev_file->f_mapping;
+ 	struct page *page;
+ 	pgoff_t index = to >> PAGE_SHIFT;	// page index
+ 	int pages = len >> PAGE_SHIFT;
+@@ -106,8 +105,7 @@ static int block2mtd_read(struct mtd_info *mtd, loff_t from, size_t len,
+ 		size_t *retlen, u_char *buf)
+ {
+ 	struct block2mtd_dev *dev = mtd->priv;
+-	struct address_space *mapping =
+-				dev->bdev_handle->bdev->bd_inode->i_mapping;
++	struct address_space *mapping = dev->bdev_file->f_mapping;
+ 	struct page *page;
+ 	pgoff_t index = from >> PAGE_SHIFT;
+ 	int offset = from & (PAGE_SIZE-1);
+@@ -142,8 +140,7 @@ static int _block2mtd_write(struct block2mtd_dev *dev, const u_char *buf,
+ 		loff_t to, size_t len, size_t *retlen)
+ {
+ 	struct page *page;
+-	struct address_space *mapping =
+-				dev->bdev_handle->bdev->bd_inode->i_mapping;
++	struct address_space *mapping = dev->bdev_file->f_mapping;
+ 	pgoff_t index = to >> PAGE_SHIFT;	// page index
+ 	int offset = to & ~PAGE_MASK;	// page offset
+ 	int cpylen;
+@@ -198,7 +195,7 @@ static int block2mtd_write(struct mtd_info *mtd, loff_t to, size_t len,
+ static void block2mtd_sync(struct mtd_info *mtd)
+ {
+ 	struct block2mtd_dev *dev = mtd->priv;
+-	sync_blockdev(dev->bdev_handle->bdev);
++	sync_blockdev(file_bdev(dev->bdev_file));
+ 	return;
+ }
  
-@@ -2457,7 +2457,7 @@ static void register_bdev_worker(struct work_struct *work)
- 		container_of(work, struct async_reg_args, reg_work.work);
+@@ -210,10 +207,9 @@ static void block2mtd_free_device(struct block2mtd_dev *dev)
  
- 	mutex_lock(&bch_register_lock);
--	if (register_bdev(args->sb, args->sb_disk, args->bdev_handle,
-+	if (register_bdev(args->sb, args->sb_disk, args->bdev_file,
- 			  args->holder) < 0)
- 		fail = true;
- 	mutex_unlock(&bch_register_lock);
-@@ -2478,7 +2478,7 @@ static void register_cache_worker(struct work_struct *work)
- 		container_of(work, struct async_reg_args, reg_work.work);
+ 	kfree(dev->mtd.name);
  
- 	/* blkdev_put() will be called in bch_cache_release() */
--	if (register_cache(args->sb, args->sb_disk, args->bdev_handle,
-+	if (register_cache(args->sb, args->sb_disk, args->bdev_file,
- 			   args->holder))
- 		fail = true;
+-	if (dev->bdev_handle) {
+-		invalidate_mapping_pages(
+-			dev->bdev_handle->bdev->bd_inode->i_mapping, 0, -1);
+-		bdev_release(dev->bdev_handle);
++	if (dev->bdev_file) {
++		invalidate_mapping_pages(dev->bdev_file->f_mapping, 0, -1);
++		fput(dev->bdev_file);
+ 	}
  
-@@ -2516,7 +2516,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 	char *path = NULL;
- 	struct cache_sb *sb;
- 	struct cache_sb_disk *sb_disk;
--	struct bdev_handle *bdev_handle, *bdev_handle2;
-+	struct file *bdev_file, *bdev_file2;
- 	void *holder = NULL;
- 	ssize_t ret;
- 	bool async_registration = false;
-@@ -2549,15 +2549,15 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 	kfree(dev);
+@@ -223,10 +219,10 @@ static void block2mtd_free_device(struct block2mtd_dev *dev)
+  * This function is marked __ref because it calls the __init marked
+  * early_lookup_bdev when called from the early boot code.
+  */
+-static struct bdev_handle __ref *mdtblock_early_get_bdev(const char *devname,
++static struct file __ref *mdtblock_early_get_bdev(const char *devname,
+ 		blk_mode_t mode, int timeout, struct block2mtd_dev *dev)
+ {
+-	struct bdev_handle *bdev_handle = ERR_PTR(-ENODEV);
++	struct file *bdev_file = ERR_PTR(-ENODEV);
+ #ifndef MODULE
+ 	int i;
  
- 	ret = -EINVAL;
- 	err = "failed to open device";
--	bdev_handle = bdev_open_by_path(strim(path), BLK_OPEN_READ, NULL, NULL);
+@@ -234,7 +230,7 @@ static struct bdev_handle __ref *mdtblock_early_get_bdev(const char *devname,
+ 	 * We can't use early_lookup_bdev from a running system.
+ 	 */
+ 	if (system_state >= SYSTEM_RUNNING)
+-		return bdev_handle;
++		return bdev_file;
+ 
+ 	/*
+ 	 * We might not have the root device mounted at this point.
+@@ -253,20 +249,20 @@ static struct bdev_handle __ref *mdtblock_early_get_bdev(const char *devname,
+ 		wait_for_device_probe();
+ 
+ 		if (!early_lookup_bdev(devname, &devt)) {
+-			bdev_handle = bdev_open_by_dev(devt, mode, dev, NULL);
+-			if (!IS_ERR(bdev_handle))
++			bdev_file = bdev_file_open_by_dev(devt, mode, dev, NULL);
++			if (!IS_ERR(bdev_file))
+ 				break;
+ 		}
+ 	}
+ #endif
+-	return bdev_handle;
++	return bdev_file;
+ }
+ 
+ static struct block2mtd_dev *add_device(char *devname, int erase_size,
+ 		char *label, int timeout)
+ {
+ 	const blk_mode_t mode = BLK_OPEN_READ | BLK_OPEN_WRITE;
+-	struct bdev_handle *bdev_handle;
++	struct file *bdev_file;
+ 	struct block_device *bdev;
+ 	struct block2mtd_dev *dev;
+ 	char *name;
+@@ -279,16 +275,16 @@ static struct block2mtd_dev *add_device(char *devname, int erase_size,
+ 		return NULL;
+ 
+ 	/* Get a handle on the device */
+-	bdev_handle = bdev_open_by_path(devname, mode, dev, NULL);
 -	if (IS_ERR(bdev_handle))
-+	bdev_file = bdev_file_open_by_path(strim(path), BLK_OPEN_READ, NULL, NULL);
+-		bdev_handle = mdtblock_early_get_bdev(devname, mode, timeout,
++	bdev_file = bdev_file_open_by_path(devname, mode, dev, NULL);
 +	if (IS_ERR(bdev_file))
- 		goto out_free_sb;
- 
- 	err = "failed to set blocksize";
--	if (set_blocksize(bdev_handle->bdev, 4096))
-+	if (set_blocksize(file_bdev(bdev_file), 4096))
- 		goto out_blkdev_put;
- 
--	err = read_super(sb, bdev_handle->bdev, &sb_disk);
-+	err = read_super(sb, file_bdev(bdev_file), &sb_disk);
- 	if (err)
- 		goto out_blkdev_put;
- 
-@@ -2569,13 +2569,13 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 	}
- 
- 	/* Now reopen in exclusive mode with proper holder */
--	bdev_handle2 = bdev_open_by_dev(bdev_handle->bdev->bd_dev,
-+	bdev_file2 = bdev_file_open_by_dev(file_bdev(bdev_file)->bd_dev,
- 			BLK_OPEN_READ | BLK_OPEN_WRITE, holder, NULL);
--	bdev_release(bdev_handle);
--	bdev_handle = bdev_handle2;
++		bdev_file = mdtblock_early_get_bdev(devname, mode, timeout,
+ 						      dev);
 -	if (IS_ERR(bdev_handle)) {
--		ret = PTR_ERR(bdev_handle);
--		bdev_handle = NULL;
-+	fput(bdev_file);
-+	bdev_file = bdev_file2;
 +	if (IS_ERR(bdev_file)) {
-+		ret = PTR_ERR(bdev_file);
-+		bdev_file = NULL;
- 		if (ret == -EBUSY) {
- 			dev_t dev;
- 
-@@ -2610,7 +2610,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 		args->path	= path;
- 		args->sb	= sb;
- 		args->sb_disk	= sb_disk;
--		args->bdev_handle	= bdev_handle;
-+		args->bdev_file	= bdev_file;
- 		args->holder	= holder;
- 		register_device_async(args);
- 		/* No wait and returns to user space */
-@@ -2619,14 +2619,14 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- 
- 	if (SB_IS_BDEV(sb)) {
- 		mutex_lock(&bch_register_lock);
--		ret = register_bdev(sb, sb_disk, bdev_handle, holder);
-+		ret = register_bdev(sb, sb_disk, bdev_file, holder);
- 		mutex_unlock(&bch_register_lock);
- 		/* blkdev_put() will be called in cached_dev_free() */
- 		if (ret < 0)
- 			goto out_free_sb;
- 	} else {
- 		/* blkdev_put() will be called in bch_cache_release() */
--		ret = register_cache(sb, sb_disk, bdev_handle, holder);
-+		ret = register_cache(sb, sb_disk, bdev_file, holder);
- 		if (ret)
- 			goto out_free_sb;
+ 		pr_err("error: cannot open device %s\n", devname);
+ 		goto err_free_block2mtd;
  	}
-@@ -2642,8 +2642,8 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
- out_put_sb_page:
- 	put_page(virt_to_page(sb_disk));
- out_blkdev_put:
--	if (bdev_handle)
--		bdev_release(bdev_handle);
-+	if (bdev_file)
-+		fput(bdev_file);
- out_free_sb:
- 	kfree(sb);
- out_free_path:
+-	dev->bdev_handle = bdev_handle;
+-	bdev = bdev_handle->bdev;
++	dev->bdev_file = bdev_file;
++	bdev = file_bdev(bdev_file);
+ 
+ 	if (MAJOR(bdev->bd_dev) == MTD_BLOCK_MAJOR) {
+ 		pr_err("attempting to use an MTD device as a block device\n");
 
 -- 
 2.43.0
