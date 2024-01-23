@@ -1,111 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-8535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834CB838C44
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 11:41:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC30838C70
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 11:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B65851C230C7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 10:41:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 080C828286C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 10:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8006C5C8EB;
-	Tue, 23 Jan 2024 10:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BA5D5D8F2;
+	Tue, 23 Jan 2024 10:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Gv6hPTxc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 444C35C619;
-	Tue, 23 Jan 2024 10:40:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7B85C8FD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jan 2024 10:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706006454; cv=none; b=IYp+m96QVaiQKW1NU4ErEet1UnYCw18wyVJhhchBD1JRCO9IADZDjt6ACvoExYJscLtZY24o72jpuk1r0ktMbQtQCj1Sq8+aRGzQtzHsozUDlNwkUCoP02nFKKa2+/5p2/40p9tgPtF6FBqtII+6eHI/ubgs92u1VzhqPjZ/TiE=
+	t=1706006828; cv=none; b=YNLMxowwK17jiOG+ITFC3qlwmrS5JoPhYLvTMP3Lt2VfLAHQ3wtAqS/+CtmzPfXvQIYwBoru6ckRyMU0isOkFa0S73Z5yW/j8Y1D49rVsEALHxtFfLV1i63d4wxTkBPfFUpKf8QG8fiVR+z1HiP5y++ERxMZzQGOcwgTdDtETKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706006454; c=relaxed/simple;
-	bh=x/7+wwKxczN3ej1c6k89cW/RUSox0yusws0gWmDca6o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pRqXfimOFngLIKPl1iIAWPQGG1EVYCZ87hY1DYSSw4zQXQpe+AcupVXGuCqihnPwUHJ9LrJacxBR/2VDJbabuBecqEK/DWIkW32zJX2rw10AMN3UTF4Zn+NAx9mSHNCv3sBRDlbzYo5hu/HTbh8AMR1KChRmzIxFr5ec6Clnduk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W.CZc3u_1706006441;
-Received: from 30.221.145.142(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W.CZc3u_1706006441)
-          by smtp.aliyun-inc.com;
-          Tue, 23 Jan 2024 18:40:42 +0800
-Message-ID: <3d1d06de-cb59-40d7-b0df-110e7dc904d6@linux.alibaba.com>
-Date: Tue, 23 Jan 2024 18:40:40 +0800
+	s=arc-20240116; t=1706006828; c=relaxed/simple;
+	bh=G8j7H5J7rDP4FvMEhKTL0JbUlW8oFRC6l0lnwfkhCIk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hMjWrvJizVCoVudRoDyKO3iyFykjlV0jBAu1rjHBd6TGiKSPSPo7fFujLVzGYSuF9+hEH9sZHw8pNDw1PLpdTm+KEx8tGyTPRdDnZMnQ1QgHQAw8yit7G/N+X1xHUjFOYW8/C5Aoy4ajSIO4UWnWSv5bUiyTLTd/BMgt3Q9tIKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Gv6hPTxc; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a271a28aeb4so443946866b.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jan 2024 02:47:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1706006825; x=1706611625; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=G8j7H5J7rDP4FvMEhKTL0JbUlW8oFRC6l0lnwfkhCIk=;
+        b=Gv6hPTxcNfyPV+KnGwIYdrGw8466MV6nq/55cGfcWodLZEGexM483eQBvDqq3zUcgV
+         Z9gJaNd9cxskSPS/6HxtBC+35O9PWeCeJEd4MXPBR5GTNcQsJlX8JWUfmIuu9gCsH0nl
+         CiIMT2uxZPf14SMcysNGTzuhBM80dps28WPEU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706006825; x=1706611625;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G8j7H5J7rDP4FvMEhKTL0JbUlW8oFRC6l0lnwfkhCIk=;
+        b=j3bdg5pKaPRQqt278VrGB9CQ/5RKtipHKHsFqW7/SU/LJp6eafp7G/XWgi+bwVlgGy
+         qxz398sjO/yit7f57nfejoQANn3vJoaDrzybjxoF2CuaaIUeQmZwH/JcaGLZW7lxuQeS
+         Z2oEn3oRVNUy9lLDWYUyAqXUqgFO2oNV1HbsR97Wf9dzRS3ZL5Vt9Z9GND1ra77ocXfa
+         RBXL6Z1zrKnnbV8cTiK1JyTv/nEfofwzfsvW6A9W51SoqBA742O69JSnxb+o65jUG6zG
+         Q+Avw4hAQ5c69bqGWnmW+oZc5U93PBKRPKV9hUdejmkcIFKPCNOwBhIEal9V1+F8rarH
+         H10w==
+X-Gm-Message-State: AOJu0YwlSa6ljgdA7RuWKheM4WbPP663BK6vuBtoPWw7QjGw95Q0ZWfD
+	flzumyDtpSMDq7Arvm1q7svJLdpmORVYLdTaKFL3q2HTC3ISVzu8b6pdPReHhamIsAkuOvNhlkw
+	MFDnD7VC/RVOfzfYcp6LrK1MuADAMyyGlenW0UNo67T83PhYJ
+X-Google-Smtp-Source: AGHT+IFtbUZR8OmWGyvWUczd7feZISOtaN29gsqT9WrxRlrFjfmcZfac2pyUJ/sOqiWjm+jxvH57XzMntT/pOjaf1xQ=
+X-Received: by 2002:a17:906:280c:b0:a2b:c6fd:e5e5 with SMTP id
+ r12-20020a170906280c00b00a2bc6fde5e5mr2869378ejc.27.1706006825043; Tue, 23
+ Jan 2024 02:47:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
+References: <20240123093701.94166-1-jefflexu@linux.alibaba.com>
+ <CAOQ4uxgna=Eimk4KHUByk5ZRu7NKHTPJQukgV9GE_DNN_3_ztA@mail.gmail.com> <3d1d06de-cb59-40d7-b0df-110e7dc904d6@linux.alibaba.com>
+In-Reply-To: <3d1d06de-cb59-40d7-b0df-110e7dc904d6@linux.alibaba.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 23 Jan 2024 11:46:53 +0100
+Message-ID: <CAJfpegtwmngLUfKeziO3dDpJ-XGU92DFLwhTpTrEJ0vqHnHLJg@mail.gmail.com>
 Subject: Re: [RFC] fuse: disable support for file handle when
  FUSE_EXPORT_SUPPORT not configured
-Content-Language: en-US
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240123093701.94166-1-jefflexu@linux.alibaba.com>
- <CAOQ4uxgna=Eimk4KHUByk5ZRu7NKHTPJQukgV9GE_DNN_3_ztA@mail.gmail.com>
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAOQ4uxgna=Eimk4KHUByk5ZRu7NKHTPJQukgV9GE_DNN_3_ztA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+On Tue, 23 Jan 2024 at 11:40, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>
+>
+>
+> On 1/23/24 6:17 PM, Amir Goldstein wrote:
+> > If you somehow find a way to mitigate the regression for NFS export of
+> > old fuse servers (maybe an opt-in Kconfig?),
 
+Better would be if the server explicitly disabled export support with
+an INIT flag (FUSE_NO_EXPORT).
 
-On 1/23/24 6:17 PM, Amir Goldstein wrote:
-> If you somehow find a way to mitigate the regression for NFS export of
-> old fuse servers (maybe an opt-in Kconfig?), your patch is also going to
-> regress AT_HANDLE_FID functionality, which can be used by fanotify to
-> monitor fuse.
-> 
-> AT_HANDLE_FID flag to name_to_handle_at(2) means that
-> open_by_handle_at(2) is not supposed to be called on that fh.
-> 
-> The correct way to deal with that would be something like this:
-> 
-> +static const struct export_operations fuse_fid_operations = {
-> +       .encode_fh      = fuse_encode_fh,
-> +};
-> +
->  static const struct export_operations fuse_export_operations = {
->         .fh_to_dentry   = fuse_fh_to_dentry,
->         .fh_to_parent   = fuse_fh_to_parent,
-> @@ -1529,12 +1533,16 @@ static void fuse_fill_attr_from_inode(struct
-> fuse_attr *attr,
-> 
->  static void fuse_sb_defaults(struct super_block *sb)
->  {
-> +       struct fuse_mount *fm = get_fuse_mount_super(sb);
-> +
->         sb->s_magic = FUSE_SUPER_MAGIC;
->         sb->s_op = &fuse_super_operations;
->         sb->s_xattr = fuse_xattr_handlers;
->         sb->s_maxbytes = MAX_LFS_FILESIZE;
->         sb->s_time_gran = 1;
-> -       sb->s_export_op = &fuse_export_operations;
-> +       if (fm->fc->export_support)
-> +               sb->s_export_op = &fuse_export_operations;
-> +       else
-> +               sb->s_export_op = &fuse_fid_operations;
->         sb->s_iflags |= SB_I_IMA_UNVERIFIABLE_SIGNATURE;
->         if (sb->s_user_ns != &init_user_ns)
->                 sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
-> 
-> ---
-> 
-> This would make name_to_handle_at() without AT_HANDLE_FID fail
-> and name_to_handle_at() with AT_HANDLE_FID to succeed as it should.
-> 
-
-Oh I didn't notice this.  Many thanks!
-
-
--- 
 Thanks,
-Jingbo
+Miklos
 
