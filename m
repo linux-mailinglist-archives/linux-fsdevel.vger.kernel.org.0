@@ -1,142 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-8517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8518-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C73838955
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 09:43:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506968389F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 10:05:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F48328BA30
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 08:43:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABFCDB231A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 09:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B794E56B88;
-	Tue, 23 Jan 2024 08:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D4B57894;
+	Tue, 23 Jan 2024 09:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e3fi1ACM"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BQq/6WFP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kj+YwuHN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2kLWKy/q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BSsrTq7L"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AA153812
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jan 2024 08:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C33479DB;
+	Tue, 23 Jan 2024 09:05:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1705999424; cv=none; b=Ra6IqH0em/1J8hrJavxvXd3UrMTSE6oav36tYtXhN6wwHL9e+8EwzrGUV9xNoz5noieDcJYJNGuSLwIZpr+YQyVKyRl0+MXJDZIt6Po+owsyf0E2TgyUbf/WY9pwMkdJhZHkPUjLxTUco1q21tRb7nO0rLxhrA9UrVfYGA1Wb/k=
+	t=1706000725; cv=none; b=YJgkUz+lsE6iZK/ZCSBrKzi+CHiUzs2GnU6EFnmHklBUQbfPEBJF9DDWXnquv7MQqTzlAK8LMP5YspU2frTdPmymqMBuxPCblYxossFBsMs6OLexxEP3fu8Zc9bkb3Txvqn7a7MOpvEx9NSzPgQC3FOyCzvv6wO60JDW6NSbCls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1705999424; c=relaxed/simple;
-	bh=B7PssBOICoFvPqIqe5On2XOkFBaVN+2Gu3JrcNpc0eE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RCNNA2uOjDG+G1VlCrtrN+CIp7zDz05AoJKCXJAekSzLCxWxM32UTyP11lXKXg7rfZhQunJqXAD7hh2KjlWhV2avvvabsVKPfqQX67YFUDl8A96fNcTuztMPiMJifmoxVLKoE0XqhAQdJq4didALPWynfYozVVoecF4tz8SiVcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=e3fi1ACM; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1d746856d85so10267265ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jan 2024 00:43:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1705999422; x=1706604222; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H+S82JcQ77wXurvtSuZs9kIC3sCK0bQARyKU0OrPqvY=;
-        b=e3fi1ACMh7eYHGf3Lv1aEfsoXhLkwPLVCRkI40nWXKB6bIJ3DIkGU8jsxmaGg5LC0s
-         x3ObHCsYlhEQIHLjAFfcqSXUik5qiZjLP7n6mTLZHdXHp5nfnwk7puszAdTKPgTRBq+5
-         6pTPTY6Q+glaziN0REoMdjDDOFKPONYuQVs3U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1705999422; x=1706604222;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H+S82JcQ77wXurvtSuZs9kIC3sCK0bQARyKU0OrPqvY=;
-        b=a0x8ImyTVHRGW/AbL+H3B0f4v6dxgbHRv+rALw7iCov0Ditw4GYAhRc13XWaLfcMkl
-         gK0K7W1bA+gMI0rCxYn/erKb9VhudP6+MuBt5krMdDLZlJ7lTyUPCZWgu+ATWiu+NUA4
-         TwXMBM/dTH9lwaMV17pRjcHgVUpZUrGyGNRYeqMCzN2d8YiidQCvzUa+haPXE+GPwLua
-         QvN1ZCKYKIXo/d6MzSoKoanBnaoQlT9T1C6yeWHyUWZG6/W56hD3N4+NhhgwGSrHEfo8
-         68LgLa7MfdYzYw0ACQGNijxB1pxuT4+VvLvhWQ71Ea+lwOKfDVRJEFxJe6CzldlUpHAV
-         fw/A==
-X-Gm-Message-State: AOJu0YwPDioDej8mUrO4lQni0MuxyLce17GISfij40bWo//79Kn+HzOJ
-	LxKDH2rK3f9dFbjCmfmubr7vGx87+pm6txvJEFYwIoMPYb9IUv3U486dioL3
-X-Google-Smtp-Source: AGHT+IEmWnMs8SorwD58InSy4V7znbni1y6M5n9s84hmNAP6xE1Tz8pmUde7OAux5WZib+FTp6rWiQ==
-X-Received: by 2002:a17:902:8c84:b0:1d7:1c89:a622 with SMTP id t4-20020a1709028c8400b001d71c89a622mr3000465plo.48.1705999422303;
-        Tue, 23 Jan 2024 00:43:42 -0800 (PST)
-Received: from yuanyao.c.googlers.com.com (174.71.80.34.bc.googleusercontent.com. [34.80.71.174])
-        by smtp.gmail.com with ESMTPSA id q12-20020a17090311cc00b001d6f7875f57sm8383232plh.162.2024.01.23.00.43.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jan 2024 00:43:41 -0800 (PST)
-From: Yuan Yao <yuanyaogoog@chromium.org>
-To: bschubert@ddn.com
-Cc: bernd.schubert@fastmail.fm,
-	brauner@kernel.org,
-	dsingh@ddn.com,
-	hbirthelmer@ddn.com,
-	linux-fsdevel@vger.kernel.org,
-	miklos@szeredi.hu,
-	viro@zeniv.linux.org.uk,
-	Yuan Yao <yuanyaogoog@chromium.org>
-Subject: [PATCH 1/1] fuse: Make atomic_open use negative d_entry
-Date: Tue, 23 Jan 2024 08:40:30 +0000
-Message-ID: <20240123084030.873139-2-yuanyaogoog@chromium.org>
-X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
-In-Reply-To: <20240123084030.873139-1-yuanyaogoog@chromium.org>
-References: <20231023183035.11035-3-bschubert@ddn.com>
- <20240123084030.873139-1-yuanyaogoog@chromium.org>
+	s=arc-20240116; t=1706000725; c=relaxed/simple;
+	bh=JpeB9HkmS2uadCS+gWnCF7x5aWvwSC1P65jZVfIntGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BUfIHZ1vIXFwTKzt7PBzx8e/Lj6xuppx8MwUq/wJsb0cJsDUvjX9Ben/PjXXKRlWYbqqOYx5cEfDc+oW9dPjddtIUztvkeK8eiDfwpi8CdOZu9fBrmz6RD0iXuazQgXztyIgjGzdsmgBEp8ZdG3XPBNpjevNACXeia04CC3zn88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BQq/6WFP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kj+YwuHN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2kLWKy/q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BSsrTq7L; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C641F1FD48;
+	Tue, 23 Jan 2024 09:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706000719; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rV8HBudkXVPcg3VdgRXmTEvLoRv4fTV06BBAmJn8J/s=;
+	b=BQq/6WFPLVZ9lNTCFfI/y1xUFiFj2y2sn4QqRVAfX6KJwNHpVF2oasTMhdYZtKMRbF+NgE
+	LxdtP+5Ico9Jmv0AZo4wMeS9aJlSFekW+Mln9iKESmJsD54m/gLNyE4yDViSPAS05z6/y1
+	48Ld4LaxqKuGhK6D9kQV/i+oTlqFY3c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706000719;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rV8HBudkXVPcg3VdgRXmTEvLoRv4fTV06BBAmJn8J/s=;
+	b=kj+YwuHN+ZXSkF2Jq9hyNWg62jHa1GKiJq5fdj2ZjWbVFZdhQ9tcjbzrD51/BV3VkGUJmv
+	LP43iWBc0gmOE3Cw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706000718; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rV8HBudkXVPcg3VdgRXmTEvLoRv4fTV06BBAmJn8J/s=;
+	b=2kLWKy/qWBUsJ+5BaznDvNHInGFnsg1lrk4V6fYE2n3jiDOZBXi3FkqRXgoAAbH2NWmUAG
+	VAgXwsNujUxmmteh02+Ykb+b0QWF/Ux3hayS9Fd6LTFpo31aqdouCaNnWEGlO1bdfJFueW
+	TSLVH2WkpR7/nkCOpnUeqwHRluWq+TE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706000718;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rV8HBudkXVPcg3VdgRXmTEvLoRv4fTV06BBAmJn8J/s=;
+	b=BSsrTq7LYadgxyFkNMYRDLf6qUxJ/n5w50ehMLDlilCHSmdqWjsO5h126XsB6WYn6BejY+
+	hhd6TjP/4hDc05BA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B96BC136A4;
+	Tue, 23 Jan 2024 09:05:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CAVALU6Br2WTfAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 23 Jan 2024 09:05:18 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 660C3A0803; Tue, 23 Jan 2024 10:05:18 +0100 (CET)
+Date: Tue, 23 Jan 2024 10:05:18 +0100
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+ed7d0f71a89e28557a77@syzkaller.appspotmail.com>
+Cc: agruenba@redhat.com, axboe@kernel.dk, bobo.shaobowang@huawei.com,
+	brauner@kernel.org, broonie@kernel.org, catalin.marinas@arm.com,
+	cluster-devel@redhat.com, dominic.coppola@gatoradeadvert.com,
+	dvyukov@google.com, gfs2@lists.linux.dev, jack@suse.cz,
+	liaoyu15@huawei.com, linux-arm-kernel@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	liwei391@huawei.com, madvenka@linux.microsoft.com,
+	rpeterso@redhat.com, scott@os.amperecomputing.com,
+	syzkaller-bugs@googlegroups.com, will@kernel.org
+Subject: Re: [syzbot] [gfs2?] INFO: task hung in gfs2_gl_hash_clear (3)
+Message-ID: <20240123090518.bu3q2khkveknbcl3@quack3>
+References: <000000000000d482ba05ee97d4e3@google.com>
+ <00000000000081bcbd060f8128e2@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00000000000081bcbd060f8128e2@google.com>
+X-Spam-Level: *
+X-Spamd-Bar: +
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="2kLWKy/q";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=BSsrTq7L
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [1.49 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 TO_DN_SOME(0.00)[];
+	 R_RATELIMIT(0.00)[to_ip_from(RL7pfqg7h1m44jupjp7nguhfec)];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-0.00)[37.39%];
+	 SUBJECT_HAS_QUESTION(0.00)[];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=29fd3392a08741ef];
+	 TAGGED_RCPT(0.00)[ed7d0f71a89e28557a77];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 RCPT_COUNT_TWELVE(0.00)[22];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Score: 1.49
+X-Rspamd-Queue-Id: C641F1FD48
+X-Spam-Flag: NO
 
-With current implementation, when fuse server replies a negative
-d_entry, _fuse_atomic_open() function will return ENOENT error. This
-behaviour will prevent using kernel's negative d_entry. The original
-fuse_create_open() function will get negative d_entry by fuse_lookup().
-And the finish_no_open() will be called with that negative d_entry.
+On Sun 21-01-24 20:21:05, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
+> 
+> commit 6f861765464f43a71462d52026fbddfc858239a5
+> Author: Jan Kara <jack@suse.cz>
+> Date:   Wed Nov 1 17:43:10 2023 +0000
+> 
+>     fs: Block writes to mounted block devices
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=137b2d43e80000
+> start commit:   3f01e9fed845 Merge tag 'linux-watchdog-6.5-rc2' of git://w..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=29fd3392a08741ef
+> dashboard link: https://syzkaller.appspot.com/bug?extid=ed7d0f71a89e28557a77
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17b6f3f8a80000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1688b6d4a80000
+> 
+> If the result looks correct, please mark the issue as fixed by replying with:
 
-This patch fixes the problem by adding a check for the case that
-negative d_entry is returned by fuse server. Atomic open will update the
-d_entry's timeout and call finish_no_open(). This change makes negative
-d_entry be used in kernel.
+Makes sense:
 
-Signed-off-by: Yuan Yao <yuanyaogoog@chromium.org>
----
- fs/fuse/dir.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+#syz fix: fs: Block writes to mounted block devices
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 4ae89f428243..11b3193c3902 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -843,8 +843,15 @@ static int _fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 		goto free_and_fallback;
- 	}
- 
--	if (!err && !outentry.nodeid)
-+	if (!err && !outentry.nodeid) {
-+		if (outentry.entry_valid) {
-+			inode = NULL;
-+			d_splice_alias(inode, entry);
-+			fuse_change_entry_timeout(entry, &outentry);
-+			goto free_and_no_open;
-+		}
- 		err = -ENOENT;
-+	}
- 
- 	if (err)
- 		goto out_free_ff;
-@@ -991,6 +998,10 @@ static int _fuse_atomic_open(struct inode *dir, struct dentry *entry,
- 	kfree(forget);
- fallback:
- 	return fuse_create_open(dir, entry, file, flags, mode);
-+free_and_no_open:
-+	fuse_file_free(ff);
-+	kfree(forget);
-+	return finish_no_open(file, entry);
- }
- 
- static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+								Honza
 -- 
-2.43.0.429.g432eaa2c6b-goog
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
