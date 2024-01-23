@@ -1,119 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-8540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79C7838DA0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 12:40:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF31D838DCE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 12:46:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435FB1F249BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 11:40:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D8C1F23722
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 11:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DCB5D8F5;
-	Tue, 23 Jan 2024 11:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD675D8F9;
+	Tue, 23 Jan 2024 11:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="MZfOxaH2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rwkl0mjP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F5BC5D73B;
-	Tue, 23 Jan 2024 11:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A665D5D8E3;
+	Tue, 23 Jan 2024 11:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706010048; cv=none; b=ncXvCD2oD1Kk2GaK3/Y/2ic2rM+lG2KIGSdgnQmTDvWiOkM7J76uQelWvChIJMAZZTI+jqqhHq4wSHtKdISEIwBemRHG8zH9gbPPhvhNZs1fmcJdWG5D2ywjkax0q5/jSXgkbNvL7f15GO3atvldcN64hDMXmhjXNjNzPDwt5A8=
+	t=1706010411; cv=none; b=NyaQyMI6ZEJCBaN6VA/GhKQjM2SYu6NQ+IaKqTV9WvUrrUcpBBnQ3ohUmOyRH3m6tkONblwoxpwHA1MFavXVT87klOcBBPYEePXcVEDnjKWujfFM8oYjp8gK62uA228AV4IoxwBYgndy41JyTXBmzZca6h0Pq31WEZjz+vgJN40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706010048; c=relaxed/simple;
-	bh=abrdKEWbRM2tgAz/9Jf8CGRQZdk11Te4jGrTOeM8q7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/xUfAQD/3F8zq2EMdbbHaTGAhYGlHPqLDrnQQhHNgnZIEyBf5xTRJta5Md4+RxFja5UvnZfRE768lmKtf7H/mRhm16Bg30x4wvN4HH4Y4iAThrDAme67VxGnOGnezYzwAXbZv0Ds6CUnvoKIwJgJwzaqKjjVckHrpQeC799sqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=MZfOxaH2; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FQPrKo5NK2wqNWnanq7bvxczA2ikui+/OZAA2UKCstE=; b=MZfOxaH2P0LH9EHtr7SlRUsim0
-	Anqh+IHA+0zj880rhmcvbRfiTIZFykG9ZBDLcT39Vt3G5TQS4F6M7nAhtm+Uj8RSDnOG2NVENgIup
-	PHWROb3NbqhnwkqS9LbP0yAnrxcpGRsPd6gYfPN6lM4JBac2Dsuw9/VcZCLreTBzaK+27aIuXwWjJ
-	opgkbUmFOvNzvvQvZ6iwF8WAm2LOizrcJcs59OC/v+VI5czcSTEfEdsnk4llM1U8cuzYoF/4DPX9r
-	LeYBFZeq4YuchnNoTG7XrQUc1LPDbKFHVyz8VZmccJeyajPGeGE22Wkc65ptIv6ih/t7cTy3kSg1Q
-	nRhksc0Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rSF91-00Cdxx-1c;
-	Tue, 23 Jan 2024 11:40:43 +0000
-Date: Tue, 23 Jan 2024 11:40:43 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Chandan Babu R <chandanbabu@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-xfs@vger.kernel.org, brauner@kernel.org, jack@suse.cz
-Subject: Re: [BUG REPORT] shrink_dcache_parent() loops indefinitely on a
- next-20240102 kernel
-Message-ID: <20240123114043.GC2087318@ZenIV>
-References: <87le96lorq.fsf@debian-BULLSEYE-live-builder-AMD64>
- <20240104043420.GT361584@frogsfrogsfrogs>
- <87sf3d8c0u.fsf@debian-BULLSEYE-live-builder-AMD64>
- <874jfbjimn.fsf@debian-BULLSEYE-live-builder-AMD64>
- <20240118063930.GP1674809@ZenIV>
- <87ede8787u.fsf@debian-BULLSEYE-live-builder-AMD64>
+	s=arc-20240116; t=1706010411; c=relaxed/simple;
+	bh=JfDnCgpZ1rLdrOgkkhaHxpw3ewpX/BXePWtymb5m778=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Cgi7a9i2UGsh3uMKQdyBH9NPoyZbBv9nlTvsBIPciGWc7AfrxY1Gfkj5e16NKEXMTXI9elm/pv6l860LHpZbVKJ+LGctDT+A8+hGfbhmTR1IJwSxSzHFyE1oxbGFHzuMDKNApcIpN0m0BqGyZzfa+OhlgPiQIiRAtl73qdQTCao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rwkl0mjP; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2cf03521306so17490421fa.2;
+        Tue, 23 Jan 2024 03:46:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706010407; x=1706615207; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=8TaiIgW9Sn1shcjlwEwCYruc13n/CneHnu8Td2T3w5k=;
+        b=Rwkl0mjPREY2NVkL4Vx7jCml4tUWz9NzVwdwL0d3VIR6zoHqvWk/XI/QOBRl7NPdXz
+         ymvQUYuqZhjagG+onhpGPB9LMnwa53vqmDIN+XF9JVZgUMj5sQ4GtZlSNRw3PGF6jMjq
+         aHhiT5VU7wu0mMRuuv5D5U8cU386EJQ21WupXIU13Kf4pZ/vu0fTZztiqe7wk/IXF/FY
+         b3RniLSF/Sm2J6jbR2vSBGp86IYPCUoXf+HoEtsfTNn//PUkx1CgbeG2rPdN8WQTgRKE
+         qJFY176KiGbIkV7wklB7BZlBFLoglBAG9JYNgnJqDc1jo4UitA1pEXfG8xxZuEm5ewBF
+         VcyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706010407; x=1706615207;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8TaiIgW9Sn1shcjlwEwCYruc13n/CneHnu8Td2T3w5k=;
+        b=EG6FKalFxGsWwGlUo5MJCpILl6XTCFh7RPvRsvUSuVrorTur8xgkc2B7spUd/pOPCr
+         2+vUINRDfxnYuSspXJtxS2dMmCYiIVxkwFSrpf23Gb63KWf6F9IKs/fF3fGCbiuZMehK
+         Mh6z8R+J4eQynr41bfae69GqGmLCK39jTuy1zoEtbapax2nKBQW0q3jaM6CrJswYko8U
+         gEDLt3RztFvsGcrCLsVQuUXCkw+kJkhsOUnY8X6v3wEAXsDwQaPgxlp8HYZ0AFyz8i7a
+         pBYXJyAdOy0ykXtRzUj4QVwKrLUQzE8+0QfdEhMfg938pygXLZQ0j4tdONo5Ay1JG+/L
+         DHYQ==
+X-Gm-Message-State: AOJu0Yy0k8TfdT2B3087fi0XGS1MXPF7zxvWNr5L7guK4wd+W7VsFc6o
+	92IwSFArVfPbkbMSSawoG90DK/jPgeOdtKjJd3ojzMNbFLt14kPVzK7xPamy3G/SzqRQwKlxDLo
+	ruL9cn1mXhyfFIXJphqRKDYL+xaEBxZVrY/FODfzh
+X-Google-Smtp-Source: AGHT+IGarevvMA2GwyFdnOl/o/iJjsdpd801TjZcbbnTbWED5hEeLiZQIWCyPqhwUplXEHevPgRILuZFPSBDDLMstbw=
+X-Received: by 2002:a2e:9f54:0:b0:2cc:8bc7:5703 with SMTP id
+ v20-20020a2e9f54000000b002cc8bc75703mr2222897ljk.18.1706010407252; Tue, 23
+ Jan 2024 03:46:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ede8787u.fsf@debian-BULLSEYE-live-builder-AMD64>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <Za9DUZoJbV0PYGN2@squish.home.loc> <6939adb3-c270-481f-8547-e267d642beea@leemhuis.info>
+ <bbac350b-7a94-475e-88c9-35f6f8700af8@leemhuis.info> <e2f791e51feb09e671d59afbbb233c4d6128a8d2.camel@kernel.org>
+In-Reply-To: <e2f791e51feb09e671d59afbbb233c4d6128a8d2.camel@kernel.org>
+Reply-To: sedat.dilek@gmail.com
+From: Sedat Dilek <sedat.dilek@gmail.com>
+Date: Tue, 23 Jan 2024 12:46:10 +0100
+Message-ID: <CA+icZUXaxysi1Oq1wKeDZ5LZVp7i585vmPQi67hw1CdW7nGC6A@mail.gmail.com>
+Subject: Re: [REGRESSION] 6.6.10+ and 6.7+ kernels lock up early in init.
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>, stable@vger.kernel.org, 
+	Linux-fsdevel <linux-fsdevel@vger.kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, 
+	Paul Thompson <set48035@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 23, 2024 at 11:31:00AM +0530, Chandan Babu R wrote:
-> 
-> The result of the above suggested bisect operation is,
-> 
-> # git bisect log
-> # bad: [0695819b3988e7e4d8099f8388244c1549d230cc] __d_unalias() doesn't use inode argument
-> # good: [b85ea95d086471afb4ad062012a4d73cd328fa86] Linux 6.7-rc1
-> git bisect start 'HEAD' 'v6.7-rc1' 'fs/'
-> # good: [b33c14c8618edfc00bf8963e3b0c8a2b19c9eaa4] Merge branch 'no-rebase-overlayfs' into work.dcache-misc
-> git bisect good b33c14c8618edfc00bf8963e3b0c8a2b19c9eaa4
-> # good: [ef8a633ee84d8b57eba1f5b2908a3e0bf61837aa] Merge branch 'merged-selinux' into work.dcache-misc
-> git bisect good ef8a633ee84d8b57eba1f5b2908a3e0bf61837aa
-> # good: [53f99622a2b24704766469af23360836432eb88a] d_genocide(): move the extern into fs/internal.h
-> git bisect good 53f99622a2b24704766469af23360836432eb88a
-> # bad: [ce54c803d57ab6e872b670f0b46fc65840c8d7ca] d_alloc_parallel(): in-lookup hash insertion doesn't need an RCU variant
-> git bisect bad ce54c803d57ab6e872b670f0b46fc65840c8d7ca
-> # bad: [f7aff128d8c70493d614786ba7ec5f743feafe51] get rid of DCACHE_GENOCIDE
-> git bisect bad f7aff128d8c70493d614786ba7ec5f743feafe51
-> # first bad commit: [f7aff128d8c70493d614786ba7ec5f743feafe51] get rid of DCACHE_GENOCIDE
-> 
-> 
-> commit f7aff128d8c70493d614786ba7ec5f743feafe51
-> Author: Al Viro <viro@zeniv.linux.org.uk>
-> Date:   Sun Nov 12 21:38:48 2023 -0500
-> 
->     get rid of DCACHE_GENOCIDE
-> 
->     ... now that we never call d_genocide() other than from kill_litter_super()
+On Tue, Jan 23, 2024 at 12:16=E2=80=AFPM Jeff Layton <jlayton@kernel.org> w=
+rote:
+>
+> On Tue, 2024-01-23 at 07:39 +0100, Linux regression tracking (Thorsten
+> Leemhuis) wrote:
+> > [a quick follow up with an important correction from the reporter for
+> > those I added to the list of recipients]
+> >
+> > On 23.01.24 06:37, Linux regression tracking (Thorsten Leemhuis) wrote:
+> > > On 23.01.24 05:40, Paul Thompson wrote:
+> > > >
+> > > >   With my longstanding configuration, kernels upto 6.6.9 work fine.
+> > > > Kernels 6.6.1[0123] and 6.7.[01] all lock up in early (open-rc) ini=
+t,
+> > > > before even the virtual filesystems are mounted.
+> > > >
+> > > >   The last thing visible on the console is the nfsclient service
+> > > > being started and:
+> > > >
+> > > > Call to flock failed: Funtion not implemented. (twice)
+> > > >
+> > > >   Then the machine is unresponsive, numlock doesnt toggle the keybo=
+ard led,
+> > > > and the alt-sysrq chords appear to do nothing.
+> > > >
+> > > >   The problem is solved by changing my 6.6.9 config option:
+> > > >
+> > > > # CONFIG_FILE_LOCKING is not set
+> > > > to
+> > > > CONFIG_FILE_LOCKING=3Dy
+> > > >
+> > > > (This option is under File Systems > Enable POSIX file locking API)
+> >
+> > The reporter replied out-of-thread:
+> > https://lore.kernel.org/all/Za9TRtSjubbX0bVu@squish.home.loc/
+> >
+> > """
+> >       Now I feel stupid or like Im losing it, but I went back and grepp=
+ed for
+> > the CONFIG_FILE_LOCKING in my old Configs, and it was turned on in all
+> > but 6.6.9. So, somehow I turned that off *after I built 6.6.9? Argh. I
+> > just built 6.6.4 with it unset and that locked up too.
+> >       Sorry if this is just noise, though one would have hoped the fail=
+ure
+> > was less severe...
+> > """
+> >
+>
+> Ok, so not necessarily a regression? It might be helpful to know the
+> earliest kernel you can boot with CONFIG_FILE_LOCKING turned off.
+>
+> > >
+> I'll give a try reproducing this later though.
 
-Huh?  So you are seeing that on merge of f7aff128d8c70493d614786ba7ec5f743feafe51 +
-6367b491c17a34b28aece294bddfda1a36ec0377, but not on
-f7aff128d8c70493d614786ba7ec5f743feafe51^ + 6367b491c17a34b28aece294bddfda1a36ec0377?
+Quote from Paul:
+"
+Now I feel stupid or like Im losing it, but I went back and grepped
+for the CONFIG_FILE_LOCKING in my old Configs, and it was turned on in all
+but 6.6.9. So, somehow I turned that off *after I built 6.6.9? Argh. I just
+built 6.6.4 with it unset and that locked up too.
+Sorry if this is just noise, though one would have hoped the failure
+was less severe...
+"
 
-Wait a minute...  That smells like a d_walk() seeing rename_lock touched when it's
-ascending from a subtree (for the reasons that have nothing to do with any changes of
-the tree we are walking) and deciding to take another pass through the damn thing.
-Argh...
+-Sedat-
 
-But that should've been a problem for that commit on its own, regardless of the
-merge with work.dcache2...  OTOH, it probably ended up as quiet memory leak without
-that merge...
+https://lore.kernel.org/all/Za9TRtSjubbX0bVu@squish.home.loc/#t
 
-OK, could you verify that revert of that commit is enough to recover?  Short-term
-that would be the obvious solution, assuming this is all that happens there.
-Longer term I'd probably prefer to avoid using d_walk() there, but that's
-a separate story.
+> --
+> Jeff Layton <jlayton@kernel.org>
+>
 
