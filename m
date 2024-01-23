@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-8555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93592838FFA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 14:30:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74CBF838FFC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 14:30:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CA692910CA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 13:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014C31F2386E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 13:30:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C260860879;
-	Tue, 23 Jan 2024 13:27:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE59260888;
+	Tue, 23 Jan 2024 13:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SeCSZ4rY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t6hvn0FO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0725F85C;
-	Tue, 23 Jan 2024 13:27:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5561660871;
+	Tue, 23 Jan 2024 13:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706016444; cv=none; b=UWJS3Exj13/Nm5X8dGBbPF4uNG2FRzU3bG8cEVXPnbYMfMsdgPcagz9tDt+o09X8BXiiXQdS0VGLIfz6+qtXmfYRbVFSsqwwR8oHt1NBy2kJ+D7SS6GKG/zHgziBgaI1nWSOcwZlvudl3y80QgAYwKiTL/IlRalqew94SWwCji4=
+	t=1706016446; cv=none; b=VKR2anOUewdzVioSfIHuRNxwN4WpdTVjKX+2rv3jFojp2Uhq9Sc7eU+Ogb1ESeFsjIpZi7cy4oOlCOCXHlos4WfUHlm7u5Mcc+wLLZKxKq7AQBlFrxo+b0Ay1HqXR88WyKK5mqmJyzKbCh0gB068o5eJGVrWwTBoU0PC7GWtITo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706016444; c=relaxed/simple;
-	bh=UCP9PrBWBhxlxr7GX987d6xnXV+DZ1q4VCgfjRa1gws=;
+	s=arc-20240116; t=1706016446; c=relaxed/simple;
+	bh=ukgwKS9b74pvxt5KIxpB+SsEZQ15dEZSLmrqfVMou9g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uy5gXr0IyOgRwasDYMO4xISNoyHdl/5VCO1OcS6wiWNoRToaLwANERAbO4LGM2bmwOH8Q88FvPA/wblayT3Z8F8/a2GW6F0QXHX/R/nVTqcVr7j0JjQusZG4VEOeLqLajcfIFqq1PIvZI70nktcJhNpsS5l57a61fOwez5xsKy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SeCSZ4rY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F354C4163B;
-	Tue, 23 Jan 2024 13:27:21 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=JpPstzqhbtX0Cc/uSF+xAfJzfzv6NPM9xBeTg8eCow1SdJWCUEAtKGdxQOZ0bQ4RlRCgekb4Kv7CUX4D6rAtbyoPgod3Wx3dlKW8wgOc8Kza7skZuOJg9qI2h3J1ECCnPZLpD6E2TG1YrrvbkISw+hEgeprwjxe6l7vBNFBj1vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t6hvn0FO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45A08C4166A;
+	Tue, 23 Jan 2024 13:27:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706016443;
-	bh=UCP9PrBWBhxlxr7GX987d6xnXV+DZ1q4VCgfjRa1gws=;
+	s=k20201202; t=1706016446;
+	bh=ukgwKS9b74pvxt5KIxpB+SsEZQ15dEZSLmrqfVMou9g=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SeCSZ4rYaYFLixTuSo25kCur7CZWgzeJeBuKg5iA6sjhJhSscpv7TCEIAnbcGfkkL
-	 RqsciqU7qcr8lr+5JTlUq0Uyewv5KKb87MJF65KCuDY8lqCYieEpkgPc1OkcDcObGY
-	 RcpCLsTnOv+Nz/e5ZWISBku027ZFrAJ4BTQzGGQ7/E4pibNQrCIKYTWPv2lGnRq7zG
-	 +XPWExOsq7Mf+jIJsilM4RtowBVi9l4kfctoGUpUHGZx6Hk/IzNVaPTfuv5oicK93o
-	 0xqU+H6JzeogCu3RuQIRGm7BB9uoNcGJy/DwvirI90V0cglQivzapdzrvznM4anMaA
-	 YVcyxJ32xdKIQ==
+	b=t6hvn0FOzEAxMSmlUsSr83M2e/H9rRNGK/Qjoac96+V9OQ4++PkFTz21mEJNHGjSJ
+	 3GxDUzA2QUzMTW3A/nYR4DXDBmq38idQDDcq53c9QWwrMbuO9zsO0HI2nzzAQcdcG5
+	 KSjctyijR53AIJ/ixmuH7cwkvEHPTQQBXOhd3lRe1r/UNDjK2Br0k8tFQJn05Xwlru
+	 K53NXhn+DbLbo+wG6VgCKFyPVT+92wPQC4gaC42g/qpOeRulXJtXJl/6Jjn1zvQa7T
+	 Z+haBkNSQmt4c0JKUqxzZDUsxOKitE+3Cg8YH0+FHT+RgT7Rz3w7DK+yc/BRWkHdJB
+	 23gvDRprqkW3g==
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 23 Jan 2024 14:26:27 +0100
-Subject: [PATCH v2 10/34] rnbd: port block device access to file
+Date: Tue, 23 Jan 2024 14:26:28 +0100
+Subject: [PATCH v2 11/34] xen: port block device access to file
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240123-vfs-bdev-file-v2-10-adbd023e19cc@kernel.org>
+Message-Id: <20240123-vfs-bdev-file-v2-11-adbd023e19cc@kernel.org>
 References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
 In-Reply-To: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
 To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
@@ -60,140 +60,185 @@ To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
 Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, 
  linux-block@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.13-dev-4e032
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5077; i=brauner@kernel.org;
- h=from:subject:message-id; bh=UCP9PrBWBhxlxr7GX987d6xnXV+DZ1q4VCgfjRa1gws=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSu3zf/dLRk9efG1KY594P/33j2c/3nqQvEjj29p7WFy
- yLx8+V71ztKWRjEuBhkxRRZHNpNwuWW81RsNsrUgJnDygQyhIGLUwAmoubMyDDbwVl+1dfH6Z9F
- 6pXmFXxZ672/1b2/+voc4brbr1d3B+oyMkyc/PfNJ6NUh0jLxw1fP3tG+G15pLqSw6w2s8Xn0Nz
- XX5kB
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6233; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=ukgwKS9b74pvxt5KIxpB+SsEZQ15dEZSLmrqfVMou9g=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSu3zf/zmK/nV1L0pwl/J+FLXaMSGH+aHzM9PCqyO7LD
+ BO/bZSZ1VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARfU2Gv6LOMpHTTriG3xa2
+ yHuyIao/bsPLlPxExek8W/tvrijaqsLw3yv1fdrhtIkJXBE8uWs1N/Z3HvnI57/KcPKy1OMrOwt
+ 4GAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- drivers/block/rnbd/rnbd-srv.c | 28 ++++++++++++++--------------
- drivers/block/rnbd/rnbd-srv.h |  2 +-
- 2 files changed, 15 insertions(+), 15 deletions(-)
+ drivers/block/xen-blkback/blkback.c |  4 ++--
+ drivers/block/xen-blkback/common.h  |  4 ++--
+ drivers/block/xen-blkback/xenbus.c  | 37 ++++++++++++++++++-------------------
+ 3 files changed, 22 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/block/rnbd/rnbd-srv.c b/drivers/block/rnbd/rnbd-srv.c
-index 3a0d5dcec6f2..f6e3a3c4b76c 100644
---- a/drivers/block/rnbd/rnbd-srv.c
-+++ b/drivers/block/rnbd/rnbd-srv.c
-@@ -145,7 +145,7 @@ static int process_rdma(struct rnbd_srv_session *srv_sess,
- 	priv->sess_dev = sess_dev;
- 	priv->id = id;
+diff --git a/drivers/block/xen-blkback/blkback.c b/drivers/block/xen-blkback/blkback.c
+index 4defd7f387c7..944576d582fb 100644
+--- a/drivers/block/xen-blkback/blkback.c
++++ b/drivers/block/xen-blkback/blkback.c
+@@ -465,7 +465,7 @@ static int xen_vbd_translate(struct phys_req *req, struct xen_blkif *blkif,
+ 	}
  
--	bio = bio_alloc(sess_dev->bdev_handle->bdev, 1,
-+	bio = bio_alloc(file_bdev(sess_dev->bdev_file), 1,
- 			rnbd_to_bio_flags(le32_to_cpu(msg->rw)), GFP_KERNEL);
- 	if (bio_add_page(bio, virt_to_page(data), datalen,
- 			offset_in_page(data)) != datalen) {
-@@ -219,7 +219,7 @@ void rnbd_destroy_sess_dev(struct rnbd_srv_sess_dev *sess_dev, bool keep_id)
- 	rnbd_put_sess_dev(sess_dev);
- 	wait_for_completion(&dc); /* wait for inflights to drop to zero */
+ 	req->dev  = vbd->pdevice;
+-	req->bdev = vbd->bdev_handle->bdev;
++	req->bdev = file_bdev(vbd->bdev_file);
+ 	rc = 0;
  
--	bdev_release(sess_dev->bdev_handle);
-+	fput(sess_dev->bdev_file);
- 	mutex_lock(&sess_dev->dev->lock);
- 	list_del(&sess_dev->dev_list);
- 	if (!sess_dev->readonly)
-@@ -534,7 +534,7 @@ rnbd_srv_get_or_create_srv_dev(struct block_device *bdev,
- static void rnbd_srv_fill_msg_open_rsp(struct rnbd_msg_open_rsp *rsp,
- 					struct rnbd_srv_sess_dev *sess_dev)
+  out:
+@@ -969,7 +969,7 @@ static int dispatch_discard_io(struct xen_blkif_ring *ring,
+ 	int err = 0;
+ 	int status = BLKIF_RSP_OKAY;
+ 	struct xen_blkif *blkif = ring->blkif;
+-	struct block_device *bdev = blkif->vbd.bdev_handle->bdev;
++	struct block_device *bdev = file_bdev(blkif->vbd.bdev_file);
+ 	struct phys_req preq;
+ 
+ 	xen_blkif_get(blkif);
+diff --git a/drivers/block/xen-blkback/common.h b/drivers/block/xen-blkback/common.h
+index 1432c83183d0..b427d54bc120 100644
+--- a/drivers/block/xen-blkback/common.h
++++ b/drivers/block/xen-blkback/common.h
+@@ -221,7 +221,7 @@ struct xen_vbd {
+ 	unsigned char		type;
+ 	/* phys device that this vbd maps to. */
+ 	u32			pdevice;
+-	struct bdev_handle	*bdev_handle;
++	struct file		*bdev_file;
+ 	/* Cached size parameter. */
+ 	sector_t		size;
+ 	unsigned int		flush_support:1;
+@@ -360,7 +360,7 @@ struct pending_req {
+ };
+ 
+ 
+-#define vbd_sz(_v)	bdev_nr_sectors((_v)->bdev_handle->bdev)
++#define vbd_sz(_v)	bdev_nr_sectors(file_bdev((_v)->bdev_file))
+ 
+ #define xen_blkif_get(_b) (atomic_inc(&(_b)->refcnt))
+ #define xen_blkif_put(_b)				\
+diff --git a/drivers/block/xen-blkback/xenbus.c b/drivers/block/xen-blkback/xenbus.c
+index e34219ea2b05..0621878940ae 100644
+--- a/drivers/block/xen-blkback/xenbus.c
++++ b/drivers/block/xen-blkback/xenbus.c
+@@ -81,7 +81,7 @@ static void xen_update_blkif_status(struct xen_blkif *blkif)
+ 	int i;
+ 
+ 	/* Not ready to connect? */
+-	if (!blkif->rings || !blkif->rings[0].irq || !blkif->vbd.bdev_handle)
++	if (!blkif->rings || !blkif->rings[0].irq || !blkif->vbd.bdev_file)
+ 		return;
+ 
+ 	/* Already connected? */
+@@ -99,13 +99,12 @@ static void xen_update_blkif_status(struct xen_blkif *blkif)
+ 		return;
+ 	}
+ 
+-	err = sync_blockdev(blkif->vbd.bdev_handle->bdev);
++	err = sync_blockdev(file_bdev(blkif->vbd.bdev_file));
+ 	if (err) {
+ 		xenbus_dev_error(blkif->be->dev, err, "block flush");
+ 		return;
+ 	}
+-	invalidate_inode_pages2(
+-			blkif->vbd.bdev_handle->bdev->bd_inode->i_mapping);
++	invalidate_inode_pages2(blkif->vbd.bdev_file->f_mapping);
+ 
+ 	for (i = 0; i < blkif->nr_rings; i++) {
+ 		ring = &blkif->rings[i];
+@@ -473,9 +472,9 @@ static void xenvbd_sysfs_delif(struct xenbus_device *dev)
+ 
+ static void xen_vbd_free(struct xen_vbd *vbd)
  {
--	struct block_device *bdev = sess_dev->bdev_handle->bdev;
-+	struct block_device *bdev = file_bdev(sess_dev->bdev_file);
+-	if (vbd->bdev_handle)
+-		bdev_release(vbd->bdev_handle);
+-	vbd->bdev_handle = NULL;
++	if (vbd->bdev_file)
++		fput(vbd->bdev_file);
++	vbd->bdev_file = NULL;
+ }
  
- 	rsp->hdr.type = cpu_to_le16(RNBD_MSG_OPEN_RSP);
- 	rsp->device_id = cpu_to_le32(sess_dev->device_id);
-@@ -560,7 +560,7 @@ static void rnbd_srv_fill_msg_open_rsp(struct rnbd_msg_open_rsp *rsp,
- static struct rnbd_srv_sess_dev *
- rnbd_srv_create_set_sess_dev(struct rnbd_srv_session *srv_sess,
- 			      const struct rnbd_msg_open *open_msg,
--			      struct bdev_handle *handle, bool readonly,
-+			      struct file *bdev_file, bool readonly,
- 			      struct rnbd_srv_dev *srv_dev)
+ static int xen_vbd_create(struct xen_blkif *blkif, blkif_vdev_t handle,
+@@ -483,7 +482,7 @@ static int xen_vbd_create(struct xen_blkif *blkif, blkif_vdev_t handle,
+ 			  int cdrom)
  {
- 	struct rnbd_srv_sess_dev *sdev = rnbd_sess_dev_alloc(srv_sess);
-@@ -572,7 +572,7 @@ rnbd_srv_create_set_sess_dev(struct rnbd_srv_session *srv_sess,
- 
- 	strscpy(sdev->pathname, open_msg->dev_name, sizeof(sdev->pathname));
- 
--	sdev->bdev_handle	= handle;
-+	sdev->bdev_file		= bdev_file;
- 	sdev->sess		= srv_sess;
- 	sdev->dev		= srv_dev;
- 	sdev->readonly		= readonly;
-@@ -678,7 +678,7 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
- 	struct rnbd_srv_dev *srv_dev;
- 	struct rnbd_srv_sess_dev *srv_sess_dev;
- 	const struct rnbd_msg_open *open_msg = msg;
+ 	struct xen_vbd *vbd;
 -	struct bdev_handle *bdev_handle;
 +	struct file *bdev_file;
- 	blk_mode_t open_flags = BLK_OPEN_READ;
- 	char *full_path;
- 	struct rnbd_msg_open_rsp *rsp = data;
-@@ -716,15 +716,15 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
- 		goto reject;
- 	}
  
--	bdev_handle = bdev_open_by_path(full_path, open_flags, NULL, NULL);
+ 	vbd = &blkif->vbd;
+ 	vbd->handle   = handle;
+@@ -492,17 +491,17 @@ static int xen_vbd_create(struct xen_blkif *blkif, blkif_vdev_t handle,
+ 
+ 	vbd->pdevice  = MKDEV(major, minor);
+ 
+-	bdev_handle = bdev_open_by_dev(vbd->pdevice, vbd->readonly ?
++	bdev_file = bdev_file_open_by_dev(vbd->pdevice, vbd->readonly ?
+ 				 BLK_OPEN_READ : BLK_OPEN_WRITE, NULL, NULL);
+ 
 -	if (IS_ERR(bdev_handle)) {
--		ret = PTR_ERR(bdev_handle);
-+	bdev_file = bdev_file_open_by_path(full_path, open_flags, NULL, NULL);
 +	if (IS_ERR(bdev_file)) {
-+		ret = PTR_ERR(bdev_file);
- 		pr_err("Opening device '%s' on session %s failed, failed to open the block device, err: %pe\n",
--		       full_path, srv_sess->sessname, bdev_handle);
-+		       full_path, srv_sess->sessname, bdev_file);
- 		goto free_path;
+ 		pr_warn("xen_vbd_create: device %08x could not be opened\n",
+ 			vbd->pdevice);
+ 		return -ENOENT;
  	}
  
--	srv_dev = rnbd_srv_get_or_create_srv_dev(bdev_handle->bdev, srv_sess,
-+	srv_dev = rnbd_srv_get_or_create_srv_dev(file_bdev(bdev_file), srv_sess,
- 						  open_msg->access_mode);
- 	if (IS_ERR(srv_dev)) {
- 		pr_err("Opening device '%s' on session %s failed, creating srv_dev failed, err: %pe\n",
-@@ -734,7 +734,7 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
+-	vbd->bdev_handle = bdev_handle;
+-	if (vbd->bdev_handle->bdev->bd_disk == NULL) {
++	vbd->bdev_file = bdev_file;
++	if (file_bdev(vbd->bdev_file)->bd_disk == NULL) {
+ 		pr_warn("xen_vbd_create: device %08x doesn't exist\n",
+ 			vbd->pdevice);
+ 		xen_vbd_free(vbd);
+@@ -510,14 +509,14 @@ static int xen_vbd_create(struct xen_blkif *blkif, blkif_vdev_t handle,
  	}
+ 	vbd->size = vbd_sz(vbd);
  
- 	srv_sess_dev = rnbd_srv_create_set_sess_dev(srv_sess, open_msg,
--				bdev_handle,
-+				bdev_file,
- 				open_msg->access_mode == RNBD_ACCESS_RO,
- 				srv_dev);
- 	if (IS_ERR(srv_sess_dev)) {
-@@ -750,7 +750,7 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
- 	 */
- 	mutex_lock(&srv_dev->lock);
- 	if (!srv_dev->dev_kobj.state_in_sysfs) {
--		ret = rnbd_srv_create_dev_sysfs(srv_dev, bdev_handle->bdev);
-+		ret = rnbd_srv_create_dev_sysfs(srv_dev, file_bdev(bdev_file));
- 		if (ret) {
- 			mutex_unlock(&srv_dev->lock);
- 			rnbd_srv_err(srv_sess_dev,
-@@ -793,7 +793,7 @@ static int process_msg_open(struct rnbd_srv_session *srv_sess,
+-	if (cdrom || disk_to_cdi(vbd->bdev_handle->bdev->bd_disk))
++	if (cdrom || disk_to_cdi(file_bdev(vbd->bdev_file)->bd_disk))
+ 		vbd->type |= VDISK_CDROM;
+-	if (vbd->bdev_handle->bdev->bd_disk->flags & GENHD_FL_REMOVABLE)
++	if (file_bdev(vbd->bdev_file)->bd_disk->flags & GENHD_FL_REMOVABLE)
+ 		vbd->type |= VDISK_REMOVABLE;
+ 
+-	if (bdev_write_cache(bdev_handle->bdev))
++	if (bdev_write_cache(file_bdev(bdev_file)))
+ 		vbd->flush_support = true;
+-	if (bdev_max_secure_erase_sectors(bdev_handle->bdev))
++	if (bdev_max_secure_erase_sectors(file_bdev(bdev_file)))
+ 		vbd->discard_secure = true;
+ 
+ 	pr_debug("Successful creation of handle=%04x (dom=%u)\n",
+@@ -570,7 +569,7 @@ static void xen_blkbk_discard(struct xenbus_transaction xbt, struct backend_info
+ 	struct xen_blkif *blkif = be->blkif;
+ 	int err;
+ 	int state = 0;
+-	struct block_device *bdev = be->blkif->vbd.bdev_handle->bdev;
++	struct block_device *bdev = file_bdev(be->blkif->vbd.bdev_file);
+ 
+ 	if (!xenbus_read_unsigned(dev->nodename, "discard-enable", 1))
+ 		return;
+@@ -932,7 +931,7 @@ static void connect(struct backend_info *be)
  	}
- 	rnbd_put_srv_dev(srv_dev);
- blkdev_put:
--	bdev_release(bdev_handle);
-+	fput(bdev_file);
- free_path:
- 	kfree(full_path);
- reject:
-diff --git a/drivers/block/rnbd/rnbd-srv.h b/drivers/block/rnbd/rnbd-srv.h
-index 343cc682b617..18d873808b8d 100644
---- a/drivers/block/rnbd/rnbd-srv.h
-+++ b/drivers/block/rnbd/rnbd-srv.h
-@@ -46,7 +46,7 @@ struct rnbd_srv_dev {
- struct rnbd_srv_sess_dev {
- 	/* Entry inside rnbd_srv_dev struct */
- 	struct list_head		dev_list;
--	struct bdev_handle		*bdev_handle;
-+	struct file			*bdev_file;
- 	struct rnbd_srv_session		*sess;
- 	struct rnbd_srv_dev		*dev;
- 	struct kobject                  kobj;
+ 	err = xenbus_printf(xbt, dev->nodename, "sector-size", "%lu",
+ 			    (unsigned long)bdev_logical_block_size(
+-					be->blkif->vbd.bdev_handle->bdev));
++					file_bdev(be->blkif->vbd.bdev_file)));
+ 	if (err) {
+ 		xenbus_dev_fatal(dev, err, "writing %s/sector-size",
+ 				 dev->nodename);
+@@ -940,7 +939,7 @@ static void connect(struct backend_info *be)
+ 	}
+ 	err = xenbus_printf(xbt, dev->nodename, "physical-sector-size", "%u",
+ 			    bdev_physical_block_size(
+-					be->blkif->vbd.bdev_handle->bdev));
++					file_bdev(be->blkif->vbd.bdev_file)));
+ 	if (err)
+ 		xenbus_dev_error(dev, err, "writing %s/physical-sector-size",
+ 				 dev->nodename);
 
 -- 
 2.43.0
