@@ -1,111 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-8583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2E6283911C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 15:16:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A82038391B2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 15:48:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83FE11F2AB00
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 14:16:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6030A28F4D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 14:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CA05FEEB;
-	Tue, 23 Jan 2024 14:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9E05FB9F;
+	Tue, 23 Jan 2024 14:47:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896495FDBE;
-	Tue, 23 Jan 2024 14:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FA560259;
+	Tue, 23 Jan 2024 14:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706019284; cv=none; b=CSNTui5m4GWyNjFUr+aCXJMmkrRpXpTHz7WvW3tLMvoDEj1V5RBtUv5kPh+5UXxwemeN3T4VWPj+XdCoOmh5EQtkWBs0uw45bAkIrd0dbn70XheTdD6ss8rNtSJx4l29EIRn39S4V+RSW98qliZfNOx0kO3w0WXqhqo3Yg10xWw=
+	t=1706021252; cv=none; b=YYkJMDdmmYOOtDxsqfWi6nlD3+Os6pT6dQlz5X0XfHjTAaS/mXo95nRSwKuZR1O6FpNZb/eWSPAthdvekIDo2cqVF5PmjaIYBGDYi/e8Y0Symb38/WcUvf+IQJspXA3OE0Cv5zhKzWF9iaYNpBmKtsAwbqiG8d074T2NVt1YHSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706019284; c=relaxed/simple;
-	bh=aLNrXaxt98R5cd0HEJoYciC+5vGvHwIt2upVpsfT5Tg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rzvUGaJcv+Su1TtXZ1G6rNtBo1VYlKUOvWZnQoXv+JFzV7EekstjdTyz0IlmRLWn2epPJbouSNyx4/aGL5jS1f5tsPmMIH6NRNHT8r7ukqV5AKKh4NdGGSf9CMUUOjog5G3EHz1GdSQ95kO3XynWOrCqlh01y7F8gezRZIIJc/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.95)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1rSHXh-0006LC-Mw; Tue, 23 Jan 2024 15:14:21 +0100
-Received: from p5dc556fd.dip0.t-ipconnect.de ([93.197.86.253] helo=z6.fritz.box)
-          by inpost2.zedat.fu-berlin.de (Exim 4.95)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1rSHXh-0046MI-Cp; Tue, 23 Jan 2024 15:14:21 +0100
-Received: from glaubitz by z6.fritz.box with local (Exim 4.96)
-	(envelope-from <glaubitz@physik.fu-berlin.de>)
-	id 1rSHXg-00Fl8w-2i;
-	Tue, 23 Jan 2024 15:14:20 +0100
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: linux@roeck-us.net
-Cc: amir73il@gmail.com,
-	arnd@arndb.de,
-	christian@brauner.io,
-	dhowells@redhat.com,
-	fweimer@redhat.com,
-	kzak@redhat.com,
-	linux-api@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	mattlloydhouse@gmail.com,
-	mszeredi@redhat.com,
-	raven@themaw.net,
-	torvalds@linux-foundation.org,
-	viro@zeniv.linux.org.uk,
-	linux-sh@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] add listmount(2) syscall
-Date: Tue, 23 Jan 2024 15:14:20 +0100
-Message-Id: <20240123141420.3756134-1-glaubitz@physik.fu-berlin.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <75b87a85-7d2c-4078-91e3-024ea36cfb42@roeck-us.net>
-References: <75b87a85-7d2c-4078-91e3-024ea36cfb42@roeck-us.net>
+	s=arc-20240116; t=1706021252; c=relaxed/simple;
+	bh=SyOCDDjWY9xeLbCSe4FxdSgAc8OEaImCI2tOJVIHOBE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z0f5nNTGW581C7Ec1IKRG5x98xXh77N+hcOJnF6w2WIoHA2xhkFrB2lQWtqMVSeHGb05eEiC9q/lzffQ8u5C6dMQzS3WcH7CjhviZM0YDi9LA9+V12qkNnt7YXZ/HhnR+McwF0oL5nzySque8z24pl5OcVNggu65YDS5OjC67d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B149C3277A;
+	Tue, 23 Jan 2024 14:47:29 +0000 (UTC)
+Date: Tue, 23 Jan 2024 09:49:00 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Huang Yiwei <quic_hyiwei@quicinc.com>
+Cc: <mhiramat@kernel.org>, <mark.rutland@arm.com>, <mcgrof@kernel.org>,
+ <keescook@chromium.org>, <j.granados@samsung.com>,
+ <mathieu.desnoyers@efficios.com>, <corbet@lwn.net>,
+ <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+ <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <quic_bjorande@quicinc.com>, <quic_tsoni@quicinc.com>,
+ <quic_satyap@quicinc.com>, <quic_aiquny@quicinc.com>, <kernel@quicinc.com>,
+ Ross Zwisler <zwisler@google.com>, Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [PATCH v3] tracing: Support to dump instance traces by
+ ftrace_dump_on_oops
+Message-ID: <20240123094900.6f96572c@gandalf.local.home>
+In-Reply-To: <0279a4cb-ced0-447a-a06f-37c38650ed5b@quicinc.com>
+References: <20240119080824.907101-1-quic_hyiwei@quicinc.com>
+	<20240119115625.603188d1@gandalf.local.home>
+	<0279a4cb-ced0-447a-a06f-37c38650ed5b@quicinc.com>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Guenter,
+On Tue, 23 Jan 2024 18:23:58 +0800
+Huang Yiwei <quic_hyiwei@quicinc.com> wrote:
 
-> with this patch in the tree, all sh4 builds fail with ICE.
+> > And if we really want to be fancy!
+> > 
+> > 	ftrace_dump_on_opps[=orig_cpu | =<instance> | =orig_cpu:<instance> ][,<instance> | ,<instance>:orig_cpu]
+> >   
+> Yeah, I agree to make the parameter more flexible.
 > 
-> during RTL pass: final
-> In file included from fs/namespace.c:11:
-> fs/namespace.c: In function '__se_sys_listmount':
-> include/linux/syscalls.h:258:9: internal compiler error: in change_address_1, at emit-rtl.c:2275
+> "=orig_cpu:<instance>" means to dump global and another instance?
+
+No, I added a comma for that:
+
+  =,orig_cpu:<instance>
+
+Would mean to dump all of global and just the origin CPU of the instance.
+
 > 
-> I tested with gcc 8.2, 11.3, 11.4, and 12.3. The compiler version
-> does not make a difference. Has anyone else seen the same problem ?
-> If so, any idea what to do about it ?
+> I'm thinking of the following format:
+> 
+> ftrace_dump_on_opps[=orig_cpu | =<instance>][,<instance> | 
+> ,<instance>=orig_cpu]
+> 
+> Here list some possible situations:
+> 
+> 1. Dump global on orig_cpu:
+> ftrace_dump_on_oops=orig_cpu
+> 
+> 2. Dump global and instance1 on all cpu, instance2 on orig_cpu:
+> ftrace_dump_on_opps,<instance1>,<instance2>=orig_cpu
+> 
+> 3. Dump global and instance1 on orig_cpu, instance2 on all cpu:
+> ftrace_dump_on_opps=orig_cpu,<instance1>=orig_cpu,<instance2>
+> 
+> 4. Dump instance1 on all cpu, instance2 on orig_cpu:
+> ftrace_dump_on_opps=<instance1>,<instance2>=orig_cpu
+> 
+> 5. Dump instance1 and instance2 on orig_cpu:
+> ftrace_dump_on_opps=<instance1>=orig_cpu,<instance2>=orig_cpu
+> 
+> This makes orig_cpu dump for global same as instance, the parameter may 
+> seems more unified and users don't need to remember another markers to 
+> request orig_cpu dump.
+> 
+> But one problem here is if there's an instance named "orig_cpu", then we 
+> may not dump it correctly.
 
-I'm not seeing any problems building the SH kernel except some -Werror=missing-prototypes warnings.
+I would put that under:
 
-I'm using gcc 11.1 from here [1].
+   Patient: Doctor it hurts me when I do this
+   Doctor:  Then don't do that
 
-Adrian
+;-)
 
-PS: Please always CC linux-sh and the SH maintainers when reporting issues.
+-- Steve
 
-> [1] https://mirrors.edge.kernel.org/pub/tools/crosstool/files/bin/x86_64/11.1.0/
-
---
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
