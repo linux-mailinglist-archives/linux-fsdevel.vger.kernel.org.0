@@ -1,116 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-8584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82038391B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 15:48:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D83839201
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 16:04:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6030A28F4D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 14:48:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16A1283A0D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 15:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9E05FB9F;
-	Tue, 23 Jan 2024 14:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB08604BC;
+	Tue, 23 Jan 2024 15:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NT+M63By"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FA560259;
-	Tue, 23 Jan 2024 14:47:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C14604B4;
+	Tue, 23 Jan 2024 15:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706021252; cv=none; b=YYkJMDdmmYOOtDxsqfWi6nlD3+Os6pT6dQlz5X0XfHjTAaS/mXo95nRSwKuZR1O6FpNZb/eWSPAthdvekIDo2cqVF5PmjaIYBGDYi/e8Y0Symb38/WcUvf+IQJspXA3OE0Cv5zhKzWF9iaYNpBmKtsAwbqiG8d074T2NVt1YHSg=
+	t=1706022207; cv=none; b=smo7uUoxnfhU9ZOeEu/1k5zZW2V2UGGVRdiB/tP6oQ1Swg/9Hk2J3HK0C8fEt5ABo5Po89UXzzQFNqcmQy021PQc3b8+Oo2pwYfHKn/lOFvpOi2Po1YtQbVYUpmxn58EVErL/yflXQBxCAn7Z7yO2EyVxEyixlwPYcAhW/YQN4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706021252; c=relaxed/simple;
-	bh=SyOCDDjWY9xeLbCSe4FxdSgAc8OEaImCI2tOJVIHOBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z0f5nNTGW581C7Ec1IKRG5x98xXh77N+hcOJnF6w2WIoHA2xhkFrB2lQWtqMVSeHGb05eEiC9q/lzffQ8u5C6dMQzS3WcH7CjhviZM0YDi9LA9+V12qkNnt7YXZ/HhnR+McwF0oL5nzySque8z24pl5OcVNggu65YDS5OjC67d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B149C3277A;
-	Tue, 23 Jan 2024 14:47:29 +0000 (UTC)
-Date: Tue, 23 Jan 2024 09:49:00 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Huang Yiwei <quic_hyiwei@quicinc.com>
-Cc: <mhiramat@kernel.org>, <mark.rutland@arm.com>, <mcgrof@kernel.org>,
- <keescook@chromium.org>, <j.granados@samsung.com>,
- <mathieu.desnoyers@efficios.com>, <corbet@lwn.net>,
- <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <quic_bjorande@quicinc.com>, <quic_tsoni@quicinc.com>,
- <quic_satyap@quicinc.com>, <quic_aiquny@quicinc.com>, <kernel@quicinc.com>,
- Ross Zwisler <zwisler@google.com>, Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH v3] tracing: Support to dump instance traces by
- ftrace_dump_on_oops
-Message-ID: <20240123094900.6f96572c@gandalf.local.home>
-In-Reply-To: <0279a4cb-ced0-447a-a06f-37c38650ed5b@quicinc.com>
-References: <20240119080824.907101-1-quic_hyiwei@quicinc.com>
-	<20240119115625.603188d1@gandalf.local.home>
-	<0279a4cb-ced0-447a-a06f-37c38650ed5b@quicinc.com>
-X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1706022207; c=relaxed/simple;
+	bh=q1ehO0VlSRjlEkZix2Yv8UwXgVbsdNerufMonTt1Rvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tclm3PQBJ+ZrKMw+OQGz/I6oZ7NE/05hp0Lc4mix8MNGJES2hU9ov0AjbAaMKOMmtS33ubcS7ozWeEWQFjQASJ21amqPEKGEza6DfvF3zoxeRlLNP3b+ugUvdprzlBhePslWHbOk3UlYmj0llqFTP7UJLDWfzR24PeOdipjTY1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NT+M63By; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AA8EC433F1;
+	Tue, 23 Jan 2024 15:03:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706022207;
+	bh=q1ehO0VlSRjlEkZix2Yv8UwXgVbsdNerufMonTt1Rvk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NT+M63By3JOLNSB6AfRX73VOAsajcGYOLYmUwI6BJW9eea/qDVp8ui4HATBCbLqta
+	 aJQRALleSXScyEPXdbsBTanNjgZhs5cuisIvevP5qQSUpcJMMvxkf5B1QIdLZrx7sn
+	 dhwfse1OScXIKVs1lftoY+0nBQuSgIuJX/0pusRP9AfbsTwOWd8h9S2PB0/FYX4yLu
+	 qPqYiuCqQSUwKWgbhwu7L+RW3btUfwvRYmIwNtTw1dnRXIrCsaTFVOeCpzVxZE665K
+	 xPr1coTGmxKiax9/xI02gl6qO/vbiH9Z8bjog6KaunCNC0RlXaVp87Q9mb8c3l0amc
+	 5MpTdGsFq5EjQ==
+Date: Tue, 23 Jan 2024 16:03:20 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>, 
+	Jeff Layton <jlayton@kernel.org>, Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev, 
+	linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, linux-erofs@lists.ozlabs.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/10] netfs, afs, cifs, cachefiles, erofs: Miscellaneous
+ fixes
+Message-ID: <20240123-malheur-fahrrad-9d7c2ce2e757@brauner>
+References: <20240122123845.3822570-1-dhowells@redhat.com>
+ <20240122-bezwingen-kanister-b56f5bc1bc84@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240122-bezwingen-kanister-b56f5bc1bc84@brauner>
 
-On Tue, 23 Jan 2024 18:23:58 +0800
-Huang Yiwei <quic_hyiwei@quicinc.com> wrote:
-
-> > And if we really want to be fancy!
+On Mon, Jan 22, 2024 at 04:18:08PM +0100, Christian Brauner wrote:
+> On Mon, Jan 22, 2024 at 12:38:33PM +0000, David Howells wrote:
+> > Hi Christian,
 > > 
-> > 	ftrace_dump_on_opps[=orig_cpu | =<instance> | =orig_cpu:<instance> ][,<instance> | ,<instance>:orig_cpu]
-> >   
-> Yeah, I agree to make the parameter more flexible.
+> > Here are some miscellaneous fixes for netfslib and a number of filesystems:
+> > 
+> >  (1) Replace folio_index() with folio->index in netfs, afs and cifs.
+> > 
+> >  (2) Fix an oops in fscache_put_cache().
+> > 
+> >  (3) Fix error handling in netfs_perform_write().
+> > 
+> >  (4) Fix an oops in cachefiles when not using erofs ondemand mode.
+> > 
+> >  (5) In afs, hide silly-rename files from getdents() to avoid problems with
+> >      tar and suchlike.
+> > 
+> >  (6) In afs, fix error handling in lookup with a bulk status fetch.
+> > 
+> >  (7) In afs, afs_dynroot_d_revalidate() is redundant, so remove it.
+> > 
+> >  (8) In afs, fix the RCU unlocking in afs_proc_addr_prefs_show().
+> > 
+> > The patches can also be found here:
+> > 
+> > 	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=netfs-fixes
 > 
-> "=orig_cpu:<instance>" means to dump global and another instance?
+> Thank you! I can pull this in right and will send a pr together with the
+> other changes around Wednesday/Thursday for -rc2. So reviews before that
+> would be nice.
 
-No, I added a comma for that:
+Pulled and pushed:
 
-  =,orig_cpu:<instance>
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.netfs
 
-Would mean to dump all of global and just the origin CPU of the instance.
-
-> 
-> I'm thinking of the following format:
-> 
-> ftrace_dump_on_opps[=orig_cpu | =<instance>][,<instance> | 
-> ,<instance>=orig_cpu]
-> 
-> Here list some possible situations:
-> 
-> 1. Dump global on orig_cpu:
-> ftrace_dump_on_oops=orig_cpu
-> 
-> 2. Dump global and instance1 on all cpu, instance2 on orig_cpu:
-> ftrace_dump_on_opps,<instance1>,<instance2>=orig_cpu
-> 
-> 3. Dump global and instance1 on orig_cpu, instance2 on all cpu:
-> ftrace_dump_on_opps=orig_cpu,<instance1>=orig_cpu,<instance2>
-> 
-> 4. Dump instance1 on all cpu, instance2 on orig_cpu:
-> ftrace_dump_on_opps=<instance1>,<instance2>=orig_cpu
-> 
-> 5. Dump instance1 and instance2 on orig_cpu:
-> ftrace_dump_on_opps=<instance1>=orig_cpu,<instance2>=orig_cpu
-> 
-> This makes orig_cpu dump for global same as instance, the parameter may 
-> seems more unified and users don't need to remember another markers to 
-> request orig_cpu dump.
-> 
-> But one problem here is if there's an instance named "orig_cpu", then we 
-> may not dump it correctly.
-
-I would put that under:
-
-   Patient: Doctor it hurts me when I do this
-   Doctor:  Then don't do that
-
-;-)
-
--- Steve
-
+Timeline still the same.
 
