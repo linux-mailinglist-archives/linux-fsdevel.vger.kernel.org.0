@@ -1,77 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-8627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E67A9839CEE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 00:10:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2629E839CF2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 00:10:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6E77B2407C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 23:10:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92C5A1F252FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 23 Jan 2024 23:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64DE853E2A;
-	Tue, 23 Jan 2024 23:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E3C954F80;
+	Tue, 23 Jan 2024 23:10:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O1nssBkc"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XuV9T5RA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 498F2210F6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jan 2024 23:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F0D53E2B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jan 2024 23:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706051419; cv=none; b=iEZlRDIX9X/n7qjoljdNkQVleTOWr+6UQedauhOoLPkh6w/AHpw6lW/IcEi6rEknjpP0R+W5Q31NRCM4QXeM6cdgNVoMOB9yhycaK8YQHublroXuq7hsKpO/rCpGWcdSGI5VyM6XBemNmY6PvAXokCMhepZoYs79ZdiBoSLEwrI=
+	t=1706051422; cv=none; b=S4gWXrz2k6zPcers0+0+t0GaiBGbL0xFyozeHtSWP05P2UgADzpiTt9Z9Zwl6IHDk6UFFB0kmLTZNzjgeKo08hR/SWqbVEtPSGBl3Dakxem4GKqilZFW2eCKCw5+PGIpzquwMpCAftvZC8Ct0+v15Tvz6xwkGxDqOWA11p4Np/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706051419; c=relaxed/simple;
-	bh=6Lrv5xwMfaDaPsl1VCKPLCnIY6z/5ht1dxDtK8LPTm4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=eMi9eTZ8P2wL/7HbvQpeOMkA7dGCpyEVRC/UMrx6/hKsJRwiFBoGxhY8yw1RVz9Frk0w7rfSeM0Sl4BM2issNurjmdKsWCZl0OaElmfqBVkJcIShU4rtRGtYKjlyvsKlvQbgeA444SavhPFPAZWDcFcBK2qwuNE5jj+D7gU2OTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O1nssBkc; arc=none smtp.client-ip=209.85.219.202
+	s=arc-20240116; t=1706051422; c=relaxed/simple;
+	bh=VSmKcMfyN3MYuxa3M+8VItvp5qj4UNGBOJKK9wA9Qlk=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=W1s1fQnoZAHKziRlBFvS9ptvnwt3k7kXr8ZVAlHoG5M9j0kY7hgqs5j+ovWQbMYSg6xHBH2O/NpP1Km9I0PlCT4QryWuWq2iSI/9fm48slmLFeUn0m4ZFAjqJE6AXPV0o4rtV7SYAMcyTApysLubam0cubElAHHGckVcdzgH46c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XuV9T5RA; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dbf618042daso6312493276.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jan 2024 15:10:18 -0800 (PST)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-5ff7cf2fd21so51161117b3.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 23 Jan 2024 15:10:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1706051417; x=1706656217; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=oXyU4pkvCRYAyA2TUvsUC8dh5sAPzBBH4qagn6tOpF0=;
-        b=O1nssBkcERP8HuhOfwNn0vUzKmXVyfovdquN26R/RqtuCtHs4lbLLYf0FEFka3ba1l
-         l4qd8TAShqCSlMRjozCdOopTxWnplFUMF11Q3uZvlQ9S/KAiCRDNx+SU+4mLaFzfTv/w
-         DSPnPrzw37OFUkBxNR0dyQJOOx8pSn5Rv2hmYVxixdEOre8L0jvkc9cFWu2z3AVi2GNn
-         x4GYNIvO+Wr9dl6aMcO/QC66BMmErtSY0ZDdmy0uWqK0/aLnu0+QoZ7QS+4k4qdMk8AC
-         HXeyNmgjoVPTvPVOjeD5GhEn+/d5xXADZ1viPwn4av184uQLBBRuv+5vCsP5OyIjgB89
-         8Fzg==
+        d=google.com; s=20230601; t=1706051419; x=1706656219; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OLp6U6EsMSw583KQsA7U2jc3UsvPAv4xgtxefIxudO0=;
+        b=XuV9T5RAXMXEf4hcRZSSpo96qObe0afVE4WoZ3Na/Td2ZSGF6RVXD9I3catbFL61Fx
+         7EcKFg92EehqiNaSHycU78dw6JEa1uITxBKB0TuymA/Ckr9psHv6w8IL2Eajcizhicwa
+         vY0zblX3cdStLP6OEJbVlHPVztheMt+4Q4NI6BhoNfGBEtF8+TDbCBSc7c1Fes5OT2D6
+         RJgT9LKZETNfBXLqIhVZ8zNuArmkQetb4nq6naANciE3ke51eToTIjkqecGYBRMQFJzM
+         0DM+2n0FHchVeKP7ElAtbgNGHyv85yZkJKkuZHYlLjDhndZsITipsOjHlgjT5tMacSZU
+         l/rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706051417; x=1706656217;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oXyU4pkvCRYAyA2TUvsUC8dh5sAPzBBH4qagn6tOpF0=;
-        b=KlwbwuRI9+BmUbSd7KF97XuBV9Ho0oUXA4jm/91tVi4wBJuFfcS8FmTOkkc+7VaayJ
-         WxpBVqC42r915M4beXcacNupsC3tJ0zpt/vyWdRahFaR3WVSMw7KyXboY6fldWjQwPC0
-         3tGS1uNtyXzq8keMAE9APCmxLF5/c/qob4FbK48Q9TXVOpHCFx5NCobDk2nBYnDpQp/V
-         viP81EqPe2ZJoR2G/UfAs5Wjp/dThR/ZU7D54mkgMfel4ab8uP33wlAbQyBCtbBMKm8J
-         7nkVQGOE7UHgoV9lzO0kiqJUHAyinq4oGeCwdmKUfvw2/VQLLtQiZ14lR+D8qUrlzg4i
-         dSSQ==
-X-Gm-Message-State: AOJu0Yz0Padcsiok5R7SK0K4P+tF3sjqE46sA/Oj7gH9twyt1R5CS09F
-	IK1F6Swfw75fzCk+h1y3XJwqsBFTouthFw59CbZUs8zY4qBL8cwpsUIEKzZnzv6s1ZSIfmGdcE0
-	ilg==
-X-Google-Smtp-Source: AGHT+IEgxI304pcV7zFy8N/84TxapaHhJhR9pXZLWhwJ6Iatmm8yKLxxB6dJA4KRTnvXodtXbWXNbbtsUkg=
+        d=1e100.net; s=20230601; t=1706051419; x=1706656219;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OLp6U6EsMSw583KQsA7U2jc3UsvPAv4xgtxefIxudO0=;
+        b=cap15qQHpX7uWoSNDLIGQ1ipr/87rrO7vKpp1D5YwVhwFgRZdOCUJgpDKq67Z045Kz
+         PnS88pHzwq9C1y9ecFWDGQYnqyaMD4tzDjJWSMi9dodZ+HfeVHdShl/FDow5NKGEpm9Z
+         1QyBHkfN6HXtxyOKDHK3lSYlfHKXlgPLKMIv30pASK9FLNhsWi3pKsipLspAwvb9gX7Z
+         +Kefcn0T5cy1pppw+SCU+n9rqt92q+dV4vOtyOZBMG1mv/+vBtdKRLiB0QV45nXf0Jtw
+         rW5wzqIso4T+ns52eKPWXq1yHQjgHzUIynTUiO0A9JH7dTD3JY69BzRob/Ljrhq8pKDw
+         Mvaw==
+X-Gm-Message-State: AOJu0YwhASPEcdhLBqo3JE8WqCB+AelqlbLU8+XB/aVPZcprI8NlxC5/
+	eDjKLJDuVoUwoaNcTMVJqWIYdAzpCkuaFl0CFUS3D5tjo4jstnnmzRjZw9O8WJxeaUsVorgBEp2
+	Hjg==
+X-Google-Smtp-Source: AGHT+IFX5qIebM/ZQiKUEXGTW3oxR6pBTWd2HR+W3VQ1MxVAngHzessR/YRxQzpsjGe8I1sOL4WmImG7jew=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:8fc3:c34f:d407:388])
- (user=surenb job=sendgmr) by 2002:a05:6902:218b:b0:dc2:5456:d9ac with SMTP id
- dl11-20020a056902218b00b00dc25456d9acmr377765ybb.5.1706051417317; Tue, 23 Jan
- 2024 15:10:17 -0800 (PST)
-Date: Tue, 23 Jan 2024 15:10:12 -0800
+ (user=surenb job=sendgmr) by 2002:a81:9896:0:b0:5fc:7f94:da64 with SMTP id
+ p144-20020a819896000000b005fc7f94da64mr134477ywg.5.1706051419411; Tue, 23 Jan
+ 2024 15:10:19 -0800 (PST)
+Date: Tue, 23 Jan 2024 15:10:13 -0800
+In-Reply-To: <20240123231014.3801041-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240123231014.3801041-1-surenb@google.com>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
-Message-ID: <20240123231014.3801041-1-surenb@google.com>
-Subject: [PATCH v2 1/3] mm: make vm_area_struct anon_name field RCU-safe
+Message-ID: <20240123231014.3801041-2-surenb@google.com>
+Subject: [PATCH v2 2/3] mm: add mm_struct sequence number to detect write locks
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
@@ -89,140 +92,89 @@ Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
 	linux-mm@kvack.org, kernel-team@android.com, surenb@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-For lockless /proc/pid/maps reading we have to ensure all the fields
-used when generating the output are RCU-safe. The only pointer fields
-in vm_area_struct which are used to generate that file's output are
-vm_file and anon_name. vm_file is RCU-safe but anon_name is not. Make
-anon_name RCU-safe as well.
+Provide a way for lockless mm_struct users to detect whether mm might have
+been changed since some specific point in time. The API provided allows
+the user to record a counter when it starts using the mm and later use
+that counter to check if anyone write-locked mmap_lock since the counter
+was recorded. Recording the counter value should be done while holding
+mmap_lock at least for reading to prevent the counter from concurrent
+changes. Every time mmap_lock is write-locked mm_struct updates its
+mm_wr_seq counter so that checks against counters recorded before that
+would fail, indicating a possibility of mm being modified.
 
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 ---
- include/linux/mm_inline.h | 10 +++++++++-
- include/linux/mm_types.h  |  3 ++-
- mm/madvise.c              | 30 ++++++++++++++++++++++++++----
- 3 files changed, 37 insertions(+), 6 deletions(-)
+ include/linux/mm_types.h  |  2 ++
+ include/linux/mmap_lock.h | 22 ++++++++++++++++++++++
+ 2 files changed, 24 insertions(+)
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index f4fe593c1400..bbdb0ca857f1 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -389,7 +389,7 @@ static inline void dup_anon_vma_name(struct vm_area_struct *orig_vma,
- 	struct anon_vma_name *anon_name = anon_vma_name(orig_vma);
- 
- 	if (anon_name)
--		new_vma->anon_name = anon_vma_name_reuse(anon_name);
-+		rcu_assign_pointer(new_vma->anon_name, anon_vma_name_reuse(anon_name));
- }
- 
- static inline void free_anon_vma_name(struct vm_area_struct *vma)
-@@ -411,6 +411,8 @@ static inline bool anon_vma_name_eq(struct anon_vma_name *anon_name1,
- 		!strcmp(anon_name1->name, anon_name2->name);
- }
- 
-+struct anon_vma_name *anon_vma_name_get_rcu(struct vm_area_struct *vma);
-+
- #else /* CONFIG_ANON_VMA_NAME */
- static inline void anon_vma_name_get(struct anon_vma_name *anon_name) {}
- static inline void anon_vma_name_put(struct anon_vma_name *anon_name) {}
-@@ -424,6 +426,12 @@ static inline bool anon_vma_name_eq(struct anon_vma_name *anon_name1,
- 	return true;
- }
- 
-+static inline
-+struct anon_vma_name *anon_vma_name_get_rcu(struct vm_area_struct *vma)
-+{
-+	return NULL;
-+}
-+
- #endif  /* CONFIG_ANON_VMA_NAME */
- 
- static inline void init_tlb_flush_pending(struct mm_struct *mm)
 diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 8b611e13153e..bbe1223cd992 100644
+index bbe1223cd992..e749f7f09314 100644
 --- a/include/linux/mm_types.h
 +++ b/include/linux/mm_types.h
-@@ -545,6 +545,7 @@ struct vm_userfaultfd_ctx {};
- 
- struct anon_vma_name {
- 	struct kref kref;
-+	struct rcu_head rcu;
- 	/* The name needs to be at the end because it is dynamically sized. */
- 	char name[];
- };
-@@ -699,7 +700,7 @@ struct vm_area_struct {
- 	 * terminated string containing the name given to the vma, or NULL if
- 	 * unnamed. Serialized by mmap_lock. Use anon_vma_name to access.
- 	 */
--	struct anon_vma_name *anon_name;
-+	struct anon_vma_name __rcu *anon_name;
+@@ -846,6 +846,8 @@ struct mm_struct {
+ 		 */
+ 		int mm_lock_seq;
  #endif
- #ifdef CONFIG_SWAP
- 	atomic_long_t swap_readahead_info;
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 912155a94ed5..0f222d464254 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -88,14 +88,15 @@ void anon_vma_name_free(struct kref *kref)
++		/* Counter incremented each time mm gets write-locked */
++		unsigned long mm_wr_seq;
+ 
+ 
+ 		unsigned long hiwater_rss; /* High-watermark of RSS usage */
+diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
+index 8d38dcb6d044..0197079cb6fe 100644
+--- a/include/linux/mmap_lock.h
++++ b/include/linux/mmap_lock.h
+@@ -106,6 +106,8 @@ static inline void mmap_write_lock(struct mm_struct *mm)
  {
- 	struct anon_vma_name *anon_name =
- 			container_of(kref, struct anon_vma_name, kref);
--	kfree(anon_name);
-+	kfree_rcu(anon_name, rcu);
+ 	__mmap_lock_trace_start_locking(mm, true);
+ 	down_write(&mm->mmap_lock);
++	/* Pairs with ACQUIRE semantics in mmap_write_seq_read */
++	smp_store_release(&mm->mm_wr_seq, mm->mm_wr_seq + 1);
+ 	__mmap_lock_trace_acquire_returned(mm, true, true);
  }
  
- struct anon_vma_name *anon_vma_name(struct vm_area_struct *vma)
+@@ -113,6 +115,8 @@ static inline void mmap_write_lock_nested(struct mm_struct *mm, int subclass)
  {
- 	mmap_assert_locked(vma->vm_mm);
- 
--	return vma->anon_name;
-+	return rcu_dereference_protected(vma->anon_name,
-+		rwsem_is_locked(&vma->vm_mm->mmap_lock));
+ 	__mmap_lock_trace_start_locking(mm, true);
+ 	down_write_nested(&mm->mmap_lock, subclass);
++	/* Pairs with ACQUIRE semantics in mmap_write_seq_read */
++	smp_store_release(&mm->mm_wr_seq, mm->mm_wr_seq + 1);
+ 	__mmap_lock_trace_acquire_returned(mm, true, true);
  }
  
- /* mmap_lock should be write-locked */
-@@ -105,7 +106,7 @@ static int replace_anon_vma_name(struct vm_area_struct *vma,
- 	struct anon_vma_name *orig_name = anon_vma_name(vma);
+@@ -122,6 +126,10 @@ static inline int mmap_write_lock_killable(struct mm_struct *mm)
  
- 	if (!anon_name) {
--		vma->anon_name = NULL;
-+		rcu_assign_pointer(vma->anon_name, NULL);
- 		anon_vma_name_put(orig_name);
- 		return 0;
- 	}
-@@ -113,11 +114,32 @@ static int replace_anon_vma_name(struct vm_area_struct *vma,
- 	if (anon_vma_name_eq(orig_name, anon_name))
- 		return 0;
- 
--	vma->anon_name = anon_vma_name_reuse(anon_name);
-+	rcu_assign_pointer(vma->anon_name, anon_vma_name_reuse(anon_name));
- 	anon_vma_name_put(orig_name);
- 
- 	return 0;
+ 	__mmap_lock_trace_start_locking(mm, true);
+ 	ret = down_write_killable(&mm->mmap_lock);
++	if (!ret) {
++		/* Pairs with ACQUIRE semantics in mmap_write_seq_read */
++		smp_store_release(&mm->mm_wr_seq, mm->mm_wr_seq + 1);
++	}
+ 	__mmap_lock_trace_acquire_returned(mm, true, ret == 0);
+ 	return ret;
  }
-+
-+/*
-+ * Returned anon_vma_name is stable due to elevated refcount but not guaranteed
-+ * to be assigned to the original VMA after the call.
-+ */
-+struct anon_vma_name *anon_vma_name_get_rcu(struct vm_area_struct *vma)
+@@ -140,6 +148,20 @@ static inline void mmap_write_downgrade(struct mm_struct *mm)
+ 	downgrade_write(&mm->mmap_lock);
+ }
+ 
++static inline unsigned long mmap_write_seq_read(struct mm_struct *mm)
 +{
-+	struct anon_vma_name __rcu *anon_name;
-+
-+	WARN_ON_ONCE(!rcu_read_lock_held());
-+
-+	anon_name = rcu_dereference(vma->anon_name);
-+	if (!anon_name)
-+		return NULL;
-+
-+	if (unlikely(!kref_get_unless_zero(&anon_name->kref)))
-+		return NULL;
-+
-+	return anon_name;
++	/* Pairs with RELEASE semantics in mmap_write_lock */
++	return smp_load_acquire(&mm->mm_wr_seq);
 +}
 +
- #else /* CONFIG_ANON_VMA_NAME */
- static int replace_anon_vma_name(struct vm_area_struct *vma,
- 				 struct anon_vma_name *anon_name)
++static inline void mmap_write_seq_record(struct mm_struct *mm,
++					 unsigned long *mm_wr_seq)
++{
++	mmap_assert_locked(mm);
++	/* Nobody can concurrently modify since we hold the mmap_lock */
++	*mm_wr_seq = mm->mm_wr_seq;
++}
++
+ static inline void mmap_read_lock(struct mm_struct *mm)
+ {
+ 	__mmap_lock_trace_start_locking(mm, false);
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
