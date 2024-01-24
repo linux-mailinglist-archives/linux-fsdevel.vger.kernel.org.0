@@ -1,95 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-8752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8547B83AA98
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 14:04:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F171983AAA5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 14:08:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B76BB1C27A00
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 13:04:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1657288B20
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 13:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C9777656;
-	Wed, 24 Jan 2024 13:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3839A77F20;
+	Wed, 24 Jan 2024 13:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="FWtYSOot"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iKXm5GBv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8789A77647
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 13:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D65577644;
+	Wed, 24 Jan 2024 13:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706101481; cv=none; b=aazTsacQ+r4zV5mNO2d3LmnAwJadQJe3v9cDI4Dkg2M5T8ewua2cNb7JMbgw7kE47xFUuDCE+y3/kgpjGlAIU8gkYvmrR2fjM8cFVR9PPXo/Sn9xHyTGqgSkUM2YolIJ2ONvLtyMcOCRgreUOAQZ5CGekCB235xlxXfYlSiT5UI=
+	t=1706101718; cv=none; b=X7be+80Q5cMg9l7D2sGQnHGJlOtbHB2DzBRrxSlB3JyYc2DBzHThMHy9KQsbKorEY1LQtE3665/76ioPRBaqSFwaKZ72p+EGwiNl0g9pcErqy6phz+XxegAnSMqD60PTKLPR5trUazb5tJKUr0uO3ddE9lxiH1jPa4amT4/Nams=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706101481; c=relaxed/simple;
-	bh=B8cA1ZmYL6Ndv77osRknh0AO8zS0RBiPjzqoqdqEtmI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZPKOzFu7zm99vWC0ojJq9mV6V/MF3qspiDS3X7h8MlXN/qY0zKc5F6w4WNUfQv+cIMxE09vObUzJRy75AgcYkGTLE7PffqO+Yk+uy4lxB7GqiFoZlmKj19Hjb6ZIhM+M6tNErt7m24ZjrnA6hDH/kGZn3tQI9lSUCxwWoCal+Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=FWtYSOot; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a28a6cef709so556702566b.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 05:04:39 -0800 (PST)
+	s=arc-20240116; t=1706101718; c=relaxed/simple;
+	bh=aHkdkNoScrk1SN8G0CWq7jpLwpFto/N91v8whUSKvqQ=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=byIVT6GaxALexzwqSYPxhYefOCYlRsd958rsqwNty4ZFErpiA+xQ4RAHOPGFartEXOC747+HggwUgxlRdQ0Rghvjd3Lr2MxuIT5Jf+aeKZRAkQl8sR+0pEXp55yNScXrlpILMb73J5RPIus8e9TdXVaj61v+8QoEi5rdugzN76c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iKXm5GBv; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1d722740622so6727205ad.0;
+        Wed, 24 Jan 2024 05:08:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1706101478; x=1706706278; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=B8cA1ZmYL6Ndv77osRknh0AO8zS0RBiPjzqoqdqEtmI=;
-        b=FWtYSOotdyfGaMOcvwjlQ6E7Nsuz5KtKZQTmTV1laYkjraIR+ta8PuGwD4TnarRBdU
-         eT8vzw/PY2+DlNudy4xl9OrE9fsNNwKNetywUse0h0thMW2UhvUlOjr7TgGiqa27QRWj
-         NeqHKQ1m2As1tAeHLhKTAazJgRD42xI5lFIdo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706101478; x=1706706278;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1706101716; x=1706706516; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=B8cA1ZmYL6Ndv77osRknh0AO8zS0RBiPjzqoqdqEtmI=;
-        b=GKr+BEoPpGPSR3k+EumZXu2axKM04d+3MT3sZvmEZqC+QW7JaDq72W0igHSyvFIDz5
-         Buj6sS1EJe+Xsp8p3EzVPoBQ8c3GccniyA2NwxWpqiq4IXXjqVDBxu2mxy6x7YGPMD/F
-         8d8UJq05MMZPnSAvP43O+1guOkoRLxymIShxF3WDFfZD98LfwB2wxKfrqpDGgNkzX6Q9
-         g7pMy3g1LzOXg1HzK/6+1O/oRf6XZDuILp8H1jqu1mRslh8nHu/QNdL/emLfbZrZU0zo
-         OX4wo7LHNjznuk5hjHZtCMZp8ps3mfCeUAMPxKrFAX2JTkSOlp0akvNyKXs//G/dLoUh
-         Pv8g==
-X-Gm-Message-State: AOJu0Yxa7bqSFHS03mCjqVMLkSyGcyrV/AT2XXF8YlgcYmDfvNsVut7q
-	fQ4DO4R+XIXvzLFG5w6zAl/GrwrWMIz1xXTVCTW5omQ1Z2e5uuhkuvnwKMS/3wcha+nLw9XM1wn
-	T47c+Uu7c1er7ch6a3D74cTK01pRv6nRNKdV9tA==
-X-Google-Smtp-Source: AGHT+IEy9B2Lm4AXkR4V27MbGmnG2tBa71pYnFnuANaeGsI16VlKXncM9PMqvReHP7q0zCWmA/NahulZkCVWrcCihCo=
-X-Received: by 2002:a17:906:ae4a:b0:a31:1178:8e6d with SMTP id
- lf10-20020a170906ae4a00b00a3111788e6dmr608924ejb.70.1706101477686; Wed, 24
- Jan 2024 05:04:37 -0800 (PST)
+        bh=6KUI/eFvmS+XloVvjaOrWB9BVgbO8O7S1IW93a0Yo70=;
+        b=iKXm5GBv3FJ1C9edLLty84A+xgEEQNNtqHmWWKkmLGNllEbA74w+74595HkO3M9+a3
+         2vmoUTqh8X81W2d3s5aze+wZlC9U5wFJri2108JkwHhL3iQ34tPWLop12xtusITJmj2x
+         LtNOA/+OIaMFe8zkm60Sbru+qg5i343bh0wPD97nrV165/7c34/zjc2JehuwkQhunLEl
+         yxEkhqAEI8DPDuNG09HtOi3raIx3hmRR/OsvJxxWzXvN/NQvlgkhT1GJn32A+Wr6LmFk
+         EldPlja96UDYnW3Y8mi+JGSWcZ3H0jQSG0PdT/tk6SoT3JbG75/6ki1DfQnuwIvP83Az
+         RWNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706101716; x=1706706516;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6KUI/eFvmS+XloVvjaOrWB9BVgbO8O7S1IW93a0Yo70=;
+        b=JohYkQez1854wrI8aW1xWYHqCLFJtrgScvlX+Ett0vJ8VXbl+XsK1lpTSzPaCgnroV
+         vHZp64XX6MLG6Xn7GB2pYMXrh7lEisrOAVTzrsWke2dIxw70pGHBszBnla5CF7PIOrER
+         jIz5G0zP17bf3gW9+BOSDbBfKe5Mj+eMTsrQH/0dOH3eDKG6k+U4/GixmvnAw7XgfrI3
+         Wi7INNr1Bb68OrRubmC5oBytZCiMBgtkgLy8kZPAiyZrr+/vKMqnktwKoVUUnpiNvmmo
+         elyM8MXhYTUsqzgvqq8Jjs6LkgwlrOGmmXLBuIkcdYcyxZpu1dTHAnsNTI8sCp5YHQTP
+         NyuA==
+X-Gm-Message-State: AOJu0Yy24MaOhc1bRqn3QkJhsqFYgsPUlJVtnXlvCppHlrzxTVcAUkkF
+	tNs1yIfpJpu6MsCLe5wLWxjc4uUZaPq8HMvWG8Kc8kGGGa/uZQOX6qyDVOpmdMk=
+X-Google-Smtp-Source: AGHT+IGKs2U18paUHaNW9mzKIy+5JGwDXqWv/uc583nLBKMxL7U5283eG8t2WUCyX0hT/tU0JGMKwQ==
+X-Received: by 2002:a17:902:ed44:b0:1d5:76b5:49a9 with SMTP id y4-20020a170902ed4400b001d576b549a9mr2265799plb.4.1706101716395;
+        Wed, 24 Jan 2024 05:08:36 -0800 (PST)
+Received: from localhost (ec2-54-68-170-188.us-west-2.compute.amazonaws.com. [54.68.170.188])
+        by smtp.gmail.com with ESMTPSA id kl5-20020a170903074500b001d72d445778sm7127275plb.204.2024.01.24.05.08.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jan 2024 05:08:35 -0800 (PST)
+Date: Wed, 24 Jan 2024 22:08:35 +0900 (JST)
+Message-Id: <20240124.220835.478444598271791659.fujita.tomonori@gmail.com>
+To: kent.overstreet@linux.dev
+Cc: david@fromorbit.com, willy@infradead.org, wedsonaf@gmail.com,
+ viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org, brauner@kernel.org,
+ kent.overstreet@gmail.com, linux-fsdevel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, walmeida@microsoft.com
+Subject: Re: [RFC PATCH 00/19] Rust abstractions for VFS
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <zdc66q6svna4t5zwa5hkxc72evxqplqpra5j47wq33hidspnjb@r4k7dewzjm7e>
+References: <ZZ2dsiK77Se65wFY@casper.infradead.org>
+	<ZZ3GeehAw/78gZJk@dread.disaster.area>
+	<zdc66q6svna4t5zwa5hkxc72evxqplqpra5j47wq33hidspnjb@r4k7dewzjm7e>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240124113042.44300-1-jefflexu@linux.alibaba.com>
- <CAJfpegtkSgRO-24bdnA4xUMFW5vFwSDQ7WkcowNR69zmbRwKqQ@mail.gmail.com> <96abca7f-8bd1-44e8-98be-c60d6d676ec6@linux.alibaba.com>
-In-Reply-To: <96abca7f-8bd1-44e8-98be-c60d6d676ec6@linux.alibaba.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 24 Jan 2024 14:04:26 +0100
-Message-ID: <CAJfpegsk-zjpOKhE7y7zmUd1sZr-Sn3jbKPjDLCSU7KmLbjr5Q@mail.gmail.com>
-Subject: Re: [PATCH] fuse: add support for explicit export disabling
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	amir73il@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On Wed, 24 Jan 2024 at 13:50, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+On Wed, 10 Jan 2024 14:19:41 -0500
+Kent Overstreet <kent.overstreet@linux.dev> wrote:
 
-> OK I will rename it to fuse_no_export_operations.
->
-> By the way do I need to bump and update the minor version of FUSE protocol?
+> On Wed, Jan 10, 2024 at 09:19:37AM +1100, Dave Chinner wrote:
+>> On Tue, Jan 09, 2024 at 07:25:38PM +0000, Matthew Wilcox wrote:
+>> > On Tue, Jan 09, 2024 at 04:13:15PM -0300, Wedson Almeida Filho wrote:
+>> > > On Wed, 3 Jan 2024 at 17:41, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>> > > > No.  This "cleaner version on the Rust side" is nothing of that sort;
+>> > > > this "readdir doesn't need any state that might be different for different
+>> > > > file instances beyond the current position, because none of our examples
+>> > > > have needed that so far" is a good example of the garbage we really do
+>> > > > not need to deal with.
+>> > > 
+>> > > What you're calling garbage is what Greg KH asked us to do, namely,
+>> > > not introduce anything for which there are no users. See a couple of
+>> > > quotes below.
+>> > > 
+>> > > https://lore.kernel.org/rust-for-linux/2023081411-apache-tubeless-7bb3@gregkh/
+>> > > The best feedback is "who will use these new interfaces?"  Without that,
+>> > > it's really hard to review a patchset as it's difficult to see how the
+>> > > bindings will be used, right?
+>> > > 
+>> > > https://lore.kernel.org/rust-for-linux/2023071049-gigabyte-timing-0673@gregkh/
+>> > > And I'd recommend that we not take any more bindings without real users,
+>> > > as there seems to be just a collection of these and it's hard to
+>> > > actually review them to see how they are used...
+>> > 
+>> > You've misunderstood Greg.  He's saying (effectively) "No fs bindings
+>> > without a filesystem to use them".  And Al, myself and others are saying
+>> > "Your filesystem interfaces are wrong because they're not usable for real
+>> > filesystems".
+>> 
+>> And that's why I've been saying that the first Rust filesystem that
+>> should be implemented is an ext2 clone. That's our "reference
+>> filesystem" for people who want to learn how filesystems should be
+>> implemented in Linux - it's relatively simple but fully featured and
+>> uses much of the generic abstractions and infrastructure.
+>> 
+>> At minimum, we need a filesystem implementation that is fully
+>> read-write, supports truncate and rename, and has a fully functional
+>> userspace and test infrastructure so that we can actually verify
+>> that the Rust code does what it says on the label. ext2 ticks all of
+>> these boxes....
+> 
+> I think someone was working on that? But I'd prefer that not to be a
+> condition of merging the VFS interfaces; we've got multiple new Rust
+> filesystems being implemented and I'm also planning on merging Rust
+> bcachefs code next merge window.
 
-It's not strictly necessary since the feature is negotiated with the
-FUSE_NO_EXPORT_SUPPORT flag.
+It's very far from a fully functional clone of ext2 but the following
+can do simple read-write to/from files and directories:
 
-Despite that we do usually bump the minor version once per kernel
-release if there were any changes to the API.
+https://github.com/fujita/linux/tree/ext2-rust/fs/ext2rust
 
-Thanks,
-Miklos
+For now, all of the code is unsafe Rust, using C structures directly
+but I could update the code to see how well Rust VFS abstractions for
+real file systems work.
 
