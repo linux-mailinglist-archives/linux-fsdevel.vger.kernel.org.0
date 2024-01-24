@@ -1,119 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-8807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE7A083B274
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 20:43:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A168683B27C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 20:49:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FEE61F2555D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:43:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D26821C22D4B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC3413340A;
-	Wed, 24 Jan 2024 19:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900BE13340C;
+	Wed, 24 Jan 2024 19:49:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="KUPBfkJ1";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="KUPBfkJ1"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jgRtZ6pC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F1C132C13;
-	Wed, 24 Jan 2024 19:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C928E132C20
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 19:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706125409; cv=none; b=cmjOhWajhk4Vh8LK2ArORL+SnkFli348OLvoTK5V2sss9Erc7BBd8eAW1f/a0qz9WKLyEJKS+BTqafZGDcMtD58GuOOXKKm7D2GaX/gjF/1LUeGWu6PYpNPyiXNCWOfuoMZbHUmFWZkvmR2eoD7pjr027mDwQhYeM9lqIBtaDuM=
+	t=1706125767; cv=none; b=BsHeiKpW7ULFPxzYbQCEleY2ot7xibu1nEtwmMCIpSd9UCEEdFrx5M3T+JnATpRCIYQEYlaF8T6XaK8F/hmz/qH7HgWteHnJB17j2jgRGIBjGkwsR0grupqjsqe+VaXZxR4LNmBJrlWxXKw2pAS9Q1JYXAjFVTDUnviehw/222o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706125409; c=relaxed/simple;
-	bh=tJ6Mi2se4+V7AkOiisaserHeM5LMuQmq4B2z8I8MZkg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Pz1AiXGGN91HDefC7LoCRUzIk4qXzv9Usmdf3cfMGxiMgk2QRG9X4gKTszP5ZNAVJ3V1h/0w0/no7oeMlLe04b+JJ2d63uSFICGHwVQYJslicM8cjRC3NUk/y4zYoCyA1HuN0RgLqwbQhq5HdgUG8MegeFYGZB21MxEtNek4sQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=KUPBfkJ1; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=KUPBfkJ1; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1706125405;
-	bh=tJ6Mi2se4+V7AkOiisaserHeM5LMuQmq4B2z8I8MZkg=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=KUPBfkJ1/scjss2kVoz0V4k/o8zraFf2OHNEmnqKnTRCWUfm8IQqpmsIWx5RvSOZ+
-	 a2CKvyIyLi0ENqe9nKZHjJ4deH3CfWPriUBVx9ccKe/D9tZxLp1W6iZI9LjvMRRVc/
-	 fxpUSslsDIFD3/aMZnvEkRiV5v6eIcy48dtbVzqQ=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id C8910128664D;
-	Wed, 24 Jan 2024 14:43:25 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id clMNtITqfoZI; Wed, 24 Jan 2024 14:43:25 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1706125405;
-	bh=tJ6Mi2se4+V7AkOiisaserHeM5LMuQmq4B2z8I8MZkg=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=KUPBfkJ1/scjss2kVoz0V4k/o8zraFf2OHNEmnqKnTRCWUfm8IQqpmsIWx5RvSOZ+
-	 a2CKvyIyLi0ENqe9nKZHjJ4deH3CfWPriUBVx9ccKe/D9tZxLp1W6iZI9LjvMRRVc/
-	 fxpUSslsDIFD3/aMZnvEkRiV5v6eIcy48dtbVzqQ=
-Received: from [192.168.7.112] (unknown [23.31.101.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B77C41286601;
-	Wed, 24 Jan 2024 14:43:23 -0500 (EST)
-Message-ID: <37f44c1409334f5dc15d7421e8b7cd3a4ff9ae33.camel@HansenPartnership.com>
-Subject: Re: [LSF/MM TOPIC] Rust
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>, lsf-pc@lists.linux-foundation.org,
-  linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, Miguel
- Ojeda <miguel.ojeda.sandonis@gmail.com>, Alice Ryhl <aliceryhl@google.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Kees
- Cook <keescook@chromium.org>, Gary Guo <gary@garyguo.net>, Dave Chinner
- <dchinner@redhat.com>, David Howells <dhowells@redhat.com>, Ariel Miculas
- <amiculas@cisco.com>, Paul McKenney <paulmck@kernel.org>
-Date: Wed, 24 Jan 2024 14:43:21 -0500
-In-Reply-To: <bmgzm3wjtcyzsuawscxrdyhq56ckc7vqnfbcjbm42gj6eb4qph@wgkhxkk43wxm>
-References: 
-	<wjtuw2m3ojn7m6gx2ozyqtvlsetzwxv5hdhg2hocal3gyou3ue@34e37oox4d5m>
-	 <ZbAO8REoMbxWjozR@casper.infradead.org>
-	 <cf6a065636b5006235dbfcaf83ff9dbcc51b2d11.camel@HansenPartnership.com>
-	 <ZbEwKjWxdD4HhcA_@casper.infradead.org>
-	 <2e62289ad0fffd2fb8bc7fa179b9a43ab7fe2222.camel@HansenPartnership.com>
-	 <bmgzm3wjtcyzsuawscxrdyhq56ckc7vqnfbcjbm42gj6eb4qph@wgkhxkk43wxm>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1706125767; c=relaxed/simple;
+	bh=CJU2Hl52ARq0CPgIV2SfUxZLEv2pHIQMrNTpWq8GCbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EXNzhskOZgtlHagL5b1Ivhcv3U2h/3GVqOlBl41bBhu0RouUdiQpK/jmTLbrlIr/rxnMuaH69Kv53YViHVs1B2FBC4NMmGhdkX9TOo0AZa+5uWvf4spbuWomQdFScNHqPI876r+baGPLF65KdaeQDGy1jLAw/vNijsBuBMHBhDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jgRtZ6pC; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 24 Jan 2024 14:49:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1706125762;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=90tx2JOK6zp8F9uDeHo0W3wTSrKFobNnyX2HRm8aTdQ=;
+	b=jgRtZ6pCS3VvbJOc46YOiQ1lmfDMrTEnxp7URywB/r5uaSApjbOCykBeR0kIhynpjApksJ
+	xzTcHDydnqv8DFLG12urRRGthHiXoM3Vi3Y3N9CKtQmBygRn+ztiN9yWIpMKxR/hvV3xsa
+	ltTTa6Npp0ewZrzE3pcDMkQX9Vq1Uq0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: FUJITA Tomonori <fujita.tomonori@gmail.com>
+Cc: david@fromorbit.com, willy@infradead.org, wedsonaf@gmail.com, 
+	viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org, brauner@kernel.org, 
+	kent.overstreet@gmail.com, linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	walmeida@microsoft.com
+Subject: Re: [RFC PATCH 00/19] Rust abstractions for VFS
+Message-ID: <6hk53ozdm474tft2sewuxo6vlgeb3cbafzfl6gex4ogufkvped@bgzciwbgncsf>
+References: <ZZ2dsiK77Se65wFY@casper.infradead.org>
+ <ZZ3GeehAw/78gZJk@dread.disaster.area>
+ <zdc66q6svna4t5zwa5hkxc72evxqplqpra5j47wq33hidspnjb@r4k7dewzjm7e>
+ <20240124.220835.478444598271791659.fujita.tomonori@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240124.220835.478444598271791659.fujita.tomonori@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 2024-01-24 at 13:50 -0500, Kent Overstreet wrote:
-> > To illustrate the problem with cryptography in rust: just because
-> > it's rust safe doesn't mean its correct or bug free.  Crypto
-> > functions are the most difficult to get right (algorithmically,
-> > regardless of memory safety).  Look at this Medium report on the
-> > top ten bugs in blockchain:
-> > 
-> > https://medium.com/rektoff/top-10-vulnerabilities-in-substrate-based-blockchains-using-rust-d454279521ff
-> > 
-> > Number 1 is a rust crypto vulnerability due to insecure randomness
-> > in a random number generating function (note it was rust safe code
-> > just not properly checked for algorithmic issues by a
-> > cryptographer).
-> > 
-> > The reason for using the kernel functions is that they are vetted
-> > by cryptographers and crafted for our environment.
+On Wed, Jan 24, 2024 at 10:08:35PM +0900, FUJITA Tomonori wrote:
+> On Wed, 10 Jan 2024 14:19:41 -0500
+> Kent Overstreet <kent.overstreet@linux.dev> wrote:
 > 
-> Are you arguing that typical kernel code is more secure than typical
-> Rust code?
+> > On Wed, Jan 10, 2024 at 09:19:37AM +1100, Dave Chinner wrote:
+> >> On Tue, Jan 09, 2024 at 07:25:38PM +0000, Matthew Wilcox wrote:
+> >> > On Tue, Jan 09, 2024 at 04:13:15PM -0300, Wedson Almeida Filho wrote:
+> >> > > On Wed, 3 Jan 2024 at 17:41, Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >> > > > No.  This "cleaner version on the Rust side" is nothing of that sort;
+> >> > > > this "readdir doesn't need any state that might be different for different
+> >> > > > file instances beyond the current position, because none of our examples
+> >> > > > have needed that so far" is a good example of the garbage we really do
+> >> > > > not need to deal with.
+> >> > > 
+> >> > > What you're calling garbage is what Greg KH asked us to do, namely,
+> >> > > not introduce anything for which there are no users. See a couple of
+> >> > > quotes below.
+> >> > > 
+> >> > > https://lore.kernel.org/rust-for-linux/2023081411-apache-tubeless-7bb3@gregkh/
+> >> > > The best feedback is "who will use these new interfaces?"  Without that,
+> >> > > it's really hard to review a patchset as it's difficult to see how the
+> >> > > bindings will be used, right?
+> >> > > 
+> >> > > https://lore.kernel.org/rust-for-linux/2023071049-gigabyte-timing-0673@gregkh/
+> >> > > And I'd recommend that we not take any more bindings without real users,
+> >> > > as there seems to be just a collection of these and it's hard to
+> >> > > actually review them to see how they are used...
+> >> > 
+> >> > You've misunderstood Greg.  He's saying (effectively) "No fs bindings
+> >> > without a filesystem to use them".  And Al, myself and others are saying
+> >> > "Your filesystem interfaces are wrong because they're not usable for real
+> >> > filesystems".
+> >> 
+> >> And that's why I've been saying that the first Rust filesystem that
+> >> should be implemented is an ext2 clone. That's our "reference
+> >> filesystem" for people who want to learn how filesystems should be
+> >> implemented in Linux - it's relatively simple but fully featured and
+> >> uses much of the generic abstractions and infrastructure.
+> >> 
+> >> At minimum, we need a filesystem implementation that is fully
+> >> read-write, supports truncate and rename, and has a fully functional
+> >> userspace and test infrastructure so that we can actually verify
+> >> that the Rust code does what it says on the label. ext2 ticks all of
+> >> these boxes....
+> > 
+> > I think someone was working on that? But I'd prefer that not to be a
+> > condition of merging the VFS interfaces; we've got multiple new Rust
+> > filesystems being implemented and I'm also planning on merging Rust
+> > bcachefs code next merge window.
+> 
+> It's very far from a fully functional clone of ext2 but the following
+> can do simple read-write to/from files and directories:
+> 
+> https://github.com/fujita/linux/tree/ext2-rust/fs/ext2rust
+> 
+> For now, all of the code is unsafe Rust, using C structures directly
+> but I could update the code to see how well Rust VFS abstractions for
+> real file systems work.
 
-For crypto code?  Absolutely, that's what the example above showed. 
-It's pretty much impossible to use an insecure rng in the kernel if you
-plug into one of our existing APIs.  That's obviously not necessarily
-true if you pull a random one from crates.io.
+I think that would be well received. I think the biggest hurdle for a
+lot of people is going to be figuring out the patterns for expressing
+old idioms in safe rust - a version of ext2 in safe Rust would be the
+perfect gentle introduction for filesystem people.
 
-James
-
+And if it achieved feature parity with fs/ext2, there'd be a strong
+argument for it eventually replacing fs/ext2 so that we can more safely
+mount untrusted filesystem images.
 
