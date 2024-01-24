@@ -1,92 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-8686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DAE83A48C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 09:50:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97DA683A496
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 09:53:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3020A284AD1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 08:50:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53291283DA2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 08:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FDD179BC;
-	Wed, 24 Jan 2024 08:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B92179B2;
+	Wed, 24 Jan 2024 08:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2S6SlR8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC52179A6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 08:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C70017BA4;
+	Wed, 24 Jan 2024 08:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706086212; cv=none; b=gI0iTYEp/s4+B60JFiF+eYjbXknAcQwQGoKM+2K+3ZW7n0dXoiy8VCMDPeyLwQCNCMEbv38KGTPhDLFnYKh/QanT1aM5T7bJPQdj+3qqxGJjT5JkKxfH/+DdGlkFNKO35R8TuPbdzXV9E6Hr80uI9sqAs/nhepN9zC5dDTojCHk=
+	t=1706086383; cv=none; b=dCUourwbR1ryOb/MwM0yxyvfgsgSX6JQ78IIWg8WmiWLQ+gUBhIcG7j8psi+QH8X18Q4Jj3fKH0vcbxCbowGsEc8fBjUM6UVlpNTpURyjWq0oPtUqdp5gXDjHHvxJcABJ3CH7PewsSuwHAgQ+tkmE+Z35BY+bE2beCFgobfmFHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706086212; c=relaxed/simple;
-	bh=5SRGXfUtzcx4CHNTX1CcNoOlAEBV5500++BZdb1Q86k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=YUMjg9U9HVFZwpF6T1aAit+JCv8TYcQIm9npxri9AdpX9n88f1TUF0TLKu/2N773jB04404bJmtolCYSdp5lyp0Cn1JomGeDIyW+RTjUw7YKBv26X7hkJr1y/LroTtWKq43EaRb8EJBeOj8uOYxXE2m0yOgGZLb2TBwENsqeuZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-361a800f629so42995585ab.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 00:50:10 -0800 (PST)
+	s=arc-20240116; t=1706086383; c=relaxed/simple;
+	bh=ALiLSmHR7ixWCL+Ps8AusrKLdltVu/WoJeQS9e5pEuo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F9jyGHGHK+aB7xgCdVCgZJ5n9VMbC1e0GZ4NHnyQvlB+sPibTyurQLJWXb+AWomurc6zCfSVZWv9Bfdw4nMXdmgt8gegAbf3BxQ6XaX4vZRDtomnALOFh3wfhyT4CA5XT9BkhC4lhT8WCwMkxr4Pt5X6Cgh2sLuFsmXpg2MYhp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2S6SlR8; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-55a5e7fa471so4605966a12.1;
+        Wed, 24 Jan 2024 00:53:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706086379; x=1706691179; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q79dc6M6aA9dlwyZRuq5WIblH8nBswmidnsr0jpaUK8=;
+        b=D2S6SlR8jLSQwnj0RM+hpbmcpt+Wl87iHAx14retynHKpVJY74I1hYlMHV0eLPYhrK
+         qZovSBS9LG7NDipAQtfNeoD6Vd1B2NA7MM8xF5+2spTRt1ctchgOOg0XIo3TBV7APmSj
+         FG6w984g+9FOOc03w1i8gY9EyF5kJ7ELKlELXergm6ydn+++R0iCki0UmLUJio/2uuUk
+         /idpOConevlI+9npzIwoE/3uah4SM8GPnZHF19sdzcyOqAFXSmMTNrlut4GgL8v9jvyQ
+         qVEGgBSvH87mK5kp326QRHSVXzC6Pk3jGMtY+5JpLLFxaaOhdRSLra+4mSe83E7bnB1I
+         DFog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706086210; x=1706691010;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cRSbUiiNcXaQ+lmznn7ZLwAAFNsMsOx+iXxoA2C4u2k=;
-        b=dzSWID9yL6ik3Q7LlAPsgE8tyPtXgH55HielEUJJc/3iF2onmWgQPVp5UQKSxIEPQy
-         wD8xZvINBM48+VmMIl2v/uYLervdThQQIBeag6ulaTKJYAP/4SvBnAYNJz9ZFslm6KC9
-         4SuvYtuAXoYhSGSIc0XeAjkiiJ+LKKSZrx/jqSqiv6W9qJ/j04e0Ar2n5LQ4CiqD2MxO
-         odl2t4fs3mqJ7yFd5840eb7Vm88+yMmivZnxKPHJd/tmMXVocu4Ow/dNE4aV6B1gg6l+
-         agleEqh9BCV1OWMYaMy29+by3feQY2lr/qgPXiRg12dcG9M0EU7ec2VuTAvCbcBmzVKy
-         i5jQ==
-X-Gm-Message-State: AOJu0Yw7U9zbMZ7NxV2svt3dVtl6sS9zbIOB9xbgDq5JRiO05VfI4ofp
-	t3pbNOm0Y8MkyL61KhcvsbRCOdFsMcM96R+32vV4eiAVyk2BtdT/Eo8kYOsl4XXFnb3ndg1mAq1
-	907rzPHPPhVrYxyUUVR34n+iqQyIn/F5WRnV+SJmhP+AobIGGv30a01o=
-X-Google-Smtp-Source: AGHT+IGmS5JwVqumT9uCpn/1NCTHaiv9XrPDAljw1ESdj/EbdOddxKHG86bIuSNbGY3kyp3Yv089DYfxmtQvC/kJ6C1mPCi85Rjz
+        d=1e100.net; s=20230601; t=1706086379; x=1706691179;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Q79dc6M6aA9dlwyZRuq5WIblH8nBswmidnsr0jpaUK8=;
+        b=BrJvrVl+goW1tvL+er6S9sL0KqXk9C1eDAQ4L9l8HbyIQG9OTxELaoOA4TVFSHoNOV
+         kPxdEo0RbtwN7emV2pdMB3sd9WFZ7n0DZxpdfpsc+g2Ae6Nj7hzDKH7nW5zjkj4RlwXD
+         QE/mH/mM/ilnrMHE+aqBbdZRYlIP4WKHfUEtRolmuC00OwL+ZssG06oKJqrMi4J6nG0a
+         02uRWdzNNn32VJHhKkxcj0iJI9I6JReZeQjGE/AFLBYc+A+9J/49SC5dLo5vNSaCT1iN
+         ZmW3LgN5+sfJN5zFbJ7/0tQnTG9kTdFRa/tLtWMunzqdb91O4GGcX8jJiPMN8AJugkBC
+         PVgA==
+X-Gm-Message-State: AOJu0YwDM3+lfHl8Xk8ChSIfkRu6CHrkt1guF+AgoV+rSn4nW2I5wpXt
+	EKTwfjxCVCgpnNQkpoBHXqhjNkRnM7LAMqxg+YRIrdctKJLvVQ3fjur4WkEMnYCmYPRGUV8Ioa5
+	oN1KCHCuauwoGLGr6MlRz35hXrG8=
+X-Google-Smtp-Source: AGHT+IE4vczDA9qOOeeDJ08Jpe4BrohKBQ1HqQmNzWxQ30H/5wtfZN4cE3h3wbu8yzNPSAcbhqfO2n7nI6nWJEEVnWU=
+X-Received: by 2002:a05:6402:3108:b0:55c:20f7:4ef8 with SMTP id
+ dc8-20020a056402310800b0055c20f74ef8mr1458462edb.23.1706086379336; Wed, 24
+ Jan 2024 00:52:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3202:b0:360:96fd:f542 with SMTP id
- cd2-20020a056e02320200b0036096fdf542mr150429ilb.1.1706086210249; Wed, 24 Jan
- 2024 00:50:10 -0800 (PST)
-Date: Wed, 24 Jan 2024 00:50:10 -0800
-In-Reply-To: <000000000000d207ef05f7790759@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000084a9da060fad26bf@google.com>
-Subject: Re: [syzbot] [xfs?] KASAN: null-ptr-deref Write in xfs_filestream_select_ag
-From: syzbot <syzbot+87466712bb342796810a@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, chandan.babu@oracle.com, 
-	dchinner@redhat.com, djwong@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20240124083301.8661-1-tony.solomonik@gmail.com>
+In-Reply-To: <20240124083301.8661-1-tony.solomonik@gmail.com>
+From: Cedric Blancher <cedric.blancher@gmail.com>
+Date: Wed, 24 Jan 2024 09:52:23 +0100
+Message-ID: <CALXu0UdfZm-UJcPqF5H6+PXPp=DC2SA-QFbB-aVywmMT5X3A6g@mail.gmail.com>
+Subject: Re: [PATCH v5 0/2] io_uring: add support for ftruncate
+To: Tony Solomonik <tony.solomonik@gmail.com>
+Cc: io-uring@vger.kernel.org, asml.silence@gmail.com, axboe@kernel.dk, 
+	linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot suspects this issue was fixed by commit:
+On Wed, 24 Jan 2024 at 09:33, Tony Solomonik <tony.solomonik@gmail.com> wrote:
+>
+> This patch adds support for doing truncate through io_uring, eliminating
+> the need for applications to roll their own thread pool or offload
+> mechanism to be able to do non-blocking truncates.
+>
+> Tony Solomonik (2):
+>   Add ftruncate_file that truncates a struct file
+>   io_uring: add support for ftruncate
+>
+>  fs/internal.h                 |  1 +
+>  fs/open.c                     | 53 ++++++++++++++++++-----------------
+>  include/uapi/linux/io_uring.h |  1 +
+>  io_uring/Makefile             |  2 +-
+>  io_uring/opdef.c              | 10 +++++++
+>  io_uring/truncate.c           | 48 +++++++++++++++++++++++++++++++
+>  io_uring/truncate.h           |  4 +++
+>  7 files changed, 93 insertions(+), 26 deletions(-)
+>  create mode 100644 io_uring/truncate.c
+>  create mode 100644 io_uring/truncate.h
+>
+>
+> base-commit: d3fa86b1a7b4cdc4367acacea16b72e0a200b3d7
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Also fallocate() to punch holes, aka sparse files, must be implemented
 
-    fs: Block writes to mounted block devices
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=119af36be80000
-start commit:   17214b70a159 Merge tag 'fsverity-for-linus' of git://git.k..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d40f6d44826f6cf7
-dashboard link: https://syzkaller.appspot.com/bug?extid=87466712bb342796810a
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1492946ac80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12e45ad6c80000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Ced
+-- 
+Cedric Blancher <cedric.blancher@gmail.com>
+[https://plus.google.com/u/0/+CedricBlancher/]
+Institute Pasteur
 
