@@ -1,122 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-8785-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE29983AFB8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 18:25:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F91E83AFE4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 18:30:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0D4D1C26FE4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 17:25:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 122C81F22D00
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 17:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E742282D8B;
-	Wed, 24 Jan 2024 17:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A19811E2;
+	Wed, 24 Jan 2024 17:27:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KloGb6hc"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SvGXjCdW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13D047F7DF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 17:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA827F7C4
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 17:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706116877; cv=none; b=bWyUJV4/leEfACoFRSNWxNpGPRPY0T892KnKSwxWLdz7nmnr3RnlJba+/dKFpVScZONkLgVcymgaDqDfgSC82oD/EprqjDyMmHri8/RxrUK9gdsy48+W/B7ZSqwrhgBxMrHpfmo2D+fMkvDZC8AajgqC6iTwUSQCXhRN6apwcso=
+	t=1706117275; cv=none; b=fdcadHfxeocKx4oiBn4vKNH32zoxP61SW0IUsBM1k6ECA7j5Dt01v9vHaH65sayJQXG4H1t2o4Yb8KQQ1VvcP5vXE+YhWxKS23RGFZ26EGNb3W28nMdMxkps+hcMs4BUIElLoP58OHRbNdU51WghZHYX1ca6/pcbLbkllKEYLMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706116877; c=relaxed/simple;
-	bh=i0fh2fvqUB6h0Bq9w6eV538kz5PYIbRga3q0Tr+/O4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lpboCd/l7NaY9QcVzUPaqDBO2tTUXFmGAkFYlxpODgt1+r9PiDBZcqUkYeRLCxsRf4yQWHiQkp0LzCwMOQuNCcJS7e9ylTvXtI9YkKQF50F3Ym2fX+NmgR22XWLlVYTHV6WeRl3dYubiWWyxvP9ODflU5/McIFRsPwwOrt/GU4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KloGb6hc; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-290ec261a61so630714a91.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 09:21:15 -0800 (PST)
+	s=arc-20240116; t=1706117275; c=relaxed/simple;
+	bh=z6BjyMQCnB/4rQCdDjotQhHRjXz7UoU01MQEf+XrLlI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gaBjE3Vt8QH++ftEbcKePo7Ip6T7tOrL2PCCcbWJPHOb+N8Pu/85TjDg+TLo5bYA4d6bsbjNs9VZ2vktsBaD8TADNUpPGk0+C7Aoy0O3zKwfTa4rO/tr2cwN2OT1fOQRbvIAS0/x5FvSdtQPqnaQAfITxyxuZby5lcebNGFpxrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SvGXjCdW; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a26fa294e56so582844866b.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 09:27:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1706116875; x=1706721675; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o3H+ezh5j15p10TUIQ78gJT0AbI3MbNz0EQ5MG5g6Js=;
-        b=KloGb6hcbTufAwdkYqlBSsWZOgn0F6LTXmIJSgH9nORprcQx8B2lRFJwhTiC2pO2+4
-         fLHqqbiXPDUjPxlVt+kyLdHcTMULTYXLTqLdPOT55mTc8/XIaUU9S4krI65CVfTFFBuL
-         WzleLev4QZD/VY7xznAXEGiD/XokWkniDoLr0=
+        d=linux-foundation.org; s=google; t=1706117271; x=1706722071; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zTlbGsImqxn7RX+/XBkYgj6lDq/Avh2rTF8zOkCv5JM=;
+        b=SvGXjCdWQ583KEVmiYYexUS3zEIYuWQ4wPEPRQhydsb2+08ONPZqteuABDBSVeB9aU
+         dIQbevDGSW2O6AHiAezGooZEAgVzm8YuDTC7blChWGde0dRCM2EIc39b67mLjwXF+jMP
+         IqFpwja29nj6xc50P9fJ5UiosHhGFgiUFQUgU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706116875; x=1706721675;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o3H+ezh5j15p10TUIQ78gJT0AbI3MbNz0EQ5MG5g6Js=;
-        b=OgLsdPYWW9v4lMZUqzWYeUywUYqZfIv962qHQcSra54HLKTMyogWmzfF1s9WG22dW0
-         b9521xIDQsgdb9VlYKRI9TnuUpbaMOLHKr2meYwf3Md0CtxfzE63xem9c8CjoVPJlH2m
-         NGmgGtJg9je4qOCszF7ocoB0QxH4t3O4V7j+qy3VU2KmzOsCV3z+BUf0wqGMRAjkUBfs
-         e93hJJHd4Du1Ss/3yAe+eVuXHQYchRX4XWQ9WxWLOfy9Oy6+5pv51MNCuVdVA4ZzuTul
-         3aaXAK6qrKOd8e1172noNcqaSEVblAjTkM8UtcI7fJdqKmnNBDkXbTOH+JMacIXWrJcL
-         FCtg==
-X-Gm-Message-State: AOJu0YzPGnLd7Kgdnk6sW0V/3XL3kKcBzwZ6ndaaefMzlnjGnOojviNt
-	Tjee+d10Whgt9XsykT2FN6ia5GorCkWSZ3TlJbZTC9hmi3C5svENzTcgXb/jog==
-X-Google-Smtp-Source: AGHT+IF8mYZHsXtIZHYmarYRM5N7qbVfGOw6LSL+xSG6379FubnYGny6wPevlrY8z5lhGqrKJ4N0fA==
-X-Received: by 2002:a17:90a:cf87:b0:28d:c7bf:3a12 with SMTP id i7-20020a17090acf8700b0028dc7bf3a12mr4364083pju.8.1706116875365;
-        Wed, 24 Jan 2024 09:21:15 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id st13-20020a17090b1fcd00b0028cf59fea33sm13880703pjb.42.2024.01.24.09.21.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jan 2024 09:21:14 -0800 (PST)
-Date: Wed, 24 Jan 2024 09:21:14 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kevin Locke <kevin@kevinlocke.name>,
-	John Johansen <john.johansen@canonical.com>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [6.8-rc1 Regression] Unable to exec apparmor_parser from
- virt-aa-helper
-Message-ID: <202401240916.044E6A6A7A@keescook>
-References: <ZbE4qn9_h14OqADK@kevinlocke.name>
- <202401240832.02940B1A@keescook>
- <CAHk-=wgJmDuYOQ+m_urRzrTTrQoobCJXnSYMovpwKckGgTyMxA@mail.gmail.com>
- <CAHk-=wijSFE6+vjv7vCrhFJw=y36RY6zApCA07uD1jMpmmFBfA@mail.gmail.com>
- <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1706117271; x=1706722071;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zTlbGsImqxn7RX+/XBkYgj6lDq/Avh2rTF8zOkCv5JM=;
+        b=KKpdikGdfwANbGPXq+rsSf2hFlikhpWpSXuCE+aXEZl+0VraHi68+MvuzqWXmCr/xz
+         KYWehLQxTP6Qyaed7vrgWG4uZt2cnjoJHmE+N5iMduziDRr6mS1U9jvql5VfgBVYd3uq
+         CdKyCiU+Pa2N+pQHUba4uMo8+L0khY8EgzSeVue36hacHkKNMG56bWfrU4kVyPQYqMnX
+         f7IfS18ZDmeSxnk8kU4dF+oEdlwALiILDzH6JuX9HuIl04gFEEv6Ufu1GZT1qdNB2ELx
+         G36Ua3WQAb1Li7K8jBkOkI1wTV1skZFWxJ9J9tSWkbU0LZwgkL3hO/d7TfDavgBvrfYA
+         ifJg==
+X-Gm-Message-State: AOJu0YzefxkAWTViXlTydkIFSLyO/7csKa5j6hyLCzoEK6AQDVTsJIel
+	zcnbyUiIm0bfa6YIKa4IXrXtzKP4Ravwvt9zZfbCdiHu7kemxoZZIhcWAuQabgSScjV3K7EcSVH
+	NABcdGA==
+X-Google-Smtp-Source: AGHT+IFEgnnDj1G8uEskDA0uPaV/B6kTzSrQbMF9o0Jg2WRLO8aME49HtONo9/cejY13oHtcmbkoDA==
+X-Received: by 2002:a17:907:a707:b0:a2c:5ed5:7bfb with SMTP id vw7-20020a170907a70700b00a2c5ed57bfbmr1239648ejc.91.1706117271254;
+        Wed, 24 Jan 2024 09:27:51 -0800 (PST)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id ff23-20020a1709069c1700b00a2ed5d9ea19sm90426ejc.190.2024.01.24.09.27.50
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 24 Jan 2024 09:27:50 -0800 (PST)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-55783b7b47aso6489281a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 09:27:50 -0800 (PST)
+X-Received: by 2002:a05:6402:34d4:b0:55c:7444:153f with SMTP id
+ w20-20020a05640234d400b0055c7444153fmr2637292edc.60.1706117270433; Wed, 24
+ Jan 2024 09:27:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com>
+References: <ZbE4qn9_h14OqADK@kevinlocke.name> <202401240832.02940B1A@keescook>
+ <CAHk-=wgJmDuYOQ+m_urRzrTTrQoobCJXnSYMovpwKckGgTyMxA@mail.gmail.com>
+ <CAHk-=wijSFE6+vjv7vCrhFJw=y36RY6zApCA07uD1jMpmmFBfA@mail.gmail.com>
+ <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com> <202401240916.044E6A6A7A@keescook>
+In-Reply-To: <202401240916.044E6A6A7A@keescook>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 24 Jan 2024 09:27:34 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whq+Kn-_LTvu8naGqtN5iK0c48L1mroyoGYuq_DgFEC7g@mail.gmail.com>
+Message-ID: <CAHk-=whq+Kn-_LTvu8naGqtN5iK0c48L1mroyoGYuq_DgFEC7g@mail.gmail.com>
+Subject: Re: [6.8-rc1 Regression] Unable to exec apparmor_parser from virt-aa-helper
+To: Kees Cook <keescook@chromium.org>
+Cc: Kevin Locke <kevin@kevinlocke.name>, John Johansen <john.johansen@canonical.com>, 
+	Josh Triplett <josh@joshtriplett.org>, Mateusz Guzik <mjguzik@gmail.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jan 24, 2024 at 09:10:58AM -0800, Linus Torvalds wrote:
-> On Wed, 24 Jan 2024 at 08:54, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Hmm. That whole thing is disgusting. I think it should have checked
-> > FMODE_EXEC, and I have no idea why it doesn't.
-> 
-> Maybe because FMODE_EXEC gets set for uselib() calls too? I dunno. I
-> think it would be even better if we had the 'intent' flags from
-> 'struct open_flags' available, but they aren't there in the
-> file_open() security chain.
+On Wed, 24 Jan 2024 at 09:21, Kees Cook <keescook@chromium.org> wrote:
+>
+> I opted to tie "current->in_execve" lifetime to bprm lifetime just to
+> have a clean boundary (i.e. strictly in alloc/free_bprm()).
 
-I think there were other problems that I might have already fixed when I
-reorganized things in commit 0fd338b2d2cd ("exec: move path_noexec() check
-earlier") to more correctly map to LSM checks.
+Honestly, the less uinnecessary churn that horrible flag causes, the better.
 
-> Anyway, moving current->in_execve earlier looks fairly trivial, but I
-> worry about the randomness. I'd be *so*( much happier if this crazy
-> flag went away, and it got changed to look at the open intent instead.
-> 
-> Attached patch is ENTIRELY UNTESTED. And disgusting.
+IOW, I think the goal here should be "minimal fix" followed by "remove
+that horrendous thing".
 
-I opted to tie "current->in_execve" lifetime to bprm lifetime just to
-have a clean boundary (i.e. strictly in alloc/free_bprm()).
-
--Kees
-
--- 
-Kees Cook
+              Linus
 
