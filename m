@@ -1,123 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-8751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10E7483AA53
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 13:52:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8547B83AA98
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 14:04:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35EB11C22783
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 12:52:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B76BB1C27A00
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 13:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503ED7764D;
-	Wed, 24 Jan 2024 12:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C9777656;
+	Wed, 24 Jan 2024 13:04:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="oJ+RSQzQ"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="FWtYSOot"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03AD60DFF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 12:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8789A77647
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 13:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706100750; cv=none; b=sENaiSJ7olCLNGEfIMNb68+Qq9jQ6MazN7O4k8q/2lcnkOy3to5V5Q4otY81fvsPfpBcWDmhzCkfrFCUgGL6SJ6p8/gCO8Iq4LL5gQ6IccSIl8xmuWGARKR0RzkpaDWXmWH6pqRgzrsU9dO1Dtyy4TymMBykrHN53LvCtQ/FZbw=
+	t=1706101481; cv=none; b=aazTsacQ+r4zV5mNO2d3LmnAwJadQJe3v9cDI4Dkg2M5T8ewua2cNb7JMbgw7kE47xFUuDCE+y3/kgpjGlAIU8gkYvmrR2fjM8cFVR9PPXo/Sn9xHyTGqgSkUM2YolIJ2ONvLtyMcOCRgreUOAQZ5CGekCB235xlxXfYlSiT5UI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706100750; c=relaxed/simple;
-	bh=u87dgtOCnG858+2RLEm/eNuMK0BlwRijmTEReSQrCk0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IfyaRZqALhPJLro4K7KEvWMoQ5OYD0MnvzQVgcWJmFpixb/MMB6X+kp4/hT16tvPxv4xFAI8pTExBZ6f/uh0G4ipJwbDMVCDKplX+bxqr2cH6UDIA3DzXjimyNZJGq8c90jjGGnQ1hYVBEeQyKv4VNWPBvgnI2HJKlGWAisQcf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=oJ+RSQzQ; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-59910dcc17bso951331eaf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 04:52:26 -0800 (PST)
+	s=arc-20240116; t=1706101481; c=relaxed/simple;
+	bh=B8cA1ZmYL6Ndv77osRknh0AO8zS0RBiPjzqoqdqEtmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZPKOzFu7zm99vWC0ojJq9mV6V/MF3qspiDS3X7h8MlXN/qY0zKc5F6w4WNUfQv+cIMxE09vObUzJRy75AgcYkGTLE7PffqO+Yk+uy4lxB7GqiFoZlmKj19Hjb6ZIhM+M6tNErt7m24ZjrnA6hDH/kGZn3tQI9lSUCxwWoCal+Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=FWtYSOot; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a28a6cef709so556702566b.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 05:04:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1706100746; x=1706705546; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RcSqh3U6uVN9tud0FaGQjxIaTxF3VYfhi3DfVDRmK/E=;
-        b=oJ+RSQzQkC5D5Khb+wfZ7ugSP+IrJ2M4QfpGvrzmsObZWHQepayJg91ms388p+APHM
-         vfB/UaCRoUh9IeXvMLXNDC+asyuyQ7N1ch5ODk+IyX/XtAsYdR/HTy6EgwIV/tuSmOXZ
-         eE2IBjjPPXXbQ37z/RwkAVLStekEQ2XGZn59SKeB01TExfXCVDw/mIFQ9ftgCrnMy+K9
-         tbS+kGfuNYh+G5n6o4/DOUHWfOkdeqODwX9BXjEJy7q0Djq6ePHDJnP4/O6zsg8cdlgD
-         LmDdxrA5lsJ4o71oe9xNrjIFgMJo8tKoWurNmmNUEaNmFv6ytEd/O5ogHAb/YZ9TTVnr
-         KmRQ==
+        d=szeredi.hu; s=google; t=1706101478; x=1706706278; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=B8cA1ZmYL6Ndv77osRknh0AO8zS0RBiPjzqoqdqEtmI=;
+        b=FWtYSOotdyfGaMOcvwjlQ6E7Nsuz5KtKZQTmTV1laYkjraIR+ta8PuGwD4TnarRBdU
+         eT8vzw/PY2+DlNudy4xl9OrE9fsNNwKNetywUse0h0thMW2UhvUlOjr7TgGiqa27QRWj
+         NeqHKQ1m2As1tAeHLhKTAazJgRD42xI5lFIdo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706100746; x=1706705546;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RcSqh3U6uVN9tud0FaGQjxIaTxF3VYfhi3DfVDRmK/E=;
-        b=ujegfX0mKuh/2QNO7orlgv7XHXbZPMfDGg4LWgqUSopOwApmeBEdVeUbpTn3UEzPlr
-         mrBWd6Xe6Ty4k+Dc9q8CPpobKd2EsWZYG0+pLAb+i9xWrk/IJVM+QnzBkaU5IaluzFVk
-         /ZCnE4T4IKwuMB00RY6wBEUIjKx1XUvq6C2Fo1X7c+8SBEDcRG3NmhjmcWcmZP/wUkcJ
-         0nul1aHpmNYXLnkrYDtn8Rx/SF5KZwwZH0bkYF92w+vuUmBP6iFPlSI3EDRsy7Jr9E5U
-         +f0oMGA/v3ZUNydrO5n0HUfoQ3I610TDLaqz9HeWtwOM9pfsupymIuys2X1d2Y2414H9
-         4xdw==
-X-Gm-Message-State: AOJu0YwkYq3iCOLb8yCRZuhAlVg80V79Xe+u7hMfcF3+v7zINe9O0+OV
-	WEGbLEetRtAvmb0T+fNeB6xq1GF9BoqMbQDbxrNI8hAVP8G5SIBmDL5/HY4UpaA=
-X-Google-Smtp-Source: AGHT+IEV9XPoTij4w6t/c3jamgPJzwbW0uxPDvd2LhSt/JNYV5z6Ri6q0YWVg7VwoBycESUWkXZj8w==
-X-Received: by 2002:a05:6358:e48f:b0:176:6189:de7e with SMTP id by15-20020a056358e48f00b001766189de7emr2503685rwb.3.1706100745748;
-        Wed, 24 Jan 2024 04:52:25 -0800 (PST)
-Received: from [192.168.1.150] ([198.8.77.194])
-        by smtp.gmail.com with ESMTPSA id h20-20020a635314000000b005d4156b3ea2sm2108542pgb.93.2024.01.24.04.52.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jan 2024 04:52:25 -0800 (PST)
-Message-ID: <fefaf2bf-64b7-4992-bd99-5f322c189e35@kernel.dk>
-Date: Wed, 24 Jan 2024 05:52:23 -0700
+        d=1e100.net; s=20230601; t=1706101478; x=1706706278;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B8cA1ZmYL6Ndv77osRknh0AO8zS0RBiPjzqoqdqEtmI=;
+        b=GKr+BEoPpGPSR3k+EumZXu2axKM04d+3MT3sZvmEZqC+QW7JaDq72W0igHSyvFIDz5
+         Buj6sS1EJe+Xsp8p3EzVPoBQ8c3GccniyA2NwxWpqiq4IXXjqVDBxu2mxy6x7YGPMD/F
+         8d8UJq05MMZPnSAvP43O+1guOkoRLxymIShxF3WDFfZD98LfwB2wxKfrqpDGgNkzX6Q9
+         g7pMy3g1LzOXg1HzK/6+1O/oRf6XZDuILp8H1jqu1mRslh8nHu/QNdL/emLfbZrZU0zo
+         OX4wo7LHNjznuk5hjHZtCMZp8ps3mfCeUAMPxKrFAX2JTkSOlp0akvNyKXs//G/dLoUh
+         Pv8g==
+X-Gm-Message-State: AOJu0Yxa7bqSFHS03mCjqVMLkSyGcyrV/AT2XXF8YlgcYmDfvNsVut7q
+	fQ4DO4R+XIXvzLFG5w6zAl/GrwrWMIz1xXTVCTW5omQ1Z2e5uuhkuvnwKMS/3wcha+nLw9XM1wn
+	T47c+Uu7c1er7ch6a3D74cTK01pRv6nRNKdV9tA==
+X-Google-Smtp-Source: AGHT+IEy9B2Lm4AXkR4V27MbGmnG2tBa71pYnFnuANaeGsI16VlKXncM9PMqvReHP7q0zCWmA/NahulZkCVWrcCihCo=
+X-Received: by 2002:a17:906:ae4a:b0:a31:1178:8e6d with SMTP id
+ lf10-20020a170906ae4a00b00a3111788e6dmr608924ejb.70.1706101477686; Wed, 24
+ Jan 2024 05:04:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/2] io_uring: add support for ftruncate
-Content-Language: en-US
-To: Cedric Blancher <cedric.blancher@gmail.com>,
- Tony Solomonik <tony.solomonik@gmail.com>
-Cc: io-uring@vger.kernel.org, asml.silence@gmail.com,
- linux-fsdevel@vger.kernel.org
-References: <20240124083301.8661-1-tony.solomonik@gmail.com>
- <CALXu0UdfZm-UJcPqF5H6+PXPp=DC2SA-QFbB-aVywmMT5X3A6g@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CALXu0UdfZm-UJcPqF5H6+PXPp=DC2SA-QFbB-aVywmMT5X3A6g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240124113042.44300-1-jefflexu@linux.alibaba.com>
+ <CAJfpegtkSgRO-24bdnA4xUMFW5vFwSDQ7WkcowNR69zmbRwKqQ@mail.gmail.com> <96abca7f-8bd1-44e8-98be-c60d6d676ec6@linux.alibaba.com>
+In-Reply-To: <96abca7f-8bd1-44e8-98be-c60d6d676ec6@linux.alibaba.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 24 Jan 2024 14:04:26 +0100
+Message-ID: <CAJfpegsk-zjpOKhE7y7zmUd1sZr-Sn3jbKPjDLCSU7KmLbjr5Q@mail.gmail.com>
+Subject: Re: [PATCH] fuse: add support for explicit export disabling
+To: Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	amir73il@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 1/24/24 1:52 AM, Cedric Blancher wrote:
-> On Wed, 24 Jan 2024 at 09:33, Tony Solomonik <tony.solomonik@gmail.com> wrote:
->>
->> This patch adds support for doing truncate through io_uring, eliminating
->> the need for applications to roll their own thread pool or offload
->> mechanism to be able to do non-blocking truncates.
->>
->> Tony Solomonik (2):
->>   Add ftruncate_file that truncates a struct file
->>   io_uring: add support for ftruncate
->>
->>  fs/internal.h                 |  1 +
->>  fs/open.c                     | 53 ++++++++++++++++++-----------------
->>  include/uapi/linux/io_uring.h |  1 +
->>  io_uring/Makefile             |  2 +-
->>  io_uring/opdef.c              | 10 +++++++
->>  io_uring/truncate.c           | 48 +++++++++++++++++++++++++++++++
->>  io_uring/truncate.h           |  4 +++
->>  7 files changed, 93 insertions(+), 26 deletions(-)
->>  create mode 100644 io_uring/truncate.c
->>  create mode 100644 io_uring/truncate.h
->>
->>
->> base-commit: d3fa86b1a7b4cdc4367acacea16b72e0a200b3d7
-> 
-> Also fallocate() to punch holes, aka sparse files, must be implemented
+On Wed, 24 Jan 2024 at 13:50, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
 
-fallocate has been supported for years.
+> OK I will rename it to fuse_no_export_operations.
+>
+> By the way do I need to bump and update the minor version of FUSE protocol?
 
--- 
-Jens Axboe
+It's not strictly necessary since the feature is negotiated with the
+FUSE_NO_EXPORT_SUPPORT flag.
 
+Despite that we do usually bump the minor version once per kernel
+release if there were any changes to the API.
+
+Thanks,
+Miklos
 
