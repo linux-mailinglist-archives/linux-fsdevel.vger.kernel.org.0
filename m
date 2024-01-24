@@ -1,87 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-8679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5AFB83A1B8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 07:03:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7563883A26C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 07:59:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 866591F2BCF2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 06:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DBC02892AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 06:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51448101C8;
-	Wed, 24 Jan 2024 06:02:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X2QxZBmf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276F714F86;
+	Wed, 24 Jan 2024 06:59:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF10EFBE4;
-	Wed, 24 Jan 2024 06:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50B010795;
+	Wed, 24 Jan 2024 06:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706076173; cv=none; b=XiXH4ryNDpoz4Xko2XE9Mv0vuw5VfcnGWVgVjUWnhrE8bWA7kbjcPfL7gUbA6MM9ywfzlZ3y4ZEo6i0MOpYJhGrMliI8i9PIdAUIfHvlA20Lq9nZjyUZ1Fm66x9ywq5P4cMqS5gFeIWPGUfLLiCKJvS7vmYEh3k7R0BTypAKrCw=
+	t=1706079580; cv=none; b=KAIUNtNY8Au4qmC1XefgXV95oCa5RBDYMXAoAiKQ4YNksEjBSx3+2zBEa+MW3rniuW3L+SiswZxRowjLO2lfPLFzEGrRUIy5e0+GcdgxP9chaawhKORPw0sdokQLDT8xi7C4i1d0sX7fzs6t/midzw8q4ynFcWzq9ilvtlJDuss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706076173; c=relaxed/simple;
-	bh=bJdSvkTGtcaSm836IDAy26STpzKRlzB0X5Rn8pTMH08=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kZcwXCynCjvuchmjHo5jEE3uCD2v1X5H0WLJjE/9GJxOPnrMJI7L94as9k+bAt3HcY6cxWDwLo2g2HdWIb9EdSlW1y8dMKA2Z5E+bSbr+7MCsiwdo0HBI3FIMITZCrgpF3RR2jCRJUsvPdjrknPVZ86SbpBfypsd7a3/KQ4egvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X2QxZBmf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD101C433A6;
-	Wed, 24 Jan 2024 06:02:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706076173;
-	bh=bJdSvkTGtcaSm836IDAy26STpzKRlzB0X5Rn8pTMH08=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X2QxZBmfmZ+Ag5wMBMZwfvXSvRTgna9mC4l/TKX20KkHH4/iHsOU2PP/sCKWa9Z3Z
-	 78wky/0C3TMJpyJP6SDZ0Rn257AXUVS6nZ+gPHHV9iAt7qmcpii0w4AEZTDcH5f/3Z
-	 fN+oQQbKnOkAcYENNjOVH3fp3I/+xz2LYe56ejkO/NdSMtu9IxcMr2NZ1fOAWckBHL
-	 AZ5Vs21IHCWQNQiC3hqgQjdIQNCWB6/gvvSd279udxKcuIrnjiBeTJm0EWtVUG3npB
-	 wLizDS3rUQ+GESDRwVO0wz4QM7WEUEHWjsMjHgGvhWs1Y62pUSjW1rJIbz2lbHKSJN
-	 Zzz9V3OQyM6aA==
-User-agent: mu4e 1.10.8; emacs 27.1
-From: Chandan Babu R <chandanbabu@kernel.org>
-To: chandanbabu@kernel.org
-Cc: dchinner@redhat.com,hch@lst.de,linux-fsdevel@vger.kernel.org,linux-xfs@vger.kernel.org
-Subject: [ANNOUNCE] xfs-linux: for-next updated to d8d222e09dab
-Date: Wed, 24 Jan 2024 11:31:01 +0530
-Message-ID: <87sf2nclpz.fsf@debian-BULLSEYE-live-builder-AMD64>
+	s=arc-20240116; t=1706079580; c=relaxed/simple;
+	bh=tr6lQdy8MC4HevkGJesocwPxqTCKOaSttUC/8n8LgJA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hvFcwyY49PEeSiihcIlIMGn+N9qhCva5/NbH/lTQmg+vIXMdyfxZC/xi5kvvhc0egJhf2PSxlckhfTl9+jjQfImYYsMzdVdfrFww9L5Vdlq2DZRDFk37rOyL1gYz/2miQfrT5J08nnnXYy9sqcpAifkKBH79+bQ0mFHrya30zk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1rSXEQ-0007VV-Rl; Wed, 24 Jan 2024 07:59:30 +0100
+Message-ID: <aeab5703-20a2-410c-bd57-c144e3283e41@leemhuis.info>
+Date: Wed, 24 Jan 2024 07:59:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: Recent-ish changes in binfmt_elf made my program segfault
+Content-Language: en-US, de-DE
+To: Linux kernel regressions list <regressions@lists.linux.dev>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <c7209e19-89c4-446a-b364-83100e30cc00@exia.io>
+From: "Linux regression tracking #adding (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <c7209e19-89c4-446a-b364-83100e30cc00@exia.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1706079578;b1f518a3;
+X-HE-SMSGID: 1rSXEQ-0007VV-Rl
 
-Hi folks,
+[TLDR: I'm adding this report to the list of tracked Linux kernel
+regressions; the text you find below is based on a few templates
+paragraphs you might have encountered already in similar form.
+See link in footer if these mails annoy you.]
 
-The for-next branch of the xfs-linux repository at:
+On 22.01.24 13:01, Jan Bujak wrote:
+> 
+> I recently updated my kernel and one of my programs started segfaulting.
+> 
+> [...]
+> I bisected the issue to the following commit:
+> 
+> commit 585a018627b4d7ed37387211f667916840b5c5ea
+> Author: Eric W. Biederman <ebiederm@xmission.com>
+> Date:   Thu Sep 28 20:24:29 2023 -0700
+> 
+>     binfmt_elf: Support segments with 0 filesz and misaligned starts
+> [...]
 
-	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+Thanks for the report. To be sure the issue doesn't fall through the
+cracks unnoticed, I'm adding it to regzbot, the Linux kernel regression
+tracking bot:
 
-has just been updated.
+#regzbot ^introduced 585a018627b4d7ed37387211f667916840b5c5e
+#regzbot title binfmt_elf: programs started segfaulting
+#regzbot ignore-activity
 
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.
-
-The new head of the for-next branch is commit:
-
-d8d222e09dab xfs: read only mounts with fsopen mount API are busted
-
-1 new commit:
-
-Dave Chinner (1):
-      [d8d222e09dab] xfs: read only mounts with fsopen mount API are busted
-
-Code Diffstat:
-
- fs/xfs/xfs_super.c | 27 +++++++++++++++++----------
- 1 file changed, 17 insertions(+), 10 deletions(-)
-
--- 
-Chandan
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+--
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+That page also explains what to do if mails like this annoy you.
 
