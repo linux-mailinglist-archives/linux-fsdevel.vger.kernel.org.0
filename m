@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-8727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE4983A8CF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 13:03:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBE183A8CC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 13:02:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C70C1F2189A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 12:03:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 656B71C22E8B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 12:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74377633F1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3378563133;
 	Wed, 24 Jan 2024 12:00:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFAB60DE6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60E2B612C5;
 	Wed, 24 Jan 2024 12:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706097605; cv=none; b=da1xFJ/ScpQq5NvbNC9K/Cye/mwlJH6YoKSXC65lIrIoVUJcHguJU+54AJOjhdTdfrOIKSR/lM4Ruur4p/Z2ucRUxY3U10Pros3bfWAZnJXFAbnWD+8HgqB2j4NjXptNQkVpsVhFPdVnT2ixuE8BBY3bpSqhI1l/NMooPgWEctM=
+	t=1706097605; cv=none; b=HKYBNZ+BwlpIMh3jZd4dsLHc0GoPtccn6GILA4H0jkd/NgWcBqg07lzlqeCghv2rOwmiDVZlQEVUGvO2FKKYDt0GEJAAxJp96N8I7uKXvtycAdXDd5JlsFN/uZCyoEWTVGgFl49A9BB1dd8DGwDqOqF5lXbt4ju8MV2A/FuJo70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706097605; c=relaxed/simple;
-	bh=37cSYW8WA/TnfUxZD66nhjfMFS+Rdxdh6OVt7EPfSog=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Ceuc/+MoKjvHxTrY15a4sHiPfgSUvUHskcEl/5JNm0MzNUkD+guikEm9bREyDtLUN+X74yddiuAy+rg6kM/Dx3bidL8Lw1SmD55cQ6VxqGFtyhZ3GAuE83pCbT5qIsvRUNMTAMLewF0FkF5n3pO/0e05hSMhcEZ/r4nKiVnkbyo=
+	bh=Z/lrsPfinthw0Keb2TOWgQylHJ0tuWxQmHrjSTWrwaY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=m7mqMV3n7hkmlB4Tz2eULc5bIzAqeGrz2nPNJqjvnUGXJwgZDwt+LjFmDK3R6Lem9c9rG/NtNkGO45mK3oDsOcZcccmBZFHp054NI4uvDNPxpzXhPkAm1dzldGDWfa9nMjCFqCOBJcrlTWSfaRV3AWVTn+O0niAN21leRjOkHzg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d85ff70000001748-a5-65b0fbb529a6
+X-AuditID: a67dfc5b-d85ff70000001748-b5-65b0fbb512f0
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org
 Cc: kernel_team@skhynix.com,
@@ -87,44 +87,44 @@ Cc: kernel_team@skhynix.com,
 	longman@redhat.com,
 	hdanton@sina.com,
 	her0gyugyu@gmail.com
-Subject: [PATCH v11 06/26] dept: Add proc knobs to show stats and dependency graph
-Date: Wed, 24 Jan 2024 20:59:17 +0900
-Message-Id: <20240124115938.80132-7-byungchul@sk.com>
+Subject: [PATCH v11 07/26] dept: Apply sdt_might_sleep_{start,end}() to wait_for_completion()/complete()
+Date: Wed, 24 Jan 2024 20:59:18 +0900
+Message-Id: <20240124115938.80132-8-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240124115938.80132-1-byungchul@sk.com>
 References: <20240124115938.80132-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0iTYRTHe573uuXkbV18S6IYWNHVbnKKiL5ED0QURX3oPvRFR15iK8si
-	07Tb1HKBLsvCS6wxl9qmpKWyjDQLzXLVsrnKtBS1lTlraRdn9OXw4/z/5/fp8JSympnBa+IP
-	Sdp4dayKldPygaDCRZUj5VJ4d0cYGDLDwTd0job8MisLraUlCKwVqRh6H26AV8P9CEaan1Jg
-	zGlFUPi+g4KKBg+CWvMpFtq6gsHp87LQlJPBQlpxGQvP+kYxuHMvYSixbYIn2UUYHP5PNBh7
-	WbhqTMNjoweD32ThwJQSBp3mKxyMvl8KTZ6XDNS2L4C8624WamqbaGio6sTQdjefBY/1DwNP
-	Gh7R0GrIYuDW5yIW+oZNFJh8Xg6eOwowlKePic58+81AY5YDw5kbtzE4X99DUHfuHQab9SUL
-	D3z9GOy2HAp+3nyIoPPCAAenM/0cXE29gCDjdC4NT381MpDuXgkjP/LZdavJg34vRdLtR0jt
-	cAFNHheJpPpKB0fS69o5UmA7TOzm+aS4pheTwkEfQ2yW8yyxDV7iiH7AicnnlhaOPLo8QpMu
-	pxFvCd0pXxMlxWoSJe2StfvlMf43xw8+jjiaXVnPpqCShXok40Vhhdid8hHrET/O3/XBgTUr
-	zBVdLj8V4CnCbNGe9ZHRIzlPCWcniuYvzWwgmCxsFXMbr9MBpoUw0dlbiQKsEFaKaXXd1D//
-	LLGk3DHOMiFCvJXXPt5XjnXeWS5yAakonJWJ9uJr6N/BdPG+2UVnI0UBmmBBSk18YpxaE7ti
-	cUxSvObo4siEOBsaeyjTidFdVWiwdVs9EnikClKss5RJSkadqEuKq0ciT6mmKFzTSyWlIkqd
-	dEzSJuzTHo6VdPUolKdVIYplw0eilEK0+pB0QJIOStr/KeZlM1LQ5eomQ2nIxuWLVK+i28I3
-	Skalh9zRaaa+qJkEzV2RQnDPedlJa0OIO395cqZM803Ys3vq0GbbnOSetZm+AyeGNNPytq+v
-	+pVjmBMkT92cseOrN9lz3923d2bUh8TyuxN2Od7O7NpZtyo6+GKLKnSNYZ7rGp6o3R3R/2Lr
-	bHp1tjdBReti1EvnU1qd+i/8N+rITAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfUzMcRzHfb+/xzsuv502v/K422JCysRnsvAHfmPM+MOG0S2/1aku3VWE
-	tijhVMpW0VWrcM4VnUtb9OBWlGo90C1Jtcpjczriyrk8VJt/3ntt74e/3iwh11PerEodK2rU
-	ykgFLSWle4KSV1e6zaK/tVsGWWn+4PxxiYT88jIaOu+XIih7eA7DyLMd8GrcjsDd1kFAbnYn
-	guKhfgIeNg4gqDWep6HrnQfYnA4amrOv0JB8s5yGF58nMfTlXMNQatkNrZklGKyujyTkjtCg
-	z03GU/IJg8tgYsCQ5APDxjwGJocCoHmgm4KGgmYKantXwo3CPhpqaptJaKwaxtD1OJ+GgbK/
-	FLQ2PiehMyudgnujJTR8HjcQYHA6GHhpLcJgTplaS/3+h4KmdCuG1FsPMNheVyOouzSIwVLW
-	TUOD046hwpJNwK87zxAMZ3xh4EKaiwH9uQwEVy7kkNDxu4mClL5AcP/Mp7cECQ12ByGkVJwU
-	aseLSKGlhBce5fUzQkpdLyMUWeKECqOvcLNmBAvFY05KsJgu04Jl7Boj6L7YsDDa3s4Iz6+7
-	SeGdLRfvXXhQuumYGKmKFzVrgkOk4a43Z060rD+VWVlPJ6HSVTrEsjy3jp/QeeiQhKW55XxP
-	j4uYZk9uKV+R/oHSISlLcBdn88avbfS0MY/bx+c0FZLTTHI+vG2kEk2zjAvkk+vez5R5bglf
-	arbOsIRbz9+70TuTl09lBk1XmUwkLUKzTMhTpY6PUqoiA/20EeEJatUpv9DoKAuauowhcTKr
-	Cv3o2lGPOBYp5si2mMpFOaWM1yZE1SOeJRSesh6v+6JcdkyZcFrURB/VxEWK2nq0gCUV82U7
-	D4ghci5MGStGiOIJUfPfxazEOwktwAW7ur8t2rlbmrpxbUjQhgh9TRe5uNCr82neeEP73OFl
-	XP/t/ca24xNvQwNWbg9+khgzVG6Xhp2s3jdbJzntl17tYZ/wuVt1qG/bGVHtdphXmF84YnHx
-	27HDEtORsKWHvhn+xB3OTPS+e0s9qgs+G7Onv2PO3tB5MXrdo+Wbt/b6KkhtuDLAl9Bolf8A
-	egzQ2y4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSf0zMcRjHfb4/r+P4OjbfmLFbzWQkqj3MLGbzMT/G/GMYjr5zN3XlUmQz
+	3ZVECllOP3CVnXMd5XvHUHGyUlEdtZyWVimkn0vXnBJ3mX+evfa8n+f111tCyp/R8yVqzQlB
+	q1FGKRgpJR2YUbD80XipsFKfFgJXL60E92gaBfklVgacD4oRWO06AnqrNsOHsX4E4/WNJBiy
+	nQgKOj+RYK9uR1Bh1jPQ1D0Tmt1DDNRmpzOQXFTCwLu+CQLarmcRUCxuhzdXCglweL5SYOhl
+	IM+QTHjHNwI8JgsLpqRA6DLnsjDRGQK17S00VLQug5xbbQyUV9RSUP2ki4CmZ/kMtFv/0PCm
+	uoYC59UMGu4PFjLQN2YiweQeYuG9w0hAaYpXlPpjkobXGQ4CUu88JKD5YxmC52kdBIjWFgZe
+	ufsJsInZJPy6W4WgK3OAhXOXPCzk6TIRpJ+7TkHj79c0pLSFwfjPfCZiLX7VP0TiFNtJXDFm
+	pHBdIY+f5n5iccrzVhYbxXhsMwfhovJeAheMuGksWi4wWBzJYvHFgWYCDzY0sLjmxjiFu5sN
+	xM4Fe6XrIoUodYKgDV5/SKqqbe+hY1/MPjUxeTYJ2WdeRH4Sngvly85b0X/ObNDTPma4JbzL
+	5SF9PJdbzNsyvnj3UgnJnZ/Om4frGV8wh1PxrQ29U0xxgXyhwz4lknFhfPmLYvqfdBFfXOqY
+	Evlx4fz9nFbKx3LvTYflMuuT8lyyH+/ILWL/PfjzL80u6gqSGdE0C5KrNQnRSnVU6ApVokZ9
+	asWRmGgReRtlOjOx7wkace6uRJwEKWbIIiwlgpxWJsQlRlciXkIq5spc/g8EuSxSmXha0MYc
+	1MZHCXGVaIGEUsyTrRo7GSnnjipPCMcEIVbQ/k8Jid/8JLR/y657uvCN3FO9+pgx4ABZpLFu
+	7dGpNn3Ub5y1ZlcP3X9tx+qqL31ZTeLhDS835Jnc8QGmwNCbb22Pt12OaNnjH3T8tj14+eh6
+	g9gtLlWKYqqnLmcytkuKs9oSB0oGv3+LqF9UFjzsvD1cs7kvbDRg4a/sztTPdbdcZHqg7vji
+	NQoqTqUMCSK1ccq/nZYfxk0DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfUzMcRzHfX+P13H5dcJPnm9rJpNI+hijf6zvPI3ZPM2mGz86rthdjphJ
+	RVF3ZMsl4Tp2bleUK+ah41YunfRALZUctUJKWbqbdB7umH8+e+39fu/110dESgvoEJEiMUlQ
+	JcqVMkZMidcvS5t/d7RUiDB7J0NOdgS4hzMpKCgpZqDxdhGC4vKTBPQ6YuG1px/BaF0DCfrc
+	RgSFnW9JKK92IbCZUxlo6g6EZvcgA87cLAbSrpcw8LLPS0DHxQsEFFnXQe15IwH2kY8U6HsZ
+	uKxPI3znEwEjJgsLppRQ6DLns+DtXAhOVwsNVVecNNja58Glqx0MVNicFFTf7yKg6WEBA67i
+	3zTUVtdQ0JijpeHWgJGBPo+JBJN7kIVXdgMBpek+2+lvv2h4prUTcPrGHQKa2x4heJz5ngBr
+	cQsDVe5+AsqsuST8uOlA0KX7wsKp7BEWLp/UIcg6dZGChp/PaEjviILR7wVMzDJc1T9I4vSy
+	w9jmMVD4uZHHD/Lfsjj9cTuLDdZDuMwchq9X9BK4cMhNY6vlDIOtQxdYfPZLM4EH6utZXJM3
+	SuHuZj2xYdp28fLdglKhEVQLVsSJ452uHvrgk6Aj3l8nUlB54FkUIOK5xbyuPpX2M8PN4Vtb
+	R0g/B3Oz+DLtB18uFpFcxlje/LWO8RcTuHi+vb73L1NcKG+0lyM/S7govuJJEf1POpMvKrX/
+	FQVwS/hbl9opP0t9m/eWc+x5JDagMRYUrEjUJMgVyqhw9f745ETFkfBdBxKsyPczpuPenPto
+	uCm2EnEiJBsnibGUCFJarlEnJ1QiXkTKgiWtU24LUsluefJRQXVgp+qQUlBXoqkiSjZZsnqL
+	ECfl9sqThP2CcFBQ/W8JUUBICnrp6O/RGHuCFk3qyIyMvLYmfPqMb9vr5IPad66W2d4b27QZ
+	A8c6dVWRXbiPHaOmYuduLgyKvjmnbV/a8zzb1GhPd/6E8dGf25I2vfjpqandOm+NO+Pum2sT
+	d3wtiWswOp5+3rQyIkDfY1pKdt9TV6buWaWhlGsdoYaEjTG2sKEQ3bCMUsfLF4aRKrX8D8Uv
+	ZDsvAwAA
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -132,251 +132,79 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-It'd be useful to show Dept internal stats and dependency graph on
-runtime via proc for better information. Introduced the knobs.
+Makes Dept able to track dependencies by
+wait_for_completion()/complete().
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- kernel/dependency/Makefile        |  1 +
- kernel/dependency/dept.c          | 24 +++-----
- kernel/dependency/dept_internal.h | 26 +++++++++
- kernel/dependency/dept_proc.c     | 95 +++++++++++++++++++++++++++++++
- 4 files changed, 131 insertions(+), 15 deletions(-)
- create mode 100644 kernel/dependency/dept_internal.h
- create mode 100644 kernel/dependency/dept_proc.c
+ include/linux/completion.h | 30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
-diff --git a/kernel/dependency/Makefile b/kernel/dependency/Makefile
-index b5cfb8a03c0c..92f165400187 100644
---- a/kernel/dependency/Makefile
-+++ b/kernel/dependency/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
- 
- obj-$(CONFIG_DEPT) += dept.o
-+obj-$(CONFIG_DEPT) += dept_proc.o
-diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
-index 7e12e46dc4b7..19406093103e 100644
---- a/kernel/dependency/dept.c
-+++ b/kernel/dependency/dept.c
-@@ -74,6 +74,7 @@
- #include <linux/dept.h>
- #include <linux/utsname.h>
- #include <linux/kernel.h>
-+#include "dept_internal.h"
- 
- static int dept_stop;
- static int dept_per_cpu_ready;
-@@ -260,20 +261,13 @@ static bool valid_key(struct dept_key *k)
-  *       have been freed will be placed.
+diff --git a/include/linux/completion.h b/include/linux/completion.h
+index fb2915676574..bd2c207481d6 100644
+--- a/include/linux/completion.h
++++ b/include/linux/completion.h
+@@ -10,6 +10,7 @@
   */
  
--enum object_t {
--#define OBJECT(id, nr) OBJECT_##id,
--	#include "dept_object.h"
--#undef  OBJECT
--	OBJECT_NR,
--};
--
- #define OBJECT(id, nr)							\
- static struct dept_##id spool_##id[nr];					\
- static DEFINE_PER_CPU(struct llist_head, lpool_##id);
- 	#include "dept_object.h"
- #undef  OBJECT
+ #include <linux/swait.h>
++#include <linux/dept_sdt.h>
  
--static struct dept_pool pool[OBJECT_NR] = {
-+struct dept_pool dept_pool[OBJECT_NR] = {
- #define OBJECT(id, nr) {						\
- 	.name = #id,							\
- 	.obj_sz = sizeof(struct dept_##id),				\
-@@ -303,7 +297,7 @@ static void *from_pool(enum object_t t)
- 	if (DEPT_WARN_ON(!irqs_disabled()))
- 		return NULL;
+ /*
+  * struct completion - structure used to maintain state for a "completion"
+@@ -26,14 +27,33 @@
+ struct completion {
+ 	unsigned int done;
+ 	struct swait_queue_head wait;
++	struct dept_map dmap;
+ };
  
--	p = &pool[t];
-+	p = &dept_pool[t];
- 
- 	/*
- 	 * Try local pool first.
-@@ -338,7 +332,7 @@ static void *from_pool(enum object_t t)
- 
- static void to_pool(void *o, enum object_t t)
- {
--	struct dept_pool *p = &pool[t];
-+	struct dept_pool *p = &dept_pool[t];
- 	struct llist_head *h;
- 
- 	preempt_disable();
-@@ -2092,7 +2086,7 @@ void dept_map_copy(struct dept_map *to, struct dept_map *from)
- 	clean_classes_cache(&to->map_key);
- }
- 
--static LIST_HEAD(classes);
-+LIST_HEAD(dept_classes);
- 
- static bool within(const void *addr, void *start, unsigned long size)
- {
-@@ -2124,7 +2118,7 @@ void dept_free_range(void *start, unsigned int sz)
- 	while (unlikely(!dept_lock()))
- 		cpu_relax();
- 
--	list_for_each_entry_safe(c, n, &classes, all_node) {
-+	list_for_each_entry_safe(c, n, &dept_classes, all_node) {
- 		if (!within((void *)c->key, start, sz) &&
- 		    !within(c->name, start, sz))
- 			continue;
-@@ -2200,7 +2194,7 @@ static struct dept_class *check_new_class(struct dept_key *local,
- 	c->sub_id = sub_id;
- 	c->key = (unsigned long)(k->base + sub_id);
- 	hash_add_class(c);
--	list_add(&c->all_node, &classes);
-+	list_add(&c->all_node, &dept_classes);
- unlock:
- 	dept_unlock();
- caching:
-@@ -2915,8 +2909,8 @@ static void migrate_per_cpu_pool(void)
- 		struct llist_head *from;
- 		struct llist_head *to;
- 
--		from = &pool[i].boot_pool;
--		to = per_cpu_ptr(pool[i].lpool, boot_cpu);
-+		from = &dept_pool[i].boot_pool;
-+		to = per_cpu_ptr(dept_pool[i].lpool, boot_cpu);
- 		move_llist(to, from);
- 	}
- }
-diff --git a/kernel/dependency/dept_internal.h b/kernel/dependency/dept_internal.h
-new file mode 100644
-index 000000000000..007c1eec6bab
---- /dev/null
-+++ b/kernel/dependency/dept_internal.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++#define init_completion(x)				\
++do {							\
++	sdt_map_init(&(x)->dmap);			\
++	__init_completion(x);				\
++} while (0)
++
 +/*
-+ * Dept(DEPendency Tracker) - runtime dependency tracker internal header
-+ *
-+ * Started by Byungchul Park <max.byungchul.park@gmail.com>:
-+ *
-+ *  Copyright (c) 2020 LG Electronics, Inc., Byungchul Park
++ * XXX: No use cases for now. Fill the body when needed.
 + */
+ #define init_completion_map(x, m) init_completion(x)
+-static inline void complete_acquire(struct completion *x) {}
+-static inline void complete_release(struct completion *x) {}
 +
-+#ifndef __DEPT_INTERNAL_H
-+#define __DEPT_INTERNAL_H
-+
-+#ifdef CONFIG_DEPT
-+
-+enum object_t {
-+#define OBJECT(id, nr) OBJECT_##id,
-+	#include "dept_object.h"
-+#undef  OBJECT
-+	OBJECT_NR,
-+};
-+
-+extern struct list_head dept_classes;
-+extern struct dept_pool dept_pool[];
-+
-+#endif
-+#endif /* __DEPT_INTERNAL_H */
-diff --git a/kernel/dependency/dept_proc.c b/kernel/dependency/dept_proc.c
-new file mode 100644
-index 000000000000..7d61dfbc5865
---- /dev/null
-+++ b/kernel/dependency/dept_proc.c
-@@ -0,0 +1,95 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Procfs knobs for Dept(DEPendency Tracker)
-+ *
-+ * Started by Byungchul Park <max.byungchul.park@gmail.com>:
-+ *
-+ *  Copyright (C) 2021 LG Electronics, Inc. , Byungchul Park
-+ */
-+#include <linux/proc_fs.h>
-+#include <linux/seq_file.h>
-+#include <linux/dept.h>
-+#include "dept_internal.h"
-+
-+static void *l_next(struct seq_file *m, void *v, loff_t *pos)
++static inline void complete_acquire(struct completion *x)
 +{
-+	/*
-+	 * XXX: Serialize list traversal if needed. The following might
-+	 * give a wrong information on contention.
-+	 */
-+	return seq_list_next(v, &dept_classes, pos);
++	sdt_might_sleep_start(&x->dmap);
 +}
 +
-+static void *l_start(struct seq_file *m, loff_t *pos)
++static inline void complete_release(struct completion *x)
 +{
-+	/*
-+	 * XXX: Serialize list traversal if needed. The following might
-+	 * give a wrong information on contention.
-+	 */
-+	return seq_list_start_head(&dept_classes, *pos);
++	sdt_might_sleep_end();
 +}
-+
-+static void l_stop(struct seq_file *m, void *v)
-+{
-+}
-+
-+static int l_show(struct seq_file *m, void *v)
-+{
-+	struct dept_class *fc = list_entry(v, struct dept_class, all_node);
-+	struct dept_dep *d;
-+	const char *prefix;
-+
-+	if (v == &dept_classes) {
-+		seq_puts(m, "All classes:\n\n");
-+		return 0;
-+	}
-+
-+	prefix = fc->sched_map ? "<sched> " : "";
-+	seq_printf(m, "[%p] %s%s\n", (void *)fc->key, prefix, fc->name);
-+
-+	/*
-+	 * XXX: Serialize list traversal if needed. The following might
-+	 * give a wrong information on contention.
-+	 */
-+	list_for_each_entry(d, &fc->dep_head, dep_node) {
-+		struct dept_class *tc = d->wait->class;
-+
-+		prefix = tc->sched_map ? "<sched> " : "";
-+		seq_printf(m, " -> [%p] %s%s\n", (void *)tc->key, prefix, tc->name);
-+	}
-+	seq_puts(m, "\n");
-+
-+	return 0;
-+}
-+
-+static const struct seq_operations dept_deps_ops = {
-+	.start	= l_start,
-+	.next	= l_next,
-+	.stop	= l_stop,
-+	.show	= l_show,
-+};
-+
-+static int dept_stats_show(struct seq_file *m, void *v)
-+{
-+	int r;
-+
-+	seq_puts(m, "Availability in the static pools:\n\n");
-+#define OBJECT(id, nr)							\
-+	r = atomic_read(&dept_pool[OBJECT_##id].obj_nr);		\
-+	if (r < 0)							\
-+		r = 0;							\
-+	seq_printf(m, "%s\t%d/%d(%d%%)\n", #id, r, nr, (r * 100) / (nr));
-+	#include "dept_object.h"
-+#undef  OBJECT
-+
-+	return 0;
-+}
-+
-+static int __init dept_proc_init(void)
-+{
-+	proc_create_seq("dept_deps", S_IRUSR, NULL, &dept_deps_ops);
-+	proc_create_single("dept_stats", S_IRUSR, NULL, dept_stats_show);
-+	return 0;
-+}
-+
-+__initcall(dept_proc_init);
+ 
+ #define COMPLETION_INITIALIZER(work) \
+-	{ 0, __SWAIT_QUEUE_HEAD_INITIALIZER((work).wait) }
++	{ 0, __SWAIT_QUEUE_HEAD_INITIALIZER((work).wait), \
++	  .dmap = DEPT_MAP_INITIALIZER(work, NULL), }
+ 
+ #define COMPLETION_INITIALIZER_ONSTACK_MAP(work, map) \
+ 	(*({ init_completion_map(&(work), &(map)); &(work); }))
+@@ -75,13 +95,13 @@ static inline void complete_release(struct completion *x) {}
+ #endif
+ 
+ /**
+- * init_completion - Initialize a dynamically allocated completion
++ * __init_completion - Initialize a dynamically allocated completion
+  * @x:  pointer to completion structure that is to be initialized
+  *
+  * This inline function will initialize a dynamically created completion
+  * structure.
+  */
+-static inline void init_completion(struct completion *x)
++static inline void __init_completion(struct completion *x)
+ {
+ 	x->done = 0;
+ 	init_swait_queue_head(&x->wait);
 -- 
 2.17.1
 
