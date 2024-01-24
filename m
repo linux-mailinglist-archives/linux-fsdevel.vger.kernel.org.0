@@ -1,106 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-8786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F91E83AFE4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 18:30:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4398F83B07D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 18:53:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 122C81F22D00
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 17:30:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 770531C2081B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 17:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A19811E2;
-	Wed, 24 Jan 2024 17:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SvGXjCdW"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0DE12BEBF;
+	Wed, 24 Jan 2024 17:51:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gentwo.org (gentwo.org [62.72.0.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EA827F7C4
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 17:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09711272CF;
+	Wed, 24 Jan 2024 17:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706117275; cv=none; b=fdcadHfxeocKx4oiBn4vKNH32zoxP61SW0IUsBM1k6ECA7j5Dt01v9vHaH65sayJQXG4H1t2o4Yb8KQQ1VvcP5vXE+YhWxKS23RGFZ26EGNb3W28nMdMxkps+hcMs4BUIElLoP58OHRbNdU51WghZHYX1ca6/pcbLbkllKEYLMI=
+	t=1706118666; cv=none; b=KhGMe1X3nROfgzqpxv6U7g0B3/xQCusvF8kN2yDTgyYt7B26GGXErNWCXyN5UJ3X589FbhsxTf4ZBefyPH3SpUmaleRWni2v3d64SmpruJtsVk6Hn+qHo17/ToHxAgbeYo4TaPnIGYJhwFoi7angcQU4J3zRysXnTRWymL2n2Cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706117275; c=relaxed/simple;
-	bh=z6BjyMQCnB/4rQCdDjotQhHRjXz7UoU01MQEf+XrLlI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gaBjE3Vt8QH++ftEbcKePo7Ip6T7tOrL2PCCcbWJPHOb+N8Pu/85TjDg+TLo5bYA4d6bsbjNs9VZ2vktsBaD8TADNUpPGk0+C7Aoy0O3zKwfTa4rO/tr2cwN2OT1fOQRbvIAS0/x5FvSdtQPqnaQAfITxyxuZby5lcebNGFpxrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=SvGXjCdW; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a26fa294e56so582844866b.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 09:27:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1706117271; x=1706722071; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zTlbGsImqxn7RX+/XBkYgj6lDq/Avh2rTF8zOkCv5JM=;
-        b=SvGXjCdWQ583KEVmiYYexUS3zEIYuWQ4wPEPRQhydsb2+08ONPZqteuABDBSVeB9aU
-         dIQbevDGSW2O6AHiAezGooZEAgVzm8YuDTC7blChWGde0dRCM2EIc39b67mLjwXF+jMP
-         IqFpwja29nj6xc50P9fJ5UiosHhGFgiUFQUgU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706117271; x=1706722071;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zTlbGsImqxn7RX+/XBkYgj6lDq/Avh2rTF8zOkCv5JM=;
-        b=KKpdikGdfwANbGPXq+rsSf2hFlikhpWpSXuCE+aXEZl+0VraHi68+MvuzqWXmCr/xz
-         KYWehLQxTP6Qyaed7vrgWG4uZt2cnjoJHmE+N5iMduziDRr6mS1U9jvql5VfgBVYd3uq
-         CdKyCiU+Pa2N+pQHUba4uMo8+L0khY8EgzSeVue36hacHkKNMG56bWfrU4kVyPQYqMnX
-         f7IfS18ZDmeSxnk8kU4dF+oEdlwALiILDzH6JuX9HuIl04gFEEv6Ufu1GZT1qdNB2ELx
-         G36Ua3WQAb1Li7K8jBkOkI1wTV1skZFWxJ9J9tSWkbU0LZwgkL3hO/d7TfDavgBvrfYA
-         ifJg==
-X-Gm-Message-State: AOJu0YzefxkAWTViXlTydkIFSLyO/7csKa5j6hyLCzoEK6AQDVTsJIel
-	zcnbyUiIm0bfa6YIKa4IXrXtzKP4Ravwvt9zZfbCdiHu7kemxoZZIhcWAuQabgSScjV3K7EcSVH
-	NABcdGA==
-X-Google-Smtp-Source: AGHT+IFEgnnDj1G8uEskDA0uPaV/B6kTzSrQbMF9o0Jg2WRLO8aME49HtONo9/cejY13oHtcmbkoDA==
-X-Received: by 2002:a17:907:a707:b0:a2c:5ed5:7bfb with SMTP id vw7-20020a170907a70700b00a2c5ed57bfbmr1239648ejc.91.1706117271254;
-        Wed, 24 Jan 2024 09:27:51 -0800 (PST)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id ff23-20020a1709069c1700b00a2ed5d9ea19sm90426ejc.190.2024.01.24.09.27.50
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jan 2024 09:27:50 -0800 (PST)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-55783b7b47aso6489281a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 09:27:50 -0800 (PST)
-X-Received: by 2002:a05:6402:34d4:b0:55c:7444:153f with SMTP id
- w20-20020a05640234d400b0055c7444153fmr2637292edc.60.1706117270433; Wed, 24
- Jan 2024 09:27:50 -0800 (PST)
+	s=arc-20240116; t=1706118666; c=relaxed/simple;
+	bh=w7rEBfdQN1/zYVzqjkLSQ1tMJOL/dF1Tae38s5/U7yQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=OAIt0yqmbBSxk1DxizoBQ7gftR/KI/1EdvloI1ximUo1TAONBmP2D5x2gcspW0ompBG8ylweWACyHwASNOVKgi/GhxD8V+fe/hUJVeyNn9xu92JKKGXBZXU+IvQj1ekKj/iqRCEUMN3cTB7ePwcjFnZbc59GQQ2/R7aE0iAu0f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=fail smtp.mailfrom=linux.com; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=linux.com
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 854D340A94; Wed, 24 Jan 2024 09:51:02 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 838C840787;
+	Wed, 24 Jan 2024 09:51:02 -0800 (PST)
+Date: Wed, 24 Jan 2024 09:51:02 -0800 (PST)
+From: "Christoph Lameter (Ampere)" <cl@linux.com>
+To: Matthew Wilcox <willy@infradead.org>
+cc: David Rientjes <rientjes@google.com>, Pasha Tatashin <tatashin@google.com>, 
+    Sourav Panda <souravpanda@google.com>, lsf-pc@lists.linux-foundation.org, 
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+    linux-block@vger.kernel.org, linux-ide@vger.kernel.org, 
+    linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org, 
+    bpf@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] State Of The Page
+In-Reply-To: <Za2lS-jG1s-HCqbx@casper.infradead.org>
+Message-ID: <aa94b8fe-fc08-2838-50b5-d1c98058b1e0@linux.com>
+References: <ZaqiPSj1wMrTMdHa@casper.infradead.org> <b04b65df-b25f-4457-8952-018dd4479651@google.com> <Za2lS-jG1s-HCqbx@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZbE4qn9_h14OqADK@kevinlocke.name> <202401240832.02940B1A@keescook>
- <CAHk-=wgJmDuYOQ+m_urRzrTTrQoobCJXnSYMovpwKckGgTyMxA@mail.gmail.com>
- <CAHk-=wijSFE6+vjv7vCrhFJw=y36RY6zApCA07uD1jMpmmFBfA@mail.gmail.com>
- <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com> <202401240916.044E6A6A7A@keescook>
-In-Reply-To: <202401240916.044E6A6A7A@keescook>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 24 Jan 2024 09:27:34 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whq+Kn-_LTvu8naGqtN5iK0c48L1mroyoGYuq_DgFEC7g@mail.gmail.com>
-Message-ID: <CAHk-=whq+Kn-_LTvu8naGqtN5iK0c48L1mroyoGYuq_DgFEC7g@mail.gmail.com>
-Subject: Re: [6.8-rc1 Regression] Unable to exec apparmor_parser from virt-aa-helper
-To: Kees Cook <keescook@chromium.org>
-Cc: Kevin Locke <kevin@kevinlocke.name>, John Johansen <john.johansen@canonical.com>, 
-	Josh Triplett <josh@joshtriplett.org>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-On Wed, 24 Jan 2024 at 09:21, Kees Cook <keescook@chromium.org> wrote:
+On Sun, 21 Jan 2024, Matthew Wilcox wrote:
+
 >
-> I opted to tie "current->in_execve" lifetime to bprm lifetime just to
-> have a clean boundary (i.e. strictly in alloc/free_bprm()).
+> I'd like to keep this topic relevant to as many people as possible.
+> I can add a proposal for a topic on both the PCP and Buddy allocators
+> (I have a series of Thoughts on how the PCP allocator works in a memdesc
+> world that I haven't written down & sent out yet).
 
-Honestly, the less uinnecessary churn that horrible flag causes, the better.
+Well the PCP cache's  (I would not call it an allocator) intent is to 
+provide cache hot / tlb hot pages. In some ways this is like the SLAB/SLUB 
+situation. I.e. lists of objects vs. service objects that are 
+locally related.
 
-IOW, I think the goal here should be "minimal fix" followed by "remove
-that horrendous thing".
+Can we come up with a design that uses a huge page (or some 
+arbitrary page size) and the breaks out portions of the large page? That 
+way potentially TLB use can be reduced (multiple sections of a large page 
+use the same TLB) and defragmentation occurs because allocs and frees 
+focus on a selection of large memory sections.
 
-              Linus
+This is rougly equivalent to a per cpu page (folio?) in SLUB where cache 
+hot objects can be served from a single memory section and also freed back 
+without too much interaction with higher level more expensive components 
+of the allocator.
 
