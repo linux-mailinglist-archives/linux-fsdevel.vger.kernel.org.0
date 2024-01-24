@@ -1,61 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-8817-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC9283B3C8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 22:20:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EF4483B3EA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 22:28:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 719181C2389B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 21:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37E3E282486
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 21:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9A51353E3;
-	Wed, 24 Jan 2024 21:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E33F81353F5;
+	Wed, 24 Jan 2024 21:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p6EBUHlj"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dIaQRd+e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCAA1350FA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 21:20:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B6D1353E8;
+	Wed, 24 Jan 2024 21:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706131244; cv=none; b=M7T1pHzhAoVy7ypLCRWuwLHfGmPVXacsVXo368c8YYB9Hv1dy9fAlQu/4Ts8/0+dkJ3GzdTC9IpPMjS42QwDN36NuGjXWyrE4psCyU3+gIme5ALpqi82V5XLEUmMvlTUMQnaItUFIhSO+ntJtf3IQnC8BqQdy9v0DgODVQpx114=
+	t=1706131692; cv=none; b=qLfkKgWNPaO3n+wuxsFkfhdALqG74Yit1tHLecdvSnaArOAjIHeZZsmSjLVXWD1mPB/WHd4a7YCp84+N6roUCsSxeDBx0LNImQfp19cOQ/tzCrp+7qLOEa7IyU8OwGBSXo5fKPoG+mEZfVZx+Hp8W9YCsTPai14HZQbNTEQAuU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706131244; c=relaxed/simple;
-	bh=bQffYBrC51rkcv1085upNJjrNHF7me/8H3wDfFrLFys=;
+	s=arc-20240116; t=1706131692; c=relaxed/simple;
+	bh=UX1UXmZWt37nkOf4mR3wodCc43qU62lzxUpnPIZNuz0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a3x09HTAQqDoqR8kyB2ZvOJkEkzVvE/Pw5xAUylw3MY9Eo2w1Pycs6wmdIrzFu/skrvbNVaCxfalYDi0pK6sxTrseWZkXvYZun4QpiFwHSjVQd52sOVPhMX6ImYNYL2QHrH9p8NfLGgn3TvTNl31cQtxo+heAk3t7+9fct1o9hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p6EBUHlj; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 24 Jan 2024 16:20:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1706131241;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BiGrjr/hG3xB2xz0QT2ZW2M4beJpPuD9moDfSoptlG4=;
-	b=p6EBUHljBBBhgRJPFaTNlTW+n49jfGUviNsmQCdvgqPbNIiWdhbdMgWO8qo1m/Cx8UXEy3
-	/KSTnz/sbBY1W+DTrBL/E8/Zw8HimVfw3jhT9J06w7mGFJ4JibK795gOex+3pHJUVULm6b
-	Rls1DvoD6kQ5mGuGFtILzZpAWLbLpM8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: David Howells <dhowells@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, Gary Guo <gary@garyguo.net>, 
-	Dave Chinner <dchinner@redhat.com>, Ariel Miculas <amiculas@cisco.com>, 
-	Paul McKenney <paulmck@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Rust
-Message-ID: <m3so6o7wa2slahaey3mzt6jvs2us34j2dup7rc2pb4vj4owe5e@amtjjkv4okqk>
-References: <ZbAO8REoMbxWjozR@casper.infradead.org>
- <wjtuw2m3ojn7m6gx2ozyqtvlsetzwxv5hdhg2hocal3gyou3ue@34e37oox4d5m>
- <201190.1706050689@warthog.procyon.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MSfxhupbTBtIf1XigRMH/JcWlQ+iLDR7l0i1rPMVRBT02vM85wgMPU7rIS8e7faCd1mzECM8KUYBWqUymKMkvKGlbcO3qrP9e194ty62vjwxBH9bIPw2wyHcT7JEQ+5oYXB6Z7wixQdIM6XW9Q4s8/X3/5MffIqoWUGv26t+tUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dIaQRd+e; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=1SpAV+QcIr7SS1AHHKV0ativcTA0Jo6hkPow9b937bc=; b=dIaQRd+efHofPQiPt7r6wctxee
+	H/UWZ+5LkGM3iLpgmEigP03OfZFg+NEJpAcZAF+jcv1b2JQJ0+BnjrbZDmc5IUPGd0eWvjqYh3GKQ
+	QKSDGvvbJYV806PzenzEhGDonVYV11xUy9MTCDppt0eCn48FHkphf57tKGLMERfNQOYozzDi0+lYE
+	2046xQ8/pQ1ZB9B/l1xH7bHgQe2OTc/2AXEQOMqxlk+kSCOtlTeUdq17tYgr2vY1/8K8ZA6rI5hEb
+	vwHB7ofJJ9ZPau3pwvTzMY1//BBHWPFkQRU4rH3hY9huwbKKWbiWZXTNPmRrU77nwVU0rBshw/8cK
+	zPKwxH6g==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rSkmz-00000007qQ0-3vSG;
+	Wed, 24 Jan 2024 21:28:05 +0000
+Date: Wed, 24 Jan 2024 21:28:05 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Wedson Almeida Filho <walmeida@microsoft.com>
+Subject: Re: [RFC PATCH 19/19] tarfs: introduce tar fs
+Message-ID: <ZbGA5RPWGNsqRTuj@casper.infradead.org>
+References: <20231018122518.128049-1-wedsonaf@gmail.com>
+ <20231018122518.128049-20-wedsonaf@gmail.com>
+ <ZbCap4F41vKC1PcE@casper.infradead.org>
+ <ZbCetzTxkq8o7O52@casper.infradead.org>
+ <CANeycqpk14H34NYiF5z-+Oi7G9JV00vVeqvyGYjaZunXAbqEWg@mail.gmail.com>
+ <ZbF7lfiH4QAg3X8T@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,42 +70,43 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201190.1706050689@warthog.procyon.org.uk>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <ZbF7lfiH4QAg3X8T@dread.disaster.area>
 
-On Tue, Jan 23, 2024 at 10:58:09PM +0000, David Howells wrote:
-> Matthew Wilcox <willy@infradead.org> wrote:
+On Thu, Jan 25, 2024 at 08:05:25AM +1100, Dave Chinner wrote:
+> On Wed, Jan 24, 2024 at 03:26:03PM -0300, Wedson Almeida Filho wrote:
+> > So what is the recommended way? Which file systems are using it (so I
+> > can do something similar)?
 > 
-> > I really want this to happen.  It's taken 50 years, but we finally have
-> > a programming language that can replace C for writing kernels.
+> e.g. btrfs_read_dev_one_super(). Essentially, if your superblock is
+> at block zero in the block device:
 > 
-> I really don't want this to happen.  Whilst I have sympathy with the idea that
-> C can be replaced with something better - Rust isn't it.  The syntax is awful.
-> It's like they looked at perl and thought they could beat it at inventing
-> weird and obfuscated bits of operator syntax.  Can't they replace the syntax
-> with something a lot more C-like[*]?
+> 	struct address_space *mapping = bdev->bd_inode->i_mapping;
+> 
+> 	......
+> 
+> 	page = read_cache_page_gfp(mapping, 0, GFP_NOFS);
+>         if (IS_ERR(page))
+>                 return ERR_CAST(page);
+> 
+>         super = page_address(page);
+> 
+> And now you have a pointer to your in memory buffer containing the
+> on-disk superblock. If the sueprblock is not at block zero, then
+> replace the '0' passed to read_cache_page_gfp() with whatever page
+> cache index the superblock can be found at....
 
-I've heard you say this before, and I'm still curious what it is you
-dislike about Rust syntax... because to my eyes, Rust syntax /is/
-already quite C-like and the differences are all obvious fixes and
-cleanups for things that have annoyed me for years.
+Just to modify this slightly ...
 
-Fixing the statement/expression distinction is really nice, so we no
-longer have to use the ridiculous ({}) construct, and that also means
-the ternary operator is no longer needed because if and match are now
-normal expressions that can have values.
+	folio = read_mapping_folio(mapping, pos / PAGE_SIZE);
+	if (IS_ERR(folio))
+		return ERR_CAST(folio);
+	super = folio_address(folio) + offset_in_folio(folio, pos);
 
-Changing how functions and variables are defined is also a nice fix -
-the type of the variable or return value no longer being the first token
-means Rust can be parsed in one pass; that's always been a painful part
-of the C grammar.
+... and then in your shutdown path, you'll need to call folio_put().
+Maybe that's easiest done in Rust by "leaking" the folio into the
+in-memory super block so it doesn't get dropped at the end of the
+function?
 
-Gegarding macros, C macros are pretty terrible in that they can
-completely violate the syntax and know nothing about the syntax tree;
-Rust macros operate on token trees and are much more regular (they're
-also hygenic!).
-
-Syntax wise, the only annoying thing for me has been getting used to
-borrow checker syntax, but I'm more than willing to put up with that for
-what it gets us...
+I don't think you need the GFP_NOFS.  We don't have a superblock yet, so
+we can't call back into the filesystem.
 
