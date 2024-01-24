@@ -1,156 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-8804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E2683B24B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 20:29:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C5FB83B23F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 20:25:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E7AF2891A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:29:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B3FAB2462F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EDF132C25;
-	Wed, 24 Jan 2024 19:29:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90740132C19;
+	Wed, 24 Jan 2024 19:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=linderud.pw header.i=@linderud.pw header.b="PCUxxJ9M"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jPzTIbJ2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from linderud.pw (linderud.dev [163.172.10.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD30E130E5D;
-	Wed, 24 Jan 2024 19:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.10.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930C312FF86
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 19:23:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706124562; cv=none; b=a0/9OoWUDo9fzCMGRtvWHRkSweh38qr1pLVa9vkVQmA0cnsKxxuKRWSAaP1TxaX69T9mculP49sz/OOmyRsj6RpYtKVYTUI7mM5ylGtva8NbhtVTggmPqd5ghPAZgcwxFgtk1YrQ1LMTU+zwjctJ2Eo7VBNLKGv/ta5wRqmsejs=
+	t=1706124221; cv=none; b=AxjOTO+pOcAgM+GfdhGmUfkhoHjEE0KHXgDvc81vQ1XRrlhFrxo3CHADD92jDpAqI3IRFd3/owhv5YePhddZRrfGWy7X9YOj1qCuOa8uO9hCM5hsYRLudSEcV26T9cTGLHXUUBoE1DQyawiYHwshPc4wLt1iYRj/4fpstyuz0bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706124562; c=relaxed/simple;
-	bh=PLdpff5lHb3OurKoocknItk5GWLlhjyoy1iI7SoSF5g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IVqXPSonJB9zj7oXVew4NYuPKlphKIuHQi6hl783wICT867qZHvstCmkmQIthsRREvr8RycwxhvgHiO3q8C+CvoxPmUKp4rFtJXIa3uctP0ebuRWY4jERCtj62YDyFyC0lOVdZbXcRck/1MA2OaLSaJPCIzj4iq02gh8025PF8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linderud.pw; spf=pass smtp.mailfrom=linderud.pw; dkim=pass (4096-bit key) header.d=linderud.pw header.i=@linderud.pw header.b=PCUxxJ9M; arc=none smtp.client-ip=163.172.10.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linderud.pw
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linderud.pw
-Received: from linderud.pw (localhost [127.0.0.1])
-	by linderud.pw (Postfix) with ESMTP id 0BFB1C0179;
-	Wed, 24 Jan 2024 20:23:19 +0100 (CET)
-X-Spam-Level: 
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linderud.pw;
-	s=linderud; t=1706124198;
-	bh=PLdpff5lHb3OurKoocknItk5GWLlhjyoy1iI7SoSF5g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=PCUxxJ9M3sYJHZH8cdNLoOPOGf+edlwYJJkh8/PvQHKI8BH7/b6U4aP+YICNBvA2c
-	 KgnF4jCJkUWLKSplseTyxSmYntnW5nOJEuZ/AgB5zVXddHoRh8K4lKrN2h4nrVwe8h
-	 3OG+L1ePieo5blPRIDOXUnzCnh0VutOvZplxxVODnv36LzZlFPapelUwFd1U/0zgVp
-	 egBGZZQQszz+VDqtFKPl0RgUsAIYMAKS9sK6N/KnH0IPgAONFGoUCEDshda2MRZbsY
-	 kX/hkAJuEMHb3GZ7FvokNuKSKEZG64LC2hyy+/xFhWDM9P2op8PzCu+sGAFgQUvH0N
-	 dBcYV0cvoKL+wKIUwevaEAaJBQzYa8V1xE3PU64iqDJIBa/a5XwF/fCCfaTTeBe2oi
-	 4ZtrbICd+O6CRCn0z2WxVwqXO7ykTklGBe6DDwHixQpYKJIXyJswL4J1owR+itzHht
-	 XIRhy2uDGVwHue+Z80lIoQkRToDy9mVP4LRAiJzzSn3ooUiEYQ+WEpkDd02aTZ88ZW
-	 YCbw8deg6GUDaMYG1XMy+sO+wMpUj5UowWLelGxSaQuQCX4ak1fRppUztcYSvdYgoH
-	 LBN9alS6bQ/q8tpP7ZssP2AqwQqT4J6tlzAjPmQ5IHEO1gFJcXvucA2MXgv1Mkznhr
-	 RJovy9QMJJ6W7JId12lIAR9A=
-Received: from localhost (unknown [178.232.143.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: morten)
-	by linderud.pw (Postfix) with ESMTPSA id C37A0C0141;
-	Wed, 24 Jan 2024 20:23:18 +0100 (CET)
-Date: Wed, 24 Jan 2024 20:23:17 +0100
-From: Morten Linderud <morten@linderud.pw>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Matthew Wilcox <willy@infradead.org>, lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, 
-	Alice Ryhl <aliceryhl@google.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Gary Guo <gary@garyguo.net>, Dave Chinner <dchinner@redhat.com>, 
-	David Howells <dhowells@redhat.com>, Ariel Miculas <amiculas@cisco.com>, 
-	Paul McKenney <paulmck@kernel.org>
-Subject: Re: Re: [LSF/MM TOPIC] Rust
-Message-ID: <pwlz3kkc675kekykoeh3bljoc6sxjlrwrwegfuprv45xsjhcfw@hm2rgmgzczur>
-References: <wjtuw2m3ojn7m6gx2ozyqtvlsetzwxv5hdhg2hocal3gyou3ue@34e37oox4d5m>
- <ZbAO8REoMbxWjozR@casper.infradead.org>
- <cf6a065636b5006235dbfcaf83ff9dbcc51b2d11.camel@HansenPartnership.com>
- <ZbEwKjWxdD4HhcA_@casper.infradead.org>
- <2e62289ad0fffd2fb8bc7fa179b9a43ab7fe2222.camel@HansenPartnership.com>
- <bmgzm3wjtcyzsuawscxrdyhq56ckc7vqnfbcjbm42gj6eb4qph@wgkhxkk43wxm>
+	s=arc-20240116; t=1706124221; c=relaxed/simple;
+	bh=VR9kpbQ0DKQJADcCvje12k4QMRw3v2j7EWNUrR5Qufc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FpZ2oS/B/17r/rFDdQbPOHv2WQIyIPQP7e+7MwuGvsN6rUq8xEnScUpu2YiyJAQ42nZnHnIdkLw2Y0eRil0tpLAVrbvgmxeulvU6+1jAVrXQaed+ohigpPFYUUjS60eq510roaokJTKAdybf+aR4QSq8pPW60i/A+oxmxgvgMu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jPzTIbJ2; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-5cdbc4334edso2971927a12.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 11:23:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1706124219; x=1706729019; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4OCyr5pSg26Go2Q3o/nYX227mKURIEY3hyUdQOlpImo=;
+        b=jPzTIbJ2Qhu9UYjSVG9yWbLHSmn2aa8JecRC349pRlmv6UmpBuxC1A339CYcBniC+1
+         Wy5UmR5FbduNuQ/yroo4TLfOSb3FzZ98QYQ2HGE+smVcmBoW8ubqP3rUQg57HfgT2kAM
+         QxeZ9bRKBi+uedfMapefXXT5qx6IOdaa7J+1w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706124219; x=1706729019;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4OCyr5pSg26Go2Q3o/nYX227mKURIEY3hyUdQOlpImo=;
+        b=dxXFn/K+/uVnjRzwqGR0hTpBNE43UwNPXbUSR51onich2gLDSLsmqMDbo6Zy6vM73R
+         nVqla3OtasQDOTFBYrsBWLX32rh+S/z2kvYcc6l+9i8bNulibXzgOwShnNagg4xE7z79
+         Mvu9SEgKPwHcxZkh0OOXdwKwGnyvlgWTp//1Uhk56EDrvwdbCFguHf14itqVxOyHfuyi
+         JAa1/4ywKhOIxVFg+J15pxWwASyF2Nxe+rvXlmPhy1AoLlMi0xsMw7/vuK202MBYBSZG
+         lGFSrZ7MzCTa5TAqJ3jL+or/zAvN5VgNZjjxUZzG0fqy/q4QtArw2pvg93FE0KDFJfuM
+         l6yg==
+X-Gm-Message-State: AOJu0YxgFbghyGgpnrBOA+jP5k1yhA3Fo4v3mRicQefZkUw3ZKkwMGow
+	aeL3W+ybx+R0gCSzRnKAZtn7SMvUSICvix8pbH2vddr0FvZUS0oezDJ4pivwsg==
+X-Google-Smtp-Source: AGHT+IHJyVGEDKONb5N+QJmOiSDJSmei1sELC71O2denBprxp6vv4OD8lz0PhgNPTwOyl9RHYLBoYg==
+X-Received: by 2002:a05:6a20:c907:b0:199:e6d0:646f with SMTP id gx7-20020a056a20c90700b00199e6d0646fmr1372021pzb.62.1706124218867;
+        Wed, 24 Jan 2024 11:23:38 -0800 (PST)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id i18-20020aa79092000000b006d9a7a48bbesm14077211pfa.116.2024.01.24.11.23.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jan 2024 11:23:38 -0800 (PST)
+From: Kees Cook <keescook@chromium.org>
+To: Kentaro Takeda <takedakn@nttdata.co.jp>
+Cc: Kees Cook <keescook@chromium.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Mike Christie <michael.christie@oracle.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Peng Zhang <zhangpeng.00@bytedance.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] exec: Distinguish in_execve from in_exec
+Date: Wed, 24 Jan 2024 11:23:36 -0800
+Message-Id: <20240124192336.work.346-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uew6wjptwuw6lx7e"
-Content-Disposition: inline
-In-Reply-To: <bmgzm3wjtcyzsuawscxrdyhq56ckc7vqnfbcjbm42gj6eb4qph@wgkhxkk43wxm>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2067; i=keescook@chromium.org;
+ h=from:subject:message-id; bh=VR9kpbQ0DKQJADcCvje12k4QMRw3v2j7EWNUrR5Qufc=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBlsWO4+WfxI39wun33oA9LOez8cVdNcQbQe0jig
+ /3TTk5FmSuJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZbFjuAAKCRCJcvTf3G3A
+ JgR4EACebytLFIu8RYZJITvGsNEcqZqvOSILHoYE48QXsSIUs9g9QRKFIkJ5vh/QPgwtsmhGiIJ
+ JnV/zDBcSQkSPdc7dZ+v+imUpKhe0fPzsBQdcUaP8UGjlJCBlA6DMd+YAeXkZF3+WG3CkKBzPMP
+ QJhvssc4dQ4XW5o0KGGNetMWLG/mJhLpka5HJ8pZkAAcSycsLT1wJFXYgWy51n/TMAwdOfHVMiK
+ Ivzzjiz0hWK81C8SqqaGbFhGU7+2KnIg7Zfs5bUbe/8zIjXkOQiO+VfjxLGyB9daFfbNrtXNPGK
+ okEYC4+omNvm5517jvtuSE5N6dvcOhtF34mgDV9UBdZnc6NFYWDuDUBNv89HWXAKpHkGIChV8jB
+ 28gO71T0qDIno9Bz00/utOA/8B84rw5srxL5+ABi/HjCxAxYIqisZym150VKYGSV5ro68qp5nLM
+ 28X4+mbOdOHyybgFGME8CPBGkYqAVP3t28aS94mz29mU0bAIBHlErmfjKnPc7qNvEzpazZA1Jt+
+ B/B80aaP+TPl7Z+Rpud+gXpkVQ17jFmTjyD04rF1xIOHm941DQJ+hzZRf9F8fQWDOhafdSkSm9p
+ xh3y/wcuEkSaGIh1mk6sYDNzpb7lnAXGJc2VDc2kPKUsrCwf5T6x+eEP/e6aHudoJHP7GNVAFCJ
+ b1tnmrQ J0V5evIQ==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
+Just to help distinguish the fs->in_exec flag from the current->in_execve
+flag, add comments in check_unsafe_exec() and copy_fs() for more
+context. Also note that in_execve is only used by TOMOYO now.
 
---uew6wjptwuw6lx7e
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ fs/exec.c             | 1 +
+ include/linux/sched.h | 2 +-
+ kernel/fork.c         | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
-On Wed, Jan 24, 2024 at 01:50:55PM -0500, Kent Overstreet wrote:
->
-> We can and should have our own review process when pulling in new
-> dependencies, but we shouldn't otherwise be making it difficult to use
-> crates.io dependencies just for the sake of it.
+diff --git a/fs/exec.c b/fs/exec.c
+index 39d773021fff..d179abb78a1c 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1633,6 +1633,7 @@ static void check_unsafe_exec(struct linux_binprm *bprm)
+ 	}
+ 	rcu_read_unlock();
+ 
++	/* "users" and "in_exec" locked for copy_fs() */
+ 	if (p->fs->users > n_fs)
+ 		bprm->unsafe |= LSM_UNSAFE_SHARE;
+ 	else
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index cdb8ea53c365..ffe8f618ab86 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -920,7 +920,7 @@ struct task_struct {
+ 	unsigned			sched_rt_mutex:1;
+ #endif
+ 
+-	/* Bit to tell LSMs we're in execve(): */
++	/* Bit to tell TOMOYO we're in execve(): */
+ 	unsigned			in_execve:1;
+ 	unsigned			in_iowait:1;
+ #ifndef TIF_RESTORE_SIGMASK
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 47ff3b35352e..0d944e92a43f 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1748,6 +1748,7 @@ static int copy_fs(unsigned long clone_flags, struct task_struct *tsk)
+ 	if (clone_flags & CLONE_FS) {
+ 		/* tsk->fs is already what we want */
+ 		spin_lock(&fs->lock);
++		/* "users" and "in_exec" locked for check_unsafe_exec() */
+ 		if (fs->in_exec) {
+ 			spin_unlock(&fs->lock);
+ 			return -EAGAIN;
+-- 
+2.34.1
 
-One aspect I find overlooked is that downstream distros largely devendor Ru=
-st
-dependencies from packages. Fedora and Debian comes to mind. Which means th=
-at
-when Rust in the kernel is something that is turned on by downstream they w=
-ould
-need to deal with these vendored dependencies.
-
-Is the intent here that `cargo` is pulling down dependencies from cargo.io =
-or is
-it vendored as part of the source-tree but managed by cargo?
-
-Alternatively, is the dependencies included in the tarball?
-
-The kernel being self-contained is also quite a nice property, and I'm not =
-sure
-if breaking this property because of cargo is a good enough reason? If you =
-don't
-vendor it as part of the source-tree then the kernel build will require an
-network connection to build.
-
-There is also the security handling aspect of depending on cargo.io as any
-security issues in these dependencies would need to trigger kernel releases=
- to
-ensure they are patched.
-
-I don't have any solutions, but I think there are a issues that needs to be
-dealt with when considering pulling down external dependencies.
-
---=20
-Morten Linderud
-PGP: 9C02FF419FECBE16
-
---uew6wjptwuw6lx7e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEwQA0ZnZjToDJQPuenAL/QZ/svhYFAmWxY6EACgkQnAL/QZ/s
-vhZjqg//XTabq0wo2kn8gv25d9o+8vsL0CZZ53rxxqx3t5xnMUlWcSXDPO2oZ2N+
-rcl1DQSFFgITEJF2kx7W2yH+yqk8+Qt0kyWwCEgwhX32kT7ELV8xm6NTATP4vt4w
-1tUJQLbPryFg7FS/aqFZlyoLSoQGzmpEKQ6LoCQWlXJSif3pxwqK59WIf5MUxj84
-QUol9Euhh8xOL4SbXz+2oTfH1g8gCkxA+s628bIYUFnxX4uRyf7eAPAiSuW3xpIZ
-VuICNhmE6JVLOk0oLwGbEae58axbP2BKQoEK5xIGiUdx+pzAU+HMkJXVJ7EcdMU+
-I3Ko6pqwnES1uZPewkwRMiuqoAO+OJwDQGrNDe3Mz619XBJKK+IE3iAr9b4FXe8O
-FPxJlGLKenn/VKc6YUOU9Gic4LirHhKtxHAqijwlngo15VPPQyk98kEWT8tsIJnt
-oLu9sov95NsbN04g22K6Mc+BGD+epL5sCQJlstIB3YhU1UH4JST+eT1igHvrhcHu
-80sB2tkPG273JxhCygjXwaWbs4znPP+g0yvST6RuWniNB4aMCFSld6lwbifuJBi7
-uwO/dLbMRH8v5xiixgsjxWb9JfWTw7GspQl293OJEcR3f5+AGOV7nStAWCoVXjse
-7xxHbsWzDCzm5rGVfZqS7fcYaxdMgrUnxQZp7Og6DYbskF32fIY=
-=j4Ec
------END PGP SIGNATURE-----
-
---uew6wjptwuw6lx7e--
 
