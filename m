@@ -1,147 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-8796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B7FE83B156
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:43:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C50F583B17C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:51:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA579B21D6A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 18:43:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 751C62875FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 18:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0129A13173B;
-	Wed, 24 Jan 2024 18:43:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EFE2131E4E;
+	Wed, 24 Jan 2024 18:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LvxCozCJ"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xRrF8vo5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949B477F36
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 18:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7E07E778;
+	Wed, 24 Jan 2024 18:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706121792; cv=none; b=jeuS27Q37AFyvIbbN/VybiGM15ki48QH+JTAKlQT/Sb3i/PITdEAU7I2WwIwzfHiJ/5A0kKC5ckfwAQIAl/CLhLa4kKLkYj6jreGNtZVkyisn6SU2XTkO/TOelYG60gqi6G2ssTRbihkQlccr2H69UVTOgm0GbVqpXWiwM8Ei2o=
+	t=1706122266; cv=none; b=by3vATXam1vMmnwEqc/i1ZawGbNL/BGvTo0qI5eqvV3czizpKmLLujjwqM2uH4y0WHpScyj+kMo+HIZgv/Xf9DCu3ASBLHmc/DDwKC8coX2NyjB5iJr9r6GmiG0Wb2UXN8DcZBox45eQE5irSHdKtUcPIaYYZkQAcxlDPQm08vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706121792; c=relaxed/simple;
-	bh=wqAoM+vnRLBDC1XOpRXjStl/mwRygxMK00IvXTenBD0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CPOJZk2HRxmd0i7qnfFvNiW8+o6N2lg8LkzFLP5zJpYqA43/LNwGSOb+gTBC3AJOyKZS18vKYaj3bKUWUVcq5jET5XzEf7TMZzvip75lU+mJuGbWSSaEqxK3WC0kJn3nnibc8Abd7kHxieyeP1LLXZKBkqS35vRiM2p48UizOf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LvxCozCJ; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-50ea9daac4cso6374357e87.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 10:43:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1706121788; x=1706726588; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eIHekvVYBLIGPdIn9vTMueIBPI0zST9Cmf/UAo0UXLM=;
-        b=LvxCozCJtMX1NqTRHcZxwCh+0Okc1JsL+NIPxBWDkRaeQ2EDdgU+X8O7B1DQplrP9K
-         eQlroXa6CKPURKS8Cr+G/lOKTlIGLUiKYYoLjre+CkMqwBEjgWe3G7FVQ6Ec5baFysHk
-         KTuNccgGtkY05grhYLKNJHzdz2NG3QoXhzTW8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706121788; x=1706726588;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eIHekvVYBLIGPdIn9vTMueIBPI0zST9Cmf/UAo0UXLM=;
-        b=aZM9nXiMiF/eoSq+mu9zxVxBO0rvAzgKw/pFcOK9A22D8kzCR0+smg7KwC7mlirhtQ
-         ezHkTRILz60TzM2wL/T4E0BOPpJQvEVAZFUqp3SWFibS4xaYxBkNQzNJt+7zxjn70f3I
-         yEsff90QbzkogFEzzRk9wNVmWhkWzKPPOvWDJKRCnbSiQRUnf9UnxtW8qewVRBsCRDAV
-         npCIr0Y9S7yU7tNhhCXUrtR9idiwfvXYhEFYP6qWQhwnzD8V9uvkEc0OvxWG0F8dHnxG
-         Yo48MyEwO38iMZscny9pMhLXCfiTCJoLKzF6ny/gQ4m0qrvLuyVIEgZERZncf7dqMYa6
-         hOAA==
-X-Gm-Message-State: AOJu0YynIWAqReTppaeMUToEGI/Ky7xSELsH62pw0JFJU3P+8Oeeqv4F
-	WSUBoMmb0TbeoaIERNfNlK/e6KgyBBW0daSYNHWgL2vpV2F9Og1MIyFdWf1pc7hIuY+si1KXD5o
-	hrOIAVg==
-X-Google-Smtp-Source: AGHT+IGLp3O8HTpje564pp72nSTq7rrMU2vw7spTwoqqGfRlKPpAsKNs7YYPShPtfAz+Ua6HTw3ZTA==
-X-Received: by 2002:a05:6512:3881:b0:50e:3907:46b7 with SMTP id n1-20020a056512388100b0050e390746b7mr3019395lft.107.1706121788276;
-        Wed, 24 Jan 2024 10:43:08 -0800 (PST)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id u10-20020ac248aa000000b0051005e75ec5sm552495lfg.158.2024.01.24.10.43.07
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 24 Jan 2024 10:43:07 -0800 (PST)
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2cf2adac1ccso8985841fa.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 10:43:07 -0800 (PST)
-X-Received: by 2002:a2e:b803:0:b0:2cd:39ec:c325 with SMTP id
- u3-20020a2eb803000000b002cd39ecc325mr1027012ljo.73.1706121787376; Wed, 24 Jan
- 2024 10:43:07 -0800 (PST)
+	s=arc-20240116; t=1706122266; c=relaxed/simple;
+	bh=XYCCL3twcWmLJdhjo4kYUTNmhDLnSFBOPOKk1NAsjK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Pf8Yp4yqSodyzXZIaDF2TYYJ+Xt8Hacjruz1z7AHDsREqzn+XwN0u8AuRj3VJ+fW00Iag/hVEJJHNuZV4ch9dYfEGuMh9IxK02kIbq5Axe4CZIwD33N4VyanIVJxz1It51t6uFfcBeQYMegtdU+ECsJFb6OX/iiSzbKM/JKcA/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xRrF8vo5; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 24 Jan 2024 13:50:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1706122260;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0pfnezVEREhW6dZgC9s3OfcWoKEKkqVNG1mZHT/2oQ4=;
+	b=xRrF8vo527eQ2Ez/yECby+L1we/jX9raOR52CVQ2Q3WiP5YJC8zgb6z5S+bMrqTAQ+jMl8
+	qhi5KcqnoPGaGACAPrPso1Kue74dJaXSF+fSHWZHF7INqzasf6Cta7mKGoR23lA33JPkaS
+	qzkOb6vWfLIvTlLOc+WFtxxW9ryAqAI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Matthew Wilcox <willy@infradead.org>, 
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, Gary Guo <gary@garyguo.net>, 
+	Dave Chinner <dchinner@redhat.com>, David Howells <dhowells@redhat.com>, 
+	Ariel Miculas <amiculas@cisco.com>, Paul McKenney <paulmck@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Rust
+Message-ID: <bmgzm3wjtcyzsuawscxrdyhq56ckc7vqnfbcjbm42gj6eb4qph@wgkhxkk43wxm>
+References: <wjtuw2m3ojn7m6gx2ozyqtvlsetzwxv5hdhg2hocal3gyou3ue@34e37oox4d5m>
+ <ZbAO8REoMbxWjozR@casper.infradead.org>
+ <cf6a065636b5006235dbfcaf83ff9dbcc51b2d11.camel@HansenPartnership.com>
+ <ZbEwKjWxdD4HhcA_@casper.infradead.org>
+ <2e62289ad0fffd2fb8bc7fa179b9a43ab7fe2222.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240119202544.19434-1-krisman@suse.de> <20240119202544.19434-2-krisman@suse.de>
- <CAHk-=whW=jahYWDezh8PeudB5ozfjNpdHnek3scMAyWHT5+=Og@mail.gmail.com>
- <87mssywsqs.fsf@mailhost.krisman.be> <CAHk-=wh+4Msg7RKv6mvKz2LfNwK24zKFhnLUyxsrKzsXqni+Kg@mail.gmail.com>
- <87ttn2sip7.fsf_-_@mailhost.krisman.be>
-In-Reply-To: <87ttn2sip7.fsf_-_@mailhost.krisman.be>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 24 Jan 2024 10:42:51 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi9MDF97MGwJv_2V5QLE=f6ShgfKWUPomVKsCKYmAU9XQ@mail.gmail.com>
-Message-ID: <CAHk-=wi9MDF97MGwJv_2V5QLE=f6ShgfKWUPomVKsCKYmAU9XQ@mail.gmail.com>
-Subject: Re: [PATCH v4] libfs: Attempt exact-match comparison first during
- casefolded lookup
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: ebiggers@kernel.org, viro@zeniv.linux.org.uk, tytso@mit.edu, 
-	linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2e62289ad0fffd2fb8bc7fa179b9a43ab7fe2222.camel@HansenPartnership.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 24 Jan 2024 at 10:13, Gabriel Krisman Bertazi <krisman@suse.de> wrote:
->
-> Just for completeness, below the version I intend to apply to
-> unicode/for-next , which is the v2, plus the comments you and Eric
-> requested. That is, unless something else comes up.
+On Wed, Jan 24, 2024 at 11:04:14AM -0500, James Bottomley wrote:
+> On Wed, 2024-01-24 at 15:43 +0000, Matthew Wilcox wrote:
+> > On Wed, Jan 24, 2024 at 09:26:34AM -0500, James Bottomley wrote:
+> > > On Tue, 2024-01-23 at 19:09 +0000, Matthew Wilcox wrote:
+> > > > >   - The use of outside library code: Historically, C code was
+> > > > > either written for userspace or the kernel, and not both. But
+> > > > > that's not particularly true in Rust land (and getting to be
+> > > > > less true even in C land); should we consider some sort of
+> > > > > structure or (cough) package management? Is it time to move
+> > > > > beyond ye olde cut- and-paste?
+> > > > 
+> > > > Rust has a package manager.  I don't think we need kCargo.  I'm
+> > > > not deep enough in the weeds on this to make sensible
+> > > > suggestions, but if a package (eg a crypto suite or compression
+> > > > library) doesn't depend on anything ridiculous then what's the
+> > > > harm in just pulling it in?
+> > > 
+> > > The problem with this is that it leads to combinatoric explosions
+> > > and multiple copies of everything[1].
+> > 
+> > OK, but why do we care?  We still have buffer_heads in the kernel
+> > (v1.0 of the block layer abstraction) while also have bios, iomap and
+> > numerous NIH in various filesystems.  I don't even know if it's going
+> > to be quantitatively worse.
+> 
+> Multiple copies lead to kernel bloat and problems for embedded systems
+> as well as security problems.
 
-Looks ok to me.
+Yes, but it's a problem we already have, and sure introducing a package
+manager might lead to lead to more duplication and bloat if we don't
+bother to care about this issue.
 
-My one comment is actually unrelated to the new code, just because the
-patch touches this code too:
+But introducing a package manager also means we'll have standard tooling
+for checking for duplicated dependencies, so if we make sure to use the
+tooling and make it part of the review process we should be fine.
 
->         if (len <= DNAME_INLINE_LEN - 1) {
->                 memcpy(strbuf, str, len);
->                 strbuf[len] = 0;
-> -               qstr.name = strbuf;
-> +               str = strbuf;
->                 /* prevent compiler from optimizing out the temporary buffer */
->                 barrier();
+It wouldn't be hard to make checkpatch check for this on changes to
+Cargo.lock.
 
-The reason for this whole mess is that allegedly utf8_strncasecmp() is
-not safe if the buffer changes under it.
+> > > For crypto in particular the last thing you want to do is pull some
+> > > random encryption routine off the internet, particularly if the
+> > > kernel already supplies it because it's usually not properly
+> > > optimized for your CPU and it makes it a nightmare to deduce the
+> > > security properties of the system.
+> > 
+> > That seems like a strawman.  Why is it _so_ much worse to have your
+> > kernel compromised than your web browser, your email client, or your
+> > corporate authentication provider?
+> 
+> If I follow that argument to the logical conclusion you're saying
+> security of our crypto functions doesn't matter that much because
+> others also get it wrong?  I'd say that might be slightly controversial
 
-At least that's what the comment says.
+I think the argument is more just "why exactly is the kernel special
+here?". 
 
-But honestly, I don't see it.
+> To illustrate the problem with cryptography in rust: just because it's
+> rust safe doesn't mean its correct or bug free.  Crypto functions are
+> the most difficult to get right (algorithmically, regardless of memory
+> safety).  Look at this Medium report on the top ten bugs in blockchain:
+> 
+> https://medium.com/rektoff/top-10-vulnerabilities-in-substrate-based-blockchains-using-rust-d454279521ff
+> 
+> Number 1 is a rust crypto vulnerability due to insecure randomness in a
+> random number generating function (note it was rust safe code just not
+> properly checked for algorithmic issues by a cryptographer).
+> 
+> The reason for using the kernel functions is that they are vetted by
+> cryptographers and crafted for our environment.
 
-I think the whole "copy to a stable buffer" code can and should just
-be removed as voodoo programming.
+Are you arguing that typical kernel code is more secure than typical
+Rust code?
 
-*If* the buffer is actually changing, the name lookup code will just
-retry, so whether the return value is correct or not is irrelevant.
+> >   Why would we allow code in that pulls in random shit from the
+> > internet instead of the vetted stuff on crates.io?
+> 
+> The pallet problem in the blockchain bug came from crates.io.
+> 
+> > > However, there's nothing wrong with a vetted approach to this: keep
+> > > a list of stuff rust needs, make sure it's properly plumbed in to
+> > > the kernel routines (which likely necessitates package changes) and
+> > > keep it somewhere everyone can use.
+> > 
+> > ... like crates.io.  Why are we better at this than they are?
+> 
+> The volume is way smaller so scrutiny can be way greater and they have
+> to be crafted for our environment anyway.
 
-All that matters is that the code honors the str/len constraint, and
-not blow up - even if the data inside that str/len buffer might not be
-stable.
+No, and being special snowflakes isn't helpful.
 
-I don't see how the utf8 code could possibly mess up.
+They don't in general have to be crafted for our environment, and we're
+slowly working to reduce the differences between the kernel environment
+and userspace (gfp flags).
 
-That code goes back to commit
+We can and should have our own review process when pulling in new
+dependencies, but we shouldn't otherwise be making it difficult to use
+crates.io dependencies just for the sake of it.
 
-  2ce3ee931a09 ("ext4: avoid utf8_strncasecmp() with unstable name")
-  fc3bb095ab02 ("f2fs: avoid utf8_strncasecmp() with unstable name")
+> Really?  crates.io currently has 135,010 packages which can all be
+> uploaded and changed instantly by their respective owners.  Security
+> vetting is mostly supposed to be done by the uploaders (it can't be
+> done by the repo since there are so many packages) ... is this starting
+> to sound familiar?  because it's the same security policy all the web
+> package repositories have.  Sure they've got safeties in place for
+> left-pad essential package removals problems, but they could still get
+> a log4j issue.
 
-and I think it's bogus.
-
-Eric - the string *data* may be unsafe, but the string length passed
-to the utf8 routines is not changing any more (since it was loaded
-long ago).
-
-And honestly, no amount of "the data may change" should possibly ever
-cause the utf8 code to then ignore the length that was passed in.
-
-                Linus
+Comitting the cargo lockfile pins your dependencies to an exact git
+revision, and then updating to new versions of dependencies requires a
+new commit in our repository. We have the means to do our own review
+here.
 
