@@ -1,168 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-8759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8760-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2199183AB4F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 15:03:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFAAF83AB69
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 15:11:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8645DB29F9E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 14:02:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73B5FB28088
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 14:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B92F77F3A;
-	Wed, 24 Jan 2024 14:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B50B7A70F;
+	Wed, 24 Jan 2024 14:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bhcj5QFU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FVdhfrOF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337F277F04
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 14:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE2D7A702;
+	Wed, 24 Jan 2024 14:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706104959; cv=none; b=XZwmTewwkuueK+4Fm0+7utjMBy68PMzyEZF7iraJqQ51jBZkIpG6M/f5LGj6y5Q2bz31qDhx8HpGi9c7rH1VkTvrhs4grgehAVvh0dNC7nS3pEf6zNgdJ6R07t3vmXmU2mAT8Lbx+3noRlr/4tW7l6pXJaI7aGF8y9daovEz1UA=
+	t=1706105464; cv=none; b=QTE2BBfKAi6CDTU4DdI8NKxRhZzym4PyI5G2Z7QL6EF1GM7jnKhThOt3eNmP70tky3OxTZPwUpzY2I0ELL7+xpM+l4Kv80bnE11Uu01387lesI+C/SIxJ74O29PL2tq3TRCAXRakvtJz/zKxtZjNMj4kcefzomLFlWQDVrbh9ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706104959; c=relaxed/simple;
-	bh=pfHAnczln2fvb4QjdW4ObQMDhktThefgnOWykCN+pOw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zk2sj62FvnK2ACa3s3Mx0EPc3lSkmtg3y4Rzv+n69l5fDa0somXZWJYHJksVBTdcEZn4E8F4urXgycwFdl0iIjjAe81al4GoAM0cyFRuqeczBV56xP5CW4pjOZAFM+3HgV+2Cd630y2K4nRarJVAg2HDLaJAKhixgXOY9OdxABw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bhcj5QFU; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=VO9z9UwG5VRkSNrRUFjq/aYmNFw6fl6NaZvDJVfRVdw=; b=bhcj5QFUrJ2VhdnJ6nYGj8muC+
-	kpiAbwCCICOMIRoM5premMF0+5u2i9iNIqqPBFlAPmqET+WNO+2sUWZRWnIbDv9SJ41lieqdDss6W
-	r+qn5RJp/xrTuOW9L+lvw4miRFgBoyP4H9bwngzKbw3Vwu6GQBTx7tnSezHBu4Nz04FayZukFPjLB
-	oLBxe3AdcFIdeH9WySR6bKjBVB68h8vHpk7u4rf8Wsy2uutlFLSfIA8HU3IQfSImNCQun0gxTDxH8
-	p89yXU4ACU1JAHlSl6oR8Y8bJkRpAwJkwC61Le3ly7KBXaG6P0JiEFt3ZpNi0iHnaWo1zubrdJCZi
-	51otND1g==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rSdpo-00000006osy-0F9W;
-	Wed, 24 Jan 2024 14:02:32 +0000
-Date: Wed, 24 Jan 2024 14:02:31 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-Cc: "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
-	"sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] exfat: fix file not locking when writing zeros in
- exfat_file_mmap()
-Message-ID: <ZbEYd-JfKMTDN-Tv@casper.infradead.org>
-References: <PUZPR04MB63168A32AB45E8924B52CBC2817B2@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <ZbCeWQnoc8XooIxP@casper.infradead.org>
- <PUZPR04MB63168DC7A1A665B4EB37C996817B2@PUZPR04MB6316.apcprd04.prod.outlook.com>
+	s=arc-20240116; t=1706105464; c=relaxed/simple;
+	bh=9L8i8MRxTRUovMnf6B3+TaY9uldZPEBNGPy4Z42mzbQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fOLzB4TvRqwis0H5thPM0hsiCr7OK4yv7tIxSQJORcEwz3ES4WzwEUSMdRnEfR7lLvudM4KPyyrAKle3n13zl8Kd4cFeQWetZX/eOtjIevMHOyxrG4G8NaOWUl6/3SsPwUV7VcLY+h5bT4MPIAfHYFb3K2ZgKUTn41H4Sg4a4gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FVdhfrOF; arc=none smtp.client-ip=209.85.160.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-21481a3de56so1077094fac.2;
+        Wed, 24 Jan 2024 06:11:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706105462; x=1706710262; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+xnTLTL2SSu5RMv39utUojmUyQtnjJr+CK/qkZj7DKg=;
+        b=FVdhfrOFBatCCeZQTPJ8mSWNAf2fnyYlwVy2Ul1Im5TjONatvNd3nVsHLKbGgpwpBt
+         hzey21lSer2m48/n1/YfF4gM0UXpwpogSStTsqLoKaGmRph7uPa+gSWkz+aaNTZXdx9v
+         jaPMybe1kl0muO/0sz60XIpJLeevM5OiDeI8Whk+QADmXFxEWa01SH3bQkJGcx6FUMhb
+         eY++ePAU82RTV89K/hhQHM857Jgr3QQqhwg8PNcpNdLGvSMetCeuzW6R75XIw2Na22QG
+         Lat+H3l2/hQpxq1KIb5yodzU2qjq7O14QsJwQxW7ciTgDYWjQpX0wQCgnLpYOBIhOSnT
+         YHAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706105462; x=1706710262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+xnTLTL2SSu5RMv39utUojmUyQtnjJr+CK/qkZj7DKg=;
+        b=AR6aVWzz1p0mFu/tH4RHcIDhYhZfMm+jInoAk0z0tqqeUqWIEz8AS/KMy+7x32ZOzx
+         ocJ/pkzVBJQTGIc7tzWz82jfi7iK8xGZ+il7AoPAilxJnt/NdFtXdLsdeJwoheZ7NQBs
+         zQazgUfNlSW6hp/rr6Ql48lO6tyNcLFfZFjdC4poHWaO0YGjf3PZeaqIaore9uK0MMaG
+         /GNQP84WvKbl69wnmbqaboNdQ+LWqVcULcEjJdwh87x5qNSzrlErtGjsLB5AEkwOz40l
+         84qQchkUHqnCxb3qvvYltLU7+/ECJLW7foQJ37HS8Wtxb1JDol1a2guzkzH+Toysuhv9
+         4Cfg==
+X-Gm-Message-State: AOJu0Yxnn33uQVVUeT1hvmf9cjpq7qyXDAuYFwiYdvLZJLwsY4aZB5Mr
+	R+Jcfarq6x8JUlfYWBiYGDUM5R08lQ0Pq72rmmWDRwLtFR2mE86UgQmOeTdUjEIoY0uWPAyveRt
+	iNQXWJh9B4ssFrk8CBeGbZldRRW8hhpRj8u3OQg==
+X-Google-Smtp-Source: AGHT+IG9TfD3j0DFTfi1uYZGWP5PaLsWSpYqgym4p+3+gRdC4L7CR6qMM9jCbxA/d6Y6YRCwVXNlWQo0VQ1qeLtd9Vs=
+X-Received: by 2002:a05:6870:718f:b0:214:9c65:b969 with SMTP id
+ d15-20020a056870718f00b002149c65b969mr1784734oah.6.1706105462338; Wed, 24 Jan
+ 2024 06:11:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PUZPR04MB63168DC7A1A665B4EB37C996817B2@PUZPR04MB6316.apcprd04.prod.outlook.com>
+References: <20240124113042.44300-1-jefflexu@linux.alibaba.com> <CAJfpegtkSgRO-24bdnA4xUMFW5vFwSDQ7WkcowNR69zmbRwKqQ@mail.gmail.com>
+In-Reply-To: <CAJfpegtkSgRO-24bdnA4xUMFW5vFwSDQ7WkcowNR69zmbRwKqQ@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 24 Jan 2024 16:10:50 +0200
+Message-ID: <CAOQ4uxjN6f=M8jjM0-_eysLy8Jx1+r0Dy3MhWHc8f2r7RnEmdQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: add support for explicit export disabling
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 24, 2024 at 10:05:15AM +0000, Yuezhang.Mo@sony.com wrote:
-> From: Matthew Wilcox <willy@infradead.org> 
-> Sent: Wednesday, January 24, 2024 1:21 PM
-> To: Mo, Yuezhang <Yuezhang.Mo@sony.com>
-> Subject: Re: [PATCH] exfat: fix file not locking when writing zeros in exfat_file_mmap()
-> > On Wed, Jan 24, 2024 at 05:00:37AM +0000, mailto:Yuezhang.Mo@sony.com wrote:
-> > > inode->i_rwsem should be locked when writing file. But the lock
-> > > is missing when writing zeros to the file in exfat_file_mmap().
-> > 
-> > This is actually very weird behaviour in exfat.  This kind of "I must
-> > manipulate the on-disc layout" is not generally done in mmap(), it's
-> > done in ->page_mkwrite() or even delayed until we actually do writeback.
-> > Why does exfat do this?
-> 
-> In exfat, "valid_size" describes how far into the data stream user data has been
-> written and "size" describes the file size.  Return zeros if read "valid_size"~"size".
+On Wed, Jan 24, 2024 at 2:17=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Wed, 24 Jan 2024 at 12:30, Jingbo Xu <jefflexu@linux.alibaba.com> wrot=
+e:
+> >
+> > open_by_handle_at(2) can fail with -ESTALE with a valid handle returned
+> > by a previous name_to_handle_at(2) for evicted fuse inodes, which is
+> > especially common when entry_valid_timeout is 0, e.g. when the fuse
+> > daemon is in "cache=3Dnone" mode.
+> >
+> > The time sequence is like:
+> >
+> >         name_to_handle_at(2)    # succeed
+> >         evict fuse inode
+> >         open_by_handle_at(2)    # fail
+> >
+> > The root cause is that, with 0 entry_valid_timeout, the dput() called i=
+n
+> > name_to_handle_at(2) will trigger iput -> evict(), which will send
+> > FUSE_FORGET to the daemon.  The following open_by_handle_at(2) will sen=
+d
+> > a new FUSE_LOOKUP request upon inode cache miss since the previous inod=
+e
+> > eviction.  Then the fuse daemon may fail the FUSE_LOOKUP request with
+> > -ENOENT as the cached metadata of the requested inode has already been
+> > cleaned up during the previous FUSE_FORGET.  The returned -ENOENT is
+> > treated as -ESTALE when open_by_handle_at(2) returns.
+> >
+> > This confuses the application somehow, as open_by_handle_at(2) fails
+> > when the previous name_to_handle_at(2) succeeds.  The returned errno is
+> > also confusing as the requested file is not deleted and already there.
+> > It is reasonable to fail name_to_handle_at(2) early in this case, after
+> > which the application can fallback to open(2) to access files.
+> >
+> > Since this issue typically appears when entry_valid_timeout is 0 which
+> > is configured by the fuse daemon, the fuse daemon is the right person t=
+o
+> > explicitly disable the export when required.
+> >
+> > Also considering FUSE_EXPORT_SUPPORT actually indicates the support for
+> > lookups of "." and "..", and there are existing fuse daemons supporting
+> > export without FUSE_EXPORT_SUPPORT set, for compatibility, we add a new
+> > INIT flag for such purpose.
+>
+> This looks good overall.
+>
+> >
+> > Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+> > ---
+> > RFC: https://lore.kernel.org/all/20240123093701.94166-1-jefflexu@linux.=
+alibaba.com/
+> > ---
+> >  fs/fuse/inode.c           | 11 ++++++++++-
+> >  include/uapi/linux/fuse.h |  2 ++
+> >  2 files changed, 12 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index 2a6d44f91729..851940c0e930 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -1110,6 +1110,11 @@ static struct dentry *fuse_get_parent(struct den=
+try *child)
+> >         return parent;
+> >  }
+> >
+> > +/* only for fid encoding; no support for file handle */
+> > +static const struct export_operations fuse_fid_operations =3D {
+>
+> Nit: I'd call this fuse_no_export_operations (or something else that
+> emphasizes the fact that this is only for encoding and not for full
+> export support).
 
-Yes, it's like a very weak implementation of sparse files.  There can
-only be one zero range and it must be at the end (as opposed to most
-unix derived filesystems which allow arbitrary zero ranges anywhere in
-the file).
+Not that I really care what the name is, but overlayfs already has
+ovl_export_fid_operations and the name aspires from AT_HANDLE_FID,
+which is already documented in man pages.
 
-> For example,
-> 
-> (1) xfs_io -t -f -c "pwrite -S 0x59 0 1024" $filename
->      - Write 0x59 to 0~1023
->      - both "size" and "valid_size" are 1024
+How about fuse_export_fid_operations?
 
-Yes.
-
-> (2) xfs_io -t -f -c "truncate 4K" $filename
->      - "valid_size" is still 1024
->      - "size" is changed to 4096
->      - 1024~4095 is not zeroed
->      - return zeros if read 1024~4095
-
-Yes.
-
-> (3) xfs_io -t -f -c "mmap -rw 0 3072" -c  "mwrite -S 0x5a 2048 512" $filename
->      (3.1) "mmap -rw 0 3072"
->               -  write zeros to 1024~3071
->               -  "valid_size" is changed to 3072
->               - "size" is still 4096
-
-That's not what the code says you do.  Is this from a trace or were you
-making up an example?
-
-        loff_t start = ((loff_t)vma->vm_pgoff << PAGE_SHIFT);
-        loff_t end = min_t(loff_t, i_size_read(inode),
-                        start + vma->vm_end - vma->vm_start);
-                ret = exfat_file_zeroed_range(file, ei->valid_size, end);
-
-
-vm_end - vm_start will be 4kB because Linux rounds to PAGE_SIZE even if
-you ask to map 3072 bytes.
-
-In any case, most filesystems do not do this, and I don't understand why
-exfat does.  Just because a file is mmaped writable doesn't mean that
-we're necessarily going to write to it.  The right thing to do here is
-defer the changing of ->valid_size until you have already written back
-the new data.
-
->      (3.2) "mwrite -S 0x5a 2048 512"
->              - write 0x5a to 2048~2559
->              - "valid_size" is still 3072
->              -  "size" is still 4096
-> 
-> To avoid 1024~2047 is not zeroed and no need to update "valid_size" in (3.2),
-> I zero 1024~3071 in (3.1).
-> 
-> If you have a better solution, welcome to contribute to  exfat or share your
-> solution in detail.
-
-Update ->valid_size in the writeback path.  If I'm reading
-exfat_get_block() correctly, you already correctly zero pages in the page
-cache that are read after ->valid_size, so there is very little work for
-you to do.
-
-
-Oh!  I just figured out why you probably do it this way.
-
-(1) xfs_io -t -f -c "pwrite -S 0x59 0 1024" $filename
-(2) xfs_io -t -f -c "truncate 4T" $filename
-(3) xfs_io -t -f -c "mmap -rw 3T 4096" -c  "mwrite -S 0x5a 3T 512" $filename
-
-Now (at whatever point you're delaying writing zeroes to) you have to
-write 3TB of zeroes.  And it's probably better to do that at mmap time
-than at page fault time, so you can still return an error.  It's a bit
-weird to return ENOSPC from mmap, but here we are.
-
-It'd be nice to have a comment to explain this.  Also, it seems to me
-that I can write a script that floods the kernel log with:
-
-                        exfat_err(inode->i_sb,
-                                  "mmap: fail to zero from %llu to %llu(%d)",
-                                  start, end, ret);
-
-That error message should probably be taken out entirely (maybe use a
-tracepoint if you really want some kind of logging).
+Thanks,
+Amir.
 
