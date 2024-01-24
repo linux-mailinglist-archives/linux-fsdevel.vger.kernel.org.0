@@ -1,177 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-8769-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535DB83ABB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 15:29:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 888BF83ABA1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 15:26:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEB201F2CF4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 14:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31ED31F2B08C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 14:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEF167A718;
-	Wed, 24 Jan 2024 14:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="II6L0Wc/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C8AB7A730;
+	Wed, 24 Jan 2024 14:26:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D20577656
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 14:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DAA60DD1;
+	Wed, 24 Jan 2024 14:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706106498; cv=none; b=DSBVF9Y9cL570n7vdzngypZ4qMAnIgSZcZ8DKXTUlN0TC+XpjvliF0BW+HjuAYMqy4HLnG05GbBcU4ylt7T0uuZxeQ0OMY8eAovOOCD/+v9PqGfK4fvLTLVrXMYD+zvZ4XiCL5oegXdvDJXvGV/X7fMco4pH03GfxddZiyqB9CE=
+	t=1706106390; cv=none; b=pB5kVLTbgoiJxA3TJ42u8y15t2/F2FGWOXW3C/s693OGBPMT5C5UZ1dkqIn3mO+4Om0hKR5Vwdzs/5w0PDvOLJVng4nUkf0ke5nXrjVMbCZ2NVsREFtW7vadPgn4SM3mPeLx84u8oK9B12Mpo3CENSI9cmIGfSsTOm/amkLVEZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706106498; c=relaxed/simple;
-	bh=CNG0yxA64p/VfK+z7q8n8Bap5iF3fervA6gZqPmVuIg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AbMIfrP/4I66tCSAxHKxtzgRaVlVkG/p7ymZ4dgEkWe+2UCe4zJelvqnLIYNPk2NOrXI7mDHx+nrGWTrW7Fa5NzG2zVlhIkEBQMwz1CGPXkB6uzO/QkIcYDugrvYXualX/hY3XEOiyMUMRjbr6ZpPfxWmS+759EfMs2p5tzSHjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=II6L0Wc/; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a3122b70439so75602266b.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 06:28:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1706106494; x=1706711294; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qv0sDPq6uuAdBYOm6vYVHDFbzrz/5/gcuAOhRKbPfRk=;
-        b=II6L0Wc/woRvjpYI6zb/5gm6ALdpy0YEjxJ/pyuTuFuXYBGAKsAuS3xXsxLRNHfpmx
-         VjswC7cu7pafns5kKQcwdiK8fmuaHShk+2UNMaOxN1iPs9cu+zcHxSfxD5qHWS59i6XN
-         BmUhyyRsjQoa9Pl3X6KS901UK3rPEcz8nxsUI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706106494; x=1706711294;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qv0sDPq6uuAdBYOm6vYVHDFbzrz/5/gcuAOhRKbPfRk=;
-        b=fjPTVQihbjQebccFi8adm1vjVtKp0j5fPXKOD8ng35Q8c+TwapLFGj21c1Ha4HHNlt
-         DsWYwGOHKxH0buv0nM60uBE1FCOrE5440zfHVeou7pUnhAeTnZX1gpZyfIZwCBNbzBz+
-         dA3IAXLHn7n7/mbmBGl/yZBU3ecoEKBnE+CH/1JzcXQTdYzXYCoBe9ThfOrA4Aissd6O
-         0dnJRiisZenA/32SRQmvUk8QlGRNMfNtaFR3Tt68uBe7mKWY0NerlLyCkcxVQzsXnkws
-         A3+zNJWkbeF5XdqmrimZ6BrvgjIBG0o22/5h34TGj9NJz6TtpmnRQFYv2gWnuw7qb4Vf
-         an0Q==
-X-Gm-Message-State: AOJu0YwonBm6bNz4tMfdLGGscfMENT7uzQwwcoM/4nRSnzl8FwKa7C8J
-	z3wWRrrJ0yogIphBi+zosMgK+Fg63DaoA9WSgzloUD381MIUHeTUB7gvwDWmvhtpjyHlopcRpt4
-	dUOTFTbnTYOAx/EQ2pU1/TYnb4mAVWPiv+PeiRw==
-X-Google-Smtp-Source: AGHT+IE19WIGLtZTJnVM1fC+uAIt3JA8bmWYHhVJE0ZONKimsCsf7l4IahIqPSb/ScBjfSP2loTOOwBoqM8+IX7tXbo=
-X-Received: by 2002:a17:906:4697:b0:a2c:4a17:1d66 with SMTP id
- a23-20020a170906469700b00a2c4a171d66mr1033777ejr.47.1706106494285; Wed, 24
- Jan 2024 06:28:14 -0800 (PST)
+	s=arc-20240116; t=1706106390; c=relaxed/simple;
+	bh=T4ZmNyGgSAx5pc1IvXagEPFYy85Sq3UzouNrKov/L9w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eqE2FvLK0FJwW7mrzIKAa+B0GAWjLXDQ7mC1K8YkxNSLUPm59PZQkT3gGODwsG0w6AfwOfCW26myslIMpX37hh1m7JFodqWBqPuYQdOQYDnYMPTz8yTs4saJCSiIgpUmEWk0nJG2qFRettsbpa366GgGf9KuQzs+Y0POxo1dlRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4TKmSl4JKCzXgcK;
+	Wed, 24 Jan 2024 22:25:11 +0800 (CST)
+Received: from dggpeml500021.china.huawei.com (unknown [7.185.36.21])
+	by mail.maildlp.com (Postfix) with ESMTPS id 26FC51400D7;
+	Wed, 24 Jan 2024 22:26:24 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by dggpeml500021.china.huawei.com
+ (7.185.36.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 24 Jan
+ 2024 22:26:23 +0800
+From: Baokun Li <libaokun1@huawei.com>
+To: <linux-fsdevel@vger.kernel.org>
+CC: <torvalds@linux-foundation.org>, <viro@zeniv.linux.org.uk>,
+	<brauner@kernel.org>, <jack@suse.cz>, <willy@infradead.org>,
+	<akpm@linux-foundation.org>, <arnd@arndb.de>, <linux-arch@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <yukuai3@huawei.com>, <libaokun1@huawei.com>
+Subject: [PATCH v2 0/3] fs: make the i_size_read/write helpers be smp_load_acquire/store_release()
+Date: Wed, 24 Jan 2024 22:28:54 +0800
+Message-ID: <20240124142857.4146716-1-libaokun1@huawei.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240124113042.44300-1-jefflexu@linux.alibaba.com>
- <CAJfpegtkSgRO-24bdnA4xUMFW5vFwSDQ7WkcowNR69zmbRwKqQ@mail.gmail.com> <CAOQ4uxjN6f=M8jjM0-_eysLy8Jx1+r0Dy3MhWHc8f2r7RnEmdQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjN6f=M8jjM0-_eysLy8Jx1+r0Dy3MhWHc8f2r7RnEmdQ@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 24 Jan 2024 15:28:02 +0100
-Message-ID: <CAJfpegtBod6ECv6O0GVXhLSGB5OH6P=uOpMN6JjAm3C+Mrg55g@mail.gmail.com>
-Subject: Re: [PATCH] fuse: add support for explicit export disabling
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jingbo Xu <jefflexu@linux.alibaba.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500021.china.huawei.com (7.185.36.21)
 
-On Wed, 24 Jan 2024 at 15:11, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Wed, Jan 24, 2024 at 2:17=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu=
-> wrote:
-> >
-> > On Wed, 24 Jan 2024 at 12:30, Jingbo Xu <jefflexu@linux.alibaba.com> wr=
-ote:
-> > >
-> > > open_by_handle_at(2) can fail with -ESTALE with a valid handle return=
-ed
-> > > by a previous name_to_handle_at(2) for evicted fuse inodes, which is
-> > > especially common when entry_valid_timeout is 0, e.g. when the fuse
-> > > daemon is in "cache=3Dnone" mode.
-> > >
-> > > The time sequence is like:
-> > >
-> > >         name_to_handle_at(2)    # succeed
-> > >         evict fuse inode
-> > >         open_by_handle_at(2)    # fail
-> > >
-> > > The root cause is that, with 0 entry_valid_timeout, the dput() called=
- in
-> > > name_to_handle_at(2) will trigger iput -> evict(), which will send
-> > > FUSE_FORGET to the daemon.  The following open_by_handle_at(2) will s=
-end
-> > > a new FUSE_LOOKUP request upon inode cache miss since the previous in=
-ode
-> > > eviction.  Then the fuse daemon may fail the FUSE_LOOKUP request with
-> > > -ENOENT as the cached metadata of the requested inode has already bee=
-n
-> > > cleaned up during the previous FUSE_FORGET.  The returned -ENOENT is
-> > > treated as -ESTALE when open_by_handle_at(2) returns.
-> > >
-> > > This confuses the application somehow, as open_by_handle_at(2) fails
-> > > when the previous name_to_handle_at(2) succeeds.  The returned errno =
-is
-> > > also confusing as the requested file is not deleted and already there=
-.
-> > > It is reasonable to fail name_to_handle_at(2) early in this case, aft=
-er
-> > > which the application can fallback to open(2) to access files.
-> > >
-> > > Since this issue typically appears when entry_valid_timeout is 0 whic=
-h
-> > > is configured by the fuse daemon, the fuse daemon is the right person=
- to
-> > > explicitly disable the export when required.
-> > >
-> > > Also considering FUSE_EXPORT_SUPPORT actually indicates the support f=
-or
-> > > lookups of "." and "..", and there are existing fuse daemons supporti=
-ng
-> > > export without FUSE_EXPORT_SUPPORT set, for compatibility, we add a n=
-ew
-> > > INIT flag for such purpose.
-> >
-> > This looks good overall.
-> >
-> > >
-> > > Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-> > > ---
-> > > RFC: https://lore.kernel.org/all/20240123093701.94166-1-jefflexu@linu=
-x.alibaba.com/
-> > > ---
-> > >  fs/fuse/inode.c           | 11 ++++++++++-
-> > >  include/uapi/linux/fuse.h |  2 ++
-> > >  2 files changed, 12 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > > index 2a6d44f91729..851940c0e930 100644
-> > > --- a/fs/fuse/inode.c
-> > > +++ b/fs/fuse/inode.c
-> > > @@ -1110,6 +1110,11 @@ static struct dentry *fuse_get_parent(struct d=
-entry *child)
-> > >         return parent;
-> > >  }
-> > >
-> > > +/* only for fid encoding; no support for file handle */
-> > > +static const struct export_operations fuse_fid_operations =3D {
-> >
-> > Nit: I'd call this fuse_no_export_operations (or something else that
-> > emphasizes the fact that this is only for encoding and not for full
-> > export support).
->
-> Not that I really care what the name is, but overlayfs already has
-> ovl_export_fid_operations and the name aspires from AT_HANDLE_FID,
-> which is already documented in man pages.
->
-> How about fuse_export_fid_operations?
+V1->V2:
+  Add patch 3 to fix an error when compiling code for 32-bit architectures
+  without CONFIG_SMP enabled.
 
-Okay, let's be consistent with overlayfs naming.
+This patchset follows the Linus suggestion to make the i_size_read/write
+helpers be smp_load_acquire/store_release(), after which the extra smp_rmb
+in filemap_read() is no longer needed, so it is removed. And remove the
+extra type checking in smp_load_acquire/smp_store_release under the
+!CONFIG_SMP case to avoid compilation errors.
 
-Thanks,
-Miklos
+Functional tests were performed and no new problems were found.
+
+Here are the results of unixbench tests based on 6.7.0-next-20240118 on
+arm64, with some degradation in single-threading and some optimization in
+multi-threading, but overall the impact is not significant.
+
+### 72 CPUs in system; running 1 parallel copy of tests
+System Benchmarks Index Values        |   base  | patched |  cmp   |
+--------------------------------------|---------|---------|--------|
+Dhrystone 2 using register variables  | 3635.06 | 3596.3  | -1.07% |
+Double-Precision Whetstone            | 808.58  | 808.58  | 0.00%  |
+Execl Throughput                      | 623.52  | 618.1   | -0.87% |
+File Copy 1024 bufsize 2000 maxblocks | 1715.82 | 1668.58 | -2.75% |
+File Copy 256 bufsize 500 maxblocks   | 1320.98 | 1250.16 | -5.36% |
+File Copy 4096 bufsize 8000 maxblocks | 2639.36 | 2488.48 | -5.72% |
+Pipe Throughput                       | 869.06  | 872.3   | 0.37%  |
+Pipe-based Context Switching          | 106.26  | 117.22  | 10.31% |
+Process Creation                      | 247.72  | 246.74  | -0.40% |
+Shell Scripts (1 concurrent)          | 1234.98 | 1226    | -0.73% |
+Shell Scripts (8 concurrent)          | 6893.96 | 6210.46 | -9.91% |
+System Call Overhead                  | 493.72  | 494.28  | 0.11%  |
+--------------------------------------|---------|---------|--------|
+Total                                 | 1003.92 | 989.58  | -1.43% |
+
+### 72 CPUs in system; running 72 parallel copy of tests
+System Benchmarks Index Values        |   base    |  patched  |  cmp   |
+--------------------------------------|-----------|-----------|--------|
+Dhrystone 2 using register variables  | 260471.88 | 258065.04 | -0.92% |
+Double-Precision Whetstone            | 58212.32  | 58219.3   | 0.01%  |
+Execl Throughput                      | 6954.7    | 7444.08   | 7.04%  |
+File Copy 1024 bufsize 2000 maxblocks | 64244.74  | 64618.24  | 0.58%  |
+File Copy 256 bufsize 500 maxblocks   | 89933.8   | 87026.38  | -3.23% |
+File Copy 4096 bufsize 8000 maxblocks | 79808.14  | 81916.42  | 2.64%  |
+Pipe Throughput                       | 62174.38  | 62389.74  | 0.35%  |
+Pipe-based Context Switching          | 27239.28  | 27887.24  | 2.38%  |
+Process Creation                      | 3551.28   | 3800.54   | 7.02%  |
+Shell Scripts (1 concurrent)          | 19212.26  | 20749.34  | 8.00%  |
+Shell Scripts (8 concurrent)          | 20842.02  | 21958.12  | 5.36%  |
+System Call Overhead                  | 35328.24  | 35451.68  | 0.35%  |
+--------------------------------------|-----------|-----------|--------|
+Total                                 | 35592.42  | 36450.36  | 2.41%  |
+
+Baokun Li (3):
+  fs: make the i_size_read/write helpers be
+    smp_load_acquire/store_release()
+  Revert "mm/filemap: avoid buffered read/write race to read
+    inconsistent data"
+  asm-generic: remove extra type checking in acquire/release for non-SMP
+    case
+
+ include/asm-generic/barrier.h |  2 --
+ include/linux/fs.h            | 10 ++++++++--
+ mm/filemap.c                  |  9 ---------
+ 3 files changed, 8 insertions(+), 13 deletions(-)
+
+-- 
+2.31.1
+
 
