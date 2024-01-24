@@ -1,91 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-8801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71BE183B230
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 20:21:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CEC883B237
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 20:22:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9ED291C2116B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:21:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AAA7287AAE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5EB7132C28;
-	Wed, 24 Jan 2024 19:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2300B132C16;
+	Wed, 24 Jan 2024 19:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OhyMlP9w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E5E131E27
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 19:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED60512DDA3
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 19:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706124067; cv=none; b=C0JGZ2qL28gZbnzKvfjaj8u7i6evMfy60ROrxYkM7omuNpZwunslf4GjzmF+qEy1ypYQARv0OnSDnIvdVth2wbO/WmLDu2G/WTKWWS4p3Osh8BL4t7S7qea/sanlkdxLrumBppj821H4W4juzoxI1Vaw77i2JVFXNbLoFwUbWZI=
+	t=1706124160; cv=none; b=L+ACdYVmR4iskn5wx3SrHaA29XQYQwP/rNpHEyHIrZDoz8kvdf9ot58LbXSAEKEtXoTd7v6vC0Z249kftFqYEInV4z15I03MCmsL6CimxriOfg1g/k43SrGWD+N0q5tCrc7WUJVqc1qqM1ryZn6J6MoI5GGdExYw4YcOEmUKDbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706124067; c=relaxed/simple;
-	bh=c6WFIf+JHlsGEfzQEZQLoJIP7VaM+Bmu6MrXa+u4PA4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XV4TBsmlYQ4ylAf/Zq+x4AB0ia7ydFdR3dxKeLin/KXBhWz2VCtstb5CW0FDaf1BQ4q3naUZHVsnC5t/1PrKBjv67AkKbZHzrU4mgDMuAbPfyk7lJ9XBjLa4/pyvoeohVWptLXrVc5M7u36JJtlclhJvxsetNCDbKnGgLZkynoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7bf356bdc2fso617850839f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 11:21:05 -0800 (PST)
+	s=arc-20240116; t=1706124160; c=relaxed/simple;
+	bh=1gaILVY/H6stGS/EvSXd6ZL/n9yg9wEbY6RbWPaWb/g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iJ1wsFaourZUnnFXePule+hEPy3i1L6lz7rfug96ZE4o0bhpEUG9vk/sZMbKBxecIInrRfBfH3TfwEnabPgvaWHVBGf7yPqa3FK/s5AfSfAc3SVVCel/oy2bh5NfmcXSxlzpSPbg/qmps/t3RvHx29pJ4yCnaC4ebNiI9SNag6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OhyMlP9w; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1d73066880eso36622995ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 11:22:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1706124158; x=1706728958; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zmd6L4iLZNNyzU97sSrER5LIO6nwo17DPDhcgnpVxag=;
+        b=OhyMlP9wfqzkEkBZYSaSnI/a/DVDGNLpoHCyyRrsjXhwi4U37k1/oTrW3+GX2KLXCi
+         5W32pHPP2ce6ilKavafL9TLoF//1tL2bxGial5zq9d6+65tbHWCNkpRzpc4pfbGzYyvg
+         oScuvJnw7B2RGvYcZcoLde4foNod+djOxgZqU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706124065; x=1706728865;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z7uAoJlJc/r/AdH+EKRBB9ocEe4x/wXE6PggxylocZs=;
-        b=k8X+MHUP3h7Gqm63isMC3WbUW7aLByhHAf4sNtOp2W4dKsEbkFGz2ALt1ZVycr5ggC
-         uU2icMewkUKbpt9U9K5Z2fORvzE4to/yr+/XJ9tb9HBY009LxoO3tubYlXf55n+YJY2T
-         kV8psv7jnXBkybZopYp+wo+f4xTl8omO6P5bOlguhPYzCOms0MskhvG+BSyGaIj9Ny5E
-         pgT6wLXRTNHcfCNpbg2qvtKOqzsI0qbB2teblOOFk2s/zNDDytjBkxW/AcOYvUTVeWJz
-         7zErceliyka9ZgCxmVV5aS8nZt/XwXQY8Rz46/nyrUNj+8VjEr3DsrLtfY6RxReI5oAi
-         X1hA==
-X-Gm-Message-State: AOJu0YwkQ+lAn9ptWTPU5UtmKVJs4r0sILT0XASxJbnaCMKym0IeOI0j
-	/MfocdTZEgp/qn6+4gOTpxqbEgrz0GcSvxS+fHLddEK+7H9aI878BvG8vbmZYg0r0hd4kon8iID
-	3yy+unzm9HMTom0BB9gb/iM3Ia4Sh3mO/juQ2SQ48B5aTiRuno8LKKu0=
-X-Google-Smtp-Source: AGHT+IE0i10pqpyY8PAMZM/n2o6EisAhLNFNU3MnVtH68x+1q+ebTb1VrFJvegV2R7EiIEC4oR8hRVnJ+M70p6wabP5Bx+g/3ZW9
+        d=1e100.net; s=20230601; t=1706124158; x=1706728958;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zmd6L4iLZNNyzU97sSrER5LIO6nwo17DPDhcgnpVxag=;
+        b=a3YsY48BllQGx2Ih30OfSRN3rmXU4wSN7v7bxlXwOIDidTYvuArjjEuwXz7i1bOhUl
+         3G6hrg+EseKuonqRVOrSvMRgyis9jEh24A+xwaV5P2Q7AoGKgp5h8ZqYx+Hchkw4YOp7
+         FmjUbaA5qnYRgQMF0FmctsfYSOf+NH6H1GMjQn7rI9lrXjYBmLz1KKtuST2w5xIk8+zb
+         A2LdVSAlNWomRogUf+bGQ/swi2OREe2gFCLFDPyZger1nXKzUV/J8egU1QTyP1n8mkrU
+         1G+P+zLrrByn1LmK7M6XD1V4JiJA4AnJQXDDWwfeyF6Y8h6Jb+0dKZz0fkfhNj/YUnLN
+         p59Q==
+X-Gm-Message-State: AOJu0Yz/0ZdBnWIgSlishTz8FRnnn2waNxR1IocevQwcyZ/1BeizXQON
+	Lyat4Lxx9Q3QVtanUlGCjXhzEE3jPfPc4TZdILkmqwrU6eZBfHr54oSNj9PavQ==
+X-Google-Smtp-Source: AGHT+IF0/ne04PCSUjBX3tqlCMh/doof5H2bjt5d6Ac8doIh9yQFPCSnvtLvQuFNGnyGzSnBUJ/aAA==
+X-Received: by 2002:a17:902:6949:b0:1d4:b50d:dba9 with SMTP id k9-20020a170902694900b001d4b50ddba9mr1254455plt.71.1706124158168;
+        Wed, 24 Jan 2024 11:22:38 -0800 (PST)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id s21-20020a17090330d500b001d6fbaaeb56sm8636308plc.145.2024.01.24.11.22.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jan 2024 11:22:37 -0800 (PST)
+From: Kees Cook <keescook@chromium.org>
+To: Josh Triplett <josh@joshtriplett.org>,
+	Kevin Locke <kevin@kevinlocke.name>
+Cc: Kees Cook <keescook@chromium.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] exec: Check __FMODE_EXEC instead of in_execve for LSMs
+Date: Wed, 24 Jan 2024 11:22:32 -0800
+Message-Id: <20240124192228.work.788-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1bcf:b0:35f:9ada:73a8 with SMTP id
- x15-20020a056e021bcf00b0035f9ada73a8mr269347ilv.2.1706124065104; Wed, 24 Jan
- 2024 11:21:05 -0800 (PST)
-Date: Wed, 24 Jan 2024 11:21:05 -0800
-In-Reply-To: <00000000000099887f05fdfc6e10@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d7ed43060fb5f676@google.com>
-Subject: Re: [syzbot] [ext4?] kernel BUG in ext4_split_extent_at (2)
-From: syzbot <syzbot+0f4d9f68fb6632330c6c@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, axboe@kernel.dk, brauner@kernel.org, 
-	jack@suse.cz, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu, 
-	yebin10@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2841; i=keescook@chromium.org;
+ h=from:subject:message-id; bh=1gaILVY/H6stGS/EvSXd6ZL/n9yg9wEbY6RbWPaWb/g=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBlsWN4cgMm3ifa4AxYv0rR1P9nb2T7XG8BeE5dh
+ dQdKGdd8U+JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZbFjeAAKCRCJcvTf3G3A
+ Jj8eEACdqWJsXSjCuU2ZGkwBhmHssL73vpbJm9vow7VcgTvUcgVoF7WjPAqU3SkkUee2vuDuEEC
+ uG3G42UgwdGwzUcascCCo7wkaex/Ac7gDV7BRBywIyjF/vLDCeQ5HhIqatIu/mH44Ebni5aTAQU
+ hUYp/I3213FNl/oN3a+PJoqHHB5ORr/0z+NOMW3XT/pJ5DU0fMqAxTHtrF2s/IE9WWreJ4PP9dD
+ X5FSgLuUtR0LuJ8/8gRd5EFCycwwUXuvOBcR9Nt4fBBQcU02uF3kcXzm4eF9JJyib+jYDu2tNP3
+ eouwdnVwePLu9Xbr2l2lFju9lrgM9QjR7aLXB4J6Bw1nlyZHuj6Hjrc+EYzI1fpVDfrBSTQtFfj
+ Skv/zZriwMgLINYrOds5qiWwNPLT7pTEychRittwryFFuoqSyJwLS/5PkycmxUNlwqaQl4NU5S5
+ aP++f2Hfr2S7lrzFV1waa0HOn4J2drH3GfOqw+oPKvq/DxMlScVwY76Uvpncoov/alR5EnKKzn4
+ Pr66BX8S4pcrokYTbSm4BLat0ulOpUJgRCL1ixDnhwT4ftGIkEFBz8KiIYbfwT/bZCe9VHxD8/s
+ bpXJ4Z6N1DuM1EnVnoMQy4GyH63CVXzi2u+ZM1eMNszMiKfYeeWkpZ+ljiyoNyt9iy/mx7u3pPW
+ 6+jc5CV pbke/Mtw==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-syzbot suspects this issue was fixed by commit:
+After commit 978ffcbf00d8 ("execve: open the executable file before
+doing anything else"), current->in_execve was no longer in sync with the
+open(). This broke AppArmor and TOMOYO which depend on this flag to
+distinguish "open" operations from being "exec" operations.
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Instead of moving around in_execve, switch to using __FMODE_EXEC, which
+is where the "is this an exec?" intent is stored. Note that TOMOYO still
+uses in_execve around cred handling.
 
-    fs: Block writes to mounted block devices
+Reported-by: Kevin Locke <kevin@kevinlocke.name>
+Closes: https://lore.kernel.org/all/ZbE4qn9_h14OqADK@kevinlocke.name
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 978ffcbf00d8 ("execve: open the executable file before doing anything else")
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: John Johansen <john.johansen@canonical.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: apparmor@lists.ubuntu.com
+Cc: linux-security-module@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ security/apparmor/lsm.c  | 4 +++-
+ security/tomoyo/tomoyo.c | 3 ++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=102ded8be80000
-start commit:   25041a4c02c7 Merge tag 'net-6.4-rc6' of git://git.kernel.o..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
-dashboard link: https://syzkaller.appspot.com/bug?extid=0f4d9f68fb6632330c6c
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11b3bc8d280000
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 7717354ce095..98e1150bee9d 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -469,8 +469,10 @@ static int apparmor_file_open(struct file *file)
+ 	 * Cache permissions granted by the previous exec check, with
+ 	 * implicit read and executable mmap which are required to
+ 	 * actually execute the image.
++	 *
++	 * Illogically, FMODE_EXEC is in f_flags, not f_mode.
+ 	 */
+-	if (current->in_execve) {
++	if (file->f_flags & __FMODE_EXEC) {
+ 		fctx->allow = MAY_EXEC | MAY_READ | AA_EXEC_MMAP;
+ 		return 0;
+ 	}
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 3c3af149bf1c..04a92c3d65d4 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -328,7 +328,8 @@ static int tomoyo_file_fcntl(struct file *file, unsigned int cmd,
+ static int tomoyo_file_open(struct file *f)
+ {
+ 	/* Don't check read permission here if called from execve(). */
+-	if (current->in_execve)
++	/* Illogically, FMODE_EXEC is in f_flags, not f_mode. */
++	if (f->f_flags & __FMODE_EXEC)
+ 		return 0;
+ 	return tomoyo_check_open_permission(tomoyo_domain(), &f->f_path,
+ 					    f->f_flags);
+-- 
+2.34.1
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
