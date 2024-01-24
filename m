@@ -1,118 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-8669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF9F83A04C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 04:58:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28B8E83A05B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 05:08:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB3401F2B241
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 03:58:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A476E1F2B62F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 04:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05660C132;
-	Wed, 24 Jan 2024 03:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFEF9BE56;
+	Wed, 24 Jan 2024 04:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnfDVaCF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/7J4RQ6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD086105;
-	Wed, 24 Jan 2024 03:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF6D6FBB;
+	Wed, 24 Jan 2024 04:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706068685; cv=none; b=peUKWFuiYe4EulQjTVL+T1EZeBi1ygNhStBqMvYx0q3gCLrGvZ2S/GDawv2Ng9G99rcEUQ6o4Dg5uOwafbfeBlkvq3wR+zus4P9c/OnjbmcvQXlZ5XDk9Awgb6miph+0VxOV3WrxR75CUldcuqWP6mKX9ZAOQk4f58k+vBCAXZ0=
+	t=1706069285; cv=none; b=noBZ1eRmZYOPhJYsa4/U6dT7DG0GcXukCXWxY9XAevicRqMpsjo0coRb/zeMUocZ0NH2iEYm1cYgEV2ob4fVkTXQtW8WEqfV2NRS2asKy9L7ILqCrR31M5tsK5sgJn6l4jr3QxwPvt9AH2EK8SrCh+B8gHWop+fOt7Bx387jnMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706068685; c=relaxed/simple;
-	bh=h/rb248OA03TSbrqF0eZgJ6CT7ACloF6JhCPBkV/Df8=;
+	s=arc-20240116; t=1706069285; c=relaxed/simple;
+	bh=3tox/uEhsKouIoVIME/v+sodPqUeCUanlm9NhtTwtbM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ECNU8S7prYevIRog6u7cDhvTEJI8jjw5m9xS2bIkAo0xMSsQlZ2WPm+lnDRJuuH+vdCsXlukZ2pjWlvSptmxlB801xZeE67fqBygWoSWlx4HM3MPtK4dxG7qUx079ET4sW4HbRsUIXfZd6sL3hP6HxE83M7MYep9fFmdpOZAZd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fnfDVaCF; arc=none smtp.client-ip=209.85.222.182
+	 Content-Type:Content-Disposition:In-Reply-To; b=paUDK3gp52p7V3kgByNSRSzGqG89P33bsYMs2L4a/x4nGEkgCD33ITp1PnjpB3ibGB2iQccXBMRlTdIHm89aCJ56I59Lu3gcxYSTfR7w8q49JvE2Eh3w7OYzIu3IKRnTeMEQ0OPHwYTeuTUEyQYnjaJjKsHa/MPx0WrU/ypwDUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/7J4RQ6; arc=none smtp.client-ip=209.85.210.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-78104f6f692so369533985a.1;
-        Tue, 23 Jan 2024 19:58:03 -0800 (PST)
+Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-6e0ed26cc5eso1848552a34.3;
+        Tue, 23 Jan 2024 20:08:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706068683; x=1706673483; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1706069283; x=1706674083; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SkDGd++VYhFkJLyUlOlXCT60hFOGwDxW/O9I/vnFLB8=;
-        b=fnfDVaCFxcH5YeiY9SYIz79uQ34CfQKy/QD2xC6jYrSLkrTPfdbul5fwpDY2eacO4s
-         N9B3h224hbyzQDI8qGm9fwt4RnasBjwQHufaHnCeL9Jt5ZMEDnSy5l4a96D4V8bLX01p
-         pZb7G0v3Ea66voHOUUpon3dtOd8hwlkS0nPFmZpjtepocQOZXe14S3rP36+Sp7jYY/w5
-         5RTyoFBZBSFy0PIsBJncBS710JqOyJj90AMplMOm3xPCKdYRBr1P6MvPTFS5scw7NcYr
-         h/puS2oHJzBdYMDK7eg3wgCXHZ2lsNiSdk+R1+fK9FQYCM5or/mNeLgP1uqgxTdtx+eY
-         oieA==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=14aE2Tmym6RO54bNuO9D8gn1sfqeYbO+xQ1GDkk8bAo=;
+        b=A/7J4RQ6vYTI3VR1pj0dRnHfimo6QZms4u7jLElVIP6D53ew9HNHVc1MPeL5rBI69w
+         i3gnUyLN2BJpnUXmmOhS7D3S1+OgmI5sOpVEofYe77rr1XfLhs6ToEE8Ja9b/LvnKEHm
+         uWJE5bFsWmdE8T36RRTAAjuWxK92wyOIYAljY8J3fyNDWOXaYq4FIEeqNqC+5mJmrcYB
+         9dsVoAdVJOyjDYXYkLsgU8hDl/TrLDzEsxr0BXNA12r7koNzOHD9zLbxpn8hE3eDZrZo
+         p2aMzj/yYTaSQNzplWDmZcz7EfX5CVXFeq1JG0hXVi/ukJHJUgMDpfd0qOl4VJo3oUMp
+         IQdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706068683; x=1706673483;
+        d=1e100.net; s=20230601; t=1706069283; x=1706674083;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SkDGd++VYhFkJLyUlOlXCT60hFOGwDxW/O9I/vnFLB8=;
-        b=H3Kjp/BiPDeQzK6F5l24WhUIGTednIWCLIoI2lV5ghn7h0l52Vv3yQVwz+QUAvuGPy
-         nMHHVOpAcxy8v0vJB1wJwIV71dOTaOSg9CpWnTVJVJtwu8DXD5YXjHxKXQhX3gbhSr4r
-         VfyvI/v7DuIjfHMdeeUlArdgy0S7uaD8vUX7W2JWp7BZ86W5red4y+CiheB98ORLGUWS
-         ZDXKWr2QlxY3y0q/XHC3pWS2AWmI83Dl5DEHe3FzS9fHOwzEec58GMtZ66/hm6QI5Jx3
-         YZeptAnzpooWA4jNTwEa08pDYvLBYJqCuvDyKV+ApwdkcGY+Y+wmg8cJv3icCoxDQaaI
-         TYPQ==
-X-Gm-Message-State: AOJu0Yx3XsP9aW0r19DNvph/8a0GxPA3veubNjFyEn7B3G/0NgI8Q2Za
-	e8UQUKh6kJb5/DRYhqLJRHxKofuvdwEX9R6S0b14TN3UKA4GSwnw
-X-Google-Smtp-Source: AGHT+IE9OX9sgY+VSjE4vn+Zdbs2u9x2Sc0H683YVWqVO7IMwsnLp+nq2gQgPEwie/ruc3uasFNO8Q==
-X-Received: by 2002:a05:620a:1276:b0:781:e4cd:785a with SMTP id b22-20020a05620a127600b00781e4cd785amr869883qkl.21.1706068682752;
-        Tue, 23 Jan 2024 19:58:02 -0800 (PST)
-Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
-        by smtp.gmail.com with ESMTPSA id w7-20020a0cc247000000b006854ec9dbabsm4067484qvh.92.2024.01.23.19.58.01
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=14aE2Tmym6RO54bNuO9D8gn1sfqeYbO+xQ1GDkk8bAo=;
+        b=JYacTuYIQz+MQ1MnYUpWplUSCcAqLtlMRq8tlUw5PCN/o8tq6omv424TIacVp6Jscg
+         AqNxoEtwox3wv788Kxswm0ZXRt2XLclvzMDyl9J7my0cLlqvyzxW2QAGy2gVjiqGQOWZ
+         CkBEESilPvGLemUlMC9Gty/5zWpFEbg/JT3UftVItvrKG85xohMDMeKdKlYxZzV4yyq6
+         4IBYPuWsOPf+r8TJweKxFV/Bl7tzSdu2gxUkqn0HRcbmYG2M4pZl9Bqnd4aABVhNQ7D0
+         SqtKDjOC2UWu2luItqTEiM/hdcjvhTRZLjGLqTwb5lbNcX6VVn8z5pkYd3l9TNeUUsDj
+         uQSA==
+X-Gm-Message-State: AOJu0Yzo+cHJM2pOPBom9wNzC3BN64kbuYW9YvUiecnerUKQzrD10E2r
+	GjKv5EB42+0lkQk0qZcLUOZn0rtlCroRn7RDK2n0DX3EFm7y2jfi
+X-Google-Smtp-Source: AGHT+IFxCYVTtETsoeoDMgiufoL8+xyL0MK1A2rE2RoCwPva+b6nDth80HSuE6Ys6HC5mjjKBRLwnw==
+X-Received: by 2002:a9d:3e14:0:b0:6e0:efaa:4e6e with SMTP id a20-20020a9d3e14000000b006e0efaa4e6emr1010274otd.50.1706069282622;
+        Tue, 23 Jan 2024 20:08:02 -0800 (PST)
+Received: from wedsonaf-dev ([189.124.190.154])
+        by smtp.gmail.com with ESMTPSA id y3-20020a62ce03000000b006dd844e7c2bsm1336871pfg.171.2024.01.23.20.07.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jan 2024 19:58:02 -0800 (PST)
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailauth.nyi.internal (Postfix) with ESMTP id AF53C27C005B;
-	Tue, 23 Jan 2024 22:58:01 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Tue, 23 Jan 2024 22:58:01 -0500
-X-ME-Sender: <xms:yYqwZRZrlU-twhTHaHr0NRbBr80xXMbRL8gL0nRaueQdMlBZgbaL5Q>
-    <xme:yYqwZYZ4EjUegnOcrNbQTx2pokiolvBS2esTvaSE5Q0w9eXR6BPX9DOIKDsZm_Kld
-    z8JdU_TCZP0QHuEQw>
-X-ME-Received: <xmr:yYqwZT8NDniyx7xmUf0VGXcrfd-yavkj_Haueu7F_1pcBiSu73NiT4MsXEltxg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvdeltddgfedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
-    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
-    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
-    igmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:yYqwZfqp2drSoYEmCnD7tRE5h3zU1aplA5fTtOhmYv0J-FcyRf3b7Q>
-    <xmx:yYqwZcq_H3jcmD64IyXk0qlbAJFGLVhOfv0QT5IFYg6DEauZEcuKQg>
-    <xmx:yYqwZVTB8iYSh2PV98IuMyIIlUwsMLrCHtWvAbIDT-e8qRIClZ6bSw>
-    <xmx:yYqwZYZCimC5AWbHMwPd_3vtULTXOvauuUVD7MLaDBh46ewmnaxNGg>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 23 Jan 2024 22:58:00 -0500 (EST)
-Date: Tue, 23 Jan 2024 19:57:20 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tue, 23 Jan 2024 20:08:02 -0800 (PST)
+Date: Wed, 24 Jan 2024 01:07:54 -0300
+From: Wedson Almeida Filho <wedsonaf@gmail.com>
+To: "Andreas Hindborg (Samsung)" <nmi@metaspace.dk>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
-	Kees Cook <keescook@chromium.org>, Gary Guo <gary@garyguo.net>,
-	Dave Chinner <dchinner@redhat.com>,
-	Ariel Miculas <amiculas@cisco.com>,
-	Paul McKenney <paulmck@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Rust
-Message-ID: <ZbCKoKB4OXzeTIgo@boqun-archlinux>
-References: <ZbAO8REoMbxWjozR@casper.infradead.org>
- <wjtuw2m3ojn7m6gx2ozyqtvlsetzwxv5hdhg2hocal3gyou3ue@34e37oox4d5m>
- <201190.1706050689@warthog.procyon.org.uk>
+	Matthew Wilcox <willy@infradead.org>,
+	Kent Overstreet <kent.overstreet@gmail.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Wedson Almeida Filho <walmeida@microsoft.com>
+Subject: Re: [RFC PATCH 06/19] rust: fs: introduce `FileSystem::init_root`
+Message-ID: <ZbCNGkyuYBwkWIEq@wedsonaf-dev>
+References: <20231018122518.128049-1-wedsonaf@gmail.com>
+ <20231018122518.128049-7-wedsonaf@gmail.com>
+ <87o7e25v2z.fsf@metaspace.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -121,55 +88,126 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <201190.1706050689@warthog.procyon.org.uk>
+In-Reply-To: <87o7e25v2z.fsf@metaspace.dk>
 
-On Tue, Jan 23, 2024 at 10:58:09PM +0000, David Howells wrote:
-> Matthew Wilcox <willy@infradead.org> wrote:
+On Wed, Jan 03, 2024 at 02:29:33PM +0100, Andreas Hindborg (Samsung) wrote:
 > 
-> > I really want this to happen.  It's taken 50 years, but we finally have
-> > a programming language that can replace C for writing kernels.
+> Wedson Almeida Filho <wedsonaf@gmail.com> writes:
 > 
-
-(I'm not sure Matthew wants to rewrite the existing kernel piece in
-Rust, my read is more like he feels Rust can be used for new or
-experimental stuffs)
-
-> I really don't want this to happen.  Whilst I have sympathy with the idea that
-> C can be replaced with something better - Rust isn't it.  The syntax is awful.
-> It's like they looked at perl and thought they could beat it at inventing
-> weird and obfuscated bits of operator syntax.  Can't they replace the syntax
-> with something a lot more C-like[*]?
+> [...]
 > 
-
-Isn't the feeling on the syntax (like, hate or can live with) really
-based on personal experience? I'd rather not use this as an argument,
-since I can find syntax haters for every language ;-)
-
-> But quite apart from that, mass-converting the kernel to Rust is pretty much
-> inevitably going introduce a whole bunch of new bugs.
+> >  
+> > +/// An inode that is locked and hasn't been initialised yet.
+> > +#[repr(transparent)]
+> > +pub struct NewINode<T: FileSystem + ?Sized>(ARef<INode<T>>);
+> > +
+> > +impl<T: FileSystem + ?Sized> NewINode<T> {
+> > +    /// Initialises the new inode with the given parameters.
+> > +    pub fn init(self, params: INodeParams) -> Result<ARef<INode<T>>> {
+> > +        // SAFETY: This is a new inode, so it's safe to manipulate it mutably.
+> > +        let inode = unsafe { &mut *self.0 .0.get() };
 > 
+> Perhaps it would make sense with a `UniqueARef` that guarantees
+> uniqueness, in line with `alloc::UniqueRc`?
 
-Desite whether this is what gets proposed here, I do really want to
-agree with you, but I'm not able to tell whether this is an educational
-prediction or unnecessary worry, since I could say the same thing for
-every patchset that adds new features ;-)
+We do have something like that in the kernel crate for Rust-allocated
+ref-counted memory, namely, UniqueArc.
 
-To me, it doesn't matter which language wins the "best C replacement for
-kernel programming" award, the lessons we learn from Rust-for-Linux will
-likely apply for any other "high-level" language. Hope that we can all
-agree on that it's all OK that people want to try out new stuffs and see
-if they *actually* work. Because then we can discuss on something
-concrete and objective.
+But in this case, this is slightly different: the ref-count may be >1, it's just
+that the other holders of pointers will refrain from accessing the object (for
+some unspecified reason). We do have another case like this for folios. Perhaps
+it does make sense to generalise the concept with a type; I'll look into this.
 
-Regards,
-Boqun
-
-> David
 > 
-> [*] That said, we do rather torture the C-preprocessor more than we should
-> have to if the C language was more flexible.  Some of that could be alleviated
-> by moving to C++ and using some of the extra features available there.  That
-> would be an easier path than rusting the kernel.
+> [...]
 > 
+> >  
+> > +impl<T: FileSystem + ?Sized> SuperBlock<T> {
+> > +    /// Tries to get an existing inode or create a new one if it doesn't exist yet.
+> > +    pub fn get_or_create_inode(&self, ino: Ino) -> Result<Either<ARef<INode<T>>, NewINode<T>>> {
+> > +        // SAFETY: The only initialisation missing from the superblock is the root, and this
+> > +        // function is needed to create the root, so it's safe to call it.
+> > +        let inode =
+> > +            ptr::NonNull::new(unsafe { bindings::iget_locked(self.0.get(), ino) }).ok_or(ENOMEM)?;
 > 
+> I can't parse this safety comment properly.
+
+Fixed in v2.
+
+> > +
+> > +        // SAFETY: `inode` is valid for read, but there could be concurrent writers (e.g., if it's
+> > +        // an already-initialised inode), so we use `read_volatile` to read its current state.
+> > +        let state = unsafe { ptr::read_volatile(ptr::addr_of!((*inode.as_ptr()).i_state)) };
+> > +        if state & u64::from(bindings::I_NEW) == 0 {
+> > +            // The inode is cached. Just return it.
+> > +            //
+> > +            // SAFETY: `inode` had its refcount incremented by `iget_locked`; this increment is now
+> > +            // owned by `ARef`.
+> > +            Ok(Either::Left(unsafe { ARef::from_raw(inode.cast()) }))
+> > +        } else {
+> > +            // SAFETY: The new inode is valid but not fully initialised yet, so it's ok to create a
+> > +            // `NewINode`.
+> > +            Ok(Either::Right(NewINode(unsafe {
+> > +                ARef::from_raw(inode.cast())
+> 
+> I would suggest making the destination type explicit for the cast.
+
+Done in v2.
+
+> 
+> > +            })))
+> > +        }
+> > +    }
+> > +}
+> > +
+> >  /// Required superblock parameters.
+> >  ///
+> >  /// This is returned by implementations of [`FileSystem::super_params`].
+> > @@ -215,41 +345,28 @@ impl<T: FileSystem + ?Sized> Tables<T> {
+> >              sb.0.s_blocksize = 1 << sb.0.s_blocksize_bits;
+> >              sb.0.s_flags |= bindings::SB_RDONLY;
+> >  
+> > -            // The following is scaffolding code that will be removed in a subsequent patch. It is
+> > -            // needed to build a root dentry, otherwise core code will BUG().
+> > -            // SAFETY: `sb` is the superblock being initialised, it is valid for read and write.
+> > -            let inode = unsafe { bindings::new_inode(&mut sb.0) };
+> > -            if inode.is_null() {
+> > -                return Err(ENOMEM);
+> > -            }
+> > -
+> > -            // SAFETY: `inode` is valid for write.
+> > -            unsafe { bindings::set_nlink(inode, 2) };
+> > -
+> > -            {
+> > -                // SAFETY: This is a newly-created inode. No other references to it exist, so it is
+> > -                // safe to mutably dereference it.
+> > -                let inode = unsafe { &mut *inode };
+> > -                inode.i_ino = 1;
+> > -                inode.i_mode = (bindings::S_IFDIR | 0o755) as _;
+> > -
+> > -                // SAFETY: `simple_dir_operations` never changes, it's safe to reference it.
+> > -                inode.__bindgen_anon_3.i_fop = unsafe { &bindings::simple_dir_operations };
+> > +            // SAFETY: The callback contract guarantees that `sb_ptr` is a unique pointer to a
+> > +            // newly-created (and initialised above) superblock.
+> > +            let sb = unsafe { &mut *sb_ptr.cast() };
+> 
+> Again, I would suggest an explicit destination type for the cast.
+
+Done in v2.
+
+> 
+> > +            let root = T::init_root(sb)?;
+> >  
+> > -                // SAFETY: `simple_dir_inode_operations` never changes, it's safe to reference it.
+> > -                inode.i_op = unsafe { &bindings::simple_dir_inode_operations };
+> > +            // Reject root inode if it belongs to a different superblock.
+> 
+> I am curious how this would happen?
+
+If a user mounts two instances of a file system and the implementation allocates
+root inodes and swap them before returning. The types will match because they
+are the same file system, but they'll have the wrong super-block.
+
+Thanks,
+-Wedson
 
