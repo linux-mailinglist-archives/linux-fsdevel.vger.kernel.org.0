@@ -1,114 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-8687-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97DA683A496
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 09:53:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D97183A572
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 10:30:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53291283DA2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 08:53:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9FCF2923A3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 09:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B92179B2;
-	Wed, 24 Jan 2024 08:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2S6SlR8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FDA18037;
+	Wed, 24 Jan 2024 09:30:32 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C70017BA4;
-	Wed, 24 Jan 2024 08:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6025F1802A;
+	Wed, 24 Jan 2024 09:30:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706086383; cv=none; b=dCUourwbR1ryOb/MwM0yxyvfgsgSX6JQ78IIWg8WmiWLQ+gUBhIcG7j8psi+QH8X18Q4Jj3fKH0vcbxCbowGsEc8fBjUM6UVlpNTpURyjWq0oPtUqdp5gXDjHHvxJcABJ3CH7PewsSuwHAgQ+tkmE+Z35BY+bE2beCFgobfmFHA=
+	t=1706088631; cv=none; b=kQih61y2HaO9kMVxLANw+Z06BPOOeaeAhNyghYhL6qhlC23mKB9ZijRu2IrVCjFfYFQCbocn9KJlTJEKq/Pb0WI7m8mGwbSYwwbf9ODozFBvi1DJAAgWY3ar0oQL8krFa/ngYx/f4BKHlntHanGIRzHxAx/3FifpP7y+i5dEURU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706086383; c=relaxed/simple;
-	bh=ALiLSmHR7ixWCL+Ps8AusrKLdltVu/WoJeQS9e5pEuo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F9jyGHGHK+aB7xgCdVCgZJ5n9VMbC1e0GZ4NHnyQvlB+sPibTyurQLJWXb+AWomurc6zCfSVZWv9Bfdw4nMXdmgt8gegAbf3BxQ6XaX4vZRDtomnALOFh3wfhyT4CA5XT9BkhC4lhT8WCwMkxr4Pt5X6Cgh2sLuFsmXpg2MYhp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2S6SlR8; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-55a5e7fa471so4605966a12.1;
-        Wed, 24 Jan 2024 00:53:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706086379; x=1706691179; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q79dc6M6aA9dlwyZRuq5WIblH8nBswmidnsr0jpaUK8=;
-        b=D2S6SlR8jLSQwnj0RM+hpbmcpt+Wl87iHAx14retynHKpVJY74I1hYlMHV0eLPYhrK
-         qZovSBS9LG7NDipAQtfNeoD6Vd1B2NA7MM8xF5+2spTRt1ctchgOOg0XIo3TBV7APmSj
-         FG6w984g+9FOOc03w1i8gY9EyF5kJ7ELKlELXergm6ydn+++R0iCki0UmLUJio/2uuUk
-         /idpOConevlI+9npzIwoE/3uah4SM8GPnZHF19sdzcyOqAFXSmMTNrlut4GgL8v9jvyQ
-         qVEGgBSvH87mK5kp326QRHSVXzC6Pk3jGMtY+5JpLLFxaaOhdRSLra+4mSe83E7bnB1I
-         DFog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706086379; x=1706691179;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Q79dc6M6aA9dlwyZRuq5WIblH8nBswmidnsr0jpaUK8=;
-        b=BrJvrVl+goW1tvL+er6S9sL0KqXk9C1eDAQ4L9l8HbyIQG9OTxELaoOA4TVFSHoNOV
-         kPxdEo0RbtwN7emV2pdMB3sd9WFZ7n0DZxpdfpsc+g2Ae6Nj7hzDKH7nW5zjkj4RlwXD
-         QE/mH/mM/ilnrMHE+aqBbdZRYlIP4WKHfUEtRolmuC00OwL+ZssG06oKJqrMi4J6nG0a
-         02uRWdzNNn32VJHhKkxcj0iJI9I6JReZeQjGE/AFLBYc+A+9J/49SC5dLo5vNSaCT1iN
-         ZmW3LgN5+sfJN5zFbJ7/0tQnTG9kTdFRa/tLtWMunzqdb91O4GGcX8jJiPMN8AJugkBC
-         PVgA==
-X-Gm-Message-State: AOJu0YwDM3+lfHl8Xk8ChSIfkRu6CHrkt1guF+AgoV+rSn4nW2I5wpXt
-	EKTwfjxCVCgpnNQkpoBHXqhjNkRnM7LAMqxg+YRIrdctKJLvVQ3fjur4WkEMnYCmYPRGUV8Ioa5
-	oN1KCHCuauwoGLGr6MlRz35hXrG8=
-X-Google-Smtp-Source: AGHT+IE4vczDA9qOOeeDJ08Jpe4BrohKBQ1HqQmNzWxQ30H/5wtfZN4cE3h3wbu8yzNPSAcbhqfO2n7nI6nWJEEVnWU=
-X-Received: by 2002:a05:6402:3108:b0:55c:20f7:4ef8 with SMTP id
- dc8-20020a056402310800b0055c20f74ef8mr1458462edb.23.1706086379336; Wed, 24
- Jan 2024 00:52:59 -0800 (PST)
+	s=arc-20240116; t=1706088631; c=relaxed/simple;
+	bh=qmC5nXw/zGxMMGst/hVylM3OFQtfUYgQ8/8cGXf1tIk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
+	 In-Reply-To:Content-Type; b=hNcYZw37lEnl0Vnw+vtOGZIqmNhGRT+DEoGzm+1PoC/05dxfS24zJORn6P1QZGbjI9u8k+IsrYBF0J1PG/Q/f/STYRvMTn2tOI4un9PUB8cjk2Po87Ja08E42ke5E/XoPyQaps/i/KF+lDozE9iv3vuagdAKwaCTGO42Tib0+j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4TKdvc69lnzNlS9;
+	Wed, 24 Jan 2024 17:29:32 +0800 (CST)
+Received: from kwepemm600020.china.huawei.com (unknown [7.193.23.147])
+	by mail.maildlp.com (Postfix) with ESMTPS id A500D18005E;
+	Wed, 24 Jan 2024 17:30:25 +0800 (CST)
+Received: from [10.174.179.160] (10.174.179.160) by
+ kwepemm600020.china.huawei.com (7.193.23.147) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 24 Jan 2024 17:30:24 +0800
+Message-ID: <4f78fea2-ced6-fc5a-c7f2-b33fcd226f06@huawei.com>
+Date: Wed, 24 Jan 2024 17:30:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240124083301.8661-1-tony.solomonik@gmail.com>
-In-Reply-To: <20240124083301.8661-1-tony.solomonik@gmail.com>
-From: Cedric Blancher <cedric.blancher@gmail.com>
-Date: Wed, 24 Jan 2024 09:52:23 +0100
-Message-ID: <CALXu0UdfZm-UJcPqF5H6+PXPp=DC2SA-QFbB-aVywmMT5X3A6g@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] io_uring: add support for ftruncate
-To: Tony Solomonik <tony.solomonik@gmail.com>
-Cc: io-uring@vger.kernel.org, asml.silence@gmail.com, axboe@kernel.dk, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+From: "zhangpeng (AS)" <zhangpeng362@huawei.com>
+Subject: Re: SECURITY PROBLEM: Any user can crash the kernel with TCP ZEROCOPY
+To: Eric Dumazet <edumazet@google.com>, Matthew Wilcox <willy@infradead.org>
+CC: <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <akpm@linux-foundation.org>, <davem@davemloft.net>,
+	<dsahern@kernel.org>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<arjunroy@google.com>, <wangkefeng.wang@huawei.com>
+References: <20240119092024.193066-1-zhangpeng362@huawei.com>
+ <Zap7t9GOLTM1yqjT@casper.infradead.org>
+ <5106a58e-04da-372a-b836-9d3d0bd2507b@huawei.com>
+ <Za6SD48Zf0CXriLm@casper.infradead.org>
+ <CANn89iL4qUXsVDRNGgBOweZbJ6ErWMsH+EpOj-55Lky8JEEhqQ@mail.gmail.com>
+ <Za6h-tB7plgKje5r@casper.infradead.org>
+ <CANn89iJDNdOpb6L6PkrAcbGcsx6_v4VD0v2XFY77g7tEnJEXXQ@mail.gmail.com>
+Content-Language: en-US
+In-Reply-To: <CANn89iJDNdOpb6L6PkrAcbGcsx6_v4VD0v2XFY77g7tEnJEXXQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600020.china.huawei.com (7.193.23.147)
 
-On Wed, 24 Jan 2024 at 09:33, Tony Solomonik <tony.solomonik@gmail.com> wrote:
->
-> This patch adds support for doing truncate through io_uring, eliminating
-> the need for applications to roll their own thread pool or offload
-> mechanism to be able to do non-blocking truncates.
->
-> Tony Solomonik (2):
->   Add ftruncate_file that truncates a struct file
->   io_uring: add support for ftruncate
->
->  fs/internal.h                 |  1 +
->  fs/open.c                     | 53 ++++++++++++++++++-----------------
->  include/uapi/linux/io_uring.h |  1 +
->  io_uring/Makefile             |  2 +-
->  io_uring/opdef.c              | 10 +++++++
->  io_uring/truncate.c           | 48 +++++++++++++++++++++++++++++++
->  io_uring/truncate.h           |  4 +++
->  7 files changed, 93 insertions(+), 26 deletions(-)
->  create mode 100644 io_uring/truncate.c
->  create mode 100644 io_uring/truncate.h
->
->
-> base-commit: d3fa86b1a7b4cdc4367acacea16b72e0a200b3d7
+On 2024/1/23 1:39, Eric Dumazet wrote:
 
-Also fallocate() to punch holes, aka sparse files, must be implemented
+> On Mon, Jan 22, 2024 at 6:12 PM Matthew Wilcox<willy@infradead.org>  wrote:
+>> On Mon, Jan 22, 2024 at 05:30:18PM +0100, Eric Dumazet wrote:
+>>> On Mon, Jan 22, 2024 at 5:04 PM Matthew Wilcox<willy@infradead.org>  wrote:
+>>>> I'm disappointed to have no reaction from netdev so far.  Let's see if a
+>>>> more exciting subject line evinces some interest.
+>>> Hmm, perhaps some of us were enjoying their weekend ?
+>> I am all in favour of people taking time off!  However the report came
+>> in on Friday at 9am UTC so it had been more than a work day for anyone
+>> anywhere in the world without response.
+>>
+>>> I don't really know what changed recently, all I know is that TCP zero
+>>> copy is for real network traffic.
+>>>
+>>> Real trafic uses order-0 pages, 4K at a time.
+>>>
+>>> If can_map_frag() needs to add another safety check, let's add it.
+>> So it's your opinion that people don't actually use sendfile() from
+>> a local file, and we can make this fail to zerocopy?
+> Certainly we do not do that at Google.
+> I am not sure if anybody else would have used this.
+>
+>
+>
+>   That's good
+>> because I had a slew of questions about what expectations we had around
+>> cache coherency between pages mapped this way and write()/mmap() of
+>> the original file.  If we can just disallow this, we don't need to
+>> have a discussion about it.
+>>
+>>> syzbot is usually quite good at bisections, was a bug origin found ?
+>> I have the impression that Huawei run syzkaller themselves without
+>> syzbot.  I suspect this bug has been there for a good long time.
+>> Wonder why nobody's found it before; it doesn't seem complicated for a
+>> fuzzer to stumble into.
+> I is strange syzbot (The Google fuzzer) have not found this yet, I
+> suspect it might be caused
+> by a recent change somewhere ?
+>
+> A repro would definitely help, I could start a bisection.
 
-Ced
+By using git-bisect, the patch that introduces this issue is 05255b823a617
+("tcp: add TCP_ZEROCOPY_RECEIVE support for zerocopy receive."). v4.18-rc1.
+
+Currently, there are no other repro or c reproduction programs can reproduce
+the issue. The syz log used to reproduce the issue is as follows:
+
+r3 = socket$inet_tcp(0x2, 0x1, 0x0)
+mmap(&(0x7f0000ff9000/0x4000)=nil, 0x4000, 0x0, 0x12, r3, 0x0)
+r4 = socket$inet_tcp(0x2, 0x1, 0x0)
+bind$inet(r4, &(0x7f0000000000)={0x2, 0x4e24, @multicast1}, 0x10)
+connect$inet(r4, &(0x7f00000006c0)={0x2, 0x4e24, @empty}, 0x10)
+r5 = openat$dir(0xffffffffffffff9c, &(0x7f00000000c0)='./file0\x00',
+0x181e42, 0x0)
+fallocate(r5, 0x0, 0x0, 0x85b8818)
+sendfile(r4, r5, 0x0, 0x3000)
+getsockopt$inet_tcp_TCP_ZEROCOPY_RECEIVE(r4, 0x6, 0x23,
+&(0x7f00000001c0)={&(0x7f0000ffb000/0x3000)=nil, 0x3000, 0x0, 0x0,
+0x0, 0x0, 0x0, 0x0, 0x0}, &(0x7f0000000440)=0x10)
+r6 = openat$dir(0xffffffffffffff9c, &(0x7f00000000c0)='./file0\x00',
+0x181e42, 0x0)
+
 -- 
-Cedric Blancher <cedric.blancher@gmail.com>
-[https://plus.google.com/u/0/+CedricBlancher/]
-Institute Pasteur
+Best Regards,
+Peng
+
 
