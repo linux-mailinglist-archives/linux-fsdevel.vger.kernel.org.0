@@ -1,59 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-8808-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A168683B27C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 20:49:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 522FB83B28C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 20:52:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D26821C22D4B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:49:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 852E91C22C3D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900BE13340C;
-	Wed, 24 Jan 2024 19:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3A6133428;
+	Wed, 24 Jan 2024 19:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jgRtZ6pC"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="J4Diar6n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C928E132C20
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 19:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60810131E38
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 19:51:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706125767; cv=none; b=BsHeiKpW7ULFPxzYbQCEleY2ot7xibu1nEtwmMCIpSd9UCEEdFrx5M3T+JnATpRCIYQEYlaF8T6XaK8F/hmz/qH7HgWteHnJB17j2jgRGIBjGkwsR0grupqjsqe+VaXZxR4LNmBJrlWxXKw2pAS9Q1JYXAjFVTDUnviehw/222o=
+	t=1706125912; cv=none; b=OJtoOl8W/40qj2kr0nbsEraNKKHw1QRAKDslCj6FL7bpdCbM6jN+3BHNq+qRZqSLt+Mxip1qBlVYEFeJ622Qm6HYL+YUuSnjpDKsd2ADHy9XPAbZzrg/QCSzxJgyedmDr2LZhzbgcMks/RpssWr1mmWBZNlzsCdaUj4H5gCxGO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706125767; c=relaxed/simple;
-	bh=CJU2Hl52ARq0CPgIV2SfUxZLEv2pHIQMrNTpWq8GCbs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EXNzhskOZgtlHagL5b1Ivhcv3U2h/3GVqOlBl41bBhu0RouUdiQpK/jmTLbrlIr/rxnMuaH69Kv53YViHVs1B2FBC4NMmGhdkX9TOo0AZa+5uWvf4spbuWomQdFScNHqPI876r+baGPLF65KdaeQDGy1jLAw/vNijsBuBMHBhDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jgRtZ6pC; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 24 Jan 2024 14:49:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1706125762;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=90tx2JOK6zp8F9uDeHo0W3wTSrKFobNnyX2HRm8aTdQ=;
-	b=jgRtZ6pCS3VvbJOc46YOiQ1lmfDMrTEnxp7URywB/r5uaSApjbOCykBeR0kIhynpjApksJ
-	xzTcHDydnqv8DFLG12urRRGthHiXoM3Vi3Y3N9CKtQmBygRn+ztiN9yWIpMKxR/hvV3xsa
-	ltTTa6Npp0ewZrzE3pcDMkQX9Vq1Uq0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: david@fromorbit.com, willy@infradead.org, wedsonaf@gmail.com, 
-	viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org, brauner@kernel.org, 
-	kent.overstreet@gmail.com, linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	walmeida@microsoft.com
-Subject: Re: [RFC PATCH 00/19] Rust abstractions for VFS
-Message-ID: <6hk53ozdm474tft2sewuxo6vlgeb3cbafzfl6gex4ogufkvped@bgzciwbgncsf>
-References: <ZZ2dsiK77Se65wFY@casper.infradead.org>
- <ZZ3GeehAw/78gZJk@dread.disaster.area>
- <zdc66q6svna4t5zwa5hkxc72evxqplqpra5j47wq33hidspnjb@r4k7dewzjm7e>
- <20240124.220835.478444598271791659.fujita.tomonori@gmail.com>
+	s=arc-20240116; t=1706125912; c=relaxed/simple;
+	bh=+IYqSxEQ9oBa5c9r8B0bfIvQXLqXBMpi4Ryc4G+HXuE=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TK1FPxvKu3E8+ZHFOrR5WPQFH2NP7sTB8NJyUs/OMjDYibFgn5l11uLXAWdZXWvnkND3paulq2YFDcxA/wzNLBNrDCHD4LzdPiJjiWulQQDU2kDf7x9Pgnd+le8KWul3X4QRg4wkECvB9LgRgsaQc3kujvjEH7PgSIgJm+MKYz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=J4Diar6n; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1d750660a0aso19969825ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 11:51:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1706125911; x=1706730711; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kA0mFxG1k0QSiOKDeUD/WDcdNFn8yF9DrGJFsA48PEc=;
+        b=J4Diar6nU/37c0/UwBQQFu7zCFodAGZNbMK8zK5T4ksD60wf29XsDjczDxsZMoOkG8
+         VWNui00mTtdF2GLDTKMEYsm80XO6z1961TZkKiOaKfAmeJPEEG9nw+44TX83kwwOMNbj
+         w/zguEDg41/bg68FDXI9OEyyVi7Lkay37ry3M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706125911; x=1706730711;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kA0mFxG1k0QSiOKDeUD/WDcdNFn8yF9DrGJFsA48PEc=;
+        b=etWE7tLRNzjJ5Rwi6njjVS67bG03whKgooUSRIunC/O9fo4BIoXk6jRmyq6nnlqW6x
+         BLW6bAZ2sPq4hwwW24/nMZctfxZ2//daF5Ww/Vus0GiCd33oiEoKQuLPqDfmVCUQsGRY
+         k42C1dkfj7ScoXnFQuGZ9WeQSUtIi5c/2OhtE8LLwLtn4iJvPnYRqBN0AMW50nUzla5z
+         OFEsToBSPWhKw/m5vgGbMWhaRp/OM29T6Cp9o4Qu59rXoGrsFaaxNHzX8sFosWt92xo+
+         KVGTcvgXcbE2WlHs4ylJyC8YE+1CecPdNMWYMYmPW+FgSeGeYZlANZaHFDluw77VH8Qi
+         q/aQ==
+X-Gm-Message-State: AOJu0Yx7iURrqOE/7dZBLZXYYsA7Z86ib7aAH3omWL1u+aHEUf08oPYK
+	BYOl8yg/TH9AiY4TXa/YL+y/ktFG7TaV9T8DaRp1GkBQ4Ge7n8f9Z0ypE3vH3w==
+X-Google-Smtp-Source: AGHT+IHOo2S4XZPrJkJAVWNIUu5O2sihiMmNygdfJCCs51/i38ljraqICbhZ/brbhlRxs5RoeWJoDA==
+X-Received: by 2002:a17:902:8685:b0:1d7:70d7:c05a with SMTP id g5-20020a170902868500b001d770d7c05amr1210754plo.98.1706125910737;
+        Wed, 24 Jan 2024 11:51:50 -0800 (PST)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id d9-20020a170902c18900b001d707163122sm10456896pld.7.2024.01.24.11.51.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 24 Jan 2024 11:51:50 -0800 (PST)
+Date: Wed, 24 Jan 2024 11:51:49 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Kevin Locke <kevin@kevinlocke.name>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] exec: Check __FMODE_EXEC instead of in_execve for LSMs
+Message-ID: <202401241151.25D468FE@keescook>
+References: <20240124192228.work.788-kees@kernel.org>
+ <ZbFneq3URF5lLAT7@kevinlocke.name>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,74 +92,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240124.220835.478444598271791659.fujita.tomonori@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <ZbFneq3URF5lLAT7@kevinlocke.name>
 
-On Wed, Jan 24, 2024 at 10:08:35PM +0900, FUJITA Tomonori wrote:
-> On Wed, 10 Jan 2024 14:19:41 -0500
-> Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> 
-> > On Wed, Jan 10, 2024 at 09:19:37AM +1100, Dave Chinner wrote:
-> >> On Tue, Jan 09, 2024 at 07:25:38PM +0000, Matthew Wilcox wrote:
-> >> > On Tue, Jan 09, 2024 at 04:13:15PM -0300, Wedson Almeida Filho wrote:
-> >> > > On Wed, 3 Jan 2024 at 17:41, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >> > > > No.  This "cleaner version on the Rust side" is nothing of that sort;
-> >> > > > this "readdir doesn't need any state that might be different for different
-> >> > > > file instances beyond the current position, because none of our examples
-> >> > > > have needed that so far" is a good example of the garbage we really do
-> >> > > > not need to deal with.
-> >> > > 
-> >> > > What you're calling garbage is what Greg KH asked us to do, namely,
-> >> > > not introduce anything for which there are no users. See a couple of
-> >> > > quotes below.
-> >> > > 
-> >> > > https://lore.kernel.org/rust-for-linux/2023081411-apache-tubeless-7bb3@gregkh/
-> >> > > The best feedback is "who will use these new interfaces?"  Without that,
-> >> > > it's really hard to review a patchset as it's difficult to see how the
-> >> > > bindings will be used, right?
-> >> > > 
-> >> > > https://lore.kernel.org/rust-for-linux/2023071049-gigabyte-timing-0673@gregkh/
-> >> > > And I'd recommend that we not take any more bindings without real users,
-> >> > > as there seems to be just a collection of these and it's hard to
-> >> > > actually review them to see how they are used...
-> >> > 
-> >> > You've misunderstood Greg.  He's saying (effectively) "No fs bindings
-> >> > without a filesystem to use them".  And Al, myself and others are saying
-> >> > "Your filesystem interfaces are wrong because they're not usable for real
-> >> > filesystems".
-> >> 
-> >> And that's why I've been saying that the first Rust filesystem that
-> >> should be implemented is an ext2 clone. That's our "reference
-> >> filesystem" for people who want to learn how filesystems should be
-> >> implemented in Linux - it's relatively simple but fully featured and
-> >> uses much of the generic abstractions and infrastructure.
-> >> 
-> >> At minimum, we need a filesystem implementation that is fully
-> >> read-write, supports truncate and rename, and has a fully functional
-> >> userspace and test infrastructure so that we can actually verify
-> >> that the Rust code does what it says on the label. ext2 ticks all of
-> >> these boxes....
+On Wed, Jan 24, 2024 at 12:39:38PM -0700, Kevin Locke wrote:
+> On Wed, 2024-01-24 at 11:22 -0800, Kees Cook wrote:
+> > After commit 978ffcbf00d8 ("execve: open the executable file before
+> > doing anything else"), current->in_execve was no longer in sync with the
+> > open(). This broke AppArmor and TOMOYO which depend on this flag to
+> > distinguish "open" operations from being "exec" operations.
 > > 
-> > I think someone was working on that? But I'd prefer that not to be a
-> > condition of merging the VFS interfaces; we've got multiple new Rust
-> > filesystems being implemented and I'm also planning on merging Rust
-> > bcachefs code next merge window.
+> > Instead of moving around in_execve, switch to using __FMODE_EXEC, which
+> > is where the "is this an exec?" intent is stored. Note that TOMOYO still
+> > uses in_execve around cred handling.
 > 
-> It's very far from a fully functional clone of ext2 but the following
-> can do simple read-write to/from files and directories:
+> It solves the AppArmor issue I was experiencing and I don't notice any
+> other issues.
 > 
-> https://github.com/fujita/linux/tree/ext2-rust/fs/ext2rust
-> 
-> For now, all of the code is unsafe Rust, using C structures directly
-> but I could update the code to see how well Rust VFS abstractions for
-> real file systems work.
+> Tested-by: Kevin Locke <kevin@kevinlocke.name>
 
-I think that would be well received. I think the biggest hurdle for a
-lot of people is going to be figuring out the patterns for expressing
-old idioms in safe rust - a version of ext2 in safe Rust would be the
-perfect gentle introduction for filesystem people.
+Thanks!
 
-And if it achieved feature parity with fs/ext2, there'd be a strong
-argument for it eventually replacing fs/ext2 so that we can more safely
-mount untrusted filesystem images.
+Sounds like Linus has taken the patch directly, and I'll send a follow-up
+PR with other clean-ups.
+
+-Kees
+
+-- 
+Kees Cook
 
