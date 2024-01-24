@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-8657-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8658-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE215839EF2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 03:26:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31123839EF6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 03:26:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25E801F21B43
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 02:26:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CAD11F2180E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 02:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3F8175AA;
-	Wed, 24 Jan 2024 02:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8152317735;
+	Wed, 24 Jan 2024 02:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXqSRTBR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EzOZDv5r"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430ED1759C;
-	Wed, 24 Jan 2024 02:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD449B659;
+	Wed, 24 Jan 2024 02:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706062961; cv=none; b=Y8Op4Bk8bIhUobGIZ9F+MFvma2PZGefEAwLY3P+XlKMYkaVj8j5jXtpdJZYqvKhD+emgOFoqXoLZ/ivtDksdLMBNTIky8aFHRz1PaRvJWegQRDrSCQgY4z5S3OfJutLLF0KTTW5yKc78RqJ63evfRfKg9TC/vX8gU+KMlezV914=
+	t=1706062965; cv=none; b=f1mDtd9SPOoHXbOIeWV1HRes2FELCGffB19eGjEh+65/7z4qrSdvoXclwOEJTK90mlLtnD9maGFqad03VzCr+/E3Ag+rmN/gZtREdW9mHgueQpC0iK8lVATEt63thhUcIn/ob8lB3DV15DIl2MyPOt3Ypa2ZDGli3VAvZ4eKuoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706062961; c=relaxed/simple;
-	bh=V3eeD/P6gPsaCD81zuOXmaiuOwvyxO6BCYZ5jnl26Bo=;
+	s=arc-20240116; t=1706062965; c=relaxed/simple;
+	bh=cn0YLgKPQ1TtahDWAguI+pIP/0vxtg7TKWt6BNQTOfc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EhbQnb8IMWREJB9DDduuCdQ96YJx3/pFgO+Uig2VJsk6/RFk6g97TN03PlfuTg43USC9kuTzKpY7Un7XuJjf59bRQgAibeFh6zsL3qZU5ECUaWnaWSh1KAd4RsPn/TPgTF0Vu/3ecFb8JzCT2zrwMCh0YQRyeusGC6DU9O8nNt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXqSRTBR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCE5FC433C7;
-	Wed, 24 Jan 2024 02:22:40 +0000 (UTC)
+	 MIME-Version; b=gqMItSnqrt2UOmkfN7FE6v2T87maFXMGFCoA1mK8dEPlL8oky2VU06jPl9ioxxvyco5RxoF96c44k+pakP2mwUW50WruCTsYN7XBzdL9QsYON9v9NZ2PDRbAy3/8pm1wyOODmt5o0Pw2vREbo7CCi1H4bQCWKtaMnAi3f+zHyJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EzOZDv5r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86BB1C433F1;
+	Wed, 24 Jan 2024 02:22:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706062961;
-	bh=V3eeD/P6gPsaCD81zuOXmaiuOwvyxO6BCYZ5jnl26Bo=;
+	s=k20201202; t=1706062964;
+	bh=cn0YLgKPQ1TtahDWAguI+pIP/0vxtg7TKWt6BNQTOfc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=DXqSRTBRJncwwVjkYgBuTU9+7TVJnnV4MTMl6TUd6EAWXKxTMnyJ1r0EYm5M+K12v
-	 7IgGMLrSTTOR7DziKXr2+ztRsrRHwwrq2PKwqOXeoMPCBOt5BrgOjNn9HjBEJzbuBI
-	 GOZRRLBMIM5uBcMkMJH+52V2S5zI/wTsCiQrEeb1lPovxEfk0U7mhSbdMp8adFX7Eo
-	 PrATa12+xf38Xna0RWtwK1ldEGQlo9qN65jGCyTFinaKgj7tpVzYyYoZ3sOl5huVy/
-	 q5QoOMDL/Zj9AcKfDuhu2ZtMz5ttQJSb6MPcbuhqAGrbJrxUNe+NcAVposfzpIYXqz
-	 +zYHq+mGjKTkQ==
+	b=EzOZDv5rvG2OR/ceFaAhMqxSUm3npLxDauIyigr0yUu9wxLa8Dm/b5UfZ1JyUEBSF
+	 sq071ttUlsWZp4XC7Ncvj49WF14MwHtwTCVoqsIRt1sL4Grg48JBh44BHQ5UCaPk9c
+	 528djQfo55sK/47fNm5vxWwaP4dwX7RDm+etVnNV2iBZpHjIs7GtfXyxWYIx7chDt4
+	 On83xupxRFvZAU6+Kf1gG5Io8hs7PaVWZ/0Y/W1qSMI8EZZQtRb0HaekVIfh3fkkX6
+	 1xMUEG+d0czfKjsS2sLQo6T0Xn6o93yASikdTF8gws7n7rQwuRN1zLD3VhpQj5BMWI
+	 0htPk3QQR0gWA==
 From: Andrii Nakryiko <andrii@kernel.org>
 To: bpf@vger.kernel.org,
 	netdev@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc: torvalds@linux-foundation.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	kernel-team@meta.com
-Subject: [PATCH v2 bpf-next 19/30] bpf: support symbolic BPF FS delegation mount options
-Date: Tue, 23 Jan 2024 18:21:16 -0800
-Message-Id: <20240124022127.2379740-20-andrii@kernel.org>
+Subject: [PATCH v2 bpf-next 20/30] selftests/bpf: utilize string values for delegate_xxx mount options
+Date: Tue, 23 Jan 2024 18:21:17 -0800
+Message-Id: <20240124022127.2379740-21-andrii@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240124022127.2379740-1-andrii@kernel.org>
 References: <20240124022127.2379740-1-andrii@kernel.org>
@@ -64,333 +64,146 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Besides already supported special "any" value and hex bit mask, support
-string-based parsing of delegation masks based on exact enumerator
-names. Utilize BTF information of `enum bpf_cmd`, `enum bpf_map_type`,
-`enum bpf_prog_type`, and `enum bpf_attach_type` types to find supported
-symbolic names (ignoring __MAX_xxx guard values and stripping repetitive
-prefixes like BPF_ for cmd and attach types, BPF_MAP_TYPE_ for maps, and
-BPF_PROG_TYPE_ for prog types). The case doesn't matter, but it is
-normalized to lower case in mount option output. So "PROG_LOAD",
-"prog_load", and "MAP_create" are all valid values to specify for
-delegate_cmds options, "array" is among supported for map types, etc.
-
-Besides supporting string values, we also support multiple values
-specified at the same time, using colon (':') separator.
-
-There are corresponding changes on bpf_show_options side to use known
-values to print them in human-readable format, falling back to hex mask
-printing, if there are any unrecognized bits. This shouldn't be
-necessary when enum BTF information is present, but in general we should
-always be able to fall back to this even if kernel was built without BTF.
-As mentioned, emitted symbolic names are normalized to be all lower case.
-
-Example below shows various ways to specify delegate_cmds options
-through mount command and how mount options are printed back:
-
-12/14 14:39:07.604
-vmuser@archvm:~/local/linux/tools/testing/selftests/bpf
-$ mount | rg token
-
-  $ sudo mkdir -p /sys/fs/bpf/token
-  $ sudo mount -t bpf bpffs /sys/fs/bpf/token \
-               -o delegate_cmds=prog_load:MAP_CREATE \
-               -o delegate_progs=kprobe \
-               -o delegate_attachs=xdp
-  $ mount | grep token
-  bpffs on /sys/fs/bpf/token type bpf (rw,relatime,delegate_cmds=map_create:prog_load,delegate_progs=kprobe,delegate_attachs=xdp)
+Use both hex-based and string-based way to specify delegate mount
+options for BPF FS.
 
 Acked-by: John Fastabend <john.fastabend@gmail.com>
 Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- kernel/bpf/inode.c | 249 ++++++++++++++++++++++++++++++++++++++-------
- 1 file changed, 211 insertions(+), 38 deletions(-)
+ .../testing/selftests/bpf/prog_tests/token.c  | 52 ++++++++++++-------
+ 1 file changed, 32 insertions(+), 20 deletions(-)
 
-diff --git a/kernel/bpf/inode.c b/kernel/bpf/inode.c
-index 5fb10da5717f..af5d2ffadd70 100644
---- a/kernel/bpf/inode.c
-+++ b/kernel/bpf/inode.c
-@@ -595,6 +595,136 @@ struct bpf_prog *bpf_prog_get_type_path(const char *name, enum bpf_prog_type typ
- }
- EXPORT_SYMBOL(bpf_prog_get_type_path);
- 
-+struct bpffs_btf_enums {
-+	const struct btf *btf;
-+	const struct btf_type *cmd_t;
-+	const struct btf_type *map_t;
-+	const struct btf_type *prog_t;
-+	const struct btf_type *attach_t;
-+};
-+
-+static int find_bpffs_btf_enums(struct bpffs_btf_enums *info)
-+{
-+	const struct btf *btf;
-+	const struct btf_type *t;
-+	const char *name;
-+	int i, n;
-+
-+	memset(info, 0, sizeof(*info));
-+
-+	btf = bpf_get_btf_vmlinux();
-+	if (IS_ERR(btf))
-+		return PTR_ERR(btf);
-+	if (!btf)
-+		return -ENOENT;
-+
-+	info->btf = btf;
-+
-+	for (i = 1, n = btf_nr_types(btf); i < n; i++) {
-+		t = btf_type_by_id(btf, i);
-+		if (!btf_type_is_enum(t))
-+			continue;
-+
-+		name = btf_name_by_offset(btf, t->name_off);
-+		if (!name)
-+			continue;
-+
-+		if (strcmp(name, "bpf_cmd") == 0)
-+			info->cmd_t = t;
-+		else if (strcmp(name, "bpf_map_type") == 0)
-+			info->map_t = t;
-+		else if (strcmp(name, "bpf_prog_type") == 0)
-+			info->prog_t = t;
-+		else if (strcmp(name, "bpf_attach_type") == 0)
-+			info->attach_t = t;
-+		else
-+			continue;
-+
-+		if (info->cmd_t && info->map_t && info->prog_t && info->attach_t)
-+			return 0;
-+	}
-+
-+	return -ESRCH;
-+}
-+
-+static bool find_btf_enum_const(const struct btf *btf, const struct btf_type *enum_t,
-+				const char *prefix, const char *str, int *value)
-+{
-+	const struct btf_enum *e;
-+	const char *name;
-+	int i, n, pfx_len = strlen(prefix);
-+
-+	*value = 0;
-+
-+	if (!btf || !enum_t)
-+		return false;
-+
-+	for (i = 0, n = btf_vlen(enum_t); i < n; i++) {
-+		e = &btf_enum(enum_t)[i];
-+
-+		name = btf_name_by_offset(btf, e->name_off);
-+		if (!name || strncasecmp(name, prefix, pfx_len) != 0)
-+			continue;
-+
-+		/* match symbolic name case insensitive and ignoring prefix */
-+		if (strcasecmp(name + pfx_len, str) == 0) {
-+			*value = e->val;
-+			return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+static void seq_print_delegate_opts(struct seq_file *m,
-+				    const char *opt_name,
-+				    const struct btf *btf,
-+				    const struct btf_type *enum_t,
-+				    const char *prefix,
-+				    u64 delegate_msk, u64 any_msk)
-+{
-+	const struct btf_enum *e;
-+	bool first = true;
-+	const char *name;
-+	u64 msk;
-+	int i, n, pfx_len = strlen(prefix);
-+
-+	delegate_msk &= any_msk; /* clear unknown bits */
-+
-+	if (delegate_msk == 0)
-+		return;
-+
-+	seq_printf(m, ",%s", opt_name);
-+	if (delegate_msk == any_msk) {
-+		seq_printf(m, "=any");
-+		return;
-+	}
-+
-+	if (btf && enum_t) {
-+		for (i = 0, n = btf_vlen(enum_t); i < n; i++) {
-+			e = &btf_enum(enum_t)[i];
-+			name = btf_name_by_offset(btf, e->name_off);
-+			if (!name || strncasecmp(name, prefix, pfx_len) != 0)
-+				continue;
-+			msk = 1ULL << e->val;
-+			if (delegate_msk & msk) {
-+				/* emit lower-case name without prefix */
-+				seq_printf(m, "%c", first ? '=' : ':');
-+				name += pfx_len;
-+				while (*name) {
-+					seq_printf(m, "%c", tolower(*name));
-+					name++;
-+				}
-+
-+				delegate_msk &= ~msk;
-+				first = false;
-+			}
-+		}
-+	}
-+	if (delegate_msk)
-+		seq_printf(m, "%c0x%llx", first ? '=' : ':', delegate_msk);
-+}
-+
- /*
-  * Display the mount options in /proc/mounts.
-  */
-@@ -614,29 +744,34 @@ static int bpf_show_options(struct seq_file *m, struct dentry *root)
- 	if (mode != S_IRWXUGO)
- 		seq_printf(m, ",mode=%o", mode);
- 
--	mask = (1ULL << __MAX_BPF_CMD) - 1;
--	if ((opts->delegate_cmds & mask) == mask)
--		seq_printf(m, ",delegate_cmds=any");
--	else if (opts->delegate_cmds)
--		seq_printf(m, ",delegate_cmds=0x%llx", opts->delegate_cmds);
--
--	mask = (1ULL << __MAX_BPF_MAP_TYPE) - 1;
--	if ((opts->delegate_maps & mask) == mask)
--		seq_printf(m, ",delegate_maps=any");
--	else if (opts->delegate_maps)
--		seq_printf(m, ",delegate_maps=0x%llx", opts->delegate_maps);
--
--	mask = (1ULL << __MAX_BPF_PROG_TYPE) - 1;
--	if ((opts->delegate_progs & mask) == mask)
--		seq_printf(m, ",delegate_progs=any");
--	else if (opts->delegate_progs)
--		seq_printf(m, ",delegate_progs=0x%llx", opts->delegate_progs);
--
--	mask = (1ULL << __MAX_BPF_ATTACH_TYPE) - 1;
--	if ((opts->delegate_attachs & mask) == mask)
--		seq_printf(m, ",delegate_attachs=any");
--	else if (opts->delegate_attachs)
--		seq_printf(m, ",delegate_attachs=0x%llx", opts->delegate_attachs);
-+	if (opts->delegate_cmds || opts->delegate_maps ||
-+	    opts->delegate_progs || opts->delegate_attachs) {
-+		struct bpffs_btf_enums info;
-+
-+		/* ignore errors, fallback to hex */
-+		(void)find_bpffs_btf_enums(&info);
-+
-+		mask = (1ULL << __MAX_BPF_CMD) - 1;
-+		seq_print_delegate_opts(m, "delegate_cmds",
-+					info.btf, info.cmd_t, "BPF_",
-+					opts->delegate_cmds, mask);
-+
-+		mask = (1ULL << __MAX_BPF_MAP_TYPE) - 1;
-+		seq_print_delegate_opts(m, "delegate_maps",
-+					info.btf, info.map_t, "BPF_MAP_TYPE_",
-+					opts->delegate_maps, mask);
-+
-+		mask = (1ULL << __MAX_BPF_PROG_TYPE) - 1;
-+		seq_print_delegate_opts(m, "delegate_progs",
-+					info.btf, info.prog_t, "BPF_PROG_TYPE_",
-+					opts->delegate_progs, mask);
-+
-+		mask = (1ULL << __MAX_BPF_ATTACH_TYPE) - 1;
-+		seq_print_delegate_opts(m, "delegate_attachs",
-+					info.btf, info.attach_t, "BPF_",
-+					opts->delegate_attachs, mask);
-+	}
-+
- 	return 0;
+diff --git a/tools/testing/selftests/bpf/prog_tests/token.c b/tools/testing/selftests/bpf/prog_tests/token.c
+index 5394a0c880a9..185ed2f79315 100644
+--- a/tools/testing/selftests/bpf/prog_tests/token.c
++++ b/tools/testing/selftests/bpf/prog_tests/token.c
+@@ -55,14 +55,22 @@ static int restore_priv_caps(__u64 old_caps)
+ 	return cap_enable_effective(old_caps, NULL);
  }
  
-@@ -686,7 +821,6 @@ static int bpf_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	kuid_t uid;
- 	kgid_t gid;
- 	int opt, err;
--	u64 msk;
+-static int set_delegate_mask(int fs_fd, const char *key, __u64 mask)
++static int set_delegate_mask(int fs_fd, const char *key, __u64 mask, const char *mask_str)
+ {
+ 	char buf[32];
+ 	int err;
  
- 	opt = fs_parse(fc, bpf_fs_parameters, param, &result);
- 	if (opt < 0) {
-@@ -741,24 +875,63 @@ static int bpf_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	case OPT_DELEGATE_CMDS:
- 	case OPT_DELEGATE_MAPS:
- 	case OPT_DELEGATE_PROGS:
--	case OPT_DELEGATE_ATTACHS:
--		if (strcmp(param->string, "any") == 0) {
--			msk = ~0ULL;
--		} else {
--			err = kstrtou64(param->string, 0, &msk);
--			if (err)
--				return err;
-+	case OPT_DELEGATE_ATTACHS: {
-+		struct bpffs_btf_enums info;
-+		const struct btf_type *enum_t;
-+		const char *enum_pfx;
-+		u64 *delegate_msk, msk = 0;
-+		char *p;
-+		int val;
-+
-+		/* ignore errors, fallback to hex */
-+		(void)find_bpffs_btf_enums(&info);
-+
-+		switch (opt) {
-+		case OPT_DELEGATE_CMDS:
-+			delegate_msk = &opts->delegate_cmds;
-+			enum_t = info.cmd_t;
-+			enum_pfx = "BPF_";
-+			break;
-+		case OPT_DELEGATE_MAPS:
-+			delegate_msk = &opts->delegate_maps;
-+			enum_t = info.map_t;
-+			enum_pfx = "BPF_MAP_TYPE_";
-+			break;
-+		case OPT_DELEGATE_PROGS:
-+			delegate_msk = &opts->delegate_progs;
-+			enum_t = info.prog_t;
-+			enum_pfx = "BPF_PROG_TYPE_";
-+			break;
-+		case OPT_DELEGATE_ATTACHS:
-+			delegate_msk = &opts->delegate_attachs;
-+			enum_t = info.attach_t;
-+			enum_pfx = "BPF_";
-+			break;
-+		default:
-+			return -EINVAL;
- 		}
-+
-+		while ((p = strsep(&param->string, ":"))) {
-+			if (strcmp(p, "any") == 0) {
-+				msk |= ~0ULL;
-+			} else if (find_btf_enum_const(info.btf, enum_t, enum_pfx, p, &val)) {
-+				msk |= 1ULL << val;
-+			} else {
-+				err = kstrtou64(p, 0, &msk);
-+				if (err)
-+					return err;
-+			}
+-	snprintf(buf, sizeof(buf), "0x%llx", (unsigned long long)mask);
++	if (!mask_str) {
++		if (mask == ~0ULL) {
++			mask_str = "any";
++		} else {
++			snprintf(buf, sizeof(buf), "0x%llx", (unsigned long long)mask);
++			mask_str = buf;
 +		}
-+
- 		/* Setting delegation mount options requires privileges */
- 		if (msk && !capable(CAP_SYS_ADMIN))
- 			return -EPERM;
--		switch (opt) {
--		case OPT_DELEGATE_CMDS: opts->delegate_cmds |= msk; break;
--		case OPT_DELEGATE_MAPS: opts->delegate_maps |= msk; break;
--		case OPT_DELEGATE_PROGS: opts->delegate_progs |= msk; break;
--		case OPT_DELEGATE_ATTACHS: opts->delegate_attachs |= msk; break;
--		default: return -EINVAL;
--		}
-+
-+		*delegate_msk |= msk;
-+		break;
 +	}
-+	default:
-+		/* ignore unknown mount options */
- 		break;
++
+ 	err = sys_fsconfig(fs_fd, FSCONFIG_SET_STRING, key,
+-			   mask == ~0ULL ? "any" : buf, 0);
++			   mask_str, 0);
+ 	if (err < 0)
+ 		err = -errno;
+ 	return err;
+@@ -75,6 +83,10 @@ struct bpffs_opts {
+ 	__u64 maps;
+ 	__u64 progs;
+ 	__u64 attachs;
++	const char *cmds_str;
++	const char *maps_str;
++	const char *progs_str;
++	const char *attachs_str;
+ };
+ 
+ static int create_bpffs_fd(void)
+@@ -93,16 +105,16 @@ static int materialize_bpffs_fd(int fs_fd, struct bpffs_opts *opts)
+ 	int mnt_fd, err;
+ 
+ 	/* set up token delegation mount options */
+-	err = set_delegate_mask(fs_fd, "delegate_cmds", opts->cmds);
++	err = set_delegate_mask(fs_fd, "delegate_cmds", opts->cmds, opts->cmds_str);
+ 	if (!ASSERT_OK(err, "fs_cfg_cmds"))
+ 		return err;
+-	err = set_delegate_mask(fs_fd, "delegate_maps", opts->maps);
++	err = set_delegate_mask(fs_fd, "delegate_maps", opts->maps, opts->maps_str);
+ 	if (!ASSERT_OK(err, "fs_cfg_maps"))
+ 		return err;
+-	err = set_delegate_mask(fs_fd, "delegate_progs", opts->progs);
++	err = set_delegate_mask(fs_fd, "delegate_progs", opts->progs, opts->progs_str);
+ 	if (!ASSERT_OK(err, "fs_cfg_progs"))
+ 		return err;
+-	err = set_delegate_mask(fs_fd, "delegate_attachs", opts->attachs);
++	err = set_delegate_mask(fs_fd, "delegate_attachs", opts->attachs, opts->attachs_str);
+ 	if (!ASSERT_OK(err, "fs_cfg_attachs"))
+ 		return err;
+ 
+@@ -284,13 +296,13 @@ static void child(int sock_fd, struct bpffs_opts *opts, child_callback_fn callba
  	}
  
+ 	/* ensure unprivileged child cannot set delegation options */
+-	err = set_delegate_mask(fs_fd, "delegate_cmds", 0x1);
++	err = set_delegate_mask(fs_fd, "delegate_cmds", 0x1, NULL);
+ 	ASSERT_EQ(err, -EPERM, "delegate_cmd_eperm");
+-	err = set_delegate_mask(fs_fd, "delegate_maps", 0x1);
++	err = set_delegate_mask(fs_fd, "delegate_maps", 0x1, NULL);
+ 	ASSERT_EQ(err, -EPERM, "delegate_maps_eperm");
+-	err = set_delegate_mask(fs_fd, "delegate_progs", 0x1);
++	err = set_delegate_mask(fs_fd, "delegate_progs", 0x1, NULL);
+ 	ASSERT_EQ(err, -EPERM, "delegate_progs_eperm");
+-	err = set_delegate_mask(fs_fd, "delegate_attachs", 0x1);
++	err = set_delegate_mask(fs_fd, "delegate_attachs", 0x1, NULL);
+ 	ASSERT_EQ(err, -EPERM, "delegate_attachs_eperm");
+ 
+ 	/* pass BPF FS context object to parent */
+@@ -314,22 +326,22 @@ static void child(int sock_fd, struct bpffs_opts *opts, child_callback_fn callba
+ 	}
+ 
+ 	/* ensure unprivileged child cannot reconfigure to set delegation options */
+-	err = set_delegate_mask(fs_fd, "delegate_cmds", ~0ULL);
++	err = set_delegate_mask(fs_fd, "delegate_cmds", 0, "any");
+ 	if (!ASSERT_EQ(err, -EPERM, "delegate_cmd_eperm_reconfig")) {
+ 		err = -EINVAL;
+ 		goto cleanup;
+ 	}
+-	err = set_delegate_mask(fs_fd, "delegate_maps", ~0ULL);
++	err = set_delegate_mask(fs_fd, "delegate_maps", 0, "any");
+ 	if (!ASSERT_EQ(err, -EPERM, "delegate_maps_eperm_reconfig")) {
+ 		err = -EINVAL;
+ 		goto cleanup;
+ 	}
+-	err = set_delegate_mask(fs_fd, "delegate_progs", ~0ULL);
++	err = set_delegate_mask(fs_fd, "delegate_progs", 0, "any");
+ 	if (!ASSERT_EQ(err, -EPERM, "delegate_progs_eperm_reconfig")) {
+ 		err = -EINVAL;
+ 		goto cleanup;
+ 	}
+-	err = set_delegate_mask(fs_fd, "delegate_attachs", ~0ULL);
++	err = set_delegate_mask(fs_fd, "delegate_attachs", 0, "any");
+ 	if (!ASSERT_EQ(err, -EPERM, "delegate_attachs_eperm_reconfig")) {
+ 		err = -EINVAL;
+ 		goto cleanup;
+@@ -658,8 +670,8 @@ void test_token(void)
+ {
+ 	if (test__start_subtest("map_token")) {
+ 		struct bpffs_opts opts = {
+-			.cmds = 1ULL << BPF_MAP_CREATE,
+-			.maps = 1ULL << BPF_MAP_TYPE_STACK,
++			.cmds_str = "map_create",
++			.maps_str = "stack",
+ 		};
+ 
+ 		subtest_userns(&opts, userns_map_create);
+@@ -673,9 +685,9 @@ void test_token(void)
+ 	}
+ 	if (test__start_subtest("prog_token")) {
+ 		struct bpffs_opts opts = {
+-			.cmds = 1ULL << BPF_PROG_LOAD,
+-			.progs = 1ULL << BPF_PROG_TYPE_XDP,
+-			.attachs = 1ULL << BPF_XDP,
++			.cmds_str = "PROG_LOAD",
++			.progs_str = "XDP",
++			.attachs_str = "xdp",
+ 		};
+ 
+ 		subtest_userns(&opts, userns_prog_load);
 -- 
 2.34.1
 
