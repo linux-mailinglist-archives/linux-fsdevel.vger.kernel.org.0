@@ -1,73 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-8671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87DE883A05E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 05:14:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1F983A066
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 05:25:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36AB928B7AD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 04:14:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96983282A10
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 04:25:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E88BE59;
-	Wed, 24 Jan 2024 04:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2E0BE5A;
+	Wed, 24 Jan 2024 04:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y+nx1Nab"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XGUA0G3A"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D0A633E1;
-	Wed, 24 Jan 2024 04:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0DF33E1;
+	Wed, 24 Jan 2024 04:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706069651; cv=none; b=KO5bBj3XThVX51WKYMoq10Z7ku/IsUSQgxxCqck9ntItZIHrX8PrKkW4lfXouFczJ92z56QFMrT3cChljY1y/z7c2CVDdDXsHw5oijA5hBt9RYpd/PJNo1hDxEB02YWbUs9vEsmjBr2W5GNhrJNd6amesuqAZsfJV1Bg9kcr1Z0=
+	t=1706070305; cv=none; b=DbQtHLJor5huo6/TIYGHF1Ryddhs93R/Q2YELop1N1XnqwsHkT9YzoFJvggS10wvMwRWe0wSyqMfIF/zLf3nwVqG60WmqOAnRizAjtYHtrXEEr6BDBVzgS6W7wQDGt0bQcccculb/1EBNFy1FFZvPSMOpWl2PumpKHnaoo0FxMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706069651; c=relaxed/simple;
-	bh=QoR/oBY9TJPsZLOUNKl0k23X7kL36kihIlWDQFL+80U=;
+	s=arc-20240116; t=1706070305; c=relaxed/simple;
+	bh=QCMVoCLxA/Lm8qZPAhSY8piZFum0pyXozn/NuiB6Ahs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qxg92R+gx/NINZozt5/fD18EzOtJibp84ZresxGoxrUzm/I02fLOswEJXQ3KbPrUwVwPtf96lAVoyw4rCUHCNmftxggk313BYE1NJHumVpgVdC+W07HcptxM0zzY8XXNujS6+EP4TjwqO8HzOdZ0Y/4zrT5+80KorSMXe33rTK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y+nx1Nab; arc=none smtp.client-ip=209.85.215.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=cg3Ci1Z5Ce6mYBJBlKxGKkniJGea97qSjaUnLEg/oxjr5LYPCAF8CWrY330+WCy/G/uR9JDyWrtAnwxGVlGX9VBX+iB6pkS6Ir/GYFib/SD5cQP0PFVqJ6JtrBmdOQz+oe9c8Q7WrufnOWlwPhtoXKvZGxnqIECPmKDA5JIe9hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XGUA0G3A; arc=none smtp.client-ip=209.85.210.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-53fa455cd94so2522347a12.2;
-        Tue, 23 Jan 2024 20:14:10 -0800 (PST)
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6dddb927d02so2934006a34.2;
+        Tue, 23 Jan 2024 20:25:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706069649; x=1706674449; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1706070303; x=1706675103; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q975eJqoIsjd0MeOPum3Loz5ekoepPOq8sMoBw2H72I=;
-        b=Y+nx1NabQ936Ef5nAZv0NZEA2eMN69TURDPkTpPdb8j/xIu/kHF3XzuGITRbcznfhk
-         s0by3Ms8CeVF6xzxJojj36yFdmEgCwHYrmE7Pnj9UxmdYGgpAQbNejNvuAsbh1XgAMuj
-         F+oOuMb6Nhs8mqsPU8S5whnyVky63IoALS0TJ0PmEV5TxdWixREsNlPPogSSk5kT5icu
-         y0QzxCQLCRH/b4F3Rk+lp5eymhx8zcI77TzTvuN0Nzy1nx7ifXJnahB+spvwyASXUky/
-         Dn9VnYO8emdFXgZlO9v30tRv7yJQP5P6ItaYwyF9InJgbeQ0oWqaAedLEuTdxr6YfyZp
-         eu5g==
+        bh=5TktUQ1WDjUNF+7IXvODpyK86wTDQZDZ7vIWXwY2sPM=;
+        b=XGUA0G3AI5CHdvzZaTlDlVc3LVT9EENyBMsO+LW979F/lrALE+UuVkxuiUZz7sL2hR
+         55W61JHXcZPAljlS+dXz+xcP5rBswtzz99p1tHx0O9p3UoTrOjqN4/nmVsITFnRGwLyN
+         yFt6qlvJKCHGdzn52QYKmwXghimMBPf871Wei8UBoLrTsMyVfhKPnjJ+wYaF3dBL3Cxp
+         25r7PA/pWbgwIut2TTR5ZaYNUVbYQpBEEvjNGmCJ0fQZbIPoJ5l9cOBhQypCH4mlWUGO
+         rO5j0Y08S7h6a6VTTfFN1EouUxzQguHjwnHJ2nUPSo0bLGioBt1PLLAPlIC7Hw5+RB9H
+         plaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706069649; x=1706674449;
+        d=1e100.net; s=20230601; t=1706070303; x=1706675103;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Q975eJqoIsjd0MeOPum3Loz5ekoepPOq8sMoBw2H72I=;
-        b=i4UkvTmDpYuSSZsOkxPdxk1SPXnxYQjqXCLFulQ0hSkieMSN7eXzFgt8etWD3mlS7y
-         jR92QBCv0sM5gpLaCsEDx2ueMRDXXYKuz6hrXZK3ZPDn3Cjn8qfsJeozH19XYzlO1xXO
-         1FxI7+h6uR4JiDDNssEpyfudgR3y5WX2WZ5VdEMx4f5j+5eUvv4xcidF2RujFay9OlKq
-         +8g4/fgnqaJ9wnY+dOJ0D8ufGqph+zYBlDFLElgz9ueytJVeRGzmZ+dnltav5NSvK0Gh
-         Zuo2AK9wrcJKcPhYsY8eImI2rTqjhmvvRoNYeNqYj4x2mEaWwJacxZBNBOy4FbtCPws2
-         j5lA==
-X-Gm-Message-State: AOJu0YwGcK+i9XwqbqOh6qYpJqOZUK1eZTizF+vPYHJHK+gJ1CncOagw
-	6GPuIVuacue5gzprbiJIYquAk0tyIkm47uUedU0Pw4dcfvE0ZcFJ6bSqALO7
-X-Google-Smtp-Source: AGHT+IG30D8wIWKEwrCgXuypYR0PoQogBUaiS916DJjCrGOghrbNtqVrurvuyxX8iWc7HpXACwv59w==
-X-Received: by 2002:a17:90b:244:b0:290:43f:62af with SMTP id fz4-20020a17090b024400b00290043f62afmr3683976pjb.1.1706069649408;
-        Tue, 23 Jan 2024 20:14:09 -0800 (PST)
+        bh=5TktUQ1WDjUNF+7IXvODpyK86wTDQZDZ7vIWXwY2sPM=;
+        b=UhhRZpOxkuUkfbnCpXghFbdlRy8Juh0QHTBmoNkavFFiMWXImDe48GafqWPkEcEwvo
+         pC1mVuIa2NWpML37wPKw/tXm5z5TAo6M4gyEFng9CvMbrVJA+nBblNZtmJxe1O2GEvuS
+         FkUQ+f/6OqCJN1WNLibp/Nl3+FPzWRYLQw9wyKYFVgfYFeLWqqHiVxujhjmE5Ie7Ak6Y
+         /5qVuHLVjFW0/LA6iLNPU4vus90ve9kCe6OIjCs5/20ktRAOs0Hx3+BYAFxpKpppuuCl
+         N84jPhyC9YNDA9hLfj6ZRp5yhAFfSFsc/+pfL3V7xjxUORIp4Kj6ulWPEBgPol+boMJ7
+         rEUw==
+X-Gm-Message-State: AOJu0YwT02AvCRjbYNn3fV3BOspNriXvSlZjyhHA4L5kJDIl051Az3N+
+	IAo3t5J+Rt/CSmRNDKD1XL7Rr+RW2w09FTbFfvdbTQy0M9yybr8k
+X-Google-Smtp-Source: AGHT+IG9rdSUPCH6Da9JmzsEs/So9DA5hMY8Iovq2hfk95duzIUf6cbQ5fAIHzAPEwqPV0A4P7th6w==
+X-Received: by 2002:a9d:6c57:0:b0:6dd:dd9f:39a7 with SMTP id g23-20020a9d6c57000000b006dddd9f39a7mr1167076otq.39.1706070302963;
+        Tue, 23 Jan 2024 20:25:02 -0800 (PST)
 Received: from wedsonaf-dev ([189.124.190.154])
-        by smtp.gmail.com with ESMTPSA id sy14-20020a17090b2d0e00b0028c89122f8asm12592152pjb.6.2024.01.23.20.14.05
+        by smtp.gmail.com with ESMTPSA id b27-20020aa78edb000000b006dd7b08b336sm2305833pfr.20.2024.01.23.20.24.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jan 2024 20:14:08 -0800 (PST)
-Date: Wed, 24 Jan 2024 01:14:01 -0300
+        Tue, 23 Jan 2024 20:25:02 -0800 (PST)
+Date: Wed, 24 Jan 2024 01:24:55 -0300
 From: Wedson Almeida Filho <wedsonaf@gmail.com>
-To: Benno Lossin <benno.lossin@proton.me>
+To: "Darrick J. Wong" <djwong@kernel.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
 	Matthew Wilcox <willy@infradead.org>,
@@ -75,12 +75,11 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org,
 	Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 16/19] rust: fs: allow file systems backed by a block
- device
-Message-ID: <ZbCOiSLZm0nXKLyB@wedsonaf-dev>
+Subject: Re: [RFC PATCH 12/19] rust: fs: introduce `FileSystem::statfs`
+Message-ID: <ZbCRF/OkpqESeQpC@wedsonaf-dev>
 References: <20231018122518.128049-1-wedsonaf@gmail.com>
- <20231018122518.128049-17-wedsonaf@gmail.com>
- <gb4CNFpmDdn45YQDB8da-G8kJfYH4OT_dDpY1WpRzF5xui6NuiiZJQR0pxRHI0ECrrzQvrpHFEhEYcKXRDT2Tj44-0FU9avzwON2VPPo2pA=@proton.me>
+ <20231018122518.128049-13-wedsonaf@gmail.com>
+ <20240104053315.GE3964019@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,136 +88,73 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <gb4CNFpmDdn45YQDB8da-G8kJfYH4OT_dDpY1WpRzF5xui6NuiiZJQR0pxRHI0ECrrzQvrpHFEhEYcKXRDT2Tj44-0FU9avzwON2VPPo2pA=@proton.me>
+In-Reply-To: <20240104053315.GE3964019@frogsfrogsfrogs>
 
-On Sat, Oct 21, 2023 at 01:39:20PM +0000, Benno Lossin wrote:
-> On 18.10.23 14:25, Wedson Almeida Filho wrote:
-> > +    /// Reads a block from the block device.
-> > +    #[cfg(CONFIG_BUFFER_HEAD)]
-> > +    pub fn bread(&self, block: u64) -> Result<ARef<buffer::Head>> {
-> > +        // Fail requests for non-blockdev file systems. This is a compile-time check.
-> > +        match T::SUPER_TYPE {
-> > +            Super::BlockDev => {}
-> > +            _ => return Err(EIO),
-> > +        }
-> 
-> Would it make sense to use `build_error` instead of returning an error
-> here?
-
-Yes, I changed these to `build_errors` in v2.
-
-> Also, do you think that separating this into a trait, `BlockDevFS` would
-> make sense?
-
-We actually have several types; we happen to only support two cases now, but will add more over time.
-
-> > +
-> > +        // SAFETY: This function is only valid after the `NeedsInit` typestate, so the block size
-> > +        // is known and the superblock can be used to read blocks.
-> 
-> Stale SAFETY comment, there are not typestates in this patch?
-
-Fixed in v2.
-
-> 
-> > +        let ptr =
-> > +            ptr::NonNull::new(unsafe { bindings::sb_bread(self.0.get(), block) }).ok_or(EIO)?;
-> > +        // SAFETY: `sb_bread` returns a referenced buffer head. Ownership of the increment is
-> > +        // passed to the `ARef` instance.
-> > +        Ok(unsafe { ARef::from_raw(ptr.cast()) })
-> > +    }
-> > +
-> > +    /// Reads `size` bytes starting from `offset` bytes.
-> > +    ///
-> > +    /// Returns an iterator that returns slices based on blocks.
-> > +    #[cfg(CONFIG_BUFFER_HEAD)]
-> > +    pub fn read(
-> > +        &self,
-> > +        offset: u64,
-> > +        size: u64,
-> > +    ) -> Result<impl Iterator<Item = Result<buffer::View>> + '_> {
-> > +        struct BlockIter<'a, T: FileSystem + ?Sized> {
-> > +            sb: &'a SuperBlock<T>,
-> > +            next_offset: u64,
-> > +            end: u64,
-> > +        }
-> > +        impl<'a, T: FileSystem + ?Sized> Iterator for BlockIter<'a, T> {
-> > +            type Item = Result<buffer::View>;
-> > +
-> > +            fn next(&mut self) -> Option<Self::Item> {
-> > +                if self.next_offset >= self.end {
-> > +                    return None;
-> > +                }
-> > +
-> > +                // SAFETY: The superblock is valid and has had its block size initialised.
-> > +                let block_size = unsafe { (*self.sb.0.get()).s_blocksize };
-> > +                let bh = match self.sb.bread(self.next_offset / block_size) {
-> > +                    Ok(bh) => bh,
-> > +                    Err(e) => return Some(Err(e)),
-> > +                };
-> > +                let boffset = self.next_offset & (block_size - 1);
-> > +                let bsize = core::cmp::min(self.end - self.next_offset, block_size - boffset);
-> > +                self.next_offset += bsize;
-> > +                Some(Ok(buffer::View::new(bh, boffset as usize, bsize as usize)))
-> > +            }
-> > +        }
-> > +        Ok(BlockIter {
-> > +            sb: self,
-> > +            next_offset: offset,
-> > +            end: offset.checked_add(size).ok_or(ERANGE)?,
-> > +        })
-> > +    }
-> >   }
+On Wed, Jan 03, 2024 at 09:33:15PM -0800, Darrick J. Wong wrote:
+> On Wed, Oct 18, 2023 at 09:25:11AM -0300, Wedson Almeida Filho wrote:
+> > From: Wedson Almeida Filho <walmeida@microsoft.com>
 > > 
-> >   /// Required superblock parameters.
-> > @@ -511,6 +591,70 @@ pub struct SuperParams<T: ForeignOwnable + Send + Sync> {
-> >   #[repr(transparent)]
-> >   pub struct NewSuperBlock<T: FileSystem + ?Sized>(bindings::super_block, PhantomData<T>);
-> > 
-> > +impl<T: FileSystem + ?Sized> NewSuperBlock<T> {
-> > +    /// Reads sectors.
-> > +    ///
-> > +    /// `count` must be such that the total size doesn't exceed a page.
-> > +    pub fn sread(&self, sector: u64, count: usize, folio: &mut UniqueFolio) -> Result {
-> > +        // Fail requests for non-blockdev file systems. This is a compile-time check.
-> > +        match T::SUPER_TYPE {
-> > +            // The superblock is valid and given that it's a blockdev superblock it must have a
-> > +            // valid `s_bdev`.
-> > +            Super::BlockDev => {}
-> > +            _ => return Err(EIO),
-> > +        }
+> > +/// File system stats.
+> > +///
+> > +/// A subset of C's `kstatfs`.
+> > +pub struct Stat {
+> > +    /// Magic number of the file system.
+> > +    pub magic: u32,
 > > +
-> > +        crate::build_assert!(count * (bindings::SECTOR_SIZE as usize) <= bindings::PAGE_SIZE);
+> > +    /// The maximum length of a file name.
+> > +    pub namelen: i64,
 > 
-> Maybe add an error message that explains why this is not ok?
-> 
-> > +
-> > +        // Read the sectors.
-> > +        let mut bio = bindings::bio::default();
-> > +        let bvec = Opaque::<bindings::bio_vec>::uninit();
-> > +
-> > +        // SAFETY: `bio` and `bvec` are allocated on the stack, they're both valid.
-> > +        unsafe {
-> > +            bindings::bio_init(
-> > +                &mut bio,
-> > +                self.0.s_bdev,
-> > +                bvec.get(),
-> > +                1,
-> > +                bindings::req_op_REQ_OP_READ,
-> > +            )
-> > +        };
-> > +
-> > +        // SAFETY: `bio` was just initialised with `bio_init` above, so it's safe to call
-> > +        // `bio_uninit` on the way out.
-> > +        let mut bio =
-> > +            ScopeGuard::new_with_data(bio, |mut b| unsafe { bindings::bio_uninit(&mut b) });
-> > +
-> > +        // SAFETY: We have one free `bvec` (initialsied above). We also know that size won't exceed
-> > +        // a page size (build_assert above).
-> 
-> I think you should move the `build_assert` above this line.
+> Yikes, I hope I never see an 8EB filename.  The C side doesn't handle
+> names longer than 255 bytes.
 
-Sure, moved in v2.
+kstatfs::f_namelen is defined as a long in C.
+
+> 
+> > +
+> > +    /// Block size.
+> > +    pub bsize: i64,
+> 
+> Or an 8EB block size.  SMR notwithstanding, I think this could be u32.
+> 
+> Why are these values signed?  Nobody has a -1k block filesystem.
+
+I agree, but they're signed in C, I'm just mimicking that. See kstatfs::f_bsize
+for this particular case, it's also a long.
+
+> 
+> > +    /// Number of files in the file system.
+> > +    pub files: u64,
+> > +
+> > +    /// Number of blocks in the file system.
+> > +    pub blocks: u64,
+> >  }
+> >  
+> > +    unsafe extern "C" fn statfs_callback(
+> > +        dentry: *mut bindings::dentry,
+> > +        buf: *mut bindings::kstatfs,
+> > +    ) -> core::ffi::c_int {
+> > +        from_result(|| {
+> > +            // SAFETY: The C API guarantees that `dentry` is valid for read. `d_sb` is
+> > +            // immutable, so it's safe to read it. The superblock is guaranteed to be valid dor
+> > +            // the duration of the call.
+> > +            let sb = unsafe { &*(*dentry).d_sb.cast::<SuperBlock<T>>() };
+> > +            let s = T::statfs(sb)?;
+> > +
+> > +            // SAFETY: The C API guarantees that `buf` is valid for read and write.
+> > +            let buf = unsafe { &mut *buf };
+> > +            buf.f_type = s.magic.into();
+> > +            buf.f_namelen = s.namelen;
+> > +            buf.f_bsize = s.bsize;
+> > +            buf.f_files = s.files;
+> > +            buf.f_blocks = s.blocks;
+> > +            buf.f_bfree = 0;
+> > +            buf.f_bavail = 0;
+> > +            buf.f_ffree = 0;
+> 
+> Why is it necessary to fill out the C structure with zeroes?
+> statfs_by_dentry zeroes the buffer contents before calling ->statfs.
+
+I didn't know they were zeroed before calling statfs. Removed this from v2.
 
 Thanks,
 -Wedson
