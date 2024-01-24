@@ -1,123 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-8756-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6866783AAFE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 14:36:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68AAE83AB04
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 14:39:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D232820B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 13:36:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CA1C1C21B54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 13:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A90C77F19;
-	Wed, 24 Jan 2024 13:36:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7GwLGIF"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A2777F18;
+	Wed, 24 Jan 2024 13:38:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D728BE1;
-	Wed, 24 Jan 2024 13:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4348BE1;
+	Wed, 24 Jan 2024 13:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706103400; cv=none; b=EFNyVSWhF2Qn26iRiqUI3EF0MlU0pOu/PsM80NF2bFoYHosyuNU+3XM+pgMhXACJ+0ZfbxntQS9HBtFTbq12jd5nKveumlN4MVlAqeGVn7uF/v71gs4uWgztXkkOEiNyIDYXwML1ygWQbLh4olXEc/wR/QxFpkzYMhOrMNonSLA=
+	t=1706103535; cv=none; b=BpC/lKyDbkix8qIZfJcsU13PdJ+BtRJnVAnxyaBadd+m1uxLNyqirTQSwBngAMibckKNixGgBbi9bTDaQEGwZTeMHwkczJ1ay382m63dBNsTFU6TWQGfD+fP1scm5S3K/GzbWQO05pU21V2fMjrcuQw9p9IxinPJ+uiyeL12Ktg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706103400; c=relaxed/simple;
-	bh=GTaTORnOj7gNjCsEHgCdgGerLLavw67hjEYFK9q4jjA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eO1XFoc0guLQtC0y6nuYBRb3UCwLhD/AmYkWt8ZQ67xVmPNeOxVs1sQLqIo9EIjKYhGCgOWyPhXyIWtJQI9JiN6b3DiEMPPOt9B66OHMSwgAizVXCg702+SW/T6bIEECQPaLy6iGhpkaHDSp5qxALVPXWmgsecj23j3i+k6pfwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c7GwLGIF; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2cf0e9f76b4so23934471fa.1;
-        Wed, 24 Jan 2024 05:36:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706103397; x=1706708197; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ob9Be6C5UnFhXFv8WrifBw30hdAz7N4ducDXTKZYrVA=;
-        b=c7GwLGIFHKorX55YFjQ3q0ODPQF9XlfWuseC7PQbU82GpamUE+Lo4eD+igJ3JWLiRs
-         FpRWogROS64bmGxuAOOE3198v0g4wicBYqYZhuH70mMp0er38IEZYP+k7xitBrmAihsO
-         fkXxp2UEsvitk5XNxPIamfpL56xljfbUblg91071rsTNGhgNcGz8INLlH1L6+bA5Wrcp
-         p6CkqvP+7t9U3lkUS67CNw1Bvz7bR5Um/Dl+70/IwjoieSJrQA2GJBBXx3iibGUYxvgi
-         M7CsTD3cxzSXO0M7IKaMDopU88abjYUyHn0FeU0YJNR8dfjqizkopP6TyGRX8vCaskpt
-         tLuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706103397; x=1706708197;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ob9Be6C5UnFhXFv8WrifBw30hdAz7N4ducDXTKZYrVA=;
-        b=m5Wk50HTsqk7WF+j1Hdy8nuCQhIx+eLUI0K9HJ6OsGs+YglJXRECTw4KzIAPF9YUG1
-         qCM9C7ll163uphXeu9ltIEzcJRWcGUA0tBs1Y0AGWlzAxEw+ydqScqLx6MwLf8RiPWcF
-         AtGDCljUSvXEyEYA7H7LYPBBZM2KOMq9IyaRFjjV8Al+078UqOahW2QVGiXY7MPkGlgF
-         gAlm27WqDvIB+UAbcmxZ0tvtVMmr1AEJ9lYicgI8Y2x3lrIB0g7XuCSk0piWpcguvxbu
-         lV9CVH4dLRv84hg0RUZ9UFmeM4I9e+9/5XC9NRaa0Uq2PunoIAGZbtybQlEW6CLPBfJK
-         FaVQ==
-X-Gm-Message-State: AOJu0YzsJacSIUZ1XjvfuGzgbjwsdMTI+NbKPvS7kopKg0zvPVfVEWPj
-	WmOlzFYMED5HY0TxNdnYlX3gc1z+FTazaLj698pFd6xkKfSgrUEDVBWnn30cHm9+uJSNSo4HWwh
-	CEvvu4zJeJbkS8SFroud0nxdfo2yfHkvh
-X-Google-Smtp-Source: AGHT+IEuDu0Iwa6OL5YMTZiljwLQtQHZpF6ecHAJwdFXdBjREBVj+NV8nBApkw1MXuCI71V7kmMjxmQ5vhraXhMTR6w=
-X-Received: by 2002:a2e:b894:0:b0:2cf:14ad:ed92 with SMTP id
- r20-20020a2eb894000000b002cf14aded92mr639128ljp.126.1706103396918; Wed, 24
- Jan 2024 05:36:36 -0800 (PST)
+	s=arc-20240116; t=1706103535; c=relaxed/simple;
+	bh=h18dF1XWNpNzYO06Da4D5AMzQ2A4VrPat2l+QQOyc80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Jcb+/wYRtLjrtprqnVebKY+b4qu4NA7tPJAFVopgm2eYkTOPu9iyIShkJTs5irzAGObzuIctNdStZbKH2l8nlWbec3HOmGaBd241HryzoIzQa2VvKKEhABLnUqutTFppo75u/pZuph8EZL40nT3cSxPCq9JaBvqQVl7ugEMm6CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4TKlQF1npKzNlVc;
+	Wed, 24 Jan 2024 21:37:57 +0800 (CST)
+Received: from dggpeml500021.china.huawei.com (unknown [7.185.36.21])
+	by mail.maildlp.com (Postfix) with ESMTPS id 411B0180073;
+	Wed, 24 Jan 2024 21:38:50 +0800 (CST)
+Received: from [10.174.177.174] (10.174.177.174) by
+ dggpeml500021.china.huawei.com (7.185.36.21) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 24 Jan 2024 21:38:49 +0800
+Message-ID: <098f69f5-524b-9ddd-3d07-5e5c04135fcb@huawei.com>
+Date: Wed, 24 Jan 2024 21:38:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240124083301.8661-1-tony.solomonik@gmail.com>
- <CALXu0UdfZm-UJcPqF5H6+PXPp=DC2SA-QFbB-aVywmMT5X3A6g@mail.gmail.com> <fefaf2bf-64b7-4992-bd99-5f322c189e35@kernel.dk>
-In-Reply-To: <fefaf2bf-64b7-4992-bd99-5f322c189e35@kernel.dk>
-From: Cedric Blancher <cedric.blancher@gmail.com>
-Date: Wed, 24 Jan 2024 14:35:56 +0100
-Message-ID: <CALXu0UeFNiFgTNtgE+-WQbA3-WForFm9pKH18xHo=GrB97zEAw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] io_uring: add support for ftruncate
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Tony Solomonik <tony.solomonik@gmail.com>, io-uring@vger.kernel.org, 
-	asml.silence@gmail.com, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.2
+Subject: Re: [brauner-vfs:vfs.misc 12/13] include/linux/fs.h:911:9: error:
+ call to '__compiletime_assert_207' declared with 'error' attribute: Need
+ native word sized stores/loads for atomicity.
+Content-Language: en-US
+To: Christian Brauner <brauner@kernel.org>
+CC: Linus Torvalds <torvalds@linux-foundation.org>, kernel test robot
+	<lkp@intel.com>, <sfr@canb.auug.org.au>, <llvm@lists.linux.dev>,
+	<oe-kbuild-all@lists.linux.dev>, Christian Brauner
+	<christianvanbrauner@gmail.com>, yangerkun <yangerkun@huawei.com>, "zhangyi
+ (F)" <yi.zhang@huawei.com>, <linux-next@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, Baokun Li <libaokun1@huawei.com>
+References: <202401230837.TXro0PHi-lkp@intel.com>
+ <59fae3eb-a125-cd5f-224e-b89d122ecb46@huawei.com>
+ <20240123-glatt-langgehegter-a239e588ae2c@brauner>
+ <2abc7cc4-72eb-33c9-864a-9f527c0273d3@huawei.com>
+ <20240124-abbaggern-oblag-67346f8dee9f@brauner>
+ <bf9b8a90-7ace-5f14-e585-8cc467f4d611@huawei.com>
+ <20240124-warnhinweis-servolenkung-e482feb8fc43@brauner>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20240124-warnhinweis-servolenkung-e482feb8fc43@brauner>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpeml500021.china.huawei.com (7.185.36.21)
 
-On Wed, 24 Jan 2024 at 13:52, Jens Axboe <axboe@kernel.dk> wrote:
+On 2024/1/24 21:27, Christian Brauner wrote:
+>> If CONFIG_SMP is not enabled in include/asm-generic/barrier.h,
+>> then smp_load_acquire/smp_store_release is implemented as
+>> READ_ONCE/READ_ONCE and barrier() and type checking.
+>> READ_ONCE/READ_ONCE already checks the pointer type,
+>> but then checks it more stringently outside, but here the
+>> more stringent checking seems unnecessary, so it is removed
+>> and only the type checking in READ_ONCE/READ_ONCE is kept
+>> to avoid compilation errors.
+> Maha, brainfart on my end, I missed the !CONFIG_SMP case.
+> Sorry about that.
+Never mind. 😊
+>> When CONFIG_SMP is enabled on 32-bit architectures,
+>> smp_load_acquire/smp_store_release is not called in i_size_read/write,
+>> so there is no compilation problem. On 64-bit architectures, there
+>> is no compilation problem because sizeof(long long) == sizeof(long),
+>> regardless of whether CONFIG_SMP is enabled or not.
+> Yes, of course.
 >
-> On 1/24/24 1:52 AM, Cedric Blancher wrote:
-> > On Wed, 24 Jan 2024 at 09:33, Tony Solomonik <tony.solomonik@gmail.com> wrote:
-> >>
-> >> This patch adds support for doing truncate through io_uring, eliminating
-> >> the need for applications to roll their own thread pool or offload
-> >> mechanism to be able to do non-blocking truncates.
-> >>
-> >> Tony Solomonik (2):
-> >>   Add ftruncate_file that truncates a struct file
-> >>   io_uring: add support for ftruncate
-> >>
-> >>  fs/internal.h                 |  1 +
-> >>  fs/open.c                     | 53 ++++++++++++++++++-----------------
-> >>  include/uapi/linux/io_uring.h |  1 +
-> >>  io_uring/Makefile             |  2 +-
-> >>  io_uring/opdef.c              | 10 +++++++
-> >>  io_uring/truncate.c           | 48 +++++++++++++++++++++++++++++++
-> >>  io_uring/truncate.h           |  4 +++
-> >>  7 files changed, 93 insertions(+), 26 deletions(-)
-> >>  create mode 100644 io_uring/truncate.c
-> >>  create mode 100644 io_uring/truncate.h
-> >>
-> >>
-> >> base-commit: d3fa86b1a7b4cdc4367acacea16b72e0a200b3d7
-> >
-> > Also fallocate() to punch holes, aka sparse files, must be implemented
+>> Yes, using smp_rmb()/smp_wmb() would also solve the problem, but
+>> the initial purpose of this patch was to replace smp_rmb() in filemap_read()
+>> with the clearer smp_load_acquire/smp_store_release, and that's where
+>> the community is going with this evolution. Later on, buffer and page/folio
+>> will also switch to acquire/release, which is why I think Linus' suggestion
+>> is better.
+> Ah ok, thanks for the context. Can you send an updated series then, please?
 >
-> fallocate has been supported for years.
+No problem, I'll send a new version soon!
 
-Does it support punching holes? Does lseek() with SEEK_HOLE and
-SEEK_DATA work, with more than one hole, and/or hole at the end?
-
-Ced
+Cheers!
 -- 
-Cedric Blancher <cedric.blancher@gmail.com>
-[https://plus.google.com/u/0/+CedricBlancher/]
-Institute Pasteur
+With Best Regards,
+Baokun Li
+.
 
