@@ -1,74 +1,75 @@
-Return-Path: <linux-fsdevel+bounces-8798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69D1D83B19C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:57:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B0E83B1BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 20:02:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 989721C23CD9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 18:57:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE8FA282B7F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F814131E38;
-	Wed, 24 Jan 2024 18:57:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDED131E4A;
+	Wed, 24 Jan 2024 19:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dM7g1WyC"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HbbjrVm8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32636131743
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 18:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A54131E27
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 19:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706122662; cv=none; b=OaSYvXRGoMnuhDRJjk5y4F2/fGto99f3MQ/WqsunfO8zuchioAm8ibc5wNCC3D9OW1IfzZ6/CB1e0MhcBxwbtSJFzQu7wjm+Lrc8SQZyw9T5j+qUbUICmNdMZieuTZNoEkLyc73ay6SQ4gkqdhv/FdC/DyOUHr1gaKDp4Xxna9Q=
+	t=1706122958; cv=none; b=cghOndKfiVv8VYj9C667MmHi+ZbVWRz/TsFJkFhIOrsDe97rwfVt6Bv8aNeCiG9+Yr851BFxr9g+tZtoQLiuzkOM2zzVjgppKurpNpRFnfsi/+MZRln/uoLw0ZaCM93D8ZHPTDxd57w6khKIeP84ZBCC4RbOgD+Rli6brTXeMoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706122662; c=relaxed/simple;
-	bh=JbibW8U25bNz/f8wJkz9E5pM/409HM7Q0ODyuc6AO9g=;
+	s=arc-20240116; t=1706122958; c=relaxed/simple;
+	bh=qTbx+gTr8wbfiYmgxu2Wovo4tQGBvHswbR+Ga9b2FLk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dv+/pBMayyh7dEGSd1Mv69kXfzk3hJ8rZpEg7E0O657SbUqqQ76aSS+SguB2fRPzgq+I4AHdq2reDFeA+FFBQySRF9JXJNWLwDx14Hy6luwrxHiElkpPX1cOE2pWxn4BL6f5Qb+Mxgw7t/fyMhuvhTKVbp7Qov/a2OCNVIIsUyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dM7g1WyC; arc=none smtp.client-ip=209.85.166.172
+	 Content-Type:Content-Disposition:In-Reply-To; b=d6EbiffGaFIvdOYTLOKGXm16plEfUq/OX0aMIbHVC5C7E2O0CYQ1K5G9etEAlYvRr9X0EBR7UNAgVKDJXE+hZBuVEuvq0CTH972KA7BaIaLll5T9x0aQFiiSQQnTM7T0pNIsYV9RB6Y3WBOgemdi5ECfvF8d6GJlT+tkuK0oPQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=HbbjrVm8; arc=none smtp.client-ip=209.85.210.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-361a8bfa168so19957915ab.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 10:57:40 -0800 (PST)
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-6dbb003be79so4998202b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 11:02:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1706122659; x=1706727459; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1706122956; x=1706727756; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dN/DcvuXwyp2yCQExIUGYH7ZCG5JTRWzNGVK64AipF8=;
-        b=dM7g1WyC0ZlAX8G1QKMTEI74plEDR8SroJkqsn3vemEIAJh8JR8H5WlktpU0qPjy1w
-         dJZ/3ykygHHmngrsQRA2xEZNiFlOT37iisb8b+qhaLIIlhZkc1OPaO2URgIQd8KYQuXD
-         D1pAXOPmeMQUmhcFs2zSWPd3QH2sKJ8h3LyAw=
+        bh=zQ4JyM8v1WEvN+KjSOc1OYxcBvKHWZsPYaE3NMgfXqI=;
+        b=HbbjrVm8y62FJzKNaWCG0Q7iq8XLDVij10apVD7PHPncwOFwrDEyCmS/ReoTUrjqXX
+         KFIqP9h4RsPw6m1+trQW9EaM9cv9gZHr26GS8ZbfwQ8P80SB4CGDiHzUDmLqi/F3oagN
+         t5LaUH0sJLRKjYrT855WDVKy1+insuqGjQ1qE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706122659; x=1706727459;
+        d=1e100.net; s=20230601; t=1706122956; x=1706727756;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dN/DcvuXwyp2yCQExIUGYH7ZCG5JTRWzNGVK64AipF8=;
-        b=dHF5mIy02sNHicYHZzNO50FW0gwbsZEMB+ZXMqxaShANKaaUek0R0UA556KsFvFf9W
-         RkNTl5xuBH5NvXvC+uHDOqKnK6+mEapM6rjQG4XquZVIj2+NVgRP7WcTgv3W9oXeB2+C
-         ylCZbqnDTRMijf7OjhEIYYMLkXL6f7n1+HhXFCtpN5ynEt7aDQbNP12rpUMCG8shBX7o
-         qYD6TJo2POtglmnluDliizPTaZNCh/ALNdQwoHeMpKT2683G7FdlSESKoagG4h70YdqL
-         RiwgH+K3yVsD3tOE32JGiWANISmzqzQL0RnStPi4Z5nUvGMHKhpdFjX9DERgvgt9QbNk
-         JxVQ==
-X-Gm-Message-State: AOJu0YyVQsY29BURcSkL9i05znuh8N5tPXA90AzyM+Jdgc6CumYBSvo4
-	CNRDk02t6QUi+w4MeANwdgiHABakp3OceCcedjf/MnKPaMyjbrjQZL/B4SMVDw==
-X-Google-Smtp-Source: AGHT+IE9qMB02EEUOxq/2jciZEyscL4XjQWdCqiITyqm3a3wtmsxRnL15cr80ulcxNXnl3HXms9o/Q==
-X-Received: by 2002:a05:6e02:16c7:b0:35f:ff56:c0fd with SMTP id 7-20020a056e0216c700b0035fff56c0fdmr2473407ilx.14.1706122659347;
-        Wed, 24 Jan 2024 10:57:39 -0800 (PST)
+        bh=zQ4JyM8v1WEvN+KjSOc1OYxcBvKHWZsPYaE3NMgfXqI=;
+        b=lNWFtxMukS1k3F5gOepeBZIT5DWicOCPGa8+vr/ewuv4N3ueFGkl3+XjqoENqa9WuE
+         3bEnFM+aYJpJAlGkEt6jtAMns+tm21hnJeIUBgZ+7BZpXiKIsFjq3QLYIYJkwPLTF4Dv
+         4qKoEAXGH1dzl5sSazB68btOuLIuebMqmz0LCxAY3x76YT4Nl3tXy3yZ2pZwrUA+oq9Y
+         R55NJxuiSaFhS4HEm2aIOy+X6ePed8eYMAuCDr6sZ+m808MNUcYhnMPjpYhlVHLJ2f0u
+         lGojelNVxVJioImnIObPPjp6VmR2GWF8UMKzme7myp2CosPfMNlOYZUG9Yz45jIN2agr
+         fmpQ==
+X-Gm-Message-State: AOJu0YxpTU+L53FG6HnURpnvuEHQH6hG/iTSoZms1bUmotrI99pSVosQ
+	rWpyjXRFjQLB9WjXd33CIYt4o+G+XwITwJ9/wK5WurZcqT6U/mx1PgGDvLi6Sw==
+X-Google-Smtp-Source: AGHT+IFAS/F4RXOGks5GiDY+E8mYR9mPjx5xv7lBQNebt2fpfiOBryRrsDiTLmDYO/08ULmx8oSQ6A==
+X-Received: by 2002:a05:6a00:390f:b0:6dd:8709:d133 with SMTP id fh15-20020a056a00390f00b006dd8709d133mr8609pfb.19.1706122955829;
+        Wed, 24 Jan 2024 11:02:35 -0800 (PST)
 Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id q22-20020a631f56000000b005cfd6b98d9bsm4724604pgm.87.2024.01.24.10.57.38
+        by smtp.gmail.com with ESMTPSA id h10-20020a65518a000000b0059d6f5196fasm10694461pgq.78.2024.01.24.11.02.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 24 Jan 2024 10:57:38 -0800 (PST)
-Date: Wed, 24 Jan 2024 10:57:38 -0800
+        Wed, 24 Jan 2024 11:02:35 -0800 (PST)
+Date: Wed, 24 Jan 2024 11:02:34 -0800
 From: Kees Cook <keescook@chromium.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kevin Locke <kevin@kevinlocke.name>,
-	John Johansen <john.johansen@canonical.com>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
+Cc: Kentaro Takeda <takedakn@nttdata.co.jp>,
 	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Kevin Locke <kevin@kevinlocke.name>,
 	Josh Triplett <josh@joshtriplett.org>,
 	Mateusz Guzik <mjguzik@gmail.com>,
 	Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
@@ -76,12 +77,15 @@ Cc: Kevin Locke <kevin@kevinlocke.name>,
 	linux-security-module@vger.kernel.org
 Subject: Re: [6.8-rc1 Regression] Unable to exec apparmor_parser from
  virt-aa-helper
-Message-ID: <202401240958.8D9A11E8E@keescook>
+Message-ID: <202401241058.16E3140@keescook>
 References: <ZbE4qn9_h14OqADK@kevinlocke.name>
  <202401240832.02940B1A@keescook>
  <CAHk-=wgJmDuYOQ+m_urRzrTTrQoobCJXnSYMovpwKckGgTyMxA@mail.gmail.com>
  <CAHk-=wijSFE6+vjv7vCrhFJw=y36RY6zApCA07uD1jMpmmFBfA@mail.gmail.com>
  <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com>
+ <202401240916.044E6A6A7A@keescook>
+ <CAHk-=whq+Kn-_LTvu8naGqtN5iK0c48L1mroyoGYuq_DgFEC7g@mail.gmail.com>
+ <CAHk-=whDAUMSPhDhMUeHNKGd-ZX8ixNeEz7FLfQasAGvi_knDg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,39 +94,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com>
+In-Reply-To: <CAHk-=whDAUMSPhDhMUeHNKGd-ZX8ixNeEz7FLfQasAGvi_knDg@mail.gmail.com>
 
-On Wed, Jan 24, 2024 at 09:10:58AM -0800, Linus Torvalds wrote:
-> On Wed, 24 Jan 2024 at 08:54, Linus Torvalds
+On Wed, Jan 24, 2024 at 10:27:03AM -0800, Linus Torvalds wrote:
+> On Wed, 24 Jan 2024 at 09:27, Linus Torvalds
 > <torvalds@linux-foundation.org> wrote:
 > >
-> > Hmm. That whole thing is disgusting. I think it should have checked
-> > FMODE_EXEC, and I have no idea why it doesn't.
+> > IOW, I think the goal here should be "minimal fix" followed by "remove
+> > that horrendous thing".
 > 
-> Maybe because FMODE_EXEC gets set for uselib() calls too? I dunno. I
-> think it would be even better if we had the 'intent' flags from
-> 'struct open_flags' available, but they aren't there in the
-> file_open() security chain.
+> Ugh. The tomoyo use is even *more* disgusting, in how it uses it for
+> "tomoyo_domain()" entirely independently of even the ->file_open()
+> callback.
 
-I've tested AppArmor, and this works fine:
+Yeah, I just sent a similar email.
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 7717354ce095..ab104ce05f96 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -470,7 +470,7 @@ static int apparmor_file_open(struct file *file)
- 	 * implicit read and executable mmap which are required to
- 	 * actually execute the image.
- 	 */
--	if (current->in_execve) {
-+	if (file->f_flags & __FMODE_EXEC) {
- 		fctx->allow = MAY_EXEC | MAY_READ | AA_EXEC_MMAP;
- 		return 0;
- 	}
+> So for tomoyo, it's not about the file open, it's about
+> tomoyo_cred_prepare() and friends.
 
-Converting TOMOYO is less obvious to me, though, as it has a helper that
-isn't strictly always called during open(). I haven't finished figuring
-out the call graphs for it...
+Yeah, it looks like it should happily follow cred lifetime, but I
+haven't fully convinced myself.
+
+> So the patch I posted probably fixes apparmor, but only breaks tomoyo
+> instead, because tomoyo really does seem to use it around the whole
+> security_bprm_creds_for_exec() thing.
+> 
+> Now, tomoyo *also* uses it for the file_open() callback, just to confuse things.
+> 
+> IOW, I think the right thing to do is to split this in two:
+> 
+>  - leave the existing ->in_execve for the bprm_creds dance in
+> boprm_execve(). Horrendous and disgusing.
+
+Agreed.
+
+>  - the ->file_open() thing is changed to check file->f_flags
+
+Agreed. (And I've tested this for AppArmor now. I can confirm the
+failure case -- it's only for profile transitions, which is why I didn't
+see it originally in testing.
+
+> IOW, I think the patch I posted earlier - and Kees' version of the
+> same thing - is just broken. This attached patch might work.
+
+Yup. Should I post a formal patch, or do you want to commit what you've
+got (with the "file" -> "f" fix)?
+
+-Kees
 
 -- 
 Kees Cook
