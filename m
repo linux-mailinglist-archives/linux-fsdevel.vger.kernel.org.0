@@ -1,256 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-8791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7787883B0D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:17:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF3E83B0D3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 19:18:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9352B32470
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 18:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 479B41F24F1A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 18:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A460312A16F;
-	Wed, 24 Jan 2024 18:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA7812A170;
+	Wed, 24 Jan 2024 18:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IbCbr5r2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n2HAn+2o";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IbCbr5r2";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n2HAn+2o"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DJEWLT58"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FC812A144
-	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 18:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 772A81272C5;
+	Wed, 24 Jan 2024 18:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706120029; cv=none; b=u4rt0+iwvhJ1387QzEfgl1v/ZJt3eTQ2GizE3wS1Bj+CQ8Aqx2kW1/NZie2ij9jcJjidqqQFmxm/2rwJt46HDBPbwHmagSneNnHA/3b4YA1Q4854GqpphjtjCZf6/1rIE0t7SiLa+JG6qJEBvPC8nSd5gmqGao/i8JGKv3M1it8=
+	t=1706120289; cv=none; b=WFMoQsYBW+3nXQdSBLnLuOgpLEmpVpS38Nc3GRAIIc2iENO3/L/nURwvBPgpj7aja74SZJqepuuTp48qeAF/dz2ijHPaSHWrq7++IWo2/djM/tieML5fIekv9LRRKrRcGl2fhr6PHju5jLDymwilxZoCmFv5VSb/kMu6OXzAmOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706120029; c=relaxed/simple;
-	bh=cYez/pbnaJokLQMTsVGvuHhAsqo+TElYDEhxy7+GpV0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TZyX7tJuqxvsE6IZ6WOgMEZqGS6nxye/mBRFVcnphJ6ply4j7nT8CH88yRfDg4QSoWOFqpNHq9H2LY4uyxqjTCLADvM9yGIUwGuWGeV7hPAlZ+P+TPKfYYW/ncctCwJSLl1AOXYn+jEVtBqG6WL+Ibc7Gxf1DMZLghhFw8GeQzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IbCbr5r2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n2HAn+2o; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IbCbr5r2; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n2HAn+2o; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2C93721F43;
-	Wed, 24 Jan 2024 18:13:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1706120024; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dszh1KVCbrkwA6b+rzpmvlgBSsl3QFeMm775Umkcr6w=;
-	b=IbCbr5r2qNj0eX14e08tu1D+fvsrMP6BcPDGhND5QR/sni6/N5ZCPrw13WgBj4LtsiN1g1
-	3BhW0oqKtwjn7kS+v+vc7WWNAzyrHRjaShypkiXGFc3BI5uHd7vxoUILmf5y45jGETbwSd
-	Yb9P4cmKtKFBfDFOTPG0VwnnZWVWAsc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1706120024;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dszh1KVCbrkwA6b+rzpmvlgBSsl3QFeMm775Umkcr6w=;
-	b=n2HAn+2oYASbnJMpN4hv2uQdyICUoLLaVTlflOu9tq2dVADxG9lL1YKyvmrYw69rzzDtL+
-	IadYhDbp/jB3+fBA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1706120024; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dszh1KVCbrkwA6b+rzpmvlgBSsl3QFeMm775Umkcr6w=;
-	b=IbCbr5r2qNj0eX14e08tu1D+fvsrMP6BcPDGhND5QR/sni6/N5ZCPrw13WgBj4LtsiN1g1
-	3BhW0oqKtwjn7kS+v+vc7WWNAzyrHRjaShypkiXGFc3BI5uHd7vxoUILmf5y45jGETbwSd
-	Yb9P4cmKtKFBfDFOTPG0VwnnZWVWAsc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1706120024;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Dszh1KVCbrkwA6b+rzpmvlgBSsl3QFeMm775Umkcr6w=;
-	b=n2HAn+2oYASbnJMpN4hv2uQdyICUoLLaVTlflOu9tq2dVADxG9lL1YKyvmrYw69rzzDtL+
-	IadYhDbp/jB3+fBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84BF91333E;
-	Wed, 24 Jan 2024 18:13:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ruu7EFdTsWX+QwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Wed, 24 Jan 2024 18:13:43 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ebiggers@kernel.org,  viro@zeniv.linux.org.uk,  tytso@mit.edu,
-  linux-fsdevel@vger.kernel.org,  jaegeuk@kernel.org
-Subject: [PATCH v4] libfs: Attempt exact-match comparison first during
- casefolded lookup
-In-Reply-To: <CAHk-=wh+4Msg7RKv6mvKz2LfNwK24zKFhnLUyxsrKzsXqni+Kg@mail.gmail.com>
-	(Linus Torvalds's message of "Sun, 21 Jan 2024 11:09:01 -0800")
-Organization: SUSE
-References: <20240119202544.19434-1-krisman@suse.de>
-	<20240119202544.19434-2-krisman@suse.de>
-	<CAHk-=whW=jahYWDezh8PeudB5ozfjNpdHnek3scMAyWHT5+=Og@mail.gmail.com>
-	<87mssywsqs.fsf@mailhost.krisman.be>
-	<CAHk-=wh+4Msg7RKv6mvKz2LfNwK24zKFhnLUyxsrKzsXqni+Kg@mail.gmail.com>
-Date: Wed, 24 Jan 2024 15:13:40 -0300
-Message-ID: <87ttn2sip7.fsf_-_@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1706120289; c=relaxed/simple;
+	bh=IZVOlariVRfIcGsIrV1/Rj9DEC+cUqQAkpjxQgYzNog=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r0WIuEBaYd/Rx+p3gp5eoseiKEOM/CInlBAmZx3hqTHCYJLbkh9sNUaPpxilV8D2pCqtp0aJyIuIz8fAiNGiNjJmy1Nk0U7eNG18XK2afXTLjPq0Jus9qldD7LYmxDxqHLQSQNythD31HytXhBly9S9+s2b9JZdb9ecc58disxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DJEWLT58; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-600094c5703so32528297b3.3;
+        Wed, 24 Jan 2024 10:18:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706120286; x=1706725086; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QsC5J7SFRh8VB2y7cw0DmGPNJsrnu5DQuprLfeci/dk=;
+        b=DJEWLT58U27eAto/wYwgoUHnH4EALDKuJvOIwk6QKwM5AqQuNYP9MKBtp/k5a6C4PN
+         l1MJL+18QmTj7s0vRGOlCAU8e1WMejW+zphefCHzas4JfpQOdgrGStw8AWS5j+xQ3V+n
+         zaxI9sHgb79DCfQ+gX46KRQ9Vp2mdbkR9VQdnfdXzNTEP0N4GNkrdmYl64qZMx/Fawlv
+         EQ76l7AqsvNKOVGnOcr9vQdNjHySv4crsAy9EuW44PSFlnnoP6OoI2pr23rp6Mq9cLSk
+         9DD086H8hsWaT7d5wxk5PL69U6UKaNKIKE4WtO6HLZWHmTRAf84b/DB194uUsPZNhXvU
+         8hnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706120286; x=1706725086;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QsC5J7SFRh8VB2y7cw0DmGPNJsrnu5DQuprLfeci/dk=;
+        b=wUTEC0qMlnruwZLSoHNhcx8zzENtHfPR2kZK91+5D/4jHT8hz6byVZwMOBek/sDBg3
+         UAoVuuiBsH9flxhSvWhEvFBn59xuoE7JbMJ+xNHetm2Zs9Z50A/QGjdVepge/c0BASzO
+         Sah8HixptRhEehQm99LA7rO4t9DuNP7qw/hUJgSRUxyUR1ldfGe/P1ilEUZRF0Gam/ml
+         aDeJgbXCcIw0KOl7SyrWr9MCekTGqwKWaDxlw8fOY0EM7pNYHyhYSf9AeX0HfBxJCtrK
+         q/YqKBgH7JSS2VhS5c62LynOOPkjYnTGryiQpxlbcv/k0TsD+GKdULRLOhbOCpu/I2Vv
+         gsJA==
+X-Gm-Message-State: AOJu0Yx+Be0GGW8m+rjpOQzV+K6wDQJcIA3DSxCAvxV2sFGDcxOgl263
+	9QeLaSpuFnQHWvrt5FHGL572gFGt0T/4kEAHJ7h2Lvv9oLS6gHmU/qdaS/h2kqcrTJIbWsYLgXZ
+	J4eRO8NuNRO/tCGTn+AlysEUkp60=
+X-Google-Smtp-Source: AGHT+IHjIotTzRXLyqQXirevqWOvpN0RADtAYz7W01uBjHC4bmMaKvNw8tNKwj68QaXnyYWvZcic6lqR4nV2ERKTT5M=
+X-Received: by 2002:a05:6902:50b:b0:dbf:1edf:37ef with SMTP id
+ x11-20020a056902050b00b00dbf1edf37efmr893940ybs.54.1706120286281; Wed, 24 Jan
+ 2024 10:18:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=IbCbr5r2;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=n2HAn+2o
-X-Spamd-Result: default: False [-3.31 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCPT_COUNT_FIVE(0.00)[6];
-	 HAS_ORG_HEADER(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%];
-	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 2C93721F43
-X-Spam-Level: 
-X-Spam-Score: -3.31
-X-Spam-Flag: NO
+References: <20231018122518.128049-1-wedsonaf@gmail.com> <20231018122518.128049-6-wedsonaf@gmail.com>
+ <20240104051454.GC3964019@frogsfrogsfrogs>
+In-Reply-To: <20240104051454.GC3964019@frogsfrogsfrogs>
+From: Wedson Almeida Filho <wedsonaf@gmail.com>
+Date: Wed, 24 Jan 2024 15:17:55 -0300
+Message-ID: <CANeycqrCzxJ0dWHX22gZw2ZBawz63btw5E1ONaz_TisNCoo5Zg@mail.gmail.com>
+Subject: Re: [RFC PATCH 05/19] rust: fs: introduce `INode<T>`
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Matthew Wilcox <willy@infradead.org>, Kent Overstreet <kent.overstreet@gmail.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Wedson Almeida Filho <walmeida@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
-
-> On Sun, 21 Jan 2024 at 08:34, Gabriel Krisman Bertazi <krisman@suse.de> wrote:
->>
->> Are you ok with the earlier v2 of this patchset as-is, and I'll send a
->> new series proposing this change?
+On Thu, 4 Jan 2024 at 02:14, Darrick J. Wong <djwong@kernel.org> wrote:
 >
-> Yeah, possibly updating just the commit log to mention how
-> __d_lookup_rcu_op_compare() takes care of the data race.
+> On Wed, Oct 18, 2023 at 09:25:04AM -0300, Wedson Almeida Filho wrote:
+> > From: Wedson Almeida Filho <walmeida@microsoft.com>
+> >
+> > Allow Rust file systems to handle typed and ref-counted inodes.
+> >
+> > This is in preparation for creating new inodes (for example, to create
+> > the root inode of a new superblock), which comes in the next patch in
+> > the series.
+> >
+> > Signed-off-by: Wedson Almeida Filho <walmeida@microsoft.com>
+> > ---
+> >  rust/helpers.c    |  7 +++++++
+> >  rust/kernel/fs.rs | 53 +++++++++++++++++++++++++++++++++++++++++++++--
+> >  2 files changed, 58 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/rust/helpers.c b/rust/helpers.c
+> > index 4c86fe4a7e05..fe45f8ddb31f 100644
+> > --- a/rust/helpers.c
+> > +++ b/rust/helpers.c
+> > @@ -25,6 +25,7 @@
+> >  #include <linux/build_bug.h>
+> >  #include <linux/err.h>
+> >  #include <linux/errname.h>
+> > +#include <linux/fs.h>
+> >  #include <linux/mutex.h>
+> >  #include <linux/refcount.h>
+> >  #include <linux/sched/signal.h>
+> > @@ -144,6 +145,12 @@ struct kunit *rust_helper_kunit_get_current_test(void)
+> >  }
+> >  EXPORT_SYMBOL_GPL(rust_helper_kunit_get_current_test);
+> >
+> > +off_t rust_helper_i_size_read(const struct inode *inode)
+>
+> i_size_read returns a loff_t (aka __kernel_loff_t (aka long long)),
+> but this returns    an off_t (aka __kernel_off_t (aka long)).
+>
+> Won't that cause truncation issues for files larger than 4GB on some
+> architectures?
 
-Just for completeness, below the version I intend to apply to
-unicode/for-next , which is the v2, plus the comments you and Eric
-requested. That is, unless something else comes up.
+This is indeed a bug, thanks for catching it! Fixed in v2.
 
-> I do think that just doing the exact check in
-> __d_lookup_rcu_op_compare() would then avoid things like the indirect
-> call for that (presumably common) case, but it's not a big deal.
+> > +{
+> > +     return i_size_read(inode);
+> > +}
+> > +EXPORT_SYMBOL_GPL(rust_helper_i_size_read);
+> > +
+> >  /*
+> >   * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we can
+> >   * use it in contexts where Rust expects a `usize` like slice (array) indices.
+> > diff --git a/rust/kernel/fs.rs b/rust/kernel/fs.rs
+> > index 31cf643aaded..30fa1f312f33 100644
+> > --- a/rust/kernel/fs.rs
+> > +++ b/rust/kernel/fs.rs
+> > @@ -7,9 +7,9 @@
+> >  //! C headers: [`include/linux/fs.h`](../../include/linux/fs.h)
+> >
+> >  use crate::error::{code::*, from_result, to_result, Error, Result};
+> > -use crate::types::Opaque;
+> > +use crate::types::{AlwaysRefCounted, Opaque};
+> >  use crate::{bindings, init::PinInit, str::CStr, try_pin_init, ThisModule};
+> > -use core::{marker::PhantomData, marker::PhantomPinned, pin::Pin};
+> > +use core::{marker::PhantomData, marker::PhantomPinned, pin::Pin, ptr};
+> >  use macros::{pin_data, pinned_drop};
+> >
+> >  /// Maximum size of an inode.
+> > @@ -94,6 +94,55 @@ fn drop(self: Pin<&mut Self>) {
+> >      }
+> >  }
+> >
+> > +/// The number of an inode.
+> > +pub type Ino = u64;
+> > +
+> > +/// A node in the file system index (inode).
+> > +///
+> > +/// Wraps the kernel's `struct inode`.
+> > +///
+> > +/// # Invariants
+> > +///
+> > +/// Instances of this type are always ref-counted, that is, a call to `ihold` ensures that the
+> > +/// allocation remains valid at least until the matching call to `iput`.
+> > +#[repr(transparent)]
+> > +pub struct INode<T: FileSystem + ?Sized>(Opaque<bindings::inode>, PhantomData<T>);
+> > +
+> > +impl<T: FileSystem + ?Sized> INode<T> {
+> > +    /// Returns the number of the inode.
+> > +    pub fn ino(&self) -> Ino {
+> > +        // SAFETY: `i_ino` is immutable, and `self` is guaranteed to be valid by the existence of a
+> > +        // shared reference (&self) to it.
+> > +        unsafe { (*self.0.get()).i_ino }
+>
+> Is "*self.0.get()" the means by which the Rust bindings get at the
+> actual C object?
 
-I will also follow up with a new patch for this shortly.
+It gets a pointer to the C object.
 
-Thanks for the reviews.
+self's type is INode, which is a pair. `self.0` get the first element
+of the pair, which has type `Opaque<bindings::inode>`. It has a method
+called `get` that returns a pointer to the object it wraps.
 
--- >8 --
-Subject: [PATCH v4] libfs: Attempt exact-match comparison first during
- casefolded lookup
+> (Forgive me, I've barely finished drying the primer coat on my rust-fu.)
+>
+> > +    }
+> > +
+> > +    /// Returns the super-block that owns the inode.
+> > +    pub fn super_block(&self) -> &SuperBlock<T> {
+> > +        // SAFETY: `i_sb` is immutable, and `self` is guaranteed to be valid by the existence of a
+> > +        // shared reference (&self) to it.
+> > +        unsafe { &*(*self.0.get()).i_sb.cast() }
+> > +    }
+> > +
+> > +    /// Returns the size of the inode contents.
+> > +    pub fn size(&self) -> i64 {
+>
+> I'm a little surprised I didn't see a
+>
+> pub type loff_t = i64
+>
+> followed by this function returning a loff_t.  Or maybe it would be
+> better to define it as:
 
-Casefolded comparisons are (obviously) way more costly than a simple
-memcmp.  Try the case-sensitive comparison first, falling-back to the
-case-insensitive lookup only when needed.  This allows any exact-match
-lookup to complete without having to walk the utf8 trie.
+This was suggested by Matthew Wilcox as well, which I did for v2,
+though I call it `Offset`.
 
-Note that, for strict mode, generic_ci_d_compare used to reject an
-invalid UTF-8 string, which would now be considered valid if it
-exact-matches the disk-name.  But, if that is the case, the filesystem
-is corrupt.  More than that, it really doesn't matter in practice,
-because the name-under-lookup will have already been rejected by
-generic_ci_d_hash and we won't even get here.
+> struct loff_t(i64);
+>
+> So that dopey fs developers like me cannot so easily assign a file
+> position (bytes) to a pgoff_t (page index) without either supplying an
+> actual conversion operator or seeing complaints from the compiler.
 
-The memcmp is safe under RCU because we are operating on str/len instead
-of dentry->d_name directly, and the caller guarantees their consistency
-between each other in __d_lookup_rcu_op_compare.
+We may want to eventually do this, but for now I'm only doing the type alias.
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
----
- fs/libfs.c | 40 +++++++++++++++++++++++-----------------
- 1 file changed, 23 insertions(+), 17 deletions(-)
+The disadvantage of doing a new type is that we lose all arithmetic
+operators as well, though we can redefine them by implementing the
+appropriate traits.
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index eec6031b0155..306a0510b7dc 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1704,16 +1704,28 @@ bool is_empty_dir_inode(struct inode *inode)
- static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
- 				const char *str, const struct qstr *name)
- {
--	const struct dentry *parent = READ_ONCE(dentry->d_parent);
--	const struct inode *dir = READ_ONCE(parent->d_inode);
--	const struct super_block *sb = dentry->d_sb;
--	const struct unicode_map *um = sb->s_encoding;
--	struct qstr qstr = QSTR_INIT(str, len);
-+	const struct dentry *parent;
-+	const struct inode *dir;
- 	char strbuf[DNAME_INLINE_LEN];
--	int ret;
-+	struct qstr qstr;
-+
-+	/*
-+	 * Attempt a case-sensitive match first. It is cheaper and
-+	 * should cover most lookups, including all the sane
-+	 * applications that expect a case-sensitive filesystem.
-+	 *
-+	 * This comparison is safe under RCU because the caller
-+	 * guarantees the consistency between str and len. See
-+	 * __d_lookup_rcu_op_compare() for details.
-+	 */
-+	if (len == name->len && !memcmp(str, name->name, len))
-+		return 0;
- 
-+	parent = READ_ONCE(dentry->d_parent);
-+	dir = READ_ONCE(parent->d_inode);
- 	if (!dir || !IS_CASEFOLDED(dir))
--		goto fallback;
-+		return 1;
-+
- 	/*
- 	 * If the dentry name is stored in-line, then it may be concurrently
- 	 * modified by a rename.  If this happens, the VFS will eventually retry
-@@ -1724,20 +1736,14 @@ static int generic_ci_d_compare(const struct dentry *dentry, unsigned int len,
- 	if (len <= DNAME_INLINE_LEN - 1) {
- 		memcpy(strbuf, str, len);
- 		strbuf[len] = 0;
--		qstr.name = strbuf;
-+		str = strbuf;
- 		/* prevent compiler from optimizing out the temporary buffer */
- 		barrier();
- 	}
--	ret = utf8_strncasecmp(um, name, &qstr);
--	if (ret >= 0)
--		return ret;
-+	qstr.len = len;
-+	qstr.name = str;
- 
--	if (sb_has_strict_encoding(sb))
--		return -EINVAL;
--fallback:
--	if (len != name->len)
--		return 1;
--	return !!memcmp(str, name->name, len);
-+	return utf8_strncasecmp(dentry->d_sb->s_encoding, name, &qstr);
- }
- 
- /**
--- 
-2.43.0
-
+Thanks,
+-Wedson
 
