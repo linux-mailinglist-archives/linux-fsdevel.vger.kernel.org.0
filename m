@@ -1,140 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-8688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D97183A572
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 10:30:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD5583A5ED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 10:51:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9FCF2923A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 09:30:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F05511C232C5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 24 Jan 2024 09:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03FDA18037;
-	Wed, 24 Jan 2024 09:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B9318038;
+	Wed, 24 Jan 2024 09:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Df71+RvZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6025F1802A;
-	Wed, 24 Jan 2024 09:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9870E1802A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 24 Jan 2024 09:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706088631; cv=none; b=kQih61y2HaO9kMVxLANw+Z06BPOOeaeAhNyghYhL6qhlC23mKB9ZijRu2IrVCjFfYFQCbocn9KJlTJEKq/Pb0WI7m8mGwbSYwwbf9ODozFBvi1DJAAgWY3ar0oQL8krFa/ngYx/f4BKHlntHanGIRzHxAx/3FifpP7y+i5dEURU=
+	t=1706089890; cv=none; b=ogxdAni8bkf8yhabuLGJvHzItc1i8HBoxtCmEh42spV/PV72btY4SS9mFZfnHfl8v7nHbce+M8AFGP/R1LoPcZiDYXubu3J/Cjs1IdPUYkra2ofh81OTqF6aVArvRom8nb4L+ZiR9joLFbkDR702PON5rj9K40GmzUPCF5clKvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706088631; c=relaxed/simple;
-	bh=qmC5nXw/zGxMMGst/hVylM3OFQtfUYgQ8/8cGXf1tIk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=hNcYZw37lEnl0Vnw+vtOGZIqmNhGRT+DEoGzm+1PoC/05dxfS24zJORn6P1QZGbjI9u8k+IsrYBF0J1PG/Q/f/STYRvMTn2tOI4un9PUB8cjk2Po87Ja08E42ke5E/XoPyQaps/i/KF+lDozE9iv3vuagdAKwaCTGO42Tib0+j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4TKdvc69lnzNlS9;
-	Wed, 24 Jan 2024 17:29:32 +0800 (CST)
-Received: from kwepemm600020.china.huawei.com (unknown [7.193.23.147])
-	by mail.maildlp.com (Postfix) with ESMTPS id A500D18005E;
-	Wed, 24 Jan 2024 17:30:25 +0800 (CST)
-Received: from [10.174.179.160] (10.174.179.160) by
- kwepemm600020.china.huawei.com (7.193.23.147) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 24 Jan 2024 17:30:24 +0800
-Message-ID: <4f78fea2-ced6-fc5a-c7f2-b33fcd226f06@huawei.com>
-Date: Wed, 24 Jan 2024 17:30:23 +0800
+	s=arc-20240116; t=1706089890; c=relaxed/simple;
+	bh=m5NWx1gVYZIUYmyzn/p7lEktd7eDSEgX54vgwJR8lWI=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IK9N6CCpcpnu47nlOyoEq83izer3g/ERAuv1o4uyZsHSNgW9KTlsWpbL1EgyLABa4yrz7M80V2Tb88zektT9/hY1HYi4EpTjPCmwvJHV1rRhXjfbsSx/AruUFh165kYdAAuREVk86zV7B+k7RduFoZra2gyVWtuznHEufaqH71g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Df71+RvZ; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=gfzwzs63c5bwpbfaoak7hqxbra.protonmail; t=1706089879; x=1706349079;
+	bh=YRa7ixpHW2IRUtx3lwsiscFSpJb9lfgyIi3waMTLXrU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=Df71+RvZH7zmdy2/Swc3ITCEGjhIrt/qwW2f2MNWphXeuBkg5IEX46Y7+5/rKlt7w
+	 64AN2ZHNAFyeks3ZGw2Gaf1O57pKfekYF4kLzz1aA1kxbixP6trCgNsd7vpNrNHuiO
+	 ZKTQmWCJ6BT8za6WiycUJOdAAQTR8uWvVyMeP2dGLarLOAdrGTr0H+YhS0n6Y8m9eC
+	 Tnx0jrX3mHKwKlbAxMpZsuVh0SKX0WlHdXmh1lXIjelnsCQ/j/ZcQyEAy2OLXFj+RI
+	 NstMSLrMjrnY1Ey0mhOu5M2k1bvwtaAm5hbaaBfF0Q3CKxaTwaRmw7uNKiJO1W0I8O
+	 OtBOh+HGXPNbA==
+Date: Wed, 24 Jan 2024 09:51:11 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 2/9] rust: cred: add Rust abstraction for `struct cred`
+Message-ID: <efde6f59-2467-4645-8846-ab42214164fa@proton.me>
+In-Reply-To: <CAH5fLgjKVQoTNZAJienaJpDrAPHoC+bAJdCzHsjjzme36h6wBw@mail.gmail.com>
+References: <20240118-alice-file-v3-0-9694b6f9580c@google.com> <20240118-alice-file-v3-2-9694b6f9580c@google.com> <67a9f08d-d551-4238-b02d-f1c7af3780ae@proton.me> <CAH5fLgjKVQoTNZAJienaJpDrAPHoC+bAJdCzHsjjzme36h6wBw@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.9.0
-From: "zhangpeng (AS)" <zhangpeng362@huawei.com>
-Subject: Re: SECURITY PROBLEM: Any user can crash the kernel with TCP ZEROCOPY
-To: Eric Dumazet <edumazet@google.com>, Matthew Wilcox <willy@infradead.org>
-CC: <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <akpm@linux-foundation.org>, <davem@davemloft.net>,
-	<dsahern@kernel.org>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<arjunroy@google.com>, <wangkefeng.wang@huawei.com>
-References: <20240119092024.193066-1-zhangpeng362@huawei.com>
- <Zap7t9GOLTM1yqjT@casper.infradead.org>
- <5106a58e-04da-372a-b836-9d3d0bd2507b@huawei.com>
- <Za6SD48Zf0CXriLm@casper.infradead.org>
- <CANn89iL4qUXsVDRNGgBOweZbJ6ErWMsH+EpOj-55Lky8JEEhqQ@mail.gmail.com>
- <Za6h-tB7plgKje5r@casper.infradead.org>
- <CANn89iJDNdOpb6L6PkrAcbGcsx6_v4VD0v2XFY77g7tEnJEXXQ@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CANn89iJDNdOpb6L6PkrAcbGcsx6_v4VD0v2XFY77g7tEnJEXXQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm600020.china.huawei.com (7.193.23.147)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/1/23 1:39, Eric Dumazet wrote:
-
-> On Mon, Jan 22, 2024 at 6:12 PM Matthew Wilcox<willy@infradead.org>  wrote:
->> On Mon, Jan 22, 2024 at 05:30:18PM +0100, Eric Dumazet wrote:
->>> On Mon, Jan 22, 2024 at 5:04 PM Matthew Wilcox<willy@infradead.org>  wrote:
->>>> I'm disappointed to have no reaction from netdev so far.  Let's see if a
->>>> more exciting subject line evinces some interest.
->>> Hmm, perhaps some of us were enjoying their weekend ?
->> I am all in favour of people taking time off!  However the report came
->> in on Friday at 9am UTC so it had been more than a work day for anyone
->> anywhere in the world without response.
+On 19.01.24 10:52, Alice Ryhl wrote:
+> On Fri, Jan 19, 2024 at 10:37=E2=80=AFAM Benno Lossin <benno.lossin@proto=
+n.me> wrote:
+>> On 1/18/24 15:36, Alice Ryhl wrote:
+>>> +    /// Returns the effective UID of the given credential.
+>>> +    pub fn euid(&self) -> bindings::kuid_t {
+>>> +        // SAFETY: By the type invariant, we know that `self.0` is val=
+id.
 >>
->>> I don't really know what changed recently, all I know is that TCP zero
->>> copy is for real network traffic.
->>>
->>> Real trafic uses order-0 pages, 4K at a time.
->>>
->>> If can_map_frag() needs to add another safety check, let's add it.
->> So it's your opinion that people don't actually use sendfile() from
->> a local file, and we can make this fail to zerocopy?
-> Certainly we do not do that at Google.
-> I am not sure if anybody else would have used this.
->
->
->
->   That's good
->> because I had a slew of questions about what expectations we had around
->> cache coherency between pages mapped this way and write()/mmap() of
->> the original file.  If we can just disallow this, we don't need to
->> have a discussion about it.
->>
->>> syzbot is usually quite good at bisections, was a bug origin found ?
->> I have the impression that Huawei run syzkaller themselves without
->> syzbot.  I suspect this bug has been there for a good long time.
->> Wonder why nobody's found it before; it doesn't seem complicated for a
->> fuzzer to stumble into.
-> I is strange syzbot (The Google fuzzer) have not found this yet, I
-> suspect it might be caused
-> by a recent change somewhere ?
->
-> A repro would definitely help, I could start a bisection.
+>> Is `euid` an immutable property, or why does this memory access not race
+>> with something?
+>=20
+> Yes. These properties are changed by replacing the credential, so the
+> credentials themselves are immutable.
 
-By using git-bisect, the patch that introduces this issue is 05255b823a617
-("tcp: add TCP_ZEROCOPY_RECEIVE support for zerocopy receive."). v4.18-rc1.
+I see that's good to know, I think that should be mentioned
+on the docs of `Credential`.
 
-Currently, there are no other repro or c reproduction programs can reproduce
-the issue. The syz log used to reproduce the issue is as follows:
+--=20
+Cheers,
+Benno
 
-r3 = socket$inet_tcp(0x2, 0x1, 0x0)
-mmap(&(0x7f0000ff9000/0x4000)=nil, 0x4000, 0x0, 0x12, r3, 0x0)
-r4 = socket$inet_tcp(0x2, 0x1, 0x0)
-bind$inet(r4, &(0x7f0000000000)={0x2, 0x4e24, @multicast1}, 0x10)
-connect$inet(r4, &(0x7f00000006c0)={0x2, 0x4e24, @empty}, 0x10)
-r5 = openat$dir(0xffffffffffffff9c, &(0x7f00000000c0)='./file0\x00',
-0x181e42, 0x0)
-fallocate(r5, 0x0, 0x0, 0x85b8818)
-sendfile(r4, r5, 0x0, 0x3000)
-getsockopt$inet_tcp_TCP_ZEROCOPY_RECEIVE(r4, 0x6, 0x23,
-&(0x7f00000001c0)={&(0x7f0000ffb000/0x3000)=nil, 0x3000, 0x0, 0x0,
-0x0, 0x0, 0x0, 0x0, 0x0}, &(0x7f0000000440)=0x10)
-r6 = openat$dir(0xffffffffffffff9c, &(0x7f00000000c0)='./file0\x00',
-0x181e42, 0x0)
-
--- 
-Best Regards,
-Peng
 
 
