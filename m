@@ -1,131 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-8938-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8939-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D125083C79B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:11:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 254CC83C7CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:25:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C48DA1C25075
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:11:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72B7AB22091
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82620129A6D;
-	Thu, 25 Jan 2024 16:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D91F129A6F;
+	Thu, 25 Jan 2024 16:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="WpSZFiJC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rbesHY24"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989981292F0
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 16:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0144E73177;
+	Thu, 25 Jan 2024 16:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706199098; cv=none; b=qVWqihH8ZpR0EmKqbn603VgF82pxb4kY0jL1wuRDE93/B+D1v8aQCUP9PBYruDlazfvcXDkTtTLIYH/csLRd3XRi8Yf22G0g3vkz8rnH2CrxzG5IEGWeMpqWiAl73sE0IoC64vKpC839DMbFfAguUCN1LogOvPDx6IUmoDAeWZE=
+	t=1706199923; cv=none; b=Vk3cCi8eK9oojYZBdGVuCEuUtFikyvvzup3WzuCwKAZ+CtRLnH+6CHPuO/jwE9I2tNP+x6Z/zXi2AWvL8CbMAYrtyMSw9UGix7Amb7tv/79AF6fFz0FUVrl1rtVk9mFwL2UZb9799POPTSzpR55i7jQsF2ylksYGFsrYxn5mkkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706199098; c=relaxed/simple;
-	bh=sJvQIDfKJSXmACGVyDxOuvYeKXaNLXeOpOjnvIPcb60=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=foKx5hg53cdCdvxEczt505yXs/WCI8V1dNpDXoetE6BXBX9KIk9zhG4FhPO0iO4t7r/8Ccjd/689Xte+s3kzpJHyQZ/mD/5Q24uBEzw6kJRPzdY+DUb5/HErlX4ZSsPoRMIEe/pwwAmd5+CVMFPJ97Fhvj/wjQdIq/XGbwrk4b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=WpSZFiJC; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7bbdd28a52aso86958739f.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 08:11:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1706199096; x=1706803896; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oXHpAvGT0l+OrcMVhCzIisM9di93nFyOAmu8umEvyYc=;
-        b=WpSZFiJC+gCkaTAxVghL+0TziKvTsW3cXquxSB2MDTRybISiN/VP7Ez5bVYU06ZP9/
-         TtFdqwmte6uhom2hQRBG7O+XasO47sVCGNXdKmFJzEaRQpIZmJVQm/B5KZO7mckPynIl
-         pS9U7LAvO+P0kFe6dFEJu1UQMEYFqDP1sSCq6kyhBsqJ+dzD9KpQez5pWC6n73ClE7RQ
-         8dG7YRBNKQABMDWVZKi+jY22+T90d4d41lkkHwz/S0Qg5QGEpMgP4yXE1SbXaj9Q/Nfo
-         yeOSJW3b/QugMVgTs8FWYWBCQ/PhmsPb+VKByWydTbLncZshx1pkDtwKeodXldxBh10E
-         Ct8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706199096; x=1706803896;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oXHpAvGT0l+OrcMVhCzIisM9di93nFyOAmu8umEvyYc=;
-        b=Cflz5LU1U6Uk+0PXxGPR7JhHpYi17PbKxiORYNqNitkz2SFwG47TtvGAyNG3hwsqhP
-         6AeWmYlF4YhVKAq0y+ok0huNgvobBzW7JT6PTuQO9ElQ4Xd4/zP8TtPPSHmSrEKoEzPQ
-         d5k0kReVBKJzuyZgrE4xcvxQwD8In17vOv6KkUKsu2GoOyu16hQclLdoNfhFfjMSlexf
-         D+EjX6NUpn/azDvj+Y7zK5LRm6xYcrnuDyc/w4BpRm3iiNouyPySpcfie2VYOAayGpVS
-         0bghgCYdoUGMWNnm8DJ5pNG3LJ0OtA3pHaeJyyqtIkT7TVloWZ5IWHWCDtEZLgEg45ZP
-         Ub5g==
-X-Gm-Message-State: AOJu0YykCC3a/snOTImFuVreXqJ6howTbtnfvbuovxhOS+XWmvd1mJUz
-	62MXjQv8Vg2r7O4cKyX6bUX4BBj1tcWVKryBlY+1v+LvKBlBg7hGbLTUmXxPDSy/Aa8PTBJ0mE1
-	u56g=
-X-Google-Smtp-Source: AGHT+IEK/ThZ75X0mSLf5JYVYvXq2E1lW6GL1EM0E56z9MRc0RzZ+JHgPgmxc0oiVIA9uU/EKwDlBA==
-X-Received: by 2002:a5e:9205:0:b0:7bc:207d:5178 with SMTP id y5-20020a5e9205000000b007bc207d5178mr2457404iop.2.1706199095804;
-        Thu, 25 Jan 2024 08:11:35 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id b18-20020a0566380b9200b0046cf80c799fsm4619524jad.120.2024.01.25.08.11.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 25 Jan 2024 08:11:35 -0800 (PST)
-Message-ID: <11868eb4-0528-4298-b8bc-2621fd1aac83@kernel.dk>
-Date: Thu, 25 Jan 2024 09:11:34 -0700
+	s=arc-20240116; t=1706199923; c=relaxed/simple;
+	bh=wJc8Jxeo78IzspCnw256X6rE5YyddHMgrBAd0+d3SoA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UKceyANua+iiLToIo21cEdemxMcdl3q6i7TJqZD/eI2Oq+opt3YOnGbYtRhuAzrVHsuutAegH9yGhIYFaoe4CydANeysgGG6HDc974a0XUh06bm+ivhQOuVz4uTGQCxCa7DVOs32aPMGk05O1lSBpsbEyBB8DomLCyyPHU0W09E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rbesHY24; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B491C433F1;
+	Thu, 25 Jan 2024 16:25:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706199922;
+	bh=wJc8Jxeo78IzspCnw256X6rE5YyddHMgrBAd0+d3SoA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rbesHY24ONOYobqOsuPiCJOmEuLcJwgj2DKyliEWdjXRD5sbQ2IxkRweXKrW6dUWU
+	 Dghz52Z7SFJr7DnoBLbEXzZyYO2LV1SnTxfetu08y0nmrDYrwgGS1NUioXSaeArR/x
+	 lxmzmND9jEZlukdxywtNOrcYq0/Tt8n2AeBXpkr6mRb8FVqxt8B8KuMAid+hKReG0c
+	 Mxk/oa3jwa7Cel5znPnJPJiEqpNak9fExYmhaKKP1xzMVTcbpdOhweK0X6WWVYWF4M
+	 NhAU/aUhmXGGI0JABrbvfKlV/OtBfwm8b8Qle80jkUqstk9GhVJ5xdXcQXM0sJdWPC
+	 HUxI6UHWtIKBg==
+From: Christian Brauner <brauner@kernel.org>
+To: Baokun Li <libaokun1@huawei.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	torvalds@linux-foundation.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	willy@infradead.org,
+	akpm@linux-foundation.org,
+	arnd@arndb.de,
+	linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	yukuai3@huawei.com,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] fs: make the i_size_read/write helpers be smp_load_acquire/store_release()
+Date: Thu, 25 Jan 2024 17:25:07 +0100
+Message-ID: <20240125-leihgabe-enkel-403d0d728714@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240124142857.4146716-1-libaokun1@huawei.com>
+References: <20240124142857.4146716-1-libaokun1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [syzbot] [jfs?] INFO: task hung in path_mount (2)
-To: Christian Brauner <brauner@kernel.org>
-Cc: syzbot <syzbot+fb337a5ea8454f5f1e3f@syzkaller.appspotmail.com>,
- hdanton@sina.com, jack@suse.cz, jfs-discussion@lists.sourceforge.net,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-References: <00000000000083513f060340d472@google.com>
- <000000000000e5e71a060fc3e747@google.com>
- <20240125-legten-zugleich-21a988d80b45@brauner>
-Content-Language: en-US
-In-Reply-To: <20240125-legten-zugleich-21a988d80b45@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1602; i=brauner@kernel.org; h=from:subject:message-id; bh=wJc8Jxeo78IzspCnw256X6rE5YyddHMgrBAd0+d3SoA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaRu6s6wYfA9ezPHb+Ee/ll/A98p/+8/4e0xn9vzoGNwm w/f9ne/O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYS9Ifhf6SP7+c5Tk7Zz91O yjx4pSRZZ7qKT/Ob8CEP9vo13x7vLmX477XC6XjnWj1h5oLu/Dvbt+mpGad56bUbG7s1OE66oT+ HFwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 25, 2024 at 9:08?AM Christian Brauner <brauner@kernel.org> wrote:
->
-> On Thu, Jan 25, 2024 at 03:59:03AM -0800, syzbot wrote:
-> > syzbot suspects this issue was fixed by commit:
-> >
-> > commit 6f861765464f43a71462d52026fbddfc858239a5
-> > Author: Jan Kara <jack@suse.cz>
-> > Date:   Wed Nov 1 17:43:10 2023 +0000
-> >
-> >     fs: Block writes to mounted block devices
-> >
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13175a53e80000
-> > start commit:   2ccdd1b13c59 Linux 6.5-rc6
-> > git tree:       upstream
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=9c37cc0e4fcc5f8d
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=fb337a5ea8454f5f1e3f
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ba5d53a80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14265373a80000
-> >
-> > If the result looks correct, please mark the issue as fixed by replying with:
->
-> #syz fix: fs: Block writes to mounted block devices
+On Wed, 24 Jan 2024 22:28:54 +0800, Baokun Li wrote:
+> V1->V2:
+>   Add patch 3 to fix an error when compiling code for 32-bit architectures
+>   without CONFIG_SMP enabled.
+> 
+> This patchset follows the Linus suggestion to make the i_size_read/write
+> helpers be smp_load_acquire/store_release(), after which the extra smp_rmb
+> in filemap_read() is no longer needed, so it is removed. And remove the
+> extra type checking in smp_load_acquire/smp_store_release under the
+> !CONFIG_SMP case to avoid compilation errors.
+> 
+> [...]
 
-Like Dave replied a few days ago, I'm kind of skeptical on all of these
-bugs being closed by this change. I'm guessing that they are all
-resolved now because a) the block writes while mounted option was set to
-Y, and b) the actual bug is just masked by that.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-Maybe this is fine, but it does seem a bit... sketchy? The bugs aren't
-really fixed, and what happens if someone doesn't turn on that option?
-If it's required, perhaps it should not be an option at all? Though
-that'd seem to be likely to break some funky use cases, whether they are
-valid or not.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
--- 
-Jens Axboe
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/3] fs: make the i_size_read/write helpers be smp_load_acquire/store_release()
+      https://git.kernel.org/vfs/vfs/c/6238fe4d7cad
+[2/3] Revert "mm/filemap: avoid buffered read/write race to read inconsistent data"
+      https://git.kernel.org/vfs/vfs/c/bf7aad3980da
+[3/3] asm-generic: remove extra type checking in acquire/release for non-SMP case
+      https://git.kernel.org/vfs/vfs/c/e9cbdca0a243
 
