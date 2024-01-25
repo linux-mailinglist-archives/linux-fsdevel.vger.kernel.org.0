@@ -1,92 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-8917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D03F83C17D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 12:59:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B26E83C2E6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 13:56:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A214B1F261DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D561F25E19
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 12:56:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D8345C1C;
-	Thu, 25 Jan 2024 11:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC694F5F4;
+	Thu, 25 Jan 2024 12:56:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="AXNMOdEC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112D332182
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 11:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0FD4EB24
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 12:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706183946; cv=none; b=rcz0w21dx0UbbUlq/40kKXbJ8uhJDKm/58kI7gJKH3PMfwdSAnFX5NnOz3MMmlpB0pdVZUGlZFPCjiE2IFG/fF8t426m354Om3oJJVzjFoyKUzLpFneDUgqcoJ6YRDzeiXew5TzXDOOn3jBwxVGc8yJ+EVRYpEwZcRxr9/oARME=
+	t=1706187380; cv=none; b=JuIVlc4vFXcouKaIPOCh8LoBunTPqsL7W0FGEM1o3MbQWfiyMxyLiIxpaB9F5uyo3Fq98rj6VtA6oNtScMsSlE+tsFvfbhkuaPp3onTS1JwYE9/qmoN1/wKmafYYoR2YUwZd0YlqKA3UENLvjz574aVZYMv4H9EYeq6I+K0pUBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706183946; c=relaxed/simple;
-	bh=5IeaVdhF5LtzIsAPk6LztQlW/FDS4ghLmFVK+1cJZBA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DfRK8cT4MfomjnVO9UeblNOM2lyI34QWYt0iyDozriAiAMn3eY9uNFakfkJ2Czh7r8+Fc2i1kIpOnnNr+Ubxe8pHfiCa9ICethYYTiH9LVNx9HH2FhLj9RUoICroep9G+BQrXNCipCzHUpRcpyO5ggE+bqx90U/tFhuMAc/0s3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7b7f98e777cso632886639f.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 03:59:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706183944; x=1706788744;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X/iub3MHAFwcdo/Gqv4i8H6fRbSsG4isv2FzsUCWJ2Q=;
-        b=DIdDasBpT+N5FS4BWyZoD5fqSOUuj3o5+A+A2nsYvRIypCgqdo14j44rQqoRZxVHAs
-         QbevleWO4fLZmGLmaqy4HHLh+axQbc31C2sIFJ6jgKcIu4QD5UCA5jGrGoGQDOq9ATQA
-         7MpJRmEB8j5fgkIWwQnbfGG7ObRbkmNJO4NaADxbjNZtAlHgHmhOd7iFTQSuOxTHGXzi
-         r7O6KhYRW7Kellr/pSbPcbv50r0RejYrgpJ0AKn65nVjjZKUqYZ8yFEop3ppcvVlsdyx
-         Nj72uyq26T9I2itSmczksZ9ieqJ+Wyn+bceQXqamcRsv1Ug0BWHmDwHEnZ+4c4wXmtQs
-         GmxQ==
-X-Gm-Message-State: AOJu0Yx2cgNV/vORZT/hQ8M3is5zwtQCztw57WbmF7FA3IPlOhrb7GeW
-	TrYzBlEuOwKlvpaGmOWaLgr6pax8xPeQ+u9ehIz90CeUAXmwhD8kJ4F7mVmrzaN4PPKBLi/yPyn
-	ron4BlLDY36bTZGf2PCNF2IJEjqR64/n/iK1fbm8TFoYL9d7ZfGYn/zc=
-X-Google-Smtp-Source: AGHT+IHyn2Qwd5HMJ7IxpvO0WYV/RjdhuSh6ltkRkTWpD1C389xewU6uddZnAn6Y8UCvfgydKDiM2O+RIWXKLEy9yto1g0WIYVHI
+	s=arc-20240116; t=1706187380; c=relaxed/simple;
+	bh=Hz949nb4lJNuFe+Z12rgcbk9PTaVMBCB/44QDUQ+PUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hK+HBjjVg1qbKy9hOFqNIuyhl+uIgfkmYuqClPcHlOwmWVlgmXtDplRT1NNXk5f7lvtayJexE0mv5BVrI6cz5XQBBY/n9YVzgNfUQnznyowW7afVz05hV1KEK/mHrt83NZsBVDWQuKHlpUXMvgXPyRf2/Pk504jyFt9B6pAqZiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=AXNMOdEC; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-116-13.bstnma.fios.verizon.net [173.48.116.13])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 40PCtcvB025504
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Jan 2024 07:55:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1706187343; bh=bvFlhgLlZ8Qq5mF+gcNynEDGbVLG6HAWaNnn+mQ+qCY=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=AXNMOdECpb9zLwnSBgQ+xCDDBQEVc2C/TUNlqZMluQ0U+JO06HP2xSgTNnDwLUchP
+	 Pdux56229Wz8MZrBsnFGB6unKKj2QySSA7lejgYXHwaNGCnsN/7MjXw3DxB+Eb0rRp
+	 VzqEHr21zp6wjtlKtM1K63B4HhwFCDZQTFmU2fWvasdUt9949PolBpFWfMAEfrevWo
+	 KIkk5NwqOBNFF63mhX7E9n2F1nM1vhkb4CxouG0dd4Hqf/9qPZEvp323/9OVKAMX1L
+	 SlukiI2xUdSZCmauyqevrwMxQa59YWjHZcvsH9KWExGKnzAhjvbrUmDxwS9LM/LZbj
+	 IrfcSvwFzNrcA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id B617E15C04DD; Thu, 25 Jan 2024 07:55:38 -0500 (EST)
+Date: Thu, 25 Jan 2024 07:55:38 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: syzbot <syzbot+0f4d9f68fb6632330c6c@syzkaller.appspotmail.com>
+Cc: adilger.kernel@dilger.ca, axboe@kernel.dk, brauner@kernel.org,
+        jack@suse.cz, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, yebin10@huawei.com
+Subject: Re: [syzbot] [ext4?] kernel BUG in ext4_split_extent_at (2)
+Message-ID: <20240125125538.GB2125008@mit.edu>
+References: <00000000000099887f05fdfc6e10@google.com>
+ <000000000000d7ed43060fb5f676@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:1921:b0:46e:d83d:472f with SMTP id
- p33-20020a056638192100b0046ed83d472fmr57559jal.0.1706183943905; Thu, 25 Jan
- 2024 03:59:03 -0800 (PST)
-Date: Thu, 25 Jan 2024 03:59:03 -0800
-In-Reply-To: <00000000000083513f060340d472@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e5e71a060fc3e747@google.com>
-Subject: Re: [syzbot] [jfs?] INFO: task hung in path_mount (2)
-From: syzbot <syzbot+fb337a5ea8454f5f1e3f@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, hdanton@sina.com, jack@suse.cz, 
-	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000d7ed43060fb5f676@google.com>
 
-syzbot suspects this issue was fixed by commit:
-
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
-
-    fs: Block writes to mounted block devices
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13175a53e80000
-start commit:   2ccdd1b13c59 Linux 6.5-rc6
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9c37cc0e4fcc5f8d
-dashboard link: https://syzkaller.appspot.com/bug?extid=fb337a5ea8454f5f1e3f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ba5d53a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14265373a80000
-
-If the result looks correct, please mark the issue as fixed by replying with:
+On Wed, Jan 24, 2024 at 11:21:05AM -0800, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
+> 
+> commit 6f861765464f43a71462d52026fbddfc858239a5
+> Author: Jan Kara <jack@suse.cz>
+> Date:   Wed Nov 1 17:43:10 2023 +0000
+> 
+>     fs: Block writes to mounted block devices
 
 #syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
