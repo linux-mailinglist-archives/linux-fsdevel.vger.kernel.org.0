@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-8958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E077283C899
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:49:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA3B283C89E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:50:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99A32289D35
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:49:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 816E828AFE1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1D813BEB1;
-	Thu, 25 Jan 2024 16:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43E5B13D500;
+	Thu, 25 Jan 2024 16:44:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC161339BA;
-	Thu, 25 Jan 2024 16:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E733A13472E;
+	Thu, 25 Jan 2024 16:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706201055; cv=none; b=Fe8jbOPRBGULVbKcttZ+en0iUgdlQq22Ud8EjBRDgtg2QVb6oI9tYD0tg3utYiBPcLW8xmQsWpwjtBtLXFwYLxPNCsnRLbbabgLLqWVausT+mEMxk05PYoj5Wzj3q4fuy1yI+U4D+vAzBE/nXhWv+0rctE68BiTfVbvFevMWrGU=
+	t=1706201061; cv=none; b=NnZb8Xg4qsqwaKV3MC7XYDP2kXNXbsnKP0FA4opRbv1zSECKXvYOEOsNJJo9AJrZiCLoIh79WwWMpP1Gko2668mEq4DMwHlakJ0o0BbfLqTImPHf/zUNSPm5WsJZIEOCrhc66NktvdK7DmyY63tilAZhFAx5NMlu1IuUBHVqVXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706201055; c=relaxed/simple;
-	bh=7/IUb3XLktUN45V9JyajrdKMq9EZsYTVNnF5KRHa0mo=;
+	s=arc-20240116; t=1706201061; c=relaxed/simple;
+	bh=kiyfnAGt1MV+rvONlOznWpR18xARO4HPqrDMRUk//ac=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RrSv7I40ltwjMpiJJODirVCL+wr0RaLJ/CISXYhDP+Zn2gki4wkeonhKUculqDJmesiDXcIL2FT9ONiAUZD1MBSFmOXrWBkcmBbPZr/zBDwxKCyAbBC4qEOmIXFUUEAvTjmNzczHTiReSPxjwTTJGzwu2fHLyVjiV6iMt/fCum8=
+	 MIME-Version; b=gnotwwQ4uQK6zuDW+j1mlzvyFdz20HWsSvJ1qTykoEJqbNeuPynuG0760O1DDD8Bz/AnWLtTFcxZTjXH4cdYaWVP1DgA3LxjVkw7qVCLe1GbhAnErPjM3ayatZrAkJEeEYGq6au7Xu2j7z5Jmpy2MEk2QQJH/CJqYvCYYjmyUho=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48AE015BF;
-	Thu, 25 Jan 2024 08:44:58 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1168115DB;
+	Thu, 25 Jan 2024 08:45:04 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5846F3F5A1;
-	Thu, 25 Jan 2024 08:44:08 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 211FF3F5A1;
+	Thu, 25 Jan 2024 08:44:13 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -71,9 +71,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v3 15/35] of: fdt: Add of_flat_read_u32()
-Date: Thu, 25 Jan 2024 16:42:36 +0000
-Message-Id: <20240125164256.4147-16-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v3 16/35] KVM: arm64: Don't deny VM_PFNMAP VMAs when kvm_has_mte()
+Date: Thu, 25 Jan 2024 16:42:37 +0000
+Message-Id: <20240125164256.4147-17-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240125164256.4147-1-alexandru.elisei@arm.com>
 References: <20240125164256.4147-1-alexandru.elisei@arm.com>
@@ -85,65 +85,62 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the function of_flat_read_u32() to return the value of a property as
-an u32.
+According to ARM DDI 0487J.a, page D10-5976, a memory location which
+doesn't have the Normal memory attribute is considered Untagged, and
+accesses are Tag Unchecked. Tag reads from an Untagged address return
+0b0000, and writes are ignored.
+
+Linux uses VM_PFNMAP VMAs represent device memory, and Linux doesn't set
+the VM_MTE_ALLOWED flag for these VMAs.
+
+In user_mem_abort(), KVM requires that all VMAs that back guest memory must
+allow tagging (VM_MTE_ALLOWED flag set), except for VMAs that represent
+device memory.  When a memslot is created or changed, KVM enforces a
+different behaviour: **all** VMAs that intersect the memslot must allow
+tagging, even those that represent device memory. This is too restrictive,
+and can lead to inconsistent behaviour: a VM_PFNMAP VMA that is present
+when a memslot is created causes KVM_SET_USER_MEMORY_REGION to fail, but if
+such a VMA is created after the memslot has been created, the virtual
+machine will run without errors.
+
+Change kvm_arch_prepare_memory_region() to allow VM_PFNMAP VMAs when the VM
+has the MTE capability enabled.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
 
-Changes since rfc v2:
+Changes from rfc v2:
 
-* New patch, suggested by Rob Herring.
+* New patch. It's a fix, and can be taken independently of the series.
 
- drivers/of/fdt.c       | 21 +++++++++++++++++++++
- include/linux/of_fdt.h |  2 ++
- 2 files changed, 23 insertions(+)
+ arch/arm64/kvm/mmu.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index bf502ba8da95..dfcd79fd5fd9 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -755,6 +755,27 @@ const void *__init of_get_flat_dt_prop(unsigned long node, const char *name,
- 	return fdt_getprop(initial_boot_params, node, name, size);
- }
+diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+index d14504821b79..b7517c4a19c4 100644
+--- a/arch/arm64/kvm/mmu.c
++++ b/arch/arm64/kvm/mmu.c
+@@ -2028,17 +2028,15 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ 		if (!vma)
+ 			break;
  
-+/*
-+ * of_flat_read_u32 - Return the value of the given property as an u32.
-+ *
-+ * @node: device node from which the property value is to be read
-+ * @propname: name of the property
-+ * @out_value: the value of the property
-+ * @return: 0 on success, -EINVAL if property does not exist
-+ */
-+int __init of_flat_read_u32(unsigned long node, const char *propname,
-+			    u32 *out_value)
-+{
-+	const __be32 *reg;
-+
-+	reg = of_get_flat_dt_prop(node, propname, NULL);
-+	if (!reg)
-+		return -EINVAL;
-+
-+	*out_value = be32_to_cpup(reg);
-+	return 0;
-+}
-+
- /**
-  * of_fdt_is_compatible - Return true if given node from the given blob has
-  * compat in its compatible list
-diff --git a/include/linux/of_fdt.h b/include/linux/of_fdt.h
-index 0e26f8c3b10e..d7901699061b 100644
---- a/include/linux/of_fdt.h
-+++ b/include/linux/of_fdt.h
-@@ -57,6 +57,8 @@ extern const void *of_get_flat_dt_prop(unsigned long node, const char *name,
- extern int of_flat_dt_is_compatible(unsigned long node, const char *name);
- extern unsigned long of_get_flat_dt_root(void);
- extern uint32_t of_get_flat_dt_phandle(unsigned long node);
-+extern int of_flat_read_u32(unsigned long node, const char *propname,
-+			    u32 *out_value);
- 
- extern int early_init_dt_scan_chosen(char *cmdline);
- extern int early_init_dt_scan_memory(void);
+-		if (kvm_has_mte(kvm) && !kvm_vma_mte_allowed(vma)) {
+-			ret = -EINVAL;
+-			break;
+-		}
+-
+ 		if (vma->vm_flags & VM_PFNMAP) {
+ 			/* IO region dirty page logging not allowed */
+ 			if (new->flags & KVM_MEM_LOG_DIRTY_PAGES) {
+ 				ret = -EINVAL;
+ 				break;
+ 			}
++		} else if (kvm_has_mte(kvm) && !kvm_vma_mte_allowed(vma)) {
++			ret = -EINVAL;
++			break;
+ 		}
+ 		hva = min(reg_end, vma->vm_end);
+ 	} while (hva < reg_end);
 -- 
 2.43.0
 
