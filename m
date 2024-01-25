@@ -1,96 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-8863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F06783BD04
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 10:16:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA4D83BD28
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 10:23:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1F341C281B9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 09:16:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30FF1B2B3A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 09:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B571BC3F;
-	Thu, 25 Jan 2024 09:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Q25VG4+r"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B46D1BF33;
+	Thu, 25 Jan 2024 09:22:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84CB1BC21;
-	Thu, 25 Jan 2024 09:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405471BF2A;
+	Thu, 25 Jan 2024 09:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706174183; cv=none; b=n/zyayI+UQ+rw9BDZ28l9NKEmKIiH/qPWS2l7wl+2RflH2JuobyQ4dPSKsGR/kpvw3jw1UyuStPhxLTciGwI9Iwe5UM02xnzr2JXL4EI0pHKGjBjGBraBLC83IxqIplrlnqCH5kA2ZkaZ1ynkW21erQRu5mjngXAiIp6jHjB2SU=
+	t=1706174569; cv=none; b=SimHrl9N83ixhwG6PLTmngWGvIECaYzTBKNk+gLwavzrwiS+JDvrnPbhnXXyJFI3EivYR1gkmaExD9qNoKVlpTan3Fj7ozmjq8EkboEVXZy/FXesRwa3k40MZWNE6IkVhXKn0h9fWbMxjwDDHXrW2kY47CgQMkup8Li5tLJ/5aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706174183; c=relaxed/simple;
-	bh=2MS9s1a8Dv9mlT2W2jXI33V9M5ds9L8zcdgaegbl64s=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ka9rY0/TVbAVLZ8Lz24R3N8k51des4ppHZcnE6EXSisTmjwLpnry76i9b/cPn6IXJXotXsRohc9ucdy+FFpigjQKnWwXm527ozeroCpOiBmzK7c53a/J1lyBa470d0FaqY9u1g3kel0sukVcDLKvzCuuEvHTKKPkDdxIFMpy91U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Q25VG4+r; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=qi3k2n676fh37cer4gmqmbhyuq.protonmail; t=1706174171; x=1706433371;
-	bh=pfsotTo/Zydb7H/lWqTfkcVY7FiDx1DJOismrr1aiyM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=Q25VG4+rhIbhEJ+0wpY8GWsKJDFm5o9RNMElt5ZMxqxZ/nr6q6Tv+uhycVfrT4eMB
-	 890ytm/Zo9553SULhGg9q6/k1M9QeAyFh73B2Dilwdk63JzNpZvL6HKAxY9zYEGOKv
-	 Whh2WgJoHt58Gp5zNLV3L1trrztS7qAlq2RLNAPE5BEeS9FX2aQweKD6mOSkkzzYRB
-	 tC+/0JCkrO3xENTpPu98kVRndU+h3Rwxw0enYzoisop63Cn68hqkQ81be9UnlbL3OC
-	 xr9Her5QGxSzWwZPnCGHUZ+hme0YMouWWAS1TCfMxvi07Q5rTjpU3h/d4+ScLoIi9o
-	 fdflKlt96chbA==
-Date: Thu, 25 Jan 2024 09:15:45 +0000
-To: Wedson Almeida Filho <wedsonaf@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Matthew Wilcox <willy@infradead.org>, Kent Overstreet <kent.overstreet@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, Wedson Almeida Filho <walmeida@microsoft.com>
-Subject: Re: [RFC PATCH 01/19] rust: fs: add registration/unregistration of file systems
-Message-ID: <e977d0ad-ca06-4b42-b2d7-09dc9a571848@proton.me>
-In-Reply-To: <CANeycqqJsy3rhBEVWspEqhUXgsQNj-Wcy=9axkDX9B3SLgupcA@mail.gmail.com>
-References: <20231018122518.128049-1-wedsonaf@gmail.com> <20231018122518.128049-2-wedsonaf@gmail.com> <ku6rR-zBwLrTfSf1JW07NywKOZFCPMS7nF-mrdBKGJthn7WGBn9lcAQOhoN5V6igk1iGBguGfV5G0PDWQciDQTopf3OYYGt049OJYhsiivk=@proton.me> <CANeycqqJsy3rhBEVWspEqhUXgsQNj-Wcy=9axkDX9B3SLgupcA@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
+	s=arc-20240116; t=1706174569; c=relaxed/simple;
+	bh=kK/sE7Bf8IkQddBoucJPWhSDzG0QN37aXIj24ILXvcw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LVhst/252CKCA/qQY4tV7OWKMlMS9buwOKsFWKpR/hLilNz1Vo+TvoZFg74Bh1aTM/Z+jmgBESTMTcb8h0rmFqlQ1nvU5CMnLbUCSGvONzE08UfsXKeFwxMoski/cAdq+mw08nl5kPZyWi3XoMljIuU/Td36fnefXwKsTtfwIVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4TLFhs0nP9z1vshR;
+	Thu, 25 Jan 2024 17:22:21 +0800 (CST)
+Received: from kwepemm600020.china.huawei.com (unknown [7.193.23.147])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8C7B61A0172;
+	Thu, 25 Jan 2024 17:22:43 +0800 (CST)
+Received: from [10.174.179.160] (10.174.179.160) by
+ kwepemm600020.china.huawei.com (7.193.23.147) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 25 Jan 2024 17:22:42 +0800
+Message-ID: <531c536d-a7d1-2be5-10aa-8d6eb4dcb5c9@huawei.com>
+Date: Thu, 25 Jan 2024 17:22:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.9.0
+Subject: Re: SECURITY PROBLEM: Any user can crash the kernel with TCP ZEROCOPY
+Content-Language: en-US
+To: Eric Dumazet <edumazet@google.com>
+CC: Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
+	<linux-fsdevel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<akpm@linux-foundation.org>, <davem@davemloft.net>, <dsahern@kernel.org>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <arjunroy@google.com>,
+	<wangkefeng.wang@huawei.com>
+References: <20240119092024.193066-1-zhangpeng362@huawei.com>
+ <Zap7t9GOLTM1yqjT@casper.infradead.org>
+ <5106a58e-04da-372a-b836-9d3d0bd2507b@huawei.com>
+ <Za6SD48Zf0CXriLm@casper.infradead.org>
+ <CANn89iL4qUXsVDRNGgBOweZbJ6ErWMsH+EpOj-55Lky8JEEhqQ@mail.gmail.com>
+ <Za6h-tB7plgKje5r@casper.infradead.org>
+ <CANn89iJDNdOpb6L6PkrAcbGcsx6_v4VD0v2XFY77g7tEnJEXXQ@mail.gmail.com>
+ <4f78fea2-ced6-fc5a-c7f2-b33fcd226f06@huawei.com>
+ <CANn89iKbyTRvWEE-3TyVVwTa=N2KsiV73-__2ASktt2hrauQ0g@mail.gmail.com>
+ <d68f50a5-8d83-99ba-1a5a-7f119cd52029@huawei.com>
+ <CANn89iJSxsx_6oTM+ggo90vacNM33e_DpgJJg1HQRfkdj3ewqg@mail.gmail.com>
+From: "zhangpeng (AS)" <zhangpeng362@huawei.com>
+In-Reply-To: <CANn89iJSxsx_6oTM+ggo90vacNM33e_DpgJJg1HQRfkdj3ewqg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm600020.china.huawei.com (7.193.23.147)
 
-On 10.01.24 19:32, Wedson Almeida Filho wrote:
->>> +#[pinned_drop]
->>> +impl PinnedDrop for Registration {
->>> +    fn drop(self: Pin<&mut Self>) {
->>> +        // SAFETY: If an instance of `Self` has been successfully crea=
-ted, a call to
->>> +        // `register_filesystem` has necessarily succeeded. So it's ok=
- to call
->>> +        // `unregister_filesystem` on the previously registered fs.
+On 2024/1/25 16:57, Eric Dumazet wrote:
+
+> On Thu, Jan 25, 2024 at 3:18 AM zhangpeng (AS) <zhangpeng362@huawei.com> wrote:
+>> On 2024/1/24 18:11, Eric Dumazet wrote:
 >>
->> I would simply add an invariant on `Registration` that `self.fs` is
->> registered, then you do not need such a lengthy explanation here.
->=20
-> Since this is the only place I need this explanation, I prefer to
-> leave it here because it's exactly where I need it.
+>>> On Wed, Jan 24, 2024 at 10:30 AM zhangpeng (AS) <zhangpeng362@huawei.com> wrote:
+>>>> By using git-bisect, the patch that introduces this issue is 05255b823a617
+>>>> ("tcp: add TCP_ZEROCOPY_RECEIVE support for zerocopy receive."). v4.18-rc1.
+>>>>
+>>>> Currently, there are no other repro or c reproduction programs can reproduce
+>>>> the issue. The syz log used to reproduce the issue is as follows:
+>>>>
+>>>> r3 = socket$inet_tcp(0x2, 0x1, 0x0)
+>>>> mmap(&(0x7f0000ff9000/0x4000)=nil, 0x4000, 0x0, 0x12, r3, 0x0)
+>>>> r4 = socket$inet_tcp(0x2, 0x1, 0x0)
+>>>> bind$inet(r4, &(0x7f0000000000)={0x2, 0x4e24, @multicast1}, 0x10)
+>>>> connect$inet(r4, &(0x7f00000006c0)={0x2, 0x4e24, @empty}, 0x10)
+>>>> r5 = openat$dir(0xffffffffffffff9c, &(0x7f00000000c0)='./file0\x00',
+>>>> 0x181e42, 0x0)
+>>>> fallocate(r5, 0x0, 0x0, 0x85b8818)
+>>>> sendfile(r4, r5, 0x0, 0x3000)
+>>>> getsockopt$inet_tcp_TCP_ZEROCOPY_RECEIVE(r4, 0x6, 0x23,
+>>>> &(0x7f00000001c0)={&(0x7f0000ffb000/0x3000)=nil, 0x3000, 0x0, 0x0,
+>>>> 0x0, 0x0, 0x0, 0x0, 0x0}, &(0x7f0000000440)=0x10)
+>>>> r6 = openat$dir(0xffffffffffffff9c, &(0x7f00000000c0)='./file0\x00',
+>>>> 0x181e42, 0x0)
+>>>>
+>>> Could you try the following fix then ?
+>>>
+>>> (We also could remove the !skb_frag_off(frag) condition, as the
+>>> !PageCompound() is necessary it seems :/)
+>>>
+>>> Thanks a lot !
+>>>
+>>> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+>>> index 1baa484d21902d2492fc2830d960100dc09683bf..ee954ae7778a651a9da4de057e3bafe35a6e10d6
+>>> 100644
+>>> --- a/net/ipv4/tcp.c
+>>> +++ b/net/ipv4/tcp.c
+>>> @@ -1785,7 +1785,9 @@ static skb_frag_t *skb_advance_to_frag(struct
+>>> sk_buff *skb, u32 offset_skb,
+>>>
+>>>    static bool can_map_frag(const skb_frag_t *frag)
+>>>    {
+>>> -       return skb_frag_size(frag) == PAGE_SIZE && !skb_frag_off(frag);
+>>> +       return skb_frag_size(frag) == PAGE_SIZE &&
+>>> +              !skb_frag_off(frag) &&
+>>> +              !PageCompound(skb_frag_page(frag));
+>>>    }
+>>>
+>>>    static int find_next_mappable_frag(const skb_frag_t *frag,
+>> This patch doesn't fix this issue. The page cache that can trigger this issue
+>> doesn't necessarily need to be compound. 🙁
+> Ah, too bad :/
+>
+> So the issue is that the page had a mapping. I am no mm expert,
+> I am not sure if we need to add more tests (like testing various
+> illegal page flags) ?
+>
+> Can you test this ?
+>
+> (I am still  converting the repro into C)
+>
+> Thanks.
+>
+> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+> index 1baa484d21902d2492fc2830d960100dc09683bf..2128015227a5066ea74b3911ecaefe7992da132f
+> 100644
+> --- a/net/ipv4/tcp.c
+> +++ b/net/ipv4/tcp.c
+> @@ -1785,7 +1785,17 @@ static skb_frag_t *skb_advance_to_frag(struct
+> sk_buff *skb, u32 offset_skb,
+>
+>   static bool can_map_frag(const skb_frag_t *frag)
+>   {
+> -       return skb_frag_size(frag) == PAGE_SIZE && !skb_frag_off(frag);
+> +       struct page *page;
+> +
+> +       if (skb_frag_size(frag) != PAGE_SIZE || skb_frag_off(frag))
+> +               return false;
+> +
+> +       page = skb_frag_page(frag);
+> +
+> +       if (PageCompound(page) || page->mapping)
+> +               return false;
+> +
+> +       return true;
+>   }
+>
+>   static int find_next_mappable_frag(const skb_frag_t *frag,
 
-I get why you want this, but consider this: someone adds a another
-`new` function, but forgets to call `register_filesystem`. They have
-no indication except for this comment in the `Drop` impl, that they
-are doing something wrong.
+This patch can fix this issue.
 
-I took a look at the implement ion of `unregister_filesystem` and
-found that you can pass an unregistered filesystem, in that case
-the function just returns an error. I think the only safety
-requirement of `unregister_filesystem` is that if the supplied
-pointer is a registered filesystem, the pointee is valid.
+In this scenario, page->mapping is inode->i_mapping of ext4,
+but VMA is tcp VMA. It's weird.
 
---=20
-Cheers,
-Benno
+If all the pages that need to be inserted by TCP zerocopy are
+page->mapping == NULL, this solution could be used.
 
+Thanks!
+
+-- 
+Best Regards,
+Peng
 
 
