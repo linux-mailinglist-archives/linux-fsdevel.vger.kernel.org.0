@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-8948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8949-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B35583C86D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:45:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C802383C86F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ACE2B25506
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:45:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 807122961E7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255C5130E50;
-	Thu, 25 Jan 2024 16:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E44137C42;
+	Thu, 25 Jan 2024 16:43:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AF213664F;
-	Thu, 25 Jan 2024 16:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10421130E53;
+	Thu, 25 Jan 2024 16:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706200997; cv=none; b=cM77OrXPBM/lUhT/R/gvDd7/rMxo8Bz/8dckyP/iKyyir/uW65MyoUWkp46XZj13bQCgjU8gI7EOSvu+PDxNOgxzVWmqVCKao52+EWGTS56p2rhLH5KSavrFdZ+hbuWlUUAIFzZtaF2tAUtVZx4x432rqx2tZ5RLRQcTfh04ayk=
+	t=1706201003; cv=none; b=Suboqkkfeezxp6j4MsTTab7//h5C4gMBXY9KkuN0S80XyqCndyLrRlpaf3tumJ0x50XWT3ehaJG5fptdv7ywQi00JCAc9SYFRh667ozIVad0hLrZdtytSLu56HhlVKMbCmTD0s4Y+Aeh1xwyOgoTJTZP57davu81M9UygcR4KOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706200997; c=relaxed/simple;
-	bh=hkegklhgwhHaIG9vI1njsTd7DG5AV1doOWIOBxRLhcQ=;
+	s=arc-20240116; t=1706201003; c=relaxed/simple;
+	bh=J+WIqQlbUY0+hWDvh2I19ubO5WQ0091CxZdX8YkH8bE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=r1LNByQz+IkpTmpHyyciUff7k+KZWHlS9oI5TLQ5+UdHMTd4sd69qYehnp+7gx3BTbsixXL+TTstzVg7IcbJONcGdg4MIf+4DVyHlsgURC5YkWfc3ROwX5rEFsL4UU+5UlQimgNudhTW7XXepzwdOB47jpDhHGTRSYN3KjHHQP8=
+	 MIME-Version; b=OJZNv9B0rH1JRDHKZ+FQ1+E3jTvi1BsuwFVewpAYIs770VzLLVqH6/+jBjBLkmsJ+HzolaXGur+cV1QFLZmaaT8dIv5N2yk53Oym26Cr411JXEASAFdhqPf4jRNKrIy+ElpSbSxX4SMwtxwraprKDpd39+0FdKZsqL1SSsLtgZo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6546F14BF;
-	Thu, 25 Jan 2024 08:44:00 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BBFC150C;
+	Thu, 25 Jan 2024 08:44:06 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 776B83F5A1;
-	Thu, 25 Jan 2024 08:43:10 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3BDCC3F5A1;
+	Thu, 25 Jan 2024 08:43:16 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -71,9 +71,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v3 05/35] mm: cma: Don't append newline when generating CMA area name
-Date: Thu, 25 Jan 2024 16:42:26 +0000
-Message-Id: <20240125164256.4147-6-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v3 06/35] mm: cma: Make CMA_ALLOC_SUCCESS/FAIL count the number of pages
+Date: Thu, 25 Jan 2024 16:42:27 +0000
+Message-Id: <20240125164256.4147-7-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240125164256.4147-1-alexandru.elisei@arm.com>
 References: <20240125164256.4147-1-alexandru.elisei@arm.com>
@@ -85,34 +85,49 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-cma->name is displayed in several CMA messages. When the name is generated
-by the CMA code, don't append a newline to avoid breaking the text across
-two lines.
+The CMA_ALLOC_SUCCESS, respectively CMA_ALLOC_FAIL, are increased by one
+after each cma_alloc() function call. This is done even though cma_alloc()
+can allocate an arbitrary number of CMA pages. When looking at
+/proc/vmstat, the number of successful (or failed) cma_alloc() calls
+doesn't tell much with regards to how many CMA pages were allocated via
+cma_alloc() versus via the page allocator (regular allocation request or
+PCP lists refill).
+
+This can also be rather confusing to a user who isn't familiar with the
+code, since the unit of measurement for nr_free_cma is the number of pages,
+but cma_alloc_success and cma_alloc_fail count the number of cma_alloc()
+function calls.
+
+Let's make this consistent, and arguably more useful, by having
+CMA_ALLOC_SUCCESS count the number of successfully allocated CMA pages, and
+CMA_ALLOC_FAIL count the number of pages the cma_alloc() failed to
+allocate.
+
+For users that wish to track the number of cma_alloc() calls, there are
+tracepoints for that already implemented.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
-
-Changes since rfc v2:
-
-* New patch. This is a fix, and can be merged independently of the other
-patches.
-
- mm/cma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/cma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/mm/cma.c b/mm/cma.c
-index 7c09c47e530b..f49c95f8ee37 100644
+index f49c95f8ee37..dbf7fe8cb1bd 100644
 --- a/mm/cma.c
 +++ b/mm/cma.c
-@@ -204,7 +204,7 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
- 	if (name)
- 		snprintf(cma->name, CMA_MAX_NAME, name);
- 	else
--		snprintf(cma->name, CMA_MAX_NAME,  "cma%d\n", cma_area_count);
-+		snprintf(cma->name, CMA_MAX_NAME,  "cma%d", cma_area_count);
- 
- 	cma->base_pfn = PFN_DOWN(base);
- 	cma->count = size >> PAGE_SHIFT;
+@@ -517,10 +517,10 @@ struct page *cma_alloc(struct cma *cma, unsigned long count,
+ 	pr_debug("%s(): returned %p\n", __func__, page);
+ out:
+ 	if (page) {
+-		count_vm_event(CMA_ALLOC_SUCCESS);
++		count_vm_events(CMA_ALLOC_SUCCESS, count);
+ 		cma_sysfs_account_success_pages(cma, count);
+ 	} else {
+-		count_vm_event(CMA_ALLOC_FAIL);
++		count_vm_events(CMA_ALLOC_FAIL, count);
+ 		if (cma)
+ 			cma_sysfs_account_fail_pages(cma, count);
+ 	}
 -- 
 2.43.0
 
