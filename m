@@ -1,164 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-8987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF84183C933
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 18:04:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2550183C937
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 18:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DC931C25E72
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:04:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4992F1C2496D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 377A4135A74;
-	Thu, 25 Jan 2024 16:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEC914198C;
+	Thu, 25 Jan 2024 16:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bItXT9mS"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZN6cYtR+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yzXOPLtF";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZN6cYtR+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yzXOPLtF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0294514076D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 16:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB62140777;
+	Thu, 25 Jan 2024 16:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706201673; cv=none; b=sWSZURDrQheTWNENvzdWQThOnTOJGPCdifwzzIK+9Hs0TdMOl56x2g4scIOu2d9M4GJvwifYjwzIczTzDEVHKvpNw6Lk9zC7zQY4hB6slAErFa3bbcoat5Ng12ttBkGB+6X9jUiVcItdJMO3oiz6woFg+Mc/Bs2f+oUWAUxx5j0=
+	t=1706201707; cv=none; b=VGrBagA8INiodAYvBV+/DT0Txgxg0K2LeN64vCm8ccdDBdGtWhnXDfvXHaqFX31wNnwUnkz9ZJ+ZnLwUl3avjDR+u8sWOC0s4AsIb1c870q6CQYRkioYNtggfKRSE4PgSAC71uFBPUy3QtP2t+k4PYAF23PSts60hnz3wIGLjB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706201673; c=relaxed/simple;
-	bh=AmFC/UDCVQ9FVpKZ5PV0jQ6FNjF2TiWEq07uxUcYKu0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YK/eG+nhh/L08r/oYjQQfMbEvreFo/IKGf2S/+Z9ijRKe3QpUztPQncn/SzEOKpgecWqhp/NGsSmqFzwDI0aWVfMb7zVjABP8XIINBr11/D3nSkL8Y3bwGC2AIl2CKN7dsnnwWt59FmKSGF4LyYNMdrcg6avshm/kfIJ3I/Omts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bItXT9mS; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-55818b7053eso19562a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 08:54:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1706201670; x=1706806470; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oOiXeojwLOXICuMt5BTSyUSoCml0QlNFyHPEHrk0k4U=;
-        b=bItXT9mSmSq3F4T5/UAvTptHVDAQMBlyokbQF7uhem9Z9H5h3WUt23odkyCTmf2nNs
-         UJGPG4OcrPnTVcg9XrpdZaJvd5U0vyWQeFM41jfdeliO2NZ0nICxG/LV294Cb0gtypwg
-         yNEFviIlJqc7cwfd0eN9Q5krDahatNIqVYzBY0sTpxD5Ep3dNXErcyHwr0e3NpAvpHD9
-         0uIseOEmoJAJ6yjWPpzdimzIFL+L+UPEmlKBkLohW4HMuPC+yMd3rMS5n19Iz6Qo6Ej2
-         h9+IfkH0TSnaoWGisY4Hz5QILC5YojuvFTexrcEcGMhVrU11tw4FwxDmdoTHeNc4nkfM
-         k/aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706201670; x=1706806470;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oOiXeojwLOXICuMt5BTSyUSoCml0QlNFyHPEHrk0k4U=;
-        b=ky+1qoU5Px5AmQpg1kxCZp3eh79odLIJyt1FF34ninWI5NP3jwi3X/NyDHUpZbTglW
-         waG0i2VgCRQFAmnm54XEXJHYSu7YNQbzjpmtQhZt7iBzs+QiYgntGX7McWmoJ7+dv0Ug
-         +IuU6N7zzzObOlIDSgiR5l3UWPX+4qJqmmZ/P1rHUhrfBLfw8kUL/Wsuu933dk0tau4R
-         sZbz88IKOMp0jfGyGStUQukNkEqyx8ZaY6KFkIv2TyhOMVMvs2DLeDm/MviC/c8xWk1n
-         CgGihKx7Je+okNk/APFLnl7b0F3++nptVT0soozR4XGJ7Fx5gsfyl/XWDOaSPB8uuiuK
-         YMew==
-X-Gm-Message-State: AOJu0YyNY0rVJ0gdSj1YUhQ+eqpMVwxfFlSQposHreJbl+EaiblEDWwp
-	A/o5A6MTVSZu9KuJLFoOiyElcsHTKatVM5PB/Q8jxhhyQuZr9FBBM1opATPAS3Vim2ByQ7zlDHN
-	ysxOQEv4FCsCtqgEK0zWLAOastt07+ZUxi/+M
-X-Google-Smtp-Source: AGHT+IE2z6ya/M/OiUUYRxn7uUuauoi1OOC2cn8v/ECFbMfBGDjI6n2fTEYDKPs48TdYcboyo2CW2Wt5Fy7VrwBeh4Q=
-X-Received: by 2002:a05:6402:c08:b0:55c:e69d:5d4e with SMTP id
- co8-20020a0564020c0800b0055ce69d5d4emr234145edb.0.1706201669987; Thu, 25 Jan
- 2024 08:54:29 -0800 (PST)
+	s=arc-20240116; t=1706201707; c=relaxed/simple;
+	bh=VXT9oJ9eK9Oh90OfJPvx0TF2pq2TYs7We+ExcqrDEaE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZQpagAGbWN1QDCObkjJUW3tG0iuaAbKc/O6ZfVef0NkoUz7mKxCRm1JEANHPoeHKle/opAiF9vEYvQPy0lbcqM2O2pmoazpmma0gFVvqVhsy6P8HakAb40HvpWiZJSHaZubuuRys/UtEUjfRloXQPsaE04ATrQTUVWeEpqoN6M0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZN6cYtR+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yzXOPLtF; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZN6cYtR+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yzXOPLtF; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B33B71F8AB;
+	Thu, 25 Jan 2024 16:55:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1706201703; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MqyFwT/zF35b3QEIc+pC02CwmxeyFqwYPps3QzTYVw4=;
+	b=ZN6cYtR+uVMFCmxJ2DYwzWhKfe2BVsc2IHcvHk/edLcSia7gmN76vOX3FtbNOGJF45uxlE
+	ouQg9ygNmKrOj7QCpCdmdOIQI/O/phFk/1jphpvhWwfUiTm6/4rUy6TlAfwU8H7VY68b1w
+	jZWZeRBms9nAqkPwvHnn11pLJgiYHK0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1706201703;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MqyFwT/zF35b3QEIc+pC02CwmxeyFqwYPps3QzTYVw4=;
+	b=yzXOPLtF4FhYk84PWdhMgoMRbh1X73RvUIYnIYAC5S//8C1S3Tn3+CxuuUe6Xds0BAWHUq
+	ixpCU8TM6kG32MAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1706201703; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MqyFwT/zF35b3QEIc+pC02CwmxeyFqwYPps3QzTYVw4=;
+	b=ZN6cYtR+uVMFCmxJ2DYwzWhKfe2BVsc2IHcvHk/edLcSia7gmN76vOX3FtbNOGJF45uxlE
+	ouQg9ygNmKrOj7QCpCdmdOIQI/O/phFk/1jphpvhWwfUiTm6/4rUy6TlAfwU8H7VY68b1w
+	jZWZeRBms9nAqkPwvHnn11pLJgiYHK0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1706201703;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=MqyFwT/zF35b3QEIc+pC02CwmxeyFqwYPps3QzTYVw4=;
+	b=yzXOPLtF4FhYk84PWdhMgoMRbh1X73RvUIYnIYAC5S//8C1S3Tn3+CxuuUe6Xds0BAWHUq
+	ixpCU8TM6kG32MAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1DB83134C3;
+	Thu, 25 Jan 2024 16:55:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZdLPNWaSsmX1AwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Thu, 25 Jan 2024 16:55:02 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: viro@zeniv.linux.org.uk,  jaegeuk@kernel.org,  tytso@mit.edu,
+  linux-ext4@vger.kernel.org,  linux-f2fs-devel@lists.sourceforge.net,
+  linux-fsdevel@vger.kernel.org,  amir73il@gmail.com
+Subject: Re: [PATCH v3 01/10] ovl: Reject mounting case-insensitive filesystems
+In-Reply-To: <20240125025115.GA52073@sol.localdomain> (Eric Biggers's message
+	of "Wed, 24 Jan 2024 18:51:15 -0800")
+Organization: SUSE
+References: <20240119184742.31088-1-krisman@suse.de>
+	<20240119184742.31088-2-krisman@suse.de>
+	<20240125025115.GA52073@sol.localdomain>
+Date: Thu, 25 Jan 2024 13:55:00 -0300
+Message-ID: <87jznxs68r.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240125103317.2334989-1-edumazet@google.com> <ZbKHVt_wkIfjKJXB@casper.infradead.org>
- <ZbKH04PDW7NhImjV@casper.infradead.org>
-In-Reply-To: <ZbKH04PDW7NhImjV@casper.infradead.org>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 25 Jan 2024 17:54:18 +0100
-Message-ID: <CANn89iJAjEm47Cqt2=5fEnFFVNH-KQbemmqkEfJFUtJZ+c4QRQ@mail.gmail.com>
-Subject: Re: [PATCH net] tcp: add sanity checks to rx zerocopy
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Neal Cardwell <ncardwell@google.com>, netdev@vger.kernel.org, 
-	eric.dumazet@gmail.com, ZhangPeng <zhangpeng362@huawei.com>, 
-	Arjun Roy <arjunroy@google.com>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Spam-Level: 
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=ZN6cYtR+;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=yzXOPLtF
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.04 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 HAS_ORG_HEADER(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[8];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,mit.edu,vger.kernel.org,lists.sourceforge.net,gmail.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-0.53)[80.60%]
+X-Spam-Score: -2.04
+X-Rspamd-Queue-Id: B33B71F8AB
+X-Spam-Flag: NO
 
-On Thu, Jan 25, 2024 at 5:09=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
+Eric Biggers <ebiggers@kernel.org> writes:
+
+> On Fri, Jan 19, 2024 at 03:47:33PM -0300, Gabriel Krisman Bertazi wrote:
+>> ovl: Reject mounting case-insensitive filesystems
 >
+> Overlayfs doesn't mount filesystems.  I think you might mean something like
+> reject case-insensitive lowerdirs?
+
+uppers and workdir too. I'd make this:
+
+  "ovl: Reject mounting over case-insensitive filesystems"
+
 >
-> Fixing email address for linux-mm.
+>> +	/*
+>> +	 * Root dentries of case-insensitive filesystems might not have
+>> +	 * the dentry operations set, but still be incompatible with
+>> +	 * overlayfs.  Check explicitly to prevent post-mount failures.
+>> +	 */
+>> +	if (sb_has_encoding(path->mnt->mnt_sb))
+>> +		return invalfc(fc, "case-insensitive filesystem on %s not supported", name);
 >
-> On Thu, Jan 25, 2024 at 04:07:50PM +0000, Matthew Wilcox wrote:
-> > On Thu, Jan 25, 2024 at 10:33:17AM +0000, Eric Dumazet wrote:
-> > > +++ b/net/ipv4/tcp.c
-> > > @@ -1786,7 +1786,17 @@ static skb_frag_t *skb_advance_to_frag(struct =
-sk_buff *skb, u32 offset_skb,
-> > >
-> > >  static bool can_map_frag(const skb_frag_t *frag)
-> > >  {
-> > > -   return skb_frag_size(frag) =3D=3D PAGE_SIZE && !skb_frag_off(frag=
-);
-> > > +   struct page *page;
-> > > +
-> > > +   if (skb_frag_size(frag) !=3D PAGE_SIZE || skb_frag_off(frag))
-> > > +           return false;
-> > > +
-> > > +   page =3D skb_frag_page(frag);
-> > > +
-> > > +   if (PageCompound(page) || page->mapping)
-> > > +           return false;
-> >
-> > I'm not entirely sure why you're testing PageCompound here.  If a drive=
-r
-> > allocates a compound page, we'd still want to be able to insert it,
-> > right?
+> sb_has_encoding() doesn't mean that the filesystem is case-insensitive.  It
+> means that the filesystem supports individual case-insensitive
+> directories.
+>
+> With that in mind, is this code still working as intended?
+>
 
-I tried to get something that would be free of merge conflicts, up to linux=
--4.18
-I was not sure if I had to use compound_head(page) in order to test
-for the mapping ?
+Yes, it is. In particular, after the rest of the patchset, any dentry
+will be weird and lookups will throw -EREMOTE.
 
-page =3D compound_head(page);
-if (page->mapping)
-     return false;
+> If so, can you update the comment and error message accordingly?
 
-I guess that we would have to adjust the page pointer based on
-skb_frag_off(frag),
-right now we bail if skb_frag_off(frag) is not zero.
+I'm not sure how to change and still make it readable by users.  How about:
 
-I would leave this change for future kernels if there is interest.
+  return invalfc(fc, "case-insensitive capable filesystem on %s not supported", name);
 
-> >
-> > I have a feeling that we want to fix this in the VM layer.  There are
-> > some weird places calling vm_insert_page() and we should probably make
-> > them all fail.
-> >
-> > Something like this, perhaps?
+what do you think?
 
-
-Perhaps, but backports to stable versions (without folio) would be a
-bit of a work ?
-
-> >
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 1a60faad2e49..ae0abab56d38 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -1871,6 +1871,10 @@ static int insert_page_into_pte_locked(struct vm=
-_area_struct *vma, pte_t *pte,
-> >
-> >       if (!pte_none(ptep_get(pte)))
-> >               return -EBUSY;
-> > +     if (folio->mapping &&
-> > +         ((addr - vma->vm_start) / PAGE_SIZE + vma->vm_pgoff) !=3D
-> > +         (folio->index + folio_page_idx(folio, page)))
-> > +             return -EINVAL;
-> >       /* Ok, finally just insert the thing.. */
-> >       folio_get(folio);
-> >       inc_mm_counter(vma->vm_mm, mm_counter_file(folio));
-> >
+-- 
+Gabriel Krisman Bertazi
 
