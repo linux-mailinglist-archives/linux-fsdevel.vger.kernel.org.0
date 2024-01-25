@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-8964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C081A83C8B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:52:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF4C483C8B8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:52:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46804B26B9F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:52:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E24A11C21D63
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C689F1350EF;
-	Thu, 25 Jan 2024 16:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE08713F01B;
+	Thu, 25 Jan 2024 16:44:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4FE1350EA;
-	Thu, 25 Jan 2024 16:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B4FC1350EA;
+	Thu, 25 Jan 2024 16:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706201090; cv=none; b=IyYXVRhh2vDPZUmzgN81WAaGd9pIpG1RiCeu5belcXrQvSEjKWMODBg4wo6c6kJuKWe2p2eb5jaxrweZI40ekllHb3eSb+2/yBA1k5pGEKiWgSw0kRK2rjfu9DCWaK7h603bIXGBe0nR6rmqCup7ALj8Wpj7UhkZ+3cBk5UK+Ms=
+	t=1706201096; cv=none; b=dVcfsCaMbkC/XreZ5dYLy43zEO5x9YlWstvWrXlKdITV7e3ZVj0ehNoPV67kpf2N2Fvh9/fGhpLz2hvC0iKI5XbSQGuqh7JQjwWaeqk7PSoc2X2JQRogb7FmYwZXPUqotReqYW5spvZnBzJ6imbeyUkMKvKzbbsZBfgb7USQ9Pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706201090; c=relaxed/simple;
-	bh=64mQn4vPAyYkyVD8dgjbvXz3vStqAMFDRY18jZb6JI8=;
+	s=arc-20240116; t=1706201096; c=relaxed/simple;
+	bh=5j3hCO+SRe3ogKV7m0cZMRApaUCUfxhFuXhoI8hsaew=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i+CfSjO1tRuq6FILEUH8CVuGe+KldQs1rIvMjK0YqvnQ6kbDU6vjlR/BJ6wcyftQYzsexxfuyRCigx8YQG3sZrnWu6GnJf8LqZbpszY1tlDE6F6bFaD558MDnX2qmdijjB0CbZJ451ZtH5FEWOg6P0CRHIe+zNs8vct30dKgTv8=
+	 MIME-Version; b=pGwIGPWOho8aA+asoz4tHg2PZtpujmMStT1AMlXGsUrGSjW3wkLTHsnihV2hzC5bnESrjx3QQYR4q2GJDumHX5itx4ksFMMFObDD2p2COlQ0tLE+b9lPeqVX0+l+zsT9TEqSIKffL9gi1agTLSKsyJP0TT08mfVfk1MfDCih5Ew=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E894C1688;
-	Thu, 25 Jan 2024 08:45:32 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B1083168F;
+	Thu, 25 Jan 2024 08:45:38 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 03CA73F5A1;
-	Thu, 25 Jan 2024 08:44:42 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C149A3F5A1;
+	Thu, 25 Jan 2024 08:44:48 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -71,9 +71,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v3 21/35] arm64: mte: Disable dynamic tag storage management if HW KASAN is enabled
-Date: Thu, 25 Jan 2024 16:42:42 +0000
-Message-Id: <20240125164256.4147-22-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v3 22/35] arm64: mte: Enable tag storage if CMA areas have been activated
+Date: Thu, 25 Jan 2024 16:42:43 +0000
+Message-Id: <20240125164256.4147-23-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240125164256.4147-1-alexandru.elisei@arm.com>
 References: <20240125164256.4147-1-alexandru.elisei@arm.com>
@@ -85,44 +85,118 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To be able to reserve the tag storage associated with a tagged page
-requires that the tag storage can be migrated, if it's in use for data.
+Before enabling MTE tag storage management, make sure that the CMA areas
+have been successfully activated. If a CMA area fails activation, the pages
+are kept as reserved. Reserved pages are never used by the page allocator.
 
-The kernel allocates pages in non-preemptible contexts, which makes
-migration impossible. The only user of tagged pages in the kernel is HW
-KASAN, so don't use tag storage pages if HW KASAN is enabled.
+If this happens, the kernel would have to manage tag storage only for some
+of the memory, but not for all memory, and that would make the code
+unreasonably complicated.
+
+Choose to disable tag storage management altogether if a CMA area fails to
+be activated.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
 
-Changes since rfc v2:
+Changes since v2:
 
-* Expanded commit message (David Hildenbrand)
+* New patch.
 
- arch/arm64/kernel/mte_tag_storage.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/include/asm/mte_tag_storage.h | 12 ++++++
+ arch/arm64/kernel/mte_tag_storage.c      | 50 ++++++++++++++++++++++++
+ 2 files changed, 62 insertions(+)
 
+diff --git a/arch/arm64/include/asm/mte_tag_storage.h b/arch/arm64/include/asm/mte_tag_storage.h
+index 3c2cd29e053e..7b3f6bff8e6f 100644
+--- a/arch/arm64/include/asm/mte_tag_storage.h
++++ b/arch/arm64/include/asm/mte_tag_storage.h
+@@ -6,8 +6,20 @@
+ #define __ASM_MTE_TAG_STORAGE_H
+ 
+ #ifdef CONFIG_ARM64_MTE_TAG_STORAGE
++
++DECLARE_STATIC_KEY_FALSE(tag_storage_enabled_key);
++
++static inline bool tag_storage_enabled(void)
++{
++	return static_branch_likely(&tag_storage_enabled_key);
++}
++
+ void mte_init_tag_storage(void);
+ #else
++static inline bool tag_storage_enabled(void)
++{
++	return false;
++}
+ static inline void mte_init_tag_storage(void)
+ {
+ }
 diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
-index 90b157132efa..9a1a8a45171e 100644
+index 9a1a8a45171e..d58c68b4a849 100644
 --- a/arch/arm64/kernel/mte_tag_storage.c
 +++ b/arch/arm64/kernel/mte_tag_storage.c
-@@ -256,6 +256,16 @@ void __init mte_init_tag_storage(void)
- 		goto out_disabled;
- 	}
+@@ -19,6 +19,8 @@
  
-+	/*
-+	 * The kernel allocates memory in non-preemptible contexts, which makes
-+	 * migration impossible when reserving the associated tag storage. The
-+	 * only in-kernel user of tagged pages is HW KASAN.
-+	 */
-+	if (kasan_hw_tags_enabled()) {
-+		pr_info("KASAN HW tags incompatible with MTE tag storage management");
-+		goto out_disabled;
+ #include <asm/mte_tag_storage.h>
+ 
++__ro_after_init DEFINE_STATIC_KEY_FALSE(tag_storage_enabled_key);
++
+ struct tag_region {
+ 	struct range mem_range;	/* Memory associated with the tag storage, in PFNs. */
+ 	struct range tag_range;	/* Tag storage memory, in PFNs. */
+@@ -314,3 +316,51 @@ void __init mte_init_tag_storage(void)
+ 	num_tag_regions = 0;
+ 	pr_info("MTE tag storage region management disabled");
+ }
++
++static int __init mte_enable_tag_storage(void)
++{
++	struct range *tag_range;
++	struct cma *cma;
++	int i, ret;
++
++	if (num_tag_regions == 0)
++		return 0;
++
++	for (i = 0; i < num_tag_regions; i++) {
++		tag_range = &tag_regions[i].tag_range;
++		cma = tag_regions[i].cma;
++		/*
++		 * CMA will keep the pages as reserved when the region fails
++		 * activation.
++		 */
++		if (PageReserved(pfn_to_page(tag_range->start)))
++			goto out_disabled;
 +	}
 +
- 	/*
- 	 * Check that tag storage is addressable by the kernel.
- 	 * cma_init_reserved_mem(), unlike cma_declare_contiguous_nid(), doesn't
++	static_branch_enable(&tag_storage_enabled_key);
++	pr_info("MTE tag storage region management enabled");
++
++	return 0;
++
++out_disabled:
++	for (i = 0; i < num_tag_regions; i++) {
++		tag_range = &tag_regions[i].tag_range;
++		cma = tag_regions[i].cma;
++
++		if (PageReserved(pfn_to_page(tag_range->start)))
++			continue;
++
++		/* Try really hard to reserve the tag storage. */
++		ret = cma_alloc(cma, range_len(tag_range), 8, true);
++		/*
++		 * Tag storage is still in use for data, memory and/or tag
++		 * corruption will ensue.
++		 */
++		WARN_ON_ONCE(ret);
++	}
++	num_tag_regions = 0;
++	pr_info("MTE tag storage region management disabled");
++
++	return -EINVAL;
++}
++arch_initcall(mte_enable_tag_storage);
 -- 
 2.43.0
 
