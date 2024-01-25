@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-8904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE49C83BFED
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 12:01:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46A4583BFEF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 12:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35511C20B94
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:01:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3C0029760C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9A1664BD;
-	Thu, 25 Jan 2024 10:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B224501E;
+	Thu, 25 Jan 2024 10:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBVOlKdK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMG1+CCt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67E8065BAD;
-	Thu, 25 Jan 2024 10:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B5865BD6;
+	Thu, 25 Jan 2024 10:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706179518; cv=none; b=fZ5QAzNy7d4v5QgIRLeovvTm5jUptrcXzG6QQqMnhmD0OoJxXFaQj/WYe0gyBllwy0Q/stQSK87ExPdgfC91R8axIlswKe13KKUxlF8n/uJXyN9CtRC86ToWvaQazTIHYYItCOcRtl8XXtZU/pveKMYopqeuo9pmg7UVJMgRTdM=
+	t=1706179524; cv=none; b=CDtWFXV3mH8ZKMA+Udm2C33iMACBOr/YPMA6dGGgsngLVAtZu+fqZoZf3oOZSD7Z/kUYR9WSoL/jnrimIk17TYOArDstcV8sPTCPhZFLtE5Y8q6RSMxFX54ZcERkFrGHBbu4XVQlgWuKubMh8OD//AOJVhpZT/V3vab2AGbcyBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706179518; c=relaxed/simple;
-	bh=8OEJAMKjJtMP3gQQ/4s+/aqMUuEPd9kVijNe+p2LZWI=;
+	s=arc-20240116; t=1706179524; c=relaxed/simple;
+	bh=May8tXK/aU9P09eCGMe0XoJv+iSqKO1K5ZKsSFCQogk=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FN0GDxnRZ3ZZdCgmyXd/Cd0tXiTiutgi1J7fLpylrsMQz3qqUwtF63+qh1082vDJvKKSBN9ZEfYItOAk7BqnwMZLq62oqaBdI9wZkr4lWfqOZGWcvw22L7+Crw6YotywTZgAewGrT1ylXoRPNBYk4rzraDmvo2dsh/qZDqZZmAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBVOlKdK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33DBCC43390;
-	Thu, 25 Jan 2024 10:45:14 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=O4DCm7rMflp7K9zZcQ9kkGRMCntl2pzntF//aubc5Dsa/gTsp/0mAvnyy8fCF5CP1Bb4pKhbhgK3j0XcpPOm6sU2RNslS5hTJB04NZIgSafS6BOGvBzTO85i/K+hD+ZEurlWx9LQ4dQmGl2RXfcc9+uyG/M1zZ/rsBPLsjev/tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMG1+CCt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AD52C43399;
+	Thu, 25 Jan 2024 10:45:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706179517;
-	bh=8OEJAMKjJtMP3gQQ/4s+/aqMUuEPd9kVijNe+p2LZWI=;
+	s=k20201202; t=1706179521;
+	bh=May8tXK/aU9P09eCGMe0XoJv+iSqKO1K5ZKsSFCQogk=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=GBVOlKdK2Syi7Bxz4hmjBDvSGJ4R4YiE9W4FGG3rurhjO51Mo2dVWXg42eFyzVUdK
-	 F8vwl3otN4QCX4Xpi0cewqUM4xauPpFf949InH1CgBTwYKyt+A825H7QcDvuz/QlK2
-	 U4P1j5L3NzffUkECBS0M/2l86ZWgyaCaBqLVR1WohCWebPNaUh295ABOoFX0u6Gxd7
-	 OCn3Qd10Kfio9Ws84o+7sAgQqzFGZ1EX20G2/EUmXqVT+GdDvqER5apxZ7ga8oz7Lf
-	 PFQJRXZcB0YYZ1OEw43AU2uZNa3yRxrMOeFozhS5YXwxoM9pKYhdxNyi9zxUaV0Uh2
-	 LLLqs8UaJpIdQ==
+	b=pMG1+CCtlySiyvB+Qu5e+QSRgO2YlQnNL8nh97HGU2zVZRA1ZYk+NTHR17fnjilI+
+	 XpDdy69YwLaWbmQ9N/d7qtdZCvmbdEG2SqO+hTS4wLNC9o6NC+iKL6n3hs1XnaXvZU
+	 6kRFJUMFlQG8uzbDboyh/3DaEacUZlQMcp7N4gIcXM/G9/iCZ3FAkKfq+oziCUp233
+	 KJlstnIzOq1nx5vAknGxgyVMEDX7s0AJez77L4+cPH4I/Ix1wgk6auWuXjDdIa6Cit
+	 C+ia+qhUAU3mNd9nob/B7vzawuVNsyMvuOkqVckszSSdCgDZgXMkTodaUTtFnHBCro
+	 HbTtqq/yO2/lw==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 25 Jan 2024 05:43:13 -0500
-Subject: [PATCH v2 32/41] dlm: adapt to breakup of struct file_lock
+Date: Thu, 25 Jan 2024 05:43:14 -0500
+Subject: [PATCH v2 33/41] gfs2: adapt to breakup of struct file_lock
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240125-flsplit-v2-32-7485322b62c7@kernel.org>
+Message-Id: <20240125-flsplit-v2-33-7485322b62c7@kernel.org>
 References: <20240125-flsplit-v2-0-7485322b62c7@kernel.org>
 In-Reply-To: <20240125-flsplit-v2-0-7485322b62c7@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -86,20 +86,20 @@ Cc: linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
  linux-cifs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5221; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=8OEJAMKjJtMP3gQQ/4s+/aqMUuEPd9kVijNe+p2LZWI=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlsjs+J3EWJEmklSu0dTF/7aEoCXaYmUzqlZk0z
- BMnwHDjdLGJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbI7PgAKCRAADmhBGVaC
- FX9EEACvpf3Am1XlKZ8gE7vV9mjusPzF/XPNZlQDvb21/K76jSlbWCBi8y3UTwWclbv3brNxdKL
- 5q3XA5C4p4WCEkRvbc6PhCzLRjZ6P8Vsd004IQ64qOLB1PRnYhhzedPXf+OMqVe57UBFVo5Kl7l
- UzcEt8SFfgDG9qQpqJpPVNApCFn0g6qawWhPC/i34YDI/GBQejzkzffXUGHvIpj44rdRVnaJRYu
- 42qX0FGmFMekBN1b/CUSfjtN/LVnO3RVfBweR1kqaCb9/udYP7G9sQnVSKRlZvT4/HabNysI29G
- mlxqWyX1zSXKclgXuLe6KzxflxuaYROQiXrCBRdxN4O7TxiD4BBnBr6c3L5er6L2sPv7supN3s8
- CUelIf56e5kKPQkKxmnYYMdoDpmsa6om5vsWxp68c2Ih/Fs0bY59lf/R6A+lqIa8Rt4S4Ln12Qj
- OVhTjOIq1jXubmB+CNER5zNN61fV52qtGboQqlfcvDuHd33WX1Nw/4XDRNrkbzMHYwi4W/bZPbZ
- htmcRiVRopVw0lJkVugQGD+UN3oYJ48PQD2AJL77WyUs3sLjr54/7iOHee18G2XN9z2Pnon11pZ
- PDY5pWHAMG7qxum9N5OoWBvAEC5XODSzbVNWY4FwlJ/MgTRcUj65qxC7G4WhyUue7uP9g1GuR7U
- 2hMBAj0M63TUzLg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2826; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=May8tXK/aU9P09eCGMe0XoJv+iSqKO1K5ZKsSFCQogk=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlsjs+crUFt4hWuqAUhKVtDFUTGdJiHAxl8qo6z
+ jTpTEqOhGSJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbI7PgAKCRAADmhBGVaC
+ FSXFEAC2Ij6vquQrJJuMnnGDLS15DLOkNyj/OzO/ognOixJocSiMEvgsjf7b9t6/sxFknKzi6N4
+ kfUk2pzXp3FJ/3QTr+urjiw7MdpwP/KVmIeC/Inn9mttlPquZOqPPKmjGHK+g8PK0X4i7XVExTD
+ clqeJmFWI5tC7ZipLCyJKxVOGhbrO/H7n6mbfk6chsYWbS2lHX6nOOTiowJB2ekjUmQKW3PzcRm
+ lZGFCxs8eq5Y6c5q8Dam3XwfJdIPDclh1ZkThWjkL2JkEah5IAdZiqJD2F3rrbbauMaRvUDkt29
+ 5DTebMEEQxLoOv1+FmFOR1vv1lFPRm/IArkz0zDnY4OkPqEI4Y5dFtjlO7mVC87quTeJdtR6D+p
+ zbypfBkT5LaP1CFVr5rGcsXv62yFuprKPKvILIT5a8/I4nY/B6qbOsVzHuMuw04/bOn6RcxjyGy
+ QDs0HU/2zwDdEfBjONMBqycoWEkYzqGc8lskjs3lp0NdIeFU5vfbABqI1QWTzTZoSFSxn5WkYwW
+ 8HROwXlT5mMJVeUndmumdfY4D+Zt/JhoBvLXbF3Ej04SJD1jgBuWm76X0tB1T2MpAtnz0we+ziQ
+ iKB/s5ugzfWnEY+QWBQI7QD8GFMxcXAaOXQIF8chaf0RhJ4SFdsze6q6KlBp/acpPzZpT0J4T6T
+ rO87ah3Dt3EaXMw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
@@ -109,151 +109,76 @@ file_lock_core now.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/dlm/plock.c | 45 ++++++++++++++++++++++-----------------------
- 1 file changed, 22 insertions(+), 23 deletions(-)
+ fs/gfs2/file.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/fs/dlm/plock.c b/fs/dlm/plock.c
-index b89dca1d51b0..b3e9fb9df808 100644
---- a/fs/dlm/plock.c
-+++ b/fs/dlm/plock.c
-@@ -4,7 +4,6 @@
-  */
- 
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index 9e7cd054e924..dc0c4f7d7cc7 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -15,7 +15,6 @@
+ #include <linux/mm.h>
+ #include <linux/mount.h>
  #include <linux/fs.h>
 -#define _NEED_FILE_LOCK_FIELD_MACROS
  #include <linux/filelock.h>
- #include <linux/miscdevice.h>
- #include <linux/poll.h>
-@@ -139,14 +138,14 @@ int dlm_posix_lock(dlm_lockspace_t *lockspace, u64 number, struct file *file,
+ #include <linux/gfs2_ondisk.h>
+ #include <linux/falloc.h>
+@@ -1441,10 +1440,10 @@ static int gfs2_lock(struct file *file, int cmd, struct file_lock *fl)
+ 	struct gfs2_sbd *sdp = GFS2_SB(file->f_mapping->host);
+ 	struct lm_lockstruct *ls = &sdp->sd_lockstruct;
+ 
+-	if (!(fl->fl_flags & FL_POSIX))
++	if (!(fl->fl_core.flc_flags & FL_POSIX))
+ 		return -ENOLCK;
+ 	if (gfs2_withdrawing_or_withdrawn(sdp)) {
+-		if (fl->fl_type == F_UNLCK)
++		if (fl->fl_core.flc_type == F_UNLCK)
+ 			locks_lock_file_wait(file, fl);
+ 		return -EIO;
  	}
+@@ -1452,7 +1451,7 @@ static int gfs2_lock(struct file *file, int cmd, struct file_lock *fl)
+ 		return dlm_posix_cancel(ls->ls_dlm, ip->i_no_addr, file, fl);
+ 	else if (IS_GETLK(cmd))
+ 		return dlm_posix_get(ls->ls_dlm, ip->i_no_addr, file, fl);
+-	else if (fl->fl_type == F_UNLCK)
++	else if (fl->fl_core.flc_type == F_UNLCK)
+ 		return dlm_posix_unlock(ls->ls_dlm, ip->i_no_addr, file, fl);
+ 	else
+ 		return dlm_posix_lock(ls->ls_dlm, ip->i_no_addr, file, cmd, fl);
+@@ -1484,7 +1483,7 @@ static int do_flock(struct file *file, int cmd, struct file_lock *fl)
+ 	int error = 0;
+ 	int sleeptime;
  
- 	op->info.optype		= DLM_PLOCK_OP_LOCK;
--	op->info.pid		= fl->fl_pid;
--	op->info.ex		= (fl->fl_type == F_WRLCK);
--	op->info.wait		= !!(fl->fl_flags & FL_SLEEP);
-+	op->info.pid		= fl->fl_core.flc_pid;
-+	op->info.ex		= (fl->fl_core.flc_type == F_WRLCK);
-+	op->info.wait		= !!(fl->fl_core.flc_flags & FL_SLEEP);
- 	op->info.fsid		= ls->ls_global_id;
- 	op->info.number		= number;
- 	op->info.start		= fl->fl_start;
- 	op->info.end		= fl->fl_end;
--	op->info.owner = (__u64)(long)fl->fl_owner;
-+	op->info.owner = (__u64)(long) fl->fl_core.flc_owner;
- 	/* async handling */
- 	if (fl->fl_lmops && fl->fl_lmops->lm_grant) {
- 		op_data = kzalloc(sizeof(*op_data), GFP_NOFS);
-@@ -259,7 +258,7 @@ static int dlm_plock_callback(struct plock_op *op)
- 	}
+-	state = (fl->fl_type == F_WRLCK) ? LM_ST_EXCLUSIVE : LM_ST_SHARED;
++	state = (fl->fl_core.flc_type == F_WRLCK) ? LM_ST_EXCLUSIVE : LM_ST_SHARED;
+ 	flags = GL_EXACT | GL_NOPID;
+ 	if (!IS_SETLKW(cmd))
+ 		flags |= LM_FLAG_TRY_1CB;
+@@ -1496,8 +1495,8 @@ static int do_flock(struct file *file, int cmd, struct file_lock *fl)
+ 		if (fl_gh->gh_state == state)
+ 			goto out;
+ 		locks_init_lock(&request);
+-		request.fl_type = F_UNLCK;
+-		request.fl_flags = FL_FLOCK;
++		request.fl_core.flc_type = F_UNLCK;
++		request.fl_core.flc_flags = FL_FLOCK;
+ 		locks_lock_file_wait(file, &request);
+ 		gfs2_glock_dq(fl_gh);
+ 		gfs2_holder_reinit(state, flags, fl_gh);
+@@ -1558,10 +1557,10 @@ static void do_unflock(struct file *file, struct file_lock *fl)
  
- 	/* got fs lock; bookkeep locally as well: */
--	flc->fl_flags &= ~FL_SLEEP;
-+	flc->fl_core.flc_flags &= ~FL_SLEEP;
- 	if (posix_lock_file(file, flc, NULL)) {
- 		/*
- 		 * This can only happen in the case of kmalloc() failure.
-@@ -292,7 +291,7 @@ int dlm_posix_unlock(dlm_lockspace_t *lockspace, u64 number, struct file *file,
- 	struct dlm_ls *ls;
- 	struct plock_op *op;
- 	int rv;
--	unsigned char saved_flags = fl->fl_flags;
-+	unsigned char saved_flags = fl->fl_core.flc_flags;
+ static int gfs2_flock(struct file *file, int cmd, struct file_lock *fl)
+ {
+-	if (!(fl->fl_flags & FL_FLOCK))
++	if (!(fl->fl_core.flc_flags & FL_FLOCK))
+ 		return -ENOLCK;
  
- 	ls = dlm_find_lockspace_local(lockspace);
- 	if (!ls)
-@@ -305,7 +304,7 @@ int dlm_posix_unlock(dlm_lockspace_t *lockspace, u64 number, struct file *file,
- 	}
- 
- 	/* cause the vfs unlock to return ENOENT if lock is not found */
--	fl->fl_flags |= FL_EXISTS;
-+	fl->fl_core.flc_flags |= FL_EXISTS;
- 
- 	rv = locks_lock_file_wait(file, fl);
- 	if (rv == -ENOENT) {
-@@ -318,14 +317,14 @@ int dlm_posix_unlock(dlm_lockspace_t *lockspace, u64 number, struct file *file,
- 	}
- 
- 	op->info.optype		= DLM_PLOCK_OP_UNLOCK;
--	op->info.pid		= fl->fl_pid;
-+	op->info.pid		= fl->fl_core.flc_pid;
- 	op->info.fsid		= ls->ls_global_id;
- 	op->info.number		= number;
- 	op->info.start		= fl->fl_start;
- 	op->info.end		= fl->fl_end;
--	op->info.owner = (__u64)(long)fl->fl_owner;
-+	op->info.owner = (__u64)(long) fl->fl_core.flc_owner;
- 
--	if (fl->fl_flags & FL_CLOSE) {
-+	if (fl->fl_core.flc_flags & FL_CLOSE) {
- 		op->info.flags |= DLM_PLOCK_FL_CLOSE;
- 		send_op(op);
- 		rv = 0;
-@@ -346,7 +345,7 @@ int dlm_posix_unlock(dlm_lockspace_t *lockspace, u64 number, struct file *file,
- 	dlm_release_plock_op(op);
- out:
- 	dlm_put_lockspace(ls);
--	fl->fl_flags = saved_flags;
-+	fl->fl_core.flc_flags = saved_flags;
- 	return rv;
- }
- EXPORT_SYMBOL_GPL(dlm_posix_unlock);
-@@ -376,14 +375,14 @@ int dlm_posix_cancel(dlm_lockspace_t *lockspace, u64 number, struct file *file,
- 		return -EINVAL;
- 
- 	memset(&info, 0, sizeof(info));
--	info.pid = fl->fl_pid;
--	info.ex = (fl->fl_type == F_WRLCK);
-+	info.pid = fl->fl_core.flc_pid;
-+	info.ex = (fl->fl_core.flc_type == F_WRLCK);
- 	info.fsid = ls->ls_global_id;
- 	dlm_put_lockspace(ls);
- 	info.number = number;
- 	info.start = fl->fl_start;
- 	info.end = fl->fl_end;
--	info.owner = (__u64)(long)fl->fl_owner;
-+	info.owner = (__u64)(long) fl->fl_core.flc_owner;
- 
- 	rv = do_lock_cancel(&info);
- 	switch (rv) {
-@@ -438,13 +437,13 @@ int dlm_posix_get(dlm_lockspace_t *lockspace, u64 number, struct file *file,
- 	}
- 
- 	op->info.optype		= DLM_PLOCK_OP_GET;
--	op->info.pid		= fl->fl_pid;
--	op->info.ex		= (fl->fl_type == F_WRLCK);
-+	op->info.pid		= fl->fl_core.flc_pid;
-+	op->info.ex		= (fl->fl_core.flc_type == F_WRLCK);
- 	op->info.fsid		= ls->ls_global_id;
- 	op->info.number		= number;
- 	op->info.start		= fl->fl_start;
- 	op->info.end		= fl->fl_end;
--	op->info.owner = (__u64)(long)fl->fl_owner;
-+	op->info.owner = (__u64)(long) fl->fl_core.flc_owner;
- 
- 	send_op(op);
- 	wait_event(recv_wq, (op->done != 0));
-@@ -456,16 +455,16 @@ int dlm_posix_get(dlm_lockspace_t *lockspace, u64 number, struct file *file,
- 
- 	rv = op->info.rv;
- 
--	fl->fl_type = F_UNLCK;
-+	fl->fl_core.flc_type = F_UNLCK;
- 	if (rv == -ENOENT)
- 		rv = 0;
- 	else if (rv > 0) {
- 		locks_init_lock(fl);
--		fl->fl_type = (op->info.ex) ? F_WRLCK : F_RDLCK;
--		fl->fl_flags = FL_POSIX;
--		fl->fl_pid = op->info.pid;
-+		fl->fl_core.flc_type = (op->info.ex) ? F_WRLCK : F_RDLCK;
-+		fl->fl_core.flc_flags = FL_POSIX;
-+		fl->fl_core.flc_pid = op->info.pid;
- 		if (op->info.nodeid != dlm_our_nodeid())
--			fl->fl_pid = -fl->fl_pid;
-+			fl->fl_core.flc_pid = -fl->fl_core.flc_pid;
- 		fl->fl_start = op->info.start;
- 		fl->fl_end = op->info.end;
- 		rv = 0;
+-	if (fl->fl_type == F_UNLCK) {
++	if (fl->fl_core.flc_type == F_UNLCK) {
+ 		do_unflock(file, fl);
+ 		return 0;
+ 	} else {
 
 -- 
 2.43.0
