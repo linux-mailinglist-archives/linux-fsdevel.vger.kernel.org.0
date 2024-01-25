@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-8889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6605983BF9A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:53:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B1C83BF9E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:54:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9875F1C23052
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 10:53:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93579284FBA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 10:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1220C604D4;
-	Thu, 25 Jan 2024 10:44:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30362605CD;
+	Thu, 25 Jan 2024 10:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tiiyjDvd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JksKtL65"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E64E604BC;
-	Thu, 25 Jan 2024 10:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F093605BE;
+	Thu, 25 Jan 2024 10:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706179460; cv=none; b=FWrqAj6+z/RRAxSmMp7zeLYvJTkTLKtjFFG0YHRsSihyMtzAID0iBxMV0iyEK3F+6SqFK2ge09gyceuX37IaXZNr7hEzPuay42aJ5W+7N9C7G3NXyXIwDMn4qA2CfjUW1UkzS8gsFH7Kxp48eeBXrDGrc5Y2RJsyH2HuNbff/nU=
+	t=1706179464; cv=none; b=KFu6fOhhSz1Hb/L/fJzUSR6YG90VuNFuwTU2YSNeXnCcP7bTb6tPQt8eErj34NF313lqpKrhs7igsryKDVYOUtL5P87Xn63TSl0UKa26c28im0k7bZDnaYTbc35hdCP10AV3m5+YdEgCz90XYIgW/BbSjxUtqTFPT+nV6yRuNEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706179460; c=relaxed/simple;
-	bh=30KJx0Hyv2s41cGRszMYoB7mdxNuB2UrCQt/ZqfUUKs=;
+	s=arc-20240116; t=1706179464; c=relaxed/simple;
+	bh=yEgsl63krJAEbBQLVgpupLgJGjIkvPZV4h5VmWEXOMg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=WqHdzpfksHTXzrIKxNOG5Lr5xcNWnhRBmuoznlLzsX9DJrbqVMdzFE/GsG0AdsEntnjqaXL/ALHCS/1xkvue7SiW9Vysbh3/MSkkx1H9Twxe50n4inYX4bNcx6gf96hoVd/lzTh6ei8d+tNCvb3tKUrbe9Ur5h5bwv5d5rJUuvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tiiyjDvd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98658C43141;
-	Thu, 25 Jan 2024 10:44:16 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=VLiI9/wcp4/DqLoqgzKjatFBhN147N8kTzJzPS8FpGFizRib9Yde7r+pcW1TrFRkbl+70saWrfvlS99At76qf26D7vW4vAKCFYcSffuVV++U3+ieAHpuYYp0nHPFBIIKgJ4XNwQOiQPoqL2GK9Y+tEc/iq1hBZ1rlQE+bWjHeMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JksKtL65; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FB14C43330;
+	Thu, 25 Jan 2024 10:44:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706179460;
-	bh=30KJx0Hyv2s41cGRszMYoB7mdxNuB2UrCQt/ZqfUUKs=;
+	s=k20201202; t=1706179464;
+	bh=yEgsl63krJAEbBQLVgpupLgJGjIkvPZV4h5VmWEXOMg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=tiiyjDvdbfKZx0exBt2/0RN//cStQCjFtnSPakaxjiqbG09QwFo18dipIHYu7nzxn
-	 RVwkrr5dktoACJi88yZZZ9/HdBEr6P3GkbdKOiUk+n5ZstTXnePmN6GpkM2K7hDVPx
-	 LH9pboX0utRBk1s/irQx+LbBWJpf5vAR4ARbUrw3AqHjbpvTEhu7xS8ossIVwbv/fu
-	 ogcFceg+N1ZNJXgWNskpnXHSSTB2X5Nw/htf4Yk9gn/ErCwg75B1ruqJyoi/RUopPR
-	 FbEjrWjNePswBEiH+qAOTDzd6cqovM4jzQVfGagjbGN7mPPG7xAvI7mpLZGaJPhazb
-	 hLdACVJxsLmOg==
+	b=JksKtL65NlYSk17V1EHtEAmZvozOXuyvW+W5vd4CUZNwi3cJpUb/1hTV0h7RSRI18
+	 Box/fXjNsECImaHdepjdNhEjW6srazwWMTO5Owfi/gVlHCqNGFsTBz/hfa0NGMGo5n
+	 OEA6hHxkXPo8X1Algk7bFbcURsTaU4Yvs/fiTQSkjE+ZrjFSgBP+aA7xEEDv8D0tjI
+	 45CIdEyreWQUubivEZ4A3WkfNs27YE7zMwNVdwWdjTHS+9F1AgAVyUN7FHypgSzgov
+	 +jHN0/SgoC09Q6+oQUJXiDQ7Gx6CT29YTy2Vfvxgu1O3MuxOH/lJw9lJMeD1if37w0
+	 XWCW4kosQONqg==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 25 Jan 2024 05:42:58 -0500
-Subject: [PATCH v2 17/41] filelock: make locks_{insert,delete}_global_locks
- take file_lock_core arg
+Date: Thu, 25 Jan 2024 05:42:59 -0500
+Subject: [PATCH v2 18/41] filelock: convert
+ locks_{insert,delete}_global_blocked
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240125-flsplit-v2-17-7485322b62c7@kernel.org>
+Message-Id: <20240125-flsplit-v2-18-7485322b62c7@kernel.org>
 References: <20240125-flsplit-v2-0-7485322b62c7@kernel.org>
 In-Reply-To: <20240125-flsplit-v2-0-7485322b62c7@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -87,91 +87,77 @@ Cc: linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
  linux-cifs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2261; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=30KJx0Hyv2s41cGRszMYoB7mdxNuB2UrCQt/ZqfUUKs=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlsjs8SdqxMRoDIm0JB0F9m6FWBPyTlwlnxaXNh
- stmXIt6zp+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbI7PAAKCRAADmhBGVaC
- FaThD/40Eel9ws4bpv6pYZmYpdrd8jeJp98F+T2aA7ikIwzWJsKndDyk2Egd1khC7kp7criXZWY
- krm85yb2xHZQOmQf/65I+9iuO8dkgZX0fP/ApSqlVYuaPqEVNQfpOCv7EK7vt4XgUDBTnANna/s
- VAeGNE31T/jCfCNaJuyl99kSQY0TEYzBbZ1wFgODmNgtAUwkcQGh0Q+h587Ob/gLDKpGzC1Beiv
- hbHo1r6r3rLV3Ca/QTWQQps5FVrE6OEDI0YEp6P6paTU0rqH+LGTrECH65hSaY/SmYlR/2p5MwK
- mMWHnpaqxrBhhBANC8odgeQKG4T4FFtGoe1O0Sp6VB230qO8WJ1OcQAfzPb9ohfMwZyxtrEJzvO
- Dq8VeRwzGTjqfYe7ozmHCBLm8edr736h6MKUTPpTl3F2noKOg62yKz7sJTDhkwYnY00TOvQTRYJ
- DuApjYo3w6BpPZ9AEkFXTaV0GN6OCI18G0iiKUevHQRm4Ahrs8GFqBtmNj0ukxxpr3uwA0cISpY
- A0tNo4Bt2+aWAdVg2A5OlHrWd6PGiVmJbR3FtRi/kxP2fsHbzX76yBtPbYMrdGPOX00Ekh/UpNd
- Sm7ASI6azyN8L4WZus725Ekd+SPYNpoqUr4GqP6F7NNzHcDRYic/6hgKvLNo5vOGQdFamQlbYMa
- bdHjgLS82BZCPGA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1970; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=yEgsl63krJAEbBQLVgpupLgJGjIkvPZV4h5VmWEXOMg=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlsjs8OyzCvzcQ1F61nn18VGX0tcoV+/UQeV2Lp
+ mPMUjAW9s6JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbI7PAAKCRAADmhBGVaC
+ FZq5D/9rEPSWrwWnu+eU909ZOHVStVEVRh9iR4HO0skOFyaI1h1nFU+jx2X99RUlsHHIxpWmExL
+ 6adx3SaCbqV1/+qIZOsmAa3Y7K/jXep0BBkcVcVOi5TBbC2H0gwI9jTkGzbLMCv/LYL+YmfAq15
+ YxwwpiQaCVkxju76SVnelHcWQFKqkvCvhGZR1WuH6kCKZbRxP2xZSN5l/4uEVMkwJgB1xwtZLBz
+ HT+mE7qb7sYZXo2T1b7BvrLnndED1wD/e3MeXfB4JofImWnfMDkCoRAMInHE0iEzIXluR5eWCzn
+ XUL8SiXcE4q8T3Wyeg36HmbKRW297+ggolI7+AwxjvCjF+1DdHkfR1rsCMhikZFKKgglslBDl4V
+ porhXSfsqGeyPPatCPO5cJJcV4ZSpcg8zfj24nlBYsXtKPq2GsAgYUGRZ0Mp9NV4RMe6MhN6Inp
+ ZQvJnmsQ332sUh2GUqaDI5ElrwRiBfnmyBzPPBpfCLJrfnkOD53wOb8YtpuYqZjoGZ3H1F/1yL7
+ ApQ7yKGBSBGvIPoj6DKb5VyPPLRXgMW0t6IORPM5Ka+6F1riCiU84jq2Pl26ApTOCVViPfHFbqP
+ z12jOWMnCqiFDCLM8bF6xQSlH9HBMqIcYNYCI4LUe3ii0o+gIgCHMJxUE5GaLGOOFzc+J/I81SP
+ 7iDDfqHh5q3c2Kw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Convert these functions to take a file_lock_core instead of a file_lock.
+Have locks_insert_global_blocked and locks_delete_global_blocked take a
+struct file_lock_core pointer.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/locks.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ fs/locks.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
 diff --git a/fs/locks.c b/fs/locks.c
-index effe84f954f9..ad4bb9cd4c9d 100644
+index ad4bb9cd4c9d..d6d47612527c 100644
 --- a/fs/locks.c
 +++ b/fs/locks.c
-@@ -596,20 +596,20 @@ static int posix_same_owner(struct file_lock_core *fl1, struct file_lock_core *f
+@@ -635,19 +635,18 @@ posix_owner_key(struct file_lock_core *flc)
+ 	return (unsigned long) flc->flc_owner;
  }
  
- /* Must be called with the flc_lock held! */
--static void locks_insert_global_locks(struct file_lock *fl)
-+static void locks_insert_global_locks(struct file_lock_core *flc)
+-static void locks_insert_global_blocked(struct file_lock *waiter)
++static void locks_insert_global_blocked(struct file_lock_core *waiter)
  {
- 	struct file_lock_list_struct *fll = this_cpu_ptr(&file_lock_list);
+ 	lockdep_assert_held(&blocked_lock_lock);
  
- 	percpu_rwsem_assert_held(&file_rwsem);
- 
- 	spin_lock(&fll->lock);
--	fl->fl_core.flc_link_cpu = smp_processor_id();
--	hlist_add_head(&fl->fl_core.flc_link, &fll->hlist);
-+	flc->flc_link_cpu = smp_processor_id();
-+	hlist_add_head(&flc->flc_link, &fll->hlist);
- 	spin_unlock(&fll->lock);
+-	hash_add(blocked_hash, &waiter->fl_core.flc_link,
+-		 posix_owner_key(&waiter->fl_core));
++	hash_add(blocked_hash, &waiter->flc_link, posix_owner_key(waiter));
  }
  
- /* Must be called with the flc_lock held! */
--static void locks_delete_global_locks(struct file_lock *fl)
-+static void locks_delete_global_locks(struct file_lock_core *flc)
+-static void locks_delete_global_blocked(struct file_lock *waiter)
++static void locks_delete_global_blocked(struct file_lock_core *waiter)
  {
- 	struct file_lock_list_struct *fll;
+ 	lockdep_assert_held(&blocked_lock_lock);
  
-@@ -620,12 +620,12 @@ static void locks_delete_global_locks(struct file_lock *fl)
- 	 * is done while holding the flc_lock, and new insertions into the list
- 	 * also require that it be held.
- 	 */
--	if (hlist_unhashed(&fl->fl_core.flc_link))
-+	if (hlist_unhashed(&flc->flc_link))
- 		return;
- 
--	fll = per_cpu_ptr(&file_lock_list, fl->fl_core.flc_link_cpu);
-+	fll = per_cpu_ptr(&file_lock_list, flc->flc_link_cpu);
- 	spin_lock(&fll->lock);
--	hlist_del_init(&fl->fl_core.flc_link);
-+	hlist_del_init(&flc->flc_link);
- 	spin_unlock(&fll->lock);
+-	hash_del(&waiter->fl_core.flc_link);
++	hash_del(&waiter->flc_link);
  }
  
-@@ -814,13 +814,13 @@ static void
- locks_insert_lock_ctx(struct file_lock *fl, struct list_head *before)
+ /* Remove waiter from blocker's block list.
+@@ -657,7 +656,7 @@ static void locks_delete_global_blocked(struct file_lock *waiter)
+  */
+ static void __locks_delete_block(struct file_lock *waiter)
  {
- 	list_add_tail(&fl->fl_core.flc_list, before);
--	locks_insert_global_locks(fl);
-+	locks_insert_global_locks(&fl->fl_core);
+-	locks_delete_global_blocked(waiter);
++	locks_delete_global_blocked(&waiter->fl_core);
+ 	list_del_init(&waiter->fl_core.flc_blocked_member);
  }
  
- static void
- locks_unlink_lock_ctx(struct file_lock *fl)
- {
--	locks_delete_global_locks(fl);
-+	locks_delete_global_locks(&fl->fl_core);
- 	list_del_init(&fl->fl_core.flc_list);
- 	locks_wake_up_blocks(fl);
- }
+@@ -768,7 +767,7 @@ static void __locks_insert_block(struct file_lock *blocker,
+ 	list_add_tail(&waiter->fl_core.flc_blocked_member,
+ 		      &blocker->fl_core.flc_blocked_requests);
+ 	if ((blocker->fl_core.flc_flags & (FL_POSIX|FL_OFDLCK)) == FL_POSIX)
+-		locks_insert_global_blocked(waiter);
++		locks_insert_global_blocked(&waiter->fl_core);
+ 
+ 	/* The requests in waiter->fl_blocked are known to conflict with
+ 	 * waiter, but might not conflict with blocker, or the requests
 
 -- 
 2.43.0
