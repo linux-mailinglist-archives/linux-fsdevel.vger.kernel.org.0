@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-8972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4679C83C8D1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:55:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4823B83C8D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:55:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A3061C214D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00767296848
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155E8136669;
-	Thu, 25 Jan 2024 16:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8968E130E4C;
+	Thu, 25 Jan 2024 16:45:43 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E91931420B5;
-	Thu, 25 Jan 2024 16:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AC3613666C;
+	Thu, 25 Jan 2024 16:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706201136; cv=none; b=NgsLhDVMpL4N2eCnbGqivCdmFdckk5352+lX3n/CAhSnjhOB5Bgck2UN3BS8pPDsh/v/Ofq6lBWQ4pCvpE4VPda1/B7CbeQAzWBS6/IK9Ql5o/Dv38RzsKXT4mVYRwtrsWmVbQLkmsvF7ltRMBP86kh51dkmP2Exc10k8ivRteA=
+	t=1706201143; cv=none; b=h4LxSFtrZtntpspJ+LU99Jsfd86oP4tqwpJCH+A6fe2tYw52CE3vF3xWXj/+7Ctll8Ph+1CIAMIAXzHWV5o5TmTYbS7qN6zVBVRD9/TL9y1Vkd9T13iVvRI0yV+2sq5uXlDsT/VQaEAFwQaaKqHmtPLjWjoLJBdLUiia33dSLn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706201136; c=relaxed/simple;
-	bh=bKe4q9E3h296O12M5Ghi6NQYQfbP48hS2WvtPTdyhHs=;
+	s=arc-20240116; t=1706201143; c=relaxed/simple;
+	bh=g16m8hwe2c+Kqfp9b9jwBFM1C8lWUj9Vnff3BFnKf5E=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WVwMMoybHfKdy5axaOqFHf5bf6mqqQvDAMXVipu/7g/ipd6psLesbEb8g6U5zsYuiv0d/KEIXgAoEjwPeBcL2+iFthgMXyNB2MoPjWCRBo2Amm8FSIsBHBx8wgCd1ysgyPFUMMFqpYtg1jdhQlV1GedweKzT0TCTdHAY1Rz5vjc=
+	 MIME-Version; b=TWnG77qGLeXwfUya7CjIcGajInD3ArZCpcK4rPOA1lgVDTiUvvNNWHam9fz6f1AQgzbYM+p9fulrfIhKMtaZQbaY7mcU5EysY31Kv66GTI6ywDnHd0+hmMHnVR2MfDo6hNbfcmzExNaTmigdDM3i0FGUn2ICSxJdG2dMMVlil/E=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0743516F3;
-	Thu, 25 Jan 2024 08:46:19 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 09C361713;
+	Thu, 25 Jan 2024 08:46:25 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E2EF3F5A1;
-	Thu, 25 Jan 2024 08:45:28 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3D8E3F5A1;
+	Thu, 25 Jan 2024 08:45:34 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -71,9 +71,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v3 29/35] arm64: mte: copypage: Handle tag restoring when missing tag storage
-Date: Thu, 25 Jan 2024 16:42:50 +0000
-Message-Id: <20240125164256.4147-30-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v3 30/35] arm64: mte: ptrace: Handle pages with missing tag storage
+Date: Thu, 25 Jan 2024 16:42:51 +0000
+Message-Id: <20240125164256.4147-31-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240125164256.4147-1-alexandru.elisei@arm.com>
 References: <20240125164256.4147-1-alexandru.elisei@arm.com>
@@ -85,105 +85,69 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are several situations where copy_highpage() can end up copying
-tags to a page which doesn't have its tag storage reserved.
+A page can end up mapped in a MTE enabled VMA without the corresponding tag
+storage block reserved. Tag accesses made by ptrace in this case can lead
+to the wrong tags being read or memory corruption for the process that is
+using the tag storage memory as data.
 
-One situation involves migration racing with mprotect(PROT_MTE): VMA is
-initially untagged, migration starts and destination page is allocated
-as untagged, mprotect(PROT_MTE) changes the VMA to tagged and userspace
-accesses the source page, thus making it tagged.  The migration code
-then calls copy_highpage(), which will copy the tags from the source
-page (now tagged) to the destination page (allocated as untagged).
-
-Yes another situation can happen during THP collapse. The huge page that
-will replace the HPAGE_PMD_NR contiguous mapped pages is allocated with
-__GFP_TAGGED not set. copy_highpage() will copy the tags from the pages
-being replaced to the huge page which doesn't have tag storage reserved.
-
-The situation gets even more complicated when the replacement huge page
-is a tag storage page. The tag storage huge page will be migrated after
-a fault on access, but the tags from the original pages must be copied
-over to the huge page that will be replacing the tag storage huge page.
+Reserve tag storage by treating ptrace accesses like a fault.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
- arch/arm64/mm/copypage.c | 56 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
 
-diff --git a/arch/arm64/mm/copypage.c b/arch/arm64/mm/copypage.c
-index a7bb20055ce0..e991ccb43fb7 100644
---- a/arch/arm64/mm/copypage.c
-+++ b/arch/arm64/mm/copypage.c
-@@ -13,6 +13,59 @@
- #include <asm/cacheflush.h>
- #include <asm/cpufeature.h>
- #include <asm/mte.h>
-+#include <asm/mte_tag_storage.h>
-+
-+#ifdef CONFIG_ARM64_MTE_TAG_STORAGE
-+static inline bool try_transfer_saved_tags(struct page *from, struct page *to)
-+{
-+	void *tags;
-+	bool saved;
-+
-+	VM_WARN_ON_ONCE(!preemptible());
-+
-+	if (page_mte_tagged(from)) {
-+		if (page_tag_storage_reserved(to))
-+			return false;
-+
-+		tags = mte_allocate_tag_buf();
-+		if (WARN_ON(!tags))
-+			return true;
-+
-+		mte_copy_page_tags_to_buf(page_address(from), tags);
-+		saved = mte_save_tags_for_pfn(tags, page_to_pfn(to));
-+		if (!saved)
-+			mte_free_tag_buf(tags);
-+
-+		return saved;
-+	}
-+
-+	tags_by_pfn_lock();
-+	tags = mte_erase_tags_for_pfn(page_to_pfn(from));
-+	tags_by_pfn_unlock();
-+
-+	if (likely(!tags))
-+		return false;
-+
-+	if (page_tag_storage_reserved(to)) {
-+		WARN_ON_ONCE(!try_page_mte_tagging(to));
-+		mte_copy_page_tags_from_buf(page_address(to), tags);
-+		set_page_mte_tagged(to);
-+		mte_free_tag_buf(tags);
-+		return true;
-+	}
-+
-+	saved = mte_save_tags_for_pfn(tags, page_to_pfn(to));
-+	if (!saved)
-+		mte_free_tag_buf(tags);
-+
-+	return saved;
-+}
-+#else
-+static inline bool try_transfer_saved_tags(struct page *from, struct page *to)
-+{
-+	return false;
-+}
-+#endif
+Changes since rfc v2:
+
+* New patch, issue reported by Peter Collingbourne.
+
+ arch/arm64/kernel/mte.c | 26 ++++++++++++++++++++++++--
+ 1 file changed, 24 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
+index faf09da3400a..b1fa02dad4fd 100644
+--- a/arch/arm64/kernel/mte.c
++++ b/arch/arm64/kernel/mte.c
+@@ -412,10 +412,13 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+ 	while (len) {
+ 		struct vm_area_struct *vma;
+ 		unsigned long tags, offset;
++		unsigned int fault_flags;
++		struct page *page;
++		vm_fault_t ret;
+ 		void *maddr;
+-		struct page *page = get_user_page_vma_remote(mm, addr,
+-							     gup_flags, &vma);
  
- void copy_highpage(struct page *to, struct page *from)
- {
-@@ -24,6 +77,9 @@ void copy_highpage(struct page *to, struct page *from)
- 	if (kasan_hw_tags_enabled())
- 		page_kasan_tag_reset(to);
- 
-+	if (tag_storage_enabled() && try_transfer_saved_tags(from, to))
-+		return;
++get_page:
++		page = get_user_page_vma_remote(mm, addr, gup_flags, &vma);
+ 		if (IS_ERR(page)) {
+ 			err = PTR_ERR(page);
+ 			break;
+@@ -433,6 +436,25 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+ 			put_page(page);
+ 			break;
+ 		}
 +
- 	if (system_supports_mte() && page_mte_tagged(from)) {
- 		/* It's a new page, shouldn't have been tagged yet */
- 		WARN_ON_ONCE(!try_page_mte_tagging(to));
++		if (tag_storage_enabled() && !page_tag_storage_reserved(page)) {
++			fault_flags = FAULT_FLAG_DEFAULT | \
++				      FAULT_FLAG_USER | \
++				      FAULT_FLAG_REMOTE | \
++				      FAULT_FLAG_ALLOW_RETRY | \
++				      FAULT_FLAG_RETRY_NOWAIT;
++			if (write)
++				fault_flags |= FAULT_FLAG_WRITE;
++
++			put_page(page);
++			ret = handle_mm_fault(vma, addr, fault_flags, NULL);
++			if (ret & VM_FAULT_ERROR) {
++				err = -EFAULT;
++				break;
++			}
++			goto get_page;
++		}
++
+ 		WARN_ON_ONCE(!page_mte_tagged(page));
+ 
+ 		/* limit access to the end of the page */
 -- 
 2.43.0
 
