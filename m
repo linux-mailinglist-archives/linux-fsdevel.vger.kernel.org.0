@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-8834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6CCE83B75D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 03:51:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B751683B780
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 04:05:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6D681C22C53
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 02:51:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5751E1F24E9A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 03:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EBC613A;
-	Thu, 25 Jan 2024 02:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD386127;
+	Thu, 25 Jan 2024 03:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tt+MgVUA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C2MBZ2Ii"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DC91842;
-	Thu, 25 Jan 2024 02:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337721866;
+	Thu, 25 Jan 2024 03:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706151078; cv=none; b=Xgy5WqHbEDNOUJZYHzAHcywcnXrbtDTXlTgS+/jNqwXgSIq1J0PIqNbsjzzVjHivRquE3cbgva/orhwre2JrcUh6i/Guf4k03RNeTXmcQq0qS5HdioPNHK8ooVsV2zDuSv837SxJYwqAYb4rgaer25JCMABWTWSEgpkZRp1PB70=
+	t=1706151933; cv=none; b=bTOG1bKS2di8QiPTvi2y0neyqSAOmj+OQZLMwq5j/pue3Oi9Unn3kVYdCzC6a5/hfzzBBYX3wCwhtBf5hBL4wXt/BsQAmryGHDR2hYWlDMDcbLd8rdDce42550pBgGP34TighvVXQ6mwYBgpPO6GQViQvBbjKEYd8Ur3Nj9fi7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706151078; c=relaxed/simple;
-	bh=XAInFk0WFWd1bmvs0vQTX2Dqg3VbW5EExkT+v4E4z9g=;
+	s=arc-20240116; t=1706151933; c=relaxed/simple;
+	bh=k/lcg2zazVrlN5kWliEtrgP95ZsgX1rocgc1aIdg3L4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IKmNLb6DWnSSiQsRGRoQ2xI9Sm6h4mFMpkhNl0Kc3n1Alj5mWUiSuW+TImrvK993L0684jSdQNsC5Zf2U/D+0rz8zVJ7SS3yDJnZXikb4/rXjtNjiH6omWllwsIaAiLKX4OYtjbNCsM7JiUpkr8Y+AyIvX0zL2bnCGXS6RmnaZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tt+MgVUA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D8D0C433F1;
-	Thu, 25 Jan 2024 02:51:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iNK5Iy7zKFOaceyOREpECHlEbCqWXkj9gPcb8MWJNN4NvjWzrySlxv05dYXEatYhdiBsMRV2RXJNedtO0NOfW8AgcOLjYRLk8gsJfy5i75WJg9ebks3zHOCDGnHmE5NOXZRfbiFXtaOqVGNNv8gioNosOsVsBoEwwVP26+Cbux8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C2MBZ2Ii; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F35DC433F1;
+	Thu, 25 Jan 2024 03:05:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706151077;
-	bh=XAInFk0WFWd1bmvs0vQTX2Dqg3VbW5EExkT+v4E4z9g=;
+	s=k20201202; t=1706151932;
+	bh=k/lcg2zazVrlN5kWliEtrgP95ZsgX1rocgc1aIdg3L4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tt+MgVUAAyNuQS03IytFSOwZ5RkSi3MCS9nRWO3cEk6RmdmofFv3pYeoilItLyrvS
-	 59QQ2SRHM3ZFUNX7mkJEWAlmGVueFeeOd3NzDnHP0Eapsv8JcFpX0AG9mQ4nlpY2xj
-	 ISIX82+Sp6lyKD4B9fFQoaNKxP096R77hgT8NfCYSVS7ePr7KSr+XqBlB7AOA/9/ux
-	 dD0KkmV/FysMqLd4FfAFPLe2XwfIxbR/JwWGaDn4XT7lmREQDtJ11Wpp7J6UkfXsQQ
-	 C3tOiMZU/S/R05IRjqOH70gMQ/lNrJ6Mc+p8HU4xkvva7mS70R6kMQsHR7PesMUyL/
-	 VrIN105+v9Abw==
-Date: Wed, 24 Jan 2024 18:51:15 -0800
+	b=C2MBZ2Ii8noSNTJIR9GJXA/gpybC54e7/5EkfmuEekhstUGgZBwcYYV7cn5pvnmFj
+	 mnI91/Enut3AM5eLngfH35zaZXbp/aaoypZPhVJ1csin1MBrgy1J8zlfKF6RkWFC4H
+	 1038qtJRm8ANP8twzH7GGrGr1boqXCBxtwCCkVX2qDaZgUvmE9Z8jwz9/ByhXw8OLI
+	 bCXBsupFXihzmYcAyHi5K8rxJiuj3XFotYLULPttjSAmSl9fQQP418LAvDWHBG04Yf
+	 xqvaNZ/pqPLly+hnluO8JNn141QNZl3ge17G7QrHsO/LGe6z9UlDV48Tf6fyK8j3je
+	 HFIW9zCxGXjDg==
+Date: Wed, 24 Jan 2024 19:05:30 -0800
 From: Eric Biggers <ebiggers@kernel.org>
 To: Gabriel Krisman Bertazi <krisman@suse.de>
 Cc: viro@zeniv.linux.org.uk, jaegeuk@kernel.org, tytso@mit.edu,
 	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org, amir73il@gmail.com
-Subject: Re: [PATCH v3 01/10] ovl: Reject mounting case-insensitive
- filesystems
-Message-ID: <20240125025115.GA52073@sol.localdomain>
+Subject: Re: [PATCH v3 02/10] fscrypt: Share code between functions that
+ prepare lookup
+Message-ID: <20240125030530.GB52073@sol.localdomain>
 References: <20240119184742.31088-1-krisman@suse.de>
- <20240119184742.31088-2-krisman@suse.de>
+ <20240119184742.31088-3-krisman@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,28 +60,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240119184742.31088-2-krisman@suse.de>
+In-Reply-To: <20240119184742.31088-3-krisman@suse.de>
 
-On Fri, Jan 19, 2024 at 03:47:33PM -0300, Gabriel Krisman Bertazi wrote:
-> ovl: Reject mounting case-insensitive filesystems
+On Fri, Jan 19, 2024 at 03:47:34PM -0300, Gabriel Krisman Bertazi wrote:
+> To make the patch simpler, we now call fscrypt_get_encryption_info twice
+> for fscrypt_prepare_lookup, once inside fscrypt_setup_filename and once
+> inside fscrypt_prepare_lookup_dentry.  It seems safe to do, and
+> considering it will bail early in the second lookup and most lookups
+> should go to the dcache anyway, it doesn't seem problematic for
+> performance.  In addition, we add a function call for the unencrypted
+> case, also during lookup.
 
-Overlayfs doesn't mount filesystems.  I think you might mean something like
-reject case-insensitive lowerdirs?
+Unfortunately I don't think it's correct.  This is basically undoing my fix
+b01531db6cec ("fscrypt: fix race where ->lookup() marks plaintext dentry as
+ciphertext") from several years ago.
 
-> +	/*
-> +	 * Root dentries of case-insensitive filesystems might not have
-> +	 * the dentry operations set, but still be incompatible with
-> +	 * overlayfs.  Check explicitly to prevent post-mount failures.
-> +	 */
-> +	if (sb_has_encoding(path->mnt->mnt_sb))
-> +		return invalfc(fc, "case-insensitive filesystem on %s not supported", name);
+When a lookup is done, the filesystem needs to either treat the name being
+looked up as a no-key name *or* as a regular name, depending on whether the
+directory's key is present.  We shouldn't enable race conditions where, due to
+the key being concurrently added, the name is treated as a no-key name for
+filename matching purposes but a regular name for dentry validation purposes.
+That can result in an anomaly where a file that exists ends up with a negative
+dentry that doesn't get invalidated.
 
-sb_has_encoding() doesn't mean that the filesystem is case-insensitive.  It
-means that the filesystem supports individual case-insensitive directories.
-
-With that in mind, is this code still working as intended?
-
-If so, can you update the comment and error message accordingly?
+Basically, the boolean fscrypt_name::is_nokey_name that's produced by
+fscrypt_setup_filename() should continue to be propagated to DCACHE_NOKEY_NAME.
 
 - Eric
 
