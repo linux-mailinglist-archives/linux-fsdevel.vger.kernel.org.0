@@ -1,147 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-8839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22DD383B879
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 04:47:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F89883B935
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 06:52:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12EC2853F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 03:47:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 078DB2874B1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 05:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830BA79F5;
-	Thu, 25 Jan 2024 03:47:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29210101E8;
+	Thu, 25 Jan 2024 05:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="YL9qBxB8";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="fsgLgirK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTKJfjUa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EBD7489;
-	Thu, 25 Jan 2024 03:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1E510A05;
+	Thu, 25 Jan 2024 05:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706154449; cv=none; b=Xt4YPDBLpDccwnmr6SXkluy747g2qSqRUxddPbJMLcueJ4d4xN1S31SIhcoXKfnDGUO5kD6ygEJDrCUDaFuIwWqiY4jhppaM5Q9MpRWtK/AsV8NZtwjKyq1zbrtruO17kngDa1A8TjrxRrFgj4Et1aQZpO2REp0pHRiKBNXGZDI=
+	t=1706161933; cv=none; b=ulMKOJEMOI5qhV9IMu/Zi8qMQW0H1Tn1w5q+zzVojhbtOwj/qqb4yC2VUIBuq6CTbsUPqiCqhAUe32j/QGPSGUcN/a1GCpB3lraedpDSsGyDpkJSBBmVi7dLrvbHKvvoXERBt4B8GOGjDJ301Z64+d6cvpisfsmC1xqmaClP61E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706154449; c=relaxed/simple;
-	bh=ZjLMYFdfKY7zfT35BRJ219TV857F6P+ZP1+xHv635go=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AE+HpvrtXWf4i3HsXD2GVpJQJxZRk3mOARSFBc0SRTw6wF/h/S4JXO0BaP4KfosVdtSu4Tfkrj8O5YzAAz0le1WpJ6MpApRnRDPZgdEmFGpxJcaswsCRncrB+sFW24+c4pSrXT6i4xkDypBINgiFeeEYyTpPTbYtBU5S6Out/xA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=YL9qBxB8; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=fsgLgirK; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1706154446;
-	bh=ZjLMYFdfKY7zfT35BRJ219TV857F6P+ZP1+xHv635go=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=YL9qBxB8rmXrVUP2wvIzsy95J5wxMuXIdx+URN22csaVJESKYsX6UgVrf/yH6GwHH
-	 4wZ/Jvksr2wp9uIBHGBgfwNCDuqARVeYx0Ely4k9eFp92WsErfoPYpgZbQeVh9Iba2
-	 pfXteLrEoXWG+4qA32j0iRq6OXg/tZy8W4g4o7CI=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 0CAF21280A41;
-	Wed, 24 Jan 2024 22:47:26 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id hwqxZ0ieK8S6; Wed, 24 Jan 2024 22:47:25 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1706154445;
-	bh=ZjLMYFdfKY7zfT35BRJ219TV857F6P+ZP1+xHv635go=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=fsgLgirK6U6/ihHvoQz8t+Sju0qDPzwC9zaPg0N0+4hIMxdc4v1WsZ9xydkDklhdG
-	 20qanvPgrKu7g8quDCNukjgBWjnTWzwE9ROZ7eeQA4K4T1PBPIil8LWiq7SWkwB+Uv
-	 9d+QxmnUTxWeN0TOk3mqhu73ix1L/BgsyQv0dD9Q=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7D6951280658;
-	Wed, 24 Jan 2024 22:47:24 -0500 (EST)
-Message-ID: <c368f1a22e271f96a49a4eab438b040959782387.camel@HansenPartnership.com>
-Subject: Re: [LSF/MM TOPIC] Rust
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>, lsf-pc@lists.linux-foundation.org,
-  linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, Miguel
- Ojeda <miguel.ojeda.sandonis@gmail.com>, Alice Ryhl <aliceryhl@google.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Kees
- Cook <keescook@chromium.org>, Gary Guo <gary@garyguo.net>, Dave Chinner
- <dchinner@redhat.com>, David Howells <dhowells@redhat.com>, Ariel Miculas
- <amiculas@cisco.com>, Paul McKenney <paulmck@kernel.org>
-Date: Wed, 24 Jan 2024 22:47:22 -0500
-In-Reply-To: <4yzecrleclh4prjqw633r6m2jvs7cbtfznjm7azdaxpp2vvmn6@cjxk3ueacoe5>
-References: 
-	<wjtuw2m3ojn7m6gx2ozyqtvlsetzwxv5hdhg2hocal3gyou3ue@34e37oox4d5m>
-	 <ZbAO8REoMbxWjozR@casper.infradead.org>
-	 <cf6a065636b5006235dbfcaf83ff9dbcc51b2d11.camel@HansenPartnership.com>
-	 <ZbEwKjWxdD4HhcA_@casper.infradead.org>
-	 <2e62289ad0fffd2fb8bc7fa179b9a43ab7fe2222.camel@HansenPartnership.com>
-	 <bmgzm3wjtcyzsuawscxrdyhq56ckc7vqnfbcjbm42gj6eb4qph@wgkhxkk43wxm>
-	 <37f44c1409334f5dc15d7421e8b7cd3a4ff9ae33.camel@HansenPartnership.com>
-	 <4yzecrleclh4prjqw633r6m2jvs7cbtfznjm7azdaxpp2vvmn6@cjxk3ueacoe5>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1706161933; c=relaxed/simple;
+	bh=L9+PrjZJpn9UwKu7+vC2RBX0OsN6HLVknq2se8hzYGE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=G11PMnCbjqhaeuoMtGCzLXxoS7G9MUGXs19y6cxnGOIXIFiu4FFeSxhBOGPSfx+CCwrENYmjY/mEwx/FO8d3J1QtIu89V8APiLsU/m8ItlucjlXc5SgHudoCmX313yD/w03e+hnZ/3SZISksIFNhKn9zQx3qRr5FoDG/OHQl+IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTKJfjUa; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-50e5a9bcec9so7065623e87.3;
+        Wed, 24 Jan 2024 21:52:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706161930; x=1706766730; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ydMGd6/9j4PSdyd+0AZK8IP7eQDwp3zvF7Pyc9L5xdM=;
+        b=MTKJfjUacocTlsHCef77KVFHLgIZ8jung4tMJ9rLwrFmOC3zEG8TNF3cFD6hgyWy7J
+         KFokx9OjTjeN+xg1HPqmc86z5ED/+6BeCp5TvaU6nhIdkVUMp7doMoaTe7jUx0TSwkVl
+         vU8F6f4AxhcS+TzHYYFS4SyCwwS9zAbF7SlM0/i3hCtMFGj59V7rlW0L/VpOD4ABshfm
+         oL9OQXr0PE06Xx9HwBb7vPgjGC8dSwu54HzXbxKNujNB87IfrVIeZNVGhsiQPK7anKrp
+         8zHRYL18yN/eglfktoHiqmMgiZU6zJZuxCJr2ShC5eFJQPIOBRIqqf6OK5CosIz7l7FF
+         Ccgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706161930; x=1706766730;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ydMGd6/9j4PSdyd+0AZK8IP7eQDwp3zvF7Pyc9L5xdM=;
+        b=WjkVfuA2axTUo0qAxtdFk06WO4i5ta69CED0FF7Jh6QzQMX5fkwLJjOh83LHnydzll
+         c/XZ90kT1MyDWHRyj94VzjSd13HwMOTpYntOyPpHMVikXpxRQw4kGRR1LGxA9vdqKujI
+         SZXtfeJjzOe9iVzeHwgv3PPAQKmMs6fqQ4AUH+g1dwom+2NrhxNXgBUUFNVmDD+jEUnG
+         Mm2YflaEaAhleJx10DoG8XM/+KjQU2dwcgTu0344hwCJWM9oMv0FiMpZ+kFMbhXq+ozX
+         YBawdqHVligXFNoA4VE4f/Nw5JjTLcWVj9eKeddMaME6wdM8+Tp7fU19Bl6YElr4yRjY
+         smmg==
+X-Gm-Message-State: AOJu0YxO6Q4wcYxYkpysJEk4kbHfRq1StW0gjEz3yfCiPpUp2sQPhdEn
+	tUZaEUUrWKyKyeF5zNaAY2zXg7hkAHSqZ8vmdVC65UIi1uuecO//Ig8pfsbZTz2ZNAxyWlqRP5c
+	C7XAwwcghq6R7pZS0R70TPZDcKI+ArcyGT00f1w==
+X-Google-Smtp-Source: AGHT+IEZmUn14BenDHW0axlwMkUrIHGPBBH0adXcx93AR+bCeIG5qaqHoozmCoRweT/rM/ygtRuQ2L8YJUd/KRx2Q2M=
+X-Received: by 2002:ac2:4db5:0:b0:510:cb1:3d09 with SMTP id
+ h21-20020ac24db5000000b005100cb13d09mr185258lfe.122.1706161929763; Wed, 24
+ Jan 2024 21:52:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+From: Steve French <smfrench@gmail.com>
+Date: Wed, 24 Jan 2024 23:51:58 -0600
+Message-ID: <CAH2r5ms9vcsvV=nv78+Tgy25tH_sKghMWtfmVAoDa9HvL=jRXw@mail.gmail.com>
+Subject: [LSF/MM TOPIC] QUIC kernel driver and use by kernel FS
+To: lsf-pc <lsf-pc@lists.linux-foundation.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 2024-01-24 at 14:57 -0500, Kent Overstreet wrote:
-> On Wed, Jan 24, 2024 at 02:43:21PM -0500, James Bottomley wrote:
-> > On Wed, 2024-01-24 at 13:50 -0500, Kent Overstreet wrote:
-> > > > To illustrate the problem with cryptography in rust: just
-> > > > because it's rust safe doesn't mean its correct or bug free. 
-> > > > Crypto functions are the most difficult to get right
-> > > > (algorithmically, regardless of memory safety).  Look at this
-> > > > Medium report on the top ten bugs in blockchain:
-> > > > 
-> > > > https://medium.com/rektoff/top-10-vulnerabilities-in-substrate-based-blockchains-using-rust-d454279521ff
-> > > > 
-> > > > Number 1 is a rust crypto vulnerability due to insecure
-> > > > randomness in a random number generating function (note it was
-> > > > rust safe code just not properly checked for algorithmic issues
-> > > > by a cryptographer).
-> > > > 
-> > > > The reason for using the kernel functions is that they are
-> > > > vetted by cryptographers and crafted for our environment.
-> > > 
-> > > Are you arguing that typical kernel code is more secure than
-> > > typical Rust code?
-> > 
-> > For crypto code?  Absolutely, that's what the example above showed.
-> > It's pretty much impossible to use an insecure rng in the kernel if
-> > you plug into one of our existing APIs.  That's obviously not
-> > necessarily true if you pull a random one from crates.io.
-> > 
-> > James
-> 
-> I can just as easily use prandom.h instead of random.h in the kernel;
+With the good recent progress on an in-kernel Linux QUIC driver (see
+e.g.  https://github.com/lxin/quic.git), it is now possible to test
+use of QUIC for SMB3.1.1 mounts (various non-Linux fileservers support
+QUIC, including Windows), instead of TCP (or RDMA/smbdirect).
 
-Neither of which would be insecure ...
+Given the performance advantages (and obvious use cases for encrypted
+access to remote files) of QUIC, the timing is good now to update
+others on what we have found out so far in our experiments using the
+in-kernel QUIC driver for accessing remote files over SMB3.1.1 mounts
+and how it may help other fs (or network block devices) that could
+benefit from using QUIC instead of TCP.
 
-> this just comes down to Rust not being able to save you from
-> arbitrary logic errors. But all the data we have so far from CVEs and
-> bug reports shows that Rust code is _dramatically_ more secure than
-> any C code, even kernel code.
+-- 
+Thanks,
 
-I've said it thrice the bellman cried and what I tell you three times
-is true.
-
-Back in the real world, the literature seems to show that rust code has
-about the same bug density as any other code (including C). 
-Ironically, memory safety is still an issue because of the inability to
-reduce unsafe areas in rust code.  I suspect the density is high simply
-because the rust code is newer (bug density in new code tends to be
-higher simply due to the human input rate of algorithmic defects), so
-this may evolve better over time, but it doesn't change the calculus
-that older more vetted code is better than rewriting that code in rust
-because the rewrite tends to introduce new bugs.
-
-James
-
+Steve
 
