@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-8954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB82283C88C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:48:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E1183C891
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:48:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64DA01F22445
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:48:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F177B265D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B27813AA53;
-	Thu, 25 Jan 2024 16:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A609D133988;
+	Thu, 25 Jan 2024 16:43:59 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EDA13AA4E;
-	Thu, 25 Jan 2024 16:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E906C13343F;
+	Thu, 25 Jan 2024 16:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706201032; cv=none; b=VUIEqOyu3SKqamB3LnZajh4+qN8UgXunAHqcs+cqCPSNgst8Srz77Dmxp7NP2cBtOUJasI4HRNb2d2sQao0Qz9wnYDmvOHN7s+NVNMbj6CpmsWuL5Ji84xaJ2wYt06zssdZk+RMgzzI+OQE7D6gTmzafNz9CD7MKjktK4IZo84o=
+	t=1706201039; cv=none; b=IkdPNSqvJjNldNGfAcsP5mAoz0dn8OcqdzO+66ToWV1IxdmIHOskGtS5fnz7XfN4LLNIymcOvoNN+znzVGTcyy4ayUU/F2Zzkk6eGYJVeK38XhsEWY1gv6jhXr+I1CPF3AqmX1OiYVGfOPggX8VuaiNMBO8DJ6yg66WWeLf0Ab0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706201032; c=relaxed/simple;
-	bh=bDQAYA9SBLymzsq/ERIJmns41Syf2su6NFF3KJNqooM=;
+	s=arc-20240116; t=1706201039; c=relaxed/simple;
+	bh=eSQaWCc2Px+2vbM1RKkbkoXSqzbcobRpPRCxEZJPC24=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZrNHOPVhoNCzEdt7plonZOVuR1KMdSCgTbSd2w0AvHrbqUZZ3d2DqR6AeRIdSUatF+krypBRZIc1GDvrE4CmnZd2MkdQ4TMQQlBLxrbzS7TNhRanDuFoc+ktEofdUYOefAX5Z6o8UR6F0Xh1rxQ3WZXumnrBirLrbEUG4z7cvOI=
+	 MIME-Version; b=YwAXNpKv+2eaFvw3ZmgFeltVdBQt1KnUTZAJisoIBeZ6F0W8z+J/PXuanZPETqZbeZynhg3+wXw2MoqJuHKy38Ms0/KuY585dZvwpdIhM4WBL9AlEnFBk6JgKXyUkJB0P/H8ayaRLvoNNw8GlXEjIe3n+wtilSLdOp4w/rd+k9s=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 113601570;
-	Thu, 25 Jan 2024 08:44:35 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CDDEF1576;
+	Thu, 25 Jan 2024 08:44:40 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 240823F5A1;
-	Thu, 25 Jan 2024 08:43:45 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DE15E3F5A1;
+	Thu, 25 Jan 2024 08:43:50 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -71,9 +71,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v3 11/35] mm: Allow an arch to hook into folio allocation when VMA is known
-Date: Thu, 25 Jan 2024 16:42:32 +0000
-Message-Id: <20240125164256.4147-12-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v3 12/35] mm: Call arch_swap_prepare_to_restore() before arch_swap_restore()
+Date: Thu, 25 Jan 2024 16:42:33 +0000
+Message-Id: <20240125164256.4147-13-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240125164256.4147-1-alexandru.elisei@arm.com>
 References: <20240125164256.4147-1-alexandru.elisei@arm.com>
@@ -85,161 +85,99 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-arm64 uses VM_HIGH_ARCH_0 and VM_HIGH_ARCH_1 for enabling MTE for a VMA.
-When VM_HIGH_ARCH_0, which arm64 renames to VM_MTE, is set for a VMA, and
-the gfp flag __GFP_ZERO is present, the __GFP_ZEROTAGS gfp flag also gets
-set in vma_alloc_zeroed_movable_folio().
+arm64 uses arch_swap_restore() to restore saved tags before the page is
+swapped in and it's called in atomic context (with the ptl lock held).
 
-Expand this to be more generic by adding an arch hook that modifes the gfp
-flags for an allocation when the VMA is known.
-
-Note that __GFP_ZEROTAGS is ignored by the page allocator unless __GFP_ZERO
-is also set; from that point of view, the current behaviour is unchanged,
-even though the arm64 flag is set in more places.  When arm64 will have
-support to reuse the tag storage for data allocation, the uses of the
-__GFP_ZEROTAGS flag will be expanded to instruct the page allocator to try
-to reserve the corresponding tag storage for the pages being allocated.
-
-The flags returned by arch_calc_vma_gfp() are or'ed with the flags set by
-the caller; this has been done to keep an architecture from modifying the
-flags already set by the core memory management code; this is similar to
-how do_mmap() -> calc_vm_flag_bits() -> arch_calc_vm_flag_bits() has been
-implemented. This can be revisited in the future if there's a need to do
-so.
+Introduce arch_swap_prepare_to_restore() that will allow an architecture to
+perform extra work during swap in and outside of a critical section.
+This will be used by arm64 to allocate a buffer in memory where to
+temporarily save tags if tag storage is not available for the page being
+swapped in.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
- arch/arm64/include/asm/page.h    |  5 ++---
- arch/arm64/include/asm/pgtable.h |  3 +++
- arch/arm64/mm/fault.c            | 19 ++++++-------------
- include/linux/pgtable.h          |  7 +++++++
- mm/mempolicy.c                   |  1 +
- mm/shmem.c                       |  5 ++++-
- 6 files changed, 23 insertions(+), 17 deletions(-)
+ include/linux/pgtable.h | 7 +++++++
+ mm/memory.c             | 4 ++++
+ mm/shmem.c              | 9 +++++++++
+ mm/swapfile.c           | 5 +++++
+ 4 files changed, 25 insertions(+)
 
-diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
-index 2312e6ee595f..88bab032a493 100644
---- a/arch/arm64/include/asm/page.h
-+++ b/arch/arm64/include/asm/page.h
-@@ -29,9 +29,8 @@ void copy_user_highpage(struct page *to, struct page *from,
- void copy_highpage(struct page *to, struct page *from);
- #define __HAVE_ARCH_COPY_HIGHPAGE
- 
--struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
--						unsigned long vaddr);
--#define vma_alloc_zeroed_movable_folio vma_alloc_zeroed_movable_folio
-+#define vma_alloc_zeroed_movable_folio(vma, vaddr) \
-+	vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma, vaddr, false)
- 
- void tag_clear_highpage(struct page *to);
- #define __HAVE_ARCH_TAG_CLEAR_HIGHPAGE
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index 79ce70fbb751..08f0904dbfc2 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -1071,6 +1071,9 @@ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
- 
- #endif /* CONFIG_ARM64_MTE */
- 
-+#define __HAVE_ARCH_CALC_VMA_GFP
-+gfp_t arch_calc_vma_gfp(struct vm_area_struct *vma, gfp_t gfp);
-+
- /*
-  * On AArch64, the cache coherency is handled via the set_pte_at() function.
-  */
-diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-index 55f6455a8284..4d3f0a870ad8 100644
---- a/arch/arm64/mm/fault.c
-+++ b/arch/arm64/mm/fault.c
-@@ -937,22 +937,15 @@ void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
- NOKPROBE_SYMBOL(do_debug_exception);
- 
- /*
-- * Used during anonymous page fault handling.
-+ * If this is called during anonymous page fault handling, and the page is
-+ * mapped with PROT_MTE, initialise the tags at the point of tag zeroing as this
-+ * is usually faster than separate DC ZVA and STGM.
-  */
--struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
--						unsigned long vaddr)
-+gfp_t arch_calc_vma_gfp(struct vm_area_struct *vma, gfp_t gfp)
- {
--	gfp_t flags = GFP_HIGHUSER_MOVABLE | __GFP_ZERO;
--
--	/*
--	 * If the page is mapped with PROT_MTE, initialise the tags at the
--	 * point of allocation and page zeroing as this is usually faster than
--	 * separate DC ZVA and STGM.
--	 */
- 	if (vma->vm_flags & VM_MTE)
--		flags |= __GFP_ZEROTAGS;
--
--	return vma_alloc_folio(flags, 0, vma, vaddr, false);
-+		return __GFP_ZEROTAGS;
-+	return 0;
- }
- 
- void tag_clear_highpage(struct page *page)
 diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index c5ddec6b5305..98f81ca08cbe 100644
+index 98f81ca08cbe..2d0f04042f62 100644
 --- a/include/linux/pgtable.h
 +++ b/include/linux/pgtable.h
-@@ -901,6 +901,13 @@ static inline void arch_do_swap_page(struct mm_struct *mm,
+@@ -959,6 +959,13 @@ static inline void arch_swap_invalidate_area(int type)
  }
  #endif
  
-+#ifndef __HAVE_ARCH_CALC_VMA_GFP
-+static inline gfp_t arch_calc_vma_gfp(struct vm_area_struct *vma, gfp_t gfp)
++#ifndef __HAVE_ARCH_SWAP_PREPARE_TO_RESTORE
++static inline vm_fault_t arch_swap_prepare_to_restore(swp_entry_t entry, struct folio *folio)
 +{
 +	return 0;
 +}
 +#endif
 +
- #ifndef __HAVE_ARCH_FREE_PAGES_PREPARE
- static inline void arch_free_pages_prepare(struct page *page, int order) { }
- #endif
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 10a590ee1c89..f7ef52760b32 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -2168,6 +2168,7 @@ struct folio *vma_alloc_folio(gfp_t gfp, int order, struct vm_area_struct *vma,
- 	pgoff_t ilx;
- 	struct page *page;
- 
-+	gfp |= arch_calc_vma_gfp(vma, gfp);
- 	pol = get_vma_policy(vma, addr, order, &ilx);
- 	page = alloc_pages_mpol(gfp | __GFP_COMP, order,
- 				pol, ilx, numa_node_id());
-diff --git a/mm/shmem.c b/mm/shmem.c
-index d7c84ff62186..14427e9982f9 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1585,7 +1585,7 @@ static struct folio *shmem_swapin_cluster(swp_entry_t swap, gfp_t gfp,
-  */
- static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t limit_gfp)
+ #ifndef __HAVE_ARCH_SWAP_RESTORE
+ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
  {
--	gfp_t allowflags = __GFP_IO | __GFP_FS | __GFP_RECLAIM;
-+	gfp_t allowflags = __GFP_IO | __GFP_FS | __GFP_RECLAIM | __GFP_ZEROTAGS;
- 	gfp_t denyflags = __GFP_NOWARN | __GFP_NORETRY;
- 	gfp_t zoneflags = limit_gfp & GFP_ZONEMASK;
- 	gfp_t result = huge_gfp & ~(allowflags | GFP_ZONEMASK);
-@@ -2038,6 +2038,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
- 		gfp_t huge_gfp;
+diff --git a/mm/memory.c b/mm/memory.c
+index 7e1f4849463a..8a421e168b57 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3975,6 +3975,10 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
  
- 		huge_gfp = vma_thp_gfp_mask(vma);
-+		huge_gfp |= arch_calc_vma_gfp(vma, huge_gfp);
- 		huge_gfp = limit_gfp_mask(huge_gfp, gfp);
- 		folio = shmem_alloc_and_add_folio(huge_gfp,
- 				inode, index, fault_mm, true);
-@@ -2214,6 +2215,8 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
- 	vm_fault_t ret = 0;
- 	int err;
+ 	folio_throttle_swaprate(folio, GFP_KERNEL);
  
-+	gfp |= arch_calc_vma_gfp(vmf->vma, gfp);
++	ret = arch_swap_prepare_to_restore(entry, folio);
++	if (ret)
++		goto out_page;
 +
  	/*
- 	 * Trinity finds that probing a hole which tmpfs is punching can
- 	 * prevent the hole-punch from ever completing: noted in i_private.
+ 	 * Back out if somebody else already faulted in this pte.
+ 	 */
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 14427e9982f9..621fabc3b8c6 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1855,6 +1855,7 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+ 	struct swap_info_struct *si;
+ 	struct folio *folio = NULL;
+ 	swp_entry_t swap;
++	vm_fault_t ret;
+ 	int error;
+ 
+ 	VM_BUG_ON(!*foliop || !xa_is_value(*foliop));
+@@ -1903,6 +1904,14 @@ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+ 	}
+ 	folio_wait_writeback(folio);
+ 
++	ret = arch_swap_prepare_to_restore(swap, folio);
++	if (ret) {
++		if (fault_type)
++			*fault_type = ret;
++		error = -EINVAL;
++		goto unlock;
++	}
++
+ 	/*
+ 	 * Some architectures may have to restore extra metadata to the
+ 	 * folio after reading from swap.
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 556ff7347d5f..49425598f778 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -1785,6 +1785,11 @@ static int unuse_pte(struct vm_area_struct *vma, pmd_t *pmd,
+ 		goto setpte;
+ 	}
+ 
++	if (arch_swap_prepare_to_restore(entry, folio)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
+ 	/*
+ 	 * Some architectures may have to restore extra metadata to the page
+ 	 * when reading from swap. This metadata may be indexed by swap entry
 -- 
 2.43.0
 
