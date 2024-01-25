@@ -1,128 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-8920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C3B83C359
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 14:10:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D72083C447
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 15:03:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8B151F23F51
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 13:10:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A9D21F23F80
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 14:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F4750A92;
-	Thu, 25 Jan 2024 13:10:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4696E62812;
+	Thu, 25 Jan 2024 14:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i/AWaFAj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B344F61E;
-	Thu, 25 Jan 2024 13:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.154.21.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2705A627F2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 14:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706188218; cv=none; b=TvvYqUfJdwME54kjjmMPDCutjlBK73bqpKDcuwA6NMgz+h236r586o/r4QPp+L0jND4zfwdCYLcsjyZlx9P3daUrSp22DWHwak2ndXJ2weO4/BQVUk8kQyVx5KBDl+ReNfdqiE7FDBMpIiC6J9SeleLxj9+sAaAFASz32csan+4=
+	t=1706191391; cv=none; b=pwT+HhPiMyQ7JcbP/a3tTq3UJqLXxhVV/MPwSUq5kz/JCJcozJLGkbbsR7Ma6RvX8WlzDoyc+0hoR0ENHA4eIX7wGhSZTp6DVcaYp3MuDD9+UD1p1L8/4eaZrjDnyV6vgyTUCzbT0c9mf7hqTMw/UP99mgSE5HOI/vMb6rIwAKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706188218; c=relaxed/simple;
-	bh=LQFpv4X1hT+QUG0VEtK7cRc54lvNGdJoRVXIOPkgluo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bb6nHZwfngV3LqmR00dt9fewtLqZ/MwMhjfGlCL1nRZdkx/dbpnpwFksDDjRfefruPUhOlI8txGt3p3dys+R4+OWQG85ZAMMs9KFv/NSkB41XVwQTyfgeDvxAm1aZXBVhnCZJAcnOEqCfcd4ucctQ2Qlfx7yRTXOvZvKVB8ENLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru; spf=pass smtp.mailfrom=omp.ru; arc=none smtp.client-ip=90.154.21.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omp.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omp.ru
-Received: from r.smirnovsmtp.omp.ru (10.189.215.22) by msexch01.omp.ru
- (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.1258.12; Thu, 25 Jan
- 2024 16:10:05 +0300
-From: Roman Smirnov <r.smirnov@omp.ru>
-To: <stable@vger.kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC: Roman Smirnov <r.smirnov@omp.ru>, "Matthew Wilcox (Oracle)"
-	<willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Alexey
- Khoroshilov <khoroshilov@ispras.ru>, Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Karina Yankevich <k.yankevich@omp.ru>, <lvc-project@linuxtesting.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-mm@kvack.org>
-Subject: [PATCH 5.10/5.15 v2 1/1 RFC] mm/truncate: Replace page_mapped() call in invalidate_inode_page()
-Date: Thu, 25 Jan 2024 13:09:47 +0000
-Message-ID: <20240125130947.600632-2-r.smirnov@omp.ru>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240125130947.600632-1-r.smirnov@omp.ru>
-References: <20240125130947.600632-1-r.smirnov@omp.ru>
+	s=arc-20240116; t=1706191391; c=relaxed/simple;
+	bh=j2gtjhl3d1XNksVxYRJqASiqF1b665xOwflpYSXVsyQ=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=rDk/N2ARUO13vm6ZW+qpmcVhB6llZdquCm7AmF/952T+tJFNWKqBNFLVf0IpuxPraHkNE9qnJQQtiDCgXVIN9tJG+TLWHV2YDdmYIrHj/GYz2Ak/dp1SRiI/um5TeSc8A4FUs5nPgZs+S3rIKHruIZpOvNzwF/pBRkZaH4FDD10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i/AWaFAj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1706191389;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=e12SznbgNVYlJuZvyyzaU+LAE5U/U9H1zetulJ+CfWs=;
+	b=i/AWaFAjO0i84J+MJKUoUVPHXqSj2EWw3N+Gh/M79nUXdJJjtVWBNihki+SntR30/+xnsn
+	TCJWBk+geVfOIRt+QoRCjbzrPIC0TDlIJC72ASqgvNl3/ZuI5DBFXXANJyLceh5g6qsyCg
+	afw5o0keYGw6w2j4xHO67KBXChaL3Bk=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-640-ak9liix9McKY6rZIJ6D-Rw-1; Thu,
+ 25 Jan 2024 09:03:00 -0500
+X-MC-Unique: ak9liix9McKY6rZIJ6D-Rw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 831452837815;
+	Thu, 25 Jan 2024 14:02:29 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.245])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id CC13951D5;
+	Thu, 25 Jan 2024 14:02:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Gao Xiang <xiang@kernel.org>
+cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    Christian Brauner <brauner@kernel.org>,
+    Matthew Wilcox <willy@infradead.org>,
+    Eric Sandeen <esandeen@redhat.com>, v9fs@lists.linux.dev,
+    linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+    linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+    linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Roadmap for netfslib and local caching (cachefiles)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: msexch02.omp.ru (10.188.4.13) To msexch01.omp.ru
- (10.188.4.12)
-X-KSE-ServerInfo: msexch01.omp.ru, 9
-X-KSE-AntiSpam-Interceptor-Info: scan successful
-X-KSE-AntiSpam-Version: 6.1.0, Database issued on: 01/25/2024 12:50:25
-X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
-X-KSE-AntiSpam-Method: none
-X-KSE-AntiSpam-Rate: 0
-X-KSE-AntiSpam-Info: Lua profiles 182932 [Jan 25 2024]
-X-KSE-AntiSpam-Info: Version: 6.1.0.3
-X-KSE-AntiSpam-Info: Envelope from: r.smirnov@omp.ru
-X-KSE-AntiSpam-Info: LuaCore: 7 0.3.7 6d6bf5bd8eea7373134f756a2fd73e9456bb7d1a
-X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
-X-KSE-AntiSpam-Info:
-	127.0.0.199:7.1.2;omp.ru:7.1.1;r.smirnovsmtp.omp.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1
-X-KSE-AntiSpam-Info: FromAlignment: s
-X-KSE-AntiSpam-Info: Rate: 0
-X-KSE-AntiSpam-Info: Status: not_detected
-X-KSE-AntiSpam-Info: Method: none
-X-KSE-AntiSpam-Info: Auth:dkim=none
-X-KSE-Antiphishing-Info: Clean
-X-KSE-Antiphishing-ScanningType: Heuristic
-X-KSE-Antiphishing-Method: None
-X-KSE-Antiphishing-Bases: 01/25/2024 12:53:00
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 1/25/2024 10:40:00 AM
-X-KSE-Attachment-Filter-Triggered-Rules: Clean
-X-KSE-Attachment-Filter-Triggered-Filters: Clean
-X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <520667.1706191347.1@warthog.procyon.org.uk>
+Date: Thu, 25 Jan 2024 14:02:27 +0000
+Message-ID: <520668.1706191347@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Here's a roadmap for the future development of netfslib and local caching
+(e.g. cachefiles).
 
-commit e41c81d0d30e1a6ebf408feaf561f80cac4457dc upstream.
+Netfslib
+========
 
-folio_mapped() is expensive because it has to check each page's mapcount
-field.  A cheaper check is whether there are any extra references to
-the page, other than the one we own, one from the page private data and
-the ones held by the page cache.
+[>] Current state:
 
-The call to remove_mapping() will fail in any case if it cannot freeze
-the refcount, but failing here avoids cycling the i_pages spinlock.
+The netfslib write helpers have gone upstream now and are in v6.8-rc1, with
+both the 9p and afs filesystems using them.  This provides larger I/O size
+support to 9p and write-streaming and DIO support to afs.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Reviewed-by: Miaohe Lin <linmiaohe@huawei.com>
-[Roman: replaced folio_ref_count() call with page_ref_count(),
-folio_nr_pages() call with compound_nr(), and
-folio_has_private() call with page_has_private()]
-Signed-off-by: Roman Smirnov <r.smirnov@omp.ru>
----
- mm/truncate.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+The helpers provide their own version of generic_perform_write() that:
 
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 8914ca4ce4b1..989bc7785d55 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -256,7 +256,9 @@ int invalidate_inode_page(struct page *page)
- 		return 0;
- 	if (PageDirty(page) || PageWriteback(page))
- 		return 0;
--	if (page_mapped(page))
-+	/* The refcount will be elevated if the page is used by the system */
-+	if (page_ref_count(page) >
-+			compound_nr(page) + page_has_private(page) + 1)
- 		return 0;
- 	return invalidate_complete_page(mapping, page);
- }
--- 
-2.34.1
+ (1) doesn't use ->write_begin() and ->write_end() at all, completely taking
+     over all of of the buffered I/O operations, including writeback.
+
+ (2) can perform write-through caching, setting up one or more write
+     operations and adding folios to them as we copy data into the pagecache
+     and then starting them as we finish.  This is then used for O_SYNC and
+     O_DSYNC and can be used with immediate-write caching modes in, say, cifs.
+
+Filesystems using this then deal with iov_iters and ideally would not deal
+pages or folios at all - except incidentally where a wrapper is necessary.
+
+
+[>] Aims for the next merge window:
+
+Convert cifs to use netfslib.  This is now in Steve French's for-next branch.
+
+Implement content crypto and bounce buffering.  I have patches to do this, but
+it would only be used by ceph (see below).
+
+Make libceph and rbd use iov_iters rather than referring to pages and folios
+as much as possible.  This is mostly done and rbd works - but there's one bit
+in rbd that still needs doing.
+
+Convert ceph to use netfslib.  This is about half done, but there are some
+wibbly bits in the ceph RPCs that I'm not sure I fully grasp.  I'm not sure
+I'll quite manage this and it might get bumped.
+
+Finally, change netfslib so that it uses ->writepages() to write data to the
+cache, even data on clean pages just read from the server.  I have a patch to
+do this, but I need to move cifs and ceph over first.  This means that
+netfslib, 9p, afs, cifs and ceph will no longer use PG_private_2 (aka
+PG_fscache) and Willy can have it back - he just then has to wrest control
+from NFS and btrfs.
+
+
+[>] Aims for future merge windows:
+
+Using a larger chunk size than PAGE_SIZE - for instance 256KiB - but that
+might require fiddling with the VM readahead code to avoid read/read races.
+
+Cache AFS directories - there are just files and currently are downloaded and
+parsed locally for readdir and lookup.
+
+Cache directories from other filesystems.
+
+Cache inode metadata, xattrs.
+
+Add support for fallocate().
+
+Implement content crypto in other filesystems, such as cifs which has its own
+non-fscrypt way of doing this.
+
+Support for data transport compression.
+
+Disconnected operation.
+
+NFS.  NFS at the very least needs to be altered to give up the use of
+PG_private_2.
+
+
+Local Caching
+=============
+
+There are a number of things I want to look at with local caching:
+
+[>] Although cachefiles has switched from using bmap to using SEEK_HOLE and
+SEEK_DATA, this isn't sufficient as we cannot rely on the backing filesystem
+optimising things and introducing both false positives and false negatives.
+Cachefiles needs to track the presence/absence of data for itself.
+
+I had a partially-implemented solution that stores a block bitmap in an xattr,
+but that only worked up to files of 1G in size (with bits representing 256K
+blocks in a 512-byte bitmap).
+
+[>] An alternative cache format might prove more fruitful.  Various AFS
+implementations use a 'tagged cache' format with an index file and a bunch of
+small files each of which contains a single block (typically 256K in OpenAFS).
+
+This would offer some advantages over the current approach:
+
+ - it can handle entry reuse within the index
+ - doesn't require an external culling process
+ - doesn't need to truncate/reallocate when invalidating
+
+There are some downsides, including:
+
+ - each block is in a separate file
+ - metadata coherency is more tricky - a powercut may require a cache wipe
+ - the index key is highly variable in size if used for multiple filesystems
+
+But OpenAFS has been using this for something like 30 years, so it's probably
+worth a try.
+
+[>] Need to work out some way to store xattrs, directory entries and inode
+metadata efficiently.
+
+[>] Using NVRAM as the cache rather than spinning rust.
+
+[>] Support for disconnected operation to pin desirable data and keep
+track of changes.
+
+[>] A user API by which the cache for specific files or volumes can be
+flushed.
+
+
+Disconnected Operation
+======================
+
+I'm working towards providing support for disconnected operation, so that,
+provided you've got your working set pinned in the cache, you can continue to
+work on your network-provided files when the network goes away and resync the
+changes later.
+
+This is going to require a number of things:
+
+ (1) A user API by which files can be preloaded into the cache and pinned.
+
+ (2) The ability to track changes in the cache.
+
+ (3) A way to synchronise changes on reconnection.
+
+ (4) A way to communicate to the user when there's a conflict with a third
+     party change on reconnect.  This might involve communicating via systemd
+     to the desktop environment to ask the user to indicate how they'd like
+     conflicts recolved.
+
+ (5) A way to prompt the user to re-enter their authentication/crypto keys.
+
+ (6) A way to ask the user how to handle a process that wants to access data
+     we don't have (error/wait) - and how to handle the DE getting stuck in
+     this fashion.
+
+David
 
 
