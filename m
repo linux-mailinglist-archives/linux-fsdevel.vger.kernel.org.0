@@ -1,138 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-8869-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8870-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D1C83BE83
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:19:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FCCD83BED7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:32:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CE5F28AEE5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 10:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FC8C1F261E0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 10:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02BBE1CA8D;
-	Thu, 25 Jan 2024 10:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD7E1CAB9;
+	Thu, 25 Jan 2024 10:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBE6lPLQ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BeoCtGvM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688DD1CA85
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 10:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BE01CAA8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 10:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706177987; cv=none; b=lJxfgrQrThH1VUwKFC2J640TNioi0OwM2v9wzxXHaKWi6in88za/gscgpxpxAhf9UUqkWUqMIYFIcq6V9WFo91ep5SSfy+fEOty0/RgEoM4YWfbJQf7Lt4KXSNsvxTuKiDnvfL281zPQtN+N1ZhJ3EC7X1aH4SNnOBiF/deYiQM=
+	t=1706178718; cv=none; b=dB/XUyATLDVLFGMvrTAmfqA80CzY0VKHM0iFOYV0/Kf3i3cP3ui1Lx2kIIkWiYYZqMtpsRcEMluEoRekGvKQUR2kYAnKoSjb+pKBogpn2k25M6oKHppvA9GWV9Bml7a0Em2buN0915PIgr1Gcb7PjbD4VWXMpexQw3RpeVskK2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706177987; c=relaxed/simple;
-	bh=DesK/s6IZ3AaNC+7BrGuEymkwdFw6BZF0QFoaowEox8=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GlCh9gTndU9n/acROWk3mtlI3QJLzd1qiT9NOSmXYTGqF1bNSrdGyn4kXw7S/FZC7cVxL8zUbr4V1HGZi1eoQ4nUbI6xt+Y5S6D/uslORlV5+5b5g1W7x2n3/VzOn8bOBQgaqroH5Wf4TCbPTnUbOQFSzpovjGEGlSLcyvijEDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UBE6lPLQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB65EC43394
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 10:19:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706177987;
-	bh=DesK/s6IZ3AaNC+7BrGuEymkwdFw6BZF0QFoaowEox8=;
-	h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-	b=UBE6lPLQVtuO5mdCfChycrn0OAdAK6riEOWQbVnN0Fn8o+a8MMurRIQQaa+jhdgcj
-	 GeBHkJCTdKcBkzYpgpMOPgapXVn1L4NuupsJgp1q3fE+4btMxK+pn9YF8EbtNwWgzk
-	 3lifdGvF5EeRcbq7O1L+VU6Gjy7U/2bsb6mVIo7JHJjSCCrMPFnmBpq/oIs4MO55ju
-	 iy6Qv8GONNn5U95RISKe6xPuIYvIXIOYXFrCVPEIBysLzey4hRqOcx51L+yUa+A3fa
-	 XH77s0RGm6Nwq01/tBNZpy4LZuy5DfVmj6OUJqkPw8gnn4Nun++sdjmlcnFdEAhw+W
-	 xzjnAg9PMb7Tw==
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-6dc83674972so3569012a34.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 02:19:46 -0800 (PST)
-X-Gm-Message-State: AOJu0Yy8ZNRxxpAz3RhJDv9h3u/Uj1aFOISax4OL5jq5JcOzbd9MztvM
-	/vUm2zCRLpSTltOHsHTWQIfoZ13Lz7vhLuu+QfEkv8PGM6c9JipxwyGN70P1aVVbWVvMeqD/MyN
-	bLcWKybDae/AAMrR0dnAbo5lBWNA=
-X-Google-Smtp-Source: AGHT+IFOKfxFm+RYnjfYIPOBsHSCgE/1CgoPH9hrTb4OVrw95G1Os+1S4uRBjXFCLuwWsAO8FMbHxTc7JanDDNvhXNE=
-X-Received: by 2002:a05:6870:c6a7:b0:210:b468:6a5c with SMTP id
- cv39-20020a056870c6a700b00210b4686a5cmr622066oab.79.1706177986291; Thu, 25
- Jan 2024 02:19:46 -0800 (PST)
+	s=arc-20240116; t=1706178718; c=relaxed/simple;
+	bh=cWf6jbJM4bTIZZq86/kL7elUKyQFSEDd12/W/Q8QCyI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AqNKiGjkCXmLcZSYNZkoLAnkkf5+jWWSGmllNPu+6SyTDYpAgriafM1po8W2s3Q570zJMPPYszydkea6vRy1jeYPJhWp4PAvkczi4ah43DNTU7/Hb/+CyvqQrjF2UJUoseivaskaZykVY3NN2aLS0/TpPW0P63gneIHIbUt1h2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BeoCtGvM; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-55cc794291cso7251a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 02:31:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1706178715; x=1706783515; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cWf6jbJM4bTIZZq86/kL7elUKyQFSEDd12/W/Q8QCyI=;
+        b=BeoCtGvMNuAMkx9bTQJa45NPOXWML4wWC7ct8hyo3Xd7PegyigVJtjK+8x692IFBjM
+         lMtcmZNpT2CerWJlgm8V1CaZP5Kld4o4xvBGtfgq3HxW8ZKK8zdtAK+5WOApLjAwHG3/
+         iItiuCqFwjwrQyDRmfx/2p4uyVURuFNJxyk9M6LqNA16cfboPxazF+6ilYkMIr9ueyOk
+         9fVfdeL+NvIjqsCpBijJPwVUdBGII+d/0gVSHgpCA7FwofKYU0+H9o1DDJwuhDgAwoqW
+         AD6ZKT7nXtJbfd2Ehzm7LK9bSuQAvm92Uybocs5/WunCATM62AusnlJ4YjzjQPPya5TQ
+         qQCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706178715; x=1706783515;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cWf6jbJM4bTIZZq86/kL7elUKyQFSEDd12/W/Q8QCyI=;
+        b=rsi53Hl3XmTZRkTbJLpzmln1hKEpKipyoJiqlneX0seD+TGY7FF4GuqxcbIcuxydAU
+         JFztWFCbblb10qq8XfuU7oQe62imJ43UEnOBmU7Um1KxNZFUj9as3PB0svCgO4Ir9MXt
+         be1YEpnh27lUBEuHggEqF2vFWsd4hjGoVzLi0snJRYmTzy6WPK7FGxhCX+8od5HeQCYS
+         yFrC9PnMTREZ0RM5DK77XB0P75G74CcAXruQzltapvsffrssvVvQRk+S2k5/vQeEWoTQ
+         lpB0SpLowaRte/go74m17HD2HbDekj3UVY3eR2lcQVZfEHT6m14jJVoqYh9ngRaqs9KO
+         vnuw==
+X-Gm-Message-State: AOJu0Yx3jhOsc/iagXWuPuUkKJu7mDxBTLyGRd2RSKPM18bPgWg7x2ZV
+	0k4Ax4YBd41gf3pjSpGkkeWtDcBZ/8cWf32vvNZ2KociR0UqDPmpKB+pas1yOOkOlwo3xw60cuU
+	SkVjV8drwKwZhfIoeWJqKjqbWzHI/2gJQ2gO+
+X-Google-Smtp-Source: AGHT+IHtqUYvp4/VdtenInel7W+JfvX7Hf8VwjhjBJFEhAw9CuJLqpo7Ij201tiBjQxKUPCTaH7PXQp8tVrb6IBxWEM=
+X-Received: by 2002:a05:6402:22a1:b0:55c:2131:56cf with SMTP id
+ cx1-20020a05640222a100b0055c213156cfmr118666edb.7.1706178714987; Thu, 25 Jan
+ 2024 02:31:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Received: by 2002:ac9:5984:0:b0:514:c0b3:431 with HTTP; Thu, 25 Jan 2024
- 02:19:45 -0800 (PST)
-In-Reply-To: <ZbGCsAsLcgreH6+a@dread.disaster.area>
-References: <PUZPR04MB63168A32AB45E8924B52CBC2817B2@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <ZbCeWQnoc8XooIxP@casper.infradead.org> <PUZPR04MB63168DC7A1A665B4EB37C996817B2@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <ZbGCsAsLcgreH6+a@dread.disaster.area>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Thu, 25 Jan 2024 19:19:45 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-MDm-9AiTsdL744cZomrFzNRvk1Sk8wrZXsZvpx8KOzA@mail.gmail.com>
-Message-ID: <CAKYAXd-MDm-9AiTsdL744cZomrFzNRvk1Sk8wrZXsZvpx8KOzA@mail.gmail.com>
-Subject: Re: [PATCH] exfat: fix file not locking when writing zeros in exfat_file_mmap()
-To: Dave Chinner <david@fromorbit.com>
-Cc: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>, Matthew Wilcox <willy@infradead.org>, 
-	"sj1557.seo@samsung.com" <sj1557.seo@samsung.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20240119092024.193066-1-zhangpeng362@huawei.com>
+ <Zap7t9GOLTM1yqjT@casper.infradead.org> <5106a58e-04da-372a-b836-9d3d0bd2507b@huawei.com>
+ <Za6SD48Zf0CXriLm@casper.infradead.org> <CANn89iL4qUXsVDRNGgBOweZbJ6ErWMsH+EpOj-55Lky8JEEhqQ@mail.gmail.com>
+ <Za6h-tB7plgKje5r@casper.infradead.org> <CANn89iJDNdOpb6L6PkrAcbGcsx6_v4VD0v2XFY77g7tEnJEXXQ@mail.gmail.com>
+ <4f78fea2-ced6-fc5a-c7f2-b33fcd226f06@huawei.com> <CANn89iKbyTRvWEE-3TyVVwTa=N2KsiV73-__2ASktt2hrauQ0g@mail.gmail.com>
+ <d68f50a5-8d83-99ba-1a5a-7f119cd52029@huawei.com> <CANn89iJSxsx_6oTM+ggo90vacNM33e_DpgJJg1HQRfkdj3ewqg@mail.gmail.com>
+ <531c536d-a7d1-2be5-10aa-8d6eb4dcb5c9@huawei.com>
+In-Reply-To: <531c536d-a7d1-2be5-10aa-8d6eb4dcb5c9@huawei.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 25 Jan 2024 11:31:42 +0100
+Message-ID: <CANn89iLThLScqJh0YSC0W3d2M6DrPzYeX3ViL7UM2BDiNbiWTA@mail.gmail.com>
+Subject: Re: SECURITY PROBLEM: Any user can crash the kernel with TCP ZEROCOPY
+To: "zhangpeng (AS)" <zhangpeng362@huawei.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
+	netdev@vger.kernel.org, akpm@linux-foundation.org, davem@davemloft.net, 
+	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, arjunroy@google.com, 
+	wangkefeng.wang@huawei.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-2024-01-25 6:35 GMT+09:00, Dave Chinner <david@fromorbit.com>:
-> On Wed, Jan 24, 2024 at 10:05:15AM +0000, Yuezhang.Mo@sony.com wrote:
->> From: Matthew Wilcox <willy@infradead.org>
->> Sent: Wednesday, January 24, 2024 1:21 PM
->> To: Mo, Yuezhang <Yuezhang.Mo@sony.com>
->> Subject: Re: [PATCH] exfat: fix file not locking when writing zeros in
->> exfat_file_mmap()
->> > On Wed, Jan 24, 2024 at 05:00:37AM +0000, mailto:Yuezhang.Mo@sony.com
->> > wrote:
->> > > inode->i_rwsem should be locked when writing file. But the lock
->> > > is missing when writing zeros to the file in exfat_file_mmap().
->> >
->> > This is actually very weird behaviour in exfat.  This kind of "I must
->> > manipulate the on-disc layout" is not generally done in mmap(), it's
->> > done in ->page_mkwrite() or even delayed until we actually do
->> > writeback.
->> > Why does exfat do this?
->>
->> In exfat, "valid_size" describes how far into the data stream user data
->> has been
->> written and "size" describes the file size.  Return zeros if read
->> "valid_size"~"size".
->>
->> For example,
->>
->> (1) xfs_io -t -f -c "pwrite -S 0x59 0 1024" $filename
->>      - Write 0x59 to 0~1023
->>      - both "size" and "valid_size" are 1024
->> (2) xfs_io -t -f -c "truncate 4K" $filename
->>      - "valid_size" is still 1024
->>      - "size" is changed to 4096
->>      - 1024~4095 is not zeroed
+On Thu, Jan 25, 2024 at 10:22=E2=80=AFAM zhangpeng (AS) <zhangpeng362@huawe=
+i.com> wrote:
 >
-> I think that's the problem right there. File extension via truncate
-> should really zero the bytes in the page cache in partial pages on
-> file extension (and likley should do it on-disk as well). See
-> iomap_truncate_page(), ext4_block_truncate_page(), etc.
->
-> Leaving the zeroing until someone actually accesses the data leads
-> to complexity in the IO path to handle this corner case and getting
-> that wrong leads directly to data corruption bugs. Just zero the
-> data in the operation that exposes that data range as zeros to the
-> user.
-We need to consider the case that mmap against files with different
-valid size and size created from Windows. So it needed to zero out in mmap.
-We tried to improve this after receiving a report of a compatibility
-issue with linux-exfat, where the two file sizes are set differently
-from Windows.
-
-https://github.com/exfatprogs/exfatprogs/issues/213
-
-Yue referred to mmap code of ntfs3 that has valid-size like exfat and
-had handled it in mmap.
-
-Thanks.
 
 >
-> -Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
+> This patch can fix this issue.
 >
+>
+
+Great, I will submit this patch for review then, thanks a lot !
+
+>
+> If all the pages that need to be inserted by TCP zerocopy are
+> page->mapping =3D=3D NULL, this solution could be used.
+
+At least the patch looks sane for stable submission.
+
+If we need to extend functionality, it can be done in future kernels.
 
