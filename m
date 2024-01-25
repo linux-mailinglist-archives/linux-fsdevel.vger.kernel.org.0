@@ -1,57 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-8993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB75783C9E1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 18:23:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 100AF83CA5D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 18:56:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C2D1C234F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:23:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4D871F24081
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88A1130E59;
-	Thu, 25 Jan 2024 17:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE77E13341F;
+	Thu, 25 Jan 2024 17:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bELAfsi4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gPA8lYpw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF9A6EB57;
-	Thu, 25 Jan 2024 17:23:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAAA12FF9F;
+	Thu, 25 Jan 2024 17:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706203395; cv=none; b=UWhXM9NcN6FCeT3WFfBlUwZl9ylnxSTREwm6nvd3fzXI9LLp8Hjk/6dsUr1lGz/2O9D+x7aMFR+QAuaki0stjo0hEvPHxmsOe1OF9JjDeFpDvqvHP8OVbuNCCeXbui55XymrjmloIzl/t/+pdRQdiHSFnFd+lomyjFVDciWnY+k=
+	t=1706205370; cv=none; b=oSnp9KqqnUHF49oGhOJh727IQO24GfZkm2nzjOdy8EHT7HGdVEznENZ6+FB/1oVc+NVyAyFA3S9YI/2ybPeKsVGiPTPVuui3535Rb5Cc3421SkBIM+OIk5vz0R4Xv7a060QTV0Mn5LNf5xL7uIh5u+Z4U3JFIERhh0QZ66aGe6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706203395; c=relaxed/simple;
-	bh=MK+U2MEGE3SsUnEsjfwVCkC79N7AdgnSB76OtGlsmFs=;
+	s=arc-20240116; t=1706205370; c=relaxed/simple;
+	bh=5zG9U0DzdAhitAtjOM1hSe+LdL3+tjiF/DdGkyoqWsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mpdVeVZTBXJEXgg1YS06L4gcblQyb9w1IVvwTOEZPfk1G/YrWZJ9CuFcvzi416DwoU5EotUpSMhsETX3j92wXAunfmZ2ttQ4YOo1YEkOn6d4kulkE7PyoX5cznTv0JyXZ5x+wEQBbIUrE8jdw+tKO2ckAnPAJjOkP7sYpq1jXkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bELAfsi4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E871C433C7;
-	Thu, 25 Jan 2024 17:23:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3OPY2KjoowZ1hx0gC+tWlL5DI8sirxiQ76lZo/B8c7HIM/AVs/mWrYbknNAuLF0GmWSck1QdklCl4ubBaAxeujTqr7KoSb7WgKJmJ/oBfRSPrBoO74B9fRAVvCjTWPeaQcRaoQD1ZgS5hwEo2vO+gs+KoFa6hF/FSYGUaEp9xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gPA8lYpw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81AA6C433F1;
+	Thu, 25 Jan 2024 17:56:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706203394;
-	bh=MK+U2MEGE3SsUnEsjfwVCkC79N7AdgnSB76OtGlsmFs=;
+	s=k20201202; t=1706205368;
+	bh=5zG9U0DzdAhitAtjOM1hSe+LdL3+tjiF/DdGkyoqWsM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bELAfsi4o/o7nKz7GDBtHHe/SexgXEjtuTMfj5KVkhgPx2+poUhouIZiLvdQd86P4
-	 v9yiR8Witdo0BgZS9p69GEmMpB41cRlclRM7rU8VprFiAoagEDV4Bsod00TlmOJpLa
-	 ulTEPeTZx5+fpFVPlrbZUhrmrPLBni56tk4jP4OvN0QB/HNYLOzyouLHVgwjc/01zJ
-	 MpiC6wNZfqygP9y9QE5/23RBVC85CWc0ic11WfkJDE9vSjvNyzoJlnjJYStqcKU08Z
-	 yx1j7CgtlaFZZBaS0qypLoCHtkM0dPiKc7q33sccf1pRIBO4nK8PjkxqmBZ00Kd24i
-	 CiIjo+terGXoQ==
-Date: Thu, 25 Jan 2024 18:23:07 +0100
+	b=gPA8lYpwIkc009qBw4FkHI2ylWYDep6bGAb9cbe/+5htz8Hh6hoJW8egMF3hAuktm
+	 m2q59n0eX9cOvE/PzgrtGtz/0Ur6u4Y7k//Z+1hhJH/pk0VkTqZL7xZ9/yp8fjg5KD
+	 w3pdZ8O1bhGyqLShWn1kxYLRBGAhpKVIbECQ4KjEYlclFioesEm6GVzWLR/9CEarmh
+	 XUGaVVre6W1iXOoc7s9tc+upZoYMi/jHKkYtJFSupwaKwtpRcd9c/UD1Dj8316UlvC
+	 TaOygb5CBrnYk/BCyuukfjuQUEUG4lsFNo3z/iqDNNSs5nZDDTtz+uOcTGWZPuz3rz
+	 bAZNuqACbZRHg==
+Date: Thu, 25 Jan 2024 18:56:04 +0100
 From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Gao Xiang <xiang@kernel.org>, Jeff Layton <jlayton@kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Eric Sandeen <esandeen@redhat.com>, v9fs@lists.linux.dev, 
-	linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org, 
-	samba-technical@lists.samba.org, linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: Roadmap for netfslib and local caching (cachefiles)
-Message-ID: <20240125-eruption-holprig-1dea37c287a4@brauner>
-References: <520668.1706191347@warthog.procyon.org.uk>
+To: Tony Solomonik <tony.solomonik@gmail.com>
+Cc: io-uring@vger.kernel.org, asml.silence@gmail.com, axboe@kernel.dk, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 1/2] Add ftruncate_file that truncates a struct file
+Message-ID: <20240125-mickrig-gemustert-927a2eaee125@brauner>
+References: <20240124083301.8661-1-tony.solomonik@gmail.com>
+ <20240124083301.8661-2-tony.solomonik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,141 +58,54 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <520668.1706191347@warthog.procyon.org.uk>
+In-Reply-To: <20240124083301.8661-2-tony.solomonik@gmail.com>
 
-On Thu, Jan 25, 2024 at 02:02:27PM +0000, David Howells wrote:
-> Here's a roadmap for the future development of netfslib and local caching
-> (e.g. cachefiles).
+On Wed, Jan 24, 2024 at 10:33:00AM +0200, Tony Solomonik wrote:
+> do_sys_ftruncate receives a file descriptor, fgets the struct file, and
+> finally actually truncates the file.
 > 
-> Netfslib
-> ========
+> ftruncate_file allows for passing in a file directly, with the caller
+> already holding a reference to it.
 > 
-> [>] Current state:
+> Signed-off-by: Tony Solomonik <tony.solomonik@gmail.com>
+> ---
+>  fs/internal.h |  1 +
+>  fs/open.c     | 53 +++++++++++++++++++++++++++------------------------
+>  2 files changed, 29 insertions(+), 25 deletions(-)
 > 
-> The netfslib write helpers have gone upstream now and are in v6.8-rc1, with
-> both the 9p and afs filesystems using them.  This provides larger I/O size
-> support to 9p and write-streaming and DIO support to afs.
-> 
-> The helpers provide their own version of generic_perform_write() that:
-> 
->  (1) doesn't use ->write_begin() and ->write_end() at all, completely taking
->      over all of of the buffered I/O operations, including writeback.
-> 
->  (2) can perform write-through caching, setting up one or more write
->      operations and adding folios to them as we copy data into the pagecache
->      and then starting them as we finish.  This is then used for O_SYNC and
->      O_DSYNC and can be used with immediate-write caching modes in, say, cifs.
-> 
-> Filesystems using this then deal with iov_iters and ideally would not deal
-> pages or folios at all - except incidentally where a wrapper is necessary.
-> 
-> 
-> [>] Aims for the next merge window:
-> 
-> Convert cifs to use netfslib.  This is now in Steve French's for-next branch.
-> 
-> Implement content crypto and bounce buffering.  I have patches to do this, but
-> it would only be used by ceph (see below).
-> 
-> Make libceph and rbd use iov_iters rather than referring to pages and folios
-> as much as possible.  This is mostly done and rbd works - but there's one bit
-> in rbd that still needs doing.
-> 
-> Convert ceph to use netfslib.  This is about half done, but there are some
-> wibbly bits in the ceph RPCs that I'm not sure I fully grasp.  I'm not sure
-> I'll quite manage this and it might get bumped.
-> 
-> Finally, change netfslib so that it uses ->writepages() to write data to the
-> cache, even data on clean pages just read from the server.  I have a patch to
-> do this, but I need to move cifs and ceph over first.  This means that
-> netfslib, 9p, afs, cifs and ceph will no longer use PG_private_2 (aka
-> PG_fscache) and Willy can have it back - he just then has to wrest control
-> from NFS and btrfs.
-> 
-> 
-> [>] Aims for future merge windows:
-> 
-> Using a larger chunk size than PAGE_SIZE - for instance 256KiB - but that
-> might require fiddling with the VM readahead code to avoid read/read races.
-> 
-> Cache AFS directories - there are just files and currently are downloaded and
-> parsed locally for readdir and lookup.
-> 
-> Cache directories from other filesystems.
-> 
-> Cache inode metadata, xattrs.
+> diff --git a/fs/internal.h b/fs/internal.h
+> index 58e43341aebf..78a641ebd16e 100644
+> --- a/fs/internal.h
+> +++ b/fs/internal.h
+> @@ -182,6 +182,7 @@ extern struct open_how build_open_how(int flags, umode_t mode);
+>  extern int build_open_flags(const struct open_how *how, struct open_flags *op);
+>  extern struct file *__close_fd_get_file(unsigned int fd);
+>  
+> +long ftruncate_file(struct file *file, loff_t length, int small);
+>  long do_sys_ftruncate(unsigned int fd, loff_t length, int small);
+>  int chmod_common(const struct path *path, umode_t mode);
+>  int do_fchownat(int dfd, const char __user *filename, uid_t user, gid_t group,
+> diff --git a/fs/open.c b/fs/open.c
+> index 02dc608d40d8..649d38eecfe4 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -154,49 +154,52 @@ COMPAT_SYSCALL_DEFINE2(truncate, const char __user *, path, compat_off_t, length
+>  }
+>  #endif
+>  
+> -long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
+> +long ftruncate_file(struct file *file, loff_t length, int small)
 
-Implications for permission checking might get interesting depending on
-how that's supposed to work for filesystems such as cephfs that support
-idmapped mounts. But I need to understand more details to say something
-less handwavy.
+All internal functions that io_uring currently calls are called do_*():
 
-> 
-> Add support for fallocate().
-> 
-> Implement content crypto in other filesystems, such as cifs which has its own
-> non-fscrypt way of doing this.
-> 
-> Support for data transport compression.
-> 
-> Disconnected operation.
-> 
-> NFS.  NFS at the very least needs to be altered to give up the use of
-> PG_private_2.
-> 
-> 
-> Local Caching
-> =============
-> 
-> There are a number of things I want to look at with local caching:
-> 
-> [>] Although cachefiles has switched from using bmap to using SEEK_HOLE and
-> SEEK_DATA, this isn't sufficient as we cannot rely on the backing filesystem
-> optimising things and introducing both false positives and false negatives.
-> Cachefiles needs to track the presence/absence of data for itself.
-> 
-> I had a partially-implemented solution that stores a block bitmap in an xattr,
-> but that only worked up to files of 1G in size (with bits representing 256K
-> blocks in a 512-byte bitmap).
-> 
-> [>] An alternative cache format might prove more fruitful.  Various AFS
-> implementations use a 'tagged cache' format with an index file and a bunch of
-> small files each of which contains a single block (typically 256K in OpenAFS).
-> 
-> This would offer some advantages over the current approach:
-> 
->  - it can handle entry reuse within the index
->  - doesn't require an external culling process
->  - doesn't need to truncate/reallocate when invalidating
-> 
-> There are some downsides, including:
-> 
->  - each block is in a separate file
->  - metadata coherency is more tricky - a powercut may require a cache wipe
->  - the index key is highly variable in size if used for multiple filesystems
-> 
-> But OpenAFS has been using this for something like 30 years, so it's probably
-> worth a try.
-> 
-> [>] Need to work out some way to store xattrs, directory entries and inode
-> metadata efficiently.
-> 
-> [>] Using NVRAM as the cache rather than spinning rust.
-> 
-> [>] Support for disconnected operation to pin desirable data and keep
-> track of changes.
-> 
-> [>] A user API by which the cache for specific files or volumes can be
-> flushed.
-> 
-> 
-> Disconnected Operation
-> ======================
-> 
-> I'm working towards providing support for disconnected operation, so that,
-> provided you've got your working set pinned in the cache, you can continue to
-> work on your network-provided files when the network goes away and resync the
-> changes later.
+* do_rmdir()
+* do_unlinkat()
+* do_mkdirat()
+* do_symlinkat()
+* do_statx()
 
-As long as it doesn't involve upcalls... :)
+So I'd follow that pattern and just call that thing do_ftruncate().
+Otherwise looks good to me,
+
+Acked-by: Christian Brauner <brauner@kernel.org>
 
