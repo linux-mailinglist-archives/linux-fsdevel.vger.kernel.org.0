@@ -1,100 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-8916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D628883C136
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 12:43:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D03F83C17D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 12:59:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14A9A1C22955
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:43:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A214B1F261DC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E917D2C6A0;
-	Thu, 25 Jan 2024 11:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="deVqHq2H"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D8345C1C;
+	Thu, 25 Jan 2024 11:59:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C181BC46
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 11:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112D332182
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 11:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706182993; cv=none; b=oqdu2HKeI2tsLiBwwmRCfmzb/nI3miFgPdPet+V2QCC60RVLWHb0X3ML5FxlPy/pPgVOrTSS0SasMP5e/RN96jw/YSb2ZGjNOZ6u8vcMAeXSLI6DXKmoHSMgSRtTdwcfsdTlBViBzKO9aFq7FFZZIYya6O7klKiK1ABWvj3KfPc=
+	t=1706183946; cv=none; b=rcz0w21dx0UbbUlq/40kKXbJ8uhJDKm/58kI7gJKH3PMfwdSAnFX5NnOz3MMmlpB0pdVZUGlZFPCjiE2IFG/fF8t426m354Om3oJJVzjFoyKUzLpFneDUgqcoJ6YRDzeiXew5TzXDOOn3jBwxVGc8yJ+EVRYpEwZcRxr9/oARME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706182993; c=relaxed/simple;
-	bh=kzEhFgF2O6Y2JCCtYiBmXE6wkYk/VoEpyEZkWKdyvHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=DMsLQOzeepKWFIoiYta5zsvzY5++/Qi3jGD2jVrFCLq9jh00Sqz+OMiMB6t+pg7U0xDAmolvpvm7dZ0mO3NWfsde1b81S6YeCG+++lA8FdbBJGDfsL5bFvRioDdPPu5PZv4bOv5znp+L9C8rqSw+sZMQx1KHC84oJfoPmItaMIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=deVqHq2H; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1706182987; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=uPEytPH/UOp1KTFETMeN2Fac9soI1S7kOoiI6OqZWeE=;
-	b=deVqHq2HbTvfJIynVtJ54oUMmA3jPZba7j7rT2LqTnGN+DnEfHePzfJK+IkhYWRqJea34nEAIdynynN2cGAQvOFkRMfWUbBKNgqIWDiQOrxptKdqq+xWPafSZriEISt1nNSZ40EKRWfeH/GfBhzx8/h0H8TufkZv6DeUXEX4ZaE=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R391e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=3;SR=0;TI=SMTPD_---0W.KIHmY_1706182986;
-Received: from 30.221.148.174(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W.KIHmY_1706182986)
-          by smtp.aliyun-inc.com;
-          Thu, 25 Jan 2024 19:43:07 +0800
-Message-ID: <1611a0cc-6daa-4423-be27-eccca71e2fce@linux.alibaba.com>
-Date: Thu, 25 Jan 2024 19:43:05 +0800
+	s=arc-20240116; t=1706183946; c=relaxed/simple;
+	bh=5IeaVdhF5LtzIsAPk6LztQlW/FDS4ghLmFVK+1cJZBA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DfRK8cT4MfomjnVO9UeblNOM2lyI34QWYt0iyDozriAiAMn3eY9uNFakfkJ2Czh7r8+Fc2i1kIpOnnNr+Ubxe8pHfiCa9ICethYYTiH9LVNx9HH2FhLj9RUoICroep9G+BQrXNCipCzHUpRcpyO5ggE+bqx90U/tFhuMAc/0s3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7b7f98e777cso632886639f.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 03:59:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706183944; x=1706788744;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X/iub3MHAFwcdo/Gqv4i8H6fRbSsG4isv2FzsUCWJ2Q=;
+        b=DIdDasBpT+N5FS4BWyZoD5fqSOUuj3o5+A+A2nsYvRIypCgqdo14j44rQqoRZxVHAs
+         QbevleWO4fLZmGLmaqy4HHLh+axQbc31C2sIFJ6jgKcIu4QD5UCA5jGrGoGQDOq9ATQA
+         7MpJRmEB8j5fgkIWwQnbfGG7ObRbkmNJO4NaADxbjNZtAlHgHmhOd7iFTQSuOxTHGXzi
+         r7O6KhYRW7Kellr/pSbPcbv50r0RejYrgpJ0AKn65nVjjZKUqYZ8yFEop3ppcvVlsdyx
+         Nj72uyq26T9I2itSmczksZ9ieqJ+Wyn+bceQXqamcRsv1Ug0BWHmDwHEnZ+4c4wXmtQs
+         GmxQ==
+X-Gm-Message-State: AOJu0Yx2cgNV/vORZT/hQ8M3is5zwtQCztw57WbmF7FA3IPlOhrb7GeW
+	TrYzBlEuOwKlvpaGmOWaLgr6pax8xPeQ+u9ehIz90CeUAXmwhD8kJ4F7mVmrzaN4PPKBLi/yPyn
+	ron4BlLDY36bTZGf2PCNF2IJEjqR64/n/iK1fbm8TFoYL9d7ZfGYn/zc=
+X-Google-Smtp-Source: AGHT+IHyn2Qwd5HMJ7IxpvO0WYV/RjdhuSh6ltkRkTWpD1C389xewU6uddZnAn6Y8UCvfgydKDiM2O+RIWXKLEy9yto1g0WIYVHI
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] fuse: Introduce a new notification type for resend
- pending requests
-Content-Language: en-US
-To: Zhao Chen <winters.zc@antgroup.com>, linux-fsdevel@vger.kernel.org,
- Miklos Szeredi <miklos@szeredi.hu>
-References: <20240109092443.519460-1-winters.zc@antgroup.com>
- <20240109092443.519460-2-winters.zc@antgroup.com>
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20240109092443.519460-2-winters.zc@antgroup.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6638:1921:b0:46e:d83d:472f with SMTP id
+ p33-20020a056638192100b0046ed83d472fmr57559jal.0.1706183943905; Thu, 25 Jan
+ 2024 03:59:03 -0800 (PST)
+Date: Thu, 25 Jan 2024 03:59:03 -0800
+In-Reply-To: <00000000000083513f060340d472@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e5e71a060fc3e747@google.com>
+Subject: Re: [syzbot] [jfs?] INFO: task hung in path_mount (2)
+From: syzbot <syzbot+fb337a5ea8454f5f1e3f@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, hdanton@sina.com, jack@suse.cz, 
+	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi, Miklos,
+syzbot suspects this issue was fixed by commit:
 
-On 1/9/24 5:24 PM, Zhao Chen wrote:
-> When a FUSE daemon panics and failover, we aim to minimize the impact on
-> applications by reusing the existing FUSE connection. During this process,
-> another daemon is employed to preserve the FUSE connection's file
-> descriptor. The new started FUSE Daemon will takeover the fd and continue
-> to provide service.
-> 
-> However, it is possible for some inflight requests to be lost and never
-> returned. As a result, applications awaiting replies would become stuck
-> forever. To address this, we can resend these pending requests to the
-> new started FUSE daemon.
-> 
-> This patch introduces a new notification type "FUSE_NOTIFY_RESEND", which
-> can trigger resending of the pending requests, ensuring they are properly
-> processed again.
-> 
-> Signed-off-by: Zhao Chen <winters.zc@antgroup.com>
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-The notification style is more helpful in the cloud native scenarios
-comparing to the original fusectl mechanism.  Recent days we found the
-original fusectl based "resend" interface is un-accessible inside a
-non-privileged container in our internal use case, as fusectl is
-designed as a singleton and has no ability for user namespace mounting.
-The new notification styled interface seems extremely helpful in our case.
+    fs: Block writes to mounted block devices
 
-Thus may I ask if there is any potential modification as for the user
-ABI of the resend feature?  I'd like to test and improve it if there's any.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13175a53e80000
+start commit:   2ccdd1b13c59 Linux 6.5-rc6
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9c37cc0e4fcc5f8d
+dashboard link: https://syzkaller.appspot.com/bug?extid=fb337a5ea8454f5f1e3f
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17ba5d53a80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14265373a80000
 
-Many thanks!
+If the result looks correct, please mark the issue as fixed by replying with:
 
+#syz fix: fs: Block writes to mounted block devices
 
--- 
-Thanks,
-Jingbo
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
