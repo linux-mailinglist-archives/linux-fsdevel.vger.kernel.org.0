@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-8874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D93C083BF3E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:44:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A2383BF44
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:45:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7921B1F2519F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 10:44:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A7A71F270A2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 10:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15913D99E;
-	Thu, 25 Jan 2024 10:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C128945033;
+	Thu, 25 Jan 2024 10:43:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hT14TLUp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpwx7wP2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073153A27E;
-	Thu, 25 Jan 2024 10:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBE845025;
+	Thu, 25 Jan 2024 10:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706179403; cv=none; b=cZj5TebKN/N63W5w8l/bwyh85ispMEN3nMD49+dd0SgFAF/sie4aB9oKcZzH/dfMGiJmlGZnjSR/ADPqlIZ3Wk+gSW+XeOFQ6ygkc4B3votpXunx9vp8+3EquVZLG+FXbDva4F6ItR5pO3sxeq77gnlAfmVE2xylUvlu53zvv5M=
+	t=1706179407; cv=none; b=lVy9F/AJ8kCNUXXktq1npIjJsqFAj/DusjyTiTPaCPM/MmFAYrWMiBJOQe7w1X0cB0WrN3RJ4E9fgpPASvJWV6tXb79aI2EaXi1i1yV5Kgn0+iL995x/Nv1kArG/ZUSjQ70zvjHua01luF/IjU8Lktnh9NGI8kK2AmHBz8hlbg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706179403; c=relaxed/simple;
-	bh=2YbMDNw3c2UqWUFblyqOLLtcJSL33noaMk1Mbj6+9/U=;
+	s=arc-20240116; t=1706179407; c=relaxed/simple;
+	bh=+4M6T+k2C0cQ+WFh3iNf7iR7sMPN2w2MqFWDMSVw904=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=SCdQTKkxqa507eE/x8LTIlFkdOWZhXyxJ5KzI1/YKeDzTt0JCw40pvYfPaAE1LSmu+wrjJYEMNtOH0XfKNDhg3Rt6jiny0RcLvGNpq7z4VfYdTK9wTiZC+adEVktSgDMv7INIofK4usMQ6D0Ekwy+UdiRY4yOyMBhF5G5d2V+Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hT14TLUp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17FD5C433F1;
-	Thu, 25 Jan 2024 10:43:19 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=e3XzZlKsnk9CVSRHaxBNqg3CeOBuSz+nNJ3rMRnOnzwyhUjZa7VX6Row0OZtER9cbM2+IGpcdiZ6hMCX82Wa+H3ikvnfPmMLziEueo+VHOVMPFdqpTzsPdDpg4d+r1YmuvqrKQzvZ1qWJjvsjiyTRwHl7K2V3/WkbAqEtygCfrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tpwx7wP2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2426C43609;
+	Thu, 25 Jan 2024 10:43:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706179402;
-	bh=2YbMDNw3c2UqWUFblyqOLLtcJSL33noaMk1Mbj6+9/U=;
+	s=k20201202; t=1706179406;
+	bh=+4M6T+k2C0cQ+WFh3iNf7iR7sMPN2w2MqFWDMSVw904=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=hT14TLUpQtKrKkB7OwsSU3gG0qzFgWueg67vejEkAWGLmsL7B7FRu7VJudxNvO793
-	 7L/siql+TeZQE1jIgg5J1CiAPX8IBovHpQvq3hHiUUCeMyWpHS0+hPxrygGXUjle22
-	 rJlWhS35Mp4cWNP0pDeTOyq4h/N5GE3w3r+yy0Mj1ZLxB9xu8EPI0MxZCSHAILNV1Q
-	 dQTZQnG7r0t7zyoqLuYTkNIFohuA1yuyqDbsOi/m2JyabSbajxQW/tn7PUW41kv5uM
-	 mqfUV3H0ijLeQkRiNJ0pJUMw4sDY5vpiQeyN+LhWDr2fBmKCIEr/prDdOY/sSi/Ong
-	 GX87xypCKYwJQ==
+	b=tpwx7wP2VA7YKWMB2O+JJsxglfesc0hWtkPusegJ9ldc5at6b7NeZtTtpH7imHdk+
+	 Z0r6/nPj3VGv+tpoli6QmVEx0VEZyJIJLGA07F7L+mkbvDDFqHmM88+8km8+E5Y1GZ
+	 OMxiNMuaCWymffjCsf72vHyuND0u4wgQHkeSmS1nNxcRKQ1DaKiA8MOOo2yKDdZOUx
+	 6PpyMeZtZVhwNEnZSWgdVqoc5nJvHOAnC/RzDRMEFPn5GebByGJudVcvNG94yckYIx
+	 SiBZ3meedUu2yvHQGsT2aVOBTeiifly/G18LkzfQ1y+TuTgVymBGM0c3xY1rxP2XUC
+	 VyDqIbbfr00fw==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 25 Jan 2024 05:42:43 -0500
-Subject: [PATCH v2 02/41] filelock: rename fl_pid variable in
- lock_get_status
+Date: Thu, 25 Jan 2024 05:42:44 -0500
+Subject: [PATCH v2 03/41] dlm: rename fl_flags variable in dlm_posix_unlock
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240125-flsplit-v2-2-7485322b62c7@kernel.org>
+Message-Id: <20240125-flsplit-v2-3-7485322b62c7@kernel.org>
 References: <20240125-flsplit-v2-0-7485322b62c7@kernel.org>
 In-Reply-To: <20240125-flsplit-v2-0-7485322b62c7@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -87,63 +86,53 @@ Cc: linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
  linux-cifs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1474; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=2YbMDNw3c2UqWUFblyqOLLtcJSL33noaMk1Mbj6+9/U=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlsjs6UJz7Yk3f7jnrR3Z5VKA7kWg/eqwTsVvjA
- GUkQztmrSqJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbI7OgAKCRAADmhBGVaC
- Fd3AD/0YUIGFNN1h2gzmR6UUCs0oVlw7FOBgzKU5zY4ZLd2QF8BYCfAWfeIjBKUzJ4UcsegwreG
- bTfHmg1lQGhnqcGzvt20Jh8ns4dHk/jIf2D6UVVZl3Egx8bBe15Hfg+TDaUgTNaXNfrPYkiA3It
- 83zoO/00BeLzzpYqHvyriEDi8d8tzrShEPZG3vmGnljv6MAmIxitsgUt+9RhDNir0Bf5uj0Ig0f
- RXQNsxNvY321TAeFz+0R5cT19zzBEgxIFdeqLV+NQTsvkViHZqMirv8du0thWReiP8BGAybJvXO
- UtdIQ5JdS93NRNhmAwm++jZEgxNhpiLEvnh/pozZvvHpROOJ8vDplGjjNZvDPBoimyQTzE0fazj
- 9b+C9//pzq4xfal5i0N2TpcK3sbx2T2g0qCANbTSZOeAPV4myr2eVe1W7eSlcvmFJg1CCs1tyzQ
- qcLGFi2m5g02B/4jioM06OQULjpRl3X6Qi5FxPGTjARaLdG0tGwWhpArCglhghCuiC1NAT1qmVP
- NZEu1dte6ojZfxYNFa4NteVmxH0BbNAZvrjvHmrMbRYB7oNFWqJMCw1/UlYdL2ldV5HR6zka8/0
- nX2g3/X6xMKiMUQHanVmHsVW4yD4SnkR/V7qq0gJ8jSN3uf2pYeaw0UwVpHrMIqcPAPgwLCachk
- GsLCd9zdCcG4S5A==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=992; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=+4M6T+k2C0cQ+WFh3iNf7iR7sMPN2w2MqFWDMSVw904=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlsjs6RsDWXNzTUUVoOvstUEH82Iss9jJB8Rk5G
+ XnlZe9DCjeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbI7OgAKCRAADmhBGVaC
+ FZ8+EACATg0lUdCqVXrzJONHHMrtX3P7yp+kwAwRpR8GH7c5TtttYihIuNExewt3BWjoQW5O5BM
+ 6STBl0yYChve/mfjqXxImTkfR7JqMM8RAOCc3p3NPpzN0aOgpVQNOl3Z27z8AmguA/rxnL2e6GD
+ u9kPBSYw+taNY1fXLEksiUKLfm4rAigWVfMncHNiSNA4ebTDY4wtjNhxBQRIfKNbRZQptkGXrDf
+ vpRon0lrIpJ5BeQFGuWlBxUN0B6x3L9B8lLCThrQDkQYK/ElCI1gSbEJdnNuilpO9jT47A9I+wc
+ 2Ia925naPlnh+wY0ST/X7I7azuXW1ZNwh88IA69cacJndLrLg20qMnOYMRodiT1LzYZ7nnb0jEN
+ r5FYm8aGt1QQuYV/ldsgGbgNOB8xEIN4EGa9YIHE1Wh6CltsfM7GpWXJn2nuNICoxaiCCbqnnkg
+ 4R0fy6ineQjFKHhnWZdCt0z1BKN9qNM+xMCgQR6oo1XSnhgI7s8oVfDbBMBh5J5r7slMjaeHfWO
+ kMpoLqz6c7oaV/Crbfv8E/AufPI0EJO7Ft7Af8Q7ZjfwpgqL+WrXJ0H8ZWoxGrZTfb6TYSkGLdO
+ FhiIFsu7gpBGX0djLx2tErYudDnF8c9Xr7KNn/UhCZ3TivOzEcllGMBADgOw7GB1lL/JXnwSBlW
+ 1txabrilKYDl3vA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-In later patches we're going to introduce some macros that will clash
-with the variable name here. Rename it.
+In later patches we're going to introduce some temporary macros with
+names that clash with the variable name here. Rename it.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/locks.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/dlm/plock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/locks.c b/fs/locks.c
-index cc7c117ee192..1eceaa56e47f 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -2695,11 +2695,11 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
- 			    loff_t id, char *pfx, int repeat)
- {
- 	struct inode *inode = NULL;
--	unsigned int fl_pid;
-+	unsigned int pid;
- 	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
- 	int type;
+diff --git a/fs/dlm/plock.c b/fs/dlm/plock.c
+index d814c5121367..1b66b2d2b801 100644
+--- a/fs/dlm/plock.c
++++ b/fs/dlm/plock.c
+@@ -291,7 +291,7 @@ int dlm_posix_unlock(dlm_lockspace_t *lockspace, u64 number, struct file *file,
+ 	struct dlm_ls *ls;
+ 	struct plock_op *op;
+ 	int rv;
+-	unsigned char fl_flags = fl->fl_flags;
++	unsigned char saved_flags = fl->fl_flags;
  
--	fl_pid = locks_translate_pid(fl, proc_pidns);
-+	pid = locks_translate_pid(fl, proc_pidns);
- 	/*
- 	 * If lock owner is dead (and pid is freed) or not visible in current
- 	 * pidns, zero is shown as a pid value. Check lock info from
-@@ -2747,11 +2747,11 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
- 			     (type == F_RDLCK) ? "READ" : "UNLCK");
- 	if (inode) {
- 		/* userspace relies on this representation of dev_t */
--		seq_printf(f, "%d %02x:%02x:%lu ", fl_pid,
-+		seq_printf(f, "%d %02x:%02x:%lu ", pid,
- 				MAJOR(inode->i_sb->s_dev),
- 				MINOR(inode->i_sb->s_dev), inode->i_ino);
- 	} else {
--		seq_printf(f, "%d <none>:0 ", fl_pid);
-+		seq_printf(f, "%d <none>:0 ", pid);
- 	}
- 	if (IS_POSIX(fl)) {
- 		if (fl->fl_end == OFFSET_MAX)
+ 	ls = dlm_find_lockspace_local(lockspace);
+ 	if (!ls)
+@@ -345,7 +345,7 @@ int dlm_posix_unlock(dlm_lockspace_t *lockspace, u64 number, struct file *file,
+ 	dlm_release_plock_op(op);
+ out:
+ 	dlm_put_lockspace(ls);
+-	fl->fl_flags = fl_flags;
++	fl->fl_flags = saved_flags;
+ 	return rv;
+ }
+ EXPORT_SYMBOL_GPL(dlm_posix_unlock);
 
 -- 
 2.43.0
