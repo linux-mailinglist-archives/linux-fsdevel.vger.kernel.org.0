@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-8953-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E88083C888
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:48:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB82283C88C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:48:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 30664B22359
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:48:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64DA01F22445
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173E413AA38;
-	Thu, 25 Jan 2024 16:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B27813AA53;
+	Thu, 25 Jan 2024 16:43:53 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76807132C30;
-	Thu, 25 Jan 2024 16:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EDA13AA4E;
+	Thu, 25 Jan 2024 16:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706201027; cv=none; b=kcEfjWJQebgRnZ+L4FqMA8TEnkoCpi2PjcEL5wniKDfmlci7Lrqbfs8mo5XsFNecLRIcolLgg0T4YNLujy26dWOh3sMvI27TSkK6cPbBLwLt/8+anQAK5oGG8JOHwc80aWXpPvl69EIex+qTCElJtA/0zZUSYgJCLgyxuh2dRhE=
+	t=1706201032; cv=none; b=VUIEqOyu3SKqamB3LnZajh4+qN8UgXunAHqcs+cqCPSNgst8Srz77Dmxp7NP2cBtOUJasI4HRNb2d2sQao0Qz9wnYDmvOHN7s+NVNMbj6CpmsWuL5Ji84xaJ2wYt06zssdZk+RMgzzI+OQE7D6gTmzafNz9CD7MKjktK4IZo84o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706201027; c=relaxed/simple;
-	bh=QxhkPMYB/Y18OYFzd/7q0TJlXUBDqmxZYj4MUlWYAXM=;
+	s=arc-20240116; t=1706201032; c=relaxed/simple;
+	bh=bDQAYA9SBLymzsq/ERIJmns41Syf2su6NFF3KJNqooM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EPhW+HflGFYzRYrQrRcCEz4ctYwjyeYtqL9FWjEHRy2yLVymIyv7hHlpbnx0GG0wRBXHrWq24As20pyqBz76buUt6GOwpuklQn+N0ZryPkrB6CP49mG97algA0v1vqk05kGGgJ3ETvkx1Bag9Ht58P4ICLj8uuDHMZxMnapLlzg=
+	 MIME-Version; b=ZrNHOPVhoNCzEdt7plonZOVuR1KMdSCgTbSd2w0AvHrbqUZZ3d2DqR6AeRIdSUatF+krypBRZIc1GDvrE4CmnZd2MkdQ4TMQQlBLxrbzS7TNhRanDuFoc+ktEofdUYOefAX5Z6o8UR6F0Xh1rxQ3WZXumnrBirLrbEUG4z7cvOI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4954D152B;
-	Thu, 25 Jan 2024 08:44:29 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 113601570;
+	Thu, 25 Jan 2024 08:44:35 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5543F3F8A4;
-	Thu, 25 Jan 2024 08:43:39 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 240823F5A1;
+	Thu, 25 Jan 2024 08:43:45 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -71,9 +71,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v3 10/35] mm: cma: Fast track allocating memory when the pages are free
-Date: Thu, 25 Jan 2024 16:42:31 +0000
-Message-Id: <20240125164256.4147-11-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v3 11/35] mm: Allow an arch to hook into folio allocation when VMA is known
+Date: Thu, 25 Jan 2024 16:42:32 +0000
+Message-Id: <20240125164256.4147-12-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240125164256.4147-1-alexandru.elisei@arm.com>
 References: <20240125164256.4147-1-alexandru.elisei@arm.com>
@@ -85,271 +85,161 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the pages to be allocated are free, take them directly off the buddy
-allocator, instead of going through alloc_contig_range() and avoiding
-costly calls to lru_cache_disable().
+arm64 uses VM_HIGH_ARCH_0 and VM_HIGH_ARCH_1 for enabling MTE for a VMA.
+When VM_HIGH_ARCH_0, which arm64 renames to VM_MTE, is set for a VMA, and
+the gfp flag __GFP_ZERO is present, the __GFP_ZEROTAGS gfp flag also gets
+set in vma_alloc_zeroed_movable_folio().
 
-Only allocations of the same size as the CMA region order are considered,
-to avoid taking the zone spinlock for too long.
+Expand this to be more generic by adding an arch hook that modifes the gfp
+flags for an allocation when the VMA is known.
+
+Note that __GFP_ZEROTAGS is ignored by the page allocator unless __GFP_ZERO
+is also set; from that point of view, the current behaviour is unchanged,
+even though the arm64 flag is set in more places.  When arm64 will have
+support to reuse the tag storage for data allocation, the uses of the
+__GFP_ZEROTAGS flag will be expanded to instruct the page allocator to try
+to reserve the corresponding tag storage for the pages being allocated.
+
+The flags returned by arch_calc_vma_gfp() are or'ed with the flags set by
+the caller; this has been done to keep an architecture from modifying the
+flags already set by the core memory management code; this is similar to
+how do_mmap() -> calc_vm_flag_bits() -> arch_calc_vm_flag_bits() has been
+implemented. This can be revisited in the future if there's a need to do
+so.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
+ arch/arm64/include/asm/page.h    |  5 ++---
+ arch/arm64/include/asm/pgtable.h |  3 +++
+ arch/arm64/mm/fault.c            | 19 ++++++-------------
+ include/linux/pgtable.h          |  7 +++++++
+ mm/mempolicy.c                   |  1 +
+ mm/shmem.c                       |  5 ++++-
+ 6 files changed, 23 insertions(+), 17 deletions(-)
 
-Changes since rfc v2:
-
-* New patch. Reworked from the rfc v2 patch #26 ("arm64: mte: Fast track
-reserving tag storage when the block is free") (David Hildenbrand).
-
- include/linux/page-flags.h | 15 ++++++++++++--
- mm/Kconfig                 |  5 +++++
- mm/cma.c                   | 42 ++++++++++++++++++++++++++++++++++----
- mm/memory-failure.c        |  8 ++++----
- mm/page_alloc.c            | 23 ++++++++++++---------
- 5 files changed, 73 insertions(+), 20 deletions(-)
-
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 735cddc13d20..b7237bce7446 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -575,11 +575,22 @@ TESTSCFLAG(HWPoison, hwpoison, PF_ANY)
- #define MAGIC_HWPOISON	0x48575053U	/* HWPS */
- extern void SetPageHWPoisonTakenOff(struct page *page);
- extern void ClearPageHWPoisonTakenOff(struct page *page);
--extern bool take_page_off_buddy(struct page *page);
--extern bool put_page_back_buddy(struct page *page);
-+extern bool PageHWPoisonTakenOff(struct page *page);
- #else
- PAGEFLAG_FALSE(HWPoison, hwpoison)
-+TESTSCFLAG_FALSE(HWPoison, hwpoison)
- #define __PG_HWPOISON 0
-+static inline void SetPageHWPoisonTakenOff(struct page *page) { }
-+static inline void ClearPageHWPoisonTakenOff(struct page *page) { }
-+static inline bool PageHWPoisonTakenOff(struct page *page)
+diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
+index 2312e6ee595f..88bab032a493 100644
+--- a/arch/arm64/include/asm/page.h
++++ b/arch/arm64/include/asm/page.h
+@@ -29,9 +29,8 @@ void copy_user_highpage(struct page *to, struct page *from,
+ void copy_highpage(struct page *to, struct page *from);
+ #define __HAVE_ARCH_COPY_HIGHPAGE
+ 
+-struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
+-						unsigned long vaddr);
+-#define vma_alloc_zeroed_movable_folio vma_alloc_zeroed_movable_folio
++#define vma_alloc_zeroed_movable_folio(vma, vaddr) \
++	vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma, vaddr, false)
+ 
+ void tag_clear_highpage(struct page *to);
+ #define __HAVE_ARCH_TAG_CLEAR_HIGHPAGE
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 79ce70fbb751..08f0904dbfc2 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -1071,6 +1071,9 @@ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
+ 
+ #endif /* CONFIG_ARM64_MTE */
+ 
++#define __HAVE_ARCH_CALC_VMA_GFP
++gfp_t arch_calc_vma_gfp(struct vm_area_struct *vma, gfp_t gfp);
++
+ /*
+  * On AArch64, the cache coherency is handled via the set_pte_at() function.
+  */
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 55f6455a8284..4d3f0a870ad8 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -937,22 +937,15 @@ void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
+ NOKPROBE_SYMBOL(do_debug_exception);
+ 
+ /*
+- * Used during anonymous page fault handling.
++ * If this is called during anonymous page fault handling, and the page is
++ * mapped with PROT_MTE, initialise the tags at the point of tag zeroing as this
++ * is usually faster than separate DC ZVA and STGM.
+  */
+-struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
+-						unsigned long vaddr)
++gfp_t arch_calc_vma_gfp(struct vm_area_struct *vma, gfp_t gfp)
+ {
+-	gfp_t flags = GFP_HIGHUSER_MOVABLE | __GFP_ZERO;
+-
+-	/*
+-	 * If the page is mapped with PROT_MTE, initialise the tags at the
+-	 * point of allocation and page zeroing as this is usually faster than
+-	 * separate DC ZVA and STGM.
+-	 */
+ 	if (vma->vm_flags & VM_MTE)
+-		flags |= __GFP_ZEROTAGS;
+-
+-	return vma_alloc_folio(flags, 0, vma, vaddr, false);
++		return __GFP_ZEROTAGS;
++	return 0;
+ }
+ 
+ void tag_clear_highpage(struct page *page)
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index c5ddec6b5305..98f81ca08cbe 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -901,6 +901,13 @@ static inline void arch_do_swap_page(struct mm_struct *mm,
+ }
+ #endif
+ 
++#ifndef __HAVE_ARCH_CALC_VMA_GFP
++static inline gfp_t arch_calc_vma_gfp(struct vm_area_struct *vma, gfp_t gfp)
 +{
-+      return false;
++	return 0;
 +}
 +#endif
 +
-+#ifdef CONFIG_WANTS_TAKE_PAGE_OFF_BUDDY
-+extern bool take_page_off_buddy(struct page *page, bool poison);
-+extern bool put_page_back_buddy(struct page *page, bool unpoison);
+ #ifndef __HAVE_ARCH_FREE_PAGES_PREPARE
+ static inline void arch_free_pages_prepare(struct page *page, int order) { }
  #endif
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 10a590ee1c89..f7ef52760b32 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -2168,6 +2168,7 @@ struct folio *vma_alloc_folio(gfp_t gfp, int order, struct vm_area_struct *vma,
+ 	pgoff_t ilx;
+ 	struct page *page;
  
- #if defined(CONFIG_PAGE_IDLE_FLAG) && defined(CONFIG_64BIT)
-diff --git a/mm/Kconfig b/mm/Kconfig
-index ffc3a2ba3a8c..341cf53898db 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -745,12 +745,16 @@ config DEFAULT_MMAP_MIN_ADDR
- config ARCH_SUPPORTS_MEMORY_FAILURE
- 	bool
- 
-+config WANTS_TAKE_PAGE_OFF_BUDDY
-+	bool
-+
- config MEMORY_FAILURE
- 	depends on MMU
- 	depends on ARCH_SUPPORTS_MEMORY_FAILURE
- 	bool "Enable recovery from hardware memory errors"
- 	select MEMORY_ISOLATION
- 	select RAS
-+	select WANTS_TAKE_PAGE_OFF_BUDDY
- 	help
- 	  Enables code to recover from some memory failures on systems
- 	  with MCA recovery. This allows a system to continue running
-@@ -891,6 +895,7 @@ config CMA
- 	depends on MMU
- 	select MIGRATION
- 	select MEMORY_ISOLATION
-+	select WANTS_TAKE_PAGE_OFF_BUDDY
- 	help
- 	  This enables the Contiguous Memory Allocator which allows other
- 	  subsystems to allocate big physically-contiguous blocks of memory.
-diff --git a/mm/cma.c b/mm/cma.c
-index 2881bab12b01..15663f95d77b 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -444,6 +444,34 @@ static void cma_debug_show_areas(struct cma *cma)
- static inline void cma_debug_show_areas(struct cma *cma) { }
- #endif
- 
-+/* Called with the cma mutex held. */
-+static int cma_alloc_pages_fastpath(struct cma *cma, unsigned long start,
-+				    unsigned long end)
-+{
-+	bool success = false;
-+	unsigned long i, j;
-+
-+	/* Avoid contention on the zone lock. */
-+	if (start - end != 1 << cma->order_per_bit)
-+		return -EINVAL;
-+
-+	for (i = start; i < end; i++) {
-+		if (!is_free_buddy_page(pfn_to_page(i)))
-+			break;
-+		success = take_page_off_buddy(pfn_to_page(i), false);
-+		if (!success)
-+			break;
-+	}
-+
-+	if (success)
-+		return 0;
-+
-+	for (j = start; j < i; j++)
-+		put_page_back_buddy(pfn_to_page(j), false);
-+
-+	return -EBUSY;
-+}
-+
- /**
-  * cma_alloc_range() - allocate pages in a specific range
-  * @cma:   Contiguous memory region for which the allocation is performed.
-@@ -493,7 +521,11 @@ int cma_alloc_range(struct cma *cma, unsigned long start, unsigned long count,
- 
- 	for (i = 0; i < tries; i++) {
- 		mutex_lock(&cma_mutex);
--		err = alloc_contig_range(start, start + count, MIGRATE_CMA, gfp);
-+		err = cma_alloc_pages_fastpath(cma, start, start + count);
-+		if (err) {
-+			err = alloc_contig_range(start, start + count,
-+						 MIGRATE_CMA, gfp);
-+		}
- 		mutex_unlock(&cma_mutex);
- 
- 		if (err != -EBUSY)
-@@ -529,7 +561,6 @@ int cma_alloc_range(struct cma *cma, unsigned long start, unsigned long count,
- 	return err;
- }
- 
--
- /**
-  * cma_alloc() - allocate pages from contiguous area
-  * @cma:   Contiguous memory region for which the allocation is performed.
-@@ -589,8 +620,11 @@ struct page *cma_alloc(struct cma *cma, unsigned long count,
- 
- 		pfn = cma->base_pfn + (bitmap_no << cma->order_per_bit);
- 		mutex_lock(&cma_mutex);
--		ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA,
--				     GFP_KERNEL | (no_warn ? __GFP_NOWARN : 0));
-+		ret = cma_alloc_pages_fastpath(cma, pfn, pfn + count);
-+		if (ret) {
-+			ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA,
-+					GFP_KERNEL | (no_warn ? __GFP_NOWARN : 0));
-+		}
- 		mutex_unlock(&cma_mutex);
- 		if (ret == 0) {
- 			page = pfn_to_page(pfn);
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 4f9b61f4a668..b87b533a9871 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -157,7 +157,7 @@ static int __page_handle_poison(struct page *page)
- 	zone_pcp_disable(page_zone(page));
- 	ret = dissolve_free_huge_page(page);
- 	if (!ret)
--		ret = take_page_off_buddy(page);
-+		ret = take_page_off_buddy(page, true);
- 	zone_pcp_enable(page_zone(page));
- 
- 	return ret;
-@@ -1353,7 +1353,7 @@ static int page_action(struct page_state *ps, struct page *p,
- 	return action_result(pfn, ps->type, result);
- }
- 
--static inline bool PageHWPoisonTakenOff(struct page *page)
-+bool PageHWPoisonTakenOff(struct page *page)
- {
- 	return PageHWPoison(page) && page_private(page) == MAGIC_HWPOISON;
- }
-@@ -2247,7 +2247,7 @@ int memory_failure(unsigned long pfn, int flags)
- 		res = get_hwpoison_page(p, flags);
- 		if (!res) {
- 			if (is_free_buddy_page(p)) {
--				if (take_page_off_buddy(p)) {
-+				if (take_page_off_buddy(p, true)) {
- 					page_ref_inc(p);
- 					res = MF_RECOVERED;
- 				} else {
-@@ -2578,7 +2578,7 @@ int unpoison_memory(unsigned long pfn)
- 		ret = folio_test_clear_hwpoison(folio) ? 0 : -EBUSY;
- 	} else if (ghp < 0) {
- 		if (ghp == -EHWPOISON) {
--			ret = put_page_back_buddy(p) ? 0 : -EBUSY;
-+			ret = put_page_back_buddy(p, true) ? 0 : -EBUSY;
- 		} else {
- 			ret = ghp;
- 			unpoison_pr_info("Unpoison: failed to grab page %#lx\n",
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 0fa34bcfb1af..502ee3eb8583 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -6655,7 +6655,7 @@ bool is_free_buddy_page(struct page *page)
- }
- EXPORT_SYMBOL(is_free_buddy_page);
- 
--#ifdef CONFIG_MEMORY_FAILURE
-+#ifdef CONFIG_WANTS_TAKE_PAGE_OFF_BUDDY
- /*
-  * Break down a higher-order page in sub-pages, and keep our target out of
-  * buddy allocator.
-@@ -6687,9 +6687,9 @@ static void break_down_buddy_pages(struct zone *zone, struct page *page,
- }
- 
- /*
-- * Take a page that will be marked as poisoned off the buddy allocator.
-+ * Take a page off the buddy allocator, and optionally mark it as poisoned.
++	gfp |= arch_calc_vma_gfp(vma, gfp);
+ 	pol = get_vma_policy(vma, addr, order, &ilx);
+ 	page = alloc_pages_mpol(gfp | __GFP_COMP, order,
+ 				pol, ilx, numa_node_id());
+diff --git a/mm/shmem.c b/mm/shmem.c
+index d7c84ff62186..14427e9982f9 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1585,7 +1585,7 @@ static struct folio *shmem_swapin_cluster(swp_entry_t swap, gfp_t gfp,
   */
--bool take_page_off_buddy(struct page *page)
-+bool take_page_off_buddy(struct page *page, bool poison)
+ static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t limit_gfp)
  {
- 	struct zone *zone = page_zone(page);
- 	unsigned long pfn = page_to_pfn(page);
-@@ -6710,7 +6710,8 @@ bool take_page_off_buddy(struct page *page)
- 			del_page_from_free_list(page_head, zone, page_order);
- 			break_down_buddy_pages(zone, page_head, page, 0,
- 						page_order, migratetype);
--			SetPageHWPoisonTakenOff(page);
-+			if (poison)
-+				SetPageHWPoisonTakenOff(page);
- 			if (!is_migrate_isolate(migratetype))
- 				__mod_zone_freepage_state(zone, -1, migratetype);
- 			ret = true;
-@@ -6724,9 +6725,10 @@ bool take_page_off_buddy(struct page *page)
- }
+-	gfp_t allowflags = __GFP_IO | __GFP_FS | __GFP_RECLAIM;
++	gfp_t allowflags = __GFP_IO | __GFP_FS | __GFP_RECLAIM | __GFP_ZEROTAGS;
+ 	gfp_t denyflags = __GFP_NOWARN | __GFP_NORETRY;
+ 	gfp_t zoneflags = limit_gfp & GFP_ZONEMASK;
+ 	gfp_t result = huge_gfp & ~(allowflags | GFP_ZONEMASK);
+@@ -2038,6 +2038,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+ 		gfp_t huge_gfp;
  
- /*
-- * Cancel takeoff done by take_page_off_buddy().
-+ * Cancel takeoff done by take_page_off_buddy(), and optionally unpoison the
-+ * page.
-  */
--bool put_page_back_buddy(struct page *page)
-+bool put_page_back_buddy(struct page *page, bool unpoison)
- {
- 	struct zone *zone = page_zone(page);
- 	unsigned long pfn = page_to_pfn(page);
-@@ -6736,17 +6738,18 @@ bool put_page_back_buddy(struct page *page)
+ 		huge_gfp = vma_thp_gfp_mask(vma);
++		huge_gfp |= arch_calc_vma_gfp(vma, huge_gfp);
+ 		huge_gfp = limit_gfp_mask(huge_gfp, gfp);
+ 		folio = shmem_alloc_and_add_folio(huge_gfp,
+ 				inode, index, fault_mm, true);
+@@ -2214,6 +2215,8 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
+ 	vm_fault_t ret = 0;
+ 	int err;
  
- 	spin_lock_irqsave(&zone->lock, flags);
- 	if (put_page_testzero(page)) {
--		ClearPageHWPoisonTakenOff(page);
-+		VM_WARN_ON_ONCE(PageHWPoisonTakenOff(page) && !unpoison);
-+		if (unpoison)
-+			ClearPageHWPoisonTakenOff(page);
- 		__free_one_page(page, pfn, zone, 0, migratetype, FPI_NONE);
--		if (TestClearPageHWPoison(page)) {
-+		if (!unpoison || (unpoison && TestClearPageHWPoison(page)))
- 			ret = true;
--		}
- 	}
- 	spin_unlock_irqrestore(&zone->lock, flags);
- 
- 	return ret;
- }
--#endif
-+#endif /* CONFIG_WANTS_TAKE_PAGE_OFF_BUDDY */
- 
- #ifdef CONFIG_ZONE_DMA
- bool has_managed_dma(void)
++	gfp |= arch_calc_vma_gfp(vmf->vma, gfp);
++
+ 	/*
+ 	 * Trinity finds that probing a hole which tmpfs is punching can
+ 	 * prevent the hole-punch from ever completing: noted in i_private.
 -- 
 2.43.0
 
