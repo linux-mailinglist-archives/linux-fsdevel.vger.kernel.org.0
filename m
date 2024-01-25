@@ -1,89 +1,239 @@
-Return-Path: <linux-fsdevel+bounces-8923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8924-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E1983C46B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 15:12:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FD3B83C488
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 15:18:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB31228DD5E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 14:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25B328CDB3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 14:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06092633F8;
-	Thu, 25 Jan 2024 14:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NCbDN4lD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC6E63407;
+	Thu, 25 Jan 2024 14:17:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DAC634E5
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 14:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968C95EE63;
+	Thu, 25 Jan 2024 14:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706191927; cv=none; b=tkVS/9UhdcNRZERywa/CYKGpDYL3rocEYKsoQwWDbN9Gt02z+QQ8Fq0txsHFyU5OX/sQiRLW5Q/Lnbo6JpHvRs674mggcvsVKfMTfdLod3JpWZqug4RWe1LaHcPVnIo4bYkErjJ4xN/e2pJPI8R/ChTfQlkZ5a4ZgKhQ5YGOwO8=
+	t=1706192278; cv=none; b=a4YL7/vDBGxPgsDZdME+Q0eznLo1axqF4woDMRaAlHiiUIOz51RUffELswexnK7noAjm5s0rzM850oVKWgCKV2pB+f45lROiaTRzgbMPckWK0v70Ur5M/i+4yEzcLScN0B622Rr0m08fbD+i6BtyrTuuFWjm1emuzyuj/V6OIgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706191927; c=relaxed/simple;
-	bh=E87yYMUmIZQHj4uCon05JeVlBr+VAITmiBQh7svNdRQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FTDf3nLzx8+ydmKA/Nq/ffBWTfrfqYNvI8augxdNDrO8HYSqvEJ9siomV30Bmz1j9H2rpLP/NMgj7AIFOkyJX4ShStTWa/G5/JAr7nrZN170mpkwtdQ5V4e9g2NO2ksPD9JGaQxdB0g8Um84yAcAw1B7U0i2MQ9J1XbVxyCeHfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NCbDN4lD; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706191924;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ACqcEjg537hZBJWAT4QAy+L6J3AJYKEx3L1s6N7xY70=;
-	b=NCbDN4lDV0ZDO/cgCL2K/2cuFB8HDaFZSJPUbbw3Puw13+OS9Vh4KaO2+vyGqf3jGDZrCR
-	jd57z6ERhww9gZpXomtp5zshpVk4TYEpUsj79M1bO8qknxTtCxxvRRBmFy3N48L01iQZoi
-	dZOoALShpPvuhkACKOGsHTEXY1kl0vQ=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-684-Ton7HokXPSWRswBc5p_IDw-1; Thu,
- 25 Jan 2024 09:11:59 -0500
-X-MC-Unique: Ton7HokXPSWRswBc5p_IDw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6A4A21C0BA46;
-	Thu, 25 Jan 2024 14:11:58 +0000 (UTC)
-Received: from [192.168.37.1] (ovpn-0-9.rdu2.redhat.com [10.22.0.9])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 060CB51D5;
-	Thu, 25 Jan 2024 14:11:55 +0000 (UTC)
-From: Benjamin Coddington <bcodding@redhat.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Gao Xiang <xiang@kernel.org>, Jeff Layton <jlayton@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Eric Sandeen <esandeen@redhat.com>, v9fs@lists.linux.dev,
- linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
- linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: Roadmap for netfslib and local caching (cachefiles)
-Date: Thu, 25 Jan 2024 09:11:54 -0500
-Message-ID: <B01D6639-6F09-4542-A1CE-5023D059B84F@redhat.com>
-In-Reply-To: <520668.1706191347@warthog.procyon.org.uk>
-References: <520668.1706191347@warthog.procyon.org.uk>
+	s=arc-20240116; t=1706192278; c=relaxed/simple;
+	bh=Td6MCQnzeN60nn9Rv1sdiDHqQG+WQ8QJwULnAd3LQfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DFgzWqtuwJ1Dj+e7lNwcvo6J5LcMT9Rd7lF44jPtkjAWTH6XqJ1ZJtZmqGioQwS2b9kdINdJDoor/4pmwwKFQr3+Te4GiwUshnXOYefBubtVNo1rSxmD5lDJzKLf2drMlt8p+Oabhs5xtj6C9gxDVJgZu6Vety8ZnOjAhK1k8Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 40PEGgch062962;
+	Thu, 25 Jan 2024 23:16:42 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Thu, 25 Jan 2024 23:16:42 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 40PEGfdi062958
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 25 Jan 2024 23:16:41 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <a9210754-2f94-4075-872f-8f6a18f4af07@I-love.SAKURA.ne.jp>
+Date: Thu, 25 Jan 2024 23:16:42 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
+User-Agent: Mozilla Thunderbird
+Subject: Re: [6.8-rc1 Regression] Unable to exec apparmor_parser from
+ virt-aa-helper
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>
+Cc: Kevin Locke <kevin@kevinlocke.name>,
+        Josh Triplett
+ <josh@joshtriplett.org>,
+        Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        Kentaro Takeda <takedakn@nttdata.co.jp>
+References: <ZbE4qn9_h14OqADK@kevinlocke.name>
+ <202401240832.02940B1A@keescook>
+ <CAHk-=wgJmDuYOQ+m_urRzrTTrQoobCJXnSYMovpwKckGgTyMxA@mail.gmail.com>
+ <CAHk-=wijSFE6+vjv7vCrhFJw=y36RY6zApCA07uD1jMpmmFBfA@mail.gmail.com>
+ <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com>
+ <202401240916.044E6A6A7A@keescook>
+ <CAHk-=whq+Kn-_LTvu8naGqtN5iK0c48L1mroyoGYuq_DgFEC7g@mail.gmail.com>
+ <CAHk-=whDAUMSPhDhMUeHNKGd-ZX8ixNeEz7FLfQasAGvi_knDg@mail.gmail.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHk-=whDAUMSPhDhMUeHNKGd-ZX8ixNeEz7FLfQasAGvi_knDg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 25 Jan 2024, at 9:02, David Howells wrote:
-...
-> NFS.  NFS at the very least needs to be altered to give up the use of
-> PG_private_2.
+On 2024/01/25 3:27, Linus Torvalds wrote:
+> The whole cred use of current->in_execve in tomoyo should
+> *also* be fixed, but I didn't even try to follow what it actually
+> wanted.
 
-Forgive what may be a naive question, but where is NFS using PG_private_2?
+Due to TOMOYO's unique domain transition (transits to new domain before
+execve() succeeds and returns to old domain if execve() failed), TOMOYO
+depends on a tricky ordering shown below.
 
-Ben
+----------
+// a caller tries execve().
+sys_execve() {
+  do_execve() {
+    do_execveat_common() {
+      bprm_execve() {
+        prepare_bprm_creds() {
+          prepare_exec_creds() {
+            prepare_creds() {
+              security_prepare_creds() {
+                tomoyo_cred_prepare() {
+                  if (s->old_domain_info && !current->in_execve) { // false because s->old_domain_info == NULL.
+                    s->domain_info = s->old_domain_info;
+                    s->old_domain_info = NULL; 
+                  }
+                }
+              }
+            }
+          }
+        }
+        current->in_execve = 1;
+        do_open_execat() {
+          (...snipped...)
+          security_file_open() {
+            tomoyo_file_open() // Not checked because current->in_execve == 1.
+          }
+          (...snipped...)
+        }
+        exec_binprm() {
+          search_binary_handler() {
+            security_bprm_check() {
+              tomoyo_bprm_check_security() {
+                if (!s->old_domain_info) { // true because s->old_domain_info == NULL.
+                  tomoyo_find_next_domain() {
+                    // Checks execute permission here.
+                    s->old_domain_info = s->domain_info; // Remember old domain.
+                    s->domain_info = domain; // Transit to new domain.
+                  }
+                }
+              }
+            }
+            fmt->load_binary() { // e.g. load_script() in fs/binfmt_script.c
+              open_exec() {
+                // Not checked because current->in_execve == 1.
+              }
+            }
+          }
+          search_binary_handler() {
+            security_bprm_check() {
+              tomoyo_bprm_check_security() {
+                if (!s->old_domain_info) { // false because s->old_domain_info != NULL.
+                } else {
+                  // Checks read permission here.
+                }
+              }
+            }
+          }
+          // An error happens after s->domain_info was updated.
+        }
+        current->in_execve = 0;
+        // No chance to restore s->domain_info.
+      }
+    }
+  }
+  // returning an error code to the caller.
+}
+// the caller retries execve().
+sys_execve() {
+  do_execve() {
+    do_execveat_common() {
+      bprm_execve() {
+        prepare_bprm_creds() {
+          prepare_exec_creds() {
+            prepare_creds() {
+              security_prepare_creds() {
+                tomoyo_cred_prepare() {
+                  if (s->old_domain_info && !current->in_execve) { // true because s->old_domain_info != NULL && current->in_execve == 0.
+                    s->domain_info = s->old_domain_info; // Transit to old domain.
+                    s->old_domain_info = NULL;
+                  }
+                }
+              }
+            }
+          }
+        }
+        current->in_execve = 1;
+        do_open_execat() {
+          (...snipped...)
+          security_file_open() {
+            tomoyo_file_open() // Not checked because current->in_execve == 1.
+          }
+          (...snipped...)
+        }
+        exec_binprm() {
+          search_binary_handler() {
+            security_bprm_check() {
+              tomoyo_bprm_check_security() {
+                if (!s->old_domain_info) { // true because s->old_domain_info == NULL.
+                  tomoyo_find_next_domain() {
+                    // Checks execute permission here.
+                    s->old_domain_info = s->domain_info; // Remember old domain.
+                    s->domain_info = domain; // Transit to new domain.
+                  }
+                }
+              }
+            }
+            fmt->load_binary() { // e.g. load_script() in fs/binfmt_script.c
+              open_exec() {
+                // Not checked because current->in_execve == 1.
+              }
+            }
+          }
+          search_binary_handler() {
+            security_bprm_check() {
+              tomoyo_bprm_check_security() {
+                if (!s->old_domain_info) { // false because s->old_domain_info != NULL.
+                } else {
+                  // Checks read permission here.
+                }
+              }
+            }
+          }
+          fmt->load_binary() { // e.g. load_elf_binary() in fs/binfmt_elf.c
+            begin_new_exec() {
+              security_bprm_committed_creds() {
+                tomoyo_bprm_committed_creds() {
+                  s->old_domain_info = NULL; // Forget old domain.
+                }
+              }
+            }
+          }
+        }
+        current->in_execve = 0;
+      }
+    }
+  }
+}
+----------
+
+Commit 978ffcbf00d8 ("execve: open the executable file before doing anything else")
+broke the ordering and commit 4759ff71f23e ("exec: Check __FMODE_EXEC instead of
+in_execve for LSMs") and commit 3eab830189d9 ("uselib: remove use of __FMODE_EXEC")
+fixed the regression.
+
+But current->in_execve remains required unless an LSM callback that is called when
+an execve() request failed which existed as security_bprm_free() until Linux 2.6.28
+revives...
 
 
