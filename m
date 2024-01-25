@@ -1,79 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-9003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F3E83CD07
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 21:01:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D70CC83CD43
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 21:18:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4F451F2583F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 20:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3B828A503
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 20:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544E713A26A;
-	Thu, 25 Jan 2024 20:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC2E137C23;
+	Thu, 25 Jan 2024 20:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cliAdjJW"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HVt/bVee";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="twLGafix";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="I7VhO6R3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="bAQXolaQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE1B1386CF;
-	Thu, 25 Jan 2024 20:00:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56138136656;
+	Thu, 25 Jan 2024 20:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706212813; cv=none; b=ukccVfw2FPLycmXU484A517HeD80yCshT7w9/ZY9djysA76MJkxW125toTmqE06QLkvxJ//bYl0hFZBzJtSL1jG+7du5iz8jnRBxQLTYCBn5CTkzXY5NMkvCG/+TSJbuza+c//4CWa5yE6IbwPCFkrJ9zTKpiu0iou3VIjxBl58=
+	t=1706213894; cv=none; b=Z2fachS9xNomRhYq+Eq2jXP4MlYmP90OqlyvokwjWVIu65OREpuZKseWmwfDMk1TRablFwKW9jwud8ckOYMGObiWm2T3+8W/aNIKaKyIgnqsaqWw44bNbRVUrxOoSR2ayFM3y29Q+bb5/9pv6vBudouTnhTzvTzDr0Ae24Iz3qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706212813; c=relaxed/simple;
-	bh=wqaKa9JlxSSimN5+AMDBfd8gNzYaLyBWCZzFP2fzd9o=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Kvn2sM7CaiDP8Qz73lYvFaDQ+nvdIDYLDD3ar9FRkPwm98v0u0lUQl4PPjioaZPlq1tno5zTOiOuOJoHaC1tqJcQ3atVYWnS1Nk67gGmNoqqc9wmLKM2KND6FmB04IaAHLRQ1d5AYlW/8RtuJYaqQxlpBRSch51LtnwXiJsot/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cliAdjJW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 83F79C43394;
-	Thu, 25 Jan 2024 20:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706212813;
-	bh=wqaKa9JlxSSimN5+AMDBfd8gNzYaLyBWCZzFP2fzd9o=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=cliAdjJWOxbJkjfAGh4CXXZrQAUAg7j4Jcu4xSp3oWkgcD23Z8I3idfbu+lYQ1ZPC
-	 Hfu6XosuCSNbb7EiCp/jwXSh3sbVgerk835VBe/reiAz6e2ZRuGwSJhpxJ0xsOuZP6
-	 X1GHZMWoJWSGgJy7oF/FETlBN9es40PyZ6nwuFpXvbqNKM0o8n5ovESuJXzA+Hsp0m
-	 bWlY2XcWQovd6wkPpyvqJqgPfLqBo2cGeXGoRlOkZINNpc7lqrKos7BAUbHycx2Djx
-	 nd6Q5HJUsl2gy88o4T7zk/FSnEsTGvU3U7/dVNvQdAXQEbslJ5zayYVuBUHC3B7n6e
-	 UawM4TjdXIW8A==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 70385DFF766;
-	Thu, 25 Jan 2024 20:00:13 +0000 (UTC)
-Subject: Re: [GIT PULL] netfs fixes
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240124-vfs-netfs-fixes-b7ac507f03e9@brauner>
-References: <20240124-vfs-netfs-fixes-b7ac507f03e9@brauner>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240124-vfs-netfs-fixes-b7ac507f03e9@brauner>
-X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.8-rc2.netfs
-X-PR-Tracked-Commit-Id: f13d8f28fe9fb0a4d0a6c21fb3c1577d0eda4ed8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a658e0e98688f4a41873fcf9b036a887a5be0de1
-Message-Id: <170621281345.19358.9734609225850564350.pr-tracker-bot@kernel.org>
-Date: Thu, 25 Jan 2024 20:00:13 +0000
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1706213894; c=relaxed/simple;
+	bh=9n7l06mR29TS443bZyCN+P+8yeXmh3DCeJFL3+cp/Es=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JNhnMv/jAXXCJJVFIfYNEZXSqqFcunV3o/S45sSsD/fKwG09sK7ZtvJBsRtLECg5Tdr2DCOlGFf3AVPwGY5eIPA+55yigGLsnjrBnyFVXmkOK1SSqD2IrO9We481Ti/C38s89MJeUbxJ3YfrbHr0d1E+D7BFgpQ1JnqvP2YQz1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HVt/bVee; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=twLGafix; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=I7VhO6R3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=bAQXolaQ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A99D91FE6B;
+	Thu, 25 Jan 2024 20:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1706213884; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A3ya30AYW8N/E78PgSlPUr0eoJq9IfloPJjz3fkDUrA=;
+	b=HVt/bVeeOovvvvh7pnp/g7SfUmHMWUvSjIXnJBdPLLRUXjWiaT5Pa9dEl5aELHCAGjZKdT
+	3OzndkI1FHMlj2DLt7x6sTcP9TR2AuHRHj2EQdh83tHf85fMEsj7vxvj8eKyMngV4IAc4S
+	QKxGOIT8vdOpw4WbddTG/zlUzs7eWBE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1706213884;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A3ya30AYW8N/E78PgSlPUr0eoJq9IfloPJjz3fkDUrA=;
+	b=twLGafixShOuaMbCl36toLifBb6JP1CXrgrCJw1rMMmK8V5Hd7Rtb9eqfRh5SwNTkqqMuU
+	hVPcOaajDB6JpxAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1706213883; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A3ya30AYW8N/E78PgSlPUr0eoJq9IfloPJjz3fkDUrA=;
+	b=I7VhO6R3I7ul/zXahlEOZzJ5bEFab/IWJTSBsUJFic7kDSCW7VwhppO6rqKCJfk9MMnsMp
+	BCyOLwvhSVvLxDDS+PCIvLaDKboj9ju05RhApqAldUX0dajDIZhi6IwmfL5gveJWfmTqCJ
+	lc2KzCQgyQT4vXYSkZXLNcpRu8x6CjQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1706213883;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A3ya30AYW8N/E78PgSlPUr0eoJq9IfloPJjz3fkDUrA=;
+	b=bAQXolaQ447YaxrGzDEUJ9g2EdXFfozjizMDsPADS4pEsEBUdsdEBTgLG0tedtHwiVum2+
+	w0o/iDmDjp949kBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0E1ED13649;
+	Thu, 25 Jan 2024 20:18:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hIeCMPrBsmXfPAAAD6G6ig
+	(envelope-from <krisman@suse.de>); Thu, 25 Jan 2024 20:18:02 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: viro@zeniv.linux.org.uk,  jaegeuk@kernel.org,  tytso@mit.edu,
+  linux-ext4@vger.kernel.org,  linux-f2fs-devel@lists.sourceforge.net,
+  linux-fsdevel@vger.kernel.org,  amir73il@gmail.com
+Subject: Re: [PATCH v3 02/10] fscrypt: Share code between functions that
+ prepare lookup
+In-Reply-To: <20240125030530.GB52073@sol.localdomain> (Eric Biggers's message
+	of "Wed, 24 Jan 2024 19:05:30 -0800")
+Organization: SUSE
+References: <20240119184742.31088-1-krisman@suse.de>
+	<20240119184742.31088-3-krisman@suse.de>
+	<20240125030530.GB52073@sol.localdomain>
+Date: Thu, 25 Jan 2024 17:18:00 -0300
+Message-ID: <87a5otxj47.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Spam-Level: 
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=I7VhO6R3;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=bAQXolaQ
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-5.05 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 TO_DN_SOME(0.00)[];
+	 HAS_ORG_HEADER(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[8];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-0.04)[57.42%];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 RCVD_DKIM_ARC_DNSWL_HI(-1.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 DWL_DNSWL_MED(-2.00)[suse.de:dkim];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,mit.edu,vger.kernel.org,lists.sourceforge.net,gmail.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 RCVD_IN_DNSWL_HI(-0.50)[2a07:de40:b281:104:10:150:64:97:from]
+X-Spam-Score: -5.05
+X-Rspamd-Queue-Id: A99D91FE6B
+X-Spam-Flag: NO
 
-The pull request you sent on Thu, 25 Jan 2024 11:13:00 +0100:
+Eric Biggers <ebiggers@kernel.org> writes:
 
-> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.8-rc2.netfs
+> On Fri, Jan 19, 2024 at 03:47:34PM -0300, Gabriel Krisman Bertazi wrote:
+>> To make the patch simpler, we now call fscrypt_get_encryption_info twice
+>> for fscrypt_prepare_lookup, once inside fscrypt_setup_filename and once
+>> inside fscrypt_prepare_lookup_dentry.  It seems safe to do, and
+>> considering it will bail early in the second lookup and most lookups
+>> should go to the dcache anyway, it doesn't seem problematic for
+>> performance.  In addition, we add a function call for the unencrypted
+>> case, also during lookup.
+>
+> Unfortunately I don't think it's correct.  This is basically undoing my fix
+> b01531db6cec ("fscrypt: fix race where ->lookup() marks plaintext dentry as
+> ciphertext") from several years ago.
+>
+> When a lookup is done, the filesystem needs to either treat the name being
+> looked up as a no-key name *or* as a regular name, depending on whether the
+> directory's key is present.  We shouldn't enable race conditions where, due to
+> the key being concurrently added, the name is treated as a no-key name for
+> filename matching purposes but a regular name for dentry validation purposes.
+> That can result in an anomaly where a file that exists ends up with a negative
+> dentry that doesn't get invalidated.
+>
+> Basically, the boolean fscrypt_name::is_nokey_name that's produced by
+> fscrypt_setup_filename() should continue to be propagated to DCACHE_NOKEY_NAME.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a658e0e98688f4a41873fcf9b036a887a5be0de1
+I see your point.  I'll drop this patch and replace it with a patch that
+just merges the DCACHE_NOKEY_NAME configuration.  Sadly, we gotta keep
+the two variants I think.
 
-Thank you!
+thanks for the review
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Gabriel Krisman Bertazi
 
