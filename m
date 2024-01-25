@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-9018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9019-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8D583D088
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 00:20:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 008A683D08F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 00:21:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C98A1F25DAA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 23:20:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 935C91F27233
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 23:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE82612E40;
-	Thu, 25 Jan 2024 23:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8A3134B5;
+	Thu, 25 Jan 2024 23:21:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="qFapaksl"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="mmh748ud"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BD312B8A;
-	Thu, 25 Jan 2024 23:20:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CE1125C8;
+	Thu, 25 Jan 2024 23:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706224839; cv=none; b=XiUkcSzVc3IDRc59JmCKWZWNParp9Wh6vHMUYYMAjnhTC/2FFf3LajxISlvQygR/QvPCfuVZ3Te0EnF4WjE4yimirmj/C6zgLD555VloixsYOWyFyxGh171yerqxyg9PG7Ex5ivvsg2JVcEivD5y4YK0D0fpvz+xFNB3J2HQgus=
+	t=1706224907; cv=none; b=XpGBGNI1vaLr5f//ijC4uZIbuODSqzgjKLX3IRfHJkhNcKKz9PlUGhNX/TXLZdueWbP52tl1yYlBQlHd8SLnRf+mCTk6F4rjN0eKMBVCByh8g4KyyydPGIqWAQYcbUU99yVksmqyAJieEO0+/kEYYePn9Abo6dwNCLDctSyNfHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706224839; c=relaxed/simple;
-	bh=Z5D1PY2CAAXEPTMCVPGBGFQOw3qPNmTGxykS0jU56Mw=;
+	s=arc-20240116; t=1706224907; c=relaxed/simple;
+	bh=guOzA7K6RUgZ5DDnCdKRtRAA0JyuY3NLLW25sX22Xag=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AiNjPzoNSgWic+J05TwJjcHwO9t8La53eC4/KWvtpuwofRDT0p2/UrR3b4AXQaqf1cxUril9QOr/gPrpalysdWRk/rjbrQh7KvSj2eedhs7foq61BHfEOqzgyjAnmd+OJzvax/J72sb7NyACCWZkn11QjrdFYszDPrxkO1dNRWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=qFapaksl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83E63C433C7;
-	Thu, 25 Jan 2024 23:20:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lSG0rjoY2ekWMQ4ZfoeHgEUYKTzxiDWwEEpxNO7ozomI/XP8KQOmad/71+G8x9psRYpZfO69VyF0+c5O7aR4FLkApGQX2ynLBaaEeO5GFaRwyjhWhbuoC8pW6+n6X8pqo8rNEf/6TCJozEaS+0uTMJOuNsoqTt0jZqn6aCI9vSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=mmh748ud; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C0D5C433F1;
+	Thu, 25 Jan 2024 23:21:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1706224838;
-	bh=Z5D1PY2CAAXEPTMCVPGBGFQOw3qPNmTGxykS0jU56Mw=;
+	s=korg; t=1706224907;
+	bh=guOzA7K6RUgZ5DDnCdKRtRAA0JyuY3NLLW25sX22Xag=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qFapakslXpv/a++Oj3QugNOWhJjpNJ+bjkPKX3/QcKx5BQYb7i65n2NfXnzU15s9f
-	 FzuK56WP3M8kr0haVSDdurBSwS1hrQxx0bK9tNVngVi0NuQ9f7F2hPqxbVHm9afbqH
-	 7nl+PkSqY8UpBPrYpbkIAkN+YUVuOpbyILB4hS9M=
-Date: Thu, 25 Jan 2024 15:20:37 -0800
+	b=mmh748ud3Gbon2Ah/b3OsL3op+RJWgcz/46gD1rs+N4tL7aFMhUVtB35T6Q7ZkZLk
+	 MyK6EXm41JZzMkPYFIg8S4J/tJrO6Y8wOMWcqJ3AJKkKDEXINxS8IJocZvjfXwOGkc
+	 ZeIjPEfvazV/u8gDk26Xz1/ly4mTgfFP5peIqDUU=
+Date: Thu, 25 Jan 2024 15:21:46 -0800
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: Joe Damato <jdamato@fastly.com>
 Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
@@ -61,7 +61,7 @@ Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
 	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>
 Subject: Re: [PATCH net-next v3 3/3] eventpoll: Add epoll ioctl for
  epoll_params
-Message-ID: <2024012559-appraiser-coerce-b32f@gregkh>
+Message-ID: <2024012551-anyone-demeaning-867b@gregkh>
 References: <20240125225704.12781-1-jdamato@fastly.com>
  <20240125225704.12781-4-jdamato@fastly.com>
 Precedence: bulk
@@ -75,17 +75,18 @@ Content-Disposition: inline
 In-Reply-To: <20240125225704.12781-4-jdamato@fastly.com>
 
 On Thu, Jan 25, 2024 at 10:56:59PM +0000, Joe Damato wrote:
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -6,6 +6,8 @@
->   *  Davide Libenzi <davidel@xmailserver.org>
->   */
->  
-> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +struct epoll_params {
+> +	u64 busy_poll_usecs;
+> +	u16 busy_poll_budget;
 > +
+> +	/* for future fields */
+> +	u8 data[118];
+> +} EPOLL_PACKED;
 
-Why this addition?  You do not add any pr_*() calls in this patch at all
-that I can see.
+variables that cross the user/kernel boundry need to be __u64, __u16,
+and __u8 here.
+
+And why 118?
 
 thanks,
 
