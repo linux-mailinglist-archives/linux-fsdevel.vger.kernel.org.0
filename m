@@ -1,122 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-8922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC3483C452
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 15:07:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E1983C46B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 15:12:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B39E1F25201
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 14:07:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB31228DD5E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 14:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA024633F2;
-	Thu, 25 Jan 2024 14:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06092633F8;
+	Thu, 25 Jan 2024 14:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UfJQK2+v"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NCbDN4lD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F35962818;
-	Thu, 25 Jan 2024 14:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DAC634E5
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 14:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706191629; cv=none; b=sizlazH2HmyriL2NAdfyAgpyPopZKnb6rCbABA8yhMknHLOpwXu6rBHIrdTCCufd/Lgjc+bI433OMlWzhVAyV01PrM48bgqCwyNEHlIaJil5qayyTMc857hnxP+IeFghm4RqLv+wMPQEMIxhIdmW024J7gTkT8sBJViC5pDZ0NY=
+	t=1706191927; cv=none; b=tkVS/9UhdcNRZERywa/CYKGpDYL3rocEYKsoQwWDbN9Gt02z+QQ8Fq0txsHFyU5OX/sQiRLW5Q/Lnbo6JpHvRs674mggcvsVKfMTfdLod3JpWZqug4RWe1LaHcPVnIo4bYkErjJ4xN/e2pJPI8R/ChTfQlkZ5a4ZgKhQ5YGOwO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706191629; c=relaxed/simple;
-	bh=IcOwiCYIKlbjRViqEZg0G3ysWLmWBTRKQjL9VUBzpek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WJh6okQ/ZVllQhGmJ/ddtZkPqbozYB3BTvE+yDXKmlGjTIrTw8RxtdH8QKocGYlUUfabtJWgANYNRDwy8To09IWeyzb7qIJjPrM6qz6irpfcaq6NgqsgweKEAcsgtZ0Igo3C7zWfGO8/00CIGg5+1mmgMp2E4NsIc8IJTg9EgtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UfJQK2+v; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XXP3YFJkDTAm2zsOnv3DQrubzByWfNV5K63UqeZtxcI=; b=UfJQK2+vPgy8YoGDyfQldf36jb
-	69jJrRB/0sNkNhT1B58DiM/8Bl2RysOAJ+BO6ns/YE8GS5Vd+FMcUPe8GPiwt6vZxUqmMib2Dzc9u
-	EuQnVQHGu2k6IUzH6aCEU18TR0l5fWFtGXJw1GZtAdzoMErMseyPH7WT7i2vjIuUIgeIImfsQNES2
-	NFpvDy5JeZJNcM+1N4L8H6o+w23uXhDea7Z4ues8MRH8ibqKq6aBkjCddPHc59spj8/b9bNH+OJtR
-	dk04RjSjwFhNEPpE1exj+3AbInvJCiCbL0grUgqheIr18GnKaP09vqKxO4UMzmyjygKWREedqDNAv
-	Tfzuhogw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rT0Ne-0000000A91C-1kHD;
-	Thu, 25 Jan 2024 14:06:58 +0000
-Date: Thu, 25 Jan 2024 14:06:58 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Roman Smirnov <r.smirnov@omp.ru>
-Cc: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Karina Yankevich <k.yankevich@omp.ru>, lvc-project@linuxtesting.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-ext4@vger.kernel.org,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.com>
-Subject: Re: [PATCH 5.10/5.15 v2 0/1 RFC] mm/truncate: fix WARNING in
- ext4_set_page_dirty()
-Message-ID: <ZbJrAvCIufx1K2PU@casper.infradead.org>
-References: <20240125130947.600632-1-r.smirnov@omp.ru>
+	s=arc-20240116; t=1706191927; c=relaxed/simple;
+	bh=E87yYMUmIZQHj4uCon05JeVlBr+VAITmiBQh7svNdRQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FTDf3nLzx8+ydmKA/Nq/ffBWTfrfqYNvI8augxdNDrO8HYSqvEJ9siomV30Bmz1j9H2rpLP/NMgj7AIFOkyJX4ShStTWa/G5/JAr7nrZN170mpkwtdQ5V4e9g2NO2ksPD9JGaQxdB0g8Um84yAcAw1B7U0i2MQ9J1XbVxyCeHfE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NCbDN4lD; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1706191924;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ACqcEjg537hZBJWAT4QAy+L6J3AJYKEx3L1s6N7xY70=;
+	b=NCbDN4lDV0ZDO/cgCL2K/2cuFB8HDaFZSJPUbbw3Puw13+OS9Vh4KaO2+vyGqf3jGDZrCR
+	jd57z6ERhww9gZpXomtp5zshpVk4TYEpUsj79M1bO8qknxTtCxxvRRBmFy3N48L01iQZoi
+	dZOoALShpPvuhkACKOGsHTEXY1kl0vQ=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-684-Ton7HokXPSWRswBc5p_IDw-1; Thu,
+ 25 Jan 2024 09:11:59 -0500
+X-MC-Unique: Ton7HokXPSWRswBc5p_IDw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6A4A21C0BA46;
+	Thu, 25 Jan 2024 14:11:58 +0000 (UTC)
+Received: from [192.168.37.1] (ovpn-0-9.rdu2.redhat.com [10.22.0.9])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 060CB51D5;
+	Thu, 25 Jan 2024 14:11:55 +0000 (UTC)
+From: Benjamin Coddington <bcodding@redhat.com>
+To: David Howells <dhowells@redhat.com>
+Cc: Gao Xiang <xiang@kernel.org>, Jeff Layton <jlayton@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Eric Sandeen <esandeen@redhat.com>, v9fs@lists.linux.dev,
+ linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+ linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: Roadmap for netfslib and local caching (cachefiles)
+Date: Thu, 25 Jan 2024 09:11:54 -0500
+Message-ID: <B01D6639-6F09-4542-A1CE-5023D059B84F@redhat.com>
+In-Reply-To: <520668.1706191347@warthog.procyon.org.uk>
+References: <520668.1706191347@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240125130947.600632-1-r.smirnov@omp.ru>
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-On Thu, Jan 25, 2024 at 01:09:46PM +0000, Roman Smirnov wrote:
-> Syzkaller reports warning in ext4_set_page_dirty() in 5.10 and 5.15
-> stable releases. It happens because invalidate_inode_page() frees pages
-> that are needed for the system. To fix this we need to add additional
-> checks to the function. page_mapped() checks if a page exists in the 
-> page tables, but this is not enough. The page can be used in other places:
-> https://elixir.bootlin.com/linux/v6.8-rc1/source/include/linux/page_ref.h#L71
-> 
-> Kernel outputs an error line related to direct I/O:
-> https://syzkaller.appspot.com/text?tag=CrashLog&x=14ab52dac80000
+On 25 Jan 2024, at 9:02, David Howells wrote:
+...
+> NFS.  NFS at the very least needs to be altered to give up the use of
+> PG_private_2.
 
-OK, this is making a lot more sense.
+Forgive what may be a naive question, but where is NFS using PG_private_2?
 
-The invalidate_inode_page() path (after the page_mapped check) calls
-try_to_release_page() which strips the buffers from the page.
-__remove_mapping() tries to freeze the page and presuambly fails.
+Ben
 
-ext4 is checking there are still buffer heads attached to the page.
-I'm not sure why it's doing that; it's legitimate to strip the
-bufferheads from a page and then reattach them later (if they're
-attached to a dirty page, they are created dirty).
-
-So the only question in my mind is whether ext4 is right to have this
-assert in the first place.  It seems wrong to me, but perhaps someone
-from ext4 can explain why it's correct.
-
-> The problem can be fixed in 5.10 and 5.15 stable releases by the 
-> following patch.
-> 
-> The patch replaces page_mapped() call with check that finds additional
-> references to the page excluding page cache and filesystem private data.
-> If additional references exist, the page cannot be freed.
-> 
-> This version does not include the first patch from the first version.
-> The problem can be fixed without it. 
-> 
-> Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-> 
-> Link: https://syzkaller.appspot.com/bug?extid=02f21431b65c214aa1d6
-> 
-> Matthew Wilcox (Oracle) (1):
->   mm/truncate: Replace page_mapped() call in invalidate_inode_page()
-> 
->  mm/truncate.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> -- 
-> 2.34.1
-> 
 
