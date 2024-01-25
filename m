@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-8933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C62683C76F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:05:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B519483C770
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:05:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0962909A1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:05:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 289351F25F47
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0095D74E24;
-	Thu, 25 Jan 2024 16:05:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CD474E1A;
+	Thu, 25 Jan 2024 16:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lx3akK/5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YetrPFPH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606D16EB62
-	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 16:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E9A6EB62
+	for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 16:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706198700; cv=none; b=cSRfXcwq0e5TpS7+zIVRv9H6vD+WwWB2KyRs97mTNU4oBnHdXSKsE7V3iJdLAGEwamzXwtf7P//barIxio8QreE79Seys6EjlnxKqSBpAj9+TG3o7vsxrlY10PDQ8VDy3iTerpRi0PhGhiefeTA48nBXG7A+rtClUqdJdHLTY1s=
+	t=1706198702; cv=none; b=p4e4t5/DxTP5qfv+zLa9EkbT03XryfZtv28+k89VGxrXyBzGbPJMhbE5gn00IIoCjpNPNSgxxkvVY/k7bSdAsdsMP5oMvYy9W/meQZWnaUN3QfwC2GjhMjZJu/ng69F/XR0i3mH2B5JueEJ9tLgFDz0DshRs8fpZZ/HKCz6K0mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706198700; c=relaxed/simple;
-	bh=nG6QtZ+0QxM4tJRZYP5r80ky9GpEV9UwdACozixY0ck=;
+	s=arc-20240116; t=1706198702; c=relaxed/simple;
+	bh=eck+Q6/d4PdPQ302HNsXwlqFeWOBFOPpF3o+EqB6Hzc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=b4h36PBXY7NhEDuKYMEP+7JE3Nmo4FCEjshEfQULgPCE5qOIGTHh6k9FeVptFl6bKT0ubLWWRv6/FjMfRcFPEERVFSdikrPRBq21F4rrn5eihRoO6ViyjgGapfEopUAvrb0WIJ0sr5hYrZymbtS4ARcZKV1TUauVAhXeU/cULlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lx3akK/5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1584DC43394;
-	Thu, 25 Jan 2024 16:04:58 +0000 (UTC)
+	 MIME-Version; b=lBzAGziPWZL7Qu/ROsSzbYjUxlPu0sU2zMTj8F/cH2qj04eouZ0iJrdZGUPZmNCi+xeZa6DzUnORM3KN3bbv2AqhUhfasoc/MKrBxUKlYD+Bk0CcVJ7E39XWGtx8KIzOK1DAwwDQnvpj4+4NjGCbf+xBLUrAxZktNJ3+cVrm+JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YetrPFPH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46A9FC43399;
+	Thu, 25 Jan 2024 16:05:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706198699;
-	bh=nG6QtZ+0QxM4tJRZYP5r80ky9GpEV9UwdACozixY0ck=;
+	s=k20201202; t=1706198702;
+	bh=eck+Q6/d4PdPQ302HNsXwlqFeWOBFOPpF3o+EqB6Hzc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lx3akK/5oEnmus2w+x+xiSIiY0MAJlYnwKB0/w2MBUqoL0oc3T0HeVKxvpvWLr4D2
-	 hEL9wiUWtmYJb+Vx2hBu6TYhPrlikEGpqNT/Uc7QkaiY2MU2LyB6XOJPhjHJJufLU9
-	 aGvjstTdr46QC/40uuQEtu6eywOlPZu3pbLfRTEXpeD4PFnzMB3wyCWTJSnB68PZ84
-	 8Ss5LR0UNP0xgzlFtDM96Diw2vs9By6C0L/4n7QTdFfDrv5PP5nHw0sQKyTERr1nWc
-	 sU+Xr829ubbIppNGCj+F97npTjSzCIQF1jCnndaaImPnM0ZtuJs0kumgXe187i+ahf
-	 +sPmx+LJm/0MQ==
+	b=YetrPFPHgtUaG3Ufw0vPIUgmEFCKQV9mxyQR00kmfrvasNh9INeTnFqSpWHFVivJj
+	 +fbpqDK1nM00YZVONqDhg8uDDQAE1fUVlIfb22AKwhYnY1RZSsMDr4A0kI/ZmNKHW5
+	 2ocBT2xCB3+amEGFJZoUoTf/xgHeDzegCa6+jUkUK1h3E/RAq1dgcEYm4SIstDF4my
+	 WDIF/tpd/6uk9VLGFDqHZJdTaEVJnCkfDiW/cu9IShGKD9xbRtrgcfSVtxr9GLZ/b3
+	 xFu4AxsriGCPGTW59Oj1Gn89djqdlBdyGGcJJ2aPB7s701MjfbB3PtleqqqhvgxmXx
+	 kuPROLm9GuXqQ==
 From: cem@kernel.org
 To: jack@suze.cz
 Cc: linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/3] Add quotactl_fd() support
-Date: Thu, 25 Jan 2024 17:04:34 +0100
-Message-ID: <20240125160447.1136023-3-cem@kernel.org>
+Subject: [PATCH 3/3] Enable support for tmpfs quotas
+Date: Thu, 25 Jan 2024 17:04:35 +0100
+Message-ID: <20240125160447.1136023-4-cem@kernel.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240125160447.1136023-1-cem@kernel.org>
 References: <20240125160447.1136023-1-cem@kernel.org>
@@ -60,112 +60,94 @@ Content-Transfer-Encoding: 8bit
 
 From: Carlos Maiolino <cem@kernel.org>
 
-To be able to set quotas on filesystems without a backing device, quota tools
-should be able to use quotactl_fd().
-To achieve that, add a new helper, do_quotactl(), to select between quotactl()
-and quotactl_fd().
-
-This shouldn't change the semantics of current code. quotactl_fd() will be
-called if and only if the handlers contain an empty device, and a valid
-mountpoint.
-All current calls containing a value device should be still handled by quotactl().
-The same is true for calls passing a NULL device on purpose, aiming to sync
-active quotas.
+To achieve so, add a new function quotactl_handle() to the quotaio subsystem,
+this will call do_quotactl() with or without a valid quotadev, according to the
+filesystem type.
 
 Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
 Signed-off-by: Lukas Czerner <lczerner@redhat.com>
 ---
- Makefile.am       |  1 +
- quotacheck.c      | 12 +++++------
- quotaio.c         |  4 ++--
- quotaio_generic.c | 12 +++++------
- quotaio_meta.c    |  4 ++--
- quotaio_v1.c      | 10 ++++-----
- quotaio_v2.c      | 12 +++++------
- quotaio_xfs.c     | 21 ++++++++++--------
- quotaon.c         |  8 +++----
- quotaon_xfs.c     |  9 ++++----
- quotastats.c      |  4 ++--
- quotasync.c       |  2 +-
- quotasys.c        | 55 ++++++++++++++++++++++++++++++++++++-----------
- quotasys.h        |  3 +++
- 14 files changed, 98 insertions(+), 59 deletions(-)
+ mntopt.h          |  1 +
+ quotaio.c         | 19 +++++++++++++++++--
+ quotaio.h         |  2 ++
+ quotaio_generic.c | 11 +++++------
+ quotaio_meta.c    |  3 +--
+ quotaio_v1.c      | 11 +++++------
+ quotaio_v2.c      | 11 +++++------
+ quotaio_xfs.c     |  4 ++--
+ quotasys.c        | 21 ++++++++++++++++++---
+ 9 files changed, 56 insertions(+), 27 deletions(-)
 
-diff --git a/Makefile.am b/Makefile.am
-index 372eafb..13a0f06 100644
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -207,6 +207,7 @@ quotastats_SOURCES = \
- 	pot.h
+diff --git a/mntopt.h b/mntopt.h
+index 0f3b0c5..9b71990 100644
+--- a/mntopt.h
++++ b/mntopt.h
+@@ -22,6 +22,7 @@
+ #define MNTTYPE_MPFS		"mpfs"  /* EMC Celerra MPFS filesystem */
+ #define MNTTYPE_OCFS2		"ocfs2"	/* Oracle Cluster filesystem */
+ #define MNTTYPE_GFS2		"gfs2"	/* Red Hat Global filesystem 2 */
++#define MNTTYPE_TMPFS		"tmpfs"	/* tmpfs filesystem */
  
- quotastats_LDADD = \
-+	libquota.a \
- 	$(INTLLIBS)
- 
- xqmstats_SOURCES = \
-diff --git a/quotacheck.c b/quotacheck.c
-index bd62d9a..e2c3bbd 100644
---- a/quotacheck.c
-+++ b/quotacheck.c
-@@ -648,8 +648,8 @@ Please turn quotas off or use -f to force checking.\n"),
- 				    type2name(type), mnt->me_dir);
- 		}
- 		/* At least sync quotas so damage will be smaller */
--		if (quotactl(QCMD((kernel_iface == IFACE_GENERIC)? Q_SYNC : Q_6_5_SYNC, type),
--			     mnt->me_devname, 0, NULL) < 0)
-+		if (do_quotactl(QCMD((kernel_iface == IFACE_GENERIC)? Q_SYNC : Q_6_5_SYNC, type),
-+			     mnt->me_devname, mnt->me_dir, 0, NULL) < 0)
- 			die(4, _("Error while syncing quotas on %s: %s\n"), mnt->me_devname, strerror(errno));
- 	}
- 
-@@ -848,8 +848,8 @@ static int dump_to_file(struct mount_entry *mnt, int type)
- 		if (get_qf_name(mnt, type, cfmt, NF_FORMAT, &filename) < 0)
- 			errstr(_("Cannot find checked quota file for %ss on %s!\n"), _(type2name(type)), mnt->me_devname);
- 		else {
--			if (quotactl(QCMD((kernel_iface == IFACE_GENERIC) ? Q_QUOTAOFF : Q_6_5_QUOTAOFF, type),
--				     mnt->me_devname, 0, NULL) < 0)
-+			if (do_quotactl(QCMD((kernel_iface == IFACE_GENERIC) ? Q_QUOTAOFF : Q_6_5_QUOTAOFF, type),
-+				     mnt->me_devname, mnt->me_dir, 0, NULL) < 0)
- 				errstr(_("Cannot turn %s quotas off on %s: %s\nKernel won't know about changes quotacheck did.\n"),
- 					_(type2name(type)), mnt->me_devname, strerror(errno));
- 			else {
-@@ -859,9 +859,9 @@ static int dump_to_file(struct mount_entry *mnt, int type)
- 				rename_files(mnt, type);
- 
- 				if (kernel_iface == IFACE_GENERIC)
--					ret = quotactl(QCMD(Q_QUOTAON, type), mnt->me_devname, util2kernfmt(cfmt), filename);
-+					ret = do_quotactl(QCMD(Q_QUOTAON, type), mnt->me_devname, mnt->me_dir, util2kernfmt(cfmt), filename);
- 				else
--					ret = quotactl(QCMD(Q_6_5_QUOTAON, type), mnt->me_devname, 0, filename);
-+					ret = do_quotactl(QCMD(Q_6_5_QUOTAON, type), mnt->me_devname, mnt->me_dir, 0, filename);
- 				if (ret < 0)
- 					errstr(_("Cannot turn %s quotas on on %s: %s\nKernel won't know about changes quotacheck did.\n"),
- 						_(type2name(type)), mnt->me_devname, strerror(errno));
+ #ifndef MNTTYPE_NFS
+ #define MNTTYPE_NFS	"nfs"		/* Network file system.  */
 diff --git a/quotaio.c b/quotaio.c
-index 94ae458..9bebb5e 100644
+index 9bebb5e..ae40d2a 100644
 --- a/quotaio.c
 +++ b/quotaio.c
-@@ -140,8 +140,8 @@ struct quota_handle *init_io(struct mount_entry *mnt, int type, int fmt, int fla
+@@ -34,6 +34,22 @@ struct disk_dqheader {
+ 	u_int32_t dqh_version;
+ } __attribute__ ((packed));
+ 
++int quotactl_handle(int cmd, struct quota_handle *h, int id, void *addr)
++{
++	int err = -EINVAL;
++
++	if (!h)
++		return err;
++
++	if (!strcmp(h->qh_fstype, MNTTYPE_TMPFS))
++		err = do_quotactl(QCMD(cmd, h->qh_type), NULL, h->qh_dir,
++					id, addr);
++	else
++		err = do_quotactl(QCMD(cmd, h->qh_type), h->qh_quotadev,
++					h->qh_dir, id, addr);
++
++	return err;
++}
+ /*
+  *	Detect quota format and initialize quota IO
+  */
+@@ -140,8 +156,7 @@ struct quota_handle *init_io(struct mount_entry *mnt, int type, int fmt, int fla
  		if (QIO_ENABLED(h)) {	/* Kernel uses same file? */
  			unsigned int cmd =
  				(kernel_iface == IFACE_GENERIC) ? Q_SYNC : Q_6_5_SYNC;
--			if (quotactl(QCMD(cmd, h->qh_type), h->qh_quotadev,
--				     0, NULL) < 0) {
-+			if (do_quotactl(QCMD(cmd, h->qh_type), h->qh_quotadev,
-+				     h->qh_dir, 0,  NULL) < 0) {
+-			if (do_quotactl(QCMD(cmd, h->qh_type), h->qh_quotadev,
+-				     h->qh_dir, 0,  NULL) < 0) {
++			if (quotactl_handle(cmd, h, 0,  NULL) < 0) {
  				die(4, _("Cannot sync quotas on device %s: %s\n"),
  				    h->qh_quotadev, strerror(errno));
  			}
+diff --git a/quotaio.h b/quotaio.h
+index 2c373b2..91689d9 100644
+--- a/quotaio.h
++++ b/quotaio.h
+@@ -182,4 +182,6 @@ struct dquot *get_empty_dquot(void);
+ /* Check whether values in current dquot can be stored on disk */
+ int check_dquot_range(struct dquot *dquot);
+ 
++/* Uses do_quotactl() to call quotactl() or quotactl_fd() */
++int quotactl_handle(int cmd, struct quota_handle *h, int id, void *addr);
+ #endif /* GUARD_QUOTAIO_H */
 diff --git a/quotaio_generic.c b/quotaio_generic.c
-index 5b23955..3c95872 100644
+index 3c95872..cf03b59 100644
 --- a/quotaio_generic.c
 +++ b/quotaio_generic.c
 @@ -50,7 +50,7 @@ int vfs_get_info(struct quota_handle *h)
  {
  	struct if_dqinfo kinfo;
  
--	if (quotactl(QCMD(Q_GETINFO, h->qh_type), h->qh_quotadev, 0, (void *)&kinfo) < 0) {
-+	if (do_quotactl(QCMD(Q_GETINFO, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kinfo) < 0) {
+-	if (do_quotactl(QCMD(Q_GETINFO, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kinfo) < 0) {
++	if (quotactl_handle(Q_GETINFO, h, 0, (void *)&kinfo) < 0) {
  		errstr(_("Cannot get info for %s quota file from kernel on %s: %s\n"), type2name(h->qh_type), h->qh_quotadev, strerror(errno));
  		return -1;
  	}
@@ -173,8 +155,8 @@ index 5b23955..3c95872 100644
  	kinfo.dqi_igrace = h->qh_info.dqi_igrace;
  	kinfo.dqi_valid = flags;
  
--	if (quotactl(QCMD(Q_SETINFO, h->qh_type), h->qh_quotadev, 0, (void *)&kinfo) < 0) {
-+	if (do_quotactl(QCMD(Q_SETINFO, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kinfo) < 0) {
+-	if (do_quotactl(QCMD(Q_SETINFO, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kinfo) < 0) {
++	if (quotactl_handle(Q_SETINFO, h, 0, (void *)&kinfo) < 0) {
  		errstr(_("Cannot set info for %s quota file from kernel on %s: %s\n"), type2name(h->qh_type), h->qh_quotadev, strerror(errno));
  		return -1;
  	}
@@ -182,8 +164,8 @@ index 5b23955..3c95872 100644
  {
  	struct if_dqblk kdqblk;
  
--	if (quotactl(QCMD(Q_GETQUOTA, dquot->dq_h->qh_type), dquot->dq_h->qh_quotadev, dquot->dq_id, (void *)&kdqblk) < 0) {
-+	if (do_quotactl(QCMD(Q_GETQUOTA, dquot->dq_h->qh_type), dquot->dq_h->qh_quotadev, dquot->dq_h->qh_dir, dquot->dq_id, (void *)&kdqblk) < 0) {
+-	if (do_quotactl(QCMD(Q_GETQUOTA, dquot->dq_h->qh_type), dquot->dq_h->qh_quotadev, dquot->dq_h->qh_dir, dquot->dq_id, (void *)&kdqblk) < 0) {
++	if (quotactl_handle(Q_GETQUOTA, dquot->dq_h, dquot->dq_id, (void *)&kdqblk) < 0) {
  		errstr(_("Cannot get quota for %s %d from kernel on %s: %s\n"), type2name(dquot->dq_h->qh_type), dquot->dq_id, dquot->dq_h->qh_quotadev, strerror(errno));
  		return -1;
  	}
@@ -191,47 +173,45 @@ index 5b23955..3c95872 100644
  
  	generic_util2kerndqblk(&kdqblk, &dquot->dq_dqb);
  	kdqblk.dqb_valid = flags;
--	if (quotactl(QCMD(Q_SETQUOTA, dquot->dq_h->qh_type), dquot->dq_h->qh_quotadev, dquot->dq_id, (void *)&kdqblk) < 0) {
-+	if (do_quotactl(QCMD(Q_SETQUOTA, dquot->dq_h->qh_type), dquot->dq_h->qh_quotadev, dquot->dq_h->qh_dir, dquot->dq_id, (void *)&kdqblk) < 0) {
+-	if (do_quotactl(QCMD(Q_SETQUOTA, dquot->dq_h->qh_type), dquot->dq_h->qh_quotadev, dquot->dq_h->qh_dir, dquot->dq_id, (void *)&kdqblk) < 0) {
++	if (quotactl_handle(Q_SETQUOTA, dquot->dq_h, dquot->dq_id, (void *)&kdqblk) < 0) {
  		errstr(_("Cannot set quota for %s %d from kernel on %s: %s\n"), type2name(dquot->dq_h->qh_type), dquot->dq_id, dquot->dq_h->qh_quotadev, strerror(errno));
  		return -1;
  	}
-@@ -188,8 +188,8 @@ int vfs_scan_dquots(struct quota_handle *h,
+@@ -188,8 +188,7 @@ int vfs_scan_dquots(struct quota_handle *h,
  
  	dquot->dq_h = h;
  	while (1) {
--		ret = quotactl(QCMD(Q_GETNEXTQUOTA, h->qh_type),
--			       h->qh_quotadev, id, (void *)&kdqblk);
-+		ret = do_quotactl(QCMD(Q_GETNEXTQUOTA, h->qh_type),
-+			       h->qh_quotadev, h->qh_dir, id, (void *)&kdqblk);
+-		ret = do_quotactl(QCMD(Q_GETNEXTQUOTA, h->qh_type),
+-			       h->qh_quotadev, h->qh_dir, id, (void *)&kdqblk);
++		ret = quotactl_handle(Q_GETNEXTQUOTA, h, id, (void *)&kdqblk);
  		if (ret < 0)
  			break;
  
 diff --git a/quotaio_meta.c b/quotaio_meta.c
-index ad6ff7a..51ebbcf 100644
+index 51ebbcf..99fdaf8 100644
 --- a/quotaio_meta.c
 +++ b/quotaio_meta.c
-@@ -59,8 +59,8 @@ static int meta_scan_dquots(struct quota_handle *h, int (*process_dquot)(struct
+@@ -59,8 +59,7 @@ static int meta_scan_dquots(struct quota_handle *h, int (*process_dquot)(struct
  	struct if_nextdqblk kdqblk;
  	int ret;
  
--	ret = quotactl(QCMD(Q_GETNEXTQUOTA, h->qh_type), h->qh_quotadev, 0,
--		       (void *)&kdqblk);
-+	ret = do_quotactl(QCMD(Q_GETNEXTQUOTA, h->qh_type), h->qh_quotadev,
-+			  h->qh_dir, 0, (void *)&kdqblk);
+-	ret = do_quotactl(QCMD(Q_GETNEXTQUOTA, h->qh_type), h->qh_quotadev,
+-			  h->qh_dir, 0, (void *)&kdqblk);
++	ret = quotactl_handle(Q_GETNEXTQUOTA, h, 0, (void *)&kdqblk);
  	/*
  	 * Fall back to scanning using passwd if Q_GETNEXTQUOTA is not
  	 * supported
 diff --git a/quotaio_v1.c b/quotaio_v1.c
-index 6a6dc78..187a5a5 100644
+index 187a5a5..0b88d0c 100644
 --- a/quotaio_v1.c
 +++ b/quotaio_v1.c
 @@ -118,7 +118,7 @@ static int v1_init_io(struct quota_handle *h)
  		else {
  			struct v1_kern_dqblk kdqblk;
  
--			if (quotactl(QCMD(Q_V1_GETQUOTA, h->qh_type), h->qh_quotadev, 0, (void *)&kdqblk) < 0) {
-+			if (do_quotactl(QCMD(Q_V1_GETQUOTA, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kdqblk) < 0) {
+-			if (do_quotactl(QCMD(Q_V1_GETQUOTA, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kdqblk) < 0) {
++			if (quotactl_handle(Q_V1_GETQUOTA, h, 0, (void *)&kdqblk) < 0) {
  				if (errno == EPERM) {	/* We have no permission to get this information? */
  					h->qh_info.dqi_bgrace = h->qh_info.dqi_igrace = 0;	/* It hopefully won't be needed */
  				}
@@ -239,13 +219,13 @@ index 6a6dc78..187a5a5 100644
  		else {
  			struct v1_kern_dqblk kdqblk;
  
--			if (quotactl(QCMD(Q_V1_GETQUOTA, h->qh_type), h->qh_quotadev, 0, (void *)&kdqblk) < 0)
-+			if (do_quotactl(QCMD(Q_V1_GETQUOTA, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kdqblk) < 0)
+-			if (do_quotactl(QCMD(Q_V1_GETQUOTA, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kdqblk) < 0)
++			if (quotactl_handle(Q_V1_GETQUOTA, h, 0, (void *)&kdqblk) < 0)
  				return -1;
  			kdqblk.dqb_btime = h->qh_info.dqi_bgrace;
  			kdqblk.dqb_itime = h->qh_info.dqi_igrace;
--			if (quotactl(QCMD(Q_V1_SETQUOTA, h->qh_type), h->qh_quotadev, 0, (void *)&kdqblk) < 0)
-+			if (do_quotactl(QCMD(Q_V1_SETQUOTA, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kdqblk) < 0)
+-			if (do_quotactl(QCMD(Q_V1_SETQUOTA, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kdqblk) < 0)
++			if (quotactl_handle(Q_V1_SETQUOTA, h, 0, (void *)&kdqblk) < 0)
  				return -1;
  		}
  	}
@@ -253,30 +233,31 @@ index 6a6dc78..187a5a5 100644
  		else {
  			struct v1_kern_dqblk kdqblk;
  
--			if (quotactl(QCMD(Q_V1_GETQUOTA, h->qh_type), h->qh_quotadev, id, (void *)&kdqblk) < 0) {
-+			if (do_quotactl(QCMD(Q_V1_GETQUOTA, h->qh_type), h->qh_quotadev, h->qh_dir, id, (void *)&kdqblk) < 0) {
+-			if (do_quotactl(QCMD(Q_V1_GETQUOTA, h->qh_type), h->qh_quotadev, h->qh_dir, id, (void *)&kdqblk) < 0) {
++			if (quotactl_handle(Q_V1_GETQUOTA, h, id, (void *)&kdqblk) < 0) {
  				free(dquot);
  				return NULL;
  			}
-@@ -299,7 +299,7 @@ static int v1_commit_dquot(struct dquot *dquot, int flags)
+@@ -299,8 +299,7 @@ static int v1_commit_dquot(struct dquot *dquot, int flags)
  			else
  				cmd = Q_V1_SETQUOTA;
  			v1_util2kerndqblk(&kdqblk, &dquot->dq_dqb);
--			if (quotactl(QCMD(cmd, h->qh_type), h->qh_quotadev, dquot->dq_id,
-+			if (do_quotactl(QCMD(cmd, h->qh_type), h->qh_quotadev, h->qh_dir, dquot->dq_id,
- 			     (void *)&kdqblk) < 0)
+-			if (do_quotactl(QCMD(cmd, h->qh_type), h->qh_quotadev, h->qh_dir, dquot->dq_id,
+-			     (void *)&kdqblk) < 0)
++			if (quotactl_handle(cmd, h, dquot->dq_id, (void *)&kdqblk) < 0)
  				return -1;
  		}
+ 	}
 diff --git a/quotaio_v2.c b/quotaio_v2.c
-index 56a549f..b0fe7bf 100644
+index b0fe7bf..9927cad 100644
 --- a/quotaio_v2.c
 +++ b/quotaio_v2.c
 @@ -275,7 +275,7 @@ static int v2_init_io(struct quota_handle *h)
  		else {
  			struct v2_kern_dqinfo kdqinfo;
  
--			if (quotactl(QCMD(Q_V2_GETINFO, h->qh_type), h->qh_quotadev, 0, (void *)&kdqinfo) < 0) {
-+			if (do_quotactl(QCMD(Q_V2_GETINFO, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kdqinfo) < 0) {
+-			if (do_quotactl(QCMD(Q_V2_GETINFO, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kdqinfo) < 0) {
++			if (quotactl_handle(Q_V2_GETINFO, h, 0, (void *)&kdqinfo) < 0) {
  				/* Temporary check just before fix gets to kernel */
  				if (errno == EPERM)	/* Don't have permission to get information? */
  					return 0;
@@ -284,10 +265,10 @@ index 56a549f..b0fe7bf 100644
  			kdqinfo.dqi_blocks = h->qh_info.u.v2_mdqi.dqi_qtree.dqi_blocks;
  			kdqinfo.dqi_free_blk = h->qh_info.u.v2_mdqi.dqi_qtree.dqi_free_blk;
  			kdqinfo.dqi_free_entry = h->qh_info.u.v2_mdqi.dqi_qtree.dqi_free_entry;
--			if (quotactl(QCMD(Q_V2_SETGRACE, h->qh_type), h->qh_quotadev, 0, (void *)&kdqinfo) < 0 ||
--			    quotactl(QCMD(Q_V2_SETFLAGS, h->qh_type), h->qh_quotadev, 0, (void *)&kdqinfo) < 0)
-+			if (do_quotactl(QCMD(Q_V2_SETGRACE, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kdqinfo) < 0 ||
-+			    do_quotactl(QCMD(Q_V2_SETFLAGS, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kdqinfo) < 0)
+-			if (do_quotactl(QCMD(Q_V2_SETGRACE, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kdqinfo) < 0 ||
+-			    do_quotactl(QCMD(Q_V2_SETFLAGS, h->qh_type), h->qh_quotadev, h->qh_dir, 0, (void *)&kdqinfo) < 0)
++			if (quotactl_handle(Q_V2_SETGRACE, h, 0, (void *)&kdqinfo) < 0 ||
++			    quotactl_handle(Q_V2_SETFLAGS, h, 0, (void *)&kdqinfo) < 0)
  					return -1;
  		}
  	}
@@ -295,32 +276,31 @@ index 56a549f..b0fe7bf 100644
  		else {
  			struct v2_kern_dqblk kdqblk;
  
--			if (quotactl(QCMD(Q_V2_GETQUOTA, h->qh_type), h->qh_quotadev, id, (void *)&kdqblk) < 0) {
-+			if (do_quotactl(QCMD(Q_V2_GETQUOTA, h->qh_type), h->qh_quotadev, h->qh_dir, id, (void *)&kdqblk) < 0) {
+-			if (do_quotactl(QCMD(Q_V2_GETQUOTA, h->qh_type), h->qh_quotadev, h->qh_dir, id, (void *)&kdqblk) < 0) {
++			if (quotactl_handle(Q_V2_GETQUOTA, h, id, (void *)&kdqblk) < 0) {
  				free(dquot);
  				return NULL;
  			}
-@@ -485,8 +485,8 @@ static int v2_commit_dquot(struct dquot *dquot, int flags)
+@@ -485,8 +485,7 @@ static int v2_commit_dquot(struct dquot *dquot, int flags)
  			else
  				cmd = Q_V2_SETQUOTA;
  			v2_util2kerndqblk(&kdqblk, &dquot->dq_dqb);
--			if (quotactl(QCMD(cmd, dquot->dq_h->qh_type), dquot->dq_h->qh_quotadev,
--			     dquot->dq_id, (void *)&kdqblk) < 0)
-+			if (do_quotactl(QCMD(cmd, dquot->dq_h->qh_type), dquot->dq_h->qh_quotadev,
-+			     dquot->dq_h->qh_dir, dquot->dq_id, (void *)&kdqblk) < 0)
+-			if (do_quotactl(QCMD(cmd, dquot->dq_h->qh_type), dquot->dq_h->qh_quotadev,
+-			     dquot->dq_h->qh_dir, dquot->dq_id, (void *)&kdqblk) < 0)
++			if (quotactl_handle(cmd, dquot->dq_h, dquot->dq_id, (void *)&kdqblk) < 0)
  				return -1;
  		}
  		return 0;
 diff --git a/quotaio_xfs.c b/quotaio_xfs.c
-index 5abb2c2..0bf6f34 100644
+index 0bf6f34..d742f9c 100644
 --- a/quotaio_xfs.c
 +++ b/quotaio_xfs.c
 @@ -128,7 +128,7 @@ static int xfs_init_io(struct quota_handle *h)
  
  	qcmd = QCMD(Q_XFS_GETQSTAT, h->qh_type);
  	memset(&info, 0, sizeof(struct xfs_mem_dqinfo));
--	if (quotactl(qcmd, h->qh_quotadev, 0, (void *)&info) < 0)
-+	if (do_quotactl(qcmd, h->qh_quotadev, h->qh_dir, 0, (void *)&info) < 0)
+-	if (do_quotactl(qcmd, h->qh_quotadev, h->qh_dir, 0, (void *)&info) < 0)
++	if (quotactl_handle(qcmd, h, 0, (void *)&info) < 0)
  		return -1;
  	h->qh_info.dqi_bgrace = info.qs_btimelimit;
  	h->qh_info.dqi_igrace = info.qs_itimelimit;
@@ -328,331 +308,80 @@ index 5abb2c2..0bf6f34 100644
  	xdqblk.d_itimer = h->qh_info.dqi_igrace;
  	xdqblk.d_fieldmask |= FS_DQ_TIMER_MASK;
  	qcmd = QCMD(Q_XFS_SETQLIM, h->qh_type);
--	if (quotactl(qcmd, h->qh_quotadev, 0, (void *)&xdqblk) < 0)
-+	if (do_quotactl(qcmd, h->qh_quotadev, h->qh_dir, 0, (void *)&xdqblk) < 0)
+-	if (do_quotactl(qcmd, h->qh_quotadev, h->qh_dir, 0, (void *)&xdqblk) < 0)
++	if (quotactl_handle(qcmd, h, 0, (void *)&xdqblk) < 0)
  		return -1;
  	return 0;
  }
-@@ -174,7 +174,8 @@ static struct dquot *xfs_read_dquot(struct quota_handle *h, qid_t id)
- 		return dquot;
- 
- 	qcmd = QCMD(Q_XFS_GETQUOTA, h->qh_type);
--	if (quotactl(qcmd, h->qh_quotadev, id, (void *)&xdqblk) < 0) {
-+	if (do_quotactl(qcmd, h->qh_quotadev, h->qh_dir,
-+			id, (void *)&xdqblk) < 0) {
- 		;
- 	}
- 	else {
-@@ -219,7 +220,7 @@ static int xfs_commit_dquot(struct dquot *dquot, int flags)
- 	}
- 
- 	qcmd = QCMD(Q_XFS_SETQLIM, h->qh_type);
--	if (quotactl(qcmd, h->qh_quotadev, id, (void *)&xdqblk) < 0)
-+	if (do_quotactl(qcmd, h->qh_quotadev, h->qh_dir, id, (void *)&xdqblk) < 0)
- 		return -1;
- 	return 0;
- }
-@@ -234,7 +235,9 @@ static int xfs_get_dquot(struct dquot *dq)
- 	int ret;
- 
- 	memset(&d, 0, sizeof(d));
--	ret = quotactl(qcmd, dq->dq_h->qh_quotadev, dq->dq_id, (void *)&d);
-+	ret = do_quotactl(qcmd, dq->dq_h->qh_quotadev, dq->dq_h->qh_dir,
-+			  dq->dq_id, (void *)&d);
-+
- 	if (ret < 0) {
- 		if (errno == ENOENT)
- 			return 0;
-@@ -254,8 +257,8 @@ static int xfs_kernel_scan_dquots(struct quota_handle *h,
- 
- 	dquot->dq_h = h;
- 	while (1) {
--		ret = quotactl(QCMD(Q_XGETNEXTQUOTA, h->qh_type),
--			       h->qh_quotadev, id, (void *)&xdqblk);
-+		ret = do_quotactl(QCMD(Q_XGETNEXTQUOTA, h->qh_type),
-+			       h->qh_quotadev, h->qh_dir, id, (void *)&xdqblk);
- 		if (ret < 0)
- 			break;
- 
-@@ -286,8 +289,8 @@ static int xfs_scan_dquots(struct quota_handle *h, int (*process_dquot) (struct
- 	int ret;
- 	struct xfs_kern_dqblk xdqblk;
- 
--	ret = quotactl(QCMD(Q_XGETNEXTQUOTA, h->qh_type), h->qh_quotadev, 0,
--		       (void *)&xdqblk);
-+	ret = do_quotactl(QCMD(Q_XGETNEXTQUOTA, h->qh_type), h->qh_quotadev,
-+			  h->qh_dir, 0, (void *)&xdqblk);
- 	if (ret < 0 && (errno == ENOSYS || errno == EINVAL)) {
- 		if (!XFS_USRQUOTA(h) && !XFS_GRPQUOTA(h) && !XFS_PRJQUOTA(h))
- 			return 0;
-diff --git a/quotaon.c b/quotaon.c
-index 125b934..351c851 100644
---- a/quotaon.c
-+++ b/quotaon.c
-@@ -152,13 +152,13 @@ static int quotarsquashonoff(const char *quotadev, int type, int flags)
- 
- 		info.dqi_flags = V1_DQF_RSQUASH;
- 		info.dqi_valid = IIF_FLAGS;
--		ret = quotactl(qcmd, quotadev, 0, (void *)&info);
-+		ret = do_quotactl(qcmd, quotadev, NULL, 0, (void *)&info);
- 	}
- 	else {
- 		int mode = (flags & STATEFLAG_OFF) ? 0 : 1;
- 		int qcmd = QCMD(Q_V1_RSQUASH, type);
- 
--		ret = quotactl(qcmd, quotadev, 0, (void *)&mode);
-+		ret = do_quotactl(qcmd, quotadev, NULL, 0, (void *)&mode);
- 	}
- 	if (ret < 0) {
- 		errstr(_("set root_squash on %s: %s\n"), quotadev, strerror(errno));
-@@ -184,7 +184,7 @@ static int quotaonoff(const char *quotadev, const char *quotadir, char *quotafil
- 			qcmd = QCMD(Q_QUOTAOFF, type);
- 		else
- 			qcmd = QCMD(Q_6_5_QUOTAOFF, type);
--		if (quotactl(qcmd, quotadev, 0, NULL) < 0) {
-+		if (do_quotactl(qcmd, quotadev, quotadir, 0, NULL) < 0) {
- 			errstr(_("quotactl on %s [%s]: %s\n"), quotadev, quotadir, strerror(errno));
- 			return 1;
- 		}
-@@ -199,7 +199,7 @@ static int quotaonoff(const char *quotadev, const char *quotadir, char *quotafil
- 		qcmd = QCMD(Q_6_5_QUOTAON, type);
- 		kqf = 0;
- 	}
--	if (quotactl(qcmd, quotadev, kqf, (void *)quotafile) < 0) {
-+	if (do_quotactl(qcmd, quotadev, quotadir, kqf, (void *)quotafile) < 0) {
- 		if (errno == ENOENT)
- 			errstr(_("cannot find %s on %s [%s]\n"), quotafile, quotadev, quotadir);
- 		else
-diff --git a/quotaon_xfs.c b/quotaon_xfs.c
-index d137240..dda3023 100644
---- a/quotaon_xfs.c
-+++ b/quotaon_xfs.c
-@@ -32,7 +32,7 @@ static int xfs_state_check(int qcmd, int type, int flags, const char *dev, int r
- 	if (flags & STATEFLAG_ALL)
- 		return 0;	/* noop */
- 
--	if (quotactl(QCMD(Q_XFS_GETQSTAT, type), dev, 0, (void *)&info) < 0) {
-+	if (do_quotactl(QCMD(Q_XFS_GETQSTAT, type), dev, NULL, 0, (void *)&info) < 0) {
- 		errstr(_("quotactl() on %s: %s\n"), dev, strerror(errno));
- 		return -1;
- 	}
-@@ -156,7 +156,7 @@ static int xfs_onoff(const char *dev, int type, int flags, int roothack, int xop
- 	if (check != 1)
- 		return (check < 0);
- 
--	if (quotactl(QCMD(qcmd, type), dev, 0, (void *)&xopts) < 0) {
-+	if (do_quotactl(QCMD(qcmd, type), dev, NULL, 0, (void *)&xopts) < 0) {
- 		errstr(_("quotactl on %s: %s\n"), dev, strerror(errno));
- 		return 1;
- 	}
-@@ -176,7 +176,7 @@ static int xfs_delete(const char *dev, int type, int flags, int roothack, int xo
- 	if (check != 1)
- 		return (check < 0);
- 
--	if (quotactl(QCMD(qcmd, type), dev, 0, (void *)&xopts) < 0) {
-+	if (do_quotactl(QCMD(qcmd, type), dev, NULL, 0, (void *)&xopts) < 0) {
- 		errstr(_("Failed to delete quota: %s\n"),
- 			strerror(errno));
- 		return 1;
-@@ -208,7 +208,8 @@ int xfs_newstate(struct mount_entry *mnt, int type, char *xarg, int flags)
- 		struct xfs_mem_dqinfo info;
- 		u_int16_t sbflags = 0;
- 
--		if (!quotactl(QCMD(Q_XFS_GETQSTAT, type), mnt->me_devname, 0, (void *)&info))
-+		if (!quotactl(QCMD(Q_XFS_GETQSTAT, type), mnt->me_devname,
-+			      mnt->me_dir, 0, (void *)&info))
- 			sbflags = (info.qs_flags & 0xff00) >> 8;
- 
- 		if ((type == USRQUOTA && (sbflags & XFS_QUOTA_UDQ_ACCT)) &&
-diff --git a/quotastats.c b/quotastats.c
-index a059812..ee23afd 100644
---- a/quotastats.c
-+++ b/quotastats.c
-@@ -72,7 +72,7 @@ static int get_stats(struct util_dqstats *dqstats)
- 		dqstats->free_dquots = get_proc_num("free_dquots");
- 		dqstats->syncs = get_proc_num("syncs");
- 	}
--	else if (quotactl(QCMD(Q_V1_GETSTATS, 0), NULL, 0, (caddr_t)&old_dqstats) >= 0) {
-+	else if (do_quotactl(QCMD(Q_V1_GETSTATS, 0), NULL, NULL, 0, (caddr_t)&old_dqstats) >= 0) {
- 		/* Structures are currently the same */
- 		memcpy(dqstats, &old_dqstats, sizeof(old_dqstats));
- 		dqstats->version = 0;
-@@ -83,7 +83,7 @@ static int get_stats(struct util_dqstats *dqstats)
- 			errstr(_("Error while getting quota statistics from kernel: %s\n"), strerror(errno));
- 			goto out;
- 		}
--		if (quotactl(QCMD(Q_V2_GETSTATS, 0), NULL, 0, (caddr_t)&v0_dqstats) < 0) {
-+		if (do_quotactl(QCMD(Q_V2_GETSTATS, 0), NULL, NULL, 0, (caddr_t)&v0_dqstats) < 0) {
- 			errstr(_("Error while getting old quota statistics from kernel: %s\n"), strerror(errno));
- 			goto out;
- 		}
-diff --git a/quotasync.c b/quotasync.c
-index 80f7e9e..cad2a20 100644
---- a/quotasync.c
-+++ b/quotasync.c
-@@ -100,7 +100,7 @@ static int sync_one(int type, char *dev)
- {
- 	int qcmd = QCMD(Q_SYNC, type);
- 
--	return quotactl(qcmd, dev, 0, NULL);
-+	return do_quotactl(qcmd, dev, NULL, 0, NULL);
- }
- 
- static int syncquotas(int type)
 diff --git a/quotasys.c b/quotasys.c
-index 9af9932..903816b 100644
+index 903816b..2655345 100644
 --- a/quotasys.c
 +++ b/quotasys.c
-@@ -25,6 +25,7 @@
- #include <sys/vfs.h>
- #include <stdint.h>
- #include <sys/utsname.h>
-+#include <sys/syscall.h>
- 
- #include "pot.h"
- #include "bylabel.h"
-@@ -670,6 +671,36 @@ const char *str2number(const char *string, qsize_t *inodes)
- 	return NULL;
+@@ -73,6 +73,11 @@ int meta_qf_fstype(char *type)
+ 	return !strcmp(type, MNTTYPE_OCFS2);
  }
  
-+/*
-+ * Wrappers for quotactl syscalls
-+ */
-+#ifdef SYS_quotactl_fd
-+int do_quotactl(int cmd, const char *dev, const char *mnt, int id, caddr_t addr)
++int tmpfs_fstype(char *type)
 +{
-+	int ret = -EINVAL;
-+
-+	if (mnt && !dev) {
-+		int fd = open(mnt, O_DIRECTORY | O_PATH);
-+
-+		if (fd < 0) {
-+			errstr(_("Unable to get a filedescriptor from mountpoint: %s\n"), mnt);
-+			return fd;
-+		}
-+
-+		ret = syscall(SYS_quotactl_fd, fd, cmd, id, addr);
-+		close(fd);
-+		return ret;
-+	}
-+
-+	return quotactl(cmd, dev, id, addr);
++	return !strcmp(type, MNTTYPE_TMPFS);
 +}
-+#else
-+int do_quotactl(int cmd, const char *dev, const char *mnt, int id, caddr_t addr)
-+{
-+	return quotactl(cmd, dev, id, addr);
-+}
-+#endif
 +
  /*
-  *	Wrappers for mount options processing functions
+  *	Convert type of quota to written representation
   */
-@@ -685,7 +716,7 @@ static int hasxfsquota(const char *dev, struct mntent *mnt, int type, int flags)
- 		return QF_XFS;
+@@ -752,6 +757,7 @@ static int hasvfsmetaquota(const char *dev, struct mntent *mnt, int type, int fl
  
- 	memset(&info, 0, sizeof(struct xfs_mem_dqinfo));
--	if (!quotactl(QCMD(Q_XFS_GETQSTAT, type), dev, 0, (void *)&info)) {
-+	if (!do_quotactl(QCMD(Q_XFS_GETQSTAT, type), dev, mnt->mnt_dir, 0, (void *)&info)) {
- #ifdef XFS_ROOTHACK
- 		int sbflags = (info.qs_flags & 0xff00) >> 8;
- #endif /* XFS_ROOTHACK */
-@@ -719,7 +750,7 @@ static int hasvfsmetaquota(const char *dev, struct mntent *mnt, int type, int fl
- {
- 	uint32_t fmt;
- 
--	if (!quotactl(QCMD(Q_GETFMT, type), dev, 0, (void *)&fmt))
-+	if (!do_quotactl(QCMD(Q_GETFMT, type), dev, mnt->mnt_dir, 0, (void *)&fmt))
+ 	if (!do_quotactl(QCMD(Q_GETFMT, type), dev, mnt->mnt_dir, 0, (void *)&fmt))
  		return QF_META;
++
  	return QF_ERROR;
  }
-@@ -796,7 +827,7 @@ static int hasquota(const char *dev, struct mntent *mnt, int type, int flags)
- 	if (!strcmp(mnt->mnt_type, MNTTYPE_EXT4) || !strcmp(mnt->mnt_type, MNTTYPE_F2FS)) {
- 		struct if_dqinfo kinfo;
  
--		if (quotactl(QCMD(Q_GETINFO, type), dev, 0, (void *)&kinfo) == 0) {
-+		if (do_quotactl(QCMD(Q_GETINFO, type), dev, mnt->mnt_dir, 0, (void *)&kinfo) == 0) {
- 			if (kinfo.dqi_flags & DQF_SYS_FILE)
- 				return QF_META;
- 		}
-@@ -1069,11 +1100,11 @@ void init_kernel_interface(void)
- 		else {
- 			fs_quota_stat_t dummy;
- 
--			if (!quotactl(QCMD(Q_XGETQSTAT, 0), "/dev/root", 0, (void *)&dummy) ||
-+			if (!do_quotactl(QCMD(Q_XGETQSTAT, 0), "/dev/root", NULL, 0, (void *)&dummy) ||
- 			    (errno != EINVAL && errno != ENOSYS))
- 				kernel_qfmt[kernel_qfmt_num++] = QF_XFS;
- 		}
--		if (quotactl(QCMD(Q_V2_GETSTATS, 0), NULL, 0, (void *)&v2_stats) >= 0) {
-+		if (do_quotactl(QCMD(Q_V2_GETSTATS, 0), NULL, NULL, 0, (void *)&v2_stats) >= 0) {
- 			kernel_qfmt[kernel_qfmt_num++] = QF_VFSV0;
- 			kernel_iface = IFACE_VFSV0;
- 		}
-@@ -1085,9 +1116,9 @@ void init_kernel_interface(void)
- 			int err_quota = 0;
-  			char tmp[1024];         /* Just temporary buffer */
- 
--			if (quotactl(QCMD(Q_V1_GETSTATS, 0), NULL, 0, tmp))
-+			if (do_quotactl(QCMD(Q_V1_GETSTATS, 0), NULL, NULL, 0, tmp))
- 				err_stat = errno;
--			if (quotactl(QCMD(Q_V1_GETQUOTA, 0), "/dev/null", 0, tmp))
-+			if (do_quotactl(QCMD(Q_V1_GETQUOTA, 0), "/dev/null", NULL, 0, tmp))
- 				err_quota = errno;
- 
- 			/* On a RedHat 2.4.2-2 	we expect 0, EINVAL
-@@ -1127,7 +1158,7 @@ static int v1_kern_quota_on(const char *dev, int type)
- 	char tmp[1024];		/* Just temporary buffer */
- 	qid_t id = (type == USRQUOTA) ? getuid() : getgid();
- 
--	if (!quotactl(QCMD(Q_V1_GETQUOTA, type), dev, id, tmp))	/* OK? */
-+	if (!do_quotactl(QCMD(Q_V1_GETQUOTA, type), dev, NULL, id, tmp))	/* OK? */
- 		return 1;
- 	return 0;
- }
-@@ -1138,7 +1169,7 @@ static int v2_kern_quota_on(const char *dev, int type)
- 	char tmp[1024];		/* Just temporary buffer */
- 	qid_t id = (type == USRQUOTA) ? getuid() : getgid();
- 
--	if (!quotactl(QCMD(Q_V2_GETQUOTA, type), dev, id, tmp))	/* OK? */
-+	if (!do_quotactl(QCMD(Q_V2_GETQUOTA, type), dev, NULL, id, tmp))	/* OK? */
- 		return 1;
- 	return 0;
- }
-@@ -1155,7 +1186,7 @@ int kern_quota_state_xfs(const char *dev, int type)
- {
- 	struct xfs_mem_dqinfo info;
- 
--	if (!quotactl(QCMD(Q_XFS_GETQSTAT, type), dev, 0, (void *)&info)) {
-+	if (!do_quotactl(QCMD(Q_XFS_GETQSTAT, type), dev, NULL, 0, (void *)&info)) {
- 		if (type == USRQUOTA) {
- 			return !!(info.qs_flags & XFS_QUOTA_UDQ_ACCT) +
- 			       !!(info.qs_flags & XFS_QUOTA_UDQ_ENFD);
-@@ -1199,8 +1230,8 @@ int kern_quota_on(struct mount_entry *mnt, int type, int fmt)
- 	if (kernel_iface == IFACE_GENERIC) {
- 		int actfmt;
- 
--		if (quotactl(QCMD(Q_GETFMT, type), mnt->me_devname, 0,
--			     (void *)&actfmt) >= 0) {
-+		if (do_quotactl(QCMD(Q_GETFMT, type), mnt->me_devname,
-+				mnt->me_dir, 0, (void *)&actfmt) >= 0) {
- 			actfmt = kern2utilfmt(actfmt);
- 			if (actfmt >= 0)
- 				return actfmt;
-diff --git a/quotasys.h b/quotasys.h
-index 841251e..b166ad2 100644
---- a/quotasys.h
-+++ b/quotasys.h
-@@ -206,6 +206,9 @@ void end_mounts_scan(void);
- /* Parse kernel version and return 1 if ext4 supports quota feature */
- int ext4_supports_quota_feature(void);
- 
-+/* Wrapper around quota syscalls, either call quotactl or quotactl_fd */
-+int do_quotactl(int cmd, const char *dev, const char *mnt, int id, caddr_t addr);
+@@ -816,8 +822,13 @@ static int hasquota(const char *dev, struct mntent *mnt, int type, int flags)
+ 	    !strcmp(mnt->mnt_type, MNTTYPE_XFS) ||
+ 	    !strcmp(mnt->mnt_type, MNTTYPE_EXFS))
+ 		return hasxfsquota(dev, mnt, type, flags);
 +
- /* Quota output formats */
- #define QOF_ERROR	-1
- #define QOF_DEFAULT	0
+ 	if (!strcmp(mnt->mnt_type, MNTTYPE_OCFS2))
+ 		return hasvfsmetaquota(dev, mnt, type, flags);
++
++	/* tmpfs has no device, pass null here so quotactl_fd() is called */
++	if (!strcmp(mnt->mnt_type, MNTTYPE_TMPFS))
++		return hasvfsmetaquota(NULL, mnt, type, flags);
+ 	/*
+ 	 * For ext4 we check whether it has quota in system files and if not,
+ 	 * we fall back on checking standard quotas. Furthermore we cannot use
+@@ -1384,7 +1395,7 @@ alloc:
+ 			continue;
+ 		}
+ 
+-		if (!nfs_fstype(mnt->mnt_type)) {
++		if (!nfs_fstype(mnt->mnt_type) && !tmpfs_fstype(mnt->mnt_type)) {
+ 			if (stat(devname, &st) < 0) {	/* Can't stat mounted device? */
+ 				errstr(_("Cannot stat() mounted device %s: %s\n"), devname, strerror(errno));
+ 				free((char *)devname);
+@@ -1398,6 +1409,7 @@ alloc:
+ 			dev = st.st_rdev;
+ 			for (i = 0; i < mnt_entries_cnt && mnt_entries[i].me_dev != dev; i++);
+ 		}
++
+ 		/* Cope with network filesystems or new mountpoint */
+ 		if (nfs_fstype(mnt->mnt_type) || i == mnt_entries_cnt) {
+ 			if (stat(mnt->mnt_dir, &st) < 0) {	/* Can't stat mountpoint? We have better ignore it... */
+@@ -1570,8 +1582,11 @@ restart:
+ 	sd = check_dirs + act_checked;
+ 	for (i = 0; i < mnt_entries_cnt; i++) {
+ 		if (sd->sd_isdir) {
+-			if (sd->sd_dev == mnt_entries[i].me_dev && sd->sd_ino == mnt_entries[i].me_ino)
+-				break;
++			if (sd->sd_ino == mnt_entries[i].me_ino)
++				if ((sd->sd_dev == mnt_entries[i].me_dev) ||
++				    (!strcmp(mnt_entries[i].me_type, MNTTYPE_TMPFS)))
++					break;
++
+ 		}
+ 		else
+ 			if (sd->sd_dev == mnt_entries[i].me_dev)
 -- 
 2.43.0
 
