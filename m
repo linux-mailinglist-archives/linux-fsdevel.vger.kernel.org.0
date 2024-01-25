@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-8910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1107F83C00E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 12:04:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39EE783C015
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 12:04:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 349D61C20A7B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:04:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FF771C23425
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0794F6A012;
-	Thu, 25 Jan 2024 10:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC9B6A323;
+	Thu, 25 Jan 2024 10:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F0CBBpPx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJ/Vu6x6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5492B67E9F;
-	Thu, 25 Jan 2024 10:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259486A02B;
+	Thu, 25 Jan 2024 10:45:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706179541; cv=none; b=tbjgAADb9pX3DRrsxdnRlTJnK9B4b8ZltJruuzHsn2HqR+Tg5Sm8FwxaETUx1CQ5R8liX4P2Ui2qxB71WV6sqK97GORwmarfhwWrsDKh/xVhZWtWSCxzFi/+IQrKKl9tbVStzRP+qSaaZfsTc3w/X7tRB7Eeu/zIvwe0UrZctmw=
+	t=1706179545; cv=none; b=ElhA+ZS75WieQ/MhmMNdBnGgThh2JJpzUSVGTnutpNAhNsQgKWQtYOII7/TcO16F3IVJOO8uNA/+Lz1X7IWzw5pVNpDJcMP67QdesThNosFA4PBwcvRibGY77LLzsT0BX1LwPs0pAWz9GKx3g8fEEEDSaz6kTn5gZnwi0eYRKzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706179541; c=relaxed/simple;
-	bh=0d5rnPV7pVlVsQkdQfvtcATDyqVhadACxbi50CfJHjQ=;
+	s=arc-20240116; t=1706179545; c=relaxed/simple;
+	bh=Bc7tS+aassSqdrdhnpohA5Vs8wnKfzMC2dWNyb0Wn/s=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=A3UxV4A91R59SE2wlV89s0QqZyrVaUvL/0llRgSYklW4ryWMwMGNWhNKgieDt0noLUwEKh4bq5lh3Lz16WvLL8KjSOz1LM9ihvGQ+d2d2tYbA3uLGPFWmETfku4NdehEx7+JJUVDOmMgiyfxsWAlusIrwzr1WmpVb3cGiATwhco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F0CBBpPx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AFF6C43390;
-	Thu, 25 Jan 2024 10:45:37 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=ainnD0zQRzE2/HQGlB9onk6lXTsIE0nnwdAshsDAx9oMc1JzBG6svxl9ZW/eePfOF899bFd8LIspfUF2DG97dwuIGvcDsQSGKpGb1pEz0m02KhoUCOHRGSN187FTPDHYwAXzNj7sIJnw6cofoq0ej+7I4P9v10EeDZl1r/YYnFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJ/Vu6x6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2139EC43601;
+	Thu, 25 Jan 2024 10:45:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706179540;
-	bh=0d5rnPV7pVlVsQkdQfvtcATDyqVhadACxbi50CfJHjQ=;
+	s=k20201202; t=1706179544;
+	bh=Bc7tS+aassSqdrdhnpohA5Vs8wnKfzMC2dWNyb0Wn/s=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=F0CBBpPxAOTSyrv0lc7DHq/CKgTy33jtAmvR7bAQLHuuKmkkBl2wSVhNzgtjOsaYF
-	 uZZOn77gA9c2LqfoSDIg4ktVmH/KOhOuyIm16eoaYGHUlfAXxi4VnfzYQf9rg80IDy
-	 Y/I989sT4vX/KrQZshkPxYn8YEEexmgUJOADTZNXhuY3ob5dC/zlznfNpGeOgDAd0R
-	 vtMZTwGPG+Hg1c5ysf2wph7mewkrjMJiIT5xIRhFFcaRSnfIsJsMvB3ejyhgUwgV6H
-	 XMk0SHrYHNurmrRE8MBquL3aBroiszz827oj0CE3JYqndxkc88MX8pBcwFdwb7+cFh
-	 uvDfQSbYTqPKg==
+	b=EJ/Vu6x67q4S4gVpIOqCQNoulXnNIIT2aLokzt62toY1DVDsXveZm6u1YBX3+09rR
+	 id2rHbrUcn2l3fLsTyWDR2tOuXRg9Jr//dMo3VvDF+lmyEV3Qr5T6OiUHxzOhIm1n8
+	 GnhpDJUIV8M5Ll6OCFvgq1sDpF4trari0+T0ym9F6V4xmw0vuLORiulpJT64HYF8Yk
+	 PMu+T7OMstFbJJiRVHhc+v/92Fj2G5NAJ7Bu9UWd7OgTjGHUWydnUcF88BTgoQdIJX
+	 mQv8TjCxbCotHbWjfLMWsPHS0oyVtbaVP/TM2uDc+YZUi1DdciN5uqE5bTh6baxEc1
+	 0E0maTLMEVfwA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 25 Jan 2024 05:43:19 -0500
-Subject: [PATCH v2 38/41] smb/client: adapt to breakup of struct file_lock
+Date: Thu, 25 Jan 2024 05:43:20 -0500
+Subject: [PATCH v2 39/41] smb/server: adapt to breakup of struct file_lock
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240125-flsplit-v2-38-7485322b62c7@kernel.org>
+Message-Id: <20240125-flsplit-v2-39-7485322b62c7@kernel.org>
 References: <20240125-flsplit-v2-0-7485322b62c7@kernel.org>
 In-Reply-To: <20240125-flsplit-v2-0-7485322b62c7@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -86,20 +86,20 @@ Cc: linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
  linux-cifs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11982; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=0d5rnPV7pVlVsQkdQfvtcATDyqVhadACxbi50CfJHjQ=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlsjs+8qeIn7YKC0elDSkyNmqHKOtzLAacbGp4v
- I8SQvGyWkOJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbI7PgAKCRAADmhBGVaC
- FUIND/4+bM27GMIH7hdk4878rF9hhrzxmbhM7DpBNAF3n5gK05X0Em8AYNtzIltF715nqHh3vOz
- 9N314WfdBxXzrHhdoeiYviHZWIy4sI7tohFH2v0oLnmndUtmWQFPRiSUB8ihtboLAuNmAl+c50E
- kl/b3JCyGH7VoLeB5PaMV4g1eZk1hILKJk9n+EXbZyEgyNuswe1PjoU9nQn0O9Qv1WCe/cruB5f
- 8Wm5oZwzNxK9ViWf+KOlnW955g1VR6m3lRdsET+yDV9O0zoppzKyoheh0axIBgDYl2+DUXqYv9W
- bZtMRHxRR2pQsi89fQrY7e/zdq5N7oM3UHirJI1fht5PC+5kYt6/e8dR30+gEnnXl1QazKDqzG7
- zZmcnIRxy9Bk7neZPD7OqQNtM/eEteNo3C7AGRSDUMyKhvJFYnsBQaJI7OfhZpenSUHRke5J9pW
- +Cu4o1Y1tHp+9drJnypDeOd2VEL+Geibs9ZWqutQIUsiHc1RFupuHqLN8grf6MbqhPxVA1OHGGa
- e1++85Ppnfst1JBy0C3CNZfuk2wjJ8eiDCdoye9/PEljOU798lcbCVA6NNMaAs14QhOcbnOL5uy
- WxTZptngzDGueQL7TasLsPCHf8MXc7sWRijDUbDRukJjn7bM5yBJPOO20bo7+uUwJ1JyFa6yKwq
- QNgCL8ZOS+gYsfw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6992; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=Bc7tS+aassSqdrdhnpohA5Vs8wnKfzMC2dWNyb0Wn/s=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlsjs+xPvHMcFQ16NNadS1JpzZBMqEfqOkyuUsy
+ JLpbxxLtgKJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbI7PgAKCRAADmhBGVaC
+ FcQHD/47CBUpbTK5oN3qm6hiNly+qXNrUEryOzV1nTvAr9HYQHyeOTS4QuhRoFfLUNFvCcCe3vy
+ v8nQ/6817nMUbv+9n23/lmWhmaDKToPQf3MEf6+RAuf6Yb1Kb4hxwfEob2EYIRBmyPJ+ITa1F2Q
+ FCqhyhhgy++yhvbUU5clP+8Ui/f+XsYOLZFx9H7tlz+TMhMY8M1t+a+ZDPz1TYV1i9DlNb1H1iP
+ AL83P2+9qx8cbfGQ4uRdoBTkcWMNabO1Ehlo3E7e1V/lq60KUHhOsP1aGllPzLuAuUbbHPL3n5B
+ Q/Jlge/j2eag9OxUk2N1ftXa8e9viDXADdibsPXg92FNmxhWa+WBMUcZ6O5U4wnq4/hbbiE2NSl
+ WRoR0GhMhbpVjq6X4SoFlugLz1EsgOgUvlXe1ZZCy91OcdDYMmeZ9GdlihbzZAvKv78wG9TTGYc
+ 09GQFLnoZZHE8ydQNKWlTg5KjAlofnOnFTQkNZlyBJFGLeqOt91BVCCoWjM3TAjGrgioNQVHMnV
+ KUcsPsGE0dj45hsE/+MsUmMxX25qkHqlBn92Qu5uCDDLq5fwwmIK7ZpuKMhzGo+JX2DAgNB0tpO
+ CVaKvc3zVunZmpiOaYKGc3WDndHdtYz4V5qV++ZnDZPExyKeazWFE+0PFiMe9Nl70LyviAlLUiH
+ ZtkrMAqk+/WfFZA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
@@ -109,327 +109,198 @@ file_lock_core now.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/smb/client/cifsglob.h |  1 -
- fs/smb/client/cifssmb.c  |  9 +++---
- fs/smb/client/file.c     | 75 ++++++++++++++++++++++++------------------------
- fs/smb/client/smb2file.c |  3 +-
- 4 files changed, 43 insertions(+), 45 deletions(-)
+ fs/smb/server/smb2pdu.c | 45 ++++++++++++++++++++++-----------------------
+ fs/smb/server/vfs.c     | 15 +++++++--------
+ 2 files changed, 29 insertions(+), 31 deletions(-)
 
-diff --git a/fs/smb/client/cifsglob.h b/fs/smb/client/cifsglob.h
-index fcda4c77c649..20036fb16cec 100644
---- a/fs/smb/client/cifsglob.h
-+++ b/fs/smb/client/cifsglob.h
-@@ -26,7 +26,6 @@
- #include <uapi/linux/cifs/cifs_mount.h>
- #include "../common/smb2pdu.h"
- #include "smb2pdu.h"
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index d12d11cdea29..1a1ce70c7b2d 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -12,7 +12,6 @@
+ #include <linux/ethtool.h>
+ #include <linux/falloc.h>
+ #include <linux/mount.h>
 -#define _NEED_FILE_LOCK_FIELD_MACROS
  #include <linux/filelock.h>
  
- #define SMB_PATH_MAX 260
-diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-index e19ecf692c20..aae4e9ddc59d 100644
---- a/fs/smb/client/cifssmb.c
-+++ b/fs/smb/client/cifssmb.c
-@@ -15,7 +15,6 @@
-  /* want to reuse a stale file handle and only the caller knows the file info */
+ #include "glob.h"
+@@ -6761,10 +6760,10 @@ struct file_lock *smb_flock_init(struct file *f)
  
- #include <linux/fs.h>
--#define _NEED_FILE_LOCK_FIELD_MACROS
- #include <linux/filelock.h>
- #include <linux/kernel.h>
- #include <linux/vfs.h>
-@@ -2067,20 +2066,20 @@ CIFSSMBPosixLock(const unsigned int xid, struct cifs_tcon *tcon,
- 		parm_data = (struct cifs_posix_lock *)
- 			((char *)&pSMBr->hdr.Protocol + data_offset);
- 		if (parm_data->lock_type == cpu_to_le16(CIFS_UNLCK))
--			pLockData->fl_type = F_UNLCK;
-+			pLockData->fl_core.flc_type = F_UNLCK;
- 		else {
- 			if (parm_data->lock_type ==
- 					cpu_to_le16(CIFS_RDLCK))
--				pLockData->fl_type = F_RDLCK;
-+				pLockData->fl_core.flc_type = F_RDLCK;
- 			else if (parm_data->lock_type ==
- 					cpu_to_le16(CIFS_WRLCK))
--				pLockData->fl_type = F_WRLCK;
-+				pLockData->fl_core.flc_type = F_WRLCK;
+ 	locks_init_lock(fl);
  
- 			pLockData->fl_start = le64_to_cpu(parm_data->start);
- 			pLockData->fl_end = pLockData->fl_start +
- 				(le64_to_cpu(parm_data->length) ?
- 				 le64_to_cpu(parm_data->length) - 1 : 0);
--			pLockData->fl_pid = -le32_to_cpu(parm_data->pid);
-+			pLockData->fl_core.flc_pid = -le32_to_cpu(parm_data->pid);
- 		}
- 	}
+-	fl->fl_owner = f;
+-	fl->fl_pid = current->tgid;
+-	fl->fl_file = f;
+-	fl->fl_flags = FL_POSIX;
++	fl->fl_core.flc_owner = f;
++	fl->fl_core.flc_pid = current->tgid;
++	fl->fl_core.flc_file = f;
++	fl->fl_core.flc_flags = FL_POSIX;
+ 	fl->fl_ops = NULL;
+ 	fl->fl_lmops = NULL;
  
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index dd87b2ef24dc..9a977ec0fb2f 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -9,7 +9,6 @@
-  *
-  */
- #include <linux/fs.h>
--#define _NEED_FILE_LOCK_FIELD_MACROS
- #include <linux/filelock.h>
- #include <linux/backing-dev.h>
- #include <linux/stat.h>
-@@ -1313,20 +1312,20 @@ cifs_lock_test(struct cifsFileInfo *cfile, __u64 offset, __u64 length,
- 	down_read(&cinode->lock_sem);
- 
- 	exist = cifs_find_lock_conflict(cfile, offset, length, type,
--					flock->fl_flags, &conf_lock,
-+					flock->fl_core.flc_flags, &conf_lock,
- 					CIFS_LOCK_OP);
- 	if (exist) {
- 		flock->fl_start = conf_lock->offset;
- 		flock->fl_end = conf_lock->offset + conf_lock->length - 1;
--		flock->fl_pid = conf_lock->pid;
-+		flock->fl_core.flc_pid = conf_lock->pid;
- 		if (conf_lock->type & server->vals->shared_lock_type)
--			flock->fl_type = F_RDLCK;
-+			flock->fl_core.flc_type = F_RDLCK;
- 		else
--			flock->fl_type = F_WRLCK;
-+			flock->fl_core.flc_type = F_WRLCK;
- 	} else if (!cinode->can_cache_brlcks)
- 		rc = 1;
- 	else
--		flock->fl_type = F_UNLCK;
-+		flock->fl_core.flc_type = F_UNLCK;
- 
- 	up_read(&cinode->lock_sem);
- 	return rc;
-@@ -1402,16 +1401,16 @@ cifs_posix_lock_test(struct file *file, struct file_lock *flock)
- {
- 	int rc = 0;
- 	struct cifsInodeInfo *cinode = CIFS_I(file_inode(file));
--	unsigned char saved_type = flock->fl_type;
-+	unsigned char saved_type = flock->fl_core.flc_type;
- 
--	if ((flock->fl_flags & FL_POSIX) == 0)
-+	if ((flock->fl_core.flc_flags & FL_POSIX) == 0)
- 		return 1;
- 
- 	down_read(&cinode->lock_sem);
- 	posix_test_lock(file, flock);
- 
--	if (flock->fl_type == F_UNLCK && !cinode->can_cache_brlcks) {
--		flock->fl_type = saved_type;
-+	if (flock->fl_core.flc_type == F_UNLCK && !cinode->can_cache_brlcks) {
-+		flock->fl_core.flc_type = saved_type;
- 		rc = 1;
- 	}
- 
-@@ -1432,7 +1431,7 @@ cifs_posix_lock_set(struct file *file, struct file_lock *flock)
- 	struct cifsInodeInfo *cinode = CIFS_I(file_inode(file));
- 	int rc = FILE_LOCK_DEFERRED + 1;
- 
--	if ((flock->fl_flags & FL_POSIX) == 0)
-+	if ((flock->fl_core.flc_flags & FL_POSIX) == 0)
- 		return rc;
- 
- 	cifs_down_write(&cinode->lock_sem);
-@@ -1582,7 +1581,7 @@ cifs_push_posix_locks(struct cifsFileInfo *cfile)
- 
- 	el = locks_to_send.next;
- 	spin_lock(&flctx->flc_lock);
--	list_for_each_entry(flock, &flctx->flc_posix, fl_list) {
-+	list_for_each_entry(flock, &flctx->flc_posix, fl_core.flc_list) {
- 		if (el == &locks_to_send) {
- 			/*
- 			 * The list ended. We don't have enough allocated
-@@ -1592,12 +1591,12 @@ cifs_push_posix_locks(struct cifsFileInfo *cfile)
- 			break;
- 		}
- 		length = cifs_flock_len(flock);
--		if (flock->fl_type == F_RDLCK || flock->fl_type == F_SHLCK)
-+		if (flock->fl_core.flc_type == F_RDLCK || flock->fl_core.flc_type == F_SHLCK)
- 			type = CIFS_RDLCK;
- 		else
- 			type = CIFS_WRLCK;
- 		lck = list_entry(el, struct lock_to_push, llist);
--		lck->pid = hash_lockowner(flock->fl_owner);
-+		lck->pid = hash_lockowner(flock->fl_core.flc_owner);
- 		lck->netfid = cfile->fid.netfid;
- 		lck->length = length;
- 		lck->type = type;
-@@ -1664,42 +1663,43 @@ static void
- cifs_read_flock(struct file_lock *flock, __u32 *type, int *lock, int *unlock,
- 		bool *wait_flag, struct TCP_Server_Info *server)
- {
--	if (flock->fl_flags & FL_POSIX)
-+	if (flock->fl_core.flc_flags & FL_POSIX)
- 		cifs_dbg(FYI, "Posix\n");
--	if (flock->fl_flags & FL_FLOCK)
-+	if (flock->fl_core.flc_flags & FL_FLOCK)
- 		cifs_dbg(FYI, "Flock\n");
--	if (flock->fl_flags & FL_SLEEP) {
-+	if (flock->fl_core.flc_flags & FL_SLEEP) {
- 		cifs_dbg(FYI, "Blocking lock\n");
- 		*wait_flag = true;
- 	}
--	if (flock->fl_flags & FL_ACCESS)
-+	if (flock->fl_core.flc_flags & FL_ACCESS)
- 		cifs_dbg(FYI, "Process suspended by mandatory locking - not implemented yet\n");
--	if (flock->fl_flags & FL_LEASE)
-+	if (flock->fl_core.flc_flags & FL_LEASE)
- 		cifs_dbg(FYI, "Lease on file - not implemented yet\n");
--	if (flock->fl_flags &
-+	if (flock->fl_core.flc_flags &
- 	    (~(FL_POSIX | FL_FLOCK | FL_SLEEP |
- 	       FL_ACCESS | FL_LEASE | FL_CLOSE | FL_OFDLCK)))
--		cifs_dbg(FYI, "Unknown lock flags 0x%x\n", flock->fl_flags);
-+		cifs_dbg(FYI, "Unknown lock flags 0x%x\n",
-+		         flock->fl_core.flc_flags);
- 
- 	*type = server->vals->large_lock_type;
--	if (flock->fl_type == F_WRLCK) {
-+	if (flock->fl_core.flc_type == F_WRLCK) {
- 		cifs_dbg(FYI, "F_WRLCK\n");
- 		*type |= server->vals->exclusive_lock_type;
- 		*lock = 1;
--	} else if (flock->fl_type == F_UNLCK) {
-+	} else if (flock->fl_core.flc_type == F_UNLCK) {
- 		cifs_dbg(FYI, "F_UNLCK\n");
- 		*type |= server->vals->unlock_lock_type;
- 		*unlock = 1;
- 		/* Check if unlock includes more than one lock range */
--	} else if (flock->fl_type == F_RDLCK) {
-+	} else if (flock->fl_core.flc_type == F_RDLCK) {
- 		cifs_dbg(FYI, "F_RDLCK\n");
- 		*type |= server->vals->shared_lock_type;
- 		*lock = 1;
--	} else if (flock->fl_type == F_EXLCK) {
-+	} else if (flock->fl_core.flc_type == F_EXLCK) {
- 		cifs_dbg(FYI, "F_EXLCK\n");
- 		*type |= server->vals->exclusive_lock_type;
- 		*lock = 1;
--	} else if (flock->fl_type == F_SHLCK) {
-+	} else if (flock->fl_core.flc_type == F_SHLCK) {
- 		cifs_dbg(FYI, "F_SHLCK\n");
- 		*type |= server->vals->shared_lock_type;
- 		*lock = 1;
-@@ -1731,7 +1731,7 @@ cifs_getlk(struct file *file, struct file_lock *flock, __u32 type,
- 		else
- 			posix_lock_type = CIFS_WRLCK;
- 		rc = CIFSSMBPosixLock(xid, tcon, netfid,
--				      hash_lockowner(flock->fl_owner),
-+				      hash_lockowner(flock->fl_core.flc_owner),
- 				      flock->fl_start, length, flock,
- 				      posix_lock_type, wait_flag);
- 		return rc;
-@@ -1748,7 +1748,7 @@ cifs_getlk(struct file *file, struct file_lock *flock, __u32 type,
- 	if (rc == 0) {
- 		rc = server->ops->mand_lock(xid, cfile, flock->fl_start, length,
- 					    type, 0, 1, false);
--		flock->fl_type = F_UNLCK;
-+		flock->fl_core.flc_type = F_UNLCK;
- 		if (rc != 0)
- 			cifs_dbg(VFS, "Error unlocking previously locked range %d during test of lock\n",
- 				 rc);
-@@ -1756,7 +1756,7 @@ cifs_getlk(struct file *file, struct file_lock *flock, __u32 type,
- 	}
- 
- 	if (type & server->vals->shared_lock_type) {
+@@ -6781,30 +6780,30 @@ static int smb2_set_flock_flags(struct file_lock *flock, int flags)
+ 	case SMB2_LOCKFLAG_SHARED:
+ 		ksmbd_debug(SMB, "received shared request\n");
+ 		cmd = F_SETLKW;
+-		flock->fl_type = F_RDLCK;
+-		flock->fl_flags |= FL_SLEEP;
++		flock->fl_core.flc_type = F_RDLCK;
++		flock->fl_core.flc_flags |= FL_SLEEP;
+ 		break;
+ 	case SMB2_LOCKFLAG_EXCLUSIVE:
+ 		ksmbd_debug(SMB, "received exclusive request\n");
+ 		cmd = F_SETLKW;
 -		flock->fl_type = F_WRLCK;
+-		flock->fl_flags |= FL_SLEEP;
 +		flock->fl_core.flc_type = F_WRLCK;
- 		return 0;
- 	}
- 
-@@ -1768,12 +1768,12 @@ cifs_getlk(struct file *file, struct file_lock *flock, __u32 type,
- 	if (rc == 0) {
- 		rc = server->ops->mand_lock(xid, cfile, flock->fl_start, length,
- 			type | server->vals->shared_lock_type, 0, 1, false);
++		flock->fl_core.flc_flags |= FL_SLEEP;
+ 		break;
+ 	case SMB2_LOCKFLAG_SHARED | SMB2_LOCKFLAG_FAIL_IMMEDIATELY:
+ 		ksmbd_debug(SMB,
+ 			    "received shared & fail immediately request\n");
+ 		cmd = F_SETLK;
 -		flock->fl_type = F_RDLCK;
 +		flock->fl_core.flc_type = F_RDLCK;
- 		if (rc != 0)
- 			cifs_dbg(VFS, "Error unlocking previously locked range %d during test of lock\n",
- 				 rc);
- 	} else
+ 		break;
+ 	case SMB2_LOCKFLAG_EXCLUSIVE | SMB2_LOCKFLAG_FAIL_IMMEDIATELY:
+ 		ksmbd_debug(SMB,
+ 			    "received exclusive & fail immediately request\n");
+ 		cmd = F_SETLK;
 -		flock->fl_type = F_WRLCK;
 +		flock->fl_core.flc_type = F_WRLCK;
+ 		break;
+ 	case SMB2_LOCKFLAG_UNLOCK:
+ 		ksmbd_debug(SMB, "received unlock request\n");
+-		flock->fl_type = F_UNLCK;
++		flock->fl_core.flc_type = F_UNLCK;
+ 		cmd = F_SETLK;
+ 		break;
+ 	}
+@@ -6842,13 +6841,13 @@ static void smb2_remove_blocked_lock(void **argv)
+ 	struct file_lock *flock = (struct file_lock *)argv[0];
  
- 	return 0;
+ 	ksmbd_vfs_posix_lock_unblock(flock);
+-	wake_up(&flock->fl_wait);
++	wake_up(&flock->fl_core.flc_wait);
  }
-@@ -1941,7 +1941,7 @@ cifs_setlk(struct file *file, struct file_lock *flock, __u32 type,
- 			posix_lock_type = CIFS_UNLCK;
  
- 		rc = CIFSSMBPosixLock(xid, tcon, cfile->fid.netfid,
--				      hash_lockowner(flock->fl_owner),
-+				      hash_lockowner(flock->fl_core.flc_owner),
- 				      flock->fl_start, length,
- 				      NULL, posix_lock_type, wait_flag);
- 		goto out;
-@@ -1951,7 +1951,7 @@ cifs_setlk(struct file *file, struct file_lock *flock, __u32 type,
- 		struct cifsLockInfo *lock;
+ static inline bool lock_defer_pending(struct file_lock *fl)
+ {
+ 	/* check pending lock waiters */
+-	return waitqueue_active(&fl->fl_wait);
++	return waitqueue_active(&fl->fl_core.flc_wait);
+ }
  
- 		lock = cifs_lock_init(flock->fl_start, length, type,
--				      flock->fl_flags);
-+				      flock->fl_core.flc_flags);
- 		if (!lock)
- 			return -ENOMEM;
+ /**
+@@ -6939,8 +6938,8 @@ int smb2_lock(struct ksmbd_work *work)
+ 		list_for_each_entry(cmp_lock, &lock_list, llist) {
+ 			if (cmp_lock->fl->fl_start <= flock->fl_start &&
+ 			    cmp_lock->fl->fl_end >= flock->fl_end) {
+-				if (cmp_lock->fl->fl_type != F_UNLCK &&
+-				    flock->fl_type != F_UNLCK) {
++				if (cmp_lock->fl->fl_core.flc_type != F_UNLCK &&
++				    flock->fl_core.flc_type != F_UNLCK) {
+ 					pr_err("conflict two locks in one request\n");
+ 					err = -EINVAL;
+ 					locks_free_lock(flock);
+@@ -6988,12 +6987,12 @@ int smb2_lock(struct ksmbd_work *work)
+ 		list_for_each_entry(conn, &conn_list, conns_list) {
+ 			spin_lock(&conn->llist_lock);
+ 			list_for_each_entry_safe(cmp_lock, tmp2, &conn->lock_list, clist) {
+-				if (file_inode(cmp_lock->fl->fl_file) !=
+-				    file_inode(smb_lock->fl->fl_file))
++				if (file_inode(cmp_lock->fl->fl_core.flc_file) !=
++				    file_inode(smb_lock->fl->fl_core.flc_file))
+ 					continue;
  
-@@ -1990,7 +1990,7 @@ cifs_setlk(struct file *file, struct file_lock *flock, __u32 type,
- 		rc = server->ops->mand_unlock_range(cfile, flock, xid);
+-				if (smb_lock->fl->fl_type == F_UNLCK) {
+-					if (cmp_lock->fl->fl_file == smb_lock->fl->fl_file &&
++				if (smb_lock->fl->fl_core.flc_type == F_UNLCK) {
++					if (cmp_lock->fl->fl_core.flc_file == smb_lock->fl->fl_core.flc_file &&
+ 					    cmp_lock->start == smb_lock->start &&
+ 					    cmp_lock->end == smb_lock->end &&
+ 					    !lock_defer_pending(cmp_lock->fl)) {
+@@ -7010,7 +7009,7 @@ int smb2_lock(struct ksmbd_work *work)
+ 					continue;
+ 				}
  
- out:
--	if ((flock->fl_flags & FL_POSIX) || (flock->fl_flags & FL_FLOCK)) {
-+	if ((flock->fl_core.flc_flags & FL_POSIX) || (flock->fl_core.flc_flags & FL_FLOCK)) {
- 		/*
- 		 * If this is a request to remove all locks because we
- 		 * are closing the file, it doesn't matter if the
-@@ -1999,7 +1999,7 @@ cifs_setlk(struct file *file, struct file_lock *flock, __u32 type,
- 		 */
- 		if (rc) {
- 			cifs_dbg(VFS, "%s failed rc=%d\n", __func__, rc);
--			if (!(flock->fl_flags & FL_CLOSE))
-+			if (!(flock->fl_core.flc_flags & FL_CLOSE))
- 				return rc;
+-				if (cmp_lock->fl->fl_file == smb_lock->fl->fl_file) {
++				if (cmp_lock->fl->fl_core.flc_file == smb_lock->fl->fl_core.flc_file) {
+ 					if (smb_lock->flags & SMB2_LOCKFLAG_SHARED)
+ 						continue;
+ 				} else {
+@@ -7052,7 +7051,7 @@ int smb2_lock(struct ksmbd_work *work)
  		}
- 		rc = locks_lock_file_wait(file, flock);
-@@ -2020,7 +2020,7 @@ int cifs_flock(struct file *file, int cmd, struct file_lock *fl)
+ 		up_read(&conn_list_lock);
+ out_check_cl:
+-		if (smb_lock->fl->fl_type == F_UNLCK && nolock) {
++		if (smb_lock->fl->fl_core.flc_type == F_UNLCK && nolock) {
+ 			pr_err("Try to unlock nolocked range\n");
+ 			rsp->hdr.Status = STATUS_RANGE_NOT_LOCKED;
+ 			goto out;
+@@ -7176,7 +7175,7 @@ int smb2_lock(struct ksmbd_work *work)
+ 		struct file_lock *rlock = NULL;
  
- 	xid = get_xid();
+ 		rlock = smb_flock_init(filp);
+-		rlock->fl_type = F_UNLCK;
++		rlock->fl_core.flc_type = F_UNLCK;
+ 		rlock->fl_start = smb_lock->start;
+ 		rlock->fl_end = smb_lock->end;
  
--	if (!(fl->fl_flags & FL_FLOCK)) {
-+	if (!(fl->fl_core.flc_flags & FL_FLOCK)) {
- 		rc = -ENOLCK;
- 		free_xid(xid);
- 		return rc;
-@@ -2071,7 +2071,8 @@ int cifs_lock(struct file *file, int cmd, struct file_lock *flock)
- 	xid = get_xid();
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index d0686ec344f5..2b67cccea91c 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -6,7 +6,6 @@
  
- 	cifs_dbg(FYI, "%s: %pD2 cmd=0x%x type=0x%x flags=0x%x r=%lld:%lld\n", __func__, file, cmd,
--		 flock->fl_flags, flock->fl_type, (long long)flock->fl_start,
-+		 flock->fl_core.flc_flags, flock->fl_core.flc_type,
-+		 (long long)flock->fl_start,
- 		 (long long)flock->fl_end);
- 
- 	cfile = (struct cifsFileInfo *)file->private_data;
-diff --git a/fs/smb/client/smb2file.c b/fs/smb/client/smb2file.c
-index cd225d15a7c5..53c855b3df5a 100644
---- a/fs/smb/client/smb2file.c
-+++ b/fs/smb/client/smb2file.c
-@@ -7,7 +7,6 @@
-  *
-  */
+ #include <linux/kernel.h>
  #include <linux/fs.h>
 -#define _NEED_FILE_LOCK_FIELD_MACROS
  #include <linux/filelock.h>
- #include <linux/stat.h>
- #include <linux/slab.h>
-@@ -229,7 +228,7 @@ smb2_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
- 			 * flock and OFD lock are associated with an open
- 			 * file description, not the process.
- 			 */
--			if (!(flock->fl_flags & (FL_FLOCK | FL_OFDLCK)))
-+			if (!(flock->fl_core.flc_flags & (FL_FLOCK | FL_OFDLCK)))
- 				continue;
- 		if (cinode->can_cache_brlcks) {
- 			/*
+ #include <linux/uaccess.h>
+ #include <linux/backing-dev.h>
+@@ -338,18 +337,18 @@ static int check_lock_range(struct file *filp, loff_t start, loff_t end,
+ 		return 0;
+ 
+ 	spin_lock(&ctx->flc_lock);
+-	list_for_each_entry(flock, &ctx->flc_posix, fl_list) {
++	list_for_each_entry(flock, &ctx->flc_posix, fl_core.flc_list) {
+ 		/* check conflict locks */
+ 		if (flock->fl_end >= start && end >= flock->fl_start) {
+-			if (flock->fl_type == F_RDLCK) {
++			if (flock->fl_core.flc_type == F_RDLCK) {
+ 				if (type == WRITE) {
+ 					pr_err("not allow write by shared lock\n");
+ 					error = 1;
+ 					goto out;
+ 				}
+-			} else if (flock->fl_type == F_WRLCK) {
++			} else if (flock->fl_core.flc_type == F_WRLCK) {
+ 				/* check owner in lock */
+-				if (flock->fl_file != filp) {
++				if (flock->fl_core.flc_file != filp) {
+ 					error = 1;
+ 					pr_err("not allow rw access by exclusive lock from other opens\n");
+ 					goto out;
+@@ -1838,13 +1837,13 @@ int ksmbd_vfs_copy_file_ranges(struct ksmbd_work *work,
+ 
+ void ksmbd_vfs_posix_lock_wait(struct file_lock *flock)
+ {
+-	wait_event(flock->fl_wait, !flock->fl_blocker);
++	wait_event(flock->fl_core.flc_wait, !flock->fl_core.flc_blocker);
+ }
+ 
+ int ksmbd_vfs_posix_lock_wait_timeout(struct file_lock *flock, long timeout)
+ {
+-	return wait_event_interruptible_timeout(flock->fl_wait,
+-						!flock->fl_blocker,
++	return wait_event_interruptible_timeout(flock->fl_core.flc_wait,
++						!flock->fl_core.flc_blocker,
+ 						timeout);
+ }
+ 
 
 -- 
 2.43.0
