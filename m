@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-8962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF5783C8AE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:51:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD36083C8B2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:52:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849251C214F3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:51:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2EB11C2146A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDE713E219;
-	Thu, 25 Jan 2024 16:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812C613EFE1;
+	Thu, 25 Jan 2024 16:44:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A68913E222;
-	Thu, 25 Jan 2024 16:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C37913E230;
+	Thu, 25 Jan 2024 16:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706201080; cv=none; b=A6RBxP+oZk/JsWZ3grJSHl/Qb94iYYP9i0+ngmTKhFz0OmYlY41UfmyZUeWk3p7HWDwWkHSzNNCB1Op4FPIS+s0iiy0OUNl1q3FEotwpsjin+/XJnHmohZgYIiucGFacvqSh7+xIIKxAeAPrWIzfI9KtOyKYZRXdn0ojIm94P+U=
+	t=1706201085; cv=none; b=OPF6qc1ABVAAFKgOp7nwzoLqyP2CaHKBWjg2zfejuc7amj4iJUzQYcFmlfpqGoOX5YfG9lvN1yUQ4a4ZcBA0Kg7ESkFu7n8mi9bFKUuBS7/H7wRyOWd+tZC/wTQgg5MwtjugtQXCwqiREpD0gg2ttndfIIEsjwketQ7yLYz/hAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706201080; c=relaxed/simple;
-	bh=XukQx5R0ddUBbcqQsHqz8JxEh94JF8KFUT0xeK6jImA=;
+	s=arc-20240116; t=1706201085; c=relaxed/simple;
+	bh=MdXbuNdRy+WoWvTiQP66X3emkGzg8oT5eaf5lWD0Nb4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bZX71EtyprbfkM2gbEnl9c6e5tTlN6ie9IWn0tzo4QYovnrEzkO+Sx5WfMCy0JrBgcugDJcsJrlYDMpoOEDJAEJIkmP0qHx03eKObqWMu/IDRGZMLYujiUrKfTZHX3iucCpiSNVowIKCCErt5SJaRV5blmdHY8enNeP36QvmqIg=
+	 MIME-Version; b=ITkyBA1ee/bUsQOd0UzmmVotCqZfpJ6JvNoEH/8lYsDxRroAwRcoNei5D7tCFGaQmSSpYeERRhILoTc/0ItvQXSkzTp+sNcIcBEmBvL0By8OFej7Gc4/9Mcklu6YPPXoCZNMDw1NXx7ePhpSc8mV36QgrNrrwSoV/PmybUlwGLU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 607B01682;
-	Thu, 25 Jan 2024 08:45:21 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 294E21684;
+	Thu, 25 Jan 2024 08:45:27 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 711BE3F5A1;
-	Thu, 25 Jan 2024 08:44:31 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3AF663F5A1;
+	Thu, 25 Jan 2024 08:44:37 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -71,9 +71,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v3 19/35] arm64: mte: Discover tag storage memory
-Date: Thu, 25 Jan 2024 16:42:40 +0000
-Message-Id: <20240125164256.4147-20-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v3 20/35] arm64: mte: Add tag storage memory to CMA
+Date: Thu, 25 Jan 2024 16:42:41 +0000
+Message-Id: <20240125164256.4147-21-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240125164256.4147-1-alexandru.elisei@arm.com>
 References: <20240125164256.4147-1-alexandru.elisei@arm.com>
@@ -85,365 +85,229 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Allow the kernel to get the base address, size, block size and associated
-memory node for tag storage from the device tree blob.
+Add the MTE tag storage pages to CMA, which allows the page allocator to
+manage them like regular pages.
 
-A tag storage region represents the smallest contiguous memory region that
-holds all the tags for the associated contiguous memory region which can be
-tagged. For example, for a 32GB contiguous tagged memory the corresponding
-tag storage region is exactly 1GB of contiguous memory, not two adjacent
-512M of tag storage memory, nor one 2GB tag storage region.
+The CMA migratype lends the tag storage pages some very desirable
+properties:
 
-Tag storage is described as reserved memory; future patches will teach the
-kernel how to make use of it for data (non-tagged) allocations.
+* They cannot be longterm pinned, meaning they should always be migratable.
+
+* The pages can be allocated explicitely by using their PFN (with
+  alloc_cma_range()) when they are needed to store tags.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
 
-Changes since rfc v2:
+Changes since v2:
 
-* Reworked from rfc v2 patch #11 ("arm64: mte: Reserve tag storage memory").
-* Added device tree schema (Rob Herring)
-* Tag storage memory is now described in the "reserved-memory" node (Rob
-Herring).
+* Reworked from rfc v2 patch #12 ("arm64: mte: Add tag storage pages to the
+MIGRATE_CMA migratetype").
+* Tag storage memory is now added to the cma_areas array and will be managed
+like a regular CMA region (David Hildenbrand).
+* If a tag storage region spans multiple zones, CMA won't be able to activate
+the region. Split such regions into multiple tag storage regions (Hyesoo Yu).
 
- .../reserved-memory/arm,mte-tag-storage.yaml  |  78 +++++++++
- arch/arm64/Kconfig                            |  12 ++
- arch/arm64/include/asm/mte_tag_storage.h      |  16 ++
- arch/arm64/kernel/Makefile                    |   1 +
- arch/arm64/kernel/mte_tag_storage.c           | 158 ++++++++++++++++++
- arch/arm64/mm/init.c                          |   3 +
- 6 files changed, 268 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/reserved-memory/arm,mte-tag-storage.yaml
- create mode 100644 arch/arm64/include/asm/mte_tag_storage.h
- create mode 100644 arch/arm64/kernel/mte_tag_storage.c
+ arch/arm64/Kconfig                  |   1 +
+ arch/arm64/kernel/mte_tag_storage.c | 150 +++++++++++++++++++++++++++-
+ 2 files changed, 150 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/reserved-memory/arm,mte-tag-storage.yaml b/Documentation/devicetree/bindings/reserved-memory/arm,mte-tag-storage.yaml
-new file mode 100644
-index 000000000000..a99aaa1e8b6e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/reserved-memory/arm,mte-tag-storage.yaml
-@@ -0,0 +1,78 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/reserved-memory/arm,mte-tag-storage.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Tag storage memory for Memory Tagging Extension
-+
-+description: |
-+  Description of the tag storage memory region that Linux can use to store
-+  data when the associated memory is not tagged.
-+
-+  The reserved memory described by the node must also be described by a
-+  standalone 'memory' node.
-+
-+maintainers:
-+  - Alexandru Elisei <alexandru.elisei@arm.com>
-+
-+allOf:
-+  - $ref: reserved-memory.yaml
-+
-+properties:
-+  compatible:
-+    const: arm,mte-tag-storage
-+
-+  reg:
-+    description: |
-+      Specifies the memory region that MTE uses for tag storage. The size of the
-+      region must be equal to the size needed to store all the tags for the
-+      associated tagged memory.
-+
-+  block-size:
-+    description: |
-+      Specifies the minimum multiple of 4K bytes of tag storage where all the
-+      tags stored in the block correspond to a contiguous memory region. This
-+      is needed for platforms where the memory controller interleaves tag
-+      writes to memory.
-+
-+      For example, if the memory controller interleaves tag writes for 256KB
-+      of contiguous memory across 8K of tag storage (2-way interleave), then
-+      the correct value for 'block-size' is 0x2000.
-+
-+      This value is a hardware property, independent of the selected kernel page
-+      size.
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+
-+  tagged-memory:
-+    description: |
-+      Specifies the memory node, as a phandle, for which all the tags are
-+      stored in the tag storage region.
-+
-+      The memory node must describe one contiguous memory region (i.e, the
-+      'ranges' property of the memory node must have exactly one entry).
-+    $ref: /schemas/types.yaml#/definitions/phandle
-+
-+unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - block-size
-+  - tagged-memory
-+  - reusable
-+
-+examples:
-+  - |
-+    reserved-memory {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
-+
-+      tags0: tag-storage@8f8000000 {
-+        compatible = "arm,mte-tag-storage";
-+        reg = <0x08 0xf8000000 0x00 0x4000000>;
-+        block-size = <0x1000>;
-+        tagged-memory = <&memory0>;
-+        reusable;
-+      };
-+    };
 diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index aa7c1d435139..92d97930b56e 100644
+index 92d97930b56e..6f65e9005dc9 100644
 --- a/arch/arm64/Kconfig
 +++ b/arch/arm64/Kconfig
-@@ -2082,6 +2082,18 @@ config ARM64_MTE
- 
- 	  Documentation/arch/arm64/memory-tagging-extension.rst.
- 
-+if ARM64_MTE
-+config ARM64_MTE_TAG_STORAGE
-+	bool
-+	help
-+	  Adds support for dynamic management of the memory used by the hardware
-+	  for storing MTE tags. This memory, unlike normal memory, cannot be
-+	  tagged. When it is used to store tags for another memory location it
-+	  cannot be used for any type of allocation.
-+
-+	  If unsure, say N
-+endif # ARM64_MTE
-+
- endmenu # "ARMv8.5 architectural features"
- 
- menu "ARMv8.7 architectural features"
-diff --git a/arch/arm64/include/asm/mte_tag_storage.h b/arch/arm64/include/asm/mte_tag_storage.h
-new file mode 100644
-index 000000000000..3c2cd29e053e
---- /dev/null
-+++ b/arch/arm64/include/asm/mte_tag_storage.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2023 ARM Ltd.
-+ */
-+#ifndef __ASM_MTE_TAG_STORAGE_H
-+#define __ASM_MTE_TAG_STORAGE_H
-+
-+#ifdef CONFIG_ARM64_MTE_TAG_STORAGE
-+void mte_init_tag_storage(void);
-+#else
-+static inline void mte_init_tag_storage(void)
-+{
-+}
-+#endif /* CONFIG_ARM64_MTE_TAG_STORAGE */
-+
-+#endif /* __ASM_MTE_TAG_STORAGE_H  */
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index e5d03a7039b4..89c28b538908 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -70,6 +70,7 @@ obj-$(CONFIG_CRASH_CORE)		+= crash_core.o
- obj-$(CONFIG_ARM_SDE_INTERFACE)		+= sdei.o
- obj-$(CONFIG_ARM64_PTR_AUTH)		+= pointer_auth.o
- obj-$(CONFIG_ARM64_MTE)			+= mte.o
-+obj-$(CONFIG_ARM64_MTE_TAG_STORAGE)	+= mte_tag_storage.o
- obj-y					+= vdso-wrap.o
- obj-$(CONFIG_COMPAT_VDSO)		+= vdso32-wrap.o
- obj-$(CONFIG_UNWIND_PATCH_PAC_INTO_SCS)	+= patch-scs.o
+@@ -2085,6 +2085,7 @@ config ARM64_MTE
+ if ARM64_MTE
+ config ARM64_MTE_TAG_STORAGE
+ 	bool
++	select CONFIG_CMA
+ 	help
+ 	  Adds support for dynamic management of the memory used by the hardware
+ 	  for storing MTE tags. This memory, unlike normal memory, cannot be
 diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
-new file mode 100644
-index 000000000000..2f32265d8ad8
---- /dev/null
+index 2f32265d8ad8..90b157132efa 100644
+--- a/arch/arm64/kernel/mte_tag_storage.c
 +++ b/arch/arm64/kernel/mte_tag_storage.c
-@@ -0,0 +1,158 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Support for dynamic tag storage.
-+ *
-+ * Copyright (C) 2023 ARM Ltd.
-+ */
-+
-+#include <linux/memblock.h>
-+#include <linux/mm.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_fdt.h>
-+#include <linux/of_reserved_mem.h>
-+#include <linux/range.h>
-+#include <linux/string.h>
-+#include <linux/xarray.h>
-+
-+#include <asm/mte_tag_storage.h>
-+
-+struct tag_region {
-+	struct range mem_range;	/* Memory associated with the tag storage, in PFNs. */
-+	struct range tag_range;	/* Tag storage memory, in PFNs. */
-+	u32 block_size_pages;	/* Tag block size, in pages. */
-+	phandle mem_phandle;	/* phandle for the associated memory node. */
-+};
-+
-+#define MAX_TAG_REGIONS	32
-+
-+static struct tag_region tag_regions[MAX_TAG_REGIONS];
-+static int num_tag_regions;
-+
-+static u32 __init get_block_size_pages(u32 block_size_bytes)
+@@ -5,6 +5,8 @@
+  * Copyright (C) 2023 ARM Ltd.
+  */
+ 
++#include <linux/cma.h>
++#include <linux/log2.h>
+ #include <linux/memblock.h>
+ #include <linux/mm.h>
+ #include <linux/of.h>
+@@ -22,6 +24,7 @@ struct tag_region {
+ 	struct range tag_range;	/* Tag storage memory, in PFNs. */
+ 	u32 block_size_pages;	/* Tag block size, in pages. */
+ 	phandle mem_phandle;	/* phandle for the associated memory node. */
++	struct cma *cma;	/* CMA cookie */
+ };
+ 
+ #define MAX_TAG_REGIONS	32
+@@ -139,9 +142,88 @@ static int __init mte_find_tagged_memory_regions(void)
+ 	return -EINVAL;
+ }
+ 
++static void __init mte_split_tag_region(struct tag_region *region, unsigned long last_tag_pfn)
 +{
-+	u32 a = PAGE_SIZE;
-+	u32 b = block_size_bytes;
-+	u32 r;
++	struct tag_region *new_region;
++	unsigned long last_mem_pfn;
 +
-+	/* Find greatest common divisor using the Euclidian algorithm. */
-+	do {
-+		r = a % b;
-+		a = b;
-+		b = r;
-+	} while (b != 0);
++	new_region = &tag_regions[num_tag_regions];
++	last_mem_pfn = region->mem_range.start + (last_tag_pfn - region->tag_range.start) * 32;
 +
-+	return PHYS_PFN(PAGE_SIZE * block_size_bytes / a);
-+}
++	new_region->mem_range.start = last_mem_pfn + 1;
++	new_region->mem_range.end = region->mem_range.end;
++	region->mem_range.end = last_mem_pfn;
 +
-+int __init tag_storage_probe(struct reserved_mem *rmem)
-+{
-+	struct tag_region *region;
-+	u32 block_size_bytes;
-+	int ret;
++	new_region->tag_range.start = last_tag_pfn + 1;
++	new_region->tag_range.end = region->tag_range.end;
++	region->tag_range.end = last_tag_pfn;
 +
-+	if (num_tag_regions == MAX_TAG_REGIONS) {
-+		pr_err("Exceeded maximum number of tag storage regions");
-+		goto out_err;
-+	}
-+
-+	region = &tag_regions[num_tag_regions];
-+	region->tag_range.start = PHYS_PFN(rmem->base);
-+	region->tag_range.end = PHYS_PFN(rmem->base + rmem->size - 1);
-+
-+	ret = of_flat_read_u32(rmem->fdt_node, "block-size", &block_size_bytes);
-+	if (ret || block_size_bytes == 0) {
-+		pr_err("Invalid or missing 'block-size' property");
-+		goto out_err;
-+	}
-+
-+	region->block_size_pages = get_block_size_pages(block_size_bytes);
-+	if (range_len(&region->tag_range) % region->block_size_pages != 0) {
-+		pr_err("Tag storage region size 0x%llx pages is not a multiple of block size 0x%x pages",
-+		       range_len(&region->tag_range), region->block_size_pages);
-+		goto out_err;
-+	}
-+
-+	ret = of_flat_read_u32(rmem->fdt_node, "tagged-memory", &region->mem_phandle);
-+	if (ret) {
-+		pr_err("Invalid or missing 'tagged-memory' property");
-+		goto out_err;
-+	}
++	new_region->block_size_pages = region->block_size_pages;
 +
 +	num_tag_regions++;
-+	return 0;
-+
-+out_err:
-+	num_tag_regions = 0;
-+	return -EINVAL;
 +}
-+RESERVEDMEM_OF_DECLARE(tag_storage, "arm,mte-tag-storage", tag_storage_probe);
 +
-+static int __init mte_find_tagged_memory_regions(void)
++/*
++ * Split any tag region that spans multiple zones - CMA will fail if that
++ * happens.
++ */
++static int __init mte_split_tag_regions(void)
 +{
-+	struct device_node *mem_dev;
 +	struct tag_region *region;
-+	struct range *mem_range;
-+	const __be32 *reg;
-+	u64 addr, size;
++	struct range *tag_range;
++	struct zone *zone;
++	unsigned long pfn;
 +	int i;
 +
 +	for (i = 0; i < num_tag_regions; i++) {
 +		region = &tag_regions[i];
-+		mem_range = &region->mem_range;
++		tag_range = &region->tag_range;
++		zone = page_zone(pfn_to_page(tag_range->start));
 +
-+		mem_dev = of_find_node_by_phandle(region->mem_phandle);
-+		if (!mem_dev) {
-+			pr_err("Cannot find tagged memory node");
-+			goto out;
++		for (pfn = tag_range->start + 1; pfn <= tag_range->end; pfn++) {
++			if (page_zone(pfn_to_page(pfn)) == zone)
++				continue;
++
++			if (WARN_ON_ONCE(pfn % region->block_size_pages))
++				goto out_err;
++
++			if (num_tag_regions == MAX_TAG_REGIONS)
++				goto out_err;
++
++			mte_split_tag_region(&tag_regions[i], pfn - 1);
++			/* Move on to the next region. */
++			break;
 +		}
-+
-+		reg = of_get_property(mem_dev, "reg", NULL);
-+		if (!reg) {
-+			pr_err("Invalid tagged memory node");
-+			goto out_put_mem;
-+		}
-+
-+		addr = of_translate_address(mem_dev, reg);
-+		if (addr == OF_BAD_ADDR) {
-+			pr_err("Invalid memory address");
-+			goto out_put_mem;
-+		}
-+
-+		size = of_read_number(reg + of_n_addr_cells(mem_dev), of_n_size_cells(mem_dev));
-+		if (!size) {
-+			pr_err("Invalid memory size");
-+			goto out_put_mem;
-+		}
-+
-+		mem_range->start = PHYS_PFN(addr);
-+		mem_range->end = PHYS_PFN(addr + size - 1);
-+
-+		of_node_put(mem_dev);
 +	}
 +
 +	return 0;
 +
-+out_put_mem:
-+	of_node_put(mem_dev);
-+out:
++out_err:
++	pr_err("Error splitting tag storage region 0x%llx-0x%llx spanning multiple zones",
++		PFN_PHYS(tag_range->start), PFN_PHYS(tag_range->end + 1) - 1);
 +	return -EINVAL;
 +}
 +
-+void __init mte_init_tag_storage(void)
-+{
-+	int ret;
+ void __init mte_init_tag_storage(void)
+ {
+-	int ret;
++	unsigned long long mem_end;
++	struct tag_region *region;
++	unsigned long pfn, order;
++	u64 start, end;
++	int i, j, ret;
 +
-+	if (num_tag_regions == 0)
-+		return;
++	/*
++	 * Tag storage memory requires that tag storage pages in use for data
++	 * are always migratable when they need to be repurposed to store tags.
++	 * If ARCH_KEEP_MEMBLOCK is enabled, kexec will not scan reserved
++	 * memblocks when trying to find a suitable location for the kernel
++	 * image. This means that kexec will not use tag storage pages for
++	 * copying the kernel, and the pages will remain migratable.
++	 *
++	 * Add the check in case arm64 stops selecting ARCH_KEEP_MEMBLOCK by
++	 * default.
++	 */
++	BUILD_BUG_ON(!IS_ENABLED(CONFIG_ARCH_KEEP_MEMBLOCK));
+ 
+ 	if (num_tag_regions == 0)
+ 		return;
+@@ -150,6 +232,72 @@ void __init mte_init_tag_storage(void)
+ 	if (ret)
+ 		goto out_disabled;
+ 
++	mem_end = PHYS_PFN(memblock_end_of_DRAM());
 +
-+	ret = mte_find_tagged_memory_regions();
++	/*
++	 * MTE is disabled, tag storage pages can be used like any other pages.
++	 * The only restriction is that the pages cannot be used by kexec
++	 * because the memory remains marked as reserved in the memblock
++	 * allocator.
++	 */
++	if (!system_supports_mte()) {
++		for (i = 0; i< num_tag_regions; i++) {
++			start = tag_regions[i].tag_range.start;
++			end = tag_regions[i].tag_range.end;
++
++			/* end is inclusive, mem_end is not */
++			if (end >= mem_end)
++				end = mem_end - 1;
++			if (end < start)
++				continue;
++			for (pfn = start; pfn <= end; pfn++)
++				free_reserved_page(pfn_to_page(pfn));
++		}
++		goto out_disabled;
++	}
++
++	/*
++	 * Check that tag storage is addressable by the kernel.
++	 * cma_init_reserved_mem(), unlike cma_declare_contiguous_nid(), doesn't
++	 * perform this check.
++	 */
++	for (i = 0; i< num_tag_regions; i++) {
++		start = tag_regions[i].tag_range.start;
++		end = tag_regions[i].tag_range.end;
++
++		if (end >= mem_end) {
++			pr_err("Tag region 0x%llx-0x%llx outside addressable memory",
++				PFN_PHYS(start), PFN_PHYS(end + 1) - 1);
++			goto out_disabled;
++		}
++	}
++
++	ret = mte_split_tag_regions();
 +	if (ret)
 +		goto out_disabled;
 +
-+	return;
++	for (i = 0; i < num_tag_regions; i++) {
++		region = &tag_regions[i];
 +
-+out_disabled:
-+	num_tag_regions = 0;
-+	pr_info("MTE tag storage region management disabled");
-+}
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 74c1db8ce271..2ccc0c294a13 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -39,6 +39,7 @@
- #include <asm/kernel-pgtable.h>
- #include <asm/kvm_host.h>
- #include <asm/memory.h>
-+#include <asm/mte_tag_storage.h>
- #include <asm/numa.h>
- #include <asm/sections.h>
- #include <asm/setup.h>
-@@ -386,6 +387,8 @@ void __init mem_init(void)
- 	/* this will put all unused low memory onto the freelists */
- 	memblock_free_all();
++		/* Tag storage pages are managed in block_size_pages chunks. */
++		if (is_power_of_2(region->block_size_pages))
++			order = ilog2(region->block_size_pages);
++		else
++			order = 0;
++
++		ret = cma_init_reserved_mem(PFN_PHYS(region->tag_range.start),
++				PFN_PHYS(range_len(&region->tag_range)),
++				order, NULL, &region->cma);
++		if (ret) {
++			for (j = 0; j < i; j++)
++				cma_remove_mem(&region->cma);
++			goto out_disabled;
++		}
++
++		/* Keep pages reserved if activation fails. */
++		cma_reserve_pages_on_error(region->cma);
++	}
++
+ 	return;
  
-+	mte_init_tag_storage();
-+
- 	/*
- 	 * Check boundaries twice: Some fundamental inconsistencies can be
- 	 * detected at build time already.
+ out_disabled:
 -- 
 2.43.0
 
