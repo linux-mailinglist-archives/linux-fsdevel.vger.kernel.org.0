@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-8878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FB5383BF58
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:47:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F73F83BF5E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:48:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CE6828B8A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 10:47:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2DC51C23DDD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 10:48:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D90D50A89;
-	Thu, 25 Jan 2024 10:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E4A51C20;
+	Thu, 25 Jan 2024 10:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYWf9zkw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LmHdrG+9"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8305025F;
-	Thu, 25 Jan 2024 10:43:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBB151017;
+	Thu, 25 Jan 2024 10:43:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706179418; cv=none; b=SCgOvOYsnAkAYeWcanOBfacHQO0GWS1iwM6mp45IhiFCBYvtLwH33FCSS19m7rnmgpCmBUsxsOAXXkn3wggTAwl4B6AqAWwt74Zr7255+4bRbQADHXX5pTfrWnalOgyhleC7vLNx3f8R8z9+qohq+MdPFhVVCw08dkq2aO4/0EI=
+	t=1706179422; cv=none; b=drFmhF5GvZW5DeMssU5hkGGewn1KEWBzdS0z7X9psDeRTiJ6J7NULXDOeuLtGrRU3UKBSvXh/0qSzTPmypyDdXfsEABdOnZ4u9Bw7bj8OilGKFnBkZ93gdIRa+O6lLdmFQBSJOiU4tSiQh1Q2+Ui0s24lKA9Xufr1Aku+J7G+BA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706179418; c=relaxed/simple;
-	bh=q27027myRVkpNVR/a+Mk2O/wAZWZl39KGvcBhSvyM0c=;
+	s=arc-20240116; t=1706179422; c=relaxed/simple;
+	bh=IS3aB6yA7q+nu/7BKCjtOAugGBaz5g5IKIwQNBYmIqc=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=JLi5yC/6bvL9A+pwo/Z1UxlxGRItljKAngalIbs54jjPQNZX63qdN3jeKsf9rh+zLF8y8qEnLd2PRlJINe+GssdqWvP1S4f47Qst9W5iy8Ma8AcDf4m9Ll8gk4CDwe69s2WPo5qXShZkMq8UF7QW31orssub0sGfeQcyF1hviqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYWf9zkw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 669CFC433F1;
-	Thu, 25 Jan 2024 10:43:34 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=S+RU4jVtgg/H0b/xWK0cTwlS+xlVqnmQvQ79U7YuXvMs9jYvmWSaRYQueTV9b4ZlKJ2BAtLdzO/cC8vxDqksqA0juhhVUeer8UnChJqki2m5WaxSi85hSAHyDXEGkQsAHXmt8lYCQ5E4V/zqAhM1HZAj4ffw5l15tHCW7t8NS1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LmHdrG+9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EF7FC43141;
+	Thu, 25 Jan 2024 10:43:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706179418;
-	bh=q27027myRVkpNVR/a+Mk2O/wAZWZl39KGvcBhSvyM0c=;
+	s=k20201202; t=1706179421;
+	bh=IS3aB6yA7q+nu/7BKCjtOAugGBaz5g5IKIwQNBYmIqc=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=eYWf9zkwYvSSiAV8EKsO4FX+HZAIG5KeyMdF0jfKnbV/ES1Fpf2S6K6LUOieZptrV
-	 6qVtnDAxJ/tJXjG92GPYBeQKX5MmyoyqNtPykHJsKveNcTWXiXmmNcHFktjL5kogXv
-	 Ys5tH3ad8jy0r1wM1hultEjBT2T9EchYj+oTr+jAipLo4m65yIfXtg9cABR8aq9Ywk
-	 BcCiX1gDQyFS/x7ZflM+falsmM0ANXC4dJVRhCLQm3QGDOQSYFD59ZuiyFkiZLFMVG
-	 v3NywzPk0seAYPO/da73APkK+9FD0VuSRPKUIUEFJQ2n5eO6bL9HsZFWNI9Enp7HM9
-	 J0KMDZ6Q3uLUw==
+	b=LmHdrG+9WciwcjOfAlc1o2jPn+i5lZU6qqRNNKOEW48YL5dGVpWuK5MPiP8Ci08wa
+	 PA+54xld+rHJbQk2XQlYKh/+8wv3Irwrgvl0xfUmnt62qg8Ng8ESOobc9g47v20ALv
+	 mw7TgAsEkntw1o7/gdfPPTFUF0YPMlTt+/ydLBYmu3vB0JBf/GXpCusj3Q3BFJUuMN
+	 vTFarVjdvJ9jIGBzki8e/LYSo7Dtpk8uAbtF+a6gKcFzvP6hSIKbyspfUNkzB8DJBT
+	 H04NyHW8lfh6L/VML9MoeM9LFyzXnnEZxp+NRdGp49OUMtnHeXk3UYFrBStcfMZLwA
+	 fdqPtMvj1h0dg==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 25 Jan 2024 05:42:47 -0500
-Subject: [PATCH v2 06/41] lockd: rename fl_flags and fl_type variables in
- nlmclnt_lock
+Date: Thu, 25 Jan 2024 05:42:48 -0500
+Subject: [PATCH v2 07/41] 9p: rename fl_type variable in v9fs_file_do_lock
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240125-flsplit-v2-6-7485322b62c7@kernel.org>
+Message-Id: <20240125-flsplit-v2-7-7485322b62c7@kernel.org>
 References: <20240125-flsplit-v2-0-7485322b62c7@kernel.org>
 In-Reply-To: <20240125-flsplit-v2-0-7485322b62c7@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -87,108 +86,58 @@ Cc: linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
  linux-cifs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2914; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=q27027myRVkpNVR/a+Mk2O/wAZWZl39KGvcBhSvyM0c=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlsjs6IY/xKoaZCIsCIIocRPR//KntXHoKf+wCI
- b1LwtAu07mJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbI7OgAKCRAADmhBGVaC
- FYToEACR/8vGQrrZ0lllbG6e4HRNzBryZ/LiacTXgBh7Plnr74CLPAiD5fmgJoaNnj7CkwLMS/D
- tjMqiNaSiLCE0Du7bk9z+WEXhdZx/TIWy5OuVWR+iozxrIuA74EX5qcbFwx5ZJbddlf9N/olweO
- UE0u75RxRxWA+SxBGti0lbnB3oAK4MCBhuBvk1T7E83Oo/kRkag9jRRKBj5l+cPqdwyP8aA0pCs
- dm0H7jvseU0SSPyJDd1fS9oMy4vOxooL/gPjsSmCAkLkrl3OSwRWYJff7O+T3ofoB7eBrTqLIFz
- uQWEYS2Atyt0II9dz2JSijvfYsm82dQX+W+l3VxVgwOWWg8RrODPqB3DUCJB3xIUmt2zM5QMsc5
- 6BkAeNK13w3QXDi37xYythT5xy40t0ipkPUPftea+oJ+W4c9Jwq657oZZzNsu7f5nCr0ZkyTKE5
- 3vOpI9/Dd5YmxKKcBv/Yl1LQlK6mrAK/Q3KxmiYCn2oCwQF/SgjhS6mgpWSwFNQsu29u1Nm9yuN
- Ch32gUzTJnrIlOtICY/lQCgKFrfecu0X7o64R4MTmJ87Kei/rE2a0CdTXvHyI1xHvvNTRGceV/g
- ZItaH4axvzklM1c9n2WfOuT9khNDfkBZiWPKA/O+ijeDJzFzJHbLs2fgwQigPzVdVoOE/WMla4t
- Qr9guaEBP5cioEQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1163; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=IS3aB6yA7q+nu/7BKCjtOAugGBaz5g5IKIwQNBYmIqc=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlsjs6qXZWzHfckDwFuS8CJXkchexkMf/rKs5JX
+ BNQleJ7QRWJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbI7OgAKCRAADmhBGVaC
+ FbZ3D/0f04M0OOKSV+emWUVYd3d2cWArdxROUDgxD6H5jFV7zW+fTmgFT8LeVWR/CmB1TttK3s7
+ G4HJMBeX/B3uX/Ud8afj/939PrgbJ1hmzeMTXKOjEefeX5fcwJZzmaPof+er57yq4T5TwzYXtSl
+ CSUzEf7TdjZC1CrRdc8Yoln7PFr0luR7zKHapY0PSzE8h7ASh/g+xf0aAU0rzowV1//IS2SR4LN
+ yDI4tMxdW6iVIKV/Yzwt1fh/mqWAZVf2r1G/2GY7lfM1UEDRfZ/daVFFZRisI3++y7huxx4+dxT
+ v2PNi1PFNkAnlG5Kshd+QLGbyk1U1imYnnaKdDO3shhAEXejwo9eeEn4b9u0N4vyXO0fd6X7fZT
+ ffD2UseUaAw3yVCDUpxH9mm5EQHD3pw2VcD5s63DaD0xWkL5af6UuxawHeZsugEVipKdVqMTgIT
+ WdRHsYeUvjB7N99Z1BudLqZlFza6LQ6WmEivfQhmH7aKgL345OXUuDzghD5Xr12h2Oq2uJxLBnG
+ YLq/fF1aJh7escISikfKNR/vxk0clgPd2GoG95LH8zJhDvZdBR+Rp6lOSpL08qutuqWjVRVkbQO
+ qbYdF0W+9BO0socEScBudYqgVsZPzZVv8mBG2ORWqUFBg+G6vGTgoQKIXB3NeTy6lP7XhhpzBIt
+ Ly+j39W5/3sOGOw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-In later patches we're going to introduce some macros with names that
-clash with the variable names here. Rename them.
+In later patches, we're going to introduce some macros that conflict
+with the variable name here. Rename it.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/lockd/clntproc.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ fs/9p/vfs_file.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/lockd/clntproc.c b/fs/lockd/clntproc.c
-index fba6c7fa7474..cc596748e359 100644
---- a/fs/lockd/clntproc.c
-+++ b/fs/lockd/clntproc.c
-@@ -522,8 +522,8 @@ nlmclnt_lock(struct nlm_rqst *req, struct file_lock *fl)
- 	struct nlm_host	*host = req->a_host;
- 	struct nlm_res	*resp = &req->a_res;
- 	struct nlm_wait block;
--	unsigned char fl_flags = fl->fl_flags;
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index bae330c2f0cf..3df8aa1b5996 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -121,7 +121,6 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
+ 	struct p9_fid *fid;
+ 	uint8_t status = P9_LOCK_ERROR;
+ 	int res = 0;
 -	unsigned char fl_type;
-+	unsigned char flags = fl->fl_flags;
-+	unsigned char type;
- 	__be32 b_status;
- 	int status = -ENOLCK;
+ 	struct v9fs_session_info *v9ses;
  
-@@ -533,7 +533,7 @@ nlmclnt_lock(struct nlm_rqst *req, struct file_lock *fl)
- 
- 	fl->fl_flags |= FL_ACCESS;
- 	status = do_vfs_lock(fl);
--	fl->fl_flags = fl_flags;
-+	fl->fl_flags = flags;
- 	if (status < 0)
- 		goto out;
- 
-@@ -595,7 +595,7 @@ nlmclnt_lock(struct nlm_rqst *req, struct file_lock *fl)
- 		if (do_vfs_lock(fl) < 0)
- 			printk(KERN_WARNING "%s: VFS is out of sync with lock manager!\n", __func__);
- 		up_read(&host->h_rwsem);
--		fl->fl_flags = fl_flags;
-+		fl->fl_flags = flags;
- 		status = 0;
- 	}
- 	if (status < 0)
-@@ -605,7 +605,7 @@ nlmclnt_lock(struct nlm_rqst *req, struct file_lock *fl)
- 	 * cases NLM_LCK_DENIED is returned for a permanent error.  So
- 	 * turn it into an ENOLCK.
+ 	fid = filp->private_data;
+@@ -208,11 +207,12 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
+ 	 * it locally
  	 */
--	if (resp->status == nlm_lck_denied && (fl_flags & FL_SLEEP))
-+	if (resp->status == nlm_lck_denied && (flags & FL_SLEEP))
- 		status = -ENOLCK;
- 	else
- 		status = nlm_stat_to_errno(resp->status);
-@@ -622,13 +622,13 @@ nlmclnt_lock(struct nlm_rqst *req, struct file_lock *fl)
- 			   req->a_host->h_addrlen, req->a_res.status);
- 	dprintk("lockd: lock attempt ended in fatal error.\n"
- 		"       Attempting to unlock.\n");
--	fl_type = fl->fl_type;
-+	type = fl->fl_type;
- 	fl->fl_type = F_UNLCK;
- 	down_read(&host->h_rwsem);
- 	do_vfs_lock(fl);
- 	up_read(&host->h_rwsem);
--	fl->fl_type = fl_type;
--	fl->fl_flags = fl_flags;
-+	fl->fl_type = type;
-+	fl->fl_flags = flags;
- 	nlmclnt_async_call(cred, req, NLMPROC_UNLOCK, &nlmclnt_unlock_ops);
- 	return status;
- }
-@@ -683,7 +683,7 @@ nlmclnt_unlock(struct nlm_rqst *req, struct file_lock *fl)
- 	struct nlm_host	*host = req->a_host;
- 	struct nlm_res	*resp = &req->a_res;
- 	int status;
--	unsigned char fl_flags = fl->fl_flags;
-+	unsigned char flags = fl->fl_flags;
- 
- 	/*
- 	 * Note: the server is supposed to either grant us the unlock
-@@ -694,7 +694,7 @@ nlmclnt_unlock(struct nlm_rqst *req, struct file_lock *fl)
- 	down_read(&host->h_rwsem);
- 	status = do_vfs_lock(fl);
- 	up_read(&host->h_rwsem);
--	fl->fl_flags = fl_flags;
-+	fl->fl_flags = flags;
- 	if (status == -ENOENT) {
- 		status = 0;
- 		goto out;
+ 	if (res < 0 && fl->fl_type != F_UNLCK) {
+-		fl_type = fl->fl_type;
++		unsigned char type = fl->fl_type;
++
+ 		fl->fl_type = F_UNLCK;
+ 		/* Even if this fails we want to return the remote error */
+ 		locks_lock_file_wait(filp, fl);
+-		fl->fl_type = fl_type;
++		fl->fl_type = type;
+ 	}
+ 	if (flock.client_id != fid->clnt->name)
+ 		kfree(flock.client_id);
 
 -- 
 2.43.0
