@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-8951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42B7083C878
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:46:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F6683C87D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 17:47:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5263296301
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:46:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 743B61C22F44
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 16:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0DD21386C5;
-	Thu, 25 Jan 2024 16:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDA813A254;
+	Thu, 25 Jan 2024 16:43:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08BD131E2B;
-	Thu, 25 Jan 2024 16:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D317131E2B;
+	Thu, 25 Jan 2024 16:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706201016; cv=none; b=WQOp7qVAkXPU0nYPnKB2xChC/qBjUXz4mYhqxPhrWoq7JukhX9Aa/bmuV9TuOJ3hZzGl7/7l8rnP8OExevurMj0+4/pfGGXTCDj6O5JJRZ4UJ4CFzxrQOKmHWZXg/rpVMWydG5VV4lMPGi+gP4FtalrmuDyNM354s9cPlk+iRu0=
+	t=1706201021; cv=none; b=C0yoaRa0H1339R/aPED0mm/oyJKurxZ9pchf3vU5q4gLh6CKUKccOiUSt7vj9w6btmpdFNAlD6LFg/ldvNW+BX3IHYByBGLp8HzR1oyLPyWdP0PN5Ds68QJ4T06T2MaWq0zrq8rdb3FeR8ERjbfcuTMpPQCAMgvOCAft9Sw1Kcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706201016; c=relaxed/simple;
-	bh=xx28PConicQPxXYQSYkxUqN0YBKscjpZEHw3dfmUj4w=;
+	s=arc-20240116; t=1706201021; c=relaxed/simple;
+	bh=0Lk/yDB2pP/0+WtYhi+H4wfG8MVkHK9WQcQ93Hxoqag=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Nsnf2rj6FWLvPUVB+LQ2zbHDHVUZe8xwRVIgfWrEdmhh0KsX/cMnfYWD3lvHbbYmjqmKENOSE9VI5OzG4UuhxBQzolDH/SC0MkSBXYC/cRpsrnJ91SEvkTqmehx/nGE27fVARrMXYSMdNjg3YJIvGNtI4zIVWXmeOIlzbgL8GB8=
+	 MIME-Version; b=n3IDr38LYq1jh04i3f3SzQgZiAeDdbACFnUV1qK+ahpo2ziK0P3FUUVo8bBrKSlv8PfwYjV6u6wi1Pz6GqSgB/n8dreAc2voTcvAz007alxDQlL6jAwZ23CRNA5LWD5206SX8i5uAx/VWsCu0+JMLsXX7ALsPOVm2nCCyoWzTGw=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B3E191516;
-	Thu, 25 Jan 2024 08:44:17 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7CBA5153B;
+	Thu, 25 Jan 2024 08:44:23 -0800 (PST)
 Received: from e121798.cable.virginm.net (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C41E03F5A1;
-	Thu, 25 Jan 2024 08:43:27 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8DF503F5A1;
+	Thu, 25 Jan 2024 08:43:33 -0800 (PST)
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: catalin.marinas@arm.com,
 	will@kernel.org,
@@ -71,9 +71,9 @@ Cc: pcc@google.com,
 	linux-arch@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH RFC v3 08/35] mm: cma: Introduce cma_alloc_range()
-Date: Thu, 25 Jan 2024 16:42:29 +0000
-Message-Id: <20240125164256.4147-9-alexandru.elisei@arm.com>
+Subject: [PATCH RFC v3 09/35] mm: cma: Introduce cma_remove_mem()
+Date: Thu, 25 Jan 2024 16:42:30 +0000
+Message-Id: <20240125164256.4147-10-alexandru.elisei@arm.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240125164256.4147-1-alexandru.elisei@arm.com>
 References: <20240125164256.4147-1-alexandru.elisei@arm.com>
@@ -85,18 +85,17 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Today, cma_alloc() is used to allocate a contiguous memory region. The
-function allows the caller to specify the number of pages to allocate, but
-not the starting address. cma_alloc() will walk over the entire CMA region
-trying to allocate the first available range of the specified size.
+Memory is added to CMA with cma_declare_contiguous_nid() and
+cma_init_reserved_mem(). This memory is then put on the MIGRATE_CMA list in
+cma_init_reserved_areas(), where the page allocator can make use of it.
 
-Introduce cma_alloc_range(), which makes CMA more versatile by allowing the
-caller to specify a particular range in the CMA region, defined by the
-start pfn and the size.
+If a device manages multiple CMA areas, and there's an error when one of
+the areas is added to CMA, there is no mechanism for the device to prevent
+the rest of the areas, which were added before the error occured, from
+being later added to the MIGRATE_CMA list.
 
-arm64 will make use of this function when tag storage management will be
-implemented: cma_alloc_range() will be used to reserve the tag storage
-associated with a tagged page.
+Add cma_remove_mem() which allows a previously reserved CMA area to be
+removed and thus it cannot be used by the page allocator.
 
 Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
 ---
@@ -105,191 +104,71 @@ Changes since rfc v2:
 
 * New patch.
 
- include/linux/cma.h        |  2 +
- include/trace/events/cma.h | 59 ++++++++++++++++++++++++++
- mm/cma.c                   | 86 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 147 insertions(+)
+ include/linux/cma.h |  1 +
+ mm/cma.c            | 30 +++++++++++++++++++++++++++++-
+ 2 files changed, 30 insertions(+), 1 deletion(-)
 
 diff --git a/include/linux/cma.h b/include/linux/cma.h
-index 63873b93deaa..e32559da6942 100644
+index e32559da6942..787cbec1702e 100644
 --- a/include/linux/cma.h
 +++ b/include/linux/cma.h
-@@ -50,6 +50,8 @@ extern int cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
+@@ -48,6 +48,7 @@ extern int cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
+ 					unsigned int order_per_bit,
+ 					const char *name,
  					struct cma **res_cma);
++extern void cma_remove_mem(struct cma **res_cma);
  extern struct page *cma_alloc(struct cma *cma, unsigned long count, unsigned int align,
  			      bool no_warn);
-+extern int cma_alloc_range(struct cma *cma, unsigned long start, unsigned long count,
-+			   unsigned tries, gfp_t gfp);
- extern bool cma_pages_valid(struct cma *cma, const struct page *pages, unsigned long count);
- extern bool cma_release(struct cma *cma, const struct page *pages, unsigned long count);
- 
-diff --git a/include/trace/events/cma.h b/include/trace/events/cma.h
-index 25103e67737c..a89af313a572 100644
---- a/include/trace/events/cma.h
-+++ b/include/trace/events/cma.h
-@@ -36,6 +36,65 @@ TRACE_EVENT(cma_release,
- 		  __entry->count)
- );
- 
-+TRACE_EVENT(cma_alloc_range_start,
-+
-+	TP_PROTO(const char *name, unsigned long start, unsigned long count,
-+		 unsigned tries),
-+
-+	TP_ARGS(name, start, count, tries),
-+
-+	TP_STRUCT__entry(
-+		__string(name, name)
-+		__field(unsigned long, start)
-+		__field(unsigned long, count)
-+		__field(unsigned, tries)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(name, name);
-+		__entry->start = start;
-+		__entry->count = count;
-+		__entry->tries = tries;
-+	),
-+
-+	TP_printk("name=%s start=%lx count=%lu tries=%u",
-+		  __get_str(name),
-+		  __entry->start,
-+		  __entry->count,
-+		  __entry->tries)
-+);
-+
-+TRACE_EVENT(cma_alloc_range_finish,
-+
-+	TP_PROTO(const char *name, unsigned long start, unsigned long count,
-+		 unsigned attempts, int err),
-+
-+	TP_ARGS(name, start, count, attempts, err),
-+
-+	TP_STRUCT__entry(
-+		__string(name, name)
-+		__field(unsigned long, start)
-+		__field(unsigned long, count)
-+		__field(unsigned, attempts)
-+		__field(int, err)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(name, name);
-+		__entry->start = start;
-+		__entry->count = count;
-+		__entry->attempts = attempts;
-+		__entry->err = err;
-+	),
-+
-+	TP_printk("name=%s start=%lx count=%lu attempts=%u err=%d",
-+		  __get_str(name),
-+		  __entry->start,
-+		  __entry->count,
-+		  __entry->attempts,
-+		  __entry->err)
-+);
-+
- TRACE_EVENT(cma_alloc_start,
- 
- 	TP_PROTO(const char *name, unsigned long count, unsigned int align),
+ extern int cma_alloc_range(struct cma *cma, unsigned long start, unsigned long count,
 diff --git a/mm/cma.c b/mm/cma.c
-index 543bb6b3be8e..4a0f68b9443b 100644
+index 4a0f68b9443b..2881bab12b01 100644
 --- a/mm/cma.c
 +++ b/mm/cma.c
-@@ -416,6 +416,92 @@ static void cma_debug_show_areas(struct cma *cma)
- static inline void cma_debug_show_areas(struct cma *cma) { }
- #endif
+@@ -147,8 +147,12 @@ static int __init cma_init_reserved_areas(void)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < cma_area_count; i++)
++	for (i = 0; i < cma_area_count; i++) {
++		/* Region was removed. */
++		if (!cma_areas[i].count)
++			continue;
+ 		cma_activate_area(&cma_areas[i]);
++	}
+ 
+ 	return 0;
+ }
+@@ -216,6 +220,30 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
+ 	return 0;
+ }
  
 +/**
-+ * cma_alloc_range() - allocate pages in a specific range
-+ * @cma:   Contiguous memory region for which the allocation is performed.
-+ * @start: Starting pfn of the allocation.
-+ * @count: Requested number of pages
-+ * @tries: Number of tries if the range is busy
-+ * @no_warn: Avoid printing message about failed allocation
++ * cma_remove_mem() - remove cma area
++ * @res_cma: Pointer to the cma region.
 + *
-+ * This function allocates part of contiguous memory from a specific contiguous
-+ * memory area, from the specified starting address. The 'start' pfn and the the
-+ * 'count' number of pages must be aligned to the CMA bitmap order per bit.
++ * This function removes a cma region created with cma_init_reserved_mem(). The
++ * ->count is set to 0.
 + */
-+int cma_alloc_range(struct cma *cma, unsigned long start, unsigned long count,
-+		    unsigned tries, gfp_t gfp)
++void __init cma_remove_mem(struct cma **res_cma)
 +{
-+	unsigned long bitmap_maxno, bitmap_no, bitmap_start, bitmap_count;
-+	unsigned long i = 0;
-+	struct page *page;
-+	int err = -EINVAL;
++	struct cma *cma;
 +
-+	if (!cma || !cma->count || !cma->bitmap)
-+		goto out_stats;
++	if (WARN_ON_ONCE(!res_cma || !(*res_cma)))
++		return;
 +
-+	trace_cma_alloc_range_start(cma->name, start, count, tries);
++	cma = *res_cma;
++	if (WARN_ON_ONCE(!cma->count))
++		return;
 +
-+	if (!count || start < cma->base_pfn ||
-+	    start + count > cma->base_pfn + cma->count)
-+		goto out_stats;
++	totalcma_pages -= cma->count;
++	cma->count = 0;
 +
-+	if (!IS_ALIGNED(start | count, 1 << cma->order_per_bit))
-+		goto out_stats;
-+
-+	bitmap_start = (start - cma->base_pfn) >> cma->order_per_bit;
-+	bitmap_maxno = cma_bitmap_maxno(cma);
-+	bitmap_count = cma_bitmap_pages_to_bits(cma, count);
-+
-+	spin_lock_irq(&cma->lock);
-+	bitmap_no = bitmap_find_next_zero_area(cma->bitmap, bitmap_maxno,
-+					       bitmap_start, bitmap_count, 0);
-+	if (bitmap_no != bitmap_start) {
-+		spin_unlock_irq(&cma->lock);
-+		err = -EEXIST;
-+		goto out_stats;
-+	}
-+	bitmap_set(cma->bitmap, bitmap_start, bitmap_count);
-+	spin_unlock_irq(&cma->lock);
-+
-+	for (i = 0; i < tries; i++) {
-+		mutex_lock(&cma_mutex);
-+		err = alloc_contig_range(start, start + count, MIGRATE_CMA, gfp);
-+		mutex_unlock(&cma_mutex);
-+
-+		if (err != -EBUSY)
-+			break;
-+	}
-+
-+	if (err) {
-+		cma_clear_bitmap(cma, start, count);
-+	} else {
-+		page = pfn_to_page(start);
-+
-+		/*
-+		 * CMA can allocate multiple page blocks, which results in
-+		 * different blocks being marked with different tags. Reset the
-+		 * tags to ignore those page blocks.
-+		 */
-+		for (i = 0; i < count; i++)
-+			page_kasan_tag_reset(nth_page(page, i));
-+	}
-+
-+out_stats:
-+	trace_cma_alloc_range_finish(cma->name, start, count, i, err);
-+
-+	if (err) {
-+		count_vm_events(CMA_ALLOC_FAIL, count);
-+		if (cma)
-+			cma_sysfs_account_fail_pages(cma, count);
-+	} else {
-+		count_vm_events(CMA_ALLOC_SUCCESS, count);
-+		cma_sysfs_account_success_pages(cma, count);
-+	}
-+
-+	return err;
++	*res_cma = NULL;
 +}
 +
-+
  /**
-  * cma_alloc() - allocate pages from contiguous area
-  * @cma:   Contiguous memory region for which the allocation is performed.
+  * cma_declare_contiguous_nid() - reserve custom contiguous area
+  * @base: Base address of the reserved area optional, use 0 for any
 -- 
 2.43.0
 
