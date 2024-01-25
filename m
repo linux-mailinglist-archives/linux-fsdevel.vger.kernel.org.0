@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-8877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-8878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBAB783BF53
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:46:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB5383BF58
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 11:47:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E13AA1C23B88
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 10:46:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CE6828B8A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 25 Jan 2024 10:47:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D264F88E;
-	Thu, 25 Jan 2024 10:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D90D50A89;
+	Thu, 25 Jan 2024 10:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TENhNdCk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYWf9zkw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA4E4F5EF;
-	Thu, 25 Jan 2024 10:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8305025F;
+	Thu, 25 Jan 2024 10:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706179414; cv=none; b=V2ef0jIS4LS3u/Wy6ItmtmnqFY3TCYN1ttV8U7vRep3WphmnfDrKWuleAG7XfZzI5EQV4AhFACh/v9aPGtOdsadBMU57FzLJktOwvuY3HtLHFuG5TDnQHKbGR2B6eZpq6LIC8FM5kLEyJ6egL+qWfe3VfcWD+HS7cQOeeQMDHZ0=
+	t=1706179418; cv=none; b=SCgOvOYsnAkAYeWcanOBfacHQO0GWS1iwM6mp45IhiFCBYvtLwH33FCSS19m7rnmgpCmBUsxsOAXXkn3wggTAwl4B6AqAWwt74Zr7255+4bRbQADHXX5pTfrWnalOgyhleC7vLNx3f8R8z9+qohq+MdPFhVVCw08dkq2aO4/0EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706179414; c=relaxed/simple;
-	bh=67tgcGcBr3M1TKgZg1fl7B4O9bsOgbylOGJue3HCOI8=;
+	s=arc-20240116; t=1706179418; c=relaxed/simple;
+	bh=q27027myRVkpNVR/a+Mk2O/wAZWZl39KGvcBhSvyM0c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lB/70tJAr2ky6YwMetVh1cVK/rUpPMK5i3yeUv45fJ53HOPukpiED2n/tmvQFKpRrvvEnDMXYwv/pmF32WYcD2iVgkBZW1Bo6P3Byy2SyXiG1/iZB/wXTdMZEpRvaeKaROBPhBW37qf1zm4H/XGV081Wlk445hEcmsm7Yu+L70Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TENhNdCk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E521C433B2;
-	Thu, 25 Jan 2024 10:43:30 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=JLi5yC/6bvL9A+pwo/Z1UxlxGRItljKAngalIbs54jjPQNZX63qdN3jeKsf9rh+zLF8y8qEnLd2PRlJINe+GssdqWvP1S4f47Qst9W5iy8Ma8AcDf4m9Ll8gk4CDwe69s2WPo5qXShZkMq8UF7QW31orssub0sGfeQcyF1hviqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYWf9zkw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 669CFC433F1;
+	Thu, 25 Jan 2024 10:43:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706179414;
-	bh=67tgcGcBr3M1TKgZg1fl7B4O9bsOgbylOGJue3HCOI8=;
+	s=k20201202; t=1706179418;
+	bh=q27027myRVkpNVR/a+Mk2O/wAZWZl39KGvcBhSvyM0c=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=TENhNdCkl3LbP8J7Y5pctGbi/MNsppzrVnjbWKN0uBVn9ve3EgR34dZt20ExdjbRv
-	 3hQzATNpCUaLmdqY9OMsKQy2235DhJGtxxTPs8Kf8Y1dMcR+6u9ffeBq+4nQiirB/S
-	 V2akd7YivvP7kTcGxj504iTkLR00ebi4W6ORJR0+FLZIHGQiz6adES7E66nZWBTUA5
-	 Ys92TDgaIF6UXtbBJt3tLlwW2J1nu3FZn5QM/cTYSqbdxwIenE6YO0De8COSaGg6Lo
-	 FC+8lRjF/Gt6bAnhNYx6jhrboS5ti62aco3Tt3ZOpGdowtU86kqRfWZq5386BNB+ul
-	 DmGZ4vyO/Lulw==
+	b=eYWf9zkwYvSSiAV8EKsO4FX+HZAIG5KeyMdF0jfKnbV/ES1Fpf2S6K6LUOieZptrV
+	 6qVtnDAxJ/tJXjG92GPYBeQKX5MmyoyqNtPykHJsKveNcTWXiXmmNcHFktjL5kogXv
+	 Ys5tH3ad8jy0r1wM1hultEjBT2T9EchYj+oTr+jAipLo4m65yIfXtg9cABR8aq9Ywk
+	 BcCiX1gDQyFS/x7ZflM+falsmM0ANXC4dJVRhCLQm3QGDOQSYFD59ZuiyFkiZLFMVG
+	 v3NywzPk0seAYPO/da73APkK+9FD0VuSRPKUIUEFJQ2n5eO6bL9HsZFWNI9Enp7HM9
+	 J0KMDZ6Q3uLUw==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Thu, 25 Jan 2024 05:42:46 -0500
-Subject: [PATCH v2 05/41] nfsd: rename fl_type and fl_flags variables in
- nfsd4_lock
+Date: Thu, 25 Jan 2024 05:42:47 -0500
+Subject: [PATCH v2 06/41] lockd: rename fl_flags and fl_type variables in
+ nlmclnt_lock
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240125-flsplit-v2-5-7485322b62c7@kernel.org>
+Message-Id: <20240125-flsplit-v2-6-7485322b62c7@kernel.org>
 References: <20240125-flsplit-v2-0-7485322b62c7@kernel.org>
 In-Reply-To: <20240125-flsplit-v2-0-7485322b62c7@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -87,20 +87,20 @@ Cc: linux-kernel@vger.kernel.org, v9fs@lists.linux.dev,
  linux-cifs@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3667; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=67tgcGcBr3M1TKgZg1fl7B4O9bsOgbylOGJue3HCOI8=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlsjs6bAIQhNU0/UBqC4/mSm3HkicBp81Q+ncaK
- rM0HwF9VpeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbI7OgAKCRAADmhBGVaC
- FRmLD/4waedvLVnPXKBXKI+UTKPxVA4gJHs881wNp23UhynANp7YSTJZl/KiMkrL7LTlsSxWGAO
- RnRRGrdoBX2pJU/nap8iMzSWsyIlFsrYH8ROwRey8e+YdVFEZjZthtD/Rqasds1hRXnAYtEiDPC
- qQDqtg8ilPlPXr+JAkYM5yJzlj9UPktBTLQ9DS2E/n0aAL41nelC1ksT00mVHUQ2As43h1IFIeY
- LuFu5VEdsC4e/7LvggeitNQ3AK5c7siAoaUj4OUEbO7ZjLGm4ATTZ/2e+4vxZmUFbKM3RfmtS7a
- LH+dUVtdlnZ6lRtGisG5mK1Dmq21LZXAwF9czIJu8aaNrKNKRo2roKY2OV+mosGQ3Gh3aYMupHW
- KffYGjzDTs/a94AAeYXOpFmWs/OcLiY6yS2SWwaaHgsf+DFkoZJ3vbP6PziPotO9sxyaAS55mGQ
- lgCoTEuCIPU/yHAtXHKuZQXI1cM16aWQpzFK75aZnT58f0E6g523b+DAoP/82oRpJiFvpGSFPCX
- Mu8/GQLG89N7ylyYFtwBGesEOy+xbq9AdK3QvIn9rgx8UNopISgAJ2/ascibtzUDkGWE0Y1zHvX
- JCuNP+AApEPqL/dEnXAxMVH3v+U3Qp//L3liMqIXuKWDr+mw+ik5J6zq0ylgeOjoTnXpcua8PPw
- yhknNJW6rxKPh+w==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2914; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=q27027myRVkpNVR/a+Mk2O/wAZWZl39KGvcBhSvyM0c=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlsjs6IY/xKoaZCIsCIIocRPR//KntXHoKf+wCI
+ b1LwtAu07mJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbI7OgAKCRAADmhBGVaC
+ FYToEACR/8vGQrrZ0lllbG6e4HRNzBryZ/LiacTXgBh7Plnr74CLPAiD5fmgJoaNnj7CkwLMS/D
+ tjMqiNaSiLCE0Du7bk9z+WEXhdZx/TIWy5OuVWR+iozxrIuA74EX5qcbFwx5ZJbddlf9N/olweO
+ UE0u75RxRxWA+SxBGti0lbnB3oAK4MCBhuBvk1T7E83Oo/kRkag9jRRKBj5l+cPqdwyP8aA0pCs
+ dm0H7jvseU0SSPyJDd1fS9oMy4vOxooL/gPjsSmCAkLkrl3OSwRWYJff7O+T3ofoB7eBrTqLIFz
+ uQWEYS2Atyt0II9dz2JSijvfYsm82dQX+W+l3VxVgwOWWg8RrODPqB3DUCJB3xIUmt2zM5QMsc5
+ 6BkAeNK13w3QXDi37xYythT5xy40t0ipkPUPftea+oJ+W4c9Jwq657oZZzNsu7f5nCr0ZkyTKE5
+ 3vOpI9/Dd5YmxKKcBv/Yl1LQlK6mrAK/Q3KxmiYCn2oCwQF/SgjhS6mgpWSwFNQsu29u1Nm9yuN
+ Ch32gUzTJnrIlOtICY/lQCgKFrfecu0X7o64R4MTmJ87Kei/rE2a0CdTXvHyI1xHvvNTRGceV/g
+ ZItaH4axvzklM1c9n2WfOuT9khNDfkBZiWPKA/O+ijeDJzFzJHbLs2fgwQigPzVdVoOE/WMla4t
+ Qr9guaEBP5cioEQ==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
@@ -109,106 +109,86 @@ clash with the variable names here. Rename them.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfsd/nfs4state.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ fs/lockd/clntproc.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 2fa54cfd4882..f66e67394157 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -7493,8 +7493,8 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	int lkflg;
- 	int err;
- 	bool new = false;
+diff --git a/fs/lockd/clntproc.c b/fs/lockd/clntproc.c
+index fba6c7fa7474..cc596748e359 100644
+--- a/fs/lockd/clntproc.c
++++ b/fs/lockd/clntproc.c
+@@ -522,8 +522,8 @@ nlmclnt_lock(struct nlm_rqst *req, struct file_lock *fl)
+ 	struct nlm_host	*host = req->a_host;
+ 	struct nlm_res	*resp = &req->a_res;
+ 	struct nlm_wait block;
+-	unsigned char fl_flags = fl->fl_flags;
 -	unsigned char fl_type;
--	unsigned int fl_flags = FL_POSIX;
++	unsigned char flags = fl->fl_flags;
 +	unsigned char type;
-+	unsigned int flags = FL_POSIX;
- 	struct net *net = SVC_NET(rqstp);
- 	struct nfsd_net *nn = net_generic(net, nfsd_net_id);
+ 	__be32 b_status;
+ 	int status = -ENOLCK;
  
-@@ -7557,14 +7557,14 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+@@ -533,7 +533,7 @@ nlmclnt_lock(struct nlm_rqst *req, struct file_lock *fl)
+ 
+ 	fl->fl_flags |= FL_ACCESS;
+ 	status = do_vfs_lock(fl);
+-	fl->fl_flags = fl_flags;
++	fl->fl_flags = flags;
+ 	if (status < 0)
  		goto out;
  
- 	if (lock->lk_reclaim)
--		fl_flags |= FL_RECLAIM;
-+		flags |= FL_RECLAIM;
- 
- 	fp = lock_stp->st_stid.sc_file;
- 	switch (lock->lk_type) {
- 		case NFS4_READW_LT:
- 			if (nfsd4_has_session(cstate) ||
- 			    exportfs_lock_op_is_async(sb->s_export_op))
--				fl_flags |= FL_SLEEP;
-+				flags |= FL_SLEEP;
- 			fallthrough;
- 		case NFS4_READ_LT:
- 			spin_lock(&fp->fi_lock);
-@@ -7572,12 +7572,12 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 			if (nf)
- 				get_lock_access(lock_stp, NFS4_SHARE_ACCESS_READ);
- 			spin_unlock(&fp->fi_lock);
--			fl_type = F_RDLCK;
-+			type = F_RDLCK;
- 			break;
- 		case NFS4_WRITEW_LT:
- 			if (nfsd4_has_session(cstate) ||
- 			    exportfs_lock_op_is_async(sb->s_export_op))
--				fl_flags |= FL_SLEEP;
-+				flags |= FL_SLEEP;
- 			fallthrough;
- 		case NFS4_WRITE_LT:
- 			spin_lock(&fp->fi_lock);
-@@ -7585,7 +7585,7 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 			if (nf)
- 				get_lock_access(lock_stp, NFS4_SHARE_ACCESS_WRITE);
- 			spin_unlock(&fp->fi_lock);
--			fl_type = F_WRLCK;
-+			type = F_WRLCK;
- 			break;
- 		default:
- 			status = nfserr_inval;
-@@ -7605,7 +7605,7 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	 * on those filesystems:
+@@ -595,7 +595,7 @@ nlmclnt_lock(struct nlm_rqst *req, struct file_lock *fl)
+ 		if (do_vfs_lock(fl) < 0)
+ 			printk(KERN_WARNING "%s: VFS is out of sync with lock manager!\n", __func__);
+ 		up_read(&host->h_rwsem);
+-		fl->fl_flags = fl_flags;
++		fl->fl_flags = flags;
+ 		status = 0;
+ 	}
+ 	if (status < 0)
+@@ -605,7 +605,7 @@ nlmclnt_lock(struct nlm_rqst *req, struct file_lock *fl)
+ 	 * cases NLM_LCK_DENIED is returned for a permanent error.  So
+ 	 * turn it into an ENOLCK.
  	 */
- 	if (!exportfs_lock_op_is_async(sb->s_export_op))
--		fl_flags &= ~FL_SLEEP;
-+		flags &= ~FL_SLEEP;
+-	if (resp->status == nlm_lck_denied && (fl_flags & FL_SLEEP))
++	if (resp->status == nlm_lck_denied && (flags & FL_SLEEP))
+ 		status = -ENOLCK;
+ 	else
+ 		status = nlm_stat_to_errno(resp->status);
+@@ -622,13 +622,13 @@ nlmclnt_lock(struct nlm_rqst *req, struct file_lock *fl)
+ 			   req->a_host->h_addrlen, req->a_res.status);
+ 	dprintk("lockd: lock attempt ended in fatal error.\n"
+ 		"       Attempting to unlock.\n");
+-	fl_type = fl->fl_type;
++	type = fl->fl_type;
+ 	fl->fl_type = F_UNLCK;
+ 	down_read(&host->h_rwsem);
+ 	do_vfs_lock(fl);
+ 	up_read(&host->h_rwsem);
+-	fl->fl_type = fl_type;
+-	fl->fl_flags = fl_flags;
++	fl->fl_type = type;
++	fl->fl_flags = flags;
+ 	nlmclnt_async_call(cred, req, NLMPROC_UNLOCK, &nlmclnt_unlock_ops);
+ 	return status;
+ }
+@@ -683,7 +683,7 @@ nlmclnt_unlock(struct nlm_rqst *req, struct file_lock *fl)
+ 	struct nlm_host	*host = req->a_host;
+ 	struct nlm_res	*resp = &req->a_res;
+ 	int status;
+-	unsigned char fl_flags = fl->fl_flags;
++	unsigned char flags = fl->fl_flags;
  
- 	nbl = find_or_allocate_block(lock_sop, &fp->fi_fhandle, nn);
- 	if (!nbl) {
-@@ -7615,11 +7615,11 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	}
- 
- 	file_lock = &nbl->nbl_lock;
--	file_lock->fl_type = fl_type;
-+	file_lock->fl_type = type;
- 	file_lock->fl_owner = (fl_owner_t)lockowner(nfs4_get_stateowner(&lock_sop->lo_owner));
- 	file_lock->fl_pid = current->tgid;
- 	file_lock->fl_file = nf->nf_file;
--	file_lock->fl_flags = fl_flags;
-+	file_lock->fl_flags = flags;
- 	file_lock->fl_lmops = &nfsd_posix_mng_ops;
- 	file_lock->fl_start = lock->lk_offset;
- 	file_lock->fl_end = last_byte_offset(lock->lk_offset, lock->lk_length);
-@@ -7632,7 +7632,7 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	/*
+ 	 * Note: the server is supposed to either grant us the unlock
+@@ -694,7 +694,7 @@ nlmclnt_unlock(struct nlm_rqst *req, struct file_lock *fl)
+ 	down_read(&host->h_rwsem);
+ 	status = do_vfs_lock(fl);
+ 	up_read(&host->h_rwsem);
+-	fl->fl_flags = fl_flags;
++	fl->fl_flags = flags;
+ 	if (status == -ENOENT) {
+ 		status = 0;
  		goto out;
- 	}
- 
--	if (fl_flags & FL_SLEEP) {
-+	if (flags & FL_SLEEP) {
- 		nbl->nbl_time = ktime_get_boottime_seconds();
- 		spin_lock(&nn->blocked_locks_lock);
- 		list_add_tail(&nbl->nbl_list, &lock_sop->lo_blocked);
-@@ -7669,7 +7669,7 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- out:
- 	if (nbl) {
- 		/* dequeue it if we queued it before */
--		if (fl_flags & FL_SLEEP) {
-+		if (flags & FL_SLEEP) {
- 			spin_lock(&nn->blocked_locks_lock);
- 			if (!list_empty(&nbl->nbl_list) &&
- 			    !list_empty(&nbl->nbl_lru)) {
 
 -- 
 2.43.0
