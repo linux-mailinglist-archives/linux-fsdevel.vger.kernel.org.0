@@ -1,161 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-9037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E8F83D45D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 07:59:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0334D83D4B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 09:27:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5306C1F21FCD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 06:57:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F2F6B21F86
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 08:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FA6919BA5;
-	Fri, 26 Jan 2024 06:16:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8130D1BF4E;
+	Fri, 26 Jan 2024 06:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ePfzeFk3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IvOGos/q"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="KI4HUP2Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out4-smtp.messagingengine.com (out4-smtp.messagingengine.com [66.111.4.28])
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB550C8E0;
-	Fri, 26 Jan 2024 06:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.111.4.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5B311184;
+	Fri, 26 Jan 2024 06:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706249814; cv=none; b=HacFVSYpeV+uCZoDxnucS3zqZb6hCahARQgyf6LzDHOUMEhJgVl6udd64MpK12g3+DLYOQuYTAfcfidKLVVzYuH/kM5+ewNfjUmn4xakFKqsQkJzGVyrUwflcrEk5pLQ2JEJ9V+UZGW1N2SW9DoA3PCmD9/P5TFHRQb2g+ftp0U=
+	t=1706250566; cv=none; b=lmsrsc7rm5a9p7kptHpN1Nsgfz7KfbpbSOWxu1hCpfwGf+ez1nclXmJEcmkMl/50aO8TAiaRnwk84zIAtW59aSCcDo2eOvvibWAjI5FwkBPJFmU4YZuVh+6qDQlr8OLpdzmtNzdu7LUGd+W+ieDXI/4DWAW7OfZ5UMFXv89UNmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706249814; c=relaxed/simple;
-	bh=UCN1lRs2vRBEnt1CbTI+f6sZAAmHopJNCxiLao/UQMI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=R5CiVlS5xGP3MxaDQRXYfvweUxuEvTmU/S7pO0CIN/bsU+qDVeCT5kZIU7QwrH9HZGDsEp49wvnQhepzZgV6uA+YUnfUuca7hEzXDHl0+1U8O0RS51cgrhKvZuiT1+0/eTU+yF2Xxkwm8FtR2LecxtCnzfGgc5HhwvjvwgCcwww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ePfzeFk3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IvOGos/q; arc=none smtp.client-ip=66.111.4.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailout.nyi.internal (Postfix) with ESMTP id E8B565C0154;
-	Fri, 26 Jan 2024 01:16:51 -0500 (EST)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 26 Jan 2024 01:16:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1706249811; x=1706336211; bh=8lgdoSvIDi
-	CRr6hQ1g1iPHkPUjc4Fdr/FoYIzZbtZC8=; b=ePfzeFk3bfvNIDY3cdNxgVlKB/
-	Lx7zmBsYKYiBfzuz3dN3XN5LFcp/peY05lJbnFF9f894gJWVcLGYcgDfuwAHXKEd
-	mbCtNBjfdmUVW+tfntX2fc/qdF64CxSqYFtjH+Sk0X4j7N3gfPcp+zC27YHro4ei
-	Wx5U92unsndmymme9SyFYwXjm2Jc8Ogq5tIs8bjasCNJClWgWHe5k9ecLBj4Rjw9
-	6/520Hut0cnxKzcBGRvH2hvYK04phRAEKtH7nnKCVUAs+vMZOzNWvA+Ga/ysKY7P
-	2zl0ivFj2Ebjt+umwRQLDL8wLXL364spUAF+owxMr/1SUDi8pBG3VjNmaYoA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1706249811; x=1706336211; bh=8lgdoSvIDiCRr6hQ1g1iPHkPUjc4
-	Fdr/FoYIzZbtZC8=; b=IvOGos/qDPTlf+NWtENxCwSBzGrQvo+skHIemNF8klsC
-	3Gcfe+n0TlgFDdYiWWw4RiHvwJcPwxPs44qA8kmE9GkV9tlzOKEWXAFc6Sw0wQxR
-	IgGq2VDAQl5yhsLbBDuI46BP/nVMH8A0wTrCZhK9sHePXFcZD3rhfNNKlrSOtrFj
-	8x4xN+uTW5aS/9JGdgjeC2k7X5HhAZOlVpwqwAxvqTv/j7FGET6iNxGTXFD/cIXG
-	U4lgG0XOFg/5EhMLaA3FEyiWPN3/8IV49WGHDCkahiPsim4HqQQUEfFxMgvQSp9j
-	9hs/3pt4Lgfk8S2/5sxt0z6fLDg9pzrDCWLWbPbgSA==
-X-ME-Sender: <xms:Uk6zZW2dejTe01OAVCXOuMD8u733oPaxdBo2pmqJmD7jfTqwBpRTZw>
-    <xme:Uk6zZZERF3ClcOxNj8DRq3W7NjYlJCmIYGDCW8G2rlCfzr-Lg9FZ-P6IpopB5oyVS
-    jCI6OXn05sdIQJaKXE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrvdeliedgledtucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:Uk6zZe4Yp1okF1C4JYucisdIq20LY_P-zMWvYPrfGvBmEMgQvRvdLg>
-    <xmx:Uk6zZX3d1l0OUejuyAQUgKeHpLiwBLMmkktFgGrTYXYj-EVCMBL5kA>
-    <xmx:Uk6zZZFg-tARBEmI6xNqSoBO8RFO-i6UWHPI3h_AqikWyPJfvv7H7A>
-    <xmx:U06zZcZgYj-KYDVFq28393AFgHiuOL2lcJsHDHS4quqhlSpdzJREhg>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 2AD2CB6008D; Fri, 26 Jan 2024 01:16:50 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-119-ga8b98d1bd8-fm-20240108.001-ga8b98d1b
+	s=arc-20240116; t=1706250566; c=relaxed/simple;
+	bh=1oKgDqQmkrliWI/8sRTPCwLf90bKib+H0y0+WavBNMo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KuKHBXJuzmaakf18QWFVMD87+HhxlbqcatO1G6JHMOocYW+h/nAv4dtxtCQJ9oyPu/o8xskzP9G4fRGUPKOCrHgvAXnEZfaymoBAsAMUYT1uNGzjf6DFBjPJ3NtRFQz2mcwHkCzTx/MqkNZaOaffX5kMSp4hISZN0aBrt766w8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=KI4HUP2Y; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1706250553; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=NT8hdE7ND84hHJW5HWIw/4V07Z4gRS7n8kgPyH9udd8=;
+	b=KI4HUP2Y80uIOGY/aCB3L7VHV2S45yx2GiRULjXq+gtD0GL7xsarI+dKI3HETPGN1lPzudqIvjzimRCM1UXjS3oGA6atD3q002qIwUZTs/YVp5o3Q87dtrPSzEw+P5sy6vHDskIKelV5HlaB+/DXRqAiy/Docqvq1DXO7ahPE8E=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R691e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046051;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0W.Moqkw_1706250552;
+Received: from 30.221.147.50(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W.Moqkw_1706250552)
+          by smtp.aliyun-inc.com;
+          Fri, 26 Jan 2024 14:29:13 +0800
+Message-ID: <b4e6b930-ed06-4e0d-b17d-61d05381ac92@linux.alibaba.com>
+Date: Fri, 26 Jan 2024 14:29:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <57b62135-2159-493d-a6bb-47d5be55154a@app.fastmail.com>
-In-Reply-To: <20240126023630.GA1235@fastly.com>
-References: <20240125225704.12781-1-jdamato@fastly.com>
- <20240125225704.12781-4-jdamato@fastly.com>
- <2024012551-anyone-demeaning-867b@gregkh> <20240126001128.GC1987@fastly.com>
- <2024012525-outdoors-district-2660@gregkh> <20240126023630.GA1235@fastly.com>
-Date: Fri, 26 Jan 2024 07:16:29 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Joe Damato" <jdamato@fastly.com>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
- "Chuck Lever" <chuck.lever@oracle.com>,
- "Jeff Layton" <jlayton@kernel.org>, linux-api@vger.kernel.org,
- "Christian Brauner" <brauner@kernel.org>,
- "Eric Dumazet" <edumazet@google.com>,
- "David S . Miller" <davem@davemloft.net>, alexander.duyck@gmail.com,
- "Sridhar Samudrala" <sridhar.samudrala@intel.com>,
- "Jakub Kicinski" <kuba@kernel.org>,
- "Willem de Bruijn" <willemdebruijn.kernel@gmail.com>, weiwan@google.com,
- "Jonathan Corbet" <corbet@lwn.net>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nathan Lynch" <nathanl@linux.ibm.com>,
- "Steve French" <stfrench@microsoft.com>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "Jiri Slaby" <jirislaby@kernel.org>,
- "Julien Panis" <jpanis@baylibre.com>,
- "Andrew Waterman" <waterman@eecs.berkeley.edu>,
- "Thomas Huth" <thuth@redhat.com>, "Palmer Dabbelt" <palmer@dabbelt.com>,
- "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- "open list:FILESYSTEMS (VFS and infrastructure)"
- <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH net-next v3 3/3] eventpoll: Add epoll ioctl for epoll_params
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fuse: increase FUSE_MAX_MAX_PAGES limit
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ zhangjiachen.jaycee@bytedance.com
+References: <20240124070512.52207-1-jefflexu@linux.alibaba.com>
+ <CAJfpegs10SdtzNXJfj3=vxoAZMhksT5A1u5W5L6nKL-P2UOuLQ@mail.gmail.com>
+ <6e6bef3d-dd26-45ce-bc4a-c04a960dfb9c@linux.alibaba.com>
+In-Reply-To: <6e6bef3d-dd26-45ce-bc4a-c04a960dfb9c@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 26, 2024, at 03:36, Joe Damato wrote:
-> On Thu, Jan 25, 2024 at 04:23:58PM -0800, Greg Kroah-Hartman wrote:
->> On Thu, Jan 25, 2024 at 04:11:28PM -0800, Joe Damato wrote:
->> > On Thu, Jan 25, 2024 at 03:21:46PM -0800, Greg Kroah-Hartman wrote:
->> > > On Thu, Jan 25, 2024 at 10:56:59PM +0000, Joe Damato wrote:
->> > > > +struct epoll_params {
->> > > > +	u64 busy_poll_usecs;
->> > > > +	u16 busy_poll_budget;
->> > > > +
->> > > > +	/* for future fields */
->> > > > +	u8 data[118];
->> > > > +} EPOLL_PACKED;
->> > > 
->
-> Sure, that makes sense to me. I'll remove it in the v4 alongside the other
-> changes you've requested.
->
-> Thanks for your time and patience reviewing my code. I greatly appreciate
-> your helpful comments and feedback.
 
-Note that you should still pad the structure to its normal
-alignment. On non-x86 targets this would currently mean a
-multiple of 64 bits.
 
-I would suggest dropping the EPOLL_PACKED here entirely and
-just using a fully aligned structure on all architectures, like
+On 1/24/24 8:47 PM, Jingbo Xu wrote:
+> 
+> 
+> On 1/24/24 8:23 PM, Miklos Szeredi wrote:
+>> On Wed, 24 Jan 2024 at 08:05, Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>>
+>>> From: Xu Ji <laoji.jx@alibaba-inc.com>
+>>>
+>>> Increase FUSE_MAX_MAX_PAGES limit, so that the maximum data size of a
+>>> single request is increased.
+>>
+>> The only worry is about where this memory is getting accounted to.
+>> This needs to be thought through, since the we are increasing the
+>> possible memory that an unprivileged user is allowed to pin.
 
-struct epoll_params {
-      __aligned_u64 busy_poll_usecs;
-      __u16 busy_poll_budget;
-      __u8 __pad[6];
-};
+Apart from the request size, the maximum number of background requests,
+i.e. max_background (12 by default, and configurable by the fuse
+daemon), also limits the size of the memory that an unprivileged user
+can pin.  But yes, it indeed increases the number proportionally by
+increasing the maximum request size.
 
-The explicit padding can help avoid leaking stack data when
-a structure is copied back from kernel to userspace, so I would
-just always use it in ioctl data structures.
 
-      Arnd
+> 
+>>
+>>
+>>
+>>>
+>>> This optimizes the write performance especially when the optimal IO size
+>>> of the backend store at the fuse daemon side is greater than the original
+>>> maximum request size (i.e. 1MB with 256 FUSE_MAX_MAX_PAGES and
+>>> 4096 PAGE_SIZE).
+>>>
+>>> Be noted that this only increases the upper limit of the maximum request
+>>> size, while the real maximum request size relies on the FUSE_INIT
+>>> negotiation with the fuse daemon.
+>>>
+>>> Signed-off-by: Xu Ji <laoji.jx@alibaba-inc.com>
+>>> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+>>> ---
+>>> I'm not sure if 1024 is adequate for FUSE_MAX_MAX_PAGES, as the
+>>> Bytedance floks seems to had increased the maximum request size to 8M
+>>> and saw a ~20% performance boost.
+>>
+>> The 20% is against the 256 pages, I guess. 
+> 
+> Yeah I guess so.
+> 
+> 
+>> It would be interesting to
+>> see the how the number of pages per request affects performance and
+>> why.
+> 
+> To be honest, I'm not sure the root cause of the performance boost in
+> bytedance's case.
+> 
+> While in our internal use scenario, the optimal IO size of the backend
+> store at the fuse server side is, e.g. 4MB, and thus if the maximum
+> throughput can not be achieved with current 256 pages per request. IOW
+> the backend store, e.g. a distributed parallel filesystem, get optimal
+> performance when the data is aligned at 4MB boundary.  I can ask my folk
+> who implements the fuse server to give more background info and the
+> exact performance statistics.
+
+Here are more details about our internal use case:
+
+We have a fuse server used in our internal cloud scenarios, while the
+backend store is actually a distributed filesystem.  That is, the fuse
+server actually plays as the client of the remote distributed
+filesystem.  The fuse server forwards the fuse requests to the remote
+backing store through network, while the remote distributed filesystem
+handles the IO requests, e.g. process the data from/to the persistent store.
+
+Then it comes the details of the remote distributed filesystem when it
+process the requested data with the persistent store.
+
+[1] The remote distributed filesystem uses, e.g. a 8+3 mode, EC
+(ErasureCode), where each fixed sized user data is split and stored as 8
+data blocks plus 3 extra parity blocks. For example, with 512 bytes
+block size, for each 4MB user data, it's split and stored as 8 (512
+bytes) data blocks with 3 (512 bytes) parity blocks.
+
+It also utilize the stripe technology to boost the performance, for
+example, there are 8 data disks and 3 parity disks in the above 8+3 mode
+example, in which each stripe consists of 8 data blocks and 3 parity
+blocks.
+
+[2] To avoid data corruption on power off, the remote distributed
+filesystem commit a O_SYNC write right away once a write (fuse) request
+received.  Since the EC described above, when the write fuse request is
+not aligned on 4MB (the stripe size) boundary, say it's 1MB in size, the
+other 3MB is read from the persistent store first, then compute the
+extra 3 parity blocks with the complete 4MB stripe, and finally write
+the 8 data blocks and 3 parity blocks down.
+
+
+Thus the write amplification is un-neglectable and is the performance
+bottleneck when the fuse request size is less than the stripe size.
+
+Here are some simple performance statistics with varying request size.
+With 4MB stripe size, there's ~3x bandwidth improvement when the maximum
+request size is increased from 256KB to 3.9MB, and another ~20%
+improvement when the request size is increased to 4MB from 3.9MB.
+
+
+
+-- 
+Thanks,
+Jingbo
 
