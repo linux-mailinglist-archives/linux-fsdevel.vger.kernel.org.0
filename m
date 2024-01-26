@@ -1,58 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-9062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A375983DB95
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 15:16:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8721483DBC5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 15:26:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8B471C231D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 14:16:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 360AE1F25399
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 14:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDE71C28F;
-	Fri, 26 Jan 2024 14:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ADD1EB21;
+	Fri, 26 Jan 2024 14:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tJGxvR8o"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VVOh/LiY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CE41B599
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 14:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88CF1DFFC;
+	Fri, 26 Jan 2024 14:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706278599; cv=none; b=Is/sORcY8jD4eAWZEWy8erABaQccgMsEoBjw8dBIYqmBjJE+29yThbPovJ/KnhCC30SQCj8LSe5ugAadonqediEsE+HdY9GhFA8w6O/ijySauvQToKG9qwn60CiZCu6fg1EJto5j2Hlb6OEuFx1m64sWZfXhGJsqPl7aW3hbw1w=
+	t=1706279067; cv=none; b=ULAdNHMr9rR0uOuU/y1xUasHlN7zD4bVg6mw9Fyw8CxL5FjPyG53X1AdSy6klGk08T1hS+A9+B4Upi+ewRSXZw63Eh0MVL+tjNHRV84sBRX7X04YZFUKWz0LSqy92vJfWKPjmy9umwMvRkrONblAp5y/T6LIyjgcmQkiFgRS5Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706278599; c=relaxed/simple;
-	bh=UTvndD8gsD+zqm4ZX9/GghH1PWJ0G0e8T5kRquh5wW4=;
+	s=arc-20240116; t=1706279067; c=relaxed/simple;
+	bh=C96FQrvkUshtgqC+qMcz5zCfSC9yhxnOKbwu0ZZpwb0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rd19xbHzjPU2xqhWHUomwFM9duzGkOnwhmEeIho0Wnbsakgy66dHd2zdLBcsYrzf/lSXyk5X8K2sOJj4U2TrfZgEQ7NvgYqueCJ3z17nGnzOyW+/l9OntrpiofxmTxrDegiQ/JfGdp6SBZZs9/JVnIcBVsUMk4AlyJf4mW4tSEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tJGxvR8o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 218ACC433C7;
-	Fri, 26 Jan 2024 14:16:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1706278599;
-	bh=UTvndD8gsD+zqm4ZX9/GghH1PWJ0G0e8T5kRquh5wW4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tJGxvR8oma7uNXWe0Z9VxtxQNjLU+fGvWcDxDVo13j/zUwOaR10OgqCT+uHEc0qpC
-	 uJMdLXgawSyIXk040fVGxbLlC3v2G20/O8HGt2doYeg9+WZVaedotoDr3rJmpoQYmA
-	 O4D2vvx9wjtHLBr6NKi2QI6MvJHuNlY8JNJCgVmM=
-Date: Fri, 26 Jan 2024 06:16:38 -0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [LSF/MM TOPIC] Making pseudo file systems inodes/dentries more
- like normal file systems
-Message-ID: <2024012634-rotten-conjoined-0a98@gregkh>
-References: <20240125104822.04a5ad44@gandalf.local.home>
- <2024012522-shorten-deviator-9f45@gregkh>
- <20240125205055.2752ac1c@rorschach.local.home>
- <2024012528-caviar-gumming-a14b@gregkh>
- <20240125214007.67d45fcf@rorschach.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YFC1/hqdD3am/swb3iZ4WwYpUu9hBS+qyZySqYi8o1hM5942Bm5F/xNPr4xZgmZUUfi7ufGV8eYzZC4tq+dciQQL0MVxHVcIvKnV8FDqpG0Mrt8SYeeOHBmMjmPMTlT0j95S9cKRnu2BzGUwujFoqun0fM4II6KmAyxkzkQg3ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VVOh/LiY; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=f1w4U8mqf5nN23ca0l43hojotOzXL6u5NlkdrKkG3gw=; b=VVOh/LiYV98n4HUSTPi8VsF4qQ
+	y0vRCN8/8/69YP57BXK6QxuDC2d+zcK5H1cFIUikmoTP/GT5pyZ4Tl3KaJKSMSKUG4naRe58ndi1d
+	VFdb5Er50Vv254B7SACCIaOKkxYVVqz9XqFO0ORQsACCl7xfa5SbMmt9MD44ew6XxxqRcKGHdqUBG
+	3swmjLp8DM+ut0Wbvo0CdiSdGxxY8RNKN6acQutLcpDFW8xQDtr0NkIJ/AZm4o6uycyangmnZu7Dw
+	tWvk3uqEBnxm2wWCTN6hWUcWczTHGItHBXJKZFv6Hbsc2gEBnGnzMiMrfz2a4lhXUz3+z3P74efrC
+	igRgdXMQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rTN7s-0000000DqpP-3S99;
+	Fri, 26 Jan 2024 14:24:12 +0000
+Date: Fri, 26 Jan 2024 14:24:12 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
+	Yu Zhao <yuzhao@google.com>, Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <niklas.cassel@wdc.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Linus Walleij <linus.walleij@linaro.org>, linux-mm@kvack.org,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhaoyang Huang <huangzhaoyang@gmail.com>, steve.kang@unisoc.com
+Subject: Re: [PATCHv4 1/1] block: introduce content activity based ioprio
+Message-ID: <ZbPAjGJr7hrOvNOo@casper.infradead.org>
+References: <20240126120800.3410349-1-zhaoyang.huang@unisoc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,62 +67,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240125214007.67d45fcf@rorschach.local.home>
+In-Reply-To: <20240126120800.3410349-1-zhaoyang.huang@unisoc.com>
 
-On Thu, Jan 25, 2024 at 09:40:07PM -0500, Steven Rostedt wrote:
-> On Thu, 25 Jan 2024 17:59:40 -0800
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> 
-> > > I tried to use kernfs when doing a lot of this and I had issues. I
-> > > don't remember what those were, but I can revisit it.  
-> > 
-> > You might, as kernfs makes it so that the filesystem structures are
-> > created on demand, when accessed, and then removed when memory pressure
-> > happens.  That's what sysfs and configfs and cgroups use quite
-> > successfully.
-> 
-> kernfs doesn't look trivial and I can't find any documentation on how
-> to use it.
+On Fri, Jan 26, 2024 at 08:08:00PM +0800, zhaoyang.huang wrote:
+> +#ifdef CONFIG_CONTENT_ACT_BASED_IOPRIO
+> +#define bio_add_page(bio, page, len, offset)	\
+> +	({					\
+> +		int class, level, hint, activity;	\
+> +		int ret = 0;				\
+> +		ret = bio_add_page(bio, page, len, offset);		\
+> +		if (ret > 0) {						\
+> +			class = IOPRIO_PRIO_CLASS(bio->bi_ioprio);	\
+> +			level = IOPRIO_PRIO_LEVEL(bio->bi_ioprio);	\
+> +			hint = IOPRIO_PRIO_HINT(bio->bi_ioprio);	\
+> +			activity = IOPRIO_PRIO_ACTIVITY(bio->bi_ioprio);		\
+> +			activity += (bio->bi_vcnt + 1 <= IOPRIO_NR_ACTIVITY &&		\
+> +				PageWorkingset(&folio->page)) ? 1 : 0;			\
 
-You have the code :)
+I know you didn't even compile this version.
 
-> Should there be work to move debugfs over to kernfs?
+More importantly, conceptually it doesn't work.  All kinds of pages
+get added to bios, and not all of them are file/anon pages.  That
+PageWorkingset bit might well be reused for other purposes.  Only
+the caller knows if this is file/anon memory.  You can't do this here.
 
-Why?  Are you seeing real actual memory use with debugfs that is causing
-problems?  That is why we made kernfs, because people were seeing this
-in sysfs.
-
-Don't change stuff unless you need to, right?
-
-> I could look at it too, but as tracefs, and more specifically eventfs,
-> has 10s of thousands of files, I'm very concerned about meta data size.
-
-Do you have real numbers?  If not, then don't worry about it :)
-
-> Currently eventfs keeps a data structure for every directory, but for
-> the files, it only keeps an array of names and callbacks. When a
-> directory is registered, it lists the files it needs. eventfs is
-> specific that the number of files a directory has is always constant,
-> and files will not be removed or added once a directory is created.
-> 
-> This way, the information on how a file is created is done via a
-> callback that was registered when the directory was created.
-
-That's fine, and shouldn't matter.
-
-> For this use case, I don't think kernfs could be used. But I would
-> still like to talk about what I'm trying to accomplish, and perhaps see
-> if there's work that can be done to consolidate what is out there.
-
-Again, look at kernfs if you care about the memory usage of your virtual
-filesystem, that's what it is there for, you shouldn't have to reinvent
-the wheel.
-
-And the best part is, when people find issues with scaling or other
-stuff with kernfs, your filesystem will then benifit (lots of tweaks
-have gone into kernfs for this over the past few kernel releases.)
-
-thanks,
-
-greg k-h
 
