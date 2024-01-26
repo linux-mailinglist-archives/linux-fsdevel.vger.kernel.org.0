@@ -1,140 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-9122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5145783E4F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 23:15:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B237683E547
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 23:23:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E50821F23148
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 22:15:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 687E11F245D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 22:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C102241C9F;
-	Fri, 26 Jan 2024 22:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8842E3E4;
+	Fri, 26 Jan 2024 22:23:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="cfkipyRs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q6o8451m"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE9F41C8A;
-	Fri, 26 Jan 2024 22:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A10625636;
+	Fri, 26 Jan 2024 22:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706307263; cv=none; b=NSORupO/Gdr+jpP2lyENO5mpVFV9DZo++gyouCyz3ajHwpUP4yzZ8F/O9xv9BYodJmFGYn65MVEQZ8Xm79qU7yrSdCFYdYPbYOMF9hEN2sjSMFqQBUZzBQXJnHFqlGt5c1HiQhvbZqu89kt/WDCRxDU4s3nX5WOMbO5J7GwhTQ8=
+	t=1706307817; cv=none; b=O0uQ7W0smMiiF3ATjH3TjUh/OFTF0fNn3BPeLmGrZMhPQe69JM0OmTvQqqaS9O1uEi23SWlFoGjJTsqgvE90OLKdTX4d8FR+mhf9zydoKMlXrd9xAvgyDWm/09hdjVhw+4/zyKfF0PwnO8UHLmUfYISEzsa7H0yX00s88SkKCx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706307263; c=relaxed/simple;
-	bh=Jdm33v2+FbE+eDx5lDB90ydl/s2iNfckbja6xWCLNck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QGhXEt/u2qGL0o9TNlwT0PY5is6+3V9Zy4xBbIBqnkEY43Gv8KDIe9qEdeQTW7tOsX8PPQInA5pGK5zAkiintIZLP5faRkpQl0pD1c9sTGRBMRFciguHvB3uG/wC7BlNekAeOOOHYUABs5IwMvHX3ZEBOHt5IQgSPNgG6u/ca0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=cfkipyRs; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1706307254;
-	bh=Jdm33v2+FbE+eDx5lDB90ydl/s2iNfckbja6xWCLNck=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cfkipyRsu2VHMJxlmbm3pCANQ19TSTz6YQmuyCbVeZ1qFT0OiAuXMZMHv/kCXDYV5
-	 Sqt5ASfUbdf9yStQP2jZ6RFX4HNh8fxfb3HAtOr5jq8vRQ8Ca1I6RvCUGN66g4Af3h
-	 QjCMbYjnwdMK2ZXud8gbIW9J0KEgQDOY8RRPVoaHnpvbHgtbcO1ZVHZn62GCgWS2+0
-	 pQNtpi1wU40f69L+cF/vpnPcRkB/SFSIX/wT6OrP2sIPHDVE/nWEgJ7OCsFERACT32
-	 Tlt9hTxL9LDX/6neQw8PeWympIe3TUM7STM9rFv+t0es/J9Ii2HxUmCzU5DJVg4hSq
-	 5Phhi3/pPJEog==
-Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TMBn22rgWzVQ4;
-	Fri, 26 Jan 2024 17:14:14 -0500 (EST)
-Message-ID: <8547159a-0b28-4d75-af02-47fc450785fa@efficios.com>
-Date: Fri, 26 Jan 2024 17:14:12 -0500
+	s=arc-20240116; t=1706307817; c=relaxed/simple;
+	bh=3a2frhHXQISxXY9oeFM5r0zBXGcl8B7EtAddIILkH4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jPDSPOqWQ9WhzpukX8uLzl0iAcEnP2bZ0RVWjhkLPhImlTmSJ7tsua4WgepTK33mARRLcItqS+NKLEgj/jH9JfBRFD2by6LyWH5SwmGl90X2qRuIZ6NIy5Ss+vhAhzvNyFYlXqWjeLWKyrecJRhDieRgQ1dosDcqZCjWr7KsaKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q6o8451m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B18FC433F1;
+	Fri, 26 Jan 2024 22:23:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706307816;
+	bh=3a2frhHXQISxXY9oeFM5r0zBXGcl8B7EtAddIILkH4M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=q6o8451mPfBNpAwvrn79DeNRGR+zTb2WftPR95DqiosCUYNIl3w5CyDYjVQqde6iV
+	 b+K/NwDoxy8vnIwJy+WUArN85m6BXH1RZGNmmmR4hv4OoqG5AETTPbqe8naIBkO5oV
+	 iRl5er9RVSTPwXKOTxVn8yGM7yaSyb4NkElZ0cgpawI0osKPsOlf7pDt5M5cMbutyS
+	 nNopJCUXxXoSRuhz4+Yb7GQDciAGQ7AR3Vt2gi4azmxWW+u4yBmD/9aMvFPdBGsQAW
+	 u5qcIsO3YzLOj5R8y6FUkwWzVSpSFJwolST8eJHhec1/pRN7pzHnL5+PbQu2P7whji
+	 KBn4u0kn8BQFA==
+Date: Fri, 26 Jan 2024 14:23:35 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: syzkaller-bugs@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>
+Cc: syzbot <syzbot+d99d2414db66171fccbb@syzkaller.appspotmail.com>,
+ asmadeus@codewreck.org, ericvh@kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net,
+ netdev@vger.kernel.org, v9fs@lists.linux.dev
+Subject: Re: [syzbot] [net?] [v9fs?] WARNING: refcount bug in p9_req_put (3)
+Message-ID: <20240126142335.6a01b39f@kernel.org>
+In-Reply-To: <000000000000ee5c6c060fd59890@google.com>
+References: <000000000000ee5c6c060fd59890@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux Trace Devel <linux-trace-devel@vger.kernel.org>,
- Masami Hiramatsu <mhiramat@kernel.org>,
- Christian Brauner <brauner@kernel.org>, Ajay Kaher
- <ajay.kaher@broadcom.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <20240126150209.367ff402@gandalf.local.home>
- <CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
- <20240126162626.31d90da9@gandalf.local.home>
- <CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
- <CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2024-01-26 16:49, Linus Torvalds wrote:
-> On Fri, 26 Jan 2024 at 13:36, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-[...]
-> So please try to look at things to *fix* and simplify, not at things
-> to mess around with and make more complicated.
+On Fri, 26 Jan 2024 01:05:28 -0800 syzbot wrote:
+> HEAD commit:    4fbbed787267 Merge tag 'timers-core-2024-01-21' of git://g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11bfbdc7e80000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4059ab9bf06b6ceb
+> dashboard link: https://syzkaller.appspot.com/bug?extid=d99d2414db66171fccbb
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: i386
 
-Hi Linus,
+Hi Aleksandr,
 
-I'm all aboard with making things as simple as possible and
-making sure no complexity is added for the sake of micro-optimization
-of slow-paths.
+we did add a X:	net/9p entry to MAINTAINERS back in November [1]
+but looks like 9p still gets counted as networking. Is it going
+to peter out over time or something's not parsing things right?
 
-I do however have a concern with the approach of using the same
-inode number for various files on the same filesystem: AFAIU it
-breaks userspace ABI expectations. See inode(7) for instance:
-
-        Inode number
-               stat.st_ino; statx.stx_ino
-
-               Each  file in a filesystem has a unique inode number.  Inode numbers
-               are guaranteed to be unique only within a filesystem (i.e., the same
-               inode  numbers  may  be  used by different filesystems, which is the
-               reason that hard links may not cross filesystem  boundaries).   This
-               field contains the file's inode number.
-
-So user-space expecting inode numbers to be unique within a filesystem
-is not "legacy" in any way. Userspace is allowed to expect this from the
-ABI.
-
-I think that a safe approach to prevent ABI regressions, and just to prevent
-adding more ABI-corner cases that userspace will have to work-around, would
-be to issue unique numbers to files within eventfs, but in the
-simplest/obviously correct implementation possible. It is, after all, a slow
-path.
-
-The issue with the atomic_add_return without any kinds of checks is the
-scenarios of a userspace loop that would create/delete directories endlessly,
-thus causing inode re-use. This approach is simple, but it's unfortunately
-not obviously correct. Because eventfs allows userspace to do mkdir/rmdir,
-this is unfortunately possible. It would be OK if only the kernel had control
-over directory creation/removal, but it's not the case here.
-
-I would suggest this straightforward solution to this:
-
-a) define a EVENTFS_MAX_INODES (e.g. 4096 * 8),
-
-b) keep track of inode allocation in a bitmap (within a single page),
-
-c) disallow allocating more than "EVENTFS_MAX_INODES" in eventfs.
-
-This way even the mkdir/rmdir loop will work fine, but it will prevent
-keeping too many inodes alive at any given time. The cost is a single
-page (4K) per eventfs instance.
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+[1]
+https://lore.kernel.org/all/CANp29Y77rtNrUgQA9HKcB3=bt8FrhbqUSnbZJi3_OGmTpSda6A@mail.gmail.com/
 
