@@ -1,151 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-9059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D32983DA80
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 14:05:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B97183DA8E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 14:12:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CBF11C2033F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 13:04:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB7932866EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 13:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EB31B805;
-	Fri, 26 Jan 2024 13:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="j/67QaIG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32E81B80A;
+	Fri, 26 Jan 2024 13:12:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A96D1B599;
-	Fri, 26 Jan 2024 13:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA7B19470
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 13:12:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706274292; cv=none; b=psccPu/0FrfVhwgKcR+Ov6oXAiu5f9pINLdKJIiqqnOgDYbXVyv81OPNlo1YzBLKfx3/tK+n6pNEEiTRxK0CztS/eQtPGD4RETcXpHQm7pnKo/e7ahank34ywSjoJviA5mlDJq8LGKy5pk4hUYJciWcB00Z+ENy4yi4dBsyEw7g=
+	t=1706274726; cv=none; b=HpzaA0q0cCmEITkcDMbd1lPMkWBloMitq4OiFl/pEe8bugvn5YfVwbhPL2RpH7d8JnccyFAYpwSGkb01UKrXqwk5anEBqKibsIInrat1hu8Ia1wfXerTIzWIOzwX7XfGNtiDlCvQyPm1QtvwpE6a8Mz5bAZfDPi6okRwIgsgI/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706274292; c=relaxed/simple;
-	bh=gCq4g1b3O8Oeg4N8ujXRTfw/tL+4gbF4FTm8029MUrM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kBhtQlsJnzDEZ8oQE0WjvOyBsw3cttjh1jMs1WJYOx3dBAgtt17vsggQq7gFwcNRow9HBPYpUIx5h1gEEA+jc0taagfA3FKjHJIuhEu8CPEA2gtKyGEerXAnlD84GRyZN1gHYvxqP57tRfD9y1Lx4ghrtfbzkFbTfoWZCpug6vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=j/67QaIG; arc=none smtp.client-ip=35.157.23.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id C7CAC1DA1;
-	Fri, 26 Jan 2024 12:50:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=paragon-software.com; s=mail; t=1706273447;
-	bh=9EfuMGzeWNG4VV/qzBMKHVckt4mYsHngjUttdA846ZA=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=j/67QaIGKRoxhLEOdLCQfd7Q7ZvtuN+BJhpzpy7NVZFbr27ajjfS2OIviyErZWDEU
-	 G+99jEC7OP9wVCjSO9Q4SbjRXkDayos1TOgk4DZjwvHe8UrKQ5fKFkrD2NvOnG990Y
-	 cm/c0w8vIflwmAiosbQIhfTXfpkTYOFqRgg0NvqA=
-Received: from [192.168.211.144] (192.168.211.144) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 26 Jan 2024 15:57:36 +0300
-Message-ID: <97660d80-fbea-4eb8-83af-78f59a6302c7@paragon-software.com>
-Date: Fri, 26 Jan 2024 15:57:35 +0300
+	s=arc-20240116; t=1706274726; c=relaxed/simple;
+	bh=NEzJ7pNKUuAaHWHT3ELgKK4hFQyY6cM6yjnMJL7fkNE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=AsMaBB2NpJv57raAmY6LLmIhphA8gtK+LPui9EZkrCAqb6WTif4lAN1ruO7v8G92X0MZramMY31dj1Ye2Wa2cXyNNRbHYI1nmp4NiMquySP0h9soTaYxwItPxPzbp/HfHAFaNnC8fXJmgC4lhnwvn0fEa8YaWUcaxudaWwnuOXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7b7f98e777cso18743739f.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 05:12:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706274724; x=1706879524;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O0x/ov2Zs03p8CkOaE9SqfLyn/5v8ep9jX8D61t7VpY=;
+        b=F4OtctHEqG9LVNBqaDIkD70Mfdh3f2sstfVKmb0MS0G3TUVMfamVlZ/ycHvdi9tzDo
+         sen1EctXTE1C+QCw5cghH+vod+sOeXxYyHlN/Ak8WY+IdwrHNAnwSA749Bkc/T8y2g2U
+         9OzFuPk+bcf7BAK3WV/PMlR7u1PG/86810kGq6/DDgj2ExJ+Vr8rsZaUS2BQyM4jXek/
+         xyAXdkcG3SbOOZZOL4zRSFZQ9IFpqvMzAk+9UnUAiUn4YSLdGkOqwcWlKQ5vZCeXqUZ6
+         4x249u8LLABwauIuPuXZxyQ9f7b1Cw/ICO0rlDfMBB7c/XRtP18m7qRGGcC25PNA9VfZ
+         Xi/g==
+X-Gm-Message-State: AOJu0YzwAnfU0gr2Kf/eNwXlBlryko8k1ERDBK+pGRCCXrduYZFqp3Vl
+	tozuFfrzbeAlyxiYVYHLmsAMIs7yOHomHNUHwXqw8Wu95zJ7dpI+tOcMCN0VPX5WZDZoc21o4EH
+	quJhibHrRjCw4YeIZpwxp9CPlnMAsv1lOiEi/yr55Ato3iQ17GXHAZOY=
+X-Google-Smtp-Source: AGHT+IHo7HCHW50KV8UXER7bHFe4guV2lkXOibpd+2Fe3a7VsPlzPa0SV3RLXftlVl7IBeDDB+jx/eCvFnMS3FQErE5eKkkrwzBd
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [regressions] ntfs3: empty file on update without forced cache
- drop
-Content-Language: en-US
-To: Linux regressions mailing list <regressions@lists.linux.dev>, Alexander
- Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-CC: <ntfs3@lists.linux.dev>, Kari Argillander
-	<kari.argillander@stargateuniverse.net>, Linux-fsdevel
-	<linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Anton
- Altaparmakov <anton@tuxera.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>
-References: <138ed123-0f84-4d7a-8a17-67fe2418cf29@leemhuis.info>
- <24aa7a8b-40ed-449b-a722-df4abf65f114@leemhuis.info>
- <d5f4c2d7-0a98-4ff8-9848-a34133199450@leemhuis.info>
-From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <d5f4c2d7-0a98-4ff8-9848-a34133199450@leemhuis.info>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
+X-Received: by 2002:a05:6e02:1be5:b0:361:9a4c:8bf5 with SMTP id
+ y5-20020a056e021be500b003619a4c8bf5mr173164ilv.6.1706274724126; Fri, 26 Jan
+ 2024 05:12:04 -0800 (PST)
+Date: Fri, 26 Jan 2024 05:12:04 -0800
+In-Reply-To: <000000000000f8389205e9f9ec5f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d227b6060fd90a48@google.com>
+Subject: Re: [syzbot] [udf?] KASAN: use-after-free Read in crc_itu_t
+From: syzbot <syzbot+d8fc21bfa138a5ae916d@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, jack@suse.com, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 21.01.2024 12:14, Thorsten Leemhuis wrote:
-> On 05.12.23 13:49, Linux regression tracking (Thorsten Leemhuis) wrote:
->> [adding a bunch of people and two lists to the recipients, as Konstantin
->> apparently hasn't sent any mail to any lists archived on lore for ~six
->> weeks; maybe someone knows what's up or is willing to help out]
-> [CCing Linus now as well]
->
-> JFYI for the VFS maintainers and everyone else who might care:
->
-> Konstantin afaics still did not look into below regression. Neither did
-> anyone else afaics.
->
-> But Konstantin is still around, as he recently showed up to post a patch
-> for review:
-> https://lore.kernel.org/all/667a5bc4-8cb5-47ce-a7f1-749479b25bec@paragon-software.com/
->
-> I replied to it in the hope of catch his attention and make him look at
-> this regression, but that did not work out.
->
-> So it seems we sadly are kinda stuck here. :-/
->
-> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
->
->> On 27.11.23 07:18, Thorsten Leemhuis wrote:
->>> Hi, Thorsten here, the Linux kernel's regression tracker.
->>>
->>> Konstantin, I noticed a regression report in bugzilla.kernel.org.
->>> Apparently it's cause by a change of yours.
->>>
->>> As many (most?) kernel developers don't keep an eye on bugzilla, I
->>> decided to forward it by mail. Note, you have to use bugzilla to reach
->>> the reporter, as I sadly[1] can not CCed them in mails like this.
->>>
->>> Quoting from https://bugzilla.kernel.org/show_bug.cgi?id=218180 :
->> Konstantin, are you still around? Would be great if you could look into
->> this regression, as this sounds somewhat worrying.
->>
->>>> The problem I am facing is the following:
->>>> 1. I mount an NTFS partition via NTFS3
->>>> 2. I create a file
->>>> 3. I write to the file
->>>> 4. The file is empty
->>>> 5. I remount the partition
->>>> 6. The file has the changes I made before the remount
->>>>
->>>> I can avoid the remount by doing:
->>>> sudo sysctl vm.drop_caches=3
->>> See the ticket for more details. It according to the report happens
->>> still happens with 6.7-rc2, but not with 6.1.y. The reporter bisected
->>> the problem to ad26a9c84510af ("fs/ntfs3: Fixing wrong logic in
->>> attr_set_size and ntfs_fallocate") [v6.2-rc1].
->>>
->>> Side note: while briefly checking lore for existing problems caused by
->>> that change I noticed two syzbot reports about it that apparently nobody
->>> looked into:
->>>
->>> https://lore.kernel.org/all/000000000000bdf37505f1a7fc09@google.com/
->>> https://lore.kernel.org/all/00000000000062174006016bc386@google.com/
->>> [...]
-> --
-> Everything you wanna know about Linux kernel regression tracking:
-> https://linux-regtracking.leemhuis.info/about/#tldr
-> If I did something stupid, please tell me, as explained on that page.
->
-> #regzbot poke
-Hello Thorsten,
+syzbot suspects this issue was fixed by commit:
 
-I apologize for the horrible delay in responding to the bug. I was able 
-to reproduce it in a scenario involving a compressed file. The patch 
-will be ready within the next few days (the response in Bugzilla will 
-also follow).
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-Best regards,
-Konstantin
+    fs: Block writes to mounted block devices
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1204f1efe80000
+start commit:   a4d7d7011219 Merge tag 'spi-fix-v6.4-rc5' of git://git.ker..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
+dashboard link: https://syzkaller.appspot.com/bug?extid=d8fc21bfa138a5ae916d
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1442e70b280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16db80dd280000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
