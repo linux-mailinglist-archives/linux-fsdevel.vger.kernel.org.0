@@ -1,89 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-9032-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2136683D2A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 03:40:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2A583D2BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 03:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCCBF290813
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 02:40:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 076371C21B2B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 02:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E1CAD49;
-	Fri, 26 Jan 2024 02:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E3E8F5C;
+	Fri, 26 Jan 2024 02:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hRYb7sB8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44781AD21
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 02:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE998F5F
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 02:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706236810; cv=none; b=lXVX/w/dn/LvlUGMmw96GZrxWi0MZkdX1PlyntTiP7obG4lkAhbb5x40otYB4pRl2A6P8Gv/+EuGlLVhRiusRQNFyl/eyztXg8VzGnS59Fd1Ac/oe8RBZbV9xn8q8LSiSDee/uP8zLbL4k1x5ZTnobeJgsuIw8NVt3cR9H10IT4=
+	t=1706237680; cv=none; b=ZdmNboFa33kGsfQ3oe2r6WI7YecQ32ynx0jJz4lmcRHdp7NHG0YfiMFMBW2OQ+qFoTrn26UyWQ6YxDiZh4CDNzjS2/oxrnFBZrlaE67rC2+SJyxc1CUNrL/P+fE/rLVIESn7skLPozarDq57UUz4G4E0waaQfoDMc/fsGGCH5sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706236810; c=relaxed/simple;
-	bh=v7wC8a4+mQjQAtY8RtTEFjG/D/c7rO2GJaaWLllfBIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ueeu0Gosoc2wniKIpLaob3XTxhYsGz8he/4j4FD38OpyqLb4PS71rop7tqUU27NHa7NYGpOadyTHL2m2ujwUijhx0P9R2pUDWWRsRcxXNj/pSsauVwtZ/1GZT+w6Td+dP6vmKEt6TOfQW445uIsTgjU5mEoFbSyKGNd5jKlOrLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0CDC433F1;
-	Fri, 26 Jan 2024 02:40:08 +0000 (UTC)
-Date: Thu, 25 Jan 2024 21:40:07 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, Christian Brauner <brauner@kernel.org>, Al Viro
- <viro@zeniv.linux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [LSF/MM TOPIC] Making pseudo file systems inodes/dentries more
- like normal file systems
-Message-ID: <20240125214007.67d45fcf@rorschach.local.home>
-In-Reply-To: <2024012528-caviar-gumming-a14b@gregkh>
-References: <20240125104822.04a5ad44@gandalf.local.home>
-	<2024012522-shorten-deviator-9f45@gregkh>
-	<20240125205055.2752ac1c@rorschach.local.home>
-	<2024012528-caviar-gumming-a14b@gregkh>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1706237680; c=relaxed/simple;
+	bh=j7SO/HzA5kbkVbZwBxQoq7ZAZ0THzdqZx4nC6poPNy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=de3tDweoHTbzQiP3oRWmMOYOssGeDK+arrMZhn03QtYdPWHloL+pNpxcZldRLAEzGG1H1CBJVPjs3UahQ1oZizPEH1ALWJFfTuxGvbV1NuzFIrlj2DnvPFLC99PKGcqExP4EEmfYkRiSU5+nwoxdvh722QMd8TA8JCJXO/2DH7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hRYb7sB8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NcQJaqqUEBbdxlQ6gaEGkf4qRylijhDf93KTiec0eWc=; b=hRYb7sB8B30+ghVQiruCZezq5q
+	SZcVbEGWXn6TBebVMXOPmp2EMi9wzRowj2xia2GdlMGEXBs7i1BHikYtJfoTZA9DHCfu8mB7BfxSt
+	/a7nQomnxSw5htoOqWZ1Daed5tUrh9Q0h1cUt4zTB/Xd8Nbl3pyJpCmT+my/Ms9xrBww1gwPYGXTA
+	MPI0y2QGtFZEaHF/yw3QJwKvqKf28pPjQEDjz2BDmUBHEQaHPG/CJtAYgoyJCZuCn0ZisEci4cJtN
+	lCe3f5zaSfRsetaHe2IpLkZ2n0qSYHYHl3A62EjT+noyb/cXdY56/jDSmFX5YlQZ1P/GSzmlKuR85
+	deUCntZw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rTCMK-0000000CFbb-0VWm;
+	Fri, 26 Jan 2024 02:54:24 +0000
+Date: Fri, 26 Jan 2024 02:54:24 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Namjae Jeon <linkinjeon@kernel.org>,
+	"Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>,
+	"sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] exfat: fix file not locking when writing zeros in
+ exfat_file_mmap()
+Message-ID: <ZbMe4CbbONCzfP7p@casper.infradead.org>
+References: <PUZPR04MB63168A32AB45E8924B52CBC2817B2@PUZPR04MB6316.apcprd04.prod.outlook.com>
+ <ZbCeWQnoc8XooIxP@casper.infradead.org>
+ <PUZPR04MB63168DC7A1A665B4EB37C996817B2@PUZPR04MB6316.apcprd04.prod.outlook.com>
+ <ZbGCsAsLcgreH6+a@dread.disaster.area>
+ <CAKYAXd-MDm-9AiTsdL744cZomrFzNRvk1Sk8wrZXsZvpx8KOzA@mail.gmail.com>
+ <ZbMJWI6Bg4lTy1aZ@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZbMJWI6Bg4lTy1aZ@dread.disaster.area>
 
-On Thu, 25 Jan 2024 17:59:40 -0800
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-
-> > I tried to use kernfs when doing a lot of this and I had issues. I
-> > don't remember what those were, but I can revisit it.  
+On Fri, Jan 26, 2024 at 12:22:32PM +1100, Dave Chinner wrote:
+> On Thu, Jan 25, 2024 at 07:19:45PM +0900, Namjae Jeon wrote:
+> > We need to consider the case that mmap against files with different
+> > valid size and size created from Windows. So it needed to zero out in mmap.
 > 
-> You might, as kernfs makes it so that the filesystem structures are
-> created on demand, when accessed, and then removed when memory pressure
-> happens.  That's what sysfs and configfs and cgroups use quite
-> successfully.
+> That's a different case - that's a "read from a hole" case, not a
+> "extending truncate" case. i.e. the range from 'valid size' to EOF
+> is a range where no data has been written and so contains zeros.
+> It is equivalent to either a hole in the file (no backing store) or
+> an unwritten range (backing store instantiated but marked as
+> containing no valid data).
+> 
+> When we consider this range as "reading from a hole/unwritten
+> range", it should become obvious the correct way to handle this case
+> is the same as every other filesystem that supports holes and/or
+> unwritten extents: the page cache page gets zeroed in the
+> readahead/readpage paths when it maps to a hole/unwritten range in
+> the file.
+> 
+> There's no special locking needed if it is done this way, and
+> there's no need for special hooks anywhere to zero data beyond valid
+> size because it is already guaranteed to be zeroed in memory if the
+> range is cached in the page cache.....
 
-kernfs doesn't look trivial and I can't find any documentation on how
-to use it.
+but the problem is that Microsoft half-arsed their support for holes.
+See my other mail in this thread.
 
-Should there be work to move debugfs over to kernfs?
+truncate the file up to 4TB
+write a byte at offset 3TB
 
-I could look at it too, but as tracefs, and more specifically eventfs,
-has 10s of thousands of files, I'm very concerned about meta data size.
-
-Currently eventfs keeps a data structure for every directory, but for
-the files, it only keeps an array of names and callbacks. When a
-directory is registered, it lists the files it needs. eventfs is
-specific that the number of files a directory has is always constant,
-and files will not be removed or added once a directory is created.
-
-This way, the information on how a file is created is done via a
-callback that was registered when the directory was created.
-
-For this use case, I don't think kernfs could be used. But I would
-still like to talk about what I'm trying to accomplish, and perhaps see
-if there's work that can be done to consolidate what is out there.
-
--- Steve
+... now we have to stream 3TB of zeroes through the page cache so that
+we can write the byte at 3TB.
 
