@@ -1,94 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-9063-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9064-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8721483DBC5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 15:26:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 235D683DCBE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 15:51:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 360AE1F25399
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 14:26:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76AEFB247D7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 14:51:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ADD1EB21;
-	Fri, 26 Jan 2024 14:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A251CA8D;
+	Fri, 26 Jan 2024 14:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VVOh/LiY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MfcM1juL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88CF1DFFC;
-	Fri, 26 Jan 2024 14:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E891C2A5;
+	Fri, 26 Jan 2024 14:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706279067; cv=none; b=ULAdNHMr9rR0uOuU/y1xUasHlN7zD4bVg6mw9Fyw8CxL5FjPyG53X1AdSy6klGk08T1hS+A9+B4Upi+ewRSXZw63Eh0MVL+tjNHRV84sBRX7X04YZFUKWz0LSqy92vJfWKPjmy9umwMvRkrONblAp5y/T6LIyjgcmQkiFgRS5Y4=
+	t=1706280658; cv=none; b=F0rEIpPdRVvjYIS4A/ZC/+nxBZsVjcMjuETmod7uwefeK7HC60lPKJL7B4qLCDENnY4ivpNvSYshoT/7KMH880y7j5fq1Jy3vUu089R8RT3sIhhR8256wUlOIaq1ReDLItdm9NDv5coM1vZ/sDXMBOOwE4ii3gP2k2lLTFAvGlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706279067; c=relaxed/simple;
-	bh=C96FQrvkUshtgqC+qMcz5zCfSC9yhxnOKbwu0ZZpwb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YFC1/hqdD3am/swb3iZ4WwYpUu9hBS+qyZySqYi8o1hM5942Bm5F/xNPr4xZgmZUUfi7ufGV8eYzZC4tq+dciQQL0MVxHVcIvKnV8FDqpG0Mrt8SYeeOHBmMjmPMTlT0j95S9cKRnu2BzGUwujFoqun0fM4II6KmAyxkzkQg3ZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VVOh/LiY; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=f1w4U8mqf5nN23ca0l43hojotOzXL6u5NlkdrKkG3gw=; b=VVOh/LiYV98n4HUSTPi8VsF4qQ
-	y0vRCN8/8/69YP57BXK6QxuDC2d+zcK5H1cFIUikmoTP/GT5pyZ4Tl3KaJKSMSKUG4naRe58ndi1d
-	VFdb5Er50Vv254B7SACCIaOKkxYVVqz9XqFO0ORQsACCl7xfa5SbMmt9MD44ew6XxxqRcKGHdqUBG
-	3swmjLp8DM+ut0Wbvo0CdiSdGxxY8RNKN6acQutLcpDFW8xQDtr0NkIJ/AZm4o6uycyangmnZu7Dw
-	tWvk3uqEBnxm2wWCTN6hWUcWczTHGItHBXJKZFv6Hbsc2gEBnGnzMiMrfz2a4lhXUz3+z3P74efrC
-	igRgdXMQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rTN7s-0000000DqpP-3S99;
-	Fri, 26 Jan 2024 14:24:12 +0000
-Date: Fri, 26 Jan 2024 14:24:12 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
-	Yu Zhao <yuzhao@google.com>, Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <niklas.cassel@wdc.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Linus Walleij <linus.walleij@linaro.org>, linux-mm@kvack.org,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhaoyang Huang <huangzhaoyang@gmail.com>, steve.kang@unisoc.com
-Subject: Re: [PATCHv4 1/1] block: introduce content activity based ioprio
-Message-ID: <ZbPAjGJr7hrOvNOo@casper.infradead.org>
-References: <20240126120800.3410349-1-zhaoyang.huang@unisoc.com>
+	s=arc-20240116; t=1706280658; c=relaxed/simple;
+	bh=mZggQAMt5w4u5uqa7pG20qzshBhYgUUvPobmKDHLKEw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g4ebYcAnMqO4RJzUPdd1TLGjTsE7SMaVbRjfMZEZsBjEvGMkLo4U9OZ72l+i4izCCUvmd3tPoYCoTqSiikGgqYYCctUuOHTPfFQyWLazAx5Og+vYvrvwc/1equZX6+ZPmqaseikjlcY6tAj5Fty3drUJq/5TvF2MJGUAGUuCZmE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MfcM1juL; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-783cd245ec0so39217085a.3;
+        Fri, 26 Jan 2024 06:50:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706280655; x=1706885455; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u/1++r8v+pWoipgYyku3vmpCyA0Gff5YNQqLULNAGzs=;
+        b=MfcM1juLHtrmiYVsD05HvnLPTCnE+SWqd0UTsvmRo/4XRE32DINmn9btk698dXdXbo
+         wglgiVdUciIglL1uk8q02z2O6dlZzXV7FzqV2loZpNJqp9pn+S/h6IGy+gphvAN7fGtr
+         NSUmvKO06Xwm7HUVMKlIvmz6D6khPBVOFoXeF6Ug5emoT1NYUxiJBaUZ2HiKbPQv+tzL
+         86RZnNztcLJN8i9Nxg6h4vV4eTsVZ5vcCycnraEn3DUR9/a3Y8MzTOsKuRLCxTgatSZY
+         5TWqkp9cyTXVhaRolsjzCYaG0obZCa28l5bu81qjped4wqY4GLA09DYDP4PBWizCXfaU
+         7NwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706280655; x=1706885455;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u/1++r8v+pWoipgYyku3vmpCyA0Gff5YNQqLULNAGzs=;
+        b=a3FELIKSCr59Q542LJQIlFNO71gG20MuST7Ppwa+5eVtcdk2GOpPgdeZ7vVStH+mV6
+         Quro1csd3najJxuIEzmqg+Q89bFDWT/1UqbQDN+SS7hr5m4qf1ifn8vZfH0W4IQJP6CF
+         w0S75fGZHsoLlX44Dwd3DlkEJJygYIVySv7y4gVlG+MIGr86+uUmzIQPYa73RkZs+Hmt
+         DNq3mTml/Ylwtp7IQ/sbKHlPsOHn+3B+k+P4JyEH5USm9BSECiGZpLmhFRibud2Z5ICZ
+         u95Q1a3B7V4cFGwae0MhaKaxoZ22BCEsjv0js3wALv4955YHGmrijNruPtnzCrmUgLl0
+         HU1Q==
+X-Gm-Message-State: AOJu0YzgzvZqKXyM1SazULTGCqdakNQzWzbPI63mr4zyg5/BbOkar5GH
+	/o74YTBiKu40sfNm9gIHyNnimYbWM/mE7FjcZhIKaQ7f8ZbBwnuClhVJESch4KzbO93Z5QF0hua
+	T8MpDqCNzLmCwfYmKx9cEVsN7y6Q=
+X-Google-Smtp-Source: AGHT+IHqG5hPV121VyvqSLJuvMpWc8n3AhmTweSV27h0xeAidMXggDOPVqthD4Wl6Q6T7ZtzZM9wlN/+WfOxCbB9zB8=
+X-Received: by 2002:ad4:5bcc:0:b0:680:f9a3:ce50 with SMTP id
+ t12-20020ad45bcc000000b00680f9a3ce50mr1436445qvt.111.1706280655325; Fri, 26
+ Jan 2024 06:50:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240126120800.3410349-1-zhaoyang.huang@unisoc.com>
+References: <20240125235723.39507-1-vinicius.gomes@intel.com> <20240125235723.39507-5-vinicius.gomes@intel.com>
+In-Reply-To: <20240125235723.39507-5-vinicius.gomes@intel.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 26 Jan 2024 16:50:44 +0200
+Message-ID: <CAOQ4uxi7MtVZECGXo-30YWjSU5ZFZP0AQzgBXLyowdOmNUc5DA@mail.gmail.com>
+Subject: Re: [RFC v2 4/4] fs: Optimize credentials reference count for backing
+ file ops
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: brauner@kernel.org, hu1.chen@intel.com, miklos@szeredi.hu, 
+	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
+	lizhen.you@intel.com, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 26, 2024 at 08:08:00PM +0800, zhaoyang.huang wrote:
-> +#ifdef CONFIG_CONTENT_ACT_BASED_IOPRIO
-> +#define bio_add_page(bio, page, len, offset)	\
-> +	({					\
-> +		int class, level, hint, activity;	\
-> +		int ret = 0;				\
-> +		ret = bio_add_page(bio, page, len, offset);		\
-> +		if (ret > 0) {						\
-> +			class = IOPRIO_PRIO_CLASS(bio->bi_ioprio);	\
-> +			level = IOPRIO_PRIO_LEVEL(bio->bi_ioprio);	\
-> +			hint = IOPRIO_PRIO_HINT(bio->bi_ioprio);	\
-> +			activity = IOPRIO_PRIO_ACTIVITY(bio->bi_ioprio);		\
-> +			activity += (bio->bi_vcnt + 1 <= IOPRIO_NR_ACTIVITY &&		\
-> +				PageWorkingset(&folio->page)) ? 1 : 0;			\
+On Fri, Jan 26, 2024 at 1:57=E2=80=AFAM Vinicius Costa Gomes
+<vinicius.gomes@intel.com> wrote:
+>
+> For backing file operations, users are expected to pass credentials
+> that will outlive the backing file common operations.
+>
+> Use the specialized guard statements to override/revert the
+> credentials.
+>
 
-I know you didn't even compile this version.
+As I wrote before, I prefer to see this patch gets reviewed and merged
+before the overlayfs large patch, so please reorder the series.
 
-More importantly, conceptually it doesn't work.  All kinds of pages
-get added to bios, and not all of them are file/anon pages.  That
-PageWorkingset bit might well be reused for other purposes.  Only
-the caller knows if this is file/anon memory.  You can't do this here.
+> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+> ---
+>  fs/backing-file.c | 124 ++++++++++++++++++++++------------------------
+>  1 file changed, 60 insertions(+), 64 deletions(-)
+>
+> diff --git a/fs/backing-file.c b/fs/backing-file.c
+> index a681f38d84d8..9874f09f860f 100644
+> --- a/fs/backing-file.c
+> +++ b/fs/backing-file.c
+> @@ -140,7 +140,7 @@ ssize_t backing_file_read_iter(struct file *file, str=
+uct iov_iter *iter,
+>                                struct backing_file_ctx *ctx)
+>  {
+>         struct backing_aio *aio =3D NULL;
+> -       const struct cred *old_cred;
+> +       const struct cred *old_cred =3D ctx->cred;
+>         ssize_t ret;
+>
+>         if (WARN_ON_ONCE(!(file->f_mode & FMODE_BACKING)))
+> @@ -153,29 +153,28 @@ ssize_t backing_file_read_iter(struct file *file, s=
+truct iov_iter *iter,
+>             !(file->f_mode & FMODE_CAN_ODIRECT))
+>                 return -EINVAL;
+>
+> -       old_cred =3D override_creds(ctx->cred);
+> -       if (is_sync_kiocb(iocb)) {
+> -               rwf_t rwf =3D iocb_to_rw_flags(flags);
+> +       scoped_guard(cred, old_cred) {
 
+This reads very strage.
+
+Also, I see that e.g. scoped_guard(spinlock_irqsave, ... hides the local va=
+r
+used for save/restore of flags inside the macro.
+
+Perhaps you use the same technique for scoped_guard(cred, ..
+loose the local old_cred variable in all those functions and then the
+code will read:
+
+scoped_guard(cred, ctx->cred) {
+
+which is nicer IMO.
+
+> +               if (is_sync_kiocb(iocb)) {
+> +                       rwf_t rwf =3D iocb_to_rw_flags(flags);
+>
+> -               ret =3D vfs_iter_read(file, iter, &iocb->ki_pos, rwf);
+> -       } else {
+> -               ret =3D -ENOMEM;
+> -               aio =3D kmem_cache_zalloc(backing_aio_cachep, GFP_KERNEL)=
+;
+> -               if (!aio)
+> -                       goto out;
+> +                       ret =3D vfs_iter_read(file, iter, &iocb->ki_pos, =
+rwf);
+> +               } else {
+> +                       ret =3D -ENOMEM;
+> +                       aio =3D kmem_cache_zalloc(backing_aio_cachep, GFP=
+_KERNEL);
+> +                       if (!aio)
+> +                               goto out;
+>
+> -               aio->orig_iocb =3D iocb;
+> -               kiocb_clone(&aio->iocb, iocb, get_file(file));
+> -               aio->iocb.ki_complete =3D backing_aio_rw_complete;
+> -               refcount_set(&aio->ref, 2);
+> -               ret =3D vfs_iocb_iter_read(file, &aio->iocb, iter);
+> -               backing_aio_put(aio);
+> -               if (ret !=3D -EIOCBQUEUED)
+> -                       backing_aio_cleanup(aio, ret);
+> +                       aio->orig_iocb =3D iocb;
+> +                       kiocb_clone(&aio->iocb, iocb, get_file(file));
+> +                       aio->iocb.ki_complete =3D backing_aio_rw_complete=
+;
+> +                       refcount_set(&aio->ref, 2);
+> +                       ret =3D vfs_iocb_iter_read(file, &aio->iocb, iter=
+);
+> +                       backing_aio_put(aio);
+> +                       if (ret !=3D -EIOCBQUEUED)
+> +                               backing_aio_cleanup(aio, ret);
+> +               }
+
+if possible, I would rather avoid all this churn in functions that mostly
+do work with the new cred, so either use guard(cred, ) directly or split a
+helper that uses guard(cred, ) form the rest.
+
+Thanks,
+Amir.
 
