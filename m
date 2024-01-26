@@ -1,240 +1,272 @@
-Return-Path: <linux-fsdevel+bounces-9077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B204C83DE21
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 16:58:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAD4F83DEC2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 17:31:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67C81281992
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 15:58:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53A94B24827
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 16:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9ABE1D54A;
-	Fri, 26 Jan 2024 15:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA781DDF8;
+	Fri, 26 Jan 2024 16:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=memverge.com header.i=@memverge.com header.b="XG7svLqJ"
+	dkim=pass (2048-bit key) header.d=smile-fr.20230601.gappssmtp.com header.i=@smile-fr.20230601.gappssmtp.com header.b="KFoEJSn2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2075.outbound.protection.outlook.com [40.107.244.75])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC90A1D524;
-	Fri, 26 Jan 2024 15:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706284686; cv=fail; b=ZmHKG9IjbZCn4ClllhYb4hEXnxdw4dpovPaW2+9YG1eFProG8x5dnFfzARH0Fyc2zQERm9UZi6LKXtcTNj1Rw62aXMu2EtNRxQWjZ2Z7nmGJH6P01eCvpJQPtoRlh2yUoZjY11KRDVqoCH9AWoZ0mqYXsJSG9Pr4p7XqBM/JZUM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706284686; c=relaxed/simple;
-	bh=lYcOliWRmbP/1ltfOlNR5RIqg8of5cYX81dLNWtLlDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Nh/pIM3S2wUn2Bl8mSuibOTW5kw+EJrHkbEHKOGpD358Bv9cZYf+qAmZEYUWtaJEYZU3cH38fPNgYrCTaaqygRjIiSv2YOD6glLcZoT8veg5pYmQyuZaYmKz1swQmLYG7a5t+lpxxhdHXE3wnRG1FJSTdWv6BS+gw7KellCbwR0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=memverge.com; spf=pass smtp.mailfrom=memverge.com; dkim=pass (1024-bit key) header.d=memverge.com header.i=@memverge.com header.b=XG7svLqJ; arc=fail smtp.client-ip=40.107.244.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=memverge.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=memverge.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=LHLxqprvVE02iUMSoN1G9ZqPgsLX5pcepiZfeVsXJA62Fjq2Cf4wVgajZHFycm3lijmMScvPdQ4hwJUE+CwLkb1NGX3B9zZ1D2ExAHMxqpQvQfDjjB7i3dutAVYJy6c7MoeZUr7VBywCmexsHUqv94+CLnwjodganp432h2tV9E/vXciRkNXmmavAy/LYNDLCmV2sLKfWQNHcvlze+kSxnSIau4Sfxm9ZMxHr9GSF3PeDmY/2WSz8EE/cZDiHdf3NynO7DFhZfbNqjhX3uraE3Xe/uTt6pEXCXallrYSVVY0pdyxnKje7Tdk5GcSFHsuGn8x+69qqNrHnTwvy09JqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pb130topw67USQiscNpzmFuEhJSAJxamPy+hXIECiUE=;
- b=HWaz9dnEQFT8/j91FQTcgWn+5ol9eJ+KnBNwrp/6Qms27O3vhGOi2gaFIX7pw9/v6plrRmiLT8+UpcPCCKJqhFeUigqPJtXn7xSfUIUTzy16whGoPLYnmF8qDt2WmjJlEPFiYM9Ywng8z7nukCt/zlF2zoIpzA2sfn4/WUXIZV0A0qq88zIe7n+4GcNNfscTBvarhQxrG1Gv2rfU0d/9Sjxe9YldEeOGDA+nXFeWSaM8pHrVoRFLpZVmjH2K3qR7ZOjgZK2R7KVD3QIlLV/wgBJyaKhke8VVL3TfPv8saeuNOxhRTdjCLAF0BabN2iARacbuBidWDcf4KW23Rcbycg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=memverge.com; dmarc=pass action=none header.from=memverge.com;
- dkim=pass header.d=memverge.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=memverge.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pb130topw67USQiscNpzmFuEhJSAJxamPy+hXIECiUE=;
- b=XG7svLqJ6gqCWA4/lyixVL3feOeUaP7w/ihv9NP6W/HMGaO9L1dLg2cexDjJlUxD+vhsh7DsQHhw3Hk3VYhtvbZN8KVb8fRsBDZLZoO6jtSU+c1LCaRA0dQOC8YI+XV+30Nnlg9qrn0oYTgcF2rIg7xB7kZOmp3CvXr56SVW9qs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=memverge.com;
-Received: from SJ0PR17MB5512.namprd17.prod.outlook.com (2603:10b6:a03:394::19)
- by BY5PR17MB3970.namprd17.prod.outlook.com (2603:10b6:a03:21d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.27; Fri, 26 Jan
- 2024 15:57:59 +0000
-Received: from SJ0PR17MB5512.namprd17.prod.outlook.com
- ([fe80::7a04:dc86:2799:2f15]) by SJ0PR17MB5512.namprd17.prod.outlook.com
- ([fe80::7a04:dc86:2799:2f15%5]) with mapi id 15.20.7228.023; Fri, 26 Jan 2024
- 15:57:59 +0000
-Date: Fri, 26 Jan 2024 10:57:51 -0500
-From: Gregory Price <gregory.price@memverge.com>
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Gregory Price <gourry.memverge@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-	corbet@lwn.net, akpm@linux-foundation.org, honggyu.kim@sk.com,
-	rakie.kim@sk.com, hyeongtak.ji@sk.com, mhocko@kernel.org,
-	vtavarespetr@micron.com, jgroves@micron.com,
-	ravis.opensrc@micron.com, sthanneeru@micron.com,
-	emirakhur@micron.com, Hasan.Maruf@amd.com, seungjun.ha@samsung.com,
-	hannes@cmpxchg.org, dan.j.williams@intel.com,
-	Srinivasulu Thanneeru <sthanneeru.opensrc@micron.com>
-Subject: Re: [PATCH v3 3/4] mm/mempolicy: introduce MPOL_WEIGHTED_INTERLEAVE
- for weighted interleaving
-Message-ID: <ZbPWf9HbUNA1MELh@memverge.com>
-References: <20240125184345.47074-1-gregory.price@memverge.com>
- <20240125184345.47074-4-gregory.price@memverge.com>
- <87y1cclgcm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87y1cclgcm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-X-ClientProxiedBy: SJ0PR03CA0196.namprd03.prod.outlook.com
- (2603:10b6:a03:2ef::21) To SJ0PR17MB5512.namprd17.prod.outlook.com
- (2603:10b6:a03:394::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 554991DDFA
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 16:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706286649; cv=none; b=EHkOkJMNf5ZyNQ+BH94e4QtPPHs5CKOXFo7P+dddarxBT+3Z71hCKWnqNphkGf0Yz/dlYORTLKRwvBCmGwcxllF0nh5Ao/Kh62+VKYNFNL0kzd7OnBBWCiDidY9dqr/4kh8z2ESelrhOnVkPFTuNNMtvo6VY2/XVjl6VrdqeYzk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706286649; c=relaxed/simple;
+	bh=e4P27LVIoLu447WxGDoBfB8TV0IwjkIO9iwplgiRTRA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=G/R6iTkCjlZfTk8vcNqhiTZyGxZFOg3Hl1wtEiwE+9KIh0bLXqA+FNq10/if8SO2F3WM/Nw68kQj5vzjv6zvAdcH5d731gmY1ZDw+d331VVArZozD4rGxrxlLOZAvjSzfLhZzaMLEb1a2tnnHH1OoW6hPerV7XYHfoLnmRlKL40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smile.fr; spf=pass smtp.mailfrom=smile.fr; dkim=pass (2048-bit key) header.d=smile-fr.20230601.gappssmtp.com header.i=@smile-fr.20230601.gappssmtp.com header.b=KFoEJSn2; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=smile.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=smile.fr
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40e7e2e04f0so9321135e9.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 08:30:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=smile-fr.20230601.gappssmtp.com; s=20230601; t=1706286643; x=1706891443; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YUy3Rwm9maFk8GP2x854tHf75dVLpNSbOLWxYX7ax5o=;
+        b=KFoEJSn2+NEXu+7uSAEIRaq3hq+MzWy0GZH54qlj+8NgLP03R9c7dJhtpHRx1VPWie
+         0qLcu+iaYrYc0ShiTf98eWcwiwuENAw8HBSKWaGpSJH3Qi1r1r91dUHl5obJJ/H0wk+I
+         UgMI31BifIvGcX0qS2HzcuaHK+m4J2GvT1TOQ3WYcOACA+UKD2dDNVMJHZvHweHgCuZW
+         yi2HuVF74dg3eJ6AenNcBklLYWa26y0XVI0GJFPaQLBerJA4H7R5WcAuVt7+yf9KW0oT
+         5zO9P3DtDByr2OsknZK426cpNz/OilgWiLHw7MNYzO50f1ritlJ7WWWbBTUL1KxC4eQB
+         orjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706286643; x=1706891443;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YUy3Rwm9maFk8GP2x854tHf75dVLpNSbOLWxYX7ax5o=;
+        b=JrJ3tAGwZWuPpYWCjjilkhWandwcR7TAjTevUtJ9aNQqlNfDDkMNqP15GyILEEM1l7
+         pSCOGaREu2asez35QivTTtJ+QuvO2ZtyNOSsWYZQ3xCoDfmq9u1Y+cC6MR46ZSgi8ysM
+         dxccpqxe5HW67/3wCUqEnm5VFAUAwpKEAABfPLgf5ogiwdW9k+HwNXCybVOnHepXXvTd
+         /OK/pNXe3NQkGAjKlRQEErDezj8sMX5rUUr/MK8WoqOlFu60FSHBQyxJZiKVpL/UR0a8
+         pdyKLP8rS5xE8Au0QKEx7cwrUvyhreAYGksMA4xsupdLTeLTqNEm5fk9Iqf2uXB0+s/7
+         ATYg==
+X-Gm-Message-State: AOJu0YwCCHHkpKnZz3fvgNAWaVLFKJe8fOQkxbgCwc8xdaDX45HS40JB
+	qSGk2gpmSOEApElSyboPOJKXO592+1gZ/zbt0hPmTlid/Z2vUSv+JcFJoFgmmHU=
+X-Google-Smtp-Source: AGHT+IHKrnM6QdGCuLACvBQlPCI1fRERqYVbqvlykdiDAUVmDp7BbX1i59uxODRv8YnFlIpKfqkT3g==
+X-Received: by 2002:a05:600c:a385:b0:40e:e793:8f9 with SMTP id hn5-20020a05600ca38500b0040ee79308f9mr30020wmb.134.1706286643360;
+        Fri, 26 Jan 2024 08:30:43 -0800 (PST)
+Received: from P-ASN-ECS-830T8C3.numericable.fr ([89.159.1.53])
+        by smtp.gmail.com with ESMTPSA id p14-20020a05600c358e00b0040ea875a527sm2337557wmq.26.2024.01.26.08.30.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 26 Jan 2024 08:30:43 -0800 (PST)
+From: Yoann Congal <yoann.congal@smile.fr>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org,
+	Yoann Congal <yoann.congal@smile.fr>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Masahiro Yamada <masahiroy@kernel.org>
+Subject: [PATCH] treewide: Change CONFIG_BASE_SMALL to bool type
+Date: Fri, 26 Jan 2024 17:30:32 +0100
+Message-Id: <20240126163032.1613731-1-yoann.congal@smile.fr>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR17MB5512:EE_|BY5PR17MB3970:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4e7161fa-f726-433c-28db-08dc1e8791d7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	yFnOD0sZD5ARSnVqreV3OnHDWE3YkWeHs4AVsTt52rhhLHDwvkfNaHZ5ok+Af8fQJrkz8h+3cqDTDLm8ueVDK5NjBFUQZrkc9p92AG1lTNGF5iVZr9gtAFG+wNreuiGGernUKUe1eFZswA3JrYTmW9YxalY2Dj1RgTV/xJYocrXGTRCOe8JDR9h/vuUh0uyZ5Dc1PGYoJcOlbUrFhlDrGZwWMMUrj/19YxDv8L1Lb+ghYEf7MTNRQXmF3XFx0j0Vja8sqXLB1vOOIEy9O48C1/Z66fyveftaoqroBujMaOUDcER4vY3B9SkdxMWjKViev5ZF9+5Z4WWY84FNVCsh17TM/9/Nttl1NTAR6zaSiIxLVuGKqwyaHarzh24HXgrRzT+VZTH0LB/VK8jAKK6KdVP9o2wkutM6e4Qfw0YiBxlPkdlwE2ZcZC9Ywuw/36sRLW86uSvnlQhKKoRhP8QtyKA4XJ2W5O0qmnvwTq4acMQ0SllltroAnZz0zj+LlLnhNrZDUPZTQksykJe+Fuzm/wTiCZsP2YuwTamHZResMYTQhK4+Rk8UMKL/I8yIYuPcqIhAqZ+2ndFmeZFC/S4NufQQI9b6bkAVDcmE5sHx8Xs=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR17MB5512.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(346002)(376002)(136003)(396003)(39830400003)(230922051799003)(1800799012)(186009)(64100799003)(451199024)(83380400001)(36756003)(2616005)(86362001)(4326008)(8936002)(8676002)(44832011)(5660300002)(38100700002)(26005)(316002)(66476007)(54906003)(66556008)(6916009)(66946007)(7416002)(966005)(41300700001)(6506007)(6666004)(6486002)(478600001)(2906002)(6512007)(16393002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YrH88WMf52Ju+zKKucgLzly9lNONU4Ol3zjv1fJLnoZ5PuA/i1EquPrjwi+p?=
- =?us-ascii?Q?iD7ieJvRcO7aSUl4NETyI9R9dwB6AGqRoRZFL9+p653bVIwTYOu79TU5WTmb?=
- =?us-ascii?Q?tU7Qh52t3E6aYa1dolyD8JdtH+OZiAwe7cC3LvbOUMU3Iysbd7AwZqcp8gup?=
- =?us-ascii?Q?mCOWwcajDH6NUXAEuNbM7PCoKskIax3c7ZlwqBkHtk/XbcTdGHe47Rjz2TGG?=
- =?us-ascii?Q?7hClHtbiilFq5JZ0/E/KkR+qGMhqqgvBFeGIMF9py35uyTRyj+VHQ2ch3O/R?=
- =?us-ascii?Q?LeP4mR0ztBHRVbpzEymX/Eh2f7G/C4zxRivTtRM1zdKMo4u/seJy/ZBBDord?=
- =?us-ascii?Q?5k8y7wKph9AP6d4AVNT2gqbj90ktLiT/Nf7VctgZ66NX1S1GqENJyF1mALOS?=
- =?us-ascii?Q?CWNe/Uw0s3N6EID1B93cFdtppA/C53pQevv+gIqOCNbXpLX9CJNuJfnTe3a1?=
- =?us-ascii?Q?2H8bp5IRnh4xc9e1CnsdAecPrfEVyfJopZu36q9kPE++UZZmesqTGIFtDMou?=
- =?us-ascii?Q?xjW+B9+mIpVCONDWKCjW9wwVDs64XOoLYG6T7sCqsWf9+5mZyT06vo7PWVOL?=
- =?us-ascii?Q?vYCDNSByBKABYkVhz8+81zNSUTDb9rhdHmoX0oDqFUOCzYP7rt6oXjfN1GWN?=
- =?us-ascii?Q?wDl7zwn1nfuauF0JE3cOXFn8SYy0sE+rSENcN6U7HcXTyHRvSIALjF862kFz?=
- =?us-ascii?Q?qzwzIY2D9qRTr+Cu9AkvT0ddNwBOTtBh3GfZqe1TZQ63oHpx4+ocSDUpZ681?=
- =?us-ascii?Q?n2M5+rsUZ05jJrqfPzK1iEnctLK0OPAqcFOGWB3HR/jPaI5XVRlBjTzngwDU?=
- =?us-ascii?Q?ehnn7m4ypvRHcqVa5FspRcQ5RGXbVomp6Tf6OJ3PrsE7Ujtf3XB9bh+qii1J?=
- =?us-ascii?Q?OO7OtMLYsCtUhK92niiAqr5+7L5tW5P+iSMMX6l3G3T7yFK7diZiEhR4MhRL?=
- =?us-ascii?Q?4FK0ItQ5YO/H4LyECjZZIvTSW/O+nRZEXskAuy0D2niDI4A8EW5KrkbWnQqB?=
- =?us-ascii?Q?7HxxBlEJce4j9xdJqo+1BQewkVjGBl1EBhRB0nvNs03sy3b4FyFfw/whRE7A?=
- =?us-ascii?Q?0bq11UqrT6+JIzjNyyOSQgOgZYK0rehvmZJIbQ5X94S3IFiw5TbcIlsjVmlF?=
- =?us-ascii?Q?2Z+/C7qA4f8MvswSxRGZdTfg0xAXwMK6JjI+U1Yy7N3V0os+X9Rtl6hwNu88?=
- =?us-ascii?Q?sR/NYv17TcdoC/Z05c7btaGr71Wnsi1D+Snhyf8mIyB9TLebDDIknZ2QupyA?=
- =?us-ascii?Q?YEOV449fweAPShMkBxx+0wSvYlBgfdctkwJWIBAdDSOUOS3K3DVuyNwJgVvC?=
- =?us-ascii?Q?Y5hXvbMAt8eZadEqHHMUB+8MbsaAdZd6Ra82uPNQQais7C5KX/LLosuVAua1?=
- =?us-ascii?Q?ettMWKMJmmkP12ZSCbjgAmmf3PnfP7hv9WpCsUgP8DMolhrcXPk0V3o/9fKX?=
- =?us-ascii?Q?s6zLpf+/g/RUs5WYG+3O8orpB8n855yZwIokcN1dXFMBoHTlzS7LtZwBoiu2?=
- =?us-ascii?Q?YHO+T6yW+TGtdCepforgr22/OaOZn8PTJ6vsJK7Q7wvdjgJ2FG5/Ebyfh3rs?=
- =?us-ascii?Q?3qkM2y2Qk0DJF4xtaiYben45TN7RQdLMDV1fnCW0xr/aoDqxXuVzfkxMZ5mj?=
- =?us-ascii?Q?qA=3D=3D?=
-X-OriginatorOrg: memverge.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4e7161fa-f726-433c-28db-08dc1e8791d7
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR17MB5512.namprd17.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jan 2024 15:57:59.7590
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5c90cb59-37e7-4c81-9c07-00473d5fb682
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DiiCuQHjpP1DUAoDCQw20CD2iYp+gRc4MVkMi9aHSDpsua+ITfw4kKE1J+0eYHL0D7YW/pjm/3RFlFcP+tf0ujaGRVK2Imyq8nrijqRR9vU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR17MB3970
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jan 26, 2024 at 03:10:49PM +0800, Huang, Ying wrote:
-> Gregory Price <gourry.memverge@gmail.com> writes:
-> 
-> > +		} else if (pol == current->mempolicy &&
-> > +				(pol->mode == MPOL_WEIGHTED_INTERLEAVE)) {
-> > +			if (pol->cur_il_weight)
-> > +				*policy = current->il_prev;
-> > +			else
-> > +				*policy = next_node_in(current->il_prev,
-> > +						       pol->nodes);
-> 
-> It appears that my previous comments about this is ignored.
-> 
-> https://lore.kernel.org/linux-mm/875xzkv3x2.fsf@yhuang6-desk2.ccr.corp.intel.com/
-> 
-> Please correct me if I am wrong.
->
+CONFIG_BASE_SMALL is currently a type int but is only used as a boolean:
+CONFIG_BASE_SMALL == 0 vs CONFIG_BASE_SMALL != 0.
 
-The fix is in the following patch.  I'd originally planned to squash the
-atomic patch into this one, but decided against it because it probably
-warranted isolated scrutiny.
+So change it to the more logical bool type.
 
-@@ -973,8 +974,10 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
-                        *policy = next_node_in(current->il_prev, pol->nodes);
-                } else if (pol == current->mempolicy &&
-                                (pol->mode == MPOL_WEIGHTED_INTERLEAVE)) {
--                       if (pol->cur_il_weight)
--                               *policy = current->il_prev;
-+                       int cweight = atomic_read(&pol->cur_il_weight);
-+
-+                       if (cweight & 0xFF)
-+                               *policy = cweight >> 8;
+Furthermore, recent kconfig changes (see Fixes: tags) revealed that using
+  config SOMETHING
+     default "some value" if X
+does not work as expected if X is not of type bool.
 
-in this we return the node the weight applies to, otherwise we return
-whatever is after il_prev.
+CONFIG_BASE_SMALL is used that way in init/Kconfig:
+  config LOG_CPU_MAX_BUF_SHIFT
+  	default 12 if !BASE_SMALL
+  	default 0 if BASE_SMALL
 
-I can pull this fix ahead.
+Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Closes: https://lore.kernel.org/all/CAMuHMdWm6u1wX7efZQf=2XUAHascps76YQac6rdnQGhc8nop_Q@mail.gmail.com/
+Fixes: 6262afa10ef7 ("kconfig: default to zero if int/hex symbol lacks default property")
+Fixes: 4e244c10eab3 ("kconfig: remove unneeded symbol_empty variable")
 
-> > +	/* if now at 0, move to next node and set up that node's weight */
-> > +	if (unlikely(!policy->cur_il_weight)) {
-> > +		me->il_prev = node;
-> > +		next = next_node_in(node, policy->nodes);
-> > +		rcu_read_lock();
-> > +		table = rcu_dereference(iw_table);
-> > +		/* detect system-default values */
-> > +		weight = table ? table[next] : 1;
-> > +		policy->cur_il_weight = weight ? weight : 1;
-> > +		rcu_read_unlock();
-> > +	}
-> 
-> It appears that the code could be more concise if we allow
-> policy->cur_il_weight == 0.  Duplicated code are in
-> alloc_pages_bulk_array_weighted_interleave() too.  Anyway, can we define
-> some function to reduce duplicated code.
-> 
+---
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Borislav Petkov <bp@alien8.de>
+CC: Dave Hansen <dave.hansen@linux.intel.com>
+CC: "H. Peter Anvin" <hpa@zytor.com>
+CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC: Jiri Slaby <jirislaby@kernel.org>
+CC: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+CC: Matthew Wilcox <willy@infradead.org>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Darren Hart <dvhart@infradead.org>
+CC: Davidlohr Bueso <dave@stgolabs.net>
+CC: "André Almeida" <andrealmeid@igalia.com>
+CC: Masahiro Yamada <masahiroy@kernel.org>
+CC: x86@kernel.org
+CC: linux-kernel@vger.kernel.org
+CC: linux-serial@vger.kernel.org
+CC: linux-fsdevel@vger.kernel.org
+CC: linux-kbuild@vger.kernel.org
+---
+ arch/x86/include/asm/mpspec.h | 2 +-
+ drivers/tty/vt/vc_screen.c    | 2 +-
+ include/linux/threads.h       | 4 ++--
+ include/linux/udp.h           | 2 +-
+ include/linux/xarray.h        | 2 +-
+ init/Kconfig                  | 6 +++---
+ kernel/futex/core.c           | 2 +-
+ kernel/user.c                 | 2 +-
+ 8 files changed, 11 insertions(+), 11 deletions(-)
 
-This is kind of complicated by the next patch, which places the node and
-the weight into the same field to resolve the stale weight issue.
+diff --git a/arch/x86/include/asm/mpspec.h b/arch/x86/include/asm/mpspec.h
+index 4b0f98a8d338d..ebe4b6121b698 100644
+--- a/arch/x86/include/asm/mpspec.h
++++ b/arch/x86/include/asm/mpspec.h
+@@ -15,7 +15,7 @@ extern int pic_mode;
+  * Summit or generic (i.e. installer) kernels need lots of bus entries.
+  * Maximum 256 PCI busses, plus 1 ISA bus in each of 4 cabinets.
+  */
+-#if CONFIG_BASE_SMALL == 0
++#ifndef CONFIG_BASE_SMALL
+ # define MAX_MP_BUSSES		260
+ #else
+ # define MAX_MP_BUSSES		32
+diff --git a/drivers/tty/vt/vc_screen.c b/drivers/tty/vt/vc_screen.c
+index 67e2cb7c96eec..da33c6c4691c0 100644
+--- a/drivers/tty/vt/vc_screen.c
++++ b/drivers/tty/vt/vc_screen.c
+@@ -51,7 +51,7 @@
+ #include <asm/unaligned.h>
+ 
+ #define HEADER_SIZE	4u
+-#define CON_BUF_SIZE (CONFIG_BASE_SMALL ? 256 : PAGE_SIZE)
++#define CON_BUF_SIZE (IS_ENABLED(CONFIG_BASE_SMALL) ? 256 : PAGE_SIZE)
+ 
+ /*
+  * Our minor space:
+diff --git a/include/linux/threads.h b/include/linux/threads.h
+index c34173e6c5f18..1674a471b0b4c 100644
+--- a/include/linux/threads.h
++++ b/include/linux/threads.h
+@@ -25,13 +25,13 @@
+ /*
+  * This controls the default maximum pid allocated to a process
+  */
+-#define PID_MAX_DEFAULT (CONFIG_BASE_SMALL ? 0x1000 : 0x8000)
++#define PID_MAX_DEFAULT (IS_ENABLED(CONFIG_BASE_SMALL) ? 0x1000 : 0x8000)
+ 
+ /*
+  * A maximum of 4 million PIDs should be enough for a while.
+  * [NOTE: PID/TIDs are limited to 2^30 ~= 1 billion, see FUTEX_TID_MASK.]
+  */
+-#define PID_MAX_LIMIT (CONFIG_BASE_SMALL ? PAGE_SIZE * 8 : \
++#define PID_MAX_LIMIT (IS_ENABLED(CONFIG_BASE_SMALL) ? PAGE_SIZE * 8 : \
+ 	(sizeof(long) > 4 ? 4 * 1024 * 1024 : PID_MAX_DEFAULT))
+ 
+ /*
+diff --git a/include/linux/udp.h b/include/linux/udp.h
+index d04188714dca1..b456417fb4515 100644
+--- a/include/linux/udp.h
++++ b/include/linux/udp.h
+@@ -24,7 +24,7 @@ static inline struct udphdr *udp_hdr(const struct sk_buff *skb)
+ }
+ 
+ #define UDP_HTABLE_SIZE_MIN_PERNET	128
+-#define UDP_HTABLE_SIZE_MIN		(CONFIG_BASE_SMALL ? 128 : 256)
++#define UDP_HTABLE_SIZE_MIN		(IS_ENABLED(CONFIG_BASE_SMALL) ? 128 : 256)
+ #define UDP_HTABLE_SIZE_MAX		65536
+ 
+ static inline u32 udp_hashfn(const struct net *net, u32 num, u32 mask)
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index cb571dfcf4b16..3f81ee5f9fb9c 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -1141,7 +1141,7 @@ static inline void xa_release(struct xarray *xa, unsigned long index)
+  * doubled the number of slots per node, we'd get only 3 nodes per 4kB page.
+  */
+ #ifndef XA_CHUNK_SHIFT
+-#define XA_CHUNK_SHIFT		(CONFIG_BASE_SMALL ? 4 : 6)
++#define XA_CHUNK_SHIFT		(IS_ENABLED(CONFIG_BASE_SMALL) ? 4 : 6)
+ #endif
+ #define XA_CHUNK_SIZE		(1UL << XA_CHUNK_SHIFT)
+ #define XA_CHUNK_MASK		(XA_CHUNK_SIZE - 1)
+diff --git a/init/Kconfig b/init/Kconfig
+index 8d4e836e1b6b1..766a7ac8c5ea4 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1941,9 +1941,9 @@ config RT_MUTEXES
+ 	default y if PREEMPT_RT
+ 
+ config BASE_SMALL
+-	int
+-	default 0 if BASE_FULL
+-	default 1 if !BASE_FULL
++	bool
++	default n if BASE_FULL
++	default y if !BASE_FULL
+ 
+ config MODULE_SIG_FORMAT
+ 	def_bool n
+diff --git a/kernel/futex/core.c b/kernel/futex/core.c
+index e0e853412c158..5f7aa4fc2f9ee 100644
+--- a/kernel/futex/core.c
++++ b/kernel/futex/core.c
+@@ -1141,7 +1141,7 @@ static int __init futex_init(void)
+ 	unsigned int futex_shift;
+ 	unsigned long i;
+ 
+-#if CONFIG_BASE_SMALL
++#ifdef CONFIG_BASE_SMALL
+ 	futex_hashsize = 16;
+ #else
+ 	futex_hashsize = roundup_pow_of_two(256 * num_possible_cpus());
+diff --git a/kernel/user.c b/kernel/user.c
+index 03cedc366dc9e..aa1162deafe49 100644
+--- a/kernel/user.c
++++ b/kernel/user.c
+@@ -88,7 +88,7 @@ EXPORT_SYMBOL_GPL(init_user_ns);
+  * when changing user ID's (ie setuid() and friends).
+  */
+ 
+-#define UIDHASH_BITS	(CONFIG_BASE_SMALL ? 3 : 7)
++#define UIDHASH_BITS	(IS_ENABLED(CONFIG_BASE_SMALL) ? 3 : 7)
+ #define UIDHASH_SZ	(1 << UIDHASH_BITS)
+ #define UIDHASH_MASK		(UIDHASH_SZ - 1)
+ #define __uidhashfn(uid)	(((uid >> UIDHASH_BITS) + uid) & UIDHASH_MASK)
+-- 
+2.39.2
 
-In that patch (cur_il_weight = 0) means "cur_il_weight invalid",
-because the weight part can only be 0 when:
-
-a) an error occuring during bulk allocation
-b) a rebind event
-
-I'll take some time to think about whether we can do away with
-task->il_prev (as your next patch notes mentioned).
-
-
-> > +		/* Otherwise we adjust nr_pages down, and continue from there */
-> > +		rem_pages -= pol->cur_il_weight;
-> > +		pol->cur_il_weight = 0;
-> 
-> This break the rule to keep pol->cur_il_weight != 0 except after initial
-> setup.  Is it OK?
-> 
-
-The only way cur_il_weight can leave this function 0 at this point is if
-an error occurs (specifically the failure to kmalloc immediately next).
-
-If we don't clear cur_il_weight here, then we have a stale weight, and
-the next allocation pass will over-allocate on the current node.
-
-This semantic also changes a bit in the next patch, but is basically the
-same.  If il_weight is 0, then either an error occurred or a rebind
-event occured.
-
-> > +				/* resume from this node w/ remaining weight */
-> > +				resume_node = prev_node;
-> > +				resume_weight = weight - (node_pages % weight);
-> 
-> resume_weight = weight - delta; ?
->
-
-ack
-
-~Gregory
 
