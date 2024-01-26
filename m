@@ -1,99 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-9061-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C7183DB81
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 15:11:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A375983DB95
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 15:16:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22C3B1C22605
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 14:11:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8B471C231D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 14:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196051C695;
-	Fri, 26 Jan 2024 14:11:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDE71C28F;
+	Fri, 26 Jan 2024 14:16:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sw1IYy2s";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+PTk/i5y";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sw1IYy2s";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+PTk/i5y"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="tJGxvR8o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBAA1C68A;
-	Fri, 26 Jan 2024 14:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CE41B599
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 14:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706278269; cv=none; b=XtMgJJMcdc1dAsRZRi7D2tnU2EYwL8rxe8rLSTNVm4zJhYxtol+bMC2KnBHONtUzVKXosDioMbG8RA4vLaqtebA46ngkFf+aml+/0OzneYamppcGgSihzQNe9hk9FvgcTllCMWPK+aGOkKu9WKIrtpXTbYoiiqGocypkwyBP5Cg=
+	t=1706278599; cv=none; b=Is/sORcY8jD4eAWZEWy8erABaQccgMsEoBjw8dBIYqmBjJE+29yThbPovJ/KnhCC30SQCj8LSe5ugAadonqediEsE+HdY9GhFA8w6O/ijySauvQToKG9qwn60CiZCu6fg1EJto5j2Hlb6OEuFx1m64sWZfXhGJsqPl7aW3hbw1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706278269; c=relaxed/simple;
-	bh=qGBAAeWbUe+Aj38Gk6sQP9MwEOJVNnsKQt0ttT1weRw=;
+	s=arc-20240116; t=1706278599; c=relaxed/simple;
+	bh=UTvndD8gsD+zqm4ZX9/GghH1PWJ0G0e8T5kRquh5wW4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aHG2HLHyVH2LN4aWQXSZW17jYSJXzRjV8DqrMOQ5R9pUejH7Xs7ToZVkDMCcuH7g9Fm9sAxNaPmVnIgU8Kh3xVez69FaXtsJH8oq/xqjjIHgpioRszG2SMcjZ+oIptCQ+mk6sdlQMuLGd9fe19u42NtiQjKdS9NBHGC2WN6kcps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sw1IYy2s; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+PTk/i5y; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sw1IYy2s; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+PTk/i5y; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B9F8F21E6D;
-	Fri, 26 Jan 2024 14:11:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706278262; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QPcOSR/E3TI//PCWMaoAPwAv977b5GCgRXOjxXLXLX4=;
-	b=sw1IYy2s1KN05rKcWIfXJr/v/ppcZx4ZOOzkpjzry0IGx+QaTlQP8egQiMyOEa+GgPqPL8
-	MbPPWlv6B/GcIRVCJ5EJ6sb6vHOTKsy97M+99XJsgR/zGsK1jU/vQ5TIxUtiLjCvQ2SIjR
-	BRr9DPkzXYMwUmYpkv9NOe2apEte60U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706278262;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QPcOSR/E3TI//PCWMaoAPwAv977b5GCgRXOjxXLXLX4=;
-	b=+PTk/i5y5JVn1jX3eoWb06VAjdbzrI+fyeSOILElvwyGQZ4D05SgkKdXS45DdotZvielO8
-	KMij6NwZ8bW2M4AQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706278262; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QPcOSR/E3TI//PCWMaoAPwAv977b5GCgRXOjxXLXLX4=;
-	b=sw1IYy2s1KN05rKcWIfXJr/v/ppcZx4ZOOzkpjzry0IGx+QaTlQP8egQiMyOEa+GgPqPL8
-	MbPPWlv6B/GcIRVCJ5EJ6sb6vHOTKsy97M+99XJsgR/zGsK1jU/vQ5TIxUtiLjCvQ2SIjR
-	BRr9DPkzXYMwUmYpkv9NOe2apEte60U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706278262;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QPcOSR/E3TI//PCWMaoAPwAv977b5GCgRXOjxXLXLX4=;
-	b=+PTk/i5y5JVn1jX3eoWb06VAjdbzrI+fyeSOILElvwyGQZ4D05SgkKdXS45DdotZvielO8
-	KMij6NwZ8bW2M4AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 99B9A13A22;
-	Fri, 26 Jan 2024 14:11:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xRR/JXa9s2VbawAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 26 Jan 2024 14:11:02 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1DF22A0805; Fri, 26 Jan 2024 15:11:00 +0100 (CET)
-Date: Fri, 26 Jan 2024 15:11:00 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+d8fc21bfa138a5ae916d@syzkaller.appspotmail.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, jack@suse.com, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [udf?] KASAN: use-after-free Read in crc_itu_t
-Message-ID: <20240126141100.s6hphczfikjbbrm5@quack3>
-References: <000000000000f8389205e9f9ec5f@google.com>
- <000000000000d227b6060fd90a48@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rd19xbHzjPU2xqhWHUomwFM9duzGkOnwhmEeIho0Wnbsakgy66dHd2zdLBcsYrzf/lSXyk5X8K2sOJj4U2TrfZgEQ7NvgYqueCJ3z17nGnzOyW+/l9OntrpiofxmTxrDegiQ/JfGdp6SBZZs9/JVnIcBVsUMk4AlyJf4mW4tSEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=tJGxvR8o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 218ACC433C7;
+	Fri, 26 Jan 2024 14:16:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1706278599;
+	bh=UTvndD8gsD+zqm4ZX9/GghH1PWJ0G0e8T5kRquh5wW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tJGxvR8oma7uNXWe0Z9VxtxQNjLU+fGvWcDxDVo13j/zUwOaR10OgqCT+uHEc0qpC
+	 uJMdLXgawSyIXk040fVGxbLlC3v2G20/O8HGt2doYeg9+WZVaedotoDr3rJmpoQYmA
+	 O4D2vvx9wjtHLBr6NKi2QI6MvJHuNlY8JNJCgVmM=
+Date: Fri, 26 Jan 2024 06:16:38 -0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, Christian Brauner <brauner@kernel.org>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [LSF/MM TOPIC] Making pseudo file systems inodes/dentries more
+ like normal file systems
+Message-ID: <2024012634-rotten-conjoined-0a98@gregkh>
+References: <20240125104822.04a5ad44@gandalf.local.home>
+ <2024012522-shorten-deviator-9f45@gregkh>
+ <20240125205055.2752ac1c@rorschach.local.home>
+ <2024012528-caviar-gumming-a14b@gregkh>
+ <20240125214007.67d45fcf@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -102,59 +61,62 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000d227b6060fd90a48@google.com>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spamd-Result: default: False [0.67 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-2.23)[96.38%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4];
-	 TAGGED_RCPT(0.00)[d8fc21bfa138a5ae916d];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_SEVEN(0.00)[8];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: 0.67
+In-Reply-To: <20240125214007.67d45fcf@rorschach.local.home>
 
-On Fri 26-01-24 05:12:04, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+On Thu, Jan 25, 2024 at 09:40:07PM -0500, Steven Rostedt wrote:
+> On Thu, 25 Jan 2024 17:59:40 -0800
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 > 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
+> > > I tried to use kernfs when doing a lot of this and I had issues. I
+> > > don't remember what those were, but I can revisit it.  
+> > 
+> > You might, as kernfs makes it so that the filesystem structures are
+> > created on demand, when accessed, and then removed when memory pressure
+> > happens.  That's what sysfs and configfs and cgroups use quite
+> > successfully.
 > 
->     fs: Block writes to mounted block devices
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1204f1efe80000
-> start commit:   a4d7d7011219 Merge tag 'spi-fix-v6.4-rc5' of git://git.ker..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=d8fc21bfa138a5ae916d
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1442e70b280000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16db80dd280000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
- 
-Looks good:
+> kernfs doesn't look trivial and I can't find any documentation on how
+> to use it.
 
-#syz fix: fs: Block writes to mounted block devices
+You have the code :)
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Should there be work to move debugfs over to kernfs?
+
+Why?  Are you seeing real actual memory use with debugfs that is causing
+problems?  That is why we made kernfs, because people were seeing this
+in sysfs.
+
+Don't change stuff unless you need to, right?
+
+> I could look at it too, but as tracefs, and more specifically eventfs,
+> has 10s of thousands of files, I'm very concerned about meta data size.
+
+Do you have real numbers?  If not, then don't worry about it :)
+
+> Currently eventfs keeps a data structure for every directory, but for
+> the files, it only keeps an array of names and callbacks. When a
+> directory is registered, it lists the files it needs. eventfs is
+> specific that the number of files a directory has is always constant,
+> and files will not be removed or added once a directory is created.
+> 
+> This way, the information on how a file is created is done via a
+> callback that was registered when the directory was created.
+
+That's fine, and shouldn't matter.
+
+> For this use case, I don't think kernfs could be used. But I would
+> still like to talk about what I'm trying to accomplish, and perhaps see
+> if there's work that can be done to consolidate what is out there.
+
+Again, look at kernfs if you care about the memory usage of your virtual
+filesystem, that's what it is there for, you shouldn't have to reinvent
+the wheel.
+
+And the best part is, when people find issues with scaling or other
+stuff with kernfs, your filesystem will then benifit (lots of tweaks
+have gone into kernfs for this over the past few kernel releases.)
+
+thanks,
+
+greg k-h
 
