@@ -1,117 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-9109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9110-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B3883E3F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 22:31:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F1083E3FC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 22:32:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77E441F21F07
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 21:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BD701F24335
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 21:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D9A24A07;
-	Fri, 26 Jan 2024 21:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BA124A1B;
+	Fri, 26 Jan 2024 21:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Q7ydLpfR"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FGYM24Fn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF84250EC
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 21:31:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6510286A6;
+	Fri, 26 Jan 2024 21:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706304682; cv=none; b=C/JW6/SHVcpkcQ+qBXpKEk09IYnA5k99IC7utuiF+Vj03sIO9RMBFhtn6sAuS5VHP3b4XhOaOiO8/4JBZUCjeB54xB69KOM5KYNmSn8DwBTcsy6Cnjct/zErvkqsPppy/D7SURrRt3TwUAcxxQoVlAxgN4zzwqWNEY/9QaXNWuU=
+	t=1706304732; cv=none; b=BukZpZvgGcU8HFeECOw2qey5MtOq3oS0PJ5gDR3E1ssC0bkxAQE8UZvmso1MwfDxKaqj4CqcqIm3OEXpvUhFEYOmfYUo58fFZyuAb5uZ9SCa2ciHqex6QH9kTisybVNGINVIvW5kS/d18YdELE/aWn0f98pBemkz7xcXP2+po7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706304682; c=relaxed/simple;
-	bh=6mukGWAjPX2YjUL4JezyXFLuCN/rYL2RbG8PlJMIYCw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UKg1lZE0pR7x+9IzNBsWOYfnVC9aMYj6r3xgxkkpfEa5alPAOSasRM2M4LUgItIiBjcggPbWp8NN5k1xMeCIsT4oNnme1Hx+JpPluB/dCFfnrkjFGxMKn9tpSBdCRjANYXmcNKnnzYIc4alWBLIZH0T3XBvMAevMcedBglmlUxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Q7ydLpfR; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-55a9008c185so1483820a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 13:31:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1706304678; x=1706909478; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=maDpcikpyh6FEh8N/tIM7o82tGen2/tmETzOibUg/is=;
-        b=Q7ydLpfRJBIPc1zDGpnWKX59E/L2MQWkHam27t3ye3pXQ8KhaHdVt0cKFF7tR4dRhW
-         8FJHYZqd8atnsWngv3bauKLiWGGaYBjyXN/6BBDtmjfKU0cxI5e9ZJu7aCAHhq8d6EVd
-         ERs1EzNLsVqS933T2uYBsrpwCzZJu/0QPBC+I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706304678; x=1706909478;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=maDpcikpyh6FEh8N/tIM7o82tGen2/tmETzOibUg/is=;
-        b=YNwXRxQ0cQgRUcuo59rSeP0XzK9Ve5NOMiZnzsZYA1kmgiQlzJffQUwp/1RdasO78+
-         PVI0rQ5impXoMIC7zUG2fUqolZWb6JIwHl4DVAFcLFgbtoX/zmvaf4EiZKmFXBbHvV+o
-         oEBrIWcwaQ1wdQzn3GpyfnyFzGgZvmzCEN/j7WtrgSH2HkMt03FdwrcDgNFZFe/sILMg
-         4ybcKqmt0q+Nlgralv8AjIeW0FCVtkSfn5ckUcci2MhY7g1P/9u91xzVPab+rO2lWwz4
-         5sLuZNJeUVdgoN2tlbEQPsD9av1cCupOpWWg2+F8Sm3BPvUQMS+WQDUPkikQUy7BxMWm
-         PS5g==
-X-Gm-Message-State: AOJu0YyS5Nz4+pnLY8rY7Qhqk5rAzaTl+5VGPGQFY3UTN0vykPnqVT2H
-	natqkIDg6Y5Z32m38SilBqczKwG2nwVt6qXXo98KAo85XNO1qMbTL74G1p9CXPjOa3pzsQda1q5
-	HO6ZlRg==
-X-Google-Smtp-Source: AGHT+IH6G6BwsEOFAhrEGzk5Oz0nGar7cgisfsNcxoZcFXpljZn/VCAd7F4QrDHdjFZGtqh3hm7Ixg==
-X-Received: by 2002:aa7:cf17:0:b0:558:b48a:b5f1 with SMTP id a23-20020aa7cf17000000b00558b48ab5f1mr2356583edy.7.1706304678633;
-        Fri, 26 Jan 2024 13:31:18 -0800 (PST)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id p4-20020a056402044400b0055c7d4d29bbsm980233edw.93.2024.01.26.13.31.17
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jan 2024 13:31:17 -0800 (PST)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a2d7e2e7fe0so165036266b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 13:31:17 -0800 (PST)
-X-Received: by 2002:a17:907:75cd:b0:a30:e9a6:68f6 with SMTP id
- jl13-20020a17090775cd00b00a30e9a668f6mr2088169ejc.37.1706304677484; Fri, 26
- Jan 2024 13:31:17 -0800 (PST)
+	s=arc-20240116; t=1706304732; c=relaxed/simple;
+	bh=jsc/69WSzTKZ/G5310wlLrX/CRAN2B+7XXtyP6eyFKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cD6twj19Pj4yXIPuVLaMRvaG74r3K7WJRLstGHQnpkJFDtXxTfDtREF/ewq+dooyp1UzPktjshrYMzZljal8fOt53oLErQISe+0kNQ34jdgHyoIRjFbOoucnBlAMCggPsn3TEPsMg7ZpdsVaiDr0UF8dmaPWc4zIBE4sdusQmuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FGYM24Fn; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wP2xVl8JLp8XOMebTnhcra6qLaj2U02CkDsznEmwziE=; b=FGYM24Fn+Iz/x4NlIX2hTy5y5U
+	H0auvnkk5HhfbmBVyRp0C+FfOq4dPgI3F5Os6p1JDSkEKZrwwSLQkEVQXY1WVKNQ8krGfhCMj9sH3
+	4eFvZ0/ZWQdg5jN0WKLY5t+OKTIFjMccd5933cX34wXREJP4KlaQx52Z3V9O+o4+Zygcvrl2AR1ct
+	w4ZVz+F0dqIfJr3agbnE3KOp2Wm5Xq59t+zGVbOqkEDG9NqcW7dbLSamFoppg5LohKRfi2WqYlFmu
+	tlYDHsGuZGfead2WwW/Op4vijp23jPraeuT6Hp6WE70EeIJB1cbeGCzSp1oWy8ViUw83uOSURLb2V
+	Z95d7Dtg==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rTTnx-00000005TLG-3VbV;
+	Fri, 26 Jan 2024 21:32:05 +0000
+Date: Fri, 26 Jan 2024 13:32:05 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>,
+	Eric Biggers <ebiggers@google.com>
+Cc: Pankaj Raghav <p.raghav@samsung.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+	Yangtao Li <frank.li@vivo.com>, chao@kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org, fengnanchang@gmail.com,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	vishal.moola@gmail.com,
+	Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
+	Adam Manzanares <a.manzanares@samsung.com>
+Subject: Re: [PATCH] f2fs: Support enhanced hot/cold data separation for f2fs
+Message-ID: <ZbQk1WqGgwgoMbg3@bombadil.infradead.org>
+References: <Y4ZaBd1r45waieQs@casper.infradead.org>
+ <20221130124804.79845-1-frank.li@vivo.com>
+ <Y4d0UReDb+EmUJOz@casper.infradead.org>
+ <Y5D8wYGpp/95ShTV@bombadil.infradead.org>
+ <ZbLI63UHBErD6_L2@casper.infradead.org>
+ <ZbLKl25vxw0eTzGE@bombadil.infradead.org>
+ <ZbQdkiwEs8o4h807@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240126150209.367ff402@gandalf.local.home> <CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
- <20240126162626.31d90da9@gandalf.local.home>
-In-Reply-To: <20240126162626.31d90da9@gandalf.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 26 Jan 2024 13:31:01 -0800
-X-Gmail-Original-Message-ID: <CAHk-=witahEb8eXvRHGUGDQPj5u0uTBW+W=AwznWRf3=9GhzxQ@mail.gmail.com>
-Message-ID: <CAHk-=witahEb8eXvRHGUGDQPj5u0uTBW+W=AwznWRf3=9GhzxQ@mail.gmail.com>
-Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Christian Brauner <brauner@kernel.org>, 
-	Ajay Kaher <ajay.kaher@broadcom.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZbQdkiwEs8o4h807@casper.infradead.org>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Fri, 26 Jan 2024 at 13:26, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> So we keep the same inode number until something breaks with it, even
-> though, using unique ones is not that complicated?
+On Fri, Jan 26, 2024 at 09:01:06PM +0000, Matthew Wilcox wrote:
+> On Thu, Jan 25, 2024 at 12:54:47PM -0800, Luis Chamberlain wrote:
+> > On Thu, Jan 25, 2024 at 08:47:39PM +0000, Matthew Wilcox wrote:
+> > > On Wed, Dec 07, 2022 at 12:51:13PM -0800, Luis Chamberlain wrote:
+> > > > Me and Pankaj are very interested in helping on this front. And so we'll
+> > > > start to organize and talk every week about this to see what is missing.
+> > > > First order of business however will be testing so we'll have to
+> > > > establish a public baseline to ensure we don't regress. For this we intend
+> > > > on using kdevops so that'll be done first.
+> > > > 
+> > > > If folks have patches they want to test in consideration for folio /
+> > > > iomap enhancements feel free to Cc us :)
+> > > > 
+> > > > After we establish a baseline we can move forward with taking on tasks
+> > > > which will help with this conversion.
+> > > 
+> > > So ... it's been a year.  How is this project coming along?  There
+> > > weren't a lot of commits to f2fs in 2023 that were folio related.
+> > 
+> > The review at LSFMM revealed iomap based filesystems were the priority
+> > and so that has been the priority. Once we tackle that and get XFS
+> > support we can revisit which next fs to help out with. Testing has been
+> > a *huge* part of our endeavor, and naturally getting XFS patches up to
+> > what is required has just taken a bit more time. But you can expect
+> > patches for that within a month or so.
+> 
+> Is anyone working on the iomap conversion for f2fs?
 
-Using unique ones for directories was a trivial cleanup.
+It already has been done for direct IO by Eric as per commit a1e09b03e6f5
+("f2fs: use iomap for direct I/O"), not clear to me if anyone is working
+on buffered-io. Then f2fs_commit_super() seems to be the last buffer-head
+user, and its not clear what the replacement could be yet.
 
-The file case is clearly different. I thought it would be the same
-trivial one-liner, but nope.
+Jaegeuk, Eric, have you guys considered this?
 
-When you have to add 30 lines of code just to get unique inode numbers
-that nobody has shown any interest in, it's 30 lines too much.
-
-And when it happens in a filesystem that has a history of copying code
-from the VFS layer and having nasty bugs, it's *definitely* too much.
-
-Simplify. If you can clean things up and we have a few release of
-not-horrendous-bugs every other day, I may change my mind.
-
-As it is, I feel like I have to waste my time checking all your
-patches, and I'm saying "it's not worth it".
-
-               Linus
+  Luis
 
