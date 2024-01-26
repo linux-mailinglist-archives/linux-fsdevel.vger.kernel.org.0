@@ -1,116 +1,233 @@
-Return-Path: <linux-fsdevel+bounces-9114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A44683E440
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 22:49:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7B3C83E47C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 23:05:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA2771F22F7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 21:49:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD41E1C21ADE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 22:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E797A24B59;
-	Fri, 26 Jan 2024 21:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7592563D;
+	Fri, 26 Jan 2024 22:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ITiiXhmu"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nPpU/QPk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2CB33CF6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 21:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDE42555E;
+	Fri, 26 Jan 2024 22:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.134.136.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706305774; cv=none; b=Nngrp5zIWX995sdEmatBALo28KVlrmqJRS+9tZk1iUGrh+/7V9Rv4ilQMxABgwTcU6Hr8ecT+dl9SfNdNpCz+RT59YPvyh2ZRqTUHYs/k5NzfDp2SXvvK0zkZJxgGICqTevUFKmrDJ5PUd0LnwRsqyuWG/V/In5scEejOv3XehE=
+	t=1706306681; cv=none; b=iJxhkvn0oBCU9qOuvITUXDWtGENL37qj5pLQkmqxLio1Bz0p07FaWe4uQ3KUcq/91SWEGgdrNsDb0JHywtw80PNtT/yHG7AW579erZuosHqFSRgpMADSq0FmDLC1EuxPKTfCJXuwnu3ozcSv3T5yxzaI7NpPpnaMysYsFTUIKzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706305774; c=relaxed/simple;
-	bh=1feBzgxjUm84iiTUiKu7X66LEHmz3gCWzAl4aZvt1MY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cwVcgJ8Olc05qNr9Tng+jtGZYLcCzA041hfgw3iC0pY3Rs/M2iBNKeQ93a/W9EvXFC5PcymWdfIquj+NHyLR5gMIIF5/iH6ZTKew40f4VKnb8IQoz95RxwTL4q+Hqth1SH9YrjngLe8JaFl+UbCoPB5lEernR4o7qMlheNFpvJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ITiiXhmu; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-33ad3ee50e4so1292709f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 13:49:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1706305770; x=1706910570; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9wu3+xA7CIMWU4XKJQMmnJ1lLlzU5w120Zsjy2ckeYo=;
-        b=ITiiXhmudKL1MPHqHwYC1207HInRj/txaj8MxdEN5yhIElN4HKnN3uJ0qy+v0o2vDC
-         MbPRgPt5thoZu9pOGm4LdmSMR1mLCpMIlx1d3OhBpd+RWpv5kyBNJYSLaQqeeszBT5OH
-         YxD60z5BY0bNA/cPPaOgmdXyhThUliqyMkhm0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706305770; x=1706910570;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9wu3+xA7CIMWU4XKJQMmnJ1lLlzU5w120Zsjy2ckeYo=;
-        b=bJS7etxM3d8iVg5V/TZwDdiE9aQgmDb11kLoKYZWRdfJ1WbQgGnaepfz90eI+gocmM
-         xePEXH6vBJGWSiF5Cv6aemP6uS532WbCkGMT6j/s0Ls6UbNFUeGkM6kFJNatjZSct+8q
-         x6NVPyOYSIuBNaPWy4j0ZaZpYL4D0qs4uxXIomCTOieo+Ka9XGOkLyUo7dbaZO2TsT29
-         TJ4z0mwctIspeZg1coUqN6m2p/pBlNIO4Pkjh9u4aNVw0QSBT+8kWiXB+lt9k9IYMCLY
-         6Pgl9jGkK8kj8kkjqYiwKlZHlAeyQqFS1dto/mN8JtIxNCfqTL/ASoxk3IOPIx0fXhcS
-         0V+g==
-X-Gm-Message-State: AOJu0Yy4Zs0P+aItHgcyzfHCGp2NaG/sAkANgRbovotkeYDF9Slh6Tbb
-	ITZCAVJ6oQjNYcr0+3Zfkdth19MR5eERIdeu2PAXQEqnvYukpEff+US5HhMhAPYKf6yp/Kzuf85
-	VYpfGoA==
-X-Google-Smtp-Source: AGHT+IFu1nKZMMweeMwkCaZpxNoUafxDyNIBOyVvWvW5pTvPCMiznYbCPauwTW0PdUXkgvH9bx8f+w==
-X-Received: by 2002:a5d:46d1:0:b0:337:aacb:3934 with SMTP id g17-20020a5d46d1000000b00337aacb3934mr149769wrs.19.1706305770558;
-        Fri, 26 Jan 2024 13:49:30 -0800 (PST)
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com. [209.85.128.49])
-        by smtp.gmail.com with ESMTPSA id hw20-20020a170907a0d400b00a2b1a20e662sm1045886ejc.34.2024.01.26.13.49.29
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jan 2024 13:49:30 -0800 (PST)
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-40e72a567eeso22451885e9.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 13:49:29 -0800 (PST)
-X-Received: by 2002:a05:600c:4a21:b0:40e:9706:9a38 with SMTP id
- c33-20020a05600c4a2100b0040e97069a38mr197355wmp.214.1706305769566; Fri, 26
- Jan 2024 13:49:29 -0800 (PST)
+	s=arc-20240116; t=1706306681; c=relaxed/simple;
+	bh=PgTmG/yzGVqUhuwJ1i6jbTUkm8ADJwrhKbzlIpQ+M9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kaDXUV7rD1hpbzaLvi4LjfxwPOtVdAli57OFvo2BjUa+PQ5WprwWxwWf5nZhnLarewwQueGuAnFgkPBcHW2sCl2SgqY1XQALAaDCJQNSfshv4pPcPTamv6xOe/WEz56HTLbTcpSJ66xYIC78+roU0d0qmzMqgTfNrSrn6YebMe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nPpU/QPk; arc=none smtp.client-ip=134.134.136.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706306679; x=1737842679;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PgTmG/yzGVqUhuwJ1i6jbTUkm8ADJwrhKbzlIpQ+M9M=;
+  b=nPpU/QPkyxw/o5eiMsb3YXl6z8u0ciuOUMG0pQu9t3k5rGKg2A2/+4Er
+   VDdOyjGVRbfJZKSaiGGhSYlDsfRI1IM3THnmKdVLIEpEVeZq6F0vD16lN
+   KY8JxjApB1X5uew6BZc2GJOR1tqyYRZNinkgZHjlFydJrwpBgaYHc8Dgz
+   Fa9zwfp7eSfstOqhvGdRCDWjzBr9z1DIbkzrGGJpzVf/CADNbD+bSRIq/
+   7EGFo+MugUuTDMkCtrUXBaEoHW+wG7QgDXOiDdGiZWTlNfkxUzgrrigUJ
+   rNb+coVcUvxXaVlYjaX8/C3D7gHIRo/+msyFFQs2gXMQxoDj1iBcByIVj
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10964"; a="406317867"
+X-IronPort-AV: E=Sophos;i="6.05,216,1701158400"; 
+   d="scan'208";a="406317867"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2024 14:04:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,216,1701158400"; 
+   d="scan'208";a="2716758"
+Received: from lkp-server01.sh.intel.com (HELO 370188f8dc87) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 26 Jan 2024 14:04:33 -0800
+Received: from kbuild by 370188f8dc87 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rTUJL-0001NK-01;
+	Fri, 26 Jan 2024 22:04:31 +0000
+Date: Sat, 27 Jan 2024 06:03:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Mike Snitzer <snitzer@kernel.org>, dm-devel@lists.linux.dev,
+	Chris Mason <chris.mason@fusionio.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
+	Chao Yu <chao@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Chaitanya Kulkarni <kch@nvidia.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>
+Subject: Re: [PATCH 5/5] block: remove gfp_flags from blkdev_zone_mgmt
+Message-ID: <202401270524.3SWUUYR8-lkp@intel.com>
+References: <20240123-zonefs_nofs-v1-5-cc0b0308ef25@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240126150209.367ff402@gandalf.local.home> <CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
- <20240126162626.31d90da9@gandalf.local.home> <CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
-In-Reply-To: <CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 26 Jan 2024 13:49:13 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
-Message-ID: <CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
-Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Christian Brauner <brauner@kernel.org>, 
-	Ajay Kaher <ajay.kaher@broadcom.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240123-zonefs_nofs-v1-5-cc0b0308ef25@wdc.com>
 
-On Fri, 26 Jan 2024 at 13:36, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> If you have more than 4 billion inodes, something is really really wrong.
+Hi Johannes,
 
-Btw, once again, the vfs layer function you took this from *does* have
-some reason to worry. Somebody might be doing 'pipe()' in a loop.
+kernel test robot noticed the following build errors:
 
-Also, if your worry is "what if somebody mounts that thing a million
-times", the solution to *that* would have been to make it a per-sb
-counter, which I think would be cleaner anyway.
+[auto build test ERROR on 7ed2632ec7d72e926b9e8bcc9ad1bb0cd37274bf]
 
-But my real issue is that I think you would be *much* better off just
-deleting code, instead of adding new code.
+url:    https://github.com/intel-lab-lkp/linux/commits/Johannes-Thumshirn/zonefs-pass-GFP_KERNEL-to-blkdev_zone_mgmt-call/20240123-174911
+base:   7ed2632ec7d72e926b9e8bcc9ad1bb0cd37274bf
+patch link:    https://lore.kernel.org/r/20240123-zonefs_nofs-v1-5-cc0b0308ef25%40wdc.com
+patch subject: [PATCH 5/5] block: remove gfp_flags from blkdev_zone_mgmt
+config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20240127/202401270524.3SWUUYR8-lkp@intel.com/config)
+compiler: clang version 18.0.0git (https://github.com/llvm/llvm-project a31a60074717fc40887cfe132b77eec93bedd307)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240127/202401270524.3SWUUYR8-lkp@intel.com/reproduce)
 
-For example, what purpose does 'e->dentry' and 'ei->d_childen[]' have?
-Isn't that entirely a left-over from the bad old days?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202401270524.3SWUUYR8-lkp@intel.com/
 
-So please try to look at things to *fix* and simplify, not at things
-to mess around with and make more complicated.
+All errors (new ones prefixed by >>):
 
-              Linus
+   In file included from drivers/md/dm-zoned-metadata.c:8:
+   In file included from drivers/md/dm-zoned.h:12:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     547 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/md/dm-zoned-metadata.c:8:
+   In file included from drivers/md/dm-zoned.h:12:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/md/dm-zoned-metadata.c:8:
+   In file included from drivers/md/dm-zoned.h:12:
+   In file included from include/linux/blkdev.h:9:
+   In file included from include/linux/blk_types.h:10:
+   In file included from include/linux/bvec.h:10:
+   In file included from include/linux/highmem.h:12:
+   In file included from include/linux/hardirq.h:11:
+   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
+   In file included from include/asm-generic/hardirq.h:17:
+   In file included from include/linux/irq.h:20:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     584 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> drivers/md/dm-zoned-metadata.c:1661:34: error: too many arguments to function call, expected 4, have 5
+    1659 |                 ret = blkdev_zone_mgmt(dev->bdev, REQ_OP_ZONE_RESET,
+         |                       ~~~~~~~~~~~~~~~~
+    1660 |                                        dmz_start_sect(zmd, zone),
+    1661 |                                        zmd->zone_nr_sectors, GFP_KERNEL);
+         |                                                              ^~~~~~~~~~
+   include/linux/gfp_types.h:327:20: note: expanded from macro 'GFP_KERNEL'
+     327 | #define GFP_KERNEL      (__GFP_RECLAIM | __GFP_IO | __GFP_FS)
+         |                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/blkdev.h:327:5: note: 'blkdev_zone_mgmt' declared here
+     327 | int blkdev_zone_mgmt(struct block_device *bdev, enum req_op op,
+         |     ^                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     328 |                 sector_t sectors, sector_t nr_sectors);
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   6 warnings and 1 error generated.
+
+
+vim +1661 drivers/md/dm-zoned-metadata.c
+
+3b1a94c88b798d Damien Le Moal     2017-06-07  1639  
+3b1a94c88b798d Damien Le Moal     2017-06-07  1640  /*
+3b1a94c88b798d Damien Le Moal     2017-06-07  1641   * Reset a zone write pointer.
+3b1a94c88b798d Damien Le Moal     2017-06-07  1642   */
+3b1a94c88b798d Damien Le Moal     2017-06-07  1643  static int dmz_reset_zone(struct dmz_metadata *zmd, struct dm_zone *zone)
+3b1a94c88b798d Damien Le Moal     2017-06-07  1644  {
+3b1a94c88b798d Damien Le Moal     2017-06-07  1645  	int ret;
+3b1a94c88b798d Damien Le Moal     2017-06-07  1646  
+3b1a94c88b798d Damien Le Moal     2017-06-07  1647  	/*
+3b1a94c88b798d Damien Le Moal     2017-06-07  1648  	 * Ignore offline zones, read only zones,
+3b1a94c88b798d Damien Le Moal     2017-06-07  1649  	 * and conventional zones.
+3b1a94c88b798d Damien Le Moal     2017-06-07  1650  	 */
+3b1a94c88b798d Damien Le Moal     2017-06-07  1651  	if (dmz_is_offline(zone) ||
+3b1a94c88b798d Damien Le Moal     2017-06-07  1652  	    dmz_is_readonly(zone) ||
+3b1a94c88b798d Damien Le Moal     2017-06-07  1653  	    dmz_is_rnd(zone))
+3b1a94c88b798d Damien Le Moal     2017-06-07  1654  		return 0;
+3b1a94c88b798d Damien Le Moal     2017-06-07  1655  
+3b1a94c88b798d Damien Le Moal     2017-06-07  1656  	if (!dmz_is_empty(zone) || dmz_seq_write_err(zone)) {
+8f22272af7a727 Hannes Reinecke    2020-06-02  1657  		struct dmz_dev *dev = zone->dev;
+3b1a94c88b798d Damien Le Moal     2017-06-07  1658  
+6c1b1da58f8c7a Ajay Joshi         2019-10-27  1659  		ret = blkdev_zone_mgmt(dev->bdev, REQ_OP_ZONE_RESET,
+3b1a94c88b798d Damien Le Moal     2017-06-07  1660  				       dmz_start_sect(zmd, zone),
+c4d4977392621f Johannes Thumshirn 2024-01-23 @1661  				       zmd->zone_nr_sectors, GFP_KERNEL);
+3b1a94c88b798d Damien Le Moal     2017-06-07  1662  		if (ret) {
+3b1a94c88b798d Damien Le Moal     2017-06-07  1663  			dmz_dev_err(dev, "Reset zone %u failed %d",
+b71228739851a9 Hannes Reinecke    2020-05-11  1664  				    zone->id, ret);
+3b1a94c88b798d Damien Le Moal     2017-06-07  1665  			return ret;
+3b1a94c88b798d Damien Le Moal     2017-06-07  1666  		}
+3b1a94c88b798d Damien Le Moal     2017-06-07  1667  	}
+3b1a94c88b798d Damien Le Moal     2017-06-07  1668  
+3b1a94c88b798d Damien Le Moal     2017-06-07  1669  	/* Clear write error bit and rewind write pointer position */
+3b1a94c88b798d Damien Le Moal     2017-06-07  1670  	clear_bit(DMZ_SEQ_WRITE_ERR, &zone->flags);
+3b1a94c88b798d Damien Le Moal     2017-06-07  1671  	zone->wp_block = 0;
+3b1a94c88b798d Damien Le Moal     2017-06-07  1672  
+3b1a94c88b798d Damien Le Moal     2017-06-07  1673  	return 0;
+3b1a94c88b798d Damien Le Moal     2017-06-07  1674  }
+3b1a94c88b798d Damien Le Moal     2017-06-07  1675  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
