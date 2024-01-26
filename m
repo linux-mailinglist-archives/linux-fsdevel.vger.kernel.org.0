@@ -1,52 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-9084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6CDA83E0FA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 19:02:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0F683E0FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 19:02:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79E45B2368B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 18:02:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6A971F23595
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 18:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A09A208A7;
-	Fri, 26 Jan 2024 18:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02374208CA;
+	Fri, 26 Jan 2024 18:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sg3c8A8F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jw0kgYg0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D8D208A3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 18:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F28F208B8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 18:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706292152; cv=none; b=d5HUtoaoZgd9GO/932AqG7BTj8T+TmoODGj/BFLNgnY0OkbybIMMv8KcbBHfmYMyhXDHfKmogopFU7voV8E5dBSP3DcupRuVdR3dGJiXpXrFbuo1fZ9oKreJ06jhaAuCQ0USzlnkXPC79c5/i8Y2H8E60TgNUJiO3Squ/xD813s=
+	t=1706292152; cv=none; b=mWiicJWRXHlzM8FJDCiWKMpTOVWhFj4VhoOfvYGIxfb/VVv6LDkKEzQukE7Cl++l4lDv+2ObFxVEAAXMnWx3lI76R2p+TiiU3wgS4lEOng693TfaY9cSmpJCpY5n/RTDwwUXuVjKVLgXgO2PcQ7E3l9pAy/scZegLSSsPD0hdCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706292152; c=relaxed/simple;
-	bh=L4kjAwDFloOrFNoO4njZxnlpCR9dsD+UHy8+QOdKPsE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Luwcx5m5n1r62USaVwUFPqlGDQEjUb0BBKn+xQzNkb4MKfXX8S26IoxpSt/JPXKNUkDioPvlSnZqaH9cdBv0zzpPdRWW1kenhsMWzbEc6zSeZjBUzPZl6HpITP75cqbB/JlHGcvtty179dpHMyokthbLbGESABsk3ryluW8U9qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sg3c8A8F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B529EC433F1;
-	Fri, 26 Jan 2024 18:02:29 +0000 (UTC)
+	bh=rGQAlVw7L+CcLVlduxZoey+YDk6+fyOq3ImOif5SK0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dFi47LuErg790j4xTbhyu+seHoS8P7IEPJJHOy6fVjHAhHfoTC2fyRVy0CLpz3R9q4ODrhPWvKHCuXm4uBUbAQyNxzoaIMAzGwT33XiFpOnuNn0siONXlxyUHq0gaAiN/Gbtr45MQylSUpsemN1WjcjGtbGxVh8M4fUu2O7+gbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jw0kgYg0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 081AAC433C7;
+	Fri, 26 Jan 2024 18:02:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706292150;
-	bh=L4kjAwDFloOrFNoO4njZxnlpCR9dsD+UHy8+QOdKPsE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=sg3c8A8FvxgI6BnLEMzR5So1dnHFRR5em6Indi7OLwzNTy19vhXdxCMu5RGwW7yd3
-	 4dnxIVel0k2FM1a+iucI8zMFfIHM4fK/TVRTWg0Gp+xJC3vLeWuBM3V3t/LkNODM0i
-	 sClS50PDV00PA4D8Ni3WxN7UsRlxvdmWh1zUBoq9oOhm8bEdwK9B9w6Tg/a5WXiaEy
-	 9eUEbpDQ7FlMxMqCvwCNf/oeDvNmfUAYzJjhg8/HXITGDMWjDjUppRY8/rOyiJFeAQ
-	 zleyaVBNm2Ptf9q/G0BkbC/TiRgLhZPCspSQnR/DJ0Ukffrj5N/V0sbYl/fSH7wu3A
-	 PAgLl9wVhTrdQ==
+	s=k20201202; t=1706292151;
+	bh=rGQAlVw7L+CcLVlduxZoey+YDk6+fyOq3ImOif5SK0s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Jw0kgYg0DUpZQvb8bQUNKSaZ83Pkwtsrb51yNW52DUUSlclwY9qobK/YYyBmIrjJO
+	 ZKHG1xbWveZOU4NUS+id/OvOROBB4sjVLCN+KWbo7+4Un/ZSP1nLZG9ji6fE2huvtl
+	 Q8MaVVkYwR/pbl/UEyEROn6gDz88LlMoBkiCZgk2M/E1luOz2V2GKefRZ6I49CQniX
+	 hjXFs2tyljqBddZzD4U/iBFgLhhqpGSIyrF7zHqLr0RJRV85MO32TR770mRbESgwBO
+	 gmT8GCzUJQNPfG9tV38ZfbqlxHY5B4cIjSZpyq5L58098cbdrTUi9F7arBfZvNEvjt
+	 Lxb7kwKJf4V5A==
 From: cem@kernel.org
 To: jack@suse.cz
 Cc: linux-fsdevel@vger.kernel.org
-Subject: [PATCH RESEND 0/3] Add support for tmpfs quotas 
-Date: Fri, 26 Jan 2024 19:02:08 +0100
-Message-ID: <20240126180225.1210841-1-cem@kernel.org>
+Subject: [PATCH 1/3] Rename searched_dir->sd_dir to sd_isdir
+Date: Fri, 26 Jan 2024 19:02:09 +0100
+Message-ID: <20240126180225.1210841-2-cem@kernel.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240126180225.1210841-1-cem@kernel.org>
+References: <20240126180225.1210841-1-cem@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,41 +60,48 @@ Content-Transfer-Encoding: 8bit
 
 From: Carlos Maiolino <cem@kernel.org>
 
-Sending again with Jan's correct email address.
+The field holds information if we are searching a directory mountpoint or a
+device, rename the field to something more meaningful.
 
-This series add suport for quota management on tmpfs filesystems. Support for
-quotas in tmpfs has been added to Linux 6.6, so, give enable users to manage it.
+We could switch it to bool, but it seems pointless to include a whole header
+just for it, so keep the int type.
 
-This series add 2 new helpers, one named do_quotactl(), which switches between
-quotactl() and quotactl_fd(), and the quotactl_handle() helper within quotaio,
-which passes quota_handle data to do_quotactl() depending on the filesystem
-associated with the mountpoint.
+Signed-off-by: Carlos Maiolino <cmaiolino@redhat.com>
+---
+ quotasys.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-The first patch is just a cleanup.
-
-Carlos Maiolino (3):
-  Rename searched_dir->sd_dir to sd_isdir
-  Add quotactl_fd() support
-  Enable support for tmpfs quotas
-
- Makefile.am       |  1 +
- mntopt.h          |  1 +
- quotacheck.c      | 12 +++----
- quotaio.c         | 19 +++++++++--
- quotaio.h         |  2 ++
- quotaio_generic.c | 11 +++----
- quotaio_meta.c    |  3 +-
- quotaio_v1.c      | 11 +++----
- quotaio_v2.c      | 11 +++----
- quotaio_xfs.c     | 21 ++++++------
- quotaon.c         |  8 ++---
- quotaon_xfs.c     |  9 +++---
- quotastats.c      |  4 +--
- quotasync.c       |  2 +-
- quotasys.c        | 82 ++++++++++++++++++++++++++++++++++++-----------
- quotasys.h        |  3 ++
- 16 files changed, 134 insertions(+), 66 deletions(-)
-
+diff --git a/quotasys.c b/quotasys.c
+index 3f50e32..9af9932 100644
+--- a/quotasys.c
++++ b/quotasys.c
+@@ -1223,7 +1223,7 @@ int kern_quota_on(struct mount_entry *mnt, int type, int fmt)
+  */
+ 
+ struct searched_dir {
+-	int sd_dir;		/* Is searched dir mountpoint or in fact device? */
++	int sd_isdir;		/* Is searched dir mountpoint or in fact device? */
+ 	dev_t sd_dev;		/* Device mountpoint lies on */
+ 	ino_t sd_ino;		/* Inode number of mountpoint */
+ 	const char *sd_name;	/* Name of given dir/device */
+@@ -1454,7 +1454,7 @@ static int process_dirs(int dcnt, char **dirs, int flags)
+ 					errstr(_("Cannot stat() given mountpoint %s: %s\nSkipping...\n"), dirs[i], strerror(errno));
+ 					continue;
+ 				}
+-			check_dirs[check_dirs_cnt].sd_dir = S_ISDIR(st.st_mode);
++			check_dirs[check_dirs_cnt].sd_isdir = S_ISDIR(st.st_mode);
+ 			if (S_ISDIR(st.st_mode)) {
+ 				const char *realmnt = dirs[i];
+ 
+@@ -1538,7 +1538,7 @@ restart:
+ 		return 0;
+ 	sd = check_dirs + act_checked;
+ 	for (i = 0; i < mnt_entries_cnt; i++) {
+-		if (sd->sd_dir) {
++		if (sd->sd_isdir) {
+ 			if (sd->sd_dev == mnt_entries[i].me_dev && sd->sd_ino == mnt_entries[i].me_ino)
+ 				break;
+ 		}
 -- 
 2.43.0
 
