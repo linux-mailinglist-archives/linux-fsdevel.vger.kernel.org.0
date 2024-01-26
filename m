@@ -1,153 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-9058-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9059-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F5583D9FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 13:13:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D32983DA80
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 14:05:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B33011C21F99
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 12:13:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CBF11C2033F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 13:04:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CC118B1B;
-	Fri, 26 Jan 2024 12:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EB31B805;
+	Fri, 26 Jan 2024 13:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VMAaWh4n"
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="j/67QaIG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BDB17732
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 12:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A96D1B599;
+	Fri, 26 Jan 2024 13:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706271213; cv=none; b=ReHFYBfqy+udkN4T/hhLGthM7qOKSNfryuiy5+NDqPVdCQAvuBHXUUMwm3gVzNi4PECJQN8SqAi96286PwMn5u3c5rygVS7L5DyEpyT04oeKReAp9N+VrXgOJwP5Aq6urDZ2EHURi96UJ8cw+yEZuuepQSOxvzCa2qPld6Lo6ok=
+	t=1706274292; cv=none; b=psccPu/0FrfVhwgKcR+Ov6oXAiu5f9pINLdKJIiqqnOgDYbXVyv81OPNlo1YzBLKfx3/tK+n6pNEEiTRxK0CztS/eQtPGD4RETcXpHQm7pnKo/e7ahank34ywSjoJviA5mlDJq8LGKy5pk4hUYJciWcB00Z+ENy4yi4dBsyEw7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706271213; c=relaxed/simple;
-	bh=1tZf8ImCPaVIMpFDDiuONG3Sax5fy69KNOh0G3ShinE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V/7X1CpQbVJNotx09G/C2xA/vsm5okRNqCUmjF9bDqgKPMhN3GXmgPJLXwj2Yp3n6n9Pfln2wAROOxjGEGoval/7rG15CdKOTkVBfpxUurIUmFK1z3D3mYphchGOgemoLO16ZUhLbt2nmuJICA5VbNynEksQfqoKI/jOLzDuiXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VMAaWh4n; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-59927972125so172767eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 04:13:31 -0800 (PST)
+	s=arc-20240116; t=1706274292; c=relaxed/simple;
+	bh=gCq4g1b3O8Oeg4N8ujXRTfw/tL+4gbF4FTm8029MUrM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kBhtQlsJnzDEZ8oQE0WjvOyBsw3cttjh1jMs1WJYOx3dBAgtt17vsggQq7gFwcNRow9HBPYpUIx5h1gEEA+jc0taagfA3FKjHJIuhEu8CPEA2gtKyGEerXAnlD84GRyZN1gHYvxqP57tRfD9y1Lx4ghrtfbzkFbTfoWZCpug6vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=j/67QaIG; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id C7CAC1DA1;
+	Fri, 26 Jan 2024 12:50:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706271211; x=1706876011; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1tZf8ImCPaVIMpFDDiuONG3Sax5fy69KNOh0G3ShinE=;
-        b=VMAaWh4nAaNY9P5jlzoW01t78iSaXu3FMUzgWl4aMwMvgSfmSDezZXDDsCH2ODIngA
-         +jfzOkYiKGb+JJNlcaNS4T0vRt6WAHw1lBRnGJ7KQlojY6uzEjDX7JCuHQ6VShgQ4eZL
-         Fibzlfj4bcSVXmI8OZ7aCkD3pSOFsVPW9cjw4ho/IkkodHuz82/lcyJKwaEUXrMR0EKI
-         TXvR7vpM0d5Cx+5UuTQdEN2HFJjzEtcTJHIWVsPzTGBXgohD1j067sJQXnGl7ewq5B7U
-         8j+HSWy3xj2Jx8hD7oN5ZvdsznpT0idQNbjmGKiYrMC10NdlGl2G0RGJGqx7n9scNYbr
-         XLAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706271211; x=1706876011;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1tZf8ImCPaVIMpFDDiuONG3Sax5fy69KNOh0G3ShinE=;
-        b=Ya4sLsCHIo+8uqMPoYtVO8h4IDjPEj/5mCAov/aGXM6FmZa/BbuCiI+KmrGInrn6J9
-         CBBvomzY14m/kMbwTptx0m4TcHRgy3p5gvE2kA9wtsKU2Eo28+xyINBREURQNQMuJxoi
-         Y8WlnJ1asUQ9WsCvfIsfvnVUHu9Fw+CgCxvigbrrIx3EE+SKeL4TRS/BoHO0SlPpTs0Y
-         lfKuYmnpeZgr0DVsS2mDkhdEYhtHpI29/JUotyuvKk2M9eOtJsQJ1MfBzEi3fOkH4eNP
-         NJf3oDh5tKb9Eoos18LvzQjAvT2L8Cb/dMhGCSdza6RlE0vodemwyMOB9Cxbc7Q2qsSR
-         ux5w==
-X-Gm-Message-State: AOJu0YwwFL8xFRtj6lVvN2pr9zaDtGUO6mOPOJZmv1qiBTPSIrgyGkNG
-	dQuNWkQF/RicMgD8LH3N1e6e4JXbAPHZAyeM2cApZr2WK8rEMTnQEfYam3NPszxtD966xyscxAq
-	pe6tsl6hm9Dp27H0Z2Jbx0y+NdSQ=
-X-Google-Smtp-Source: AGHT+IFURqMNxhamp9kylKVlxp7fjKKlYfBIDHhy30vH0PLUQQZjcGesrhIpfguK/unTHki0KQ+AgdGzb/Vm4t4uVek=
-X-Received: by 2002:a05:6358:d04:b0:176:9957:c33e with SMTP id
- v4-20020a0563580d0400b001769957c33emr1334534rwj.39.1706271211021; Fri, 26 Jan
- 2024 04:13:31 -0800 (PST)
+	d=paragon-software.com; s=mail; t=1706273447;
+	bh=9EfuMGzeWNG4VV/qzBMKHVckt4mYsHngjUttdA846ZA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=j/67QaIGKRoxhLEOdLCQfd7Q7ZvtuN+BJhpzpy7NVZFbr27ajjfS2OIviyErZWDEU
+	 G+99jEC7OP9wVCjSO9Q4SbjRXkDayos1TOgk4DZjwvHe8UrKQ5fKFkrD2NvOnG990Y
+	 cm/c0w8vIflwmAiosbQIhfTXfpkTYOFqRgg0NvqA=
+Received: from [192.168.211.144] (192.168.211.144) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Fri, 26 Jan 2024 15:57:36 +0300
+Message-ID: <97660d80-fbea-4eb8-83af-78f59a6302c7@paragon-software.com>
+Date: Fri, 26 Jan 2024 15:57:35 +0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231016160902.2316986-1-amir73il@gmail.com> <CAOQ4uxh=cLySge6htd+DnJrqAKF=C_oJYfVrbpvQGik0wR-+iw@mail.gmail.com>
- <CAJfpegtZGC93-ydnFEt1Gzk+Yy5peJ-osuZD8GRYV4c+WPu0EQ@mail.gmail.com>
- <CAOQ4uxjYLta7_fJc90C4=tPUxTw-WR2v9du8JHTVdsy_iZnFmA@mail.gmail.com>
- <CAJfpegufvtaBaK8p+Q3v=9Qoeob3WamWBye=1BwGniRsvO5HZg@mail.gmail.com>
- <CAOQ4uxj+myANTk2C+_tk_YNLe748i2xA0HMZ7FKCuw7W5RUCuA@mail.gmail.com>
- <CAJfpegs1v=JKaEREORbTsvyTe02_DgkFhNSEJKR6xpjUW1NBDg@mail.gmail.com>
- <CAOQ4uxiBu8bZ4URhwKuMeHB_Oykz2LHY8mXA1eB3FBoeM_Vs6w@mail.gmail.com>
- <CAJfpegtr1yOYKOW0GLkow_iALMc_A0+CUaErZasQunAfJ7NFzw@mail.gmail.com>
- <CAOQ4uxjbj4fQr9=wxRR8a5vNp-vo+_JjK6uHizZPyNFiN1jh4w@mail.gmail.com>
- <CAJfpegtWdGVm9iHgVyXfY2mnR98XJ=6HtpaA+W83vvQea5PycQ@mail.gmail.com>
- <CAOQ4uxja2G2M22bWSi_kDE2vdxs+sJ0ua9JgD-e7LEGsTcNGXw@mail.gmail.com>
- <CAJfpegt3mEii075roOTk6RKeNKGc89pGMkWrvVM0uLyrpg7Ebg@mail.gmail.com>
- <CAOQ4uxipyZOSMcko+V+ZxGZwAgKVwWTUeoH79zqtMqbcKSnOoA@mail.gmail.com>
- <CAJfpegs5m-7QapX86CEiyy5oDzJQox6QsWjcLeegMV9OMbkBrg@mail.gmail.com>
- <CAOQ4uxjc6B2kXvbnbYPNCr8+ysFCoH24s+3fFa_Xkapyb9ueKA@mail.gmail.com> <CAJfpegsoHtp_VthZRGfcoBREZ0pveb4wYYiKVEnCxaTgGEaeWw@mail.gmail.com>
-In-Reply-To: <CAJfpegsoHtp_VthZRGfcoBREZ0pveb4wYYiKVEnCxaTgGEaeWw@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 26 Jan 2024 14:13:15 +0200
-Message-ID: <CAOQ4uxhwWPwBtfG7KH8w4bAJ_vZ_xMB-Gz3=D94sdz=3jynYfA@mail.gmail.com>
-Subject: Re: [PATCH v14 00/12] FUSE passthrough for file io
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Daniel Rosenberg <drosen@google.com>, 
-	Paul Lawrence <paullawrence@google.com>, Alessio Balsini <balsini@android.com>, 
-	Christian Brauner <brauner@kernel.org>, fuse-devel@lists.sourceforge.net, 
-	linux-fsdevel@vger.kernel.org, Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [regressions] ntfs3: empty file on update without forced cache
+ drop
+Content-Language: en-US
+To: Linux regressions mailing list <regressions@lists.linux.dev>, Alexander
+ Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+CC: <ntfs3@lists.linux.dev>, Kari Argillander
+	<kari.argillander@stargateuniverse.net>, Linux-fsdevel
+	<linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Anton
+ Altaparmakov <anton@tuxera.com>, Linus Torvalds
+	<torvalds@linux-foundation.org>
+References: <138ed123-0f84-4d7a-8a17-67fe2418cf29@leemhuis.info>
+ <24aa7a8b-40ed-449b-a722-df4abf65f114@leemhuis.info>
+ <d5f4c2d7-0a98-4ff8-9848-a34133199450@leemhuis.info>
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+In-Reply-To: <d5f4c2d7-0a98-4ff8-9848-a34133199450@leemhuis.info>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-On Thu, Nov 2, 2023 at 3:13=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> w=
-rote:
+On 21.01.2024 12:14, Thorsten Leemhuis wrote:
+> On 05.12.23 13:49, Linux regression tracking (Thorsten Leemhuis) wrote:
+>> [adding a bunch of people and two lists to the recipients, as Konstantin
+>> apparently hasn't sent any mail to any lists archived on lore for ~six
+>> weeks; maybe someone knows what's up or is willing to help out]
+> [CCing Linus now as well]
 >
-> On Thu, 2 Nov 2023 at 14:08, Amir Goldstein <amir73il@gmail.com> wrote:
+> JFYI for the VFS maintainers and everyone else who might care:
 >
-> > Just to be clear, at the last close for an inode, we would check
-> > if attribute cache needs to be invalidate and the inode will return
-> > to "neutral" mode, when server could legally switch between
-> > caching and passthrough mode.
+> Konstantin afaics still did not look into below regression. Neither did
+> anyone else afaics.
 >
-> Exactly.
-
-FYI, this is now implemented in the fuse-backing-fd branch OTM [1],
-including auto-invalidate of attributes in fuse_getattr() when there is
-a backing inode.
-
-With this in place, the few fstests that were reported to fail in the v14
-cover letter (top of this thread) are now passing.
-
-One detail worth noting is that I found it too complicated to support
-writeback cache (for the non-passthrough inodes) along with fuse
-passthrough support on the same filesystem, so for now, this
-combination is not allowed.
-
+> But Konstantin is still around, as he recently showed up to post a patch
+> for review:
+> https://lore.kernel.org/all/667a5bc4-8cb5-47ce-a7f1-749479b25bec@paragon-software.com/
 >
-> > EIO works for me.
-> > Just as simple.
-> > Will try to get this ready for early 6.8 cycle.
+> I replied to it in the hope of catch his attention and make him look at
+> this regression, but that did not work out.
 >
+> So it seems we sadly are kinda stuck here. :-/
+>
+> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
+>
+>> On 27.11.23 07:18, Thorsten Leemhuis wrote:
+>>> Hi, Thorsten here, the Linux kernel's regression tracker.
+>>>
+>>> Konstantin, I noticed a regression report in bugzilla.kernel.org.
+>>> Apparently it's cause by a change of yours.
+>>>
+>>> As many (most?) kernel developers don't keep an eye on bugzilla, I
+>>> decided to forward it by mail. Note, you have to use bugzilla to reach
+>>> the reporter, as I sadly[1] can not CCed them in mails like this.
+>>>
+>>> Quoting from https://bugzilla.kernel.org/show_bug.cgi?id=218180 :
+>> Konstantin, are you still around? Would be great if you could look into
+>> this regression, as this sounds somewhat worrying.
+>>
+>>>> The problem I am facing is the following:
+>>>> 1. I mount an NTFS partition via NTFS3
+>>>> 2. I create a file
+>>>> 3. I write to the file
+>>>> 4. The file is empty
+>>>> 5. I remount the partition
+>>>> 6. The file has the changes I made before the remount
+>>>>
+>>>> I can avoid the remount by doing:
+>>>> sudo sysctl vm.drop_caches=3
+>>> See the ticket for more details. It according to the report happens
+>>> still happens with 6.7-rc2, but not with 6.1.y. The reporter bisected
+>>> the problem to ad26a9c84510af ("fs/ntfs3: Fixing wrong logic in
+>>> attr_set_size and ntfs_fallocate") [v6.2-rc1].
+>>>
+>>> Side note: while briefly checking lore for existing problems caused by
+>>> that change I noticed two syzbot reports about it that apparently nobody
+>>> looked into:
+>>>
+>>> https://lore.kernel.org/all/000000000000bdf37505f1a7fc09@google.com/
+>>> https://lore.kernel.org/all/00000000000062174006016bc386@google.com/
+>>> [...]
+> --
+> Everything you wanna know about Linux kernel regression tracking:
+> https://linux-regtracking.leemhuis.info/about/#tldr
+> If I did something stupid, please tell me, as explained on that page.
+>
+> #regzbot poke
+Hello Thorsten,
 
-My patches are based on top of the fuse IO mode patches [2] that
-were a joined effort with Bernd.
+I apologize for the horrible delay in responding to the bug. I was able 
+to reproduce it in a scenario involving a compressed file. The patch 
+will be ready within the next few days (the response in Bugzilla will 
+also follow).
 
-I will wait for Bernd to post his patches before I post the FUSE
-passthrough patches.
-
-There are a few questionable behaviors w.r.t mixing parallel dio
-with fuse passthrough, but I won't get into them now.
-We can discuss them after the patches are posted.
-
-I will mention that I took a design choice that server can
-(and is encouraged to) use FOPEN_DIRECT_IO together with
-FUSE_PASSTHROUGH and a backing file id to request that read/write
-will go directly to server, but mmap will have a backing inode to map to,
-so that it won't need to use page cache and deny future passthrough open
-of the same inode.
-
-Thanks,
-Amir.
-
-[1] https://github.com/amir73il/linux/commits/fuse-backing-fd-260124/
-[2] https://github.com/amir73il/linux/commits/fuse_io_mode
+Best regards,
+Konstantin
 
