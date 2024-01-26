@@ -1,100 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-9094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AD3E83E196
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 19:32:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6B383E1D6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 19:44:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082042827C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 18:32:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BD841C22F3C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 18:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A73B200D9;
-	Fri, 26 Jan 2024 18:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cz9CQuHo"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2F222EF4;
+	Fri, 26 Jan 2024 18:41:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4BE1B954
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 18:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD99D20DD3;
+	Fri, 26 Jan 2024 18:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706293932; cv=none; b=DeYcerOjgUZRlREMdWsCUCNyuAQoyZp0/5ZCuYqYD3Nvn7uPW/QUYMo1QblrtteT5B50g/qOeKR+/J2328rR2uz7PckigYqvdi6kkMva40YzkWKCmIXbELJScD3vetDqOZSok3xVbLGZRLqs3SGPlXyXvvr84Tv+Kt4GPgZIjLM=
+	t=1706294500; cv=none; b=AsF3XJ6LLBiR+4sxyWwcstmvKbSM6BbmhYAbAOnvvJGZCnz87hi6meZBZ3H2eqwROSQl/GT37Q4O6OenStnhSa/+IiXQyO+u4NzxcwlOpbZhBZopahgHynQCwKdkn2iX512QbyJ75R7pA4GLS+kklcG0wpDVOm3rvMlw6r8jEG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706293932; c=relaxed/simple;
-	bh=npphpisri3XPKAbtB0a0IVCBAoWiXMc97DCOBdOZfzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FD7vD/qbjAg6ja/p7gTeuJaxMwGdAoqE2V5rN2LXkBjwzZWi9KhZdcTOgGkhft8bREp4D8KLVKiTaCbS5ogCZz9KdqW1b3dlziwT6RT5dFYBUAciAecKDObLZQSNGyxtqM5ebmBbk3iTjYS8Xe2LphCf3thkCITaZHcf5Xpos2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cz9CQuHo; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6db0fdd2b8fso409290b3a.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 10:32:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1706293930; x=1706898730; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JdX+qj0yNqnHj9tuX5qSNRIW39sn49NKdS7uftFX8bg=;
-        b=cz9CQuHoGDLBfAcMdTVQ6H43lb6pl4SQDF6X1RPSneXa8WSmIsEKHyGZsDAiXgDkRM
-         Mgr3l7nGjLYGyyoLa2fKQEdBD1r3gSGTvE9ohbfL3nfuI468riT+6WFFPXLBouz76oa0
-         pgTxxMvMsUeWgUukUu09M6u4PWsVra6pcoxqA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706293930; x=1706898730;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JdX+qj0yNqnHj9tuX5qSNRIW39sn49NKdS7uftFX8bg=;
-        b=fx+tW5QpHVzmqOUE4ZIIlStvN/ZmuyS5zVrEEJ+0n+i6jtOjvpfzYozRp4CAg8RW1i
-         RfqqPR4lb/gyYlqnee9kxvcDLAYRQwawcmEgQqRkti8XOwFzo+BK7IZwx8zB6lzSNmst
-         H/SLj4OD7qYZC8JoeAF71FCDMtiFJdMPse8g3jLVSPqLzrCteehTZdJa6ovZd+WMUmg1
-         eOrVF17ffeoZLwmQQA93Y5DEAdIFr2XhH+YF0yh/zWubbO6+812yOeqp+iMSTZrUcuKD
-         5JjoWb4HdJYan9EpY62tp5pIB+S8xhN+8YljVzqeFlHOJGwbdzyGx2weC6GavoDBFfZu
-         aJtQ==
-X-Gm-Message-State: AOJu0Yy7cYMLaF6MY6ANW4kUlg6Bf5hRbIk4eo98Ma17Qb65P8tyLbUd
-	wF743RUFrp+w+7oW1OxXtcSQycx8wox9eBUsYe+AFZifdl32qPghOyx0QpCbFg==
-X-Google-Smtp-Source: AGHT+IHMQ8+WfnqXmO8t95sK/Rlm2mUekflUv4KpnP6ah1WQJ/+BLzZNOFgmY70/He3L42StAR2hFg==
-X-Received: by 2002:a05:6a00:1d1e:b0:6d9:e97d:c68a with SMTP id a30-20020a056a001d1e00b006d9e97dc68amr307550pfx.23.1706293930539;
-        Fri, 26 Jan 2024 10:32:10 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id r19-20020aa78453000000b006ddc1ae04eesm1392548pfn.192.2024.01.26.10.32.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 26 Jan 2024 10:32:10 -0800 (PST)
-Date: Fri, 26 Jan 2024 10:32:09 -0800
-From: Kees Cook <keescook@chromium.org>
-To: j.granados@samsung.com
-Cc: Luis Chamberlain <mcgrof@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Update sysctl tree location
-Message-ID: <202401261032.F8C0375E2@keescook>
-References: <20240126-for-6-8-v1-1-9695cdd9f8ef@samsung.com>
+	s=arc-20240116; t=1706294500; c=relaxed/simple;
+	bh=kEQjJsA8wpw6FHNf9vQGPieJQVwYxiG/mQO5T+LdSDs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FJzH1ic6GMmbBknj0p81UKfEbkrgAkX1YOLqAop25Ua4aXehfk0dGTsmS/RVTT032Dzt0q6HNNpAOvDlyTV+SKMUPGG3iq1OIqlEe/pgZ2IuywvzlKyH4EiiSG3ZCPSZ1YfMCKAUDv+s8pPrRa8t4Cml1ZQAo5xpJyWALdwITew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8E80C433C7;
+	Fri, 26 Jan 2024 18:41:38 +0000 (UTC)
+Date: Fri, 26 Jan 2024 13:41:41 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Christian Brauner <brauner@kernel.org>, Ajay Kaher
+ <ajay.kaher@broadcom.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] eventfs: Give files a default of PAGE_SIZE size
+Message-ID: <20240126134141.65139b5e@gandalf.local.home>
+In-Reply-To: <CAHk-=whA8562VjU3MVBPMLsJ4u=ixecRpn=0UnJPPAxsBr680Q@mail.gmail.com>
+References: <20240126131837.36dbecc8@gandalf.local.home>
+	<CAHk-=whA8562VjU3MVBPMLsJ4u=ixecRpn=0UnJPPAxsBr680Q@mail.gmail.com>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240126-for-6-8-v1-1-9695cdd9f8ef@samsung.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jan 26, 2024 at 12:53:10PM +0100, Joel Granados via B4 Relay wrote:
-> From: Joel Granados <j.granados@samsung.com>
+On Fri, 26 Jan 2024 10:31:07 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Fri, 26 Jan 2024 at 10:18, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > By following what sysfs does, and give files a default size of PAGE_SIZE,
+> > it allows the tar to work. No event file is greater than PAGE_SIZE.  
 > 
-> To more efficiently co-maintain the sysctl subsystem a shared repository
-> has been created at https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git
-> and the sysctl-next branch that Luis Chamberlain (mcgrof@kernel.org) maintained at
-> https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=sysctl-next
-> has moved to the shared sysctl-next branch located at
-> https://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/log/?h=sysctl-next.
-> This commit changes the sysctl tree in MAINTAINERS to reflect this change.
+> No, please. Just don't.
 > 
-> Signed-off-by: Joel Granados <j.granados@samsung.com>
+> Nobody has asked for this, and nobody sane should use 'tar' on tracefs anyway.
+> 
+> It hasn't worked before, so saying "now you can use tar" is just a
+> *bad* idea. There is no upside, only downsides, with tar either (a)
+> not working at all on older kernels or (b) complaining about how the
+> size isn't reliable on newer ones.
+> 
+> So please. You should *NOT* look at "this makes tar work, albeit badly".
+> 
+> You should look at whether it improves REAL LOADS. And it doesn't. All
+> it does is add a hack for a bad idea. Leave it alone.
+>
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Fine, but I still plan on sending you the update to give all files unique
+inode numbers. If it screws up tar, it could possibly screw up something
+else. And all the files use to have unique numbers. They are just not unique
+in the current -rc release. You have a point that this would just fix this
+release and the older kernels would still be broken, but the identical inode
+numbers is something I don't want to later find out breaks something.
 
--- 
-Kees Cook
+-- Steve
 
