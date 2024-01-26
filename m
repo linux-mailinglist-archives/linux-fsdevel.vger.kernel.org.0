@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-9102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8623E83E306
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 21:02:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA3783E321
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 21:13:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2105282D74
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 20:02:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B39C3288608
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 20:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAC9E2263A;
-	Fri, 26 Jan 2024 20:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F130722EF3;
+	Fri, 26 Jan 2024 20:12:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4816D1E876;
-	Fri, 26 Jan 2024 20:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF3022EE9;
+	Fri, 26 Jan 2024 20:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706299328; cv=none; b=HrjdMRaAdlqzq9Ic8HNLQ9YpWgix+Qobvc44Tb5Ti/m7Jny/O/bla13R2aJYBWi086CRiTSSu8Qz1KTcaperoqM3Nl/WggeyJbpW85vsiJJdntiL812MOU7nvf1Ib0xLOZFKq3S7/sTiP/upWnWV+LTJ3/GDzbXJee1RLlIuApA=
+	t=1706299971; cv=none; b=TTPgAMtXE9W62r253dd9Nl+GaBq+OrG6ilVLGgk/fnBw4V59RXUA2QFLWvZ4qU7brYvX7H0Qz1uEZVuYiekC9Wu2Lg5Td/gkGwj8rY7wdlK7YGtjJPS23xZbov2m9/3qaGTh2E/6yKlbA4QpV0p8wnh5FnXJKGqC362fyJregvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706299328; c=relaxed/simple;
-	bh=iC0Vw1MUNFSZSDa2/2hGfEAsJpdJDjskecOmVObMa9k=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=e0Uu8X//qUlJYqPiWiyU5c3ANVur5hmlinR6IwX7/1TUha+mbwlinrzRu5VKc1zOMfBF8kUGQoxtxMoCh0ks399nL+7JxNzknbnXV0K+5OJl03QdEB3tTqXLhWMwy0K9v8oc/qo7KRlE7zRXlrrocw2hx5IioMjscIeZAudS2LA=
+	s=arc-20240116; t=1706299971; c=relaxed/simple;
+	bh=M1r8eF93GMhsQRAF03WGnLnKKELrprFPsGPJfz9qGl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ppVxpFhbUgITVvwdERGOyKoiVwVnf8+jInxNbwYEZo30plNhVrsLen1fk92ilPyPm5vuJ353WXRaiMD7DnHjLc1fPWb+9Vivoo1t+oSoJN0SDH1ww9APtaw5JuWP/kgfPdyHaDxbhno6LV1ShBRg4LwNjKC4N2d108LL4KUW0aM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BACFC433F1;
-	Fri, 26 Jan 2024 20:02:06 +0000 (UTC)
-Date: Fri, 26 Jan 2024 15:02:09 -0500
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BA51C433C7;
+	Fri, 26 Jan 2024 20:12:48 +0000 (UTC)
+Date: Fri, 26 Jan 2024 15:12:51 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Devel
- <linux-trace-devel@vger.kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
 Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
  <mathieu.desnoyers@efficios.com>, Christian Brauner <brauner@kernel.org>,
- Ajay Kaher  <ajay.kaher@broadcom.com>, Geert Uytterhoeven
+ Ajay Kaher  <ajay.kaher@broadcom.com>, Geert Uytterhoeven 
  <geert@linux-m68k.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
  Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH] eventfs: Have inodes have unique inode numbers
-Message-ID: <20240126150209.367ff402@gandalf.local.home>
+Subject: [RESEND] [PATCH] eventfs: Have inodes have unique inode numbers
+Message-ID: <20240126151251.74cb9285@gandalf.local.home>
 X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -81,6 +81,10 @@ can be retrieved at any time.
 
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
+[
+  Resending because I sent the first one to the wrong mailing list.
+]
+
  fs/tracefs/event_inode.c | 31 +++++++++++++++----------------
  fs/tracefs/inode.c       | 37 ++++++++++++++++++++++++++++++++++---
  fs/tracefs/internal.h    |  1 +
