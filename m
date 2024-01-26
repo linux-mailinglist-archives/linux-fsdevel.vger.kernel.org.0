@@ -1,105 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-9033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C2A583D2BE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 03:54:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38CE83D2FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 04:41:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 076371C21B2B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 02:54:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 407D21F2544E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 03:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E3E8F5C;
-	Fri, 26 Jan 2024 02:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hRYb7sB8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42054B661;
+	Fri, 26 Jan 2024 03:41:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE998F5F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 02:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D9DA95E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 03:41:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706237680; cv=none; b=ZdmNboFa33kGsfQ3oe2r6WI7YecQ32ynx0jJz4lmcRHdp7NHG0YfiMFMBW2OQ+qFoTrn26UyWQ6YxDiZh4CDNzjS2/oxrnFBZrlaE67rC2+SJyxc1CUNrL/P+fE/rLVIESn7skLPozarDq57UUz4G4E0waaQfoDMc/fsGGCH5sY=
+	t=1706240473; cv=none; b=jmkT6fhiNu43/beq0s9cy6qX0/Kpngpxx2jXktZPz1iCAi/uIX5nEtki8qPEu/xhAoinSHu6QfTw05iSLi8iUyVMvUjI1npMp0qab2KNM+BH/ogv/OMaHNd2p92U2QuzNYLDJ55id8cF75n2gKn1Rp74ajuKT8svcYxPMEbBf7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706237680; c=relaxed/simple;
-	bh=j7SO/HzA5kbkVbZwBxQoq7ZAZ0THzdqZx4nC6poPNy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=de3tDweoHTbzQiP3oRWmMOYOssGeDK+arrMZhn03QtYdPWHloL+pNpxcZldRLAEzGG1H1CBJVPjs3UahQ1oZizPEH1ALWJFfTuxGvbV1NuzFIrlj2DnvPFLC99PKGcqExP4EEmfYkRiSU5+nwoxdvh722QMd8TA8JCJXO/2DH7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hRYb7sB8; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NcQJaqqUEBbdxlQ6gaEGkf4qRylijhDf93KTiec0eWc=; b=hRYb7sB8B30+ghVQiruCZezq5q
-	SZcVbEGWXn6TBebVMXOPmp2EMi9wzRowj2xia2GdlMGEXBs7i1BHikYtJfoTZA9DHCfu8mB7BfxSt
-	/a7nQomnxSw5htoOqWZ1Daed5tUrh9Q0h1cUt4zTB/Xd8Nbl3pyJpCmT+my/Ms9xrBww1gwPYGXTA
-	MPI0y2QGtFZEaHF/yw3QJwKvqKf28pPjQEDjz2BDmUBHEQaHPG/CJtAYgoyJCZuCn0ZisEci4cJtN
-	lCe3f5zaSfRsetaHe2IpLkZ2n0qSYHYHl3A62EjT+noyb/cXdY56/jDSmFX5YlQZ1P/GSzmlKuR85
-	deUCntZw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rTCMK-0000000CFbb-0VWm;
-	Fri, 26 Jan 2024 02:54:24 +0000
-Date: Fri, 26 Jan 2024 02:54:24 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Namjae Jeon <linkinjeon@kernel.org>,
-	"Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>,
-	"sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] exfat: fix file not locking when writing zeros in
- exfat_file_mmap()
-Message-ID: <ZbMe4CbbONCzfP7p@casper.infradead.org>
-References: <PUZPR04MB63168A32AB45E8924B52CBC2817B2@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <ZbCeWQnoc8XooIxP@casper.infradead.org>
- <PUZPR04MB63168DC7A1A665B4EB37C996817B2@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <ZbGCsAsLcgreH6+a@dread.disaster.area>
- <CAKYAXd-MDm-9AiTsdL744cZomrFzNRvk1Sk8wrZXsZvpx8KOzA@mail.gmail.com>
- <ZbMJWI6Bg4lTy1aZ@dread.disaster.area>
+	s=arc-20240116; t=1706240473; c=relaxed/simple;
+	bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=b1k8ChIQSVq8a3qTtsjwi3DQ0uEgVEtKYpb8eCqhxnXQ7QCEBdzEtIhl3KHghvPvcdTJKDz3ePz67HmfgsUgn4xLuuSjRK9rN/tf1Asz+Z8Sa9ntEriQZbOL+gDGhKung5q/i6VJYcUoXdxxl35EZcDuRZgiSkK0MPx5T714Now=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3618e013ec7so83426485ab.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 25 Jan 2024 19:41:12 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706240471; x=1706845271;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DC68Fan9U1mDvvm9HS7/KL5cq/tCfXtYDl7pvERFoFo=;
+        b=HKYYK3xtBOCC5DthRtm05ow0bJAj3mepMlGKK2oLjTw0QC1Y8gKUc8r/Tr99anUSpE
+         4RBX3gXoAmMqU1jg/ANCnQUE/3BLAnFn9Ztt6uukw0V2t2aCj3Eja2ff9CohpYoG3JtP
+         d2roDmitxgd+hrnFqSRZvwM7GqQ8F6WP2X8Cif+QrfuQMsUWFF+HNENmR+Nyxfh+JAx7
+         U+VJp5hXCKdPsnjTR0bE6FxTpaR/BZgN5SeevndumcfqzlzxsGg3je4T4yl4356HOvow
+         F+yRJHqzQ/ej34NbwH1NPsY6yqqwROwA2If5fN8GVeVBLHR7KeJQ+szW978qmCPsQPiT
+         MHjg==
+X-Gm-Message-State: AOJu0YwGev7jG4hEFSGsWK1PbXB4qV//8brkJPw/8LxDsaZsi8zPhoug
+	gSULvbRyKxS+7G8DeKE9ADt/8IuYiFdW40KVQ6dSCadfHhfwJ5/4I3gRpylmG7JJGr/3HUUdd54
+	5wxcBh/ccGwv0oRfZWoxH2AsetxU6X5xMFGbIY3KcQHmWPOLTx1PGMeg=
+X-Google-Smtp-Source: AGHT+IFz0qxmvUVhvPOqgIrXUDDVpxna4jQPfuOBVEfPvyygebPqZl5fDHsA4+R5BZ5kDHAvmukq1PwEVID+8OKOegIa7MVTh2wE
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZbMJWI6Bg4lTy1aZ@dread.disaster.area>
+X-Received: by 2002:a05:6e02:144b:b0:35f:a338:44ae with SMTP id
+ p11-20020a056e02144b00b0035fa33844aemr106434ilo.3.1706240471688; Thu, 25 Jan
+ 2024 19:41:11 -0800 (PST)
+Date: Thu, 25 Jan 2024 19:41:11 -0800
+In-Reply-To: <000000000000dfd6a105f71001d7@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000376be5060fd11135@google.com>
+Subject: Re: [syzbot] kernel BUG in ext4_write_inline_data
+From: syzbot <syzbot+f4582777a19ec422b517@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, eadavis@qq.com, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Jan 26, 2024 at 12:22:32PM +1100, Dave Chinner wrote:
-> On Thu, Jan 25, 2024 at 07:19:45PM +0900, Namjae Jeon wrote:
-> > We need to consider the case that mmap against files with different
-> > valid size and size created from Windows. So it needed to zero out in mmap.
-> 
-> That's a different case - that's a "read from a hole" case, not a
-> "extending truncate" case. i.e. the range from 'valid size' to EOF
-> is a range where no data has been written and so contains zeros.
-> It is equivalent to either a hole in the file (no backing store) or
-> an unwritten range (backing store instantiated but marked as
-> containing no valid data).
-> 
-> When we consider this range as "reading from a hole/unwritten
-> range", it should become obvious the correct way to handle this case
-> is the same as every other filesystem that supports holes and/or
-> unwritten extents: the page cache page gets zeroed in the
-> readahead/readpage paths when it maps to a hole/unwritten range in
-> the file.
-> 
-> There's no special locking needed if it is done this way, and
-> there's no need for special hooks anywhere to zero data beyond valid
-> size because it is already guaranteed to be zeroed in memory if the
-> range is cached in the page cache.....
+This bug is marked as fixed by commit:
+ext4: fix race condition between buffer write and page_mkwrite
 
-but the problem is that Microsoft half-arsed their support for holes.
-See my other mail in this thread.
+But I can't find it in the tested trees[1] for more than 90 days.
+Is it a correct commit? Please update it by replying:
 
-truncate the file up to 4TB
-write a byte at offset 3TB
+#syz fix: exact-commit-title
 
-... now we have to stream 3TB of zeroes through the page cache so that
-we can write the byte at 3TB.
+Until then the bug is still considered open and new crashes with
+the same signature are ignored.
+
+Kernel: Linux
+Dashboard link: https://syzkaller.appspot.com/bug?extid=f4582777a19ec422b517
+
+---
+[1] I expect the commit to be present in:
+
+1. for-kernelci branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+
+2. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+
+3. master branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git
+
+4. main branch of
+git://git.kernel.org/pub/scm/linux/kernel/git/davem/net-next.git
+
+The full list of 9 trees can be found at
+https://syzkaller.appspot.com/upstream/repos
 
