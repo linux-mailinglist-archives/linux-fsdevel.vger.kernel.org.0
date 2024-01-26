@@ -1,161 +1,252 @@
-Return-Path: <linux-fsdevel+bounces-9054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F65483D8FD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 12:06:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7643D83D97E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 12:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F016128872B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 11:06:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AE091C23D05
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 11:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D73014015;
-	Fri, 26 Jan 2024 11:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3D7175A1;
+	Fri, 26 Jan 2024 11:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jYnnLwbZ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fb/J5BeT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p8O3HT8x";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AVYGOCcf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUbZBaOy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3712134A3;
-	Fri, 26 Jan 2024 11:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F24D1427F;
+	Fri, 26 Jan 2024 11:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706267171; cv=none; b=spQyNt0SkprsGKsB80IdvrCSrQ+GnB6p37aqnrdu/+6BEH9142KADM7t84yVGhiwQIHELR0ispoenk/Avu3DyVzLcpDGGL2YQ8HV3S01PQWYphi6Clr+doSIdN5xM6DrxWPx8r5EFA7DJJTvz0stj+pwRXndB4wLP/+UbvDWu9o=
+	t=1706269254; cv=none; b=FfFlhtKwtzeEdpdpWRuqqiLkKLk0YAZkQANJBDcy+5VTX6ElW8t1hQmHKxmIZQoksH7UESL8PdDTx9mNJktAsgwDQ7Nm0ZsxkWwnLcYmA3MjCd+FwC/7t+m2JVmGKbqgoDW0jACGzO0yU9SvP0yazNkPrnDRv6g4gQiMuPsiPR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706267171; c=relaxed/simple;
-	bh=4dvkGFk45JEH0TJH5g3LyphMC0E2eiuJFV9HXzhFYc4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HivYzm4v9HGqkanNZTPVOMSvl7nD6LyAdYBdfdmKU5LijUFh+FCCfCxMcLJ8IXOCBqdka6WLSAdckpOtSj8GUifvWnw6iAZ9XHkgIMEIN2p4wAeDAUD0PIkPEjK9E+CEWMketCYs+n7gz3NqgM2bMIRhOEsvdy7BI2Lxtfllwck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jYnnLwbZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fb/J5BeT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p8O3HT8x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AVYGOCcf; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DC0B11FD38;
-	Fri, 26 Jan 2024 11:06:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706267168; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dbkeSPiFMYS4fWv45pqaCiMPxPH/2P+XDGohr6cgfb4=;
-	b=jYnnLwbZa+hEU0K3yyOet9j8XvcuvpDN6WATXZi8LmJ3Kkv3c1j48CpkWuHQObWUic+g3N
-	6MAr6Iw2NIeWvKQPpVqehOzfPEKcIRBYuojSy94O4h0DSAw7xk4F230AMjVpaQVyZhDi6q
-	OLN284wVYpPtoYGHb34mgR6YrBMOK1Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706267168;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dbkeSPiFMYS4fWv45pqaCiMPxPH/2P+XDGohr6cgfb4=;
-	b=Fb/J5BeTrbxnY8bIdhgkqvPK9L7MUJGTh11k+sVqLpwEyB23kwmezYqoMn93XUovMwGccn
-	EkohWaQGMF2hIwDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706267167; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dbkeSPiFMYS4fWv45pqaCiMPxPH/2P+XDGohr6cgfb4=;
-	b=p8O3HT8xKPbe7gmP4LaOSYxsUI1ClIdserIuMYZMZMdXZ5ixrROg9pKHGiwMVbFPTNUCN2
-	Ovbb1xlxZO7vLpSdn7o4uNoYnRKrK7Q9nkxGZXa6BRpvm+klbhw61JyHhxPWSOV/2tq5WA
-	KGEA0eKAFmFh2F7oT1P9vuVi54Gci4E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706267167;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dbkeSPiFMYS4fWv45pqaCiMPxPH/2P+XDGohr6cgfb4=;
-	b=AVYGOCcf11qrUekIdC9sXCHXAlnfWB92rr4GjAJRtxAKT+c7K+xYpheIU8jTK4Jnwa02Sa
-	RArsW7Hxt4oKcMCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 21124134C3;
-	Fri, 26 Jan 2024 11:06:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qeQMCB+Ss2UPLgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 26 Jan 2024 11:06:07 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0542CA0805; Fri, 26 Jan 2024 12:05:22 +0100 (CET)
-Date: Fri, 26 Jan 2024 12:05:22 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+198e7455f3a4f38b838a@syzkaller.appspotmail.com>
-Cc: adilger.kernel@dilger.ca, axboe@kernel.dk, brauner@kernel.org,
-	jack@suse.cz, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Subject: Re: [syzbot] [ext4?] kernel BUG in ext4_write_inline_data_end
-Message-ID: <20240126110522.kltwopnoabgxiu6j@quack3>
-References: <000000000000562d8105f5ecc4ca@google.com>
- <00000000000007cd5c060fbc9da4@google.com>
+	s=arc-20240116; t=1706269254; c=relaxed/simple;
+	bh=/3o8LMDYZa891pv/+7XoRHQ8MeuE5NNlBKlJHMHcXUA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bVzHz7+r4x7njvR6thmCO9dnAjidVLgnGkqOwEwidGG/WhCNgr82ayCWPrA45FqL1fPutOuth+k6Edwt0D9mQlD3XRRu8XPzOwpOheTYHPExg6xigA63Li2kEPgIoVf6cRZ1FdT8H3Acjh0Y+Xc2jEAV71P9tafX9haeM5KxL7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZUbZBaOy; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-783cd27aef4so20777385a.2;
+        Fri, 26 Jan 2024 03:40:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706269251; x=1706874051; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WywnUEa8/PFBaA7RrQ/d7DELIRLf0x0WvxBTi+4gRBQ=;
+        b=ZUbZBaOy7QZxxRup9uNFUxF7hr5mjZ2PBcet9JwfpYfSYt8IrFCe+7OxoI7+N5tsu5
+         wbStgixfg+LLB1Lm5ygoYkoYx56TtIOMgUpSpT0LpHa5ve+jZ/1KEZt1RA8/+Ka9Q/Nx
+         0Z8Ht5u0avaT5T7lEgbQiEOhGPxyjFEfnZ/coEk8M6yOkj1IDE5OwIvNKtxLCC1WNtau
+         zNY1ibv9/xNSzqk6u0nPhCbjRG57mbdBoR45nDmbOdbuKPci3DqYkJXpjdn4/z8d1F3T
+         nSYied7ARIgsOX1aI5L1bzqlV7Vitg7dYTkNnjIDxCKf1fVI7FwDmmwnbPvy0lzg6++7
+         yt3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706269251; x=1706874051;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WywnUEa8/PFBaA7RrQ/d7DELIRLf0x0WvxBTi+4gRBQ=;
+        b=OUV6CmmWnFtqB4yHR3nxGxyMw+fgMbGfgJIumY7gIz7xuyiy3mE49DoyT4oOCJyfAO
+         FL9c5Tsd7ZDsz+v3nK4W79oBV7nyoNl8lFH1ma8gkLxF58/JmGsCDAQ5jr0AKvIg9Z+o
+         woIh64vdb2tmnaunE4XSEUNVni4gRaKs4f0VyzX/6yiAb57N90Krk8tIbD/1zsLKslb9
+         lWPtCtQmGszfnH5yukyxtMR1qGJPqf9vOy7MwOYz7YICRjnpuhITrOxj+Goe8Vy6mvqq
+         RqxGvM08CnO07irtKHrteSdk3r+y2h1r0EsrfTLqvqM6enr/V8hXlrO92lAWepofLj66
+         hFGw==
+X-Gm-Message-State: AOJu0Yyj7X14PwOfZtXQXJXjQUBTf+PgPJ0TKs5YLrTtiajccTLiP8u3
+	iLt3fSLrfgou0qrCAqMzHAKk8rKPXhy/KwSUVgEPW5KFJvgPRASU5Yr8DL+r/V//lv9kvSWN43L
+	1ZjibzEmjrG1I9Xqe54iISt5+6AY=
+X-Google-Smtp-Source: AGHT+IFx/lFm2tRr6Yg+XpQcdPkpnwCm+YkwiTOsK+mYBjfNsOAEQUFhryN+xS0O6eyKCR0BRNUzOOfv34eLa8oKr+0=
+X-Received: by 2002:ad4:5f0c:0:b0:680:b7fd:e3c0 with SMTP id
+ fo12-20020ad45f0c000000b00680b7fde3c0mr1354002qvb.130.1706269251403; Fri, 26
+ Jan 2024 03:40:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000007cd5c060fbc9da4@google.com>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [1.44 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-1.46)[91.38%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=93ac5233c138249e];
-	 TAGGED_RCPT(0.00)[198e7455f3a4f38b838a];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_SEVEN(0.00)[10];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Level: *
-X-Spam-Score: 1.44
-X-Spam-Flag: NO
+References: <20240125235723.39507-1-vinicius.gomes@intel.com>
+In-Reply-To: <20240125235723.39507-1-vinicius.gomes@intel.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 26 Jan 2024 13:40:40 +0200
+Message-ID: <CAOQ4uxgA8OAp5Htv9qBtW7S9J-YhyJeatiXTtzyw-1maraRZrA@mail.gmail.com>
+Subject: Re: [RFC v2 0/4] overlayfs: Optimize override/revert creds
+To: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: brauner@kernel.org, hu1.chen@intel.com, miklos@szeredi.hu, 
+	malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com, 
+	lizhen.you@intel.com, linux-unionfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 24-01-24 19:17:03, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
-> 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
-> 
->     fs: Block writes to mounted block devices
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1682e45fe80000
-> start commit:   90b0c2b2edd1 Merge tag 'pinctrl-v6.7-1' of git://git.kerne..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=93ac5233c138249e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=198e7455f3a4f38b838a
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17277d7f680000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=123c58df680000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
- 
-Makes sense:
+cc: fsdevel
 
-#syz fix: fs: Block writes to mounted block devices
+On Fri, Jan 26, 2024 at 1:57=E2=80=AFAM Vinicius Costa Gomes
+<vinicius.gomes@intel.com> wrote:
+>
+> Hi,
+>
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Hi Vinicius,
+
+I have some specific comments about the overlayfs patch,
+but first I prefer to provide higher level feedback on the series.
+
+> It was noticed that some workloads suffer from contention on
+> increasing/decrementing the ->usage counter in their credentials,
+> those refcount operations are associated with overriding/reverting the
+> current task credentials. (the linked thread adds more context)
+>
+> In some specialized cases, overlayfs is one of them, the credentials
+> in question have a longer lifetime than the override/revert "critical
+> section". In the overlayfs case, the credentials are created when the
+> fs is mounted and destroyed when it's unmounted. In this case of long
+> lived credentials, the usage counter doesn't need to be
+> incremented/decremented.
+>
+> Add a lighter version of credentials override/revert to be used in
+> these specialized cases. To make sure that the override/revert calls
+> are paired, add a cleanup guard macro. This was suggested here:
+>
+> https://lore.kernel.org/all/20231219-marken-pochen-26d888fb9bb9@brauner/
+>
+> With a small number of tweaks:
+>  - Used inline functions instead of macros;
+>  - A small change to store the credentials into the passed argument,
+>    the guard is now defined as (note the added '_T =3D'):
+>
+>       DEFINE_GUARD(cred, const struct cred *, _T =3D override_creds_light=
+(_T),
+>                   revert_creds_light(_T));
+>
+>  - Allow "const" arguments to be used with these kind of guards;
+>
+> Some comments:
+>  - If patch 1/4 is not a good idea (adding the cast), the alternative
+>    I can see is using some kind of container for the credentials;
+>  - The only user for the backing file ops is overlayfs, so these
+>    changes make sense, but may not make sense in the most general
+>    case;
+>
+> For the numbers, some from 'perf c2c', before this series:
+> (edited to fit)
+>
+> #
+> #        ----- HITM -----                                        Shared
+> #   Num  RmtHitm  LclHitm                      Symbol            Object  =
+       Source:Line  Node
+> # .....  .......  .......  ..........................  ................  =
+..................  ....
+> #
+>   -------------------------
+>       0      412     1028
+>   -------------------------
+>           41.50%   42.22%  [k] revert_creds            [kernel.vmlinux]  =
+atomic64_64.h:39     0  1
+>           15.05%   10.60%  [k] override_creds          [kernel.vmlinux]  =
+atomic64_64.h:25     0  1
+>            0.73%    0.58%  [k] init_file               [kernel.vmlinux]  =
+atomic64_64.h:25     0  1
+>            0.24%    0.10%  [k] revert_creds            [kernel.vmlinux]  =
+cred.h:266           0  1
+>           32.28%   37.16%  [k] generic_permission      [kernel.vmlinux]  =
+mnt_idmapping.h:81   0  1
+>            9.47%    8.75%  [k] generic_permission      [kernel.vmlinux]  =
+mnt_idmapping.h:81   0  1
+>            0.49%    0.58%  [k] inode_owner_or_capable  [kernel.vmlinux]  =
+mnt_idmapping.h:81   0  1
+>            0.24%    0.00%  [k] generic_permission      [kernel.vmlinux]  =
+namei.c:354          0
+>
+>   -------------------------
+>       1       50      103
+>   -------------------------
+>          100.00%  100.00%  [k] update_cfs_group  [kernel.vmlinux]  atomic=
+64_64.h:15   0  1
+>
+>   -------------------------
+>       2       50       98
+>   -------------------------
+>           96.00%   96.94%  [k] update_cfs_group  [kernel.vmlinux]  atomic=
+64_64.h:15   0  1
+>            2.00%    1.02%  [k] update_load_avg   [kernel.vmlinux]  atomic=
+64_64.h:25   0  1
+>            0.00%    2.04%  [k] update_load_avg   [kernel.vmlinux]  fair.c=
+:4118        0
+>            2.00%    0.00%  [k] update_cfs_group  [kernel.vmlinux]  fair.c=
+:3932        0  1
+>
+> after this series:
+>
+> #
+> #        ----- HITM -----                                   Shared
+> #   Num  RmtHitm  LclHitm                 Symbol            Object       =
+Source:Line  Node
+> # .....  .......  .......   ....................  ................  .....=
+...........  ....
+> #
+>   -------------------------
+>       0       54       88
+>   -------------------------
+>          100.00%  100.00%   [k] update_cfs_group  [kernel.vmlinux]  atomi=
+c64_64.h:15   0  1
+>
+>   -------------------------
+>       1       48       83
+>   -------------------------
+>           97.92%   97.59%   [k] update_cfs_group  [kernel.vmlinux]  atomi=
+c64_64.h:15   0  1
+>            2.08%    1.20%   [k] update_load_avg   [kernel.vmlinux]  atomi=
+c64_64.h:25   0  1
+>            0.00%    1.20%   [k] update_load_avg   [kernel.vmlinux]  fair.=
+c:4118        0  1
+>
+>   -------------------------
+>       2       28       44
+>   -------------------------
+>           85.71%   79.55%   [k] generic_permission      [kernel.vmlinux] =
+ mnt_idmapping.h:81   0  1
+>           14.29%   20.45%   [k] generic_permission      [kernel.vmlinux] =
+ mnt_idmapping.h:81   0  1
+>
+>
+> The contention is practically gone.
+
+That is very impressive.
+Can you say which workloads were running during this test?
+Specifically, I am wondering how much of the improvement came from
+backing_file.c and how much from overlayfs/*.c.
+
+The reason I am asking is because the overlayfs patch is quite large and ca=
+n
+take more time to review, so I am wondering out loud if we are not
+better off this
+course of action:
+
+1. convert backing_file.c to use new helpers/guards
+2. convert overlayfs to use new helpers/guards
+
+#1 should definitely go in via Christian's tree and should get a wider revi=
+ew
+from fsdevel (please CC fsdevel next time)
+
+#2 is contained for overlayfs reviewers. Once the helpers are merged
+and used by backing_file helpers, overlayfs can be converted independently.
+
+#1 and #2 could both be merged in the same merge cycle, or not, it does not
+matter. Most likely, #2 will go through Christian's tree as well, but I thi=
+nk we
+need to work according to this merge order.
+
+We can also work on the review in parallel and you may keep the overlayfs
+patch in following posts, just wanted us to be on the same page w.r.t to
+the process.
+
+Thanks,
+Amir.
 
