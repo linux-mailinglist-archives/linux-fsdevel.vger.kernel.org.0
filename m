@@ -1,102 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-9106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F1E083E38B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 22:01:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A8B483E3DF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 22:26:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B14A81F2571C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 21:01:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D4881C211F9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 21:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4C42421E;
-	Fri, 26 Jan 2024 21:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a6nigD30"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28BCB24A08;
+	Fri, 26 Jan 2024 21:26:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 580B7208B8;
-	Fri, 26 Jan 2024 21:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBA4249EA;
+	Fri, 26 Jan 2024 21:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706302877; cv=none; b=FkxwQ4fbf7aZMSRiZ2KTRGMBRf0Se006oVqldS8H9qr7Jcm4nsuFbXsueK5YaYcfqQZXTZbAllGv6i5kvveQY6GzOhRuW46O7y7SsL6+I1lTjsuKghS4ugEfemObKSY/yuWkteeAN6quaKVwDo7xGX+TG6MGBI/FBsfB/XwfjGU=
+	t=1706304385; cv=none; b=PL7zCA697Te1gG5ZX5Y/U79buhndpGSza1oeIbbyxy5GaUHJGJPD29LSzilSH5iFDe0uqpiuIVGg/w7xgVqlwlmnkXauUtFKa4beF8UkhZSqZIGDPBLfzYjtpSsf/gPJhfpZWbb6ShTBSgqTC7eztQJ/gQv9rADrn107lWw2gB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706302877; c=relaxed/simple;
-	bh=K/vV4HXLF0w/iq9+oevY/s4BTuCZ0+kwXRPOV5D4Cdo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ia+W0qFrF28D+Tdmx30EMRnSwjlbN8YattjfI70lRC0RiIYZUUYC5R19HUv3blX4kq+eC8j9wWnilb6p3pkbMdasd4agWSKqlco82SR8kT5zSiMc6HsVZF3iwXNXEE2Fp0ormtUKPn43SiQBzHKIXR3TzeG7FJ7jM2VPoZSMjdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=a6nigD30; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=r/QEG1+GRs70rQ+r6RwZXc9jTJs5Jf1cK8sS2vy9OTU=; b=a6nigD30c17ynoFn1++uO4A7rB
-	gBLNhhEo+pCSqVhVYWH0mQV6ltDRyprpRDjL6ZBPRRZEpeyZpNb/IZbOXUdO9Cj6m2GKVXw+2Dj0T
-	MdRat3pIfEqyJ8iv7xrggI+qBxtQuetCP89u3dcSf3mcZI2Kw9J6bJly4sclyfPZfo214N3SwhMvT
-	yy4ufWAt98IFJ2EHzZmNeRiRWxDwzn9T2LrRSWM45f1wBizs0lEuWmYfrZG3ofJkG3CMweKlUwv21
-	Dvz3wChQlBJd/S7n1XHNcZCuYY9DfjNi063dK0fGrElQSJ45A/Gzy2azctDB6oPreBUMcbXB7tgac
-	wpF82cMg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rTTJz-0000000EqNO-07FO;
-	Fri, 26 Jan 2024 21:01:07 +0000
-Date: Fri, 26 Jan 2024 21:01:06 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Pankaj Raghav <p.raghav@samsung.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-	Yangtao Li <frank.li@vivo.com>, chao@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org, fengnanchang@gmail.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	vishal.moola@gmail.com,
-	Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-	Adam Manzanares <a.manzanares@samsung.com>
-Subject: Re: [PATCH] f2fs: Support enhanced hot/cold data separation for f2fs
-Message-ID: <ZbQdkiwEs8o4h807@casper.infradead.org>
-References: <Y4ZaBd1r45waieQs@casper.infradead.org>
- <20221130124804.79845-1-frank.li@vivo.com>
- <Y4d0UReDb+EmUJOz@casper.infradead.org>
- <Y5D8wYGpp/95ShTV@bombadil.infradead.org>
- <ZbLI63UHBErD6_L2@casper.infradead.org>
- <ZbLKl25vxw0eTzGE@bombadil.infradead.org>
+	s=arc-20240116; t=1706304385; c=relaxed/simple;
+	bh=eO2PbaoyRZQ7eFdXYsMoTI8zvWtJ7nAM+Z/kZ5vVv24=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TfRhqEo1BhWiygswrfa9/FrnFIvK5urQN/ON5yw3p2wwXpYDclv+6DyVwUXBWahF2L5s4Ymfefeqc0ymVMSZhu6GNEh+9sMVjoy/0PfP1Bl3EBE5Ts8vhINjMQ17+cKEZouQTb7F3EB+Fhqk+dq2rPm38OfwpQb9DPG6wQNqtYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37A25C433C7;
+	Fri, 26 Jan 2024 21:26:24 +0000 (UTC)
+Date: Fri, 26 Jan 2024 16:26:26 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Devel
+ <linux-trace-devel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Christian Brauner <brauner@kernel.org>, Ajay Kaher
+ <ajay.kaher@broadcom.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
+Message-ID: <20240126162626.31d90da9@gandalf.local.home>
+In-Reply-To: <CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
+References: <20240126150209.367ff402@gandalf.local.home>
+	<CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZbLKl25vxw0eTzGE@bombadil.infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jan 25, 2024 at 12:54:47PM -0800, Luis Chamberlain wrote:
-> On Thu, Jan 25, 2024 at 08:47:39PM +0000, Matthew Wilcox wrote:
-> > On Wed, Dec 07, 2022 at 12:51:13PM -0800, Luis Chamberlain wrote:
-> > > Me and Pankaj are very interested in helping on this front. And so we'll
-> > > start to organize and talk every week about this to see what is missing.
-> > > First order of business however will be testing so we'll have to
-> > > establish a public baseline to ensure we don't regress. For this we intend
-> > > on using kdevops so that'll be done first.
-> > > 
-> > > If folks have patches they want to test in consideration for folio /
-> > > iomap enhancements feel free to Cc us :)
-> > > 
-> > > After we establish a baseline we can move forward with taking on tasks
-> > > which will help with this conversion.
-> > 
-> > So ... it's been a year.  How is this project coming along?  There
-> > weren't a lot of commits to f2fs in 2023 that were folio related.
+On Fri, 26 Jan 2024 12:25:05 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> Steven,
+>  stop making things more complicated than they need to be.
 > 
-> The review at LSFMM revealed iomap based filesystems were the priority
-> and so that has been the priority. Once we tackle that and get XFS
-> support we can revisit which next fs to help out with. Testing has been
-> a *huge* part of our endeavor, and naturally getting XFS patches up to
-> what is required has just taken a bit more time. But you can expect
-> patches for that within a month or so.
+> And dammit, STOP COPYING VFS LAYER FUNCTIONS.
+> 
+> It was a bad idea last time, it's a horribly bad idea this time too.
+> 
+> I'm not taking this kind of crap.
+> 
+> The whole "get_next_ino()" should be "atomic64_add_return()". End of story.
 
-Is anyone working on the iomap conversion for f2fs?
+I originally wrote it that way, and thought to myself that the VFS version
+is "faster" and switched to that.
+
+My fault for being too much into micro-optimizations.
+
+> 
+> You arent' special. If the VFS functions don't work for you, you don't
+> use them, but dammit, you also don't then steal them without
+> understanding what they do, and why they were necessary.
+> 
+> The reason get_next_ino() is critical is because it's used by things
+> like pipes and sockets etc that get created at high rates, the the
+> inode numbers most definitely do not get cached.
+
+Yes, I understood why it's optimized, and took it because it's been there
+since 2010 and figured it's pretty solid.
+
+> 
+> You copied that function without understanding why it does what it
+> does, and as a result your code IS GARBAGE.
+> 
+> AGAIN.
+> 
+> Honestly, kill this thing with fire. It was a bad idea. I'm putting my
+> foot down, and you are *NOT* doing unique regular file inode numbers
+> uintil somebody points to a real problem.
+> 
+> Because this whole "I make up problems, and then I write overly
+> complicated crap code to solve them" has to stop,.
+
+If I had just used the atomic_add_return() is it really that overly
+complicated? Yes, I copied from VFS because I figured if they put in the
+effort to make it faster then why not use that, even though it was overkill.
+
+> 
+> No more. This stops here.
+> 
+> I don't want to see a single eventfs patch that doesn't have a real
+> bug report associated with it. And the next time I see you copying VFS
+> functions (or any other core functions) without udnerstanding what the
+> f*ck they do, and why they do it, I'm going to put you in my
+> spam-filter for a week.
+> 
+> I'm done. I'm really *really* tired of having to look at eventfs garbage.
+
+So we keep the same inode number until something breaks with it, even
+though, using unique ones is not that complicated?
+
+I'd be happy to change that patch to what I originally did before deciding
+to copy get_next_ino():
+
+unsigned int tracefs_get_next_ino(int files)
+{
+	static atomic_t next_inode;
+	unsigned int res;
+
+	do {
+		res = atomic_add_return(files + 1, &next_inode);
+
+		/* Check for overflow */
+	} while (unlikely(res < files + 1));
+
+	return res - files;
+}
+
+If I knew going back and copying over get_next_ino() was going to piss you
+off so much, I wouldn't have done that.
+
+Not to mention that the current code calls into get_next_ino() and then
+throws it away. That is, eventfs gets its inode structure from tracefs that
+adds the inode number to it using the VFS get_next_ino(). That gets thrown
+away by the single inode assigned. This just makes it more likely that the
+global get_inode_ino() is going to overflow due to eventfs, even though
+eventfs isn't even using them.
+
+I only did the one inode number because that's what you wanted. Is it that
+you want to move away from having inode numbers completely? At least for
+pseudo file systems? If that's the case, then we can look to get people to
+start doing that. First it would be fixing tools like 'tar' to ignore the
+inode numbers.
+
+Otherwise, I really rather keep it the way it has always been. That is,
+each file has its own unique inode number, and not have to deal with some
+strange bug report because it's not. Is there another file system that has
+just one inode number?
+
+-- Steve
 
