@@ -1,185 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-9047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9046-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3826183D6F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 10:55:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0BE383D6F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 10:55:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0A451F2B12E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 09:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FC8B1F2AD29
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 09:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808D3604B9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA9F604B1;
 	Fri, 26 Jan 2024 09:05:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404C760264
-	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 09:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EAD6025E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 09:05:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706259931; cv=none; b=HfdwZzSwad1m2jtOR2x96q6tfp4n4+ZxOnrEtzPMDexI75fg/djK4XEU9VvCI3h7l0l0aAlpFTuUKYSyIlN/2omVX6QHPtk4EC2bWO0jwJ3ANViEJlI4Scc6iREROi2q+88ij/c+a2M4M3s2NF8qSVFLByeOt/MZOm0bWAnLiMk=
+	t=1706259931; cv=none; b=Jdc3wGQu5Fnc1PGSvTmFTdCBmaiD1GG3yoQ23ZrWcyYAwFw/jDtWBAetW1QRstV9trPj9KvUcm7rkj7uNytlWX6cT5uCZbHWyim/pKOWh8OqhnQ+1fWquQnq0FhPVnttkxNYqHirc7PqNa5eqa7GcTMvUzo4o8ElJq5SlituB4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706259931; c=relaxed/simple;
-	bh=T9wpoH0F1cIP8eVCnBQyB/bvSH/l99a66hT/RBmiLG4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=O389zo94uKQgn60b5okwu9hvloZormcmA2/vYcpXHXfL6qB5lNeC22EM1g9+g/lGmWV+xW4wduHzE0TP6GlM8FJprQ1NDfx5xtPyc3Z3Ji6bGH9FUVD8KF5gWge313m88L76k0dLiBVmWom4RrbGiQsqjZj/IsRfgRJ4kt1w/eo=
+	bh=cvXAVg/QUHe1nP3xRlWWfO6myo8tRa+Jwh37Gu5r3NQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qewy2ef2QEe3+yOCv834LipNCBr/CvWhsODnzkwSDAaCJbaBi+cAb4+Jxz+b0xffSnuuY2oORSxLZsi3wuvF7zLHDfSzU3ox+iuG3ZsXb5e70r0cx52z+5DFRpl78hcNyq8fU273Nss+5ASmfBW/OfdScwsP1oC5ATW74qSdXnM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7bf4698825eso28701939f.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 01:05:29 -0800 (PST)
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7bf863c324dso83927339f.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 26 Jan 2024 01:05:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1706259928; x=1706864728;
-        h=content-transfer-encoding:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=spc1ShxOmdgB1pC4pVuSbJpCr0hgxztE/zkQiLNA1BA=;
-        b=bCIphzsSQTZZXrnZYCkDaOdXUjDejYIqug8TQfErTnGiLlICjAqn40LU5j2WjmaMhb
-         MWIKsA1i3Mh8u22sKAsICTrDnSTdSeyYOgOz/ct0NBvmbN6lDbeAq6LDwAVPKOd3HkHP
-         3JpGeJPd61zr4CDxVNQI7PnIfRAhIkicAVz1nQxSi54IwlmrVy1V966EgM9+wS+WPwm7
-         +9aLBK0w43UC02XEnVMJ1i/sSJJ1w5JGHzw8h9J2mADumNChxLgJHu18MUZS9Wyv0QlF
-         PH7jAzsLjBa7LCocqoBoaZd65RPDZylYFKYtszD6+7MmUhnX4xlILIhwFjEpHBrC/CXy
-         +puw==
-X-Gm-Message-State: AOJu0Yw4F5mZ1ZrpbakAfix164wmvAMHMoTAQO6YaYRgl098z6TS9PjW
-	nDFXEJEVBOotMTs0Txw7nmkjoBnUjhWRj9foUdkOX55RVqNRnkbVay6n3xKoZB5SNXy5Ujd3B2W
-	K0iGZHNu08a3Es/ckEKI/sfui8ma2PMshBwYrdO7Lt4ysSbyjvKoa+aM=
-X-Google-Smtp-Source: AGHT+IHkbZUO6XeiPdqbgZ81JcfuzhhS+rfbSkGWl/OfSYFJsF50hYFc2QlOeN4HJWElFBahgMEfpsWHgH1d9zPXSqNXmaddU+mo
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8LXXRWhnVpg5s10wa8N0l8GPBmu/g4QOuL8LUz3mdrk=;
+        b=wIt19CCoxGvUnYC22z5mOvpTpj+d/LTwCDIfQ5dMh0Byw6MpwMH/mCeyATJ3l6v3/m
+         Qmkjhtog8z/0Dz/KA6lrlibwr0o8UYAs8Wy5GcJknC2veYiPzT4Lq8KyHMZB0FWEfHAT
+         GcmrKrjIPGXerMt2Az9aaMrrIi/zmpoKUM+68icowflFXyxS+RaiNeThI4RUSI/8R0sh
+         JwbeQYUys3FJqkTrkMV8EosYAnw1ysrGlUu3cp0IhHjfB/SDTVPqKNTyaZ8reyRsmK7A
+         vR4L8fJci80+NakVB539/SNbkbHFLDSL1Fr43eBFa/k9U/Jtp8UQBdhACaVmBKXMwdLg
+         A/6w==
+X-Gm-Message-State: AOJu0Yw5iFc+vpisq4KJoJsue0L98ih/or98NJrtBySwRSy+NAxX7JeY
+	jN5mVJlFArWUBsFvYVEzeiIUxum0WVvlSbfLw/vUTnxfil/ArTiHQ9Ls/El8BTqgib8ZrqMXT2w
+	/Uyi2FLCj9T4Uab1Ul26sR2XUEqWwFDkdR18udGQdGfvipzMB+Ihl5ag=
+X-Google-Smtp-Source: AGHT+IH1X+V4lAg0wlyhUZG76oDSzE4znywKlY8zf/gqHdqnP01hi4XluIcTXTFWC49pjGgRv1As2c8MxB6M+4dVQiGIRcF26KK0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a02:cacd:0:b0:46e:668b:58d7 with SMTP id
- f13-20020a02cacd000000b0046e668b58d7mr7716jap.0.1706259928470; Fri, 26 Jan
+X-Received: by 2002:a05:6e02:1aa1:b0:361:9320:5b3d with SMTP id
+ l1-20020a056e021aa100b0036193205b3dmr89644ilv.2.1706259928153; Fri, 26 Jan
  2024 01:05:28 -0800 (PST)
 Date: Fri, 26 Jan 2024 01:05:28 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ee5c6c060fd59890@google.com>
-Subject: [syzbot] [net?] [v9fs?] WARNING: refcount bug in p9_req_put (3)
-From: syzbot <syzbot+d99d2414db66171fccbb@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, ericvh@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+Message-ID: <000000000000e98460060fd59831@google.com>
+Subject: [syzbot] [ext4?] general protection fault in jbd2__journal_start
+From: syzbot <syzbot+cdee56dbcdf0096ef605@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, jack@suse.com, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    4fbbed787267 Merge tag 'timers-core-2024-01-21' of git://g.=
-.
+HEAD commit:    7a396820222d Merge tag 'v6.8-rc-part2-smb-client' of git:/..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=3D11bfbdc7e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D4059ab9bf06b6ce=
-b
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd99d2414db66171fc=
-cbb
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
-ian) 2.40
-userspace arch: i386
+console output: https://syzkaller.appspot.com/x/log.txt?x=15fca78fe80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7059b09d0488022
+dashboard link: https://syzkaller.appspot.com/bug?extid=cdee56dbcdf0096ef605
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7bc=
-7510fe41f/non_bootable_disk-4fbbed78.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/13a98041382d/vmlinux-=
-4fbbed78.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0a02086862ee/bzI=
-mage-4fbbed78.xz
+disk image: https://storage.googleapis.com/syzbot-assets/da73c2c8f5fe/disk-7a396820.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/10d2d2be8831/vmlinux-7a396820.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/939406fd4919/bzImage-7a396820.xz
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit=
-:
-Reported-by: syzbot+d99d2414db66171fccbb@syzkaller.appspotmail.com
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cdee56dbcdf0096ef605@syzkaller.appspotmail.com
 
-9p: Unknown Cache mode or invalid value fsca=EF=BF=BDhe
-9pnet: Tag 65535 still in use
-------------[ cut here ]------------
-refcount_t: underflow; use-after-free.
-WARNING: CPU: 3 PID: 30609 at lib/refcount.c:28 refcount_warn_saturate+0x14=
-a/0x210 lib/refcount.c:28
-Modules linked in:
-CPU: 3 PID: 30609 Comm: syz-executor.1 Not tainted 6.7.0-syzkaller-13004-g4=
-fbbed787267 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16=
-.2-1 04/01/2014
-RIP: 0010:refcount_warn_saturate+0x14a/0x210 lib/refcount.c:28
-Code: ff 89 de e8 e8 af 1e fd 84 db 0f 85 66 ff ff ff e8 ab b4 1e fd c6 05 =
-1b 87 bb 0a 01 90 48 c7 c7 c0 70 2f 8b e8 97 a9 e4 fc 90 <0f> 0b 90 90 e9 4=
-3 ff ff ff e8 88 b4 1e fd 0f b6 1d f6 86 bb 0a 31
-RSP: 0018:ffffc9000345f9b0 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffc90006349000
-RDX: 0000000000040000 RSI: ffffffff814e1906 RDI: 0000000000000001
-RBP: ffff8880687d59a0 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 0000000000000001 R12: ffffc9000345fa48
-R13: ffff8880687d59a0 R14: ffff888026a9d800 R15: 1ffff9200068bf41
-FS:  0000000000000000(0000) GS:ffff88802c900000(0063) knlGS:00000000f7ff1b4=
-0
-CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-CR2: 0000000020003000 CR3: 000000006eb7c000 CR4: 0000000000350ef0
+general protection fault, probably for non-canonical address 0xdffffc000a8a4829: 0000 [#1] PREEMPT SMP KASAN
+KASAN: probably user-memory-access in range [0x0000000054524148-0x000000005452414f]
+CPU: 0 PID: 3394 Comm: syz-executor.5 Not tainted 6.7.0-syzkaller-12991-g7a396820222d #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
+RIP: 0010:jbd2__journal_start+0x87/0x5d0 fs/jbd2/transaction.c:496
+Code: 74 63 48 8b 1b 48 85 db 74 79 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 23 46 8f ff 48 8b 2b 48 89 e8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 ef e8 0a 46 8f ff 4c 39 65 00 0f 85 1a
+RSP: 0018:ffffc900154d65c8 EFLAGS: 00010203
+RAX: 000000000a8a4829 RBX: ffff8880234e7618 RCX: 0000000000040000
+RDX: ffffc9000a3a1000 RSI: 000000000000195c RDI: 000000000000195d
+RBP: 000000005452414e R08: 0000000000000c40 R09: 0000000000000001
+R10: dffffc0000000000 R11: ffffed1005541071 R12: ffff88802aa0a000
+R13: dffffc0000000000 R14: 0000000000000c40 R15: 0000000000000002
+FS:  00007fbf47a2a6c0(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020020000 CR3: 0000000030c1a000 CR4: 00000000003506f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- __refcount_sub_and_test include/linux/refcount.h:272 [inline]
- __refcount_dec_and_test include/linux/refcount.h:304 [inline]
- refcount_dec_and_test include/linux/refcount.h:322 [inline]
- p9_req_put+0x1f0/0x250 net/9p/client.c:401
- p9_tag_cleanup net/9p/client.c:428 [inline]
- p9_client_destroy+0x226/0x480 net/9p/client.c:1073
- v9fs_session_init+0xba5/0x1a80 fs/9p/v9fs.c:490
- v9fs_mount+0xc6/0xcd0 fs/9p/vfs_super.c:123
- legacy_get_tree+0x109/0x220 fs/fs_context.c:662
- vfs_get_tree+0x8c/0x370 fs/super.c:1784
- do_new_mount fs/namespace.c:3352 [inline]
- path_mount+0x14e6/0x1f20 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount fs/namespace.c:3875 [inline]
- __ia32_sys_mount+0x291/0x310 fs/namespace.c:3875
- do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
- __do_fast_syscall_32+0x79/0x110 arch/x86/entry/common.c:321
- do_fast_syscall_32+0x33/0x70 arch/x86/entry/common.c:346
- entry_SYSENTER_compat_after_hwframe+0x70/0x7a
-RIP: 0023:0xf7ff6579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 =
-00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 9=
-0 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RSP: 002b:00000000f7ff15ac EFLAGS: 00000292 ORIG_RAX: 0000000000000015
-RAX: ffffffffffffffda RBX: 00000000200001c0 RCX: 0000000020000480
-RDX: 00000000200004c0 RSI: 0000000000000404 RDI: 0000000020001080
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000292 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ __ext4_journal_start_sb+0x215/0x5b0 fs/ext4/ext4_jbd2.c:112
+ __ext4_journal_start fs/ext4/ext4_jbd2.h:326 [inline]
+ ext4_dirty_inode+0x92/0x110 fs/ext4/inode.c:5969
+ __mark_inode_dirty+0x305/0xda0 fs/fs-writeback.c:2452
+ generic_update_time fs/inode.c:1905 [inline]
+ inode_update_time fs/inode.c:1918 [inline]
+ __file_update_time fs/inode.c:2106 [inline]
+ file_update_time+0x39b/0x3e0 fs/inode.c:2136
+ ext4_page_mkwrite+0x207/0xdf0 fs/ext4/inode.c:6090
+ do_page_mkwrite+0x197/0x470 mm/memory.c:2966
+ wp_page_shared mm/memory.c:3353 [inline]
+ do_wp_page+0x20e3/0x4c80 mm/memory.c:3493
+ handle_pte_fault mm/memory.c:5160 [inline]
+ __handle_mm_fault+0x26a3/0x72b0 mm/memory.c:5285
+ handle_mm_fault+0x27e/0x770 mm/memory.c:5450
+ do_user_addr_fault arch/x86/mm/fault.c:1415 [inline]
+ handle_page_fault arch/x86/mm/fault.c:1507 [inline]
+ exc_page_fault+0x2ad/0x870 arch/x86/mm/fault.c:1563
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:570
+RIP: 0010:rep_movs_alternative+0x4a/0x70 arch/x86/lib/copy_user_64.S:71
+Code: 75 f1 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 8b 06 48 89 07 48 83 c6 08 48 83 c7 08 83 e9 08 74 df 83 f9 08 73 e8 eb c9 <f3> a4 c3 48 89 c8 48 c1 e9 03 83 e0 07 f3 48 a5 89 c1 85 c9 75 b3
+RSP: 0018:ffffc900154d70f8 EFLAGS: 00050202
+RAX: ffffffff848bfd01 RBX: 0000000020020040 RCX: 0000000000000040
+RDX: 0000000000000000 RSI: ffff88802cded190 RDI: 0000000020020000
+RBP: 1ffff92002a9af26 R08: ffff88802cded1cf R09: 1ffff110059bda39
+R10: dffffc0000000000 R11: ffffed10059bda3a R12: 00000000000000c0
+R13: dffffc0000000000 R14: 000000002001ff80 R15: ffff88802cded110
+ copy_user_generic arch/x86/include/asm/uaccess_64.h:112 [inline]
+ raw_copy_to_user arch/x86/include/asm/uaccess_64.h:133 [inline]
+ _copy_to_user+0x86/0xa0 lib/usercopy.c:41
+ copy_to_user include/linux/uaccess.h:191 [inline]
+ xfs_bulkstat_fmt+0x4f/0x120 fs/xfs/xfs_ioctl.c:744
+ xfs_bulkstat_one_int+0xd8b/0x12e0 fs/xfs/xfs_itable.c:161
+ xfs_bulkstat_iwalk+0x72/0xb0 fs/xfs/xfs_itable.c:239
+ xfs_iwalk_ag_recs+0x4c3/0x820 fs/xfs/xfs_iwalk.c:220
+ xfs_iwalk_run_callbacks+0x25b/0x490 fs/xfs/xfs_iwalk.c:376
+ xfs_iwalk_ag+0xad6/0xbd0 fs/xfs/xfs_iwalk.c:482
+ xfs_iwalk+0x360/0x6f0 fs/xfs/xfs_iwalk.c:584
+ xfs_bulkstat+0x4f8/0x6c0 fs/xfs/xfs_itable.c:308
+ xfs_ioc_bulkstat+0x3d0/0x450 fs/xfs/xfs_ioctl.c:867
+ xfs_file_ioctl+0x6a5/0x1980 fs/xfs/xfs_ioctl.c:1994
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:871 [inline]
+ __se_sys_ioctl+0xf8/0x170 fs/ioctl.c:857
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf5/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x63/0x6b
+RIP: 0033:0x7fbf46c7cda9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fbf47a2a0c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007fbf46dabf80 RCX: 00007fbf46c7cda9
+RDX: 000000002001fc40 RSI: 000000008040587f RDI: 0000000000000006
+RBP: 00007fbf46cc947a R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007fbf46dabf80 R15: 00007ffee39fcd08
  </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:jbd2__journal_start+0x87/0x5d0 fs/jbd2/transaction.c:496
+Code: 74 63 48 8b 1b 48 85 db 74 79 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 23 46 8f ff 48 8b 2b 48 89 e8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 ef e8 0a 46 8f ff 4c 39 65 00 0f 85 1a
+RSP: 0018:ffffc900154d65c8 EFLAGS: 00010203
+RAX: 000000000a8a4829 RBX: ffff8880234e7618 RCX: 0000000000040000
+RDX: ffffc9000a3a1000 RSI: 000000000000195c RDI: 000000000000195d
+RBP: 000000005452414e R08: 0000000000000c40 R09: 0000000000000001
+R10: dffffc0000000000 R11: ffffed1005541071 R12: ffff88802aa0a000
+R13: dffffc0000000000 R14: 0000000000000c40 R15: 0000000000000002
+FS:  00007fbf47a2a6c0(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020020000 CR3: 0000000030c1a000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 ----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+Code disassembly (best guess):
+   0:	74 63                	je     0x65
+   2:	48 8b 1b             	mov    (%rbx),%rbx
+   5:	48 85 db             	test   %rbx,%rbx
+   8:	74 79                	je     0x83
+   a:	48 89 d8             	mov    %rbx,%rax
+   d:	48 c1 e8 03          	shr    $0x3,%rax
+  11:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
+  16:	74 08                	je     0x20
+  18:	48 89 df             	mov    %rbx,%rdi
+  1b:	e8 23 46 8f ff       	call   0xff8f4643
+  20:	48 8b 2b             	mov    (%rbx),%rbp
+  23:	48 89 e8             	mov    %rbp,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 ef             	mov    %rbp,%rdi
+  34:	e8 0a 46 8f ff       	call   0xff8f4643
+  39:	4c 39 65 00          	cmp    %r12,0x0(%rbp)
+  3d:	0f                   	.byte 0xf
+  3e:	85 1a                	test   %ebx,(%rdx)
 
 
 ---
