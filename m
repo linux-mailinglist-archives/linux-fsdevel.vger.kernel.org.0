@@ -1,232 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-9041-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A178483D524
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 10:00:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59F5C83D546
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 10:03:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65A61C250E3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 09:00:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EBBB1C258E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 26 Jan 2024 09:03:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C3C1B7FA;
-	Fri, 26 Jan 2024 07:34:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B0D5EE7C;
+	Fri, 26 Jan 2024 07:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WsPtnk5q"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YniWX0MJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC1F10A30;
-	Fri, 26 Jan 2024 07:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E0265D75B;
+	Fri, 26 Jan 2024 07:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706254441; cv=none; b=ortqlQnZURUezD6bbdacWQTYK2cC9kpSa5PZNeULrPf7eLpydhsPp+3/TpmtJd1JlW68s7HVQ80goraJ2Oyh12rqdbij1ivJtLkRkf+wuWF0seQfd2Y7IwEmHxB94yLI12plrqFbbp8nqRXbIY5qgJq6JtSQXi9bB8XTDzehnx0=
+	t=1706254952; cv=none; b=RTJ+p+9GAzSnVCltgbVyFFgjoTa4UV1vvHenjGlDDEOBFMCZmiLZcaVRU9/n0+i/CQPyNeuBwbioWmOrFZ0Por9JGwXDJQxLmtyrXXGtddXUOmsasDxXoPzObhagx1tVdHfWiOyWVKlfGakXyzl40mjOba0RQENEVKhrxHYrNrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706254441; c=relaxed/simple;
-	bh=pr8CavKcrMTZ6oQHBG9sL1u5dseQXpJbyT5ePj2mAHM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UncRacIqoAa5YEjZ/tLVMOL4HE2QSW0gxZuJz3Rs+2SxS1c68FdR+HJUrfyAN0l1q2IwfK5EMNu+yDeL4AWEw2SgFTJ7YHU1JqRmeEpbJomMt/EBmzDE1btLbHmQW5e+XRZCj68aaNZWHJA6QlvJXkwU/sGKsvB0NsZJvepVErg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WsPtnk5q; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-783b7ec94d4so10613285a.1;
-        Thu, 25 Jan 2024 23:33:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706254438; x=1706859238; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7OxKeIsphvMqTV/5X66+kHexwoOkDjhg0ICPhwJGIqg=;
-        b=WsPtnk5qHcGYc9rbzivEju6G8pU+01PcsWWmP0RIqqYIK8NhWvzKDj+3HLePe3w4nV
-         HDPyXvO8b5tvIbJjSzhd5f7c5Z4y1w4Jc4f/ZfBxQaD+zJkfIw+wI5tyUV8ra37KxyNp
-         3BCdXKao01RwPSe6alYchHkwm9/Eq9CojAfmx2dBq0unnQEaOKD7azR8521ldFH23HTp
-         Xjmad1cXZKBkIoQ+5OeySIHHjvjusY1ldG/2YXn5DzHhFh//I5gmlv9r18lW6ChmikXw
-         aATmtFspubjm89Gzr1+tfFl7n/nrAdsyW+yS2DxbSvYBEn81AennN1DpdF2FcFuRwzeE
-         CdHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706254438; x=1706859238;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7OxKeIsphvMqTV/5X66+kHexwoOkDjhg0ICPhwJGIqg=;
-        b=trFKNe6re9WamYvd4M3o0vZfdZdWrSbwLpUMs0PmPASwqBl4UXp21tdIHxbnrboDrP
-         OUaZMeKOWiL4sLzKXDQFXbFuxPJzrHUrPPrIR+Kp2u75KZz79xQt/zqyWPVVwP/qWevl
-         d4U0tKzK5nBir94s+do+2U0cW1rAj2skLZblsnKekLWCRg/3cpg/xgsmO1dmHEAQd/Lr
-         FK0EyUIbTOorEZADxPgMGsEZtM1qoU9HbuK/FwttJ146Eb+VnmDysBfMN53CHIMdV/NV
-         wPApGcXhKq7KoWABeFfEN16KGnosrj5+y3M2e+dRNdK1wo3GrRuHZrTrNPWS8tSNObrV
-         3v1w==
-X-Gm-Message-State: AOJu0YzUF9P5vDUl3bpdAT3Xb0Wzq5ReydXIVyzbedGCOjNgU7OEfpTK
-	zOlVGjR03Hg7+9gYd5MMZq8Kie2vv4/zZ6wEOzRKz1npFqp9O8fR2m35twp0TEvq5gloz6Oq7Ot
-	70DYlSoNSXUIx+9m2heEeF6P7dFknRr15RuY=
-X-Google-Smtp-Source: AGHT+IF9/NXdXtHKzHSeskLIz03AzeCORyxWBJv8kcluJdLvqQL+mJ4Cyg2Sf6UkG3cqnSWnX725nQcicvjZtIcoUJw=
-X-Received: by 2002:ad4:5e8a:0:b0:685:f9a6:1db6 with SMTP id
- jl10-20020ad45e8a000000b00685f9a61db6mr1163644qvb.9.1706254438264; Thu, 25
- Jan 2024 23:33:58 -0800 (PST)
+	s=arc-20240116; t=1706254952; c=relaxed/simple;
+	bh=hB+/FDgOotOkMi7XZ4G7xO3oHXwb0zbrKyD4k6wFPFI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dTbxxbsISoxm4H2Irvd7FUyXML0aaah9Em0niO6bi6BgFVk2bBttHzYGr+vUeIXNEGSJWVONacyDE4iAOFAuJFQYEAafjSeIX8r4IZwK0kMzmxyZlRiHF06PZbLIg9BwjkSL5F/P264Tk2yGJI+D4O1a3WIijL9DxJWBcT15dwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YniWX0MJ; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706254950; x=1737790950;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=hB+/FDgOotOkMi7XZ4G7xO3oHXwb0zbrKyD4k6wFPFI=;
+  b=YniWX0MJzfL6rPSqfBzYn5DGGI+WgQnCOskZrSKhX69BfG0Xg5KmuLK+
+   v6crtK8k/9N1u7geJa1cJav/JTp4m0K0jpQU5q39Z6+lFiU6J2WL5pg+u
+   O94Gn56jtcaE20OJZ+pUS9yAUZR76LGy7IEpBdpudZrCBfQM2bKv7RxZM
+   Yi1LpJJ/DOfRjXtbX/6l8LGy88wWiNfWnbiKKEwFoMwiNDp6YvXjoeKk+
+   lBELNnn3y3C/LjM80bUu4ISLdP3WcaDS6NwHapvzlzRLOWMa1jmgkKsBp
+   d6VB+XIsanGypc8q+EBZ4L5WTgOCqhe9KMPDJDlxC8b6xDORgUU4IbdUK
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10964"; a="2247860"
+X-IronPort-AV: E=Sophos;i="6.05,216,1701158400"; 
+   d="scan'208";a="2247860"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2024 23:42:29 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,216,1701158400"; 
+   d="scan'208";a="2523694"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jan 2024 23:42:24 -0800
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Gregory Price <gourry.memverge@gmail.com>
+Cc: linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
+  linux-doc@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
+  linux-api@vger.kernel.org,  corbet@lwn.net,  akpm@linux-foundation.org,
+  gregory.price@memverge.com,  honggyu.kim@sk.com,  rakie.kim@sk.com,
+  hyeongtak.ji@sk.com,  mhocko@kernel.org,  vtavarespetr@micron.com,
+  jgroves@micron.com,  ravis.opensrc@micron.com,  sthanneeru@micron.com,
+  emirakhur@micron.com,  Hasan.Maruf@amd.com,  seungjun.ha@samsung.com,
+  hannes@cmpxchg.org,  dan.j.williams@intel.com
+Subject: Re: [PATCH v3 4/4] mm/mempolicy: change cur_il_weight to atomic and
+ carry the node with it
+In-Reply-To: <20240125184345.47074-5-gregory.price@memverge.com> (Gregory
+	Price's message of "Thu, 25 Jan 2024 13:43:45 -0500")
+References: <20240125184345.47074-1-gregory.price@memverge.com>
+	<20240125184345.47074-5-gregory.price@memverge.com>
+Date: Fri, 26 Jan 2024 15:40:27 +0800
+Message-ID: <87sf2klez8.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240126072120.71867-1-jefflexu@linux.alibaba.com>
-In-Reply-To: <20240126072120.71867-1-jefflexu@linux.alibaba.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 26 Jan 2024 09:33:47 +0200
-Message-ID: <CAOQ4uxh2C_mh2Zgr=s8jXh0pk=UGWJxLijTWBGEL5cZfyFUzbQ@mail.gmail.com>
-Subject: Re: [PATCH v2] fuse: add support for explicit export disabling
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=ascii
 
-On Fri, Jan 26, 2024 at 9:21=E2=80=AFAM Jingbo Xu <jefflexu@linux.alibaba.c=
-om> wrote:
->
-> open_by_handle_at(2) can fail with -ESTALE with a valid handle returned
-> by a previous name_to_handle_at(2) for evicted fuse inodes, which is
-> especially common when entry_valid_timeout is 0, e.g. when the fuse
-> daemon is in "cache=3Dnone" mode.
->
-> The time sequence is like:
->
->         name_to_handle_at(2)    # succeed
->         evict fuse inode
->         open_by_handle_at(2)    # fail
->
-> The root cause is that, with 0 entry_valid_timeout, the dput() called in
-> name_to_handle_at(2) will trigger iput -> evict(), which will send
-> FUSE_FORGET to the daemon.  The following open_by_handle_at(2) will send
-> a new FUSE_LOOKUP request upon inode cache miss since the previous inode
-> eviction.  Then the fuse daemon may fail the FUSE_LOOKUP request with
-> -ENOENT as the cached metadata of the requested inode has already been
-> cleaned up during the previous FUSE_FORGET.  The returned -ENOENT is
-> treated as -ESTALE when open_by_handle_at(2) returns.
->
-> This confuses the application somehow, as open_by_handle_at(2) fails
-> when the previous name_to_handle_at(2) succeeds.  The returned errno is
-> also confusing as the requested file is not deleted and already there.
-> It is reasonable to fail name_to_handle_at(2) early in this case, after
-> which the application can fallback to open(2) to access files.
->
-> Since this issue typically appears when entry_valid_timeout is 0 which
-> is configured by the fuse daemon, the fuse daemon is the right person to
-> explicitly disable the export when required.
->
-> Also considering FUSE_EXPORT_SUPPORT actually indicates the support for
-> lookups of "." and "..", and there are existing fuse daemons supporting
-> export without FUSE_EXPORT_SUPPORT set, for compatibility, we add a new
-> INIT flag for such purpose.
->
-> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+Gregory Price <gourry.memverge@gmail.com> writes:
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+> In the prior patch, we carry only the current weight for a weighted
+> interleave round with us across calls through the allocator path.
+>
+> node = next_node_in(current->il_prev, pol->nodemask)
+> pol->cur_il_weight <--- this weight applies to the above node
+>
+> This separation of data can cause a race condition.
+>
+> If a cgroup-initiated task migration or mems_allowed change occurs
+> from outside the context of the task, this can cause the weight to
+> become stale, meaning we may end using that weight to allocate
+> memory on the wrong node.
+>
+> Example:
+>   1) task A sets (cur_il_weight = 8) and (current->il_prev) to
+>      node0. node1 is the next set bit in pol->nodemask
+>   2) rebind event occurs, removing node1 from the nodemask.
+>      node2 is now the next set bit in pol->nodemask
+>      cur_il_weight is now stale.
+>   3) allocation occurs, next_node_in(il_prev, nodes) returns
+>      node2. cur_il_weight is now applied to the wrong node.
+>
+> The upper level allocator logic must still enforce mems_allowed,
+> so this isn't dangerous, but it is innaccurate.
+>
+> Just clearing the weight is insufficient, as it creates two more
+> race conditions.  The root of the issue is the separation of weight
+> and node data between nodemask and cur_il_weight.
+>
+> To solve this, update cur_il_weight to be an atomic_t, and place the
+> node that the weight applies to in the upper bits of the field:
+>
+> atomic_t cur_il_weight
+> 	node bits 32:8
+> 	weight bits 7:0
+>
+> Now retrieving or clearing the active interleave node and weight
+> is a single atomic operation, and we are not dependent on the
+> potentially changing state of (pol->nodemask) to determine what
+> node the weight applies to.
+>
+> Two special observations:
+> - if the weight is non-zero, cur_il_weight must *always* have a
+>   valid node number, e.g. it cannot be NUMA_NO_NODE (-1).
 
+IIUC, we don't need that, "MAX_NUMNODES-1" is used instead.
+
+>   This is because we steal the top byte for the weight.
+>
+> - MAX_NUMNODES is presently limited to 1024 or less on every
+>   architecture. This would permanently limit MAX_NUMNODES to
+>   an absolute maximum of (1 << 24) to avoid overflows.
+>
+> Per some reading and discussion, it appears that max nodes is
+> limited to 1024 so that zone type still fits in page flags, so
+> this method seemed preferable compared to the alternatives of
+> trying to make all or part of mempolicy RCU protected (which
+> may not be possible, since it is often referenced during code
+> chunks which call operations that may sleep).
+>
+> Signed-off-by: Gregory Price <gregory.price@memverge.com>
 > ---
-> v2:
-> - rename to "fuse_export_fid_operations"
-> - bump FUSE_KERNEL_MINOR_VERSION
+>  include/linux/mempolicy.h |  2 +-
+>  mm/mempolicy.c            | 93 +++++++++++++++++++++++++--------------
+>  2 files changed, 61 insertions(+), 34 deletions(-)
 >
-> v1: https://lore.kernel.org/linux-fsdevel/20240124113042.44300-1-jefflexu=
-@linux.alibaba.com/
-> RFC: https://lore.kernel.org/all/20240123093701.94166-1-jefflexu@linux.al=
-ibaba.com/
-> ---
->  fs/fuse/inode.c           | 11 ++++++++++-
->  include/uapi/linux/fuse.h |  7 ++++++-
->  2 files changed, 16 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 2a6d44f91729..eee200308482 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1110,6 +1110,11 @@ static struct dentry *fuse_get_parent(struct dentr=
-y *child)
->         return parent;
+> diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
+> index c644d7bbd396..8108fc6e96ca 100644
+> --- a/include/linux/mempolicy.h
+> +++ b/include/linux/mempolicy.h
+> @@ -56,7 +56,7 @@ struct mempolicy {
+>  	} w;
+>  
+>  	/* Weighted interleave settings */
+> -	u8 cur_il_weight;
+> +	atomic_t cur_il_weight;
+
+If we use this field for node and weight, why not change the field name?
+For example, cur_wil_node_weight.
+
+>  };
+>  
+>  /*
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index 5a517511658e..41b5fef0a6f5 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -321,7 +321,7 @@ static struct mempolicy *mpol_new(unsigned short mode, unsigned short flags,
+>  	policy->mode = mode;
+>  	policy->flags = flags;
+>  	policy->home_node = NUMA_NO_NODE;
+> -	policy->cur_il_weight = 0;
+> +	atomic_set(&policy->cur_il_weight, 0);
+>  
+>  	return policy;
 >  }
->
-> +/* only for fid encoding; no support for file handle */
-> +static const struct export_operations fuse_export_fid_operations =3D {
-> +       .encode_fh      =3D fuse_encode_fh,
-> +};
+> @@ -356,6 +356,7 @@ static void mpol_rebind_nodemask(struct mempolicy *pol, const nodemask_t *nodes)
+>  		tmp = *nodes;
+>  
+>  	pol->nodes = tmp;
+> +	atomic_set(&pol->cur_il_weight, 0);
+>  }
+>  
+>  static void mpol_rebind_preferred(struct mempolicy *pol,
+> @@ -973,8 +974,10 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
+>  			*policy = next_node_in(current->il_prev, pol->nodes);
+>  		} else if (pol == current->mempolicy &&
+>  				(pol->mode == MPOL_WEIGHTED_INTERLEAVE)) {
+> -			if (pol->cur_il_weight)
+> -				*policy = current->il_prev;
+> +			int cweight = atomic_read(&pol->cur_il_weight);
 > +
->  static const struct export_operations fuse_export_operations =3D {
->         .fh_to_dentry   =3D fuse_fh_to_dentry,
->         .fh_to_parent   =3D fuse_fh_to_parent,
-> @@ -1284,6 +1289,8 @@ static void process_init_reply(struct fuse_mount *f=
-m, struct fuse_args *args,
->                                 fc->create_supp_group =3D 1;
->                         if (flags & FUSE_DIRECT_IO_ALLOW_MMAP)
->                                 fc->direct_io_allow_mmap =3D 1;
-> +                       if (flags & FUSE_NO_EXPORT_SUPPORT)
-> +                               fm->sb->s_export_op =3D &fuse_export_fid_=
-operations;
->                 } else {
->                         ra_pages =3D fc->max_read / PAGE_SIZE;
->                         fc->no_lock =3D 1;
-> @@ -1330,7 +1337,8 @@ void fuse_send_init(struct fuse_mount *fm)
->                 FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
->                 FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_E=
-XT |
->                 FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
-> -               FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP;
-> +               FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
-> +               FUSE_NO_EXPORT_SUPPORT;
->  #ifdef CONFIG_FUSE_DAX
->         if (fm->fc->dax)
->                 flags |=3D FUSE_MAP_ALIGNMENT;
-> @@ -1527,6 +1535,7 @@ static int fuse_fill_super_submount(struct super_bl=
-ock *sb,
->         sb->s_bdi =3D bdi_get(parent_sb->s_bdi);
->
->         sb->s_xattr =3D parent_sb->s_xattr;
-> +       sb->s_export_op =3D parent_sb->s_export_op;
->         sb->s_time_gran =3D parent_sb->s_time_gran;
->         sb->s_blocksize =3D parent_sb->s_blocksize;
->         sb->s_blocksize_bits =3D parent_sb->s_blocksize_bits;
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index e7418d15fe39..38d9f285a599 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -211,6 +211,9 @@
->   *  7.39
->   *  - add FUSE_DIRECT_IO_ALLOW_MMAP
->   *  - add FUSE_STATX and related structures
-> + *
-> + *  7.40
-> + *  - add FUSE_NO_EXPORT_SUPPORT
->   */
->
->  #ifndef _LINUX_FUSE_H
-> @@ -246,7 +249,7 @@
->  #define FUSE_KERNEL_VERSION 7
->
->  /** Minor version number of this interface */
-> -#define FUSE_KERNEL_MINOR_VERSION 39
-> +#define FUSE_KERNEL_MINOR_VERSION 40
->
->  /** The node ID of the root inode */
->  #define FUSE_ROOT_ID 1
-> @@ -410,6 +413,7 @@ struct fuse_file_lock {
->   *                     symlink and mknod (single group that matches pare=
-nt)
->   * FUSE_HAS_EXPIRE_ONLY: kernel supports expiry-only entry invalidation
->   * FUSE_DIRECT_IO_ALLOW_MMAP: allow shared mmap in FOPEN_DIRECT_IO mode.
-> + * FUSE_NO_EXPORT_SUPPORT: explicitly disable export support
->   */
->  #define FUSE_ASYNC_READ                (1 << 0)
->  #define FUSE_POSIX_LOCKS       (1 << 1)
-> @@ -449,6 +453,7 @@ struct fuse_file_lock {
->  #define FUSE_CREATE_SUPP_GROUP (1ULL << 34)
->  #define FUSE_HAS_EXPIRE_ONLY   (1ULL << 35)
->  #define FUSE_DIRECT_IO_ALLOW_MMAP (1ULL << 36)
-> +#define FUSE_NO_EXPORT_SUPPORT (1ULL << 37)
->
->  /* Obsolete alias for FUSE_DIRECT_IO_ALLOW_MMAP */
->  #define FUSE_DIRECT_IO_RELAX   FUSE_DIRECT_IO_ALLOW_MMAP
-> --
-> 2.19.1.6.gb485710b
->
+> +			if (cweight & 0xFF)
+> +				*policy = cweight >> 8;
+
+Please define some helper functions or macros instead of operate on bits
+directly.
+
+>  			else
+>  				*policy = next_node_in(current->il_prev,
+>  						       pol->nodes);
+
+If we record current node in pol->cur_il_weight, why do we still need
+curren->il_prev.  Can we only use pol->cur_il_weight?  And if so, we can
+even make current->il_prev a union.
+
+--
+Best Regards,
+Huang, Ying
+
+[snip]
 
