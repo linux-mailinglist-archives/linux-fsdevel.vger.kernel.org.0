@@ -1,91 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-9148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F56E83E810
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 01:12:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B057283E812
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 01:12:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 560512846D3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 00:12:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37ABC1F22D6B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 00:12:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D4B749D;
-	Sat, 27 Jan 2024 00:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCF97481;
+	Sat, 27 Jan 2024 00:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YcY1xGHp";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+3MLAQIu";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DL29lvjE";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lUykj0Lo"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rUco1wkm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GVxuysbt";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rUco1wkm";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="GVxuysbt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A923579CD;
-	Sat, 27 Jan 2024 00:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39328C0C;
+	Sat, 27 Jan 2024 00:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706314260; cv=none; b=iuWzLyyigywz25Vkyr/8JCuDlLgCFnd9ut20MS7gpng0C9lB+Kjf8AuxIW3gAoxGwMXztd9ZcERyztfJfk+NW7VfyUFr7DRi5F4nNo+RdUebUEI0aDbUM3d/KkZi/74riuyvJpLYqkrfdMTNuk7jVOSV1OOTgpZLhfq1EuCJYAw=
+	t=1706314264; cv=none; b=RdyhXWKWMKvoz59ZHl9xEbd0DhJXN3gkdm834EM0tFtqX291XwN5PPFn7w01yZ1yJLT8e14sV2TMX8DyPPabz0txYMJBXrnraXOm3aPpqUMRY1i84pYLiZgjIaSRUsOvsnM6GVpTUixpO/0/7JWCn4f5N50kWlzNf5/+gv9SYQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706314260; c=relaxed/simple;
-	bh=xdvOyZCyetrCoFBK/1YJbxbSYOwB1nE+htEZH6Bvsf0=;
+	s=arc-20240116; t=1706314264; c=relaxed/simple;
+	bh=1Ao/c/JxfzxL9II9Yp4/ihYQEUaG7i9u2Xgh2Znp3r4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Jv9olDYwfZSga8yQ6YlB6/gMpHrXBMpH7n+HRlXpliA1XsEfQPhswkVs6YPigau00XF1Wh65BrhLM6SVXG3rCSvXupbCOVIFJoahE5sCkXsckbRBOyuqdIKqn8CpbAi8Imi04zU4sVWBgocTZQrjuAtBjqYUCBY1LmxS+I7YI/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YcY1xGHp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+3MLAQIu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DL29lvjE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lUykj0Lo; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=HoepLqqw01KQ6yjZv1C2Q9ny7BGMnSM3ahyRXI/tjL5S7nfOEAd0x9nPNTu6OEtxJDhkHLqZCOc2FISuF0SFo9YR8EXE1dS2qpx7YEvvahHXARRdV16O4nVDEpKW1TOBKO+2xU8Bn23CtMokDeCLYXOvbmpemDm/UjyCXMPvVjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rUco1wkm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GVxuysbt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rUco1wkm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=GVxuysbt; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F20E4223A2;
-	Sat, 27 Jan 2024 00:10:56 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E3EC5223A6;
+	Sat, 27 Jan 2024 00:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1706314257; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1706314260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
-	b=YcY1xGHpTl9Vy8q3omzUUcUEfClzGE70Ta6rn+086a221j5iI5SWBVzrEoDqXYZ8Dud6a5
-	ZxPK6uHn0jlZMIZ/i0VqSbJzno/GjXX5UMrKia1TWIqH1XcuuccegBqrNHcJCOIMK6haBb
-	hqdzP4odjb+/UHyxOLxVmcspEmYZCZM=
+	bh=RVHkl1+gHuQ53whsCv6aHWAEO4kmheKoUmT6NcMFQk8=;
+	b=rUco1wkmJdL6RcqVP2pN2DT0mbj9rej6Bg90Q4RmrD21jBjqSm4oi7hs2aZ0k6lpkEbLku
+	11Ejddv4+oD9nPYXJ2YaycHrTDGU1g3Y6d0iSJ7QySnzFG5JXMghELKZjGPJQRR6vxT8iP
+	qhb/TPwMS4FZYox6E2D7RsIluqrrd44=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1706314257;
+	s=susede2_ed25519; t=1706314260;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
-	b=+3MLAQIubavuuRim7BkW3oHAk217xznLyNLzcaIy8k+6pVLjBrkXHCqHNk+an6H6ewHKK9
-	3XDmguXcjZ3siKDw==
+	bh=RVHkl1+gHuQ53whsCv6aHWAEO4kmheKoUmT6NcMFQk8=;
+	b=GVxuysbt1zhzuKUTPhZyq0XwEAxw/D/7mveNnduI03axx+G7/p98c1VWrtRYTqPDCLIYbI
+	/F2PZdqA6eUUCaBw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1706314256; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1706314260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
-	b=DL29lvjES8MKtzC9/H5Hh210LiZwpdC1QzYI1J5hnPnz2hQPukfS6PT9koBHlz9+1V4Us4
-	x2tUASE4Kpby/3Byr5BFzaFU752g5U4FJZZYBlQCAAOjleus3FHitgl7wB3TiyNnAOT3F0
-	4LJuvuZYerbPv4o+GSNz5DIuo/k9jyI=
+	bh=RVHkl1+gHuQ53whsCv6aHWAEO4kmheKoUmT6NcMFQk8=;
+	b=rUco1wkmJdL6RcqVP2pN2DT0mbj9rej6Bg90Q4RmrD21jBjqSm4oi7hs2aZ0k6lpkEbLku
+	11Ejddv4+oD9nPYXJ2YaycHrTDGU1g3Y6d0iSJ7QySnzFG5JXMghELKZjGPJQRR6vxT8iP
+	qhb/TPwMS4FZYox6E2D7RsIluqrrd44=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1706314256;
+	s=susede2_ed25519; t=1706314260;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
-	b=lUykj0Lo8ao0pKTz/joEtkFX/o7HStFWM56EhE6CZw9hi9pxFDK2yNMxfAtiwuv/dbhjtP
-	IcUs4BZHLf7Rs6AQ==
+	bh=RVHkl1+gHuQ53whsCv6aHWAEO4kmheKoUmT6NcMFQk8=;
+	b=GVxuysbt1zhzuKUTPhZyq0XwEAxw/D/7mveNnduI03axx+G7/p98c1VWrtRYTqPDCLIYbI
+	/F2PZdqA6eUUCaBw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C99D13998;
-	Sat, 27 Jan 2024 00:10:56 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5ACD013998;
+	Sat, 27 Jan 2024 00:11:00 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4NFGBBBKtGWIEQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Sat, 27 Jan 2024 00:10:56 +0000
+	id Ad0FBRRKtGWNEQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Sat, 27 Jan 2024 00:11:00 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: ebiggers@kernel.org,
 	viro@zeniv.linux.org.uk,
@@ -96,9 +96,9 @@ Cc: amir73il@gmail.com,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org,
 	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v4 10/12] f2fs: Configure dentry operations at dentry-creation time
-Date: Fri, 26 Jan 2024 21:10:10 -0300
-Message-ID: <20240127001013.2845-11-krisman@suse.de>
+Subject: [PATCH v4 11/12] ubifs: Configure dentry operations at dentry-creation time
+Date: Fri, 26 Jan 2024 21:10:11 -0300
+Message-ID: <20240127001013.2845-12-krisman@suse.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240127001013.2845-1-krisman@suse.de>
 References: <20240127001013.2845-1-krisman@suse.de>
@@ -135,47 +135,42 @@ X-Spamd-Result: default: False [3.70 / 50.00];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 MIME_TRACE(0.00)[0:+];
 	 FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,lists.sourceforge.net,suse.de];
-	 RCVD_TLS_ALL(0.00)[]
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-0.00)[14.70%]
 X-Spam-Flag: NO
 
-This was already the case for case-insensitive before commit
-bb9cd9106b22 ("fscrypt: Have filesystems handle their d_ops"), but it
-was changed to set at lookup-time to facilitate the integration with
-fscrypt.  But it's a problem because dentries that don't get created
-through ->lookup() won't have any visibility of the operations.
-
-Since fscrypt now also supports configuring dentry operations at
-creation-time, do it for any encrypted and/or casefold volume,
-simplifying the implementation across these features.
+fscrypt now supports configuring dentry operations at dentry-creation
+time through the preset sb->s_d_op, instead of at lookup time.
+Enable this in ubifs, since the lookup-time mechanism is going away.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- fs/f2fs/namei.c | 1 -
- fs/f2fs/super.c | 1 +
+ fs/ubifs/dir.c   | 1 -
+ fs/ubifs/super.c | 1 +
  2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index d0053b0284d8..b40c6c393bd6 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -532,7 +532,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 	}
+diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
+index 3b13c648d490..51b9a10a9851 100644
+--- a/fs/ubifs/dir.c
++++ b/fs/ubifs/dir.c
+@@ -205,7 +205,6 @@ static struct dentry *ubifs_lookup(struct inode *dir, struct dentry *dentry,
+ 	dbg_gen("'%pd' in dir ino %lu", dentry, dir->i_ino);
  
- 	err = f2fs_prepare_lookup(dir, dentry, &fname);
+ 	err = fscrypt_prepare_lookup(dir, dentry, &nm);
 -	generic_set_encrypted_ci_d_ops(dentry);
  	if (err == -ENOENT)
- 		goto out_splice;
+ 		return d_splice_alias(NULL, dentry);
  	if (err)
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 033af907c3b1..abfdb6e25b1c 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4663,6 +4663,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		goto free_node_inode;
+diff --git a/fs/ubifs/super.c b/fs/ubifs/super.c
+index 09e270d6ed02..304646b03e99 100644
+--- a/fs/ubifs/super.c
++++ b/fs/ubifs/super.c
+@@ -2239,6 +2239,7 @@ static int ubifs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto out_umount;
  	}
  
 +	generic_set_sb_d_ops(sb);
- 	sb->s_root = d_make_root(root); /* allocate root dentry */
+ 	sb->s_root = d_make_root(root);
  	if (!sb->s_root) {
  		err = -ENOMEM;
 -- 
