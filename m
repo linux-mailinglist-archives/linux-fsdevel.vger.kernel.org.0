@@ -1,91 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-9211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCE8483EE3E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 17:12:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43C5783EE4E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 17:18:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FF6C1C2108D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 16:12:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A64E5B2183D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 16:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97652C18F;
-	Sat, 27 Jan 2024 16:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDB02C1AA;
+	Sat, 27 Jan 2024 16:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gdFaxO8t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 273FB1E4BC
-	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jan 2024 16:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2462E28E23;
+	Sat, 27 Jan 2024 16:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706371925; cv=none; b=lWUT4EEQmPzN+CBxwZnVODYJbf0Xv9naUbBq7n9wBP/iZY652ogiOVutYcYhOoUxAUVMxqukPmn5cpSo0CCQ9edrnFgaUGLNdVEAVD1TFolW0M7YpWsm0zYJ42JcAXTFL6bFBn3+5EDQVKgZm9HdO+ILT+O5qRnaH4phNqxs85E=
+	t=1706372289; cv=none; b=rqvAT6oJ4FB3p/tXWIZ4IaaPB6etQD4T4AZHnKeAd2ELsHpO2G2Q7GdMQBaRILrKHdCuxQIu5inwtz0v/K8aa177qOp8uIQ81ebx0mb+1InJK+8Zhbxoosu7KY3KMRWl+4GR0RgBe84wAzPn0SsxDY3oMpMtS2vcjdwj01fPQvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706371925; c=relaxed/simple;
-	bh=Mbh52BZbCdx3tCagUL0smHoHhUomsD+AcDYk4SE06CA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=EXXWTFcbJlrVhviyYB1LMim5IuYEjP9fWD+jHNi5bc110UIdA1NiXL/3RYVK+SMDKsXMJxk7CEtoWmRWdQ1knyozL3riEC6zkzzDF1bvEVRXTEHksD6pFpOSyP+0LRubgl4yiJOixXlT+ewJGJseA/flJZWhMmjSclLMk+ie7HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-361a5c2e84eso5790225ab.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jan 2024 08:12:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706371923; x=1706976723;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CobbQsqvBTFHX4fAZc4WxCoKNf7Qym9tUoc5Rg1pYJo=;
-        b=Qn94qpZnBkaLtnKi9GlY+Ni37oi5xs61cN0JW20ZpzipiBKhML4pAj7LHv6nHDhp7B
-         ZnHbnmxsvywXl/ZaZZNDr1rgq3WRY1+uSlyPFPntSbIcj20vAh5613BFiu5TWKgNg0Fs
-         BgIMZHs+lr/64naqpIN6nuOznAGxMgx9Jz4H8cquDuyNGVFbKQDiInYbYoxmqD/VD9Xf
-         5BrnxLo4bSMtAS3CYi2FVv1o+7KD8yWyGRswaFLJ3ThjEG3fGYmQRKES4GO1aFC236WW
-         XP6enJBnoZ3qk7GzAWoDDeKHXcOTAxouERYjAt5MWFcHiK13pmDYw+bdeTAjSlnDNmWK
-         pcTw==
-X-Gm-Message-State: AOJu0Yx/bE5YBniTc3+8fJodUIZi2Szh319edsJNHhVFwDaVa4DuDDAU
-	jezvGJfwSVGZgDKGNtXNxlxya2GJOjMmbW3VeMR2OcPq8G0yT5H2bIT7NZ8/2Y6QFNZTbesjLU9
-	udiuujJ5bTAHEorEPRI7wkAopL5qcg4VFKuOiQm1u5yEYPPDJBe2mHfU=
-X-Google-Smtp-Source: AGHT+IH20cR57PeOLe4lJa5m7Tyz2Wi4IuB5L9esa9+3ULbsHM3Ko4jBOeX9JWSudWdn9mqm9O9++1mU2FyboUkmpzO4cHV3jntD
+	s=arc-20240116; t=1706372289; c=relaxed/simple;
+	bh=aHPBBvTe1Yv5eAiaidgAePZFK/VRhuggBoBZrMj6VwQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gTNQZeoWvVqbHHGMbDUcAVJmhz8YjqclZ2lEOq4ZzmXG6XMadQC7RbJkWYiybVZudUP4bBjq45SY5mgpA1R09yPp9GqnELIfWJ7GU/3c7bIRFPTSPcrcYeDlTBgUsp53xlac4YHdXVJun/CBP9gS1ax1X19EnDMfmUc/KbguGY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gdFaxO8t; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KhHNxgF3fX8abmBvoOAyuYkGMYHZsCw8fbKtovSaG/I=; b=gdFaxO8t6tnCSKV8WTnvzfHz2e
+	vL3goFmREafb6BeoodiQOqw7C6OocFzhyq/eIYwdJAhsYIdpoCUXYDONbVTFM9Wc/aGWtxQ6yl021
+	APdqJgfTxUUXMDYm7Re0cYNuq4tL18oadwnRPa7Hum6f6R2lvDwbqc9TVET+KbAHR+C5N+KuDNf6S
+	EeVNaMcEFmgUYrmxhgcrjFDhDXK+jLn9UsH4bE+3ON6iblEXxOR8UGQMyj8M0emHEm5KI5oT38/y8
+	WMH9ok4+pBbJkgSTOd4sC+FOfd8sq1abWCj78o1W14txC4lKOh33kzs4Mo/W/uhNb7OKnJxMm8ndZ
+	cpI2T1MQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rTlNa-0000000HLiT-3PXm;
+	Sat, 27 Jan 2024 16:18:02 +0000
+Date: Sat, 27 Jan 2024 16:18:02 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-nvme@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] State Of The Page
+Message-ID: <ZbUsuquUXXq4D6fw@casper.infradead.org>
+References: <ZaqiPSj1wMrTMdHa@casper.infradead.org>
+ <CAOQ4uxh1BCmBA3ow130p1FBUrLLRVO2i_DDtAGQWhAzrabmP8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda4:0:b0:362:910b:2345 with SMTP id
- g4-20020a92cda4000000b00362910b2345mr189662ild.4.1706371923321; Sat, 27 Jan
- 2024 08:12:03 -0800 (PST)
-Date: Sat, 27 Jan 2024 08:12:03 -0800
-In-Reply-To: <000000000000a213d505f1472cbe@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000582e37060fefac1a@google.com>
-Subject: Re: [syzbot] [ntfs?] kernel BUG in ntfs_truncate
-From: syzbot <syzbot+22e381af27f7921a2642@syzkaller.appspotmail.com>
-To: anton@tuxera.com, axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-ntfs-dev@lists.sourceforge.net, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxh1BCmBA3ow130p1FBUrLLRVO2i_DDtAGQWhAzrabmP8Q@mail.gmail.com>
 
-syzbot suspects this issue was fixed by commit:
+On Sat, Jan 27, 2024 at 12:10:32PM +0200, Amir Goldstein wrote:
+> Matthew,
+> 
+> And everyone else who suggests LSF/MM/BPF topic.
+> 
+> Please do not forget to also fill out the Google form:
+> 
+>           https://forms.gle/TGCgBDH1x5pXiWFo7
+> 
+> So we have your attendance request with suggested topics in our spreadsheet.
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
-
-    fs: Block writes to mounted block devices
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=179a855fe80000
-start commit:   bff687b3dad6 Merge tag 'block-6.2-2022-12-29' of git://git..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=68e0be42c8ee4bb4
-dashboard link: https://syzkaller.appspot.com/bug?extid=22e381af27f7921a2642
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=175a9dbc480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1542c884480000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+I'm pretty sure I already filled that out months ago within a day of the
+initial announcement, and I thought I included SOTP as one of the topics.
+But honestly, I'm not sure which topics I filled in there.  Is there a
+way for me to know what I wrote in and edit my initial response?
 
