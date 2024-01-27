@@ -1,123 +1,272 @@
-Return-Path: <linux-fsdevel+bounces-9208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9209-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348AE83EDBD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 15:59:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16A183EDDC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 16:21:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C891F2242B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 14:59:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68EE51F22651
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 15:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A7B28DAE;
-	Sat, 27 Jan 2024 14:59:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8911928E0D;
+	Sat, 27 Jan 2024 15:20:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="eGPk/ly2";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="eGPk/ly2"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WGKPTwHv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B948C25629
-	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jan 2024 14:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE95D28DA7
+	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jan 2024 15:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706367556; cv=none; b=buEzMgvaoTFwYYhui9BlO9R8H85QbXlvvT3tlvCeDDHY9LyVV3kJSxO2tbQuHSGs8jXIxNqscw4FxmAGf5TpE6dXlaPYjEoCEeqX6gLX8zFDnu3jdtYVNP6EAYk1sdl3L/I5GM0hYpn8KoeuWOL1GIaEDYpyoFttcr3Em1l+aj8=
+	t=1706368855; cv=none; b=GL7ThyR9gjXDzyROaOPXA6JxqpRt4KXoPHI/jCj3lifbSder5Rq30aiLheIE3u8E/HREY2OKHPOe4qEpEz3PlUY2QCn2AuN9SyqG6CE6qU7R7KavHqkbD6HWwy7y1xFdgR1lFyFYxSP0T82vWXmXUzno0muEUDySQKRQVdkeIRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706367556; c=relaxed/simple;
-	bh=jk7bFkoYzF+XHYrzjj0iuyo/A5nRVpoWxmzEke5I2tU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RD727JgqfU1aejh9yU0kk9MjkSscyf5RoCqYr9cqerohK7+nB+o5bVSUBoxtSeaPSufEqvbdMcogskFeT9ZT91C+lKOLNZ4StYiyZmFdML0s3/XUGhXOmWRUUq6x7WnnbZCeH3E/R/vgwUNl2dr4bq0ads6mifFzs5qUXGQ+UL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=eGPk/ly2; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=eGPk/ly2; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1706367553;
-	bh=jk7bFkoYzF+XHYrzjj0iuyo/A5nRVpoWxmzEke5I2tU=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=eGPk/ly2W+0rxG8znMh2lGom/4lK474TgBh0vHrn2eYKfvtGQajuVJAiomsuUUssG
-	 Sw20WzUKi92m7QyyjKjVGgfD5irZFWBIEUFFJ53pjT9Kfrl//u2aCjL2TR/LZeKias
-	 DFkWUzuMcAQO2FdPi/JUuKpPh2mKFxKJ9kjRM/18=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8ABB91281BDA;
-	Sat, 27 Jan 2024 09:59:13 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id kmTTlxDjm9JL; Sat, 27 Jan 2024 09:59:13 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1706367553;
-	bh=jk7bFkoYzF+XHYrzjj0iuyo/A5nRVpoWxmzEke5I2tU=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=eGPk/ly2W+0rxG8znMh2lGom/4lK474TgBh0vHrn2eYKfvtGQajuVJAiomsuUUssG
-	 Sw20WzUKi92m7QyyjKjVGgfD5irZFWBIEUFFJ53pjT9Kfrl//u2aCjL2TR/LZeKias
-	 DFkWUzuMcAQO2FdPi/JUuKpPh2mKFxKJ9kjRM/18=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 8C2C81281947;
-	Sat, 27 Jan 2024 09:59:12 -0500 (EST)
-Message-ID: <d661e4a68a799d8ae85f0eab67b1074bfde6a87b.camel@HansenPartnership.com>
-Subject: Re: [LSF/MM TOPIC] Making pseudo file systems inodes/dentries more
- like normal file systems
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Amir Goldstein <amir73il@gmail.com>, Steven Rostedt <rostedt@goodmis.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, Christian Brauner <brauner@kernel.org>, Al Viro
-	 <viro@zeniv.linux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 27 Jan 2024 09:59:10 -0500
-In-Reply-To: <CAOQ4uxjRxp4eGJtuvV90J4CWdEftusiQDPb5rFoBC-Ri7Nr8BA@mail.gmail.com>
-References: <20240125104822.04a5ad44@gandalf.local.home>
-	 <2024012522-shorten-deviator-9f45@gregkh>
-	 <20240125205055.2752ac1c@rorschach.local.home>
-	 <2024012528-caviar-gumming-a14b@gregkh>
-	 <20240125214007.67d45fcf@rorschach.local.home>
-	 <2024012634-rotten-conjoined-0a98@gregkh>
-	 <20240126101553.7c22b054@gandalf.local.home>
-	 <2024012600-dose-happiest-f57d@gregkh>
-	 <20240126114451.17be7e15@gandalf.local.home>
-	 <CAOQ4uxjRxp4eGJtuvV90J4CWdEftusiQDPb5rFoBC-Ri7Nr8BA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1706368855; c=relaxed/simple;
+	bh=wilSicJhWwERnmVX9GceQmQr35AE1fiUYJoUpMTUsHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rwnfvjPGtNyn/Ry4S3fHT+LHru0/+6AoYiF2gZCKZd/qv21cMN/5oKzeqZ8rqqsm+8iTHkcBHPIdEqc2Ae8oxEEERubMpaWrTDTXnhpz10v1P/X9zD5WnSolRjCsSPYR31AH7K5OpTBEDfXX8SmJaL+ny7SwBvG1GavzKeE4Dr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WGKPTwHv; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 27 Jan 2024 10:20:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1706368851;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=02z/TrmtiGbUOiCDc1VZWJkHRhcxM9+ZNLI+hwzY088=;
+	b=WGKPTwHvBpWp2pyFXXTRUnKV8+jhjqe2vf5mHhl8eFkJBnAVn/HYBzEg1o//BjUllTcCF3
+	1qKfLwP1Mu6nWeQkhRO/dRbuZ07hKPXOEApu2ADhXxOYNefP/2HSnH0johtQ2lkDwlhb7e
+	54aSs6UAawKU1I54wnGkJWZrWrMN0I4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Joshua Ashton <joshua@froggi.es>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-bcache@vger.kernel.org, linux-bcachefs@vger.kernel.org
+Subject: Re: [PATCH 3/5] bcachefs: bch2_time_stats_to_seq_buf()
+Message-ID: <5efhxgruvtlrjiqe52kgmnduguw3tmg2jjugfzi7dhbywljrwi@zu2ndkvzunzs>
+References: <20240126220655.395093-1-kent.overstreet@linux.dev>
+ <20240126220655.395093-3-kent.overstreet@linux.dev>
+ <DA69BC9C-D7FF-48F7-9F6D-EF96DC4C5C7B@froggi.es>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <DA69BC9C-D7FF-48F7-9F6D-EF96DC4C5C7B@froggi.es>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, 2024-01-27 at 12:15 +0200, Amir Goldstein wrote:
-> I would like to attend the talk about what happened since we
-> suggested that you use kernfs in LSFMM 2022 and what has happened
-> since. I am being serious, I am not being sarcastic and I am not
-> claiming that you did anything wrong :)
+On Sat, Jan 27, 2024 at 03:49:29AM +0000, Joshua Ashton wrote:
+> Kernel patches need descriptions.
 
-Actually, could we do the reverse and use this session to investigate
-what's wrong with the VFS for new coders?  I had a somewhat similar
-experience when I did shiftfs way back in 2017.  There's a huge amount
-of VFS knowledge you simply can't pick up reading the VFS API.  The way
-I did it was to look at existing filesystems (for me overlayfs was the
-closes to my use case) as well (and of course configfs which proved to
-be too narrow for the use case).  I'd say it took a good six months
-before I understood the subtleties enough to propose a new filesystem
-and be capable of answering technical questions about it.  And
-remember, like Steve, I'm a fairly competent kernel programmer.  Six
-months plus of code reading is an enormous barrier to place in front of
-anyone wanting to do a simple filesystem, and it would be way bigger if
-that person were new(ish) to Linux.
+I think this one was pretty clear from the name and type signature :)
 
-It was also only after eventfs had gone around the houses several times
-that people suggested kernfs; it wasn't the default answer (why not?).
-Plus, if kernfs should have been the default answer early on, why is
-there no documentation at all?  I mean fine, eventfs isn't really a new
-filesystem, it's an extension of the existing tracefs, which is perhaps
-how it sailed under the radar until the initial blow up, but that still
-doesn't answer how hostile an environment the VFS currently is to new
-coders who don't have six months or more to invest.
-
-James
-
+> 
+> On January 26, 2024 10:06:53 PM GMT, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> >Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> >---
+> > fs/bcachefs/super.c |   2 +
+> > fs/bcachefs/util.c  | 129 +++++++++++++++++++++++++++++++++++++++-----
+> > fs/bcachefs/util.h  |   4 ++
+> > 3 files changed, 121 insertions(+), 14 deletions(-)
+> >
+> >diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
+> >index da8697c79a97..e74534096cb5 100644
+> >--- a/fs/bcachefs/super.c
+> >+++ b/fs/bcachefs/super.c
+> >@@ -1262,6 +1262,8 @@ static struct bch_dev *__bch2_dev_alloc(struct bch_fs *c,
+> > 
+> > 	bch2_time_stats_init(&ca->io_latency[READ]);
+> > 	bch2_time_stats_init(&ca->io_latency[WRITE]);
+> >+	ca->io_latency[READ].quantiles_enabled = true;
+> >+	ca->io_latency[WRITE].quantiles_enabled = true;
+> > 
+> > 	ca->mi = bch2_mi_to_cpu(member);
+> > 
+> >diff --git a/fs/bcachefs/util.c b/fs/bcachefs/util.c
+> >index c7cf9c6fcf9a..f2c8550c1331 100644
+> >--- a/fs/bcachefs/util.c
+> >+++ b/fs/bcachefs/util.c
+> >@@ -505,10 +505,8 @@ static inline void pr_name_and_units(struct printbuf *out, const char *name, u64
+> > 
+> > void bch2_time_stats_to_text(struct printbuf *out, struct bch2_time_stats *stats)
+> > {
+> >-	const struct time_unit *u;
+> > 	s64 f_mean = 0, d_mean = 0;
+> >-	u64 q, last_q = 0, f_stddev = 0, d_stddev = 0;
+> >-	int i;
+> >+	u64 f_stddev = 0, d_stddev = 0;
+> > 
+> > 	if (stats->buffer) {
+> > 		int cpu;
+> >@@ -607,19 +605,122 @@ void bch2_time_stats_to_text(struct printbuf *out, struct bch2_time_stats *stats
+> > 
+> > 	printbuf_tabstops_reset(out);
+> > 
+> >-	i = eytzinger0_first(NR_QUANTILES);
+> >-	u = pick_time_units(stats->quantiles.entries[i].m);
+> >+	if (stats->quantiles_enabled) {
+> >+		int i = eytzinger0_first(NR_QUANTILES);
+> >+		const struct time_unit *u =
+> >+			pick_time_units(stats->quantiles.entries[i].m);
+> >+		u64 last_q = 0;
+> >+
+> >+		prt_printf(out, "quantiles (%s):\t", u->name);
+> >+		eytzinger0_for_each(i, NR_QUANTILES) {
+> >+			bool is_last = eytzinger0_next(i, NR_QUANTILES) == -1;
+> >+
+> >+			u64 q = max(stats->quantiles.entries[i].m, last_q);
+> >+			prt_printf(out, "%llu ", div_u64(q, u->nsecs));
+> >+			if (is_last)
+> >+				prt_newline(out);
+> >+			last_q = q;
+> >+		}
+> >+	}
+> >+}
+> >+
+> >+#include <linux/seq_buf.h>
+> >+
+> >+static void seq_buf_time_units_aligned(struct seq_buf *out, u64 ns)
+> >+{
+> >+	const struct time_unit *u = pick_time_units(ns);
+> >+
+> >+	seq_buf_printf(out, "%8llu %s", div64_u64(ns, u->nsecs), u->name);
+> >+}
+> >+
+> >+void bch2_time_stats_to_seq_buf(struct seq_buf *out, struct bch2_time_stats *stats)
+> >+{
+> >+	s64 f_mean = 0, d_mean = 0;
+> >+	u64 f_stddev = 0, d_stddev = 0;
+> >+
+> >+	if (stats->buffer) {
+> >+		int cpu;
+> > 
+> >-	prt_printf(out, "quantiles (%s):\t", u->name);
+> >-	eytzinger0_for_each(i, NR_QUANTILES) {
+> >-		bool is_last = eytzinger0_next(i, NR_QUANTILES) == -1;
+> >+		spin_lock_irq(&stats->lock);
+> >+		for_each_possible_cpu(cpu)
+> >+			__bch2_time_stats_clear_buffer(stats, per_cpu_ptr(stats->buffer, cpu));
+> >+		spin_unlock_irq(&stats->lock);
+> >+	}
+> > 
+> >-		q = max(stats->quantiles.entries[i].m, last_q);
+> >-		prt_printf(out, "%llu ",
+> >-		       div_u64(q, u->nsecs));
+> >-		if (is_last)
+> >-			prt_newline(out);
+> >-		last_q = q;
+> >+	/*
+> >+	 * avoid divide by zero
+> >+	 */
+> >+	if (stats->freq_stats.n) {
+> >+		f_mean = mean_and_variance_get_mean(stats->freq_stats);
+> >+		f_stddev = mean_and_variance_get_stddev(stats->freq_stats);
+> >+		d_mean = mean_and_variance_get_mean(stats->duration_stats);
+> >+		d_stddev = mean_and_variance_get_stddev(stats->duration_stats);
+> >+	}
+> >+
+> >+	seq_buf_printf(out, "count: %llu\n", stats->duration_stats.n);
+> >+
+> >+	seq_buf_printf(out, "                       since mount        recent\n");
+> >+
+> >+	seq_buf_printf(out, "duration of events\n");
+> >+
+> >+	seq_buf_printf(out, "  min:                     ");
+> >+	seq_buf_time_units_aligned(out, stats->min_duration);
+> >+	seq_buf_printf(out, "\n");
+> >+
+> >+	seq_buf_printf(out, "  max:                     ");
+> >+	seq_buf_time_units_aligned(out, stats->max_duration);
+> >+	seq_buf_printf(out, "\n");
+> >+
+> >+	seq_buf_printf(out, "  total:                   ");
+> >+	seq_buf_time_units_aligned(out, stats->total_duration);
+> >+	seq_buf_printf(out, "\n");
+> >+
+> >+	seq_buf_printf(out, "  mean:                    ");
+> >+	seq_buf_time_units_aligned(out, d_mean);
+> >+	seq_buf_time_units_aligned(out, mean_and_variance_weighted_get_mean(stats->duration_stats_weighted));
+> >+	seq_buf_printf(out, "\n");
+> >+
+> >+	seq_buf_printf(out, "  stddev:                  ");
+> >+	seq_buf_time_units_aligned(out, d_stddev);
+> >+	seq_buf_time_units_aligned(out, mean_and_variance_weighted_get_stddev(stats->duration_stats_weighted));
+> >+	seq_buf_printf(out, "\n");
+> >+
+> >+	seq_buf_printf(out, "time between events\n");
+> >+
+> >+	seq_buf_printf(out, "  min:                     ");
+> >+	seq_buf_time_units_aligned(out, stats->min_freq);
+> >+	seq_buf_printf(out, "\n");
+> >+
+> >+	seq_buf_printf(out, "  max:                     ");
+> >+	seq_buf_time_units_aligned(out, stats->max_freq);
+> >+	seq_buf_printf(out, "\n");
+> >+
+> >+	seq_buf_printf(out, "  mean:                    ");
+> >+	seq_buf_time_units_aligned(out, f_mean);
+> >+	seq_buf_time_units_aligned(out, mean_and_variance_weighted_get_mean(stats->freq_stats_weighted));
+> >+	seq_buf_printf(out, "\n");
+> >+
+> >+	seq_buf_printf(out, "  stddev:                  ");
+> >+	seq_buf_time_units_aligned(out, f_stddev);
+> >+	seq_buf_time_units_aligned(out, mean_and_variance_weighted_get_stddev(stats->freq_stats_weighted));
+> >+	seq_buf_printf(out, "\n");
+> >+
+> >+	if (stats->quantiles_enabled) {
+> >+		int i = eytzinger0_first(NR_QUANTILES);
+> >+		const struct time_unit *u =
+> >+			pick_time_units(stats->quantiles.entries[i].m);
+> >+		u64 last_q = 0;
+> >+
+> >+		prt_printf(out, "quantiles (%s):\t", u->name);
+> >+		eytzinger0_for_each(i, NR_QUANTILES) {
+> >+			bool is_last = eytzinger0_next(i, NR_QUANTILES) == -1;
+> >+
+> >+			u64 q = max(stats->quantiles.entries[i].m, last_q);
+> >+			seq_buf_printf(out, "%llu ", div_u64(q, u->nsecs));
+> >+			if (is_last)
+> >+				seq_buf_printf(out, "\n");
+> >+			last_q = q;
+> >+		}
+> > 	}
+> > }
+> > #else
+> >diff --git a/fs/bcachefs/util.h b/fs/bcachefs/util.h
+> >index c3b11c3d24ea..7ff2d4fe26f6 100644
+> >--- a/fs/bcachefs/util.h
+> >+++ b/fs/bcachefs/util.h
+> >@@ -382,6 +382,7 @@ struct bch2_time_stat_buffer {
+> > 
+> > struct bch2_time_stats {
+> > 	spinlock_t	lock;
+> >+	bool		quantiles_enabled;
+> > 	/* all fields are in nanoseconds */
+> > 	u64             min_duration;
+> > 	u64		max_duration;
+> >@@ -435,6 +436,9 @@ static inline bool track_event_change(struct bch2_time_stats *stats,
+> > 
+> > void bch2_time_stats_to_text(struct printbuf *, struct bch2_time_stats *);
+> > 
+> >+struct seq_buf;
+> >+void bch2_time_stats_to_seq_buf(struct seq_buf *, struct bch2_time_stats *);
+> >+
+> > void bch2_time_stats_exit(struct bch2_time_stats *);
+> > void bch2_time_stats_init(struct bch2_time_stats *);
+> > 
+> >-- 
+> >2.43.0
+> >
+> >
+> 
+> - Joshie 🐸✨
 
