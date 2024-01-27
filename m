@@ -1,91 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-9147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B46E83E80E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 01:12:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F56E83E810
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 01:12:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA0D71F22C7C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 00:12:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 560512846D3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 00:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87CE612E;
-	Sat, 27 Jan 2024 00:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D4B749D;
+	Sat, 27 Jan 2024 00:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="s7cKuHyg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AIdwbnv9";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="s7cKuHyg";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AIdwbnv9"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YcY1xGHp";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="+3MLAQIu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DL29lvjE";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lUykj0Lo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E626FD2;
-	Sat, 27 Jan 2024 00:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A923579CD;
+	Sat, 27 Jan 2024 00:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706314256; cv=none; b=kK9Nqv0/CU8CK9/NODURBBNWi/vyIdtEwwULtZlpSOVeD7IAJkw4gIaaMrFIo3RnqfGPn8rjO1b3TjFZWG8Zw657pLemFqRdzqpLavBig6f2hQz2a4TWw8V8Om4hiCxY+Cewcf10BENk0WgESDRFH/wGrG+OWU16BEz4Sh9riLc=
+	t=1706314260; cv=none; b=iuWzLyyigywz25Vkyr/8JCuDlLgCFnd9ut20MS7gpng0C9lB+Kjf8AuxIW3gAoxGwMXztd9ZcERyztfJfk+NW7VfyUFr7DRi5F4nNo+RdUebUEI0aDbUM3d/KkZi/74riuyvJpLYqkrfdMTNuk7jVOSV1OOTgpZLhfq1EuCJYAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706314256; c=relaxed/simple;
-	bh=SyI2wLhlC/SY13QjjJmfT+fhtHMRlxjaM0zdsPjwQH4=;
+	s=arc-20240116; t=1706314260; c=relaxed/simple;
+	bh=xdvOyZCyetrCoFBK/1YJbxbSYOwB1nE+htEZH6Bvsf0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cAuieM28YC8XHcLrpefpu2QPuEm2PMn1uJbhqIuNHFMOBgIHq8q4l181jL05nL5JeOTYELHh4Umrxlge1805y0l4DD+c9+1sj/x6Cl6M8mMVgiD/3Mk5X+YCENoZvbqWeCWJwKfRRcWc/ioQTNP80uIWo1UPqD2NhVkb71sXydU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=s7cKuHyg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AIdwbnv9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=s7cKuHyg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AIdwbnv9; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=Jv9olDYwfZSga8yQ6YlB6/gMpHrXBMpH7n+HRlXpliA1XsEfQPhswkVs6YPigau00XF1Wh65BrhLM6SVXG3rCSvXupbCOVIFJoahE5sCkXsckbRBOyuqdIKqn8CpbAi8Imi04zU4sVWBgocTZQrjuAtBjqYUCBY1LmxS+I7YI/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YcY1xGHp; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=+3MLAQIu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DL29lvjE; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lUykj0Lo; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 37BBA2214A;
-	Sat, 27 Jan 2024 00:10:53 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F20E4223A2;
+	Sat, 27 Jan 2024 00:10:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1706314253; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1706314257; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dAXxsZUzQs43nPmCR7QF70NpWme+IPIt3kqL7m9PrBY=;
-	b=s7cKuHygqyE9yfCRe+LTUyAI/SuU30COqK7Pv1yQ3kYSwb0yXIkwAXXUqHBJZugSpyIp0H
-	JnDrPyOF9C6IoxuLyLm2HTYI4qc72G2BdMAxOwDDJHJUXlZ6Sb6QP3sWBhhU5soRVlguzJ
-	yY6Cc7W38nZNqcVjE+gDdXvM2KQmOLs=
+	bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
+	b=YcY1xGHpTl9Vy8q3omzUUcUEfClzGE70Ta6rn+086a221j5iI5SWBVzrEoDqXYZ8Dud6a5
+	ZxPK6uHn0jlZMIZ/i0VqSbJzno/GjXX5UMrKia1TWIqH1XcuuccegBqrNHcJCOIMK6haBb
+	hqdzP4odjb+/UHyxOLxVmcspEmYZCZM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1706314253;
+	s=susede2_ed25519; t=1706314257;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dAXxsZUzQs43nPmCR7QF70NpWme+IPIt3kqL7m9PrBY=;
-	b=AIdwbnv9OJbSjYPR65RW+ftI2yUqq3M7/nYWMv7XaU9oeLeLtZcXhwHQKqeZiwU3zJqrsy
-	SH1QNqVZkuk9QBAA==
+	bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
+	b=+3MLAQIubavuuRim7BkW3oHAk217xznLyNLzcaIy8k+6pVLjBrkXHCqHNk+an6H6ewHKK9
+	3XDmguXcjZ3siKDw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1706314253; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1706314256; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dAXxsZUzQs43nPmCR7QF70NpWme+IPIt3kqL7m9PrBY=;
-	b=s7cKuHygqyE9yfCRe+LTUyAI/SuU30COqK7Pv1yQ3kYSwb0yXIkwAXXUqHBJZugSpyIp0H
-	JnDrPyOF9C6IoxuLyLm2HTYI4qc72G2BdMAxOwDDJHJUXlZ6Sb6QP3sWBhhU5soRVlguzJ
-	yY6Cc7W38nZNqcVjE+gDdXvM2KQmOLs=
+	bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
+	b=DL29lvjES8MKtzC9/H5Hh210LiZwpdC1QzYI1J5hnPnz2hQPukfS6PT9koBHlz9+1V4Us4
+	x2tUASE4Kpby/3Byr5BFzaFU752g5U4FJZZYBlQCAAOjleus3FHitgl7wB3TiyNnAOT3F0
+	4LJuvuZYerbPv4o+GSNz5DIuo/k9jyI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1706314253;
+	s=susede2_ed25519; t=1706314256;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dAXxsZUzQs43nPmCR7QF70NpWme+IPIt3kqL7m9PrBY=;
-	b=AIdwbnv9OJbSjYPR65RW+ftI2yUqq3M7/nYWMv7XaU9oeLeLtZcXhwHQKqeZiwU3zJqrsy
-	SH1QNqVZkuk9QBAA==
+	bh=tlx4z3N508ykO+IPN4KGQgLY91vQLkOc0l8vpLCa86g=;
+	b=lUykj0Lo8ao0pKTz/joEtkFX/o7HStFWM56EhE6CZw9hi9pxFDK2yNMxfAtiwuv/dbhjtP
+	IcUs4BZHLf7Rs6AQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 93BCF13998;
-	Sat, 27 Jan 2024 00:10:52 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5C99D13998;
+	Sat, 27 Jan 2024 00:10:56 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 5w7IEAxKtGV/EQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Sat, 27 Jan 2024 00:10:52 +0000
+	id 4NFGBBBKtGWIEQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Sat, 27 Jan 2024 00:10:56 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: ebiggers@kernel.org,
 	viro@zeniv.linux.org.uk,
@@ -96,9 +96,9 @@ Cc: amir73il@gmail.com,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org,
 	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v4 09/12] ext4: Configure dentry operations at dentry-creation time
-Date: Fri, 26 Jan 2024 21:10:09 -0300
-Message-ID: <20240127001013.2845-10-krisman@suse.de>
+Subject: [PATCH v4 10/12] f2fs: Configure dentry operations at dentry-creation time
+Date: Fri, 26 Jan 2024 21:10:10 -0300
+Message-ID: <20240127001013.2845-11-krisman@suse.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240127001013.2845-1-krisman@suse.de>
 References: <20240127001013.2845-1-krisman@suse.de>
@@ -111,19 +111,23 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Authentication-Results: smtp-out1.suse.de;
 	none
-X-Spamd-Result: default: False [4.90 / 50.00];
+X-Spam-Level: ***
+X-Spam-Score: 3.70
+X-Spamd-Result: default: False [3.70 / 50.00];
 	 ARC_NA(0.00)[];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
 	 FROM_HAS_DN(0.00)[];
 	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	 R_MISSING_CHARSET(2.50)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	 MIME_GOOD(-0.10)[text/plain];
 	 TO_MATCH_ENVRCPT_ALL(0.00)[];
 	 BROKEN_CONTENT_TYPE(1.50)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
 	 R_RATELIMIT(0.00)[to_ip_from(RLzk7q5dcbbphp39zi8hi5jhbt)];
 	 RCVD_COUNT_THREE(0.00)[3];
 	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
 	 RCPT_COUNT_SEVEN(0.00)[9];
 	 MID_CONTAINS_FROM(1.00)[];
 	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
@@ -132,8 +136,6 @@ X-Spamd-Result: default: False [4.90 / 50.00];
 	 MIME_TRACE(0.00)[0:+];
 	 FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,lists.sourceforge.net,suse.de];
 	 RCVD_TLS_ALL(0.00)[]
-X-Spam-Level: ****
-X-Spam-Score: 4.90
 X-Spam-Flag: NO
 
 This was already the case for case-insensitive before commit
@@ -148,34 +150,34 @@ simplifying the implementation across these features.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
 ---
- fs/ext4/namei.c | 1 -
- fs/ext4/super.c | 1 +
+ fs/f2fs/namei.c | 1 -
+ fs/f2fs/super.c | 1 +
  2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index d252935f9c8a..3f0b853a371e 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -1762,7 +1762,6 @@ static struct buffer_head *ext4_lookup_entry(struct inode *dir,
- 	struct buffer_head *bh;
+diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+index d0053b0284d8..b40c6c393bd6 100644
+--- a/fs/f2fs/namei.c
++++ b/fs/f2fs/namei.c
+@@ -532,7 +532,6 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
+ 	}
  
- 	err = ext4_fname_prepare_lookup(dir, dentry, &fname);
+ 	err = f2fs_prepare_lookup(dir, dentry, &fname);
 -	generic_set_encrypted_ci_d_ops(dentry);
  	if (err == -ENOENT)
- 		return NULL;
+ 		goto out_splice;
  	if (err)
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index c5fcf377ab1f..de80a9cc699a 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5493,6 +5493,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 		goto failed_mount4;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 033af907c3b1..abfdb6e25b1c 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -4663,6 +4663,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto free_node_inode;
  	}
  
 +	generic_set_sb_d_ops(sb);
- 	sb->s_root = d_make_root(root);
+ 	sb->s_root = d_make_root(root); /* allocate root dentry */
  	if (!sb->s_root) {
- 		ext4_msg(sb, KERN_ERR, "get root dentry failed");
+ 		err = -ENOMEM;
 -- 
 2.43.0
 
