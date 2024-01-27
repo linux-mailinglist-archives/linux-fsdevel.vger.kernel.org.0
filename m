@@ -1,144 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-9206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3030583EDB3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 15:52:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7488C83EDB6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 15:54:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7AE3B21A98
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 14:52:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F04E283E17
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 14:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE7F28DC8;
-	Sat, 27 Jan 2024 14:52:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23BC828E23;
+	Sat, 27 Jan 2024 14:54:16 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA2B2577B
-	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jan 2024 14:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22D028E02
+	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jan 2024 14:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706367143; cv=none; b=FGYB08sCjxMnvMKY98gyRZZ7D1K1uEfKqVU8F/0SCtBgFHemPw5vwdCTN4oNUAB8C7z7n9uLH9n/gPiChBl7ieJCKryi3S0eew7ADh5Nghmsx5LBkMde15ermX2fjsjjEjMqHwpz0Cj1YWWkxKqsL0WMIlb5yO6wM9uwswtM/No=
+	t=1706367255; cv=none; b=lrOBeuOXzkahNSerdKpYxWjoyqquRwmEN/zmi+7jNufogRfXCBItzWiMNoJuZQBSOaxeN4LRkiUxi0JH5P+FFf5lLQVZ/dL5GTb4EWTKvLYNkrm+wfSb9p5bFk91k121lRYxqJ50d4X53hvNRewhcI+ZEPJXDNgIShFQxotS1Ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706367143; c=relaxed/simple;
-	bh=Be/y4DGVPbfmx4K3rGTzJCiIH9BNVn8X6ivVn+mUvI0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=SyXuY1k30R823C+Caa8YBjk1bplTO0umiFQ/djAaLGhhgrUij8QoXa6pFOgy/hmekI/I4wzCL/lFhf1JEkg9hRuG3e7l+pvX7f8UaF+sjANjBshY8uSRtooXbzMk/hGc1brCi8UlZQ96pnQoOLslwXUgsyjODis+m5UvEgTayEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-89-lY5SiMHAMkCe7VPZSgwSoQ-1; Sat, 27 Jan 2024 14:52:18 +0000
-X-MC-Unique: lY5SiMHAMkCe7VPZSgwSoQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 27 Jan
- 2024 14:51:58 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 27 Jan 2024 14:51:58 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Arnd Bergmann' <arnd@arndb.de>, Joe Damato <jdamato@fastly.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Netdev
-	<netdev@vger.kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Jeff Layton
-	<jlayton@kernel.org>, "linux-api@vger.kernel.org"
-	<linux-api@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, "Eric
- Dumazet" <edumazet@google.com>, "David S . Miller" <davem@davemloft.net>,
-	"alexander.duyck@gmail.com" <alexander.duyck@gmail.com>, Sridhar Samudrala
-	<sridhar.samudrala@intel.com>, Jakub Kicinski <kuba@kernel.org>, "Willem de
- Bruijn" <willemdebruijn.kernel@gmail.com>, "weiwan@google.com"
-	<weiwan@google.com>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Michael Ellerman
-	<mpe@ellerman.id.au>, Nathan Lynch <nathanl@linux.ibm.com>, Steve French
-	<stfrench@microsoft.com>, Thomas Zimmermann <tzimmermann@suse.de>, Jiri Slaby
-	<jirislaby@kernel.org>, Julien Panis <jpanis@baylibre.com>, Andrew Waterman
-	<waterman@eecs.berkeley.edu>, Thomas Huth <thuth@redhat.com>, Palmer Dabbelt
-	<palmer@dabbelt.com>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)"
-	<linux-fsdevel@vger.kernel.org>
-Subject: RE: [PATCH net-next v3 3/3] eventpoll: Add epoll ioctl for
- epoll_params
-Thread-Topic: [PATCH net-next v3 3/3] eventpoll: Add epoll ioctl for
- epoll_params
-Thread-Index: AQHaUCR+m5BGvEW2OU6rGFqZjiahCbDtv1nw
-Date: Sat, 27 Jan 2024 14:51:58 +0000
-Message-ID: <f99dd6cfe7744ed8b9cfe9489aa499de@AcuMS.aculab.com>
-References: <20240125225704.12781-1-jdamato@fastly.com>
- <20240125225704.12781-4-jdamato@fastly.com>
- <2024012551-anyone-demeaning-867b@gregkh> <20240126001128.GC1987@fastly.com>
- <2024012525-outdoors-district-2660@gregkh> <20240126023630.GA1235@fastly.com>
- <57b62135-2159-493d-a6bb-47d5be55154a@app.fastmail.com>
-In-Reply-To: <57b62135-2159-493d-a6bb-47d5be55154a@app.fastmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1706367255; c=relaxed/simple;
+	bh=LQ1sGySf8PM4/fBTco9r88JsK6i5eRBbup78E/jD4q0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WLF9E2Ba+jFm8WkkHq0ijnkfY1/RefSvyZdo44W0vbJa0cxMSR6ZnQvTHn/CurA5efq7yGHe2+XQjFJhIOrfiww0c0dWraIvgOCZpMHcY3A1NO3hjXUDy37Wn2U89qQ43caZ11RnmV3R3Xvo7j+1rBVI+lRHde0twAEnxTPthJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F863C433F1;
+	Sat, 27 Jan 2024 14:54:14 +0000 (UTC)
+Date: Sat, 27 Jan 2024 09:54:12 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, Christian Brauner <brauner@kernel.org>, Al Viro
+ <viro@zeniv.linux.org.uk>, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [LSF/MM TOPIC] Making pseudo file systems inodes/dentries more
+ like normal file systems
+Message-ID: <20240127095412.46b6e3dc@rorschach.local.home>
+In-Reply-To: <CAOQ4uxjRxp4eGJtuvV90J4CWdEftusiQDPb5rFoBC-Ri7Nr8BA@mail.gmail.com>
+References: <20240125104822.04a5ad44@gandalf.local.home>
+	<2024012522-shorten-deviator-9f45@gregkh>
+	<20240125205055.2752ac1c@rorschach.local.home>
+	<2024012528-caviar-gumming-a14b@gregkh>
+	<20240125214007.67d45fcf@rorschach.local.home>
+	<2024012634-rotten-conjoined-0a98@gregkh>
+	<20240126101553.7c22b054@gandalf.local.home>
+	<2024012600-dose-happiest-f57d@gregkh>
+	<20240126114451.17be7e15@gandalf.local.home>
+	<CAOQ4uxjRxp4eGJtuvV90J4CWdEftusiQDPb5rFoBC-Ri7Nr8BA@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Arnd Bergmann
-> Sent: 26 January 2024 06:16
->=20
-> On Fri, Jan 26, 2024, at 03:36, Joe Damato wrote:
-> > On Thu, Jan 25, 2024 at 04:23:58PM -0800, Greg Kroah-Hartman wrote:
-> >> On Thu, Jan 25, 2024 at 04:11:28PM -0800, Joe Damato wrote:
-> >> > On Thu, Jan 25, 2024 at 03:21:46PM -0800, Greg Kroah-Hartman wrote:
-> >> > > On Thu, Jan 25, 2024 at 10:56:59PM +0000, Joe Damato wrote:
-> >> > > > +struct epoll_params {
-> >> > > > +=09u64 busy_poll_usecs;
-> >> > > > +=09u16 busy_poll_budget;
-> >> > > > +
-> >> > > > +=09/* for future fields */
-> >> > > > +=09u8 data[118];
-> >> > > > +} EPOLL_PACKED;
-> >> > >
-> >
-> > Sure, that makes sense to me. I'll remove it in the v4 alongside the ot=
-her
-> > changes you've requested.
-> >
-> > Thanks for your time and patience reviewing my code. I greatly apprecia=
-te
-> > your helpful comments and feedback.
->=20
-> Note that you should still pad the structure to its normal
-> alignment. On non-x86 targets this would currently mean a
-> multiple of 64 bits.
->=20
-> I would suggest dropping the EPOLL_PACKED here entirely and
-> just using a fully aligned structure on all architectures, like
->=20
-> struct epoll_params {
->       __aligned_u64 busy_poll_usecs;
->       __u16 busy_poll_budget;
->       __u8 __pad[6];
-> };
->=20
-> The explicit padding can help avoid leaking stack data when
-> a structure is copied back from kernel to userspace, so I would
-> just always use it in ioctl data structures.
+On Sat, 27 Jan 2024 12:15:00 +0200
+Amir Goldstein <amir73il@gmail.com> wrote:
+> >  
+> 
+> I would like to attend the talk about what happened since we suggested
+> that you use kernfs in LSFMM 2022 and what has happened since.
 
-Or just use 32bit types for both fields.
-Both values need erroring before they get that large.
-32bit of usec is about 20 seconds.
+It was the lack of documentation to understand the concept it was
+using. As I was very familiar with the way debugfs worked, I couldn't
+map that same logic to how kernfs worked for what I wanted to do. I
+remember spending a lot of time on it but just kept getting lost. I then
+went to see if just modifying the current method with tracefs that was
+like debugfs and things made a lot more sense. I guess the biggest
+failure in that was my thinking that using the dentry as the main
+handle was the proper way to do things, as supposed to being the exact
+opposite. If I had known that from the beginning, I probably would have
+approached it much differently.
 
-=09David
+> I am being serious, I am not being sarcastic and I am not claiming that
+> you did anything wrong :)
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+Thanks ;-)
+
+> 
+> Also ,please do not forget to also fill out the Google form:
+> 
+>           https://forms.gle/TGCgBDH1x5pXiWFo7
+
+Crap, I keep forgetting about that form.
+
+> 
+> So we have your attendance request with suggested topics in our spreadsheet.
+
+Appreciate it.
+
+-- Steve
 
 
