@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-9163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3BA83E954
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 03:06:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B8B883E95A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 03:07:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E17C11C24C12
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 02:06:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 108D51F29A10
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 02:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E84123775;
-	Sat, 27 Jan 2024 02:02:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19F94249E9;
+	Sat, 27 Jan 2024 02:02:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BCBC1DFE7;
-	Sat, 27 Jan 2024 02:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948BD1F93C;
+	Sat, 27 Jan 2024 02:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706320970; cv=none; b=ObjvKOwlV+tjmoIpu4o3/VyB6bktvqtysJGUIjB9rp+jn0DhFA/O5Fdm9iZgIeUeRHS37okA1+50eGdLXnaUp8jl5U1I2iwDtv9Xa+evaCFLO9B57VTXHAFsAxZp9ce8XH9gNlWalOthNhgqSBem62ZPUmy1ruc3KOl6vlU1eNs=
+	t=1706320971; cv=none; b=uw/WhfxGd6fHinJlmlAdrtWviB4xjRhqh7tvhCss7HSSdU/+NRCVyJ1cEbaHVVeBDkWo7/u9vjlbt+Mv6/MV6cr/X6dryIAH9yVtoDnEVof/5eQXHOqEaKaeqcNK8kHsQ0Y9m7DWOLDa98UomTMXy4R0quQFvYU5TtIi+kr7WxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706320970; c=relaxed/simple;
-	bh=muoZNmd+3ruVkM1B9JKDL9y+LXaIvJ+OnXOB5GSKJg0=;
+	s=arc-20240116; t=1706320971; c=relaxed/simple;
+	bh=OhxFV0efwTaZaL++22MbUE521mynGuX4NZYGl3tt6zQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Jx5C/Sl8xbm6rOLvYWk+poDwr9YgShbcjZUWjozRSosAXawptrj+a/sSsav48W+7aYBDg7edYT58P8LifMFijiHagw9FpHdeXWx6tdmPlVz3mZTZf5/grRU3Ob/JCURTH58DPMj7dV5FHSRvUS52xDSWipB0jIK6TFIJv3OeWqM=
+	 MIME-Version; b=kkVaMvMZw19Dd0GRfFjyYQ+endOs9/n7HAb77VwEdYOmwjXsavAeaKEog1oeCbSAgOTWFtoE8ZVC8yu6TovdlWxy/jFfTcIiW0ecn7Q13Po7znGDkDiTdV+fjSEsRWJlB80Qp81adXMxuMROhgPTwWFuyyqs8XQjT91CPVA3+a4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TMHrb4fxKz4f3lgG;
-	Sat, 27 Jan 2024 10:02:39 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TMHrh1nLXz4f3k67;
+	Sat, 27 Jan 2024 10:02:44 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 04D941A0232;
+	by mail.maildlp.com (Postfix) with ESMTP id A69671A017A;
 	Sat, 27 Jan 2024 10:02:46 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAX5g40ZLRlGJtmCA--.7377S14;
-	Sat, 27 Jan 2024 10:02:45 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgAX5g40ZLRlGJtmCA--.7377S15;
+	Sat, 27 Jan 2024 10:02:46 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v3 10/26] ext4: correct delalloc extent length
-Date: Sat, 27 Jan 2024 09:58:09 +0800
-Message-Id: <20240127015825.1608160-11-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v3 11/26] ext4: also mark extent as delalloc if it's been unwritten
+Date: Sat, 27 Jan 2024 09:58:10 +0800
+Message-Id: <20240127015825.1608160-12-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
 References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
@@ -69,10 +69,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX5g40ZLRlGJtmCA--.7377S14
-X-Coremail-Antispam: 1UD129KBjvJXoW7CryfAry5Zw1Uuw1kXr1fJFb_yoW8Gw1Up3
-	93CF1kGr4fuw1UuayxtF13XF1rK3W5K3y7Jr95tw1rZas5Gw1Iga1kA3W7ta40qFWfJF4r
-	XFW7tw1xAw4SyrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgAX5g40ZLRlGJtmCA--.7377S15
+X-Coremail-Antispam: 1UD129KBjvJXoW7AF1xtFW8Ww48JrWxur4fGrg_yoW8GFWUpa
+	97C34rGr4UX348uayIyF1UZr1rKa4UKrWUtFs8uF1jya4fGF9a9F10yFyI9FyxKrWrJ3yF
+	qF48Kry8Cay8A37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -91,44 +91,46 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-When adding a delalloc extent in ext4_da_map_blocks(), the extent
-length can be incorrect if we found a cached hole extent entry and the
-hole length is smaller than the origin map->m_len. Fortunately, it
-should not be able to trigger any issue now because the map->m_len is
-always 1. Fix this by adjust length before inserting delalloc extent.
+Mark extent as delalloc if it's been unwritten, this delalloc flag will
+last until write back. It would be useful to indicate the map length
+when writing data back after converting regular file's buffered write
+path to iomap.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/inode.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ fs/ext4/inode.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index bc29c2e92750..44033828db44 100644
+index 44033828db44..9ac9bb548a4c 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -1712,6 +1712,11 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
- 
- 	/* Lookup extent status tree firstly */
- 	if (ext4_es_lookup_extent(inode, iblock, NULL, &es)) {
-+		retval = es.es_len - (iblock - es.es_lblk);
-+		if (retval > map->m_len)
-+			retval = map->m_len;
-+		map->m_len = retval;
+@@ -1742,7 +1742,11 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
+ #ifdef ES_AGGRESSIVE_TEST
+ 		ext4_map_blocks_es_recheck(NULL, inode, map, &orig_map, 0);
+ #endif
+-		return retval;
++		if (ext4_es_is_delayed(&es) || ext4_es_is_written(&es))
++			return retval;
 +
- 		if (ext4_es_is_hole(&es))
- 			goto add_delayed;
++		down_read(&EXT4_I(inode)->i_data_sem);
++		goto insert_extent;
+ 	}
  
-@@ -1727,10 +1732,6 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
+ 	/*
+@@ -1770,9 +1774,11 @@ static int ext4_da_map_blocks(struct inode *inode, sector_t iblock,
+ 				     inode->i_ino, retval, map->m_len);
+ 			WARN_ON(1);
  		}
- 
- 		map->m_pblk = ext4_es_pblock(&es) + iblock - es.es_lblk;
--		retval = es.es_len - (iblock - es.es_lblk);
--		if (retval > map->m_len)
--			retval = map->m_len;
--		map->m_len = retval;
- 		if (ext4_es_is_written(&es))
- 			map->m_flags |= EXT4_MAP_MAPPED;
- 		else if (ext4_es_is_unwritten(&es))
+-
++insert_extent:
+ 		status = map->m_flags & EXT4_MAP_UNWRITTEN ?
+ 				EXTENT_STATUS_UNWRITTEN : EXTENT_STATUS_WRITTEN;
++		if (status == EXTENT_STATUS_UNWRITTEN)
++			status |= EXTENT_STATUS_DELAYED;
+ 		ext4_es_insert_extent(inode, map->m_lblk, map->m_len,
+ 				      map->m_pblk, status);
+ 		up_read(&EXT4_I(inode)->i_data_sem);
 -- 
 2.39.2
 
