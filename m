@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-9160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7496C83E94C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 03:05:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8733783E94F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 03:05:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AD3A1F2978E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 02:05:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35D311F29796
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 02:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC901F927;
-	Sat, 27 Jan 2024 02:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0E0208A1;
+	Sat, 27 Jan 2024 02:02:50 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED5F11CA9;
-	Sat, 27 Jan 2024 02:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CA614AAD;
+	Sat, 27 Jan 2024 02:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706320969; cv=none; b=sbyhiiToIBE74OrqCnS/JhRfSdFgm1n9qllNO1KtVS/oWrNF787FzdfmdTq8xxENEed7hSQfhOaVQoFcTo1aDaSBgo9LeDm/RxNScFSmR+PQiJapInNf7bZmoSFIe9aIYO8QbmzScnbFivd2yWFOZlQSEu7I2iulRp6Zm0DOeV0=
+	t=1706320969; cv=none; b=mHX0Qz1I2joFxI28DKLYmZwUisNmM8ODDy61kpEWZ9JA8RpSxN/1GemORveL6Nb4tlJa3xk8Cy7LFG6D/13PxPQKN++npCdCmJewQJw7KTPLEQAEC4SJPeioQ69aDnt2cw5917MuMwvei4Cghhftiwi9l+aFRVWOdmJzOSF+rSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706320969; c=relaxed/simple;
-	bh=eqSL2CFLIXiZZNI+yz+FjOzM7KNrAeIFjC+NeUimJEo=;
+	bh=5htVoT5yAcADrznHX69BozU0tvv0yd+Udq8Ttbk3Z7g=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rlDO0nXGaOop5jveBBarTSB6ASFGw91m5Ij6GFJ1FFTYxc1WBQ75UErCfxKHpc9oVU8HtivmPHNdxX2KI6NJeNQk0xC5/kZ2Hyka50Hxbu2cpz1ntyvmeiVx271TYYOCe20dEsQe6baDzpIjoBD/6HMyfcBHbwEjJGZgDOAqLQY=
+	 MIME-Version; b=JWvatbb3oRejKfT5+97sNEzEenXCwhGaNfSZE2wE1C0OWIsWwiylkv5gfWyc4rhnBP7OazkqdrlkSHc0z7bkXssCIfdW+CpHvThokiTwc6SXpQJHGYnfxgCGtjahjGDvA6cd0BswpzIfhtm5lDQTxEdRBLOVbG6W7MQC64q+37w=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TMHrc0D1qz4f3lwb;
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TMHrc4sr7z4f3lwf;
 	Sat, 27 Jan 2024 10:02:40 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 0910A1A01E9;
+	by mail.maildlp.com (Postfix) with ESMTP id A87281A0172;
 	Sat, 27 Jan 2024 10:02:44 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAX5g40ZLRlGJtmCA--.7377S11;
-	Sat, 27 Jan 2024 10:02:43 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgAX5g40ZLRlGJtmCA--.7377S12;
+	Sat, 27 Jan 2024 10:02:44 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v3 07/26] iomap: don't increase i_size if it's not a write operation
-Date: Sat, 27 Jan 2024 09:58:06 +0800
-Message-Id: <20240127015825.1608160-8-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v3 08/26] iomap: add pos and dirty_len into trace_iomap_writepage_map
+Date: Sat, 27 Jan 2024 09:58:07 +0800
+Message-Id: <20240127015825.1608160-9-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
 References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
@@ -69,10 +69,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX5g40ZLRlGJtmCA--.7377S11
-X-Coremail-Antispam: 1UD129KBjvJXoWxZrWkXr1UuF4fKr18XF4UCFg_yoW5ZFWxpr
-	WDK398Crs7JF47Wrn5JF98Xr1Yk34rGrW2kFWxG3y3ZFn0yr47K3W8KayY9F18J3s7Ar4f
-	JF4vya4rWr1UCr7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgAX5g40ZLRlGJtmCA--.7377S12
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw4xZF18Cw4Utw48CrWUXFb_yoW5AryfpF
+	9FyFZ8Cr4kJr429w1fZ34rArs0vF95ur4Utr13u3y5Zw4vyr17GF4vkFWjvF95ArnIyr13
+	XF4F934kG3WUCw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -91,91 +91,85 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Increase i_size in iomap_zero_range() and iomap_unshare_iter() is not
-needed, the caller should handle it. Especially, when truncate partial
-block, we could not increase i_size beyond the new EOF here. It dosn't
-affect xfs and gfs2 now because they reset the new file size after zero
-out, it doesn't matter that a brief increase in i_size, but it will
-affect ext4 because it set file size before truncate. At the same time,
-iomap_write_failed() is also not needed for above two cases too, so
-let's introduce a new helper iomap_write_end_simple() to replace the
-common iomap_write_end() helper which designed for buffer write, and
-also move out iomap_write_failed() from iomap_write_begin() to
-iomap_write_iter().
+Since commit "iomap: map multiple blocks at a time", we could map
+multi-blocks once a time, and the dirty_len indicates the expected map
+length, map_len won't large than it. The pos and dirty_len means the
+dirty range that should be mapped to write, add them into
+trace_iomap_writepage_map() could be more useful for debug.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/iomap/buffered-io.c | 28 ++++++++++++++++++++++++----
- 1 file changed, 24 insertions(+), 4 deletions(-)
+ fs/iomap/buffered-io.c |  2 +-
+ fs/iomap/trace.h       | 43 +++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 43 insertions(+), 2 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index e0c9cede82ee..2ae936e5af74 100644
+index 2ae936e5af74..9a9f1bfe80b4 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -834,7 +834,6 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
- 
- out_unlock:
- 	__iomap_put_folio(iter, pos, 0, folio);
--	iomap_write_failed(iter->inode, pos, len);
- 
- 	return status;
- }
-@@ -881,6 +880,25 @@ static size_t iomap_write_end_inline(const struct iomap_iter *iter,
- 	return copied;
- }
- 
-+static size_t iomap_write_end_simple(struct iomap_iter *iter, loff_t pos,
-+		size_t len, struct folio *folio)
-+{
-+	const struct iomap *srcmap = iomap_iter_srcmap(iter);
-+	size_t ret;
-+
-+	if (srcmap->type == IOMAP_INLINE) {
-+		ret = iomap_write_end_inline(iter, folio, pos, len);
-+	} else if (srcmap->flags & IOMAP_F_BUFFER_HEAD) {
-+		ret = block_write_end(NULL, iter->inode->i_mapping, pos, len,
-+				len, &folio->page, NULL);
-+	} else {
-+		ret = __iomap_write_end(iter->inode, pos, len, len, folio);
-+	}
-+
-+	__iomap_put_folio(iter, pos, ret, folio);
-+	return ret;
-+}
-+
- /* Returns the number of bytes copied.  May be 0.  Cannot be an errno. */
- static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
- 		size_t copied, struct folio *folio)
-@@ -960,8 +978,10 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 		}
- 
- 		status = iomap_write_begin(iter, pos, bytes, &folio);
--		if (unlikely(status))
-+		if (unlikely(status)) {
-+			iomap_write_failed(iter->inode, pos, bytes);
+@@ -1806,7 +1806,7 @@ static int iomap_writepage_map_blocks(struct iomap_writepage_ctx *wpc,
+ 		error = wpc->ops->map_blocks(wpc, inode, pos, dirty_len);
+ 		if (error)
  			break;
-+		}
- 		if (iter->iomap.flags & IOMAP_F_STALE)
- 			break;
+-		trace_iomap_writepage_map(inode, &wpc->iomap);
++		trace_iomap_writepage_map(inode, pos, dirty_len, &wpc->iomap);
  
-@@ -1343,7 +1363,7 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
- 		if (bytes > folio_size(folio) - offset)
- 			bytes = folio_size(folio) - offset;
+ 		map_len = min_t(u64, dirty_len,
+ 			wpc->iomap.offset + wpc->iomap.length - pos);
+diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+index c16fd55f5595..3ef694f9489f 100644
+--- a/fs/iomap/trace.h
++++ b/fs/iomap/trace.h
+@@ -154,7 +154,48 @@ DEFINE_EVENT(iomap_class, name,	\
+ 	TP_ARGS(inode, iomap))
+ DEFINE_IOMAP_EVENT(iomap_iter_dstmap);
+ DEFINE_IOMAP_EVENT(iomap_iter_srcmap);
+-DEFINE_IOMAP_EVENT(iomap_writepage_map);
++
++TRACE_EVENT(iomap_writepage_map,
++	TP_PROTO(struct inode *inode, u64 pos, unsigned int dirty_len,
++		 struct iomap *iomap),
++	TP_ARGS(inode, pos, dirty_len, iomap),
++	TP_STRUCT__entry(
++		__field(dev_t, dev)
++		__field(u64, ino)
++		__field(u64, pos)
++		__field(u64, dirty_len)
++		__field(u64, addr)
++		__field(loff_t, offset)
++		__field(u64, length)
++		__field(u16, type)
++		__field(u16, flags)
++		__field(dev_t, bdev)
++	),
++	TP_fast_assign(
++		__entry->dev = inode->i_sb->s_dev;
++		__entry->ino = inode->i_ino;
++		__entry->pos = pos;
++		__entry->dirty_len = dirty_len;
++		__entry->addr = iomap->addr;
++		__entry->offset = iomap->offset;
++		__entry->length = iomap->length;
++		__entry->type = iomap->type;
++		__entry->flags = iomap->flags;
++		__entry->bdev = iomap->bdev ? iomap->bdev->bd_dev : 0;
++	),
++	TP_printk("dev %d:%d ino 0x%llx bdev %d:%d pos 0x%llx dirty len 0x%llx "
++		  "addr 0x%llx offset 0x%llx length 0x%llx type %s flags %s",
++		  MAJOR(__entry->dev), MINOR(__entry->dev),
++		  __entry->ino,
++		  MAJOR(__entry->bdev), MINOR(__entry->bdev),
++		  __entry->pos,
++		  __entry->dirty_len,
++		  __entry->addr,
++		  __entry->offset,
++		  __entry->length,
++		  __print_symbolic(__entry->type, IOMAP_TYPE_STRINGS),
++		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS))
++);
  
--		bytes = iomap_write_end(iter, pos, bytes, bytes, folio);
-+		bytes = iomap_write_end_simple(iter, pos, bytes, folio);
- 		if (WARN_ON_ONCE(bytes == 0))
- 			return -EIO;
- 
-@@ -1407,7 +1427,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		folio_zero_range(folio, offset, bytes);
- 		folio_mark_accessed(folio);
- 
--		bytes = iomap_write_end(iter, pos, bytes, bytes, folio);
-+		bytes = iomap_write_end_simple(iter, pos, bytes, folio);
- 		if (WARN_ON_ONCE(bytes == 0))
- 			return -EIO;
- 
+ TRACE_EVENT(iomap_iter,
+ 	TP_PROTO(struct iomap_iter *iter, const void *ops,
 -- 
 2.39.2
 
