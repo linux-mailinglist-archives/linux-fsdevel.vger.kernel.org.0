@@ -1,91 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-9141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4983D83E800
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 01:11:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 523F983E805
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 01:11:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E757F1F284EE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 00:11:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFDA21F22CD6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 00:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878D92907;
-	Sat, 27 Jan 2024 00:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7893C4A30;
+	Sat, 27 Jan 2024 00:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hIlMEfCT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xz9TFm/U";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hIlMEfCT";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="xz9TFm/U"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="njihZ2dH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="glvGzXi4";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="njihZ2dH";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="glvGzXi4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3AB20F0;
-	Sat, 27 Jan 2024 00:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C202F32;
+	Sat, 27 Jan 2024 00:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706314237; cv=none; b=riQrikEyaQKmVUrwZ1nyWzAp5ISbXuieEbR+Kr/kEyGB1K/0rFpfMsRDxupGbH+SHJQTi8JuFpiRO7xDOb17xZrNQOv8hufp0U7WvOutd3Eu0qqjocTYAoNCOHJywrMhdsqEmXcmfdS9drLg7u+lvT1TJGTA3Lhycso2JDiTV9Q=
+	t=1706314240; cv=none; b=h9KqE5Dz6JoMW26YGzXcUFEoN9iEIWOdjnYiWv/Yz3HEhm+FB6oumrzonE9rrE9GfhM0DM3A8JaobU9Lg+8m1AwRMOFrsu7BpSTW/I2D6hVTusDX8MXtqiefepdfk4hGDHdYi7Rq1Lh16MReFORVr0cAWXLXP+zHb1QBQjuJeQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706314237; c=relaxed/simple;
-	bh=J1AU5YIm+7xYPJh5a3WE5kWCW+pWVpLtgvTZl5Zp1Ro=;
+	s=arc-20240116; t=1706314240; c=relaxed/simple;
+	bh=mjhq8Ydo934T4ky79O6NVA6saVt9Qh6FavIF4018Pxw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sAkOJ8uX6xjI0H3vHoJshvNG9D79rjGlJ4h2P6+Tnf39KkBFtxGnuZ+fRdGITN9vO4SATA/YKYXqFeZLFe6bwwZw9HXqhtz6LiVe1DHlzvDKB9BzuBuls28/oQl/0gXDQ9ts818NOmmvbFKG+0mUv7g2G44CpRo8N2B4vwxePPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hIlMEfCT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xz9TFm/U; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hIlMEfCT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=xz9TFm/U; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=e6OKjdtM2iAQiEYYJPkxwmEpEb+xtof/ye1LvnqhL1oq/XStyiDjSR+qGpRJnKVayJqdKMPdmztZcz1DFZtgI2TLGgNrnzyHtwars+85bg2dqXuUY12qypBQens5vmdT73By0kZLHxulGckMyi4eiPPUF5t/rvFzEm93P27Q/pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=njihZ2dH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=glvGzXi4; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=njihZ2dH; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=glvGzXi4; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8B14C223A2;
-	Sat, 27 Jan 2024 00:10:33 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6FBB51FDB0;
+	Sat, 27 Jan 2024 00:10:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1706314233; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1706314237; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nFf2P+TvRG7M8VFr2Z2JnXZ5zzx7Ytjk1bFgdtQ+JA4=;
-	b=hIlMEfCT7leuXNVllpw9w9CRYtDpDP90wFY6jwfG1Ems9IEkQ+axCJlNKVS7dTqCayQoyk
-	Uzedamq/+Js/DlqgrGXc6IKRumm8g0VLoYYT8En67JHkDpxCsl8zF0Qzs5CeIQ3EGpfuy+
-	NhIJwnr6G7zS+a9HQy0InkFozTXP4/k=
+	bh=ee/oWUNb4/zKYaB/G7ImZVRaz1EQk96VJ8QbjhzB4ZM=;
+	b=njihZ2dHAnHyFYwzjouCIGfePEXEE1CROutbw5YtwQizHMZhBRVFuJguNcMm6MihGp+vIa
+	qSEPIOXSrjG4Wwj6Mk9lDyaUFHvnoozmE0obDlR/2140b7HdytPHbETVIwVj7uebRkBzIr
+	rEj2n9UP+SBCfCFSxlbhtB5i1euUq0Q=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1706314233;
+	s=susede2_ed25519; t=1706314237;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nFf2P+TvRG7M8VFr2Z2JnXZ5zzx7Ytjk1bFgdtQ+JA4=;
-	b=xz9TFm/U7icSMnJnAlTHBobbjA1hdhJbRhHD/nGTVtlg4APzeti3QbimNVnGBrTFbrVbBr
-	wIUPAGyBR0I3rkCA==
+	bh=ee/oWUNb4/zKYaB/G7ImZVRaz1EQk96VJ8QbjhzB4ZM=;
+	b=glvGzXi4PeXfuOC1nkWX/mSYmDJJheEXCVcC/+N7c4gFM55a9yJ3LjZTbCRYtJtAPv6ILB
+	N/e9drsssNj7fPCQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1706314233; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1706314237; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nFf2P+TvRG7M8VFr2Z2JnXZ5zzx7Ytjk1bFgdtQ+JA4=;
-	b=hIlMEfCT7leuXNVllpw9w9CRYtDpDP90wFY6jwfG1Ems9IEkQ+axCJlNKVS7dTqCayQoyk
-	Uzedamq/+Js/DlqgrGXc6IKRumm8g0VLoYYT8En67JHkDpxCsl8zF0Qzs5CeIQ3EGpfuy+
-	NhIJwnr6G7zS+a9HQy0InkFozTXP4/k=
+	bh=ee/oWUNb4/zKYaB/G7ImZVRaz1EQk96VJ8QbjhzB4ZM=;
+	b=njihZ2dHAnHyFYwzjouCIGfePEXEE1CROutbw5YtwQizHMZhBRVFuJguNcMm6MihGp+vIa
+	qSEPIOXSrjG4Wwj6Mk9lDyaUFHvnoozmE0obDlR/2140b7HdytPHbETVIwVj7uebRkBzIr
+	rEj2n9UP+SBCfCFSxlbhtB5i1euUq0Q=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1706314233;
+	s=susede2_ed25519; t=1706314237;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nFf2P+TvRG7M8VFr2Z2JnXZ5zzx7Ytjk1bFgdtQ+JA4=;
-	b=xz9TFm/U7icSMnJnAlTHBobbjA1hdhJbRhHD/nGTVtlg4APzeti3QbimNVnGBrTFbrVbBr
-	wIUPAGyBR0I3rkCA==
+	bh=ee/oWUNb4/zKYaB/G7ImZVRaz1EQk96VJ8QbjhzB4ZM=;
+	b=glvGzXi4PeXfuOC1nkWX/mSYmDJJheEXCVcC/+N7c4gFM55a9yJ3LjZTbCRYtJtAPv6ILB
+	N/e9drsssNj7fPCQ==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0841313998;
-	Sat, 27 Jan 2024 00:10:32 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C7AB513998;
+	Sat, 27 Jan 2024 00:10:36 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wGm1LPhJtGVhEQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Sat, 27 Jan 2024 00:10:32 +0000
+	id CC1ZH/xJtGVpEQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Sat, 27 Jan 2024 00:10:36 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: ebiggers@kernel.org,
 	viro@zeniv.linux.org.uk,
@@ -96,9 +96,9 @@ Cc: amir73il@gmail.com,
 	linux-f2fs-devel@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org,
 	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v4 04/12] fscrypt: Drop d_revalidate for valid dentries during lookup
-Date: Fri, 26 Jan 2024 21:10:04 -0300
-Message-ID: <20240127001013.2845-5-krisman@suse.de>
+Subject: [PATCH v4 05/12] fscrypt: Drop d_revalidate once the key is added
+Date: Fri, 26 Jan 2024 21:10:05 -0300
+Message-ID: <20240127001013.2845-6-krisman@suse.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240127001013.2845-1-krisman@suse.de>
 References: <20240127001013.2845-1-krisman@suse.de>
@@ -109,11 +109,14 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spamd-Result: default: False [4.36 / 50.00];
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=njihZ2dH;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=glvGzXi4
+X-Spamd-Result: default: False [-0.31 / 50.00];
 	 ARC_NA(0.00)[];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	 FROM_HAS_DN(0.00)[];
 	 TO_DN_SOME(0.00)[];
 	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
@@ -121,67 +124,109 @@ X-Spamd-Result: default: False [4.36 / 50.00];
 	 MIME_GOOD(-0.10)[text/plain];
 	 TO_MATCH_ENVRCPT_ALL(0.00)[];
 	 BROKEN_CONTENT_TYPE(1.50)[];
+	 DWL_DNSWL_MED(-2.00)[suse.de:dkim];
 	 RCVD_COUNT_THREE(0.00)[3];
 	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
 	 RCPT_COUNT_SEVEN(0.00)[9];
 	 MID_CONTAINS_FROM(1.00)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
 	 FUZZY_BLOCKED(0.00)[rspamd.com];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 MIME_TRACE(0.00)[0:+];
 	 FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,lists.sourceforge.net,suse.de];
 	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.54)[80.63%]
-X-Spam-Level: ****
-X-Spam-Score: 4.36
+	 BAYES_HAM(-3.00)[100.00%]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -0.31
+X-Rspamd-Queue-Id: 6FBB51FDB0
+X-Spam-Level: 
 X-Spam-Flag: NO
+X-Spamd-Bar: /
 
-Unencrypted and encrypted-dentries where the key is available don't need
-to be revalidated with regards to fscrypt, since they don't go stale
-from under VFS and the key cannot be removed for the encrypted case
-without evicting the dentry.  Mark them with d_set_always_valid, to
-avoid unnecessary revalidation, in preparation to always configuring
-d_op through sb->s_d_op.
+From fscrypt perspective, once the key is available, the dentry will
+remain valid until evicted for other reasons, since keyed dentries don't
+require revalidation and, if the key is removed, the dentry is
+forcefully evicted.  Therefore, we don't need to keep revalidating them
+repeatedly.
 
-Since the filesystem might have other features that require
-revalidation, only apply this optimization if the d_revalidate handler
-is fscrypt_d_revalidate itself.
+Obviously, we can only do this if fscrypt is the only thing requiring
+revalidation for a dentry.  For this reason, we only disable
+d_revalidate if the .d_revalidate hook is fscrypt_d_revalidate itself.
+
+It is safe to do it here because when moving the dentry to the
+plain-text version, we are holding the d_lock.  We might race with a
+concurrent RCU lookup but this is harmless because, at worst, we will
+get an extra d_revalidate on the keyed dentry, which is will find the
+dentry is valid.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
+
 ---
- include/linux/fscrypt.h | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+Changes since v3:
+  - Fix null-ptr-deref for filesystems that don't support fscrypt (ktr)
+Changes since v2:
+  - Do it when moving instead of when revalidating the dentry. (me)
+
+Changes since v1:
+  - Improve commit message (Eric)
+  - Drop & in function comparison (Eric)
+---
+ include/linux/fscrypt.h | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
 diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-index 4aaf847955c0..a22997b9f35c 100644
+index a22997b9f35c..c1e285053b3e 100644
 --- a/include/linux/fscrypt.h
 +++ b/include/linux/fscrypt.h
-@@ -942,11 +942,22 @@ static inline int fscrypt_prepare_rename(struct inode *old_dir,
- static inline void fscrypt_prepare_lookup_dentry(struct dentry *dentry,
- 						 bool is_nokey_name)
+@@ -192,6 +192,8 @@ struct fscrypt_operations {
+ 					     unsigned int *num_devs);
+ };
+ 
++int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags);
++
+ static inline struct fscrypt_inode_info *
+ fscrypt_get_inode_info(const struct inode *inode)
  {
--	if (is_nokey_name) {
--		spin_lock(&dentry->d_lock);
-+	spin_lock(&dentry->d_lock);
+@@ -221,15 +223,24 @@ static inline bool fscrypt_needs_contents_encryption(const struct inode *inode)
+ }
+ 
+ /*
+- * When d_splice_alias() moves a directory's no-key alias to its plaintext alias
+- * as a result of the encryption key being added, DCACHE_NOKEY_NAME must be
+- * cleared.  Note that we don't have to support arbitrary moves of this flag
+- * because fscrypt doesn't allow no-key names to be the source or target of a
+- * rename().
++ * When d_splice_alias() moves a directory's no-key alias to its
++ * plaintext alias as a result of the encryption key being added,
++ * DCACHE_NOKEY_NAME must be cleared and there might be an opportunity
++ * to disable d_revalidate.  Note that we don't have to support the
++ * inverse operation because fscrypt doesn't allow no-key names to be
++ * the source or target of a rename().
+  */
+ static inline void fscrypt_handle_d_move(struct dentry *dentry)
+ {
+ 	dentry->d_flags &= ~DCACHE_NOKEY_NAME;
 +
-+	if (is_nokey_name)
- 		dentry->d_flags |= DCACHE_NOKEY_NAME;
--		spin_unlock(&dentry->d_lock);
-+	else if (dentry->d_flags & DCACHE_OP_REVALIDATE &&
-+		 dentry->d_op->d_revalidate == fscrypt_d_revalidate) {
-+		/*
-+		 * Unencrypted dentries and encrypted dentries where the
-+		 * key is available are always valid from fscrypt
-+		 * perspective. Avoid the cost of calling
-+		 * fscrypt_d_revalidate unnecessarily.
-+		 */
++	/*
++	 * Save the d_revalidate call cost during VFS operations.  We
++	 * can do it because, when the key is available, the dentry
++	 * can't go stale and the key won't go away without eviction.
++	 */
++	if (dentry->d_op && dentry->d_op->d_revalidate == fscrypt_d_revalidate)
 +		dentry->d_flags &= ~DCACHE_OP_REVALIDATE;
- 	}
-+
-+	spin_unlock(&dentry->d_lock);
  }
  
  /**
+@@ -368,7 +379,6 @@ int fscrypt_fname_disk_to_usr(const struct inode *inode,
+ bool fscrypt_match_name(const struct fscrypt_name *fname,
+ 			const u8 *de_name, u32 de_name_len);
+ u64 fscrypt_fname_siphash(const struct inode *dir, const struct qstr *name);
+-int fscrypt_d_revalidate(struct dentry *dentry, unsigned int flags);
+ 
+ /* bio.c */
+ bool fscrypt_decrypt_bio(struct bio *bio);
 -- 
 2.43.0
 
