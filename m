@@ -1,219 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-9150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9151-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237BD83E814
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 01:12:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A5F83E86C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 01:25:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68271F22895
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 00:12:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 263DA1F229AD
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 00:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C838C0C;
-	Sat, 27 Jan 2024 00:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A2F64A;
+	Sat, 27 Jan 2024 00:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="h8iFeVUU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7GFSu66W";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="h8iFeVUU";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="7GFSu66W"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ke2UJyvK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D41A8F42;
-	Sat, 27 Jan 2024 00:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B08A370;
+	Sat, 27 Jan 2024 00:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706314268; cv=none; b=O5NpNIhctE0RImdP4C6vbwb5SxVZMA6r9G+Hp9LgupNVU8B8dChNXegeFmf9YI7GP+KR+2egY4qRfFgesqO8KJcsf9yaaandq0UCcuOUAKOQ95xdjHB7J32GBAvUsAV/gGWaxkukh2cxuGM9iOmJ+sBVfGj9YYq77aUCuHXiPQk=
+	t=1706315112; cv=none; b=NGhg5sE8zy45c1oo8XsaMrVa0oGLHe/ymPLKPpWFvvpCPNl5LJzrPk2VmqnQs4pwEZZapUyIIC39Tj+airl20rZkrk4dZgyUsR51eqMFNhvfhfOwVv3UUdfnAcSXd8XAIR6lJkZEok/12Bs+R6MDaeDf0muyVAi0/ARN+LbycPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706314268; c=relaxed/simple;
-	bh=S9Le+RDOZE+/jyLKuh6bypOJf7kdPy6re1UaYeEIlBU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OHOkmh3+902RkfhorrZNMfwkxjMZgv39oPiJmQ3hQDaBE3MeMC8mNV0G4ijtk1qTbHmL0V1PVzIvz3oxveePPjJPFNIdmwbhVds3haM6PU06HqH7G4Ug9Kk00V2fF/FcoCjS4Li0Y67dzzLGS07RZc/PAeBgx4P34JYg6dv6b70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=h8iFeVUU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7GFSu66W; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=h8iFeVUU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=7GFSu66W; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 9024A2239F;
-	Sat, 27 Jan 2024 00:11:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1706314264; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xqFo+NbC+4N+nbk/+SEqgEGx6mP0Hq6kIaXRoErZ8as=;
-	b=h8iFeVUUvH4RAxVwM0JI/+x9dsw/JEoOjH0IFNebxdRbTRRU+wscf21xIxS1mspeZRznsp
-	gu43O7Nvp5wTnIGAwH7NdWGcbav+O+nM4tbmbdQfCYYQIvdPtwNqm/FPK5MCaYYYq4/RwV
-	yL5OlaJzPI0D50jb4hEgpISHHuV8/hg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1706314264;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xqFo+NbC+4N+nbk/+SEqgEGx6mP0Hq6kIaXRoErZ8as=;
-	b=7GFSu66WuFBqwaZq3waq1r+UvbzRMqcjW9BrGg/ZRqPh6plJe1mriBRe+7cEUa2Y2oBJzp
-	tNnc4Xewq7BphZBg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1706314264; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xqFo+NbC+4N+nbk/+SEqgEGx6mP0Hq6kIaXRoErZ8as=;
-	b=h8iFeVUUvH4RAxVwM0JI/+x9dsw/JEoOjH0IFNebxdRbTRRU+wscf21xIxS1mspeZRznsp
-	gu43O7Nvp5wTnIGAwH7NdWGcbav+O+nM4tbmbdQfCYYQIvdPtwNqm/FPK5MCaYYYq4/RwV
-	yL5OlaJzPI0D50jb4hEgpISHHuV8/hg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1706314264;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xqFo+NbC+4N+nbk/+SEqgEGx6mP0Hq6kIaXRoErZ8as=;
-	b=7GFSu66WuFBqwaZq3waq1r+UvbzRMqcjW9BrGg/ZRqPh6plJe1mriBRe+7cEUa2Y2oBJzp
-	tNnc4Xewq7BphZBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EC6F913998;
-	Sat, 27 Jan 2024 00:11:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EhOnLBdKtGWQEQAAD6G6ig
-	(envelope-from <krisman@suse.de>); Sat, 27 Jan 2024 00:11:03 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: ebiggers@kernel.org,
-	viro@zeniv.linux.org.uk,
-	jaegeuk@kernel.org,
-	tytso@mit.edu
-Cc: amir73il@gmail.com,
-	linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v4 12/12] libfs: Drop generic_set_encrypted_ci_d_ops
-Date: Fri, 26 Jan 2024 21:10:12 -0300
-Message-ID: <20240127001013.2845-13-krisman@suse.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240127001013.2845-1-krisman@suse.de>
-References: <20240127001013.2845-1-krisman@suse.de>
+	s=arc-20240116; t=1706315112; c=relaxed/simple;
+	bh=Pp2dkrvI3a+XAecsEBVlUohWyE+iC8npvaxRWXehryM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=VZ+sBwrhrb9xWxgFV1U4ydq0s0cIxZUAoGZaLVPV5IvHm7knPUhch+amXfrndXjkSJVJiLkqD4kAneWmlAPE67YHCGgJTBkbOzo+Op3yW8vcnibIqOu5zvsqg9YTLxYo8qU6Qm9Qv20y640skPzHSjF9CpTEIywXyrniC3ARtXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ke2UJyvK; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706315110; x=1737851110;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=Pp2dkrvI3a+XAecsEBVlUohWyE+iC8npvaxRWXehryM=;
+  b=Ke2UJyvKMtw3PhuCHfTiPhynLokxfdb7naMTs6xY0Tntrsiibwtl2dwv
+   HrkWB+RvhRyj+OwKqqJU6PjJ35uGPJEleLfBIF7aTngv5igF/P/u6YqTo
+   WrXibWd30x+Q/ubWgLVrMZ77wgCxFOOnm2uubTTqmbUKGZzeKDAeIfGdA
+   HMGu8Ift/wuPZgOB6KgtqugVZ/3Q34XUIw+M1eTWfLxw9s7HViOQFxJqy
+   CuquQ4ew9Z8LdvVqqzxmjhcvHOaYavn1NChpNRe8MiI3u08Dp5MQ/tnMh
+   H2eQquNKkbSwHKE4YefGoc9xPWGo0hQYTaIBME1SqUfjynTkPz8COnd8l
+   g==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10964"; a="15981078"
+X-IronPort-AV: E=Sophos;i="6.05,220,1701158400"; 
+   d="scan'208";a="15981078"
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2024 16:25:09 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10964"; a="930517372"
+X-IronPort-AV: E=Sophos;i="6.05,220,1701158400"; 
+   d="scan'208";a="930517372"
+Received: from vcostago-desk1.jf.intel.com (HELO vcostago-desk1) ([10.54.70.67])
+  by fmsmga001-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jan 2024 16:25:08 -0800
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: brauner@kernel.org, hu1.chen@intel.com, miklos@szeredi.hu,
+ malini.bhandaru@intel.com, tim.c.chen@intel.com, mikko.ylinen@intel.com,
+ lizhen.you@intel.com, linux-unionfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC v2 4/4] fs: Optimize credentials reference count for
+ backing file ops
+In-Reply-To: <CAOQ4uxi7MtVZECGXo-30YWjSU5ZFZP0AQzgBXLyowdOmNUc5DA@mail.gmail.com>
+References: <20240125235723.39507-1-vinicius.gomes@intel.com>
+ <20240125235723.39507-5-vinicius.gomes@intel.com>
+ <CAOQ4uxi7MtVZECGXo-30YWjSU5ZFZP0AQzgBXLyowdOmNUc5DA@mail.gmail.com>
+Date: Fri, 26 Jan 2024 16:25:08 -0800
+Message-ID: <87mssr4o7v.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: *
-X-Spamd-Bar: +
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=h8iFeVUU;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=7GFSu66W
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [1.49 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 TO_DN_SOME(0.00)[];
-	 R_MISSING_CHARSET(2.50)[];
-	 BROKEN_CONTENT_TYPE(1.50)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[9];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 DWL_DNSWL_MED(-2.00)[suse.de:dkim];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 MID_CONTAINS_FROM(1.00)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FREEMAIL_CC(0.00)[gmail.com,vger.kernel.org,lists.sourceforge.net,suse.de];
-	 RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: 1.49
-X-Rspamd-Queue-Id: 9024A2239F
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-No filesystems depend on it anymore, and it is generally a bad idea.
-Since all dentries should have the same set of dentry operations in
-case-insensitive filesystems, it should be propagated through ->s_d_op.
+Amir Goldstein <amir73il@gmail.com> writes:
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
----
- fs/libfs.c         | 34 ----------------------------------
- include/linux/fs.h |  1 -
- 2 files changed, 35 deletions(-)
+> On Fri, Jan 26, 2024 at 1:57=E2=80=AFAM Vinicius Costa Gomes
+> <vinicius.gomes@intel.com> wrote:
+>>
+>> For backing file operations, users are expected to pass credentials
+>> that will outlive the backing file common operations.
+>>
+>> Use the specialized guard statements to override/revert the
+>> credentials.
+>>
+>
+> As I wrote before, I prefer to see this patch gets reviewed and merged
+> before the overlayfs large patch, so please reorder the series.
+>
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 0aa388ee82ff..35124987f162 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1788,40 +1788,6 @@ static const struct dentry_operations generic_encrypted_dentry_ops = {
- };
- #endif
- 
--/**
-- * generic_set_encrypted_ci_d_ops - helper for setting d_ops for given dentry
-- * @dentry:	dentry to set ops on
-- *
-- * Casefolded directories need d_hash and d_compare set, so that the dentries
-- * contained in them are handled case-insensitively.  Note that these operations
-- * are needed on the parent directory rather than on the dentries in it, and
-- * while the casefolding flag can be toggled on and off on an empty directory,
-- * dentry_operations can't be changed later.  As a result, if the filesystem has
-- * casefolding support enabled at all, we have to give all dentries the
-- * casefolding operations even if their inode doesn't have the casefolding flag
-- * currently (and thus the casefolding ops would be no-ops for now).
-- *
-- * Encryption works differently in that the only dentry operation it needs is
-- * d_revalidate, which it only needs on dentries that have the no-key name flag.
-- * The no-key flag can't be set "later", so we don't have to worry about that.
-- */
--void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
--{
--#if IS_ENABLED(CONFIG_UNICODE)
--	if (dentry->d_sb->s_encoding) {
--		d_set_d_op(dentry, &generic_ci_dentry_ops);
--		return;
--	}
--#endif
--#ifdef CONFIG_FS_ENCRYPTION
--	if (dentry->d_flags & DCACHE_NOKEY_NAME) {
--		d_set_d_op(dentry, &generic_encrypted_dentry_ops);
--		return;
--	}
--#endif
--}
--EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
--
- /**
-  * generic_set_sb_d_ops - helper for choosing the set of
-  * filesystem-wide dentry operations for the enabled features
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c985d9392b61..c0cfc53f95bb 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3201,7 +3201,6 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
- 
- extern int generic_check_addressable(unsigned, u64);
- 
--extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
- extern void generic_set_sb_d_ops(struct super_block *sb);
- 
- static inline bool sb_has_encoding(const struct super_block *sb)
--- 
-2.43.0
+Sure. Will do.
 
+>> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+>> ---
+>>  fs/backing-file.c | 124 ++++++++++++++++++++++------------------------
+>>  1 file changed, 60 insertions(+), 64 deletions(-)
+>>
+>> diff --git a/fs/backing-file.c b/fs/backing-file.c
+>> index a681f38d84d8..9874f09f860f 100644
+>> --- a/fs/backing-file.c
+>> +++ b/fs/backing-file.c
+>> @@ -140,7 +140,7 @@ ssize_t backing_file_read_iter(struct file *file, st=
+ruct iov_iter *iter,
+>>                                struct backing_file_ctx *ctx)
+>>  {
+>>         struct backing_aio *aio =3D NULL;
+>> -       const struct cred *old_cred;
+>> +       const struct cred *old_cred =3D ctx->cred;
+>>         ssize_t ret;
+>>
+>>         if (WARN_ON_ONCE(!(file->f_mode & FMODE_BACKING)))
+>> @@ -153,29 +153,28 @@ ssize_t backing_file_read_iter(struct file *file, =
+struct iov_iter *iter,
+>>             !(file->f_mode & FMODE_CAN_ODIRECT))
+>>                 return -EINVAL;
+>>
+>> -       old_cred =3D override_creds(ctx->cred);
+>> -       if (is_sync_kiocb(iocb)) {
+>> -               rwf_t rwf =3D iocb_to_rw_flags(flags);
+>> +       scoped_guard(cred, old_cred) {
+>
+> This reads very strage.
+>
+> Also, I see that e.g. scoped_guard(spinlock_irqsave, ... hides the local =
+var
+> used for save/restore of flags inside the macro.
+>
+> Perhaps you use the same technique for scoped_guard(cred, ..
+> loose the local old_cred variable in all those functions and then the
+> code will read:
+>
+> scoped_guard(cred, ctx->cred) {
+>
+> which is nicer IMO.
+
+Most likely using DEFINE_LOCK_GUARD_1() would allow us to use the nicer ver=
+sion.
+
+>
+>> +               if (is_sync_kiocb(iocb)) {
+>> +                       rwf_t rwf =3D iocb_to_rw_flags(flags);
+>>
+>> -               ret =3D vfs_iter_read(file, iter, &iocb->ki_pos, rwf);
+>> -       } else {
+>> -               ret =3D -ENOMEM;
+>> -               aio =3D kmem_cache_zalloc(backing_aio_cachep, GFP_KERNEL=
+);
+>> -               if (!aio)
+>> -                       goto out;
+>> +                       ret =3D vfs_iter_read(file, iter, &iocb->ki_pos,=
+ rwf);
+>> +               } else {
+>> +                       ret =3D -ENOMEM;
+>> +                       aio =3D kmem_cache_zalloc(backing_aio_cachep, GF=
+P_KERNEL);
+>> +                       if (!aio)
+>> +                               goto out;
+>>
+>> -               aio->orig_iocb =3D iocb;
+>> -               kiocb_clone(&aio->iocb, iocb, get_file(file));
+>> -               aio->iocb.ki_complete =3D backing_aio_rw_complete;
+>> -               refcount_set(&aio->ref, 2);
+>> -               ret =3D vfs_iocb_iter_read(file, &aio->iocb, iter);
+>> -               backing_aio_put(aio);
+>> -               if (ret !=3D -EIOCBQUEUED)
+>> -                       backing_aio_cleanup(aio, ret);
+>> +                       aio->orig_iocb =3D iocb;
+>> +                       kiocb_clone(&aio->iocb, iocb, get_file(file));
+>> +                       aio->iocb.ki_complete =3D backing_aio_rw_complet=
+e;
+>> +                       refcount_set(&aio->ref, 2);
+>> +                       ret =3D vfs_iocb_iter_read(file, &aio->iocb, ite=
+r);
+>> +                       backing_aio_put(aio);
+>> +                       if (ret !=3D -EIOCBQUEUED)
+>> +                               backing_aio_cleanup(aio, ret);
+>> +               }
+>
+> if possible, I would rather avoid all this churn in functions that mostly
+> do work with the new cred, so either use guard(cred, ) directly or split a
+> helper that uses guard(cred, ) form the rest.
+>
+
+Yeah, I think what happened is that I tried to keep the scope of the
+guard to be as close as possible to override/revert (as you said), and
+that caused the churn.
+
+Probably using guard() more will reduce these confusing code changes. I
+am going to try that.
+
+> Thanks,
+> Amir.
+
+
+Cheers,
+--=20
+Vinicius
 
