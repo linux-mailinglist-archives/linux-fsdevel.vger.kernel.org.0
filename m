@@ -1,55 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-9188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA4883EB1D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 05:54:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C6E83EB41
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 06:17:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E415C1C225B8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 04:54:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 831D5B23D44
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 05:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B4C13FE0;
-	Sat, 27 Jan 2024 04:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2938C13FFB;
+	Sat, 27 Jan 2024 05:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="YWoJPUSi"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="HAHvAryw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954AF14A8C;
-	Sat, 27 Jan 2024 04:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD1F14A89;
+	Sat, 27 Jan 2024 05:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706331257; cv=none; b=qjO9KATw77S4ndsld22quAWKyukXSWGpO0FZ4l50acZoaeKrZyNQwZiqWhJox8HXWqb/B8p0iNUCoIPXiT7V8f43EhjhcSGHuRxVPvVsE/rIPRHVZwz8UPdjacF4+j5v8YdI7QQIgTDo8hHc+QjgQlVaAeKjXvxFMjuaz96xZRY=
+	t=1706332652; cv=none; b=YDjBLJpUvwOT9afyZgAXdtmiKAFZ/AIdseZtuWglO0A2kx82LVk7Fn4uZBetm4yTlePJH67W6Oav5jVJUWsCnrFnggTl5nFC2iwXZ6JpFS8n4zsJmnVBL05a50vZt7pn6ErbaN95gv5A2I2vmswz/Zl5rb4uwkmGkrdE9eb1rGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706331257; c=relaxed/simple;
-	bh=88V1hzhbCbfftos6zJaZB0wK6TKkDyBHXpC0wjXxfws=;
+	s=arc-20240116; t=1706332652; c=relaxed/simple;
+	bh=dU8fqx8M8vbi+SwP7PEPAYOiaD41B/qN7tDKilT3zj8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pzp5zOpdW7Um+xrh/bs/jhxdUDYbqzILlv1KaudeNzXoGussP0DDJ5uODPXS4GBe2u0NtnhpOSmGDYlnPOE6zF6ur17fmbrfpDKU3IgYfl8UeVHhJWMvoPqQiVrPRYh8o7bZQIFiL9c2yuQJGmTR6UJurxYLS8gAe5ZcX7ZZCpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=YWoJPUSi; arc=none smtp.client-ip=185.125.188.121
+	 In-Reply-To:Content-Type; b=LmiOh/yPE452t8toBkXqbFssQGK6vybCFbzf42jnQQC34RBxQM5843kncvL4+WlRKY8kI+peLO42DDGOr9apfaf17cW3yICrUxzAl4ngqqySwRvyFhNJfya79DVEjCOFja50rpTGVDZr8x4ZeABoj3kHVmrbJ9tCQDJFp7gybX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=HAHvAryw; arc=none smtp.client-ip=185.125.188.121
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Received: from [192.168.192.85] (unknown [50.39.103.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id D151B3FE86;
-	Sat, 27 Jan 2024 04:54:00 +0000 (UTC)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id BC6573FFCB;
+	Sat, 27 Jan 2024 05:17:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1706331245;
-	bh=5WPgKmWsxsze4yg1WX8Fw9bzUlXpaO5ltG37GOwu2Sw=;
+	s=20210705; t=1706332647;
+	bh=RGdmLwVJaeGh5hPc5pI57XxhUQN2/0dpo4aenb9lXl4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=YWoJPUSiaYGiIC25TTkda9fHpLf0/hC7qRCRUwrLKpauF+d5RavH9uMlpmqVY6+fC
-	 msVNW745+H9p13uwfGnAuiVpSlUg9MPO8sWMbOdpSaXwkPT3Qze7vX3pPhECJRH3RL
-	 pU1qHhDAuvfrEZtNQvhnoO5+OPebxAUrivRyV2G0rLgXqRfZX/xUyLs90AJoV45m87
-	 Tm+SsU80twLuGJOk0B59b/16eHHvqHdhzd6ef7FKMOpZZqHbLS9cnVQeWZ2+MWQU2z
-	 YKPQDgJfnc1WFakMzYfSoQrzTYuz7wwva++KKpQycG8KtThacsTHe7+nd/QhABnpRa
-	 C48v1ZWXR0Rrw==
-Message-ID: <4bb5dd09-9e09-477b-9ea8-d7b9d2fb4760@canonical.com>
-Date: Fri, 26 Jan 2024 20:53:58 -0800
+	b=HAHvArywcoUyZ+eBuafvECo7LZ4BCBvkD/ANxor/PnWy6F0HVR1EGQ5lhiaFKUCM2
+	 ZqNYkQv3UThEoEUFpvnKFjlmD/5+pbB1x+iTN+huq2UE6gl8Qz3O2bXfm6/SBx0tlC
+	 VM6g1SktDlIAVy+JuOYo3y/WYOdAHe/3JNSLiKD51n9QDVpYI34isEqAWFU0CCpMel
+	 XEKIYzVpNmhKoSpLNN4sgO/YfXqvxWzC3MDM8sWxTem82PrnT7BaVMu7UqyTz3wUEI
+	 D/PxZZaSYoCHs6Q0ZK5xhDh1BatUaVH1K4i9RA7m4QCo8zDxYGaI3AAulRFlExbObG
+	 2qkwYTw8h06+g==
+Message-ID: <ff9a525e-8c39-4590-9ace-57f4426cbe74@canonical.com>
+Date: Fri, 26 Jan 2024 21:17:22 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,29 +57,24 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] exec: Check __FMODE_EXEC instead of in_execve for LSMs
+Subject: Re: [6.8-rc1 Regression] Unable to exec apparmor_parser from
+ virt-aa-helper
 Content-Language: en-US
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- Kees Cook <keescook@chromium.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Jann Horn <jannh@google.com>, Josh Triplett <josh@joshtriplett.org>,
- Kevin Locke <kevin@kevinlocke.name>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+To: Kees Cook <keescook@chromium.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kevin Locke <kevin@kevinlocke.name>,
  Kentaro Takeda <takedakn@nttdata.co.jp>,
  Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Eric Biederman <ebiederm@xmission.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20240124192228.work.788-kees@kernel.org>
- <CAG48ez017tTwxXbxdZ4joVDv5i8FLWEjk=K_z1Vf=pf0v1=cTg@mail.gmail.com>
- <202401241206.031E2C75B@keescook>
- <CAHk-=wiUwRG7LuR=z5sbkFVGQh+7qVB6_1NM0Ny9SVNL1Un4Sw@mail.gmail.com>
- <202401241310.0A158998@keescook> <20240125.bais0ieKahz7@digikod.net>
+ Josh Triplett <josh@joshtriplett.org>, Mateusz Guzik <mjguzik@gmail.com>,
+ Al Viro <viro@zeniv.linux.org.uk>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+References: <ZbE4qn9_h14OqADK@kevinlocke.name>
+ <202401240832.02940B1A@keescook>
+ <CAHk-=wgJmDuYOQ+m_urRzrTTrQoobCJXnSYMovpwKckGgTyMxA@mail.gmail.com>
+ <CAHk-=wijSFE6+vjv7vCrhFJw=y36RY6zApCA07uD1jMpmmFBfA@mail.gmail.com>
+ <CAHk-=wiZj-C-ZjiJdhyCDGK07WXfeROj1ACaSy7OrxtpqQVe-g@mail.gmail.com>
+ <202401240958.8D9A11E8E@keescook>
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
  xsFNBE5mrPoBEADAk19PsgVgBKkImmR2isPQ6o7KJhTTKjJdwVbkWSnNn+o6Up5knKP1f49E
@@ -124,105 +119,51 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20240125.bais0ieKahz7@digikod.net>
+In-Reply-To: <202401240958.8D9A11E8E@keescook>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 1/25/24 08:38, Mickaël Salaün wrote:
-> On Wed, Jan 24, 2024 at 01:32:02PM -0800, Kees Cook wrote:
->> On Wed, Jan 24, 2024 at 12:47:34PM -0800, Linus Torvalds wrote:
->>> On Wed, 24 Jan 2024 at 12:15, Kees Cook <keescook@chromium.org> wrote:
->>>>
->>>> Hmpf, and frustratingly Ubuntu (and Debian) still builds with
->>>> CONFIG_USELIB, even though it was reported[2] to them almost 4 years ago.
->>
->> For completeness, Fedora hasn't had CONFIG_USELIB for a while now.
->>
->>> Well, we could just remove the __FMODE_EXEC from uselib.
+On 1/24/24 10:57, Kees Cook wrote:
+> On Wed, Jan 24, 2024 at 09:10:58AM -0800, Linus Torvalds wrote:
+>> On Wed, 24 Jan 2024 at 08:54, Linus Torvalds
+>> <torvalds@linux-foundation.org> wrote:
 >>>
->>> It's kind of wrong anyway.
+>>> Hmm. That whole thing is disgusting. I think it should have checked
+>>> FMODE_EXEC, and I have no idea why it doesn't.
 >>
->> Yeah.
->>
->>> So I think just removing __FMODE_EXEC would just do the
->>> RightThing(tm), and changes nothing for any sane situation.
->>
->> Agreed about these:
->>
->> - fs/fcntl.c is just doing a bitfield sanity check.
->>
->> - nfs_open_permission_mask(), as you say, is only checking for
->>    unreadable case.
->>
->> - fsnotify would also see uselib() as a read, but afaict,
->>    that's what it would see for an mmap(), so this should
->>    be functionally safe.
->>
->> This one, though, I need some more time to examine:
->>
->> - AppArmor, TOMOYO, and LandLock will see uselib() as an
->>    open-for-read, so that might still be a problem? As you
->>    say, it's more of a mmap() call, but that would mean
->>    adding something a call like security_mmap_file() into
->>    uselib()...
+>> Maybe because FMODE_EXEC gets set for uselib() calls too? I dunno. I
+>> think it would be even better if we had the 'intent' flags from
+>> 'struct open_flags' available, but they aren't there in the
+>> file_open() security chain.
 > 
-> If user space can emulate uselib() without opening a file with
-> __FMODE_EXEC, then there is no security reason to keep __FMODE_EXEC for
-> uselib().
+> I've tested AppArmor, and this works fine:
 > 
-agreed
+thanks. I also ran it through the regression test suit, to double
+check so that Murphy doesn't bite.
 
-> Removing __FMODE_EXEC from uselib() looks OK for Landlock.  We use
-> __FMODE_EXEC to infer if a file is being open for execution i.e., by
-> execve(2).
+that this even tripped a regression is a bug that I am going to
+have to chase down. The file check at this point should just be
+redundant.
+
+thanks for the quick fix
+
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index 7717354ce095..ab104ce05f96 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -470,7 +470,7 @@ static int apparmor_file_open(struct file *file)
+>   	 * implicit read and executable mmap which are required to
+>   	 * actually execute the image.
+>   	 */
+> -	if (current->in_execve) {
+> +	if (file->f_flags & __FMODE_EXEC) {
+>   		fctx->allow = MAY_EXEC | MAY_READ | AA_EXEC_MMAP;
+>   		return 0;
+>   	}
 > 
-
-apparmor the hint should be to avoid doing permission work again that we
-are doing in exec. That it regressed anything more than performance here
-is a bug, that will get fixed.
-
-
-> If __FMODE_EXEC is removed from uselib(), I think it should also be
-> backported to all stable kernels for consistency though.
+> Converting TOMOYO is less obvious to me, though, as it has a helper that
+> isn't strictly always called during open(). I haven't finished figuring
+> out the call graphs for it...
 > 
-hrmmm, I am not opposed to it being backported but I don't know that
-it should be backported. Consistency is good but its not a serious
-bug fix either
-
-> 
->>
->> The issue isn't an insane "support uselib() under AppArmor" case, but
->> rather "Can uselib() be used to bypass exec/mmap checks?"
->>
->> This totally untested patch might give appropriate coverage:
->>
->> diff --git a/fs/exec.c b/fs/exec.c
->> index d179abb78a1c..0c9265312c8d 100644
->> --- a/fs/exec.c
->> +++ b/fs/exec.c
->> @@ -143,6 +143,10 @@ SYSCALL_DEFINE1(uselib, const char __user *, library)
->>   	if (IS_ERR(file))
->>   		goto out;
->>   
->> +	error = security_mmap_file(file, PROT_READ | PROT_EXEC, MAP_FIXED | MAP_SHARED);
->> +	if (error)
->> +		goto exit;
->> +
->>   	/*
->>   	 * may_open() has already checked for this, so it should be
->>   	 * impossible to trip now. But we need to be extra cautious
->>
->>> Of course, as you say, not having CONFIG_USELIB enabled at all is the
->>> _truly_ sane thing, but the only thing that used the FMODE_EXEC bit
->>> were landlock and some special-case nfs stuff.
->>
->> Do we want to attempt deprecation again? This was suggested last time:
->> https://lore.kernel.org/lkml/20200518130251.zih2s32q2rxhxg6f@wittgenstein/
->>
->> -Kees
->>
->> -- 
->> Kees Cook
->>
 
 
