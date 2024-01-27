@@ -1,89 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-9205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D18783EDAA
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 15:47:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3030583EDB3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 15:52:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36B071F21BFE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 14:47:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7AE3B21A98
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 14:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C963428DA7;
-	Sat, 27 Jan 2024 14:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE7F28DC8;
+	Sat, 27 Jan 2024 14:52:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621CF1E4BC;
-	Sat, 27 Jan 2024 14:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA2B2577B
+	for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jan 2024 14:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706366842; cv=none; b=bczmnJ0xowbzkTOZ5L2KX+/sprQL33Y25w8gO5mBuoOE1f3TEVx08VHf9f2E8m6TaFONd5SX8ijTnmjCTPzSuaxqV3v2+2EnfAQJq8RZHOYh4xDFvIjYLavr2eW51+AODEbNCN2t7m+FbocqASz+vb1T9coCTCx5UaX327K8vyA=
+	t=1706367143; cv=none; b=FGYB08sCjxMnvMKY98gyRZZ7D1K1uEfKqVU8F/0SCtBgFHemPw5vwdCTN4oNUAB8C7z7n9uLH9n/gPiChBl7ieJCKryi3S0eew7ADh5Nghmsx5LBkMde15ermX2fjsjjEjMqHwpz0Cj1YWWkxKqsL0WMIlb5yO6wM9uwswtM/No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706366842; c=relaxed/simple;
-	bh=FZLyxs2KTnrtcfMD37K8ga7IQTtn1kDf3zqroJHBu0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bEgrDhkjpnnGd7qFECr+IiV+mVhIcMUwjMav7nWHh1MLOr1b63V77wvAHqAx4FQwTYUUSr7pOoG3Z3rw8TnmFbl3SzGe/q6phCnetW14WzasR7sIFEqHooeM/20IFcOh2LZfhcfQb1eXoZSs50yJsVvZ8noGDDX44K4MLa5Of4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EA99C433C7;
-	Sat, 27 Jan 2024 14:47:20 +0000 (UTC)
-Date: Sat, 27 Jan 2024 09:47:17 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Devel
- <linux-trace-devel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Christian Brauner <brauner@kernel.org>, Ajay Kaher
- <ajay.kaher@broadcom.com>, Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
-Message-ID: <20240127094717.63c09edb@rorschach.local.home>
-In-Reply-To: <CAHk-=whDnGUm1zAhq7Oa+5BjzjChxObWdy4J4n2TAmMWb_RWtw@mail.gmail.com>
-References: <20240126150209.367ff402@gandalf.local.home>
-	<CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
-	<20240126162626.31d90da9@gandalf.local.home>
-	<CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
-	<CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
-	<0C9AF227-60F1-4D9B-9099-1A86502359BA@goodmis.org>
-	<CAHk-=whDnGUm1zAhq7Oa+5BjzjChxObWdy4J4n2TAmMWb_RWtw@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1706367143; c=relaxed/simple;
+	bh=Be/y4DGVPbfmx4K3rGTzJCiIH9BNVn8X6ivVn+mUvI0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=SyXuY1k30R823C+Caa8YBjk1bplTO0umiFQ/djAaLGhhgrUij8QoXa6pFOgy/hmekI/I4wzCL/lFhf1JEkg9hRuG3e7l+pvX7f8UaF+sjANjBshY8uSRtooXbzMk/hGc1brCi8UlZQ96pnQoOLslwXUgsyjODis+m5UvEgTayEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-89-lY5SiMHAMkCe7VPZSgwSoQ-1; Sat, 27 Jan 2024 14:52:18 +0000
+X-MC-Unique: lY5SiMHAMkCe7VPZSgwSoQ-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 27 Jan
+ 2024 14:51:58 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 27 Jan 2024 14:51:58 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Arnd Bergmann' <arnd@arndb.de>, Joe Damato <jdamato@fastly.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Netdev
+	<netdev@vger.kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Jeff Layton
+	<jlayton@kernel.org>, "linux-api@vger.kernel.org"
+	<linux-api@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, "Eric
+ Dumazet" <edumazet@google.com>, "David S . Miller" <davem@davemloft.net>,
+	"alexander.duyck@gmail.com" <alexander.duyck@gmail.com>, Sridhar Samudrala
+	<sridhar.samudrala@intel.com>, Jakub Kicinski <kuba@kernel.org>, "Willem de
+ Bruijn" <willemdebruijn.kernel@gmail.com>, "weiwan@google.com"
+	<weiwan@google.com>, Jonathan Corbet <corbet@lwn.net>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Michael Ellerman
+	<mpe@ellerman.id.au>, Nathan Lynch <nathanl@linux.ibm.com>, Steve French
+	<stfrench@microsoft.com>, Thomas Zimmermann <tzimmermann@suse.de>, Jiri Slaby
+	<jirislaby@kernel.org>, Julien Panis <jpanis@baylibre.com>, Andrew Waterman
+	<waterman@eecs.berkeley.edu>, Thomas Huth <thuth@redhat.com>, Palmer Dabbelt
+	<palmer@dabbelt.com>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	"open list:FILESYSTEMS (VFS and infrastructure)"
+	<linux-fsdevel@vger.kernel.org>
+Subject: RE: [PATCH net-next v3 3/3] eventpoll: Add epoll ioctl for
+ epoll_params
+Thread-Topic: [PATCH net-next v3 3/3] eventpoll: Add epoll ioctl for
+ epoll_params
+Thread-Index: AQHaUCR+m5BGvEW2OU6rGFqZjiahCbDtv1nw
+Date: Sat, 27 Jan 2024 14:51:58 +0000
+Message-ID: <f99dd6cfe7744ed8b9cfe9489aa499de@AcuMS.aculab.com>
+References: <20240125225704.12781-1-jdamato@fastly.com>
+ <20240125225704.12781-4-jdamato@fastly.com>
+ <2024012551-anyone-demeaning-867b@gregkh> <20240126001128.GC1987@fastly.com>
+ <2024012525-outdoors-district-2660@gregkh> <20240126023630.GA1235@fastly.com>
+ <57b62135-2159-493d-a6bb-47d5be55154a@app.fastmail.com>
+In-Reply-To: <57b62135-2159-493d-a6bb-47d5be55154a@app.fastmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 26 Jan 2024 14:26:08 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+From: Arnd Bergmann
+> Sent: 26 January 2024 06:16
+>=20
+> On Fri, Jan 26, 2024, at 03:36, Joe Damato wrote:
+> > On Thu, Jan 25, 2024 at 04:23:58PM -0800, Greg Kroah-Hartman wrote:
+> >> On Thu, Jan 25, 2024 at 04:11:28PM -0800, Joe Damato wrote:
+> >> > On Thu, Jan 25, 2024 at 03:21:46PM -0800, Greg Kroah-Hartman wrote:
+> >> > > On Thu, Jan 25, 2024 at 10:56:59PM +0000, Joe Damato wrote:
+> >> > > > +struct epoll_params {
+> >> > > > +=09u64 busy_poll_usecs;
+> >> > > > +=09u16 busy_poll_budget;
+> >> > > > +
+> >> > > > +=09/* for future fields */
+> >> > > > +=09u8 data[118];
+> >> > > > +} EPOLL_PACKED;
+> >> > >
+> >
+> > Sure, that makes sense to me. I'll remove it in the v4 alongside the ot=
+her
+> > changes you've requested.
+> >
+> > Thanks for your time and patience reviewing my code. I greatly apprecia=
+te
+> > your helpful comments and feedback.
+>=20
+> Note that you should still pad the structure to its normal
+> alignment. On non-x86 targets this would currently mean a
+> multiple of 64 bits.
+>=20
+> I would suggest dropping the EPOLL_PACKED here entirely and
+> just using a fully aligned structure on all architectures, like
+>=20
+> struct epoll_params {
+>       __aligned_u64 busy_poll_usecs;
+>       __u16 busy_poll_budget;
+>       __u8 __pad[6];
+> };
+>=20
+> The explicit padding can help avoid leaking stack data when
+> a structure is copied back from kernel to userspace, so I would
+> just always use it in ioctl data structures.
 
-> nother thing that worries me is that odd locking that releases the
-> lock in the middle. I don't understand why you release the
-> tracefs_mutex() over create_file(), for example. There's a lot of
-> "take, drop, re-take, re-drop" of that mutex that seems strange.
+Or just use 32bit types for both fields.
+Both values need erroring before they get that large.
+32bit of usec is about 20 seconds.
 
-This was because the create_file/dir() would call into the VFS which
-would grab locks, and on a final dput() on a ei dentry that is to be
-freed, calls back into eventfs_set_ei_status_free() which also grabs
-the eventfs_mutex. But it gets called with the same VFS locks that are
-taken by create_file/dir() VFS calls. This was caught by lockdep. Hence
-the dropping of those locks.
+=09David
 
-The eventfs_mutex is just protecting the ei list and also assigning and
-clearing the ei->dentry. Now that dentry is used to synchronize the last
-close, and also to know if the ei was ever referenced. If ei->dentry is
-NULL it can be freed immediately (after SRCU) when the directory is
-deleted. But if ei->dentry is set, it means that something may still
-have a reference to it and must be freed after the last dput() and SRCU.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
-Now some of this was needed due to the way the dir wrapper worked so I
-may be able to revisit this and possibly just use an ei->ref counter.
-But I wasted enough time on this and I'm way behind in my other
-responsibilities, so this is not something I can work on now.
-
--- Steve
 
