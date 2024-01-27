@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-9169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F2783E96A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 03:08:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8FDC83E96D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 03:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AF5B1F21133
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 02:08:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 186261C211CC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 27 Jan 2024 02:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD602941C;
-	Sat, 27 Jan 2024 02:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0545E2A8FE;
+	Sat, 27 Jan 2024 02:02:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA00D250EE;
-	Sat, 27 Jan 2024 02:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF3125560;
+	Sat, 27 Jan 2024 02:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706320974; cv=none; b=VQmGee7RJtkbXc8HtBHMn8R2tBzqqg80f/Jh61///5IGV91gK/NBkZ3B2dA7faBL3smzyenpQYN8FJlNABrgESEp+lN6cy6DEDC6Fq1Bc9zBS9stuatK9nVq3fZcUm00Vq/mnyshGeJqJyq/bsB5UkpDGGXhOxBB7zMLp4KLU8M=
+	t=1706320975; cv=none; b=eOBH3kQoVd4nDyXX/wJk3aDC3cKNZMqrWCTQoBOCMI45jPVa7Pzr9GXAnxZNou+II4b6BD21GXgUVZEWr+I7eggWBZ0V4S+iujOI0QpMKGJBnhR/L91zhXDaoXid4fA19I66773GbcP1cDWqYCp/05z4EcgN9MlAR0PJLbEwZPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706320974; c=relaxed/simple;
-	bh=7YKFrlvZ/lxWAihHwYcRtDZ3s326RXyN+mp+GRn0QwU=;
+	s=arc-20240116; t=1706320975; c=relaxed/simple;
+	bh=Dpj19GRto2dLQ9n4zCk2WfsXCNrH05/hq6u6MPOOItE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MSOZjbNRXNi+KVBJA2GuHksXi/eoCgKGL+O45CO/+/UCwQbomoQI1QbTLgk6K1Vuxn48uRf5QKGhFDHKeEHbqku1tlS5ZGrdp01kjpO62UnA68v9CClK5oT4jHjNcinTuQvrJrm7zqgIufyc6Ns5fnI4YdB8OhUMsI8GHClU2Oc=
+	 MIME-Version; b=EUhBdLZKY/ujmuN+3p/riqQyn1pL5NT27lrqtXuLVC2/sQ7kSl8e/OcNe8+bhAUvCgPgx2fGYAPHv0Ye8IxA4s2vooNIR2SyqPsFlJWdJrsR5eL/MiJKn1tTHGSGbQOEkLyv3rRW66SaryW3tehDGCO6SEY8F7wBVQElYP9ACu0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TMHrg4bQQz4f3lg0;
-	Sat, 27 Jan 2024 10:02:43 +0800 (CST)
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TMHrm1mLmz4f3jqN;
+	Sat, 27 Jan 2024 10:02:48 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 026501A0232;
+	by mail.maildlp.com (Postfix) with ESMTP id A3CEE1A0272;
 	Sat, 27 Jan 2024 10:02:50 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgAX5g40ZLRlGJtmCA--.7377S20;
-	Sat, 27 Jan 2024 10:02:49 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgAX5g40ZLRlGJtmCA--.7377S21;
+	Sat, 27 Jan 2024 10:02:50 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -56,9 +56,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	wangkefeng.wang@huawei.com
-Subject: [RFC PATCH v3 16/26] ext4: add a new iomap aops for regular file's buffered IO path
-Date: Sat, 27 Jan 2024 09:58:15 +0800
-Message-Id: <20240127015825.1608160-17-yi.zhang@huaweicloud.com>
+Subject: [RFC PATCH v3 17/26] ext4: implement buffered read iomap path
+Date: Sat, 27 Jan 2024 09:58:16 +0800
+Message-Id: <20240127015825.1608160-18-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
 References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
@@ -69,10 +69,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgAX5g40ZLRlGJtmCA--.7377S20
-X-Coremail-Antispam: 1UD129KBjvJXoWxur43KF1xCr4ruw1kKF13twb_yoW5Cr1UpF
-	Z8Gas8Gr18Zry7ua1fXFWDZF4Yka4fJw4jgFW3G3Wa9ryrGrW7KFWvka4jyFy7t3y8Ar17
-	XF4jkry7WFy7CrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgAX5g40ZLRlGJtmCA--.7377S21
+X-Coremail-Antispam: 1UD129KBjvJXoW7urW7uFW8uw17ZF1kWF13CFg_yoW8uFW7pF
+	98KFy5GF47XrnI9F4SqFZrJr1Yk3WxtF4UurW3WasxGFyYkrW2gayUWFyYyF15X3y7Ary0
+	qF4jkr18GF1UArDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -91,89 +91,68 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Introduce a new iomap address space operations ext4_iomap_aops to
-support regular file's buffered IO path and add an inode state flag
-EXT4_STATE_BUFFERED_IOMAP to indicate that one inode use the iomap
-path. Most of their callbacks should be able to use general
-implementation, the left over read_folio, readahead and writepages
-should be implemented later.
+Add ext4_iomap_buffered_io_begin() to query map blocks, and use
+ext4_set_iomap() to convert ext4 map to iomap, after that we can
+convert buffered read path to iomap simply.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/ext4.h  |  1 +
- fs/ext4/inode.c | 33 +++++++++++++++++++++++++++++++++
- 2 files changed, 34 insertions(+)
+ fs/ext4/inode.c | 36 ++++++++++++++++++++++++++++++++++--
+ 1 file changed, 34 insertions(+), 2 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 287284a3f128..3461cb3ff524 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -1913,6 +1913,7 @@ enum {
- 	EXT4_STATE_VERITY_IN_PROGRESS,	/* building fs-verity Merkle tree */
- 	EXT4_STATE_FC_COMMITTING,	/* Fast commit ongoing */
- 	EXT4_STATE_ORPHAN_FILE,		/* Inode orphaned in orphan file */
-+	EXT4_STATE_BUFFERED_IOMAP,	/* Inode use iomap for buffered IO */
- };
- 
- #define EXT4_INODE_BIT_FNS(name, field, offset)				\
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 125d0665fa10..eca9bf5dd255 100644
+index eca9bf5dd255..5d542ce13d2a 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -3507,6 +3507,22 @@ const struct iomap_ops ext4_iomap_report_ops = {
+@@ -3507,14 +3507,46 @@ const struct iomap_ops ext4_iomap_report_ops = {
  	.iomap_begin = ext4_iomap_begin_report,
  };
  
-+static int ext4_iomap_read_folio(struct file *file, struct folio *folio)
-+{
-+	return 0;
-+}
+-static int ext4_iomap_read_folio(struct file *file, struct folio *folio)
++static int ext4_iomap_buffered_io_begin(struct inode *inode, loff_t offset,
++				loff_t length, unsigned int iomap_flags,
++				struct iomap *iomap, struct iomap *srcmap)
+ {
++	int ret;
++	struct ext4_map_blocks map;
++	u8 blkbits = inode->i_blkbits;
 +
-+static void ext4_iomap_readahead(struct readahead_control *rac)
-+{
++	if (unlikely(ext4_forced_shutdown(inode->i_sb)))
++		return -EIO;
++	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
++		return -EINVAL;
++	if (WARN_ON_ONCE(ext4_has_inline_data(inode)))
++		return -ERANGE;
 +
-+}
++	/* Calculate the first and last logical blocks respectively. */
++	map.m_lblk = offset >> blkbits;
++	map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
++			  EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
 +
-+static int ext4_iomap_writepages(struct address_space *mapping,
-+				 struct writeback_control *wbc)
-+{
-+	return 0;
-+}
++	ret = ext4_map_blocks(NULL, inode, &map, 0);
++	if (ret < 0)
++		return ret;
 +
- /*
-  * For data=journal mode, folio should be marked dirty only when it was
-  * writeably mapped. When that happens, it was already attached to the
-@@ -3596,6 +3612,21 @@ static const struct address_space_operations ext4_da_aops = {
- 	.swap_activate		= ext4_iomap_swap_activate,
- };
++	ext4_set_iomap(inode, iomap, &map, offset, length, iomap_flags);
+ 	return 0;
+ }
  
-+static const struct address_space_operations ext4_iomap_aops = {
-+	.read_folio		= ext4_iomap_read_folio,
-+	.readahead		= ext4_iomap_readahead,
-+	.writepages		= ext4_iomap_writepages,
-+	.dirty_folio		= iomap_dirty_folio,
-+	.bmap			= ext4_bmap,
-+	.invalidate_folio	= iomap_invalidate_folio,
-+	.release_folio		= iomap_release_folio,
-+	.direct_IO		= noop_direct_IO,
-+	.migrate_folio		= filemap_migrate_folio,
-+	.is_partially_uptodate  = iomap_is_partially_uptodate,
-+	.error_remove_page	= generic_error_remove_page,
-+	.swap_activate		= ext4_iomap_swap_activate,
+-static void ext4_iomap_readahead(struct readahead_control *rac)
++const struct iomap_ops ext4_iomap_buffered_read_ops = {
++	.iomap_begin = ext4_iomap_buffered_io_begin,
 +};
 +
- static const struct address_space_operations ext4_dax_aops = {
- 	.writepages		= ext4_dax_writepages,
- 	.direct_IO		= noop_direct_IO,
-@@ -3618,6 +3649,8 @@ void ext4_set_aops(struct inode *inode)
- 	}
- 	if (IS_DAX(inode))
- 		inode->i_mapping->a_ops = &ext4_dax_aops;
-+	else if (ext4_test_inode_state(inode, EXT4_STATE_BUFFERED_IOMAP))
-+		inode->i_mapping->a_ops = &ext4_iomap_aops;
- 	else if (test_opt(inode->i_sb, DELALLOC))
- 		inode->i_mapping->a_ops = &ext4_da_aops;
- 	else
++static int ext4_iomap_read_folio(struct file *file, struct folio *folio)
+ {
++	return iomap_read_folio(folio, &ext4_iomap_buffered_read_ops);
++}
+ 
++static void ext4_iomap_readahead(struct readahead_control *rac)
++{
++	iomap_readahead(rac, &ext4_iomap_buffered_read_ops);
+ }
+ 
+ static int ext4_iomap_writepages(struct address_space *mapping,
 -- 
 2.39.2
 
