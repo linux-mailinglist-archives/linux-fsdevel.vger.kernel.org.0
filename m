@@ -1,91 +1,84 @@
-Return-Path: <linux-fsdevel+bounces-9233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0A783F49F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 09:33:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3911F83F4A9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 09:52:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B6021C2113E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 08:33:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E09D3284923
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 08:52:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F5FDF55;
-	Sun, 28 Jan 2024 08:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90295DF49;
+	Sun, 28 Jan 2024 08:52:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from cstnet.cn (smtp37.cstnet.cn [159.226.251.37])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B645DDA5
-	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 08:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F39FDDC5;
+	Sun, 28 Jan 2024 08:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706430788; cv=none; b=EXbvBWa81wO5pai9xsa5J1L4d9nNJzSixuMVR38zKavE/BU+BCyS9jkr4adeTU1Ppks0JSJ+lZcNYdR6kakdquusSg+ukEpDGJCSqr6qGLnFjoe7vRRfZcV832udU6/qOZhTNwcyoh/qDa/zZHSq1gKoOupWD9NG5EC4dPO/Bzg=
+	t=1706431962; cv=none; b=VvQtYQN3gLRe7AYj9ssn86Ge5lK2UafLjG3BuKPSv+5mobWAe4Y+y0jeV410g2658IJ1jGpeHN3ghShLPFaB22IZgJEGcZg+G8In45ohIfXUJ98w5F2F0ybHMlY3Jbl5UO8jO9W/lL2ZnYGbI6NiMoX8loM++r3oa8mrm92MzDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706430788; c=relaxed/simple;
-	bh=hGMR4U5K86JxyB4kr5e3ZACsI7Q2evvli8q8yzSoiSw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HvD4tH4VyJlZZG3ai6IBQ22/yNx+DvJoqaH2XrzNrY89GWwRjWWGiwyvoUjGmwbwSEHKl93Y6NRGomFA6jjafgex6P+5rZvEBuTCwdoUkPQQRvg3VpZ+JXbORKRlyj/3VyYxJ9VJwaqNGaJrxh58oTXpboqrJWWkrBgsj01nYqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7bf4698825eso134460639f.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 00:33:06 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706430786; x=1707035586;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PNN5KLkPHS0YIYwzI5Jykoe2YGdKNWga1jxyVuOp7+s=;
-        b=M8o9zC1BSzfIAWnKhdeCXMgJk/2FahP97TsetKq6HyB5Gb7nDUU/JrhqpuWy2vexEL
-         2u3UyFnnResi3SleudqQhO6YBfQngYKua/fsOg3ez2YY1bMaT2CRuR8I0jphzQNQqIMp
-         D39h1GCQlLI3vfWyvvBvK3CQl6WEzhojYZKP7WOIO/JLODIL6axtnXUrrXfsPvX7OnL+
-         f/olOEouTIa8x5Yvk3O0ryx2T90WW/l6Uvf4JyEjx/K9Tx4jNTEholT+FPhzb1mETxzh
-         4viaYJHdwulcRBJ+w40Qf5O17UuDKjwppRDGkC7QOAyugmowDw8hvP6IueC2wwtQwBbu
-         t2Cg==
-X-Gm-Message-State: AOJu0Ywt3oi9oF+6AhMXd3vti1yNqqo+OhfnxEOYey/qTx1BTEwLoRWx
-	P9rUsvrV7oCezQseVfCamPsBDBl9O3p5V6akHWSg5R6yD+lCcSYh5LoKAjATHxX7o5N/Lg9orwD
-	IDYQY+vX0i+73kbzeyVR89P2NB0hniJk6nVH3+Wy+H9A037kDhLTQiZg=
-X-Google-Smtp-Source: AGHT+IE5JhByvi0HswZNtB6u5bhB0ZD545GFOO2qLdKbRVHFiQgOaj511OOcYmw4/xBkKyELGhEbtSg6NtbI2umtY2tG+8LtTdM6
+	s=arc-20240116; t=1706431962; c=relaxed/simple;
+	bh=0l9Gv2KClL1PK/HXZ8poSenceSjDMvX3gYNrU+Hzmcg=;
+	h=Date:From:To:Subject:Content-Type:MIME-Version:Message-ID; b=gbnS2Q4nYl+pwrzYaea4s6gNrlqq/RIUPKL06U8KuO7uKpBUOhd3FYkPGbTp8P+rIOj8k6nZYi/+GZAPk0Pnh64PqSSe/ubVozcABZrJvzPBWrNwNRzxie67iOAzmJHVFNitbdqmZC0F2UbEgC9C/o6fb56Kh1MO0NR8ImAmzKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iie.ac.cn; spf=pass smtp.mailfrom=iie.ac.cn; arc=none smtp.client-ip=159.226.251.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iie.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iie.ac.cn
+Received: from mengjingzi$iie.ac.cn ( [219.141.235.82] ) by
+ ajax-webmail-APP-12 (Coremail) ; Sun, 28 Jan 2024 16:45:59 +0800
+ (GMT+08:00)
+Date: Sun, 28 Jan 2024 16:45:59 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: =?UTF-8?B?5a2f5pWs5ae/?= <mengjingzi@iie.ac.cn>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Identified Redundant Capability Check in File Access under
+ /proc/sys
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.15 build 20230921(8ad33efc)
+ Copyright (c) 2002-2024 www.mailtech.cn cnic.cn
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2f:b0:361:9a73:5a8f with SMTP id
- g15-20020a056e021a2f00b003619a735a8fmr398208ile.5.1706430784250; Sun, 28 Jan
- 2024 00:33:04 -0800 (PST)
-Date: Sun, 28 Jan 2024 00:33:04 -0800
-In-Reply-To: <0000000000007584ba05f80047bb@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000baabe1060ffd60b0@google.com>
-Subject: Re: [syzbot] [reiserfs?] KASAN: use-after-free Read in reiserfs_get_unused_objectid
-From: syzbot <syzbot+04e8b36eaa27ecf7f840@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <30b59a4.19708.18d4f3f3620.Coremail.mengjingzi@iie.ac.cn>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:tgCowAAHf89HFLZlHkQIAA--.23563W
+X-CM-SenderInfo: pphqwyxlqj6xo6llvhldfou0/1tbiBwoJE2W0X22TVAACsx
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-syzbot suspects this issue was fixed by commit:
-
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
-
-    fs: Block writes to mounted block devices
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=116501efe80000
-start commit:   1e760fa3596e Merge tag 'gfs2-v6.3-rc3-fix' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=acdb62bf488a8fe5
-dashboard link: https://syzkaller.appspot.com/bug?extid=04e8b36eaa27ecf7f840
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d5c261c80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=155eba51c80000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+SGVsbG8gZGV2ZWxvcGVycywKCkkgaG9wZSB0aGlzIG1lc3NhZ2UgZmluZHMgeW91IHdlbGwuIEkg
+d2FudGVkIHRvIGJyaW5nIHRvIHlvdXIgYXR0ZW50aW9uIGFuIG9ic2VydmF0aW9uIHJlZ2FyZGlu
+ZyBmaWxlIGFjY2VzcyB1bmRlciAvcHJvYy9zeXMgaW4gdGhlIGtlcm5lbCBzb3VyY2UgY29kZS4K
+ClVwb24gcmV2aWV3LCBpdCBhcHBlYXJzIHRoYXQgY2VydGFpbiBmaWxlcyBhcmUgcHJvdGVjdGVk
+IGJ5IGNhcGFiaWxpdGllcyBpbiB0aGUga2VybmVsIHNvdXJjZSBjb2RlOyBob3dldmVyLCB0aGUg
+Y2FwYWJpbGl0eSBjaGVjayBkb2VzIG5vdCBzZWVtIHRvIGJlIGVmZmVjdGl2ZWx5IGVuZm9yY2Vk
+IGR1cmluZyBmaWxlIGFjY2Vzcy4KCkZvciBleGFtcGxlLCBJIG5vdGljZWQgdGhpcyBpbmNvbnNp
+c3RlbmN5IGluIHRoZSBhY2Nlc3MgZnVuY3Rpb25zIG9mIHNvbWUgc3BlY2lhbCBmaWxlczoKMS4g
+VGhlIGFjY2VzcyBmdW5jdGlvbiBtbWFwX21pbl9hZGRyX2hhbmRsZXIoKSBpbiAvcHJvYy9zeXMv
+dm0vbW1hcF9taW5fYWRkciB1dGlsaXplcyB0aGUgQ0FQX1NZU19SQVdJTyBjaGVjay4KMi4gVGhl
+IGFjY2VzcyBmdW5jdGlvbiBwcm9jX2RvaW50dmVjX21pbm1heF9zeXNhZG1pbigpIGluIC9wcm9j
+L3N5cy9rZXJuZWwva3B0cl9yZXN0cmljdCByZXF1aXJlcyB0aGUgQ0FQX1NZU19BRE1JTiBjaGVj
+ay4KCkRlc3BpdGUgdGhlc2UgY2FwYWJpbGl0eSBjaGVja3MgaW4gdGhlIHNvdXJjZSBjb2RlLCB3
+aGVuIGFjY2Vzc2luZyBhIGZpbGUsIGl0IHVuZGVyZ29lcyBhIFVHTyBwZXJtaXNzaW9uIGNoZWNr
+IGJlZm9yZSB0cmlnZ2VyaW5nIHRoZXNlIHNwZWNpYWxpemVkIGZpbGUgYWNjZXNzIGZ1bmN0aW9u
+cy4gVGhlIFVHTyBwZXJtaXNzaW9ucyBmb3IgdGhlc2UgZmlsZXMgYXJlIGNvbmZpZ3VyZWQgYXMg
+cm9vdDpyb290IHJ3LSByLS0gci0tLCBtZWFuaW5nIG9ubHkgdGhlIHJvb3QgdXNlciBjYW4gcGFz
+cyB0aGUgVUdPIGNoZWNrLgoKQXMgYSByZXN1bHQsIHRvIGFjY2VzcyB0aGVzZSBmaWxlcywgb25l
+IG11c3QgYmUgdGhlIHJvb3QgdXNlciwgd2hvIGluaGVyZW50bHkgcG9zc2Vzc2VzIGFsbCBjYXBh
+YmlsaXRpZXMuIENvbnNlcXVlbnRseSwgdGhlIGNhcGFiaWxpdGllcyBjaGVjayBpbiB0aGUgZmls
+ZSBhY2Nlc3MgZnVuY3Rpb24gc2VlbXMgcmVkdW5kYW50LgoKUGxlYXNlIGNvbnNpZGVyIHJldmll
+d2luZyBhbmQgYWRqdXN0aW5nIHRoZSBjYXBhYmlsaXR5IGNoZWNrcyBpbiB0aGUgbWVudGlvbmVk
+IGFjY2VzcyBmdW5jdGlvbnMgZm9yIGJldHRlciBhbGlnbm1lbnQgd2l0aCB0aGUgVUdPIHBlcm1p
+c3Npb25zLgoKVGhhbmsgeW91IGZvciB5b3VyIGF0dGVudGlvbiB0byB0aGlzIG1hdHRlci4KCkJl
+c3QgcmVnYXJkcywKSmluZ3ppIE1lbmc=
 
