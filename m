@@ -1,101 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-9261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CF8E83FA3C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 23:01:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2E383FA3F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 23:03:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52B74282CF3
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 22:01:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E658B21B46
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 22:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676FC3C484;
-	Sun, 28 Jan 2024 22:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3CE3D393;
+	Sun, 28 Jan 2024 22:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X1k8QQ5p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BEF3C461;
-	Sun, 28 Jan 2024 22:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12B83CF44;
+	Sun, 28 Jan 2024 22:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706479290; cv=none; b=D+Hu7hKEsSvEyBmtS01VN5C2kksNyhUsU2IzEGxAhr/NSHCgdtA2cLXo/onFkmtDmt1tCkKm84F6+xR4KBlxuVAH5opD5HUNhyMSIis2o5jtrG+SQuiMx79W93qn2MIH5ISiXMOpGe2h1cHsWWS5f8EuyaGEW5nDIrmAFlICAFU=
+	t=1706479374; cv=none; b=jVPeuUFSoiu3UdkZkiJOcfWbtn5O3ylE6kiUaaLoaMw+gwApuyndZ2t0eD9r8/qmMdpKfTBbBge4Axy4FSB52/aouNZ9JwJikWWHkLfGwP/4nmbO+YfATdg9tAWQiTIUSlqg281/itUBPqZgsvMTSmyOchLEfecSQQL4npYpRJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706479290; c=relaxed/simple;
-	bh=ssQbheLqlmCPZsjWzxOefn+0xp44vjzjY+8m+zuL42w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FYAgmmthmfzIuiEzbTyQvtoBnCp+RcwpjvWZzSgsiXv9D9/XcOoonKKkTI2dpXyl36+QOkl3jcJ04Mjq61+Adjb4nVy2/ySf7ZGBR3tsio8gi521zSR9hV2pC5FLjSDwRom611l6dtMHvTJ8KAtaMzajEsK+Uwr5fhwFgyvDn54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03E89C433F1;
-	Sun, 28 Jan 2024 22:01:27 +0000 (UTC)
-Date: Sun, 28 Jan 2024 17:01:25 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, LKML <linux-kernel@vger.kernel.org>,
- Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Christian Brauner
- <brauner@kernel.org>, Ajay Kaher <ajay.kaher@broadcom.com>, Geert
- Uytterhoeven <geert@linux-m68k.org>, linux-fsdevel
- <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
-Message-ID: <20240128170125.7d51aa8f@rorschach.local.home>
-In-Reply-To: <CAHk-=wiWo9Ern_MKkWJ-6MEh6fUtBtwU3avQRm=N51VsHevzQg@mail.gmail.com>
-References: <20240126150209.367ff402@gandalf.local.home>
-	<CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
-	<20240126162626.31d90da9@gandalf.local.home>
-	<CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
-	<CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
-	<CAHk-=wj+DsZZ=2iTUkJ-Nojs9fjYMvPs1NuoM3yK7aTDtJfPYQ@mail.gmail.com>
-	<20240128151542.6efa2118@rorschach.local.home>
-	<CAHk-=whKJ6dzQJX27gvL4Xug5bFRKW7_Cx4XpngMKmWxOtb+Qg@mail.gmail.com>
-	<CAHk-=wiWo9Ern_MKkWJ-6MEh6fUtBtwU3avQRm=N51VsHevzQg@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1706479374; c=relaxed/simple;
+	bh=5C4J0Ao+ZJ0LzdgubJzD/RjoPDpCc0XCOKB+k/bVZG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SO6AdjCfZo2c1fj4hABa+XjkJ/MoSpk4Q8zFfInK3AaXJsq1yJEoRw3DP4RSR6BHSGgzaHXgjsbTYIC+1WXJ0ps9KJRi9R86Rbgh5Xk5NoOSwLT7pPQWdOrb614AyCNsO1itlKJkKQ2imnETyw61kHJTNPcWpj/2ggI4cSZy2TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=X1k8QQ5p; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=y7owlhmhi2gAoXU/UeiIuxV6mq5IG8XVGr21uGp5/40=; b=X1k8QQ5pXWWbzG7O67QZFKgivf
+	fC4g/yiD/pw9sbIud887+AHkhsj549Vtg9KNot/nBjV/HBtKG7yyvZKb4qzLdYyBXeX1FVqwTzk5+
+	OLVa4cfZYnxTiitLTIbnFTGWY5XD23C/3DYNAvZcKrbGDzeSypq9QHkgVFmnIaRz/WlR9AjqzBpwO
+	JnwOEI14KUxGFsDAfQpYKajyh/iBrk6vy5fMzpPgSAMsohdV4ZgxYgd7RCPoxjUZf8Q9uetdVPZw0
+	Awbmxv1kdTiw9EuDqww/jOSeysk0rC+is0rNAaqXlEbxxaSqAczD9GbtHGIz9RORFmZWehVOoB2TE
+	+MRe/u2w==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rUDEn-00000004g71-0xeS;
+	Sun, 28 Jan 2024 22:02:49 +0000
+Date: Sun, 28 Jan 2024 22:02:49 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
+	Don Dutile <ddutile@redhat.com>,
+	Raghavendra K T <raghavendra.kt@linux.vnet.ibm.com>
+Subject: Re: [RFC PATCH] mm/readahead: readahead aggressively if read drops
+ in willneed range
+Message-ID: <ZbbPCQZdazF7s0_b@casper.infradead.org>
+References: <20240128142522.1524741-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240128142522.1524741-1-ming.lei@redhat.com>
 
-On Sun, 28 Jan 2024 13:08:55 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Sun, Jan 28, 2024 at 10:25:22PM +0800, Ming Lei wrote:
+> Since commit 6d2be915e589 ("mm/readahead.c: fix readahead failure for
+> memoryless NUMA nodes and limit readahead max_pages"), ADV_WILLNEED
+> only tries to readahead 512 pages, and the remained part in the advised
+> range fallback on normal readahead.
 
-> On Sun, 28 Jan 2024 at 12:53, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > Now, the RCU delay may be needed if the lookup of said structure
-> > happens under RCU, but no, saying "I use SRCU to make sure the
-> > lifetime is at least X" is just broken.  
-> 
-> Put another way, the only reason for any RCU should be that you don't
-> use locking at lookup, and the normal lookup routine should follow a
-> pattern something like this:
-> 
->     rcu_read_lock();
->     entry = find_entry(...);
->     if (entry && !atomic_inc_not_zero(&entry->refcount))
->         entry = NULL;
->     rcu_read_unlock();
-> 
-> and the freeing should basically follow a pattern like
-> 
->     if (atomic_dec_and_test(&entry->refcount))
->         rcu_free(entry);
+Does the MAINTAINERS file mean nothing any more?
 
-Basically you are saying that when the ei is created, it should have a
-ref count of 1. If the lookup happens and does the
-atomic_inc_not_zero() it will only increment if the ref count is not 0
-(which is basically equivalent to is_freed).
+> If bdi->ra_pages is set as small, readahead will perform not efficient
+> enough. Increasing read ahead may not be an option since workload may
+> have mixed random and sequential I/O.
 
-And then we can have deletion of the object happen in both where the
-caller (kprobes) deletes the directory and in the final iput()
-reference (can I use iput and not the d_release()?), that it does the
-same as well.
+I thik there needs to be a lot more explanation than this about what's
+going on before we jump to "And therefore this patch is the right
+answer".
 
-Where whatever sees the refcount of zero calls rcu_free?
+> @@ -972,6 +974,7 @@ struct file_ra_state {
+>  	unsigned int ra_pages;
+>  	unsigned int mmap_miss;
+>  	loff_t prev_pos;
+> +	struct maple_tree *need_mt;
 
--- Steve
+No.  Embed the struct maple tree.  Don't allocate it.  What made you
+think this was the right approach?
+
 
