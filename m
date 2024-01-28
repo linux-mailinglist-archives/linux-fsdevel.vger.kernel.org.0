@@ -1,93 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-9231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92ECD83F483
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 08:18:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA8F83F49B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 09:29:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C568D1C21F78
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 07:18:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E08AE1C2167C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 08:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1466D51C;
-	Sun, 28 Jan 2024 07:18:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 268CDDDC5;
+	Sun, 28 Jan 2024 08:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="VgHeaGEL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-52005.amazon.com (smtp-fw-52005.amazon.com [52.119.213.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D28C129
-	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 07:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03E8D536;
+	Sun, 28 Jan 2024 08:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706426285; cv=none; b=YWBUFpF/Cjxqxu3U/VR8vNjch7xl4IYFQZWlPfRPJrvSPDd11FEdMCevihhaNxJ+MTWqKu/iNfjA0vW4Uo2+j0hahBn3bPTH2gp8TqGqTiTMALB5b9l7huI7m2PvrI8cWkAzlaFgjJx5FUPWYvshFnCnYdJewsM/htxOV4ZLZrQ=
+	t=1706430535; cv=none; b=i4V9AnslqtD5iCsdjxeaJDms+v3Wet0BjyiL4q3B0clgnomHFQcG9dt/wfT4ucYRBan9RLBLy0km4J9utxsZIS/PFn95v+2xx4FO+IhksERVjPR44Ksl54Cade1qZX+HTu+b1e4GESWkO509r/TPxJsoIfTVHA+TZUQZdttNHZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706426285; c=relaxed/simple;
-	bh=D6ZyoKTF6L3wn7H4QjFvGhyvGvKbYTYFoHnQj51K7pA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=eHdH5n94EWoB0DFQ6OtSN60mUdZmbQpzitFILhicYhYQhutKHckZ8hAtdMwEZa7jiZF5V/8McRW48KOd0Wc1DJZe8vDSYT3NlbIOf/pRTJFPxYAM2kT2NHno97XXRafnxPP4UViOs45C6HzxyPxRMvaXL3AUnkG5rxGFjEtDEz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36377aafa3bso3516095ab.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 27 Jan 2024 23:18:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706426283; x=1707031083;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ul8wmNFSCMVhgffO/ITwaHvUKPduHDAXYkg9gcF38LQ=;
-        b=vIJqTCxwhYjyOa9Yz2Pmsv13K/mC6SyopioVfvdHGNHq1CVVbSkAVMiqoaxUp2NlWs
-         3+md4n7w1h1eOCBAwIhjn90fzWp9OP9cuqANWANcc+GICBLd5ThFej/d4/nij9k+cQlj
-         j//fc1R+SGEJDlIaSFc/aPCVt3qHA2pLGzgxz3lYPpWXbFBX0smwIizFXWyxkZB6wD7V
-         EKG4839p96WNmhRWF6och1rq5ik8xY+0P+CF5sd+TRtXnJw8U1OVNDsh28w8ha+aEliq
-         NkOLGYCB+AhDG4XbCa6+tNlhoiHz///TH1OubMbgbGvTB942dMJAqCuzToVxfiuykwHx
-         amtQ==
-X-Gm-Message-State: AOJu0YyVN6gCbecP2E0rWpcPKaoFuFCYM2xa7k4Grq8DQGZxrGGlVX4F
-	Ckht4zcGd03VWBt/UX7zyfyCuREoKKNh443KTDJEohCgYGNsfaJvmlMD4uY8yIRzL3nELFzPR6s
-	79QvlUkaCR/OCg1jb6rcTiQ1FnS2iLLyIgPaoIcL5ymrcFdt6gnXmb/Y=
-X-Google-Smtp-Source: AGHT+IE87ax8hL/iicqYU4HAN2acMDSk8ljjHL8DXHbMp3/VT5KWOCFtGyYxsWaFr43s1p6HNGKprBlfxx1Usk9EN270xb77Heb0
+	s=arc-20240116; t=1706430535; c=relaxed/simple;
+	bh=VZJ32uBSnHeYLRqyWtoGJ+vKF2durp0l+kmkeHMQY4g=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=uB/ua+2Igt6iGv9TOb81S6d8Ab95AJdoAB+s2TBymZ2Q5zIaSnSA9DngXCP5iiuV6ln6/EQsItkhr5V7FSEPzJa2YLoxGliz8CTXTeYNzNnyxTNGIY61wYu7XqXahThpcVxggYWKLtPrWOYkqIJVid3dcvIVBcTJQbG1MfE26ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=VgHeaGEL; arc=none smtp.client-ip=52.119.213.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1706430533; x=1737966533;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=Aer27LddC3vgYFmEG+ckZUqU4qn8n6YISCTG6G1GZy8=;
+  b=VgHeaGELqUwp7GAJTzhRXTiNKRZy5doIseqYQYbIP0Em+fusrfWfImOp
+   2lTPH/sQslDYPUUE7dgkDTLyC48CjZJznQpoFe6ITEzrHlhxaK4eomVBE
+   MebhBQjDGOSiIdVy3aWpOy+elbi8LgMwgMnM5GiLNdumoadZxCvAbboWM
+   c=;
+X-IronPort-AV: E=Sophos;i="6.05,220,1701129600"; 
+   d="scan'208";a="630396084"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-pdx-2c-m6i4x-8c5b1df3.us-west-2.amazon.com) ([10.43.8.6])
+  by smtp-border-fw-52005.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2024 08:28:51 +0000
+Received: from smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev (pdx2-ws-svc-p26-lb5-vlan3.pdx.amazon.com [10.39.38.70])
+	by email-inbound-relay-pdx-2c-m6i4x-8c5b1df3.us-west-2.amazon.com (Postfix) with ESMTPS id 1D98440D4A;
+	Sun, 28 Jan 2024 08:28:50 +0000 (UTC)
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:28618]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.3.8:2525] with esmtp (Farcaster)
+ id a741d178-266c-4cf2-9742-14a26ef5d16b; Sun, 28 Jan 2024 08:28:49 +0000 (UTC)
+X-Farcaster-Flow-ID: a741d178-266c-4cf2-9742-14a26ef5d16b
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Sun, 28 Jan 2024 08:28:49 +0000
+Received: from 88665a182662.ant.amazon.com (10.106.101.48) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Sun, 28 Jan 2024 08:28:46 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <kent.overstreet@linux.dev>
+CC: <boqun.feng@gmail.com>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<peterz@infradead.org>, <kuniyu@amazon.com>
+Subject: Re: [PATCH 4/4] af_unix: convert to lock_cmp_fn
+Date: Sun, 28 Jan 2024 00:28:38 -0800
+Message-ID: <20240128082838.3961-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240127020833.487907-5-kent.overstreet@linux.dev>
+References: <20240127020833.487907-5-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1808:b0:361:9a68:4891 with SMTP id
- a8-20020a056e02180800b003619a684891mr353817ilv.3.1706426283208; Sat, 27 Jan
- 2024 23:18:03 -0800 (PST)
-Date: Sat, 27 Jan 2024 23:18:03 -0800
-In-Reply-To: <000000000000c6ec640601d95e6c@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000072355b060ffc546e@google.com>
-Subject: Re: [syzbot] [kernel?] general protection fault in timerqueue_del (2)
-From: syzbot <syzbot+500a5eabc2495aaeb60e@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, luto@kernel.org, 
-	peterz@infradead.org, reiserfs-devel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, yukuai3@huawei.com, 
-	yuran.pereira@hotmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D038UWB003.ant.amazon.com (10.13.139.157) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Precedence: Bulk
 
-syzbot suspects this issue was fixed by commit:
+From: Kent Overstreet <kent.overstreet@linux.dev>
+Date: Fri, 26 Jan 2024 21:08:31 -0500
+> Kill
+>  - unix_state_lock_nested
+>  - _nested usage for net->unx.table.locks[].
+> 
+> replace both with lock_set_cmp_fn_ptr_order(&u->lock).
+> 
+> The lock ordering in sk_diag_dump_icons() looks suspicious; this may
+> turn up a real issue.
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Yes, you cannot use lock_cmp_fn() for unix_state_lock_nested().
 
-    fs: Block writes to mounted block devices
+The lock order in sk_diag_dump_icons() is
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=172204dfe80000
-start commit:   4b954598a47b Merge tag 'exfat-for-6.5-rc5' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa5bd4cd5ab6259d
-dashboard link: https://syzkaller.appspot.com/bug?extid=500a5eabc2495aaeb60e
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=169efdf6a80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13733f31a80000
+  listening socket -> child socket in the listener's queue
 
-If the result looks correct, please mark the issue as fixed by replying with:
+, and the inverse order never happens.  ptr comparison does not make
+sense in this case, and lockdep will complain about false positive.
 
-#syz fix: fs: Block writes to mounted block devices
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> Cc: netdev@vger.kernel.org
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> ---
+>  include/net/af_unix.h |  3 ---
+>  net/unix/af_unix.c    | 20 ++++++++------------
+>  net/unix/diag.c       |  2 +-
+>  3 files changed, 9 insertions(+), 16 deletions(-)
+> 
+> diff --git a/include/net/af_unix.h b/include/net/af_unix.h
+> index 49c4640027d8..4eff0a089640 100644
+> --- a/include/net/af_unix.h
+> +++ b/include/net/af_unix.h
+> @@ -48,9 +48,6 @@ struct scm_stat {
+>  
+>  #define unix_state_lock(s)	spin_lock(&unix_sk(s)->lock)
+>  #define unix_state_unlock(s)	spin_unlock(&unix_sk(s)->lock)
+> -#define unix_state_lock_nested(s) \
+> -				spin_lock_nested(&unix_sk(s)->lock, \
+> -				SINGLE_DEPTH_NESTING)
+>  
+>  /* The AF_UNIX socket */
+>  struct unix_sock {
+> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> index d013de3c5490..1a0d273799c1 100644
+> --- a/net/unix/af_unix.c
+> +++ b/net/unix/af_unix.c
+> @@ -170,7 +170,7 @@ static void unix_table_double_lock(struct net *net,
+>  		swap(hash1, hash2);
+>  
+>  	spin_lock(&net->unx.table.locks[hash1]);
+> -	spin_lock_nested(&net->unx.table.locks[hash2], SINGLE_DEPTH_NESTING);
+> +	spin_lock(&net->unx.table.locks[hash2]);
+>  }
+>  
+>  static void unix_table_double_unlock(struct net *net,
+> @@ -997,6 +997,7 @@ static struct sock *unix_create1(struct net *net, struct socket *sock, int kern,
+>  	u->path.dentry = NULL;
+>  	u->path.mnt = NULL;
+>  	spin_lock_init(&u->lock);
+> +	lock_set_cmp_fn_ptr_order(&u->lock);
+>  	atomic_long_set(&u->inflight, 0);
+>  	INIT_LIST_HEAD(&u->link);
+>  	mutex_init(&u->iolock); /* single task reading lock */
+> @@ -1340,17 +1341,11 @@ static int unix_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
+>  
+>  static void unix_state_double_lock(struct sock *sk1, struct sock *sk2)
+>  {
+> -	if (unlikely(sk1 == sk2) || !sk2) {
+> -		unix_state_lock(sk1);
+> -		return;
+> -	}
+> -	if (sk1 < sk2) {
+> +	if (sk1 > sk2)
+> +		swap(sk1, sk2);
+> +	if (sk1 && sk1 != sk2)
+>  		unix_state_lock(sk1);
+> -		unix_state_lock_nested(sk2);
+> -	} else {
+> -		unix_state_lock(sk2);
+> -		unix_state_lock_nested(sk1);
+> -	}
+> +	unix_state_lock(sk2);
+>  }
+>  
+>  static void unix_state_double_unlock(struct sock *sk1, struct sock *sk2)
+> @@ -1591,7 +1586,7 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
+>  		goto out_unlock;
+>  	}
+>  
+> -	unix_state_lock_nested(sk);
+> +	unix_state_lock(sk);
+>  
+>  	if (sk->sk_state != st) {
+>  		unix_state_unlock(sk);
+> @@ -3575,6 +3570,7 @@ static int __net_init unix_net_init(struct net *net)
+>  
+>  	for (i = 0; i < UNIX_HASH_SIZE; i++) {
+>  		spin_lock_init(&net->unx.table.locks[i]);
+> +		lock_set_cmp_fn_ptr_order(&net->unx.table.locks[i]);
+>  		INIT_HLIST_HEAD(&net->unx.table.buckets[i]);
+>  	}
+>  
+> diff --git a/net/unix/diag.c b/net/unix/diag.c
+> index bec09a3a1d44..8ab5e2217e4c 100644
+> --- a/net/unix/diag.c
+> +++ b/net/unix/diag.c
+> @@ -84,7 +84,7 @@ static int sk_diag_dump_icons(struct sock *sk, struct sk_buff *nlskb)
+>  			 * queue lock. With the other's queue locked it's
+>  			 * OK to lock the state.
+>  			 */
+> -			unix_state_lock_nested(req);
+> +			unix_state_lock(req);
+>  			peer = unix_sk(req)->peer;
+>  			buf[i++] = (peer ? sock_i_ino(peer) : 0);
+>  			unix_state_unlock(req);
+> -- 
+> 2.43.0
 
