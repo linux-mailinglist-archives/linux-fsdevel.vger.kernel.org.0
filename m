@@ -1,129 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-9260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A2C283FA37
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 22:56:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF8E83FA3C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 23:01:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27108282D65
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 21:56:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52B74282CF3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 22:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA9F3C08A;
-	Sun, 28 Jan 2024 21:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="g/2ywbQb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676FC3C484;
+	Sun, 28 Jan 2024 22:01:30 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC301DFCE
-	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 21:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BEF3C461;
+	Sun, 28 Jan 2024 22:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706478953; cv=none; b=uFTlV4ODyW7Det0yM2LMbXSwfXaBjQi1RUpuC5VbMhkViYB9IyeJoPQ6TgevCCJ/C7+JROKK4yKR3clC/51nL/HTvlgKeyNOBULjuesCjvEujAgtpTlTdwaEeNXtZqv3m4f3Qijb3C+XQsA+79M4iEutt9y7U3JXGifxymcQE0Q=
+	t=1706479290; cv=none; b=D+Hu7hKEsSvEyBmtS01VN5C2kksNyhUsU2IzEGxAhr/NSHCgdtA2cLXo/onFkmtDmt1tCkKm84F6+xR4KBlxuVAH5opD5HUNhyMSIis2o5jtrG+SQuiMx79W93qn2MIH5ISiXMOpGe2h1cHsWWS5f8EuyaGEW5nDIrmAFlICAFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706478953; c=relaxed/simple;
-	bh=9jSkYnuonGJybCKZEIMVw8ZfaI1LKdY3jyIXSfaWi08=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aS/vR4RgBJot2ERjkVXUQdHEm4V9z/PIzWjeKInpMkg66UD4fuVxLo9yUq2VFeuKowR+B005YQmZPvqHCdvWncdvHyey5lfzX0sR3VyJYbKFOuvHRaLy1VwxzETh+NP5QfOgI5xsDcCI4cpfTtydt069l0fextAfkYwAM6hrIcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=g/2ywbQb; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5100ed2b33dso3267034e87.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 13:55:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1706478949; x=1707083749; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nLt6r4XtTa4SPYOVEEGfDF0wKF4MI0mrfWV0xt83Pcc=;
-        b=g/2ywbQbnlSiURgGGwuXY3fy7gdPUFu9cqJOVgDig7iCw57igZ2JfQTxLnwbPQTQy8
-         Mx2wUH3rHXohrokHbWGMKnMN81IWyjiT+FRtBOyBldF47XQ4ORNIfH0okA5TFgkG/W3G
-         HunuvknwpCW7U1RzBhk6IkWJ0U28j1fAbr3UI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706478949; x=1707083749;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nLt6r4XtTa4SPYOVEEGfDF0wKF4MI0mrfWV0xt83Pcc=;
-        b=NVhga0ZKDIP9OtqHAKxtPCq5CZuytPJeW57JhP+k1erMv4KzryKT3Ig/WoobYQxzgX
-         qO5wgtW3PkWs+AD76F76lVJ7JDRG5zOg6FjWm+3W6oKenZNQCgVLKiHePyySQpO4Rn5T
-         P9cfUmIduwpjmLSfOGdFTsau5NyKMfrENDn7HPcYNCOWv465Z3VajspRXM7hQCZSCNV/
-         dmfq16ASzyRu8MSKJM5s+76QijToxW/IL5L9gtntFwfO6rCTQnlhVnX9avIs9zoJ5ljP
-         tiLq0WWpLsYNv32aH2UoDZHQRpHmYXoYvpL+lHEF4VXU7KTA6J24LhUJv2OHahB8CDI7
-         emRQ==
-X-Gm-Message-State: AOJu0Yx0jQcSfOFtAiSCAVxMd9FDgUjQILAOuKIt9rj6bD46jbh1N0w0
-	/iSJkLkEAOYqYE85gnkcALG4+aGoqVXogFhRXhZ45rmG+Kxj0S6KRNVrtxAAij5Wevlk1ZICvcg
-	cLCA=
-X-Google-Smtp-Source: AGHT+IHL7GW+JW+6K+Cr6RnqoiyWkdsw9RGw+mvrCGP82zHAh+/bX1mpYsdMOCXVSHSAdSljY8e5Fw==
-X-Received: by 2002:a05:6512:39ca:b0:510:e815:7e27 with SMTP id k10-20020a05651239ca00b00510e8157e27mr1960515lfu.58.1706478949238;
-        Sun, 28 Jan 2024 13:55:49 -0800 (PST)
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
-        by smtp.gmail.com with ESMTPSA id g36-20020a0565123ba400b00510189e1581sm906210lfv.249.2024.01.28.13.55.48
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Jan 2024 13:55:48 -0800 (PST)
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-510f37d6714so1135934e87.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 13:55:48 -0800 (PST)
-X-Received: by 2002:ac2:4570:0:b0:510:c2e:e0e with SMTP id k16-20020ac24570000000b005100c2e0e0emr2432391lfm.13.1706478948313;
- Sun, 28 Jan 2024 13:55:48 -0800 (PST)
+	s=arc-20240116; t=1706479290; c=relaxed/simple;
+	bh=ssQbheLqlmCPZsjWzxOefn+0xp44vjzjY+8m+zuL42w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FYAgmmthmfzIuiEzbTyQvtoBnCp+RcwpjvWZzSgsiXv9D9/XcOoonKKkTI2dpXyl36+QOkl3jcJ04Mjq61+Adjb4nVy2/ySf7ZGBR3tsio8gi521zSR9hV2pC5FLjSDwRom611l6dtMHvTJ8KAtaMzajEsK+Uwr5fhwFgyvDn54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03E89C433F1;
+	Sun, 28 Jan 2024 22:01:27 +0000 (UTC)
+Date: Sun, 28 Jan 2024 17:01:25 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, LKML <linux-kernel@vger.kernel.org>,
+ Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Christian Brauner
+ <brauner@kernel.org>, Ajay Kaher <ajay.kaher@broadcom.com>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
+Message-ID: <20240128170125.7d51aa8f@rorschach.local.home>
+In-Reply-To: <CAHk-=wiWo9Ern_MKkWJ-6MEh6fUtBtwU3avQRm=N51VsHevzQg@mail.gmail.com>
+References: <20240126150209.367ff402@gandalf.local.home>
+	<CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
+	<20240126162626.31d90da9@gandalf.local.home>
+	<CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
+	<CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
+	<CAHk-=wj+DsZZ=2iTUkJ-Nojs9fjYMvPs1NuoM3yK7aTDtJfPYQ@mail.gmail.com>
+	<20240128151542.6efa2118@rorschach.local.home>
+	<CAHk-=whKJ6dzQJX27gvL4Xug5bFRKW7_Cx4XpngMKmWxOtb+Qg@mail.gmail.com>
+	<CAHk-=wiWo9Ern_MKkWJ-6MEh6fUtBtwU3avQRm=N51VsHevzQg@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202401280650.Us2Lrkgl-lkp@intel.com> <20240128211544.GD2087318@ZenIV>
-In-Reply-To: <20240128211544.GD2087318@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 28 Jan 2024 13:55:31 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj8LUAX_rwM4=N9kNGeg=E+KoxY6uQfyqf=k7MOrb4+aA@mail.gmail.com>
-Message-ID: <CAHk-=wj8LUAX_rwM4=N9kNGeg=E+KoxY6uQfyqf=k7MOrb4+aA@mail.gmail.com>
-Subject: Re: [viro-vfs:work.alpha 5/8] arch/alpha/kernel/io.c:655:1: error:
- redefinition of 'scr_memcpyw'
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, 28 Jan 2024 at 13:15, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> The thing is, VT_BUF_HAVE_... are defined in asm/vga.h, so if you don't
-> have VGA_CONSOLE or MDA_CONSOLE you are going to get the default ones.
-> In case of scr_memcpyw() it's going to end up with memcpy(); on alpha
-> that does *not* match the native scr_memcpyw() instance.
->
-> Since we have vga.h in mandatory-y, with asm-generic fallback being
-> reasonable enough...  Should that include of asm/vga.h be conditional
-> in the first place?
+On Sun, 28 Jan 2024 13:08:55 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-It should be conditional, because that's the only case you want to
-actually have that special scr_memsetw() etc.
+> On Sun, 28 Jan 2024 at 12:53, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Now, the RCU delay may be needed if the lookup of said structure
+> > happens under RCU, but no, saying "I use SRCU to make sure the
+> > lifetime is at least X" is just broken.  
+> 
+> Put another way, the only reason for any RCU should be that you don't
+> use locking at lookup, and the normal lookup routine should follow a
+> pattern something like this:
+> 
+>     rcu_read_lock();
+>     entry = find_entry(...);
+>     if (entry && !atomic_inc_not_zero(&entry->refcount))
+>         entry = NULL;
+>     rcu_read_unlock();
+> 
+> and the freeing should basically follow a pattern like
+> 
+>     if (atomic_dec_and_test(&entry->refcount))
+>         rcu_free(entry);
 
-I think the problem is that you added the vtbuf include to <asm/io.h>,
-which gets included from VGA_H early, before vga.h has even had time
-to tell people that it overrides those helper functions.
+Basically you are saying that when the ei is created, it should have a
+ref count of 1. If the lookup happens and does the
+atomic_inc_not_zero() it will only increment if the ref count is not 0
+(which is basically equivalent to is_freed).
 
-I assume that moving the
+And then we can have deletion of the object happen in both where the
+caller (kprobes) deletes the directory and in the final iput()
+reference (can I use iput and not the d_release()?), that it does the
+same as well.
 
-    #define VT_BUF_HAVE_RW
-    #define VT_BUF_HAVE_MEMSETW
-    #define VT_BUF_HAVE_MEMCPYW
+Where whatever sees the refcount of zero calls rcu_free?
 
-to above the
-
-    #include <asm/io.h>
-
-fixes the build?
-
-That said, a good alternative might be to just stop using 'inline' for
-the default scr_memsetw() and scr_memcpyw() functions, make them real
-functions, and mark them __weak.
-
-Then architectures can override them much more easily, and inlining
-them seems a bit pointless.
-
-But I doubt it's even worth cleaning things up in this area.
-
-             Linus
+-- Steve
 
