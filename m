@@ -1,97 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-9257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC9283FA08
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 22:19:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF51183FA0D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 22:25:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 779AF1F221BD
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 21:19:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF1431C21BD4
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 21:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45AD3C46B;
-	Sun, 28 Jan 2024 21:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E98E3C460;
+	Sun, 28 Jan 2024 21:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="NDwh/ZsH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8150D3C068;
-	Sun, 28 Jan 2024 21:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141851DFD9
+	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 21:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706476778; cv=none; b=Ts4QLZZROPfuP0rGx3DbDMX1HudeN9ALJIqf+n0qw7rmR6cXBBR+MSycUqVbRi4avn7BJ6NDCQNk6JIQzVpLDvoTV4yauTPQedX7hPqzA69VuCAkwCmepHRfr3uKIhaMrn6ZldHzlhou413mNmECi7bhDOhodAdq0O+4H5w9dBs=
+	t=1706477107; cv=none; b=HB5hYzm1Z6JwVxK54N63wMV/uV83aYGfk0iRjRAvUP5JxODpLN4hdsvw4xVd8mLn3s8lGwTQR3ZRDoShVm21du9ko2wSQ/p8v1neA6QO6D8EJdaT1v/Zarr9pqOwtw4+62PCSGPee3h5WctrJPGoBmDH++zJbyLjdAHAbHKymoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706476778; c=relaxed/simple;
-	bh=GUpw5izvhyZ2h4yrNEtqr/QWSWIXNewKupdAHYrEHOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=unKfjX1I17+Seb0Y2yb+2oUiIXYFiDxhbWwW1Hb943faubJ5Jaf0EXM535gl+L1h32OKIHNYhZFPR4nUL/Yqt93I1GnxxovsDz14XxVGd5WrjlmQwvwu1Gh09rSbGyZq89wlN6xDDwzBU2/kBLMDvQo9ObTSxzIDL0CLuzA/zII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7446C433F1;
-	Sun, 28 Jan 2024 21:19:36 +0000 (UTC)
-Date: Sun, 28 Jan 2024 16:19:35 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, LKML <linux-kernel@vger.kernel.org>,
- Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Christian Brauner
- <brauner@kernel.org>, Ajay Kaher <ajay.kaher@broadcom.com>, Geert
- Uytterhoeven <geert@linux-m68k.org>, linux-fsdevel
- <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
-Message-ID: <20240128161935.417d36b3@rorschach.local.home>
-In-Reply-To: <CAHk-=whKJ6dzQJX27gvL4Xug5bFRKW7_Cx4XpngMKmWxOtb+Qg@mail.gmail.com>
-References: <20240126150209.367ff402@gandalf.local.home>
-	<CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
-	<20240126162626.31d90da9@gandalf.local.home>
-	<CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
-	<CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
-	<CAHk-=wj+DsZZ=2iTUkJ-Nojs9fjYMvPs1NuoM3yK7aTDtJfPYQ@mail.gmail.com>
-	<20240128151542.6efa2118@rorschach.local.home>
-	<CAHk-=whKJ6dzQJX27gvL4Xug5bFRKW7_Cx4XpngMKmWxOtb+Qg@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1706477107; c=relaxed/simple;
+	bh=Ab32dIT+JGe1KR1hHoPEcNe4Z/Tjno7/Odo5mSS+wms=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CiyAAJLV7Yxvc6gaQ2On+eJZUlR13qiRT9SVSTgwSVCvImLlrkdbiDAMee9+vRrvVQDrq7xVtBx3ChqchqPhQUtkgkoe+2Zwc+FUhJIOh0+yyigPdncD3QpCoc6cL6E8b/P+kS8HZVC/adXt6F5XNEKlBHc7fhgS8ZZRNpUZkhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=NDwh/ZsH; arc=none smtp.client-ip=209.85.167.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3bd562d17dcso1833225b6e.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 13:25:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1706477105; x=1707081905; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yFxnYNSqRJeaFLMjNAkAR1eBmkMk5OSt+lKtiwrsmCg=;
+        b=NDwh/ZsHdERG/iI3CDDf/3aMtaliEDPHjOzu45k0MBqduifmaBCM3p5INpddz0b/5d
+         1ubtwhOM9RpewbDIZrpSteQJ78XAf5JZk7UtJR83s8UdgLFx4d02CB0YrFnQeBQ6o7Z2
+         +e4LpxAM5wJVVHP66QXwP57uVYxldN1EnYzZDqJQi4vFYKlBfogKIEbinItlFlBOvvLV
+         zbG3aOM+MGB0Upu2Qe0c5b+OxVtQJREm7l6MB189o51eNt5/wt6EyClZ8HLzECnlGxZ2
+         Ior7H/V0QXSKvNYTRIz8y9HwjPW61ynbL3IDQW3IhVb4BcaKajt6iThm9Oh3OLDzK0iq
+         h9kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706477105; x=1707081905;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFxnYNSqRJeaFLMjNAkAR1eBmkMk5OSt+lKtiwrsmCg=;
+        b=dXGq4Cg/13hj5ihWVkcDlBhZRJlN8lWuwIqx7rzwmuKtlTOdLnv2cHUzY7BZShkO9N
+         RQXKXYFDl62iFAhG+htM7gRx/XnhGCJSvaD7t+VWqXcgt+vMArUNR8Qg7lJLriYnPebG
+         BZSKIUds2eQxkTy0PGGViKW9kNxPsinumbc4rBDvCX9SDc/51gTOvOZrxYOA2lU/kXKJ
+         SIth9YeGv/Tg4HELZRaAfBUikPSyEwahCxuJj9DmtnYyPo6TNsveH/AZScgZYFvMi430
+         QiMGMA8fwZtL4/0nCjGQiNuZyLT7yoekq+JWg5PLSEUzbAbyx99CzDiF4/gs82cM9zMY
+         0Caw==
+X-Gm-Message-State: AOJu0Ywlur/UEtykyPKjOoNWtmHTFkKCYhhRTr6+keLNzTRhaXAOIvB5
+	CTS+dQLFi7jpUasPpdyCZjq2VOSWmezvChjm2MSYI9aGzqbGx4Da32cJDEHQoRc=
+X-Google-Smtp-Source: AGHT+IFqrJrYWS3DKZJW50dQDBsCsKhW2ARZDOnSqRTeM0ew1imAxRvFWqS4nKmfgWaynnC0I3xLYA==
+X-Received: by 2002:a05:6808:3c94:b0:3be:51df:b82a with SMTP id gs20-20020a0568083c9400b003be51dfb82amr1709382oib.40.1706477104987;
+        Sun, 28 Jan 2024 13:25:04 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
+        by smtp.gmail.com with ESMTPSA id it3-20020a056a00458300b006db04fb3f00sm4541463pfb.28.2024.01.28.13.25.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 28 Jan 2024 13:25:04 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rUCeC-00GaMn-02;
+	Mon, 29 Jan 2024 08:25:00 +1100
+Date: Mon, 29 Jan 2024 08:25:00 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Antonio SJ Musumeci <trapexit@spawn.link>,
+	fuse-devel <fuse-devel@lists.sourceforge.net>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [fuse-devel] FICLONE / FICLONERANGE support
+Message-ID: <ZbbGLKeZ90fHYnRs@dread.disaster.area>
+References: <1fb83b2a-38cf-4b70-8c9e-ac1c77db7080@spawn.link>
+ <CAOQ4uxgoJkotsP6MVuPmO91VSG3kKWdUqXAtp37rxc0ehOSfEw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgoJkotsP6MVuPmO91VSG3kKWdUqXAtp37rxc0ehOSfEw@mail.gmail.com>
 
-On Sun, 28 Jan 2024 12:53:31 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> Honestly, you should just *always* do refcounting. No "free after RCU
-> delay" as an alternative. Just refcount it.
+On Sun, Jan 28, 2024 at 12:07:22PM +0200, Amir Goldstein wrote:
+> On Sun, Jan 28, 2024 at 2:31 AM Antonio SJ Musumeci <trapexit@spawn.link> wrote:
+> >
+> > Hello,
+> >
+> > Has anyone investigated adding support for FICLONE and FICLONERANGE? I'm
+> > not seeing any references to either on the mailinglist. I've got a
+> > passthrough filesystem and with more users taking advantage of btrfs and
+> > xfs w/ reflinks there has been some demand for the ability to support it.
+> >
 > 
-> Now, the RCU delay may be needed if the lookup of said structure
-> happens under RCU, but no, saying "I use SRCU to make sure the
-> lifetime is at least X" is just broken.
+> [CC fsdevel because my answer's scope is wider than just FUSE]
 > 
-> The refcount is what gives the lifetime. Any form of RCU-delaying
-> should then be purely about non-refcounting RCU lookups that may
-> happen as the thing is dying (and said lookup should *look* at the
-> refcount and say "oh, this is dead, I'm not returning this".
+> FWIW, the kernel implementation of copy_file_range() calls remap_file_range()
+> (a.k.a. clone_file_range()) for both xfs and btrfs, so if your users control the
+> application they are using, calling copy_file_range() will propagate via your
+> fuse filesystem correctly to underlying xfs/btrfs and will effectively result in
+> clone_file_range().
+> 
+> Thus using tools like cp --reflink, on your passthrough filesystem should yield
+> the expected result.
+> 
+> For a more practical example see:
+> https://bugzilla.samba.org/show_bug.cgi?id=12033
+> Since Samba 4.1, server-side-copy is implemented as copy_file_range()
+> 
+> API-wise, there are two main differences between copy_file_range() and
+> FICLONERANGE:
+> 1. copy_file_range() can result in partial copy
+> 2. copy_file_range() can results in more used disk space
+> 
+> Other API differences are minor, but the fact that copy_file_range()
+> is a syscall with a @flags argument makes it a candidate for being
+> a super-set of both functionalities.
+> 
+> The question is, for your users, are you actually looking for
+> clone_file_range() support? or is best-effort copy_file_range() with
+> clone_file_range() fallback enough?
+> 
+> If your users are looking for the atomic clone_file_range() behavior,
+> then a single flag in fuse_copy_file_range_in::flags is enough to
+> indicate to the server that the "atomic clone" behavior is wanted.
+> 
+> Note that the @flags argument to copy_file_range() syscall does not
+> support any flags at all at the moment.
+> 
+> The only flag defined in the kernel COPY_FILE_SPLICE is for
+> internal use only.
+> 
+> We can define a flag COPY_FILE_CLONE to use either only
+> internally in kernel and in FUSE protocol or even also in
+> copy_file_range() syscall.
 
-The deleting of the ei is done outside the VFS logic. I use SRCU to
-synchronize looking at the ei children in the lookup. On deletion, I
-grab the eventfs_mutex, set ei->is_freed and then wait for SRCU to
-finish before freeing.
+I don't care how fuse implements ->remap_file_range(), but no change
+to syscall behaviour, please.
 
-The lookup checks ei->is_freed and doesn't do anything if set, but most
-that logic is under the SRCU, which is what I want to make sure is
-finished before the ei is deleted.
+copy_file_range() is supposed to select the best available method
+for copying the data based on kernel side technology awareness that
+the application knows nothing about (e.g. clone, server-side copy,
+block device copy offload, etc). The API is technology agnostic and
+largely future proof because of this; adding flags to say "use this
+specific technology to copy data or fail" is the exact opposite of
+how we want copy_file_range() to work.
 
-Hmm, I still need the logic for iput(), as dentry->d_fsdata can still
-access the ei. That's where I need to have the ref counters. For a
-lookup, I need to up the ref count when I create a new inode for the ei
-or its children. Then in the iput() I decrement the ei ref count. I can
-only free the ei if the ref count is zero.
+i.e. if you want a specific type of "copy" to be done (i.e. clone
+rather than data copy) then call FICLONE or copy the data yourself
+to do exactly what you need. If you just want it done fast as
+possible and don't care about implementation (99% of cases), then
+just call copy_file_range().
 
-The ref count is for knowing if an ei is referenced by a
-dentry->d_fsdata, and the SRCU is to make sure there's no lookups
-accessing an ei.
+> Sure, we can also add a new FUSE protocol command for
+> FUSE_CLONE_FILE_RANGE, but I don't think that is
+> necessary.
+> It is certainly not necessary if there is agreement to extend the
+> copy_file_range() syscall to support COPY_FILE_CLONE flag.
 
--- Steve
+We have already have FICLONE/FICLONERANGE for this operation. Fuse
+just needs to implement ->remap_file_range() server stubs, and then
+the back end driver  can choose to implement it if it's storage
+mechanisms support such functionality. Then it will get used
+automatically for copy_file_range() for those FUSE drivers, the rest
+will just copy the data in the kernel using splice as they currently
+do...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
