@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-9240-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CED983F5C2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 15:17:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F98E83F5C5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 15:17:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8244E1C2270A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 14:17:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71F851C22712
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 14:17:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6573828DD6;
-	Sun, 28 Jan 2024 14:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077E9241EA;
+	Sun, 28 Jan 2024 14:17:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2865925773;
-	Sun, 28 Jan 2024 14:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010CC2E401;
+	Sun, 28 Jan 2024 14:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706451435; cv=none; b=j5PfVRl1gMBSsZ45XKY08o1ecpFK88CyuEYuafs/7yLjNKFKsOJLA0Q8xYIvqfumbJEr2byWmUOREn2BBJPBMVXckPl3PIkP+gsdK65m2HcQn40RbKCJW3+Z9tGAxwDhRavL4zw86NtMVrSlITaSCAoSWlWCOPdVsh5gzPseLXY=
+	t=1706451458; cv=none; b=WotWdGPlOi4JRejcFX8VRxEXKyHYGpuFkskuQ+cyUvrstGyL26t6c6Q8/DnSmJGMhoQIG+NCn6GthCiVKZOflMD0Enevx4rOEaNso/oUXoJJFmwXhe7w0/saHu7rdL4yXvtJIjw6ZMwYQVzdK7K/R/+j10iI+dDkVO7F+l7hQHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706451435; c=relaxed/simple;
-	bh=BqdmzxJqM5geoy5x3EiANW+NvN/y/ZuUVzh+k4a2aY0=;
+	s=arc-20240116; t=1706451458; c=relaxed/simple;
+	bh=lAYJ65VbD9qteDUGspUOYa8U+uiNPZmnxlvPQfvCwEo=;
 	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cW88Xf5smdsVLwOJFb68aieuAqxAwNhHrg88TOaYWqaiRbRojzuaig6D5Lms1ntLry2vxsinuMc2n89pRx16+MG/VVQ6L4ryjndoYLnEtZf00ATq7DK/MkB7XZO0q4LUhZ2OMVe5JdvENVp1EYSYydWObHSMv0IvKwWhM5r0z1I=
+	 In-Reply-To:Content-Type; b=KhzBj8JyL4KqqLA6RjV7xhBsq/+BTEpB4GoNPahKTGVWayQ84QUIv835CCzD4OMO9EElvlfBkmOVI/b7xIla9Js/5CYCD29di8wfRq7PyezdJcfsyatMlf4sQFMVqwxBLsKGawCueNEqPOCG2HhvHM+OqMgIRSElqHgvOR0c1+U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav414.sakura.ne.jp (fsav414.sakura.ne.jp [133.242.250.113])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 40SEGghk024795;
-	Sun, 28 Jan 2024 23:16:42 +0900 (JST)
+Received: from fsav411.sakura.ne.jp (fsav411.sakura.ne.jp [133.242.250.110])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 40SEH9sV024935;
+	Sun, 28 Jan 2024 23:17:09 +0900 (JST)
 	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
 Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav414.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp);
- Sun, 28 Jan 2024 23:16:42 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav414.sakura.ne.jp)
+ by fsav411.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp);
+ Sun, 28 Jan 2024 23:17:09 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav411.sakura.ne.jp)
 Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
 	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 40SEGAAW024134
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 40SEGAAX024134
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sun, 28 Jan 2024 23:16:42 +0900 (JST)
+	Sun, 28 Jan 2024 23:17:09 +0900 (JST)
 	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <613a54d2-9508-4f87-a163-a25a77a101cd@I-love.SAKURA.ne.jp>
-Date: Sun, 28 Jan 2024 23:16:41 +0900
+Message-ID: <515fc2e9-0df8-4985-a3c5-f918d784ee83@I-love.SAKURA.ne.jp>
+Date: Sun, 28 Jan 2024 23:17:08 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: [PATCH 1/3] LSM: add security_bprm_aborting_creds() hook
+Subject: [PATCH 2/3] tomoyo: replace current->in_execve flag with
+ security_bprm_aborting_creds() hook
 Content-Language: en-US
 From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
@@ -70,118 +71,69 @@ In-Reply-To: <e938c37b-d615-4be4-a2da-02b904b7072f@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-A regression caused by commit 978ffcbf00d8 ("execve: open the executable
-file before doing anything else") has been fixed by commit 4759ff71f23e
-("exec: Check __FMODE_EXEC instead of in_execve for LSMs") and commit
-3eab830189d9 ("uselib: remove use of __FMODE_EXEC"). While fixing this
-regression, Linus commented that we want to remove current->in_execve flag.
-
-The current->in_execve flag was introduced by commit f9ce1f1cda8b ("Add
-in_execve flag into task_struct.") when TOMOYO LSM was merged, and the
-reason was explained in commit f7433243770c ("LSM adapter functions.").
-
-In short, TOMOYO's design is not compatible with COW credential model
-introduced in Linux 2.6.29, and the current->in_execve flag was added for
-emulating security_bprm_free() hook which has been removed by introduction
-of COW credential model.
-
-security_task_alloc()/security_task_free() hooks have been removed by
-commit f1752eec6145 ("CRED: Detach the credentials from task_struct"),
-and these hooks have been revived by commit 1a2a4d06e1e9 ("security:
-create task_free security callback") and commit e4e55b47ed9a ("LSM: Revive
-security_task_alloc() hook and per "struct task_struct" security blob.").
-
-But security_bprm_free() hook did not revive until now. Now that Linus
-wants TOMOYO to stop carrying state across two independent execve() calls,
-and TOMOYO can stop carrying state if a hook for restoring previous state
-upon failed execve() call were provided, this patch revives the hook.
-
-Since security_bprm_committing_creds() and security_bprm_committed_creds()
-hooks are called when an execve() request succeeded, we don't need to call
-security_bprm_free() hook when an execve() request succeeded. Therefore,
-this patch adds security_bprm_aborting_creds() hook which is called only
-when an execve() request failed after successful prepare_bprm_creds() call.
+TOMOYO was using current->in_execve flag in order to restore previous state
+when previous execve() request failed. Since security_bprm_aborting_creds()
+hook was added, switch to use it.
 
 Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 ---
- fs/exec.c                     |  1 +
- include/linux/lsm_hook_defs.h |  1 +
- include/linux/security.h      |  5 +++++
- security/security.c           | 14 ++++++++++++++
- 4 files changed, 21 insertions(+)
+ security/tomoyo/tomoyo.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index af4fbb61cd53..9d198cd9a75c 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1519,6 +1519,7 @@ static void free_bprm(struct linux_binprm *bprm)
- 	}
- 	free_arg_pages(bprm);
- 	if (bprm->cred) {
-+		security_bprm_aborting_creds(bprm);
- 		mutex_unlock(&current->signal->cred_guard_mutex);
- 		abort_creds(bprm->cred);
- 	}
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 185924c56378..ec44ff913cee 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -54,6 +54,7 @@ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, const struct f
- LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
- LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, const struct linux_binprm *bprm)
- LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, const struct linux_binprm *bprm)
-+LSM_HOOK(void, LSM_RET_VOID, bprm_aborting_creds, const struct linux_binprm *bprm)
- LSM_HOOK(int, 0, fs_context_submount, struct fs_context *fc, struct super_block *reference)
- LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
- 	 struct fs_context *src_sc)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index d0eb20f90b26..cf78fb14ef3c 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -299,6 +299,7 @@ int security_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *
- int security_bprm_check(struct linux_binprm *bprm);
- void security_bprm_committing_creds(const struct linux_binprm *bprm);
- void security_bprm_committed_creds(const struct linux_binprm *bprm);
-+void security_bprm_aborting_creds(const struct linux_binprm *bprm);
- int security_fs_context_submount(struct fs_context *fc, struct super_block *reference);
- int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
- int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
-@@ -648,6 +649,10 @@ static inline void security_bprm_committed_creds(const struct linux_binprm *bprm
+diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+index 04a92c3d65d4..de572705772a 100644
+--- a/security/tomoyo/tomoyo.c
++++ b/security/tomoyo/tomoyo.c
+@@ -18,34 +18,24 @@ struct tomoyo_domain_info *tomoyo_domain(void)
  {
+ 	struct tomoyo_task *s = tomoyo_task(current);
+ 
+-	if (s->old_domain_info && !current->in_execve) {
+-		atomic_dec(&s->old_domain_info->users);
+-		s->old_domain_info = NULL;
+-	}
+ 	return s->domain_info;
  }
  
-+static inline void security_bprm_aborting_creds(const struct linux_binprm *bprm)
-+{
-+}
-+
- static inline int security_fs_context_submount(struct fs_context *fc,
- 					   struct super_block *reference)
- {
-diff --git a/security/security.c b/security/security.c
-index 0144a98d3712..f426841e576a 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1223,6 +1223,20 @@ void security_bprm_committed_creds(const struct linux_binprm *bprm)
- 	call_void_hook(bprm_committed_creds, bprm);
- }
- 
-+/**
-+ * security_bprm_aborting_creds() - Destroy creds for a process during exec()
-+ * @bprm: binary program information
-+ *
-+ * Prepare to destroy the new security attributes which became unused due to
-+ * failed execve operation.  @bprm points to the linux_binprm structure.
-+ * This hook is a good place to undo changes which cannot be discarded by
-+ * abort_creds().
-+ */
-+void security_bprm_aborting_creds(const struct linux_binprm *bprm)
-+{
-+	call_void_hook(bprm_aborting_creds, bprm);
-+}
-+
  /**
-  * security_fs_context_submount() - Initialise fc->security
-  * @fc: new filesystem context
+- * tomoyo_cred_prepare - Target for security_prepare_creds().
+- *
+- * @new: Pointer to "struct cred".
+- * @old: Pointer to "struct cred".
+- * @gfp: Memory allocation flags.
++ * tomoyo_bprm_aborting_creds - Target for security_bprm_aborting_creds().
+  *
+- * Returns 0.
++ * @bprm: Pointer to "struct linux_binprm".
+  */
+-static int tomoyo_cred_prepare(struct cred *new, const struct cred *old,
+-			       gfp_t gfp)
++static void tomoyo_bprm_aborting_creds(const struct linux_binprm *bprm)
+ {
+-	/* Restore old_domain_info saved by previous execve() request. */
++	/* Restore old_domain_info saved by execve() request. */
+ 	struct tomoyo_task *s = tomoyo_task(current);
+ 
+-	if (s->old_domain_info && !current->in_execve) {
++	if (s->old_domain_info) {
+ 		atomic_dec(&s->domain_info->users);
+ 		s->domain_info = s->old_domain_info;
+ 		s->old_domain_info = NULL;
+ 	}
+-	return 0;
+ }
+ 
+ /**
+@@ -554,8 +544,8 @@ static const struct lsm_id tomoyo_lsmid = {
+  * registering TOMOYO.
+  */
+ static struct security_hook_list tomoyo_hooks[] __ro_after_init = {
+-	LSM_HOOK_INIT(cred_prepare, tomoyo_cred_prepare),
+ 	LSM_HOOK_INIT(bprm_committed_creds, tomoyo_bprm_committed_creds),
++	LSM_HOOK_INIT(bprm_aborting_creds, tomoyo_bprm_aborting_creds),
+ 	LSM_HOOK_INIT(task_alloc, tomoyo_task_alloc),
+ 	LSM_HOOK_INIT(task_free, tomoyo_task_free),
+ #ifndef CONFIG_SECURITY_TOMOYO_OMIT_USERSPACE_LOADER
 -- 
 2.18.4
 
