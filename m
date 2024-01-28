@@ -1,107 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-9256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB6983FA05
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 22:15:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDC9283FA08
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 22:19:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 120771C21BF7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 21:15:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 779AF1F221BD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 21:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58A93C08E;
-	Sun, 28 Jan 2024 21:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="W1o5H2JH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45AD3C46B;
+	Sun, 28 Jan 2024 21:19:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D95D3C068;
-	Sun, 28 Jan 2024 21:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8150D3C068;
+	Sun, 28 Jan 2024 21:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706476550; cv=none; b=N0Q5i+7H9NiaKNqig/O1mFxlk/1RRbjs22fchC+z1GTwDvgk9MkXF70Y7lG7sD8CatCArfWeGsSLqMc1Q0YVGFrau5XKCgsF+AMqZ1Smp43FO9Rm9qJSPNuk6mnCb8L+kXG4LM6l1xQk/Wv+n9Anuoqh+vKe0IQU5CnBHnT2/LA=
+	t=1706476778; cv=none; b=Ts4QLZZROPfuP0rGx3DbDMX1HudeN9ALJIqf+n0qw7rmR6cXBBR+MSycUqVbRi4avn7BJ6NDCQNk6JIQzVpLDvoTV4yauTPQedX7hPqzA69VuCAkwCmepHRfr3uKIhaMrn6ZldHzlhou413mNmECi7bhDOhodAdq0O+4H5w9dBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706476550; c=relaxed/simple;
-	bh=EXuSa4gGiCY0uqNYZiHpX9KNfSk9OgXnN3fhz5hen2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rFi6wkjdWyzm5t/qBayZ0PvyiZTHJezE3PtA6Fpte6R9fYvktktlYNU4gnA71c2Y/ul5nX3RQ3st05hBGgTJq+hkI7zf4EPWi1OqXdLsGgbPzfP5gYYxeyXLOlYXtQmx0zwWs5Ybd3VisHm2ThVcVshQGDrurU6XvT1PfsHc2kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=W1o5H2JH; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/1z7epYXd7WwGTtA8Xhkd9FS4LrkVYNY9code3O2GwU=; b=W1o5H2JH+iy1jqASif+VOSnz75
-	8z9WRqC3L/hUjGmjMa8Yjw20OEzZT9zURQJVfg5znB4hKkjgP0QISAHQTpRJm6IpIo5pkuzRqTC+P
-	TpljrBS3GvwF63JiqbgOIXUpuTs4GJuNdohF5u5DJNO0QNdYLXjcqja1mDyFVEfMYATtBhvYeKLaW
-	gSecsnjcCisJmeERHx752xOdXkBBd+gGDa/vEWjxDyy1OoVUctuyqumQWllrqFBRJf7dNb7h/Q38q
-	+9GO1wM7iSXxDJ+7fV77cqVwZObd4K6qJtzOpZ6OdagXdZPjhEP8sxCJG7bf2w80ZXt3K4sQbOFBr
-	vFBrqa6w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rUCVE-00HXA6-2A;
-	Sun, 28 Jan 2024 21:15:44 +0000
-Date: Sun, 28 Jan 2024 21:15:44 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1706476778; c=relaxed/simple;
+	bh=GUpw5izvhyZ2h4yrNEtqr/QWSWIXNewKupdAHYrEHOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=unKfjX1I17+Seb0Y2yb+2oUiIXYFiDxhbWwW1Hb943faubJ5Jaf0EXM535gl+L1h32OKIHNYhZFPR4nUL/Yqt93I1GnxxovsDz14XxVGd5WrjlmQwvwu1Gh09rSbGyZq89wlN6xDDwzBU2/kBLMDvQo9ObTSxzIDL0CLuzA/zII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7446C433F1;
+	Sun, 28 Jan 2024 21:19:36 +0000 (UTC)
+Date: Sun, 28 Jan 2024 16:19:35 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: Re: [viro-vfs:work.alpha 5/8] arch/alpha/kernel/io.c:655:1: error:
- redefinition of 'scr_memcpyw'
-Message-ID: <20240128211544.GD2087318@ZenIV>
-References: <202401280650.Us2Lrkgl-lkp@intel.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, LKML <linux-kernel@vger.kernel.org>,
+ Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Christian Brauner
+ <brauner@kernel.org>, Ajay Kaher <ajay.kaher@broadcom.com>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
+Message-ID: <20240128161935.417d36b3@rorschach.local.home>
+In-Reply-To: <CAHk-=whKJ6dzQJX27gvL4Xug5bFRKW7_Cx4XpngMKmWxOtb+Qg@mail.gmail.com>
+References: <20240126150209.367ff402@gandalf.local.home>
+	<CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
+	<20240126162626.31d90da9@gandalf.local.home>
+	<CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
+	<CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
+	<CAHk-=wj+DsZZ=2iTUkJ-Nojs9fjYMvPs1NuoM3yK7aTDtJfPYQ@mail.gmail.com>
+	<20240128151542.6efa2118@rorschach.local.home>
+	<CAHk-=whKJ6dzQJX27gvL4Xug5bFRKW7_Cx4XpngMKmWxOtb+Qg@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202401280650.Us2Lrkgl-lkp@intel.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jan 28, 2024 at 06:59:08AM +0800, kernel test robot wrote:
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.alpha
-> head:   267674e3b4fd1ff6cedf9b22cd304daa75297966
-> commit: 1fb71c4d2bcacd6510fbe411016475ccc15b1a03 [5/8] alpha: missing includes
-> config: alpha-allnoconfig (https://download.01.org/0day-ci/archive/20240128/202401280650.Us2Lrkgl-lkp@intel.com/config)
-> compiler: alpha-linux-gcc (GCC) 13.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240128/202401280650.Us2Lrkgl-lkp@intel.com/reproduce)
+On Sun, 28 Jan 2024 12:53:31 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> Honestly, you should just *always* do refcounting. No "free after RCU
+> delay" as an alternative. Just refcount it.
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202401280650.Us2Lrkgl-lkp@intel.com/
+> Now, the RCU delay may be needed if the lookup of said structure
+> happens under RCU, but no, saying "I use SRCU to make sure the
+> lifetime is at least X" is just broken.
 > 
-> All errors (new ones prefixed by >>):
-> 
-> >> arch/alpha/kernel/io.c:655:1: error: redefinition of 'scr_memcpyw'
->      655 | scr_memcpyw(u16 *d, const u16 *s, unsigned int count)
->          | ^~~~~~~~~~~
->    In file included from arch/alpha/kernel/io.c:10:
->    include/linux/vt_buffer.h:42:20: note: previous definition of 'scr_memcpyw' with type 'void(u16 *, const u16 *, unsigned int)' {aka 'void(short unsigned int *, const short unsigned int *, unsigned int)'}
->       42 | static inline void scr_memcpyw(u16 *d, const u16 *s, unsigned int count)
->          |                    ^~~~~~~~~~~
+> The refcount is what gives the lifetime. Any form of RCU-delaying
+> should then be purely about non-refcounting RCU lookups that may
+> happen as the thing is dying (and said lookup should *look* at the
+> refcount and say "oh, this is dead, I'm not returning this".
 
-_Very_ interesting.  First of all, there are 3 users of scr_memcpyw() -
-vt.c, vgacon.c and fbcon.c.  All of them are getting that thing via
-vt_buffer.h.  There we have
-* include of asm/vga.h, conditional upon VGA_CONSOLE | MDA_CONSOLE
-* fallback definitions of scr_...() stuff, conditional upon the
-corresponding VT_BUF_HAVE_... not being defined.
+The deleting of the ei is done outside the VFS logic. I use SRCU to
+synchronize looking at the ei children in the lookup. On deletion, I
+grab the eventfs_mutex, set ei->is_freed and then wait for SRCU to
+finish before freeing.
 
-The thing is, VT_BUF_HAVE_... are defined in asm/vga.h, so if you don't
-have VGA_CONSOLE or MDA_CONSOLE you are going to get the default ones.
-In case of scr_memcpyw() it's going to end up with memcpy(); on alpha
-that does *not* match the native scr_memcpyw() instance.
+The lookup checks ei->is_freed and doesn't do anything if set, but most
+that logic is under the SRCU, which is what I want to make sure is
+finished before the ei is deleted.
 
-Since we have vga.h in mandatory-y, with asm-generic fallback being
-reasonable enough...  Should that include of asm/vga.h be conditional
-in the first place?
+Hmm, I still need the logic for iput(), as dentry->d_fsdata can still
+access the ei. That's where I need to have the ref counters. For a
+lookup, I need to up the ref count when I create a new inode for the ei
+or its children. Then in the iput() I decrement the ei ref count. I can
+only free the ei if the ref count is zero.
 
-I'm really unfamiliar with that thing - the last time I'd looked at
-anything related to virtual console had been back in '99 or so...
+The ref count is for knowing if an ei is referenced by a
+dentry->d_fsdata, and the SRCU is to make sure there's no lookups
+accessing an ei.
+
+-- Steve
 
