@@ -1,223 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-9252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C0183F9F0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 21:54:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5E5D83F9F2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 21:57:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5860EB21A22
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 20:54:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB3CD1C21CAD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 20:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7937131A7E;
-	Sun, 28 Jan 2024 20:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331B13C068;
+	Sun, 28 Jan 2024 20:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="h5vuX8Ys"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="bkXwz3GF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25533C082
-	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 20:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0202F31A7E;
+	Sun, 28 Jan 2024 20:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706475233; cv=none; b=GOq62srmJJGnoH5ETWh0SX/kCB7r2G/RbUaFVqIV2acnS7HzCok6xuOffEx5F94R78+GrJmkQqMC5KriKjjwN9Wxsku2wTm8B3+Mu/e1Gjv1TL4pyQKkkKu/VL62716TCcs+9Tb6kcjm+hQYn97W8TYR5KdOAeQBPSZGBL4DFOA=
+	t=1706475411; cv=none; b=pVLRvikIZaKaC8KhZHgqUY3U+pAVlHfstej6dyeOxu/VkEZ8iWyWO3gd+amUUznbDzw7kSu9vgcOXA4X+cMsjKbodC21hrsq/cyEfL12La11kGf9driTe3wyX26WFim/5D2UMT6onOdb45QKQ8JqbHg4zNM9vzugc/h8BA6aCUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706475233; c=relaxed/simple;
-	bh=OPL25mOEMBzNyt0G9tcDF3mdQkqE/LMmusy0WyFodYA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o4LNCigEycQWY1yNJGocPK7F5CvB0iK6E1Hz/w+yIhPKENBj5npPScCzj+gZjnT2659BwWQPO0mr6vHKwb2w4Z9iNymZMHy/fg8SkNjC5A7iHzcZzmyXNDlUR+zsG+dr0VTpm7fq/npMDNQNekirvFewUKcyZ+UQ8GHIklE8bGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=h5vuX8Ys; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a350a021120so225028666b.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 12:53:51 -0800 (PST)
+	s=arc-20240116; t=1706475411; c=relaxed/simple;
+	bh=zQPpEUHp5eKj9EhyK7RuxwngFTVum61WXyXTsZdGoLA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Kar06IDagJGhzesuO2TqBOspHVjmepp3hEEQTJu317hoNPJI+w8+kgrOlPtnp/Xq4FI4ldbMZm/s+I5T8C2heOZ2vTVZVtx9sCaHsxUwsdhUnAvOEld37FrX7jJD1feAjde2TJf2SXBWzkKCbOfHukybRdrIcip2ggEksfAvgIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=bkXwz3GF; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1706475230; x=1707080030; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BrezTTnj7N/Ys+Vw7pUL8AQ9OmNzc9NBDGdrHuRcsMA=;
-        b=h5vuX8YsxB/SLHF3J9Gl0lWlYe3aBqPcZkUAwo0C0csow47/EE/MPhMB3FBCQDgWA8
-         H60bx22CnjYB09c2KtCI6oagzPRAnoCjrb9kgXMVaQKQHfW+vH1pAK152BfzWMDn0JDh
-         u8Md++6eBnW2c+EL3ZubZAXq050CBBE4cfmYM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706475230; x=1707080030;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BrezTTnj7N/Ys+Vw7pUL8AQ9OmNzc9NBDGdrHuRcsMA=;
-        b=UrvcND13mSFy+uBAHfdkkZkggiFdL7ImmPDaAeAzaEFG/ESmg8TAe7DIHC6XIF4YhS
-         mkAtfXssZr+ocF5cW8eXBT+ou/aDMSTZ4M9+qqRxITYmROdTB2fxJKPJxFbzlZ5BGwmQ
-         K+FiOeukrCRuYnCfAUCRC7PvbicOAzKN73PrKsk/aARxuUFzQUJWFMNk9+hUtCWLGT4L
-         id1d2eDOb1E8g3+pq+BxIUmWW0RoRtKVbR8NXaNtrmUraS2BxJk98tJW1u8aa7XquMk7
-         SREmwL66gNCrnK6xwAY5UHU8a/j/G0vrwVCWT8l3vEnCVRdrZs9Nd5NO7ARw8w9cF8hg
-         UorQ==
-X-Gm-Message-State: AOJu0Yy15+QA6slrfEvL9VB0BYCHYnmHGVnGWP536gCd0qpEKfph2Cv9
-	s11VsQkIp+mKfKd6w/H8YeukjGpylKklkZE995eVIKa14Q8XV3ChfYR6Hhj1KUT9fP9pS0NR9j3
-	Q6j0=
-X-Google-Smtp-Source: AGHT+IH1uKe/TZke6JSArEa3szL4oAXhA4ifeDjNaa0WydFfa1RGQe8ayw32b2qCizAcL7qp9B0cBw==
-X-Received: by 2002:a17:906:a250:b0:a35:65c3:50f7 with SMTP id bi16-20020a170906a25000b00a3565c350f7mr2110665ejb.28.1706475229728;
-        Sun, 28 Jan 2024 12:53:49 -0800 (PST)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id k15-20020a1709065fcf00b00a2cea055d92sm3204362ejv.176.2024.01.28.12.53.48
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Jan 2024 12:53:49 -0800 (PST)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-55c1ac8d2f2so1979824a12.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 12:53:48 -0800 (PST)
-X-Received: by 2002:a05:6402:88f:b0:55f:8fb:f41a with SMTP id
- e15-20020a056402088f00b0055f08fbf41amr54301edy.8.1706475228498; Sun, 28 Jan
- 2024 12:53:48 -0800 (PST)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1706475410; x=1738011410;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=kNjMyJ+fMASTc2wcvJOQRFW38HN5NRSbZjppugncMZ4=;
+  b=bkXwz3GFwWBo4hVI+2kTN+ZFgQweXRFupBhXOnkjq70/EC97uGgp7Tg1
+   gfygGgNNoKEOju0K9SvDrN4TLovT0zYs3g8uwRvBzdS98B0wN0ft6TKtk
+   kOT+hvx70MoU6+MfTqKVx8fa29f2LhOiWEEOoMDgZg2xm14dCf4moPyAB
+   s=;
+X-IronPort-AV: E=Sophos;i="6.05,220,1701129600"; 
+   d="scan'208";a="270070340"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO email-inbound-relay-iad-1e-m6i4x-3e1fab07.us-east-1.amazon.com) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jan 2024 20:56:48 +0000
+Received: from smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev (iad7-ws-svc-p70-lb3-vlan3.iad.amazon.com [10.32.235.38])
+	by email-inbound-relay-iad-1e-m6i4x-3e1fab07.us-east-1.amazon.com (Postfix) with ESMTPS id B9CCD80632;
+	Sun, 28 Jan 2024 20:56:45 +0000 (UTC)
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:53888]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.6.162:2525] with esmtp (Farcaster)
+ id b7ac26ac-411e-4303-8e3e-96e5a3a16879; Sun, 28 Jan 2024 20:56:45 +0000 (UTC)
+X-Farcaster-Flow-ID: b7ac26ac-411e-4303-8e3e-96e5a3a16879
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Sun, 28 Jan 2024 20:56:44 +0000
+Received: from 88665a182662.ant.amazon.com (10.106.101.48) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1118.40;
+ Sun, 28 Jan 2024 20:56:41 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <kent.overstreet@linux.dev>
+CC: <boqun.feng@gmail.com>, <kuniyu@amazon.com>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <peterz@infradead.org>
+Subject: Re: [PATCH 4/4] af_unix: convert to lock_cmp_fn
+Date: Sun, 28 Jan 2024 12:56:32 -0800
+Message-ID: <20240128205632.93670-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <suyvonwf55vfeumeujeats2mtozs2q4wcx6ijz4hqfd54mibjj@6dt26flhrfdh>
+References: <suyvonwf55vfeumeujeats2mtozs2q4wcx6ijz4hqfd54mibjj@6dt26flhrfdh>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240126150209.367ff402@gandalf.local.home> <CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
- <20240126162626.31d90da9@gandalf.local.home> <CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
- <CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
- <CAHk-=wj+DsZZ=2iTUkJ-Nojs9fjYMvPs1NuoM3yK7aTDtJfPYQ@mail.gmail.com> <20240128151542.6efa2118@rorschach.local.home>
-In-Reply-To: <20240128151542.6efa2118@rorschach.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 28 Jan 2024 12:53:31 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whKJ6dzQJX27gvL4Xug5bFRKW7_Cx4XpngMKmWxOtb+Qg@mail.gmail.com>
-Message-ID: <CAHk-=whKJ6dzQJX27gvL4Xug5bFRKW7_Cx4XpngMKmWxOtb+Qg@mail.gmail.com>
-Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Ajay Kaher <ajay.kaher@broadcom.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D035UWB002.ant.amazon.com (10.13.138.97) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Precedence: Bulk
 
-On Sun, 28 Jan 2024 at 12:15, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> I have to understand how the dentry lookup works. Basically, when the
-> ei gets deleted, it can't be freed until all dentries it references
-> (including its children) are no longer being accessed. Does that lookup
-> get called only when a dentry with the name doesn't already exist?
+From: Kent Overstreet <kent.overstreet@linux.dev>
+Date: Sun, 28 Jan 2024 14:38:02 -0500
+> On Sun, Jan 28, 2024 at 12:28:38AM -0800, Kuniyuki Iwashima wrote:
+> > From: Kent Overstreet <kent.overstreet@linux.dev>
+> > Date: Fri, 26 Jan 2024 21:08:31 -0500
+> > > Kill
+> > >  - unix_state_lock_nested
+> > >  - _nested usage for net->unx.table.locks[].
+> > > 
+> > > replace both with lock_set_cmp_fn_ptr_order(&u->lock).
+> > > 
+> > > The lock ordering in sk_diag_dump_icons() looks suspicious; this may
+> > > turn up a real issue.
+> > 
+> > Yes, you cannot use lock_cmp_fn() for unix_state_lock_nested().
+> > 
+> > The lock order in sk_diag_dump_icons() is
+> > 
+> >   listening socket -> child socket in the listener's queue
+> > 
+> > , and the inverse order never happens.  ptr comparison does not make
+> > sense in this case, and lockdep will complain about false positive.
+> 
+> Is that a real lock ordering? Is this parent -> child relationship well
+> defined?
+> 
+> If it is, we should be able to write a lock_cmp_fn for it, as long as
+> it's not some handwavy "this will never happen but _nested won't check
+> for it" like I saw elsewhere in the net code... :)
 
-Dentry lookup gets called with the parent inode locked for reading, so
-a lookup can happen in parallel with readdir and other dentry lookup.
+The problem would be there's no handy way to detect the relationship
+except for iterating the queue again.
 
-BUT.
+---8<---
+static int unix_state_lock_cmp_fn(const struct lockdep_map *_a,
+				  const struct lockdep_map *_b)
+{
+	const struct unix_sock *a = container_of(_a, struct unix_sock, lock.dep_map);
+	const struct unix_sock *b = container_of(_b, struct unix_sock, lock.dep_map);
 
-Each dentry is also "self-serializing", so you will never see a lookup
-on the same name (in the same directory) concurrently.
+	if (a->sk.sk_state == TCP_LISTEN && b->sk.sk_state == TCP_ESTABLISHED) {
+		/* check if b is a's cihld */
+	}
 
-The implementation is very much internal to the VFS layer, and it's
-all kinds of nasty, with a new potential lookup waiting for the old
-one, verifying that the old one is still usable, and maybe repeating
-it all until we find a successful previous lookup or we're the only
-dentry remaining.
+	/* otherwise, ptr comparison here. */
+}
+---8<---
 
-It's nasty code that is very much in the "Al Viro" camp, but the point
-is that any normal filesystem should treat lookups as being concurrent
-with non-creation events, but not concurrently multiples.
 
-There *is* some common code with "atomic_open()", where filesystems
-that implement that then want to know if it's the *first* lookup, or a
-use of a previously looked up dentry, and they'll use the
-"d_in_lookup()" thing to determine that. So this whole "keep track of
-which dentries are *currently* being looked up is actually exposed,
-but any normal filesystem should never care.
+This can be resolved by a patch like this, which is in my local tree
+for another series.
 
-But if you think you have that issue (tracefs does not), you really
-want to talk to Al extensively.
+So, after posting the series, I can revisit this and write lock_cmp_fn
+for u->lock.
 
-> That is, can I assume that eventfs_root_lookup() is only called when
-> the VFS file system could not find an existing dentry and it has to
-> create one?
+---8<---
+commit 12d39766b06068fda5987f4e7b4827e8c3273137
+Author: Kuniyuki Iwashima <kuniyu@amazon.com>
+Date:   Thu Jan 11 22:36:58 2024 +0000
 
-Correct. For any _particular_ name, you should think of lookup as serialized.
+    af_unix: Save listener for embryo socket.
+    
+    Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
-> If that's the case, then I can remove the ei->dentry and just add a ref
-> counter that it was accessed. Then the final dput() should call
-> eventfs_set_ei_status_free() (I hate that name and need to change it),
-> and if the ei->is_freed is set, it can free the ei.
+diff --git a/include/net/af_unix.h b/include/net/af_unix.h
+index 9ea04653c7c9..d0c0d81bcb1d 100644
+--- a/include/net/af_unix.h
++++ b/include/net/af_unix.h
+@@ -82,6 +82,7 @@ struct scm_stat {
+ struct unix_sock {
+ 	/* WARNING: sk has to be the first member */
+ 	struct sock		sk;
++#define usk_listener		sk.__sk_common.skc_unix_listener
+ 	struct unix_address	*addr;
+ 	struct path		path;
+ 	struct mutex		iolock, bindlock;
+diff --git a/include/net/sock.h b/include/net/sock.h
+index a9d99a9c583f..3df3d068345a 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -142,6 +142,8 @@ typedef __u64 __bitwise __addrpair;
+  *		[union with @skc_incoming_cpu]
+  *	@skc_tw_rcv_nxt: (aka tw_rcv_nxt) TCP window next expected seq number
+  *		[union with @skc_incoming_cpu]
++ *	@skc_unix_listener: connection request listener socket for AF_UNIX
++ *		[union with @skc_rxhash]
+  *	@skc_refcnt: reference count
+  *
+  *	This is the minimal network layer representation of sockets, the header
+@@ -227,6 +229,7 @@ struct sock_common {
+ 		u32		skc_rxhash;
+ 		u32		skc_window_clamp;
+ 		u32		skc_tw_snd_nxt; /* struct tcp_timewait_sock */
++		struct sock	*skc_unix_listener; /* struct unix_sock */
+ 	};
+ 	/* public: */
+ };
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 5f9871555ec6..4a41bb727c32 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -991,6 +991,7 @@ static struct sock *unix_create1(struct net *net, struct socket *sock, int kern,
+ 	sk->sk_max_ack_backlog	= net->unx.sysctl_max_dgram_qlen;
+ 	sk->sk_destruct		= unix_sock_destructor;
+ 	u = unix_sk(sk);
++	u->usk_listener = NULL;
+ 	u->inflight = 0;
+ 	u->path.dentry = NULL;
+ 	u->path.mnt = NULL;
+@@ -1612,6 +1613,7 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
+ 	newsk->sk_type		= sk->sk_type;
+ 	init_peercred(newsk);
+ 	newu = unix_sk(newsk);
++	newu->usk_listener = other;
+ 	RCU_INIT_POINTER(newsk->sk_wq, &newu->peer_wq);
+ 	otheru = unix_sk(other);
+ 
+@@ -1707,8 +1709,8 @@ static int unix_accept(struct socket *sock, struct socket *newsock, int flags,
+ 		       bool kern)
+ {
+ 	struct sock *sk = sock->sk;
+-	struct sock *tsk;
+ 	struct sk_buff *skb;
++	struct sock *tsk;
+ 	int err;
+ 
+ 	err = -EOPNOTSUPP;
+@@ -1733,6 +1735,7 @@ static int unix_accept(struct socket *sock, struct socket *newsock, int flags,
+ 	}
+ 
+ 	tsk = skb->sk;
++	unix_sk(tsk)->usk_listener = NULL;
+ 	skb_free_datagram(sk, skb);
+ 	wake_up_interruptible(&unix_sk(sk)->peer_wait);
+ 
+---8<---
 
-Note that the final 'dput()' will happen *after* the dentry has been
-removed, so what can happen is
-
-   lookup("name", d1);
-   ... lookup successful, dentry is used ..
-   ... dentry at some point has no more users ..
-   ... memory pressure prunes unused dentries ..
-   ... dentry gets unhashed and is no longer visible ..
-   lookup("name", d2);
-   ... new dentry is created ..
-   final dput(d1);
-   .. old dentry - that wasn't accessible any more is freed ..
-
-and this is actually one of the *reasons* that virtual filesystems
-must not try to cache dentry pointers in their internal data
-structures. Because note how the fuilesystem saw the new lookup(d2) of
-the same name *before* it saw the >d_release(d1) of the old dentry.
-
-And the above is fundamental: we obviously cannot call '->d_release()'
-until the old dentry is all dead and buried (lockref_mark_dead() etc),
-so pretty much by definition you'll have that ordering being possible.
-
-It's extremely unlikely, of course. I'll be you'll never hit it in testing.
-
-So if if you associate some internal data structure with a dentry,
-just *what* happens when you haven't been told abotu the old dentry
-being dead when the new one happens?
-
-See why I say that it's fundamentally wrong for a filesystem to try to
-track dentries? All the operations that can use a dentry will get one
-passed down to them by the VFS layer. The filesystem has no business
-trying to remember some dentry from a previous operation, and the
-filesystem *will* get it wrong.
-
-But also note how refcounting works fine. In fact, refcounting is
-pretty much the *only* thing that works fine. So what you *should* do
-is
-
- - at lookup(), when you save your filesystem data in "->d_fsdata",
-you increment a refcount
-
- - at ->d_release(), you decrement a refcount
-
-and now you're fine. Yes, when the above (very very unlikely)
-situation happens, you'll temporarily have a refcount incremented
-twice, but that's kind of the *point* of refcounts.
-
-Side note: this is pretty much true of any kernel data structure. If
-you have a kernel data structure that isn't just used within one
-thread, it must be refcounted. But it'as *doubly* true when you save
-references to something that the VFS maintains, because you DO NOT
-CONTROL the lifetime of that entity.
-
-> The eventfs_remove_dir() can free the ei (after SRCU) if it has no
-> references, otherwise it needs to wait for the final dput() to do the
-> free.
-
-Honestly, you should just *always* do refcounting. No "free after RCU
-delay" as an alternative. Just refcount it.
-
-Now, the RCU delay may be needed if the lookup of said structure
-happens under RCU, but no, saying "I use SRCU to make sure the
-lifetime is at least X" is just broken.
-
-The refcount is what gives the lifetime. Any form of RCU-delaying
-should then be purely about non-refcounting RCU lookups that may
-happen as the thing is dying (and said lookup should *look* at the
-refcount and say "oh, this is dead, I'm not returning this".
-
-> I think the ei->dentry was required for the dir wrapper logic that we
-> removed.
-
-I think all of this was due to the bogus readdir that created dentries
-willy-nilly and without the required serialization.
-
-And that was all horribly broken.  It wasn't even the above kind of
-"really subtle race that you'll never hit in practice" broken. It was
-just absolutely broken with readdir and lookup racing on the same name
-and creating an unholy dentry mess.
-
-            Linus
 
