@@ -1,94 +1,144 @@
-Return-Path: <linux-fsdevel+bounces-9262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2E383FA3F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 23:03:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A816283FA45
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 23:08:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E658B21B46
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 22:03:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 449951F22604
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 22:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3CE3D393;
-	Sun, 28 Jan 2024 22:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CFD3C49D;
+	Sun, 28 Jan 2024 22:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="X1k8QQ5p"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="U3FCvQDV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12B83CF44;
-	Sun, 28 Jan 2024 22:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5BE3C47B
+	for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 22:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706479374; cv=none; b=jVPeuUFSoiu3UdkZkiJOcfWbtn5O3ylE6kiUaaLoaMw+gwApuyndZ2t0eD9r8/qmMdpKfTBbBge4Axy4FSB52/aouNZ9JwJikWWHkLfGwP/4nmbO+YfATdg9tAWQiTIUSlqg281/itUBPqZgsvMTSmyOchLEfecSQQL4npYpRJ4=
+	t=1706479692; cv=none; b=lbR4lEyNXZiYm2LKhDwMyVJW/BnvHGFanCzFi5uJR5+V2vnbrirCsb+VFVe3xN9RNaBr92/aCFDEQfedcBgHIIDTC6GbLX8cDaQsnCMMLsVmtQcJYHtwKZNfZMh6DTqOx8mRSIwco+Pi7QlMuS7tXC1KpS8u/OecpHSQd+AIO7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706479374; c=relaxed/simple;
-	bh=5C4J0Ao+ZJ0LzdgubJzD/RjoPDpCc0XCOKB+k/bVZG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SO6AdjCfZo2c1fj4hABa+XjkJ/MoSpk4Q8zFfInK3AaXJsq1yJEoRw3DP4RSR6BHSGgzaHXgjsbTYIC+1WXJ0ps9KJRi9R86Rbgh5Xk5NoOSwLT7pPQWdOrb614AyCNsO1itlKJkKQ2imnETyw61kHJTNPcWpj/2ggI4cSZy2TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=X1k8QQ5p; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=y7owlhmhi2gAoXU/UeiIuxV6mq5IG8XVGr21uGp5/40=; b=X1k8QQ5pXWWbzG7O67QZFKgivf
-	fC4g/yiD/pw9sbIud887+AHkhsj549Vtg9KNot/nBjV/HBtKG7yyvZKb4qzLdYyBXeX1FVqwTzk5+
-	OLVa4cfZYnxTiitLTIbnFTGWY5XD23C/3DYNAvZcKrbGDzeSypq9QHkgVFmnIaRz/WlR9AjqzBpwO
-	JnwOEI14KUxGFsDAfQpYKajyh/iBrk6vy5fMzpPgSAMsohdV4ZgxYgd7RCPoxjUZf8Q9uetdVPZw0
-	Awbmxv1kdTiw9EuDqww/jOSeysk0rC+is0rNAaqXlEbxxaSqAczD9GbtHGIz9RORFmZWehVOoB2TE
-	+MRe/u2w==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rUDEn-00000004g71-0xeS;
-	Sun, 28 Jan 2024 22:02:49 +0000
-Date: Sun, 28 Jan 2024 22:02:49 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
-	Don Dutile <ddutile@redhat.com>,
-	Raghavendra K T <raghavendra.kt@linux.vnet.ibm.com>
-Subject: Re: [RFC PATCH] mm/readahead: readahead aggressively if read drops
- in willneed range
-Message-ID: <ZbbPCQZdazF7s0_b@casper.infradead.org>
-References: <20240128142522.1524741-1-ming.lei@redhat.com>
+	s=arc-20240116; t=1706479692; c=relaxed/simple;
+	bh=QrkyxoSXHYJTqgfXOZsbnZEyWO+kRuXGCx6MVdeKjaM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ki7LA4YY+hVSCLEEJJ9zUz2aQnL6+s99zxZz5WZJEJDIGZ0QMS2OQVnxJl5RKhVkTSXAok5WpBSSsyN5LF3SZQ05n6c9EOal8TkjizLVn2DyXT0IwQkdIowhewk7BE65nwrumb/gyRFqj3bFU8k4m3CqXhBEhT7dyok0CiFcaZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=U3FCvQDV; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a358ec50b7cso92209466b.0
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 14:08:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1706479687; x=1707084487; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4w5EVcmzkmBCRT4EQRf6hOGTNZV4Vu2foNdqvfEoib8=;
+        b=U3FCvQDV8wlDZNQrqgPMR6yoI5S4khe4tysgj6L1hYlLrS8Yp2vPLESMrGSTMsSNFH
+         1YrqbYeyaCyP9sQ2P6H/4qOcgNYURSTigbIB/fxKQDgnXnrKqIGetSyt+iFkXrg9zyU0
+         7D/XwV8lW5yjohpaJATlmJFH1UnSln/8DreEs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706479687; x=1707084487;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4w5EVcmzkmBCRT4EQRf6hOGTNZV4Vu2foNdqvfEoib8=;
+        b=MEcANo6m8NSmBcfR60wslCX/dY+vKQBoAG/YXGzJODj5tU5+O5U9Uzs3UwplSiJqia
+         b8/akgXLI17bQt0qbBGQP0o7fZsh5NgY090PpoABRsJ18X/mMK6+4Pb8H9OVIbsK/APu
+         SecH5T7K2zqo4c2nmjPkqBJV4STDXIYdfWSocrlH/2ioBO+CaSeL54xgHMkrlTLNCZM9
+         LYsCdEcaaGKp8MzOGSnbnJf4C4xJ7gFmzhBaYPY6jUHspmqgp6veLFxhtVynoZU8OwN0
+         DMr0IVcuqpANxXYpreYupPHigFoJ5CotcmU9/kr9Jb2gx5g+IMEazGaO2KQK1z4ESjy5
+         dDpA==
+X-Gm-Message-State: AOJu0Yygo59wRV6w4mVQCd23dR3Msao99yV1Gg9/aIQFozJQgmUKNmKC
+	jJMQ17x5/f28pEMeKn8SmxMuc4A1XjJmrxQfOr/lSBtb6my0Vpt6RKbinboOVBWve0qk2i+/lTX
+	AW6MPeg==
+X-Google-Smtp-Source: AGHT+IFNw7VVHoMDYuT7gvwOAZ14TBGgX7xTUEB6K5De0QBtOR9jw4NLQlnwjd3D7Sni1oMnyGgf1Q==
+X-Received: by 2002:a17:907:a710:b0:a35:8b62:42e2 with SMTP id vw16-20020a170907a71000b00a358b6242e2mr1986778ejc.7.1706479687602;
+        Sun, 28 Jan 2024 14:08:07 -0800 (PST)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id f19-20020a17090624d300b00a2f15b8cb76sm3210098ejb.184.2024.01.28.14.08.06
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Jan 2024 14:08:06 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-55a9008c185so3609936a12.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 14:08:06 -0800 (PST)
+X-Received: by 2002:a05:6402:94a:b0:55c:93c1:4a50 with SMTP id
+ h10-20020a056402094a00b0055c93c14a50mr4633321edz.13.1706479686311; Sun, 28
+ Jan 2024 14:08:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240128142522.1524741-1-ming.lei@redhat.com>
+References: <20240126150209.367ff402@gandalf.local.home> <CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
+ <20240126162626.31d90da9@gandalf.local.home> <CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
+ <CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
+ <CAHk-=wj+DsZZ=2iTUkJ-Nojs9fjYMvPs1NuoM3yK7aTDtJfPYQ@mail.gmail.com>
+ <20240128151542.6efa2118@rorschach.local.home> <CAHk-=whKJ6dzQJX27gvL4Xug5bFRKW7_Cx4XpngMKmWxOtb+Qg@mail.gmail.com>
+ <20240128161935.417d36b3@rorschach.local.home> <CAHk-=whYOKXjrv_zMZ10=JjrPewwc81Y3AXg+uA5g1GXFBHabg@mail.gmail.com>
+In-Reply-To: <CAHk-=whYOKXjrv_zMZ10=JjrPewwc81Y3AXg+uA5g1GXFBHabg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 28 Jan 2024 14:07:49 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whJ56_YdH-hqgAuV5WkS0r3Tq2CFX+AQGJXGxrihOLb_Q@mail.gmail.com>
+Message-ID: <CAHk-=whJ56_YdH-hqgAuV5WkS0r3Tq2CFX+AQGJXGxrihOLb_Q@mail.gmail.com>
+Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	Ajay Kaher <ajay.kaher@broadcom.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Jan 28, 2024 at 10:25:22PM +0800, Ming Lei wrote:
-> Since commit 6d2be915e589 ("mm/readahead.c: fix readahead failure for
-> memoryless NUMA nodes and limit readahead max_pages"), ADV_WILLNEED
-> only tries to readahead 512 pages, and the remained part in the advised
-> range fallback on normal readahead.
+On Sun, 28 Jan 2024 at 13:43, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> That's just wrong.
+>
+> Either you look things up under your own locks, in which case the SRCU
+> dance is unnecessary and pointless.
+>
+> Or you use refcounts.
+>
+> In which case SRCU is also unnecessary and pointless.
 
-Does the MAINTAINERS file mean nothing any more?
+So from what I can see, you actually protect almost everything with
+the eventfs_mutex, but the problem is that you then occasionally drop
+that mutex in the middle.
 
-> If bdi->ra_pages is set as small, readahead will perform not efficient
-> enough. Increasing read ahead may not be an option since workload may
-> have mixed random and sequential I/O.
+The one valid reason for dropping it is the readdir callback, which
+does need to write to user space memory.
 
-I thik there needs to be a lot more explanation than this about what's
-going on before we jump to "And therefore this patch is the right
-answer".
+But no, that's not a valid reason to use SRCU. It's a very *bad*
+reason to use SRCU.
 
-> @@ -972,6 +974,7 @@ struct file_ra_state {
->  	unsigned int ra_pages;
->  	unsigned int mmap_miss;
->  	loff_t prev_pos;
-> +	struct maple_tree *need_mt;
+The thing is, you can fix it two ways:
 
-No.  Embed the struct maple tree.  Don't allocate it.  What made you
-think this was the right approach?
+ - either refcount things properly, ie when you do that lookup under your lock:
 
+        mutex_lock(&eventfs_mutex);
+        ei = READ_ONCE(ti->private);
+        if (ei && ei->is_freed)
+                ei = NULL;
+        mutex_unlock(&eventfs_mutex);
+
+   you just go "I now have a ref" to the ei, and you increment the
+refcount like you should, and then you dcrement it at the end when
+you're done.
+
+Btw, what's with the READ_ONCE()? You have locking.
+
+The other option is to simply re-lookup the ei when you re-get the
+eventfs_mutext anyway.
+
+Either of those cases, and the SRCU is entirely pointless. It  really
+looks wrong, because you seem to take that eventfs_mutex everywhere
+anyway.
+
+             Linus
 
