@@ -1,116 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-9264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6124983FA46
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 23:09:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E4383FA4B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 23:17:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 211C11F224C9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 22:09:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 985C51F22681
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 28 Jan 2024 22:17:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3283C481;
-	Sun, 28 Jan 2024 22:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="WKVV4JzG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961E63C496;
+	Sun, 28 Jan 2024 22:17:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741363C46E;
-	Sun, 28 Jan 2024 22:09:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEC23C46B;
+	Sun, 28 Jan 2024 22:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706479750; cv=none; b=HPOI/mE7pPes4ehJ2SF609+7nGkjLi7q3UmNyoZwNU4utKoj4OlUKGtul6lwo6esTP/KwLcu5aMNm1QxCMI0U9zfJSiXePFnltti5NikeXQTbKiE8gz6gIuAYnG1DX0ErBMe15hC9QjZUWsE9jWE2cDm6RESJvRvrh1jeALbSEs=
+	t=1706480256; cv=none; b=FXhVTl3iFox2q5NaoSi4sVm91Y3sc8sbS0YOgNEk7t4A28ernq0IlN/TAMijuKcU9Zpa0J+OfG674yUCXOheOWkr2W27s/ESB0Y+NGJ0NBP15aHpumPeCkzEX8YP5rq+2uZgVaAPEwU9OgKBkkCYIcqMmTeERZLgerGGhIxjeVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706479750; c=relaxed/simple;
-	bh=Svj/uhQONH0YYoalS5BYgSyJ5wJIVTOZ3/QMOCcx2c8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EXiL8B0EZfl8takHRel2QpDGW4tYnbIz/LqwzdPRZPKHr/rK/n2elyQTBaEXedGzAA3nHXtR4IclYf46Rbiw0cTyXjgKfAL14AST+IXwAsSDF0vTbdBY6kxjbXeHSQ4E3gxqYxsvrLoRal85OUh+5AfqA6puTatTQJ0GVEi2WAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=WKVV4JzG; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JvGaNpyrRzuacPHK+3LyFnGQ5PrV8OggoB/YP2zjJfs=; b=WKVV4JzGVnI7xh8qZV2d4f7Qsb
-	bINwjPFJy7pOqnaC/VzO+9Ct+HlzskD7L9V20kifRSETP+/1Gi5ZyixOPWwB0yYsavS0FvG2CRqcC
-	3dK6z3brtu8XsBIx5WX2lW3IPc7pVcnsZ0XWv7RlsVnOrHBjt++UJUA2kFeI/Saz3i0MSQECZVO3S
-	kw/IZdDbcNxeYAi8IaPQncFKV1xlMxYYzzff/xH5UsdbfF9TGsybM0DxRY6SMQLwaonttkGHdFqlc
-	61SQ/lYfZAVf6LWF4zkJbKxmeV+P9hMbUhZbSXPzAoqOnSBIwaZzPdaEBxV0E8gq6ZLMBoxVwEG2T
-	6Swf2u6Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rUDKr-00HYsi-01;
-	Sun, 28 Jan 2024 22:09:05 +0000
-Date: Sun, 28 Jan 2024 22:09:04 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1706480256; c=relaxed/simple;
+	bh=BUSERkOvlG2VoJBGGXoB3teG6OEEWG8bRMj3RwYf988=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=i+RPg/9FwgDC/PzdwV6rG51arrO5ImCTVhp9/6SBLe3IIXYGejEKiyiTrUwHnLT5vyw72/4H6WsX5EWP3ztIecxGeg+U4dN2jEwLx60lNbiN2V1I78OCOeMu3Vbj264/+pOOST83/se5PJO/5c2f5q5P9DXxOTYvZ1vw8NYxObM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A581C433C7;
+	Sun, 28 Jan 2024 22:17:34 +0000 (UTC)
+Date: Sun, 28 Jan 2024 17:17:33 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
-Subject: Re: [viro-vfs:work.alpha 5/8] arch/alpha/kernel/io.c:655:1: error:
- redefinition of 'scr_memcpyw'
-Message-ID: <20240128220904.GF2087318@ZenIV>
-References: <202401280650.Us2Lrkgl-lkp@intel.com>
- <20240128211544.GD2087318@ZenIV>
- <CAHk-=wj8LUAX_rwM4=N9kNGeg=E+KoxY6uQfyqf=k7MOrb4+aA@mail.gmail.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, LKML <linux-kernel@vger.kernel.org>,
+ Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Christian Brauner
+ <brauner@kernel.org>, Ajay Kaher <ajay.kaher@broadcom.com>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
+Message-ID: <20240128171733.2ba41226@rorschach.local.home>
+In-Reply-To: <CAHk-=whJ56_YdH-hqgAuV5WkS0r3Tq2CFX+AQGJXGxrihOLb_Q@mail.gmail.com>
+References: <20240126150209.367ff402@gandalf.local.home>
+	<CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
+	<20240126162626.31d90da9@gandalf.local.home>
+	<CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
+	<CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
+	<CAHk-=wj+DsZZ=2iTUkJ-Nojs9fjYMvPs1NuoM3yK7aTDtJfPYQ@mail.gmail.com>
+	<20240128151542.6efa2118@rorschach.local.home>
+	<CAHk-=whKJ6dzQJX27gvL4Xug5bFRKW7_Cx4XpngMKmWxOtb+Qg@mail.gmail.com>
+	<20240128161935.417d36b3@rorschach.local.home>
+	<CAHk-=whYOKXjrv_zMZ10=JjrPewwc81Y3AXg+uA5g1GXFBHabg@mail.gmail.com>
+	<CAHk-=whJ56_YdH-hqgAuV5WkS0r3Tq2CFX+AQGJXGxrihOLb_Q@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wj8LUAX_rwM4=N9kNGeg=E+KoxY6uQfyqf=k7MOrb4+aA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jan 28, 2024 at 01:55:31PM -0800, Linus Torvalds wrote:
-> On Sun, 28 Jan 2024 at 13:15, Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Sun, 28 Jan 2024 14:07:49 -0800
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
+
+> On Sun, 28 Jan 2024 at 13:43, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
 > >
-> > The thing is, VT_BUF_HAVE_... are defined in asm/vga.h, so if you don't
-> > have VGA_CONSOLE or MDA_CONSOLE you are going to get the default ones.
-> > In case of scr_memcpyw() it's going to end up with memcpy(); on alpha
-> > that does *not* match the native scr_memcpyw() instance.
+> > That's just wrong.
 > >
-> > Since we have vga.h in mandatory-y, with asm-generic fallback being
-> > reasonable enough...  Should that include of asm/vga.h be conditional
-> > in the first place?
+> > Either you look things up under your own locks, in which case the SRCU
+> > dance is unnecessary and pointless.
+> >
+> > Or you use refcounts.
+> >
+> > In which case SRCU is also unnecessary and pointless.  
 > 
-> It should be conditional, because that's the only case you want to
-> actually have that special scr_memsetw() etc.
+> So from what I can see, you actually protect almost everything with
+> the eventfs_mutex, but the problem is that you then occasionally drop
+> that mutex in the middle.
 > 
-> I think the problem is that you added the vtbuf include to <asm/io.h>,
-> which gets included from VGA_H early, before vga.h has even had time
-> to tell people that it overrides those helper functions.
+> The one valid reason for dropping it is the readdir callback, which
+> does need to write to user space memory.
+> 
+> But no, that's not a valid reason to use SRCU. It's a very *bad*
+> reason to use SRCU.
+> 
+> The thing is, you can fix it two ways:
+> 
+>  - either refcount things properly, ie when you do that lookup under your lock:
+> 
+>         mutex_lock(&eventfs_mutex);
+>         ei = READ_ONCE(ti->private);
+>         if (ei && ei->is_freed)
+>                 ei = NULL;
+>         mutex_unlock(&eventfs_mutex);
+> 
+>    you just go "I now have a ref" to the ei, and you increment the
+> refcount like you should, and then you dcrement it at the end when
+> you're done.
+> 
+> Btw, what's with the READ_ONCE()? You have locking.
+> 
+> The other option is to simply re-lookup the ei when you re-get the
+> eventfs_mutext anyway.
+> 
+> Either of those cases, and the SRCU is entirely pointless. It  really
+> looks wrong, because you seem to take that eventfs_mutex everywhere
+> anyway.
 
-Nope.  It's arch/alpha/kernel/io.c growing an include of linux/vt_buffer.h
-and blowing up on allnoconfig.  The reason for that include was the
-"missing prototype" on scr_memcpyw() definition in there...
+The original code just used the mutex, but then we were hitting
+deadlocks because we used the mutex in the iput() logic. But this could
+have been due to the readdir logic causing the deadlocks.
 
-> I assume that moving the
-> 
->     #define VT_BUF_HAVE_RW
->     #define VT_BUF_HAVE_MEMSETW
->     #define VT_BUF_HAVE_MEMCPYW
-> 
-> to above the
-> 
->     #include <asm/io.h>
-> 
-> fixes the build?
+A lot of the design decisions were based on doing the dentry creation
+in the readdir code. Now that it's no longer there, I could go back and
+try taking the eventfs_mutex for the entirety of the lookup and see if
+lockdep complains again about also using it in the iput logic.
 
-No such thing...  I can add an explicit extern in io.c, but that's
-really obnoxious ;-/
+Then yes, we can get rid of the SRCU as that was added as a way to get
+out of that deadlock.
 
-> That said, a good alternative might be to just stop using 'inline' for
-> the default scr_memsetw() and scr_memcpyw() functions, make them real
-> functions, and mark them __weak.
-> 
-> Then architectures can override them much more easily, and inlining
-> them seems a bit pointless.
-> 
-> But I doubt it's even worth cleaning things up in this area.
-
-Do we ever use that thing on iomem in non-VGA setups?
+-- Steve
 
