@@ -1,115 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-9376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE04A84067D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 14:16:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7FB8406D6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 14:26:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8808528A551
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 13:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9341F25678
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 13:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4934662804;
-	Mon, 29 Jan 2024 13:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B6764CF6;
+	Mon, 29 Jan 2024 13:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xzz7UJ9I"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XtLogM/b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477E15BAD2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 13:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FBC64CE3;
+	Mon, 29 Jan 2024 13:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706534181; cv=none; b=OE1IRJsy9jujzGgPa/1CnwACVzd9JghaNjYAeTIO9zsLnQEE1CpHzs/buEtSlPRPY3j3vaifU7KN1s5tmaCp8JVD4K1SX6g1dlhs4weUYPufngFLOS0RwNEAA4fmHj/4YEerPWupwD5QQJZBH8aLM0EXxvLPIXVPbI6U4KSCcFU=
+	t=1706534772; cv=none; b=LUg95OFvqAdhiMNS5OW6RNLhqjnn5xqvxNAY1ff8IZcDGhWYKWE+webB3A8Fmvj27yu0B93F/RxiN6/JNtvqZcIj4ZdvyHAHgsCeNbxPJh5kA0SOwV4ikuENJh65uwRkXTyvHkSXyudddkba6FJV1xicahu/EpbH1ttU2aQz4iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706534181; c=relaxed/simple;
-	bh=kGxA5hm/lgN4Izl0zMPyH8ilOLAwdv/7UUaa19didCw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ipnEFeIFHnAycr+coXPmijUUgPD2Uq+xfGMXymZF6Af43qshBi7YbHEnBVkpYNG2F/wdgblF6vjZHk4yj4wTe1lpoUowkNRcUCa+rfa5RDSOLBIQPcXjt74Yjko0fao4EibejWSETGLlFBLoZ0gOdwZ8q5wFeyPxF9sSJ+As7o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Xzz7UJ9I; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-783f7db2833so105090685a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 05:16:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706534179; x=1707138979; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kGxA5hm/lgN4Izl0zMPyH8ilOLAwdv/7UUaa19didCw=;
-        b=Xzz7UJ9IReTxiJeKT/v6K3DHKq9Vf0EERgFq9BakGEWB8gJBvb1A4urq+u3seD1brQ
-         EDFd1tf3J0nJpzdPLlbT//ktQpBnAx9y56kVk+HeHgwBRqt1WWDuWt/HB5lXvdkkgAdh
-         sYoQenp85BrswGaOSx+4pbbnuVg6CVplqO/n2pJpDdIZ1AGPeZqD2KhjJHih2d3ded8G
-         G0y9DeuErCntx79bzlJ+UJ8XIuI6/iSpLQavlWAucYLaLXq6Lu+ykV/iVJ3bBotu2NXW
-         eFn5MbMDuSIncpyp834Xo0kGbWwJXq25IPCTlct8aELtVReQV6OTiZtq9ZFrCjeoPhnd
-         BtIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706534179; x=1707138979;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kGxA5hm/lgN4Izl0zMPyH8ilOLAwdv/7UUaa19didCw=;
-        b=XQ/c2p3W1DbvYYgaz7mdx0FIllx+FgN/zO6JJN5s1yaKFFUA4hRvK3a1VsaXH4XPyx
-         WycpchPIq/Skq3JOeI+Ud0xPbSYzpWUjppYxrHHdERGAj8s2o3CW3a/TxIzYYh2DNM8J
-         DcN5JT8hMrR759dgHYi88IoaQ8dEz82i6K0NvFQMweVJmvlrtbeIfY1itsPPm2DSF9na
-         AxczD2PrldQJ4y7ighL1PV/QT9IJoSUdXUwCPbeAfnre9lbU8vdrOsSkrhCUSDPAtxiD
-         iEJlTddmZQCjEPFl1Lixq81iNGPJJ8/H0SikOhgPCh6a4L6xEn1U2Lnjt9NeQygE0ndH
-         oX+g==
-X-Gm-Message-State: AOJu0YyCXE12AW4xLJSaUmwKS0OzKsHszBy0SF/Rd4elmo62DcwVsGc7
-	3gDJaLzjM+MjJeK4+NDcBm/dAHXiSEbnm2tNHGVVnW1g9XYm9orbrozlRadsHEFL6jOMdypaIxX
-	mYmNycqQGk+Gnab8wojXNHY8sQx4=
-X-Google-Smtp-Source: AGHT+IEDqfY+CmT5kOpCpuyA2YlIRLF3h3kvQC2ea32DS/mm5ZZqXflAnkRxsWdfbwujUrkvjhoM/i2KQ6kpWXBwT3A=
-X-Received: by 2002:a05:6214:f08:b0:680:aedb:72fe with SMTP id
- gw8-20020a0562140f0800b00680aedb72femr7377169qvb.81.1706534179095; Mon, 29
- Jan 2024 05:16:19 -0800 (PST)
+	s=arc-20240116; t=1706534772; c=relaxed/simple;
+	bh=xwMcV3tNhSk+2xyVIcFgqQPYvtX3UtKlP6tjwF+wLxU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hqlqYwe8O1D3zKTrKKPeq9Bffh8dP3ivJ2+rzp7STaMLwUQBcVXPjA8EdF5WHUcgjkKXaFx6EWh8nzLGiPcKB42ATNXk+VCRG1RW7hjGwcnrJWEHNGs7Xc0/NJ2emRY4GG6m97qfSo9HUzauh16BOXYZbNd2Iyc7n2CXkZjYssU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XtLogM/b; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+Xny/9dxsbpogvH8OKBQOEtr91O6R9Hp8hj1G9BwXFc=; b=XtLogM/bjdvsN4LPHEVaTg29du
+	0Unj6JuGv0EHxkbpUCdxQr8yIE3G+kAX/kJX+wiyiINxVZt1Lp6yByH7mj3xUmi1lsIJPbErTUwmt
+	ENt4Qa0/KXxmZlQbiWoVkUcvX3KDU5VgfBTZTx6wkiPhB1dseNe4GwPAmkU2PFzAy5fwvJoYSW9ze
+	FrjdfFENUWgA9HB218k9Q7AklwhGkZQGIrNRErGK8BCrjzt3nbPGoSpwXOGJ5CTR6Kh/3IeKZ27iR
+	ry4JKdRnvVrQmXBH9x/tXavd2pvkj/91femN7KJwvCkZgitIuCjOSzHUrlWRYO0xRiGLifncssWg1
+	3Jxna3MQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rUReI-00000006hqA-0T1r;
+	Mon, 29 Jan 2024 13:26:06 +0000
+Date: Mon, 29 Jan 2024 13:26:06 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Dave Chinner <david@fromorbit.com>, Mike Snitzer <snitzer@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Don Dutile <ddutile@redhat.com>,
+	Raghavendra K T <raghavendra.kt@linux.vnet.ibm.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, linux-block@vger.kernel.org
+Subject: Re: [RFC PATCH] mm/readahead: readahead aggressively if read drops
+ in willneed range
+Message-ID: <ZbenbtEXY82N6tHt@casper.infradead.org>
+References: <20240128142522.1524741-1-ming.lei@redhat.com>
+ <ZbbPCQZdazF7s0_b@casper.infradead.org>
+ <ZbbfXVg9FpWRUVDn@redhat.com>
+ <ZbbvfFxcVgkwbhFv@casper.infradead.org>
+ <CAH6w=aw_46Ker0w8HmSA41vUUDKGDGC3gxBFWAhd326+kEtrNg@mail.gmail.com>
+ <ZbcDvTkeDKttPfJ4@dread.disaster.area>
+ <ZbciOba1h3V9mmup@fedora>
+ <Zbc0ZJceZPyt8m7q@dread.disaster.area>
+ <ZbdhBaXkXm6xyqgC@fedora>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <b1603752-5f5b-458f-a77b-2cc678c75dfb@app.fastmail.com>
- <9ed27532-41fd-4818-8420-7b7118ce5c62@fastmail.fm> <92efd760-a08c-4cb1-90ab-d1d5ddb42807@spawn.link>
- <3435db6c-d073-4e60-adfd-53b2e0797b3c@fastmail.fm>
-In-Reply-To: <3435db6c-d073-4e60-adfd-53b2e0797b3c@fastmail.fm>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 29 Jan 2024 15:16:07 +0200
-Message-ID: <CAOQ4uxju6Y1=a0c1Qwf1YdTL2A2RdDcS58zK_cQVPqMD+pXSOA@mail.gmail.com>
-Subject: Re: Future of libfuse maintenance
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Antonio SJ Musumeci <trapexit@spawn.link>, Nikolaus Rath <nikolaus@rath.org>, 
-	Martin Kaspar via fuse-devel <fuse-devel@lists.sourceforge.net>, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZbdhBaXkXm6xyqgC@fedora>
 
-> >> I'm maintaining our DDN internal version anyway - I think I can help to
-> >> maintain libfuse / take it over.
-> >>
-> >> Btw, I also think that kernel fuse needs a maintenance team - I think
-> >> currently patches are getting forgotten about - I'm planning to set up
-> >> my own fuse-bernd-next branch with patches, which I think should be
-> >> considered - I just didn't get to that yet.
-> >>
-> >>
-> >> Thanks,
-> >> Bernd
-> >
-> > +1 for Bernd's maintenance *team* idea. But perhaps extended to libfuse
-> > as well? There are a number of us who are familiar with the code and at
-> > least semi-active in the space. Help spread the load.
-> >
-> > I could help out at least on the libfuse side.
->
-> You are absolutely right, a team is always better.
+On Mon, Jan 29, 2024 at 04:25:41PM +0800, Ming Lei wrote:
+> Here the single .ra_pages may not work, that is why this patch stores
+> the willneed range in maple tree, please see the following words from
+> the original RH report:
+> 
+> "
+> Increasing read ahead is not an option as it has a mixed I/O workload of
+> random I/O and sequential I/O, so that a large read ahead is very counterproductive
+> to the random I/O and is unacceptable.
+> "
 
-Might also be a good opportunity to start the linux-fuse mailing list
-on kernel.org.
-I find the disjoint fuse-devel and linux-fsdevel mailing lists a bit
-counter productive
-for new fuse feature development, which afaik, are mostly driven by linux-fuse
-driver developers these days.
-
-Thanks,
-Amir.
+It is really frustrating having to drag this important information out of
+you.  Please send the full bug report (stripping identifying information
+if that's what the customer needs).  We seem to be covering the same
+ground again in public that apparently you've already done in private.
+This is no way to work with upstream.
 
