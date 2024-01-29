@@ -1,384 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-9428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0BC08411FF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 19:30:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 503B9841299
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 19:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26CD528AD30
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 18:30:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 074D8286B82
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 18:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE18A13AC5;
-	Mon, 29 Jan 2024 18:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B8A76037;
+	Mon, 29 Jan 2024 18:40:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CdkVew3f"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YKVpCR0o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9CB125C1
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 18:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279A66F081
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 18:40:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706553050; cv=none; b=OfhEi4jniRCvZgC5fBoqrZun+zbhJfEXXP8IuNMRpfBNnkcfXR1iRRSMbrlyZ31RDh2SXVJ/kULtuyToJY0GugdbOt6TBWkre3bx3oprRDXsr3xI1xrF1KCnM1XVHrxPfKO42hFZN9+HGX3+pI+XzsdLCvo+Bc8j58B4xSql0yA=
+	t=1706553620; cv=none; b=Xu85EBPB71nw66Yj6hC1gszDY6vFs6Dmlono8yHh8mseozOfVFyxzyBgjJwsRG47UtNfeW21cs924dGIBvxdx1egeO+5m70Og/0b8KJkvZhYzo63oNZ+GYnuXkWevERzw3xggd+1DguKax5EFkOYthoTJyW3iRhcrKPr4NSRPyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706553050; c=relaxed/simple;
-	bh=kQQqyFOdPc3PmyNpZgAc7G6jLOKGlDHEjmF7Xmyd6qc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cQ/q+gfN2M96Bxzm+PocPtxE34KmqntbFxiNRQfyAobGNv0LPhP2Xrg/zTT3zDt+gawJVAMEXp1aWt/yM9vDJQR+ebjZZ1g+BeoV5HbJHTCAcysP/AK9VvOd2mYt5bivqW9l+Bg/qXmNRxY3IqVHn+tgm8hGtl32Oow0Pi9CgUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CdkVew3f; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-46b29f09401so516551137.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 10:30:47 -0800 (PST)
+	s=arc-20240116; t=1706553620; c=relaxed/simple;
+	bh=R2t7ERucYntEaiouukVxBCXGGyHD7wa90M6aZ+Evuwc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mvyoZOk8AdzM+988uSsDLJ0e6WrkLoYvSfgWTAtHVuyaJzlfyBLupvVr+W6ITzaDW7WXAzdJyBY6C+ETDujYhfnQzC/+GvZ79j+e7LgeYWWN5TObYu8WKmewqxnu7LM5gasmx9xLXMxbNLIqvQCVV72Bi3BRywq4r49mTLouCkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YKVpCR0o; arc=none smtp.client-ip=209.85.161.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-598699c0f1eso1500481eaf.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 10:40:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706553047; x=1707157847; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WHEyDcqypKFkwpNDe8GfvVy0x6/6h1Qp2TPjBPSdRNM=;
-        b=CdkVew3f6VG0vLCRGqxpDdzvtPph1ioxAC8XKWq1DBl6DBP1XofUIXDNY9OQ/i0mff
-         GWj91RojEGN7AUsV/Ah/ourg7soD4Q0nnmSVjE8iVcFPw0q3DD+6J/kMKhi7q7SbjAZQ
-         i7YpEF75T3zvPo8/MUp5ZCDzCcF6bq94Rv+LR1uQu/YgWzzWsGcZ9/bAijxm6h/lQaxx
-         xPIKNwWSGOj3QO3+BPoCfbpL+ZBN/M3TfxY51CRTH6ZVnGVQIHNtZqlePvB87rMBt9FL
-         0yQ1ftQ2TrP4imN69TeKN3J074ls5nfxkZHdwzdhq89XbYQxqgxWkaYNtEu7X2KBQTm3
-         sluA==
+        d=chromium.org; s=google; t=1706553618; x=1707158418; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1FndaoLuezk++wxgVrcH5NtXJoTq/9EmRf7oCHvFRc0=;
+        b=YKVpCR0oacknJ8wxTULb127zriOH+E//z3pPhQins5bYgYqK+4Dgdze79PZCCzP3Bo
+         95DyjSBEyL0oAeynXPoI5anVT0xLw4Txap1NGjkIQcnEwbmK/Lt71ejXEddXjTtZav6s
+         aLIAP5XARwhNVephydle/KFdQm0r/p7Op5uq0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706553047; x=1707157847;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WHEyDcqypKFkwpNDe8GfvVy0x6/6h1Qp2TPjBPSdRNM=;
-        b=SxFA5na+EeTv409J7Cv6xQgAyXcGD2dBcfEtjQG7SKo9kL8qDHX6kSiH+uNiLG0Blr
-         wdxIyB5wQ/0sOd0fiOJYVnnvKPFtIDt0Xy2P7g4sNWdq82uS8b4kmvG7YZEWCRL4iFhb
-         hrRL172/cXVQDsdiG9u724jNTtefVRQ6OIv85c9NJSXAGnI6E4toYpQtKOPZvf2lTZVK
-         E/Bdgq2EibbCX9Pol6cRAXQ92Wx7cQtRpLGQ2AiBy8PKK+iBmHV2DOiu7RI7ftpaPqTN
-         2fhWKgc41Lx9gKLIpZ0YHk3EjlzGW22LdLP7YepkzxagLhp+tl24nypMlw/F/QuzqoS0
-         MAvQ==
-X-Gm-Message-State: AOJu0YyczovJT+Pj40ptonCgAcYl7qabxf+oOLNrG/GgizFBhwkTmNNA
-	/I6f1Gz8FXvKmSbxxaOyaXbcuysP0yg/efOlCWPU/nCC1GsTGCo2H4Ljt35C6bw2ux4yd5r5LHV
-	abogPP0vTBizahywsyapPDPmYAZk=
-X-Google-Smtp-Source: AGHT+IH5+tz8PjAO0wb1CwnXalFgCzvaGBVYvQkzG3gFfHtmAyMTDWr6uNXfmJtzOxIBCKpBFixnULb7D3pCZ//nLKo=
-X-Received: by 2002:a05:6102:1499:b0:46b:970b:daf9 with SMTP id
- d25-20020a056102149900b0046b970bdaf9mr119383vsv.2.1706553046933; Mon, 29 Jan
- 2024 10:30:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706553618; x=1707158418;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1FndaoLuezk++wxgVrcH5NtXJoTq/9EmRf7oCHvFRc0=;
+        b=ZeiRFjuv7Xju5rvx5PwD16aA6l0STJy8+RFlwdt10Pkac9mDl84/p3QvEJonXbPgcN
+         CbbEk0k4Od5SddlDQDpDw0kx77YqcKCXOoBdfQIAj0ABUrTF7Lyj+z2o5MOJaulzUTde
+         jmNhRfMPdHZhw1M18YS6IkH6/3gwrB1RUs+76XyyzZbCpOE+3Q6FX6ivQO42Tz80yQi2
+         cAry0imvHlTRsKWFEJRjJObeTDmISKySoyY6ZEPDuyxbk13+xAE82uvYfxscxbH2B3vf
+         SmnymSHLyddglIgnekH5hTt8j07ot9UFnhPHnObp8LQfKYlBSf0FsIkuy0Ws3BUdIalS
+         /KfQ==
+X-Gm-Message-State: AOJu0YzMJ2uTcK6YPPcqIIhzDIlovboDvFVXl2cqMdallxsPHpV7Oy73
+	qK1VgLxKncvuvTvSHnxHovN8k5kwoNdQ4DjAVBVyBkjUmmKQN3ET0gPK3SMl45P2Uyy01f5Vlwc
+	=
+X-Google-Smtp-Source: AGHT+IHOhi+sxu1kUOA8mCIzVmAbbxxks8PiFMkQLmL98Lyj8XHKWyUPwIfFNCDqEurVhlwYZZyIyw==
+X-Received: by 2002:a05:6358:d592:b0:178:632d:656f with SMTP id ms18-20020a056358d59200b00178632d656fmr2226352rwb.62.1706553618251;
+        Mon, 29 Jan 2024 10:40:18 -0800 (PST)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id u13-20020a63454d000000b005cd86cd9055sm6450299pgk.1.2024.01.29.10.40.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jan 2024 10:40:17 -0800 (PST)
+From: Kees Cook <keescook@chromium.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH] select: Avoid wrap-around instrumentation in do_sys_poll()
+Date: Mon, 29 Jan 2024 10:40:15 -0800
+Message-Id: <20240129184014.work.593-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231208080135.4089880-1-amir73il@gmail.com> <20231213172844.ygjbkyl6i4gj52lt@quack3>
- <CAOQ4uxjMv_3g1XSp41M7eV+Tr+6R2QK0kCY=+AuaMCaGj0nuJA@mail.gmail.com>
- <20231215153108.GC683314@perftesting> <CAOQ4uxjVuhznNZitsjzDCanqtNrHvFN7Rx4dhUEPeFxsM+S22A@mail.gmail.com>
- <20231218143504.abj3h6vxtwlwsozx@quack3> <CAOQ4uxjNzSf6p9G79vcg3cxFdKSEip=kXQs=MwWjNUkPzTZqPg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjNzSf6p9G79vcg3cxFdKSEip=kXQs=MwWjNUkPzTZqPg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 29 Jan 2024 20:30:34 +0200
-Message-ID: <CAOQ4uxgxCRoqwCs7mr+7YP4mmW7JXxRB20r-fsrFe2y5d3wDqQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH] fanotify: allow to set errno in FAN_DENY permission response
-To: Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>, 
-	Sweet Tea Dorminy <thesweettea@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2692; i=keescook@chromium.org;
+ h=from:subject:message-id; bh=R2t7ERucYntEaiouukVxBCXGGyHD7wa90M6aZ+Evuwc=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBlt/EPCgLg3aGtKRVzbHxjO78YeZKfPnx5tmaL9
+ ehYjSVEgj6JAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZbfxDwAKCRCJcvTf3G3A
+ JudFD/4uj/y23P8K+iLzDJ8hOxwYy4bJl41fAFTr2k6Q1vBAcDDMCSOq7ZggcPMb7ixLGFwyNcY
+ KlAInc1U0WE9ttaTeseDa0Rj/x8VV4ygOBIkywlomWkVKJXAMRv3RzT0H/MtQBaayJVZ7+a6KIG
+ 03JEZgOWmMKFT6mMl9hDu65yy37G7tRzOfLbWF7hcuzhEz2Z6hUhkl/yXUwNq3/ml5T3D+DuSFw
+ ySoX+Bk/uLVmIEtFiRK4WrXbLH8ld3qwsU1CN8GNApzcJhb2Nb8E0pjM8QRvm+SLGznR9p0yXut
+ Cj/UnGpJs1l+GIvDv/n6H4aRvcXauUntzoT+qLmYseBhos4YiHAtT/1GVFx/IWfPeV0/Or9Gxol
+ 1VQUpH5v09Z0yt3IxuJXLmYMhFxOKgVAubQk9JQZafDMW0Y8Y9FAcXJ1O0r6TmhE8lZba2qiTi7
+ /4VTVfjzPLrfyrJy/+h8yt2OmQhT5kU06J39wfOYI8b39I+B9Fduig96lgysYFTZC4dYLniRgbv
+ n5QosAv43xkYCX9W7n7GASxlft7ESwATPaZ0bb5JEOV012ZuuX0TyK61a/ZeR/Yzhi9LrYnNwRT
+ qhOS1mgazV2q9wTf5a+VzSWFPqz+4Yxb0Cpb5cMk1Y7UVCXCA4xjJ+sni5dnXpvgxgxOeSkYiP+
+ BYy8vSA Ho8G6Txw==
+X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 18, 2023 at 5:53=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Mon, Dec 18, 2023 at 4:35=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Fri 15-12-23 18:50:39, Amir Goldstein wrote:
-> > > On Fri, Dec 15, 2023 at 5:31=E2=80=AFPM Josef Bacik <josef@toxicpanda=
-.com> wrote:
-> > > >
-> > > > On Wed, Dec 13, 2023 at 09:09:30PM +0200, Amir Goldstein wrote:
-> > > > > On Wed, Dec 13, 2023 at 7:28=E2=80=AFPM Jan Kara <jack@suse.cz> w=
-rote:
-> > > > > >
-> > > > > > On Fri 08-12-23 10:01:35, Amir Goldstein wrote:
-> > > > > > > With FAN_DENY response, user trying to perform the filesystem=
- operation
-> > > > > > > gets an error with errno set to EPERM.
-> > > > > > >
-> > > > > > > It is useful for hierarchical storage management (HSM) servic=
-e to be able
-> > > > > > > to deny access for reasons more diverse than EPERM, for examp=
-le EAGAIN,
-> > > > > > > if HSM could retry the operation later.
-> > > > > > >
-> > > > > > > Allow userspace to response to permission events with the res=
-ponse value
-> > > > > > > FAN_DENY_ERRNO(errno), instead of FAN_DENY to return a custom=
- error.
-> > > > > > >
-> > > > > > > The change in fanotify_response is backward compatible, becau=
-se errno is
-> > > > > > > written in the high 8 bits of the 32bit response field and ol=
-d kernels
-> > > > > > > reject respose value with high bits set.
-> > > > > > >
-> > > > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > >
-> > > > > > So a couple of comments that spring to my mind when I'm looking=
- into this
-> > > > > > now (partly maybe due to my weak memory ;):
-> > > > > >
-> > > > > > 1) Do we still need the EAGAIN return? I think we have mostly d=
-ealt with
-> > > > > > freezing deadlocks in another way, didn't we?
-> > > > >
-> > > > > I was thinking about EAGAIN on account of the HSM not being able =
-to
-> > > > > download the file ATM.
-> > > > >
-> > > > > There are a bunch of error codes that are typical for network fil=
-esystems, e.g.
-> > > > > ETIMEDOUT, ENOTCONN, ECONNRESET which could be relevant to
-> > > > > HSM failures.
-> > > > >
-> > > > > >
-> > > > > > 2) If answer to 1) is yes, then there is a second question - do=
- we expect
-> > > > > > the errors to propagate back to the unsuspecting application do=
-ing say
-> > > > > > read(2) syscall? Because I don't think that will fly well with =
-a big
-> > > > > > majority of applications which basically treat *any* error from=
- read(2) as
-> > > > > > fatal. This is also related to your question about standard per=
-mission
-> > > > > > events. Consumers of these error numbers are going to be random
-> > > > > > applications and I see a potential for rather big confusion ari=
-sing there
-> > > > > > (like read(1) returning EINVAL or EBADF and now you wonder why =
-the hell
-> > > > > > until you go debug the kernel and find out the error is coming =
-out of
-> > > > > > fanotify handler). And the usecase is not quite clear to me for=
- ordinary
-> > > > > > fanotify permission events (while I have no doubts about creati=
-vity of
-> > > > > > implementors of fanotify handlers ;)).
-> > > > > >
-> > > > >
-> > > > > That's a good question.
-> > > > > I prefer to delegate your question to the prospect users of the f=
-eature.
-> > > > >
-> > > > > Josef, which errors did your use case need this feature for?
-> > > > >
-> > > > > > 3) Given the potential for confusion, maybe we should stay cons=
-ervative and
-> > > > > > only allow additional EAGAIN error instead of arbitrary errno i=
-f we need it?
-> > > > > >
-> > > > >
-> > > > > I know I was planning to use this for EDQUOT error (from FAN_PRE_=
-MODIFY),
-> > > > > but I certainly wouldn't mind restricting the set of custom error=
-s.
-> > > > > I think it makes sense. The hard part is to agree on this set of =
-errors.
-> > > > >
-> > > >
-> > > > I'm all for flexibility here.
-> > > >
-> > > > We're going to have 2 classes of applications interacting with HSM =
-backed
-> > > > storage, normal applications and applications that know they're bac=
-ked by HSM.
-> > > > The normal applications are just going to crash if they get an erro=
-r on read(2),
-> > > > it doesn't matter what errno it is.  The second class would have di=
-fferent
-> > > > things they'd want to do in the face of different errors, and that'=
-s what this
-> > > > patchset is targeting.  We can limit it to a few errno's if that ma=
-kes you feel
-> > > > better, but having more than just one would be helpful.
-> > >
-> > > Ok. In another email I got from your colleagues, they listed:
-> > > EIO, EAGAIN, ENOSPC as possible errors to return.
-> > > I added EDQUOT for our in house use case.
-> >
-> > OK, so do I get it right that you also have applications that are aware
-> > that they are operation on top of HSM managed filesystem and thus they =
-can
-> > do meaningful things with the reported errors?
-> >
->
-> Some applications are HSM aware.
-> Some just report the errors that they get which are meaningful to users.
-> EIO is the standard response for HSM failure to fill content.
->
-> EDQUOT/ENOSPC is a good example of special functionality.
-> HSM "swaps out" file content to a slow remote tier, but the slow remote
-> tier may have a space/quota limit that is known to HSM.
->
-> By tracking the total of st_size under some HSM managed folder, including
-> the st_size of files whose content is punched out, HSM can enforce this l=
-imit
-> not in the conventional meaning of local disk blocks usage.
->
-> This is when returning EDQUOT/ENOSPC for FAN_PRE_MODIFY makes
-> sense to most users/applications, except for ones that try to create
-> large sparse
-> files...
->
->
-> > > Those are all valid errors for write(2) and some are valid for read(2=
-).
-> > > ENOSPC/EDQUOT make a lot of sense for HSM for read(2), but could
-> > > be surprising to applications not aware of HSM.
-> > > I think it wouldn't be that bad if we let HSM decide which of those e=
-rrors
-> > > to return for FAN_PRE_ACCESS as opposed to FAN_PRE_MODIFY.
-> >
-> > Yeah, I don't think we need to be super-restrictive here, I'd just pref=
-er
-> > to avoid the "whatever number you decide to return" kind of interface
-> > because I can see potential for confusion and abuse there. I think all =
-four
-> > errors above are perfectly fine for both FAN_PRE_ACCESS and FAN_PRE_MOD=
-IFY
-> > if there are consumers that are able to use them.
-> >
-> > > But given that we do want to limit the chance of abusing this feature=
-,
-> > > perhaps it would be best to limit the error codes to known error code=
-s
-> > > for write(2) IO failures (i.e. not EBADF, not EFAULT) and allow retur=
-ning
-> > > FAN_DENY_ERRNO only for the new FAN_PRE_{ACCESS,MODIFY}
-> > > HSM events.
-> > >
-> > > IOW, FAN_{OPEN,ACCESS}_PERM - no FAN_DENY_ERRNO for you!
-> > >
-> > > Does that sound good to you?
-> >
-> > It sounds OK to me. I'm open to allowing FAN_DENY_ERRNO for FAN_OPEN_PE=
-RM
-> > if there's a usecase because at least conceptually it makes a good sens=
-e
-> > and chances for confusion are low there. People are used to dealing wit=
-h
-> > errors on open(2).
-> >
->
-> I wrote about one case I have below.
->
-> > > Furthermore, we can start with allowing a very limited set of errors
-> > > and extend it in the future, on case by case basis.
-> > >
-> > > The way that this could be manageable is if we provide userspace
-> > > a way to test for supported return codes.
-> > >
-> > > There is already a simple method that we used for testing FAN_INFO
-> > > records type support -
-> > > After fan_fd =3D fanotify_init(), userspace can write a "test" fanoti=
-fy_response
-> > > to fan_fd with fanotify_response.fd=3DFAN_NOFD.
-> > >
-> > > When setting fanotify_response.fd=3DFAN_DENY, this would return ENOEN=
-T,
-> > > but with fanotify_response.fd=3DFAN_DENY_ERRNO(EIO), upstream would
-> > > return EINVAL.
-> > >
-> > > This opens the possibility of allowing, say, EIO, EAGAIN in the first=
- release
-> > > and ENOSPC, EDQUOT in the following release.
-> >
-> > If we forsee that ENOSPC and EDQUOT will be needed, then we can just en=
-able
-> > it from start and not complicate our lives more than necessary.
-> >
->
-> Sure, I was just giving an example how the list could be extended case by=
- case
-> in the future.
->
-> > > The advantage in this method is that it is very simple and already wo=
-rking
-> > > correctly for old kernels.
-> > >
-> > > The downside is that this simple method does not allow checking for
-> > > allowed errors per specific event type, so if we decide that we do wa=
-nt
-> > > to allow returning FAN_DENY_ERRNO for FAN_OPEN_PERM later on, this me=
-thod
-> > > could not be used by userspace to test for this finer grained support=
-.
-> >
-> > True, in that case the HSM manager would have to try responding with
-> > FAN_DENY_ERRNO() and if it fails, it will have to fallback to respondin=
-g
-> > with FAN_DENY. Not too bad I'd say.
-> >
->
-> Yeah that works too.
->
-> > > In another thread, I mention the fact that FAN_OPEN_PERM still has a
-> > > potential freeze deadlock when called from open(O_TRUNC|O_CREATE),
-> > > so we can consider the fact that FAN_DENY_ERRNO is not allowed with
-> > > FAN_OPEN_PERM as a negative incentive for people to consider using
-> > > FAN_OPEN_PERM as a trigger for HSM.
-> >
-> > AFAIU from the past discussions, there's no good use of FAN_OPEN_PERM
-> > event for HSM. If that's the case, I'm for not allowing FAN_DENY_ERRNO =
-for
-> > FAN_OPEN_PERM.
->
-> In the HttpDirFS HSM demo, I used FAN_OPEN_PERM on a mount mark
-> to deny open of file during the short time that it's content is being
-> punched out [1].
-> It is quite complicated to explain, but I only used it for denying access=
-,
-> not to fill content and not to write anything to filesystem.
-> It's worth noting that returning EBUSY in that case would be more meaning=
-ful
-> to users.
->
-> That's one case in favor of allowing FAN_DENY_ERRNO for FAN_OPEN_PERM,
-> but mainly I do not have a proof that people will not need it.
->
-> OTOH, I am a bit concerned that this will encourage developer to use
-> FAN_OPEN_PERM as a trigger to filling file content and then we are back t=
-o
-> deadlock risk zone.
->
-> Not sure which way to go.
->
-> Anyway, I think we agree that there is no reason to merge FAN_DENY_ERRNO
-> before FAN_PRE_* events, so we can continue this discussion later when
-> I post FAN_PRE_* patches - not for this cycle.
->
+The mix of int, unsigned int, and unsigned long used by struct
+poll_list::len, todo, len, and j meant that the signed overflow
+sanitizer got worried it needed to instrument several places where
+arithmetic happens between these variables. Since all of the variables
+are always positive and bounded by unsigned int, use a single type in
+all places. Additionally expand the zero-test into an explicit range
+check before updating "todo".
 
-Hi Jan,
+This keeps sanitizer instrumentation[1] out of a UACCESS path:
 
-I started to prepare the pre-content events patches for posting and got bac=
-k
-to this one as well.
+vmlinux.o: warning: objtool: do_sys_poll+0x285: call to __ubsan_handle_sub_overflow() with UACCESS enabled
 
-Since we had this discussion I have learned of another use case that requir=
-es
-filling file content in FAN_OPEN_PERM hook, FAN_OPEN_EXEC_PERM to
-be exact.
+Link: https://github.com/KSPP/linux/issues/26 [1]
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+ fs/select.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-The reason is that unless an executable content is filled at execve() time,
-there is no other opportunity to fill its content without getting -ETXTBSY.
+diff --git a/fs/select.c b/fs/select.c
+index 0ee55af1a55c..11a3b1312abe 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -839,7 +839,7 @@ SYSCALL_DEFINE1(old_select, struct sel_arg_struct __user *, arg)
+ 
+ struct poll_list {
+ 	struct poll_list *next;
+-	int len;
++	unsigned int len;
+ 	struct pollfd entries[];
+ };
+ 
+@@ -975,14 +975,15 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
+ 		struct timespec64 *end_time)
+ {
+ 	struct poll_wqueues table;
+-	int err = -EFAULT, fdcount, len;
++	int err = -EFAULT, fdcount;
+ 	/* Allocate small arguments on the stack to save memory and be
+ 	   faster - use long to make sure the buffer is aligned properly
+ 	   on 64 bit archs to avoid unaligned access */
+ 	long stack_pps[POLL_STACK_ALLOC/sizeof(long)];
+ 	struct poll_list *const head = (struct poll_list *)stack_pps;
+  	struct poll_list *walk = head;
+- 	unsigned long todo = nfds;
++	unsigned int todo = nfds;
++	unsigned int len;
+ 
+ 	if (nfds > rlimit(RLIMIT_NOFILE))
+ 		return -EINVAL;
+@@ -998,9 +999,9 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
+ 					sizeof(struct pollfd) * walk->len))
+ 			goto out_fds;
+ 
+-		todo -= walk->len;
+-		if (!todo)
++		if (walk->len >= todo)
+ 			break;
++		todo -= walk->len;
+ 
+ 		len = min(todo, POLLFD_PER_PAGE);
+ 		walk = walk->next = kmalloc(struct_size(walk, entries, len),
+@@ -1020,7 +1021,7 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
+ 
+ 	for (walk = head; walk; walk = walk->next) {
+ 		struct pollfd *fds = walk->entries;
+-		int j;
++		unsigned int j;
+ 
+ 		for (j = walk->len; j; fds++, ufds++, j--)
+ 			unsafe_put_user(fds->revents, &ufds->revents, Efault);
+-- 
+2.34.1
 
-So to keep things more flexible, I decided to add -ETXTBSY to the
-allowed errors with FAN_DENY_ERRNO() and to decided to allow
-FAN_DENY_ERRNO() with all permission events.
-
-To keep FAN_DENY_ERRNO() a bit more focused on HSM, I have
-added a limitation that FAN_DENY_ERRNO() is allowed only for
-FAN_CLASS_PRE_CONTENT groups.
-
-Thanks,
-Amir.
 
