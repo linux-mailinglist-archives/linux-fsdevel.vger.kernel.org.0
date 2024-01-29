@@ -1,69 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-9435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2124984139B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 20:36:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF1984139E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 20:36:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48DD4B26B10
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 19:36:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 777AF1F277AA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 19:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29533156967;
-	Mon, 29 Jan 2024 19:35:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CDE76020;
+	Mon, 29 Jan 2024 19:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aHENsEAY"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xKqYfZQq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8854A1534EB
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 19:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E348154C0C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 19:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706556933; cv=none; b=MFPm3+zQF2lXjUNW8WApnaGIaOexoTsA3gCGdxfGoGjndGIgoQHYhCv13bmqsh8/jOpDk41HECy4LgusixIsd6VYMvh7fQMa2euix4llQgr9S5QM+yBI5sCoQc1bh/LSREraNb9BdjODT8cQEBVRqk5YVHM0exNMYuRHifVvEjg=
+	t=1706556939; cv=none; b=oslVjPOrm0R2Yh2Zq5Xl6U+PsWbKSqko6MioVObBVrfTRccYznDDtsbUcNHdFVM2hxJbsCaAHYCCXKDJcaJ8znkNNqU6h5YVVxP19LrUHHrMFJGtWrfbnCJ5D/2s72+GBQOeonvOzjdqIm1gZp8cTE6C0jWQeK49j1aZn9ZXz/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706556933; c=relaxed/simple;
-	bh=VlWgkrKHwm88S5G8qp6WyRk6uzfCPiutFp9GMzxJmgs=;
+	s=arc-20240116; t=1706556939; c=relaxed/simple;
+	bh=+HdbbaQZa8+A0lATLROmSrWayDBc8cSfyhmoQJXBCs8=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eA6Ymm6z3ZH4DvLAYzVu0S4bHJIdB7Ssx7oQMQKtmXIu4xQX2Pdwd+ChHY8DPZ+xbEQ9RtjD/zwVpuXZX4YOotBlrmT81/peIMTWxHIjLEzDeS2yi0i3MEgNlG/u57fl7wHBjm9b+4YzGQB+NzS0+HzaWg6SUvOUfodUgyHS3+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--lokeshgidra.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aHENsEAY; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=JZuwauSAC7ahUcdi1OiDYc94HN69pZjW1ZxbjK1251MNmJCn95gIm3aYBKF+4orVaoM12pKCYYOgV2B2MLLXjV1fjx6XiX1xpx4h6uwGoIIysmHcsaNqDcTlYMKZJFKNsVW63KqOvZcE4//iHeAbvTZuJZUvAaP3IN8VexTUpio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--lokeshgidra.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xKqYfZQq; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--lokeshgidra.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-602d22a54caso44374647b3.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 11:35:31 -0800 (PST)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-5ff84361ac3so55419267b3.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 11:35:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1706556930; x=1707161730; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1706556936; x=1707161736; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=d58A86vZ58W9GlIkgHFHlo47r/EdM3AnN+I4lpZG9DM=;
-        b=aHENsEAYX+KY2gXJzGvB7GJ/j0cPo6DQVuoJc/g2ia6clV5sNc3fPb956nHGHo2bFi
-         F43g/cRg2jGOYfYqddbbdaxwt/ST/TEZYsd1TVxxTcNqoh86MXovk4zoGEZ7F2Q3IUFx
-         JxSRU1lndH4pqFgZ8lxH1x1aR5/+IhUO4DLk6395/xVQ/ar8dBpEbmypAKUCRVqg13z3
-         Rz2Si6GeoGLgGY6k0j01E+hXHnST8DS3ZDdwUZpkDDuWT+jyX4myN2h18WyT7K6oVwwO
-         ruPV1+vtnnfiUDGDZDyAENs4HbFLpgmUv99ZOlmcu1nhD1CMZBgIqR4+MR1rHewOTV2n
-         BYTg==
+        bh=/rTTdTkZrF1wexi3aiNZ7/0XWdKeqDeZCcom0yepX1o=;
+        b=xKqYfZQq1gwh+Hwvnyx8H8UOCQVCqg+uLZGLmvDznYQtjy6KAv1iQ4zydpQd/ucLUc
+         iEt7a6rGibfEbm/wAldZJcHq0M1qF6XjN8frVZAxLVLUGX4a6t439GrENNxxrlxCNRCL
+         5+YHF+i34KUUmaWxtObdkPcjaBHIPQxJ2WKeDreKZ4XgVMrYSIggqOrVDNKlt7T9fL5W
+         A0/MHsiPaktsqVoTCfDFKhUZVnbsEpqYSqkeU3Nxe6XfZWhVlli70K1a/qZbW4jw8cxh
+         R2Rl1Sxc8YAV6uy5aI9HQVQhPjG1Vf72Vj/e2iqNZTEFKGUGgoCA3EGXQ1QeTSh4D+I1
+         z8tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706556930; x=1707161730;
+        d=1e100.net; s=20230601; t=1706556936; x=1707161736;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d58A86vZ58W9GlIkgHFHlo47r/EdM3AnN+I4lpZG9DM=;
-        b=sdfifhUIzDLXjiAjk8hd91OoCnp7E3i7x+DCfQUCl42BFfO5td60QFQgJEsLRGQ3io
-         kKzCPBTaWeuWiE4speqMTrNaHJM+QSwzYC4Hd0EtGsRM8HO3aVfb1EGw0KKdhapz+nTw
-         QNjGQ8+YUhNq3jA5OmcWmrwNYFuPH/RCL4lOmgT4g+DeJenEzggIELqGMy8vV/G0127U
-         2UAkYxFBh2h2j+ktikBDF7piKi/hbmhbyLpiYpgx5cXL0ohbWWdS2y57a8s1KdqG1i1W
-         xOz/IZQtIYH3/Uxx4Boct5KhHvUp3OkgnNiqulh+f0LyB4uS1pQVqcCL8MCIA2uQPuiS
-         MBuQ==
-X-Gm-Message-State: AOJu0YzNPAQyVomny+BhBQGImI9bPePjKWqkFHoiAT6YL0hzysuDJUPW
-	tOcJHNHqFJrL/LdR+8WdPt2+RZIOCUH4fx7QBUEz2S1zldXODZk/qNI++3A3jssZP7LEYpfoUT7
-	bZbjuqY+Tpc134JF0nkTEyA==
-X-Google-Smtp-Source: AGHT+IE1PvMaB6+3Hjv+1DaHKrgtjZqmJWCQ16jIYn+568pU6S4HnoY5ZNPwoavC8p3R9cSdFTy25+/4zcBx7JAcww==
+        bh=/rTTdTkZrF1wexi3aiNZ7/0XWdKeqDeZCcom0yepX1o=;
+        b=h9gxO4yiVW1B0vs1hcCVOFk8ZIXO0GE9mJ3pCzPzCJBmoGwh36QIEqT017Vdf2Srxu
+         PvO64y0+JwtynHCIZxrwRx2ESgcu374I0/epa2qDX24VW6dn2jxdXd9hiJOUIN+KDDod
+         Us2/7cUyHyvnNR2Bjh0Np5USP5xeaK8DBHdec7pBRQThuZAkh8b0J+EjXYqhkRFremnb
+         IkOTSKlSdOgzIZt7YoTfmXPLLgJAmi6N0rYRNTyADq7CNSPDtvFHT6DdJwfY76YxWuqy
+         s8NXeRBbMU72myvgwcq0Is7Ma9jXn3c3cq9dDpC5UkA12MMOXsGDAjkB1ecV8X3xQwse
+         To8w==
+X-Gm-Message-State: AOJu0Yw4jexWfPjEBOcEa4a1Qno046sFPSwxckVQu4Bbfu7dh9Fs6wKc
+	SW+cTiAaPPnq6K1nNJtdvJkXx3xJeX86bNiVe0WPtXTGhtv/U/6h+qZExu0eu2xneQaeYK7rS63
+	7Zj9bzUIElsdnlGSgKD1MWA==
+X-Google-Smtp-Source: AGHT+IHg5bBsWt55Rz1Rugqar6MZ+VAZSQCpoEjW8I0EHN+ywy05kgFpt3/w0bymXcr1SFJEZK7hul4bbbOZB2g6+g==
 X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:9b1d:f1ee:f750:93f1])
- (user=lokeshgidra job=sendgmr) by 2002:a05:690c:f91:b0:5ff:80cb:23c7 with
- SMTP id df17-20020a05690c0f9100b005ff80cb23c7mr1505040ywb.1.1706556930561;
- Mon, 29 Jan 2024 11:35:30 -0800 (PST)
-Date: Mon, 29 Jan 2024 11:35:11 -0800
+ (user=lokeshgidra job=sendgmr) by 2002:a05:6902:250b:b0:dbe:d0a9:2be3 with
+ SMTP id dt11-20020a056902250b00b00dbed0a92be3mr2244340ybb.3.1706556936414;
+ Mon, 29 Jan 2024 11:35:36 -0800 (PST)
+Date: Mon, 29 Jan 2024 11:35:12 -0800
 In-Reply-To: <20240129193512.123145-1-lokeshgidra@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240129193512.123145-1-lokeshgidra@google.com>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
-Message-ID: <20240129193512.123145-3-lokeshgidra@google.com>
-Subject: [PATCH v2 2/3] userfaultfd: protect mmap_changing with rw_sem in userfaulfd_ctx
+Message-ID: <20240129193512.123145-4-lokeshgidra@google.com>
+Subject: [PATCH v2 3/3] userfaultfd: use per-vma locks in userfaultfd operations
 From: Lokesh Gidra <lokeshgidra@google.com>
 To: akpm@linux-foundation.org
 Cc: lokeshgidra@google.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
@@ -85,417 +85,408 @@ Cc: lokeshgidra@google.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
 	ngeoffray@google.com, timmurray@google.com, rppt@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Increments and loads to mmap_changing are always in mmap_lock
-critical section. This ensures that if userspace requests event
-notification for non-cooperative operations (e.g. mremap), userfaultfd
-operations don't occur concurrently.
+All userfaultfd operations, except write-protect, opportunistically use
+per-vma locks to lock vmas. If we fail then fall back to locking
+mmap-lock in read-mode.
 
-This can be achieved by using a separate read-write semaphore in
-userfaultfd_ctx such that increments are done in write-mode and loads
-in read-mode, thereby eliminating the dependency on mmap_lock for this
-purpose.
-
-This is a preparatory step before we replace mmap_lock usage with
-per-vma locks in fill/move ioctls.
+Write-protect operation requires mmap_lock as it iterates over multiple vmas.
 
 Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
 ---
- fs/userfaultfd.c              | 40 ++++++++++++----------
- include/linux/userfaultfd_k.h | 31 ++++++++++--------
- mm/userfaultfd.c              | 62 ++++++++++++++++++++---------------
- 3 files changed, 75 insertions(+), 58 deletions(-)
+ fs/userfaultfd.c              |  13 +--
+ include/linux/userfaultfd_k.h |   5 +-
+ mm/userfaultfd.c              | 175 +++++++++++++++++++++++-----------
+ 3 files changed, 122 insertions(+), 71 deletions(-)
 
 diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 58331b83d648..c00a021bcce4 100644
+index c00a021bcce4..60dcfafdc11a 100644
 --- a/fs/userfaultfd.c
 +++ b/fs/userfaultfd.c
-@@ -685,12 +685,15 @@ int dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
- 		ctx->flags = octx->flags;
- 		ctx->features = octx->features;
- 		ctx->released = false;
-+		init_rwsem(&ctx->map_changing_lock);
- 		atomic_set(&ctx->mmap_changing, 0);
- 		ctx->mm = vma->vm_mm;
- 		mmgrab(ctx->mm);
- 
- 		userfaultfd_ctx_get(octx);
-+		down_write(&octx->map_changing_lock);
- 		atomic_inc(&octx->mmap_changing);
-+		up_write(&octx->map_changing_lock);
- 		fctx->orig = octx;
- 		fctx->new = ctx;
- 		list_add_tail(&fctx->list, fcs);
-@@ -737,7 +740,9 @@ void mremap_userfaultfd_prep(struct vm_area_struct *vma,
- 	if (ctx->features & UFFD_FEATURE_EVENT_REMAP) {
- 		vm_ctx->ctx = ctx;
- 		userfaultfd_ctx_get(ctx);
-+		down_write(&ctx->map_changing_lock);
- 		atomic_inc(&ctx->mmap_changing);
-+		up_write(&ctx->map_changing_lock);
- 	} else {
- 		/* Drop uffd context if remap feature not enabled */
- 		vma_start_write(vma);
-@@ -783,7 +788,9 @@ bool userfaultfd_remove(struct vm_area_struct *vma,
- 		return true;
- 
- 	userfaultfd_ctx_get(ctx);
-+	down_write(&ctx->map_changing_lock);
- 	atomic_inc(&ctx->mmap_changing);
-+	up_write(&ctx->map_changing_lock);
- 	mmap_read_unlock(mm);
- 
- 	msg_init(&ewq.msg);
-@@ -825,7 +832,9 @@ int userfaultfd_unmap_prep(struct vm_area_struct *vma, unsigned long start,
- 		return -ENOMEM;
- 
- 	userfaultfd_ctx_get(ctx);
-+	down_write(&ctx->map_changing_lock);
- 	atomic_inc(&ctx->mmap_changing);
-+	up_write(&ctx->map_changing_lock);
- 	unmap_ctx->ctx = ctx;
- 	unmap_ctx->start = start;
- 	unmap_ctx->end = end;
-@@ -1709,9 +1718,8 @@ static int userfaultfd_copy(struct userfaultfd_ctx *ctx,
- 	if (uffdio_copy.mode & UFFDIO_COPY_MODE_WP)
- 		flags |= MFILL_ATOMIC_WP;
- 	if (mmget_not_zero(ctx->mm)) {
--		ret = mfill_atomic_copy(ctx->mm, uffdio_copy.dst, uffdio_copy.src,
--					uffdio_copy.len, &ctx->mmap_changing,
--					flags);
-+		ret = mfill_atomic_copy(ctx, uffdio_copy.dst, uffdio_copy.src,
-+					uffdio_copy.len, flags);
- 		mmput(ctx->mm);
- 	} else {
- 		return -ESRCH;
-@@ -1761,9 +1769,8 @@ static int userfaultfd_zeropage(struct userfaultfd_ctx *ctx,
- 		goto out;
- 
- 	if (mmget_not_zero(ctx->mm)) {
--		ret = mfill_atomic_zeropage(ctx->mm, uffdio_zeropage.range.start,
--					   uffdio_zeropage.range.len,
--					   &ctx->mmap_changing);
-+		ret = mfill_atomic_zeropage(ctx, uffdio_zeropage.range.start,
-+					   uffdio_zeropage.range.len);
- 		mmput(ctx->mm);
- 	} else {
- 		return -ESRCH;
-@@ -1818,9 +1825,8 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
+@@ -2005,17 +2005,8 @@ static int userfaultfd_move(struct userfaultfd_ctx *ctx,
  		return -EINVAL;
  
- 	if (mmget_not_zero(ctx->mm)) {
--		ret = mwriteprotect_range(ctx->mm, uffdio_wp.range.start,
--					  uffdio_wp.range.len, mode_wp,
--					  &ctx->mmap_changing);
-+		ret = mwriteprotect_range(ctx, uffdio_wp.range.start,
-+					  uffdio_wp.range.len, mode_wp);
- 		mmput(ctx->mm);
- 	} else {
- 		return -ESRCH;
-@@ -1870,9 +1876,8 @@ static int userfaultfd_continue(struct userfaultfd_ctx *ctx, unsigned long arg)
- 		flags |= MFILL_ATOMIC_WP;
- 
- 	if (mmget_not_zero(ctx->mm)) {
--		ret = mfill_atomic_continue(ctx->mm, uffdio_continue.range.start,
--					    uffdio_continue.range.len,
--					    &ctx->mmap_changing, flags);
-+		ret = mfill_atomic_continue(ctx, uffdio_continue.range.start,
-+					    uffdio_continue.range.len, flags);
- 		mmput(ctx->mm);
- 	} else {
- 		return -ESRCH;
-@@ -1925,9 +1930,8 @@ static inline int userfaultfd_poison(struct userfaultfd_ctx *ctx, unsigned long
- 		goto out;
- 
- 	if (mmget_not_zero(ctx->mm)) {
--		ret = mfill_atomic_poison(ctx->mm, uffdio_poison.range.start,
--					  uffdio_poison.range.len,
--					  &ctx->mmap_changing, 0);
-+		ret = mfill_atomic_poison(ctx, uffdio_poison.range.start,
-+					  uffdio_poison.range.len, 0);
- 		mmput(ctx->mm);
- 	} else {
- 		return -ESRCH;
-@@ -2003,13 +2007,14 @@ static int userfaultfd_move(struct userfaultfd_ctx *ctx,
  	if (mmget_not_zero(mm)) {
- 		mmap_read_lock(mm);
- 
--		/* Re-check after taking mmap_lock */
-+		/* Re-check after taking map_changing_lock */
-+		down_read(&ctx->map_changing_lock);
- 		if (likely(!atomic_read(&ctx->mmap_changing)))
- 			ret = move_pages(ctx, mm, uffdio_move.dst, uffdio_move.src,
- 					 uffdio_move.len, uffdio_move.mode);
- 		else
- 			ret = -EAGAIN;
+-		mmap_read_lock(mm);
 -
-+		up_read(&ctx->map_changing_lock);
- 		mmap_read_unlock(mm);
+-		/* Re-check after taking map_changing_lock */
+-		down_read(&ctx->map_changing_lock);
+-		if (likely(!atomic_read(&ctx->mmap_changing)))
+-			ret = move_pages(ctx, mm, uffdio_move.dst, uffdio_move.src,
+-					 uffdio_move.len, uffdio_move.mode);
+-		else
+-			ret = -EAGAIN;
+-		up_read(&ctx->map_changing_lock);
+-		mmap_read_unlock(mm);
++		ret = move_pages(ctx, uffdio_move.dst, uffdio_move.src,
++				 uffdio_move.len, uffdio_move.mode);
  		mmput(mm);
  	} else {
-@@ -2216,6 +2221,7 @@ static int new_userfaultfd(int flags)
- 	ctx->flags = flags;
- 	ctx->features = 0;
- 	ctx->released = false;
-+	init_rwsem(&ctx->map_changing_lock);
- 	atomic_set(&ctx->mmap_changing, 0);
- 	ctx->mm = current->mm;
- 	/* prevent the mm struct to be freed */
+ 		return -ESRCH;
 diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-index 691d928ee864..3210c3552976 100644
+index 3210c3552976..05d59f74fc88 100644
 --- a/include/linux/userfaultfd_k.h
 +++ b/include/linux/userfaultfd_k.h
-@@ -69,6 +69,13 @@ struct userfaultfd_ctx {
- 	unsigned int features;
- 	/* released */
- 	bool released;
-+	/*
-+	 * Prevents userfaultfd operations (fill/move/wp) from happening while
-+	 * some non-cooperative event(s) is taking place. Increments are done
-+	 * in write-mode. Whereas, userfaultfd operations, which includes
-+	 * reading mmap_changing, is done under read-mode.
-+	 */
-+	struct rw_semaphore map_changing_lock;
- 	/* memory mappings are changing because of non-cooperative event */
- 	atomic_t mmap_changing;
- 	/* mm with one ore more vmas attached to this userfaultfd_ctx */
-@@ -113,22 +120,18 @@ extern int mfill_atomic_install_pte(pmd_t *dst_pmd,
- 				    unsigned long dst_addr, struct page *page,
- 				    bool newly_allocated, uffd_flags_t flags);
- 
--extern ssize_t mfill_atomic_copy(struct mm_struct *dst_mm, unsigned long dst_start,
-+extern ssize_t mfill_atomic_copy(struct userfaultfd_ctx *ctx, unsigned long dst_start,
- 				 unsigned long src_start, unsigned long len,
--				 atomic_t *mmap_changing, uffd_flags_t flags);
--extern ssize_t mfill_atomic_zeropage(struct mm_struct *dst_mm,
-+				 uffd_flags_t flags);
-+extern ssize_t mfill_atomic_zeropage(struct userfaultfd_ctx *ctx,
- 				     unsigned long dst_start,
--				     unsigned long len,
--				     atomic_t *mmap_changing);
--extern ssize_t mfill_atomic_continue(struct mm_struct *dst_mm, unsigned long dst_start,
--				     unsigned long len, atomic_t *mmap_changing,
--				     uffd_flags_t flags);
--extern ssize_t mfill_atomic_poison(struct mm_struct *dst_mm, unsigned long start,
--				   unsigned long len, atomic_t *mmap_changing,
--				   uffd_flags_t flags);
--extern int mwriteprotect_range(struct mm_struct *dst_mm,
--			       unsigned long start, unsigned long len,
--			       bool enable_wp, atomic_t *mmap_changing);
-+				     unsigned long len);
-+extern ssize_t mfill_atomic_continue(struct userfaultfd_ctx *ctx, unsigned long dst_start,
-+				     unsigned long len, uffd_flags_t flags);
-+extern ssize_t mfill_atomic_poison(struct userfaultfd_ctx *ctx, unsigned long start,
-+				   unsigned long len, uffd_flags_t flags);
-+extern int mwriteprotect_range(struct userfaultfd_ctx *ctx, unsigned long start,
-+			       unsigned long len, bool enable_wp);
- extern long uffd_wp_range(struct vm_area_struct *vma,
- 			  unsigned long start, unsigned long len, bool enable_wp);
- 
+@@ -138,9 +138,8 @@ extern long uffd_wp_range(struct vm_area_struct *vma,
+ /* move_pages */
+ void double_pt_lock(spinlock_t *ptl1, spinlock_t *ptl2);
+ void double_pt_unlock(spinlock_t *ptl1, spinlock_t *ptl2);
+-ssize_t move_pages(struct userfaultfd_ctx *ctx, struct mm_struct *mm,
+-		   unsigned long dst_start, unsigned long src_start,
+-		   unsigned long len, __u64 flags);
++ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
++		   unsigned long src_start, unsigned long len, __u64 flags);
+ int move_pages_huge_pmd(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd, pmd_t dst_pmdval,
+ 			struct vm_area_struct *dst_vma,
+ 			struct vm_area_struct *src_vma,
 diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index e3a91871462a..6e2ca04ab04d 100644
+index 6e2ca04ab04d..d55bf18b80db 100644
 --- a/mm/userfaultfd.c
 +++ b/mm/userfaultfd.c
-@@ -353,11 +353,11 @@ static pmd_t *mm_alloc_pmd(struct mm_struct *mm, unsigned long address)
-  * called with mmap_lock held, it will release mmap_lock before returning.
+@@ -19,20 +19,39 @@
+ #include <asm/tlb.h>
+ #include "internal.h"
+ 
+-static __always_inline
+-struct vm_area_struct *find_dst_vma(struct mm_struct *dst_mm,
+-				    unsigned long dst_start,
+-				    unsigned long len)
++void unpin_vma(struct mm_struct *mm, struct vm_area_struct *vma, bool *mmap_locked)
++{
++	BUG_ON(!vma && !*mmap_locked);
++
++	if (*mmap_locked) {
++		mmap_read_unlock(mm);
++		*mmap_locked = false;
++	} else
++		vma_end_read(vma);
++}
++
++/*
++ * Search for VMA and make sure it is stable either by locking it or taking
++ * mmap_lock.
++ */
++struct vm_area_struct *find_and_pin_dst_vma(struct mm_struct *dst_mm,
++					    unsigned long dst_start,
++					    unsigned long len,
++					    bool *mmap_locked)
+ {
++	struct vm_area_struct *dst_vma = lock_vma_under_rcu(dst_mm, dst_start);
++	if (!dst_vma) {
++		mmap_read_lock(dst_mm);
++		*mmap_locked = true;
++		dst_vma = find_vma(dst_mm, dst_start);
++	}
++
+ 	/*
+ 	 * Make sure that the dst range is both valid and fully within a
+ 	 * single existing vma.
+ 	 */
+-	struct vm_area_struct *dst_vma;
+-
+-	dst_vma = find_vma(dst_mm, dst_start);
+ 	if (!range_in_vma(dst_vma, dst_start, dst_start + len))
+-		return NULL;
++		goto unpin;
+ 
+ 	/*
+ 	 * Check the vma is registered in uffd, this is required to
+@@ -40,9 +59,13 @@ struct vm_area_struct *find_dst_vma(struct mm_struct *dst_mm,
+ 	 * time.
+ 	 */
+ 	if (!dst_vma->vm_userfaultfd_ctx.ctx)
+-		return NULL;
++		goto unpin;
+ 
+ 	return dst_vma;
++
++unpin:
++	unpin_vma(dst_mm, dst_vma, mmap_locked);
++	return NULL;
+ }
+ 
+ /* Check if dst_addr is outside of file's size. Must be called with ptl held. */
+@@ -350,7 +373,8 @@ static pmd_t *mm_alloc_pmd(struct mm_struct *mm, unsigned long address)
+ #ifdef CONFIG_HUGETLB_PAGE
+ /*
+  * mfill_atomic processing for HUGETLB vmas.  Note that this routine is
+- * called with mmap_lock held, it will release mmap_lock before returning.
++ * called with either vma-lock or mmap_lock held, it will release the lock
++ * before returning.
   */
  static __always_inline ssize_t mfill_atomic_hugetlb(
-+					      struct userfaultfd_ctx *ctx,
- 					      struct vm_area_struct *dst_vma,
+ 					      struct userfaultfd_ctx *ctx,
+@@ -358,7 +382,8 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
  					      unsigned long dst_start,
  					      unsigned long src_start,
  					      unsigned long len,
--					      atomic_t *mmap_changing,
- 					      uffd_flags_t flags)
+-					      uffd_flags_t flags)
++					      uffd_flags_t flags,
++					      bool *mmap_locked)
  {
  	struct mm_struct *dst_mm = dst_vma->vm_mm;
-@@ -379,6 +379,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
- 	 * feature is not supported.
+ 	int vm_shared = dst_vma->vm_flags & VM_SHARED;
+@@ -380,7 +405,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
  	 */
  	if (uffd_flags_mode_is(flags, MFILL_ATOMIC_ZEROPAGE)) {
-+		up_read(&ctx->map_changing_lock);
- 		mmap_read_unlock(dst_mm);
+ 		up_read(&ctx->map_changing_lock);
+-		mmap_read_unlock(dst_mm);
++		unpin_vma(dst_mm, dst_vma, mmap_locked);
  		return -EINVAL;
  	}
-@@ -463,6 +464,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
- 		cond_resched();
+ 
+@@ -404,12 +429,25 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
+ 	 */
+ 	if (!dst_vma) {
+ 		err = -ENOENT;
+-		dst_vma = find_dst_vma(dst_mm, dst_start, len);
+-		if (!dst_vma || !is_vm_hugetlb_page(dst_vma))
+-			goto out_unlock;
++		dst_vma = find_and_pin_dst_vma(dst_mm, dst_start,
++					       len, mmap_locked);
++		if (!dst_vma)
++			goto out;
++		if (!is_vm_hugetlb_page(dst_vma))
++			goto out_unlock_vma;
+ 
+ 		err = -EINVAL;
+ 		if (vma_hpagesize != vma_kernel_pagesize(dst_vma))
++			goto out_unlock_vma;
++
++		/*
++		 * If memory mappings are changing because of non-cooperative
++		 * operation (e.g. mremap) running in parallel, bail out and
++		 * request the user to retry later
++		 */
++		down_read(&ctx->map_changing_lock);
++		err = -EAGAIN;
++		if (atomic_read(&ctx->mmap_changing))
+ 			goto out_unlock;
+ 
+ 		vm_shared = dst_vma->vm_flags & VM_SHARED;
+@@ -465,7 +503,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
  
  		if (unlikely(err == -ENOENT)) {
-+			up_read(&ctx->map_changing_lock);
- 			mmap_read_unlock(dst_mm);
+ 			up_read(&ctx->map_changing_lock);
+-			mmap_read_unlock(dst_mm);
++			unpin_vma(dst_mm, dst_vma, mmap_locked);
  			BUG_ON(!folio);
  
-@@ -473,12 +475,13 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
+ 			err = copy_folio_from_user(folio,
+@@ -474,17 +512,6 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
+ 				err = -EFAULT;
  				goto out;
  			}
- 			mmap_read_lock(dst_mm);
-+			down_read(&ctx->map_changing_lock);
- 			/*
- 			 * If memory mappings are changing because of non-cooperative
- 			 * operation (e.g. mremap) running in parallel, bail out and
- 			 * request the user to retry later
- 			 */
--			if (mmap_changing && atomic_read(mmap_changing)) {
-+			if (atomic_read(ctx->mmap_changing)) {
- 				err = -EAGAIN;
- 				break;
- 			}
-@@ -501,6 +504,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
- 	}
+-			mmap_read_lock(dst_mm);
+-			down_read(&ctx->map_changing_lock);
+-			/*
+-			 * If memory mappings are changing because of non-cooperative
+-			 * operation (e.g. mremap) running in parallel, bail out and
+-			 * request the user to retry later
+-			 */
+-			if (atomic_read(ctx->mmap_changing)) {
+-				err = -EAGAIN;
+-				break;
+-			}
+ 
+ 			dst_vma = NULL;
+ 			goto retry;
+@@ -505,7 +532,8 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
  
  out_unlock:
-+	up_read(&ctx->map_changing_lock);
- 	mmap_read_unlock(dst_mm);
+ 	up_read(&ctx->map_changing_lock);
+-	mmap_read_unlock(dst_mm);
++out_unlock_vma:
++	unpin_vma(dst_mm, dst_vma, mmap_locked);
  out:
  	if (folio)
-@@ -512,11 +516,11 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
- }
- #else /* !CONFIG_HUGETLB_PAGE */
- /* fail at build time if gcc attempts to use this */
--extern ssize_t mfill_atomic_hugetlb(struct vm_area_struct *dst_vma,
-+extern ssize_t mfill_atomic_hugetlb(struct userfaultfd_ctx *ctx,
-+				    struct vm_area_struct *dst_vma,
+ 		folio_put(folio);
+@@ -521,7 +549,8 @@ extern ssize_t mfill_atomic_hugetlb(struct userfaultfd_ctx *ctx,
  				    unsigned long dst_start,
  				    unsigned long src_start,
  				    unsigned long len,
--				    atomic_t *mmap_changing,
- 				    uffd_flags_t flags);
+-				    uffd_flags_t flags);
++				    uffd_flags_t flags,
++				    bool *mmap_locked);
  #endif /* CONFIG_HUGETLB_PAGE */
  
-@@ -564,13 +568,13 @@ static __always_inline ssize_t mfill_atomic_pte(pmd_t *dst_pmd,
- 	return err;
- }
- 
--static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
-+static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
- 					    unsigned long dst_start,
- 					    unsigned long src_start,
- 					    unsigned long len,
--					    atomic_t *mmap_changing,
- 					    uffd_flags_t flags)
- {
-+	struct mm_struct *dst_mm = ctx->mm;
- 	struct vm_area_struct *dst_vma;
- 	ssize_t err;
- 	pmd_t *dst_pmd;
-@@ -600,8 +604,9 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
- 	 * operation (e.g. mremap) running in parallel, bail out and
- 	 * request the user to retry later
- 	 */
-+	down_read(&ctx->map_changing_lock);
- 	err = -EAGAIN;
--	if (mmap_changing && atomic_read(mmap_changing))
-+	if (atomic_read(&ctx->mmap_changing))
- 		goto out_unlock;
+ static __always_inline ssize_t mfill_atomic_pte(pmd_t *dst_pmd,
+@@ -581,6 +610,7 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
+ 	unsigned long src_addr, dst_addr;
+ 	long copied;
+ 	struct folio *folio;
++	bool mmap_locked = false;
  
  	/*
-@@ -633,8 +638,8 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
+ 	 * Sanitize the command parameters:
+@@ -597,7 +627,14 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
+ 	copied = 0;
+ 	folio = NULL;
+ retry:
+-	mmap_read_lock(dst_mm);
++	/*
++	 * Make sure the vma is not shared, that the dst range is
++	 * both valid and fully within a single existing vma.
++	 */
++	err = -ENOENT;
++	dst_vma = find_and_pin_dst_vma(dst_mm, dst_start, len, &mmap_locked);
++	if (!dst_vma)
++		goto out;
+ 
+ 	/*
+ 	 * If memory mappings are changing because of non-cooperative
+@@ -609,15 +646,6 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
+ 	if (atomic_read(&ctx->mmap_changing))
+ 		goto out_unlock;
+ 
+-	/*
+-	 * Make sure the vma is not shared, that the dst range is
+-	 * both valid and fully within a single existing vma.
+-	 */
+-	err = -ENOENT;
+-	dst_vma = find_dst_vma(dst_mm, dst_start, len);
+-	if (!dst_vma)
+-		goto out_unlock;
+-
+ 	err = -EINVAL;
+ 	/*
+ 	 * shmem_zero_setup is invoked in mmap for MAP_ANONYMOUS|MAP_SHARED but
+@@ -638,8 +666,8 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
  	 * If this is a HUGETLB vma, pass off to appropriate routine
  	 */
  	if (is_vm_hugetlb_page(dst_vma))
--		return  mfill_atomic_hugetlb(dst_vma, dst_start, src_start,
--					     len, mmap_changing, flags);
-+		return  mfill_atomic_hugetlb(ctx, dst_vma, dst_start,
-+					     src_start, len, flags);
+-		return  mfill_atomic_hugetlb(ctx, dst_vma, dst_start,
+-					     src_start, len, flags);
++		return  mfill_atomic_hugetlb(ctx, dst_vma, dst_start, src_start
++					     len, flags, &mmap_locked);
  
  	if (!vma_is_anonymous(dst_vma) && !vma_is_shmem(dst_vma))
  		goto out_unlock;
-@@ -693,6 +698,7 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
- 		if (unlikely(err == -ENOENT)) {
+@@ -699,7 +727,8 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
  			void *kaddr;
  
-+			up_read(&ctx->map_changing_lock);
- 			mmap_read_unlock(dst_mm);
+ 			up_read(&ctx->map_changing_lock);
+-			mmap_read_unlock(dst_mm);
++			unpin_vma(dst_mm, dst_vma, &mmap_locked);
++
  			BUG_ON(!folio);
  
-@@ -723,6 +729,7 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
- 	}
+ 			kaddr = kmap_local_folio(folio, 0);
+@@ -730,7 +759,7 @@ static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
  
  out_unlock:
-+	up_read(&ctx->map_changing_lock);
- 	mmap_read_unlock(dst_mm);
+ 	up_read(&ctx->map_changing_lock);
+-	mmap_read_unlock(dst_mm);
++	unpin_vma(dst_mm, dst_vma, &mmap_locked);
  out:
  	if (folio)
-@@ -733,34 +740,33 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
- 	return copied ? copied : err;
- }
- 
--ssize_t mfill_atomic_copy(struct mm_struct *dst_mm, unsigned long dst_start,
-+ssize_t mfill_atomic_copy(struct userfaultfd_ctx *ctx, unsigned long dst_start,
- 			  unsigned long src_start, unsigned long len,
--			  atomic_t *mmap_changing, uffd_flags_t flags)
-+			  uffd_flags_t flags)
+ 		folio_put(folio);
+@@ -1285,8 +1314,6 @@ static int validate_move_areas(struct userfaultfd_ctx *ctx,
+  * @len: length of the virtual memory range
+  * @mode: flags from uffdio_move.mode
+  *
+- * Must be called with mmap_lock held for read.
+- *
+  * move_pages() remaps arbitrary anonymous pages atomically in zero
+  * copy. It only works on non shared anonymous pages because those can
+  * be relocated without generating non linear anon_vmas in the rmap
+@@ -1353,15 +1380,16 @@ static int validate_move_areas(struct userfaultfd_ctx *ctx,
+  * could be obtained. This is the only additional complexity added to
+  * the rmap code to provide this anonymous page remapping functionality.
+  */
+-ssize_t move_pages(struct userfaultfd_ctx *ctx, struct mm_struct *mm,
+-		   unsigned long dst_start, unsigned long src_start,
+-		   unsigned long len, __u64 mode)
++ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
++		   unsigned long src_start, unsigned long len, __u64 mode)
  {
--	return mfill_atomic(dst_mm, dst_start, src_start, len, mmap_changing,
-+	return mfill_atomic(ctx, dst_start, src_start, len,
- 			    uffd_flags_set_mode(flags, MFILL_ATOMIC_COPY));
- }
++	struct mm_struct *mm = ctx->mm;
+ 	struct vm_area_struct *src_vma, *dst_vma;
+ 	unsigned long src_addr, dst_addr;
+ 	pmd_t *src_pmd, *dst_pmd;
+ 	long err = -EINVAL;
+ 	ssize_t moved = 0;
++	bool mmap_locked = false;
  
--ssize_t mfill_atomic_zeropage(struct mm_struct *dst_mm, unsigned long start,
--			      unsigned long len, atomic_t *mmap_changing)
-+ssize_t mfill_atomic_zeropage(struct userfaultfd_ctx *ctx,
-+			      unsigned long start,
-+			      unsigned long len)
- {
--	return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
-+	return mfill_atomic(ctx, start, 0, len,
- 			    uffd_flags_set_mode(0, MFILL_ATOMIC_ZEROPAGE));
- }
+ 	/* Sanitize the command parameters. */
+ 	if (WARN_ON_ONCE(src_start & ~PAGE_MASK) ||
+@@ -1374,28 +1402,52 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, struct mm_struct *mm,
+ 	    WARN_ON_ONCE(dst_start + len <= dst_start))
+ 		goto out;
  
--ssize_t mfill_atomic_continue(struct mm_struct *dst_mm, unsigned long start,
--			      unsigned long len, atomic_t *mmap_changing,
--			      uffd_flags_t flags)
-+ssize_t mfill_atomic_continue(struct userfaultfd_ctx *ctx, unsigned long start,
-+			      unsigned long len, uffd_flags_t flags)
- {
--	return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
-+	return mfill_atomic(ctx, start, 0, len,
- 			    uffd_flags_set_mode(flags, MFILL_ATOMIC_CONTINUE));
- }
- 
--ssize_t mfill_atomic_poison(struct mm_struct *dst_mm, unsigned long start,
--			    unsigned long len, atomic_t *mmap_changing,
--			    uffd_flags_t flags)
-+ssize_t mfill_atomic_poison(struct userfaultfd_ctx *ctx, unsigned long start,
-+			    unsigned long len, uffd_flags_t flags)
- {
--	return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
-+	return mfill_atomic(ctx, start, 0, len,
- 			    uffd_flags_set_mode(flags, MFILL_ATOMIC_POISON));
- }
- 
-@@ -793,10 +799,10 @@ long uffd_wp_range(struct vm_area_struct *dst_vma,
- 	return ret;
- }
- 
--int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
--			unsigned long len, bool enable_wp,
--			atomic_t *mmap_changing)
-+int mwriteprotect_range(struct userfaultfd_ctx *ctx, unsigned long start,
-+			unsigned long len, bool enable_wp)
- {
-+	struct mm_struct *dst_mm = ctx->mm;
- 	unsigned long end = start + len;
- 	unsigned long _start, _end;
- 	struct vm_area_struct *dst_vma;
-@@ -820,8 +826,9 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
- 	 * operation (e.g. mremap) running in parallel, bail out and
- 	 * request the user to retry later
- 	 */
++	dst_vma = NULL;
++	src_vma = lock_vma_under_rcu(mm, src_start);
++	if (src_vma) {
++		dst_vma = lock_vma_under_rcu(mm, dst_start);
++		if (!dst_vma)
++			vma_end_read(src_vma);
++	}
++
++	/* If we failed to lock both VMAs, fall back to mmap_lock */
++	if (!dst_vma) {
++		mmap_read_lock(mm);
++		mmap_locked = true;
++		src_vma = find_vma(mm, src_start);
++		if (!src_vma)
++			goto out_unlock_mmap;
++		dst_vma = find_vma(mm, dst_start);
++		if (!dst_vma)
++			goto out_unlock_mmap;
++	}
++
++	/* Re-check after taking map_changing_lock */
 +	down_read(&ctx->map_changing_lock);
- 	err = -EAGAIN;
--	if (mmap_changing && atomic_read(mmap_changing))
-+	if (atomic_read(&ctx->mmap_changing))
- 		goto out_unlock;
++	if (likely(atomic_read(&ctx->mmap_changing))) {
++		err = -EAGAIN;
++		goto out_unlock;
++	}
+ 	/*
+ 	 * Make sure the vma is not shared, that the src and dst remap
+ 	 * ranges are both valid and fully within a single existing
+ 	 * vma.
+ 	 */
+-	src_vma = find_vma(mm, src_start);
+-	if (!src_vma || (src_vma->vm_flags & VM_SHARED))
+-		goto out;
++	if (src_vma->vm_flags & VM_SHARED)
++		goto out_unlock;
+ 	if (src_start < src_vma->vm_start ||
+ 	    src_start + len > src_vma->vm_end)
+-		goto out;
++		goto out_unlock;
  
- 	err = -ENOENT;
-@@ -850,6 +857,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
- 		err = 0;
+-	dst_vma = find_vma(mm, dst_start);
+-	if (!dst_vma || (dst_vma->vm_flags & VM_SHARED))
+-		goto out;
++	if (dst_vma->vm_flags & VM_SHARED)
++		goto out_unlock;
+ 	if (dst_start < dst_vma->vm_start ||
+ 	    dst_start + len > dst_vma->vm_end)
+-		goto out;
++		goto out_unlock;
+ 
+ 	err = validate_move_areas(ctx, src_vma, dst_vma);
+ 	if (err)
+-		goto out;
++		goto out_unlock;
+ 
+ 	for (src_addr = src_start, dst_addr = dst_start;
+ 	     src_addr < src_start + len;) {
+@@ -1512,6 +1564,15 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, struct mm_struct *mm,
+ 		moved += step_size;
  	}
- out_unlock:
+ 
++out_unlock:
 +	up_read(&ctx->map_changing_lock);
- 	mmap_read_unlock(dst_mm);
- 	return err;
- }
++out_unlock_mmap:
++	if (mmap_locked)
++		mmap_read_unlock(mm);
++	else {
++		vma_end_read(dst_vma);
++		vma_end_read(src_vma);
++	}
+ out:
+ 	VM_WARN_ON(moved < 0);
+ 	VM_WARN_ON(err > 0);
 -- 
 2.43.0.429.g432eaa2c6b-goog
 
