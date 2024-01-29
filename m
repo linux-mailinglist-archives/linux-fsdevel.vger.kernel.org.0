@@ -1,129 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-9399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C33840AA3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 16:55:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 792DE840AA8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 16:57:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1A691F22BE2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 15:55:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F7CE281B13
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 15:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A2C6155A2B;
-	Mon, 29 Jan 2024 15:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="PFMK+OgK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C541552E9;
+	Mon, 29 Jan 2024 15:57:18 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876C4155304
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 15:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F77154BEE
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 15:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706543728; cv=none; b=mkqCuGm+zHcMw/SHaV+cAXwrevHzH6Wr3ZeX72UQDYY1Sp/lCBV9w/ag0xkjQwau4Nd/H/lahr/OYr8/E04uSpKgYXGnzSIXBAJ7xAup95d/7oGjKZqKe+lsPyM5Flj5LP/sVomrNCO9udSlJtkbPlV6ayKMdMj3+9jhB/D9KLI=
+	t=1706543838; cv=none; b=l6q966NXtJBE7K2aWv53x4Noz66Fdlf42K2pTUZH2Pz9sZvZY77dIpmJRYEYE1kN0iqFVfdZnKcpmYrvgCyx/R7jEp5X5wmTrLZKrqet+7BTIOFbGjrcotrBCE9821qaTYjM6vKsklOVIHJtY07YJUsnKQAGOhVkP4wmQfeTMVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706543728; c=relaxed/simple;
-	bh=tI5LA+MUq9JhjZhLhabItOUMnv5mSDCLQ3Xz8jFIF/M=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=hdRoJ9kbUgBqQN4w2uKUwkk6CZSib/Tpjg2L6HxcqHqSHkY7RJsFLmWgcudAwjZTK2EA7/mqeRvpLoqt/n1e/dYx6Jn/C2bbt04brvky94fDCwuFXB+T189zK4gspt3G8kBUFYxrfwiuLxzJkgMx4xv/M3RCVF74H/Ga8aWuHFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=PFMK+OgK; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com [209.85.218.70])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id EB4A43F17F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 15:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1706543721;
-	bh=jk0E+s0/Zi+TYR36QC+b5NfI3JWS1PpST8+F2bmxeZM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type;
-	b=PFMK+OgKk8GixCQ4Qmy+8MauVn/10B/HP1W96VFAJRdT0rGEqCvpZvqTfMl9CPS/L
-	 TBSWQO/Fk22g0fS0pLkM7jeJhxT8d7+6nSXxj71gb365kxX9uTGsE1Jn3kBFBzT16H
-	 V5Ns1ue0agPdk8fxlyM5zjbD6BUde/bn8q6ShMCDfNX30PHYv1IPhmUkM0kB5UZ97Z
-	 pdfpKrFqp2ltYKcFef6FGjRizhq+U6VH1KTUpS4+8HEWjRHGBVMzQl5GdUlTGnuRym
-	 AkF81DyqKnRIzmH3sAfZgpdPAFddNJN/cPxkmvDj/wP2/Dyc02rzbLbr96z5wA2zgi
-	 +imxxu3zNXnsQ==
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a2b047e8f9fso175661566b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 07:55:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706543720; x=1707148520;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jk0E+s0/Zi+TYR36QC+b5NfI3JWS1PpST8+F2bmxeZM=;
-        b=rmM7M5Gpw9KQCnNnevdy5tnCVsdHqCwAzdbWaT75Chnz1X/b1pYPpgUxnrwE9zF8WS
-         tOMwrR173YcCz6d8+C+GTF+44d3Np5fHaEKiuHj8YbqGyVIGS/7JG47O+H5ZNgNyMuL9
-         HYLqXhd1mslEDHIfadbgre4P1+HhI6UHgeSHm1qAPAVPXIi15c+tbXqFbk3xFIlpRB7L
-         p0dW6S+B/p7YfymTQz5/O02i6ksq+qsdEEQNyGR+A8R4D0IkcZmeBquuN1RzZzDDJHlU
-         8tguoVvpzvb/AbWO0umwl6oflAAGJyMZMEDpqQpGpBdcfU19Z/tXzD+luD4wBmi5NEQi
-         mxyg==
-X-Gm-Message-State: AOJu0YzoN4Wa0C9bQuIGXCpDoaAsd3HuMIiUDHjqSYLqdhzjHhYDP6J1
-	Tq1vrJnN1F91deMBHo+KGMloQ6QCDcFAZAl7A7dCfySGzrQC5nxVR4J805nvounlvKCVNtNMZ3X
-	B8ep4NNC5Kp/zZTLwUt4mcQqI79ljrfU+0VAbTIVNgnco2Fd0vBnuVeTQKEMMDnbvAju8D1MA2r
-	3H5Pw=
-X-Received: by 2002:a17:906:e5b:b0:a35:c8ce:ca0f with SMTP id q27-20020a1709060e5b00b00a35c8ceca0fmr1565472eji.24.1706543720713;
-        Mon, 29 Jan 2024 07:55:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFLfUtsCr2johKWGnRfhgTv4nloHpGOJIu76RsF83V1uO0cs/AkByjmexnmxpRwJcl5s/ioXw==
-X-Received: by 2002:a17:906:e5b:b0:a35:c8ce:ca0f with SMTP id q27-20020a1709060e5b00b00a35c8ceca0fmr1565458eji.24.1706543720400;
-        Mon, 29 Jan 2024 07:55:20 -0800 (PST)
-Received: from amikhalitsyn ([91.64.72.41])
-        by smtp.gmail.com with ESMTPSA id dq5-20020a170907734500b00a26f1f36708sm4052159ejc.78.2024.01.29.07.55.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jan 2024 07:55:20 -0800 (PST)
-Date: Mon, 29 Jan 2024 16:55:19 +0100
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+	s=arc-20240116; t=1706543838; c=relaxed/simple;
+	bh=P5BJJHYP04vZ0v4XwFwSxRMwPfvyzhMqoNXjpxG219s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GjF9hMLeulHKCdk7jYyBiojFM1mdilTdeaR1k7iQGb1UGx02BIPleVkv5+fz7b2Vp816vV/fEFFMtXDqqXitPOJKEvSo+e4nV+fY5k/YuSmaNOwm6YSs3BMTr5tVHfDUJGV8Xrl2xzGxeRZkEp1i6miPVeAnS8tX+IqFiUeBUw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04A73C433C7;
+	Mon, 29 Jan 2024 15:57:16 +0000 (UTC)
+Date: Mon, 29 Jan 2024 10:57:26 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
 To: Christian Brauner <brauner@kernel.org>
-Cc: mszeredi@redhat.com, stgraber@stgraber.org,
- linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, Miklos
- Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, Bernd
- Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 7/9] fs/fuse: drop idmap argument from __fuse_get_acl
-Message-Id: <20240129165519.06d348cfef475bd6a7b0b073@canonical.com>
-In-Reply-To: <20240120-bersten-anarchie-3b0f4dc63b26@brauner>
-References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
-	<20240108120824.122178-8-aleksandr.mikhalitsyn@canonical.com>
-	<20240120-bersten-anarchie-3b0f4dc63b26@brauner>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Matthew Wilcox
+ <willy@infradead.org>, James Bottomley
+ <James.Bottomley@hansenpartnership.com>, Amir Goldstein
+ <amir73il@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [LSF/MM TOPIC] Making pseudo file systems inodes/dentries more
+ like normal file systems
+Message-ID: <20240129105726.2c2f77f0@gandalf.local.home>
+In-Reply-To: <20240129-umrechnen-kaiman-cb591bc22fc5@brauner>
+References: <2024012528-caviar-gumming-a14b@gregkh>
+	<20240125214007.67d45fcf@rorschach.local.home>
+	<2024012634-rotten-conjoined-0a98@gregkh>
+	<20240126101553.7c22b054@gandalf.local.home>
+	<2024012600-dose-happiest-f57d@gregkh>
+	<20240126114451.17be7e15@gandalf.local.home>
+	<CAOQ4uxjRxp4eGJtuvV90J4CWdEftusiQDPb5rFoBC-Ri7Nr8BA@mail.gmail.com>
+	<d661e4a68a799d8ae85f0eab67b1074bfde6a87b.camel@HansenPartnership.com>
+	<ZbVGLXu4DuomEvJH@casper.infradead.org>
+	<CAHk-=whXg6zAHWZ7f+CdOg5GOMffR3RSDVyvORTZhipxp5iAFQ@mail.gmail.com>
+	<20240129-umrechnen-kaiman-cb591bc22fc5@brauner>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sat, 20 Jan 2024 16:24:55 +0100
+On Mon, 29 Jan 2024 16:08:33 +0100
 Christian Brauner <brauner@kernel.org> wrote:
 
-> On Mon, Jan 08, 2024 at 01:08:22PM +0100, Alexander Mikhalitsyn wrote:
-> > We don't need to have idmap in the __fuse_get_acl as we don't
-> > have any use for it.
+> > But no. You should *not* look at a virtual filesystem as a guide how
+> > to write a filesystem, or how to use the VFS. Look at a real FS. A
+> > simple one, and preferably one that is built from the ground up to
+> > look like a POSIX one, so that you don't end up getting confused by
+> > all the nasty hacks to make it all look ok.
 > > 
-> > In the current POSIX ACL implementation, idmapped mounts are
-> > taken into account on the userspace/kernel border
-> > (see vfs_set_acl_idmapped_mnt() and vfs_posix_acl_to_xattr()).
+> > IOW, while FAT is a simple filesystem, don't look at that one, just
+> > because then you end up with all the complications that come from
+> > decades of non-UNIX filesystem history.
 > > 
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Seth Forshee <sforshee@kernel.org>
-> > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > Cc: Amir Goldstein <amir73il@gmail.com>
-> > Cc: Bernd Schubert <bschubert@ddn.com>
-> > Cc: <linux-fsdevel@vger.kernel.org>
-> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-> > ---
+> > I'd say "look at minix or sysv filesystems", except those may be
+> > simple but they also end up being so legacy that they aren't good
+> > examples. You shouldn't use buffer-heads for anything new. But they
+> > are still probably good examples for one thing: if you want to
+> > understand the real power of dentries, look at either of the minix or
+> > sysv 'namei.c' files. Just *look* at how simple they are. Ignore the
+> > internal implementation of how a directory entry is then looked up on
+> > disk - because that's obviously filesystem-specific - and instead just
+> > look at the interface.  
 > 
-> Ah, that probably became obsolete when I did the VFS POSIX ACL api.
+> I agree and I have to say I'm getting annoyed with this thread.
+> 
+> And I want to fundamentally oppose the notion that it's too difficult to
+> write a virtual filesystem. Just one look at how many virtual
 
-Precisely ;-)
+I guess you mean pseudo file systems? Somewhere along the discussion we
+switched from saying pseudo to virtual. I may have been the culprit, I
+don't remember and I'm not re-reading the thread to find out.
 
-> Thanks,
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
+> filesystems we already have and how many are proposed. Recent example is
+> that KVM wanted to implement restricted memory as a stacking layer on
+> top of tmpfs which I luckily caught early and told them not to do.
+> 
+> If at all a surprising amount of people that have nothing to do with
+> filesystems manage to write filesystem drivers quickly and propose them
+> upstream. And I hope people take a couple of months to write a decently
+> sized/complex (virtual) filesystem.
+
+I spent a lot of time on this. Let me give you a bit of history of where
+tracefs/eventfs came from.
+
+When we first started the tracing infrastructure, I wanted it to be easy to
+debug embedded devices. I use to have my own tracer called "logdev" which
+was a character device in /dev called /dev/logdev. I was able to write into
+it for simple control actions.
+
+But we needed a more complex system when we started integrating the
+PREEMPT_RT latency tracer which eventually became the ftrace infrastructure.
+
+As I wanted to still only need busybox to interact with it, I wanted to use
+files and not system calls. I was recommended to use debugfs, and I did. It
+became /sys/kernel/debug/tracing.
+
+After a while, when tracing started to become useful in production systems,
+people wanted access to tracing without having to have debugfs mounted.
+That's because debugfs is a dumping ground to a lot of interactions with
+the kernel, and people were legitimately worried about security
+vulnerabilities it could expose.
+
+I then asked about how to make /sys/kernel/debug/tracing its own file
+system and was recommended to just start with debugfs (it's the easiest
+concept of all the files systems to understand) and since tracing was
+already used the debugfs API (with dentries as the handle) it made sense.
+
+That created tracefs. Now you could mount tracefs at /sys/kernel/tracing
+and even have debugfs configured out.
+
+When the eBPF folks were using trace_printk directly into the main trace
+buffer, I asked them to please use an instance instead. They told me that
+an instance adds too much memory overhead. Over 20MBs! When I investigated,
+I found that they were right. And most of that overhead was all the dentry
+and inodes that were created for every directory and file that was used for
+events. As there's 10s of thousands of files and directories that adds up.
+And if you create a new instance, you create another 10s of thousands of
+files and directories that are basically all the same.
+
+This lead to the effort to create eventfs that would remove the overhead of
+these inodes and dentries with just a light weight descriptor for every
+directory. As there's just around 2000 directories, its the files that take
+up most of the memory.
+
+What got us here is the evolution of changes that were made. Now you can
+argue that when tracefs was first moved out of debugfs I should have based
+it on kernfs. I actually did look at that, but because it behaved so much
+differently than debugfs (which was the only thing in VFS that I was
+familiar with), I chose debugfs instead.
+
+The biggest savings in eventfs is the fact that it has no meta data for
+files. All the directories in eventfs has a fixed number of files when they
+are created. The creating of a directory passes in an array that has a list
+of names and callbacks to call when the file needs to be accessed. Note,
+this array is static for all events. That is, there's one array for all
+event files, and one array for all event systems, they are not allocated per
+directory.
 
 
+> 
+> And specifically for virtual filesystems they often aren't alike at
+> all. And that's got nothing to do with the VFS abstractions. It's
+> simply because a virtual filesystem is often used for purposes when
+> developers think that they want a filesystem like userspace interface
+> but don't want all of the actual filesystem semantics that come with it.
+> So they all differ from each other and what functionality they actually
+> implement.
+
+I agree with the above.
+
+> 
+> And I somewhat oppose the notion that the VFS isn't documented. We do
+> have extensive documentation for locking rules, a constantly updated
+> changelog with fundamental changes to all VFS APIs and expectations
+> around it. Including very intricate details for the reader that really
+> needs to know everything. I wrote a whole document just on permission
+> checking and idmappings when we added that to the VFS. Both
+> implementation and theoretical background. 
+
+I spent a lot of time reading the VFS documentation. The problem I had was
+that it's very much focused for its main purpose. That is for real file
+systems. It was hard to know what would apply to a pseudo file system and
+what would not.
+
+So I don't want to say that VFS isn't well documented. I would say that VFS
+is a very big beast, and there's documentation that is focused on what the
+majority want to do with it.
+
+It's us outliers (pseudo file systems) that are screwing this up. And when
+you come from an approach of "I just want an file systems like interface"
+you really just want to know the bare minimum of VFS to get that done.
+
+I've been approach countless of times by the embedded community (including
+those that worked on the Mars helicopter) thanking me for having such a
+nice file system like interface into tracing.
+
+-- Steve
 
