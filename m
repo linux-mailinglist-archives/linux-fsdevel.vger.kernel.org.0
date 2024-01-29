@@ -1,103 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-9423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF3784110C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 18:44:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8723284117B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 19:00:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E27311F2357C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 17:44:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E58F1F250B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 18:00:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524363F9E1;
-	Mon, 29 Jan 2024 17:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BB56F06D;
+	Mon, 29 Jan 2024 18:00:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="vkjmQazW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F48D3F9D2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 17:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935493F9CF
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 18:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706550162; cv=none; b=gaHy9wweuRVP1gZ0OtumXi4a+6fh5Thw8YacKg74IgN6gJRIsQ+vmRZMqMOaQ1zceRqPpSpP1PoSBYHPayLuuOf5r12P8hgd5G+xdz3zUt0jtTN0UPxlxs48Bf8SSsoiGtjDBsl5FosEevBnAw4Dx98knXSuC+6JLmVJC2OAXaQ=
+	t=1706551241; cv=none; b=m7JClWUJig2EaCzVfxBVg6fmAtRUzqgg9iocCSgF7oFkZihlnI55cUxxXoKVSX+YyXkCYqmkEfdK551II3N9tAW4vtQw2R7vW84Sr65zR2WpfaYpMmHphcsGDFaSC2imd+ilKupia7+mrJ3yvNaotijtrVeooYP3MkAHg4GJoxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706550162; c=relaxed/simple;
-	bh=TosvVxwquqInZxOX0CZp6UFQe750GXHzXLT2bzJ8KRk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DE9zLZ/Z8DQXvJ5qUbMqChalEKlZVp2VBl95iHYm+Uo1LnEyC3zXEEwGKVvC8TMGR8BXov3HiY2qfdMpmjkWrXBwO4/PHpi0HksRsRmwyl4KCcXKmfgMiQmQsGZ86Rd+TecXfkpy0945e8pts2C7IOhYJP6Y4lCP5qW+ZTZhIGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=redhat.com; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-680b1335af6so37434026d6.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 09:42:41 -0800 (PST)
+	s=arc-20240116; t=1706551241; c=relaxed/simple;
+	bh=8dnqni1i0A26L48rcT03UdEc1rRuCmcmNOl+uBBBp6I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KSBzh21PkZ5aiWFzcZ37iTwn+I7ZlARfkt9oGK3t4yiD0dL84/wwxxcIUVnM1thmdvneTTL7nTnd3T/kbpRYcu1E3Maxsv/KHF891aV1gq5SeA5uGeD57whnhhz4OTKJ0I17sOGhSIGihFy0ZQA2RHeXglN/y8Ol7XB7f1R1LCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=vkjmQazW; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id CCD933FD96
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 18:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1706551234;
+	bh=8ZF26zqFi961N4xCf2xSg7p646IkBT56MWEZW1L3RH8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version;
+	b=vkjmQazWWUJYggLxKHbM+XdlRtX0ednAjiEoklZTYzFafamXJyWDxaDOe02oAjnQV
+	 8+MoGv3k1lWSbl+RlANJxx/LRhXbFgAgNIOsEwMmHGzIQoNxTlCoE8vC2GKmPcOASX
+	 79JFKCn4IFyZ4RGMtE+orKlNusdno04NBVWEDUL9ZsGEGnZTzw3AzgYpjgqwM9UJGR
+	 uNKg+krc11Q3U3Yj5yqb9oIzDZ6y+smwhgi4oq62Sdf734mcExiyKX6iDsgDM56sww
+	 eJbNPC11gONMgLWTxRJqcnlDOtr4tzA8DPhOjbdBN3CJQmY6MYUOfEOafGBuUXQE+c
+	 ksg0Qm3vtcRrw==
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a3158fbb375so154929066b.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 10:00:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706550160; x=1707154960;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bGSfs+oLah5p8atiIFDkPtIIBxDhbFoFkuAT3N8FnRs=;
-        b=CtLum7EeMfszqt8N4yjDimTxOt2uInG7n8XA9l1R+E2w4Wso6Tt4rIZjkBTNO+XPKy
-         FFdilJzQcSbb1IBOSuZLgxtn3E6ySdi7t0bbq5phVX89DE3w45Wj+pimI4iykv9YTNhU
-         qbSeH4Owyx3Rr5pzptksfgTVM7yhh5yda9B6TCWbXLSseU3nGmWXAI5MFNHn/Hogm8S3
-         /4OAnwvzJMUQHfrWbaucAzrROg1QaJ2QbEZI7ScG+V4MP5T4RIQE1UHXLZFxsAE0q8PF
-         ME/WhumBOwYZtdgysWUCC8nyxRpGo2SK8iI+PuE9vPGblGWihukJweEk32htEIxpRRNu
-         WNRw==
-X-Gm-Message-State: AOJu0YxNjZiQRtEZFh72/o/vvgLDcZRUdW9Ie94JHtxshugDVcRjaAAB
-	D3paNhTKbtujSJ5mL4ZssiZ4675HUu+30iL8KE2Xz6a7izrmT5LmbGLj/OcA9A==
-X-Google-Smtp-Source: AGHT+IGROYSRd+aTFKXf01w8ewa6J639byauVRJVy14CUWOtG5LUP0MzE9zts2MzsVEEracFsaYmiQ==
-X-Received: by 2002:a05:6214:4008:b0:67f:26c9:ffdb with SMTP id kd8-20020a056214400800b0067f26c9ffdbmr6347580qvb.22.1706550160222;
-        Mon, 29 Jan 2024 09:42:40 -0800 (PST)
-Received: from localhost (pool-68-160-141-91.bstnma.fios.verizon.net. [68.160.141.91])
-        by smtp.gmail.com with ESMTPSA id s17-20020ad44b31000000b0068c523609e6sm777249qvw.20.2024.01.29.09.42.39
+        d=1e100.net; s=20230601; t=1706551233; x=1707156033;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8ZF26zqFi961N4xCf2xSg7p646IkBT56MWEZW1L3RH8=;
+        b=cyGMdRRF+GFchF6t6aW4RR3iPpeDBez14ovyuopazv2veh0Q7U6tIxA5rClRzydX1a
+         LroDxDXlmZa3dZghUnBDl5B0LhBesi6YlqUiyk5KfFFKKO5M2jX2DP85xuwwqg+3kibC
+         02o7yBL1ZW5Du7X2js6ubOcgZlYXb840vOEPEbss3rCFhhqXTZLodEF3IgjzFUdzDkDG
+         3eUMhb/mzUaB7bAfveQBeBCA/XnaB4HUkfP8tAhCeGKwxUM6bmJG0TxwdUGvf+kO1MHA
+         nfq5dCCwxuGjyBQPDbTDb4VnJPedN34xXWwL+mCEZ7+kcb6GZYy1RCAC5Xywg6A1DOAq
+         gN3A==
+X-Gm-Message-State: AOJu0YztgfzYjtVq0w+9ubWboRalG37Gtt3+W11zYd0C83AIv23FM0JN
+	OV7CG8qqCfP+w8nQIMOfeIKk1NQy3Uhq5o8VZlsADZkvCSZFrBOmxLyrFhznlq8QifeJzXCEAgh
+	qXGhgGsK6OP7KtmmzzjfC7neMGe5YsYdmIcygPmf3AI/S8hRX3NZ/fHvxhix7xP+okVdyE2wo6g
+	GAllFn43XrftU=
+X-Received: by 2002:a17:906:560e:b0:a35:3ce3:c48c with SMTP id f14-20020a170906560e00b00a353ce3c48cmr4621179ejq.23.1706551233346;
+        Mon, 29 Jan 2024 10:00:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF6WK2Tup3/s17NUfjas7PhWpttkvWLK15SZRHVDXcx0AkLhE1oarw2KV1uiJddN93c+MQByw==
+X-Received: by 2002:a17:906:560e:b0:a35:3ce3:c48c with SMTP id f14-20020a170906560e00b00a353ce3c48cmr4621173ejq.23.1706551233104;
+        Mon, 29 Jan 2024 10:00:33 -0800 (PST)
+Received: from localhost.localdomain ([91.64.72.41])
+        by smtp.gmail.com with ESMTPSA id un8-20020a170907cb8800b00a2fb9c0337esm4147500ejc.112.2024.01.29.10.00.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jan 2024 09:42:39 -0800 (PST)
-Date: Mon, 29 Jan 2024 12:42:38 -0500
-From: Mike Snitzer <snitzer@kernel.org>
-To: Ming Lei <ming.lei@redhat.com>, Dave Chinner <david@fromorbit.com>,
-	Matthew Wilcox <willy@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Don Dutile <ddutile@redhat.com>,
-	Raghavendra K T <raghavendra.kt@linux.vnet.ibm.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, linux-block@vger.kernel.org
-Subject: Re: [RFC PATCH] mm/readahead: readahead aggressively if read drops
- in willneed range
-Message-ID: <ZbfjjmlvPrbdKIjX@redhat.com>
-References: <ZbenbtEXY82N6tHt@casper.infradead.org>
- <Zbc0ZJceZPyt8m7q@dread.disaster.area>
- <20240128142522.1524741-1-ming.lei@redhat.com>
- <ZbfeBrKVMaeSwtYm@redhat.com>
+        Mon, 29 Jan 2024 10:00:32 -0800 (PST)
+From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+To: brauner@kernel.org
+Cc: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+	ntfs3@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ntfs3: use file_mnt_idmap helper
+Date: Mon, 29 Jan 2024 19:00:23 +0100
+Message-Id: <20240129180024.219766-1-aleksandr.mikhalitsyn@canonical.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZbfeBrKVMaeSwtYm@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 29 2024 at 12:19P -0500,
-Mike Snitzer <snitzer@kernel.org> wrote:
- 
-> While I'm sure this legacy application would love to not have to
-> change its code at all, I think we can all agree that we need to just
-> focus on how best to advise applications that have mixed workloads
-> accomplish efficient mmap+read of both sequential and random.
-> 
-> To that end, I heard Dave clearly suggest 2 things:
-> 
-> 1) update MADV/FADV_SEQUENTIAL to set file->f_ra.ra_pages to
->    bdi->io_pages, not bdi->ra_pages * 2
-> 
-> 2) Have the application first issue MADV_SEQUENTIAL to convey that for
->    the following MADV_WILLNEED is for sequential file load (so it is
->    desirable to use larger ra_pages)
-> 
-> This overrides the default of bdi->io_pages and _should_ provide the
-> required per-file duality of control for readahead, correct?
+Let's use file_mnt_idmap() as we do that across the tree.
 
-I meant "This overrides the default of bdi->ra_pages ..." ;)
+No functional impact.
+
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Cc: <ntfs3@lists.linux.dev>
+Cc: <linux-fsdevel@vger.kernel.org>
+Cc: <linux-kernel@vger.kernel.org>
+Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+---
+ fs/ntfs3/namei.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
+index ee3093be5170..144aa80cca43 100644
+--- a/fs/ntfs3/namei.c
++++ b/fs/ntfs3/namei.c
+@@ -419,7 +419,7 @@ static int ntfs_atomic_open(struct inode *dir, struct dentry *dentry,
+ 	 * fnd contains tree's path to insert to.
+ 	 * If fnd is not NULL then dir is locked.
+ 	 */
+-	inode = ntfs_create_inode(mnt_idmap(file->f_path.mnt), dir, dentry, uni,
++	inode = ntfs_create_inode(file_mnt_idmap(file), dir, dentry, uni,
+ 				  mode, 0, NULL, 0, fnd);
+ 	err = IS_ERR(inode) ? PTR_ERR(inode) :
+ 			      finish_open(file, dentry, ntfs_file_open);
+-- 
+2.34.1
+
 
