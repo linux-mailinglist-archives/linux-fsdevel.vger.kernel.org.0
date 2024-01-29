@@ -1,196 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-9288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CFDB83FCA8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 04:20:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B65A83FCE5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 04:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 044BAB21222
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 03:20:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 574472825F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 03:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EDBCFC0C;
-	Mon, 29 Jan 2024 03:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GRMqTOOW"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09FAD10979;
+	Mon, 29 Jan 2024 03:40:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3DDF9DA
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 03:20:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1D110A03;
+	Mon, 29 Jan 2024 03:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706498439; cv=none; b=TWIrctP16NwT3P1FGPhN4lvwA2Mxq/nFakJ1fq7AUp9bx7Ant0DTS9bfcJvudgF3t6gPC/C57jTov1xPMWxI21LIFYlNhwZ92TqdRVBQvX0v+e7adWhJvL6QeTAndpIk5rk5DC25zh+VZAg3HHrKEM8ROOI7IM550KJUYFU1LXc=
+	t=1706499657; cv=none; b=obUl0Z0cyL9+gKtq+aYIZhL+b0W7IUYLtXDyp7fzgf6H1zKYr/U2WSV7hLP5UV/ZQtG7QU1cIqvg3LYfcdBpqfujMiHsHE9F5OT8+z7dnfpe2vCc6fGlRWLE2xQrfesMfnmrsGZ7a6vFRUL/w+vyd82iNydC7fS5w5AcAeL3Eyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706498439; c=relaxed/simple;
-	bh=r/4Yclr74ahtXpXV+m5YFeBz0Y8jrHDZvJEmycRcYo8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PseovqUszBcjBnrrqL8PBAm+6ShcHIkfBijpQULr7k4uTnzKJPeqTaLa9rQVPQkewx/+YnW/eb7H3C76ygRpPFRefEBIpzqe5UUL7abbwHqGGU5QgU+wT0w0X/NKy6uqsPE8G9OjpPl3loyiQy36bSuGYJYUjgABpgMR44RMaLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GRMqTOOW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706498436;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7G+EdxBrZWtWfEsSXmLsfmBlcaKy+iy1nng6IU24Ic8=;
-	b=GRMqTOOWpvnv+3U6IX5KHA8yhaXPFJziuz4tlQNvx0QDGBCO0ThpYDhWYM7RrOp6xdIggG
-	mV9j9DMGWG9KTZpppHi8PZp7avvdXw6U2J9xiTk6qHcHsJNXnJ6jICftL3Cg1qD0uUoRhP
-	MnIL4GmpzyIOdsc7yVz/EvtqErZCCFE=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-163-n_431acuNtSus-asaD7sqQ-1; Sun,
- 28 Jan 2024 22:20:34 -0500
-X-MC-Unique: n_431acuNtSus-asaD7sqQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 212553C14942;
-	Mon, 29 Jan 2024 03:20:34 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.135])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id D6C94487;
-	Mon, 29 Jan 2024 03:20:28 +0000 (UTC)
-Date: Mon, 29 Jan 2024 11:20:24 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Mike Snitzer <snitzer@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, Don Dutile <ddutile@redhat.com>,
-	Raghavendra K T <raghavendra.kt@linux.vnet.ibm.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, ming.lei@redhat.com
-Subject: Re: [RFC PATCH] mm/readahead: readahead aggressively if read drops
- in willneed range
-Message-ID: <ZbcZeHHzzO7sPuYB@fedora>
-References: <20240128142522.1524741-1-ming.lei@redhat.com>
- <ZbbPCQZdazF7s0_b@casper.infradead.org>
- <ZbbfXVg9FpWRUVDn@redhat.com>
- <ZbbvfFxcVgkwbhFv@casper.infradead.org>
+	s=arc-20240116; t=1706499657; c=relaxed/simple;
+	bh=Oz2gMS5fifJ1NkkC+E9odJnrcDRFtlzSRsNITi9/COg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hfI3gusuSHOHzqOigOb8sEaVVXkCgM6e0nKLi67y6gc4FuqZemv92GpwbhYJjyZp8+5pAtgl46n8a1xoswh7zbBROeVOp76LStB4NFPru5zFyUclXalpotwl8lMkQjKwBYXl1reCQja2+1+VsEsoQv9PvFB9vwqUDPwIgyLQ/Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CF53C433C7;
+	Mon, 29 Jan 2024 03:40:56 +0000 (UTC)
+Date: Sun, 28 Jan 2024 22:40:54 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, LKML <linux-kernel@vger.kernel.org>,
+ Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Christian Brauner
+ <brauner@kernel.org>, Ajay Kaher <ajay.kaher@broadcom.com>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
+Message-ID: <20240128224054.0df489b8@rorschach.local.home>
+In-Reply-To: <20240128213249.605a7ade@rorschach.local.home>
+References: <20240126150209.367ff402@gandalf.local.home>
+	<CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
+	<20240126162626.31d90da9@gandalf.local.home>
+	<CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
+	<CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
+	<CAHk-=wj+DsZZ=2iTUkJ-Nojs9fjYMvPs1NuoM3yK7aTDtJfPYQ@mail.gmail.com>
+	<20240128175111.69f8b973@rorschach.local.home>
+	<CAHk-=wjHc48QSGWtgBekej7F+Ln3b0j1tStcqyEf3S-Pj_MHHw@mail.gmail.com>
+	<20240128185943.6920388b@rorschach.local.home>
+	<20240128192108.6875ecf4@rorschach.local.home>
+	<CAHk-=wg7tML8L+27j=7fh8Etk4Wvo0Ay3mS5U7JOTEGxjy1viA@mail.gmail.com>
+	<CAHk-=wjKagcAh5rHuNPMqp9hH18APjF4jW7LQ06pNQwZ1Qp0Eg@mail.gmail.com>
+	<20240128213249.605a7ade@rorschach.local.home>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZbbvfFxcVgkwbhFv@casper.infradead.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jan 29, 2024 at 12:21:16AM +0000, Matthew Wilcox wrote:
-> On Sun, Jan 28, 2024 at 06:12:29PM -0500, Mike Snitzer wrote:
-> > On Sun, Jan 28 2024 at  5:02P -0500,
-> > Matthew Wilcox <willy@infradead.org> wrote:
-> > 
-> > > On Sun, Jan 28, 2024 at 10:25:22PM +0800, Ming Lei wrote:
-> > > > Since commit 6d2be915e589 ("mm/readahead.c: fix readahead failure for
-> > > > memoryless NUMA nodes and limit readahead max_pages"), ADV_WILLNEED
-> > > > only tries to readahead 512 pages, and the remained part in the advised
-> > > > range fallback on normal readahead.
-> > > 
-> > > Does the MAINTAINERS file mean nothing any more?
-> > 
-> > "Ming, please use scripts/get_maintainer.pl when submitting patches."
-> 
-> That's an appropriate response to a new contributor, sure.  Ming has
-> been submitting patches since, what, 2008?  Surely they know how to
-> submit patches by now.
-> 
-> > I agree this patch's header could've worked harder to establish the
-> > problem that it fixes.  But I'll now take a crack at backfilling the
-> > regression report that motivated this patch be developed:
-> 
-> Thank you.
-> 
-> > Linux 3.14 was the last kernel to allow madvise (MADV_WILLNEED)
-> > allowed mmap'ing a file more optimally if read_ahead_kb < max_sectors_kb.
-> > 
-> > Ths regressed with commit 6d2be915e589 (so Linux 3.15) such that
-> > mounting XFS on a device with read_ahead_kb=64 and max_sectors_kb=1024
-> > and running this reproducer against a 2G file will take ~5x longer
-> > (depending on the system's capabilities), mmap_load_test.java follows:
-> > 
-> > import java.nio.ByteBuffer;
-> > import java.nio.ByteOrder;
-> > import java.io.RandomAccessFile;
-> > import java.nio.MappedByteBuffer;
-> > import java.nio.channels.FileChannel;
-> > import java.io.File;
-> > import java.io.FileNotFoundException;
-> > import java.io.IOException;
-> > 
-> > public class mmap_load_test {
-> > 
-> >         public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException {
-> > 		if (args.length == 0) {
-> > 			System.out.println("Please provide a file");
-> > 			System.exit(0);
-> > 		}
-> > 		FileChannel fc = new RandomAccessFile(new File(args[0]), "rw").getChannel();
-> > 		MappedByteBuffer mem = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-> > 
-> > 		System.out.println("Loading the file");
-> > 
-> > 		long startTime = System.currentTimeMillis();
-> > 		mem.load();
-> > 		long endTime = System.currentTimeMillis();
-> > 		System.out.println("Done! Loading took " + (endTime-startTime) + " ms");
-> > 		
-> > 	}
-> > }
-> 
-> It's good to have the original reproducer.  The unfortunate part is
-> that being at such a high level, it doesn't really show what syscalls
-> the library makes on behalf of the application.  I'll take your word
-> for it that it calls madvise(MADV_WILLNEED).  An strace might not go
-> amiss.
+On Sun, 28 Jan 2024 21:32:49 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-Yeah, it can be fadvise(WILLNEED)/readahead syscall too.
-
+>  # echo 'p:sched schedule' >> kprobe_events
+>  # ls events/kprobes
+> enable  filter  sched  timer
 > 
-> > reproduce with:
-> > 
-> > javac mmap_load_test.java
-> > echo 64 > /sys/block/sda/queue/read_ahead_kb
-> > echo 1024 > /sys/block/sda/queue/max_sectors_kb
-> > mkfs.xfs /dev/sda
-> > mount /dev/sda /mnt/test
-> > dd if=/dev/zero of=/mnt/test/2G_file bs=1024k count=2000
-> > 
-> > echo 3 > /proc/sys/vm/drop_caches
+>  # ls events/kprobes/sched/
+> ls: reading directory 'events/kprobes/sched/': Invalid argument
 > 
-> (I prefer to unmount/mount /mnt/test; it drops the cache for
-> /mnt/test/2G_file without affecting the rest of the system)
-> 
-> > java mmap_load_test /mnt/test/2G_file
-> > 
-> > Without a fix, like the patch Ming provided, iostat will show rareq-sz
-> > is 64 rather than ~1024.
-> 
-> Understood.  But ... the application is asking for as much readahead as
-> possible, and the sysadmin has said "Don't readahead more than 64kB at
-> a time".  So why will we not get a bug report in 1-15 years time saying
-> "I put a limit on readahead and the kernel is ignoring it"?  I think
-> typically we allow the sysadmin to override application requests,
-> don't we?
+> I have no access to the directory that was deleted and recreated.
 
-ra_pages is just one hint for readahead, the reality is that sysadmin
-can't understand how much bytes is perfect for readahead.
-
-But application often knows how much bytes it will need, so here
-I think application requirement should have higher priority, especially
-when application doesn't want kernel to readahead blindly.
-
-And madvise/fadvise(WILLNEED) syscall already reads bdi->io_pages
-first, and which is bigger than ra_pages.
+Ah, this was because the final iput() does dentry->d_fsdata = NULL, and
+in the lookup code I have:
 
 
-Thanks, 
-Ming
+	mutex_lock(&eventfs_mutex);
+	ei = READ_ONCE(ti->private);
+	if (ei && ei->is_freed)
+		ei = NULL;
+	mutex_unlock(&eventfs_mutex);
 
+	if (!ei) {
+		printk("HELLO no ei\n");
+		goto out;
+	}
+
+Where that printk() was triggering.
+
+So at least it's not calling back into the tracing code ;-)
+
+Interesting that it still did the lookup, even though it was already
+referenced.
+
+I'm still learning the internals of VFS.
+
+Anyway, after keeping the d_fsdata untouched (not going to NULL), just
+to see what would happen, I ran it again with KASAN and did trigger:
+
+[  106.255468] ==================================================================
+[  106.258400] BUG: KASAN: slab-use-after-free in tracing_open_file_tr+0x3a/0x120
+[  106.261228] Read of size 8 at addr ffff8881136f27b8 by task cat/868
+
+[  106.264506] CPU: 2 PID: 868 Comm: cat Not tainted 6.8.0-rc1-test-00008-gbee668990ac4-dirty #454
+[  106.267810] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[  106.271337] Call Trace:
+[  106.272406]  <TASK>
+[  106.273317]  dump_stack_lvl+0x5c/0xc0
+[  106.274750]  print_report+0xcf/0x670
+[  106.276173]  ? __virt_addr_valid+0x15a/0x330
+[  106.278807]  kasan_report+0xd8/0x110
+[  106.280172]  ? tracing_open_file_tr+0x3a/0x120
+[  106.281745]  ? tracing_open_file_tr+0x3a/0x120
+[  106.283343]  tracing_open_file_tr+0x3a/0x120
+[  106.284887]  do_dentry_open+0x3b7/0x950
+[  106.286284]  ? __pfx_tracing_open_file_tr+0x10/0x10
+[  106.287992]  path_openat+0xea8/0x11d0
+
+
+That was with just these commands:
+
+  cd /sys/kernel/tracing/
+  echo 'p:sched schedule' >> /sys/kernel/tracing/kprobe_events 
+  echo 'p:timer read_current_timer' >> kprobe_events 
+  ls events/kprobes/
+  cat events/kprobes/sched/enable
+  ls events/kprobes/sched
+  echo '-:sched schedule' >> /sys/kernel/tracing/kprobe_events 
+  ls events/kprobes/sched/enable
+  cat events/kprobes/sched/enable
+
+BTW, the ls after the deletion returned:
+
+ # ls events/kprobes/sched/enable
+ events/kprobes/sched/enable
+
+In a normal file system that would be equivalent to:
+
+ # mkdir events/kprobes/sched
+ # touch events/kprobes/sched/enable
+ # rm -rf events/kprobes/sched
+ # ls events/kprobes/sched/enable
+ events/kprobes/sched/enable
+
+-- Steve
 
