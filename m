@@ -1,153 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-9430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7E4F8412E2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 19:59:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1661841315
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 20:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 621C81F2385F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 18:59:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E4121C234ED
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 19:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4761A1EB42;
-	Mon, 29 Jan 2024 18:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C535C4C615;
+	Mon, 29 Jan 2024 19:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OsOLphgX"
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="rIkU6Ws2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC2328DDE
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 18:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D9F3399F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 19:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706554733; cv=none; b=kspD083r9ITP9ntraylrHzVm4iPATvSQCDFySHMVlOuTOKaC6PmLft0icyWtV10+55f34KI+aGVbEP624p6aHHxGP0YVNZEuwHcIn796pMgbVW1FFSMXrtH9lF09sJ0UlNPWDgYHRXpEvtypThhocAO6TAhz7ZV5wvY0YPyfWC0=
+	t=1706555370; cv=none; b=sBh5ZXMmZDDIZYypHuDr/4kixVuELZrzEWxdbV/nk7maOhRAruD8Rw+lMAWmP6oL6cQRz1IHLF/Q/zmbcbOPrS30RNe/7SaZINjHr1k4R35VP1YdxzJfytzt36bzrHsS7gCtOgJFxSqafs+3WdwcUPenmyhmEkEtI1bFpiHYQo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706554733; c=relaxed/simple;
-	bh=eKMFg7i7+7j+e8Iv0NW7ko6n3ZkbnwSwN9MN8KR3iQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QFoMDXTNVTlOoDgFul4qZNnx/ds6spV8dT6NpG2iMNZXuDR5H6wU24evS2VNkCFoasyQWTkFA1UqoyWI0qMM70VZ05PgQ19xxa4yzUraJiUJUd/5ZuNtrDjdxIX3MTRyhunSd/jVNGpGuFgANq8XO9RNdkmvukeXNk+RbpwwRyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OsOLphgX; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2d057003864so1147401fa.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 10:58:51 -0800 (PST)
+	s=arc-20240116; t=1706555370; c=relaxed/simple;
+	bh=511hvbc1Pbq2+EOuaGOVAprY+/qc4fIDXxmZ7B+0s2w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hl/2x/gGECoKw85SoCSMyN8cI5FiS05mOlWPGvenO8x8lBlkuE0cDoSD//hWUcEE4cbe9OvoftyU9FFJZ51UkV3uoaWiEOt8WfSsEPGPIrg7IXzwWpxrfIBnMNOvZsLk6yHiTQRW+ETkOcC9dbZWQtymrCu+poBnjhZcosXQhAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=rIkU6Ws2; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-6de24201aa6so887111b3a.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 11:09:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1706554729; x=1707159529; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lAIeftpjE3O3z+PB+PSTo+RPyGVLY9cTuEJCruuNk/w=;
-        b=OsOLphgXcvY9l4lR1zql4yODBK9CiHilNprHE23ita63pWGQxXOny/0C4QEPHkJL4w
-         7nHUPf1MNloA2saNS/w1AKU5vBU6rqBmubOBGGuKZeypMJSUr/HtqU08a+kxfahD/FFS
-         xA7TZouk9GaxShnH83jZhmiIqb7JOItvxa1KM=
+        d=fastly.com; s=google; t=1706555368; x=1707160168; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A+pfwsAR7dQEMZaUbmAmf7P3tGpaqey93GDUy/LCXUY=;
+        b=rIkU6Ws2QKHii+1VfbHJ2qXmJcqT+IfmpgjYD4xzI5MIRFiSvC+xRxCq3OP1SGpSgF
+         4TglgnOJTGktPRPsH8rsgF7lN7JIo5WrTDlJVg1OO4glT8goQETCjiwYdIofMJ5z+XVc
+         D3eVlvTYsLHUwtw4Ginkr08ZTdGu83VGHMZK4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706554729; x=1707159529;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lAIeftpjE3O3z+PB+PSTo+RPyGVLY9cTuEJCruuNk/w=;
-        b=YmOKMVQAvKJ9tAOrVrmDQ78M0jSNn7nhmXHjYS8Y9ySlagI2itmj1ONBLD2F3Mx9mh
-         xaI0fNtS8L0nms3LG0pUAhSHfXdDXG3LHh8q1DO/yfcGIWbInmLqotJcMHZwo8IhQMqj
-         XDVRbvirHhUTN00g62WjqME7gXFyQtfc84oRkeqSY0AOXzvSPK5iGxBL8SNZZhmo59pN
-         QzKA5QYYZW4cqrZpp0flE4bm5Qq8GLBHovAsPe9gYEpI+rdKcoJ/zJ8RSFoSKq5Yql2b
-         nGQRRLqDu3FP7dEEkI2OtFwcpe1z+VPMSrFm+foeShftdprqbndZ7BGgusBwxM3ZU2NZ
-         S4+w==
-X-Gm-Message-State: AOJu0YzIEMfmz3iN8awjiNZwwirB/oC5zAwO10tCPOQvidd31DDCaoT0
-	RtIWcck7itV8aa56plbfwqL6VUZxlcJvtRDb+JxHFI3bC+h17tFYF/MhZvXt3xXcNsYRVNJSJ0v
-	QowyLZQ==
-X-Google-Smtp-Source: AGHT+IGVFna17cbnjDlFiAzd1lFEugS8bQoVzrFwz8i74tIC8IxZifzm1JhmYPLXXoT+U1mR8i6liA==
-X-Received: by 2002:a05:651c:14f:b0:2cd:fafc:1700 with SMTP id c15-20020a05651c014f00b002cdfafc1700mr3743622ljd.53.1706554729183;
-        Mon, 29 Jan 2024 10:58:49 -0800 (PST)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id z9-20020a2e3509000000b002cdf37ee19dsm1286600ljz.7.2024.01.29.10.58.48
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 29 Jan 2024 10:58:48 -0800 (PST)
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2cf3a095ba6so36254351fa.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 10:58:48 -0800 (PST)
-X-Received: by 2002:a05:651c:150b:b0:2cc:9ec8:fc5a with SMTP id
- e11-20020a05651c150b00b002cc9ec8fc5amr5318335ljf.39.1706554727677; Mon, 29
- Jan 2024 10:58:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706555368; x=1707160168;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A+pfwsAR7dQEMZaUbmAmf7P3tGpaqey93GDUy/LCXUY=;
+        b=Q18zTzZfZ8SHwy0fHJrJIe1cE3yVZ2nW6hyne6XSIGL7fY0Ty7gINVZPuvvKlMhgp8
+         IvQCffSCXDhaBkeG2Si7B4AkJzSWNZci3ovvhCFY2TkCkptYk4pX1WPPzvlyBgZN+UIk
+         LwFAKKqpywE5J4phReoEcGkjgqeMHMCLlapVgZo+R/Uh8CHhL9qeI6Z6jnuiN9BPezo/
+         O/zKPOwj27QNZSt4JBYxBqRIJ+hm5NhJIW5V+mGceRwCYipI7VFjx9EyaTtyWfbZjgBG
+         4nWJL+aoOzVThMcrGR0oPj9JhDbyqpS85CcBj+0EHyNDmHpwRSej9OQyJPlJd4Bmtecb
+         Nssg==
+X-Gm-Message-State: AOJu0YwKxk0XASdws2kc8Cgl2Uv/j+M8kToC4mJOz7kscxx8JPsnveGD
+	wltqLd/fJ2b5d9PGfoPRUCfWRn1CekfRJHVj53bTiSBnzuOKGgZ7xWF1d5YEhkk=
+X-Google-Smtp-Source: AGHT+IESoPfU8AaOOY4JrFQlBadzLfIdEEVi2A6ryh3PYylu1gurZgUOMvs8PMQt3gmoBwZrfVF57g==
+X-Received: by 2002:a05:6a00:939c:b0:6dd:8767:2fa1 with SMTP id ka28-20020a056a00939c00b006dd87672fa1mr4221676pfb.0.1706555367798;
+        Mon, 29 Jan 2024 11:09:27 -0800 (PST)
+Received: from fastly.com (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id gu7-20020a056a004e4700b006db105027basm6234279pfb.50.2024.01.29.11.09.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Jan 2024 11:09:27 -0800 (PST)
+Date: Mon, 29 Jan 2024 11:09:23 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	chuck.lever@oracle.com, jlayton@kernel.org,
+	linux-api@vger.kernel.org, brauner@kernel.org, edumazet@google.com,
+	davem@davemloft.net, alexander.duyck@gmail.com,
+	sridhar.samudrala@intel.com, kuba@kernel.org, weiwan@google.com,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andrew Waterman <waterman@eecs.berkeley.edu>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dominik Brodowski <linux@dominikbrodowski.net>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jan Kara <jack@suse.cz>, Jiri Slaby <jirislaby@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Julien Panis <jpanis@baylibre.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	"(open list:FILESYSTEMS \\(VFS and infrastructure\\))" <linux-fsdevel@vger.kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nathan Lynch <nathanl@linux.ibm.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Steve French <stfrench@microsoft.com>,
+	Thomas Huth <thuth@redhat.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>
+Subject: Re: [PATCH net-next v3 0/3] Per epoll context busy poll support
+Message-ID: <20240129190922.GA1315@fastly.com>
+References: <20240125225704.12781-1-jdamato@fastly.com>
+ <65b52d6381de7_3a9e0b2943d@willemb.c.googlers.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240126150209.367ff402@gandalf.local.home> <CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
- <20240126162626.31d90da9@gandalf.local.home> <CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
- <CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
- <8547159a-0b28-4d75-af02-47fc450785fa@efficios.com> <CAHk-=whAG6TM6PgH0YnsRe6U=RzL+JMvCi=_f0Bhw+q_7SSZuw@mail.gmail.com>
- <29be300d-00c4-4759-b614-2523864c074b@efficios.com> <CAHk-=wjpyv+fhxzV+XEQgsC+-HaouKT7Ns8qT31jkpN_Jm84_g@mail.gmail.com>
- <3120f1f0-eaf8-4058-9a65-bdbee28c68c9@efficios.com>
-In-Reply-To: <3120f1f0-eaf8-4058-9a65-bdbee28c68c9@efficios.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 29 Jan 2024 10:58:30 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg8BrZEzjJ5kUyZzHPZmFqH6ooMN1gRBCofxxCfucgjaw@mail.gmail.com>
-Message-ID: <CAHk-=wg8BrZEzjJ5kUyZzHPZmFqH6ooMN1gRBCofxxCfucgjaw@mail.gmail.com>
-Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, Ajay Kaher <ajay.kaher@broadcom.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <65b52d6381de7_3a9e0b2943d@willemb.c.googlers.com.notmuch>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 
-On Mon, 29 Jan 2024 at 08:00, Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> This breaks "cp -aH" and "cp -aL".
+On Sat, Jan 27, 2024 at 11:20:51AM -0500, Willem de Bruijn wrote:
+> Joe Damato wrote:
+> > Greetings:
+> > 
+> > Welcome to v3. Cover letter updated from v2 to explain why ioctl and
+> > adjusted my cc_cmd to try to get the correct people in addition to folks
+> > who were added in v1 & v2. Labeled as net-next because it seems networking
+> > related to me even though it is fs code.
+> > 
+> > TL;DR This builds on commit bf3b9f6372c4 ("epoll: Add busy poll support to
+> > epoll with socket fds.") by allowing user applications to enable
+> > epoll-based busy polling and set a busy poll packet budget on a per epoll
+> > context basis.
+> > 
+> > This makes epoll-based busy polling much more usable for user
+> > applications than the current system-wide sysctl and hardcoded budget.
+> > 
+> > To allow for this, two ioctls have been added for epoll contexts for
+> > getting and setting a new struct, struct epoll_params.
+> > 
+> > ioctl was chosen vs a new syscall after reviewing a suggestion by Willem
+> > de Bruijn [1]. I am open to using a new syscall instead of an ioctl, but it
+> > seemed that: 
+> >   - Busy poll affects all existing epoll_wait and epoll_pwait variants in
+> >     the same way, so new verions of many syscalls might be needed. It
+> 
+> There is no need to support a new feature on legacy calls. Applications have
+> to be upgraded to the new ioctl, so they can also be upgraded to the latest
+> epoll_wait variant.
 
-Do we care? Do we have a user that cares? Has anybody ever hit it?
+Sure, that's a fair point. I think we could probably make reasonable
+arguments in both directions about the pros/cons of each approach.
 
-Why would you ever do anything like that to tracefs filesystem?
+It's still not clear to me that a new syscall is the best way to go on
+this, and IMO it does not offer a clear advantage. I understand that part
+of the premise of your argument is that ioctls are not recommended, but in
+this particular case it seems like a good use case and there have been
+new ioctls added recently (at least according to git log).
 
-In other words: my point is that tracefs just isn't a regular
-filesystem. Never was, never will be.
+This makes me think that while their use is not recommended, they can serve
+a purpose in specific use cases. To me, this use case seems very fitting.
 
-And people should be *aware* of that. We should not say "hey, if it
-doesn't work like a normal filesystem, it's a bug".
+More of a joke and I hate to mention this, but this setting is changing how
+io is done and it seems fitting that this done via an ioctl ;)
 
-Try "cp -aL" on /proc, and guess what? It won't work all that well
-either. For entirely *different* reasons. You'll get some variation of
-"Input/output error"s, and insanely big files and quite possibly
-you'll end up with recursive copying as you try to copy the file that
-is /proc/self/fd/<output>.
+> epoll_pwait extends epoll_wait with a sigmask.
+> epoll_pwait2 extends extends epoll_pwait with nsec resolution timespec.
+> Since they are supersets, nothing is lots by limiting to the most recent API.
+> 
+> In the discussion of epoll_pwait2 the addition of a forward looking flags
+> argument was discussed, but eventually dropped. Based on the argument that
+> adding a syscall is not a big task and does not warrant preemptive code.
+> This decision did receive a suitably snarky comment from Jonathan Corbet [1].
+> 
+> It is definitely more boilerplate, but essentially it is as feasible to add an
+> epoll_pwait3 that takes an optional busy poll argument. In which case, I also
+> believe that it makes more sense to configure the behavior of the syscall
+> directly, than through another syscall and state stored in the kernel.
 
-It's just a nonsensical operation to do, and if somebody says "I can't
-copy /proc on my system" it's a PEBKAC, not a kernel problem.
+I definitely hear what you are saying; I think I'm still not convinced, but
+I am thinking it through.
 
-The "no regressions" rule is not about made-up "if I do this, behavior changes".
+In my mind, all of the other busy poll settings are configured by setting
+options on the sockets using various SO_* options, which modify some state
+in the kernel. The existing system-wide busy poll sysctl also does this. It
+feels strange to me to diverge from that pattern just for epoll.
 
-The "no regressions" rule is about *users*.
+In the case of epoll_pwait2 the addition of a new syscall is an approach
+that I think makes a lot of sense. The new system call is also probably
+better from an end-user usability perspective, as well. For busy poll, I
+don't see a clear reasoning why a new system call is better, but maybe I am
+still missing something.
 
-If you have an actual user that has been doing insane things, and we
-change something, and now the insane thing no longer works, at that
-point it's a regression, and we'll sigh, and go "Users are insane" and
-have to fix it.
+> I don't think that the usec fine grain busy poll argument is all that useful.
+> Documentation always suggests setting it to 50us or 100us, based on limited
+> data. Main point is to set it to exceed the round-trip delay of whatever the
+> process is trying to wait on. Overestimating is not costly, as the call
+> returns as soon as the condition is met. An epoll_pwait3 flag EPOLL_BUSY_POLL
+> with default 100us might be sufficient.
+> 
+> [1] https://lwn.net/Articles/837816/
 
-But if you have some random test that now behaves differently, it's
-not a regression. It's a *warning* sign, sure: tests are useful.
+Perhaps I am misunderstanding what you are suggesting, but I am opposed to
+hardcoding a value. If it is currently configurable system-wide and via
+SO_* options for other forms of busy poll, I think it should similarly be
+configurable for epoll busy poll.
 
-So tests can show when something user-visible changed, and as such
-they are a "there be monsters here" sign that maybe some user
-experience will hit it too.
+I may yet be convinced by the new syscall argument, but I don't think I'd
+agree on imposing a default. The value can be modified by other forms of
+busy poll and the goal of my changes are to:
+  - make epoll-based busy poll per context
+  - allow applications to configure (within reason) how epoll-based busy
+    poll behaves, like they can do now with the existing SO_* options for
+    other busy poll methods.
 
-So I agree that "just use the same inode number" changes behavior. I
-agree that it can be a bit of a danger. But these "look, I can see a
-difference" isn't an argument.
-
-And honestly, I have now spent *days* looking at tracefs, and I'm
-finding core fundamental bugs that would cause actual oopses and/or
-wild pointer accesses.
-
-All of which makes me go "this code needs to be simpler and *cleaner*
-and stop making problems".
-
-In other words: tracefs is such a complete mess that I do not care one
-*whit* about "cp -aL". I care about "this is actual kernel
-instability".
-
-           Linus
+> >     seems much simpler for users to use the correct
+> >     epoll_wait/epoll_pwait for their app and add a call to ioctl to enable
+> >     or disable busy poll as needed. This also probably means less work to
+> >     get an existing epoll app using busy poll.
+> 
 
