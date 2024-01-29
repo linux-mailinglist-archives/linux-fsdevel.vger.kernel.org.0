@@ -1,165 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-9286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83B783FC40
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 03:33:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 114BE83FC6D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 04:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5137285B62
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 02:33:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2B4E1F23360
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 03:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D593EEDA;
-	Mon, 29 Jan 2024 02:32:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3252FF9F7;
+	Mon, 29 Jan 2024 03:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="C2NeskAm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C28CF9D6;
-	Mon, 29 Jan 2024 02:32:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA4B9F9DB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 03:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706495573; cv=none; b=XET4rGEhxRoDjkNDV9WIcS7IzXgumrhLNzt8QPKfLAoiic+THDlzpKt4tzMEf2YqytnaoGPafofhF4QqHNw5hmqE6g/D+8nFk6iS0Jp2soiNxlfN6Be3A0/dReGrnB2FhhgZIkgljcV5fezWUJ9p3+Hr/05oCiwWSUvG84pJG6k=
+	t=1706497250; cv=none; b=A9wRdN5HuQwhe15X0ZSCKuN77LVkbMLFkN5EEuJyItf/S/SkAikMRJzVZ4VCg6qX2U4l+uBzvVx4UYJsNGy4W8oJeklZgRdjRn3OGZVedFf4ku4ngOMgZ/9aBX6F1pEFVM6+KXXe5lFylGKxm9zpQSL/8fACPKsfVxbmnDKGQl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706495573; c=relaxed/simple;
-	bh=o63n5WMpln1TRFn0Kucd9NqGIM5xQz1xSMHbQaPz57Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GBgRREvlveqz6ArDd2d7oegSGdWZLNHL1NhUqAPOI1OQpvTOgfWlbDkktA0VlEP7/+tjzcDplNjFJ6Q0qPe7ydVb+4xOpLfdGrAPGxpQWG4puz/bdrSWZiSkvj/kKNMGXAy9pAebxjkREPShk8xsyhk84qGn1muHiYKl3fIcDAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18A10C43390;
-	Mon, 29 Jan 2024 02:32:50 +0000 (UTC)
-Date: Sun, 28 Jan 2024 21:32:49 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, LKML <linux-kernel@vger.kernel.org>,
- Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Christian Brauner
- <brauner@kernel.org>, Ajay Kaher <ajay.kaher@broadcom.com>, Geert
- Uytterhoeven <geert@linux-m68k.org>, linux-fsdevel
- <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
-Message-ID: <20240128213249.605a7ade@rorschach.local.home>
-In-Reply-To: <CAHk-=wjKagcAh5rHuNPMqp9hH18APjF4jW7LQ06pNQwZ1Qp0Eg@mail.gmail.com>
-References: <20240126150209.367ff402@gandalf.local.home>
-	<CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
-	<20240126162626.31d90da9@gandalf.local.home>
-	<CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
-	<CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
-	<CAHk-=wj+DsZZ=2iTUkJ-Nojs9fjYMvPs1NuoM3yK7aTDtJfPYQ@mail.gmail.com>
-	<20240128175111.69f8b973@rorschach.local.home>
-	<CAHk-=wjHc48QSGWtgBekej7F+Ln3b0j1tStcqyEf3S-Pj_MHHw@mail.gmail.com>
-	<20240128185943.6920388b@rorschach.local.home>
-	<20240128192108.6875ecf4@rorschach.local.home>
-	<CAHk-=wg7tML8L+27j=7fh8Etk4Wvo0Ay3mS5U7JOTEGxjy1viA@mail.gmail.com>
-	<CAHk-=wjKagcAh5rHuNPMqp9hH18APjF4jW7LQ06pNQwZ1Qp0Eg@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1706497250; c=relaxed/simple;
+	bh=/oGa5ABPhpXed7C0cgst3BJAf0CGV7fQ9TLfp798wPU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WmeGykiDQlYwLhj+ILP9bKA1L14+Ud1b1fkI2egH1ukTV2zuAom37NAfydb3FKhNPLPB5fkH6uIhMY07V7e82tX/JFx2vBuI7U1oado5gMdp2N/AHS8u35sXWlcxpjRupYCNZDBEUMx/dM/ry0hSNDJCtJY0VFBCgTIBq7WL2Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=C2NeskAm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1706497247;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SH5JJA8B2/oLNz4ErgboH6AqTlVlU9RXl7tVsXTShf0=;
+	b=C2NeskAmJGqcRs/knlZh+cWM+9MXlNfW+wcdmpRkf5tlAoiy+hgdAuukuMiPzVSpPEiqs9
+	XF0HlZmh5BBUYlxErau3sCO+6c8z5XAL8tmh85ZxgMs0o5cV67G4bMeN70XKNeGYRi5tla
+	swYSDs1hTvjLBxpKuw7MXn7HDk2Umfs=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-540-GSvxAW-rMwWbug6hU-02LQ-1; Sun,
+ 28 Jan 2024 22:00:45 -0500
+X-MC-Unique: GSvxAW-rMwWbug6hU-02LQ-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2077E29AC015;
+	Mon, 29 Jan 2024 03:00:45 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.135])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id C4D5B2026F95;
+	Mon, 29 Jan 2024 03:00:40 +0000 (UTC)
+Date: Mon, 29 Jan 2024 11:00:36 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Mike Snitzer <snitzer@kernel.org>,
+	Don Dutile <ddutile@redhat.com>,
+	Raghavendra K T <raghavendra.kt@linux.vnet.ibm.com>,
+	ming.lei@redhat.com
+Subject: Re: [RFC PATCH] mm/readahead: readahead aggressively if read drops
+ in willneed range
+Message-ID: <ZbcU1PXACdxbtjWx@fedora>
+References: <20240128142522.1524741-1-ming.lei@redhat.com>
+ <ZbbPCQZdazF7s0_b@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZbbPCQZdazF7s0_b@casper.infradead.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-On Sun, 28 Jan 2024 17:42:30 -0800
-Linus Torvalds <torvalds@linux-foundation.org> wrote:
-
-> On Sun, 28 Jan 2024 at 17:00, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> >    mkdir dummy
-> >    cd dummy
-> >    echo "Hello" > hello
-> >    ( sleep 10; cat ) < hello &
-> >    rm hello
-> >    cd ..
-> >    rmdir dummy  
+On Sun, Jan 28, 2024 at 10:02:49PM +0000, Matthew Wilcox wrote:
+> On Sun, Jan 28, 2024 at 10:25:22PM +0800, Ming Lei wrote:
+> > Since commit 6d2be915e589 ("mm/readahead.c: fix readahead failure for
+> > memoryless NUMA nodes and limit readahead max_pages"), ADV_WILLNEED
+> > only tries to readahead 512 pages, and the remained part in the advised
+> > range fallback on normal readahead.
 > 
-> Note that it's worth repeating that simple_recursive_removal()
-> wouldn't change any of the above. It only unhashes things and makes
-> them *look* gone, doing things like clearing i_nlink etc.
+> Does the MAINTAINERS file mean nothing any more?
 
-I know, but I already cover the above case. And that case is not what
-simple_recursive_removal() is covering.
-
-I'm worried about what can be opened after a deletion. Not what has
-already been opened. The simple_recrusive_removal() is the way to clear
-the dcache on those files and directories that are being removed so
-that no new references can happen on them.
-
-So, I removed the simple_recursive_removal() from the code to see what
-happened. Interesting, the opposite occurred.
-
- # cd /sys/kernel/tracing
- # echo 'p:sched schedule' > kprobe_events
- # ls events/kprobes
-enable  filter  sched
- # ls events/kprobes/sched
-enable  filter  format  hist  hist_debug  id  inject  trigger
- # cat events/kprobes/sched/enable
-0
-
- # echo 'p:timer read_current_timer' >> kprobe_events
- # ls events/kprobes
-enable  filter  sched  timer
-
-Now delete just one kprobe (keeping the kprobes directory around)
-
- # echo '-:sched schedule' >> kprobe_events
- # ls events/kprobes/
-enable  filter  timer
-
-Now recreate that kprobe
-
- # echo 'p:sched schedule' >> kprobe_events
- # ls events/kprobes
-enable  filter  sched  timer
-
- # ls events/kprobes/sched/
-ls: reading directory 'events/kprobes/sched/': Invalid argument
-
-I have no access to the directory that was deleted and recreated.
+It is just miss to Cc you, sorry.
 
 > 
-> But those VFS data structures would still exist, and the files that
-> had them open would still continue to be open.
+> > If bdi->ra_pages is set as small, readahead will perform not efficient
+> > enough. Increasing read ahead may not be an option since workload may
+> > have mixed random and sequential I/O.
 > 
-> So if you thought that simple_recursive_removal() would make the above
-> kind of thing not able to happen, and that eventfs wouldn't have to
-> deal with dentries that point to event_inodes that are dead, you were
-> always wrong.
+> I thik there needs to be a lot more explanation than this about what's
+> going on before we jump to "And therefore this patch is the right
+> answer".
 
-No but I want to shrink the dentries after the directory is removed.
+Both 6d2be915e589 and the commit log provids background about this
+issue, let me explain it more:
 
-Perhaps something else is the error here.
+1) before commit 6d2be915e589, madvise/fadvise(WILLNEED)/readahead
+syscalls try to readahead in the specified range if memory is allowed,
+and for each readahead in this range, the ra size is set as max sectors
+of the block device, see force_page_cache_ra().
 
-> 
-> simple_recursive_removal() is mostly just lipstick on a pig. It does
-> cause the cached dentries that have no active use be removed earlier,
-> so it has that "memory pressure" kind of effect, but it has no real
-> fundamental semantic effect.
+2) since commit 6d2be915e589, only 2MB bytes are load in these syscalls,
+and the remained bytes fallback to future normal readahead when reads
+from page cache or mmap buffer
 
-I was using it to "flush" the cache on that directory. Nothing more.
-
-> 
-> Of course, for a filesystem where the dentry tree *is* the underlying
-> data (ie the 'tmpfs' kind, but also things like debugfs or ipathfs,
-> for example), then things are different.
-
-Note, tracefs was built on debugfs. Only the "events" directory is
-"different". The rest of /sys/kernel/tracing behaves exactly like
-debugfs.
+3) this patch wires the advise(WILLNEED) range info to normal readahead for
+both mmap fault and buffered read code path, so each readhead can use
+max sectors of block size for the ra, basically takes the similar
+approach before commit 6d2be915e589
 
 > 
-> There the dentries are the primary thing, and not just a cache in
-> front of the backing store.
+> > @@ -972,6 +974,7 @@ struct file_ra_state {
+> >  	unsigned int ra_pages;
+> >  	unsigned int mmap_miss;
+> >  	loff_t prev_pos;
+> > +	struct maple_tree *need_mt;
 > 
-> But you didn't want that, and those days are long gone as far as
-> tracefs is concerned.
+> No.  Embed the struct maple tree.  Don't allocate it.  What made you
+> think this was the right approach?
 
-Well, as long as eventfs is ;-)
+Can you explain why it has to be embedded? core-api/maple_tree.rst
+mentioned it is fine to call "mt_init() for dynamically allocated ones".
 
--- Steve
+maple tree provides one easy way to record the advised willneed range,
+so readahead code path can apply this info for speedup readahead.
+
+
+Thanks,
+Ming
+
 
