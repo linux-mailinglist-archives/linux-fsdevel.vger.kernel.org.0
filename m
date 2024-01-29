@@ -1,108 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-9454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA84D8414B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 21:53:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53F608414C4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 22:00:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52F8228998A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 20:53:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC6CB1F2569B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 21:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DEA157E68;
-	Mon, 29 Jan 2024 20:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85824157E66;
+	Mon, 29 Jan 2024 21:00:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="a45d4hFm"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="tkJzgch9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5641629D03;
-	Mon, 29 Jan 2024 20:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA365157028
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 21:00:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706561604; cv=none; b=X22E8Xxa1nUJsYlqO3mf4P+CoS5I7Qs5sLk8z5e3jevhvBZFygqMsnSeHRXeTlnOqikWfidU4vPk3CGP6x+6PbZafU/q4Vy94d94hBCyOMspcL5tmzo3QIwcDMnIFdo0OJ7p7i+yuxP1urTSfVm1a0zkqgAKUyAaZL/sfhdtmCg=
+	t=1706562003; cv=none; b=Ets+wUZVS0LSg+a0FGF8F9AvI3w8PTTt+bqToJVoMeRe+yV317nKreub8DXEkgdt0L1/IIU9vYneO8j1ASn5AktB0MR+zcUXmizeD9eho/3CIz9bDLGQj/gxLeKgeH+iuWg3UjxH9r8S5tXmuw9ZvXkAoYJ7rvWSgXbgs9yaCWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706561604; c=relaxed/simple;
-	bh=7shu1kQp5hKe9agoMH9qJo8QtYjjAUCVX1MLlx22v1s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ugpHnhI4KGp3hoOH7d80b3fsllh1b+BLq6RtP1SoEGy0aYefmWiDkIviUrvz4Fl65kWKTd+6u6yj/ry4Ia+FnsjWT5Zq0P7+BGa0T6OqXhd27usIwW2ujUiH1calD7rc/TGmOf1PEvR2/dvAr0dhC/imPd7nt9xWQSpf1nvu4cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=a45d4hFm; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=2dTEyjtteeuqOs2PRClBfhfMNIS8T9MNH+TgboxuqbY=; b=a45d4hFmybCdijy4TXhiCFFbFs
-	NWL/Y7lkUWm58OqzeLEYiUTCBAtp5Sr8kyOIuyiKIwZ0mLIUqgucQRoZzy5dOUyN9iTy1Bq/kSkgY
-	9P3gHx44UdxOLI6qodRvssAYO2nZFe/FMU0SKlmCONjNmS+kR33o+5Nopw+SZljmhme5zH1Iw4yQK
-	Pj85DoPO0i95fpuEohClOsrBVgEO4xM6yOckL5nuIZciCidzLCs/Wy7Z5OKY6zXHIXUxYwuXnep3g
-	GOPKlRPwxAXe/umGjGi4SOVXW9HWm7Brp/MedqI89RRZ0b8LLUo0e1LJxndDOQ75AdulrvBpnYbuX
-	izXrrKTdYCofr60bEqe3Gh2MeOxui8Hdtu7lVxeHtLprFrYdgvQ/HIPRdSQuFncWGE+6VyQoPTNQ6
-	kk3cpHwmNX1Wo8cfhrO4QYV8Fe8LhPxwIHZGiRwsyAJ4D4ZgfJ5Csc4fn15+UXdMMK0qeFCIlfuMJ
-	OxrlC1cpbDMpGVusfhNKoTsYj6eZumqAXQArpszJXmlwmUAo7tPrZ8hPa/ZXD3+MpgiyOTDvUd//I
-	xpyxSo/JMpX3HExjDwhCQldsKf1WFrv3DyjHv1L2ZDBTdnR7dvRiLrLwoKoBaR+0vqJYggqCgl9s/
-	zvf+SagYnHCxVsKxc24z5tOE8T9g0ZWakGfvQeZks=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: David Howells <dhowells@redhat.com>
-Cc: dhowells@redhat.com, Eric Van Hensbergen <ericvh@kernel.org>,
- Dominique Martinet <asmadeus@codewreck.org>,
- Latchesar Ionkov <lucho@ionkov.net>, Matthew Wilcox <willy@infradead.org>,
- Jeff Layton <jlayton@kernel.org>, Christian Brauner <christian@brauner.io>,
- netfs@lists.linux.dev, v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1706562003; c=relaxed/simple;
+	bh=ibokadCESHSA11HDDNlCAcaBxiIM5GHQthJ33p4hMt8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=CQulcIpoak7Azm7qIekAyMucvVuvY6DdBpkHkGAkhtkKD8NNBOjD9TNovvloZiqzK64pVe7LLsk0OTBxT/MoF+2IlGRpq4RpMwhY77Ugllv6UL3P4ehF8HRd76ZwUWF6C+oa9Nq6/fwh20D2XcTwGOqCDAXqIAR3IU5pzgNs+fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=tkJzgch9; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7bffe53850eso10661039f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 13:00:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1706562000; x=1707166800; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8LSn6LBXM31HvHqvEALdWkrsVvyHsbFeG4dy64fSTfE=;
+        b=tkJzgch9Nb/WNZ4ZTES2hmNvzK00dvws5U+TIcwWEETT0b/mGdDxaLfDZfglY+nohL
+         HiwcI4XifHhoMDBblbf4SnuVXIvBgvsRblTo6SNQDn81TDgZ/p8OhaFnwgdEZVqhdR6H
+         jbtana5G6JzhyNoRT9UrOv6cHkDEj4E8txCwXZd3GX2pnKBLVF7EPdwcm2mnxUZJLCkJ
+         FXV6+N12FgxyIETeFQxEZkIPTcKqUWj8l0q9Uf/blOlgBnpViyDP/X1rJ8+CVUWwm0Ly
+         OtaSMwO5+Z/yuqAXfOSVnFQdcE5zv/oj/rb2e+Qn36OHV5GPtSiBEEU7EGCBCUJZyx8j
+         xt8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706562000; x=1707166800;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8LSn6LBXM31HvHqvEALdWkrsVvyHsbFeG4dy64fSTfE=;
+        b=lRf416F3jVSexrWa2h/CZNEQe9ZdZqzekM9KnHsoPXUaoR68ySyqHSMT+0at50yXdl
+         kzU3iNgrY8nh5b7JTHk6CzRxKwi1WEuduj6wHQ6RQOb3UY/SR/+Z/gmFZ3fc8l857Kgv
+         f24e6qNwsa/O/h+Xik/VgblyPUu3ytU5v0WRCAu/w7D/XHIxhWbDABV8H+6nEX/C3vqc
+         GQwLT9gnKNuefmd5QBcUgPYZaCjFtsUuOvKfy/DUeIRjAQHa0l9Cd9sQk0KD9Vc16AHD
+         SFxkVhiKxCbkS1Tnaz7TE0Ahj8t/4dlWXjQlRA8yuxcKMzv66D2ePQHnPqPCF8bx5+yY
+         sxzA==
+X-Gm-Message-State: AOJu0YzU5Rxj0SLpDpFHBqisDmCTCPQSYA0FzQKQTqHpsplABVs0Nyy4
+	xFS0+yBrAH7JYgmrKx5EO3dPM8/w9joqJ+2OaXSaavMgcFbqgRG9Xd4sC/2QvWQ=
+X-Google-Smtp-Source: AGHT+IHPTdM7bWCC3uKdOyS9KP89WOgaIyn9pl+DIsnhjC44TMW7G+ElMdFDPse7HJKfD3zVMCK0Dg==
+X-Received: by 2002:a6b:c953:0:b0:7bf:60bc:7f1e with SMTP id z80-20020a6bc953000000b007bf60bc7f1emr8003144iof.1.1706561999898;
+        Mon, 29 Jan 2024 12:59:59 -0800 (PST)
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id x17-20020a5d9911000000b007bf0e4b4c63sm2339741iol.31.2024.01.29.12.59.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jan 2024 12:59:59 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: brauner@kernel.org, Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Cc: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>, 
+ ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] 9p: Further netfslib-related changes
-Date: Mon, 29 Jan 2024 21:53:09 +0100
-Message-ID: <5747464.0Q8nNhgPvr@silver>
-In-Reply-To: <1400271.1706538135@warthog.procyon.org.uk>
-References:
- <1726980.McBZPkGeyK@silver> <20240129115512.1281624-1-dhowells@redhat.com>
- <1400271.1706538135@warthog.procyon.org.uk>
+In-Reply-To: <20240129180024.219766-1-aleksandr.mikhalitsyn@canonical.com>
+References: <20240129180024.219766-1-aleksandr.mikhalitsyn@canonical.com>
+Subject: Re: (subset) [PATCH 1/2] ntfs3: use file_mnt_idmap helper
+Message-Id: <170656199924.3224941.3075763153914506438.b4-ty@kernel.dk>
+Date: Mon, 29 Jan 2024 13:59:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-On Monday, January 29, 2024 3:22:15 PM CET David Howells wrote:
-> Christian Schoenebeck <linux_oss@crudebyte.com> wrote:
-> 
-> > >  (1) Enable large folio support for 9p.  This is handled entirely by
-> > >      netfslib and is already supported in afs.  I wonder if we should limit
-> > >      the maximum folio size to 1MiB to match the maximum I/O size in the 9p
-> > >      protocol.
-> > 
-> > The limit depends on user's 'msize' 9p client option and on the 9p transport
-> > implementation. The hard limit with virtio transport for instance is currently
-> > just 500k (patches for virtio 4MB limit fetching dust unfortunately).
-> 
-> Okay.  Is that 500KiB or 512Kib?
 
-'msize' is currently hard limited by virtio transport to exactly 512000. For
-rdma and fd transports it's both exactly 1MiB. For xen transport it should be
-exactly 524288 (could be lowered though depending on configured xen ring
-size). You find the individual transports to fill the field 'maxsize'
-accordingly (in net/9p/trans_*.c).
+On Mon, 29 Jan 2024 19:00:23 +0100, Alexander Mikhalitsyn wrote:
+> Let's use file_mnt_idmap() as we do that across the tree.
+> 
+> No functional impact.
+> 
+> 
 
-So that's the maximum message size. Then the individual 9p message header
-size needs to be subtracted. For Twrite request that's -23, for Rread
-response that's -11.
+Applied, thanks!
 
-> > Would you see an advantage to limit folio size? I mean p9_client_read() etc.
-> > are automatically limiting the read/write chunk size accordingly.
-> 
-> For reads not so much, but for writes it would mean that a dirty folio is
-> either entirely written or entirely failed.  I don't know how important this
-> would be for the 9p usecases.
-> 
-> David
-> 
-> 
+[2/2] io_uring: use file_mnt_idmap helper
+      commit: 712fc7e5862c2b9af7cf37418e4b398c5493ffb5
+
+Best regards,
+-- 
+Jens Axboe
+
 
 
 
