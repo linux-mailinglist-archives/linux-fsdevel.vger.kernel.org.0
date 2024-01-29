@@ -1,160 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-9279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE5283FB81
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 02:00:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12D0983FBD9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 02:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 069721F22110
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 01:00:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90323B20F8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 01:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FC12C157;
-	Mon, 29 Jan 2024 01:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB92DDD4;
+	Mon, 29 Jan 2024 01:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OigTqese"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gWZNODXq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B9EEEB1
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 01:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AABF9E0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 01:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706490030; cv=none; b=jkfFew0+n/M5YI9DU4/czxFPc6zw9iEH9ojBfWV+E/9eAbA0U2jxNN3B6uLPxwRvReXCjxVgT9IHZ0MxetGhNkq5KdXyqjvVcpmiKwf/dVhuwOLhV5vFOgubAGh8/Me6sgMURZCilYY9NeGbY1CXvBPv/Za4woczO+59xu0L0Gk=
+	t=1706492055; cv=none; b=hWGeGZqhJzhQyc2tsexOlMEH6ts/HODIAV21JRzbc8m1iMSteKes5uFclsh0BCk4I5A/B0cte3xQOKRougsHhx/DJSP3giG4zuq6emUAhd570EPSti7LVoh+9AR7aB5gUKeJxq4owqIW5DlaTm5Mt+ZgHuakfCVg7UPb2rq+QvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706490030; c=relaxed/simple;
-	bh=YV/bcQkrjkJZfVbuHo0SUwf0M9gitRb1norNvaA7gns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H5ponAtBYZcIASVOqMsC4gPniUjgTxVsgL9X7ZGGmfcRIzAgIyo+iLCUFIgMsEO86gzdzvvxTD1i8YWsrwv9ubQWPh89XozXX3jsDtW1xIMFsp2aanSOKXkz54WNRgj/kT3gLIuTGnATE2nLVD/++13zTUMMkM7QKyEYKs0l4Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OigTqese; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-510f37d6714so1245278e87.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 17:00:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1706490026; x=1707094826; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sUl32XdnagElZC/GjdZNn8oS0p+2WjUorr6tDLMCHP4=;
-        b=OigTqeseAW2CIy6Me+bfySidSRXFp9f+4/jDeM6qsR1w4P61zChgRnYMSgbkTzJn57
-         SDV9rpcz4LFWHTVwGg9pqvc7jDPi69eDk872GaHbGI+teXF5oIf/Xb1c7YBDUP8rDbHP
-         TLnjgMywGRGtCyGOrT5YB+qFvvsMOzkS70XeQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706490026; x=1707094826;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sUl32XdnagElZC/GjdZNn8oS0p+2WjUorr6tDLMCHP4=;
-        b=aSa5hM6Y5pxqtP2lkpy5LrUUaK9/nLvInqEHezzAVeD3TrE8/MLwgm7LtYL7onhBfQ
-         +dYMJLWMAq7NleVMILAf6gshjpVigy1Hy/QIh2Y3ZHIYaYubq0iUWS6H9Ur/nyiGtsCA
-         O+0/2yUi74LErPdAI6IyugFDKztN+Hb7qSYUNgolkBThlDgiyXSb9eRxWjWIdX1MwHs1
-         ECgm4Zi1xMpTRIsV6P8v8ffJb+Q5DGcq7KlQT+4IsoMHZ5b/FGa5VPvSf9EU3KsGjlrN
-         wUXkMN+DZ/VXhcx+P/5bhZ0Wg81b6nqrEkXTScWcsYTFSY2VVD0X4KjLJVn3xDEkV7fX
-         bOvg==
-X-Gm-Message-State: AOJu0YyzvzwPW/Ng/rHIgak92X/TWOh5Tat8uoTi1yzfkt8l6ZgOBYnq
-	RC6K5JDa9Vy1n3xcjz4JBsmEskCVKsUoGiqBa93Ovd3/ZyM4ZAKoSqumwYBfe1vDsfy7Z6tujAo
-	XQI8=
-X-Google-Smtp-Source: AGHT+IFMCe8A5WBsxBLTGSUKBAB2MAB2lyhm1kxs07LRNSPJkyqLP/dY5O8EVQvTJ5l3sQYb8cCK7g==
-X-Received: by 2002:a19:2d1c:0:b0:50f:738:a5b1 with SMTP id k28-20020a192d1c000000b0050f0738a5b1mr2531901lfj.61.1706490026600;
-        Sun, 28 Jan 2024 17:00:26 -0800 (PST)
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com. [209.85.208.45])
-        by smtp.gmail.com with ESMTPSA id p6-20020a170906784600b00a30e1f233b4sm3332801ejm.128.2024.01.28.17.00.25
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Jan 2024 17:00:25 -0800 (PST)
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-55f082c2c92so169287a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 17:00:25 -0800 (PST)
-X-Received: by 2002:aa7:d7da:0:b0:55d:333c:1ae with SMTP id
- e26-20020aa7d7da000000b0055d333c01aemr2876130eds.15.1706490025336; Sun, 28
- Jan 2024 17:00:25 -0800 (PST)
+	s=arc-20240116; t=1706492055; c=relaxed/simple;
+	bh=Sn3+afSObecsLwVspCGlRr2u/eqvfC8YAyQ9sYvfkw8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s/abfyGIkRAdI3z5gbt2sfVXzIlP0azLEZ2n9dsdsQZd/USGP2+YuCoQTnz1spHtxxwhAvCAC1tjdy2GHFaPaWa96+ymLHuUJn8f85E1lhYBMp/pYNjw2pIj0A0mTmHQyfVs0FwrGRLRakASn4zvHItlVSJAIW7TW+8OJmE8k2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gWZNODXq; arc=none smtp.client-ip=91.218.175.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 28 Jan 2024 20:34:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1706492051;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qN1FxCPOJ5H4DfTAIjDzCCL68C4YSsHpS9Bz1bmn1k0=;
+	b=gWZNODXqBwsyFdMkaap/3eI4ToaTkSkd2jmZCRqH68A4L/qscT0n11KdUHXc5vOwx69PoY
+	zs+xKjY9vH52zOsb/4b+ZYKwL+JSWIDxGKNoASizHgo/AC7LnisSe6CHKVNBtCIyRE3JsO
+	Gs/1pjjvKfQqQkF20NpSI01rtZ6LL4I=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: boqun.feng@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, peterz@infradead.org
+Subject: Re: [PATCH 4/4] af_unix: convert to lock_cmp_fn
+Message-ID: <x7ido6w436gbs5ibdunezldhi6hisjck6rtxtag5g7lo6zt2o2@752ok7ean62y>
+References: <suyvonwf55vfeumeujeats2mtozs2q4wcx6ijz4hqfd54mibjj@6dt26flhrfdh>
+ <20240128205632.93670-1-kuniyu@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240126150209.367ff402@gandalf.local.home> <CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
- <20240126162626.31d90da9@gandalf.local.home> <CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
- <CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
- <CAHk-=wj+DsZZ=2iTUkJ-Nojs9fjYMvPs1NuoM3yK7aTDtJfPYQ@mail.gmail.com>
- <20240128175111.69f8b973@rorschach.local.home> <CAHk-=wjHc48QSGWtgBekej7F+Ln3b0j1tStcqyEf3S-Pj_MHHw@mail.gmail.com>
- <20240128185943.6920388b@rorschach.local.home> <20240128192108.6875ecf4@rorschach.local.home>
-In-Reply-To: <20240128192108.6875ecf4@rorschach.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 28 Jan 2024 17:00:08 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg7tML8L+27j=7fh8Etk4Wvo0Ay3mS5U7JOTEGxjy1viA@mail.gmail.com>
-Message-ID: <CAHk-=wg7tML8L+27j=7fh8Etk4Wvo0Ay3mS5U7JOTEGxjy1viA@mail.gmail.com>
-Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Ajay Kaher <ajay.kaher@broadcom.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240128205632.93670-1-kuniyu@amazon.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, 28 Jan 2024 at 16:21, Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> >
-> > Wouldn't it be bad if the dentry hung around after the rmdir. You don't
-> > want to be able to access files after rmdir has finished.
+On Sun, Jan 28, 2024 at 12:56:32PM -0800, Kuniyuki Iwashima wrote:
+> From: Kent Overstreet <kent.overstreet@linux.dev>
+> Date: Sun, 28 Jan 2024 14:38:02 -0500
+> > On Sun, Jan 28, 2024 at 12:28:38AM -0800, Kuniyuki Iwashima wrote:
+> > > From: Kent Overstreet <kent.overstreet@linux.dev>
+> > > Date: Fri, 26 Jan 2024 21:08:31 -0500
+> > > > Kill
+> > > >  - unix_state_lock_nested
+> > > >  - _nested usage for net->unx.table.locks[].
+> > > > 
+> > > > replace both with lock_set_cmp_fn_ptr_order(&u->lock).
+> > > > 
+> > > > The lock ordering in sk_diag_dump_icons() looks suspicious; this may
+> > > > turn up a real issue.
+> > > 
+> > > Yes, you cannot use lock_cmp_fn() for unix_state_lock_nested().
+> > > 
+> > > The lock order in sk_diag_dump_icons() is
+> > > 
+> > >   listening socket -> child socket in the listener's queue
+> > > 
+> > > , and the inverse order never happens.  ptr comparison does not make
+> > > sense in this case, and lockdep will complain about false positive.
+> > 
+> > Is that a real lock ordering? Is this parent -> child relationship well
+> > defined?
+> > 
+> > If it is, we should be able to write a lock_cmp_fn for it, as long as
+> > it's not some handwavy "this will never happen but _nested won't check
+> > for it" like I saw elsewhere in the net code... :)
+> 
+> The problem would be there's no handy way to detect the relationship
+> except for iterating the queue again.
+> 
+> ---8<---
+> static int unix_state_lock_cmp_fn(const struct lockdep_map *_a,
+> 				  const struct lockdep_map *_b)
+> {
+> 	const struct unix_sock *a = container_of(_a, struct unix_sock, lock.dep_map);
+> 	const struct unix_sock *b = container_of(_b, struct unix_sock, lock.dep_map);
+> 
+> 	if (a->sk.sk_state == TCP_LISTEN && b->sk.sk_state == TCP_ESTABLISHED) {
+> 		/* check if b is a's cihld */
+> 	}
+> 
+> 	/* otherwise, ptr comparison here. */
+> }
+> ---8<---
+> 
+> 
+> This can be resolved by a patch like this, which is in my local tree
+> for another series.
+> 
+> So, after posting the series, I can revisit this and write lock_cmp_fn
+> for u->lock.
 
-Steven, I already told you that that is NORMAL.
-
-This is how UNIX filesystems work. Try this:
-
-   mkdir dummy
-   cd dummy
-   echo "Hello" > hello
-   ( sleep 10; cat ) < hello &
-   rm hello
-   cd ..
-   rmdir dummy
-
-and guess what? It will print "hello" after that file has been
-removed, and the whole directory is gone.
-
-YOU NEED TO DEAL WITH THIS.
-
-> And thinking about this more, this is one thing that is different with
-> eventfs than a normal file system. The rmdir in most cases where
-> directories are deleted in eventfs will fail if there's any open files
-> within it.
-
-No.
-
-Stop thinking that eventfs is special. It's not.
-
-You need to deal with the realities of having made a filesystem. And
-one of those realities is that you don't control the dentries, and you
-can't randomly cache dentry state and then do things behind the VFS
-layer's back.
-
-So remove that broken function. Really.  You did a filesystem, and
-that means that you had better play by the VFS rules.
-
-End of discussion.
-
-Now, you can then make your own "read" and "lookup" etc functions say
-"if the backing store data has been marked dead, I'll not do this".
-That's *YOUR* data structures, and that's your choice.
-
-But you need to STOP thinking you can play games with dentries.  And
-you need to stop making up BS arguments for why  you should be able
-to.
-
-So if you are thinking of a "Here's how to do a virtual filesystem"
-talk, I would suggest you start with one single word: "Don't".
-
-I'm convinced that we have made it much too easy to do a half-arsed
-virtual filesystem. And eventfs is way beyond half-arsed.
-
-It's now gone from half-arsed to "I told you how to do this right, and
-you are still arguing". That makes it full-arsed.
-
-So just stop the arsing around, and just get rid of those _broken_ dentry games.
-
-               Linus
+Sounds good! Please CC me when you do.
 
