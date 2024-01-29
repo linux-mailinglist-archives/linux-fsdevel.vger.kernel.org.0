@@ -1,121 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-9364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C5384045E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 12:56:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870C4840480
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 13:00:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 733DC2832BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 11:56:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAA371C22D1B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 12:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC858605D8;
-	Mon, 29 Jan 2024 11:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Via0b88x"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FA6C604BB;
+	Mon, 29 Jan 2024 11:59:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9685C8E4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 11:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70D9604AD;
+	Mon, 29 Jan 2024 11:59:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706529333; cv=none; b=rjYc3lEBFY2tqmRrJKeiLOy4YwbR2Pp8sQ27+cZnL5UE8fqH7GhjvYIgfBAejR++dJD4zpfM17fMnTHjw2J9x6k6j8EmhAStzt/uvszRgu+wtHN+1n7vx4Q8C4u2ACCehuiIAzHAOYNZxyd8f1BwBgKvV3OVb89r2mPRWQpWo/w=
+	t=1706529573; cv=none; b=oHP/DNRjXMoOLXKo3f26ZEnXd/YVA86ZoGYdiOePzoxahbxCHy7ggcxLajTT2PV3f3QdXxYmxWaOWRpma8EV6KAzwI1XKFofqZ72nxXeC2S1xJnXUtmu4Zi9R52d5lWlUM6GK+fxrGaKElhviUKKbP6WM4PYL/ANVVbfiv1L2VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706529333; c=relaxed/simple;
-	bh=1byjLmjT6ZOpcnDHKbSQxLlzmYce9B40FvFh6bkgVOc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yo+dUv9kfUwPIrklKv671jZBSKE8QgrgTOwl1TjjqgxfvVOBfBQMqhcVtLR5agYmD8DFTeHBumfbbE7jcqLlZMf5x9QFBAud+ZTkYtNoD2SIYN4s+i3WCMeUvTp9mtNtw+VEjr7Zpj4GRB03yOyGsCFSRZnpchFDucXXkXP/ByQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Via0b88x; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706529330;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l/klC/ghutWIOc1+EVzXLrxXcGHqt0/sieVr6S5RVKE=;
-	b=Via0b88xzdVdc0ILDIBWnDppCUsAt9zwdhG96tEEqnbmJmILdaOQiwcrroSZkGUComgTYl
-	eW2THVf7tGR8SinvDguy3Hrl5L6K8aqQaRo97lmWcnLm52Lk3tOCWPWUJc4PsjK92TYsyO
-	lTKwa1Pq+CM+tCUeIlx1A2yTuNLqoCw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-221-d1lzjPdMMbCmhQXLAPqJfA-1; Mon, 29 Jan 2024 06:55:25 -0500
-X-MC-Unique: d1lzjPdMMbCmhQXLAPqJfA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id ADC73185A782;
-	Mon, 29 Jan 2024 11:55:24 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.245])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 013882166B31;
-	Mon, 29 Jan 2024 11:55:22 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Eric Van Hensbergen <ericvh@kernel.org>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Latchesar Ionkov <lucho@ionkov.net>
-Cc: David Howells <dhowells@redhat.com>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Christian Brauner <christian@brauner.io>,
-	netfs@lists.linux.dev,
-	v9fs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-cachefs@redhat.com
-Subject: [RFC PATCH 3/3] 9p: Always update remote_i_size in stat2inode
-Date: Mon, 29 Jan 2024 11:54:37 +0000
-Message-ID: <20240129115512.1281624-4-dhowells@redhat.com>
-In-Reply-To: <20240129115512.1281624-1-dhowells@redhat.com>
-References: <20240129115512.1281624-1-dhowells@redhat.com>
+	s=arc-20240116; t=1706529573; c=relaxed/simple;
+	bh=g8VjbZmPPMmeZJ0+muiwD3pbzn3IrrJd/y/zYOa4JkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YmhODcLWy+OOvp7lKPZiUi3t8HxOVjoJS60FHg8hplMudV6eAL82GdfmAjEu8p2F/TifNr+yb+gsBcMGGGE5GGuCW7PLp9pM5N23CwlpCw8DXiqmYkVSd4JA84wIQn0yG0ZzZ5OXnHdcKXm3EIDPjCzQ56HB0vkFUKQMn1iceFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AF0DB1FB;
+	Mon, 29 Jan 2024 04:00:13 -0800 (PST)
+Received: from raptor (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F6793F5A1;
+	Mon, 29 Jan 2024 03:59:24 -0800 (PST)
+Date: Mon, 29 Jan 2024 11:59:21 +0000
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: Peter Collingbourne <pcc@google.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
+	rppt@kernel.org, hughd@google.com, steven.price@arm.com,
+	anshuman.khandual@arm.com, vincenzo.frascino@arm.com,
+	david@redhat.com, eugenis@google.com, kcc@google.com,
+	hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v3 11/35] mm: Allow an arch to hook into folio
+ allocation when VMA is known
+Message-ID: <ZbeTGX1QSQlhcmh2@raptor>
+References: <20240125164256.4147-1-alexandru.elisei@arm.com>
+ <20240125164256.4147-12-alexandru.elisei@arm.com>
+ <CAMn1gO6hx7yaFHEYVbkpPocAxQmQc3JBgppcNSJw9SUfyvjwbQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+In-Reply-To: <CAMn1gO6hx7yaFHEYVbkpPocAxQmQc3JBgppcNSJw9SUfyvjwbQ@mail.gmail.com>
 
-Always update remote_i_size in v9fs_stat2inode*() if the size is available,
-even if we are asked not to update i_isize
+Hi Peter,
 
-Suggested-by: Dominique Martinet <asmadeus@codewreck.org>
-Link: https://lore.kernel.org/r/ZZVctju5TEjS218p@codewreck.org/
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Eric Van Hensbergen <ericvh@kernel.org>
-cc: Latchesar Ionkov <lucho@ionkov.net>
-cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-cc: v9fs@lists.linux.dev
-cc: linux-cachefs@redhat.com
-cc: linux-fsdevel@vger.kernel.org
----
- fs/9p/vfs_inode_dotl.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Fri, Jan 26, 2024 at 12:00:36PM -0800, Peter Collingbourne wrote:
+> On Thu, Jan 25, 2024 at 8:43 AM Alexandru Elisei
+> <alexandru.elisei@arm.com> wrote:
+> >
+> > arm64 uses VM_HIGH_ARCH_0 and VM_HIGH_ARCH_1 for enabling MTE for a VMA.
+> > When VM_HIGH_ARCH_0, which arm64 renames to VM_MTE, is set for a VMA, and
+> > the gfp flag __GFP_ZERO is present, the __GFP_ZEROTAGS gfp flag also gets
+> > set in vma_alloc_zeroed_movable_folio().
+> >
+> > Expand this to be more generic by adding an arch hook that modifes the gfp
+> > flags for an allocation when the VMA is known.
+> >
+> > Note that __GFP_ZEROTAGS is ignored by the page allocator unless __GFP_ZERO
+> > is also set; from that point of view, the current behaviour is unchanged,
+> > even though the arm64 flag is set in more places.  When arm64 will have
+> > support to reuse the tag storage for data allocation, the uses of the
+> > __GFP_ZEROTAGS flag will be expanded to instruct the page allocator to try
+> > to reserve the corresponding tag storage for the pages being allocated.
+> >
+> > The flags returned by arch_calc_vma_gfp() are or'ed with the flags set by
+> > the caller; this has been done to keep an architecture from modifying the
+> > flags already set by the core memory management code; this is similar to
+> > how do_mmap() -> calc_vm_flag_bits() -> arch_calc_vm_flag_bits() has been
+> > implemented. This can be revisited in the future if there's a need to do
+> > so.
+> >
+> > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> 
+> This patch also needs to update the non-CONFIG_NUMA definition of
+> vma_alloc_folio in include/linux/gfp.h to call arch_calc_vma_gfp. See:
+> https://r.android.com/2849146
 
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index 3505227e1704..aa3a77bb5e86 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -684,10 +684,10 @@ v9fs_stat2inode_dotl(struct p9_stat_dotl *stat, struct inode *inode,
- 			mode |= inode->i_mode & ~S_IALLUGO;
- 			inode->i_mode = mode;
- 		}
--		if (!(flags & V9FS_STAT2INODE_KEEP_ISIZE) &&
--		    stat->st_result_mask & P9_STATS_SIZE) {
-+		if (stat->st_result_mask & P9_STATS_SIZE) {
- 			v9inode->netfs.remote_i_size = stat->st_size;
--			v9fs_i_size_write(inode, stat->st_size);
-+			if (!(flags & V9FS_STAT2INODE_KEEP_ISIZE))
-+				v9fs_i_size_write(inode, stat->st_size);
- 		}
- 		if (stat->st_result_mask & P9_STATS_BLOCKS)
- 			inode->i_blocks = stat->st_blocks;
+Of course, you're already reported this to me, I cherry-pick the version of
+the patch that doesn't have the fix for this series.
 
+Will fix.
+
+Thanks,
+Alex
+
+> 
+> Peter
 
