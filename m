@@ -1,117 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-9291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B7483FD15
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 05:01:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9314483FD23
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 05:11:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9A45B237F8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 04:01:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2914D1F20E0A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 04:11:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25DD11CB8;
-	Mon, 29 Jan 2024 04:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VqkPGPVk"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E1B12B91;
+	Mon, 29 Jan 2024 04:11:03 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9242010A0D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 04:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0374C11737;
+	Mon, 29 Jan 2024 04:11:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706500902; cv=none; b=oK/15sPCLWRvHQ5j/rzvGR/+UOXdKuiF5TLNiiZRLTgCxL7TV3ruWOKam+VV3XGyMs528+9aXtQtV2LtQeyyDXMR4Uu7F+X0SVkWYfrR1kNdj3Tiv7P4LeRlsToXU4QYfrjlpvzjXrvHSZyqyTrdABp2Bw61kdvc0VhYGPTvWxg=
+	t=1706501463; cv=none; b=b3sa1sy/pbzSbxOzlgBIlCSTdttTnUSxARZu8xMewQMbCnTAOgmk4vJY6pDQ0f4i1Btk4cftPdPLF9sRYqxRpV5R/jqtudcjqFHD4KLVtnbQWgEbT5tNBcWBx3/PJspUmYfveHzy6fNLMfueszYCShXHPmfy1+FsmnD7xbXMyAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706500902; c=relaxed/simple;
-	bh=xkL43O7OU7ppcLkBh7OlkPsjLq6ZFYIqsGEUJU4E5HM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RNAZsjUWMUIu9Al57/U6YHi8cLXya5CaEU9taIMS9/WdB0vDigasQjbsu909ChMyb9Pp/epJaK29tdQ5JmRYy4kjuUVGFhaF77AHNk7tLWBUe+r/qJ75mT0r9wZvJBDBOrGYNO5PxfeEi1C09HSSkTWzjMhoD9/b2q/2CdfOPH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=VqkPGPVk; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-510e0d700c6so882974e87.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 20:01:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1706500898; x=1707105698; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=n3rcnUVyGJZKxOB2+kTh5T1A/eFH+JMPmm6YXhef9ps=;
-        b=VqkPGPVkhy8EqpLeBANqz3+Rc7n0CByyEgJsKoo8153BBLEAGDwL606nmXm+QM7f1q
-         zWOt8Q3VKDgCxiRKmubYLiBxf4viwUfHNJMnZKyyECCDSTgImpqxBxT1uNAaokReumTn
-         QYW9IxrSLXDVLo3tDb7+/N+6uNimjKA7YOngA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706500898; x=1707105698;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=n3rcnUVyGJZKxOB2+kTh5T1A/eFH+JMPmm6YXhef9ps=;
-        b=bih7i06nv/GASiBpcygh+moCcA/8KfdKIv3tpv5E0WjQ3W4jvLpbaBViGeBhyCGa41
-         sfWzwDst7ejB22g5qRY0TCqfZGSWr0vB4O5sUQ81X8UbzQ3B8IEsdzPRTlyGUvIZPZ6B
-         HQ2MDGHlOM8BniKDt+jy4bVP3gP7AZcsC7zFJQlzipNDHvNEk1GQ09/x0ner9+kDQjsp
-         CBG58KrUu0ObLonyWfejsxj0p3+cqdsvi+xzNsmgIgW97u6vqcqF74qt9erIkQgYyplE
-         WtdMyUBGX/H2ESzewJ3T+5pbT3o8Mt5m+D2nMvaI2+hRMYRbFspX168b0CmdWgrE25gd
-         y4Hw==
-X-Gm-Message-State: AOJu0Yy71NMSihf+p0YQJLTYuTSUJBc6qDHnYpHO+CRFEFZfO1xzwMYs
-	rwuvGVGY0hnc6MT0h7eCUVMoawoELbzgE5pLd1jRL/10j5Hu7mJ+Kq5t1GCiJtUZMM4nFsXVp9G
-	e2oBWXA==
-X-Google-Smtp-Source: AGHT+IEdKmk8lDoP7iAnIzm+7focbigCDD6amrfREMCWkjtYigH8vrZh9UCfy0eaeXItokMOn1SuJQ==
-X-Received: by 2002:a05:6512:3b0e:b0:50e:7a91:7e93 with SMTP id f14-20020a0565123b0e00b0050e7a917e93mr3456383lfv.44.1706500898400;
-        Sun, 28 Jan 2024 20:01:38 -0800 (PST)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id b21-20020a196455000000b005101f0166b6sm973865lfj.14.2024.01.28.20.01.37
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 28 Jan 2024 20:01:37 -0800 (PST)
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5110c166d70so1076479e87.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 20:01:37 -0800 (PST)
-X-Received: by 2002:a05:6512:12d1:b0:50e:6317:54ab with SMTP id
- p17-20020a05651212d100b0050e631754abmr2806079lfg.42.1706500896681; Sun, 28
- Jan 2024 20:01:36 -0800 (PST)
+	s=arc-20240116; t=1706501463; c=relaxed/simple;
+	bh=gFyTubGzeynFIHyzwqQ79bgdGLJ3Vo4vTFTq75BZOVU=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=iHDBsGXacWGmPfInzf7gQ3ptZ0tj3+3kb7ji1c5UfvVeUNoBG2stAQR7CMaI4nrxx0eGPfvrdQPjPIOBKuDPaaTHtkLNguli1bR1/DaSpOr7jX9xVMgWyulrXFu5Mf0ZRCxCHEJJMP/zsEizy4ntfEavWelXOr7TgGyPFYFG8MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:43946)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1rUIyy-00DJEa-8E; Sun, 28 Jan 2024 21:10:52 -0700
+Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:51358 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1rUIyx-006FYI-AA; Sun, 28 Jan 2024 21:10:51 -0700
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,  Kees Cook
+ <keescook@chromium.org>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Christian Brauner <brauner@kernel.org>,  Jan Kara <jack@suse.cz>,  Paul
+ Moore <paul@paul-moore.com>,  James Morris <jmorris@namei.org>,  "Serge E.
+ Hallyn" <serge@hallyn.com>,  <linux-security-module@vger.kernel.org>
+ <linux-security-module@vger.kernel.org>,  <linux-fsdevel@vger.kernel.org>
+ <linux-fsdevel@vger.kernel.org>,  LKML <linux-kernel@vger.kernel.org>
+References: <e938c37b-d615-4be4-a2da-02b904b7072f@I-love.SAKURA.ne.jp>
+	<613a54d2-9508-4f87-a163-a25a77a101cd@I-love.SAKURA.ne.jp>
+Date: Sun, 28 Jan 2024 22:10:19 -0600
+In-Reply-To: <613a54d2-9508-4f87-a163-a25a77a101cd@I-love.SAKURA.ne.jp>
+	(Tetsuo Handa's message of "Sun, 28 Jan 2024 23:16:41 +0900")
+Message-ID: <87frygbx04.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240126150209.367ff402@gandalf.local.home> <CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
- <20240126162626.31d90da9@gandalf.local.home> <CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
- <CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
- <CAHk-=wj+DsZZ=2iTUkJ-Nojs9fjYMvPs1NuoM3yK7aTDtJfPYQ@mail.gmail.com>
- <20240128175111.69f8b973@rorschach.local.home> <CAHk-=wjHc48QSGWtgBekej7F+Ln3b0j1tStcqyEf3S-Pj_MHHw@mail.gmail.com>
- <20240128185943.6920388b@rorschach.local.home> <20240128192108.6875ecf4@rorschach.local.home>
- <CAHk-=wg7tML8L+27j=7fh8Etk4Wvo0Ay3mS5U7JOTEGxjy1viA@mail.gmail.com>
- <CAHk-=wjKagcAh5rHuNPMqp9hH18APjF4jW7LQ06pNQwZ1Qp0Eg@mail.gmail.com>
- <20240128213249.605a7ade@rorschach.local.home> <20240128224054.0df489b8@rorschach.local.home>
-In-Reply-To: <20240128224054.0df489b8@rorschach.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 28 Jan 2024 20:01:19 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whjO4zAmoP8fQkHUQJANahFMZaviNu=Jfd36E=knLPVgQ@mail.gmail.com>
-Message-ID: <CAHk-=whjO4zAmoP8fQkHUQJANahFMZaviNu=Jfd36E=knLPVgQ@mail.gmail.com>
-Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Ajay Kaher <ajay.kaher@broadcom.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1rUIyx-006FYI-AA;;;mid=<87frygbx04.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX18UA/hqWrZfwwrfC68Hn14pOeoqB042ceA=
+X-SA-Exim-Connect-IP: 68.227.168.167
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-Spam-Level: ***
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4940]
+	*  0.7 XMSubLong Long Subject
+	*  0.5 XMGappySubj_01 Very gappy subject
+	*  1.5 XMNoVowels Alpha-numberic number with no vowels
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	*  1.2 LotsOfNums_01 BODY: Lots of long strings of numbers
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  0.0 T_TooManySym_03 6+ unique symbols in subject
+	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 342 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 3.9 (1.1%), b_tie_ro: 2.7 (0.8%), parse: 0.62
+	(0.2%), extract_message_metadata: 9 (2.6%), get_uri_detail_list: 1.10
+	(0.3%), tests_pri_-2000: 2.9 (0.9%), tests_pri_-1000: 1.98 (0.6%),
+	tests_pri_-950: 0.89 (0.3%), tests_pri_-900: 0.87 (0.3%),
+	tests_pri_-90: 57 (16.6%), check_bayes: 56 (16.4%), b_tokenize: 6
+	(1.7%), b_tok_get_all: 8 (2.3%), b_comp_prob: 1.59 (0.5%),
+	b_tok_touch_all: 38 (11.2%), b_finish: 0.58 (0.2%), tests_pri_0: 254
+	(74.3%), check_dkim_signature: 0.42 (0.1%), check_dkim_adsp: 1.89
+	(0.6%), poll_dns_idle: 0.35 (0.1%), tests_pri_10: 1.52 (0.4%),
+	tests_pri_500: 7 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/3] LSM: add security_bprm_aborting_creds() hook
+X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 
-On Sun, 28 Jan 2024 at 19:40, Steven Rostedt <rostedt@goodmis.org> wrote:
+Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
+
+> A regression caused by commit 978ffcbf00d8 ("execve: open the executable
+> file before doing anything else") has been fixed by commit 4759ff71f23e
+> ("exec: Check __FMODE_EXEC instead of in_execve for LSMs") and commit
+> 3eab830189d9 ("uselib: remove use of __FMODE_EXEC"). While fixing this
+> regression, Linus commented that we want to remove current->in_execve flag.
 >
-> [  106.258400] BUG: KASAN: slab-use-after-free in tracing_open_file_tr+0x3a/0x120
-> [  106.261228] Read of size 8 at addr ffff8881136f27b8 by task cat/868
+> The current->in_execve flag was introduced by commit f9ce1f1cda8b ("Add
+> in_execve flag into task_struct.") when TOMOYO LSM was merged, and the
+> reason was explained in commit f7433243770c ("LSM adapter functions.").
+>
+> In short, TOMOYO's design is not compatible with COW credential model
+> introduced in Linux 2.6.29, and the current->in_execve flag was added for
+> emulating security_bprm_free() hook which has been removed by introduction
+> of COW credential model.
 
-Are you refcounting the pointers that you have in the dentries (and
-inodes)? Like we talked about you needing to do?
+How is it not compatible?  Especially how is TOMOYO's design not
+compatible with how things are today?
 
-Every time you assign a pointer to d_fsdata, you need to kref_get() it.
+The discussion talks about not allowing reading of executables by programs
+that can exec them.
 
-You try to work around the tracefs weaknesses by trying to clean up
-the dentry data, but it's WRONG.
+At this point with __FMODE_EXEC being placed on the files for exec,
+and with only execve using that mode all of your considerations should
+be resolved.
 
-You should refcount the data properly, so that you don't NEED to clean it out.
+So it appears to me that Tomoyo is currently compatible with COW
+credentials even if it was not historically.
 
-               Linus
+As such can we get a cleanup to actually make Tomoyo compatible.
+Otherwise because Tomoyo is the only use of whatever you are doing
+it will continue to be very easy to break Tomoyo.
+
+The fact that somewhere Tomoyo is modifying a credential that the rest
+of the kernel sees as read-only, and making it impossible to just
+restore that credential is very concerning from a maintenance
+perspective.
+
+Can't Tomoyo simply allow reading of files that have __FMODE_EXEC
+set when allow_execve is set, without needing to perform a domain
+transition, and later back out that domain transition?
+
+
+>  include/linux/security.h      |  5 +++++
+>  security/security.c           | 14 ++++++++++++++
+>  4 files changed, 21 insertions(+)
+>
+> diff --git a/fs/exec.c b/fs/exec.c
+> index af4fbb61cd53..9d198cd9a75c 100644
+> --- a/fs/exec.c
+> +++ b/fs/exec.c
+> @@ -1519,6 +1519,7 @@ static void free_bprm(struct linux_binprm *bprm)
+>  	}
+>  	free_arg_pages(bprm);
+>  	if (bprm->cred) {
+> +		security_bprm_aborting_creds(bprm);
+>  		mutex_unlock(&current->signal->cred_guard_mutex);
+>  		abort_creds(bprm->cred);
+
+Why isn't abort_creds calling security_free_cred enough here?
+>  	}
+
+Eric
 
