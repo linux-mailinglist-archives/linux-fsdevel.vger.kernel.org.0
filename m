@@ -1,148 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-9396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 881E2840A53
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 16:43:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA87840A79
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 16:49:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17BDB1F239AC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 15:43:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D752C28C5F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 15:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86AE15531C;
-	Mon, 29 Jan 2024 15:42:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EF0154BFA;
+	Mon, 29 Jan 2024 15:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="MUe+POmJ"
+	dkim=pass (1024-bit key) header.d=memverge.com header.i=@memverge.com header.b="0Eg/1de2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2076.outbound.protection.outlook.com [40.107.220.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E723B156972
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 15:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706542968; cv=none; b=ILTYKAxF072bymuk1HOsjgjsY3VzYK/gbYA8KHkjMohEjrjsTdlFmAjviVil+rTiZ9Pm2Tzc2slXtujLlkVaLlQQE0p0pN8YnwCsZ6WiKZUPAwhdp2sf9E/iASQtOGAhLiXfYG/G40vZGd8VC1YoOnvRYUWk3aaiPP876VBFpWo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706542968; c=relaxed/simple;
-	bh=E2pz83SaHUUBSu+k2FmR9GyqPifnumB7xkbI8/ZNP6c=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=IWFaXWHFRBCBbWbDo/0DDxIif28YEQMW3UIxoo+CQicxWTZ04VCWZlZsmOuWb+SSxEESv2foaU03G+qjA73MY9WYAHf8v09z0AObssPPWZpl83SB/7PBBH1OX2Vb+wgZ/VdaOceP1LelX1f0wlgQgsN6gx4KqY4a4/Yn2NR+05E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=MUe+POmJ; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com [209.85.218.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id C87413FDA6
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 15:42:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1706542962;
-	bh=FmVwiL7ssmvBS/Rk3AP7EZwNHMhnVZ9IcleUiv9ucoo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type;
-	b=MUe+POmJwanreQNkMuyXUEq1Gmq9m0Zpn4dwmRWFZQ5BzDHtJDEdYSbd9rki/VMhn
-	 dfeKT+ZUKscxbYDeyC3KelkrTJw1HbA7L9P7QTOlOe6BfmIElvg+wjzi/K0Jk+y0xF
-	 y65fe92JueevglKGclECrr2iB95ErVFt+4SCp2UZLlAY8GQysEiPd2itKVm//iUhZr
-	 KP7Xg0A+mkx/gS8biAlzu8ZQklRHklnZknAQTOd5MdTbkG/Gkcsst1k+IkrN4SLULj
-	 t69SIeJzDyouJzA+9nLCib2mpNC1TJbwZvsDwPTm9iVjqMNyeIwfjs2IswUrau5pcn
-	 9cKF1KwKjHLuw==
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a2f1d0c3389so143035666b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 07:42:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706542961; x=1707147761;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FmVwiL7ssmvBS/Rk3AP7EZwNHMhnVZ9IcleUiv9ucoo=;
-        b=ZiS8f+CRc25pkhwGKQTcs+HV+PR6kHsju+m1zHshMyeantNsufipxjKNFPb8HKQ+ll
-         Yf4JQRlf7AZ32QPXj4E8YpyRXzBt+WtJgZK7s55ZMIo3ZHZxy3axB7s/qubWL1fDq2LN
-         xBQU2JjPPIoJspdQI4lk8yi0+9vjs7Ukirfi8b3mSCiIVSEOoptVRuWgI0loGSPSKvxp
-         +E2gYibaxwtu70cnw1D6UyGCPbuUWS2ueIXDwqOT+/CI3ncZRm1QsSZnmQaoIU4d5XQQ
-         KUfhmJXaAcI4jPZVDpKDYcuRru0ddXVh3dhyHTvQofG7CXN3xAJ0/m2Ycv9UamFGs1o+
-         cnWQ==
-X-Gm-Message-State: AOJu0YwY+7Vj08UMZdNISgqFf3yHj2Br23QYo189kVeAigi2yiKpAp+F
-	lr0cgG9nsHup5WYLBHSwqM0dPZoVYJdilOww3Kv4tCTSdyb1ZZaywj4wp2iPieEDlQ60JGqqU8b
-	9lSN+GXeMfFYBC4e66Hda/GPjHBDFkzXeBoJU53H67OPhu6qg/UfL9IYjyHxXMc+/3uVkb3gKfH
-	Ol7udtb36IdcA=
-X-Received: by 2002:a17:906:7f90:b0:a2c:3596:b0c1 with SMTP id f16-20020a1709067f9000b00a2c3596b0c1mr4985251ejr.75.1706542961638;
-        Mon, 29 Jan 2024 07:42:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF4WvBpWmKQPkCgy9/7v4IVO3JZ0fzYsBag+YDG8GPdLA0TxgRJEg58UOGotA/ZgDC9TpA24w==
-X-Received: by 2002:a17:906:7f90:b0:a2c:3596:b0c1 with SMTP id f16-20020a1709067f9000b00a2c3596b0c1mr4985242ejr.75.1706542961322;
-        Mon, 29 Jan 2024 07:42:41 -0800 (PST)
-Received: from amikhalitsyn ([91.64.72.41])
-        by smtp.gmail.com with ESMTPSA id fj18-20020a1709069c9200b00a3496fa1f7fsm4069969ejc.91.2024.01.29.07.42.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jan 2024 07:42:40 -0800 (PST)
-Date: Mon, 29 Jan 2024 16:42:40 +0100
-From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: mszeredi@redhat.com, stgraber@stgraber.org,
- linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, Miklos
- Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, Bernd
- Schubert <bschubert@ddn.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 4/9] fs/fuse: support idmapped getattr inode op
-Message-Id: <20240129164240.9e35bcf01695efcb1f966517@canonical.com>
-In-Reply-To: <20240120-heult-applaudieren-d6449392b497@brauner>
-References: <20240108120824.122178-1-aleksandr.mikhalitsyn@canonical.com>
-	<20240108120824.122178-5-aleksandr.mikhalitsyn@canonical.com>
-	<20240120-heult-applaudieren-d6449392b497@brauner>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F97B15531C;
+	Mon, 29 Jan 2024 15:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706543340; cv=fail; b=Ugc+juduCBLQE1bPCW2ZNLRg/4j0NEYN0EX6J5ZoJd6QEKheC/WpNxySF31GPQfo6gBpPaT3b9HmhNe8flDIpyu/WA8nVfBNSQ/ZJ6mCDkWXopgBvv2cmfeRliF9CuGMSfzUo4KGuaP1ibfgvyREX80fJr2HcYB2WHfJ/0B+vwU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706543340; c=relaxed/simple;
+	bh=5G9pVet5oAyYXbNTF6sRgdiJKHUbhS6s/TOnDJ1hctE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=WcE/up9++Mh7l+E4fnMjOtN8Ab8jjsQyhTTHaVEgICTndTqHfV9Kh9h4tP5j/e29XJNZbOyJdsO2MsPVmFGtfpwCIPhkeBInYtoDsGB5DDfPg9kL9PbZKk1A+T/3yfOnZcTwPBINJSkV4RFs6PRvLhWUFzyrnvYYrXAGaHr12O8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=memverge.com; spf=pass smtp.mailfrom=memverge.com; dkim=pass (1024-bit key) header.d=memverge.com header.i=@memverge.com header.b=0Eg/1de2; arc=fail smtp.client-ip=40.107.220.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=memverge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=memverge.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LkzeT1f2YuMA6yJNHCCVWuoCJxKOIF3Ee9jcP8/L5r3BROX5yiknGHRc2ly3BaNxwj5sEuRhj9MXLGDFDOtj1DG+Kr+qIN14+RGrz+yMw371aC8FbWXr2uzUFPZhJUgSkC/80rye2eVVOL0H6Z5ElxSInyYoiAGZVCRLUE05lK7R32ScaWEMz6M+CYCK5DbD7cNdMWoast9eP1kVFQhMe1mikiOcnaJXK8iDLsr7RAG1DiGyokrixAY5HseIGGIaCIbG355GbVRYteJPotNQmMRlSYbZgbX2mMtkcmoskwo0PapOFmbUlWGLpJ7+K+dVU3a1iixYlhCFNcU8mPgStQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jmHQ/R5uh/8YvjKCi0vlntmngjiN2NtR67L7NkXvhvg=;
+ b=RbDgD0zHYsHwzs5fRLsuOxQteYUG5dqLvOPhl1lgJ+XGEWrq6gxqogo1n1l9E12lQgJf2iVlZYoOzqWBrdHZr4awqem8KPZqr8Sj/uJLE0UxTCuaKE4f1BUSCaid6cmfzmu3vfiJ6YYvmh6OZfo7wQhj4qjyr3JraJV77GEToFmd0GBCNgEl4h2s/MDevTxKlpKdA+jEPC9IhgLi6U7eZ0B5T9cBjKzzXwZ/mKoOEiBf1Dgj3vQhd+jsr6Kg9TAu8MRM13XUQhjwjzbxfW7T/mEYoPglck1JwZOocQRmfP7TRZQ4aUu1wAgM4CFpzJDOE8jxH8+AJRnnJXhRfg9VLw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=memverge.com; dmarc=pass action=none header.from=memverge.com;
+ dkim=pass header.d=memverge.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=memverge.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jmHQ/R5uh/8YvjKCi0vlntmngjiN2NtR67L7NkXvhvg=;
+ b=0Eg/1de2LdFZedY6hoRHqSRKWGIOxQaUEbe2VZtczfcpOvD8CoPRv6ZlpaY+hyrkK4sm4AD+E6d8qi9UVqSCVU6Qw8BHYiyFjyMFdzKFb2Mwifrd1ybM+JS+x0U/7gPT7jLhS7TKBRrz+uV2uCvDt27C1c5W6IBQ7I5HTWqoR2k=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=memverge.com;
+Received: from SJ0PR17MB5512.namprd17.prod.outlook.com (2603:10b6:a03:394::19)
+ by SJ0PR17MB4303.namprd17.prod.outlook.com (2603:10b6:a03:298::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7228.32; Mon, 29 Jan
+ 2024 15:48:55 +0000
+Received: from SJ0PR17MB5512.namprd17.prod.outlook.com
+ ([fe80::7a04:dc86:2799:2f15]) by SJ0PR17MB5512.namprd17.prod.outlook.com
+ ([fe80::7a04:dc86:2799:2f15%5]) with mapi id 15.20.7228.029; Mon, 29 Jan 2024
+ 15:48:55 +0000
+Date: Mon, 29 Jan 2024 10:48:47 -0500
+From: Gregory Price <gregory.price@memverge.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Gregory Price <gourry.memverge@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+	corbet@lwn.net, akpm@linux-foundation.org, honggyu.kim@sk.com,
+	rakie.kim@sk.com, hyeongtak.ji@sk.com, mhocko@kernel.org,
+	vtavarespetr@micron.com, jgroves@micron.com,
+	ravis.opensrc@micron.com, sthanneeru@micron.com,
+	emirakhur@micron.com, Hasan.Maruf@amd.com, seungjun.ha@samsung.com,
+	hannes@cmpxchg.org, dan.j.williams@intel.com
+Subject: Re: [PATCH v3 4/4] mm/mempolicy: change cur_il_weight to atomic and
+ carry the node with it
+Message-ID: <ZbfI3+nhgQlNKMPG@memverge.com>
+References: <20240125184345.47074-1-gregory.price@memverge.com>
+ <20240125184345.47074-5-gregory.price@memverge.com>
+ <87sf2klez8.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZbPf6d2cQykdl3Eb@memverge.com>
+ <877cjsk0yd.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877cjsk0yd.fsf@yhuang6-desk2.ccr.corp.intel.com>
+X-ClientProxiedBy: BYAPR21CA0016.namprd21.prod.outlook.com
+ (2603:10b6:a03:114::26) To SJ0PR17MB5512.namprd17.prod.outlook.com
+ (2603:10b6:a03:394::19)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ0PR17MB5512:EE_|SJ0PR17MB4303:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8d86384f-02a6-4814-a6c7-08dc20e1ccaa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	Ose/SujTTFN5DwEaWaJVFyWkoIcfcbXmmELCvqKGbG+9KLHvebP0oV6Ee/dGZYKvcTbNiSO67W0NWBcCk+/53jboDrdzTRtXzlSIB1Ek/jPtQMcDE/tNVtQNibmekJoSEM7xoWiKAS/+8zvmgx2QL/XNCxWn0sQBwMeb52agJBIusv3F/dSGVRLrn6aiQIhtCEMX36jHpbFXprL8kk6Z9dcUR4EKJPteoG0ZqS3No3BloGCjaSsyK9KcyvDtApucnIPM3Z0kC+gHXB8ozZnsO5kiNks9trUqM4oNow7GMOdSRIBAWqt4NWTOXpyzToAiKaxnlc6PoLTTq3jJ/R8jd4lB8P9U8sl1HvypDpSzKRWSCKScmrXR7CTYDwY9W3m9RTwy3owASgieYXKulodt97BJNgt1wpm6xeCRVHXjcPekTHaOnAExgOql4ggY+1xl/eBYS8bkI6XV6sIjwq371Xas189Q3hZYmJiodibyyz7MJHDLRRYx93YkPlQHhte/jd6mie9X7JD5sXlGMfNNIe2AQE1+gkrSAaf5B0aRJ8/dn2Kpzrh1+y/i2PzfBlmwg3Uzymc1PA2AkGOdCdF1ImwAiXCvdrpTSEL3J5SPqgGSF6jYn5f8mnfAxlW1K/YdMuvnYO5CUdP69O1md805zQ==
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR17MB5512.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(366004)(396003)(376002)(39840400004)(136003)(230922051799003)(64100799003)(186009)(451199024)(1800799012)(41300700001)(38100700002)(66556008)(6506007)(86362001)(316002)(6916009)(66946007)(66476007)(6486002)(8676002)(8936002)(44832011)(2616005)(5660300002)(6512007)(7416002)(26005)(478600001)(6666004)(2906002)(4326008)(83380400001)(36756003)(16393002)(67856001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CeuUms+e7X+eFBk+MoNuTCY6oZj00nJnkDfuYDldeKdXQT+Mt4sRnh8EPAzq?=
+ =?us-ascii?Q?I9xhKd5uKHdCwiPebmwKAvUi2Aef8CKKb/7AYbigNTh0aQHhs4PHteuM/nzo?=
+ =?us-ascii?Q?KPcF1Putt0Byd2qpWyOu2XCmLrqbJcWsnu5PPgg5qRDPPAn+lUmDkm79dCps?=
+ =?us-ascii?Q?IeSuhNSTUCfNPhXIi+GOYfChetUnYCLgLyxnCeTO5zaxunhD2wGOG2RMaIFo?=
+ =?us-ascii?Q?XpChrxRVZafpYjXmQpHVuK5yuYRN5vpLiWp2ZRXqJfSsj9KEpCBl3yL2oDEd?=
+ =?us-ascii?Q?tlQYI0d92twUzu+LLICS92sCpQUk4BclOulxTgBKtcl2wiAuOD0RNMe0RXwj?=
+ =?us-ascii?Q?FZ1A5oKm9r9qr0B2BCrWoj7m41lx90GZAGWvjOShUzg7aTvIkG3Nl/ic4bk3?=
+ =?us-ascii?Q?F2hEshtnVz6clk5DfbpC4aqIkJ8tlYPh2e2atzajJlbFZeoAZpPlIIkHk6Zl?=
+ =?us-ascii?Q?rZr7wi3bSsm5HV1sHKcV7syCc4Zifqrfp0S4CzoXPxXya/4hcNeiVi2IOGGY?=
+ =?us-ascii?Q?Hwmq1U3EQDgDrB8Vb6ipJ4y6qXIIlTZIuMjQsyQMw69F3x1MPH5c2LPYS36P?=
+ =?us-ascii?Q?M9XS3cE/D8FzCqTKFwHha8d7s6CB/Xz4iCwtG+0FcWgIhFVmyuQuicwFjOM2?=
+ =?us-ascii?Q?ffK6LALB35X3tirl3ycG0MECk0zYYwwqcpBrD3tMDRGPf1pm1QrDdixZEEFg?=
+ =?us-ascii?Q?BvkdePgDatugXXKtCMiK3jssR+crNPlLNG5C3NDktmt63vdSQB6ykuCLyYDU?=
+ =?us-ascii?Q?UnxLNmFI0/dXkjXYUpM1jj9+x2+eCNeq6NcCcpw0PmikHEq14s42boKtSNgU?=
+ =?us-ascii?Q?RByRw4YSy5g5sClN8bFsRCEoSjO2rbaTSF/TGJlWD4m2GZu4almb3TxRDBzt?=
+ =?us-ascii?Q?a97GQ7aVJsTA1qozNNTv97m6TBQKAVo2lmzcZBDtR+KCP9jVHd8V2E1/lkIi?=
+ =?us-ascii?Q?eb2jYB/V3QaHTuMrZnb0B9d27lIfrChDo84u4q6io/l0JG5wr3/mKbRY16xh?=
+ =?us-ascii?Q?1lN1Ow9lYhTTPnaMhQgk4Rd1t9698PnBcpSqqDHksG/t0APwCSKygkOF+Jnb?=
+ =?us-ascii?Q?OialfFzKlQDnoO3pt6bCRlOvpzNGOldSschRS8k7Vnib0iCmEL3iP8oQ35a3?=
+ =?us-ascii?Q?TqGk5wMzdfARzHkFRBkIBI+zvkWE+D07SoF3FNhW3XeB+mslHqqzlPCdOzd4?=
+ =?us-ascii?Q?vC2gqKD2iPC2s1gftZ2s0UQzp+ry8Ed+gHwPDF6xG6hcpZQ4HHDQMjs5h+l7?=
+ =?us-ascii?Q?XjZvBdNDLGIm7Ooj3dtEbhrr7L14tDP6X+KEu7l5hZWdzXNLUITeW4EtPR/j?=
+ =?us-ascii?Q?hZgnaaq8gORZpIMzdMwPaLvy7Hs/WqsNzBwxYmmTRJgN5AlRWt/Cs2hYuaww?=
+ =?us-ascii?Q?mcprfHAIVDRq/t7wlD9kJxP5lqpBnmzW+aMhs6FAebXCxo1fBiav+qPNJz5+?=
+ =?us-ascii?Q?cJrofY3TntvZp9oMX1ATjdqpfN+Yo6RtXETaHCnIcX5N0zRhNgThZs9gKyfU?=
+ =?us-ascii?Q?CqDWG97RjDxWEIWkfqKpE+CDJaXRLYeiJDZfD4xTeLGNXbfFI2zFi1bIzpZz?=
+ =?us-ascii?Q?WE1badmujGsrg1wfd7jr/t+LuG96Up3/1SAiVhz3dOl/Ei4pw3K8QwwFBQTn?=
+ =?us-ascii?Q?5w=3D=3D?=
+X-OriginatorOrg: memverge.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8d86384f-02a6-4814-a6c7-08dc20e1ccaa
+X-MS-Exchange-CrossTenant-AuthSource: SJ0PR17MB5512.namprd17.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jan 2024 15:48:55.5292
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 5c90cb59-37e7-4c81-9c07-00473d5fb682
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: zzy/a/eFjFCdFOetbcN0/zick0p7FcLxetEhpcRpiEwP+aNmDXnki+71EvYqbBeJGNN4JIxRAO3FRcwp9TOIEkk0mP+UX8RkWWMhlQvYYF0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR17MB4303
 
-On Sat, 20 Jan 2024 16:21:08 +0100
-Christian Brauner <brauner@kernel.org> wrote:
+On Mon, Jan 29, 2024 at 04:17:46PM +0800, Huang, Ying wrote:
+> Gregory Price <gregory.price@memverge.com> writes:
+> 
+> > Using current->il_prev between these two policies, is just plain incorrect,
+> > so I will need to rethink this, and the existing code will need to be
+> > updated such that weighted_interleave does not use current->il_prev.
+> 
+> IIUC, weighted_interleave_nodes() is only used for mempolicy of tasks
+> (set_mempolicy()), as in the following code.
+> 
+> +		*nid = (ilx == NO_INTERLEAVE_INDEX) ?
+> +			weighted_interleave_nodes(pol) :
+> +			weighted_interleave_nid(pol, ilx);
+>
 
-> >  int fuse_update_attributes(struct inode *inode, struct file *file, u32 mask)
-> >  {
-> > -	return fuse_update_get_attr(inode, file, NULL, mask, 0);
-> > +	return fuse_update_get_attr(&nop_mnt_idmap, inode, file, NULL, mask, 0);
-> >  }
-> >  
-> >  int fuse_reverse_inval_entry(struct fuse_conn *fc, u64 parent_nodeid,
-> > @@ -1506,7 +1510,7 @@ static int fuse_perm_getattr(struct inode *inode, int mask)
-> >  		return -ECHILD;
-> >  
-> >  	forget_all_cached_acls(inode);
-> > -	return fuse_do_getattr(inode, NULL, NULL);
-> > +	return fuse_do_getattr(&nop_mnt_idmap, inode, NULL, NULL);
-> >  }
-> >  
-> >  /*
-> > @@ -2062,7 +2066,7 @@ static int fuse_setattr(struct mnt_idmap *idmap, struct dentry *entry,
-> >  			 * ia_mode calculation may have used stale i_mode.
-> >  			 * Refresh and recalculate.
-> >  			 */
-> > -			ret = fuse_do_getattr(inode, NULL, file);
-> > +			ret = fuse_do_getattr(&nop_mnt_idmap, inode, NULL, file);
-> >  			if (ret)
-> >  				return ret;
+Was digging through this the past couple of days.  It does look like
+this is true - because if (pol) comes from a vma, ilx will not be
+NO_INTERLEAVE_INDEX.  If this changes in the future, however,
+weighted_interleave_nodes may begin to miscount under heavy contention.
+
+It may be worth documenting this explicitly, because this is incredibly
+non-obvious.  I will add a comment to this chunk here.
+
+> But, in contrast, it's bad to put task-local "current weight" in
+> mempolicy.  So, I think that it's better to move cur_il_weight to
+> task_struct.  And maybe combine it with current->il_prev.
 > 
 
-Hi, Christian!
+Given all of this, I think is reasonably. That is effectively what is
+happening anyway for anyone that just uses `numactl -w --interleave=...`
 
-> These are internal getattr requests that don't originate from a specific mount?
+Style question: is it preferable add an anonymous union into task_struct:
 
-These requests do originate from a specific mount, but we don't need an idmapping in there
-because 3rd argument of fuse_do_getattr(struct mnt_idmap *idmap, struct inode *inode, struct kstat *stat, struct file *file) is NULL,
-which means that this request will not fill an stat structure => we don't need to take an idmapping into account.
+union {
+    short il_prev;
+    atomic_t wil_node_weight;
+};
 
-> Can you please add a comment about this in the commit message so it's
-> clear why it's ok to not pass the idmapping?
+Or should I break out that union explicitly in mempolicy.h?
 
-Sure, that's my bad that I haven't added this explanation! It's not obvious at all.
+The latter involves additional code updates in mempolicy.c for the union
+name (current->___.il_prev) but it lets us add documentation to mempolicy.h
 
-Will be fixed in -v2.
-
-Thanks,
-Alex
-
+~Gregory
 
