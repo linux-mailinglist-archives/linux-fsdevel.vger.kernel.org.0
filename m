@@ -1,205 +1,384 @@
-Return-Path: <linux-fsdevel+bounces-9427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3697E8411DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 19:15:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0BC08411FF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 19:30:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1CBE286AED
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 18:15:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26CD528AD30
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 18:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 890C16F06E;
-	Mon, 29 Jan 2024 18:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE18A13AC5;
+	Mon, 29 Jan 2024 18:30:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CdkVew3f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A1593F9F3;
-	Mon, 29 Jan 2024 18:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9CB125C1
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 18:30:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706552132; cv=none; b=sv9cPvlGA6AWOVsYKwvps2AeY9IoXMP3HuNtrhVlgaD74VE/psn8aHQq1CuvMWnCDZe9DiwDKUJG8TinrYNaUtXHerjM5oMRuJ4Ngl4q/Yc0J34hYo2z1gJs4tcZQG7G7F9TMjVoH9A4cZqEUPXxQprtIXokcMwO1+gHnzN+dvU=
+	t=1706553050; cv=none; b=OfhEi4jniRCvZgC5fBoqrZun+zbhJfEXXP8IuNMRpfBNnkcfXR1iRRSMbrlyZ31RDh2SXVJ/kULtuyToJY0GugdbOt6TBWkre3bx3oprRDXsr3xI1xrF1KCnM1XVHrxPfKO42hFZN9+HGX3+pI+XzsdLCvo+Bc8j58B4xSql0yA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706552132; c=relaxed/simple;
-	bh=Am5aEz8EwJQXXuKnZa+C00jQvnC7PmkUOWBDLEGjGEk=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=Oj/xb+nYadSqdAADwogVPI9b2tOBXmG9sOeVa8Kz10Hd8Lvn2m0L5XxU5P8kF/7U9dGyg+0iJtxqJZ7YVh5mGNkZFUtFrbVeWFywz1JowRmYZXp6RUKee74k9GAAnfrmIKwDdCzpYyDuhDH5zPr701aAjKH+T+45mjorlUPDDbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:45144)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1rUWAI-00ET44-Sf; Mon, 29 Jan 2024 11:15:26 -0700
-Received: from ip68-227-168-167.om.om.cox.net ([68.227.168.167]:35054 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1rUWAH-00Edcf-6p; Mon, 29 Jan 2024 11:15:26 -0700
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,  Kees Cook
- <keescook@chromium.org>,  Christian Brauner <brauner@kernel.org>,  Jan
- Kara <jack@suse.cz>,  Paul Moore <paul@paul-moore.com>,  James Morris
- <jmorris@namei.org>,  "Serge E. Hallyn" <serge@hallyn.com>,
-  linux-security-module@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
-  LKML <linux-kernel@vger.kernel.org>
-References: <e938c37b-d615-4be4-a2da-02b904b7072f@I-love.SAKURA.ne.jp>
-	<613a54d2-9508-4f87-a163-a25a77a101cd@I-love.SAKURA.ne.jp>
-	<87frygbx04.fsf@email.froward.int.ebiederm.org>
-	<dbf0ef61-355b-4dcb-8e51-9298cf847367@I-love.SAKURA.ne.jp>
-Date: Mon, 29 Jan 2024 12:15:02 -0600
-In-Reply-To: <dbf0ef61-355b-4dcb-8e51-9298cf847367@I-love.SAKURA.ne.jp>
-	(Tetsuo Handa's message of "Mon, 29 Jan 2024 13:46:28 +0900")
-Message-ID: <8734ug9fbt.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1706553050; c=relaxed/simple;
+	bh=kQQqyFOdPc3PmyNpZgAc7G6jLOKGlDHEjmF7Xmyd6qc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cQ/q+gfN2M96Bxzm+PocPtxE34KmqntbFxiNRQfyAobGNv0LPhP2Xrg/zTT3zDt+gawJVAMEXp1aWt/yM9vDJQR+ebjZZ1g+BeoV5HbJHTCAcysP/AK9VvOd2mYt5bivqW9l+Bg/qXmNRxY3IqVHn+tgm8hGtl32Oow0Pi9CgUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CdkVew3f; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-46b29f09401so516551137.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 10:30:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706553047; x=1707157847; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WHEyDcqypKFkwpNDe8GfvVy0x6/6h1Qp2TPjBPSdRNM=;
+        b=CdkVew3f6VG0vLCRGqxpDdzvtPph1ioxAC8XKWq1DBl6DBP1XofUIXDNY9OQ/i0mff
+         GWj91RojEGN7AUsV/Ah/ourg7soD4Q0nnmSVjE8iVcFPw0q3DD+6J/kMKhi7q7SbjAZQ
+         i7YpEF75T3zvPo8/MUp5ZCDzCcF6bq94Rv+LR1uQu/YgWzzWsGcZ9/bAijxm6h/lQaxx
+         xPIKNwWSGOj3QO3+BPoCfbpL+ZBN/M3TfxY51CRTH6ZVnGVQIHNtZqlePvB87rMBt9FL
+         0yQ1ftQ2TrP4imN69TeKN3J074ls5nfxkZHdwzdhq89XbYQxqgxWkaYNtEu7X2KBQTm3
+         sluA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706553047; x=1707157847;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WHEyDcqypKFkwpNDe8GfvVy0x6/6h1Qp2TPjBPSdRNM=;
+        b=SxFA5na+EeTv409J7Cv6xQgAyXcGD2dBcfEtjQG7SKo9kL8qDHX6kSiH+uNiLG0Blr
+         wdxIyB5wQ/0sOd0fiOJYVnnvKPFtIDt0Xy2P7g4sNWdq82uS8b4kmvG7YZEWCRL4iFhb
+         hrRL172/cXVQDsdiG9u724jNTtefVRQ6OIv85c9NJSXAGnI6E4toYpQtKOPZvf2lTZVK
+         E/Bdgq2EibbCX9Pol6cRAXQ92Wx7cQtRpLGQ2AiBy8PKK+iBmHV2DOiu7RI7ftpaPqTN
+         2fhWKgc41Lx9gKLIpZ0YHk3EjlzGW22LdLP7YepkzxagLhp+tl24nypMlw/F/QuzqoS0
+         MAvQ==
+X-Gm-Message-State: AOJu0YyczovJT+Pj40ptonCgAcYl7qabxf+oOLNrG/GgizFBhwkTmNNA
+	/I6f1Gz8FXvKmSbxxaOyaXbcuysP0yg/efOlCWPU/nCC1GsTGCo2H4Ljt35C6bw2ux4yd5r5LHV
+	abogPP0vTBizahywsyapPDPmYAZk=
+X-Google-Smtp-Source: AGHT+IH5+tz8PjAO0wb1CwnXalFgCzvaGBVYvQkzG3gFfHtmAyMTDWr6uNXfmJtzOxIBCKpBFixnULb7D3pCZ//nLKo=
+X-Received: by 2002:a05:6102:1499:b0:46b:970b:daf9 with SMTP id
+ d25-20020a056102149900b0046b970bdaf9mr119383vsv.2.1706553046933; Mon, 29 Jan
+ 2024 10:30:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1rUWAH-00Edcf-6p;;;mid=<8734ug9fbt.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=68.227.168.167;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX18wl42UHne2LVIOqfwPN0l+F1RkALgM9RU=
-X-SA-Exim-Connect-IP: 68.227.168.167
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-Spam-Level: **
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4995]
-	*  0.5 XMGappySubj_01 Very gappy subject
-	*  0.7 XMSubLong Long Subject
-	*  1.5 XMNoVowels Alpha-numberic number with no vowels
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.0 T_TooManySym_02 5+ unique symbols in subject
-	* -0.0 T_SCC_BODY_TEXT_LINE No description available.
-	*  0.0 T_TooManySym_03 6+ unique symbols in subject
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 728 ms - load_scoreonly_sql: 0.12 (0.0%),
-	signal_user_changed: 12 (1.7%), b_tie_ro: 10 (1.4%), parse: 1.48
-	(0.2%), extract_message_metadata: 15 (2.0%), get_uri_detail_list: 2.6
-	(0.4%), tests_pri_-2000: 5 (0.7%), tests_pri_-1000: 2.9 (0.4%),
-	tests_pri_-950: 1.34 (0.2%), tests_pri_-900: 1.07 (0.1%),
-	tests_pri_-90: 202 (27.8%), check_bayes: 197 (27.0%), b_tokenize: 10
-	(1.4%), b_tok_get_all: 8 (1.1%), b_comp_prob: 3.5 (0.5%),
-	b_tok_touch_all: 171 (23.5%), b_finish: 0.88 (0.1%), tests_pri_0: 467
-	(64.2%), check_dkim_signature: 0.82 (0.1%), check_dkim_adsp: 3.8
-	(0.5%), poll_dns_idle: 0.37 (0.1%), tests_pri_10: 2.4 (0.3%),
-	tests_pri_500: 13 (1.8%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/3] LSM: add security_bprm_aborting_creds() hook
-X-SA-Exim-Version: 4.2.1 (built Sat, 08 Feb 2020 21:53:50 +0000)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <20231208080135.4089880-1-amir73il@gmail.com> <20231213172844.ygjbkyl6i4gj52lt@quack3>
+ <CAOQ4uxjMv_3g1XSp41M7eV+Tr+6R2QK0kCY=+AuaMCaGj0nuJA@mail.gmail.com>
+ <20231215153108.GC683314@perftesting> <CAOQ4uxjVuhznNZitsjzDCanqtNrHvFN7Rx4dhUEPeFxsM+S22A@mail.gmail.com>
+ <20231218143504.abj3h6vxtwlwsozx@quack3> <CAOQ4uxjNzSf6p9G79vcg3cxFdKSEip=kXQs=MwWjNUkPzTZqPg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjNzSf6p9G79vcg3cxFdKSEip=kXQs=MwWjNUkPzTZqPg@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 29 Jan 2024 20:30:34 +0200
+Message-ID: <CAOQ4uxgxCRoqwCs7mr+7YP4mmW7JXxRB20r-fsrFe2y5d3wDqQ@mail.gmail.com>
+Subject: Re: [RFC][PATCH] fanotify: allow to set errno in FAN_DENY permission response
+To: Jan Kara <jack@suse.cz>
+Cc: Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>, 
+	Sweet Tea Dorminy <thesweettea@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> writes:
-
-> On 2024/01/29 13:10, Eric W. Biederman wrote:
->>> @@ -1519,6 +1519,7 @@ static void free_bprm(struct linux_binprm *bprm)
->>>  	}
->>>  	free_arg_pages(bprm);
->>>  	if (bprm->cred) {
->>> +		security_bprm_aborting_creds(bprm);
->>>  		mutex_unlock(&current->signal->cred_guard_mutex);
->>>  		abort_creds(bprm->cred);
->> 
->> Why isn't abort_creds calling security_free_cred enough here?
+On Mon, Dec 18, 2023 at 5:53=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
 >
-> Because security_cred_free() from put_cred_rcu() is called from RCU callback
-> rather than from current thread doing execve().
-> TOMOYO wants to restore attributes of current thread doing execve().
-
+> On Mon, Dec 18, 2023 at 4:35=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Fri 15-12-23 18:50:39, Amir Goldstein wrote:
+> > > On Fri, Dec 15, 2023 at 5:31=E2=80=AFPM Josef Bacik <josef@toxicpanda=
+.com> wrote:
+> > > >
+> > > > On Wed, Dec 13, 2023 at 09:09:30PM +0200, Amir Goldstein wrote:
+> > > > > On Wed, Dec 13, 2023 at 7:28=E2=80=AFPM Jan Kara <jack@suse.cz> w=
+rote:
+> > > > > >
+> > > > > > On Fri 08-12-23 10:01:35, Amir Goldstein wrote:
+> > > > > > > With FAN_DENY response, user trying to perform the filesystem=
+ operation
+> > > > > > > gets an error with errno set to EPERM.
+> > > > > > >
+> > > > > > > It is useful for hierarchical storage management (HSM) servic=
+e to be able
+> > > > > > > to deny access for reasons more diverse than EPERM, for examp=
+le EAGAIN,
+> > > > > > > if HSM could retry the operation later.
+> > > > > > >
+> > > > > > > Allow userspace to response to permission events with the res=
+ponse value
+> > > > > > > FAN_DENY_ERRNO(errno), instead of FAN_DENY to return a custom=
+ error.
+> > > > > > >
+> > > > > > > The change in fanotify_response is backward compatible, becau=
+se errno is
+> > > > > > > written in the high 8 bits of the 32bit response field and ol=
+d kernels
+> > > > > > > reject respose value with high bits set.
+> > > > > > >
+> > > > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > > > >
+> > > > > > So a couple of comments that spring to my mind when I'm looking=
+ into this
+> > > > > > now (partly maybe due to my weak memory ;):
+> > > > > >
+> > > > > > 1) Do we still need the EAGAIN return? I think we have mostly d=
+ealt with
+> > > > > > freezing deadlocks in another way, didn't we?
+> > > > >
+> > > > > I was thinking about EAGAIN on account of the HSM not being able =
+to
+> > > > > download the file ATM.
+> > > > >
+> > > > > There are a bunch of error codes that are typical for network fil=
+esystems, e.g.
+> > > > > ETIMEDOUT, ENOTCONN, ECONNRESET which could be relevant to
+> > > > > HSM failures.
+> > > > >
+> > > > > >
+> > > > > > 2) If answer to 1) is yes, then there is a second question - do=
+ we expect
+> > > > > > the errors to propagate back to the unsuspecting application do=
+ing say
+> > > > > > read(2) syscall? Because I don't think that will fly well with =
+a big
+> > > > > > majority of applications which basically treat *any* error from=
+ read(2) as
+> > > > > > fatal. This is also related to your question about standard per=
+mission
+> > > > > > events. Consumers of these error numbers are going to be random
+> > > > > > applications and I see a potential for rather big confusion ari=
+sing there
+> > > > > > (like read(1) returning EINVAL or EBADF and now you wonder why =
+the hell
+> > > > > > until you go debug the kernel and find out the error is coming =
+out of
+> > > > > > fanotify handler). And the usecase is not quite clear to me for=
+ ordinary
+> > > > > > fanotify permission events (while I have no doubts about creati=
+vity of
+> > > > > > implementors of fanotify handlers ;)).
+> > > > > >
+> > > > >
+> > > > > That's a good question.
+> > > > > I prefer to delegate your question to the prospect users of the f=
+eature.
+> > > > >
+> > > > > Josef, which errors did your use case need this feature for?
+> > > > >
+> > > > > > 3) Given the potential for confusion, maybe we should stay cons=
+ervative and
+> > > > > > only allow additional EAGAIN error instead of arbitrary errno i=
+f we need it?
+> > > > > >
+> > > > >
+> > > > > I know I was planning to use this for EDQUOT error (from FAN_PRE_=
+MODIFY),
+> > > > > but I certainly wouldn't mind restricting the set of custom error=
+s.
+> > > > > I think it makes sense. The hard part is to agree on this set of =
+errors.
+> > > > >
+> > > >
+> > > > I'm all for flexibility here.
+> > > >
+> > > > We're going to have 2 classes of applications interacting with HSM =
+backed
+> > > > storage, normal applications and applications that know they're bac=
+ked by HSM.
+> > > > The normal applications are just going to crash if they get an erro=
+r on read(2),
+> > > > it doesn't matter what errno it is.  The second class would have di=
+fferent
+> > > > things they'd want to do in the face of different errors, and that'=
+s what this
+> > > > patchset is targeting.  We can limit it to a few errno's if that ma=
+kes you feel
+> > > > better, but having more than just one would be helpful.
+> > >
+> > > Ok. In another email I got from your colleagues, they listed:
+> > > EIO, EAGAIN, ENOSPC as possible errors to return.
+> > > I added EDQUOT for our in house use case.
+> >
+> > OK, so do I get it right that you also have applications that are aware
+> > that they are operation on top of HSM managed filesystem and thus they =
+can
+> > do meaningful things with the reported errors?
+> >
 >
->> The fact that somewhere Tomoyo is modifying a credential that the rest
->> of the kernel sees as read-only, and making it impossible to just
->> restore that credential is very concerning from a maintenance
->> perspective.
+> Some applications are HSM aware.
+> Some just report the errors that they get which are meaningful to users.
+> EIO is the standard response for HSM failure to fill content.
 >
-> TOMOYO does not use "struct cred"->security.
-> TOMOYO uses only "struct task_struct"->security.
+> EDQUOT/ENOSPC is a good example of special functionality.
+> HSM "swaps out" file content to a slow remote tier, but the slow remote
+> tier may have a space/quota limit that is known to HSM.
 >
->   struct lsm_blob_sizes tomoyo_blob_sizes __ro_after_init = {
->       .lbs_task = sizeof(struct tomoyo_task),
->   };
+> By tracking the total of st_size under some HSM managed folder, including
+> the st_size of files whose content is punched out, HSM can enforce this l=
+imit
+> not in the conventional meaning of local disk blocks usage.
 >
-> TOMOYO uses security_task_alloc() for allocating "struct task_struct"->security,
-> security_task_free() for releasing "struct task_struct"->security,
-> security_bprm_check() for updating "struct task_struct"->security,
-> security_bprm_committed_creds() for erasing old "struct task_struct"->security,
-> security_bprm_aborting_creds() for restoring old "struct task_struct"->security.
+> This is when returning EDQUOT/ENOSPC for FAN_PRE_MODIFY makes
+> sense to most users/applications, except for ones that try to create
+> large sparse
+> files...
 >
-> Commit a6f76f23d297 ("CRED: Make execve() take advantage of copy-on-write
-> credentials") made TOMOYO impossible to do above. current->in_execve flag was a
-> hack for emulating security_bprm_aborting_creds() using security_prepare_creds().
 >
->> Can't Tomoyo simply allow reading of files that have __FMODE_EXEC
->> set when allow_execve is set, without needing to perform a domain
->> transition, and later back out that domain transition?
+> > > Those are all valid errors for write(2) and some are valid for read(2=
+).
+> > > ENOSPC/EDQUOT make a lot of sense for HSM for read(2), but could
+> > > be surprising to applications not aware of HSM.
+> > > I think it wouldn't be that bad if we let HSM decide which of those e=
+rrors
+> > > to return for FAN_PRE_ACCESS as opposed to FAN_PRE_MODIFY.
+> >
+> > Yeah, I don't think we need to be super-restrictive here, I'd just pref=
+er
+> > to avoid the "whatever number you decide to return" kind of interface
+> > because I can see potential for confusion and abuse there. I think all =
+four
+> > errors above are perfectly fine for both FAN_PRE_ACCESS and FAN_PRE_MOD=
+IFY
+> > if there are consumers that are able to use them.
+> >
+> > > But given that we do want to limit the chance of abusing this feature=
+,
+> > > perhaps it would be best to limit the error codes to known error code=
+s
+> > > for write(2) IO failures (i.e. not EBADF, not EFAULT) and allow retur=
+ning
+> > > FAN_DENY_ERRNO only for the new FAN_PRE_{ACCESS,MODIFY}
+> > > HSM events.
+> > >
+> > > IOW, FAN_{OPEN,ACCESS}_PERM - no FAN_DENY_ERRNO for you!
+> > >
+> > > Does that sound good to you?
+> >
+> > It sounds OK to me. I'm open to allowing FAN_DENY_ERRNO for FAN_OPEN_PE=
+RM
+> > if there's a usecase because at least conceptually it makes a good sens=
+e
+> > and chances for confusion are low there. People are used to dealing wit=
+h
+> > errors on open(2).
+> >
 >
-> No. That does not match TOMOYO's design.
+> I wrote about one case I have below.
 >
-> allow_execve keyword does not imply "allow opening that file for non-execve() purpose".
+> > > Furthermore, we can start with allowing a very limited set of errors
+> > > and extend it in the future, on case by case basis.
+> > >
+> > > The way that this could be manageable is if we provide userspace
+> > > a way to test for supported return codes.
+> > >
+> > > There is already a simple method that we used for testing FAN_INFO
+> > > records type support -
+> > > After fan_fd =3D fanotify_init(), userspace can write a "test" fanoti=
+fy_response
+> > > to fan_fd with fanotify_response.fd=3DFAN_NOFD.
+> > >
+> > > When setting fanotify_response.fd=3DFAN_DENY, this would return ENOEN=
+T,
+> > > but with fanotify_response.fd=3DFAN_DENY_ERRNO(EIO), upstream would
+> > > return EINVAL.
+> > >
+> > > This opens the possibility of allowing, say, EIO, EAGAIN in the first=
+ release
+> > > and ENOSPC, EDQUOT in the following release.
+> >
+> > If we forsee that ENOSPC and EDQUOT will be needed, then we can just en=
+able
+> > it from start and not complicate our lives more than necessary.
+> >
+>
+> Sure, I was just giving an example how the list could be extended case by=
+ case
+> in the future.
+>
+> > > The advantage in this method is that it is very simple and already wo=
+rking
+> > > correctly for old kernels.
+> > >
+> > > The downside is that this simple method does not allow checking for
+> > > allowed errors per specific event type, so if we decide that we do wa=
+nt
+> > > to allow returning FAN_DENY_ERRNO for FAN_OPEN_PERM later on, this me=
+thod
+> > > could not be used by userspace to test for this finer grained support=
+.
+> >
+> > True, in that case the HSM manager would have to try responding with
+> > FAN_DENY_ERRNO() and if it fails, it will have to fallback to respondin=
+g
+> > with FAN_DENY. Not too bad I'd say.
+> >
+>
+> Yeah that works too.
+>
+> > > In another thread, I mention the fact that FAN_OPEN_PERM still has a
+> > > potential freeze deadlock when called from open(O_TRUNC|O_CREATE),
+> > > so we can consider the fact that FAN_DENY_ERRNO is not allowed with
+> > > FAN_OPEN_PERM as a negative incentive for people to consider using
+> > > FAN_OPEN_PERM as a trigger for HSM.
+> >
+> > AFAIU from the past discussions, there's no good use of FAN_OPEN_PERM
+> > event for HSM. If that's the case, I'm for not allowing FAN_DENY_ERRNO =
+for
+> > FAN_OPEN_PERM.
+>
+> In the HttpDirFS HSM demo, I used FAN_OPEN_PERM on a mount mark
+> to deny open of file during the short time that it's content is being
+> punched out [1].
+> It is quite complicated to explain, but I only used it for denying access=
+,
+> not to fill content and not to write anything to filesystem.
+> It's worth noting that returning EBUSY in that case would be more meaning=
+ful
+> to users.
+>
+> That's one case in favor of allowing FAN_DENY_ERRNO for FAN_OPEN_PERM,
+> but mainly I do not have a proof that people will not need it.
+>
+> OTOH, I am a bit concerned that this will encourage developer to use
+> FAN_OPEN_PERM as a trigger to filling file content and then we are back t=
+o
+> deadlock risk zone.
+>
+> Not sure which way to go.
+>
+> Anyway, I think we agree that there is no reason to merge FAN_DENY_ERRNO
+> before FAN_PRE_* events, so we can continue this discussion later when
+> I post FAN_PRE_* patches - not for this cycle.
+>
 
-Huh?  I was proposing using the allow_execve credential to allow opening
-and reading the file for execve purpose.  So you don't need to perform
-a domain transition early.
+Hi Jan,
 
-> Also, performing a domain transition before execve() reaches point of no return is
-> the TOMOYO's design, but COW credentials does not allow such behavior.
+I started to prepare the pre-content events patches for posting and got bac=
+k
+to this one as well.
 
-My question is simple.  Why can't TOMOYO use the changing of credentials
-in task->cred to perform the domain transition?  Why can't TOMOYO work
-with the code in execve?
+Since we had this discussion I have learned of another use case that requir=
+es
+filling file content in FAN_OPEN_PERM hook, FAN_OPEN_EXEC_PERM to
+be exact.
 
-I don't see anything that fundamentally requires you to have the domain
-transition early.  All I have seen so far is an assertion that you
-are using task->security.  Is there anything except for the reading
-of the executable that having the domain transition early allows?
+The reason is that unless an executable content is filled at execve() time,
+there is no other opportunity to fill its content without getting -ETXTBSY.
 
-My primary concern with TOMOYO being the odd man out, and using hooks
-for purposes arbitrary purposes instead of purposes they are logically
-designed to be used for?
+So to keep things more flexible, I decided to add -ETXTBSY to the
+allowed errors with FAN_DENY_ERRNO() and to decided to allow
+FAN_DENY_ERRNO() with all permission events.
 
-If you aren't going to change your design your new hook should be:
-	security_execve_revert(current);
-Or maybe:
-	security_execve_abort(current);
+To keep FAN_DENY_ERRNO() a bit more focused on HSM, I have
+added a limitation that FAN_DENY_ERRNO() is allowed only for
+FAN_CLASS_PRE_CONTENT groups.
 
-At least then it is based upon the reality that you plan to revert
-changes to current->security.  Saying anything about creds or bprm when
-you don't touch them, makes no sense at all.  Causing people to
-completely misunderstand what is going on, and making it more likely
-they will change the code in ways that will break TOMOYO.
-
-
-What I understand from the documentation you provided about TOMOYO is:
-- TOMOYO provides the domain transition early so that the executable
-  can be read.
-- TOMOYO did that because it could not detect reliably when a file
-  was opened for execve and read for execve.
-
-Am I wrong in my understanding?
-
-If that understanding is correct, now that (file->f_mode & __FMODE_EXEC)
-is a reliable indication of a file used exclusively for exec then it
-should be possible to take advantage of the new information and get
-TOMOYO and the rest of the execve playing nicely with each other without
-having to add new hooks.
-
-
-If the maintenance concerns are not enough please consider the situation
-from an attack surface concern.  Any hacked together poorly maintained
-surface is ripe bugs, and the exploitation of those bugs.  Sometimes
-those bugs will break you in obvious ways, other times those bugs
-will break you in overlooked and exploitable ways.
-
-Eric
+Thanks,
+Amir.
 
