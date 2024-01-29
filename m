@@ -1,629 +1,349 @@
-Return-Path: <linux-fsdevel+bounces-9463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26958415CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 23:37:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2A7A8415DA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 23:42:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2792E1F23C1A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 22:37:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ADFF1F23ACB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 22:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D30415A498;
-	Mon, 29 Jan 2024 22:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56EE4F60E;
+	Mon, 29 Jan 2024 22:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QgrlIxjD"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="za33MXTG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D0451C28
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 22:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527D14F1F0
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 22:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706567752; cv=none; b=ovr3rhY/DPrj+RNEYJTrwANDgmkER0MyPLNfoxmzt+woCTo1+9AoBXuF4yhABJSRPeTP7cAXlqq7STslOumz9htyGv3YJ0FoFF0edXmiCT2m6/eK1rdd9Vgg2R4AEJp+9Pppddqd3JLTzrQQCdB9x+H+ORXlvsEYcn6yf2cmY8o=
+	t=1706568129; cv=none; b=t5cnjGEvtt9DudrXy4mZZeAdD25Ps7311As7vmEDTE0vslvyKl0U33JZbYHUDKL3omxSbWkRmcA1pgDcrfWVkdbKGXAjjyVw1y5Y0PwasmB4g8EWNeCeGH0PPbgywfufT7JoB1sUXxMJQVrCRPf+mCY0OGIIiWRlZTDTXpbzApQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706567752; c=relaxed/simple;
-	bh=s+G+9sjvSoX5XgBQ6z4AUcbG6RL1FicQxfKQ3QcjecI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=jcnxhZVUQ9/OV+QdRVgHDRPWnwWO1L4fDaycJ5aF7aGK9ZMxK+rj4IKlGziKKzEXFxZvBPWZHncBKbIgoids8v1COX8tUumeBVuE7+ppaDFGOhCXa1IMRCudhvLU/6yCL1CAp2E7Lx949sO+/KmVnLKIh7SWNQheTa0LqdMel0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QgrlIxjD; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1706568129; c=relaxed/simple;
+	bh=ExktG3hW2hVE4umdJAwOuYzeosO6UnaKjedkGRNDkVQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=if3dLo6/x7HSjxZDNy1f2irhRGYZXkXZnaMk9viFa3gBmpOjy30FNKboJTy1ZJ4Uch6r3MNb3yM6AlFUHLyxeO/zcF4jIf20/3Pnz0FCPZwSZOKeA6E+vqPSTK5OqTGIEfUsFK3g12vjImCrKPyWNgdFt+mbiJO3vje2FQS5DNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--souravpanda.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=za33MXTG; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40efcd830f6so4411805e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 14:35:48 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--souravpanda.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-5ffee6e316bso74623817b3.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 14:42:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1706567747; x=1707172547; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nAcge6e4bZ+atcwcU+LlRcSma3RpIGNh/KwuVkxAx7I=;
-        b=QgrlIxjDEMlozJTce9wkxflhX0/NBBau3dkMkY+j8K8z2m+TG4q2Ee1+a/Dfiw3yRe
-         1SwFXhSYF4pe3boDYf9NLi9x4ZGtSSL3BH5sh3aBh+wd9/slNX3bTYBJcWlTTpMSsObK
-         FWnH+YVYC6D9CAE8T0meVYw8OJObY4uLEkoid3KM1GV4PjgymJzF98fZ4J9/QXxkfatb
-         rSbnGPBh3Khr+hwesnTGjtrOh358TXTxHMYon5clGTM8gfW/03fQemNtI6dCiGucwG7e
-         EBCLYJardMRc0MKXqiMUPSQz17MIPR2V6x3FA3Xa6WHAP6s5kTsBVXQY+UTwrCPyw2Ha
-         LD4A==
+        d=google.com; s=20230601; t=1706568126; x=1707172926; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VE7GZwlO0yUqA6/JtS1kX+fO9JTNi/wRG9QlDH96VaM=;
+        b=za33MXTG60FF+wBvqnWtPkvfvCIVeOpM5j0+T3PHRKQQx+ohAGPQoAYgEte3lk51u4
+         8MKNDKJe4Uv0UbBtV2DP9X52+FvfeSgh7Gt/1IGMKgV8srD8Jn3k2LNihvbUN7ARuqor
+         gdh4WjnePTQhfWkAwZF6PwDwHkieFm2N2Ydcyj0rsW+cNhdscypc0m1AkF+p5WfFYh2e
+         oyJXdywQsdIDHJGKrIsXl5LR2PyB1A30jJ1GTrSm3mC0lXlSyR6odFnxzwDNy/BrUrJa
+         eWxteY98u0zYi0TcjFAn1x5jQ7wYOyNS4EzbC4sTM3CKbj6247SPJeb6LbfHVUcdbvYJ
+         52/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706567747; x=1707172547;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nAcge6e4bZ+atcwcU+LlRcSma3RpIGNh/KwuVkxAx7I=;
-        b=B87ayRyhtJ6ZZejCMVfY0GTHkgfE+Wog9r5ZMBNqdH1Le5Sj1Z0WO5YhdZgU6fbTwd
-         irdJMaLLTRZ0xVmb2AFXcEkHhYsu7Wpp/Ua4c+C/TkhPDjmsK/OJu6zJJh84a8X+Z/dj
-         CFTDmB05N3omAtxbXg1gqfAL3KNm01M1kGMdyUF8yEYKmfYPabdSoKYyAP9QThg1Kcq7
-         G/JDJK0jixit6rz9ZXPn9F2Z0GwIMD312byZS4h3KEPGYuN8cOCO6erwKGKoF/fMSPu1
-         pT+nb7Y04OeUbIeUX29QqOsOaK/sICOrWkEjNaPpiGAkrB0DfklGvBp7EaKZ2XpRvPuD
-         VidA==
-X-Gm-Message-State: AOJu0Ywz5uYazsZcN6LzTmt0pqDh4fTtVMJROSfXAKEX2YhNJ5xTY6bv
-	TJp0O3u033eiB8/EE68QIBlz94WQMKeY9cEYwLwmZkNUeDkzfa5RV1BUxMxfXfl/FwGDHG1Erkj
-	2H8srO2eqwK0btJJD8DqTv5TNGIjqwCjGuopS
-X-Google-Smtp-Source: AGHT+IHKTx6TKKMJqRKYrlcoWFxencD+Ug2zjqF2Z5Pjq/Ylpfs4IiZgAEMP7vijiJBgFprWXOWwkVzBJ1nlff5tOys=
-X-Received: by 2002:a05:6000:1a8c:b0:33a:ed47:2858 with SMTP id
- f12-20020a0560001a8c00b0033aed472858mr3625434wry.63.1706567746536; Mon, 29
- Jan 2024 14:35:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706568126; x=1707172926;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VE7GZwlO0yUqA6/JtS1kX+fO9JTNi/wRG9QlDH96VaM=;
+        b=Otb5xrZ0gHLxFxWeQQjdlI5tZUFqvcDeD1FNkrxJ5+eP6QREuGI4zWW73QK6waR3FX
+         ryUKtWMfZK7WvnicJgIzELB3u34znz6WNykPsQhhJgKFR7Al3H/1OLrqEQO+v3HMsg8b
+         hmtA7QSVUgEnREHaCs3nMB9VjnpFbZda5LbfYJzbHHxV3a0AIO4cbC9PcMG/xUIRxlFZ
+         YK9opSc7rTs+tGS1JqiF6APH0KtSlmHZGF2iRwx+X8nYkCTMc+VG50f92rN/pXEyocB2
+         b112IOzQ0yNmMKP2dB4sQmwhV5MD4tzzAZaFeJ7x4vU/iiVRDB+WLovOLt+7EqO92FsW
+         gktw==
+X-Gm-Message-State: AOJu0YyFS2y7bsBDvIFNP26C8r/ClFtF7UhfTKCabMtmH/kYa1gcNJCl
+	vbtw9WnMrYDWYjsS+Wl5w8J/kTWpAC4puQ3FUVUyq4OqclKcAo7OTPOncSDe4u3koj69fIdUmWv
+	BJozxcBa3ovYX/dV8xxuMdw==
+X-Google-Smtp-Source: AGHT+IHsc6gFIVDbnW/AAd98AprNnklerEGWWSROYyc2PHPusRWpj7AuGZqgpUYnX4Zpiewhvb8Wx78Fis1tjxYt+Q==
+X-Received: from souravpanda.svl.corp.google.com ([2620:15c:2a3:200:56e5:d75e:57c4:836c])
+ (user=souravpanda job=sendgmr) by 2002:a05:690c:ed4:b0:5d8:4274:bae2 with
+ SMTP id cs20-20020a05690c0ed400b005d84274bae2mr2229572ywb.6.1706568126319;
+ Mon, 29 Jan 2024 14:42:06 -0800 (PST)
+Date: Mon, 29 Jan 2024 14:42:03 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240129193512.123145-1-lokeshgidra@google.com>
- <20240129193512.123145-3-lokeshgidra@google.com> <20240129210014.troxejbr3mzorcvx@revolver>
-In-Reply-To: <20240129210014.troxejbr3mzorcvx@revolver>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Mon, 29 Jan 2024 14:35:34 -0800
-Message-ID: <CA+EESO6XiPfbUBgU3FukGvi_NG5XpAQxWKu7vg534t=rtWmGXg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] userfaultfd: protect mmap_changing with rw_sem in userfaulfd_ctx
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lokesh Gidra <lokeshgidra@google.com>, 
-	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, surenb@google.com, 
-	kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com, 
-	david@redhat.com, axelrasmussen@google.com, bgeffon@google.com, 
-	willy@infradead.org, jannh@google.com, kaleshsingh@google.com, 
-	ngeoffray@google.com, timmurray@google.com, rppt@kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
+Message-ID: <20240129224204.1812062-1-souravpanda@google.com>
+Subject: [PATCH v7 0/1] mm: report per-page metadata information
+From: Sourav Panda <souravpanda@google.com>
+To: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org, 
+	akpm@linux-foundation.org, mike.kravetz@oracle.com, muchun.song@linux.dev, 
+	rppt@kernel.org, david@redhat.com, rdunlap@infradead.org, 
+	chenlinxuan@uniontech.com, yang.yang29@zte.com.cn, souravpanda@google.com, 
+	tomas.mudrunka@gmail.com, bhelgaas@google.com, ivan@cloudflare.com, 
+	pasha.tatashin@soleen.com, yosryahmed@google.com, hannes@cmpxchg.org, 
+	shakeelb@google.com, kirill.shutemov@linux.intel.com, 
+	wangkefeng.wang@huawei.com, adobriyan@gmail.com, vbabka@suse.cz, 
+	Liam.Howlett@Oracle.com, surenb@google.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	willy@infradead.org, weixugc@google.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 29, 2024 at 1:00=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> * Lokesh Gidra <lokeshgidra@google.com> [240129 14:35]:
-> > Increments and loads to mmap_changing are always in mmap_lock
-> > critical section.
->
-> Read or write?
->
-It's write-mode when incrementing (except in case of
-userfaultfd_remove() where it's done in read-mode) and loads are in
-mmap_lock (read-mode). I'll clarify this in the next version.
->
-> > This ensures that if userspace requests event
-> > notification for non-cooperative operations (e.g. mremap), userfaultfd
-> > operations don't occur concurrently.
-> >
-> > This can be achieved by using a separate read-write semaphore in
-> > userfaultfd_ctx such that increments are done in write-mode and loads
-> > in read-mode, thereby eliminating the dependency on mmap_lock for this
-> > purpose.
-> >
-> > This is a preparatory step before we replace mmap_lock usage with
-> > per-vma locks in fill/move ioctls.
-> >
-> > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-> > ---
-> >  fs/userfaultfd.c              | 40 ++++++++++++----------
-> >  include/linux/userfaultfd_k.h | 31 ++++++++++--------
-> >  mm/userfaultfd.c              | 62 ++++++++++++++++++++---------------
-> >  3 files changed, 75 insertions(+), 58 deletions(-)
-> >
-> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> > index 58331b83d648..c00a021bcce4 100644
-> > --- a/fs/userfaultfd.c
-> > +++ b/fs/userfaultfd.c
-> > @@ -685,12 +685,15 @@ int dup_userfaultfd(struct vm_area_struct *vma, s=
-truct list_head *fcs)
-> >               ctx->flags =3D octx->flags;
-> >               ctx->features =3D octx->features;
-> >               ctx->released =3D false;
-> > +             init_rwsem(&ctx->map_changing_lock);
-> >               atomic_set(&ctx->mmap_changing, 0);
-> >               ctx->mm =3D vma->vm_mm;
-> >               mmgrab(ctx->mm);
-> >
-> >               userfaultfd_ctx_get(octx);
-> > +             down_write(&octx->map_changing_lock);
-> >               atomic_inc(&octx->mmap_changing);
-> > +             up_write(&octx->map_changing_lock);
->
-> This can potentially hold up your writer as the readers execute.  I
-> think this will change your priority (ie: priority inversion)?
+Changelog:
+v7:
+	- Addressed comments from David Rientjes
+                - For exporting PageMetadata to /proc/meminfo,
+                  utilize global_node_page_state_pages for item
+                  NR_PAGE_METADATA. This is instead of iterating
+                  over nodes and accumulating the output of
+                  node_page_state.
+v6:
+	- Interface changes
+	  	- Added per-node nr_page_metadata and
+		  nr_page_metadata_boot fields that are exported
+		  in /sys/devices/system/node/nodeN/vmstat
+		- nr_page_metadata exclusively tracks buddy
+		  allocations while nr_page_metadata_boot
+		  exclusively tracks memblock allocations.
+		- Modified PageMetadata in /proc/meminfo to only
+		  include buddy allocations so that it is
+		  comparable against MemTotal in /proc/meminfo
+		- Removed the PageMetadata field added in
+		  /sys/devices/system/node/nodeN/meminfo
+	- Addressed bugs reported by the kernel test bot.
+	  	- All occurences of __mod_node_page_state have
+		  been replaced by mod_node_page_state.
+	- Addressed comments from Muchun Song.
+	  	- Removed page meta data accouting from
+		  mm/hugetlb.c. When CONFIG_SPARSEMEM_VMEMMAP
+		  is disabled struct pages should not be returned
+		  to buddy.
+	- Modified the cover letter with the results and analysis
+		- From when memory_hotplug.memmap_on_memory is
+		  alternated between 0 and 1.
+		- To account for the new interface changes.
 
-Priority inversion, if any, is already happening due to mmap_lock, no?
-Also, I thought rw_semaphore implementation is fair, so the writer
-will eventually get the lock right? Please correct me if I'm wrong.
+v5:
+	- Addressed comments from Muchun Song.
+		- Fixed errors introduced in v4 when
+		  CONFIG_SPARSEMEM_VMEMMAP is disabled by testing
+		  against FLATMEM and SPARSEMEM memory models.
+		- Handled the condition wherein the allocation of
+		  walk.reuse_page fails, by moving NR_PAGE_METADATA
+		  update into the clause if( walk.reuse_page ).
+		- Removed the usage of DIV_ROUND_UP from
+		  alloc_vmemmap_page_list since "end - start" is
+		  always a multiple of PAGE_SIZE.
+		- Modified alloc_vmemmap_page_list to update
+		  NR_PAGE_METADATA once instead of every loop.
+v4:
+	- Addressed comment from Matthew Wilcox.
+		- Used __node_stat_sub_folio and __node_stat_add_folio
+		  instead of __mod_node_page_state in mm/hugetlb.c.
+		- Used page_pgdat wherever possible in the entire patch.
+		- Used DIV_ROUND_UP() wherever possible in the entire
+		  patch.
+v3:
+	- Addressed one comment from Matthew Wilcox.
+	  	- In free_page_ext, page_pgdat() is now extracted
+		  prior to freeing the memory.
+v2:
+	- Fixed the three bugs reported by kernel test robot.
+	- Enhanced the commit message as recommended by David Hildenbrand.
+	- Addressed comments from Matthew Wilcox:
+	  	- Simplified alloc_vmemmap_page_list() and
+		  free_page_ext() as recommended.
+		- Used the appropriate comment style in mm/vmstat.c.
+		- Replaced writeout_early_perpage_metadata() with
+		  store_early_perpage_metadata() to reduce ambiguity
+		  with what swap does.
+	- Addressed comments from Mike Rapoport:
+	  	- Simplified the loop in alloc_vmemmap_page_list().
+		- Could NOT address a comment to move
+		  store_early_perpage_metadata() near where nodes
+		  and page allocator are initialized.
+		- Included the vmalloc()ed page_ext in accounting
+		  within free_page_ext().
+		- Made early_perpage_metadata[MAX_NUMNODES] static.
 
-At this patch: there can't be any readers as they need to acquire
-mmap_lock in read-mode first. While writers, at the point of
-incrementing mmap_changing, already hold mmap_lock in write-mode.
 
-With per-vma locks, the same synchronization that mmap_lock achieved
-around mmap_changing, will be achieved by ctx->map_changing_lock.
->
-> You could use the first bit of the atomic_inc as indication of a write.
-> So if the mmap_changing is even, then there are no writers.  If it
-> didn't change and it's even then you know no modification has happened
-> (or it overflowed and hit the same number which would be rare, but
-> maybe okay?).
+Previous approaches and discussions
+-----------------------------------
+V6:
+https://lore.kernel.org/all/20231205223118.3575485-1-souravpanda@google.com
+v5:
+https://lore.kernel.org/all/20231101230816.1459373-1-souravpanda@google.com
+v4:
+https://lore.kernel.org/all/20231031223846.827173-1-souravpanda@google.com
+v3:
+https://lore.kernel.org/all/20231031174459.459480-1-souravpanda@google.com
+v2:
+https://lore.kernel.org/all/20231018005548.3505662-1-souravpanda@google.com
+v1:
+https://lore.kernel.org/r/20230913173000.4016218-2-souravpanda@google.com
 
-This is already achievable, right? If mmap_changing is >0 then we know
-there are writers. The problem is that we want writers (like mremap
-operations) to block as long as there is a userfaultfd operation (also
-reader of mmap_changing) going on. Please note that I'm inferring this
-from current implementation.
+Hi!
 
-AFAIU, mmap_changing isn't required for correctness, because all
-operations are happening under the right mode of mmap_lock. It's used
-to ensure that while a non-cooperative operations is happening, if the
-user has asked it to be notified, then no other userfaultfd operations
-should take place until the user gets the event notification.
->
-> >               fctx->orig =3D octx;
-> >               fctx->new =3D ctx;
-> >               list_add_tail(&fctx->list, fcs);
-> > @@ -737,7 +740,9 @@ void mremap_userfaultfd_prep(struct vm_area_struct =
-*vma,
-> >       if (ctx->features & UFFD_FEATURE_EVENT_REMAP) {
-> >               vm_ctx->ctx =3D ctx;
-> >               userfaultfd_ctx_get(ctx);
-> > +             down_write(&ctx->map_changing_lock);
-> >               atomic_inc(&ctx->mmap_changing);
-> > +             up_write(&ctx->map_changing_lock);
-> >       } else {
-> >               /* Drop uffd context if remap feature not enabled */
-> >               vma_start_write(vma);
-> > @@ -783,7 +788,9 @@ bool userfaultfd_remove(struct vm_area_struct *vma,
-> >               return true;
-> >
-> >       userfaultfd_ctx_get(ctx);
-> > +     down_write(&ctx->map_changing_lock);
-> >       atomic_inc(&ctx->mmap_changing);
-> > +     up_write(&ctx->map_changing_lock);
-> >       mmap_read_unlock(mm);
-> >
-> >       msg_init(&ewq.msg);
-> > @@ -825,7 +832,9 @@ int userfaultfd_unmap_prep(struct vm_area_struct *v=
-ma, unsigned long start,
-> >               return -ENOMEM;
-> >
-> >       userfaultfd_ctx_get(ctx);
-> > +     down_write(&ctx->map_changing_lock);
-> >       atomic_inc(&ctx->mmap_changing);
-> > +     up_write(&ctx->map_changing_lock);
-> >       unmap_ctx->ctx =3D ctx;
-> >       unmap_ctx->start =3D start;
-> >       unmap_ctx->end =3D end;
-> > @@ -1709,9 +1718,8 @@ static int userfaultfd_copy(struct userfaultfd_ct=
-x *ctx,
-> >       if (uffdio_copy.mode & UFFDIO_COPY_MODE_WP)
-> >               flags |=3D MFILL_ATOMIC_WP;
-> >       if (mmget_not_zero(ctx->mm)) {
-> > -             ret =3D mfill_atomic_copy(ctx->mm, uffdio_copy.dst, uffdi=
-o_copy.src,
-> > -                                     uffdio_copy.len, &ctx->mmap_chang=
-ing,
-> > -                                     flags);
-> > +             ret =3D mfill_atomic_copy(ctx, uffdio_copy.dst, uffdio_co=
-py.src,
-> > +                                     uffdio_copy.len, flags);
-> >               mmput(ctx->mm);
-> >       } else {
-> >               return -ESRCH;
-> > @@ -1761,9 +1769,8 @@ static int userfaultfd_zeropage(struct userfaultf=
-d_ctx *ctx,
-> >               goto out;
-> >
-> >       if (mmget_not_zero(ctx->mm)) {
-> > -             ret =3D mfill_atomic_zeropage(ctx->mm, uffdio_zeropage.ra=
-nge.start,
-> > -                                        uffdio_zeropage.range.len,
-> > -                                        &ctx->mmap_changing);
-> > +             ret =3D mfill_atomic_zeropage(ctx, uffdio_zeropage.range.=
-start,
-> > +                                        uffdio_zeropage.range.len);
-> >               mmput(ctx->mm);
-> >       } else {
-> >               return -ESRCH;
-> > @@ -1818,9 +1825,8 @@ static int userfaultfd_writeprotect(struct userfa=
-ultfd_ctx *ctx,
-> >               return -EINVAL;
-> >
-> >       if (mmget_not_zero(ctx->mm)) {
-> > -             ret =3D mwriteprotect_range(ctx->mm, uffdio_wp.range.star=
-t,
-> > -                                       uffdio_wp.range.len, mode_wp,
-> > -                                       &ctx->mmap_changing);
-> > +             ret =3D mwriteprotect_range(ctx, uffdio_wp.range.start,
-> > +                                       uffdio_wp.range.len, mode_wp);
-> >               mmput(ctx->mm);
-> >       } else {
-> >               return -ESRCH;
-> > @@ -1870,9 +1876,8 @@ static int userfaultfd_continue(struct userfaultf=
-d_ctx *ctx, unsigned long arg)
-> >               flags |=3D MFILL_ATOMIC_WP;
-> >
-> >       if (mmget_not_zero(ctx->mm)) {
-> > -             ret =3D mfill_atomic_continue(ctx->mm, uffdio_continue.ra=
-nge.start,
-> > -                                         uffdio_continue.range.len,
-> > -                                         &ctx->mmap_changing, flags);
-> > +             ret =3D mfill_atomic_continue(ctx, uffdio_continue.range.=
-start,
-> > +                                         uffdio_continue.range.len, fl=
-ags);
-> >               mmput(ctx->mm);
-> >       } else {
-> >               return -ESRCH;
-> > @@ -1925,9 +1930,8 @@ static inline int userfaultfd_poison(struct userf=
-aultfd_ctx *ctx, unsigned long
-> >               goto out;
-> >
-> >       if (mmget_not_zero(ctx->mm)) {
-> > -             ret =3D mfill_atomic_poison(ctx->mm, uffdio_poison.range.=
-start,
-> > -                                       uffdio_poison.range.len,
-> > -                                       &ctx->mmap_changing, 0);
-> > +             ret =3D mfill_atomic_poison(ctx, uffdio_poison.range.star=
-t,
-> > +                                       uffdio_poison.range.len, 0);
-> >               mmput(ctx->mm);
-> >       } else {
-> >               return -ESRCH;
-> > @@ -2003,13 +2007,14 @@ static int userfaultfd_move(struct userfaultfd_=
-ctx *ctx,
-> >       if (mmget_not_zero(mm)) {
-> >               mmap_read_lock(mm);
-> >
-> > -             /* Re-check after taking mmap_lock */
-> > +             /* Re-check after taking map_changing_lock */
-> > +             down_read(&ctx->map_changing_lock);
-> >               if (likely(!atomic_read(&ctx->mmap_changing)))
-> >                       ret =3D move_pages(ctx, mm, uffdio_move.dst, uffd=
-io_move.src,
-> >                                        uffdio_move.len, uffdio_move.mod=
-e);
-> >               else
-> >                       ret =3D -EAGAIN;
-> > -
-> > +             up_read(&ctx->map_changing_lock);
-> >               mmap_read_unlock(mm);
-> >               mmput(mm);
-> >       } else {
-> > @@ -2216,6 +2221,7 @@ static int new_userfaultfd(int flags)
-> >       ctx->flags =3D flags;
-> >       ctx->features =3D 0;
-> >       ctx->released =3D false;
-> > +     init_rwsem(&ctx->map_changing_lock);
-> >       atomic_set(&ctx->mmap_changing, 0);
-> >       ctx->mm =3D current->mm;
-> >       /* prevent the mm struct to be freed */
-> > diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_=
-k.h
-> > index 691d928ee864..3210c3552976 100644
-> > --- a/include/linux/userfaultfd_k.h
-> > +++ b/include/linux/userfaultfd_k.h
-> > @@ -69,6 +69,13 @@ struct userfaultfd_ctx {
-> >       unsigned int features;
-> >       /* released */
-> >       bool released;
-> > +     /*
-> > +      * Prevents userfaultfd operations (fill/move/wp) from happening =
-while
-> > +      * some non-cooperative event(s) is taking place. Increments are =
-done
-> > +      * in write-mode. Whereas, userfaultfd operations, which includes
-> > +      * reading mmap_changing, is done under read-mode.
-> > +      */
-> > +     struct rw_semaphore map_changing_lock;
-> >       /* memory mappings are changing because of non-cooperative event =
-*/
-> >       atomic_t mmap_changing;
-> >       /* mm with one ore more vmas attached to this userfaultfd_ctx */
-> > @@ -113,22 +120,18 @@ extern int mfill_atomic_install_pte(pmd_t *dst_pm=
-d,
-> >                                   unsigned long dst_addr, struct page *=
-page,
-> >                                   bool newly_allocated, uffd_flags_t fl=
-ags);
-> >
-> > -extern ssize_t mfill_atomic_copy(struct mm_struct *dst_mm, unsigned lo=
-ng dst_start,
-> > +extern ssize_t mfill_atomic_copy(struct userfaultfd_ctx *ctx, unsigned=
- long dst_start,
-> >                                unsigned long src_start, unsigned long l=
-en,
-> > -                              atomic_t *mmap_changing, uffd_flags_t fl=
-ags);
-> > -extern ssize_t mfill_atomic_zeropage(struct mm_struct *dst_mm,
-> > +                              uffd_flags_t flags);
-> > +extern ssize_t mfill_atomic_zeropage(struct userfaultfd_ctx *ctx,
-> >                                    unsigned long dst_start,
-> > -                                  unsigned long len,
-> > -                                  atomic_t *mmap_changing);
-> > -extern ssize_t mfill_atomic_continue(struct mm_struct *dst_mm, unsigne=
-d long dst_start,
-> > -                                  unsigned long len, atomic_t *mmap_ch=
-anging,
-> > -                                  uffd_flags_t flags);
-> > -extern ssize_t mfill_atomic_poison(struct mm_struct *dst_mm, unsigned =
-long start,
-> > -                                unsigned long len, atomic_t *mmap_chan=
-ging,
-> > -                                uffd_flags_t flags);
-> > -extern int mwriteprotect_range(struct mm_struct *dst_mm,
-> > -                            unsigned long start, unsigned long len,
-> > -                            bool enable_wp, atomic_t *mmap_changing);
-> > +                                  unsigned long len);
-> > +extern ssize_t mfill_atomic_continue(struct userfaultfd_ctx *ctx, unsi=
-gned long dst_start,
-> > +                                  unsigned long len, uffd_flags_t flag=
-s);
-> > +extern ssize_t mfill_atomic_poison(struct userfaultfd_ctx *ctx, unsign=
-ed long start,
-> > +                                unsigned long len, uffd_flags_t flags)=
-;
-> > +extern int mwriteprotect_range(struct userfaultfd_ctx *ctx, unsigned l=
-ong start,
-> > +                            unsigned long len, bool enable_wp);
-> >  extern long uffd_wp_range(struct vm_area_struct *vma,
-> >                         unsigned long start, unsigned long len, bool en=
-able_wp);
-> >
-> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > index e3a91871462a..6e2ca04ab04d 100644
-> > --- a/mm/userfaultfd.c
-> > +++ b/mm/userfaultfd.c
-> > @@ -353,11 +353,11 @@ static pmd_t *mm_alloc_pmd(struct mm_struct *mm, =
-unsigned long address)
-> >   * called with mmap_lock held, it will release mmap_lock before return=
-ing.
-> >   */
-> >  static __always_inline ssize_t mfill_atomic_hugetlb(
-> > +                                           struct userfaultfd_ctx *ctx=
-,
-> >                                             struct vm_area_struct *dst_=
-vma,
-> >                                             unsigned long dst_start,
-> >                                             unsigned long src_start,
-> >                                             unsigned long len,
-> > -                                           atomic_t *mmap_changing,
-> >                                             uffd_flags_t flags)
-> >  {
-> >       struct mm_struct *dst_mm =3D dst_vma->vm_mm;
-> > @@ -379,6 +379,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb=
-(
-> >        * feature is not supported.
-> >        */
-> >       if (uffd_flags_mode_is(flags, MFILL_ATOMIC_ZEROPAGE)) {
-> > +             up_read(&ctx->map_changing_lock);
-> >               mmap_read_unlock(dst_mm);
-> >               return -EINVAL;
-> >       }
-> > @@ -463,6 +464,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb=
-(
-> >               cond_resched();
-> >
-> >               if (unlikely(err =3D=3D -ENOENT)) {
-> > +                     up_read(&ctx->map_changing_lock);
-> >                       mmap_read_unlock(dst_mm);
-> >                       BUG_ON(!folio);
-> >
-> > @@ -473,12 +475,13 @@ static __always_inline ssize_t mfill_atomic_huget=
-lb(
-> >                               goto out;
-> >                       }
-> >                       mmap_read_lock(dst_mm);
-> > +                     down_read(&ctx->map_changing_lock);
-> >                       /*
-> >                        * If memory mappings are changing because of non=
--cooperative
-> >                        * operation (e.g. mremap) running in parallel, b=
-ail out and
-> >                        * request the user to retry later
-> >                        */
-> > -                     if (mmap_changing && atomic_read(mmap_changing)) =
-{
-> > +                     if (atomic_read(ctx->mmap_changing)) {
-> >                               err =3D -EAGAIN;
-> >                               break;
-> >                       }
-> > @@ -501,6 +504,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb=
-(
-> >       }
-> >
-> >  out_unlock:
-> > +     up_read(&ctx->map_changing_lock);
-> >       mmap_read_unlock(dst_mm);
-> >  out:
-> >       if (folio)
-> > @@ -512,11 +516,11 @@ static __always_inline ssize_t mfill_atomic_huget=
-lb(
-> >  }
-> >  #else /* !CONFIG_HUGETLB_PAGE */
-> >  /* fail at build time if gcc attempts to use this */
-> > -extern ssize_t mfill_atomic_hugetlb(struct vm_area_struct *dst_vma,
-> > +extern ssize_t mfill_atomic_hugetlb(struct userfaultfd_ctx *ctx,
-> > +                                 struct vm_area_struct *dst_vma,
-> >                                   unsigned long dst_start,
-> >                                   unsigned long src_start,
-> >                                   unsigned long len,
-> > -                                 atomic_t *mmap_changing,
-> >                                   uffd_flags_t flags);
-> >  #endif /* CONFIG_HUGETLB_PAGE */
-> >
-> > @@ -564,13 +568,13 @@ static __always_inline ssize_t mfill_atomic_pte(p=
-md_t *dst_pmd,
-> >       return err;
-> >  }
-> >
-> > -static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
-> > +static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ct=
-x,
-> >                                           unsigned long dst_start,
-> >                                           unsigned long src_start,
-> >                                           unsigned long len,
-> > -                                         atomic_t *mmap_changing,
-> >                                           uffd_flags_t flags)
-> >  {
-> > +     struct mm_struct *dst_mm =3D ctx->mm;
-> >       struct vm_area_struct *dst_vma;
-> >       ssize_t err;
-> >       pmd_t *dst_pmd;
-> > @@ -600,8 +604,9 @@ static __always_inline ssize_t mfill_atomic(struct =
-mm_struct *dst_mm,
-> >        * operation (e.g. mremap) running in parallel, bail out and
-> >        * request the user to retry later
-> >        */
-> > +     down_read(&ctx->map_changing_lock);
-> >       err =3D -EAGAIN;
-> > -     if (mmap_changing && atomic_read(mmap_changing))
-> > +     if (atomic_read(&ctx->mmap_changing))
-> >               goto out_unlock;
-> >
-> >       /*
-> > @@ -633,8 +638,8 @@ static __always_inline ssize_t mfill_atomic(struct =
-mm_struct *dst_mm,
-> >        * If this is a HUGETLB vma, pass off to appropriate routine
-> >        */
-> >       if (is_vm_hugetlb_page(dst_vma))
-> > -             return  mfill_atomic_hugetlb(dst_vma, dst_start, src_star=
-t,
-> > -                                          len, mmap_changing, flags);
-> > +             return  mfill_atomic_hugetlb(ctx, dst_vma, dst_start,
-> > +                                          src_start, len, flags);
-> >
-> >       if (!vma_is_anonymous(dst_vma) && !vma_is_shmem(dst_vma))
-> >               goto out_unlock;
-> > @@ -693,6 +698,7 @@ static __always_inline ssize_t mfill_atomic(struct =
-mm_struct *dst_mm,
-> >               if (unlikely(err =3D=3D -ENOENT)) {
-> >                       void *kaddr;
-> >
-> > +                     up_read(&ctx->map_changing_lock);
-> >                       mmap_read_unlock(dst_mm);
-> >                       BUG_ON(!folio);
-> >
-> > @@ -723,6 +729,7 @@ static __always_inline ssize_t mfill_atomic(struct =
-mm_struct *dst_mm,
-> >       }
-> >
-> >  out_unlock:
-> > +     up_read(&ctx->map_changing_lock);
-> >       mmap_read_unlock(dst_mm);
-> >  out:
-> >       if (folio)
-> > @@ -733,34 +740,33 @@ static __always_inline ssize_t mfill_atomic(struc=
-t mm_struct *dst_mm,
-> >       return copied ? copied : err;
-> >  }
-> >
-> > -ssize_t mfill_atomic_copy(struct mm_struct *dst_mm, unsigned long dst_=
-start,
-> > +ssize_t mfill_atomic_copy(struct userfaultfd_ctx *ctx, unsigned long d=
-st_start,
-> >                         unsigned long src_start, unsigned long len,
-> > -                       atomic_t *mmap_changing, uffd_flags_t flags)
-> > +                       uffd_flags_t flags)
-> >  {
-> > -     return mfill_atomic(dst_mm, dst_start, src_start, len, mmap_chang=
-ing,
-> > +     return mfill_atomic(ctx, dst_start, src_start, len,
-> >                           uffd_flags_set_mode(flags, MFILL_ATOMIC_COPY)=
-);
-> >  }
-> >
-> > -ssize_t mfill_atomic_zeropage(struct mm_struct *dst_mm, unsigned long =
-start,
-> > -                           unsigned long len, atomic_t *mmap_changing)
-> > +ssize_t mfill_atomic_zeropage(struct userfaultfd_ctx *ctx,
-> > +                           unsigned long start,
-> > +                           unsigned long len)
-> >  {
-> > -     return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
-> > +     return mfill_atomic(ctx, start, 0, len,
-> >                           uffd_flags_set_mode(0, MFILL_ATOMIC_ZEROPAGE)=
-);
-> >  }
-> >
-> > -ssize_t mfill_atomic_continue(struct mm_struct *dst_mm, unsigned long =
-start,
-> > -                           unsigned long len, atomic_t *mmap_changing,
-> > -                           uffd_flags_t flags)
-> > +ssize_t mfill_atomic_continue(struct userfaultfd_ctx *ctx, unsigned lo=
-ng start,
-> > +                           unsigned long len, uffd_flags_t flags)
-> >  {
-> > -     return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
-> > +     return mfill_atomic(ctx, start, 0, len,
-> >                           uffd_flags_set_mode(flags, MFILL_ATOMIC_CONTI=
-NUE));
-> >  }
-> >
-> > -ssize_t mfill_atomic_poison(struct mm_struct *dst_mm, unsigned long st=
-art,
-> > -                         unsigned long len, atomic_t *mmap_changing,
-> > -                         uffd_flags_t flags)
-> > +ssize_t mfill_atomic_poison(struct userfaultfd_ctx *ctx, unsigned long=
- start,
-> > +                         unsigned long len, uffd_flags_t flags)
-> >  {
-> > -     return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
-> > +     return mfill_atomic(ctx, start, 0, len,
-> >                           uffd_flags_set_mode(flags, MFILL_ATOMIC_POISO=
-N));
-> >  }
-> >
-> > @@ -793,10 +799,10 @@ long uffd_wp_range(struct vm_area_struct *dst_vma=
-,
-> >       return ret;
-> >  }
-> >
-> > -int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
-> > -                     unsigned long len, bool enable_wp,
-> > -                     atomic_t *mmap_changing)
-> > +int mwriteprotect_range(struct userfaultfd_ctx *ctx, unsigned long sta=
-rt,
-> > +                     unsigned long len, bool enable_wp)
-> >  {
-> > +     struct mm_struct *dst_mm =3D ctx->mm;
-> >       unsigned long end =3D start + len;
-> >       unsigned long _start, _end;
-> >       struct vm_area_struct *dst_vma;
-> > @@ -820,8 +826,9 @@ int mwriteprotect_range(struct mm_struct *dst_mm, u=
-nsigned long start,
-> >        * operation (e.g. mremap) running in parallel, bail out and
-> >        * request the user to retry later
-> >        */
-> > +     down_read(&ctx->map_changing_lock);
-> >       err =3D -EAGAIN;
-> > -     if (mmap_changing && atomic_read(mmap_changing))
-> > +     if (atomic_read(&ctx->mmap_changing))
-> >               goto out_unlock;
-> >
-> >       err =3D -ENOENT;
-> > @@ -850,6 +857,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, u=
-nsigned long start,
-> >               err =3D 0;
-> >       }
-> >  out_unlock:
-> > +     up_read(&ctx->map_changing_lock);
-> >       mmap_read_unlock(dst_mm);
-> >       return err;
-> >  }
-> > --
-> > 2.43.0.429.g432eaa2c6b-goog
-> >
-> >
+This patch adds two new per-node fields, namely nr_page_metadata and
+nr_page_metadata_boot to /sys/devices/system/node/nodeN/vmstat and a
+global PageMetadata field to /proc/meminfo. This information can be
+used by users to see how much memory is being used by per-page
+metadata, which can vary depending on build configuration, machine
+architecture, and system use.
+
+Per-page metadata is the amount of memory that Linux needs in order to
+manage memory at the page granularity. The majority of such memory is
+used by "struct page" and "page_ext" data structures.
+
+
+Background
+----------
+
+Kernel overhead observability is missing some of the largest
+allocations during runtime, including vmemmap (struct pages) and
+page_ext. This patch aims to address this problem by exporting a
+new metric PageMetadata.
+
+On the contrary, the kernel does provide observibility for boot memory
+allocations. For example, the metric reserved_pages depicts the pages
+allocated by the bootmem allocator. This can be simply calculated as
+present_pages - managed_pages, which are both exported in /proc/zoneinfo.
+The metric reserved_pages is primarily composed of struct pages and
+page_ext.
+
+What about the struct pages (allocated by bootmem allocator) that are
+free'd during hugetlbfs allocations and then allocated by buddy-allocator
+once hugtlbfs pages are free'd?
+
+/proc/meminfo MemTotal changes: MemTotal does not include memblock
+allocations but includes buddy allocations. However, during runtime
+memblock allocations can be shifted into buddy allocations, and therefore
+become part of MemTotal.
+
+Once the struct pages get allocated by buddy allocator, we lose track of
+these struct page allocations overhead accounting. Therefore, we must
+export new metrics. nr_page_metadata and nr_page_metadata_boot
+exclusively track the struct page and page ext allocations made by the
+buddy allocator and memblock allocator, respectively for each node.
+PageMetadata in /proc/meminfo would report the struct page and page ext
+allocations made by the buddy allocator.
+
+Results and analysis
+--------------------
+
+Memory model: Sparsemem-vmemmap
+$ echo 1 > /proc/sys/vm/hugetlb_optimize_vmemmap
+
+$ cat /proc/meminfo | grep MemTotal
+	MemTotal:       32919124 kB
+$ cat /proc/meminfo | grep Meta
+	PageMetadata:      65536 kB
+$ cat /sys/devices/system/node/node0/vmstat | grep "nr_page_metadata"
+	nr_page_metadata 8192
+	nr_page_metadata_boot 65536
+$ cat /sys/devices/system/node/node1/vmstat | grep "nr_page_metadata"
+        nr_page_metadata 8192
+	nr_page_metadata_boot 65536
+
+AFTER HUGTLBFS RESERVATION
+$ echo 512 > /proc/sys/vm/nr_hugepages
+
+$ cat /proc/meminfo | grep MemTotal
+	MemTotal:       32935508 kB
+$ cat /proc/meminfo | grep Meta
+	PageMetadata:      67584 kB
+$ cat /sys/devices/system/node/node0/vmstat | grep "nr_page_metadata"
+	nr_page_metadata 8448
+	nr_page_metadata_boot 63488
+$ cat /sys/devices/system/node/node1/vmstat | grep "nr_page_metadata"
+	nr_page_metadata 8448
+	nr_page_metadata_booy 63488
+
+
+AFTER FREEING HUGTLBFS RESERVATION
+$ echo 0 > /proc/sys/vm/nr_hugepages
+
+$ cat /proc/meminfo | grep MemTotal
+        MemTotal:       32935508 kB
+$ cat /proc/meminfo | grep Meta
+        PageMetadata:      81920 kB
+$ cat /sys/devices/system/node/node0/vmstat | grep "nr_page_metadata"
+        nr_page_metadata 10240
+	nr_page_metadata_boot 63488
+$ cat /sys/devices/system/node/node1/vmstat | grep "nr_page_metadata"
+        nr_page_metadata 10240
+	nr_page_metadata_boot 63488
+
+------------------------
+
+Memory Hotplug with memory_hotplug.memmap_on_memory=1
+
+BEFORE HOTADD
+$ cat /proc/meminfo | grep MemTotal
+	MemTotal:       32919124 kB
+$ cat /proc/meminfo | grep PageMeta
+	PageMetadata:      65536 kB
+$ cat /sys/devices/system/node/node0/vmstat | grep "nr_page_metadata"
+	nr_page_metadata 8192
+	nr_page_metadata_boot 65536
+$ cat /sys/devices/system/node/node1/vmstat | grep "nr_page_metadata"
+	nr_page_metadata 8192
+	nr_page_metadata_boot 65536
+
+AFTER HOTADDING 1GB
+$ cat /proc/meminfo | grep MemTotal
+	MemTotal:       33951316 kB
+$ cat /proc/meminfo | grep PageMeta
+	PageMetadata:      83968 kB
+$ cat /sys/devices/system/node/node0/vmstat | grep "nr_page_metadata"
+	nr_page_metadata 12800
+	nr_page_metadata_boot 65536
+$ cat /sys/devices/system/node/node1/vmstat | grep "nr_page_metadata"
+	nr_page_metadata 8192
+	nr_page_metadata_boot 65536
+
+--------------------------
+
+Memory Hotplug with memory_hotplug.memmap_on_memory=0
+
+BEFORE HOTADD
+$ cat /proc/meminfo | grep MemTotal
+	MemTotal:       32919124 kB
+$ cat /proc/meminfo | grep PageMeta
+	PageMetadata:      65536 kB
+$ cat /sys/devices/system/node/node0/vmstat | grep "nr_page_metadata"
+	nr_page_metadata 8192
+	nr_page_metadata_boot 65536
+$ cat /sys/devices/system/node/node1/vmstat | grep "nr_page_metadata"
+	nr_page_metadata 8192
+	nr_page_metadata_boot 65536
+
+AFTER HOTADDING 1GB
+$ cat /proc/meminfo | grep MemTotal
+	MemTotal:       33967700 kB
+$ cat /proc/meminfo | grep PageMeta
+	PageMetadata:      83968 kB
+$ cat /sys/devices/system/node/node0/vmstat | grep "nr_page_metadata"
+	nr_page_metadata 12800
+	nr_page_metadata_boot 65536
+$ cat /sys/devices/system/node/node1/vmstat | grep "nr_page_metadata"
+	nr_page_metadata 8192
+	nr_page_metadata_boot 65536
+
+Sourav Panda (1):
+  mm: report per-page metadata information
+
+ Documentation/filesystems/proc.rst |  3 +++
+ fs/proc/meminfo.c                  |  4 ++++
+ include/linux/mmzone.h             |  4 ++++
+ include/linux/vmstat.h             |  4 ++++
+ mm/hugetlb_vmemmap.c               | 19 ++++++++++++++----
+ mm/mm_init.c                       |  3 +++
+ mm/page_alloc.c                    |  1 +
+ mm/page_ext.c                      | 32 +++++++++++++++++++++---------
+ mm/sparse-vmemmap.c                |  8 ++++++++
+ mm/sparse.c                        |  7 ++++++-
+ mm/vmstat.c                        | 26 +++++++++++++++++++++++-
+ 11 files changed, 96 insertions(+), 15 deletions(-)
+
+-- 
+2.43.0.429.g432eaa2c6b-goog
+
 
