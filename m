@@ -1,121 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-9280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D0983FBD9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 02:34:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F04883FBE7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 02:43:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90323B20F8D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 01:34:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58AF2282776
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 01:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB92DDD4;
-	Mon, 29 Jan 2024 01:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF9B4DF57;
+	Mon, 29 Jan 2024 01:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gWZNODXq"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="EPoje+CC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AABF9E0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 01:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74EF8DDD4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 01:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706492055; cv=none; b=hWGeGZqhJzhQyc2tsexOlMEH6ts/HODIAV21JRzbc8m1iMSteKes5uFclsh0BCk4I5A/B0cte3xQOKRougsHhx/DJSP3giG4zuq6emUAhd570EPSti7LVoh+9AR7aB5gUKeJxq4owqIW5DlaTm5Mt+ZgHuakfCVg7UPb2rq+QvA=
+	t=1706492573; cv=none; b=bQc78R7Y4cYLNFbRJkkOSDSd3ll11uQat697iEFmQFy0KZ4DKVUqxSrGbTTDtQPIXKzHnh6Ox1P6+S0OPJ4E478W6nlIeo8mVcgkikDMMpbqSAtvTXnUcmVpib5z3Y8cnvVexTwl3tFBp+RPD1v/XRPUO0ViXokKW8SfjFj9kbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706492055; c=relaxed/simple;
-	bh=Sn3+afSObecsLwVspCGlRr2u/eqvfC8YAyQ9sYvfkw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s/abfyGIkRAdI3z5gbt2sfVXzIlP0azLEZ2n9dsdsQZd/USGP2+YuCoQTnz1spHtxxwhAvCAC1tjdy2GHFaPaWa96+ymLHuUJn8f85E1lhYBMp/pYNjw2pIj0A0mTmHQyfVs0FwrGRLRakASn4zvHItlVSJAIW7TW+8OJmE8k2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gWZNODXq; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 28 Jan 2024 20:34:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1706492051;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qN1FxCPOJ5H4DfTAIjDzCCL68C4YSsHpS9Bz1bmn1k0=;
-	b=gWZNODXqBwsyFdMkaap/3eI4ToaTkSkd2jmZCRqH68A4L/qscT0n11KdUHXc5vOwx69PoY
-	zs+xKjY9vH52zOsb/4b+ZYKwL+JSWIDxGKNoASizHgo/AC7LnisSe6CHKVNBtCIyRE3JsO
-	Gs/1pjjvKfQqQkF20NpSI01rtZ6LL4I=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: boqun.feng@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, peterz@infradead.org
-Subject: Re: [PATCH 4/4] af_unix: convert to lock_cmp_fn
-Message-ID: <x7ido6w436gbs5ibdunezldhi6hisjck6rtxtag5g7lo6zt2o2@752ok7ean62y>
-References: <suyvonwf55vfeumeujeats2mtozs2q4wcx6ijz4hqfd54mibjj@6dt26flhrfdh>
- <20240128205632.93670-1-kuniyu@amazon.com>
+	s=arc-20240116; t=1706492573; c=relaxed/simple;
+	bh=jWloI5phTfFMjDxmvM5fOgnQ0vyxnALm4mf/sCbpm20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qn+Y7V6ziid4XNRwwJYBOUjqa4sS3XJRrZ/lc2I8jw3TSTYo8HVRsSIMygHuEb3U8Ic7MjytRiSVw9bxfb3ii3caDOfDSPqXe85SVSo9hyDWDc5427z0Mj1ED2DD6+xhAJG4ea0DRPPnuOjZpxZhuaxRGmhXj750DIOH5+vDPNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=EPoje+CC; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5110c7b4be2so666692e87.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 17:42:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1706492569; x=1707097369; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tmwJigiCm1y/pWMgjrvap0eEiQZ4O/kCC0i78tTYfew=;
+        b=EPoje+CCAclWIpjRXfnDgG3Nz6WnRC8FZSxgmqIW8oLuvFk+EL2fhnGYmcDKWsV/u9
+         j93QXlJX/RY1WivxAJHmBGl9sJpY6s9dD0nYkITI45Uv7aQUJotzdrLn9RYZQ0R9MlzE
+         Yt5wBhzMZUpdxTvQLImF0fnPd/gzDtDsBwUzc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706492569; x=1707097369;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tmwJigiCm1y/pWMgjrvap0eEiQZ4O/kCC0i78tTYfew=;
+        b=qo2bUzbsX2+qKSdJ7aKMRlo86uDxVvS9lJNdoQYm/xrhuJuRmf6dhxp5UZh5qjIuTv
+         jnN4YxbiAB4eS2/AKNpWWIsjhXL0w2/0gVjLNtcQBhp6AOarDkPZRIpFWBe/HJP5Qprt
+         yy5afAk4ZsJkOgVcxPHdymF7/kWgojxUW/KJ4YRgiRgcq1YDIDCvfBdIH5FFRrihSvHF
+         8kFv7U7J1GI8TIkRwN3bMShx1b0T1GU5E7xF60tiaxTVnflVZUyPe7K5Aixv2zRsf0tH
+         UaU5uaSO32QfT9be14Bq5NdA380Li5xgLEZWqHwfr1Dh2eMf8EPU+R7RpCUcj2AN2Xww
+         d1FA==
+X-Gm-Message-State: AOJu0Yz09VzWRCzjdfboISbOOARsf3hC3nUTFt9UlWzW1bl8C+nOA87S
+	AaLGOXXjGDDqaPagl8XGBFV/s/bi0pwvEb17FWgMBVb0l2th7S2z/ZHzFjio6Yr/B80TxN10bGq
+	gbaLb/Q==
+X-Google-Smtp-Source: AGHT+IHWTNLCizM7BGsaHZo4aPpI0wyi0zEKSlMRurpspW0vIn9p/6qZCvA/sjRvWoxShwvGBQO9Ww==
+X-Received: by 2002:ac2:482d:0:b0:510:2582:5592 with SMTP id 13-20020ac2482d000000b0051025825592mr3479782lft.38.1706492569200;
+        Sun, 28 Jan 2024 17:42:49 -0800 (PST)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id vg14-20020a170907d30e00b00a30f3e8838bsm3361830ejc.127.2024.01.28.17.42.47
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 28 Jan 2024 17:42:48 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-55f0b2c79cdso177320a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 28 Jan 2024 17:42:47 -0800 (PST)
+X-Received: by 2002:aa7:c70f:0:b0:55e:c2d9:3750 with SMTP id
+ i15-20020aa7c70f000000b0055ec2d93750mr2555420edq.5.1706492567478; Sun, 28 Jan
+ 2024 17:42:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240128205632.93670-1-kuniyu@amazon.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20240126150209.367ff402@gandalf.local.home> <CAHk-=wgZEHwFRgp2Q8_-OtpCtobbuFPBmPTZ68qN3MitU-ub=Q@mail.gmail.com>
+ <20240126162626.31d90da9@gandalf.local.home> <CAHk-=wj8WygQNgoHerp-aKyCwFxHeyKMguQszVKyJfi-=Yfadw@mail.gmail.com>
+ <CAHk-=whNfNti-mn6vhL-v-WZnn0i7ZAbwSf_wNULJeyanhPOgg@mail.gmail.com>
+ <CAHk-=wj+DsZZ=2iTUkJ-Nojs9fjYMvPs1NuoM3yK7aTDtJfPYQ@mail.gmail.com>
+ <20240128175111.69f8b973@rorschach.local.home> <CAHk-=wjHc48QSGWtgBekej7F+Ln3b0j1tStcqyEf3S-Pj_MHHw@mail.gmail.com>
+ <20240128185943.6920388b@rorschach.local.home> <20240128192108.6875ecf4@rorschach.local.home>
+ <CAHk-=wg7tML8L+27j=7fh8Etk4Wvo0Ay3mS5U7JOTEGxjy1viA@mail.gmail.com>
+In-Reply-To: <CAHk-=wg7tML8L+27j=7fh8Etk4Wvo0Ay3mS5U7JOTEGxjy1viA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 28 Jan 2024 17:42:30 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjKagcAh5rHuNPMqp9hH18APjF4jW7LQ06pNQwZ1Qp0Eg@mail.gmail.com>
+Message-ID: <CAHk-=wjKagcAh5rHuNPMqp9hH18APjF4jW7LQ06pNQwZ1Qp0Eg@mail.gmail.com>
+Subject: Re: [PATCH] eventfs: Have inodes have unique inode numbers
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linux Trace Devel <linux-trace-devel@vger.kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	Ajay Kaher <ajay.kaher@broadcom.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Jan 28, 2024 at 12:56:32PM -0800, Kuniyuki Iwashima wrote:
-> From: Kent Overstreet <kent.overstreet@linux.dev>
-> Date: Sun, 28 Jan 2024 14:38:02 -0500
-> > On Sun, Jan 28, 2024 at 12:28:38AM -0800, Kuniyuki Iwashima wrote:
-> > > From: Kent Overstreet <kent.overstreet@linux.dev>
-> > > Date: Fri, 26 Jan 2024 21:08:31 -0500
-> > > > Kill
-> > > >  - unix_state_lock_nested
-> > > >  - _nested usage for net->unx.table.locks[].
-> > > > 
-> > > > replace both with lock_set_cmp_fn_ptr_order(&u->lock).
-> > > > 
-> > > > The lock ordering in sk_diag_dump_icons() looks suspicious; this may
-> > > > turn up a real issue.
-> > > 
-> > > Yes, you cannot use lock_cmp_fn() for unix_state_lock_nested().
-> > > 
-> > > The lock order in sk_diag_dump_icons() is
-> > > 
-> > >   listening socket -> child socket in the listener's queue
-> > > 
-> > > , and the inverse order never happens.  ptr comparison does not make
-> > > sense in this case, and lockdep will complain about false positive.
-> > 
-> > Is that a real lock ordering? Is this parent -> child relationship well
-> > defined?
-> > 
-> > If it is, we should be able to write a lock_cmp_fn for it, as long as
-> > it's not some handwavy "this will never happen but _nested won't check
-> > for it" like I saw elsewhere in the net code... :)
-> 
-> The problem would be there's no handy way to detect the relationship
-> except for iterating the queue again.
-> 
-> ---8<---
-> static int unix_state_lock_cmp_fn(const struct lockdep_map *_a,
-> 				  const struct lockdep_map *_b)
-> {
-> 	const struct unix_sock *a = container_of(_a, struct unix_sock, lock.dep_map);
-> 	const struct unix_sock *b = container_of(_b, struct unix_sock, lock.dep_map);
-> 
-> 	if (a->sk.sk_state == TCP_LISTEN && b->sk.sk_state == TCP_ESTABLISHED) {
-> 		/* check if b is a's cihld */
-> 	}
-> 
-> 	/* otherwise, ptr comparison here. */
-> }
-> ---8<---
-> 
-> 
-> This can be resolved by a patch like this, which is in my local tree
-> for another series.
-> 
-> So, after posting the series, I can revisit this and write lock_cmp_fn
-> for u->lock.
+On Sun, 28 Jan 2024 at 17:00, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+>    mkdir dummy
+>    cd dummy
+>    echo "Hello" > hello
+>    ( sleep 10; cat ) < hello &
+>    rm hello
+>    cd ..
+>    rmdir dummy
 
-Sounds good! Please CC me when you do.
+Note that it's worth repeating that simple_recursive_removal()
+wouldn't change any of the above. It only unhashes things and makes
+them *look* gone, doing things like clearing i_nlink etc.
+
+But those VFS data structures would still exist, and the files that
+had them open would still continue to be open.
+
+So if you thought that simple_recursive_removal() would make the above
+kind of thing not able to happen, and that eventfs wouldn't have to
+deal with dentries that point to event_inodes that are dead, you were
+always wrong.
+
+simple_recursive_removal() is mostly just lipstick on a pig. It does
+cause the cached dentries that have no active use be removed earlier,
+so it has that "memory pressure" kind of effect, but it has no real
+fundamental semantic effect.
+
+Of course, for a filesystem where the dentry tree *is* the underlying
+data (ie the 'tmpfs' kind, but also things like debugfs or ipathfs,
+for example), then things are different.
+
+There the dentries are the primary thing, and not just a cache in
+front of the backing store.
+
+But you didn't want that, and those days are long gone as far as
+tracefs is concerned.
+
+              Linus
 
