@@ -1,48 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-9370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3526784052D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 13:42:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFB3840535
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 13:43:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C0C2B224A0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 12:42:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31AE31C224F8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 12:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FB661673;
-	Mon, 29 Jan 2024 12:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A9B6167A;
+	Mon, 29 Jan 2024 12:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AqKzbR3x"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="up6YWHoR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207EF612C1;
-	Mon, 29 Jan 2024 12:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE44612CB;
+	Mon, 29 Jan 2024 12:43:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706532119; cv=none; b=NiufNdB9BmRbItX+UQlMfilhWUVfxWH7GHczNE4bYMtAg6N/OnM5NwzJ+VET4IQlmhZ99ydWV9aYSi4wIsBrk7Igr/mK5ui/MaV85BSNbPr13GDVFRkUuVRTD59KPF9wbK5wYk0VKXVopOmnwsR3lVolMToAQC1aQv/7qiEk0F4=
+	t=1706532218; cv=none; b=Yy3/0lUoWxblveAZFdAWLpz6MKmmKOjReFAjsjSJJAb/cdYq9l1GiPVp2NgNVSQIE/7hMJrgKJSHpClTFu3yWNJXRajTvof2+5D9Xg42h54I/vKRskhE0vLMyRzgYvkUPnAbEZSXzVT433kGHLgQj8qoNHoyTP0pMm8jMmqrSh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706532119; c=relaxed/simple;
-	bh=IzW8F0GJkznmN36EAvwwvImQ6UcKbxt7LXtKAbOkWZw=;
+	s=arc-20240116; t=1706532218; c=relaxed/simple;
+	bh=qEaDcI77Zs3RXzEb9ijo5VEe7XOiy8LdZc2C7h7DSWk=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Gx5asyZEC267mzSkGA36PZym/eJBHdAJSr/fmMVDH6rODLW4VvflZk8suQ9eekp0HH1alnaBLtaxJ4PdrW4Q2fZHLpXd4J8+YykR7MvQ7ZTbjFumyGxJMn6FbGHVkCWpcbiR+AwTetTqdmURQOOEr6tlITQ6DCVwfHZSzfaoaC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AqKzbR3x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44841C433C7;
-	Mon, 29 Jan 2024 12:41:57 +0000 (UTC)
+	 Content-Type:MIME-Version; b=AEmSmVO5pNMB67XKsGA3fnC2dx7x8LUKIWcvBqN91iH7l5yUsercdxYbD/1X2g7KmnajP6/1DlvHwFqPav63AqRj/bspDdA5Q8VsHSzpuaBbH5ArYen3WVoLDFPo5tXaklvFAYUQ+Sw43cnAxHxifunBu4xvy4TuEdw4C/YgqvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=up6YWHoR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D9FDC433C7;
+	Mon, 29 Jan 2024 12:43:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706532118;
-	bh=IzW8F0GJkznmN36EAvwwvImQ6UcKbxt7LXtKAbOkWZw=;
+	s=k20201202; t=1706532217;
+	bh=qEaDcI77Zs3RXzEb9ijo5VEe7XOiy8LdZc2C7h7DSWk=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=AqKzbR3xjuozcRlSbdODTAl9fCOwMGTDdHzu4cRrA2hPSlrrmFGocoRjoPgF3wl4V
-	 +oRVNZ2DssHk6z+kVCVjBscTp/jBtFaFenoMG1A6YoZNs/B+WTOhVnbAdt+G5uEgmy
-	 Fht74JKXzhVdQ9MO9uEhMceLNpFCb8ycunPEpbXi1S54FuVg0a8IkZ/1VwGE9YpDmz
-	 Z/JEtIlJ90DkwXIsxJMSMKzCY5LcijHoKDcnK71kZElhTf1hiVpwVsio9NEyZVulK1
-	 VP86JYIwBy/c+/vJP5u6ijQXtTNzIndbIQY0FqRRpfYtspbj7aoBr2FFpUwtv7CV+/
-	 MMhfKJ8aaZw+Q==
-Message-ID: <0f0a4357afaa3cc98f306de555e816146654245f.camel@kernel.org>
-Subject: Re: [PATCH 1/2] netfs: Fix i_dio_count leak on DIO read past i_size
+	b=up6YWHoRza7tFkwjjJNODxnPPVHLTOM4VqRApxtjkxQPp3QUqW/gS/Xvriv0eJTBK
+	 gb2cQFsuCUwelJMJu+UPsSgSxvckJe8H2810FzZ1hYTEc9Sttdf5QHnT4ouinjrczN
+	 +L8QwZeJYX48I6QIk31tqlv8+1VLq5J7hkm38s8UK9y7Uf1/ZW2IiXH85/zR9Ag6EX
+	 SyKhPlZK5NBJx53X+HnwYqyg5wQqzxRmdlg8NRAhn+z9bESsS/oFgvCMOSu36I7YQo
+	 MpcJfn5/9hyxSgce+wVsV9dtBQq4U22gzFBhkEZ76rypHNaZ07RqosiVFOTcBsUw9N
+	 P5VI/Y5tzFmLA==
+Message-ID: <1e4d080eb0d94b40f8fc5cce60a83391b9a2c2c3.camel@kernel.org>
+Subject: Re: [PATCH 2/2] netfs: Fix missing zero-length check in unbuffered
+ write
 From: Jeff Layton <jlayton@kernel.org>
 To: David Howells <dhowells@redhat.com>, Christian Brauner
 	 <christian@brauner.io>
@@ -52,12 +53,11 @@ Cc: Eric Van Hensbergen <ericvh@kernel.org>, Dominique Martinet
  linux-cifs@vger.kernel.org,  linux-nfs@vger.kernel.org,
  ceph-devel@vger.kernel.org, v9fs@lists.linux.dev, 
  linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org,  linux-kernel@vger.kernel.org, Marc Dionne
- <marc.dionne@auristor.com>
-Date: Mon, 29 Jan 2024 07:41:56 -0500
-In-Reply-To: <20240129094924.1221977-2-dhowells@redhat.com>
+ linux-mm@kvack.org,  linux-kernel@vger.kernel.org, linux_oss@crudebyte.com
+Date: Mon, 29 Jan 2024 07:43:35 -0500
+In-Reply-To: <20240129094924.1221977-3-dhowells@redhat.com>
 References: <20240129094924.1221977-1-dhowells@redhat.com>
-	 <20240129094924.1221977-2-dhowells@redhat.com>
+	 <20240129094924.1221977-3-dhowells@redhat.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxwn8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1WvegyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqVT2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtVYrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8snVluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQcDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQfCBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sELZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/
 	r0kmR/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2BrQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRIONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZWf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQOlDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7RjiR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27XiQQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBMYXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9qLqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoac8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3FLpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx
@@ -78,43 +78,85 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
 On Mon, 2024-01-29 at 09:49 +0000, David Howells wrote:
-> From: Marc Dionne <marc.dionne@auristor.com>
+> Fix netfs_unbuffered_write_iter() to return immediately if
+> generic_write_checks() returns 0, indicating there's nothing to write.
+> Note that netfs_file_write_iter() already does this.
 >=20
-> If netfs_begin_read gets a NETFS_DIO_READ request that begins
-> past i_size, it won't perform any i/o and just return 0.  This
-> will leak an increment to i_dio_count that is done at the top
-> of the function.
+> Also, whilst we're at it, put in checks for the size being zero before we
+> even take the locks.  Note that generic_write_checks() can still reduce t=
+he
+> size to zero, so we still need that check.
 >=20
-> This can cause subsequent buffered read requests to block
-> indefinitely, waiting for a non existing dio operation to complete.
+> Without this, a warning similar to the following is logged to dmesg:
 >=20
-> Add a inode_dio_end() for the NETFS_DIO_READ case, before returning.
+> 	netfs: Zero-sized write [R=3D1b6da]
 >=20
-> Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
+> and the syscall fails with EIO, e.g.:
+>=20
+> 	/sbin/ldconfig.real: Writing of cache extension data failed: Input/outpu=
+t error
+>=20
+> This can be reproduced on 9p by:
+>=20
+> 	xfs_io -f -c 'pwrite 0 0' /xfstest.test/foo
+>=20
+> Fixes: 153a9961b551 ("netfs: Implement unbuffered/DIO write support")
+> Reported-by: Eric Van Hensbergen <ericvh@kernel.org>
+> Link: https://lore.kernel.org/r/ZbQUU6QKmIftKsmo@FV7GG9FTHL/
 > Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Dominique Martinet <asmadeus@codewreck.org>
 > cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-afs@lists.infradead.org
+> cc: v9fs@lists.linux.dev
+> cc: linux_oss@crudebyte.com
 > cc: netfs@lists.linux.dev
 > cc: linux-fsdevel@vger.kernel.org
 > ---
->  fs/netfs/io.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  fs/netfs/buffered_write.c | 3 +++
+>  fs/netfs/direct_write.c   | 5 ++++-
+>  2 files changed, 7 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/fs/netfs/io.c b/fs/netfs/io.c
-> index e8ff1e61ce79..4261ad6c55b6 100644
-> --- a/fs/netfs/io.c
-> +++ b/fs/netfs/io.c
-> @@ -748,6 +748,8 @@ int netfs_begin_read(struct netfs_io_request *rreq, b=
-ool sync)
+> diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+> index a3059b3168fd..9a0d32e4b422 100644
+> --- a/fs/netfs/buffered_write.c
+> +++ b/fs/netfs/buffered_write.c
+> @@ -477,6 +477,9 @@ ssize_t netfs_file_write_iter(struct kiocb *iocb, str=
+uct iov_iter *from)
 > =20
->  	if (!rreq->submitted) {
->  		netfs_put_request(rreq, false, netfs_rreq_trace_put_no_submit);
-> +		if (rreq->origin =3D=3D NETFS_DIO_READ)
-> +			inode_dio_end(rreq->inode);
->  		ret =3D 0;
+>  	_enter("%llx,%zx,%llx", iocb->ki_pos, iov_iter_count(from), i_size_read=
+(inode));
+> =20
+> +	if (!iov_iter_count(from))
+> +		return 0;
+> +
+>  	if ((iocb->ki_flags & IOCB_DIRECT) ||
+>  	    test_bit(NETFS_ICTX_UNBUFFERED, &ictx->flags))
+>  		return netfs_unbuffered_write_iter(iocb, from);
+> diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
+> index 60a40d293c87..bee047e20f5d 100644
+> --- a/fs/netfs/direct_write.c
+> +++ b/fs/netfs/direct_write.c
+> @@ -139,6 +139,9 @@ ssize_t netfs_unbuffered_write_iter(struct kiocb *ioc=
+b, struct iov_iter *from)
+> =20
+>  	_enter("%llx,%zx,%llx", iocb->ki_pos, iov_iter_count(from), i_size_read=
+(inode));
+> =20
+> +	if (!iov_iter_count(from))
+> +		return 0;
+> +
+>  	trace_netfs_write_iter(iocb, from);
+>  	netfs_stat(&netfs_n_rh_dio_write);
+> =20
+> @@ -146,7 +149,7 @@ ssize_t netfs_unbuffered_write_iter(struct kiocb *ioc=
+b, struct iov_iter *from)
+>  	if (ret < 0)
+>  		return ret;
+>  	ret =3D generic_write_checks(iocb, from);
+> -	if (ret < 0)
+> +	if (ret <=3D 0)
 >  		goto out;
->  	}
->=20
+>  	ret =3D file_remove_privs(file);
+>  	if (ret < 0)
 >=20
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
