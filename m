@@ -1,88 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-9336-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4645884014D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 10:22:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6112F84015B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 10:24:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A1771C20D8C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 09:22:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15DAF1F228DB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 29 Jan 2024 09:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72FC154FA8;
-	Mon, 29 Jan 2024 09:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="DKbY3vpd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qyIV1Txm"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BED5576E;
+	Mon, 29 Jan 2024 09:24:38 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1552F54F86
-	for <linux-fsdevel@vger.kernel.org>; Mon, 29 Jan 2024 09:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.111.4.25
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2517054F93;
+	Mon, 29 Jan 2024 09:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706520133; cv=none; b=hEOVszBRPHUd8k+BBu+TkOZP7po8RJte0dhNimpsLa5KJMuIFM5aaOvsczc1NIdzv2VgsCI+Hi3cy7MTm9SS3SCFSH/XRqVZ+n8YRCu+GGA8CD0CVEqZ635H+7R6P5UGp8ekTiushaj95cqbpKj+9IBfcoQ7b8GhImTRMREObqs=
+	t=1706520277; cv=none; b=J9BXUB33LQF1JwDZfYd07jKDDQuRkX40fW6XULlS0BxFvRPIGKFHNNJbT8JNSlUQTCmZSvjhReXDH71p5ThPLSF5W5ZtQpZV11P6XRw6590x2OngZnRDDcxb35ESxUnQ8QTYp209uLXy2vbj7wOOOYKdhdpNn7p5UAb9v+KXb+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706520133; c=relaxed/simple;
-	bh=th18CgkbqhNz1BrILvR/kyrOzjlqNDwOo6wtEPDvwMc=;
+	s=arc-20240116; t=1706520277; c=relaxed/simple;
+	bh=inmOTze7uKfZeWIoyGwST8hZ+d0IPucCCcqmZ34CTwM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bfnPTc6NV6Ye9WT3u+G/QP3QegRUArOZFAhSdb60i99XTU2ulYZlhbU+f4cnnsyJAoupKpRrQr2pMilR3XWv80Gy5dGGMLwQ8IK7puz6INoxv03eJeIb3kNiwIFNyna7zMAxverHGZCeQ3lzdjNonajy15ABykfF2Y4rvQvwdoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=DKbY3vpd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qyIV1Txm; arc=none smtp.client-ip=66.111.4.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailout.nyi.internal (Postfix) with ESMTP id 08CB15C00B4;
-	Mon, 29 Jan 2024 04:22:10 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 29 Jan 2024 04:22:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1706520130;
-	 x=1706606530; bh=kRx4PIjLbz3OMoO4ufIqAXqiHAxblGyaQhTPqi7XN8I=; b=
-	DKbY3vpdb2rqCqMftLQIABnjIoRmNf19mNIva5wisQy/8ZmOMbKrvLBPT/gmbWSr
-	YRZWYLLE/DowGVrwtO3i72Nin7c72bUb7w2xf9vCisK7QYJlmWmdWRSXEbk+p2S3
-	5kpluSA8nLInemCc+afUnlCVpqYeDqO7tUfMQa3iGOYTKA+zXhjiuK6SLVu1OJDQ
-	5LU4adp9ygtgfoQylVKjKXcl/VnqGMsOuYdfb7NVi8W6i3Ue+7JEGYgxx/XPDFLS
-	JCBakPHsKqjWIBQ5UvqC8FCovL9lBvzD6zwD8uVso+wAXqN7qcMb/2nMs7yMqUDd
-	s6AtsBtaY5UkP0YBVvo7XQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1706520130; x=
-	1706606530; bh=kRx4PIjLbz3OMoO4ufIqAXqiHAxblGyaQhTPqi7XN8I=; b=q
-	yIV1TxmQR0b+HpuhFUAN+gT4GW2W1BVXm7tu47dHEJo+wLJc9RhoaAdj42ZCQVRq
-	pN8HT8HoMfYWkWAlnCBendVB6IGQqR88oQOAxnWM4TvyK9vntbug5calebF4bU44
-	7ObhIpN0pZwPn9PU1N1jyzJ7dbJGZH4+W3SlPnmEXhqUFuMTQtCrbECMLKNk2To3
-	DxImzk2Oe/CR2oHlfMD0xlixp6TjA2K8cs1k1suuXVh3z6fod4EwlsmXVhD0XenB
-	vCQIA0mlsa7M0rq4b6AFRQpK8QbziKPjUISUjcfiO6if3hdU/8pgqgKE4Er14bpi
-	FpY/XeAZ4Az4GbB9B0lPg==
-X-ME-Sender: <xms:QW63ZWFYkjXO_-jEFWHyCRuxlxRpofJhCgKbuzZXwufWV0U7Odfu0w>
-    <xme:QW63ZXXjGCpP2C--XemaLKZkfm36HW7R_DJY0_dWRhgU6eMCprwGCsbUyZlvu3PFF
-    Rsp0fE7zQHlAArp>
-X-ME-Received: <xmr:QW63ZQJPMGYqhZQvWkkoxMfyw4m1mSC7yZ0mBKdAjinwj1ga2QWHVbaqnKK611uO_LmchmqGCqoDdvEtWGQuYJa9Jn3Ko2PpM00s9Rto3wXvntfBkhcE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvkedrfedtgedgtddvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfgtdfggeelfedvheefieev
-    jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:QW63ZQHcSMDL4imS0JpTO9mXe2LkSYernD3Fcm6NBKfmzBpAKTRLDA>
-    <xmx:QW63ZcVW3j_EetDW8YeJmAZ641NRBjDs3-Aj18XsdYMiOGsTm7pXIQ>
-    <xmx:QW63ZTOMIkjapEQAdFzaQ0yviqJBVu6uvr6Qw0awu9rlN4_BXhVsgw>
-    <xmx:Qm63Zawu41-S1Q4L8lCDToepl358IdOeeJvS4zV8PW85oQrs2qz-2g>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 29 Jan 2024 04:22:08 -0500 (EST)
-Message-ID: <9ed27532-41fd-4818-8420-7b7118ce5c62@fastmail.fm>
-Date: Mon, 29 Jan 2024 10:22:07 +0100
+	 In-Reply-To:Content-Type; b=RSaub6YEpF49Y5VZS9ojZ54+jfYWYJR0RoOmNL7zwrOEEX3548X0A/DVzQ6Y8bljG8NWn3su5xFC5PNHdYNCEeQs42ufOEA62JagMQM1tuhBjxfmWFHAaWU98o+SVJwDMQxTY4jCdkhyj99xI42nxdjfB6VdDw1DAmdqz5lUsfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 132871FB;
+	Mon, 29 Jan 2024 01:25:18 -0800 (PST)
+Received: from [10.162.42.11] (a077893.blr.arm.com [10.162.42.11])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5B6393F762;
+	Mon, 29 Jan 2024 01:24:23 -0800 (PST)
+Message-ID: <0a71c87a-ae2c-4a61-8adb-3a51d6369b99@arm.com>
+Date: Mon, 29 Jan 2024 14:54:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,63 +42,78 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Future of libfuse maintenance
-To: Nikolaus Rath <nikolaus@rath.org>,
- Martin Kaspar via fuse-devel <fuse-devel@lists.sourceforge.net>,
- Linux FS Devel <linux-fsdevel@vger.kernel.org>
-Cc: Antonio SJ Musumeci <trapexit@spawn.link>,
- Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
-References: <b1603752-5f5b-458f-a77b-2cc678c75dfb@app.fastmail.com>
-Content-Language: en-US, de-DE, fr
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <b1603752-5f5b-458f-a77b-2cc678c75dfb@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH RFC v3 06/35] mm: cma: Make CMA_ALLOC_SUCCESS/FAIL count
+ the number of pages
+Content-Language: en-US
+To: Alexandru Elisei <alexandru.elisei@arm.com>, catalin.marinas@arm.com,
+ will@kernel.org, oliver.upton@linux.dev, maz@kernel.org,
+ james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+ arnd@arndb.de, akpm@linux-foundation.org, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+ mhiramat@kernel.org, rppt@kernel.org, hughd@google.com
+Cc: pcc@google.com, steven.price@arm.com, vincenzo.frascino@arm.com,
+ david@redhat.com, eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org
+References: <20240125164256.4147-1-alexandru.elisei@arm.com>
+ <20240125164256.4147-7-alexandru.elisei@arm.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240125164256.4147-7-alexandru.elisei@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Nikolaus,
-
-On 1/29/24 09:56, Nikolaus Rath wrote:
-> [Resend as text/plain so it doesn't bounce from linux-fsdevel@]
-> 
-> Hello everyone,
-> 
-> The time that I have availability for libfuse maintenance is a lot less today than it was a few years ago, and I don't expect that to change.
-
-firstly. thanks a lot for your great work over the last years!
-
-> 
-> For a while, it has worked reasonably well for other people to submit pull requests that I can review and merge, and for me to make regular releases based on that.
-> 
-> Recently, I've become increasingly uncomfortable with this. My familiarity with the code and context is getting smaller and smaller, so it takes me more and more time to review pull requests and the quality of my reviews and understanding is decreasing.
-> 
-> Therefore, I don't think this trajectory is sustainable. It takes too much of my time while adding too little value, and also gives the misleading impression of the state of affairs.
-> 
-> If anyone has ideas for how libfuse could be maintained, please let me know.
-> 
-> Currently I see these options:
-> 
-> 1. Fully automate merge requests and releases, i.e. merge anything that passes unit tests and release every x months (or, more likely, just ask people to download current Git head).
-
-Please not, that is quite dangerous. I don't think the tests are 
-perfect, especially with compatibility tests are missing. In principle 
-we would need to get github to run tests on different kernel versions - 
-no idea how to do that.
 
 
+On 1/25/24 22:12, Alexandru Elisei wrote:
+> The CMA_ALLOC_SUCCESS, respectively CMA_ALLOC_FAIL, are increased by one
+> after each cma_alloc() function call. This is done even though cma_alloc()
+> can allocate an arbitrary number of CMA pages. When looking at
+> /proc/vmstat, the number of successful (or failed) cma_alloc() calls
+> doesn't tell much with regards to how many CMA pages were allocated via
+> cma_alloc() versus via the page allocator (regular allocation request or
+> PCP lists refill).
 > 
-> 2. Declare it as unmaintained and archive the Github project
+> This can also be rather confusing to a user who isn't familiar with the
+> code, since the unit of measurement for nr_free_cma is the number of pages,
+> but cma_alloc_success and cma_alloc_fail count the number of cma_alloc()
+> function calls.
 > 
-> 3. Someone else takes over my role. I'd like this to be someone with a history of contributions though, because libfuse is a perfect target for supply chain attacks and I don't want to make this too easy.
+> Let's make this consistent, and arguably more useful, by having
+> CMA_ALLOC_SUCCESS count the number of successfully allocated CMA pages, and
+> CMA_ALLOC_FAIL count the number of pages the cma_alloc() failed to
+> allocate.
+> 
+> For users that wish to track the number of cma_alloc() calls, there are
+> tracepoints for that already implemented.
+> 
+> Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> ---
+>  mm/cma.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/cma.c b/mm/cma.c
+> index f49c95f8ee37..dbf7fe8cb1bd 100644
+> --- a/mm/cma.c
+> +++ b/mm/cma.c
+> @@ -517,10 +517,10 @@ struct page *cma_alloc(struct cma *cma, unsigned long count,
+>  	pr_debug("%s(): returned %p\n", __func__, page);
+>  out:
+>  	if (page) {
+> -		count_vm_event(CMA_ALLOC_SUCCESS);
+> +		count_vm_events(CMA_ALLOC_SUCCESS, count);
+>  		cma_sysfs_account_success_pages(cma, count);
+>  	} else {
+> -		count_vm_event(CMA_ALLOC_FAIL);
+> +		count_vm_events(CMA_ALLOC_FAIL, count);
+>  		if (cma)
+>  			cma_sysfs_account_fail_pages(cma, count);
+>  	}
 
-I'm maintaining our DDN internal version anyway - I think I can help to 
-maintain libfuse / take it over.
-
-Btw, I also think that kernel fuse needs a maintenance team - I think 
-currently patches are getting forgotten about - I'm planning to set up 
-my own fuse-bernd-next branch with patches, which I think should be 
-considered - I just didn't get to that yet.
-
-
-Thanks,
-Bernd
+Without getting into the merits of this patch - which is actually trying to do
+semantics change to /proc/vmstat, wondering how is this even related to this
+particular series ? If required this could be debated on it's on separately.
 
