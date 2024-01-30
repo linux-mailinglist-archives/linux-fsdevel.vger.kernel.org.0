@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-9483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E99C841AFD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 05:26:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76A01841B09
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 05:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 480901F25BF0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 04:26:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8F501C24E05
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 04:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB482381AB;
-	Tue, 30 Jan 2024 04:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91EC037716;
+	Tue, 30 Jan 2024 04:34:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74593770A;
-	Tue, 30 Jan 2024 04:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F8C376F2;
+	Tue, 30 Jan 2024 04:34:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706588789; cv=none; b=PzLr9SHLrYjg573GOjr6XRR6i6C1pSxIAROa6MvpLEZLvwncH4B1npOre0tyVQlxwZDcdMQahvl64tCmI+ptmI18Zsz0ljMboRCI8anPFgbXoRWlouo7wekX/LO6TVhmBne4VvNTVZBxvb1UkC/xtdsT5sPF9oGvefqxoItXw3Y=
+	t=1706589262; cv=none; b=GBOYmue34Im2NIjgczqPnuDi+tIYHKb1GV/L++72sVh+ttgXYS+zamGTq/EodtkE/p+0BVIDDXknvXC6g2sIfVnKWjMcNRL5mCEEbnEfqlXg+J2O8WGop/8w3+B2MQtlfsKRs4jleS+nH7lhASEwaziDra7TT+rRLbdOZvH9zp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706588789; c=relaxed/simple;
-	bh=OmsH5cVGc67ZoutoHVLZlyvRi+VnnD7tEU5XBBF9WIU=;
+	s=arc-20240116; t=1706589262; c=relaxed/simple;
+	bh=0F5mFah0QNd5K10CodthfzW/RM1sMIaJbOS1PHFaycA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jBsMLQjTnM78Q0EYcSC5zuK//NZTY5Vcacyj51FIDgVmJzOXv+/C++KNp19F1quNFVq9fmaKUKTYXiC6aOf5BvKm3hyXfm3dyjOkswwFEjMhXV1eWBfJfyy7Rw0HqwXvxJBX6jEbwleoVItDf1oZRcx2wqCWqxpjUGxC7fR7xv0=
+	 In-Reply-To:Content-Type; b=BJZPbOBm2hPXH1PzWMK93ZydkpV/F+3BGnfCO4+YuArImbgAlMLsxgn2HiJA+8P7c7LCDXBS74LwQM8YAzf3MpAQAyS1NgkivuP1u1ACL8z7Y0wxjZB4cIb3LFboiCLjhmvCcND5I/z1YVs3OQL1NZJKGlxb/6F/J5ymiChgCGQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3D28DA7;
-	Mon, 29 Jan 2024 20:27:10 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3BC74DA7;
+	Mon, 29 Jan 2024 20:35:03 -0800 (PST)
 Received: from [10.163.41.110] (unknown [10.163.41.110])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 31CBB3F762;
-	Mon, 29 Jan 2024 20:26:13 -0800 (PST)
-Message-ID: <3fbfb5fc-83a4-49da-ba75-9b671ffe0569@arm.com>
-Date: Tue, 30 Jan 2024 09:56:10 +0530
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6E3CB3F762;
+	Mon, 29 Jan 2024 20:34:06 -0800 (PST)
+Message-ID: <3983416f-b613-42c7-bb42-d3ab268ea1be@arm.com>
+Date: Tue, 30 Jan 2024 10:04:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -42,8 +42,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 01/35] mm: page_alloc: Add gfp_flags parameter to
- arch_alloc_page()
+Subject: Re: [PATCH RFC v3 04/35] mm: page_alloc: Partially revert "mm:
+ page_alloc: remove stale CMA guard code"
 Content-Language: en-US
 To: Alexandru Elisei <alexandru.elisei@arm.com>
 Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
@@ -60,34 +60,38 @@ Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
  linux-arch@vger.kernel.org, linux-mm@kvack.org,
  linux-trace-kernel@vger.kernel.org
 References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-2-alexandru.elisei@arm.com>
- <de0c74b3-0c7d-4f21-8454-659e8b616ea7@arm.com> <ZbePA2dGE6Vs-58t@raptor>
+ <20240125164256.4147-5-alexandru.elisei@arm.com>
+ <966a1a84-76dc-40da-bde2-251d2a81ee31@arm.com> <ZbeQBDwe8zc_pLDZ@raptor>
 From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <ZbePA2dGE6Vs-58t@raptor>
+In-Reply-To: <ZbeQBDwe8zc_pLDZ@raptor>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 1/29/24 17:11, Alexandru Elisei wrote:
+On 1/29/24 17:16, Alexandru Elisei wrote:
 > Hi,
 > 
-> On Mon, Jan 29, 2024 at 11:18:59AM +0530, Anshuman Khandual wrote:
+> On Mon, Jan 29, 2024 at 02:31:23PM +0530, Anshuman Khandual wrote:
+>>
+>>
 >> On 1/25/24 22:12, Alexandru Elisei wrote:
->>> Extend the usefulness of arch_alloc_page() by adding the gfp_flags
->>> parameter.
->> Although the change here is harmless in itself, it will definitely benefit
->> from some additional context explaining the rationale, taking into account
->> why-how arch_alloc_page() got added particularly for s390 platform and how
->> it's going to be used in the present proposal.
-> arm64 will use it to reserve tag storage if the caller requested a tagged
-> page. Right now that means that __GFP_ZEROTAGS is set in the gfp mask, but
-> I'll rename it to __GFP_TAGGED in patch #18 ("arm64: mte: Rename
-> __GFP_ZEROTAGS to __GFP_TAGGED") [1].
+>>> The patch f945116e4e19 ("mm: page_alloc: remove stale CMA guard code")
+>>> removed the CMA filter when allocating from the MIGRATE_MOVABLE pcp list
+>>> because CMA is always allowed when __GFP_MOVABLE is set.
+>>>
+>>> With the introduction of the arch_alloc_cma() function, the above is not
+>>> true anymore, so bring back the filter.
+>>
+>> This makes sense as arch_alloc_cma() now might prevent ALLOC_CMA being
+>> assigned to alloc_flags in gfp_to_alloc_flags_cma().
 > 
-> [1] https://lore.kernel.org/lkml/20240125164256.4147-19-alexandru.elisei@arm.com/
+> Can I add your Reviewed-by tag then?
 
-Makes sense, but please do update the commit message explaining how
-new gfp mask argument will be used to detect tagged page allocation
-requests, further requiring tag storage allocation.
+I think all these changes need to be reviewed in their entirety
+even though some patches do look good on their own. For example
+this patch depends on whether [PATCH 03/35] is acceptable or not.
+
+I would suggest separating out CMA patches which could be debated
+and merged regardless of this series.
 
