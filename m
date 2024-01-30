@@ -1,197 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-9515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9517-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF0B84208F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:05:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A72A8421C9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6261F2BBA9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 10:05:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C0F81F27BD6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 10:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5603679EF;
-	Tue, 30 Jan 2024 10:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vVZFDbYX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="n/MERs5t";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vVZFDbYX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="n/MERs5t"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410726BB2A;
+	Tue, 30 Jan 2024 10:44:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2E8679E8;
-	Tue, 30 Jan 2024 10:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 502F76A03A;
+	Tue, 30 Jan 2024 10:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706608991; cv=none; b=YRh9vZWAAHFzXowcNDI0b5Js6FzuBVtEZ/tSqlxyENay1Wd07phzrwlog0NkeAl0I6EFda0/RDEoAnw0tHPmKohGg08BiuB78IZALgBOKOWB9Kp24mxy53eSM2t/V1rPe2SZmnJ9ujnN/oM06co2HiNyQyqf/9IbIAS0s+eeubc=
+	t=1706611443; cv=none; b=fZ/tbsvnVyqqwtqemq4VirWeP+Vg6fonAKXpffylNMaS8umUJvaNHDWtcaQLn4x/u4HmU63YGuFMDe4biFl3/GCmnwreChrgYtL7lZ1CjmpittEBTGX5OoY25KVqyOQG4Hjdt7LxjEy70uPMHS2L2H/PFwWtv1GB2bwdi7nznIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706608991; c=relaxed/simple;
-	bh=IkKzQEXnXlwjhWZFN3oqHoe3HVv0pAR2z5vY4PVRLYg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MmBXAxkIqLap/Ad+V0hMIqf0WdC6/sDudtXtRmt4zIptrIyB+abma8toyuMdk33u51TTs9f6RrfuPlh1OQFivdskdjpmVq9PbLHT8rvFDwE+YETnKCRK1qNkbGL0Kn1aUyMkqYJTp4nEBhH6GW4kxbGsbi08MZxqULEpnYOGzjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vVZFDbYX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=n/MERs5t; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vVZFDbYX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=n/MERs5t; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9C9FD1F83F;
-	Tue, 30 Jan 2024 10:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706608987; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ypvJnXvVjmaayelrbx9cC9PI4eHdK+C4dtVzpiZqLQ4=;
-	b=vVZFDbYX2wN/3NIyMU5Mb/zYfjArt0R1NdLgrRwS3sMURrlNf2A37D82b9XAdKCmjs7wF4
-	wpLrRvpwHJSu4lLfIrm8JehI8cFJpQhC9lhShY4VVrSTceLWFs21FtoUAvS1Mlnv7uaNi3
-	qIJoFKAwnNja2OGNOKTCpSfrNzvvIa8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706608987;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ypvJnXvVjmaayelrbx9cC9PI4eHdK+C4dtVzpiZqLQ4=;
-	b=n/MERs5tRa7fMRqwi43Nhw143nMxUdTx1DsOb2d1LYDAMF2UgoTh1FS8GACB9h52YQ43a7
-	w6raW35bJ59zKIAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706608987; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ypvJnXvVjmaayelrbx9cC9PI4eHdK+C4dtVzpiZqLQ4=;
-	b=vVZFDbYX2wN/3NIyMU5Mb/zYfjArt0R1NdLgrRwS3sMURrlNf2A37D82b9XAdKCmjs7wF4
-	wpLrRvpwHJSu4lLfIrm8JehI8cFJpQhC9lhShY4VVrSTceLWFs21FtoUAvS1Mlnv7uaNi3
-	qIJoFKAwnNja2OGNOKTCpSfrNzvvIa8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706608987;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ypvJnXvVjmaayelrbx9cC9PI4eHdK+C4dtVzpiZqLQ4=;
-	b=n/MERs5tRa7fMRqwi43Nhw143nMxUdTx1DsOb2d1LYDAMF2UgoTh1FS8GACB9h52YQ43a7
-	w6raW35bJ59zKIAA==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 7DABC13462;
-	Tue, 30 Jan 2024 10:03:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id Z7anHlvJuGXocgAAn2gu4w
-	(envelope-from <jack@suse.cz>); Tue, 30 Jan 2024 10:03:07 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1C92CA0807; Tue, 30 Jan 2024 11:03:07 +0100 (CET)
-Date: Tue, 30 Jan 2024 11:03:07 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.com>, David Howells <dhowells@redhat.com>,
-	Brian Foster <bfoster@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 18/19] iomap: Convert iomap_writepages() to use
- for_each_writeback_folio()
-Message-ID: <20240130100307.5ub22s5ajanqstp6@quack3>
-References: <20240125085758.2393327-1-hch@lst.de>
- <20240125085758.2393327-19-hch@lst.de>
+	s=arc-20240116; t=1706611443; c=relaxed/simple;
+	bh=LR4Tqdwk6o5B3sBkOoFmCKb782ENpektt/aVbGbwqOo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DDn/6LwfTwhrFKK1uwtfht69SiPaiy3g/s33mIwJ1PewMkFcyZzhzNiaVcgAVQraEtRp/1OQymndMaPwkSLDYDDd5XOvnJ3Bs+9UOrLtUh6RhY5Quecwg8114MsitkpcfmlzIdRee/1sGrYuf/bnHP2BYz7nrBXwph91ekj6H8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 40UAh0Lq008630;
+	Tue, 30 Jan 2024 19:43:00 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
+ Tue, 30 Jan 2024 19:43:00 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 40UAh0YY008627
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 30 Jan 2024 19:43:00 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <56432241-1947-4701-a3d1-febd57fb3096@I-love.SAKURA.ne.jp>
+Date: Tue, 30 Jan 2024 19:42:59 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240125085758.2393327-19-hch@lst.de>
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=vVZFDbYX;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="n/MERs5t"
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[11];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,suse.cz:dkim,suse.cz:email,infradead.org:email,suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Score: -4.01
-X-Rspamd-Queue-Id: 9C9FD1F83F
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] LSM: add security_bprm_aborting_creds() hook
+Content-Language: en-US
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+References: <e938c37b-d615-4be4-a2da-02b904b7072f@I-love.SAKURA.ne.jp>
+ <613a54d2-9508-4f87-a163-a25a77a101cd@I-love.SAKURA.ne.jp>
+ <87frygbx04.fsf@email.froward.int.ebiederm.org>
+ <dbf0ef61-355b-4dcb-8e51-9298cf847367@I-love.SAKURA.ne.jp>
+ <8734ug9fbt.fsf@email.froward.int.ebiederm.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <8734ug9fbt.fsf@email.froward.int.ebiederm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 25-01-24 09:57:57, Christoph Hellwig wrote:
-> From: Matthew Wilcox <willy@infradead.org>
+On 2024/01/30 3:15, Eric W. Biederman wrote:
+> If you aren't going to change your design your new hook should be:
+> 	security_execve_revert(current);
+> Or maybe:
+> 	security_execve_abort(current);
 > 
-> This removes one indirect function call per folio, and adds typesafety
-> by not casting through a void pointer.
+> At least then it is based upon the reality that you plan to revert
+> changes to current->security.  Saying anything about creds or bprm when
+> you don't touch them, makes no sense at all.  Causing people to
+> completely misunderstand what is going on, and making it more likely
+> they will change the code in ways that will break TOMOYO.
+
+Fine for me. The current argument is redundant, for nobody will try to
+call security_execve_abort() on a remote thread.
+
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-> ---
->  fs/iomap/buffered-io.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 093c4515b22a53..58b3661f5eac9e 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -1887,9 +1887,8 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
->   * regular allocated space.
->   */
->  static int iomap_do_writepage(struct folio *folio,
-> -		struct writeback_control *wbc, void *data)
-> +		struct writeback_control *wbc, struct iomap_writepage_ctx *wpc)
->  {
-> -	struct iomap_writepage_ctx *wpc = data;
->  	struct inode *inode = folio->mapping->host;
->  	u64 end_pos, isize;
->  
-> @@ -1986,10 +1985,12 @@ iomap_writepages(struct address_space *mapping, struct writeback_control *wbc,
->  		struct iomap_writepage_ctx *wpc,
->  		const struct iomap_writeback_ops *ops)
->  {
-> -	int			ret;
-> +	struct folio *folio;
-> +	int ret;
->  
->  	wpc->ops = ops;
-> -	ret = write_cache_pages(mapping, wbc, iomap_do_writepage, wpc);
-> +	for_each_writeback_folio(mapping, wbc, folio, ret)
-> +		ret = iomap_do_writepage(folio, wbc, wpc);
->  	if (!wpc->ioend)
->  		return ret;
->  	return iomap_submit_ioend(wpc, wpc->ioend, ret);
-> -- 
-> 2.39.2
+> What I understand from the documentation you provided about TOMOYO is:
+> - TOMOYO provides the domain transition early so that the executable
+>   can be read.
+> - TOMOYO did that because it could not detect reliably when a file
+>   was opened for execve and read for execve.
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> Am I wrong in my understanding?
+> 
+> If that understanding is correct, now that (file->f_mode & __FMODE_EXEC)
+> is a reliable indication of a file used exclusively for exec then it
+> should be possible to take advantage of the new information and get
+> TOMOYO and the rest of the execve playing nicely with each other without
+> having to add new hooks.
+
+current->in_execve flag has two purposes: "whether to check permission" and
+"what domain is used for checking permission (if need to check permission)".
+
+One is to distinguish "open from execve()" and "open from uselib()".
+This was replaced by the (file->f_mode & __FMODE_EXEC) change, for
+__FMODE_EXEC was now removed from uselib(). But this is after all about
+"whether to check permission".
+
+The other is to emulate security_execve_abort(). security_execve_abort() is
+needed because TOMOYO checks permission for opening interpreter file from
+execve() using a domain which the current thread will belong to if execve()
+succeeds (whereas DAC checks permission for opening interpreter file from
+execve() using credentials which the current thread is currently using).
+This is about "what domain is used for checking permission".
+
+Since security_file_open() hook cannot see bprm->cred, TOMOYO cannot know
+"what domain is used for checking permission" from security_file_open().
+TOMOYO can know only "whether to check permission" from security_file_open().
+
+Since TOMOYO cannot pass bprm->cred to security_file_open() hook using
+override_creds()/revert_creds(), TOMOYO is passing "what domain is used for
+checking permission" to security_file_open() via "struct task_struct"->security.
+"struct task_struct"->security is updated _before_ security_file_open() for the
+interpreter file is called.
+
+Since security_execve_abort() was missing, when execve() failed, TOMOYO had
+to keep the domain which the current thread would belong to if execve() succeeded.
+The kept domain is cleared when TOMOYO finds that previous execve() was finished
+(indicated by current->in_execve == 0) or when TOMOYO finds that new execve() is
+in progress (indicated by current->in_execve == 0 when security_cred_prepare() is
+called).
+
+It is not possible to extract "what domain is used for checking permission" from
+"whether file->f_mode includes __FMODE_EXEC". Talking about the
+(file->f_mode & __FMODE_EXEC) change (i.e. "whether to check permission") is
+pointless when talking about "what domain is used for checking permission".
+
 
