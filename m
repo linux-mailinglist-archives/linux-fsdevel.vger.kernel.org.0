@@ -1,100 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-9519-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C299C8422C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 12:20:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05209842325
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 12:33:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7966C296549
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:20:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D1841F23816
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:33:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73EED67E91;
-	Tue, 30 Jan 2024 11:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wnSKfYN+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="J1gPgPNr";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iGTFcS83";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y46nuuz/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3F467736;
+	Tue, 30 Jan 2024 11:33:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB5167E6D;
-	Tue, 30 Jan 2024 11:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C921467729;
+	Tue, 30 Jan 2024 11:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706613360; cv=none; b=Fevby1YP+Svta5sLPyMwyTLODKLUebC7LGSJJeQC5EWMKgcDdfOtGSNrtq55TxDg3NxnhzpBlUrGOmz8OowwbFv5MBudQPEvh+m5g7MhPVv88GbCNe+Rby7Dzia8iCuR0ehtU5zTgiiacAHIX77EZ0ZhoajvxDa5ZWI29RmVMIc=
+	t=1706614404; cv=none; b=vBzUC+BEpEn4n84TB1XHk6ndbtuKx/8SUpu0Y01pRWorOAz2MHe/TaYGCHCcw8zlqI7uCvheXTfC2ba0zBXQTl7/rcQaSo6afq1KPpE/PfJ4fluH/nWc4SBj+Coz+4JZJ2RRJZFx0CS/RVM64Y8qgnlQnEvR371rAH9vTKcw4E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706613360; c=relaxed/simple;
-	bh=1u4ISiGKciq/te4aoqonTD2lmefQOKlXtD+Z/JlW8Xs=;
+	s=arc-20240116; t=1706614404; c=relaxed/simple;
+	bh=iYeZRBQMYetEM+TK5yHlgX6GcwqR9jGOdY9NNlijHeI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r/c9p9w2nwHIoGko6MNNVS7DJlZk6Yb25TDfmDWIuZ/MyWxjKqGeC7lVzwft0vbqj8WlsiEL6NEevz29YShxQZdLDgpbSmbf5S/sMC65zNc1B+sghDfqWj9oBufHCWdh5hVnVfASqVmhznok8arWdVkxPbS4NLU62f9nhTt9yhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wnSKfYN+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=J1gPgPNr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iGTFcS83; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y46nuuz/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DAA4C1F846;
-	Tue, 30 Jan 2024 11:15:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706613355; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+OQ1bCF/HA8s2JUmEwbhXiDyJh9rd41WXFOaLCe3q/U=;
-	b=wnSKfYN+XJOFJdv+dIeQpzY4JIiNbrGSw4Y7TNl6Md/2JxugJt0tqDrgMEdVfeF3AY3k8Q
-	J5IzIe8sB/hN1tq18WdTy2tOTlXSR96u3t9Fp5HQGw+B4ryGR3LqcO/eLmsSUj2+iP8cVF
-	08RrIjWoPRQvPz08P5U8xLawh3WQJwA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706613355;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+OQ1bCF/HA8s2JUmEwbhXiDyJh9rd41WXFOaLCe3q/U=;
-	b=J1gPgPNr+S4rVl9Ov63My5ktcVTtV6BiCeTHyd/ovTVtlf8nAxDqdR+bw5WTSRF4Smc09z
-	RB6XFKAyCxGUO6DQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706613353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+OQ1bCF/HA8s2JUmEwbhXiDyJh9rd41WXFOaLCe3q/U=;
-	b=iGTFcS83zowJfNaToC+rm0tIl5H77AwpQNLp7kSNLyudQ/GATEhEzPkRUiqbaNDvaJ9oSr
-	DFHQfu237sJf/VAHMkrOuV55laaylOvgIbg+OMOitUX12LI9GA8d67LLxVSoQUebXMylrK
-	ZR69Eh2ifP668eRisCIHdqyB2FHwehw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706613353;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+OQ1bCF/HA8s2JUmEwbhXiDyJh9rd41WXFOaLCe3q/U=;
-	b=Y46nuuz/iBKzdbyJIaAipdLauaXAHfII8sF5/k+jxsw4JEJccNJu+RU7WASk6pd9PeHNpN
-	WNnTPyPQ0WdmL/Bg==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id CD97B13212;
-	Tue, 30 Jan 2024 11:15:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id f9oqMmnauGVlCwAAn2gu4w
-	(envelope-from <jack@suse.cz>); Tue, 30 Jan 2024 11:15:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5C9E7A0807; Tue, 30 Jan 2024 12:15:53 +0100 (CET)
-Date: Tue, 30 Jan 2024 12:15:53 +0100
-From: Jan Kara <jack@suse.cz>
-To: Kees Cook <keescook@chromium.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] select: Avoid wrap-around instrumentation in
- do_sys_poll()
-Message-ID: <20240130111553.yxm74p5q64pyuurs@quack3>
-References: <20240129184014.work.593-kees@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JnNG0P5FvhwG3Cd6UOqZaR8H4RrXt5Ai5rtYR5pcSG1+OUDNtl8fG1Sudeydh9SonyCekVNIRJS0kshi/87l9HhXQWOxWAioaM63XfDFHOs6gGscT2BLoqO2eg62Gv8jgQjLdFf6wwaVijkgzkpI/vUeWWztgrI+psLwdgIjdTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 121DBDA7;
+	Tue, 30 Jan 2024 03:34:03 -0800 (PST)
+Received: from raptor (unknown [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA3D43F5A1;
+	Tue, 30 Jan 2024 03:33:13 -0800 (PST)
+Date: Tue, 30 Jan 2024 11:33:07 +0000
+From: Alexandru Elisei <alexandru.elisei@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
+	rppt@kernel.org, hughd@google.com, pcc@google.com,
+	steven.price@arm.com, vincenzo.frascino@arm.com, david@redhat.com,
+	eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC v3 09/35] mm: cma: Introduce cma_remove_mem()
+Message-ID: <ZbjecxWRUrBfOEdn@raptor>
+References: <20240125164256.4147-1-alexandru.elisei@arm.com>
+ <20240125164256.4147-10-alexandru.elisei@arm.com>
+ <830691cf-cb96-443e-b6eb-2adfe2edd587@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,127 +63,199 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240129184014.work.593-kees@kernel.org>
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=iGTFcS83;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="Y46nuuz/"
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-5.51 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_DKIM_ARC_DNSWL_HI(-1.00)[];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[7];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[linux.org.uk:email,chromium.org:email,suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_IN_DNSWL_HI(-0.50)[2a07:de40:b281:104:10:150:64:98:from];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Score: -5.51
-X-Rspamd-Queue-Id: DAA4C1F846
-X-Spam-Flag: NO
+In-Reply-To: <830691cf-cb96-443e-b6eb-2adfe2edd587@arm.com>
 
-On Mon 29-01-24 10:40:15, Kees Cook wrote:
-> The mix of int, unsigned int, and unsigned long used by struct
-> poll_list::len, todo, len, and j meant that the signed overflow
-> sanitizer got worried it needed to instrument several places where
-> arithmetic happens between these variables. Since all of the variables
-> are always positive and bounded by unsigned int, use a single type in
-> all places. Additionally expand the zero-test into an explicit range
-> check before updating "todo".
-> 
-> This keeps sanitizer instrumentation[1] out of a UACCESS path:
-> 
-> vmlinux.o: warning: objtool: do_sys_poll+0x285: call to __ubsan_handle_sub_overflow() with UACCESS enabled
-> 
-> Link: https://github.com/KSPP/linux/issues/26 [1]
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+Hi,
 
-Yeah, good cleanup. Feel free to add:
+I really appreciate the feedback you have given me so far. I believe the
+commit message isn't clear enough and there has been a confusion.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+A CMA user adds a CMA area to the cma_areas array with
+cma_declare_contiguous_nid() or cma_init_reserved_mem().
+init_cma_reserved_pageblock() then iterates over the array and activates
+all cma areas.
 
-								Honza
+The function cma_remove_mem() is intended to be used to remove a cma area
+from the cma_areas array **before** the area has been activated.
 
-> ---
->  fs/select.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
+Usecase: a driver (in this case, the arm64 dynamic tag storage code)
+manages several cma areas. The driver successfully adds the first area to
+the cma_areas array. When the driver tries to adds the second area, the
+function fails. Without cma_remove_mem(), the driver has no way to prevent
+the first area from being freed to the page allocator. cma_remove_mem() is
+about providing a means to do cleanup in case of error.
+
+Does that make more sense now?
+
+Ok Tue, Jan 30, 2024 at 11:20:56AM +0530, Anshuman Khandual wrote:
 > 
-> diff --git a/fs/select.c b/fs/select.c
-> index 0ee55af1a55c..11a3b1312abe 100644
-> --- a/fs/select.c
-> +++ b/fs/select.c
-> @@ -839,7 +839,7 @@ SYSCALL_DEFINE1(old_select, struct sel_arg_struct __user *, arg)
->  
->  struct poll_list {
->  	struct poll_list *next;
-> -	int len;
-> +	unsigned int len;
->  	struct pollfd entries[];
->  };
->  
-> @@ -975,14 +975,15 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
->  		struct timespec64 *end_time)
->  {
->  	struct poll_wqueues table;
-> -	int err = -EFAULT, fdcount, len;
-> +	int err = -EFAULT, fdcount;
->  	/* Allocate small arguments on the stack to save memory and be
->  	   faster - use long to make sure the buffer is aligned properly
->  	   on 64 bit archs to avoid unaligned access */
->  	long stack_pps[POLL_STACK_ALLOC/sizeof(long)];
->  	struct poll_list *const head = (struct poll_list *)stack_pps;
->   	struct poll_list *walk = head;
-> - 	unsigned long todo = nfds;
-> +	unsigned int todo = nfds;
-> +	unsigned int len;
->  
->  	if (nfds > rlimit(RLIMIT_NOFILE))
->  		return -EINVAL;
-> @@ -998,9 +999,9 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
->  					sizeof(struct pollfd) * walk->len))
->  			goto out_fds;
->  
-> -		todo -= walk->len;
-> -		if (!todo)
-> +		if (walk->len >= todo)
->  			break;
-> +		todo -= walk->len;
->  
->  		len = min(todo, POLLFD_PER_PAGE);
->  		walk = walk->next = kmalloc(struct_size(walk, entries, len),
-> @@ -1020,7 +1021,7 @@ static int do_sys_poll(struct pollfd __user *ufds, unsigned int nfds,
->  
->  	for (walk = head; walk; walk = walk->next) {
->  		struct pollfd *fds = walk->entries;
-> -		int j;
-> +		unsigned int j;
->  
->  		for (j = walk->len; j; fds++, ufds++, j--)
->  			unsafe_put_user(fds->revents, &ufds->revents, Efault);
-> -- 
-> 2.34.1
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> On 1/25/24 22:12, Alexandru Elisei wrote:
+> > Memory is added to CMA with cma_declare_contiguous_nid() and
+> > cma_init_reserved_mem(). This memory is then put on the MIGRATE_CMA list in
+> > cma_init_reserved_areas(), where the page allocator can make use of it.
+> 
+> cma_declare_contiguous_nid() reserves memory in memblock and marks the
+
+You forgot about about cma_init_reserved_mem() which does the same thing,
+but yes, you are right.
+
+> for subsequent CMA usage, where as cma_init_reserved_areas() activates
+> these memory areas through init_cma_reserved_pageblock(). Standard page
+> allocator only receives these memory via free_reserved_page() - only if
+
+I don't think that's correct. init_cma_reserved_pageblock() clears the
+PG_reserved page flag, sets the migratetype to MIGRATE_CMA and then frees
+the page. After that, the page is available to the standard page allocator
+to use for allocation. Otherwise, what would be the point of the
+MIGRATE_CMA migratetype?
+
+> the page block activation fails.
+
+For the sake of having a complete picture, I'll add that that only happens
+if cma->reserve_pages_on_error is false. If the CMA user sets the field to
+'true' (with cma_reserve_pages_on_error()), then the pages in the CMA
+region are kept PG_reserved if activation fails.
+
+> 
+> > 
+> > If a device manages multiple CMA areas, and there's an error when one of
+> > the areas is added to CMA, there is no mechanism for the device to prevent
+> 
+> What kind of error ? init_cma_reserved_pageblock() fails ? But that will
+> not happen until cma_init_reserved_areas().
+
+I think I haven't been clear enough. When I say that "an area is added
+to CMA", I mean that the memory region is added to cma_areas array, via
+cma_declare_contiguous_nid() or cma_init_reserved_mem(). There are several
+ways in which either function can fail.
+
+> 
+> > the rest of the areas, which were added before the error occured, from
+> > being later added to the MIGRATE_CMA list.
+> 
+> Why is this mechanism required ? cma_init_reserved_areas() scans over all
+> CMA areas and try and activate each of them sequentially. Why is not this
+> sufficient ?
+
+This patch is about removing a struct cma from the cma_areas array after it
+has been added to the array, with cma_declare_contiguous_nid() or
+cma_init_reserved_mem(), to prevent the area from being activated in
+cma_init_reserved_areas(). Sorry for the confusion.
+
+I'll add a check in cma_remove_mem() to fail if the cma area has been
+activated, and a comment to the function to explain its usage.
+
+> 
+> > 
+> > Add cma_remove_mem() which allows a previously reserved CMA area to be
+> > removed and thus it cannot be used by the page allocator.
+> 
+> Successfully activated CMA areas do not get used by the buddy allocator.
+
+I don't believe that is correct, see above.
+
+> 
+> > 
+> > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> > ---
+> > 
+> > Changes since rfc v2:
+> > 
+> > * New patch.
+> > 
+> >  include/linux/cma.h |  1 +
+> >  mm/cma.c            | 30 +++++++++++++++++++++++++++++-
+> >  2 files changed, 30 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/include/linux/cma.h b/include/linux/cma.h
+> > index e32559da6942..787cbec1702e 100644
+> > --- a/include/linux/cma.h
+> > +++ b/include/linux/cma.h
+> > @@ -48,6 +48,7 @@ extern int cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
+> >  					unsigned int order_per_bit,
+> >  					const char *name,
+> >  					struct cma **res_cma);
+> > +extern void cma_remove_mem(struct cma **res_cma);
+> >  extern struct page *cma_alloc(struct cma *cma, unsigned long count, unsigned int align,
+> >  			      bool no_warn);
+> >  extern int cma_alloc_range(struct cma *cma, unsigned long start, unsigned long count,
+> > diff --git a/mm/cma.c b/mm/cma.c
+> > index 4a0f68b9443b..2881bab12b01 100644
+> > --- a/mm/cma.c
+> > +++ b/mm/cma.c
+> > @@ -147,8 +147,12 @@ static int __init cma_init_reserved_areas(void)
+> >  {
+> >  	int i;
+> >  
+> > -	for (i = 0; i < cma_area_count; i++)
+> > +	for (i = 0; i < cma_area_count; i++) {
+> > +		/* Region was removed. */
+> > +		if (!cma_areas[i].count)
+> > +			continue;
+> 
+> Skip previously added CMA area (now zeroed out) ?
+
+Yes, that's what I meant with the comment "Region was removed". Do you
+think I should reword the comment?
+
+> 
+> >  		cma_activate_area(&cma_areas[i]);
+> > +	}
+> >  
+> >  	return 0;
+> >  }
+> 
+> cma_init_reserved_areas() gets called via core_initcall(). Some how
+> platform/device needs to call cma_remove_mem() before core_initcall()
+> gets called ? This might be time sensitive.
+
+I don't understand your point.
+
+> 
+> > @@ -216,6 +220,30 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
+> >  	return 0;
+> >  }
+> >  
+> > +/**
+> > + * cma_remove_mem() - remove cma area
+> > + * @res_cma: Pointer to the cma region.
+> > + *
+> > + * This function removes a cma region created with cma_init_reserved_mem(). The
+> > + * ->count is set to 0.
+> > + */
+> > +void __init cma_remove_mem(struct cma **res_cma)
+> > +{
+> > +	struct cma *cma;
+> > +
+> > +	if (WARN_ON_ONCE(!res_cma || !(*res_cma)))
+> > +		return;
+> > +
+> > +	cma = *res_cma;
+> > +	if (WARN_ON_ONCE(!cma->count))
+> > +		return;
+> > +
+> > +	totalcma_pages -= cma->count;
+> > +	cma->count = 0;
+> > +
+> > +	*res_cma = NULL;
+> > +}
+> > +
+> >  /**
+> >   * cma_declare_contiguous_nid() - reserve custom contiguous area
+> >   * @base: Base address of the reserved area optional, use 0 for any
+> 
+> But first please do explain what are the errors device or platform might
+
+cma_declare_contiguous_nid() and cma_init_reserved_mem() can fail in a
+number of ways, the code should be self documenting.
+
+> see on a previously marked CMA area so that removing them on way becomes
+> necessary preventing their activation via cma_init_reserved_areas().
+
+I've described how the function is supposed to be used at the top of my
+reply.
+
+Thanks,
+Alex
 
