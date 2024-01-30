@@ -1,151 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-9485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9487-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 199EF841B1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 05:52:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D74841B62
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 06:20:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9853BB2351A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 04:52:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D39B1F24EF7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 05:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4CA3771E;
-	Tue, 30 Jan 2024 04:52:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B65381B8;
+	Tue, 30 Jan 2024 05:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TEUMk/AC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C96376EA;
-	Tue, 30 Jan 2024 04:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76DC38391;
+	Tue, 30 Jan 2024 05:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706590356; cv=none; b=oMz8nH17qrj+eNtclkPEaA/dmhBFvTvvcN3G4ArVWY4T46++tPgLhxjd0VGuP9wUaMO6O+SoB8xaVSAel43Y0m1DPb/ut0YuDQsA2hgEgpvWZy8JQawDzXjmhZ+opaf2SlMNHSxL346GSG8QHNucz656II5Z+PqeL78LjpKGfG4=
+	t=1706592034; cv=none; b=Z+FNZ+E8ZmWTv8GF6FDaPLVQimJ3+y0lGa3C2fLpc0LRMyWP2ipLqmba1K76fiFlRRt0f79QmeGWWxQkKihhwRozrh23T5CyjUZTptFhqYSoZwovNAB6TmPdgDqG9okzXiMoBaoehwyux3FMGhkEyyi+B9isDjk26SfrHGQWVNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706590356; c=relaxed/simple;
-	bh=pSny46fbcm5afdgGkL8N9AZNYoV2BmDZXSWgbG1D29A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UoGenMDxeebLrD+fGkOt6fdpPkhzv+dBI2J3alJpNIvwVikmN38GCWBxvTPAw8aw6FJYx4bjM4EdUQ3akB7hC5RMor6m12RhZoKn3JKOHDJ0BNeO3ya4vXmKlu2fuhSg2RBu8Jb/gZWBixetMFdDqh72Bk5NEZH2ETa3YMz8T14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5BB05DA7;
-	Mon, 29 Jan 2024 20:53:11 -0800 (PST)
-Received: from [10.163.41.110] (unknown [10.163.41.110])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 45BD03F762;
-	Mon, 29 Jan 2024 20:52:15 -0800 (PST)
-Message-ID: <2cb8288c-5378-4968-a75b-8462b41998c6@arm.com>
-Date: Tue, 30 Jan 2024 10:22:11 +0530
+	s=arc-20240116; t=1706592034; c=relaxed/simple;
+	bh=H+kUUwQrQMb1IwmAFXXv1tRw7HnV6M5rIHAXOc0j4jI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=H99DqpYVAry+OBEkikuT3HmWD5eN8Ld2pZWYM1CdXRh7Tl+OgCN+0m3nQnStFrzQyG5yT2TCaYTtQxKx89WXNW2QxtmeyPaaVrrHnUXYpm+qZ4DHhWoRChmtz6nV808BfSgs/HWtl5FEXDk/gac1WUJ+yBsKDPOYz8pmJGyUl4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TEUMk/AC; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706592033; x=1738128033;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=H+kUUwQrQMb1IwmAFXXv1tRw7HnV6M5rIHAXOc0j4jI=;
+  b=TEUMk/AC0iWr24N6H/ASEDQF3rZBKzuTMhfM42rDyXjzFMoQM8v3/q2Q
+   srOl23H+RAVnRpW7cIVHCPtZcnb8wW8XcfHeX3RM9nMOk9JKPKW0XsMLB
+   nTGULwkxghWS6tmO9JkhXyzlU1GvhsYhpKejdXLoGpiZapbjpeUHbey72
+   qRTMFbFixpsaVbub9XHxxIQogi0DJXnpBSf3u5Mnti6StRz1SOar1zvJR
+   PyGMizGPDyRfH6KjQDUjqcb3qMbHrJ4a7ROKdAWoTg54Wj8lSTpK3ECyv
+   YU19rO6Sb4AyvTNl22rg2zdBa4BefgzCcVPcD+IcPNfgphWm/9OrMmF/1
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10968"; a="16560415"
+X-IronPort-AV: E=Sophos;i="6.05,707,1701158400"; 
+   d="scan'208";a="16560415"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jan 2024 21:20:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10968"; a="737657907"
+X-IronPort-AV: E=Sophos;i="6.05,707,1701158400"; 
+   d="scan'208";a="737657907"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jan 2024 21:20:27 -0800
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Gregory Price <gregory.price@memverge.com>
+Cc: Gregory Price <gourry.memverge@gmail.com>,  <linux-mm@kvack.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-doc@vger.kernel.org>,
+  <linux-fsdevel@vger.kernel.org>,  <linux-api@vger.kernel.org>,
+  <corbet@lwn.net>,  <akpm@linux-foundation.org>,  <honggyu.kim@sk.com>,
+  <rakie.kim@sk.com>,  <hyeongtak.ji@sk.com>,  <mhocko@kernel.org>,
+  <vtavarespetr@micron.com>,  <jgroves@micron.com>,
+  <ravis.opensrc@micron.com>,  <sthanneeru@micron.com>,
+  <emirakhur@micron.com>,  <Hasan.Maruf@amd.com>,
+  <seungjun.ha@samsung.com>,  <hannes@cmpxchg.org>,
+  <dan.j.williams@intel.com>
+Subject: Re: [PATCH v3 4/4] mm/mempolicy: change cur_il_weight to atomic and
+ carry the node with it
+In-Reply-To: <ZbhuJTBp68e8eLRv@memverge.com> (Gregory Price's message of "Mon,
+	29 Jan 2024 22:33:57 -0500")
+References: <20240125184345.47074-1-gregory.price@memverge.com>
+	<20240125184345.47074-5-gregory.price@memverge.com>
+	<87sf2klez8.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<ZbPf6d2cQykdl3Eb@memverge.com>
+	<877cjsk0yd.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<ZbfI3+nhgQlNKMPG@memverge.com> <ZbfqVHA9+38/j3Mq@memverge.com>
+	<875xzbika0.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<ZbhuJTBp68e8eLRv@memverge.com>
+Date: Tue, 30 Jan 2024 13:18:30 +0800
+Message-ID: <871q9ziel5.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 06/35] mm: cma: Make CMA_ALLOC_SUCCESS/FAIL count
- the number of pages
-Content-Language: en-US
-To: Alexandru Elisei <alexandru.elisei@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
- maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
- yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
- mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
- vschneid@redhat.com, mhiramat@kernel.org, rppt@kernel.org, hughd@google.com,
- pcc@google.com, steven.price@arm.com, vincenzo.frascino@arm.com,
- david@redhat.com, eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org
-References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-7-alexandru.elisei@arm.com>
- <0a71c87a-ae2c-4a61-8adb-3a51d6369b99@arm.com> <ZbeRQpGNnfXnjayQ@raptor>
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <ZbeRQpGNnfXnjayQ@raptor>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ascii
 
+Gregory Price <gregory.price@memverge.com> writes:
 
+> On Tue, Jan 30, 2024 at 11:15:35AM +0800, Huang, Ying wrote:
+>> Gregory Price <gregory.price@memverge.com> writes:
+>> 
+>> > On Mon, Jan 29, 2024 at 10:48:47AM -0500, Gregory Price wrote:
+>> >> On Mon, Jan 29, 2024 at 04:17:46PM +0800, Huang, Ying wrote:
+>> >> > Gregory Price <gregory.price@memverge.com> writes:
+>> >> > 
+>> >> > But, in contrast, it's bad to put task-local "current weight" in
+>> >> > mempolicy.  So, I think that it's better to move cur_il_weight to
+>> >> > task_struct.  And maybe combine it with current->il_prev.
+>> >> > 
+>> >> Style question: is it preferable add an anonymous union into task_struct:
+>> >> 
+>> >> union {
+>> >>     short il_prev;
+>> >>     atomic_t wil_node_weight;
+>> >> };
+>> >> 
+>> >> Or should I break out that union explicitly in mempolicy.h?
+>> >> 
+>> >
+>> > Having attempted this, it looks like including mempolicy.h into sched.h
+>> > is a non-starter.  There are build issues likely associated from the
+>> > nested include of uapi/linux/mempolicy.h
+>> >
+>> > So I went ahead and did the following.  Style-wise If it's better to just
+>> > integrate this as an anonymous union in task_struct, let me know, but it
+>> > seemed better to add some documentation here.
+>> >
+>> > I also added static get/set functions to mempolicy.c to touch these
+>> > values accordingly.
+>> >
+>> > As suggested, I changed things to allow 0-weight in il_prev.node_weight
+>> > adjusted the logic accordingly. Will be testing this for a day or so
+>> > before sending out new patches.
+>> >
+>> 
+>> Thanks about this again.  It seems that we don't need to touch
+>> task->il_prev and task->il_weight during rebinding for weighted
+>> interleave too.
+>> 
+>
+> It's not clear to me this is the case.  cpusets takes the task_lock to
+> change mems_allowed and rebind task->mempolicy, but I do not see the
+> task lock access blocking allocations.
+>
+> Comments from cpusets suggest allocations can happen in parallel.
+>
+> /*
+>  * cpuset_change_task_nodemask - change task's mems_allowed and mempolicy
+>  * @tsk: the task to change
+>  * @newmems: new nodes that the task will be set
+>  *
+>  * We use the mems_allowed_seq seqlock to safely update both tsk->mems_allowed
+>  * and rebind an eventual tasks' mempolicy. If the task is allocating in
+>  * parallel, it might temporarily see an empty intersection, which results in
+>  * a seqlock check and retry before OOM or allocation failure.
+>  */
+>
+>
+> For normal interleave, this isn't an issue because it always proceeds to
+> the next node. The same is not true of weighted interleave, which may
+> have a hanging weight in task->il_weight.
 
-On 1/29/24 17:21, Alexandru Elisei wrote:
-> Hi,
-> 
-> On Mon, Jan 29, 2024 at 02:54:20PM +0530, Anshuman Khandual wrote:
->>
->>
->> On 1/25/24 22:12, Alexandru Elisei wrote:
->>> The CMA_ALLOC_SUCCESS, respectively CMA_ALLOC_FAIL, are increased by one
->>> after each cma_alloc() function call. This is done even though cma_alloc()
->>> can allocate an arbitrary number of CMA pages. When looking at
->>> /proc/vmstat, the number of successful (or failed) cma_alloc() calls
->>> doesn't tell much with regards to how many CMA pages were allocated via
->>> cma_alloc() versus via the page allocator (regular allocation request or
->>> PCP lists refill).
->>>
->>> This can also be rather confusing to a user who isn't familiar with the
->>> code, since the unit of measurement for nr_free_cma is the number of pages,
->>> but cma_alloc_success and cma_alloc_fail count the number of cma_alloc()
->>> function calls.
->>>
->>> Let's make this consistent, and arguably more useful, by having
->>> CMA_ALLOC_SUCCESS count the number of successfully allocated CMA pages, and
->>> CMA_ALLOC_FAIL count the number of pages the cma_alloc() failed to
->>> allocate.
->>>
->>> For users that wish to track the number of cma_alloc() calls, there are
->>> tracepoints for that already implemented.
->>>
->>> Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
->>> ---
->>>  mm/cma.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/mm/cma.c b/mm/cma.c
->>> index f49c95f8ee37..dbf7fe8cb1bd 100644
->>> --- a/mm/cma.c
->>> +++ b/mm/cma.c
->>> @@ -517,10 +517,10 @@ struct page *cma_alloc(struct cma *cma, unsigned long count,
->>>  	pr_debug("%s(): returned %p\n", __func__, page);
->>>  out:
->>>  	if (page) {
->>> -		count_vm_event(CMA_ALLOC_SUCCESS);
->>> +		count_vm_events(CMA_ALLOC_SUCCESS, count);
->>>  		cma_sysfs_account_success_pages(cma, count);
->>>  	} else {
->>> -		count_vm_event(CMA_ALLOC_FAIL);
->>> +		count_vm_events(CMA_ALLOC_FAIL, count);
->>>  		if (cma)
->>>  			cma_sysfs_account_fail_pages(cma, count);
->>>  	}
->>
->> Without getting into the merits of this patch - which is actually trying to do
->> semantics change to /proc/vmstat, wondering how is this even related to this
->> particular series ? If required this could be debated on it's on separately.
-> 
-> Having the number of CMA pages allocated and the number of CMA pages freed
-> allows someone to infer how many tagged pages are in use at a given time:
+So, I added a check as follows,
 
-That should not be done in CMA which is a generic multi purpose allocator.
+node_isset(current->il_prev, policy->nodes)
 
-> (allocated CMA pages - CMA pages allocated by drivers* - CMA pages
-> released) * 32. That is valuable information for software and hardware
-> designers.
-> 
-> Besides that, for every iteration of the series, this has proven invaluable
-> for discovering bugs with freeing and/or reserving tag storage pages.
+If prev node is removed from nodemask, allocation will proceed to the
+next node.  Otherwise, it's safe to use current->il_weight.  
 
-I am afraid that might not be enough justification for getting something
-merged mainline.
+--
+Best Regards,
+Huang, Ying
 
-> 
-> *that would require userspace reading cma_alloc_success and
-> cma_release_success before any tagged allocations are performed.
-
-While assuming that no other non-memory-tagged CMA based allocation amd free
-call happens in the meantime ? That would be on real thin ice.
-
-I suppose arm64 tagged memory specific allocation or free related counters
-need to be created on the caller side, including arch_free_pages_prepare().
+> That is why I looked to combine the two, so at least node/weight were
+> carried together.
+>
+>> unsigned int weighted_interleave_nodes(struct mempolicy *policy)
+>> {
+>>         unsigned int nid;
+>>         struct task_struct *me = current;
+>> 
+>>         nid = me->il_prev;
+>>         if (!me->il_weight || !node_isset(nid, policy->nodes)) {
+>>                 nid = next_node_in(...);
+>>                 me->il_prev = nid;
+>>                 me->il_weight = weights[nid];
+>>         }
+>>         me->il_weight--;
+>> 
+>>         return nid;
+>> }
+>
+> I ended up with this:
+>
+> static unsigned int weighted_interleave_nodes(struct mempolicy *policy)
+> {
+>        unsigned int node;
+>        u8 weight;
+>
+>        get_wil_prev(&node, &weight);
+>        /* If nodemask was rebound, just fetch the next node */
+>        if (!weight) {
+>                node = next_node_in(node, policy->nodes);
+>                /* can only happen if nodemask has become invalid */
+>                if (node == MAX_NUMNODES)
+>                        return node;
+>                weight = get_il_weight(node);
+>        }
+>        weight--;
+>        set_wil_prev(node, weight);
+>        return node;
+> }
+>
+> ~Gregory
 
