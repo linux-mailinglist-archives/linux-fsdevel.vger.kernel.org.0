@@ -1,61 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-9522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A93842332
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 12:35:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00712842335
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 12:35:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B921C247A8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:35:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 247381C25BDD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6373F6773A;
-	Tue, 30 Jan 2024 11:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279A4679F5;
+	Tue, 30 Jan 2024 11:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="a5ML3lA+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F7D679E6;
-	Tue, 30 Jan 2024 11:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD75767728
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jan 2024 11:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706614509; cv=none; b=U72MQLbDiZ4SlZsWdX90epSbMVKNK+m1h7YI975QG9g8uEVL/raIKyFYeXsLV2kR+0nWRioP6w27liTpKtPP3q7FqAnwwth6fkqKlmEkjVe9M8zwKPd5JZ6pUxZSuxjiKG9CXW8HCvRs7V9L/YA+3PrOfVkYbKltvuRt8Rk6lmY=
+	t=1706614518; cv=none; b=hftZuwvSOJd8pJAO9ATH/Ed0mT5IjLy9lrAKOC4ks4NMasbxTEHllritl3Pi63O5/DK0JYpU/7VijQWPN0lB9cpNogjB7UwPeWiwYbM4l91O4bRa2RQt3WK2n7PTonCo8vH+c+l1KT+tu87hjNoqzC+Har9E3sbwdWfTWiJ1Rpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706614509; c=relaxed/simple;
-	bh=07SSko51loIQzP9kc9KW4dZdkNU2a4AGreSz0PL6Uc8=;
+	s=arc-20240116; t=1706614518; c=relaxed/simple;
+	bh=qqxjh81NRRMyKVrTNcIoz7Y+jhPc6WPwBiL26RCpQ8o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzkiyRKCtTLTSr4HnOwY7ylqpJzpinCPj9RkSthvfc6GG5FTlKoPbEWq9j4T4O+vz7rEMmhWv9Pj01XTI+HmRdvIMGOhoTyijzZ/MPyplsdVXyahp25LKWyauiprrHR9w2grpVgxZxO8mHcXc8lQWjvkAIJj/LAPLP1LILrzg5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB835DA7;
-	Tue, 30 Jan 2024 03:35:48 -0800 (PST)
-Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABE033F5A1;
-	Tue, 30 Jan 2024 03:34:59 -0800 (PST)
-Date: Tue, 30 Jan 2024 11:34:57 +0000
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
-	rppt@kernel.org, hughd@google.com, pcc@google.com,
-	steven.price@arm.com, vincenzo.frascino@arm.com, david@redhat.com,
-	eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 11/35] mm: Allow an arch to hook into folio
- allocation when VMA is known
-Message-ID: <Zbje4T5tZ5k707Wg@raptor>
-References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-12-alexandru.elisei@arm.com>
- <1e03aec4-705a-41b6-b258-0b8944d9dc0c@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e1YGzTtx2Ep46JdcnwNNcO29U8UD+l5q4PxBHTEMsf+iCi7OwuYuOF2aKCDZ5d8eyUX2vnfr8LSb/rmnyaK29Zn9G8Xj4xyAiIQSVXnXUs8HYQMgQcnx+M18x8aDnLmgfEIMEK1tcW9LT8C0T2O9Ws63h9ZnfcYqKPBgWWZpy84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=a5ML3lA+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1706614515;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kR0xiXlTgctwy0ZOXXh3w90idhtmWLxzB6iSAte8Lhs=;
+	b=a5ML3lA+dhi2tBmqF9rvQVOVhDDhszhutvUIY9vpdmDeiWzRfD5DcSZ8aZGGL5Y9BNA08c
+	9rHQ615vD/OUkBE6LhPimI6r9C4nBWTgYL5ItRklkJnhMPqfJkRiDzuA96Tn3o1UP7ZDbF
+	MylLj8zgoW/0bbHkmclJ4BLqhphe6E8=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-672-6-0lTcvCMgW8wdlU2BLhIA-1; Tue,
+ 30 Jan 2024 06:35:10 -0500
+X-MC-Unique: 6-0lTcvCMgW8wdlU2BLhIA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C24A11C0513C;
+	Tue, 30 Jan 2024 11:35:09 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.143])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id E9CAF8B;
+	Tue, 30 Jan 2024 11:35:03 +0000 (UTC)
+Date: Tue, 30 Jan 2024 19:34:59 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Mike Snitzer <snitzer@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Don Dutile <ddutile@redhat.com>,
+	Raghavendra K T <raghavendra.kt@linux.vnet.ibm.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, linux-block@vger.kernel.org,
+	ming.lei@redhat.com
+Subject: Re: [RFC PATCH] mm/readahead: readahead aggressively if read drops
+ in willneed range
+Message-ID: <Zbje4/789Zs1Ia1t@fedora>
+References: <ZbbfXVg9FpWRUVDn@redhat.com>
+ <ZbbvfFxcVgkwbhFv@casper.infradead.org>
+ <CAH6w=aw_46Ker0w8HmSA41vUUDKGDGC3gxBFWAhd326+kEtrNg@mail.gmail.com>
+ <ZbcDvTkeDKttPfJ4@dread.disaster.area>
+ <ZbciOba1h3V9mmup@fedora>
+ <Zbc0ZJceZPyt8m7q@dread.disaster.area>
+ <ZbdhBaXkXm6xyqgC@fedora>
+ <ZbghnK+Hs+if6vEz@dread.disaster.area>
+ <ZbhpbpeV6ChPD9NT@fedora>
+ <ZbiJP3Dhjkh6Dz4x@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,189 +86,134 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1e03aec4-705a-41b6-b258-0b8944d9dc0c@arm.com>
+In-Reply-To: <ZbiJP3Dhjkh6Dz4x@dread.disaster.area>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-Hi,
-
-On Tue, Jan 30, 2024 at 03:25:20PM +0530, Anshuman Khandual wrote:
-> 
-> 
-> On 1/25/24 22:12, Alexandru Elisei wrote:
-> > arm64 uses VM_HIGH_ARCH_0 and VM_HIGH_ARCH_1 for enabling MTE for a VMA.
-> > When VM_HIGH_ARCH_0, which arm64 renames to VM_MTE, is set for a VMA, and
-> > the gfp flag __GFP_ZERO is present, the __GFP_ZEROTAGS gfp flag also gets
-> > set in vma_alloc_zeroed_movable_folio().
+On Tue, Jan 30, 2024 at 04:29:35PM +1100, Dave Chinner wrote:
+> On Tue, Jan 30, 2024 at 11:13:50AM +0800, Ming Lei wrote:
+> > On Tue, Jan 30, 2024 at 09:07:24AM +1100, Dave Chinner wrote:
+> > > On Mon, Jan 29, 2024 at 04:25:41PM +0800, Ming Lei wrote:
+> > > > On Mon, Jan 29, 2024 at 04:15:16PM +1100, Dave Chinner wrote:
+> > > > > On Mon, Jan 29, 2024 at 11:57:45AM +0800, Ming Lei wrote:
+> > > > > > On Mon, Jan 29, 2024 at 12:47:41PM +1100, Dave Chinner wrote:
+> > > > > > > On Sun, Jan 28, 2024 at 07:39:49PM -0500, Mike Snitzer wrote:
+> > > > > > Follows the current report:
+> > > > > > 
+> > > > > > 1) usersapce call madvise(willneed, 1G)
+> > > > > > 
+> > > > > > 2) only the 1st part(size is from bdi->io_pages, suppose it is 2MB) is
+> > > > > > readahead in madvise(willneed, 1G) since commit 6d2be915e589
+> > > > > > 
+> > > > > > 3) the other parts(2M ~ 1G) is readahead by unit of bdi->ra_pages which is
+> > > > > > set as 64KB by userspace when userspace reads the mmaped buffer, then
+> > > > > > the whole application becomes slower.
+> > > > > 
+> > > > > It gets limited by file->f_ra->ra_pages being initialised to
+> > > > > bdi->ra_pages and then never changed as the advice for access
+> > > > > methods to the file are changed.
+> > > > > 
+> > > > > But the problem here is *not the readahead code*. The problem is
+> > > > > that the user has configured the device readahead window to be far
+> > > > > smaller than is optimal for the storage. Hence readahead is slow.
+> > > > > The fix for that is to either increase the device readahead windows,
+> > > > > or to change the specific readahead window for the file that has
+> > > > > sequential access patterns.
+> > > > > 
+> > > > > Indeed, we already have that - FADV_SEQUENTIAL will set
+> > > > > file->f_ra.ra_pages to 2 * bdi->ra_pages so that readahead uses
+> > > > > larger IOs for that access.
+> > > > > 
+> > > > > That's what should happen here - MADV_WILLNEED does not imply a
+> > > > > specific access pattern so the application should be running
+> > > > > MADV_SEQUENTIAL (triggers aggressive readahead) then MADV_WILLNEED
+> > > > > to start the readahead, and then the rest of the on-demand readahead
+> > > > > will get the higher readahead limits.
+> > > > > 
+> > > > > > This patch changes 3) to use bdi->io_pages as readahead unit.
+> > > > > 
+> > > > > I think it really should be changing MADV/FADV_SEQUENTIAL to set
+> > > > > file->f_ra.ra_pages to bdi->io_pages, not bdi->ra_pages * 2, and the
+> > > > > mem.load() implementation in the application converted to use
+> > > > > MADV_SEQUENTIAL to properly indicate it's access pattern to the
+> > > > > readahead algorithm.
+> > > > 
+> > > > Here the single .ra_pages may not work, that is why this patch stores
+> > > > the willneed range in maple tree, please see the following words from
+> > > > the original RH report:
+> > > 
+> > > > "
+> > > > Increasing read ahead is not an option as it has a mixed I/O workload of
+> > > > random I/O and sequential I/O, so that a large read ahead is very counterproductive
+> > > > to the random I/O and is unacceptable.
+> > > > "
+> > > 
+> > > Yes, I've read the bug. There's no triage that tells us what the
+> > > root cause of the application perofrmance issue might be. Just an
+> > > assertion that "this is how we did it 10 years ago, it's been
+> > > unchanged for all this time, the new kernel we are upgrading
+> > > to needs to behave exactly like pre-3.10 era kernels did.
+> > > 
+> > > And to be totally honest, my instincts tell me this is more likely a
+> > > problem with a root cause in poor IO scheduling decisions than be a
+> > > problem with the page cache readahead implementation. Readahead has
+> > > been turned down to stop the bandwidth it uses via background async
+> > > read IO from starving latency dependent foreground random IO
+> > > operation, and then we're being asked to turn readahead back up
+> > > in specific situations because it's actually needed for performance
+> > > in certain access patterns. This is the sort of thing bfq is
+> > > intended to solve.
 > > 
-> > Expand this to be more generic by adding an arch hook that modifes the gfp
-> > flags for an allocation when the VMA is known.
-> > 
-> > Note that __GFP_ZEROTAGS is ignored by the page allocator unless __GFP_ZERO
-> > is also set; from that point of view, the current behaviour is unchanged,
-> > even though the arm64 flag is set in more places.  When arm64 will have
-> > support to reuse the tag storage for data allocation, the uses of the
-> > __GFP_ZEROTAGS flag will be expanded to instruct the page allocator to try
-> > to reserve the corresponding tag storage for the pages being allocated.
+> > Reading mmaped buffer in userspace is sync IO, and page fault just
+> > readahead 64KB. I don't understand how block IO scheduler makes a
+> > difference in this single 64KB readahead in case of cache miss.
 > 
-> Right but how will pushing __GFP_ZEROTAGS addition into gfp_t flags further
-> down via a new arch call back i.e arch_calc_vma_gfp() while still maintaining
-> (vma->vm_flags & VM_MTE) conditionality improve the current scenario. Because
+> I think you've misunderstood what I said. I was refering to the
+> original customer problem of "too much readahead IO causes problems
+> for latency sensitive IO" issue that lead to the customer setting
+> 64kB readahead device limits in the first place.
 
-I'm afraid I don't follow you.
-
-> the page allocator could have still analyzed alloc flags for __GFP_ZEROTAGS
-> for any additional stuff.
-> 
-> OR this just adds some new core MM paths to get __GFP_ZEROTAGS which was not
-> the case earlier via this call back.
-
-Before this patch: vma_alloc_zeroed_movable_folio() sets __GFP_ZEROTAGS.
-After this patch: vma_alloc_folio() sets __GFP_ZEROTAGS.
-
-This patch is about adding __GFP_ZEROTAGS for more callers.
-
-Thanks,
-Alex
+Looks we are not in same page, I never see words of "latency sensitive IO"
+in this report(RHEL-22476).
 
 > 
-> > 
-> > The flags returned by arch_calc_vma_gfp() are or'ed with the flags set by
-> > the caller; this has been done to keep an architecture from modifying the
-> > flags already set by the core memory management code; this is similar to
-> > how do_mmap() -> calc_vm_flag_bits() -> arch_calc_vm_flag_bits() has been
-> > implemented. This can be revisited in the future if there's a need to do
-> > so.
-> > 
-> > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
-> > ---
-> >  arch/arm64/include/asm/page.h    |  5 ++---
-> >  arch/arm64/include/asm/pgtable.h |  3 +++
-> >  arch/arm64/mm/fault.c            | 19 ++++++-------------
-> >  include/linux/pgtable.h          |  7 +++++++
-> >  mm/mempolicy.c                   |  1 +
-> >  mm/shmem.c                       |  5 ++++-
-> >  6 files changed, 23 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/arch/arm64/include/asm/page.h b/arch/arm64/include/asm/page.h
-> > index 2312e6ee595f..88bab032a493 100644
-> > --- a/arch/arm64/include/asm/page.h
-> > +++ b/arch/arm64/include/asm/page.h
-> > @@ -29,9 +29,8 @@ void copy_user_highpage(struct page *to, struct page *from,
-> >  void copy_highpage(struct page *to, struct page *from);
-> >  #define __HAVE_ARCH_COPY_HIGHPAGE
-> >  
-> > -struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
-> > -						unsigned long vaddr);
-> > -#define vma_alloc_zeroed_movable_folio vma_alloc_zeroed_movable_folio
-> > +#define vma_alloc_zeroed_movable_folio(vma, vaddr) \
-> > +	vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma, vaddr, false)
-> >  
-> >  void tag_clear_highpage(struct page *to);
-> >  #define __HAVE_ARCH_TAG_CLEAR_HIGHPAGE
-> > diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> > index 79ce70fbb751..08f0904dbfc2 100644
-> > --- a/arch/arm64/include/asm/pgtable.h
-> > +++ b/arch/arm64/include/asm/pgtable.h
-> > @@ -1071,6 +1071,9 @@ static inline void arch_swap_restore(swp_entry_t entry, struct folio *folio)
-> >  
-> >  #endif /* CONFIG_ARM64_MTE */
-> >  
-> > +#define __HAVE_ARCH_CALC_VMA_GFP
-> > +gfp_t arch_calc_vma_gfp(struct vm_area_struct *vma, gfp_t gfp);
-> > +
-> >  /*
-> >   * On AArch64, the cache coherency is handled via the set_pte_at() function.
-> >   */
-> > diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> > index 55f6455a8284..4d3f0a870ad8 100644
-> > --- a/arch/arm64/mm/fault.c
-> > +++ b/arch/arm64/mm/fault.c
-> > @@ -937,22 +937,15 @@ void do_debug_exception(unsigned long addr_if_watchpoint, unsigned long esr,
-> >  NOKPROBE_SYMBOL(do_debug_exception);
-> >  
-> >  /*
-> > - * Used during anonymous page fault handling.
-> > + * If this is called during anonymous page fault handling, and the page is
-> > + * mapped with PROT_MTE, initialise the tags at the point of tag zeroing as this
-> > + * is usually faster than separate DC ZVA and STGM.
-> >   */
-> > -struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
-> > -						unsigned long vaddr)
-> > +gfp_t arch_calc_vma_gfp(struct vm_area_struct *vma, gfp_t gfp)
-> >  {
-> > -	gfp_t flags = GFP_HIGHUSER_MOVABLE | __GFP_ZERO;
-> > -
-> > -	/*
-> > -	 * If the page is mapped with PROT_MTE, initialise the tags at the
-> > -	 * point of allocation and page zeroing as this is usually faster than
-> > -	 * separate DC ZVA and STGM.
-> > -	 */
-> >  	if (vma->vm_flags & VM_MTE)
-> > -		flags |= __GFP_ZEROTAGS;
-> > -
-> > -	return vma_alloc_folio(flags, 0, vma, vaddr, false);
-> > +		return __GFP_ZEROTAGS;
-> > +	return 0;
-> >  }
-> >  
-> >  void tag_clear_highpage(struct page *page)
-> > diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> > index c5ddec6b5305..98f81ca08cbe 100644
-> > --- a/include/linux/pgtable.h
-> > +++ b/include/linux/pgtable.h
-> > @@ -901,6 +901,13 @@ static inline void arch_do_swap_page(struct mm_struct *mm,
-> >  }
-> >  #endif
-> >  
-> > +#ifndef __HAVE_ARCH_CALC_VMA_GFP
-> > +static inline gfp_t arch_calc_vma_gfp(struct vm_area_struct *vma, gfp_t gfp)
-> > +{
-> > +	return 0;
-> > +}
-> > +#endif
-> > +
-> >  #ifndef __HAVE_ARCH_FREE_PAGES_PREPARE
-> >  static inline void arch_free_pages_prepare(struct page *page, int order) { }
-> >  #endif
-> > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> > index 10a590ee1c89..f7ef52760b32 100644
-> > --- a/mm/mempolicy.c
-> > +++ b/mm/mempolicy.c
-> > @@ -2168,6 +2168,7 @@ struct folio *vma_alloc_folio(gfp_t gfp, int order, struct vm_area_struct *vma,
-> >  	pgoff_t ilx;
-> >  	struct page *page;
-> >  
-> > +	gfp |= arch_calc_vma_gfp(vma, gfp);
-> >  	pol = get_vma_policy(vma, addr, order, &ilx);
-> >  	page = alloc_pages_mpol(gfp | __GFP_COMP, order,
-> >  				pol, ilx, numa_node_id());
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index d7c84ff62186..14427e9982f9 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -1585,7 +1585,7 @@ static struct folio *shmem_swapin_cluster(swp_entry_t swap, gfp_t gfp,
-> >   */
-> >  static gfp_t limit_gfp_mask(gfp_t huge_gfp, gfp_t limit_gfp)
-> >  {
-> > -	gfp_t allowflags = __GFP_IO | __GFP_FS | __GFP_RECLAIM;
-> > +	gfp_t allowflags = __GFP_IO | __GFP_FS | __GFP_RECLAIM | __GFP_ZEROTAGS;
-> >  	gfp_t denyflags = __GFP_NOWARN | __GFP_NORETRY;
-> >  	gfp_t zoneflags = limit_gfp & GFP_ZONEMASK;
-> >  	gfp_t result = huge_gfp & ~(allowflags | GFP_ZONEMASK);
-> > @@ -2038,6 +2038,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
-> >  		gfp_t huge_gfp;
-> >  
-> >  		huge_gfp = vma_thp_gfp_mask(vma);
-> > +		huge_gfp |= arch_calc_vma_gfp(vma, huge_gfp);
-> >  		huge_gfp = limit_gfp_mask(huge_gfp, gfp);
-> >  		folio = shmem_alloc_and_add_folio(huge_gfp,
-> >  				inode, index, fault_mm, true);
-> > @@ -2214,6 +2215,8 @@ static vm_fault_t shmem_fault(struct vm_fault *vmf)
-> >  	vm_fault_t ret = 0;
-> >  	int err;
-> >  
-> > +	gfp |= arch_calc_vma_gfp(vmf->vma, gfp);
-> > +
-> >  	/*
-> >  	 * Trinity finds that probing a hole which tmpfs is punching can
-> >  	 * prevent the hole-punch from ever completing: noted in i_private.
+> That is, if reducing readahead for sequential IO suddenly makes
+> synchronous random IO perform a whole lot better and the application
+> goes faster, then it indicates the problem is IO dispatch
+> prioritisation, not that there is too much readahead. Deprioritising
+> readahead will educe it's impact on other IO, without having to
+> reduce the readahead windows that provide decent sequential IO
+> perofrmance...
+> 
+> I really think the customer needs to retune their application from
+> first principles. Start with the defaults, measure where things are
+> slow, address the worst issue by twiddling knobs. Repeat until
+> performance is either good enough or they hit on actual problems
+> that need code changes.
+
+io priority is set in blkcg/process level, we even don't know if the random IO
+and sequential IO are submitted from different process.
+
+Also io priority is only applied when IOs with different priority are
+submitted concurrently.
+
+The main input from the report is that iostat shows that read IO request size is
+reduced to 64K from 1MB, which isn't something io priority can deal with.
+
+Here from my understanding the problem is that advise(ADV_RANDOM, ADV_SEQUENTIAL,
+ADV_WILLNEED) are basically applied on file level instead of range level, even
+though range is passed in from these syscalls.
+
+So sequential and random advise are actually exclusively on the whole file.
+
+That is why the customer don't want to set bigger ra_pages because they
+are afraid(or have tested) that bigger ra_pages hurts performance of random
+IO workload because unnecessary data may be readahead. But readahead
+algorithm is supposed to be capable of dealing with it, maybe still not
+well enough.
+
+But yes, more details are needed for understand the issue further.
+
+thanks, 
+Ming
+
 
