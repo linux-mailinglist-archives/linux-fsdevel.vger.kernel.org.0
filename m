@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-9570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DF81842EEE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 22:49:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 207F7842EF4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 22:50:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 472191F25D39
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 21:49:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A2E1C246C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 21:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7057878B78;
-	Tue, 30 Jan 2024 21:49:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D8D78B7F;
+	Tue, 30 Jan 2024 21:49:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDD77869B;
-	Tue, 30 Jan 2024 21:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B6078666;
+	Tue, 30 Jan 2024 21:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706651368; cv=none; b=JDDViuAc9uKhwcHZFxIReJgeATDqvY+aK1ACElRPsVq72HNx8bsSFwp6FxIOaokP9p5vWvAUR1feNBZooA7vFMDyr358zwRl4xv+kzkm95QolBLzWN/IBF8Rj30XOGykshveqwi4g3Qj804RavSE4QfqTkknOCpyahtr0iJl9yM=
+	t=1706651381; cv=none; b=KfZFN48imY7OKyRo7Zp5RXvEMGhHEiYrqZUrLT+IfSjUjWzc+VJl7k5OO9dZdvLvbLw+qpkdAhJPRZzUNswnD8AGVUDOuGZDb7gJnU91Xzo1hKDFk8xHwZuVwF/M34hrOeQ75g3Hwz+M5dJeKbfytP45wzNzFizgwQFXqR9S1Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706651368; c=relaxed/simple;
-	bh=aUraGB4nf6Uln9eeyFRUAy89ikuMJcNKcTUbVm5OCLo=;
+	s=arc-20240116; t=1706651381; c=relaxed/simple;
+	bh=C6mV3KfDj3Wjbrt+AGCNnge7YG8viX3cFxaZOuvArLg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GSt9MXh/bS4y5bL/NhUyxU9lqB8uUa37stMZS0Nc3WDv3E7Vklxo5RR3KvDmryHmUnUX3UevTtNm6lYsfE2x/dG9an4oM/+Oexqim1s7LaKPXTpE0kIeNdtjAv16Yxo56nouF7dOK7/UHVEddnLcw4WruXD/Zt2z1mgyAr1q37s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.171
+	 MIME-Version; b=tw361s3cPKFBy693zE3rZ5g0XHxo3VCanSUKwNbnEzE5SHT67sYkETKryXA3uUL8QSAu4tofgvUlm13F49zPN+/bva5grRpNZ8lYCrGgXHZpu4aF8zmUy+ZQ0+1XLYrW65y9EYf7Ru2RKlut5mavSWdmn0slN8uOrBSzZo3LnxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6de24201aa6so1902892b3a.2;
-        Tue, 30 Jan 2024 13:49:22 -0800 (PST)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6de0ba30994so186417b3a.1;
+        Tue, 30 Jan 2024 13:49:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706651362; x=1707256162;
+        d=1e100.net; s=20230601; t=1706651376; x=1707256176;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WzYzr0Z0IGgZwCtLxDVA46/3tUMtgECaHnFhkVRnpJE=;
-        b=pzYrKhKW2XfzhIktcXPComLlAyWEtGWeIzdbYwb1prNE4POrth9CoFRxsS/0A+I38O
-         lOl5C2aJf0S/z2KITATTVEBrYNhnqXFIZsFhCmcv7LWOtDoqbNgwxuncE9HIz6CwHO9t
-         wM2EoqSuekmH5keR2vlqA7qLt4qcEiR+2MYVh5fCJSUjNcNjkdNA9y8qcbSGb/P6Q94l
-         /tBkQ9f5/0T4SovSHpj7OYKSnyL4YymNdZ65hpoUNcuvtj4VjGNWEejTMdbk3QTiDEcK
-         9lZ7WoGE9EmZhzkh5VRAG0NfSrmh0j3B0UhHp1YYeCd7mcL+9CRKdzga0rX96Ydn5AcN
-         R/0Q==
-X-Gm-Message-State: AOJu0Yyb71TGSmypO10GzGCMX3l6G6WmnSCyYT8nRFgF1onzPfHLjyi3
-	HnqIPmviB/269iU5ysx8o/42RyR6xGPYO2QimiFeEkrFvY/+iX4q
-X-Google-Smtp-Source: AGHT+IH3Nyrm0ik/IWEOIz+yJjTthTcTqKU2AyKN2ne26b1yBqsGyZ9JYK3POGhiWCPOGt0qj2II5A==
-X-Received: by 2002:a62:cd04:0:b0:6dd:a118:9082 with SMTP id o4-20020a62cd04000000b006dda1189082mr5899527pfg.29.1706651362382;
-        Tue, 30 Jan 2024 13:49:22 -0800 (PST)
+        bh=YzvkWo0KfJnbV5FZqwh8Hi6oyCiJv93P0jXRU5LNY0U=;
+        b=WvD6QfZX2PXhJfNW6PvCCqFvfNC2mxo0AuIilHEnVoSEGsS0fRPkT49BEOMZaF3+0v
+         mlxcRKogEJkUNoCREdg85ch/y54LjV/K/zmS2UVeeZ/WMSIAk+69rghr4U4aWLc/dPvF
+         YVJ7R3i2kgZB6QbwRIyFD7CGaj/XmdpO8B1tuIat1nqOs7gynUCi4ZYiUaS4TKJQ8IcX
+         MuKgbxFp8wDsJ5YEum5iRqT3dAxVS6xdFnvUjpqTI8yqwO3eNkBMwx2ano+HkvmzjCR0
+         aZH2ue/HRJD2neAunDkoQ6FwvlyUETkrNy0Ql+MsViPdhjeeOYhSrvTCsTFNJI9e0yAC
+         Lp6w==
+X-Gm-Message-State: AOJu0YxYvjAXIQe1Swn0G2sSuevF9gwQO7uUDuRfgna6EoPyybxGowRa
+	tkiEOaU0ctodwWtVRNznDfsKACrgjHDsul2bEJu+kGh0/VbB4RUV
+X-Google-Smtp-Source: AGHT+IH74z1/zRmNsf1MzpP0E3VeUDUJBHYOVMZHzg/oXZ4zrsL0yVokVBGHDACpZDCijuwybCK1QQ==
+X-Received: by 2002:a05:6a00:810:b0:6dd:a32c:d7ef with SMTP id m16-20020a056a00081000b006dda32cd7efmr2818679pfk.8.1706651376029;
+        Tue, 30 Jan 2024 13:49:36 -0800 (PST)
 Received: from bvanassche-linux.mtv.corp.google.com ([2620:0:1000:8411:f45c:fd18:bfa0:e084])
-        by smtp.gmail.com with ESMTPSA id k14-20020aa7998e000000b006db87354a8fsm8285597pfh.119.2024.01.30.13.49.21
+        by smtp.gmail.com with ESMTPSA id k14-20020aa7998e000000b006db87354a8fsm8285597pfh.119.2024.01.30.13.49.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jan 2024 13:49:21 -0800 (PST)
+        Tue, 30 Jan 2024 13:49:35 -0800 (PST)
 From: Bart Van Assche <bvanassche@acm.org>
 To: "Martin K . Petersen" <martin.petersen@oracle.com>
 Cc: linux-scsi@vger.kernel.org,
@@ -62,14 +62,16 @@ Cc: linux-scsi@vger.kernel.org,
 	Daejun Park <daejun7.park@samsung.com>,
 	Kanchan Joshi <joshi.k@samsung.com>,
 	Bart Van Assche <bvanassche@acm.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v9 03/19] fs: Split fcntl_rw_hint()
-Date: Tue, 30 Jan 2024 13:48:29 -0800
-Message-ID: <20240130214911.1863909-4-bvanassche@acm.org>
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Jaegeuk Kim <jaegeuk@kernel.org>,
+	Chao Yu <chao@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>
+Subject: [PATCH v9 04/19] fs: Move enum rw_hint into a new header file
+Date: Tue, 30 Jan 2024 13:48:30 -0800
+Message-ID: <20240130214911.1863909-5-bvanassche@acm.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240130214911.1863909-1-bvanassche@acm.org>
 References: <20240130214911.1863909-1-bvanassche@acm.org>
@@ -81,90 +83,131 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Split fcntl_rw_hint() such that there is one helper function per fcntl. No
-functionality is changed by this patch.
+Move enum rw_hint into a new header file to prepare for using this data
+type in the block layer. Add the attribute __packed to reduce the space
+occupied by instances of this data type from four bytes to one byte.
+Change the data type of i_write_hint from u8 into enum rw_hint.
 
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Suggested-by: Christoph Hellwig <hch@lst.de>
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- fs/fcntl.c | 47 ++++++++++++++++++++++++++---------------------
- 1 file changed, 26 insertions(+), 21 deletions(-)
+ fs/f2fs/f2fs.h          |  1 +
+ fs/fcntl.c              |  1 +
+ fs/inode.c              |  1 +
+ include/linux/fs.h      | 16 ++--------------
+ include/linux/rw_hint.h | 24 ++++++++++++++++++++++++
+ 5 files changed, 29 insertions(+), 14 deletions(-)
+ create mode 100644 include/linux/rw_hint.h
 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 65294e3b0bef..01fde6d44bf6 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -24,6 +24,7 @@
+ #include <linux/blkdev.h>
+ #include <linux/quotaops.h>
+ #include <linux/part_stat.h>
++#include <linux/rw_hint.h>
+ #include <crypto/hash.h>
+ 
+ #include <linux/fscrypt.h>
 diff --git a/fs/fcntl.c b/fs/fcntl.c
-index f3bc4662455f..5fa2d95114bf 100644
+index 5fa2d95114bf..fc73c5fae43c 100644
 --- a/fs/fcntl.c
 +++ b/fs/fcntl.c
-@@ -290,32 +290,35 @@ static bool rw_hint_valid(u64 hint)
- 	}
- }
+@@ -27,6 +27,7 @@
+ #include <linux/memfd.h>
+ #include <linux/compat.h>
+ #include <linux/mount.h>
++#include <linux/rw_hint.h>
  
--static long fcntl_rw_hint(struct file *file, unsigned int cmd,
--			  unsigned long arg)
-+static long fcntl_get_rw_hint(struct file *file, unsigned int cmd,
-+			      unsigned long arg)
- {
- 	struct inode *inode = file_inode(file);
- 	u64 __user *argp = (u64 __user *)arg;
--	u64 hint;
-+	u64 hint = inode->i_write_hint;
+ #include <linux/poll.h>
+ #include <asm/siginfo.h>
+diff --git a/fs/inode.c b/fs/inode.c
+index 91048c4c9c9e..1aba6c0bf26a 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -20,6 +20,7 @@
+ #include <linux/ratelimit.h>
+ #include <linux/list_lru.h>
+ #include <linux/iversion.h>
++#include <linux/rw_hint.h>
+ #include <trace/events/writeback.h>
+ #include "internal.h"
  
--	switch (cmd) {
--	case F_GET_RW_HINT:
--		hint = inode->i_write_hint;
--		if (copy_to_user(argp, &hint, sizeof(*argp)))
--			return -EFAULT;
--		return 0;
--	case F_SET_RW_HINT:
--		if (copy_from_user(&hint, argp, sizeof(hint)))
--			return -EFAULT;
--		if (!rw_hint_valid(hint))
--			return -EINVAL;
-+	if (copy_to_user(argp, &hint, sizeof(*argp)))
-+		return -EFAULT;
-+	return 0;
-+}
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ed5966a70495..bdabda5dc364 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -43,6 +43,7 @@
+ #include <linux/cred.h>
+ #include <linux/mnt_idmapping.h>
+ #include <linux/slab.h>
++#include <linux/rw_hint.h>
  
--		inode_lock(inode);
--		inode->i_write_hint = hint;
--		inode_unlock(inode);
--		return 0;
--	default:
-+static long fcntl_set_rw_hint(struct file *file, unsigned int cmd,
-+			      unsigned long arg)
-+{
-+	struct inode *inode = file_inode(file);
-+	u64 __user *argp = (u64 __user *)arg;
-+	u64 hint;
+ #include <asm/byteorder.h>
+ #include <uapi/linux/fs.h>
+@@ -309,19 +310,6 @@ struct address_space;
+ struct writeback_control;
+ struct readahead_control;
+ 
+-/*
+- * Write life time hint values.
+- * Stored in struct inode as u8.
+- */
+-enum rw_hint {
+-	WRITE_LIFE_NOT_SET	= 0,
+-	WRITE_LIFE_NONE		= RWH_WRITE_LIFE_NONE,
+-	WRITE_LIFE_SHORT	= RWH_WRITE_LIFE_SHORT,
+-	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
+-	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
+-	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
+-};
+-
+ /* Match RWF_* bits to IOCB bits */
+ #define IOCB_HIPRI		(__force int) RWF_HIPRI
+ #define IOCB_DSYNC		(__force int) RWF_DSYNC
+@@ -677,7 +665,7 @@ struct inode {
+ 	spinlock_t		i_lock;	/* i_blocks, i_bytes, maybe i_size */
+ 	unsigned short          i_bytes;
+ 	u8			i_blkbits;
+-	u8			i_write_hint;
++	enum rw_hint		i_write_hint;
+ 	blkcnt_t		i_blocks;
+ 
+ #ifdef __NEED_I_SIZE_ORDERED
+diff --git a/include/linux/rw_hint.h b/include/linux/rw_hint.h
+new file mode 100644
+index 000000000000..309ca72f2dfb
+--- /dev/null
++++ b/include/linux/rw_hint.h
+@@ -0,0 +1,24 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_RW_HINT_H
++#define _LINUX_RW_HINT_H
 +
-+	if (copy_from_user(&hint, argp, sizeof(hint)))
-+		return -EFAULT;
-+	if (!rw_hint_valid(hint))
- 		return -EINVAL;
--	}
++#include <linux/build_bug.h>
++#include <linux/compiler_attributes.h>
++#include <uapi/linux/fcntl.h>
 +
-+	inode_lock(inode);
-+	inode->i_write_hint = hint;
-+	inode_unlock(inode);
++/* Block storage write lifetime hint values. */
++enum rw_hint {
++	WRITE_LIFE_NOT_SET	= RWH_WRITE_LIFE_NOT_SET,
++	WRITE_LIFE_NONE		= RWH_WRITE_LIFE_NONE,
++	WRITE_LIFE_SHORT	= RWH_WRITE_LIFE_SHORT,
++	WRITE_LIFE_MEDIUM	= RWH_WRITE_LIFE_MEDIUM,
++	WRITE_LIFE_LONG		= RWH_WRITE_LIFE_LONG,
++	WRITE_LIFE_EXTREME	= RWH_WRITE_LIFE_EXTREME,
++} __packed;
 +
-+	return 0;
- }
- 
- static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
-@@ -421,8 +424,10 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
- 		err = memfd_fcntl(filp, cmd, argi);
- 		break;
- 	case F_GET_RW_HINT:
-+		err = fcntl_get_rw_hint(filp, cmd, arg);
-+		break;
- 	case F_SET_RW_HINT:
--		err = fcntl_rw_hint(filp, cmd, arg);
-+		err = fcntl_set_rw_hint(filp, cmd, arg);
- 		break;
- 	default:
- 		break;
++/* Sparse ignores __packed annotations on enums, hence the #ifndef below. */
++#ifndef __CHECKER__
++static_assert(sizeof(enum rw_hint) == 1);
++#endif
++
++#endif /* _LINUX_RW_HINT_H */
 
