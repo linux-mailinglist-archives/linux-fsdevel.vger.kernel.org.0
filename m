@@ -1,491 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-9497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9498-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 224C8841C7C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 08:22:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92ED5841C9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 08:32:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC804285BE5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 07:22:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC565B24FF9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 07:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDAE50A70;
-	Tue, 30 Jan 2024 07:22:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F5452F93;
+	Tue, 30 Jan 2024 07:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MO3HhY8d"
+	dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b="ot5PhONU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843114CDEC;
-	Tue, 30 Jan 2024 07:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706599341; cv=none; b=r8EYOHu2kMroyMwM/zLjivK5aQlA31GH03rORRmAnq+oi/OkKuyhnmSuf5KzSilYD3j0DvxXYBtkgF4awu8K7mgSnKWvMXLIDMHB2W1VkPMhR7W81tb2jHhUHSccKMrR34EuWh1TBk8R5huscO+GdgDOAjDcsJA/79Yb0XqnhAU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706599341; c=relaxed/simple;
-	bh=wpEkXZNJ9bBcBiJwytPGy1LD1i67Bb+XSsQ9HLpClg8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ku2LO4c/uKDCwHdrRV9+itgYW3W3J1UHn0SRg0dwfWJujb8VZ0NVSsyjgwpBAO2TyMYBNx3BY3wpWoKSNq3YlVYym8BeXEe+RoOpCjNPWfjC7NI4NxgePDhEc94Q2xTAFBTIRsCK+9z9gbvQYlZFHzDt34Qn4y7sGEE81XSzWuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MO3HhY8d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A496AC433F1;
-	Tue, 30 Jan 2024 07:22:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706599341;
-	bh=wpEkXZNJ9bBcBiJwytPGy1LD1i67Bb+XSsQ9HLpClg8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MO3HhY8doPlJvmIyGUANAcJkCitjRFBg+TzDAHT6lIrrzX4flu+v03ZO2GzjlUy5k
-	 GjV5uCZ37T5aPAcOIrnTjYz1d5MleMU8slPfR1366ZmRr9gAUbkkL1BY9i8NVFkkj3
-	 0pNvliKCNNnUPLlJ5cc1AYhNtYHaxyoZW+G/GgSfXTOLUD44tBvIJ+ylELrukGH+zI
-	 K0AGr1ihUR6Tjy+j723PP06G3X8cJFL3fouyzRjI2Nm5W2zIDFbpYsoz840uTHnrdO
-	 PKOL9YU0bWuiXBTOAc3GWBQthmQreYCyYGT4y7k4/JzKvavC+ActhMCE8nhDg4Rv8h
-	 fm7GuzoWR0bLQ==
-Date: Tue, 30 Jan 2024 09:21:54 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Lokesh Gidra <lokeshgidra@google.com>
-Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org, surenb@google.com, kernel-team@android.com,
-	aarcange@redhat.com, peterx@redhat.com, david@redhat.com,
-	axelrasmussen@google.com, bgeffon@google.com, willy@infradead.org,
-	jannh@google.com, kaleshsingh@google.com, ngeoffray@google.com,
-	timmurray@google.com
-Subject: Re: [PATCH v2 2/3] userfaultfd: protect mmap_changing with rw_sem in
- userfaulfd_ctx
-Message-ID: <ZbijkqepWBtAGToI@kernel.org>
-References: <20240129193512.123145-1-lokeshgidra@google.com>
- <20240129193512.123145-3-lokeshgidra@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C53524AC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jan 2024 07:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.183.30.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706599956; cv=fail; b=AmQRfORJ/lZ0nbqkSvJW1FtO5rbL8DQ3bs+r4c+oV81t6q9o4fFBYuv56r2HDn7x/QVqTmENKyizYm+AYpuWxLzFnvlFQY+LDtd/lLQWg/c2q7kQ1jaf40Ir8pk7K0Et0vjT2SpsFofBrMvifLBu5O3XIb+dEsitqBZJQoLaG+Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706599956; c=relaxed/simple;
+	bh=VJBfL6eZ+P/Th/0H/i1EvAKSsmKhhyeuc8zZ8uhOj1Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eKXhrNSp1hccCvAUc+fjg6cV01ulHQ4wB9poN8V5J2ZGiAy/awR98D3IpbXw261IReOC3RfSQKNLVJzYjOF9CG7JdgFXB52bb4E5hcuAmuzKTiRNQqea8JMIWP5/1HaQIkTHP5hTEImN6twzGvuzmUp73FS7EtKFA4nvrXqsNcY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com; spf=pass smtp.mailfrom=sony.com; dkim=pass (2048-bit key) header.d=sony.com header.i=@sony.com header.b=ot5PhONU; arc=fail smtp.client-ip=185.183.30.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sony.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sony.com
+Received: from pps.filterd (m0209323.ppops.net [127.0.0.1])
+	by mx08-001d1705.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 40U70ZGu005582;
+	Tue, 30 Jan 2024 07:32:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type; s=S1;
+ bh=EKxk+BO9BlLZ1nPdJgJjqCUkSbvhQYAhFwn8gXErzmM=;
+ b=ot5PhONU7f8Rah1347Dxt1X9MdUXahFOErosfJCx8fkGM3exv3s+DD0Q5P4LhX0VH7ju
+ WxLSf2nC+nqt0wErYQZMf0S9bBwGtIcAhWaDDU9+f/QtnH1b4atRrP+D9kfftiN2Cv+N
+ /izzybOY+349/gFALrD0q9VyBIVZK/Cz7vk6wpEAAv3uxy7qqbhRadsbEFoDslGe7rOI
+ aDzUcgQ4wg7BgegwrFYVS8ptkty+IMaCRVRysYrHj1RLfReQejUwT5OTTjwphll5aW0I
+ bi8i+WknsV6vTjA11tO85w9BBeQfKjlYoMPdVlMuPVqxCvGD3cKrbOQROVxpfJixe6W2 eg== 
+Received: from apc01-tyz-obe.outbound.protection.outlook.com (mail-tyzapc01lp2040.outbound.protection.outlook.com [104.47.110.40])
+	by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3vvs62thqu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 30 Jan 2024 07:32:09 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bZERWQGbxZ6TC8duaExR/bmDsdsc4WQpxm/DI6yxDKn+8VBJaqzUz66A2OrgClBRGqB4yEAGwwDmGafz3cjwCB91wOiOcN9ShKqtctPXTa+iHidf+0ss+y9kKcNjTFRlVoAVlw4bPau0RQyEIxXKNPQnDHoa0R6j/xXtpE7DDMLm+spAV9+wK4F94lVn/pxjTMehwcD1yxyVzulmQZjokd+bmz1xinE51eTbgtHlQe7Qm69QcFT5tGEb4qtqjdkIY6gj/k6KYqGpi/UUNbWEWWiwOvN6CeoB3NHsFxnZ81C/TFTQPSepea33I1i0SABtyBM8UwmRgIklrnp76LnAtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EKxk+BO9BlLZ1nPdJgJjqCUkSbvhQYAhFwn8gXErzmM=;
+ b=VspOLEiJ1ytx1KOcXfilx0W1CxeuKTnrwFRvwGFgysioDC1LeY4YXhhg8TszkBX6ls6723zTq/oDpmLlVkV3uAoYciJ+nc2/SMvjd/z5zWUXeMn7ZqRjo2k0ITaH2hMpdiRhJE5zcve7FXaqRfYB3YPMa2J01GclWszZBifejMl7Zc9J50yJXZ3LwajNeQQrbPZ6bf5W/T0DLjVRIKIdVApRY9qcMofVAU1GZh81PpbUQPzpUMCUrpeAKQrqHysBot/PLLeS6+XdAQ4VyC2kNOQF4YDe/YVY+7KcXWNbC88feqPwa5aQtGde6i5oFKzp/LQHYSWs+rgjKGPSOFHcjQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
+ dkim=pass header.d=sony.com; arc=none
+Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
+ by SEYPR04MB6483.apcprd04.prod.outlook.com (2603:1096:101:bd::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7202.31; Tue, 30 Jan
+ 2024 07:31:48 +0000
+Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
+ ([fe80::f0fc:7116:6105:88b2]) by PUZPR04MB6316.apcprd04.prod.outlook.com
+ ([fe80::f0fc:7116:6105:88b2%7]) with mapi id 15.20.7228.029; Tue, 30 Jan 2024
+ 07:31:48 +0000
+From: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+To: "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
+        "sj1557.seo@samsung.com"
+	<sj1557.seo@samsung.com>
+CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com"
+	<Wataru.Aoyama@sony.com>
+Subject: [PATCH v1] exfat: ratelimit error msg in exfat_file_mmap()
+Thread-Topic: [PATCH v1] exfat: ratelimit error msg in exfat_file_mmap()
+Thread-Index: AdpTN0UxqEMN3rFKRd2R4Fso5MmIQAAFuLNQ
+Date: Tue, 30 Jan 2024 07:31:48 +0000
+Message-ID: 
+ <PUZPR04MB63169F97595D70047AF50E3B817D2@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|SEYPR04MB6483:EE_
+x-ms-office365-filtering-correlation-id: d2c5e810-e9f4-4652-0108-08dc216584f7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 
+ M53jwp9iW3YVGMpdjNlrZv0zh/0mL+LcGg8FNFGoTtBdRxchNzwUoGv2f172BLx9w8hp/fCw9LMEw/fjkuxAt6narSKi2OceWRIavgGa2gcPQaaeA0dgZxagT4aDIZksQcg1Sp6tsF2cKVtK+D804tUiMtkkjryLAsnuuUuSdZu+1I+Fn6aVnPrqUBKMGmlcv5Qqep7Y95aFBgq4ePvapw/hqz1eBRoemd8RxoVLjBCI1L1DTg8Dp8VoAf8Vl7tVaZcuOQIXeciXxkuRcHmF0veXR8Zh6AnS6o+DzemAvkFbSdwsJQ6KWWtavIv5Lq+nsipy/oQC5O2iYdZdDR41fAqgxfl/03CUZPToao0HFqfnn9/qERRarJYx8iLTMX3+hWR8MqScJ+zemYRZAUjc94Twffl1BMbtlITRRNWGOtF55EX1q6PmFRqbNcLbbZeDX13RZ7mVb3cINncncnlpuMTIv4vvOzf7V5l4AtWEXRVHz3Gy+G9ts6Gob904SJleGPIjalJMfYn1QQoz9IfqH74Pq6awiLUVZQZcY7DmarCvAKOvDjWIG6inKzlJHyuWEs8TF79fmRpBaQMPBpcrHqxxuMgQyyF0FL6t8vzD7wcUfmRGisWs+mo+3LHWEBHo
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(346002)(396003)(376002)(39860400002)(136003)(366004)(230922051799003)(64100799003)(186009)(1800799012)(451199024)(41300700001)(107886003)(55016003)(6506007)(7696005)(83380400001)(9686003)(26005)(4326008)(5660300002)(8936002)(8676002)(52536014)(66476007)(478600001)(122000001)(66446008)(64756008)(54906003)(71200400001)(316002)(82960400001)(66556008)(76116006)(66946007)(110136005)(86362001)(99936003)(38100700002)(38070700009)(2906002)(33656002);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?bS96K1FFUVJwMCtnd0pEVGhmT284VDc1VnF2UXZUT0lYRk5WcCtWMmhsM3dq?=
+ =?utf-8?B?dFdOVUpJTGw4QllmQ2NQcHNnRFdGOG1GR1JYS3AzcmJkMXBrTzRTZGpMdERL?=
+ =?utf-8?B?Ym1MaDJmdEtRbEY2dUpXWk5zUVhuRVM1MzZ5ZFNOci9YWjZRY1pJejBGUUli?=
+ =?utf-8?B?L3pyLy9EczJYU1ViZlVDNGxqSEkrcU9jTG9nQm9EaXRKMGI2SjQ2SW5GZWlD?=
+ =?utf-8?B?enlOY0w1MVdiRkxBU3BSSXBNNzN1enFlUmhKbGNvM3ViNXVFMXJ2WFllZlkx?=
+ =?utf-8?B?eW5heG5ESXU2TGFpMnhIbXR1dE5nei9BTFJtOGU5bkJ1blF2dC9RYzB5MGxY?=
+ =?utf-8?B?KzZhNlpkeFNXeGE0V3hqSVdxWGZlKzk5TFJlaDhLYTVldlNLRmNqTWM0SnRy?=
+ =?utf-8?B?WWlJRS9YcVVhMkFNR3BwUVM2VzBIcVB5NDNDZDZWZFF0T3ZtQTZDUzk2Ykw3?=
+ =?utf-8?B?NEZ3dGVHdndDYVFEZlc3ZTZWWjFqQ0tJZHVSaTgrMm52YTR4TEpmbnY0NzFW?=
+ =?utf-8?B?elJjUFJUZSsvUURPTnVTZkhtOUtQRlh5WFl5dk8xQW4yeno2WDM5dTQyWm56?=
+ =?utf-8?B?dGFiL28ramp3bTNiK3Y5ZklYYTlEbklNMTlGR2pkYWgwV2s4SlVQTUdKbFhK?=
+ =?utf-8?B?T1l0am9neGRvcUNtb3A3TE9IenM0MGtpUldta1FpMUhjRmZVVTU2L3lmbzV5?=
+ =?utf-8?B?djI0c2Y1TzJ5YXpMdlYzblZNdWU1L0tvWGtVMFZnSno2Q1Vsc0lnaTRwN21m?=
+ =?utf-8?B?cFlkNGlVa3M3WFREVzBIQnFvcG1DOGpiV01ua0RBZlZnWTJCamprSGh1U0Y4?=
+ =?utf-8?B?TVhjTldlUTFTbXlnbWJCdjJjb281dEdqblVJUWVQOHpnaEdRT0VGcmxabTZW?=
+ =?utf-8?B?UkhjQ0dSS08ydmJlUGxHS3FNMnMwWUtaeGZTMFlmUWNxTEdOU0xKb3hueklL?=
+ =?utf-8?B?S2c5Y3A5d1AyZElEN2lCc2JnS0psSFhieXlMSkY3NTl6cDRGK0ZkZzNRNllY?=
+ =?utf-8?B?SjJQZldHbks0QkZack1DWmFoV21DMlQwYmM3emovMmJsS3R6SklUUnJqYisv?=
+ =?utf-8?B?dGtWNTAwTW8zNHN0amx1NEw0MDVUdElUY29yQzFpRnpoWFhVVWxCQXdkMDVZ?=
+ =?utf-8?B?VHVqNklVSUY4aGs1dk52QkhDK2dKTVJ0cFoxQ0EwUVM3U0trZXF3eDhNRVFs?=
+ =?utf-8?B?TnNVWjhnRk0vLzZoaSthUEcxeVRXZGFmRTZrTjV2a3BFd3cxcUZrNXRublBN?=
+ =?utf-8?B?djZydlo3ekFPM1JXWFBsa0Q0WUpkMUJIOThWeGNVNTZQYlcvOVhBMmVPUVpX?=
+ =?utf-8?B?aUxQeEh0ZmJCSS9FMGZYUHBSaUFSbjJSYitFTjZqTHM4dlhNeFVPTkRObU9h?=
+ =?utf-8?B?cFhRc1RBRGlyQjlKeHBBejA3eG13VC9reSt1cnlLZ05GWlV5R1hScFB2Z2g5?=
+ =?utf-8?B?Uit1eGRXMG5razc3WlY0eEdYcFQxblczazVOclJGWlJ2bWZSTWFOSFRybk10?=
+ =?utf-8?B?UytVZWo2LzM4UFRqYXVhMjMxNy9OcUpQdmxxTUhhdnJrRXhVZERzcjV3Unhy?=
+ =?utf-8?B?cmFqYzhkWDZVVVpCVmxCdjF2clVhS2g1dmJubG5Kdkhsa2Z3dVk0d3FrR0Nv?=
+ =?utf-8?B?RTAyZW1BdWx4L2hMcjZoVjFQS281T3N5OGxrQlJyT1NnR1JtOEFFZ284T3Bj?=
+ =?utf-8?B?d2ZLYldZd3plSHhDR3h6MDR3MFhhbzMyT3VheVluZlNKL1pwQWZRQlI2Skl2?=
+ =?utf-8?B?S0p4cm9lVE9WQTdrVnN5TGRCc2VMRnY4VlRjajlac1lsYWIra1dsR1RDNzZB?=
+ =?utf-8?B?bmo1Qk9ibUpqSFo5WVVJNUdDNGpzNEIvRFpCcFY4THFYUithMDNFLzRhMkVS?=
+ =?utf-8?B?QkVSY2JjdkcydU5OTktJdk03YTVySW00SEppNDFZU2xPNzdKUVM5djJXWndh?=
+ =?utf-8?B?Y25IckFud0NNc1lxRDJ1NHhTMmtBMEhOanNwSFhmY1NXUktsUTVqODZiZGJi?=
+ =?utf-8?B?emVsY0ZaWnFPazhxaEZ1ZG5FSW1YZGJBMFNlbkYyVjN0bjdrUUlaNlRnZk9M?=
+ =?utf-8?B?SXVzZjdhdmZoSXZERlNZQW0yMmVhUHg1cnpCUkVnMjZFK1k5eHAzVkIrWStY?=
+ =?utf-8?Q?viJajDKXHlvrPEc1lVG9VHi6U?=
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240129193512.123145-3-lokeshgidra@google.com>
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	jowBG8vwq4QawU7v/pnjkTnkRNby4Qi1XKsCRZHOdwVDCpxFJmNM6/r9d5am4zUgmWXbyZQKz5WVajB1+jaUH5fUP1IbkugrEOHwj++ztYYL217F/nHsf4ie6VF3N8Sa/h4PYK9+kUzlzYdmJEF9Lwj6sXEwthrOGoTQD2MFunaZwiGooP++064l4MaIxL4Orgr5x6LjOkV2yM4CPn+xZU+hOKggRmPbfrs7AtbZXyS88W6PP+OL3DiVtkg8zYTPbIL3oMfOeIhExUURucowYYbiU3uPYpOaengFLFeIsbdVlo3yO9l+sbYHmE7KdwIIwnz1tRSm5FVrVhFcl1kWTatPuBPQG2CZEEz0Ov8CrDJPLXqP24l3Byj2hPNRsQ1/54y6DhjBPFqiHxpAo6Q3LgGPXQi/Fx9cnBYWlwx1LiFrRQiGzr3QbLxFTCm+gYgqEX2hOGW6X8vrfVQxIuOP9yYejymDFlzEQKQDEcbznSws/5WaU/tKXQj7Ur/qdqRGSy01dtfS7RpaS5EF0TtrLixdNgmznMy54Fvw0SJqMepxsl6v0dP6GFriyPgwQ/q4C29omHpxryOYwq6SE3bck+HkJU3hl7+9ma3klLfUPpg3vZbgyfgeYLOrZ1ZZTHSz
+X-OriginatorOrg: sony.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d2c5e810-e9f4-4652-0108-08dc216584f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jan 2024 07:31:48.5499
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NBMfhXRQ1qH9NXtiWoRXzWV/2NEMFdhG2627XqcmPpzGCuiMZ1AiFlIGpumWFQg3q00gSNIOV9B25it0mL6lZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR04MB6483
+X-Proofpoint-GUID: 6Kyv2ww8diddI0BXKN4atTOtmfP-jCqq
+X-Proofpoint-ORIG-GUID: 6Kyv2ww8diddI0BXKN4atTOtmfP-jCqq
+Content-Type: multipart/mixed;	boundary="_002_PUZPR04MB63169F97595D70047AF50E3B817D2PUZPR04MB6316apcp_"
+X-Sony-Outbound-GUID: 6Kyv2ww8diddI0BXKN4atTOtmfP-jCqq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-01-30_02,2024-01-29_01,2023-05-22_02
 
-On Mon, Jan 29, 2024 at 11:35:11AM -0800, Lokesh Gidra wrote:
-> Increments and loads to mmap_changing are always in mmap_lock
-> critical section. This ensures that if userspace requests event
-> notification for non-cooperative operations (e.g. mremap), userfaultfd
-> operations don't occur concurrently.
-> 
-> This can be achieved by using a separate read-write semaphore in
-> userfaultfd_ctx such that increments are done in write-mode and loads
-> in read-mode, thereby eliminating the dependency on mmap_lock for this
-> purpose.
-> 
-> This is a preparatory step before we replace mmap_lock usage with
-> per-vma locks in fill/move ioctls.
-> 
-> Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+--_002_PUZPR04MB63169F97595D70047AF50E3B817D2PUZPR04MB6316apcp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-Reviewed-by: Mike Rapoport (IBM) <rppt@kernel.org>
+UmF0ZWxpbWl0IHRoZSBlcnJvciBtZXNzYWdlIG9mIHplcm9pbmcgb3V0IGRhdGEgYmV0d2VlbiB0
+aGUgdmFsaWQNCnNpemUgYW5kIHRoZSBmaWxlIHNpemUgaW4gZXhmYXRfZmlsZV9tbWFwKCkgdG8g
+bm90IGZsb29kIGRtZXNnLg0KDQpTaWduZWQtb2ZmLWJ5OiBZdWV6aGFuZyBNbyA8WXVlemhhbmcu
+TW9Ac29ueS5jb20+DQotLS0NCiBmcy9leGZhdC9leGZhdF9mcy5oIHwgNSArKysrKw0KIGZzL2V4
+ZmF0L2ZpbGUuYyAgICAgfCAyICstDQogMiBmaWxlcyBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyks
+IDEgZGVsZXRpb24oLSkNCg0KZGlmZiAtLWdpdCBhL2ZzL2V4ZmF0L2V4ZmF0X2ZzLmggYi9mcy9l
+eGZhdC9leGZhdF9mcy5oDQppbmRleCA5NDc0Y2Q1MGRhNmQuLjQ2ZjI3NjBkOTg0NiAxMDA2NDQN
+Ci0tLSBhL2ZzL2V4ZmF0L2V4ZmF0X2ZzLmgNCisrKyBiL2ZzL2V4ZmF0L2V4ZmF0X2ZzLmgNCkBA
+IC01NDIsNiArNTQyLDExIEBAIHZvaWQgX19leGZhdF9mc19lcnJvcihzdHJ1Y3Qgc3VwZXJfYmxv
+Y2sgKnNiLCBpbnQgcmVwb3J0LCBjb25zdCBjaGFyICpmbXQsIC4uLikNCiAvKiBleHBhbmQgdG8g
+cHJfKigpIHdpdGggcHJlZml4ICovDQogI2RlZmluZSBleGZhdF9lcnIoc2IsIGZtdCwgLi4uKQkJ
+CQkJCVwNCiAJcHJfZXJyKCJleEZBVC1mcyAoJXMpOiAiIGZtdCAiXG4iLCAoc2IpLT5zX2lkLCAj
+I19fVkFfQVJHU19fKQ0KKyNkZWZpbmUgZXhmYXRfZXJyX3JhdGVsaW1pdChzYiwgZm10LCBhcmdz
+Li4uKSBcDQorCWRvIHsgXA0KKwkJaWYgKF9fcmF0ZWxpbWl0KCZFWEZBVF9TQihzYiktPnJhdGVs
+aW1pdCkpIFwNCisJCQlleGZhdF9lcnIoc2IsIGZtdCwgIyMgYXJncyk7IFwNCisJfSB3aGlsZSAo
+MCkNCiAjZGVmaW5lIGV4ZmF0X3dhcm4oc2IsIGZtdCwgLi4uKQkJCQkJXA0KIAlwcl93YXJuKCJl
+eEZBVC1mcyAoJXMpOiAiIGZtdCAiXG4iLCAoc2IpLT5zX2lkLCAjI19fVkFfQVJHU19fKQ0KICNk
+ZWZpbmUgZXhmYXRfaW5mbyhzYiwgZm10LCAuLi4pCQkJCQlcDQpkaWZmIC0tZ2l0IGEvZnMvZXhm
+YXQvZmlsZS5jIGIvZnMvZXhmYXQvZmlsZS5jDQppbmRleCA0NzNjMTY0MWQ1MGQuLjY4NDA1YWUw
+Njc3MiAxMDA2NDQNCi0tLSBhL2ZzL2V4ZmF0L2ZpbGUuYw0KKysrIGIvZnMvZXhmYXQvZmlsZS5j
+DQpAQCAtNjE5LDcgKzYxOSw3IEBAIHN0YXRpYyBpbnQgZXhmYXRfZmlsZV9tbWFwKHN0cnVjdCBm
+aWxlICpmaWxlLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSkNCiAJCXJldCA9IGV4ZmF0X2Zp
+bGVfemVyb2VkX3JhbmdlKGZpbGUsIGVpLT52YWxpZF9zaXplLCBlbmQpOw0KIAkJaW5vZGVfdW5s
+b2NrKGlub2RlKTsNCiAJCWlmIChyZXQgPCAwKSB7DQotCQkJZXhmYXRfZXJyKGlub2RlLT5pX3Ni
+LA0KKwkJCWV4ZmF0X2Vycl9yYXRlbGltaXQoaW5vZGUtPmlfc2IsDQogCQkJCSAgIm1tYXA6IGZh
+aWwgdG8gemVybyBmcm9tICVsbHUgdG8gJWxsdSglZCkiLA0KIAkJCQkgIHN0YXJ0LCBlbmQsIHJl
+dCk7DQogCQkJcmV0dXJuIHJldDsNCi0tIA0KMi4zNC4xDQoNCg==
 
-> ---
->  fs/userfaultfd.c              | 40 ++++++++++++----------
->  include/linux/userfaultfd_k.h | 31 ++++++++++--------
->  mm/userfaultfd.c              | 62 ++++++++++++++++++++---------------
->  3 files changed, 75 insertions(+), 58 deletions(-)
-> 
-> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-> index 58331b83d648..c00a021bcce4 100644
-> --- a/fs/userfaultfd.c
-> +++ b/fs/userfaultfd.c
-> @@ -685,12 +685,15 @@ int dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
->  		ctx->flags = octx->flags;
->  		ctx->features = octx->features;
->  		ctx->released = false;
-> +		init_rwsem(&ctx->map_changing_lock);
->  		atomic_set(&ctx->mmap_changing, 0);
->  		ctx->mm = vma->vm_mm;
->  		mmgrab(ctx->mm);
->  
->  		userfaultfd_ctx_get(octx);
-> +		down_write(&octx->map_changing_lock);
->  		atomic_inc(&octx->mmap_changing);
-> +		up_write(&octx->map_changing_lock);
->  		fctx->orig = octx;
->  		fctx->new = ctx;
->  		list_add_tail(&fctx->list, fcs);
-> @@ -737,7 +740,9 @@ void mremap_userfaultfd_prep(struct vm_area_struct *vma,
->  	if (ctx->features & UFFD_FEATURE_EVENT_REMAP) {
->  		vm_ctx->ctx = ctx;
->  		userfaultfd_ctx_get(ctx);
-> +		down_write(&ctx->map_changing_lock);
->  		atomic_inc(&ctx->mmap_changing);
-> +		up_write(&ctx->map_changing_lock);
->  	} else {
->  		/* Drop uffd context if remap feature not enabled */
->  		vma_start_write(vma);
-> @@ -783,7 +788,9 @@ bool userfaultfd_remove(struct vm_area_struct *vma,
->  		return true;
->  
->  	userfaultfd_ctx_get(ctx);
-> +	down_write(&ctx->map_changing_lock);
->  	atomic_inc(&ctx->mmap_changing);
-> +	up_write(&ctx->map_changing_lock);
->  	mmap_read_unlock(mm);
->  
->  	msg_init(&ewq.msg);
-> @@ -825,7 +832,9 @@ int userfaultfd_unmap_prep(struct vm_area_struct *vma, unsigned long start,
->  		return -ENOMEM;
->  
->  	userfaultfd_ctx_get(ctx);
-> +	down_write(&ctx->map_changing_lock);
->  	atomic_inc(&ctx->mmap_changing);
-> +	up_write(&ctx->map_changing_lock);
->  	unmap_ctx->ctx = ctx;
->  	unmap_ctx->start = start;
->  	unmap_ctx->end = end;
-> @@ -1709,9 +1718,8 @@ static int userfaultfd_copy(struct userfaultfd_ctx *ctx,
->  	if (uffdio_copy.mode & UFFDIO_COPY_MODE_WP)
->  		flags |= MFILL_ATOMIC_WP;
->  	if (mmget_not_zero(ctx->mm)) {
-> -		ret = mfill_atomic_copy(ctx->mm, uffdio_copy.dst, uffdio_copy.src,
-> -					uffdio_copy.len, &ctx->mmap_changing,
-> -					flags);
-> +		ret = mfill_atomic_copy(ctx, uffdio_copy.dst, uffdio_copy.src,
-> +					uffdio_copy.len, flags);
->  		mmput(ctx->mm);
->  	} else {
->  		return -ESRCH;
-> @@ -1761,9 +1769,8 @@ static int userfaultfd_zeropage(struct userfaultfd_ctx *ctx,
->  		goto out;
->  
->  	if (mmget_not_zero(ctx->mm)) {
-> -		ret = mfill_atomic_zeropage(ctx->mm, uffdio_zeropage.range.start,
-> -					   uffdio_zeropage.range.len,
-> -					   &ctx->mmap_changing);
-> +		ret = mfill_atomic_zeropage(ctx, uffdio_zeropage.range.start,
-> +					   uffdio_zeropage.range.len);
->  		mmput(ctx->mm);
->  	} else {
->  		return -ESRCH;
-> @@ -1818,9 +1825,8 @@ static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
->  		return -EINVAL;
->  
->  	if (mmget_not_zero(ctx->mm)) {
-> -		ret = mwriteprotect_range(ctx->mm, uffdio_wp.range.start,
-> -					  uffdio_wp.range.len, mode_wp,
-> -					  &ctx->mmap_changing);
-> +		ret = mwriteprotect_range(ctx, uffdio_wp.range.start,
-> +					  uffdio_wp.range.len, mode_wp);
->  		mmput(ctx->mm);
->  	} else {
->  		return -ESRCH;
-> @@ -1870,9 +1876,8 @@ static int userfaultfd_continue(struct userfaultfd_ctx *ctx, unsigned long arg)
->  		flags |= MFILL_ATOMIC_WP;
->  
->  	if (mmget_not_zero(ctx->mm)) {
-> -		ret = mfill_atomic_continue(ctx->mm, uffdio_continue.range.start,
-> -					    uffdio_continue.range.len,
-> -					    &ctx->mmap_changing, flags);
-> +		ret = mfill_atomic_continue(ctx, uffdio_continue.range.start,
-> +					    uffdio_continue.range.len, flags);
->  		mmput(ctx->mm);
->  	} else {
->  		return -ESRCH;
-> @@ -1925,9 +1930,8 @@ static inline int userfaultfd_poison(struct userfaultfd_ctx *ctx, unsigned long
->  		goto out;
->  
->  	if (mmget_not_zero(ctx->mm)) {
-> -		ret = mfill_atomic_poison(ctx->mm, uffdio_poison.range.start,
-> -					  uffdio_poison.range.len,
-> -					  &ctx->mmap_changing, 0);
-> +		ret = mfill_atomic_poison(ctx, uffdio_poison.range.start,
-> +					  uffdio_poison.range.len, 0);
->  		mmput(ctx->mm);
->  	} else {
->  		return -ESRCH;
-> @@ -2003,13 +2007,14 @@ static int userfaultfd_move(struct userfaultfd_ctx *ctx,
->  	if (mmget_not_zero(mm)) {
->  		mmap_read_lock(mm);
->  
-> -		/* Re-check after taking mmap_lock */
-> +		/* Re-check after taking map_changing_lock */
-> +		down_read(&ctx->map_changing_lock);
->  		if (likely(!atomic_read(&ctx->mmap_changing)))
->  			ret = move_pages(ctx, mm, uffdio_move.dst, uffdio_move.src,
->  					 uffdio_move.len, uffdio_move.mode);
->  		else
->  			ret = -EAGAIN;
-> -
-> +		up_read(&ctx->map_changing_lock);
->  		mmap_read_unlock(mm);
->  		mmput(mm);
->  	} else {
-> @@ -2216,6 +2221,7 @@ static int new_userfaultfd(int flags)
->  	ctx->flags = flags;
->  	ctx->features = 0;
->  	ctx->released = false;
-> +	init_rwsem(&ctx->map_changing_lock);
->  	atomic_set(&ctx->mmap_changing, 0);
->  	ctx->mm = current->mm;
->  	/* prevent the mm struct to be freed */
-> diff --git a/include/linux/userfaultfd_k.h b/include/linux/userfaultfd_k.h
-> index 691d928ee864..3210c3552976 100644
-> --- a/include/linux/userfaultfd_k.h
-> +++ b/include/linux/userfaultfd_k.h
-> @@ -69,6 +69,13 @@ struct userfaultfd_ctx {
->  	unsigned int features;
->  	/* released */
->  	bool released;
-> +	/*
-> +	 * Prevents userfaultfd operations (fill/move/wp) from happening while
-> +	 * some non-cooperative event(s) is taking place. Increments are done
-> +	 * in write-mode. Whereas, userfaultfd operations, which includes
-> +	 * reading mmap_changing, is done under read-mode.
-> +	 */
-> +	struct rw_semaphore map_changing_lock;
->  	/* memory mappings are changing because of non-cooperative event */
->  	atomic_t mmap_changing;
->  	/* mm with one ore more vmas attached to this userfaultfd_ctx */
-> @@ -113,22 +120,18 @@ extern int mfill_atomic_install_pte(pmd_t *dst_pmd,
->  				    unsigned long dst_addr, struct page *page,
->  				    bool newly_allocated, uffd_flags_t flags);
->  
-> -extern ssize_t mfill_atomic_copy(struct mm_struct *dst_mm, unsigned long dst_start,
-> +extern ssize_t mfill_atomic_copy(struct userfaultfd_ctx *ctx, unsigned long dst_start,
->  				 unsigned long src_start, unsigned long len,
-> -				 atomic_t *mmap_changing, uffd_flags_t flags);
-> -extern ssize_t mfill_atomic_zeropage(struct mm_struct *dst_mm,
-> +				 uffd_flags_t flags);
-> +extern ssize_t mfill_atomic_zeropage(struct userfaultfd_ctx *ctx,
->  				     unsigned long dst_start,
-> -				     unsigned long len,
-> -				     atomic_t *mmap_changing);
-> -extern ssize_t mfill_atomic_continue(struct mm_struct *dst_mm, unsigned long dst_start,
-> -				     unsigned long len, atomic_t *mmap_changing,
-> -				     uffd_flags_t flags);
-> -extern ssize_t mfill_atomic_poison(struct mm_struct *dst_mm, unsigned long start,
-> -				   unsigned long len, atomic_t *mmap_changing,
-> -				   uffd_flags_t flags);
-> -extern int mwriteprotect_range(struct mm_struct *dst_mm,
-> -			       unsigned long start, unsigned long len,
-> -			       bool enable_wp, atomic_t *mmap_changing);
-> +				     unsigned long len);
-> +extern ssize_t mfill_atomic_continue(struct userfaultfd_ctx *ctx, unsigned long dst_start,
-> +				     unsigned long len, uffd_flags_t flags);
-> +extern ssize_t mfill_atomic_poison(struct userfaultfd_ctx *ctx, unsigned long start,
-> +				   unsigned long len, uffd_flags_t flags);
-> +extern int mwriteprotect_range(struct userfaultfd_ctx *ctx, unsigned long start,
-> +			       unsigned long len, bool enable_wp);
->  extern long uffd_wp_range(struct vm_area_struct *vma,
->  			  unsigned long start, unsigned long len, bool enable_wp);
->  
-> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> index e3a91871462a..6e2ca04ab04d 100644
-> --- a/mm/userfaultfd.c
-> +++ b/mm/userfaultfd.c
-> @@ -353,11 +353,11 @@ static pmd_t *mm_alloc_pmd(struct mm_struct *mm, unsigned long address)
->   * called with mmap_lock held, it will release mmap_lock before returning.
->   */
->  static __always_inline ssize_t mfill_atomic_hugetlb(
-> +					      struct userfaultfd_ctx *ctx,
->  					      struct vm_area_struct *dst_vma,
->  					      unsigned long dst_start,
->  					      unsigned long src_start,
->  					      unsigned long len,
-> -					      atomic_t *mmap_changing,
->  					      uffd_flags_t flags)
->  {
->  	struct mm_struct *dst_mm = dst_vma->vm_mm;
-> @@ -379,6 +379,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
->  	 * feature is not supported.
->  	 */
->  	if (uffd_flags_mode_is(flags, MFILL_ATOMIC_ZEROPAGE)) {
-> +		up_read(&ctx->map_changing_lock);
->  		mmap_read_unlock(dst_mm);
->  		return -EINVAL;
->  	}
-> @@ -463,6 +464,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
->  		cond_resched();
->  
->  		if (unlikely(err == -ENOENT)) {
-> +			up_read(&ctx->map_changing_lock);
->  			mmap_read_unlock(dst_mm);
->  			BUG_ON(!folio);
->  
-> @@ -473,12 +475,13 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
->  				goto out;
->  			}
->  			mmap_read_lock(dst_mm);
-> +			down_read(&ctx->map_changing_lock);
->  			/*
->  			 * If memory mappings are changing because of non-cooperative
->  			 * operation (e.g. mremap) running in parallel, bail out and
->  			 * request the user to retry later
->  			 */
-> -			if (mmap_changing && atomic_read(mmap_changing)) {
-> +			if (atomic_read(ctx->mmap_changing)) {
->  				err = -EAGAIN;
->  				break;
->  			}
-> @@ -501,6 +504,7 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
->  	}
->  
->  out_unlock:
-> +	up_read(&ctx->map_changing_lock);
->  	mmap_read_unlock(dst_mm);
->  out:
->  	if (folio)
-> @@ -512,11 +516,11 @@ static __always_inline ssize_t mfill_atomic_hugetlb(
->  }
->  #else /* !CONFIG_HUGETLB_PAGE */
->  /* fail at build time if gcc attempts to use this */
-> -extern ssize_t mfill_atomic_hugetlb(struct vm_area_struct *dst_vma,
-> +extern ssize_t mfill_atomic_hugetlb(struct userfaultfd_ctx *ctx,
-> +				    struct vm_area_struct *dst_vma,
->  				    unsigned long dst_start,
->  				    unsigned long src_start,
->  				    unsigned long len,
-> -				    atomic_t *mmap_changing,
->  				    uffd_flags_t flags);
->  #endif /* CONFIG_HUGETLB_PAGE */
->  
-> @@ -564,13 +568,13 @@ static __always_inline ssize_t mfill_atomic_pte(pmd_t *dst_pmd,
->  	return err;
->  }
->  
-> -static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
-> +static __always_inline ssize_t mfill_atomic(struct userfaultfd_ctx *ctx,
->  					    unsigned long dst_start,
->  					    unsigned long src_start,
->  					    unsigned long len,
-> -					    atomic_t *mmap_changing,
->  					    uffd_flags_t flags)
->  {
-> +	struct mm_struct *dst_mm = ctx->mm;
->  	struct vm_area_struct *dst_vma;
->  	ssize_t err;
->  	pmd_t *dst_pmd;
-> @@ -600,8 +604,9 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
->  	 * operation (e.g. mremap) running in parallel, bail out and
->  	 * request the user to retry later
->  	 */
-> +	down_read(&ctx->map_changing_lock);
->  	err = -EAGAIN;
-> -	if (mmap_changing && atomic_read(mmap_changing))
-> +	if (atomic_read(&ctx->mmap_changing))
->  		goto out_unlock;
->  
->  	/*
-> @@ -633,8 +638,8 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
->  	 * If this is a HUGETLB vma, pass off to appropriate routine
->  	 */
->  	if (is_vm_hugetlb_page(dst_vma))
-> -		return  mfill_atomic_hugetlb(dst_vma, dst_start, src_start,
-> -					     len, mmap_changing, flags);
-> +		return  mfill_atomic_hugetlb(ctx, dst_vma, dst_start,
-> +					     src_start, len, flags);
->  
->  	if (!vma_is_anonymous(dst_vma) && !vma_is_shmem(dst_vma))
->  		goto out_unlock;
-> @@ -693,6 +698,7 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
->  		if (unlikely(err == -ENOENT)) {
->  			void *kaddr;
->  
-> +			up_read(&ctx->map_changing_lock);
->  			mmap_read_unlock(dst_mm);
->  			BUG_ON(!folio);
->  
-> @@ -723,6 +729,7 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
->  	}
->  
->  out_unlock:
-> +	up_read(&ctx->map_changing_lock);
->  	mmap_read_unlock(dst_mm);
->  out:
->  	if (folio)
-> @@ -733,34 +740,33 @@ static __always_inline ssize_t mfill_atomic(struct mm_struct *dst_mm,
->  	return copied ? copied : err;
->  }
->  
-> -ssize_t mfill_atomic_copy(struct mm_struct *dst_mm, unsigned long dst_start,
-> +ssize_t mfill_atomic_copy(struct userfaultfd_ctx *ctx, unsigned long dst_start,
->  			  unsigned long src_start, unsigned long len,
-> -			  atomic_t *mmap_changing, uffd_flags_t flags)
-> +			  uffd_flags_t flags)
->  {
-> -	return mfill_atomic(dst_mm, dst_start, src_start, len, mmap_changing,
-> +	return mfill_atomic(ctx, dst_start, src_start, len,
->  			    uffd_flags_set_mode(flags, MFILL_ATOMIC_COPY));
->  }
->  
-> -ssize_t mfill_atomic_zeropage(struct mm_struct *dst_mm, unsigned long start,
-> -			      unsigned long len, atomic_t *mmap_changing)
-> +ssize_t mfill_atomic_zeropage(struct userfaultfd_ctx *ctx,
-> +			      unsigned long start,
-> +			      unsigned long len)
->  {
-> -	return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
-> +	return mfill_atomic(ctx, start, 0, len,
->  			    uffd_flags_set_mode(0, MFILL_ATOMIC_ZEROPAGE));
->  }
->  
-> -ssize_t mfill_atomic_continue(struct mm_struct *dst_mm, unsigned long start,
-> -			      unsigned long len, atomic_t *mmap_changing,
-> -			      uffd_flags_t flags)
-> +ssize_t mfill_atomic_continue(struct userfaultfd_ctx *ctx, unsigned long start,
-> +			      unsigned long len, uffd_flags_t flags)
->  {
-> -	return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
-> +	return mfill_atomic(ctx, start, 0, len,
->  			    uffd_flags_set_mode(flags, MFILL_ATOMIC_CONTINUE));
->  }
->  
-> -ssize_t mfill_atomic_poison(struct mm_struct *dst_mm, unsigned long start,
-> -			    unsigned long len, atomic_t *mmap_changing,
-> -			    uffd_flags_t flags)
-> +ssize_t mfill_atomic_poison(struct userfaultfd_ctx *ctx, unsigned long start,
-> +			    unsigned long len, uffd_flags_t flags)
->  {
-> -	return mfill_atomic(dst_mm, start, 0, len, mmap_changing,
-> +	return mfill_atomic(ctx, start, 0, len,
->  			    uffd_flags_set_mode(flags, MFILL_ATOMIC_POISON));
->  }
->  
-> @@ -793,10 +799,10 @@ long uffd_wp_range(struct vm_area_struct *dst_vma,
->  	return ret;
->  }
->  
-> -int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
-> -			unsigned long len, bool enable_wp,
-> -			atomic_t *mmap_changing)
-> +int mwriteprotect_range(struct userfaultfd_ctx *ctx, unsigned long start,
-> +			unsigned long len, bool enable_wp)
->  {
-> +	struct mm_struct *dst_mm = ctx->mm;
->  	unsigned long end = start + len;
->  	unsigned long _start, _end;
->  	struct vm_area_struct *dst_vma;
-> @@ -820,8 +826,9 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
->  	 * operation (e.g. mremap) running in parallel, bail out and
->  	 * request the user to retry later
->  	 */
-> +	down_read(&ctx->map_changing_lock);
->  	err = -EAGAIN;
-> -	if (mmap_changing && atomic_read(mmap_changing))
-> +	if (atomic_read(&ctx->mmap_changing))
->  		goto out_unlock;
->  
->  	err = -ENOENT;
-> @@ -850,6 +857,7 @@ int mwriteprotect_range(struct mm_struct *dst_mm, unsigned long start,
->  		err = 0;
->  	}
->  out_unlock:
-> +	up_read(&ctx->map_changing_lock);
->  	mmap_read_unlock(dst_mm);
->  	return err;
->  }
-> -- 
-> 2.43.0.429.g432eaa2c6b-goog
-> 
+--_002_PUZPR04MB63169F97595D70047AF50E3B817D2PUZPR04MB6316apcp_
+Content-Type: application/octet-stream;
+	name="v1-0001-exfat-ratelimit-error-msg-in-exfat_file_mmap.patch"
+Content-Description: 
+ v1-0001-exfat-ratelimit-error-msg-in-exfat_file_mmap.patch
+Content-Disposition: attachment;
+	filename="v1-0001-exfat-ratelimit-error-msg-in-exfat_file_mmap.patch";
+	size=1697; creation-date="Tue, 30 Jan 2024 07:07:35 GMT";
+	modification-date="Tue, 30 Jan 2024 07:31:48 GMT"
+Content-Transfer-Encoding: base64
 
--- 
-Sincerely yours,
-Mike.
+RnJvbSA1ZjAyM2ZjYzZlNjMyYzYzYzFiZWE0NjM3OWJiZjAzMWUwYzRhMWE1IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBZdWV6aGFuZyBNbyA8WXVlemhhbmcuTW9Ac29ueS5jb20+CkRh
+dGU6IFR1ZSwgMzAgSmFuIDIwMjQgMTI6NDY6MjEgKzA4MDAKU3ViamVjdDogW1BBVENIIHYxXSBl
+eGZhdDogcmF0ZWxpbWl0IGVycm9yIG1zZyBpbiBleGZhdF9maWxlX21tYXAoKQoKUmF0ZWxpbWl0
+IHRoZSBlcnJvciBtZXNzYWdlIG9mIHplcm9pbmcgb3V0IGRhdGEgYmV0d2VlbiB0aGUgdmFsaWQK
+c2l6ZSBhbmQgdGhlIGZpbGUgc2l6ZSBpbiBleGZhdF9maWxlX21tYXAoKSB0byBub3QgZmxvb2Qg
+ZG1lc2cuCgpTaWduZWQtb2ZmLWJ5OiBZdWV6aGFuZyBNbyA8WXVlemhhbmcuTW9Ac29ueS5jb20+
+Ci0tLQogZnMvZXhmYXQvZXhmYXRfZnMuaCB8IDUgKysrKysKIGZzL2V4ZmF0L2ZpbGUuYyAgICAg
+fCAyICstCiAyIGZpbGVzIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygrKSwgMSBkZWxldGlvbigtKQoK
+ZGlmZiAtLWdpdCBhL2ZzL2V4ZmF0L2V4ZmF0X2ZzLmggYi9mcy9leGZhdC9leGZhdF9mcy5oCmlu
+ZGV4IDk0NzRjZDUwZGE2ZC4uNDZmMjc2MGQ5ODQ2IDEwMDY0NAotLS0gYS9mcy9leGZhdC9leGZh
+dF9mcy5oCisrKyBiL2ZzL2V4ZmF0L2V4ZmF0X2ZzLmgKQEAgLTU0Miw2ICs1NDIsMTEgQEAgdm9p
+ZCBfX2V4ZmF0X2ZzX2Vycm9yKHN0cnVjdCBzdXBlcl9ibG9jayAqc2IsIGludCByZXBvcnQsIGNv
+bnN0IGNoYXIgKmZtdCwgLi4uKQogLyogZXhwYW5kIHRvIHByXyooKSB3aXRoIHByZWZpeCAqLwog
+I2RlZmluZSBleGZhdF9lcnIoc2IsIGZtdCwgLi4uKQkJCQkJCVwKIAlwcl9lcnIoImV4RkFULWZz
+ICglcyk6ICIgZm10ICJcbiIsIChzYiktPnNfaWQsICMjX19WQV9BUkdTX18pCisjZGVmaW5lIGV4
+ZmF0X2Vycl9yYXRlbGltaXQoc2IsIGZtdCwgYXJncy4uLikgXAorCWRvIHsgXAorCQlpZiAoX19y
+YXRlbGltaXQoJkVYRkFUX1NCKHNiKS0+cmF0ZWxpbWl0KSkgXAorCQkJZXhmYXRfZXJyKHNiLCBm
+bXQsICMjIGFyZ3MpOyBcCisJfSB3aGlsZSAoMCkKICNkZWZpbmUgZXhmYXRfd2FybihzYiwgZm10
+LCAuLi4pCQkJCQlcCiAJcHJfd2FybigiZXhGQVQtZnMgKCVzKTogIiBmbXQgIlxuIiwgKHNiKS0+
+c19pZCwgIyNfX1ZBX0FSR1NfXykKICNkZWZpbmUgZXhmYXRfaW5mbyhzYiwgZm10LCAuLi4pCQkJ
+CQlcCmRpZmYgLS1naXQgYS9mcy9leGZhdC9maWxlLmMgYi9mcy9leGZhdC9maWxlLmMKaW5kZXgg
+NDczYzE2NDFkNTBkLi42ODQwNWFlMDY3NzIgMTAwNjQ0Ci0tLSBhL2ZzL2V4ZmF0L2ZpbGUuYwor
+KysgYi9mcy9leGZhdC9maWxlLmMKQEAgLTYxOSw3ICs2MTksNyBAQCBzdGF0aWMgaW50IGV4ZmF0
+X2ZpbGVfbW1hcChzdHJ1Y3QgZmlsZSAqZmlsZSwgc3RydWN0IHZtX2FyZWFfc3RydWN0ICp2bWEp
+CiAJCXJldCA9IGV4ZmF0X2ZpbGVfemVyb2VkX3JhbmdlKGZpbGUsIGVpLT52YWxpZF9zaXplLCBl
+bmQpOwogCQlpbm9kZV91bmxvY2soaW5vZGUpOwogCQlpZiAocmV0IDwgMCkgewotCQkJZXhmYXRf
+ZXJyKGlub2RlLT5pX3NiLAorCQkJZXhmYXRfZXJyX3JhdGVsaW1pdChpbm9kZS0+aV9zYiwKIAkJ
+CQkgICJtbWFwOiBmYWlsIHRvIHplcm8gZnJvbSAlbGx1IHRvICVsbHUoJWQpIiwKIAkJCQkgIHN0
+YXJ0LCBlbmQsIHJldCk7CiAJCQlyZXR1cm4gcmV0OwotLSAKMi4zNC4xCgo=
+
+--_002_PUZPR04MB63169F97595D70047AF50E3B817D2PUZPR04MB6316apcp_--
 
