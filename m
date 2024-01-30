@@ -1,71 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-9558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8DF842B9A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 19:21:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32194842B9E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 19:21:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 674C31F276D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 18:21:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6D991F28BCB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 18:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECD4157E95;
-	Tue, 30 Jan 2024 18:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF431586F2;
+	Tue, 30 Jan 2024 18:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SiWvGuc2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g1zF+b0T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF68157E6C;
-	Tue, 30 Jan 2024 18:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A339D1586CB;
+	Tue, 30 Jan 2024 18:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706638859; cv=none; b=VihQIKSpEfHGBPtaMEaCldLqL0EEkO0qBlkxU2U0bzGMiXrke3ymgFx1P+kyN9XHqKXc3ye03dEIdXrrKkaFDFuYzih2Ng11ikRvHRusxvVkPo+AOYh5FQBUATrPcGJ+8OhNULjStgHqZeCDLnfgapB89lKVa9cHI3LNl6JbR2M=
+	t=1706638862; cv=none; b=udlgQV+BfFmuy3zroq0pOfpXZ6Qyg23x5MxD9tROl+VWsU0CBQZPk/iUFU01DY2yQCguwOlm7eRJC+AGAc9/fKpDbueyYl6cU3eykAqqWVTQLCmpyDspvl1bzO1VnWspXzI6JrZtReNzhXcjwkpIgzNfU0gSsVBB+qU3nyyzbT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706638859; c=relaxed/simple;
-	bh=NIUzAXrRV7ZDE0Mb5WeD6b/AYmdSkN2e52tVP9wKT0E=;
+	s=arc-20240116; t=1706638862; c=relaxed/simple;
+	bh=Nc/Qletu6+zJXp1xkdWFc63PgpuhGv7hKfN5LGc1nlg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DgdE/R613Swec6FO2wPQsyvxZXPwVA7kZ7GJJxJQ4/hSOqokNxxl4J6uD5Ud4ziGuL3IDoiaui9SWdku2zIAKLIcpoFx2zfiQuqzOZfOQhSpemC9DQvLE9z6oJk7lqeQCNZ7XLJ5eW6ZkMZOWFgW3iTynGkibDi8TPo5brDcaJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SiWvGuc2; arc=none smtp.client-ip=209.85.214.193
+	 MIME-Version; b=Ar9B9aRc+pft/GNrStqMNxmdaFoTUPxsV3ZsxyKkxX12EqUvwiS1va0c5H3SenQ8VgwuDfR9k74wPTLvfvyTySyl1O8/AYz7qoHGff7GsPyUyuuGsQaboylID3oH+YgtB/Ih32UauSQrTmruI3c6ooou84IXXHkAkUHGySf20qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g1zF+b0T; arc=none smtp.client-ip=209.85.210.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-1d8ef972451so11499505ad.2;
-        Tue, 30 Jan 2024 10:20:57 -0800 (PST)
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-6daf694b439so2012626b3a.1;
+        Tue, 30 Jan 2024 10:21:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706638856; x=1707243656; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1706638860; x=1707243660; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6ZMn6sDMi1uCxjmVz8fP6z7yvojLb9nEQHXs3aNIFG4=;
-        b=SiWvGuc2j3JPgJn44/Jt2h/mncFCM2iyfV6Q/EmppyYbdxU6YjL8yKKFLRnExllVz3
-         RL366Xh+uhnDYhV/a88jTWc4Xok+ncuD856GIlOw67jqd11mZ/nEjW9p60DXMLtiBYKC
-         VMXEjNSQO6HtE1izZbYK6xQxTB89lW4AfmrzH8m7tQMetQxDTsC7VDotldnYRAkX3cV2
-         cH2LrdD5j0KMf00TwnocXjSi9pMWnWVNOP5aH9/ZMN3ruqt330rhGH2vheay4KjJJDGH
-         VyKKTlL+cV7kJlbA5mA70UP92yVRsFtQdxYKQ7BJ1foSJGu41zAoXe+qTGBjcoJdw20o
-         eBOg==
+        bh=P3SsBm0r3LDCnRLkAzwTVLxQ2sFbW5+S1JsSVpdLy4I=;
+        b=g1zF+b0TITRwXCU92BFOlxezeR9vbjej4YWUJpOnb1jzeUZVkj3m1YQQcpJoQ1QVTH
+         eGgkD2RBKAxwmbDhtxpZmDRmb4OiuOHRKVmCMBEKZ5I3sM9YL10vDkF5EIb3OnE+hslh
+         2TjbIeHDMh/KKMzwdPfGqbp3nMkKx6gfqFoz650NrY6649mh7tU7xnkFIhEqy5OHGM1h
+         auwC8GZZTVEkDtgsheFCaC4V0r3MU/A5OsRGSUNKylZD7LPKVA6EipC6Mh+itIxwBb/Z
+         /PwXlKu0G34g9Q6BemhWY+zRgD66/MQGh6uAlfkmpcjHabyZPvONuh1f67mgZ3vIr7Oh
+         jE/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706638856; x=1707243656;
+        d=1e100.net; s=20230601; t=1706638860; x=1707243660;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6ZMn6sDMi1uCxjmVz8fP6z7yvojLb9nEQHXs3aNIFG4=;
-        b=k2gmISHvZOaO9XgUEapjxryZ4SkEhuHLlhmAXrLNLHGek3TKWGEBK7SAw1sSFO4CPg
-         9l1toDOixKxxYO7QcH+d4c0/vwN3cRx9HzWQ1UcsNBE6+xbKWHq4bfSxzQxrg8uSi7NH
-         bgNX2tnwrG85aMhaiPeM+BnZ7brKdZuhQaXl3vy0WhJPRCJJO2A3hT/1j06P7yY+K/a7
-         nts4nSn4GqT05UCddhhsotmIROitY+B6kk4X/21rtb9flrcT5Q8GQg62Iniu6wgLJAEW
-         LmXnLY2DV9XhAqByeMIFFJGk/2y961o/+x7OS/vthFwNwaCwlzE7GNMGsfGpxICebkM1
-         lKVA==
-X-Gm-Message-State: AOJu0YyoCfxXkhNJMTkfkzaGqURRpHGY0gHnDQamF6mOy6oJElePuJN1
-	f+YO8fpAnDfIWF1FXs0oAjer6Y8tvwp9o7bQ64i+GEGA6OqBN4i2KcWxBFMdhAc9
-X-Google-Smtp-Source: AGHT+IHt0cjlyHl0KL24KfAI1BtOVueUlhISU+9jt8XD1LbCPQo9Jx7uDvV7iI3p0+67jXuwN4211w==
-X-Received: by 2002:a05:6a21:4487:b0:19b:4349:5447 with SMTP id vo7-20020a056a21448700b0019b43495447mr4623581pzb.29.1706638856462;
-        Tue, 30 Jan 2024 10:20:56 -0800 (PST)
+        bh=P3SsBm0r3LDCnRLkAzwTVLxQ2sFbW5+S1JsSVpdLy4I=;
+        b=StqWSVz4fVJjnZUS9nTJSJO3hR6ViBLZ+oDbQrWjyxOtNxLXJa4t4jUcuzGAIsfpBS
+         aM9Zj69y6AK91nGHutwQ3sfY+S1iUkvT+gUgB3jZVvstbd3TgbeD43jdNdT3hd+50xWW
+         LERpFB8ZCppone9+w7dIvrwDD5UuECEXXt4ZOuVD2b30wihXnabPXy9djbIZWHr5eEWf
+         GHhoG++QLE4bBXP9kyTHy0hjRMjNEwQ4g/cB4Of0+DRhmW7yE5qvlQO1BQFGyX7znXcq
+         6uQzcvtKG9X/fPV07Y4kK0u78WyMiJbgII5120a0iveFtUVreIdMgVqSOcGnYpb5BcGG
+         TsmA==
+X-Gm-Message-State: AOJu0YwvWa+h2e0HO9PjVd/68YnQ4g3EIAr1I0/Y4t6Lp7kBmBM7HZRW
+	/twHZuBHl8g1pW0TUoV8BkjqX+lfjRNS/xUEyaIkBmWiTKz5Kt0=
+X-Google-Smtp-Source: AGHT+IF658u5j+JGDTlh3pv0qgLkUrtejP5nowPywOp5J6L0lLHIY8AKt5LB2Ry3EAAY8M3F8cSZeQ==
+X-Received: by 2002:a05:6a00:9390:b0:6db:de9f:5f10 with SMTP id ka16-20020a056a00939000b006dbde9f5f10mr5976134pfb.15.1706638859932;
+        Tue, 30 Jan 2024 10:20:59 -0800 (PST)
 Received: from fedora.mshome.net (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id o64-20020a62cd43000000b006d9ce7d3258sm8460143pfg.204.2024.01.30.10.20.53
+        by smtp.gmail.com with ESMTPSA id o64-20020a62cd43000000b006d9ce7d3258sm8460143pfg.204.2024.01.30.10.20.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jan 2024 10:20:56 -0800 (PST)
+        Tue, 30 Jan 2024 10:20:59 -0800 (PST)
 From: Gregory Price <gourry.memverge@gmail.com>
 X-Google-Original-From: Gregory Price <gregory.price@memverge.com>
 To: linux-mm@kvack.org
@@ -90,9 +90,9 @@ Cc: linux-kernel@vger.kernel.org,
 	seungjun.ha@samsung.com,
 	hannes@cmpxchg.org,
 	dan.j.williams@intel.com
-Subject: [PATCH v4 1/3] mm/mempolicy: implement the sysfs-based weighted_interleave interface
-Date: Tue, 30 Jan 2024 13:20:44 -0500
-Message-Id: <20240130182046.74278-2-gregory.price@memverge.com>
+Subject: [PATCH v4 2/3] mm/mempolicy: refactor a read-once mechanism into a function for re-use
+Date: Tue, 30 Jan 2024 13:20:45 -0500
+Message-Id: <20240130182046.74278-3-gregory.price@memverge.com>
 X-Mailer: git-send-email 2.39.1
 In-Reply-To: <20240130182046.74278-1-gregory.price@memverge.com>
 References: <20240130182046.74278-1-gregory.price@memverge.com>
@@ -102,327 +102,65 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Rakie Kim <rakie.kim@sk.com>
-
-This patch provides a way to set interleave weight information under
-sysfs at /sys/kernel/mm/mempolicy/weighted_interleave/nodeN
-
-The sysfs structure is designed as follows.
-
-  $ tree /sys/kernel/mm/mempolicy/
-  /sys/kernel/mm/mempolicy/ [1]
-  └── weighted_interleave [2]
-      ├── node0 [3]
-      └── node1
-
-Each file above can be explained as follows.
-
-[1] mm/mempolicy: configuration interface for mempolicy subsystem
-
-[2] weighted_interleave/: config interface for weighted interleave policy
-
-[3] weighted_interleave/nodeN: weight for nodeN
-
-If a node value is set to `0`, the system-default value will be used.
-As of this patch, the system-default for all nodes is always 1.
+move the use of barrier() to force policy->nodemask onto the stack into
+a function `read_once_policy_nodemask` so that it may be re-used.
 
 Suggested-by: Huang Ying <ying.huang@intel.com>
-Signed-off-by: Rakie Kim <rakie.kim@sk.com>
-Signed-off-by: Honggyu Kim <honggyu.kim@sk.com>
-Co-developed-by: Gregory Price <gregory.price@memverge.com>
 Signed-off-by: Gregory Price <gregory.price@memverge.com>
-Co-developed-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
-Signed-off-by: Hyeongtak Ji <hyeongtak.ji@sk.com>
 ---
- .../ABI/testing/sysfs-kernel-mm-mempolicy     |   4 +
- ...fs-kernel-mm-mempolicy-weighted-interleave |  25 ++
- mm/mempolicy.c                                | 223 ++++++++++++++++++
- 3 files changed, 252 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-kernel-mm-mempolicy
- create mode 100644 Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
+ mm/mempolicy.c | 26 ++++++++++++++++----------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy
-new file mode 100644
-index 000000000000..8ac327fd7fb6
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy
-@@ -0,0 +1,4 @@
-+What:		/sys/kernel/mm/mempolicy/
-+Date:		January 2024
-+Contact:	Linux memory management mailing list <linux-mm@kvack.org>
-+Description:	Interface for Mempolicy
-diff --git a/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
-new file mode 100644
-index 000000000000..0b7972de04e9
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-kernel-mm-mempolicy-weighted-interleave
-@@ -0,0 +1,25 @@
-+What:		/sys/kernel/mm/mempolicy/weighted_interleave/
-+Date:		January 2024
-+Contact:	Linux memory management mailing list <linux-mm@kvack.org>
-+Description:	Configuration Interface for the Weighted Interleave policy
-+
-+What:		/sys/kernel/mm/mempolicy/weighted_interleave/nodeN
-+Date:		January 2024
-+Contact:	Linux memory management mailing list <linux-mm@kvack.org>
-+Description:	Weight configuration interface for nodeN
-+
-+		The interleave weight for a memory node (N). These weights are
-+		utilized by tasks which have set their mempolicy to
-+		MPOL_WEIGHTED_INTERLEAVE.
-+
-+		These weights only affect new allocations, and changes at runtime
-+		will not cause migrations on already allocated pages.
-+
-+		The minimum weight for a node is always 1.
-+
-+		Minimum weight: 1
-+		Maximum weight: 255
-+
-+		Writing an empty string or `0` will reset the weight to the
-+		system default. The system default may be set by the kernel
-+		or drivers at boot or during hotplug events.
 diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 10a590ee1c89..440128a398ef 100644
+index 440128a398ef..3bdfaf03b660 100644
 --- a/mm/mempolicy.c
 +++ b/mm/mempolicy.c
-@@ -131,6 +131,32 @@ static struct mempolicy default_policy = {
- 
- static struct mempolicy preferred_node_policy[MAX_NUMNODES];
- 
-+/*
-+ * iw_table is the sysfs-set interleave weight table, a value of 0 denotes
-+ * system-default value should be used. A NULL iw_table also denotes that
-+ * system-default values should be used. Until the system-default table
-+ * is implemented, the system-default is always 1.
-+ *
-+ * iw_table is RCU protected
-+ */
-+static u8 __rcu *iw_table;
-+static DEFINE_MUTEX(iw_table_lock);
-+
-+static u8 get_il_weight(int node)
-+{
-+	u8 __rcu *table;
-+	u8 weight;
-+
-+	rcu_read_lock();
-+	table = rcu_dereference(iw_table);
-+	/* if no iw_table, use system default */
-+	weight = table ? table[node] : 1;
-+	/* if value in iw_table is 0, use system default */
-+	weight = weight ? weight : 1;
-+	rcu_read_unlock();
-+	return weight;
-+}
-+
- /**
-  * numa_nearest_node - Find nearest node by state
-  * @node: Node id to start the search
-@@ -3067,3 +3093,200 @@ void mpol_to_str(char *buffer, int maxlen, struct mempolicy *pol)
- 		p += scnprintf(p, buffer + maxlen - p, ":%*pbl",
- 			       nodemask_pr_args(&nodes));
+@@ -1909,6 +1909,20 @@ unsigned int mempolicy_slab_node(void)
+ 	}
  }
-+
-+#ifdef CONFIG_SYSFS
-+struct iw_node_attr {
-+	struct kobj_attribute kobj_attr;
-+	int nid;
-+};
-+
-+static ssize_t node_show(struct kobject *kobj, struct kobj_attribute *attr,
-+			 char *buf)
+ 
++static unsigned int read_once_policy_nodemask(struct mempolicy *pol,
++					      nodemask_t *mask)
 +{
-+	struct iw_node_attr *node_attr;
-+	u8 weight;
-+
-+	node_attr = container_of(attr, struct iw_node_attr, kobj_attr);
-+	weight = get_il_weight(node_attr->nid);
-+	return sysfs_emit(buf, "%d\n", weight);
++	/*
++	 * barrier stabilizes the nodemask locally so that it can be iterated
++	 * over safely without concern for changes. Allocators validate node
++	 * selection does not violate mems_allowed, so this is safe.
++	 */
++	barrier();
++	memcpy(mask, &pol->nodes, sizeof(nodemask_t));
++	barrier();
++	return nodes_weight(*mask);
 +}
 +
-+static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *attr,
-+			  const char *buf, size_t count)
-+{
-+	struct iw_node_attr *node_attr;
-+	u8 __rcu *new;
-+	u8 __rcu *old;
-+	u8 weight = 0;
-+
-+	node_attr = container_of(attr, struct iw_node_attr, kobj_attr);
-+	if (count == 0 || sysfs_streq(buf, ""))
-+		weight = 0;
-+	else if (kstrtou8(buf, 0, &weight))
-+		return -EINVAL;
-+
-+	new = kzalloc(nr_node_ids, GFP_KERNEL);
-+	if (!new)
-+		return -ENOMEM;
-+
-+	mutex_lock(&iw_table_lock);
-+	old = rcu_dereference_protected(iw_table,
-+					lockdep_is_held(&iw_table_lock));
-+	if (old)
-+		memcpy(new, old, nr_node_ids);
-+	new[node_attr->nid] = weight;
-+	rcu_assign_pointer(iw_table, new);
-+	mutex_unlock(&iw_table_lock);
-+	synchronize_rcu();
-+	kfree(old);
-+	return count;
-+}
-+
-+static struct iw_node_attr **node_attrs;
-+
-+static void sysfs_wi_node_release(struct iw_node_attr *node_attr,
-+				  struct kobject *parent)
-+{
-+	if (!node_attr)
-+		return;
-+	sysfs_remove_file(parent, &node_attr->kobj_attr.attr);
-+	kfree(node_attr->kobj_attr.attr.name);
-+	kfree(node_attr);
-+}
-+
-+static void sysfs_wi_release(struct kobject *wi_kobj)
-+{
-+	int i;
-+
-+	for (i = 0; i < nr_node_ids; i++)
-+		sysfs_wi_node_release(node_attrs[i], wi_kobj);
-+	kobject_put(wi_kobj);
-+}
-+
-+static const struct kobj_type wi_ktype = {
-+	.sysfs_ops = &kobj_sysfs_ops,
-+	.release = sysfs_wi_release,
-+};
-+
-+static int add_weight_node(int nid, struct kobject *wi_kobj)
-+{
-+	struct iw_node_attr *node_attr;
-+	char *name;
-+
-+	node_attr = kzalloc(sizeof(*node_attr), GFP_KERNEL);
-+	if (!node_attr)
-+		return -ENOMEM;
-+
-+	name = kasprintf(GFP_KERNEL, "node%d", nid);
-+	if (!name) {
-+		kfree(node_attr);
-+		return -ENOMEM;
-+	}
-+
-+	sysfs_attr_init(&node_attr->kobj_attr.attr);
-+	node_attr->kobj_attr.attr.name = name;
-+	node_attr->kobj_attr.attr.mode = 0644;
-+	node_attr->kobj_attr.show = node_show;
-+	node_attr->kobj_attr.store = node_store;
-+	node_attr->nid = nid;
-+
-+	if (sysfs_create_file(wi_kobj, &node_attr->kobj_attr.attr)) {
-+		kfree(node_attr->kobj_attr.attr.name);
-+		kfree(node_attr);
-+		pr_err("failed to add attribute to weighted_interleave\n");
-+		return -ENOMEM;
-+	}
-+
-+	node_attrs[nid] = node_attr;
-+	return 0;
-+}
-+
-+static int add_weighted_interleave_group(struct kobject *root_kobj)
-+{
-+	struct kobject *wi_kobj;
-+	int nid, err;
-+
-+	wi_kobj = kzalloc(sizeof(struct kobject), GFP_KERNEL);
-+	if (!wi_kobj)
-+		return -ENOMEM;
-+
-+	err = kobject_init_and_add(wi_kobj, &wi_ktype, root_kobj,
-+				   "weighted_interleave");
-+	if (err) {
-+		kfree(wi_kobj);
-+		return err;
-+	}
-+
-+	for_each_node_state(nid, N_POSSIBLE) {
-+		err = add_weight_node(nid, wi_kobj);
-+		if (err) {
-+			pr_err("failed to add sysfs [node%d]\n", nid);
-+			break;
-+		}
-+	}
-+	if (err)
-+		kobject_put(wi_kobj);
-+	return 0;
-+}
-+
-+static void mempolicy_kobj_release(struct kobject *kobj)
-+{
-+	u8 __rcu *old;
-+
-+	mutex_lock(&iw_table_lock);
-+	old = rcu_dereference_protected(iw_table,
-+					lockdep_is_held(&iw_table_lock));
-+	rcu_assign_pointer(iw_table, NULL);
-+	mutex_unlock(&iw_table_lock);
-+	synchronize_rcu();
-+	kfree(old);
-+	kfree(node_attrs);
-+	kfree(kobj);
-+}
-+
-+static const struct kobj_type mempolicy_ktype = {
-+	.release = mempolicy_kobj_release
-+};
-+
-+static int __init mempolicy_sysfs_init(void)
-+{
-+	int err;
-+	static struct kobject *mempolicy_kobj;
-+
-+	mempolicy_kobj = kzalloc(sizeof(*mempolicy_kobj), GFP_KERNEL);
-+	if (!mempolicy_kobj) {
-+		err = -ENOMEM;
-+		goto err_out;
-+	}
-+
-+	node_attrs = kcalloc(nr_node_ids, sizeof(struct iw_node_attr *),
-+			     GFP_KERNEL);
-+	if (!node_attrs) {
-+		err = -ENOMEM;
-+		goto mempol_out;
-+	}
-+
-+	err = kobject_init_and_add(mempolicy_kobj, &mempolicy_ktype, mm_kobj,
-+				   "mempolicy");
-+	if (err)
-+		goto node_out;
-+
-+	err = add_weighted_interleave_group(mempolicy_kobj);
-+	if (err) {
-+		pr_err("mempolicy sysfs structure failed to initialize\n");
-+		kobject_put(mempolicy_kobj);
-+		return err;
-+	}
-+
-+	return err;
-+node_out:
-+	kfree(node_attrs);
-+mempol_out:
-+	kfree(mempolicy_kobj);
-+err_out:
-+	pr_err("failed to add mempolicy kobject to the system\n");
-+	return err;
-+}
-+
-+late_initcall(mempolicy_sysfs_init);
-+#endif /* CONFIG_SYSFS */
+ /*
+  * Do static interleaving for interleave index @ilx.  Returns the ilx'th
+  * node in pol->nodes (starting from ilx=0), wrapping around if ilx
+@@ -1916,20 +1930,12 @@ unsigned int mempolicy_slab_node(void)
+  */
+ static unsigned int interleave_nid(struct mempolicy *pol, pgoff_t ilx)
+ {
+-	nodemask_t nodemask = pol->nodes;
++	nodemask_t nodemask;
+ 	unsigned int target, nnodes;
+ 	int i;
+ 	int nid;
+-	/*
+-	 * The barrier will stabilize the nodemask in a register or on
+-	 * the stack so that it will stop changing under the code.
+-	 *
+-	 * Between first_node() and next_node(), pol->nodes could be changed
+-	 * by other threads. So we put pol->nodes in a local stack.
+-	 */
+-	barrier();
+ 
+-	nnodes = nodes_weight(nodemask);
++	nnodes = read_once_policy_nodemask(pol, &nodemask);
+ 	if (!nnodes)
+ 		return numa_node_id();
+ 	target = ilx % nnodes;
 -- 
 2.39.1
 
