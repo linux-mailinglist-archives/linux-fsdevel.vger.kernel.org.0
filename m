@@ -1,39 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-9527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E8A842433
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 12:56:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77787842440
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 12:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6333628D2D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:56:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1863D1F2DE56
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:58:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F117679F5;
-	Tue, 30 Jan 2024 11:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B0F67E82;
+	Tue, 30 Jan 2024 11:57:37 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D0B67749;
-	Tue, 30 Jan 2024 11:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2309267E7C;
+	Tue, 30 Jan 2024 11:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706615806; cv=none; b=GE0DEj0vdoQUZ/NRlrYl0ZfQzmj9J9C9ExTdhSwD0IcTiAitSQ4nlEtDlpM+XlLJdpfEf0cI471ziWfksfIVr0oU8euZWVLpl3+gFjW3LjbwvL5KgJzB/gXX+FCMocPQWFigBDLCfuv8OenEgDR5sn2NudUI79KYaAeFlXzipRA=
+	t=1706615857; cv=none; b=b4OeyRdcoHU5omYx0j6Mv9c/ZyIUlw4IG/ty3qj1hKfXb1GHaCPhiUdCoobzQ5zHWTgb/ZlpkaQLRkZ3rGOvMXcDn6LVxvj8/MTgscncH7fmm6TGpIeQpjdyXammrE44sXKVVnXes8y+vibAKiaxXip3MIoBQmxTq0oWTyElI0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706615806; c=relaxed/simple;
-	bh=J434d3JUEnJGRx6DbeepNFaekQshHeqk6I1rEBF7TJw=;
+	s=arc-20240116; t=1706615857; c=relaxed/simple;
+	bh=+PL92MEHrH3ZtLrABPR9HFjxEndX5qwgR9BUBrdekIg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a4C41s9efah6td+QuQNn9GLXTVspsC+PXvcAdNljlU+eWFXNc/Xal+/d/xoOFRukS/t76sGzCghINk6noZj/4qYJ5PFK4ogXfYYqdjDt2umDhiM9/W9pJ0X4dk27HNdO48yucxP8lpVCrf5Rq6iQBcxq1BWeTaOjvf1JvCa4wwQ=
+	 Content-Type:Content-Disposition:In-Reply-To; b=VJXH0UhUidL5VqfXu1cqx8UJ33ckB9QVU3pysV1UTwR/7RSSbgRWXqRyCSq+jd2Cygi/BxDDhPkWhBJVtrtTCePspTEOEdk21d2ZKPBFbB/V5TXLwdC2f0Cebt54yU7Hf1MJsB3Oma37ZlzBB0HcDXsyGP4qKDjmaqZQwa9c1ss=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37B73DA7;
-	Tue, 30 Jan 2024 03:57:27 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4EDF3DA7;
+	Tue, 30 Jan 2024 03:58:19 -0800 (PST)
 Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B37A3F762;
-	Tue, 30 Jan 2024 03:56:37 -0800 (PST)
-Date: Tue, 30 Jan 2024 11:56:31 +0000
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 194363F762;
+	Tue, 30 Jan 2024 03:57:29 -0800 (PST)
+Date: Tue, 30 Jan 2024 11:57:23 +0000
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: Anshuman Khandual <anshuman.khandual@arm.com>
 Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
@@ -50,14 +50,14 @@ Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
 	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
 	linux-arch@vger.kernel.org, linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 01/35] mm: page_alloc: Add gfp_flags parameter to
- arch_alloc_page()
-Message-ID: <Zbjj4fin09_TCQp8@raptor>
+Subject: Re: [PATCH RFC v3 04/35] mm: page_alloc: Partially revert "mm:
+ page_alloc: remove stale CMA guard code"
+Message-ID: <ZbjkFujWTs9zqkeD@raptor>
 References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-2-alexandru.elisei@arm.com>
- <de0c74b3-0c7d-4f21-8454-659e8b616ea7@arm.com>
- <ZbePA2dGE6Vs-58t@raptor>
- <3fbfb5fc-83a4-49da-ba75-9b671ffe0569@arm.com>
+ <20240125164256.4147-5-alexandru.elisei@arm.com>
+ <966a1a84-76dc-40da-bde2-251d2a81ee31@arm.com>
+ <ZbeQBDwe8zc_pLDZ@raptor>
+ <3983416f-b613-42c7-bb42-d3ab268ea1be@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,36 +66,43 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3fbfb5fc-83a4-49da-ba75-9b671ffe0569@arm.com>
+In-Reply-To: <3983416f-b613-42c7-bb42-d3ab268ea1be@arm.com>
 
 Hi,
 
-On Tue, Jan 30, 2024 at 09:56:10AM +0530, Anshuman Khandual wrote:
+On Tue, Jan 30, 2024 at 10:04:02AM +0530, Anshuman Khandual wrote:
 > 
 > 
-> On 1/29/24 17:11, Alexandru Elisei wrote:
+> On 1/29/24 17:16, Alexandru Elisei wrote:
 > > Hi,
 > > 
-> > On Mon, Jan 29, 2024 at 11:18:59AM +0530, Anshuman Khandual wrote:
+> > On Mon, Jan 29, 2024 at 02:31:23PM +0530, Anshuman Khandual wrote:
+> >>
+> >>
 > >> On 1/25/24 22:12, Alexandru Elisei wrote:
-> >>> Extend the usefulness of arch_alloc_page() by adding the gfp_flags
-> >>> parameter.
-> >> Although the change here is harmless in itself, it will definitely benefit
-> >> from some additional context explaining the rationale, taking into account
-> >> why-how arch_alloc_page() got added particularly for s390 platform and how
-> >> it's going to be used in the present proposal.
-> > arm64 will use it to reserve tag storage if the caller requested a tagged
-> > page. Right now that means that __GFP_ZEROTAGS is set in the gfp mask, but
-> > I'll rename it to __GFP_TAGGED in patch #18 ("arm64: mte: Rename
-> > __GFP_ZEROTAGS to __GFP_TAGGED") [1].
+> >>> The patch f945116e4e19 ("mm: page_alloc: remove stale CMA guard code")
+> >>> removed the CMA filter when allocating from the MIGRATE_MOVABLE pcp list
+> >>> because CMA is always allowed when __GFP_MOVABLE is set.
+> >>>
+> >>> With the introduction of the arch_alloc_cma() function, the above is not
+> >>> true anymore, so bring back the filter.
+> >>
+> >> This makes sense as arch_alloc_cma() now might prevent ALLOC_CMA being
+> >> assigned to alloc_flags in gfp_to_alloc_flags_cma().
 > > 
-> > [1] https://lore.kernel.org/lkml/20240125164256.4147-19-alexandru.elisei@arm.com/
+> > Can I add your Reviewed-by tag then?
 > 
-> Makes sense, but please do update the commit message explaining how
-> new gfp mask argument will be used to detect tagged page allocation
-> requests, further requiring tag storage allocation.
+> I think all these changes need to be reviewed in their entirety
+> even though some patches do look good on their own. For example
+> this patch depends on whether [PATCH 03/35] is acceptable or not.
+> 
+> I would suggest separating out CMA patches which could be debated
+> and merged regardless of this series.
 
-Will do, thanks!
+Ah, I see, makes sense. Since basically all the core mm changes are there
+to enable dynamic tag storage for arm64, I'll hold on until the series
+stabilises before separating the core mm from the arm64 patches.
 
+Thanks,
 Alex
 
