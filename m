@@ -1,39 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-9520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05209842325
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 12:33:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2896884232C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 12:34:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D1841F23816
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C6D91C23D38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C3F467736;
-	Tue, 30 Jan 2024 11:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB5B6773B;
+	Tue, 30 Jan 2024 11:34:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C921467729;
-	Tue, 30 Jan 2024 11:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023C867727;
+	Tue, 30 Jan 2024 11:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706614404; cv=none; b=vBzUC+BEpEn4n84TB1XHk6ndbtuKx/8SUpu0Y01pRWorOAz2MHe/TaYGCHCcw8zlqI7uCvheXTfC2ba0zBXQTl7/rcQaSo6afq1KPpE/PfJ4fluH/nWc4SBj+Coz+4JZJ2RRJZFx0CS/RVM64Y8qgnlQnEvR371rAH9vTKcw4E4=
+	t=1706614465; cv=none; b=jvb4vRVd3/cWRZpM11vzeAI7uu6U2nJwBV67vZJI+UMt1SnEbReCmnNPTT2XDBcAvE4riVhoHl45zC6a2W82HQvZbvgFZOf1awAQh/jzeZn+Zj0w8+qgsoVrEgiUxI0+4fVsoV2WN0dD8hKmbsRm4v+fgCG7KQsncsWKn/FSOEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706614404; c=relaxed/simple;
-	bh=iYeZRBQMYetEM+TK5yHlgX6GcwqR9jGOdY9NNlijHeI=;
+	s=arc-20240116; t=1706614465; c=relaxed/simple;
+	bh=pAjrTyzRe9rW0CRcO2ECOckHgmDhMEmf2G6If/XzA94=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JnNG0P5FvhwG3Cd6UOqZaR8H4RrXt5Ai5rtYR5pcSG1+OUDNtl8fG1Sudeydh9SonyCekVNIRJS0kshi/87l9HhXQWOxWAioaM63XfDFHOs6gGscT2BLoqO2eg62Gv8jgQjLdFf6wwaVijkgzkpI/vUeWWztgrI+psLwdgIjdTA=
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBpuuWEY21q4qUtWJGcsoZf1qJOfKKkMPj7McQhYVtd2khNqexUejv+ll8blVVFtrQ9vlnoQV3g1te46sAp+RYtGDFgNaukL8fnlnRGokSDfM2vPKdIgfPEQzkNcnT0qCvivFKzlGdbx8A8N6F0KqxDlBRMIcT9Z8yfuiRKNi9A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 121DBDA7;
-	Tue, 30 Jan 2024 03:34:03 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 27850DA7;
+	Tue, 30 Jan 2024 03:35:05 -0800 (PST)
 Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA3D43F5A1;
-	Tue, 30 Jan 2024 03:33:13 -0800 (PST)
-Date: Tue, 30 Jan 2024 11:33:07 +0000
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 092573F5A1;
+	Tue, 30 Jan 2024 03:34:15 -0800 (PST)
+Date: Tue, 30 Jan 2024 11:34:13 +0000
 From: Alexandru Elisei <alexandru.elisei@arm.com>
 To: Anshuman Khandual <anshuman.khandual@arm.com>
 Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
@@ -50,11 +50,12 @@ Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
 	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
 	linux-arch@vger.kernel.org, linux-mm@kvack.org,
 	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 09/35] mm: cma: Introduce cma_remove_mem()
-Message-ID: <ZbjecxWRUrBfOEdn@raptor>
+Subject: Re: [PATCH RFC v3 10/35] mm: cma: Fast track allocating memory when
+ the pages are free
+Message-ID: <ZbjetR3La_qObrVx@raptor>
 References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-10-alexandru.elisei@arm.com>
- <830691cf-cb96-443e-b6eb-2adfe2edd587@arm.com>
+ <20240125164256.4147-11-alexandru.elisei@arm.com>
+ <598c9762-83b3-4517-858c-8349d6dceec2@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,199 +64,298 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <830691cf-cb96-443e-b6eb-2adfe2edd587@arm.com>
+In-Reply-To: <598c9762-83b3-4517-858c-8349d6dceec2@arm.com>
 
 Hi,
 
-I really appreciate the feedback you have given me so far. I believe the
-commit message isn't clear enough and there has been a confusion.
-
-A CMA user adds a CMA area to the cma_areas array with
-cma_declare_contiguous_nid() or cma_init_reserved_mem().
-init_cma_reserved_pageblock() then iterates over the array and activates
-all cma areas.
-
-The function cma_remove_mem() is intended to be used to remove a cma area
-from the cma_areas array **before** the area has been activated.
-
-Usecase: a driver (in this case, the arm64 dynamic tag storage code)
-manages several cma areas. The driver successfully adds the first area to
-the cma_areas array. When the driver tries to adds the second area, the
-function fails. Without cma_remove_mem(), the driver has no way to prevent
-the first area from being freed to the page allocator. cma_remove_mem() is
-about providing a means to do cleanup in case of error.
-
-Does that make more sense now?
-
-Ok Tue, Jan 30, 2024 at 11:20:56AM +0530, Anshuman Khandual wrote:
+On Tue, Jan 30, 2024 at 02:48:53PM +0530, Anshuman Khandual wrote:
 > 
 > 
 > On 1/25/24 22:12, Alexandru Elisei wrote:
-> > Memory is added to CMA with cma_declare_contiguous_nid() and
-> > cma_init_reserved_mem(). This memory is then put on the MIGRATE_CMA list in
-> > cma_init_reserved_areas(), where the page allocator can make use of it.
-> 
-> cma_declare_contiguous_nid() reserves memory in memblock and marks the
-
-You forgot about about cma_init_reserved_mem() which does the same thing,
-but yes, you are right.
-
-> for subsequent CMA usage, where as cma_init_reserved_areas() activates
-> these memory areas through init_cma_reserved_pageblock(). Standard page
-> allocator only receives these memory via free_reserved_page() - only if
-
-I don't think that's correct. init_cma_reserved_pageblock() clears the
-PG_reserved page flag, sets the migratetype to MIGRATE_CMA and then frees
-the page. After that, the page is available to the standard page allocator
-to use for allocation. Otherwise, what would be the point of the
-MIGRATE_CMA migratetype?
-
-> the page block activation fails.
-
-For the sake of having a complete picture, I'll add that that only happens
-if cma->reserve_pages_on_error is false. If the CMA user sets the field to
-'true' (with cma_reserve_pages_on_error()), then the pages in the CMA
-region are kept PG_reserved if activation fails.
-
-> 
+> > If the pages to be allocated are free, take them directly off the buddy
+> > allocator, instead of going through alloc_contig_range() and avoiding
+> > costly calls to lru_cache_disable().
 > > 
-> > If a device manages multiple CMA areas, and there's an error when one of
-> > the areas is added to CMA, there is no mechanism for the device to prevent
-> 
-> What kind of error ? init_cma_reserved_pageblock() fails ? But that will
-> not happen until cma_init_reserved_areas().
-
-I think I haven't been clear enough. When I say that "an area is added
-to CMA", I mean that the memory region is added to cma_areas array, via
-cma_declare_contiguous_nid() or cma_init_reserved_mem(). There are several
-ways in which either function can fail.
-
-> 
-> > the rest of the areas, which were added before the error occured, from
-> > being later added to the MIGRATE_CMA list.
-> 
-> Why is this mechanism required ? cma_init_reserved_areas() scans over all
-> CMA areas and try and activate each of them sequentially. Why is not this
-> sufficient ?
-
-This patch is about removing a struct cma from the cma_areas array after it
-has been added to the array, with cma_declare_contiguous_nid() or
-cma_init_reserved_mem(), to prevent the area from being activated in
-cma_init_reserved_areas(). Sorry for the confusion.
-
-I'll add a check in cma_remove_mem() to fail if the cma area has been
-activated, and a comment to the function to explain its usage.
-
-> 
-> > 
-> > Add cma_remove_mem() which allows a previously reserved CMA area to be
-> > removed and thus it cannot be used by the page allocator.
-> 
-> Successfully activated CMA areas do not get used by the buddy allocator.
-
-I don't believe that is correct, see above.
-
-> 
+> > Only allocations of the same size as the CMA region order are considered,
+> > to avoid taking the zone spinlock for too long.
 > > 
 > > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> 
+> This patch seems to be improving standard cma_alloc() as well as
+> the previously added new allocator i.e cma_alloc_range() - via a
+> new helper cma_alloc_pages_fastpath().
+
+Yes, that's correct.
+
+> 
+> Should not any standard cma_alloc() improvement be discussed as
+> an independent patch separately irrespective of this series. OR
+> it is some how related to this series which I might be missing ?
+
+Yes, it's related to this series. I wrote this patch because it fixes a
+performance regression with Chrome when dynamic tag storage management is
+enabled [1]. I will bring back the commit message explaining that.
+
+[1] https://lore.kernel.org/linux-fsdevel/20231119165721.9849-27-alexandru.elisei@arm.com/
+
+Thanks,
+Alex
+
+> 
 > > ---
 > > 
 > > Changes since rfc v2:
 > > 
-> > * New patch.
+> > * New patch. Reworked from the rfc v2 patch #26 ("arm64: mte: Fast track
+> > reserving tag storage when the block is free") (David Hildenbrand).
 > > 
-> >  include/linux/cma.h |  1 +
-> >  mm/cma.c            | 30 +++++++++++++++++++++++++++++-
-> >  2 files changed, 30 insertions(+), 1 deletion(-)
+> >  include/linux/page-flags.h | 15 ++++++++++++--
+> >  mm/Kconfig                 |  5 +++++
+> >  mm/cma.c                   | 42 ++++++++++++++++++++++++++++++++++----
+> >  mm/memory-failure.c        |  8 ++++----
+> >  mm/page_alloc.c            | 23 ++++++++++++---------
+> >  5 files changed, 73 insertions(+), 20 deletions(-)
 > > 
-> > diff --git a/include/linux/cma.h b/include/linux/cma.h
-> > index e32559da6942..787cbec1702e 100644
-> > --- a/include/linux/cma.h
-> > +++ b/include/linux/cma.h
-> > @@ -48,6 +48,7 @@ extern int cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
-> >  					unsigned int order_per_bit,
-> >  					const char *name,
-> >  					struct cma **res_cma);
-> > +extern void cma_remove_mem(struct cma **res_cma);
-> >  extern struct page *cma_alloc(struct cma *cma, unsigned long count, unsigned int align,
-> >  			      bool no_warn);
-> >  extern int cma_alloc_range(struct cma *cma, unsigned long start, unsigned long count,
+> > diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> > index 735cddc13d20..b7237bce7446 100644
+> > --- a/include/linux/page-flags.h
+> > +++ b/include/linux/page-flags.h
+> > @@ -575,11 +575,22 @@ TESTSCFLAG(HWPoison, hwpoison, PF_ANY)
+> >  #define MAGIC_HWPOISON	0x48575053U	/* HWPS */
+> >  extern void SetPageHWPoisonTakenOff(struct page *page);
+> >  extern void ClearPageHWPoisonTakenOff(struct page *page);
+> > -extern bool take_page_off_buddy(struct page *page);
+> > -extern bool put_page_back_buddy(struct page *page);
+> > +extern bool PageHWPoisonTakenOff(struct page *page);
+> >  #else
+> >  PAGEFLAG_FALSE(HWPoison, hwpoison)
+> > +TESTSCFLAG_FALSE(HWPoison, hwpoison)
+> >  #define __PG_HWPOISON 0
+> > +static inline void SetPageHWPoisonTakenOff(struct page *page) { }
+> > +static inline void ClearPageHWPoisonTakenOff(struct page *page) { }
+> > +static inline bool PageHWPoisonTakenOff(struct page *page)
+> > +{
+> > +      return false;
+> > +}
+> > +#endif
+> > +
+> > +#ifdef CONFIG_WANTS_TAKE_PAGE_OFF_BUDDY
+> > +extern bool take_page_off_buddy(struct page *page, bool poison);
+> > +extern bool put_page_back_buddy(struct page *page, bool unpoison);
+> >  #endif
+> >  
+> >  #if defined(CONFIG_PAGE_IDLE_FLAG) && defined(CONFIG_64BIT)
+> > diff --git a/mm/Kconfig b/mm/Kconfig
+> > index ffc3a2ba3a8c..341cf53898db 100644
+> > --- a/mm/Kconfig
+> > +++ b/mm/Kconfig
+> > @@ -745,12 +745,16 @@ config DEFAULT_MMAP_MIN_ADDR
+> >  config ARCH_SUPPORTS_MEMORY_FAILURE
+> >  	bool
+> >  
+> > +config WANTS_TAKE_PAGE_OFF_BUDDY
+> > +	bool> +
+> >  config MEMORY_FAILURE
+> >  	depends on MMU
+> >  	depends on ARCH_SUPPORTS_MEMORY_FAILURE
+> >  	bool "Enable recovery from hardware memory errors"
+> >  	select MEMORY_ISOLATION
+> >  	select RAS
+> > +	select WANTS_TAKE_PAGE_OFF_BUDDY
+> >  	help
+> >  	  Enables code to recover from some memory failures on systems
+> >  	  with MCA recovery. This allows a system to continue running
+> > @@ -891,6 +895,7 @@ config CMA
+> >  	depends on MMU
+> >  	select MIGRATION
+> >  	select MEMORY_ISOLATION
+> > +	select WANTS_TAKE_PAGE_OFF_BUDDY
+> >  	help
+> >  	  This enables the Contiguous Memory Allocator which allows other
+> >  	  subsystems to allocate big physically-contiguous blocks of memory.
 > > diff --git a/mm/cma.c b/mm/cma.c
-> > index 4a0f68b9443b..2881bab12b01 100644
+> > index 2881bab12b01..15663f95d77b 100644
 > > --- a/mm/cma.c
 > > +++ b/mm/cma.c
-> > @@ -147,8 +147,12 @@ static int __init cma_init_reserved_areas(void)
-> >  {
-> >  	int i;
+> > @@ -444,6 +444,34 @@ static void cma_debug_show_areas(struct cma *cma)
+> >  static inline void cma_debug_show_areas(struct cma *cma) { }
+> >  #endif
 > >  
-> > -	for (i = 0; i < cma_area_count; i++)
-> > +	for (i = 0; i < cma_area_count; i++) {
-> > +		/* Region was removed. */
-> > +		if (!cma_areas[i].count)
-> > +			continue;
-> 
-> Skip previously added CMA area (now zeroed out) ?
-
-Yes, that's what I meant with the comment "Region was removed". Do you
-think I should reword the comment?
-
-> 
-> >  		cma_activate_area(&cma_areas[i]);
-> > +	}
-> >  
-> >  	return 0;
-> >  }
-> 
-> cma_init_reserved_areas() gets called via core_initcall(). Some how
-> platform/device needs to call cma_remove_mem() before core_initcall()
-> gets called ? This might be time sensitive.
-
-I don't understand your point.
-
-> 
-> > @@ -216,6 +220,30 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
-> >  	return 0;
-> >  }
-> >  
-> > +/**
-> > + * cma_remove_mem() - remove cma area
-> > + * @res_cma: Pointer to the cma region.
-> > + *
-> > + * This function removes a cma region created with cma_init_reserved_mem(). The
-> > + * ->count is set to 0.
-> > + */
-> > +void __init cma_remove_mem(struct cma **res_cma)
+> > +/* Called with the cma mutex held. */
+> > +static int cma_alloc_pages_fastpath(struct cma *cma, unsigned long start,
+> > +				    unsigned long end)
 > > +{
-> > +	struct cma *cma;
+> > +	bool success = false;
+> > +	unsigned long i, j;
 > > +
-> > +	if (WARN_ON_ONCE(!res_cma || !(*res_cma)))
-> > +		return;
+> > +	/* Avoid contention on the zone lock. */
+> > +	if (start - end != 1 << cma->order_per_bit)
+> > +		return -EINVAL;
 > > +
-> > +	cma = *res_cma;
-> > +	if (WARN_ON_ONCE(!cma->count))
-> > +		return;
+> > +	for (i = start; i < end; i++) {
+> > +		if (!is_free_buddy_page(pfn_to_page(i)))
+> > +			break;
+> > +		success = take_page_off_buddy(pfn_to_page(i), false);
+> > +		if (!success)
+> > +			break;
+> > +	}
 > > +
-> > +	totalcma_pages -= cma->count;
-> > +	cma->count = 0;
+> > +	if (success)
+> > +		return 0;
 > > +
-> > +	*res_cma = NULL;
+> > +	for (j = start; j < i; j++)
+> > +		put_page_back_buddy(pfn_to_page(j), false);
+> > +
+> > +	return -EBUSY;
 > > +}
 > > +
 > >  /**
-> >   * cma_declare_contiguous_nid() - reserve custom contiguous area
-> >   * @base: Base address of the reserved area optional, use 0 for any
-> 
-> But first please do explain what are the errors device or platform might
-
-cma_declare_contiguous_nid() and cma_init_reserved_mem() can fail in a
-number of ways, the code should be self documenting.
-
-> see on a previously marked CMA area so that removing them on way becomes
-> necessary preventing their activation via cma_init_reserved_areas().
-
-I've described how the function is supposed to be used at the top of my
-reply.
-
-Thanks,
-Alex
+> >   * cma_alloc_range() - allocate pages in a specific range
+> >   * @cma:   Contiguous memory region for which the allocation is performed.
+> > @@ -493,7 +521,11 @@ int cma_alloc_range(struct cma *cma, unsigned long start, unsigned long count,
+> >  
+> >  	for (i = 0; i < tries; i++) {
+> >  		mutex_lock(&cma_mutex);
+> > -		err = alloc_contig_range(start, start + count, MIGRATE_CMA, gfp);
+> > +		err = cma_alloc_pages_fastpath(cma, start, start + count);
+> > +		if (err) {
+> > +			err = alloc_contig_range(start, start + count,
+> > +						 MIGRATE_CMA, gfp);
+> > +		}
+> >  		mutex_unlock(&cma_mutex);
+> >  
+> >  		if (err != -EBUSY)
+> > @@ -529,7 +561,6 @@ int cma_alloc_range(struct cma *cma, unsigned long start, unsigned long count,
+> >  	return err;
+> >  }
+> >  
+> > -
+> >  /**
+> >   * cma_alloc() - allocate pages from contiguous area
+> >   * @cma:   Contiguous memory region for which the allocation is performed.
+> > @@ -589,8 +620,11 @@ struct page *cma_alloc(struct cma *cma, unsigned long count,
+> >  
+> >  		pfn = cma->base_pfn + (bitmap_no << cma->order_per_bit);
+> >  		mutex_lock(&cma_mutex);
+> > -		ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA,
+> > -				     GFP_KERNEL | (no_warn ? __GFP_NOWARN : 0));
+> > +		ret = cma_alloc_pages_fastpath(cma, pfn, pfn + count);
+> > +		if (ret) {
+> > +			ret = alloc_contig_range(pfn, pfn + count, MIGRATE_CMA,
+> > +					GFP_KERNEL | (no_warn ? __GFP_NOWARN : 0));
+> > +		}
+> >  		mutex_unlock(&cma_mutex);
+> >  		if (ret == 0) {
+> >  			page = pfn_to_page(pfn);
+> > diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+> > index 4f9b61f4a668..b87b533a9871 100644
+> > --- a/mm/memory-failure.c
+> > +++ b/mm/memory-failure.c
+> > @@ -157,7 +157,7 @@ static int __page_handle_poison(struct page *page)
+> >  	zone_pcp_disable(page_zone(page));
+> >  	ret = dissolve_free_huge_page(page);
+> >  	if (!ret)
+> > -		ret = take_page_off_buddy(page);
+> > +		ret = take_page_off_buddy(page, true);
+> >  	zone_pcp_enable(page_zone(page));
+> >  
+> >  	return ret;
+> > @@ -1353,7 +1353,7 @@ static int page_action(struct page_state *ps, struct page *p,
+> >  	return action_result(pfn, ps->type, result);
+> >  }
+> >  
+> > -static inline bool PageHWPoisonTakenOff(struct page *page)
+> > +bool PageHWPoisonTakenOff(struct page *page)
+> >  {
+> >  	return PageHWPoison(page) && page_private(page) == MAGIC_HWPOISON;
+> >  }
+> > @@ -2247,7 +2247,7 @@ int memory_failure(unsigned long pfn, int flags)
+> >  		res = get_hwpoison_page(p, flags);
+> >  		if (!res) {
+> >  			if (is_free_buddy_page(p)) {
+> > -				if (take_page_off_buddy(p)) {
+> > +				if (take_page_off_buddy(p, true)) {
+> >  					page_ref_inc(p);
+> >  					res = MF_RECOVERED;
+> >  				} else {
+> > @@ -2578,7 +2578,7 @@ int unpoison_memory(unsigned long pfn)
+> >  		ret = folio_test_clear_hwpoison(folio) ? 0 : -EBUSY;
+> >  	} else if (ghp < 0) {
+> >  		if (ghp == -EHWPOISON) {
+> > -			ret = put_page_back_buddy(p) ? 0 : -EBUSY;
+> > +			ret = put_page_back_buddy(p, true) ? 0 : -EBUSY;
+> >  		} else {
+> >  			ret = ghp;
+> >  			unpoison_pr_info("Unpoison: failed to grab page %#lx\n",
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 0fa34bcfb1af..502ee3eb8583 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -6655,7 +6655,7 @@ bool is_free_buddy_page(struct page *page)
+> >  }
+> >  EXPORT_SYMBOL(is_free_buddy_page);
+> >  
+> > -#ifdef CONFIG_MEMORY_FAILURE
+> > +#ifdef CONFIG_WANTS_TAKE_PAGE_OFF_BUDDY
+> >  /*
+> >   * Break down a higher-order page in sub-pages, and keep our target out of
+> >   * buddy allocator.
+> > @@ -6687,9 +6687,9 @@ static void break_down_buddy_pages(struct zone *zone, struct page *page,
+> >  }
+> >  
+> >  /*
+> > - * Take a page that will be marked as poisoned off the buddy allocator.
+> > + * Take a page off the buddy allocator, and optionally mark it as poisoned.
+> >   */
+> > -bool take_page_off_buddy(struct page *page)
+> > +bool take_page_off_buddy(struct page *page, bool poison)
+> >  {
+> >  	struct zone *zone = page_zone(page);
+> >  	unsigned long pfn = page_to_pfn(page);
+> > @@ -6710,7 +6710,8 @@ bool take_page_off_buddy(struct page *page)
+> >  			del_page_from_free_list(page_head, zone, page_order);
+> >  			break_down_buddy_pages(zone, page_head, page, 0,
+> >  						page_order, migratetype);
+> > -			SetPageHWPoisonTakenOff(page);
+> > +			if (poison)
+> > +				SetPageHWPoisonTakenOff(page);
+> >  			if (!is_migrate_isolate(migratetype))
+> >  				__mod_zone_freepage_state(zone, -1, migratetype);
+> >  			ret = true;
+> > @@ -6724,9 +6725,10 @@ bool take_page_off_buddy(struct page *page)
+> >  }
+> >  
+> >  /*
+> > - * Cancel takeoff done by take_page_off_buddy().
+> > + * Cancel takeoff done by take_page_off_buddy(), and optionally unpoison the
+> > + * page.
+> >   */
+> > -bool put_page_back_buddy(struct page *page)
+> > +bool put_page_back_buddy(struct page *page, bool unpoison)
+> >  {
+> >  	struct zone *zone = page_zone(page);
+> >  	unsigned long pfn = page_to_pfn(page);
+> > @@ -6736,17 +6738,18 @@ bool put_page_back_buddy(struct page *page)
+> >  
+> >  	spin_lock_irqsave(&zone->lock, flags);
+> >  	if (put_page_testzero(page)) {
+> > -		ClearPageHWPoisonTakenOff(page);
+> > +		VM_WARN_ON_ONCE(PageHWPoisonTakenOff(page) && !unpoison);
+> > +		if (unpoison)
+> > +			ClearPageHWPoisonTakenOff(page);
+> >  		__free_one_page(page, pfn, zone, 0, migratetype, FPI_NONE);
+> > -		if (TestClearPageHWPoison(page)) {
+> > +		if (!unpoison || (unpoison && TestClearPageHWPoison(page)))
+> >  			ret = true;
+> > -		}
+> >  	}
+> >  	spin_unlock_irqrestore(&zone->lock, flags);
+> >  
+> >  	return ret;
+> >  }
+> > -#endif
+> > +#endif /* CONFIG_WANTS_TAKE_PAGE_OFF_BUDDY */
+> >  
+> >  #ifdef CONFIG_ZONE_DMA
+> >  bool has_managed_dma(void)
 
