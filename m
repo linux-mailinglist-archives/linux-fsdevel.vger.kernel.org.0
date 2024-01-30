@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-9580-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9581-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32031842F0D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 22:51:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB893842F10
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 22:51:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7C5C1F24BEB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 21:51:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9897D28474A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 21:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F09156985;
-	Tue, 30 Jan 2024 21:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DBD16275F;
+	Tue, 30 Jan 2024 21:50:00 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C431412BF02;
-	Tue, 30 Jan 2024 21:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE7778671;
+	Tue, 30 Jan 2024 21:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706651399; cv=none; b=Dl8jMG9HfeGTa3D2e2wLnSKKUyE4ONS3zAqeTbeyquQ00Z0V2H7M1C9kT6CN1szA5YCLUcuH6vIgt/5d2vA2dMIXgIEpYqIObi/6iL0z7FlyE+4hpRpwHXwLcfiCnvNQ55GrC7F0+YlDXuf9wDXaVt4PUpALVsI38TihWMEwQis=
+	t=1706651400; cv=none; b=oUGn5ThINWzKknzRgSje9oRd32xWVSbl7KX7RdednUXofEtYeyApLTrYNleFgWAjvI/VdLoKZsPJ3QoaZkmPtXNasFo+YGSHuer5RK9pxR1gO4nvISmipzfEtlmTE+rSSjKr8VkRrK7zpiogzoudG3Ifh9uYYfLTu8JQKBGSS6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706651399; c=relaxed/simple;
-	bh=9j1OIZejLefmmKyhnYsUFGpVmUAOqH5O/Vj6lACD6GY=;
+	s=arc-20240116; t=1706651400; c=relaxed/simple;
+	bh=ReoAgyArusvAYBEY1Dxq9pKXMLzy1yk/3CyhJgGq2xw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SLej8D6NsKGaGy6P6pDpQ58F20qvlxNRm+eEQYlzTEsHCF0YeLfENvjENTDH9AGzMvbdxY19+OMW7Yeg8olHo0inZF3gcFfHYJj3QS7DvKGXUqnS+9AvIUD5hFTgXkFRFfDRbExsLheAhC4VbftB8SH79Un21tp9c9WnRcn2rIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.169
+	 MIME-Version; b=UoWqD3d8K9hT7HEz9fACqek1BvF9avk839XLlXjScE31RYyhIAgbWr4xqMOuyzVXH5WdX8V2RpxRtJ+167w+1wpp2IH/NAroF1sRrN/1CTt00W8zm/DoKrkJkmHuejneJiDM5i7vV1g1x9hN23rJ7VUPmmo/KPcYQ23hEs4kLdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3be3753e002so1383157b6e.1;
-        Tue, 30 Jan 2024 13:49:57 -0800 (PST)
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-6de0ba30994so186607b3a.1;
+        Tue, 30 Jan 2024 13:49:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706651397; x=1707256197;
+        d=1e100.net; s=20230601; t=1706651398; x=1707256198;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=X5N8iE07qnVQFaiEZk1v63nlXY8tM38tqiHwS7uEhgk=;
-        b=CLDkxBvniIe5ln7H62bcasmkRPFWIVfRUVaDfKiVRg8ssMRi21J1Ae88dXwiuMKsVu
-         ipDfBcyIIe0sQvLsQwTVgUKequtA1u2B7mPjaeu5W4XbnUrpJldtmQtheEmyFp2hf914
-         hHnwdqeQ8zPGYcUylrWWV9Ih5r03/oc5QEwkDZIPZkPZ2fuEULCds0Wch9zyEjvXt0hL
-         k4XB/IDc3sTv72nsArcI1EbuswsHECaWXNOXEJD5sHgLvnvmFmCsVDHsKnq2N9e/eqAw
-         pfB0s5CU2yuIwTEWrmBlKlcMOn9gZ/TV38pOccDo3tGYzD1mxIDxBSL9UW4znEwGUBrR
-         kGLA==
-X-Gm-Message-State: AOJu0YxBOZ7q9Qsm0Q8OjbvhZh5FEWBE+JaWIs72CQPBMejZSLtW6UcH
-	QJl7HvGFvb0cgIaqwsHtTGKugWPSXRpOkVPtHRKf5IhqCeKGVXyXJ3f/eNgM
-X-Google-Smtp-Source: AGHT+IFE3BIOzwvLSsV+kvt7BtyyloFOHaDK1gQ4rlFxi1Bhg2GzDq+SIbHnnzonrCQ21RxHju4DZQ==
-X-Received: by 2002:a05:6358:2c83:b0:178:70ac:5a4f with SMTP id l3-20020a0563582c8300b0017870ac5a4fmr5826413rwm.27.1706651396766;
-        Tue, 30 Jan 2024 13:49:56 -0800 (PST)
+        bh=2qSkiYLEpndgk91NEKVImgnQ0iTk/12SnGdfVXY3CVY=;
+        b=GOdZDrgycvrOafF54VIkAobKUd9F7Zgx2srP4nYLOomFTpwFJkllD4ZZ4/DCjBni9b
+         doovKo/soBJa910s5s+z07Wdcl8jzJLArFf3Sr+eqr7Ey6UjAMfFJS4Mpteu4vr6Pvwb
+         YRuv9rg/VI2xN2/RMmCGxBFWLWQn45YtDjgTCvK96oEU+Z+yrrdZO1qgaD2FR2DhJ4wO
+         4M9VH3Vg6dscI4d7MmFPlOmsk6EpylNvGHuLp1UCPH7sqA57XExVSF9lu5XAhbo9atRK
+         JFEl/6ILEJvRIS7+dbcGLBZwCnDWnB4f31232x6huBFCcjVhKQZSeXb11Yh0OXoiEA7v
+         w5/A==
+X-Gm-Message-State: AOJu0YwrAcOET7dST7WuyMgaaajN43Ttdd/xyA5jRi/qGgnnYu0uEUcJ
+	EFQzMtHj2Tp5S7W20VbhWfgU2tYSEf6LgtoWQPeOI1Pn73oNtO+X
+X-Google-Smtp-Source: AGHT+IHgH41lIf+K9v0jjF+4UajBXpzgWhN3dMHv2rFxF7TEQ8FTFb+wqWSVmwWTswZNWbnsMfTJ9w==
+X-Received: by 2002:a05:6a00:b52:b0:6da:ca92:3e2e with SMTP id p18-20020a056a000b5200b006daca923e2emr2672584pfo.7.1706651398204;
+        Tue, 30 Jan 2024 13:49:58 -0800 (PST)
 Received: from bvanassche-linux.mtv.corp.google.com ([2620:0:1000:8411:f45c:fd18:bfa0:e084])
-        by smtp.gmail.com with ESMTPSA id k14-20020aa7998e000000b006db87354a8fsm8285597pfh.119.2024.01.30.13.49.55
+        by smtp.gmail.com with ESMTPSA id k14-20020aa7998e000000b006db87354a8fsm8285597pfh.119.2024.01.30.13.49.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jan 2024 13:49:56 -0800 (PST)
+        Tue, 30 Jan 2024 13:49:57 -0800 (PST)
 From: Bart Van Assche <bvanassche@acm.org>
 To: "Martin K . Petersen" <martin.petersen@oracle.com>
 Cc: linux-scsi@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc: linux-scsi@vger.kernel.org,
 	Bart Van Assche <bvanassche@acm.org>,
 	Douglas Gilbert <dgilbert@interlog.com>,
 	"James E.J. Bottomley" <jejb@linux.ibm.com>
-Subject: [PATCH v9 13/19] scsi: scsi_debug: Support the block limits extension VPD page
-Date: Tue, 30 Jan 2024 13:48:39 -0800
-Message-ID: <20240130214911.1863909-14-bvanassche@acm.org>
+Subject: [PATCH v9 14/19] scsi: scsi_debug: Rework page code error handling
+Date: Tue, 30 Jan 2024 13:48:40 -0800
+Message-ID: <20240130214911.1863909-15-bvanassche@acm.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240130214911.1863909-1-bvanassche@acm.org>
 References: <20240130214911.1863909-1-bvanassche@acm.org>
@@ -78,84 +78,83 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From SBC-5 r05:
-
-"Reduced stream control:
-a) reduces the maximum number of streams that the device server supports;
-   and
-b) increases the number of write commands that are able to specify a stream
-   to be written in any write command that contains the GROUP NUMBER field
-   in its CDB.
-
-If the RSCS bit (see 6.6.5) is set to one, then the device server shall:
-a) support per group stream identifier usage as described in 4.32.2;
-b) support the IO Advice Hints Grouping mode page (see 6.5.7); and
-c) set the MAXIMUM NUMBER OF STREAMS field (see 6.6.5) to a value that is
-   less than 64.
-
-Device servers that set the RSCS bit to one may support other features
-(e.g., permanent streams (see 4.32.4)).
-
-4.32.4 Permanent streams
-
-A permanent stream is a stream for which the device server does not allow
-closing or otherwise modifying the configuration of that stream. The PERM
-bit (see 5.9.2.3) indicates whether a stream is a permanent stream. If a
-STREAM CONTROL command (see 5.32) specifies the closing of a permanent
-stream, the device server terminates that command with CHECK CONDITION
-status instead of closing the specified stream. A permanent stream is always
-an open stream. Device severs should assign the lowest numbered stream
-identifiers to permanent streams."
-
-Report that reduced stream control is supported.
+Instead of tracking whether or not the page code is valid in a boolean
+variable, jump to error handling code if an unsupported page code is
+encountered.
 
 Cc: Martin K. Petersen <martin.petersen@oracle.com>
 Cc: Douglas Gilbert <dgilbert@interlog.com>
 Tested-by: Douglas Gilbert <dgilbert@interlog.com>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- drivers/scsi/scsi_debug.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/scsi/scsi_debug.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
-index 994a2b829b94..8dba838ef983 100644
+index 8dba838ef983..ba0a29e6a86d 100644
 --- a/drivers/scsi/scsi_debug.c
 +++ b/drivers/scsi/scsi_debug.c
-@@ -1867,6 +1867,19 @@ static int inquiry_vpd_b6(struct sdebug_dev_info *devip, unsigned char *arr)
- 	return 0x3c;
+@@ -2644,7 +2644,7 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+ 	unsigned char *ap;
+ 	unsigned char arr[SDEBUG_MAX_MSENSE_SZ];
+ 	unsigned char *cmd = scp->cmnd;
+-	bool dbd, llbaa, msense_6, is_disk, is_zbc, bad_pcode;
++	bool dbd, llbaa, msense_6, is_disk, is_zbc;
+ 
+ 	dbd = !!(cmd[1] & 0x8);		/* disable block descriptors */
+ 	pcontrol = (cmd[2] & 0xc0) >> 6;
+@@ -2708,7 +2708,6 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+ 		mk_sense_invalid_fld(scp, SDEB_IN_CDB, 3, -1);
+ 		return check_condition_result;
+ 	}
+-	bad_pcode = false;
+ 
+ 	switch (pcode) {
+ 	case 0x1:	/* Read-Write error recovery page, direct access */
+@@ -2723,15 +2722,17 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+ 		if (is_disk) {
+ 			len = resp_format_pg(ap, pcontrol, target);
+ 			offset += len;
+-		} else
+-			bad_pcode = true;
++		} else {
++			goto bad_pcode;
++		}
+ 		break;
+ 	case 0x8:	/* Caching page, direct access */
+ 		if (is_disk || is_zbc) {
+ 			len = resp_caching_pg(ap, pcontrol, target);
+ 			offset += len;
+-		} else
+-			bad_pcode = true;
++		} else {
++			goto bad_pcode;
++		}
+ 		break;
+ 	case 0xa:	/* Control Mode page, all devices */
+ 		len = resp_ctrl_m_pg(ap, pcontrol, target);
+@@ -2784,18 +2785,17 @@ static int resp_mode_sense(struct scsi_cmnd *scp,
+ 		}
+ 		break;
+ 	default:
+-		bad_pcode = true;
+-		break;
+-	}
+-	if (bad_pcode) {
+-		mk_sense_invalid_fld(scp, SDEB_IN_CDB, 2, 5);
+-		return check_condition_result;
++		goto bad_pcode;
+ 	}
+ 	if (msense_6)
+ 		arr[0] = offset - 1;
+ 	else
+ 		put_unaligned_be16((offset - 2), arr + 0);
+ 	return fill_from_dev_buffer(scp, arr, min_t(u32, alloc_len, offset));
++
++bad_pcode:
++	mk_sense_invalid_fld(scp, SDEB_IN_CDB, 2, 5);
++	return check_condition_result;
  }
  
-+#define SDEBUG_BLE_LEN_AFTER_B4 28	/* thus vpage 32 bytes long */
-+
-+enum { MAXIMUM_NUMBER_OF_STREAMS = 6, PERMANENT_STREAM_COUNT = 5 };
-+
-+/* Block limits extension VPD page (SBC-4) */
-+static int inquiry_vpd_b7(unsigned char *arrb4)
-+{
-+	memset(arrb4, 0, SDEBUG_BLE_LEN_AFTER_B4);
-+	arrb4[1] = 1; /* Reduced stream control support (RSCS) */
-+	put_unaligned_be16(MAXIMUM_NUMBER_OF_STREAMS, &arrb4[2]);
-+	return SDEBUG_BLE_LEN_AFTER_B4;
-+}
-+
- #define SDEBUG_LONG_INQ_SZ 96
- #define SDEBUG_MAX_INQ_ARR_SZ 584
- 
-@@ -1932,6 +1945,7 @@ static int resp_inquiry(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 					arr[n++] = 0xb2;  /* LB Provisioning */
- 				if (is_zbc)
- 					arr[n++] = 0xb6;  /* ZB dev. char. */
-+				arr[n++] = 0xb7;  /* Block limits extension */
- 			}
- 			arr[3] = n - 4;	  /* number of supported VPD pages */
- 		} else if (0x80 == cmd[2]) { /* unit serial number */
-@@ -1974,6 +1988,8 @@ static int resp_inquiry(struct scsi_cmnd *scp, struct sdebug_dev_info *devip)
- 			arr[3] = inquiry_vpd_b2(&arr[4]);
- 		} else if (is_zbc && cmd[2] == 0xb6) { /* ZB dev. charact. */
- 			arr[3] = inquiry_vpd_b6(devip, &arr[4]);
-+		} else if (cmd[2] == 0xb7) { /* block limits extension page */
-+			arr[3] = inquiry_vpd_b7(&arr[4]);
- 		} else {
- 			mk_sense_invalid_fld(scp, SDEB_IN_CDB, 2, -1);
- 			kfree(arr);
+ #define SDEBUG_MAX_MSELECT_SZ 512
 
