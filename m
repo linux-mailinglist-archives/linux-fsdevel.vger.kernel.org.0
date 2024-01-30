@@ -1,172 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-9529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F8A7842443
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 12:58:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF078424EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 13:28:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 525F61C253F6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:58:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25E421F26741
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 12:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1358967A03;
-	Tue, 30 Jan 2024 11:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39866D1CB;
+	Tue, 30 Jan 2024 12:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="dOFbCfBU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2BC67749;
-	Tue, 30 Jan 2024 11:58:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1AB6D1B8
+	for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jan 2024 12:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706615904; cv=none; b=dec0yUD+lXfpx+6f+FvjHPL3gHbtCGumeBef8kKLl/soEj1lxFobnhES+P2MW8IqDQNFpBvQMS3ssNTy3cy3RUaawZ8imRLvCk8gxxbs6qSviPPnisluwzvEZDrWfmVAtrdt5nx5C+eXpyKWzc5x78/vVuVj9VePjWLLfqdfo1o=
+	t=1706617685; cv=none; b=loWNluXNfpcHXMN4VunRnIs1YSncqDvmn5tz1vv8bM2kOTFM1Tzc34XG6OvXJ0MrANDtLc8IzTf3+2SOktXouzexYAtgJVYeFBqosN1r/4Dnyl6oG9mEpUBIwoO7hnrtiqiyo/Z9vUS0GqdoOtC2JSLAnFpHRY1LqvgTonz6i0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706615904; c=relaxed/simple;
-	bh=jNHQrdd2Z4gnAKa15AMBURkRQv5zNH5s6N2REXaxEKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q+OwI1oo1gwbxsV/fUGtpYEaQ40BGt1fiB5HCEo0EA0ShVhEibnKkJHdu6ii86kyPZLh//RWcsoyR6tvGkhkibfaGm1D5LqCectbU1xuAF5Ud93WhNRR4rEBnC5sHi7m71C+iw3lqHUCUfmoFwjQL5oMRNTtE09d6D5k9CEg+UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E04CDA7;
-	Tue, 30 Jan 2024 03:59:05 -0800 (PST)
-Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 878FB3F762;
-	Tue, 30 Jan 2024 03:58:15 -0800 (PST)
-Date: Tue, 30 Jan 2024 11:58:04 +0000
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
-	rppt@kernel.org, hughd@google.com, pcc@google.com,
-	steven.price@arm.com, vincenzo.frascino@arm.com, david@redhat.com,
-	eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 06/35] mm: cma: Make CMA_ALLOC_SUCCESS/FAIL count
- the number of pages
-Message-ID: <ZbjkTFEvSvyHNqmu@raptor>
-References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-7-alexandru.elisei@arm.com>
- <0a71c87a-ae2c-4a61-8adb-3a51d6369b99@arm.com>
- <ZbeRQpGNnfXnjayQ@raptor>
- <2cb8288c-5378-4968-a75b-8462b41998c6@arm.com>
+	s=arc-20240116; t=1706617685; c=relaxed/simple;
+	bh=Ex8FxJ04jAdyWL0UeSXY+YnkDCB6s5bbeFoztASo4Dw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tAUOQPHUBVH8HTYkvb6So5WrXQ9+gV0AmHIMUy4/SGDJ08T/x98QyChoxA+v9ZxBCSlMebEH9qtLhtWFQHSOgXPiX4jLytjuCv13wwl1CB2vmd4c/BsROZjDGOLeUEXBS3doiNUR/CV8eHJWCqZYJ5ZnNuhJyyYvPdDxQxhLejY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=dOFbCfBU; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-510f37d673aso3229529e87.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jan 2024 04:28:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1706617680; x=1707222480; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0B6uRNfs4s8RGWDYXKL4Y58PZDASdfYW1vhR+y8p0OM=;
+        b=dOFbCfBUey+XRrv9NCjyKvxLnPZdqNDKCnNEW1JpvVwnZMGmvU4Qr7Z4kZYlyXfw0E
+         E9q7zPGEvrFgeHammgw3z/NTI+yH8sX0QxrkVO12XuHadg7HrRCTuZgWXNC5NjgcInQq
+         1A+nYQqWczOMGuba7uqtkqiu3P1RHjJGqSnnM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706617680; x=1707222480;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0B6uRNfs4s8RGWDYXKL4Y58PZDASdfYW1vhR+y8p0OM=;
+        b=T0zIGKPNDw5VWqcjsj1pzt0Eh/qQ5+hEXWgjJKkP2xqCqPpO5CsH/oa8X4AYKCEY02
+         YXsuQ5x0z2xzDPCKtr1zKux8L14k1n7C3m1y7k/DNmsEtsv9570MEEuUlc4ELkJDi9pJ
+         pal5XMqRPVn1iEcWt0DxBFhd/xS8dGNsrWUutO/0OzuxwZ6xBcWJDxux3l8kAH9gwTHg
+         VNYznhoKqvlqhRZwfnuomgwWkPASQBu51+z9eIGpt+H3tkAXeW/jOMj2b27GKjcHjb7R
+         axqVuWHxLN5uL9Hr7R3q2fsH9t56IcXlQMo1GEpw0+Bgj8pzCbmIEnG7VjIm0loeWK3M
+         3SSA==
+X-Gm-Message-State: AOJu0Yy5tjOwysrBIm7+aYhc4BhmVc9Qmo5/hGcgYFmJk1Az0qbUfYhO
+	9YgnI4nV3adq8UumdB0dJ9FtiTNfpfFQrO+F4SEjj9ePajQFPVG5ej5Q7P8aQsgEn0eaIsYEdj5
+	p4Bjzgj8RIecPpbIFRrz/YITT1UZ3LYCtmg954g==
+X-Google-Smtp-Source: AGHT+IHyHXhLm+bgLKnS1/70rp4BVRDziyplLk9Ocqs3FtrK9mFC8DfzXnCpBIsDAS+DinbzmeML9mwQCpNgtGyjsRs=
+X-Received: by 2002:a19:2d0e:0:b0:510:c20:74a9 with SMTP id
+ k14-20020a192d0e000000b005100c2074a9mr7009904lfj.64.1706617680236; Tue, 30
+ Jan 2024 04:28:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2cb8288c-5378-4968-a75b-8462b41998c6@arm.com>
+References: <b1603752-5f5b-458f-a77b-2cc678c75dfb@app.fastmail.com> <9ed27532-41fd-4818-8420-7b7118ce5c62@fastmail.fm>
+In-Reply-To: <9ed27532-41fd-4818-8420-7b7118ce5c62@fastmail.fm>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 30 Jan 2024 13:27:48 +0100
+Message-ID: <CAJfpeguF=pXwi5NGDwmdpmRzv3Bn=obL01ipO5h5xKO5pNJASQ@mail.gmail.com>
+Subject: Re: Future of libfuse maintenance
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Nikolaus Rath <nikolaus@rath.org>, 
+	Martin Kaspar via fuse-devel <fuse-devel@lists.sourceforge.net>, 
+	Linux FS Devel <linux-fsdevel@vger.kernel.org>, Antonio SJ Musumeci <trapexit@spawn.link>, 
+	Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
+On Mon, 29 Jan 2024 at 10:22, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>
+> Hi Nikolaus,
+>
+> On 1/29/24 09:56, Nikolaus Rath wrote:
+> > [Resend as text/plain so it doesn't bounce from linux-fsdevel@]
+> >
+> > Hello everyone,
+> >
+> > The time that I have availability for libfuse maintenance is a lot less today than it was a few years ago, and I don't expect that to change.
 
-On Tue, Jan 30, 2024 at 10:22:11AM +0530, Anshuman Khandual wrote:
-> 
-> 
-> On 1/29/24 17:21, Alexandru Elisei wrote:
-> > Hi,
-> > 
-> > On Mon, Jan 29, 2024 at 02:54:20PM +0530, Anshuman Khandual wrote:
-> >>
-> >>
-> >> On 1/25/24 22:12, Alexandru Elisei wrote:
-> >>> The CMA_ALLOC_SUCCESS, respectively CMA_ALLOC_FAIL, are increased by one
-> >>> after each cma_alloc() function call. This is done even though cma_alloc()
-> >>> can allocate an arbitrary number of CMA pages. When looking at
-> >>> /proc/vmstat, the number of successful (or failed) cma_alloc() calls
-> >>> doesn't tell much with regards to how many CMA pages were allocated via
-> >>> cma_alloc() versus via the page allocator (regular allocation request or
-> >>> PCP lists refill).
-> >>>
-> >>> This can also be rather confusing to a user who isn't familiar with the
-> >>> code, since the unit of measurement for nr_free_cma is the number of pages,
-> >>> but cma_alloc_success and cma_alloc_fail count the number of cma_alloc()
-> >>> function calls.
-> >>>
-> >>> Let's make this consistent, and arguably more useful, by having
-> >>> CMA_ALLOC_SUCCESS count the number of successfully allocated CMA pages, and
-> >>> CMA_ALLOC_FAIL count the number of pages the cma_alloc() failed to
-> >>> allocate.
-> >>>
-> >>> For users that wish to track the number of cma_alloc() calls, there are
-> >>> tracepoints for that already implemented.
-> >>>
-> >>> Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
-> >>> ---
-> >>>  mm/cma.c | 4 ++--
-> >>>  1 file changed, 2 insertions(+), 2 deletions(-)
-> >>>
-> >>> diff --git a/mm/cma.c b/mm/cma.c
-> >>> index f49c95f8ee37..dbf7fe8cb1bd 100644
-> >>> --- a/mm/cma.c
-> >>> +++ b/mm/cma.c
-> >>> @@ -517,10 +517,10 @@ struct page *cma_alloc(struct cma *cma, unsigned long count,
-> >>>  	pr_debug("%s(): returned %p\n", __func__, page);
-> >>>  out:
-> >>>  	if (page) {
-> >>> -		count_vm_event(CMA_ALLOC_SUCCESS);
-> >>> +		count_vm_events(CMA_ALLOC_SUCCESS, count);
-> >>>  		cma_sysfs_account_success_pages(cma, count);
-> >>>  	} else {
-> >>> -		count_vm_event(CMA_ALLOC_FAIL);
-> >>> +		count_vm_events(CMA_ALLOC_FAIL, count);
-> >>>  		if (cma)
-> >>>  			cma_sysfs_account_fail_pages(cma, count);
-> >>>  	}
-> >>
-> >> Without getting into the merits of this patch - which is actually trying to do
-> >> semantics change to /proc/vmstat, wondering how is this even related to this
-> >> particular series ? If required this could be debated on it's on separately.
-> > 
-> > Having the number of CMA pages allocated and the number of CMA pages freed
-> > allows someone to infer how many tagged pages are in use at a given time:
-> 
-> That should not be done in CMA which is a generic multi purpose allocator.
+Nikolaus, thank you for all the work you did with libfuse.  I hope you
+got something in return for what you put into this project.
 
-Ah, ok. Let me rephrase that: Having the number of CMA pages allocated, the
-number of failed CMA page allocations and the number of freed CMA pages
-allows someone to infer how many CMA pages are in use at a given time.
-That's valuable information for software designers and system
-administrators, as it allows them to tune the number of CMA pages available
-in a system.
 
-Or put another way: what would you consider to be more useful?  Knowing the
-number of cma_alloc()/cma_release() calls, or knowing the number of pages
-that cma_alloc()/cma_release() allocated or freed?
+> I'm maintaining our DDN internal version anyway - I think I can help to
+> maintain libfuse / take it over.
+>
+> Btw, I also think that kernel fuse needs a maintenance team - I think
+> currently patches are getting forgotten about - I'm planning to set up
+> my own fuse-bernd-next branch with patches, which I think should be
+> considered - I just didn't get to that yet.
 
-> 
-> > (allocated CMA pages - CMA pages allocated by drivers* - CMA pages
-> > released) * 32. That is valuable information for software and hardware
-> > designers.
-> > 
-> > Besides that, for every iteration of the series, this has proven invaluable
-> > for discovering bugs with freeing and/or reserving tag storage pages.
-> 
-> I am afraid that might not be enough justification for getting something
-> merged mainline.
-> 
-> > 
-> > *that would require userspace reading cma_alloc_success and
-> > cma_release_success before any tagged allocations are performed.
-> 
-> While assuming that no other non-memory-tagged CMA based allocation amd free
-> call happens in the meantime ? That would be on real thin ice.
-> 
-> I suppose arm64 tagged memory specific allocation or free related counters
-> need to be created on the caller side, including arch_free_pages_prepare().
-
-I'll think about this. At the very least, I can add tracepoints.
+I hope to have a little more time for review in the coming weeks, but
+this is a good idea regardless.
 
 Thanks,
-Alex
+Miklos
 
