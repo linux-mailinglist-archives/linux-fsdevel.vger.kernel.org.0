@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-9575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24530842EFD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 22:50:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A5B3842F00
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 22:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57E1B1C20BF6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 21:50:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2100C28483B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 21:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62797AE63;
-	Tue, 30 Jan 2024 21:49:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CCB7AE71;
+	Tue, 30 Jan 2024 21:49:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3452478667;
-	Tue, 30 Jan 2024 21:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AD978667;
+	Tue, 30 Jan 2024 21:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706651385; cv=none; b=gBwCcbp4nVcrXYaRlTPQUv6qZo2p8sC/VA2Wew6KtLv/kW1fYpypZJHQG77MHymipQaoN+u/IIvym8NFS0o9SOGJ8Ms8HXEN5DcRT/s6Z8crLsutAFCq2dtRSV6wVmXH+VbDXk+qpS0BcXoVbTs5a6eZdtIbWvFoGBIchMs5Ok0=
+	t=1706651387; cv=none; b=fpE4kURi8K1XJF8YcxPvzL9rCCJrI8P1JhXgku+YFCf2hbaMG9MqmYAsx+UzqM5twFZ5ok+2+SKbEW+c96X/xNXKctvtQWXbn07pU1fsNGPbjq+hfjcgM0I8DmN4lhH3GrGSKYBJTadBK7uICHmIQKNYal8gS/FOGx5qajmM+q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706651385; c=relaxed/simple;
-	bh=Qwx0IqNMZgC+QUJgYyMtM+q120xKqoyQylNr7GT7SyA=;
+	s=arc-20240116; t=1706651387; c=relaxed/simple;
+	bh=D5eS+8sUdMu96G4S4r6zJGm9swC5GaAyWtY6saZ5xp4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=O87xhfyNEDALmNTW/FCbdkspOokUzrPaQotQRJTx0aFc/oUAq03oHaP3sGd/OeYWGrzs5UeMy8Diaiz8FTZuzFloSxwKYHaak5jc2rrbp8/oMReevAh/nxAJX11QCBwx5XyBDXnj5rZOrMgR5zO6Dqzxl+UhcWCnpApveMirQm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.171
+	 MIME-Version; b=rvY0N+A9cXAKUP6Iy0EEOOkva75TZqlaCqCr9V25GYXYYZdMCGaI2ZZ/B095Rk/VQ77DfcqbVkWpv2WwFpAbNlqNSLv+Zi8mTfER/XoZonM0YUbxCO2JWoWNgsad+x2er5vtS6zB53ku6+xa8o83WZyeduR/bQf30HmmF7iM+4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6ddc2a78829so2005441b3a.3;
-        Tue, 30 Jan 2024 13:49:44 -0800 (PST)
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-59927972125so2603765eaf.3;
+        Tue, 30 Jan 2024 13:49:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706651383; x=1707256183;
+        d=1e100.net; s=20230601; t=1706651385; x=1707256185;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=X4UrNeChDqVOfEzO8p6dQhx5OKsmU+cgYZn1LaX3tGQ=;
-        b=eKTVMEY2SPNzWpwFdRmCxbGr8ouAm9Fc3yEVohk/L/noUzyZqAqNrRwIXUrw2tO3Hx
-         uGnN1ZV4vNqLD/ou9CcoCUEAYLQbulc51s4ZBsmeFyw7mfnNz6DYoXMsdWcsFlcv8zyE
-         Uv81qoOpVtlzjg0OpyK6zwOAV6oFm4+P8TAoqSAsgJhndgEXRnVXfvPurV+ZMqrKm32b
-         R3Qvp/AvKOUJ8OsOSjna6mVU6PHZH0aUnWjZABlLYX5lpF1Eer7C9eXRxQMQufliec/E
-         gKm8Zc+vzxqSeYP7y0O/mYpDzcV2HZX4EIYwIRJpLx5m6GGc1bv6WBwx3gywRwzqElUf
-         FRtA==
-X-Gm-Message-State: AOJu0Yy04tT1qQw7XYhWQ93J8UTPj7jfQFK+HR9WAHOtpVJNMxrnNpiZ
-	GBauYeND7aaFe6ZGp/mNu7/4X+7w3L0Q+BaWY4xoSL8nZL8k54Gj
-X-Google-Smtp-Source: AGHT+IEQaJm+yOeazxODneOpRgQXgAc69JoTWWrXlGC6huZCv9tCMR5fd0WNRrcQcKGGRqdsaFlX2g==
-X-Received: by 2002:a05:6a20:7923:b0:19c:7e70:d32d with SMTP id b35-20020a056a20792300b0019c7e70d32dmr5401445pzg.0.1706651383455;
-        Tue, 30 Jan 2024 13:49:43 -0800 (PST)
+        bh=zA1ddFZJk14FiW69Kd5w4wFf8ei2zMcA76pCnpHDGCQ=;
+        b=wGPFbZtX221yDHa1G+8uWeKl5JIj0tgQR9BHhxA+8fPBtO0ONx+oY976UDka1Nwug5
+         7/qtoU+8kDEDSsJaUzaIjxvycFZQN2iBbMgWkmPu4TYDNxvfQRvOvUkXHAiXmXcehv6W
+         DeCWb35hvl/AgTJKvSTy65EnnZtWQsr7qbbcvAcasQxioLR16cVf+gBzv0kcg+cpaLGA
+         fwFUpDEXRjRgjUxg0SSJux9khp4ECwTEfjuaeLnq9FE+rkB6Q9SoaEFDkFZayxB8QY/F
+         OnNnRJvN/Xa+YRo6yZONolE+iZzOw3Q9b6h1rRpoIEkDJSSdm1OZRQJR0eApSSv5uY9K
+         hDUQ==
+X-Gm-Message-State: AOJu0Yzu6+47BGCh5gHIhJamqVBE7SPNTmElN983dZ4AW38dEZrBQOBA
+	fIZeaPdDYrHlKjuZFCtjalvcH+57VW8pKufOEVWIIL/vSsLA87Es
+X-Google-Smtp-Source: AGHT+IFroVwhS91ke0M4F+VvFCNmJYwlEBSmdGtBTKW3ebOu2yj0BEvy9KPEi2FujwMtZs6ai2O/1A==
+X-Received: by 2002:a05:6359:4c1d:b0:176:8248:a219 with SMTP id kj29-20020a0563594c1d00b001768248a219mr7865722rwc.8.1706651385299;
+        Tue, 30 Jan 2024 13:49:45 -0800 (PST)
 Received: from bvanassche-linux.mtv.corp.google.com ([2620:0:1000:8411:f45c:fd18:bfa0:e084])
-        by smtp.gmail.com with ESMTPSA id k14-20020aa7998e000000b006db87354a8fsm8285597pfh.119.2024.01.30.13.49.42
+        by smtp.gmail.com with ESMTPSA id k14-20020aa7998e000000b006db87354a8fsm8285597pfh.119.2024.01.30.13.49.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jan 2024 13:49:43 -0800 (PST)
+        Tue, 30 Jan 2024 13:49:44 -0800 (PST)
 From: Bart Van Assche <bvanassche@acm.org>
 To: "Martin K . Petersen" <martin.petersen@oracle.com>
 Cc: linux-scsi@vger.kernel.org,
@@ -62,13 +62,11 @@ Cc: linux-scsi@vger.kernel.org,
 	Daejun Park <daejun7.park@samsung.com>,
 	Kanchan Joshi <joshi.k@samsung.com>,
 	Bart Van Assche <bvanassche@acm.org>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Chao Yu <chao@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [PATCH v9 08/19] fs/f2fs: Restore support for tracing data lifetimes
-Date: Tue, 30 Jan 2024 13:48:34 -0800
-Message-ID: <20240130214911.1863909-9-bvanassche@acm.org>
+	Avri Altman <avri.altman@wdc.com>,
+	"James E.J. Bottomley" <jejb@linux.ibm.com>
+Subject: [PATCH v9 09/19] scsi: core: Query the Block Limits Extension VPD page
+Date: Tue, 30 Jan 2024 13:48:35 -0800
+Message-ID: <20240130214911.1863909-10-bvanassche@acm.org>
 X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
 In-Reply-To: <20240130214911.1863909-1-bvanassche@acm.org>
 References: <20240130214911.1863909-1-bvanassche@acm.org>
@@ -80,48 +78,144 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch restores code that was removed by commit 41d36a9f3e53 ("fs:
-remove kiocb.ki_hint").
+Parse the Reduced Stream Control Supported (RSCS) bit from the block
+limits extension VPD page. The RSCS bit is defined in SBC-5 r05
+(https://www.t10.org/cgi-bin/ac.pl?t=f&f=sbc5r05.pdf).
 
-Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: Chao Yu <chao@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Avri Altman <avri.altman@wdc.com>
+Reviewed-by: Daejun Park <daejun7.park@samsung.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- include/trace/events/f2fs.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/scsi/scsi.c        |  2 ++
+ drivers/scsi/scsi_sysfs.c  | 10 ++++++++++
+ drivers/scsi/sd.c          | 13 +++++++++++++
+ drivers/scsi/sd.h          |  1 +
+ include/scsi/scsi_device.h |  1 +
+ 5 files changed, 27 insertions(+)
 
-diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
-index 7ed0fc430dc6..db3596478748 100644
---- a/include/trace/events/f2fs.h
-+++ b/include/trace/events/f2fs.h
-@@ -1032,6 +1032,7 @@ TRACE_EVENT(f2fs_direct_IO_enter,
- 		__field(ino_t,	ino)
- 		__field(loff_t,	ki_pos)
- 		__field(int,	ki_flags)
-+		__field(u16,	ki_hint)
- 		__field(u16,	ki_ioprio)
- 		__field(unsigned long,	len)
- 		__field(int,	rw)
-@@ -1042,16 +1043,19 @@ TRACE_EVENT(f2fs_direct_IO_enter,
- 		__entry->ino		= inode->i_ino;
- 		__entry->ki_pos		= iocb->ki_pos;
- 		__entry->ki_flags	= iocb->ki_flags;
-+		__entry->ki_hint	=
-+			file_inode(iocb->ki_filp)->i_write_hint;
- 		__entry->ki_ioprio	= iocb->ki_ioprio;
- 		__entry->len		= len;
- 		__entry->rw		= rw;
- 	),
+diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
+index 76d369343c7a..74cc3369dd8d 100644
+--- a/drivers/scsi/scsi.c
++++ b/drivers/scsi/scsi.c
+@@ -499,6 +499,8 @@ void scsi_attach_vpd(struct scsi_device *sdev)
+ 			scsi_update_vpd_page(sdev, 0xb1, &sdev->vpd_pgb1);
+ 		if (vpd_buf->data[i] == 0xb2)
+ 			scsi_update_vpd_page(sdev, 0xb2, &sdev->vpd_pgb2);
++		if (vpd_buf->data[i] == 0xb7)
++			scsi_update_vpd_page(sdev, 0xb7, &sdev->vpd_pgb7);
+ 	}
+ 	kfree(vpd_buf);
+ }
+diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
+index 24f6eefb6803..93652a786a46 100644
+--- a/drivers/scsi/scsi_sysfs.c
++++ b/drivers/scsi/scsi_sysfs.c
+@@ -449,6 +449,7 @@ static void scsi_device_dev_release(struct device *dev)
+ 	struct scsi_vpd *vpd_pg80 = NULL, *vpd_pg83 = NULL;
+ 	struct scsi_vpd *vpd_pg0 = NULL, *vpd_pg89 = NULL;
+ 	struct scsi_vpd *vpd_pgb0 = NULL, *vpd_pgb1 = NULL, *vpd_pgb2 = NULL;
++	struct scsi_vpd *vpd_pgb7 = NULL;
+ 	unsigned long flags;
  
--	TP_printk("dev = (%d,%d), ino = %lu pos = %lld len = %lu ki_flags = %x ki_ioprio = %x rw = %d",
-+	TP_printk("dev = (%d,%d), ino = %lu pos = %lld len = %lu ki_flags = %x ki_hint = %x ki_ioprio = %x rw = %d",
- 		show_dev_ino(__entry),
- 		__entry->ki_pos,
- 		__entry->len,
- 		__entry->ki_flags,
-+		__entry->ki_hint,
- 		__entry->ki_ioprio,
- 		__entry->rw)
- );
+ 	might_sleep();
+@@ -494,6 +495,8 @@ static void scsi_device_dev_release(struct device *dev)
+ 				       lockdep_is_held(&sdev->inquiry_mutex));
+ 	vpd_pgb2 = rcu_replace_pointer(sdev->vpd_pgb2, vpd_pgb2,
+ 				       lockdep_is_held(&sdev->inquiry_mutex));
++	vpd_pgb7 = rcu_replace_pointer(sdev->vpd_pgb7, vpd_pgb7,
++				       lockdep_is_held(&sdev->inquiry_mutex));
+ 	mutex_unlock(&sdev->inquiry_mutex);
+ 
+ 	if (vpd_pg0)
+@@ -510,6 +513,8 @@ static void scsi_device_dev_release(struct device *dev)
+ 		kfree_rcu(vpd_pgb1, rcu);
+ 	if (vpd_pgb2)
+ 		kfree_rcu(vpd_pgb2, rcu);
++	if (vpd_pgb7)
++		kfree_rcu(vpd_pgb7, rcu);
+ 	kfree(sdev->inquiry);
+ 	kfree(sdev);
+ 
+@@ -921,6 +926,7 @@ sdev_vpd_pg_attr(pg89);
+ sdev_vpd_pg_attr(pgb0);
+ sdev_vpd_pg_attr(pgb1);
+ sdev_vpd_pg_attr(pgb2);
++sdev_vpd_pg_attr(pgb7);
+ sdev_vpd_pg_attr(pg0);
+ 
+ static ssize_t show_inquiry(struct file *filep, struct kobject *kobj,
+@@ -1295,6 +1301,9 @@ static umode_t scsi_sdev_bin_attr_is_visible(struct kobject *kobj,
+ 	if (attr == &dev_attr_vpd_pgb2 && !sdev->vpd_pgb2)
+ 		return 0;
+ 
++	if (attr == &dev_attr_vpd_pgb7 && !sdev->vpd_pgb7)
++		return 0;
++
+ 	return S_IRUGO;
+ }
+ 
+@@ -1347,6 +1356,7 @@ static struct bin_attribute *scsi_sdev_bin_attrs[] = {
+ 	&dev_attr_vpd_pgb0,
+ 	&dev_attr_vpd_pgb1,
+ 	&dev_attr_vpd_pgb2,
++	&dev_attr_vpd_pgb7,
+ 	&dev_attr_inquiry,
+ 	NULL
+ };
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index a54cd1864a92..463b201a3109 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -3166,6 +3166,18 @@ static void sd_read_block_limits(struct scsi_disk *sdkp)
+ 	rcu_read_unlock();
+ }
+ 
++/* Parse the Block Limits Extension VPD page (0xb7) */
++static void sd_read_block_limits_ext(struct scsi_disk *sdkp)
++{
++	struct scsi_vpd *vpd;
++
++	rcu_read_lock();
++	vpd = rcu_dereference(sdkp->device->vpd_pgb7);
++	if (vpd && vpd->len >= 2)
++		sdkp->rscs = vpd->data[5] & 1;
++	rcu_read_unlock();
++}
++
+ /**
+  * sd_read_block_characteristics - Query block dev. characteristics
+  * @sdkp: disk to query
+@@ -3517,6 +3529,7 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 		if (scsi_device_supports_vpd(sdp)) {
+ 			sd_read_block_provisioning(sdkp);
+ 			sd_read_block_limits(sdkp);
++			sd_read_block_limits_ext(sdkp);
+ 			sd_read_block_characteristics(sdkp);
+ 			sd_zbc_read_zones(sdkp, buffer);
+ 			sd_read_cpr(sdkp);
+diff --git a/drivers/scsi/sd.h b/drivers/scsi/sd.h
+index 409dda5350d1..e4539122f2a2 100644
+--- a/drivers/scsi/sd.h
++++ b/drivers/scsi/sd.h
+@@ -151,6 +151,7 @@ struct scsi_disk {
+ 	unsigned	urswrz : 1;
+ 	unsigned	security : 1;
+ 	unsigned	ignore_medium_access_errors : 1;
++	bool		rscs : 1; /* reduced stream control support */
+ };
+ #define to_scsi_disk(obj) container_of(obj, struct scsi_disk, disk_dev)
+ 
+diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
+index 4dceabb9dbe1..ea494a0114e8 100644
+--- a/include/scsi/scsi_device.h
++++ b/include/scsi/scsi_device.h
+@@ -153,6 +153,7 @@ struct scsi_device {
+ 	struct scsi_vpd __rcu *vpd_pgb0;
+ 	struct scsi_vpd __rcu *vpd_pgb1;
+ 	struct scsi_vpd __rcu *vpd_pgb2;
++	struct scsi_vpd __rcu *vpd_pgb7;
+ 
+ 	struct scsi_target      *sdev_target;
+ 
 
