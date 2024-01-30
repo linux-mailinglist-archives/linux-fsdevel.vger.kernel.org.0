@@ -1,186 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-9525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A54084234F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 12:39:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568FC84242A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 12:54:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51B11288CE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 060D8285B69
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 30 Jan 2024 11:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C846BB30;
-	Tue, 30 Jan 2024 11:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E014679EA;
+	Tue, 30 Jan 2024 11:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="a1/K2Lja";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o1pRKWzY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bTJ6JEVv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9bOvETPW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005506A01E;
-	Tue, 30 Jan 2024 11:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D68167730;
+	Tue, 30 Jan 2024 11:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706614693; cv=none; b=DPPlGDJh0TjlAAwwHM06nLNXg+zeqL9sduAEhJTWFbEOiN2+qxEVqb+QsXfOTb0VC1Qgwx+cVTvGs9mZ2H86MUryW/CM7Lecq3Du+QJwfIn48UGmekXsX5GaMob08P8qOL0v2jdhA1o6NErNJ5tUHZ0H5k8Y3WXi/zl453I123o=
+	t=1706615676; cv=none; b=JLJyX56erIRwSqyvmF6W1MIElMjogiSUtj+PNtCC4S7tX2I0p2Y9+SxJTwnpmd0AcrqDetyLc+OChrVAI5Jrno/eLl+U0RZQllS2DmChSmQshrpTSPAthKY3k6SxGNJpCLnftS+l9s3EiGfPsvJzTCBdhcYOXG/oGZOW1w+z3fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706614693; c=relaxed/simple;
-	bh=/DsBAHX8HTlca+Vpy4zDg5DsZ5AAjetwE7nEWjeRix8=;
+	s=arc-20240116; t=1706615676; c=relaxed/simple;
+	bh=uFzF0c7y0Xa5eSfpXQjqGeNrxWa15vZJgvwqZSw5274=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=psG7XgZC/QZh+3TWfF6WlwUnle3O6N5nNOWS6ZaT5EgH7ZJi98iLDHnMqtOqLJXN9uTW5nxVUR53EgA/dhTpaP5REhbX7ZVvU4xPeKvIIWwzmGRIOKimtrI1312qj/p75kHv+83+8KM4MzIVD0RjK21dVsTE8ODeZqccmekg4PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2F6CEDA7;
-	Tue, 30 Jan 2024 03:38:54 -0800 (PST)
-Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 070733F5A1;
-	Tue, 30 Jan 2024 03:38:04 -0800 (PST)
-Date: Tue, 30 Jan 2024 11:38:02 +0000
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: Peter Collingbourne <pcc@google.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
-	rppt@kernel.org, hughd@google.com, steven.price@arm.com,
-	anshuman.khandual@arm.com, vincenzo.frascino@arm.com,
-	david@redhat.com, eugenis@google.com, kcc@google.com,
-	hyesoo.yu@samsung.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 23/35] arm64: mte: Try to reserve tag storage in
- arch_alloc_page()
-Message-ID: <ZbjfmqpYex4C8Uhm@raptor>
-References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-24-alexandru.elisei@arm.com>
- <CAMn1gO5pGVRCErVF+Ca-4JgHRKEcq9sDGyEe--gEjj5ZLrB8sA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gQqXJtst+uodcEFAwQm4a2rnFHYMGzoT9NO5nKOtLu1Nq1t8MF4VwreQRE7jmDAMSqCUiGBz/8W85FwNRwCHnKl+yqSIzAHt0qSRRzFr9zrWRrr2jOTp5yGO1MwSFEGbluwU1HMb9yCv65JnnDR4efeXszt0V4S6g6lNErx00dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=a1/K2Lja; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o1pRKWzY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bTJ6JEVv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9bOvETPW; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 76A7A1F848;
+	Tue, 30 Jan 2024 11:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706615672; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DnqLZBlDKpe4vlipCmXXPECUe1oy+3ydvLI/2aiDEv8=;
+	b=a1/K2LjasCHk8VC1+Mv9MMio1D7f+pKVCjtL2QvlP4ud6ZJn/jrPzv1HW0lZw4nhyiE6OO
+	w8Mh25o1VAaeNHtbAPaiBgF3wrKuDeVvDWQv9MJnj1MDg5EQNoflnBYd2tcN86clPJF433
+	hu1jDRX/Ii9KMMGot0KKUUz9U44Bl00=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706615672;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DnqLZBlDKpe4vlipCmXXPECUe1oy+3ydvLI/2aiDEv8=;
+	b=o1pRKWzY/K2bnB4oa2+DxPSI9kNchKco4S3HJJKut0FnJlyV5nlQf9ch3GPYbyyj8+EYmB
+	WRpCMU/GfoxJPhAA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706615670; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DnqLZBlDKpe4vlipCmXXPECUe1oy+3ydvLI/2aiDEv8=;
+	b=bTJ6JEVvHTL1X4SldT6ke7pjLnJ03JzIPjm3+FdH/PZPETNwOsA3YMkmxfysIWSOo48ozg
+	XPJbtaljXB/+zCw0hCxFgefHm5bjr6Z+X2TaftOVjuTMHCfJvTVJzPkqZq3nYi9oWlhKQ2
+	1muuCC42T7KLL7Bpk8G9gcUi12qQy1M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706615670;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DnqLZBlDKpe4vlipCmXXPECUe1oy+3ydvLI/2aiDEv8=;
+	b=9bOvETPWQ8F6h2aztso666fLDiQVBQP4e0vjNNAhAyWRzfiXw3Zc86Y5EjZnR/47SVGohq
+	Q+WVAr8dJP7OTdDQ==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 6327A13462;
+	Tue, 30 Jan 2024 11:54:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id 9JcxGHbjuGWDFAAAn2gu4w
+	(envelope-from <jack@suse.cz>); Tue, 30 Jan 2024 11:54:30 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1B758A0807; Tue, 30 Jan 2024 12:54:30 +0100 (CET)
+Date: Tue, 30 Jan 2024 12:54:30 +0100
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+69b40dc5fd40f32c199f@syzkaller.appspotmail.com>
+Cc: akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org,
+	chenzhongjin@huawei.com, dchinner@redhat.com, hch@infradead.org,
+	hch@lst.de, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+	willy@infradead.org
+Subject: Re: [syzbot] [fs?] BUG: sleeping function called from invalid
+ context in __getblk_gfp
+Message-ID: <20240130115430.rljjwjcji3vlrgyz@quack3>
+References: <0000000000000ccf9a05ee84f5b0@google.com>
+ <0000000000000d130006101f7e0e@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMn1gO5pGVRCErVF+Ca-4JgHRKEcq9sDGyEe--gEjj5ZLrB8sA@mail.gmail.com>
+In-Reply-To: <0000000000000d130006101f7e0e@google.com>
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spamd-Result: default: False [-0.10 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=174a257c5ae6b4fd];
+	 TAGGED_RCPT(0.00)[69b40dc5fd40f32c199f];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 RCPT_COUNT_TWELVE(0.00)[15];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,syzkaller.appspot.com:url,suse.cz:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[];
+	 SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -0.10
 
-Hi Peter,
-
-On Mon, Jan 29, 2024 at 04:04:18PM -0800, Peter Collingbourne wrote:
-> On Thu, Jan 25, 2024 at 8:45 AM Alexandru Elisei
-> <alexandru.elisei@arm.com> wrote:
-> >
-> > Reserve tag storage for a page that is being allocated as tagged. This
-> > is a best effort approach, and failing to reserve tag storage is
-> > allowed.
-> >
-> > When all the associated tagged pages have been freed, return the tag
-> > storage pages back to the page allocator, where they can be used again for
-> > data allocations.
-> >
-> > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
-> > ---
-> >
-> > Changes since rfc v2:
-> >
-> > * Based on rfc v2 patch #16 ("arm64: mte: Manage tag storage on page
-> > allocation").
-> > * Fixed calculation of the number of associated tag storage blocks (Hyesoo
-> > Yu).
-> > * Tag storage is reserved in arch_alloc_page() instead of
-> > arch_prep_new_page().
-> >
-> >  arch/arm64/include/asm/mte.h             |  16 +-
-> >  arch/arm64/include/asm/mte_tag_storage.h |  31 +++
-> >  arch/arm64/include/asm/page.h            |   5 +
-> >  arch/arm64/include/asm/pgtable.h         |  19 ++
-> >  arch/arm64/kernel/mte_tag_storage.c      | 234 +++++++++++++++++++++++
-> >  arch/arm64/mm/fault.c                    |   7 +
-> >  fs/proc/page.c                           |   1 +
-> >  include/linux/kernel-page-flags.h        |   1 +
-> >  include/linux/page-flags.h               |   1 +
-> >  include/trace/events/mmflags.h           |   3 +-
-> >  mm/huge_memory.c                         |   1 +
-> >  11 files changed, 316 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/arm64/include/asm/mte.h b/arch/arm64/include/asm/mte.h
-> > index 8034695b3dd7..6457b7899207 100644
-> > --- a/arch/arm64/include/asm/mte.h
-> > +++ b/arch/arm64/include/asm/mte.h
-> > @@ -40,12 +40,24 @@ void mte_free_tag_buf(void *buf);
-> >  #ifdef CONFIG_ARM64_MTE
-> >
-> >  /* track which pages have valid allocation tags */
-> > -#define PG_mte_tagged  PG_arch_2
-> > +#define PG_mte_tagged          PG_arch_2
-> >  /* simple lock to avoid multiple threads tagging the same page */
-> > -#define PG_mte_lock    PG_arch_3
-> > +#define PG_mte_lock            PG_arch_3
-> > +/* Track if a tagged page has tag storage reserved */
-> > +#define PG_tag_storage_reserved        PG_arch_4
-> > +
-> > +#ifdef CONFIG_ARM64_MTE_TAG_STORAGE
-> > +DECLARE_STATIC_KEY_FALSE(tag_storage_enabled_key);
-> > +extern bool page_tag_storage_reserved(struct page *page);
-> > +#endif
-> >
-> >  static inline void set_page_mte_tagged(struct page *page)
-> >  {
-> > +#ifdef CONFIG_ARM64_MTE_TAG_STORAGE
-> > +       /* Open code mte_tag_storage_enabled() */
-> > +       WARN_ON_ONCE(static_branch_likely(&tag_storage_enabled_key) &&
-> > +                    !page_tag_storage_reserved(page));
-> > +#endif
-> >         /*
-> >          * Ensure that the tags written prior to this function are visible
-> >          * before the page flags update.
-> > diff --git a/arch/arm64/include/asm/mte_tag_storage.h b/arch/arm64/include/asm/mte_tag_storage.h
-> > index 7b3f6bff8e6f..09f1318d924e 100644
-> > --- a/arch/arm64/include/asm/mte_tag_storage.h
-> > +++ b/arch/arm64/include/asm/mte_tag_storage.h
-> > @@ -5,6 +5,12 @@
-> >  #ifndef __ASM_MTE_TAG_STORAGE_H
-> >  #define __ASM_MTE_TAG_STORAGE_H
-> >
-> > +#ifndef __ASSEMBLY__
-> > +
-> > +#include <linux/mm_types.h>
-> > +
-> > +#include <asm/mte.h>
-> > +
-> >  #ifdef CONFIG_ARM64_MTE_TAG_STORAGE
-> >
-> >  DECLARE_STATIC_KEY_FALSE(tag_storage_enabled_key);
-> > @@ -15,6 +21,15 @@ static inline bool tag_storage_enabled(void)
-> >  }
-> >
-> >  void mte_init_tag_storage(void);
-> > +
-> > +static inline bool alloc_requires_tag_storage(gfp_t gfp)
-> > +{
-> > +       return gfp & __GFP_TAGGED;
-> > +}
-> > +int reserve_tag_storage(struct page *page, int order, gfp_t gfp);
-> > +void free_tag_storage(struct page *page, int order);
-> > +
-> > +bool page_tag_storage_reserved(struct page *page);
-> >  #else
-> >  static inline bool tag_storage_enabled(void)
-> >  {
-> > @@ -23,6 +38,22 @@ static inline bool tag_storage_enabled(void)
-> >  static inline void mte_init_tag_storage(void)
-> >  {
-> >  }
-> > +static inline bool alloc_requires_tag_storage(struct page *page)
+On Mon 29-01-24 17:15:05, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
 > 
-> This function should take a gfp_t to match the
-> CONFIG_ARM64_MTE_TAG_STORAGE case.
+> commit 6f861765464f43a71462d52026fbddfc858239a5
+> Author: Jan Kara <jack@suse.cz>
+> Date:   Wed Nov 1 17:43:10 2023 +0000
+> 
+>     fs: Block writes to mounted block devices
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=116642dfe80000
+> start commit:   d88520ad73b7 Merge tag 'pull-nfsd-fix' of git://git.kernel..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=174a257c5ae6b4fd
+> dashboard link: https://syzkaller.appspot.com/bug?extid=69b40dc5fd40f32c199f
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a77593680000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1104a593680000
+> 
+> If the result looks correct, please mark the issue as fixed by replying with:
+> 
+> #syz fix: fs: Block writes to mounted block devices
 
-Ah, yes, it should, nice catch, the compiler didn't throw an error. Will
-fix, thanks!
+This doesn't look correct. The problem here really is that sysv is calling
+sb_bread() under a RWLOCK - pointers_lock - in get_block(). Which more or
+less shows nobody has run sysv in ages because otherwise the chances of
+sleeping in atomic context are really high? Perhaps another candidate for
+removal?
 
-Alex
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
