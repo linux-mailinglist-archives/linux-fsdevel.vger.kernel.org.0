@@ -1,50 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-9733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0453E844BCB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 00:04:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C6F844BCF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 00:04:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8892CB2CFCF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 23:03:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 445F51C230DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 23:04:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8C03CF54;
-	Wed, 31 Jan 2024 23:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5233EA83;
+	Wed, 31 Jan 2024 23:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/m3EcAu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p0f1OulF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7813C6BC;
-	Wed, 31 Jan 2024 23:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3AF3D56D;
+	Wed, 31 Jan 2024 23:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706742148; cv=none; b=ZuMNAQzmmXfUADw9l+C81f0tYjZDTkJg7fTey1V4lyBt8fIoH1ANJp0BpAh96ra9sdaFLBUwBxbRABv/EEnFwYEH5uZ8Roh3OpO70LXunjGUdkdzqwfey/kvS9gbLIez26EAIsxH79BGjcp/t/sR+OgNd1daTJ5ikDHHjoRrhbM=
+	t=1706742152; cv=none; b=YnMlC8t+VT9eoD01X440v86Fl/NJng6y6E+J5xJAf5BnPYRlt9FG8G5FLNC28hfcOzT09Xu3KXK9Yil9ccP0oxKrLP4DpYztnacfAtDxIE4zw+G4sRO0Wv76v70kUkn49q5N50vvsHA/q4MGy9hqE6yI4QTYBBk0OrrriJpuVic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706742148; c=relaxed/simple;
-	bh=2YbMDNw3c2UqWUFblyqOLLtcJSL33noaMk1Mbj6+9/U=;
+	s=arc-20240116; t=1706742152; c=relaxed/simple;
+	bh=xt33cafGvSFvt222mAMoOTpMEQG2ghQN1EIR655yJN0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qdmqHbLDe1MqyHo4wSLsYDN1TatoyX5vfO/pnJvD/tRxtFEcs0R1d3XCdgStbwzqoO3SyvPG5PdSnye98xCEkjvs56gwNVqwwau295ur2Xx8LRuNngRBEczFPE/6TvGVdlPT67IUcjynPzjIcC4NlA4xVmoO0x6icIsTLCJ+1hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/m3EcAu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A176C433F1;
-	Wed, 31 Jan 2024 23:02:24 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=nx8TxqY07120cXAVISV6idCpwF7itHsQFIh3Zf9V0Bc6CVh6PYoOc0rpabRCQIhz7s4D4UMYeLpMAu5q8dJ+wsqLjaPLlbvZy5DtkG56LyOyChKnAiYDyTprJIyYlaXMln6POI0sVpAaEWF/ohkbusECX5zkhGxM7WX4r0XoxR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p0f1OulF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82292C43601;
+	Wed, 31 Jan 2024 23:02:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706742148;
-	bh=2YbMDNw3c2UqWUFblyqOLLtcJSL33noaMk1Mbj6+9/U=;
+	s=k20201202; t=1706742152;
+	bh=xt33cafGvSFvt222mAMoOTpMEQG2ghQN1EIR655yJN0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=R/m3EcAuDcf5QXKkwD+MevGbjPtPC3i16HDBtdkqpPmDuhGOuQDP3ifh3DJMNpNm7
-	 i1Oy8J8A5EDX5op2wJJwBmpZB+dmk98/NsDmBeQyelGIm0eyV6Uyi+e7PmoGPdwbtm
-	 o/wUsJJ09SLdimnoJmD8iizeR9E0rtoIOHbfWoA35kRyeyHDtM1vCppUs/xwM/WJWR
-	 Ne1yhZ8xXq6mbGXAbCBK666Aw3dGMdetPPLe5iG4Ukc9sXGJORU9fclgl5GWCrf3A6
-	 3joJTSvctveyY27aEKzgW0aB9A4jM31lEumNR7GCqB8IKE7RNzlhxYPTqfFh3r9mky
-	 GNAkI3uEceUIg==
+	b=p0f1OulFEEElmyKK0Uv3B9cug7v7Zvq3/Zr1OsgJU58i/PbhRAmS0eYpcNHsgg3ZH
+	 8ewJ9meelgEleUNxIAQHvx9aieyewDZpV/Jr0ydIB08icoKmnqsK+oUSiU4L29hEN1
+	 Sjgs9Ggp5cPk/FhYQNlOSrlFP8lA1O0NxngHb31Flo8CXDm3nguei+lPtazyhDvbmn
+	 +hErSf2YcdRUCCfiNa+3zxbg9F85t6Optjh+4aGlwyYMAGe6RzaCT1TQmk5JWPFGDw
+	 9qF1wMJibm+JHs/TQU5+/YHxa46v4yQvGtOv6dyEhD7cmTnItpWEBVX41GYDR8Fq7O
+	 hpXn5k/BFtC/A==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 31 Jan 2024 18:01:44 -0500
-Subject: [PATCH v3 03/47] filelock: rename fl_pid variable in
- lock_get_status
+Date: Wed, 31 Jan 2024 18:01:45 -0500
+Subject: [PATCH v3 04/47] filelock: add some new helper functions
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240131-flsplit-v3-3-c6129007ee8d@kernel.org>
+Message-Id: <20240131-flsplit-v3-4-c6129007ee8d@kernel.org>
 References: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
 In-Reply-To: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
 To: Steven Rostedt <rostedt@goodmis.org>, 
@@ -87,63 +86,147 @@ Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
  ocfs2-devel@lists.linux.dev, linux-cifs@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1474; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=2YbMDNw3c2UqWUFblyqOLLtcJSL33noaMk1Mbj6+9/U=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlutFu61Z5WT8kuDNwU06HgxdPXzSA8/qE2Cj1D
- CG6IWS+MAeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbrRbgAKCRAADmhBGVaC
- FVsAD/91v196/WZutgy8iR+odquUSnynSbS8L4egjxN8AMrfF5febHAe3Y5JABVbmobrabNtWlz
- 5EIPoBL4JJlC2xplBQ8N1dJQ3ep1q/G9Q6VmOzY7RKXtf4djuW1Izyr/pePhuieYEiEWwLjd5B2
- f7KM7FllMPSTAv/fJaEiqYElJ0/3jB4JPA8GWBI3pkmC+j2uFkYKtHd1GR+sBrkhgSkW1niGTI5
- OstchGjyK7h2wxHU4zU4OT+f1mPCN3OiPp0sz1Lenrr2e3C5v1OkTYEDI7mPZuPStssWeqoEFxS
- GZQ8GW64SaES1fbOmTBLol3tma8c+27adTqLnb2qCz6Wu5myK9lFZUkLEQSXYbk+H+OFnLfkb4a
- AgpQu81MI6am6IY7oBCL4/Mdh5PkagkcRchQ2JRjMBNB5BDNwfMp5rLCq9psTAQ1A0lxLFmRxTu
- 9/BvxWooQGO5qVQWWQZvu9GIwf5sbfLOaJTfY/UcCymgIaaZ3mlcxUh8tR69mejTe0OEygaB5Ng
- 4T7Hr7aCpcV9AvGbJBd9K6LWmwO38I91xaSnI+eXBjGbzz/0vLfmPUz5/Fso+/PJlFp26FCDG2A
- Po9N6MzCAZ8OVyJcfRSztM8IKMsV0WPpR7n5VaI5dkkJl1rFqRIR6us3RLvKyiFNMayW3lkaw1R
- OGMK2HNQqqxeLKQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4239; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=xt33cafGvSFvt222mAMoOTpMEQG2ghQN1EIR655yJN0=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlutFu7pak3ysU7YUEadmffL0cjTzgn6W58PqPi
+ O+VkLJOJleJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbrRbgAKCRAADmhBGVaC
+ FTkgEACwR7rQ5JTYFNjlZe0wLt9N7ReG5E7lt9pi+v4QXxMxU6zFDBf65iHA00yAzZxcnlMFdqV
+ b8UtO2fotBzn7i/F1UR5aCknZGuU0AiwEr+6ic0xQrH7VFDPu5JmAxQOCReVedjrrYe+23sOA1X
+ sTvQTBkjy4/tNqdA8dvT82dqlo3wZe8kO/Am61eFX7Fs5z6WPGbmUQGQutIotImyHqHgu5MFE1B
+ Me+Etok0NCCoTA7kKou3TjaK96y916+UtwgKH0YKnkYp/fel2u4RfEOS+m85tFPn4Xk0NrDDubY
+ 50eunzAil4PTazfxa8GEZSGcMW1tVPf+1GMJIWlF0+C7OzDG8GMmEhM1wkSmvKUzn8SYuI+W61V
+ V++GdegN2vVXhdpWAWYrvWnpp2vQZWfWtoYKM507mdQUh4dU0RTwOwBWBo156/dB2UbN6Sx1qE8
+ fDPJyn54Y8Rfa/IjJQBiLskGVDp1l0ryQOm6UD4gofJ2dnvWuOoJnb/dZivB/7n4qSO4e5pIvRM
+ 3tcKlUS8U9x8ATMiKgTL1NEr5zqh8CNNaOD2A2szZ1TfoP5YLEF7xZb0H1txOLLvZXAUFKOgQJk
+ PVfJV9H5psKLfN4lkqD5C5bii/HfiSCQLOiU+CH0ccSH35x3UBEc1y8v5Ka2IvVtIfLOJdUm6aN
+ omSEWafx298uVwA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-In later patches we're going to introduce some macros that will clash
-with the variable name here. Rename it.
+In later patches we're going to embed some common fields into a new
+structure inside struct file_lock. Smooth the transition by adding some
+new helper functions, and converting the core file locking code to use
+them.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/locks.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/locks.c               | 18 +++++++++---------
+ include/linux/filelock.h | 23 +++++++++++++++++++++++
+ 2 files changed, 32 insertions(+), 9 deletions(-)
 
 diff --git a/fs/locks.c b/fs/locks.c
-index cc7c117ee192..1eceaa56e47f 100644
+index 1eceaa56e47f..149070fd3b66 100644
 --- a/fs/locks.c
 +++ b/fs/locks.c
-@@ -2695,11 +2695,11 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
- 			    loff_t id, char *pfx, int repeat)
- {
- 	struct inode *inode = NULL;
--	unsigned int fl_pid;
-+	unsigned int pid;
- 	struct pid_namespace *proc_pidns = proc_pid_ns(file_inode(f->file)->i_sb);
- 	int type;
+@@ -674,7 +674,7 @@ static void __locks_wake_up_blocks(struct file_lock *blocker)
+ 		if (waiter->fl_lmops && waiter->fl_lmops->lm_notify)
+ 			waiter->fl_lmops->lm_notify(waiter);
+ 		else
+-			wake_up(&waiter->fl_wait);
++			locks_wake_up(waiter);
  
--	fl_pid = locks_translate_pid(fl, proc_pidns);
-+	pid = locks_translate_pid(fl, proc_pidns);
- 	/*
- 	 * If lock owner is dead (and pid is freed) or not visible in current
- 	 * pidns, zero is shown as a pid value. Check lock info from
-@@ -2747,11 +2747,11 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
- 			     (type == F_RDLCK) ? "READ" : "UNLCK");
- 	if (inode) {
- 		/* userspace relies on this representation of dev_t */
--		seq_printf(f, "%d %02x:%02x:%lu ", fl_pid,
-+		seq_printf(f, "%d %02x:%02x:%lu ", pid,
- 				MAJOR(inode->i_sb->s_dev),
- 				MINOR(inode->i_sb->s_dev), inode->i_ino);
- 	} else {
--		seq_printf(f, "%d <none>:0 ", fl_pid);
-+		seq_printf(f, "%d <none>:0 ", pid);
+ 		/*
+ 		 * The setting of fl_blocker to NULL marks the "done"
+@@ -841,9 +841,9 @@ locks_delete_lock_ctx(struct file_lock *fl, struct list_head *dispose)
+ static bool locks_conflict(struct file_lock *caller_fl,
+ 			   struct file_lock *sys_fl)
+ {
+-	if (sys_fl->fl_type == F_WRLCK)
++	if (lock_is_write(sys_fl))
+ 		return true;
+-	if (caller_fl->fl_type == F_WRLCK)
++	if (lock_is_write(caller_fl))
+ 		return true;
+ 	return false;
+ }
+@@ -874,7 +874,7 @@ static bool posix_test_locks_conflict(struct file_lock *caller_fl,
+ 				      struct file_lock *sys_fl)
+ {
+ 	/* F_UNLCK checks any locks on the same fd. */
+-	if (caller_fl->fl_type == F_UNLCK) {
++	if (lock_is_unlock(caller_fl)) {
+ 		if (!posix_same_owner(caller_fl, sys_fl))
+ 			return false;
+ 		return locks_overlap(caller_fl, sys_fl);
+@@ -1055,7 +1055,7 @@ static int flock_lock_inode(struct inode *inode, struct file_lock *request)
+ 		break;
  	}
- 	if (IS_POSIX(fl)) {
- 		if (fl->fl_end == OFFSET_MAX)
+ 
+-	if (request->fl_type == F_UNLCK) {
++	if (lock_is_unlock(request)) {
+ 		if ((request->fl_flags & FL_EXISTS) && !found)
+ 			error = -ENOENT;
+ 		goto out;
+@@ -1107,7 +1107,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+ 
+ 	ctx = locks_get_lock_context(inode, request->fl_type);
+ 	if (!ctx)
+-		return (request->fl_type == F_UNLCK) ? 0 : -ENOMEM;
++		return lock_is_unlock(request) ? 0 : -ENOMEM;
+ 
+ 	/*
+ 	 * We may need two file_lock structures for this operation,
+@@ -1228,7 +1228,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+ 				continue;
+ 			if (fl->fl_start > request->fl_end)
+ 				break;
+-			if (request->fl_type == F_UNLCK)
++			if (lock_is_unlock(request))
+ 				added = true;
+ 			if (fl->fl_start < request->fl_start)
+ 				left = fl;
+@@ -1279,7 +1279,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
+ 
+ 	error = 0;
+ 	if (!added) {
+-		if (request->fl_type == F_UNLCK) {
++		if (lock_is_unlock(request)) {
+ 			if (request->fl_flags & FL_EXISTS)
+ 				error = -ENOENT;
+ 			goto out;
+@@ -1608,7 +1608,7 @@ void lease_get_mtime(struct inode *inode, struct timespec64 *time)
+ 		spin_lock(&ctx->flc_lock);
+ 		fl = list_first_entry_or_null(&ctx->flc_lease,
+ 					      struct file_lock, fl_list);
+-		if (fl && (fl->fl_type == F_WRLCK))
++		if (fl && lock_is_write(fl))
+ 			has_lease = true;
+ 		spin_unlock(&ctx->flc_lock);
+ 	}
+diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+index 085ff6ba0653..a814664b1053 100644
+--- a/include/linux/filelock.h
++++ b/include/linux/filelock.h
+@@ -147,6 +147,29 @@ int fcntl_setlk64(unsigned int, struct file *, unsigned int,
+ int fcntl_setlease(unsigned int fd, struct file *filp, int arg);
+ int fcntl_getlease(struct file *filp);
+ 
++static inline bool lock_is_unlock(struct file_lock *fl)
++{
++	return fl->fl_type == F_UNLCK;
++}
++
++static inline bool lock_is_read(struct file_lock *fl)
++{
++	return fl->fl_type == F_RDLCK;
++}
++
++static inline bool lock_is_write(struct file_lock *fl)
++{
++	return fl->fl_type == F_WRLCK;
++}
++
++static inline void locks_wake_up(struct file_lock *fl)
++{
++	wake_up(&fl->fl_wait);
++}
++
++/* for walking lists of file_locks linked by fl_list */
++#define for_each_file_lock(_fl, _head)	list_for_each_entry(_fl, _head, fl_list)
++
+ /* fs/locks.c */
+ void locks_free_lock_context(struct inode *inode);
+ void locks_free_lock(struct file_lock *fl);
 
 -- 
 2.43.0
