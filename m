@@ -1,178 +1,206 @@
-Return-Path: <linux-fsdevel+bounces-9647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D6884408B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 14:28:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9898440B7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 14:37:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB3621F2D385
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 13:28:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E2231C2A5E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 13:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56E17BB1D;
-	Wed, 31 Jan 2024 13:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D8DC80BEF;
+	Wed, 31 Jan 2024 13:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R12DiuRs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D4EA7BAE5;
-	Wed, 31 Jan 2024 13:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FF0280BE9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jan 2024 13:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706707671; cv=none; b=jHfQuV27Vai/s/9GPaXoYvXWv8n8Cr0MqbnLF5pg4erqWf3kqYqbCSfxlZ+a4jaufmZx2Gn7GD+6d8Hkag1m2NGwouhIB9WfThOM28k+68FnHOwz9jjbJOAizK35ArL+QaMGHe03TOWS8n+6UGLYXhMyOpnEknF7dswU5bcxNA4=
+	t=1706708219; cv=none; b=nn5JG7FK69A2NLefA+3vPfEL+etOXPWgj8dCn29fexuMkSPeelFWIi4MI8pAtfv6rYr0W6lloh6ICBkajJOOivHGRo3bMJLf020RyaNZM/jVNKAQ9vsCxNIvLINxb38zfg7u0zDZOog6rOBwLiaztk82x7B69/Hh9NyfekV/HM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706707671; c=relaxed/simple;
-	bh=yjPKe3SsGoBdZkqJvFpS8eiF0fp4OCL9lHXBD+iqiDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O32HJGvs79BdUG3slsA53LFrscvxg2zaWMjINl5D2TXr5l+ZNe9A/2GvF78f6BanswKLx2kjz8m3wbN25agzEt+unoXrRN60GDVIUtye60wcLEeSXzbChYqYtyIllaLuk8huIKEse2qSBO/MuFX7XpVdBCbCYUjMLrn3lESQ6BM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 379B6DA7;
-	Wed, 31 Jan 2024 05:28:31 -0800 (PST)
-Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 031EC3F738;
-	Wed, 31 Jan 2024 05:27:42 -0800 (PST)
-Date: Wed, 31 Jan 2024 13:27:36 +0000
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
-	rppt@kernel.org, hughd@google.com, pcc@google.com,
-	steven.price@arm.com, vincenzo.frascino@arm.com, david@redhat.com,
-	eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 06/35] mm: cma: Make CMA_ALLOC_SUCCESS/FAIL count
- the number of pages
-Message-ID: <ZbpKyNVHfhf1-AAv@raptor>
-References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-7-alexandru.elisei@arm.com>
- <0a71c87a-ae2c-4a61-8adb-3a51d6369b99@arm.com>
- <ZbeRQpGNnfXnjayQ@raptor>
- <2cb8288c-5378-4968-a75b-8462b41998c6@arm.com>
- <ZbjkTFEvSvyHNqmu@raptor>
- <8cd39b48-7fb8-40b2-8d6c-e6fc2b48f86d@arm.com>
+	s=arc-20240116; t=1706708219; c=relaxed/simple;
+	bh=sM4Z5/1kK7oFj99UnAH/d8SuEqsD0qqiEHgeK0ptMJg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cOZt5t3R3zNT1B38Pe9DgQwnJbctXTzu3PpFI6rUA5YxXU+bl/vTEi43DnR13L9jokd3pNMka87UvWUF/C4wD9K+PLKF/47c8ZLMisWUojSQO1L6zWyGWt44x18cYkO3VKdi19ccLNH/CDo7WuqhFX3NB3o4NNxlNTNSzAtF7HA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R12DiuRs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8935C433C7;
+	Wed, 31 Jan 2024 13:36:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706708218;
+	bh=sM4Z5/1kK7oFj99UnAH/d8SuEqsD0qqiEHgeK0ptMJg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=R12DiuRs/5rSHkXtDBIFZtVxI0ky1q6x3kiYin+tH8LTSl3XtMEMgERlC0fTkixsn
+	 YKrfDJfCuon8Kuc9iyG9I5Ky6ESPJ7KTZOv/uwPmplFJcDhECoZJcs5ZtbNWu6ypb/
+	 Qmw50KIJdUv7lUK8ViBVGOXWgn/x2tTLnTCzlmARaQBXLFwA3tlB7A+pph1jTzpJ7m
+	 9yml3+xtU64EtEu/sCUuZN7XIHY7beMtNs4v7F/3+FH+iztyaodKdS+UkRPBce8ID9
+	 Kc54ZaC2ADIMDz+oNJ0hBxrMM9iIr3mRKS6LFaijBNh0kUBhQJVkc9cT4cHCaHGVqe
+	 Z8zBp+LcZnGpw==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH DRAFT 0/4] : Port tracefs to kernfs
+Date: Wed, 31 Jan 2024 14:36:37 +0100
+Message-Id: <20240131-tracefs-kernfs-v1-0-f20e2e9a8d61@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8cd39b48-7fb8-40b2-8d6c-e6fc2b48f86d@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOVMumUC/x3MwQrCQAyE4VcpObvQbMWDryIesttZG8RVkiJC6
+ bsbPQ3fYf6NHKZwOg8bGd7q+uwBPgxUF+k3JJ3DlMd8HHnitJpUNE93WI+ZWp7RTpDCTHF6GZp
+ +/sHLNVzEkYpJr8sv8xBfYbTvX4c837d5AAAA
+To: Steven Rostedt <rostedt@goodmis.org>, 
+ Linus Torvalds <torvalds@linux-foundation.org>, 
+ Amir Goldstein <amir73il@gmail.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+ Al Viro <viro@zeniv.linux.org.uk>, Matthew Wilcox <willy@infradead.org>, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.13-dev-4e032
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6323; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=sM4Z5/1kK7oFj99UnAH/d8SuEqsD0qqiEHgeK0ptMJg=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTu8vk+b6bjsq3dMQcD3dnMeWakLfa9HKC/yFri/NTjn
+ wtNUvl6OkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYSfJqRYZ3c7bqj142rJ9xN
+ DaiMnPt502fF916L9Ld/OmTskxW0g4fhn+Ger2IBn+7pswU+E1AQsg4MEt9ruvPy9cuz3BhZMhg
+ vMwMA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Hi,
+Back in 2022 we already had a session at LSFMM where we talked about
+eventfs and we said that it should be based on kernfs and any missing
+functionality be implemented in kernfs. Instead we've gotten a
+hand-rolled version of similar functionality and 100+ mails exchanges
+over the last weeks to fix bugs in there binding people's time.
 
-On Wed, Jan 31, 2024 at 10:10:05AM +0530, Anshuman Khandual wrote:
-> 
-> 
-> On 1/30/24 17:28, Alexandru Elisei wrote:
-> > Hi,
-> > 
-> > On Tue, Jan 30, 2024 at 10:22:11AM +0530, Anshuman Khandual wrote:
-> >>
-> >> On 1/29/24 17:21, Alexandru Elisei wrote:
-> >>> Hi,
-> >>>
-> >>> On Mon, Jan 29, 2024 at 02:54:20PM +0530, Anshuman Khandual wrote:
-> >>>>
-> >>>> On 1/25/24 22:12, Alexandru Elisei wrote:
-> >>>>> The CMA_ALLOC_SUCCESS, respectively CMA_ALLOC_FAIL, are increased by one
-> >>>>> after each cma_alloc() function call. This is done even though cma_alloc()
-> >>>>> can allocate an arbitrary number of CMA pages. When looking at
-> >>>>> /proc/vmstat, the number of successful (or failed) cma_alloc() calls
-> >>>>> doesn't tell much with regards to how many CMA pages were allocated via
-> >>>>> cma_alloc() versus via the page allocator (regular allocation request or
-> >>>>> PCP lists refill).
-> >>>>>
-> >>>>> This can also be rather confusing to a user who isn't familiar with the
-> >>>>> code, since the unit of measurement for nr_free_cma is the number of pages,
-> >>>>> but cma_alloc_success and cma_alloc_fail count the number of cma_alloc()
-> >>>>> function calls.
-> >>>>>
-> >>>>> Let's make this consistent, and arguably more useful, by having
-> >>>>> CMA_ALLOC_SUCCESS count the number of successfully allocated CMA pages, and
-> >>>>> CMA_ALLOC_FAIL count the number of pages the cma_alloc() failed to
-> >>>>> allocate.
-> >>>>>
-> >>>>> For users that wish to track the number of cma_alloc() calls, there are
-> >>>>> tracepoints for that already implemented.
-> >>>>>
-> >>>>> Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
-> >>>>> ---
-> >>>>>  mm/cma.c | 4 ++--
-> >>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
-> >>>>>
-> >>>>> diff --git a/mm/cma.c b/mm/cma.c
-> >>>>> index f49c95f8ee37..dbf7fe8cb1bd 100644
-> >>>>> --- a/mm/cma.c
-> >>>>> +++ b/mm/cma.c
-> >>>>> @@ -517,10 +517,10 @@ struct page *cma_alloc(struct cma *cma, unsigned long count,
-> >>>>>  	pr_debug("%s(): returned %p\n", __func__, page);
-> >>>>>  out:
-> >>>>>  	if (page) {
-> >>>>> -		count_vm_event(CMA_ALLOC_SUCCESS);
-> >>>>> +		count_vm_events(CMA_ALLOC_SUCCESS, count);
-> >>>>>  		cma_sysfs_account_success_pages(cma, count);
-> >>>>>  	} else {
-> >>>>> -		count_vm_event(CMA_ALLOC_FAIL);
-> >>>>> +		count_vm_events(CMA_ALLOC_FAIL, count);
-> >>>>>  		if (cma)
-> >>>>>  			cma_sysfs_account_fail_pages(cma, count);
-> >>>>>  	}
-> >>>> Without getting into the merits of this patch - which is actually trying to do
-> >>>> semantics change to /proc/vmstat, wondering how is this even related to this
-> >>>> particular series ? If required this could be debated on it's on separately.
-> >>> Having the number of CMA pages allocated and the number of CMA pages freed
-> >>> allows someone to infer how many tagged pages are in use at a given time:
-> >> That should not be done in CMA which is a generic multi purpose allocator.
-> 
-> > Ah, ok. Let me rephrase that: Having the number of CMA pages allocated, the
-> > number of failed CMA page allocations and the number of freed CMA pages
-> > allows someone to infer how many CMA pages are in use at a given time.
-> > That's valuable information for software designers and system
-> > administrators, as it allows them to tune the number of CMA pages available
-> > in a system.
-> > 
-> > Or put another way: what would you consider to be more useful?  Knowing the
-> > number of cma_alloc()/cma_release() calls, or knowing the number of pages
-> > that cma_alloc()/cma_release() allocated or freed?
-> 
-> There is still value in knowing how many times cma_alloc() succeeded or failed
-> regardless of the cumulative number pages involved over the time. Actually the
-> count helps to understand how cma_alloc() performed overall as an allocator.
-> 
-> But on the cma_release() path there is no chances of failure apart from - just
-> when the caller itself provides an wrong input. So there are no corresponding
-> CMA_RELEASE_SUCCESS/CMA_RELEASE_FAIL vmstat counters in there - for a reason !
-> 
-> Coming back to CMA based pages being allocated and freed, there is already an
-> interface via sysfs (CONFIG_CMA_SYSFS) which gets updated in cma_alloc() path
-> via cma_sysfs_account_success_pages() and cma_sysfs_account_fail_pages().
-> 
-> #ls /sys/kernel/mm/cma/<name>
-> alloc_pages_fail alloc_pages_success
-> 
-> Why these counters could not meet your requirements ? Also 'struct cma' can
-> be updated to add an element 'nr_pages_freed' to be tracked in cma_release(),
-> providing free pages count as well.
-> 
-> There are additional debug fs based elements (CONFIG_CMA_DEBUGFS) available.
-> 
-> #ls /sys/kernel/debug/cma/<name>
-> alloc  base_pfn  bitmap  count  free  maxchunk  order_per_bit  used
+All we've heard so far were either claims that it would be too difficult
+to port tracefs to kernfs or that it somehow wouldn't work but we've
+never heard why and it's never been demonstrated why.
 
-Ok, I'll have a look at those, thank you for the suggestion.
+So I went and started a draft for porting all of tracefs to kernfs in
+the hopes that someone picks this up and finishes the work. I've gotten
+the core of it done and it's pretty easy to do logical copy-pasta to
+port this to eventfs as well.
 
-Thanks,
-Alex
+I want to see tracefs and eventfs ported to kernfs and get rid of the
+hand-rolled implementation. I don't see the value in any additional
+talks about why eventfs is special until we've seen an implementation of
+tracefs on kernfs.
+
+I'm pretty certain that we have capable people that can and want to
+finish the port (I frankly don't have time for this unless I drop all
+reviews.). I've started just jotting down the basics yesterday evening
+and came to the conclusion that:
+
+* It'll get rid of pointless dentry pinning in various places that is
+  currently done in the first place. Instead only a kernfs root and a
+  kernfs node need to be stashed. Dentries and inodes are added
+  on-demand.
+
+* It'll make _all of_ tracefs capable of on-demand dentry and inode
+  creation.
+
+* Quoting [1]:
+
+  > The biggest savings in eventfs is the fact that it has no meta data for
+  > files. All the directories in eventfs has a fixed number of files when they
+  > are created. The creating of a directory passes in an array that has a list
+  > of names and callbacks to call when the file needs to be accessed. Note,
+  > this array is static for all events. That is, there's one array for all
+  > event files, and one array for all event systems, they are not allocated per
+  > directory.
+
+  This is all possible with kernfs.
+
+* All ownership information (mode, uid, gid) is stashed and kept
+  kernfs_node->iattrs. So the parent kernfs_node's ownership can be used
+  to set the child's ownership information. This will allow to get rid
+  of any custom permission checking and ->getattr() and ->setattr()
+  calls.
+
+* Private tracefs data that was stashed in inode->i_private is stashed
+  in kernfs_node->priv. That's always accessible in kernfs->open() calls
+  via kernfs_open_file->kn->priv but it could also be transferred to
+  kernfs_open_file->priv. In any case, it makes it a lot easier to
+  handle private data than tracefs does it now.
+
+* It'll make maintenance of tracefs easier in the long run because new
+  functionality and improvements get added to kernfs including better
+  integration with namespaces (I've had patchsets for kernfs a while ago
+  to unlock additional namespaces.)
+
+* There's no need for separate i_ops for "instances" and regular tracefs
+  directories. Simply compare the stashed kernfs_node of the "instances"
+  directory against the current kernfs_node passed to ->mkdir() or
+  ->rmdir() whether the directory creation or deletion is allowed.
+
+* Frankly, another big reason to do it is simply maintenance. All of the
+  maintenance burden neeeds to be shifted to the generic kernfs
+  implementation which is maintained by people familar with filesystem
+  details. I'm willing to support it too.
+
+  No shade, but currently I don't see how eventfs can be maintained
+  without the involvement of others. Maintainability alone should be a
+  sufficient reason to move all of this to kernfs and add any missing
+  functionality.
+
+* If we have a session about this at LSFMM and I want to see a POC of
+  tracefs and eventfs built on top of kernfs. I'm tired of talking about
+  a private implementation of functionality that already exists.
+  Otherwise, this is just wasting everyone's time and eventfs as it is
+  will not become common infrastructure.
+
+* Yes, debugfs could or should be ported as well but it's almost
+  irrelevant for debugfs. It's a debugging filesystem. If you enable it
+  on a production workload then you have bigger problems to worry about
+  than wasted memory. So I don't consider that urgent. But tracefs is
+  causing us headaches right now and I'm weary of cementing a
+  hand-rolled implementation.
+
+So really, please let's move this to kernfs, fix any things that aren't
+supported in kernfs (I haven't seen any) and get rid of all the custom
+functionality. Part of the work is moving tracefs to the new mount api
+(which should've been done anyway).
+
+The fs/tracefs/ part already compiles. The rest I haven't finished
+converting. All the file_operations need to be moved to kernfs_ops which
+shouldn't be too difficult.
+
+To: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Amir Goldstein <amir73il@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: lsf-pc@lists.linux-foundation.org,
+Cc: linux-fsdevel@vger.kernel.org
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Matthew Wilcox <willy@infradead.org>
+
+Link: https://lore.kernel.org/r/20240129105726.2c2f77f0@gandalf.local.home [1]
+Link: https://lore.kernel.org/r/20240129105726.2c2f77f0@gandalf.local.home
+---
+Christian Brauner (4):
+      [DRAFT]: tracefs: port to kernfs
+      [DRAFT]: trace: stash kernfs_node instead of dentries
+      [DRAFT]: hwlat: port struct file_operations thread_mode_fops to struct kernfs_ops
+      [DRAFT]: trace: illustrate how to convert basic open functions
+
+ fs/kernfs/mount.c                 |  10 +
+ fs/tracefs/inode.c                | 649 +++++++++++++-------------------------
+ include/linux/kernfs.h            |   3 +
+ include/linux/tracefs.h           |  18 +-
+ kernel/trace/trace.c              |  22 +-
+ kernel/trace/trace.h              |   4 +-
+ kernel/trace/trace_events_synth.c |   4 +-
+ kernel/trace/trace_events_user.c  |   2 +-
+ kernel/trace/trace_hwlat.c        |  45 +--
+ 9 files changed, 270 insertions(+), 487 deletions(-)
+---
+base-commit: 41bccc98fb7931d63d03f326a746ac4d429c1dd3
+change-id: 20240131-tracefs-kernfs-3f2def6eab11
+
 
