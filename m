@@ -1,384 +1,239 @@
-Return-Path: <linux-fsdevel+bounces-9719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9720-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82759844933
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 21:53:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6BC5844954
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 22:02:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6EBD1C21A28
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 20:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A97A1F2201D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 21:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C590E39875;
-	Wed, 31 Jan 2024 20:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A30438FBE;
+	Wed, 31 Jan 2024 21:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V0ivjRjN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B032B38FBC
-	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jan 2024 20:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706734395; cv=none; b=A/JlkDZt+thK37rimkO/36XSGNIvm5Lw4uR90QvP3nIhwg8Mf9Pbf3oneBRII0ecifQrHbYwrL9qyVfZU8AXcrKe5pdrqiKvWfApWIGJ7i0q9H5ziQkOhDsT4SMXlH49zErTgWo/ZA9uPWoIeC9r6L5XioPTPYkcT9aKhO9jc+E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706734395; c=relaxed/simple;
-	bh=a+okDlWx9/qPLdBcy7htYvkIivsaWX4NYZq96zRjvIw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YDKKw4Ymhrl4soNz9CST7c3h2inYCeTUr5Vf0Qa1jcqg8CRepC7wr3FuBXHwR6I/pZN5wJ1Jzfv4RcxKHu0ywF4hlz/NuZPAOHceYh9bySBWYfLc/ALBh0EtjzQ4kG0S8ySIG4yw7iwYxWc5b0Qbce13EGx8M/o+fipDQuAAP4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-295f95ac74aso118776a91.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jan 2024 12:53:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706734393; x=1707339193;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZQtRy8aH4+NZcdv1DbXtSr6CX/Icu9Trjb7pmXD4VBs=;
-        b=rci9jp/YTqYPtrB8gCr0j6umeUMvQ3S4mGhdgzeqTxkUxf6EGXXwmxE9xmQPel/16e
-         kctwg1yHDWQkuRLBxJ008b7fiJKsJd7jxzpdB1ry6xSBE/8np8o2SYlyOuzvMAK7/tLo
-         /Rnyo8Ivhpt6Abk5BithfWrU9Q/3zbWfJQ2DBzplO8G+YHnLbzWkWqWHmmDa0FOLBc7k
-         fDfDMCo9kPXa9HHZ3J2aqRqXKjoCTg/ziRbP2Ner49k6qxXwPRpHfn1/IL4vCVDMFqyK
-         6EW/Rhbt5oSEGcu3crnW84qiAna8/1JKU1BDu/IEicb3NW6dreEYLaWSxa8Bs546zG9C
-         dM2g==
-X-Gm-Message-State: AOJu0YyeRjYIgj0KYdttQiSYwy5X+UMqv/AbjePbffPiqeVA/tJi9XR1
-	GH02ihja4GfdoUzZjxp+ff7RBvvNVexs9Xen6d+YnwcVVtdn1hr7
-X-Google-Smtp-Source: AGHT+IFRBdJ3Qo7SWYftLxaNase8/u8qHhrlRksrACE/t4Kaedxp1+yLQaTYcLVKecLVDmKFlPoGug==
-X-Received: by 2002:a17:90a:ce97:b0:295:aa97:d6ad with SMTP id g23-20020a17090ace9700b00295aa97d6admr2828956pju.39.1706734392847;
-        Wed, 31 Jan 2024 12:53:12 -0800 (PST)
-Received: from bvanassche-linux.mtv.corp.google.com ([2620:0:1000:8411:1d95:ca94:1cbe:1409])
-        by smtp.gmail.com with ESMTPSA id g3-20020a17090ace8300b00295fb7e7b87sm855977pju.27.2024.01.31.12.53.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jan 2024 12:53:12 -0800 (PST)
-From: Bart Van Assche <bvanassche@acm.org>
-To: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Kanchan Joshi <joshi.k@samsung.com>
-Subject: [PATCH 6/6] block, fs: Restore the per-bio/request data lifetime fields
-Date: Wed, 31 Jan 2024 12:52:37 -0800
-Message-ID: <20240131205237.3540210-7-bvanassche@acm.org>
-X-Mailer: git-send-email 2.43.0.429.g432eaa2c6b-goog
-In-Reply-To: <20240131205237.3540210-1-bvanassche@acm.org>
-References: <20240131205237.3540210-1-bvanassche@acm.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6030E38DF1;
+	Wed, 31 Jan 2024 21:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1706734964; cv=fail; b=LjHfFgHYBotVHsB2lXOTrbkYLvyAHEpFfzimgf4YfSRwqG1GV3K7qoa2hWPQlYD2z0EYcl/UWe5WFspL3aog71O0Dw6z7aOzJpTQHhv+6BSXUgcgKiL5P2NAR0k2xj41mPQlh/Pc5oHX9a9I7jqeAen4D9faHcZWB6OtnL/q5u4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1706734964; c=relaxed/simple;
+	bh=a8KrKIWFalgBAC9gxi/aWImn2TjPttRO4oRESyH5lts=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=EITXdkI568uzCPBjVeNf/7hPcExNcP2ycqhyvRxXyII92PO8Ua8yLao/3G8KfLFBWNeqhIBNKgsdR7ZZ+ghuJImib+oubWqZU/dAZkWEYl35gY6mZQjce1I1sz6BUQELHe3hsPNsCWzkOr7sOAuYOBW/sRnLUO1+dqgY74SBSEQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V0ivjRjN; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706734963; x=1738270963;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=a8KrKIWFalgBAC9gxi/aWImn2TjPttRO4oRESyH5lts=;
+  b=V0ivjRjN8RypYPmmW4TmHXnGgRMNe0+72cLlGJKsSOGvOoinR1yjRaBX
+   1+tLngXUeiZj5Qvxsz58q+eSHmzcERwaHaUGERjgxPB2IQmIss5SscnFg
+   pgXVH6oACpUV9Okjo+tMOxW5lU1a6U6GJZzi4rRak7UU9TtyOadLxWwjT
+   Dpy9L0Td7wklEFr/XNGjP/ZB7CTdSMpJS3G6HjyqzIaGjNv/4CHjdaqUm
+   zwb2ajKBQReUwdg8QFRY/twQONwZ8jbFwKgWN7kH5eKfLGfS0Zbx7+vFf
+   Q8ZvH82xa6P8Nfb/CanS8cUJlFBMm3XbxW+waiYrKrkB+n8FDZu1dA18f
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10969"; a="17109193"
+X-IronPort-AV: E=Sophos;i="6.05,233,1701158400"; 
+   d="scan'208";a="17109193"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2024 13:02:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10969"; a="878896221"
+X-IronPort-AV: E=Sophos;i="6.05,233,1701158400"; 
+   d="scan'208";a="878896221"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by FMSMGA003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 31 Jan 2024 13:02:39 -0800
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 31 Jan 2024 13:02:38 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Wed, 31 Jan 2024 13:02:38 -0800
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
+ by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 31 Jan 2024 13:02:37 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cvjo/KbuuQHHp78c9L2xJM0UwPY0FqRMH42dIb5Svv/+OKEcOG/FMcsqWpKY3WeBVatVoWo4bFg/sRapVzv50l/Sy5h0n4tkA7zpH2GAqJpMHGaMFimPWbvBiOwKPSa+6Dy/bMO55Fhih1V4V4QweGpbT77bXQt6V283jHCU040JnOi22xMFPw+1EPs8U/nZ7AXozIZKLqWFv6KtbH8RrDcdada8ULcyy1YqDfnyQ6mUoOvaHFan71sL0AM7mUjkOqNtnqw/yJVUt44ng1kc82/Z4iRF36B5X4nDZOmTQnWI26k45cNsoHaaqzKEDZLbnVz+OdJAiHrS89BN8BF6rw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1zr6IXfXIDFKRkqsZalTnOGJWkx072CyAb0yn8eUdr4=;
+ b=mwi2j6R++30rEnHxR9i4zd1ILyyGH6dLs+l1qaNXDhLlHin49ais1R1QRexmtpyTb01kJMJd8PhcZbAXuMZWF4ZHnbAvZYZutp7IEGVUD52JyysAjRYWt4WwqfAVChoY8RlJX3IFo0nTCI7G8NRTsq0cE0I/NxRkP1brueKxmPW/rho+YwbPUN01Nod/mw9tSi3wzqEUVUrn7eEva/Xnc7xw0kc6RVN7khGw5/Xk6tg3+8D4/NZnEZwilSezxU6MViQz+UlazBCXhz2hn+XIFt7zntV120oKSvUerIZxnkflZor3HxnO93/TCLjZK9PlWR89EnhubAkMh90DY9ZrTg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by PH0PR11MB5880.namprd11.prod.outlook.com (2603:10b6:510:143::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.22; Wed, 31 Jan
+ 2024 21:02:35 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6257:f90:c7dd:f0b2]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6257:f90:c7dd:f0b2%4]) with mapi id 15.20.7228.029; Wed, 31 Jan 2024
+ 21:02:35 +0000
+Date: Wed, 31 Jan 2024 13:02:31 -0800
+From: Dan Williams <dan.j.williams@intel.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Dan Williams
+	<dan.j.williams@intel.com>, Arnd Bergmann <arnd@arndb.de>, Dave Chinner
+	<david@fromorbit.com>
+CC: <linux-kernel@vger.kernel.org>, Mathieu Desnoyers
+	<mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>, <linux-mm@kvack.org>,
+	<linux-arch@vger.kernel.org>, Vishal Verma <vishal.l.verma@intel.com>, "Dave
+ Jiang" <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, "Russell
+ King" <linux@armlinux.org.uk>, <nvdimm@lists.linux.dev>,
+	<linux-cxl@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<dm-devel@lists.linux.dev>
+Subject: RE: [RFC PATCH v3 2/4] dax: Check for data cache aliasing at runtime
+Message-ID: <65bab567665f3_37ad2943c@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20240131162533.247710-1-mathieu.desnoyers@efficios.com>
+ <20240131162533.247710-3-mathieu.desnoyers@efficios.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240131162533.247710-3-mathieu.desnoyers@efficios.com>
+X-ClientProxiedBy: MW4PR02CA0015.namprd02.prod.outlook.com
+ (2603:10b6:303:16d::6) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|PH0PR11MB5880:EE_
+X-MS-Office365-Filtering-Correlation-Id: d7a1ea31-f14c-4307-fa17-08dc229ff2e0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Ukuos4hW0e9u9CRsOX0aHXJ4OglysIkG6wJCuTos36K/pqM7Xl1Hs/MJW82P1N/59SLaFbhLqkA4dELGtdEXa+NJdy5oJrw0mc7bdZ5mtTpeQ1n1128N8ItTcIDvoQJBPR5aVLfdgLxQpdIle80ZrGGY8qhn//RyIdlnu10C6F4WWubUeDTSdGw1EzC6eAAGt8pRiXglFGY9Rqppjr/Gul46OJkkZ90xeHtJNhLLK56L4rHX3DatTVgQYHNQUWSwuFzkFsICrQ+QV2VOjGoyzri+LonsSGl6J2b0jYXs00sYfP2rM5PODhV5p1gL0B3HTJ8UXgwRa5JuxJzPxLucCLQ9fc8jvXvUO0GQ+tM1X6IY2yNIHie0N9ioe7Rs7qouyas6v7D9nZYjhOE+ivREN7U7TRUFT4iNsWgzNvVx0flaRJ1vf7TvETpLZZC91JzIiiweeLrO7FpxETwAy1jLTiIW1cvkkSqLo8aieYB4riUJpqbUrWrud8Erd/nDVbzO7FoOObiry7rfzhqHyeWLNUqyGyCaXSXHPY20VXoZYa2yYsJAsrkF2IK4ZLEh3ee4
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(136003)(396003)(366004)(346002)(39860400002)(230922051799003)(1800799012)(64100799003)(451199024)(186009)(41300700001)(83380400001)(38100700002)(6512007)(9686003)(26005)(4326008)(8676002)(5660300002)(8936002)(7416002)(2906002)(478600001)(110136005)(6506007)(66946007)(6666004)(54906003)(66476007)(66556008)(6486002)(316002)(86362001)(82960400001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?I0JTBq8UYMS5ThZbO5MlAc1c78GE68vnfbQv8yCHdxVpKjhr2jnzVTq2d22n?=
+ =?us-ascii?Q?5YLZWIsJqX6DgBjeM38sgvpmnyFYRc2YyKFH9kWfToBrpfjLM2w+P9K+6oVh?=
+ =?us-ascii?Q?IEzxfIzb+TydjAx2R5jG0xsmU0y+JQp4vOwx8Mrr3PzTpSfNi+V/mVB9zAuT?=
+ =?us-ascii?Q?uURVfhfV7LonrDhfzVXBPZF3mSjEHp/5Utgf9mqC7oRKtWdGIPbvoMR6z/K0?=
+ =?us-ascii?Q?Ef73VxG49QGfFkPOmvpKPLPhCWAEVhJjiXE0jwyIN/uuD1Md37cTCzwtNrJP?=
+ =?us-ascii?Q?OTEhzqakSU4Fy/z9kK2OpxsBb2dJi+6U5BA51oFvuMw+0xR7I6a34y7fGAtD?=
+ =?us-ascii?Q?Av2AH4SfUs4sZZ0dhJRt+Bz2Lo5/9Z9udgOGXqaD5DZluuWslbrYfKhEZZe3?=
+ =?us-ascii?Q?6pRUXo3ScBM3Of2tD+fIb1V5KRHYTNa1T6rEh7/cu6Uh52uiq2IrBMObIjfd?=
+ =?us-ascii?Q?JLE9vdwAZKqYyrLD7zZZAuviQZGuWMzDGRq7VdwyU9Xf5wcugwKHbrj6v+M1?=
+ =?us-ascii?Q?y3tvgE2CX4pXE+6S+3AYpHfJ2ctd4LJY85R1nCGAYq8kGygOuEgASXJaTVeR?=
+ =?us-ascii?Q?Vx4aIF3tQJHZ4rs3g9Tjv5eIYSMLRRqpyRrRuHxz41XhEuvGsjoNVAm4riwK?=
+ =?us-ascii?Q?uOF0eqpIiuhk4WSXYGRIgMJNhIWFa9MMhUVlAWGxpwWNNJnZkYvO8Nemirx3?=
+ =?us-ascii?Q?o/xjbsK8PQrlGnNMWyKT+qaClFX6Zd36Bxt+HTs5wQLUR+BFnHJBqUKdayOL?=
+ =?us-ascii?Q?8awSWTwXmr2a2lI8i9Xx37TCeL1KWIWWrYIQ7Z4+rsLuaNU6dqwkDMlTWuZr?=
+ =?us-ascii?Q?ebZJPCtN8MQ+K45L3EVhhOMJBJ1dYsE3pSeEItahKL/0FSMR6uwDKGJZZ6AT?=
+ =?us-ascii?Q?eQXGAgL+qrKr3Q9meVVdFcITfYpSR1pu30vzYYiTGXq95rKyCWjz+rgSfKyM?=
+ =?us-ascii?Q?p6LrgsIWKs6Hc79KIg7KoWSqvzXDpwKiqNTr1IgkJoGM5fj0HAzlMHz9TiWY?=
+ =?us-ascii?Q?GcXfaUiXvSHEriALTN7c5DukTIyfaQaRGYpmP6D+X4BoycDwbKvEwPaCePO3?=
+ =?us-ascii?Q?/uET9EZkvnCiH6F0LKRrAG5Kjp1+x0esCOjzBSRHKVJIaNr8PDZ4xv9IHcir?=
+ =?us-ascii?Q?Z4LZHt9aa384Rj4sXDhrZ596pDA2b+mM9lgvOEfTg3HsRNLLv497yR3rQ2DN?=
+ =?us-ascii?Q?U3BInMmn4tyfroSaR/FgLxD4hafpoEHciwogWukwmgU9AeC8G/J+/ReC+qqi?=
+ =?us-ascii?Q?nzkWYow09VuItwWRBHCjQ/6z193bJbhNRYoAsN7yN/qXiDxbQEQAbCBZmJ2d?=
+ =?us-ascii?Q?seiLp4Ya3Xw561i+4Pj3AajX4bNfKxB725yzOj+MTmEZezkNeQoUhyzl1L/3?=
+ =?us-ascii?Q?PSqTicIENAoNt7VL7nQ03J07zglU6TPTP/X5bk1qqVMeISX+a90NNCPAjDVt?=
+ =?us-ascii?Q?1r8BJn8nonj2CMB1yK1qcX0HnqSsOQZc4W1XHOZRCuQWTrNIc/5cFRWPEw73?=
+ =?us-ascii?Q?XyX9mkJi++JeTs8Z6Fc18VUTv+mcPLyQ9iyvEqMos2uiUGoGiOOQkCeaHIQw?=
+ =?us-ascii?Q?5+d96freP5F1FNcjRQwniiV4+xXNwzICqeaq3E5nKlVBpay9aI621LHppIeF?=
+ =?us-ascii?Q?vg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7a1ea31-f14c-4307-fa17-08dc229ff2e0
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2024 21:02:35.1249
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: edDio51DKHDj5cgPCqMWSpRVpzEbDLN1Pq29QX2IfOj5cTFgrxvCGkityzaMJTTWSSvIp8rKGBiItC6bIDCspyUZIZDbDV2wiB0kApnV+JI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5880
+X-OriginatorOrg: intel.com
 
-Restore support for passing data lifetime information from filesystems to
-block drivers. This patch reverts commit b179c98f7697 ("block: Remove
-request.write_hint") and commit c75e707fe1aa ("block: remove the
-per-bio/request write hint").
+Mathieu Desnoyers wrote:
+> Replace the following fs/Kconfig:FS_DAX dependency:
+> 
+>   depends on !(ARM || MIPS || SPARC)
+> 
+> By a runtime check within alloc_dax().
+> 
+> This is done in preparation for its use by each filesystem supporting
+> the "dax" mount option to validate whether DAX is indeed supported.
+> 
+> This is done in preparation for using cpu_dcache_is_aliasing() in a
+> following change which will properly support architectures which detect
+> data cache aliasing at runtime.
+> 
+> Fixes: d92576f1167c ("dax: does not work correctly with virtual aliasing caches")
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: linux-mm@kvack.org
+> Cc: linux-arch@vger.kernel.org
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: nvdimm@lists.linux.dev
+> Cc: linux-cxl@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: dm-devel@lists.linux.dev
+> ---
+>  drivers/dax/super.c | 6 ++++++
+>  fs/Kconfig          | 1 -
+>  2 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index 0da9232ea175..e9f397b8a5a3 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -445,6 +445,12 @@ struct dax_device *alloc_dax(void *private, const struct dax_operations *ops)
+>  	dev_t devt;
+>  	int minor;
+>  
+> +	/* Unavailable on architectures with virtually aliased data caches. */
+> +	if (IS_ENABLED(CONFIG_ARM) ||
+> +	    IS_ENABLED(CONFIG_MIPS) ||
+> +	    IS_ENABLED(CONFIG_SPARC))
+> +		return NULL;
 
-This patch does not modify the size of struct bio because the new
-bi_write_hint member fills a hole in struct bio. pahole reports the
-following for struct bio on an x86_64 system with this patch applied:
+This function returns ERR_PTR(), not NULL on failure.
 
-        /* size: 112, cachelines: 2, members: 20 */
-        /* sum members: 110, holes: 1, sum holes: 2 */
-        /* last cacheline: 48 bytes */
+...and I notice this mistake is also made in include/linux/dax.h in the
+CONFIG_DAX=n case. That function also mentions:
 
-Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- block/bio.c                 |  2 ++
- block/blk-crypto-fallback.c |  1 +
- block/blk-merge.c           |  8 ++++++++
- block/blk-mq.c              |  2 ++
- block/bounce.c              |  1 +
- block/fops.c                |  3 +++
- fs/buffer.c                 | 12 ++++++++----
- fs/direct-io.c              |  2 ++
- fs/iomap/buffered-io.c      |  2 ++
- fs/iomap/direct-io.c        |  1 +
- fs/mpage.c                  |  1 +
- include/linux/blk-mq.h      |  2 ++
- include/linux/blk_types.h   |  2 ++
- 13 files changed, 35 insertions(+), 4 deletions(-)
+    static inline struct dax_device *alloc_dax(void *private,
+                    const struct dax_operations *ops)
+    {
+            /*
+             * Callers should check IS_ENABLED(CONFIG_DAX) to know if this
+             * NULL is an error or expected.
+             */     
+            return NULL;
+    }               
 
-diff --git a/block/bio.c b/block/bio.c
-index b9642a41f286..c9223e9d31da 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -251,6 +251,7 @@ void bio_init(struct bio *bio, struct block_device *bdev, struct bio_vec *table,
- 	bio->bi_opf = opf;
- 	bio->bi_flags = 0;
- 	bio->bi_ioprio = 0;
-+	bio->bi_write_hint = 0;
- 	bio->bi_status = 0;
- 	bio->bi_iter.bi_sector = 0;
- 	bio->bi_iter.bi_size = 0;
-@@ -813,6 +814,7 @@ static int __bio_clone(struct bio *bio, struct bio *bio_src, gfp_t gfp)
- {
- 	bio_set_flag(bio, BIO_CLONED);
- 	bio->bi_ioprio = bio_src->bi_ioprio;
-+	bio->bi_write_hint = bio_src->bi_write_hint;
- 	bio->bi_iter = bio_src->bi_iter;
- 
- 	if (bio->bi_bdev) {
-diff --git a/block/blk-crypto-fallback.c b/block/blk-crypto-fallback.c
-index e6468eab2681..b1e7415f8439 100644
---- a/block/blk-crypto-fallback.c
-+++ b/block/blk-crypto-fallback.c
-@@ -172,6 +172,7 @@ static struct bio *blk_crypto_fallback_clone_bio(struct bio *bio_src)
- 	if (bio_flagged(bio_src, BIO_REMAPPED))
- 		bio_set_flag(bio, BIO_REMAPPED);
- 	bio->bi_ioprio		= bio_src->bi_ioprio;
-+	bio->bi_write_hint	= bio_src->bi_write_hint;
- 	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
- 	bio->bi_iter.bi_size	= bio_src->bi_iter.bi_size;
- 
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 2d470cf2173e..2a06fd33039d 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -810,6 +810,10 @@ static struct request *attempt_merge(struct request_queue *q,
- 	if (rq_data_dir(req) != rq_data_dir(next))
- 		return NULL;
- 
-+	/* Don't merge requests with different write hints. */
-+	if (req->write_hint != next->write_hint)
-+		return NULL;
-+
- 	if (req->ioprio != next->ioprio)
- 		return NULL;
- 
-@@ -937,6 +941,10 @@ bool blk_rq_merge_ok(struct request *rq, struct bio *bio)
- 	if (!bio_crypt_rq_ctx_compatible(rq, bio))
- 		return false;
- 
-+	/* Don't merge requests with different write hints. */
-+	if (rq->write_hint != bio->bi_write_hint)
-+		return false;
-+
- 	if (rq->ioprio != bio_prio(bio))
- 		return false;
- 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index aa87fcfda1ec..34ceb15d2ea4 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2585,6 +2585,7 @@ static void blk_mq_bio_to_request(struct request *rq, struct bio *bio,
- 		rq->cmd_flags |= REQ_FAILFAST_MASK;
- 
- 	rq->__sector = bio->bi_iter.bi_sector;
-+	rq->write_hint = bio->bi_write_hint;
- 	blk_rq_bio_prep(rq, bio, nr_segs);
- 
- 	/* This can't fail, since GFP_NOIO includes __GFP_DIRECT_RECLAIM. */
-@@ -3185,6 +3186,7 @@ int blk_rq_prep_clone(struct request *rq, struct request *rq_src,
- 	}
- 	rq->nr_phys_segments = rq_src->nr_phys_segments;
- 	rq->ioprio = rq_src->ioprio;
-+	rq->write_hint = rq_src->write_hint;
- 
- 	if (rq->bio && blk_crypto_rq_bio_prep(rq, rq->bio, gfp_mask) < 0)
- 		goto free_and_out;
-diff --git a/block/bounce.c b/block/bounce.c
-index 7cfcb242f9a1..d6a5219f29dd 100644
---- a/block/bounce.c
-+++ b/block/bounce.c
-@@ -169,6 +169,7 @@ static struct bio *bounce_clone_bio(struct bio *bio_src)
- 	if (bio_flagged(bio_src, BIO_REMAPPED))
- 		bio_set_flag(bio, BIO_REMAPPED);
- 	bio->bi_ioprio		= bio_src->bi_ioprio;
-+	bio->bi_write_hint	= bio_src->bi_write_hint;
- 	bio->bi_iter.bi_sector	= bio_src->bi_iter.bi_sector;
- 	bio->bi_iter.bi_size	= bio_src->bi_iter.bi_size;
- 
-diff --git a/block/fops.c b/block/fops.c
-index 0cf8cf72cdfa..ab0e37d1dc48 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -73,6 +73,7 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
- 		bio_init(&bio, bdev, vecs, nr_pages, dio_bio_write_op(iocb));
- 	}
- 	bio.bi_iter.bi_sector = pos >> SECTOR_SHIFT;
-+	bio.bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
- 	bio.bi_ioprio = iocb->ki_ioprio;
- 
- 	ret = bio_iov_iter_get_pages(&bio, iter);
-@@ -203,6 +204,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 
- 	for (;;) {
- 		bio->bi_iter.bi_sector = pos >> SECTOR_SHIFT;
-+		bio->bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
- 		bio->bi_private = dio;
- 		bio->bi_end_io = blkdev_bio_end_io;
- 		bio->bi_ioprio = iocb->ki_ioprio;
-@@ -321,6 +323,7 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
- 	dio->flags = 0;
- 	dio->iocb = iocb;
- 	bio->bi_iter.bi_sector = pos >> SECTOR_SHIFT;
-+	bio->bi_write_hint = file_inode(iocb->ki_filp)->i_write_hint;
- 	bio->bi_end_io = blkdev_bio_end_io_async;
- 	bio->bi_ioprio = iocb->ki_ioprio;
- 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index b55dea034a5d..d6b64124977a 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -55,7 +55,7 @@
- 
- static int fsync_buffers_list(spinlock_t *lock, struct list_head *list);
- static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
--			  struct writeback_control *wbc);
-+			  enum rw_hint hint, struct writeback_control *wbc);
- 
- #define BH_ENTRY(list) list_entry((list), struct buffer_head, b_assoc_buffers)
- 
-@@ -1889,7 +1889,8 @@ int __block_write_full_folio(struct inode *inode, struct folio *folio,
- 	do {
- 		struct buffer_head *next = bh->b_this_page;
- 		if (buffer_async_write(bh)) {
--			submit_bh_wbc(REQ_OP_WRITE | write_flags, bh, wbc);
-+			submit_bh_wbc(REQ_OP_WRITE | write_flags, bh,
-+				      inode->i_write_hint, wbc);
- 			nr_underway++;
- 		}
- 		bh = next;
-@@ -1944,7 +1945,8 @@ int __block_write_full_folio(struct inode *inode, struct folio *folio,
- 		struct buffer_head *next = bh->b_this_page;
- 		if (buffer_async_write(bh)) {
- 			clear_buffer_dirty(bh);
--			submit_bh_wbc(REQ_OP_WRITE | write_flags, bh, wbc);
-+			submit_bh_wbc(REQ_OP_WRITE | write_flags, bh,
-+				      inode->i_write_hint, wbc);
- 			nr_underway++;
- 		}
- 		bh = next;
-@@ -2756,6 +2758,7 @@ static void end_bio_bh_io_sync(struct bio *bio)
- }
- 
- static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
-+			  enum rw_hint write_hint,
- 			  struct writeback_control *wbc)
- {
- 	const enum req_op op = opf & REQ_OP_MASK;
-@@ -2783,6 +2786,7 @@ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
- 	fscrypt_set_bio_crypt_ctx_bh(bio, bh, GFP_NOIO);
- 
- 	bio->bi_iter.bi_sector = bh->b_blocknr * (bh->b_size >> 9);
-+	bio->bi_write_hint = write_hint;
- 
- 	__bio_add_page(bio, bh->b_page, bh->b_size, bh_offset(bh));
- 
-@@ -2802,7 +2806,7 @@ static void submit_bh_wbc(blk_opf_t opf, struct buffer_head *bh,
- 
- void submit_bh(blk_opf_t opf, struct buffer_head *bh)
- {
--	submit_bh_wbc(opf, bh, NULL);
-+	submit_bh_wbc(opf, bh, WRITE_LIFE_NOT_SET, NULL);
- }
- EXPORT_SYMBOL(submit_bh);
- 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 60456263a338..62c97ff9e852 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -410,6 +410,8 @@ dio_bio_alloc(struct dio *dio, struct dio_submit *sdio,
- 		bio->bi_end_io = dio_bio_end_io;
- 	if (dio->is_pinned)
- 		bio_set_flag(bio, BIO_PAGE_PINNED);
-+	bio->bi_write_hint = file_inode(dio->iocb->ki_filp)->i_write_hint;
-+
- 	sdio->bio = bio;
- 	sdio->logical_offset_in_bio = sdio->cur_page_fs_offset;
- }
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 093c4515b22a..c961511bece1 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1667,6 +1667,7 @@ iomap_alloc_ioend(struct inode *inode, struct iomap_writepage_ctx *wpc,
- 			       REQ_OP_WRITE | wbc_to_write_flags(wbc),
- 			       GFP_NOFS, &iomap_ioend_bioset);
- 	bio->bi_iter.bi_sector = sector;
-+	bio->bi_write_hint = inode->i_write_hint;
- 	wbc_init_bio(wbc, bio);
- 
- 	ioend = container_of(bio, struct iomap_ioend, io_inline_bio);
-@@ -1697,6 +1698,7 @@ iomap_chain_bio(struct bio *prev)
- 	new = bio_alloc(prev->bi_bdev, BIO_MAX_VECS, prev->bi_opf, GFP_NOFS);
- 	bio_clone_blkg_association(new, prev);
- 	new->bi_iter.bi_sector = bio_end_sector(prev);
-+	new->bi_write_hint = prev->bi_write_hint;
- 
- 	bio_chain(prev, new);
- 	bio_get(prev);		/* for iomap_finish_ioend */
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index bcd3f8cf5ea4..f3b43d223a46 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -380,6 +380,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
- 		fscrypt_set_bio_crypt_ctx(bio, inode, pos >> inode->i_blkbits,
- 					  GFP_KERNEL);
- 		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
-+		bio->bi_write_hint = inode->i_write_hint;
- 		bio->bi_ioprio = dio->iocb->ki_ioprio;
- 		bio->bi_private = dio;
- 		bio->bi_end_io = iomap_dio_bio_end_io;
-diff --git a/fs/mpage.c b/fs/mpage.c
-index 738882e0766d..fa8b99a199fa 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -605,6 +605,7 @@ static int __mpage_writepage(struct folio *folio, struct writeback_control *wbc,
- 				GFP_NOFS);
- 		bio->bi_iter.bi_sector = first_block << (blkbits - 9);
- 		wbc_init_bio(wbc, bio);
-+		bio->bi_write_hint = inode->i_write_hint;
- 	}
- 
- 	/*
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index 7a8150a5f051..492b0128b5d9 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -8,6 +8,7 @@
- #include <linux/scatterlist.h>
- #include <linux/prefetch.h>
- #include <linux/srcu.h>
-+#include <linux/rw_hint.h>
- 
- struct blk_mq_tags;
- struct blk_flush_queue;
-@@ -135,6 +136,7 @@ struct request {
- 	struct blk_crypto_keyslot *crypt_keyslot;
- #endif
- 
-+	enum rw_hint write_hint;
- 	unsigned short ioprio;
- 
- 	enum mq_rq_state state;
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index f288c94374b3..12d87cef2c03 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -10,6 +10,7 @@
- #include <linux/bvec.h>
- #include <linux/device.h>
- #include <linux/ktime.h>
-+#include <linux/rw_hint.h>
- 
- struct bio_set;
- struct bio;
-@@ -269,6 +270,7 @@ struct bio {
- 						 */
- 	unsigned short		bi_flags;	/* BIO_* below */
- 	unsigned short		bi_ioprio;
-+	enum rw_hint		bi_write_hint;
- 	blk_status_t		bi_status;
- 	atomic_t		__bi_remaining;
- 
+...and none of the callers validate the result, but now runtime
+validation is necessary. I.e. it is not enough to check
+IS_ENABLED(CONFIG_DAX) it also needs to check cpu_dcache_is_aliasing().
+
+With that, there are a few more fixup places needed, pmem_attach_disk(),
+dcssblk_add_store(), and virtio_fs_setup_dax().
 
