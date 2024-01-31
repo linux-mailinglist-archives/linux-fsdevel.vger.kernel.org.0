@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-9771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CA1D844C83
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 00:21:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27008844C88
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 00:22:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B776E29CC39
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 23:21:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE72A29D38A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 23:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665DB14AD29;
-	Wed, 31 Jan 2024 23:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8478314AD3F;
+	Wed, 31 Jan 2024 23:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOh6aJ69"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T15soXSC"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A417B14A0BE;
-	Wed, 31 Jan 2024 23:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D55F514C59B;
+	Wed, 31 Jan 2024 23:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706742299; cv=none; b=YV0nAXrgQxgIQq0H2ofCeGzB65wrQs9nv8RM9EdISh7GdZPh+q3szFUQ2e7hZNmcZlKrEl39XJhuKfzS+p+9bOy4MaKVqOtTjrXmQpKvk1jrU8sC6EC/R2EFr5x4sa0z/Nx+D3YKnR/jB6eYjPGz0mSKctR583x7eu3H/k+7Okg=
+	t=1706742304; cv=none; b=rNpwhaCLfTCq/L5+3ZDmjhCZs6cTzcSUoERQ1FeTyu3n6cfsQHw0d2wVy8l3ssk48GbTRSvTEehjhXfzGxYb/1JraMJz2XS/p4FayEkd0NxEfQ4NsMxxpD56l903Xun6nRKy1CURYRZ/fq/8Fc0a3HvVHD91FlBqtW3lJPtZ1Ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706742299; c=relaxed/simple;
-	bh=9RCebd38P+8Es8cmjl3RvgO2QHoUDVRrYNbrLjIgX10=;
+	s=arc-20240116; t=1706742304; c=relaxed/simple;
+	bh=PXVGuw53qr9TezuT+KvNx3DUkTmJ7ZZFgnUvInk7/B0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=sN9I+GZ64/S0/m4I1ui4CjiwSusqMMVeRbhPYO2FWJHOqN1VCqv/hveGrVe0eOJOwUmFacpM6Iru3Czg0pEFx7QkuXmgIqi3fs9zMBabQ2HauaJ+ufHY9PFpHBT/ID22hyw08lnMU9cXziAg5IcbFjdEV0F6S+Ftul66Z0/W8xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOh6aJ69; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66301C43601;
-	Wed, 31 Jan 2024 23:04:55 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=rH+iRcJWmwYYnBQ5pDRQ1hB3nWGH3iYyPPIe7ohjuzj6NKb+HJUtV2mqJliPNzouIsBrljEXmNI6S9C2pR3huS7p9KfJeimktr8INTdgDh/UeASuDXpFT7IJiT+QmkKmrASXCTCQQ/FPqg+NhmLXQsP+vGm508Bu/naf55KgHJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T15soXSC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E42CC433B1;
+	Wed, 31 Jan 2024 23:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706742299;
-	bh=9RCebd38P+8Es8cmjl3RvgO2QHoUDVRrYNbrLjIgX10=;
+	s=k20201202; t=1706742303;
+	bh=PXVGuw53qr9TezuT+KvNx3DUkTmJ7ZZFgnUvInk7/B0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=EOh6aJ69jvMgLYA6088c4owAZ0QP3wdxxVhH7lU9LkZryO5jH74ijcMdnUBG2TxVb
-	 5G0hFlYfbMSLqDOpuWj+kXwxmohQvbHiDf7Qi0THH/PPduKV2h2h44y6T9K1a0U2RS
-	 /9jD6j1WLMCT9b+1A3nL/pzZNf1Q3w8NduCI7qG6Sj8U5LwgKEOyxXp04rhIWdvp/m
-	 Zh8K3cI9TvcMRkHq+pvXI8V5JEfD9PGgTYATEpch18RTMU7AVAB3rHfB1E2iWEzcd5
-	 0DA4tgrCJKdmzH+VkeFUYs3VxHgYqCZtOxQr9ZADai0zISKfm/ND+6yfWYsm+8GEzY
-	 oJomkOq54CjdQ==
+	b=T15soXSC2KzrPd1uKzWRF5BZtyMph1jFSdchu8ZR7DAGHBFcj5N0A71f42MD/J5Bt
+	 NNyxr+uUGFcsw0hvcL+CXdgBDtjK/pZvNe6r+Sm6Bd9LqqvaVwQa9J9X4CD2GNXksE
+	 C0yaAUHec0DIuuEmCTwvZBL9m1izknxmxf3pfsFelpAzKxK89jb0QYfC1tsMBbIip1
+	 aEYptviz7TA6a5751ZPpiAc2hlVSynZsdAtgqlHobE5RHwUr91WoMa+p8eUKZwGEzH
+	 6h5ZtZr55CILfrsL5CtknFPNAu/iZ2qRkzAxW5He5DzhDypYfNjeHdHLaLUDEwOX95
+	 jtfa1auYYAIvQ==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 31 Jan 2024 18:02:22 -0500
-Subject: [PATCH v3 41/47] nfs: adapt to breakup of struct file_lock
+Date: Wed, 31 Jan 2024 18:02:23 -0500
+Subject: [PATCH v3 42/47] nfsd: adapt to breakup of struct file_lock
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240131-flsplit-v3-41-c6129007ee8d@kernel.org>
+Message-Id: <20240131-flsplit-v3-42-c6129007ee8d@kernel.org>
 References: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
 In-Reply-To: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
 To: Steven Rostedt <rostedt@goodmis.org>, 
@@ -86,20 +86,20 @@ Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
  ocfs2-devel@lists.linux.dev, linux-cifs@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12477; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=9RCebd38P+8Es8cmjl3RvgO2QHoUDVRrYNbrLjIgX10=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlutFzLWTAr4wtkrDrQiLE2t4BgvuoTIdcA29gj
- 6HF75TgsViJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbrRcwAKCRAADmhBGVaC
- FZHOEADWeu+4u3JGvyVPbN3x19pWZtE4XF6xJOwj+Tkrfe3NQqmMu0e/oapCsXoxPRaywn1PvvK
- pSPjX8Zqvjl8lh0U9BcWTrdml/fmr52zWm7pOpKCqpt9KL6BaIsJz8zJMYW/OHYVrJx+vfwAU5L
- 1Y1CVGMJD72ezK9AWBVHAcw3nUWYWu65DUo3B5jjE8LECHr0F9mbLE/2MD8GcatFi5dkqY8XWmI
- 6zQK4KkOOWSe9O2+t0fTiYsBR6jat5S/nu8hJh+atejbW4Hku01XskJJ2d0iBRX4tjuvK3kwcJY
- 13zve2GzHWHQLLtq6/tdwDoEfL6S3yimu34soxTIF+y1fzn++K1QUjKUdIVN4I2CU+xwjQ+VmsV
- EDDEkp155EG59POoutBB+6z/xREjYbCIcuFKEQePZ0O2u0ZmMgsMayBl5K5GGq25BTaey+X5C8b
- AjeHmANEjANW+y5hM8DLvEKqPDwvG4qUgWXBr8c0rHF35V2/8VyD2yIyzb28+zr+ucJPnpdEDFv
- OwxpE4cg+T0cJBANuOb7LKqMYLQHbJCbLUcGwQO94CbIDo/OUqwXWzKE6eap/R+ousrJeGsvZZa
- mlxj5Eg6CyItD+3balH3ZL/gx8kIvhxyY8h51ZemZmoR18YFi/cPSCVpU8IKgIYp6Tz7CYEWGQC
- 1q2wXhFko3pchFg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=11074; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=PXVGuw53qr9TezuT+KvNx3DUkTmJ7ZZFgnUvInk7/B0=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlutFzv1i4zkjjY39YaImSjqkOs8HMoleul/F5F
+ Rt8kUWdUTGJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbrRcwAKCRAADmhBGVaC
+ FWpkD/9TkhwkQHdCKoHoM3CLe64rI+Do9LfY/mTIDH4AtM7LUXQfM6k6tak/X5kENj3Xe38MIKC
+ uM4dFqEZ9xfLeb3Y7/0AmqaguMjQThRK1/PDikpaaVE1VhaX36hAQxpnweHOzSDj+Q/wfwT4ovp
+ QX0HnPbl4pXqV0co+WPB55y3ThgeWK/A8t6Cpzze3Lw2VSfuiSwg0S26JAJGo7kpuPEILvk7HLV
+ lEyVff68s2L5LE7pc3mMjzaPsp9WF70kJUvukW8SN7fs4LUFDG48HD308VntInTso8swQOZ+Wqz
+ 0S2B9d6umoJ3Z3YdTHpSa4fZkFA1afw7skJ47F1hIr+OL358cJcZKFqNX9r0mruMRhlV1Gm9UEF
+ +1gAJaMg9oTndh3tdNmZgffQfz7lIhYrPsgJ5s/+YisYB4WY3fkJ5sSixLxbBY5YQp2fKdjnNlz
+ Ktnlch73d7BJ4isX8yyNngOedAjd5tIsDR6Sw7rC7agWeZNAqo6Av5f/2Hq5ES1zCNg1AdLjR4w
+ FPRd2Ot/bOhKp+WUa/x3fr0GwFKirOpPvP8gazythct3dgvJ93rBKeczihMbktYicE7f04D+A3U
+ Emogg773TsGxw+EJSw93K+FNmMdaWdT3+vn3wO+rA6Sx2WhovEZ9lqyoJIfhMyqI9b3iXfzwqZw
+ mivz/n2Ijn3FrRg==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
@@ -109,345 +109,292 @@ file_lock_core now.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfs/delegation.c |  2 +-
- fs/nfs/file.c       | 19 +++++++++----------
- fs/nfs/nfs3proc.c   |  2 +-
- fs/nfs/nfs4_fs.h    |  1 -
- fs/nfs/nfs4proc.c   | 33 ++++++++++++++++++---------------
- fs/nfs/nfs4state.c  |  4 ++--
- fs/nfs/nfs4trace.h  |  4 ++--
- fs/nfs/nfs4xdr.c    |  6 +++---
- fs/nfs/write.c      |  5 ++---
- 9 files changed, 38 insertions(+), 38 deletions(-)
+ fs/nfsd/filecache.c    |  4 +--
+ fs/nfsd/netns.h        |  1 -
+ fs/nfsd/nfs4callback.c |  2 +-
+ fs/nfsd/nfs4layouts.c  | 15 ++++++-----
+ fs/nfsd/nfs4state.c    | 69 +++++++++++++++++++++++++-------------------------
+ 5 files changed, 46 insertions(+), 45 deletions(-)
 
-diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
-index ca6985001466..d4a42ce0c7e3 100644
---- a/fs/nfs/delegation.c
-+++ b/fs/nfs/delegation.c
-@@ -157,7 +157,7 @@ static int nfs_delegation_claim_locks(struct nfs4_state *state, const nfs4_state
- 	spin_lock(&flctx->flc_lock);
- restart:
- 	for_each_file_lock(fl, list) {
--		if (nfs_file_open_context(fl->fl_file)->state != state)
-+		if (nfs_file_open_context(fl->c.flc_file)->state != state)
- 			continue;
- 		spin_unlock(&flctx->flc_lock);
- 		status = nfs4_lock_delegation_recall(fl, state, stateid);
-diff --git a/fs/nfs/file.c b/fs/nfs/file.c
-index 0b6691e64d27..407c6e15afe2 100644
---- a/fs/nfs/file.c
-+++ b/fs/nfs/file.c
-@@ -31,7 +31,6 @@
- #include <linux/swap.h>
+diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+index 9cb7f0c33df5..b86d8494052c 100644
+--- a/fs/nfsd/filecache.c
++++ b/fs/nfsd/filecache.c
+@@ -662,8 +662,8 @@ nfsd_file_lease_notifier_call(struct notifier_block *nb, unsigned long arg,
+ 	struct file_lock *fl = data;
  
- #include <linux/uaccess.h>
--#define _NEED_FILE_LOCK_FIELD_MACROS
- #include <linux/filelock.h>
- 
- #include "delegation.h"
-@@ -721,15 +720,15 @@ do_getlk(struct file *filp, int cmd, struct file_lock *fl, int is_local)
- {
- 	struct inode *inode = filp->f_mapping->host;
- 	int status = 0;
--	unsigned int saved_type = fl->fl_type;
-+	unsigned int saved_type = fl->c.flc_type;
- 
- 	/* Try local locking first */
- 	posix_test_lock(filp, fl);
--	if (fl->fl_type != F_UNLCK) {
-+	if (fl->c.flc_type != F_UNLCK) {
- 		/* found a conflict */
- 		goto out;
- 	}
--	fl->fl_type = saved_type;
-+	fl->c.flc_type = saved_type;
- 
- 	if (NFS_PROTO(inode)->have_delegation(inode, FMODE_READ))
- 		goto out_noconflict;
-@@ -741,7 +740,7 @@ do_getlk(struct file *filp, int cmd, struct file_lock *fl, int is_local)
- out:
- 	return status;
- out_noconflict:
--	fl->fl_type = F_UNLCK;
-+	fl->c.flc_type = F_UNLCK;
- 	goto out;
+ 	/* Only close files for F_SETLEASE leases */
+-	if (fl->fl_flags & FL_LEASE)
+-		nfsd_file_close_inode(file_inode(fl->fl_file));
++	if (fl->c.flc_flags & FL_LEASE)
++		nfsd_file_close_inode(file_inode(fl->c.flc_file));
+ 	return 0;
  }
  
-@@ -766,7 +765,7 @@ do_unlk(struct file *filp, int cmd, struct file_lock *fl, int is_local)
- 		 * 	If we're signalled while cleaning up locks on process exit, we
- 		 * 	still need to complete the unlock.
- 		 */
--		if (status < 0 && !(fl->fl_flags & FL_CLOSE))
-+		if (status < 0 && !(fl->c.flc_flags & FL_CLOSE))
- 			return status;
- 	}
+diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
+index fd91125208be..74b4360779a1 100644
+--- a/fs/nfsd/netns.h
++++ b/fs/nfsd/netns.h
+@@ -10,7 +10,6 @@
  
-@@ -833,12 +832,12 @@ int nfs_lock(struct file *filp, int cmd, struct file_lock *fl)
- 	int is_local = 0;
- 
- 	dprintk("NFS: lock(%pD2, t=%x, fl=%x, r=%lld:%lld)\n",
--			filp, fl->fl_type, fl->fl_flags,
-+			filp, fl->c.flc_type, fl->c.flc_flags,
- 			(long long)fl->fl_start, (long long)fl->fl_end);
- 
- 	nfs_inc_stats(inode, NFSIOS_VFSLOCK);
- 
--	if (fl->fl_flags & FL_RECLAIM)
-+	if (fl->c.flc_flags & FL_RECLAIM)
- 		return -ENOGRACE;
- 
- 	if (NFS_SERVER(inode)->flags & NFS_MOUNT_LOCAL_FCNTL)
-@@ -870,9 +869,9 @@ int nfs_flock(struct file *filp, int cmd, struct file_lock *fl)
- 	int is_local = 0;
- 
- 	dprintk("NFS: flock(%pD2, t=%x, fl=%x)\n",
--			filp, fl->fl_type, fl->fl_flags);
-+			filp, fl->c.flc_type, fl->c.flc_flags);
- 
--	if (!(fl->fl_flags & FL_FLOCK))
-+	if (!(fl->c.flc_flags & FL_FLOCK))
- 		return -ENOLCK;
- 
- 	if (NFS_SERVER(inode)->flags & NFS_MOUNT_LOCAL_FLOCK)
-diff --git a/fs/nfs/nfs3proc.c b/fs/nfs/nfs3proc.c
-index 2de66e4e8280..cbbe3f0193b8 100644
---- a/fs/nfs/nfs3proc.c
-+++ b/fs/nfs/nfs3proc.c
-@@ -963,7 +963,7 @@ nfs3_proc_lock(struct file *filp, int cmd, struct file_lock *fl)
- 	struct nfs_open_context *ctx = nfs_file_open_context(filp);
- 	int status;
- 
--	if (fl->fl_flags & FL_CLOSE) {
-+	if (fl->c.flc_flags & FL_CLOSE) {
- 		l_ctx = nfs_get_lock_context(ctx);
- 		if (IS_ERR(l_ctx))
- 			l_ctx = NULL;
-diff --git a/fs/nfs/nfs4_fs.h b/fs/nfs/nfs4_fs.h
-index 752224a48f1c..581698f1b7b2 100644
---- a/fs/nfs/nfs4_fs.h
-+++ b/fs/nfs/nfs4_fs.h
-@@ -23,7 +23,6 @@
- #define NFS4_MAX_LOOP_ON_RECOVER (10)
- 
- #include <linux/seqlock.h>
+ #include <net/net_namespace.h>
+ #include <net/netns/generic.h>
 -#define _NEED_FILE_LOCK_FIELD_MACROS
  #include <linux/filelock.h>
+ #include <linux/percpu_counter.h>
+ #include <linux/siphash.h>
+diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
+index 926c29879c6a..32d23ef3e5de 100644
+--- a/fs/nfsd/nfs4callback.c
++++ b/fs/nfsd/nfs4callback.c
+@@ -674,7 +674,7 @@ static void nfs4_xdr_enc_cb_notify_lock(struct rpc_rqst *req,
+ 	const struct nfsd4_callback *cb = data;
+ 	const struct nfsd4_blocked_lock *nbl =
+ 		container_of(cb, struct nfsd4_blocked_lock, nbl_cb);
+-	struct nfs4_lockowner *lo = (struct nfs4_lockowner *)nbl->nbl_lock.fl_owner;
++	struct nfs4_lockowner *lo = (struct nfs4_lockowner *)nbl->nbl_lock.c.flc_owner;
+ 	struct nfs4_cb_compound_hdr hdr = {
+ 		.ident = 0,
+ 		.minorversion = cb->cb_clp->cl_minorversion,
+diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
+index 5e8096bc5eaa..daae68e526e0 100644
+--- a/fs/nfsd/nfs4layouts.c
++++ b/fs/nfsd/nfs4layouts.c
+@@ -193,14 +193,15 @@ nfsd4_layout_setlease(struct nfs4_layout_stateid *ls)
+ 		return -ENOMEM;
+ 	locks_init_lock(fl);
+ 	fl->fl_lmops = &nfsd4_layouts_lm_ops;
+-	fl->fl_flags = FL_LAYOUT;
+-	fl->fl_type = F_RDLCK;
++	fl->c.flc_flags = FL_LAYOUT;
++	fl->c.flc_type = F_RDLCK;
+ 	fl->fl_end = OFFSET_MAX;
+-	fl->fl_owner = ls;
+-	fl->fl_pid = current->tgid;
+-	fl->fl_file = ls->ls_file->nf_file;
++	fl->c.flc_owner = ls;
++	fl->c.flc_pid = current->tgid;
++	fl->c.flc_file = ls->ls_file->nf_file;
  
- struct idmap;
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index df54fcd0fa08..91dddcd79004 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -6800,7 +6800,7 @@ static int _nfs4_proc_getlk(struct nfs4_state *state, int cmd, struct file_lock
- 	status = nfs4_call_sync(server->client, server, &msg, &arg.seq_args, &res.seq_res, 1);
- 	switch (status) {
- 		case 0:
--			request->fl_type = F_UNLCK;
-+			request->c.flc_type = F_UNLCK;
+-	status = vfs_setlease(fl->fl_file, fl->fl_type, &fl, NULL);
++	status = vfs_setlease(fl->c.flc_file, fl->c.flc_type, &fl,
++			      NULL);
+ 	if (status) {
+ 		locks_free_lock(fl);
+ 		return status;
+@@ -731,7 +732,7 @@ nfsd4_layout_lm_break(struct file_lock *fl)
+ 	 * in time:
+ 	 */
+ 	fl->fl_break_time = 0;
+-	nfsd4_recall_file_layout(fl->fl_owner);
++	nfsd4_recall_file_layout(fl->c.flc_owner);
+ 	return false;
+ }
+ 
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 83d605ecdcdc..4a1d462209cd 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -4924,7 +4924,7 @@ static void nfsd_break_one_deleg(struct nfs4_delegation *dp)
+ static bool
+ nfsd_break_deleg_cb(struct file_lock *fl)
+ {
+-	struct nfs4_delegation *dp = (struct nfs4_delegation *)fl->fl_owner;
++	struct nfs4_delegation *dp = (struct nfs4_delegation *) fl->c.flc_owner;
+ 	struct nfs4_file *fp = dp->dl_stid.sc_file;
+ 	struct nfs4_client *clp = dp->dl_stid.sc_client;
+ 	struct nfsd_net *nn;
+@@ -4962,7 +4962,7 @@ nfsd_break_deleg_cb(struct file_lock *fl)
+  */
+ static bool nfsd_breaker_owns_lease(struct file_lock *fl)
+ {
+-	struct nfs4_delegation *dl = fl->fl_owner;
++	struct nfs4_delegation *dl = fl->c.flc_owner;
+ 	struct svc_rqst *rqst;
+ 	struct nfs4_client *clp;
+ 
+@@ -4980,7 +4980,7 @@ static int
+ nfsd_change_deleg_cb(struct file_lock *onlist, int arg,
+ 		     struct list_head *dispose)
+ {
+-	struct nfs4_delegation *dp = (struct nfs4_delegation *)onlist->fl_owner;
++	struct nfs4_delegation *dp = (struct nfs4_delegation *) onlist->c.flc_owner;
+ 	struct nfs4_client *clp = dp->dl_stid.sc_client;
+ 
+ 	if (arg & F_UNLCK) {
+@@ -5340,12 +5340,12 @@ static struct file_lock *nfs4_alloc_init_lease(struct nfs4_delegation *dp,
+ 	if (!fl)
+ 		return NULL;
+ 	fl->fl_lmops = &nfsd_lease_mng_ops;
+-	fl->fl_flags = FL_DELEG;
+-	fl->fl_type = flag == NFS4_OPEN_DELEGATE_READ? F_RDLCK: F_WRLCK;
++	fl->c.flc_flags = FL_DELEG;
++	fl->c.flc_type = flag == NFS4_OPEN_DELEGATE_READ? F_RDLCK: F_WRLCK;
+ 	fl->fl_end = OFFSET_MAX;
+-	fl->fl_owner = (fl_owner_t)dp;
+-	fl->fl_pid = current->tgid;
+-	fl->fl_file = dp->dl_stid.sc_file->fi_deleg_file->nf_file;
++	fl->c.flc_owner = (fl_owner_t)dp;
++	fl->c.flc_pid = current->tgid;
++	fl->c.flc_file = dp->dl_stid.sc_file->fi_deleg_file->nf_file;
+ 	return fl;
+ }
+ 
+@@ -5533,7 +5533,8 @@ nfs4_set_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
+ 	if (!fl)
+ 		goto out_clnt_odstate;
+ 
+-	status = vfs_setlease(fp->fi_deleg_file->nf_file, fl->fl_type, &fl, NULL);
++	status = vfs_setlease(fp->fi_deleg_file->nf_file,
++			      fl->c.flc_type, &fl, NULL);
+ 	if (fl)
+ 		locks_free_lock(fl);
+ 	if (status)
+@@ -7149,7 +7150,7 @@ nfsd4_lm_put_owner(fl_owner_t owner)
+ static bool
+ nfsd4_lm_lock_expirable(struct file_lock *cfl)
+ {
+-	struct nfs4_lockowner *lo = (struct nfs4_lockowner *)cfl->fl_owner;
++	struct nfs4_lockowner *lo = (struct nfs4_lockowner *) cfl->c.flc_owner;
+ 	struct nfs4_client *clp = lo->lo_owner.so_client;
+ 	struct nfsd_net *nn;
+ 
+@@ -7171,7 +7172,7 @@ nfsd4_lm_expire_lock(void)
+ static void
+ nfsd4_lm_notify(struct file_lock *fl)
+ {
+-	struct nfs4_lockowner		*lo = (struct nfs4_lockowner *)fl->fl_owner;
++	struct nfs4_lockowner		*lo = (struct nfs4_lockowner *) fl->c.flc_owner;
+ 	struct net			*net = lo->lo_owner.so_client->net;
+ 	struct nfsd_net			*nn = net_generic(net, nfsd_net_id);
+ 	struct nfsd4_blocked_lock	*nbl = container_of(fl,
+@@ -7208,7 +7209,7 @@ nfs4_set_lock_denied(struct file_lock *fl, struct nfsd4_lock_denied *deny)
+ 	struct nfs4_lockowner *lo;
+ 
+ 	if (fl->fl_lmops == &nfsd_posix_mng_ops) {
+-		lo = (struct nfs4_lockowner *) fl->fl_owner;
++		lo = (struct nfs4_lockowner *) fl->c.flc_owner;
+ 		xdr_netobj_dup(&deny->ld_owner, &lo->lo_owner.so_owner,
+ 						GFP_KERNEL);
+ 		if (!deny->ld_owner.data)
+@@ -7227,7 +7228,7 @@ nfs4_set_lock_denied(struct file_lock *fl, struct nfsd4_lock_denied *deny)
+ 	if (fl->fl_end != NFS4_MAX_UINT64)
+ 		deny->ld_length = fl->fl_end - fl->fl_start + 1;        
+ 	deny->ld_type = NFS4_READ_LT;
+-	if (fl->fl_type != F_RDLCK)
++	if (fl->c.flc_type != F_RDLCK)
+ 		deny->ld_type = NFS4_WRITE_LT;
+ }
+ 
+@@ -7615,11 +7616,11 @@ nfsd4_lock(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	}
+ 
+ 	file_lock = &nbl->nbl_lock;
+-	file_lock->fl_type = type;
+-	file_lock->fl_owner = (fl_owner_t)lockowner(nfs4_get_stateowner(&lock_sop->lo_owner));
+-	file_lock->fl_pid = current->tgid;
+-	file_lock->fl_file = nf->nf_file;
+-	file_lock->fl_flags = flags;
++	file_lock->c.flc_type = type;
++	file_lock->c.flc_owner = (fl_owner_t)lockowner(nfs4_get_stateowner(&lock_sop->lo_owner));
++	file_lock->c.flc_pid = current->tgid;
++	file_lock->c.flc_file = nf->nf_file;
++	file_lock->c.flc_flags = flags;
+ 	file_lock->fl_lmops = &nfsd_posix_mng_ops;
+ 	file_lock->fl_start = lock->lk_offset;
+ 	file_lock->fl_end = last_byte_offset(lock->lk_offset, lock->lk_length);
+@@ -7737,9 +7738,9 @@ static __be32 nfsd_test_lock(struct svc_rqst *rqstp, struct svc_fh *fhp, struct
+ 	err = nfserrno(nfsd_open_break_lease(inode, NFSD_MAY_READ));
+ 	if (err)
+ 		goto out;
+-	lock->fl_file = nf->nf_file;
++	lock->c.flc_file = nf->nf_file;
+ 	err = nfserrno(vfs_test_lock(nf->nf_file, lock));
+-	lock->fl_file = NULL;
++	lock->c.flc_file = NULL;
+ out:
+ 	inode_unlock(inode);
+ 	nfsd_file_put(nf);
+@@ -7784,11 +7785,11 @@ nfsd4_lockt(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	switch (lockt->lt_type) {
+ 		case NFS4_READ_LT:
+ 		case NFS4_READW_LT:
+-			file_lock->fl_type = F_RDLCK;
++			file_lock->c.flc_type = F_RDLCK;
  			break;
- 		case -NFS4ERR_DENIED:
- 			status = 0;
-@@ -7018,8 +7018,8 @@ static struct rpc_task *nfs4_do_unlck(struct file_lock *fl,
- 	/* Ensure this is an unlock - when canceling a lock, the
- 	 * canceled lock is passed in, and it won't be an unlock.
- 	 */
--	fl->fl_type = F_UNLCK;
--	if (fl->fl_flags & FL_CLOSE)
-+	fl->c.flc_type = F_UNLCK;
-+	if (fl->c.flc_flags & FL_CLOSE)
- 		set_bit(NFS_CONTEXT_UNLOCK, &ctx->flags);
+ 		case NFS4_WRITE_LT:
+ 		case NFS4_WRITEW_LT:
+-			file_lock->fl_type = F_WRLCK;
++			file_lock->c.flc_type = F_WRLCK;
+ 			break;
+ 		default:
+ 			dprintk("NFSD: nfs4_lockt: bad lock type!\n");
+@@ -7798,9 +7799,9 @@ nfsd4_lockt(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
  
- 	data = nfs4_alloc_unlockdata(fl, ctx, lsp, seqid);
-@@ -7045,11 +7045,11 @@ static int nfs4_proc_unlck(struct nfs4_state *state, int cmd, struct file_lock *
- 	struct rpc_task *task;
- 	struct nfs_seqid *(*alloc_seqid)(struct nfs_seqid_counter *, gfp_t);
- 	int status = 0;
--	unsigned char saved_flags = request->fl_flags;
-+	unsigned char saved_flags = request->c.flc_flags;
+ 	lo = find_lockowner_str(cstate->clp, &lockt->lt_owner);
+ 	if (lo)
+-		file_lock->fl_owner = (fl_owner_t)lo;
+-	file_lock->fl_pid = current->tgid;
+-	file_lock->fl_flags = FL_POSIX;
++		file_lock->c.flc_owner = (fl_owner_t)lo;
++	file_lock->c.flc_pid = current->tgid;
++	file_lock->c.flc_flags = FL_POSIX;
  
- 	status = nfs4_set_lock_state(state, request);
- 	/* Unlock _before_ we do the RPC call */
--	request->fl_flags |= FL_EXISTS;
-+	request->c.flc_flags |= FL_EXISTS;
- 	/* Exclude nfs_delegation_claim_locks() */
- 	mutex_lock(&sp->so_delegreturn_mutex);
- 	/* Exclude nfs4_reclaim_open_stateid() - note nesting! */
-@@ -7073,14 +7073,16 @@ static int nfs4_proc_unlck(struct nfs4_state *state, int cmd, struct file_lock *
- 	status = -ENOMEM;
- 	if (IS_ERR(seqid))
+ 	file_lock->fl_start = lockt->lt_offset;
+ 	file_lock->fl_end = last_byte_offset(lockt->lt_offset, lockt->lt_length);
+@@ -7811,7 +7812,7 @@ nfsd4_lockt(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 	if (status)
  		goto out;
--	task = nfs4_do_unlck(request, nfs_file_open_context(request->fl_file), lsp, seqid);
-+	task = nfs4_do_unlck(request,
-+			     nfs_file_open_context(request->c.flc_file),
-+			     lsp, seqid);
- 	status = PTR_ERR(task);
- 	if (IS_ERR(task))
- 		goto out;
- 	status = rpc_wait_for_completion_task(task);
- 	rpc_put_task(task);
- out:
--	request->fl_flags = saved_flags;
-+	request->c.flc_flags = saved_flags;
- 	trace_nfs4_unlock(request, state, F_SETLK, status);
- 	return status;
- }
-@@ -7191,7 +7193,7 @@ static void nfs4_lock_done(struct rpc_task *task, void *calldata)
- 		renew_lease(NFS_SERVER(d_inode(data->ctx->dentry)),
- 				data->timestamp);
- 		if (data->arg.new_lock && !data->cancelled) {
--			data->fl.fl_flags &= ~(FL_SLEEP | FL_ACCESS);
-+			data->fl.c.flc_flags &= ~(FL_SLEEP | FL_ACCESS);
- 			if (locks_lock_inode_wait(lsp->ls_state->inode, &data->fl) < 0)
- 				goto out_restart;
- 		}
-@@ -7292,7 +7294,8 @@ static int _nfs4_do_setlk(struct nfs4_state *state, int cmd, struct file_lock *f
- 	if (nfs_server_capable(state->inode, NFS_CAP_MOVEABLE))
- 		task_setup_data.flags |= RPC_TASK_MOVEABLE;
  
--	data = nfs4_alloc_lockdata(fl, nfs_file_open_context(fl->fl_file),
-+	data = nfs4_alloc_lockdata(fl,
-+				   nfs_file_open_context(fl->c.flc_file),
- 				   fl->fl_u.nfs4_fl.owner, GFP_KERNEL);
- 	if (data == NULL)
- 		return -ENOMEM;
-@@ -7398,10 +7401,10 @@ static int _nfs4_proc_setlk(struct nfs4_state *state, int cmd, struct file_lock
- {
- 	struct nfs_inode *nfsi = NFS_I(state->inode);
- 	struct nfs4_state_owner *sp = state->owner;
--	unsigned char flags = request->fl_flags;
-+	unsigned char flags = request->c.flc_flags;
- 	int status;
+-	if (file_lock->fl_type != F_UNLCK) {
++	if (file_lock->c.flc_type != F_UNLCK) {
+ 		status = nfserr_denied;
+ 		nfs4_set_lock_denied(file_lock, &lockt->lt_denied);
+ 	}
+@@ -7867,11 +7868,11 @@ nfsd4_locku(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+ 		goto put_file;
+ 	}
  
--	request->fl_flags |= FL_ACCESS;
-+	request->c.flc_flags |= FL_ACCESS;
- 	status = locks_lock_inode_wait(state->inode, request);
- 	if (status < 0)
- 		goto out;
-@@ -7410,7 +7413,7 @@ static int _nfs4_proc_setlk(struct nfs4_state *state, int cmd, struct file_lock
- 	if (test_bit(NFS_DELEGATED_STATE, &state->flags)) {
- 		/* Yes: cache locks! */
- 		/* ...but avoid races with delegation recall... */
--		request->fl_flags = flags & ~FL_SLEEP;
-+		request->c.flc_flags = flags & ~FL_SLEEP;
- 		status = locks_lock_inode_wait(state->inode, request);
- 		up_read(&nfsi->rwsem);
- 		mutex_unlock(&sp->so_delegreturn_mutex);
-@@ -7420,7 +7423,7 @@ static int _nfs4_proc_setlk(struct nfs4_state *state, int cmd, struct file_lock
- 	mutex_unlock(&sp->so_delegreturn_mutex);
- 	status = _nfs4_do_setlk(state, cmd, request, NFS_LOCK_NEW);
- out:
--	request->fl_flags = flags;
-+	request->c.flc_flags = flags;
- 	return status;
- }
+-	file_lock->fl_type = F_UNLCK;
+-	file_lock->fl_owner = (fl_owner_t)lockowner(nfs4_get_stateowner(stp->st_stateowner));
+-	file_lock->fl_pid = current->tgid;
+-	file_lock->fl_file = nf->nf_file;
+-	file_lock->fl_flags = FL_POSIX;
++	file_lock->c.flc_type = F_UNLCK;
++	file_lock->c.flc_owner = (fl_owner_t)lockowner(nfs4_get_stateowner(stp->st_stateowner));
++	file_lock->c.flc_pid = current->tgid;
++	file_lock->c.flc_file = nf->nf_file;
++	file_lock->c.flc_flags = FL_POSIX;
+ 	file_lock->fl_lmops = &nfsd_posix_mng_ops;
+ 	file_lock->fl_start = locku->lu_offset;
  
-@@ -7571,7 +7574,7 @@ nfs4_proc_lock(struct file *filp, int cmd, struct file_lock *request)
- 	if (state == NULL)
- 		return -ENOLCK;
- 
--	if ((request->fl_flags & FL_POSIX) &&
-+	if ((request->c.flc_flags & FL_POSIX) &&
- 	    !test_bit(NFS_STATE_POSIX_LOCKS, &state->flags))
- 		return -ENOLCK;
- 
-@@ -7579,7 +7582,7 @@ nfs4_proc_lock(struct file *filp, int cmd, struct file_lock *request)
- 	 * Don't rely on the VFS having checked the file open mode,
- 	 * since it won't do this for flock() locks.
- 	 */
--	switch (request->fl_type) {
-+	switch (request->c.flc_type) {
- 	case F_RDLCK:
- 		if (!(filp->f_mode & FMODE_READ))
- 			return -EBADF;
-diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
-index 16b57735e26a..8cfabdbda336 100644
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -980,7 +980,7 @@ int nfs4_set_lock_state(struct nfs4_state *state, struct file_lock *fl)
- 
- 	if (fl->fl_ops != NULL)
+@@ -7929,7 +7930,7 @@ check_for_locks(struct nfs4_file *fp, struct nfs4_lockowner *lowner)
+ 	if (flctx && !list_empty_careful(&flctx->flc_posix)) {
+ 		spin_lock(&flctx->flc_lock);
+ 		for_each_file_lock(fl, &flctx->flc_posix) {
+-			if (fl->fl_owner == (fl_owner_t)lowner) {
++			if (fl->c.flc_owner == (fl_owner_t)lowner) {
+ 				status = true;
+ 				break;
+ 			}
+@@ -8460,7 +8461,7 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct inode *inode)
  		return 0;
--	lsp = nfs4_get_lock_state(state, fl->fl_owner);
-+	lsp = nfs4_get_lock_state(state, fl->c.flc_owner);
- 	if (lsp == NULL)
- 		return -ENOMEM;
- 	fl->fl_u.nfs4_fl.owner = lsp;
-@@ -1530,7 +1530,7 @@ static int nfs4_reclaim_locks(struct nfs4_state *state, const struct nfs4_state_
- 	spin_lock(&flctx->flc_lock);
- restart:
- 	for_each_file_lock(fl, list) {
--		if (nfs_file_open_context(fl->fl_file)->state != state)
-+		if (nfs_file_open_context(fl->c.flc_file)->state != state)
+ 	spin_lock(&ctx->flc_lock);
+ 	for_each_file_lock(fl, &ctx->flc_lease) {
+-		if (fl->fl_flags == FL_LAYOUT)
++		if (fl->c.flc_flags == FL_LAYOUT)
  			continue;
- 		spin_unlock(&flctx->flc_lock);
- 		status = ops->recover_lock(state, fl);
-diff --git a/fs/nfs/nfs4trace.h b/fs/nfs/nfs4trace.h
-index d27919d7241d..fd7cb15b08b2 100644
---- a/fs/nfs/nfs4trace.h
-+++ b/fs/nfs/nfs4trace.h
-@@ -699,7 +699,7 @@ DECLARE_EVENT_CLASS(nfs4_lock_event,
- 
- 			__entry->error = error < 0 ? -error : 0;
- 			__entry->cmd = cmd;
--			__entry->type = request->fl_type;
-+			__entry->type = request->c.flc_type;
- 			__entry->start = request->fl_start;
- 			__entry->end = request->fl_end;
- 			__entry->dev = inode->i_sb->s_dev;
-@@ -771,7 +771,7 @@ TRACE_EVENT(nfs4_set_lock,
- 
- 			__entry->error = error < 0 ? -error : 0;
- 			__entry->cmd = cmd;
--			__entry->type = request->fl_type;
-+			__entry->type = request->c.flc_type;
- 			__entry->start = request->fl_start;
- 			__entry->end = request->fl_end;
- 			__entry->dev = inode->i_sb->s_dev;
-diff --git a/fs/nfs/nfs4xdr.c b/fs/nfs/nfs4xdr.c
-index 6e309db5afe4..1416099dfcd1 100644
---- a/fs/nfs/nfs4xdr.c
-+++ b/fs/nfs/nfs4xdr.c
-@@ -5052,10 +5052,10 @@ static int decode_lock_denied (struct xdr_stream *xdr, struct file_lock *fl)
- 		fl->fl_end = fl->fl_start + (loff_t)length - 1;
- 		if (length == ~(uint64_t)0)
- 			fl->fl_end = OFFSET_MAX;
--		fl->fl_type = F_WRLCK;
-+		fl->c.flc_type = F_WRLCK;
- 		if (type & 1)
--			fl->fl_type = F_RDLCK;
--		fl->fl_pid = 0;
-+			fl->c.flc_type = F_RDLCK;
-+		fl->c.flc_pid = 0;
- 	}
- 	p = xdr_decode_hyper(p, &clientid); /* read 8 bytes */
- 	namelen = be32_to_cpup(p); /* read 4 bytes */  /* have read all 32 bytes now */
-diff --git a/fs/nfs/write.c b/fs/nfs/write.c
-index 13f2e10167ac..84bb85264572 100644
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -25,7 +25,6 @@
- #include <linux/freezer.h>
- #include <linux/wait.h>
- #include <linux/iversion.h>
--#define _NEED_FILE_LOCK_FIELD_MACROS
- #include <linux/filelock.h>
- 
- #include <linux/uaccess.h>
-@@ -1336,12 +1335,12 @@ static int nfs_can_extend_write(struct file *file, struct folio *folio,
- 	spin_lock(&flctx->flc_lock);
- 	if (!list_empty(&flctx->flc_posix)) {
- 		fl = list_first_entry(&flctx->flc_posix, struct file_lock,
--					fl_list);
-+					c.flc_list);
- 		if (is_whole_file_wrlock(fl))
- 			ret = 1;
- 	} else if (!list_empty(&flctx->flc_flock)) {
- 		fl = list_first_entry(&flctx->flc_flock, struct file_lock,
--					fl_list);
-+					c.flc_list);
- 		if (lock_is_write(fl))
- 			ret = 1;
- 	}
+ 		if (fl->fl_lmops != &nfsd_lease_mng_ops) {
+ 			/*
+@@ -8473,7 +8474,7 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct inode *inode)
+ 			goto break_lease;
+ 		}
+ 		if (lock_is_write(fl)) {
+-			dp = fl->fl_owner;
++			dp = fl->c.flc_owner;
+ 			if (dp->dl_recall.cb_clp == *(rqstp->rq_lease_breaker)) {
+ 				spin_unlock(&ctx->flc_lock);
+ 				return 0;
 
 -- 
 2.43.0
