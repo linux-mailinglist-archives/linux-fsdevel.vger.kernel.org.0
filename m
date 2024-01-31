@@ -1,230 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-9637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8548843DA6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 12:04:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82423843E28
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 12:18:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D8C228BFEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 11:04:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A703E1C27CD1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 11:18:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFA2768F4;
-	Wed, 31 Jan 2024 11:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B646F067;
+	Wed, 31 Jan 2024 11:18:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PJmBHfiC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LbMqUVa4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PJmBHfiC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LbMqUVa4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF6EA6EB66;
-	Wed, 31 Jan 2024 11:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57F4922619;
+	Wed, 31 Jan 2024 11:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706698949; cv=none; b=h5qGujd2l9uDxXfi0VVfvsZ6GfNRe18EHQ+bvedG2SqRXPRropQmAen+ywMJAhdPiM8/QIEzA/TtF+0gkD4Ipy3d8ACAol/sg77WY6lEdPbYA4bZcugBqTIJXODCIp8s3zjF7SYU+I19F1Kv6XtUFS+ywQuHF/fsAZ+7t00FjdI=
+	t=1706699932; cv=none; b=qCA6CWG9p89KeluRBZLPEc4WF2lJ0gWN4bfnNU/KJsDJYXbVPwuvG3cxMpeYPgPmKiJmhXSkOUwQ94tRvIcJm59KhsUXRtmi1kEwde+K/4Us1OsuVVMlL1WF5KgZopfKIoL6qMUvUaPuAgqD4PtOaqgdabHmb9hQE9UXO/8ORks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706698949; c=relaxed/simple;
-	bh=GwdHJedowxMYfa/OQlb6Jxhq7XuL1egOIohA03EK7FY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bvBhENWNsaiFRxdVXMuQv4B6gvwo6MuNxwG0pgGvrHtmC8GY1o5hHCULx55jnJ4ePHx5wlVMDwnHx8beEgBymcSe0FHvoNcTvuSxkfbS+HqhzjpDnrrlD8oRy442lz9sEaVl53SDutKLsrRQaAWcpLswxXKYom1SknHBWMKSTc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 40VAxH5X019223;
-	Wed, 31 Jan 2024 18:59:17 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4TPzP76bvWz2Shwd6;
-	Wed, 31 Jan 2024 18:51:39 +0800 (CST)
-Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 31 Jan 2024 18:59:14 +0800
-From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>, Yu Zhao <yuzhao@google.com>,
-        Damien Le
- Moal <dlemoal@kernel.org>,
-        Niklas Cassel <niklas.cassel@wdc.com>,
-        "Martin K .
- Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Linus
- Walleij <linus.walleij@linaro.org>, <linux-mm@kvack.org>,
-        <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
-Subject: [PATCHv6 1/1] block: introduce content activity based ioprio
-Date: Wed, 31 Jan 2024 18:59:12 +0800
-Message-ID: <20240131105912.3849767-1-zhaoyang.huang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1706699932; c=relaxed/simple;
+	bh=z9HbznpTxs+hCXQiVU7KW8JJixJG05vmA2WmM1tQPp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HhbULiljWGGnpanlqZQT/9iJTTa9KvVzHOcZLwqHmmDn1005EjV3ccgvOA/cjVjmy4AxUrWoK+I6mZivcNJRp2C6f4FMWsgctgf84rgMl1FDzmOPohFp845AV7Uj9WYpZuKln1oe9qkmdTN8HZnbgFeWiJ/6q6QPCJwksYBIl+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PJmBHfiC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LbMqUVa4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PJmBHfiC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LbMqUVa4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4FAF3220D8;
+	Wed, 31 Jan 2024 11:18:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706699928; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T+ZO5rd8ho25EDHOwsCAfpvNPINlx/FEPMDsaLbJtlU=;
+	b=PJmBHfiC7xG2mBNl4fVz4ZMxB408aQXuHiTFFzo0JyNZATQI7feB3jddU5o8vkHOioI7Be
+	DPBsV3WwCITrcpCLQDj8V9fDRtnhQq40hex2mdBPhKJn8fXJ9bQ4MVVNlAMmnMkZGZAoBp
+	vdroEjYzJnXDsfFx392A6jPJ8HDYsZI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706699928;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T+ZO5rd8ho25EDHOwsCAfpvNPINlx/FEPMDsaLbJtlU=;
+	b=LbMqUVa4p4c3thd9uNPo8J21zMTzrTGzjegRDDs2Q9ihllp+fpVcClz5Zp+DQADRZHSJ3u
+	/Agzat4MaI626NAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706699928; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T+ZO5rd8ho25EDHOwsCAfpvNPINlx/FEPMDsaLbJtlU=;
+	b=PJmBHfiC7xG2mBNl4fVz4ZMxB408aQXuHiTFFzo0JyNZATQI7feB3jddU5o8vkHOioI7Be
+	DPBsV3WwCITrcpCLQDj8V9fDRtnhQq40hex2mdBPhKJn8fXJ9bQ4MVVNlAMmnMkZGZAoBp
+	vdroEjYzJnXDsfFx392A6jPJ8HDYsZI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706699928;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T+ZO5rd8ho25EDHOwsCAfpvNPINlx/FEPMDsaLbJtlU=;
+	b=LbMqUVa4p4c3thd9uNPo8J21zMTzrTGzjegRDDs2Q9ihllp+fpVcClz5Zp+DQADRZHSJ3u
+	/Agzat4MaI626NAw==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 41134132FA;
+	Wed, 31 Jan 2024 11:18:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id JyzUD5gsumXGQAAAn2gu4w
+	(envelope-from <jack@suse.cz>); Wed, 31 Jan 2024 11:18:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id A8398A0809; Wed, 31 Jan 2024 12:18:47 +0100 (CET)
+Date: Wed, 31 Jan 2024 12:18:47 +0100
+From: Jan Kara <jack@suse.cz>
+To: Kunwu Chan <chentao@kylinos.cn>
+Cc: miklos@szeredi.hu, amir73il@gmail.com, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-unionfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: Use KMEM_CACHE instead of kmem_cache_create
+Message-ID: <20240131111847.ujdhhab6wdebo6fn@quack3>
+References: <20240131070941.135178-1-chentao@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 40VAxH5X019223
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240131070941.135178-1-chentao@kylinos.cn>
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=PJmBHfiC;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=LbMqUVa4
+X-Spamd-Result: default: False [-2.78 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[9];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 FREEMAIL_CC(0.00)[szeredi.hu,gmail.com,zeniv.linux.org.uk,kernel.org,suse.cz,vger.kernel.org];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-2.97)[99.86%]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 4FAF3220D8
+X-Spam-Level: 
+X-Spam-Score: -2.78
+X-Spam-Flag: NO
 
-From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+On Wed 31-01-24 15:09:41, Kunwu Chan wrote:
+> commit 0a31bd5f2bbb ("KMEM_CACHE(): simplify slab cache creation")
+> introduces a new macro.
+> Use the new KMEM_CACHE() macro instead of direct kmem_cache_create
+> to simplify the creation of SLAB caches.
+> 
+> Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
 
-Currently, request's ioprio are set via task's schedule priority(when no
-blkcg configured), which has high priority tasks possess the privilege on
-both of CPU and IO scheduling.
-This commit works as a hint of original policy by promoting the request ioprio
-based on the page/folio's activity. The original idea comes from LRU_GEN
-which provides more precised folio activity than before. This commit try
-to adjust the request's ioprio when certain part of its folios are hot,
-which indicate that this request carry important contents and need be
-scheduled ealier.
+Looks good. Feel free to add:
 
-This commit just provide the mechanism(a subsitution maro) which need to
-be replaced by each fs for the file page's bio while keep others use the
-legacy one.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-This commit is verified on a v6.6 6GB RAM android14 system via 4 test cases
-by changing the bio_add_page/folio API in erofs, ext4 and f2fs in
-another commit.
+								Honza
 
-Case 1:
-script[a] which get significant improved fault time as expected[b]
-where dd's cost also shrink from 55s to 40s.
-(1). fault_latency.bin is an ebpf based test tool which measure all task's
-   iowait latency during page fault when scheduled out/in.
-(2). costmem generate page fault by mmaping a file and access the VA.
-(3). dd generate concurrent vfs io.
-
-[a]
-./fault_latency.bin 1 5 > /data/dd_costmem &
-costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
-costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
-costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
-costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
-dd if=/dev/block/sda of=/data/ddtest bs=1024 count=2048000 &
-dd if=/dev/block/sda of=/data/ddtest1 bs=1024 count=2048000 &
-dd if=/dev/block/sda of=/data/ddtest2 bs=1024 count=2048000 &
-dd if=/dev/block/sda of=/data/ddtest3 bs=1024 count=2048000
-[b]
-                       mainline		commit
-io wait                836us            156us
-
-Case 2:
-fio -filename=/dev/block/by-name/userdata -rw=randread -direct=0 -bs=4k -size=2000M -numjobs=8 -group_reporting -name=mytest
-mainline: 513MiB/s
-READ: bw=531MiB/s (557MB/s), 531MiB/s-531MiB/s (557MB/s-557MB/s), io=15.6GiB (16.8GB), run=30137-30137msec
-READ: bw=543MiB/s (569MB/s), 543MiB/s-543MiB/s (569MB/s-569MB/s), io=15.6GiB (16.8GB), run=29469-29469msec
-READ: bw=474MiB/s (497MB/s), 474MiB/s-474MiB/s (497MB/s-497MB/s), io=15.6GiB (16.8GB), run=33724-33724msec
-READ: bw=535MiB/s (561MB/s), 535MiB/s-535MiB/s (561MB/s-561MB/s), io=15.6GiB (16.8GB), run=29928-29928msec
-READ: bw=523MiB/s (548MB/s), 523MiB/s-523MiB/s (548MB/s-548MB/s), io=15.6GiB (16.8GB), run=30617-30617msec
-READ: bw=492MiB/s (516MB/s), 492MiB/s-492MiB/s (516MB/s-516MB/s), io=15.6GiB (16.8GB), run=32518-32518msec
-READ: bw=533MiB/s (559MB/s), 533MiB/s-533MiB/s (559MB/s-559MB/s), io=15.6GiB (16.8GB), run=29993-29993msec
-READ: bw=524MiB/s (550MB/s), 524MiB/s-524MiB/s (550MB/s-550MB/s), io=15.6GiB (16.8GB), run=30526-30526msec
-READ: bw=529MiB/s (554MB/s), 529MiB/s-529MiB/s (554MB/s-554MB/s), io=15.6GiB (16.8GB), run=30269-30269msec
-READ: bw=449MiB/s (471MB/s), 449MiB/s-449MiB/s (471MB/s-471MB/s), io=15.6GiB (16.8GB), run=35629-35629msec
-
-commit: 633MiB/s
-READ: bw=668MiB/s (700MB/s), 668MiB/s-668MiB/s (700MB/s-700MB/s), io=15.6GiB (16.8GB), run=23952-23952msec
-READ: bw=589MiB/s (618MB/s), 589MiB/s-589MiB/s (618MB/s-618MB/s), io=15.6GiB (16.8GB), run=27164-27164msec
-READ: bw=638MiB/s (669MB/s), 638MiB/s-638MiB/s (669MB/s-669MB/s), io=15.6GiB (16.8GB), run=25071-25071msec
-READ: bw=714MiB/s (749MB/s), 714MiB/s-714MiB/s (749MB/s-749MB/s), io=15.6GiB (16.8GB), run=22409-22409msec
-READ: bw=600MiB/s (629MB/s), 600MiB/s-600MiB/s (629MB/s-629MB/s), io=15.6GiB (16.8GB), run=26669-26669msec
-READ: bw=592MiB/s (621MB/s), 592MiB/s-592MiB/s (621MB/s-621MB/s), io=15.6GiB (16.8GB), run=27036-27036msec
-READ: bw=691MiB/s (725MB/s), 691MiB/s-691MiB/s (725MB/s-725MB/s), io=15.6GiB (16.8GB), run=23150-23150msec
-READ: bw=569MiB/s (596MB/s), 569MiB/s-569MiB/s (596MB/s-596MB/s), io=15.6GiB (16.8GB), run=28142-28142msec
-READ: bw=563MiB/s (590MB/s), 563MiB/s-563MiB/s (590MB/s-590MB/s), io=15.6GiB (16.8GB), run=28429-28429msec
-READ: bw=712MiB/s (746MB/s), 712MiB/s-712MiB/s (746MB/s-746MB/s), io=15.6GiB (16.8GB), run=22478-22478msec
-
-Case 3:
-This commit is also verified by the case of launching camera APP which is
-usually considered as heavy working load on both of memory and IO, which
-shows 12%-24% improvement.
-
-		ttl = 0		ttl = 50	ttl = 100
-mainline        2267ms		2420ms		2316ms
-commit          1992ms          1806ms          1998ms
-
-case 4:
-androbench has no improvment as well as regression in RD/WR test item
-while make a 3% improvement in sqlite items.
-
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
----
-change of v2: calculate page's activity via helper function
-change of v3: solve layer violation by move API into mm
-change of v4: keep block clean by removing the page related API
-change of v5: introduce the macros of bio_add_folio/page for read dir.
-change of v6: replace the macro of bio_add_xxx by submit_bio which
-		iterating the bio_vec before launching bio to block layer
----
----
- include/linux/act_ioprio.h | 35 +++++++++++++++++++++++++++++++++++
- mm/Kconfig                 |  8 ++++++++
- 2 files changed, 43 insertions(+)
- create mode 100644 include/linux/act_ioprio.h
-
-diff --git a/include/linux/act_ioprio.h b/include/linux/act_ioprio.h
-new file mode 100644
-index 000000000000..797304acdabc
---- /dev/null
-+++ b/include/linux/act_ioprio.h
-@@ -0,0 +1,35 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+#ifndef _ACT_IOPRIO_H
-+#define _ACT_IOPRIO_H
-+
-+#ifdef CONFIG_CONTENT_ACT_BASED_IOPRIO
-+#include <linux/bio.h>
-+
-+static __maybe_unused
-+void act_submit_bio(struct bio *bio)
-+{
-+	struct bio_vec bv;
-+	struct bvec_iter iter;
-+	struct page *page;
-+	int class, level, hint;
-+	int activity = 0;
-+	int cnt = 0;
-+
-+	class = IOPRIO_PRIO_CLASS(bio->bi_ioprio);
-+	level = IOPRIO_PRIO_LEVEL(bio->bi_ioprio);
-+	hint = IOPRIO_PRIO_HINT(bio->bi_ioprio);
-+	bio_for_each_bvec(bv, bio, iter) {
-+		page = bv.bv_page;
-+		activity += PageWorkingset(page) ? 1 : 0;
-+		cnt++;
-+	}
-+	if (activity >= cnt / 2)
-+		class = IOPRIO_CLASS_RT;
-+	else if (activity >= cnt / 4)
-+		class = max(IOPRIO_PRIO_CLASS(get_current_ioprio()), IOPRIO_CLASS_BE);
-+	bio->bi_ioprio = IOPRIO_PRIO_VALUE_HINT(class, level, hint);
-+	submit_bio(bio);
-+}
-+#define submit_bio(bio) act_submit_bio(bio)
-+#endif
-+#endif
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 264a2df5ecf5..e0e5a5a44ded 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -1240,6 +1240,14 @@ config LRU_GEN_STATS
- 	  from evicted generations for debugging purpose.
- 
- 	  This option has a per-memcg and per-node memory overhead.
-+
-+config CONTENT_ACT_BASED_IOPRIO
-+	bool "Enable content activity based ioprio"
-+	depends on LRU_GEN
-+	default n
-+	help
-+	  This item enable the feature of adjust bio's priority by
-+	  calculating its content's activity.
- # }
- 
- config ARCH_SUPPORTS_PER_VMA_LOCK
+> ---
+>  fs/backing-file.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/fs/backing-file.c b/fs/backing-file.c
+> index a681f38d84d8..740185198db3 100644
+> --- a/fs/backing-file.c
+> +++ b/fs/backing-file.c
+> @@ -325,9 +325,7 @@ EXPORT_SYMBOL_GPL(backing_file_mmap);
+>  
+>  static int __init backing_aio_init(void)
+>  {
+> -	backing_aio_cachep = kmem_cache_create("backing_aio",
+> -					       sizeof(struct backing_aio),
+> -					       0, SLAB_HWCACHE_ALIGN, NULL);
+> +	backing_aio_cachep = KMEM_CACHE(backing_aio, SLAB_HWCACHE_ALIGN);
+>  	if (!backing_aio_cachep)
+>  		return -ENOMEM;
+>  
+> -- 
+> 2.39.2
+> 
 -- 
-2.25.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
