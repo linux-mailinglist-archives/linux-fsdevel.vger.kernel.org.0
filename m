@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-9744-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B25844C97
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 00:23:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDE36844BFF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 00:09:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FC23B2EED3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 23:09:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73006292B9F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 23:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D6D4B5D7;
-	Wed, 31 Jan 2024 23:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF944CE19;
+	Wed, 31 Jan 2024 23:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jPaJihUo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eW/eQ+05"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77CE84A9BF;
-	Wed, 31 Jan 2024 23:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538824CE05;
+	Wed, 31 Jan 2024 23:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706742192; cv=none; b=rGfLpMD+Zb+fBNSTyAac6TbxT1aXJhdf/f+3OfcUvA8b3DwHdRquC4mhtcb862YTThPvapwLYsp1icOVq06OkDsjgo8apRkz4O4ArSZqOdk9gF2WcAoGAjo545y+oWG/oNBPw9KICqn+8LemiiZ6MXJ552klh2GsiKtIrlQpTqU=
+	t=1706742196; cv=none; b=uwEMFRzN9rqV27gBpytS0WUto5M1pp3FEoYRhIHNeFKaerwaZasBgWM8LByWx08YCzEwPAdtTfSg4pGHTOa/2JTaJqfmvNOchIzZLwtn2G1zUOY4xyM2SgjhFo7uaThgvXvZkkqFDMa+msoRw8vwIRE+tHpitf9JoDvOfRh25L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706742192; c=relaxed/simple;
-	bh=sNOrCkTcYd2ehInJVAjwI61o+eqh8+BcNWvctRiFYlw=;
+	s=arc-20240116; t=1706742196; c=relaxed/simple;
+	bh=smZQaBDSUcgQtmSdbU7VQqlPNCQff4UZV2EFHrxh+PI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jvWh88l8qbwm5bqAvWMxZx9xMfSLNa3cF4iIfSmN9Qmd1Fzy6T+Uy8wxEn37rBtI+hGxwOLk9EnUHN66FN3cWlr5p2ZZFSuzpBF1MpgP9KLQnI1Ns7zrbYez6eL/D+pwcDQls7vrL9vVU5RnDQaRPxzXEUMnUMEg7x9dQc/efSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jPaJihUo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3656AC43330;
-	Wed, 31 Jan 2024 23:03:08 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=MLdrrA7BYexnx2QSCDTtoMk8YXAa0+UGZINjcClDHG2jXY2IeEf66gpMAwGLgF8oFjcQ5gzNkW7NAnfdxnCGrNm5Gz8dVnm7ePuf0GEvHcK4LAkWRuPRHLY5pz9TXvSysTec1WBNqTcJYMcn+5SAltgTHWB4y5h8eAooewRmZio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eW/eQ+05; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F16CC43394;
+	Wed, 31 Jan 2024 23:03:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706742191;
-	bh=sNOrCkTcYd2ehInJVAjwI61o+eqh8+BcNWvctRiFYlw=;
+	s=k20201202; t=1706742195;
+	bh=smZQaBDSUcgQtmSdbU7VQqlPNCQff4UZV2EFHrxh+PI=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jPaJihUo28zQ6jJnl98vBQtGyyjGMtzVW5ofnzGXXU+QTRvh15v2RBIzVXnE2JFaO
-	 W1Cu7k+uH0yEh+e6pr4EIx+3m7Cmuu0iBVZvMwfVERr61y3TDefQNLlrBM2eqKa4FL
-	 kscevZqv+9C8H0SmoYtuM6o3cW5YxYYLT17q7Iah5phaEuTsvnRBb9bchyuRHcZB5N
-	 5qxt/iEjtAf/z6JUO6qoQDD7icldKN+rA7J2YL/LOI0H1y8CiIqIXoR7t+EWxh1sAk
-	 aEOt5gPSJ3qqU/PmADYuY6BSwnL3Mej0uia1UEvudny2EEo7O+ehgLssIhfvbJASww
-	 QkNFb26yMDazw==
+	b=eW/eQ+05Jy31+4vFP9Y2H3barwbkQ7dU1UT6xgKmNqj9N4m+Ez8PIf6Mwf6XTU0yy
+	 vvnSIGBGuXGWRzHBB3l8//EREAUNqa+UBlQ3M17OMAKXz1nqdlEkI3LKON40xLMFT1
+	 ldcNg0F7u69dpz0m3kCQ0PIFMbK3a13Kt5VQf8U6XlXxFZCLPJ6DtgIP3gEMeP1skO
+	 0X8SAGuz52XRmZ6XyLvLMxs959yXnkdRFrqGJsKdQdzA1me4eu4SqgkvpQlxtZfGJV
+	 EgfqFL6d7g19IVWaapgcMXyM1+71+j2N8sQBU3lhKPnd5/UamFYxQrqodug+DSCPOK
+	 q6EyY+z7MztvA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 31 Jan 2024 18:01:55 -0500
-Subject: [PATCH v3 14/47] smb/client: convert to using new filelock helpers
+Date: Wed, 31 Jan 2024 18:01:56 -0500
+Subject: [PATCH v3 15/47] smb/server: convert to using new filelock helpers
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240131-flsplit-v3-14-c6129007ee8d@kernel.org>
+Message-Id: <20240131-flsplit-v3-15-c6129007ee8d@kernel.org>
 References: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
 In-Reply-To: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
 To: Steven Rostedt <rostedt@goodmis.org>, 
@@ -86,20 +86,20 @@ Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
  ocfs2-devel@lists.linux.dev, linux-cifs@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2139; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=sNOrCkTcYd2ehInJVAjwI61o+eqh8+BcNWvctRiFYlw=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlutFwEGvApQjLFywG5KR4PXw94xatGEobs6Txc
- 96xMWLF+iuJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbrRcAAKCRAADmhBGVaC
- FW/HD/9t/9RYMz4y8XwdaPmCmqiSG5Md5Xd11I35AaoOBOBMXwUeC3cIoizT7vcQHgG8OQQebCw
- NQOY+wmXxcYtqyJcbt9RiqqFybbWAQt4crYf6Bg5nKBHwm32QIdP6JJLMrFmAtbpp6hb2xWzHuz
- 5SvKSCIFWRslcz1JTSTnWgNed6rUapybXAi4K/adDvQTXEZuqB4vWFPXYkAR+sJ/2snfOgau0hR
- sMxvrdi/COJ7AepichAP3JvXKGu/elAe7g6lJ0MgLssb3b2olbt/Jl3XXdm4T4Q8+Odb/pJyP6M
- R2VBE9T3c8w/pVTEun2UStpcm1DH6U/tYHwaHK/Zq5zLT/d6NOIaftuaFxBMLqXVgVGggAc/5PM
- imB/qngELyOKiVRbx/KfMFtj6FOesJ3S7jZWWSu1uBwOlzvR5vS9btnKObUYgWfGgTOb7WW6lPp
- z+QjxOu+Byg8QBU4dhuT8w37Aulj/OeJ5p0xEsAebccb9B1JRie5m3LL2RkjVT6L2aihHdJL5sC
- GiHAJT7z+Qz0g8YhAk/jU9AlalNqbzGdxcIX7vh/6KsoNvwsjV/8MVwGSvfX8OYVBnYcQkexQbN
- h0VvHH7dz198ioRYLgTk60as7ToLb/qVHNxt+o5sTF/pQL6Iu6S2QAKlGgtres1FM9mSz9/wE8g
- pi2mqeC1DCCjf1A==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2270; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=smZQaBDSUcgQtmSdbU7VQqlPNCQff4UZV2EFHrxh+PI=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlutFwb5a0RccmT0DQoZb2DAf8k05FkzYuXWMB3
+ mHjswRhgliJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbrRcAAKCRAADmhBGVaC
+ FWxzD/0W7IJGr38uQCEjrXS+6oc15ULuQMyaEWcQtwqH0/D1/m8iNFpwQs+YsWg0aM/eWlDMToP
+ CrOBXIj4hP/UufnnQb4jUz/4OARetq40aJHnqY0Lmejy4MMfSozDfq0QB3wrDYsMHTW8hY+CKeN
+ wvGI9TQ9Ld+3yiJ/Did0CJJuPFjZhS2r/eMUXkrYf3b1IvmMkt5DnfoT3a/ALv4nKgs80uSBaNC
+ IAyAMT3maglVaGWII2WFqpjZYQVbrGl91sPXT0Z2x5O/DyOGZS/L+qGohx9gTl9+F3flxvWar9E
+ XYjXRbTzuUDkoefOfLbfGCkW1WEifOk0rEIL5ady2W6WCombE6X/EhTr79XraNwihmZoX4bU5Oo
+ ovzpWEDRIfnEFJWzK/1SVzefiZKkQ8mAS96A1+ttkBVRqhuOgSCgpJ4mBtbOLspirN07ePhFm4+
+ tIntvazavdLwHOuwCLbUkTz02Nw/opCL4+U+5AFJEsV68JLiPm+DpppBOIJU1JiQdhw6B1f6uuc
+ 5pn0QHTHqwa0imsUE23451cYdUdmtO7WjeRimDBwb5Bly+sIpycXXH5S6XkvUDsR/3T1i4mR9Fb
+ IXQdsKZ8nI7ktdGiAF5QhbR/YMoILar5enwGAOHbj7HDVgQdUKcsffCKrn/MGIl6C0Etah8vqCw
+ MeW/C+PmUnMKLPA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
@@ -107,60 +107,65 @@ Convert to using the new file locking helper functions.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/smb/client/file.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/smb/server/smb2pdu.c | 6 +++---
+ fs/smb/server/vfs.c     | 6 +++---
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/smb/client/file.c b/fs/smb/client/file.c
-index b75282c204da..27f9ef4e69a8 100644
---- a/fs/smb/client/file.c
-+++ b/fs/smb/client/file.c
-@@ -1409,7 +1409,7 @@ cifs_posix_lock_test(struct file *file, struct file_lock *flock)
- 	down_read(&cinode->lock_sem);
- 	posix_test_lock(file, flock);
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index ba7a72a6a4f4..e170b96d5ac0 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -6841,7 +6841,7 @@ static void smb2_remove_blocked_lock(void **argv)
+ 	struct file_lock *flock = (struct file_lock *)argv[0];
  
--	if (flock->fl_type == F_UNLCK && !cinode->can_cache_brlcks) {
-+	if (lock_is_unlock(flock) && !cinode->can_cache_brlcks) {
- 		flock->fl_type = saved_type;
- 		rc = 1;
- 	}
-@@ -1581,7 +1581,7 @@ cifs_push_posix_locks(struct cifsFileInfo *cfile)
+ 	ksmbd_vfs_posix_lock_unblock(flock);
+-	wake_up(&flock->fl_wait);
++	locks_wake_up(flock);
+ }
  
- 	el = locks_to_send.next;
- 	spin_lock(&flctx->flc_lock);
--	list_for_each_entry(flock, &flctx->flc_posix, fl_list) {
-+	for_each_file_lock(flock, &flctx->flc_posix) {
- 		if (el == &locks_to_send) {
- 			/*
- 			 * The list ended. We don't have enough allocated
-@@ -1591,7 +1591,7 @@ cifs_push_posix_locks(struct cifsFileInfo *cfile)
- 			break;
+ static inline bool lock_defer_pending(struct file_lock *fl)
+@@ -6991,7 +6991,7 @@ int smb2_lock(struct ksmbd_work *work)
+ 				    file_inode(smb_lock->fl->fl_file))
+ 					continue;
+ 
+-				if (smb_lock->fl->fl_type == F_UNLCK) {
++				if (lock_is_unlock(smb_lock->fl)) {
+ 					if (cmp_lock->fl->fl_file == smb_lock->fl->fl_file &&
+ 					    cmp_lock->start == smb_lock->start &&
+ 					    cmp_lock->end == smb_lock->end &&
+@@ -7051,7 +7051,7 @@ int smb2_lock(struct ksmbd_work *work)
  		}
- 		length = cifs_flock_len(flock);
--		if (flock->fl_type == F_RDLCK || flock->fl_type == F_SHLCK)
-+		if (lock_is_read(flock) || flock->fl_type == F_SHLCK)
- 			type = CIFS_RDLCK;
- 		else
- 			type = CIFS_WRLCK;
-@@ -1681,16 +1681,16 @@ cifs_read_flock(struct file_lock *flock, __u32 *type, int *lock, int *unlock,
- 		cifs_dbg(FYI, "Unknown lock flags 0x%x\n", flock->fl_flags);
+ 		up_read(&conn_list_lock);
+ out_check_cl:
+-		if (smb_lock->fl->fl_type == F_UNLCK && nolock) {
++		if (lock_is_unlock(smb_lock->fl) && nolock) {
+ 			pr_err("Try to unlock nolocked range\n");
+ 			rsp->hdr.Status = STATUS_RANGE_NOT_LOCKED;
+ 			goto out;
+diff --git a/fs/smb/server/vfs.c b/fs/smb/server/vfs.c
+index a6961bfe3e13..449cfa9ed31c 100644
+--- a/fs/smb/server/vfs.c
++++ b/fs/smb/server/vfs.c
+@@ -337,16 +337,16 @@ static int check_lock_range(struct file *filp, loff_t start, loff_t end,
+ 		return 0;
  
- 	*type = server->vals->large_lock_type;
--	if (flock->fl_type == F_WRLCK) {
-+	if (lock_is_write(flock)) {
- 		cifs_dbg(FYI, "F_WRLCK\n");
- 		*type |= server->vals->exclusive_lock_type;
- 		*lock = 1;
--	} else if (flock->fl_type == F_UNLCK) {
-+	} else if (lock_is_unlock(flock)) {
- 		cifs_dbg(FYI, "F_UNLCK\n");
- 		*type |= server->vals->unlock_lock_type;
- 		*unlock = 1;
- 		/* Check if unlock includes more than one lock range */
--	} else if (flock->fl_type == F_RDLCK) {
-+	} else if (lock_is_read(flock)) {
- 		cifs_dbg(FYI, "F_RDLCK\n");
- 		*type |= server->vals->shared_lock_type;
- 		*lock = 1;
+ 	spin_lock(&ctx->flc_lock);
+-	list_for_each_entry(flock, &ctx->flc_posix, fl_list) {
++	for_each_file_lock(flock, &ctx->flc_posix) {
+ 		/* check conflict locks */
+ 		if (flock->fl_end >= start && end >= flock->fl_start) {
+-			if (flock->fl_type == F_RDLCK) {
++			if (lock_is_read(flock)) {
+ 				if (type == WRITE) {
+ 					pr_err("not allow write by shared lock\n");
+ 					error = 1;
+ 					goto out;
+ 				}
+-			} else if (flock->fl_type == F_WRLCK) {
++			} else if (lock_is_write(flock)) {
+ 				/* check owner in lock */
+ 				if (flock->fl_file != filp) {
+ 					error = 1;
 
 -- 
 2.43.0
