@@ -1,41 +1,41 @@
-Return-Path: <linux-fsdevel+bounces-9702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04CDD84478B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 19:55:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED204844792
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 19:55:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACA9F1F27609
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 18:55:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A989A2845A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 18:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A4D53E481;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5B73FB16;
 	Wed, 31 Jan 2024 18:54:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79D938FA1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 126083A8FE;
 	Wed, 31 Jan 2024 18:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706727297; cv=none; b=VmkwwH+MDQoSEsw7ZnFrsyp0lsfw7PKc3U0IQkmTBPDAteA8ky815gfdDfO0xie6MUbUH0PUIug14czJvIeGyK9mLaXbErtkx1rCFdtZFPluNPC3//upCW2OIruXifMpZImTe3ORMOgaIOLFPWkQlK2vm9dvGPMj1xFyoA1ntc0=
+	t=1706727298; cv=none; b=QNyL46sDnBnrpgal219thiF4Hw4JOvSzIMwBjGrnEAmA2VHnjHQe05JrqA6druQj6Eh/YRbOmkZhUvhZcw8r34DGokCsQ/rAdveXpbAkzSasqOJdfb0CdM0CB/RCfyFMXVElS7rJH6PjLOFEYQScxJUn2C40TdoKb3ywpanh9Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706727297; c=relaxed/simple;
-	bh=pfpMUH3tWGcM1lGwQK3NyStqZwiqHr8qawaLbZJl8tw=;
+	s=arc-20240116; t=1706727298; c=relaxed/simple;
+	bh=7Rdww8PD/OZDuJxNvZnG5j/I+jvbRavpqIHcKsYavJQ=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=T6AxM+xZwbHEwWwMTbX//V46Ogcnw9Rcs58K0Ere9mGIo046PaIMN36JPk+Cxnzf9ZCCNYXZuOf9KzU4PgzSqFN/P1NVQc2xXuE2c0k4l6LK3iQW0wZ21GvAwr46TCfL+i0wnto4wal8o5/l7s8QLehvkfQkAsByVY30nbhmTMY=
+	 Content-Type; b=O8KbXwxcDuDNVuzyThFh293AFGLq0ovmBcfZ1iFkezRYTECvHntNpB//rASDyXktw+I//quNIEFhjG1fzLTeXvupAIZOsoulwnPPJ/yjmw5mIFtP+wa9gG5XZLJEe/yi5WjjHO9teI0/tzszT0iCOIp9DilZtnFeTtzQJtEFRTc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C98CC433F1;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3D7AC433A6;
 	Wed, 31 Jan 2024 18:54:57 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.97)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1rVFjs-000000055Ps-1v8J;
+	id 1rVFjs-000000055QM-2apb;
 	Wed, 31 Jan 2024 13:55:12 -0500
-Message-ID: <20240131185512.315825944@goodmis.org>
+Message-ID: <20240131185512.478449628@goodmis.org>
 User-Agent: quilt/0.67
-Date: Wed, 31 Jan 2024 13:49:19 -0500
+Date: Wed, 31 Jan 2024 13:49:20 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org,
@@ -50,7 +50,7 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
  stable@vger.kernel.org,
  kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH v2 1/7] tracefs: Zero out the tracefs_inode when allocating it
+Subject: [PATCH v2 2/7] eventfs: Initialize the tracefs inode properly
 References: <20240131184918.945345370@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -60,76 +60,59 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: "Steven Rostedt (Google)" <rostedt@goodmis.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-eventfs uses the tracefs_inode and assumes that it's already initialized
-to zero. That is, it doesn't set fields to zero (like ti->private) after
-getting its tracefs_inode. This causes bugs due to stale values.
+The tracefs-specific fields in the inode were not initialized before the
+inode was exposed to others through the dentry with 'd_instantiate()'.
 
-Just initialize the entire structure to zero on allocation so there isn't
-any more surprises.
-
-This is a partial fix to access to ti->private. The assignment still needs
-to be made before the dentry is instantiated.
+Move the field initializations up to before the d_instantiate.
 
 Cc: stable@vger.kernel.org
 Fixes: 5790b1fb3d672 ("eventfs: Remove eventfs_file and just use eventfs_inode")
 Reported-by: kernel test robot <oliver.sang@intel.com>
 Closes: https://lore.kernel.org/oe-lkp/202401291043.e62e89dc-oliver.sang@intel.com
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
-Changes since last version: https://lore.kernel.org/all/20240130230612.377a1933@gandalf.local.home/
+Changes since v1: https://lore.kernel.org/linux-trace-kernel/20240130190355.11486-2-torvalds@linux-foundation.org
 
-- Moved vfs_inode to top of tracefs_inode structure so that the rest can
-  be initialized with memset_after() as the vfs_inode portion is already
-  cleared with a memset() itself in inode_init_once().
+-  Since another patch zeroed out the entire tracefs_inode, there's no need
+   to initialize any of its fields to NULL.
 
- fs/tracefs/inode.c    | 6 ++++--
- fs/tracefs/internal.h | 3 ++-
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ fs/tracefs/event_inode.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-index e1b172c0e091..888e42087847 100644
---- a/fs/tracefs/inode.c
-+++ b/fs/tracefs/inode.c
-@@ -38,8 +38,6 @@ static struct inode *tracefs_alloc_inode(struct super_block *sb)
- 	if (!ti)
- 		return NULL;
+diff --git a/fs/tracefs/event_inode.c b/fs/tracefs/event_inode.c
+index 1c3dd0ad4660..824b1811e342 100644
+--- a/fs/tracefs/event_inode.c
++++ b/fs/tracefs/event_inode.c
+@@ -370,6 +370,8 @@ static struct dentry *create_dir(struct eventfs_inode *ei, struct dentry *parent
  
--	ti->flags = 0;
--
- 	return &ti->vfs_inode;
- }
+ 	ti = get_tracefs(inode);
+ 	ti->flags |= TRACEFS_EVENT_INODE;
++	/* Only directories have ti->private set to an ei, not files */
++	ti->private = ei;
  
-@@ -779,7 +777,11 @@ static void init_once(void *foo)
+ 	inc_nlink(inode);
+ 	d_instantiate(dentry, inode);
+@@ -515,7 +517,6 @@ create_file_dentry(struct eventfs_inode *ei, int idx,
+ static void eventfs_post_create_dir(struct eventfs_inode *ei)
  {
- 	struct tracefs_inode *ti = (struct tracefs_inode *) foo;
+ 	struct eventfs_inode *ei_child;
+-	struct tracefs_inode *ti;
  
-+	/* inode_init_once() calls memset() on the vfs_inode portion */
- 	inode_init_once(&ti->vfs_inode);
-+
-+	/* Zero out the rest */
-+	memset_after(ti, 0, vfs_inode);
+ 	lockdep_assert_held(&eventfs_mutex);
+ 
+@@ -525,9 +526,6 @@ static void eventfs_post_create_dir(struct eventfs_inode *ei)
+ 				 srcu_read_lock_held(&eventfs_srcu)) {
+ 		ei_child->d_parent = ei->dentry;
+ 	}
+-
+-	ti = get_tracefs(ei->dentry->d_inode);
+-	ti->private = ei;
  }
  
- static int __init tracefs_init(void)
-diff --git a/fs/tracefs/internal.h b/fs/tracefs/internal.h
-index 91c2bf0b91d9..7d84349ade87 100644
---- a/fs/tracefs/internal.h
-+++ b/fs/tracefs/internal.h
-@@ -11,9 +11,10 @@ enum {
- };
- 
- struct tracefs_inode {
-+	struct inode            vfs_inode;
-+	/* The below gets initialized with memset_after(ti, 0, vfs_inode) */
- 	unsigned long           flags;
- 	void                    *private;
--	struct inode            vfs_inode;
- };
- 
- /*
+ /**
 -- 
 2.43.0
 
