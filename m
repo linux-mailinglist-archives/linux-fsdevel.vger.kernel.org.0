@@ -1,114 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-9670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADDD484435A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 16:48:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506D08443F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 17:17:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A3828872C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 15:48:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 053101F2BE33
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 16:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4E112AAE1;
-	Wed, 31 Jan 2024 15:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D5D12BF22;
+	Wed, 31 Jan 2024 16:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIfIe8IH"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CgORUqrJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12046129A90;
-	Wed, 31 Jan 2024 15:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0D712BF04;
+	Wed, 31 Jan 2024 16:16:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706716067; cv=none; b=hOx1pRuRpEBDeiphdr1RYxbxOa1QVUVvCjxrZ6XSCv8EanrQTcGC7q5SqU5akrNYmxuYgxX9cewXpuQ/PEgSeHYic47bPn+XGdGeFb6NupykYoDRwU8tJj2sUr4e+5xXElEb+LOweLh/fKPBVP9/XUe9P+txoxE5U4b06jIa3KY=
+	t=1706717815; cv=none; b=DtlDLfrOpFKrgioGhjBUy4lPhId86mTNvTPgFy8Gnxm56g36zsTHfKIcfvqYmU20WLzuGyi/dUPDMYOcLNcGKsX2DLV6NUjGmGGE+hGCb3YOeQNMGpDKgwH0UFLLme1MZ3H7k9MyQrj4BkNGUUMGif3A9E5u0VCTos8y4Yup2lU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706716067; c=relaxed/simple;
-	bh=kcvtLaH8tgDWu8daM4FrjIXLhnfcpyDWdLSIcNR9BMI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YmsRFeKA2DwL/LOJ89nDPbRj1Gdxr9nBhSrS+iH6/l90Aw4e9hZo+em7BpsjyNX35t1nvOJQjNmUYROooGpembhe1auxOG9+W6vmopp3kjg4fq0t8TT7TdddQempoNPz9fl5epAvHY+E6CJWXjkk/hDBusoNbixjE0JWA7hwhP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CIfIe8IH; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-68c41c070efso6975916d6.0;
-        Wed, 31 Jan 2024 07:47:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706716065; x=1707320865; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kcvtLaH8tgDWu8daM4FrjIXLhnfcpyDWdLSIcNR9BMI=;
-        b=CIfIe8IHwfQrbWtmAN535k+JCR6rVp+V7gZqIGEKE0Z7lHxrsy3mNrVJirum+BVSlB
-         H6hin6y8hGoaldmynJL56gJztdb1qZG1kwPv6bNtzuuBdzxx8iggtP0oJq14dJCv9lw2
-         fjqnc6CVcOjHJO7VJs551DIDC2UNnFQnK3UmpiUIFeu5+RqaBlo8fx0Nuw+qutAxxxq3
-         80/CDIV8dox+xSN4tVeSEG0/PjcTpbvc3sm+XRxtiYlsfWiABj5ET4SJ1YICD7DIOA9C
-         +tj8eKwMmtUrVkTExNIAUbwXymKPIEgVVgme4KmW/gnFC6keirqxHqHfBpa6A6wKpscZ
-         Oebw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706716065; x=1707320865;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kcvtLaH8tgDWu8daM4FrjIXLhnfcpyDWdLSIcNR9BMI=;
-        b=BiFrOMBClAP5JubdJKwbScYMXhHTGFTcsUKltKccdMHvz9/B5gB5oIfLMq6Pa5gSbK
-         ofMXcZ+i9CqZsPN8AolX49ilrI4Iw6FfltAneoOlrWRgmOAgNFDBipY8Oi1stdkmN+2T
-         ht0pS0PI5I80rKv84TQHhLJYPTymCPE1fYeG/WecqsO3wxHK3V6oWhq2OPo2pjsJjoAD
-         HvdSTOPRYwNA/aymfyqUSpkBmS228sqLPKVsX5rn6qUDkvYsoHLy/AnFED0sH6XcdTz8
-         GSno8uM9NHI5T5gq3iIOKnSW+Eq6JlwlZ0Sa1AdjCfTtYvuNJt9SZ3C0t7ysug9qGgWQ
-         iY8g==
-X-Gm-Message-State: AOJu0YxwswrdvUl96MnCsO4J0CD9yzhDZYoLJksQAuHHDGEJXSFBHkWL
-	Sddt4MFFwt2716b503nmAMH4JaVCXy3znNg7Hb1TCQ6hlz0gd4dfNIit1JRL8lmG3p/ONXioCf9
-	2PMMzmnA8jFiMGN7/x9D433ZyNV0=
-X-Google-Smtp-Source: AGHT+IHQqAgRfXqPSmq7iWifa1xzg0IGtYsDAfOxUUbc14RP6DBVnAdj5gYQaGlZTXyn6lwVnaxg1nJlxJqTr4b244A=
-X-Received: by 2002:a05:6214:226e:b0:682:bfd0:d79e with SMTP id
- gs14-20020a056214226e00b00682bfd0d79emr2330095qvb.27.1706716064959; Wed, 31
- Jan 2024 07:47:44 -0800 (PST)
+	s=arc-20240116; t=1706717815; c=relaxed/simple;
+	bh=UWlq1EvrM0m1ICwPMbYYxNGA47wTvXH22WzmLVpjSio=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DYO+zqimSqrEDPrvrtPfhVH6616/+e8MtYUvpuvT3pjuhPLP58GKGfoEiXToJGa6vWvx7VEAqFzK8aOUWnFWNfumkLnaQLPhTkk8TaJZpu7ZM4SP5XvkvQ5Cc4OZqwMY/T3LUVfRnC/DHObq2kbDJXfUA6HUibIcN09F7ili5Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CgORUqrJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE299C43394;
+	Wed, 31 Jan 2024 16:16:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1706717814;
+	bh=UWlq1EvrM0m1ICwPMbYYxNGA47wTvXH22WzmLVpjSio=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CgORUqrJmMRy+gVz2WCDjKWTEcugunpPRz1KOkLESVexKQmfsQnJYdqUuBz3sUPZ5
+	 uarGdPXOwzHzLluU5h8xUdzXA/6nuIWUeZPHlK37WXT8q8/lDhrNKur26A4mv8mYh4
+	 u8PERyhH9A4LdAC+CI34Ay5qoQNbZssp3TOu4CAk=
+Date: Wed, 31 Jan 2024 08:16:54 -0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Joe Damato <jdamato@fastly.com>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+	linux-api@vger.kernel.org, brauner@kernel.org, edumazet@google.com,
+	davem@davemloft.net, alexander.duyck@gmail.com,
+	sridhar.samudrala@intel.com, kuba@kernel.org,
+	willemdebruijn.kernel@gmail.com, weiwan@google.com,
+	David.Laight@aculab.com, arnd@arndb.de,
+	Jonathan Corbet <corbet@lwn.net>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nathan Lynch <nathanl@linux.ibm.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Maik Broemme <mbroemme@libmpq.org>,
+	Steve French <stfrench@microsoft.com>,
+	Julien Panis <jpanis@baylibre.com>, Thomas Huth <thuth@redhat.com>,
+	Andrew Waterman <waterman@eecs.berkeley.edu>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH net-next v4 3/3] eventpoll: Add epoll ioctl for
+ epoll_params
+Message-ID: <2024013145-payment-enjoyment-6274@gregkh>
+References: <20240131014738.469858-1-jdamato@fastly.com>
+ <20240131014738.469858-4-jdamato@fastly.com>
+ <2024013001-prison-strum-899d@gregkh>
+ <20240131022756.GA4837@fastly.com>
+ <efee9789-4f05-4202-9a95-21d88f6307b0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202401312229.eddeb9a6-oliver.sang@intel.com>
-In-Reply-To: <202401312229.eddeb9a6-oliver.sang@intel.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 31 Jan 2024 17:47:33 +0200
-Message-ID: <CAOQ4uxiwCGxBBbz3Edsu-aeJbNzh5b-+gvTHwtBFnCvbto2v-g@mail.gmail.com>
-Subject: Re: [linus:master] [remap_range] dfad37051a: stress-ng.file-ioctl.ops_per_sec
- -11.2% regression
-To: kenel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <efee9789-4f05-4202-9a95-21d88f6307b0@kernel.org>
 
-On Wed, Jan 31, 2024 at 4:13=E2=80=AFPM kenel test robot <oliver.sang@intel=
-.com> wrote:
->
->
->
-> Hello,
->
-> kernel test robot noticed a -11.2% regression of stress-ng.file-ioctl.ops=
-_per_sec on:
->
->
-> commit: dfad37051ade6ac0d404ef4913f3bd01954ee51c ("remap_range: move perm=
-ission hooks out of do_clone_file_range()")
-> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
->
+On Wed, Jan 31, 2024 at 07:03:54AM +0100, Jiri Slaby wrote:
+> On 31. 01. 24, 3:27, Joe Damato wrote:
+> > On Tue, Jan 30, 2024 at 06:08:36PM -0800, Greg Kroah-Hartman wrote:
+> > > On Wed, Jan 31, 2024 at 01:47:33AM +0000, Joe Damato wrote:
+> > > > +struct epoll_params {
+> > > > +	__aligned_u64 busy_poll_usecs;
+> > > > +	__u16 busy_poll_budget;
+> > > > +
+> > > > +	/* pad the struct to a multiple of 64bits for alignment on all arches */
+> > > > +	__u8 __pad[6];
+> > > 
+> > > You HAVE to check this padding to be sure it is all 0, otherwise it can
+> > > never be used in the future for anything.
+> > 
+> > Is there some preferred mechanism for this in the kernel that I should be
+> > using or is this as simple as adding a for loop to check each u8 == 0 ?
+> 
+> You are likely looking for memchr_inv().
 
-Can you please try this fix:
-
- 7d4213664bda remap_range: move sanity checks out of do_clone_file_range()
-
-from:
-
-https://github.com/amir73il/linux ovl-fixes
-
-Thanks,
-Amir.
+Ah, never noticed that, thanks!
 
