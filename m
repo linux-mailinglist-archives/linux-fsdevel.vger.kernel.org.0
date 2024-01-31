@@ -1,106 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-9669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11F4A844357
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 16:47:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADDD484435A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 16:48:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43DFE1C245D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 15:47:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A3828872C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 15:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CD712A162;
-	Wed, 31 Jan 2024 15:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E4E112AAE1;
+	Wed, 31 Jan 2024 15:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H9SVQJ3k";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uMlUuZq/"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIfIe8IH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828431292FA;
-	Wed, 31 Jan 2024 15:47:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12046129A90;
+	Wed, 31 Jan 2024 15:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706716060; cv=none; b=mBhHP7ZNR5IatxETtGnOD9o7IZWLstIpUp6A9RMzf6o1kRhYg6533YeeJFU79pt92q9PgAiXRZH37Xg+FRbf+pNghFil9GYPYOW2Y4ZI/XGRvWnRyv6bnxkn8MyRDaURyVk+qoGwrSqpfvEFDctItQOz2EpSmBeKDusH8gEZzL8=
+	t=1706716067; cv=none; b=hOx1pRuRpEBDeiphdr1RYxbxOa1QVUVvCjxrZ6XSCv8EanrQTcGC7q5SqU5akrNYmxuYgxX9cewXpuQ/PEgSeHYic47bPn+XGdGeFb6NupykYoDRwU8tJj2sUr4e+5xXElEb+LOweLh/fKPBVP9/XUe9P+txoxE5U4b06jIa3KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706716060; c=relaxed/simple;
-	bh=dPqaiX5PAWnQlOQ8Jiutu8bSeKEr3U2pTg/+HqQA8Ak=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=O6iptg37gIBvci8kk5Rq9Bg4tykHSaqQ8DbLGeP9ras1RCQHb0xHwdlRphTv8F1t/KtO5tySYe8VPNPKa/KIDPDI0rmj/KttC8/eXOHtkugPkVemJbhgc6IKWzwkxX/gB/72O0T8JJ7vskJGV4r8Hyk1CGrAm7sz5N+98kv/aIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H9SVQJ3k; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uMlUuZq/; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1706716056;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tgMsdbxCaBeot/1FIP0WAPLTrTPmjNYgZHCMmQQu8dA=;
-	b=H9SVQJ3kZBcTos2bLSoPIrvvuZKMApea5Qu9HHZYgNM8BNQfA/OHFJ+WjVXo9vY7aDRTYj
-	ADHdyOKvce0Yx57ElMxY8VKqQeBrB6bnGXVcCpphzLJ/FAxc3tG8ylCm3Mfmi7ES3VJNgc
-	5INdOZHUh6oDVntoImpbiMFZj0rr9FigBfKXo+yy499BbD7YTOHzSGSullWchOTiHzaAaF
-	xqtwBg4aOuV84BADA55KqidMBwO1u0n8G0zIEXQYRWuYIwFbwbUrc8aYvIVAkzifI8qQzg
-	SQE7/RUsoOi63G/shU8/5VmgYyTiG17bDxAPMZoZjyDiiGljPu5dtVIlgnfHxA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1706716056;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tgMsdbxCaBeot/1FIP0WAPLTrTPmjNYgZHCMmQQu8dA=;
-	b=uMlUuZq/EpH/uEvkdR/5kovyAEmTtSfIOBdtlMc+HOaYYqnXFmQEhRRc2BfnSYhyfHHkXS
-	XtjXjlW9DmUwSGBQ==
-To: Luis Chamberlain <mcgrof@kernel.org>, Yoann Congal
- <yoann.congal@smile.fr>, Josh Triplett <josh@joshtriplett.org>, Petr
- Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
- Senozhatsky <senozhatsky@chromium.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kbuild@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Willem de
- Bruijn <willemdebruijn.kernel@gmail.com>, Matthew Wilcox
- <willy@infradead.org>, Peter Zijlstra <peterz@infradead.org>, Darren Hart
- <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, =?utf-8?Q?An?=
- =?utf-8?Q?dr=C3=A9?= Almeida
- <andrealmeid@igalia.com>, Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH v2] printk: Remove redundant CONFIG_BASE_SMALL
-In-Reply-To: <ZbfLl6PR_qxxreeX@bombadil.infradead.org>
-References: <20240127220026.1722399-1-yoann.congal@smile.fr>
- <ZbfLl6PR_qxxreeX@bombadil.infradead.org>
-Date: Wed, 31 Jan 2024 16:53:32 +0106
-Message-ID: <871q9xzeqz.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1706716067; c=relaxed/simple;
+	bh=kcvtLaH8tgDWu8daM4FrjIXLhnfcpyDWdLSIcNR9BMI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YmsRFeKA2DwL/LOJ89nDPbRj1Gdxr9nBhSrS+iH6/l90Aw4e9hZo+em7BpsjyNX35t1nvOJQjNmUYROooGpembhe1auxOG9+W6vmopp3kjg4fq0t8TT7TdddQempoNPz9fl5epAvHY+E6CJWXjkk/hDBusoNbixjE0JWA7hwhP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CIfIe8IH; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-68c41c070efso6975916d6.0;
+        Wed, 31 Jan 2024 07:47:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706716065; x=1707320865; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kcvtLaH8tgDWu8daM4FrjIXLhnfcpyDWdLSIcNR9BMI=;
+        b=CIfIe8IHwfQrbWtmAN535k+JCR6rVp+V7gZqIGEKE0Z7lHxrsy3mNrVJirum+BVSlB
+         H6hin6y8hGoaldmynJL56gJztdb1qZG1kwPv6bNtzuuBdzxx8iggtP0oJq14dJCv9lw2
+         fjqnc6CVcOjHJO7VJs551DIDC2UNnFQnK3UmpiUIFeu5+RqaBlo8fx0Nuw+qutAxxxq3
+         80/CDIV8dox+xSN4tVeSEG0/PjcTpbvc3sm+XRxtiYlsfWiABj5ET4SJ1YICD7DIOA9C
+         +tj8eKwMmtUrVkTExNIAUbwXymKPIEgVVgme4KmW/gnFC6keirqxHqHfBpa6A6wKpscZ
+         Oebw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706716065; x=1707320865;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kcvtLaH8tgDWu8daM4FrjIXLhnfcpyDWdLSIcNR9BMI=;
+        b=BiFrOMBClAP5JubdJKwbScYMXhHTGFTcsUKltKccdMHvz9/B5gB5oIfLMq6Pa5gSbK
+         ofMXcZ+i9CqZsPN8AolX49ilrI4Iw6FfltAneoOlrWRgmOAgNFDBipY8Oi1stdkmN+2T
+         ht0pS0PI5I80rKv84TQHhLJYPTymCPE1fYeG/WecqsO3wxHK3V6oWhq2OPo2pjsJjoAD
+         HvdSTOPRYwNA/aymfyqUSpkBmS228sqLPKVsX5rn6qUDkvYsoHLy/AnFED0sH6XcdTz8
+         GSno8uM9NHI5T5gq3iIOKnSW+Eq6JlwlZ0Sa1AdjCfTtYvuNJt9SZ3C0t7ysug9qGgWQ
+         iY8g==
+X-Gm-Message-State: AOJu0YxwswrdvUl96MnCsO4J0CD9yzhDZYoLJksQAuHHDGEJXSFBHkWL
+	Sddt4MFFwt2716b503nmAMH4JaVCXy3znNg7Hb1TCQ6hlz0gd4dfNIit1JRL8lmG3p/ONXioCf9
+	2PMMzmnA8jFiMGN7/x9D433ZyNV0=
+X-Google-Smtp-Source: AGHT+IHQqAgRfXqPSmq7iWifa1xzg0IGtYsDAfOxUUbc14RP6DBVnAdj5gYQaGlZTXyn6lwVnaxg1nJlxJqTr4b244A=
+X-Received: by 2002:a05:6214:226e:b0:682:bfd0:d79e with SMTP id
+ gs14-20020a056214226e00b00682bfd0d79emr2330095qvb.27.1706716064959; Wed, 31
+ Jan 2024 07:47:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <202401312229.eddeb9a6-oliver.sang@intel.com>
+In-Reply-To: <202401312229.eddeb9a6-oliver.sang@intel.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 31 Jan 2024 17:47:33 +0200
+Message-ID: <CAOQ4uxiwCGxBBbz3Edsu-aeJbNzh5b-+gvTHwtBFnCvbto2v-g@mail.gmail.com>
+Subject: Re: [linus:master] [remap_range] dfad37051a: stress-ng.file-ioctl.ops_per_sec
+ -11.2% regression
+To: kenel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+	Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-01-29, Luis Chamberlain <mcgrof@kernel.org> wrote:
-> You should mention the one case which this patch fixes is:
+On Wed, Jan 31, 2024 at 4:13=E2=80=AFPM kenel test robot <oliver.sang@intel=
+.com> wrote:
 >
->> CONFIG_BASE_SMALL was used that way in init/Kconfig:
->>   config LOG_CPU_MAX_BUF_SHIFT
->>   	default 12 if !BASE_SMALL
->>   	default 0 if BASE_SMALL
 >
-> You should then mention this has been using 12 for a long time now
-> for BASE_SMALL, and so this patch is a functional fix for those
-> who used BASE_SMALL and wanted a smaller printk buffer contribtion per
-> cpu. The contribution was only per CPU, and since BASE_SMALL systems
-> likely don't have many CPUs the impact of this was relatively small,
-> 4 KiB per CPU.  This patch fixes that back down to 0 KiB per CPU.
+>
+> Hello,
+>
+> kernel test robot noticed a -11.2% regression of stress-ng.file-ioctl.ops=
+_per_sec on:
+>
+>
+> commit: dfad37051ade6ac0d404ef4913f3bd01954ee51c ("remap_range: move perm=
+ission hooks out of do_clone_file_range()")
+> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+>
 
-For printk this will mean that BASE_SMALL systems were probably
-previously allocating/using the dynamic ringbuffer and now they will
-just continue to use the static ringbuffer. Which is fine and saves
-memory (as it should).
+Can you please try this fix:
 
-Reviewed-by: John Ogness <john.ogness@linutronix.de>
+ 7d4213664bda remap_range: move sanity checks out of do_clone_file_range()
+
+from:
+
+https://github.com/amir73il/linux ovl-fixes
+
+Thanks,
+Amir.
 
