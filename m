@@ -1,79 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-9667-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50E76844306
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 16:28:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84482844345
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 16:42:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 037F9285E6B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 15:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F86C1F211D8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 15:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C500F86AC5;
-	Wed, 31 Jan 2024 15:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EFD12AAED;
+	Wed, 31 Jan 2024 15:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eAYRS6JE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JEcCUXZl";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eAYRS6JE";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JEcCUXZl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70ADC6A32B
-	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jan 2024 15:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8013D1292FA;
+	Wed, 31 Jan 2024 15:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706714890; cv=none; b=R6tJ0RWC8jEcMKEFOhi1pZyUZIEVHaecHD7qrYyb6XPnc73KMeGy9Gz7gv7Jl9a9fIoVBiZr7i4o55kcmG0NAaQmFgh9Nvlt3zEngYfxrVS7n6/l/ixpQOA1pfEPP0xlQDqdsfLWk57nYwMwgh6HebyXuhRjZIkAfyZN3SsIPKk=
+	t=1706715718; cv=none; b=pZju3J0nx0puZSIkBCggZbQJUm+109hAI0j9Jw6Yid3RiwshLOIhsmXrFxxNoZHHN8tKcFbXwnygkaQejmOpbnSH7wx5+lEiDn+zXYsxflruIoqMr1tUiR96K2eMVYVGno1Rl+YR0GwtJXmZVTrqBcse1UIF7D0FY1B/YFMwPWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706714890; c=relaxed/simple;
-	bh=EsTmPxxbi2jxf0mZRK9ALLWdEvbp+A2acQWskh3H+qA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lIWWtQqynpX38iLtsLIuYldCxz3/ppXja4eLi2f3kZc94t/3KwxxTM//fwnH/dPHtU0iL8K+v3ogDbWWUUAFrkwyUR3/pzKaonAIl+q+zDWqpoJCpzYR1J6ZRdCPKB5JZE0htXoqkWN2gLRcP2yCHDbg/Us4MOZmJPXh/WxVYqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E3F4C433C7;
-	Wed, 31 Jan 2024 15:28:08 +0000 (UTC)
-Date: Wed, 31 Jan 2024 10:28:07 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Amir Goldstein
- <amir73il@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, Al Viro
- <viro@zeniv.linux.org.uk>, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH DRAFT 0/4] : Port tracefs to kernfs
-Message-ID: <20240131102807.6a6c7b58@rorschach.local.home>
-In-Reply-To: <20240131094117.7bccfe6c@gandalf.local.home>
-References: <20240131-tracefs-kernfs-v1-0-f20e2e9a8d61@kernel.org>
-	<20240131094117.7bccfe6c@gandalf.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1706715718; c=relaxed/simple;
+	bh=k975rr5SOQJ0akKpIS6Xf8RVc6oORwcCOak8L3VOgN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qEVhLmtMhFruNXNH2kXnf3NWNJQPKTLGMINfAbfdYQt1TWP5cZ7J6aBgdeFNftKB/pzlHzMzIsu5gAGgNlkhQHd3eYKFDRevlyWRanlrKP3MigFiaIF5kQ8EiHXuwbgNKp4w9ZRvXkDP8/dc9NJvYsqqtelR1y3Wkz6+6lQIDDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eAYRS6JE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JEcCUXZl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eAYRS6JE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JEcCUXZl; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 99A931F747;
+	Wed, 31 Jan 2024 15:41:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706715714; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DfCZX+hFUBlbWs8+8jojtXLtoVcojjb6ykWSphE2z1g=;
+	b=eAYRS6JERcuIGWvi6Ek08YG+lfpfdU+UAgjzoDk7TwEInNVsdBf4o7EZXbfN0Y0JfD3dBs
+	aobWKJqCIB0rO7brfn9fUSiZT/mn2cZ04fww5vWpgTp2gVtXvpjhASo+fdLTjVTrAEp7aI
+	8zP5d9B3ea8I12U+4GCjKO9R6SMA6zc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706715714;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DfCZX+hFUBlbWs8+8jojtXLtoVcojjb6ykWSphE2z1g=;
+	b=JEcCUXZltSMg4I4IO5xpTfXnvD8ZUTPWFRkM79oWnUGyAKuqqAs88AeT8qyKn9A19NT6zo
+	zDhz8aK3F+mAXmCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706715714; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DfCZX+hFUBlbWs8+8jojtXLtoVcojjb6ykWSphE2z1g=;
+	b=eAYRS6JERcuIGWvi6Ek08YG+lfpfdU+UAgjzoDk7TwEInNVsdBf4o7EZXbfN0Y0JfD3dBs
+	aobWKJqCIB0rO7brfn9fUSiZT/mn2cZ04fww5vWpgTp2gVtXvpjhASo+fdLTjVTrAEp7aI
+	8zP5d9B3ea8I12U+4GCjKO9R6SMA6zc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706715714;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DfCZX+hFUBlbWs8+8jojtXLtoVcojjb6ykWSphE2z1g=;
+	b=JEcCUXZltSMg4I4IO5xpTfXnvD8ZUTPWFRkM79oWnUGyAKuqqAs88AeT8qyKn9A19NT6zo
+	zDhz8aK3F+mAXmCA==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 7DCC2132FA;
+	Wed, 31 Jan 2024 15:41:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id cPeuHkJqumWyfwAAn2gu4w
+	(envelope-from <jack@suse.cz>); Wed, 31 Jan 2024 15:41:54 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 0ADF9A0809; Wed, 31 Jan 2024 16:41:54 +0100 (CET)
+Date: Wed, 31 Jan 2024 16:41:53 +0100
+From: Jan Kara <jack@suse.cz>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: syzbot+cdee56dbcdf0096ef605@syzkaller.appspotmail.com,
+	adilger.kernel@dilger.ca, chandan.babu@oracle.com, jack@suse.com,
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Subject: Re: [PATCH] jbd2: user-memory-access in jbd2__journal_start
+Message-ID: <20240131154153.domdzkkbqgpkplp2@quack3>
+References: <000000000000d6e06d06102ae80b@google.com>
+ <tencent_7F29369E974036964A3E742F778567CC3C09@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_7F29369E974036964A3E742F778567CC3C09@qq.com>
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=eAYRS6JE;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=JEcCUXZl
+X-Spamd-Result: default: False [1.69 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[11];
+	 FREEMAIL_TO(0.00)[qq.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[qq.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[cdee56dbcdf0096ef605];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: 1.69
+X-Rspamd-Queue-Id: 99A931F747
+X-Spam-Level: *
+X-Spam-Flag: NO
+X-Spamd-Bar: +
 
-On Wed, 31 Jan 2024 09:41:17 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> > So I went and started a draft for porting all of tracefs to kernfs in
-> > the hopes that someone picks this up and finishes the work. I've gotten
-> > the core of it done and it's pretty easy to do logical copy-pasta to
-> > port this to eventfs as well.  
+On Wed 31-01-24 20:04:27, Edward Adam Davis wrote:
+> Before reusing the handle, it is necessary to confirm that the transaction is 
+> ready.
 > 
-> tracefs yes, but I'm not so sure about eventfs.
+> Reported-and-tested-by: syzbot+cdee56dbcdf0096ef605@syzkaller.appspotmail.com
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 
-BTW, I do want to thank you for doing this. I would *love* to have
-tracefs switched over to kernfs. Unfortunately, I have no time to do
-it. I also don't want to lose the memory savings that is done in
-eventfs.
+Sorry but no. Dave found a way to fix this particular problem in XFS and
+your patch would not really improve anything because we'd just crash
+when dereferencing handle->saved_alloc_context.
 
-Even if kernfs couldn't do what is needed in eventfs, I'd still be
-happy if just the tracefs portion was converted over to kernfs, as long
-as it treated the eventfs the same as tracefs does today.
+								Honza
 
-I never really wanted to be the tracefs/eventfs maintainer. I just
-needed the interface for tracing. The more generic code it can use, the
-better. This is why I'm ecstatic for the simplification changes that
-Linus is making.
 
--- Steve
+> diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
+> index cb0b8d6fc0c6..702312cd5392 100644
+> --- a/fs/jbd2/transaction.c
+> +++ b/fs/jbd2/transaction.c
+> @@ -493,6 +493,9 @@ handle_t *jbd2__journal_start(journal_t *journal, int nblocks, int rsv_blocks,
+>  		return ERR_PTR(-EROFS);
+>  
+>  	if (handle) {
+> +		if (handle->saved_alloc_context & ~PF_MEMALLOC_NOFS)
+> +			return ERR_PTR(-EBUSY);
+> +
+>  		J_ASSERT(handle->h_transaction->t_journal == journal);
+>  		handle->h_ref++;
+>  		return handle;
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
