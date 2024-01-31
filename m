@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-9764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9765-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3559F844C61
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 00:18:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE16844C67
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 00:18:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939321F24EEA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 23:18:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12CF91F22CBB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 23:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388091474CF;
-	Wed, 31 Jan 2024 23:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46514148304;
+	Wed, 31 Jan 2024 23:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CQ2yxmgC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/VIcs86"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8831474B6;
-	Wed, 31 Jan 2024 23:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE0A1482EF;
+	Wed, 31 Jan 2024 23:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706742271; cv=none; b=pcU6kg0OIfZOpaRlY6yMH0f1Slr32onBABjFpKQStPm+vzqw7E4+Xjh8Jh68DivpphG4xqwD8MquecUs3UyIQxZsnWBMfIE7pBPoVvoSKZdg2xateWLU2UigM60JrFjS05jxtYuz/J7eXRFKN0Ivy1Owgj7W+wIU0QIvuvLQjUU=
+	t=1706742275; cv=none; b=d1GTYQVDZhI6/zdldcjpqkhTuf5DpZcAxzSmaXJTgcvDZ/ql5tJMgWCBSdpw7zJxJFEgR9oXFkeEElk6MFYt3kI98HgKNL18AUaMKpr5NEVRh0r90bB8Cs4Z0ZgW6FgC1n1bumTsUPXbPN0lYseYVF+HlILXDqrhFWcFlvkBo3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706742271; c=relaxed/simple;
-	bh=lt+oKLJUC48gDmjw1y21ssCmdJC4YA8AHvCegy98kEY=;
+	s=arc-20240116; t=1706742275; c=relaxed/simple;
+	bh=kyu2h/n4Fzdv/eqjiJ3uCiiXLu/8SBPw/K7lznAJ8KM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=n0369fZysez4eBH0YeNTcEnJq5VXADq3NCSR3Q10mAvvl2PcJlEEGODK7s9ggK3xSsvcMKNrSoR7O9KBreELv9aSaXbFKcmhi/8ssKSrCCQLdzF2Xn8K2/G708e2y5C4iAvBmU1D0sGZ+FRq9jfPdGM1hCSlFhTuKyPp1IQaI1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CQ2yxmgC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AA4FC43609;
-	Wed, 31 Jan 2024 23:04:27 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=tgLKS5i8HHRztBIxMxesWnh96vVgSKwTdXOdQTJEjWrXw51b4pEgCCQ25b0xb8NYvOv7IG0SORjnrP7MMpe/Uv6sB+uCOXWAGtk2Yo3w/SC7qAJX4CDmUG/E6zkckaJgDs/vPq60bCDvEQWhciWe8xFpr+WZ0gq4B2hq01/QuxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l/VIcs86; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 914D3C433C7;
+	Wed, 31 Jan 2024 23:04:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706742271;
-	bh=lt+oKLJUC48gDmjw1y21ssCmdJC4YA8AHvCegy98kEY=;
+	s=k20201202; t=1706742275;
+	bh=kyu2h/n4Fzdv/eqjiJ3uCiiXLu/8SBPw/K7lznAJ8KM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=CQ2yxmgC28107Kau7/ccyZGZRGK5iUG+YZPwKedOd1g3VeyM/MCegE2d94WDhS8BJ
-	 1jWsaQgJr1RDKrGASU/V1OI9FaZEFGz0C7pAp+SROGBT7OHoZC5K343veTcNwfVNUv
-	 li5qQlgOqi3kno+ik7DOFFXHF/HBpH6Xnqz6bWeMXM0GGSt1soUq0SIyksv9CQnNUz
-	 fEBleUU197/Roj1kwRNRUzLAfxEtxYO6CY1h7WUOCk1toaotkBxhQndt+RbQxrxlIa
-	 F3fP7a6tm6c6KVkvKglxnKZtmnK1hXaJj5upbBmKdy5E2jb5UfW0uKRP57115+GWIS
-	 TsYdZI6gwND5A==
+	b=l/VIcs86De1apDNSLZuHXgXBijQshecrJCXbHUWIVs5a9zVJC/n0+ro/1BHaryXRD
+	 6K1El/rOQI0K1CUJ4ckeCwGr7UIymF5nmSElNYoLWlFQLM7jsl/A2odlAkOQwPLkcb
+	 DTO1L+elruRe3Va/87smch39bhDNs3lMSRi+ZS6IiPIKZTNBuHXcJi31anUkd3Mxyz
+	 VCbCisQChs64trcSMW57G+od8fa+yTLL+49gsAziStvddce+vFe3vSSbqMbPSq6ffO
+	 gI6Ca1oT1+3IE1nhAHCHz/MWXjS5Te05eTcSTRT2lRiWt1FIwoirflxg4O9/D0+1nI
+	 JQ2klXQG+eDkg==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 31 Jan 2024 18:02:15 -0500
-Subject: [PATCH v3 34/47] 9p: adapt to breakup of struct file_lock
+Date: Wed, 31 Jan 2024 18:02:16 -0500
+Subject: [PATCH v3 35/47] afs: adapt to breakup of struct file_lock
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240131-flsplit-v3-34-c6129007ee8d@kernel.org>
+Message-Id: <20240131-flsplit-v3-35-c6129007ee8d@kernel.org>
 References: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
 In-Reply-To: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
 To: Steven Rostedt <rostedt@goodmis.org>, 
@@ -86,20 +86,20 @@ Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
  ocfs2-devel@lists.linux.dev, linux-cifs@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5390; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=lt+oKLJUC48gDmjw1y21ssCmdJC4YA8AHvCegy98kEY=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlutFyepmoy/WJ4nMuHI/1auaqF0xE3bBNBZQeI
- IEYB/X2x5mJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbrRcgAKCRAADmhBGVaC
- FQHJEACqIdAaO+PcmXbqT2RlGQptXethNxFqqJ5jHncN3XRhwkl3ISe2vxiPtVXfgUMXsXvtg5Q
- Xx0U4y7KVlRpgmjDEq6tYZieyOFCZfZQt2dmXfP2w45jxhKjzchv6dAK9n02dtnp0/BJKQ/33aw
- 8IhLaOUtn989ETCwSVryLxBZqfxgM0PgXGsXUH5aznuzHZ02EeuO5YWvxKd778ZFaJpD2GpRu1u
- l+baoDm9uXK62x/wuaMbSB/AG5gaNDgEK8HBxqz0zfmlPk5OCsdqTdk0oJJH+WISUOrrIKbRFxK
- inxDG0lf9fryuHjCK/AJ/6RvXpaU3U7wlt3ofFm9AiLUw87zNBJ/oclk6zAJqExCcYmGxz/vfJr
- JrtCuxwds3pt8DT67CduU0b/Q+lVz+P6PCbGLqxHTpSdNCtoOTu/rac2vskwCnanlNLs9phHeMg
- JM6voFU+G7d0ABYjJkVkp8vZMmuCp5SXGmlkUtdSo5uIxOlRo7oybqmb/4Xt7JKFfrqpGeyNOru
- 22IivsuLub37ZpVxrHEdwBsQyJtm4wDPl3oNy14HRVg2SIFQ3EiL+CIatXm91Y/cHfR8YGcNa6M
- pzkjArY9qTdMS8zm7IfwJ5aE3VJl2702WV2NdD0XReSznaY8EKFRYb57bKbZhKedj1ZOLMFphdC
- J3gJmxUtygqaSvw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6392; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=kyu2h/n4Fzdv/eqjiJ3uCiiXLu/8SBPw/K7lznAJ8KM=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlutFysWKvUlB8tHSLmI2LL7d3LNH3kDaXNKpKm
+ O1GNoaVqLWJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbrRcgAKCRAADmhBGVaC
+ FTqkD/9FlAzlR8tdVoRicAOZ5zW3nzENMWNyDcbX7BJa9ZpwY2qh8+4+28rJynibZwNBQ2DzCcr
+ X01gbf/3jy9x/sPvq8aOwwYvSHp2+wz5dmPCNBpI9bGk8bMFWC39zbVh9sbAM1TatSTj3S749fL
+ 5oo1b16Q2MCdTvJARKvYHWmuCb66W/Vsf33SrPhXwXWis5Tk9YxRWNvKIh9LLtb3qk338wMuF+R
+ 4arB9aHW3StKNi2gDnpP+Mya7tK+gHznmXO9EFM1FC1rSjlD/p7m7nrdTGIQxQ5wavPkViTPYu+
+ +8DUxwpaKxhpQtqU9emOVj0NjcUBjco6POAfwTk5WpXw62W1KDwZOWAgMZzgOKKeMxk1MJytBn0
+ EAR5P0du9Su9mtAtHRBFjqJ7yFPnUcfCzbn9aCrV6iM0PM7D7ckv9uC0VCS09+DH3arevKJzHQ9
+ SSwLARiNBFF3B6AToUZepL4Yfg+KpP/dtgFmSiN/5yOYYpGVs5IWa81HelkpAbhbeRnFGBvMwp3
+ bShFBNQX/Oz9DZ+SuoXNKY68fw43V6dbPDiJhhlM98+aLqD+ZDIczwxbrMDL9kXW06nV+ADvaMb
+ DiXJTAuclUhMBu/qBVMXqHlyRQKqgZ5e932l6HpZAzKDJBSz1RQzJULHVxObEfwJA1sOLDm+TvB
+ 9yt/50+bIFGolWA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
@@ -109,149 +109,185 @@ file_lock_core now.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/9p/vfs_file.c | 39 +++++++++++++++++++--------------------
- 1 file changed, 19 insertions(+), 20 deletions(-)
+ fs/afs/flock.c             | 38 +++++++++++++++++++-------------------
+ fs/afs/internal.h          |  1 -
+ include/trace/events/afs.h |  4 ++--
+ 3 files changed, 21 insertions(+), 22 deletions(-)
 
-diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-index a1dabcf73380..abdbbaee5184 100644
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
+diff --git a/fs/afs/flock.c b/fs/afs/flock.c
+index 4eee3d1ca5ad..f0e96a35093f 100644
+--- a/fs/afs/flock.c
++++ b/fs/afs/flock.c
+@@ -121,16 +121,15 @@ static void afs_next_locker(struct afs_vnode *vnode, int error)
+ 
+ 	list_for_each_entry_safe(p, _p, &vnode->pending_locks, fl_u.afs.link) {
+ 		if (error &&
+-		    p->fl_type == type &&
+-		    afs_file_key(p->fl_file) == key) {
++		    p->c.flc_type == type &&
++		    afs_file_key(p->c.flc_file) == key) {
+ 			list_del_init(&p->fl_u.afs.link);
+ 			p->fl_u.afs.state = error;
+ 			locks_wake_up(p);
+ 		}
+ 
+ 		/* Select the next locker to hand off to. */
+-		if (next &&
+-		    (lock_is_write(next) || lock_is_read(p)))
++		if (next && (lock_is_write(next) || lock_is_read(p)))
+ 			continue;
+ 		next = p;
+ 	}
+@@ -464,7 +463,7 @@ static int afs_do_setlk(struct file *file, struct file_lock *fl)
+ 
+ 	_enter("{%llx:%llu},%llu-%llu,%u,%u",
+ 	       vnode->fid.vid, vnode->fid.vnode,
+-	       fl->fl_start, fl->fl_end, fl->fl_type, mode);
++	       fl->fl_start, fl->fl_end, fl->c.flc_type, mode);
+ 
+ 	fl->fl_ops = &afs_lock_ops;
+ 	INIT_LIST_HEAD(&fl->fl_u.afs.link);
+@@ -524,7 +523,7 @@ static int afs_do_setlk(struct file *file, struct file_lock *fl)
+ 	}
+ 
+ 	if (vnode->lock_state == AFS_VNODE_LOCK_NONE &&
+-	    !(fl->fl_flags & FL_SLEEP)) {
++	    !(fl->c.flc_flags & FL_SLEEP)) {
+ 		ret = -EAGAIN;
+ 		if (type == AFS_LOCK_READ) {
+ 			if (vnode->status.lock_count == -1)
+@@ -621,7 +620,7 @@ static int afs_do_setlk(struct file *file, struct file_lock *fl)
+ 	return 0;
+ 
+ lock_is_contended:
+-	if (!(fl->fl_flags & FL_SLEEP)) {
++	if (!(fl->c.flc_flags & FL_SLEEP)) {
+ 		list_del_init(&fl->fl_u.afs.link);
+ 		afs_next_locker(vnode, 0);
+ 		ret = -EAGAIN;
+@@ -641,7 +640,7 @@ static int afs_do_setlk(struct file *file, struct file_lock *fl)
+ 	spin_unlock(&vnode->lock);
+ 
+ 	trace_afs_flock_ev(vnode, fl, afs_flock_waiting, 0);
+-	ret = wait_event_interruptible(fl->fl_wait,
++	ret = wait_event_interruptible(fl->c.flc_wait,
+ 				       fl->fl_u.afs.state != AFS_LOCK_PENDING);
+ 	trace_afs_flock_ev(vnode, fl, afs_flock_waited, ret);
+ 
+@@ -704,7 +703,8 @@ static int afs_do_unlk(struct file *file, struct file_lock *fl)
+ 	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
+ 	int ret;
+ 
+-	_enter("{%llx:%llu},%u", vnode->fid.vid, vnode->fid.vnode, fl->fl_type);
++	_enter("{%llx:%llu},%u", vnode->fid.vid, vnode->fid.vnode,
++	       fl->c.flc_type);
+ 
+ 	trace_afs_flock_op(vnode, fl, afs_flock_op_unlock);
+ 
+@@ -730,7 +730,7 @@ static int afs_do_getlk(struct file *file, struct file_lock *fl)
+ 	if (vnode->lock_state == AFS_VNODE_LOCK_DELETED)
+ 		return -ENOENT;
+ 
+-	fl->fl_type = F_UNLCK;
++	fl->c.flc_type = F_UNLCK;
+ 
+ 	/* check local lock records first */
+ 	posix_test_lock(file, fl);
+@@ -743,18 +743,18 @@ static int afs_do_getlk(struct file *file, struct file_lock *fl)
+ 		lock_count = READ_ONCE(vnode->status.lock_count);
+ 		if (lock_count != 0) {
+ 			if (lock_count > 0)
+-				fl->fl_type = F_RDLCK;
++				fl->c.flc_type = F_RDLCK;
+ 			else
+-				fl->fl_type = F_WRLCK;
++				fl->c.flc_type = F_WRLCK;
+ 			fl->fl_start = 0;
+ 			fl->fl_end = OFFSET_MAX;
+-			fl->fl_pid = 0;
++			fl->c.flc_pid = 0;
+ 		}
+ 	}
+ 
+ 	ret = 0;
+ error:
+-	_leave(" = %d [%hd]", ret, fl->fl_type);
++	_leave(" = %d [%hd]", ret, fl->c.flc_type);
+ 	return ret;
+ }
+ 
+@@ -769,7 +769,7 @@ int afs_lock(struct file *file, int cmd, struct file_lock *fl)
+ 
+ 	_enter("{%llx:%llu},%d,{t=%x,fl=%x,r=%Ld:%Ld}",
+ 	       vnode->fid.vid, vnode->fid.vnode, cmd,
+-	       fl->fl_type, fl->fl_flags,
++	       fl->c.flc_type, fl->c.flc_flags,
+ 	       (long long) fl->fl_start, (long long) fl->fl_end);
+ 
+ 	if (IS_GETLK(cmd))
+@@ -804,7 +804,7 @@ int afs_flock(struct file *file, int cmd, struct file_lock *fl)
+ 
+ 	_enter("{%llx:%llu},%d,{t=%x,fl=%x}",
+ 	       vnode->fid.vid, vnode->fid.vnode, cmd,
+-	       fl->fl_type, fl->fl_flags);
++	       fl->c.flc_type, fl->c.flc_flags);
+ 
+ 	/*
+ 	 * No BSD flocks over NFS allowed.
+@@ -813,7 +813,7 @@ int afs_flock(struct file *file, int cmd, struct file_lock *fl)
+ 	 * Not sure whether that would be unique, though, or whether
+ 	 * that would break in other places.
+ 	 */
+-	if (!(fl->fl_flags & FL_FLOCK))
++	if (!(fl->c.flc_flags & FL_FLOCK))
+ 		return -ENOLCK;
+ 
+ 	fl->fl_u.afs.debug_id = atomic_inc_return(&afs_file_lock_debug_id);
+@@ -843,7 +843,7 @@ int afs_flock(struct file *file, int cmd, struct file_lock *fl)
+  */
+ static void afs_fl_copy_lock(struct file_lock *new, struct file_lock *fl)
+ {
+-	struct afs_vnode *vnode = AFS_FS_I(file_inode(fl->fl_file));
++	struct afs_vnode *vnode = AFS_FS_I(file_inode(fl->c.flc_file));
+ 
+ 	_enter("");
+ 
+@@ -861,7 +861,7 @@ static void afs_fl_copy_lock(struct file_lock *new, struct file_lock *fl)
+  */
+ static void afs_fl_release_private(struct file_lock *fl)
+ {
+-	struct afs_vnode *vnode = AFS_FS_I(file_inode(fl->fl_file));
++	struct afs_vnode *vnode = AFS_FS_I(file_inode(fl->c.flc_file));
+ 
+ 	_enter("");
+ 
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index f5dd428e40f4..9c03fcf7ffaa 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
 @@ -9,7 +9,6 @@
- #include <linux/module.h>
- #include <linux/errno.h>
+ #include <linux/kernel.h>
+ #include <linux/ktime.h>
  #include <linux/fs.h>
 -#define _NEED_FILE_LOCK_FIELD_MACROS
  #include <linux/filelock.h>
- #include <linux/sched.h>
- #include <linux/file.h>
-@@ -108,7 +107,7 @@ static int v9fs_file_lock(struct file *filp, int cmd, struct file_lock *fl)
+ #include <linux/pagemap.h>
+ #include <linux/rxrpc.h>
+diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
+index 08f2c93d6b16..450c44c83a5d 100644
+--- a/include/trace/events/afs.h
++++ b/include/trace/events/afs.h
+@@ -1189,8 +1189,8 @@ TRACE_EVENT(afs_flock_op,
+ 		    __entry->from = fl->fl_start;
+ 		    __entry->len = fl->fl_end - fl->fl_start + 1;
+ 		    __entry->op = op;
+-		    __entry->type = fl->fl_type;
+-		    __entry->flags = fl->fl_flags;
++		    __entry->type = fl->c.flc_type;
++		    __entry->flags = fl->c.flc_flags;
+ 		    __entry->debug_id = fl->fl_u.afs.debug_id;
+ 			   ),
  
- 	p9_debug(P9_DEBUG_VFS, "filp: %p lock: %p\n", filp, fl);
- 
--	if ((IS_SETLK(cmd) || IS_SETLKW(cmd)) && fl->fl_type != F_UNLCK) {
-+	if ((IS_SETLK(cmd) || IS_SETLKW(cmd)) && fl->c.flc_type != F_UNLCK) {
- 		filemap_write_and_wait(inode->i_mapping);
- 		invalidate_mapping_pages(&inode->i_data, 0, -1);
- 	}
-@@ -127,7 +126,7 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
- 	fid = filp->private_data;
- 	BUG_ON(fid == NULL);
- 
--	BUG_ON((fl->fl_flags & FL_POSIX) != FL_POSIX);
-+	BUG_ON((fl->c.flc_flags & FL_POSIX) != FL_POSIX);
- 
- 	res = locks_lock_file_wait(filp, fl);
- 	if (res < 0)
-@@ -136,7 +135,7 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
- 	/* convert posix lock to p9 tlock args */
- 	memset(&flock, 0, sizeof(flock));
- 	/* map the lock type */
--	switch (fl->fl_type) {
-+	switch (fl->c.flc_type) {
- 	case F_RDLCK:
- 		flock.type = P9_LOCK_TYPE_RDLCK;
- 		break;
-@@ -152,7 +151,7 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
- 		flock.length = 0;
- 	else
- 		flock.length = fl->fl_end - fl->fl_start + 1;
--	flock.proc_id = fl->fl_pid;
-+	flock.proc_id = fl->c.flc_pid;
- 	flock.client_id = fid->clnt->name;
- 	if (IS_SETLKW(cmd))
- 		flock.flags = P9_LOCK_FLAGS_BLOCK;
-@@ -207,13 +206,13 @@ static int v9fs_file_do_lock(struct file *filp, int cmd, struct file_lock *fl)
- 	 * incase server returned error for lock request, revert
- 	 * it locally
- 	 */
--	if (res < 0 && fl->fl_type != F_UNLCK) {
--		unsigned char type = fl->fl_type;
-+	if (res < 0 && fl->c.flc_type != F_UNLCK) {
-+		unsigned char type = fl->c.flc_type;
- 
--		fl->fl_type = F_UNLCK;
-+		fl->c.flc_type = F_UNLCK;
- 		/* Even if this fails we want to return the remote error */
- 		locks_lock_file_wait(filp, fl);
--		fl->fl_type = type;
-+		fl->c.flc_type = type;
- 	}
- 	if (flock.client_id != fid->clnt->name)
- 		kfree(flock.client_id);
-@@ -235,7 +234,7 @@ static int v9fs_file_getlock(struct file *filp, struct file_lock *fl)
- 	 * if we have a conflicting lock locally, no need to validate
- 	 * with server
- 	 */
--	if (fl->fl_type != F_UNLCK)
-+	if (fl->c.flc_type != F_UNLCK)
- 		return res;
- 
- 	/* convert posix lock to p9 tgetlock args */
-@@ -246,7 +245,7 @@ static int v9fs_file_getlock(struct file *filp, struct file_lock *fl)
- 		glock.length = 0;
- 	else
- 		glock.length = fl->fl_end - fl->fl_start + 1;
--	glock.proc_id = fl->fl_pid;
-+	glock.proc_id = fl->c.flc_pid;
- 	glock.client_id = fid->clnt->name;
- 
- 	res = p9_client_getlock_dotl(fid, &glock);
-@@ -255,13 +254,13 @@ static int v9fs_file_getlock(struct file *filp, struct file_lock *fl)
- 	/* map 9p lock type to os lock type */
- 	switch (glock.type) {
- 	case P9_LOCK_TYPE_RDLCK:
--		fl->fl_type = F_RDLCK;
-+		fl->c.flc_type = F_RDLCK;
- 		break;
- 	case P9_LOCK_TYPE_WRLCK:
--		fl->fl_type = F_WRLCK;
-+		fl->c.flc_type = F_WRLCK;
- 		break;
- 	case P9_LOCK_TYPE_UNLCK:
--		fl->fl_type = F_UNLCK;
-+		fl->c.flc_type = F_UNLCK;
- 		break;
- 	}
- 	if (glock.type != P9_LOCK_TYPE_UNLCK) {
-@@ -270,7 +269,7 @@ static int v9fs_file_getlock(struct file *filp, struct file_lock *fl)
- 			fl->fl_end = OFFSET_MAX;
- 		else
- 			fl->fl_end = glock.start + glock.length - 1;
--		fl->fl_pid = -glock.proc_id;
-+		fl->c.flc_pid = -glock.proc_id;
- 	}
- out:
- 	if (glock.client_id != fid->clnt->name)
-@@ -294,7 +293,7 @@ static int v9fs_file_lock_dotl(struct file *filp, int cmd, struct file_lock *fl)
- 	p9_debug(P9_DEBUG_VFS, "filp: %p cmd:%d lock: %p name: %pD\n",
- 		 filp, cmd, fl, filp);
- 
--	if ((IS_SETLK(cmd) || IS_SETLKW(cmd)) && fl->fl_type != F_UNLCK) {
-+	if ((IS_SETLK(cmd) || IS_SETLKW(cmd)) && fl->c.flc_type != F_UNLCK) {
- 		filemap_write_and_wait(inode->i_mapping);
- 		invalidate_mapping_pages(&inode->i_data, 0, -1);
- 	}
-@@ -325,16 +324,16 @@ static int v9fs_file_flock_dotl(struct file *filp, int cmd,
- 	p9_debug(P9_DEBUG_VFS, "filp: %p cmd:%d lock: %p name: %pD\n",
- 		 filp, cmd, fl, filp);
- 
--	if (!(fl->fl_flags & FL_FLOCK))
-+	if (!(fl->c.flc_flags & FL_FLOCK))
- 		goto out_err;
- 
--	if ((IS_SETLK(cmd) || IS_SETLKW(cmd)) && fl->fl_type != F_UNLCK) {
-+	if ((IS_SETLK(cmd) || IS_SETLKW(cmd)) && fl->c.flc_type != F_UNLCK) {
- 		filemap_write_and_wait(inode->i_mapping);
- 		invalidate_mapping_pages(&inode->i_data, 0, -1);
- 	}
- 	/* Convert flock to posix lock */
--	fl->fl_flags |= FL_POSIX;
--	fl->fl_flags ^= FL_FLOCK;
-+	fl->c.flc_flags |= FL_POSIX;
-+	fl->c.flc_flags ^= FL_FLOCK;
- 
- 	if (IS_SETLK(cmd) | IS_SETLKW(cmd))
- 		ret = v9fs_file_do_lock(filp, cmd, fl);
 
 -- 
 2.43.0
