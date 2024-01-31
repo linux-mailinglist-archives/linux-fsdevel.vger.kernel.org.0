@@ -1,178 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-9721-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36FEC844967
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 22:07:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C20484496A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 22:07:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89F63B258FB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 21:07:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC41328B155
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 21:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA65F39846;
-	Wed, 31 Jan 2024 21:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="jGPVEa0w"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08ECB3986D;
+	Wed, 31 Jan 2024 21:07:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
+Received: from mail-ot1-f50.google.com (mail-ot1-f50.google.com [209.85.210.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B6138FA4
-	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jan 2024 21:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B5738F97;
+	Wed, 31 Jan 2024 21:07:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706735234; cv=none; b=d+2rz4jKo2Glj4FYPZI06K/AW+KhweRSo840WdYqL3hKMQNTGqH5BjhCjZbFV3Y3Wo9tsZY/+oGe0aQ2qSA4s/3LTPQK54c1p5beUOppt+9/gqr1ndCpyPehHoI6hfhELNP9xR5gRAYsNq9Wl6CSxWxxYR0+I2Jt66yhOP8OCb4=
+	t=1706735243; cv=none; b=skGPblt6Ad/TGFIkALukBCB6IX0TxQrJ/8PscdTXLtWoFZQDJlVJGbo65Gf9OCg6tmBUrMPz1A86LR9V/XvAqP63o4d9PAw0Ee0deFwbArX4m4ig0/Uz31UF68NqwCl7XM3MLt/tf/4xLtNxhfx68gPeYia863j25iQp7pXKICg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706735234; c=relaxed/simple;
-	bh=IxO8a8L67cWwjXrkecZP+FYE4tDiJRsZJUWJKBQn0Aw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ako+K/1qsU1DLM23Bb9Z45/kXCxogVY5lvD53ZUAlB6AzOwyZm6+hs12Tgouvbef5yhec2H//4F1nUOPWQ5zM4kTq9ZzHjRZLWYQXoe17JnF79zE/32OFHiCwTj2Logff+Aa4+0WyMEH9Tg1Q4hxhexptL9P9R3YBh+zKfE9dIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=jGPVEa0w; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5986d902ae6so129559eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jan 2024 13:07:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1706735231; x=1707340031; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M6cLTcFD8XT4oeO50GCGwvFcw8Q7L3Ri5cm/Yywom6s=;
-        b=jGPVEa0w3BtnV6CQ5L845cxQSrtAz/Krgb5CAoVjSGYz79C8YKQ89VVTILPDrsTOCU
-         1wJ34tifCVcTtiQXG6mU9VpvEgYpuFv505I8u3DUdFnjgBcUJDbohlcl4PCz5I+YAnIr
-         pkzziMORc+utD+Kcyqp0ZmM0yXXrgSndCxEPsMojh0WwEw04Oy1gB+rhBM9w2efGow4w
-         AOAQdehCbc4nF5WRWO5lvWnDREq5zZFvGClRQXNf7y4xnfdyNzacQLEA16mpKtxtjFY8
-         u6CQlYJDEOLz0fqZbOFNHOHLT4j1zqf0+bMydRrXWn11kaKsp0/AoeWQqcmR67Z8FwyE
-         ySHw==
+	s=arc-20240116; t=1706735243; c=relaxed/simple;
+	bh=g0HPUuyc3xA8aBRoniQjl8dvJBE/1NIN42R2oj0Ub9s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fUJQ4Sp99GoC4lxqTQ/skmiAMLQ9NI0/JARKe74B0ReIw578dN/V8pG2KeOwuAsz30TSXcXQWRmgZAJveNJZ/iYpZC8bLc9nlzZ9nWqh+0Cu1nOTJVAfEXm89KdaW0cyuRpleUl+KRZmK4slzxlrCiuuSgjuwwBzFS3CnZ0PLzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-6dc8b280155so114182a34.0;
+        Wed, 31 Jan 2024 13:07:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706735231; x=1707340031;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M6cLTcFD8XT4oeO50GCGwvFcw8Q7L3Ri5cm/Yywom6s=;
-        b=vt1GvSU3ELcsW74GH00uFwTATKPrldOCap4t0AVU5nq1VH0TAPw2hqfsOMH6D5KPXw
-         2sTI6KwP+zBAHsxJy3VyuSV7KjqKVLCzmi9nBriaHKHxIvhco7nprlUGqVj/+LbTZpFR
-         TjMRoS2WpmrRrD65H9vMwv0pPmOu6A4QcLLwciFunJZ+XBwxJc9tSJWxJMfOFrzE+Tcu
-         1SkE8Qrmzab97OeNAUSWuD5r8t0BN1LYym8iSA9a7hiz3oqxDv2XK8EfLYRNYAJJ5Vxp
-         /qBmzNjEVQM9JdNZ56SobLkpjLlhfd02EIRZ+tOzxepibpnKvykw3aQ+A9dWYslvqNDc
-         uMKQ==
-X-Gm-Message-State: AOJu0Yy2frsfP4aTfJNtZzn3Xt0G+ERN4wYB0O5cyM26gh36khwXbpEQ
-	BMIjVKc+QsfFw7wAfuj8EiM+h12zAdkfI7oWoZeKzNzsft6Un1Akn7OwKF21P0Q=
-X-Google-Smtp-Source: AGHT+IE2DvjVjVI0vMRCxKImdSao9a6QI1YGOCIDx+2fKz4FZgqyhL3v5huWklky+WSIrZCuMokN8w==
-X-Received: by 2002:a05:6358:6f11:b0:178:a1d9:4a9f with SMTP id r17-20020a0563586f1100b00178a1d94a9fmr2460280rwn.31.1706735231492;
-        Wed, 31 Jan 2024 13:07:11 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
-        by smtp.gmail.com with ESMTPSA id y136-20020a62ce8e000000b006de30d6786bsm6132265pfg.126.2024.01.31.13.07.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jan 2024 13:07:10 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rVHnX-000Jtv-1a;
-	Thu, 01 Feb 2024 08:07:07 +1100
-Date: Thu, 1 Feb 2024 08:07:07 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Kanchan Joshi <joshi.k@samsung.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Chuck Lever <chuck.lever@oracle.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCH 3/6] fs: Split fcntl_rw_hint()
-Message-ID: <Zbq2e7e8Ba1Df6O7@dread.disaster.area>
-References: <20240131205237.3540210-1-bvanassche@acm.org>
- <20240131205237.3540210-4-bvanassche@acm.org>
+        d=1e100.net; s=20230601; t=1706735241; x=1707340041;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g0HPUuyc3xA8aBRoniQjl8dvJBE/1NIN42R2oj0Ub9s=;
+        b=Ri/vSUhUqT3Q8rR6Yt1KqnKa6HANX0YRihyEvI3sGHWmXUlnHClX4d0qRLLbT1aEoT
+         KWTpboaPosf+yGq/xNyO1CCDbmJKauh9EzfczJI8LZOqBiaoJujXT8Re8M8ys/9goAZM
+         8kDzI4GE4wSUecsl/O5MWqx0nxUWTQwV0bCKmqiSmJbzWOfju3nJ+ZXbjikkb9flZWW8
+         E9qjzh0MHsWff77/1Zxn5jtzPeDElMce94cQ33WJkt93uLOjOke684YNWPqx0ZR/fUqg
+         IwhJXIMRg4ZOwruRXrL0VLMdQYNvYlKkKrUI10fwtpX+ATQJVwJ0Vy9TfMvGvYH+8wHD
+         kDNA==
+X-Gm-Message-State: AOJu0YzgQpMqIkpVJeybB16g3TtIbUcPligu/7q0OhtJvcP4XGWAUT2X
+	1iBc6+fF1CFDbMIoKQdUj/pHptHalcfOVddjYZHJMgUASOutxVC7mbCr93SR
+X-Google-Smtp-Source: AGHT+IF8jsH6w3Jrntxyz+UTAWJ653bvPjVu0dKPaui3DiBTjcn0sucTjygP5Sr18Y8MIV0p0r4HxQ==
+X-Received: by 2002:a05:6870:f61e:b0:215:d046:8c62 with SMTP id ek30-20020a056870f61e00b00215d0468c62mr3315922oab.9.1706735241172;
+        Wed, 31 Jan 2024 13:07:21 -0800 (PST)
+Received: from ?IPV6:2620:0:1000:8411:1d95:ca94:1cbe:1409? ([2620:0:1000:8411:1d95:ca94:1cbe:1409])
+        by smtp.gmail.com with ESMTPSA id p16-20020a63e650000000b005d553239b16sm10865231pgj.20.2024.01.31.13.07.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jan 2024 13:07:20 -0800 (PST)
+Message-ID: <5eb49324-5c03-4eae-84ff-dcbea494c262@acm.org>
+Date: Wed, 31 Jan 2024 13:07:18 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240131205237.3540210-4-bvanassche@acm.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 01/19] fs: Fix rw_hint validation
+Content-Language: en-US
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+ linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Daejun Park <daejun7.park@samsung.com>,
+ Kanchan Joshi <joshi.k@samsung.com>, Jeff Layton <jlayton@kernel.org>,
+ Chuck Lever <chuck.lever@oracle.com>, Stephen Rothwell
+ <sfr@canb.auug.org.au>, Alexander Viro <viro@zeniv.linux.org.uk>
+References: <20240130214911.1863909-1-bvanassche@acm.org>
+ <20240130214911.1863909-2-bvanassche@acm.org>
+ <20240131-skilift-decken-cf3d638ce40c@brauner>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240131-skilift-decken-cf3d638ce40c@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jan 31, 2024 at 12:52:34PM -0800, Bart Van Assche wrote:
-> Split fcntl_rw_hint() such that there is one helper function per fcntl. No
-> functionality is changed by this patch.
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Suggested-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
-> Cc: Jeff Layton <jlayton@kernel.org>
-> Cc: Chuck Lever <chuck.lever@oracle.com>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-> ---
->  fs/fcntl.c | 47 ++++++++++++++++++++++++++---------------------
->  1 file changed, 26 insertions(+), 21 deletions(-)
-> 
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index f3bc4662455f..5fa2d95114bf 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -290,32 +290,35 @@ static bool rw_hint_valid(u64 hint)
->  	}
->  }
->  
-> -static long fcntl_rw_hint(struct file *file, unsigned int cmd,
-> -			  unsigned long arg)
-> +static long fcntl_get_rw_hint(struct file *file, unsigned int cmd,
-> +			      unsigned long arg)
->  {
->  	struct inode *inode = file_inode(file);
->  	u64 __user *argp = (u64 __user *)arg;
-> -	u64 hint;
-> +	u64 hint = inode->i_write_hint;
->  
-> -	switch (cmd) {
-> -	case F_GET_RW_HINT:
-> -		hint = inode->i_write_hint;
-> -		if (copy_to_user(argp, &hint, sizeof(*argp)))
-> -			return -EFAULT;
-> -		return 0;
-> -	case F_SET_RW_HINT:
-> -		if (copy_from_user(&hint, argp, sizeof(hint)))
-> -			return -EFAULT;
-> -		if (!rw_hint_valid(hint))
-> -			return -EINVAL;
-> +	if (copy_to_user(argp, &hint, sizeof(*argp)))
-> +		return -EFAULT;
-> +	return 0;
-> +}
->  
-> -		inode_lock(inode);
-> -		inode->i_write_hint = hint;
-> -		inode_unlock(inode);
-> -		return 0;
-> -	default:
-> +static long fcntl_set_rw_hint(struct file *file, unsigned int cmd,
-> +			      unsigned long arg)
-> +{
-> +	struct inode *inode = file_inode(file);
-> +	u64 __user *argp = (u64 __user *)arg;
-> +	u64 hint;
-> +
-> +	if (copy_from_user(&hint, argp, sizeof(hint)))
-> +		return -EFAULT;
-> +	if (!rw_hint_valid(hint))
->  		return -EINVAL;
-> -	}
-> +
-> +	inode_lock(inode);
-> +	inode->i_write_hint = hint;
-> +	inode_unlock(inode);
+On 1/31/24 05:56, Christian Brauner wrote:
+> The fs parts of this should go through a vfs tree as this is vfs infra.
+> I can then give you a stable tag that you can merge and base the big
+> block and scsci bits on. It'll minimize merge conflicts and makes it
+> easier to coordinate imho.
+The fs parts have been posted on the fs-devel mailing list. See also
+https://lore.kernel.org/all/20240131205237.3540210-1-bvanassche@acm.org/
 
-What is this locking serialising against? The inode may or may not
-be locked when we access this in IO path, so why isn't this just
-WRITE_ONCE() here and READ_ONCE() in the IO paths?
+Thanks,
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Bart.
 
