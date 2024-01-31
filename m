@@ -1,175 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-9668-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9669-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84482844345
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 16:42:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F4A844357
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 16:47:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F86C1F211D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 15:42:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43DFE1C245D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 15:47:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EFD12AAED;
-	Wed, 31 Jan 2024 15:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CD712A162;
+	Wed, 31 Jan 2024 15:47:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eAYRS6JE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JEcCUXZl";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="eAYRS6JE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JEcCUXZl"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H9SVQJ3k";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uMlUuZq/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8013D1292FA;
-	Wed, 31 Jan 2024 15:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828431292FA;
+	Wed, 31 Jan 2024 15:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706715718; cv=none; b=pZju3J0nx0puZSIkBCggZbQJUm+109hAI0j9Jw6Yid3RiwshLOIhsmXrFxxNoZHHN8tKcFbXwnygkaQejmOpbnSH7wx5+lEiDn+zXYsxflruIoqMr1tUiR96K2eMVYVGno1Rl+YR0GwtJXmZVTrqBcse1UIF7D0FY1B/YFMwPWI=
+	t=1706716060; cv=none; b=mBhHP7ZNR5IatxETtGnOD9o7IZWLstIpUp6A9RMzf6o1kRhYg6533YeeJFU79pt92q9PgAiXRZH37Xg+FRbf+pNghFil9GYPYOW2Y4ZI/XGRvWnRyv6bnxkn8MyRDaURyVk+qoGwrSqpfvEFDctItQOz2EpSmBeKDusH8gEZzL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706715718; c=relaxed/simple;
-	bh=k975rr5SOQJ0akKpIS6Xf8RVc6oORwcCOak8L3VOgN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qEVhLmtMhFruNXNH2kXnf3NWNJQPKTLGMINfAbfdYQt1TWP5cZ7J6aBgdeFNftKB/pzlHzMzIsu5gAGgNlkhQHd3eYKFDRevlyWRanlrKP3MigFiaIF5kQ8EiHXuwbgNKp4w9ZRvXkDP8/dc9NJvYsqqtelR1y3Wkz6+6lQIDDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eAYRS6JE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JEcCUXZl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=eAYRS6JE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JEcCUXZl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 99A931F747;
-	Wed, 31 Jan 2024 15:41:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706715714; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1706716060; c=relaxed/simple;
+	bh=dPqaiX5PAWnQlOQ8Jiutu8bSeKEr3U2pTg/+HqQA8Ak=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=O6iptg37gIBvci8kk5Rq9Bg4tykHSaqQ8DbLGeP9ras1RCQHb0xHwdlRphTv8F1t/KtO5tySYe8VPNPKa/KIDPDI0rmj/KttC8/eXOHtkugPkVemJbhgc6IKWzwkxX/gB/72O0T8JJ7vskJGV4r8Hyk1CGrAm7sz5N+98kv/aIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H9SVQJ3k; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uMlUuZq/; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1706716056;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DfCZX+hFUBlbWs8+8jojtXLtoVcojjb6ykWSphE2z1g=;
-	b=eAYRS6JERcuIGWvi6Ek08YG+lfpfdU+UAgjzoDk7TwEInNVsdBf4o7EZXbfN0Y0JfD3dBs
-	aobWKJqCIB0rO7brfn9fUSiZT/mn2cZ04fww5vWpgTp2gVtXvpjhASo+fdLTjVTrAEp7aI
-	8zP5d9B3ea8I12U+4GCjKO9R6SMA6zc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706715714;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	bh=tgMsdbxCaBeot/1FIP0WAPLTrTPmjNYgZHCMmQQu8dA=;
+	b=H9SVQJ3kZBcTos2bLSoPIrvvuZKMApea5Qu9HHZYgNM8BNQfA/OHFJ+WjVXo9vY7aDRTYj
+	ADHdyOKvce0Yx57ElMxY8VKqQeBrB6bnGXVcCpphzLJ/FAxc3tG8ylCm3Mfmi7ES3VJNgc
+	5INdOZHUh6oDVntoImpbiMFZj0rr9FigBfKXo+yy499BbD7YTOHzSGSullWchOTiHzaAaF
+	xqtwBg4aOuV84BADA55KqidMBwO1u0n8G0zIEXQYRWuYIwFbwbUrc8aYvIVAkzifI8qQzg
+	SQE7/RUsoOi63G/shU8/5VmgYyTiG17bDxAPMZoZjyDiiGljPu5dtVIlgnfHxA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1706716056;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DfCZX+hFUBlbWs8+8jojtXLtoVcojjb6ykWSphE2z1g=;
-	b=JEcCUXZltSMg4I4IO5xpTfXnvD8ZUTPWFRkM79oWnUGyAKuqqAs88AeT8qyKn9A19NT6zo
-	zDhz8aK3F+mAXmCA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706715714; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DfCZX+hFUBlbWs8+8jojtXLtoVcojjb6ykWSphE2z1g=;
-	b=eAYRS6JERcuIGWvi6Ek08YG+lfpfdU+UAgjzoDk7TwEInNVsdBf4o7EZXbfN0Y0JfD3dBs
-	aobWKJqCIB0rO7brfn9fUSiZT/mn2cZ04fww5vWpgTp2gVtXvpjhASo+fdLTjVTrAEp7aI
-	8zP5d9B3ea8I12U+4GCjKO9R6SMA6zc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706715714;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DfCZX+hFUBlbWs8+8jojtXLtoVcojjb6ykWSphE2z1g=;
-	b=JEcCUXZltSMg4I4IO5xpTfXnvD8ZUTPWFRkM79oWnUGyAKuqqAs88AeT8qyKn9A19NT6zo
-	zDhz8aK3F+mAXmCA==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 7DCC2132FA;
-	Wed, 31 Jan 2024 15:41:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id cPeuHkJqumWyfwAAn2gu4w
-	(envelope-from <jack@suse.cz>); Wed, 31 Jan 2024 15:41:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0ADF9A0809; Wed, 31 Jan 2024 16:41:54 +0100 (CET)
-Date: Wed, 31 Jan 2024 16:41:53 +0100
-From: Jan Kara <jack@suse.cz>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: syzbot+cdee56dbcdf0096ef605@syzkaller.appspotmail.com,
-	adilger.kernel@dilger.ca, chandan.babu@oracle.com, jack@suse.com,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Subject: Re: [PATCH] jbd2: user-memory-access in jbd2__journal_start
-Message-ID: <20240131154153.domdzkkbqgpkplp2@quack3>
-References: <000000000000d6e06d06102ae80b@google.com>
- <tencent_7F29369E974036964A3E742F778567CC3C09@qq.com>
+	bh=tgMsdbxCaBeot/1FIP0WAPLTrTPmjNYgZHCMmQQu8dA=;
+	b=uMlUuZq/EpH/uEvkdR/5kovyAEmTtSfIOBdtlMc+HOaYYqnXFmQEhRRc2BfnSYhyfHHkXS
+	XtjXjlW9DmUwSGBQ==
+To: Luis Chamberlain <mcgrof@kernel.org>, Yoann Congal
+ <yoann.congal@smile.fr>, Josh Triplett <josh@joshtriplett.org>, Petr
+ Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
+ Senozhatsky <senozhatsky@chromium.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Willem de
+ Bruijn <willemdebruijn.kernel@gmail.com>, Matthew Wilcox
+ <willy@infradead.org>, Peter Zijlstra <peterz@infradead.org>, Darren Hart
+ <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, =?utf-8?Q?An?=
+ =?utf-8?Q?dr=C3=A9?= Almeida
+ <andrealmeid@igalia.com>, Masahiro Yamada <masahiroy@kernel.org>
+Subject: Re: [PATCH v2] printk: Remove redundant CONFIG_BASE_SMALL
+In-Reply-To: <ZbfLl6PR_qxxreeX@bombadil.infradead.org>
+References: <20240127220026.1722399-1-yoann.congal@smile.fr>
+ <ZbfLl6PR_qxxreeX@bombadil.infradead.org>
+Date: Wed, 31 Jan 2024 16:53:32 +0106
+Message-ID: <871q9xzeqz.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_7F29369E974036964A3E742F778567CC3C09@qq.com>
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=eAYRS6JE;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=JEcCUXZl
-X-Spamd-Result: default: False [1.69 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[11];
-	 FREEMAIL_TO(0.00)[qq.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[qq.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[cdee56dbcdf0096ef605];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: 1.69
-X-Rspamd-Queue-Id: 99A931F747
-X-Spam-Level: *
-X-Spam-Flag: NO
-X-Spamd-Bar: +
+Content-Type: text/plain
 
-On Wed 31-01-24 20:04:27, Edward Adam Davis wrote:
-> Before reusing the handle, it is necessary to confirm that the transaction is 
-> ready.
-> 
-> Reported-and-tested-by: syzbot+cdee56dbcdf0096ef605@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+On 2024-01-29, Luis Chamberlain <mcgrof@kernel.org> wrote:
+> You should mention the one case which this patch fixes is:
+>
+>> CONFIG_BASE_SMALL was used that way in init/Kconfig:
+>>   config LOG_CPU_MAX_BUF_SHIFT
+>>   	default 12 if !BASE_SMALL
+>>   	default 0 if BASE_SMALL
+>
+> You should then mention this has been using 12 for a long time now
+> for BASE_SMALL, and so this patch is a functional fix for those
+> who used BASE_SMALL and wanted a smaller printk buffer contribtion per
+> cpu. The contribution was only per CPU, and since BASE_SMALL systems
+> likely don't have many CPUs the impact of this was relatively small,
+> 4 KiB per CPU.  This patch fixes that back down to 0 KiB per CPU.
 
-Sorry but no. Dave found a way to fix this particular problem in XFS and
-your patch would not really improve anything because we'd just crash
-when dereferencing handle->saved_alloc_context.
+For printk this will mean that BASE_SMALL systems were probably
+previously allocating/using the dynamic ringbuffer and now they will
+just continue to use the static ringbuffer. Which is fine and saves
+memory (as it should).
 
-								Honza
-
-
-> diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
-> index cb0b8d6fc0c6..702312cd5392 100644
-> --- a/fs/jbd2/transaction.c
-> +++ b/fs/jbd2/transaction.c
-> @@ -493,6 +493,9 @@ handle_t *jbd2__journal_start(journal_t *journal, int nblocks, int rsv_blocks,
->  		return ERR_PTR(-EROFS);
->  
->  	if (handle) {
-> +		if (handle->saved_alloc_context & ~PF_MEMALLOC_NOFS)
-> +			return ERR_PTR(-EBUSY);
-> +
->  		J_ASSERT(handle->h_transaction->t_journal == journal);
->  		handle->h_ref++;
->  		return handle;
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
