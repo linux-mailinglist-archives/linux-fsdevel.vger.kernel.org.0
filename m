@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-9751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB19A844CB0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 00:26:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF51844C24
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 00:12:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3A7FB2ECAD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 23:11:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A4A4284529
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 23:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EDB3C497;
-	Wed, 31 Jan 2024 23:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF26513D51F;
+	Wed, 31 Jan 2024 23:03:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0EWzwTc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QVNAmxi1"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45AE213BE9E;
-	Wed, 31 Jan 2024 23:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E031A13D50D;
+	Wed, 31 Jan 2024 23:03:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706742220; cv=none; b=N801ZuB9zQknjFtHLiMC6bg2cn+Fhs0SelayQjy3v+uih37XYUF3sW+Pl8fw69U/Nv2pS7JGDicQtjY8foBcYT0D1Irnc09yLbtMAjU7XSr07cVy/Typv6Z78bXQ1eR993RhXBgrBUm4J5AHCj5sHW0ZxkRT7UVjTJalomBI7U0=
+	t=1706742224; cv=none; b=qw9DXslHEmpl6NRU/pY8RvXS6GDGe04UJyfMG4KqnBwJ5gP7YYYGsHNCGrPoAxN7b9ADaw6OY3cngo13QrXBS0Sn6BtuV5WUwBBgDtN6dcCBzC0czGYHpBL/Ig1dIoDHCOi6W5t6q0HWdhgH+WA/+YNzeD4JSidmwS6RdjctpOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706742220; c=relaxed/simple;
-	bh=oU1l+ksOKxD5QTjyx5Q3wpjW56H/LXw8me0TimuRFek=;
+	s=arc-20240116; t=1706742224; c=relaxed/simple;
+	bh=HcLhLyMTb0uV3nLml2p2oQReU+iiXkPoxKB/zr8tLAM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Qzfq9uo7dEPth14yVwPCsEGyLmTgoVXcCCo9hCkt4I0tkhgav9ss/kxz0miVGih4CGmP+wJFiBz9oNfuVknUKacl6v9BrpJrNbLj4/GU0s90M2BDg6KTTqJRv/HLH61gAvPlyPSFM4jZknHiNP2G7ePCmtmUkeE1GUA6OSV54uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0EWzwTc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F3E9C43141;
-	Wed, 31 Jan 2024 23:03:35 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=iWJyLR7OYEN/tNITLBdnVKlnL9ngZqz/jW8CbUDkl4ex/LvVErKWbUfO/AwH/F3hGqOCvG5t/M4tI3o0ZQJExUnS5aDflRPsGqPQj5MMNQB3gjg4iKUd/R+JCExucEBqoGvnfN30JF7OoAEVGp+IMwjgMW9FD5hmQBKKMayhQPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QVNAmxi1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09278C43399;
+	Wed, 31 Jan 2024 23:03:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706742219;
-	bh=oU1l+ksOKxD5QTjyx5Q3wpjW56H/LXw8me0TimuRFek=;
+	s=k20201202; t=1706742223;
+	bh=HcLhLyMTb0uV3nLml2p2oQReU+iiXkPoxKB/zr8tLAM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=l0EWzwTco/GVPhpeXnEma+B+VHEKwsEBFkRAd7vZrdu9jYwrqfrmAfUIfYZYmZwzL
-	 RN3C/uo/wWY+tq3uZz+MBYdS1ylWHaA1qkzm5uwF0bk+ug8YaC4WMYkRNiQg6O+ZQT
-	 9PYWd5yav4MMszJqpm2uua7wDOUGGQh2sn6+xCH32wz0q9A4Qt9OkAwHxnMgp9bU5Z
-	 E+YDdjKM6392cCgGsYOwNRNjM97+VxcfFGFvFb2LudUsAlTfvP8GnNa/1qr84gNIbw
-	 Dy/Nr95zcJ6NcSvFx6Z06NrrJfmurE6nunR/BMLiUjdBsHxDYEDHrEnWag92wJghJj
-	 8l662xfg41J/Q==
+	b=QVNAmxi1i6F1oqR1nDjSI6sAlWfgttyGldYI9QmOV7ZUVOhcfAX+E0NoZwgYO38xX
+	 KtfUvn/IGIxoW3hxvZFrZD2G2FTAOl2qDrfTwVcD8pqDAsjEGp43mczTuNdl+xdo8o
+	 XEDYDKxWrYjrBpWlJbzU7moItH3FgFgD2Cc6SB+TUETqDwMHUZdhyM/1/Lhdd+mEgQ
+	 wdPqIsONFE4UZez3YWbh0sMx349mgaqz89KhgZEWt/Gfwl+yDUzZXLksQH3P+Bihwh
+	 DuaSL5Bq0NOIgK+x+tFXgsFKlVORXCJtkpTc3KXt7SdiYahJqjFzfvSOhH+sNfabyK
+	 2bGNpH/Ctb+EA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Wed, 31 Jan 2024 18:02:02 -0500
-Subject: [PATCH v3 21/47] filelock: convert posix_owner_key to take
- file_lock_core arg
+Date: Wed, 31 Jan 2024 18:02:03 -0500
+Subject: [PATCH v3 22/47] filelock: make locks_{insert,delete}_global_locks
+ take file_lock_core arg
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240131-flsplit-v3-21-c6129007ee8d@kernel.org>
+Message-Id: <20240131-flsplit-v3-22-c6129007ee8d@kernel.org>
 References: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
 In-Reply-To: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
 To: Steven Rostedt <rostedt@goodmis.org>, 
@@ -87,65 +87,91 @@ Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
  ocfs2-devel@lists.linux.dev, linux-cifs@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1468; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=oU1l+ksOKxD5QTjyx5Q3wpjW56H/LXw8me0TimuRFek=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlutFwRfnmGuw+kZZnzAb0prMEAPMNT9x3XjV3y
- MD6YsS59veJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbrRcAAKCRAADmhBGVaC
- FT4FEADHoubPCG9Ssate8KyC9UXdDZ52tJtOxTqhlYEsbKtOcDqrSPS0oiQ3lP3JFrisKxkdoff
- Dn5yeZ2Y5B88LmvpyXU+/drV1HMyZrg07QbmtlsD7QvzrVxHstydUmz1qaHu9+ogiz8e/53quq5
- rS+8qwY3FG+jj6HIxSGqyfA2ow2IrjNnwkctfhBJXTD/uMpZBFccBdsXBl/SE6Vm4tNBY6i5Mtf
- 51lTNEoOo6jsyJ2Cn6QInC5PFcx+kzF/5ZUfjMv/KU1c5gvVESxaKHNQzfsZd9h8f1nMGa8edhH
- EUc4oP5/FpO01ZhN96OT7whltuYwE4BvUJI1QKGlaCXUSeV0gAKCcs5Twt+DnuHGDIOIgRmjC47
- 6wJl3TZIuJ86XRfSbUrJv8TJT2/UTcmSzmNvRy34kKlMMweNBbwNknDDHb95lb44YBzpG+LkLb8
- vTRPfBAY1sAA7ySLIO61TPJk2bp19fNF2mC31sKxEgjuiMCfSKG07R95pKgYe21Q0ofvq9ql9mJ
- sZHhcZ5ntsbfxlL7HtU3/oD0oQHFq2mjZPI8ZX5idbyawcQv9CYDOmZdbu+RkpSfLxSPjj4ATbj
- qF7USRAnnbgGRgCcAPLNLHa4qGsnPQJAD7hbNJ1zpQ7J4PQgWXurWpfqcheZ3PHSXUwFpWu3JEm
- W9lPU4Ot6JLf1Mw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2207; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=HcLhLyMTb0uV3nLml2p2oQReU+iiXkPoxKB/zr8tLAM=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlutFxeTa4E2kYEHNuBcC2Pw7Gr50YkKLnTstR6
+ aNLAut81X2JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZbrRcQAKCRAADmhBGVaC
+ FTu3EACcK9RVjwnt0r8GlR/FGOGylMhxITZC9JaUrZbWc7gcMdUdvTFGYIGbIjpHAcUu+5I8vaB
+ p9xg9e5SHmAyK7JhZxl1nQrdxMqsOiVY6Yez1QAVjYxAffljEkfqKfZwIl5FVZ9W4shbrqMsj4n
+ vIgjFuruTFjZEYU7y5TbFIpEpWjVpCSVIsZseq+f6aPWTOhviRFbcEf+hfn+ibcreHeDROx+h90
+ ILa7AM6Gujz3xzVL6mzxcdov0f/diDoqC1K5ZIbycBBxFp5rVdcZrTHJpaVaWrRkdm6oAeZK+1k
+ e+NJDUs4qR1z3UQoAEzrH0H3bUvgvBj/+gjASNo0VjkoaFAv6Ep4BUSI1HDhRx/AXdUjCRIyIXf
+ LGlZWGZg6lPagPrA55jXzIUfgXAbepYHCTKi1B+GcopocpfbjMM1HwPbdf0bQvp9hP7RI3BC9CI
+ 3QNneTqSJLdD8yeNHRvvKTJ8LacFEEBOQql13VHFh6eiSVxU1ewUYFR2GBr9kcj0cnrsb2MKp3q
+ CT1jjqZPaUk6xgBsOephGU5f6qxxUcJUBgJLQEg0mKeYr1FCzPvwkq7Q+KYQBEgxatYzUru4qE1
+ 4K60QBu/dKWJjXKk7OLfHyYcqokj3Z7qILeHSj0QNGBDs9mq5hw6TpkriHHfiyzEIkwypAPEUFP
+ SUlsBbSEnLn0Uhw==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Convert posix_owner_key to take struct file_lock_core pointer, and fix
-up the callers to pass one in.
+Convert these functions to take a file_lock_core instead of a file_lock.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/locks.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/locks.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
 diff --git a/fs/locks.c b/fs/locks.c
-index 9ff331b55b7a..1cfd02562e9f 100644
+index 1cfd02562e9f..fa9b2beed0d7 100644
 --- a/fs/locks.c
 +++ b/fs/locks.c
-@@ -630,9 +630,9 @@ static void locks_delete_global_locks(struct file_lock *fl)
+@@ -596,20 +596,20 @@ static int posix_same_owner(struct file_lock_core *fl1, struct file_lock_core *f
  }
  
- static unsigned long
--posix_owner_key(struct file_lock *fl)
-+posix_owner_key(struct file_lock_core *flc)
+ /* Must be called with the flc_lock held! */
+-static void locks_insert_global_locks(struct file_lock *fl)
++static void locks_insert_global_locks(struct file_lock_core *flc)
  {
--	return (unsigned long) fl->c.flc_owner;
-+	return (unsigned long) flc->flc_owner;
+ 	struct file_lock_list_struct *fll = this_cpu_ptr(&file_lock_list);
+ 
+ 	percpu_rwsem_assert_held(&file_rwsem);
+ 
+ 	spin_lock(&fll->lock);
+-	fl->c.flc_link_cpu = smp_processor_id();
+-	hlist_add_head(&fl->c.flc_link, &fll->hlist);
++	flc->flc_link_cpu = smp_processor_id();
++	hlist_add_head(&flc->flc_link, &fll->hlist);
+ 	spin_unlock(&fll->lock);
  }
  
- static void locks_insert_global_blocked(struct file_lock *waiter)
-@@ -640,7 +640,7 @@ static void locks_insert_global_blocked(struct file_lock *waiter)
- 	lockdep_assert_held(&blocked_lock_lock);
- 
- 	hash_add(blocked_hash, &waiter->c.flc_link,
--		 posix_owner_key(waiter));
-+		 posix_owner_key(&waiter->c));
- }
- 
- static void locks_delete_global_blocked(struct file_lock *waiter)
-@@ -977,7 +977,7 @@ static struct file_lock *what_owner_is_waiting_for(struct file_lock *block_fl)
+ /* Must be called with the flc_lock held! */
+-static void locks_delete_global_locks(struct file_lock *fl)
++static void locks_delete_global_locks(struct file_lock_core *flc)
  {
- 	struct file_lock *fl;
+ 	struct file_lock_list_struct *fll;
  
--	hash_for_each_possible(blocked_hash, fl, c.flc_link, posix_owner_key(block_fl)) {
-+	hash_for_each_possible(blocked_hash, fl, c.flc_link, posix_owner_key(&block_fl->c)) {
- 		if (posix_same_owner(&fl->c, &block_fl->c)) {
- 			while (fl->c.flc_blocker)
- 				fl = fl->c.flc_blocker;
+@@ -620,12 +620,12 @@ static void locks_delete_global_locks(struct file_lock *fl)
+ 	 * is done while holding the flc_lock, and new insertions into the list
+ 	 * also require that it be held.
+ 	 */
+-	if (hlist_unhashed(&fl->c.flc_link))
++	if (hlist_unhashed(&flc->flc_link))
+ 		return;
+ 
+-	fll = per_cpu_ptr(&file_lock_list, fl->c.flc_link_cpu);
++	fll = per_cpu_ptr(&file_lock_list, flc->flc_link_cpu);
+ 	spin_lock(&fll->lock);
+-	hlist_del_init(&fl->c.flc_link);
++	hlist_del_init(&flc->flc_link);
+ 	spin_unlock(&fll->lock);
+ }
+ 
+@@ -814,13 +814,13 @@ static void
+ locks_insert_lock_ctx(struct file_lock *fl, struct list_head *before)
+ {
+ 	list_add_tail(&fl->c.flc_list, before);
+-	locks_insert_global_locks(fl);
++	locks_insert_global_locks(&fl->c);
+ }
+ 
+ static void
+ locks_unlink_lock_ctx(struct file_lock *fl)
+ {
+-	locks_delete_global_locks(fl);
++	locks_delete_global_locks(&fl->c);
+ 	list_del_init(&fl->c.flc_list);
+ 	locks_wake_up_blocks(fl);
+ }
 
 -- 
 2.43.0
