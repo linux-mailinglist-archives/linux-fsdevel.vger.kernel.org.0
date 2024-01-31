@@ -1,168 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-9614-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0286A8434DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 05:40:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14E228434E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 05:58:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60E92B24982
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 04:40:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE4F61F231E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 04:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9903B18634;
-	Wed, 31 Jan 2024 04:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C0F63D0BC;
+	Wed, 31 Jan 2024 04:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="VaH2cke0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E38D13FE2;
-	Wed, 31 Jan 2024 04:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B593D0AB
+	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jan 2024 04:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706676024; cv=none; b=ZA/h1NV5hCIsbNV/kPGmZuyPuXxwNG14btxKk1BEcNL0dWOLRUUz11KvmvhDk+SEoP1jSXibxU70DdAtli2XYBIC6zNFf12Fcp79TNlJE4rawobxmfTSeWcY7rYtgRV0rRxo6Xim1AWY+ET/YVb2TQEq+gY/jtFLmi6d5BWZw9k=
+	t=1706677126; cv=none; b=LkODEhVpJN4JT9iNNy6Ot4UItR/gHfNAx2GEHAu/Oe3jINlPWB3hK073VWbiL868tg//ZBUXUJGiqiWP3hMEUFt2xQhumwmypVWeSdDQD3SRO4pLmUiWh/eSKsCXbKQQU2fvHhZ0HlW7Vmbv3WwgsyMTlPSnp/o2PnRER/7c0PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706676024; c=relaxed/simple;
-	bh=3R14n/VzZcxmNnLweehoAPfyjB2o8LMMfTdOUihMJJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=plDZY6P0eYCU92S/dlwxRLOVIieIscajYpzPOyvs14+QI+k5YJeJzW8OTc5LikRZrNsACTIz0VkZG9vmPRtxvx/mY0kddxErF2XOWomN7U3neoWywAbzEnm8X0UM0sVlND9nMmwlyhUgKAYKEVWcpY+g7wl3NG+iDk1RCR8jNl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4E6CDA7;
-	Tue, 30 Jan 2024 20:41:03 -0800 (PST)
-Received: from [10.163.41.195] (unknown [10.163.41.195])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 52C333F738;
-	Tue, 30 Jan 2024 20:40:06 -0800 (PST)
-Message-ID: <8cd39b48-7fb8-40b2-8d6c-e6fc2b48f86d@arm.com>
-Date: Wed, 31 Jan 2024 10:10:05 +0530
+	s=arc-20240116; t=1706677126; c=relaxed/simple;
+	bh=AbCGXp5Zx/URHiZT1nmu8rSeqyC0cbZsrnC8I1K/zGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yk6isb36btzdGnwX1AbXJh+SpzrfY5X+peOYPj4jz7OZ/2306PYdpWtII1TSXRUpQlsygLAdS44ckOVbKEPq4oC0U2Y+HbdYEG6gNiDlvxwnpe8juKBIyGdCgV8lJPX/GwkeMwo9pDUyVKGF9+A54PeOfL7w9LjSr7aEO1T2X8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=VaH2cke0; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-116-252.bstnma.fios.verizon.net [173.48.116.252])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 40V4wNUQ013006
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 30 Jan 2024 23:58:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1706677105; bh=FTAZSbSldqW8oyYhGCCedIW1l15RMakCY0zmdX7B1ck=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=VaH2cke0joKHX/XvZt0Z5ZUj/GOXaCrsYxsSJfXkQJrjEA/OKrLrmZ5a5EwhmTSTT
+	 m3ijT/kYcPLpkyYIKAKewne+xDC04C2RPct8X47C5F2jDkDOJwelPq2ljartmRfMdI
+	 Bk9+9k8B5Mq80pO2pCxMFbKY7ehIu0Myi56ukpUHZZnmsICMXBdu9ZVPlsrX2D+fyF
+	 cTYK66CeK/ENviTgAiyWKHanMY2pIXM3g/1d4sc2v8U9dhh7Dw3i0xgV4fmn/E2e74
+	 DXD/FEI4Zii5cFtl0T4ihBXiMnZmh5odtKjGnpzACAkmla2viJx4laK2ZshYUCI1Yz
+	 +iPKbzfyzQpEA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id D94E715C0667; Tue, 30 Jan 2024 23:58:22 -0500 (EST)
+Date: Tue, 30 Jan 2024 23:58:22 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Dave Chinner <david@fromorbit.com>
+Cc: syzbot <syzbot+cdee56dbcdf0096ef605@syzkaller.appspotmail.com>,
+        adilger.kernel@dilger.ca, chandan.babu@oracle.com, jack@suse.com,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: current->journal_info got nested! (was Re: [syzbot] [xfs?]
+ [ext4?] general protection fault in jbd2__journal_start)
+Message-ID: <20240131045822.GA2356784@mit.edu>
+References: <000000000000e98460060fd59831@google.com>
+ <000000000000d6e06d06102ae80b@google.com>
+ <ZbmILkfdGks57J4a@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 06/35] mm: cma: Make CMA_ALLOC_SUCCESS/FAIL count
- the number of pages
-Content-Language: en-US
-To: Alexandru Elisei <alexandru.elisei@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
- maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
- yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
- mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, mgorman@suse.de, bristot@redhat.com,
- vschneid@redhat.com, mhiramat@kernel.org, rppt@kernel.org, hughd@google.com,
- pcc@google.com, steven.price@arm.com, vincenzo.frascino@arm.com,
- david@redhat.com, eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org
-References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-7-alexandru.elisei@arm.com>
- <0a71c87a-ae2c-4a61-8adb-3a51d6369b99@arm.com> <ZbeRQpGNnfXnjayQ@raptor>
- <2cb8288c-5378-4968-a75b-8462b41998c6@arm.com> <ZbjkTFEvSvyHNqmu@raptor>
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <ZbjkTFEvSvyHNqmu@raptor>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZbmILkfdGks57J4a@dread.disaster.area>
 
-
-
-On 1/30/24 17:28, Alexandru Elisei wrote:
-> Hi,
+On Wed, Jan 31, 2024 at 10:37:18AM +1100, Dave Chinner wrote:
+> It should be obvious what has happened now -
+> current->journal_info is not null, so ext4 thinks it owns the
+> structure attached there and panics when it finds that it isn't an
+> ext4 journal handle being held there.
 > 
-> On Tue, Jan 30, 2024 at 10:22:11AM +0530, Anshuman Khandual wrote:
->>
->> On 1/29/24 17:21, Alexandru Elisei wrote:
->>> Hi,
->>>
->>> On Mon, Jan 29, 2024 at 02:54:20PM +0530, Anshuman Khandual wrote:
->>>>
->>>> On 1/25/24 22:12, Alexandru Elisei wrote:
->>>>> The CMA_ALLOC_SUCCESS, respectively CMA_ALLOC_FAIL, are increased by one
->>>>> after each cma_alloc() function call. This is done even though cma_alloc()
->>>>> can allocate an arbitrary number of CMA pages. When looking at
->>>>> /proc/vmstat, the number of successful (or failed) cma_alloc() calls
->>>>> doesn't tell much with regards to how many CMA pages were allocated via
->>>>> cma_alloc() versus via the page allocator (regular allocation request or
->>>>> PCP lists refill).
->>>>>
->>>>> This can also be rather confusing to a user who isn't familiar with the
->>>>> code, since the unit of measurement for nr_free_cma is the number of pages,
->>>>> but cma_alloc_success and cma_alloc_fail count the number of cma_alloc()
->>>>> function calls.
->>>>>
->>>>> Let's make this consistent, and arguably more useful, by having
->>>>> CMA_ALLOC_SUCCESS count the number of successfully allocated CMA pages, and
->>>>> CMA_ALLOC_FAIL count the number of pages the cma_alloc() failed to
->>>>> allocate.
->>>>>
->>>>> For users that wish to track the number of cma_alloc() calls, there are
->>>>> tracepoints for that already implemented.
->>>>>
->>>>> Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
->>>>> ---
->>>>>  mm/cma.c | 4 ++--
->>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/mm/cma.c b/mm/cma.c
->>>>> index f49c95f8ee37..dbf7fe8cb1bd 100644
->>>>> --- a/mm/cma.c
->>>>> +++ b/mm/cma.c
->>>>> @@ -517,10 +517,10 @@ struct page *cma_alloc(struct cma *cma, unsigned long count,
->>>>>  	pr_debug("%s(): returned %p\n", __func__, page);
->>>>>  out:
->>>>>  	if (page) {
->>>>> -		count_vm_event(CMA_ALLOC_SUCCESS);
->>>>> +		count_vm_events(CMA_ALLOC_SUCCESS, count);
->>>>>  		cma_sysfs_account_success_pages(cma, count);
->>>>>  	} else {
->>>>> -		count_vm_event(CMA_ALLOC_FAIL);
->>>>> +		count_vm_events(CMA_ALLOC_FAIL, count);
->>>>>  		if (cma)
->>>>>  			cma_sysfs_account_fail_pages(cma, count);
->>>>>  	}
->>>> Without getting into the merits of this patch - which is actually trying to do
->>>> semantics change to /proc/vmstat, wondering how is this even related to this
->>>> particular series ? If required this could be debated on it's on separately.
->>> Having the number of CMA pages allocated and the number of CMA pages freed
->>> allows someone to infer how many tagged pages are in use at a given time:
->> That should not be done in CMA which is a generic multi purpose allocator.
-
-> Ah, ok. Let me rephrase that: Having the number of CMA pages allocated, the
-> number of failed CMA page allocations and the number of freed CMA pages
-> allows someone to infer how many CMA pages are in use at a given time.
-> That's valuable information for software designers and system
-> administrators, as it allows them to tune the number of CMA pages available
-> in a system.
+> I don't think there are any clear rules as to how filesystems can
+> and can't use current->journal_info. In general, a task can't jump
+> from one filesystem to another inside a transaction context like
+> this, so there's never been a serious concern about nested
+> current->journal_info assignments like this in the past.
 > 
-> Or put another way: what would you consider to be more useful?  Knowing the
-> number of cma_alloc()/cma_release() calls, or knowing the number of pages
-> that cma_alloc()/cma_release() allocated or freed?
+> XFS is doing nothing wrong - we're allowed to define transaction
+> contexts however we want and use current->journal_info in this way.
+> However, we have to acknowledge that ext4 has also done nothing
+> wrong by assuming current->journal_info should below to it if it is
+> not null. Indeed, XFS does the same thing.
 
-There is still value in knowing how many times cma_alloc() succeeded or failed
-regardless of the cumulative number pages involved over the time. Actually the
-count helps to understand how cma_alloc() performed overall as an allocator.
+Nice analysis.  Fundamentally the current usage of
+current->journal_info assumes that a process would only be calling
+into one file system at a time.  But obviously that's not going to be
+true in the case of one file system writing to memory which then
+triggers a page fault.
 
-But on the cma_release() path there is no chances of failure apart from - just
-when the caller itself provides an wrong input. So there are no corresponding
-CMA_RELEASE_SUCCESS/CMA_RELEASE_FAIL vmstat counters in there - for a reason !
+As far as other potential avenues that could cause this kind of
+nesting, the other one which comes to mind might be sendfile(2) --
+although in general the reader side won't trigger a transaction since
+the atime update tends to be done lazily.
 
-Coming back to CMA based pages being allocated and freed, there is already an
-interface via sysfs (CONFIG_CMA_SYSFS) which gets updated in cma_alloc() path
-via cma_sysfs_account_success_pages() and cma_sysfs_account_fail_pages().
+> The question here is what to do about this? The obvious solution is
+> to have save/restore semantics in the filesystem code that
+> sets/clears current->journal_info, and then filesystems can also do
+> the necessary "recursion into same filesystem" checks they need to
+> ensure that they aren't nesting transactions in a way that can
+> deadlock.
+> 
+> Maybe there are other options - should filesystems even be allowed to
+> trigger page faults when they have set current->journal_info?
 
-#ls /sys/kernel/mm/cma/<name>
-alloc_pages_fail alloc_pages_success
+Hmm, could XFS pre-fault target memory buffer for the bulkstat output
+before starting its transaction?  Alternatively, ext4 could do a save
+of current->journal_info before starting to process the page fault,
+and restore it when it is done.  Both of these seem a bit hacky, and
+the question is indeed, are there other avenues that might cause the
+transaction context nesting, such that a more general solution is
+called for?
 
-Why these counters could not meet your requirements ? Also 'struct cma' can
-be updated to add an element 'nr_pages_freed' to be tracked in cma_release(),
-providing free pages count as well.
-
-There are additional debug fs based elements (CONFIG_CMA_DEBUGFS) available.
-
-#ls /sys/kernel/debug/cma/<name>
-alloc  base_pfn  bitmap  count  free  maxchunk  order_per_bit  used
+						- Ted
 
