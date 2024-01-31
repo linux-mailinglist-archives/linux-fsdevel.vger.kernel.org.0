@@ -1,68 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-9599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF888432F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 02:48:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860CC8432F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 02:49:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 638371C2499D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 01:48:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABF721C252C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 01:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1D41E546;
-	Wed, 31 Jan 2024 01:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40EB75677;
+	Wed, 31 Jan 2024 01:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="qtm/73JW"
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="LBX4ZcEd"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03FA5673
-	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jan 2024 01:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD794C87
+	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jan 2024 01:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706665671; cv=none; b=OTbrNPyXqnPUFveclumwZXwYbk/OCrxgz7ARG/g/Y81EXjrjiDLoflnDFQUNAu3/zp6k4962TU4jpDsaiTJUFAEGUnxgQXMefbt1pZOKJ5y7zVoE/KW8bJQld3aFpSPSBqzqlgcGcxHZKzoPpl65tzGIL9mAWQsugmh5FUY1338=
+	t=1706665676; cv=none; b=Epa9f1PuRI04o4hIfNq4nFPj32MHUuQthvHE7ZMlJDilew/5RzWnfXnd6beIW+GmcP6hGYG5xTI4Ty2PaAc9EUnMFcX0CMWKrQJZS+5DLRHSvc13/G3t9V0eEYh9pmbEvjC6SqDnddQjWuPSrN3UhjT9jaNw/aRqRtWbRm5Y59A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706665671; c=relaxed/simple;
-	bh=+NvwukKrlDHz6eylGdtOKZKD8hFQLLmD1KnjinUcTaA=;
+	s=arc-20240116; t=1706665676; c=relaxed/simple;
+	bh=PCgM0jeKVsYznDgZ+Is72gv1JvGoJVesIskQPr8m5bI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=HP6cOfAvwIyHEvPzurYyAYUlEGiVhPwOljIvwH3FlfTPvVo/ocs11khLzkZFQvPhP+g50vWB9wxZmVQMJGbUVrtu1EnY9Ui6098ZpKwYmmbkzPRgzPJWmgLEUCJDVSxS4RKcdUhxDUvq4mI0uIfTyIdD9oGLhjNeqtKIbTMuLSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=qtm/73JW; arc=none smtp.client-ip=209.85.214.182
+	 MIME-Version; b=ZxKfHHwTQtp+xA9h4w4FzCx42EqzCLKbKra5xXWsx3SaFYtmLzxfdidrF+yYqN0XT3uOieVXq655GjlJNjHTLu0VYDeOb1C8KwmOrid6f5KYTxKSQaIWtZAnNjtB99QDVhc71usAciE/94rROc2dWOS6Y2u7DPgiNoCCOSfellA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=LBX4ZcEd; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1d76671e5a4so32868255ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jan 2024 17:47:48 -0800 (PST)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1d7881b1843so38596725ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 30 Jan 2024 17:47:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1706665668; x=1707270468; darn=vger.kernel.org;
+        d=fastly.com; s=google; t=1706665674; x=1707270474; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dis0Zk83NVRgFQ7j5PMchP4NSpK2O2E2OiTy+PShPHQ=;
-        b=qtm/73JWx7S9OK0UV6TPJcE/rlOXvOveLlaD3eRlhDwbPAAuBPb/5a97Gluz6XwVSP
-         A5rMWNs+JQiBtvpHVsyEXZnwnC/xP5BRqk+nJgzj2Ovgbj17EyjfHkueZzgmz+0gZb1D
-         CLJYNVRys7ObuXJyvYu/F0W16yb0lgDTLw5kc=
+        bh=8eiQqj8AyPJBMkwxcjL/fD8XyFJwiWNQcNlhT/VtKOo=;
+        b=LBX4ZcEdP1MS1rkBBEBMw7hzj41jHuuW4HbTFgIDzvWrgKxKBrZDr01AelE7XpitZa
+         80JTYLeH2b5GdWDyCpAYDCZa8iMe2elI0oEKXKsz0qVTZ9B0eNJo4F+kzqIqZbWZ/SZv
+         MWDEDbGL16imyHxrzn8oWhRp5znSl3R1MSjzU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706665668; x=1707270468;
+        d=1e100.net; s=20230601; t=1706665674; x=1707270474;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dis0Zk83NVRgFQ7j5PMchP4NSpK2O2E2OiTy+PShPHQ=;
-        b=fCKzd0a6vgXpYvN83HaceLAS5UsCAcsH5nx/JysgkUpgbS7WYj8/6vSjdYl7qqlTRL
-         h188wBanHo9qBmk6N10Ff7xyvJM2r790cP+SLoY5FOov+09JZqlGFE9grarY8z8y+lA9
-         uZtoXf9JvEbOEh7AIBYJigdtJdh1wC4JuUhXsaiG6KNo26UC/o2LeUP3YrgAzkiq6HOS
-         PTEjCgMP2Bq+qiU6RyFcSXUwsPZsHiQ9makoH05FVxDbF5zSxnIwD5t3n2yafEe/WpNJ
-         BTubfxvhGN2d554XhkEvgiEW7fvEW1FtPV0B9+f/GHrcGZP2s+kBjtZlCcpVyjgpV6hr
-         U8KA==
-X-Gm-Message-State: AOJu0YzItzXyQPOBej/D0czhUYCaOuT0gRof/KO8MMoCJ8K4euW091Sz
-	lm3gn3AbLPQfROvxRVN0TFWuO7dkYgvP8g1D2Wo+2kUVQtyktABPpi4+VQdpGzc=
-X-Google-Smtp-Source: AGHT+IFv6d4ylemRg3/pDjnfS0aS5P4n48qcDQT6tqTQ/14aUrLUnInFu+mblYmjeGs82/P7TOII6w==
-X-Received: by 2002:a17:902:bcc5:b0:1d6:fe15:b588 with SMTP id o5-20020a170902bcc500b001d6fe15b588mr324376pls.64.1706665668134;
-        Tue, 30 Jan 2024 17:47:48 -0800 (PST)
+        bh=8eiQqj8AyPJBMkwxcjL/fD8XyFJwiWNQcNlhT/VtKOo=;
+        b=ZsFa7UEUvNA2H35H/Oc9L/gtNBynWjkpKP6zRGCdHJYyApQpFT4yiwMujkaMkfOY0I
+         KHIkUL/U/zqAzwGkw5P5NQosAT+9o3+grCaGvPZ4yTAL5O0Bd2plBjzJ+H67dMLCLuEd
+         8iuWu6OzH1/n6sGfjriT/OJHQWEULxpbg1tQiBLiVbkT7ZyPLajLG5VKeFMuVZEPzOln
+         9acOGZ9XB69n7GoWujfk6ttxoyUQWJQCUaGKTb2HilsmC48bVjth/3AJhnTkKhzrY9jc
+         EmlWvhG9pwwzBDcXe+GD7ipy2kYCQlRDDWio1VDzklchJ8Rh8O/yxViZPp8Y8JHhbcOE
+         K4Bw==
+X-Gm-Message-State: AOJu0YwupYd/p4xsLH/E8a5KJo9NjUOXFjeaaP1w5SbzWuIkZbwKJCtl
+	N1nz8hifpOUrcCay8NXauSUnKuC9+T4TDbMT0i7hJkC4k2YlauMOCfBpPNo2L5w=
+X-Google-Smtp-Source: AGHT+IHoqZW6Z2tzjKd4C0U5jSuUHmeqk/pJH2zIOvUa65KkvE6gbo1Ev/DhUGFaZ+5GRyx9NdzxkQ==
+X-Received: by 2002:a17:902:d38c:b0:1d8:ee30:aaac with SMTP id e12-20020a170902d38c00b001d8ee30aaacmr309763pld.69.1706665674460;
+        Tue, 30 Jan 2024 17:47:54 -0800 (PST)
 Received: from localhost.localdomain ([2620:11a:c018:0:ea8:be91:8d1:f59b])
-        by smtp.gmail.com with ESMTPSA id li6-20020a170903294600b001d90fe6da6esm1837846plb.305.2024.01.30.17.47.46
+        by smtp.gmail.com with ESMTPSA id li6-20020a170903294600b001d90fe6da6esm1837846plb.305.2024.01.30.17.47.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jan 2024 17:47:47 -0800 (PST)
+        Tue, 30 Jan 2024 17:47:53 -0800 (PST)
 From: Joe Damato <jdamato@fastly.com>
 To: linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org
@@ -80,12 +80,26 @@ Cc: chuck.lever@oracle.com,
 	David.Laight@ACULAB.COM,
 	arnd@arndb.de,
 	Joe Damato <jdamato@fastly.com>,
+	Jonathan Corbet <corbet@lwn.net>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Jan Kara <jack@suse.cz>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nathan Lynch <nathanl@linux.ibm.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Maik Broemme <mbroemme@libmpq.org>,
+	Steve French <stfrench@microsoft.com>,
+	Julien Panis <jpanis@baylibre.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Thomas Huth <thuth@redhat.com>,
+	Andrew Waterman <waterman@eecs.berkeley.edu>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
 	linux-fsdevel@vger.kernel.org (open list:FILESYSTEMS (VFS and infrastructure))
-Subject: [PATCH net-next v4 2/3] eventpoll: Add per-epoll busy poll packet budget
-Date: Wed, 31 Jan 2024 01:47:32 +0000
-Message-Id: <20240131014738.469858-3-jdamato@fastly.com>
+Subject: [PATCH net-next v4 3/3] eventpoll: Add epoll ioctl for epoll_params
+Date: Wed, 31 Jan 2024 01:47:33 +0000
+Message-Id: <20240131014738.469858-4-jdamato@fastly.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20240131014738.469858-1-jdamato@fastly.com>
 References: <20240131014738.469858-1-jdamato@fastly.com>
@@ -97,61 +111,159 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When using epoll-based busy poll, the packet budget is hardcoded to
-BUSY_POLL_BUDGET (8). Users may desire larger busy poll budgets, which
-can potentially increase throughput when busy polling under high network
-load.
+Add an ioctl for getting and setting epoll_params. User programs can use
+this ioctl to get and set the busy poll usec time or packet budget
+params for a specific epoll context.
 
-Other busy poll methods allow setting the busy poll budget via
-SO_BUSY_POLL_BUDGET, but epoll-based busy polling uses a hardcoded
-value.
-
-Fix this edge case by adding support for a per-epoll context busy poll
-packet budget. If not specified, the default value (BUSY_POLL_BUDGET) is
-used.
+Parameters are limited:
+  - busy_poll_usecs is limited to <= u32_max
+  - busy_poll_budget is limited to <= NAPI_POLL_WEIGHT by unprivileged
+    users (!capable(CAP_NET_ADMIN)).
 
 Signed-off-by: Joe Damato <jdamato@fastly.com>
 ---
- fs/eventpoll.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ .../userspace-api/ioctl/ioctl-number.rst      |  1 +
+ fs/eventpoll.c                                | 65 +++++++++++++++++++
+ include/uapi/linux/eventpoll.h                | 12 ++++
+ 3 files changed, 78 insertions(+)
 
+diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
+index 457e16f06e04..b33918232f78 100644
+--- a/Documentation/userspace-api/ioctl/ioctl-number.rst
++++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+@@ -309,6 +309,7 @@ Code  Seq#    Include File                                           Comments
+ 0x89  0B-DF  linux/sockios.h
+ 0x89  E0-EF  linux/sockios.h                                         SIOCPROTOPRIVATE range
+ 0x89  F0-FF  linux/sockios.h                                         SIOCDEVPRIVATE range
++0x8A  00-1F  linux/eventpoll.h
+ 0x8B  all    linux/wireless.h
+ 0x8C  00-3F                                                          WiNRADiO driver
+                                                                      <http://www.winradio.com.au/>
 diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index ce75189d46df..3985434df527 100644
+index 3985434df527..afdb91c6faa8 100644
 --- a/fs/eventpoll.c
 +++ b/fs/eventpoll.c
-@@ -229,6 +229,8 @@ struct eventpoll {
- 	unsigned int napi_id;
- 	/* busy poll timeout */
- 	u64 busy_poll_usecs;
-+	/* busy poll packet budget */
-+	u16 busy_poll_budget;
- #endif
+@@ -37,6 +37,7 @@
+ #include <linux/seq_file.h>
+ #include <linux/compat.h>
+ #include <linux/rculist.h>
++#include <linux/capability.h>
+ #include <net/busy_poll.h>
  
- #ifdef CONFIG_DEBUG_LOCK_ALLOC
-@@ -437,10 +439,14 @@ static bool ep_busy_loop_end(void *p, unsigned long start_time)
- static bool ep_busy_loop(struct eventpoll *ep, int nonblock)
- {
- 	unsigned int napi_id = READ_ONCE(ep->napi_id);
-+	u16 budget = READ_ONCE(ep->busy_poll_budget);
+ /*
+@@ -495,6 +496,42 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
+ 	ep->napi_id = napi_id;
+ }
+ 
++static long ep_eventpoll_bp_ioctl(struct file *file, unsigned int cmd,
++				  unsigned long arg)
++{
++	struct eventpoll *ep;
++	struct epoll_params epoll_params;
++	void __user *uarg = (void __user *) arg;
 +
-+	if (!budget)
-+		budget = BUSY_POLL_BUDGET;
++	ep = file->private_data;
++
++	switch (cmd) {
++	case EPIOCSPARAMS:
++		if (copy_from_user(&epoll_params, uarg, sizeof(epoll_params)))
++			return -EFAULT;
++
++		if (epoll_params.busy_poll_usecs > U32_MAX)
++			return -EINVAL;
++
++		if (epoll_params.busy_poll_budget > NAPI_POLL_WEIGHT &&
++		    !capable(CAP_NET_ADMIN))
++			return -EPERM;
++
++		ep->busy_poll_usecs = epoll_params.busy_poll_usecs;
++		ep->busy_poll_budget = epoll_params.busy_poll_budget;
++		return 0;
++	case EPIOCGPARAMS:
++		memset(&epoll_params, 0, sizeof(epoll_params));
++		epoll_params.busy_poll_usecs = ep->busy_poll_usecs;
++		epoll_params.busy_poll_budget = ep->busy_poll_budget;
++		if (copy_to_user(uarg, &epoll_params, sizeof(epoll_params)))
++			return -EFAULT;
++		return 0;
++	default:
++		return -ENOIOCTLCMD;
++	}
++}
++
+ #else
  
- 	if ((napi_id >= MIN_NAPI_ID) && ep_busy_loop_on(ep)) {
- 		napi_busy_loop(napi_id, nonblock ? NULL : ep_busy_loop_end, ep, false,
--			       BUSY_POLL_BUDGET);
-+			       budget);
- 		if (ep_events_available(ep))
- 			return true;
- 		/*
-@@ -2098,6 +2104,7 @@ static int do_epoll_create(int flags)
- 	}
- #ifdef CONFIG_NET_RX_BUSY_POLL
- 	ep->busy_poll_usecs = 0;
-+	ep->busy_poll_budget = 0;
- #endif
- 	ep->file = file;
- 	fd_install(fd, file);
+ static inline bool ep_busy_loop(struct eventpoll *ep, int nonblock)
+@@ -510,6 +547,12 @@ static inline bool ep_busy_loop_on(struct eventpoll *ep)
+ {
+ 	return false;
+ }
++
++static long ep_eventpoll_bp_ioctl(struct file *file, unsigned int cmd,
++				  unsigned long arg)
++{
++	return -EOPNOTSUPP;
++}
+ #endif /* CONFIG_NET_RX_BUSY_POLL */
+ 
+ /*
+@@ -869,6 +912,26 @@ static void ep_clear_and_put(struct eventpoll *ep)
+ 		ep_free(ep);
+ }
+ 
++static long ep_eventpoll_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++{
++	int ret;
++
++	if (!is_file_epoll(file))
++		return -EINVAL;
++
++	switch (cmd) {
++	case EPIOCSPARAMS:
++	case EPIOCGPARAMS:
++		ret = ep_eventpoll_bp_ioctl(file, cmd, arg);
++		break;
++	default:
++		ret = -EINVAL;
++		break;
++	}
++
++	return ret;
++}
++
+ static int ep_eventpoll_release(struct inode *inode, struct file *file)
+ {
+ 	struct eventpoll *ep = file->private_data;
+@@ -975,6 +1038,8 @@ static const struct file_operations eventpoll_fops = {
+ 	.release	= ep_eventpoll_release,
+ 	.poll		= ep_eventpoll_poll,
+ 	.llseek		= noop_llseek,
++	.unlocked_ioctl	= ep_eventpoll_ioctl,
++	.compat_ioctl   = compat_ptr_ioctl,
+ };
+ 
+ /*
+diff --git a/include/uapi/linux/eventpoll.h b/include/uapi/linux/eventpoll.h
+index cfbcc4cc49ac..98e5ea525dd0 100644
+--- a/include/uapi/linux/eventpoll.h
++++ b/include/uapi/linux/eventpoll.h
+@@ -85,4 +85,16 @@ struct epoll_event {
+ 	__u64 data;
+ } EPOLL_PACKED;
+ 
++struct epoll_params {
++	__aligned_u64 busy_poll_usecs;
++	__u16 busy_poll_budget;
++
++	/* pad the struct to a multiple of 64bits for alignment on all arches */
++	__u8 __pad[6];
++};
++
++#define EPOLL_IOC_TYPE 0x8A
++#define EPIOCSPARAMS _IOW(EPOLL_IOC_TYPE, 0x01, struct epoll_params)
++#define EPIOCGPARAMS _IOR(EPOLL_IOC_TYPE, 0x02, struct epoll_params)
++
+ #endif /* _UAPI_LINUX_EVENTPOLL_H */
 -- 
 2.25.1
 
