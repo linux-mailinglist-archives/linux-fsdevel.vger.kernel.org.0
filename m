@@ -1,146 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-9662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 128BD8442AE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 16:09:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2318442F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 16:24:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC948B31E1C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 15:02:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42751B328FF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 31 Jan 2024 15:03:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2F012DD8D;
-	Wed, 31 Jan 2024 14:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94CB12FF75;
+	Wed, 31 Jan 2024 14:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vdtNY3zJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MuceGC/4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B46B12DD8E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jan 2024 14:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9DFD5A7A1;
+	Wed, 31 Jan 2024 14:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706712931; cv=none; b=bHzf4cQpV2YuLEyAQ26TfQfU3lciJUtY2k7ykxDZAkq+KbRyUUagZyWAdm0R5+rjH8wbUyeTs9vK7JW0OEYbO/RYx5/T85L3KNjVQAehgbPid3DESKTY8AhOq+WpAXwx+hYzp9K7kIkrK2VB/cPdP3kyUZi6eXllRUPBu8p0h4c=
+	t=1706713014; cv=none; b=gS8o9/0rEqTwN18EqgRPXsU0WTHAUlRl7b34OqI4hEHNR8JkaEDlwfUGy4gRgwHUbuyKGTulxHGuarPBsdeYI/YCRSf2LerqLerBeFhr88C5NCeFfRv0CJ3eU6tM/gQpRguhOM2T8zYF8tJSZSsABpPCXvsD6ZlgODFvI5Uvj5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706712931; c=relaxed/simple;
-	bh=l029VUoP9sdfGzPV4OqDoPzKyZc8gckM1T7bd+dSxYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=f39LUw3un6BEZN1/HaielF2J/Pfmq1TKcoyjYGz17ta1fNz640IUMFWvXaUhEq1cw+sbQkZN/A35+9Kf7Avqm5WRibT1gDwMzF3ZwVk7zlhtyqwXJ1V3Aw0LpOeWcQ2ns1h6ltO+9HLSfP5XPAE/rhALCRJQukFbaZfTgd0+Zc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=vdtNY3zJ; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240131145527epoutp02aa67adf176d7dd520f1a33127855d76c~vdl2DOH_00581005810epoutp02i
-	for <linux-fsdevel@vger.kernel.org>; Wed, 31 Jan 2024 14:55:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240131145527epoutp02aa67adf176d7dd520f1a33127855d76c~vdl2DOH_00581005810epoutp02i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1706712927;
-	bh=l029VUoP9sdfGzPV4OqDoPzKyZc8gckM1T7bd+dSxYs=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=vdtNY3zJMbMgMkpAp8mXD47CTc1eMyIrvOnPvTEKN5uyaHNUxQhca/jeDghAIA8rR
-	 b/DZAizwkcqppqaYbg7w1s6KfS9vjQZ2NYVSLY1Twj0aieLRnNXTpydqJjrsNjzidA
-	 t7dVMcYlnRqNJZD5Cau9wdHsXh2y2ZxgNcioHfVA=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20240131145527epcas5p3feb305630f7ac17bf47361f51ea903f6~vdl1b_fdp2531325313epcas5p3u;
-	Wed, 31 Jan 2024 14:55:27 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.174]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4TQ4pP3Pt7z4x9Pq; Wed, 31 Jan
-	2024 14:55:25 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	85.8E.09672.D5F5AB56; Wed, 31 Jan 2024 23:55:25 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240131145524epcas5p1a1031555f7c80b85180a4390648b591e~vdlzQqCYF2721727217epcas5p1d;
-	Wed, 31 Jan 2024 14:55:24 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240131145524epsmtrp1cd139dffbc40a08cb2848f0bde7c6861~vdlzPREWW1296912969epsmtrp1F;
-	Wed, 31 Jan 2024 14:55:24 +0000 (GMT)
-X-AuditID: b6c32a4b-60bfd700000025c8-02-65ba5f5d6cc9
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	18.9A.07368.C5F5AB56; Wed, 31 Jan 2024 23:55:24 +0900 (KST)
-Received: from [107.122.11.51] (unknown [107.122.11.51]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240131145522epsmtip14abd4dfa12ec622d0e526d75319ef2e5~vdlxgMGz22257122571epsmtip1r;
-	Wed, 31 Jan 2024 14:55:22 +0000 (GMT)
-Message-ID: <1a9678e1-aca1-5feb-51d8-92cc519768c9@samsung.com>
-Date: Wed, 31 Jan 2024 20:25:22 +0530
+	s=arc-20240116; t=1706713014; c=relaxed/simple;
+	bh=udDX7mi5zTuN4PeqBdH8shqiz4Wq0FyCqAQLYTgJPOo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fen7RNSSAmAveK3MqvPefG17lpI+jgvVELapVY4KvYMwGISXrDZ4EzOoTlVC1oEAUbcdB6Yr9Y1q9AXCBqTRF8Fvpji6uVHO89b6bSuBoa30r9SyI6GnJ7TpWSaLQfql/TSS6VoOOXVsA1iRbRDW0XnXOu2uaYw62VGLn0T6yDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MuceGC/4; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1d93b525959so2639805ad.0;
+        Wed, 31 Jan 2024 06:56:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706713012; x=1707317812; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YaQh+r2Zu4+oI4esO7EBFsRE6WihrlEdHsqMVhO6RU0=;
+        b=MuceGC/4GGmR6+Z64HgOciVUzksltOuAHEdqvEOMWhKqI9zVEFhYMNnVooR58CkeR8
+         /33O2AUI4/DZE9W8/Uf8vkIOmYID88h7a/XHYiWrI8T+v03x5XJwh85OYW7Z7tplpxBO
+         cUadMDmKW9Maet/E9UyUnNuLqbAQEcY+K9KcneEsHDLFeCO1dySHNMmIx5464zuXkD+1
+         Ys4ZCTSQ1T7UZaf9vT41tCgdj1xzs4z1MsaBgDMutepstvApp6vNAy8fJ8rc90+ncjAO
+         Y5+I0Cgl6DJqiMY4oBspktUcapunBWQwIbcQGQAf0ZRY2t1F6wsvrQ8Fyu0T8wHQL1ho
+         1bfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706713012; x=1707317812;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YaQh+r2Zu4+oI4esO7EBFsRE6WihrlEdHsqMVhO6RU0=;
+        b=Pv0wT36bynp9CQ6bVqRNV+R3slStbXB8+vVnHdccVk3Q16hX2glh9YZZFDKj2JXydF
+         hP0j1sk+K7y+X1nexK7IfRucsnLWChPcwHakoS0Zml1csSk/n2q+Ya6DOJNcFaIxXrLl
+         5Bj6svIEeLNl5HsoCFBpNtwoSuBYTVz/aOba15WwUepBPJXo7WwGsPfvpaReVdk5Zyei
+         wLqdshvdUUINCCyrAiHkdgvvWjJaWUFR5bdyn6Men79bfDED8zxYG+qAglK3v1ij6QHw
+         XPVoFlC+Mk/Js66gu4ddbghLflNcNNHLVWrqzgeBKV+zHZ/+LyEG+adCdE3U6sxwIWtH
+         JUmg==
+X-Gm-Message-State: AOJu0YwiXHilBClyRgVkHGYjP3XV/v9K3D67lOmHDFlLDFyI0HdcDlWU
+	Dksibnqq/MxpOJkBZt5x1tyz3xCtRDVuZtJit8S4T1uv/7PPLodh
+X-Google-Smtp-Source: AGHT+IGaY4LQD053zcJHFyDpcQtFMlF4Cb6fvrnEBtIVGlU6SAwI8QpE8efHRGsxSnjAYD3KQ/r48g==
+X-Received: by 2002:a17:902:6b0c:b0:1d8:b486:8501 with SMTP id o12-20020a1709026b0c00b001d8b4868501mr4333041plk.1.1706713011943;
+        Wed, 31 Jan 2024 06:56:51 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCXFcJ2PAYflWm06l6Xef2gNPwF/JPDKADf3NnZTd2Hf+SsEATcwY4dJX6teV16K3sDFMA71rgH54tlUh83l2eIPgBbBYGfYcjvwN1WuB9kFsiacD0RA/I/g85+SaoxR0w4STzfYfWCgoGndQfFAfDCnM0vh+KAF9nAWzJXuC9O9Vhz9tMYPKm2nhYALvZKkAGlBdLm3e3j9gyQ9ZijJb3HL4KabC0cP+rghaf95/NHkHliTOKJkKJUzphXWXR+v0ni0J1Y=
+Received: from carrot.. (i223-218-113-167.s42.a014.ap.plala.or.jp. [223.218.113.167])
+        by smtp.gmail.com with ESMTPSA id x5-20020a1709029a4500b001d5d736d1b2sm9180005plv.261.2024.01.31.06.56.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jan 2024 06:56:50 -0800 (PST)
+From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-nilfs@vger.kernel.org,
+	syzbot <syzbot+ee2ae68da3b22d04cd8d@syzkaller.appspotmail.com>,
+	syzkaller-bugs@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] nilfs2: fix hang in nilfs_lookup_dirty_data_buffers()
+Date: Wed, 31 Jan 2024 23:56:57 +0900
+Message-Id: <20240131145657.4209-1-konishi.ryusuke@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <00000000000047d819061004ad6c@google.com>
+References: <00000000000047d819061004ad6c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0)
-	Gecko/20100101 Thunderbird/91.8.1
-Subject: Re: [PATCH v9 05/19] fs: Propagate write hints to the struct
- block_device inode
-Content-Language: en-US
-To: Bart Van Assche <bvanassche@acm.org>, "Martin K . Petersen"
-	<martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>, Christoph
-	Hellwig <hch@lst.de>, Daejun Park <daejun7.park@samsung.com>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jeff
-	Layton <jlayton@kernel.org>, Chuck Lever <chuck.lever@oracle.com>
-From: Kanchan Joshi <joshi.k@samsung.com>
-In-Reply-To: <20240130214911.1863909-6-bvanassche@acm.org>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNJsWRmVeSWpSXmKPExsWy7bCmum5s/K5Ugy+3hC1W3+1ns3h9+BOj
-	xbQPP5kt/t99zmSx6kG4xcrVR5ksfi5bxW6x95a2xZ69J1ksuq/vYLNYfvwfk8X5v8dZHXg8
-	Ll/x9rh8ttRj06pONo/dNxvYPD4+vcXi0bdlFaPH501yHpuevGUK4IjKtslITUxJLVJIzUvO
-	T8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOlVJoSwxpxQoFJBYXKykb2dT
-	lF9akqqQkV9cYquUWpCSU2BSoFecmFtcmpeul5daYmVoYGBkClSYkJ1xdc0VtoILTBWvm/ez
-	NDBOYepi5OCQEDCReNWb0sXIxSEksJtR4sen84wQzidGie7fi1kgnG+MEq8u3mLvYuQE62je
-	+JMNxBYS2Mso0XImEaLoLZB9YDYzyFheATuJL5N0QEwWAVWJJ7sdQMp5BQQlTs58wgJiiwok
-	Sfy6OocRxBYWiJKYenQRM4jNLCAucevJfCYQW0QgTqJ11iuwg5gFHjFJdK29xAYyk01AU+LC
-	5FKQGk4BK4nNx+9B9cpLbH87hxmkXkLgAIfEnoMn2CBudpGYcnoJM4QtLPHq+BaoX6QkXva3
-	QdnJEpdmnmOCsEskHu85CGXbS7Se6gd7ixlo7/pd+hC7+CR6fz+BBiKvREebEES1osS9SU9Z
-	IWxxiYczlrBClHhIrJ8nCAkoYKB1Pd/IPIFRYRZSqMxC8v0sJN/MQli8gJFlFaNkakFxbnpq
-	sWmBcV5qOTyyk/NzNzGCU7GW9w7GRw8+6B1iZOJgPMQowcGsJMK7Um5nqhBvSmJlVWpRfnxR
-	aU5q8SFGU2DsTGSWEk3OB2aDvJJ4QxNLAxMzMzMTS2MzQyVx3tetc1OEBNITS1KzU1MLUotg
-	+pg4OKUamOyj7L6u3iO7vHXPJW8P9tO9H2Q/rGvwVN9547Z8/fPffJXTXNi1eqPLty/mC2Yy
-	kvequ3T1nKu50GGLuDx20ZCsR9e4PHmL4manaS+sYP0REp7wf/Jb5UBO8Uc3T6ZH8l09uinC
-	8HDbRL3bRfc6Ouz8hVfelIvm3rb2uubGzwu8JP9u5Gk+XmeyTe5H2NaG1BNMmg+fb1farp72
-	OF/7uu4dN7mfjKmKirUOp88xsYrc6rG05ZrZYcvC3qC7P78oOYQlxErw2daYZWelDzftrV8/
-	Ybv0xw17z2SrbDITCfO7v/SJ15Mank0efXZHZn6d2fTa1clp0jzBR2+eit/WsY2+My+4n7+t
-	58ys0zcslViKMxINtZiLihMBh6PQfk4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprBIsWRmVeSWpSXmKPExsWy7bCSnG5M/K5Ug3sftSxW3+1ns3h9+BOj
-	xbQPP5kt/t99zmSx6kG4xcrVR5ksfi5bxW6x95a2xZ69J1ksuq/vYLNYfvwfk8X5v8dZHXg8
-	Ll/x9rh8ttRj06pONo/dNxvYPD4+vcXi0bdlFaPH501yHpuevGUK4IjisklJzcksSy3St0vg
-	yri65gpbwQWmitfN+1kaGKcwdTFyckgImEg0b/zJBmILCexmlNj83BkiLi7RfO0HO4QtLLHy
-	33Mgmwuo5jWjxI0Jb1i6GDk4eAXsJL5M0gExWQRUJZ7sdgAp5xUQlDg58wkLiC0qkCSx534j
-	2CphgSiJqUcXMYPYzEDjbz2ZDxYXEYiTOLz/Bth4ZoEnTBKbt7eyQ9yzl1Fiyi8LkPlsApoS
-	FyaXgoQ5BawkNh+/BzXHTKJraxcjhC0vsf3tHOYJjEKzkJwxC8m6WUhaZiFpWcDIsopRMrWg
-	ODc9N9mwwDAvtVyvODG3uDQvXS85P3cTIzjytDR2MN6b/0/vECMTB+MhRgkOZiUR3pVyO1OF
-	eFMSK6tSi/Lji0pzUosPMUpzsCiJ8xrOmJ0iJJCeWJKanZpakFoEk2Xi4JRqYEqb1zrxL9f+
-	5ctTHh62+R/nedYouVI0wSrKuMNQ/fSy3exCxcvVHLd03jw+VX3H00aXW+dT7KQ/nXzCunBV
-	WZLQtp0bvE8In9B+u1Xr199PZk/5X6R4fPk97526/foL/Sb7xE7qrefdyDWz2+H++n2BtrYM
-	s/c8O2WQ/PyFwnL/frnW2cvDGJ/s7b5qHTgznVfEUG6Pc6ey5YObU+VXM148b6PvdyFkdh1r
-	y69im47b/lse37PSe6MUwvpWrchW5GDWg7bjteqRIZZpPqJMx036jqlUvI5itT1jq1lcsOtk
-	ufuuy/8EVHN3H2aNlJn4Kl2QNdE04csnGYvjs5eu8I4XSJderzh3BdfmWUW1+kosxRmJhlrM
-	RcWJAMrSHowrAwAA
-X-CMS-MailID: 20240131145524epcas5p1a1031555f7c80b85180a4390648b591e
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240130214958epcas5p25f8c63678746128e6aa51e5be656d3cc
-References: <20240130214911.1863909-1-bvanassche@acm.org>
-	<CGME20240130214958epcas5p25f8c63678746128e6aa51e5be656d3cc@epcas5p2.samsung.com>
-	<20240130214911.1863909-6-bvanassche@acm.org>
+Content-Transfer-Encoding: 8bit
 
-On 1/31/2024 3:18 AM, Bart Van Assche wrote:
-> Write hints applied with F_SET_RW_HINT on a block device affect the
-> block device inode only. Propagate these hints to the inode associated
-> with struct block_device because that is the inode used when writing
-> back dirty pages.
+Syzbot reported a hang issue in migrate_pages_batch() called by mbind()
+and nilfs_lookup_dirty_data_buffers() called in the log writer of nilfs2.
 
-Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
+While migrate_pages_batch() locks a folio and waits for the writeback to
+complete, the log writer thread that should bring the writeback to
+completion picks up the folio being written back in
+nilfs_lookup_dirty_data_buffers() that it calls for subsequent log
+creation and was trying to lock the folio.  Thus causing a deadlock.
+
+In the first place, it is unexpected that folios/pages in the middle of
+writeback will be updated and become dirty.  Nilfs2 adds a checksum to
+verify the validity of the log being written and uses it for recovery at
+mount, so data changes during writeback are suppressed.  Since this is
+broken, an unclean shutdown could potentially cause recovery to fail.
+
+Investigation revealed that the root cause is that the wait for writeback
+completion in nilfs_page_mkwrite() is conditional, and if the backing
+device does not require stable writes, data may be modified without
+waiting.
+
+Fix these issues by making nilfs_page_mkwrite() wait for writeback to
+finish regardless of the stable write requirement of the backing device.
+
+Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+Reported-by: syzbot+ee2ae68da3b22d04cd8d@syzkaller.appspotmail.com
+Closes: https://lkml.kernel.org/r/00000000000047d819061004ad6c@google.com
+Fixes: 1d1d1a767206 ("mm: only enforce stable page writes if the backing device requires it")
+Tested-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+---
+Andrew, please apply this as a bugfix.
+
+This fixes a hang issue reported by syzbot and potential mount-time
+recovery failure.
+
+This patch is affected by the merged folio conversion series and cannot
+be backported as is, so I don't add the Cc: stable tag.  Once merged,
+I would like to send a separate request to the stable team.
+
+Thanks,
+Ryusuke Konishi
+
+ fs/nilfs2/file.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/fs/nilfs2/file.c b/fs/nilfs2/file.c
+index bec33b89a075..0e3fc5ba33c7 100644
+--- a/fs/nilfs2/file.c
++++ b/fs/nilfs2/file.c
+@@ -107,7 +107,13 @@ static vm_fault_t nilfs_page_mkwrite(struct vm_fault *vmf)
+ 	nilfs_transaction_commit(inode->i_sb);
+ 
+  mapped:
+-	folio_wait_stable(folio);
++	/*
++	 * Since checksumming including data blocks is performed to determine
++	 * the validity of the log to be written and used for recovery, it is
++	 * necessary to wait for writeback to finish here, regardless of the
++	 * stable write requirement of the backing device.
++	 */
++	folio_wait_writeback(folio);
+  out:
+ 	sb_end_pagefault(inode->i_sb);
+ 	return vmf_fs_error(ret);
+-- 
+2.34.1
+
 
