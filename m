@@ -1,162 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-9820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC658453A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:19:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD8418453BD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:22:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80DD1B294EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:19:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67F08B2A389
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD24715B976;
-	Thu,  1 Feb 2024 09:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r+/j3u7G";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jK2sjdPz";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r+/j3u7G";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jK2sjdPz"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF1315B977;
+	Thu,  1 Feb 2024 09:21:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A159B15B11D;
-	Thu,  1 Feb 2024 09:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A2015B0F2;
+	Thu,  1 Feb 2024 09:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706779108; cv=none; b=EGqfVGeQdFPr/7wALmmPeh4qRvPSw5PBg1jKXWsbd/aLyGExln4ycCq1KeBe8aLGpsq9oMB8J7vBSb+NLouUiV4vVGa64I2BLKay/y1mAahZwL/BL9mxOcdApEWFPslAiXtR+foVbhqM5R5FME5gqoxb3QUVBVO3D2OdylTYbnc=
+	t=1706779316; cv=none; b=I9+eBr/oku/6TpSjA1T6fqr2CabhMYcKF1Qe6GtIvcNZMyEoGm7BhMiWMKqZ4HM5rccWr7+UwSBHmI+c+61Q3ksOq9WXe7bwoNXGn4RfeKL8FZcIDbg7JwunjzbP9Tce/5yRIb3OvqiBAviosOHDrOhxY2lxNkUca3JV2tjFq2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706779108; c=relaxed/simple;
-	bh=sh56VmbZjgCgtQLhnGvOJhwkTWdus+n0lPyfuAk31KM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fta46xeOywjPxr3Bo8iTUnlQPRmVkkyi6aCKRNa2GY+b/32HXcb4jGZUWx89JqM7Evqm+uayCgxPf2rFuOhIoCmFkU6yr1Bw/S1mTl+sgimNpbPg5t01lbq3VRe7GZ1Kxtm8YWpVZTtD/8U19Gh6Aoe2YmO2HUrnvbITHfXwFZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r+/j3u7G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jK2sjdPz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r+/j3u7G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jK2sjdPz; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9310D1FB94;
-	Thu,  1 Feb 2024 09:18:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706779104; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zxXi/fOaMgCDFHXrPY+RQgE8sSdBP+ESghM8RbqJyJI=;
-	b=r+/j3u7GdyDVTtLA782A2TcNcvVZsQBBXbNxhS1vGQ5fZm/ENNlGmmaCoZMRFjhQqUeWdj
-	ChKJVt9rQmGKpKVJcPd97+JSdkOQWcc7BMfrpPxbtHoIU3lhLiDU9obujxe4ODbWRVdBq0
-	SebmrCPQ1eP6a/OzE9YoZ+FhK2SH6Hk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706779104;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zxXi/fOaMgCDFHXrPY+RQgE8sSdBP+ESghM8RbqJyJI=;
-	b=jK2sjdPzWLqVSArvaC2rvz/uMdFLG33ySQa+U2Rn5qmugHH2b1/CRmBMPArm0dVCxo7uEm
-	oOnbBirY2UhM/jDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706779104; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zxXi/fOaMgCDFHXrPY+RQgE8sSdBP+ESghM8RbqJyJI=;
-	b=r+/j3u7GdyDVTtLA782A2TcNcvVZsQBBXbNxhS1vGQ5fZm/ENNlGmmaCoZMRFjhQqUeWdj
-	ChKJVt9rQmGKpKVJcPd97+JSdkOQWcc7BMfrpPxbtHoIU3lhLiDU9obujxe4ODbWRVdBq0
-	SebmrCPQ1eP6a/OzE9YoZ+FhK2SH6Hk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706779104;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zxXi/fOaMgCDFHXrPY+RQgE8sSdBP+ESghM8RbqJyJI=;
-	b=jK2sjdPzWLqVSArvaC2rvz/uMdFLG33ySQa+U2Rn5qmugHH2b1/CRmBMPArm0dVCxo7uEm
-	oOnbBirY2UhM/jDw==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 8234A13594;
-	Thu,  1 Feb 2024 09:18:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id Zsp/H+Bhu2XGTwAAn2gu4w
-	(envelope-from <jack@suse.cz>); Thu, 01 Feb 2024 09:18:24 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3A3A3A0809; Thu,  1 Feb 2024 10:18:24 +0100 (CET)
-Date: Thu, 1 Feb 2024 10:18:24 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+db6caad9ebd2c8022b41@syzkaller.appspotmail.com>
-Cc: adilger.kernel@dilger.ca, axboe@kernel.dk, brauner@kernel.org,
-	jack@suse.cz, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nogikh@google.com, syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Subject: Re: [syzbot] [ext4?] KASAN: slab-use-after-free Read in
- ext4_convert_inline_data_nolock
-Message-ID: <20240201091824.xat4nseembst5qoj@quack3>
-References: <000000000000b62cdb05f7dfab8b@google.com>
- <0000000000009e002e06104da983@google.com>
+	s=arc-20240116; t=1706779316; c=relaxed/simple;
+	bh=Xan/dqyZBR9aQDewxYQ4N13dX6KyR4YMrUZL8g38qlQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OGzba39z+tIbnbz5qoWOIIhhjFZJh22A4Q98RUZ2f6BZP0WdLkWnZFt/FpSj9Vb6jbTMvglJDjxZgd7Gq8AVrFU6Z818GOUQFxWz6s6YBlB2eTjHKE3sE5jBVLZ1UmFpqGmgAPcwzFfZtiqou6qTWS5WDzAiXef0Zl70j8G8vko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1878DA7;
+	Thu,  1 Feb 2024 01:22:35 -0800 (PST)
+Received: from [10.162.42.11] (a077893.blr.arm.com [10.162.42.11])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48A343F738;
+	Thu,  1 Feb 2024 01:21:41 -0800 (PST)
+Message-ID: <30278898-c4b2-4dd6-ba68-a19575f81a65@arm.com>
+Date: Thu, 1 Feb 2024 14:51:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0000000000009e002e06104da983@google.com>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [-0.10 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=9c35b3803e5ad668];
-	 TAGGED_RCPT(0.00)[db6caad9ebd2c8022b41];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_SEVEN(0.00)[11];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 30/35] arm64: mte: ptrace: Handle pages with
+ missing tag storage
+Content-Language: en-US
+To: Alexandru Elisei <alexandru.elisei@arm.com>, catalin.marinas@arm.com,
+ will@kernel.org, oliver.upton@linux.dev, maz@kernel.org,
+ james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+ arnd@arndb.de, akpm@linux-foundation.org, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+ mhiramat@kernel.org, rppt@kernel.org, hughd@google.com
+Cc: pcc@google.com, steven.price@arm.com, vincenzo.frascino@arm.com,
+ david@redhat.com, eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org
+References: <20240125164256.4147-1-alexandru.elisei@arm.com>
+ <20240125164256.4147-31-alexandru.elisei@arm.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240125164256.4147-31-alexandru.elisei@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 01-02-24 00:20:04, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
-> 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
-> 
->     fs: Block writes to mounted block devices
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1606d4ffe80000
-> start commit:   3a93e40326c8 Merge tag 'for-linus' of git://git.kernel.org..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=9c35b3803e5ad668
-> dashboard link: https://syzkaller.appspot.com/bug?extid=db6caad9ebd2c8022b41
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a2cd05c80000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=158e1f29c80000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
 
-Yep, the reproducer seems to mess with the loop device itself.
- 
-#syz fix: fs: Block writes to mounted block devices
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+On 1/25/24 22:12, Alexandru Elisei wrote:
+> A page can end up mapped in a MTE enabled VMA without the corresponding tag
+> storage block reserved. Tag accesses made by ptrace in this case can lead
+> to the wrong tags being read or memory corruption for the process that is
+> using the tag storage memory as data.
+> 
+> Reserve tag storage by treating ptrace accesses like a fault.
+> 
+> Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> ---
+> 
+> Changes since rfc v2:
+> 
+> * New patch, issue reported by Peter Collingbourne.
+> 
+>  arch/arm64/kernel/mte.c | 26 ++++++++++++++++++++++++--
+>  1 file changed, 24 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
+> index faf09da3400a..b1fa02dad4fd 100644
+> --- a/arch/arm64/kernel/mte.c
+> +++ b/arch/arm64/kernel/mte.c
+> @@ -412,10 +412,13 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+>  	while (len) {
+>  		struct vm_area_struct *vma;
+>  		unsigned long tags, offset;
+> +		unsigned int fault_flags;
+> +		struct page *page;
+> +		vm_fault_t ret;
+>  		void *maddr;
+> -		struct page *page = get_user_page_vma_remote(mm, addr,
+> -							     gup_flags, &vma);
+>  
+> +get_page:
+> +		page = get_user_page_vma_remote(mm, addr, gup_flags, &vma);
+
+But if there is valid page returned here in the first GUP attempt, will there
+still be a subsequent handle_mm_fault() on the same vma and addr ?
+
+>  		if (IS_ERR(page)) {
+>  			err = PTR_ERR(page);
+>  			break;
+> @@ -433,6 +436,25 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
+>  			put_page(page);
+>  			break;
+>  		}
+> +
+> +		if (tag_storage_enabled() && !page_tag_storage_reserved(page)) {
+
+Should not '!page' be checked here as well ?
+
+> +			fault_flags = FAULT_FLAG_DEFAULT | \
+> +				      FAULT_FLAG_USER | \
+> +				      FAULT_FLAG_REMOTE | \
+> +				      FAULT_FLAG_ALLOW_RETRY | \
+> +				      FAULT_FLAG_RETRY_NOWAIT;
+> +			if (write)
+> +				fault_flags |= FAULT_FLAG_WRITE;
+> +
+> +			put_page(page);
+> +			ret = handle_mm_fault(vma, addr, fault_flags, NULL);
+> +			if (ret & VM_FAULT_ERROR) {
+> +				err = -EFAULT;
+> +				break;
+> +			}
+> +			goto get_page;
+> +		}
+> +
+>  		WARN_ON_ONCE(!page_mte_tagged(page));
+>  
+>  		/* limit access to the end of the page */
 
