@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-9928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9925-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3F148463A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 23:46:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE95A84639D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 23:46:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247B81F25C5E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 22:46:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D4841F24A27
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 22:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DAC4654D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630AD46424;
 	Thu,  1 Feb 2024 22:46:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I0KMcAuw"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QgrQ+9Ua"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5638A45BED
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE1645018
 	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Feb 2024 22:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706827572; cv=none; b=R4rc1pEjU3w0SRjtZYJLELxKRNehUwwF7owPEMXv1oH8EVxtx4YZwMn8XNHqbIhXv8XySSZoShzLIlFBYzKf2VAZzAHcoeCNFPMNIqmGZWfOY8NuBmBgZkg/NweLdwV/+5oCg+zaJKJ+NaKW3EGR+6dC28MvDZZru5kZX7kQOrA=
+	t=1706827571; cv=none; b=Ym0y4QS7YEF8yPBiQRvDKQf6SHTs7xxPqtoFSNcHS0O+agOBEjU9Z/42O2fVlurRSpbfYHcEZhFOn2JikuV/jPC35a9m2/ib0QMBTszVaOmGSAi2U797spbCIRx7xwL45rmkC5AqlP43QqEFV+8ZMKL4Q3NCwmYA3OMLmDq5a5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706827572; c=relaxed/simple;
-	bh=rcIr+B8qxMx5VK8mCQlDbMP5/vYU2Si+NvCCLWlbMy8=;
+	s=arc-20240116; t=1706827571; c=relaxed/simple;
+	bh=4b3G/+T3wt+YVnTF1aSwniBeH1KOIEVwE1fET7SzUXI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CeYcZujegdAanaIqQblMv3ELepRfUJtWT7m1xlF6i12sk8L2/RYhFZKGF1tLtCpjWeIl5i7gtFZ7V83bheidnUgmvsp0d8sqnsbMnCz9YmO+Wc+E0rTScodAWFPWzkeUrAiHWPU6PWsoBMCbfZ8wWn8LvJv0KW3cNsvn97U5ICQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=I0KMcAuw; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=cEnmH2jrRQWCYVzHyIvgs+bajzzvS/WtWoZiBE4+QXLxwa49sJKAV+Yg+NCFRKifY2XWECIXucsKaF0X8fSEYXojGRqpGBk4/NG9EjALJFwxZyCi/r3nPBs1E2UL+L80orKe51RfvdTrG7MQ46WX3isCgVpby7IJAkAvOsIWh2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QgrQ+9Ua; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=6SLAbvmsJojxx3vTYw3U/xZYbOr7sG7SZmWvTEYqw5I=; b=I0KMcAuw7Cb0GRzNwfTPSgu1EI
-	yPKz7YDuHNv5W/N+WH1i6yh0DfvZ20yShoUfclzKT4j5GZ8fIavHxAxSTpwe4A7ycYoHTF4vqmAZn
-	pRnO5VvL6AvXoX3LRQq8fMPbXA6tiWtFMpzI3ZW5Wno666ZLcgjXup8qcw6v7c8J/Wfg7zNrqyRY2
-	G7FukhoT3tcOyb6PuBijn9HSY+06CSknJoh2p3iyy/0qklenhsl1jOLNnlj0WZ2yNlGVCLZGePPMI
-	3beQBhzG61i2VY7YtS+ZQvQc2dn5Upp2wJRuJD5b/0nlIhg3Svhs76A844UD6ck36ohetlZJVNcLe
-	S4Sl5dIA==;
+	bh=1hiBfCsxHjQnrQb499TeqPNt73gL1h2Ah7TqxU7+CxY=; b=QgrQ+9Ua/rVGJWmUFecax/c262
+	ZKtbBOnzKWcouuoFucyUucJfo5V56z3Y43FnHhVCoc5ryno/fTQ+JIIj76nJAcNRTSxlHC3PDR+gz
+	GPkpwBtv+UTwBBIXmrXTB4aEp1pxdAQKp+BLNnSwBOyhU0FXion8MQ4CuDbLNefDvfqAU4fmpMdaT
+	AY7vRX1LiUzpEaL248+e65+N/AELgnVct/SdIn6akFYrKXADP/iv32l+JwBa+rcKEXk+Bh3fUVg4V
+	rqwgRDgmXjxxncF4a3M9HeQOAaYcmK+2XiDe3v007u0dxwTBkHl5FxiQrYbLpuaVLq9eb0bnjJeIf
+	rHKJVQtg==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rVfot-0000000H17z-0hMY;
+	id 1rVfot-0000000H187-1EK8;
 	Thu, 01 Feb 2024 22:46:07 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Dave Kleikamp <shaggy@kernel.org>
 Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	jfs-discussion@lists.sourceforge.net,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 02/13] jfs: Convert metapage_writepage to metapage_write_folio
-Date: Thu,  1 Feb 2024 22:45:51 +0000
-Message-ID: <20240201224605.4055895-3-willy@infradead.org>
+Subject: [PATCH 03/13] jfs: Convert __get_metapage to use a folio
+Date: Thu,  1 Feb 2024 22:45:52 +0000
+Message-ID: <20240201224605.4055895-4-willy@infradead.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240201224605.4055895-1-willy@infradead.org>
 References: <20240201224605.4055895-1-willy@infradead.org>
@@ -63,199 +63,92 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement writepages rather than writepage by using write_cache_pages()
-to call metapage_write_folio().  Use bio_add_folio_nofail() as we know
-we just allocated the bio.  Replace the call to SetPageError (which
-is never checked) with a call to mapping_set_error (which ... might be
-checked somewhere?)
+Remove four hidden calls to compound_head().
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/jfs/jfs_metapage.c | 75 +++++++++++++++++++++++--------------------
- 1 file changed, 41 insertions(+), 34 deletions(-)
+ fs/jfs/jfs_metapage.c | 28 ++++++++++++++--------------
+ 1 file changed, 14 insertions(+), 14 deletions(-)
 
 diff --git a/fs/jfs/jfs_metapage.c b/fs/jfs/jfs_metapage.c
-index 8266c43ec728..beecc9ad656e 100644
+index beecc9ad656e..4ef85e264f51 100644
 --- a/fs/jfs/jfs_metapage.c
 +++ b/fs/jfs/jfs_metapage.c
-@@ -4,6 +4,7 @@
-  *   Portions Copyright (C) Christoph Hellwig, 2001-2002
-  */
+@@ -577,7 +577,7 @@ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
+ 	int l2bsize;
+ 	struct address_space *mapping;
+ 	struct metapage *mp = NULL;
+-	struct page *page;
++	struct folio *folio;
+ 	unsigned long page_index;
+ 	unsigned long page_offset;
  
-+#include <linux/blkdev.h>
- #include <linux/fs.h>
- #include <linux/mm.h>
- #include <linux/module.h>
-@@ -321,23 +322,25 @@ static void last_write_complete(struct page *page)
- 
- static void metapage_write_end_io(struct bio *bio)
- {
--	struct page *page = bio->bi_private;
-+	struct folio *folio = bio->bi_private;
- 
--	BUG_ON(!PagePrivate(page));
-+	BUG_ON(!folio->private);
- 
- 	if (bio->bi_status) {
-+		int err = blk_status_to_errno(bio->bi_status);
- 		printk(KERN_ERR "metapage_write_end_io: I/O error\n");
--		SetPageError(page);
-+		mapping_set_error(folio->mapping, err);
+@@ -608,22 +608,22 @@ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
  	}
--	dec_io(page, last_write_complete);
-+	dec_io(&folio->page, last_write_complete);
- 	bio_put(bio);
- }
  
--static int metapage_writepage(struct page *page, struct writeback_control *wbc)
-+static int metapage_write_folio(struct folio *folio,
-+		struct writeback_control *wbc, void *unused)
- {
- 	struct bio *bio = NULL;
- 	int block_offset;	/* block offset of mp within page */
--	struct inode *inode = page->mapping->host;
-+	struct inode *inode = folio->mapping->host;
- 	int blocks_per_mp = JFS_SBI(inode->i_sb)->nbperpage;
- 	int len;
- 	int xlen;
-@@ -353,14 +356,13 @@ static int metapage_writepage(struct page *page, struct writeback_control *wbc)
- 	int offset;
- 	int bad_blocks = 0;
- 
--	page_start = (sector_t)page->index <<
--		     (PAGE_SHIFT - inode->i_blkbits);
--	BUG_ON(!PageLocked(page));
--	BUG_ON(PageWriteback(page));
--	set_page_writeback(page);
-+	page_start = folio_pos(folio) >> inode->i_blkbits;
-+	BUG_ON(!folio_test_locked(folio));
-+	BUG_ON(folio_test_writeback(folio));
-+	folio_start_writeback(folio);
- 
- 	for (offset = 0; offset < PAGE_SIZE; offset += PSIZE) {
--		mp = page_to_mp(page, offset);
-+		mp = page_to_mp(&folio->page, offset);
- 
- 		if (!mp || !test_bit(META_dirty, &mp->flag))
- 			continue;
-@@ -389,22 +391,20 @@ static int metapage_writepage(struct page *page, struct writeback_control *wbc)
- 				continue;
- 			}
- 			/* Not contiguous */
--			if (bio_add_page(bio, page, bio_bytes, bio_offset) <
--			    bio_bytes)
--				goto add_failed;
-+			bio_add_folio_nofail(bio, folio, bio_bytes, bio_offset);
- 			/*
- 			 * Increment counter before submitting i/o to keep
- 			 * count from hitting zero before we're through
- 			 */
--			inc_io(page);
-+			inc_io(&folio->page);
- 			if (!bio->bi_iter.bi_size)
- 				goto dump_bio;
- 			submit_bio(bio);
- 			nr_underway++;
- 			bio = NULL;
- 		} else
--			inc_io(page);
--		xlen = (PAGE_SIZE - offset) >> inode->i_blkbits;
-+			inc_io(&folio->page);
-+		xlen = (folio_size(folio) - offset) >> inode->i_blkbits;
- 		pblock = metapage_get_blocks(inode, lblock, &xlen);
- 		if (!pblock) {
- 			printk(KERN_ERR "JFS: metapage_get_blocks failed\n");
-@@ -420,7 +420,7 @@ static int metapage_writepage(struct page *page, struct writeback_control *wbc)
- 		bio = bio_alloc(inode->i_sb->s_bdev, 1, REQ_OP_WRITE, GFP_NOFS);
- 		bio->bi_iter.bi_sector = pblock << (inode->i_blkbits - 9);
- 		bio->bi_end_io = metapage_write_end_io;
--		bio->bi_private = page;
-+		bio->bi_private = folio;
- 
- 		/* Don't call bio_add_page yet, we may add to this vec */
- 		bio_offset = offset;
-@@ -430,8 +430,7 @@ static int metapage_writepage(struct page *page, struct writeback_control *wbc)
- 		next_block = lblock + len;
+ 	if (new && (PSIZE == PAGE_SIZE)) {
+-		page = grab_cache_page(mapping, page_index);
+-		if (!page) {
+-			jfs_err("grab_cache_page failed!");
++		folio = filemap_grab_folio(mapping, page_index);
++		if (IS_ERR(folio)) {
++			jfs_err("filemap_grab_folio failed!");
+ 			return NULL;
+ 		}
+-		SetPageUptodate(page);
++		folio_mark_uptodate(folio);
+ 	} else {
+-		page = read_mapping_page(mapping, page_index, NULL);
+-		if (IS_ERR(page)) {
++		folio = read_mapping_folio(mapping, page_index, NULL);
++		if (IS_ERR(folio)) {
+ 			jfs_err("read_mapping_page failed!");
+ 			return NULL;
+ 		}
+-		lock_page(page);
++		folio_lock(folio);
  	}
- 	if (bio) {
--		if (bio_add_page(bio, page, bio_bytes, bio_offset) < bio_bytes)
--				goto add_failed;
-+		bio_add_folio_nofail(bio, folio, bio_bytes, bio_offset);
- 		if (!bio->bi_iter.bi_size)
- 			goto dump_bio;
  
-@@ -439,34 +438,42 @@ static int metapage_writepage(struct page *page, struct writeback_control *wbc)
- 		nr_underway++;
+-	mp = page_to_mp(page, page_offset);
++	mp = page_to_mp(&folio->page, page_offset);
+ 	if (mp) {
+ 		if (mp->logical_size != size) {
+ 			jfs_error(inode->i_sb,
+@@ -649,16 +649,16 @@ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
+ 		mp = alloc_metapage(GFP_NOFS);
+ 		if (!mp)
+ 			goto unlock;
+-		mp->page = page;
++		mp->page = &folio->page;
+ 		mp->sb = inode->i_sb;
+ 		mp->flag = 0;
+ 		mp->xflag = COMMIT_PAGE;
+ 		mp->count = 1;
+ 		mp->nohomeok = 0;
+ 		mp->logical_size = size;
+-		mp->data = page_address(page) + page_offset;
++		mp->data = folio_address(folio) + page_offset;
+ 		mp->index = lblock;
+-		if (unlikely(insert_metapage(page, mp))) {
++		if (unlikely(insert_metapage(&folio->page, mp))) {
+ 			free_metapage(mp);
+ 			goto unlock;
+ 		}
+@@ -670,12 +670,12 @@ struct metapage *__get_metapage(struct inode *inode, unsigned long lblock,
+ 		memset(mp->data, 0, PSIZE);
  	}
- 	if (redirty)
--		redirty_page_for_writepage(wbc, page);
-+		folio_redirty_for_writepage(wbc, folio);
  
 -	unlock_page(page);
 +	folio_unlock(folio);
+ 	jfs_info("__get_metapage: returning = 0x%p data = 0x%p", mp, mp->data);
+ 	return mp;
  
- 	if (bad_blocks)
- 		goto err_out;
- 
- 	if (nr_underway == 0)
--		end_page_writeback(page);
-+		folio_end_writeback(folio);
- 
- 	return 0;
--add_failed:
--	/* We should never reach here, since we're only adding one vec */
--	printk(KERN_ERR "JFS: bio_add_page failed unexpectedly\n");
--	goto skip;
- dump_bio:
- 	print_hex_dump(KERN_ERR, "JFS: dump of bio: ", DUMP_PREFIX_ADDRESS, 16,
- 		       4, bio, sizeof(*bio), 0);
--skip:
- 	bio_put(bio);
+ unlock:
 -	unlock_page(page);
--	dec_io(page, last_write_complete);
 +	folio_unlock(folio);
-+	dec_io(&folio->page, last_write_complete);
- err_out:
- 	while (bad_blocks--)
--		dec_io(page, last_write_complete);
-+		dec_io(&folio->page, last_write_complete);
- 	return -EIO;
+ 	return NULL;
  }
  
-+static int metapage_writepages(struct address_space *mapping,
-+		struct writeback_control *wbc)
-+{
-+	struct blk_plug plug;
-+	int err;
-+
-+	blk_start_plug(&plug);
-+	err = write_cache_pages(mapping, wbc, metapage_write_folio, NULL);
-+	blk_finish_plug(&plug);
-+
-+	return err;
-+}
-+
- static int metapage_read_folio(struct file *fp, struct folio *folio)
- {
- 	struct inode *inode = folio->mapping->host;
-@@ -556,7 +563,7 @@ static void metapage_invalidate_folio(struct folio *folio, size_t offset,
- 
- const struct address_space_operations jfs_metapage_aops = {
- 	.read_folio	= metapage_read_folio,
--	.writepage	= metapage_writepage,
-+	.writepages	= metapage_writepages,
- 	.release_folio	= metapage_release_folio,
- 	.invalidate_folio = metapage_invalidate_folio,
- 	.dirty_folio	= filemap_dirty_folio,
-@@ -698,7 +705,7 @@ static int metapage_write_one(struct page *page)
- 
- 	if (folio_clear_dirty_for_io(folio)) {
- 		folio_get(folio);
--		ret = metapage_writepage(page, &wbc);
-+		ret = metapage_write_folio(folio, &wbc, NULL);
- 		if (ret == 0)
- 			folio_wait_writeback(folio);
- 		folio_put(folio);
 -- 
 2.43.0
 
