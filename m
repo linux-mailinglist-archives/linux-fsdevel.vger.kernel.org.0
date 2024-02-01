@@ -1,197 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-9857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED258455A6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 11:41:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 080438455A8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 11:42:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E4111C22EC2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:41:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B3F51C22A39
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607E815B961;
-	Thu,  1 Feb 2024 10:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1174E15B97E;
+	Thu,  1 Feb 2024 10:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5U3JXfu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52C7841C87;
-	Thu,  1 Feb 2024 10:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F2915B961
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Feb 2024 10:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706784098; cv=none; b=VzSpZiOV2zYb1JfNt2GCK6wx3SPhkP6PtqO/bjV1C5gamHPDmXWej/D0Oyuz1WCT3yJjq9hTYG1jogf/yUG4M6BcWlofH7Rmd4OMiBIKn95j4WWq02Yhwz5dRdg0BCzcEfEjBRiNDRyFPC1peOTUm0RJKnDQPBqz6R3pwfndCKg=
+	t=1706784113; cv=none; b=g3LlwWNt7Oqq+5EONgadLJknrX/AlU/arReQr8ieDDrgraEMzbpQut+BME2BkIQ56Xw8q86gY4jfLPBh1hRBp7N/Zgvd1fvGZPaJ0tssGLTEwJ85/T3VzlMREdekT9n7cqC+rdwp32jTYBZgncfjGKHjwIuC72sLmHink/6cpK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706784098; c=relaxed/simple;
-	bh=IGu7IIdO7j3kdwSZGT3hgRZopkNjAO+e1SjmpUG56ak=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=elxEx4Ue6LqN9yWPEAof9Lnj7tef/oe30brbLsFBi1iEv4ry0jMCMKq4mmivi7/b3L64xGsZKOkPPmkEAHHat79xNTWypb1CwQn20vgMnuezhqJLQI/i+57lyXJSa8wi/U7lCYmryiGeO6c8X6DilWOaMdR8lX13omnT9tfA1Us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4TQb4q61Pqz29kyQ;
-	Thu,  1 Feb 2024 18:39:39 +0800 (CST)
-Received: from dggpemd200004.china.huawei.com (unknown [7.185.36.141])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2D38C1400D4;
-	Thu,  1 Feb 2024 18:41:31 +0800 (CST)
-Received: from [10.174.179.24] (10.174.179.24) by
- dggpemd200004.china.huawei.com (7.185.36.141) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1258.28; Thu, 1 Feb 2024 18:41:30 +0800
-Subject: Re: [PATCH 2/2] mm/readahead: limit sync readahead while too many
- active refault
-To: Jan Kara <jack@suse.cz>
-References: <20240201100835.1626685-1-liushixin2@huawei.com>
- <20240201100835.1626685-3-liushixin2@huawei.com>
- <20240201093749.ll7uzgt7ixy7kkhw@quack3>
-CC: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
-	<brauner@kernel.org>, Matthew Wilcox <willy@infradead.org>, Andrew Morton
-	<akpm@linux-foundation.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
-From: Liu Shixin <liushixin2@huawei.com>
-Message-ID: <c768cab9-4ccb-9618-24a8-b51d3f141340@huawei.com>
-Date: Thu, 1 Feb 2024 18:41:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1706784113; c=relaxed/simple;
+	bh=G3PK4B/G7TI5S7RoTH00yBZOZBUAtwikxhzyCcmhOu8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ixf5+cBCa03E92GhtWjum3XGTFfyfiyJPuNyT8u7jAgQUSRNMbThV0CkeIYyaf2tdnsKmYKoeP3+V8JVs/dGtYAWn+EhkKHeAMooutOTxcPZz7/eakNE0btAmCTnQfzin7HOpWSLRASo4iwmFfuby0ZqEfXsqjlRVWJLMJQbRPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5U3JXfu; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-46b1f6c0aecso293013137.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Feb 2024 02:41:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706784111; x=1707388911; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G3PK4B/G7TI5S7RoTH00yBZOZBUAtwikxhzyCcmhOu8=;
+        b=d5U3JXfuDvj2XtDgnfYF8colbT6u+hWn4NglRT2+cVeWWRFVlaOdug+IzTGMdn7iE9
+         AtkYt18iXJwyZVab/IaZVMIEP3DUkE0TXdElDyE+9tAdEqMIhtukKc8y62KwQIUoMjif
+         wQfGv/d1f8JLVEbLDu523oqASm3YvcL4hPFiOqSZ/bO+XPjZ5BibutVgUWFh0INgqoUm
+         ez5PsXP2wT34Jlw1zXnJ4TqVeG16Pb0zUJEtP3EQ4sia8jJN/FU09Ugj5w0xuUeSZJ3H
+         ESlqByTuor+eTTP/8Bkcf9T586F1KRr5y9HUkwECqcsvRVgKRxeNgB+cppSoQx/MlkhV
+         vt5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706784111; x=1707388911;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G3PK4B/G7TI5S7RoTH00yBZOZBUAtwikxhzyCcmhOu8=;
+        b=XmwqHZ0wDKDGOW+eR2EsPeGZqSyWDWV+hhukuq26JsR71FqFWDib9kySKr7Q6MWxSX
+         QQihyvTZZ8EuV3cVPofHGA72lXkZtRTipsJD4Dhd1cfDZLzbqwjz1JtKGzYOQLjQcaCX
+         zwoBHheNudVnUJGirC2YByumytr4Uxd4S/Ow7wMqeS9Q9PL80xlIOCoieFZvgjsCtMIY
+         IiSK/SQ4/yEvvSmi3cYmqVkcKJZj6U3g7hjAXFZl5CHda4WkIEaEv0xKd3mTku4mf4Zn
+         iiPhCM8ZjbaALnQ31ZayHgNPZ98z2Or3YAoCCfJg815TNmP4aKSaGLupo5STakdFhiFQ
+         uOjQ==
+X-Gm-Message-State: AOJu0YwkLRZAymKjP/iqCO4eOtjjF+Qv7LKEjk0xK/pqN0ocF+56g8px
+	HcC2LrHDNwg7zm0/Gshiwyxz5WZwRgxRFV1KBI7lYp05/qP5XuZEQ7Dx6W9ypwHasJ+znqiM3uF
+	3Zmnw5jGuCA6aeI4zzk1iup/CgjU=
+X-Google-Smtp-Source: AGHT+IHHkFFWs3aQs6WxB5Uk8OGEbj+D06uFw1xoC1ouhA/luLUzVarK/RZ9vmp3unxAywcXakJCEA6yw7D/4I6E4Jg=
+X-Received: by 2002:a05:6102:22d1:b0:46b:74c8:5cb2 with SMTP id
+ a17-20020a05610222d100b0046b74c85cb2mr3865865vsh.31.1706784110802; Thu, 01
+ Feb 2024 02:41:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240201093749.ll7uzgt7ixy7kkhw@quack3>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemd200004.china.huawei.com (7.185.36.141)
+References: <20240131230827.207552-1-bschubert@ddn.com> <20240131230827.207552-5-bschubert@ddn.com>
+ <CAJfpeguF0ENfGJHYH5Q5o4gMZu96jjB4Ax4Q2+78DEP3jBrxCQ@mail.gmail.com>
+ <CAOQ4uxgv67njK9CvbUfdqF8WV_cFzrnaHdPB6-qiQuKNEDvvwA@mail.gmail.com> <CAJfpegupKaeLX_-G-DqR0afC1JsT21Akm6TeMK9Ugi6MBh3fMA@mail.gmail.com>
+In-Reply-To: <CAJfpegupKaeLX_-G-DqR0afC1JsT21Akm6TeMK9Ugi6MBh3fMA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 1 Feb 2024 12:41:39 +0200
+Message-ID: <CAOQ4uxiXEc-p7JY03RH2hJg7d+R1EtwGdBowTkOuaT9Ps_On8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] fuse: prepare for failing open response
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, dsingh@ddn.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 2024/2/1 17:37, Jan Kara wrote:
-> On Thu 01-02-24 18:08:35, Liu Shixin wrote:
->> When the pagefault is not for write and the refault distance is close,
->> the page will be activated directly. If there are too many such pages in
->> a file, that means the pages may be reclaimed immediately.
->> In such situation, there is no positive effect to read-ahead since it will
->> only waste IO. So collect the number of such pages and when the number is
->> too large, stop bothering with read-ahead for a while until it decreased
->> automatically.
->>
->> Define 'too large' as 10000 experientially, which can solves the problem
->> and does not affect by the occasional active refault.
->>
->> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
-> So I'm not convinced this new logic is needed. We already have
-> ra->mmap_miss which gets incremented when a page fault has to read the page
-> (and decremented when a page fault found the page already in cache). This
-> should already work to detect trashing as well, shouldn't it? If it does
-> not, why?
+On Thu, Feb 1, 2024 at 12:29=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
 >
-> 								Honza
-ra->mmap_miss doesn't help, it increased only one in do_sync_mmap_readahead()
-and then decreased one for every page in filemap_map_pages(). So in this scenario,
-it can't exceed MMAP_LOTSAMISS.
+> On Thu, 1 Feb 2024 at 11:16, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > I can look into it, but for now the fix to fuse_sync_release() is a sim=
+ple
+> > one liner, so I would rather limit the changes in this series.
+>
+> Not urgent, but it might be a good idea to add a cleanup patch as a
+> prep, which would make this patch just that one line less complex.
+>
+
+I will see if I can get something done quickly.
+
+> > Is fuse_finish_open() supposed to be called after clearing O_TRUNC
+> > in fuse_create_open()?
+>
+> This will invalidate size/modification time, which we've just updated
+> with the correct post open values.
+>
+> > I realize that this is what the code is doing in upstream, but it does =
+not
+> > look correct.
+>
+> I think it's correct, because it deals with the effect of
+> FUSE_OPEN/O_TRUNC on attributes that weren't refreshed in contrast to
+> fuse_create_open() where the attributes were refreshed.
+>
+
+I was considering splitting fuse_finish_open() to the first part that
+can fail and the "finally" part that deals with attributes, but seeing
+that this entire chunk of atomic_o_trunc code in fuse_finish_open()
+is never relevant to atomic_open(), I'd rather just move it out
+into fuse_open_common() which has loads of other code related to
+atomic_o_trunc anyway?
 
 Thanks,
->
->> ---
->>  include/linux/fs.h      |  2 ++
->>  include/linux/pagemap.h |  1 +
->>  mm/filemap.c            | 16 ++++++++++++++++
->>  mm/readahead.c          |  4 ++++
->>  4 files changed, 23 insertions(+)
->>
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index ed5966a704951..f2a1825442f5a 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -960,6 +960,7 @@ struct fown_struct {
->>   *      the first of these pages is accessed.
->>   * @ra_pages: Maximum size of a readahead request, copied from the bdi.
->>   * @mmap_miss: How many mmap accesses missed in the page cache.
->> + * @active_refault: Number of active page refault.
->>   * @prev_pos: The last byte in the most recent read request.
->>   *
->>   * When this structure is passed to ->readahead(), the "most recent"
->> @@ -971,6 +972,7 @@ struct file_ra_state {
->>  	unsigned int async_size;
->>  	unsigned int ra_pages;
->>  	unsigned int mmap_miss;
->> +	unsigned int active_refault;
->>  	loff_t prev_pos;
->>  };
->>  
->> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
->> index 2df35e65557d2..da9eaf985dec4 100644
->> --- a/include/linux/pagemap.h
->> +++ b/include/linux/pagemap.h
->> @@ -1256,6 +1256,7 @@ struct readahead_control {
->>  	pgoff_t _index;
->>  	unsigned int _nr_pages;
->>  	unsigned int _batch_count;
->> +	unsigned int _active_refault;
->>  	bool _workingset;
->>  	unsigned long _pflags;
->>  };
->> diff --git a/mm/filemap.c b/mm/filemap.c
->> index 750e779c23db7..4de80592ab270 100644
->> --- a/mm/filemap.c
->> +++ b/mm/filemap.c
->> @@ -3037,6 +3037,7 @@ loff_t mapping_seek_hole_data(struct address_space *mapping, loff_t start,
->>  
->>  #ifdef CONFIG_MMU
->>  #define MMAP_LOTSAMISS  (100)
->> +#define ACTIVE_REFAULT_LIMIT	(10000)
->>  /*
->>   * lock_folio_maybe_drop_mmap - lock the page, possibly dropping the mmap_lock
->>   * @vmf - the vm_fault for this fault.
->> @@ -3142,6 +3143,18 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->>  	if (mmap_miss > MMAP_LOTSAMISS)
->>  		return fpin;
->>  
->> +	ractl._active_refault = READ_ONCE(ra->active_refault);
->> +	if (ractl._active_refault)
->> +		WRITE_ONCE(ra->active_refault, --ractl._active_refault);
->> +
->> +	/*
->> +	 * If there are a lot of refault of active pages in this file,
->> +	 * that means the memory reclaim is ongoing. Stop bothering with
->> +	 * read-ahead since it will only waste IO.
->> +	 */
->> +	if (ractl._active_refault >= ACTIVE_REFAULT_LIMIT)
->> +		return fpin;
->> +
->>  	/*
->>  	 * mmap read-around
->>  	 */
->> @@ -3151,6 +3164,9 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->>  	ra->async_size = ra->ra_pages / 4;
->>  	ractl._index = ra->start;
->>  	page_cache_ra_order(&ractl, ra, 0);
->> +
->> +	WRITE_ONCE(ra->active_refault, ractl._active_refault);
->> +
->>  	return fpin;
->>  }
->>  
->> diff --git a/mm/readahead.c b/mm/readahead.c
->> index cc4abb67eb223..d79bb70a232c4 100644
->> --- a/mm/readahead.c
->> +++ b/mm/readahead.c
->> @@ -263,6 +263,10 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->>  			folio_set_readahead(folio);
->>  		ractl->_workingset |= folio_test_workingset(folio);
->>  		ractl->_nr_pages++;
->> +		if (unlikely(folio_test_workingset(folio)))
->> +			ractl->_active_refault++;
->> +		else if (unlikely(ractl->_active_refault))
->> +			ractl->_active_refault--;
->>  	}
->>  
->>  	/*
->> -- 
->> 2.25.1
->>
+Amir.
 
+> Thanks,
+> Miklos
 
