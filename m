@@ -1,91 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-9871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 042E7845921
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 14:43:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D5884593B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 14:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9762AB23E30
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 13:43:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3121BB24FC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 13:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B5C5CDEB;
-	Thu,  1 Feb 2024 13:43:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01BE5D496;
+	Thu,  1 Feb 2024 13:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KLJ43RXk"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZTZ1f+NB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F91853371;
-	Thu,  1 Feb 2024 13:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EB453389;
+	Thu,  1 Feb 2024 13:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706795016; cv=none; b=cdkhBKRO6IbXw4i1fNgdbpVcC3zpFXF0k6Umr8Ory7z/N9pzlIvxkO7JH1MMYN3Y3+kSenrmvxCJ1q35+U+3cr4vYLajYCKFc5sMbqxo2tKrloooLNeZvFJnI83nCTaIomUXJ7cs/yBBMCbz6PazuoJKKWuUwyoKBHlUXQdCuBI=
+	t=1706795235; cv=none; b=b7+JC38wI4UZTknPbC/H/V0FLhnIkz+1eTOlz/Tk4o+dxHWKACJUnxSq+N0igbnnpeKQWGXVJpmXi33y/q2F7OnM+8FvBRcFis/lUEmkdWBqAqbGIzCc6j0yaCahzDEWsdxsUn+mkKpLxT4Fkg3wGv6sSzc+rGkoy+HKYLi/zEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706795016; c=relaxed/simple;
-	bh=Wgnso4/LpiD/3Hi1OyMMyAOI8T7cc0RZG91HUuFQGA4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SNIOr+hOV28qyXOetwZ/z3bnIlCsO01Vd5nrVqLbB5u/HzS5TCq3QYOXjMqjkhXrANc/fivGNpX3O2kisHBgxzTnyRIfaGryOhdu85PtR3I2/DR10dSQOLr6vRUs8l/CZeZLxm/x1/xRUh4wd2NFpY+DSC+vbBlLEoTStJFOr08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KLJ43RXk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E093FC433C7;
-	Thu,  1 Feb 2024 13:43:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706795015;
-	bh=Wgnso4/LpiD/3Hi1OyMMyAOI8T7cc0RZG91HUuFQGA4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KLJ43RXkzT8IflcJVQSPZCz5Vq2rOdPq1+UrjWLHZNqpVbmwRtgDGz78n1jjPEwch
-	 lo3KeFZZ4V/LRXGw/DBIXO9NQgzqTkHY4AlGPsVJoj5l3EgMC274tYWSkGWXwNWwTP
-	 w7UdQI3UQHNA0bdGG/i+VuB1cNI0SetOLjOz52Vv0r3s9nhdH/Mh4/T/lxGyLHcMHv
-	 Dz7arFyHywzTkGKKwAg8hxRiSCR/t28D6EzBhR56oBthRkXHUOXdQX2fq+n0oiEbuj
-	 KyPbvVAtz8R3zntSbXnO+r8DrZkMZqhUunjXwOCSCCh97rC0R1yCR/iEYXyctJY8pF
-	 HEZcKXipEqcRQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Kunwu Chan <chentao@kylinos.cn>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz
-Subject: Re: [PATCH] mbcache: Simplify the allocation of slab caches
-Date: Thu,  1 Feb 2024 14:43:27 +0100
-Message-ID: <20240201-abgrenzen-zahlreich-4a517a1cf1ae@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240201093426.207932-1-chentao@kylinos.cn>
-References: <20240201093426.207932-1-chentao@kylinos.cn>
+	s=arc-20240116; t=1706795235; c=relaxed/simple;
+	bh=MicJ7RF+w26oTpS4mXGfMglg4DfFvf7LKePLvO1pSV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mM5NnNM2dOpTCyYPsUToxffCxjMcICQVPgZ/YJ5wDhC70KO2cKyJV9GD+dqBqFran1ItvDIgX4leYfBn4AnfOcrRWITsvP9B5ZeXYfIv+N9M2ATks0wPzuXScB2HMKxMWv25TZic6c6zRyykyIqxrRhGb76l8zVGABjH7MPTYC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZTZ1f+NB; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tYvzDfQFwKusRhTebIY0H6L6hobYf0zaXRaAkQ0RHv0=; b=ZTZ1f+NBXyhYPNqdhJlWo2ZOEI
+	R/PgLoYl3Eee9mq1bkdGmYgdsofoHdCGIMIHplMCeFEMN14Ee/o8MDdHGxDOo97AGNQ4KWkeOhSz8
+	Mc1liETjGH0RSzqfoTUWc18nQjpe8Eb/RA0YCjPwu09qbdoYEz90KpimVadd+QhkAXlZya91W96Sg
+	P9G1m2TeVnCaobr8RXj5qAXdU5idsx33NPYyaYEJDHXZil8IiYak8DSKGLSwabiXHpLsDj05/0KbJ
+	NjB9SMjRnQNle5b1DGFPL2d8rrRpyEfnetRXjcgalgNuhGyu8HR+hH4OpEiooAYv0AbUIKemBmACr
+	v31qxLJQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rVXPD-0000000FwiQ-2CYU;
+	Thu, 01 Feb 2024 13:47:03 +0000
+Date: Thu, 1 Feb 2024 13:47:03 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Liu Shixin <liushixin2@huawei.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 1/2] mm/readahead: stop readahead loop if memcg charge
+ fails
+Message-ID: <Zbug14NoOHFmfLst@casper.infradead.org>
+References: <20240201100835.1626685-1-liushixin2@huawei.com>
+ <20240201100835.1626685-2-liushixin2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=936; i=brauner@kernel.org; h=from:subject:message-id; bh=Wgnso4/LpiD/3Hi1OyMMyAOI8T7cc0RZG91HUuFQGA4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTuXsDwxIF3rqNaiPn6GrYduYWeu79OPFrIsoljqnPXN IWZ0xY96ChlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIA2aG/95x3tpvz+T6aLVn rDo0eW7z0mci5f77rs81XKHj55tzRYyRYe7nPU5v3J/56tTrBgd7dK9s2qHzcT+3es2GWXI6S7M L+QA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240201100835.1626685-2-liushixin2@huawei.com>
 
-On Thu, 01 Feb 2024 17:34:26 +0800, Kunwu Chan wrote:
-> Use the new KMEM_CACHE() macro instead of direct kmem_cache_create
-> to simplify the creation of SLAB caches.
+On Thu, Feb 01, 2024 at 06:08:34PM +0800, Liu Shixin wrote:
+> @@ -247,9 +248,12 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
+>  		folio = filemap_alloc_folio(gfp_mask, 0);
+>  		if (!folio)
+>  			break;
+> -		if (filemap_add_folio(mapping, folio, index + i,
+> -					gfp_mask) < 0) {
+> +
+> +		ret = filemap_add_folio(mapping, folio, index + i, gfp_mask);
+> +		if (ret < 0) {
+>  			folio_put(folio);
+> +			if (ret == -ENOMEM)
+> +				break;
+
+No, that's too early.  You've still got a batch of pages which were
+successfully added; you have to read them.  You were only off by one
+line though ;-)
+
+>  			read_pages(ractl);
+>  			ractl->_index++;
+>  			i = ractl->_index + ractl->_nr_pages - index - 1;
+> -- 
+> 2.25.1
 > 
 > 
-
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] mbcache: Simplify the allocation of slab caches
-      https://git.kernel.org/vfs/vfs/c/879fe799ad2b
 
