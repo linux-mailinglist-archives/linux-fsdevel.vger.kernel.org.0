@@ -1,169 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-9911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7076845EA7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 18:36:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18974845EAC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 18:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D7B428EB02
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 17:36:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C804428784C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 17:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46ECA63CA0;
-	Thu,  1 Feb 2024 17:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nY399TsQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RT/Q78Yj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nY399TsQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RT/Q78Yj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6537784047;
+	Thu,  1 Feb 2024 17:38:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0785C04A;
-	Thu,  1 Feb 2024 17:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B1A84024
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Feb 2024 17:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706808995; cv=none; b=Hf6K73UkW4d9m9V/vqRO+6lCNeQPfw5OcTgHhogBVjf3zOsuPI+28WCH7ZhnrWaXYrUsL3qAZnuwuTFnDYaIMaBN9o+d4IUxv7W4VkSvCk3xhe3nNpIA9kIxJTwa5RFURoxb92dPVonSmFJS0dqhBoqSQyiURjN8pAbzULMyx98=
+	t=1706809086; cv=none; b=Gl9YhWYZl6Kg4ZmBwVhrfGowA3K5XCp490zteEFgEkRuKbb6Rd262eQ39yXan5GQgH4v4W+wY87/715tAPRWQ+QtA6zR92ZvMHkNrd/FnBqBN8N85x+QZeEOzbNT41zEGL3oGIRK4BJetomI74icrwiKbLdinPTnoxg9BwaKgng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706808995; c=relaxed/simple;
-	bh=TBmGaKe0krDiygVUYxtlPNQ4KktkWuvWJWggeWjjYo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GbCx7nLQocxGgCpcvP1qb78ATDYnsvSB/5Ry5MZzAdvYmHfvDzG/tzEIXvh5ZBlP9x2NRqD/MI/sSQhmPe9GTH28PDEzRpBnkXde3ni3p8yN53+W51LT3D4HnQxfGeVZGofHUx1fLCwEsOHHh1yr7L9USb9j4E1rqPrGBJe8pTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nY399TsQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RT/Q78Yj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nY399TsQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RT/Q78Yj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 38E731FBF0;
-	Thu,  1 Feb 2024 17:36:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706808992; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jihreb443vt7QH9UloB81ix+EeA28Som6yjedwgNsXw=;
-	b=nY399TsQbZYg6Eye277HGPLHR5bngfIgDjWBq0V47Vy2sqLmgF13MTi37VwpOVA06ah1Lf
-	/o8n7BSe1dgZKAl82SdSwCjaxB3OQOB2v5iLzYQA5CQy6Xq4U4Q6kRYJ6Ey9AMXEAtMTFS
-	oXkxTrwOUsKlq5MpllbMJA+IdmSS3zI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706808992;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jihreb443vt7QH9UloB81ix+EeA28Som6yjedwgNsXw=;
-	b=RT/Q78YjpbrMkr8vBhVbumrldMjonPivcaxo+h+q7wUr3Sg/mX7AaDcmu/5X0vWviC+yRo
-	JQr+nQwwabV9yCCw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706808992; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jihreb443vt7QH9UloB81ix+EeA28Som6yjedwgNsXw=;
-	b=nY399TsQbZYg6Eye277HGPLHR5bngfIgDjWBq0V47Vy2sqLmgF13MTi37VwpOVA06ah1Lf
-	/o8n7BSe1dgZKAl82SdSwCjaxB3OQOB2v5iLzYQA5CQy6Xq4U4Q6kRYJ6Ey9AMXEAtMTFS
-	oXkxTrwOUsKlq5MpllbMJA+IdmSS3zI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706808992;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jihreb443vt7QH9UloB81ix+EeA28Som6yjedwgNsXw=;
-	b=RT/Q78YjpbrMkr8vBhVbumrldMjonPivcaxo+h+q7wUr3Sg/mX7AaDcmu/5X0vWviC+yRo
-	JQr+nQwwabV9yCCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E85D139AB;
-	Thu,  1 Feb 2024 17:36:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ylViC6DWu2W3JwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 01 Feb 2024 17:36:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B184BA0809; Thu,  1 Feb 2024 18:36:31 +0100 (CET)
-Date: Thu, 1 Feb 2024 18:36:31 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 31/34] block: use file->f_op to indicate restricted
- writes
-Message-ID: <20240201173631.pda5jvi573hevpil@quack3>
-References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
- <20240123-vfs-bdev-file-v2-31-adbd023e19cc@kernel.org>
- <20240201110858.on47ef4cmp23jhcv@quack3>
- <20240201-lauwarm-kurswechsel-75ed33e41ba2@brauner>
+	s=arc-20240116; t=1706809086; c=relaxed/simple;
+	bh=F6aEyGx8n2KD1Dc+SF07MuC9HJNGbCCubSaI49hxeTU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XVoJJuCMhhD/J+WAyxuaPwEuIjW2OoGy7ogmCSI3/Rv329ffrUgv78UVDF5qIQVuFd/was416WrNh47h7JdPmQ2mbkK5+LNT8fVEhGVp3z20YtHDOoo0SqZVocKqcQf5VMjGyZ38cGveRdm6BQVvbFgwfREpCCa02VsWW5QzOJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-53fbf2c42bfso963165a12.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Feb 2024 09:38:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706809084; x=1707413884;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0gw83YyakVHHUi2A5N9A7N9A49UYycmoToICzHtmT4o=;
+        b=I8BxEdR0I33F3jtQXA3XyLO/mdGTSMHkHmJAvhCXm7wkPEXk2Fm7FShONCwaa9nPsX
+         rN65QRYbQuHc6vD3qax8TzR6rodFs8PK3T5YzRD6K+e67pn2ao+dBJ9B20wh1dCOtuJY
+         gvaVDZPEcvmGY3LrsHdHDX1OqUVvk034gyn4+N1DjQ121Hqu9yNsM1yl886umtyy/IPc
+         4hkQvg2+nAZBIXTYrpA3g7VH+nR+1AM3iWJebbI3vrJ6OOA31fsckQHRe6VnEUftOoPJ
+         CmYEkiVZBbDB+dlPAYBDjP0EZ7YFtM9i/1L3vqymO/zJ71H/BHbyMDyG5HU5KT0/h9gb
+         J+gg==
+X-Gm-Message-State: AOJu0Yxzf9Tq1o0mtUaiaidgTREBeWELRpQvn1+52YJq9+Y4PhL205iD
+	Fh4iRijPUw6crqyfH3pV2FRd90RYYNoXw1g5w9ZEMLA5B7V9p2bi
+X-Google-Smtp-Source: AGHT+IELnjmzwRGy9RhratFzwYzzql1bfvD+AZLk+FDhP7YT5eSpgHFfpmZV/fljE+Ym/HpRleSQFQ==
+X-Received: by 2002:a05:6a21:3984:b0:19e:4816:e71a with SMTP id ad4-20020a056a21398400b0019e4816e71amr1464965pzc.27.1706809083920;
+        Thu, 01 Feb 2024 09:38:03 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCXMiBB7pw4sQLlt9cMv+cvmShsgApSOhCrj4f/X8ZpKVHPI+W/xuOxNdGLYxXyZ9CcnKN6zwC6nfuO68m8zm1kwduqJ975K16A7RYJmNh7a/FLiUqkM/IgGXgGZKgI4rV0P3VZG8eH0DF3LvIcKdsuNRJLTVRuvEMjWIlz/kr9fcveOKSCTDMv3HEokeMmSu5PS5y0dbxF6+5137w5NywDIABtSrAeIg4hiyg2Fr8uIQlgs6B/1NmyhZnqJOB8S4zIxdvxdRQUEANY3q4S14Osmv7BwLV73pacUTlq6HNZrjI0IgEBUEah0W5lQdIdnbd6dKU100A0=
+Received: from ?IPV6:2620:0:1000:8411:170e:a1a5:1887:adb2? ([2620:0:1000:8411:170e:a1a5:1887:adb2])
+        by smtp.gmail.com with ESMTPSA id i17-20020aa78b51000000b006d98ae070c3sm2548pfd.135.2024.02.01.09.38.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Feb 2024 09:38:03 -0800 (PST)
+Message-ID: <ab80ec3c-db9c-439e-8476-e4404574dfed@acm.org>
+Date: Thu, 1 Feb 2024 09:38:02 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240201-lauwarm-kurswechsel-75ed33e41ba2@brauner>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [0.29 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_SEVEN(0.00)[7];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.11)[66.33%]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: 0.29
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/6] fs: Split fcntl_rw_hint()
+Content-Language: en-US
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>,
+ Kanchan Joshi <joshi.k@samsung.com>, Jeff Layton <jlayton@kernel.org>,
+ Chuck Lever <chuck.lever@oracle.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+References: <20240131205237.3540210-1-bvanassche@acm.org>
+ <20240131205237.3540210-4-bvanassche@acm.org>
+ <Zbq2e7e8Ba1Df6O7@dread.disaster.area>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <Zbq2e7e8Ba1Df6O7@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu 01-02-24 17:16:02, Christian Brauner wrote:
-> On Thu, Feb 01, 2024 at 12:08:58PM +0100, Jan Kara wrote:
-> > On Tue 23-01-24 14:26:48, Christian Brauner wrote:
-> > > Make it possible to detected a block device that was opened with
-> > > restricted write access solely based on its file operations that it was
-> > > opened with. This avoids wasting an FMODE_* flag.
-> > > 
-> > > def_blk_fops isn't needed to check whether something is a block device
-> > > checking the inode type is enough for that. And def_blk_fops_restricted
-> > > can be kept private to the block layer.
-> > > 
-> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > 
-> > I don't think we need def_blk_fops_restricted. If we have BLK_OPEN_WRITE
-> > file against a bdev with bdev_writes_blocked() == true, we are sure this is
-> > the handle blocking other writes so we can unblock them in
-> > bdev_yield_write_access()...
+On 1/31/24 13:07, Dave Chinner wrote:
+> On Wed, Jan 31, 2024 at 12:52:34PM -0800, Bart Van Assche wrote:
+>> +	inode_lock(inode);
+>> +	inode->i_write_hint = hint;
+>> +	inode_unlock(inode);
+> 
+> What is this locking serialising against? The inode may or may not
+> be locked when we access this in IO path, so why isn't this just
+> WRITE_ONCE() here and READ_ONCE() in the IO paths?
 
-...
+How about using WRITE_ONCE()/READ_ONCE() in the fcntl implementations and
+regular reads in the I/O paths? Using F_SET_RW_HINT while I/O is ongoing
+is racy - there are no guarantees about how F_SET_RW_HINT will affect I/O
+that has already been submitted. Hence, I think that it is acceptable to
+use regular reads for i_write_hint in the I/O paths.
 
-> -       if (mode & BLK_OPEN_RESTRICT_WRITES)
-> +       if (mode & BLK_OPEN_WRITE) {
-> +               if (bdev_writes_blocked(bdev))
-> +                       bdev_unblock_writes(bdev);
-> +               else
-> +                       bdev->bd_writers--;
-> +       }
-> +       if (bdev_file->f_op == &def_blk_fops_restricted)
+Thanks,
 
-Uh, why are you leaving def_blk_fops_restricted check here? I'd expect you
-can delete def_blk_fops_restricted completely...
+Bart.
 
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
