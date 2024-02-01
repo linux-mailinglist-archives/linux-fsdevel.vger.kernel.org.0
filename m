@@ -1,256 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-9799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E2A844FC8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 04:31:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3520E845008
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 05:05:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F272AB2C583
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 03:31:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9557EB214B0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 04:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C581A3AC08;
-	Thu,  1 Feb 2024 03:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738BD3B7A8;
+	Thu,  1 Feb 2024 04:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QnUrcKvy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="inOwgJO1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8373A8E3;
-	Thu,  1 Feb 2024 03:31:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5033B197;
+	Thu,  1 Feb 2024 04:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706758285; cv=none; b=Cx1ZpRF3h3lmKdD8IZCSWGXFFohKgFy5N7ASkZ25+FSEeh0Hg1kr0Cx3/2EzUZQD1820C+ehP1u6oPMaPz3plOYb/7aDU/zjsde+dv86KPWJTbSAByi9hdfadaWr5szaSp0vtxToM0WMwU0lHVkGEeDDFIkBcC6yJ1Igffpi+y4=
+	t=1706760338; cv=none; b=e06EUisOP7FSUe2EC83LRebdEXXkFeWt+cGu3xqquKI1vsjzbo4L5JhZAGON4BozyLP02YHt53PBxUzEcta1cgiqVr5U4osKXWXAf8KF4MAVvTBZHiXiXzkW388kzgH5hAV1CaXcYArAS0MzI+seULLnP5jAiXPk4hm/9FjMRuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706758285; c=relaxed/simple;
-	bh=F+jUlRtNHrP0LewC79ckokmwI/v54HAeYJWfQyggfA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IpRE7ak7mCt7qifRPTMV5e9jAL++vBZi+97Jddr2xhSBYnvXLHhHK6IGjjZlj8mjfdr8u5nnDZObuJV+DlBfAxLOXAonHB7fhRR5sm4sjqghHU2R9Qq4XALWNHMKBQeXBuqFt5vE8ZYE71ap4wq2tRv6ueVnsrDjpBpLRqfVTv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QnUrcKvy; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1706758283; x=1738294283;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=F+jUlRtNHrP0LewC79ckokmwI/v54HAeYJWfQyggfA8=;
-  b=QnUrcKvyLC+MjC01CDYA5TvDbl/YyqpprbsfNKiywVKU9WNt/63oq074
-   Ji3gnoqUuh5VTjQxza1kroUPT3lsXGyqhYmJeIeDyfYAgbA5D+32ALYQb
-   6Hp9Xdfy+Xw9f8MU1lxZl8oP9spbvjn9gVW6/SyRb7KfhePWd9FddTh+w
-   SmOag7B6Vhy2cLi195LMmI9OREg/KrRgb0GKci68kYXqGVLyw5BOzszz0
-   cFRkavgj+/qtxVenGIVSnruQOmr5RyOYEE2U/ff8IHRa0EPErd2755lW8
-   tnvGV6kfFXUM7uBY/UWepLdZxd3BGIbmQpZi+Ofjo6rfqY5ar2nFShrA2
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10969"; a="10897727"
-X-IronPort-AV: E=Sophos;i="6.05,234,1701158400"; 
-   d="scan'208";a="10897727"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2024 19:31:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6600,9927,10969"; a="788824084"
-X-IronPort-AV: E=Sophos;i="6.05,234,1701158400"; 
-   d="scan'208";a="788824084"
-Received: from lkp-server02.sh.intel.com (HELO 59f4f4cd5935) ([10.239.97.151])
-  by orsmga002.jf.intel.com with ESMTP; 31 Jan 2024 19:31:19 -0800
-Received: from kbuild by 59f4f4cd5935 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rVNnI-0002KK-2D;
-	Thu, 01 Feb 2024 03:31:16 +0000
-Date: Thu, 1 Feb 2024 11:30:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Brauner <brauner@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: oe-kbuild-all@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH DRAFT 3/4] : hwlat: port struct file_operations
- thread_mode_fops to struct kernfs_ops
-Message-ID: <202402011108.V2Y9QaTk-lkp@intel.com>
-References: <20240131-tracefs-kernfs-v1-3-f20e2e9a8d61@kernel.org>
+	s=arc-20240116; t=1706760338; c=relaxed/simple;
+	bh=JEgdm4dXi+L1DQzTB3h/avDvAmCbRi6xV/Fe7blQnM0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r0DvMm4PrvLlYQd6PIe99gL030idgASLz1ioljN4kyxsvvrolbG0PB4FDu8ChzCRwkGnzSREL2VZwaMJ4pza+cRpSAdHn7ebkJN6VSnuHUD9+Qqr8P+1ssRcvvGBea/0FrHF4t5CduDmyD1OPC8i8G1c1cQDOyd48mYhs07l5w4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=inOwgJO1; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5113000a426so123360e87.2;
+        Wed, 31 Jan 2024 20:05:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1706760335; x=1707365135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rVtZzGrAZ7Rvq/x504vQLLiqx/E0QPJtNjyDBer37qU=;
+        b=inOwgJO1klhdL9TwB5BnVudeeJjDIIzKOdrSnBjwTANvTzLvHWNsIrMnkGJZAWdQf4
+         O7gnXG6qxAzD6iZcITQNn06BLPSjsXnWvbI74OiZNM2XjZG2IBSH6nKmXimGn9Xue4/O
+         TpWsbFujOC57j71E26ccBR2+Y6UyKVj9n616zPfxeW2LKVieYUgJ7TRzDRE3byrJHHpb
+         /w2DlHWs3jfZcTEHGtCwo7cyb30Q0A8w5UeX2+4OTFfkm2IPC2aOJYY207PTO7+9tDq+
+         HSgCQo0o6xgNUcCf+5g6SNi7K2mpCcAx9aal+GQ7ev8GPQVcodwxgI7jQ6oLmT84PhGE
+         9goQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706760335; x=1707365135;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rVtZzGrAZ7Rvq/x504vQLLiqx/E0QPJtNjyDBer37qU=;
+        b=d10cw77yq9F+JzI5MDBdmR8H4+YfVgYUNl6E9bu65ze+iaPUnSWBYZEOi/3eJN7IEM
+         ZzFKmmCAaK9P8SSIgyQkzVxiG/9y1XavPq/TqE5h9Aku7FHhAhBSAK5BZtaEMTtccuAg
+         vbuvaLAfx3MQEfiUfEeeOrjs4oejf4S7B4wylPBXxhv1OGRsVCOIhFGa8KgYxTQyA5Rr
+         VmGMF44I2ru+LWNbmJUP1PsGWia2R3jI/8WjGzPc4eP5QvNyss/HQ1xE+Ws9669+UCXI
+         yiZyPsUtrRRHKpDV0yGbxa5DErNvCk2iNzp5TQaE1rAbdacbIE15B9T2CGUgUjbWrVlZ
+         fO5Q==
+X-Gm-Message-State: AOJu0YyGPC1gX4rbwssuj7Us7yyy0HGuTLeu4f7eyhIkFzboKJCV20Ax
+	I/4mB9qpxGm4Qle6m4PF9ohaaN1wf9CVaQuSIjOo3DAwIHbK75aqusYOmblhGsQwD6VoqytpdWb
+	xVWrdKZ65adK7FtuqldpiVbjaPRc=
+X-Google-Smtp-Source: AGHT+IHpnc3L5drGX+KAL4BK4m0LBZFIPEWSaWzqj8aEDtJJKuyCfdXo2Mh+7dQM3JkU4FRcmq161BRCmppHxt3f2KY=
+X-Received: by 2002:ac2:4550:0:b0:50e:d1f9:ebe0 with SMTP id
+ j16-20020ac24550000000b0050ed1f9ebe0mr1110331lfm.2.1706760334966; Wed, 31 Jan
+ 2024 20:05:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240131-tracefs-kernfs-v1-3-f20e2e9a8d61@kernel.org>
+References: <20240131105912.3849767-1-zhaoyang.huang@unisoc.com>
+ <ZbpJqYvkoGM7fvbC@casper.infradead.org> <CAGWkznGLt-T1S7_BM8-2eLhxVYktYYLmdfMbRKRK88Ami-mEdg@mail.gmail.com>
+In-Reply-To: <CAGWkznGLt-T1S7_BM8-2eLhxVYktYYLmdfMbRKRK88Ami-mEdg@mail.gmail.com>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Thu, 1 Feb 2024 12:05:23 +0800
+Message-ID: <CAGWkznEv=A1AOe=xGWvNnaUq2eAfrHy2TQFyScNyu9rqQ+Q6xA@mail.gmail.com>
+Subject: Re: [PATCHv6 1/1] block: introduce content activity based ioprio
+To: Matthew Wilcox <willy@infradead.org>
+Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jens Axboe <axboe@kernel.dk>, Yu Zhao <yuzhao@google.com>, Damien Le Moal <dlemoal@kernel.org>, 
+	Niklas Cassel <niklas.cassel@wdc.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, 
+	Hannes Reinecke <hare@suse.de>, Linus Walleij <linus.walleij@linaro.org>, linux-mm@kvack.org, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, steve.kang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Christian,
+On Thu, Feb 1, 2024 at 10:39=E2=80=AFAM Zhaoyang Huang <huangzhaoyang@gmail=
+.com> wrote:
+>
+> On Wed, Jan 31, 2024 at 9:23=E2=80=AFPM Matthew Wilcox <willy@infradead.o=
+rg> wrote:
+> >
+> > On Wed, Jan 31, 2024 at 06:59:12PM +0800, zhaoyang.huang wrote:
+> > > change of v6: replace the macro of bio_add_xxx by submit_bio which
+> > >               iterating the bio_vec before launching bio to block lay=
+er
+> >
+> > Still wrong.
+> I did some research on bio operations in the system and state my
+> understanding here. I would like to have you review it and give me
+> more details of the fault. thanks
+>
+> 1. REQ_OP_ZONE_xxx
+> a. These operations are from driver/block layer/fs where we can keep
+> driver/block layer using the legacy submit_bio by not including
+> act_prio.h.
+> b. most of fs's REQ_OP_ZONE_xxx will be handled by blkdev_zone_mgmt
+> which is the same as 'a'
+> c. __submit_zone_reset_cmd within f2fs use no page for REQ_OP_ZONE_RESET
+>
+> 2. other REQ_OP_<none>_READ/WRITE except REQ_OP_ZONE_xxx
+> These operations all comes from driver and block layer as same as 1.a
+>
+> 3. direct_io
+> keep fs/direct-io.c and fs/iomap/direct-io.c using legacy submit_bio
+>
+> 4. metadata, dentry
+> Are these data also file pages?
+>
+> 5. normal REQ_OP_READ/WRITE/SYNC
+> fs choose to use act based submit_bio by including act_ioprio.h in
+> corresponding c file
 
-kernel test robot noticed the following build errors:
+OR could I restrict the change by judging bio_op as below
 
-[auto build test ERROR on 41bccc98fb7931d63d03f326a746ac4d429c1dd3]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Brauner/tracefs-port-to-kernfs/20240131-214120
-base:   41bccc98fb7931d63d03f326a746ac4d429c1dd3
-patch link:    https://lore.kernel.org/r/20240131-tracefs-kernfs-v1-3-f20e2e9a8d61%40kernel.org
-patch subject: [PATCH DRAFT 3/4] : hwlat: port struct file_operations thread_mode_fops to struct kernfs_ops
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20240201/202402011108.V2Y9QaTk-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240201/202402011108.V2Y9QaTk-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202402011108.V2Y9QaTk-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   kernel/trace/trace_hwlat.c: In function 'hwlat_mode_write':
-   kernel/trace/trace_hwlat.c:672:14: error: 'buf' redeclared as different kind of symbol
-     672 |         char buf[64];
-         |              ^~~
-   kernel/trace/trace_hwlat.c:667:68: note: previous definition of 'buf' with type 'char *'
-     667 | static ssize_t hwlat_mode_write(struct kernfs_open_file *of, char *buf,
-         |                                                              ~~~~~~^~~
-   kernel/trace/trace_hwlat.c:672:14: warning: unused variable 'buf' [-Wunused-variable]
-     672 |         char buf[64];
-         |              ^~~
-   kernel/trace/trace_hwlat.c: At top level:
-   kernel/trace/trace_hwlat.c:736:10: error: 'const struct kernfs_ops' has no member named 'start'
-     736 |         .start                  = s_mode_start,
-         |          ^~~~~
-   kernel/trace/trace_hwlat.c:736:9: warning: the address of 's_mode_start' will always evaluate as 'true' [-Waddress]
-     736 |         .start                  = s_mode_start,
-         |         ^
-   kernel/trace/trace_hwlat.c:737:10: error: 'const struct kernfs_ops' has no member named 'next'
-     737 |         .next                   = s_mode_next,
-         |          ^~~~
->> kernel/trace/trace_hwlat.c:737:35: error: initialization of 'ssize_t (*)(struct kernfs_open_file *, char *, size_t,  loff_t)' {aka 'long int (*)(struct kernfs_open_file *, char *, long unsigned int,  long long int)'} from incompatible pointer type 'void * (*)(struct seq_file *, void *, loff_t *)' {aka 'void * (*)(struct seq_file *, void *, long long int *)'} [-Werror=incompatible-pointer-types]
-     737 |         .next                   = s_mode_next,
-         |                                   ^~~~~~~~~~~
-   kernel/trace/trace_hwlat.c:737:35: note: (near initialization for 'thread_mode_fops.write')
-   kernel/trace/trace_hwlat.c:738:10: error: 'const struct kernfs_ops' has no member named 'show'
-     738 |         .show                   = s_mode_show,
-         |          ^~~~
-   kernel/trace/trace_hwlat.c:738:35: error: initialization of '__poll_t (*)(struct kernfs_open_file *, struct poll_table_struct *)' {aka 'unsigned int (*)(struct kernfs_open_file *, struct poll_table_struct *)'} from incompatible pointer type 'int (*)(struct seq_file *, void *)' [-Werror=incompatible-pointer-types]
-     738 |         .show                   = s_mode_show,
-         |                                   ^~~~~~~~~~~
-   kernel/trace/trace_hwlat.c:738:35: note: (near initialization for 'thread_mode_fops.poll')
-   kernel/trace/trace_hwlat.c:739:10: error: 'const struct kernfs_ops' has no member named 'stop'
-     739 |         .stop                   = s_mode_stop,
-         |          ^~~~
-   kernel/trace/trace_hwlat.c:739:35: error: initialization of 'int (*)(struct kernfs_open_file *, struct vm_area_struct *)' from incompatible pointer type 'void (*)(struct seq_file *, void *)' [-Werror=incompatible-pointer-types]
-     739 |         .stop                   = s_mode_stop,
-         |                                   ^~~~~~~~~~~
-   kernel/trace/trace_hwlat.c:739:35: note: (near initialization for 'thread_mode_fops.mmap')
-   kernel/trace/trace_hwlat.c:740:35: warning: initialized field overwritten [-Woverride-init]
-     740 |         .write                  = hwlat_mode_write,
-         |                                   ^~~~~~~~~~~~~~~~
-   kernel/trace/trace_hwlat.c:740:35: note: (near initialization for 'thread_mode_fops.write')
-   kernel/trace/trace_hwlat.c: In function 'init_tracefs':
-   kernel/trace/trace_hwlat.c:766:51: error: passing argument 5 of 'tracefs_create_file' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     766 |                                                   &trace_min_max_fops);
-         |                                                   ^~~~~~~~~~~~~~~~~~~
-         |                                                   |
-         |                                                   const struct file_operations *
-   In file included from kernel/trace/trace_hwlat.c:41:
-   include/linux/tracefs.h:94:66: note: expected 'const struct kernfs_ops *' but argument is of type 'const struct file_operations *'
-      94 |                                         const struct kernfs_ops *ops);
-         |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~^~~
-   kernel/trace/trace_hwlat.c:773:50: error: passing argument 5 of 'tracefs_create_file' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     773 |                                                  &trace_min_max_fops);
-         |                                                  ^~~~~~~~~~~~~~~~~~~
-         |                                                  |
-         |                                                  const struct file_operations *
-   include/linux/tracefs.h:94:66: note: expected 'const struct kernfs_ops *' but argument is of type 'const struct file_operations *'
-      94 |                                         const struct kernfs_ops *ops);
-         |                                         ~~~~~~~~~~~~~~~~~~~~~~~~~^~~
-   kernel/trace/trace_hwlat.c:778:47: error: passing argument 3 of 'trace_create_file' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     778 |                                               top_dir,
-         |                                               ^~~~~~~
-         |                                               |
-         |                                               struct kernfs_node *
-   In file included from kernel/trace/trace_hwlat.c:46:
-   kernel/trace/trace.h:629:49: note: expected 'struct dentry *' but argument is of type 'struct kernfs_node *'
-     629 |                                  struct dentry *parent,
-         |                                  ~~~~~~~~~~~~~~~^~~~~~
-   kernel/trace/trace_hwlat.c:780:47: error: passing argument 5 of 'trace_create_file' from incompatible pointer type [-Werror=incompatible-pointer-types]
-     780 |                                               &thread_mode_fops);
-         |                                               ^~~~~~~~~~~~~~~~~
-         |                                               |
-         |                                               const struct kernfs_ops *
-   kernel/trace/trace.h:631:64: note: expected 'const struct file_operations *' but argument is of type 'const struct kernfs_ops *'
-     631 |                                  const struct file_operations *fops);
-         |                                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~
-   kernel/trace/trace_hwlat.c:777:27: error: assignment to 'struct kernfs_node *' from incompatible pointer type 'struct dentry *' [-Werror=incompatible-pointer-types]
-     777 |         hwlat_thread_mode = trace_create_file("mode", TRACE_MODE_WRITE,
-         |                           ^
-   cc1: some warnings being treated as errors
-
-
-vim +737 kernel/trace/trace_hwlat.c
-
-   733	
-   734	static const struct kernfs_ops thread_mode_fops = {
-   735		.atomic_write_len	= PAGE_SIZE,
-   736		.start			= s_mode_start,
- > 737		.next			= s_mode_next,
-   738		.show			= s_mode_show,
-   739		.stop			= s_mode_stop,
-   740		.write			= hwlat_mode_write,
-   741	};
-   742	/**
-   743	 * init_tracefs - A function to initialize the tracefs interface files
-   744	 *
-   745	 * This function creates entries in tracefs for "hwlat_detector".
-   746	 * It creates the hwlat_detector directory in the tracing directory,
-   747	 * and within that directory is the count, width and window files to
-   748	 * change and view those values.
-   749	 */
-   750	static int init_tracefs(void)
-   751	{
-   752		int ret;
-   753		struct kernfs_node *top_dir;
-   754	
-   755		ret = tracing_init_dentry();
-   756		if (ret)
-   757			return -ENOMEM;
-   758	
-   759		top_dir = tracefs_create_dir("hwlat_detector", NULL);
-   760		if (!top_dir)
-   761			return -ENOMEM;
-   762	
-   763		hwlat_sample_window = tracefs_create_file("window", TRACE_MODE_WRITE,
-   764							  top_dir,
-   765							  &hwlat_window,
-   766							  &trace_min_max_fops);
-   767		if (!hwlat_sample_window)
-   768			goto err;
-   769	
-   770		hwlat_sample_width = tracefs_create_file("width", TRACE_MODE_WRITE,
-   771							 top_dir,
-   772							 &hwlat_width,
-   773							 &trace_min_max_fops);
-   774		if (!hwlat_sample_width)
-   775			goto err;
-   776	
-   777		hwlat_thread_mode = trace_create_file("mode", TRACE_MODE_WRITE,
-   778						      top_dir,
-   779						      NULL,
-   780						      &thread_mode_fops);
-   781		if (!hwlat_thread_mode)
-   782			goto err;
-   783	
-   784		return 0;
-   785	
-   786	 err:
-   787		tracefs_remove(top_dir);
-   788		return -ENOMEM;
-   789	}
-   790	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
++ if (bio_op(bio) =3D=3D REQ_OP_READ || bio_op(bio) =3D=3D REQ_OP_WRITE)
++ {
+       class =3D IOPRIO_PRIO_CLASS(bio->bi_ioprio);
+       level =3D IOPRIO_PRIO_LEVEL(bio->bi_ioprio);
+       hint =3D IOPRIO_PRIO_HINT(bio->bi_ioprio);
+       bio_for_each_bvec(bv, bio, iter) {
+               page =3D bv.bv_page;
+               activity +=3D PageWorkingset(page) ? 1 : 0;
+               cnt++;
+       }
+       if (activity >=3D cnt / 2)
+               class =3D IOPRIO_CLASS_RT;
+       else if (activity >=3D cnt / 4)
+               class =3D max(IOPRIO_PRIO_CLASS(get_current_ioprio()),
+IOPRIO_CLASS_BE);
+       bio->bi_ioprio =3D IOPRIO_PRIO_VALUE_HINT(class, level, hint);
++ }
+       submit_bio(bio);
 
