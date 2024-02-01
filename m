@@ -1,145 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-9836-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCAC7845485
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:48:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542D7845488
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:48:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53F711F23AFB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:48:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA57F28DA69
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C374DA19;
-	Thu,  1 Feb 2024 09:48:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32C44DA0F;
+	Thu,  1 Feb 2024 09:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="hZBUumxT"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tZEk2L4Y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pz+l2eYM";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tZEk2L4Y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pz+l2eYM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03B34DA0F;
-	Thu,  1 Feb 2024 09:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A1815B964;
+	Thu,  1 Feb 2024 09:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706780903; cv=none; b=rJkc5rBy+/HlLd9IX7oXL9N815ngo+aMlFHYBook9PaKpm50i2zJdzXSN/lDiP5yWovXe2BurYpjRZVgu+AG8z2HHTFVrnkomRuvWb7TSA0tI3xUJrp5LMo7tDhmVfdoIm36mmYeo4x09RvB1yNoJhTd4ah4qctG5eWIKDU0LNE=
+	t=1706780911; cv=none; b=kFanDJ+sb+ug+pXp75lDierJhPfGsXKx+DOne8zumRyFbyqasE1TPWVSRe+NdOvOexzvVqZLulKhfJ7c6RmjKLk7wYfSm1rnV70+mv/C7o23/xWl/tLY0tNi1dNaVckAjbrc6lk/3U0x/z04DRDW7GfY/eM2d44SCb5zBg/XZog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706780903; c=relaxed/simple;
-	bh=DFghu3f7HzjWGNU0gxtFRoAFiQOsk60yFRXN1PiuSDc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=O1mfaf+P7csrtdDSH0+q2Iwwq+drFoxFcksSpcDYHSNmB62w+rfw3pGNGjk4khv3qQyU7IK/VpcWiA7hyVX4/GsOFFzkrC+wIJchbmwhuGyk5dYNYPYAWo7yow/lyyVHYphQ/JozOp8Rm74QMvAbB1pKEg4Gz3NusMvXr1vdmRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=hZBUumxT; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1706780899; x=1707040099;
-	bh=u9SphSZbc1p3zFepTcmXSK/skYC+oxXB4G+fAJ9cZrc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=hZBUumxT1k1hPWHmwKu0MEgn4637WMREmAeVkuIACG2wyUGcYQ9lIz6YKVAZnbrAy
-	 zyy+V4ptGI5LVJLEBmyxgXmL717veco5j9gps8uyl1XA5zBj0Hui5ia9GgTSAr0ihV
-	 CZlO501Jq4m4HCDKAtWFGooBi74TcEamWTMWxCMhLRThPjBR3LgXfzM2cOlWRCJ7gU
-	 0WPnhosSSifYK6bgOcKZaI8GGDLJP1zWSy7dDbZq3niqquJLVB+rPHlMkGQr7mZGi9
-	 bftKAjif2hvoXE1k4/jYksQ5xfh46qdmUI6etEnBRgv6pQogza2FyylV2w3KbCwcPX
-	 zV/3t+cNbiK6g==
-Date: Thu, 01 Feb 2024 09:48:04 +0000
-To: Alice Ryhl <aliceryhl@google.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 1/9] rust: file: add Rust abstraction for `struct file`
-Message-ID: <038748e0-22ce-4455-ba08-e8ae30e357df@proton.me>
-In-Reply-To: <CAH5fLghQAn5JYeeG0MDO-acwQHdX7CTkr_-5SzGOzrdFs2SfNw@mail.gmail.com>
-References: <20240118-alice-file-v3-0-9694b6f9580c@google.com> <20240118-alice-file-v3-1-9694b6f9580c@google.com> <5dbbaba2-fd7f-4734-9f44-15d2a09b4216@proton.me> <CAH5fLghgc_z23dOR2L5vnPhVmhiKqZxR6jin9KCA5e_ii4BL3w@mail.gmail.com> <84850d04-c1cb-460d-bc4e-d5032489da0d@proton.me> <CAH5fLgioyr7NsX+-VSwbpQZtm2u9gFmSF8URHGzdSWEruRRrSQ@mail.gmail.com> <38afc0bb-8874-4847-9b44-ea929880a9ba@proton.me> <CAH5fLghQAn5JYeeG0MDO-acwQHdX7CTkr_-5SzGOzrdFs2SfNw@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
+	s=arc-20240116; t=1706780911; c=relaxed/simple;
+	bh=tDMbD4PMdT6UfagN+yuhScX9TjAkhJ0rsI9jzZvDz7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EOcGgIM3wRPJA7DODG23g5RW/BX2jsuauyK82crkXw51hPJ/0n3yY1YTdKwQxFJfFQvU78V0iKiIEz0MLoA7ncUFNaaEgSTkKNJ364Feyu+MtQVAoc+rildA53Awdewr8nwsq6AazjznBqaBEk6qzOw7gzSTaldp+0D7VyqtUJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tZEk2L4Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pz+l2eYM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tZEk2L4Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pz+l2eYM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id ADDF8221BF;
+	Thu,  1 Feb 2024 09:48:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706780907; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WsOhp/Yk2JKBhL5ykqAu+mt9pPTg6uW9cuDlpV1B14I=;
+	b=tZEk2L4YVIh0pB+mUPcPNiX/roDCMlZtuw7N3LpOa3Tn8X2bMo8yBqPlYO5eFmGpNEbXyB
+	4kLuV0N9sxnws/BToK4p6xW/YCr/8eTzJoXtZt0OgsKnfUjoTic/QkY8PjPoyBTa8y11PX
+	UFjzWF38qu4PbF2z+5aqxEp4g+HXVvs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706780907;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WsOhp/Yk2JKBhL5ykqAu+mt9pPTg6uW9cuDlpV1B14I=;
+	b=pz+l2eYMi+MPX37VKCmyxDJwvWEfC2+OwPEviZtSuWMpHZWb+H0PdHlVwQjQluL1wQpzuK
+	EucJ7GdR8SPAI7Dg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706780907; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WsOhp/Yk2JKBhL5ykqAu+mt9pPTg6uW9cuDlpV1B14I=;
+	b=tZEk2L4YVIh0pB+mUPcPNiX/roDCMlZtuw7N3LpOa3Tn8X2bMo8yBqPlYO5eFmGpNEbXyB
+	4kLuV0N9sxnws/BToK4p6xW/YCr/8eTzJoXtZt0OgsKnfUjoTic/QkY8PjPoyBTa8y11PX
+	UFjzWF38qu4PbF2z+5aqxEp4g+HXVvs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706780907;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WsOhp/Yk2JKBhL5ykqAu+mt9pPTg6uW9cuDlpV1B14I=;
+	b=pz+l2eYMi+MPX37VKCmyxDJwvWEfC2+OwPEviZtSuWMpHZWb+H0PdHlVwQjQluL1wQpzuK
+	EucJ7GdR8SPAI7Dg==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id A071F13594;
+	Thu,  1 Feb 2024 09:48:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id Z5spJ+tou2UdVwAAn2gu4w
+	(envelope-from <jack@suse.cz>); Thu, 01 Feb 2024 09:48:27 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 5B1C3A0809; Thu,  1 Feb 2024 10:48:27 +0100 (CET)
+Date: Thu, 1 Feb 2024 10:48:27 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v2 15/34] nvme: port block device access to file
+Message-ID: <20240201094827.a5rd7mdpcqfuywc2@quack3>
+References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
+ <20240123-vfs-bdev-file-v2-15-adbd023e19cc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240123-vfs-bdev-file-v2-15-adbd023e19cc@kernel.org>
+X-Spam-Level: 
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=tZEk2L4Y;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=pz+l2eYM
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[7];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: ADDF8221BF
+X-Spam-Flag: NO
 
-On 01.02.24 10:41, Alice Ryhl wrote:
-> On Thu, Feb 1, 2024 at 10:38=E2=80=AFAM Benno Lossin <benno.lossin@proton=
-.me> wrote:
->>
->> On 01.02.24 10:33, Alice Ryhl wrote:
->>> On Thu, Feb 1, 2024 at 10:31=E2=80=AFAM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
->>>>
->>>> On 29.01.24 17:34, Alice Ryhl wrote:
->>>>> On Fri, Jan 26, 2024 at 4:04=E2=80=AFPM Benno Lossin <benno.lossin@pr=
-oton.me> wrote:
->>>>>>> +///   closed.
->>>>>>> +/// * A light refcount must be dropped before returning to userspa=
-ce.
->>>>>>> +#[repr(transparent)]
->>>>>>> +pub struct File(Opaque<bindings::file>);
->>>>>>> +
->>>>>>> +// SAFETY: By design, the only way to access a `File` is via an im=
-mutable reference or an `ARef`.
->>>>>>> +// This means that the only situation in which a `File` can be acc=
-essed mutably is when the
->>>>>>> +// refcount drops to zero and the destructor runs. It is safe for =
-that to happen on any thread, so
->>>>>>> +// it is ok for this type to be `Send`.
->>>>>>
->>>>>> Technically, `drop` is never called for `File`, since it is only use=
-d
->>>>>> via `ARef<File>` which calls `dec_ref` instead. Also since it only c=
-ontains
->>>>>> an `Opaque`, dropping it is a noop.
->>>>>> But what does `Send` mean for this type? Since it is used together w=
-ith
->>>>>> `ARef`, being `Send` means that `File::dec_ref` can be called from a=
-ny
->>>>>> thread. I think we are missing this as a safety requirement on
->>>>>> `AlwaysRefCounted`, do you agree?
->>>>>> I think the safety justification here could be (with the requirement=
- added
->>>>>> to `AlwaysRefCounted`):
->>>>>>
->>>>>>         SAFETY:
->>>>>>         - `File::drop` can be called from any thread.
->>>>>>         - `File::dec_ref` can be called from any thread.
->>>>>
->>>>> This wording was taken from rust/kernel/task.rs. I think it's out of
->>>>> scope to reword it.
->>>>
->>>> Rewording the safety docs on `AlwaysRefCounted`, yes that is out of sc=
-ope,
->>>> I was just checking if you agree that the current wording is incomplet=
-e.
->>>
->>> That's not what I meant. The wording of this safety comment is
->>> identical to the wording in other existing safety comments in the
->>> kernel, such as e.g. the one for `impl Send for Task`.
->>
->> Ah I see. But I still think changing it is better, since it would only g=
-et
->> shorter. The comment on `Task` can be fixed later.
->> Or do you want to keep consistency here? Because I would prefer to make
->> this right and then change `Task` later.
->=20
-> What would you like me to change it to?
->=20
-> For example:
-> // SAFETY: It is okay to send references to a File across thread boundari=
-es.
+On Tue 23-01-24 14:26:32, Christian Brauner wrote:
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-That would fit better as the safety comment for `Sync`, since
-it refers to "references".
+Looks good. Feel free to add:
 
-For `Send` I think this would be better:
-// SAFETY:
-// - `File::dec_ref` can be called from any thread.
-// - It is okay to send ownership of `File` across thread boundaries.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
---=20
-Cheers,
-Benno
+								Honza
 
-
+> ---
+>  drivers/nvme/target/io-cmd-bdev.c | 16 ++++++++--------
+>  drivers/nvme/target/nvmet.h       |  2 +-
+>  2 files changed, 9 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/nvme/target/io-cmd-bdev.c b/drivers/nvme/target/io-cmd-bdev.c
+> index f11400a908f2..6426aac2634a 100644
+> --- a/drivers/nvme/target/io-cmd-bdev.c
+> +++ b/drivers/nvme/target/io-cmd-bdev.c
+> @@ -50,10 +50,10 @@ void nvmet_bdev_set_limits(struct block_device *bdev, struct nvme_id_ns *id)
+>  
+>  void nvmet_bdev_ns_disable(struct nvmet_ns *ns)
+>  {
+> -	if (ns->bdev_handle) {
+> -		bdev_release(ns->bdev_handle);
+> +	if (ns->bdev_file) {
+> +		fput(ns->bdev_file);
+>  		ns->bdev = NULL;
+> -		ns->bdev_handle = NULL;
+> +		ns->bdev_file = NULL;
+>  	}
+>  }
+>  
+> @@ -85,18 +85,18 @@ int nvmet_bdev_ns_enable(struct nvmet_ns *ns)
+>  	if (ns->buffered_io)
+>  		return -ENOTBLK;
+>  
+> -	ns->bdev_handle = bdev_open_by_path(ns->device_path,
+> +	ns->bdev_file = bdev_file_open_by_path(ns->device_path,
+>  				BLK_OPEN_READ | BLK_OPEN_WRITE, NULL, NULL);
+> -	if (IS_ERR(ns->bdev_handle)) {
+> -		ret = PTR_ERR(ns->bdev_handle);
+> +	if (IS_ERR(ns->bdev_file)) {
+> +		ret = PTR_ERR(ns->bdev_file);
+>  		if (ret != -ENOTBLK) {
+>  			pr_err("failed to open block device %s: (%d)\n",
+>  					ns->device_path, ret);
+>  		}
+> -		ns->bdev_handle = NULL;
+> +		ns->bdev_file = NULL;
+>  		return ret;
+>  	}
+> -	ns->bdev = ns->bdev_handle->bdev;
+> +	ns->bdev = file_bdev(ns->bdev_file);
+>  	ns->size = bdev_nr_bytes(ns->bdev);
+>  	ns->blksize_shift = blksize_bits(bdev_logical_block_size(ns->bdev));
+>  
+> diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
+> index 6c8acebe1a1a..33e61b4f478b 100644
+> --- a/drivers/nvme/target/nvmet.h
+> +++ b/drivers/nvme/target/nvmet.h
+> @@ -58,7 +58,7 @@
+>  
+>  struct nvmet_ns {
+>  	struct percpu_ref	ref;
+> -	struct bdev_handle	*bdev_handle;
+> +	struct file		*bdev_file;
+>  	struct block_device	*bdev;
+>  	struct file		*file;
+>  	bool			readonly;
+> 
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
