@@ -1,61 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-9914-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A81845EB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 18:39:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC714845EC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 18:42:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A047FB25F31
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 17:39:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 758F728A7FC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 17:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1EE06FBA7;
-	Thu,  1 Feb 2024 17:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0727C6E3;
+	Thu,  1 Feb 2024 17:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ks1WZ/qQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GGjKx8kV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ks1WZ/qQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GGjKx8kV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4626FB88;
-	Thu,  1 Feb 2024 17:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F0184037;
+	Thu,  1 Feb 2024 17:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706809136; cv=none; b=hPr1b6Nbmg16yTLAvC4i4/CnnPPS1Cx4DhhtpcTMbAsVlz6aFQBhmLzUsx2Amv2/vGz47kzSiICPWP9YdGKUVvO/ZcXzgD45F2fzgQRu0HujJVtq8b1zuQbBza5JodlA3E52nC1M/Z/yfHHtS2AkFHUcL60CbLUldwo/zTXVq8Y=
+	t=1706809365; cv=none; b=PxY1VUUmDKqeb0ukt7JdEX71EkZTfizrr0d806YfT/lApboDXrIuVRczhIoeOLWAaWbLeS3oTHY+YuSZ/KU3aIeYUrejNI5V3MudAH2a+sB2ah0EbAXolmzGEQD1Ubv1bQf3wDIhtlUHfNG6OewnM8qnxwokz5jKJnOMEiKEqDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706809136; c=relaxed/simple;
-	bh=+jscayz1j5iTQ/gLXe+z+HvDEvJcz5+9nneP6cJ+HKk=;
+	s=arc-20240116; t=1706809365; c=relaxed/simple;
+	bh=nQkgxeJctXCbqc1q77iqkX0YjrjrPVJxfrXEr7aVGY4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E1Oy54BLboD4+svxMA0HRo41tJ+2bcrddkoFADgqFDbHUU9IMwqoOxBzB8XccNQrhMK2fPukgZFprHGGr8nucHvaMzSTZqE3vJcZZ909Zyt9TD/4PZP6bdtBI/70ea3rkwmTNB3YCDoFwrTJm1ZJiJ9Zw5XjffuJO6ItZC22Hps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 32134DA7;
-	Thu,  1 Feb 2024 09:39:36 -0800 (PST)
-Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 95BF13F738;
-	Thu,  1 Feb 2024 09:38:48 -0800 (PST)
-Date: Thu, 1 Feb 2024 17:38:42 +0000
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
-	rppt@kernel.org, hughd@google.com, pcc@google.com,
-	steven.price@arm.com, vincenzo.frascino@arm.com, david@redhat.com,
-	eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 31/35] khugepaged: arm64: Don't collapse MTE
- enabled VMAs
-Message-ID: <ZbvXImzAJNKQvamJ@raptor>
-References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-32-alexandru.elisei@arm.com>
- <599769c3-0aef-4c5b-ac98-f109649862f7@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=K1g/A8EStXJZN7AaLB2fzoixQIVJu6XD1Jky66n63+02mTv4l1x9UKZ2kKyQ7OAyOApzf8U92xQ4meM58V72VXj545ke8dN71LjOHxorfXFj3NiqOnZtBuCFKsdWsGeDLAhEHsMkAfb4PcWXn+R7kJ5RykpAAyUO703i/14mtxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ks1WZ/qQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GGjKx8kV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ks1WZ/qQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GGjKx8kV; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9BDAB21EB6;
+	Thu,  1 Feb 2024 17:42:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706809355; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zAgrRfHWWfIki/a6lq962GwLpDnn3/KZNYXlWkHPUZU=;
+	b=Ks1WZ/qQq3SF9V12cftZJJrcABCwlpLObdQoS6Ia7kSNbTQoVfi0snOf487tcOMX3942rl
+	9CJK1yPAoxZW8mvPgLjxB8/J45pb2G0yBnRczPVe/Dj9PlFPy6+WiZi05ejkOSfiJtqMzi
+	j8b8Ovr/I5KFm7iggj3Fd7xVeOXcBuI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706809355;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zAgrRfHWWfIki/a6lq962GwLpDnn3/KZNYXlWkHPUZU=;
+	b=GGjKx8kV0GeCyWu2hfYKr2uCExetnSHzkdz25Gf+KPwJcsTioDWhqwOrQV3UF3/wMBq13w
+	2RmooqmqXWzM49Bg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706809355; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zAgrRfHWWfIki/a6lq962GwLpDnn3/KZNYXlWkHPUZU=;
+	b=Ks1WZ/qQq3SF9V12cftZJJrcABCwlpLObdQoS6Ia7kSNbTQoVfi0snOf487tcOMX3942rl
+	9CJK1yPAoxZW8mvPgLjxB8/J45pb2G0yBnRczPVe/Dj9PlFPy6+WiZi05ejkOSfiJtqMzi
+	j8b8Ovr/I5KFm7iggj3Fd7xVeOXcBuI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706809355;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zAgrRfHWWfIki/a6lq962GwLpDnn3/KZNYXlWkHPUZU=;
+	b=GGjKx8kV0GeCyWu2hfYKr2uCExetnSHzkdz25Gf+KPwJcsTioDWhqwOrQV3UF3/wMBq13w
+	2RmooqmqXWzM49Bg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E39813672;
+	Thu,  1 Feb 2024 17:42:35 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hGqxIgvYu2XsKAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 01 Feb 2024 17:42:35 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 339FEA0809; Thu,  1 Feb 2024 18:42:35 +0100 (CET)
+Date: Thu, 1 Feb 2024 18:42:35 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v2 29/34] bdev: make struct bdev_handle private to the
+ block layer
+Message-ID: <20240201174235.ngbjole5h3huujou@quack3>
+References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
+ <20240123-vfs-bdev-file-v2-29-adbd023e19cc@kernel.org>
+ <20240201105422.3wuw332vh4tusbzp@quack3>
+ <20240201-enzianblau-wohlgefallen-ece64eb96719@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,122 +105,63 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <599769c3-0aef-4c5b-ac98-f109649862f7@arm.com>
+In-Reply-To: <20240201-enzianblau-wohlgefallen-ece64eb96719@brauner>
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spamd-Result: default: False [-2.02 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 RCPT_COUNT_SEVEN(0.00)[7];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-2.42)[97.36%];
+	 ARC_NA(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.02
 
-On Thu, Feb 01, 2024 at 01:42:08PM +0530, Anshuman Khandual wrote:
-> 
-> 
-> On 1/25/24 22:12, Alexandru Elisei wrote:
-> > copy_user_highpage() will do memory allocation if there are saved tags for
-> > the destination page, and the page is missing tag storage.
+On Thu 01-02-24 16:07:59, Christian Brauner wrote:
+> > > +	if (ret)
+> > > +		return ERR_PTR(ret);
+> > > +
+> > > +	bdev = blkdev_get_no_open(dev);
+> > > +	if (!bdev)
+> > > +		return ERR_PTR(-ENXIO);
+> > >  
+> > >  	flags = blk_to_file_flags(mode);
+> > > -	bdev_file = alloc_file_pseudo_noaccount(handle->bdev->bd_inode,
+> > > +	bdev_file = alloc_file_pseudo_noaccount(bdev->bd_inode,
+> > >  			blockdev_mnt, "", flags | O_LARGEFILE, &def_blk_fops);
+> > >  	if (IS_ERR(bdev_file)) {
+> > > -		bdev_release(handle);
+> > > +		blkdev_put_no_open(bdev);
+> > >  		return bdev_file;
+> > >  	}
+> > > -	ihold(handle->bdev->bd_inode);
+> > > +	bdev_file->f_mode &= ~FMODE_OPENED;
 > > 
-> > After commit a349d72fd9ef ("mm/pgtable: add rcu_read_lock() and
-> > rcu_read_unlock()s"), collapse_huge_page() calls
-> > __collapse_huge_page_copy() -> .. -> copy_user_highpage() with the RCU lock
-> > held, which means that copy_user_highpage() can only allocate memory using
-> > GFP_ATOMIC or equivalent.
-> > 
-> > Get around this by refusing to collapse pages into a transparent huge page
-> > if the VMA is MTE-enabled.
+> > Hum, why do you need these games with FMODE_OPENED? I suspect you want to
+> > influence fput() behavior but then AFAICT we will leak dentry, mnt, etc. on
+> > error? If this is indeed needed, it deserves a comment...
 > 
-> Makes sense when copy_user_highpage() will allocate memory for tag storage.
+> I rewrote this.
 > 
-> > 
-> > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
-> > ---
-> > 
-> > Changes since rfc v2:
-> > 
-> > * New patch. I think an agreement on whether copy*_user_highpage() should be
-> > always allowed to sleep, or should not be allowed, would be useful.
-> 
-> This is a good question ! Even after preventing the collapse of MTE VMA here,
-> there still might be more paths where a sleeping (i.e memory allocating)
-> copy*_user_highpage() becomes problematic ?
+> Total diff I applied is:
 
-Exactly!
+Looks good now.
 
-> 
-> > 
-> >  arch/arm64/include/asm/pgtable.h    | 3 +++
-> >  arch/arm64/kernel/mte_tag_storage.c | 5 +++++
-> >  include/linux/khugepaged.h          | 5 +++++
-> >  mm/khugepaged.c                     | 4 ++++
-> >  4 files changed, 17 insertions(+)
-> > 
-> > diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> > index 87ae59436162..d0473538c926 100644
-> > --- a/arch/arm64/include/asm/pgtable.h
-> > +++ b/arch/arm64/include/asm/pgtable.h
-> > @@ -1120,6 +1120,9 @@ static inline bool arch_alloc_cma(gfp_t gfp_mask)
-> >  	return true;
-> >  }
-> >  
-> > +bool arch_hugepage_vma_revalidate(struct vm_area_struct *vma, unsigned long address);
-> > +#define arch_hugepage_vma_revalidate arch_hugepage_vma_revalidate
-> > +
-> >  #endif /* CONFIG_ARM64_MTE_TAG_STORAGE */
-> >  #endif /* CONFIG_ARM64_MTE */
-> >  
-> > diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/mte_tag_storage.c
-> > index ac7b9c9c585c..a99959b70573 100644
-> > --- a/arch/arm64/kernel/mte_tag_storage.c
-> > +++ b/arch/arm64/kernel/mte_tag_storage.c
-> > @@ -636,3 +636,8 @@ void arch_alloc_page(struct page *page, int order, gfp_t gfp)
-> >  	if (tag_storage_enabled() && alloc_requires_tag_storage(gfp))
-> >  		reserve_tag_storage(page, order, gfp);
-> >  }
-> > +
-> > +bool arch_hugepage_vma_revalidate(struct vm_area_struct *vma, unsigned long address)
-> > +{
-> > +	return !(vma->vm_flags & VM_MTE);
-> > +}
-> > diff --git a/include/linux/khugepaged.h b/include/linux/khugepaged.h
-> > index f68865e19b0b..461e4322dff2 100644
-> > --- a/include/linux/khugepaged.h
-> > +++ b/include/linux/khugepaged.h
-> > @@ -38,6 +38,11 @@ static inline void khugepaged_exit(struct mm_struct *mm)
-> >  	if (test_bit(MMF_VM_HUGEPAGE, &mm->flags))
-> >  		__khugepaged_exit(mm);
-> >  }
-> > +
-> > +#ifndef arch_hugepage_vma_revalidate
-> > +#define arch_hugepage_vma_revalidate(vma, address) 1
-> 
-> Please replace s/1/true as arch_hugepage_vma_revalidate() returns bool ?
+								Honza
 
-Yeah, that's strange, I don't know why I used 1 there. Will change it to true,
-thanks for spotting it.
-
-> 
-> > +#endif
-> 
-> Right, above construct is much better than __HAVE_ARCH_XXXX based one.
-
-Thanks!
-
-Alex
-
-> 
-> > +
-> >  #else /* CONFIG_TRANSPARENT_HUGEPAGE */
-> >  static inline void khugepaged_fork(struct mm_struct *mm, struct mm_struct *oldmm)
-> >  {
-> > diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-> > index 2b219acb528e..cb9a9ddb4d86 100644
-> > --- a/mm/khugepaged.c
-> > +++ b/mm/khugepaged.c
-> > @@ -935,6 +935,10 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
-> >  	 */
-> >  	if (expect_anon && (!(*vmap)->anon_vma || !vma_is_anonymous(*vmap)))
-> >  		return SCAN_PAGE_ANON;
-> > +
-> > +	if (!arch_hugepage_vma_revalidate(vma, address))
-> > +		return SCAN_VMA_CHECK;
-> > +
-> >  	return SCAN_SUCCEED;
-> >  }
-> >  
-> 
-> Otherwise this LGTM.
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
