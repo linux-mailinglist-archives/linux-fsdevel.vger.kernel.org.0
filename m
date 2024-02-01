@@ -1,103 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-9855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35D9E845552
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 11:29:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 449EB84555B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 11:31:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C99001F214B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:29:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 731C21C2406F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B0215B965;
-	Thu,  1 Feb 2024 10:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6455515B961;
+	Thu,  1 Feb 2024 10:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="nbKmx9Kh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gpXtck/e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29204DA1D
-	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Feb 2024 10:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322244DA06
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Feb 2024 10:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706783346; cv=none; b=QbjzYw8w2WDe+O7GjPW7508YnLIcI5HsTbrDeLRlpayMxJPKW3ybcXlolCCZDsJ9ElVFatgrED7DmWpu0JUEQ2Yp1R5fC/7cklCCQsmzQ4G09eWuYzZ/r8jQDtjbN+spyf9gYPj0D0pcBZaThAJux1RinXPLc5E8wSZv89lMQQ0=
+	t=1706783433; cv=none; b=WrWCkqLzrSwnDAcYDa5s/pUpyor82thBhK3irpVtWlz94MwbuVgVPSMaZquUdTqguoVen3Pzdx4Oe8Iy0M7/ntlUdwF3GqTlXIcH42KyaCMAOpXiQH/caSIsnUEcJ4fMfeDMG8DRgC/HDdQv4VtHpYE5ytAWSgQ6x5GoC5pfLIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706783346; c=relaxed/simple;
-	bh=4bY7UZC6F0iEcfCyio2JtneQgLqFyahA1E9s4ohixvo=;
+	s=arc-20240116; t=1706783433; c=relaxed/simple;
+	bh=s0+1Lc+SDqINIcddYDVfB5HrppfGTp9XJkMyG4k5SpQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NxskGaC2j1qL0xo9m6wzYH89DQzE7dxLPcjg/YuzaE2m9zUTAmjRlYzT0MHVNwDi0qr2ACdzcaV9pdL2t7LmNCBzRKwZBwHRCzWycRYmQ+eEGbIDyLDROnfpHYPiHrGuw6pFajXx1Zll7M6p/iCu3Uf13Lcxbu9mIfXZ0qDPGRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=nbKmx9Kh; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a30f7c9574eso96941266b.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Feb 2024 02:29:03 -0800 (PST)
+	 To:Cc:Content-Type; b=SgWcRb+KK9+t1Zu2OsjKrOkX/NAi3lPI7Zy2AJGPfrjs58BRxzHgYMjfCzzIQybixDLq+CrX3EAswcVPkB5eZab25ThW6AHh1xqROisXA+/DwmfmhWSx4fsrmZkzoEsMxQb0J0ZIADlTd9Vh4Gs2Lh4jyc5NMXGKNgcdBCJZgNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gpXtck/e; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-78405c9a152so55618985a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Feb 2024 02:30:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1706783342; x=1707388142; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4bY7UZC6F0iEcfCyio2JtneQgLqFyahA1E9s4ohixvo=;
-        b=nbKmx9Kh6v2/fqKd4ByL/LJSAT5heGjOTp7kmlbmwe4wjdx0SMnletoqJ6cCZLfsPw
-         AIOI+GHAO2vUdv9pjL2fzcICFhoKvCbevTMvT/wiKfzfFtc3OmRE3otexPIeQO5riR0g
-         X4EVorIZNHG8mtMfoX8lRFl7N9FjmyA1HZD7A=
+        d=gmail.com; s=20230601; t=1706783431; x=1707388231; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s0+1Lc+SDqINIcddYDVfB5HrppfGTp9XJkMyG4k5SpQ=;
+        b=gpXtck/eWHV0P6Os3jF/C/ZcXfuyqORZcTSdJoLFf95AERa5CUODoFr3A2Yfo0o5gV
+         2Ncl6UFhcWvHab4DrN8v/Kf1XuIwM/Ob9jkrOL+KA06vPJUZCBshpumpZhiKdmPvI7Ev
+         3/YQzoRl8cXu2btuosXEW0MWj6+n4vtZFkPJIKRfff2lRSkOOH0AX1smt82UZM5Dl3Cs
+         Q/MnMUX2v42g8xSZ2nahMR/6XiEk+T45h1a8BG8KF3xRx7KUSK47LAZqqdH+NseBMiIM
+         bolb0VYRQqSnH1Ti7kSBPhSxQfuNnJFDwphQnYywiD4CDEGiO6Nv7J6xUjamGC525Csm
+         ydgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706783342; x=1707388142;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4bY7UZC6F0iEcfCyio2JtneQgLqFyahA1E9s4ohixvo=;
-        b=mLDvZJBYRL17Sa5IfXcEWA4gvCWbWiZRZi59GkG140LJhRt1w4k7A6OpG6QGC/gBaU
-         7k7xeV4Qb/32+/GcuvOz3Gcqebh+vh/h59v3Uj7kM8HZ37/1qLE/2yBWS5WyYMdRlTUI
-         ArX6bC/HArcPm94oDhOr8c8VoFegKexOMVALiq303YYZDv7pks+K70A1+jyvGL6F9W2W
-         tjPWoGgn2nFCDrBWbHiSXBlrMnvLH5v6cuG7xolsB6UZndbxDUzZv6QdJpIJs31Ai9Do
-         Hl7IT9h0vXFD1d6z/rVTKxVh8xSzSf3KNVHZVux5sz8Kn12Vi30ue1z61HIrTBuGoGU/
-         wBuw==
-X-Gm-Message-State: AOJu0Yz0chgqPl7uw0R/xio0SmmUNkC9sI4En6zvNCD8iWnbBpwDQWnV
-	cy84v+48UJM2OLD4Fl4OKWP5jp2tXDDOOwSoE9o2I9S0Re4fou2EiEPBzSlcN+D9Qz7huNmekmv
-	MfKKZftLvBcxNaHJ+QHmA1y4fqWZAEhWXg/6u+VrLrWfi+/8P
-X-Google-Smtp-Source: AGHT+IGQNyzPfdZqwV1VHVDTGA8DodGSPCrKNI3shQclFWGP3eVv1dR9+y5P5eVEXUDdGNYr0bflkF417WfkKeHu0vo=
-X-Received: by 2002:a17:906:46d4:b0:a35:78e1:2d1f with SMTP id
- k20-20020a17090646d400b00a3578e12d1fmr1386879ejs.71.1706783341958; Thu, 01
- Feb 2024 02:29:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706783431; x=1707388231;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s0+1Lc+SDqINIcddYDVfB5HrppfGTp9XJkMyG4k5SpQ=;
+        b=uNSonnI5zrGiYTM/KVf4UmMtW9GuLO6W/QDBjYBF13On2U6P14cXjPT3IGg8QDyYgP
+         6jaErWUWOolWFQawCqU3awhcpUGidUtbR5UUyUIY3jjIFfIRqxZURB586xTxwJz64EnH
+         y9IdAybez5I5znsn4VKRr0bGfxKmMCyFZERsF8oJsyG7qiH9MGnJf0B913tQiKUIeN81
+         kZNVLvWgRf6PfKI4htgyvBkSRjEB9nCkpvk1ytl2mbwd3s2OVk68VgkrPJ5dROmlqpUG
+         Bc8MXu34ulUO0XQSHqd8J/GpEJEGmcMYCafCWvpAryaUBVMVV1YtVJACuHlb9M7trN2I
+         flXA==
+X-Gm-Message-State: AOJu0Yz4rIukjI33lcAvoh8JGRiWFN5W4rja4mBhQKAZNCau669rHktf
+	DIwXopbhCdbf/fVKFrTwo0QUh1oplnWLyv7yqNj7Halj3ZCvAPY8EEcJu/9m9lfrylSnWleuJnX
+	3eej9i+3VFD9VaR0AyUPPUXwCqxpHBLzgFHI=
+X-Google-Smtp-Source: AGHT+IF2rONY3e0TTmCkHU5bri4vv7SWeybRODfCZHC+JcdRnt0MS00F7Sb5hO6RLlJ1LjAqhwg5ar8a/xgzfuLtc0o=
+X-Received: by 2002:a05:6214:29ed:b0:68c:71d7:2926 with SMTP id
+ jv13-20020a05621429ed00b0068c71d72926mr3581265qvb.50.1706783430981; Thu, 01
+ Feb 2024 02:30:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131230827.207552-1-bschubert@ddn.com> <20240131230827.207552-5-bschubert@ddn.com>
- <CAJfpeguF0ENfGJHYH5Q5o4gMZu96jjB4Ax4Q2+78DEP3jBrxCQ@mail.gmail.com> <CAOQ4uxgv67njK9CvbUfdqF8WV_cFzrnaHdPB6-qiQuKNEDvvwA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgv67njK9CvbUfdqF8WV_cFzrnaHdPB6-qiQuKNEDvvwA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 1 Feb 2024 11:28:50 +0100
-Message-ID: <CAJfpegupKaeLX_-G-DqR0afC1JsT21Akm6TeMK9Ugi6MBh3fMA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] fuse: prepare for failing open response
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, dsingh@ddn.com
+References: <20240131230827.207552-1-bschubert@ddn.com>
+In-Reply-To: <20240131230827.207552-1-bschubert@ddn.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 1 Feb 2024 12:30:19 +0200
+Message-ID: <CAOQ4uxi_SqKq_sdaL1nFgjqonh2_b910XOgMbzeY4aP1tj-qGw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] fuse: inode IO modes and mmap
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, dsingh@ddn.com, 
+	Bernd Schubert <bernd.schubert@fastmail.fm>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 1 Feb 2024 at 11:16, Amir Goldstein <amir73il@gmail.com> wrote:
+On Thu, Feb 1, 2024 at 1:08=E2=80=AFAM Bernd Schubert <bschubert@ddn.com> w=
+rote:
+>
+> This series is mostly about mmap, direct-IO and inode IO modes.
+> (new in this series is FOPEN_CACHE_IO).
+> It brings back the shared lock for FOPEN_DIRECT_IO when
+> FUSE_DIRECT_IO_ALLOW_MMAP is set and is also preparation
+> work for Amirs work on fuse-passthrough and also for
 
-> I can look into it, but for now the fix to fuse_sync_release() is a simple
-> one liner, so I would rather limit the changes in this series.
+For the interested:
+https://github.com/amir73il/linux/commits/fuse-backing-fd-010224/
 
-Not urgent, but it might be a good idea to add a cleanup patch as a
-prep, which would make this patch just that one line less complex.
+Bernd,
 
-> Is fuse_finish_open() supposed to be called after clearing O_TRUNC
-> in fuse_create_open()?
+Can you push this series to your v2 branch so that I can rebase
+my branch on top of it?
 
-This will invalidate size/modification time, which we've just updated
-with the correct post open values.
+> shared lock O_DIRECT and direct-IO code consolidation I have
+> patches for.
+>
+> Patch 1/5 was already posted before
+> https://patchwork.kernel.org/project/linux-fsdevel/patch/20231213150703.6=
+262-1-bschubert@ddn.com/
+> but is included here again, as especially patch 5/5 has a
+> dependency on it. Amir has also spotted a typo in the commit message
+> of the initial patch, which is corrected here.
+>
+> Patches 2/5 and 3/5 add helper functions, which are needed by the
+> main patch (5/5) in this series and are be also needed by another
+> fuse direct-IO series. That series needs the helper functions in
+> fuse_cache_write_iter, thus, these new helpers are above that
+> function.
+>
+> Patch 4/5 allows to fail fuse_finish_open and is a preparation
+> to handle conflicting IO modes from the server side and will also be
+> needed for fuse passthrough.
+>
+> Patch 5/5 is the main patch in the series, which adds inode
+> IO modes, which is needed to re-enable shared DIO writes locks
+> when FUSE_DIRECT_IO_ALLOW_MMAP is set. Furthermore, these IO modes
+> are also needed by Amirs WIP fuse passthrough work.
+>
+> The conflict of FUSE_DIRECT_IO_ALLOW_MMAP and
+> FOPEN_PARALLEL_DIRECT_WRITES was detected by xfstest generic/095.
+> This patch series was tested by running a loop of that test
+> and also by multiple runs of the complete xfstest suite.
+> For testing with libfuse a version is needed that includes this
+> pull request
+> https://github.com/libfuse/libfuse/pull/870
 
-> I realize that this is what the code is doing in upstream, but it does not
-> look correct.
+Heh, this is already merged :)
 
-I think it's correct, because it deals with the effect of
-FUSE_OPEN/O_TRUNC on attributes that weren't refreshed in contrast to
-fuse_create_open() where the attributes were refreshed.
+For the record, I understand that you ran this test with passthrough_hp.
+In which configurations --direct-io? --nocache? only default?
 
-Thanks,
-Miklos
+Thanks for pushing this through!
+
+Amir.
 
