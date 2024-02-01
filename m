@@ -1,213 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-9837-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542D7845488
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:48:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18B0584537B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:13:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA57F28DA69
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:48:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB7291F29164
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:13:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32C44DA0F;
-	Thu,  1 Feb 2024 09:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tZEk2L4Y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pz+l2eYM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="tZEk2L4Y";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pz+l2eYM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3198715AAAA;
+	Thu,  1 Feb 2024 09:13:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A1815B964;
-	Thu,  1 Feb 2024 09:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9B515A4B1;
+	Thu,  1 Feb 2024 09:13:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706780911; cv=none; b=kFanDJ+sb+ug+pXp75lDierJhPfGsXKx+DOne8zumRyFbyqasE1TPWVSRe+NdOvOexzvVqZLulKhfJ7c6RmjKLk7wYfSm1rnV70+mv/C7o23/xWl/tLY0tNi1dNaVckAjbrc6lk/3U0x/z04DRDW7GfY/eM2d44SCb5zBg/XZog=
+	t=1706778794; cv=none; b=oG1S4DnbpHp0tVuxnkzlZ4WpqgPkoa2d7TRU/ayTHUv+ovXVqi4S+w7X4xy74Z9FBtjpo27N+CkDa4aZiFZjfusD2o3w8CqNB8UYZ9fNGlH2ciHGLZvTMIFIsp27h8XzLtbuYgME8ws6xWUkSjHOxlLl+sP7HPtWwFdQAZlf/k0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706780911; c=relaxed/simple;
-	bh=tDMbD4PMdT6UfagN+yuhScX9TjAkhJ0rsI9jzZvDz7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EOcGgIM3wRPJA7DODG23g5RW/BX2jsuauyK82crkXw51hPJ/0n3yY1YTdKwQxFJfFQvU78V0iKiIEz0MLoA7ncUFNaaEgSTkKNJ364Feyu+MtQVAoc+rildA53Awdewr8nwsq6AazjznBqaBEk6qzOw7gzSTaldp+0D7VyqtUJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tZEk2L4Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pz+l2eYM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=tZEk2L4Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pz+l2eYM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id ADDF8221BF;
-	Thu,  1 Feb 2024 09:48:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706780907; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WsOhp/Yk2JKBhL5ykqAu+mt9pPTg6uW9cuDlpV1B14I=;
-	b=tZEk2L4YVIh0pB+mUPcPNiX/roDCMlZtuw7N3LpOa3Tn8X2bMo8yBqPlYO5eFmGpNEbXyB
-	4kLuV0N9sxnws/BToK4p6xW/YCr/8eTzJoXtZt0OgsKnfUjoTic/QkY8PjPoyBTa8y11PX
-	UFjzWF38qu4PbF2z+5aqxEp4g+HXVvs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706780907;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WsOhp/Yk2JKBhL5ykqAu+mt9pPTg6uW9cuDlpV1B14I=;
-	b=pz+l2eYMi+MPX37VKCmyxDJwvWEfC2+OwPEviZtSuWMpHZWb+H0PdHlVwQjQluL1wQpzuK
-	EucJ7GdR8SPAI7Dg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706780907; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WsOhp/Yk2JKBhL5ykqAu+mt9pPTg6uW9cuDlpV1B14I=;
-	b=tZEk2L4YVIh0pB+mUPcPNiX/roDCMlZtuw7N3LpOa3Tn8X2bMo8yBqPlYO5eFmGpNEbXyB
-	4kLuV0N9sxnws/BToK4p6xW/YCr/8eTzJoXtZt0OgsKnfUjoTic/QkY8PjPoyBTa8y11PX
-	UFjzWF38qu4PbF2z+5aqxEp4g+HXVvs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706780907;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WsOhp/Yk2JKBhL5ykqAu+mt9pPTg6uW9cuDlpV1B14I=;
-	b=pz+l2eYMi+MPX37VKCmyxDJwvWEfC2+OwPEviZtSuWMpHZWb+H0PdHlVwQjQluL1wQpzuK
-	EucJ7GdR8SPAI7Dg==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id A071F13594;
-	Thu,  1 Feb 2024 09:48:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id Z5spJ+tou2UdVwAAn2gu4w
-	(envelope-from <jack@suse.cz>); Thu, 01 Feb 2024 09:48:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5B1C3A0809; Thu,  1 Feb 2024 10:48:27 +0100 (CET)
-Date: Thu, 1 Feb 2024 10:48:27 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 15/34] nvme: port block device access to file
-Message-ID: <20240201094827.a5rd7mdpcqfuywc2@quack3>
-References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
- <20240123-vfs-bdev-file-v2-15-adbd023e19cc@kernel.org>
+	s=arc-20240116; t=1706778794; c=relaxed/simple;
+	bh=vdcjgpSSe3vHkaNcPGjjlLa0vhqVfEdHpZMs8SYg4f0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=AvGA8mjN8vkMyuEcNAqD4aAt5YmZi+UFKAyb1ihKkgCPIdqTDb95WgwyvbRKjF9pXbxnqb9wLpIBqGR0FeX+n6CS8t+PtmKSZ/voAmYHQwjisWlcqUNic1bXnqGKVzigaXnW8fGONF8m9KHxSD744QnRv8/D/gsy46Jxw/VPprc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4TQY6s3h8Bz1Q8Ks;
+	Thu,  1 Feb 2024 17:11:17 +0800 (CST)
+Received: from dggpemd200004.china.huawei.com (unknown [7.185.36.141])
+	by mail.maildlp.com (Postfix) with ESMTPS id 205971400D4;
+	Thu,  1 Feb 2024 17:13:09 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by dggpemd200004.china.huawei.com
+ (7.185.36.141) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1258.28; Thu, 1 Feb
+ 2024 17:13:08 +0800
+From: Liu Shixin <liushixin2@huawei.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+	<brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox
+	<willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
+CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, Liu Shixin <liushixin2@huawei.com>
+Subject: [PATCH 0/2] Fix I/O high when memory almost met memcg limit
+Date: Thu, 1 Feb 2024 18:08:33 +0800
+Message-ID: <20240201100835.1626685-1-liushixin2@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240123-vfs-bdev-file-v2-15-adbd023e19cc@kernel.org>
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=tZEk2L4Y;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=pz+l2eYM
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[7];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Score: -4.01
-X-Rspamd-Queue-Id: ADDF8221BF
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemd200004.china.huawei.com (7.185.36.141)
 
-On Tue 23-01-24 14:26:32, Christian Brauner wrote:
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+Recently, when install package in a docker environment where the memory
+almost reached the memcg limit, the program have no respond severely for
+more than 15 minutes. During this period, the I/O is high(~1G/s) which
+cause other programs failed to work properly.
 
-Looks good. Feel free to add:
+The problem can be constructed in the following way:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+ 1. Download the image:
+	docker pull centos:7
+ 2. Create a docker with 4G memory limit and 6G memsw limit(cgroupv1):
+	docker create --name dockerhub_centos7 --cpu-period=100000
+	--cpu-quota=400000 --memory 4G --memory-swap 6G --cap-add=SYS_PTRACE
+	--cap-add=SYS_ADMIN --cap-add=NET_ADMIN --cap-add=NET_RAW
+	--pids-limit=20000 --ulimit nofile=1048576:1048576
+	--ulimit memlock=-1:-1 dockerhub_centos7:latest /usr/sbin/init
+ 3. Start the docker:
+	docker start dockerhub_centos7
+ 4. Allocate 6094MB memory in docker.
+ 5. run 'yum install expect'.
 
-								Honza
+We found that this problem is caused by a lot ot meaningless readahead.
+Since memory is almost met memcg limit, the readahead page will be
+reclaimed immediately and will readahead and reclaim again and again.
 
-> ---
->  drivers/nvme/target/io-cmd-bdev.c | 16 ++++++++--------
->  drivers/nvme/target/nvmet.h       |  2 +-
->  2 files changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/nvme/target/io-cmd-bdev.c b/drivers/nvme/target/io-cmd-bdev.c
-> index f11400a908f2..6426aac2634a 100644
-> --- a/drivers/nvme/target/io-cmd-bdev.c
-> +++ b/drivers/nvme/target/io-cmd-bdev.c
-> @@ -50,10 +50,10 @@ void nvmet_bdev_set_limits(struct block_device *bdev, struct nvme_id_ns *id)
->  
->  void nvmet_bdev_ns_disable(struct nvmet_ns *ns)
->  {
-> -	if (ns->bdev_handle) {
-> -		bdev_release(ns->bdev_handle);
-> +	if (ns->bdev_file) {
-> +		fput(ns->bdev_file);
->  		ns->bdev = NULL;
-> -		ns->bdev_handle = NULL;
-> +		ns->bdev_file = NULL;
->  	}
->  }
->  
-> @@ -85,18 +85,18 @@ int nvmet_bdev_ns_enable(struct nvmet_ns *ns)
->  	if (ns->buffered_io)
->  		return -ENOTBLK;
->  
-> -	ns->bdev_handle = bdev_open_by_path(ns->device_path,
-> +	ns->bdev_file = bdev_file_open_by_path(ns->device_path,
->  				BLK_OPEN_READ | BLK_OPEN_WRITE, NULL, NULL);
-> -	if (IS_ERR(ns->bdev_handle)) {
-> -		ret = PTR_ERR(ns->bdev_handle);
-> +	if (IS_ERR(ns->bdev_file)) {
-> +		ret = PTR_ERR(ns->bdev_file);
->  		if (ret != -ENOTBLK) {
->  			pr_err("failed to open block device %s: (%d)\n",
->  					ns->device_path, ret);
->  		}
-> -		ns->bdev_handle = NULL;
-> +		ns->bdev_file = NULL;
->  		return ret;
->  	}
-> -	ns->bdev = ns->bdev_handle->bdev;
-> +	ns->bdev = file_bdev(ns->bdev_file);
->  	ns->size = bdev_nr_bytes(ns->bdev);
->  	ns->blksize_shift = blksize_bits(bdev_logical_block_size(ns->bdev));
->  
-> diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
-> index 6c8acebe1a1a..33e61b4f478b 100644
-> --- a/drivers/nvme/target/nvmet.h
-> +++ b/drivers/nvme/target/nvmet.h
-> @@ -58,7 +58,7 @@
->  
->  struct nvmet_ns {
->  	struct percpu_ref	ref;
-> -	struct bdev_handle	*bdev_handle;
-> +	struct file		*bdev_file;
->  	struct block_device	*bdev;
->  	struct file		*file;
->  	bool			readonly;
-> 
-> -- 
-> 2.43.0
-> 
+These two patch will stop readahead early when memcg charge failed and
+will skip readahead when there are too many active refault.
+
+[1] https://lore.kernel.org/linux-mm/c2f4a2fa-3bde-72ce-66f5-db81a373fdbc@huawei.com/T/
+
+Liu Shixin (2):
+  mm/readahead: stop readahead loop if memcg charge fails
+  mm/readahead: limit sync readahead while too many active refault
+
+ include/linux/fs.h      |  2 ++
+ include/linux/pagemap.h |  1 +
+ mm/filemap.c            | 16 ++++++++++++++++
+ mm/readahead.c          | 12 ++++++++++--
+ 4 files changed, 29 insertions(+), 2 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.25.1
+
 
