@@ -1,128 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-9801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6341E845018
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 05:17:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AE87845055
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 05:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35FF28B0AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 04:17:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04A89283EE9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 04:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4940F3B7AC;
-	Thu,  1 Feb 2024 04:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BCA3BB21;
+	Thu,  1 Feb 2024 04:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YkF4gx7E"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27713A8EC;
-	Thu,  1 Feb 2024 04:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5561E49E;
+	Thu,  1 Feb 2024 04:36:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706761066; cv=none; b=HhJd38RwV9F7XqICyqm5Zya6AW2XKDWDcxK+hYlqL+1bSHCGAuCtXz8NYsGxKakfmDFiV6sS3PLLH4FdYNxijVxiJ4Ezsr+F62pZDDITJd6I0aRIFWXGlLP9EMQF2zIkfG3uZxE0dY+Q/YqF4UrShNUoAXjzDt3kiwzfw6+cs7E=
+	t=1706762174; cv=none; b=uN1AlZukPaYnCZPlsOLd1tWKiuCB05dkkNaFF+6VjJ0BJ3SgEKFOPRv8r8ot2soROzeZX3AyjV2vVZ690vZ1FkpceK2l0nE9Lt+eBraSvmEetQHt2wN8KDTZIgaZhYHbZbv+8iUNMch0FLw8IK8Pwp+kW3FiPRM8/vneYD+fn84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706761066; c=relaxed/simple;
-	bh=1jz/F0H9uzx4iimjF6QGPOPc8awhpHtiBXKNQWRuH20=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aw8naRszGXs1c3G6fXo06zUkWhFtqA28V9nl7Fofnjpb6s7MVKxNXX0kHUZx2ZREAGzpn7gX5knnI5HR6yf6/5OMMF4DRpNhJ+K7U4Whi8As/6GHB4aQoLA68uDvIZ+fwDoE93ltTUr98sTqZFGntiNd3Bh7/MigqWekf/eBQUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0FAAC433F1;
-	Thu,  1 Feb 2024 04:17:44 +0000 (UTC)
-Date: Wed, 31 Jan 2024 23:18:00 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Linus Torvalds
- <torvalds@linux-foundation.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Christian Brauner <brauner@kernel.org>,
- Ajay Kaher <ajay.kaher@broadcom.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] tracefs: dentry lookup crapectomy
-Message-ID: <20240131231800.35e3e715@gandalf.local.home>
-In-Reply-To: <20240131222127.15b2731b@gandalf.local.home>
-References: <20240131184918.945345370@goodmis.org>
-	<20240131185512.799813912@goodmis.org>
-	<20240201002719.GS2087318@ZenIV>
-	<20240131212642.2e384250@gandalf.local.home>
-	<20240201030205.GT2087318@ZenIV>
-	<20240131222127.15b2731b@gandalf.local.home>
-X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1706762174; c=relaxed/simple;
+	bh=OEVOo8eim3R2lQTiss86sxtGriI0aMzNy5LhI1J134Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PXQK4H4lWmvc5YoNuO9tv4SEm90xf6eIt7o7SxkMpIX8+BUrjJ1aDTv+sFj8kO4uG0eF4lRxcmZewPvy8YdQYHRYjCBPgNBq2gfzjwESccQy+I9O0oG+q05SS5lAvXtReU6+48HLUDuBKTrj+sS2k76c2vx4f7SyZBcx8wWscxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YkF4gx7E; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BbO75Sa4lpAGLFf065Gk/ztVsKTvZhbTbKkiiGsMvNI=; b=YkF4gx7EoH6YK7VhQBwE7/fbdO
+	VvdeJvR6RWeF2cZ/DZBy3B9zx6t1A7brIxv36MUcwRkdKUqoMVnlWaOEqFJyUbRPkqPddks8htZRm
+	39ax8SCSNdxdLXgy8IyRk+pLoVG7eduAOii0BoiemiRSmJFh/YHYv/VOpivwNjK6LoWhP94ZaRtJA
+	RBbtCY8hnVrjQrmjPEU09jjyo38OFjpTacA8NHSx35RDvNyjZQ8osV0V+CIWBKquMnYn3OJLAL0um
+	30Re0IV5NsPcpDmpxUak/v3QX1K3S/LdfqGaYiJdlH+Eh+QBlQ0IYV8d6W0aCXhgRwzFyoeJezfXT
+	znoqLuOQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rVOo5-0000000Er0V-3wtu;
+	Thu, 01 Feb 2024 04:36:10 +0000
+Date: Thu, 1 Feb 2024 04:36:09 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 1/3] fs: Introduce buffered_write_operations
+Message-ID: <ZbsfuaANd4DIVb4w@casper.infradead.org>
+References: <20240130055414.2143959-1-willy@infradead.org>
+ <20240130055414.2143959-2-willy@infradead.org>
+ <20240130081252.GC22621@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240130081252.GC22621@lst.de>
 
-On Wed, 31 Jan 2024 22:21:27 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> We (Linus and I) got it wrong. It originally had:
+On Tue, Jan 30, 2024 at 09:12:52AM +0100, Christoph Hellwig wrote:
+> > +struct buffered_write_operations {
+> > +	int (*write_begin)(struct file *, struct address_space *mapping,
+> > +			loff_t pos, size_t len, struct folio **foliop,
+> > +			void **fsdata);
+> > +	int (*write_end)(struct file *, struct address_space *mapping,
+> > +			loff_t pos, size_t len, size_t copied,
+> > +			struct folio *folio, void **fsdata);
+> > +};
 > 
-> 	d_add(dentry, NULL);
-> 	[..]
-> 	return NULL;
+> Should write_begin simply return the folio or an ERR_PTR instead of
+> the return by reference?
 
-OK, so I changed that function to this:
+OK, I've done that.  It's a _lot_ more intrusive for the ext4
+conversion.  There's a higher risk of bugs.  BUT I think it does end up
+looking a bit cleaner.  I also did the same conversion to iomap; ie
 
-static struct dentry *eventfs_root_lookup(struct inode *dir,
-					  struct dentry *dentry,
-					  unsigned int flags)
-{
-	struct eventfs_inode *ei_child;
-	struct tracefs_inode *ti;
-	struct eventfs_inode *ei;
-	const char *name = dentry->d_name.name;
+-static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
+-               size_t len, struct folio **foliop)
++static struct folio *iomap_write_begin(struct iomap_iter *iter, loff_t pos,
++               size_t len)
 
-	ti = get_tracefs(dir);
-	if (!(ti->flags & TRACEFS_EVENT_INODE))
-		return ERR_PTR(-EIO);
+with corresponding changes.  Again, ends up looking slightly cleaner.
 
-	mutex_lock(&eventfs_mutex);
+> I also wonder if the fsdata paramter should go away - if a fs needs
+> to pass forth and back fsdata, generic/filemap_perform_write is
+> probably the wrong abstraction for it.
 
-	ei = ti->private;
-	if (!ei || ei->is_freed)
-		goto out;
+So I could get rid of fsdata in ext4; that works out fine.
 
-	list_for_each_entry(ei_child, &ei->children, list) {
-		if (strcmp(ei_child->name, name) != 0)
-			continue;
-		if (ei_child->is_freed)
-			goto out;
-		lookup_dir_entry(dentry, ei, ei_child);
-		goto out;
-	}
+We have three filesystems actually using fsdata (unless they call fsdata
+something else ...)
 
-	for (int i = 0; i < ei->nr_entries; i++) {
-		void *data;
-		umode_t mode;
-		const struct file_operations *fops;
-		const struct eventfs_entry *entry = &ei->entries[i];
+fs/bcachefs/fs-io-buffered.c:   *fsdata = res;
+fs/f2fs/compress.c:             *fsdata = cc->rpages;
+fs/ocfs2/aops.c:        *fsdata = wc;
 
-		if (strcmp(name, entry->name) != 0)
-			continue;
+bcachefs seems to actually be using it for its intended purpose --
+passing a reservation between write_begin and write_end.
 
-		data = ei->data;
-		if (entry->callback(name, &mode, &data, &fops) <= 0)
-			goto out;
+f2fs also doesn't seem terribly objectional; passing rpages between
+begin & end.
 
-		lookup_file_dentry(dentry, ei, i, mode, data, fops);
-		goto out;
-	}
- out:
-	mutex_unlock(&eventfs_mutex);
-	return NULL;
-}
+ocfs2 is passing a ocfs2_write_ctxt between the two.
 
-And it passes the make kprobe test. I'll send out a v3 of this patch, and
-remove the inc_nlink(dentry->d_parent->d_inode) and the fsnotify as
-separate patches as that code was there before Linus touched it.
+I don't know that it's a win to remove fsdata from these callbacks,
+only to duplicate __generic_file_write_iter() into ocfs2,
+generic_perform_write() into f2fs and ... er, I don't think bcachefs
+uses any of the functions which would call back through
+write_begin/write_end.  So maybe that one's dead code?
 
-Thanks,
-
--- Steve
+Anyway, I'm most inclined to leave fsdata andling the way I had it
+in v1, unless you have a better suggestion.
 
