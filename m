@@ -1,195 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-9824-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9826-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 748AE8453DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:28:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54056845412
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:35:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27D9728B229
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:28:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09E1B285046
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A13E15B10F;
-	Thu,  1 Feb 2024 09:28:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442284DA1A;
+	Thu,  1 Feb 2024 09:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EK1Xce2m";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ywSa7cRP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EK1Xce2m";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ywSa7cRP"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="L1SpQ0ZK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3496615A498;
-	Thu,  1 Feb 2024 09:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123AF4D9F3
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Feb 2024 09:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706779695; cv=none; b=Lzi3GR3RvPc3gr3cW+NkyIcc8NEIVJmri1KDckWVi0fV26XyMhn3QlZ0iCWXZkWbuEn5aE8DhIVp6dMYfvh7ci/9AkLOLqWgSDBWUWXsnWnL4F59srmDTTFn2fEu4v76S0QdipDy4by1VoCjD5wrPAg5Nq640PhrYuyK1o2bQdo=
+	t=1706779886; cv=none; b=t8onh2sDrya2k6t704KW2fQiH80Oq2Xc+udvSwbe1NbYRAN+HbNn4AvLp2e+1vQtTFqobfI2YFBvd07KKnZNjB+HwlTIf9HEhCf5+ZvF7wGW96joUA5nI3lk5LnVww/+mZOwZG7uyulH9onsKDOGRRFHzXofrxrJLLDrCnlir78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706779695; c=relaxed/simple;
-	bh=cZ8hpkR/3u+9nW8V/2LfRPSay0z0DtpGIpqWUwfMnlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rAiIIM6ae3MQqqhuoFAFmm77Lkf9lx4PZBITNyHPcyhXXdiNMA75+K72xYmx3phwg8OuVyhyhz8qOU1EWWgwPCWmmEOaSOMc5mDxIp6G7tal8HTvQXeyK6Zqr3E4jT/CpjPb22YA5PdBeCFwHGzKflciEdxTkSeY7/c0WBsynCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EK1Xce2m; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ywSa7cRP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EK1Xce2m; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ywSa7cRP; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3F1E02205A;
-	Thu,  1 Feb 2024 09:28:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706779692; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ZXgLLa0AgQAAzLt+5EkE3Qo2/vmJJ/AA1BTUNqnDIc=;
-	b=EK1Xce2mBq6yxLlhpfJlbluuhV5OslGE3Ihq9ykf96pXF7vJhk6atO/IXrz7yoZH4lkPQ0
-	cahd+9kJXp7PcDARqcqCi1l0kZ+qRxr7cs0B5VdUeF1/6JKo0Hl762DvbC3T4xYb+c3A8t
-	53PsZNMu4QDHVkC6lALalNs72sasIZY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706779692;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ZXgLLa0AgQAAzLt+5EkE3Qo2/vmJJ/AA1BTUNqnDIc=;
-	b=ywSa7cRP+K5QgHKyokZsMb2v6/xI9DEvDMndE6k61NRtyyee4b3nrZrDVebWl4Jq+YAGyF
-	EK7zD6pNtRQqx0AA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706779692; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ZXgLLa0AgQAAzLt+5EkE3Qo2/vmJJ/AA1BTUNqnDIc=;
-	b=EK1Xce2mBq6yxLlhpfJlbluuhV5OslGE3Ihq9ykf96pXF7vJhk6atO/IXrz7yoZH4lkPQ0
-	cahd+9kJXp7PcDARqcqCi1l0kZ+qRxr7cs0B5VdUeF1/6JKo0Hl762DvbC3T4xYb+c3A8t
-	53PsZNMu4QDHVkC6lALalNs72sasIZY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706779692;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5ZXgLLa0AgQAAzLt+5EkE3Qo2/vmJJ/AA1BTUNqnDIc=;
-	b=ywSa7cRP+K5QgHKyokZsMb2v6/xI9DEvDMndE6k61NRtyyee4b3nrZrDVebWl4Jq+YAGyF
-	EK7zD6pNtRQqx0AA==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 317B513594;
-	Thu,  1 Feb 2024 09:28:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id LrYEDCxku2X+UQAAn2gu4w
-	(envelope-from <jack@suse.cz>); Thu, 01 Feb 2024 09:28:12 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C935DA0809; Thu,  1 Feb 2024 10:28:11 +0100 (CET)
-Date: Thu, 1 Feb 2024 10:28:11 +0100
-From: Jan Kara <jack@suse.cz>
-To: Liu Shixin <liushixin2@huawei.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH 1/2] mm/readahead: stop readahead loop if memcg charge
- fails
-Message-ID: <20240201092811.ycoh2rekx4wagglc@quack3>
-References: <20240201100835.1626685-1-liushixin2@huawei.com>
- <20240201100835.1626685-2-liushixin2@huawei.com>
+	s=arc-20240116; t=1706779886; c=relaxed/simple;
+	bh=Pxf0gkPUSV6ML8ezzNHzC2q4EU2zzV+BO6VfllDl0nE=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iKa3jFJVdYw/7kQSB8w26CwBjXYXjJlQnl7BlyvJB6c4V2OU0lCuUXm2T8R3m3Hiwf7GDcV3c27YtUzda+zxyAvcl4MzWaXmnhqQvaVjiu53bO4YBknxdGuO/uue6QOBFnD5iDnkMVgFY3cFMRBTScbljZ50Nh3FbCekQKWVHXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=L1SpQ0ZK; arc=none smtp.client-ip=185.70.40.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1706779872; x=1707039072;
+	bh=/TpO0duNnWXfuRmnGBDmPg/iJAgdmf8+TRYZheB4zzo=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=L1SpQ0ZKZj0vEZbuhSTKvRRrWW6xgW5wTGeQWEXnf0CAAopQ1uUuErf6ZJShY6zcS
+	 DRaGadbR1O069/g9s9vLme57qnXWHn72kNrcA+mO+vh8yOp9yqaFlXTb1PwRQgWd0+
+	 yMzbr7gTl8PCjvZnGQ92+rl6Ksv1VhFApC3vcrsIywUVB1RvQEjz2VuC/YV+PGkPj4
+	 k/p04fwZ8Qntri1r7/csU62ytmv2qaweNFBv58TA9fTur7Ledik1jgashxmaq1QdE+
+	 5FH7Pz+Zg34ZVOj9+l+Ra6iTKzPI46/NOfWQGZzlceuUHTmcnI2CvCI6wjt6ZDY/L/
+	 WUXng+BOezWig==
+Date: Thu, 01 Feb 2024 09:30:46 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v3 1/9] rust: file: add Rust abstraction for `struct file`
+Message-ID: <84850d04-c1cb-460d-bc4e-d5032489da0d@proton.me>
+In-Reply-To: <CAH5fLghgc_z23dOR2L5vnPhVmhiKqZxR6jin9KCA5e_ii4BL3w@mail.gmail.com>
+References: <20240118-alice-file-v3-0-9694b6f9580c@google.com> <20240118-alice-file-v3-1-9694b6f9580c@google.com> <5dbbaba2-fd7f-4734-9f44-15d2a09b4216@proton.me> <CAH5fLghgc_z23dOR2L5vnPhVmhiKqZxR6jin9KCA5e_ii4BL3w@mail.gmail.com>
+Feedback-ID: 71780778:user:proton
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240201100835.1626685-2-liushixin2@huawei.com>
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=EK1Xce2m;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ywSa7cRP
-X-Spamd-Result: default: False [0.18 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[9];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.01)[49.80%]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: 0.18
-X-Rspamd-Queue-Id: 3F1E02205A
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Bar: /
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 01-02-24 18:08:34, Liu Shixin wrote:
-> When a task in memcg readaheads file pages, page_cache_ra_unbounded()
-> will try to readahead nr_to_read pages. Even if the new allocated page
-> fails to charge, page_cache_ra_unbounded() still tries to readahead
-> next page. This leads to too much memory reclaim.
-> 
-> Stop readahead if mem_cgroup_charge() fails, i.e. add_to_page_cache_lru()
-> returns -ENOMEM.
-> 
-> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
-> Signed-off-by: Jinjiang Tu <tujinjiang@huawei.com>
+On 29.01.24 17:34, Alice Ryhl wrote:
+> On Fri, Jan 26, 2024 at 4:04=E2=80=AFPM Benno Lossin <benno.lossin@proton=
+.me> wrote:
+>>> +///   closed.
+>>> +/// * A light refcount must be dropped before returning to userspace.
+>>> +#[repr(transparent)]
+>>> +pub struct File(Opaque<bindings::file>);
+>>> +
+>>> +// SAFETY: By design, the only way to access a `File` is via an immuta=
+ble reference or an `ARef`.
+>>> +// This means that the only situation in which a `File` can be accesse=
+d mutably is when the
+>>> +// refcount drops to zero and the destructor runs. It is safe for that=
+ to happen on any thread, so
+>>> +// it is ok for this type to be `Send`.
+>>
+>> Technically, `drop` is never called for `File`, since it is only used
+>> via `ARef<File>` which calls `dec_ref` instead. Also since it only conta=
+ins
+>> an `Opaque`, dropping it is a noop.
+>> But what does `Send` mean for this type? Since it is used together with
+>> `ARef`, being `Send` means that `File::dec_ref` can be called from any
+>> thread. I think we are missing this as a safety requirement on
+>> `AlwaysRefCounted`, do you agree?
+>> I think the safety justification here could be (with the requirement add=
+ed
+>> to `AlwaysRefCounted`):
+>>
+>>       SAFETY:
+>>       - `File::drop` can be called from any thread.
+>>       - `File::dec_ref` can be called from any thread.
+>=20
+> This wording was taken from rust/kernel/task.rs. I think it's out of
+> scope to reword it.
 
-Makes sense. Feel free to add:
+Rewording the safety docs on `AlwaysRefCounted`, yes that is out of scope,
+I was just checking if you agree that the current wording is incomplete.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> Besides, it says "destructor runs", not "drop runs". The destructor
+> can be interpreted to mean the right thing for ARef.
 
-								Honza
+To me "destructor runs" and "drop runs" are synonyms.
 
-> ---
->  mm/readahead.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index 23620c57c1225..cc4abb67eb223 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -228,6 +228,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  	 */
->  	for (i = 0; i < nr_to_read; i++) {
->  		struct folio *folio = xa_load(&mapping->i_pages, index + i);
-> +		int ret;
->  
->  		if (folio && !xa_is_value(folio)) {
->  			/*
-> @@ -247,9 +248,12 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
->  		folio = filemap_alloc_folio(gfp_mask, 0);
->  		if (!folio)
->  			break;
-> -		if (filemap_add_folio(mapping, folio, index + i,
-> -					gfp_mask) < 0) {
-> +
-> +		ret = filemap_add_folio(mapping, folio, index + i, gfp_mask);
-> +		if (ret < 0) {
->  			folio_put(folio);
-> +			if (ret == -ENOMEM)
-> +				break;
->  			read_pages(ractl);
->  			ractl->_index++;
->  			i = ractl->_index + ractl->_nr_pages - index - 1;
-> -- 
-> 2.25.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> The right safety comment would probably be that dec_ref can be called
+> from any thread.
+
+Yes and no, I would prefer if you could remove the "By design, ..."
+part and only focus on `dec_ref` being callable from any thread and
+it being ok to send a `File` to a different thread.
+
+--=20
+Cheers,
+Benno
+
+
 
