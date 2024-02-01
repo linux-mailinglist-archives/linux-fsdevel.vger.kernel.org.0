@@ -1,82 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-9854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81A0845550
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 11:27:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D9E845552
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 11:29:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 171071C294FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:27:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C99001F214B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD4F15B977;
-	Thu,  1 Feb 2024 10:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B0215B965;
+	Thu,  1 Feb 2024 10:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJUCT4N+"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="nbKmx9Kh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DB415AAC4;
-	Thu,  1 Feb 2024 10:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29204DA1D
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Feb 2024 10:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706783259; cv=none; b=dbH58xxQSPlwfo6Z1mUNGKpuZWS7go8Eu2nPleQt54TdQNWLJ26ChSVYXJBbEJFer57IpSBDd1loq9f2Vb8oKI8KdZ9TnGTUE+684JTfHOaKb1dgPXSrNrWcqrOOUZfO5dMs7kS/QsxDVSFZ6S1pQKRXxXPqjnIBUhBJw7mff2g=
+	t=1706783346; cv=none; b=QbjzYw8w2WDe+O7GjPW7508YnLIcI5HsTbrDeLRlpayMxJPKW3ybcXlolCCZDsJ9ElVFatgrED7DmWpu0JUEQ2Yp1R5fC/7cklCCQsmzQ4G09eWuYzZ/r8jQDtjbN+spyf9gYPj0D0pcBZaThAJux1RinXPLc5E8wSZv89lMQQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706783259; c=relaxed/simple;
-	bh=Ja61sSGoZwqA+IWDDY3U5LhiD9rMbqKjVh16oqMotWs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bO/AtbGce+HCmW7mMUTRx9/4BEmcVTMrFKi8gJtwJL6xP8m/rTcg6OspYoIc8bDyvplT4sho1ACHbbFOwWzLfGfnhj1CQzhskcgC2x75UNgy6qYHqOzW6DvHysKAFIyiYWqgXzQCzrSSlP1WuwrQCkJQ1Y85D4DA2azn9Qkfmts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJUCT4N+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E1FDC433F1;
-	Thu,  1 Feb 2024 10:27:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706783258;
-	bh=Ja61sSGoZwqA+IWDDY3U5LhiD9rMbqKjVh16oqMotWs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZJUCT4N+kH1vAAGH8WhlNhVmmZuBulWi8/3qp35XqQhS4lwBio+k3jLKxs4XmxnRM
-	 9hyvqPQZCbjcmvf3Ww4ZLN7+tK3ODK/0wrL8Xuh7arpnTf0SpZFxSU324KWCj/bwmO
-	 C0ToEcbLczjfYgBi872k4Wp75zKIDe1VPpqQEjQL8AHU3jp8xQeliZjD9cxxsxm3yw
-	 cFgYXBbKSmH6a2A9WFDY0azU3098qfdQ9XmJWlzx+A5t33i77rbDbEAzgiZEZdIve2
-	 qN+nFU8gWyOC1HrVIxekOiGtR3RMZTvG00k/ZQcuRhhJKYkMkMIexWzO3BEGqbUkEz
-	 iXtriJilD8R2g==
-Message-ID: <86af03db-80bf-42a1-9f47-f8e0f185f8fc@kernel.org>
-Date: Thu, 1 Feb 2024 18:27:35 +0800
+	s=arc-20240116; t=1706783346; c=relaxed/simple;
+	bh=4bY7UZC6F0iEcfCyio2JtneQgLqFyahA1E9s4ohixvo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NxskGaC2j1qL0xo9m6wzYH89DQzE7dxLPcjg/YuzaE2m9zUTAmjRlYzT0MHVNwDi0qr2ACdzcaV9pdL2t7LmNCBzRKwZBwHRCzWycRYmQ+eEGbIDyLDROnfpHYPiHrGuw6pFajXx1Zll7M6p/iCu3Uf13Lcxbu9mIfXZ0qDPGRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=nbKmx9Kh; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a30f7c9574eso96941266b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Feb 2024 02:29:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1706783342; x=1707388142; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4bY7UZC6F0iEcfCyio2JtneQgLqFyahA1E9s4ohixvo=;
+        b=nbKmx9Kh6v2/fqKd4ByL/LJSAT5heGjOTp7kmlbmwe4wjdx0SMnletoqJ6cCZLfsPw
+         AIOI+GHAO2vUdv9pjL2fzcICFhoKvCbevTMvT/wiKfzfFtc3OmRE3otexPIeQO5riR0g
+         X4EVorIZNHG8mtMfoX8lRFl7N9FjmyA1HZD7A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706783342; x=1707388142;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4bY7UZC6F0iEcfCyio2JtneQgLqFyahA1E9s4ohixvo=;
+        b=mLDvZJBYRL17Sa5IfXcEWA4gvCWbWiZRZi59GkG140LJhRt1w4k7A6OpG6QGC/gBaU
+         7k7xeV4Qb/32+/GcuvOz3Gcqebh+vh/h59v3Uj7kM8HZ37/1qLE/2yBWS5WyYMdRlTUI
+         ArX6bC/HArcPm94oDhOr8c8VoFegKexOMVALiq303YYZDv7pks+K70A1+jyvGL6F9W2W
+         tjPWoGgn2nFCDrBWbHiSXBlrMnvLH5v6cuG7xolsB6UZndbxDUzZv6QdJpIJs31Ai9Do
+         Hl7IT9h0vXFD1d6z/rVTKxVh8xSzSf3KNVHZVux5sz8Kn12Vi30ue1z61HIrTBuGoGU/
+         wBuw==
+X-Gm-Message-State: AOJu0Yz0chgqPl7uw0R/xio0SmmUNkC9sI4En6zvNCD8iWnbBpwDQWnV
+	cy84v+48UJM2OLD4Fl4OKWP5jp2tXDDOOwSoE9o2I9S0Re4fou2EiEPBzSlcN+D9Qz7huNmekmv
+	MfKKZftLvBcxNaHJ+QHmA1y4fqWZAEhWXg/6u+VrLrWfi+/8P
+X-Google-Smtp-Source: AGHT+IGQNyzPfdZqwV1VHVDTGA8DodGSPCrKNI3shQclFWGP3eVv1dR9+y5P5eVEXUDdGNYr0bflkF417WfkKeHu0vo=
+X-Received: by 2002:a17:906:46d4:b0:a35:78e1:2d1f with SMTP id
+ k20-20020a17090646d400b00a3578e12d1fmr1386879ejs.71.1706783341958; Thu, 01
+ Feb 2024 02:29:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 08/19] fs/f2fs: Restore support for tracing data
- lifetimes
-Content-Language: en-US
-To: Bart Van Assche <bvanassche@acm.org>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Daejun Park <daejun7.park@samsung.com>,
- Kanchan Joshi <joshi.k@samsung.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>
-References: <20240130214911.1863909-1-bvanassche@acm.org>
- <20240130214911.1863909-9-bvanassche@acm.org>
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240130214911.1863909-9-bvanassche@acm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240131230827.207552-1-bschubert@ddn.com> <20240131230827.207552-5-bschubert@ddn.com>
+ <CAJfpeguF0ENfGJHYH5Q5o4gMZu96jjB4Ax4Q2+78DEP3jBrxCQ@mail.gmail.com> <CAOQ4uxgv67njK9CvbUfdqF8WV_cFzrnaHdPB6-qiQuKNEDvvwA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgv67njK9CvbUfdqF8WV_cFzrnaHdPB6-qiQuKNEDvvwA@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 1 Feb 2024 11:28:50 +0100
+Message-ID: <CAJfpegupKaeLX_-G-DqR0afC1JsT21Akm6TeMK9Ugi6MBh3fMA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] fuse: prepare for failing open response
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, dsingh@ddn.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024/1/31 5:48, Bart Van Assche wrote:
-> This patch restores code that was removed by commit 41d36a9f3e53 ("fs:
-> remove kiocb.ki_hint").
-> 
-> Cc: Jaegeuk Kim <jaegeuk@kernel.org>
-> Cc: Chao Yu <chao@kernel.org>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+On Thu, 1 Feb 2024 at 11:16, Amir Goldstein <amir73il@gmail.com> wrote:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+> I can look into it, but for now the fix to fuse_sync_release() is a simple
+> one liner, so I would rather limit the changes in this series.
+
+Not urgent, but it might be a good idea to add a cleanup patch as a
+prep, which would make this patch just that one line less complex.
+
+> Is fuse_finish_open() supposed to be called after clearing O_TRUNC
+> in fuse_create_open()?
+
+This will invalidate size/modification time, which we've just updated
+with the correct post open values.
+
+> I realize that this is what the code is doing in upstream, but it does not
+> look correct.
+
+I think it's correct, because it deals with the effect of
+FUSE_OPEN/O_TRUNC on attributes that weren't refreshed in contrast to
+fuse_create_open() where the attributes were refreshed.
 
 Thanks,
+Miklos
 
