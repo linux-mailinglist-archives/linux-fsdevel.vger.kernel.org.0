@@ -1,110 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-9793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC950844F4B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 04:02:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94F33844F4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 04:05:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A4D81C225F9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 03:02:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F4B71F2CA90
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 03:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FC53A1B4;
-	Thu,  1 Feb 2024 03:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B333A1B4;
+	Thu,  1 Feb 2024 03:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="amh3vtnC"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HvWjrgRi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3FF3A8C5;
-	Thu,  1 Feb 2024 03:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B4B39FD8;
+	Thu,  1 Feb 2024 03:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706756535; cv=none; b=UEeuW7nhYi0QJbAsNWTDVEPPiSK6+6jb+Wyjc8aoXLIYFXMFL0wbiafyiMJYxW5gQsTHLTJBdr3aqOd+KW/obTawTTjsivzB8jBsbPb4r6SFo4+ZSelRhcFmJMMRJcQlQDWoAe6N2tZbEWGs/++j5U8NBMbDJuEImB78RWiRlns=
+	t=1706756693; cv=none; b=uzKQhZAlrupgGCZr5waaSg+zoycbWdhy13oU9ozKgxm5y7dNa7avRDbWMSagPF11j9Q7ZUsLhEC4GbpFpLuU+wZgXVRtsMqzcGcQwq87IH0m3QWRVjzyWbJdD/tNKaooAAElIFD6NmJW/yAvXxhUVuzgD8qsHnUR+3JX3XIM7oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706756535; c=relaxed/simple;
-	bh=R+QsqpdTX1sY9S+UwIGf0BPhr4noXICmiQinzkSiegE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L8RTTVRTR4sYEY98s8vFRlx0l8s14fCNiAiJ6BummRLMOxmRwWhOgZ354XzwsmRkVh+bSyaN1TXrK4WtpuHi3xFqrKwRectBo/PDsSmUlHwgsjmUCxeBoRx6hTpJtUTCHZUUY9D49n3mD8tFxliuB7yCFAyRL44OEhSnYZ61hao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=amh3vtnC; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nMcVHbq/MOi0e8w8BPhjM3V1acBbj0Azdv/NIoV0FxY=; b=amh3vtnCwTf6LtO9i4uFr/ipV7
-	kGvaers485QV7vDl4MLKa+a/t0Juu4UDIAhkYMIXxw0slTsDAYHkuyNivNrSY+1/Y+wGHZYwSHS+3
-	CXTADfo6pTqNe9/Fe4N0TqFWunq9sSlcIUcfJiLn4XGK9daDqlz8oD1Yybwi8U4HuzraGCV3fxsTB
-	QI1ZBB9P65NiIBMUBifUmV3HT6kat644IaZUNguJSk22mpISizaCXt/bThRXZmiI6qymsbLBCq3b+
-	ZM9sKzOsAhYMpWQBqxf61p7SzZh5rVSarfn6fIB+xqecuSCGluGaptXaxC4KSJKVRxeGZzypRULKF
-	6wwGJSVw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rVNL3-002jgw-1z;
-	Thu, 01 Feb 2024 03:02:05 +0000
-Date: Thu, 1 Feb 2024 03:02:05 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Ajay Kaher <ajay.kaher@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 4/7] tracefs: dentry lookup crapectomy
-Message-ID: <20240201030205.GT2087318@ZenIV>
-References: <20240131184918.945345370@goodmis.org>
- <20240131185512.799813912@goodmis.org>
- <20240201002719.GS2087318@ZenIV>
- <20240131212642.2e384250@gandalf.local.home>
+	s=arc-20240116; t=1706756693; c=relaxed/simple;
+	bh=GXFw6LRGTigVHPUohOYoyxlMbD7hcQgUJZ58+lT30Dk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Y0A7Vres6jysZPiuGGOuYwNUf5oWCEkJoed5DkZutb6kMtGpvPaASEQ+msRpUNzdyNk+cE11Ar1hTBL2cCYQHJY99WTBFHWhWFVImVUYgKaupSwyTWkZ+ZuHzqXRTkPDPdvRgYsBNScZNsZpw67o1Xzxu3nDCLvS6GPrvKXcq9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HvWjrgRi; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706756692; x=1738292692;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=GXFw6LRGTigVHPUohOYoyxlMbD7hcQgUJZ58+lT30Dk=;
+  b=HvWjrgRi96X+IdNR0UlHToOg16/Wpp2iTYKJ+fvxffI8Jq9QsM/ceuHF
+   Mrst21doldTBqrapYgI0xUQNOPcGDN66yZKvrEx7VelYOpIAx3hm3QiZx
+   HjFoL57Df4UblW+HrC8DrjnBQlNpnn7G3UKjanrih7Py6uAjUdxHZZhl6
+   N+6ElD3wfJ6woCShibndnw8AIYz8Qt9oeY4t9qdDSvDKLZ5w5RSy63uDz
+   N22X9n/O3GH1vy64JI0cbaPI1z0KOQDzBfjKtXrolTU/wme8v3nVdKVTt
+   38NYQ89eEXSFEBxJ2qs3GYemJH4Pf+GNbQ5M80KKdvx2PFhoyOXFkQY3Y
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10969"; a="22297689"
+X-IronPort-AV: E=Sophos;i="6.05,234,1701158400"; 
+   d="scan'208";a="22297689"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2024 19:04:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6600,9927,10969"; a="961795024"
+X-IronPort-AV: E=Sophos;i="6.05,234,1701158400"; 
+   d="scan'208";a="961795024"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orsmga005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2024 19:04:44 -0800
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Gregory Price <gregory.price@memverge.com>
+Cc: Gregory Price <gourry.memverge@gmail.com>,  <linux-mm@kvack.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-doc@vger.kernel.org>,
+  <linux-fsdevel@vger.kernel.org>,  <linux-api@vger.kernel.org>,
+  <corbet@lwn.net>,  <akpm@linux-foundation.org>,  <honggyu.kim@sk.com>,
+  <rakie.kim@sk.com>,  <hyeongtak.ji@sk.com>,  <mhocko@kernel.org>,
+  <vtavarespetr@micron.com>,  <jgroves@micron.com>,
+  <ravis.opensrc@micron.com>,  <sthanneeru@micron.com>,
+  <emirakhur@micron.com>,  <Hasan.Maruf@amd.com>,
+  <seungjun.ha@samsung.com>,  <hannes@cmpxchg.org>,
+  <dan.j.williams@intel.com>,  Srinivasulu Thanneeru
+ <sthanneeru.opensrc@micron.com>
+Subject: Re: [PATCH v4 3/3] mm/mempolicy: introduce MPOL_WEIGHTED_INTERLEAVE
+ for weighted interleaving
+In-Reply-To: <Zbr/iv3IfVqhOglE@memverge.com> (Gregory Price's message of "Wed,
+	31 Jan 2024 21:18:50 -0500")
+References: <20240130182046.74278-1-gregory.price@memverge.com>
+	<20240130182046.74278-4-gregory.price@memverge.com>
+	<877cjqgfzz.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<Zbn6FG3346jhrQga@memverge.com>
+	<87y1c5g8qw.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<ZbqDgaOsAeXnqRP2@memverge.com>
+	<871q9xeyo4.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<Zbr/iv3IfVqhOglE@memverge.com>
+Date: Thu, 01 Feb 2024 11:02:47 +0800
+Message-ID: <87wmroevjc.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240131212642.2e384250@gandalf.local.home>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=ascii
 
-On Wed, Jan 31, 2024 at 09:26:42PM -0500, Steven Rostedt wrote:
+Gregory Price <gregory.price@memverge.com> writes:
 
-> > Huh?  Just return NULL and be done with that - you'll get an
-> > unhashed negative dentry and let the caller turn that into
-> > -ENOENT...
-> 
-> We had a problem here with just returning NULL. It leaves the negative
-> dentry around and doesn't get refreshed.
+> On Thu, Feb 01, 2024 at 09:55:07AM +0800, Huang, Ying wrote:
+>> Gregory Price <gregory.price@memverge.com> writes:
+>> > -       u8 __rcu *table, *weights, weight;
+>> > +       u8 __rcu *table, __rcu *weights, weight;
+>> 
+>> The __rcu usage can be checked with `sparse` directly.  For example,
+>> 
+>> make C=1 mm/mempolicy.o
+>> 
+>
+> fixed and squashed, all the __rcu usage i had except the global pointer
+> have been used.  Thanks for the reference material, was struggling to
+> understand that.
+>
+>> > task->mems_allowed_seq protection (added as 4th patch)
+>> > ------------------------------------------------------
+>> >
+>> > +       cpuset_mems_cookie = read_mems_allowed_begin();
+>> >         if (!current->il_weight || !node_isset(node, policy->nodes)) {
+>> >                 node = next_node_in(node, policy->nodes);
+>> 
+>> node will be changed in the loop.  So we need to change the logic here.
+>> 
+>
+> new patch, if it all looks good i'll ship it in v5
+>
+> ~Gregory
+>
+>
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index d8cc3a577986..4e5a640d10b8 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -1878,11 +1878,17 @@ bool apply_policy_zone(struct mempolicy *policy, enum zone_type zone)
+>
+>  static unsigned int weighted_interleave_nodes(struct mempolicy *policy)
+>  {
+> -       unsigned int node = current->il_prev;
+> -
+> -       if (!current->il_weight || !node_isset(node, policy->nodes)) {
+> -               node = next_node_in(node, policy->nodes);
+> -               /* can only happen if nodemask is being rebound */
+> +       unsigned int node;
 
-Why would that dentry stick around?  And how would anyone find
-it, anyway, when it's not hashed?
+IIUC, "node" may be used without initialization.
 
-> I did this:
-> 
->  # cd /sys/kernel/tracing
->  # ls events/kprobes/sched/
-> ls: cannot access 'events/kprobes/sched/': No such file or directory
->  # echo 'p:sched schedule' >> kprobe_events
->  # ls events/kprobes/sched/
-> ls: cannot access 'events/kprobes/sched/': No such file or directory
-> 
-> When it should have been:
-> 
->  # ls events/kprobes/sched/
-> enable  filter  format  hist  hist_debug  id  inject  trigger
-> 
-> Leaving the negative dentry there will have it fail when the directory
-> exists the next time.
+--
+Best Regards,
+Huang, Ying
 
-Then you have something very deeply fucked up.  NULL or ERR_PTR(-ENOENT)
-from ->lookup() in the last component of open() would do exactly the
-same thing: dput() whatever had been passed to ->lookup() and fail
-open(2) with -ENOENT.
+> +       unsigned int cpuset_mems_cookie;
+> +
+> +retry:
+> +       /* to prevent miscount use tsk->mems_allowed_seq to detect rebind */
+> +       cpuset_mems_cookie = read_mems_allowed_begin();
+> +       if (!current->il_weight ||
+> +           !node_isset(current->il_prev, policy->nodes)) {
+> +               node = next_node_in(current->il_prev, policy->nodes);
+> +               if (read_mems_allowed_retry(cpuset_mems_cookie))
+> +                       goto retry;
+>                 if (node == MAX_NUMNODES)
+>                         return node;
+>                 current->il_prev = node;
+> @@ -1896,8 +1902,14 @@ static unsigned int weighted_interleave_nodes(struct mempolicy *policy)
+>  static unsigned int interleave_nodes(struct mempolicy *policy)
+>  {
+>         unsigned int nid;
+> +       unsigned int cpuset_mems_cookie;
+> +
+> +       /* to prevent miscount, use tsk->mems_allowed_seq to detect rebind */
+> +       do {
+> +               cpuset_mems_cookie = read_mems_allowed_begin();
+> +               nid = next_node_in(current->il_prev, policy->nodes);
+> +       } while (read_mems_allowed_retry(cpuset_mems_cookie));
+>
+> -       nid = next_node_in(current->il_prev, policy->nodes);
+>         if (nid < MAX_NUMNODES)
+>                 current->il_prev = nid;
+>         return nid;
+> @@ -2374,6 +2386,7 @@ static unsigned long alloc_pages_bulk_array_weighted_interleave(gfp_t gfp,
+>                 struct page **page_array)
+>  {
+>         struct task_struct *me = current;
+> +       unsigned int cpuset_mems_cookie;
+>         unsigned long total_allocated = 0;
+>         unsigned long nr_allocated = 0;
+>         unsigned long rounds;
+> @@ -2391,7 +2404,13 @@ static unsigned long alloc_pages_bulk_array_weighted_interleave(gfp_t gfp,
+>         if (!nr_pages)
+>                 return 0;
+>
+> -       nnodes = read_once_policy_nodemask(pol, &nodes);
+> +       /* read the nodes onto the stack, retry if done during rebind */
+> +       do {
+> +               cpuset_mems_cookie = read_mems_allowed_begin();
+> +               nnodes = read_once_policy_nodemask(pol, &nodes);
+> +       } while (read_mems_allowed_retry(cpuset_mems_cookie));
+> +
+> +       /* if the nodemask has become invalid, we cannot do anything */
+>         if (!nnodes)
+>                 return 0;
 
