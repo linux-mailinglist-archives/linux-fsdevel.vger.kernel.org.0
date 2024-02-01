@@ -1,61 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-9910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F13845EA4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 18:36:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7076845EA7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 18:36:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41DF01F2495F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 17:36:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D7B428EB02
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 17:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6928402A;
-	Thu,  1 Feb 2024 17:36:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46ECA63CA0;
+	Thu,  1 Feb 2024 17:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nY399TsQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RT/Q78Yj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nY399TsQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RT/Q78Yj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B201E5C04B;
-	Thu,  1 Feb 2024 17:36:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0785C04A;
+	Thu,  1 Feb 2024 17:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706808977; cv=none; b=cUDAPA5HlG3fJ0untaGR7D3dbb66AfKBjV7XiYEgFcuCCUXir9wg69/TG+hTxzzi59J/r1vIrx07ZdXZqor+/WNUG6j5DuUWNzw0PH1Ndx3B/iR54lZfGWqS+d8HIi8u52/FjteLp0EChtNG67PNH17XoDEcaMfuyFoiHw/Ux3M=
+	t=1706808995; cv=none; b=Hf6K73UkW4d9m9V/vqRO+6lCNeQPfw5OcTgHhogBVjf3zOsuPI+28WCH7ZhnrWaXYrUsL3qAZnuwuTFnDYaIMaBN9o+d4IUxv7W4VkSvCk3xhe3nNpIA9kIxJTwa5RFURoxb92dPVonSmFJS0dqhBoqSQyiURjN8pAbzULMyx98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706808977; c=relaxed/simple;
-	bh=/Qy9jAQDP2HP/iUQ8qdKb6Um9c7IsL8aCRBqdT91moA=;
+	s=arc-20240116; t=1706808995; c=relaxed/simple;
+	bh=TBmGaKe0krDiygVUYxtlPNQ4KktkWuvWJWggeWjjYo4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iIqfC+Mkuf08NOnVeSW9VqzPlZmD4g5t/fBK7eMkufVf+GXloam2izll47gRjMI3migvrW27dZrGCZeiXBuabrEdLggvFQUXOKbqPLD8J0uIgqRm2nzY6VrHckiXYcXIgH3bOPoDo2A8R8jgqO9tkRRDVIyejTKizWgfgJEIiUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A0029DA7;
-	Thu,  1 Feb 2024 09:36:56 -0800 (PST)
-Received: from raptor (unknown [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18F183F738;
-	Thu,  1 Feb 2024 09:36:08 -0800 (PST)
-Date: Thu, 1 Feb 2024 17:36:02 +0000
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev,
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org,
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, mhiramat@kernel.org,
-	rppt@kernel.org, hughd@google.com, pcc@google.com,
-	steven.price@arm.com, vincenzo.frascino@arm.com, david@redhat.com,
-	eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC v3 13/35] mm: memory: Introduce fault-on-access
- mechanism for pages
-Message-ID: <ZbvWgnMAzbGWWQvn@raptor>
-References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-14-alexandru.elisei@arm.com>
- <9a881a18-bc50-44d6-a4b5-48f8e2f73045@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GbCx7nLQocxGgCpcvP1qb78ATDYnsvSB/5Ry5MZzAdvYmHfvDzG/tzEIXvh5ZBlP9x2NRqD/MI/sSQhmPe9GTH28PDEzRpBnkXde3ni3p8yN53+W51LT3D4HnQxfGeVZGofHUx1fLCwEsOHHh1yr7L9USb9j4E1rqPrGBJe8pTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nY399TsQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RT/Q78Yj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nY399TsQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RT/Q78Yj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 38E731FBF0;
+	Thu,  1 Feb 2024 17:36:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706808992; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jihreb443vt7QH9UloB81ix+EeA28Som6yjedwgNsXw=;
+	b=nY399TsQbZYg6Eye277HGPLHR5bngfIgDjWBq0V47Vy2sqLmgF13MTi37VwpOVA06ah1Lf
+	/o8n7BSe1dgZKAl82SdSwCjaxB3OQOB2v5iLzYQA5CQy6Xq4U4Q6kRYJ6Ey9AMXEAtMTFS
+	oXkxTrwOUsKlq5MpllbMJA+IdmSS3zI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706808992;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jihreb443vt7QH9UloB81ix+EeA28Som6yjedwgNsXw=;
+	b=RT/Q78YjpbrMkr8vBhVbumrldMjonPivcaxo+h+q7wUr3Sg/mX7AaDcmu/5X0vWviC+yRo
+	JQr+nQwwabV9yCCw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706808992; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jihreb443vt7QH9UloB81ix+EeA28Som6yjedwgNsXw=;
+	b=nY399TsQbZYg6Eye277HGPLHR5bngfIgDjWBq0V47Vy2sqLmgF13MTi37VwpOVA06ah1Lf
+	/o8n7BSe1dgZKAl82SdSwCjaxB3OQOB2v5iLzYQA5CQy6Xq4U4Q6kRYJ6Ey9AMXEAtMTFS
+	oXkxTrwOUsKlq5MpllbMJA+IdmSS3zI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706808992;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jihreb443vt7QH9UloB81ix+EeA28Som6yjedwgNsXw=;
+	b=RT/Q78YjpbrMkr8vBhVbumrldMjonPivcaxo+h+q7wUr3Sg/mX7AaDcmu/5X0vWviC+yRo
+	JQr+nQwwabV9yCCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E85D139AB;
+	Thu,  1 Feb 2024 17:36:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ylViC6DWu2W3JwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 01 Feb 2024 17:36:32 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B184BA0809; Thu,  1 Feb 2024 18:36:31 +0100 (CET)
+Date: Thu, 1 Feb 2024 18:36:31 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v2 31/34] block: use file->f_op to indicate restricted
+ writes
+Message-ID: <20240201173631.pda5jvi573hevpil@quack3>
+References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
+ <20240123-vfs-bdev-file-v2-31-adbd023e19cc@kernel.org>
+ <20240201110858.on47ef4cmp23jhcv@quack3>
+ <20240201-lauwarm-kurswechsel-75ed33e41ba2@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,356 +105,65 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9a881a18-bc50-44d6-a4b5-48f8e2f73045@arm.com>
+In-Reply-To: <20240201-lauwarm-kurswechsel-75ed33e41ba2@brauner>
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spamd-Result: default: False [0.29 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 RCPT_COUNT_SEVEN(0.00)[7];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-0.11)[66.33%]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: 0.29
 
-Hi,
-
-On Thu, Feb 01, 2024 at 11:22:13AM +0530, Anshuman Khandual wrote:
-> On 1/25/24 22:12, Alexandru Elisei wrote:
-> > Introduce a mechanism that allows an architecture to trigger a page fault,
-> > and add the infrastructure to handle that fault accordingly. To use make> use of this, an arch is expected to mark the table entry as PAGE_NONE (which
-> > will cause a fault next time it is accessed) and to implement an
-> > arch-specific method (like a software bit) for recognizing that the fault
-> > needs to be handled by the arch code.
+On Thu 01-02-24 17:16:02, Christian Brauner wrote:
+> On Thu, Feb 01, 2024 at 12:08:58PM +0100, Jan Kara wrote:
+> > On Tue 23-01-24 14:26:48, Christian Brauner wrote:
+> > > Make it possible to detected a block device that was opened with
+> > > restricted write access solely based on its file operations that it was
+> > > opened with. This avoids wasting an FMODE_* flag.
+> > > 
+> > > def_blk_fops isn't needed to check whether something is a block device
+> > > checking the inode type is enough for that. And def_blk_fops_restricted
+> > > can be kept private to the block layer.
+> > > 
+> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > > 
-> > arm64 will use of this approach to reserve tag storage for pages which are
-> > mapped in an MTE enabled VMA, but the storage needed to store tags isn't
-> > reserved (for example, because of an mprotect(PROT_MTE) call on a VMA with
-> > existing pages).
-> 
-> Just to summerize -
-> 
-> So platform will create NUMA balancing like page faults - via marking existing
-> mappings with PAGE_NONE permission, when the subsequent fault happens identify
-> such cases via a software bit in the page table entry and then route the fault
-> to the platform code itself for special purpose page fault handling where page
-> might come from some reserved areas instead.
+> > I don't think we need def_blk_fops_restricted. If we have BLK_OPEN_WRITE
+> > file against a bdev with bdev_writes_blocked() == true, we are sure this is
+> > the handle blocking other writes so we can unblock them in
+> > bdev_yield_write_access()...
 
-Indeed. In the tag storage scenario, the page is page that will be mapped
-as tagged, if it's missing tag storage, the tag storage needs to be
-reserved before it can be mapped as tagged (and tags can be accessed).
+...
 
-> 
-> Some questions
-> 
-> - How often PAGE_NONE is to be marked for applicable MTE VMA based mappings 
-> 
-> 	- Is it periodic like NUMA balancing or just one time for tag storage
+> -       if (mode & BLK_OPEN_RESTRICT_WRITES)
+> +       if (mode & BLK_OPEN_WRITE) {
+> +               if (bdev_writes_blocked(bdev))
+> +                       bdev_unblock_writes(bdev);
+> +               else
+> +                       bdev->bd_writers--;
+> +       }
+> +       if (bdev_file->f_op == &def_blk_fops_restricted)
 
-It's deterministic, and only for tag storage. It's done in
-set_ptes()/__set_pte_at()->..->mte_sync_tags(), if the page is going to be
-mapped as tagged, but is missing tag storage. See patch #26 ("arm64: mte:
-Use fault-on-access to reserve missing tag storage") [1] for the code.
+Uh, why are you leaving def_blk_fops_restricted check here? I'd expect you
+can delete def_blk_fops_restricted completely...
 
-[1] https://lore.kernel.org/linux-arm-kernel/20240125164256.4147-27-alexandru.elisei@arm.com/
+								Honza
 
-> 
-> - How this is going to interact with NUMA balancing given both use PAGE_NONE
-> 
-> 	- How to differentiate these mappings from standard pte_protnone()
-
-The only place where the difference matters is in do_numa_page(), here
-renamed to handle_pte_protnone(), and in the huge page equivalent.
-
-Userspace can access tags only if set_ptes()/__set_pte_at() maps the pte
-with the PT_NORMAL_TAGGED attribute, but those functions will always map
-the page as arch_fault_on_access_pte() if it's missing tag storage. That
-makes it impossible for the kernel to map it as tagged behind our back.
-
-Unless you had other concerns.
-
-Thanks,
-Alex
-
-> 
-> > 
-> > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
-> > ---
-> > 
-> > Changes since rfc v2:
-> > 
-> > * New patch. Split from patch #19 ("mm: mprotect: Introduce PAGE_FAULT_ON_ACCESS
-> > for mprotect(PROT_MTE)") (David Hildenbrand).
-> > 
-> >  include/linux/huge_mm.h |  4 ++--
-> >  include/linux/pgtable.h | 47 +++++++++++++++++++++++++++++++++++--
-> >  mm/Kconfig              |  3 +++
-> >  mm/huge_memory.c        | 36 +++++++++++++++++++++--------
-> >  mm/memory.c             | 51 ++++++++++++++++++++++++++---------------
-> >  5 files changed, 109 insertions(+), 32 deletions(-)
-> > 
-> > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > index 5adb86af35fc..4678a0a5e6a8 100644
-> > --- a/include/linux/huge_mm.h
-> > +++ b/include/linux/huge_mm.h
-> > @@ -346,7 +346,7 @@ struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
-> >  struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
-> >  		pud_t *pud, int flags, struct dev_pagemap **pgmap);
-> >  
-> > -vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf);
-> > +vm_fault_t handle_huge_pmd_protnone(struct vm_fault *vmf);
-> >  
-> >  extern struct page *huge_zero_page;
-> >  extern unsigned long huge_zero_pfn;
-> > @@ -476,7 +476,7 @@ static inline spinlock_t *pud_trans_huge_lock(pud_t *pud,
-> >  	return NULL;
-> >  }
-> >  
-> > -static inline vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
-> > +static inline vm_fault_t handle_huge_pmd_protnone(struct vm_fault *vmf)
-> >  {
-> >  	return 0;
-> >  }
-> > diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> > index 2d0f04042f62..81a21be855a2 100644
-> > --- a/include/linux/pgtable.h
-> > +++ b/include/linux/pgtable.h
-> > @@ -1455,7 +1455,7 @@ static inline int pud_trans_unstable(pud_t *pud)
-> >  	return 0;
-> >  }
-> >  
-> > -#ifndef CONFIG_NUMA_BALANCING
-> > +#if !defined(CONFIG_NUMA_BALANCING) && !defined(CONFIG_ARCH_HAS_FAULT_ON_ACCESS)
-> >  /*
-> >   * In an inaccessible (PROT_NONE) VMA, pte_protnone() may indicate "yes". It is
-> >   * perfectly valid to indicate "no" in that case, which is why our default
-> > @@ -1477,7 +1477,50 @@ static inline int pmd_protnone(pmd_t pmd)
-> >  {
-> >  	return 0;
-> >  }
-> > -#endif /* CONFIG_NUMA_BALANCING */
-> > +#endif /* !CONFIG_NUMA_BALANCING && !CONFIG_ARCH_HAS_FAULT_ON_ACCESS */
-> > +
-> > +#ifndef CONFIG_ARCH_HAS_FAULT_ON_ACCESS
-> > +static inline bool arch_fault_on_access_pte(pte_t pte)
-> > +{
-> > +	return false;
-> > +}
-> > +
-> > +static inline bool arch_fault_on_access_pmd(pmd_t pmd)
-> > +{
-> > +	return false;
-> > +}
-> > +
-> > +/*
-> > + * The function is called with the fault lock held and an elevated reference on
-> > + * the folio.
-> > + *
-> > + * Rules that an arch implementation of the function must follow:
-> > + *
-> > + * 1. The function must return with the elevated reference dropped.
-> > + *
-> > + * 2. If the return value contains VM_FAULT_RETRY or VM_FAULT_COMPLETED then:
-> > + *
-> > + * - if FAULT_FLAG_RETRY_NOWAIT is not set, the function must return with the
-> > + *   correct fault lock released, which can be accomplished with
-> > + *   release_fault_lock(vmf). Note that release_fault_lock() doesn't check if
-> > + *   FAULT_FLAG_RETRY_NOWAIT is set before releasing the mmap_lock.
-> > + *
-> > + * - if FAULT_FLAG_RETRY_NOWAIT is set, then the function must not release the
-> > + *   mmap_lock. The flag should be set only if the mmap_lock is held.
-> > + *
-> > + * 3. If the return value contains neither of the above, the function must not
-> > + * release the fault lock; the generic fault handler will take care of releasing
-> > + * the correct lock.
-> > + */
-> > +static inline vm_fault_t arch_handle_folio_fault_on_access(struct folio *folio,
-> > +							   struct vm_fault *vmf,
-> > +							   bool *map_pte)
-> > +{
-> > +	*map_pte = false;
-> > +
-> > +	return VM_FAULT_SIGBUS;
-> > +}
-> > +#endif
-> >  
-> >  #endif /* CONFIG_MMU */
-> >  
-> > diff --git a/mm/Kconfig b/mm/Kconfig
-> > index 341cf53898db..153df67221f1 100644
-> > --- a/mm/Kconfig
-> > +++ b/mm/Kconfig
-> > @@ -1006,6 +1006,9 @@ config IDLE_PAGE_TRACKING
-> >  config ARCH_HAS_CACHE_LINE_SIZE
-> >  	bool
-> >  
-> > +config ARCH_HAS_FAULT_ON_ACCESS
-> > +	bool
-> > +
-> >  config ARCH_HAS_CURRENT_STACK_POINTER
-> >  	bool
-> >  	help
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 94ef5c02b459..2bad63a7ec16 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -1698,7 +1698,7 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
-> >  }
-> >  
-> >  /* NUMA hinting page fault entry point for trans huge pmds */
-> > -vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
-> > +vm_fault_t handle_huge_pmd_protnone(struct vm_fault *vmf)
-> >  {
-> >  	struct vm_area_struct *vma = vmf->vma;
-> >  	pmd_t oldpmd = vmf->orig_pmd;
-> > @@ -1708,6 +1708,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
-> >  	int nid = NUMA_NO_NODE;
-> >  	int target_nid, last_cpupid = (-1 & LAST_CPUPID_MASK);
-> >  	bool migrated = false, writable = false;
-> > +	vm_fault_t ret;
-> >  	int flags = 0;
-> >  
-> >  	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-> > @@ -1731,6 +1732,20 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
-> >  	if (!folio)
-> >  		goto out_map;
-> >  
-> > +	folio_get(folio);
-> > +	vma_set_access_pid_bit(vma);
-> > +
-> > +	if (arch_fault_on_access_pmd(oldpmd)) {
-> > +		bool map_pte = false;
-> > +
-> > +		spin_unlock(vmf->ptl);
-> > +		ret = arch_handle_folio_fault_on_access(folio, vmf, &map_pte);
-> > +		if (ret || !map_pte)
-> > +			return ret;
-> > +		writable = false;
-> > +		goto out_lock_and_map;
-> > +	}
-> > +
-> >  	/* See similar comment in do_numa_page for explanation */
-> >  	if (!writable)
-> >  		flags |= TNF_NO_GROUP;
-> > @@ -1755,15 +1770,18 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
-> >  	if (migrated) {
-> >  		flags |= TNF_MIGRATED;
-> >  		nid = target_nid;
-> > -	} else {
-> > -		flags |= TNF_MIGRATE_FAIL;
-> > -		vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-> > -		if (unlikely(!pmd_same(oldpmd, *vmf->pmd))) {
-> > -			spin_unlock(vmf->ptl);
-> > -			goto out;
-> > -		}
-> > -		goto out_map;
-> > +		goto out;
-> > +	}
-> > +
-> > +	flags |= TNF_MIGRATE_FAIL;
-> > +
-> > +out_lock_and_map:
-> > +	vmf->ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-> > +	if (unlikely(!pmd_same(oldpmd, *vmf->pmd))) {
-> > +		spin_unlock(vmf->ptl);
-> > +		goto out;
-> >  	}
-> > +	goto out_map;
-> >  
-> >  out:
-> >  	if (nid != NUMA_NO_NODE)
-> > diff --git a/mm/memory.c b/mm/memory.c
-> > index 8a421e168b57..110fe2224277 100644
-> > --- a/mm/memory.c
-> > +++ b/mm/memory.c
-> > @@ -4886,11 +4886,6 @@ static vm_fault_t do_fault(struct vm_fault *vmf)
-> >  int numa_migrate_prep(struct folio *folio, struct vm_area_struct *vma,
-> >  		      unsigned long addr, int page_nid, int *flags)
-> >  {
-> > -	folio_get(folio);
-> > -
-> > -	/* Record the current PID acceesing VMA */
-> > -	vma_set_access_pid_bit(vma);
-> > -
-> >  	count_vm_numa_event(NUMA_HINT_FAULTS);
-> >  	if (page_nid == numa_node_id()) {
-> >  		count_vm_numa_event(NUMA_HINT_FAULTS_LOCAL);
-> > @@ -4900,13 +4895,14 @@ int numa_migrate_prep(struct folio *folio, struct vm_area_struct *vma,
-> >  	return mpol_misplaced(folio, vma, addr);
-> >  }
-> >  
-> > -static vm_fault_t do_numa_page(struct vm_fault *vmf)
-> > +static vm_fault_t handle_pte_protnone(struct vm_fault *vmf)
-> >  {
-> >  	struct vm_area_struct *vma = vmf->vma;
-> >  	struct folio *folio = NULL;
-> >  	int nid = NUMA_NO_NODE;
-> >  	bool writable = false;
-> >  	int last_cpupid;
-> > +	vm_fault_t ret;
-> >  	int target_nid;
-> >  	pte_t pte, old_pte;
-> >  	int flags = 0;
-> > @@ -4939,6 +4935,20 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
-> >  	if (!folio || folio_is_zone_device(folio))
-> >  		goto out_map;
-> >  
-> > +	folio_get(folio);
-> > +	/* Record the current PID acceesing VMA */
-> > +	vma_set_access_pid_bit(vma);
-> > +
-> > +	if (arch_fault_on_access_pte(old_pte)) {
-> > +		bool map_pte = false;
-> > +
-> > +		pte_unmap_unlock(vmf->pte, vmf->ptl);
-> > +		ret = arch_handle_folio_fault_on_access(folio, vmf, &map_pte);
-> > +		if (ret || !map_pte)
-> > +			return ret;
-> > +		goto out_lock_and_map;
-> > +	}
-> > +
-> >  	/* TODO: handle PTE-mapped THP */
-> >  	if (folio_test_large(folio))
-> >  		goto out_map;
-> > @@ -4983,18 +4993,21 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
-> >  	if (migrate_misplaced_folio(folio, vma, target_nid)) {
-> >  		nid = target_nid;
-> >  		flags |= TNF_MIGRATED;
-> > -	} else {
-> > -		flags |= TNF_MIGRATE_FAIL;
-> > -		vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
-> > -					       vmf->address, &vmf->ptl);
-> > -		if (unlikely(!vmf->pte))
-> > -			goto out;
-> > -		if (unlikely(!pte_same(ptep_get(vmf->pte), vmf->orig_pte))) {
-> > -			pte_unmap_unlock(vmf->pte, vmf->ptl);
-> > -			goto out;
-> > -		}
-> > -		goto out_map;
-> > +		goto out;
-> > +	}
-> > +
-> > +	flags |= TNF_MIGRATE_FAIL;
-> > +
-> > +out_lock_and_map:
-> > +	vmf->pte = pte_offset_map_lock(vma->vm_mm, vmf->pmd,
-> > +				       vmf->address, &vmf->ptl);
-> > +	if (unlikely(!vmf->pte))
-> > +		goto out;
-> > +	if (unlikely(!pte_same(ptep_get(vmf->pte), vmf->orig_pte))) {
-> > +		pte_unmap_unlock(vmf->pte, vmf->ptl);
-> > +		goto out;
-> >  	}
-> > +	goto out_map;
-> >  
-> >  out:
-> >  	if (nid != NUMA_NO_NODE)
-> > @@ -5151,7 +5164,7 @@ static vm_fault_t handle_pte_fault(struct vm_fault *vmf)
-> >  		return do_swap_page(vmf);
-> >  
-> >  	if (pte_protnone(vmf->orig_pte) && vma_is_accessible(vmf->vma))
-> > -		return do_numa_page(vmf);
-> > +		return handle_pte_protnone(vmf);
-> >  
-> >  	spin_lock(vmf->ptl);
-> >  	entry = vmf->orig_pte;
-> > @@ -5272,7 +5285,7 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
-> >  		}
-> >  		if (pmd_trans_huge(vmf.orig_pmd) || pmd_devmap(vmf.orig_pmd)) {
-> >  			if (pmd_protnone(vmf.orig_pmd) && vma_is_accessible(vma))
-> > -				return do_huge_pmd_numa_page(&vmf);
-> > +				return handle_huge_pmd_protnone(&vmf);
-> >  
-> >  			if ((flags & (FAULT_FLAG_WRITE|FAULT_FLAG_UNSHARE)) &&
-> >  			    !pmd_write(vmf.orig_pmd)) {
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
