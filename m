@@ -1,142 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-9821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8418453BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:22:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 314488453D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:24:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67F08B2A389
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:22:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6469D1C26EA8
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF1315B977;
-	Thu,  1 Feb 2024 09:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF2815B11D;
+	Thu,  1 Feb 2024 09:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="o42QU8N/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A2015B0F2;
-	Thu,  1 Feb 2024 09:21:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96B115B10A
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Feb 2024 09:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706779316; cv=none; b=I9+eBr/oku/6TpSjA1T6fqr2CabhMYcKF1Qe6GtIvcNZMyEoGm7BhMiWMKqZ4HM5rccWr7+UwSBHmI+c+61Q3ksOq9WXe7bwoNXGn4RfeKL8FZcIDbg7JwunjzbP9Tce/5yRIb3OvqiBAviosOHDrOhxY2lxNkUca3JV2tjFq2I=
+	t=1706779401; cv=none; b=qQo65PXyOQGOh2uac8oLzXjm8p+QQ4j2eOzR8lQe0vm63CtFrYPPlCEtOyLg9PL+NwuFrfagxedT3BdSXEy6w/i/H4eNCgHmN0VYMT0O5u0P8LixkRtwXgvV409IPEV3ehhnCT8YBGhYf4F4T+9q4p26t1vd797L2pEjt2pAg00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706779316; c=relaxed/simple;
-	bh=Xan/dqyZBR9aQDewxYQ4N13dX6KyR4YMrUZL8g38qlQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OGzba39z+tIbnbz5qoWOIIhhjFZJh22A4Q98RUZ2f6BZP0WdLkWnZFt/FpSj9Vb6jbTMvglJDjxZgd7Gq8AVrFU6Z818GOUQFxWz6s6YBlB2eTjHKE3sE5jBVLZ1UmFpqGmgAPcwzFfZtiqou6qTWS5WDzAiXef0Zl70j8G8vko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E1878DA7;
-	Thu,  1 Feb 2024 01:22:35 -0800 (PST)
-Received: from [10.162.42.11] (a077893.blr.arm.com [10.162.42.11])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 48A343F738;
-	Thu,  1 Feb 2024 01:21:41 -0800 (PST)
-Message-ID: <30278898-c4b2-4dd6-ba68-a19575f81a65@arm.com>
-Date: Thu, 1 Feb 2024 14:51:39 +0530
+	s=arc-20240116; t=1706779401; c=relaxed/simple;
+	bh=P/o0U0jRV5smDHEuQY610H2VGAl3tdPdE66Kv2+oDkY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IF+57arvHIZaR8HVtjzQtlQ76MBOEt5vT6ge5BP3c6SScv3idYxGqqhvDa0acUEMRugHXBllaPxTBdm5981PRYbOZXrBCTvChXrxh8u85lRwQ6xNklnTRvNUDyHUENrObm6uNoqlV1ZaNRlBCbQQRPYwtSKD2MEfCTj9ghnIldo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=o42QU8N/; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a3122b70439so85851066b.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Feb 2024 01:23:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1706779398; x=1707384198; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=xxYYV7eFNynI72ZruKC6Q2ePZmpMY4c1EQ3Ni7rcsDY=;
+        b=o42QU8N/ta/zwWF0OOl+Tj2tpHcsepmWrdlmTan9hqu5mK+3khuon7+a0w0kstN+xu
+         YXvKBrfhdgimxMHizn51/vAzMev9R2JaWPHzNKi5kl1uKMhOqKWErzMa1+V04MHRGQfN
+         uuAk2APAlJzt2+2xMmSMqM/yktasGrZhm3qIQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706779398; x=1707384198;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xxYYV7eFNynI72ZruKC6Q2ePZmpMY4c1EQ3Ni7rcsDY=;
+        b=DF1tTv2EK895A6zWGnuMK/dLSMavHQTrde94ubrTEsDfHXdkjW92kZYCMpacmILTSc
+         WRlbSq2wwxPTg75haARThQqve+EaNBqxxltB4uXSjR9j7If9ZUJdzEG031/zzJuRPUcp
+         ITiVaLYUGmW2JuFypssE4Ih1yGnYWx6afR9bt5fthXDEyMmUwSRTShtCRMbbQt3xD3n2
+         RSKGutUmuPj87yn3BMSThPuqPR3gQ3ElYi1OmwB00DSEP0/igiYk4qzwC1VshIthH1Mw
+         KlPYqvXvhKS1LPtvKGyr2SFF7fyBu2V5LXZSkX0viCjy8LTHdHHHQv2f+GhIeHwTlj20
+         J4zQ==
+X-Gm-Message-State: AOJu0Yyx9jSKx6cMIMLGZZFyaBjW2A5InWUkIDGEV4H5a9kTRPS77gPL
+	9F0OlmJvGLiKz9isr7z0Q00eYuU49+xsIrEUlcfBAQDA4FP09RzS9LmezB3p02fes+YKajwrjlE
+	Lstkk0Z/KX48pHf/iznIEYZTP8k5E4T3dYCWtUw==
+X-Google-Smtp-Source: AGHT+IH/FZuoIGaAqNiBs6pUa6EAx9oL2KNEz2zRUqywz9Fk6M66wvgzQ6gWZ+OyvyHJbtESFkv33EsAMU4qU/CbhGk=
+X-Received: by 2002:a17:907:bb85:b0:a36:133c:ad2a with SMTP id
+ xo5-20020a170907bb8500b00a36133cad2amr2843227ejc.21.1706779397209; Thu, 01
+ Feb 2024 01:23:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v3 30/35] arm64: mte: ptrace: Handle pages with
- missing tag storage
-Content-Language: en-US
-To: Alexandru Elisei <alexandru.elisei@arm.com>, catalin.marinas@arm.com,
- will@kernel.org, oliver.upton@linux.dev, maz@kernel.org,
- james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
- arnd@arndb.de, akpm@linux-foundation.org, mingo@redhat.com,
- peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
- mhiramat@kernel.org, rppt@kernel.org, hughd@google.com
-Cc: pcc@google.com, steven.price@arm.com, vincenzo.frascino@arm.com,
- david@redhat.com, eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org,
- linux-trace-kernel@vger.kernel.org
-References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-31-alexandru.elisei@arm.com>
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20240125164256.4147-31-alexandru.elisei@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240131230827.207552-1-bschubert@ddn.com> <20240131230827.207552-5-bschubert@ddn.com>
+In-Reply-To: <20240131230827.207552-5-bschubert@ddn.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 1 Feb 2024 10:23:05 +0100
+Message-ID: <CAJfpeguF0ENfGJHYH5Q5o4gMZu96jjB4Ax4Q2+78DEP3jBrxCQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] fuse: prepare for failing open response
+To: Bernd Schubert <bschubert@ddn.com>
+Cc: linux-fsdevel@vger.kernel.org, dsingh@ddn.com, 
+	Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 1 Feb 2024 at 00:09, Bernd Schubert <bschubert@ddn.com> wrote:
+>
+> From: Amir Goldstein <amir73il@gmail.com>
+>
+> In preparation for inode io modes, a server open response could fail
+> due to conflicting inode io modes.
+>
+> Allow returning an error from fuse_finish_open() and handle the error in
+> the callers. fuse_dir_open() can now call fuse_sync_release(), so handle
+> the isdir case correctly.
 
+While that's true, it may be better to just decouple the dir/regular
+paths completely, since there isn't much sharing anyway and becoming
+even less.
 
-On 1/25/24 22:12, Alexandru Elisei wrote:
-> A page can end up mapped in a MTE enabled VMA without the corresponding tag
-> storage block reserved. Tag accesses made by ptrace in this case can lead
-> to the wrong tags being read or memory corruption for the process that is
-> using the tag storage memory as data.
-> 
-> Reserve tag storage by treating ptrace accesses like a fault.
-> 
-> Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
-> ---
-> 
-> Changes since rfc v2:
-> 
-> * New patch, issue reported by Peter Collingbourne.
-> 
->  arch/arm64/kernel/mte.c | 26 ++++++++++++++++++++++++--
->  1 file changed, 24 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/mte.c b/arch/arm64/kernel/mte.c
-> index faf09da3400a..b1fa02dad4fd 100644
-> --- a/arch/arm64/kernel/mte.c
-> +++ b/arch/arm64/kernel/mte.c
-> @@ -412,10 +412,13 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
->  	while (len) {
->  		struct vm_area_struct *vma;
->  		unsigned long tags, offset;
-> +		unsigned int fault_flags;
-> +		struct page *page;
-> +		vm_fault_t ret;
->  		void *maddr;
-> -		struct page *page = get_user_page_vma_remote(mm, addr,
-> -							     gup_flags, &vma);
->  
-> +get_page:
-> +		page = get_user_page_vma_remote(mm, addr, gup_flags, &vma);
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index d19cbf34c634..d45d4a678351 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -692,13 +692,15 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+>         d_instantiate(entry, inode);
+>         fuse_change_entry_timeout(entry, &outentry);
+>         fuse_dir_changed(dir);
+> -       err = finish_open(file, entry, generic_file_open);
+> +       err = generic_file_open(inode, file);
+> +       if (!err) {
+> +               file->private_data = ff;
+> +               err = finish_open(file, entry, fuse_finish_open);
 
-But if there is valid page returned here in the first GUP attempt, will there
-still be a subsequent handle_mm_fault() on the same vma and addr ?
+Need to be careful with moving fuse_finish_open() call inside
+finish_open() since various fields will be different.
 
->  		if (IS_ERR(page)) {
->  			err = PTR_ERR(page);
->  			break;
-> @@ -433,6 +436,25 @@ static int __access_remote_tags(struct mm_struct *mm, unsigned long addr,
->  			put_page(page);
->  			break;
->  		}
-> +
-> +		if (tag_storage_enabled() && !page_tag_storage_reserved(page)) {
-
-Should not '!page' be checked here as well ?
-
-> +			fault_flags = FAULT_FLAG_DEFAULT | \
-> +				      FAULT_FLAG_USER | \
-> +				      FAULT_FLAG_REMOTE | \
-> +				      FAULT_FLAG_ALLOW_RETRY | \
-> +				      FAULT_FLAG_RETRY_NOWAIT;
-> +			if (write)
-> +				fault_flags |= FAULT_FLAG_WRITE;
-> +
-> +			put_page(page);
-> +			ret = handle_mm_fault(vma, addr, fault_flags, NULL);
-> +			if (ret & VM_FAULT_ERROR) {
-> +				err = -EFAULT;
-> +				break;
-> +			}
-> +			goto get_page;
-> +		}
-> +
->  		WARN_ON_ONCE(!page_mte_tagged(page));
->  
->  		/* limit access to the end of the page */
+In particular O_TRUNC in f_flags will not be cleared and in this case
+it looks undesirable.
 
