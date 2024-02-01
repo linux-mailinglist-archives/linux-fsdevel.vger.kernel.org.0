@@ -1,156 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-9814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D1C284530E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:47:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C68BE845388
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D671F220AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 08:47:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 655C41F2925F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60FB158D8E;
-	Thu,  1 Feb 2024 08:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CC3D15B96B;
+	Thu,  1 Feb 2024 09:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MwCHKcgt"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rbaHIs4a";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XBPUU3Uo";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rbaHIs4a";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XBPUU3Uo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26071586FE
-	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Feb 2024 08:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058E515B0F9;
+	Thu,  1 Feb 2024 09:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706777267; cv=none; b=PwY4ybIrzqyjW69TADVBkJXR85tiueDH+V+Utdpmidw86libV4OTNoDamZ/+ZYmZRghNnxsPpzJ9oWkK88AyhOl+nIacZrJEIFzmMd2W6yH3cI322GNbPqvwSE7MPK6DfVYTLpRGvcBOaQn2R6o5nbfl61C3hocnc0/MENsrDjw=
+	t=1706778862; cv=none; b=UoNteyjtewwn+0AC0wOAfCdUTgmGalQY/h44Y0SsO/CtXBpNvPK6l2Yw5UkHuurZYnfpdfrGwQYpnl1eXJLbASRIhmWOcP32qD2oE8T1YGG4nBp7VwIsNprFK6+7KliemcF9cd/CPYKTMO4e4MXq2ZgJtk53/YwD7BgFpEqfiN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706777267; c=relaxed/simple;
-	bh=RhJCGSqtg+lQOjMf14y8RYem6UsJutbmhYP65QnXxY4=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=n5yxOo7TIAgS4LtUVpQY73u+crWW4/cB9/mvD8WwQhKCyEBymffsWRCoXI0SlMa50cbJFms/Dcn5EFEN5YHI4BV5MIkLlmuyrtQFXTB/xu6r6G/XdUBGULQZw2GRg29vfDc5ewG6NHtgwTyBs4/YKd9mZic4xbCuZTH0fA/b8Wo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MwCHKcgt; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6040ffa60ddso13861987b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Feb 2024 00:47:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1706777264; x=1707382064; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Ut6iMrGe0Fe7IMukcbrdTGUANM5JE5jZNaHWvk8D0fg=;
-        b=MwCHKcgtkDFjSGiV47psn9uMZd7Yo+1pRaX9yeqEhtdkWYrQ0ABvxP7KR4duuJ+zaB
-         tqDCL6OPCEdbrr79oL3hiXm3FbYD0ni12cKpdRbmqRnWv/TMFCuc4VWlF6KZbseeWEQj
-         zJZWcZiqoiLHEoMrZ5l43GzHXYSYTLHi9ytjxnRT37LwBHu6fnONTp/FkvZx1Uk0SDf2
-         TUhSuEjOT2+gu5aM+2IR33eqjp4YYCuTwUs7Luq9jAnv2VG7n58YodWSlvEp3QQk92ZK
-         sEi+zxpnk/4ASyEuULrJlThUlxDyxKti2mx1eMjO7P6vs6NOyNwQSK40qPafjPSVmOLq
-         sQvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706777264; x=1707382064;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Ut6iMrGe0Fe7IMukcbrdTGUANM5JE5jZNaHWvk8D0fg=;
-        b=CU4VxN2sNVzPA/emqeqw9VE4v8oayuwwXbC6V9vuSV8aEQwrRqLMqgLTJjxHwRl2gV
-         2q1UnCbmgIf3lkRru5+455Xp8oGHnkXUJTh3CPLxqpkO4QWXMOodNiJ806ikYde3YBMD
-         j4Iq5/0jXeSoq14loVSTb9RFVdIFOYvs0YqVRWTokqYqwTdoAfqr/6BytDYFWxqwA0a2
-         qtWmHN2YCS3M4BFEjR+Lopgsp9ymL5BFmfUapMWsUo5VRFcRKksqQqoGKd4z2QBc+OKr
-         YsfSktQmCCDnqEBzk5N68CUi9i2l9ddjpApdZU6piAm1mwmeE5HyTkmCZb0iWa8s5qRG
-         7uNw==
-X-Gm-Message-State: AOJu0Yz8oemGL0oSKHZBLrqJ+cGMZpACDBFTLgtq+SDScXkOw+p8jdBU
-	8vtRzDu2eoHSBHMVmzjgvSg9TPuRe9evsu5/VOwnPAdBjtmE77qw9pEONcImZt6+iMcBb8PRw16
-	qGeX7mLzGKP+eOw==
-X-Google-Smtp-Source: AGHT+IEwC2Sq+6nJ4cPi4xRUxsLrbdif3maAi4tV/OsTRC4SRRj3pncHKyErUMxRhqPd+mlOla5u99yynevNafM=
-X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a81:9946:0:b0:604:45a:6740 with SMTP id
- q67-20020a819946000000b00604045a6740mr942684ywg.2.1706777264640; Thu, 01 Feb
- 2024 00:47:44 -0800 (PST)
-Date: Thu,  1 Feb 2024 08:47:39 +0000
+	s=arc-20240116; t=1706778862; c=relaxed/simple;
+	bh=35I/4ETFMVgxg6CJT0uJUyv5QL43GJzyjJq4wVkwSxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VH8IvM3wwgs1atKJMbneRs/uD0aQhYEE2bNQhM3Ma1HZICZ1GzYHzmRqtd1b3PH5uD21b6BGAsRsimrJn8lR6/59EdL0wfkWUfY3o7NVs8SHNgMltGtgGbsbUrb3NDQ4W9uFJhL5eAFJatAi9ed/EMzQDY5BGKdeIUGxw0TW6SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rbaHIs4a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XBPUU3Uo; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rbaHIs4a; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XBPUU3Uo; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 24EC51FB82;
+	Thu,  1 Feb 2024 09:14:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706778859; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F0lhF+jRm2+GaFMUA9qvbMYRCg3c9XzJlwSiMwmPEKM=;
+	b=rbaHIs4amEgm58hLkh8H3XIBvpDAC0lCSbNOW2mNriWBaMjqbp2Z663HVIot7H/CsMNlGT
+	wuTUrRlyuAy6A48k/ENwgZsGHF88J60aeKVbk0/ABHf4eIESxp2SLG2JfEBQRNY962APMI
+	4sv3oJ2yXAksBWhAW88vZT5l9iKpgBs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706778859;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F0lhF+jRm2+GaFMUA9qvbMYRCg3c9XzJlwSiMwmPEKM=;
+	b=XBPUU3UoGMr5C8RvsW0EE9t4ciVC68M8T5KiM6x9+1k4XZum+neQb3uZmRJTpMPsTNTjkI
+	1nzj/S5/ctjpoZCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706778859; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F0lhF+jRm2+GaFMUA9qvbMYRCg3c9XzJlwSiMwmPEKM=;
+	b=rbaHIs4amEgm58hLkh8H3XIBvpDAC0lCSbNOW2mNriWBaMjqbp2Z663HVIot7H/CsMNlGT
+	wuTUrRlyuAy6A48k/ENwgZsGHF88J60aeKVbk0/ABHf4eIESxp2SLG2JfEBQRNY962APMI
+	4sv3oJ2yXAksBWhAW88vZT5l9iKpgBs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706778859;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F0lhF+jRm2+GaFMUA9qvbMYRCg3c9XzJlwSiMwmPEKM=;
+	b=XBPUU3UoGMr5C8RvsW0EE9t4ciVC68M8T5KiM6x9+1k4XZum+neQb3uZmRJTpMPsTNTjkI
+	1nzj/S5/ctjpoZCQ==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 162CA13594;
+	Thu,  1 Feb 2024 09:14:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id wgllBetgu2XbTgAAn2gu4w
+	(envelope-from <jack@suse.cz>); Thu, 01 Feb 2024 09:14:19 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B0DE2A0809; Thu,  1 Feb 2024 10:14:18 +0100 (CET)
+Date: Thu, 1 Feb 2024 10:14:18 +0100
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+82df44ede2faca24c729@syzkaller.appspotmail.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, groeck@google.com,
+	hdanton@sina.com, jack@suse.com, jack@suse.cz, kernel@collabora.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	shreeya.patel@collabora.com, steve.magnani@digidescorp.com,
+	steve@digidescorp.com, syzkaller-bugs@googlegroups.com,
+	zsm@google.com
+Subject: Re: [syzbot] [udf?] KASAN: use-after-free Read in udf_sync_fs
+Message-ID: <20240201091418.rqapa3fbc563jeyk@quack3>
+References: <00000000000024d7f70602b705e9@google.com>
+ <000000000000d33080061046ed47@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2507; i=aliceryhl@google.com;
- h=from:subject; bh=RhJCGSqtg+lQOjMf14y8RYem6UsJutbmhYP65QnXxY4=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBlu1ovgg0/kO+AwbQOpm/x9i67t3KgnisFNXUNB
- Inyb0i3XUWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZbtaLwAKCRAEWL7uWMY5
- RubYD/9xlb20HFn+H3WxCU2CRg6XGIz9MaIXEUHE5OsE3WrbL9m8IP5VR3eHLBrgXOF+Hz9NUJK
- uj5zxhC5v6PYqae+Zb+QL5noZsvh/eT7pelzBpQla/Oo6zVyUbzflAxbamg1Xy14s5und2I0sRI
- s4wKvP1ODScDZBMe5BUj+GWQ+6x5UXp6RR91f1IXwNbjgazj7HWrw8ZaxqBcYnhDpoFUS8x0mZ7
- O68eVoRjO2tE6zeltWEPw4THnvkS4qVbPxBihetT+RFs7jynTh5LNQno+r/3UcUbFWPtbad7R9Y
- SYGT/9Io85R0M7M9to2ITnn+nafzXzizkAA+9QrnkBztvkhFnBJOomaQPsxGAo6EbGat9AA1Til
- JQUWBWhpUl0qOFxkA7addbLIoOsVHpxWLB7xdlFbr3SVk0immZ1/xe6irqw7lYMLKAJIHvH/21E
- N9YR29AhYhPXR5lM0pQxD5Kmut3EunY+pKTJ6eXu3kbJx6E/kOI4khL1dar5jlFeGVWuPIzM3aD
- VKu55UanXk0ChcyfhMu7fOpFfqwUujOEQ5yMOYh400Bnj8gM4XdJCtXMJ/NGig2L23YB1W3cLbg
- KJnCC2FC9e/XpHtXFwVF3KBlyGmrlQfsQ08g7oL2JZzT6SZ+o7VRvVTHVszFwJZZTa3VROoHCxp VFW5uPQeLw/0h9w==
-X-Mailer: git-send-email 2.43.0.594.gd9cf4e227d-goog
-Message-ID: <20240201084739.1452854-1-aliceryhl@google.com>
-Subject: [PATCH] xarray: document that xa_alloc uses the smallest index
-From: Alice Ryhl <aliceryhl@google.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000d33080061046ed47@google.com>
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -1.30
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[sina.com];
+	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=e5751b3a2226135d];
+	 TAGGED_RCPT(0.00)[82df44ede2faca24c729];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 R_RATELIMIT(0.00)[to_ip_from(RLnp55o5df8f6i9gmhay37f8wn)];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_TWELVE(0.00)[15];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 FREEMAIL_CC(0.00)[kernel.dk,kernel.org,google.com,sina.com,suse.com,suse.cz,collabora.com,vger.kernel.org,digidescorp.com,googlegroups.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[];
+	 SUBJECT_HAS_QUESTION(0.00)[]
+X-Spam-Flag: NO
 
-The deprecated IDR data structure was used to allocate *small* ids for
-things, and the property that the ids are small is often desireable for
-various reasons. However, the IDR interface is deprecated in favor of
-XArray.
+On Wed 31-01-24 16:18:04, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
+> 
+> commit 6f861765464f43a71462d52026fbddfc858239a5
+> Author: Jan Kara <jack@suse.cz>
+> Date:   Wed Nov 1 17:43:10 2023 +0000
+> 
+>     fs: Block writes to mounted block devices
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11282540180000
+> start commit:   55cb5f43689d Merge tag 'trace-v6.7-rc6' of git://git.kerne..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e5751b3a2226135d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=82df44ede2faca24c729
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12dbd63ee80000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1534bed1e80000
+> 
+> If the result looks correct, please mark the issue as fixed by replying with:
 
-Clarify that when replacing IDR with XArray, you do not give up the
-guarantee that the generated ids are small, even if you use a very large
-range such as xa_limit_32b.
+Looks good.
+ 
+#syz fix: fs: Block writes to mounted block devices
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- include/linux/xarray.h | 6 ++++++
- lib/xarray.c           | 2 ++
- 2 files changed, 8 insertions(+)
-
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index cb571dfcf4b1..e5f273d3f2bc 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -856,6 +856,8 @@ static inline int __must_check xa_insert_irq(struct xarray *xa,
-  * stores the index into the @id pointer, then stores the entry at
-  * that index.  A concurrent lookup will not see an uninitialised @id.
-  *
-+ * Always allocates the entry at the smallest possible index.
-+ *
-  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
-  * in xa_init_flags().
-  *
-@@ -889,6 +891,8 @@ static inline __must_check int xa_alloc(struct xarray *xa, u32 *id,
-  * stores the index into the @id pointer, then stores the entry at
-  * that index.  A concurrent lookup will not see an uninitialised @id.
-  *
-+ * Always allocates the entry at the smallest possible index.
-+ *
-  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
-  * in xa_init_flags().
-  *
-@@ -922,6 +926,8 @@ static inline int __must_check xa_alloc_bh(struct xarray *xa, u32 *id,
-  * stores the index into the @id pointer, then stores the entry at
-  * that index.  A concurrent lookup will not see an uninitialised @id.
-  *
-+ * Always allocates the entry at the smallest possible index.
-+ *
-  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
-  * in xa_init_flags().
-  *
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 39f07bfc4dcc..ccc64005fe3e 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -1802,6 +1802,8 @@ EXPORT_SYMBOL(xa_get_order);
-  * stores the index into the @id pointer, then stores the entry at
-  * that index.  A concurrent lookup will not see an uninitialised @id.
-  *
-+ * Always allocates the entry at the smallest possible index.
-+ *
-  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
-  * in xa_init_flags().
-  *
+								Honza
 -- 
-2.43.0.429.g432eaa2c6b-goog
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
