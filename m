@@ -1,102 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-9813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C777F84530A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:46:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D1C284530E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:47:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F115D1C2087F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 08:46:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27D671F220AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 08:47:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F50026AFA;
-	Thu,  1 Feb 2024 08:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60FB158D8E;
+	Thu,  1 Feb 2024 08:47:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="B9SxSMq0"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MwCHKcgt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6364E1552E8
-	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Feb 2024 08:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26071586FE
+	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Feb 2024 08:47:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706777174; cv=none; b=G2rCguH7EDqGwjIRetuVyThTHVE/3lBwm+qQYQfw2Ob+nHrjq9QzAijEGM14Pkma0dIT16lQnzeOaG5mAGOTpI7fIrqH0xB2WRa+1UCZ+kNcjWtqGjKNyWQetYvKy9sUw5V48bZtfsG2t3sKAA3n6WD36X4Nk99rmqM18DvQMFU=
+	t=1706777267; cv=none; b=PwY4ybIrzqyjW69TADVBkJXR85tiueDH+V+Utdpmidw86libV4OTNoDamZ/+ZYmZRghNnxsPpzJ9oWkK88AyhOl+nIacZrJEIFzmMd2W6yH3cI322GNbPqvwSE7MPK6DfVYTLpRGvcBOaQn2R6o5nbfl61C3hocnc0/MENsrDjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706777174; c=relaxed/simple;
-	bh=WhHLaquxSvpLxMqDcJI+B8ZV32ULLbVr0/BiZffkAKo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MROKe+jzAK9u5a1qib7zqHxZS9FpWc6fw6QKlx3BNt/VW7WcRE7Q1ngk8OM+7U76mCXJiPFTllh/p8TmiprO1EK/2earM6oOPXxgqeB7aSgPlIxZf0OTFJlybJVDeVAaJ/1tOw9VOQGxQSEEMWPKLR1+vFpsYn3B4NeerBVvZG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=B9SxSMq0; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-55790581457so902736a12.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Feb 2024 00:46:12 -0800 (PST)
+	s=arc-20240116; t=1706777267; c=relaxed/simple;
+	bh=RhJCGSqtg+lQOjMf14y8RYem6UsJutbmhYP65QnXxY4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=n5yxOo7TIAgS4LtUVpQY73u+crWW4/cB9/mvD8WwQhKCyEBymffsWRCoXI0SlMa50cbJFms/Dcn5EFEN5YHI4BV5MIkLlmuyrtQFXTB/xu6r6G/XdUBGULQZw2GRg29vfDc5ewG6NHtgwTyBs4/YKd9mZic4xbCuZTH0fA/b8Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=MwCHKcgt; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6040ffa60ddso13861987b3.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Feb 2024 00:47:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1706777170; x=1707381970; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=e8RQuQpDR9bvXppaCq3EKf/0/oBG7i7aNL/9+3uvW6Y=;
-        b=B9SxSMq0Baj2Ser8cffWnwqIz07InxAu+3/Rqf7qXs9l05LRtCv1yzS1fiOlRDTATg
-         TzYx5PQGeId6RvZ86jWoCkbOyi/k8qWmOVgkMX9DyMzqd8t3eDTBf8GSVNM2G5gt16DO
-         MeHG1AH+vWtZ7jlFnpvwJT/PupVoITTgwrFK0=
+        d=google.com; s=20230601; t=1706777264; x=1707382064; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ut6iMrGe0Fe7IMukcbrdTGUANM5JE5jZNaHWvk8D0fg=;
+        b=MwCHKcgtkDFjSGiV47psn9uMZd7Yo+1pRaX9yeqEhtdkWYrQ0ABvxP7KR4duuJ+zaB
+         tqDCL6OPCEdbrr79oL3hiXm3FbYD0ni12cKpdRbmqRnWv/TMFCuc4VWlF6KZbseeWEQj
+         zJZWcZiqoiLHEoMrZ5l43GzHXYSYTLHi9ytjxnRT37LwBHu6fnONTp/FkvZx1Uk0SDf2
+         TUhSuEjOT2+gu5aM+2IR33eqjp4YYCuTwUs7Luq9jAnv2VG7n58YodWSlvEp3QQk92ZK
+         sEi+zxpnk/4ASyEuULrJlThUlxDyxKti2mx1eMjO7P6vs6NOyNwQSK40qPafjPSVmOLq
+         sQvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706777170; x=1707381970;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e8RQuQpDR9bvXppaCq3EKf/0/oBG7i7aNL/9+3uvW6Y=;
-        b=u1hbrRY4T8NdHVuOPI/D2vHNLEGfHSE34DQ2Z0QADUOdPwaRoT7aDqYddW4QpONH43
-         GmFtTV2ix6LozD4Gr1/eSyQTvgqyMmpughVn8AKu8HmoZOUIUapQITwm59pnu8wV9WMN
-         iWIcK05z6UwevPqjErxgUvgKZaWBPx98EW+mO6w+zMISZABtDgoe/Bb6CjJfmv83hPHd
-         VEYJzbLZio8UNSE3M1r6XRzodbNHSnWLnuadPsk3yXS0kjaI7FlQ4b7BKG8PsYHAiwIj
-         yuiVlTIRzU32FmccdFs+q7x1XFUbYfk2qGIfncqjQ6zYLFyc+c/ZNVLwNQ8L/+nPGk/e
-         QkfA==
-X-Gm-Message-State: AOJu0Yzf/MyKf2wePLmhuxxS/dLeRAAHSa+L9qmqvV0qySNiVc2kyzvl
-	b2Aetn1y26GU+S9d0wngPvKbydTUNXGDki9wc/CQfkrUWKuweEtc/9GcZwKMYOr4J9E2w09ovbH
-	oQDLBUj+e7ecgzBHC2uH4xDbCqjv1o91B4uZyEQ==
-X-Google-Smtp-Source: AGHT+IGzI2SKXNcEklhfyYiVeZDiu9TDvZ2RVihxZU6McTXdUxv6VA8s8Kba6ycgFRFfRumir3Y3TPWJ5uSj3dMK+fc=
-X-Received: by 2002:a17:906:da06:b0:a35:edda:ca8b with SMTP id
- fi6-20020a170906da0600b00a35eddaca8bmr2859628ejb.76.1706777170641; Thu, 01
- Feb 2024 00:46:10 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706777264; x=1707382064;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ut6iMrGe0Fe7IMukcbrdTGUANM5JE5jZNaHWvk8D0fg=;
+        b=CU4VxN2sNVzPA/emqeqw9VE4v8oayuwwXbC6V9vuSV8aEQwrRqLMqgLTJjxHwRl2gV
+         2q1UnCbmgIf3lkRru5+455Xp8oGHnkXUJTh3CPLxqpkO4QWXMOodNiJ806ikYde3YBMD
+         j4Iq5/0jXeSoq14loVSTb9RFVdIFOYvs0YqVRWTokqYqwTdoAfqr/6BytDYFWxqwA0a2
+         qtWmHN2YCS3M4BFEjR+Lopgsp9ymL5BFmfUapMWsUo5VRFcRKksqQqoGKd4z2QBc+OKr
+         YsfSktQmCCDnqEBzk5N68CUi9i2l9ddjpApdZU6piAm1mwmeE5HyTkmCZb0iWa8s5qRG
+         7uNw==
+X-Gm-Message-State: AOJu0Yz8oemGL0oSKHZBLrqJ+cGMZpACDBFTLgtq+SDScXkOw+p8jdBU
+	8vtRzDu2eoHSBHMVmzjgvSg9TPuRe9evsu5/VOwnPAdBjtmE77qw9pEONcImZt6+iMcBb8PRw16
+	qGeX7mLzGKP+eOw==
+X-Google-Smtp-Source: AGHT+IEwC2Sq+6nJ4cPi4xRUxsLrbdif3maAi4tV/OsTRC4SRRj3pncHKyErUMxRhqPd+mlOla5u99yynevNafM=
+X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
+ (user=aliceryhl job=sendgmr) by 2002:a81:9946:0:b0:604:45a:6740 with SMTP id
+ q67-20020a819946000000b00604045a6740mr942684ywg.2.1706777264640; Thu, 01 Feb
+ 2024 00:47:44 -0800 (PST)
+Date: Thu,  1 Feb 2024 08:47:39 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240131230827.207552-1-bschubert@ddn.com> <20240131230827.207552-2-bschubert@ddn.com>
-In-Reply-To: <20240131230827.207552-2-bschubert@ddn.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 1 Feb 2024 09:45:59 +0100
-Message-ID: <CAJfpegsU25pNx9KA0+9HiVLzd2NeSLvzfbXjcFNxT9gpfogjjg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] fuse: Fix VM_MAYSHARE and direct_io_allow_mmap
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: linux-fsdevel@vger.kernel.org, dsingh@ddn.com, 
-	Hao Xu <howeyxu@tencent.com>, stable@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>
+Mime-Version: 1.0
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2507; i=aliceryhl@google.com;
+ h=from:subject; bh=RhJCGSqtg+lQOjMf14y8RYem6UsJutbmhYP65QnXxY4=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBlu1ovgg0/kO+AwbQOpm/x9i67t3KgnisFNXUNB
+ Inyb0i3XUWJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZbtaLwAKCRAEWL7uWMY5
+ RubYD/9xlb20HFn+H3WxCU2CRg6XGIz9MaIXEUHE5OsE3WrbL9m8IP5VR3eHLBrgXOF+Hz9NUJK
+ uj5zxhC5v6PYqae+Zb+QL5noZsvh/eT7pelzBpQla/Oo6zVyUbzflAxbamg1Xy14s5und2I0sRI
+ s4wKvP1ODScDZBMe5BUj+GWQ+6x5UXp6RR91f1IXwNbjgazj7HWrw8ZaxqBcYnhDpoFUS8x0mZ7
+ O68eVoRjO2tE6zeltWEPw4THnvkS4qVbPxBihetT+RFs7jynTh5LNQno+r/3UcUbFWPtbad7R9Y
+ SYGT/9Io85R0M7M9to2ITnn+nafzXzizkAA+9QrnkBztvkhFnBJOomaQPsxGAo6EbGat9AA1Til
+ JQUWBWhpUl0qOFxkA7addbLIoOsVHpxWLB7xdlFbr3SVk0immZ1/xe6irqw7lYMLKAJIHvH/21E
+ N9YR29AhYhPXR5lM0pQxD5Kmut3EunY+pKTJ6eXu3kbJx6E/kOI4khL1dar5jlFeGVWuPIzM3aD
+ VKu55UanXk0ChcyfhMu7fOpFfqwUujOEQ5yMOYh400Bnj8gM4XdJCtXMJ/NGig2L23YB1W3cLbg
+ KJnCC2FC9e/XpHtXFwVF3KBlyGmrlQfsQ08g7oL2JZzT6SZ+o7VRvVTHVszFwJZZTa3VROoHCxp VFW5uPQeLw/0h9w==
+X-Mailer: git-send-email 2.43.0.594.gd9cf4e227d-goog
+Message-ID: <20240201084739.1452854-1-aliceryhl@google.com>
+Subject: [PATCH] xarray: document that xa_alloc uses the smallest index
+From: Alice Ryhl <aliceryhl@google.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 1 Feb 2024 at 00:09, Bernd Schubert <bschubert@ddn.com> wrote:
->
-> There were multiple issues with direct_io_allow_mmap:
-> - fuse_link_write_file() was missing, resulting in warnings in
->   fuse_write_file_get() and EIO from msync()
-> - "vma->vm_ops = &fuse_file_vm_ops" was not set, but especially
->   fuse_page_mkwrite is needed.
->
-> The semantics of invalidate_inode_pages2() is so far not clearly defined
-> in fuse_file_mmap. It dates back to
-> commit 3121bfe76311 ("fuse: fix "direct_io" private mmap")
-> Though, as direct_io_allow_mmap is a new feature, that was for MAP_PRIVATE
-> only. As invalidate_inode_pages2() is calling into fuse_launder_folio()
-> and writes out dirty pages, it should be safe to call
-> invalidate_inode_pages2 for MAP_PRIVATE and MAP_SHARED as well.
+The deprecated IDR data structure was used to allocate *small* ids for
+things, and the property that the ids are small is often desireable for
+various reasons. However, the IDR interface is deprecated in favor of
+XArray.
 
-Did you test with fsx (various versions can be found in LTP/xfstests)?
- It's very good at finding  mapped vs. non-mapped bugs.
+Clarify that when replacing IDR with XArray, you do not give up the
+guarantee that the generated ids are small, even if you use a very large
+range such as xa_limit_32b.
 
-Thanks,
-Miklos
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ include/linux/xarray.h | 6 ++++++
+ lib/xarray.c           | 2 ++
+ 2 files changed, 8 insertions(+)
+
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index cb571dfcf4b1..e5f273d3f2bc 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -856,6 +856,8 @@ static inline int __must_check xa_insert_irq(struct xarray *xa,
+  * stores the index into the @id pointer, then stores the entry at
+  * that index.  A concurrent lookup will not see an uninitialised @id.
+  *
++ * Always allocates the entry at the smallest possible index.
++ *
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
+@@ -889,6 +891,8 @@ static inline __must_check int xa_alloc(struct xarray *xa, u32 *id,
+  * stores the index into the @id pointer, then stores the entry at
+  * that index.  A concurrent lookup will not see an uninitialised @id.
+  *
++ * Always allocates the entry at the smallest possible index.
++ *
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
+@@ -922,6 +926,8 @@ static inline int __must_check xa_alloc_bh(struct xarray *xa, u32 *id,
+  * stores the index into the @id pointer, then stores the entry at
+  * that index.  A concurrent lookup will not see an uninitialised @id.
+  *
++ * Always allocates the entry at the smallest possible index.
++ *
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 39f07bfc4dcc..ccc64005fe3e 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1802,6 +1802,8 @@ EXPORT_SYMBOL(xa_get_order);
+  * stores the index into the @id pointer, then stores the entry at
+  * that index.  A concurrent lookup will not see an uninitialised @id.
+  *
++ * Always allocates the entry at the smallest possible index.
++ *
+  * Must only be operated on an xarray initialized with flag XA_FLAGS_ALLOC set
+  * in xa_init_flags().
+  *
+-- 
+2.43.0.429.g432eaa2c6b-goog
+
 
