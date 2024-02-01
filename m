@@ -1,99 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-9838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0B88454E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 11:10:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5544B8454EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 11:11:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1833B1F248D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:10:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A23A1C2409E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:11:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52AA615B110;
-	Thu,  1 Feb 2024 10:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1679D15B111;
+	Thu,  1 Feb 2024 10:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L3d9AcZW";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="S7xwwv3Z";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iQh3Kf3F";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="t0Yae1o8"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="x+/vWphe";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="drFpimha";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SP6SSHr6";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1npeiMmP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FAE4DA1D;
-	Thu,  1 Feb 2024 10:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF4BB4D9F4;
+	Thu,  1 Feb 2024 10:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706782202; cv=none; b=RMQeCPPteZLI1wq6BkT6YGaFeLw2/5FSpwbuhd5dCofKtB+r0xMSS636MXZVS29SWMKfoBEye7FyEw+IjzPUlUNf7w3CDOWMbl7HbeA2L8hcsnqwFs4h/DCTWhdk69HFHuESEQpF3ca9iVZydLW/1C2AB7sR3Wd0qQSmVvP1yOI=
+	t=1706782300; cv=none; b=jfEw8siTdvjinzgvuBdKC8hgTkj6iIptTJOAJ3CkA+RFGkk+ivP+pCmMh0IDsu/T4qT1SIxG+gOaWKBbjGSr+TBAm78Bj0r44Br2lsQ9ZfCydeppcvQXf1g/1lIDGGajr8CSZ53w2bJv2kumzdMYa/86z6L93UqptK7YHNF+YdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706782202; c=relaxed/simple;
-	bh=dS76l7yQjXg+hYE5ifqgbacx5v+UWl3KmtqUWxDPG4Q=;
+	s=arc-20240116; t=1706782300; c=relaxed/simple;
+	bh=delr6aXVrNvhWk0YAPlLZlz4KPCKI3OEbgdCFomZngI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jUn7nK5o8QbFghTuOJNXUwc+ceey9/dwky0SxuwZFywjEzlwsXbLVDWPLulkQHIPbah4ydrhYCO8bFFGmOl5CMrbzhpQOiO4ySk5LQadADfeLY+Y6Nv0sbRaKL06mFeMyLPJiK5CnYU+uPXp7bg6mJiVBeyBiC12LjDtu3hk8X0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L3d9AcZW; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=S7xwwv3Z; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iQh3Kf3F; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=t0Yae1o8; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=F9wO7Yf74EfymS4Rsd5slZ1FeQhKR/M/uC/lqwBnqXrk507xz1PiCFev2AVSba118KGtot2hTUeA2pXd24ZBtGUtM6/2i0J/qAW5tm1H/QVG1dQ3aVbuzsl6J/vLcQuGVOmGkSPB3luBJbX34Qkg7UwlVUCLkzKIW3SyLPwK+ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=x+/vWphe; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=drFpimha; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SP6SSHr6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1npeiMmP; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DAD3421D71;
-	Thu,  1 Feb 2024 10:09:58 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A9D321FB96;
+	Thu,  1 Feb 2024 10:11:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706782199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1706782296; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3v1Mgw0m1b7qRDS/J4mhG54Svo4JNMyRzWD6k9rPa+4=;
-	b=L3d9AcZWtRzZL7M4QesP3LB8PPx3lDWj/eYiqQiVhUL+p4PyUvC5RKPoBZiiw2hoZrFfs4
-	E7Je2tTW6aowd60xbpIvpCjICl+Mo3bSCkfwGlrAJckSZiveS6FVa1IjN5J+FqahLqxjku
-	+aJ2HL5bCx0I3d9MswzHDo3JQ6tRsu8=
+	bh=9i6t0cpDDtl/sgJzPa58UP9cM/pGHN0SoBjL0mJ7wss=;
+	b=x+/vWpheOuAtVXg05sGRtajPLL+dMghRjRysChng1SW0LC9UyfvjsR6Izuk5R35A5IYFFp
+	+tz7nlQr9wlaZYkbxpG2uNdYZ1X0crVV8MYY2+RfV0+aoumsBfYi2BqeQPv0/ZCQHrfgzu
+	ORBwfe22TNHKUE4rQZSlZw3jVyBpKNg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706782199;
+	s=susede2_ed25519; t=1706782296;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3v1Mgw0m1b7qRDS/J4mhG54Svo4JNMyRzWD6k9rPa+4=;
-	b=S7xwwv3ZaSTRPn/eT5AjtiQM+DTtNFCIg5CyOTFLrdQuNK9IdpdNlo9xHJKgrOYdetNLWD
-	BCqF+btzn0ySdvBw==
+	bh=9i6t0cpDDtl/sgJzPa58UP9cM/pGHN0SoBjL0mJ7wss=;
+	b=drFpimhak2DlkHgLYmnGcBG0p8ip39+FYL4Pvv0s5x0hrC6N7FHlUTkIDBThJLJcdBkMOG
+	bjL8s4OPqawCXLDA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1706782198; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1706782295; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3v1Mgw0m1b7qRDS/J4mhG54Svo4JNMyRzWD6k9rPa+4=;
-	b=iQh3Kf3FEKXQgzi1rl7njCd3+VGLnIKKkQBkOiyYzZ2Ozx7Acp5+k9Rq+xN0XoR2Aw+LSa
-	d9DiaOCYAHvz09U72uFdpvKjAo9qrkVYShjhiJCDqQJ8ZYVTPSIc5nVg0D3t7msYxZO0zM
-	wgHqlg9GHzS5kMVKABfgv8dcgr2fUeU=
+	bh=9i6t0cpDDtl/sgJzPa58UP9cM/pGHN0SoBjL0mJ7wss=;
+	b=SP6SSHr64EY7EXDV8zCSjCO40DpNPMgDgRDE8dZxRgx+4LgA1E2Pw5MD0oOuySH1SPOcMu
+	pg/Em88dTBi9PkL0l/lsy1moUzUNY3MGHTyc+0KxZMpa9SlDcGzPWXokE2dkQSS/Ct6Cvt
+	Me7MF2Rsk+aL7jpJAMVxgFYnG/hsYeM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1706782198;
+	s=susede2_ed25519; t=1706782295;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3v1Mgw0m1b7qRDS/J4mhG54Svo4JNMyRzWD6k9rPa+4=;
-	b=t0Yae1o8XZYoT4F+8Mu2ckBE4pYEodEOHpoHQepmmyvOP7g1wYwYm6U7XFrC7YkvTLiOB3
-	pudMoy7vkQIm3qCA==
+	bh=9i6t0cpDDtl/sgJzPa58UP9cM/pGHN0SoBjL0mJ7wss=;
+	b=1npeiMmP/72zbAB6QTpJC4N0VRCmo07hTJPAkBShP2IaxJpAMFdlPmaQt8LZ686aydrMxa
+	cju0ZdTCXjp2EDDA==
 Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id CE99613594;
-	Thu,  1 Feb 2024 10:09:58 +0000 (UTC)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 9123C1329F;
+	Thu,  1 Feb 2024 10:11:35 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([10.150.64.162])
 	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id oLpoMvZtu2X1WwAAn2gu4w
-	(envelope-from <jack@suse.cz>); Thu, 01 Feb 2024 10:09:58 +0000
+	id y81pI1duu2WtXAAAn2gu4w
+	(envelope-from <jack@suse.cz>); Thu, 01 Feb 2024 10:11:35 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 74F81A0809; Thu,  1 Feb 2024 11:09:58 +0100 (CET)
-Date: Thu, 1 Feb 2024 11:09:58 +0100
+	id 5740FA0809; Thu,  1 Feb 2024 11:11:31 +0100 (CET)
+Date: Thu, 1 Feb 2024 11:11:31 +0100
 From: Jan Kara <jack@suse.cz>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
 	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>,
 	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 33/34] block: expose bdev_file_inode()
-Message-ID: <20240201100958.aci5seesxlvj4rmz@quack3>
+Subject: Re: [PATCH v2 16/34] s390: port block device access to file
+Message-ID: <20240201101131.cxpytawoo6533cy7@quack3>
 References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
- <20240123-vfs-bdev-file-v2-33-adbd023e19cc@kernel.org>
+ <20240123-vfs-bdev-file-v2-16-adbd023e19cc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -102,11 +102,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240123-vfs-bdev-file-v2-33-adbd023e19cc@kernel.org>
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=iQh3Kf3F;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=t0Yae1o8
-X-Spamd-Result: default: False [-2.81 / 50.00];
+In-Reply-To: <20240123-vfs-bdev-file-v2-16-adbd023e19cc@kernel.org>
+X-Spam-Level: 
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=SP6SSHr6;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=1npeiMmP
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
 	 ARC_NA(0.00)[];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
 	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
@@ -114,95 +116,186 @@ X-Spamd-Result: default: False [-2.81 / 50.00];
 	 FROM_HAS_DN(0.00)[];
 	 TO_DN_SOME(0.00)[];
 	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
 	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
 	 RCVD_COUNT_THREE(0.00)[3];
 	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	 DKIM_TRACE(0.00)[suse.cz:+];
 	 MX_GOOD(-0.01)[];
 	 RCPT_COUNT_SEVEN(0.00)[7];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email];
 	 FUZZY_BLOCKED(0.00)[rspamd.com];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 MIME_TRACE(0.00)[0:+];
 	 MID_RHS_NOT_FQDN(0.50)[];
 	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: DAD3421D71
-X-Spam-Level: 
-X-Spam-Score: -2.81
+	 BAYES_HAM(-3.00)[100.00%];
+	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:98:from]
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: A9D321FB96
 X-Spam-Flag: NO
 
-On Tue 23-01-24 14:26:50, Christian Brauner wrote:
-> Now that we open block devices as files we don't need to rely on
-> bd_inode to get to the correct inode. Use the helper.
-> 
-> We could use bdev_file->f_inode directly here since we know that
-> @f_inode refers to a bdev fs inode but it is generically correct to use
-> bdev_file->f_mapping->host since that will also work for bdev_files
-> opened from userspace.
-> 
+On Tue 23-01-24 14:26:33, Christian Brauner wrote:
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-I think you wouldn't need this patch, if you picked up patch:
-https://lore.kernel.org/all/20231211140833.975935-1-yukuai1@huaweicloud.com
+Looks good. Feel free to add:
 
-from previous Yu Kuai's series. Because the only user of bdev_file_inode()
-in ext4 is actually dead code...
+Reviewed-by: Jan Kara <jack@suse.cz>
 
 								Honza
 
 > ---
->  block/bdev.c           | 2 +-
->  block/fops.c           | 5 -----
->  include/linux/blkdev.h | 5 +++++
->  3 files changed, 6 insertions(+), 6 deletions(-)
+>  drivers/s390/block/dasd.c       | 10 +++++-----
+>  drivers/s390/block/dasd_genhd.c | 36 ++++++++++++++++++------------------
+>  drivers/s390/block/dasd_int.h   |  2 +-
+>  drivers/s390/block/dasd_ioctl.c |  2 +-
+>  4 files changed, 25 insertions(+), 25 deletions(-)
 > 
-> diff --git a/block/bdev.c b/block/bdev.c
-> index 4b47003d8082..185c43ebeea5 100644
-> --- a/block/bdev.c
-> +++ b/block/bdev.c
-> @@ -51,7 +51,7 @@ EXPORT_SYMBOL(I_BDEV);
+> diff --git a/drivers/s390/block/dasd.c b/drivers/s390/block/dasd.c
+> index 7327e81352e9..c833a7c7d7b2 100644
+> --- a/drivers/s390/block/dasd.c
+> +++ b/drivers/s390/block/dasd.c
+> @@ -412,7 +412,7 @@ dasd_state_ready_to_online(struct dasd_device * device)
+>  					KOBJ_CHANGE);
+>  			return 0;
+>  		}
+> -		disk_uevent(device->block->bdev_handle->bdev->bd_disk,
+> +		disk_uevent(file_bdev(device->block->bdev_file)->bd_disk,
+>  			    KOBJ_CHANGE);
+>  	}
+>  	return 0;
+> @@ -433,7 +433,7 @@ static int dasd_state_online_to_ready(struct dasd_device *device)
 >  
->  struct block_device *file_bdev(struct file *bdev_file)
->  {
-> -	return I_BDEV(bdev_file->f_mapping->host);
-> +	return I_BDEV(bdev_file_inode(bdev_file));
+>  	device->state = DASD_STATE_READY;
+>  	if (device->block && !(device->features & DASD_FEATURE_USERAW))
+> -		disk_uevent(device->block->bdev_handle->bdev->bd_disk,
+> +		disk_uevent(file_bdev(device->block->bdev_file)->bd_disk,
+>  			    KOBJ_CHANGE);
+>  	return 0;
 >  }
->  EXPORT_SYMBOL(file_bdev);
->  
-> diff --git a/block/fops.c b/block/fops.c
-> index a0bff2c0d88d..240d968c281c 100644
-> --- a/block/fops.c
-> +++ b/block/fops.c
-> @@ -19,11 +19,6 @@
->  #include <linux/module.h>
->  #include "blk.h"
->  
-> -static inline struct inode *bdev_file_inode(struct file *file)
-> -{
-> -	return file->f_mapping->host;
-> -}
-> -
->  static blk_opf_t dio_bio_write_op(struct kiocb *iocb)
+> @@ -3588,7 +3588,7 @@ int dasd_generic_set_offline(struct ccw_device *cdev)
+>  	 * in the other openers.
+>  	 */
+>  	if (device->block) {
+> -		max_count = device->block->bdev_handle ? 0 : -1;
+> +		max_count = device->block->bdev_file ? 0 : -1;
+>  		open_count = atomic_read(&device->block->open_count);
+>  		if (open_count > max_count) {
+>  			if (open_count > 0)
+> @@ -3634,8 +3634,8 @@ int dasd_generic_set_offline(struct ccw_device *cdev)
+>  		 * so sync bdev first and then wait for our queues to become
+>  		 * empty
+>  		 */
+> -		if (device->block && device->block->bdev_handle)
+> -			bdev_mark_dead(device->block->bdev_handle->bdev, false);
+> +		if (device->block && device->block->bdev_file)
+> +			bdev_mark_dead(file_bdev(device->block->bdev_file), false);
+>  		dasd_schedule_device_bh(device);
+>  		rc = wait_event_interruptible(shutdown_waitq,
+>  					      _wait_for_empty_queues(device));
+> diff --git a/drivers/s390/block/dasd_genhd.c b/drivers/s390/block/dasd_genhd.c
+> index 55e3abe94cde..8bf2cf0ccc15 100644
+> --- a/drivers/s390/block/dasd_genhd.c
+> +++ b/drivers/s390/block/dasd_genhd.c
+> @@ -127,15 +127,15 @@ void dasd_gendisk_free(struct dasd_block *block)
+>   */
+>  int dasd_scan_partitions(struct dasd_block *block)
 >  {
->  	blk_opf_t opf = REQ_OP_WRITE | REQ_SYNC | REQ_IDLE;
-> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> index 2f5dbde23094..4b7080e56e44 100644
-> --- a/include/linux/blkdev.h
-> +++ b/include/linux/blkdev.h
-> @@ -1490,6 +1490,11 @@ void blkdev_put_no_open(struct block_device *bdev);
->  struct block_device *I_BDEV(struct inode *inode);
->  struct block_device *file_bdev(struct file *bdev_file);
+> -	struct bdev_handle *bdev_handle;
+> +	struct file *bdev_file;
+>  	int rc;
 >  
-> +static inline struct inode *bdev_file_inode(struct file *file)
-> +{
-> +	return file->f_mapping->host;
-> +}
-> +
->  #ifdef CONFIG_BLOCK
->  void invalidate_bdev(struct block_device *bdev);
->  int sync_blockdev(struct block_device *bdev);
+> -	bdev_handle = bdev_open_by_dev(disk_devt(block->gdp), BLK_OPEN_READ,
+> +	bdev_file = bdev_file_open_by_dev(disk_devt(block->gdp), BLK_OPEN_READ,
+>  				       NULL, NULL);
+> -	if (IS_ERR(bdev_handle)) {
+> +	if (IS_ERR(bdev_file)) {
+>  		DBF_DEV_EVENT(DBF_ERR, block->base,
+>  			      "scan partitions error, blkdev_get returned %ld",
+> -			      PTR_ERR(bdev_handle));
+> +			      PTR_ERR(bdev_file));
+>  		return -ENODEV;
+>  	}
+>  
+> @@ -147,15 +147,15 @@ int dasd_scan_partitions(struct dasd_block *block)
+>  				"scan partitions error, rc %d", rc);
+>  
+>  	/*
+> -	 * Since the matching bdev_release() call to the
+> -	 * bdev_open_by_path() in this function is not called before
+> +	 * Since the matching fput() call to the
+> +	 * bdev_file_open_by_path() in this function is not called before
+>  	 * dasd_destroy_partitions the offline open_count limit needs to be
+> -	 * increased from 0 to 1. This is done by setting device->bdev_handle
+> +	 * increased from 0 to 1. This is done by setting device->bdev_file
+>  	 * (see dasd_generic_set_offline). As long as the partition detection
+>  	 * is running no offline should be allowed. That is why the assignment
+> -	 * to block->bdev_handle is done AFTER the BLKRRPART ioctl.
+> +	 * to block->bdev_file is done AFTER the BLKRRPART ioctl.
+>  	 */
+> -	block->bdev_handle = bdev_handle;
+> +	block->bdev_file = bdev_file;
+>  	return 0;
+>  }
+>  
+> @@ -165,21 +165,21 @@ int dasd_scan_partitions(struct dasd_block *block)
+>   */
+>  void dasd_destroy_partitions(struct dasd_block *block)
+>  {
+> -	struct bdev_handle *bdev_handle;
+> +	struct file *bdev_file;
+>  
+>  	/*
+> -	 * Get the bdev_handle pointer from the device structure and clear
+> -	 * device->bdev_handle to lower the offline open_count limit again.
+> +	 * Get the bdev_file pointer from the device structure and clear
+> +	 * device->bdev_file to lower the offline open_count limit again.
+>  	 */
+> -	bdev_handle = block->bdev_handle;
+> -	block->bdev_handle = NULL;
+> +	bdev_file = block->bdev_file;
+> +	block->bdev_file = NULL;
+>  
+> -	mutex_lock(&bdev_handle->bdev->bd_disk->open_mutex);
+> -	bdev_disk_changed(bdev_handle->bdev->bd_disk, true);
+> -	mutex_unlock(&bdev_handle->bdev->bd_disk->open_mutex);
+> +	mutex_lock(&file_bdev(bdev_file)->bd_disk->open_mutex);
+> +	bdev_disk_changed(file_bdev(bdev_file)->bd_disk, true);
+> +	mutex_unlock(&file_bdev(bdev_file)->bd_disk->open_mutex);
+>  
+>  	/* Matching blkdev_put to the blkdev_get in dasd_scan_partitions. */
+> -	bdev_release(bdev_handle);
+> +	fput(bdev_file);
+>  }
+>  
+>  int dasd_gendisk_init(void)
+> diff --git a/drivers/s390/block/dasd_int.h b/drivers/s390/block/dasd_int.h
+> index 1b1b8a41c4d4..aecd502aec51 100644
+> --- a/drivers/s390/block/dasd_int.h
+> +++ b/drivers/s390/block/dasd_int.h
+> @@ -650,7 +650,7 @@ struct dasd_block {
+>  	struct gendisk *gdp;
+>  	spinlock_t request_queue_lock;
+>  	struct blk_mq_tag_set tag_set;
+> -	struct bdev_handle *bdev_handle;
+> +	struct file *bdev_file;
+>  	atomic_t open_count;
+>  
+>  	unsigned long blocks;	   /* size of volume in blocks */
+> diff --git a/drivers/s390/block/dasd_ioctl.c b/drivers/s390/block/dasd_ioctl.c
+> index 61b9675e2a67..de85a5e4e21b 100644
+> --- a/drivers/s390/block/dasd_ioctl.c
+> +++ b/drivers/s390/block/dasd_ioctl.c
+> @@ -537,7 +537,7 @@ static int __dasd_ioctl_information(struct dasd_block *block,
+>  	 * This must be hidden from user-space.
+>  	 */
+>  	dasd_info->open_count = atomic_read(&block->open_count);
+> -	if (!block->bdev_handle)
+> +	if (!block->bdev_file)
+>  		dasd_info->open_count++;
+>  
+>  	/*
 > 
 > -- 
 > 2.43.0
