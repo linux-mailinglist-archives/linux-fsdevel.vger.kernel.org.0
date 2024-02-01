@@ -1,147 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-9800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3520E845008
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 05:05:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6341E845018
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 05:17:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9557EB214B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 04:05:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C35FF28B0AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 04:17:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738BD3B7A8;
-	Thu,  1 Feb 2024 04:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="inOwgJO1"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4940F3B7AC;
+	Thu,  1 Feb 2024 04:17:47 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D5033B197;
-	Thu,  1 Feb 2024 04:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27713A8EC;
+	Thu,  1 Feb 2024 04:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706760338; cv=none; b=e06EUisOP7FSUe2EC83LRebdEXXkFeWt+cGu3xqquKI1vsjzbo4L5JhZAGON4BozyLP02YHt53PBxUzEcta1cgiqVr5U4osKXWXAf8KF4MAVvTBZHiXiXzkW388kzgH5hAV1CaXcYArAS0MzI+seULLnP5jAiXPk4hm/9FjMRuI=
+	t=1706761066; cv=none; b=HhJd38RwV9F7XqICyqm5Zya6AW2XKDWDcxK+hYlqL+1bSHCGAuCtXz8NYsGxKakfmDFiV6sS3PLLH4FdYNxijVxiJ4Ezsr+F62pZDDITJd6I0aRIFWXGlLP9EMQF2zIkfG3uZxE0dY+Q/YqF4UrShNUoAXjzDt3kiwzfw6+cs7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706760338; c=relaxed/simple;
-	bh=JEgdm4dXi+L1DQzTB3h/avDvAmCbRi6xV/Fe7blQnM0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r0DvMm4PrvLlYQd6PIe99gL030idgASLz1ioljN4kyxsvvrolbG0PB4FDu8ChzCRwkGnzSREL2VZwaMJ4pza+cRpSAdHn7ebkJN6VSnuHUD9+Qqr8P+1ssRcvvGBea/0FrHF4t5CduDmyD1OPC8i8G1c1cQDOyd48mYhs07l5w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=inOwgJO1; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5113000a426so123360e87.2;
-        Wed, 31 Jan 2024 20:05:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706760335; x=1707365135; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rVtZzGrAZ7Rvq/x504vQLLiqx/E0QPJtNjyDBer37qU=;
-        b=inOwgJO1klhdL9TwB5BnVudeeJjDIIzKOdrSnBjwTANvTzLvHWNsIrMnkGJZAWdQf4
-         O7gnXG6qxAzD6iZcITQNn06BLPSjsXnWvbI74OiZNM2XjZG2IBSH6nKmXimGn9Xue4/O
-         TpWsbFujOC57j71E26ccBR2+Y6UyKVj9n616zPfxeW2LKVieYUgJ7TRzDRE3byrJHHpb
-         /w2DlHWs3jfZcTEHGtCwo7cyb30Q0A8w5UeX2+4OTFfkm2IPC2aOJYY207PTO7+9tDq+
-         HSgCQo0o6xgNUcCf+5g6SNi7K2mpCcAx9aal+GQ7ev8GPQVcodwxgI7jQ6oLmT84PhGE
-         9goQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706760335; x=1707365135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rVtZzGrAZ7Rvq/x504vQLLiqx/E0QPJtNjyDBer37qU=;
-        b=d10cw77yq9F+JzI5MDBdmR8H4+YfVgYUNl6E9bu65ze+iaPUnSWBYZEOi/3eJN7IEM
-         ZzFKmmCAaK9P8SSIgyQkzVxiG/9y1XavPq/TqE5h9Aku7FHhAhBSAK5BZtaEMTtccuAg
-         vbuvaLAfx3MQEfiUfEeeOrjs4oejf4S7B4wylPBXxhv1OGRsVCOIhFGa8KgYxTQyA5Rr
-         VmGMF44I2ru+LWNbmJUP1PsGWia2R3jI/8WjGzPc4eP5QvNyss/HQ1xE+Ws9669+UCXI
-         yiZyPsUtrRRHKpDV0yGbxa5DErNvCk2iNzp5TQaE1rAbdacbIE15B9T2CGUgUjbWrVlZ
-         fO5Q==
-X-Gm-Message-State: AOJu0YyGPC1gX4rbwssuj7Us7yyy0HGuTLeu4f7eyhIkFzboKJCV20Ax
-	I/4mB9qpxGm4Qle6m4PF9ohaaN1wf9CVaQuSIjOo3DAwIHbK75aqusYOmblhGsQwD6VoqytpdWb
-	xVWrdKZ65adK7FtuqldpiVbjaPRc=
-X-Google-Smtp-Source: AGHT+IHpnc3L5drGX+KAL4BK4m0LBZFIPEWSaWzqj8aEDtJJKuyCfdXo2Mh+7dQM3JkU4FRcmq161BRCmppHxt3f2KY=
-X-Received: by 2002:ac2:4550:0:b0:50e:d1f9:ebe0 with SMTP id
- j16-20020ac24550000000b0050ed1f9ebe0mr1110331lfm.2.1706760334966; Wed, 31 Jan
- 2024 20:05:34 -0800 (PST)
+	s=arc-20240116; t=1706761066; c=relaxed/simple;
+	bh=1jz/F0H9uzx4iimjF6QGPOPc8awhpHtiBXKNQWRuH20=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aw8naRszGXs1c3G6fXo06zUkWhFtqA28V9nl7Fofnjpb6s7MVKxNXX0kHUZx2ZREAGzpn7gX5knnI5HR6yf6/5OMMF4DRpNhJ+K7U4Whi8As/6GHB4aQoLA68uDvIZ+fwDoE93ltTUr98sTqZFGntiNd3Bh7/MigqWekf/eBQUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0FAAC433F1;
+	Thu,  1 Feb 2024 04:17:44 +0000 (UTC)
+Date: Wed, 31 Jan 2024 23:18:00 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Christian Brauner <brauner@kernel.org>,
+ Ajay Kaher <ajay.kaher@broadcom.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] tracefs: dentry lookup crapectomy
+Message-ID: <20240131231800.35e3e715@gandalf.local.home>
+In-Reply-To: <20240131222127.15b2731b@gandalf.local.home>
+References: <20240131184918.945345370@goodmis.org>
+	<20240131185512.799813912@goodmis.org>
+	<20240201002719.GS2087318@ZenIV>
+	<20240131212642.2e384250@gandalf.local.home>
+	<20240201030205.GT2087318@ZenIV>
+	<20240131222127.15b2731b@gandalf.local.home>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131105912.3849767-1-zhaoyang.huang@unisoc.com>
- <ZbpJqYvkoGM7fvbC@casper.infradead.org> <CAGWkznGLt-T1S7_BM8-2eLhxVYktYYLmdfMbRKRK88Ami-mEdg@mail.gmail.com>
-In-Reply-To: <CAGWkznGLt-T1S7_BM8-2eLhxVYktYYLmdfMbRKRK88Ami-mEdg@mail.gmail.com>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Thu, 1 Feb 2024 12:05:23 +0800
-Message-ID: <CAGWkznEv=A1AOe=xGWvNnaUq2eAfrHy2TQFyScNyu9rqQ+Q6xA@mail.gmail.com>
-Subject: Re: [PATCHv6 1/1] block: introduce content activity based ioprio
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jens Axboe <axboe@kernel.dk>, Yu Zhao <yuzhao@google.com>, Damien Le Moal <dlemoal@kernel.org>, 
-	Niklas Cassel <niklas.cassel@wdc.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, 
-	Hannes Reinecke <hare@suse.de>, Linus Walleij <linus.walleij@linaro.org>, linux-mm@kvack.org, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 1, 2024 at 10:39=E2=80=AFAM Zhaoyang Huang <huangzhaoyang@gmail=
-.com> wrote:
->
-> On Wed, Jan 31, 2024 at 9:23=E2=80=AFPM Matthew Wilcox <willy@infradead.o=
-rg> wrote:
-> >
-> > On Wed, Jan 31, 2024 at 06:59:12PM +0800, zhaoyang.huang wrote:
-> > > change of v6: replace the macro of bio_add_xxx by submit_bio which
-> > >               iterating the bio_vec before launching bio to block lay=
-er
-> >
-> > Still wrong.
-> I did some research on bio operations in the system and state my
-> understanding here. I would like to have you review it and give me
-> more details of the fault. thanks
->
-> 1. REQ_OP_ZONE_xxx
-> a. These operations are from driver/block layer/fs where we can keep
-> driver/block layer using the legacy submit_bio by not including
-> act_prio.h.
-> b. most of fs's REQ_OP_ZONE_xxx will be handled by blkdev_zone_mgmt
-> which is the same as 'a'
-> c. __submit_zone_reset_cmd within f2fs use no page for REQ_OP_ZONE_RESET
->
-> 2. other REQ_OP_<none>_READ/WRITE except REQ_OP_ZONE_xxx
-> These operations all comes from driver and block layer as same as 1.a
->
-> 3. direct_io
-> keep fs/direct-io.c and fs/iomap/direct-io.c using legacy submit_bio
->
-> 4. metadata, dentry
-> Are these data also file pages?
->
-> 5. normal REQ_OP_READ/WRITE/SYNC
-> fs choose to use act based submit_bio by including act_ioprio.h in
-> corresponding c file
+On Wed, 31 Jan 2024 22:21:27 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-OR could I restrict the change by judging bio_op as below
+> We (Linus and I) got it wrong. It originally had:
+> 
+> 	d_add(dentry, NULL);
+> 	[..]
+> 	return NULL;
 
-+ if (bio_op(bio) =3D=3D REQ_OP_READ || bio_op(bio) =3D=3D REQ_OP_WRITE)
-+ {
-       class =3D IOPRIO_PRIO_CLASS(bio->bi_ioprio);
-       level =3D IOPRIO_PRIO_LEVEL(bio->bi_ioprio);
-       hint =3D IOPRIO_PRIO_HINT(bio->bi_ioprio);
-       bio_for_each_bvec(bv, bio, iter) {
-               page =3D bv.bv_page;
-               activity +=3D PageWorkingset(page) ? 1 : 0;
-               cnt++;
-       }
-       if (activity >=3D cnt / 2)
-               class =3D IOPRIO_CLASS_RT;
-       else if (activity >=3D cnt / 4)
-               class =3D max(IOPRIO_PRIO_CLASS(get_current_ioprio()),
-IOPRIO_CLASS_BE);
-       bio->bi_ioprio =3D IOPRIO_PRIO_VALUE_HINT(class, level, hint);
-+ }
-       submit_bio(bio);
+OK, so I changed that function to this:
+
+static struct dentry *eventfs_root_lookup(struct inode *dir,
+					  struct dentry *dentry,
+					  unsigned int flags)
+{
+	struct eventfs_inode *ei_child;
+	struct tracefs_inode *ti;
+	struct eventfs_inode *ei;
+	const char *name = dentry->d_name.name;
+
+	ti = get_tracefs(dir);
+	if (!(ti->flags & TRACEFS_EVENT_INODE))
+		return ERR_PTR(-EIO);
+
+	mutex_lock(&eventfs_mutex);
+
+	ei = ti->private;
+	if (!ei || ei->is_freed)
+		goto out;
+
+	list_for_each_entry(ei_child, &ei->children, list) {
+		if (strcmp(ei_child->name, name) != 0)
+			continue;
+		if (ei_child->is_freed)
+			goto out;
+		lookup_dir_entry(dentry, ei, ei_child);
+		goto out;
+	}
+
+	for (int i = 0; i < ei->nr_entries; i++) {
+		void *data;
+		umode_t mode;
+		const struct file_operations *fops;
+		const struct eventfs_entry *entry = &ei->entries[i];
+
+		if (strcmp(name, entry->name) != 0)
+			continue;
+
+		data = ei->data;
+		if (entry->callback(name, &mode, &data, &fops) <= 0)
+			goto out;
+
+		lookup_file_dentry(dentry, ei, i, mode, data, fops);
+		goto out;
+	}
+ out:
+	mutex_unlock(&eventfs_mutex);
+	return NULL;
+}
+
+And it passes the make kprobe test. I'll send out a v3 of this patch, and
+remove the inc_nlink(dentry->d_parent->d_inode) and the fsnotify as
+separate patches as that code was there before Linus touched it.
+
+Thanks,
+
+-- Steve
 
