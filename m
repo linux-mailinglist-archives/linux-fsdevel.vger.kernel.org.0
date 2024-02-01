@@ -1,159 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-9797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F70F844FA3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 04:24:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52741844FC4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 04:30:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C6ED296123
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 03:24:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E55E51F26379
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 03:30:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789CD3A8E4;
-	Thu,  1 Feb 2024 03:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9HIfgrj"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1493B182;
+	Thu,  1 Feb 2024 03:30:41 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C3D3A8C1;
-	Thu,  1 Feb 2024 03:24:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23423A8C5;
+	Thu,  1 Feb 2024 03:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706757875; cv=none; b=mCGDnFME1R837WZzlQSONds1EUvAizfByp0vX58WWdnEScpxAFI4uen1XM74InAPX9Kvikk4q6JXrzMImTWHWvpRg8uw8OFq7MpjuJIye7pcOzQfqJOPVzVPmYrM0i0b3Z7hKPqJT5Z2HEhJnX6epvaE7GOJz6hqVxPPXBwbpvY=
+	t=1706758241; cv=none; b=hcYvPoR8W/2uCg5nc9z9glehCFcB7hL9dfV91r7N/jk36t2iDqYBb9Aiw6311tHYJ1g7psv0EX6dbjSbINqhiNwxgNQhNX8ZUHkkT1dktNcN4gACkQxM0YYtlwmQs6hBpzRpZkDOJRTsEQkGv7DNzIPpOmuViUSmdRKwqQntFww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706757875; c=relaxed/simple;
-	bh=gc4v17wSZ6Qjqbp/jjpPvy6HAXY8q3i8CoEzcQx+p5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gqK0l73o2pxSEIJfuqymDMle1oc46XOf1yHMFi1ZFUUU9PGKwEkl2aUa3cMKv7VyBvBydtGwNMNdbWVnc6+T0A6jfJoDz83gCEj7HPwYAdKSgqkUgGyqPXLoxDxuH4BN+x3bV0MnDHLJ76C/jRQbpF/xK3mKkLfmnHm6IijaNvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9HIfgrj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59B2DC433C7;
-	Thu,  1 Feb 2024 03:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706757875;
-	bh=gc4v17wSZ6Qjqbp/jjpPvy6HAXY8q3i8CoEzcQx+p5M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g9HIfgrjQN4UNK2O52IcyksmHgjKicwwypq6hTILIRCeBTVo7SGVmoVgOQMPmzZkL
-	 Vqi/r9+whLWGODUxnvUCkEnpq3Q6a5RG5LRgFd+xpXosOJk1TC+3r3u+sBAq7gmN0G
-	 8zOOYrgD2uypAEsiGN4DBstHrpzMXul2JLcMIY2swDh4zdE2SQUW4kIHcv2MR21U8d
-	 HvgerTiSlDB1DNZorlBKtkOFUwfuKZ1utk5FzYoMeWDl8TdAnmAZILJYVNOxn3fwJv
-	 GfXv1vIfQc0feHnLFvYA2nDWxczw6BO30AknTWTP3XK1cJPHf2v4mW2E1Jv4zbN45a
-	 QuXYf6lmq0Fiw==
-Date: Wed, 31 Jan 2024 19:24:33 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: viro@zeniv.linux.org.uk, jaegeuk@kernel.org, tytso@mit.edu,
-	amir73il@gmail.com, linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 04/12] fscrypt: Drop d_revalidate for valid dentries
- during lookup
-Message-ID: <20240201032433.GB1526@sol.localdomain>
-References: <20240129204330.32346-1-krisman@suse.de>
- <20240129204330.32346-5-krisman@suse.de>
- <20240131004724.GC2020@sol.localdomain>
- <871q9x2vwj.fsf@mailhost.krisman.be>
+	s=arc-20240116; t=1706758241; c=relaxed/simple;
+	bh=0U0DRnxOD6IVrdCQPmo32znrfxpOuyUvuYMn1ho150w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AaU7UBeSPkm44jP2ZtQEVGGnbP0izIzyynUNf9/F/ulAMjwZtz2pXX5F2Z421wb4pV7gzH9KaGoqDUZswXuEXTNzjuyVQTeSVIPLW7fpdW7iuP7GDv0Ir8ARsg5p1rUq+j+c8b+zL1JuNpg3KYGrG+NZSkeqdZNeS45+jXdD44I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A4B63DA7;
+	Wed, 31 Jan 2024 19:31:21 -0800 (PST)
+Received: from [10.162.42.11] (a077893.blr.arm.com [10.162.42.11])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DADF33F738;
+	Wed, 31 Jan 2024 19:30:26 -0800 (PST)
+Message-ID: <08a4971e-c31d-46f7-afbc-7404bd9a293f@arm.com>
+Date: Thu, 1 Feb 2024 09:00:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871q9x2vwj.fsf@mailhost.krisman.be>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 12/35] mm: Call arch_swap_prepare_to_restore()
+ before arch_swap_restore()
+Content-Language: en-US
+To: Alexandru Elisei <alexandru.elisei@arm.com>, catalin.marinas@arm.com,
+ will@kernel.org, oliver.upton@linux.dev, maz@kernel.org,
+ james.morse@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
+ arnd@arndb.de, akpm@linux-foundation.org, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+ mhiramat@kernel.org, rppt@kernel.org, hughd@google.com
+Cc: pcc@google.com, steven.price@arm.com, vincenzo.frascino@arm.com,
+ david@redhat.com, eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org,
+ linux-trace-kernel@vger.kernel.org
+References: <20240125164256.4147-1-alexandru.elisei@arm.com>
+ <20240125164256.4147-13-alexandru.elisei@arm.com>
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20240125164256.4147-13-alexandru.elisei@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jan 31, 2024 at 03:35:40PM -0300, Gabriel Krisman Bertazi wrote:
-> Eric Biggers <ebiggers@kernel.org> writes:
+
+
+On 1/25/24 22:12, Alexandru Elisei wrote:
+> arm64 uses arch_swap_restore() to restore saved tags before the page is
+> swapped in and it's called in atomic context (with the ptl lock held).
 > 
-> > On Mon, Jan 29, 2024 at 05:43:22PM -0300, Gabriel Krisman Bertazi wrote:
-> >> Unencrypted and encrypted-dentries where the key is available don't need
-> >> to be revalidated with regards to fscrypt, since they don't go stale
-> >> from under VFS and the key cannot be removed for the encrypted case
-> >> without evicting the dentry.  Mark them with d_set_always_valid, to
-> >
-> > "d_set_always_valid" doesn't appear in the diff itself.
-> >
-> >> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
-> >> index 4aaf847955c0..a22997b9f35c 100644
-> >> --- a/include/linux/fscrypt.h
-> >> +++ b/include/linux/fscrypt.h
-> >> @@ -942,11 +942,22 @@ static inline int fscrypt_prepare_rename(struct inode *old_dir,
-> >>  static inline void fscrypt_prepare_lookup_dentry(struct dentry *dentry,
-> >>  						 bool is_nokey_name)
-> >>  {
-> >> -	if (is_nokey_name) {
-> >> -		spin_lock(&dentry->d_lock);
-> >> +	spin_lock(&dentry->d_lock);
-> >> +
-> >> +	if (is_nokey_name)
-> >>  		dentry->d_flags |= DCACHE_NOKEY_NAME;
-> >> -		spin_unlock(&dentry->d_lock);
-> >> +	else if (dentry->d_flags & DCACHE_OP_REVALIDATE &&
-> >> +		 dentry->d_op->d_revalidate == fscrypt_d_revalidate) {
-> >> +		/*
-> >> +		 * Unencrypted dentries and encrypted dentries where the
-> >> +		 * key is available are always valid from fscrypt
-> >> +		 * perspective. Avoid the cost of calling
-> >> +		 * fscrypt_d_revalidate unnecessarily.
-> >> +		 */
-> >> +		dentry->d_flags &= ~DCACHE_OP_REVALIDATE;
-> >>  	}
-> >> +
-> >> +	spin_unlock(&dentry->d_lock);
-> >
-> > This makes lookups in unencrypted directories start doing the
-> > spin_lock/spin_unlock pair.  Is that really necessary?
-> >
-> > These changes also make the inline function fscrypt_prepare_lookup() very long
-> > (when including the fscrypt_prepare_lookup_dentry() that's inlined into it).
-> > The rule that I'm trying to follow is that to the extent that the fscrypt helper
-> > functions are inlined, the inline part should be a fast path for unencrypted
-> > directories.  Encrypted directories should be handled out-of-line.
-> >
-> > So looking at the original fscrypt_prepare_lookup():
-> >
-> > 	static inline int fscrypt_prepare_lookup(struct inode *dir,
-> > 						 struct dentry *dentry,
-> > 						 struct fscrypt_name *fname)
-> > 	{
-> > 		if (IS_ENCRYPTED(dir))
-> > 			return __fscrypt_prepare_lookup(dir, dentry, fname);
-> >
-> > 		memset(fname, 0, sizeof(*fname));
-> > 		fname->usr_fname = &dentry->d_name;
-> > 		fname->disk_name.name = (unsigned char *)dentry->d_name.name;
-> > 		fname->disk_name.len = dentry->d_name.len;
-> > 		return 0;
-> > 	}
-> >
-> > If you could just add the DCACHE_OP_REVALIDATE clearing for dentries in
-> > unencrypted directories just before the "return 0;", hopefully without the
-> > spinlock, that would be good.  Yes, that does mean that
-> > __fscrypt_prepare_lookup() will have to handle it too, for the case of dentries
-> > in encrypted directories, but that seems okay.
-> 
-> ok, will do.  IIUC, we might be able to do without the d_lock
-> provided there is no store tearing.
-> 
-> But what was the reason you need the d_lock to set DCACHE_NOKEY_NAME
-> during lookup?  Is there a race with parallel lookup setting d_flag that
-> I couldn't find? Or is it another reason?
+> Introduce arch_swap_prepare_to_restore() that will allow an architecture to
+> perform extra work during swap in and outside of a critical section.
+> This will be used by arm64 to allocate a buffer in memory where to
+> temporarily save tags if tag storage is not available for the page being
+> swapped in.
 
-d_flags is documented to be protected by d_lock.  So for setting
-DCACHE_NOKEY_NAME, fs/crypto/ just does the safe thing of taking d_lock.  I
-never really looked into whether the lock can be skipped there (i.e., whether
-anything else can change d_flags while ->lookup is running), since this code
-only ran for no-key names, for which performance isn't really important.
-
-This patch would extend that locking to a new context in which it would be
-executed several orders of magnitude more often.  So, making sure it's properly
-optimized becomes more important.  It looks like it *might* be the case that
-->lookup has exclusive access to d_flags, by virtue of having allocated the
-dentry, so I'm just wondering if we can take advantage of that (or whether in
-classic VFS fashion there's some edge case where that assumption is wrong).
-
-- Eric
+Just wondering if tag storage will always be unavailable for tagged pages
+being swapped in ? OR there are cases where allocation might not even be
+required ? This prepare phase needs to be outside the critical section -
+only because there might be memory allocations ?
 
