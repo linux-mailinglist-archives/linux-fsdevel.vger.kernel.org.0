@@ -1,167 +1,390 @@
-Return-Path: <linux-fsdevel+bounces-9833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF17845454
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:42:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA84184547B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 10:46:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FA4E1C26BFB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:42:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6084A1F24E66
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Feb 2024 09:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A552F4DA19;
-	Thu,  1 Feb 2024 09:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B7A4DA18;
+	Thu,  1 Feb 2024 09:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c/oudCBY"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RLybB+FI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="RtR7Gbwx";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VZm1Zb8s";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lnquogje"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7403D4D9EB
-	for <linux-fsdevel@vger.kernel.org>; Thu,  1 Feb 2024 09:42:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF614DA09;
+	Thu,  1 Feb 2024 09:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706780532; cv=none; b=dEQfp/7f5hBuG7+03ZKtaLCezU5FdrRlKMaXKA1kZmOF2myxTKR/F9s9nbpoTu2/saKR/MyloeJXnC7fI7vLbYTgM14sKnVe+7fEa5FkQlVXg29012TYqUI4/pVluOi/k+CMxncILwJAAynFqaBKfQ2m6zgCqJ/mPaA0Ddt9BxM=
+	t=1706780754; cv=none; b=EdJnvYuu18XHchpwE1ox4CS+/wxcbsHVWE+EOOi2SItmQTKSXo/CbOt5j7eWN/qXek1s9zmzIwBcCTlGogK/XywLSBLShEq7Y/ZJbK4QC1cl05d0py5BunIDbU2SnNfLPlFYsK2OhpBblI5P1Okov7ZO/5kzEqVf+9xhmYl36jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706780532; c=relaxed/simple;
-	bh=RI/xh3KG3rWCEcP4eS2L4B9Piqu6OhdAZcUZ2rjfAy8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MspgXRLdFGO43c2XEalwFLcd7eGBc5gzRjFeaLDeP6aTS5/i1jVfC6AC600rprotyRA1myE+K2RjWZ+Ur6G5GFFAlrgmRGCyUVQAcJYQ3eoPlLtLMQeyrFseoWBE+/dCRcAKMdIzDO2cd+oQCsiDwbVWxNX4M/BmSbhb26uxE5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c/oudCBY; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4b739b49349so272786e0c.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Feb 2024 01:42:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1706780529; x=1707385329; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AuPOrdCb6HbBTgaqgsjDT3E2Mco217B1+thjHRyFhms=;
-        b=c/oudCBYQbUpkiq2xbEoIFZdtO6CjG5l7EZOxx8GbJZPDYmDjqittyLjIzjtDCDKia
-         aKyX4ngVa72r7TZyqCpQ2JSmV7OYyFqAblW05k2+TtYFEPU+99UENoinKatd1ZrVOghn
-         +TVSCg9dEIshG7zYSAhiaxn56jnTa4Xi2cehRRYJAIwzSCN2BZIkqpK3jmPnsMlToIHX
-         fWQeedSw6+SapD4igDYIvEIvKI2wLrGsXz8dnQZJinWliV8x3uAOO3MWIFxvO14RZPMF
-         RX73ekI5dHT//VGI6D9+3S6vKdatSYQLNyYEgwlGsu2UuVBOohST9FV6vV+JQ0fz9XWS
-         Otyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706780529; x=1707385329;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AuPOrdCb6HbBTgaqgsjDT3E2Mco217B1+thjHRyFhms=;
-        b=tFq8ntTPXwfAq/5v8tJfiEfo/dLYbl1JcItnKWL/HAVzSuYv2ZiMMbOu5QmVA720Mv
-         Yd/7QD4+PrXWJRvlVDUl9hkI2t4pInOlKkA3dN4Ie/kVz2RZMJ1yq6VQvBkiRI2aeme+
-         Oa+M8jmAZsost3b4rjMvxEi/37fGqU/608YY7rwEt+0VygaT2pMe6uMgfk21kgbEyJHw
-         8zyloSdSc1AZtHfcnCy15CsIhKoBoX0VG1f+uqkAquBjQOihwxwa/1Zc7zPGb5G2PhPk
-         +FGJj7oXB+IB5NdyrkO1ugqnl1C5UShXtQozm8lM2MKaKE/kl5RQFXIv4rUsok/cAJVS
-         3w4w==
-X-Gm-Message-State: AOJu0Yz/Fs7trO5IoNI2EGYnylgqJ8SRY+TUPYQazth2NSskvkQy9PLp
-	7AL/RwtUQPuMHxzHkvmms0uHJNWrgWLVbOpV3AdEvZ+hK0w5cHBaE3LPXkOj5KNz410U1Q2sm59
-	6pi/qKvDSAZvDcfYEZiBLRAnGApeXZBpY9n5C
-X-Google-Smtp-Source: AGHT+IECDgqCaXC3D95Pns2tEui0S4X58vEeWJ4hsISY8qGpjuY6uBTkGlgBNB8UM/Un2o8+WkkkZboJRfYbLKHc2+8=
-X-Received: by 2002:a05:6122:4085:b0:4bd:9cbc:a5d7 with SMTP id
- cb5-20020a056122408500b004bd9cbca5d7mr4603391vkb.13.1706780529128; Thu, 01
- Feb 2024 01:42:09 -0800 (PST)
+	s=arc-20240116; t=1706780754; c=relaxed/simple;
+	bh=W549+IzA9DtdsnqZ5306BQkGEBv/6gtRdfn62Z/TbM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M1E/mtQgCLsWra1ZJBr3otOycO3dQ2KlOhuW3k5hkmiEfFSrWCCdpNRSX32wMurl7oghUfp4CKvgTcyTGQxhoPSX5zTz1/oTKjaVPegwmMgSIdPbrfKLESGvCZM0iJ6ksTaSrKLZZjgDS3NC77BLP+IDhPSn8MiYa23AiOwapK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RLybB+FI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=RtR7Gbwx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VZm1Zb8s; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lnquogje; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7A3CC221CF;
+	Thu,  1 Feb 2024 09:45:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706780750; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wl9BjwJmlh5vNvGMV1TASorbwF0hvdQC8HX7XESsXfw=;
+	b=RLybB+FIFT5yFylFGoUsruLryYJ7HkWJ9Blf2mBKBIqPcgOCr4/EvVDYCIaT5UMz9lVx4z
+	Qtj5wLXSCdnY1FD4nXGti2KM8QKq8dgdbzo22PhhQwcctEVJOOtvJKSRIADoI/ue0Cuk19
+	B4sLTe8qYdszquBx/frzZbO4iRP2btA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706780750;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wl9BjwJmlh5vNvGMV1TASorbwF0hvdQC8HX7XESsXfw=;
+	b=RtR7GbwxeYqaW8jRL4iEfaQH4Gmvo7LGpYjO1Q48OE1oTNu9Xciiy3aXHwFqakcaPcDxsj
+	RTLfGmZJG/A15ZCw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706780749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wl9BjwJmlh5vNvGMV1TASorbwF0hvdQC8HX7XESsXfw=;
+	b=VZm1Zb8suQm4GH+yKpUFgX18uW8fvyLANyonlNZeg5H6jaVxYevk+7veWNbx7WFF7F+yso
+	yZTkcxQ9BjilwxlvbmS02Jggqej8c7Byuun/8Lanr41XxmlHDQTJNEzyjwyVlvXlMjfiE1
+	6kKBihyG0eVdTgvi7hnydCnTJrqqy44=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706780749;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wl9BjwJmlh5vNvGMV1TASorbwF0hvdQC8HX7XESsXfw=;
+	b=lnquogjebjNVa0zA2q7Mg65kqPzqbYzG4lbhKEtW5biQfZTx5OptiebEbf72F7/QJqhMwH
+	AZSnh72IZjzgjlAw==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 6AAF413594;
+	Thu,  1 Feb 2024 09:45:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id cjcIGk1ou2WIVgAAn2gu4w
+	(envelope-from <jack@suse.cz>); Thu, 01 Feb 2024 09:45:49 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 13E51A0809; Thu,  1 Feb 2024 10:45:49 +0100 (CET)
+Date: Thu, 1 Feb 2024 10:45:49 +0100
+From: Jan Kara <jack@suse.cz>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
+	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [PATCH v2 13/34] bcache: port block device access to files
+Message-ID: <20240201094549.tw3dskvc336bim5d@quack3>
+References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
+ <20240123-vfs-bdev-file-v2-13-adbd023e19cc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240118-alice-file-v3-0-9694b6f9580c@google.com>
- <20240118-alice-file-v3-1-9694b6f9580c@google.com> <5dbbaba2-fd7f-4734-9f44-15d2a09b4216@proton.me>
- <CAH5fLghgc_z23dOR2L5vnPhVmhiKqZxR6jin9KCA5e_ii4BL3w@mail.gmail.com>
- <84850d04-c1cb-460d-bc4e-d5032489da0d@proton.me> <CAH5fLgioyr7NsX+-VSwbpQZtm2u9gFmSF8URHGzdSWEruRRrSQ@mail.gmail.com>
- <38afc0bb-8874-4847-9b44-ea929880a9ba@proton.me>
-In-Reply-To: <38afc0bb-8874-4847-9b44-ea929880a9ba@proton.me>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 1 Feb 2024 10:41:58 +0100
-Message-ID: <CAH5fLghQAn5JYeeG0MDO-acwQHdX7CTkr_-5SzGOzrdFs2SfNw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/9] rust: file: add Rust abstraction for `struct file`
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240123-vfs-bdev-file-v2-13-adbd023e19cc@kernel.org>
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spamd-Result: default: False [-2.60 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 RCPT_COUNT_SEVEN(0.00)[7];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -2.60
 
-On Thu, Feb 1, 2024 at 10:38=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On 01.02.24 10:33, Alice Ryhl wrote:
-> > On Thu, Feb 1, 2024 at 10:31=E2=80=AFAM Benno Lossin <benno.lossin@prot=
-on.me> wrote:
-> >>
-> >> On 29.01.24 17:34, Alice Ryhl wrote:
-> >>> On Fri, Jan 26, 2024 at 4:04=E2=80=AFPM Benno Lossin <benno.lossin@pr=
-oton.me> wrote:
-> >>>>> +///   closed.
-> >>>>> +/// * A light refcount must be dropped before returning to userspa=
-ce.
-> >>>>> +#[repr(transparent)]
-> >>>>> +pub struct File(Opaque<bindings::file>);
-> >>>>> +
-> >>>>> +// SAFETY: By design, the only way to access a `File` is via an im=
-mutable reference or an `ARef`.
-> >>>>> +// This means that the only situation in which a `File` can be acc=
-essed mutably is when the
-> >>>>> +// refcount drops to zero and the destructor runs. It is safe for =
-that to happen on any thread, so
-> >>>>> +// it is ok for this type to be `Send`.
-> >>>>
-> >>>> Technically, `drop` is never called for `File`, since it is only use=
-d
-> >>>> via `ARef<File>` which calls `dec_ref` instead. Also since it only c=
-ontains
-> >>>> an `Opaque`, dropping it is a noop.
-> >>>> But what does `Send` mean for this type? Since it is used together w=
-ith
-> >>>> `ARef`, being `Send` means that `File::dec_ref` can be called from a=
-ny
-> >>>> thread. I think we are missing this as a safety requirement on
-> >>>> `AlwaysRefCounted`, do you agree?
-> >>>> I think the safety justification here could be (with the requirement=
- added
-> >>>> to `AlwaysRefCounted`):
-> >>>>
-> >>>>        SAFETY:
-> >>>>        - `File::drop` can be called from any thread.
-> >>>>        - `File::dec_ref` can be called from any thread.
-> >>>
-> >>> This wording was taken from rust/kernel/task.rs. I think it's out of
-> >>> scope to reword it.
-> >>
-> >> Rewording the safety docs on `AlwaysRefCounted`, yes that is out of sc=
-ope,
-> >> I was just checking if you agree that the current wording is incomplet=
-e.
-> >
-> > That's not what I meant. The wording of this safety comment is
-> > identical to the wording in other existing safety comments in the
-> > kernel, such as e.g. the one for `impl Send for Task`.
->
-> Ah I see. But I still think changing it is better, since it would only ge=
-t
-> shorter. The comment on `Task` can be fixed later.
-> Or do you want to keep consistency here? Because I would prefer to make
-> this right and then change `Task` later.
+On Tue 23-01-24 14:26:30, Christian Brauner wrote:
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-What would you like me to change it to?
+Looks good. Feel free to add:
 
-For example:
-// SAFETY: It is okay to send references to a File across thread boundaries=
-.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Alice
+								Honza
+
+> ---
+>  drivers/md/bcache/bcache.h |  4 +--
+>  drivers/md/bcache/super.c  | 74 +++++++++++++++++++++++-----------------------
+>  2 files changed, 39 insertions(+), 39 deletions(-)
+> 
+> diff --git a/drivers/md/bcache/bcache.h b/drivers/md/bcache/bcache.h
+> index 6ae2329052c9..4e6afa89921f 100644
+> --- a/drivers/md/bcache/bcache.h
+> +++ b/drivers/md/bcache/bcache.h
+> @@ -300,7 +300,7 @@ struct cached_dev {
+>  	struct list_head	list;
+>  	struct bcache_device	disk;
+>  	struct block_device	*bdev;
+> -	struct bdev_handle	*bdev_handle;
+> +	struct file		*bdev_file;
+>  
+>  	struct cache_sb		sb;
+>  	struct cache_sb_disk	*sb_disk;
+> @@ -423,7 +423,7 @@ struct cache {
+>  
+>  	struct kobject		kobj;
+>  	struct block_device	*bdev;
+> -	struct bdev_handle	*bdev_handle;
+> +	struct file		*bdev_file;
+>  
+>  	struct task_struct	*alloc_thread;
+>  
+> diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+> index dc3f50f69714..d00b3abab133 100644
+> --- a/drivers/md/bcache/super.c
+> +++ b/drivers/md/bcache/super.c
+> @@ -1369,8 +1369,8 @@ static CLOSURE_CALLBACK(cached_dev_free)
+>  	if (dc->sb_disk)
+>  		put_page(virt_to_page(dc->sb_disk));
+>  
+> -	if (dc->bdev_handle)
+> -		bdev_release(dc->bdev_handle);
+> +	if (dc->bdev_file)
+> +		fput(dc->bdev_file);
+>  
+>  	wake_up(&unregister_wait);
+>  
+> @@ -1445,7 +1445,7 @@ static int cached_dev_init(struct cached_dev *dc, unsigned int block_size)
+>  /* Cached device - bcache superblock */
+>  
+>  static int register_bdev(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+> -				 struct bdev_handle *bdev_handle,
+> +				 struct file *bdev_file,
+>  				 struct cached_dev *dc)
+>  {
+>  	const char *err = "cannot allocate memory";
+> @@ -1453,8 +1453,8 @@ static int register_bdev(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+>  	int ret = -ENOMEM;
+>  
+>  	memcpy(&dc->sb, sb, sizeof(struct cache_sb));
+> -	dc->bdev_handle = bdev_handle;
+> -	dc->bdev = bdev_handle->bdev;
+> +	dc->bdev_file = bdev_file;
+> +	dc->bdev = file_bdev(bdev_file);
+>  	dc->sb_disk = sb_disk;
+>  
+>  	if (cached_dev_init(dc, sb->block_size << 9))
+> @@ -2218,8 +2218,8 @@ void bch_cache_release(struct kobject *kobj)
+>  	if (ca->sb_disk)
+>  		put_page(virt_to_page(ca->sb_disk));
+>  
+> -	if (ca->bdev_handle)
+> -		bdev_release(ca->bdev_handle);
+> +	if (ca->bdev_file)
+> +		fput(ca->bdev_file);
+>  
+>  	kfree(ca);
+>  	module_put(THIS_MODULE);
+> @@ -2339,18 +2339,18 @@ static int cache_alloc(struct cache *ca)
+>  }
+>  
+>  static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+> -				struct bdev_handle *bdev_handle,
+> +				struct file *bdev_file,
+>  				struct cache *ca)
+>  {
+>  	const char *err = NULL; /* must be set for any error case */
+>  	int ret = 0;
+>  
+>  	memcpy(&ca->sb, sb, sizeof(struct cache_sb));
+> -	ca->bdev_handle = bdev_handle;
+> -	ca->bdev = bdev_handle->bdev;
+> +	ca->bdev_file = bdev_file;
+> +	ca->bdev = file_bdev(bdev_file);
+>  	ca->sb_disk = sb_disk;
+>  
+> -	if (bdev_max_discard_sectors((bdev_handle->bdev)))
+> +	if (bdev_max_discard_sectors(file_bdev(bdev_file)))
+>  		ca->discard = CACHE_DISCARD(&ca->sb);
+>  
+>  	ret = cache_alloc(ca);
+> @@ -2361,20 +2361,20 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+>  			err = "cache_alloc(): cache device is too small";
+>  		else
+>  			err = "cache_alloc(): unknown error";
+> -		pr_notice("error %pg: %s\n", bdev_handle->bdev, err);
+> +		pr_notice("error %pg: %s\n", file_bdev(bdev_file), err);
+>  		/*
+>  		 * If we failed here, it means ca->kobj is not initialized yet,
+>  		 * kobject_put() won't be called and there is no chance to
+> -		 * call bdev_release() to bdev in bch_cache_release(). So
+> -		 * we explicitly call bdev_release() here.
+> +		 * call fput() to bdev in bch_cache_release(). So
+> +		 * we explicitly call fput() on the block device here.
+>  		 */
+> -		bdev_release(bdev_handle);
+> +		fput(bdev_file);
+>  		return ret;
+>  	}
+>  
+> -	if (kobject_add(&ca->kobj, bdev_kobj(bdev_handle->bdev), "bcache")) {
+> +	if (kobject_add(&ca->kobj, bdev_kobj(file_bdev(bdev_file)), "bcache")) {
+>  		pr_notice("error %pg: error calling kobject_add\n",
+> -			  bdev_handle->bdev);
+> +			  file_bdev(bdev_file));
+>  		ret = -ENOMEM;
+>  		goto out;
+>  	}
+> @@ -2388,7 +2388,7 @@ static int register_cache(struct cache_sb *sb, struct cache_sb_disk *sb_disk,
+>  		goto out;
+>  	}
+>  
+> -	pr_info("registered cache device %pg\n", ca->bdev_handle->bdev);
+> +	pr_info("registered cache device %pg\n", file_bdev(ca->bdev_file));
+>  
+>  out:
+>  	kobject_put(&ca->kobj);
+> @@ -2446,7 +2446,7 @@ struct async_reg_args {
+>  	char *path;
+>  	struct cache_sb *sb;
+>  	struct cache_sb_disk *sb_disk;
+> -	struct bdev_handle *bdev_handle;
+> +	struct file *bdev_file;
+>  	void *holder;
+>  };
+>  
+> @@ -2457,7 +2457,7 @@ static void register_bdev_worker(struct work_struct *work)
+>  		container_of(work, struct async_reg_args, reg_work.work);
+>  
+>  	mutex_lock(&bch_register_lock);
+> -	if (register_bdev(args->sb, args->sb_disk, args->bdev_handle,
+> +	if (register_bdev(args->sb, args->sb_disk, args->bdev_file,
+>  			  args->holder) < 0)
+>  		fail = true;
+>  	mutex_unlock(&bch_register_lock);
+> @@ -2478,7 +2478,7 @@ static void register_cache_worker(struct work_struct *work)
+>  		container_of(work, struct async_reg_args, reg_work.work);
+>  
+>  	/* blkdev_put() will be called in bch_cache_release() */
+> -	if (register_cache(args->sb, args->sb_disk, args->bdev_handle,
+> +	if (register_cache(args->sb, args->sb_disk, args->bdev_file,
+>  			   args->holder))
+>  		fail = true;
+>  
+> @@ -2516,7 +2516,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+>  	char *path = NULL;
+>  	struct cache_sb *sb;
+>  	struct cache_sb_disk *sb_disk;
+> -	struct bdev_handle *bdev_handle, *bdev_handle2;
+> +	struct file *bdev_file, *bdev_file2;
+>  	void *holder = NULL;
+>  	ssize_t ret;
+>  	bool async_registration = false;
+> @@ -2549,15 +2549,15 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+>  
+>  	ret = -EINVAL;
+>  	err = "failed to open device";
+> -	bdev_handle = bdev_open_by_path(strim(path), BLK_OPEN_READ, NULL, NULL);
+> -	if (IS_ERR(bdev_handle))
+> +	bdev_file = bdev_file_open_by_path(strim(path), BLK_OPEN_READ, NULL, NULL);
+> +	if (IS_ERR(bdev_file))
+>  		goto out_free_sb;
+>  
+>  	err = "failed to set blocksize";
+> -	if (set_blocksize(bdev_handle->bdev, 4096))
+> +	if (set_blocksize(file_bdev(bdev_file), 4096))
+>  		goto out_blkdev_put;
+>  
+> -	err = read_super(sb, bdev_handle->bdev, &sb_disk);
+> +	err = read_super(sb, file_bdev(bdev_file), &sb_disk);
+>  	if (err)
+>  		goto out_blkdev_put;
+>  
+> @@ -2569,13 +2569,13 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+>  	}
+>  
+>  	/* Now reopen in exclusive mode with proper holder */
+> -	bdev_handle2 = bdev_open_by_dev(bdev_handle->bdev->bd_dev,
+> +	bdev_file2 = bdev_file_open_by_dev(file_bdev(bdev_file)->bd_dev,
+>  			BLK_OPEN_READ | BLK_OPEN_WRITE, holder, NULL);
+> -	bdev_release(bdev_handle);
+> -	bdev_handle = bdev_handle2;
+> -	if (IS_ERR(bdev_handle)) {
+> -		ret = PTR_ERR(bdev_handle);
+> -		bdev_handle = NULL;
+> +	fput(bdev_file);
+> +	bdev_file = bdev_file2;
+> +	if (IS_ERR(bdev_file)) {
+> +		ret = PTR_ERR(bdev_file);
+> +		bdev_file = NULL;
+>  		if (ret == -EBUSY) {
+>  			dev_t dev;
+>  
+> @@ -2610,7 +2610,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+>  		args->path	= path;
+>  		args->sb	= sb;
+>  		args->sb_disk	= sb_disk;
+> -		args->bdev_handle	= bdev_handle;
+> +		args->bdev_file	= bdev_file;
+>  		args->holder	= holder;
+>  		register_device_async(args);
+>  		/* No wait and returns to user space */
+> @@ -2619,14 +2619,14 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+>  
+>  	if (SB_IS_BDEV(sb)) {
+>  		mutex_lock(&bch_register_lock);
+> -		ret = register_bdev(sb, sb_disk, bdev_handle, holder);
+> +		ret = register_bdev(sb, sb_disk, bdev_file, holder);
+>  		mutex_unlock(&bch_register_lock);
+>  		/* blkdev_put() will be called in cached_dev_free() */
+>  		if (ret < 0)
+>  			goto out_free_sb;
+>  	} else {
+>  		/* blkdev_put() will be called in bch_cache_release() */
+> -		ret = register_cache(sb, sb_disk, bdev_handle, holder);
+> +		ret = register_cache(sb, sb_disk, bdev_file, holder);
+>  		if (ret)
+>  			goto out_free_sb;
+>  	}
+> @@ -2642,8 +2642,8 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+>  out_put_sb_page:
+>  	put_page(virt_to_page(sb_disk));
+>  out_blkdev_put:
+> -	if (bdev_handle)
+> -		bdev_release(bdev_handle);
+> +	if (bdev_file)
+> +		fput(bdev_file);
+>  out_free_sb:
+>  	kfree(sb);
+>  out_free_path:
+> 
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
