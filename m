@@ -1,91 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-9969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98C6A846B42
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 09:51:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839C5846B73
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 10:02:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBAE61C215CB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 08:51:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2297C2811CD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 09:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AD9604DA;
-	Fri,  2 Feb 2024 08:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jRBViAH1"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AA1061674;
+	Fri,  2 Feb 2024 09:02:10 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BEB17BCD
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 08:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09DCA62162;
+	Fri,  2 Feb 2024 09:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706863894; cv=none; b=YkJRPI6Vjd3JDs0tWepRscZvh98dEHR5nHt/rg7xuvk8DhSRcCyYGTV4lCXFL++uxYPlZn7aCd20lwDQhDu29xhqmWJn1FCreE4mlT0IA6SPeCqASiUmxFzGKfR+v6lPq+fKbcHRS6738i/MdzaGXgYtoyH9V4FyxF074ful/iA=
+	t=1706864529; cv=none; b=VUUWh2eb77VZzwCuH396apu01wlEqFk2IqT+p4uK1zBTmpsPwVzFjK2XDqBnvGyz8PdGVBAzBEhF8zeBotKryk3W3A6OjQc497WZwNFU++dMBHH9ytsbSGFXd7xEy/qH69DBD+tk7UH7J7uIdjnJ6iT7xxiO1xKH7SYQN9swHis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706863894; c=relaxed/simple;
-	bh=PG2zgEJDFQ1/8J6qd/Sv6uwo0RbEngsGO7IWR1dFojo=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=qqAbqWGft6ktBbM8lrtgKN5DA0MkAucoRgzo6PfNiSmfLQ3f/lajmskxXlfNQeLxnfEXuzukSjrz9PZq4wO11AQNpzdoO6iEq3dcwcJMXZsh/0gk4guXpMuvR+7B0tu8UbYd1BR4t/fD+2VE9y/IPtM941w91PZU99PHOsUaL6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jRBViAH1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706863891;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=F6Prs1QlwLvlmms9iMnqYJXnd32DxIjB6bHAEUH6zXI=;
-	b=jRBViAH1Uq9CUGQk6gM27A38ctpH3qOM/CYZFMpVsfh8NdoMWbNzfr0gKDMiEgwQ199YlN
-	clrI5bgQUEGFDcsFAtklrowreUIGCNgJfAm1Ef0fC1JXmYNOX+OPhXl2LexaNQ7xrp+ocE
-	8W7/btog6c61UQ20lx7ySd/tyw5yaUM=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-128-T_-YDuHrPHuHADsnKQu_5w-1; Fri, 02 Feb 2024 03:51:29 -0500
-X-MC-Unique: T_-YDuHrPHuHADsnKQu_5w-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8492585A58B;
-	Fri,  2 Feb 2024 08:51:28 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.245])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 8D4F72166B31;
-	Fri,  2 Feb 2024 08:51:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: lsf-pc@lists.linux-foundation.org
-cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-    Kent Overstreet <kent.overstreet@linux.dev>, dwmw2@infradead.org,
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [LSF/MM/BPF TOPIC] Replacing TASK_(UN)INTERRUPTIBLE with regions of uninterruptibility
+	s=arc-20240116; t=1706864529; c=relaxed/simple;
+	bh=aHzEmoPoxsCtAcAXqMLjI12v8AWic6XYoYlNqsGWalQ=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ciTAJwlAtgsQe4zonSSVlkWIrzrg3d8TkUt0BLjayZCaxSEEh9wQwQSRTFbbyyDkbKVSZUNqWAA34vL9crScXo0akCVdzi8rx24fW0oD04aeF7/1rkZQcifE4CXoOF/ZIXV5aHN2hhTWVtBrzQuRLMC/iCSqDbUTth21UOZrMCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4TR8r34knvzXh7G;
+	Fri,  2 Feb 2024 17:00:35 +0800 (CST)
+Received: from dggpemd200004.china.huawei.com (unknown [7.185.36.141])
+	by mail.maildlp.com (Postfix) with ESMTPS id 688AD140114;
+	Fri,  2 Feb 2024 17:02:01 +0800 (CST)
+Received: from [10.174.179.24] (10.174.179.24) by
+ dggpemd200004.china.huawei.com (7.185.36.141) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.1258.28; Fri, 2 Feb 2024 17:02:00 +0800
+Subject: Re: [PATCH 2/2] mm/readahead: limit sync readahead while too many
+ active refault
+To: Jan Kara <jack@suse.cz>
+References: <20240201100835.1626685-1-liushixin2@huawei.com>
+ <20240201100835.1626685-3-liushixin2@huawei.com>
+ <20240201093749.ll7uzgt7ixy7kkhw@quack3>
+ <c768cab9-4ccb-9618-24a8-b51d3f141340@huawei.com>
+ <20240201173130.frpaqpy7iyzias5j@quack3>
+CC: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+	<brauner@kernel.org>, Matthew Wilcox <willy@infradead.org>, Andrew Morton
+	<akpm@linux-foundation.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>
+From: Liu Shixin <liushixin2@huawei.com>
+Message-ID: <78ee0c12-e706-875d-2baf-cb51dea9cfc4@huawei.com>
+Date: Fri, 2 Feb 2024 17:02:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2701317.1706863882.1@warthog.procyon.org.uk>
-Date: Fri, 02 Feb 2024 08:51:22 +0000
-Message-ID: <2701318.1706863882@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+In-Reply-To: <20240201173130.frpaqpy7iyzias5j@quack3>
+Content-Type: multipart/mixed;
+	boundary="------------851C32ACB350EF2108EAD576"
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemd200004.china.huawei.com (7.185.36.141)
 
-Hi,
+--------------851C32ACB350EF2108EAD576
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 
-We have various locks, mutexes, etc., that are taken on entry to filesystem
-code, for example, and a bunch of them are taken interruptibly or killably (or
-ought to be) - but filesystem code might be called into from uninterruptible
-code, such as the memory allocator, fscache, etc..
 
-Does it make sense to replace TASK_{INTERRUPTIBLE,KILLABLE,UNINTERRUPTIBLE}
-with begin/end functions that define the area of uninterruptibility?  The
-regions would need to handle being nested, so maybe some sort of counter in
-the task_struct counter would work.
 
-David
+On 2024/2/2 1:31, Jan Kara wrote:
+> On Thu 01-02-24 18:41:30, Liu Shixin wrote:
+>> On 2024/2/1 17:37, Jan Kara wrote:
+>>> On Thu 01-02-24 18:08:35, Liu Shixin wrote:
+>>>> When the pagefault is not for write and the refault distance is close,
+>>>> the page will be activated directly. If there are too many such pages in
+>>>> a file, that means the pages may be reclaimed immediately.
+>>>> In such situation, there is no positive effect to read-ahead since it will
+>>>> only waste IO. So collect the number of such pages and when the number is
+>>>> too large, stop bothering with read-ahead for a while until it decreased
+>>>> automatically.
+>>>>
+>>>> Define 'too large' as 10000 experientially, which can solves the problem
+>>>> and does not affect by the occasional active refault.
+>>>>
+>>>> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+>>> So I'm not convinced this new logic is needed. We already have
+>>> ra->mmap_miss which gets incremented when a page fault has to read the page
+>>> (and decremented when a page fault found the page already in cache). This
+>>> should already work to detect trashing as well, shouldn't it? If it does
+>>> not, why?
+>>>
+>>> 								Honza
+>> ra->mmap_miss doesn't help, it increased only one in do_sync_mmap_readahead()
+>> and then decreased one for every page in filemap_map_pages(). So in this scenario,
+>> it can't exceed MMAP_LOTSAMISS.
+> I see, OK. But that's a (longstanding) bug in how mmap_miss is handled. Can
+> you please test whether attached patches fix the trashing for you? At least
+> now I can see mmap_miss properly increments when we are hitting uncached
+> pages...  Thanks!
+>
+> 								Honza
+The patch doesn't seem to have much effect. I will try to analyze why it doesn't work.
+The attached file is my testcase.
 
+Thanks,
+>
+
+
+--------------851C32ACB350EF2108EAD576
+Content-Type: text/plain; charset="UTF-8"; name="test.sh"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="test.sh"
+
+#!/bin/bash
+  
+while true; do
+    flag=$(ps -ef | grep -v grep | grep alloc_page| wc -l)
+    if [ "$flag" -eq 0 ]; then
+        /alloc_page &
+    fi
+
+    sleep 30
+
+    start_time=$(date +%s)
+    yum install -y expect > /dev/null 2>&1
+
+    end_time=$(date +%s)
+
+    elapsed_time=$((end_time - start_time))
+
+    echo "$elapsed_time seconds"
+    yum remove -y expect > /dev/null 2>&1
+done
+--------------851C32ACB350EF2108EAD576
+Content-Type: text/plain; charset="UTF-8"; name="alloc_page.c"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="alloc_page.c"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+
+#define SIZE 1*1024*1024 //1M
+
+int main()
+{
+    void *ptr = NULL;
+    int i;
+
+    for (i = 0; i < 1024 * 6 - 50;i++) {
+        ptr = (void *) malloc(SIZE);
+        if (ptr == NULL) {
+            printf("malloc err!");
+            return -1;
+        }
+
+        memset(ptr, 0, SIZE);
+    }
+
+    sleep(99999);
+
+    free(ptr);
+    return 0;
+}
+--------------851C32ACB350EF2108EAD576--
 
