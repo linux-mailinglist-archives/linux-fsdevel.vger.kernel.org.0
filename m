@@ -1,120 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-9984-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9985-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67DA846E30
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 11:46:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6109846E57
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 11:53:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 658001F29E0D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 10:46:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA85D1C266A3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 10:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C4C13BEB0;
-	Fri,  2 Feb 2024 10:46:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860C913E202;
+	Fri,  2 Feb 2024 10:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="g6iI/Sey"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SeTJN+64"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F0D5B691
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 10:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6AA13DB99
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 10:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706870786; cv=none; b=UAIl1IMh/xhShUIR1D7LbXC0wc2mQX5MWUw/tNT/XbsldkAQc3KqpaH6+CBGg8WdvSieNSL9/PNSeUIxKu4Jpq360muxs9EsM0sGao2+qjg2vDF+4XJupAJG6HXO82k8P1Gi3rcGk7Pth100cC9wgwquWOtE9C4B5DZZYgiMJqk=
+	t=1706871180; cv=none; b=fzqpiY3xG9GwMi0BSERk5MKBjOZUSOaHrFJpZL9ORdtO09gJNgHzGe2uTh+QFCz48yB4zRvwQaJs8obNiu/GqKa/H15Tav6TMTsQFnmlTI7oYulp8/uFd5lTDeWGo81X4ZeE6YHc+EzvTNBOIEyLEqvOJ1FbqckoiPF8jOyZC/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706870786; c=relaxed/simple;
-	bh=zvp0K9ydN3nMMzMq61aNR+c3kffjeXbJJ0TvhrErc1U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gLs+M6Kt5E22lIiHhwjOBoMz2SnNaTeZPTn9DXP0MWJJtX1ccEwhOH+3cYjpYBYysSKqEkXHxIDil3laJ+SOHrOfoxdOeykJidnmlAH/DeGhWmf2JKsG8YiwWZc7Wr5XDGA8QnACO0udttRrOqse8c1LM6p2ANL2v8WUUHqNxaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=g6iI/Sey; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a35e9161b8cso270240166b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 02:46:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1706870782; x=1707475582; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3kPO1VsO0xl/Hz3gFZBk/t8WtAh4jt1/TJtfk1JPNxw=;
-        b=g6iI/SeyswTt7LP2T5GQxtFBNdW02HE3sgFq99mlgK1Uu2YJXZSOuDEHQJUeOlRp+F
-         XTb/OBc8YHXbNuaFSmxoQOHUOaDtotXDc5Kyucw+F/dlL/wf03c9Jr2n/fh4F9HNzvxd
-         rk7puOGuur9ZlbWLq4ZD7eMVuL1OvF921mOMM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706870782; x=1707475582;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3kPO1VsO0xl/Hz3gFZBk/t8WtAh4jt1/TJtfk1JPNxw=;
-        b=XB25CJ28ilhwYkNvfjsAz1NMVYjSfgJKtFPbvV5nS/6nngax6NdCUVFsoQtFY6Nmff
-         g6iCi0uF9ukZ/htStr5SUfZVPqCOftMO1Fz5l1c249MSxyqmgL1jb+uJST8aqxtoLfru
-         sNfSkhT89nFPES9FSP9ds9xx3rN3XohKWh1yjebnK225EE+u76OtcVeAeH2/rQbSJ/NX
-         xQrvrhI2d+Bbv+VhuvXCyMixer7/JrylUxqSxBaFvX22DE6To4/VJ07U4V2iUwxJaUxb
-         72mAxxUM9SBJU1jkYD9S/8Om4huDtdD6Fz34riQWazc17C/dlpD/Au8vrxIoPdfJDA0I
-         SwCw==
-X-Gm-Message-State: AOJu0YyCXDuJngAk/6tNhvQCKCAdN7aunt3Ir7T8hBdKF6HW5fqZMcAz
-	TUOrcjZShc4TM1axHi1bCybevy6i/fK49dlqTz1sOqPZN8Qpk1+oSfRRhvsZvWSMlyXB8CDxkh4
-	b36D2wGIIOajwW0mK/UQgGMM3wCNZWfMfxIUEzg==
-X-Google-Smtp-Source: AGHT+IFR7cDiHqvGndK4aAk7B92jSuGV10s7ALvFXkMAB0xA944wD4b6Z6Pb2dUr/+XV5Ri8TqFJebZRVSVnU5kL+Zg=
-X-Received: by 2002:a17:907:1119:b0:a31:34a9:d742 with SMTP id
- qu25-20020a170907111900b00a3134a9d742mr1152228ejb.3.1706870781905; Fri, 02
- Feb 2024 02:46:21 -0800 (PST)
+	s=arc-20240116; t=1706871180; c=relaxed/simple;
+	bh=dqUxwBZX2kfI3B+P5TtoZCK0zVV9VHWfEdhugIz7LIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cD4w5D0THswePHx3EOyjQCn1eMfQi+n3vOsXpRykD120SHRMr5oWATiNxYoXb3K390oIg9Mg/9HkFkHzhI/+dgJR6t/KxEGDQ2x4uJCtKggSVPZGCOOdC6Hxc0kgqZXlE2aeNjTL+pGJ5Hln43xSlhRcW8w06dz14oM8zfRDFrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SeTJN+64; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1706871177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZClaqx53ZJJu0ie6KUCf9aABm/H96wl0onIl5m7Has8=;
+	b=SeTJN+64PCjm+xkaoqCNwhvFiFJDd3KAz+0ic49xX1UIThfvffXsSirlxNmXv3a5oje1ci
+	A+zoWNeD7h4rahVeMaZFDh7NVsag0scwTE07XKxLl8ZcEowJz5Vv0VD36A5JhfUS7p16BT
+	cEbBEL/7atCogNDeWLH4UzJTFX7oyLM=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-659-iW2aeLZvPEy-2p72J5_cXA-1; Fri, 02 Feb 2024 05:52:52 -0500
+X-MC-Unique: iW2aeLZvPEy-2p72J5_cXA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 71E5385A588;
+	Fri,  2 Feb 2024 10:52:51 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.16])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id D9E5640C95AD;
+	Fri,  2 Feb 2024 10:52:45 +0000 (UTC)
+Date: Fri, 2 Feb 2024 18:52:22 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Mike Snitzer <snitzer@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Don Dutile <ddutile@redhat.com>, Rafael Aquini <raquini@redhat.com>,
+	Dave Chinner <david@fromorbit.com>
+Subject: Re: mm/madvise: set ra_pages as device max request size during
+ ADV_POPULATE_READ
+Message-ID: <ZbzJZji95a1qmhcj@fedora>
+References: <20240202022029.1903629-1-ming.lei@redhat.com>
+ <Zbxy30POPE8rN_YN@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2701318.1706863882@warthog.procyon.org.uk> <CAJfpegtOiiBqhFeFBbuaY=TaS2xMafLOES=LHdNx8BhwUz7aCg@mail.gmail.com>
- <2704767.1706869832@warthog.procyon.org.uk>
-In-Reply-To: <2704767.1706869832@warthog.procyon.org.uk>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 2 Feb 2024 11:46:10 +0100
-Message-ID: <CAJfpegu6v1fRAyLvFLOPUSAhx5aAGvPGjBWv-TDQjugqjUA_hQ@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Replacing TASK_(UN)INTERRUPTIBLE with regions
- of uninterruptibility
-To: David Howells <dhowells@redhat.com>
-Cc: lsf-pc@lists.linux-foundation.org, Matthew Wilcox <willy@infradead.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, dwmw2@infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zbxy30POPE8rN_YN@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-On Fri, 2 Feb 2024 at 11:30, David Howells <dhowells@redhat.com> wrote:
->
-> Miklos Szeredi <miklos@szeredi.hu> wrote:
->
-> > > We have various locks, mutexes, etc., that are taken on entry to
-> > > filesystem code, for example, and a bunch of them are taken interruptibly
-> > > or killably (or ought to be) - but filesystem code might be called into
-> > > from uninterruptible code, such as the memory allocator, fscache, etc..
-> >
-> > Are you suggesting to make lots more filesystem/vfs/mm sleeps
-> > killable?  That would present problems with being called from certain
-> > contexts.
->
-> No, it wouldn't.  What I'm suggesting is something like:
->
->         overlayfs_mkdir(inode)
->         {
->                 inode_lock(inode);  <---  This could be interruptible
+On Thu, Feb 01, 2024 at 11:43:11PM -0500, Mike Snitzer wrote:
+> On Thu, Feb 01 2024 at  9:20P -0500,
+> Ming Lei <ming.lei@redhat.com> wrote:
+> 
+> > madvise(MADV_POPULATE_READ) tries to populate all page tables in the
+> > specific range, so it is usually sequential IO if VMA is backed by
+> > file.
+> > 
+> > Set ra_pages as device max request size for the involved readahead in
+> > the ADV_POPULATE_READ, this way reduces latency of madvise(MADV_POPULATE_READ)
+> > to 1/10 when running madvise(MADV_POPULATE_READ) over one 1GB file with
+> > usual(default) 128KB of read_ahead_kb.
+> > 
+> > Cc: David Hildenbrand <david@redhat.com>
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: Don Dutile <ddutile@redhat.com>
+> > Cc: Rafael Aquini <raquini@redhat.com>
+> > Cc: Dave Chinner <david@fromorbit.com>
+> > Cc: Mike Snitzer <snitzer@kernel.org>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > ---
+> >  mm/madvise.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 51 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/madvise.c b/mm/madvise.c
+> > index 912155a94ed5..db5452c8abdd 100644
+> > --- a/mm/madvise.c
+> > +++ b/mm/madvise.c
+> > @@ -900,6 +900,37 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
+> >  		return -EINVAL;
+> >  }
+> >  
+> > +static void madvise_restore_ra_win(struct file **file, unsigned int ra_pages)
+> > +{
+> > +	if (*file) {
+> > +		struct file *f = *file;
+> > +
+> > +		f->f_ra.ra_pages = ra_pages;
+> > +		fput(f);
+> > +		*file = NULL;
+> > +	}
+> > +}
+> > +
+> > +static struct file *madvise_override_ra_win(struct file *f,
+> > +		unsigned long start, unsigned long end,
+> > +		unsigned int *old_ra_pages)
+> > +{
+> > +	unsigned int io_pages;
+> > +
+> > +	if (!f || !f->f_mapping || !f->f_mapping->host)
+> > +		return NULL;
+> > +
+> > +	io_pages = inode_to_bdi(f->f_mapping->host)->io_pages;
+> > +	if (((end - start) >> PAGE_SHIFT) < io_pages)
+> > +		return NULL;
+> > +
+> > +	f = get_file(f);
+> > +	*old_ra_pages = f->f_ra.ra_pages;
+> > +	f->f_ra.ra_pages = io_pages;
+> > +
+> > +	return f;
+> > +}
+> > +
+> 
+> Does this override imply that madvise_populate resorts to calling
+> filemap_fault() and here you're just arming it to use the larger
+> ->io_pages for the duration of all associated faulting?
 
-Just making inode_lock() interruptible would break everything.
+Yes.
 
-So I assume this is not what you meant, but that we add error handling
-to each and every inode_lock() call?
+> 
+> Wouldn't it be better to avoid faulting and build up larger page
 
->                 ...
->                 begin_task_uninterruptible();
+How can we avoid the fault handling? which is needed to build VA->PA mapping.
 
-Yes, I understand that this is your suggestion.
+> vectors that get sent down to the block layer in one go and let the
 
-For overlayfs it doesn't really make sense, but for network fs and
-fuse I guess it could be interesting.  I would have thought that
-making all fs related sleeping locks interruptible is not something
-that would be worth the effort, but maybe you have a very good use
-case.
+filemap_fault() already tries to allocate folio in big size(max order
+is MAX_PAGECACHE_ORDER), see page_cache_ra_order() and ra_alloc_folio().
+
+> block layer split using the device's limits? (like happens with
+> force_page_cache_ra)
+
+Here filemap code won't deal with block directly because there is VFS &
+FS and io mapping is required, and it just calls aops->readahead() or
+aops->read_folio(), but block plug & readahead_control are applied for
+handling everything in batch.
+
+> 
+> I'm concerned that madvise_populate isn't so efficient with filemap
+
+That is why this patch increases readahead window, then
+madvise_populate() performance can be improved by X10 in big file-backed
+popluate read.
+
+> due to excessive faulting (*BUT* I haven't traced to know, I'm just
+> inferring that is why twiddling f->f_ra.ra_pages helps improve
+> madvise_populate by having it issue larger IO. Apologies if I'm way
+> off base)
+
+As mentioned, fault handling can't be avoided, but we can improve
+involved readahead IO perf.
+
+
 
 Thanks,
-Miklos
+Ming
+
 
