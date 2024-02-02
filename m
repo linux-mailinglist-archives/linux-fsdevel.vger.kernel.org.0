@@ -1,58 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-10075-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10076-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A5A1847903
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 20:05:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20306847909
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 20:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5A41F26F33
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 19:05:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D726F2962F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 19:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209D1126F05;
-	Fri,  2 Feb 2024 18:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB9F12C7E6;
+	Fri,  2 Feb 2024 18:50:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2eUvkkE"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fnIM5S8M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766A885945;
-	Fri,  2 Feb 2024 18:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746F012C7E5;
+	Fri,  2 Feb 2024 18:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706899679; cv=none; b=WMY/MG4Snk8SgFF7RpQ02eUNf5qD0UK/9Y9B1AJeByQrZmp5WpKkRbAffZ6VOc903mUFggoA86SbX/k54anavMHhAbF/Lq4ZMuu3x+i6Izk/Wyc9rwIDUIZwCbsu1j+CH3I+t1VmOYeKeVkeKYWZ4a1EDWPr3ZYl110W/ZUjBNk=
+	t=1706899821; cv=none; b=nP8qBn2zhEmAd1KDzN+HNxLgyt8hy6oBYzau66g8p0NNThapxTGcpRVB2EO4FSeGRNn7aP1KbGLl0QImo1Z0RHKAM2gbTpz6v1iaxdWHP/agMf2v4e/gAxA+jCeZHZv5xnsNHVgq0k8OpwXFgeQ8EHdccnZ903RF17mFrosUFz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706899679; c=relaxed/simple;
-	bh=QcaaP/4jBnJB46G9guIEmeObnt6+/Id6kQQiWLBmNbo=;
+	s=arc-20240116; t=1706899821; c=relaxed/simple;
+	bh=fzeY1VlgvPi47dk0X+uJv+op+kqkPwqjm2YRFBDKUuY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gzFpA4diBcFU1C98tslUBn770mWB7hKYTlMywMjKj8snsYtT6EBChLdMD9ArmJRe7xepdi94CoRUgmXuk+aNHYuWRLYaQ2SpcHfGwr7Hzk4z/FF3Ob932+HHJh0HKwWQZ91KNbvsOLC/T3nvUA85U5scwPTCw2C/5HULglhQTMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2eUvkkE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB23CC43390;
-	Fri,  2 Feb 2024 18:47:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706899679;
-	bh=QcaaP/4jBnJB46G9guIEmeObnt6+/Id6kQQiWLBmNbo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h2eUvkkEYHLCPDhfZVJ9aTeddxb6PdiJfiGQGBpuuxwaq+iEzg3P9l4OQo75Wjszq
-	 Mw0zSz/rcx9tbV36HcT3iISdYMxMgjvpIE4xRiWYi9AAcSTw+nD1EJQ5nc/GioU+A6
-	 8pjcuvz3TJj7fiAybhyT96Xvqxfn/3+3vXnNi7q1jXEKSyfjuQeWbdF6tDF7O0UQvL
-	 XomMzk1c6OHzcqA6TaTDPYp+IPPAX5mTNY+qpf5vxzuwahugA7tSc7RVU+tZxemNdh
-	 Bq2BEmbL9mu0E9GFBynBEwhj25IOzqK5Bi2aTk4SCl769dRXEFD7nSmHIDa1GgCk/Q
-	 ToB1eS/xzzvPw==
-Date: Fri, 2 Feb 2024 10:47:58 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: hch@lst.de, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	dchinner@redhat.com, jack@suse.cz, chandan.babu@oracle.com,
-	martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com
-Subject: Re: [PATCH RFC 5/6] fs: xfs: iomap atomic write support
-Message-ID: <20240202184758.GA6226@frogsfrogsfrogs>
-References: <20240124142645.9334-1-john.g.garry@oracle.com>
- <20240124142645.9334-6-john.g.garry@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/4ADOJUSJXmx/vI2siVRWC7HNPWJT778i9E/uHtqs5H6lpim7dZSVycalXqf0HdVMTuSaVLhaaVcxauKLwbn7mA7ZRa9Ow1XtpzyQjq9nRqPwG/k2VaM+X5VkE939cM7iymTUXMpBiR+g6aGREDNrUUp22BqQBs9fEmX7p4u0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fnIM5S8M; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=WB1XmSi8bTlEku4b4dtz4QsMpA2q7ThsMTrffyCD+dw=; b=fnIM5S8Mazi6ZPXYoBdBoOw+Tn
+	6tVuTorfFW591FhwOJRTmIR4vjOMMKPSWVMS9hBbdEaDHAFRZQtgaJ+HT0sH5po91vHLFvgsIcpM2
+	aeEhZz0xwwZ8p/nCTw+MeZ4tKcpODkFQwiIxfsYJjV/wwe/j5ufQ+LP2iDBzle+6VN1e7hOlF1OeI
+	GqOooAiee9YkcDJS/RvhmfVaupqOvrLOGTY2lCWbNwmZtWUEsiSR+O7MiJcnhpHz9MLQwNYEmYKfA
+	WFFyADeendL88hHn/pfqt8KzUEoLEYDkK+zWOQYhnJRgnzz4ugo8OzrfRmRTtWmiBliJ2Je6zv7i/
+	HRv+UOGQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rVyc6-004BKo-1h;
+	Fri, 02 Feb 2024 18:50:10 +0000
+Date: Fri, 2 Feb 2024 18:50:10 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>, linux-unionfs@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fs: remove the inode argument to ->d_real() method
+Message-ID: <20240202185010.GG2087318@ZenIV>
+References: <20240202110132.1584111-1-amir73il@gmail.com>
+ <20240202110132.1584111-3-amir73il@gmail.com>
+ <20240202160509.GZ2087318@ZenIV>
+ <20240202161601.GA976131@ZenIV>
+ <063577b8-3d7f-4a7f-8ed7-332601c98122@linux.ibm.com>
+ <20240202182732.GE2087318@ZenIV>
+ <4662633b-47c0-469f-9578-8597bcc65703@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,116 +68,17 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240124142645.9334-6-john.g.garry@oracle.com>
+In-Reply-To: <4662633b-47c0-469f-9578-8597bcc65703@linux.ibm.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Jan 24, 2024 at 02:26:44PM +0000, John Garry wrote:
-> Ensure that when creating a mapping that we adhere to all the atomic
-> write rules.
-> 
-> We check that the mapping covers the complete range of the write to ensure
-> that we'll be just creating a single mapping.
-> 
-> Currently minimum granularity is the FS block size, but it should be
-> possibly to support lower in future.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
-> I am setting this as an RFC as I am not sure on the change in
-> xfs_iomap_write_direct() - it gives the desired result AFAICS.
-> 
->  fs/xfs/xfs_iomap.c | 41 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
-> 
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 18c8f168b153..758dc1c90a42 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -289,6 +289,9 @@ xfs_iomap_write_direct(
->  		}
->  	}
->  
-> +	if (xfs_inode_atomicwrites(ip))
-> +		bmapi_flags = XFS_BMAPI_ZERO;
+On Fri, Feb 02, 2024 at 01:32:39PM -0500, Stefan Berger wrote:
 
-Why do we want to write zeroes to the disk if we're allocating space
-even if we're not sending an atomic write?
+> I can take it from here unless you want to formally post it.
 
-(This might want an explanation for why we're doing this at all -- it's
-to avoid unwritten extent conversion, which defeats hardware untorn
-writes.)
-
-I think we should support IOCB_ATOMIC when the mapping is unwritten --
-the data will land on disk in an untorn fashion, the unwritten extent
-conversion on IO completion is itself atomic, and callers still have to
-set O_DSYNC to persist anything.  Then we can avoid the cost of
-BMAPI_ZERO, because double-writes aren't free.
-
-> +
->  	error = xfs_trans_alloc_inode(ip, &M_RES(mp)->tr_write, dblocks,
->  			rblocks, force, &tp);
->  	if (error)
-> @@ -812,6 +815,44 @@ xfs_direct_write_iomap_begin(
->  	if (error)
->  		goto out_unlock;
->  
-> +	if (flags & IOMAP_ATOMIC) {
-> +		xfs_filblks_t unit_min_fsb, unit_max_fsb;
-> +		unsigned int unit_min, unit_max;
-> +
-> +		xfs_get_atomic_write_attr(ip, &unit_min, &unit_max);
-> +		unit_min_fsb = XFS_B_TO_FSBT(mp, unit_min);
-> +		unit_max_fsb = XFS_B_TO_FSBT(mp, unit_max);
-> +
-> +		if (!imap_spans_range(&imap, offset_fsb, end_fsb)) {
-> +			error = -EINVAL;
-> +			goto out_unlock;
-> +		}
-> +
-> +		if ((offset & mp->m_blockmask) ||
-> +		    (length & mp->m_blockmask)) {
-> +			error = -EINVAL;
-> +			goto out_unlock;
-> +		}
-> +
-> +		if (imap.br_blockcount == unit_min_fsb ||
-> +		    imap.br_blockcount == unit_max_fsb) {
-> +			/* ok if exactly min or max */
-> +		} else if (imap.br_blockcount < unit_min_fsb ||
-> +			   imap.br_blockcount > unit_max_fsb) {
-> +			error = -EINVAL;
-> +			goto out_unlock;
-> +		} else if (!is_power_of_2(imap.br_blockcount)) {
-> +			error = -EINVAL;
-> +			goto out_unlock;
-> +		}
-> +
-> +		if (imap.br_startoff &&
-> +		    imap.br_startoff & (imap.br_blockcount - 1)) {
-
-Not sure why we care about the file position, it's br_startblock that
-gets passed into the bio, not br_startoff.
-
-I'm also still not convinced that any of this validation is useful here.
-The block device stack underneath the filesystem can change at any time
-without any particular notice to the fs, so the only way to find out if
-the proposed IO would meet the alignment constraints is to submit_bio
-and see what happens.
-
-(The "one bio per untorn write request" thing in the direct-io.c patch
-sound sane to me though.)
-
---D
-
-> +			error = -EINVAL;
-> +			goto out_unlock;
-> +		}
-> +	}
-> +
->  	if (imap_needs_cow(ip, flags, &imap, nimaps)) {
->  		error = -EAGAIN;
->  		if (flags & IOMAP_NOWAIT)
-> -- 
-> 2.31.1
-> 
-> 
+Less headache for me that way, but you want to test it - all
+I've checked is that the damn thing compiles, and while it's
+hard to fuck up and I don't see any brainos in there...
+I'm way too low on caffeine at the moment.  It should be
+safe from races, just verifying that it prints the right thing
+when you hit that codepath would be enough.
 
