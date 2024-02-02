@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-10071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDFFB84784E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 19:50:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE28B847884
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 19:54:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CD971F2F850
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 18:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79A052930C5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 18:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7129B135DDB;
-	Fri,  2 Feb 2024 18:40:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6145F154C18;
+	Fri,  2 Feb 2024 18:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AKgOLoAH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMDYbyVZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4765135DCF;
-	Fri,  2 Feb 2024 18:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEC813CE96;
+	Fri,  2 Feb 2024 18:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706899244; cv=none; b=XHnKoU+yZgsHXHEzscVhVNkrkFp0gQpMwUxGRRse5GTeqQeina73OlVhKsH8/H7mMlOrHjFuWoYHhkkUFTARvj21nA5RNweDL0M4y4kwBZIkadGVmTtdACljxqOrJzlfvQwXCuR7qRgvJONjXa3DwwMt1GjXLFzzALIiK/0OCDc=
+	t=1706899280; cv=none; b=T61eJTS8WqwvZ3vLyHKYmwQg+mGDBI8MjCmIRma4oIai2a8ZX9ZGMN3BIz04Dlz5SGaoydp56PmbnysTD1Hi3S8Lkk6uiPyM/p70jsP6WzmsK90ZMSEpWoRL+JaGOwyjD5Itd6NUP+xsfnKEj1/VdxQFtPFLQyV+1t5+RYip0J0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706899244; c=relaxed/simple;
-	bh=iNFafJR22TQxMVXHVTQvbaJRTbsIbHqq8o288GxB84Y=;
+	s=arc-20240116; t=1706899280; c=relaxed/simple;
+	bh=+83wejdaZn0XRoPCrFUad4bSGSW8W3jB8XnpkDDvpqI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VFM54kv54lNr8zdr67xZGGtZO4UmpWUbVp4yTeEO9KhB2r/Hy//aO0unaqf2xY0xLfeORYZxNVGfmTz5sLxqp58rIjvzASSYFK9zefsziWUDdXHjasmbEruJXzXkf6W9KdkMglT41TfvYbWBNWCYdPHoU8q5y2gGQoFkV/02YF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AKgOLoAH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCFDBC433C7;
-	Fri,  2 Feb 2024 18:40:41 +0000 (UTC)
+	 MIME-Version; b=Dga/FOmc1uF1tLsAYwZ+g9LyJfb9KkL1OC+hd9Klf0f11THqS+32GY5KogVbXLj0FiW9Ih4uTpJErc8M0jkM8u8SBFpDji+avXkpMDpa7qWgC94UNJpFqh9ZbduUgOtX6oqZ0WGetrNAaPdzy+6zcpPQvECOoi+2SDjlQ3htneE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMDYbyVZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6FC5C43394;
+	Fri,  2 Feb 2024 18:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706899244;
-	bh=iNFafJR22TQxMVXHVTQvbaJRTbsIbHqq8o288GxB84Y=;
+	s=k20201202; t=1706899280;
+	bh=+83wejdaZn0XRoPCrFUad4bSGSW8W3jB8XnpkDDvpqI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AKgOLoAHbUswOO+oBlvPqWUDOTPBZIWXrsfC64mNykMsXma+4CU/a5cZO44/3Er+d
-	 spWRmbBUyHzuULNcmczBZ2SGziF6C/3DbEMvHh5fLfn0znJ3W77iixhaXhPI6aSQeA
-	 VY6tUwBgo+68KxywmjdtV443bOHdf4b6uPxfQLXbWrbpDBaoGybpcB00L5SDDEPwIK
-	 02QkSzRmfrSHJiU9TYOhpPSnoypTqQKAu1+aE2sy8/NGEiO+xntME1kFHaMwEqR4Ed
-	 +MkaUhx/agLiuVSzhCxsFUZmVH4oZszDIMxlbABiYcZOS1kL/vw2LdvxBu3GMMH9dK
-	 UVf+r2Y52ZxnQ==
+	b=JMDYbyVZ78vS+3O92S77GJfV/uPE8mFTXSDQJMPr8Z843pXFbuppcqvax31pC0/Ux
+	 LVvPVKQ6ZEGhCHp/D3reSPHs15ugbOFDA02Avl3gFr41cuJqDxfQqfFIaGoD3HQ5ki
+	 bSn0VutIXHprtopFqhLxUQzim7parctdbTQakDD70ruSjZJ35zxkbsp/HPDKFE4bZm
+	 sEUoDxcmkjdgJkGqG1n3BL/91d8j6+yMLjPmaNwFfwxHg3gaFKK9ol59iIFDbJvnmk
+	 xB574uVTgy1rquIPW1ahpi6iLvSvUawgWZ3sVfDhBeNhlzp8qHWP902bSwIlIigxSn
+	 6P0NQPQYgL3Ng==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -61,18 +61,18 @@ Cc: Kees Cook <keescook@chromium.org>,
 	juri.lelli@redhat.com,
 	vincent.guittot@linaro.org,
 	surenb@google.com,
-	mst@redhat.com,
 	michael.christie@oracle.com,
+	mst@redhat.com,
 	mjguzik@gmail.com,
 	npiggin@gmail.com,
 	zhangpeng.00@bytedance.com,
 	hca@linux.ibm.com
-Subject: [PATCH AUTOSEL 6.6 17/21] exec: Distinguish in_execve from in_exec
-Date: Fri,  2 Feb 2024 13:40:04 -0500
-Message-ID: <20240202184015.540966-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 12/15] exec: Distinguish in_execve from in_exec
+Date: Fri,  2 Feb 2024 13:40:49 -0500
+Message-ID: <20240202184057.541411-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240202184015.540966-1-sashal@kernel.org>
-References: <20240202184015.540966-1-sashal@kernel.org>
+In-Reply-To: <20240202184057.541411-1-sashal@kernel.org>
+References: <20240202184057.541411-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,7 +81,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.15
+X-stable-base: Linux 6.1.76
 Content-Transfer-Encoding: 8bit
 
 From: Kees Cook <keescook@chromium.org>
@@ -111,10 +111,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  3 files changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/fs/exec.c b/fs/exec.c
-index 6518e33ea813..3bd1784b92c5 100644
+index 283012eb1aeb..541ae913e683 100644
 --- a/fs/exec.c
 +++ b/fs/exec.c
-@@ -1590,6 +1590,7 @@ static void check_unsafe_exec(struct linux_binprm *bprm)
+@@ -1584,6 +1584,7 @@ static void check_unsafe_exec(struct linux_binprm *bprm)
  	}
  	rcu_read_unlock();
  
@@ -123,7 +123,7 @@ index 6518e33ea813..3bd1784b92c5 100644
  		bprm->unsafe |= LSM_UNSAFE_SHARE;
  	else
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 77f01ac385f7..9fb7851384f9 100644
+index 0cac69902ec5..4f955709a4ae 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
 @@ -912,7 +912,7 @@ struct task_struct {
@@ -136,10 +136,10 @@ index 77f01ac385f7..9fb7851384f9 100644
  	unsigned			in_iowait:1;
  #ifndef TIF_RESTORE_SIGMASK
 diff --git a/kernel/fork.c b/kernel/fork.c
-index 177ce7438db6..97dd79386c62 100644
+index 85617928041c..354c644b6deb 100644
 --- a/kernel/fork.c
 +++ b/kernel/fork.c
-@@ -1749,6 +1749,7 @@ static int copy_fs(unsigned long clone_flags, struct task_struct *tsk)
+@@ -1602,6 +1602,7 @@ static int copy_fs(unsigned long clone_flags, struct task_struct *tsk)
  	if (clone_flags & CLONE_FS) {
  		/* tsk->fs is already what we want */
  		spin_lock(&fs->lock);
