@@ -1,69 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-9991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C16A6846E6C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 11:57:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCCA4846E6E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 11:57:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45A8EB28A87
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 10:57:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 967922913E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 10:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4DB13F019;
-	Fri,  2 Feb 2024 10:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86944140790;
+	Fri,  2 Feb 2024 10:56:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qLqtGd5q"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KaDpZSN4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+Received: from mail-lj1-f202.google.com (mail-lj1-f202.google.com [209.85.208.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3B913EFF1
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 10:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D3F13BEA1
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 10:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706871363; cv=none; b=SV/ppFlfMNNdc5gaoG6EDFncq3xxRhER/CjWNHhAUcIDm5yNTNGa8WNnix8b6XnrJnxTqBeL+XeplDChIWzllqRsRR1FC06UheNYfHR4AjehfkvBL0FpgLVRsx7sfNfwUZOXuDIaQ+HYeTyyF9aKIBdnfKwTk6PWdgz0WzwDw/s=
+	t=1706871367; cv=none; b=c7o4bRN50UUl9BNVWDBO1GgatDPsR4i2Kfblm49WJR3qCu8/QnCkCbjo+EpaGuNn29qasg9BdyrxQNXvvrr3Em9ncy0GR2KEHC/ll+FH0mwQEXmsgQu3C+5KQqgWWuTQfClyg1ZziFo1gmLsrMIgOIDx/sTIOfdc3xMg/r2RHhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706871363; c=relaxed/simple;
-	bh=LAKcJY6R7fk8wuf3FdVFNOskSEsABniFk3E+zDxpTYA=;
+	s=arc-20240116; t=1706871367; c=relaxed/simple;
+	bh=rtE/oxepQqksMoR2qP3TYN4awGZUE7hR5gf+H0B+bNQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=i8lc1lC3K3EeoodVuGSkebopMHXkHFlu9LW7zot1rW1yA42YGS5EZ31TqShVWu+UwGpBPajLO5ce9oar9i6jLB5a4Ra11p8cGL35waGiDkT8eniQvsN6JmeTJQVH68LHXSxhbqiwYOXa4aIa9L8xvKPtsMv6OutH9WmVAnJYN/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qLqtGd5q; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=LrH8OTv1GmS7HidXlqHOrmosOWGgrdupE5XvHg6we82Xbx6YPaK9JsxpReab8P60GctPosETFclU0xI4I0jnxhZZFfT+Dd0JPHAE6u7vhD4g7Z+ZgR824jsKaF3IRg0d5JIhKQx20iKKfhZgAkTFrwvkQ3uvTapkRPSUzMAy+Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KaDpZSN4; arc=none smtp.client-ip=209.85.208.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dc6b26845cdso3457984276.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 02:56:01 -0800 (PST)
+Received: by mail-lj1-f202.google.com with SMTP id 38308e7fff4ca-2d07d743553so13113281fa.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 02:56:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1706871360; x=1707476160; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1706871363; x=1707476163; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N/cEy1eL/l/XNVoA+dLHaLRQMYmmdCYyUSwII431DqQ=;
-        b=qLqtGd5q+9Vt67M12OaNuLmEbjzVIx+CmdnnCfv/v6R9DdAv9OQPP7wLdPIWCCLAvX
-         qk9HGMWDCasO1x9rNXwCCoTsXbdjN3azltQzbEJnI0d/4Fae+bOggIOGRt5NAnS+ifE2
-         5IJZ+lK4jRMTXFTUexjTSGyoC5FNYbMClpMl50gmy/jP0an1ZD9u01l3e4bowT6nJ2H6
-         nRhRc6gLJLHMiedm8j1VnDwF8k3XDWkYfoOOIHyAI6T5WtsexACJmA031LAwF1/cUpEa
-         4UUdgjoGchaODyr692Cdvcd6vwRdr6bCnZ2as5+NFicpiMzYdFS7iaO1shIrR1Jc/EPA
-         naHA==
+        bh=j0kQAYir3oZEIRDEnXelicKinA6h+DIjN/X4cL6IApI=;
+        b=KaDpZSN4pKxnXUYxuj5/iF+QNSfN3yj5BUM5H9r7TXd2anKAOCvvNU79Y4Q6pNdI2c
+         LFOmXYnut1BSr/M46c2xaB+cEMamMaEWh1XoGo8rN/sXZCuy69LxpkvU+HezDem+wgk5
+         L/VyPf+bwRIsjocpuHucBmtGAJm6mf6MqFqTEQ1JmzM8WgvqtdGo8LSLNIgQaW7WQ/5n
+         BQ+PlZ/tq1tMe5utYIzc3tjVnBgu+4CQoeeXJP8vNbOtINx81icRqA1ZU6HEgLAXdUZP
+         cfGZqsksaVGOoJ9ASytsqaTLl8V4FMFUZHiNIcH1aDAqMYwBmyKrBhnF8Bv+ybZxYmSg
+         Spgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706871360; x=1707476160;
+        d=1e100.net; s=20230601; t=1706871363; x=1707476163;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N/cEy1eL/l/XNVoA+dLHaLRQMYmmdCYyUSwII431DqQ=;
-        b=I9Ha9T5XWj+e/tPuOXMsLGiqlDCW2cvncgZ6zk32lwCOk7hny65bMJFG6szvehRARz
-         7V6xIw80zt1L/MWW4B8Rl4/LKTn02Gi39sLyPnulXXa0jAe0DgKIlV38/KvDYFksG3TL
-         A92GbV++xlEgVH9eFMtTaVz+vwB6jdvdhtt1+hqhuDALgNOItOEAsbPw0kXrrVXgy1wF
-         LaT5FGOyYo2r3f1sD4FleQHhF3KOHtnXkeMTTQEiUtjcQOLZMcY0ETWhCWK3aBeGovh1
-         OF8hCfFssrglSTr5RfWSF/WfJPUgGzyRuj0afgrsHgssGNGFA6nSET0b8fhS24tO1aTp
-         yNbA==
-X-Gm-Message-State: AOJu0YzBgUDc9bdKsENieJr17G4RDeOThFyv2l7fqcvdLv/qqJUzWGVL
-	b+AEwQoNcvMwh5a5pY5Hy6FQdiZLgbtRgx5J4WPwTJ92dvXHtUdx2HXkeiL80RVLb5T0Qmi77oa
-	IfZlEZ+ui7fwy+A==
-X-Google-Smtp-Source: AGHT+IHGWDsppd3u5BR+vMpT1OVny20PjdzIDKyoOIJeefj0Lg20ELLZHW3EwJtKcV0OqsP82bXRcmd6fucdXUk=
+        bh=j0kQAYir3oZEIRDEnXelicKinA6h+DIjN/X4cL6IApI=;
+        b=rqnLeGG8+oDdXRg50ZYqFqaskqr/XAkSRghaBRpNzgsN/yrtrXPuTpLu5tvI14e6f0
+         PgWxFB2K1VWmBRRp5viVqxFOXulZWgH0zkJgCQr/aroWfZCkvaLwPypb4/JaVtoFQTtH
+         r00jsaribNfWs3UZLkont8kzfuLuo3Cjk09OhpoYtzqTeqdQBV43Q71u9/RZyM0Pw9i/
+         mseCfSiRR7RzMDu8kYcu2hJDyeemG7J/tAUVhYPSLXS8DC8l/IUyaMvjdtEbzbKVLQ2d
+         yTlZ+1ofXZNamj4FYWVrU9MVsQFAuZQxtqx3pXdTee+gjLNgELSqxuj1F6qnXvV6ORRO
+         FVMA==
+X-Gm-Message-State: AOJu0YzvN2mOVCWP0qebCc0+qNiTW2VLjvkFUnLAfEsYx1UAK0RaGhzZ
+	07hVrUxQ3krvDIChek2RmPzzAIx2sPlxWabsrVDLE+Q6MloXh1dza/kZ7fH5lydlzlZ3BrLtUmY
+	bcsbjY25GvfuEXQ==
+X-Google-Smtp-Source: AGHT+IFdIdI8Pg4pezC1btcZASnSbwn7g/uXGcslngO5eHDNMD0Ag8hhS+SkK+P/b1c89UbD188O9Yxdq96DbtM=
 X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a05:6902:108e:b0:dbd:b165:441 with SMTP
- id v14-20020a056902108e00b00dbdb1650441mr505685ybu.0.1706871360496; Fri, 02
- Feb 2024 02:56:00 -0800 (PST)
-Date: Fri,  2 Feb 2024 10:55:39 +0000
+ (user=aliceryhl job=sendgmr) by 2002:a2e:b74c:0:b0:2d0:8445:ed0 with SMTP id
+ k12-20020a2eb74c000000b002d084450ed0mr1642ljo.1.1706871363112; Fri, 02 Feb
+ 2024 02:56:03 -0800 (PST)
+Date: Fri,  2 Feb 2024 10:55:40 +0000
 In-Reply-To: <20240202-alice-file-v4-0-fc9c2080663b@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -73,22 +73,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240202-alice-file-v4-0-fc9c2080663b@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6367; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=LAKcJY6R7fk8wuf3FdVFNOskSEsABniFk3E+zDxpTYA=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBlvMjJDLWaBObEUkm/vJdm8vQJA/wX9vGKDjqW9
- /at096sPU+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZbzIyQAKCRAEWL7uWMY5
- Rou1EACWIY6SndO4eyAbK86sp6UNQjtZ8uyPav+PwM/ipkr9RAskcCYz2fIsoyiYlBEC3g39+BY
- cXPs5MvP4YA+vze3qBBnSfX6FBp3VB6p2FJpwEltRdhQ4/ryThht6Ji7UA0FyD2OtcvvD4+KJ8d
- GNjK4haBwvbTUS3ia8HSGmwaX85QiyR/YpUt683Y1vCd0eU/PlOrRYXgtPvKqdWibdUrRpfOt+c
- ciTN9lOgbgBvUCJWTKO4v64p1eAnoemMsU6jrAMp6AyCCjcdzs066y7gmAYqQE1Qh1iBl5Mt9OU
- 7Mt03V49vTV+4vPeKkq9wVefoXHrEZOvf/rADw89dqqd31VS30ldHS4BnWGWXVnM5XJXU7eycyW
- fydQ++WqeaOF2bMSvs92VxM3LSqyFf6AfnrVNooHAfASfsUIT3Jp8ajGXJXvfXmgUBaU5WXz7Il
- NmUTpwOJSGccHILnkzJI+dh/mXf/M8X1xb7/E7N8LHZndnJ0QOxgtKebuEWPKpm/0iDWok7tXGG
- 5dh7txZAq7ZRYgaVjRsg+BmElA/b5s865Ptz7EX10xPaVYpslbrfOE+3M3sQmO2zJ+ubLiE8WPD
- vQLys3PlDJxRvYWfFntquWD+FsnO3aBe32FszwqFGGRD4F0ZuNaWYu1yDXzsZd16RV1akKwSc2F o7onX77ur4pqzaQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5020; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=YCd8Lz4NQ7loX+ZbPkzyOHKKxufRjuF+zON1dgx0uqI=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBlvMjJbqrZjLJl6uR5Bkp5+R171uPaIU6vFld2j
+ bMoKBaFa+KJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZbzIyQAKCRAEWL7uWMY5
+ RrkLD/9+HcI/n4ZPrDD3BILD8zoSicDxCF9ACdPWFuJApsidYxMhtaI/iA9uM1hzg1MoAiotNr/
+ un7kzqyv0CyRf/+GkI9BVhxDjfsmc3vdKX9KwMHs/8UJ2/LYQX644ERm//D/Nc9av81/PEMIyj2
+ yUygfbPmRF13ridgReF6P+Bjj7F/aQJyP5GRewBhymFkRt4NFw51lS+PDqtTXQ99lHrp2xQLVOz
+ MpUdSJKRlxnHJDVEX+tcgSJs3ffDLknbvXegWJ296c0gJZz1w2xpN5yslfrhfeYWXBuYbF53O7c
+ ktdmltlm0EZfGyKvi+cvcOyh6TZHEoePWuAIw5NHJIYXC+4UzR0oXuXb3Gx9yyMz/zNjU0YA+lF
+ BZTgxlbBCSExKmQJgEgJ56HQblQYqUnQnSQ9ZieDRGoOWPcS5hINxO16yYPxWMhJWK/6KzhNQXp
+ tqDBH2pxmLHHhndhlXDq7BCtkB0hCIrdc8WGBbk/rzOCuLBkP0Vz5/Op/Z2xFzYWTFgNjlB+6Pj
+ UbLlXkG9iJew2C9h4KnwsCLKTcz8uhppbqztkMuSxfqY9uRR42re2iwTi2Nc1sXrji4/+p/E8r4
+ uqeMOUneKKvT6whbLAFHT8GaqazYU6NvxjLfmL4aBKnxeVHaxIsbzeI4jfCFSKFXs5cb3kUhBbe TJ0DQpOlv8/5MjQ==
 X-Mailer: git-send-email 2.43.0.594.gd9cf4e227d-goog
-Message-ID: <20240202-alice-file-v4-5-fc9c2080663b@google.com>
-Subject: [PATCH v4 5/9] rust: security: add abstraction for secctx
+Message-ID: <20240202-alice-file-v4-6-fc9c2080663b@google.com>
+Subject: [PATCH v4 6/9] rust: file: add `FileDescriptorReservation`
 From: Alice Ryhl <aliceryhl@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -105,186 +105,124 @@ Cc: Daniel Xu <dxu@dxuuu.xyz>, Alice Ryhl <aliceryhl@google.com>, linux-kernel@v
 	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Adds an abstraction for viewing the string representation of a security
-context.
+From: Wedson Almeida Filho <wedsonaf@gmail.com>
 
-This is needed by Rust Binder because it has feature where a process can
-view the string representation of the security context for incoming
-transactions. The process can use that to authenticate incoming
-transactions, and since the feature is provided by the kernel, the
-process can trust that the security context is legitimate.
+Allow for the creation of a file descriptor in two steps: first, we
+reserve a slot for it, then we commit or drop the reservation. The first
+step may fail (e.g., the current process ran out of available slots),
+but commit and drop never fail (and are mutually exclusive).
 
+This is needed by Rust Binder when fds are sent from one process to
+another. It has to be a two-step process to properly handle the case
+where multiple fds are sent: The operation must fail or succeed
+atomically, which we achieve by first reserving the fds we need, and
+only installing the files once we have reserved enough fds to send the
+files.
+
+Fd reservations assume that the value of `current` does not change
+between the call to get_unused_fd_flags and the call to fd_install (or
+put_unused_fd). By not implementing the Send trait, this abstraction
+ensures that the `FileDescriptorReservation` cannot be moved into a
+different process.
+
+Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+Co-developed-by: Alice Ryhl <aliceryhl@google.com>
 Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/bindings/bindings_helper.h |  1 +
- rust/helpers.c                  | 21 ++++++++++
- rust/kernel/cred.rs             |  8 ++++
- rust/kernel/lib.rs              |  1 +
- rust/kernel/security.rs         | 72 +++++++++++++++++++++++++++++++++
- 5 files changed, 103 insertions(+)
- create mode 100644 rust/kernel/security.rs
+ rust/kernel/file.rs | 72 ++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 71 insertions(+), 1 deletion(-)
 
-diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-index 84a56e8b6b67..5ca497d786f0 100644
---- a/rust/bindings/bindings_helper.h
-+++ b/rust/bindings/bindings_helper.h
-@@ -15,6 +15,7 @@
- #include <linux/jiffies.h>
- #include <linux/mdio.h>
- #include <linux/phy.h>
-+#include <linux/security.h>
- #include <linux/slab.h>
- #include <linux/refcount.h>
- #include <linux/wait.h>
-diff --git a/rust/helpers.c b/rust/helpers.c
-index 10ed69f76424..fd633d9db79a 100644
---- a/rust/helpers.c
-+++ b/rust/helpers.c
-@@ -30,6 +30,7 @@
- #include <linux/mutex.h>
- #include <linux/refcount.h>
- #include <linux/sched/signal.h>
-+#include <linux/security.h>
- #include <linux/spinlock.h>
- #include <linux/wait.h>
- #include <linux/workqueue.h>
-@@ -177,6 +178,26 @@ void rust_helper_put_cred(const struct cred *cred)
- }
- EXPORT_SYMBOL_GPL(rust_helper_put_cred);
+diff --git a/rust/kernel/file.rs b/rust/kernel/file.rs
+index 095775411979..2004270a661c 100644
+--- a/rust/kernel/file.rs
++++ b/rust/kernel/file.rs
+@@ -9,7 +9,7 @@
+     bindings,
+     cred::Credential,
+     error::{code::*, Error, Result},
+-    types::{ARef, AlwaysRefCounted, Opaque},
++    types::{ARef, AlwaysRefCounted, NotThreadSafe, Opaque},
+ };
+ use core::ptr;
  
-+#ifndef CONFIG_SECURITY
-+void rust_helper_security_cred_getsecid(const struct cred *c, u32 *secid)
-+{
-+	security_cred_getsecid(c, secid);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_security_cred_getsecid);
-+
-+int rust_helper_security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen)
-+{
-+	return security_secid_to_secctx(secid, secdata, seclen);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_security_secid_to_secctx);
-+
-+void rust_helper_security_release_secctx(char *secdata, u32 seclen)
-+{
-+	security_release_secctx(secdata, seclen);
-+}
-+EXPORT_SYMBOL_GPL(rust_helper_security_release_secctx);
-+#endif
-+
- /*
-  * `bindgen` binds the C `size_t` type as the Rust `usize` type, so we can
-  * use it in contexts where Rust expects a `usize` like slice (array) indices.
-diff --git a/rust/kernel/cred.rs b/rust/kernel/cred.rs
-index fabc50e48c9e..0640356a8c29 100644
---- a/rust/kernel/cred.rs
-+++ b/rust/kernel/cred.rs
-@@ -48,6 +48,14 @@ pub unsafe fn from_ptr<'a>(ptr: *const bindings::cred) -> &'a Credential {
-         unsafe { &*ptr.cast() }
+@@ -243,6 +243,76 @@ unsafe fn dec_ref(obj: ptr::NonNull<File>) {
      }
+ }
  
-+    /// Get the id for this security context.
-+    pub fn get_secid(&self) -> u32 {
-+        let mut secid = 0;
-+        // SAFETY: The invariants of this type ensures that the pointer is valid.
-+        unsafe { bindings::security_cred_getsecid(self.0.get(), &mut secid) };
-+        secid
-+    }
-+
-     /// Returns the effective UID of the given credential.
-     pub fn euid(&self) -> bindings::kuid_t {
-         // SAFETY: By the type invariant, we know that `self.0` is valid. Furthermore, the `euid`
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index f65e5978f807..d55d065642f0 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -44,6 +44,7 @@
- pub mod net;
- pub mod prelude;
- pub mod print;
-+pub mod security;
- mod static_assert;
- #[doc(hidden)]
- pub mod std_vendor;
-diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
-new file mode 100644
-index 000000000000..ee2ef0385bae
---- /dev/null
-+++ b/rust/kernel/security.rs
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Linux Security Modules (LSM).
-+//!
-+//! C header: [`include/linux/security.h`](srctree/include/linux/security.h).
-+
-+use crate::{
-+    bindings,
-+    error::{to_result, Result},
-+};
-+
-+/// A security context string.
++/// A file descriptor reservation.
++///
++/// This allows the creation of a file descriptor in two steps: first, we reserve a slot for it,
++/// then we commit or drop the reservation. The first step may fail (e.g., the current process ran
++/// out of available slots), but commit and drop never fail (and are mutually exclusive).
++///
++/// Dropping the reservation happens in the destructor of this type.
 +///
 +/// # Invariants
 +///
-+/// The `secdata` and `seclen` fields correspond to a valid security context as returned by a
-+/// successful call to `security_secid_to_secctx`, that has not yet been destroyed by calling
-+/// `security_release_secctx`.
-+pub struct SecurityCtx {
-+    secdata: *mut core::ffi::c_char,
-+    seclen: usize,
++/// The fd stored in this struct must correspond to a reserved file descriptor of the current task.
++pub struct FileDescriptorReservation {
++    fd: u32,
++    /// Prevent values of this type from being moved to a different task.
++    ///
++    /// The `fd_install` and `put_unused_fd` functions assume that the value of `current` is
++    /// unchanged since the call to `get_unused_fd_flags`. By adding this marker to this type, we
++    /// prevent it from being moved across task boundaries, which ensures that `current` does not
++    /// change while this value exists.
++    _not_send: NotThreadSafe,
 +}
 +
-+impl SecurityCtx {
-+    /// Get the security context given its id.
-+    pub fn from_secid(secid: u32) -> Result<Self> {
-+        let mut secdata = core::ptr::null_mut();
-+        let mut seclen = 0u32;
-+        // SAFETY: Just a C FFI call. The pointers are valid for writes.
-+        to_result(unsafe { bindings::security_secid_to_secctx(secid, &mut secdata, &mut seclen) })?;
-+
-+        // INVARIANT: If the above call did not fail, then we have a valid security context.
++impl FileDescriptorReservation {
++    /// Creates a new file descriptor reservation.
++    pub fn get_unused_fd_flags(flags: u32) -> Result<Self> {
++        // SAFETY: FFI call, there are no safety requirements on `flags`.
++        let fd: i32 = unsafe { bindings::get_unused_fd_flags(flags) };
++        if fd < 0 {
++            return Err(Error::from_errno(fd));
++        }
 +        Ok(Self {
-+            secdata,
-+            seclen: seclen as usize,
++            fd: fd as u32,
++            _not_send: NotThreadSafe,
 +        })
 +    }
 +
-+    /// Returns whether the security context is empty.
-+    pub fn is_empty(&self) -> bool {
-+        self.seclen == 0
++    /// Returns the file descriptor number that was reserved.
++    pub fn reserved_fd(&self) -> u32 {
++        self.fd
 +    }
 +
-+    /// Returns the length of this security context.
-+    pub fn len(&self) -> usize {
-+        self.seclen
-+    }
++    /// Commits the reservation.
++    ///
++    /// The previously reserved file descriptor is bound to `file`. This method consumes the
++    /// [`FileDescriptorReservation`], so it will not be usable after this call.
++    pub fn fd_install(self, file: ARef<File>) {
++        // SAFETY: `self.fd` was previously returned by `get_unused_fd_flags`. We have not yet used
++        // the fd, so it is still valid, and `current` still refers to the same task, as this type
++        // cannot be moved across task boundaries.
++        //
++        // Furthermore, the file pointer is guaranteed to own a refcount by its type invariants,
++        // and we take ownership of that refcount by not running the destructor below.
++        unsafe { bindings::fd_install(self.fd, file.as_ptr()) };
 +
-+    /// Returns the bytes for this security context.
-+    pub fn as_bytes(&self) -> &[u8] {
-+        let ptr = self.secdata;
-+        if ptr.is_null() {
-+            debug_assert_eq!(self.seclen, 0);
-+            // We can't pass a null pointer to `slice::from_raw_parts` even if the length is zero.
-+            return &[];
-+        }
-+
-+        // SAFETY: The call to `security_secid_to_secctx` guarantees that the pointer is valid for
-+        // `seclen` bytes. Furthermore, if the length is zero, then we have ensured that the
-+        // pointer is not null.
-+        unsafe { core::slice::from_raw_parts(ptr.cast(), self.seclen) }
++        // `fd_install` consumes both the file descriptor and the file reference, so we cannot run
++        // the destructors.
++        core::mem::forget(self);
++        core::mem::forget(file);
 +    }
 +}
 +
-+impl Drop for SecurityCtx {
++impl Drop for FileDescriptorReservation {
 +    fn drop(&mut self) {
-+        // SAFETY: By the invariant of `Self`, this frees a pointer that came from a successful
-+        // call to `security_secid_to_secctx` and has not yet been destroyed by
-+        // `security_release_secctx`.
-+        unsafe { bindings::security_release_secctx(self.secdata, self.seclen as u32) };
++        // SAFETY: By the type invariants of this type, `self.fd` was previously returned by
++        // `get_unused_fd_flags`. We have not yet used the fd, so it is still valid, and `current`
++        // still refers to the same task, as this type cannot be moved across task boundaries.
++        unsafe { bindings::put_unused_fd(self.fd) };
 +    }
 +}
++
+ /// Represents the `EBADF` error code.
+ ///
+ /// Used for methods that can only fail with `EBADF`.
 -- 
 2.43.0.594.gd9cf4e227d-goog
 
