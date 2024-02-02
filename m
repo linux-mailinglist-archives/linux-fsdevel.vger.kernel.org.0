@@ -1,177 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-10049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10050-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A789D8474CA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 17:32:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7DD984755A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 17:50:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F01BB2B4E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 16:32:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE40AB2455B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 16:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6447148314;
-	Fri,  2 Feb 2024 16:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F87149005;
+	Fri,  2 Feb 2024 16:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="jU5wubxj"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DVkgZZfi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF992E3E1;
-	Fri,  2 Feb 2024 16:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74B701487C1;
+	Fri,  2 Feb 2024 16:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706891523; cv=none; b=Co3cJlzmd+RTVYVfTB6wiAIP7aXfPmajB5QYyuMvh1B1KDtui+VlvxoHnHZwcid+nSqGqNH8GRbeCrEmNCzVEdDIMRWgcH0C85RMv54Q4hDs+JHl7Vj+CAAdSm4aSzXhQ/jUtokeeSy8wBrVJq0Bg5dRVizeNMv9FzEauUd0PPQ=
+	t=1706892599; cv=none; b=nzctPdyB2boCj3TFGe8aisqH3kkcZwQfu9+wjQzJAZ/02PaIDpBBgCIcjiAdUAoA+qYZIeJcfdTneo1wYNzFy7Jtsjy4ooTCBCSKb0+AlXeUfsuWLCmGBH1EcHG82CZmIYlxrLw0zmVBaV9jX7IO1Dfi82AlIU7GbziwCZRHf1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706891523; c=relaxed/simple;
-	bh=yma4nylgOoLjTOHrYgozp3WCHDCZs0kwIUYe+i7FJY8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XqaD8fldPUquXzFupiu5ohZsX1xAt5iejh+/6lyBanVhJ/44HIoH0vZO6+EUZDymuZZCFEBOqIkQeK6tLMqlIGtg1A/giLsAEeUUId9ZZ4H2TkypQnGQMS6E5pxDHoVhgLQinPzCAo6urW+NQInBaphmzc6ecYn22q1QTCa99cY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=jU5wubxj; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1706891519;
-	bh=yma4nylgOoLjTOHrYgozp3WCHDCZs0kwIUYe+i7FJY8=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=jU5wubxjeRgWqLh+oXgXkt9L6ToIU6aLtIv74J33D94Z1bAuwUkYMDh43wTpgdlwk
-	 ircon1WeA8O1VoQha723YG13bkUh50GNf7CmEu+/24b34xifpcw4D1fgeDOPHgVIIJ
-	 jElb/7siEE49WZijpvj972viuZFA8YKRa2ImjRcEa53ZNXFUb4t5y6qyaTIWAWbO4X
-	 uVKOqJy5aChedzSPk82AaYiwsp/3O6f8Uzr6Sw72XEkemnVbTSFWoCR24mWLF/NetX
-	 lXurcKAzwiKzhXJX6flQLy6YgSDzTBoEnGPBZNJVJqHrjIA0JXKpYY22SQ9Si5VeJT
-	 mK+yKNhrX75og==
-Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TRLrt5bFczX6S;
-	Fri,  2 Feb 2024 11:31:58 -0500 (EST)
-Message-ID: <da4c7c2c-0400-40d7-8263-22d284ecca8c@efficios.com>
-Date: Fri, 2 Feb 2024 11:32:00 -0500
+	s=arc-20240116; t=1706892599; c=relaxed/simple;
+	bh=gnFe0Frak2hFCx8RZtBOH/vB3WQDtpNqAaGgzrVnBdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k4W7dCPnF/0wt8v1cyJvWAlDo0+xBRmyfzKqL9amQPnteIzYmy1m4dej2IvjY6HP+mTTasKV/4TMKkh4WiovCqQXg9f2KCGr5XI2W2PwULDCLaOznzMPPXCys3tIcYuDlSSQhscqPvH8r9i/DWnqw/5sCHbnz5w8GE0gc0QCBZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=DVkgZZfi; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=s9JPuMGns8g3lIGXW/Eg6QZhxZ7uPg73+hdVmq5mOgM=; b=DVkgZZfi2r2C6r6Wp9n1fbDZkc
+	DDthIagMB72CZNj3c6Nd+qnHEjDJhCtk+e7YNlPIhSqbXDIlapav868Tf9f0/nGKw/U7L571XMIo/
+	5Eae+fjojVYAmCBw2LZrYx1fVhXpXagV6YrjFm31MBr9ITLM++fJ32peBWHWA/YkQKCYl0OHDrwfr
+	Zo6hElXlTyGl43i2hChpfarFNlP0vWwH0XO6sSiqypqKfPoqU8FWG0fOULIEZ6sfvBQCwB6nr3glw
+	R6Cs4T7oJSHCS1ujs+1XRpag4wm5e76zFGg+MKHKGHA1W+YALv8TKXFVZ+RVTsApAkdeSQt7lm75k
+	BJ9uapJg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rVwjb-0047ud-1N;
+	Fri, 02 Feb 2024 16:49:47 +0000
+Date: Fri, 2 Feb 2024 16:49:47 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>,
+	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Oleg Nesterov <oleg@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] regset: use vmalloc() for regset_get_alloc()
+Message-ID: <20240202164947.GC2087318@ZenIV>
+References: <20240201171159.1.Id9ad163b60d21c9e56c2d686b0cc9083a8ba7924@changeid>
+ <20240202012249.GU2087318@ZenIV>
+ <CAD=FV=X5dpMyCGg4Xn+ApRwmiLB5zB0LTMCoSfW_X6eAsfQy8w@mail.gmail.com>
+ <20240202030438.GV2087318@ZenIV>
+ <CAD=FV=Wbq7R9AirvxnW1aWoEnp2fWQrwBsxsDB46xbfTLHCZ4w@mail.gmail.com>
+ <20240202034925.GW2087318@ZenIV>
+ <20240202040503.GX2087318@ZenIV>
+ <CAD=FV=X93KNMF4NwQY8uh-L=1J8PrDFQYu-cqSd+KnY5+Pq+_w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 2/4] dax: Check for data cache aliasing at runtime
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Dan Williams <dan.j.williams@intel.com>, Arnd Bergmann <arnd@arndb.de>,
- Dave Chinner <david@fromorbit.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
- linux-arch@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
- Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>,
- Russell King <linux@armlinux.org.uk>, nvdimm@lists.linux.dev,
- linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- dm-devel@lists.linux.dev
-References: <20240131162533.247710-1-mathieu.desnoyers@efficios.com>
- <20240131162533.247710-3-mathieu.desnoyers@efficios.com>
- <65bab567665f3_37ad2943c@dwillia2-xfh.jf.intel.com.notmuch>
- <0a38176b-c453-4be0-be83-f3e1bb897973@efficios.com>
- <65bac71a9659b_37ad29428@dwillia2-xfh.jf.intel.com.notmuch>
- <f1d14941-2d22-452a-99e6-42db806b6d7f@efficios.com>
-In-Reply-To: <f1d14941-2d22-452a-99e6-42db806b6d7f@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=X93KNMF4NwQY8uh-L=1J8PrDFQYu-cqSd+KnY5+Pq+_w@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 2024-02-01 10:44, Mathieu Desnoyers wrote:
-> On 2024-01-31 17:18, Dan Williams wrote:
-
-[...]
-
-
->> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
->> index 5f1be1da92ce..11053a70f5ab 100644
->> --- a/fs/fuse/virtio_fs.c
->> +++ b/fs/fuse/virtio_fs.c
->> @@ -16,6 +16,7 @@
->>   #include <linux/fs_context.h>
->>   #include <linux/fs_parser.h>
->>   #include <linux/highmem.h>
->> +#include <linux/cleanup.h>
->>   #include <linux/uio.h>
->>   #include "fuse_i.h"
->> @@ -795,8 +796,11 @@ static void virtio_fs_cleanup_dax(void *data)
->>       put_dax(dax_dev);
->>   }
->> +DEFINE_FREE(cleanup_dax, struct dax_dev *, if (!IS_ERR_OR_NULL(_T)) 
->> virtio_fs_cleanup_dax(_T))
->> +
->>   static int virtio_fs_setup_dax(struct virtio_device *vdev, struct 
->> virtio_fs *fs)
+On Fri, Feb 02, 2024 at 08:24:17AM -0800, Doug Anderson wrote:
+> Hi,
 > 
-> So either I'm completely missing how ownership works in this function, or
-> we should be really concerned about the fact that it does no actual
-> cleanup of anything on any error.
-[...]
+> On Thu, Feb 1, 2024 at 8:05 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Fri, Feb 02, 2024 at 03:49:25AM +0000, Al Viro wrote:
+> > > On Thu, Feb 01, 2024 at 07:15:48PM -0800, Doug Anderson wrote:
+> > > > >
+> > > > > Well, the next step would be to see which regset it is - if you
+> > > > > see that kind of allocation, print regset->n, regset->size and
+> > > > > regset->core_note_type.
+> > > >
+> > > > Of course! Here are the big ones:
+> > > >
+> > > > [   45.875574] DOUG: Allocating 279584 bytes, n=17474, size=16,
+> > > > core_note_type=1029
+> > >
+> > > 0x405, NT_ARM_SVE
+> > >         [REGSET_SVE] = { /* Scalable Vector Extension */
+> > >                 .core_note_type = NT_ARM_SVE,
+> > >                 .n = DIV_ROUND_UP(SVE_PT_SIZE(SVE_VQ_MAX, SVE_PT_REGS_SVE),
+> > >                                   SVE_VQ_BYTES),
+> > >                 .size = SVE_VQ_BYTES,
+> > >
+> > > IDGI.  Wasn't SVE up to 32 * 2Kbit, i.e. 8Kbyte max?  Any ARM folks around?
+> > > Sure, I understand that it's variable-sized and we want to allocate enough
+> > > for the worst case, but can we really get about 280Kb there?  Context switches
+> > > would be really unpleasant on such boxen...
+> >
+> > FWIW, this apparently intends to be "variable, up to SVE_PT_SIZE(...) bytes";
+> > no idea if SVE_PT_SIZE is the right thing to use here.
 > 
-> Here what I'm seeing so far:
+> +folks from `./scripts/get_maintainer.pl -f arch/arm64/kernel/ptrace.c`
 > 
-> - devm_release_mem_region() is never called after 
-> devm_request_mem_region(). Not
->    on error, neither on teardown,
-> - pgmap is never freed on error after devm_kzalloc.
+> Trying to follow the macros to see where "n" comes from is a maze of
+> twisty little passages, all alike. Hopefully someone from the ARM
+> world can help tell if the value of 17474 for n here is correct or if
+> something is wonky.
 
-I was indeed missing something: the devm_ family of functions
-keeps ownership at the device level, so we would not need explicit
-teardown.
+It might be interesting to have it print the return value of __regset_get()
+in those cases; if *that* is huge, we really have a problem.  If it ends up
+small enough to fit into few pages, OTOH...
 
-> 
->>   {
->> +    struct dax_device *dax_dev __free(cleanup_dax) = NULL;
->>       struct virtio_shm_region cache_reg;
->>       struct dev_pagemap *pgmap;
->>       bool have_cache;
->> @@ -804,6 +808,15 @@ static int virtio_fs_setup_dax(struct 
->> virtio_device *vdev, struct virtio_fs *fs)
->>       if (!IS_ENABLED(CONFIG_FUSE_DAX))
->>           return 0;
->> +    dax_dev = alloc_dax(fs, &virtio_fs_dax_ops);
->> +    if (IS_ERR(dax_dev)) {
->> +        int rc = PTR_ERR(dax_dev);
->> +
->> +        if (rc == -EOPNOTSUPP)
->> +            return 0;
->> +        return rc;
->> +    }
-> 
-> What is gained by moving this allocation here ?
+SVE_VQ_MAX is defined as 255; is that really in units of 128 bits?  IOW,
+do we really expect to support 32Kbit registers?  That would drive the
+size into that range, all right, but it would really suck on context
+switches.
 
-I'm still concerned about moving the call to alloc_dax() before
-the setup of the memory region it will use. Are those completely
-independent ?
-
-> 
->> +
->>       /* Get cache region */
->>       have_cache = virtio_get_shm_region(vdev, &cache_reg,
->>                          (u8)VIRTIO_FS_SHMCAP_ID_CACHE);
->> @@ -849,10 +862,7 @@ static int virtio_fs_setup_dax(struct 
->> virtio_device *vdev, struct virtio_fs *fs)
->>       dev_dbg(&vdev->dev, "%s: window kaddr 0x%px phys_addr 0x%llx len 
->> 0x%llx\n",
->>           __func__, fs->window_kaddr, cache_reg.addr, cache_reg.len);
->> -    fs->dax_dev = alloc_dax(fs, &virtio_fs_dax_ops);
->> -    if (IS_ERR(fs->dax_dev))
->> -        return PTR_ERR(fs->dax_dev);
->> -
->> +    fs->dax_dev = no_free_ptr(dax_dev);
->>       return devm_add_action_or_reset(&vdev->dev, virtio_fs_cleanup_dax,
->>                       fs->dax_dev);
->>   }
-> 
-
-[...]
-
-Thanks,
-
-Mathieu
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+I could be misreading it, though - the macros in there are not easy to
+follow and I've never dealt with SVE before, so take the above with
+a cartload of salt.
 
