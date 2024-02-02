@@ -1,152 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-9968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5150B846AC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 09:33:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C6A846B42
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 09:51:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7663C1C24142
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 08:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBAE61C215CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 08:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AB818054;
-	Fri,  2 Feb 2024 08:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AD9604DA;
+	Fri,  2 Feb 2024 08:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jRBViAH1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE5EC17C7C
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 08:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BEB17BCD
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 08:51:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706862800; cv=none; b=jsd7246iqTI1mI24K9EC9yfyBQsdgjTg+OuCQG96T3iJZYTcoBwveeKkcq1Hr92SDslQDTmZy2RsGtOOGdB5D0MwcZVMjyiKYvZAGFwq3lEz5fNDtwqssvL16LhZ6hoZLbTaYIMoJmImfHD0l/zRunR5/u/+6UAWhTUcEFeNEjM=
+	t=1706863894; cv=none; b=YkJRPI6Vjd3JDs0tWepRscZvh98dEHR5nHt/rg7xuvk8DhSRcCyYGTV4lCXFL++uxYPlZn7aCd20lwDQhDu29xhqmWJn1FCreE4mlT0IA6SPeCqASiUmxFzGKfR+v6lPq+fKbcHRS6738i/MdzaGXgYtoyH9V4FyxF074ful/iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706862800; c=relaxed/simple;
-	bh=c4FYUfO7T9Q8NYNTmKDNK4N92kYCMcdhDtYA4Ckjdwc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IfmJ7W39l0F6/JtaYiVnZ8NnPKPB7AwdKuIbdUaxCBnXGL3eD1KG3vNKaqO4W7TSlMaRD0FO84TiCT/1M8/ZON1B+l9vVDuii4pDTIGd21RGo2cKo/IeB3Msn31K2FBh/px40IMRYO4HLZ7V+NOQNx401YbDdgGjtt/NsHIWqNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1706862786-086e230f28364a0001-kl68QG
-Received: from ZXSHMBX2.zhaoxin.com (ZXSHMBX2.zhaoxin.com [10.28.252.164]) by mx1.zhaoxin.com with ESMTP id Rvp5G7CRSOGeSGAx (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Fri, 02 Feb 2024 16:33:06 +0800 (CST)
-X-Barracuda-Envelope-From: JonasZhou-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
-Received: from ZXBJMBX02.zhaoxin.com (10.29.252.6) by ZXSHMBX2.zhaoxin.com
- (10.28.252.164) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.27; Fri, 2 Feb
- 2024 16:33:05 +0800
-Received: from zjh-VirtualBox.zhaoxin.com (10.28.66.66) by
- ZXBJMBX02.zhaoxin.com (10.29.252.6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.27; Fri, 2 Feb 2024 16:33:04 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.28.252.164
-From: JonasZhou-oc <JonasZhou-oc@zhaoxin.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.6
-To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>
-CC: <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <CobeChen@zhaoxin.com>,
-	<LouisQi@zhaoxin.com>, <JonasZhou@zhaoxin.com>
-Subject: [PATCH] fs/address_space: move i_mmap_rwsem to mitigate a false sharing with i_mmap.
-Date: Fri, 2 Feb 2024 16:33:04 +0800
-X-ASG-Orig-Subj: [PATCH] fs/address_space: move i_mmap_rwsem to mitigate a false sharing with i_mmap.
-Message-ID: <20240202083304.10995-1-JonasZhou-oc@zhaoxin.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1706863894; c=relaxed/simple;
+	bh=PG2zgEJDFQ1/8J6qd/Sv6uwo0RbEngsGO7IWR1dFojo=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=qqAbqWGft6ktBbM8lrtgKN5DA0MkAucoRgzo6PfNiSmfLQ3f/lajmskxXlfNQeLxnfEXuzukSjrz9PZq4wO11AQNpzdoO6iEq3dcwcJMXZsh/0gk4guXpMuvR+7B0tu8UbYd1BR4t/fD+2VE9y/IPtM941w91PZU99PHOsUaL6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jRBViAH1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1706863891;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=F6Prs1QlwLvlmms9iMnqYJXnd32DxIjB6bHAEUH6zXI=;
+	b=jRBViAH1Uq9CUGQk6gM27A38ctpH3qOM/CYZFMpVsfh8NdoMWbNzfr0gKDMiEgwQ199YlN
+	clrI5bgQUEGFDcsFAtklrowreUIGCNgJfAm1Ef0fC1JXmYNOX+OPhXl2LexaNQ7xrp+ocE
+	8W7/btog6c61UQ20lx7ySd/tyw5yaUM=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-128-T_-YDuHrPHuHADsnKQu_5w-1; Fri, 02 Feb 2024 03:51:29 -0500
+X-MC-Unique: T_-YDuHrPHuHADsnKQu_5w-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8492585A58B;
+	Fri,  2 Feb 2024 08:51:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.245])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 8D4F72166B31;
+	Fri,  2 Feb 2024 08:51:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: lsf-pc@lists.linux-foundation.org
+cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+    Kent Overstreet <kent.overstreet@linux.dev>, dwmw2@infradead.org,
+    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [LSF/MM/BPF TOPIC] Replacing TASK_(UN)INTERRUPTIBLE with regions of uninterruptibility
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: zxbjmbx1.zhaoxin.com (10.29.252.163) To
- ZXBJMBX02.zhaoxin.com (10.29.252.6)
-X-Barracuda-Connect: ZXSHMBX2.zhaoxin.com[10.28.252.164]
-X-Barracuda-Start-Time: 1706862786
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 6746
-X-Barracuda-BRTS-Status: 0
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0027 1.0000 -2.0033
-X-Barracuda-Spam-Score: -2.00
-X-Barracuda-Spam-Status: No, SCORE=-2.00 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.120274
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2701317.1706863882.1@warthog.procyon.org.uk>
+Date: Fri, 02 Feb 2024 08:51:22 +0000
+Message-ID: <2701318.1706863882@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
 
-From: JonasZhou <JonasZhou@zhaoxin.com>
+Hi,
 
-In the struct address_space, there is a 32-byte gap between i_mmap
-and i_mmap_rwsem. Due to the alignment of struct address_space
-variables to 8 bytes, in certain situations, i_mmap and i_mmap_rwsem
-may end up in the same CACHE line.
+We have various locks, mutexes, etc., that are taken on entry to filesystem
+code, for example, and a bunch of them are taken interruptibly or killably (or
+ought to be) - but filesystem code might be called into from uninterruptible
+code, such as the memory allocator, fscache, etc..
 
-While running Unixbench/execl, we observe high false sharing issues
-when accessing i_mmap against i_mmap_rwsem. We move i_mmap_rwsem
-after i_private_list, ensuring a 64-byte gap between i_mmap and
-i_mmap_rwsem.
+Does it make sense to replace TASK_{INTERRUPTIBLE,KILLABLE,UNINTERRUPTIBLE}
+with begin/end functions that define the area of uninterruptibility?  The
+regions would need to handle being nested, so maybe some sort of counter in
+the task_struct counter would work.
 
-For Intel Silver machines (2 sockets) using kernel v6.8 rc-2, the score
-of Unixbench/execl improves by ~3.94%, and the score of Unixbench/shell
-improves by ~3.26%.
-
-Baseline:
--------------------------------------------------------------
-  162      546      748    11374       21  0xffff92e266af90c0
--------------------------------------------------------------
-        46.89%   44.65%    0.00%    0.00%                 0x0     1       1  0xffffffff86d5fb96       460       258       271     1069        32  [k] __handle_mm_fault          [kernel.vmlinux]  memory.c:2940            0  1
-         4.21%    4.41%    0.00%    0.00%                 0x4     1       1  0xffffffff86d0ed54       473       311       288       95        28  [k] filemap_read               [kernel.vmlinux]  atomic.h:23              0  1
-         0.00%    0.00%    0.04%    4.76%                 0x8     1       1  0xffffffff86d4bcf1         0         0         0        5         4  [k] vma_interval_tree_remove   [kernel.vmlinux]  rbtree_augmented.h:204   0  1
-         6.41%    6.02%    0.00%    0.00%                 0x8     1       1  0xffffffff86d4ba85       411       271       339      210        32  [k] vma_interval_tree_insert   [kernel.vmlinux]  interval_tree.c:23       0  1
-         0.00%    0.00%    0.47%   95.24%                0x10     1       1  0xffffffff86d4bd34         0         0         0       74        32  [k] vma_interval_tree_remove   [kernel.vmlinux]  rbtree_augmented.h:339   0  1
-         0.37%    0.13%    0.00%    0.00%                0x10     1       1  0xffffffff86d4bb4f       328       212       380        7         5  [k] vma_interval_tree_remove   [kernel.vmlinux]  rbtree_augmented.h:338   0  1
-         5.13%    5.08%    0.00%    0.00%                0x10     1       1  0xffffffff86d4bb4b       416       255       357      197        32  [k] vma_interval_tree_remove   [kernel.vmlinux]  rbtree_augmented.h:338   0  1
-         1.10%    0.53%    0.00%    0.00%                0x28     1       1  0xffffffff86e06eb8       395       228       351       24        14  [k] do_dentry_open             [kernel.vmlinux]  open.c:966               0  1
-         1.10%    2.14%   57.07%    0.00%                0x38     1       1  0xffffffff878c9225      1364       792       462     7003        32  [k] down_write                 [kernel.vmlinux]  atomic64_64.h:109        0  1
-         0.00%    0.00%    0.01%    0.00%                0x38     1       1  0xffffffff878c8e75         0         0       252        3         2  [k] rwsem_down_write_slowpath  [kernel.vmlinux]  atomic64_64.h:109        0  1
-         0.00%    0.13%    0.00%    0.00%                0x38     1       1  0xffffffff878c8e23         0       596        63        2         2  [k] rwsem_down_write_slowpath  [kernel.vmlinux]  atomic64_64.h:15         0  1
-         2.38%    2.94%    6.53%    0.00%                0x38     1       1  0xffffffff878c8ccb      1150       818       570     1197        32  [k] rwsem_down_write_slowpath  [kernel.vmlinux]  atomic64_64.h:109        0  1
-        30.59%   32.22%    0.00%    0.00%                0x38     1       1  0xffffffff878c8cb4       423       251       380      648        32  [k] rwsem_down_write_slowpath  [kernel.vmlinux]  atomic64_64.h:15         0  1
-         1.83%    1.74%   35.88%    0.00%                0x38     1       1  0xffffffff86b4f833      1217      1112       565     4586        32  [k] up_write                   [kernel.vmlinux]  atomic64_64.h:91         0  1
-
-with this change:
--------------------------------------------------------------
-  360       12      300       57       35  0xffff982cdae76400
--------------------------------------------------------------
-        50.00%   59.67%    0.00%    0.00%                 0x0     1       1  0xffffffff8215fb86       352       200       191      558        32  [k] __handle_mm_fault         [kernel.vmlinux]  memory.c:2940            0  1
-         8.33%    5.00%    0.00%    0.00%                 0x4     1       1  0xffffffff8210ed44       370       284       263       42        24  [k] filemap_read              [kernel.vmlinux]  atomic.h:23              0  1
-         0.00%    0.00%    5.26%    2.86%                 0x8     1       1  0xffffffff8214bce1         0         0         0        4         4  [k] vma_interval_tree_remove  [kernel.vmlinux]  rbtree_augmented.h:204   0  1
-        33.33%   14.33%    0.00%    0.00%                 0x8     1       1  0xffffffff8214ba75       344       186       219      140        32  [k] vma_interval_tree_insert  [kernel.vmlinux]  interval_tree.c:23       0  1
-         0.00%    0.00%   94.74%   97.14%                0x10     1       1  0xffffffff8214bd24         0         0         0       88        29  [k] vma_interval_tree_remove  [kernel.vmlinux]  rbtree_augmented.h:339   0  1
-         8.33%   20.00%    0.00%    0.00%                0x10     1       1  0xffffffff8214bb3b       296       209       226      167        31  [k] vma_interval_tree_remove  [kernel.vmlinux]  rbtree_augmented.h:338   0  1
-         0.00%    0.67%    0.00%    0.00%                0x28     1       1  0xffffffff82206f45         0       140       334        4         3  [k] do_dentry_open            [kernel.vmlinux]  open.c:966               0  1
-         0.00%    0.33%    0.00%    0.00%                0x38     1       1  0xffffffff8250a6c4         0       286       126        5         5  [k] errseq_sample             [kernel.vmlinux]  errseq.c:125             0
-
-Signed-off-by: JonasZhou <JonasZhou@zhaoxin.com>
----
- include/linux/fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ed5966a70495..2d6ccde5d1be 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -482,10 +482,10 @@ struct address_space {
- 	pgoff_t			writeback_index;
- 	const struct address_space_operations *a_ops;
- 	unsigned long		flags;
--	struct rw_semaphore	i_mmap_rwsem;
- 	errseq_t		wb_err;
- 	spinlock_t		i_private_lock;
- 	struct list_head	i_private_list;
-+	struct rw_semaphore	i_mmap_rwsem;
- 	void *			i_private_data;
- } __attribute__((aligned(sizeof(long)))) __randomize_layout;
- 	/*
--- 
-2.25.1
+David
 
 
