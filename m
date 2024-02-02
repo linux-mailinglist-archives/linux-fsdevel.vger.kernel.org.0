@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-10103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1FF3847B31
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 22:05:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 216B7847B37
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 22:05:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F94A288FF9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 21:05:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 544A61C21907
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 21:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF1E1332AA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264A21332B8;
 	Fri,  2 Feb 2024 21:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="t638+rYb"
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="stqve+V0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5305812F36F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7589D12F395;
 	Fri,  2 Feb 2024 21:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706907635; cv=none; b=q7EbqE1b4k03KfNsQKofiTRsDtv4z+Ea0wvbxYytvaBTb7IiIH8KQ6vShaSEVLFlkjUgq/xmEm5Mt4kp9ZOL1gUuRTm8vKBNdn6kd7ah8nWwIohy8PfE0yzWYXCXU2ughqvSCgSgh7YZqEDcJDTUPocOMGFeZSCN8pI1cX3u/rk=
+	t=1706907635; cv=none; b=odYB93mgAIBFydgpYPIO1P0krWxK6REUtrtkdejav/k9frVV4RGe/ehpGLpiTolLpqc+0PkYlkAGhXv1O57D9lJDFOR2BIm/ny1i1W+dVFBQi60u48HBO3Ziz0OD+U19YSeduI3Tll8wqShNrxviFBcDp4Z7LfATaqeLt5Sak18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706907635; c=relaxed/simple;
-	bh=Iy1T66BEIuPj6bTS95Nd9D5h8aE2OAfCM3Sw4sgOgjA=;
+	bh=3qwtk0TzM3yqkpdWTkMn8G1D7Yvm6JJDP82nQNcfpzk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qNThyIjYh/AasJ8vZSWtpVp0CGe663YVEmeszuheWz/18vT7M1LGQyDkb2ceJf8IVf+imFtgHrP3Pa0JJdi4kHrdVXCI6sY5BEFOx/LqaAm9O7028jsP/IpdL0BhipbMHzm4RP/3Kty3tjPw0t2CCjD9hvBQdAJjhn12Tzl9dak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=t638+rYb; arc=none smtp.client-ip=167.114.26.122
+	 MIME-Version; b=BYkwSXhFTeuoTqETJ2Q/N5WsqmwW3eMpdjUgpUy3G1YuVsj73YYcR7E4svhKsxpeoqrOeCHwXtDw2GX/26dS8r4lYY1jrniQakiQzLCkBhxpJFvK19fPyg4QWqckB2ipDYZaqxWx3Ok2fVqZ5S15K3GZFj/Q2FpaJZe6u6j6ww0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=stqve+V0; arc=none smtp.client-ip=167.114.26.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1706907630;
-	bh=Iy1T66BEIuPj6bTS95Nd9D5h8aE2OAfCM3Sw4sgOgjA=;
+	s=smtpout1; t=1706907631;
+	bh=3qwtk0TzM3yqkpdWTkMn8G1D7Yvm6JJDP82nQNcfpzk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=t638+rYbOFyXGgFVCvFYOjUcEKa8934Yh63zuA8Ip6CU+8nNAmiILkFgP8nw6XNPm
-	 ex5CrBXXgswNdV/g8sBEiCvZYGg4PT9Lwyg/6bqVeoJd9Y6lUnnrRi5CJEebiyiNGc
-	 BE2bJEKg6gCvFyhHXyT6qlw2C/xtKJ4ydBnC7IKca5iBk50a9s7RMnjLexCDeQIzct
-	 afJMtBUYLz+HyBuALYfSgAhiSzzmkVG4JGiBZH0W9xaSZtl2ODjuUL+l+9YbPksYZ/
-	 L/+hs3IKD1BF2vqbCEzbqvXahtVAWhb4urtvIiA9DqevrCh76z9aa+kAAqoSPkK7Gj
-	 QCrn07lWmahCA==
+	b=stqve+V0iP+i7A8cWyEdeR/J0+TFtioEAeqXubDQfNrggDawyuTqMyi7DlnWDbJPW
+	 iDOy+p1MQzxotedzOUguk4h94qZrEA0AN7mjmuzZ7X9J6dE3YIgS9yNly8YeiJOzGM
+	 aE02qMnnDQ2TWTEIqq0WhcRJylZzNF3EBqhM9xwgiCTZuXtmJxPxi/59mJrN+FJJS9
+	 iMUPk/3CUQifwg8kFZnYAe8PayUfUzpS9yBrCAjw9+zgkOAWJzl1Hsfmh4xylcg2sf
+	 DyIb2UVO9CL+zPup7gMxuA3MqBvmsHTIUEuxKr01Euu+/TTDdIo2T9pudSkFGCgQor
+	 3SRQF2RTqGK/Q==
 Received: from thinkos.internal.efficios.com (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TRSpk37PFzX4X;
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TRSpk6BX1zXBy;
 	Fri,  2 Feb 2024 16:00:30 -0500 (EST)
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Dan Williams <dan.j.williams@intel.com>,
@@ -67,9 +67,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Alasdair Kergon <agk@redhat.com>,
 	Mike Snitzer <snitzer@kernel.org>,
 	Mikulas Patocka <mpatocka@redhat.com>
-Subject: [RFC PATCH v4 09/12] nvdimm/pmem: Cleanup alloc_dax() error handling
-Date: Fri,  2 Feb 2024 16:00:16 -0500
-Message-Id: <20240202210019.88022-10-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH v4 10/12] dm: Cleanup alloc_dax() error handling
+Date: Fri,  2 Feb 2024 16:00:17 -0500
+Message-Id: <20240202210019.88022-11-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240202210019.88022-1-mathieu.desnoyers@efficios.com>
 References: <20240202210019.88022-1-mathieu.desnoyers@efficios.com>
@@ -104,24 +104,24 @@ Cc: linux-xfs@vger.kernel.org
 Cc: dm-devel@lists.linux.dev
 Cc: nvdimm@lists.linux.dev
 ---
- drivers/nvdimm/pmem.c | 4 ++--
+ drivers/md/dm.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
-index f1d9f5c6dbac..e9898457a7bd 100644
---- a/drivers/nvdimm/pmem.c
-+++ b/drivers/nvdimm/pmem.c
-@@ -558,8 +558,8 @@ static int pmem_attach_disk(struct device *dev,
- 	disk->bb = &pmem->bb;
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 2fc22cae9089..acdc00bc05be 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -2124,8 +2124,8 @@ static struct mapped_device *alloc_dev(int minor)
+ 	sprintf(md->disk->disk_name, "dm-%d", minor);
  
- 	dax_dev = alloc_dax(pmem, &pmem_dax_ops);
+ 	dax_dev = alloc_dax(md, &dm_dax_ops);
 -	if (IS_ERR_OR_NULL(dax_dev)) {
--		rc = IS_ERR(dax_dev) ? PTR_ERR(dax_dev) : -EOPNOTSUPP;
+-		if (IS_ERR(dax_dev) && PTR_ERR(dax_dev) != -EOPNOTSUPP)
 +	if (IS_ERR(dax_dev)) {
-+		rc = PTR_ERR(dax_dev);
- 		if (rc != -EOPNOTSUPP)
- 			goto out;
++		if (PTR_ERR(dax_dev) != -EOPNOTSUPP)
+ 			goto bad;
  	} else {
+ 		set_dax_nocache(dax_dev);
 -- 
 2.39.2
 
