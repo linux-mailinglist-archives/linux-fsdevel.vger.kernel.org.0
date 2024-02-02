@@ -1,113 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-10025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 850038471ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 15:29:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B6484721A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 15:40:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B3F1F2A417
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 14:29:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E157B28841
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 14:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1C014077C;
-	Fri,  2 Feb 2024 14:29:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D32144625;
+	Fri,  2 Feb 2024 14:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XKYE+x3u"
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="vygKGwH5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2094C17C77;
-	Fri,  2 Feb 2024 14:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D5E46B98;
+	Fri,  2 Feb 2024 14:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706884188; cv=none; b=dS4ks10DMhLgFSVtNZXkKEFK9MU5Rgbn5JVw0fLuLQINPpmzs9Vom9z7de9RilSpOZqEWBF3PTwtXrJHCsrO/blxs04aqh+UBek90L2aZASGUCN9IieYQIBQruVUNBW8y1/oPmBzFFqAprO6iAE3yA0n/gHuD+9IKNGvyRsjjag=
+	t=1706884833; cv=none; b=hAzaWlKZ3qMPOCjRGJkl98kDj6xIFNa0cZATuRHFpYjc+hof3t/P7rl43rdCBPiU2cEblUKsQjEBw9MHtyMhJSFszqlpgeuSo1hleMgzT7jOe27Iu0RSAcxa5efbr9Tuq5Caw+GOiulV07zYwDqdA6b+vvyRiPEPRCAIT2imn2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706884188; c=relaxed/simple;
-	bh=yQnFMwUPqT1dwV3rgVOzcOu8uxmqyURzCAvr1lxck9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iU00dFkw+1VYkfTKy1WO29h99JWlocKEG+M1CPoK3aPyczmTJP6F2qax8TxGl+hz1AV+/o1DIpKj5f4dFHXETcFx0Snv3/Z90FMSPaw5rQSMt/xWA4hR1IpHoUJJ0nJAKpy6tyNFFba9W882ybgR72UWqtGXhuAKyqT3cgrxwhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XKYE+x3u; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wP7ap7SwTE6cJeEes3sVUH/vFnz+eX+KSdmLVr5C1To=; b=XKYE+x3u9bB0tuGI/mGQ4xi5Sv
-	pdMjLTE0LcFX2TLHGnBe6u6ld6fp8xdUYT0+pYZBK9H+Ts0IqvFc2YVlUFPdS0GywD8jSR95Chxhs
-	+jzef2Fo+TiyloyChnxnsUD1lS7DSh2FpDgvK7nsYIZjDuK76U+nMANLkyc6REeD2V9d27s6aPooh
-	4Ij8FkFzkZzF2B0uZZ5PKGJiSouTJfBuuiytuTgAzAI+mwjo5+HHM6YKRd4PuBj6UrpxwFRi91T11
-	sWpFpcGUQYcytmMgC6K+mfFbjGvWxwBKi05OkRm3F9cfkikh8HAH2icgpi0+r4Vj7CbGwgTSI3XXB
-	3G5SRSUQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rVuY0-00000001H82-3gby;
-	Fri, 02 Feb 2024 14:29:40 +0000
-Date: Fri, 2 Feb 2024 14:29:40 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: David Howells <dhowells@redhat.com>
-Cc: lsf-pc@lists.linux-foundation.org, netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [LSF/MM/BPF TOPIC] Large folios, swap and fscache
-Message-ID: <Zbz8VAKcO56rBh6b@casper.infradead.org>
-References: <2701740.1706864989@warthog.procyon.org.uk>
+	s=arc-20240116; t=1706884833; c=relaxed/simple;
+	bh=75xRr+Hh8XvCcTnldScx3u7vNNKbiPCXSVT3faG9PZY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=VPK0T3+Gd5cyQZlwQEs8mUtjFJL9nFysnAA4lnC7mdoZREpB3h0SypKfU3ktyr3JMpp52y8pPu3cpt0O5tZ6JYui67f8MzSNaKNC7cQBnLo16bbw7w8SdjUmEjXuWugpwO4EoVUYobWmAkiHHhbEDMrIehupt+UO1CJAL9UMU5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=vygKGwH5; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1706884819;
+	bh=75xRr+Hh8XvCcTnldScx3u7vNNKbiPCXSVT3faG9PZY=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=vygKGwH5Oj72Vz0Ai3eQ8qhTXUCVBw5yan0ZsVxgZNCeP0yq73w6MH+HpicWZy5+u
+	 BmL+qoc9jn/GD6Z+9V3g0sT5hZ4XR3tZG3tfcWPRfIiUKsDPGohjfGYtUZjUm+BIM9
+	 byIhaYQlDp21cpVnX/T3UJmO3PfQL20DCBolr0waUkft+ctCw4B1JBsJOv5hT0aaHF
+	 +ljaSkBLFUZu8Tl4qP7asELPgGvp3aoPRhBDBoNvOoxaTaOCu6bAzyIUHIZLbvCaiL
+	 vzxr77H44QWgZDV6ev2C9Y7tEQsIBZgUxnbWnfgiR4yCILQdkzipROCj16VedDYrbT
+	 +4YNXnsiyAjnw==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TRJN2717NzXBc;
+	Fri,  2 Feb 2024 09:40:18 -0500 (EST)
+Message-ID: <b28819f3-890f-4eac-befd-f9da1c77e34a@efficios.com>
+Date: Fri, 2 Feb 2024 09:40:20 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2701740.1706864989@warthog.procyon.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 2/4] dax: Check for data cache aliasing at runtime
+Content-Language: en-US
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Dan Williams <dan.j.williams@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+ Dave Chinner <david@fromorbit.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+ linux-arch@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
+ Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>,
+ Russell King <linux@armlinux.org.uk>, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ dm-devel@lists.linux.dev
+References: <20240131162533.247710-1-mathieu.desnoyers@efficios.com>
+ <20240131162533.247710-3-mathieu.desnoyers@efficios.com>
+ <65bab567665f3_37ad2943c@dwillia2-xfh.jf.intel.com.notmuch>
+ <0a38176b-c453-4be0-be83-f3e1bb897973@efficios.com>
+ <65bac71a9659b_37ad29428@dwillia2-xfh.jf.intel.com.notmuch>
+ <f1d14941-2d22-452a-99e6-42db806b6d7f@efficios.com>
+In-Reply-To: <f1d14941-2d22-452a-99e6-42db806b6d7f@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 02, 2024 at 09:09:49AM +0000, David Howells wrote:
-> The topic came up in a recent discussion about how to deal with large folios
-> when it comes to swap as a swap device is normally considered a simple array
-> of PAGE_SIZE-sized elements that can be indexed by a single integer.
+On 2024-02-01 10:44, Mathieu Desnoyers wrote:
+[...]
+>> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+>> index 4e8fdcb3f1c8..b69c9e442cf4 100644
+>> --- a/drivers/nvdimm/pmem.c
+>> +++ b/drivers/nvdimm/pmem.c
+>> @@ -560,17 +560,19 @@ static int pmem_attach_disk(struct device *dev,
+>>       dax_dev = alloc_dax(pmem, &pmem_dax_ops);
+>>       if (IS_ERR(dax_dev)) {
+>>           rc = PTR_ERR(dax_dev);
+>> -        goto out;
+>> +        if (rc != -EOPNOTSUPP)
+>> +            goto out;
 > 
-> With the advent of large folios, however, we might need to change this in
-> order to be better able to swap out a compound page efficiently.  Swap
-> fragmentation raises its head, as does the need to potentially save multiple
-> indices per folio.  Does swap need to grow more filesystem features?
+> If I compare the before / after this change, if previously
+> pmem_attach_disk() was called in a configuration with FS_DAX=n, it would
+> result in a NULL pointer dereference.
 
-I didn't mention this during the meeting, but there are more reasons
-to do something like this.  For example, even with large folios, it
-doesn't make sense to drive writing to swap on a per-folio basis.  We
-should be writing out large chunks of virtual address space in a single
-write to the swap device, just like we do large chunks of files in
-->writepages.
+I was wrong. drivers/nvdimm/Kconfig has:
 
-Another reason to do something different is that we're starting to see
-block devices with bs>PS.  That means we'll _have_ to write out larger
-chunks than a single page.  For reads, we can discard the extra data,
-but it'd be better to swap back in the entire block rather than
-individual pages.
+config BLK_DEV_PMEM
+         select DAX
 
-So my modest proposal is that we completely rearchitect how we handle
-swap.  Instead of putting swp entries in the page tables (and in shmem's
-case in the page cache), we turn swap into an (object, offset) lookup
-(just like a filesystem).  That means that each anon_vma becomes its
-own swap object and each shmem inode becomes its own swap object.
-The swap system can then borrow techniques from whichever filesystem
-it likes to do (object, offset, length) -> n x (device, block) mappings.
+and
 
-> Further to this, we have at least two ways to cache data on disk/flash/etc. -
-> swap and fscache - and both want to set aside disk space for their operation.
-> Might it be possible to combine the two?
+drivers/nvdimm/Makefile has:
+
+obj-$(CONFIG_BLK_DEV_PMEM) += nd_pmem.o
+nd_pmem-y := pmem.o
+
+which means that anything in pmem.c can assume that alloc_dax() is
+implemented.
+
+[...]
+>> diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
+>> index 4b7ecd4fd431..f911e58a24dd 100644
+>> --- a/drivers/s390/block/dcssblk.c
+>> +++ b/drivers/s390/block/dcssblk.c
+>> @@ -681,12 +681,14 @@ dcssblk_add_store(struct device *dev, struct 
+>> device_attribute *attr, const char
+>>       if (IS_ERR(dev_info->dax_dev)) {
+>>           rc = PTR_ERR(dev_info->dax_dev);
+>>           dev_info->dax_dev = NULL;
+>> -        goto put_dev;
+>> +        if (rc != -EOPNOTSUPP)
+>> +            goto put_dev;
 > 
-> One thing I want to look at for fscache is the possibility of switching from a
-> file-per-object-based approach to a tagged cache more akin to the way OpenAFS
-> does things.  In OpenAFS, you have a whole bunch of small files, each
-> containing a single block (e.g. 256K) of data, and an index that maps a
-> particular {volume,file,version,block} to one of these files in the cache.
+> config DCSSBLK selects FS_DAX_LIMITED and DAX.
+> 
+> I'm not sure what selecting DAX is trying to achieve here, because the
+> Kconfig option is "FS_DAX".
+> 
+> So depending on the real motivation behind this select, we may want to
+> consider failure rather than success in the -EOPNOTSUPP case.
+> 
 
-I think my proposal above works for you?  For each file you want to cache,
-create a swap object, and then tell swap when you want to read/write to
-the local swap object.  What you do need is to persist the objects over
-a power cycle.  That shouldn't be too hard ... after all, filesystems
-manage to do it.  All we need to do is figure out how to name the
-lookup (I don't think we need to use strings to name the swap object,
-but obviously we could).  Maybe it's just a stream of bytes.
+I missed that alloc_dax() is implemented as not supported based on
+CONFIG_DAX (not CONFIG_FS_DAX).
+
+Therefore DCSSBLK Kconfig does the right thing and always selects DAX,
+and thus an implemented version of alloc_dax().
+
+This takes care of two of my open questions at least. :)
+
+Thanks,
+
+Mathieu
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
