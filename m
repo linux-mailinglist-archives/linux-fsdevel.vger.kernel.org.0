@@ -1,121 +1,127 @@
-Return-Path: <linux-fsdevel+bounces-10087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 309B7847A65
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 21:18:50 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCEF0847A92
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 21:39:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE47329065C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 20:18:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF34AB284D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 20:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91BEE81742;
-	Fri,  2 Feb 2024 20:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D425B1F6;
+	Fri,  2 Feb 2024 20:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="j0YbsdI3"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OUq4Iv26"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB578062E;
-	Fri,  2 Feb 2024 20:18:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C39C41764
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 20:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706905119; cv=none; b=d49LNG+8uzbVwouRZSquhxnfRxL6+Ghqyme4OJwoeqcAM2Y5BoBbEtS5ErchDTSpdI7NcBzeSsaP6SexgKdOgSWp2yR3OUkEaJwILPaRCqQor/wkrQMbFxY0WWgyLeEmxXjHDtAn/H5sngKSd190gNidxnNCB9Zf2iDA+q3IuzM=
+	t=1706906349; cv=none; b=RpcYtsqsccpE01+AwjP/G/QhXuCE+ObuUCTOq0pv4qRs8WjAiVC1rlCdBPYSZ7EYPgapDy6OasCGthGvPj0Ij4eCEZZA1CXWkVllOFk/YJsOsuKU897HiimtYj2k/qzCQUBYr2/bRxaGlY7ViAIjSiLZl+5H4pgXlQEg+Svs540=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706905119; c=relaxed/simple;
-	bh=mh+mo38fsEQgb9l3Kuwv1eN4wevPn1ndoe/G9f1R3Wg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uHn5/lGzD9U37WtlaMGvwzelWDLRrcQIDnJCfepOltQ5rDb4MJuMAFXwkM6HC1hBrW3/ilGHEthFcS5qF3tjFjMM2i3q5Q6q4gwR3kQ3qWEjDdyGhmKdu8UdXe2mmHMRIMExcx3ve0dHOyWy0idtQje/U2h/bfGF1aDqWggLwwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=j0YbsdI3; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1706905115;
-	bh=mh+mo38fsEQgb9l3Kuwv1eN4wevPn1ndoe/G9f1R3Wg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=j0YbsdI3y6vCPgWvcLlBfSENnF1fM18wQKlrQ47Z6vS/Lu+5uXdTUXoJtf3p1E10p
-	 20YTd4Yysds9Fc8+0b6V+OsfbT17mhbkv37sH0RogmtvLcyJvkNXvcbLGe74TWbrhS
-	 HUx5JRvOie7xZ1Qqhc3oXMoE8WJJLhi/VkVjuI8CQ7qNhPK+No8OaIzt+DQfEKdgYt
-	 woV0Cd/riDC8CadDDjBDCpwxlRatUyiNLEwFXzLL03k+hlFBnEBK1c1gytA7iBfe3e
-	 AMPZTBIMrqrQGCYQEWxcSx259uC6FjHPECXXrtL/pbBU/8IJthIyCDSvplBrQc2OEO
-	 hD2B6tCO0gM5A==
-Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TRRtM1f6yzXBq;
-	Fri,  2 Feb 2024 15:18:35 -0500 (EST)
-Message-ID: <f3ec50a5-ff5e-41ae-ab2f-7319a18381e2@efficios.com>
-Date: Fri, 2 Feb 2024 15:18:36 -0500
+	s=arc-20240116; t=1706906349; c=relaxed/simple;
+	bh=C1NOo2D6BqxPz3sCVOg601jHnW2UzAwYZ75CPDqMBRk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pVP41w0qq50czDErh+QLHqqgVZuLEhJBAyznP70Re4Mk0hHh6gi3y7QR9M2DAa8BOkfuEXexy7TacCTf6Q1PXk6P+0P/fQcO7lTPVyLszuTTCt+uTMsm8I1tBVMz/M5b69hkC2l0hghLfU2kX47PkZiJ3YsWavcB+nL4ru0F4mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OUq4Iv26; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-55ff4dbe6a8so1380925a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 12:39:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1706906344; x=1707511144; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C1NOo2D6BqxPz3sCVOg601jHnW2UzAwYZ75CPDqMBRk=;
+        b=OUq4Iv26V4WQpkJH/KnFKGihfYDL14ZwgEXqYIXKSYN23Wx63Nbav8PM3WituGIeGf
+         ls63tqh/xK3xnHwLivtDx11jMsA8cFf/qJ3Nn1WvJcwaJGZQ03E7vxpszPP0y+ymNOFf
+         LSe0U9Omt7/TKwzS5xaWTnwLypBb1F/3ZzLvA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706906344; x=1707511144;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C1NOo2D6BqxPz3sCVOg601jHnW2UzAwYZ75CPDqMBRk=;
+        b=cq67V3Ggku9ah9atZJnwC5tLGK9RcIyeCF+ZE/e+n2lCp+Bb87vFiiUUQsRSNKw9Ye
+         +GB757mKS8JGeWnENlKouVFQ+5KdDGwfgV2LhNWocfV4SFhS0ELDNqnVCLMrCopXs/M4
+         f55wOzteHgI/PucBSwbOks9marTLerrj5XXmrCI5vQ88wv5kDP8uRJUnfhXHKHOQ8+Wh
+         cIhf3mptUc8p20dF6thnHVAzrmBpgSoA+zrE6k2FkwEHmpBFIdeH+Xog0XGgq5qjC0BL
+         H6Ya8JyaarseVq5pd+Qk9Zz0hhkwkHfX0W090r4aSYAu/ZDpMPKoJ7Sxd4lgXX4343Dk
+         cNWQ==
+X-Gm-Message-State: AOJu0Yx9TOBzhwQCLwMb3QDZ5ZtwEMiMnvU8nEI94LSLyzvlFbrRnOvF
+	7aEqrirtAgmbMi1MsY+pnUbvbj8VKDuKSRX/6ErMUahODTIvGTcP/T/7T4M5KVpD6SKmVw3vFco
+	Y4H/z
+X-Google-Smtp-Source: AGHT+IHxRMwacY6NjemqbHNGsl7SJjsT1XDDuGGcJHMIRB/QvVKScKPtvGwp5D0Vc8E2k1GTBTYrRA==
+X-Received: by 2002:aa7:c6da:0:b0:55e:f640:125a with SMTP id b26-20020aa7c6da000000b0055ef640125amr502315eds.11.1706906343831;
+        Fri, 02 Feb 2024 12:39:03 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCW7E2ReH5Z6l0TQ5DBRGzL4moDztd+k4Jc/FnWQBHJPl8hi86UC0jvv1tXwaa1Ipc6Y0GQmbuvmq/8h8iZ/mAoz4UuFTzhX+XHx66go9Q==
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
+        by smtp.gmail.com with ESMTPSA id fk24-20020a056402399800b0055d18d6a586sm1101518edb.13.2024.02.02.12.39.02
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 02 Feb 2024 12:39:03 -0800 (PST)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-40ef9382752so11595e9.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 12:39:02 -0800 (PST)
+X-Received: by 2002:a05:600c:a3a4:b0:40f:c2f1:9d4c with SMTP id
+ hn36-20020a05600ca3a400b0040fc2f19d4cmr7485wmb.4.1706906341770; Fri, 02 Feb
+ 2024 12:39:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 2/4] dax: Check for data cache aliasing at runtime
-Content-Language: en-US
-To: Dan Williams <dan.j.williams@intel.com>, Arnd Bergmann <arnd@arndb.de>,
- Dave Chinner <david@fromorbit.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
- linux-arch@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
- Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>,
- Russell King <linux@armlinux.org.uk>, nvdimm@lists.linux.dev,
- linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- dm-devel@lists.linux.dev
-References: <20240131162533.247710-1-mathieu.desnoyers@efficios.com>
- <20240131162533.247710-3-mathieu.desnoyers@efficios.com>
- <65bab567665f3_37ad2943c@dwillia2-xfh.jf.intel.com.notmuch>
- <0a38176b-c453-4be0-be83-f3e1bb897973@efficios.com>
- <65bac71a9659b_37ad29428@dwillia2-xfh.jf.intel.com.notmuch>
- <f1d14941-2d22-452a-99e6-42db806b6d7f@efficios.com>
- <65bd284165177_2d43c29443@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <6bdf6085-101d-47ef-86f4-87936622345a@efficios.com>
- <65bd457460fb1_719322942@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <5e838147-524c-40e5-b106-e388bf4e549b@efficios.com>
- <65bd4d18cab98_7193229421@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <65bd4d18cab98_7193229421@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240202012249.GU2087318@ZenIV> <CAD=FV=X5dpMyCGg4Xn+ApRwmiLB5zB0LTMCoSfW_X6eAsfQy8w@mail.gmail.com>
+ <20240202030438.GV2087318@ZenIV> <CAD=FV=Wbq7R9AirvxnW1aWoEnp2fWQrwBsxsDB46xbfTLHCZ4w@mail.gmail.com>
+ <20240202034925.GW2087318@ZenIV> <20240202040503.GX2087318@ZenIV>
+ <CAD=FV=X93KNMF4NwQY8uh-L=1J8PrDFQYu-cqSd+KnY5+Pq+_w@mail.gmail.com>
+ <20240202164947.GC2087318@ZenIV> <20240202165524.GD2087318@ZenIV>
+ <Zb0vem7KC28gmT5U@e133380.arm.com> <d7154f86-d185-495d-aa84-63d4561f1e47@sirena.org.uk>
+In-Reply-To: <d7154f86-d185-495d-aa84-63d4561f1e47@sirena.org.uk>
+From: Doug Anderson <dianders@chromium.org>
+Date: Fri, 2 Feb 2024 12:38:38 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=ViEjvEevLq+1ZEVQB9qh4ofJHvLYfNu0XTQSjNRpZzAA@mail.gmail.com>
+Message-ID: <CAD=FV=ViEjvEevLq+1ZEVQB9qh4ofJHvLYfNu0XTQSjNRpZzAA@mail.gmail.com>
+Subject: Re: [PATCH] regset: use vmalloc() for regset_get_alloc()
+To: Mark Brown <broonie@kernel.org>
+Cc: Dave Martin <Dave.Martin@arm.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>, 
+	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Oleg Nesterov <oleg@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-02-02 15:14, Dan Williams wrote:
-> Mathieu Desnoyers wrote:
-> [..]
->>> Thanks for that. All of those need to be done before the fs goes live
->>> later in virtio_device_ready(), but before that point nothing should be
->>> calling into virtio_fs_dax_ops, so as far as I can see it is safe to
->>> change the order.
->>
->> Sounds good, I'll do that.
->>
->> I will soon be ready to send out a RFC v4, which is still only
->> compiled-tested. Do you happen to have some kind of test suite
->> you can use to automate some of the runtime testing ?
-> 
-> There is a test suite for the pmem, dm, and dax changes
-> (https://github.com/pmem/ndctl?tab=readme-ov-file#unit-tests), but not
-> automated unfortunately. The NVDIMM maintainer team will run that before
-> pushing patches out to the fixes branch if you just want to lean on
-> that. For the rest I think we will need to depend on tested-by's from
-> s390 + virtio_fs folks, and / or sufficient soak time in linux-next.
+Hi,
 
-I suspect this will be necessary. There are just so many combinations
-of architectures, drivers and filesystems involved here that I don't
-think it is realistic to try to do all this testing manually on my own.
+On Fri, Feb 2, 2024 at 11:43=E2=80=AFAM Mark Brown <broonie@kernel.org> wro=
+te:
+>
+> On Fri, Feb 02, 2024 at 06:07:54PM +0000, Dave Martin wrote:
+>
+> > So, if the only reason for trying to migrate to vmalloc() is to cope
+> > with an insanely sized regset on arm64, I think somehow or other we can
+> > avoid that.
+>
+> With SME we do routinely see the full glory of the 64K regset for ZA in
+> emulated systems so I think we have to treat it as an issue.
 
-I prefer to voice this up front, so there are no misplaced expectations
-about testing.
+Ah, got it. 64K is much less likely to be as big of a problem (only an
+order 4 allocation), but you're right that it's still a size where
+kvmalloc() would be an improvement. With that in mind I'll plan to
+send out a v2 of my patch where I use kvmalloc() instead of vmalloc()
+and update the commit description a bit, including a link to this
+thread. Then I will assume that others on this thread will move
+forward with actually making the allocations smaller.
 
-Thanks,
+Please yell if the above sounds wrong. :-)
 
-Mathieu
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+-Doug
 
