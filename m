@@ -1,189 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-10056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861C884759B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 18:04:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F91E8475F6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 18:19:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A37651C232AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 17:04:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA72A1C25555
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 17:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA19A14D42A;
-	Fri,  2 Feb 2024 17:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502901474BE;
+	Fri,  2 Feb 2024 17:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WdIbO7Ou"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MrNXQJ3X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E192D14A4E7;
-	Fri,  2 Feb 2024 17:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4823445BF3
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 17:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706893383; cv=none; b=V8SdDNVu8mCLpm4eYc4FyjUS6TlNyzzSx5s9oxDCE6ZmwCrJu7XAE2ErskSc014ULfSDtCP5vtkjpb4yycu4LokK+YqvW9PUGF6ROZ7CSnFUE7atTojEC1XbENx4SQgHocH7qVu2toJ16bpll7P+PJRFD6M3m641h2h1udEU1rE=
+	t=1706894346; cv=none; b=c1yzSgv83ftrShIEixbTKGFUZezVd8FBq7aRjEgPfFRg90xVjuU57/KaxfEZL277U7OqImVDJhZrlx8tedVQmt6V8qPEQzyrKSvQNUgIZf+4vVZK7XtD1urAI5zFmtLYGPnlc1GAmsa3/Lc/ADPC1FjzrIgV51mWCLHYWHZKC+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706893383; c=relaxed/simple;
-	bh=WGXGeGTdrW7NoVRK7cYfyrjHnGc5NCJjZnCnYePfUZQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ATl4mIuHJzYkeuTnof2LM3qsRVv9o4+qCHygIkHYJHDS0h3AxJqezry5FCXwPhdqFSDVl52SgX6W72lzyFN8q7McTB/q0Ne1zLZgHQ8Bg7wzZWfTguT+jK9685tCr8amM/mgSB2GfbD0ZM/m/HVS1bxtEA1M4vwyQd3wbtfJaMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WdIbO7Ou; arc=none smtp.client-ip=209.85.210.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-6dfc321c677so1724918b3a.3;
-        Fri, 02 Feb 2024 09:03:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706893381; x=1707498181; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HhrTG5AYewh5phNKX1uPxhcy8QhnMld2uJe/mWMdTe0=;
-        b=WdIbO7Ouw3Z3py0EEW5CcPqIlylJU5eowr5F68NhhsduW+K7P/0JlYNtzBhTRLyNmB
-         0/UDkimsfnoSj2r/vSfIattYQL5NwWnsWNUmdLMqST0uvnXPPJD+yOsyJzuDkX9DZq2T
-         Gf2d6TjzKYTcKtvVn+6KJWpJT1cFn62m3k9aF7lkOUnDftZszjNV/y+0WAVdi7ZUWAo/
-         ngKzGNmmQW/yI7SWEkHwlspyAx1i+PhZaOGdeapzN1gZpqs+Uv0Hjg4O9AxzEe39Lb0U
-         XW6XPyNF6g/I57BOhrAgzwh3y6T7wcsJ7BmKCeYgnPQ+qY9TRo8kc0IbqeZLv1EbdNb0
-         ZRnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706893381; x=1707498181;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HhrTG5AYewh5phNKX1uPxhcy8QhnMld2uJe/mWMdTe0=;
-        b=gMV/llJJKF+mm6g2aMYc89BpZ/onRKuL5VLgNjOknGshjj0T6jyMimOdUqw7J5tBII
-         d+0R2wFlDOR5JXB3dAx3xMYBcfmq8zefCeLoqhRyKc7Q37g3ofXdb5TJPcxwdM1zLXUt
-         q+ckRFS/yvyD5rLtvOIxUW2OIg8iF13rr1BasJnFbfBdAfwbzYfJSkb0WMCi4nxUiPOa
-         iwyRzRAPOW0ADxgfZiyqZCiIrV9EGGnMV3LEiLmMP42BwDaxCbao54K/lKVu/rs4JjvA
-         80bg8NCmY83ZpCmNaPbfZxmFPXj3suBDH2K6OBzuaWV+H1wAR68Bk2qDSNOFWvsoH+O1
-         zQfg==
-X-Gm-Message-State: AOJu0YzuLpnAjFOBMv7wmS15We5UMAKkI0Y+ldHKI+xKI5xGmFsKFJR7
-	RqJGJD1JJXk9/78wHODYneTOnCpisYPsB69PhIO1bZNdjHcqyYQ=
-X-Google-Smtp-Source: AGHT+IFogIopQqwUpwpEFsFzdYwSc8X+34bpQwF6wcEJlxSEsQ2LoOTeQtLBa1R1mPNFivEZAibTKQ==
-X-Received: by 2002:aa7:8698:0:b0:6dd:c3b1:797e with SMTP id d24-20020aa78698000000b006ddc3b1797emr2585012pfo.19.1706893381133;
-        Fri, 02 Feb 2024 09:03:01 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCVt1bpVi7/1usRCD00UfVroAEBs2kkA7ivPuJBFs7e4G+50XRtr/OkpAzFSMfFRAHdUrmWFaRgbmluqN9+kP6pYoISXSBVGj3gGym0kGZAPJqyC9zCnaxeKxoVqIg+YsKhcBnckhYr0jqT+88HBKWVVvKol1k9qKs6zfze27eMF8LMwoCCImKMQ1QboF2LNyUiQlGDhILX78kacwGH3CEFwJF4MjCCPH0WZzUCY/EqU11rSp+7VSCcPyhqnACvJLqIenX7ox5uk6g+0BRmKDyW+u0Kc96vapdvPzWcSfp5uXlV8r4+b1LugH1OLSTzxHTdLvSuzkh+bhPyPGuGqqkRp6Jq/WmFwjFmTpaVnvynSrPgg6EXt8aJXZqPdvgU1hCvlfMTDAyWGPgEprUT0uA7CjpAMGLx9aO2UBB/uFO4lpMVdoIkgg+FhMnZNXJxNugpKs6x6pYKxEzulQq0Qc4VtjlWtT3Ml2/G1MpSSw2VARz4d2EBU7mh4um+v+jw+7cNDhrTAWNgBx7r4cq/lD29zYteZKCs+AhvgyOw94L0HxtBf8Mh8WR9T8cZvnNh0uxpT4ozEnaaTYxN/bWhlS0dY1lsdRGSWlqopk5eik5zKkpWz/fv0D5jTdAaQ5ARjZhTX69CwPcQUtgzfBrZ0y9Ic17GPXYKjlKblDPYcsHw=
-Received: from fedora.mshome.net (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id z22-20020aa785d6000000b006ddddc7701fsm1866578pfn.4.2024.02.02.09.02.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Feb 2024 09:03:00 -0800 (PST)
-From: Gregory Price <gourry.memverge@gmail.com>
-X-Google-Original-From: Gregory Price <gregory.price@memverge.com>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	corbet@lwn.net,
-	akpm@linux-foundation.org,
-	gregory.price@memverge.com,
-	honggyu.kim@sk.com,
-	rakie.kim@sk.com,
-	hyeongtak.ji@sk.com,
-	mhocko@kernel.org,
-	ying.huang@intel.com,
-	vtavarespetr@micron.com,
-	jgroves@micron.com,
-	ravis.opensrc@micron.com,
-	sthanneeru@micron.com,
-	emirakhur@micron.com,
-	Hasan.Maruf@amd.com,
-	seungjun.ha@samsung.com,
-	hannes@cmpxchg.org,
-	dan.j.williams@intel.com
-Subject: [PATCH v5 4/4] mm/mempolicy: protect task interleave functions with tsk->mems_allowed_seq
-Date: Fri,  2 Feb 2024 12:02:38 -0500
-Message-Id: <20240202170238.90004-5-gregory.price@memverge.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20240202170238.90004-1-gregory.price@memverge.com>
-References: <20240202170238.90004-1-gregory.price@memverge.com>
+	s=arc-20240116; t=1706894346; c=relaxed/simple;
+	bh=mJgq3ofmCoWHQ4kNSmvNlxA1eQkDiJKs+jlZfxisP+I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dtvSHk38ZRqaZCjVforeIl7FrzE/UB1tJwbKPzGOE77hzxi/GcCCHU7ztus52Wo/kkUIlS57ziyzE5VkVOWBjytFWz5ywqc7zVKV9sJZZHOtNfdASKEM6Uwh23wLe9/GdmnUDSk9zXUDD+chUDmQtcbYheX1lopR1GofSutEIXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MrNXQJ3X; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706894345; x=1738430345;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mJgq3ofmCoWHQ4kNSmvNlxA1eQkDiJKs+jlZfxisP+I=;
+  b=MrNXQJ3XUt0nuWCJa9PbdmYBFFmOKzEEKL5xAhtY4k9ge2gtVMTSOVrD
+   28wzi4KePn/ixfl3ZGGPnCGfManO5SsBJwSnP5HKrmSL1LYpdrBC0eARx
+   8itJ+1Njei2uVKiNLdXSFLx9lVs2MvNBK4LFHB0AEODpg/lwhWk604os3
+   4f50b3J7oNNNcv429+nnwxO8OgIHsByWnjnWrWAIsE6Jzm2zqTx3s8NR5
+   XBjzlG8yh7ddXPXp8FR8e1Th5/OoADhyZ+XvWCVnLQr2cFsS0uQS4JQ/F
+   BUfJSk+31bJ04uXGht3xgGH6cVIKFbqutL4u3J4yKeGgoUItAanOi48ag
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10971"; a="116503"
+X-IronPort-AV: E=Sophos;i="6.05,238,1701158400"; 
+   d="scan'208";a="116503"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2024 09:19:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,238,1701158400"; 
+   d="scan'208";a="129837"
+Received: from lkp-server02.sh.intel.com (HELO 59f4f4cd5935) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 02 Feb 2024 09:19:01 -0800
+Received: from kbuild by 59f4f4cd5935 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rVxBq-00045q-2J;
+	Fri, 02 Feb 2024 17:18:58 +0000
+Date: Sat, 3 Feb 2024 01:18:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Dave Kleikamp <shaggy@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 06/13] jfs: Convert drop_metapage and remove_metapage to
+ take a folio
+Message-ID: <202402030124.yWFowXZd-lkp@intel.com>
+References: <20240201224605.4055895-7-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240201224605.4055895-7-willy@infradead.org>
 
-In the event of rebind, pol->nodemask can change at the same time as an
-allocation occurs.  We can detect this with tsk->mems_allowed_seq and
-prevent a miscount or an allocation failure from occurring.
+Hi Matthew,
 
-The same thing happens in the allocators to detect failure, but this
-can prevent spurious failures in a much smaller critical section.
+kernel test robot noticed the following build errors:
 
-Suggested-by: "Huang, Ying" <ying.huang@intel.com>
-Signed-off-by: Gregory Price <gregory.price@memverge.com>
----
- mm/mempolicy.c | 31 +++++++++++++++++++++++++------
- 1 file changed, 25 insertions(+), 6 deletions(-)
+[auto build test ERROR on kleikamp-shaggy/jfs-next]
+[also build test ERROR on linus/master v6.8-rc2 next-20240202]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index d8cc3a577986..ed0d5d2d456a 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -1878,11 +1878,17 @@ bool apply_policy_zone(struct mempolicy *policy, enum zone_type zone)
- 
- static unsigned int weighted_interleave_nodes(struct mempolicy *policy)
- {
--	unsigned int node = current->il_prev;
--
--	if (!current->il_weight || !node_isset(node, policy->nodes)) {
-+	unsigned int node;
-+	unsigned int cpuset_mems_cookie;
-+
-+retry:
-+	/* to prevent miscount use tsk->mems_allowed_seq to detect rebind */
-+	cpuset_mems_cookie = read_mems_allowed_begin();
-+	node = current->il_prev;
-+	if (!node || !node_isset(node, policy->nodes)) {
- 		node = next_node_in(node, policy->nodes);
--		/* can only happen if nodemask is being rebound */
-+		if (read_mems_allowed_retry(cpuset_mems_cookie))
-+			goto retry;
- 		if (node == MAX_NUMNODES)
- 			return node;
- 		current->il_prev = node;
-@@ -1896,8 +1902,14 @@ static unsigned int weighted_interleave_nodes(struct mempolicy *policy)
- static unsigned int interleave_nodes(struct mempolicy *policy)
- {
- 	unsigned int nid;
-+	unsigned int cpuset_mems_cookie;
-+
-+	/* to prevent miscount, use tsk->mems_allowed_seq to detect rebind */
-+	do {
-+		cpuset_mems_cookie = read_mems_allowed_begin();
-+		nid = next_node_in(current->il_prev, policy->nodes);
-+	} while (read_mems_allowed_retry(cpuset_mems_cookie));
- 
--	nid = next_node_in(current->il_prev, policy->nodes);
- 	if (nid < MAX_NUMNODES)
- 		current->il_prev = nid;
- 	return nid;
-@@ -2374,6 +2386,7 @@ static unsigned long alloc_pages_bulk_array_weighted_interleave(gfp_t gfp,
- 		struct page **page_array)
- {
- 	struct task_struct *me = current;
-+	unsigned int cpuset_mems_cookie;
- 	unsigned long total_allocated = 0;
- 	unsigned long nr_allocated = 0;
- 	unsigned long rounds;
-@@ -2391,7 +2404,13 @@ static unsigned long alloc_pages_bulk_array_weighted_interleave(gfp_t gfp,
- 	if (!nr_pages)
- 		return 0;
- 
--	nnodes = read_once_policy_nodemask(pol, &nodes);
-+	/* read the nodes onto the stack, retry if done during rebind */
-+	do {
-+		cpuset_mems_cookie = read_mems_allowed_begin();
-+		nnodes = read_once_policy_nodemask(pol, &nodes);
-+	} while (read_mems_allowed_retry(cpuset_mems_cookie));
-+
-+	/* if the nodemask has become invalid, we cannot do anything */
- 	if (!nnodes)
- 		return 0;
- 
+url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/jfs-Convert-metapage_read_folio-to-use-folio-APIs/20240202-064805
+base:   https://github.com/kleikamp/linux-shaggy jfs-next
+patch link:    https://lore.kernel.org/r/20240201224605.4055895-7-willy%40infradead.org
+patch subject: [PATCH 06/13] jfs: Convert drop_metapage and remove_metapage to take a folio
+config: loongarch-defconfig (https://download.01.org/0day-ci/archive/20240203/202402030124.yWFowXZd-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240203/202402030124.yWFowXZd-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202402030124.yWFowXZd-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   fs/jfs/jfs_metapage.c: In function 'remove_metapage':
+>> fs/jfs/jfs_metapage.c:128:38: error: passing argument 1 of 'folio_detach_private' from incompatible pointer type [-Werror=incompatible-pointer-types]
+     128 |                 folio_detach_private(&folio->page);
+         |                                      ^~~~~~~~~~~~
+         |                                      |
+         |                                      struct page *
+   In file included from include/linux/buffer_head.h:15,
+                    from fs/jfs/jfs_metapage.c:14:
+   include/linux/pagemap.h:508:56: note: expected 'struct folio *' but argument is of type 'struct page *'
+     508 | static inline void *folio_detach_private(struct folio *folio)
+         |                                          ~~~~~~~~~~~~~~^~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/folio_detach_private +128 fs/jfs/jfs_metapage.c
+
+   114	
+   115	static inline void remove_metapage(struct folio *folio, struct metapage *mp)
+   116	{
+   117		struct meta_anchor *a = mp_anchor(&folio->page);
+   118		int l2mp_blocks = L2PSIZE - folio->mapping->host->i_blkbits;
+   119		int index;
+   120	
+   121		index = (mp->index >> l2mp_blocks) & (MPS_PER_PAGE - 1);
+   122	
+   123		BUG_ON(a->mp[index] != mp);
+   124	
+   125		a->mp[index] = NULL;
+   126		if (--a->mp_count == 0) {
+   127			kfree(a);
+ > 128			folio_detach_private(&folio->page);
+   129			kunmap(&folio->page);
+   130		}
+   131	}
+   132	
+
 -- 
-2.39.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
