@@ -1,100 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-9951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63CA8846645
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 04:05:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63563846647
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 04:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F49828A76F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 03:05:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026FE1F27511
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 03:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1880FFBFC;
-	Fri,  2 Feb 2024 03:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="b/aMu8Jo"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2B4C131;
+	Fri,  2 Feb 2024 03:05:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E88F9EB;
-	Fri,  2 Feb 2024 03:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC69BE5A
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 03:05:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706843090; cv=none; b=Sq+aneq3nR7abwyqx6T35uRnq19fNOOCOwiDM3mGRfeHn5PpQmCJT23+tyVAIPYMbczm8skFbVhpTczSHqNfOokk4rAsPk0+p0UGWztBrolI7r/9Y0DoAGak4I7EsfYxGfpzObxor6y5tyPXjkctJJsZHp4Y5fejOp3v03atMVA=
+	t=1706843128; cv=none; b=AddUaeYnZi9aK7OvjaGQPljuh4Ru6Wpbz5WGynsPVXY3AHa2CNEuzm3K3u7d6n/R2SpUWdgIpHSyYPNiXalJDwQqJPwzsIckuATLPMq4mrB4RqJH+eH3IFL9grVP7VCS2Q8VVBMDQR8EwnwzQxnF8g7DwMPaGRd2ixnFoapgdts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706843090; c=relaxed/simple;
-	bh=8fHK8o8jc9om6S6NsTKmiBFNLkn6v1fUilTyI9/jVVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZSVc3SZGXxHQrTUnt6HIaUGw8QF9rZI6UqAWqV63jrwmvJ7ZegP+iilFuYkXwTly1tmFRNjOh0XyWXuI97ATieNxaPNRFiGbOKgl0LjA/DzzXh8MVnyDxlXfPmg1MS9QNMUnWcah0W/c6kH50T96axGVHaVmb5H9LqUN7xqUeGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=b/aMu8Jo; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=skwCDGnLP4ByDSOBblEedQL0pq1fFuzhc2BhN7e3aHY=; b=b/aMu8JoyIi6pJYBgWcGXN8/UL
-	ZV4PD80UgkfKr6pNS8JG1V4UccwxSlYwrgseJJPFEZpuLwVa38MCxyhgHRo5KdncYIge1WN+dpbqS
-	B/1lOpLFqm2CKapZ6zJ4X5rP0E9ppzecAfULowIMwbcSNmIT80kFFjW7GDT8mdZxu2xyQ6l1D7XGF
-	q3PGSLF044jinUnnTJjlThb6VV31oS8mUd7z1EJSenxFA0Nq06FvNXOzOSdMQeFNFZPGacvJ9byOz
-	qyKNcOnAu5QzJoxF27mka7u/ZWgwVBgWf1BJ7vQL6+knhEqc/KZTEmNMsvHBDB7ucfRKXsAyn6ihr
-	8MIH4/Rg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rVjr4-003cIj-1h;
-	Fri, 02 Feb 2024 03:04:38 +0000
-Date: Fri, 2 Feb 2024 03:04:38 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>,
-	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] regset: use vmalloc() for regset_get_alloc()
-Message-ID: <20240202030438.GV2087318@ZenIV>
-References: <20240201171159.1.Id9ad163b60d21c9e56c2d686b0cc9083a8ba7924@changeid>
- <20240202012249.GU2087318@ZenIV>
- <CAD=FV=X5dpMyCGg4Xn+ApRwmiLB5zB0LTMCoSfW_X6eAsfQy8w@mail.gmail.com>
+	s=arc-20240116; t=1706843128; c=relaxed/simple;
+	bh=JRekS3WddbaaxMrX/64wljfBNx5CrWBGJq+qA+uUbOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=na7+oBc/0IXYqDP8vba9BCiupagyyrwDqYNYuuwi6N9WOInopQ9EtThPn4TS0VozdiqFaBqqtnUHxku0xrUZjgfYYamlorGAqMg99wSW4bjmmO0+xcP8iegUrqzUfqc683x8nWWmJMnoxrm08mfYvsZt8DqL0RL4/PUhnUAXCPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4TR0vd2M8Wz29l70;
+	Fri,  2 Feb 2024 11:03:09 +0800 (CST)
+Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 411F51400CC;
+	Fri,  2 Feb 2024 11:05:01 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Fri, 2 Feb 2024 11:05:00 +0800
+Message-ID: <b2e90e4b-f41f-4e1a-a089-55b2696c2e62@huawei.com>
+Date: Fri, 2 Feb 2024 11:04:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=X5dpMyCGg4Xn+ApRwmiLB5zB0LTMCoSfW_X6eAsfQy8w@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH rfc 6/9] mm: migrate: support poisoned recover from
+ migrate folio
+Content-Language: en-US
+To: Matthew Wilcox <willy@infradead.org>
+CC: Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>, Tony Luck
+	<tony.luck@intel.com>, Naoya Horiguchi <naoya.horiguchi@nec.com>, Miaohe Lin
+	<linmiaohe@huawei.com>, David Hildenbrand <david@redhat.com>, Muchun Song
+	<muchun.song@linux.dev>, Benjamin LaHaise <bcrl@kvack.org>,
+	<jglisse@redhat.com>, <linux-aio@kvack.org>, <linux-fsdevel@vger.kernel.org>
+References: <20240129070934.3717659-1-wangkefeng.wang@huawei.com>
+ <20240129070934.3717659-7-wangkefeng.wang@huawei.com>
+ <ZbwAWXhz26Q7ZYMr@casper.infradead.org>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <ZbwAWXhz26Q7ZYMr@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemm100001.china.huawei.com (7.185.36.93)
 
-On Thu, Feb 01, 2024 at 06:54:51PM -0800, Doug Anderson wrote:
-> >         What the hell?  Which regset could have lead to that?
-> > It would need to have the total size of register in excess of
-> > 256K.  Seriously, which regset is that about?  Note that we
-> > have just made sure that size is not greater than that product.
-> > size is unsigned int, so it's not as if a negative value passed
-> > to function could get through that test only to be interpreted
-> > as large positive later...
-> >
-> >         Details, please.
-> 
-> I can continue to dig more, but it is easy for me to reproduce this.
-> On the stack is elf_core_dump() and it seems like we're getting a core
-> dump of the chrome process. So I just arbitrarily look for the chrome
-> GPU process:
-> 
-> $ ps aux | grep gpu-process
-> chronos   2075  3.0  1.1 34075552 95372 ?      S<l  18:44   0:01
-> /opt/google/chrome/chrome --type=gpu-process ...
-> 
-> Then I send it a quit:
-> 
-> $ kill -quit 2075
-> 
-> I added some printouts for this allocation and there are a ton. Here's
-> all of them, some of which are over 256K:
 
-Well, the next step would be to see which regset it is - if you
-see that kind of allocation, print regset->n, regset->size and
-regset->core_note_type.
+
+On 2024/2/2 4:34, Matthew Wilcox wrote:
+> On Mon, Jan 29, 2024 at 03:09:31PM +0800, Kefeng Wang wrote:
+>> In order to support poisoned folio copy recover from migrate folio,
+>> let's use folio_mc_copy() and move it in the begin of the function
+>> of __migrate_folio(), which could simply error handling since there
+>> is no turning back if folio_migrate_mapping() return success, the
+>> downside is the folio copied even though folio_migrate_mapping()
+>> return fail, a small optimization is to check whether folio does
+>> not have extra refs before we do more work ahead in __migrate_folio(),
+>> which could help us avoid unnecessary folio copy.
+> 
+> OK, I see why you've done it this way.
+> 
+> Would it make more sense if we pulled the folio refcount freezing
+> out of folio_migrate_mapping() into its callers?  That way
+> folio_migrate_mapping() could never fail.
+
+Will try this way, thank.
 
