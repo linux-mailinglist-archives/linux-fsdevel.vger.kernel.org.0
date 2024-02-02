@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-10097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7382847B03
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 22:03:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DDCF847B06
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 22:03:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6417A1F2859C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 21:03:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD2731F283FF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 21:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25DC212F380;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC26B12C804;
 	Fri,  2 Feb 2024 21:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="n4HkiezO"
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="uUAHHnSH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7528174B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9987812C800;
 	Fri,  2 Feb 2024 21:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706907631; cv=none; b=nUxF3QWL1G6TykHzN50oLihrsy+mco5e314loLTgSH4tGzok6dBzPHHQSHYDr/Tvo6sogzzcv5G18lAqV9Kt19e8HOhwythG3XJ44zkm4s382k0bsd7PqsFpPfEhRT2EUYoWb15qvSRRDhHQwSSXxHfkfIq2UiMW+SbQPX5Z+Q8=
+	t=1706907631; cv=none; b=TA/h7cd5i0b+KyqtV+/vHms2j3mEqDpm/5GIMcNHArcVIrRCDtRNVH2fifoU/AlldH8FFEM1VC2ygIsGMIPui7xgyv6k8BXQ7u0YGd4bvvcp3khO9LlHCC9ymc1J7m8k/6uIOLitW5nvY34IVLHHkYDdpBvW2FLCRlAqsaj2C+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1706907631; c=relaxed/simple;
-	bh=Cw819/KonN7FOZNMfLR1Ivonx2xW8T4iDPwkWkOj91U=;
+	bh=NIplNKYnPiSxsRcYozD6/Em7BpOZVdeSTtUJ6fu0NbI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZPcaCraa4QwibBoC2emEy7/KaXxbtX9GOMFj4SJvYwHqjSZDNTQ8YS7vS/dQhu8LPQLg8mRzm6I9AlIMGpOBC6pfCpmd7FGKV6s9nzIo5xcpWUGO/wMFJsRdzP4v9oTMSRyGKF4K705k0IShPE2ekBkVH2U4OPm3OS4tvE71TsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=n4HkiezO; arc=none smtp.client-ip=167.114.26.122
+	 MIME-Version; b=bMV1HwlhRhtSglYeEZ+l6VAHUkP2eDG+OZUpmAxb1PlnOKBWhCV7wy+V00tq58++KvxJFhsmVkUd1PNccHRscf2zl0DAKUKsagQViJoXnZRmS6JLaTRQ2XXYIS4QCXWJ0VWYouo8IrYdTax/I/UgCPTwVI1Lctn1GPggNPc1Zl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=uUAHHnSH; arc=none smtp.client-ip=167.114.26.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
 	s=smtpout1; t=1706907628;
-	bh=Cw819/KonN7FOZNMfLR1Ivonx2xW8T4iDPwkWkOj91U=;
+	bh=NIplNKYnPiSxsRcYozD6/Em7BpOZVdeSTtUJ6fu0NbI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n4HkiezOBThhr+L9DyyXZNtQ3AYY+KR7/dDOpldNT1ICN9K/vq3hURiBfP3xjrM1p
-	 OiPZ/R7PyOXUgy+yZquxsBjeck+wbRSmQ3FvrpnUSNOb42bHSDKgFQFfZNXM7fZtl+
-	 Ja8yhxmPfFMLTJPyiUNHimX0PAZY+I0Ga4qkzZvU/SoxsvOF4UCbzLwcMsoZOwniLF
-	 kyD8uDpxesxBAC801OxUQlPOCQSAQ96tAYfxVFNjmJmPTOEk2N7nyZovgqjYV+lsrz
-	 VMrdnB2pvEWd/t6vwTYj41rnS9ymkzrXokyLekwB22A9AkKI5X+WUX2IxomFfmazUt
-	 vrYQOPhPSgdIQ==
+	b=uUAHHnSH9qyqiPFbxwBtx0+D9xq4cbcOGLgW4N3moWcT7pudTHalnE5g1pd42JIw1
+	 E3TN3gqn3EUKS2dS9BzMQmTDoF+b7/+Qo4cwDn0a2ByIW+HF+RdPmI8Gicr0hw2PC1
+	 rvL4NM2lV7/3fJAgKuzVhmtLD4sYUctQymj+dRbaw03MRctwLcGdqytl4bAfkLRnmT
+	 4zEaxXtJqlO+Duz6P4JaEGwtf4+/NJP0OjTM0KP4jY3eHJU+9XKKJK07j50wLLNsZI
+	 5soy4VlB1L6a0Mfw3iWgCtncLHEZ7CxNE1IQAbBR3d217g1gnazmhpUoUCZ9XrHKcd
+	 Qr321w76PHugg==
 Received: from thinkos.internal.efficios.com (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TRSpg6fNpzX4R;
-	Fri,  2 Feb 2024 16:00:27 -0500 (EST)
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TRSph2fcvzX4S;
+	Fri,  2 Feb 2024 16:00:28 -0500 (EST)
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Dan Williams <dan.j.williams@intel.com>,
 	Arnd Bergmann <arnd@arndb.de>,
@@ -67,9 +67,9 @@ Cc: linux-kernel@vger.kernel.org,
 	Alasdair Kergon <agk@redhat.com>,
 	Mike Snitzer <snitzer@kernel.org>,
 	Mikulas Patocka <mpatocka@redhat.com>
-Subject: [RFC PATCH v4 03/12] dm: Treat alloc_dax() -EOPNOTSUPP failure as non-fatal
-Date: Fri,  2 Feb 2024 16:00:10 -0500
-Message-Id: <20240202210019.88022-4-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH v4 04/12] dcssblk: Handle alloc_dax() -EOPNOTSUPP failure
+Date: Fri,  2 Feb 2024 16:00:11 -0500
+Message-Id: <20240202210019.88022-5-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240202210019.88022-1-mathieu.desnoyers@efficios.com>
 References: <20240202210019.88022-1-mathieu.desnoyers@efficios.com>
@@ -82,14 +82,17 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
 In preparation for checking whether the architecture has data cache
-aliasing within alloc_dax(), modify the error handling of dm alloc_dev()
-to treat alloc_dax() -EOPNOTSUPP failure as non-fatal.
+aliasing within alloc_dax(), modify the error handling of dcssblk
+dcssblk_add_store() to handle alloc_dax() -EOPNOTSUPP failures.
+
+Considering that s390 is not a data cache aliasing architecture,
+and considering that DCSSBLK selects DAX, a return value of -EOPNOTSUPP
+from alloc_dax() should make dcssblk_add_store() fail.
 
 For the transition, consider that alloc_dax() returning NULL is the
 same as returning -EOPNOTSUPP.
 
 Fixes: d92576f1167c ("dax: does not work correctly with virtual aliasing caches")
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Alasdair Kergon <agk@redhat.com>
 Cc: Mike Snitzer <snitzer@kernel.org>
@@ -109,46 +112,42 @@ Cc: linux-mm@kvack.org
 Cc: linux-xfs@vger.kernel.org
 Cc: dm-devel@lists.linux.dev
 Cc: nvdimm@lists.linux.dev
+Cc: linux-s390@vger.kernel.org
 ---
- drivers/md/dm.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+ drivers/s390/block/dcssblk.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-index 23c32cd1f1d8..2fc22cae9089 100644
---- a/drivers/md/dm.c
-+++ b/drivers/md/dm.c
-@@ -2054,6 +2054,7 @@ static void cleanup_mapped_device(struct mapped_device *md)
- static struct mapped_device *alloc_dev(int minor)
- {
- 	int r, numa_node_id = dm_get_numa_node();
+diff --git a/drivers/s390/block/dcssblk.c b/drivers/s390/block/dcssblk.c
+index 4b7ecd4fd431..a3010849bfed 100644
+--- a/drivers/s390/block/dcssblk.c
++++ b/drivers/s390/block/dcssblk.c
+@@ -549,6 +549,7 @@ dcssblk_add_store(struct device *dev, struct device_attribute *attr, const char
+ 	int rc, i, j, num_of_segments;
+ 	struct dcssblk_dev_info *dev_info;
+ 	struct segment_info *seg_info, *temp;
 +	struct dax_device *dax_dev;
- 	struct mapped_device *md;
- 	void *old_md;
+ 	char *local_buf;
+ 	unsigned long seg_byte_size;
  
-@@ -2122,15 +2123,15 @@ static struct mapped_device *alloc_dev(int minor)
- 	md->disk->private_data = md;
- 	sprintf(md->disk->disk_name, "dm-%d", minor);
+@@ -677,13 +678,13 @@ dcssblk_add_store(struct device *dev, struct device_attribute *attr, const char
+ 	if (rc)
+ 		goto put_dev;
  
--	if (IS_ENABLED(CONFIG_FS_DAX)) {
--		md->dax_dev = alloc_dax(md, &dm_dax_ops);
--		if (IS_ERR(md->dax_dev)) {
--			md->dax_dev = NULL;
-+	dax_dev = alloc_dax(md, &dm_dax_ops);
+-	dev_info->dax_dev = alloc_dax(dev_info, &dcssblk_dax_ops);
+-	if (IS_ERR(dev_info->dax_dev)) {
+-		rc = PTR_ERR(dev_info->dax_dev);
+-		dev_info->dax_dev = NULL;
++	dax_dev = alloc_dax(dev_info, &dcssblk_dax_ops);
 +	if (IS_ERR_OR_NULL(dax_dev)) {
-+		if (IS_ERR(dax_dev) && PTR_ERR(dax_dev) != -EOPNOTSUPP)
- 			goto bad;
--		}
--		set_dax_nocache(md->dax_dev);
--		set_dax_nomc(md->dax_dev);
--		if (dax_add_host(md->dax_dev, md->disk))
-+	} else {
-+		set_dax_nocache(dax_dev);
-+		set_dax_nomc(dax_dev);
-+		md->dax_dev = dax_dev;
-+		if (dax_add_host(dax_dev, md->disk))
- 			goto bad;
++		rc = IS_ERR(dax_dev) ? PTR_ERR(dax_dev) : -EOPNOTSUPP;
+ 		goto put_dev;
  	}
- 
+-	set_dax_synchronous(dev_info->dax_dev);
++	set_dax_synchronous(dax_dev);
++	dev_info->dax_dev = dax_dev;
+ 	rc = dax_add_host(dev_info->dax_dev, dev_info->gd);
+ 	if (rc)
+ 		goto out_dax;
 -- 
 2.39.2
 
