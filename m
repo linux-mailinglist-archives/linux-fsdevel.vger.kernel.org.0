@@ -1,99 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-9972-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9973-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE362846B8D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 10:09:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDA7A846B8E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 10:10:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 80D50B24912
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 09:09:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 869C2281C77
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 09:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B05474281;
-	Fri,  2 Feb 2024 09:09:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CE074297;
+	Fri,  2 Feb 2024 09:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Lr5RkQm1"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JQzazboQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A630267E97
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 09:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DDE65BA5
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 09:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706864955; cv=none; b=b6Vt4UGfMUQ6kU//R3VEM1KnxIsxfmtqo7TrnCPP68yn9PB4j2Wsr6ooWGXigp0ll1a5UbzLtELGaxygV+UEtik28n//0cVWi+k3sBqREk58wmOtn7r4hiM41KAyotzn05ihUJWBTM71Dkun259g4NWojdkogoNoMZI3e1ZqvWg=
+	t=1706864999; cv=none; b=an0YjHR95SQ7Ge+bjuWzF9AL8pZeXEirB6YrYM4yf9lrgiSmK0mlLY6PvbW9LnFURAbeJQHc0lnNohKPRyvXeZme1ZJ9Y8pQCcO+eqqXQrufiOqnH59/Xc7bAwyElWcKn74Ml7OnzExhA5DcQL09yDIYF8f6iVmkEpjmV7RwRCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706864955; c=relaxed/simple;
-	bh=K5RNrjZNne+9BhySI8vABslxCokSSL7jfngtWXORFLA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oGCF7xDg3SKgJBn1a0PrOvtSIwDJMCiwYxM0w0A2W/v82yPYs74VFCorjNZyH3SAY9NP7WqAXwxLZfpXnd7aNGja/WDORhZVlBAYdT1ZFHbuFmtyKoky3331y30mwEAV37RtEatyKsUO6dIpvx1qMeALt/y8oE8jklVV7K7wQ+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Lr5RkQm1; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a370328e8b8so56073066b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 01:09:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1706864951; x=1707469751; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qVe4EBuC1wLLm/F/+zAhu2k0n4XVT4KAE++V21QJr+w=;
-        b=Lr5RkQm1MHq3AwS+Qd/97KRSUSJ34ct4wUx0V7HyUfDpK1vQaHHT7BIhbLtNu3u6tV
-         n19ESsgyMR8MNE3zrTVBREMfTBL6DoRtxKT51Csr3AGZHMHEUdUtaRA6yxj4/2JD6f3X
-         OBOhEQGY/S8Ng8CFFjGeMIVN1qSzcfuADQu7E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706864951; x=1707469751;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qVe4EBuC1wLLm/F/+zAhu2k0n4XVT4KAE++V21QJr+w=;
-        b=w7wSXb/IiFlTOzuhZGzefk/oAJGxoTkV/CvevgdcIZrI5Id80zgFTLA/tgwyfsM+pt
-         FUjiGubNm4KHvF9l6TlAVDNsot5amTIwE+yx7XyejWvBJNiK5Yoo8xrSnzv5G3I9iXNI
-         hus3M/3fBi7YF1IXBWhAA808ndRAIhlN5Q8742dXusahYxVWbFM9Xw5sDE3ln33jgPjF
-         H65OnmWiPUifkWPHBm4fIE14tgCYYdfpFUhuhiuL9RLm29cfh6WRMKZlQuHsZpHHM11J
-         OJuW17ho5UL7TVr1A6NuLR6HsN88jWeqOtoWxh/FsxJeXFsMEXPDlcIOlC2H/SW7UoYt
-         Rktg==
-X-Gm-Message-State: AOJu0Yx9WNU4BBz/nGtJtTO5FZTYJKsMMD0INmLNTGw9CjrAn6TlWHkK
-	/FkJ904+DwpRbKrBDRUx3JNvTMxbdwl6TbxbjkJoFKFGBHY/iruB+Jbl9EZzeTh35hnJYegLcfn
-	1UUOH9jwGqZxL7uc3MWWGNbf2tqgn8SzgiuvBJw==
-X-Google-Smtp-Source: AGHT+IHj3NH/ISBNdebgtuteIrihmJMBrJmXVr5sMJoQYHMqXa7Vh7uOvbmGRCvRuwAPdVjQYrM/OqS8wrk9a6pik9w=
-X-Received: by 2002:a17:907:75cc:b0:a31:13e5:8fb3 with SMTP id
- jl12-20020a17090775cc00b00a3113e58fb3mr927763ejc.38.1706864950497; Fri, 02
- Feb 2024 01:09:10 -0800 (PST)
+	s=arc-20240116; t=1706864999; c=relaxed/simple;
+	bh=CsuUIB9BGEhPpq82AnSmPqKa7q1L7vczo0Qa7uKk6HI=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=S2QQ8nxL1kFIfspQbPncQYU0Yqv4T+DQFy+Soe2LZaoQh9dBe0fby8zP+fixOXrU9RCemLHf/Fv/t2aD1uC7EBbvtHC0+BeMcdbzDl93HLyg9/V+nzV8siyE+/9rFS++Jlt/8qhwiSPSB++iIvkzdjQKiDw1DGVFaWpn7ImwdE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JQzazboQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1706864996;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=wR/xEWsoc/qcVUxpsQwiYXMTwgRl2K/SGjKuYsI30Fw=;
+	b=JQzazboQyhfpEM9Np0W+iw/SJUSxg3v9n96y4sYtysS/uLgnS1Qpah6gIpliEXMLjhxmt3
+	9PPn4ckmRE02pYH/hV45R38kbM161DauCPp7iFd8djCNoYs3QBv/j7Fls3tGONQULfChtF
+	TfrDCpCDHcLK/EeQV2lueNQxO5ORIFc=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-461-uL2SUc8LORqDEysyTOZeOw-1; Fri,
+ 02 Feb 2024 04:09:55 -0500
+X-MC-Unique: uL2SUc8LORqDEysyTOZeOw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 288581C05194;
+	Fri,  2 Feb 2024 09:09:55 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.245])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 682D21C060B2;
+	Fri,  2 Feb 2024 09:09:54 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: lsf-pc@lists.linux-foundation.org
+cc: dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+    netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+    linux-mm@kvack.org
+Subject: [LSF/MM/BPF TOPIC] Large folios, swap and fscache
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2701318.1706863882@warthog.procyon.org.uk>
-In-Reply-To: <2701318.1706863882@warthog.procyon.org.uk>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 2 Feb 2024 10:08:59 +0100
-Message-ID: <CAJfpegtOiiBqhFeFBbuaY=TaS2xMafLOES=LHdNx8BhwUz7aCg@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Replacing TASK_(UN)INTERRUPTIBLE with regions
- of uninterruptibility
-To: David Howells <dhowells@redhat.com>
-Cc: lsf-pc@lists.linux-foundation.org, Matthew Wilcox <willy@infradead.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, dwmw2@infradead.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2701739.1706864989.1@warthog.procyon.org.uk>
+Date: Fri, 02 Feb 2024 09:09:49 +0000
+Message-ID: <2701740.1706864989@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.7
 
-On Fri, 2 Feb 2024 at 09:51, David Howells <dhowells@redhat.com> wrote:
->
-> Hi,
->
-> We have various locks, mutexes, etc., that are taken on entry to filesystem
-> code, for example, and a bunch of them are taken interruptibly or killably (or
-> ought to be) - but filesystem code might be called into from uninterruptible
-> code, such as the memory allocator, fscache, etc..
+Hi,
 
-Are you suggesting to make lots more filesystem/vfs/mm sleeps
-killable?  That would present problems with being called from certain
-contexts.
+The topic came up in a recent discussion about how to deal with large folios
+when it comes to swap as a swap device is normally considered a simple array
+of PAGE_SIZE-sized elements that can be indexed by a single integer.
 
-Or are there bugs already?
+With the advent of large folios, however, we might need to change this in
+order to be better able to swap out a compound page efficiently.  Swap
+fragmentation raises its head, as does the need to potentially save multiple
+indices per folio.  Does swap need to grow more filesystem features?
 
-Thanks,
-Miklos
+Further to this, we have at least two ways to cache data on disk/flash/etc. -
+swap and fscache - and both want to set aside disk space for their operation.
+Might it be possible to combine the two?
+
+One thing I want to look at for fscache is the possibility of switching from a
+file-per-object-based approach to a tagged cache more akin to the way OpenAFS
+does things.  In OpenAFS, you have a whole bunch of small files, each
+containing a single block (e.g. 256K) of data, and an index that maps a
+particular {volume,file,version,block} to one of these files in the cache.
+
+Now, I could also consider holding all the data blocks in a single file (or
+blockdev) - and this might work for swap.  For fscache, I do, however, need to
+have some sort of integrity across reboots that swap does not require.
+
+David
+
 
