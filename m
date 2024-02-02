@@ -1,99 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-10036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D56A18473C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 16:55:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22A878473C5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 16:56:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A3821F284DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 15:55:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9215B2262F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 15:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFF1146919;
-	Fri,  2 Feb 2024 15:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 084911474A5;
+	Fri,  2 Feb 2024 15:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ZYzpF8+Q"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vpJPjleQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18D0179A5
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 15:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F235C14690C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 15:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706889350; cv=none; b=ib5GU4KOy3l9v1sZicCvaFz32JUz5ItETvbgj5GnzsLNTSOe1m/5uq02VDDuY193of9Y4G5+qi7km1bVfSMuCrVq8p8vIK9DGiG56cYjqbLwl7nljsSKLeHVm+UR2cDcxpl5W452bw6OIhC+qK3cwZ4sK0xsfYr2ph3d31qgMO8=
+	t=1706889389; cv=none; b=FeoY/x1AHtwfahztGKpM7CkZJhzKfD7VJw08KKRRgsHbuJdRLMQA1IR2l5DqtrrhA1+7LY5ZwCyAeHg4DRMJWjL8oTe3xA0yGEhx7kugEUftNvIwbna22GUN1DHg7pemnZWaFPZJ2+uYko7dtP4hdob35pjFy76oVV5xt3M363U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706889350; c=relaxed/simple;
-	bh=TVbzMpwRAFO6lwt5AX+qbLrLbE75MsS84/zt9kyfCUQ=;
+	s=arc-20240116; t=1706889389; c=relaxed/simple;
+	bh=FNDJQ9xh+RWwPD9Nki93GLkLV+DCmLpnpSZYdhe5EYk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I5T7LbNKjEx+P7l5zPpdnMWvdzSBWvDHLljvexKxvu0eralD9ldTjuWikL9KxEvOQavNO0baS2yRy6/pl13olH0DAwAPdONvBiGWcJOpZvI8xlZdoCp0pgUJk3wUBTHoivbDvMTi1jPxlS+EAHYdxPrRW4Mz4NGYLcLHFP2N+C0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=ZYzpF8+Q; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2d081a0e5feso13340151fa.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 07:55:48 -0800 (PST)
+	 To:Cc:Content-Type; b=ZK7OI5F8oHIfqAQNw9vGJqBNmWnw+UvNyyG2ROhNUA1iKJQPRWVyWd7jA5FaweANdlJxRR80Rf5dupnllMX+uK3zAlYwtbs639l+hHMS1uUCeF5NtQCI5mNHg9jdgkalHe6SE4eS5bLehtWVfAOWSeeFcGJGr7S/pb685fjL0OE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vpJPjleQ; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4bd45397c17so796748e0c.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 07:56:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1706889347; x=1707494147; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TVbzMpwRAFO6lwt5AX+qbLrLbE75MsS84/zt9kyfCUQ=;
-        b=ZYzpF8+Q9eXROnR2Mj0FNNwrhFYId/B55v1XzaEWDn/cYDKgejslcsDV/ULV9VFD1/
-         AiPpPnJIMdDxl+VNs68yp7QVPCsWvOiEMGvFj3E54b51UP66LcP1izF388nECyJX10Bd
-         NI6xx/FrgN0N4AqqWvCl4nDf4VilC73aURBnw=
+        d=google.com; s=20230601; t=1706889387; x=1707494187; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lmJR7Ww8ojzofhT9CYA10sXCxDHSnn8Gqx6UiwVGV8g=;
+        b=vpJPjleQQtzxFs6XeeETAEBppD4dE7iPK/ZucSJdqHpC5yiYQcT8gXIaFBeQsA+EyW
+         HkI8BKy4Zb8WtX/LC/G98S0pjVR6EfE0/uesIwcw1U5AGhBk91awjtOhrku/uDyWxq5Q
+         QoBUhWnlQqp9Y/WdTTwEsL+iszr2if8jEgZyMyINv0aBKWaUkVg+VBOLpvf/1ANXjNW+
+         e9vsfAqQVr0z+NQYDLUn0zhNIsz6FfxenjFqOQLdkvXLqibn58H6BpCjYv8jYcZgsdjZ
+         r4U3DDjOE1OspcRn2jMHtwrno6UnrQtEHIHB+TZJlQbJx3gP5R0nhvUzamC6KeG5pktF
+         dOfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706889347; x=1707494147;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TVbzMpwRAFO6lwt5AX+qbLrLbE75MsS84/zt9kyfCUQ=;
-        b=HRwdOqnhm5KRyOB9kdZNOgYcWDio3yuA2xpB2jGEINSSI7rm3PiY+YT3czYJV43R9+
-         tU4d8l8suQqx2/hwGE23nfpVlyFA8H9MWlSAA+S7+6iTmQ+fvMUNu/41DmIgaFHL2oeG
-         IK7Cgkpb7QDnkVNeZUf7JTRa8fxNOxrW/XfJcg55PIR/iwwCmfWCjg/dtkGniBWmHPbt
-         ceu3bVMs1ttKc3EFkDbeVKsJK5QNcl4VXw9/7VvgPG8ixEuoRlhrITIidWWGWQEFYcs4
-         ICidOertQOPuaPDhRRuIcqyP8Vx+uYFb5RRhIW699xThedog7cQSYjWVedLPydTOJcVc
-         ipGg==
-X-Gm-Message-State: AOJu0Yy0jnlqs0V0vgGHy9jUALGjOfYT9H8sQo4PH3KU6WLgNANf5M5S
-	GLpvKP4lyM5682JplzaaVvaQ+PyujW4SrMQcvoxmOLXSMQfokdbnxDWAWCcJfFJu45+1pidx1an
-	gu5WXmHtji3MKJta3uKKfTUURdLFEHkIdrGa7qfurKB3X+yG0
-X-Google-Smtp-Source: AGHT+IFnN+y/nJcTahckutneKyDlz/OHiiZ+lWlS36H1Q8h+eMih71AMFenGl7byqtzCokEU0pddhZQuwVH+VSMqmjk=
-X-Received: by 2002:a05:651c:2126:b0:2d0:7e15:8cd8 with SMTP id
- a38-20020a05651c212600b002d07e158cd8mr3285944ljq.49.1706889346644; Fri, 02
- Feb 2024 07:55:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1706889387; x=1707494187;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lmJR7Ww8ojzofhT9CYA10sXCxDHSnn8Gqx6UiwVGV8g=;
+        b=BOnxASVvF5fs1YQTaQuBIdjSrfVMZ2Yi2E1mT6dQYPR4buZuP4mqC1BgHcDtcx6MEy
+         TmrR8cht8K39CDoQey4zASyuu4YHieE+wy6GXQ97z93UBF9Kied8HUtMHpNRXIC4kxGP
+         eCkYppE1gaV9WIhkLXfwtpYlgm9yv9JlqMEIJWAIocby0ywqw8vPMIsc8uG86fg1ke4f
+         DcGkYweHQJHZAHWhh48Xo3fjjxpPu/5ffADJUQSe/RIrSvyHl8KLhrmFT+wOMtt3MLh2
+         cvX4fvFRsSwhCb2pteEixo2h+lpuYzTxxW5VCG1Ullf2quwsQihqdFEZTYiNVPuKaoeg
+         Jzow==
+X-Gm-Message-State: AOJu0YybifD+XGSTIAyEjLwPgKYPa2nq4jICf8LXOr0PpfSWXHgjUG14
+	dQajx4Hmuqe4BQjeFg03/AQ/tffp41yjFmfp3fqeArYnFfmlLWomnSHTeVqHXLwCEKnH0/9rNO2
+	oWDcS8TH1ZSJQldqWAwfANyyFshr6rGIJacEh
+X-Google-Smtp-Source: AGHT+IH2Og0a7twSwhicsL764k2gi6eQEWtu6vNVhCfq/Nv88snUC2LLMaOgyqphlIrFstt/i2vCM6+wbYKlaJvFsdQ=
+X-Received: by 2002:a1f:7d05:0:b0:4b7:6c2f:fdb0 with SMTP id
+ y5-20020a1f7d05000000b004b76c2ffdb0mr2486777vkc.0.1706889386687; Fri, 02 Feb
+ 2024 07:56:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131230827.207552-1-bschubert@ddn.com> <20240131230827.207552-5-bschubert@ddn.com>
-In-Reply-To: <20240131230827.207552-5-bschubert@ddn.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 2 Feb 2024 16:55:35 +0100
-Message-ID: <CAJfpeguYDpLN9xPycd7UMwJfp-mctc38e4KFr2v_CvPSDayxEQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] fuse: prepare for failing open response
-To: Bernd Schubert <bschubert@ddn.com>
-Cc: linux-fsdevel@vger.kernel.org, dsingh@ddn.com, 
-	Amir Goldstein <amir73il@gmail.com>
+References: <20240202-alice-file-v4-0-fc9c2080663b@google.com>
+ <20240202-alice-file-v4-7-fc9c2080663b@google.com> <2024020214-concierge-rework-2ac5@gregkh>
+In-Reply-To: <2024020214-concierge-rework-2ac5@gregkh>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 2 Feb 2024 16:56:15 +0100
+Message-ID: <CAH5fLgj=m78KdWaxzyy3YkDh3UkxczXsh_i7ekOZDjzuwe10bA@mail.gmail.com>
+Subject: Re: [PATCH v4 7/9] rust: file: add `Kuid` wrapper
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 1 Feb 2024 at 00:09, Bernd Schubert <bschubert@ddn.com> wrote:
+On Fri, Feb 2, 2024 at 4:36=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> From: Amir Goldstein <amir73il@gmail.com>
+> On Fri, Feb 02, 2024 at 10:55:41AM +0000, Alice Ryhl wrote:
+> > +    /// Returns the given task's pid in the current pid namespace.
+> > +    pub fn pid_in_current_ns(&self) -> Pid {
+> > +        let current =3D Task::current_raw();
+> > +        // SAFETY: Calling `task_active_pid_ns` with the current task =
+is always safe.
+> > +        let namespace =3D unsafe { bindings::task_active_pid_ns(curren=
+t) };
+> > +        // SAFETY: We know that `self.0.get()` is valid by the type in=
+variant, and the namespace
+> > +        // pointer is not dangling since it points at this task's name=
+space.
+> > +        unsafe { bindings::task_tgid_nr_ns(self.0.get(), namespace) }
+> > +    }
 >
-> In preparation for inode io modes, a server open response could fail
-> due to conflicting inode io modes.
->
-> Allow returning an error from fuse_finish_open() and handle the error in
-> the callers. fuse_dir_open() can now call fuse_sync_release(), so handle
-> the isdir case correctly.
+> pids are reference counted in the kernel, how does this deal with that?
+> Are they just ignored somehow?  Where is the reference count given back?
 
-Another question: will fuse_finish_open() fail for any reason other
-than due to an interrupted wait?
+The intention is that it will be used to replicate the following line
+of code from C binder:
 
-If not, then maybe this belongs into a separate update which deals
-with killability/interruptibility in a comprehensive way.
+trd->sender_pid =3D task_tgid_nr_ns(sender, task_active_pid_ns(current));
 
-Thanks,
-Miklos
+The context of this is an ioctl where the `trd` struct contains what
+will be copied into userspace as the output of the ioctl. So, the pid
+here is just a number that is given to userspace immediately, and
+userspace can then do with it as it likes. It is true that the pid is
+stale immediately, as the remote process could die and the pid could
+get reused. But it is up to userspace to handle that properly. Binder
+has a different mechanism than pids that userspace can use for a
+trusted way of verifying credentials (see the 5th patch).
+
+If this implementation of pid_in_current_ns actually takes a refcount
+on the pid, then it is incorrect because it will leak the refcount in
+that case.
+
+Alice
 
