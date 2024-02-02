@@ -1,126 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-10033-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 729C8847333
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 16:32:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DA382847349
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 16:36:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5EE21C2244A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 15:32:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D85A1C20F11
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 15:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065B0145B38;
-	Fri,  2 Feb 2024 15:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7201468FF;
+	Fri,  2 Feb 2024 15:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yslwt4tf"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DZJA8gBX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8459210E4
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 15:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929891482E8;
+	Fri,  2 Feb 2024 15:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706887930; cv=none; b=kWYEMoKJEEPl7MxLUUPw7g2uLujqa1yLelpEWNE+/S7DFmwUSn8b8QsJGucrH2LtE6VSEmOFrfBQx8r7XmzxqJb6U2q82Isjqd9DwiFfTePllwW126z6KEduTP8qIiUkOoUCw5oZ0pUoeEkbK+e9zVvyiVFf5auOBSeZWNELrEU=
+	t=1706888182; cv=none; b=J9XfisvARrTZ70sosG5ecRm/KK6l6zf6aNhyDESk241AYgT2Bo5D7xU+2mrIgR8PR9es/ZzkNorUrxI8mRIaSzx7lLPaeaTBQwdACQPdhVwII7uJVyY92TQxFPHrTKK/mfo9Gb5vTW2Mp6bKmqWvut+g3sSbJvhZOQFDfAgmdJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706887930; c=relaxed/simple;
-	bh=LB2tM7M/vojvvD9pvT8qCxaHqoBfTDEqvLcRwrwirJ4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=DHAZbz8TvFbAAd+DL/vRGaxWdfyFPfVE0G6ELwPsQUfqppBrMAbksTpr6xmkBk8Brl6Qli44FtCMEkI85Q5UIHrkeJEEfEuq3XKw+cLW8rnYc8LJb5FigunJZXF9xyDC1ed+flTcDrERpv8Qzu9ZfQDbq20AtKsKWwDBVzuQoM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yslwt4tf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1706887927;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type;
-	bh=IM5ZcaZa7yAGe/RxsbA0xm4coNhAXOwcBQuiu+U+L9A=;
-	b=Yslwt4tfZwWZc07/Y1V2EsIuBfawaHqh8zAxyIkPMe8UZNNdgJ5G0pIWCr3rDMEy2W+5eo
-	xtBJUh/U4Eg8W2TyFKEAyyhHL5cCmO9PWLKdRUdOgClvLnEU4DzAvfDW4ltQ7AGKewiQwq
-	WDPWGfFGAPcKLNPOVAP8MA3LqQAVP1M=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-JWxdHL0vO2WMUAKFld2Snw-1; Fri, 02 Feb 2024 10:32:04 -0500
-X-MC-Unique: JWxdHL0vO2WMUAKFld2Snw-1
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-290d09f47daso1972230a91.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 07:32:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706887924; x=1707492724;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IM5ZcaZa7yAGe/RxsbA0xm4coNhAXOwcBQuiu+U+L9A=;
-        b=lPXM7tDzEVu+lxmsm7i/+7zoo6iF2RDVjUuDF5eOwPBV6JAui1ImVpx6jcO3lFkv/j
-         FbqMz/8V2zxgmnAbl9+Cdyoi5aRTJA4RFy1cjzIta9NuC79RRYD6CeZhBasXRxnodI4c
-         TmGYRz0zhgDvmINY7owUbKeeT4vAKYL91FR9H2KYflM+Ej19WCmqJLdFkra/cb6Wbfe6
-         gZ4cIgWwhP/GaqgTG4/9q/XDEtxHfGGjfmLSNF+zcHCiEQ188zfMUY611BNE0wkwEEX5
-         JeM6YuugPJc6Ye4Ywr4xds6RRwt/NvaIACt4xOBC+whjuF8+hOdIxT8hjoToJDFrYwo8
-         dUEA==
-X-Gm-Message-State: AOJu0YyinVKcDwsP1jSJhIuJOuiIrluskbH1xiZbBAIbPmcuTfijlyJD
-	brm9BMjNw/NNLFjUXES7IuHTK1u6coX2Egy+OmyUCZKOeUpCHu6GGfcdVYb4tliW4ryKd2+p1RX
-	cN4pSrwJjLZmTxngX5kvtqEEvHVaajb/MuSdQsxKBMjkLKr+3/L8pz5pvNadgIB21FRUqbCfwe+
-	LICOqYAzw/GZwUYYz9YAOZ8eUPGKXnST18B7LedA==
-X-Received: by 2002:a17:90a:744e:b0:295:e24b:62e with SMTP id o14-20020a17090a744e00b00295e24b062emr7819860pjk.6.1706887923773;
-        Fri, 02 Feb 2024 07:32:03 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF03sJR3jRWqPFscANuSc2fRI9wXu+W40DwRQn5GP605LFjRa33EKNRS0ysXmGh0QHmT1WpDp6Hp9YV+m8zQC4=
-X-Received: by 2002:a17:90a:744e:b0:295:e24b:62e with SMTP id
- o14-20020a17090a744e00b00295e24b062emr7819845pjk.6.1706887923501; Fri, 02 Feb
- 2024 07:32:03 -0800 (PST)
+	s=arc-20240116; t=1706888182; c=relaxed/simple;
+	bh=Wvl87XNvXMMBWBNxLEx5QalHdJhfB/UDqRD0cL5pQrQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MgooAgqS0FwL95KKIN6l8bWbFtV2cf9tRMOGhXECtvwKKniJUhQvdh8qav/i7H9Z//xkQ0xFs/PiCX3MLawCHW4y1xvWJ1hS5Vs7u4XHnF45fRFpFowavUptoCRFI72nHifCICyorVQIEAmnaBb/Z5jRhTxYFYN56vuhIptCIiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DZJA8gBX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25AA4C433F1;
+	Fri,  2 Feb 2024 15:36:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1706888182;
+	bh=Wvl87XNvXMMBWBNxLEx5QalHdJhfB/UDqRD0cL5pQrQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DZJA8gBXms4F+fDYW6PqCtbmIskJoLqLxNLntY0A5nOHSLbtl94NwrJo0pwCAUIO7
+	 Gl3OzmnfhgtOfSDB/932KCoZyiuEEnzRIuW+YdF4vmSXUXB6Dfy7ecxygCt6IbHDM6
+	 6DBi+PKKKzr5MZlyUGE5zplsn7Fuw+pS/vp/zyz8=
+Date: Fri, 2 Feb 2024 07:36:21 -0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Kees Cook <keescook@chromium.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 7/9] rust: file: add `Kuid` wrapper
+Message-ID: <2024020214-concierge-rework-2ac5@gregkh>
+References: <20240202-alice-file-v4-0-fc9c2080663b@google.com>
+ <20240202-alice-file-v4-7-fc9c2080663b@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Ondrej Mosnacek <omosnace@redhat.com>
-Date: Fri, 2 Feb 2024 16:31:51 +0100
-Message-ID: <CAFqZXNu2V-zV2UHk5006mw8mjURdFmD-74edBeo-7ZX5LJNXag@mail.gmail.com>
-Subject: Calls to vfs_setlease() from NFSD code cause unnecessary CAP_LEASE
- security checks
-To: linux-nfs <linux-nfs@vger.kernel.org>, 
-	Linux FS Devel <linux-fsdevel@vger.kernel.org>, 
-	Linux Security Module list <linux-security-module@vger.kernel.org>, 
-	SElinux list <selinux@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240202-alice-file-v4-7-fc9c2080663b@google.com>
 
-Hello,
+On Fri, Feb 02, 2024 at 10:55:41AM +0000, Alice Ryhl wrote:
+> +    /// Returns the given task's pid in the current pid namespace.
+> +    pub fn pid_in_current_ns(&self) -> Pid {
+> +        let current = Task::current_raw();
+> +        // SAFETY: Calling `task_active_pid_ns` with the current task is always safe.
+> +        let namespace = unsafe { bindings::task_active_pid_ns(current) };
+> +        // SAFETY: We know that `self.0.get()` is valid by the type invariant, and the namespace
+> +        // pointer is not dangling since it points at this task's namespace.
+> +        unsafe { bindings::task_tgid_nr_ns(self.0.get(), namespace) }
+> +    }
 
-In [1] a user reports seeing SELinux denials from NFSD when it writes
-into /proc/fs/nfsd/threads with the following kernel backtrace:
- => trace_event_raw_event_selinux_audited
- => avc_audit_post_callback
- => common_lsm_audit
- => slow_avc_audit
- => cred_has_capability.isra.0
- => security_capable
- => capable
- => generic_setlease
- => destroy_unhashed_deleg
- => __destroy_client
- => nfs4_state_shutdown_net
- => nfsd_shutdown_net
- => nfsd_last_thread
- => nfsd_svc
- => write_threads
- => nfsctl_transaction_write
- => vfs_write
- => ksys_write
- => do_syscall_64
- => entry_SYSCALL_64_after_hwframe
+pids are reference counted in the kernel, how does this deal with that?
+Are they just ignored somehow?  Where is the reference count given back?
 
-It seems to me that the security checks in generic_setlease() should
-be skipped (at least) when called through this codepath, since the
-userspace process merely writes into /proc/fs/nfsd/threads and it's
-just the kernel's internal code that releases the lease as a side
-effect. For example, for vfs_write() there is kernel_write(), which
-provides a no-security-check equivalent. Should there be something
-similar for vfs_setlease() that could be utilized for this purpose?
+thanks,
 
-[1] https://bugzilla.redhat.com/show_bug.cgi?id=2248830
-
--- 
-Ondrej Mosnacek
-Senior Software Engineer, Linux Security - SELinux kernel
-Red Hat, Inc.
-
+greg k-h
 
