@@ -1,122 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-10042-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B50C84743E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 17:10:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF0284747A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 17:16:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 195D21F2D0EB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 16:10:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 398CA1F22D56
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 16:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A151474B9;
-	Fri,  2 Feb 2024 16:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D6D61474B1;
+	Fri,  2 Feb 2024 16:16:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m2+vWe/L"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="T81rWylA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF7A148FE8
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 16:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B071614690E;
+	Fri,  2 Feb 2024 16:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706890060; cv=none; b=TuL94ZHd5xednGQrTR7AWJDTnjBInmLlpRBDsPWPTYHer0s6sJdEB/o1Nl/fwgT9134YDhmElygLkOa6hAqvAdWGJc3qjT9iXkYXZOnAITWHfH4sUHEExQso/EKkcno+8XixDBuzq6dugoWWlnZrIzrr4nurVSsSOu49pFt/LRo=
+	t=1706890579; cv=none; b=RJ3Z9A9jAEvio2/OrdcH+bNG7s4KL/MNmrrtuAZ0POGAv4HlFWhi5Op9GDEtRymq4c6I+ysNivAHiIUWwum/etz9xcrExec10DPWovf9sEhDrslizOOstbXaYkpbGnZmoJspqzmEPDzeGcKvGy/V9n6GbX7SXA5I4jdYfaUydqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706890060; c=relaxed/simple;
-	bh=HHi1UxmMH2tHjDjaNU4XCBQu1ROthkPo1wqP31dgE0k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qViuhCWifWu0uu345OzfapN6aPJMI35yaAqvXkPpOQ01PYT9U0vgf9QaMQ4usLy3Pvm1zJzgKcCvAc8CPCUvO4bNolE4dOKGKFhsrvtwVl7MqkICcCqaLwgz3btDJrcTWxOEf/wJdpMOTtWabrFWDsxnbJhrFmG90YmzG6ah1JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m2+vWe/L; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7810827e54eso145412985a.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 08:07:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706890057; x=1707494857; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HHi1UxmMH2tHjDjaNU4XCBQu1ROthkPo1wqP31dgE0k=;
-        b=m2+vWe/L7RpW3bjG6ge+teukhbzZOpnBwFJaxNtZn9bN7LVSGOkYqbWFCTrol/SazB
-         aQnzm92vaprJN9FiQzo4IRxQkuolR6fMxDRpxiYVjlwVhgIWjNR9HwOrdHxI1S8wlBdU
-         Psb2pgycw1wtfqE7l6xVoE1TniEWJagcwcBHoSUXNgTjnA0o5IvCtJgk94psNb9a30Vn
-         iaFNJh9cdOlSad9yuo9/dC92KJOxyIuOD64UJfslB5+aO+J7PncL8+nrJ79aQjGFnN38
-         G5Ys+pnLDEj+wk4W/rJ+DMVzgGVM4IjM0SHl5kN8ya2f1i8dGEuxnohGAIyC+DPzwdIy
-         3KyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706890057; x=1707494857;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HHi1UxmMH2tHjDjaNU4XCBQu1ROthkPo1wqP31dgE0k=;
-        b=eCFHPof4G0xTDJMXb0P5aEfCNDXV77nNUIrQ/Txpcj9xy7EIpOhRe3xSIV3c+cIgP0
-         gCdLpARwrcf8Wf6mGcesR7/YxvF05BLPVuatirBmk+Q6Mds7ssVnsXEdFBAQN9UuJzm3
-         aZrvfEdYE5e1+1hd6P5eMLtbYHS2nKknrUW44vJ6C0QWGtrAreC6xqFH1cum2AsgKgOc
-         o/X6q+krKow9Nsz/x+wofxv++h4UhWNBnkUEauSifcDwdP0brZrkffIU4ghRF90LOfiO
-         ksEkaNu0XgK8vLoBmRGPW4v1NRViZzW/0HWaWKRwzBwq/4y7Ol/uHhxwvGx7PF6gX7YG
-         4ZUw==
-X-Gm-Message-State: AOJu0YyVu7nY8Xm/yAQwO8n4WQVUl6yNhU1ZRZVdtYsbIZplQegOtYHj
-	TdpyXKQnQc9uvOZdme3soar+ZB63WsbxrYs80V+NNr7Rc6IBwdfD1W2Gd69Gdy1479BJI58AeB2
-	87RtCyPcsREYGyIM0/w9f0EmxOA4=
-X-Google-Smtp-Source: AGHT+IHuwcHiNFB5kBQtnVoZkeWaCqE0RMcPwxYQCiWK4O4Pgzdy08kvzTbpaS9vzRfbqwolSxXh7n5l4FU3NIsdRzA=
-X-Received: by 2002:a05:6214:b6b:b0:686:a20c:faf with SMTP id
- ey11-20020a0562140b6b00b00686a20c0fafmr2687054qvb.12.1706890057538; Fri, 02
- Feb 2024 08:07:37 -0800 (PST)
+	s=arc-20240116; t=1706890579; c=relaxed/simple;
+	bh=mLMIc1SroO3yXxTLHAMRh3BU9a9MgpgQyVlRrfzkTkQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cNwCb3ApCPGuoy1O9lCcPt4nW7Esxvgzhice/T+QXl6GeaB4ahfW+Cc3KNbIFU0uVIFnX6+sqO+N9h+dBysrM+9+3KgeeGTGsToPuhAihb/h29rn6kK/MdCIN8tp0DaF/9/0JNfVF9kLnFpNvzxsTC1NEecWmqQAPMwpnr/NGLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=T81rWylA; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=/PNpaXHWsvIDQvHDtXv0Q9pV47OOW+hLVA2RGVaIbqg=; b=T81rWylA7n6OVGsJk9u/H3ytWz
+	UjhnoqjoiIvzEl1afLdqepRZLlnhtrtsR48raZmSA18YLtNnTDYExe+I/9acbn/IBQvcHo9QpVLd6
+	anusvW599i76l7jHLcDJCd8ikxkCRuMIU8+jNcsSUmDA90MdHmkSRJBGAhKp7lgWTwuFg82901IYC
+	9doUlLQXvYRB8cytenFrvZ+zOLUi6hoKgpuL7gD4Gz7j7wvlwfNCsCwXH7cvhwu2iEOKm47hrrt3J
+	WTWrqW2IuQzm94aqidTlZ7E4ozNWtNk8pjMACH6dinL6EOEncTxmryikv/ugCmNU7dniMogfKyKus
+	KHiSgJEg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rVwCv-0046Nj-1s;
+	Fri, 02 Feb 2024 16:16:01 +0000
+Date: Fri, 2 Feb 2024 16:16:01 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Mimi Zohar <zohar@linux.ibm.com>, linux-unionfs@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fs: remove the inode argument to ->d_real() method
+Message-ID: <20240202161601.GA976131@ZenIV>
+References: <20240202110132.1584111-1-amir73il@gmail.com>
+ <20240202110132.1584111-3-amir73il@gmail.com>
+ <20240202160509.GZ2087318@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131230827.207552-1-bschubert@ddn.com> <20240131230827.207552-5-bschubert@ddn.com>
- <CAJfpeguYDpLN9xPycd7UMwJfp-mctc38e4KFr2v_CvPSDayxEQ@mail.gmail.com>
-In-Reply-To: <CAJfpeguYDpLN9xPycd7UMwJfp-mctc38e4KFr2v_CvPSDayxEQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 2 Feb 2024 18:07:26 +0200
-Message-ID: <CAOQ4uxgvJ_BPKo2oLJo4XuZnZnk0t1p_phhdVfb-vE6JzCqePQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] fuse: prepare for failing open response
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, dsingh@ddn.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240202160509.GZ2087318@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Feb 2, 2024 at 5:55=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> w=
-rote:
->
-> On Thu, 1 Feb 2024 at 00:09, Bernd Schubert <bschubert@ddn.com> wrote:
-> >
-> > From: Amir Goldstein <amir73il@gmail.com>
-> >
-> > In preparation for inode io modes, a server open response could fail
-> > due to conflicting inode io modes.
-> >
-> > Allow returning an error from fuse_finish_open() and handle the error i=
-n
-> > the callers. fuse_dir_open() can now call fuse_sync_release(), so handl=
-e
-> > the isdir case correctly.
->
-> Another question: will fuse_finish_open() fail for any reason other
-> than due to an interrupted wait?
->
+On Fri, Feb 02, 2024 at 04:05:09PM +0000, Al Viro wrote:
 
-Yes. Definitely. With fuse passthrough.
-Wait for parallel dio is Benrd's share of the patch set.
-My interest was always to deny cached open and passthrough
-open of the same inode and passthrough file open to a conflicting backing f=
-ile
-as we have agreed [1]. See this passthough open commit for example:
+> Use After Free.  Really.  And "untrusted" in the function name does not
+> refer to "it might be pointing to unmapped page" - it's just "don't
+> expect anything from the characters you might find there, including
+> the presence of NUL".
 
-https://github.com/amir73il/linux/commit/9422b02931ca4be5471230645a2b4a6723=
-f99d0e
+Argh...  s/including/beyond the/ - sorry.  Messed up rewriting the
+sentence.
 
-I will also split fuse_finish_dir_open() as you suggested.
+"Untrusted" refers to the lack of whitespaces, control characters, '"',
+etc.  What audit_log_untrustedstring(ab, string) expects is
+	* string pointing to readable memory object
+	* the object remaining unchanged through the call
+	* NUL existing somewhere in that object.
 
-Thanks,
-Amir.
-
-[1] https://lore.kernel.org/linux-fsdevel/CAJfpegsoHtp_VthZRGfcoBREZ0pveb4w=
-YYiKVEnCxaTgGEaeWw@mail.gmail.com/
+All of those assertions can be violated once the object string
+used to point to has been passed to kmem_cache_free().  Which is what
+can very well happen to filename pointer in this case.
 
