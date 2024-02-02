@@ -1,62 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-10066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10067-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50425847718
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 19:08:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE3084776E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 19:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BFA028D104
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 18:08:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1398DB28CBF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 18:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0527A14D445;
-	Fri,  2 Feb 2024 18:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B9D14D445;
+	Fri,  2 Feb 2024 18:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gnjQ6rnT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFE4E14C598;
-	Fri,  2 Feb 2024 18:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A29A14D42C;
+	Fri,  2 Feb 2024 18:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706897286; cv=none; b=ImgoTBOYcQ3fG94ufq4GN5Ad2JBiPm/zz6YZtv1HURte4x1jKhIzecJCT7ekvvKXEK5xRQPlP1Wk1OcetbRupGZarBawFk6UnOqlwOK2kqMGJmXhZldrIQnJU1A07rPoRsXvqpzxfHwLxvxJIp524ZY6aIkoUU7mJkRvtCpZ4gY=
+	t=1706898461; cv=none; b=bUZK4N5gG3/J6sux5mF90240QViApfAMJ1dj01w/5Q5iykOAqmARL7l2EhAigLRmexQBDm82Nx9gq/mVcj9oH6MzbAcZjt1GA0RmUwoIW6e5N6O4wIfghs8riHG4bsOS5HzdOFvzD6xA4MkhAnrfFWjPnlh7nJ0dd6ewDZKJkvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706897286; c=relaxed/simple;
-	bh=9rwlNwy8wTSVXhT4XMjY34L+K/gYaFA32HXn/coWBE4=;
+	s=arc-20240116; t=1706898461; c=relaxed/simple;
+	bh=QZie7bDJjbOlPSiKRl0NruNxTgQ/pAzQQ20lqpepnI4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=brlpoNJszZ5cpPiy1f/58GCmp3/WAQOsOyLEsR850sj1IvX3boKknCsna7ZsW/EIUSkWvtXZtvwh2DTdLyGn5IUDkadk5lwameNZy8AzqpO4rzkBg3CHyNpqGPw/+WJA+xrnxTODpVx0hLjln5gGPlwpXFioKZnPatrZjdt64Ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 748E119F0;
-	Fri,  2 Feb 2024 10:08:41 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.58])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 37B2C3F762;
-	Fri,  2 Feb 2024 10:07:57 -0800 (PST)
-Date: Fri, 2 Feb 2024 18:07:54 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Doug Anderson <dianders@chromium.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=lXNCl09Mrc918MhjAvO0add0Sqsmov+aAJhK8HbcbnWFco0Vv5IJepp7Vbf7vuV155QiZplMvUjH8tD+E2gVwye+FN7xWGSQz4UeBCg6fJBcMc1EzKPfj9BLVpJuV2Q9EGusI1SCEAVJlJtbjST7ixDtdQJv+bh7+2fOacsQtig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gnjQ6rnT; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=i4kd9eGtAs1wPsvn+kBqonJpOUZ4KCNMFHSGzr+hHxc=; b=gnjQ6rnTPVlsWkN5aoxyAOqIXH
+	tLS6iWrLkYI/X7dwPxbuxYrEh+BE8v6ytjPUjA95dY19KQJXt0zcmBnvlRMCrx2TqMocQquBO3gXL
+	2LFCp0ngm0owGoVGMycZCaGv3ESdscMQ937HOmEhPZzY0i2Ey2beER74LBKZbDkdh/CUHBjYTLtwV
+	3jPnL2C9j7PKSojL4C1EUiJ8uf2zw5vkJ2NqIrnMVbbP+5gAGn4ZAofMtf2RHQEFxHCuuKsPv2BvZ
+	M7hqRPW6BG9HX5EnL77ao2jNh7U27pIAxz4Wxi+9adjJNLIAXfLOR1au+Pzx78PvxOdXKJjXoXXd6
+	Ie+mxI9A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rVyGC-004Ac8-0t;
+	Fri, 02 Feb 2024 18:27:32 +0000
+Date: Fri, 2 Feb 2024 18:27:32 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, Miklos Szeredi <miklos@szeredi.hu>,
 	Christian Brauner <brauner@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>,
-	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Oleg Nesterov <oleg@redhat.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] regset: use vmalloc() for regset_get_alloc()
-Message-ID: <Zb0vem7KC28gmT5U@e133380.arm.com>
-References: <20240201171159.1.Id9ad163b60d21c9e56c2d686b0cc9083a8ba7924@changeid>
- <20240202012249.GU2087318@ZenIV>
- <CAD=FV=X5dpMyCGg4Xn+ApRwmiLB5zB0LTMCoSfW_X6eAsfQy8w@mail.gmail.com>
- <20240202030438.GV2087318@ZenIV>
- <CAD=FV=Wbq7R9AirvxnW1aWoEnp2fWQrwBsxsDB46xbfTLHCZ4w@mail.gmail.com>
- <20240202034925.GW2087318@ZenIV>
- <20240202040503.GX2087318@ZenIV>
- <CAD=FV=X93KNMF4NwQY8uh-L=1J8PrDFQYu-cqSd+KnY5+Pq+_w@mail.gmail.com>
- <20240202164947.GC2087318@ZenIV>
- <20240202165524.GD2087318@ZenIV>
+	Mimi Zohar <zohar@linux.ibm.com>, linux-unionfs@vger.kernel.org,
+	linux-integrity@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] fs: remove the inode argument to ->d_real() method
+Message-ID: <20240202182732.GE2087318@ZenIV>
+References: <20240202110132.1584111-1-amir73il@gmail.com>
+ <20240202110132.1584111-3-amir73il@gmail.com>
+ <20240202160509.GZ2087318@ZenIV>
+ <20240202161601.GA976131@ZenIV>
+ <063577b8-3d7f-4a7f-8ed7-332601c98122@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,91 +66,97 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240202165524.GD2087318@ZenIV>
+In-Reply-To: <063577b8-3d7f-4a7f-8ed7-332601c98122@linux.ibm.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Feb 02, 2024 at 04:55:24PM +0000, Al Viro wrote:
-> On Fri, Feb 02, 2024 at 04:49:47PM +0000, Al Viro wrote:
-> > > +folks from `./scripts/get_maintainer.pl -f arch/arm64/kernel/ptrace.c`
-> > > 
-> > > Trying to follow the macros to see where "n" comes from is a maze of
-> > > twisty little passages, all alike. Hopefully someone from the ARM
-> > > world can help tell if the value of 17474 for n here is correct or if
-> > > something is wonky.
+On Fri, Feb 02, 2024 at 12:34:15PM -0500, Stefan Berger wrote:
 
-Nope, that's the "correct" answer...
-
-> > 
-> > It might be interesting to have it print the return value of __regset_get()
-> > in those cases; if *that* is huge, we really have a problem.  If it ends up
-> > small enough to fit into few pages, OTOH...
-> > 
-> > SVE_VQ_MAX is defined as 255; is that really in units of 128 bits?  IOW,
-> > do we really expect to support 32Kbit registers?  That would drive the
-> > size into that range, all right, but it would really suck on context
-> > switches.
-> > 
-> > I could be misreading it, though - the macros in there are not easy to
-> > follow and I've never dealt with SVE before, so take the above with
-> > a cartload of salt.
+> I suppose this would provide a stable name?
 > 
-> Worse - it's SVE_VQ_MAX is 512; sorry about the confusion.  OK, that would
-> certainly explain the size (header + 32 registers, each up to 512 * 16 bytes),
-> but... ouch.
+> diff --git a/security/integrity/ima/ima_api.c
+> b/security/integrity/ima/ima_api.c
+> index 597ea0c4d72f..48ae6911139b 100644
+> --- a/security/integrity/ima/ima_api.c
+> +++ b/security/integrity/ima/ima_api.c
+> @@ -244,7 +244,6 @@ int ima_collect_measurement(struct integrity_iint_cache
+> *iint,
+>         const char *audit_cause = "failed";
+>         struct inode *inode = file_inode(file);
+>         struct inode *real_inode = d_real_inode(file_dentry(file));
+> -       const char *filename = file->f_path.dentry->d_name.name;
+>         struct ima_max_digest_data hash;
+>         struct kstat stat;
+>         int result = 0;
+> @@ -313,11 +312,17 @@ int ima_collect_measurement(struct
+> integrity_iint_cache *iint,
+>                 iint->flags |= IMA_COLLECTED;
+>  out:
+>         if (result) {
+> +               struct qstr *qstr = &file->f_path.dentry->d_name;
+> +               char buf[NAME_MAX + 1];
+> +
+>                 if (file->f_flags & O_DIRECT)
+>                         audit_cause = "failed(directio)";
+> 
+> +               memcpy(buf, qstr->name, qstr->len);
+> +               buf[qstr->len] = 0;
 
-Mark Brown [+ Cc] has been taking care of SVE in my absence, but
-from memory:
+	Think what happens if you fetch ->len in state prior to
+rename and ->name - after.  memcpy() from one memory object
+with length that matches another, UAF right there.
 
-The SVE architecture has a really big maximum vector size (16 * 128 =
-2048 bits), and there is a theoretical possibility of it getting bigger
-in the future, though unlikely.
+	If you want to take a snapshot of the name, just use
+take_dentry_name_snapshot() - that will copy name if it's
+short or grab a reference to external name if the length is
+>= 40, all of that under ->d_lock to stabilize things.
 
-Real platforms to date have a much smaller limit, though Qemu can go up
-to 2048 bits IIUC.
+	Paired with release_dentry_name_snapshot(), to
+drop the reference to external name if one had been taken.
+No need to copy in long case (external names are never
+rewritten) and it's kinder on the stack footprint that
+way (56 bytes vs. 256).
 
-My aim when working on the ABI was to future-proof it against
-foreseeable expansion on the architecture side, but this does mean that
-we cannot statically determine a sane limit for the vector size.
+	Something like this (completely untested):
 
+fix a UAF in ima_collect_measurement()
 
-I suppose we could have had a more sane limit built into the kernel or a
-Kconfig option for it, but it seemed simpler just to determine the size
-dynamically depending on the task's current state.  This is not so
-important for coredumps, but for the the gdbstub wire protocol etc. it
-seemed undesirable to have the regset larger than needed.
+->d_name.name can change on rename and the earlier value can get freed;
+there are conditions sufficient to stabilize it (->d_lock on denty,
+->d_lock on its parent, ->i_rwsem exclusive on the parent's inode,
+rename_lock), but none of those are met in ima_collect_measurement().
+Take a stable snapshot of name instead.
 
-Hence the reason for adding ->get_size() in
-27e64b4be4b8 ("regset: Add support for dynamically sized regsets").
-
-What I guess was not so obvious from the commit message is the
-expected relationship between the actual and maximum possible size
-of the regset: for SVE the actual size is in practice going to be *much*
-smaller than the max, while the max is crazy large because of being an
-ABI design limit chosen for futureproofing purposes.
-
-
-
-So, if the only reason for trying to migrate to vmalloc() is to cope
-with an insanely sized regset on arm64, I think somehow or other we can
-avoid that.
-
-Options:
-
- a) bring back ->get_size() so that we can allocate the correct size
-before generating the regset data;
-
- b) make aarch64_regsets[] __ro_after_init and set
-aarch64_regsets[REGSET_SVE].n based on the boot-time probed maximum size
-(which will be sane); or
-
- c) allow membufs to grow if needed (sounds fragile though, and may be
-hard to justify just for one arch?).
-
-
-Thoughts?
-
-If people don't want to bring back get_size(), then (b) doesn't look
-too bad.
-
-Cheers
----Dave
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/security/integrity/ima/ima_api.c b/security/integrity/ima/ima_api.c
+index 597ea0c4d72f..d8be2280d97b 100644
+--- a/security/integrity/ima/ima_api.c
++++ b/security/integrity/ima/ima_api.c
+@@ -244,7 +244,6 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 	const char *audit_cause = "failed";
+ 	struct inode *inode = file_inode(file);
+ 	struct inode *real_inode = d_real_inode(file_dentry(file));
+-	const char *filename = file->f_path.dentry->d_name.name;
+ 	struct ima_max_digest_data hash;
+ 	struct kstat stat;
+ 	int result = 0;
+@@ -313,12 +312,16 @@ int ima_collect_measurement(struct integrity_iint_cache *iint,
+ 		iint->flags |= IMA_COLLECTED;
+ out:
+ 	if (result) {
++		struct name_snapshot filename;
++
++		take_dentry_name_snapshot(&filename, file->f_path.dentry);
+ 		if (file->f_flags & O_DIRECT)
+ 			audit_cause = "failed(directio)";
+ 
+ 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode,
+-				    filename, "collect_data", audit_cause,
+-				    result, 0);
++				    filename.name.name, "collect_data",
++				    audit_cause, result, 0);
++		release_dentry_name_snapshot(&filename);
+ 	}
+ 	return result;
+ }
 
