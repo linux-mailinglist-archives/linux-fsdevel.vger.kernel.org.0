@@ -1,121 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-9954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278F4846691
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 04:34:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D210184669F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 04:49:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D08CE1F28141
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 03:34:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7629BB223B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 03:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70BBE57C;
-	Fri,  2 Feb 2024 03:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 662B5E55E;
+	Fri,  2 Feb 2024 03:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b="Gulj+Tu+"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DMWQ5eFU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99DBE54E;
-	Fri,  2 Feb 2024 03:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B22FD514;
+	Fri,  2 Feb 2024 03:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706844839; cv=none; b=KNJZA9lo3ajFf2IMDSOLcArd0PxNYN9l8/gunVDByVs1Eg/w6EBzDl1cOrZhsq2CwI7zcI7GqlOFu4Zl9rFTmCnKZhb+5g5mbkMysgqKX+iTmxJdFVW3hK+4ZspAJmLgDdMQhEaKV8U2Kl3eLR+fJHD9VPSXoWCqMMPrD+pK6vU=
+	t=1706845775; cv=none; b=dHn1H08TqHLwDvCEskSJnBnmfIWjWqDhZlVLOCbtFTIXKIMjUj179t0TPdeB54xKU/0R3p/Eb00zx45VQBU9aDuS9rMwsiwKnk1TcGBHWfQRAQewSebImTmsM7RPUlAlpZrO3zzlCAtL7XoimhYuS8A6IelAsgBnATeZ5eG+k1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706844839; c=relaxed/simple;
-	bh=OyxBJ+A0yGlHECRXeVfAbJEuoSWpFLSlFOQ48riM33o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=i4sSGl/U8dp8p6aswXslzMU4LJU9ZDraxfh2qWqI2U1ReF8xkusyuqOi8aoD3tEInb+cjsIoUJmyJCvga1T++t+xRIq8DL00DKv/7taexMCj5/haVe1LXZC7uN+K+YQOu+CdkVqO1FHvIRWi754ZwxM+uYrqjjeENIoNfuugJaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; dkim=pass (2048-bit key) header.d=windriver.com header.i=@windriver.com header.b=Gulj+Tu+; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 4121b31T011765;
-	Fri, 2 Feb 2024 03:33:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=windriver.com;
-	 h=from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding:content-type; s=
-	PPS06212021; bh=ZB6EemBjg4kqn54hPi694lZL5cl9eBwRNQ7kuQcXWig=; b=
-	Gulj+Tu+3crXaFoBEGXPli3BzPOFtQ0HZxb/51R5LRhLop95qlGv2fEQRsFSZKhb
-	fsaOaieQDWOx1q6tlCRC11ZwoaADhez6zTlMsMfvwMTjG6gGj+Bb6pijCcVUNM2Z
-	IkGJQ18zpO2QlQa+kxCxqXr8knJv4bQcN3Q8S+If+5CGdK0TYVeFrlon9h7LlQq3
-	3gXNWYNKDCTTKqCMsyI3Uj46r1lnCHjgbYrGsXGSPhg82MaPuvUNAWZWRKPMhG6g
-	iNje9YaYkf/zvHoP866ZE4kqR/nzQPcfpnFsW1efHL0Woa44Xnvobgxg/K2P9Omg
-	eVxkjPyhvlmAbKXcPxsGKQ==
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 3w0pvcr28v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Fri, 02 Feb 2024 03:33:38 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 1 Feb 2024 19:33:34 -0800
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 1 Feb 2024 19:33:32 -0800
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com>
-CC: <almaz.alexandrovich@paragon-software.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <ntfs3@lists.linux.dev>, <syzkaller-bugs@googlegroups.com>
-Subject: [PATCH] fs/ntfs3: fix oob in mi_enum_attr
-Date: Fri, 2 Feb 2024 11:33:34 +0800
-Message-ID: <20240202033334.1784409-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <00000000000012d4ed0610537e34@google.com>
-References: <00000000000012d4ed0610537e34@google.com>
+	s=arc-20240116; t=1706845775; c=relaxed/simple;
+	bh=Cv0w8oHTl4+0Yk8RFWfy1a7sSAUtwxQAmimPK9LrkYk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=erYsDHAqyQxoiAXVerxmM6jdxAGOza/AycLFPbP+XgnajxGXM1qHf4cb0oGsYFO8YKiR0Mk7wX8pXX5yBNvrykxg27tflDnBEebCQ5rRPn+ocNrlIAUUZPvBE0UUcaXRqe2gvz4NHEHxXuMFs0Peqjwft/2fx5lpGzVKr3RQTC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=DMWQ5eFU; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=MqQmRHXIGwvjNURHDffefpzXQRpdMsIdEY9A7rDu3qU=; b=DMWQ5eFUmYBozpEalenAa7mNXn
+	+rWG79SC5S0FeBh7O+UjZsQpnoXvJCVVBhLw+6zi08WhASm4qSZrEBZJx/Vut++peShGggpN2wkbo
+	TgIR+v7RncUizi5tKF1JMv1RHjABhvUhIfS07mcAJidcebQ2/Mz52bNasIXlhneFX/WRJQDltkEwX
+	fDY5uplHT3Cdm27B9udXGf2iMRomH587+Cj+nMtZtqeoJ84zJDVK/XCsnZYBfgkVXp7X5uBWFzBKc
+	y9huFBvzYq/oDfgjKyqdBFwezCFr/HwXNn+eLZUn0TLVOLFQvWNOnWAB+YDrY1qZVQ5bKxNzS4fgt
+	97mdp1ig==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rVkYP-003dd3-0Z;
+	Fri, 02 Feb 2024 03:49:25 +0000
+Date: Fri, 2 Feb 2024 03:49:25 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>, Jan Kara <jack@suse.cz>,
+	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] regset: use vmalloc() for regset_get_alloc()
+Message-ID: <20240202034925.GW2087318@ZenIV>
+References: <20240201171159.1.Id9ad163b60d21c9e56c2d686b0cc9083a8ba7924@changeid>
+ <20240202012249.GU2087318@ZenIV>
+ <CAD=FV=X5dpMyCGg4Xn+ApRwmiLB5zB0LTMCoSfW_X6eAsfQy8w@mail.gmail.com>
+ <20240202030438.GV2087318@ZenIV>
+ <CAD=FV=Wbq7R9AirvxnW1aWoEnp2fWQrwBsxsDB46xbfTLHCZ4w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: jK86FqcCVEdZqEKrJxt2Cghy_RGh0MBu
-X-Proofpoint-ORIG-GUID: jK86FqcCVEdZqEKrJxt2Cghy_RGh0MBu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-01_10,2024-01-31_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 malwarescore=0
- bulkscore=0 clxscore=1011 mlxscore=0 spamscore=0 phishscore=0
- mlxlogscore=574 suspectscore=0 priorityscore=1501 lowpriorityscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2401310000 definitions=main-2402020023
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=Wbq7R9AirvxnW1aWoEnp2fWQrwBsxsDB46xbfTLHCZ4w@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-When the value of attr->size is too large, it can cause overflow when taking
-the next attr. Here, off is used to determine the offset first to avoid problems.
+On Thu, Feb 01, 2024 at 07:15:48PM -0800, Doug Anderson wrote:
+> >
+> > Well, the next step would be to see which regset it is - if you
+> > see that kind of allocation, print regset->n, regset->size and
+> > regset->core_note_type.
+> 
+> Of course! Here are the big ones:
+> 
+> [   45.875574] DOUG: Allocating 279584 bytes, n=17474, size=16,
+> core_note_type=1029
 
-Reported-and-tested-by: syzbot+a426cde6dee8c2884b0b@syzkaller.appspotmail.com
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- fs/ntfs3/record.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+0x405, NT_ARM_SVE
+        [REGSET_SVE] = { /* Scalable Vector Extension */
+                .core_note_type = NT_ARM_SVE,
+                .n = DIV_ROUND_UP(SVE_PT_SIZE(SVE_VQ_MAX, SVE_PT_REGS_SVE),
+                                  SVE_VQ_BYTES),
+                .size = SVE_VQ_BYTES,
 
-diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
-index 53629b1f65e9..a435df98c2b1 100644
---- a/fs/ntfs3/record.c
-+++ b/fs/ntfs3/record.c
-@@ -243,14 +243,14 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
- 		off += asize;
- 	}
- 
--	asize = le32_to_cpu(attr->size);
--
- 	/* Can we use the first field (attr->type). */
- 	if (off + 8 > used) {
- 		static_assert(ALIGN(sizeof(enum ATTR_TYPE), 8) == 8);
- 		return NULL;
- 	}
- 
-+	asize = le32_to_cpu(attr->size);
-+
- 	if (attr->type == ATTR_END) {
- 		/* End of enumeration. */
- 		return NULL;
--- 
-2.43.0
+IDGI.  Wasn't SVE up to 32 * 2Kbit, i.e. 8Kbyte max?  Any ARM folks around?
+Sure, I understand that it's variable-sized and we want to allocate enough
+for the worst case, but can we really get about 280Kb there?  Context switches
+would be really unpleasant on such boxen...
 
+> [   45.884809] DOUG: Allocating 8768 bytes, n=548, size=16, core_note_type=1035
+> [   45.893958] DOUG: Allocating 65552 bytes, n=4097, size=16,
+> core_note_type=1036
+
+0x40c, NT_ARM_ZA.
+                /*
+                 * ZA is a single register but it's variably sized and
+                 * the ptrace core requires that the size of any data
+                 * be an exact multiple of the configured register
+                 * size so report as though we had SVE_VQ_BYTES
+                 * registers. These values aren't exposed to
+                 * userspace.
+                 */
+                .n = DIV_ROUND_UP(ZA_PT_SIZE(SME_VQ_MAX), SVE_VQ_BYTES),
+                .size = SVE_VQ_BYTES,
 
