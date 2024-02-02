@@ -1,238 +1,419 @@
-Return-Path: <linux-fsdevel+bounces-10005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CAF846FBB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 13:04:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1809846FBD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 13:04:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12FF8288F72
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 12:04:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36EC01F27225
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 12:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170F013E22A;
-	Fri,  2 Feb 2024 12:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDC313EFEC;
+	Fri,  2 Feb 2024 12:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hADevLd8"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="saSm+x/j";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/1irLNxV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="saSm+x/j";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/1irLNxV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E33D417C60
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 12:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0006E13E223;
+	Fri,  2 Feb 2024 12:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706875439; cv=none; b=ceC1VSooeE2DAUsaw3dGxqZ9Qw1qmYmdZhqe+0pxbpVl5FqnGYBmViNa1wu1WvLuFkD75DpT+J9Uc2tHD9CdIGCtzTx5RS7KV+pgkoEsNhOUpH0uYyXYDnL5f1SAugzc11Znrh6MO0xRZAn+ne/tlX1Pwz07dnM+4PG/PpDVbew=
+	t=1706875442; cv=none; b=btV8KzZnjkFeHztvEObxFeyV4I7AdMipaV0DeiK+4Zd+2bONao2fG/h4XvFTK5CQjbSfCcbAsqEw+6ps2VZMOxhhQQr2CFw76ljU58rEmhI7q62K4LKhB1a5xgYxtO4SCxFcwmpqjXzJhZcEGkCVm868IYSmrVGgvjzIL8TInlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706875439; c=relaxed/simple;
-	bh=oRlb8kLrvumbX6tNIlnYx8YiRov44TlV8sDseEhIrCg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lz9eGkPUUfNLMBGZz0c29yii9boi7xm4uL9GS5RQk/23poBdeC6D7y+1zxjK8x4/1u83B0VLfIaL4j/hvtQXtBmqWETIufwKGqf7wnA1ZarHImKVYrxbvx2DW/k+3sRq7cBt+W9WajNSFlA6aU4q7ahujWRzch6Eb5fjMDVM/7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hADevLd8; arc=none smtp.client-ip=209.85.160.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-214c940145bso1101847fac.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 04:03:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706875437; x=1707480237; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zs6aJUh5jEis10Uo3A13hOMzpnUIaN+M3EX1dIt2Pj8=;
-        b=hADevLd8qfLsJuQtCGUYck9PVGNwYmuZ5xJjA/DQjoK3ZreIU703tGXYjxSx2mbQpd
-         xwuTzgzWBExKK7gArMiqMKc6JBtHyuxQS4/v4La3ha42AhjSIWcC9KXjbaBuPG4gkQsU
-         TjnHy+9SO7agT67+2atfUf9NA36CiO9amL1hNCBUfGuY+iCdeWWLx4/TisgVPHC4x7a3
-         IR5XoxZUCSQ1AMhSi00FdCJ5fkaLY5vtFg6rIGPM0XnJwpaVaY5UzrhJ4SiU8FvWseKw
-         GNE2JNLu9ac1M6nGfg3fIdt6e6Wv2jn5vKTSp/PPA+QMORSALXHKV7cgaA39JiMz1P0m
-         IRZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706875437; x=1707480237;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zs6aJUh5jEis10Uo3A13hOMzpnUIaN+M3EX1dIt2Pj8=;
-        b=GznQ2veUBnVv6cP6PK0XCPeCaLG8ONa37OoniOYUmthDKzZ3XANrBEIArYhTATg3MQ
-         6sC9NIO+sMBmUkc6DtFlr7grcXzyD3i4nahKfKq5c5nBiBYId9oP377OB5PmDkjol7Rm
-         M2A+kuT/In2uuCD4oH+AHwak+IYGcZ2Z0B/ZIOKKKqfpoIbkkgeB2tWL/1eNI4JYwBk6
-         oIpe9RQazwy0RArEd9UoT7DOj6s2BLBxmMHtqrxQTV0eA5iYLQRSK/wFMSpXntFqshL+
-         VEJxer8ivS/pueEte1h5E4+4htNv6a09NvwUB++DshF5PeK4ttlBw3eRfm7/zCsHdnUK
-         7prQ==
-X-Gm-Message-State: AOJu0Yz5G091U+YK0u3NUlpW17qLp/v6nvKtMy4R69CJLwoSZMtUvhWZ
-	Jb7SxUrMuim9VZnkqDe0QWVDuh4E8QPBis64yjAlhQeA4JoqJA0Jl9qOw3Ohg8xZHBT7Vyror0k
-	zMEnStUf84lHkTlJeMca9K9dB+Bz2AAHIHZs=
-X-Google-Smtp-Source: AGHT+IFyRd7qc4l5rq3WowPuOYnCa2IM9NWwK/DmTtoft812trGEKflhQZ8z+pERqnR/lIlfIeHjDEtumEsZNQ84p0Y=
-X-Received: by 2002:a05:6871:79a4:b0:218:4be8:3747 with SMTP id
- pb36-20020a05687179a400b002184be83747mr8772931oac.8.1706875436940; Fri, 02
- Feb 2024 04:03:56 -0800 (PST)
+	s=arc-20240116; t=1706875442; c=relaxed/simple;
+	bh=BFWBmU/jYYDXr18HEv5QepWCmCVic6sv2Hcn4F1RciM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JtA1DH2eX4eXJbOgQFQ87R8PMtzcBtNeMheQCWCFXudI1mGfUYG0AU9TXwElscZlLiKHaUi9I5WRww72W3Ym049tHE92PYThYdooRJwZ+f1GV8FmryPKpQAKPwyqNfZvW2yQTG//uZHQg3wU4eC+7ajBhewI0rx36e+79/NErj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=saSm+x/j; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/1irLNxV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=saSm+x/j; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/1irLNxV; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 2588D21C0D;
+	Fri,  2 Feb 2024 12:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706875438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pmbY8x67pQNDCPqTCtNPhT1PrY33JKkZtEBhWWZ3+iQ=;
+	b=saSm+x/j5n6H4gRmcc5tGw1c6uV66OajBEW7XAbF93kWsRtSbU5HaW1SrZnVDAEXsR1GU5
+	yORwKFEkoEuJfpmsddZg9373naf3OJoh3OytAuAa8siTuZL542xfht0nGqxnZXetm1L1zC
+	/fnRYtZi4OK2OVI7H+WxD/QfecpjoyU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706875438;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pmbY8x67pQNDCPqTCtNPhT1PrY33JKkZtEBhWWZ3+iQ=;
+	b=/1irLNxVJ4XNQ/a5jkC5+dlehjskvnozLXk1qSBD1m/AwRn8AZ9xIQ0xYIg/MUvY3jZ5o4
+	wNtP0Df4WvMKz/Bw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1706875438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pmbY8x67pQNDCPqTCtNPhT1PrY33JKkZtEBhWWZ3+iQ=;
+	b=saSm+x/j5n6H4gRmcc5tGw1c6uV66OajBEW7XAbF93kWsRtSbU5HaW1SrZnVDAEXsR1GU5
+	yORwKFEkoEuJfpmsddZg9373naf3OJoh3OytAuAa8siTuZL542xfht0nGqxnZXetm1L1zC
+	/fnRYtZi4OK2OVI7H+WxD/QfecpjoyU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1706875438;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pmbY8x67pQNDCPqTCtNPhT1PrY33JKkZtEBhWWZ3+iQ=;
+	b=/1irLNxVJ4XNQ/a5jkC5+dlehjskvnozLXk1qSBD1m/AwRn8AZ9xIQ0xYIg/MUvY3jZ5o4
+	wNtP0Df4WvMKz/Bw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 18BDA13A58;
+	Fri,  2 Feb 2024 12:03:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id kFwFBi7avGUweQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 02 Feb 2024 12:03:58 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id AFDB1A0809; Fri,  2 Feb 2024 13:03:57 +0100 (CET)
+Date: Fri, 2 Feb 2024 13:03:57 +0100
+From: Jan Kara <jack@suse.cz>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, peterz@infradead.org,
+	boqun.feng@gmail.com, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 1/4] fs/pipe: Convert to lockdep_cmp_fn
+Message-ID: <20240202120357.tfjdri5rfd2onajl@quack3>
+References: <20240127020833.487907-1-kent.overstreet@linux.dev>
+ <20240127020833.487907-2-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131230827.207552-1-bschubert@ddn.com> <20240131230827.207552-5-bschubert@ddn.com>
- <CAJfpeguF0ENfGJHYH5Q5o4gMZu96jjB4Ax4Q2+78DEP3jBrxCQ@mail.gmail.com>
- <CAOQ4uxgv67njK9CvbUfdqF8WV_cFzrnaHdPB6-qiQuKNEDvvwA@mail.gmail.com>
- <CAJfpegupKaeLX_-G-DqR0afC1JsT21Akm6TeMK9Ugi6MBh3fMA@mail.gmail.com>
- <CAOQ4uxiXEc-p7JY03RH2hJg7d+R1EtwGdBowTkOuaT9Ps_On8Q@mail.gmail.com>
- <CAJfpegs4hQg93Dariy5hz4bsxiFKoRuLsB5aRO4S6iiu6_DAKw@mail.gmail.com> <CAOQ4uxhNS81=Fry+K6dF45ab==Y4ijpWUkUmvpf2E1hJrkzC3w@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhNS81=Fry+K6dF45ab==Y4ijpWUkUmvpf2E1hJrkzC3w@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 2 Feb 2024 14:03:45 +0200
-Message-ID: <CAOQ4uxgrgoEZ34Deyg3RYJJM8+XuWVtDB9tzcXCiQvzcba8bhQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] fuse: prepare for failing open response
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, dsingh@ddn.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240127020833.487907-2-kent.overstreet@linux.dev>
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_SEVEN(0.00)[9];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 FREEMAIL_CC(0.00)[vger.kernel.org,infradead.org,gmail.com,zeniv.linux.org.uk,kernel.org,suse.cz];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Flag: NO
 
-On Thu, Feb 1, 2024 at 6:46=E2=80=AFPM Amir Goldstein <amir73il@gmail.com> =
-wrote:
->
-> On Thu, Feb 1, 2024 at 12:51=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu=
-> wrote:
-> >
-> > On Thu, 1 Feb 2024 at 11:41, Amir Goldstein <amir73il@gmail.com> wrote:
-> >
-> > > I was considering splitting fuse_finish_open() to the first part that
-> > > can fail and the "finally" part that deals with attributes, but seein=
-g
-> > > that this entire chunk of atomic_o_trunc code in fuse_finish_open()
-> > > is never relevant to atomic_open(), I'd rather just move it out
-> > > into fuse_open_common() which has loads of other code related to
-> > > atomic_o_trunc anyway?
-> >
-> > Yep.
->
-> FWIW, I pushed some cleanups to:
->
-> https://github.com/amir73il/linux/commits/fuse_io_mode-wip/
->
-> * e71b0c0356c8 - (github/fuse_io_mode-wip) fuse: introduce inode io modes
-> * 081ddd63a9ff - fuse: prepare for failing open response
-> * 437b84a47a8a - fuse: allocate ff->release_args only if release is neede=
-d
-> * e2df18f9a3d6 - fuse: factor out helper fuse_truncate_update_attr()
->
-> e2df18f9a3d6 is the O_TRUNC change discussed above.
-> 437b84a47a8a gets rid of the isdir argument to fuse_file_put(), so this
-> one liner that you disliked is gone.
->
-> I will see if I can also get the opendir separation cleanup done.
->
+On Fri 26-01-24 21:08:28, Kent Overstreet wrote:
+> *_lock_nested() is fundamentally broken; lockdep needs to check lock
+> ordering, but we cannot device a total ordering on an unbounded number
+> of elements with only a few subclasses.
+> 
+> the replacement is to define lock ordering with a proper comparison
+> function.
+> 
+> fs/pipe.c was already doing everything correctly otherwise, nothing
+> much changes here.
+> 
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 
-This is what I have in WIP branch - not sure if that is what you meant:
+I had to digest for a while what this new lockdep lock ordering feature is
+about. I have one pending question - what is the motivation of this
+conversion of pipe code? AFAIU we don't have any problems with lockdep
+annotations on pipe->mutex because there are always only two subclasses?
 
-* 285a83f439d8 - (github/fuse_io_mode-wip) fuse: introduce inode io modes
-* cf7e1707a319 - fuse: break up fuse_open_common()
-* d8fcee9252ca - fuse: prepare for failing open response
-* 5e4786da5d6e - fuse: allocate ff->release_args only if release is needed
-* 64a6a415239c - fuse: factor out helper fuse_truncate_update_attr()
+								Honza
 
-Thanks,
-Amir.
-
-commit cf7e1707a31990ed5df1294047909fce60cc3ec1
-Author: Amir Goldstein <amir73il@gmail.com>
-Date:   Fri Feb 2 13:30:30 2024 +0200
-
-    fuse: break up fuse_open_common()
-
-    fuse_open_common() has a lot of code relevant only for regular files an=
-d
-    O_TRUNC in particular.
-
-    Copy the little bit of remaining code into fuse_dir_open() and stop usi=
-ng
-    this common helper for directory open.
-
-    Suggested-by: Miklos Szeredi <miklos@szeredi.hu>
-    Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 27daf0bf84ad..3498255402fe 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1632,7 +1632,27 @@ static const char *fuse_get_link(struct dentry
-*dentry, struct inode *inode,
-
- static int fuse_dir_open(struct inode *inode, struct file *file)
- {
--       return fuse_open_common(inode, file, true);
-+       struct fuse_mount *fm =3D get_fuse_mount(inode);
-+       struct fuse_inode *fi =3D get_fuse_inode(inode);
-+       int err;
-+
-+       if (fuse_is_bad(inode))
-+               return -EIO;
-+
-+       err =3D generic_file_open(inode, file);
-+       if (err)
-+               return err;
-+
-+       err =3D fuse_do_open(fm, get_node_id(inode), file, true);
-+       if (!err) {
-+               struct fuse_file *ff =3D file->private_data;
-+
-+               err =3D fuse_finish_open(inode, file);
-+               if (err)
-+                       fuse_sync_release(fi, ff, file->f_flags);
-+       }
-+
-+       return err;
- }
-
- static int fuse_dir_release(struct inode *inode, struct file *file)
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 891bfa8a6724..1d6b3499c069 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -229,7 +229,7 @@ static void fuse_truncate_update_attr(struct inode
-*inode, struct file *file)
-        fuse_invalidate_attr_mask(inode, FUSE_STATX_MODSIZE);
- }
-
--int fuse_open_common(struct inode *inode, struct file *file, bool isdir)
-+int fuse_open(struct inode *inode, struct file *file)
- {
-        struct fuse_mount *fm =3D get_fuse_mount(inode);
-        struct fuse_inode *fi =3D get_fuse_inode(inode);
-@@ -260,7 +260,7 @@ int fuse_open_common(struct inode *inode, struct
-file *file, bool isdir)
-        if (is_wb_truncate || dax_truncate)
-                fuse_set_nowrite(inode);
-
--       err =3D fuse_do_open(fm, get_node_id(inode), file, isdir);
-+       err =3D fuse_do_open(fm, get_node_id(inode), file, false);
-        if (!err) {
-                ff =3D file->private_data;
-                err =3D fuse_finish_open(inode, file);
-@@ -359,11 +359,6 @@ void fuse_release_common(struct file *file, bool isdir=
-)
-                          (fl_owner_t) file, isdir);
- }
-
--static int fuse_open(struct inode *inode, struct file *file)
--{
--       return fuse_open_common(inode, file, false);
--}
--
- static int fuse_release(struct inode *inode, struct file *file)
- {
-        struct fuse_conn *fc =3D get_fuse_conn(inode);
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 536b4515c2c8..9ad5f882bd0a 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1034,8 +1034,6 @@ void fuse_read_args_fill(struct fuse_io_args
-*ia, struct file *file, loff_t pos,
- /**
-  * Send OPEN or OPENDIR request
-  */
--int fuse_open_common(struct inode *inode, struct file *file, bool isdir);
--
- struct fuse_file *fuse_file_alloc(struct fuse_mount *fm, bool release);
- void fuse_file_free(struct fuse_file *ff);
- int fuse_finish_open(struct inode *inode, struct file *file);
---
+> ---
+>  fs/pipe.c | 81 +++++++++++++++++++++++++------------------------------
+>  1 file changed, 36 insertions(+), 45 deletions(-)
+> 
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index f1adbfe743d4..50c8a8596b52 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -76,18 +76,20 @@ static unsigned long pipe_user_pages_soft = PIPE_DEF_BUFFERS * INR_OPEN_CUR;
+>   * -- Manfred Spraul <manfred@colorfullife.com> 2002-05-09
+>   */
+>  
+> -static void pipe_lock_nested(struct pipe_inode_info *pipe, int subclass)
+> +#define cmp_int(l, r)		((l > r) - (l < r))
+> +
+> +#ifdef CONFIG_PROVE_LOCKING
+> +static int pipe_lock_cmp_fn(const struct lockdep_map *a,
+> +			    const struct lockdep_map *b)
+>  {
+> -	if (pipe->files)
+> -		mutex_lock_nested(&pipe->mutex, subclass);
+> +	return cmp_int((unsigned long) a, (unsigned long) b);
+>  }
+> +#endif
+>  
+>  void pipe_lock(struct pipe_inode_info *pipe)
+>  {
+> -	/*
+> -	 * pipe_lock() nests non-pipe inode locks (for writing to a file)
+> -	 */
+> -	pipe_lock_nested(pipe, I_MUTEX_PARENT);
+> +	if (pipe->files)
+> +		mutex_lock(&pipe->mutex);
+>  }
+>  EXPORT_SYMBOL(pipe_lock);
+>  
+> @@ -98,28 +100,16 @@ void pipe_unlock(struct pipe_inode_info *pipe)
+>  }
+>  EXPORT_SYMBOL(pipe_unlock);
+>  
+> -static inline void __pipe_lock(struct pipe_inode_info *pipe)
+> -{
+> -	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
+> -}
+> -
+> -static inline void __pipe_unlock(struct pipe_inode_info *pipe)
+> -{
+> -	mutex_unlock(&pipe->mutex);
+> -}
+> -
+>  void pipe_double_lock(struct pipe_inode_info *pipe1,
+>  		      struct pipe_inode_info *pipe2)
+>  {
+>  	BUG_ON(pipe1 == pipe2);
+>  
+> -	if (pipe1 < pipe2) {
+> -		pipe_lock_nested(pipe1, I_MUTEX_PARENT);
+> -		pipe_lock_nested(pipe2, I_MUTEX_CHILD);
+> -	} else {
+> -		pipe_lock_nested(pipe2, I_MUTEX_PARENT);
+> -		pipe_lock_nested(pipe1, I_MUTEX_CHILD);
+> -	}
+> +	if (pipe1 > pipe2)
+> +		swap(pipe1, pipe2);
+> +
+> +	pipe_lock(pipe1);
+> +	pipe_lock(pipe2);
+>  }
+>  
+>  static void anon_pipe_buf_release(struct pipe_inode_info *pipe,
+> @@ -271,7 +261,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>  		return 0;
+>  
+>  	ret = 0;
+> -	__pipe_lock(pipe);
+> +	mutex_lock(&pipe->mutex);
+>  
+>  	/*
+>  	 * We only wake up writers if the pipe was full when we started
+> @@ -368,7 +358,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>  			ret = -EAGAIN;
+>  			break;
+>  		}
+> -		__pipe_unlock(pipe);
+> +		mutex_unlock(&pipe->mutex);
+>  
+>  		/*
+>  		 * We only get here if we didn't actually read anything.
+> @@ -400,13 +390,13 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>  		if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
+>  			return -ERESTARTSYS;
+>  
+> -		__pipe_lock(pipe);
+> +		mutex_lock(&pipe->mutex);
+>  		was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
+>  		wake_next_reader = true;
+>  	}
+>  	if (pipe_empty(pipe->head, pipe->tail))
+>  		wake_next_reader = false;
+> -	__pipe_unlock(pipe);
+> +	mutex_unlock(&pipe->mutex);
+>  
+>  	if (was_full)
+>  		wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
+> @@ -462,7 +452,7 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+>  	if (unlikely(total_len == 0))
+>  		return 0;
+>  
+> -	__pipe_lock(pipe);
+> +	mutex_lock(&pipe->mutex);
+>  
+>  	if (!pipe->readers) {
+>  		send_sig(SIGPIPE, current, 0);
+> @@ -582,19 +572,19 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+>  		 * after waiting we need to re-check whether the pipe
+>  		 * become empty while we dropped the lock.
+>  		 */
+> -		__pipe_unlock(pipe);
+> +		mutex_unlock(&pipe->mutex);
+>  		if (was_empty)
+>  			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+>  		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+>  		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
+> -		__pipe_lock(pipe);
+> +		mutex_lock(&pipe->mutex);
+>  		was_empty = pipe_empty(pipe->head, pipe->tail);
+>  		wake_next_writer = true;
+>  	}
+>  out:
+>  	if (pipe_full(pipe->head, pipe->tail, pipe->max_usage))
+>  		wake_next_writer = false;
+> -	__pipe_unlock(pipe);
+> +	mutex_unlock(&pipe->mutex);
+>  
+>  	/*
+>  	 * If we do do a wakeup event, we do a 'sync' wakeup, because we
+> @@ -629,7 +619,7 @@ static long pipe_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  
+>  	switch (cmd) {
+>  	case FIONREAD:
+> -		__pipe_lock(pipe);
+> +		mutex_lock(&pipe->mutex);
+>  		count = 0;
+>  		head = pipe->head;
+>  		tail = pipe->tail;
+> @@ -639,16 +629,16 @@ static long pipe_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+>  			count += pipe->bufs[tail & mask].len;
+>  			tail++;
+>  		}
+> -		__pipe_unlock(pipe);
+> +		mutex_unlock(&pipe->mutex);
+>  
+>  		return put_user(count, (int __user *)arg);
+>  
+>  #ifdef CONFIG_WATCH_QUEUE
+>  	case IOC_WATCH_QUEUE_SET_SIZE: {
+>  		int ret;
+> -		__pipe_lock(pipe);
+> +		mutex_lock(&pipe->mutex);
+>  		ret = watch_queue_set_size(pipe, arg);
+> -		__pipe_unlock(pipe);
+> +		mutex_unlock(&pipe->mutex);
+>  		return ret;
+>  	}
+>  
+> @@ -734,7 +724,7 @@ pipe_release(struct inode *inode, struct file *file)
+>  {
+>  	struct pipe_inode_info *pipe = file->private_data;
+>  
+> -	__pipe_lock(pipe);
+> +	mutex_lock(&pipe->mutex);
+>  	if (file->f_mode & FMODE_READ)
+>  		pipe->readers--;
+>  	if (file->f_mode & FMODE_WRITE)
+> @@ -747,7 +737,7 @@ pipe_release(struct inode *inode, struct file *file)
+>  		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+>  		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+>  	}
+> -	__pipe_unlock(pipe);
+> +	mutex_unlock(&pipe->mutex);
+>  
+>  	put_pipe_info(inode, pipe);
+>  	return 0;
+> @@ -759,7 +749,7 @@ pipe_fasync(int fd, struct file *filp, int on)
+>  	struct pipe_inode_info *pipe = filp->private_data;
+>  	int retval = 0;
+>  
+> -	__pipe_lock(pipe);
+> +	mutex_lock(&pipe->mutex);
+>  	if (filp->f_mode & FMODE_READ)
+>  		retval = fasync_helper(fd, filp, on, &pipe->fasync_readers);
+>  	if ((filp->f_mode & FMODE_WRITE) && retval >= 0) {
+> @@ -768,7 +758,7 @@ pipe_fasync(int fd, struct file *filp, int on)
+>  			/* this can happen only if on == T */
+>  			fasync_helper(-1, filp, 0, &pipe->fasync_readers);
+>  	}
+> -	__pipe_unlock(pipe);
+> +	mutex_unlock(&pipe->mutex);
+>  	return retval;
+>  }
+>  
+> @@ -834,6 +824,7 @@ struct pipe_inode_info *alloc_pipe_info(void)
+>  		pipe->nr_accounted = pipe_bufs;
+>  		pipe->user = user;
+>  		mutex_init(&pipe->mutex);
+> +		lock_set_cmp_fn(&pipe->mutex, pipe_lock_cmp_fn, NULL);
+>  		return pipe;
+>  	}
+>  
+> @@ -1144,7 +1135,7 @@ static int fifo_open(struct inode *inode, struct file *filp)
+>  	filp->private_data = pipe;
+>  	/* OK, we have a pipe and it's pinned down */
+>  
+> -	__pipe_lock(pipe);
+> +	mutex_lock(&pipe->mutex);
+>  
+>  	/* We can only do regular read/write on fifos */
+>  	stream_open(inode, filp);
+> @@ -1214,7 +1205,7 @@ static int fifo_open(struct inode *inode, struct file *filp)
+>  	}
+>  
+>  	/* Ok! */
+> -	__pipe_unlock(pipe);
+> +	mutex_unlock(&pipe->mutex);
+>  	return 0;
+>  
+>  err_rd:
+> @@ -1230,7 +1221,7 @@ static int fifo_open(struct inode *inode, struct file *filp)
+>  	goto err;
+>  
+>  err:
+> -	__pipe_unlock(pipe);
+> +	mutex_unlock(&pipe->mutex);
+>  
+>  	put_pipe_info(inode, pipe);
+>  	return ret;
+> @@ -1411,7 +1402,7 @@ long pipe_fcntl(struct file *file, unsigned int cmd, unsigned int arg)
+>  	if (!pipe)
+>  		return -EBADF;
+>  
+> -	__pipe_lock(pipe);
+> +	mutex_lock(&pipe->mutex);
+>  
+>  	switch (cmd) {
+>  	case F_SETPIPE_SZ:
+> @@ -1425,7 +1416,7 @@ long pipe_fcntl(struct file *file, unsigned int cmd, unsigned int arg)
+>  		break;
+>  	}
+>  
+> -	__pipe_unlock(pipe);
+> +	mutex_unlock(&pipe->mutex);
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
