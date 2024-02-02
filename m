@@ -1,75 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-10024-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E94D8471C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 15:19:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 850038471ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 15:29:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FB7CB27338
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 14:19:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22B3F1F2A417
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 14:29:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF5D144631;
-	Fri,  2 Feb 2024 14:19:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1C014077C;
+	Fri,  2 Feb 2024 14:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XKYE+x3u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8041C13E20B
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 14:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2094C17C77;
+	Fri,  2 Feb 2024 14:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706883558; cv=none; b=Uo7DXkt/SO2141xpPXNc1DEKMm4uWFf47ITDzmrtSgSf8tD4t/xzbhBQMpkeFkQnmiAApaiUPk75jw+e7iyk1w+6EMIgz+W0a4MJDqj9CgS+exBjGintoEFfMeTFsDO64EY3ZKSholNhse3BtFXPksP66+LyDT6wJSKZ+bWrL2I=
+	t=1706884188; cv=none; b=dS4ks10DMhLgFSVtNZXkKEFK9MU5Rgbn5JVw0fLuLQINPpmzs9Vom9z7de9RilSpOZqEWBF3PTwtXrJHCsrO/blxs04aqh+UBek90L2aZASGUCN9IieYQIBQruVUNBW8y1/oPmBzFFqAprO6iAE3yA0n/gHuD+9IKNGvyRsjjag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706883558; c=relaxed/simple;
-	bh=WaF05etmv6xtJTE48JVQIk8cC0oCi0ltt4j8nJKOOE4=;
+	s=arc-20240116; t=1706884188; c=relaxed/simple;
+	bh=yQnFMwUPqT1dwV3rgVOzcOu8uxmqyURzCAvr1lxck9M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NH5H8O9qI2QWzsOQ/x0j6iJyJkW/KaMPKJTSesA+hoHltoojBvA3CbFJT203LrCJAqpsetfEmfdjfh0zq7ahJgGCroAePURLv88YFG94m2egPMyQJr1CHLKIIUUAtONy8cjCHJRECtGTzFXWJzOdmLoOhmNmrAX5vumfE6WzPqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=redhat.com; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-42a4516ec46so8171721cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 06:19:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706883554; x=1707488354;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PVCU/QdR6yOLyX27bti1riO+pE3pl8L1u9F5qqx6Qkg=;
-        b=jc/1A/807aWzYjKxJJlk+48Arh1o31IOViOoS/rEhks3ArsGFcJ67iVve+xUmgHY2t
-         Q4nbZK7aP4kqHXhz1vBFfcVHoxSUI76y+ZO+u5aAarVEQDimsIq4sI6TSObG7M5IxA+s
-         IMabGuhPdcYjkED1KonhXujplNTU+G2SXI2cW45iozGw7DozJctHHpWAZrydUI0dDfdO
-         XesTONMNBrhlbqa+0/I9FSl4jDWqjIEBoiRzcryyZzm/Xb++sMcMstO5DLmhRRW3O8TP
-         Eyjmgf2ASTrwR5m6BMY26srFVlAoibreRUr3/XWm985T5Nim6/3Mv41xBoaVaL3iLlid
-         mgOg==
-X-Gm-Message-State: AOJu0YyNJ5Gx0qq3f4a6Rc4zw/ZeKAkreCnwq9jE+MM4/aTTFvKwM+32
-	JkmWDOg7+wRGCfbcw7NGKH1Gv6kawigFotcsGBEaB81ZXtcYcsAFgxMvLxwhug==
-X-Google-Smtp-Source: AGHT+IEhQHanL60HiGDGS5wktHODuGtgnxpWhUHgFtWvSjOpTOhppcIFgAcuMhigP/FHcai4EZhJqw==
-X-Received: by 2002:a05:622a:1748:b0:42b:f6a6:4058 with SMTP id l8-20020a05622a174800b0042bf6a64058mr3632398qtk.15.1706883554394;
-        Fri, 02 Feb 2024 06:19:14 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCW5ywsfSWxoOXCneHQ193arCv1HiGofCXP9MquEQ/empUbTJttjRivFKD+KnwEX2OLj+A5f1aEr9yLYUa5qZ8AjkA8ZvXZpTKFJQS3dsrO1C30IU+HPlrVB1cjjZmcvyv/AMHE3CvAY/rEYfQBU7wZBv1M8VW+VuJA2ex8qh2Tootn+uaTgnTyf0ZjdSZSztAEe2WvzWJIu6J3TanTtKlobuVMRO8kzofHOpoPGwdv+hSk6SxHREzEqsgUmJn08eE/wOkPXdPwGzSBGaxYiBtNU3APPVYeEV5DsX3JXi59bCFDMOvWJbbOXwf5/2vmHmxX9Eg6VkKsXzntKtE6YpfvxvcTKRzq8ah30mL/Vs572aA==
-Received: from localhost (pool-68-160-141-91.bstnma.fios.verizon.net. [68.160.141.91])
-        by smtp.gmail.com with ESMTPSA id ey22-20020a05622a4c1600b0042bed7dc558sm860739qtb.6.2024.02.02.06.19.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Feb 2024 06:19:14 -0800 (PST)
-Date: Fri, 2 Feb 2024 09:19:13 -0500
-From: Mike Snitzer <snitzer@kernel.org>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Don Dutile <ddutile@redhat.com>, Rafael Aquini <raquini@redhat.com>,
-	Dave Chinner <david@fromorbit.com>
-Subject: Re: mm/madvise: set ra_pages as device max request size during
- ADV_POPULATE_READ
-Message-ID: <Zbz54MUZ2kZLTQQx@redhat.com>
-References: <20240202022029.1903629-1-ming.lei@redhat.com>
- <Zbxy30POPE8rN_YN@redhat.com>
- <ZbzJZji95a1qmhcj@fedora>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iU00dFkw+1VYkfTKy1WO29h99JWlocKEG+M1CPoK3aPyczmTJP6F2qax8TxGl+hz1AV+/o1DIpKj5f4dFHXETcFx0Snv3/Z90FMSPaw5rQSMt/xWA4hR1IpHoUJJ0nJAKpy6tyNFFba9W882ybgR72UWqtGXhuAKyqT3cgrxwhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XKYE+x3u; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wP7ap7SwTE6cJeEes3sVUH/vFnz+eX+KSdmLVr5C1To=; b=XKYE+x3u9bB0tuGI/mGQ4xi5Sv
+	pdMjLTE0LcFX2TLHGnBe6u6ld6fp8xdUYT0+pYZBK9H+Ts0IqvFc2YVlUFPdS0GywD8jSR95Chxhs
+	+jzef2Fo+TiyloyChnxnsUD1lS7DSh2FpDgvK7nsYIZjDuK76U+nMANLkyc6REeD2V9d27s6aPooh
+	4Ij8FkFzkZzF2B0uZZ5PKGJiSouTJfBuuiytuTgAzAI+mwjo5+HHM6YKRd4PuBj6UrpxwFRi91T11
+	sWpFpcGUQYcytmMgC6K+mfFbjGvWxwBKi05OkRm3F9cfkikh8HAH2icgpi0+r4Vj7CbGwgTSI3XXB
+	3G5SRSUQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rVuY0-00000001H82-3gby;
+	Fri, 02 Feb 2024 14:29:40 +0000
+Date: Fri, 2 Feb 2024 14:29:40 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: David Howells <dhowells@redhat.com>
+Cc: lsf-pc@lists.linux-foundation.org, netfs@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [LSF/MM/BPF TOPIC] Large folios, swap and fscache
+Message-ID: <Zbz8VAKcO56rBh6b@casper.infradead.org>
+References: <2701740.1706864989@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,133 +60,54 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZbzJZji95a1qmhcj@fedora>
+In-Reply-To: <2701740.1706864989@warthog.procyon.org.uk>
 
-On Fri, Feb 02 2024 at  5:52P -0500,
-Ming Lei <ming.lei@redhat.com> wrote:
+On Fri, Feb 02, 2024 at 09:09:49AM +0000, David Howells wrote:
+> The topic came up in a recent discussion about how to deal with large folios
+> when it comes to swap as a swap device is normally considered a simple array
+> of PAGE_SIZE-sized elements that can be indexed by a single integer.
+> 
+> With the advent of large folios, however, we might need to change this in
+> order to be better able to swap out a compound page efficiently.  Swap
+> fragmentation raises its head, as does the need to potentially save multiple
+> indices per folio.  Does swap need to grow more filesystem features?
 
-> On Thu, Feb 01, 2024 at 11:43:11PM -0500, Mike Snitzer wrote:
-> > On Thu, Feb 01 2024 at  9:20P -0500,
-> > Ming Lei <ming.lei@redhat.com> wrote:
-> > 
-> > > madvise(MADV_POPULATE_READ) tries to populate all page tables in the
-> > > specific range, so it is usually sequential IO if VMA is backed by
-> > > file.
-> > > 
-> > > Set ra_pages as device max request size for the involved readahead in
-> > > the ADV_POPULATE_READ, this way reduces latency of madvise(MADV_POPULATE_READ)
-> > > to 1/10 when running madvise(MADV_POPULATE_READ) over one 1GB file with
-> > > usual(default) 128KB of read_ahead_kb.
-> > > 
-> > > Cc: David Hildenbrand <david@redhat.com>
-> > > Cc: Matthew Wilcox <willy@infradead.org>
-> > > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > > Cc: Christian Brauner <brauner@kernel.org>
-> > > Cc: Don Dutile <ddutile@redhat.com>
-> > > Cc: Rafael Aquini <raquini@redhat.com>
-> > > Cc: Dave Chinner <david@fromorbit.com>
-> > > Cc: Mike Snitzer <snitzer@kernel.org>
-> > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > > ---
-> > >  mm/madvise.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++++++-
-> > >  1 file changed, 51 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/mm/madvise.c b/mm/madvise.c
-> > > index 912155a94ed5..db5452c8abdd 100644
-> > > --- a/mm/madvise.c
-> > > +++ b/mm/madvise.c
-> > > @@ -900,6 +900,37 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
-> > >  		return -EINVAL;
-> > >  }
-> > >  
-> > > +static void madvise_restore_ra_win(struct file **file, unsigned int ra_pages)
-> > > +{
-> > > +	if (*file) {
-> > > +		struct file *f = *file;
-> > > +
-> > > +		f->f_ra.ra_pages = ra_pages;
-> > > +		fput(f);
-> > > +		*file = NULL;
-> > > +	}
-> > > +}
-> > > +
-> > > +static struct file *madvise_override_ra_win(struct file *f,
-> > > +		unsigned long start, unsigned long end,
-> > > +		unsigned int *old_ra_pages)
-> > > +{
-> > > +	unsigned int io_pages;
-> > > +
-> > > +	if (!f || !f->f_mapping || !f->f_mapping->host)
-> > > +		return NULL;
-> > > +
-> > > +	io_pages = inode_to_bdi(f->f_mapping->host)->io_pages;
-> > > +	if (((end - start) >> PAGE_SHIFT) < io_pages)
-> > > +		return NULL;
-> > > +
-> > > +	f = get_file(f);
-> > > +	*old_ra_pages = f->f_ra.ra_pages;
-> > > +	f->f_ra.ra_pages = io_pages;
-> > > +
-> > > +	return f;
-> > > +}
-> > > +
-> > 
-> > Does this override imply that madvise_populate resorts to calling
-> > filemap_fault() and here you're just arming it to use the larger
-> > ->io_pages for the duration of all associated faulting?
-> 
-> Yes.
-> 
-> > 
-> > Wouldn't it be better to avoid faulting and build up larger page
-> 
-> How can we avoid the fault handling? which is needed to build VA->PA mapping.
+I didn't mention this during the meeting, but there are more reasons
+to do something like this.  For example, even with large folios, it
+doesn't make sense to drive writing to swap on a per-folio basis.  We
+should be writing out large chunks of virtual address space in a single
+write to the swap device, just like we do large chunks of files in
+->writepages.
 
-I was wondering if it made sense to add fadvise_populate -- but given
-my lack of experience with MM I then get handwavvy quick -- I have
-more work ahead to round out my MM understanding so that I'm more
-informed.
- 
-> > vectors that get sent down to the block layer in one go and let the
-> 
-> filemap_fault() already tries to allocate folio in big size(max order
-> is MAX_PAGECACHE_ORDER), see page_cache_ra_order() and ra_alloc_folio().
-> 
-> > block layer split using the device's limits? (like happens with
-> > force_page_cache_ra)
-> 
-> Here filemap code won't deal with block directly because there is VFS &
-> FS and io mapping is required, and it just calls aops->readahead() or
-> aops->read_folio(), but block plug & readahead_control are applied for
-> handling everything in batch.
-> 
-> > 
-> > I'm concerned that madvise_populate isn't so efficient with filemap
-> 
-> That is why this patch increases readahead window, then
-> madvise_populate() performance can be improved by X10 in big file-backed
-> popluate read.
+Another reason to do something different is that we're starting to see
+block devices with bs>PS.  That means we'll _have_ to write out larger
+chunks than a single page.  For reads, we can discard the extra data,
+but it'd be better to swap back in the entire block rather than
+individual pages.
 
-Right, as you know I've tested your patch, the larger readahead window
-certainly did provide the much more desirable performance.  I'll reply
-to your v2 (with reduced negative checks) with my Reviewed-by and
-Tested-by.
+So my modest proposal is that we completely rearchitect how we handle
+swap.  Instead of putting swp entries in the page tables (and in shmem's
+case in the page cache), we turn swap into an (object, offset) lookup
+(just like a filesystem).  That means that each anon_vma becomes its
+own swap object and each shmem inode becomes its own swap object.
+The swap system can then borrow techniques from whichever filesystem
+it likes to do (object, offset, length) -> n x (device, block) mappings.
 
-I was just wondering if there an opportunity to plumb in more a
-specific (and potentially better) fadvise_populate for dealing with
-file backed pages.
-
-> > due to excessive faulting (*BUT* I haven't traced to know, I'm just
-> > inferring that is why twiddling f->f_ra.ra_pages helps improve
-> > madvise_populate by having it issue larger IO. Apologies if I'm way
-> > off base)
+> Further to this, we have at least two ways to cache data on disk/flash/etc. -
+> swap and fscache - and both want to set aside disk space for their operation.
+> Might it be possible to combine the two?
 > 
-> As mentioned, fault handling can't be avoided, but we can improve
-> involved readahead IO perf.
+> One thing I want to look at for fscache is the possibility of switching from a
+> file-per-object-based approach to a tagged cache more akin to the way OpenAFS
+> does things.  In OpenAFS, you have a whole bunch of small files, each
+> containing a single block (e.g. 256K) of data, and an index that maps a
+> particular {volume,file,version,block} to one of these files in the cache.
 
-Thanks, and sorry for asking such a naive question (put more pressure
-on you to educate than I should have).
-
-Mike
+I think my proposal above works for you?  For each file you want to cache,
+create a swap object, and then tell swap when you want to read/write to
+the local swap object.  What you do need is to persist the objects over
+a power cycle.  That shouldn't be too hard ... after all, filesystems
+manage to do it.  All we need to do is figure out how to name the
+lookup (I don't think we need to use strings to name the swap object,
+but obviously we could).  Maybe it's just a stream of bytes.
 
