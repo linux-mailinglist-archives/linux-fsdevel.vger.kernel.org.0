@@ -1,57 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-10089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDE4847A96
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 21:40:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DC93847A97
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 21:40:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0C1B2852F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 20:40:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4964928556F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 20:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F857A73D;
-	Fri,  2 Feb 2024 20:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D5F7D40F;
+	Fri,  2 Feb 2024 20:39:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f172.google.com (mail-il1-f172.google.com [209.85.166.172])
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7DCD48788
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 20:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AC627473
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 20:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706906391; cv=none; b=D/aWLq/s0ykMXLcL/PogzhWiqL3IFCiJFm01w9hkc9cEQxxC9nQ66VimeP6WF6irN0JEEJ6bvjlfOE48Ny57y9FWxSx57IA9qRv5lg3IknxIK8EBuIoBhbPatfQBkTaKIxRApf2RkZ90W3NArwOnQtCzSlmtIk0GSP5zFft9fTo=
+	t=1706906392; cv=none; b=Kbc37x+tiIPcu83l1OAVasiYCXK0XgSzGLk+xPryUQuT6OnTuZwlD1V48ZOESKuPY6zpTgAf8d3o75kdFVbIkDN1cMHBxHyw7P5xDRfBF/vQnoVLsjDbF6+vyQmGENKIGWwcWTERqbf/9jPuNTKZQpNNWEiASM2VOc6e3ftgdNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706906391; c=relaxed/simple;
-	bh=9vS2BqhDsnRY9TWsjUOBP5i2r4QT0NEevOkYXmxkIMk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h5dnnZmDOIA/cDRGx/uxuffhTtlwhworJFu8BNW/eBt03GQvyx1KDc/hc5cKi2o5ogJ3YbPnt1RXRyqaKgjCys9ZKb565k6pmimoIRlWuCceG/YXse4+WFXkE3cnU91L0yjMMn6qEc8wIvkgY7bTGOf0cOQWSHbyllG/T2aLBAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.172
+	s=arc-20240116; t=1706906392; c=relaxed/simple;
+	bh=S/P24wcTvrFOg4SsS4CeD+d5rBmERutoXicKIgS4CC4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lrjwE775J3pC/xf8mQlvn8l1fbATSU9dsxUInCRZxzQQ0oSOI8IBrHcQ9G0HXnyZ0us7HhkrZUjQY17HHPunanhlwpJ08Au+koLMmzsW7YNMT2oZUuFt2/0pQADxxk1pOSEtu4g5UelM128rq6gtU/nAN3P1PFZZWO8YDU6qK3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f172.google.com with SMTP id e9e14a558f8ab-3637860f03bso8685635ab.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 12:39:49 -0800 (PST)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-5cddfe0cb64so2114177a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 12:39:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706906389; x=1707511189;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NHt4H/x+qcMPzHU6qwJG2VMpe3tJiV6m8j63XJJYag0=;
-        b=shwvaGuaO77Q3YmfDvPXMvqMLnTMbs3rv60TbccjT7XrIive/S4E5ux9gQRw5Tb61v
-         QpSdQW3fHelcCDTYNOrUf02oF278wOpjHOlOQCOcl/ql8RDdNmc25ncZlWSMRXO8lzvY
-         kSHKEObAZkMnUS1jDFlPxujzCkGokEgc4eIfWbxyV6A2H7A5W5JQC2O3CzRJ0NwkQMTI
-         xGACWvMOng+4V8/bpm1nnsN6Lx6+5ut0nAmginqlAeD4K+QxWm2Vy8il48CVIlY/x+3o
-         v52mulZLmzMGXxTxMA+r2dgyUTd1JE/CWTvJlqLITjPbxTCxRehWe0B/TWNoHgMl+9NZ
-         ynMA==
-X-Gm-Message-State: AOJu0YzQbihbxbExGGtDbhakWxcwde4PmtCyYSCj2OqHyfiHtxCbznCf
-	DTlc5iUX5GPH8lZXdZaElUSBuG/yC/Bg7QXHBH5nLZsRvRYZwPjk
-X-Google-Smtp-Source: AGHT+IGv9WHtffWpyc1HN7hnIjMDANFz34q2cM0+WcYXw6xG1BniLInmR2c1p0vqtPkRKpHp+nXIUQ==
-X-Received: by 2002:a92:de52:0:b0:363:b669:d102 with SMTP id e18-20020a92de52000000b00363b669d102mr2057763ilr.0.1706906388910;
-        Fri, 02 Feb 2024 12:39:48 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCVhssh8LXIufojR6mMglKpv1SZAC+S6Ed7qg9tuTkHrXr9ppZdAvw420Aeo9h1+mLUdDSobtYvM4FWByoOz7lUNmCmgeXRgLTKg8n18BRqItdBwhNf0Em/KtMqLVhIwfmA4NjvkgDNeHpR7JGI0fSgjqIdR49EWZhVQt5zyCX+JECQa22vo4Q0U1VMFw55jc22QimJv
+        d=1e100.net; s=20230601; t=1706906390; x=1707511190;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4NnkzmgwtRA87qL5gc3Zv1AqjSPa8netVCv6+D4Bmn0=;
+        b=pK4uEGrv3WJZOX5tjzCFybxZOt58/g4TVcY0m+nmqIo4zd1NEZ28eBcdmfeAd1dQaO
+         G4ffk22KJ8NszXhb2frh+qS3TD5Hy4pO497+MDLEnV71D7Bp1DeyjRQuyZs2Gfebh3kK
+         ydd7qtcvSwAhwEbY8oCQOfDuXGmgYWufNDtPFwrsgDCUQKZjz7t7xUOrk0ImBkQnxbyb
+         BRExVnOAUr6YYL/sUy3qcmVoeswPwFRjlaQmkSHTyyNSO5rftYYD0rA4LtDJDPwXkeMh
+         GMwLof4i3W33GLSuGesww1kq3eIZtr35cTDDLbmZc1hl7BDVq+7REoWpfnXRxLjiLYj7
+         clrQ==
+X-Gm-Message-State: AOJu0Yxs8t8zCS5nU9sgEiIes7vg+pA0G7eMZq/iUughPW3PDDe0uAae
+	ETSaGBRcGo9pj/yYrTU1oTbRPYdw8rKw+o5N1j5qnQoO6lImR2gCryyc1zz9
+X-Google-Smtp-Source: AGHT+IFdqP0z/gU3IvL8+rnfoqhKjtbvkS0EKyYR5LHDkyg6HMGJNj0WB1TpmUPN1RFpvYQwWdzh8Q==
+X-Received: by 2002:a05:6a20:43aa:b0:19e:4457:ff59 with SMTP id i42-20020a056a2043aa00b0019e4457ff59mr7428069pzl.14.1706906390170;
+        Fri, 02 Feb 2024 12:39:50 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCX4qh7hwpGA1mEauLIIv6VZT3Q/g5lecaVas5dbxZZpUBIpGgCC2SiTNqm8qB5OsYMXQN9iIrTdxo7w5TTvAvrgC/jgbdPcqFwuVrIp06fGf3t6fdAc039Y8whOXRQRIvPJxSQXYxGvUHf16V3X1DGTcz+rDjVNXwgzB29vNgn18yt860hxAz/Pw55TDZdY1/IYVf/4Bjkhj2MOD+Ksrvm21mAFC+CT2rzZt3UtRjWhA+tne09WoTBMyjBxp0SZDuYaHmxPGFALCj/vfZQFTbLT3q1u8cf4aFgZird3WgUfvsiparFvxlJEwKqD
 Received: from bvanassche-linux.mtv.corp.google.com ([2620:0:1000:8411:4cc3:4ab5:7d2:ddc7])
-        by smtp.gmail.com with ESMTPSA id f8-20020a63de08000000b005d8aef12380sm2239678pgg.73.2024.02.02.12.39.47
+        by smtp.gmail.com with ESMTPSA id f8-20020a63de08000000b005d8aef12380sm2239678pgg.73.2024.02.02.12.39.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Feb 2024 12:39:48 -0800 (PST)
+        Fri, 02 Feb 2024 12:39:49 -0800 (PST)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Christian Brauner <brauner@kernel.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>
@@ -59,11 +60,17 @@ Cc: linux-fsdevel@vger.kernel.org,
 	Jens Axboe <axboe@kernel.dk>,
 	Christoph Hellwig <hch@lst.de>,
 	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH v2 0/6] Restore data lifetime support
-Date: Fri,  2 Feb 2024 12:39:19 -0800
-Message-ID: <20240202203926.2478590-1-bvanassche@acm.org>
+	Bart Van Assche <bvanassche@acm.org>,
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH v2 1/6] fs: Fix rw_hint validation
+Date: Fri,  2 Feb 2024 12:39:20 -0800
+Message-ID: <20240202203926.2478590-2-bvanassche@acm.org>
 X-Mailer: git-send-email 2.43.0.594.gd9cf4e227d-goog
+In-Reply-To: <20240202203926.2478590-1-bvanassche@acm.org>
+References: <20240202203926.2478590-1-bvanassche@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,66 +79,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+Reject values that are valid rw_hints after truncation but not before
+truncation by passing an untruncated value to rw_hint_valid().
 
-Hi Christian,
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Kanchan Joshi <joshi.k@samsung.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+Fixes: 5657cb0797c4 ("fs/fcntl: use copy_to/from_user() for u64 types")
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+---
+ fs/fcntl.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-UFS devices are widely used in mobile applications, e.g. in smartphones.
-UFS vendors need data lifetime information to achieve good performance.
-Providing data lifetime information to UFS devices can result in up to 40%
-lower write amplification. Hence this patch series that restores the
-bi_write_hint member in struct bio. After this patch series has been merged,
-patches that implement data lifetime support in the SCSI disk (sd) driver
-will be sent to the Linux kernel SCSI maintainer.
-
-The following changes are included in this patch series:
- - Improvements for the F_GET_RW_HINT and F_SET_RW_HINT fcntls.
- - Move enum rw_hint into a new header file.
- - Support F_SET_RW_HINT for block devices to make it easy to test data
-   lifetime support.
- - Restore the bio.bi_write_hint member and restore support in the VFS layer
-   and also in the block layer for data lifetime information.
-
-The shell script that has been used to test the patch series combined with
-the SCSI patches is available at the end of this cover letter.
-
-Please consider this patch series for the next merge window.
-
-Thanks,
-
-Bart.
-
-Changes compared to v1:
- - Rebased this patch series on top of the vfs.all branch.
- - Use READ_ONCE() / WRITE_ONCE() to access i_write_hint in the fcntl
-   implementation.
-
-Bart Van Assche (6):
-  fs: Fix rw_hint validation
-  fs: Verify write lifetime constants at compile time
-  fs: Split fcntl_rw_hint()
-  fs: Move enum rw_hint into a new header file
-  fs: Propagate write hints to the struct block_device inode
-  block, fs: Restore the per-bio/request data lifetime fields
-
- block/bio.c                 |  2 ++
- block/blk-crypto-fallback.c |  1 +
- block/blk-merge.c           |  8 +++++
- block/blk-mq.c              |  2 ++
- block/bounce.c              |  1 +
- block/fops.c                |  3 ++
- fs/buffer.c                 | 12 ++++---
- fs/direct-io.c              |  2 ++
- fs/f2fs/f2fs.h              |  1 +
- fs/fcntl.c                  | 64 +++++++++++++++++++++++--------------
- fs/inode.c                  |  1 +
- fs/iomap/buffered-io.c      |  1 +
- fs/iomap/direct-io.c        |  1 +
- fs/mpage.c                  |  1 +
- include/linux/blk-mq.h      |  2 ++
- include/linux/blk_types.h   |  2 ++
- include/linux/fs.h          | 16 ++--------
- include/linux/rw_hint.h     | 24 ++++++++++++++
- 18 files changed, 102 insertions(+), 42 deletions(-)
- create mode 100644 include/linux/rw_hint.h
-
+diff --git a/fs/fcntl.c b/fs/fcntl.c
+index c80a6acad742..3ff707bf2743 100644
+--- a/fs/fcntl.c
++++ b/fs/fcntl.c
+@@ -268,7 +268,7 @@ static int f_getowner_uids(struct file *filp, unsigned long arg)
+ }
+ #endif
+ 
+-static bool rw_hint_valid(enum rw_hint hint)
++static bool rw_hint_valid(u64 hint)
+ {
+ 	switch (hint) {
+ 	case RWH_WRITE_LIFE_NOT_SET:
+@@ -288,19 +288,17 @@ static long fcntl_rw_hint(struct file *file, unsigned int cmd,
+ {
+ 	struct inode *inode = file_inode(file);
+ 	u64 __user *argp = (u64 __user *)arg;
+-	enum rw_hint hint;
+-	u64 h;
++	u64 hint;
+ 
+ 	switch (cmd) {
+ 	case F_GET_RW_HINT:
+-		h = inode->i_write_hint;
+-		if (copy_to_user(argp, &h, sizeof(*argp)))
++		hint = inode->i_write_hint;
++		if (copy_to_user(argp, &hint, sizeof(*argp)))
+ 			return -EFAULT;
+ 		return 0;
+ 	case F_SET_RW_HINT:
+-		if (copy_from_user(&h, argp, sizeof(h)))
++		if (copy_from_user(&hint, argp, sizeof(hint)))
+ 			return -EFAULT;
+-		hint = (enum rw_hint) h;
+ 		if (!rw_hint_valid(hint))
+ 			return -EINVAL;
+ 
 
