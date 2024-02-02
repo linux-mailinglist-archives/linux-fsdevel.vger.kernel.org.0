@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-10091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A81A847A98
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 21:40:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D464847A99
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 21:40:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6561C26B1C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 20:40:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6CF1F25516
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 20:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259997E0F0;
-	Fri,  2 Feb 2024 20:39:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF808061F;
+	Fri,  2 Feb 2024 20:39:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6F67C6CE
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 20:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA764176D
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 20:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706906393; cv=none; b=W7AFNmK+/H4ABdEE75hDTSJ5QgAAfqnPDC0p+wt8topr1wMaOIBt+2jTtpQZi0Nq9yYRjyadwk7DxahDInI5ZHnbhwlT4GSosmWsvCb3ZPS6n4OBkNyVhzLfMDNLVS6UJKldfQCoYHKRcUECVSQ8Vkn1+91ZwalqBe25yIMyO7c=
+	t=1706906395; cv=none; b=uZA+21VLtI/5FUSz3vUA+hvtt3Ulxlj3W1VVT6Bc1zj4cjhA+stw9RM5O2a01OBuRSZiDv6e0f7eRq8lapgpUbIS5simZJIEh9LuuLmztO2fsw9mfOH9RwfaqCN/XUGe7TrE2jgRIqnXI6ESj2Kl/cwju06rV0QJnfuTPdADRqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706906393; c=relaxed/simple;
-	bh=PeigcjR0fJHqnWYzUNDhF0SumumPwInd9lmx/bLcwVY=;
+	s=arc-20240116; t=1706906395; c=relaxed/simple;
+	bh=rOsuHbgIOOOfHazZ42+dHSV3q4tvgcje94XQjRipquc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xsb7fUpRG9xBO2qwmAGh8fOwQ7mFCseWAgwxXu+K3Fue9mxXjPAob+ih49j0YJnOu6q1qwcY9f8B0aGC28V+XcTtgcqIMCkDv2y+lnc0C/Knm+Nmau1Cwi3euzmTKtDe+9evxbqVbN6/azjA3ePH0v0eVdDDUsGla62c0ZHeHXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.161.45
+	 MIME-Version; b=ovDwRPrjWD9L39leW+I6xkQI/qTLGymtyn7smg89NVYGuS3DBiDhkLlTRVYCQfTHojO+jkwIBGOGNQ8p5uVLNizcs5LNegsnMLf6wDg6/qPYTnaqjTyi+oFEkaOvDnJgJXkhefWtPM2OTTdN2Exl9Kk+69kV3w9rOGU21cyEbQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-59a7a6a24b1so1141603eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 12:39:52 -0800 (PST)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-5ca29c131ebso2280367a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 12:39:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706906391; x=1707511191;
+        d=1e100.net; s=20230601; t=1706906392; x=1707511192;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Jkb7BdFD0GARRMQmHbkGbl9/+4lufBLaMcZRoVBPKBQ=;
-        b=hf8VPcMDPSVlCag8RiQY3C91l07DilBDw7efHOc/lUxWyUx53Cx5UF1JZpvwuvZxUy
-         p/B7m47IXH4TkFwl3udphQgyEh7HlbDTE3kl02O7xX7TR17tFfjH1aqM7p7tle7+OnHw
-         vxlSLx764orx0lu1uIpcSeKjSBYCv/IjXp8tNzs2C3hp8VAOI9+haQmxHXuQlthBAH/c
-         VDnNSVcqduXvlbws4NcmJy0uPvBURI41TtPZCx7j6BmpKOea3HgnI0zVQFpWm7+s7wXw
-         KSLE9yWJX4lU9FH+EGBLEiavkZqE/4BnXwpY33JUL5kSVYAjz9LuoKzXOtoHcizurU6t
-         u14A==
-X-Gm-Message-State: AOJu0YyKk+7eAtGE4cSGTIzwVBX3gsl9KLKiasJzcxlpiv5YLBdxR6b4
-	jfnVDAT+yjsUykzgQIzDypsYqbyWXDdHWkd2FUTlKTgAE67mOB19
-X-Google-Smtp-Source: AGHT+IG1+uP5CcN9rTTcssYSjIZGMttSjwyGEXw6WrUqRA7pduBBrUW9Bt+kEDDLyVjGrr+305u8iQ==
-X-Received: by 2002:a05:6358:3121:b0:176:40fb:e123 with SMTP id c33-20020a056358312100b0017640fbe123mr9335719rwe.5.1706906391241;
-        Fri, 02 Feb 2024 12:39:51 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCWVoeej/WqOUFQ1qe4Q1EO8ooUmvGNV4cZ5QAaP9J5aquYgX5M6rwnEzGDG/U5JBeLKfI/W8p0Y28JTy5ei6Zeid0V6GIJT9Z2j8zKgvjS+t37yq1IzTe/wd6rWhB2HglRePN1R/TdNPeAEeSzzMw3vST3omXDFrebbN2vc6+qoluL3/MK9YplQ4NuSPzIkOhO+IdHeUYPAxQsz7XmVRI23kw3zbt0GWXHL/vs5+2Yaqw==
+        bh=C6xn9gMKxEoulxlALoe13cShfItbIgtXnuWDbuTfeiU=;
+        b=lAI+KIOYh8VXggC9NIH7hLd2LOJPllCpAE1xQ8CHlxgHY5BKRHBbpRgbtheiJIB+wy
+         QE1nSJjW8lgxYSiRopkaWAgf7CymqK4Z4WcrmOUxhg7SJppKoKGMWgiZvMCp6ldvponq
+         GCimMdXTSen/ATGVJnISXf16Qv2bcZHgIfe8DjKtBMlXI8jS9EhchPG8srTxWHoznRaV
+         SZFe6ILTy/quq+inpAnFaNlp5jtx/H45FhBRtcXCIClzG2vdFaKv9amjUt2g8qBdHe+y
+         sb4YIs1TJQSZ3iUvh7eAfpWnF+XgNa5/ayHqS+KMTzrnIKKHERFug1325z8BoRYMx6tw
+         8b+Q==
+X-Gm-Message-State: AOJu0Yz4HpI1NUztWMhntouRXXRXhIboXZldy3E34p75N89RWwTWMFaD
+	o5heVfetT2AbcUwBAlKWaVyq36fUPJlrlMu/D0dogNky5FqpBzle
+X-Google-Smtp-Source: AGHT+IEZDixWzZ0iCXGrhtYC+N/N919scyzl/ixWGrMkT46jSUoF3uaTtrbr23cv6ZyV4pPzd00yWg==
+X-Received: by 2002:a05:6a21:3a87:b0:19c:773c:570e with SMTP id zv7-20020a056a213a8700b0019c773c570emr4673899pzb.39.1706906392468;
+        Fri, 02 Feb 2024 12:39:52 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCUncaRIGzBeayQh8fiBp+SxQxHGTUEfegUh7SCbIlitaVd/mk1Uddsy/CWQ4dcwxXC5xjEgFcTRUKqfSsqC3mGP0rOMFjMmDPrhJnlTfeB0prp0LanME+VAzkobIfEbCZEdEYSwoHxR5mLYvMkohip4k18evnyR4DA+UnZCkuVgsCIiaJAO91YgIs43KgVNkTZiPg68v8VyJArpif2GYBibc+sKeh+I4PvaSZZQVWFrcSU6fxTfNm7qm98DbyHqd+dsjy2URgmbjUnIMi+Hq14BufgJSlkBQ9gzm/w3olQqLNYNt9V/Tg2n72rl
 Received: from bvanassche-linux.mtv.corp.google.com ([2620:0:1000:8411:4cc3:4ab5:7d2:ddc7])
-        by smtp.gmail.com with ESMTPSA id f8-20020a63de08000000b005d8aef12380sm2239678pgg.73.2024.02.02.12.39.50
+        by smtp.gmail.com with ESMTPSA id f8-20020a63de08000000b005d8aef12380sm2239678pgg.73.2024.02.02.12.39.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Feb 2024 12:39:50 -0800 (PST)
+        Fri, 02 Feb 2024 12:39:52 -0800 (PST)
 From: Bart Van Assche <bvanassche@acm.org>
 To: Christian Brauner <brauner@kernel.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>
@@ -61,10 +61,13 @@ Cc: linux-fsdevel@vger.kernel.org,
 	Christoph Hellwig <hch@lst.de>,
 	"Martin K . Petersen" <martin.petersen@oracle.com>,
 	Bart Van Assche <bvanassche@acm.org>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v2 2/6] fs: Verify write lifetime constants at compile time
-Date: Fri,  2 Feb 2024 12:39:21 -0800
-Message-ID: <20240202203926.2478590-3-bvanassche@acm.org>
+	Kanchan Joshi <joshi.k@samsung.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH v2 3/6] fs: Split fcntl_rw_hint()
+Date: Fri,  2 Feb 2024 12:39:22 -0800
+Message-ID: <20240202203926.2478590-4-bvanassche@acm.org>
 X-Mailer: git-send-email 2.43.0.594.gd9cf4e227d-goog
 In-Reply-To: <20240202203926.2478590-1-bvanassche@acm.org>
 References: <20240202203926.2478590-1-bvanassche@acm.org>
@@ -76,34 +79,94 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The code in fs/fcntl.c converts RWH_* constants to and from WRITE_LIFE_*
-constants using casts. Verify at compile time that these casts will yield
-the intended effect.
+Split fcntl_rw_hint() such that there is one helper function per fcntl.
+Use READ_ONCE() and WRITE_ONCE() to access the i_write_hint member
+instead of protecting such accesses with the inode lock. READ_ONCE() is
+not used in I/O path code that reads i_write_hint. Users who want
+F_SET_RW_HINT to affect I/O need to make sure that F_SET_RW_HINT has
+completed before I/O is submitted that should use the configured write
+hint.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+Cc: Christoph Hellwig <hch@lst.de>
 Suggested-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc: Kanchan Joshi <joshi.k@samsung.com>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- fs/fcntl.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/fcntl.c | 45 ++++++++++++++++++++++++---------------------
+ 1 file changed, 24 insertions(+), 21 deletions(-)
 
 diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 3ff707bf2743..f3bc4662455f 100644
+index f3bc4662455f..d2b15351ab8e 100644
 --- a/fs/fcntl.c
 +++ b/fs/fcntl.c
-@@ -270,6 +270,13 @@ static int f_getowner_uids(struct file *filp, unsigned long arg)
+@@ -290,32 +290,33 @@ static bool rw_hint_valid(u64 hint)
+ 	}
+ }
  
- static bool rw_hint_valid(u64 hint)
+-static long fcntl_rw_hint(struct file *file, unsigned int cmd,
+-			  unsigned long arg)
++static long fcntl_get_rw_hint(struct file *file, unsigned int cmd,
++			      unsigned long arg)
  {
-+	BUILD_BUG_ON(WRITE_LIFE_NOT_SET != RWH_WRITE_LIFE_NOT_SET);
-+	BUILD_BUG_ON(WRITE_LIFE_NONE != RWH_WRITE_LIFE_NONE);
-+	BUILD_BUG_ON(WRITE_LIFE_SHORT != RWH_WRITE_LIFE_SHORT);
-+	BUILD_BUG_ON(WRITE_LIFE_MEDIUM != RWH_WRITE_LIFE_MEDIUM);
-+	BUILD_BUG_ON(WRITE_LIFE_LONG != RWH_WRITE_LIFE_LONG);
-+	BUILD_BUG_ON(WRITE_LIFE_EXTREME != RWH_WRITE_LIFE_EXTREME);
+ 	struct inode *inode = file_inode(file);
+ 	u64 __user *argp = (u64 __user *)arg;
+-	u64 hint;
++	u64 hint = READ_ONCE(inode->i_write_hint);
+ 
+-	switch (cmd) {
+-	case F_GET_RW_HINT:
+-		hint = inode->i_write_hint;
+-		if (copy_to_user(argp, &hint, sizeof(*argp)))
+-			return -EFAULT;
+-		return 0;
+-	case F_SET_RW_HINT:
+-		if (copy_from_user(&hint, argp, sizeof(hint)))
+-			return -EFAULT;
+-		if (!rw_hint_valid(hint))
+-			return -EINVAL;
++	if (copy_to_user(argp, &hint, sizeof(*argp)))
++		return -EFAULT;
++	return 0;
++}
+ 
+-		inode_lock(inode);
+-		inode->i_write_hint = hint;
+-		inode_unlock(inode);
+-		return 0;
+-	default:
++static long fcntl_set_rw_hint(struct file *file, unsigned int cmd,
++			      unsigned long arg)
++{
++	struct inode *inode = file_inode(file);
++	u64 __user *argp = (u64 __user *)arg;
++	u64 hint;
 +
- 	switch (hint) {
- 	case RWH_WRITE_LIFE_NOT_SET:
- 	case RWH_WRITE_LIFE_NONE:
++	if (copy_from_user(&hint, argp, sizeof(hint)))
++		return -EFAULT;
++	if (!rw_hint_valid(hint))
+ 		return -EINVAL;
+-	}
++
++	WRITE_ONCE(inode->i_write_hint, hint);
++
++	return 0;
+ }
+ 
+ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
+@@ -421,8 +422,10 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
+ 		err = memfd_fcntl(filp, cmd, argi);
+ 		break;
+ 	case F_GET_RW_HINT:
++		err = fcntl_get_rw_hint(filp, cmd, arg);
++		break;
+ 	case F_SET_RW_HINT:
+-		err = fcntl_rw_hint(filp, cmd, arg);
++		err = fcntl_set_rw_hint(filp, cmd, arg);
+ 		break;
+ 	default:
+ 		break;
 
