@@ -1,313 +1,252 @@
-Return-Path: <linux-fsdevel+bounces-9998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90EBB846E8C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 12:02:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B596846EC4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 12:17:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B58DA1C2463D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 11:02:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93F0E1F2770C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 11:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5B7813D4F2;
-	Fri,  2 Feb 2024 11:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1130413DB86;
+	Fri,  2 Feb 2024 11:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VUBd4h1g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIClvloQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712FE79DB2;
-	Fri,  2 Feb 2024 11:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4058647F78;
+	Fri,  2 Feb 2024 11:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706871704; cv=none; b=J/xP1fDrnEtvR4hmXUohID/7L9IvnMIREetUHqlhOJC8OCbzLaScJ4XbIlS8Z0zNeqvmgIdr3D8bttcI/dbRx53NRzPVm4HiQ7Bkg49dU4o4rVa6quyoCs8/yVCelef0796k8dmSU4kaOFCmocTWaogY5vIFwZY5unuV1ihN1D4=
+	t=1706872623; cv=none; b=i8OC3HwIAcQLCUQvYIIhpocvqr7QYvdkwKeEn5rZpUR5r1uUk4wC0RcJMIQB2gPjL1mXxzkvfaU+BF8ejAXoQ0X7+jOC841jamO8CSBhhqR5GJfyiNgZ80KcEmcKPMqnC/KAYuzXRzqN8mENNfE2HfH6Ur4tFmeuACBkvyu2ytk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706871704; c=relaxed/simple;
-	bh=JpTsbx9gyOD4RFI4BcOrfqAvIDDOqduZidyXVQpyvwE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uPJgFqxHpWK7I6kRsu5JfzaDklRFIGcqTT/x1aGGKTuDuva4nmrv60epn3TcITVtDjpdh/s5sD4rzbSP/qotTpT1GdnFHHoCRwfL3iD9MGTea2rVZOEDw5dD3zifrRkSdZYPwtXghBRX5EMWuqjpWa2vJYk1zjt7MNLiwYyGGKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VUBd4h1g; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-339289fead2so1239882f8f.3;
-        Fri, 02 Feb 2024 03:01:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1706871700; x=1707476500; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ALlqqSr0fBOMR8kEQ4bpGzuKAtK0byxAHdPJlmLkDzc=;
-        b=VUBd4h1gBsVFT+itozw5LWrxcKcnVOiVRuW85lTtiLeQ3vgJUQrAWuUTWCdaVTyjx6
-         WN/lSD1iLU9u8FaLeNo8RlFaJ0tpQMqUAJWLRUyidLVZQ2tEiwX2/OgauiWwtKBOPaVJ
-         wjg2NEhzLbURAYA+s6N9RHfLBMGcN5MziVoMLAs6Jrn3ELTAJjX+u/OBxRAX+Z9igmKT
-         wmc/sYc2xXbu/yrELx8so2p/eY3n1f5LmiFPRF6rNEL56iC4qJ5PbtSoTSWLLMDN6E+C
-         nV9/RkD2ght1hwvNLoW3lkr1DVNuAV7/Tkv2gv0XL/hS+1wko8oXFfr5YzCsysQXoy+v
-         b9GA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706871700; x=1707476500;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ALlqqSr0fBOMR8kEQ4bpGzuKAtK0byxAHdPJlmLkDzc=;
-        b=pcP2jI9tr/BpMW8kAyDutoQ5r2GwoWwyE/+aMHN+pGLmpHSs5ezGWX/a4NQ8A6fYDb
-         gB8JjAo69PZjfqVm1eyOcYeyDzw+DqP79NKjoNAuUGlr2621carkRwwAM8h5KE2oF0sG
-         eUHN0RI/Yoppvs+BI2i9SXNy+VGfTtVuvBePudnil9pjqkwCbfMzRAUTWHTsQof4Drce
-         TcxDJ5ljeGXlyBwdzjP9UJ1WsBWyYBg7bZpQJrh2M8msREDE+8WOt5kreEHf54dqJWQi
-         Aswg4iTkhmrEerDQfh4+27bq+EFKq+vqciptTcLRtL305s2HBqI8hAjFJkHvIQyJIbhN
-         T3tw==
-X-Gm-Message-State: AOJu0Yw4YSz5OVDiG4N/jNHl077schLo1wuyjHTQeN0k25TfE3pRpw1L
-	8J9FYVljj4SphkvALcjoSR81BAu24TOUIMU/SsqWqEMW9hZDvbkO
-X-Google-Smtp-Source: AGHT+IFnFtDZnCLmSH/R+XGEvy7O+I4Ks5SkvOxiVFgEwZu7Noqul9awwI4ktzvKKs5UzpGh3akURQ==
-X-Received: by 2002:a5d:6204:0:b0:33a:e72c:c252 with SMTP id y4-20020a5d6204000000b0033ae72cc252mr5606345wru.52.1706871700447;
-        Fri, 02 Feb 2024 03:01:40 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCWpddlydGCL6V47qHjIL5bXeY4tlOZkrRbky5iVOD8k+WJRwuYCZ5P4kmhU2THfk1Wkp1XX/0Pe43S79Zx1u9du9MtcmYaGDfVeXztugivinIUM+cQ5ooM55/M2+1Nop3PonaJGqj574QL1eqOBhBrNiKUiueZ7tGO8UmnmMUuuXw+jrILXsLvFqEtP5Jo/DNuvRV+nMcUmCOUb4tCVhnMaq6DBZyrnFrR0+qx3xoBZQId/D0sD5PIpM4kfMRCYJSg5mLDm4eUKt04Pkfx3
-Received: from amir-ThinkPad-T480.lan (46-117-242-41.bb.netvision.net.il. [46.117.242.41])
-        by smtp.gmail.com with ESMTPSA id a13-20020a5d4d4d000000b0033b0924543asm1654180wru.108.2024.02.02.03.01.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 Feb 2024 03:01:40 -0800 (PST)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	linux-unionfs@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] fs: remove the inode argument to ->d_real() method
-Date: Fri,  2 Feb 2024 13:01:32 +0200
-Message-Id: <20240202110132.1584111-3-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240202110132.1584111-1-amir73il@gmail.com>
-References: <20240202110132.1584111-1-amir73il@gmail.com>
+	s=arc-20240116; t=1706872623; c=relaxed/simple;
+	bh=FCOQ3oxfwys8se6zxDBVnjGUrQ0D43QqafAIstBsJ2g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YW5RgozmrnQ3pKS8CLKjnYgWhW9NIXk2Weoy3c5IhG7Dw3tlLq/UhF5nZQ8nANs0DQ6GAyMtyLgx3GiKWvngya6VLk3l4qGGPezq+Zu0z/XJjHCxC4KVhzahkVLDtYCluvffqUXRSDhwkG5i5cmgfqyYvDoepAjW2lFPBr79dtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIClvloQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0642EC433C7;
+	Fri,  2 Feb 2024 11:16:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1706872622;
+	bh=FCOQ3oxfwys8se6zxDBVnjGUrQ0D43QqafAIstBsJ2g=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=HIClvloQZ1M129peATTtWb6atela5X7cYHFsZrb67lwZ1vtHh1l4IF6scBTjv/PzB
+	 87X+qdn9IaowdLggFLz78Dw2QGQYzTGTKYlYjesUecF7SKGmXP3K7d4MiNpysRK0C4
+	 t1j6G+/iD6LfqO1isYZWLf7PzibnKlRmHEvbs7+NgM3HuNE42GCI1Q9GRAefkReH7D
+	 h1xPrbjqj6a/OYMEAXoJHIZOoDahFAwploUpVgqALFamW0OGHq4qX5LWxM1UPydgH/
+	 YFeXyS+Ct198tCxuXtgduVxQagdX4vudq08ofGv4NLeAgh6fW/WoGrhSFTAIx7hFzB
+	 9jJR67v3JsAHQ==
+From: Christian Brauner <brauner@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	v9fs@lists.linux.dev,
+	linux-afs@lists.infradead.org,
+	ceph-devel@vger.kernel.org,
+	gfs2@lists.linux.dev,
+	linux-nfs@vger.kernel.org,
+	ocfs2-devel@lists.linux.dev,
+	linux-cifs@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>,
+	Alexander Aring <aahringo@redhat.com>,
+	David Teigland <teigland@redhat.com>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <kolga@netapp.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	Trond Myklebust <trond.myklebust@hammerspace.com>,
+	Anna Schumaker <anna@kernel.org>,
+	Mark Fasheh <mark@fasheh.com>,
+	Joel Becker <jlbec@evilplan.org>,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	Shyam Prasad N <sprasad@microsoft.com>,
+	Namjae Jeon <linkinjeon@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [PATCH v3 00/47] filelock: split file leases out of struct file_lock
+Date: Fri,  2 Feb 2024 12:16:44 +0100
+Message-ID: <20240202-neigung-ergiebig-9e4a18e7afa3@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
+References: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7495; i=brauner@kernel.org; h=from:subject:message-id; bh=FCOQ3oxfwys8se6zxDBVnjGUrQ0D43QqafAIstBsJ2g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTuOS+797jkjleqZtyND8RfphxXTPnGFqfbdXTF9ZorU m3xJaVmHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABMp/szIsFSbbfeTWHs/ozKH C7Ehv34yMCgvm1q6s+pDttikJ9sudzD8d1F9tTlx75EtAWdeGenLRlVo7ZEr/xU0sd55YRk/75c /7AA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-The only remaining user of ->d_real() method is d_real_inode(), which
-passed NULL inode argument to get the real data dentry.
+On Wed, 31 Jan 2024 18:01:41 -0500, Jeff Layton wrote:
+> I'm not sure this is much prettier than the last, but contracting
+> "fl_core" to "c", as Neil suggested is a bit easier on the eyes.
+> 
+> I also added a few small helpers and converted several users over to
+> them. That reduces the size of the per-fs conversion patches later in
+> the series. I played with some others too, but they were too awkward
+> or not frequently used enough to make it worthwhile.
+> 
+> [...]
 
-There are no longer any users that call ->d_real() with a non-NULL
-inode argument for getting a detry from a specific underlying layer.
+Fyi, I've merged this series as in I've turned this series into a pull
+request based on the patches. And this has a merge commit of the
+following form:
 
-Remove the inode argument of the method and replace it with an integer
-'type' argument, to allow callers to request the real metadata dentry
-instead of the real data dentry.
+commit 363af2435e403ac323ab2543da91f5984047bdb8
+Merge: 6613476e225e 6c6109548454
+Author:     Christian Brauner <brauner@kernel.org>
+AuthorDate: Fri Feb 2 12:09:26 2024 +0100
+Commit:     Christian Brauner <brauner@kernel.org>
+CommitDate: Fri Feb 2 12:09:26 2024 +0100
 
-All the current users of d_real_inode() (e.g. uprobe) continue to get
-the real data inode.  Caller that need to get the real metadata inode
-(e.g. IMA/EVM) can use d_inode(d_real(dentry, D_REAL_METADATA)).
+    Merge patch series "filelock: split file leases out of struct file_lock"
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+    Pull file locking patch series from Jeff Layton:
+
+For larger series such as this this is what I think we should end up
+doing because it gives bigger series an overall summary without forcing
+the author to always provide a tag or branch or whatever. Often the
+cover letter description is good for long term contributors already. So
+I stole most of it from v1.
+
+Thanks for basing this on a mainline tag!
+
 ---
- Documentation/filesystems/locking.rst |  2 +-
- Documentation/filesystems/vfs.rst     | 16 ++++-----
- fs/overlayfs/super.c                  | 52 ++++++++++++---------------
- include/linux/dcache.h                | 18 ++++++----
- 4 files changed, 41 insertions(+), 47 deletions(-)
 
-diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index d5bf4b6b7509..453039a2e49b 100644
---- a/Documentation/filesystems/locking.rst
-+++ b/Documentation/filesystems/locking.rst
-@@ -29,7 +29,7 @@ prototypes::
- 	char *(*d_dname)((struct dentry *dentry, char *buffer, int buflen);
- 	struct vfsmount *(*d_automount)(struct path *path);
- 	int (*d_manage)(const struct path *, bool);
--	struct dentry *(*d_real)(struct dentry *, const struct inode *);
-+	struct dentry *(*d_real)(struct dentry *, int type);
- 
- locking rules:
- 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index eebcc0f9e2bc..2a39e718fdf8 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -1264,7 +1264,7 @@ defined:
- 		char *(*d_dname)(struct dentry *, char *, int);
- 		struct vfsmount *(*d_automount)(struct path *);
- 		int (*d_manage)(const struct path *, bool);
--		struct dentry *(*d_real)(struct dentry *, const struct inode *);
-+		struct dentry *(*d_real)(struct dentry *, int type);
- 	};
- 
- ``d_revalidate``
-@@ -1419,16 +1419,14 @@ defined:
- 	the dentry being transited from.
- 
- ``d_real``
--	overlay/union type filesystems implement this method to return
--	one of the underlying dentries hidden by the overlay.  It is
--	used in two different modes:
-+	overlay/union type filesystems implement this method to return one
-+	of the underlying dentries of a regular file hidden by the overlay.
- 
--	Called from file_dentry() it returns the real dentry matching
--	the inode argument.  The real dentry may be from a lower layer
--	already copied up, but still referenced from the file.  This
--	mode is selected with a non-NULL inode argument.
-+	The 'type' argument takes the values D_REAL_DATA or D_REAL_METADATA
-+	for returning the real underlying dentry that refers to the inode
-+	hosting the file's data or metadata respectively.
- 
--	With NULL inode the topmost real underlying dentry is returned.
-+	For non-regular files, the 'dentry' argument is returned.
- 
- Each dentry has a pointer to its parent dentry, as well as a hash list
- of child dentries.  Child dentries are basically like files in a
-diff --git a/fs/overlayfs/super.c b/fs/overlayfs/super.c
-index 2eef6c70b2ae..938852a0a92b 100644
---- a/fs/overlayfs/super.c
-+++ b/fs/overlayfs/super.c
-@@ -28,41 +28,38 @@ MODULE_LICENSE("GPL");
- 
- struct ovl_dir_cache;
- 
--static struct dentry *ovl_d_real(struct dentry *dentry,
--				 const struct inode *inode)
-+static struct dentry *ovl_d_real(struct dentry *dentry, int type)
- {
--	struct dentry *real = NULL, *lower;
-+	struct dentry *upper, *lower;
- 	int err;
- 
--	/*
--	 * vfs is only expected to call d_real() with NULL from d_real_inode()
--	 * and with overlay inode from file_dentry() on an overlay file.
--	 *
--	 * TODO: remove @inode argument from d_real() API, remove code in this
--	 * function that deals with non-NULL @inode and remove d_real() call
--	 * from file_dentry().
--	 */
--	if (inode && d_inode(dentry) == inode)
--		return dentry;
--	else if (inode)
-+	switch (type) {
-+	case D_REAL_DATA:
-+	case D_REAL_METADATA:
-+		break;
-+	default:
- 		goto bug;
-+	}
- 
- 	if (!d_is_reg(dentry)) {
- 		/* d_real_inode() is only relevant for regular files */
- 		return dentry;
- 	}
- 
--	real = ovl_dentry_upper(dentry);
--	if (real && (inode == d_inode(real)))
--		return real;
-+	upper = ovl_dentry_upper(dentry);
-+	if (upper && (type == D_REAL_METADATA ||
-+		      ovl_has_upperdata(d_inode(dentry))))
-+		return upper;
- 
--	if (real && !inode && ovl_has_upperdata(d_inode(dentry)))
--		return real;
-+	if (type == D_REAL_METADATA) {
-+		lower = ovl_dentry_lower(dentry);
-+		goto real_lower;
-+	}
- 
- 	/*
--	 * Best effort lazy lookup of lowerdata for !inode case to return
-+	 * Best effort lazy lookup of lowerdata for D_REAL_DATA case to return
- 	 * the real lowerdata dentry.  The only current caller of d_real() with
--	 * NULL inode is d_real_inode() from trace_uprobe and this caller is
-+	 * D_REAL_DATA is d_real_inode() from trace_uprobe and this caller is
- 	 * likely going to be followed reading from the file, before placing
- 	 * uprobes on offset within the file, so lowerdata should be available
- 	 * when setting the uprobe.
-@@ -73,18 +70,13 @@ static struct dentry *ovl_d_real(struct dentry *dentry,
- 	lower = ovl_dentry_lowerdata(dentry);
- 	if (!lower)
- 		goto bug;
--	real = lower;
- 
--	/* Handle recursion */
--	real = d_real(real, inode);
-+real_lower:
-+	/* Handle recursion into stacked lower fs */
-+	return d_real(lower, type);
- 
--	if (!inode || inode == d_inode(real))
--		return real;
- bug:
--	WARN(1, "%s(%pd4, %s:%lu): real dentry (%p/%lu) not found\n",
--	     __func__, dentry, inode ? inode->i_sb->s_id : "NULL",
--	     inode ? inode->i_ino : 0, real,
--	     real && d_inode(real) ? d_inode(real)->i_ino : 0);
-+	WARN(1, "%s(%pd4, %d): real dentry not found\n", __func__, dentry, type);
- 	return dentry;
- }
- 
-diff --git a/include/linux/dcache.h b/include/linux/dcache.h
-index 1666c387861f..019ad02f2b7e 100644
---- a/include/linux/dcache.h
-+++ b/include/linux/dcache.h
-@@ -139,7 +139,7 @@ struct dentry_operations {
- 	char *(*d_dname)(struct dentry *, char *, int);
- 	struct vfsmount *(*d_automount)(struct path *);
- 	int (*d_manage)(const struct path *, bool);
--	struct dentry *(*d_real)(struct dentry *, const struct inode *);
-+	struct dentry *(*d_real)(struct dentry *, int type);
- } ____cacheline_aligned;
- 
- /*
-@@ -543,27 +543,31 @@ static inline struct inode *d_backing_inode(const struct dentry *upper)
- 	return inode;
- }
- 
-+enum d_real_type {
-+	D_REAL_DATA,
-+	D_REAL_METADATA,
-+};
-+
- /**
-  * d_real - Return the real dentry
-  * @dentry: the dentry to query
-- * @inode: inode to select the dentry from multiple layers (can be NULL)
-+ * @type: the type of real dentry (data or metadata)
-  *
-  * If dentry is on a union/overlay, then return the underlying, real dentry.
-  * Otherwise return the dentry itself.
-  *
-  * See also: Documentation/filesystems/vfs.rst
-  */
--static inline struct dentry *d_real(struct dentry *dentry,
--				    const struct inode *inode)
-+static inline struct dentry *d_real(struct dentry *dentry, int type)
- {
- 	if (unlikely(dentry->d_flags & DCACHE_OP_REAL))
--		return dentry->d_op->d_real(dentry, inode);
-+		return dentry->d_op->d_real(dentry, type);
- 	else
- 		return dentry;
- }
- 
- /**
-- * d_real_inode - Return the real inode
-+ * d_real_inode - Return the real inode hosting the data
-  * @dentry: The dentry to query
-  *
-  * If dentry is on a union/overlay, then return the underlying, real inode.
-@@ -572,7 +576,7 @@ static inline struct dentry *d_real(struct dentry *dentry,
- static inline struct inode *d_real_inode(const struct dentry *dentry)
- {
- 	/* This usage of d_real() results in const dentry */
--	return d_backing_inode(d_real((struct dentry *) dentry, NULL));
-+	return d_inode(d_real((struct dentry *) dentry, D_REAL_DATA));
- }
- 
- struct name_snapshot {
--- 
-2.34.1
+Applied to the vfs.file branch of the vfs/vfs.git tree.
+Patches in the vfs.file branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.file
+
+[01/47] filelock: fl_pid field should be signed int
+        https://git.kernel.org/vfs/vfs/c/0e9876d8e88d
+[02/47] filelock: rename some fields in tracepoints
+        https://git.kernel.org/vfs/vfs/c/587a67b6830b
+[03/47] filelock: rename fl_pid variable in lock_get_status
+        https://git.kernel.org/vfs/vfs/c/6021d62c677f
+[04/47] filelock: add some new helper functions
+        https://git.kernel.org/vfs/vfs/c/403594111407
+[05/47] 9p: rename fl_type variable in v9fs_file_do_lock
+        https://git.kernel.org/vfs/vfs/c/2911c0e3a5dd
+[06/47] afs: convert to using new filelock helpers
+        https://git.kernel.org/vfs/vfs/c/46a9b98baecc
+[07/47] ceph: convert to using new filelock helpers
+        https://git.kernel.org/vfs/vfs/c/7c82f3103915
+[08/47] dlm: convert to using new filelock helpers
+        https://git.kernel.org/vfs/vfs/c/7851cb526662
+[09/47] gfs2: convert to using new filelock helpers
+        https://git.kernel.org/vfs/vfs/c/47bc8fa51b46
+[10/47] lockd: convert to using new filelock helpers
+        https://git.kernel.org/vfs/vfs/c/b9570e87b652
+[11/47] nfs: convert to using new filelock helpers
+        https://git.kernel.org/vfs/vfs/c/28ad1884a338
+[12/47] nfsd: convert to using new filelock helpers
+        https://git.kernel.org/vfs/vfs/c/4e2cd366d826
+[13/47] ocfs2: convert to using new filelock helpers
+        https://git.kernel.org/vfs/vfs/c/a336b91b2340
+[14/47] smb/client: convert to using new filelock helpers
+        https://git.kernel.org/vfs/vfs/c/39647541cb26
+[15/47] smb/server: convert to using new filelock helpers
+        https://git.kernel.org/vfs/vfs/c/1d9b1c4525f6
+[16/47] filelock: drop the IS_* macros
+        https://git.kernel.org/vfs/vfs/c/22716eba8323
+[17/47] filelock: split common fields into struct file_lock_core
+        https://git.kernel.org/vfs/vfs/c/b2566e35e7d6
+[18/47] filelock: have fs/locks.c deal with file_lock_core directly
+        https://git.kernel.org/vfs/vfs/c/424dc929f8f1
+[19/47] filelock: convert more internal functions to use file_lock_core
+        https://git.kernel.org/vfs/vfs/c/2d1cfb3cf69e
+[20/47] filelock: make posix_same_owner take file_lock_core pointers
+        https://git.kernel.org/vfs/vfs/c/c91b6f218894
+[21/47] filelock: convert posix_owner_key to take file_lock_core arg
+        https://git.kernel.org/vfs/vfs/c/6944d789d1a1
+[22/47] filelock: make locks_{insert,delete}_global_locks take file_lock_core arg
+        https://git.kernel.org/vfs/vfs/c/ff30006ce158
+[23/47] filelock: convert locks_{insert,delete}_global_blocked
+        https://git.kernel.org/vfs/vfs/c/b7ae01bb4138
+[24/47] filelock: make __locks_delete_block and __locks_wake_up_blocks take file_lock_core
+        https://git.kernel.org/vfs/vfs/c/6ada65e99171
+[25/47] filelock: convert __locks_insert_block, conflict and deadlock checks to use file_lock_core
+        https://git.kernel.org/vfs/vfs/c/f449edd19f07
+[26/47] filelock: convert fl_blocker to file_lock_core
+        https://git.kernel.org/vfs/vfs/c/9bb41e6b6ea5
+[27/47] filelock: clean up locks_delete_block internals
+        https://git.kernel.org/vfs/vfs/c/78d1567cb873
+[28/47] filelock: reorganize locks_delete_block and __locks_insert_block
+        https://git.kernel.org/vfs/vfs/c/b261e8d3d5eb
+[29/47] filelock: make assign_type helper take a file_lock_core pointer
+        https://git.kernel.org/vfs/vfs/c/ae37275d53ed
+[30/47] filelock: convert locks_wake_up_blocks to take a file_lock_core pointer
+        https://git.kernel.org/vfs/vfs/c/acd1c6f76c17
+[31/47] filelock: convert locks_insert_lock_ctx and locks_delete_lock_ctx
+        https://git.kernel.org/vfs/vfs/c/77d7ed489db4
+[32/47] filelock: convert locks_translate_pid to take file_lock_core
+        https://git.kernel.org/vfs/vfs/c/e2c23bf73104
+[33/47] filelock: convert seqfile handling to use file_lock_core
+        https://git.kernel.org/vfs/vfs/c/a15d945405a3
+[34/47] 9p: adapt to breakup of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/d09f798f208c
+[35/47] afs: adapt to breakup of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/febb326af51b
+[36/47] ceph: adapt to breakup of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/afd5898079d2
+[37/47] dlm: adapt to breakup of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/f40b314ab0f2
+[38/47] gfs2: adapt to breakup of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/f1b0d238e179
+[39/47] fuse: adapt to breakup of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/ca2a24a9ff7f
+[40/47] lockd: adapt to breakup of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/1c910b2459cf
+[41/47] nfs: adapt to breakup of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/455100f41471
+[42/47] nfsd: adapt to breakup of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/48c7900f7b21
+[43/47] ocfs2: adapt to breakup of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/b7b8c39a9587
+[44/47] smb/client: adapt to breakup of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/7cd03c482447
+[45/47] smb/server: adapt to breakup of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/5087b21fd5ee
+[46/47] filelock: remove temporary compatibility macros
+        https://git.kernel.org/vfs/vfs/c/e0bde6d6d7e3
+[47/47] filelock: split leases out of struct file_lock
+        https://git.kernel.org/vfs/vfs/c/6c6109548454
 
