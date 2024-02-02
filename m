@@ -1,95 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-10034-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA382847349
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 16:36:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CEF08473AF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 16:50:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D85A1C20F11
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 15:36:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CED41C2452E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 15:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7201468FF;
-	Fri,  2 Feb 2024 15:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27CBD145B3E;
+	Fri,  2 Feb 2024 15:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DZJA8gBX"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="bfntJQMa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929891482E8;
-	Fri,  2 Feb 2024 15:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A5B1474BA
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 15:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706888182; cv=none; b=J9XfisvARrTZ70sosG5ecRm/KK6l6zf6aNhyDESk241AYgT2Bo5D7xU+2mrIgR8PR9es/ZzkNorUrxI8mRIaSzx7lLPaeaTBQwdACQPdhVwII7uJVyY92TQxFPHrTKK/mfo9Gb5vTW2Mp6bKmqWvut+g3sSbJvhZOQFDfAgmdJ8=
+	t=1706888981; cv=none; b=W90mKQhaSTf3Mhg67eOHTeQrRiuINyKsscykBcpgMTyaP5M+nt6i+dK5S+WS+t7hNShAGRNpA9uTRGMEQsigmXY1/pP74W33s0ONfECcLHkc1R15vj02g0xl8ZGZuYO7PmQcgTvcYfs08tIETa3owX6Lt60+Dv7hSgkEPNXcRqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706888182; c=relaxed/simple;
-	bh=Wvl87XNvXMMBWBNxLEx5QalHdJhfB/UDqRD0cL5pQrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MgooAgqS0FwL95KKIN6l8bWbFtV2cf9tRMOGhXECtvwKKniJUhQvdh8qav/i7H9Z//xkQ0xFs/PiCX3MLawCHW4y1xvWJ1hS5Vs7u4XHnF45fRFpFowavUptoCRFI72nHifCICyorVQIEAmnaBb/Z5jRhTxYFYN56vuhIptCIiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DZJA8gBX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25AA4C433F1;
-	Fri,  2 Feb 2024 15:36:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1706888182;
-	bh=Wvl87XNvXMMBWBNxLEx5QalHdJhfB/UDqRD0cL5pQrQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DZJA8gBXms4F+fDYW6PqCtbmIskJoLqLxNLntY0A5nOHSLbtl94NwrJo0pwCAUIO7
-	 Gl3OzmnfhgtOfSDB/932KCoZyiuEEnzRIuW+YdF4vmSXUXB6Dfy7ecxygCt6IbHDM6
-	 6DBi+PKKKzr5MZlyUGE5zplsn7Fuw+pS/vp/zyz8=
-Date: Fri, 2 Feb 2024 07:36:21 -0800
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Kees Cook <keescook@chromium.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v4 7/9] rust: file: add `Kuid` wrapper
-Message-ID: <2024020214-concierge-rework-2ac5@gregkh>
-References: <20240202-alice-file-v4-0-fc9c2080663b@google.com>
- <20240202-alice-file-v4-7-fc9c2080663b@google.com>
+	s=arc-20240116; t=1706888981; c=relaxed/simple;
+	bh=Pqqd2eCMatPfNpTdinIeb7af4EambkaxKfyLK1ad1Ns=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MX5XZx6A0P5Ns1IIbZdvts0xuy2m1IDkHK8WoXMvaJGToq3c2TkIpNrWhbe48KBJvGoNampqZPWqYPOp78vKohus0OKC+i10TIKYVfGI4DqYthEaXlqHXxBDwij4QbsQ5w9Q+grCILoMLfS38SaLqJwxgQtHU2QNuAltX96IfX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=bfntJQMa; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a35e9161b8cso311620266b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 07:49:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1706888977; x=1707493777; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=S6WHSaSMQdpDBFdRz2NpMLyLIbPyvC4EWIKUuVbjxdA=;
+        b=bfntJQMamCc2glmIRwBKSKHpW2Iz87zrzHU81CxTb8Jx5gMKXzmuDZE9+LJfQfr7eB
+         4fyOehYHv1VCSdqCtx/2baq8TvTn9pMYdQ2MjFT2CwhwCDohpWFfEK4zxn2WQdZJ6+KW
+         svyi8hgsgV1+SFTfDwscuAiQhF7ewM76YP3Hs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1706888977; x=1707493777;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S6WHSaSMQdpDBFdRz2NpMLyLIbPyvC4EWIKUuVbjxdA=;
+        b=pGJJxzXbFHnNyTdpLTFLiRVY5h9/ckZLhdnN7oCg3ay9SwkphpPoMVL2y5124AZlgy
+         WoD7T4dPk44RzySEhWkHjTH8oDUG6CIgXj6ShPjqmunPrrTxaE0D/U7Dz3e4UPz+Ip2c
+         MmRkDKFa8+2ig+msCNDn0NfkDeX36SkASNLAtZ7PxFHSPAxIxdJW/LVc4zTggRnKfgif
+         NRfFrHuqjcKHG22LFQX71b1q5VSKHCJr7xaCma2S7GbD6TjzKkWbW1bVnuhCjl5AWTZB
+         fK12lhokbFlL95rttTsAl1xmoAxiDJY57hUeyEExb91LsNvEPwBqWUfMUvEUTZFWXckH
+         3nkA==
+X-Gm-Message-State: AOJu0YwSlcvKVNtINvMzIQLdztHglNPTbtFeqIIVwpVMwPwprSP0bLT6
+	Md4P4963qD6GbwE5IJMfkbmkKqnGGIfvDmadlpMxIL2UdZog1RSwamTZoDMZ4LWtRYI4N/RfSZF
+	V/zZ2S6VR016TFyKoxRGysdG/R/vv/KY2R2d7To1LmX2EZnaijC4=
+X-Google-Smtp-Source: AGHT+IHZ9NS+o7bc9uF/lDy33EFbzEr/Bqm4y71OvHirCkmIM4Zm+o5O9OqDCL+pDgpSoShJ0nU+oEFY19GixZz1mZg=
+X-Received: by 2002:a17:907:3da0:b0:a35:fa06:aced with SMTP id
+ he32-20020a1709073da000b00a35fa06acedmr2305784ejc.65.1706888976886; Fri, 02
+ Feb 2024 07:49:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240202-alice-file-v4-7-fc9c2080663b@google.com>
+References: <20240131230827.207552-1-bschubert@ddn.com> <20240131230827.207552-5-bschubert@ddn.com>
+ <CAJfpeguF0ENfGJHYH5Q5o4gMZu96jjB4Ax4Q2+78DEP3jBrxCQ@mail.gmail.com>
+ <CAOQ4uxgv67njK9CvbUfdqF8WV_cFzrnaHdPB6-qiQuKNEDvvwA@mail.gmail.com>
+ <CAJfpegupKaeLX_-G-DqR0afC1JsT21Akm6TeMK9Ugi6MBh3fMA@mail.gmail.com>
+ <CAOQ4uxiXEc-p7JY03RH2hJg7d+R1EtwGdBowTkOuaT9Ps_On8Q@mail.gmail.com>
+ <CAJfpegs4hQg93Dariy5hz4bsxiFKoRuLsB5aRO4S6iiu6_DAKw@mail.gmail.com>
+ <CAOQ4uxhNS81=Fry+K6dF45ab==Y4ijpWUkUmvpf2E1hJrkzC3w@mail.gmail.com> <CAOQ4uxgrgoEZ34Deyg3RYJJM8+XuWVtDB9tzcXCiQvzcba8bhQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxgrgoEZ34Deyg3RYJJM8+XuWVtDB9tzcXCiQvzcba8bhQ@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 2 Feb 2024 16:49:25 +0100
+Message-ID: <CAJfpeguLBa4OzoBcxYwf0e_swctKvNGnVXLpmomU6a9wy=5f0Q@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] fuse: prepare for failing open response
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, dsingh@ddn.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Feb 02, 2024 at 10:55:41AM +0000, Alice Ryhl wrote:
-> +    /// Returns the given task's pid in the current pid namespace.
-> +    pub fn pid_in_current_ns(&self) -> Pid {
-> +        let current = Task::current_raw();
-> +        // SAFETY: Calling `task_active_pid_ns` with the current task is always safe.
-> +        let namespace = unsafe { bindings::task_active_pid_ns(current) };
-> +        // SAFETY: We know that `self.0.get()` is valid by the type invariant, and the namespace
-> +        // pointer is not dangling since it points at this task's namespace.
-> +        unsafe { bindings::task_tgid_nr_ns(self.0.get(), namespace) }
-> +    }
+On Fri, 2 Feb 2024 at 13:03, Amir Goldstein <amir73il@gmail.com> wrote:
 
-pids are reference counted in the kernel, how does this deal with that?
-Are they just ignored somehow?  Where is the reference count given back?
+>  static int fuse_dir_open(struct inode *inode, struct file *file)
+>  {
+> -       return fuse_open_common(inode, file, true);
+> +       struct fuse_mount *fm = get_fuse_mount(inode);
+> +       struct fuse_inode *fi = get_fuse_inode(inode);
+> +       int err;
+> +
+> +       if (fuse_is_bad(inode))
+> +               return -EIO;
+> +
+> +       err = generic_file_open(inode, file);
+> +       if (err)
+> +               return err;
+> +
+> +       err = fuse_do_open(fm, get_node_id(inode), file, true);
+> +       if (!err) {
+> +               struct fuse_file *ff = file->private_data;
+> +
+> +               err = fuse_finish_open(inode, file);
 
-thanks,
+I'd prefer fuse_finish_open() to be expanded as well.  FMODE_WRITE is
+always false for directories.  The other two FOPEN_ flags don't make
+sense for directories, but let's just leave them for a later cleanup.
 
-greg k-h
+Thanks,
+Miklos
 
