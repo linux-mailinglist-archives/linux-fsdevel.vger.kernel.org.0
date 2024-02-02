@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-9966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-9967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF6E28469B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 08:43:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0535A846A9A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 09:23:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A608528BD47
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 07:43:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A2DE1C26316
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 08:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026AD17BC2;
-	Fri,  2 Feb 2024 07:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABA91B59F;
+	Fri,  2 Feb 2024 08:20:52 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB3017BA4
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 07:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF8281A27D
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 08:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706859798; cv=none; b=hne8etO1m6+e95Yt2i85BS/K9hDKR6nsMB82Ja5odFX3+0d6GvS6AuUkNTxBGrHq2QMDIkqTxJBowL+Ir4Mb1ZBFlYL0R1C3+MQK56KCWeA3iEsh+q9YwMjnpZb80RKsxfIZb/nMQYkVam+LaOlaQrF4InTlBC01gSpG666A6cM=
+	t=1706862051; cv=none; b=aXOSO139VNZmNIyQ0YjNOj9tS7H5WistCOy5iwE5Ace7QZzJyRIpYUnwySll7rUlCNX1l8G7E7mN+ZbhZu8RLqSSPIK5cwBHpiGwZimkKveM1taruJL6bcxC4xFP+bIIGPfZvDUoU96a3tdjAfXKfz3V0tSmqu+FjSd5Q4M/lT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706859798; c=relaxed/simple;
-	bh=NIl8vBPPhfV8BFNp4CJyrV34KyD9EtPndnqwVuvBq7k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=otNyTALKdehiuHxL1vmocilPKeiRYTf5uPiYrnFZckrw71n2UKbihdZDE17KHZrXUYhXB1+Ac+lFnDanmgzPfZfhA2cZk9Bm6VRNK9gxci/ysjMgd1Q2sPOqlGCLsCvsCTFsL2AUaIrm1kxMhkqqScIi4mdFbOpdLSICUeTzvwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+	s=arc-20240116; t=1706862051; c=relaxed/simple;
+	bh=+4s8Dop2FMCD50JsPRXtUY6gNMki1aASbLRp3Xb59wc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VpJ0Y86GHZIEGtCh/Mmu9cG4wp0RweMWVFXzZHp4N7x6HyOd80sI1o6D0QqFOfyxXtGfHnvza1cVqRo7wPW4w+LOq3EdkgzwhMRMQToZTU2n+93WxLDyjwXQo4kqXPmx7SBIMytrK9isR9nYF75tH8Ge76U3OmzCTAwdNCcGcgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
 Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4TR7563CzyzXh5f
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 15:41:46 +0800 (CST)
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4TR7wg6mY7z1Q8k0
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 16:19:31 +0800 (CST)
 Received: from canpemm500009.china.huawei.com (unknown [7.192.105.203])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2186C140114
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 15:43:12 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 5025714059B
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 Feb 2024 16:20:46 +0800 (CST)
 Received: from huawei.com (10.113.213.244) by canpemm500009.china.huawei.com
  (7.192.105.203) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Fri, 2 Feb
- 2024 15:43:11 +0800
+ 2024 16:20:45 +0800
 From: Wang Jianjian <wangjianjian3@huawei.com>
 To: <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>
 CC: <zhangzhikang1@huawei.com>, <liujie1@huawei.com>, <yunlanying@huawei.com>,
 	<gudehe@huawei.com>
-Subject: [PATCH] quota: Fix potential NULL pointer dereference
-Date: Fri, 2 Feb 2024 15:41:18 +0800
-Message-ID: <20240202074118.3777896-1-wangjianjian3@huawei.com>
+Subject: [PATCH v2] quota: Fix potential NULL pointer dereference
+Date: Fri, 2 Feb 2024 16:18:52 +0800
+Message-ID: <20240202081852.2514092-1-wangjianjian3@huawei.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -83,7 +83,7 @@ Signed-off-by: Wang Jianjian <wangjianjian3@huawei.com>
  1 file changed, 52 insertions(+), 40 deletions(-)
 
 diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 1f0c754416b6..142b652e0025 100644
+index 1f0c754416b6..929a720c72fc 100644
 --- a/fs/quota/dquot.c
 +++ b/fs/quota/dquot.c
 @@ -402,12 +402,14 @@ EXPORT_SYMBOL(dquot_mark_dquot_dirty);
@@ -133,7 +133,7 @@ index 1f0c754416b6..142b652e0025 100644
  			for (cnt--; cnt >= 0; cnt--) {
 -				if (!dquots[cnt])
 +				dquot = srcu_dereference(dquots[cnt], &dquot_srcu);
-+				if (dquot)
++				if (!dquot)
  					continue;
 -				spin_lock(&dquots[cnt]->dq_dqb_lock);
 +				spin_lock(&dquot->dq_dqb_lock);
