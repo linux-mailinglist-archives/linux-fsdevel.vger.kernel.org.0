@@ -1,310 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-10084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B8B8479FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 20:55:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99728847A36
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 21:04:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2344C1F27C68
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 19:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD41E1C2521E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Feb 2024 20:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D25980628;
-	Fri,  2 Feb 2024 19:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA309839EE;
+	Fri,  2 Feb 2024 20:02:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YocfUc9n"
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="CmeX23S7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06D4915E5CF;
-	Fri,  2 Feb 2024 19:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EBA18063D;
+	Fri,  2 Feb 2024 20:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706903690; cv=none; b=qvFlswdfXOdF5xN+WL2TxkH9bsMNyKYTS06HFa0fpuXm8xEElpX2u86d8AxCmkzhifuMdl0+0fzkKRgS6cTUW2LNV8MxMf6dVo4Q67xM479QI1VjWZ00AQzg6cDvPtnYpiHdv8AveI8lF0x4+q08yxHXoPl124jDpyrFWHBYghM=
+	t=1706904173; cv=none; b=JU14UIVwl/G439CznFolw6zaD538QPlAJtsyY8gHUR/TaK7pm56nmpH0vMZ645c5x+vcJC/t8dKck28rhGClZ/O1ViGJIO4JIRrqtKyAtrSAieP6Wu33O4kntCkBtdc3gLwoc6s5/HWGUeCg7XhQIgwLHb1YONm1C47vovnUT14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706903690; c=relaxed/simple;
-	bh=zis5a832DNVLDWMLTosC40g+8JGoXNTfiM52H9fknoA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=raNUcJJypfZE+W0I1pTZzZ8Xgmg2WmQrKDWRx5udcklaZ/kLOzXGMWUA3YIlON+ZyRhhZtPbNWg7hZcxIkZiZLpeMrecOkRIysJX45R4fYeD1eRlsGM7MzsUQ6k9ocVtRcMtOEXAhDh/9vxZQMrrcxJxf2bvJ2KWi6aspO0VsBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YocfUc9n; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EPDigTwMYSBeKa6P2S6F9u1gtv1/BziHaf0fSlf2HG8=; b=YocfUc9nh/plb0/y4ycGxYL6+3
-	yPQ1rAiT7ueetm5FzW01bar2EInuaNROHYtFNNeGTe5QMK0+3rWHA//rSaRsSe+ag2RRTXquD2mTU
-	I/lWvLuNqLdKV/fVocNPbkVhYS7sEC74KzbpO57m559oGE1jTBiIkkJHrfbYswIotesGLbfWOaeZS
-	dJV69wh0VbhGRp16QQesbTiM1W/5mZIld142xIqSV8NYPZU0Z3o2THgbEto+ZXCY7IY8WSrYb5Mj6
-	1aGJk0q2+0edXHuc6eMwZaEC+D5BeyfK/1nvArJ0exyaLUy9REv+4mexNBN7luPnJk5RnXaoj9oJK
-	R5M0xuxg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rVzcd-00000001wBG-08ua;
-	Fri, 02 Feb 2024 19:54:47 +0000
-Date: Fri, 2 Feb 2024 19:54:46 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH 1/3] fs: Introduce buffered_write_operations
-Message-ID: <Zb1IhounqHjhreZD@casper.infradead.org>
-References: <20240130055414.2143959-1-willy@infradead.org>
- <20240130055414.2143959-2-willy@infradead.org>
- <20240130081252.GC22621@lst.de>
- <ZbsfuaANd4DIVb4w@casper.infradead.org>
- <20240201044246.GA14117@lst.de>
+	s=arc-20240116; t=1706904173; c=relaxed/simple;
+	bh=U8Zpp8rzADjQWv8sp6Upen6MRmo/xdz9mIdCpg1d5d0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=csWED/iUkVLgKMo3dkaS6gzbbj8Oy81z5jKrH+/JrtVPrljiQPlZ+argUlXJFUNFCRKoHUNwVCrY65xTIsIZhKCeNKRQrStc5T0RgomzZslmDL0Cu9oJoa2vXPDIgu7vlvngfhhztr/hj1mgHdMBW6mGzjirJngOnGoy4Q3ngI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=CmeX23S7; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1706904169;
+	bh=U8Zpp8rzADjQWv8sp6Upen6MRmo/xdz9mIdCpg1d5d0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CmeX23S7NWtLpK+eiIZsvdsXqvq9a2C5GT5UEfoNFmLT74sYFVEQYiZUHTkWR1s/m
+	 gE82fXfKp38/4XUPZ133OnCLiaZxfY/nGJ6r0uws4ITe4unBEgeis7VnRH87RkvfNS
+	 CcXWaHj/JViXRsjCr9gB0Kbmj/OOP3ohi6cBPEyDlOEOgnW+3JyO9rjllrj3yXQGPc
+	 f0IHPPF5Zw5Vp2HS8EdN/Ls7v6O3dLmXNVMB4dlwr35GzKBiARWFnFxE8DWOSwJZyn
+	 zCFGR0OSgygAMI3MXZqpWjLzzYzG+W4swDPmIV6cDvsnrXfRR85+F+SRNfRKdnRGZT
+	 ypkpPgzZlqG2A==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TRRX86Fj7zWgY;
+	Fri,  2 Feb 2024 15:02:48 -0500 (EST)
+Message-ID: <5e838147-524c-40e5-b106-e388bf4e549b@efficios.com>
+Date: Fri, 2 Feb 2024 15:02:50 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240201044246.GA14117@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 2/4] dax: Check for data cache aliasing at runtime
+Content-Language: en-US
+To: Dan Williams <dan.j.williams@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+ Dave Chinner <david@fromorbit.com>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, linux-mm@kvack.org,
+ linux-arch@vger.kernel.org, Vishal Verma <vishal.l.verma@intel.com>,
+ Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>,
+ Russell King <linux@armlinux.org.uk>, nvdimm@lists.linux.dev,
+ linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ dm-devel@lists.linux.dev
+References: <20240131162533.247710-1-mathieu.desnoyers@efficios.com>
+ <20240131162533.247710-3-mathieu.desnoyers@efficios.com>
+ <65bab567665f3_37ad2943c@dwillia2-xfh.jf.intel.com.notmuch>
+ <0a38176b-c453-4be0-be83-f3e1bb897973@efficios.com>
+ <65bac71a9659b_37ad29428@dwillia2-xfh.jf.intel.com.notmuch>
+ <f1d14941-2d22-452a-99e6-42db806b6d7f@efficios.com>
+ <65bd284165177_2d43c29443@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+ <6bdf6085-101d-47ef-86f4-87936622345a@efficios.com>
+ <65bd457460fb1_719322942@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+In-Reply-To: <65bd457460fb1_719322942@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 01, 2024 at 05:42:46AM +0100, Christoph Hellwig wrote:
-> On Thu, Feb 01, 2024 at 04:36:09AM +0000, Matthew Wilcox wrote:
-> > +static struct folio *iomap_write_begin(struct iomap_iter *iter, loff_t pos,
-> > +               size_t len)
-> > 
-> > with corresponding changes.  Again, ends up looking slightly cleaner.
+On 2024-02-02 14:41, Dan Williams wrote:
+> Mathieu Desnoyers wrote:
+>> On 2024-02-02 12:37, Dan Williams wrote:
+>>> Mathieu Desnoyers wrote:
+>> [...]
+>>>>
+>>>
+>>>> The alternative route I intend to take is to audit all callers
+>>>> of alloc_dax() and make sure they all save the alloc_dax() return
+>>>> value in a struct dax_device * local variable first for the sake
+>>>> of checking for IS_ERR(). This will leave the xyz->dax_dev pointer
+>>>> initialized to NULL in the error case and simplify the rest of
+>>>> error checking.
+>>>
+>>> I could maybe get on board with that, but it needs a comment somewhere
+>>> about the asymmetric subtlety.
+>>
+>> Is this "somewhere" at every alloc_dax() call site, or do you have
+>> something else in mind ?
 > 
-> iomap also really needs some tweaks to the naming in the area as a
-> __foo function calling foo as the default is horrible.  I'll take a
-> look at your patches and can add that on top.
+> At least kill_dax() should mention the asymmetry I think.
+
+Here is what I intend to add:
+
+  * Note, because alloc_dax() returns an ERR_PTR() on error, callers
+  * typically store its result into a local variable in order to check
+  * the result. Therefore, care must be taken to populate the struct
+  * device dax_dev field make sure the dax_dev is not leaked.
+
 > 
-> > f2fs also doesn't seem terribly objectional; passing rpages between
-> > begin & end.
-> > 
-> > ocfs2 is passing a ocfs2_write_ctxt between the two.
+>>> The real question is what to do about device-dax. I *think* it is not
+>>> affected by cpu_dcache aliasing because it never accesses user mappings
+>>> through a kernel alias. I doubt device-dax is in use on these platforms,
+>>> but we might need another fixup for that if someone screams about the
+>>> alloc_dax() behavior change making them lose device-dax access.
+>>
+>> By "device-dax", I understand you mean drivers/dax/Kconfig:DEV_DAX.
+>>
+>> Based on your analysis, is alloc_dax() still the right spot where
+>> to place this runtime check ? Which call sites are responsible
+>> for invoking alloc_dax() for device-dax ?
 > 
-> Well, it might be the intended purpose, but as-is it is horribly
-> inefficient - they need to do a dynamic allocation for every
-> page they iterate over.  So all of them are candidates for an
-> iterator model that does this allocation once per write.
+> That is in devm_create_dev_dax().
+> 
+>> If we know which call sites do not intend to use the kernel linear
+>> mapping, we could introduce a flag (or a new variant of the alloc_dax()
+>> API) that would either enforce or skip the check.
+> 
+> Hmmm, it looks like there is already a natural flag for that. If
+> alloc_dax() is passed a NULL operations pointer it means there are no
+> kernel usages of the aliased mapping. That actually fits rather nicely.
 
-Oh, I see what you mean.  What I could do is pass in the fsdata,
-like this.
+Good, I was reaching the same conclusion when I received your reply.
+I'll do that. It ends up being:
 
-commit 753c7d2d62e1
-Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-Date:   Mon Jan 29 23:20:34 2024 -0500
+         /*
+          * Unavailable on architectures with virtually aliased data caches,
+          * except for device-dax (NULL operations pointer), which does
+          * not use aliased mappings from the kernel.
+          */
+         if (ops && cpu_dcache_is_aliasing())
+                 return ERR_PTR(-EOPNOTSUPP);
 
-    fs: Introduce buffered_write_operations
-    
-    Start the process of moving write_begin and write_end out from the
-    address_space_operations to their own struct.
-    
-    The new write_begin returns the folio or an ERR_PTR instead of returning
-    the folio by reference.  It also accepts len as a size_t and (as
-    documented) the len may be larger than PAGE_SIZE.
-    
-    Pass an optional buffered_write_operations pointer to various functions
-    in filemap.c.  The old names are available as macros for now, except
-    for generic_file_write_iter() which is used as a function pointer by
-    many filesystems.  If using the new functions, the filesystem can have
-    per-operation fsdata instead of per-page fsdata.
-    
-    Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> 
+> [..]
+>>>>> @@ -804,6 +808,15 @@ static int virtio_fs_setup_dax(struct virtio_device *vdev, struct virtio_fs *fs)
+>>>>>     	if (!IS_ENABLED(CONFIG_FUSE_DAX))
+>>>>>     		return 0;
+>>>>>     
+>>>>> +	dax_dev = alloc_dax(fs, &virtio_fs_dax_ops);
+>>>>> +	if (IS_ERR(dax_dev)) {
+>>>>> +		int rc = PTR_ERR(dax_dev);
+>>>>> +
+>>>>> +		if (rc == -EOPNOTSUPP)
+>>>>> +			return 0;
+>>>>> +		return rc;
+>>>>> +	}
+>>>>
+>>>> What is gained by moving this allocation here ?
+>>>
+>>> The gain is to fail early in virtio_fs_setup_dax() since the fundamental
+>>> dependency of alloc_dax() success is not met. For example why let the
+>>> setup progress to devm_memremap_pages() when alloc_dax() is going to
+>>> return ERR_PTR(-EOPNOTSUPP).
+>>
+>> What I don't know is whether there is a dependency requiring to do
+>> devm_request_mem_region(), devm_kzalloc(), devm_memremap_pages()
+>> before calling alloc_dax() ?
+>>
+>> Those 3 calls are used to populate:
+>>
+>>           fs->window_phys_addr = (phys_addr_t) cache_reg.addr;
+>>           fs->window_len = (phys_addr_t) cache_reg.len;
+>>
+>> and then alloc_dax() takes "fs" as private data parameter. So it's
+>> unclear to me whether we can swap the invocation order. I suspect
+>> that it is not an issue because it is only used to populate
+>> dax_dev->private, but I prefer to confirm this with you just to be
+>> on the safe side.
+> 
+> Thanks for that. All of those need to be done before the fs goes live
+> later in virtio_device_ready(), but before that point nothing should be
+> calling into virtio_fs_dax_ops, so as far as I can see it is safe to
+> change the order.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 2df35e65557d..a79c7f15ca9f 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -18,6 +18,27 @@
- 
- struct folio_batch;
- 
-+struct buffered_write_operations {
-+	struct folio *(*write_begin)(struct file *, struct address_space *,
-+			loff_t pos, size_t len, void **fsdata);
-+	size_t (*write_end)(struct file *, struct address_space *,
-+			loff_t pos, size_t len, size_t copied,
-+			struct folio *folio, void **fsdata);
-+};
-+
-+ssize_t filemap_write_iter(struct kiocb *, struct iov_iter *,
-+		const struct buffered_write_operations *, void *fsdata);
-+ssize_t __filemap_write_iter(struct kiocb *, struct iov_iter *,
-+		const struct buffered_write_operations *, void *fsdata);
-+ssize_t filemap_perform_write(struct kiocb *, struct iov_iter *,
-+		const struct buffered_write_operations *, void *fsdata);
-+
-+ssize_t generic_file_write_iter(struct kiocb *, struct iov_iter *);
-+#define generic_perform_write(kiocb, iter)		\
-+	filemap_perform_write(kiocb, iter, NULL, NULL)
-+#define __generic_file_write_iter(kiocb, iter)		\
-+	__filemap_write_iter(kiocb, iter, NULL, NULL)
-+
- unsigned long invalidate_mapping_pages(struct address_space *mapping,
- 					pgoff_t start, pgoff_t end);
- 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 750e779c23db..214266aeaca5 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -95,7 +95,7 @@
-  *    ->invalidate_lock		(filemap_fault)
-  *      ->lock_page		(filemap_fault, access_process_vm)
-  *
-- *  ->i_rwsem			(generic_perform_write)
-+ *  ->i_rwsem			(filemap_perform_write)
-  *    ->mmap_lock		(fault_in_readable->do_page_fault)
-  *
-  *  bdi->wb.list_lock
-@@ -3890,7 +3890,8 @@ generic_file_direct_write(struct kiocb *iocb, struct iov_iter *from)
- }
- EXPORT_SYMBOL(generic_file_direct_write);
- 
--ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
-+ssize_t filemap_perform_write(struct kiocb *iocb, struct iov_iter *i,
-+		const struct buffered_write_operations *ops, void *fsdata)
- {
- 	struct file *file = iocb->ki_filp;
- 	loff_t pos = iocb->ki_pos;
-@@ -3900,11 +3901,10 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
- 	ssize_t written = 0;
- 
- 	do {
--		struct page *page;
--		unsigned long offset;	/* Offset into pagecache page */
--		unsigned long bytes;	/* Bytes to write to page */
-+		struct folio *folio;
-+		size_t offset;		/* Offset into pagecache folio */
-+		size_t bytes;		/* Bytes to write to page */
- 		size_t copied;		/* Bytes copied from user */
--		void *fsdata = NULL;
- 
- 		offset = (pos & (PAGE_SIZE - 1));
- 		bytes = min_t(unsigned long, PAGE_SIZE - offset,
-@@ -3927,19 +3927,33 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
- 			break;
- 		}
- 
--		status = a_ops->write_begin(file, mapping, pos, bytes,
-+		if (ops) {
-+			folio = ops->write_begin(file, mapping, pos, bytes, &fsdata);
-+			if (IS_ERR(folio)) {
-+				status = PTR_ERR(folio);
-+				break;
-+			}
-+		} else {
-+			struct page *page;
-+			status = a_ops->write_begin(file, mapping, pos, bytes,
- 						&page, &fsdata);
--		if (unlikely(status < 0))
--			break;
-+			if (unlikely(status < 0))
-+				break;
-+			folio = page_folio(page);
-+		}
- 
- 		if (mapping_writably_mapped(mapping))
--			flush_dcache_page(page);
-+			flush_dcache_folio(folio);
- 
--		copied = copy_page_from_iter_atomic(page, offset, bytes, i);
--		flush_dcache_page(page);
-+		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
-+		flush_dcache_folio(folio);
- 
--		status = a_ops->write_end(file, mapping, pos, bytes, copied,
--						page, fsdata);
-+		if (ops)
-+			status = ops->write_end(file, mapping, pos, bytes,
-+					copied, folio, &fsdata);
-+		else
-+			status = a_ops->write_end(file, mapping, pos, bytes,
-+					copied, &folio->page, fsdata);
- 		if (unlikely(status != copied)) {
- 			iov_iter_revert(i, copied - max(status, 0L));
- 			if (unlikely(status < 0))
-@@ -3969,12 +3983,13 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
- 	iocb->ki_pos += written;
- 	return written;
- }
--EXPORT_SYMBOL(generic_perform_write);
-+EXPORT_SYMBOL(filemap_perform_write);
- 
- /**
-- * __generic_file_write_iter - write data to a file
-- * @iocb:	IO state structure (file, offset, etc.)
-- * @from:	iov_iter with data to write
-+ * __filemap_write_iter - write data to a file
-+ * @iocb: IO state structure (file, offset, etc.)
-+ * @from: iov_iter with data to write
-+ * @ops: How to inform the filesystem that a write is starting/finishing.
-  *
-  * This function does all the work needed for actually writing data to a
-  * file. It does all basic checks, removes SUID from the file, updates
-@@ -3992,7 +4007,8 @@ EXPORT_SYMBOL(generic_perform_write);
-  * * number of bytes written, even for truncated writes
-  * * negative error code if no data has been written at all
-  */
--ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-+ssize_t __filemap_write_iter(struct kiocb *iocb, struct iov_iter *from,
-+		const struct buffered_write_operations *ops, void *fsdata)
- {
- 	struct file *file = iocb->ki_filp;
- 	struct address_space *mapping = file->f_mapping;
-@@ -4019,27 +4035,29 @@ ssize_t __generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		if (ret < 0 || !iov_iter_count(from) || IS_DAX(inode))
- 			return ret;
- 		return direct_write_fallback(iocb, from, ret,
--				generic_perform_write(iocb, from));
-+				filemap_perform_write(iocb, from, ops, fsdata));
- 	}
- 
--	return generic_perform_write(iocb, from);
-+	return filemap_perform_write(iocb, from, ops, fsdata);
- }
--EXPORT_SYMBOL(__generic_file_write_iter);
-+EXPORT_SYMBOL(__filemap_write_iter);
- 
- /**
-- * generic_file_write_iter - write data to a file
-+ * filemap_write_iter - write data to a file
-  * @iocb:	IO state structure
-  * @from:	iov_iter with data to write
-  *
-- * This is a wrapper around __generic_file_write_iter() to be used by most
-+ * This is a wrapper around __filemap_write_iter() to be used by most
-  * filesystems. It takes care of syncing the file in case of O_SYNC file
-  * and acquires i_rwsem as needed.
-+ *
-  * Return:
-- * * negative error code if no data has been written at all of
-+ * * negative error code if no data has been written at all or if
-  *   vfs_fsync_range() failed for a synchronous write
-  * * number of bytes written, even for truncated writes
-  */
--ssize_t generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-+ssize_t filemap_write_iter(struct kiocb *iocb, struct iov_iter *from,
-+		const struct buffered_write_operations *ops, void *fsdata)
- {
- 	struct file *file = iocb->ki_filp;
- 	struct inode *inode = file->f_mapping->host;
-@@ -4048,13 +4066,18 @@ ssize_t generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	inode_lock(inode);
- 	ret = generic_write_checks(iocb, from);
- 	if (ret > 0)
--		ret = __generic_file_write_iter(iocb, from);
-+		ret = __filemap_write_iter(iocb, from, ops, fsdata);
- 	inode_unlock(inode);
- 
- 	if (ret > 0)
- 		ret = generic_write_sync(iocb, ret);
- 	return ret;
- }
-+
-+ssize_t generic_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
-+{
-+	return filemap_write_iter(iocb, from, NULL, NULL);
-+}
- EXPORT_SYMBOL(generic_file_write_iter);
- 
- /**
+Sounds good, I'll do that.
+
+I will soon be ready to send out a RFC v4, which is still only
+compiled-tested. Do you happen to have some kind of test suite
+you can use to automate some of the runtime testing ?
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
 
