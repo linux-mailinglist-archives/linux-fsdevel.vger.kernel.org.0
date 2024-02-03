@@ -1,94 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-10116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BB6847E4E
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 03:07:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3BB284820F
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 05:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED85E1F28B35
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 02:07:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E52101C225C5
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 04:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCDE747D;
-	Sat,  3 Feb 2024 02:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CACD4502D;
+	Sat,  3 Feb 2024 04:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zIC82qJh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAF46FA7
-	for <linux-fsdevel@vger.kernel.org>; Sat,  3 Feb 2024 02:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C861D12B9C;
+	Sat,  3 Feb 2024 04:14:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706926026; cv=none; b=QUtX3enXeSxXW/teB8K2c7J5ox4zwC+BafKeZ7M7Alkm3B4/T8FL8+ZgoblmrG2JGMZ6qMsE2XOEkWXOwUktH6iX4t7zXgmmn/tDd9qhExhGub7I7Ufsnj3rDOHKQnLLN1LS62cG57a97tNMr4o5si42X3aqC0W94UOdk2wTcA8=
+	t=1706933674; cv=none; b=dAmxYLunu9k/eq9FXogsdXuveM+qKNBVvyWDYKKDUAC8ekV4VA7rb+btHjyxJst+5wOoHZlF2rXCwjMHS86Ljx6dLrwoGEGcNyHUtprbwKbIHLtJbUG9rBoyGRH34dSKEv1LLtBWjBNjK5IhL0njzD2GsUjRPKlW+HC1Vf2vRdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706926026; c=relaxed/simple;
-	bh=i+JDF/U16A0h2ReCuKESPregCblwWsIb8m6CUL60Wpc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tqYy2e87dDmm2uVt3tZyGDvLOlTmfcGhyfQo+few0+H8oTmU9WSfevmL1lzzLQGqlO59mkQGc3i1FlZJij+A2D9u/JLhsuDkgbVV4hiRerMsyk6NwhBw4KXieoILuKGcq+wzXYZCo1HwPodj/XCF5yMu0MhfkISlrx+L74zQvBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-363827f3e55so15517555ab.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 18:07:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706926024; x=1707530824;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gbrmRoGKWhe6TCC1sGE2MFNaSiHwcC3ZaDKpsmrHR/s=;
-        b=woWHGEgjj4KZESp8UFwKvvCLYsqajwEEAP3Hugs0182e/8EOkg4sOpKvQbZ8vdTfQ1
-         1C6t4EFztMGhzJuQ96tJpYOrQtg0dLE18jRt2zEO4uCHVpwTTtBHhs/o1rkM23NggfnB
-         a7fIjG3UXQ85TFfrMgIb7WXFHLrQPsS34Ux/CRaddo6CmLY4zHGFoyBn3cO8/nn41HbM
-         i59l2UmJsfrHsVRXzsImkySoJ2mWKxoBgedjYNRWT7+rhfhcY06T89Y3tERyiPuRheh0
-         42TcE6R9qmO1XPw6GJZQNWIyAn+9iegDEvGwTh4oZA6bR/83mIqxB5jJ9sNWheAwQkZh
-         JHAA==
-X-Gm-Message-State: AOJu0YxNJBKfJaVXCfmhJ+A4Z/FQrJXE1clvFlBiJpY32Fhr/uZpXxBB
-	EsUaxAcFi2sMVATSFhpdxnkXaJQm/7C5tXxvi/eQOqaJilAhlzx9vBLV11c+c346A7zMYmzCUNy
-	CZUrlBWX4OSPdGqShiKST/0iY7h3Hw93il5dcIrVIWS/nsIMqWTRmeCQ=
-X-Google-Smtp-Source: AGHT+IHwGrrxGICgqXvjF1ce4ToGFnpyWKkdzcU/b4TT1Lnl5bhAvElMzunisL/xzV0/F+QhMt/En7jAWF2jmQunOuCuK0a1HyCw
+	s=arc-20240116; t=1706933674; c=relaxed/simple;
+	bh=0VMOBfnAIjkG+vtb8kO8dzVZvSKz9695JrKeBWWlVBc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=raTBzvMObmsba2ktKWCzuW+ZpAmULqGIbd6yunvS32b8nZLU5iPMZxUSNb4yDGOQcoTMaDu3JghoRUPDvqhNiFhy1Oh5YH3aOKRilAZBHHfQxl1ZKeOPAVT+lP3MR98TGQb1M7KDj/Zer2OxbYPb/FyCV0oQHFr4S5wmh8aLtBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zIC82qJh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89350C43399;
+	Sat,  3 Feb 2024 04:14:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1706933674;
+	bh=0VMOBfnAIjkG+vtb8kO8dzVZvSKz9695JrKeBWWlVBc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=zIC82qJhmMz5UMCv8WOzKKPCvBifNuNcMtt2VMDRUUzlDIjXH4AeTs689LbEmjiTk
+	 +9LjLcp4v7vhkkwU3zuTrfMYLWiK750LTrRCyEUJVMjrdB3mTjW0O1Red4y7eveBIU
+	 91i1OcsPe7MUURNKw2VfQcZSm+65cXiGATEbclNk=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Marc Dionne <marc.dionne@auristor.com>,
+	David Howells <dhowells@redhat.com>,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Eric Van Hensbergen <ericvh@kernel.org>,
+	Latchesar Ionkov <lucho@ionkov.net>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	v9fs@lists.linux.dev,
+	linux-cachefs@redhat.com,
+	linux-fsdevel@vger.kernel.org,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.6 242/322] 9p: Fix initialisation of netfs_inode for 9p
+Date: Fri,  2 Feb 2024 20:05:39 -0800
+Message-ID: <20240203035406.997024446@linuxfoundation.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240203035359.041730947@linuxfoundation.org>
+References: <20240203035359.041730947@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:170d:b0:363:85de:452c with SMTP id
- u13-20020a056e02170d00b0036385de452cmr341535ill.0.1706926024094; Fri, 02 Feb
- 2024 18:07:04 -0800 (PST)
-Date: Fri, 02 Feb 2024 18:07:04 -0800
-In-Reply-To: <0000000000002a909705eb841dda@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000052fe42061070afc4@google.com>
-Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_block_rsv_release
-From: syzbot <syzbot+dde7e853812ed57835ea@syzkaller.appspotmail.com>
-To: 18801353760@163.com, anand.jain@oracle.com, brauner@kernel.org, clm@fb.com, 
-	dsterba@suse.com, johannes.thumshirn@wdc.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, nathan@kernel.org, 
-	ndesaulniers@google.com, syzkaller-bugs@googlegroups.com, trix@redhat.com, 
-	yin31149@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot suspects this issue was fixed by commit:
+6.6-stable review patch.  If anyone has any objections, please let me know.
 
-commit a1912f712188291f9d7d434fba155461f1ebef66
-Author: Josef Bacik <josef@toxicpanda.com>
-Date:   Wed Nov 22 17:17:55 2023 +0000
+------------------
 
-    btrfs: remove code for inode_cache and recovery mount options
+From: David Howells <dhowells@redhat.com>
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=149a0a38180000
-start commit:   7287904c8771 Merge tag 'for-linus-2023011801' of git://git..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d24faf5fc10540ae
-dashboard link: https://syzkaller.appspot.com/bug?extid=dde7e853812ed57835ea
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14f7a805480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10df5afe480000
+[ Upstream commit 9546ac78b232bac56ff975072b1965e0e755ebd4 ]
 
-If the result looks correct, please mark the issue as fixed by replying with:
+The 9p filesystem is calling netfs_inode_init() in v9fs_init_inode() -
+before the struct inode fields have been initialised from the obtained file
+stats (ie. after v9fs_stat2inode*() has been called), but netfslib wants to
+set a couple of its fields from i_size.
 
-#syz fix: btrfs: remove code for inode_cache and recovery mount options
+Reported-by: Marc Dionne <marc.dionne@auristor.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Tested-by: Marc Dionne <marc.dionne@auristor.com>
+Tested-by: Dominique Martinet <asmadeus@codewreck.org>
+Acked-by: Dominique Martinet <asmadeus@codewreck.org>
+cc: Eric Van Hensbergen <ericvh@kernel.org>
+cc: Latchesar Ionkov <lucho@ionkov.net>
+cc: Dominique Martinet <asmadeus@codewreck.org>
+cc: Christian Schoenebeck <linux_oss@crudebyte.com>
+cc: v9fs@lists.linux.dev
+cc: linux-cachefs@redhat.com
+cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/9p/v9fs_vfs.h       | 1 +
+ fs/9p/vfs_inode.c      | 6 +++---
+ fs/9p/vfs_inode_dotl.c | 1 +
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+diff --git a/fs/9p/v9fs_vfs.h b/fs/9p/v9fs_vfs.h
+index cdf441f22e07..dcce42d55d68 100644
+--- a/fs/9p/v9fs_vfs.h
++++ b/fs/9p/v9fs_vfs.h
+@@ -42,6 +42,7 @@ struct inode *v9fs_alloc_inode(struct super_block *sb);
+ void v9fs_free_inode(struct inode *inode);
+ struct inode *v9fs_get_inode(struct super_block *sb, umode_t mode,
+ 			     dev_t rdev);
++void v9fs_set_netfs_context(struct inode *inode);
+ int v9fs_init_inode(struct v9fs_session_info *v9ses,
+ 		    struct inode *inode, umode_t mode, dev_t rdev);
+ void v9fs_evict_inode(struct inode *inode);
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 0d28ecf668d0..ea695c4a7a3f 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -246,7 +246,7 @@ void v9fs_free_inode(struct inode *inode)
+ /*
+  * Set parameters for the netfs library
+  */
+-static void v9fs_set_netfs_context(struct inode *inode)
++void v9fs_set_netfs_context(struct inode *inode)
+ {
+ 	struct v9fs_inode *v9inode = V9FS_I(inode);
+ 	netfs_inode_init(&v9inode->netfs, &v9fs_req_ops);
+@@ -326,8 +326,6 @@ int v9fs_init_inode(struct v9fs_session_info *v9ses,
+ 		err = -EINVAL;
+ 		goto error;
+ 	}
+-
+-	v9fs_set_netfs_context(inode);
+ error:
+ 	return err;
+ 
+@@ -359,6 +357,7 @@ struct inode *v9fs_get_inode(struct super_block *sb, umode_t mode, dev_t rdev)
+ 		iput(inode);
+ 		return ERR_PTR(err);
+ 	}
++	v9fs_set_netfs_context(inode);
+ 	return inode;
+ }
+ 
+@@ -464,6 +463,7 @@ static struct inode *v9fs_qid_iget(struct super_block *sb,
+ 		goto error;
+ 
+ 	v9fs_stat2inode(st, inode, sb, 0);
++	v9fs_set_netfs_context(inode);
+ 	v9fs_cache_inode_get_cookie(inode);
+ 	unlock_new_inode(inode);
+ 	return inode;
+diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
+index 1312f68965ac..91bcee2ab3c4 100644
+--- a/fs/9p/vfs_inode_dotl.c
++++ b/fs/9p/vfs_inode_dotl.c
+@@ -128,6 +128,7 @@ static struct inode *v9fs_qid_iget_dotl(struct super_block *sb,
+ 		goto error;
+ 
+ 	v9fs_stat2inode_dotl(st, inode, 0);
++	v9fs_set_netfs_context(inode);
+ 	v9fs_cache_inode_get_cookie(inode);
+ 	retval = v9fs_get_acl(inode, fid);
+ 	if (retval)
+-- 
+2.43.0
+
+
+
 
