@@ -1,69 +1,69 @@
-Return-Path: <linux-fsdevel+bounces-10113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7154847E2D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 02:32:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1B4847E45
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 02:53:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C38E31C2334A
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 01:32:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2FE31C2221B
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 01:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A9D522C;
-	Sat,  3 Feb 2024 01:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705F45396;
+	Sat,  3 Feb 2024 01:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ULr/vmJd"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IeFepvAY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE621C16
-	for <linux-fsdevel@vger.kernel.org>; Sat,  3 Feb 2024 01:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AFD53AC
+	for <linux-fsdevel@vger.kernel.org>; Sat,  3 Feb 2024 01:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706923942; cv=none; b=ucNRy+lr/ltbrr3NQbT9ATLrZLhmfq/huS7Xu/mNqgNmEnTB1t4yKMXrtXl+jEZ9C41fzUvpgJVCTJiDdzVk3ht0NA5+ZK7X2R6by02GCPkFuVhmS1B487T7GRFDoYXzAr+wJHEFchLv0ohSM0v91VK5K53AlsGVnG6CJCjcBuk=
+	t=1706925179; cv=none; b=owMKtpYXP0ffOCuJKIRX/bGXMJSvWx7FyvV2+F2nLrbqJNUuSFUdQbGWgWYj/cZi0KyEq6hprKNpYpLjzTO0nFLtnHNYyp23VBQzna8y11oo6bttinEpVvtdd6GvoSA2MvYEvTOnwyGmAxVGn7+NJML3ml9v3qsyLQpoL3LNkVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706923942; c=relaxed/simple;
-	bh=LDJw0ZJRtlJkdFySI0wOAPdQNZaGk/IUoMeT7OgSShs=;
+	s=arc-20240116; t=1706925179; c=relaxed/simple;
+	bh=RYrVK0Xsga3mJrFF6r9v4P5u7C5IlYcrgGXk0OMY6xU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u1/MRkomMthH6u2rc0+bOxfvauu/iGfc8gGof9m9SkmjAG9JVEOnqMB2QGCAObnqBR4WxO39qXQPTFaLYVi5DK9NIZLbKjSNtPrDQ4kXO0RfpcQ8aS3UihA+myB+ur2zFWtpvB9AL0NymAWa6JifUTc0yL85390vpX86jXFzOHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ULr/vmJd; arc=none smtp.client-ip=209.85.214.171
+	 To:Cc:Content-Type; b=U9chHLOGTpoVD5iWaMiUqX199icF6DUW5ZhvC885NA/AVIgryIvvFOXB8Gv2QK8H2KFlpmGAnEukXJ3VGYo+OJmw4yv9q7UahKyLrx5agL04LfhOiLmdN+g2PKlIYHf2bwjz43Hr+Ms+qi4K4zcncMVBkoUlQTtLbgEm6hKyZZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IeFepvAY; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1d94691de1eso30565ad.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 17:32:20 -0800 (PST)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1d89f0ab02bso31855ad.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 17:52:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1706923940; x=1707528740; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1706925177; x=1707529977; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OEllp6xt+hG9OYbVYTRwXvaPtKG2vixg03RLhlAvHS8=;
-        b=ULr/vmJdr6NG1L7haJPhi7/4+DNFBmhUNUJDhfk7u2cW4a7IGGaJIPrLQ5v+gY0y6v
-         8j87ePBFNIL5KTP1drW8ThVAP98HIVpXVwu9tY8D5DPFqfek6SRrTXs5wDZ5/gI/l1b/
-         bRDadKP5KGcnviLPjBS1XlpnG4Hf2zocvOofnx/MU2mgi/y7IOUZlWzpoCFm787bl+OW
-         Z10gAD+T8UJb8xPd7hPJ6yJh0ynrCaInGCebByCQAEzBNSVeRpv5dzJC5y5oBGWaYU1U
-         sjYGiKvXu1jNJXA6DU/OY083cG3bp7EuCbpSlG+BY7gxvlB5VroX4WnxzMlbgTJEQzLu
-         +fGg==
+        bh=4YVUYItchskiPiFVr3towSzyXMqcpKnO7KFVbDujDv0=;
+        b=IeFepvAYWpzuiTT5EJKCxrVUTVWBsS0uU5H6OR/q98DH1Q05k6vNdQ7vRz3HFZTMO+
+         FFDFXaHN5JRT+1+X3LXGYiVMhZ5SbNcadSlgszO9YgCjESBssJKinBPMSOh3PRnv/gE3
+         dj7q+9yejQSMzNJM7WlIfGjj7buBikacv5QTUNEgT8dw9xWWYfYRaqTA+qh0jDbxA4l3
+         wBIt42J+ll1pBLFveyV5guw6LWgzY7BadWqZOTzjObwgEOx4ebCHV4fndr6wLZPY9P3g
+         KtwHqDiA3oA307KcTeRKnqL7DzdCNh8+Or2liN/GDuWfHERbibB2/7+DCwMdYUGwpHt0
+         IBFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706923940; x=1707528740;
+        d=1e100.net; s=20230601; t=1706925177; x=1707529977;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OEllp6xt+hG9OYbVYTRwXvaPtKG2vixg03RLhlAvHS8=;
-        b=k4EdT/30H3KZ069uGnBrXK4ZJZjhO3EgBqcIWqLwUA7q6EQuC/cXUmNyH9CKekENsB
-         LUWSfOWLL65kg5uhwxtlC5v6vFAesLUtC2+JxtOXqUBJ+KPGGr1aUuhxFRDXpRd5MLP6
-         Nzs1nkpJTKayTLxlbYaiB6OvFIMGD/Z/xDiXwFOntp3Fl94dLqxMWm45OK0BzYJb/XJg
-         vgNC3Lq5vwauL9U2CPnq3iLcYkIU7B7zVWHAv8lFJKhmfuLrgYQx4eD9cncZcaVEnDHs
-         PSsFQuRrfB1NuK3BBm/XISJ7x9GvPYiRT1neQwd4Q9iTHhu9tATcqzLq22GJZcjCgCH9
-         x6DA==
-X-Gm-Message-State: AOJu0YzhG1GgpsxAw5R2Papfdc5M0r6TpTBkW59N5f1LIxFyjMWKz0PX
-	wcCSkl8eMW2Ll3AVXDByVal26jPvNEjNA1VnPyN2LeD8kfz9jcVec4oVxPASZ/qqIdVcTAWIqXm
-	TCASlV+mqIxpT7HGqX8tNMq3UmgG2pYe7hC3N
-X-Google-Smtp-Source: AGHT+IEyl82Hg3VFPZZlXyUwgpQogEWkAxahEhAwIFKbaGb5fy4bBRD0kVA10OreWVQXtVHsW/d+Xp4LHMHYfB4lY90=
-X-Received: by 2002:a17:903:22c2:b0:1d9:5229:989 with SMTP id
- y2-20020a17090322c200b001d952290989mr70672plg.10.1706923939451; Fri, 02 Feb
- 2024 17:32:19 -0800 (PST)
+        bh=4YVUYItchskiPiFVr3towSzyXMqcpKnO7KFVbDujDv0=;
+        b=SOM4LW+05gKr6ZXOj/HcDr4jK0Sk7PnPxWP8R+cdzpKykSnybf/G/vZ+mhaZ52NyFW
+         ZjG6IU258vpM//iFysnXDlaNWJSjiHUYHrOOi82eWgLWP/mitnak22TjBBorApfhuad9
+         3oXFIwLzYqg0YV3uv4cBxbTJQFcVRLjh1W7Vb1lmgFekig22QhzjlVBnuLpD1+Sdogcy
+         H700HQZsPdRo7K6nXjaaCoc6dg9NMZOoA/Fxjq8gPcLC0Jm0DAbbLEjnJFQiPbGMNI92
+         +fGrM5IbOOjiWvzaMQirNpg5yUBuiTsbFLUPeNfaYmASf7cGrfky631X7YH+XEy1nyek
+         mG+Q==
+X-Gm-Message-State: AOJu0Yw+My6FGu6Pb7Czow0YqUuuIY57h8aaYFFl3t5O57onP/hZ++J7
+	UAhzPdNhWxIE+o+DD+UTArDUVH0IVsaOgiXPTV9LTIqhDxTOcOha2TRbFqjJ6A8gPYPs6wK3Y6b
+	A7vdJHDC9UR/0nX0afrOc1f8OjrwxGkUGj8cy
+X-Google-Smtp-Source: AGHT+IERC5pdHUOjk0sdXzYQIgHtEgfci2NbTryKwg65YkKqVaH9pjKs6GAU0hV+Ubl7fWQznML7tY3Dh7lY8X5xTXw=
+X-Received: by 2002:a17:902:e750:b0:1d7:6ebd:3867 with SMTP id
+ p16-20020a170902e75000b001d76ebd3867mr61710plf.1.1706925176905; Fri, 02 Feb
+ 2024 17:52:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -74,21 +74,21 @@ References: <20240125164256.4147-1-alexandru.elisei@arm.com>
  <20240125164256.4147-29-alexandru.elisei@arm.com> <CAMn1gO7M51QtxPxkRO3ogH1zasd2-vErWqoPTqGoPiEvr8Pvcw@mail.gmail.com>
  <Zb0CRYSmQxJ_N4Sr@raptor>
 In-Reply-To: <Zb0CRYSmQxJ_N4Sr@raptor>
-From: Evgenii Stepanov <eugenis@google.com>
-Date: Fri, 2 Feb 2024 17:32:07 -0800
-Message-ID: <CAFKCwrg=+KEwPoc2FXshe2qF9kQJZDT0yit4+vJ5JhNUT8+sVA@mail.gmail.com>
+From: Peter Collingbourne <pcc@google.com>
+Date: Fri, 2 Feb 2024 17:52:45 -0800
+Message-ID: <CAMn1gO5H6A71zEHLzPyuDfF5xaeej_Q2eCb54jeJ8eAG=yVgiA@mail.gmail.com>
 Subject: Re: [PATCH RFC v3 28/35] arm64: mte: swap: Handle tag restoring when
  missing tag storage
 To: Alexandru Elisei <alexandru.elisei@arm.com>
-Cc: Peter Collingbourne <pcc@google.com>, catalin.marinas@arm.com, will@kernel.org, 
-	oliver.upton@linux.dev, maz@kernel.org, james.morse@arm.com, 
-	suzuki.poulose@arm.com, yuzenghui@huawei.com, arnd@arndb.de, 
-	akpm@linux-foundation.org, mingo@redhat.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de, bristot@redhat.com, 
-	vschneid@redhat.com, mhiramat@kernel.org, rppt@kernel.org, hughd@google.com, 
-	steven.price@arm.com, anshuman.khandual@arm.com, vincenzo.frascino@arm.com, 
-	david@redhat.com, kcc@google.com, hyesoo.yu@samsung.com, 
+Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, 
+	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com, 
+	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org, 
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
+	mhiramat@kernel.org, rppt@kernel.org, hughd@google.com, steven.price@arm.com, 
+	anshuman.khandual@arm.com, vincenzo.frascino@arm.com, david@redhat.com, 
+	eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com, 
 	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
 	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
 	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
@@ -316,7 +316,9 @@ ve
 > the issue I see with this is that a memory allocation can fail, while
 > copy_*highpage() cannot. Send a fatal signal to the process if memory
 > allocation fails?
->
+
+Right, I think I'd have stability concerns about an approach like this.
+
 > Another approach would be to preallocate memory in a preemptible context,
 > something like copy_*highpage_prepare(), but that would mean a lot more
 > work: finding all the places where copy_*highpage is used and add
@@ -325,7 +327,25 @@ ry
 > in case of failure (like in the copy_pte_range() case - maybe
 > copy_*highpage_end()?). That's a pretty big maintenance burden for the MM
 > code. Although maybe other architectures can find a use for it?
->
+
+This one might not be too bad. There are only a handful of calls to
+this function, so it might not be a major ongoing burden. We can
+implement copy_highpage() like this:
+
+copy_highpage() {
+  might_sleep();
+  copy_highpage_atomic();
+}
+
+rename the existing implementations to copy_highpage_atomic() and
+change atomic context callers to call copy_highpage_atomic(). That
+way, kernels with CONFIG_DEBUG_ATOMIC_SLEEP will detect errors on all
+architectures. Then in a later patch, introduce
+copy_highpage_prepare() (or whatever) and update the
+copy_highpage_atomic() callers.
+
+Peter
+
 > And yet another approach is reserve the needed memory (for the buffer and
 > in the xarray) when the page is allocated, if it doesn't have tag storage
 > reserved, regardless of the page being allocated as tagged or not. Then i=
@@ -396,11 +416,6 @@ ll
 > > > +                       mte_copy_page_tags_from_buf(page_address(page=
 ), tags);
 > > > +                       set_page_mte_tagged(page);
-
-I hit a WARN_ON_ONCE inside `set_page_mte_tagged` at this call site,
-because the page does not have PG_tag_storage_reserved yet.
-Swap the order of calls in reserve_tag_storage?
-
 > > > +                       mte_free_tag_buf(tags);
 > > > +               }
 > > > +       }
