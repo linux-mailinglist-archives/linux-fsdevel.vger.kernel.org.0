@@ -1,118 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-10123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF09C8483EC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 06:14:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5544E84842E
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 08:12:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B462B213C6
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 05:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E86351F25B10
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 07:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5C610A1C;
-	Sat,  3 Feb 2024 05:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDAE4CDFD;
+	Sat,  3 Feb 2024 07:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uxo97TB4"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hfk1jOB6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A29110A09;
-	Sat,  3 Feb 2024 05:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE314B5C1;
+	Sat,  3 Feb 2024 07:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706937248; cv=none; b=t30Q4YJJx6b99ox3Ke0WJZrPxzYo9KJeIN8oEizac1pVU6jS4GtGcRFTZ1dCnEci3oKFlUijKLEIM6IVlZrubsgmm6hz++Z70boyaQ9s/lYiF5IxUrZr9R5m4a+8qwzqv7Y/7rTVzYvHFCJcFVAjj9O2Ha3c5ZP3GmuKJdbhMtM=
+	t=1706944326; cv=none; b=Ax1eX5hVGVoDieRjCIdbURkaKHWomPrOQTPsG4dIKHrfEnpy/q7+UK6PkihXxG4jJy56HBgJHebSYCyzfTcMrexJL8G811FVkZaYWDdVIA3J1tjnxK/51mra8+qH+7ZmqlrmV//XIiDo5LnEwjOWP7yooiRjhMTzcFe4svyeGbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706937248; c=relaxed/simple;
-	bh=v25sxvay8N5e2/0Wwh7sc0SdxRqWAPgUZnyU+HdR1PE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LEzOI1si00nrnwAcvwqENIDApmRkz18q49Py+KN39UHGqf7F1LrJT7+eXiRT3AK+ty4busA97J8C+AAnl9D8cg9y11qw8a7mCqkOl6/JJyNZXqQcpYoYdNGkO8zEacf0mhT/CciMAXs+2YolwmUy6Z25YmufENJorjf1L0RZwt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uxo97TB4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8D1CC433C7;
-	Sat,  3 Feb 2024 05:14:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1706937247;
-	bh=v25sxvay8N5e2/0Wwh7sc0SdxRqWAPgUZnyU+HdR1PE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Uxo97TB4tOt7X3Yk1UgLdnbvOvrzeWM3tu68rXKSOpcvkED8g9GQ995duk/A6H2tc
-	 NCBVXsXDlwURcMA89UfEEwq/lAaxhjlvnvW9y1yOF9GePdk8Y4k7rXGwbtgpTE14+z
-	 xaX3haOxI/48bPdPKDo1h2JSHFDncyJHajKTJD094l20F8fo3k094kIErDHD9LSZ2k
-	 2sBvAwRtYJw1R9g/aESi6ILszrP6Qc+a8AIcUJOXFeobFsyoyOWUoQ4td/t9ZOQhyp
-	 Ac0tJdTYJazT03uGnoNoex39SOY9riBigfiL/2u6jB0DxPN9TxPfugSPVhtFjKrD/A
-	 DQaJ2WSlUTl1g==
-Date: Sat, 3 Feb 2024 13:13:57 +0800
-From: Gao Xiang <xiang@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: lsf-pc@lists.linux-foundation.org, Matthew Wilcox <willy@infradead.org>,
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [LSF/MM/BPF TOPIC] Large folios, swap and fscache
-Message-ID: <Zb3Llc+dHxu4eggS@debian>
-Mail-Followup-To: David Howells <dhowells@redhat.com>,
-	lsf-pc@lists.linux-foundation.org,
-	Matthew Wilcox <willy@infradead.org>, netfs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <2701740.1706864989@warthog.procyon.org.uk>
+	s=arc-20240116; t=1706944326; c=relaxed/simple;
+	bh=h1vKh875I7DQ97UVGmnI+2v/whFN/tFVvlOTyPdDGwM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Zmtq6oVefYdBQQY1/qNt6qvlC6rJ2eUI2pTSiufmnU8/9vmiqxI8CDXDR2SLYyBRxASazyKyrtIZYb6YW4Oi2Yn/8voO9ZvCXByYUqTLOW8TUY/79VnNKkUsok9dKqkAYccPxTO9sakh1b4m23mq5aQHqRC8phfxb3SIeGnFn+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Hfk1jOB6; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=HMBNnp3fgBDK6ztw/NO3s+iVnQcpEAV34TJMhHGz7lI=; b=Hfk1jOB6JsmsKp3tLeYrYuZOXy
+	AayejwfIhn+MYGLWoPY2CdSef9mFapvkWNacoc7Rc9QLlNPfjrpcB9HUMYMlRG5YgwX2Apt8dzL3i
+	Xw72vGE+8770V5or/kmoGOWXqDf+DXrRg8z75QB4pTc2FpV6phLf0yYPHlLstv6fYZTjqtmyAIouD
+	07FCNuwksuY9zDDjYG8iD2ldZJhr9POZKriEsRotD8evbA9ivqmxN8qt+tih1wb9gjQKExRb5oo7U
+	RESHqP+TPhdaALhK5CV/Yflm88j+YnlinUZXseBUAEUOCMrd2B7EsVm8PqMa6yl8S4CgEqJFGJNd/
+	cYpziPdA==;
+Received: from [89.144.222.32] (helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rWABz-0000000FjxC-1WUq;
+	Sat, 03 Feb 2024 07:12:00 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: linux-mm@kvack.org
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Jan Kara <jack@suse.com>,
+	David Howells <dhowells@redhat.com>,
+	Brian Foster <bfoster@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: convert write_cache_pages() to an iterator v6
+Date: Sat,  3 Feb 2024 08:11:34 +0100
+Message-Id: <20240203071147.862076-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2701740.1706864989@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi David,
+Hi all,
 
-On Fri, Feb 02, 2024 at 09:09:49AM +0000, David Howells wrote:
-> Hi,
-> 
-> The topic came up in a recent discussion about how to deal with large folios
-> when it comes to swap as a swap device is normally considered a simple array
-> of PAGE_SIZE-sized elements that can be indexed by a single integer.
-> 
-> With the advent of large folios, however, we might need to change this in
-> order to be better able to swap out a compound page efficiently.  Swap
-> fragmentation raises its head, as does the need to potentially save multiple
-> indices per folio.  Does swap need to grow more filesystem features?
-> 
-> Further to this, we have at least two ways to cache data on disk/flash/etc. -
-> swap and fscache - and both want to set aside disk space for their operation.
-> Might it be possible to combine the two?
-> 
-> One thing I want to look at for fscache is the possibility of switching from a
-> file-per-object-based approach to a tagged cache more akin to the way OpenAFS
-> does things.  In OpenAFS, you have a whole bunch of small files, each
-> containing a single block (e.g. 256K) of data, and an index that maps a
-> particular {volume,file,version,block} to one of these files in the cache.
-> 
-> Now, I could also consider holding all the data blocks in a single file (or
-> blockdev) - and this might work for swap.  For fscache, I do, however, need to
-> have some sort of integrity across reboots that swap does not require.
+this is an evolution of the series Matthew Wilcox originally sent in June
+2023, which has changed quite a bit since and now has a while based
+iterator.
 
-If my understanding is correct, I think the old swapfile approach just
-works with pinned local fs extents, which means it looks up extents in
-advance and it doesn't expect these extents will be moved so the real
-swap data I/O paths always work without fses involved.  I don't look
-into the new SWP_FS_OPS/.swap_rw way and it seems only some network
-fses use it but IMHO it might have some deadlock risk if swapout
-triggers local fs block allocation.  But overall I think it's a good
-idea to combine the two.
+Note that in this version two patches are so different from the previous
+version that I've not kept any Reviews or Acks for them, even if the
+final result look almost the same as the previous patches with the
+incremental patch on the list.
 
-Just slight off the topic: Recently I had another rough thought. As
-you said, even a single fscache block or called a single fscache chunk is like
-256K or whatever.
+Changes since v5:
+ - completely reshuffle the series to directly prepare for the
+   writeback_iter() style.
+ - don't require *error to be initialized on first call
+ - improve various comments
+ - fix a bisection hazard where write_cache_pages don't return delayed
+   error for a few commits
+ - fix a whitespace error
+ - drop the iomap patch again for now as the iomap map multiple blocks
+   series isn't in mainline yet
 
-Is it possible to implement an _optional_ partial cached data uptodate
-like fscache chunk vs fsblock?  For example a bitmap can be attached to
-each 256K or 1M chunk. That would be much helpful.
+Changes since v4:
+ - added back the (rebased) iomap conversion now that the conflict is in
+   mainline
+ - add a new patch to change the iterator
 
-Thanks,
-Gao Xiang
+Changes since v3:
+ - various commit log spelling fixes
+ - remove a statement from a commit log that isn't true any more with the
+   changes in v3
+ - rename a function
+ - merge two helpers
 
-> 
-> David
-> 
+Diffstat:
+ fs/iomap/buffered-io.c    |   10 -
+ include/linux/pagevec.h   |   18 ++
+ include/linux/writeback.h |   12 +
+ mm/page-writeback.c       |  344 ++++++++++++++++++++++++++--------------------
+ 4 files changed, 231 insertions(+), 153 deletions(-)
 
