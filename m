@@ -1,67 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-10139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67EED84846D
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 08:57:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0928384848D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 09:40:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2E17B2A228
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 07:57:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB570B244CA
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 08:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD1E44F203;
-	Sat,  3 Feb 2024 07:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA45D5C911;
+	Sat,  3 Feb 2024 08:40:39 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3B154EB2F
-	for <linux-fsdevel@vger.kernel.org>; Sat,  3 Feb 2024 07:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C26C558ACA
+	for <linux-fsdevel@vger.kernel.org>; Sat,  3 Feb 2024 08:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706947051; cv=none; b=j6Otoedp+EDCe9IDy3lMOWLI1V5Unh2F4vSoUOc5KGCNn4h43iG7roAKQaxlXXEJUlAv0Lkx2vCBDx6P9WDZo+cE2h+jhYpea9FSn0MScMT8e7UCVD/+KsoI9HplzqSgSAkpK02DvR4Us2AaAvFXvCWnibcxTr/uFq1wGCYnUxc=
+	t=1706949639; cv=none; b=bZjfsML3AZa9UIR0etHTrs5rMn0L7B23v8L5ohjxYfZuDewRwRXLhjlqds70MOmRaLTFNowfoRNmrpPChsWOoRlcPFV6EVv/gWD1Muuh2Q60kafanhlLJ7lWlmABzqzMu3STR4f6R7lM/f0Mc1HUuu3Dj3a+ENhbk6GMpAbq29c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706947051; c=relaxed/simple;
-	bh=hroIZKqVyIMMeicPNrsjwRZRLDKnJZ+qliuelIcNzX8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AOkS3sYdCQ0IwT3ztSt5mdl+8WRDMHal84DoADjkIO+uG1FlG3EKSO73AuLo0rS3I7geiBLcAXjrqbNleXz6j/EQgUnj0LvlOr1l7kwNoMwDPiq3+hZjbCDLQdkfkFbGWwXM2L6F/6bSV/uXsAjJzZ6InHJ66c0/mAjJaY6ypnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+	s=arc-20240116; t=1706949639; c=relaxed/simple;
+	bh=xXdbn6Th8/yeDhRqmzj0sSt8ciexr4KqOD/UcR5HxtY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rSYVzwJ2MxZZtd9IJg4dOPDY9zLHAL6U+52SBPzNlOa8l17fzVXw0pF7yGYU2iDOvvcKCJDBeeSKyRASaqbexnRcmUSEHxECw8LSUkn1ieBRay5mNZK+vLvdaMQkPKuai36M9ZHEe2/6KyJdDEho0AU1Ep/1jotb/fM5xlLgHMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-363bc4a8d38so2894915ab.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 23:57:29 -0800 (PST)
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3610073a306so25627675ab.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 03 Feb 2024 00:40:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706947049; x=1707551849;
+        d=1e100.net; s=20230601; t=1706949637; x=1707554437;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=/6nBQdvx1rkzyJkyFMyp4g5RXHBqZrOZM6xaBekHJyg=;
-        b=aXsnkZkYqlFQwh6LWVcj4nRWy/tN3WfrEh5YzD5fzI5vRGIQfuDUqAcGJDyJ7dFdxh
-         U2CT02RMdEgTIR3zMnhYmXmKCrTFrQdAkc+380FxQRKzBHzmSBdH6Z14lDup4sLL2Otm
-         6QPXTGS0rX6juQqMbL3lxfKfU5dmDabBWO1Rd7U1IpxH9LjMLquoUlNS/caoi9OyQzL6
-         wU9PlW+h+fcPmObgq7RUvXC6cSSncA/nKpl6eVoPrZPdAIfXzj4mrf3vVCZ3NDX0BSya
-         aAeEhr0x86nn22eq93/wH9xtV7Lj1WqIJuNOcsRjoFq57ATWQyZjpwJgr6nKE2NKU5/i
-         /FoA==
-X-Gm-Message-State: AOJu0YyoJXK/ojxH0HDwul5cdilDHKHcKoctx2Rsp2o1ASQC7Z0BIIeh
-	GYUMosCU+A3lZdt3B1pirgLra1CTVTZkLq7PzZpxcfmIwbGbVbFLHxNHod0Emp5rjnx3vjD7G5J
-	aWqwP5oPja13XXlrrAYDTDtytbgKiaNLoNnEyQEj+Z7sIlkNxnw52YDM=
-X-Google-Smtp-Source: AGHT+IG/81Ib99PMqzWj59NX8R5GBRq+ruAXmTaGG3acfiU4b7NcBEN+QysElG0EOQfr9Nm6d4BCDOAeXQO0Gg4iZUOcX7L6/ojv
+        bh=JH0UWT1VuRwhxv8uLMOG4NLnKvFJPMKiFk/HBOsm7hQ=;
+        b=SsGq2fUtthdX+RjlovizH+berO9vPjBYlItDCF6N46tzdNHJM6KSGzACmBOQtQ3m2C
+         f5ZYqZLp4EfUmlcDjOMeW+1lvPoJxP1rjcPTOfG6l23lsT6bBGTTTA0InCXd0HUw/klx
+         hMV1ZCYWUaqRHhYPJ+3mlXz+qC2J/we01zazz0yr+H93w5VrULDNGG8ww5ZzsUMjv+Fb
+         p87B5jJ0qd58+8m0Dqig76yuE1WlUVNYkqe0oZQ5bDVO262eW/EG6zrnRhIpasmP5KVm
+         76+wz0RgHAnSHg56hMRYDZtvYUgn7buq3jCJYfCvovdN/00qxpYZ/WualCh8N3hpxUTx
+         XBvg==
+X-Gm-Message-State: AOJu0YxSyY60HHkpPoNkSFKPmKyKtBptoZRJf3huZNjsv5c4zhXK40+q
+	z5d5ZAcZpgBBQBK0uZfZfdhfTzid9pdvJsP9vCotW/pDSx+JNpv3+O2qnbYIpoQ8HhLSRI+L9S8
+	tJOn4QAoqGQVblaxrqo2XLyr7znCko+AtJrGMEug3XzMC4vohbVdAkcQX2Q==
+X-Google-Smtp-Source: AGHT+IEVD9aSEI5bN0h/gXEQTfUm8DdstSspgqVswzFZrvfGdC5J5hma4eh89yuk6yKhlgifRWapWI/0S/ntBHlEFGUO2Vh0CqTZ
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a4c:b0:363:812d:d6a5 with SMTP id
- u12-20020a056e021a4c00b00363812dd6a5mr301584ilv.0.1706947049138; Fri, 02 Feb
- 2024 23:57:29 -0800 (PST)
-Date: Fri, 02 Feb 2024 23:57:29 -0800
+X-Received: by 2002:a05:6e02:388a:b0:363:b877:a4c7 with SMTP id
+ cn10-20020a056e02388a00b00363b877a4c7mr213432ilb.1.1706949637010; Sat, 03 Feb
+ 2024 00:40:37 -0800 (PST)
+Date: Sat, 03 Feb 2024 00:40:36 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000083b24f0610759407@google.com>
-Subject: [syzbot] [netfs?] kernel BUG in __fscache_relinquish_cookie (2)
-From: syzbot <syzbot+ccef0a87d907980eed03@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
+Message-ID: <000000000000c37a740610762e55@google.com>
+Subject: [syzbot] [hfs?] KASAN: slab-out-of-bounds Write in hfsplus_bnode_read_key
+From: syzbot <syzbot+57028366b9825d8e8ad0@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
@@ -69,90 +68,149 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    596764183be8 Add linux-next specific files for 20240129
+HEAD commit:    076d56d74f17 Add linux-next specific files for 20240202
 git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1571092fe80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=584144ad19f381aa
-dashboard link: https://syzkaller.appspot.com/bug?extid=ccef0a87d907980eed03
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=1773d5d3e80000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=428086ff1c010d9f
+dashboard link: https://syzkaller.appspot.com/bug?extid=57028366b9825d8e8ad0
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1692c160180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13bab004180000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b647c038857b/disk-59676418.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/729e26c3ac55/vmlinux-59676418.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/15aa5e287059/bzImage-59676418.xz
+disk image: https://storage.googleapis.com/syzbot-assets/dece45d1a4b5/disk-076d56d7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4921e269b178/vmlinux-076d56d7.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2a9156da9091/bzImage-076d56d7.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/a4851316d70a/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ccef0a87d907980eed03@syzkaller.appspotmail.com
+Reported-by: syzbot+57028366b9825d8e8ad0@syzkaller.appspotmail.com
 
-netfs: 
-netfs: Assertion failed
-netfs: ffffffffadacafae == 0 is false
-------------[ cut here ]------------
-kernel BUG at fs/netfs/fscache_cookie.c:985!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 PID: 22343 Comm: syz-executor.0 Not tainted 6.8.0-rc1-next-20240129-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/17/2023
-RIP: 0010:__fscache_relinquish_cookie+0x4e8/0x620 fs/netfs/fscache_cookie.c:985
-Code: e8 83 e0 07 83 c0 03 38 d0 7c 0c 84 d2 74 08 48 89 ef e8 cb d4 b8 ff 48 63 73 04 31 d2 48 c7 c7 c0 a2 22 8b e8 b9 29 40 ff 90 <0f> 0b e8 c1 51 5e ff 48 c7 c7 40 a2 22 8b e8 a5 29 40 ff 48 c7 c7
-RSP: 0018:ffffc90014417b00 EFLAGS: 00010282
-RAX: 0000000000000025 RBX: ffff88823bd40ee8 RCX: ffffc9000cded000
-RDX: 0000000000000000 RSI: ffffffff816eb7e6 RDI: 0000000000000005
-RBP: ffff88823bd40eec R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000000 R11: fffffffffffc94f8 R12: ffff88823bd40fd8
-R13: 00000000adacafae R14: 000000000003c0cc R15: ffff8880750f29c0
-FS:  00007f4f507ef6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f41889747a0 CR3: 000000007c79e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+loop0: detected capacity change from 0 to 1024
+==================================================================
+BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:417 [inline]
+BUG: KASAN: slab-out-of-bounds in hfsplus_bnode_read fs/hfsplus/bnode.c:32 [inline]
+BUG: KASAN: slab-out-of-bounds in hfsplus_bnode_read_key+0x394/0x610 fs/hfsplus/bnode.c:70
+Write of size 3970 at addr ffff88802a197800 by task syz-executor339/5066
+
+CPU: 0 PID: 5066 Comm: syz-executor339 Not tainted 6.8.0-rc2-next-20240202-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
 Call Trace:
  <TASK>
- fscache_relinquish_cookie include/linux/fscache.h:308 [inline]
- v9fs_evict_inode+0x102/0x150 fs/9p/vfs_inode.c:356
- evict+0x2ed/0x6c0 fs/inode.c:666
- iput_final fs/inode.c:1740 [inline]
- iput.part.0+0x573/0x7c0 fs/inode.c:1766
- iput+0x5c/0x80 fs/inode.c:1756
- v9fs_fid_iget_dotl+0x1b4/0x260 fs/9p/vfs_inode_dotl.c:96
- v9fs_get_inode_from_fid fs/9p/v9fs.h:230 [inline]
- v9fs_mount+0x515/0xa90 fs/9p/vfs_super.c:142
- legacy_get_tree+0x109/0x220 fs/fs_context.c:662
- vfs_get_tree+0x8f/0x380 fs/super.c:1784
- do_new_mount fs/namespace.c:3352 [inline]
- path_mount+0x14e6/0x1f20 fs/namespace.c:3679
- do_mount fs/namespace.c:3692 [inline]
- __do_sys_mount fs/namespace.c:3898 [inline]
- __se_sys_mount fs/namespace.c:3875 [inline]
- __x64_sys_mount+0x297/0x320 fs/namespace.c:3875
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xd2/0x260 arch/x86/entry/common.c:83
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2e0 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
+ memcpy_from_page include/linux/highmem.h:417 [inline]
+ hfsplus_bnode_read fs/hfsplus/bnode.c:32 [inline]
+ hfsplus_bnode_read_key+0x394/0x610 fs/hfsplus/bnode.c:70
+ hfsplus_brec_insert+0x6ea/0xde0 fs/hfsplus/brec.c:141
+ hfsplus_create_attr+0x4a2/0x640 fs/hfsplus/attributes.c:252
+ __hfsplus_setxattr+0x6fe/0x22d0 fs/hfsplus/xattr.c:354
+ hfsplus_setxattr+0xb0/0xe0 fs/hfsplus/xattr.c:434
+ hfsplus_security_setxattr+0x40/0x60 fs/hfsplus/xattr_security.c:31
+ __vfs_setxattr+0x468/0x4a0 fs/xattr.c:201
+ __vfs_setxattr_noperm+0x12e/0x5e0 fs/xattr.c:235
+ vfs_setxattr+0x221/0x430 fs/xattr.c:322
+ do_setxattr fs/xattr.c:630 [inline]
+ setxattr+0x25d/0x2f0 fs/xattr.c:653
+ path_setxattr+0x1c0/0x2a0 fs/xattr.c:672
+ __do_sys_setxattr fs/xattr.c:688 [inline]
+ __se_sys_setxattr fs/xattr.c:684 [inline]
+ __x64_sys_setxattr+0xbb/0xd0 fs/xattr.c:684
+ do_syscall_64+0xfb/0x240
  entry_SYSCALL_64_after_hwframe+0x6d/0x75
-RIP: 0033:0x7f4f4fa7cda9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f4f507ef0c8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f4f4fbabf80 RCX: 00007f4f4fa7cda9
-RDX: 0000000020000140 RSI: 0000000020000400 RDI: 0000000000000000
-RBP: 00007f4f4fac947a R08: 00000000200007c0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f4f4fbabf80 R15: 00007ffd6430a4a8
+RIP: 0033:0x7fc180ad2639
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc6080f8c8 EFLAGS: 00000246 ORIG_RAX: 00000000000000bc
+RAX: ffffffffffffffda RBX: 0031656c69662f2e RCX: 00007fc180ad2639
+RDX: 0000000000000000 RSI: 0000000020000140 RDI: 0000000020000240
+RBP: 00007fc180b45610 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffc6080fa98 R14: 0000000000000001 R15: 0000000000000001
  </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__fscache_relinquish_cookie+0x4e8/0x620 fs/netfs/fscache_cookie.c:985
-Code: e8 83 e0 07 83 c0 03 38 d0 7c 0c 84 d2 74 08 48 89 ef e8 cb d4 b8 ff 48 63 73 04 31 d2 48 c7 c7 c0 a2 22 8b e8 b9 29 40 ff 90 <0f> 0b e8 c1 51 5e ff 48 c7 c7 40 a2 22 8b e8 a5 29 40 ff 48 c7 c7
-RSP: 0018:ffffc90014417b00 EFLAGS: 00010282
-RAX: 0000000000000025 RBX: ffff88823bd40ee8 RCX: ffffc9000cded000
-RDX: 0000000000000000 RSI: ffffffff816eb7e6 RDI: 0000000000000005
-RBP: ffff88823bd40eec R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000000 R11: fffffffffffc94f8 R12: ffff88823bd40fd8
-R13: 00000000adacafae R14: 000000000003c0cc R15: ffff8880750f29c0
-FS:  00007f4f507ef6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007efe021a8000 CR3: 000000007c79e000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+Allocated by task 5066:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:370 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:387
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ __do_kmalloc_node mm/slub.c:3982 [inline]
+ __kmalloc+0x231/0x4a0 mm/slub.c:3995
+ kmalloc include/linux/slab.h:594 [inline]
+ hfsplus_find_init+0x85/0x1c0 fs/hfsplus/bfind.c:21
+ hfsplus_create_attr+0x161/0x640 fs/hfsplus/attributes.c:216
+ __hfsplus_setxattr+0x6fe/0x22d0 fs/hfsplus/xattr.c:354
+ hfsplus_setxattr+0xb0/0xe0 fs/hfsplus/xattr.c:434
+ hfsplus_security_setxattr+0x40/0x60 fs/hfsplus/xattr_security.c:31
+ __vfs_setxattr+0x468/0x4a0 fs/xattr.c:201
+ __vfs_setxattr_noperm+0x12e/0x5e0 fs/xattr.c:235
+ vfs_setxattr+0x221/0x430 fs/xattr.c:322
+ do_setxattr fs/xattr.c:630 [inline]
+ setxattr+0x25d/0x2f0 fs/xattr.c:653
+ path_setxattr+0x1c0/0x2a0 fs/xattr.c:672
+ __do_sys_setxattr fs/xattr.c:688 [inline]
+ __se_sys_setxattr fs/xattr.c:684 [inline]
+ __x64_sys_setxattr+0xbb/0xd0 fs/xattr.c:684
+ do_syscall_64+0xfb/0x240
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+
+The buggy address belongs to the object at ffff88802a197800
+ which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 0 bytes inside of
+ allocated 536-byte region [ffff88802a197800, ffff88802a197a18)
+
+The buggy address belongs to the physical page:
+page:ffffea0000a86400 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2a190
+head:ffffea0000a86400 order:3 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+anon flags: 0xfff80000000840(slab|head|node=0|zone=1|lastcpupid=0xfff)
+page_type: 0xffffffff()
+raw: 00fff80000000840 ffff888014c41dc0 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 1, tgid 1 (swapper/0), ts 10670801188, free_ts 0
+ set_page_owner include/linux/page_owner.h:31 [inline]
+ post_alloc_hook+0x1ea/0x210 mm/page_alloc.c:1539
+ prep_new_page mm/page_alloc.c:1546 [inline]
+ get_page_from_freelist+0x34eb/0x3680 mm/page_alloc.c:3353
+ __alloc_pages+0x256/0x680 mm/page_alloc.c:4609
+ __alloc_pages_node include/linux/gfp.h:238 [inline]
+ alloc_pages_node include/linux/gfp.h:261 [inline]
+ alloc_slab_page+0x5f/0x160 mm/slub.c:2191
+ allocate_slab mm/slub.c:2354 [inline]
+ new_slab+0x84/0x2f0 mm/slub.c:2407
+ ___slab_alloc+0xc73/0x1260 mm/slub.c:3541
+ __slab_alloc mm/slub.c:3626 [inline]
+ __slab_alloc_node mm/slub.c:3679 [inline]
+ slab_alloc_node mm/slub.c:3851 [inline]
+ __do_kmalloc_node mm/slub.c:3981 [inline]
+ __kmalloc+0x2e3/0x4a0 mm/slub.c:3995
+ kmalloc include/linux/slab.h:594 [inline]
+ kzalloc include/linux/slab.h:711 [inline]
+ alloc_workqueue+0x19b/0x1f40 kernel/workqueue.c:5196
+ nf_flow_table_offload_init+0x3c/0xb0 net/netfilter/nf_flow_table_offload.c:1217
+ nf_flow_table_module_init+0x2b/0x70 net/netfilter/nf_flow_table_core.c:662
+ do_one_initcall+0x238/0x830 init/main.c:1233
+ do_initcall_level+0x157/0x210 init/main.c:1295
+ do_initcalls+0x3f/0x80 init/main.c:1311
+ kernel_init_freeable+0x430/0x5d0 init/main.c:1542
+ kernel_init+0x1d/0x2b0 init/main.c:1432
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+page_owner free stack trace missing
+
+Memory state around the buggy address:
+ ffff88802a197900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff88802a197980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffff88802a197a00: 00 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc
+                            ^
+ ffff88802a197a80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88802a197b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 
 
 ---
@@ -165,6 +223,10 @@ https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
 If the report is already addressed, let syzbot know by replying with:
 #syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
 If you want to overwrite report's subsystems, reply with:
 #syz set subsystems: new-subsystem
