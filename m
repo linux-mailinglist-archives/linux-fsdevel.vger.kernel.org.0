@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-10127-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 868DF848437
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 08:13:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12D6984843A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 08:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42DAB28469F
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 07:13:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 452F31C2447A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 07:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A490B4F5F7;
-	Sat,  3 Feb 2024 07:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642204F8A5;
+	Sat,  3 Feb 2024 07:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XlUtYVzv"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QH+FHNxv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1F3E4F21D;
-	Sat,  3 Feb 2024 07:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D75F4F891;
+	Sat,  3 Feb 2024 07:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706944339; cv=none; b=XHXDnC2tMK6HkG9C9az0WgiuJVdQDDAP0UvLo+SMWNb/CtRg00SpZgFtpBBJnMwLSU/9wAkugPLrvHY6j/IuMuhfQJnTmUSDq8tI6Sx2hyN3+WorPT2fVde8pndQYX/+bM7SgnQ9yc/YGJj4r+SbhYzuM1zFnY7d/5YeaonGDRo=
+	t=1706944343; cv=none; b=puDXNA3+xV8ZvPYj4orvSYi42v9fTSq4+vHBGocaYgXsfZYAQwDMNCWufmmwkehBYtZt3W1ih9IvC642hu44dTg32b9k+508lGFbUIPnF13017cuHzSCJ/2esn07dCLinX/OWgz2UyvrVPFWQKzxXgvncrJ4K4cLwY0DGaX2JNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706944339; c=relaxed/simple;
-	bh=2Ra1DIMO+G/TyPfQxYqph8jYmrGnaJYGYnlhqWoTXnE=;
+	s=arc-20240116; t=1706944343; c=relaxed/simple;
+	bh=d7uAWRyCrrlyj0Ej5Or/Ih/519cz8DKV1v+etTcSbsg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KGduLhuLAg/hS90YQqkMx2klUCmydvCIcksqcF8ni4TZTu3a48zxXi8WH2dtBM+0eYB2NQh5qedlzbTdw/zKS/F3khJdwGSvioqlBHJwLAAiRoeJ45VToSkSXkJ9rZ+gzOFmFp1wqpjNxGdJ9N3G9nAWv134SPtmILYBmA2RBig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XlUtYVzv; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=lvIuULEv79ULms6iagWoZD6YS+K4ca8FBEl20XBsVy3/V5kCLcDCnkfZZIN1nqBh6Wo5qd0HJT4MRtk2fOmqLa5Lj2o9hGgfOF0BXP9Usf3SnKxr6f6SoO8X2pB27d5C5dO9pRn1BiAlVIFFDqQFhTshfak4kzivCgDVUdRZ0z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QH+FHNxv; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=49fgiBCP04epsyHu4VZLFhJdGCRmLlr7ZEyZXKDtz3E=; b=XlUtYVzvEHslYCkKcXL+kLKkWh
-	9WTLKLOLzxgooVTG83weTxXHEkwnSz4ybyLAeTF63d9qpkg5/3QqKB1r0fiaxhUO3cVx09NH+5Eo5
-	QFGjAEPz/oAvFBpRtC9I0fpdDPAIDkdv9qsZ/o2Yk6jT1RW6Z8Qoa81kLjYtsh7/LoSy3GUxUHyIz
-	MQ0OFbDNGbmshBa1RhuYyufJiFWc9kY5FoAub/R7AI5Ep+JcunFwqr5QsPuqV2eofrvNuVUc7kq0H
-	mfFJrDAX6yoOt/HhTtIfyWWS9UVv6ptOAdSuTkYnPQpb3GhIL9zWe/+GHCh8en4saFjCp4gzKTqae
-	RAaS1RPw==;
+	bh=GhmEmGUPN5iqiwr7bHV2cU1PJLEobcTODedxESHF4Gc=; b=QH+FHNxvkAB6h4KM2iyT9Hyvsg
+	AfE8Wt9IRK/c15fUAWzpoE0OtkarSrAESliln8xwuU91uqBJnw3VO1ZVOQoYwX84FrKLJob4M3jMF
+	oRjd2HOh1Yp7g+s/i/D020aM/XNuc5Ou1E5OqSB+BoPXYnmXsysVl04sBQn+hyb0r/W9HefFlUQas
+	cX5zi8ABK7rKKEQCa4O6ZDOWajvyMxkBX+pdPcVSoLre58AnwYKNwkfkYrngCfhD9mRSaR7RQeW3j
+	+ZFwoC5ArTW4txv7BDS1lqNVD7QtwiapVkQzDgkl/LFVurH1ZDwJQeCF5Z4DWpsunH5mT9eRUoK2y
+	SAl/WSOA==;
 Received: from [89.144.222.32] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rWACE-0000000Fk0K-0UzU;
-	Sat, 03 Feb 2024 07:12:14 +0000
+	id 1rWACJ-0000000Fk2d-1AV7;
+	Sat, 03 Feb 2024 07:12:20 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: linux-mm@kvack.org
 Cc: Matthew Wilcox <willy@infradead.org>,
@@ -58,9 +58,9 @@ Cc: Matthew Wilcox <willy@infradead.org>,
 	linux-kernel@vger.kernel.org,
 	Jan Kara <jack@suse.cz>,
 	Dave Chinner <dchinner@redhat.com>
-Subject: [PATCH 03/13] writeback: also update wbc->nr_to_write on writeback failure
-Date: Sat,  3 Feb 2024 08:11:37 +0100
-Message-Id: <20240203071147.862076-4-hch@lst.de>
+Subject: [PATCH 04/13] writeback: only update ->writeback_index for range_cyclic writeback
+Date: Sat,  3 Feb 2024 08:11:38 +0100
+Message-Id: <20240203071147.862076-5-hch@lst.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240203071147.862076-1-hch@lst.de>
 References: <20240203071147.862076-1-hch@lst.de>
@@ -73,40 +73,72 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-When exiting write_cache_pages early due to a non-integrity write
-failure, wbc->nr_to_write currently doesn't account for the folio
-we just failed to write.  This doesn't matter because the callers
-always ingore the value on a failure, but moving the update to
-common code will allow to simplify the code, so do it.
+mapping->writeback_index is only [1] used as the starting point for
+range_cyclic writeback, so there is no point in updating it for other
+types of writeback.
+
+[1] except for btrfs_defrag_file which does really odd things with
+mapping->writeback_index.  But btrfs doesn't use write_cache_pages at
+all, so this isn't relevant here.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Brian Foster <bfoster@redhat.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Acked-by: Dave Chinner <dchinner@redhat.com>
 ---
- mm/page-writeback.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/page-writeback.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
 diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index b4d978f77b0b69..ee9eb347890cd3 100644
+index ee9eb347890cd3..c7c494526bc650 100644
 --- a/mm/page-writeback.c
 +++ b/mm/page-writeback.c
-@@ -2473,6 +2473,7 @@ int write_cache_pages(struct address_space *mapping,
- 			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
- 			error = writepage(folio, wbc, data);
- 			nr = folio_nr_pages(folio);
-+			wbc->nr_to_write -= nr;
- 			if (unlikely(error)) {
- 				/*
- 				 * Handle errors according to the type of
-@@ -2506,7 +2507,6 @@ int write_cache_pages(struct address_space *mapping,
- 			 * we tagged for writeback prior to entering this loop.
- 			 */
- 			done_index = folio->index + nr;
--			wbc->nr_to_write -= nr;
- 			if (wbc->nr_to_write <= 0 &&
- 			    wbc->sync_mode == WB_SYNC_NONE) {
- 				done = 1;
+@@ -2403,7 +2403,6 @@ int write_cache_pages(struct address_space *mapping,
+ 	pgoff_t index;
+ 	pgoff_t end;		/* Inclusive */
+ 	pgoff_t done_index;
+-	int range_whole = 0;
+ 	xa_mark_t tag;
+ 
+ 	folio_batch_init(&fbatch);
+@@ -2413,8 +2412,6 @@ int write_cache_pages(struct address_space *mapping,
+ 	} else {
+ 		index = wbc->range_start >> PAGE_SHIFT;
+ 		end = wbc->range_end >> PAGE_SHIFT;
+-		if (wbc->range_start == 0 && wbc->range_end == LLONG_MAX)
+-			range_whole = 1;
+ 	}
+ 	if (wbc->sync_mode == WB_SYNC_ALL || wbc->tagged_writepages) {
+ 		tag_pages_for_writeback(mapping, index, end);
+@@ -2518,14 +2515,21 @@ int write_cache_pages(struct address_space *mapping,
+ 	}
+ 
+ 	/*
+-	 * If we hit the last page and there is more work to be done: wrap
+-	 * back the index back to the start of the file for the next
+-	 * time we are called.
++	 * For range cyclic writeback we need to remember where we stopped so
++	 * that we can continue there next time we are called.  If  we hit the
++	 * last page and there is more work to be done, wrap back to the start
++	 * of the file.
++	 *
++	 * For non-cyclic writeback we always start looking up at the beginning
++	 * of the file if we are called again, which can only happen due to
++	 * -ENOMEM from the file system.
+ 	 */
+-	if (wbc->range_cyclic && !done)
+-		done_index = 0;
+-	if (wbc->range_cyclic || (range_whole && wbc->nr_to_write > 0))
+-		mapping->writeback_index = done_index;
++	if (wbc->range_cyclic) {
++		if (done)
++			mapping->writeback_index = done_index;
++		else
++			mapping->writeback_index = 0;
++	}
+ 
+ 	return ret;
+ }
 -- 
 2.39.2
 
