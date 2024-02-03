@@ -1,483 +1,257 @@
-Return-Path: <linux-fsdevel+bounces-10114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1B4847E45
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 02:53:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAF18847E48
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 02:55:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2FE31C2221B
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 01:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623CF287C21
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Feb 2024 01:55:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705F45396;
-	Sat,  3 Feb 2024 01:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78C846FAE;
+	Sat,  3 Feb 2024 01:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IeFepvAY"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IvOBBtv7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9AFD53AC
-	for <linux-fsdevel@vger.kernel.org>; Sat,  3 Feb 2024 01:52:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7F56127
+	for <linux-fsdevel@vger.kernel.org>; Sat,  3 Feb 2024 01:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1706925179; cv=none; b=owMKtpYXP0ffOCuJKIRX/bGXMJSvWx7FyvV2+F2nLrbqJNUuSFUdQbGWgWYj/cZi0KyEq6hprKNpYpLjzTO0nFLtnHNYyp23VBQzna8y11oo6bttinEpVvtdd6GvoSA2MvYEvTOnwyGmAxVGn7+NJML3ml9v3qsyLQpoL3LNkVA=
+	t=1706925317; cv=none; b=X1sRjlZzLW2N2KeWdoPyyUXL06l22/1YV6IWyWvmwS0yZfri/P/U+tHl9MmHenIjDpGjmQpur69YI3a+fTUzKWwB6U8GTp1i3vdMXTtjzDBqIpUeLdL7+WUdgxZLvznUqxSoImRGYI5fPBsO9Zi31fqykM0eIO3nj3JxweFdQZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1706925179; c=relaxed/simple;
-	bh=RYrVK0Xsga3mJrFF6r9v4P5u7C5IlYcrgGXk0OMY6xU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U9chHLOGTpoVD5iWaMiUqX199icF6DUW5ZhvC885NA/AVIgryIvvFOXB8Gv2QK8H2KFlpmGAnEukXJ3VGYo+OJmw4yv9q7UahKyLrx5agL04LfhOiLmdN+g2PKlIYHf2bwjz43Hr+Ms+qi4K4zcncMVBkoUlQTtLbgEm6hKyZZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IeFepvAY; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1d89f0ab02bso31855ad.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Feb 2024 17:52:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1706925177; x=1707529977; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4YVUYItchskiPiFVr3towSzyXMqcpKnO7KFVbDujDv0=;
-        b=IeFepvAYWpzuiTT5EJKCxrVUTVWBsS0uU5H6OR/q98DH1Q05k6vNdQ7vRz3HFZTMO+
-         FFDFXaHN5JRT+1+X3LXGYiVMhZ5SbNcadSlgszO9YgCjESBssJKinBPMSOh3PRnv/gE3
-         dj7q+9yejQSMzNJM7WlIfGjj7buBikacv5QTUNEgT8dw9xWWYfYRaqTA+qh0jDbxA4l3
-         wBIt42J+ll1pBLFveyV5guw6LWgzY7BadWqZOTzjObwgEOx4ebCHV4fndr6wLZPY9P3g
-         KtwHqDiA3oA307KcTeRKnqL7DzdCNh8+Or2liN/GDuWfHERbibB2/7+DCwMdYUGwpHt0
-         IBFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1706925177; x=1707529977;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4YVUYItchskiPiFVr3towSzyXMqcpKnO7KFVbDujDv0=;
-        b=SOM4LW+05gKr6ZXOj/HcDr4jK0Sk7PnPxWP8R+cdzpKykSnybf/G/vZ+mhaZ52NyFW
-         ZjG6IU258vpM//iFysnXDlaNWJSjiHUYHrOOi82eWgLWP/mitnak22TjBBorApfhuad9
-         3oXFIwLzYqg0YV3uv4cBxbTJQFcVRLjh1W7Vb1lmgFekig22QhzjlVBnuLpD1+Sdogcy
-         H700HQZsPdRo7K6nXjaaCoc6dg9NMZOoA/Fxjq8gPcLC0Jm0DAbbLEjnJFQiPbGMNI92
-         +fGrM5IbOOjiWvzaMQirNpg5yUBuiTsbFLUPeNfaYmASf7cGrfky631X7YH+XEy1nyek
-         mG+Q==
-X-Gm-Message-State: AOJu0Yw+My6FGu6Pb7Czow0YqUuuIY57h8aaYFFl3t5O57onP/hZ++J7
-	UAhzPdNhWxIE+o+DD+UTArDUVH0IVsaOgiXPTV9LTIqhDxTOcOha2TRbFqjJ6A8gPYPs6wK3Y6b
-	A7vdJHDC9UR/0nX0afrOc1f8OjrwxGkUGj8cy
-X-Google-Smtp-Source: AGHT+IERC5pdHUOjk0sdXzYQIgHtEgfci2NbTryKwg65YkKqVaH9pjKs6GAU0hV+Ubl7fWQznML7tY3Dh7lY8X5xTXw=
-X-Received: by 2002:a17:902:e750:b0:1d7:6ebd:3867 with SMTP id
- p16-20020a170902e75000b001d76ebd3867mr61710plf.1.1706925176905; Fri, 02 Feb
- 2024 17:52:56 -0800 (PST)
+	s=arc-20240116; t=1706925317; c=relaxed/simple;
+	bh=zj5W0jgMX2iMP6/D1Yn+1ZlFej6I3CPhYxpVBoixFgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IL7WsBBbGaes+VUar8BB2lAtdDTlJPnZ4pDPP28MmvmOlxYj3ic2eRfT0IOJ971vuJ9ebV604uDmlpepY9LRJD4OD5lbqNVrrbqf0rbqsiDWKNNva0a0HSRDASYCsn748+BQJ5fGvNZA4B3YSglrMTGX5AnEWqm5iWQkpwcfkSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IvOBBtv7; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1706925316; x=1738461316;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zj5W0jgMX2iMP6/D1Yn+1ZlFej6I3CPhYxpVBoixFgQ=;
+  b=IvOBBtv7xf3UTN9yR/g15EUd47Jv3vaYoZ4DTeqsHJutEPB1hHSuS7f5
+   cvqDt1ABRPVHLvg+Jd26RAg0TF6xpsexRE+tsl2ZJjn3B75oGVX7hkl+X
+   DTnq4tRSl9svyzVS6D2KBdZJP3jx5T9O1JLt8O3V3AutcNha7bTyg8kAe
+   rWffdAKHCJZ8WkI8mKhcm+zObW0eppi9rxKc75/QnxDbCAuLSISqdCpNB
+   O5B8l7NoS4K+mxe5i87TmRMVdwNoTYYtMh0NPLraLwmmdXo841cx27wcP
+   sdji3ox5HWQqXkZNAgvNy+I7EPi1Z+ansKpC8/TLwVWwG4XMHSUR0OMlO
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10971"; a="17803208"
+X-IronPort-AV: E=Sophos;i="6.05,238,1701158400"; 
+   d="scan'208";a="17803208"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2024 17:55:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,238,1701158400"; 
+   d="scan'208";a="433862"
+Received: from lkp-server02.sh.intel.com (HELO 59f4f4cd5935) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 02 Feb 2024 17:55:14 -0800
+Received: from kbuild by 59f4f4cd5935 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1rW5Ey-0004Wc-1m;
+	Sat, 03 Feb 2024 01:55:11 +0000
+Date: Sat, 3 Feb 2024 09:53:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Dave Kleikamp <shaggy@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 10/13] jfs: Convert inc_io and mp_anchor to take a folio
+Message-ID: <202402030956.qthlo2BE-lkp@intel.com>
+References: <20240201224605.4055895-11-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240125164256.4147-1-alexandru.elisei@arm.com>
- <20240125164256.4147-29-alexandru.elisei@arm.com> <CAMn1gO7M51QtxPxkRO3ogH1zasd2-vErWqoPTqGoPiEvr8Pvcw@mail.gmail.com>
- <Zb0CRYSmQxJ_N4Sr@raptor>
-In-Reply-To: <Zb0CRYSmQxJ_N4Sr@raptor>
-From: Peter Collingbourne <pcc@google.com>
-Date: Fri, 2 Feb 2024 17:52:45 -0800
-Message-ID: <CAMn1gO5H6A71zEHLzPyuDfF5xaeej_Q2eCb54jeJ8eAG=yVgiA@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 28/35] arm64: mte: swap: Handle tag restoring when
- missing tag storage
-To: Alexandru Elisei <alexandru.elisei@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, oliver.upton@linux.dev, 
-	maz@kernel.org, james.morse@arm.com, suzuki.poulose@arm.com, 
-	yuzenghui@huawei.com, arnd@arndb.de, akpm@linux-foundation.org, 
-	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
-	mhiramat@kernel.org, rppt@kernel.org, hughd@google.com, steven.price@arm.com, 
-	anshuman.khandual@arm.com, vincenzo.frascino@arm.com, david@redhat.com, 
-	eugenis@google.com, kcc@google.com, hyesoo.yu@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	linux-trace-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240201224605.4055895-11-willy@infradead.org>
 
-On Fri, Feb 2, 2024 at 6:56=E2=80=AFAM Alexandru Elisei
-<alexandru.elisei@arm.com> wrote:
->
-> Hi Peter,
->
-> On Thu, Feb 01, 2024 at 08:02:40PM -0800, Peter Collingbourne wrote:
-> > On Thu, Jan 25, 2024 at 8:45=E2=80=AFAM Alexandru Elisei
-> > <alexandru.elisei@arm.com> wrote:
-> > >
-> > > Linux restores tags when a page is swapped in and there are tags asso=
-ciated
-> > > with the swap entry which the new page will replace. The saved tags a=
-re
-> > > restored even if the page will not be mapped as tagged, to protect ag=
-ainst
-> > > cases where the page is shared between different VMAs, and is tagged =
-in
-> > > some, but untagged in others. By using this approach, the process can=
- still
-> > > access the correct tags following an mprotect(PROT_MTE) on the non-MT=
-E
-> > > enabled VMA.
-> > >
-> > > But this poses a challenge for managing tag storage: in the scenario =
-above,
-> > > when a new page is allocated to be swapped in for the process where i=
-t will
-> > > be mapped as untagged, the corresponding tag storage block is not res=
-erved.
-> > > mte_restore_page_tags_by_swp_entry(), when it restores the saved tags=
-, will
-> > > overwrite data in the tag storage block associated with the new page,
-> > > leading to data corruption if the block is in use by a process.
-> > >
-> > > Get around this issue by saving the tags in a new xarray, this time i=
-ndexed
-> > > by the page pfn, and then restoring them when tag storage is reserved=
- for
-> > > the page.
-> > >
-> > > Signed-off-by: Alexandru Elisei <alexandru.elisei@arm.com>
-> > > ---
-> > >
-> > > Changes since rfc v2:
-> > >
-> > > * Restore saved tags **before** setting the PG_tag_storage_reserved b=
-it to
-> > > eliminate a brief window of opportunity where userspace can access un=
-initialized
-> > > tags (Peter Collingbourne).
-> > >
-> > >  arch/arm64/include/asm/mte_tag_storage.h |   8 ++
-> > >  arch/arm64/include/asm/pgtable.h         |  11 +++
-> > >  arch/arm64/kernel/mte_tag_storage.c      |  12 ++-
-> > >  arch/arm64/mm/mteswap.c                  | 110 +++++++++++++++++++++=
-++
-> > >  4 files changed, 140 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/arch/arm64/include/asm/mte_tag_storage.h b/arch/arm64/in=
-clude/asm/mte_tag_storage.h
-> > > index 50bdae94cf71..40590a8c3748 100644
-> > > --- a/arch/arm64/include/asm/mte_tag_storage.h
-> > > +++ b/arch/arm64/include/asm/mte_tag_storage.h
-> > > @@ -36,6 +36,14 @@ bool page_is_tag_storage(struct page *page);
-> > >
-> > >  vm_fault_t handle_folio_missing_tag_storage(struct folio *folio, str=
-uct vm_fault *vmf,
-> > >                                             bool *map_pte);
-> > > +vm_fault_t mte_try_transfer_swap_tags(swp_entry_t entry, struct page=
- *page);
-> > > +
-> > > +void tags_by_pfn_lock(void);
-> > > +void tags_by_pfn_unlock(void);
-> > > +
-> > > +void *mte_erase_tags_for_pfn(unsigned long pfn);
-> > > +bool mte_save_tags_for_pfn(void *tags, unsigned long pfn);
-> > > +void mte_restore_tags_for_pfn(unsigned long start_pfn, int order);
-> > >  #else
-> > >  static inline bool tag_storage_enabled(void)
-> > >  {
-> > > diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/as=
-m/pgtable.h
-> > > index 0174e292f890..87ae59436162 100644
-> > > --- a/arch/arm64/include/asm/pgtable.h
-> > > +++ b/arch/arm64/include/asm/pgtable.h
-> > > @@ -1085,6 +1085,17 @@ static inline void arch_swap_invalidate_area(i=
-nt type)
-> > >                 mte_invalidate_tags_area_by_swp_entry(type);
-> > >  }
-> > >
-> > > +#ifdef CONFIG_ARM64_MTE_TAG_STORAGE
-> > > +#define __HAVE_ARCH_SWAP_PREPARE_TO_RESTORE
-> > > +static inline vm_fault_t arch_swap_prepare_to_restore(swp_entry_t en=
-try,
-> > > +                                                     struct folio *f=
-olio)
-> > > +{
-> > > +       if (tag_storage_enabled())
-> > > +               return mte_try_transfer_swap_tags(entry, &folio->page=
-);
-> > > +       return 0;
-> > > +}
-> > > +#endif
-> > > +
-> > >  #define __HAVE_ARCH_SWAP_RESTORE
-> > >  static inline void arch_swap_restore(swp_entry_t entry, struct folio=
- *folio)
-> > >  {
-> > > diff --git a/arch/arm64/kernel/mte_tag_storage.c b/arch/arm64/kernel/=
-mte_tag_storage.c
-> > > index afe2bb754879..ac7b9c9c585c 100644
-> > > --- a/arch/arm64/kernel/mte_tag_storage.c
-> > > +++ b/arch/arm64/kernel/mte_tag_storage.c
-> > > @@ -567,6 +567,7 @@ int reserve_tag_storage(struct page *page, int or=
-der, gfp_t gfp)
-> > >                 }
-> > >         }
-> > >
-> > > +       mte_restore_tags_for_pfn(page_to_pfn(page), order);
-> > >         page_set_tag_storage_reserved(page, order);
-> > >  out_unlock:
-> > >         mutex_unlock(&tag_blocks_lock);
-> > > @@ -595,7 +596,8 @@ void free_tag_storage(struct page *page, int orde=
-r)
-> > >         struct tag_region *region;
-> > >         unsigned long page_va;
-> > >         unsigned long flags;
-> > > -       int ret;
-> > > +       void *tags;
-> > > +       int i, ret;
-> > >
-> > >         ret =3D tag_storage_find_block(page, &start_block, &region);
-> > >         if (WARN_ONCE(ret, "Missing tag storage block for pfn 0x%lx",=
- page_to_pfn(page)))
-> > > @@ -605,6 +607,14 @@ void free_tag_storage(struct page *page, int ord=
-er)
-> > >         /* Avoid writeback of dirty tag cache lines corrupting data. =
-*/
-> > >         dcache_inval_tags_poc(page_va, page_va + (PAGE_SIZE << order)=
-);
-> > >
-> > > +       tags_by_pfn_lock();
-> > > +       for (i =3D 0; i < (1 << order); i++) {
-> > > +               tags =3D mte_erase_tags_for_pfn(page_to_pfn(page + i)=
-);
-> > > +               if (unlikely(tags))
-> > > +                       mte_free_tag_buf(tags);
-> > > +       }
-> > > +       tags_by_pfn_unlock();
-> > > +
-> > >         end_block =3D start_block + order_to_num_blocks(order, region=
-->block_size_pages);
-> > >
-> > >         xa_lock_irqsave(&tag_blocks_reserved, flags);
-> > > diff --git a/arch/arm64/mm/mteswap.c b/arch/arm64/mm/mteswap.c
-> > > index 2a43746b803f..e11495fa3c18 100644
-> > > --- a/arch/arm64/mm/mteswap.c
-> > > +++ b/arch/arm64/mm/mteswap.c
-> > > @@ -20,6 +20,112 @@ void mte_free_tag_buf(void *buf)
-> > >         kfree(buf);
-> > >  }
-> > >
-> > > +#ifdef CONFIG_ARM64_MTE_TAG_STORAGE
-> > > +static DEFINE_XARRAY(tags_by_pfn);
-> > > +
-> > > +void tags_by_pfn_lock(void)
-> > > +{
-> > > +       xa_lock(&tags_by_pfn);
-> > > +}
-> > > +
-> > > +void tags_by_pfn_unlock(void)
-> > > +{
-> > > +       xa_unlock(&tags_by_pfn);
-> > > +}
-> > > +
-> > > +void *mte_erase_tags_for_pfn(unsigned long pfn)
-> > > +{
-> > > +       return __xa_erase(&tags_by_pfn, pfn);
-> > > +}
-> > > +
-> > > +bool mte_save_tags_for_pfn(void *tags, unsigned long pfn)
-> > > +{
-> > > +       void *entry;
-> > > +       int ret;
-> > > +
-> > > +       ret =3D xa_reserve(&tags_by_pfn, pfn, GFP_KERNEL);
-> >
-> > copy_highpage can be called from an atomic context, so it isn't
-> > currently valid to pass GFP_KERNEL here.
-> >
-> > To give one example of a possible atomic context call, copy_pte_range
-> > will take a PTE spinlock and can call copy_present_pte, which can call
-> > copy_present_page, which will call copy_user_highpage.
-> >
-> > To give another example, __buffer_migrate_folio can call
-> > spin_lock(&mapping->private_lock), then call folio_migrate_copy, which
-> > will call folio_copy.
->
-> That is very unfortunate from my part. I distinctly remember looking
-> precisely at copy_page_range() to double check that it doesn't call
-> copy_*highpage() from an atomic context, I can only assume that I missed
-> that it's called with the ptl lock held.
->
-> With your two examples, and the khugepaged case in patch #31 ("khugepaged=
-:
-> arm64: Don't collapse MTE enabled VMAs"), it's crystal clear that the
-> convention for copy_*highpage() is that the function cannot sleep.
->
-> There are two issues here: allocating the buffer in memory where the tags
-> will be copied, and xarray allocating memory for a new entry.
->
-> One fix would be to allocate an entire page with __GFP_ATOMIC, and use th=
-at
-> as a cache for tag buffers (storing the tags for a page uses 1/32th of a
-> page). From what little I know about xarray, xarray stores would still ha=
-ve
-> to be GFP_ATOMIC. This should fix the sleeping in atomic context bug. But
-> the issue I see with this is that a memory allocation can fail, while
-> copy_*highpage() cannot. Send a fatal signal to the process if memory
-> allocation fails?
+Hi Matthew,
 
-Right, I think I'd have stability concerns about an approach like this.
+kernel test robot noticed the following build errors:
 
-> Another approach would be to preallocate memory in a preemptible context,
-> something like copy_*highpage_prepare(), but that would mean a lot more
-> work: finding all the places where copy_*highpage is used and add
-> copy_*highpage_prepare() outside the critical section, releasing the memo=
-ry
-> in case of failure (like in the copy_pte_range() case - maybe
-> copy_*highpage_end()?). That's a pretty big maintenance burden for the MM
-> code. Although maybe other architectures can find a use for it?
+[auto build test ERROR on kleikamp-shaggy/jfs-next]
+[also build test ERROR on linus/master v6.8-rc2 next-20240202]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This one might not be too bad. There are only a handful of calls to
-this function, so it might not be a major ongoing burden. We can
-implement copy_highpage() like this:
+url:    https://github.com/intel-lab-lkp/linux/commits/Matthew-Wilcox-Oracle/jfs-Convert-metapage_read_folio-to-use-folio-APIs/20240202-064805
+base:   https://github.com/kleikamp/linux-shaggy jfs-next
+patch link:    https://lore.kernel.org/r/20240201224605.4055895-11-willy%40infradead.org
+patch subject: [PATCH 10/13] jfs: Convert inc_io and mp_anchor to take a folio
+config: loongarch-defconfig (https://download.01.org/0day-ci/archive/20240203/202402030956.qthlo2BE-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240203/202402030956.qthlo2BE-lkp@intel.com/reproduce)
 
-copy_highpage() {
-  might_sleep();
-  copy_highpage_atomic();
-}
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202402030956.qthlo2BE-lkp@intel.com/
 
-rename the existing implementations to copy_highpage_atomic() and
-change atomic context callers to call copy_highpage_atomic(). That
-way, kernels with CONFIG_DEBUG_ATOMIC_SLEEP will detect errors on all
-architectures. Then in a later patch, introduce
-copy_highpage_prepare() (or whatever) and update the
-copy_highpage_atomic() callers.
+All error/warnings (new ones prefixed by >>):
 
-Peter
+   fs/jfs/jfs_metapage.c: In function 'remove_metapage':
+   fs/jfs/jfs_metapage.c:130:38: error: passing argument 1 of 'folio_detach_private' from incompatible pointer type [-Werror=incompatible-pointer-types]
+     130 |                 folio_detach_private(&folio->page);
+         |                                      ^~~~~~~~~~~~
+         |                                      |
+         |                                      struct page *
+   In file included from include/linux/buffer_head.h:15,
+                    from fs/jfs/jfs_metapage.c:14:
+   include/linux/pagemap.h:508:56: note: expected 'struct folio *' but argument is of type 'struct page *'
+     508 | static inline void *folio_detach_private(struct folio *folio)
+         |                                          ~~~~~~~~~~~~~~^~~~~
+   fs/jfs/jfs_metapage.c: In function 'inc_io':
+>> fs/jfs/jfs_metapage.c:137:37: warning: dereferencing 'void *' pointer
+     137 |         atomic_inc(&mp_anchor(folio)->io_count);
+         |                                     ^~
+>> fs/jfs/jfs_metapage.c:137:37: error: request for member 'io_count' in something not a structure or union
+   cc1: some warnings being treated as errors
 
-> And yet another approach is reserve the needed memory (for the buffer and
-> in the xarray) when the page is allocated, if it doesn't have tag storage
-> reserved, regardless of the page being allocated as tagged or not. Then i=
-n
-> set_pte_at() free this memory if it's unused. But this would mean reservi=
-ng
-> memory for possibly all memory allocations in the system (including for t=
-ag
-> storage pages) if userspace doesn't use tags at all, though not all pages
-> in the system will have this memory reserved at the same time. Pretty big
-> downside.
->
-> Out of the three, I prefer the first, but it's definitely not perfect. I'=
-ll
-> try to think of something else, maybe I can come up with something better=
-.
->
-> What are your thoughts?
->
-> Thanks,
-> Alex
->
-> >
-> > Peter
-> >
-> > > +       if (ret)
-> > > +               return true;
-> > > +
-> > > +       tags_by_pfn_lock();
-> > > +
-> > > +       if (page_tag_storage_reserved(pfn_to_page(pfn))) {
-> > > +               xa_release(&tags_by_pfn, pfn);
-> > > +               tags_by_pfn_unlock();
-> > > +               return false;
-> > > +       }
-> > > +
-> > > +       entry =3D __xa_store(&tags_by_pfn, pfn, tags, GFP_ATOMIC);
-> > > +       if (xa_is_err(entry)) {
-> > > +               xa_release(&tags_by_pfn, pfn);
-> > > +               goto out_unlock;
-> > > +       } else if (entry) {
-> > > +               mte_free_tag_buf(entry);
-> > > +       }
-> > > +
-> > > +out_unlock:
-> > > +       tags_by_pfn_unlock();
-> > > +       return true;
-> > > +}
-> > > +
-> > > +void mte_restore_tags_for_pfn(unsigned long start_pfn, int order)
-> > > +{
-> > > +       struct page *page =3D pfn_to_page(start_pfn);
-> > > +       unsigned long pfn;
-> > > +       void *tags;
-> > > +
-> > > +       tags_by_pfn_lock();
-> > > +
-> > > +       for (pfn =3D start_pfn; pfn < start_pfn + (1 << order); pfn++=
-, page++) {
-> > > +               tags =3D mte_erase_tags_for_pfn(pfn);
-> > > +               if (unlikely(tags)) {
-> > > +                       /*
-> > > +                        * Mark the page as tagged so mte_sync_tags()=
- doesn't
-> > > +                        * clear the tags.
-> > > +                        */
-> > > +                       WARN_ON_ONCE(!try_page_mte_tagging(page));
-> > > +                       mte_copy_page_tags_from_buf(page_address(page=
-), tags);
-> > > +                       set_page_mte_tagged(page);
-> > > +                       mte_free_tag_buf(tags);
-> > > +               }
-> > > +       }
-> > > +
-> > > +       tags_by_pfn_unlock();
-> > > +}
-> > > +
-> > > +/*
-> > > + * Note on locking: swap in/out is done with the folio locked, which=
- eliminates
-> > > + * races with mte_save/restore_page_tags_by_swp_entry.
-> > > + */
-> > > +vm_fault_t mte_try_transfer_swap_tags(swp_entry_t entry, struct page=
- *page)
-> > > +{
-> > > +       void *swap_tags, *pfn_tags;
-> > > +       bool saved;
-> > > +
-> > > +       /*
-> > > +        * mte_restore_page_tags_by_swp_entry() will take care of cop=
-ying the
-> > > +        * tags over.
-> > > +        */
-> > > +       if (likely(page_mte_tagged(page) || page_tag_storage_reserved=
-(page)))
-> > > +               return 0;
-> > > +
-> > > +       swap_tags =3D xa_load(&tags_by_swp_entry, entry.val);
-> > > +       if (!swap_tags)
-> > > +               return 0;
-> > > +
-> > > +       pfn_tags =3D mte_allocate_tag_buf();
-> > > +       if (!pfn_tags)
-> > > +               return VM_FAULT_OOM;
-> > > +
-> > > +       memcpy(pfn_tags, swap_tags, MTE_PAGE_TAG_STORAGE_SIZE);
-> > > +       saved =3D mte_save_tags_for_pfn(pfn_tags, page_to_pfn(page));
-> > > +       if (!saved)
-> > > +               mte_free_tag_buf(pfn_tags);
-> > > +
-> > > +       return 0;
-> > > +}
-> > > +#endif
-> > > +
-> > >  int mte_save_page_tags_by_swp_entry(struct page *page)
-> > >  {
-> > >         void *tags, *ret;
-> > > @@ -54,6 +160,10 @@ void mte_restore_page_tags_by_swp_entry(swp_entry=
-_t entry, struct page *page)
-> > >         if (!tags)
-> > >                 return;
-> > >
-> > > +       /* Tags will be restored when tag storage is reserved. */
-> > > +       if (tag_storage_enabled() && unlikely(!page_tag_storage_reser=
-ved(page)))
-> > > +               return;
-> > > +
-> > >         if (try_page_mte_tagging(page)) {
-> > >                 mte_copy_page_tags_from_buf(page_address(page), tags)=
-;
-> > >                 set_page_mte_tagged(page);
-> > > --
-> > > 2.43.0
-> > >
+
+vim +/io_count +137 fs/jfs/jfs_metapage.c
+
+  > 14	#include <linux/buffer_head.h>
+    15	#include <linux/mempool.h>
+    16	#include <linux/seq_file.h>
+    17	#include <linux/writeback.h>
+    18	#include "jfs_incore.h"
+    19	#include "jfs_superblock.h"
+    20	#include "jfs_filsys.h"
+    21	#include "jfs_metapage.h"
+    22	#include "jfs_txnmgr.h"
+    23	#include "jfs_debug.h"
+    24	
+    25	#ifdef CONFIG_JFS_STATISTICS
+    26	static struct {
+    27		uint	pagealloc;	/* # of page allocations */
+    28		uint	pagefree;	/* # of page frees */
+    29		uint	lockwait;	/* # of sleeping lock_metapage() calls */
+    30	} mpStat;
+    31	#endif
+    32	
+    33	#define metapage_locked(mp) test_bit(META_locked, &(mp)->flag)
+    34	#define trylock_metapage(mp) test_and_set_bit_lock(META_locked, &(mp)->flag)
+    35	
+    36	static inline void unlock_metapage(struct metapage *mp)
+    37	{
+    38		clear_bit_unlock(META_locked, &mp->flag);
+    39		wake_up(&mp->wait);
+    40	}
+    41	
+    42	static inline void __lock_metapage(struct metapage *mp)
+    43	{
+    44		DECLARE_WAITQUEUE(wait, current);
+    45		INCREMENT(mpStat.lockwait);
+    46		add_wait_queue_exclusive(&mp->wait, &wait);
+    47		do {
+    48			set_current_state(TASK_UNINTERRUPTIBLE);
+    49			if (metapage_locked(mp)) {
+    50				unlock_page(mp->page);
+    51				io_schedule();
+    52				lock_page(mp->page);
+    53			}
+    54		} while (trylock_metapage(mp));
+    55		__set_current_state(TASK_RUNNING);
+    56		remove_wait_queue(&mp->wait, &wait);
+    57	}
+    58	
+    59	/*
+    60	 * Must have mp->page locked
+    61	 */
+    62	static inline void lock_metapage(struct metapage *mp)
+    63	{
+    64		if (trylock_metapage(mp))
+    65			__lock_metapage(mp);
+    66	}
+    67	
+    68	#define METAPOOL_MIN_PAGES 32
+    69	static struct kmem_cache *metapage_cache;
+    70	static mempool_t *metapage_mempool;
+    71	
+    72	#define MPS_PER_PAGE (PAGE_SIZE >> L2PSIZE)
+    73	
+    74	#if MPS_PER_PAGE > 1
+    75	
+    76	struct meta_anchor {
+    77		int mp_count;
+    78		atomic_t io_count;
+    79		struct metapage *mp[MPS_PER_PAGE];
+    80	};
+    81	#define mp_anchor(folio) (folio->private)
+    82	
+    83	static inline struct metapage *folio_to_mp(struct folio *folio, int offset)
+    84	{
+    85		struct meta_anchor *anchor = folio->private;
+    86	
+    87		if (!anchor)
+    88			return NULL;
+    89		return anchor->mp[offset >> L2PSIZE];
+    90	}
+    91	
+    92	static inline int insert_metapage(struct folio *folio, struct metapage *mp)
+    93	{
+    94		struct meta_anchor *a;
+    95		int index;
+    96		int l2mp_blocks;	/* log2 blocks per metapage */
+    97	
+    98		a = folio->private;
+    99		if (!a) {
+   100			a = kzalloc(sizeof(struct meta_anchor), GFP_NOFS);
+   101			if (!a)
+   102				return -ENOMEM;
+   103			folio_attach_private(folio, a);
+   104			kmap(&folio->page);
+   105		}
+   106	
+   107		if (mp) {
+   108			l2mp_blocks = L2PSIZE - folio->mapping->host->i_blkbits;
+   109			index = (mp->index >> l2mp_blocks) & (MPS_PER_PAGE - 1);
+   110			a->mp_count++;
+   111			a->mp[index] = mp;
+   112		}
+   113	
+   114		return 0;
+   115	}
+   116	
+   117	static inline void remove_metapage(struct folio *folio, struct metapage *mp)
+   118	{
+   119		struct meta_anchor *a = mp_anchor(folio);
+   120		int l2mp_blocks = L2PSIZE - folio->mapping->host->i_blkbits;
+   121		int index;
+   122	
+   123		index = (mp->index >> l2mp_blocks) & (MPS_PER_PAGE - 1);
+   124	
+   125		BUG_ON(a->mp[index] != mp);
+   126	
+   127		a->mp[index] = NULL;
+   128		if (--a->mp_count == 0) {
+   129			kfree(a);
+   130			folio_detach_private(&folio->page);
+   131			kunmap(&folio->page);
+   132		}
+   133	}
+   134	
+   135	static inline void inc_io(struct folio *folio)
+   136	{
+ > 137		atomic_inc(&mp_anchor(folio)->io_count);
+   138	}
+   139	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
