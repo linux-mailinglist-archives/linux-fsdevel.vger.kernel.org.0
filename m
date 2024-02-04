@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-10199-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2368E848A7E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 03:18:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D068848A94
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 03:19:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5AE11F246BE
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 02:18:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A10ED2875F6
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 02:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0546E8BF9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD7BEAE6;
 	Sun,  4 Feb 2024 02:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TtcHfJzG"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="qxbrWosc"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EADB6FD1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4D47460;
 	Sun,  4 Feb 2024 02:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707013064; cv=none; b=LF6kvzr60KqxMrcQE+PygXnMIIca83KnwyLeG5wlfOLMqrdgJ12KwJuV4inSW6E9tpky9x/4PWqruZF2fEEjqsScCa7RkjpZcT0tsKNDS2LGIP/+b4ebfCljYCj+5yw1o89+KFNbSPjxeCwqrelXdUlmRBLsd5OGuxzWbcU6msw=
+	t=1707013064; cv=none; b=tcLqQ+Y2qvtnPMrN1vGcukvnFqYb5cZdu1Rt63mpJI4p8Mxp4J7x1Hd3JM91QCi8XleDmm99IA2DKJOELLRNgE87QVb3EbnYokhTHclnBpksVJmv9jTJEKtf17ZlqtZNDudkBnSYIzUE0PLbqRZMP6vRvmpd8rYvfg161kNTqgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1707013064; c=relaxed/simple;
-	bh=1rtYk8nQaR6Z1oX3dIJL6BYRNYvWov9U8Si234YvJHY=;
+	bh=sG42Zf5DTiNNOcAGlM3Zr/H2o4OoCoJx8NrtZkRtutU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZECjwoPZ4FdUv4C/yBe8H524OzCiriAUaTHhndKA9hpl4kHDao9I4LW/gWG5FFU7ZKuzfWUKWJ5+8OYV0TqNkzPRTgJM/B96AcL/n89rvNAwsZ2SJn6EUvGkUYJcJJbbdkHvvPiYxPFNkA6tga0w+myaNmUDSx+o3mhc7m08JGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TtcHfJzG; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=aK5h7M0WyGTbKtTPJlaKi2diYtQC5Ty72zarF9tS+o8NeNyav+FG5xq9U0MgRUIMWhvE0U0WiRqlhY1Cg33m4hP0WOhw427JTcki9vP3mo4XMTPt0qYy/nsfXohwCH+8KiBse21q0kD8Hm+z4jS4p93m0Ae4Ra9FdJtvnlsJjR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=qxbrWosc; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=txbefR1bImZynMySniqB43HTfyckqDaK6LKKZ+70ogY=; b=TtcHfJzGmY3hgu42vlk+4hxcrn
-	aGH28IkeY0tk962KTYy2Vtmq5rrH3ZClMikX9dt8cn7iMPHvyYDMYuXkvBQotov6cELYdKdqBO+E+
-	Yen++U2pB6iPd8HbYiTl5zAYfb8hq669w7GcE01+aWKUOt3SjKnNa/MX/7rV+DTbrUtxduPKPckyy
-	FyiOpRK40a3l+Q4sJRMYwO+o1+YL1K8x4Fa/gy6py3TTjHc5ctEoutuxSOkUNciQxpA1ProNsNSaL
-	L4cV3zTg+tODNaIUdLWEk1D2UQgT+UQMEBJnLHbSHX23dlkMJ1LxW4wCLMw6qc1zQDuD6owQcEIMN
-	x+jhbwEw==;
+	bh=EjWkAFYMC0New8r7aI9BMXvNYwHQVwhCzm32GsCIcMM=; b=qxbrWoscao3BKYzdD4PD0fuDnE
+	UqP/FXLwX6jwmPbGH2l3okPgOnMkOvN4mfB2xIe3CBE66vbg4tcyGehDknGgRcBnzWVYAW9Lg8lVq
+	WVina8FjERTRoggaxszJIc4HAQ9rlrJRXvyuw/HlXZ22ksVm5olRNKwf3xv0uJiKF9sbAoRapGU0k
+	6pyhPYetdWWbFzrocj9H5kQ/F2sJK8oHTQCFJZvodGoXar0hHTveIw5gYjefjHKtH+BMyuFF5aWAi
+	Nyc4n7zXFjKgC28keu+RISSYHcrJL6Aw9O04dAx9sLqRm4/8q1iHdse2CmN8CIT7esZk4ENubZV2O
+	m1XMfxRw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rWS4i-004rCx-1g;
+	id 1rWS4i-004rD1-2B;
 	Sun, 04 Feb 2024 02:17:40 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	linux-nfs@vger.kernel.org,
 	Miklos Szeredi <miklos@szeredi.hu>,
 	linux-cifs@vger.kernel.org
-Subject: [PATCH 04/13] exfat: move freeing sbi, upcase table and dropping nls into rcu-delayed helper
-Date: Sun,  4 Feb 2024 02:17:30 +0000
-Message-Id: <20240204021739.1157830-4-viro@zeniv.linux.org.uk>
+Subject: [PATCH 05/13] hfsplus: switch to rcu-delayed unloading of nls and freeing ->s_fs_info
+Date: Sun,  4 Feb 2024 02:17:31 +0000
+Message-Id: <20240204021739.1157830-5-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240204021739.1157830-1-viro@zeniv.linux.org.uk>
 References: <20240204021436.GH2087318@ZenIV>
@@ -68,151 +68,57 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-That stuff can be accessed by ->d_hash()/->d_compare(); as it is, we have
-a hard-to-hit UAF if rcu pathwalk manages to get into ->d_hash() on a filesystem
-that is in process of getting shut down.
-
-Besides, having nls and upcase table cleanup moved from ->put_super() towards
-the place where sbi is freed makes for simpler failure exits.
+->d_hash() and ->d_compare() use those, so we need to delay freeing
+them.
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/exfat/exfat_fs.h |  1 +
- fs/exfat/nls.c      | 14 ++++----------
- fs/exfat/super.c    | 20 +++++++++++---------
- 3 files changed, 16 insertions(+), 19 deletions(-)
+ fs/hfsplus/hfsplus_fs.h |  1 +
+ fs/hfsplus/super.c      | 12 +++++++++---
+ 2 files changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
-index 9474cd50da6d..361595433480 100644
---- a/fs/exfat/exfat_fs.h
-+++ b/fs/exfat/exfat_fs.h
-@@ -275,6 +275,7 @@ struct exfat_sb_info {
- 
- 	spinlock_t inode_hash_lock;
- 	struct hlist_head inode_hashtable[EXFAT_HASH_SIZE];
+diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+index 7ededcb720c1..012a3d003fbe 100644
+--- a/fs/hfsplus/hfsplus_fs.h
++++ b/fs/hfsplus/hfsplus_fs.h
+@@ -190,6 +190,7 @@ struct hfsplus_sb_info {
+ 	int work_queued;               /* non-zero delayed work is queued */
+ 	struct delayed_work sync_work; /* FS sync delayed work */
+ 	spinlock_t work_lock;          /* protects sync_work and work_queued */
 +	struct rcu_head rcu;
  };
  
- #define EXFAT_CACHE_VALID	0
-diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-index 705710f93e2d..afdf13c34ff5 100644
---- a/fs/exfat/nls.c
-+++ b/fs/exfat/nls.c
-@@ -655,7 +655,6 @@ static int exfat_load_upcase_table(struct super_block *sb,
- 	unsigned int sect_size = sb->s_blocksize;
- 	unsigned int i, index = 0;
- 	u32 chksum = 0;
--	int ret;
- 	unsigned char skip = false;
- 	unsigned short *upcase_table;
- 
-@@ -673,8 +672,7 @@ static int exfat_load_upcase_table(struct super_block *sb,
- 		if (!bh) {
- 			exfat_err(sb, "failed to read sector(0x%llx)",
- 				  (unsigned long long)sector);
--			ret = -EIO;
--			goto free_table;
-+			return -EIO;
- 		}
- 		sector++;
- 		for (i = 0; i < sect_size && index <= 0xFFFF; i += 2) {
-@@ -701,15 +699,12 @@ static int exfat_load_upcase_table(struct super_block *sb,
- 
- 	exfat_err(sb, "failed to load upcase table (idx : 0x%08x, chksum : 0x%08x, utbl_chksum : 0x%08x)",
- 		  index, chksum, utbl_checksum);
--	ret = -EINVAL;
--free_table:
--	exfat_free_upcase_table(sbi);
--	return ret;
-+	return -EINVAL;
- }
- 
- static int exfat_load_default_upcase_table(struct super_block *sb)
- {
--	int i, ret = -EIO;
-+	int i;
- 	struct exfat_sb_info *sbi = EXFAT_SB(sb);
- 	unsigned char skip = false;
- 	unsigned short uni = 0, *upcase_table;
-@@ -740,8 +735,7 @@ static int exfat_load_default_upcase_table(struct super_block *sb)
- 		return 0;
- 
- 	/* FATAL error: default upcase table has error */
--	exfat_free_upcase_table(sbi);
--	return ret;
-+	return -EIO;
- }
- 
- int exfat_create_upcase_table(struct super_block *sb)
-diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-index d9d4fa91010b..fcb658267765 100644
---- a/fs/exfat/super.c
-+++ b/fs/exfat/super.c
-@@ -39,9 +39,6 @@ static void exfat_put_super(struct super_block *sb)
- 	exfat_free_bitmap(sbi);
- 	brelse(sbi->boot_bh);
- 	mutex_unlock(&sbi->s_lock);
--
--	unload_nls(sbi->nls_io);
--	exfat_free_upcase_table(sbi);
- }
- 
- static int exfat_sync_fs(struct super_block *sb, int wait)
-@@ -600,7 +597,7 @@ static int __exfat_fill_super(struct super_block *sb)
- 	ret = exfat_load_bitmap(sb);
- 	if (ret) {
- 		exfat_err(sb, "failed to load alloc-bitmap");
--		goto free_upcase_table;
-+		goto free_bh;
- 	}
- 
- 	ret = exfat_count_used_clusters(sb, &sbi->used_clusters);
-@@ -613,8 +610,6 @@ static int __exfat_fill_super(struct super_block *sb)
- 
- free_alloc_bitmap:
- 	exfat_free_bitmap(sbi);
--free_upcase_table:
--	exfat_free_upcase_table(sbi);
- free_bh:
- 	brelse(sbi->boot_bh);
- 	return ret;
-@@ -701,12 +696,10 @@ static int exfat_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_root = NULL;
- 
- free_table:
--	exfat_free_upcase_table(sbi);
- 	exfat_free_bitmap(sbi);
- 	brelse(sbi->boot_bh);
- 
- check_nls_io:
--	unload_nls(sbi->nls_io);
- 	return err;
- }
- 
-@@ -771,13 +764,22 @@ static int exfat_init_fs_context(struct fs_context *fc)
- 	return 0;
+ #define HFSPLUS_SB_WRITEBACKUP	0
+diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+index 1986b4f18a90..97920202790f 100644
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -277,6 +277,14 @@ void hfsplus_mark_mdb_dirty(struct super_block *sb)
+ 	spin_unlock(&sbi->work_lock);
  }
  
 +static void delayed_free(struct rcu_head *p)
 +{
-+	struct exfat_sb_info *sbi = container_of(p, struct exfat_sb_info, rcu);
++	struct hfsplus_sb_info *sbi = container_of(p, struct hfsplus_sb_info, rcu);
 +
-+	unload_nls(sbi->nls_io);
-+	exfat_free_upcase_table(sbi);
-+	exfat_free_sbi(sbi);
++	unload_nls(sbi->nls);
++	kfree(sbi);
 +}
 +
- static void exfat_kill_sb(struct super_block *sb)
+ static void hfsplus_put_super(struct super_block *sb)
  {
- 	struct exfat_sb_info *sbi = sb->s_fs_info;
- 
- 	kill_block_super(sb);
- 	if (sbi)
--		exfat_free_sbi(sbi);
-+		call_rcu(&sbi->rcu, delayed_free);
+ 	struct hfsplus_sb_info *sbi = HFSPLUS_SB(sb);
+@@ -302,9 +310,7 @@ static void hfsplus_put_super(struct super_block *sb)
+ 	hfs_btree_close(sbi->ext_tree);
+ 	kfree(sbi->s_vhdr_buf);
+ 	kfree(sbi->s_backup_vhdr_buf);
+-	unload_nls(sbi->nls);
+-	kfree(sb->s_fs_info);
+-	sb->s_fs_info = NULL;
++	call_rcu(&sbi->rcu, delayed_free);
  }
  
- static struct file_system_type exfat_fs_type = {
+ static int hfsplus_statfs(struct dentry *dentry, struct kstatfs *buf)
 -- 
 2.39.2
 
