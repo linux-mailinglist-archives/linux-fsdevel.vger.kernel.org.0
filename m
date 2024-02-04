@@ -1,148 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-10219-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E886848D32
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 12:44:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C26C848D46
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 12:57:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7561282A71
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 11:44:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A3F1F214EA
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 11:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60D7224CF;
-	Sun,  4 Feb 2024 11:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80851224C6;
+	Sun,  4 Feb 2024 11:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="XNEtcZmM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D7222301
-	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Feb 2024 11:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDF5224CC;
+	Sun,  4 Feb 2024 11:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707047073; cv=none; b=I17W4cIlyqfoHGP/LMf+J2QKwCgouv29m+/c+oqzfpB8M7Czd6NqT6LzRQXhhzdOTuJnAbjUWiiCsgzU5Sv3Ml5dm9te8o5eQ9Qsek0AEqCjxPc8bYXerfkFUIgUB1gO4fzMNYYDRmiVSUgup8vbK59FNORVF/Xvj44jfNEKc4U=
+	t=1707047861; cv=none; b=qjXpKVdkGb07tEOEZzEeHtZ8DOEgyhtSeOizCoH/I/+aCWtvvbWqrGxVJ17OK3lhVodUMGFURszIMB4hD5yfl5igY/DK040Rkiw8kKFdCYWrKlzK6h2H3ax6E7gXmkCnB067OxpGv+lEFV0cZBnL+KAy7ibYvAQMQZhtsjLjGUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707047073; c=relaxed/simple;
-	bh=W+PrOG+3qjgKVWlr8gdUcu/HyylkSKA8m2x73hOH6a4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=a9OfVV6SFqjI1Mai+xZcoOcKS9U3IGqOslcczyVDeDnhqZf1iRfwAEsd8iONb1GcPOAtvF3bgWwNZimD1W4ewC0vFB+3ZAuInp39nuc/TuEmCk/31yVTV9m+D8r0w4MQ4ID3QGpLoIjU0DNJvsdkcZZlAUeXEModrDob/yU/TF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7bf863c324dso254277139f.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Feb 2024 03:44:31 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707047071; x=1707651871;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6MyD/vd8jdcu5CLhoPmsunjC+RxH9aURP3x2XieB+UE=;
-        b=MObRvvPWVN9cQMcKHE9rCoUVUiaaLgQ9gzy5p6u7J81dkWWpKDqtUsgktGMP8kJ0BS
-         eWbijiDw15nkucoSjJXeYJ6D3XIJ8YD0+fv29VAnohLqGpm8tPARe10ZC3eEI4U7Ql6O
-         AransZgQVKW+F6kq4Q5LwLyDFxQ0yTGcavNc936j3InIt7me1ty9pWv1sSnQRyXXYWhk
-         hCwIix3eV2zsEGPxAz+txBPWOqXrJuQaKAY87EmDK9lA8jW9M39Vm/c9+1hHdqppilT1
-         ZZvLoYwmwPMZOCE3GrkeSBBb61pfsDoKXLi74WjVVRo0KMtNZXpiEgWGvkvX/hqpp8Gv
-         E3WA==
-X-Gm-Message-State: AOJu0YydWYn/12tEPhoim87VEhQuK3aMUPeur1s7ERxWiZ2BF6fJIGx2
-	TejMEGM3wNk4C2cAJ9EKEH0s+jiohthuahVLc1xdEW9ncC1dEyFNSIMHz24Z6jnrGJ7SZAXrrlh
-	EDJdWHhvPDKVPgMxUn7UoIx8PmBaPVaIVm6E77/87pqhFApEpTuwLHkw=
-X-Google-Smtp-Source: AGHT+IHEKadB5q6lC0tXQyqaJh7ql2qjGqAWHNec8Metezww0Ghn88vKADo2NdJlqlFSt1D39aJxgO2gMQ3AFurC2OhBnaf1F4zP
+	s=arc-20240116; t=1707047861; c=relaxed/simple;
+	bh=NQM9ewEAOMuQm+se/Npgt3IKsTDh+L8SAE7Lj7MYFvU=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=M2T15ekIPPEe2f1mi9Jzny1vbu+tC89IDNqvwRkLfO+dE/0oH/crSYCjW/XmDrQFw6S05Hd9iFRlAbChotCGDJIc9nALrRk+lgT/o39zbQZEY8cj3FAxf9u/uy4x/+RLqx7WpQEOhZbFlthsA0FjLh8l4FrHZGWa9wvmqcF0TF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=XNEtcZmM; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1707047849; bh=6IHcRw4gkKhhZegzn1OH3uiNgGEL9LqQ6Vszdi2xy6A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=XNEtcZmMiwTlKiTLDHEiKAaqccfnTRiFpyYhr1a8JFjz1ie5yikEjhQnKH7vkYgz7
+	 CHTKs9YKDYe/Oe/xiy4i0Fw4tWPAJ9HUptw6SBNl+ztuc3D6cHwVIN/ktTUUdlAKgB
+	 6ArgbqrGn45Etw2lb9vcqIKCT+UHGH7WUY419Tp8=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.140])
+	by newxmesmtplogicsvrsza7-0.qq.com (NewEsmtp) with SMTP
+	id CD5A4A7F; Sun, 04 Feb 2024 19:51:21 +0800
+X-QQ-mid: xmsmtpt1707047481t8mna7hj6
+Message-ID: <tencent_164AB8743976ED67863C2F375496E236B009@qq.com>
+X-QQ-XMAILINFO: OOPJ7pYMv25tidAIa0px2wHqSkcb+RQFaqhNT1q4VDqpL/DSKIkClttaSJejqZ
+	 oQkl8S+6CuffNTMlObsck87wXme7JbMeTk+lamkaB6OuCt++r5qO+ML+T8y2grA5l7dbNvacBbYh
+	 TvNDtN3P8c+7KO5ub0//l2rBseiVjyqka+F4eaFlRnZ1lsJCQBTRkWVnSLVmRNOMiazPYWkfzLe1
+	 VuhCX/i3pKNyxllhBgUOmXp36UTFsAZb5C2qJ8Rgk5z1LeCjR/dzF8eFEzg8cEs8/i7iGdeMm+VY
+	 pkHH//REvMxc1J+ekB6sFzSG8iZn3EDvsQKh3qLaD1KKeo1xMZNe1M4jw1uFuQsqcyeqo5cpo6pz
+	 molP7pK75fiKAHEuPkp3lI7EIEnKSzow1tLQxzKPDuqXfUun3gv3NIyzFhrZK9IMkE9GcF+vXdkg
+	 GMqSls4E8Vk5u+PHo6HUwhkkh4QgIaHl/QqWigg+44Ij4zn/+JjMq+B4TuMgc6OljGqjnqFq3TKQ
+	 5tmdo2gJ11QzuF3UMhgqNGJjAcOXYUTFhc0fyNikJ3l0B9cY8EXcvO+roWAGsc3fIdgILdym+BcT
+	 A+wviPpOlDD5yklMwEZSYOniE7yJst6BXNzcIdA7FSwSJcX89FsfsJvBH+fJM2c+X8zfovJ8AkD6
+	 u/H9fjt4EbaBE50Z+GnW5cDEaFVWIPaQgPcVXQQrOxuNok8L413CTapaPGfC/1LPX6B59TlAMKJ0
+	 b0wTGQqh05W4W5rCHrKDT0k6xWsZgo5af+NrMWtskF6DYYS1nEK6xu8sLNDz/Dl5j33Z6rhqqrmA
+	 yAEG91SypdEb/Bq9p5t+p3ExNFsmy1OuLIZih4NWp1Iy4Wqyf6NMwUbLVYBG2HSzO/iEnqGF17RS
+	 8uVMkuen2XwJt7pZN5W7PVpUtZLQIe8eCjmbgkGxxN11/+Gi8gTP6grpwVd19sOHSEQfPb3kL+RO
+	 N35bq/MNQ=
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+57028366b9825d8e8ad0@syzkaller.appspotmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH next] hfsplus: fix oob in hfsplus_bnode_read_key
+Date: Sun,  4 Feb 2024 19:51:22 +0800
+X-OQ-MSGID: <20240204115121.1906264-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000c37a740610762e55@google.com>
+References: <000000000000c37a740610762e55@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:210f:b0:471:2b64:d967 with SMTP id
- n15-20020a056638210f00b004712b64d967mr26201jaj.2.1707047070350; Sun, 04 Feb
- 2024 03:44:30 -0800 (PST)
-Date: Sun, 04 Feb 2024 03:44:30 -0800
-In-Reply-To: <000000000000b6ffa9060ee52c74@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000003e469906108cde8d@google.com>
-Subject: Re: [syzbot] [btrfs?] KMSAN: uninit-value in bcmp (2)
-From: syzbot <syzbot+3ce5dea5b1539ff36769@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, clm@fb.com, dsterba@suse.com, jack@suse.cz, 
-	josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	repnop@google.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot has found a reproducer for the following issue on:
+In hfs_brec_insert(), if data has not been moved to "data_off + size", the size
+should not be added when reading search_key from node->page.
 
-HEAD commit:    9f8413c4a66f Merge tag 'cgroup-for-6.8' of git://git.kerne..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=10fcfdc0180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=656820e61b758b15
-dashboard link: https://syzkaller.appspot.com/bug?extid=3ce5dea5b1539ff36769
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=139dd53fe80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12685aa8180000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/79d9f2f4b065/disk-9f8413c4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/cbc68430d9c6/vmlinux-9f8413c4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9740ad9fc172/bzImage-9f8413c4.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/25f4008bd752/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3ce5dea5b1539ff36769@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in memcmp lib/string.c:692 [inline]
-BUG: KMSAN: uninit-value in bcmp+0x186/0x1c0 lib/string.c:713
- memcmp lib/string.c:692 [inline]
- bcmp+0x186/0x1c0 lib/string.c:713
- fanotify_fh_equal fs/notify/fanotify/fanotify.c:51 [inline]
- fanotify_fid_event_equal fs/notify/fanotify/fanotify.c:72 [inline]
- fanotify_should_merge fs/notify/fanotify/fanotify.c:168 [inline]
- fanotify_merge+0x15f5/0x27e0 fs/notify/fanotify/fanotify.c:209
- fsnotify_insert_event+0x1d0/0x600 fs/notify/notification.c:113
- fanotify_handle_event+0x47f7/0x6140 fs/notify/fanotify/fanotify.c:966
- send_to_group fs/notify/fsnotify.c:360 [inline]
- fsnotify+0x2510/0x3530 fs/notify/fsnotify.c:570
- fsnotify_parent include/linux/fsnotify.h:80 [inline]
- fsnotify_file include/linux/fsnotify.h:100 [inline]
- fsnotify_close include/linux/fsnotify.h:362 [inline]
- __fput+0x578/0x10c0 fs/file_table.c:368
- __fput_sync+0x74/0x90 fs/file_table.c:467
- __do_sys_close fs/open.c:1554 [inline]
- __se_sys_close+0x28a/0x4c0 fs/open.c:1539
- __x64_sys_close+0x48/0x60 fs/open.c:1539
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x6d/0x140 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-
-Uninit was created at:
- slab_post_alloc_hook+0x129/0xa70 mm/slab.h:768
- slab_alloc_node mm/slub.c:3478 [inline]
- slab_alloc mm/slub.c:3486 [inline]
- __kmem_cache_alloc_lru mm/slub.c:3493 [inline]
- kmem_cache_alloc+0x579/0xa90 mm/slub.c:3502
- fanotify_alloc_fid_event fs/notify/fanotify/fanotify.c:584 [inline]
- fanotify_alloc_event fs/notify/fanotify/fanotify.c:817 [inline]
- fanotify_handle_event+0x2ff6/0x6140 fs/notify/fanotify/fanotify.c:952
- send_to_group fs/notify/fsnotify.c:360 [inline]
- fsnotify+0x2510/0x3530 fs/notify/fsnotify.c:570
- fsnotify_parent include/linux/fsnotify.h:80 [inline]
- fsnotify_file include/linux/fsnotify.h:100 [inline]
- fsnotify_close include/linux/fsnotify.h:362 [inline]
- __fput+0x578/0x10c0 fs/file_table.c:368
- __fput_sync+0x74/0x90 fs/file_table.c:467
- __do_sys_close fs/open.c:1554 [inline]
- __se_sys_close+0x28a/0x4c0 fs/open.c:1539
- __x64_sys_close+0x48/0x60 fs/open.c:1539
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0x6d/0x140 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x63/0x6b
-
-CPU: 0 PID: 5010 Comm: syz-executor120 Not tainted 6.7.0-syzkaller-00562-g9f8413c4a66f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
-=====================================================
-
-
+Reported-and-tested-by: syzbot+57028366b9825d8e8ad0@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ fs/hfsplus/brec.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
+index 1918544a7871..9e0e0c1f15a5 100644
+--- a/fs/hfsplus/brec.c
++++ b/fs/hfsplus/brec.c
+@@ -138,7 +138,8 @@ int hfs_brec_insert(struct hfs_find_data *fd, void *entry, int entry_len)
+ 	 * at the start of the node and it is not the new node
+ 	 */
+ 	if (!rec && new_node != node) {
+-		hfs_bnode_read_key(node, fd->search_key, data_off + size);
++		hfs_bnode_read_key(node, fd->search_key, data_off + 
++				(idx_rec_off == data_rec_off ? 0 : size));
+ 		hfs_brec_update_parent(fd);
+ 	}
+ 
+-- 
+2.43.0
+
 
