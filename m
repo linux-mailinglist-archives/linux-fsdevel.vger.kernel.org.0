@@ -1,113 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-10222-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2AD8848E0E
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 14:30:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A10A848EFC
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 16:46:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E3C1284519
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 13:30:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FEB1282E05
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 15:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F71225AF;
-	Sun,  4 Feb 2024 13:30:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE08225DC;
+	Sun,  4 Feb 2024 15:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cUb9QyKC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77AA3224DF
-	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Feb 2024 13:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44CC22611;
+	Sun,  4 Feb 2024 15:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707053427; cv=none; b=q9fiA3Zs21rxDzuQgC3DTkzTc6rOZYcbs74fn5mUtsiACyYBg32EztPOwL6pdJslZTZCGlZsXOL6txPrZyf1gU9CQBBEc9Ag82ZKFYnnbQCbXP/Ym7PqeCJL6Zk9w8d2UarA/smjjgzxZbPgTOr8kWA/yvnQKRbONY1SIhZy81c=
+	t=1707061558; cv=none; b=LSgaatOGwvai6F/wDOpf0WaYQqGpF+FhOYmobq6t6iOa4sEmyLj4MQuVXwwNfN/2O6uv5bqtVmrEtLEpwZH2WGG0+f8qL2sybWHsBysab2ULZRsI/Id59x5QOju2JZfYUrewOoF89D3BpWbXMEDbm3t2GvjMjOcrys7FVHDm6ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707053427; c=relaxed/simple;
-	bh=UaMSnAIomP0d4/QVoz2dzuPbz+yAssf64Z9+owHSSDo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=t4bbRhZhqE/ahN3/b41/S5S3pWpb9T6eITnbDl93yrBl33+d7+7qH+JpK0asu1LL/6u5zP1NnMVYn4CqnIBrkntQ613lz81SYEG/kYXeLSfN1ckHEabjzc/QcQPo+giJK3tVdhj5Zd+VNx7XhTJq7Gk3zxcG0vsI6IIB9JawTp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7bedddd00d5so314389839f.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Feb 2024 05:30:26 -0800 (PST)
+	s=arc-20240116; t=1707061558; c=relaxed/simple;
+	bh=lUgppHZGb1vOjtolopDlqedRfuoqxQctFGVGsU1wMHY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j0DAg7dW7jlOQXXtiD1rFp2F1HSlFfvckFyvAfmg7BPhA0ArQMbjsozaNPhz/YoVBi9xcnjjvlkLHNgl7Zkjbg3YwuDSMX7UaJWjVs2XDwttqOA6ahxPIvIX6PdGHuKQR6RVjdHkrsCuF6MrW+Tiv+F3Txv/N9zbt3cW2lp0h0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cUb9QyKC; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-337d05b8942so2725047f8f.3;
+        Sun, 04 Feb 2024 07:45:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707061555; x=1707666355; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ErjVDx00u8D0uyLxAbe0rYeVX5VlnaMxXzQQWliNW6k=;
+        b=cUb9QyKCVB46pM8nPZXWXTja/69KrA62OEAIg1D4Viqo9Lh+Gu/Wyez9LsSm9WJcrT
+         AmCA8TPxel3EMkrF1XjQzJlm/bNHj4TUPgds6Y2axz2p2OLxCTKlS7/1J8EugllOxEa5
+         wpYbUGsZikhCvz77d65sbeF/19/e+7QMngdvB3pPc0Kc7xPJIOjCixyB8mWYP0Rw2h7K
+         u0WqLWsMgszmdm1ZFFXI+sYJMGRRI7QbaG726RgFdURcltpghjdvV97yTat9kpVNcwyA
+         8UAEGQeA8QKvI/nwmnUL9Yfon5p5p5vBBGYUNKohMt/wdZbnS0eGrLgURsunBVL5v74k
+         AuhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707053425; x=1707658225;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tzM0gFWX358jgiBmOqZtwQSB/F2tsNwCbyAEBJz63Vc=;
-        b=uL4O9/rXwsJYsbTlX2MiYvvby5AijKz6bckr46KNVhqP5YkcP1XKjb6R0jf5EJfbjl
-         Dz3Mc2HCilbK2Psr02Y00Eag0YuyEL2kPZOE3bjskJqDExqKJL1kHNJWFfuXY2mQ+qar
-         x9oV5g5YUaD0Zb413M0FvYmLrJRcB2jajga0OpUT2ca4ks6gV/ZU+vAjRV37bm/RkoZY
-         O9DgH54DfoOUkIrFLff+nTCThb/cPboPUZg/G6f2I0AhE2DVuP1GtmsvJhCpCf0uulgY
-         4gEnUClCGX51cf0itKcRYdZbacdCI1sKlIHEhubyiUibF25TNrNuce1GjgPPXfI5T5ND
-         eBeA==
-X-Gm-Message-State: AOJu0YwZWESoQQh1SRcLNxI6jBu0uM9QHpoy+HUaaqCR3l80ljWBYi66
-	I0vfmTlIPrRfcUVXTz49xtIs6oopzzwXkVta6yoYXXFT6SdcmH8e05myxL1Jv9qfHQLdFukp/ay
-	vU+8vHJiic6BZ2RPXyBGAw/gVM/FQL7AYJpUKhBtWzqTHWrztdmLLSIE=
-X-Google-Smtp-Source: AGHT+IHCw+64iELG79qhBXYxXl02VqldZ1Z1z7ljzrHWmEXSfj/t9tLgEWnk5meIw7bn7d7KKARtlDI3i6cpUlTad/3ij0mEVaHC
+        d=1e100.net; s=20230601; t=1707061555; x=1707666355;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ErjVDx00u8D0uyLxAbe0rYeVX5VlnaMxXzQQWliNW6k=;
+        b=R1ClZC4RDO4nJL+Du4HbO1BZX10ljjkWcFyalv7M8VB+gj6JuJr77VAZk6rhyhJ1WQ
+         jWJ0Q1d51rlqpOOzaEWcQ6+KiRakEKQ1NLL2Vyiey/NRQuSKha+KuUVBWmPCQT2y1HZK
+         YwYRWbr4LoGFia2Imj2M5PuHh77/q7loORYbKtzzXNX9rQQ3Q1wXk9Cdf/D7UxQlZfLK
+         2xkwLElDXxcdpql9HNmbzyLyaxXa5hak6DkdwxBPMzauLGmYJXmtu2YH+UfIPP0su6tY
+         vrEqFm6zuYcSmdX+BDA4CFk2QfuPZELLWRelaqpCoFy9EaBFvsfpSbIWhmj/qQzoeIdZ
+         3sBA==
+X-Gm-Message-State: AOJu0Yw63h1Lb6eNCpsP9NbtFIrTcWi4Qf0/iwB2X+R7r/x/y9BFxZOL
+	rzzlO8CHEk0emR25Jc3sxjI7f95Vsz6vqkCa6cClyOV0zo0lxIhC3iO1hjg1fkiID+GkRJuY2+2
+	N6wC/ESHpImzz6q9LGPcCErjQWas=
+X-Google-Smtp-Source: AGHT+IEr3S4iwLwTGT7CdXfeBrkbADV4KmxBXcpxQ0KO4aMKJ/IOroFZxQehrrV3DGXIs1edvcvpXpbv/p8XG9pWHrg=
+X-Received: by 2002:a5d:608e:0:b0:33b:3d6f:7a2e with SMTP id
+ w14-20020a5d608e000000b0033b3d6f7a2emr39650wrt.49.1707061554633; Sun, 04 Feb
+ 2024 07:45:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d11:b0:363:c8ba:ea5a with SMTP id
- i17-20020a056e021d1100b00363c8baea5amr46326ila.6.1707053425706; Sun, 04 Feb
- 2024 05:30:25 -0800 (PST)
-Date: Sun, 04 Feb 2024 05:30:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000000d4e8006108e5989@google.com>
-Subject: [syzbot] Monthly jfs report (Feb 2024)
-From: syzbot <syzbot+list857c7d203040989b10bd@syzkaller.appspotmail.com>
-To: jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240204021436.GH2087318@ZenIV> <20240204021739.1157830-1-viro@zeniv.linux.org.uk>
+ <20240204021739.1157830-12-viro@zeniv.linux.org.uk>
+In-Reply-To: <20240204021739.1157830-12-viro@zeniv.linux.org.uk>
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 4 Feb 2024 09:45:42 -0600
+Message-ID: <CAH2r5muOY-K6AEG_fMgTLfc5LBa1x291kCjb3C4Q_TKS8yn1xw@mail.gmail.com>
+Subject: Re: [PATCH 12/13] cifs_get_link(): bail out in unsafe case
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-cifs@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello jfs maintainers/developers,
+I may be missing some additional change or proposed future change -
+but it looks like the patch to add check for null dentry in
+cifs_get_link causes
+an extra call to cifs_get_link in pick_link() (in namei.c - see
+below), so would be slightly slower than leaving code as is in
+cifs_get_link
 
-This is a 31-day syzbot report for the jfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/jfs
+                if (nd->flags & LOOKUP_RCU) {
+                        res =3D get(NULL, inode, &last->done);
+                        if (res =3D=3D ERR_PTR(-ECHILD) && try_to_unlazy(nd=
+))
+                                res =3D get(link->dentry, inode, &last->don=
+e);
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 34 issues are still open and 31 have been fixed so far.
+cifs.ko doesn't use or check the dentry in cifs_get_link since the
+symlink target is stored in the cifs inode, not  accessed via the
+dentry, so wasn't clear to me
+from the patch description why we would care if dentry is null in
+cifs_get_link()
 
-Some of the still happening issues:
+On Sat, Feb 3, 2024 at 8:18=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+>
+> ->d_revalidate() bails out there, anyway.  It's not enough
+> to prevent getting into ->get_link() in RCU mode, but that
+> could happen only in a very contrieved setup.  Not worth
+> trying to do anything fancy here unless ->d_revalidate()
+> stops kicking out of RCU mode at least in some cases.
+>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+>  fs/smb/client/cifsfs.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+> index e902de4e475a..630e74628dfe 100644
+> --- a/fs/smb/client/cifsfs.c
+> +++ b/fs/smb/client/cifsfs.c
+> @@ -1172,6 +1172,9 @@ const char *cifs_get_link(struct dentry *dentry, st=
+ruct inode *inode,
+>  {
+>         char *target_path;
+>
+> +       if (!dentry)
+> +               return ERR_PTR(-ECHILD);
+> +
+>         target_path =3D kmalloc(PATH_MAX, GFP_KERNEL);
+>         if (!target_path)
+>                 return ERR_PTR(-ENOMEM);
+> --
+> 2.39.2
+>
+>
 
-Ref  Crashes Repro Title
-<1>  1661    Yes   general protection fault in lmLogSync (2)
-                   https://syzkaller.appspot.com/bug?extid=e14b1036481911ae4d77
-<2>  1416    Yes   kernel BUG in jfs_evict_inode
-                   https://syzkaller.appspot.com/bug?extid=9c0c58ea2e4887ab502e
-<3>  985     Yes   general protection fault in write_special_inodes
-                   https://syzkaller.appspot.com/bug?extid=c732e285f8fc38d15916
-<4>  574     Yes   WARNING in inc_nlink (3)
-                   https://syzkaller.appspot.com/bug?extid=2b3af42c0644df1e4da9
-<5>  527     Yes   kernel BUG in txUnlock
-                   https://syzkaller.appspot.com/bug?extid=a63afa301d1258d09267
-<6>  357     Yes   general protection fault in jfs_flush_journal
-                   https://syzkaller.appspot.com/bug?extid=194bfe3476f96782c0b6
-<7>  279     Yes   KASAN: use-after-free Read in release_metapage
-                   https://syzkaller.appspot.com/bug?extid=f1521383cec5f7baaa94
-<8>  109     Yes   KASAN: user-memory-access Write in __destroy_inode
-                   https://syzkaller.appspot.com/bug?extid=dcc068159182a4c31ca3
-<9>  104     Yes   kernel BUG in dbFindLeaf
-                   https://syzkaller.appspot.com/bug?extid=dcea2548c903300a400e
-<10> 84      Yes   kernel BUG in lbmIODone
-                   https://syzkaller.appspot.com/bug?extid=52ddb6c83a04ca55f975
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--=20
+Thanks,
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Steve
 
