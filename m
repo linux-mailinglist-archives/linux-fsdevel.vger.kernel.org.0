@@ -1,931 +1,494 @@
-Return-Path: <linux-fsdevel+bounces-10211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D423848AAB
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 03:28:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B8C848B82
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 07:33:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE551F246BE
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 02:28:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3458EB22F81
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 06:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930CA1869;
-	Sun,  4 Feb 2024 02:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8063179DF;
+	Sun,  4 Feb 2024 06:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VdNoWbJU"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VmqqMQg5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29B2EDE;
-	Sun,  4 Feb 2024 02:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707013670; cv=none; b=L+V0tAR4ucs0a6NB3UrBNE8m44nU8ANwBSNFHcQbaOIqP5/1pyo0d5t7VO1v1ckw/eWI+K7tf2OUHri19qa1e7Hmr0E+2QVzB/Vkunfdoew4lMZIxLxQfNKO9DOZmZvAGDUKOJpjPBeedPDak1o4oMY+3OM6Dt2AuGDlb/kPRGw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707013670; c=relaxed/simple;
-	bh=AgBoP/pTn50k1EBS94+w7qvCmCMgjjHQelEwWrEnLa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JrcVRfGKn163cvYbtn/kSGfbKG6UmwbS3MSDfPVLWpPJrW801zHRb1CuqqV73+WgIGTKmuFvBhrdSYpbJDzyQDrm7ZMBO8PeRXyWgsHdyWWBl0Sdbih39hvSEOUUK6bJ7U8ZpfYscXVxmPD5jKQJDIJfIxrt4LLuF0jp4cKQjWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=VdNoWbJU; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wxXhP2KZAKa2PBF3pJ3N+ndgOlucxvRYdGYpFXgXRr4=; b=VdNoWbJUiQNMcws4MoZU/W29i8
-	w/uxfBDhtzfv9nwG9Qwy9Coz3bqKfNa9lE8RQcFxmg4uT/b52BEhqvIjUheXWJQ/sxGEikKv6QuRJ
-	GQ+77H78ZDNZ2Sn/EYeBRltX2Wo/+r95hr4fSpBUkhlIQrpoUNact1iRs3bG2WvkiGA9IQYPLj2Xj
-	+/9ToKG5XXji6irmUaYgn72vJR/x2GnaogwTmoEOjIPj6zHD122t0oiYW6qlFTQSqYL7EA/6pzyAz
-	8rGwus5/MHJf2MPUsdxAUhIXR+LtQNSQ+qtk0LxwHzoUmPp3XMm5qgYMnthvxur0xelDLJMiy5VK+
-	lHniD9pg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rWSER-004rUk-37;
-	Sun, 04 Feb 2024 02:27:44 +0000
-Date: Sun, 4 Feb 2024 02:27:43 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>, linux-ext4@vger.kernel.org,
-	linux-nfs@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-	linux-cifs@vger.kernel.org
-Subject: RCU pathwalk audit notes
-Message-ID: <20240204022743.GI2087318@ZenIV>
-References: <20240204021436.GH2087318@ZenIV>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6B679D2;
+	Sun,  4 Feb 2024 06:33:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707028389; cv=fail; b=LSs+YMOV3IoBP0hMPHVSOfn3QwDsyJ6ri+qIUhHhsxheLsG5h8u/M+A3Dk1oHDhChnW9y7ig/CYPd4f4JjhAofq1UuubugrurNkdnIh3c1CkCAhubPACpjP4QQT+scQ+DdhZz6m/h5rawCXXQINsqpBb+JMxGIoFRyW4Vga+k4k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707028389; c=relaxed/simple;
+	bh=uho38/X7zWsdH4Jae9z4Th4Inqn759mPohMwHjxNkxo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=MUtrKMcagdGsRbza8gKDa7RkzQVCzxCh5WifzrNmmAnkMzHxxapgdfwykEaiGqjHargcnbSU+OljPweWKswZpTXzjGHh5KwP21BrxOYZjmY3QFWoQjiPTCfZZfakVif5w6UPJr74c3GB3+or7B55tTR4bvjcmeP6/23MmO/bnh4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VmqqMQg5; arc=fail smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1707028388; x=1738564388;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=uho38/X7zWsdH4Jae9z4Th4Inqn759mPohMwHjxNkxo=;
+  b=VmqqMQg5DimSCERZxWhHtQtvzBCK751XidQT4WgYenR1Cp0185ztMclF
+   rkch3Ecmi9iQUlV7cQUm4s2dmPVU/068aqfVtmtnMOV8XwD/zb1n7mjxr
+   JWYdeVjlsvwdJ9OrBUb1eI7zxCWHNxD0vwZv8mytWSsj5YnpWg1Wv9YRs
+   uPobdlmRIh1jIF35TXH354yJEGhcd4EQLVA4ZHRT/x043cJARB1lKmg4n
+   146bBoRIxZlGgSUiWq3Mi9blV3VB1KnbXHTuV9lMTTNgrDH3YHB+qqWVd
+   4roCXt+hLOuZr3VjvjLZ4/38dY+AQU+2BH+5Qe30kcnWOg3jDXwbMaqOh
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10973"; a="11107369"
+X-IronPort-AV: E=Sophos;i="6.05,242,1701158400"; 
+   d="scan'208";a="11107369"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Feb 2024 22:33:06 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,242,1701158400"; 
+   d="scan'208";a="724244"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 03 Feb 2024 22:33:05 -0800
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Sat, 3 Feb 2024 22:33:04 -0800
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Sat, 3 Feb 2024 22:33:04 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Sat, 3 Feb 2024 22:33:04 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.101)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Sat, 3 Feb 2024 22:33:04 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JZvOBY02favNgwXryesoFhk/fUGYV8D3Iw7iq4b/kHEvoa0P6MxgFFCXkdQYQDpLDAd+zgveAOEHfr8Ba/1sksHZqRj6zaVw5x9i38koQPEuTY4bZEreN28y7CaM/UTsNxI7lGUeNzaBDKlmGDIwpoD4UPHZvFdADZx3ofSutKWSYL3q6QHqpIGVZxWUj8lXpdpbN939/eGYcA/D7qAGw9Yc8ABRDBC6JyAOt3q0W8qaigZHWYLqj6qPH8sGWJwG2+PGom+DyhEmwt4cT32ewA+dUxsrZvuGKN0UtIMFD4GpGP1jcb0osqClG06Djkjw6q9gIhApIxBr24n/yx0Wzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qPgDnJEKuuhiNSC4eWSdK2JdVX8TRAdaGmVAIdvnsA8=;
+ b=OIipih4sGhY8dgP+G+NE95gq0G37nAs+QDbt0K+GMRKEzBYxXeKnEDxnB5xlIft//14LUQw5sUquaUZQLyDjUeepGl/RpdXJboG7Rd7PxFT21/8Bne2y/tb3dxBQgVix1pZwSrPdZKxknKXkWlXDkFv1a6DWLzhtxptS4vFralRBrgAUow7H2O0/52ATS/wp6nmsRyo5c7gu+vJDn7iXodVoE2O2QxiCiT+TbGCV4i68wTFwXjmLbuzhm1PH3OE4uNhyB1NHrZquBWGMqhXH9ktAYp3fnovQuZjMlZPQagu/gykKds/XzFKMjiujgciZ3dwNFSV/9KEt5utJyMZOdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by SN7PR11MB6945.namprd11.prod.outlook.com (2603:10b6:806:2a8::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.33; Sun, 4 Feb
+ 2024 06:33:01 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::a026:574d:dab0:dc8e]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::a026:574d:dab0:dc8e%3]) with mapi id 15.20.7249.032; Sun, 4 Feb 2024
+ 06:33:00 +0000
+Date: Sun, 4 Feb 2024 14:32:51 +0800
+From: Oliver Sang <oliver.sang@intel.com>
+To: Amir Goldstein <amir73il@gmail.com>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Christian Brauner <brauner@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+	Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>,
+	<linux-fsdevel@vger.kernel.org>, <ying.huang@intel.com>,
+	<feng.tang@intel.com>, <fengwei.yin@intel.com>
+Subject: Re: [linus:master] [remap_range] dfad37051a:
+ stress-ng.file-ioctl.ops_per_sec -11.2% regression
+Message-ID: <Zb8vk1Psust0ODrs@xsang-OptiPlex-9020>
+References: <202401312229.eddeb9a6-oliver.sang@intel.com>
+ <CAOQ4uxiwCGxBBbz3Edsu-aeJbNzh5b-+gvTHwtBFnCvbto2v-g@mail.gmail.com>
+ <CAOQ4uxgAaApTVxxPLKH69PMP-5My=1vS_c6TGqvV5MizMKoaiw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgAaApTVxxPLKH69PMP-5My=1vS_c6TGqvV5MizMKoaiw@mail.gmail.com>
+X-ClientProxiedBy: SG2PR02CA0040.apcprd02.prod.outlook.com
+ (2603:1096:3:18::28) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240204021436.GH2087318@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SN7PR11MB6945:EE_
+X-MS-Office365-Filtering-Correlation-Id: d283d77c-0c0b-4a8d-0c0f-08dc254b21f5
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: t03sSt+DL2njVrkY8Uz/Ad9KIj0M/IKisxNTUUnjw7sc9yvc9xnJUxpumbGie1jh8gBzT0KN7cKst36F4aT4HmJ/805M4H1klJh2SO73tIyXucKFOl7k1YQj9fKCdPQrlxcppa+llNUjWY7A7a2omYYXZngs4MW+IjU43ZKwAJNogO3ltvn3kx39ebemXHbXC/MaVZBaTSNtkpr5iBxcDuYzNNTaz+lyPtRd//U5yimXiUZeWUXmAJMhsMEpaBxrhgHVcgG/oBPNzFlBdgGs5vD3SR9HRzyg6Ie0mIm9IXC4WvcPPAEPg6hXLv4YoaUOFXlIoH2xcXsOUo04MxNzZm98Jd2/cLLNEs6Nuyc+vHvyGtSwLozLFmlP0+DX1jaz1MaQHgqmgP6ncmdvUNOFViTurE4zwFqvSoXVrsDJVpucuT+z6as5hm1a9pmjxfHrFF1RQ1bl/nIhWeg+XrN+202kAD3pDyV2LTvySJHgURCKQ+tulthPBORRetQ3iGiMlRLrNf3FjkoI7OqEW6zulnH9AYvXMcJfiNzgO751bvpmojijOW/IGVFYuI/z2ielKQyS8tUCqebr7ja5+jx9mQ==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(376002)(366004)(136003)(39860400002)(396003)(346002)(230922051799003)(186009)(1800799012)(64100799003)(451199024)(41300700001)(44832011)(8936002)(8676002)(4326008)(2906002)(30864003)(5660300002)(86362001)(66946007)(66556008)(316002)(54906003)(6916009)(66476007)(82960400001)(38100700002)(53546011)(6506007)(9686003)(6512007)(478600001)(6666004)(6486002)(966005)(83380400001)(26005)(107886003)(33716001)(579004);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Tm9TMmxnSkZ1dFJKSzdteFh6c3UxV1NRanc0WDlMVTJpT3AxWmViU0t4QlpH?=
+ =?utf-8?B?cWpuSyszVEhIWjZ5Y0htOWQ5WFA1VTJtcnFPZHRuLzdzM0xCNmFCYmJjN1ZQ?=
+ =?utf-8?B?dTdhUThqaEY1R1IvUHRoeDR2TG1ZT0xMRkVTNFlDWENhU1FucS93MTBGUW5P?=
+ =?utf-8?B?SFB3blhDNysxTFR2aTI2a3FGdFB4RGlGa2w5K0RsRy9XSHU3MXNLcnJ3N3VF?=
+ =?utf-8?B?U3pKMzlxSXZpUUpmczFBdE5DZWU3Z21FM2VPVzF6dExFaXV2d0tWc1cvQlVB?=
+ =?utf-8?B?YnRDTVlmKy9OK1gxSmxUbyt4L3d5LzNWVlNmWjZ6ck8rVE1ZMjh3bEZ6d3dR?=
+ =?utf-8?B?QnBjQk1kQnFRUURyQWpJR1dhNW11WlkxWXZFR09zMEhaS2FYakxFbmVUc1pC?=
+ =?utf-8?B?Qjh4Q0lJNDRBK3kvL28zbGxXbEM2c2lhMmV0UEdZYitPczlJU21IRHFYaC9j?=
+ =?utf-8?B?TmxkbVMybS9hblZ3UlJqeVhNZnJ5SlVOaHBrd0x1YXN3U3QvVzRDYmx6K3Vr?=
+ =?utf-8?B?aENxN0cwMDJTQk5HVnQ4bjVEWlpsWE0wc0IwZVdpcGYwWERjQTNkNVNYRDBM?=
+ =?utf-8?B?c2xXQWxNeGdEak5YRm1GRXJuMzg4cWt0TnQ4MWFQSUp4Mm9SUXh4Q014TS9C?=
+ =?utf-8?B?cjJtVDdOVm9LVkkyUW5MNEVTYzhxQjhrK043bDhEL0FjbzFrU0VzL0xKbDhS?=
+ =?utf-8?B?V0VXMzFiNEFBVnRqRGtCdWhxR2JHUWVoNEF6eVNhUFFsaFM1UTFySkRqZXgv?=
+ =?utf-8?B?UEduaEpOa3hvTGFkQVZXUUlvY2NGN1o0WElDdmlTZC9zdEMxeTJHLy9DUVA3?=
+ =?utf-8?B?QkRLS21FWlZOa3Z5UE1nU0s3ei9lNGpNNnBqRTZaK0x1ZHRDNm44UVZyVjNk?=
+ =?utf-8?B?OHM2bHBFaEpJTTlidi9TdE5oSnh5QTA5eFFHNG5QNG9hZGtXaTBxeUFuMzd0?=
+ =?utf-8?B?WVJTZGRhaVpyZHhoSm53Qzl6M2JSZmd3a29xY0tXWEtzMjBCU0phNFZxaDRO?=
+ =?utf-8?B?a1VEM2wwVVlyYU0wVFFmdzJ5MzkxWWJwZElaNmJpSFpaTUo3bnNldUoxemQ5?=
+ =?utf-8?B?bGVvbVdOOFAxcjZIbVpGVWh5bWdwcTNwVHg0Z1ZrWDV5TklUU2M4S0s2dnRW?=
+ =?utf-8?B?MzFUNXRCd2FwQ3RkSW53QmtITUQzU1dVeTBtU01sdWJoS0Q1cmtHZzBCeGYv?=
+ =?utf-8?B?VU5aWnVGcjZPeHVtQkJWK1lwcmtPeEFXOG9PTXBJVTd4ZHE4WVRkZm01N2F2?=
+ =?utf-8?B?V1RsdGh0a2lMRWxPUk1rYWVYbmxIN09kblhXUHJGNzB6YTEzZ0NrY3ppZWFQ?=
+ =?utf-8?B?cDdBUHhmWGpyQVROTHp6NHhTT0Y4eThBU3lUY0tsK042WXR4L1ZjRm9zT3BP?=
+ =?utf-8?B?eSt0K3V5V01XNW5TU2NWYjRnM1o1WkNqRzhKWG40aVcyb3BpVHhmMGZlTU1I?=
+ =?utf-8?B?SXBJRHJnOGh0WU9rcm10QzhQWDE3cGJhbUUzZGYyZytOZzhtSlBHcFp4NkNz?=
+ =?utf-8?B?V1NjdHljcy9hUGtyWitzSnEvZUhET0VqenRQVlZqU0dnd3dSV3RnL3FMYUF3?=
+ =?utf-8?B?UnpYdnZ1WlpNekcrcDRORThZYWF3ZXBmdjFHYXVzbjNFWkZLVmVaRC9OQkJ1?=
+ =?utf-8?B?QU5HZWI3MnVxRC9US3dVRjR4dlpyR0p0djk3U2RuL2xQYkVpbHVlcW5Xdm83?=
+ =?utf-8?B?dzlLSytFNlQreE51elE0cCtxd1p6cktZVUdTZW1qZDlBZy9rb2QyK2Q3cWtx?=
+ =?utf-8?B?bUZ3bUZzd00vQUN6M0tkaitJS2JPTXUzTVlmMnRGNFNOMU5wMGdKcFFYWWVY?=
+ =?utf-8?B?bEVXZ2h6UXUrR2JFWmo2TjlLZ2dvSDl2UUxiZDR0SXpEN1RIdExYbGhxR3VO?=
+ =?utf-8?B?UnRnMHdDZXNNVXNxWE1tYlRHRllXNHdqanpXWUdXbFdMQnpWb2FmVWNMRGRO?=
+ =?utf-8?B?eitrSGlEVVF2a2FQZzJoL3N1dE42b3k0dVNKWE9INlNpZVpaMkxnY2ZZcG15?=
+ =?utf-8?B?R0lvM0lZQzRSNHZxOFkvRFJtZVZMWWFpMXUycG94eWFYK1ZiNldrUzJQblpp?=
+ =?utf-8?B?WHE4WnU2Z2o4UDlJREh5cjJEaHAzRkFnV3Y0cDhkYzFFZXVsbjN0WU90YkJL?=
+ =?utf-8?Q?Obt82pibLcF5OtDozAzcCCewj?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: d283d77c-0c0b-4a8d-0c0f-08dc254b21f5
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2024 06:33:00.6081
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UVKKZxBwpHDGVJbpz+EJWikPBt4gLELqrkJOdqWe91EJmGQJrl52SnloDTc8cCFbAQ22gKInUnSGAI1Aa1ssrA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6945
+X-OriginatorOrg: intel.com
 
-Below are my notes from that code audit; a part of that would probably
-be useful for filesystem maintainers - right now it's between the
-braindump and usable documentation.  If anyone finds it useful - great;
-if somebody helps with turning that into proper documentation - even
-better.
---------------------------------------------------------------------------
-PRELIMINARY NOTE: it is possible for a lazy pathwalk to run into a dentry
-on a filesystem that is getting shut down.  Here's how:
-	* have two threads sharing fs_struct chdir'ed on that filesystem.
-	* lazy-umount it, so that the only thing holding it alive is
-cwd of these threads.
-	* one of the threads does relative pathname resolution
-and gets to e.g. ->d_hash().  It's holding rcu_read_lock().
-	* at the same time another thread does fchdir(), moving to
-different directory.  set_fs_pwd() flips to the new place and does
-mntput() on the old one.  No RCU delays here, we calculate the
-refcount of that mount and see that we are dropping the last reference.
-We make sure that the first thread will fail when it comes to
-legitimize_mnt() and do this:
-			init_task_work(&mnt->mnt_rcu, __cleanup_mnt);
-			if (!task_work_add(task, &mnt->mnt_rcu, TWA_RESUME))
-				return;
-As we leave the syscall, we have __cleanup_mnt() run; it calls
-cleanup_mnt() on our mount, which hits deactivate_super().  That was
-the last reference to superblock.
+hi, Amir,
 
-	Voila - we have a filesystem shutdown right under the nose of
-a thread running in ->d_hash() of something on that filesystem.
-	Mutatis mutandis, one can arrange the same for other methods
-called by rcu pathwalk.
+On Fri, Feb 02, 2024 at 11:13:56AM +0200, Amir Goldstein wrote:
+> On Wed, Jan 31, 2024 at 5:47 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Wed, Jan 31, 2024 at 4:13 PM kenel test robot <oliver.sang@intel.com> wrote:
+> > >
+> > >
+> > >
+> > > Hello,
+> > >
+> > > kernel test robot noticed a -11.2% regression of stress-ng.file-ioctl.ops_per_sec on:
+> > >
+> > >
+> > > commit: dfad37051ade6ac0d404ef4913f3bd01954ee51c ("remap_range: move permission hooks out of do_clone_file_range()")
+> > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+> > >
+> >
+> > Can you please try this fix:
+> >
+> >  7d4213664bda remap_range: move sanity checks out of do_clone_file_range()
+> >
+> > from:
+> >
+> > https://github.com/amir73il/linux ovl-fixes
+> >
+> 
+> Sorry, Oliver, this was a buggy commit.
+> I pushed this fixes version to ovl-fixes branch:
+> 
+>  1c5e7db8e1b2 remap_range: merge do_clone_file_range() into
+> vfs_clone_file_range()
+> 
+> Can you please test.
 
-	It's not easy to hit (especially if you want to get through the
-entire ->kill_sb() before the first thread gets through ->d_hash()),
-and it's probably impossible on the real hardware; on KVM it might be
-borderline doable.  However, it is possible and I would not swear that
-other ways of arranging the same thing are equally hard to hit.
+the regression disappeared by above commit in our tests.
 
-	The bottom line: methods that can be called in RCU mode need to
-be careful about the per-superblock objects destruction.
-[end of note]
+I noticed this branch is based on v6.8-rc2, so I directly tested upon it and its
+parent (3f01e53bf6). I found 3f01e53bf6 has same data as dfad37051a we reported.
 
-	Exposure of filesystem code to lockless environment, or
-the ways in which RCU pathwalk may fuck filesystem maintainer over.
+and on 1c5e7db8e1b2, the performance back to the same level before dfad37051a.
 
+below is the summary:
 
-	Filesystem methods can usually count upon VFS-provided warranties
-regarding the stability of objects they are called to act upon; at the
-very least, they can expect the dentries/inodes/superblocks involved to
-remain live throughout the operation.
+=========================================================================================
+compiler/cpufreq_governor/disk/fs/kconfig/nr_threads/rootfs/tbox_group/test/testcase/testtime:
+  gcc-12/performance/1HDD/btrfs/x86_64-rhel-8.3/10%/debian-11.1-x86_64-20220510.cgz/lkp-icl-2sp8/file-ioctl/stress-ng/60s
 
-	Life would be much more painful without that; however, such
-warranties do not come for free.  The problem is that access patterns are
-heavily biased; every system call getting an absolute pathname will have
-to start at root directory, etc.  Having each of them in effect write
-"I'd been here" on the same memory objects would cost quite a bit.
-As the result, we try to keep the fast path stores-free, bumping no
-refcounts and taking no locks.	Details are described elsewhere, but the
-bottom line for filesystems is that some methods may be called with much
-looser warranties than usual.  Of course, from the filesystem POV each
-of those is a potential source of headache - you are asked to operate
-on an object that might start to be torn down right under you, possibly
-along with the filesystem instance it lives on.
+commit:
+  d53471ba6f ("splice: remove permission hook from iter_file_splice_write()")
+  dfad37051a ("remap_range: move permission hooks out of do_clone_file_range()")
+  3f01e53bf6 ("MAINTAINERS: update overlayfs git tree")
+  1c5e7db8e1 ("remap_range: merge do_clone_file_range() into vfs_clone_file_range()")
 
-	The list of the methods that could run into that fun:
-
-	method		| indication that the call is unsafe	| unstable objects
-->d_hash(d, ...) 	|	none - any call might be	|	d
-->d_compare(d, ...)	|	none - any call might be	|	d
-->d_revalidate(d, f)	|	f & LOOKUP_RCU			|	d
-->d_manage(d, f)	|	f				|	d
-->permission(i, m)	|	m & MAY_NOT_BLOCK		|	i
-->get_link(d, i, ...)	|	d == NULL			|	i
-->get_inode_acl(i, t, f)|	f == LOOKUP_RCU			|	i
-
-
-	Additionally, callback set by set_delayed_call() from unsafe call of
-->get_link() will be run in the same environment; that one is usually not
-a problem, though.
-
-	For the sake of completeness, three of LSM methods
-(->inode_permission(), ->inode_follow_link() and ->task_to_inode())
-might be called in similar environment, but that's a problem for LSM
-crowd, not for filesystem folks.
-
-
-	Any method call is, of course, required not to crash - no stepping on
-freed memory, etc.  All of the unsafe calls listed above are done under
-rcu_read_lock(), so they are not allowed to block.  Further requirements
-vary between the methods.
-
-
-	Before going through the list of affected methods, several notes on
-the things that _are_ guaranteed:
-	* if a reference to struct dentry is passed to such call, it will
-not be freed until the method returns.	The same goes for a reference to
-struct inode and to struct super_block pointed to by ->d_sb or ->i_sb
-members of dentry and inode resp.  Any of those might be in process of
-being torn down or enter such state right under us; the entire point of
-those unsafe calls is that we make them without telling anyone they'd
-need to wait for us.
-	* following ->d_parent and ->d_inode of such dentries is fine,
-provided that it's done by READ_ONCE() (for ->d_inode the preferred form
-is d_inode_rcu(dentry)).  The value of ->d_parent is never going to be
-NULL and it will again point to a struct dentry that will not be freed
-until the method call finishes.  The value of ->d_inode might be NULL;
-if non-NULL, it'll be pointing to a struct inode that will not be freed
-until the method call finishes.
-	* none of the inodes passed to an unsafe call could have reached
-fs/inode.c:evict() before the caller grabbed rcu_read_lock().
-	* for inodes 'not freed' means 'not entered ->free_inode()', so
-anything that won't be destroyed until ->free_inode() is safe to access.
-Anything synchronously destroyed in ->evict_inode() or ->destroy_inode()
-is not safe; however, one can count upon the call_rcu() callbacks issued
-in those yet to be entered.  Note that unlike dentries and superblocks,
-inodes are embedded into filesystem-private objects; anything stored
-directly in the containing object is safe to access.
-	* for dentries anything destroyed by ->d_prune() (synchronously or
-not) is not safe; the same goes for the things synchronously destroyed by
-->d_release().  However, call_rcu() callbacks issued in ->d_release() are
-yet to be entered.
-	* for superblocks we can count upon call_rcu() callbacks issued
-from inside the ->kill_sb() (including the ones issued from ->put_super())
-yet to be entered.
-	* NOTE: we can not count upon the things like ->d_parent
-being positive (or a directory); a race with rename()+rmdir()+mknod()
-and you might find a FIFO as parent's inode.  NULL is even easier -
-just have the dentry *and* its ex-parent already past dentry_kill()
-(which is a normal situation for eviction on memory pressure) and there
-you go.  Normally such pathologies are prevented by the locking (and
-dentry refcounting), but... the entire point of that stuff is to avoid
-informing anyone that we are there, so those mechanisms are bypassed.
-What's more, if dentry is not pinned by refcount, grabbing its ->d_lock
-will *not* suffice to prevent that kind of mess - the scenario with
-eviction by memory pressure won't be prevented by that; you might have
-grabbed ->d_lock only after the dentry_kill() had released it, and at
-that point ->d_parent still points to what used to be the parent, but
-there's nothing to prevent its eviction.
-	* [with fix in this series] for superblocks we can count
-upon ->s_user_ns still being pinned and ->s_security have not
-been freed yet.
+d53471ba6f7ae97a dfad37051ade6ac0d404ef4913f 3f01e53bf658495e01cab85d82a 1c5e7db8e1b25b9ef86a9026862
+---------------- --------------------------- --------------------------- ---------------------------
+         %stddev     %change         %stddev     %change         %stddev     %change         %stddev
+             \          |                \          |                \          |                \
+  95739218           -11.2%   84990543 ±  2%     -11.3%   84951004            +0.7%   96455282        stress-ng.file-ioctl.ops
+   1595650           -11.2%    1416506 ±  2%     -11.3%    1415846            +0.7%    1607584        stress-ng.file-ioctl.ops_per_sec
 
 
-	1. ->d_compare().
 
-	For ->d_compare() we just need to make sure it won't crash
-when called for dying dentry - an incorrect return value won't harm the
-caller in such case.  False positives and false negatives alike - the
-callers take care of that.  To be pedantic, make that "false positives
-do not cause problems unless they have ->d_manage()", but ->d_manage()
-is present only on autofs and there's no autofs ->d_compare() instances.
+below is the details FYI:
 
-[[ footnote:
-		Some callers prevent being called for dying dentry (holding
-	->d_lock and having verified !d_unhashed() or finding it in the list
-	of inode's aliases under ->i_lock).  For those the scenario in question
-	simply cannot arise.
-		Some follow the match with lockref_get_not_dead() and treat
-	the failure as mismatch.  That takes care of false positives, and false
-	negatives on dying dentry are still correct - we simply pretend to have
-	lost the race.
-		The only caller that does not fit into the classes above is
-	__d_lookup_rcu_op_compare().  There we sample ->d_seq and verify !d_unhashed()
-	before calling ->d_compare().  That is not enough to prevent dentry
-	from starting to die right under us; however, the sampled value of ->d_seq
-	will be rechecked when the caller gets to step_into(), so for a false
-	positive we will end up with a mismatch.  The corner case around ->d_manage()
-	is due to the handle_mounts() done before step_into() gets to ->d_seq
-	validation...
-]]
+=========================================================================================
+compiler/cpufreq_governor/disk/fs/kconfig/nr_threads/rootfs/tbox_group/test/testcase/testtime:
+  gcc-12/performance/1HDD/btrfs/x86_64-rhel-8.3/10%/debian-11.1-x86_64-20220510.cgz/lkp-icl-2sp8/file-ioctl/stress-ng/60s
 
-	There is no indication that ->d_compare() is called in RCU mode;
-the majority of callers are such, anyway, so we need to cope with that.
-VFS guarantees that dentry won't be freed under us; the same goes for
-the superblock pointed to by its ->d_sb.  Name points to memory object
-that won't get freed under us and length does not exceed the size of
-that object.  The contents of that object is *NOT* guaranteed to be
-stable; d_move() might race with us, modifying the name.  However, in
-that case we are free to return an arbitrary result - the callers will
-take care of both false positives and false negatives in such case.
-The name we are comparing dentry with (passed in qstr) is stable,
-thankfully...
+commit:
+  d53471ba6f ("splice: remove permission hook from iter_file_splice_write()")
+  dfad37051a ("remap_range: move permission hooks out of do_clone_file_range()")
+  3f01e53bf6 ("MAINTAINERS: update overlayfs git tree")
+  1c5e7db8e1 ("remap_range: merge do_clone_file_range() into vfs_clone_file_range()")
 
-	If we need to access any other data, it's up to the filesystem
-to protect it.  In practice it means that destruction of fs-private part
-of superblock (and possibly unicode tables hanging off it, etc.) might
-need to be RCU-delayed.
+d53471ba6f7ae97a dfad37051ade6ac0d404ef4913f 3f01e53bf658495e01cab85d82a 1c5e7db8e1b25b9ef86a9026862
+---------------- --------------------------- --------------------------- ---------------------------
+         %stddev     %change         %stddev     %change         %stddev     %change         %stddev
+             \          |                \          |                \          |                \
+      2.57            -0.3        2.27            -0.3        2.25            -0.0        2.52        mpstat.cpu.all.usr%
+      7.40            +3.4%       7.65            +4.1%       7.71            +0.4%       7.43        iostat.cpu.system
+      2.50           -11.5%       2.22           -12.5%       2.19            -1.9%       2.46        iostat.cpu.user
+     49702 ±  6%      -3.4%      48023 ± 12%     +13.4%      56347 ±  8%     +20.0%      59637 ±  2%  meminfo.AnonHugePages
+     74632            -0.2%      74463           -57.7%      31584           -57.6%      31669        meminfo.Percpu
+     87960 ±  2%      +1.6%      89400 ±  5%     +12.2%      98666 ±  7%      +4.3%      91739 ±  9%  numa-meminfo.node0.SUnreclaim
+     69529 ±  3%      -1.9%      68208 ±  7%     -16.2%      58254 ± 13%      -5.5%      65677 ± 14%  numa-meminfo.node1.SUnreclaim
+     21990 ±  2%      +1.6%      22350 ±  5%     +12.2%      24666 ±  7%      +4.3%      22934 ±  9%  numa-vmstat.node0.nr_slab_unreclaimable
+     17382 ±  3%      -1.9%      17052 ±  7%     -16.2%      14563 ± 13%      -5.5%      16419 ± 14%  numa-vmstat.node1.nr_slab_unreclaimable
+    267.41            +4.2%     278.66            +4.7%     280.04            +0.7%     269.27        time.system_time
+     90.19           -12.5%      78.96           -14.0%      77.59            -2.0%      88.37        time.user_time
+     34.41            +0.5%      34.57            +3.7%      35.69            +3.2%      35.51        boot-time.boot
+     23.41            +0.5%      23.52            +5.5%      24.69            +4.5%      24.47        boot-time.dhcp
+      1991            +0.6%       2002            +4.0%       2071            +3.4%       2059        boot-time.idle
+      1434 ± 10%     -18.2%       1172 ± 18%     -57.1%     615.00 ±  9%     -63.1%     529.50 ± 11%  perf-c2c.DRAM.remote
+      1117 ±  9%      -7.0%       1039 ±  9%     -52.8%     527.67 ± 11%     -57.1%     480.00 ± 13%  perf-c2c.HITM.local
+    167.67 ± 14%      -5.5%     158.50 ± 31%     -41.0%      99.00 ± 14%     -57.6%      71.17 ± 22%  perf-c2c.HITM.remote
+  95739218           -11.2%   84990543 ±  2%     -11.3%   84951004            +0.7%   96455282        stress-ng.file-ioctl.ops
+   1595650           -11.2%    1416506 ±  2%     -11.3%    1415846            +0.7%    1607584        stress-ng.file-ioctl.ops_per_sec
+    267.41            +4.2%     278.66            +4.7%     280.04            +0.7%     269.27        stress-ng.time.system_time
+     90.19           -12.5%      78.96           -14.0%      77.59            -2.0%      88.37        stress-ng.time.user_time
+     44.89 ± 16%      +1.5%      45.57 ± 19%    -100.0%       0.00          -100.0%       0.00        sched_debug.cfs_rq:/.util_est_enqueued.avg
+    515.17 ±  2%      +5.4%     542.92 ±  9%    -100.0%       0.00          -100.0%       0.00        sched_debug.cfs_rq:/.util_est_enqueued.max
+    135.06 ±  8%      +2.3%     138.12 ± 10%    -100.0%       0.00          -100.0%       0.00        sched_debug.cfs_rq:/.util_est_enqueued.stddev
+    891.47            -0.4%     887.93           +15.8%       1031           +14.9%       1024        sched_debug.cpu.clock_task.stddev
+  12529207            +0.0%   12529207           -50.2%    6237751           -50.2%    6237751        sched_debug.sysctl_sched.sysctl_sched_features
+     86772            -0.4%      86400            +4.9%      91010            +4.7%      90835        proc-vmstat.nr_anon_pages
+    105949            -0.4%     105517            +5.1%     111368            +4.8%     111042        proc-vmstat.nr_inactive_anon
+    105949            -0.4%     105517            +5.1%     111368            +4.8%     111042        proc-vmstat.nr_zone_inactive_anon
+    425778            +0.8%     429132            +1.3%     431364            +2.4%     435972        proc-vmstat.pgalloc_normal
+    415867            +0.5%     417794            +1.2%     420781            +1.9%     423729        proc-vmstat.pgfree
+    696576 ±  2%      -3.8%     670080 ±  7%    -100.0%       0.00          -100.0%       0.00        proc-vmstat.unevictable_pgs_scanned
+      0.00 ± 17%      +0.0%       0.00 ± 17%    -100.0%       0.00          -100.0%       0.00        perf-sched.sch_delay.avg.ms.schedule_hrtimeout_range_clock.usleep_range_state.tpm_try_transmit.tpm_transmit
+      0.00 ± 20%      +9.1%       0.00 ± 28%    -100.0%       0.00          -100.0%       0.00        perf-sched.sch_delay.avg.ms.schedule_hrtimeout_range_clock.usleep_range_state.wait_for_tpm_stat.tpm_tis_send_data
+      0.00 ± 31%      +0.0%       0.00 ± 17%    -100.0%       0.00          -100.0%       0.00        perf-sched.sch_delay.avg.ms.schedule_timeout.hwrng_fillfn.kthread.ret_from_fork
+      0.01 ± 28%     -28.3%       0.01 ± 54%    -100.0%       0.00          -100.0%       0.00        perf-sched.sch_delay.max.ms.exit_to_user_mode_loop.exit_to_user_mode_prepare.syscall_exit_to_user_mode.do_syscall_64
+      0.00 ± 30%     +13.3%       0.00 ± 13%    -100.0%       0.00          -100.0%       0.00        perf-sched.sch_delay.max.ms.schedule_hrtimeout_range_clock.usleep_range_state.tpm_try_transmit.tpm_transmit
+      0.00 ± 39%      -4.8%       0.00 ± 41%    -100.0%       0.00          -100.0%       0.00        perf-sched.sch_delay.max.ms.schedule_hrtimeout_range_clock.usleep_range_state.wait_for_tpm_stat.tpm_tis_send_data
+      0.00 ± 31%      +0.0%       0.00 ± 17%    -100.0%       0.00          -100.0%       0.00        perf-sched.sch_delay.max.ms.schedule_timeout.hwrng_fillfn.kthread.ret_from_fork
+    564.55 ± 37%     -48.8%     288.96 ± 73%     +10.0%     621.20 ± 62%     -90.2%      55.05 ±223%  perf-sched.wait_and_delay.avg.ms.__cond_resched.smpboot_thread_fn.kthread.ret_from_fork.ret_from_fork_asm
+      0.02 ± 27%     -17.6%       0.01 ± 24%    -100.0%       0.00          -100.0%       0.00        perf-sched.wait_and_delay.avg.ms.exit_to_user_mode_loop.exit_to_user_mode_prepare.syscall_exit_to_user_mode.do_syscall_64
+      4.00 ± 54%      +8.3%       4.33 ±126%     +29.2%       5.17 ± 51%     -87.5%       0.50 ±223%  perf-sched.wait_and_delay.count.__cond_resched.smpboot_thread_fn.kthread.ret_from_fork.ret_from_fork_asm
+     51.83 ± 20%     -13.5%      44.83 ± 34%    -100.0%       0.00          -100.0%       0.00        perf-sched.wait_and_delay.count.exit_to_user_mode_loop.exit_to_user_mode_prepare.syscall_exit_to_user_mode.do_syscall_64
+      1013            -1.2%       1001 ±100%     +48.2%       1502 ± 63%     -83.8%     164.00 ±223%  perf-sched.wait_and_delay.max.ms.__cond_resched.smpboot_thread_fn.kthread.ret_from_fork.ret_from_fork_asm
+      0.06 ± 41%     -23.9%       0.04 ± 60%    -100.0%       0.00          -100.0%       0.00        perf-sched.wait_and_delay.max.ms.exit_to_user_mode_loop.exit_to_user_mode_prepare.syscall_exit_to_user_mode.do_syscall_64
+    564.54 ± 37%     -44.3%     314.30 ± 57%     +10.2%     622.40 ± 62%     -72.6%     154.89 ± 80%  perf-sched.wait_time.avg.ms.__cond_resched.smpboot_thread_fn.kthread.ret_from_fork.ret_from_fork_asm
+      0.01 ± 61%     +29.4%       0.02 ± 16%      +1.2%       0.01 ±  9%    -100.0%       0.00        perf-sched.wait_time.avg.ms.__cond_resched.vfs_clone_file_range.ioctl_file_clone.do_vfs_ioctl.__x64_sys_ioctl
+      0.02 ± 29%     -19.2%       0.01 ± 21%    -100.0%       0.00          -100.0%       0.00        perf-sched.wait_time.avg.ms.exit_to_user_mode_loop.exit_to_user_mode_prepare.irqentry_exit_to_user_mode.asm_sysvec_apic_timer_interrupt
+      0.02 ± 27%     -17.6%       0.01 ± 24%    -100.0%       0.00          -100.0%       0.00        perf-sched.wait_time.avg.ms.exit_to_user_mode_loop.exit_to_user_mode_prepare.syscall_exit_to_user_mode.do_syscall_64
+      0.71            +0.0%       0.71          -100.0%       0.00          -100.0%       0.00        perf-sched.wait_time.avg.ms.schedule_hrtimeout_range_clock.usleep_range_state.tpm_try_transmit.tpm_transmit
+      0.45            +0.1%       0.45          -100.0%       0.00          -100.0%       0.00        perf-sched.wait_time.avg.ms.schedule_hrtimeout_range_clock.usleep_range_state.wait_for_tpm_stat.tpm_tis_send_data
+      0.99            -0.1%       0.99          -100.0%       0.00          -100.0%       0.00        perf-sched.wait_time.avg.ms.schedule_timeout.hwrng_fillfn.kthread.ret_from_fork
+      0.00 ±145%    +160.0%       0.00 ±114%  +19320.0%       0.16 ±217%  +20700.0%       0.17 ±202%  perf-sched.wait_time.avg.ms.schedule_timeout.khugepaged_wait_work.khugepaged.kthread
+      0.03 ± 64%     +14.2%       0.03 ± 63%     -13.7%       0.03 ± 18%    -100.0%       0.00        perf-sched.wait_time.max.ms.__cond_resched.vfs_clone_file_range.ioctl_file_clone.do_vfs_ioctl.__x64_sys_ioctl
+      0.04 ± 59%      -5.6%       0.03 ± 57%    -100.0%       0.00          -100.0%       0.00        perf-sched.wait_time.max.ms.exit_to_user_mode_loop.exit_to_user_mode_prepare.irqentry_exit_to_user_mode.asm_sysvec_apic_timer_interrupt
+      0.06 ± 41%     -23.9%       0.04 ± 60%    -100.0%       0.00          -100.0%       0.00        perf-sched.wait_time.max.ms.exit_to_user_mode_loop.exit_to_user_mode_prepare.syscall_exit_to_user_mode.do_syscall_64
+      0.98            -0.1%       0.98          -100.0%       0.00          -100.0%       0.00        perf-sched.wait_time.max.ms.schedule_hrtimeout_range_clock.usleep_range_state.tpm_try_transmit.tpm_transmit
+      0.99            +0.1%       0.99          -100.0%       0.00          -100.0%       0.00        perf-sched.wait_time.max.ms.schedule_hrtimeout_range_clock.usleep_range_state.wait_for_tpm_stat.tpm_tis_send_data
+      0.99            -0.1%       0.99          -100.0%       0.00          -100.0%       0.00        perf-sched.wait_time.max.ms.schedule_timeout.hwrng_fillfn.kthread.ret_from_fork
+      0.00 ±145%    +160.0%       0.00 ±114%  +19320.0%       0.16 ±217%  +20700.0%       0.17 ±202%  perf-sched.wait_time.max.ms.schedule_timeout.khugepaged_wait_work.khugepaged.kthread
+      0.12 ±  9%     +37.6%       0.16 ±  3%     +46.3%       0.17 ±  2%      +0.9%       0.12 ±  8%  perf-stat.i.MPKI
+ 5.619e+09            -4.9%  5.346e+09           -10.1%  5.053e+09            -8.3%  5.154e+09        perf-stat.i.branch-instructions
+      0.13            +0.0        0.13 ±  5%      +0.0        0.13 ±  2%      +0.0        0.14        perf-stat.i.branch-miss-rate%
+   8104366            -3.2%    7841290 ±  5%      -2.2%    7928723 ±  2%      +0.4%    8134981        perf-stat.i.branch-misses
+     25.26 ± 12%      +5.4       30.67 ±  2%      +6.1       31.39 ±  2%      -2.8       22.49 ± 12%  perf-stat.i.cache-miss-rate%
+   3226271 ±  8%     +32.3%    4268159 ±  2%     +34.1%    4327362 ±  2%      -6.7%    3008704 ±  7%  perf-stat.i.cache-misses
+  13880671 ±  2%      +7.6%   14934433            +7.0%   14856536            +4.2%   14464224 ±  3%  perf-stat.i.cache-references
+      0.83            +3.9%       0.86            +8.9%       0.90            +8.2%       0.89        perf-stat.i.cpi
+      7405 ±  8%     -26.1%       5473 ±  2%     -27.2%       5395 ±  2%      +7.5%       7963 ±  7%  perf-stat.i.cycles-between-cache-misses
+      0.02 ±210%      +0.0        0.03 ±217%      -0.0        0.00 ±  7%      -0.0        0.00 ±  6%  perf-stat.i.dTLB-load-miss-rate%
+   1198124 ±210%     +87.7%    2248507 ±217%     -95.7%      51944 ±  7%     -95.8%      50495 ±  6%  perf-stat.i.dTLB-load-misses
+ 7.817e+09            -2.7%   7.61e+09            -5.8%  7.364e+09            -6.8%  7.285e+09        perf-stat.i.dTLB-loads
+      0.00 ±  4%      +0.0        0.00 ±  3%      +0.0        0.00 ±  3%      +0.0        0.00 ±  2%  perf-stat.i.dTLB-store-miss-rate%
+     26775 ±  3%      -2.5%      26108 ±  2%      -7.7%      24702 ±  3%      -1.4%      26389 ±  2%  perf-stat.i.dTLB-store-misses
+ 5.186e+09            -6.0%  4.873e+09           -10.8%  4.624e+09            -8.4%  4.749e+09        perf-stat.i.dTLB-stores
+ 2.807e+10            -3.9%  2.696e+10            -8.3%  2.575e+10            -7.5%  2.597e+10        perf-stat.i.instructions
+      1.21            -3.7%       1.17            -8.1%       1.11            -7.6%       1.12        perf-stat.i.ipc
+    257.16           +12.9%     290.46           +12.7%     289.89            +2.2%     262.78 ±  2%  perf-stat.i.metric.K/sec
+    290.80            -4.2%     278.45            -8.5%     266.14            -7.7%     268.43        perf-stat.i.metric.M/sec
+   1580051 ± 11%     +38.0%    2180479 ±  5%     +41.9%    2242249 ±  3%      -7.4%    1463122 ± 12%  perf-stat.i.node-load-misses
+    228848 ± 22%    +116.2%     494834 ± 27%     +83.2%     419274 ± 22%     -18.7%     186032 ± 32%  perf-stat.i.node-loads
+    739626 ± 15%     +28.2%     948465 ± 11%     +36.7%    1011333 ±  8%      -8.4%     677284 ±  4%  perf-stat.i.node-store-misses
+      0.11 ±  9%     +37.7%       0.16 ±  3%     +46.1%       0.17 ±  2%      +0.8%       0.12 ±  8%  perf-stat.overall.MPKI
+      0.14            +0.0        0.15 ±  5%      +0.0        0.16 ±  2%      +0.0        0.16        perf-stat.overall.branch-miss-rate%
+     23.29 ± 11%      +5.3       28.58 ±  2%      +5.8       29.13 ±  2%      -2.4       20.89 ± 11%  perf-stat.overall.cache-miss-rate%
+      0.82            +3.9%       0.86            +8.8%       0.90            +8.1%       0.89        perf-stat.overall.cpi
+      7231 ±  8%     -25.1%       5416 ±  2%     -26.1%       5343 ±  2%      +7.0%       7740 ±  6%  perf-stat.overall.cycles-between-cache-misses
+      0.02 ±210%      +0.0        0.03 ±217%      -0.0        0.00 ±  7%      -0.0        0.00 ±  6%  perf-stat.overall.dTLB-load-miss-rate%
+      0.00 ±  3%      +0.0        0.00 ±  3%      +0.0        0.00 ±  2%      +0.0        0.00 ±  2%  perf-stat.overall.dTLB-store-miss-rate%
+      1.21            -3.7%       1.17            -8.1%       1.11            -7.5%       1.12        perf-stat.overall.ipc
+ 5.524e+09            -4.8%  5.257e+09           -10.1%  4.967e+09            -8.3%  5.068e+09        perf-stat.ps.branch-instructions
+   7962517            -3.1%    7713102 ±  5%      -2.3%    7781058            +0.5%    8006027        perf-stat.ps.branch-misses
+   3170718 ±  8%     +32.4%    4196610 ±  2%     +34.1%    4253192 ±  2%      -6.7%    2957362 ±  7%  perf-stat.ps.cache-misses
+  13646445 ±  2%      +7.6%   14686495 ±  2%      +7.0%   14601960            +4.2%   14219304 ±  3%  perf-stat.ps.cache-references
+   1178079 ±210%     +87.7%    2210990 ±217%     -95.7%      51043 ±  7%     -95.8%      49643 ±  6%  perf-stat.ps.dTLB-load-misses
+ 7.685e+09            -2.6%  7.483e+09            -5.8%   7.24e+09            -6.8%  7.163e+09        perf-stat.ps.dTLB-loads
+     26301 ±  3%      -2.5%      25656 ±  2%      -7.8%      24251 ±  3%      -1.5%      25913 ±  2%  perf-stat.ps.dTLB-store-misses
+ 5.099e+09            -6.0%  4.792e+09           -10.8%  4.546e+09            -8.4%   4.67e+09        perf-stat.ps.dTLB-stores
+ 2.759e+10            -3.9%  2.651e+10            -8.3%  2.531e+10            -7.5%  2.553e+10        perf-stat.ps.instructions
+   1553350 ± 11%     +38.1%    2144498 ±  5%     +41.9%    2204343 ±  3%      -7.4%    1438512 ± 12%  perf-stat.ps.node-load-misses
+    224907 ± 22%    +116.2%     486304 ± 27%     +83.2%     412125 ± 22%     -18.7%     182868 ± 32%  perf-stat.ps.node-loads
+    727127 ± 15%     +28.3%     932767 ± 11%     +36.7%     994262 ±  8%      -8.4%     665892 ±  4%  perf-stat.ps.node-store-misses
+ 1.668e+12            -3.4%  1.611e+12 ±  2%      -8.6%  1.524e+12            -7.5%  1.544e+12        perf-stat.total.instructions
+      5.57 ±  3%      -0.7        4.85 ±  2%      -5.6        0.00            -5.6        0.00        perf-profile.calltrace.cycles-pp.__fget_light.__x64_sys_ioctl.do_syscall_64.entry_SYSCALL_64_after_hwframe.ioctl
+      0.89 ± 23%      -0.4        0.45 ± 44%      -0.9        0.00            -0.9        0.00        perf-profile.calltrace.cycles-pp.exit_to_user_mode_prepare.syscall_exit_to_user_mode.do_syscall_64.entry_SYSCALL_64_after_hwframe.ioctl
+      4.28 ±  5%      -0.3        3.94 ±  9%      -0.5        3.79            +0.0        4.29        perf-profile.calltrace.cycles-pp._copy_from_user.ioctl_preallocate.__x64_sys_ioctl.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      2.30 ±  2%      -0.3        2.00            -0.3        1.99            +0.0        2.32        perf-profile.calltrace.cycles-pp.entry_SYSCALL_64_after_hwframe
+      1.69 ±  3%      -0.3        1.39 ±  4%      -0.4        1.26 ±  2%      -0.2        1.48 ±  5%  perf-profile.calltrace.cycles-pp.entry_SYSCALL_64
+      1.99 ±  2%      -0.3        1.72            -0.2        1.74            +0.0        2.02        perf-profile.calltrace.cycles-pp.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      0.28 ±101%      -0.2        0.08 ±223%      +0.3        0.58 ±  9%      +0.5        0.79 ± 27%  perf-profile.calltrace.cycles-pp.security_file_ioctl.__x64_sys_ioctl.do_syscall_64.entry_SYSCALL_64_after_hwframe.ioctl
+      2.27            -0.2        2.09 ±  5%      -0.2        2.06 ±  2%      +0.1        2.32        perf-profile.calltrace.cycles-pp._copy_from_user.do_vfs_ioctl.__x64_sys_ioctl.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      1.16 ±  3%      -0.2        1.00 ±  3%      -0.1        1.01            +0.0        1.19 ±  3%  perf-profile.calltrace.cycles-pp.__x64_sys_fcntl.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      0.60 ±  4%      -0.2        0.44 ± 45%      -0.6        0.00            -0.6        0.00        perf-profile.calltrace.cycles-pp.__fget_light.__x64_sys_fcntl.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      1.47 ± 11%      -0.1        1.36            -0.5        0.95 ± 23%      -0.2        1.31 ±  8%  perf-profile.calltrace.cycles-pp.memdup_user.do_vfs_ioctl.__x64_sys_ioctl.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      0.00            +0.0        0.00            +0.0        0.00            +0.5        0.52 ±  3%  perf-profile.calltrace.cycles-pp.__fdget_raw.__x64_sys_fcntl.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      0.00            +0.0        0.00            +0.5        0.53 ± 46%      +0.8        0.83 ± 26%  perf-profile.calltrace.cycles-pp.__fdget.ioctl_file_clone.do_vfs_ioctl.__x64_sys_ioctl.do_syscall_64
+      0.00            +0.0        0.00            +5.6        5.59            +6.5        6.50 ±  3%  perf-profile.calltrace.cycles-pp.__fdget.__x64_sys_ioctl.do_syscall_64.entry_SYSCALL_64_after_hwframe.ioctl
+      0.00            +0.0        0.00            +7.3        7.28 ±  3%      +0.0        0.00        perf-profile.calltrace.cycles-pp.apparmor_file_permission.security_file_permission.remap_verify_area.vfs_clone_file_range.ioctl_file_clone
+      0.00            +0.0        0.00            +7.6        7.64 ±  2%      +0.0        0.00        perf-profile.calltrace.cycles-pp.security_file_permission.remap_verify_area.vfs_clone_file_range.ioctl_file_clone.do_vfs_ioctl
+      0.00            +0.0        0.00            +8.2        8.20 ±  2%      +0.0        0.00        perf-profile.calltrace.cycles-pp.remap_verify_area.vfs_clone_file_range.ioctl_file_clone.do_vfs_ioctl.__x64_sys_ioctl
+      0.00            +1.5        1.52 ±  2%      +1.3        1.33 ± 15%      +0.0        0.00        perf-profile.calltrace.cycles-pp.__fsnotify_parent.vfs_clone_file_range.ioctl_file_clone.do_vfs_ioctl.__x64_sys_ioctl
+      0.00            +6.9        6.94 ±  6%      +0.0        0.00            +0.0        0.00        perf-profile.calltrace.cycles-pp.apparmor_file_permission.security_file_permission.vfs_clone_file_range.ioctl_file_clone.do_vfs_ioctl
+      0.00            +7.4        7.41 ±  6%      +0.0        0.00            +0.0        0.00        perf-profile.calltrace.cycles-pp.security_file_permission.vfs_clone_file_range.ioctl_file_clone.do_vfs_ioctl.__x64_sys_ioctl
+     21.11            +7.4       28.53            +7.6       28.73            -0.8       20.32        perf-profile.calltrace.cycles-pp.do_vfs_ioctl.__x64_sys_ioctl.do_syscall_64.entry_SYSCALL_64_after_hwframe.ioctl
+      3.18 ±  2%      +8.7       11.87 ±  3%      +9.0       12.22            -1.1        2.04 ±  8%  perf-profile.calltrace.cycles-pp.ioctl_file_clone.do_vfs_ioctl.__x64_sys_ioctl.do_syscall_64.entry_SYSCALL_64_after_hwframe
+      1.46 ±  9%      +8.9       10.36 ±  4%      +9.3       10.77            -1.5        0.00        perf-profile.calltrace.cycles-pp.vfs_clone_file_range.ioctl_file_clone.do_vfs_ioctl.__x64_sys_ioctl.do_syscall_64
+     10.70            -1.3        9.39 ±  3%      -1.6        9.11            +0.0       10.73        perf-profile.children.cycles-pp.entry_SYSRETQ_unsafe_stack
+     11.31            -1.1       10.24 ±  2%      -1.5        9.76            -0.2       11.11 ±  2%  perf-profile.children.cycles-pp.entry_SYSCALL_64
+      7.87 ±  3%      -1.0        6.90            -7.9        0.00            -7.9        0.00        perf-profile.children.cycles-pp.__fget_light
+      5.13            -0.7        4.46 ±  2%      -1.3        3.82            -0.8        4.33 ±  2%  perf-profile.children.cycles-pp.syscall_exit_to_user_mode
+      7.74 ±  3%      -0.6        7.09 ±  5%      -0.8        6.90            +0.1        7.80        perf-profile.children.cycles-pp._copy_from_user
+      0.89            -0.4        0.46 ±  5%      -0.5        0.40 ±  5%      -0.9        0.00        perf-profile.children.cycles-pp.do_clone_file_range
+      3.45 ±  2%      -0.4        3.10            -0.4        3.08            +0.0        3.48        perf-profile.children.cycles-pp.llseek
+      1.80 ±  4%      -0.3        1.49 ±  3%      -0.2        1.60 ±  2%      +0.0        1.80 ±  3%  perf-profile.children.cycles-pp.stress_file_ioctl
+      1.83            -0.2        1.63 ±  4%      -0.2        1.63 ±  3%      -0.0        1.83 ±  3%  perf-profile.children.cycles-pp.entry_SYSCALL_64_safe_stack
+      1.53 ±  3%      -0.2        1.34 ±  4%      -1.5        0.00            -1.5        0.00        perf-profile.children.cycles-pp.exit_to_user_mode_prepare
+      2.32 ±  3%      -0.2        2.13            -0.3        2.03 ±  2%      +0.0        2.34 ±  2%  perf-profile.children.cycles-pp.syscall_return_via_sysret
+      1.58 ±  2%      -0.2        1.40            -0.3        1.26 ±  3%      -0.2        1.40        perf-profile.children.cycles-pp.memdup_user
+      1.81            -0.2        1.62            -0.2        1.57 ±  2%      -0.0        1.80 ±  4%  perf-profile.children.cycles-pp.__get_user_4
+      1.26 ±  3%      -0.2        1.08 ±  3%      -0.1        1.12 ±  2%      +0.0        1.31 ±  3%  perf-profile.children.cycles-pp.__x64_sys_fcntl
+      1.32 ±  2%      -0.2        1.14 ±  2%      -0.4        0.90 ±  4%      -0.3        1.04        perf-profile.children.cycles-pp.syscall_exit_to_user_mode_prepare
+      2.06 ±  2%      -0.2        1.90 ±  3%      -2.1        0.00            -2.1        0.00        perf-profile.children.cycles-pp.syscall_enter_from_user_mode
+      1.12 ±  3%      -0.1        0.99 ±  2%      +0.0        1.13            +0.2        1.27 ±  2%  perf-profile.children.cycles-pp.security_file_ioctl
+      0.84 ±  3%      -0.1        0.73 ±  3%      -0.1        0.77 ±  2%      +0.1        0.92 ±  3%  perf-profile.children.cycles-pp.ksys_lseek
+      0.29 ±  4%      -0.1        0.18 ±  4%      -0.1        0.16 ±  5%      -0.1        0.17 ±  8%  perf-profile.children.cycles-pp.generic_file_rw_checks
+      0.76 ±  3%      -0.1        0.68            -0.1        0.68            -0.0        0.75 ±  4%  perf-profile.children.cycles-pp.amd_clear_divider
+      0.84 ±  3%      -0.1        0.75 ±  3%      -0.1        0.77 ±  2%      +0.1        0.89 ±  2%  perf-profile.children.cycles-pp.__put_user_4
+      0.86 ±  4%      -0.1        0.78 ±  3%      -0.1        0.78 ±  3%      +0.0        0.89 ±  2%  perf-profile.children.cycles-pp._raw_spin_lock
+      0.53 ±  3%      -0.1        0.46 ±  4%      -0.0        0.50 ±  3%      +0.1        0.60 ±  6%  perf-profile.children.cycles-pp.__fdget_pos
+      0.19 ± 11%      -0.1        0.12 ± 10%      -0.1        0.12 ±  9%      +0.0        0.22 ±  6%  perf-profile.children.cycles-pp.stress_mwc8
+      0.54 ±  5%      -0.1        0.48 ±  6%      -0.1        0.45 ±  5%      -0.1        0.47 ±  6%  perf-profile.children.cycles-pp.__check_object_size
+      0.73 ±  2%      -0.1        0.67 ±  5%      +6.0        6.78            +7.1        7.84 ±  2%  perf-profile.children.cycles-pp.__fdget
+      0.49 ±  2%      -0.1        0.43 ±  3%      -0.2        0.34 ±  3%      -0.1        0.40 ±  3%  perf-profile.children.cycles-pp.__kmalloc_node_track_caller
+      0.51 ±  4%      -0.1        0.45 ±  5%      -0.0        0.48 ± 18%      -0.0        0.49        perf-profile.children.cycles-pp.ioctl@plt
+      0.58 ±  3%      -0.0        0.54 ±  4%      -0.1        0.53 ±  4%      +0.0        0.59 ±  3%  perf-profile.children.cycles-pp.__get_user_2
+      0.38 ±  3%      -0.0        0.33 ±  4%      -0.4        0.00            -0.4        0.00        perf-profile.children.cycles-pp.__kmem_cache_alloc_node
+      0.44 ±  3%      -0.0        0.40 ±  3%      -0.1        0.39 ±  5%      +0.0        0.45 ±  5%  perf-profile.children.cycles-pp.__libc_fcntl64
+      0.24 ±  6%      -0.0        0.20 ±  7%      -0.0        0.21 ±  5%      -0.0        0.23 ±  5%  perf-profile.children.cycles-pp.do_fcntl
+      0.48 ±  3%      -0.0        0.44 ±  2%      -0.0        0.44 ±  3%      +0.0        0.49 ±  2%  perf-profile.children.cycles-pp.set_close_on_exec
+      0.38 ±  6%      -0.0        0.36 ±  3%      -0.0        0.38 ±  4%      +0.1        0.44 ±  4%  perf-profile.children.cycles-pp.check_flag
+      0.26 ±  5%      -0.0        0.24 ± 11%      -0.1        0.20 ±  9%      -0.1        0.18 ±  6%  perf-profile.children.cycles-pp.check_heap_object
+      0.16 ±  8%      -0.0        0.14 ±  8%      -0.0        0.15 ±  9%      +0.0        0.17 ±  9%  perf-profile.children.cycles-pp.__check_heap_object
+      0.10 ± 13%      -0.0        0.08 ± 11%      +0.0        0.11 ± 10%      +0.0        0.13 ± 10%  perf-profile.children.cycles-pp.security_file_fcntl
+      0.20 ±  7%      -0.0        0.18 ±  5%      -0.0        0.17 ±  5%      +0.0        0.21 ± 12%  perf-profile.children.cycles-pp.inode_get_bytes
+      0.13 ±  7%      -0.0        0.12 ± 15%      -0.0        0.11 ±  9%      -0.0        0.10 ± 10%  perf-profile.children.cycles-pp.__virt_addr_valid
+      0.08 ± 11%      -0.0        0.08 ±  6%      +0.2        0.26 ±  3%      +0.2        0.30 ±  6%  perf-profile.children.cycles-pp.kfree
+      0.08 ± 14%      -0.0        0.08 ±  6%      +0.0        0.10 ± 10%      +0.0        0.10 ±  9%  perf-profile.children.cycles-pp.__errno_location
+      0.06 ± 11%      +0.0        0.06 ± 11%      +0.4        0.46 ±  5%      +0.5        0.54 ±  3%  perf-profile.children.cycles-pp.__fdget_raw
+      0.00            +0.0        0.00            +8.3        8.30 ±  2%      +0.0        0.00        perf-profile.children.cycles-pp.remap_verify_area
+      0.28 ±  3%      +0.0        0.30 ±  7%      -0.0        0.26 ± 11%      -0.2        0.06 ± 14%  perf-profile.children.cycles-pp.__cond_resched
+      0.00            +0.2        0.25 ±  4%      +0.0        0.00            +0.0        0.00        perf-profile.children.cycles-pp.fsnotify_perm
+      0.57            +0.6        1.15 ±  3%      +0.6        1.13 ±  2%      +0.0        0.60 ±  3%  perf-profile.children.cycles-pp.aa_file_perm
+     85.52            +1.4       86.91            +1.3       86.85            -0.0       85.51        perf-profile.children.cycles-pp.ioctl
+      0.00            +1.6        1.55            +1.5        1.52            +0.0        0.00        perf-profile.children.cycles-pp.__fsnotify_parent
+     62.60            +4.0       66.55            +4.5       67.05            +0.1       62.67        perf-profile.children.cycles-pp.entry_SYSCALL_64_after_hwframe
+     59.77            +4.3       64.05            +4.8       64.53            +0.0       59.82        perf-profile.children.cycles-pp.do_syscall_64
+     47.98            +5.7       53.66            +6.2       54.22            +0.1       48.10        perf-profile.children.cycles-pp.__x64_sys_ioctl
+     21.64            +7.3       28.98            +7.5       29.19            -0.8       20.85        perf-profile.children.cycles-pp.do_vfs_ioctl
+      8.29 ±  4%      +7.4       15.74 ±  6%      +7.9       16.18 ±  3%      +0.3        8.60 ±  9%  perf-profile.children.cycles-pp.apparmor_file_permission
+      8.78 ±  4%      +7.9       16.64 ±  5%      +8.2       17.03 ±  3%      +0.3        9.10 ±  9%  perf-profile.children.cycles-pp.security_file_permission
+      3.30 ±  2%      +8.7       11.96 ±  3%      +9.0       12.30            -1.1        2.22 ±  3%  perf-profile.children.cycles-pp.ioctl_file_clone
+      1.68            +8.9       10.55 ±  3%      +9.2       10.92            -1.1        0.60 ±  7%  perf-profile.children.cycles-pp.vfs_clone_file_range
+     10.33            -1.3        9.02 ±  3%      -1.5        8.80            +0.1       10.38        perf-profile.self.cycles-pp.entry_SYSRETQ_unsafe_stack
+     11.15            -1.2        9.92 ±  2%      -1.4        9.77            -0.1       11.07 ±  2%  perf-profile.self.cycles-pp.ioctl
+      7.55 ±  3%      -0.9        6.61            -7.6        0.00            -7.6        0.00        perf-profile.self.cycles-pp.__fget_light
+      7.54 ±  3%      -0.6        6.92 ±  6%      -0.8        6.73            +0.1        7.59        perf-profile.self.cycles-pp._copy_from_user
+      3.16 ±  4%      -0.5        2.69 ±  2%      -0.5        2.68            -0.1        3.11 ±  2%  perf-profile.self.cycles-pp.do_vfs_ioctl
+      2.95 ±  2%      -0.4        2.55 ±  2%      -0.3        2.64            +0.1        3.04 ±  2%  perf-profile.self.cycles-pp.__x64_sys_ioctl
+      3.32            -0.4        2.93 ±  2%      +1.7        5.00            +2.3        5.66 ±  2%  perf-profile.self.cycles-pp.do_syscall_64
+      3.08 ±  2%      -0.4        2.72 ±  3%      -0.3        2.74 ±  2%      +0.0        3.10        perf-profile.self.cycles-pp.entry_SYSCALL_64_after_hwframe
+      3.13            -0.4        2.78 ±  2%      -0.4        2.73 ±  2%      +0.0        3.15 ±  2%  perf-profile.self.cycles-pp.entry_SYSCALL_64
+      2.39 ±  2%      -0.3        2.10 ±  2%      -0.3        2.09 ±  2%      -0.0        2.38        perf-profile.self.cycles-pp.ioctl_preallocate
+      0.57 ±  2%      -0.3        0.31 ±  9%      -0.3        0.26 ±  5%      -0.6        0.00        perf-profile.self.cycles-pp.do_clone_file_range
+      2.02 ±  2%      -0.3        1.77 ±  3%      +0.2        2.26 ±  2%      +0.5        2.54 ±  3%  perf-profile.self.cycles-pp.syscall_exit_to_user_mode
+      1.54 ±  4%      -0.2        1.29 ±  3%      -0.2        1.37 ±  3%      +0.0        1.55 ±  4%  perf-profile.self.cycles-pp.stress_file_ioctl
+      1.83            -0.2        1.62 ±  4%      -0.2        1.62 ±  3%      -0.0        1.83 ±  3%  perf-profile.self.cycles-pp.entry_SYSCALL_64_safe_stack
+      2.32 ±  3%      -0.2        2.13            -0.3        2.03 ±  2%      +0.0        2.33 ±  2%  perf-profile.self.cycles-pp.syscall_return_via_sysret
+      1.77            -0.2        1.58            -0.2        1.54 ±  2%      -0.0        1.75 ±  4%  perf-profile.self.cycles-pp.__get_user_4
+      1.28 ±  2%      -0.2        1.11 ±  4%      -1.3        0.00            -1.3        0.00        perf-profile.self.cycles-pp.exit_to_user_mode_prepare
+      1.76 ±  2%      -0.1        1.62 ±  3%      -1.8        0.00            -1.8        0.00        perf-profile.self.cycles-pp.syscall_enter_from_user_mode
+      0.25 ±  6%      -0.1        0.12 ±  8%      -0.2        0.10 ±  9%      -0.1        0.16 ±  6%  perf-profile.self.cycles-pp.generic_file_rw_checks
+      0.48 ±  2%      -0.1        0.38 ±  4%      -0.1        0.34 ±  6%      -0.0        0.47 ±  3%  perf-profile.self.cycles-pp.ioctl_file_clone
+      0.79 ±  3%      -0.1        0.70 ±  2%      -0.1        0.67 ±  4%      -0.0        0.78 ±  2%  perf-profile.self.cycles-pp.syscall_exit_to_user_mode_prepare
+      0.81 ±  3%      -0.1        0.73 ±  4%      -0.1        0.75 ±  2%      +0.1        0.87 ±  2%  perf-profile.self.cycles-pp.__put_user_4
+      0.90 ±  4%      -0.1        0.82 ±  5%      -0.2        0.75 ±  5%      -0.1        0.85 ±  2%  perf-profile.self.cycles-pp.vfs_fallocate
+      0.81 ±  5%      -0.1        0.73 ±  3%      -0.1        0.74 ±  3%      +0.0        0.84 ±  2%  perf-profile.self.cycles-pp._raw_spin_lock
+      0.52 ±  4%      -0.1        0.44 ±  3%      -0.1        0.46 ±  3%      -0.0        0.51 ±  6%  perf-profile.self.cycles-pp.amd_clear_divider
+      0.17 ± 11%      -0.1        0.12 ± 10%      -0.1        0.11 ±  9%      +0.0        0.21 ±  6%  perf-profile.self.cycles-pp.stress_mwc8
+      0.57 ±  3%      -0.0        0.52 ±  4%      -0.0        0.52 ±  4%      +0.0        0.58 ±  2%  perf-profile.self.cycles-pp.__get_user_2
+      0.42 ±  4%      -0.0        0.38 ±  3%      -0.0        0.37 ±  6%      +0.0        0.42 ±  6%  perf-profile.self.cycles-pp.__libc_fcntl64
+      0.30 ±  3%      -0.0        0.26 ±  5%      +0.1        0.39 ±  5%      +0.2        0.47 ±  5%  perf-profile.self.cycles-pp.__x64_sys_fcntl
+      0.22 ±  5%      -0.0        0.18 ±  6%      -0.0        0.19 ±  6%      -0.0        0.21 ±  4%  perf-profile.self.cycles-pp.do_fcntl
+      0.28 ±  3%      -0.0        0.24 ±  2%      -0.3        0.00            -0.3        0.00        perf-profile.self.cycles-pp.__kmem_cache_alloc_node
+      0.27 ±  4%      -0.0        0.24 ±  8%      +6.1        6.32            +7.1        7.33 ±  2%  perf-profile.self.cycles-pp.__fdget
+      0.14 ± 10%      -0.0        0.12 ±  8%      +0.3        0.49 ±  4%      +0.4        0.59 ±  6%  perf-profile.self.cycles-pp.__fdget_pos
+      0.19 ±  4%      -0.0        0.17 ±  8%      +0.0        0.20 ± 39%      -0.0        0.18 ±  6%  perf-profile.self.cycles-pp.ioctl@plt
+      0.22 ±  6%      -0.0        0.21 ±  4%      +0.0        0.23 ±  6%      +0.0        0.26 ±  5%  perf-profile.self.cycles-pp.check_flag
+      0.07 ± 10%      -0.0        0.06 ± 13%      +0.2        0.28 ±  3%      +0.3        0.32 ±  5%  perf-profile.self.cycles-pp.__kmalloc_node_track_caller
+      0.12 ±  7%      -0.0        0.12 ± 16%      -0.0        0.10 ±  7%      -0.0        0.09 ± 12%  perf-profile.self.cycles-pp.__virt_addr_valid
+      0.07 ± 13%      -0.0        0.06 ± 11%      +0.2        0.24 ±  3%      +0.2        0.29 ±  5%  perf-profile.self.cycles-pp.kfree
+      0.46 ±  5%      -0.0        0.46 ±  3%      -0.1        0.37 ±  6%      -0.0        0.42 ±  6%  perf-profile.self.cycles-pp.llseek
+      0.10 ± 13%      -0.0        0.09 ±  9%      -0.0        0.07 ± 12%      -0.0        0.08 ± 13%  perf-profile.self.cycles-pp.check_heap_object
+      0.00            +0.0        0.00            +0.4        0.42 ±  5%      +0.5        0.50 ±  3%  perf-profile.self.cycles-pp.__fdget_raw
+      0.00            +0.0        0.00            +0.5        0.46 ±  4%      +0.0        0.00        perf-profile.self.cycles-pp.remap_verify_area
+      0.05 ± 45%      +0.0        0.06 ±  8%      +0.0        0.08 ±  9%      +0.0        0.08 ± 13%  perf-profile.self.cycles-pp.__errno_location
+      0.66 ±  2%      +0.0        0.68 ±  3%      -0.0        0.64 ±  3%      -0.2        0.42 ±  8%  perf-profile.self.cycles-pp.vfs_clone_file_range
+      0.00            +0.2        0.22 ±  4%      +0.0        0.00            +0.0        0.00        perf-profile.self.cycles-pp.fsnotify_perm
+      0.49 ±  3%      +0.4        0.92 ±  2%      +0.4        0.94            +0.0        0.51 ±  3%  perf-profile.self.cycles-pp.security_file_permission
+      0.46 ±  2%      +0.5        0.96 ±  2%      +0.5        0.94 ±  2%      +0.0        0.47 ±  3%  perf-profile.self.cycles-pp.aa_file_perm
+      0.00            +1.5        1.52 ±  2%      +1.5        1.49 ±  2%      +0.0        0.00        perf-profile.self.cycles-pp.__fsnotify_parent
+      7.75 ±  4%      +6.8       14.58 ±  7%      +7.3       15.02 ±  4%      +0.3        8.03 ± 10%  perf-profile.self.cycles-pp.apparmor_file_permission
 
-	*IF* you want the behaviour that varies depending upon the parent
-directory, you get to be very careful with READ_ONCE() and watch out
-for the object lifetimes.
 
-	Basically, if the things get that tricky, ask for help.
-Currently there are two such instances in the tree - proc_sys_compare()
-and generic_ci_d_compare().  Both are... special.
-
-
-	2. ->d_hash().
-
-	For ->d_hash() on a dying dentry we are free to report any hash
-value; the only extra requirement is that we should not return stray
-hard errors.  In other words, if we return anything other than 0 or
--ECHILD, we'd better make sure that this error would've been correct
-before the parent started dying.  Since ->d_hash() error-reporting is
-usually done to reject unacceptable names (too long, contain unsuitable
-characters for this filesystem, etc.), that's really not a problem -
-hard errors depend only upon the name, not the parent.
-
-	Again, VFS guarantees that freeing of dentry and of the superblock
-pointed to by dentry->d_sb won't happen under us.  The name passed to
-us (in qstr) is stable.  If you need anything beyond that, you are
-in the same situation as with ->d_compare().  Might want to RCU-delay
-freeing private part of superblock (if that's what we need to access),
-might want the same for some objects hanging off that (unicode tables,
-etc.).  If you need something beyond that - ask for help.
-
-
-	3. ->d_revalidate().
-
-	For this one we do have an indication of call being unsafe -
-flags & LOOKUP_RCU.  With ->d_revalidate we are always allowed to bail
-out and return -ECHILD; that will have the caller drop out of RCU mode.
-We definitely need to do that if revalidate would require any kind of IO,
-mutex-taking, etc.; we can't block in RCU mode.
-
-	Quite a few instances of ->d_revalidate() simply treat LOOKUP_RCU
-in flags as "return -ECHILD and be done with that"; it's guaranteed to
-do the right thing, but you lose the benefits of RCU pathwalks whenever
-you run into such dentry.
-
-	Same as with the previous methods, we are guaranteed that
-dentry and dentry->d_sb won't be freed under us.  We are also guaranteed
-that ->d_parent (which is *not* stable, so use READ_ONCE) points to a
-struct dentry that won't get freed under us.  As always with ->d_parent,
-it's not NULL - for a detached dentry it will point to dentry itself.
-d_inode_rcu() of dentry and its parent will be either NULL or will
-point to a struct inode that won't get freed under us.	Anything beyond
-than that is not guaranteed.  We may find parent to be negative - it can
-happen if we race with d_move() and removal of old parent.  In that case
-just return -ECHILD and be done with that.
-
-	On non-RCU side you could use dget_parent() instead - that
-would give a positive dentry and its ->d_inode would remain stable.
-dget_parent() has to be paired with dput(), though, so it's not usable
-in RCU mode.
-
-	If you need fs-private objects associated with dentry, its parent
-inode(s) or superblock - see the general notes above on how to access
-those.
-
-
-	4. ->d_manage()
-
-	Can be called in RCU mode; gets an argument telling it if it has
-been called so.  Pretty much autofs-only; for everyone's sanity sake,
-don't inflict more of those on the kernel.  Definitely don't do that
-without asking first...
-
-
-	5.  ->permission()
-
-	Can be called in RCU mode; that is indicated by MAY_NOT_BLOCK
-in mask, and it can only happen for MAY_EXEC checks on directories.
-In RCU mode it is not allowed to block, and it is allowed to bail out
-by returning -ECHILD.  It might be called for an inode that is getting
-torn down, possibly along with its filesystem.	Errors other than -ECHILD
-should only be returned if they would've been returned in non-RCU mode;
-several instances in procfs currently (6.5) run afoul of that one.  That's
-an instructive example, BTW - what happens is that proc_pid_permission()
-uses proc_get_task() to find the relevant process.  proc_get_task()
-uses PID reference stored in struct proc_inode our inode is embedded
-into; inode can't have been freed yet, so fetching ->pid member in that
-is safe.  However, using the value you've fetched is a different story
-- proc_evict_inode() would have passed it to put_pid() and replaced
-it with NULL.  Unsafe caller has no way to tell if that is happening
-right under it.  Solution: stop zeroing ->pid in proc_evict_inode()
-and move put_pid() from proc_pid_evict_inode() to proc_free_inode().
-That's not all that is needed (there's access to procfs-private part of
-superblock as well), but it does make a good example of how such stuff
-can be dealt with.
-
-	Note that idmap argument is safe on all calls - its destruction
-is rcu-delayed.
-
-	The amount of headache is seriously reduced (for now) by the fact
-that a lot of instances boil down to generic_permission() (which will
-do the right thing in RCU mode) when mask is MAY_EXEC | MAY_NOT_BLOCK.
-If we ever extend RCU mode to other ->permission() callers, the thing will
-get interesting; that's not likely to happen, though, unless access(2)
-goes there [this is NOT a suggestion, folks].
-
-
-	6. ->get_link()
-
-	Again, this can be called in RCU mode.	Even if your
-->d_revalidate() always returns -ECHILD in RCU mode and kicks the
-pathwalk out of it, you can't assume that ->get_link() won't be reached;
-binding a symlink on a regular file on another filesystem is possible
-and that's all it takes for RCU pathwalk to get there.	NULL dentry
-argument is an indicator of unsafe call; if you can't handle it, just
-return ERR_PTR(-ECHILD).  Any allocations you need to do (and with this
-method you really might need that) should be done with GFP_ATOMIC in
-the unsafe case.
-
-	Whatever you pass to set_delayed_call() is going to be called
-in the same mode as ->get_link() itself; not a problem for most of the
-instances.  The string you return needs to stay there until the
-callback gets called or, if no callback is set, until at least the
-freeing of inode.  As usual, for an unsafe call the inode might be
-in process of teardown, possibly along with the hosting filesystem.
-The usual considerations apply.  The same, BTW, applies to whatever
-you set in ->i_link - it must stay around at least until ->free_inode().
-
-
-	7. ->get_inode_acl()
-
-	Very limited exposure for that one - unsafe call is possible
-only if you explicitly set ACL_DONT_CACHE as cached ACL value.
-Only two filesystems (fuse and overlayfs) even bother.  Unsafe call
-is indicated by explicit flag (the third argument of the method),
-bailout is done by returning ERR_PTR(-CHILD) and the usual considerations
-apply for any access to data structures you might need to do.
-
-
-	List of potentially relevant instances:
-
-d_hash:
-	adfs_hash()
-		safe; dereferences ->s_fs_info, which is freed by
-		kfree_rcu() from ->put_super().  All errors are
-		directory-independent.
-	affs_hash_dentry()
-		UAF; checks a bit in object referenced to by ->s_fs_info
-		->s_fs_info is freed (synchronously) by ->kill_sb().
-		Fixed by switch to kfree_rcu() ("affs: free affs_sb_info with kfree_rcu()")
-		All errors are directory-independent.
-	affs_intl_hash_dentry()
-		same as affs_hash_dentry() above.
-	cifs_ci_hash()
-		safe; uses ->s_fs_info->local_nls.  
-		->s_fs_info is freed from delayed_free(), via call_rcu() from
-		cifs_umount() from ->kill_sb().  ->local_nls is dropped in
-		the same place.
-		All errors are directory-independent.
-	efivarfs_d_hash()
-		safe - no access to fs objects.
-		All errors are directory-independent.
-	exfat_d_hash()
-		UAF; uses ->s_fs_info->nls_io and ->s_fs_info->vol_utbl.
-		->s_fs_info and ->vol_utbl are freed (synchronously) from
-		->kill_sb().  ->nls_io is dropped (also synchronously)
-		from ->put_super().  All errors are directory-independent.
-		Fixed by moving freeing all that stuff into a rcu-delayed helper
-		called from ->kill_sb() ("exfat: move freeing sbi, upcase table and
-		dropping nls into rcu-delayed helper").
-	exfat_utf8_d_hash()
-		UAF; similar to exfat_d_hash(), except that ->nls_io is not used.
-		Fix of exfat_d_hash() covers that one.
-	generic_ci_d_hash()
-		safe; probably would be more idiomatic to use d_inode_rcu() in
-		there...
-	gfs2_dhash()
-		safe - no access to fs objects.
-		No errors at all.
-	hfs_hash_dentry()
-		safe - no access to fs objects.
-		No errors at all.
-	hfsplus_hash_dentry()
-		UAF (and oops); access to ->s_fs_info->nls.  Dropped and freed
-		(and ->s_fs_info zeroed) in ->put_super().  Fixed by making their
-		destruction rcu-delayed ("hfsplus: switch to rcu-delayed unloading
-		of nls and freeing ->s_fs_info").  Might be worth moving that from
-		->put_super() to ->kill_sb(), but that's a separate story...
-		All errors are directory-independent.
-	hpfs_hash_dentry()
-		safe - no access to fs objects.
-		No errors at all.
-	isofs_hashi()
-		safe - no access to fs objects.
-		No errors at all.
-	isofs_hashi_ms()
-		safe - no access to fs objects.
-		No errors at all.
-	isofs_hash_ms()
-		safe - no access to fs objects.
-		No errors at all.
-	jfs_ci_hash()
-		safe - no access to fs objects.
-		No errors at all.
-	msdos_hash()
-		safe - dereferences ->s_fs_info, freeing is rcu-delayed
-		(in delayed_free(), from ->put_super()).
-		All errors are directory-independent.
-	vfat_hash()
-		safe - no access to fs objects.
-		No errors at all.
-	vfat_hashi()
-		safe - uses ->s_fs_info->nls_io, freeing and unloading
-		is rcu-delayed	(in delayed_free(), from ->put_super()).
-		No errors at all.
-	ntfs_d_hash()
-		fucked in head - blocking allocations, UAF, etc.
-		Not touching that one, sorry.
-
-d_compare:
-	adfs_compare()
-		safe - no fs objects accessed
-	affs_compare_dentry()
-		same as affs_hash_dentry(), fixed by the same patch
-	affs_intl_compare_dentry()
-		same as affs_hash_dentry(), fixed by the same patch
-	cifs_ci_compare()
-		safe; uses ->s_fs_info->local_nls.  
-		->s_fs_info is freed from delayed_free(), via call_rcu() from
-		cifs_umount() from ->kill_sb().  ->local_nls is dropped in
-		the same place.
-	efivarfs_d_compare()
-		safe - no access to fs objects.
-	exfat_d_cmp()
-		UAF; similar to exfat_d_hash(), fixed by the same patch
-	exfat_utf8_d_cmp()
-		UAF; similar to exfat_utf8_d_hash(), fixed by the same patch
-	generic_ci_d_compare()
-		safe, even though it's a really scary one.
-	hfs_compare_dentry()
-		safe - no access to fs objects.
-	hfsplus_compare_dentry()
-		UAF; similar to hfsplus_hash_dentry(), fixed by the same patch
-	hpfs_compare_dentry()
-		safe - uses ->s_fs_info->sb_cp_table; freeing is rcu-delayed
-		(in lazy_free_sbi(), from hpfs_put_super().
-	isofs_dentry_cmpi()
-		safe - no access to fs objects.
-	isofs_dentry_cmpi_ms()
-		safe - no access to fs objects.
-	isofs_dentry_cmp_ms()
-		safe - no access to fs objects.
-	jfs_ci_compare()
-		safe - no access to fs objects.
-	msdos_cmp()
-		safe - dereferences ->s_fs_info, freeing is rcu-delayed
-		(in delayed_free(), from ->put_super()).
-	proc_sys_compare()
-		safe - access of ->sysctl of containing proc_inode,
-		with barriers provided by rcu_dereference() and
-		protection against the case it had already been zeroed.
-		Freeing of the object it points to is rcu-delayed
-		(kfree_rcu() from ->evict_inode()).
-	vfat_cmp()
-		safe - no access to fs objects.
-	vfat_cmpi()
-		safe - uses ->s_fs_info->nls_io, freeing and unloading
-		is rcu-delayed (in delayed_free(), from ->put_super()).
-	ntfs_d_compare()
-		fucked in head - blocking allocations, UAF, etc.
-		Not touching that one, sorry.
-
-d_revalidate:
-	afs_d_revalidate()
-		race - we might end up doing __afs_break_callback() there,
-		and it could race with afs_drop_open_mmap(), leading to
-		stray queued work on object that might be about to be
-		freed, with nothing to flush or cancel the sucker.
-		Fixed by making sure that afs_drop_open_mmap()
-		will only do the final decrement while under ->cb_lock;
-		since the entire __afs_break_callback() is done under
-		the same, it will either see zero mmap count and do
-		nothing, or it will finish queue_work() before afs_drop_open_mmap()
-		gets to its flush_work() ("afs: fix __afs_break_callback() /
-		afs_drop_open_mmap() race").
-	afs_dynroot_d_revalidate()
-		safe - no access to fs objects, no errors.
-		Probably no point keeping it...
-	cifs_d_revalidate()
-		safe - bails out in unsafe case
-	coda_dentry_revalidate()
-		safe - bails out in unsafe case
-	ecryptfs_d_revalidate()
-		safe - bails out in unsafe case
-	exfat_d_revalidate()
-		safe - bails out in unsafe case
-	fscrypt_d_revalidate()
-		safe - accesses dentry, then either accesses no fs objects,
-		or bails out in unsafe case
-	fuse_dentry_revalidate()
-		safe - fetches ->d_inode (safely), then accesses fields
-		of dentry and of the structure inode is embedded into.
-		In 32bit case we also dereference ->d_fsdata, but there
-		its freeing is done by kfree_rcu() from ->d_release(),
-		which means that it won't be freed until we drop
-		rcu_read_lock().  Probably needs cleaning its control
-		flow, but that's a separate story...
-	gfs2_drevalidate()
-		buggered.  Used to bail out in unsafe case, now it will
-		go and do blocking IO.  Revert; proposed fixes still
-		don't deal with everything - they treat "can't do it
-		in RCU mode" as "invalid", not "unlazy and repeat".
-		[Reverted in mainline now]
-	hfs_revalidate_dentry()
-		safe - bails out in unsafe case
-	jfs_ci_revalidate()
-		safe - accesses dentry, then no access to fs objects.
-	kernfs_dop_revalidate()
-		safe - bails out in unsafe case
-	map_files_d_revalidate()
-		safe - bails out in unsafe case
-	nfs4_lookup_revalidate()
-		oops - nfs_set_verifier() makes an assumption that
-		having grabbed ->d_lock is enough to keep dentry's
-		parent positive.  That's only true if dentry is pinned
-		down...  Fixed by rechecking parent's ->d_inode in
-		there ("nfs: make nfs_set_verifier() safe for use in RCU
-		pathwalk").  Also a UAF - we dereference ->s_fs_info, and
-		that's freed synchronously in ->kill_sb().  The same goes
-		for ->s_fs_info->io_stats (ditto) and, worse yet, for
-		->s_fs_info->nfs_client->rpc_ops.  nfs_client might get
-		freed synchronously, if our superblock is holding the
-		last reference, and this is not just a use-after-free -
-		it's chasing pointers through the freed structure, so we
-		might end up dereferencing an address that had never been
-		mapped/is in iomem/whatnot.  What's more, after we get to
-		rpc_ops, we fetch a function pointer from there and call
-		it...  Fixed by RCU-delaying the actual freeing of
-		objects in question (" nfs: fix UAF on pathwalk running
-		into umount").
-	nfs_lookup_revalidate()
-		same story as with nfs4_lookup_revalidate().
-	ocfs2_dentry_revalidate()
-		safe - bails out in unsafe case
-	orangefs_d_revalidate()
-		safe - accesses dentry, then either accesses no fs objects,
-		or bails out in unsafe case
-	ovl_dentry_revalidate()
-		Safe.  Access to dentry, verifying that it's positive,
-		then walking through the ovl_entry for associated inode
-		(freeing of which is RCU-delayed) and calling ->d_revalidate()
-		on all components (dput() is _not_ RCU-delayed, but it isn't
-		initiated until the inode refcount reaches zero, so we are
-		essentially in the same conditions as with RCU calls of 
-		>d_revalidate() - refcounts of dentries in question are not
-		reached until after our rcu_read_lock() done by path_init().
-		_WAY_ too subtle, IMO - it relies upon DCACHE_OP_REVALIDATE
-		being turned off for negative dentries, so it can run into
-		a negative only in RCU mode (in non-RCU we are holding a reference,
-		so positive would've stayed positive).  In that case we must've
-		had successful unlink or rmdir and both would've unhashed
-		the sucker, so legitimization would fail.  _Ouch_.
-	pid_revalidate()
-		UAF; uses proc_pid(); not safe, since it's dropped in
-		->evict_inode().  Fixed by dropping it in ->free_inode()
-		instead ("procfs: move dropping pde and pid from ->evict_inode()
-		to ->free_inode()".  It also might access LSM shite associated
-		with inode; safe, AFAICS, in both LSM flavours that care
-		about ->task_to_inode() hook.
-	proc_misc_d_revalidate()
-		safe - bails out in unsafe case.
-		Incidentally, it wouldn't take much to make it work unsafe
-		case - by the end of the series we would have everything
-		we need for that...
-	proc_net_d_revalidate()
-		safe - no access to fs objects
-	proc_sys_revalidate()
-		safe - bails out in unsafe case
-	tid_fd_revalidate()
-		safe - bails out in unsafe case
-	v9fs_lookup_revalidate()
-		safe - bails out in unsafe case
-	vboxsf_dentry_revalidate()
-		safe - bails out in unsafe case.
-	vfat_revalidate()
-		safe - bails out in unsafe case.
-	vfat_revalidate_ci()
-		safe - bails out in unsafe case.
-	xattr_hide_revalidate
-		safe - no access to fs objects
-	ceph_d_revalidate()
-		broken - races on fs shutdown, AFAICS, and with that
-		one I'm not familiar enough with the codebase, so
-		I'd rather leave that to ceph maintainers...
-		Lifetime of ceph_mds_client, etc.
-
-d_manage:
-	autofs_d_manage()
-		safe; accesses fs-private objects associated
-		with dentry and with superblock (freeing either is
-		rcu-delayed).  The only non-obvious part is the call of
-		autofs_oz_mode(), which looks like it might try to compare
-		task_pgrp(current) with potentially dangling pointer;
-		however, it only becomes dangling after ->kill_sb()
-		had called autofs_catatonic_mode(), at which point we
-		want autofs_oz_mode() to return true, same PGRP or not.
-		IOW, potential false positives on struct pid reuse
-		are not false at all.
-
-permission: [reordered with the default instance put in front]
-	generic_permission()
-		safe; accesses fields of struct inode, relies upon the rcu-delayed
-		freeing of cached acls.  Bails out if an unsafe call would have
-		to extract acls from filesystem (with narrow exception used by
-		fuse and overlayfs).
-	afs_permission()
-		same race as in afs_d_revalidate(), same fix
-	autofs_dir_permission()
-		safe - boils down to generic_permission() if no MAY_WRITE is given.
-		Even with MAY_WRITE it would be safe - it accesses ->s_fs_data
-		in that case, but that gets freed with kfree_rcu()...
-	bad_inode_permission()
-		safe - no access to filesystem objects
-	btrfs_permission()
-		safe - boils down to generic_permission() if no MAY_WRITE is given.
-		With MAY_WRITE it would boil down to access to btrfs_root; no
-		idea where does that get freed.
-	ceph_permission()
-		safe - bails out in unsafe case
-	cifs_permission()
-		safe - derefences ->s_fs_info, then possibly does generic_permission().
-		see above (cifs_ci_hash() entry) for the reasons that's safe.
-	coda_ioctl_permission()
-		safe - no access to filesystem objects
-	coda_permission()
-		safe - bails out in unsafe case
-	ecryptfs_permission()
-		safe - it fetches ->wii_inode of containing
-		ecryptfs_inode_info, then passes it to inode_permission().
-		Note that this call of inode_permission() is itself
-		unsafe; the inode passed to it might be getting torn down.
-		However, the reference held in ecryptfs_inode_info does
-		contribute to inode refcount and it is not dropped until
-		ecryptfs_evict_inode().   IOW, that inode must have had
-		a positive refcount at some point after the caller had
-		grabbed rcu_read_lock().
-	fuse_permission()
-		UAF; accesses ->s_fs_info->fc, and ->s_fs_info
-		points to struct fuse_mount which gets freed
-		synchronously by fuse_mount_destroy(), from
-		the end of ->kill_sb().  It proceeds to accessing
-		->fc, but that part is safe - ->fc freeing is
-		done via kfree_rcu() (called via ->fc->release())
-		after the refcount of ->fc drops to zero.
-		That can't happen until the call of fuse_conn_put()
-		(from fuse_mount_destroy() from ->kill_sb()), so anything
-		rcu-delayed from there won't get freed until the end of
-		rcu pathwalk.
-		
-		Unfortunately, we also dereference fc->user_ns (pass it
-		to current_in_userns).  That gets dropped via put_user_ns()
-		(non-rcu-delayed) from the final fuse_conn_put() and it
-		needs to be delayed.
-
-		Solution: make freeing in ->release() synchronous
-		and do call_rcu(delayed_release, &fc->rcu), with
-		delayed_release() doing put_user_ns() and calling
-		->release() ("fuse: fix UAF in rcu pathwalks").
-
-		In case of MAY_ACCESS | MAY_CHDIR it would blow up in
-		rcu mode; thankfully, we are not calling it that way.
-	gfs2_permission()
-		currently safe, with breakage reverted.
-		carefully dereferences ->ip_gl of containing gfs2_inode,
-		bails out if NULL.  Freeing of the object being accessed
-		is rcu-delayed, and past that point it either bails
-		out or does generic_permission().
-	hostfs_permission()
-		safe - bails out in unsafe case
-	kernfs_iop_permission()
-		safe - bails out in unsafe case
-	nfs_permission()
-		same UAF as for nfs4_lookup_revalidate(), same fix
-		NB: might make sense to tell nfs_revalidate_inode() that
-		we are in non-blocking mode and have it bail out with -ECHILD
-		if it's about to talk to server; then bailout at
-		out_notsup: would go away.
-	nilfs_permission()
-		safe - boils down to generic_permission() if no MAY_WRITE is given.
-		IF we want to support MAY_WRITE|MAY_NOT_BLOCK, it becomes more
-		interesting.  We dereference a pointer (->i_root) in
-		nilfs object inode is embedded into.  Probably would be enough
-		to rcu-delay freeing nilfs_root - just the kfree() -> kfree_rcu()
-		in nilfs_put_root().
-	ocfs2_permission()
-		safe - bails out in unsafe case
-	orangefs_permission()
-		safe - bails out in unsafe case
-	ovl_permission()
-		safe.  Accesses the object inode is embedded into,
-		dereferences a pointer to ovl_entry (->oe) in that
-		object, accesses inodes and dentries found in ovl_entry.
-		Freeing of ->oe is done from ->free_inode(), i.e. past
-		an RCU delay; dropping dentry references in it happens
-		from ->destroy_inode(), which couldn't have happened
-		before we'd grabbed rcu_read_lock(), so wrt the dentries
-		we are in the same situation as for anything found
-		during the pathwalk - they might be going down, but they
-		couldn't have started to do so until after our rcu_read_lock().
-		We dereference ->layer pointer picked from oe and pick
-		struct mount reference from there; safe, since the object
-		it points to is taken apart in ovl_free_fs(), after
-		ovl_free_fs() has called kern_unmount_array(), with its RCU delay.
-		Probably worth a comment - it's fairly subtle.
-		Call of generic_permission() is safe, as usual.
-		We also access ->creator_cred in fs-private part of
-		superblock; that gets dropped from ovl_free_fs(),
-		again, after the call of kern_unmount_array().
-	proc_fd_permission()
-		UAF; same story as with pid_revalidate(), same fix
-	proc_pid_permission()
-		UAF; same as with pid_revalidate() + use of
-		->s_fs_info, which is freed synchronously from ->kill_sb();
-		to fix that part, make freeing ->s_fs_info
-		rcu-delayed.  Dropping pidns doesn't need
-		to be rcu-delayed - it's already careful enough.
-		Fixed in "procfs: make freeing proc_fs_info rcu-delayed"
-	proc_tid_comm_permission()
-		safe, because it's a non-directory and will see no
-		unsafe calls.  IF we allow MAY_NOT_BLOCK in other
-		callers, same UAF as in pid_revalidate() (with the same
-		fix).
-	proc_sys_permission()
-		race; we start with fetching ->sysctl of the proc_inode our
-		inode is embedded into.  That gets cleared from ->evict_inode(),
-		without an RCU delay.  Freeing of that thing *is* RCU-delayed,
-		so dereference is safe.  However, running into a directory
-		that is getting evicted is indistinguishable from running
-		into /proc/sys itself, since there ->sysctl is NULL all
-		along; that's an artefact of the way we represent the root
-		sysctl inode.  Race is harmless, not quite by an accident -
-		/proc/sys permissions are the least restrictive in the entire
-		subtree, so we do not get bogus hard errors and if rcu pathwalk
-		observes such inode getting evicted, we are going to get ->d_seq
-		mismatch anyway.  Fixing the race would still be nice (and
-		getting rid of that artefact would simplify things there),
-		but that's out of scope for this series.
-	reiserfs_permission()
-		safe - accesses fields of inode, then proceeds to generic_permission()
-	reject_all()
-		safe - no access to filesystem objects
-
-get_link: [reordered with two common instances put in front]
-	simple_get_link()
-		safe; returns ->i_link, which should be pointing to something
-		that will live at least until inode freeing.  Separate code
-		audit, but AFAICS everything's currently fine with that one.
-	page_get_link()
-		safe; that's "grab page in inode->i_mapping, bail out if
-		not there or not uptodate" and inode->i_mapping points to
-		&inode->i_data for all symlinks.
-		NOTE: hitting busy symlink inodes in generic_shutdown_super()
-		will poison ->i_mapping; that's really a data corruption
-		scenario, though - the possibility of race hitting UAF
-		here is the least of concerns.  Might insert synchronize_rcu()
-		before the poisoning loop for shits and giggles, but...
-		no point, really.
-	autofs_get_link()
-		safe - bails out in unsafe case
-	bad_inode_get_link()
-		safe - no fs objects accessed
-	ceph_encrypted_get_link()
-		safe - bails out in unsafe case
-	cifs_get_link()
-		buggered - unconditional GFP_KERNEL allocation
-		looks like they'd assumed that ->d_revalidate() bailing
-		out would suffice; it isn't.  Obvious fix: bail out in
-		unsafe case and be done with that ("cifs_get_link(): bail
-		out in unsafe case").  It might be tempting
-		to try and return ->symlink_target and to hell with any
-		allocations, but...  the damn thing can get freed and
-		replaced at any point.	Might be possible to work around
-		(add a refcount, store new value with rcu_assign_pointer,
-		add rcu delay between refcount hitting zero and freeing
-		the sucker), but that's way out of scope for this.
-	ecryptfs_get_link()
-		safe - bails out in unsafe case
-	ext4_encrypted_get_link()
-		safe - bails out in unsafe case
-	ext4_get_link()
-		leak - checks a bit in containing ext4_inode_info, then
-		either bails out in unsafe case, or does buffer_head
-		analogue of what page_get_link() would do for pages.
-		Unfortunately, it has two problems - potentially bogus
-		hard errors from ext4_getblk() and leak in case when
-		we get a bh that is not uptodate.  Fixed in
-		"ext4_get_link(): fix breakage in RCU mode".
-	f2fs_encrypted_get_link()
-		safe - bails out in unsafe case
-	f2fs_get_link()
-		safe - page_get_link(), followed by no access of fs objects
-	fuse_get_link()
-		UAF, similar to one in fuse_permission(),
-		but without the ->user_ns part - we only check
-		->s_fs_info->fc->cached_symlinks flag.	After that it
-		either uses page_get_link() or buggers off in unsafe case.
-		So fix for fuse_permission() is sufficient here.
-	gfs2_get_link()
-		safe - bails out in unsafe case
-	hostfs_get_link()
-		safe - bails out in unsafe case
-	kernfs_iop_get_link()
-		safe - bails out in unsafe case
-	nfs_get_link()
-		same UAF as for nfs4_lookup_revalidate(), same fix
-	ntfs_get_link()
-		safe - bails out in unsafe case
-	ovl_get_link()
-		safe - bails out in unsafe case
-	policy_get_link()
-		safe - bails out in unsafe case
-	proc_get_link()
-		UAF (and oops) - dereferences ->pde of containing
-		proc_inode, which is dropped (and field zeroed) from
-		->evict_inode().  Fixed in "procfs: move dropping pde
-		and pid from ->evict_inode() to ->free_inode()"
-	proc_map_files_get_link()
-		safe - possible hard error, without any fs objects being
-		accessed, then bails out in unsafe case
-	proc_ns_get_link()
-		safe - fetches a field of procfs container of inode, then
-		bails out in unsafe case
-	proc_pid_get_link()
-		safe - bails out in unsafe case
-	proc_self_get_link()
-		UAF - accesses the result of proc_pid_ns(), i.e.
-		->s_fs_info->pid_ns.  ->s_fs_info is freed synchronously
-		from ->kill_sb(), immediately after (also synchronous)
-		put_pid_ns() in there.  Fixed by having that taken to
-		rcu-delayed helper in "procfs: make freeing proc_fs_info
-		rcu-delayed".
-	proc_thread_self_get_link()
-		same UAF as in proc_self_get_link(), same fix
-	rawdata_get_link_abi()
-		safe - bails out in unsafe case
-	rawdata_get_link_data()
-		safe - bails out in unsafe case
-	rawdata_get_link_sha1()
-		safe - bails out in unsafe case
-	shmem_get_link()
-		safe; essentially the same thing page_get_link() does.
-	ubifs_get_link()
-		safe; checks inode field, then either returns a pointer into
-		containing ubifs_inode or bails out in unsafe case
-	v9fs_vfs_get_link()
-		safe - bails out in unsafe case
-	v9fs_vfs_get_link_dotl()
-		safe - bails out in unsafe case
-	vboxsf_get_link()
-		safe - bails out in unsafe case
-	xfs_vn_get_link()
-		safe - bails out in unsafe case
-		NOTE: really ancient comment about recursion(!) next to
-		that one.  Comment ought to go...  No idea why bother
-		recalculating the symlink every time, BTW - might as
-		well cache the sucker in ->i_link on the first access
-		and leave freeing to the time we free the inode...
-		Oh, wait - XFS doesn't free them at all, they are playing
-		games with reuse...  Alternatively, they could shove
-		the symlink contents in page cache, a-la e.g. NFS does.
-		Anyway, well out of scope for this...
-
-get_inode_acl:
-	fuse_get_inode_acl()
-		same UAF as in fuse_get_link(), except that we are
-		fetching a different flag from ->s_fs_info->fc.  Same fix...
-	ovl_get_inode_acl()
-		safe; pretty much parallel to ovl_permission(), except
-		that it calls get_cached_acl_rcu() rather than inode_permission()
+> 
+> Thanks,
+> Amir.
 
