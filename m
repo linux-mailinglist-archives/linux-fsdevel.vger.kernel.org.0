@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-10201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90F5A848A81
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 03:18:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 712C5848A9D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 03:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCEAEB24C1C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 02:18:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C1A5287AF6
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 02:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184EF8C1B;
-	Sun,  4 Feb 2024 02:17:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7508111701;
+	Sun,  4 Feb 2024 02:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TlrDjk3i"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="nEh+Ap5r"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71977493;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17E37491;
 	Sun,  4 Feb 2024 02:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707013064; cv=none; b=cTN3/BZ3Pl1Ao/qEDjDH4UBb7kWA/aFqFUZrYyZ3/UIe7qSKJpKVpLDIc+gz7FLIjcLq4F9nBb5oSqty+xRoVlku1SC2Ha/p3nevaW6/UK1O34j86j5XneCCnl+y1BuURwGroNZa+elNV8SD+1zAmulvJK+JXzzKvvo7iTNsCOE=
+	t=1707013065; cv=none; b=jMYy2hl+3uZdOuwvF69f1Jm+2xZj2pEruRZFW/SdBUZxcc8iNlH8tIspLHT5oegwxwLK7LONgL5qi0sV4mDd6ROFhWKk0UB4SkAR6b/EEdR6x5RTMmGX53GDYsKS4jjGf6cnmA9QQhPD9dKpcsAKWNJvT8JOaAhEJGlWJ072o1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707013064; c=relaxed/simple;
-	bh=zYRFksJtbabvYcgsGO42pYWYQgwk2Gd62aTtBhPPs+0=;
+	s=arc-20240116; t=1707013065; c=relaxed/simple;
+	bh=f7WEO3vbtoP9xl5yKOL2rLQXCDxPEAWsYtSBPxBzmF0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NS9U/2iTXFMxkmx3AbZBLCOh3lVGXC37JFEl4TSeWQ/oY4y1MVDv4l/PZhqTO7E40R7oUBT3ZrB61ck7WN00gBVEJruCSUip9fgo3oyYLIkPMeChUSQ4LlOpShoOparZuF0DOmCrSSB0+MOE4LidlgQhMrF3zJ4CB+Y+lefCWhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TlrDjk3i; arc=none smtp.client-ip=62.89.141.173
+	 MIME-Version; b=bhw0H2n78TqGLB/fBUN03sKVM7fWJ4umDjdyu2T1z4mUc2dbS5JPRTEw3mbn5f4L4+w2s6th3E0siYPJlM6tKh0z55kNR3IKx6qOrNrbNOCu4Q+sY4Jtfc9Ixn6JHniuOySxLrbu0x0DcrFDtRaB9PpbQ+cPsfJxlaWNGHusm5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=nEh+Ap5r; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
 	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=hytpd6GUU8CfpGv7IEW9Pto33UoqqEf/lpKO/D7NPpA=; b=TlrDjk3io75QzP8iHfhoV/0Bna
-	Uzb/gG6phRhbFCtrWMkk3GU49NqZTLEhhYUulAmuZwnsRab+gRCNXTmJGfmgLf8LWAiIbjnw1NU+R
-	UvR738PhELzuQ4P78XLvQsuZcP2pkmotJEmPW1pvwY80SZIJpgKlR3fRPNFO+OGQgYJ3e8sMW6Qvr
-	z/Dz/kqQ8xk6diRVanMZ1UUItKLlSccCHwPhGwcuO2ZEMPFRdKssA9C1gCOZIwR1u90BzAMr3X8sA
-	A8kP9hr/+2wgV4iLVO6aFY5cH2by20WZrMMMrr1IdWxESkqndCKUIyIGDX0RWhncGodc9aDw9vcMj
-	5A8AFptw==;
+	bh=JeJspV0xyM95jRaGyJ36cYe2kvImon+4d20qpFr9x+A=; b=nEh+Ap5rp0DyclGgaHmmPb4tpl
+	fYMd75Kdb5+ly9NAyH0EIZei/nUWPlhEb40rTLYJXdvEpbU8anWIM76zFjhV9pA0RoWDvAsvcFc1+
+	RDPHGcXPeiIECmX8iw5k6jcvsWTx4zCfKY2yKHfDSHKQdGtVw1YF3CHTjR5MKwyImrULNq1ncM1rF
+	on5cBOXR4VmxJ0MapNHfUuC+518+Bvkla/luqlMd/QB3xxNPZMkcqgs7LANUZ6AT9J/1Y7gw5C81d
+	Db/DQjvNN0U4GKvYJ6Hu7K86zY9KeISiyc82CJdRFCMLn74Ui95sVtAp8q/IXKNPBoj6qeNaPMYCw
+	pONA1S5w==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rWS4j-004rDK-0V;
+	id 1rWS4j-004rDS-1B;
 	Sun, 04 Feb 2024 02:17:41 +0000
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc: Linus Torvalds <torvalds@linux-foundation.org>,
 	linux-nfs@vger.kernel.org,
 	Miklos Szeredi <miklos@szeredi.hu>,
 	linux-cifs@vger.kernel.org
-Subject: [PATCH 08/13] nfs: fix UAF on pathwalk running into umount
-Date: Sun,  4 Feb 2024 02:17:34 +0000
-Message-Id: <20240204021739.1157830-8-viro@zeniv.linux.org.uk>
+Subject: [PATCH 09/13] procfs: move dropping pde and pid from ->evict_inode() to ->free_inode()
+Date: Sun,  4 Feb 2024 02:17:35 +0000
+Message-Id: <20240204021739.1157830-9-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240204021739.1157830-1-viro@zeniv.linux.org.uk>
 References: <20240204021436.GH2087318@ZenIV>
@@ -68,87 +68,73 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-NFS ->d_revalidate(), ->permission() and ->get_link() need to access
-some parts of nfs_server when called in RCU mode:
-	server->flags
-	server->caps
-	*(server->io_stats)
-and, worst of all, call
-	server->nfs_client->rpc_ops->have_delegation
-(the last one - as NFS_PROTO(inode)->have_delegation()).  We really
-don't want to RCU-delay the entire nfs_free_server() (it would have
-to be done with schedule_work() from RCU callback, since it can't
-be made to run from interrupt context), but actual freeing of
-nfs_server and ->io_stats can be done via call_rcu() just fine.
-nfs_client part is handled simply by making nfs_free_client() use
-kfree_rcu().
+that keeps both around until struct inode is freed, making access
+to them safe from rcu-pathwalk
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- fs/nfs/client.c           | 13 ++++++++++---
- include/linux/nfs_fs_sb.h |  2 ++
- 2 files changed, 12 insertions(+), 3 deletions(-)
+ fs/proc/base.c  |  2 --
+ fs/proc/inode.c | 19 ++++++++-----------
+ 2 files changed, 8 insertions(+), 13 deletions(-)
 
-diff --git a/fs/nfs/client.c b/fs/nfs/client.c
-index 44eca51b2808..fbdc9ca80f71 100644
---- a/fs/nfs/client.c
-+++ b/fs/nfs/client.c
-@@ -246,7 +246,7 @@ void nfs_free_client(struct nfs_client *clp)
- 	put_nfs_version(clp->cl_nfs_mod);
- 	kfree(clp->cl_hostname);
- 	kfree(clp->cl_acceptor);
--	kfree(clp);
-+	kfree_rcu(clp, rcu);
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 98a031ac2648..18550c071d71 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -1878,8 +1878,6 @@ void proc_pid_evict_inode(struct proc_inode *ei)
+ 		hlist_del_init_rcu(&ei->sibling_inodes);
+ 		spin_unlock(&pid->lock);
+ 	}
+-
+-	put_pid(pid);
  }
- EXPORT_SYMBOL_GPL(nfs_free_client);
  
-@@ -1006,6 +1006,14 @@ struct nfs_server *nfs_alloc_server(void)
- }
- EXPORT_SYMBOL_GPL(nfs_alloc_server);
+ struct inode *proc_pid_make_inode(struct super_block *sb,
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index b33e490e3fd9..05350f3c2812 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -30,7 +30,6 @@
  
-+static void delayed_free(struct rcu_head *p)
-+{
-+	struct nfs_server *server = container_of(p, struct nfs_server, rcu);
+ static void proc_evict_inode(struct inode *inode)
+ {
+-	struct proc_dir_entry *de;
+ 	struct ctl_table_header *head;
+ 	struct proc_inode *ei = PROC_I(inode);
+ 
+@@ -38,17 +37,8 @@ static void proc_evict_inode(struct inode *inode)
+ 	clear_inode(inode);
+ 
+ 	/* Stop tracking associated processes */
+-	if (ei->pid) {
++	if (ei->pid)
+ 		proc_pid_evict_inode(ei);
+-		ei->pid = NULL;
+-	}
+-
+-	/* Let go of any associated proc directory entry */
+-	de = ei->pde;
+-	if (de) {
+-		pde_put(de);
+-		ei->pde = NULL;
+-	}
+ 
+ 	head = ei->sysctl;
+ 	if (head) {
+@@ -80,6 +70,13 @@ static struct inode *proc_alloc_inode(struct super_block *sb)
+ 
+ static void proc_free_inode(struct inode *inode)
+ {
++	struct proc_inode *ei = PROC_I(inode);
 +
-+	nfs_free_iostats(server->io_stats);
-+	kfree(server);
-+}
-+
- /*
-  * Free up a server record
-  */
-@@ -1031,10 +1039,9 @@ void nfs_free_server(struct nfs_server *server)
- 
- 	ida_destroy(&server->lockowner_id);
- 	ida_destroy(&server->openowner_id);
--	nfs_free_iostats(server->io_stats);
- 	put_cred(server->cred);
--	kfree(server);
- 	nfs_release_automount_timer();
-+	call_rcu(&server->rcu, delayed_free);
++	if (ei->pid)
++		put_pid(ei->pid);
++	/* Let go of any associated proc directory entry */
++	if (ei->pde)
++		pde_put(ei->pde);
+ 	kmem_cache_free(proc_inode_cachep, PROC_I(inode));
  }
- EXPORT_SYMBOL_GPL(nfs_free_server);
  
-diff --git a/include/linux/nfs_fs_sb.h b/include/linux/nfs_fs_sb.h
-index cd797e00fe35..92de074e63b9 100644
---- a/include/linux/nfs_fs_sb.h
-+++ b/include/linux/nfs_fs_sb.h
-@@ -124,6 +124,7 @@ struct nfs_client {
- 	char			cl_ipaddr[48];
- 	struct net		*cl_net;
- 	struct list_head	pending_cb_stateids;
-+	struct rcu_head		rcu;
- };
- 
- /*
-@@ -265,6 +266,7 @@ struct nfs_server {
- 	const struct cred	*cred;
- 	bool			has_sec_mnt_opts;
- 	struct kobject		kobj;
-+	struct rcu_head		rcu;
- };
- 
- /* Server capabilities */
 -- 
 2.39.2
 
