@@ -1,146 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-10224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A10A848EFC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 16:46:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86213848F3E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 17:26:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FEB1282E05
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 15:46:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 238111F228B4
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 16:26:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE08225DC;
-	Sun,  4 Feb 2024 15:45:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF65F22EF4;
+	Sun,  4 Feb 2024 16:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cUb9QyKC"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="cWf5x1NP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44CC22611;
-	Sun,  4 Feb 2024 15:45:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38C522EE0;
+	Sun,  4 Feb 2024 16:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707061558; cv=none; b=LSgaatOGwvai6F/wDOpf0WaYQqGpF+FhOYmobq6t6iOa4sEmyLj4MQuVXwwNfN/2O6uv5bqtVmrEtLEpwZH2WGG0+f8qL2sybWHsBysab2ULZRsI/Id59x5QOju2JZfYUrewOoF89D3BpWbXMEDbm3t2GvjMjOcrys7FVHDm6ic=
+	t=1707063965; cv=none; b=d6CxCekiTRp1CNYNGo3tH5CIyBkp77FreB7K+hCQLF5xQkAwaKWIABedRB33wR/NGwiATPuVD5SV8A1dkXeUNZ5AyhdnlLZxFeNxshB1onY/qCfFuUL4bt7buemHDvWMg6DET8Bi3O5PL7AfhQuFuNFIIBNFu7rXfrvLUGLBIYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707061558; c=relaxed/simple;
-	bh=lUgppHZGb1vOjtolopDlqedRfuoqxQctFGVGsU1wMHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j0DAg7dW7jlOQXXtiD1rFp2F1HSlFfvckFyvAfmg7BPhA0ArQMbjsozaNPhz/YoVBi9xcnjjvlkLHNgl7Zkjbg3YwuDSMX7UaJWjVs2XDwttqOA6ahxPIvIX6PdGHuKQR6RVjdHkrsCuF6MrW+Tiv+F3Txv/N9zbt3cW2lp0h0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cUb9QyKC; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-337d05b8942so2725047f8f.3;
-        Sun, 04 Feb 2024 07:45:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707061555; x=1707666355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ErjVDx00u8D0uyLxAbe0rYeVX5VlnaMxXzQQWliNW6k=;
-        b=cUb9QyKCVB46pM8nPZXWXTja/69KrA62OEAIg1D4Viqo9Lh+Gu/Wyez9LsSm9WJcrT
-         AmCA8TPxel3EMkrF1XjQzJlm/bNHj4TUPgds6Y2axz2p2OLxCTKlS7/1J8EugllOxEa5
-         wpYbUGsZikhCvz77d65sbeF/19/e+7QMngdvB3pPc0Kc7xPJIOjCixyB8mWYP0Rw2h7K
-         u0WqLWsMgszmdm1ZFFXI+sYJMGRRI7QbaG726RgFdURcltpghjdvV97yTat9kpVNcwyA
-         8UAEGQeA8QKvI/nwmnUL9Yfon5p5p5vBBGYUNKohMt/wdZbnS0eGrLgURsunBVL5v74k
-         AuhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707061555; x=1707666355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ErjVDx00u8D0uyLxAbe0rYeVX5VlnaMxXzQQWliNW6k=;
-        b=R1ClZC4RDO4nJL+Du4HbO1BZX10ljjkWcFyalv7M8VB+gj6JuJr77VAZk6rhyhJ1WQ
-         jWJ0Q1d51rlqpOOzaEWcQ6+KiRakEKQ1NLL2Vyiey/NRQuSKha+KuUVBWmPCQT2y1HZK
-         YwYRWbr4LoGFia2Imj2M5PuHh77/q7loORYbKtzzXNX9rQQ3Q1wXk9Cdf/D7UxQlZfLK
-         2xkwLElDXxcdpql9HNmbzyLyaxXa5hak6DkdwxBPMzauLGmYJXmtu2YH+UfIPP0su6tY
-         vrEqFm6zuYcSmdX+BDA4CFk2QfuPZELLWRelaqpCoFy9EaBFvsfpSbIWhmj/qQzoeIdZ
-         3sBA==
-X-Gm-Message-State: AOJu0Yw63h1Lb6eNCpsP9NbtFIrTcWi4Qf0/iwB2X+R7r/x/y9BFxZOL
-	rzzlO8CHEk0emR25Jc3sxjI7f95Vsz6vqkCa6cClyOV0zo0lxIhC3iO1hjg1fkiID+GkRJuY2+2
-	N6wC/ESHpImzz6q9LGPcCErjQWas=
-X-Google-Smtp-Source: AGHT+IEr3S4iwLwTGT7CdXfeBrkbADV4KmxBXcpxQ0KO4aMKJ/IOroFZxQehrrV3DGXIs1edvcvpXpbv/p8XG9pWHrg=
-X-Received: by 2002:a5d:608e:0:b0:33b:3d6f:7a2e with SMTP id
- w14-20020a5d608e000000b0033b3d6f7a2emr39650wrt.49.1707061554633; Sun, 04 Feb
- 2024 07:45:54 -0800 (PST)
+	s=arc-20240116; t=1707063965; c=relaxed/simple;
+	bh=TYrE7OeWwo6qLBtmcJPaIJ9NY33iAz58AQTG5E7m6qI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rdcgj7hbNW+O6NkbqzBt8QX9B5du7nNpG0KNdblR3H8j4KQ90OEkQkXZ0x6u3GrHjcrcPUjz59PFfeZ0kJ4GAVyarnphupV0J/VeqQWBMk4PGOfjWxIo8VmZ+1Ofb22MHX9qrf0MuQTKzO/f36YQodOXV6jTPlkwRfwxaFt2Gfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=cWf5x1NP; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lp2W6AwdYS1QtTu5hBJMg1umxOVPx8GyqI2GdpCrMuQ=; b=cWf5x1NPnMFpK7ObcfuAMNM/BK
+	F4oNkeiPtnqh//XO1eWdwdlczuRTlAfU2hmmTm9ulkIajDxWeBnoDT5n0gyiXH+i0R7uXFT1hGZmR
+	z86iYwha38YjfGnv9yNEXqd7C/AR7h8q1ibxDftXHl67gGM6K/xSJEHQ/6tKtyTJH5c5eREo1HRP/
+	Mxg+3TepEn+el9CClA1VeNDRIXVhLxAgcilRXfXWhUIQRbSKXw8aH7H+wWQ9URXYBqUlwH3SLpzgc
+	CiVxAGj7zo8f08W06okS7CdcWmmsf8BG+M++R4U1t3UUEAIT8FMASEOyHxGmPcSD75Kpr5zJOqpG+
+	qXqcmPFw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rWfJe-005BQS-0y;
+	Sun, 04 Feb 2024 16:25:58 +0000
+Date: Sun, 4 Feb 2024 16:25:58 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Steve French <smfrench@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>, linux-cifs@vger.kernel.org
+Subject: Re: [PATCH 12/13] cifs_get_link(): bail out in unsafe case
+Message-ID: <20240204162558.GJ2087318@ZenIV>
+References: <20240204021436.GH2087318@ZenIV>
+ <20240204021739.1157830-1-viro@zeniv.linux.org.uk>
+ <20240204021739.1157830-12-viro@zeniv.linux.org.uk>
+ <CAH2r5muOY-K6AEG_fMgTLfc5LBa1x291kCjb3C4Q_TKS8yn1xw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240204021436.GH2087318@ZenIV> <20240204021739.1157830-1-viro@zeniv.linux.org.uk>
- <20240204021739.1157830-12-viro@zeniv.linux.org.uk>
-In-Reply-To: <20240204021739.1157830-12-viro@zeniv.linux.org.uk>
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 4 Feb 2024 09:45:42 -0600
-Message-ID: <CAH2r5muOY-K6AEG_fMgTLfc5LBa1x291kCjb3C4Q_TKS8yn1xw@mail.gmail.com>
-Subject: Re: [PATCH 12/13] cifs_get_link(): bail out in unsafe case
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	Miklos Szeredi <miklos@szeredi.hu>, linux-cifs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH2r5muOY-K6AEG_fMgTLfc5LBa1x291kCjb3C4Q_TKS8yn1xw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-I may be missing some additional change or proposed future change -
-but it looks like the patch to add check for null dentry in
-cifs_get_link causes
-an extra call to cifs_get_link in pick_link() (in namei.c - see
-below), so would be slightly slower than leaving code as is in
-cifs_get_link
+On Sun, Feb 04, 2024 at 09:45:42AM -0600, Steve French wrote:
+> I may be missing some additional change or proposed future change -
+> but it looks like the patch to add check for null dentry in
+> cifs_get_link causes
+> an extra call to cifs_get_link in pick_link() (in namei.c - see
+> below), so would be slightly slower than leaving code as is in
+> cifs_get_link
+> 
+>                 if (nd->flags & LOOKUP_RCU) {
+>                         res = get(NULL, inode, &last->done);
+>                         if (res == ERR_PTR(-ECHILD) && try_to_unlazy(nd))
+>                                 res = get(link->dentry, inode, &last->done);
+> 
+> cifs.ko doesn't use or check the dentry in cifs_get_link since the
+> symlink target is stored in the cifs inode, not  accessed via the
+> dentry, so wasn't clear to me
+> from the patch description why we would care if dentry is null in
+> cifs_get_link()
 
-                if (nd->flags & LOOKUP_RCU) {
-                        res =3D get(NULL, inode, &last->done);
-                        if (res =3D=3D ERR_PTR(-ECHILD) && try_to_unlazy(nd=
-))
-                                res =3D get(link->dentry, inode, &last->don=
-e);
+The very first thing you do in there is a GFP_KERNEL allocation.
+You can't do that under rcu_read_lock(), for obvious reasons.
 
-cifs.ko doesn't use or check the dentry in cifs_get_link since the
-symlink target is stored in the cifs inode, not  accessed via the
-dentry, so wasn't clear to me
-from the patch description why we would care if dentry is null in
-cifs_get_link()
+So if you ever get there (and it takes a somewhat convoluted setup -
+you need to bind a cifs symlink over a file on a local filesystem),
+you need to
+	* carefully grab references to all dentries involved,
+verify that they are still valid, etc.
+	* drop rcu_read_lock()
+before you can get on with fetching the symlink target.
 
-On Sat, Feb 3, 2024 at 8:18=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->
-> ->d_revalidate() bails out there, anyway.  It's not enough
-> to prevent getting into ->get_link() in RCU mode, but that
-> could happen only in a very contrieved setup.  Not worth
-> trying to do anything fancy here unless ->d_revalidate()
-> stops kicking out of RCU mode at least in some cases.
->
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  fs/smb/client/cifsfs.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> index e902de4e475a..630e74628dfe 100644
-> --- a/fs/smb/client/cifsfs.c
-> +++ b/fs/smb/client/cifsfs.c
-> @@ -1172,6 +1172,9 @@ const char *cifs_get_link(struct dentry *dentry, st=
-ruct inode *inode,
->  {
->         char *target_path;
->
-> +       if (!dentry)
-> +               return ERR_PTR(-ECHILD);
-> +
->         target_path =3D kmalloc(PATH_MAX, GFP_KERNEL);
->         if (!target_path)
->                 return ERR_PTR(-ENOMEM);
-> --
-> 2.39.2
->
->
+That's precisely what try_to_unlazy() in the fragment you've
+quoted is doing.
 
+NULL dentry argument passed to ->get_link() is the way it is told
+that we are in RCU pathwalk mode; anyone who can't handle that
+should just return ERR_PTR(-ECHILD) and be done with that.  The
+caller will switch to the non-RCU mode (with references pinned,
+etc.) and call again.
 
---=20
-Thanks,
+*IF* you can tell the symlink body without blocking (e.g. you
+have some cached information from the last time you've asked
+the server and have reasons to trust it to be still valid),
+sure, you can return it without dropping out of RCU mode.
 
-Steve
+It would be fairly useless for CIFS, since ->d_revalidate() of
+CIFS dentries would reject RCU mode anyway.  That's what normally
+saves you from having ->get_link() called that way, but it's not
+guaranteed - there are convoluted setups that avoid having
+->d_revalidate() called first.
+
+See the description of RCU mode filesystem exposure in the
+last posting in this thread for more details.
 
