@@ -1,70 +1,71 @@
-Return-Path: <linux-fsdevel+bounces-10217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10218-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 050D2848CF4
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 11:48:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8FB848D2F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 12:42:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6DF2825B6
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 10:48:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBFCB1F22492
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 11:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF8E219F3;
-	Sun,  4 Feb 2024 10:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3394D22307;
+	Sun,  4 Feb 2024 11:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kcaGHIYa"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XQVoJwzN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
+Received: from mgamail.intel.com (mgamail.intel.com [192.55.52.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066FF2110E
-	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Feb 2024 10:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.134.136.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFD121A19
+	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Feb 2024 11:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.55.52.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707043709; cv=none; b=aUQ4PJb13JLulrO2tHQT+/7aLjH4p3qj1r3ZODPLd6XpY8kT6YRCgbuCGr+Xo0TcDc1Tg2/xg3lJdTbrPaPMgT/PshqKQZ4+Vz+ZMrKT8zZz8KH2uS/c/9LM4iE3G9o0jSrkEw3a25RrblUcUVok77f/AwpOpvKTKJG7t75D28M=
+	t=1707046951; cv=none; b=pO5d4UhkpT5OqZKvqo00m1G/0alMwoWWFrzCCqMsG7ghbvf5niW15qmJU1dGcb+5ifgkqSWtZJ5d8zrz+K2ouHATGTkyQF1XKQdE14eGNO/eGcIeD4Z3l46UEngN6pIuLKlcWYj6JsoIwMN8iYjAucGvSENNAqw4CVaHJJO72gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707043709; c=relaxed/simple;
-	bh=v8HCsB+hOktMQL68CZEOP03ehhVrnijMqj9a6BeCUUQ=;
+	s=arc-20240116; t=1707046951; c=relaxed/simple;
+	bh=KGDpUThHtAKqkOgWRCAPT9jQfnmE7CzSh7uY2Rj7gh0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OAdiFqkV3kZym0NbXX8vT8TRnhvJbJOX9vlsv1Kw2lBoaRE5po2DI/mldeX9J+ZAuodJ2fKpDmdZP69d6Q5SeVIkOLCCsSvy5PwDqm3onqGlar0LuBGL5cHIx0MWes5AkwUCrz6RGevKcjwaE7CQ3tv09YLhKtcEprx3DUxa0po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kcaGHIYa; arc=none smtp.client-ip=134.134.136.20
+	 Content-Disposition; b=m27pzNO8q8ebfu+y08LZFrcFR2p1C9zL6eod5+fuAVCsh3k3F56HWPLcQJ11vzYfCYdzU/gl73D38sGlyVLYXpO2WvJTzUxbocKb43vU/rFCfEg2QfhoKBdrNv+MTLgIoWPltP0Y6sLWi8ITz7xIH0E1ZXKGjb9fShRS+XBr8Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XQVoJwzN; arc=none smtp.client-ip=192.55.52.88
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1707043707; x=1738579707;
+  t=1707046948; x=1738582948;
   h=date:from:to:cc:subject:message-id:mime-version;
-  bh=v8HCsB+hOktMQL68CZEOP03ehhVrnijMqj9a6BeCUUQ=;
-  b=kcaGHIYaRa3QyfVDwKTm/FjDRbMtMS5G1hOkDfBWynKRUURx1W0ccodL
-   KAg3FveQL5911WgkdFATv23Dv1KCCYTlTWrg3iV+4va7yQzeuPrTaLklL
-   9/hchlnsw0zyb48iqnk3aRExvPCAffNd7BFMRjfXw5wM3pyPopeoO5dzh
-   xFesNop8laOpkpdZ/MpnOTvYz0QC0P+wttQLnmyOluFVHLhZ8+hQ1Gx+r
-   AFhS08LV3Fic6U7vnp0huyWqPXtCnAuhXz77I2/dhW9S69nBHQArdN+5a
-   iLra+i12YMLFdnuWOA0RZ2eeKT23hEua22WBgxACxFfc31GROB1LqYmxF
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10973"; a="394807969"
+  bh=KGDpUThHtAKqkOgWRCAPT9jQfnmE7CzSh7uY2Rj7gh0=;
+  b=XQVoJwzNaI3TCfZCDXdXHMr4MoptlwIV+VacdJnEgv4JXFoopCY/sfVO
+   oq2H4LMJhhHSQCF4X8iadNlFDiz8EREpAVZ4HnIJBUtgECvdfTLs+/C1a
+   jWno9dfT1NqsZUGjBzU2+u3qw4XvJ2HAIRkuTGuomu6KvcRRor+yy7ZOO
+   LxkgBaFn0ZXzQDd+GA+revQ638e6xvlk9ouhlLol/oN7bN5uW/zDIdtX8
+   VJgICIQ2Y8IcsOvcYyMLYTDgTmI3DHLYoi4UM3HcNz5Iukoz2a/7du74V
+   msKIERhXfgbHIZ/7zHWV9nYYb/eVzelhE9aLceGENp3xk5qMZAOy4KXI1
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10973"; a="435522418"
 X-IronPort-AV: E=Sophos;i="6.05,242,1701158400"; 
-   d="scan'208";a="394807969"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2024 02:48:26 -0800
+   d="scan'208";a="435522418"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Feb 2024 03:42:27 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.05,242,1701158400"; 
-   d="scan'208";a="5097344"
+   d="scan'208";a="812941"
 Received: from lkp-server02.sh.intel.com (HELO 59f4f4cd5935) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 04 Feb 2024 02:48:24 -0800
+  by orviesa008.jf.intel.com with ESMTP; 04 Feb 2024 03:42:26 -0800
 Received: from kbuild by 59f4f4cd5935 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1rWa2v-0006GS-38;
-	Sun, 04 Feb 2024 10:48:21 +0000
-Date: Sun, 4 Feb 2024 18:47:31 +0800
+	id 1rWatD-0006IO-0e;
+	Sun, 04 Feb 2024 11:42:23 +0000
+Date: Sun, 4 Feb 2024 19:42:17 +0800
 From: kernel test robot <lkp@intel.com>
 To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>
-Subject: [viro-vfs:work.misc 6/6] fs/splice.c:743:23: error: implicit
- declaration of function 'call_write_iter'
-Message-ID: <202402041805.svirD88l-lkp@intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Subject: [viro-vfs:work.misc 6/6] fs/splice.c:743:9: error: call to
+ undeclared function 'call_write_iter'; ISO C99 and later do not support
+ implicit function declarations
+Message-ID: <202402041909.VYei40Zu-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,22 +78,21 @@ Content-Disposition: inline
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git work.misc
 head:   8f5893b867907f2e6d6451cca3b397e655f7c094
 commit: 8f5893b867907f2e6d6451cca3b397e655f7c094 [6/6] remove call_{read,write}_iter() functions
-config: i386-buildonly-randconfig-002-20240204 (https://download.01.org/0day-ci/archive/20240204/202402041805.svirD88l-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240204/202402041805.svirD88l-lkp@intel.com/reproduce)
+config: i386-randconfig-001-20240204 (https://download.01.org/0day-ci/archive/20240204/202402041909.VYei40Zu-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240204/202402041909.VYei40Zu-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202402041805.svirD88l-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202402041909.VYei40Zu-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   fs/splice.c: In function 'iter_file_splice_write':
->> fs/splice.c:743:23: error: implicit declaration of function 'call_write_iter' [-Werror=implicit-function-declaration]
+>> fs/splice.c:743:9: error: call to undeclared function 'call_write_iter'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
      743 |                 ret = call_write_iter(out, &kiocb, &from);
-         |                       ^~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
+         |                       ^
+   1 error generated.
 
 
 vim +/call_write_iter +743 fs/splice.c
