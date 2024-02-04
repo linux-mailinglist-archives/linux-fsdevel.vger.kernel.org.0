@@ -1,178 +1,276 @@
-Return-Path: <linux-fsdevel+bounces-10232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C448491B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 00:35:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5D07849202
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 01:14:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAEAA1F21418
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 23:35:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE0ED1C220F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 00:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127F3C2FD;
-	Sun,  4 Feb 2024 23:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935E6A55;
+	Mon,  5 Feb 2024 00:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="FRw0G62Y"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LgLXrqmf";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="m/g1qGV5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4ECFBE5B
-	for <linux-fsdevel@vger.kernel.org>; Sun,  4 Feb 2024 23:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707089693; cv=none; b=FPO0ut7rVJ9an8ysywbwmYwW9FrZdhaUdto4APzlimuZzlg+p72aozlTC20YMBY5nVUL5SrwZifd5HFAeCiqV+PPHdCXXHOjGOeLNNh7K2QRU6rZ06tu5pn7ewQkiikkcG2MkLGa/qHeYPX0k7G9+kwXsvVIgdO+qr4cURMxfbs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707089693; c=relaxed/simple;
-	bh=mzpbX0JLJdVzO2c/5EYUqV4nIisyNX0uSPxWZjygZhg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S1tBpwdGQJrTDHD4wB20JAKC8M8CSFUEAgK0ukv4CWTvFH1AgWMV8iUEKQwSM6eOcVQwAtgG1vWTFephheiao7ArjMpgn0jqPFAk09MXYBNaWZxTWwHLD61hy8Ioa4J8zU/JUupxSIOl43QMnSzG4pnMIL/JKndBdud6YDv+X24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=FRw0G62Y; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-6e040c83556so270105b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 04 Feb 2024 15:34:51 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E8E465C;
+	Mon,  5 Feb 2024 00:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707092032; cv=fail; b=t62wf9ibMhXtHQ+1k08oWKSGdzSD9Trbzz09FPyqfcm1I9qSOCmzKnNIRF2nvan0JzIC6TiYjYpdRkv6LOhoz/H7ThNyAbMlnA/SHk1ny6DiAZWTKka/NuFBdfaWjO3qc5v+lL1AmoWLq8XUCagMmVQ+6mxhcIRQqCK5cudaDpA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707092032; c=relaxed/simple;
+	bh=GoK3hyQvAMW2zwdeLcSK+3IaN28LulrD2ZYnJZaY2GE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=WPnqj9hWrpR4bfYa7krwkNXgN0RciET7IZCfnUab2GbmgMwo2ZxxigefNpbfpudT7XQGhKPbuDDd3nDsrofSn+mebC0X1A2Q5+VcL4I7HEEkEdSiDQEjnOjC5NlQ/HW92E9onvp7WB+oJtx3CRLXVHP3q2YUZH0P6oNA3Gnw/wY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LgLXrqmf; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=m/g1qGV5; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 414Mufxv000792;
+	Sun, 4 Feb 2024 23:44:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2023-11-20;
+ bh=jjm1Sx1U8QtO9oiKh7WtWfuTOi2K68YQDCjzsQl5Kx0=;
+ b=LgLXrqmfJm0WeWNcZYijBdGv9LT6jcmJwXAHjnR6OTbCJ0X0SUl56WYriosbygZ7gYPI
+ Ab5bqBKouR2YLWeqsXvCGkv/hhOhNVCKdpx7GpYJuOZRzO5SsynjpJgPFLrF3CQQ0X1i
+ arBHtieh1eTyvfa+Un/JgaYkFC3rqJlziRw8QF3UmpFqf84w0kYmpp0Hy3pP5GCSZTV5
+ t9vZ5Ap0e2QoHK9eXh7jB0kuBee+VM/SGpSdporoEnarb8zpi0C5I30wsgD6UjN04OdK
+ tD17Bl8wOPbo+2AdVlCujar+rde7URh2g3jY+XRdy/qh+8bNL6QfPTrTbe4bBsyfzHGL 8Q== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3w1dhdafc7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 04 Feb 2024 23:44:01 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 414KVw6D036728;
+	Sun, 4 Feb 2024 23:44:00 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2040.outbound.protection.outlook.com [104.47.66.40])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3w1bx4xxwq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 04 Feb 2024 23:44:00 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Q05/wEV8apetUcEtep99pp1s++HGNeQzX6J19q/HrOGJynhUA/lsgHqBYAODKO7FvvljVQOk0V4Soa45PhTVAkP82pyDHeY6U3uOhIYkhDdSafv7BLbm6lpPJCa9y9WdtI7UWD63A8Hy+ocHjlAMgF7LXgYnnPBG0H3AYSi8Ri0fgeBQuX7ta30g8GA4xTi6o3b+8eI0PguMUKHF5UX6XgC7EL4IlCFySxtaFZlQ4ZN1IElBz/+3RcjjgE1G9rU5t0hGknFRgiBYLGZWY8iARVqpfdme5uxovYCDQ8rhr7sA6K75dQQtzYdaCcVUMWaixBCAJbSkReWspFcy6BHdsQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jjm1Sx1U8QtO9oiKh7WtWfuTOi2K68YQDCjzsQl5Kx0=;
+ b=IOs/F0nLLGBeWyDYtntrXpp9eQ6fBfdAYr6nxltpTPtl6dIkMvktELSVoV08+IJQj5lo26UOBbP9w3KA5vSHuHn/PcCzTcY/DAm9aQ8BpJmwTPjCEaafHcawkG3zOEIlDw+sBrGbCgEoKlpOvpIKCeU0L/C+1HcMc/XYOngI8qWDcm2s4luenOiLkk/MFNdTmK/j7eG6FvF/xeRnGI2sx7piDkI2q83zq7d57Dj35prA8ZWsjcvgExratvY7Q7KhJbk7IfHUFOovFIdfggbAVIaMst+klMEuAaKniS8CNcljtas0wyjxxVD49ERoNhAV+SdQHoFzyQ4rfo6UB0mpMA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707089691; x=1707694491; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p2TnSnFYEsDimdpS3N17Ru85rGMnUNIuGwXCS2vJfQo=;
-        b=FRw0G62YRIRSd1l36tnMa358x2HiQDU2XiJb0Bc+TvQdyY61zgdkXPjpH3cdkpVKlK
-         su/AVYrxGlwbd40jb99DJZvrAX/7vO6urSQzSNPrqkBKacpwsTvayKNF/ukiIrkni5VG
-         nS9mKNFydm9PuVls1VWaLRsgKfrm3DRM8VgVxs5SKot1z+NYxwMw2Hwidob58qAWmYmz
-         nqgEqKBOZrS2Zrn85Z66b8odKfk48F+CgrbXRgvlWM+lw0qWXPbSj5zSaKhlALXrYLnD
-         3nucyzhKs/bmJA/aZa6NXTK4hVbSFiIdqaQmWSloEqxDR9rMqbi6ZMLO4gMuoojjXvsF
-         uFFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707089691; x=1707694491;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p2TnSnFYEsDimdpS3N17Ru85rGMnUNIuGwXCS2vJfQo=;
-        b=TQki1kpKjKOgYQYl1T7QodKqS5X5pRT/FVFPkd3ZgLdMnE/47GxbQOCe/B/Fd1lFy8
-         AqfgUHYtHNVC0fzVdtKWhfFVJ1nNaEjkzfIAxMkyTWvx7k91bZQNEDNvt3SsoQza+a75
-         Sz1APVJrrcLtPhrTIhed/mPJjkNS26JQWJeZ8Czv9eSOODAmdCh7/pq3rtJkNcfxH6cV
-         GVqU8zXGtjvnezUTI21XRTIDiqOIfv32WJZsu5/eeWW6niRYmJbp235s++CMQ3TtmbQQ
-         fk/wyX4vTpADAAELlUlVoA6avPXObepNvTwC/MHs+xLW1hKECRtk399oEhSojKPRmrx6
-         cjgw==
-X-Gm-Message-State: AOJu0YxJKAGeouJzbrtH+vX6AU8zX6w1J2jzyOnvOsO8jnjMir4EooD7
-	a/79QAfgT7xp7tNBTyO6CatB6RuT46RhDwoM1FWndhGcCjKonDS7DxlXWP2DEIY=
-X-Google-Smtp-Source: AGHT+IF/iScD9UiPoru51YxiL2oZG6kkO9dOS0pdBYHBb4GuksLfFUGdQXzGHfeNI7h4UsP0jyX3xA==
-X-Received: by 2002:a05:6a00:2192:b0:6e0:25db:65b2 with SMTP id h18-20020a056a00219200b006e025db65b2mr5694366pfi.14.1707089691057;
-        Sun, 04 Feb 2024 15:34:51 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCUSoMhjFgbz6wgPYjJeWh0oBQcp6MJNa57h3rXjMk90rQX9EVmU21co4Vy13pQ78HfAK+dGBm51kXWCv8XPb7jMIPFd0Zg/FJOlcH/ShnF2EIeOLQY8LC2IRQIzg8ZOH6QBwJl9Die3twPbKyjCq158cXpUeT5L+wzpnvjJRWM1n4riTNHqBuOwCfGyDski6jpqfGIbMzRmo0z03NXa8O44yHf3NBsY+Ry8rtnnLptRU+M/jFT2un02cNaZBfEAbtTiQrB+oceSPYqkImMz1GtPC0COLQJ58gmUFrQEyh/gZcktQV3fs3APTofh01rGo3KBYsD+eV6vS5eqA8jjjyrLYpcxFYMqwwykAAqHa6O7
-Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
-        by smtp.gmail.com with ESMTPSA id x2-20020aa79a42000000b006da2aad58adsm1422234pfj.176.2024.02.04.15.34.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 04 Feb 2024 15:34:50 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rWm0d-00293b-35;
-	Mon, 05 Feb 2024 10:34:47 +1100
-Date: Mon, 5 Feb 2024 10:34:47 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Don Dutile <ddutile@redhat.com>, Rafael Aquini <raquini@redhat.com>,
-	Mike Snitzer <snitzer@kernel.org>
-Subject: Re: [PATCH] mm/madvise: set ra_pages as device max request size
- during ADV_POPULATE_READ
-Message-ID: <ZcAfF18OM2kqKsBe@dread.disaster.area>
-References: <20240202022029.1903629-1-ming.lei@redhat.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jjm1Sx1U8QtO9oiKh7WtWfuTOi2K68YQDCjzsQl5Kx0=;
+ b=m/g1qGV5RJIR/WprU51XEhjX5quYUHmURmZwpiqZeY8tZ3tqA3WeoY13gCgZaXCzEJTNtHlp3sOn2nBsQ9lLU9AG8TA8ZNbcreNuhl1pMdrvFZhB7Wi9qTy+xfGEgdpnl562eaz4XWboougnudOvk3UUHXss7XNtERGdG3xRzao=
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
+ by CH0PR10MB4857.namprd10.prod.outlook.com (2603:10b6:610:c2::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.34; Sun, 4 Feb
+ 2024 23:43:56 +0000
+Received: from BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::ed:9f6b:7944:a2fa]) by BN0PR10MB5128.namprd10.prod.outlook.com
+ ([fe80::ed:9f6b:7944:a2fa%7]) with mapi id 15.20.7249.032; Sun, 4 Feb 2024
+ 23:43:56 +0000
+Date: Sun, 4 Feb 2024 18:43:53 -0500
+From: Chuck Lever <chuck.lever@oracle.com>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] filelock: add stubs for new functions when
+ CONFIG_FILE_LOCKING=n
+Message-ID: <ZcAhOW0A8U3h2OTf@tissot.1015granger.net>
+References: <20240204-flsplit3-v1-1-9820c7d9ce16@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240204-flsplit3-v1-1-9820c7d9ce16@kernel.org>
+X-ClientProxiedBy: CH0PR08CA0018.namprd08.prod.outlook.com
+ (2603:10b6:610:33::23) To BN0PR10MB5128.namprd10.prod.outlook.com
+ (2603:10b6:408:117::24)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240202022029.1903629-1-ming.lei@redhat.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|CH0PR10MB4857:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32e8c76c-af00-416e-3684-08dc25db2711
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	KNiYmzYiAkJpagDxL+9M+/rImgHxpP5fJUHCtDs+BCNcauoPPtZSzkcUatIRt0dtRuAnXA3WNLO3FCiDcEQVcMG9sW/x9VZxMcNb8/A5jnpG8BB7ECsQEJUnzAHNH4YGUSEjAYbaTEKgE7BRKy4KOdeJGoyoXdoqfeGRtn57AAXtXJr9+WBnErG5K4d6yt+ynOWBKEqbN8aWbv7Z7TRGF8F3+hiPYHR4tRSj2mDAttchv/58WHj74+wWovaR/TduapRquQX++Ad33sMfO+tOWVHDsIPMhENMHk5S5j5HfrdF9a0UGlkrASJgZI5Po3yUyWII+Iig3Qy38JTpuNJKxLdzqF67tkHLs1PyamijGY5WFl7ZOx0qoE/eh1AwuiNgZk9CtT1WGHghjVcTJrlqEIZyR/BVpz+atsihdUwoDOg2Ql0N08PYiwKQYZkBToA0b9wL9WCwxSYizT+jF7+WTqw89VOeMmvK3ZKG5G+2lCG56V0e818uTd0/KsLeyMO1B4A07HiNm8ruJoqNHYPxoZO0ZXsumWqXfoJENuXaDUI=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376002)(39860400002)(366004)(136003)(396003)(346002)(230922051799003)(451199024)(186009)(64100799003)(1800799012)(41300700001)(26005)(66899024)(966005)(478600001)(6512007)(9686003)(6486002)(6666004)(83380400001)(6506007)(38100700002)(86362001)(5660300002)(66946007)(316002)(66556008)(6916009)(66476007)(54906003)(44832011)(2906002)(4326008)(8676002)(8936002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?Fae8BaF+aUEvkW+7nSUPqVZUuei/MzGrfrkky4HM1+MFrsbi8FtF6neqfH5E?=
+ =?us-ascii?Q?Jbt41P1hACAPEJA4OhZAjKqS6Ccf2Go2dOH6qhlG9U6lIwRwWPE/fewDXTOK?=
+ =?us-ascii?Q?wXfh0fuUhYdG+7D2FO6yLNbhyyzXlvUC2IorAxA9h9uGYAdapMp03WSfhYjf?=
+ =?us-ascii?Q?G53i4rdXWtdV0Yl2Wwr7q3VC4GAHvKLjUDbqowx5EHNEfM1SocQDbf56vYAO?=
+ =?us-ascii?Q?kqjrOwVwk3oLIXxi/illwSv7puep3S0HJrtw3zjQWLkfj2pu2NHxdz1+WMn1?=
+ =?us-ascii?Q?r2hGX1uwwadFaPmuEK5/SvQB9Yhxl8g+cdzLTzADUsjSHp46N4LCnbxKnNOv?=
+ =?us-ascii?Q?Ne4CiCyTxQR0O/dWumecsqASPzc8+X5RrPBQvbVD0geYEwkyA6tvRLpto89v?=
+ =?us-ascii?Q?lBWhwscFm/Irx6yHQaoX+8kBDWOSklopj6Eput355R0Q0jEFd+Mv9BHaBLaY?=
+ =?us-ascii?Q?SDiaZyjJwpLUufDYK/SOJYXa6Xv/gU9k/9P2zlvhrWI4mCWEm1UdEU4obN3F?=
+ =?us-ascii?Q?7KjZCFFEjzu+O0I0TAoQ1fEvzH0vNzARGjMvJUvJyyP1GyRz7zXKXz1DAMnu?=
+ =?us-ascii?Q?HglPaiAUWeMswsJki2cSiiDrIysqENmmSQUh0ZivXe4sN2G0QuINTEGqkVaG?=
+ =?us-ascii?Q?+5fduv4INF1dG4Ru021OKyJkQMsur8iOuhcwIr54w/bbLC6xGC7f/QE9yK63?=
+ =?us-ascii?Q?JHF5e9u8np0VqdPQzvC4rjSCkVTNLM2/i2rqq5OtFhQAyyjmjwD9vEbN7veI?=
+ =?us-ascii?Q?O8jb78acO2dZBkkG7spsbHFpzJdA+UFq3r4R0YniV0hltvzYNfSw+3uHUGpj?=
+ =?us-ascii?Q?l58C71WOmdfiQRfv0m/X5f7kH+43Hy17qAfiX7fyD5eI+3nfAs/Jy6ZysU5x?=
+ =?us-ascii?Q?dS4iNGG8n4qOAW+YWJ0gcW7cRQ+QianxhIAsf3QXh8znan08gDg8IXUW8WCe?=
+ =?us-ascii?Q?e7SeLQphiuc2IDeowehSiUa89RtlqHlstezvO+SyryIyR9QyG8o3xQ9VsIih?=
+ =?us-ascii?Q?dd45SFJpDua1tLcMkfghRUM/0eksjEzYEBcpQLQglCPP70F9jrFp1IWABU3X?=
+ =?us-ascii?Q?n8OhYXOoShYt/1Wy9dqX/v9jQB5Ne6kM1vYNa8ynbZUV6fqCDaXxj4HHOe3e?=
+ =?us-ascii?Q?hC8NGo/5MptS3EiOVjJSfqDFK/fMSUkEYtUfh43XVGRpJ8r4s07lSXZXY0DZ?=
+ =?us-ascii?Q?mbB/vRvckUf8VXpbZlPGHzZ332UCvK76hh0UNyxlK/e9QwsqLcWeYSxrjtsU?=
+ =?us-ascii?Q?bFae1+JS+EdPe6aNg8QjzUe4RbpscD5g2XGzeRDzy1Vm6cBy983MgArImcwf?=
+ =?us-ascii?Q?j0hssuxcw0grkQw01sRva/dWtyxzdB9XKn4aOLG95eJuNRjqYUv2HSmYheXf?=
+ =?us-ascii?Q?+o7z6g7Fe9Ocb543ExaYsSjvvazKMfq1lgTGxY2rviPoDgAmVGWgiKd56BPy?=
+ =?us-ascii?Q?spTTmAxWFC6+rpLYjGe91ksBC68kX3IH9o+iWeYwPW79DCtZ9luJ+qH6g5T+?=
+ =?us-ascii?Q?Tta8qs1x722XvKFEjT/dau5yN1zlPfvkVZ8IOsdza7H/50mSSxzHGYcA0Xx0?=
+ =?us-ascii?Q?zNjYmTWpt5y39P0neuuKTiNNr8hDIe76CuTMc6p8JQGm1j6WmwT+GxqMHng/?=
+ =?us-ascii?Q?Aw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	FULYwG6/Cf0HADcBkPpcq+ZDLX0Av6EjtN7rhn2gdiEbgIFEKHS1JyAx7qKsrHqcGfaJS2HZ2t8S122HV8mTVUoOjTdXkzSJdDaDWW9ap878EKWOLhUEubHfrhpXkrWXEAI9qo/8dy07CMJ/UJnJYeCBAZiACXkkXqEa48MRwBKMf93oryox2jCXZkWSbNo26MhqR4tFdUXbT84TX47rZI1KS5B0s5hxi2FjApCjAxqlk5ZQSsiUq5gZ0b9o2ADpZQfS8E1VYjT1WVAPrS6K95vxHvXU+1E8DqpAHSvrYl3/LbYRontdnPh6B8zLHYsUnmVFSwjVbCFrKsDBCnNYoQmJM4vVpnIqdEe8zTEI5CPyQqMM9gayqSgBY1MurkJz9+kOLuM4xtNYlUK0XdDNLZzNKIPymtmfGdFE/KJEShCsCudnV9MZyX1bheAPMn00ErN4VIfExkN9m+Caax+g3Tah7A82uparVm6hXHwnCeV51eOz6HFeojZaz20vVxHLqMdwP/Hd6JZQNY3M5f5dYe6li+13UqGqAbIMnAzPqBc4GTkYw8QqMTGsyZkxXrUQygXrkDzSVAIR3hX2Ji5deAvGHkLtgyPiRWhYJRT1qNw=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32e8c76c-af00-416e-3684-08dc25db2711
+X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2024 23:43:56.4149
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aOVdRSdFiPMI5NfGCC7NvMTi1S7xZydpx42B32tsmCyTeCOPenRuARv4sSc4ztTbZ7qS1+9OHfPVfchTAfNY7A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB4857
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-04_14,2024-01-31_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0
+ mlxlogscore=999 suspectscore=0 adultscore=0 spamscore=0 malwarescore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402040183
+X-Proofpoint-GUID: se6Of1MwbsCekeWEafOSaKqgDXxPfEG_
+X-Proofpoint-ORIG-GUID: se6Of1MwbsCekeWEafOSaKqgDXxPfEG_
 
-On Fri, Feb 02, 2024 at 10:20:29AM +0800, Ming Lei wrote:
-> madvise(MADV_POPULATE_READ) tries to populate all page tables in the
-> specific range, so it is usually sequential IO if VMA is backed by
-> file.
+On Sun, Feb 04, 2024 at 07:32:55AM -0500, Jeff Layton wrote:
+> We recently added several functions to the file locking API. Add stubs
+> for those functions for when CONFIG_FILE_LOCKING is set to n.
 > 
-> Set ra_pages as device max request size for the involved readahead in
-> the ADV_POPULATE_READ, this way reduces latency of madvise(MADV_POPULATE_READ)
-> to 1/10 when running madvise(MADV_POPULATE_READ) over one 1GB file with
-> usual(default) 128KB of read_ahead_kb.
-> 
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Don Dutile <ddutile@redhat.com>
-> Cc: Rafael Aquini <raquini@redhat.com>
-> Cc: Dave Chinner <david@fromorbit.com>
-> Cc: Mike Snitzer <snitzer@kernel.org>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> Fixes: 403594111407 ("filelock: add some new helper functions")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202402041412.6YvtlflL-lkp@intel.com/
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 > ---
->  mm/madvise.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 51 insertions(+), 1 deletion(-)
+> Just a small follow-on fix for CONFIG_FILE_LOCKING=n builds for the
+> file_lease split. Christian, it might be best to squash this into
+> the patch it Fixes.
 > 
-> diff --git a/mm/madvise.c b/mm/madvise.c
-> index 912155a94ed5..db5452c8abdd 100644
-> --- a/mm/madvise.c
-> +++ b/mm/madvise.c
-> @@ -900,6 +900,37 @@ static long madvise_dontneed_free(struct vm_area_struct *vma,
->  		return -EINVAL;
+> That said, I'm starting to wonder if we ought to just hardcode
+> CONFIG_FILE_LOCKING to y. Does anyone ship kernels with it disabled? I
+> guess maybe people with stripped-down embedded builds might?
+
+One thing you might try is building a kernel with both settings
+and compare the resulting object sizes.
+
+CONFIG_FILE_LOCKING was added during the git era, actually, so we
+have some reasonable archaeology available:
+
+commit bfcd17a6c5529bc37234cfa720a047cf9397bcfc
+Author:     Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
+AuthorDate: Wed Aug 6 15:12:22 2008 +0200
+Commit:     J. Bruce Fields <bfields@fieldses.org>
+CommitDate: Mon Sep 29 17:56:57 2008 -0400
+
+    Configure out file locking features
+    
+    This patch adds the CONFIG_FILE_LOCKING option which allows to remove
+    support for advisory locks. With this patch enabled, the flock()
+    system call, the F_GETLK, F_SETLK and F_SETLKW operations of fcntl()
+    and NFS support are disabled. These features are not necessarly needed
+    on embedded systems. It allows to save ~11 Kb of kernel code and data:
+    
+       text          data     bss     dec     hex filename
+    1125436        118764  212992 1457192  163c28 vmlinux.old
+    1114299        118564  212992 1445855  160fdf vmlinux
+     -11137    -200       0  -11337   -2C49 +/-
+    
+    This patch has originally been written by Matt Mackall
+    <mpm@selenic.com>, and is part of the Linux Tiny project.
+
+
+Embedded folks might want to keep CONFIG_FILE_LOCKING.
+
+
+> Another thought too: "locks_" as a prefix is awfully generic. Might it be
+> better to rename these new functions with a "filelock_" prefix instead?
+> That would better distinguish to the casual reader that this is dealing
+> with a file_lock object. I'm happy to respin the set if that's the
+> consensus.
+
+"posix_lock" might be even better, but no-one likes to make function
+names longer.
+
+
+> ---
+>  include/linux/filelock.h | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+> index 4a5ad26962c1..553d65a88048 100644
+> --- a/include/linux/filelock.h
+> +++ b/include/linux/filelock.h
+> @@ -263,6 +263,27 @@ static inline int fcntl_getlease(struct file *filp)
+>  	return F_UNLCK;
 >  }
 >  
-> +static void madvise_restore_ra_win(struct file **file, unsigned int ra_pages)
+> +static inline bool lock_is_unlock(struct file_lock *fl)
 > +{
-> +	if (*file) {
-> +		struct file *f = *file;
-> +
-> +		f->f_ra.ra_pages = ra_pages;
-> +		fput(f);
-> +		*file = NULL;
-> +	}
+> +	return false;
 > +}
 > +
-> +static struct file *madvise_override_ra_win(struct file *f,
-> +		unsigned long start, unsigned long end,
-> +		unsigned int *old_ra_pages)
+> +static inline bool lock_is_read(struct file_lock *fl)
 > +{
-> +	unsigned int io_pages;
-> +
-> +	if (!f || !f->f_mapping || !f->f_mapping->host)
-> +		return NULL;
-> +
-> +	io_pages = inode_to_bdi(f->f_mapping->host)->io_pages;
-> +	if (((end - start) >> PAGE_SHIFT) < io_pages)
-> +		return NULL;
-> +
-> +	f = get_file(f);
-> +	*old_ra_pages = f->f_ra.ra_pages;
-> +	f->f_ra.ra_pages = io_pages;
-> +
-> +	return f;
+> +	return false;
 > +}
+> +
+> +static inline bool lock_is_write(struct file_lock *fl)
+> +{
+> +	return false;
+> +}
+> +
+> +static inline void locks_wake_up(struct file_lock *fl)
+> +{
+> +}
+> +
+> +#define for_each_file_lock(_fl, _head)	while(false)
+> +
+>  static inline void
+>  locks_free_lock_context(struct inode *inode)
+>  {
+> 
+> ---
+> base-commit: 1499e59af376949b062cdc039257f811f6c1697f
+> change-id: 20240204-flsplit3-da666d82b7b4
+> 
+> Best regards,
+> -- 
+> Jeff Layton <jlayton@kernel.org>
+> 
+> 
 
-This won't do what you think if the file has been marked
-FMODE_RANDOM before this populate call.
-
-IOWs, I don't think madvise should be digging in the struct file
-readahead stuff here. It should call vfs_fadvise(FADV_SEQUENTIAL) to
-do the set the readahead mode, rather that try to duplicate
-FADV_SEQUENTIAL (badly).  We already do this for WILLNEED to make it
-do the right thing, we should be doing the same thing here.
-
-Also, AFAICT, there is no need for get_file()/fput() here - the vma
-already has a reference to the struct file, and the vma should not
-be going away whilst the madvise() operation is in progress.
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Chuck Lever
 
