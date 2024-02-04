@@ -1,105 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-10220-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10221-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C26C848D46
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 12:57:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03458848DA7
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 13:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5A3F1F214EA
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 11:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B50F281E16
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 Feb 2024 12:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80851224C6;
-	Sun,  4 Feb 2024 11:57:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3727C224DE;
+	Sun,  4 Feb 2024 12:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="XNEtcZmM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BI9dNCw6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CDF5224CC;
-	Sun,  4 Feb 2024 11:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B7B224CB;
+	Sun,  4 Feb 2024 12:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707047861; cv=none; b=qjXpKVdkGb07tEOEZzEeHtZ8DOEgyhtSeOizCoH/I/+aCWtvvbWqrGxVJ17OK3lhVodUMGFURszIMB4hD5yfl5igY/DK040Rkiw8kKFdCYWrKlzK6h2H3ax6E7gXmkCnB067OxpGv+lEFV0cZBnL+KAy7ibYvAQMQZhtsjLjGUM=
+	t=1707049999; cv=none; b=qXmOXN5DcuXbmPYDK7GAE6ydfXHEBAXctQmu1EXF+YzBq3OXZzXulBtNFp2tdRqWjZ2WLjtSwtT2kmTYTVzkxn1AiRqHZpQ89ZALTDRgOAmhlZE83Yuc0NOZx9Hxtnpyaf07HRd4N+RNB8NhbHvTuOIWiEjvt6glxjsZvhs0b5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707047861; c=relaxed/simple;
-	bh=NQM9ewEAOMuQm+se/Npgt3IKsTDh+L8SAE7Lj7MYFvU=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=M2T15ekIPPEe2f1mi9Jzny1vbu+tC89IDNqvwRkLfO+dE/0oH/crSYCjW/XmDrQFw6S05Hd9iFRlAbChotCGDJIc9nALrRk+lgT/o39zbQZEY8cj3FAxf9u/uy4x/+RLqx7WpQEOhZbFlthsA0FjLh8l4FrHZGWa9wvmqcF0TF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=XNEtcZmM; arc=none smtp.client-ip=162.62.58.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1707047849; bh=6IHcRw4gkKhhZegzn1OH3uiNgGEL9LqQ6Vszdi2xy6A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=XNEtcZmMiwTlKiTLDHEiKAaqccfnTRiFpyYhr1a8JFjz1ie5yikEjhQnKH7vkYgz7
-	 CHTKs9YKDYe/Oe/xiy4i0Fw4tWPAJ9HUptw6SBNl+ztuc3D6cHwVIN/ktTUUdlAKgB
-	 6ArgbqrGn45Etw2lb9vcqIKCT+UHGH7WUY419Tp8=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.140])
-	by newxmesmtplogicsvrsza7-0.qq.com (NewEsmtp) with SMTP
-	id CD5A4A7F; Sun, 04 Feb 2024 19:51:21 +0800
-X-QQ-mid: xmsmtpt1707047481t8mna7hj6
-Message-ID: <tencent_164AB8743976ED67863C2F375496E236B009@qq.com>
-X-QQ-XMAILINFO: OOPJ7pYMv25tidAIa0px2wHqSkcb+RQFaqhNT1q4VDqpL/DSKIkClttaSJejqZ
-	 oQkl8S+6CuffNTMlObsck87wXme7JbMeTk+lamkaB6OuCt++r5qO+ML+T8y2grA5l7dbNvacBbYh
-	 TvNDtN3P8c+7KO5ub0//l2rBseiVjyqka+F4eaFlRnZ1lsJCQBTRkWVnSLVmRNOMiazPYWkfzLe1
-	 VuhCX/i3pKNyxllhBgUOmXp36UTFsAZb5C2qJ8Rgk5z1LeCjR/dzF8eFEzg8cEs8/i7iGdeMm+VY
-	 pkHH//REvMxc1J+ekB6sFzSG8iZn3EDvsQKh3qLaD1KKeo1xMZNe1M4jw1uFuQsqcyeqo5cpo6pz
-	 molP7pK75fiKAHEuPkp3lI7EIEnKSzow1tLQxzKPDuqXfUun3gv3NIyzFhrZK9IMkE9GcF+vXdkg
-	 GMqSls4E8Vk5u+PHo6HUwhkkh4QgIaHl/QqWigg+44Ij4zn/+JjMq+B4TuMgc6OljGqjnqFq3TKQ
-	 5tmdo2gJ11QzuF3UMhgqNGJjAcOXYUTFhc0fyNikJ3l0B9cY8EXcvO+roWAGsc3fIdgILdym+BcT
-	 A+wviPpOlDD5yklMwEZSYOniE7yJst6BXNzcIdA7FSwSJcX89FsfsJvBH+fJM2c+X8zfovJ8AkD6
-	 u/H9fjt4EbaBE50Z+GnW5cDEaFVWIPaQgPcVXQQrOxuNok8L413CTapaPGfC/1LPX6B59TlAMKJ0
-	 b0wTGQqh05W4W5rCHrKDT0k6xWsZgo5af+NrMWtskF6DYYS1nEK6xu8sLNDz/Dl5j33Z6rhqqrmA
-	 yAEG91SypdEb/Bq9p5t+p3ExNFsmy1OuLIZih4NWp1Iy4Wqyf6NMwUbLVYBG2HSzO/iEnqGF17RS
-	 8uVMkuen2XwJt7pZN5W7PVpUtZLQIe8eCjmbgkGxxN11/+Gi8gTP6grpwVd19sOHSEQfPb3kL+RO
-	 N35bq/MNQ=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+57028366b9825d8e8ad0@syzkaller.appspotmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH next] hfsplus: fix oob in hfsplus_bnode_read_key
-Date: Sun,  4 Feb 2024 19:51:22 +0800
-X-OQ-MSGID: <20240204115121.1906264-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000c37a740610762e55@google.com>
-References: <000000000000c37a740610762e55@google.com>
+	s=arc-20240116; t=1707049999; c=relaxed/simple;
+	bh=tUb84TlzXHt1IU/2JXj468FUS1oRysS/ztfYJPoYHp4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fDyj0RSFSg48SCOM0cHIFEud+y+mLdHgyx+DQ3CLijHCJHFEYZW/IJKYKB2g/yU9FUau8CtC9AKhLZwsQMhF7A3v8GFoh2H0eav2GabEeRJf902SieukWC5L54kBM9xZKkMgu69Lyi4CgbyzSaUoHXsE7dPGHFQsQ9cQDhUF2ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BI9dNCw6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A13CC433F1;
+	Sun,  4 Feb 2024 12:33:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707049999;
+	bh=tUb84TlzXHt1IU/2JXj468FUS1oRysS/ztfYJPoYHp4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=BI9dNCw6srBdVv2d6s4fdVRyF6Q5nj8TgLOoHUgs6OiICA9dexhGykAxw5imT3QLU
+	 clUOjqspg17cwmhJuGP/8b3FNtkEfEuEM4bK7qM7pV76bSeQMvnO6jnpip3fq7MHvf
+	 BAR7VgFZ/RyYx5TELqFfR0wRPa2ST3/Pcc/AA0VP6m9zw+9DvuKVvQRpqYnrUrSjvI
+	 r1o8lTUe9/zE2oBqNYyIuvBHKTXr2yJMpadoM34IuWlGJf4Ud925WQ9qnT47BZs3cH
+	 D3rkZhda+B9QDT0RaJBz8bpmlWdcgByOhttIv18/ObDpTiB0kQdJ2HEZcwTksjVKFN
+	 u7Lkx1NrIVS5w==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Sun, 04 Feb 2024 07:32:55 -0500
+Subject: [PATCH] filelock: add stubs for new functions when
+ CONFIG_FILE_LOCKING=n
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240204-flsplit3-v1-1-9820c7d9ce16@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAPaDv2UC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDIwMT3bSc4oKczBJj3ZREMzOzFAujJPMkEyWg8oKi1LTMCrBR0bG1tQA
+ 3JXiZWgAAAA==
+To: Christian Brauner <brauner@kernel.org>, 
+ Al Viro <viro@zeniv.linux.org.uk>, Chuck Lever <chuck.lever@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ kernel test robot <lkp@intel.com>, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2028; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=tUb84TlzXHt1IU/2JXj468FUS1oRysS/ztfYJPoYHp4=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBlv4QHX6KksZ4zQY7QHs4PamLpO9ItNSIcm/Xlu
+ JYUjeZHVIGJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZb+EBwAKCRAADmhBGVaC
+ FQ8FD/4mvgATOGCSC4QBT43oj6d4HGsFeiX7kppaIBfKAaXZS6BAxwH0/glK7jGhFLuKwnI0vHi
+ 2TZoCdGeaLY5KUjhMTUzpg8zrzYRTFZBQvBbFRFvarLTEdXkqjrMFuSdw8KIqONnWIm2xkIOlgO
+ 8Usr7m+Sozb211U7aASJpnsD0Elu2IQvlNf4O8NsaemBPtzAf0YtqFKNcXa4F/ZhFNIc3ETKl7J
+ 9Jr5sFgwifCdCbpUF6rECc//W4bpPd3EJBSiI/+25mtR7bYWo2l9pKAnacftcxpydTFl6ligUDv
+ U7LfXnYX5anjso0vor6moqyxJ8oVQxQIaLmV/2RQovX5ZThw7PwkI5TP2ncpkS8ixb5ZsD+Kh6C
+ UJPjh/HqWhmMI608RFSPelhFBZrdSZbRLu2xL89xWRuZU9BxR0hNtjuapTmOP6IIngTl1mnaWtO
+ Ws+gAlYzd/DDXsbXisl5PjbUIYymzvVMiyysULzkD35mMu3v4mMPNfpRl527l/uswPWcqzGr1gx
+ sEfFKOp46g/b6Q808YIhr/5YFPe4wmjjjqIZ4clujx2yck8tb/SkwCbRkaz7rBczWEQgkr+n9eE
+ q7ApE3Q1LP8NloMM9rZ9sz3+aOtU6Epb8bnOgJT9Fsjz1wymtXlRUtm+QjsrqDzii20Jrit2t8r
+ k8eR1ThyZrTdowg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-In hfs_brec_insert(), if data has not been moved to "data_off + size", the size
-should not be added when reading search_key from node->page.
+We recently added several functions to the file locking API. Add stubs
+for those functions for when CONFIG_FILE_LOCKING is set to n.
 
-Reported-and-tested-by: syzbot+57028366b9825d8e8ad0@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Fixes: 403594111407 ("filelock: add some new helper functions")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202402041412.6YvtlflL-lkp@intel.com/
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/hfsplus/brec.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Just a small follow-on fix for CONFIG_FILE_LOCKING=n builds for the
+file_lease split. Christian, it might be best to squash this into
+the patch it Fixes.
 
-diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
-index 1918544a7871..9e0e0c1f15a5 100644
---- a/fs/hfsplus/brec.c
-+++ b/fs/hfsplus/brec.c
-@@ -138,7 +138,8 @@ int hfs_brec_insert(struct hfs_find_data *fd, void *entry, int entry_len)
- 	 * at the start of the node and it is not the new node
- 	 */
- 	if (!rec && new_node != node) {
--		hfs_bnode_read_key(node, fd->search_key, data_off + size);
-+		hfs_bnode_read_key(node, fd->search_key, data_off + 
-+				(idx_rec_off == data_rec_off ? 0 : size));
- 		hfs_brec_update_parent(fd);
- 	}
+That said, I'm starting to wonder if we ought to just hardcode
+CONFIG_FILE_LOCKING to y. Does anyone ship kernels with it disabled? I
+guess maybe people with stripped-down embedded builds might?
+
+Another thought too: "locks_" as a prefix is awfully generic. Might it be
+better to rename these new functions with a "filelock_" prefix instead?
+That would better distinguish to the casual reader that this is dealing
+with a file_lock object. I'm happy to respin the set if that's the
+consensus.
+---
+ include/linux/filelock.h | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+index 4a5ad26962c1..553d65a88048 100644
+--- a/include/linux/filelock.h
++++ b/include/linux/filelock.h
+@@ -263,6 +263,27 @@ static inline int fcntl_getlease(struct file *filp)
+ 	return F_UNLCK;
+ }
  
++static inline bool lock_is_unlock(struct file_lock *fl)
++{
++	return false;
++}
++
++static inline bool lock_is_read(struct file_lock *fl)
++{
++	return false;
++}
++
++static inline bool lock_is_write(struct file_lock *fl)
++{
++	return false;
++}
++
++static inline void locks_wake_up(struct file_lock *fl)
++{
++}
++
++#define for_each_file_lock(_fl, _head)	while(false)
++
+ static inline void
+ locks_free_lock_context(struct inode *inode)
+ {
+
+---
+base-commit: 1499e59af376949b062cdc039257f811f6c1697f
+change-id: 20240204-flsplit3-da666d82b7b4
+
+Best regards,
 -- 
-2.43.0
+Jeff Layton <jlayton@kernel.org>
 
 
