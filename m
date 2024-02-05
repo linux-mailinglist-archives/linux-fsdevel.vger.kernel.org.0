@@ -1,219 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-10337-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E1DA849FA7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 17:43:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA9184A015
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 17:58:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E19E1F253B6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 16:43:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46651C218AC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 16:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00A13C097;
-	Mon,  5 Feb 2024 16:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB1141770;
+	Mon,  5 Feb 2024 16:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdAa96kD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042A244C69
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 16:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1191B3EA9C;
+	Mon,  5 Feb 2024 16:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707151407; cv=none; b=No8/VyPm/j9dre752nLYYQTXTNdgejxrbxCgB5xRCQPaVvkdCJmT2wh1qkzr6t6K1Xs8AWkn+rPZK0yCHUMvlT0ECtFJYoiFiHunWSrIF1X3eu/ur2nCRGs38yknc3NPmSejgU1nMN1s8YIWL+s7B2n/kkYEMsWi3oBmFRJ+5zo=
+	t=1707152307; cv=none; b=JsrA9ydtCvLudb2n3F06VgTddG5RWE6HeESpLmtr/hcRvJihEPb/835Ao0wh1GRwe/iDrg2aEXHzScAGAQxqcKbEq+d8+5avgQ5zOrXUY734ljyrc6v/HewKt+2ry20O6Vf89+KLXeMrT6WJdDo6Rgd6JLTxSH3uUzTupon+UZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707151407; c=relaxed/simple;
-	bh=8OxqGc9vix9NkKoNC0s3Cyui0zO2bynkyDH/jlgbA5k=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=S29xc8CGQhLseyVA+Nony96uzj2iQEeWxxMhBr6KrAH5RgpNs7+q35HYTC/Lm1atlkPRa+Ef251J4/vnHhSG1amkFYju50bz/vNRjw+aFtyW59C0HuAUQjPe2iO+jTZJMYTfZHVhBmw0M93TfiApRYwJJsjx060ivefNpfwpKUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7bbb3de4dcbso549081739f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 08:43:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707151405; x=1707756205;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HVVduCt4pD0y3Mn0F7G0Ei30vvm4n/FswoItULAhfmQ=;
-        b=vmg6Xwud3u/myWDofHx3o8bEocRf0ysPdn82vo827zBH1qWmosM49ZTH0lv16QYawW
-         Fm8Vf+ZLYfDzWUYClLTlLgULHZIbonzKmVlsOkpbhl5sHlqim76vJ3QeFXjKUmVwVcvL
-         glDREIbiaK9bH9IvOR/5IwAs5G2uowISkJ+mtGHMB8jIAai7/I1NhoMzpWCy9vNuYd4r
-         ccIaNUDMq4SHu/HD0fArDLuzxPXkVBt15fm+maTY1tGqeiMQ+tKrG/NtPhcVVK9P2oTa
-         wZF5ltBfkFi5mpsf+EeRgrBE+WpaII3oxaS9vGQBUfRwqcFUJJccJ/YF9TFuoTMnwcY6
-         OFuA==
-X-Gm-Message-State: AOJu0Yy6u3dFa5rnxyNbjD/6M3AP0Q8vb7rZcz1IGkacnsTk66ZvbrPw
-	dVY/3b7mIQPuMnTEHecC/MxpgMeWrCMkfpcGykUvEr52SRcp+6VRhVrto2TMarxLOelvbfOMjMb
-	/lShKgfLijNrKJVWi+wJeu2ZIaPoaAA8LpGh3lVHHlBkfl6H83w20JXw=
-X-Google-Smtp-Source: AGHT+IHjRx/kYKvsFPIuIsFBj5pCd0NUoBUXs/p9s8oyT10r+Aa/4mjQm8YOi77gi4+ldck09mhYrUnR+jTxnr1ykjnoBwdW3HBF
+	s=arc-20240116; t=1707152307; c=relaxed/simple;
+	bh=9FpafEGlyrNhPgZJkrgRLS7U6aCYTe6Poar4f0Fu86c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UNX2AZ2loPzImhL2BHBwDYF++BgtrPHACT87etOZ+8o3NWj4+bPKrc6VbR4GO2P3ME3pv2tt3Xr38bF69f5AYUQ3qteh+jTXBuqAZsjliJo8IDzS552nPk1kYsEECngwnrQrNrzielmarhz5eWNXSbHxduGkpB040xBesVJlBAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdAa96kD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42EE0C433C7;
+	Mon,  5 Feb 2024 16:58:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707152306;
+	bh=9FpafEGlyrNhPgZJkrgRLS7U6aCYTe6Poar4f0Fu86c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jdAa96kD60IeV9lxQp0ubdqOgUSHcdsjtge2WP6mvoDwpwOe+Rw7nwcU7ORKlVlgr
+	 8Z6UYcfu0rXRgY6H147qPvpixPmJkpZDmWrIwgKeNqmHE5Dyf5eNNmQ5bBvWaONUZO
+	 0/G6+v/VmTdZm/r0jhWTvEEg+oGSkpJiB3YYAtdV41ad/d4EyHHPk7vnDwmNhbZO9W
+	 xGQCvUQAyZvm+DIKz7D+cBrAtQbQgXkRRwM6jx1tMc0pifYl3BcJGyd0M/p6YJjmTK
+	 m/3/iDifHMb1SIEd4HlIJDGTt/kOZPRgXRKA/sGbloE3oJcO4SJAp50Cw6wGa0iRnt
+	 6WaVOdTjOW2yA==
+Date: Mon, 5 Feb 2024 16:58:20 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v8 13/38] KVM: arm64: Manage GCS registers for guests
+Message-ID: <ZcETrPAFFfgAy/PT@finisterre.sirena.org.uk>
+References: <20240203-arm64-gcs-v8-0-c9fec77673ef@kernel.org>
+ <20240203-arm64-gcs-v8-13-c9fec77673ef@kernel.org>
+ <868r3z6y6v.wl-maz@kernel.org>
+ <825d2b35-fa10-43ad-b3b3-b29a77f3fed0@sirena.org.uk>
+ <8634u76i36.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2c8d:b0:7c0:2a76:a607 with SMTP id
- i13-20020a0566022c8d00b007c02a76a607mr3745iow.0.1707151405160; Mon, 05 Feb
- 2024 08:43:25 -0800 (PST)
-Date: Mon, 05 Feb 2024 08:43:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001524350610a52994@google.com>
-Subject: [syzbot] [ceph?] [fs?] INFO: task hung in ceph_mdsc_pre_umount
-From: syzbot <syzbot+4bbc13a207327f82b3b0@syzkaller.appspotmail.com>
-To: ceph-devel@vger.kernel.org, idryomov@gmail.com, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, xiubli@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    076d56d74f17 Add linux-next specific files for 20240202
-git tree:       linux-next
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=104ea9b7e80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=428086ff1c010d9f
-dashboard link: https://syzkaller.appspot.com/bug?extid=4bbc13a207327f82b3b0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a4ef2fe80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1255e7c4180000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/dece45d1a4b5/disk-076d56d7.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4921e269b178/vmlinux-076d56d7.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2a9156da9091/bzImage-076d56d7.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4bbc13a207327f82b3b0@syzkaller.appspotmail.com
-
-INFO: task syz-executor268:5081 blocked for more than 143 seconds.
-      Not tainted 6.8.0-rc2-next-20240202-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor268 state:D stack:26296 pid:5081  tgid:5081  ppid:5070   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5400 [inline]
- __schedule+0x17df/0x4a40 kernel/sched/core.c:6727
- __schedule_loop kernel/sched/core.c:6804 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6819
- schedule_timeout+0xb0/0x310 kernel/time/timer.c:2159
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common kernel/sched/completion.c:116 [inline]
- wait_for_common kernel/sched/completion.c:127 [inline]
- wait_for_completion+0x355/0x620 kernel/sched/completion.c:148
- __flush_workqueue+0x730/0x1630 kernel/workqueue.c:3617
- ceph_mdsc_pre_umount+0x5b5/0x8b0 fs/ceph/mds_client.c:5475
- ceph_kill_sb+0x9f/0x4b0 fs/ceph/super.c:1535
- deactivate_locked_super+0xc4/0x130 fs/super.c:477
- ceph_get_tree+0x9a9/0x17b0 fs/ceph/super.c:1361
- vfs_get_tree+0x90/0x2a0 fs/super.c:1784
- vfs_cmd_create+0xe4/0x230 fs/fsopen.c:230
- __do_sys_fsconfig fs/fsopen.c:476 [inline]
- __se_sys_fsconfig+0x967/0xec0 fs/fsopen.c:349
- do_syscall_64+0xfb/0x240
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
-RIP: 0033:0x7f1723f3ba39
-RSP: 002b:00007ffde9dc2ba8 EFLAGS: 00000246 ORIG_RAX: 00000000000001af
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f1723f3ba39
-RDX: 0000000000000000 RSI: 0000000000000006 RDI: 0000000000000003
-RBP: 00000000000143e0 R08: 0000000000000000 R09: 0000000000000006
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffde9dc2bbc
-R13: 431bde82d7b634db R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/29:
- #0: ffffffff8e130d60 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:298 [inline]
- #0: ffffffff8e130d60 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:750 [inline]
- #0: ffffffff8e130d60 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
-2 locks held by getty/4823:
- #0: ffff88802b08d0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc900031432f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
-2 locks held by syz-executor268/5081:
- #0: ffff888022c74c70 (&fc->uapi_mutex){+.+.}-{3:3}, at: __do_sys_fsconfig fs/fsopen.c:474 [inline]
- #0: ffff888022c74c70 (&fc->uapi_mutex){+.+.}-{3:3}, at: __se_sys_fsconfig+0x8e6/0xec0 fs/fsopen.c:349
- #1: ffff888022e380e0 (&type->s_umount_key#41/1){+.+.}-{3:3}, at: alloc_super+0x20e/0x8f0 fs/super.c:345
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 PID: 29 Comm: khungtaskd Not tainted 6.8.0-rc2-next-20240202-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2e0 lib/dump_stack.c:106
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:222 [inline]
- watchdog+0xfb0/0xff0 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:388
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:242
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 PID: 11 Comm: kworker/u4:1 Not tainted 6.8.0-rc2-next-20240202-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
-Workqueue: events_unbound toggle_allocation_gate
-RIP: 0010:__text_poke+0x34b/0xd30
-Code: e8 3a 08 c2 00 4c 8b b4 24 40 01 00 00 fa bb 00 02 00 00 be 00 02 00 00 4c 21 f6 31 ff e8 6d 18 5f 00 4c 21 f3 48 89 5c 24 50 <4c> 89 7c 24 38 75 07 e8 79 13 5f 00 eb 0a e8 72 13 5f 00 e8 fd 42
-RSP: 0018:ffffc90000107780 EFLAGS: 00000006
-RAX: 0000000000000000 RBX: 0000000000000200 RCX: ffff888016eabc00
-RDX: 0000000000000000 RSI: 0000000000000200 RDI: 0000000000000000
-RBP: ffffc90000107950 R08: ffffffff8134bcf3 R09: fffff52000020ec0
-R10: dffffc0000000000 R11: fffff52000020ec0 R12: ffffea000007ad00
-R13: fffffffffffffeff R14: 0000000000000246 R15: ffffffff81eb4896
-FS:  0000000000000000(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055a9d88ed600 CR3: 000000000df32000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- text_poke arch/x86/kernel/alternative.c:1985 [inline]
- text_poke_bp_batch+0x59c/0xb30 arch/x86/kernel/alternative.c:2318
- text_poke_flush arch/x86/kernel/alternative.c:2487 [inline]
- text_poke_finish+0x30/0x50 arch/x86/kernel/alternative.c:2494
- arch_jump_label_transform_apply+0x1c/0x30 arch/x86/kernel/jump_label.c:146
- static_key_disable_cpuslocked+0xce/0x1c0 kernel/jump_label.c:235
- static_key_disable+0x1a/0x20 kernel/jump_label.c:243
- toggle_allocation_gate+0x1b8/0x250 mm/kfence/core.c:831
- process_one_work kernel/workqueue.c:3049 [inline]
- process_scheduled_works+0x913/0x14f0 kernel/workqueue.c:3125
- worker_thread+0xa60/0x1000 kernel/workqueue.c:3206
- kthread+0x2f0/0x390 kernel/kthread.c:388
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:242
- </TASK>
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.413 msecs
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="CPooLl9HGmOME8a3"
+Content-Disposition: inline
+In-Reply-To: <8634u76i36.wl-maz@kernel.org>
+X-Cookie: You might have mail.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+--CPooLl9HGmOME8a3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On Mon, Feb 05, 2024 at 03:34:05PM +0000, Marc Zyngier wrote:
+> Mark Brown <broonie@kernel.org> wrote:
+> > On Mon, Feb 05, 2024 at 09:46:16AM +0000, Marc Zyngier wrote:
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+> > > We have had this discussion in the past. This must be based on the
+> > > VM's configuration. Guarding the check with the host capability is a
+> > > valuable optimisation, but that's nowhere near enough. See the series
+> > > that I have posted on this very subject (you're on Cc), but you are
+> > > welcome to invent your own mechanism in the meantime.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> > Right, which postdates the version you're replying to and isn't merged
+> > yet - the current code was what you were asking for at the time.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> v1 and v2 predate it. And if the above is what I did ask, then I must
+> have done a very poor job of explaining what was required. For which I
+> apologise profusely.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+To be clear it's what was asked for prior to the switch to the
+forthcoming switch to the parsing idregs scheme, I haven't pulled in
+your idregs work yet since it's being rapidly iterated and this is an
+already large series with dependencies.
 
-If you want to undo deduplication, reply with:
-#syz undup
+> > I'm
+> > expecting to update all these feature series to work with that once it
+> > gets finalised and merged but it's not there yet, I do see I forgot to
+> > put a note in v9 about that like I did for dpISA - sorry about that, I
+> > was too focused on the clone3() rework when rebasing onto the new
+> > kernel.
+
+> > This particular series isn't going to get merged for a while yet anyway
+> > due to the time it'll take for userspace testing, I'm expecting your
+> > series to be in by the time it becomes an issue.
+
+> Right. Then I'll ignore it for the foreseeable future.
+
+Actually now I think about it would you be open to merging the guest
+context switching bit without the rest of the series (pending me fixing
+the issues you raise of course)?  If so I'll split that bit out in the
+hope that we can reduce the size of the series and CC list for the
+userspace support which I imagine would make people a bit happier.
+
+> > > > +		write_sysreg_s(ctxt_sys_reg(ctxt, GCSCRE0_EL1),
+> > > > +			       SYS_GCSCRE0_EL1);
+> > > > +	}
+
+> > > For the benefit of the unsuspecting reviewers, and in the absence of a
+> > > public specification (which the XML drop isn't), it would be good to
+> > > have the commit message explaining the rationale of what gets saved
+> > > when.
+
+> > What are you looking for in terms of rationale here?  The KVM house
+> > style is often very reliant on reader context so it would be good to
+> > know what considerations you'd like to see explicitly addressed.
+
+> Nothing to do with style, everything to do with substance: if nothing
+
+The style I'm referring to there is the style for documentation.
+
+> in the host kernel makes any use of these registers, why are they
+> eagerly saved/restored on nVHE/hVHE? I'm sure you have a reason for
+> it, but it isn't that obvious. Because these two modes need all the
+> help they can get in terms of overhead reduction.
+
+Ah, I see - yes, they should probably be moved somewhere else.  Though
+I'm not clear why some of the other registers that we're saving and
+restoring in the same place are being done eagerly?  The userspace
+TPIDRs stand out for example, they're in taken care of in
+__sysreg_save_user_state() which is called in the same paths.  IIRC my
+thinking there was something along the lines of "this is where we save
+and restore everything else that's just a general system register, I
+should be consistent".
+
+Am I right in thinking kvm_arch_vcpu_load()/_put() would make sense?
+Everything in there currently looked like it was there more due to doing
+something more complex than simple register save/restore and we weren't
+worrying too much about what was going on with just the sysregs.
+
+> > These
+> > registers shouldn't do anything when we aren't running the guest so
+> > they're not terribly ordering sensitive, the EL2 ones will need a bit
+> > more consideration in the face of nested virt.
+
+> The EL2 registers should follow the exact same pattern, specially once
+> you fix the VNCR bugs I pointed out.
+
+Great, that's what I'd thought thanks - I hadn't checked yet.
+
+--CPooLl9HGmOME8a3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmXBE6sACgkQJNaLcl1U
+h9AxYAgAgiMyW4DrBuI2SbKKpBxTNqFWS6hwvL/pz27nGc2T9cgR2P2ODSG3A9Cv
+MJh2K7irI4JHl/jj/8GLJLH5IVMOVyVYPtTxauHvCVu+I6RM92hSfVey9I7clK40
+Lxhri2n3D8Tj89RvRi90LvEgM0pJKqGBYYpc+lZBuUVhpsHDx1rwBsuMmryxpbyX
+U9xvwhFc+lNUfrCUYIVp0VThb8QBJzBYs0SSVyM1ggHARaP+t64DzE+vrtI9h5QN
+CQo6qN+H0ojTvx9E0MGZhqBPtNnGOs3jafSq88emxX431D+3kZSJwY4npbfFNQd3
+Il677REj9RoCNO5cSTKMWWb27EzOxg==
+=xxbo
+-----END PGP SIGNATURE-----
+
+--CPooLl9HGmOME8a3--
 
