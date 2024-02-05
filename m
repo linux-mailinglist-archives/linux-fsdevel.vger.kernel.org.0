@@ -1,187 +1,354 @@
-Return-Path: <linux-fsdevel+bounces-10247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10249-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3A88495C8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 10:01:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A960E8495FF
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 10:09:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E58A285354
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 09:01:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 308601F22027
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 09:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89ADB11CB9;
-	Mon,  5 Feb 2024 09:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 825D813AE0;
+	Mon,  5 Feb 2024 09:06:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7338A12E46
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 09:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9249A179A7;
+	Mon,  5 Feb 2024 09:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707123706; cv=none; b=grqKqL9BmEnFlXOh3RFS+e2UKAr2rqh2TfEq4sdXXPQWlaBupJGyfnfO1tTfO7MAsyq67cgF3zSPblvzwlra9KW436AN4R50z47U7zKda4QoWWbo+Bzdpzc6Ja4kpvcLvZNluiwRIUIm2606k4iC2bXdrns5jw3JI+ZMdyreQGc=
+	t=1707123994; cv=none; b=K5abp4V3chBxvU4bTPszI4wJEYGAUl6oS3RWC6xQVDBCW1QBhZet95r5Ig1SXArsUxta/VM5dVabaCIR/2HudlkJxPL5rFwuNMJSt8qs8aGbeArL8j7YmwXq6uFWeQhauSLYpk2nItGcwsuiDLzirKb6MiNxADq2kO6a0THSR3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707123706; c=relaxed/simple;
-	bh=Y1tvMdcD1KcRa8ihdcMDLe2VTaYbBW2VHfg53zzTNxA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qKidPs9heHWuItRHwuqyJnFFAXC+SmAjONymWxQzFK2kHlfHplAl+ZQ7MagtqspS4DXwFAC0n01z3JIacerLdBXTUGH73e/dpZbO6DkJjc23+Rg8bg0oDP2c6bhl0n8lTbF7pS6Z72l/qDFrFBn87rSVc52vuv2Bg/rhp4iLmoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-363c3862a93so10604745ab.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 01:01:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707123703; x=1707728503;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DL7sT0R0lCMePu4/4pnetWzg+tj7VTTtQXhE0cYtBTE=;
-        b=NvkccSFV37gk0l6P2Vs+7+iNCeBzlUSFTJAInXJeMTQEQ8jTTR6tCovdhF4nfB6ETE
-         hW6PJ71nl78H2PW4eJij18+8ouYa/5LODfHZ3pGFUfqBbfaLpWN08dNVE02dMJ0f5oqN
-         6ybig33vGVDDiPYHEcVd7IIVEcfxDnD9PkS3r5gVmy4cJeKDKe2JI+N9j3WnMZl9JvHu
-         wd2MLeIvCzFgMa4CjfbCByjegt8qvWYCPYyFL7TNduXB86VwXwjeljC1jqoQI2y2Genf
-         5ZJ87+YfdAdfpJLv0klRsNcf8ABcKLj8boMDFdH9+5q8AUEjo4J82SWWHD34bRRC04tM
-         0JOQ==
-X-Gm-Message-State: AOJu0Yxc+feo7kYRTMbUNY9KfJ/0FgAlYHNFihJ6PswzjQO0BV3Aq3/b
-	oiKWjHdzywYWxuSe2VjQWajb4Tb8fI7EhvjJgr+qMq0FF0J5gcJy+fmAYTZ+LdNNNDfpdjfOqIy
-	3HusqTpdUsuxn7GSiiNnFG/3+7tZd2W93n05t3gf3wH3Nwy7LsnuNMTU=
-X-Google-Smtp-Source: AGHT+IGtQjw4M7O1hHR4+f3rLVTV1yft0FTQPoMe0O5W1v3q58JneTGq6ZgeJuRNi5dOMcqrrcyOhHSsvN+fyCo/ZlmlbC7Vcj83
+	s=arc-20240116; t=1707123994; c=relaxed/simple;
+	bh=PDAFWnh9a+ea8WSwjnOVDSSW9QVnF4JmFry3dryJTpk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dmogophe3enVVdfDNT5DFQEh2jwgGXF9XJ8MYr2+kLQPUaM363WVdopkuVpvzXLzOpMXkER9gB7A5f2a2D5he8wItM/JNZyU4o3I0JREgHrXuLxAUIFsBP9LQrxeyMapL4dSvTGOkBqAtO0o4yHUGQtjYQj8H9TjOzvNGn+5R4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 41595xRB088167;
+	Mon, 5 Feb 2024 17:05:59 +0800 (+08)
+	(envelope-from zhaoyang.huang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4TT0pq29X7z2SQS27;
+	Mon,  5 Feb 2024 17:05:55 +0800 (CST)
+Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Mon, 5 Feb 2024 17:05:57 +0800
+From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+To: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
+        Yu
+ Zhao <yuzhao@google.com>, <linux-block@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Zhaoyang
+ Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
+Subject: [PATCHv8 1/1] block: introduce content activity based ioprio
+Date: Mon, 5 Feb 2024 17:05:52 +0800
+Message-ID: <20240205090552.40567-1-zhaoyang.huang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:216a:b0:35f:eb20:3599 with SMTP id
- s10-20020a056e02216a00b0035feb203599mr553015ilv.2.1707123703648; Mon, 05 Feb
- 2024 01:01:43 -0800 (PST)
-Date: Mon, 05 Feb 2024 01:01:43 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f19a1406109eb5c5@google.com>
-Subject: [syzbot] [ext4?] general protection fault in __block_commit_write
-From: syzbot <syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 41595xRB088167
 
-Hello,
+From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
-syzbot found the following issue on:
+Currently, request's ioprio are set via task's schedule priority(when no
+blkcg configured), which has high priority tasks possess the privilege on
+both of CPU and IO scheduling. Furthermore, most of the write requestes
+are launched asynchronosly from kworker which can't know the submitter's
+priorities.
+This commit works as a hint of original policy by promoting the request
+ioprio based on the page/folio's activity. The original idea comes from
+LRU_GEN which provides more precised folio activity than before. This
+commit try to adjust the request's ioprio when certain part of its folios
+are hot, which indicate that this request carry important contents and
+need be scheduled ealier.
 
-HEAD commit:    56897d51886f Merge tag 'trace-v6.8-rc2' of git://git.kerne..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1550b18fe80000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b60b985eda147877
-dashboard link: https://syzkaller.appspot.com/bug?extid=18df508cf00a0598d9a6
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=166f7aa8180000
+This commit provide two sets of exclusive APIs.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/1c0cc47da79d/disk-56897d51.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ef9122f0ce05/vmlinux-56897d51.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/8e2856cfcf95/bzImage-56897d51.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/5175bbf40ca7/mount_0.gz
+*counting activities by iterating the bio's pages
+The filesystem should call bio_set_active_ioprio() before submit_bio on the
+spot where they want(buffered read/write/sync etc).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+18df508cf00a0598d9a6@syzkaller.appspotmail.com
+*counting activities during each call
+The filesystem should call bio_set_active_ioprio_page/folio() after
+calling bio_add_page/folio. Please be noted that this set of API can not
+handle bvec_try_merge_page cases.
 
-loop0: detected capacity change from 0 to 2048
-general protection fault, probably for non-canonical address 0xdffffc0000000004: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000020-0x0000000000000027]
-CPU: 0 PID: 6860 Comm: syz-executor.0 Not tainted 6.8.0-rc2-syzkaller-00397-g56897d51886f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
-RIP: 0010:__block_commit_write+0x61/0x270 fs/buffer.c:2165
-Code: ea 03 80 3c 02 00 0f 85 16 02 00 00 48 8b 44 24 18 4c 8b 78 28 48 b8 00 00 00 00 00 fc ff df 49 8d 7f 20 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 e4 01 00 00 41 8b 47 20 4c 89 fb 45 31 f6 31 ed
-RSP: 0018:ffffc90008947918 EFLAGS: 00010212
-RAX: dffffc0000000000 RBX: ffffea00019b1180 RCX: ffffffff82086d31
-RDX: 0000000000000004 RSI: ffffffff820823e4 RDI: 0000000000000020
-RBP: 0000000000000040 R08: 0000000000000004 R09: 0000000000000040
-R10: 0000000000000040 R11: 0000000000000003 R12: 0000000000000000
-R13: 0000000000000040 R14: 0000000000000040 R15: 0000000000000000
-FS:  00007f6f6a4016c0(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020007640 CR3: 0000000015340000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- block_write_end+0xc8/0x250 fs/buffer.c:2251
- ext4_write_end+0x277/0xed0 fs/ext4/inode.c:1287
- ext4_da_write_end+0xa64/0xce0 fs/ext4/inode.c:3020
- generic_perform_write+0x33b/0x620 mm/filemap.c:3941
- ext4_buffered_write_iter+0x11f/0x3d0 fs/ext4/file.c:299
- ext4_file_write_iter+0x819/0x1960 fs/ext4/file.c:698
- call_write_iter include/linux/fs.h:2085 [inline]
- new_sync_write fs/read_write.c:497 [inline]
- vfs_write+0x6e1/0x1110 fs/read_write.c:590
- ksys_write+0x12f/0x260 fs/read_write.c:643
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xd8/0x270 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x6f/0x77
-RIP: 0033:0x7f6f6967dda9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6f6a4010c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f6f697abf80 RCX: 00007f6f6967dda9
-RDX: 0000000000000040 RSI: 0000000020002ac0 RDI: 0000000000000005
-RBP: 00007f6f696ca47a R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000000b R14: 00007f6f697abf80 R15: 00007ffc14067c28
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__block_commit_write+0x61/0x270 fs/buffer.c:2165
-Code: ea 03 80 3c 02 00 0f 85 16 02 00 00 48 8b 44 24 18 4c 8b 78 28 48 b8 00 00 00 00 00 fc ff df 49 8d 7f 20 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 e4 01 00 00 41 8b 47 20 4c 89 fb 45 31 f6 31 ed
-RSP: 0018:ffffc90008947918 EFLAGS: 00010212
-RAX: dffffc0000000000 RBX: ffffea00019b1180 RCX: ffffffff82086d31
-RDX: 0000000000000004 RSI: ffffffff820823e4 RDI: 0000000000000020
-RBP: 0000000000000040 R08: 0000000000000004 R09: 0000000000000040
-R10: 0000000000000040 R11: 0000000000000003 R12: 0000000000000000
-R13: 0000000000000040 R14: 0000000000000040 R15: 0000000000000000
-FS:  00007f6f6a4016c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f9a064f7000 CR3: 0000000015340000 CR4: 0000000000350ef0
-----------------
-Code disassembly (best guess), 1 bytes skipped:
-   0:	03 80 3c 02 00 0f    	add    0xf00023c(%rax),%eax
-   6:	85 16                	test   %edx,(%rsi)
-   8:	02 00                	add    (%rax),%al
-   a:	00 48 8b             	add    %cl,-0x75(%rax)
-   d:	44 24 18             	rex.R and $0x18,%al
-  10:	4c 8b 78 28          	mov    0x28(%rax),%r15
-  14:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
-  1b:	fc ff df
-  1e:	49 8d 7f 20          	lea    0x20(%r15),%rdi
-  22:	48 89 fa             	mov    %rdi,%rdx
-  25:	48 c1 ea 03          	shr    $0x3,%rdx
-* 29:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2d:	0f 85 e4 01 00 00    	jne    0x217
-  33:	41 8b 47 20          	mov    0x20(%r15),%eax
-  37:	4c 89 fb             	mov    %r15,%rbx
-  3a:	45 31 f6             	xor    %r14d,%r14d
-  3d:	31 ed                	xor    %ebp,%ebp
+This commit is verified on a v6.6 6GB RAM android14 system via 4 test cases
+by calling bio_set_active_ioprio in erofs, ext4, f2fs and blkdev(raw
+partition of gendisk)
 
+Case 1:
+script[a] which get significant improved fault time as expected[b]*
+where dd's cost also shrink from 55s to 40s.
+(1). fault_latency.bin is an ebpf based test tool which measure all task's
+   iowait latency during page fault when scheduled out/in.
+(2). costmem generate page fault by mmaping a file and access the VA.
+(3). dd generate concurrent vfs io.
 
+[a]
+./fault_latency.bin 1 5 > /data/dd_costmem &
+costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
+costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
+costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
+costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
+dd if=/dev/block/sda of=/data/ddtest bs=1024 count=2048000 &
+dd if=/dev/block/sda of=/data/ddtest1 bs=1024 count=2048000 &
+dd if=/dev/block/sda of=/data/ddtest2 bs=1024 count=2048000 &
+dd if=/dev/block/sda of=/data/ddtest3 bs=1024 count=2048000
+[b]
+                       mainline		commit
+io wait                736us            523us
+
+* provide correct result for test case 1 in v7 which was compared between
+EMMC and UFS wrongly.
+
+Case 2:
+fio -filename=/dev/block/by-name/userdata -rw=randread -direct=0 -bs=4k -size=2000M -numjobs=8 -group_reporting -name=mytest
+mainline: 513MiB/s
+READ: bw=531MiB/s (557MB/s), 531MiB/s-531MiB/s (557MB/s-557MB/s), io=15.6GiB (16.8GB), run=30137-30137msec
+READ: bw=543MiB/s (569MB/s), 543MiB/s-543MiB/s (569MB/s-569MB/s), io=15.6GiB (16.8GB), run=29469-29469msec
+READ: bw=474MiB/s (497MB/s), 474MiB/s-474MiB/s (497MB/s-497MB/s), io=15.6GiB (16.8GB), run=33724-33724msec
+READ: bw=535MiB/s (561MB/s), 535MiB/s-535MiB/s (561MB/s-561MB/s), io=15.6GiB (16.8GB), run=29928-29928msec
+READ: bw=523MiB/s (548MB/s), 523MiB/s-523MiB/s (548MB/s-548MB/s), io=15.6GiB (16.8GB), run=30617-30617msec
+READ: bw=492MiB/s (516MB/s), 492MiB/s-492MiB/s (516MB/s-516MB/s), io=15.6GiB (16.8GB), run=32518-32518msec
+READ: bw=533MiB/s (559MB/s), 533MiB/s-533MiB/s (559MB/s-559MB/s), io=15.6GiB (16.8GB), run=29993-29993msec
+READ: bw=524MiB/s (550MB/s), 524MiB/s-524MiB/s (550MB/s-550MB/s), io=15.6GiB (16.8GB), run=30526-30526msec
+READ: bw=529MiB/s (554MB/s), 529MiB/s-529MiB/s (554MB/s-554MB/s), io=15.6GiB (16.8GB), run=30269-30269msec
+READ: bw=449MiB/s (471MB/s), 449MiB/s-449MiB/s (471MB/s-471MB/s), io=15.6GiB (16.8GB), run=35629-35629msec
+
+commit: 633MiB/s
+READ: bw=668MiB/s (700MB/s), 668MiB/s-668MiB/s (700MB/s-700MB/s), io=15.6GiB (16.8GB), run=23952-23952msec
+READ: bw=589MiB/s (618MB/s), 589MiB/s-589MiB/s (618MB/s-618MB/s), io=15.6GiB (16.8GB), run=27164-27164msec
+READ: bw=638MiB/s (669MB/s), 638MiB/s-638MiB/s (669MB/s-669MB/s), io=15.6GiB (16.8GB), run=25071-25071msec
+READ: bw=714MiB/s (749MB/s), 714MiB/s-714MiB/s (749MB/s-749MB/s), io=15.6GiB (16.8GB), run=22409-22409msec
+READ: bw=600MiB/s (629MB/s), 600MiB/s-600MiB/s (629MB/s-629MB/s), io=15.6GiB (16.8GB), run=26669-26669msec
+READ: bw=592MiB/s (621MB/s), 592MiB/s-592MiB/s (621MB/s-621MB/s), io=15.6GiB (16.8GB), run=27036-27036msec
+READ: bw=691MiB/s (725MB/s), 691MiB/s-691MiB/s (725MB/s-725MB/s), io=15.6GiB (16.8GB), run=23150-23150msec
+READ: bw=569MiB/s (596MB/s), 569MiB/s-569MiB/s (596MB/s-596MB/s), io=15.6GiB (16.8GB), run=28142-28142msec
+READ: bw=563MiB/s (590MB/s), 563MiB/s-563MiB/s (590MB/s-590MB/s), io=15.6GiB (16.8GB), run=28429-28429msec
+READ: bw=712MiB/s (746MB/s), 712MiB/s-712MiB/s (746MB/s-746MB/s), io=15.6GiB (16.8GB), run=22478-22478msec
+
+Case 3:
+This commit is also verified by the case of launching camera APP which is
+usually considered as heavy working load on both of memory and IO, which
+shows 12%-24% improvement.
+
+		ttl = 0		ttl = 50	ttl = 100
+mainline        2267ms		2420ms		2316ms
+commit          1992ms          1806ms          1998ms
+
+case 4:
+androbench has no improvment as well as regression in RD/WR test item
+while make a 3% improvement in sqlite items.
+
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+change of v2: calculate page's activity via helper function
+change of v3: solve layer violation by move API into mm
+change of v4: keep block clean by removing the page related API
+change of v5: introduce the macros of bio_add_folio/page for read dir.
+change of v6: replace the macro of bio_add_xxx by submit_bio which
+                iterating the bio_vec before launching bio to block layer
+change of v7: introduce the function bio_set_active_ioprio
+	      provide updated test result
+change of v8: provide two sets of APIs for bio_set_active_ioprio_xxx
+---
+---
+ block/Kconfig             | 27 +++++++++++
+ block/bio.c               | 94 +++++++++++++++++++++++++++++++++++++++
+ include/linux/bio.h       |  3 ++
+ include/linux/blk_types.h |  7 ++-
+ 4 files changed, 130 insertions(+), 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/block/Kconfig b/block/Kconfig
+index f1364d1c0d93..5e721678ea3d 100644
+--- a/block/Kconfig
++++ b/block/Kconfig
+@@ -228,6 +228,33 @@ config BLOCK_HOLDER_DEPRECATED
+ config BLK_MQ_STACKING
+ 	bool
+ 
++config BLK_CONT_ACT_BASED_IOPRIO
++	bool "Enable content activity based ioprio"
++	depends on LRU_GEN
++	default n
++	help
++	  This item enable the feature of adjust bio's priority by
++	  calculating its content's activity.
++	  This feature works as a hint of original bio_set_ioprio
++	  which means rt task get no change of its bio->bi_ioprio
++	  while other tasks have the opportunity to raise the ioprio
++	  if the bio take certain numbers of active pages.
++	  The file system should use this by modifying their buffered
++	  read/write/sync function to raise the bio->bi_ioprio before
++	  calling submit_bio or after bio_add_page/folio
++
++config BLK_CONT_ACT_BASED_IOPRIO_ITER_BIO
++	bool "Counting bio's activity by iterating bio's pages"
++	depends on BLK_CONT_ACT_BASED_IOPRIO
++	help
++	  The API under this config counts bio's activity by iterating the bio.
++
++config BLK_CONT_ACT_BASED_IOPRIO_ADD_PAGE
++	bool "Counting bio's activity when adding page or folio"
++	depends on BLK_CONT_ACT_BASED_IOPRIO && !BLK_CONT_ACT_BASED_IOPRIO_ITER_BIO
++	help
++	  The API under this config count activity during each call buy can't
++	   handle bvec_try_merge_page cases, please be sure you are ok with that.
+ source "block/Kconfig.iosched"
+ 
+ endif # BLOCK
+diff --git a/block/bio.c b/block/bio.c
+index 816d412c06e9..73916a6c319f 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1476,6 +1476,100 @@ void bio_set_pages_dirty(struct bio *bio)
+ }
+ EXPORT_SYMBOL_GPL(bio_set_pages_dirty);
+ 
++/*
++ * bio_set_active_ioprio() is helper function for fs to adjust the bio's ioprio via
++ * calculating the content's activity which measured from MGLRU.
++ * The file system should call this function before submit_bio for the buffered
++ * read/write/sync.
++ */
++#ifdef CONFIG_BLK_CONT_ACT_BASED_IOPRIO
++#ifdef CONFIG_BLK_CONT_ACT_BASED_IOPRIO_ITER_BIO
++void bio_set_active_ioprio(struct bio *bio)
++{
++	struct bio_vec bv;
++	struct bvec_iter iter;
++	struct page *page;
++	int class, level, hint;
++	int activity = 0;
++	int cnt = 0;
++
++	class = IOPRIO_PRIO_CLASS(bio->bi_ioprio);
++	level = IOPRIO_PRIO_LEVEL(bio->bi_ioprio);
++	hint = IOPRIO_PRIO_HINT(bio->bi_ioprio);
++	/*apply legacy ioprio policy on RT task*/
++	if (task_is_realtime(current)) {
++		bio->bi_ioprio = IOPRIO_PRIO_VALUE_HINT(IOPRIO_CLASS_RT, level, hint);
++		return;
++	}
++	bio_for_each_bvec(bv, bio, iter) {
++		page = bv.bv_page;
++		activity += PageWorkingset(page) ? 1 : 0;
++		cnt++;
++		if (activity > bio->bi_vcnt / 2) {
++			class = IOPRIO_CLASS_RT;
++			break;
++		} else if (activity > bio->bi_vcnt / 4) {
++			/*
++			 * all itered pages are all active so far
++			 * then raise to RT directly
++			 */
++			if (activity == cnt) {
++				class = IOPRIO_CLASS_RT;
++				break;
++			} else
++				class = max(IOPRIO_PRIO_CLASS(get_current_ioprio()),
++						IOPRIO_CLASS_BE);
++		}
++	}
++	if (!class && activity > cnt / 2)
++		class = IOPRIO_CLASS_RT;
++	else if (!class && activity > cnt / 4)
++		class = max(IOPRIO_PRIO_CLASS(get_current_ioprio()), IOPRIO_CLASS_BE);
++
++	bio->bi_ioprio = IOPRIO_PRIO_VALUE_HINT(class, level, hint);
++}
++void bio_set_active_ioprio_folio(struct bio *bio, struct folio *folio) {}
++void bio_set_active_ioprio_page(struct bio *bio, struct page *page) {}
++#endif
++#ifdef CONFIG_BLK_CONT_ACT_BASED_IOPRIO_ADD_PAGE
++/*
++ * bio_set_active_ioprio_page/folio are helper functions for counting
++ * the bio's activity during each all. However, it can't handle the
++ * scenario of bvec_try_merge_page. The submitter can use them if there
++ * is no such case in the system(block size < page size)
++ */
++void bio_set_active_ioprio_page(struct bio *bio, struct page *page)
++{
++	int class, level, hint;
++
++	class = IOPRIO_PRIO_CLASS(bio->bi_ioprio);
++	level = IOPRIO_PRIO_LEVEL(bio->bi_ioprio);
++	hint = IOPRIO_PRIO_HINT(bio->bi_ioprio);
++	bio->bi_cont_act += PageWorkingset(page) ? 1 : 0;
++
++	if (bio->bi_cont_act > bio->bi_vcnt / 2)
++		class = IOPRIO_CLASS_RT;
++	else if (bio->bi_cont_act > bio->bi_vcnt / 4)
++		class = max(IOPRIO_PRIO_CLASS(get_current_ioprio()), IOPRIO_CLASS_BE);
++
++	bio->bi_ioprio = IOPRIO_PRIO_VALUE_HINT(class, level, hint);
++}
++
++void bio_set_active_ioprio_folio(struct bio *bio, struct folio *folio)
++{
++	bio_set_active_ioprio_page(bio, &folio->page);
++}
++void bio_set_active_ioprio(struct bio *bio) {}
++#endif
++#else
++void bio_set_active_ioprio(struct bio *bio) {}
++void bio_set_active_ioprio_page(struct bio *bio, struct page *page) {}
++void bio_set_active_ioprio_folio(struct bio *bio, struct folio *folio) {}
++#endif
++EXPORT_SYMBOL_GPL(bio_set_active_ioprio);
++EXPORT_SYMBOL_GPL(bio_set_active_ioprio_page);
++EXPORT_SYMBOL_GPL(bio_set_active_ioprio_folio);
++
+ /*
+  * bio_check_pages_dirty() will check that all the BIO's pages are still dirty.
+  * If they are, then fine.  If, however, some pages are clean then they must
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 41d417ee1349..35221ee3dd54 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -487,6 +487,9 @@ void bio_iov_bvec_set(struct bio *bio, struct iov_iter *iter);
+ void __bio_release_pages(struct bio *bio, bool mark_dirty);
+ extern void bio_set_pages_dirty(struct bio *bio);
+ extern void bio_check_pages_dirty(struct bio *bio);
++extern void bio_set_active_ioprio(struct bio *bio);
++extern void bio_set_active_ioprio_folio(struct bio *bio, struct folio *folio);
++extern void bio_set_active_ioprio_page(struct bio *bio, struct page *page);
+ 
+ extern void bio_copy_data_iter(struct bio *dst, struct bvec_iter *dst_iter,
+ 			       struct bio *src, struct bvec_iter *src_iter);
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index d5c5e59ddbd2..a3a18b9a5168 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -314,7 +314,12 @@ struct bio {
+ 	struct bio_vec		*bi_io_vec;	/* the actual vec list */
+ 
+ 	struct bio_set		*bi_pool;
+-
++#ifdef CONFIG_BLK_CONT_ACT_BASED_IOPRIO
++	/*
++	 * bi_cont_act record total activities of bi_io_vec->pages
++	 */
++	u64			bi_cont_act;
++#endif
+ 	/*
+ 	 * We can inline a number of vecs at the end of the bio, to avoid
+ 	 * double allocations for a small number of bio_vecs. This member
+-- 
+2.25.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
