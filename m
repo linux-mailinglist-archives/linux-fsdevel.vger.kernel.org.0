@@ -1,124 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-10264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1399849930
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:48:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 207F0849944
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:55:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACFFD28128A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 11:48:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 807B51F22F8A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 11:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C39418EB9;
-	Mon,  5 Feb 2024 11:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EB8199A2;
+	Mon,  5 Feb 2024 11:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lD3RssUx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuep7jpG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B2118EAF
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 11:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D9518EB1;
+	Mon,  5 Feb 2024 11:55:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707133727; cv=none; b=XZqJWPh+ZeFnlZEhrxw1X4L5HojtpYHp+YoBB2k8a9Jp0YgGF9KZZLLsDojFUQ7C9GgHCHeconG6pVkSEbCoaq1DQqDgQEmW7DkKVJQ/szpFsE8hkb84P7k06g5AYp0c6O2SdEaP2uhSpxTodH45B728oqYkWHCeD71AlGRfM5o=
+	t=1707134123; cv=none; b=dKvHHlFsRiyvk1xywk7K4nW8cMSfDz4louqfPnlVNdkTNVAOC1llOfNprd6ADlCxfENX/squBRKhR8XDn/ynOpKZAP/9wtBJeDgju63Sw3jXBu7PDZnZLPrfg/GEsNSU+IA6iq5m5+uXGm+XzkPQilthl12rUrtJgEp3Dr0iZPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707133727; c=relaxed/simple;
-	bh=l5CX4MUSpNODrG+pghWnWssiLgNUXRT1YW1tv9NA8ME=;
+	s=arc-20240116; t=1707134123; c=relaxed/simple;
+	bh=vcTcw3QZM+FJ9OhHdU1Dr3k5mD5XU60j9QSyLvBtwqk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BkYAaSNc/AL0dRLW5odSsqEiv3id+IuENC0OgMnb6QlsPDcvfnhSLhOhdYyWvN28DUz0QPjP23FcujswkzfqZ1hJliwXQS3pGESgerfx7So53wh6t4/+9J5imbKp40OVzStNnVcMOQOXdMbrDfMu8ZBwheITu0mORRLeA8jJE7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lD3RssUx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9F74C433C7;
-	Mon,  5 Feb 2024 11:48:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=hOPhJ8Dy88KFVutDy7ab8f6VQv0GLi7WEEr076KZTJHDiwg1OVrSQkrYFra6vVcOBZzM78az1BdUWNf43UHEDwkClSxy/8JeeUuup1CpH5WwrrWanIPAjcLL1M2yyhiH9Kca2DD0AVdPtnPSD1NJk6NmV2d98g9YaZIYeTmovcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuep7jpG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5BC9C433F1;
+	Mon,  5 Feb 2024 11:55:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707133726;
-	bh=l5CX4MUSpNODrG+pghWnWssiLgNUXRT1YW1tv9NA8ME=;
+	s=k20201202; t=1707134122;
+	bh=vcTcw3QZM+FJ9OhHdU1Dr3k5mD5XU60j9QSyLvBtwqk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lD3RssUxgW/kqIF8GcwvdCM9e0GuFdNlqvWqfAzd61XSwGYLjuZ9uQstbKmRoX87O
-	 frzkfGL8WmVVFESqBQNF1K8HBT5ie4CnBzqTPzdms3da3GxZUo9iL1qNE/K40dFcNJ
-	 jvUGdhS5hCapm5V1CMlj4AQgQ87G0HK6PYqwVtHFE/bt775kvZ7QkxY1IoTHw1y2Tc
-	 I9sAI64IH02tNBOHCvHpk2FVhe9XyKnBu09eAJAHrDsd9r2IjOWIk6phNkLvRvQ7Ef
-	 1G5uHufLnXMrvNnxwMzQxki2viSIxrclURNF5GqoCz9SV+Gxs2Em7fq+V+5d1wEvZp
-	 Bur3VbKe/7iEQ==
-Date: Mon, 5 Feb 2024 12:48:42 +0100
-From: Carlos Maiolino <cem@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: Re: [PATCH RESEND 0/3] Add support for tmpfs quotas
-Message-ID: <eqiv6nlgvn2v5ttdcmg4uqr7wpl4qlasgmothqmjjqcfwdm2zt@r6xvh5eyafbm>
-References: <20240126180225.1210841-1-cem@kernel.org>
- <Tb_UQz5UisKRZbczrlN2L0xsKfHFFywIcojx1fVIPiioQwRHgNAhhV3Ciu8twF73Q_b90wrkMHHlLYVlqaYxtg==@protonmail.internalid>
- <20240129115949.5pqeskav7jkvvxuv@quack3>
+	b=iuep7jpGUmwYnp+IAvBhI6OUhEXB5j3ByEQl6CEXYsS8XNJbw/qqV3jCR+PQILklZ
+	 m60PSoaP1A5tGPFSnfDSiYVSFsyqyB89ForvQiedsBUD1mPl0CEw0dgEfU9XvHMWI3
+	 JonFJtvpFcKTH+CroZu8nfB+lkbtzszkoBIldVU52wrE+RhNUAiURyzCs/JzJuvHqF
+	 FPFfY8dMvYRyGjiUt81ChbA5SfLJ3ciJnknXEgQl7JE78Q4lpwBUbrxk2k0OWu8rlr
+	 Qs5ku2ig9e3p/Gp5QX+rPx8RJliZcurZ5XjOfFov0dTs9o0NLpsegWR7+6GoBlbuai
+	 j0PM/BTSDyCSA==
+Date: Mon, 5 Feb 2024 12:55:18 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
+	Jens Axboe <axboe@kernel.dk>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-block@vger.kernel.org
+Subject: Re: [PATCH v2 00/34] Open block devices as files
+Message-ID: <20240205-biotechnologie-korallen-d2b3a7138ec0@brauner>
+References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240129115949.5pqeskav7jkvvxuv@quack3>
+In-Reply-To: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
 
-On Mon, Jan 29, 2024 at 12:59:49PM +0100, Jan Kara wrote:
-> Hi Carlos!
+On Tue, Jan 23, 2024 at 02:26:17PM +0100, Christian Brauner wrote:
+> Hey Christoph,
+> Hey Jan,
+> Hey Jens,
 > 
-> On Fri 26-01-24 19:02:08, cem@kernel.org wrote:
-> > From: Carlos Maiolino <cem@kernel.org>
-> >
-> > Sending again with Jan's correct email address.
-> >
-> > This series add suport for quota management on tmpfs filesystems. Support for
-> > quotas in tmpfs has been added to Linux 6.6, so, give enable users to manage it.
-> >
-> > This series add 2 new helpers, one named do_quotactl(), which switches between
-> > quotactl() and quotactl_fd(), and the quotactl_handle() helper within quotaio,
-> > which passes quota_handle data to do_quotactl() depending on the filesystem
-> > associated with the mountpoint.
-> >
-> > The first patch is just a cleanup.
+> This opens block devices as files. Instead of introducing a separate
+> indirection into bdev_open_by_*() vis struct bdev_handle we can just
+> make bdev_file_open_by_*() return a struct file. Opening and closing a
+> block device from setup_bdev_super() and in all other places just
+> becomes equivalent to opening and closing a file.
 > 
-> Thanks for the patches! I did a few small tweaks (e.g. renamed
-> tmpfs_fstype() to nodev_fstype(), included nfs_fstype() in that function
-> and used it where appropriate; fixed up compilation breakage with RPC
-> configured on quotastats) and merged everything. Thanks again.
+> This has held up in xfstests and in blktests so far and it seems stable
+> and clean. The equivalence of opening and closing block devices to
+> regular files is a win in and of itself imho. Added to that is the
+> ability to do away with struct bdev_handle completely and make various
+> low-level helpers private to the block layer.
+> 
+> All places were we currently stash a struct bdev_handle we just stash a
+> file and use an accessor such as file_bdev() akin to I_BDEV() to get to
+> the block device.
+> 
+> It's now also possible to use file->f_mapping as a replacement for
+> bdev->bd_inode->i_mapping and file->f_inode or file->f_mapping->host as
+> an alternative to bdev->bd_inode allowing us to significantly reduce or
+> even fully remove bdev->bd_inode in follow-up patches.
+> 
+> In addition, we could get rid of sb->s_bdev and various other places
+> that stash the block device directly and instead stash the block device
+> file. Again, this is follow-up work.
+> 
+> Thanks!
+> Christian
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
 
-Thanks Honza, much appreciated. I didn't test different configurations, I'll try
-that next time I deal with quota-tools.
-Thanks again!
-
-Carlos
-> 
-> 								Honza
-> 
-> > Carlos Maiolino (3):
-> >   Rename searched_dir->sd_dir to sd_isdir
-> >   Add quotactl_fd() support
-> >   Enable support for tmpfs quotas
-> >
-> >  Makefile.am       |  1 +
-> >  mntopt.h          |  1 +
-> >  quotacheck.c      | 12 +++----
-> >  quotaio.c         | 19 +++++++++--
-> >  quotaio.h         |  2 ++
-> >  quotaio_generic.c | 11 +++----
-> >  quotaio_meta.c    |  3 +-
-> >  quotaio_v1.c      | 11 +++----
-> >  quotaio_v2.c      | 11 +++----
-> >  quotaio_xfs.c     | 21 ++++++------
-> >  quotaon.c         |  8 ++---
-> >  quotaon_xfs.c     |  9 +++---
-> >  quotastats.c      |  4 +--
-> >  quotasync.c       |  2 +-
-> >  quotasys.c        | 82 ++++++++++++++++++++++++++++++++++++-----------
-> >  quotasys.h        |  3 ++
-> >  16 files changed, 134 insertions(+), 66 deletions(-)
-> >
-> > --
-> > 2.43.0
-> >
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
-> 
+With all fixes applied I've moved this into vfs.super on vfs/vfs.git so
+this gets some exposure in -next asap. Please let me know if you have
+quarrels with that.
 
