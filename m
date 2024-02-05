@@ -1,223 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-10346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1291884A23B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 19:29:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 860B684A23D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 19:29:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 913771F22D2C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 18:29:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF8D1B2182B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 18:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F60D482C9;
-	Mon,  5 Feb 2024 18:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB03482F0;
+	Mon,  5 Feb 2024 18:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ZEYJAhpS"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q4KNRKtw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ROwfoMR6";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q4KNRKtw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ROwfoMR6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782FB481B3
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 18:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D16247F76
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 18:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707157561; cv=none; b=WejxzykQjsNFQjO3MjuNSHgXjgvA7w1/bi6GKLq32L+YR14gdacJko+JeoSGRS/79hUZ07cqdPJn1SUU2NbC2CMMCQs501QIdHSdHw1YeuEda2nUXptccthZvg5HEKrPutcsIkPYWRAy+s+tvxGaXcrFb8RfkDS3cTp3hGF2eqs=
+	t=1707157642; cv=none; b=W8V6ftLb7Z5U3hcD8Zpjy/XosXBrj4/MHl6RRF0/odVxBddfW2BrO7qnsAqmZX5Tz8K0TPgr5bQaeCfunvGdWeEo59T3R9a+n6BBc2TkcmJ8j0yOSL+oPerzDxuxI1q23i3SALhlPKhRxJp15+jG+COxuDTsXA7hqeiwKLjFjt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707157561; c=relaxed/simple;
-	bh=OhVjfgQ6ypsXAl4aTp6y2RSd+qg4DOU5DAB4K9X8HUE=;
+	s=arc-20240116; t=1707157642; c=relaxed/simple;
+	bh=HVddpkjrThTI+wcVOu7rQblO8jHrhD3YfQUQzyHTd6k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K2FFzBQsIsbiUw2H+KysS0pPTQFhg+ciTG/ummuI9M9lzatm1lViFmoL2AbxZlDuxsnU7OYgtxDdlk+6QXwajEKh7pXvMeH3O1NYoDHLC6k/qgD0L2e57Sxjyc4T//IuTxUGAaFj8xcF/JA18SR58bZjk9k7KvUia8NmTKrJuRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ZEYJAhpS; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1d746ce7d13so38664565ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 10:25:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1707157559; x=1707762359; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8YYhJmNwACs7xWzxaru2OLoYfAu9N74lwcPjzUDB+xg=;
-        b=ZEYJAhpSf25DJNLMudbcAfzw1CZQMJLzK/SqywQ5irB9Sq2jplxCSBCbNAxBwS+Txn
-         0L7nwuaesxFlBH0w6dg1Sgv904eVAU3pbZtPqeAE1fuHmxWkP4x3w9iC7mI7SgKqiL0P
-         N1c+a55ibd5Orfi5+g50OkgB/c/mIxdCx5Ftg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707157559; x=1707762359;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8YYhJmNwACs7xWzxaru2OLoYfAu9N74lwcPjzUDB+xg=;
-        b=TRZf1m+TZ5TfgyEJdIRzcNPJZW1A0DNOg4/kcSZ65Ek0EtY/JMgyLFwJc4OA1MkU3t
-         vedHI9S2jdT2ByazeYVyg6Xlxvirj1Q19D3z1UHiPwTCQQ03shPKjMvTSf/Op73/cUnl
-         5t9DIzt6Rnq8EB2KMgG6hsouKX8y5bbxYAqg4DeGJeWe/uV5NElKVLXIbYKrCjJkJDCo
-         pyXzCQYfZt2U+SDwktanaM6F42QYQAX08UFd7gtrai2njpL8V0Bd67bcWYMiXVuCBKPe
-         fM2CvTGflyPSC3t4QfXjVK3R2dkiPeNXFM826vlCFPRhQKczBkFH96eSehz5Pj3UOxGL
-         y/Qw==
-X-Gm-Message-State: AOJu0YxCwx/l+AJRpfZwMLdc5g9tK0terNRe1c5u4Vj0VDcAL0pRKYJC
-	yl7l37ls9iP5DjMMOAlDPJu9aqGEjkuQ808PjXIO3KJ2m1cqDSEFVIlPt5PeBmM=
-X-Google-Smtp-Source: AGHT+IGZSu01SCfpuVAoKxEEGhseye5jcYZ2OTQbBwLSosCOhrRB2L0bvS8C7HVgC2MzoPFWHatu+Q==
-X-Received: by 2002:a17:902:6f16:b0:1d9:742b:fedd with SMTP id w22-20020a1709026f1600b001d9742bfeddmr388747plk.34.1707157558764;
-        Mon, 05 Feb 2024 10:25:58 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCUbE7iGxVCPUBH4KvD0r1Rt49gMPSuQYHBQM6KluyR+1rAgHNElceTU1aObRosTlZRh1FwTv1OVSOIf5VGTjAwMhd8Xt2ohpeA+TlBhB25QhdhzTGBdE3ky5Ly2mQFPUURjnLLXpkP7V0yvChDB3MHjgqdb95/LIxNcHrt3OPWTXCSy1W8i1mP2JAETIcueqC1VCOhWPZUjKJlAfeYpMcsRgwqmeW/AIqBe2Ll/QP8ytuhKCvwSk8zJVNm2rMXjBS7v4r2WCPZw9dPf4XXIwg1wQHfPe1mozEAE1ZyTliyzm4tbIDfCZbZQZTYE/sDVy8ZcfcMOe5hCYpNtqjaK70F6w16d3Y1cQsjnGz7pwSTQS97sPVP9HJW5NbUIyIed5uExBAzifS8OSNOShYXISKThexfg5lqTXlALwMxkIgeZdFlfrI+YbM7GE3tE/EfeEvGkoKk4MIrk0dy+qxGTkwcIgG+b4mk0Qvjmwk1Ic/Ij1hLRr1BHlAs9hb4mBBJ3Gvd70gcpQehyK2WeY6yr/Veo52kvsaNLIvPGn2vG5EI=
-Received: from fastly.com (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id iy15-20020a170903130f00b001d8f3c7fb96sm170642plb.166.2024.02.05.10.25.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Feb 2024 10:25:58 -0800 (PST)
-Date: Mon, 5 Feb 2024 10:25:55 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc: chuck.lever@oracle.com, jlayton@kernel.org, linux-api@vger.kernel.org,
-	brauner@kernel.org, edumazet@google.com, davem@davemloft.net,
-	alexander.duyck@gmail.com, sridhar.samudrala@intel.com,
-	kuba@kernel.org, willemdebruijn.kernel@gmail.com, weiwan@google.com,
-	David.Laight@ACULAB.COM, arnd@arndb.de,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH net-next v5 1/3] eventpoll: support busy poll per epoll
- instance
-Message-ID: <20240205182555.GA10463@fastly.com>
-References: <20240131180811.23566-1-jdamato@fastly.com>
- <20240131180811.23566-2-jdamato@fastly.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pi8NCVrTRMOuicxDU38Abwneb/v4bIoRnfc2YM7NJJH9P+360dMsWH6B0HC/b1579NzAHStYG5vra6AZ8aJdgVzy+qk/+BXQ1j92xvAoN1p4+x7r+EpSXU/zuZZIYSsFclLZ0KYa0OgPNnrVheZFPuIguYtNtG3z4t/cO/P94ZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q4KNRKtw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ROwfoMR6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q4KNRKtw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ROwfoMR6; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 01A171F74C;
+	Mon,  5 Feb 2024 18:27:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1707157639; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=abq8dpjAqaY2FioVf6B14pRgDEVBdpv99Ovy0kuAf6I=;
+	b=Q4KNRKtwdxtP8ixTro4AbkFEEXfYSAXqPOlR+LyKHkokpw5LgSCFAuJxH7yWA+JpVqvOfq
+	GJEg63M1rPpty2h9D3DIcRE+cmx6DCvREwFzm6gpbnDsSw43/SZMUvNfKdbHmA1ZglSd14
+	wSwbxDg+MKakhzUGp8I2Y0jFKQNKlxI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1707157639;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=abq8dpjAqaY2FioVf6B14pRgDEVBdpv99Ovy0kuAf6I=;
+	b=ROwfoMR6H8zIb4czU4uvcbThaqkpvZyRxtDu3lv3eYiKcCpNv8zqpHt3N9DZAHqyVnQuBH
+	snc/w6mD7Q80/ZBg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1707157639; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=abq8dpjAqaY2FioVf6B14pRgDEVBdpv99Ovy0kuAf6I=;
+	b=Q4KNRKtwdxtP8ixTro4AbkFEEXfYSAXqPOlR+LyKHkokpw5LgSCFAuJxH7yWA+JpVqvOfq
+	GJEg63M1rPpty2h9D3DIcRE+cmx6DCvREwFzm6gpbnDsSw43/SZMUvNfKdbHmA1ZglSd14
+	wSwbxDg+MKakhzUGp8I2Y0jFKQNKlxI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1707157639;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=abq8dpjAqaY2FioVf6B14pRgDEVBdpv99Ovy0kuAf6I=;
+	b=ROwfoMR6H8zIb4czU4uvcbThaqkpvZyRxtDu3lv3eYiKcCpNv8zqpHt3N9DZAHqyVnQuBH
+	snc/w6mD7Q80/ZBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EACD7132DD;
+	Mon,  5 Feb 2024 18:27:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id RNRNOYYowWWOLgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 05 Feb 2024 18:27:18 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8A2FDA0809; Mon,  5 Feb 2024 19:27:18 +0100 (CET)
+Date: Mon, 5 Feb 2024 19:27:18 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, Josef Bacik <josef@toxicpanda.com>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>,
+	Sweet Tea Dorminy <thesweettea@meta.com>
+Subject: Re: [RFC][PATCH] fanotify: allow to set errno in FAN_DENY permission
+ response
+Message-ID: <20240205182718.lvtgfsxcd6htbqyy@quack3>
+References: <20231208080135.4089880-1-amir73il@gmail.com>
+ <20231213172844.ygjbkyl6i4gj52lt@quack3>
+ <CAOQ4uxjMv_3g1XSp41M7eV+Tr+6R2QK0kCY=+AuaMCaGj0nuJA@mail.gmail.com>
+ <20231215153108.GC683314@perftesting>
+ <CAOQ4uxjVuhznNZitsjzDCanqtNrHvFN7Rx4dhUEPeFxsM+S22A@mail.gmail.com>
+ <20231218143504.abj3h6vxtwlwsozx@quack3>
+ <CAOQ4uxjNzSf6p9G79vcg3cxFdKSEip=kXQs=MwWjNUkPzTZqPg@mail.gmail.com>
+ <CAOQ4uxgxCRoqwCs7mr+7YP4mmW7JXxRB20r-fsrFe2y5d3wDqQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240131180811.23566-2-jdamato@fastly.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxgxCRoqwCs7mr+7YP4mmW7JXxRB20r-fsrFe2y5d3wDqQ@mail.gmail.com>
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Q4KNRKtw;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ROwfoMR6
+X-Spamd-Result: default: False [-2.81 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[7];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email];
+	 FREEMAIL_TO(0.00)[gmail.com];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 01A171F74C
+X-Spam-Level: 
+X-Spam-Score: -2.81
+X-Spam-Flag: NO
 
-On Wed, Jan 31, 2024 at 06:08:03PM +0000, Joe Damato wrote:
-> Allow busy polling on a per-epoll context basis. The per-epoll context
-> usec timeout value is preferred, but the pre-existing system wide sysctl
-> value is still supported if it specified.
-> 
-> Note that this change uses an xor: either per epoll instance busy polling
-> is enabled on the epoll instance or system wide epoll is enabled. Enabling
-> both is disallowed.
+I'm sorry for the delay. The last week was busy and this fell through the
+cracks.
 
-I just realized that I updated the code below to use a an or (||) instead
-of xor (^), but forgot to update the commit message.
+On Mon 29-01-24 20:30:34, Amir Goldstein wrote:
+> On Mon, Dec 18, 2023 at 5:53 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > In the HttpDirFS HSM demo, I used FAN_OPEN_PERM on a mount mark
+> > to deny open of file during the short time that it's content is being
+> > punched out [1].
+> > It is quite complicated to explain, but I only used it for denying access,
+> > not to fill content and not to write anything to filesystem.
+> > It's worth noting that returning EBUSY in that case would be more meaningful
+> > to users.
+> >
+> > That's one case in favor of allowing FAN_DENY_ERRNO for FAN_OPEN_PERM,
+> > but mainly I do not have a proof that people will not need it.
+> >
+> > OTOH, I am a bit concerned that this will encourage developer to use
+> > FAN_OPEN_PERM as a trigger to filling file content and then we are back to
+> > deadlock risk zone.
+> >
+> > Not sure which way to go.
+> >
+> > Anyway, I think we agree that there is no reason to merge FAN_DENY_ERRNO
+> > before FAN_PRE_* events, so we can continue this discussion later when
+> > I post FAN_PRE_* patches - not for this cycle.
+> 
+> I started to prepare the pre-content events patches for posting and got back
+> to this one as well.
+> 
+> Since we had this discussion I have learned of another use case that
+> requires filling file content in FAN_OPEN_PERM hook, FAN_OPEN_EXEC_PERM
+> to be exact.
+>
+> The reason is that unless an executable content is filled at execve() time,
+> there is no other opportunity to fill its content without getting -ETXTBSY.
 
-I can fix this and send a v6.
+Yes, I've been scratching my head over this usecase for a few days. I was
+thinking whether we could somehow fill in executable (and executed) files on
+access but it all seemed too hacky so I agree that we probably have to fill
+them in on open. 
 
-> 
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> ---
->  fs/eventpoll.c | 49 +++++++++++++++++++++++++++++++++++++++++++++----
->  1 file changed, 45 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index 3534d36a1474..ce75189d46df 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -227,6 +227,8 @@ struct eventpoll {
->  #ifdef CONFIG_NET_RX_BUSY_POLL
->  	/* used to track busy poll napi_id */
->  	unsigned int napi_id;
-> +	/* busy poll timeout */
-> +	u64 busy_poll_usecs;
->  #endif
->  
->  #ifdef CONFIG_DEBUG_LOCK_ALLOC
-> @@ -386,12 +388,44 @@ static inline int ep_events_available(struct eventpoll *ep)
->  		READ_ONCE(ep->ovflist) != EP_UNACTIVE_PTR;
->  }
->  
-> +/**
-> + * busy_loop_ep_timeout - check if busy poll has timed out. The timeout value
-> + * from the epoll instance ep is preferred, but if it is not set fallback to
-> + * the system-wide global via busy_loop_timeout.
-> + *
-> + * @start_time: The start time used to compute the remaining time until timeout.
-> + * @ep: Pointer to the eventpoll context.
-> + *
-> + * Return: true if the timeout has expired, false otherwise.
-> + */
-> +static inline bool busy_loop_ep_timeout(unsigned long start_time, struct eventpoll *ep)
-> +{
-> +#ifdef CONFIG_NET_RX_BUSY_POLL
-> +	unsigned long bp_usec = READ_ONCE(ep->busy_poll_usecs);
-> +
-> +	if (bp_usec) {
-> +		unsigned long end_time = start_time + bp_usec;
-> +		unsigned long now = busy_loop_current_time();
-> +
-> +		return time_after(now, end_time);
-> +	} else {
-> +		return busy_loop_timeout(start_time);
-> +	}
-> +#endif
-> +	return true;
-> +}
-> +
->  #ifdef CONFIG_NET_RX_BUSY_POLL
-> +static bool ep_busy_loop_on(struct eventpoll *ep)
-> +{
-> +	return !!ep->busy_poll_usecs || net_busy_loop_on();
-> +}
-> +
->  static bool ep_busy_loop_end(void *p, unsigned long start_time)
->  {
->  	struct eventpoll *ep = p;
->  
-> -	return ep_events_available(ep) || busy_loop_timeout(start_time);
-> +	return ep_events_available(ep) || busy_loop_ep_timeout(start_time, ep);
->  }
->  
->  /*
-> @@ -404,7 +438,7 @@ static bool ep_busy_loop(struct eventpoll *ep, int nonblock)
->  {
->  	unsigned int napi_id = READ_ONCE(ep->napi_id);
->  
-> -	if ((napi_id >= MIN_NAPI_ID) && net_busy_loop_on()) {
-> +	if ((napi_id >= MIN_NAPI_ID) && ep_busy_loop_on(ep)) {
->  		napi_busy_loop(napi_id, nonblock ? NULL : ep_busy_loop_end, ep, false,
->  			       BUSY_POLL_BUDGET);
->  		if (ep_events_available(ep))
-> @@ -430,7 +464,8 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
->  	struct socket *sock;
->  	struct sock *sk;
->  
-> -	if (!net_busy_loop_on())
-> +	ep = epi->ep;
-> +	if (!ep_busy_loop_on(ep))
->  		return;
->  
->  	sock = sock_from_file(epi->ffd.file);
-> @@ -442,7 +477,6 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
->  		return;
->  
->  	napi_id = READ_ONCE(sk->sk_napi_id);
-> -	ep = epi->ep;
->  
->  	/* Non-NAPI IDs can be rejected
->  	 *	or
-> @@ -466,6 +500,10 @@ static inline void ep_set_busy_poll_napi_id(struct epitem *epi)
->  {
->  }
->  
-> +static inline bool ep_busy_loop_on(struct eventpoll *ep)
-> +{
-> +	return false;
-> +}
->  #endif /* CONFIG_NET_RX_BUSY_POLL */
->  
->  /*
-> @@ -2058,6 +2096,9 @@ static int do_epoll_create(int flags)
->  		error = PTR_ERR(file);
->  		goto out_free_fd;
->  	}
-> +#ifdef CONFIG_NET_RX_BUSY_POLL
-> +	ep->busy_poll_usecs = 0;
-> +#endif
->  	ep->file = file;
->  	fd_install(fd, file);
->  	return fd;
-> -- 
-> 2.25.1
-> 
+> So to keep things more flexible, I decided to add -ETXTBSY to the
+> allowed errors with FAN_DENY_ERRNO() and to decided to allow
+> FAN_DENY_ERRNO() with all permission events.
+>
+> To keep FAN_DENY_ERRNO() a bit more focused on HSM, I have
+> added a limitation that FAN_DENY_ERRNO() is allowed only for
+> FAN_CLASS_PRE_CONTENT groups.
+
+I have no problem with adding -ETXTBSY to the set of allowed errors. That
+makes sense. Adding FAN_DENY_ERRNO() to all permission events in
+FAN_CLASS_PRE_CONTENT groups - OK, if we don't find anything better - I
+wanted to hash out another possibility here: Currently all permission
+events (and thus also the events we plan to use for HSM AFAIU) are using
+'fd' to identify file where the event happened. This is used as identifier
+for response, can be used to fill in file contents for HSM but it also
+causes issues such as the problem with exec(2) occasionally failing if this
+fd happens to get closed only after exec(2) gets to checking
+deny_write_access(). So what if we implemented events needed for HSM as FID
+events (we'd have think how to match replies to events)? Then the app would
+open the file for filling in using FID as well as it would naturally close
+the handle before replying so problems with exec(2) would not arise. These
+would be essentially new events (so far we didn't allow permission events
+in FID groups) so allowing FAN_DENY_ERRNO() replies for them would be
+natural. Overall it would seem like a cleaner "clean room implementation"
+API?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
