@@ -1,448 +1,309 @@
-Return-Path: <linux-fsdevel+bounces-10250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87031849610
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 10:11:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 744658496E9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 10:46:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D25B287096
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 09:11:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F11CA1F24367
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 09:46:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD9712B6D;
-	Mon,  5 Feb 2024 09:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E37A134B7;
+	Mon,  5 Feb 2024 09:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QZBcbNO2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bNRiIrQz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFF8125A4;
-	Mon,  5 Feb 2024 09:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A36512E5C;
+	Mon,  5 Feb 2024 09:46:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707124189; cv=none; b=Zm8NlZtgH63gOo0Vcw+vHSpBI7BWrMfLKYu5L3bSjHxO7Yp5YLBLakcp1K1DfDc+PsVVTEvKM/MOu9RE0q+I2iWgQKVrQWxEC4TuyYHkqkzCAiPgJNetOfTtg/KE7QiOgRVV5yMBKzcfcBFY4bv9vMRcsTjHxcPxMiayM4MmVec=
+	t=1707126380; cv=none; b=a+6cQlGtdSaU+gRAaCYMSKhEPxv4SZZ67qdM47aFH77CIFWfgHi2y4/WTSZQESqUGMyR2w61W+gbn3P1uU4X9XbmqLsqF4uXDe7UwnJItf1BHyqNaPTTmuxUOKFtlOlqKB4ZLnH2haFDcpNts4YEIGMzes7CjyyJX1vM9TU6IxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707124189; c=relaxed/simple;
-	bh=i6f2X23X+uCcTe9YICOWAooGvVviOVmq0LOsLJRDpAM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MQhAxhII4mz1tCK0qVkRuo2Egll7wWQr69wRJs4932rUPhrQZ2y7d3ExUV5MB0BYFniAeaPDs8PrxOdgPnCBZu/o6NyitdG/texWVcR7UVFYuDAZWAtectX/Tw7EypKFE+vWPiaXnedmmlUafk+2Qu4Z1EQRWfI4VgKN3dItkz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QZBcbNO2; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-511344235c6so4676503e87.0;
-        Mon, 05 Feb 2024 01:09:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707124185; x=1707728985; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=s8w06G0X7yIoSXZScOxoBiqjUMaYjQk83NXqtXbrmGo=;
-        b=QZBcbNO2Q72Ufawve9c1mTkMrS/ZCVtYfDwDFKTT/mEjPCRr7qfNxsmg5lboS7jGki
-         K5mMvYjoXDhNTDx+oz2l2gtgQj8ZO0z7DGIqvMQFD3vym7dmxRLz6cCrd5bSbsuZLtU2
-         FBMfrSgLeqyAmMrTtoqMiCZ72Hss8U3GFUE7vJOFAqxAZiDWOLdjpHU0EdL6XOcRnaWt
-         fJxKitFu178faFBUKAq20VOpDInES2ChOPgZuqodCwEYsM0Iu/qcO3Z/8SI0MiPJiYeU
-         tRLFSdeoPYL/9gIAgBEnku/38H66EJELTMhXvzIjAN/ANEskIEZb70G9ocmAH19m6MAP
-         vdlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707124185; x=1707728985;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s8w06G0X7yIoSXZScOxoBiqjUMaYjQk83NXqtXbrmGo=;
-        b=o5nGPZ8A39qUtTyJ7aJvZxFYmzC7i4jekusQF3fnJIKvZJzI4f0Ny+o61npChoHdjr
-         PT9B/5Pw1XUkHSpR9ZHrSHN7BBVoJu/5vlcZek6Hs1A2euveLNew0gNCbViqJQrHaJto
-         OEZ5Y17BqxGCsImXmC/+F4go9f2+WCrff/j3hBZdMH+SKkwqQRuwrMpvwKVBC0BfEmhX
-         wNBJBQDggy5StDkAbultwjYcvF4TybWwPwq4QQ0w0wwe1Ege9O0r3Lrs/ei9SyXv1Foj
-         xE0F2qaYuojtHOtYX4xrLVR8/on2qoyN/L0Qs9ILabJcJxB4Fgf4tFAWtyGZ4b2LN8IC
-         N4og==
-X-Gm-Message-State: AOJu0YxjUwdP92ROHJvqhLAgwxZfBVxLOwUrGH2W60lqghYjGYWMWLJy
-	uOV4fhjev1ydc/D0+FvpJufipbrFt2B7l5n+Kc6KWIbDrOHG+fhbgomRQ8NxuacMhi0mVa7arKj
-	umJXy9LaXp4T/NGYCn1g7Uyno36V9gCeS04Y=
-X-Google-Smtp-Source: AGHT+IEp2Fyw3kyCRgzHv0QN+TXUrgMZYK8Pb9IXx6JU+xD8Prc10dCnTzdL9bmyansE1HXl74VmcISttMHmm7OiSrU=
-X-Received: by 2002:a05:6512:3d87:b0:511:18f5:947a with SMTP id
- k7-20020a0565123d8700b0051118f5947amr6950020lfv.65.1707124185098; Mon, 05 Feb
- 2024 01:09:45 -0800 (PST)
+	s=arc-20240116; t=1707126380; c=relaxed/simple;
+	bh=S97KO5vp8gvf1SplDj/NGWxNDyP6qbms4ZkJbU5yooM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XEA2zJ8RREzSo45Awa4dWyhS/vRbhgp5miD3PZGVVC4BzVpK80uArNO5bdoqHfhMpPJQgR/huXlor/SYhM0gMQ2WFTN6Zzg6TxqMgVjKVMWXyGGVOwylD/Xbw27IHv0BzniSUH3G9xJbPji0oGnYWsfk3wHOrsx9vx2qYS1i9gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bNRiIrQz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA44C433C7;
+	Mon,  5 Feb 2024 09:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707126380;
+	bh=S97KO5vp8gvf1SplDj/NGWxNDyP6qbms4ZkJbU5yooM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bNRiIrQzbsUHuNnGrTyP97HsR6a5ElJ8g/yOEAUSEgMLXjrD1wrompGhpSa784aDm
+	 BOJIFakdCbJ0oLGWnXmjvko1iKXoIYs+tkYLq1ozX11wzikPpCorAkMLycbrZOjvfE
+	 871aPrxCMtGwj9JCNpg8MCD/eVsBGYDb7chMM/moiMdAow6Dfks+AKxhryvwYjag+k
+	 gquq3s0gH9ZJRp9Qlr44GigOojab3TfuwWgk7mC8ZOhtow2GGRAOxoRh6V4RJCpfs6
+	 rCI57Q7MPII5wAtiDPmoNej4WLo/WmuWTqRu1K5rFDS7wdbrexH1SexDwC10KXdOIG
+	 MtJ2paw/8y1YQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1rWvYO-000MhB-Iw;
+	Mon, 05 Feb 2024 09:46:16 +0000
+Date: Mon, 05 Feb 2024 09:46:16 +0000
+Message-ID: <868r3z6y6v.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <keescook@chromium.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v8 13/38] KVM: arm64: Manage GCS registers for guests
+In-Reply-To: <20240203-arm64-gcs-v8-13-c9fec77673ef@kernel.org>
+References: <20240203-arm64-gcs-v8-0-c9fec77673ef@kernel.org>
+	<20240203-arm64-gcs-v8-13-c9fec77673ef@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240205090552.40567-1-zhaoyang.huang@unisoc.com>
-In-Reply-To: <20240205090552.40567-1-zhaoyang.huang@unisoc.com>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Mon, 5 Feb 2024 17:09:33 +0800
-Message-ID: <CAGWkznEGKFWdvSfa87BveT_=yfQQpzerOCFn=x+a7PJTDNJUYA@mail.gmail.com>
-Subject: Re: [PATCHv8 1/1] block: introduce content activity based ioprio
-To: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>, Yu Zhao <yuzhao@google.com>, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, steve.kang@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, akpm@linux-foundation.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, arnd@arndb.de, oleg@redhat.com, ebiederm@xmission.com, keescook@chromium.org, shuah@kernel.org, rick.p.edgecombe@intel.com, debug@rivosinc.com, ardb@kernel.org, Szabolcs.Nagy@arm.com, hjl.tools@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, fweimer@redhat.com, brauner@kernel.org, thiago.bauermann@linaro.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Feb 5, 2024 at 5:06=E2=80=AFPM zhaoyang.huang <zhaoyang.huang@uniso=
-c.com> wrote:
->
-> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
->
-> Currently, request's ioprio are set via task's schedule priority(when no
-> blkcg configured), which has high priority tasks possess the privilege on
-> both of CPU and IO scheduling. Furthermore, most of the write requestes
-> are launched asynchronosly from kworker which can't know the submitter's
-> priorities.
-> This commit works as a hint of original policy by promoting the request
-> ioprio based on the page/folio's activity. The original idea comes from
-> LRU_GEN which provides more precised folio activity than before. This
-> commit try to adjust the request's ioprio when certain part of its folios
-> are hot, which indicate that this request carry important contents and
-> need be scheduled ealier.
->
-> This commit provide two sets of exclusive APIs.
->
-> *counting activities by iterating the bio's pages
-> The filesystem should call bio_set_active_ioprio() before submit_bio on t=
-he
-> spot where they want(buffered read/write/sync etc).
->
-> *counting activities during each call
-> The filesystem should call bio_set_active_ioprio_page/folio() after
-> calling bio_add_page/folio. Please be noted that this set of API can not
-> handle bvec_try_merge_page cases.
->
-> This commit is verified on a v6.6 6GB RAM android14 system via 4 test cas=
-es
-> by calling bio_set_active_ioprio in erofs, ext4, f2fs and blkdev(raw
-> partition of gendisk)
->
-> Case 1:
-> script[a] which get significant improved fault time as expected[b]*
-> where dd's cost also shrink from 55s to 40s.
-> (1). fault_latency.bin is an ebpf based test tool which measure all task'=
-s
->    iowait latency during page fault when scheduled out/in.
-> (2). costmem generate page fault by mmaping a file and access the VA.
-> (3). dd generate concurrent vfs io.
->
-> [a]
-> ./fault_latency.bin 1 5 > /data/dd_costmem &
-> costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
-> costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
-> costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
-> costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
-> dd if=3D/dev/block/sda of=3D/data/ddtest bs=3D1024 count=3D2048000 &
-> dd if=3D/dev/block/sda of=3D/data/ddtest1 bs=3D1024 count=3D2048000 &
-> dd if=3D/dev/block/sda of=3D/data/ddtest2 bs=3D1024 count=3D2048000 &
-> dd if=3D/dev/block/sda of=3D/data/ddtest3 bs=3D1024 count=3D2048000
-> [b]
->                        mainline         commit
-> io wait                736us            523us
->
-> * provide correct result for test case 1 in v7 which was compared between
-> EMMC and UFS wrongly.
->
-> Case 2:
-> fio -filename=3D/dev/block/by-name/userdata -rw=3Drandread -direct=3D0 -b=
-s=3D4k -size=3D2000M -numjobs=3D8 -group_reporting -name=3Dmytest
-> mainline: 513MiB/s
-> READ: bw=3D531MiB/s (557MB/s), 531MiB/s-531MiB/s (557MB/s-557MB/s), io=3D=
-15.6GiB (16.8GB), run=3D30137-30137msec
-> READ: bw=3D543MiB/s (569MB/s), 543MiB/s-543MiB/s (569MB/s-569MB/s), io=3D=
-15.6GiB (16.8GB), run=3D29469-29469msec
-> READ: bw=3D474MiB/s (497MB/s), 474MiB/s-474MiB/s (497MB/s-497MB/s), io=3D=
-15.6GiB (16.8GB), run=3D33724-33724msec
-> READ: bw=3D535MiB/s (561MB/s), 535MiB/s-535MiB/s (561MB/s-561MB/s), io=3D=
-15.6GiB (16.8GB), run=3D29928-29928msec
-> READ: bw=3D523MiB/s (548MB/s), 523MiB/s-523MiB/s (548MB/s-548MB/s), io=3D=
-15.6GiB (16.8GB), run=3D30617-30617msec
-> READ: bw=3D492MiB/s (516MB/s), 492MiB/s-492MiB/s (516MB/s-516MB/s), io=3D=
-15.6GiB (16.8GB), run=3D32518-32518msec
-> READ: bw=3D533MiB/s (559MB/s), 533MiB/s-533MiB/s (559MB/s-559MB/s), io=3D=
-15.6GiB (16.8GB), run=3D29993-29993msec
-> READ: bw=3D524MiB/s (550MB/s), 524MiB/s-524MiB/s (550MB/s-550MB/s), io=3D=
-15.6GiB (16.8GB), run=3D30526-30526msec
-> READ: bw=3D529MiB/s (554MB/s), 529MiB/s-529MiB/s (554MB/s-554MB/s), io=3D=
-15.6GiB (16.8GB), run=3D30269-30269msec
-> READ: bw=3D449MiB/s (471MB/s), 449MiB/s-449MiB/s (471MB/s-471MB/s), io=3D=
-15.6GiB (16.8GB), run=3D35629-35629msec
->
-> commit: 633MiB/s
-> READ: bw=3D668MiB/s (700MB/s), 668MiB/s-668MiB/s (700MB/s-700MB/s), io=3D=
-15.6GiB (16.8GB), run=3D23952-23952msec
-> READ: bw=3D589MiB/s (618MB/s), 589MiB/s-589MiB/s (618MB/s-618MB/s), io=3D=
-15.6GiB (16.8GB), run=3D27164-27164msec
-> READ: bw=3D638MiB/s (669MB/s), 638MiB/s-638MiB/s (669MB/s-669MB/s), io=3D=
-15.6GiB (16.8GB), run=3D25071-25071msec
-> READ: bw=3D714MiB/s (749MB/s), 714MiB/s-714MiB/s (749MB/s-749MB/s), io=3D=
-15.6GiB (16.8GB), run=3D22409-22409msec
-> READ: bw=3D600MiB/s (629MB/s), 600MiB/s-600MiB/s (629MB/s-629MB/s), io=3D=
-15.6GiB (16.8GB), run=3D26669-26669msec
-> READ: bw=3D592MiB/s (621MB/s), 592MiB/s-592MiB/s (621MB/s-621MB/s), io=3D=
-15.6GiB (16.8GB), run=3D27036-27036msec
-> READ: bw=3D691MiB/s (725MB/s), 691MiB/s-691MiB/s (725MB/s-725MB/s), io=3D=
-15.6GiB (16.8GB), run=3D23150-23150msec
-> READ: bw=3D569MiB/s (596MB/s), 569MiB/s-569MiB/s (596MB/s-596MB/s), io=3D=
-15.6GiB (16.8GB), run=3D28142-28142msec
-> READ: bw=3D563MiB/s (590MB/s), 563MiB/s-563MiB/s (590MB/s-590MB/s), io=3D=
-15.6GiB (16.8GB), run=3D28429-28429msec
-> READ: bw=3D712MiB/s (746MB/s), 712MiB/s-712MiB/s (746MB/s-746MB/s), io=3D=
-15.6GiB (16.8GB), run=3D22478-22478msec
->
-> Case 3:
-> This commit is also verified by the case of launching camera APP which is
-> usually considered as heavy working load on both of memory and IO, which
-> shows 12%-24% improvement.
->
->                 ttl =3D 0         ttl =3D 50        ttl =3D 100
-> mainline        2267ms          2420ms          2316ms
-> commit          1992ms          1806ms          1998ms
->
-> case 4:
-> androbench has no improvment as well as regression in RD/WR test item
-> while make a 3% improvement in sqlite items.
->
-> Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+On Sat, 03 Feb 2024 12:25:39 +0000,
+Mark Brown <broonie@kernel.org> wrote:
+> 
+> GCS introduces a number of system registers for EL1 and EL0, on systems
+
+and EL2.
+
+> with GCS we need to context switch them and expose them to VMMs to allow
+> guests to use GCS, as well as describe their fine grained traps to
+> nested virtualisation.  Traps are already disabled.
+
+The latter is not true with NV, since the guest is in control of the
+FGT registers.
+
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
 > ---
-> change of v2: calculate page's activity via helper function
-> change of v3: solve layer violation by move API into mm
-> change of v4: keep block clean by removing the page related API
-> change of v5: introduce the macros of bio_add_folio/page for read dir.
-> change of v6: replace the macro of bio_add_xxx by submit_bio which
->                 iterating the bio_vec before launching bio to block layer
-> change of v7: introduce the function bio_set_active_ioprio
->               provide updated test result
-> change of v8: provide two sets of APIs for bio_set_active_ioprio_xxx
-> ---
-> ---
->  block/Kconfig             | 27 +++++++++++
->  block/bio.c               | 94 +++++++++++++++++++++++++++++++++++++++
->  include/linux/bio.h       |  3 ++
->  include/linux/blk_types.h |  7 ++-
->  4 files changed, 130 insertions(+), 1 deletion(-)
->
-> diff --git a/block/Kconfig b/block/Kconfig
-> index f1364d1c0d93..5e721678ea3d 100644
-> --- a/block/Kconfig
-> +++ b/block/Kconfig
-> @@ -228,6 +228,33 @@ config BLOCK_HOLDER_DEPRECATED
->  config BLK_MQ_STACKING
->         bool
->
-> +config BLK_CONT_ACT_BASED_IOPRIO
-> +       bool "Enable content activity based ioprio"
-> +       depends on LRU_GEN
-> +       default n
-> +       help
-> +         This item enable the feature of adjust bio's priority by
-> +         calculating its content's activity.
-> +         This feature works as a hint of original bio_set_ioprio
-> +         which means rt task get no change of its bio->bi_ioprio
-> +         while other tasks have the opportunity to raise the ioprio
-> +         if the bio take certain numbers of active pages.
-> +         The file system should use this by modifying their buffered
-> +         read/write/sync function to raise the bio->bi_ioprio before
-> +         calling submit_bio or after bio_add_page/folio
+>  arch/arm64/include/asm/kvm_host.h          | 12 ++++++++++++
+>  arch/arm64/kvm/emulate-nested.c            |  4 ++++
+>  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h | 17 +++++++++++++++++
+>  arch/arm64/kvm/sys_regs.c                  | 22 ++++++++++++++++++++++
+>  4 files changed, 55 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 21c57b812569..6c7ea7f9cd92 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -388,6 +388,12 @@ enum vcpu_sysreg {
+>  	GCR_EL1,	/* Tag Control Register */
+>  	TFSRE0_EL1,	/* Tag Fault Status Register (EL0) */
+>  
+> +	/* Guarded Control Stack registers */
+> +	GCSCRE0_EL1,	/* Guarded Control Stack Control (EL0) */
+> +	GCSCR_EL1,	/* Guarded Control Stack Control (EL1) */
+
+This is subjected to VNCR (0x8D0).
+
+> +	GCSPR_EL0,	/* Guarded Control Stack Pointer (EL0) */
+> +	GCSPR_EL1,	/* Guarded Control Stack Pointer (EL1) */
+
+So is this one (0x8C0). And how about the *_EL2 versions?
+
 > +
-> +config BLK_CONT_ACT_BASED_IOPRIO_ITER_BIO
-> +       bool "Counting bio's activity by iterating bio's pages"
-> +       depends on BLK_CONT_ACT_BASED_IOPRIO
-> +       help
-> +         The API under this config counts bio's activity by iterating th=
-e bio.
+>  	/* 32bit specific registers. */
+>  	DACR32_EL2,	/* Domain Access Control Register */
+>  	IFSR32_EL2,	/* Instruction Fault Status Register */
+> @@ -1221,6 +1227,12 @@ static inline bool __vcpu_has_feature(const struct kvm_arch *ka, int feature)
+>  
+>  #define vcpu_has_feature(v, f)	__vcpu_has_feature(&(v)->kvm->arch, (f))
+>  
+> +static inline bool has_gcs(void)
+> +{
+> +	return IS_ENABLED(CONFIG_ARM64_GCS) &&
+> +		cpus_have_final_cap(ARM64_HAS_GCS);
+> +}
 > +
-> +config BLK_CONT_ACT_BASED_IOPRIO_ADD_PAGE
-> +       bool "Counting bio's activity when adding page or folio"
-> +       depends on BLK_CONT_ACT_BASED_IOPRIO && !BLK_CONT_ACT_BASED_IOPRI=
-O_ITER_BIO
-> +       help
-> +         The API under this config count activity during each call buy c=
-an't
-> +          handle bvec_try_merge_page cases, please be sure you are ok wi=
-th that.
-counting activities during each call can not handle
-bvec_try_merge_page cases as it returns the valid value. So I provide
-two sets of exclusive APIs by keeping the iteration one
-int bio_add_page(struct bio *bio, struct page *page,
-                 unsigned int len, unsigned int offset)
-{
-        bool same_page =3D false;
+>  int kvm_trng_call(struct kvm_vcpu *vcpu);
+>  #ifdef CONFIG_KVM
+>  extern phys_addr_t hyp_mem_base;
+> diff --git a/arch/arm64/kvm/emulate-nested.c b/arch/arm64/kvm/emulate-nested.c
+> index 431fd429932d..24eb7eccbae4 100644
+> --- a/arch/arm64/kvm/emulate-nested.c
+> +++ b/arch/arm64/kvm/emulate-nested.c
+> @@ -1098,8 +1098,12 @@ static const struct encoding_to_trap_config encoding_to_fgt[] __initconst = {
+>  	SR_FGT(SYS_ESR_EL1, 		HFGxTR, ESR_EL1, 1),
+>  	SR_FGT(SYS_DCZID_EL0, 		HFGxTR, DCZID_EL0, 1),
+>  	SR_FGT(SYS_CTR_EL0, 		HFGxTR, CTR_EL0, 1),
+> +	SR_FGT(SYS_GCSPR_EL0,		HFGxTR, nGCS_EL0, 1),
+>  	SR_FGT(SYS_CSSELR_EL1, 		HFGxTR, CSSELR_EL1, 1),
+>  	SR_FGT(SYS_CPACR_EL1, 		HFGxTR, CPACR_EL1, 1),
+> +	SR_FGT(SYS_GCSCR_EL1,		HFGxTR, nGCS_EL1, 1),
+> +	SR_FGT(SYS_GCSPR_EL1,		HFGxTR, nGCS_EL1, 1),
+> +	SR_FGT(SYS_GCSCRE0_EL1,		HFGxTR, nGCS_EL0, 1),
 
-        if (WARN_ON_ONCE(bio_flagged(bio, BIO_CLONED)))
-                return 0;
-        if (bio->bi_iter.bi_size > UINT_MAX - len)
-                return 0;
+This is clearly wrong on all 4 counts (the n prefix gives it away...).
 
-        if (bio->bi_vcnt > 0 &&
-            bvec_try_merge_page(&bio->bi_io_vec[bio->bi_vcnt - 1],
-                                page, len, offset, &same_page)) {
-                bio->bi_iter.bi_size +=3D len;
-                return len;
-        }
+>  	SR_FGT(SYS_CONTEXTIDR_EL1, 	HFGxTR, CONTEXTIDR_EL1, 1),
+>  	SR_FGT(SYS_CLIDR_EL1, 		HFGxTR, CLIDR_EL1, 1),
+>  	SR_FGT(SYS_CCSIDR_EL1, 		HFGxTR, CCSIDR_EL1, 1),
+> diff --git a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> index bb6b571ec627..ec34d4a90717 100644
+> --- a/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> +++ b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> @@ -25,6 +25,8 @@ static inline void __sysreg_save_user_state(struct kvm_cpu_context *ctxt)
+>  {
+>  	ctxt_sys_reg(ctxt, TPIDR_EL0)	= read_sysreg(tpidr_el0);
+>  	ctxt_sys_reg(ctxt, TPIDRRO_EL0)	= read_sysreg(tpidrro_el0);
+> +	if (has_gcs())
+> +		ctxt_sys_reg(ctxt, GCSPR_EL0) = read_sysreg_s(SYS_GCSPR_EL0);
 
-        if (bio->bi_vcnt >=3D bio->bi_max_vecs)
-                return 0;
-        __bio_add_page(bio, page, len, offset);
-        return len;
-}
+We have had this discussion in the past. This must be based on the
+VM's configuration. Guarding the check with the host capability is a
+valuable optimisation, but that's nowhere near enough. See the series
+that I have posted on this very subject (you're on Cc), but you are
+welcome to invent your own mechanism in the meantime.
 
->  source "block/Kconfig.iosched"
->
->  endif # BLOCK
-> diff --git a/block/bio.c b/block/bio.c
-> index 816d412c06e9..73916a6c319f 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -1476,6 +1476,100 @@ void bio_set_pages_dirty(struct bio *bio)
 >  }
->  EXPORT_SYMBOL_GPL(bio_set_pages_dirty);
->
-> +/*
-> + * bio_set_active_ioprio() is helper function for fs to adjust the bio's=
- ioprio via
-> + * calculating the content's activity which measured from MGLRU.
-> + * The file system should call this function before submit_bio for the b=
-uffered
-> + * read/write/sync.
-> + */
-> +#ifdef CONFIG_BLK_CONT_ACT_BASED_IOPRIO
-> +#ifdef CONFIG_BLK_CONT_ACT_BASED_IOPRIO_ITER_BIO
-> +void bio_set_active_ioprio(struct bio *bio)
+>  
+>  static inline bool ctxt_has_mte(struct kvm_cpu_context *ctxt)
+> @@ -62,6 +64,12 @@ static inline void __sysreg_save_el1_state(struct kvm_cpu_context *ctxt)
+>  	ctxt_sys_reg(ctxt, PAR_EL1)	= read_sysreg_par();
+>  	ctxt_sys_reg(ctxt, TPIDR_EL1)	= read_sysreg(tpidr_el1);
+>  
+> +	if (has_gcs()) {
+> +		ctxt_sys_reg(ctxt, GCSPR_EL1)	= read_sysreg_el1(SYS_GCSPR);
+> +		ctxt_sys_reg(ctxt, GCSCR_EL1)	= read_sysreg_el1(SYS_GCSCR);
+> +		ctxt_sys_reg(ctxt, GCSCRE0_EL1)	= read_sysreg_s(SYS_GCSCRE0_EL1);
+> +	}
+> +
+
+Same thing.
+
+>  	if (ctxt_has_mte(ctxt)) {
+>  		ctxt_sys_reg(ctxt, TFSR_EL1) = read_sysreg_el1(SYS_TFSR);
+>  		ctxt_sys_reg(ctxt, TFSRE0_EL1) = read_sysreg_s(SYS_TFSRE0_EL1);
+> @@ -95,6 +103,8 @@ static inline void __sysreg_restore_user_state(struct kvm_cpu_context *ctxt)
+>  {
+>  	write_sysreg(ctxt_sys_reg(ctxt, TPIDR_EL0),	tpidr_el0);
+>  	write_sysreg(ctxt_sys_reg(ctxt, TPIDRRO_EL0),	tpidrro_el0);
+> +	if (has_gcs())
+> +		write_sysreg_s(ctxt_sys_reg(ctxt, GCSPR_EL0), SYS_GCSPR_EL0);
+>  }
+>  
+>  static inline void __sysreg_restore_el1_state(struct kvm_cpu_context *ctxt)
+> @@ -138,6 +148,13 @@ static inline void __sysreg_restore_el1_state(struct kvm_cpu_context *ctxt)
+>  	write_sysreg(ctxt_sys_reg(ctxt, PAR_EL1),	par_el1);
+>  	write_sysreg(ctxt_sys_reg(ctxt, TPIDR_EL1),	tpidr_el1);
+>  
+> +	if (has_gcs()) {
+> +		write_sysreg_el1(ctxt_sys_reg(ctxt, GCSPR_EL1),	SYS_GCSPR);
+> +		write_sysreg_el1(ctxt_sys_reg(ctxt, GCSCR_EL1),	SYS_GCSCR);
+> +		write_sysreg_s(ctxt_sys_reg(ctxt, GCSCRE0_EL1),
+> +			       SYS_GCSCRE0_EL1);
+> +	}
+> +
+
+For the benefit of the unsuspecting reviewers, and in the absence of a
+public specification (which the XML drop isn't), it would be good to
+have the commit message explaining the rationale of what gets saved
+when.
+
+>  	if (ctxt_has_mte(ctxt)) {
+>  		write_sysreg_el1(ctxt_sys_reg(ctxt, TFSR_EL1), SYS_TFSR);
+>  		write_sysreg_s(ctxt_sys_reg(ctxt, TFSRE0_EL1), SYS_TFSRE0_EL1);
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index 30253bd19917..83ba767e75d2 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -2000,6 +2000,23 @@ static unsigned int mte_visibility(const struct kvm_vcpu *vcpu,
+>  	.visibility = mte_visibility,		\
+>  }
+>  
+> +static unsigned int gcs_visibility(const struct kvm_vcpu *vcpu,
+> +				   const struct sys_reg_desc *rd)
 > +{
-> +       struct bio_vec bv;
-> +       struct bvec_iter iter;
-> +       struct page *page;
-> +       int class, level, hint;
-> +       int activity =3D 0;
-> +       int cnt =3D 0;
+> +	if (has_gcs())
+> +		return 0;
+
+Yet another case of exposing potentially unwanted state, to the VMM
+this time.
+
 > +
-> +       class =3D IOPRIO_PRIO_CLASS(bio->bi_ioprio);
-> +       level =3D IOPRIO_PRIO_LEVEL(bio->bi_ioprio);
-> +       hint =3D IOPRIO_PRIO_HINT(bio->bi_ioprio);
-> +       /*apply legacy ioprio policy on RT task*/
-> +       if (task_is_realtime(current)) {
-> +               bio->bi_ioprio =3D IOPRIO_PRIO_VALUE_HINT(IOPRIO_CLASS_RT=
-, level, hint);
-> +               return;
-> +       }
-> +       bio_for_each_bvec(bv, bio, iter) {
-> +               page =3D bv.bv_page;
-> +               activity +=3D PageWorkingset(page) ? 1 : 0;
-> +               cnt++;
-> +               if (activity > bio->bi_vcnt / 2) {
-> +                       class =3D IOPRIO_CLASS_RT;
-> +                       break;
-> +               } else if (activity > bio->bi_vcnt / 4) {
-> +                       /*
-> +                        * all itered pages are all active so far
-> +                        * then raise to RT directly
-> +                        */
-> +                       if (activity =3D=3D cnt) {
-> +                               class =3D IOPRIO_CLASS_RT;
-> +                               break;
-> +                       } else
-> +                               class =3D max(IOPRIO_PRIO_CLASS(get_curre=
-nt_ioprio()),
-> +                                               IOPRIO_CLASS_BE);
-> +               }
-> +       }
-> +       if (!class && activity > cnt / 2)
-> +               class =3D IOPRIO_CLASS_RT;
-> +       else if (!class && activity > cnt / 4)
-> +               class =3D max(IOPRIO_PRIO_CLASS(get_current_ioprio()), IO=
-PRIO_CLASS_BE);
-> +
-> +       bio->bi_ioprio =3D IOPRIO_PRIO_VALUE_HINT(class, level, hint);
-> +}
-> +void bio_set_active_ioprio_folio(struct bio *bio, struct folio *folio) {=
-}
-> +void bio_set_active_ioprio_page(struct bio *bio, struct page *page) {}
-> +#endif
-> +#ifdef CONFIG_BLK_CONT_ACT_BASED_IOPRIO_ADD_PAGE
-> +/*
-> + * bio_set_active_ioprio_page/folio are helper functions for counting
-> + * the bio's activity during each all. However, it can't handle the
-> + * scenario of bvec_try_merge_page. The submitter can use them if there
-> + * is no such case in the system(block size < page size)
-> + */
-> +void bio_set_active_ioprio_page(struct bio *bio, struct page *page)
-> +{
-> +       int class, level, hint;
-> +
-> +       class =3D IOPRIO_PRIO_CLASS(bio->bi_ioprio);
-> +       level =3D IOPRIO_PRIO_LEVEL(bio->bi_ioprio);
-> +       hint =3D IOPRIO_PRIO_HINT(bio->bi_ioprio);
-> +       bio->bi_cont_act +=3D PageWorkingset(page) ? 1 : 0;
-> +
-> +       if (bio->bi_cont_act > bio->bi_vcnt / 2)
-> +               class =3D IOPRIO_CLASS_RT;
-> +       else if (bio->bi_cont_act > bio->bi_vcnt / 4)
-> +               class =3D max(IOPRIO_PRIO_CLASS(get_current_ioprio()), IO=
-PRIO_CLASS_BE);
-> +
-> +       bio->bi_ioprio =3D IOPRIO_PRIO_VALUE_HINT(class, level, hint);
+> +	return REG_HIDDEN;
 > +}
 > +
-> +void bio_set_active_ioprio_folio(struct bio *bio, struct folio *folio)
-> +{
-> +       bio_set_active_ioprio_page(bio, &folio->page);
+> +#define GCS_REG(name) {				\
+> +	SYS_DESC(SYS_##name),			\
+> +	.access = undef_access,			\
+> +	.reset = reset_unknown,			\
+> +	.reg = name,				\
+> +	.visibility = gcs_visibility,		\
 > +}
-> +void bio_set_active_ioprio(struct bio *bio) {}
-> +#endif
-> +#else
-> +void bio_set_active_ioprio(struct bio *bio) {}
-> +void bio_set_active_ioprio_page(struct bio *bio, struct page *page) {}
-> +void bio_set_active_ioprio_folio(struct bio *bio, struct folio *folio) {=
-}
-> +#endif
-> +EXPORT_SYMBOL_GPL(bio_set_active_ioprio);
-> +EXPORT_SYMBOL_GPL(bio_set_active_ioprio_page);
-> +EXPORT_SYMBOL_GPL(bio_set_active_ioprio_folio);
 > +
->  /*
->   * bio_check_pages_dirty() will check that all the BIO's pages are still=
- dirty.
->   * If they are, then fine.  If, however, some pages are clean then they =
-must
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 41d417ee1349..35221ee3dd54 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -487,6 +487,9 @@ void bio_iov_bvec_set(struct bio *bio, struct iov_ite=
-r *iter);
->  void __bio_release_pages(struct bio *bio, bool mark_dirty);
->  extern void bio_set_pages_dirty(struct bio *bio);
->  extern void bio_check_pages_dirty(struct bio *bio);
-> +extern void bio_set_active_ioprio(struct bio *bio);
-> +extern void bio_set_active_ioprio_folio(struct bio *bio, struct folio *f=
-olio);
-> +extern void bio_set_active_ioprio_page(struct bio *bio, struct page *pag=
-e);
->
->  extern void bio_copy_data_iter(struct bio *dst, struct bvec_iter *dst_it=
-er,
->                                struct bio *src, struct bvec_iter *src_ite=
-r);
-> diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-> index d5c5e59ddbd2..a3a18b9a5168 100644
-> --- a/include/linux/blk_types.h
-> +++ b/include/linux/blk_types.h
-> @@ -314,7 +314,12 @@ struct bio {
->         struct bio_vec          *bi_io_vec;     /* the actual vec list */
->
->         struct bio_set          *bi_pool;
-> -
-> +#ifdef CONFIG_BLK_CONT_ACT_BASED_IOPRIO
-> +       /*
-> +        * bi_cont_act record total activities of bi_io_vec->pages
-> +        */
-> +       u64                     bi_cont_act;
-> +#endif
->         /*
->          * We can inline a number of vecs at the end of the bio, to avoid
->          * double allocations for a small number of bio_vecs. This member
-> --
-> 2.25.1
->
+>  static unsigned int el2_visibility(const struct kvm_vcpu *vcpu,
+>  				   const struct sys_reg_desc *rd)
+>  {
+> @@ -2376,6 +2393,10 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	PTRAUTH_KEY(APDB),
+>  	PTRAUTH_KEY(APGA),
+>  
+> +	GCS_REG(GCSCR_EL1),
+> +	GCS_REG(GCSPR_EL1),
+> +	GCS_REG(GCSCRE0_EL1),
+> +
+>  	{ SYS_DESC(SYS_SPSR_EL1), access_spsr},
+>  	{ SYS_DESC(SYS_ELR_EL1), access_elr},
+>  
+> @@ -2462,6 +2483,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	{ SYS_DESC(SYS_SMIDR_EL1), undef_access },
+>  	{ SYS_DESC(SYS_CSSELR_EL1), access_csselr, reset_unknown, CSSELR_EL1 },
+>  	{ SYS_DESC(SYS_CTR_EL0), access_ctr },
+> +	GCS_REG(GCSPR_EL0),
+>  	{ SYS_DESC(SYS_SVCR), undef_access },
+>  
+>  	{ PMU_SYS_REG(PMCR_EL0), .access = access_pmcr, .reset = reset_pmcr,
+> 
+
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
