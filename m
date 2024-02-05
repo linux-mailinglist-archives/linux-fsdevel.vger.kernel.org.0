@@ -1,98 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-10396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F6E84AAB0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 00:36:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1175484AAEC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 00:59:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC49B1C23302
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 23:36:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D7C828AB98
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 23:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533FC4D5B0;
-	Mon,  5 Feb 2024 23:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CBD04CE06;
+	Mon,  5 Feb 2024 23:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="twsh112c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Va3lu6Nc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA0D495DC
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 23:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A534D11B;
+	Mon,  5 Feb 2024 23:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707176091; cv=none; b=lPKe1Fnb6V86KziF1duZIbVd4F7/WjD9zrEwSVr4S90ApmxcRcVEVhrrpfQX59b2qtYolT/6ioHzB8BtLNrFn/ZR+VnndSYaclu0XsLNOBXk/YFiblHj7AiKAoCVmyDtD1+QkeRZBozhSig9RczqDppb79Vmo2jISSJeL60KRpc=
+	t=1707177571; cv=none; b=kjNHYwySgcbyr8dRlWWPjuDhoUwRmVwltvWdm88m6BLrqOxOPCzGq6S7R8YfF4AwRfGtKBdrwsE0b4PTfsq2EP2Wj9rdX0mkcAax4FriehceUOKVn6hBZJhMSmMQ0aQoNIqEmY52aJ2DBjLm3XIEaYlEF3cCymwgl+PTRbnfEDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707176091; c=relaxed/simple;
-	bh=ldhxU/uh8jcnenclWs1IUZtu/99DL4r26fBNY3JoSIc=;
+	s=arc-20240116; t=1707177571; c=relaxed/simple;
+	bh=311rEKidzYaFW4/d84Q1AgvS1KB7if5JdpM6hqvaaio=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KVAtbjJzijQEokgaByVQmy1DAkOEw9PFd9Zfz45Qq18/2AtUWSlxFFF1Ocol/tossrlFFgJ+/KwWEECa0UYpd/zotTlHPYLlqxpnRYJ3n9XZo39axmgbBFCTBkay+hCxQnK4XNV8+gr2eQktq07MAP6OAs05kBm79PY4+402/Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=twsh112c; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-53fbf2c42bfso4154191a12.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 15:34:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707176089; x=1707780889; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gtL3jvJTvpjem+XLSIljDmdaRNW3JxGajKR4+xmGq/g=;
-        b=twsh112cxZ6tGm9NJIJXjjMfSrgSntwk7HW2VF7WtGsTm1E1pv+a7O+2Dw6DA0L/Rf
-         TlUsUNFO+g+YVkfORlSH03dNpOOZZYRJMu0Hg96q/JU4qH0JF+vW7macCgsndF4WcJ8/
-         Y8+CwxIRzFuK7cHDdGgmJKoOYEIxkK1mlp2vkcb5y5uXyEHHCeOJLGWzwlAXfookLryw
-         fNJoCpMOL8lUAmvV2vMGTxG9nFUlN9sKle3qCIlXb9a5u/bal9VdZ2OD4G+C5dcT2Rl0
-         BGE2YKYGVzX0pRAjiJoinYFuQgOLIKN0+NxzLCCg6rUUndVBr6neTo6y5/68T+gNBwhr
-         UR6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707176089; x=1707780889;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gtL3jvJTvpjem+XLSIljDmdaRNW3JxGajKR4+xmGq/g=;
-        b=KK1paQId0lsn6t8jpvCM/VKsA1RK3kd20BIwdYPGy+53TC9X1NbiTLNgIbXHSDgcwA
-         K5qT0OYAyDyIg6IgQdoz1dyuv2AY3ZVII7Ww8zjMafo/OhnaMrNzHXQsYyhCVqqnRk/L
-         5iHhpY+luZnaT7Rwb4ejv6tW7ETprFfiehLrQ+suP2hCTd3X5KEvJkJC3k/b1PO7++oB
-         vO3A8ipqN8twz+WT8Jg0B7e5mNbm/iVZ5LYWBKsYqCo5nd2lzYCjTx6PBLzw/Y0Hi71q
-         kElfzcx2U7YEA95yeGcWdzNxjIwNUmzu65tIgwalAaEtpBvkkRhYfQmeLKPGBvR2zSfz
-         +rJg==
-X-Gm-Message-State: AOJu0Yydaz4275KbjR8TnB+Icigk4ehnhMeUE8Vn1fi6uG2vOkGGtS8u
-	dDpkMzjHx5iRP81n7uGwhOHAxANVUnhepvCcf/JREJJhY2ENqwnXH1SRgU998EU=
-X-Google-Smtp-Source: AGHT+IERWsgnVzcArUkK0ONx3MiZk4r16tHisF/C0B+IjOUSmMRlRCaxDntU0A4X2gmwb0jbKeI/4g==
-X-Received: by 2002:a05:6a20:5a23:b0:19c:6994:8913 with SMTP id jz35-20020a056a205a2300b0019c69948913mr18604pzb.7.1707176089472;
-        Mon, 05 Feb 2024 15:34:49 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCV0CEkV2IfB4OmDyzaC+v8m2BH8FR7RhAj08DN4ZCHOpokDj9NS3wCXNVRfk7DG1CgufYqK8wHCWHs/PTSMiUjOuQSYNN6ZB+aTscx7+cznoZDT8F2Z+x8Fq3mxFfB9Q2jg/LH2Xu5A+NenLIQoUHD99PduRSLqa/iSmtJqGUFocP6eazRhZvFPA9oDPPOrGfymNqdHw0h/nxszHDIMLLBz29NGLa3hIDKXa0S4z53eR2lqqcuHECKUht7VhUHfbFimSw7QRk7cn4BKB3os4xsrqwiVMkY7NRCwcGUSArF2DNAxABXpngViCgO/vzS6NOCH8aVzjxa+p7AcjKWz6oTuWjyOTrBZ8G63OPDI6g9B3Y9ih4iHTfBED1X+kcrAoyJpINXQ5q4bBt5dYYppH+8WNNuWMz2CNZCklGzQk9dJuoE2ItM4zSqmfovYw3ID101Lnd3kUjofr8ibkxgD8K3q6WDRUDbueTuqDCvzRQDSW98rcWllaXDIoFd2YDIC4WD/pL8BWmhBnN8pJ6k6aTgCMvz90BDChV469mYLup57WhnQyVmsE3Qc8hAeKEEGLeNjV2ax1UH2rK7sI8BbI4uqpLjJUj6kEP6G3Awmmm0ngNCcknaIUFOysIxxB9aT2a3JhYMHnRxYt1Ck/1I805Fl85lKwmRr4/1P9deiddme4xe2eCvJLYL3JVcbTYiI3Vs+wFW6KG3VQaHK+PxspiH1JWWW2QHFdaRaiqgAgi3xQs8I
-Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
-        by smtp.gmail.com with ESMTPSA id k18-20020a170902c41200b001d8f12b0009sm423859plk.293.2024.02.05.15.34.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Feb 2024 15:34:48 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rX8UA-002agH-2H;
-	Tue, 06 Feb 2024 10:34:46 +1100
-Date: Tue, 6 Feb 2024 10:34:46 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: James Gowans <jgowans@amazon.com>
-Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
-	kexec@lists.infradead.org, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-	Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	Alexander Graf <graf@amazon.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	"Jan H . Schoenherr" <jschoenh@amazon.de>,
-	Usama Arif <usama.arif@bytedance.com>,
-	Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
-	madvenka@linux.microsoft.com, steven.sistare@oracle.com,
-	yuleixzhang@tencent.com
-Subject: Re: [RFC 05/18] pkernfs: add file mmap callback
-Message-ID: <ZcFwlu9+LQQWWOz4@dread.disaster.area>
-References: <20240205120203.60312-1-jgowans@amazon.com>
- <20240205120203.60312-6-jgowans@amazon.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fSJMce713LXnE7uatxXyCKB6LoJWOFlySBQfO+azOt/OReGcYHoGlU+p/eHX81juVeNuAMirU+FdfotGAalVE8Qncef2cDwHiXuaoQfJN9OO+M0ez7Sl2xMI8lUYV7mrp60DOOtziRL2qwdKv8J8CgeVTfwKBUrf4d1YZWzUWNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Va3lu6Nc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2906AC433C7;
+	Mon,  5 Feb 2024 23:59:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707177571;
+	bh=311rEKidzYaFW4/d84Q1AgvS1KB7if5JdpM6hqvaaio=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Va3lu6NcfuOkDZ0rurlc66h9UYINPbbON9v32BDL6fLEOoCWixiQbP/GsoYWNOA9c
+	 WrfJ/1yk5q56bec70Pyx1deQVXeDTBl+jUu1HDjn1HjncpMvRYfEKTomPG8oxuGgVy
+	 MnYK+k5MrGBa5pvBhh3dWjIlh5rTAwtrwOkVehDO9qJHq5osMC9cLHgN9AzIEgmpAE
+	 /o7koH7OJOFk3JuAMj2OHiCiHYE/DSNlok7ASCCWyGxrMRLslbDkzf2HjCepbaYLaE
+	 qrLHrMjXHSVC0YFmuyK+1Vr6HcFZWCwZ9yddbnpvxWPuxKSQ+cyyHMPEqzTLlO3h69
+	 nA1nhIf9FgNRA==
+Date: Mon, 5 Feb 2024 15:59:30 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Dave Chinner <dchinner@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
+	linux-fsdevel@vger.kernel.or
+Subject: Re: [PATCH 2/6] fs: FS_IOC_GETUUID
+Message-ID: <20240205235930.GP616564@frogsfrogsfrogs>
+References: <20240205200529.546646-1-kent.overstreet@linux.dev>
+ <20240205200529.546646-3-kent.overstreet@linux.dev>
+ <ZcFelmKPb374aebH@dread.disaster.area>
+ <l2zdnuczo24zxc6z6hh7q5mmux3wr5iltscnrc7axdugt6ct2k@qzrpj6vc2ct5>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -101,24 +64,98 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240205120203.60312-6-jgowans@amazon.com>
+In-Reply-To: <l2zdnuczo24zxc6z6hh7q5mmux3wr5iltscnrc7axdugt6ct2k@qzrpj6vc2ct5>
 
-On Mon, Feb 05, 2024 at 12:01:50PM +0000, James Gowans wrote:
-> Make the file data useable to userspace by adding mmap. That's all that
-> QEMU needs for guest RAM, so that's all be bother implementing for now.
+On Mon, Feb 05, 2024 at 05:49:30PM -0500, Kent Overstreet wrote:
+> On Tue, Feb 06, 2024 at 09:17:58AM +1100, Dave Chinner wrote:
+> > On Mon, Feb 05, 2024 at 03:05:13PM -0500, Kent Overstreet wrote:
+> > > Add a new generic ioctls for querying the filesystem UUID.
+> > > 
+> > > These are lifted versions of the ext4 ioctls, with one change: we're not
+> > > using a flexible array member, because UUIDs will never be more than 16
+> > > bytes.
+> > > 
+> > > This patch adds a generic implementation of FS_IOC_GETFSUUID, which
+> > > reads from super_block->s_uuid; FS_IOC_SETFSUUID is left for individual
+> > > filesystems to implement.
+> > > 
+> > > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> > > Cc: Christian Brauner <brauner@kernel.org>
+> > > Cc: Jan Kara <jack@suse.cz>
+> > > Cc: Dave Chinner <dchinner@redhat.com>
+> > > Cc: "Darrick J. Wong" <djwong@kernel.org>
+> > > Cc: Theodore Ts'o <tytso@mit.edu>
+> > > Cc: linux-fsdevel@vger.kernel.or
+> > > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> > > ---
+> > >  fs/ioctl.c              | 16 ++++++++++++++++
+> > >  include/uapi/linux/fs.h | 16 ++++++++++++++++
+> > >  2 files changed, 32 insertions(+)
+> > > 
+> > > diff --git a/fs/ioctl.c b/fs/ioctl.c
+> > > index 76cf22ac97d7..858801060408 100644
+> > > --- a/fs/ioctl.c
+> > > +++ b/fs/ioctl.c
+> > > @@ -763,6 +763,19 @@ static int ioctl_fssetxattr(struct file *file, void __user *argp)
+> > >  	return err;
+> > >  }
+> > >  
+> > > +static int ioctl_getfsuuid(struct file *file, void __user *argp)
+> > > +{
+> > > +	struct super_block *sb = file_inode(file)->i_sb;
+> > > +
+> > > +	if (WARN_ON(sb->s_uuid_len > sizeof(sb->s_uuid)))
+> > > +		sb->s_uuid_len = sizeof(sb->s_uuid);
+> > 
+> > A "get"/read only ioctl should not be change superblock fields -
+> > this is not the place for enforcing superblock filed constraints.
+> > Make a helper function super_set_uuid(sb, uuid, uuid_len) for the
+> > filesystems to call that does all the validity checking and then
+> > sets the superblock fields appropriately.
 > 
-> When mmaping the file the VMA is marked as PFNMAP to indicate that there
-> are no struct pages for the memory in this VMA. Remap_pfn_range() is
-> used to actually populate the page tables. All PTEs are pre-faulted into
-> the pgtables at mmap time so that the pgtables are useable when this
-> virtual address range is given to VFIO's MAP_DMA.
+> *nod* good thought...
+> 
+> > > +struct fsuuid2 {
+> > > +	__u32       fsu_len;
+> > > +	__u32       fsu_flags;
+> > > +	__u8        fsu_uuid[16];
+> > > +};
+> > 
+> > Nobody in userspace will care that this is "version 2" of the ext4
+> > ioctl. I'd just name it "fs_uuid" as though the ext4 version didn't
+> > ever exist.
+> 
+> I considered that - but I decided I wanted the explicit versioning,
+> because too often we live with unfixed mistakes because versioning is
+> ugly, or something?
+> 
+> Doing a new revision of an API should be a normal, frequent thing, and I
+> want to start making it a convention.
+> 
+> > 
+> > > +
+> > >  /* extent-same (dedupe) ioctls; these MUST match the btrfs ioctl definitions */
+> > >  #define FILE_DEDUPE_RANGE_SAME		0
+> > >  #define FILE_DEDUPE_RANGE_DIFFERS	1
+> > > @@ -215,6 +229,8 @@ struct fsxattr {
+> > >  #define FS_IOC_FSSETXATTR		_IOW('X', 32, struct fsxattr)
+> > >  #define FS_IOC_GETFSLABEL		_IOR(0x94, 49, char[FSLABEL_MAX])
+> > >  #define FS_IOC_SETFSLABEL		_IOW(0x94, 50, char[FSLABEL_MAX])
+> > > +#define FS_IOC_GETFSUUID		_IOR(0x94, 51, struct fsuuid2)
+> > > +#define FS_IOC_SETFSUUID		_IOW(0x94, 52, struct fsuuid2)
+> > 
+> > 0x94 is the btrfs ioctl space, not the VFS space - why did you
+> > choose that? That said, what is the VFS ioctl space identifier? 'v',
+> > perhaps?
+> 
+> "Promoting ioctls from fs to vfs without revising and renaming
+> considered harmful"... this is a mess that could have been avoided if we
+> weren't taking the lazy route.
+> 
+> And 'v' doesn't look like it to me, I really have no idea what to use
+> here. Does anyone?
 
-And so what happens when this file is truncated whilst it is mmap()d
-by an application? Ain't that just a great big UAF waiting to be
-exploited?
+I thought it was 'f' but apparently that's ext?
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+--D
 
