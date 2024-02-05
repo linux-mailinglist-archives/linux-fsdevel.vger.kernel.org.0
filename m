@@ -1,193 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-10323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C11849CD7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 15:19:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785B8849D13
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 15:31:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CCE4281633
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 14:19:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2C91C24941
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 14:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CCC2C19C;
-	Mon,  5 Feb 2024 14:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634862C1B5;
+	Mon,  5 Feb 2024 14:31:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2nMsNcPL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WjICKJUx";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2nMsNcPL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WjICKJUx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DI0Xd/8S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C1B2C183;
-	Mon,  5 Feb 2024 14:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858002C19C;
+	Mon,  5 Feb 2024 14:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707142760; cv=none; b=nfGY7R1isPLSWt14H6SEwW56jhiHxwa6OB7ToQV6TmELepAJ7x6OPiQQsDf7gY3pRKrG+x2Ku/8lbQMNfEsfzc5A7B/nnhMyzeAg6ywRIn+miZ8ChZcZhNP9mDWHTTNHzrfkQ1Mpp0rc58tVaV23shNlwvSyZ1gK7Ai96rVsk6s=
+	t=1707143487; cv=none; b=BNSow1HwB3M/aHT3rncoAgFInmC1NGfvp9yNyt/DDEAw/4Ylrt8w8nKc0GKF99lFaXUcSCuWl3mKWbUFZ4hFUiZ0pH9kP8z1wtFq+axLtyqdlMllo+3dgeBxJn+L6rNomSWPDIMOG/FtBkqp7MybeaW0HEbGmCckz0SGiHd22C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707142760; c=relaxed/simple;
-	bh=wL7f3/q9wLuR8kbR26+8p0Wa2ib3IFx0iIqAMfT3Ab0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T45lufXx1B8OUbHcXPFA+zi58oXhy0m3KlTKh45LaGvnVmbtvQzYcytxWts0caIjvWmseWK4e/3qU8m48HbmJMaWd55O0svqGT6j8+JjGRRH3zJEXEqTYJ93Iz64xiEmXxAJLrcG1lnR35ES5NffkytLHgabGvoaXrmEpuZ3akk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2nMsNcPL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WjICKJUx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2nMsNcPL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WjICKJUx; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 48E181F37C;
-	Mon,  5 Feb 2024 14:19:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707142756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XBuD2w214FrX4bQ1rAZNvdA6it7oOTmTdw3JUrl60T0=;
-	b=2nMsNcPLTbESKwOSwuBRBjkuQZCfhXPPtG5XrVhmc+xHHTROjNGwJqqC8kj1ufY8DO3xJ3
-	6CI1AGmYnFE/8Q2R8uRniKNwa/nFEWjv/CzqT7jXQw507c2rxKJf5xilzYsxvQUKsj/M+F
-	MpjMo0ouKB9kei6xJ0XyGNveWISpKKk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707142756;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XBuD2w214FrX4bQ1rAZNvdA6it7oOTmTdw3JUrl60T0=;
-	b=WjICKJUxp0x5vEfN56Af6YLEk07IiHzPlqJl8Qoi3n9yLk/1QJb7uVqKvsbzVLttbxYdPM
-	LaWBsN1KKtPaHjCg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707142756; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XBuD2w214FrX4bQ1rAZNvdA6it7oOTmTdw3JUrl60T0=;
-	b=2nMsNcPLTbESKwOSwuBRBjkuQZCfhXPPtG5XrVhmc+xHHTROjNGwJqqC8kj1ufY8DO3xJ3
-	6CI1AGmYnFE/8Q2R8uRniKNwa/nFEWjv/CzqT7jXQw507c2rxKJf5xilzYsxvQUKsj/M+F
-	MpjMo0ouKB9kei6xJ0XyGNveWISpKKk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707142756;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XBuD2w214FrX4bQ1rAZNvdA6it7oOTmTdw3JUrl60T0=;
-	b=WjICKJUxp0x5vEfN56Af6YLEk07IiHzPlqJl8Qoi3n9yLk/1QJb7uVqKvsbzVLttbxYdPM
-	LaWBsN1KKtPaHjCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3D847136F5;
-	Mon,  5 Feb 2024 14:19:16 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ChoAD2TuwGVJbAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 05 Feb 2024 14:19:16 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D5627A0809; Mon,  5 Feb 2024 15:19:11 +0100 (CET)
-Date: Mon, 5 Feb 2024 15:19:11 +0100
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>, "Darrick J. Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH v2 00/34] Open block devices as files
-Message-ID: <20240205141911.vbuqvjdbjw5pq2wc@quack3>
-References: <20240123-vfs-bdev-file-v2-0-adbd023e19cc@kernel.org>
- <20240205-biotechnologie-korallen-d2b3a7138ec0@brauner>
+	s=arc-20240116; t=1707143487; c=relaxed/simple;
+	bh=vB2CucJIHYQw9yXikZUQXpzjmRCNVBBJ96ZHLmXzccA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rHhoBuA6BoccLrmT3hcAXBZn0S4gGwxFIBmt8ih/U9lq/9bvc/Uezqm0ULfIeVhLomrbxdG/74VzBp8XJjA19FR7bbbqJoc4mQyZsdfeYAuici7+RyacfGR0PQ7ij0QIEp3Dt7N/ELONHQLhsRB+hz2reRCiuJuuTTbvvyan8kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DI0Xd/8S; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-29080973530so3635156a91.1;
+        Mon, 05 Feb 2024 06:31:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707143485; x=1707748285; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xeN9yJ2dQGs6jig9OgjqCQqlFO+WtiSIe/SoY3+XhmQ=;
+        b=DI0Xd/8SIL1OVHB/ENhm6vG5GaBzrkIghKr5sZ5Z07Jsna+Y7Z50yiARDZwpe7O0j9
+         ig9TwbDGmnISqSEKnTeuEynZcHUzP3N1WTfuN/vOjwiCArrwUi41KcfwKSZXnM0my7Da
+         Q9G3cSwY04ewdNxckUecPr/elZKkzwWoe+UMhCkZM3Vm4GpL5LzbEQuF8Aed0KJDnpl1
+         DRYB1S8t2MC+Vw/dYEQUuESJCR7v39RkuzCd/OXAPq48ILRgx5kbVFtymhdBSqlIvoC6
+         KzVIYgoHNVQz1aX5PH0Akbk844Y024HMGtnD1+mhP6DKWo7kNutKl8cI9aR489nx6sQ+
+         9fcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707143485; x=1707748285;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xeN9yJ2dQGs6jig9OgjqCQqlFO+WtiSIe/SoY3+XhmQ=;
+        b=JpuLDi1tIFTU9Tp1PW+5S7Ic5zELptTAPK+mNC+mgpuTXADxe3DwfthvevjkpJgLE+
+         4vXBypA2NWq470sH6BKlYKp7Cp0EzdFEkbbNirXAGCBVPW69fUIPcUh0jlo/5q0Ut3Eb
+         OxXIy90PzEdafiHjah+NH1yY75r7sAJ/tsT3Se0RHPUxuq4HS8DguKXw7nZNOYxLSZCv
+         LUgT+cEJ1cAr5Q+CQ9+9+D6K4F0chgFqzD3DhaG/2BB4rhkaJ40vEMe20Mr+azetFsDG
+         zTN4D0K/MKqS2o09INdF9g9cn5TqRejGYAB/zJ+sIj6OOaF3jnkpWnkhVUk6lIs9lhru
+         ybXQ==
+X-Gm-Message-State: AOJu0YwMPREis+HL71hcbwOUX/hGgLOqw3HKJI28KcF4Hb4gX2EKSxfq
+	G7hGCzQdkSk+OzGa7SchYBXu+N2di9A11T2bR3J8UmMQKLT20J1JhGLMgSaCPp2kfMjCr/py0IQ
+	kOSpz4uvZE+Iv+mkudJaBGwMG+BltGYC+
+X-Google-Smtp-Source: AGHT+IEioUX3dA1lS9t0kJPFYTkeeTRGjpJdaW6VcH7dBGLqReC45Rwpm07BQxt7Nf8HS0ucwqnC87U+i3GIdvyYQuE=
+X-Received: by 2002:a17:90a:fc83:b0:296:2d0f:bba8 with SMTP id
+ ci3-20020a17090afc8300b002962d0fbba8mr9992598pjb.43.1707143485338; Mon, 05
+ Feb 2024 06:31:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240205-biotechnologie-korallen-d2b3a7138ec0@brauner>
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2nMsNcPL;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WjICKJUx
-X-Spamd-Result: default: False [-2.81 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[7];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 48E181F37C
-X-Spam-Level: 
-X-Spam-Score: -2.81
-X-Spam-Flag: NO
+References: <20240118150637.660461-1-jcmvbkbc@gmail.com>
+In-Reply-To: <20240118150637.660461-1-jcmvbkbc@gmail.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
+Date: Mon, 5 Feb 2024 06:31:13 -0800
+Message-ID: <CAMo8BfL+j5XUit2b7UjmZfZJCGd-gyh3Aia4FhLAm7YHNm0Fdg@mail.gmail.com>
+Subject: Re: [PATCH] fs: binfmt_elf_efpic: don't use missing interpreter's properties
+To: linux-kernel@vger.kernel.org
+Cc: Chris Zankel <chris@zankel.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Eric Biederman <ebiederm@xmission.com>, 
+	Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	Greg Ungerer <gerg@linux-m68k.org>, Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi!
+Ping?
 
-On Mon 05-02-24 12:55:18, Christian Brauner wrote:
-> On Tue, Jan 23, 2024 at 02:26:17PM +0100, Christian Brauner wrote:
-> > Hey Christoph,
-> > Hey Jan,
-> > Hey Jens,
-> > 
-> > This opens block devices as files. Instead of introducing a separate
-> > indirection into bdev_open_by_*() vis struct bdev_handle we can just
-> > make bdev_file_open_by_*() return a struct file. Opening and closing a
-> > block device from setup_bdev_super() and in all other places just
-> > becomes equivalent to opening and closing a file.
-> > 
-> > This has held up in xfstests and in blktests so far and it seems stable
-> > and clean. The equivalence of opening and closing block devices to
-> > regular files is a win in and of itself imho. Added to that is the
-> > ability to do away with struct bdev_handle completely and make various
-> > low-level helpers private to the block layer.
-> > 
-> > All places were we currently stash a struct bdev_handle we just stash a
-> > file and use an accessor such as file_bdev() akin to I_BDEV() to get to
-> > the block device.
-> > 
-> > It's now also possible to use file->f_mapping as a replacement for
-> > bdev->bd_inode->i_mapping and file->f_inode or file->f_mapping->host as
-> > an alternative to bdev->bd_inode allowing us to significantly reduce or
-> > even fully remove bdev->bd_inode in follow-up patches.
-> > 
-> > In addition, we could get rid of sb->s_bdev and various other places
-> > that stash the block device directly and instead stash the block device
-> > file. Again, this is follow-up work.
-> > 
-> > Thanks!
-> > Christian
-> > 
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> 
-> With all fixes applied I've moved this into vfs.super on vfs/vfs.git so
-> this gets some exposure in -next asap. Please let me know if you have
-> quarrels with that.
+On Thu, Jan 18, 2024 at 7:07=E2=80=AFAM Max Filippov <jcmvbkbc@gmail.com> w=
+rote:
+>
+> Static FDPIC executable may get an executable stack even when it has
+> non-executable GNU_STACK segment. This happens when STACK segment has rw
+> permissions, but does not specify stack size. In that case FDPIC loader
+> uses permissions of the interpreter's stack, and for static executables
+> with no interpreter it results in choosing the arch-default permissions
+> for the stack.
+>
+> Fix that by using the interpreter's properties only when the interpreter
+> is actually used.
+>
+> Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+> ---
+>  fs/binfmt_elf_fdpic.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
+> index be4e7ac3efbc..f6d72fe3998c 100644
+> --- a/fs/binfmt_elf_fdpic.c
+> +++ b/fs/binfmt_elf_fdpic.c
+> @@ -322,7 +322,7 @@ static int load_elf_fdpic_binary(struct linux_binprm =
+*bprm)
+>         else
+>                 executable_stack =3D EXSTACK_DEFAULT;
+>
+> -       if (stack_size =3D=3D 0) {
+> +       if (stack_size =3D=3D 0 && interp_params.flags & ELF_FDPIC_FLAG_P=
+RESENT) {
+>                 stack_size =3D interp_params.stack_size;
+>                 if (interp_params.flags & ELF_FDPIC_FLAG_EXEC_STACK)
+>                         executable_stack =3D EXSTACK_ENABLE_X;
+> --
+> 2.39.2
+>
 
-No quarrels really. I went through the patches and all of them look fine to
-me to feel free to add:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-I have just noticed that in "bdev: make struct bdev_handle private to the
-block layer" in bdev_open() we are still leaking the handle in case of
-error. This is however temporary (until the end of the series when we get
-rid of handles altogether) so whatever.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--=20
+Thanks.
+-- Max
 
