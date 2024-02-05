@@ -1,57 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-10309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06015849A50
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 13:32:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB69849A58
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 13:34:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD5CEB26E8C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:32:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7FF6281FD1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 011EE1BDC3;
-	Mon,  5 Feb 2024 12:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54431BC58;
+	Mon,  5 Feb 2024 12:33:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvkYEcag"
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="iBUOeyK3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5510C1BC2A;
-	Mon,  5 Feb 2024 12:31:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31861BC3D;
+	Mon,  5 Feb 2024 12:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707136312; cv=none; b=ElKzCaaEUKr7wGaxrx0Z9k8gr8Z4SllBG5EdPstjo+DbugsU7vw79zo9/n4YxM8nNPgCTwLz04xMZy1RnlBeUc/GJ3r3EOgKIfjoeoxMs68/JOgnUclR50hMGIQkjURbPUJZmQBkAIYjEPQUEtdx30+K2xTLssWat50Wo5b7NmI=
+	t=1707136430; cv=none; b=VnktjnX13JwxB98ZS73hZwhAEo4QfPrZ02pXjEyq1iZL5lTXwDvXM1WTC+Z4eubYvvD1BXkpBM1fHshSxs88pgKmf+9N4W2rP6cfENuQbKPBz1wfFLBB3bfs4U36IXGjn6RQPCQkzQcG0viHlA4mhd4fZWlSiCwpMJfohPYILWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707136312; c=relaxed/simple;
-	bh=OvthZE2bvXcBV8LXD8wNl6xF83BZcROXQGXGKL5j77E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a6OKq58uRklDkoTgmhv1IMtCMxHIm5B4m7ytwuon+z5ISqLr28WBWWVIS5ntzZEdQ21OhxmUy4Yx9kvL6gD5mk26Mv0EsAr/kOslDUwfRI1ZGqqb64nApBxS7p8/DVYNk3iMmMEFF43gjYV2po8cK9GOjuhz7L9NDrz98tZRsoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IvkYEcag; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20A50C433F1;
-	Mon,  5 Feb 2024 12:31:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707136311;
-	bh=OvthZE2bvXcBV8LXD8wNl6xF83BZcROXQGXGKL5j77E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IvkYEcagw9GLn2Xyj27UFyIrKvramr9XYJda4GwFgpoAzGHJ8zlji5QCefmE85kEA
-	 hgyI4tDT2LPrie4Vixfa2Lm76eazhGxJjbDJJK2jZ9kdp4wAJJoXXqOxQXWb7TgsQV
-	 PsvK7Pmi5GM/YKqbl8MON2xb23fMatq7kv21lylMlheR6k79eL6IBZBnK1DRl+kBTk
-	 JRX5o5rU9qMs4O5JSdaA2mjsTPh0H4TZfqItF20s13sdMWTLFXRCpDX9Fh/s7DTxDj
-	 Ol8iRSJvR4sIjUnPyR1YBhyP3a8UMDWetTcTXlLahygxEqdkLSgwNb2wOj8zSsc4Lj
-	 IvBAZSymNIHJQ==
-Date: Mon, 5 Feb 2024 13:31:47 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, linux-cifs@vger.kernel.org
-Subject: Re: [PATCH 11/13] fuse: fix UAF in rcu pathwalks
-Message-ID: <20240205-gesponnen-mahnmal-ad1aef11676a@brauner>
-References: <20240204021436.GH2087318@ZenIV>
- <20240204021739.1157830-1-viro@zeniv.linux.org.uk>
- <20240204021739.1157830-11-viro@zeniv.linux.org.uk>
+	s=arc-20240116; t=1707136430; c=relaxed/simple;
+	bh=ZCWpwwDP32QW23OHxqcS6dyIhG+EZnGUM+vdeUCbChQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=V7SmIVp0gP4d+fbwFrY+mJJD1d/QwBXH8/IRc+9re6gOfTEB4KkAAcNJ82qysgJNpHwNP6Cj+WTpKRNXH2LPRihIjPzq6JYoCMZvX0NbAj6rA4MByQOzOvKhNOUVqDzC/EnXv79oUE6LikYkraWuE0GvIeTuzEvWFf9FUKOgWNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=iBUOeyK3; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1707136426; x=1707395626;
+	bh=Koptk02WV6BeYNID6QKo1BWynpaJzVcgM9vAm9rLNbY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=iBUOeyK3HhTdc8lgsE31Vu767CZcsaMMDP2tX5btt8UO6ecAU3r5SIFXNFT8CxKmW
+	 UDvqP7UFoBd5+PLkiet7e8Srvgz9iCnpUha32FSvKqm6wqIpetUlXLeHnVOK0cVti3
+	 Z8Kp9lbiwZ3rD/YKzyroZkhAgyclBEOIrzk7SmLjN/Q+B7GwocbhuiOR7ZgIQGViu6
+	 2vcp2bI1QtvMuR5R5O8Pp/9ZvyL2OiA18NuOn/739FzH8ZLBpdiQTCEIc67EBprkI9
+	 pFP8AsdiGUxdpNRtsxxBUP3m5aAAjYur3XL0aAcuukoNAN1PULQUfNwsOoUxxu2Xwp
+	 YLTQ3nFKlq+ng==
+Date: Mon, 05 Feb 2024 12:33:27 +0000
+To: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?utf-8?Q?Arve_Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 3/9] rust: file: add Rust abstraction for `struct file`
+Message-ID: <5f261c6a-785b-4bc5-974f-ad43c3a312b9@proton.me>
+In-Reply-To: <20240202-alice-file-v4-3-fc9c2080663b@google.com>
+References: <20240202-alice-file-v4-0-fc9c2080663b@google.com> <20240202-alice-file-v4-3-fc9c2080663b@google.com>
+Feedback-ID: 71780778:user:proton
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,19 +59,64 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240204021739.1157830-11-viro@zeniv.linux.org.uk>
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Feb 04, 2024 at 02:17:37AM +0000, Al Viro wrote:
-> ->permission(), ->get_link() and ->inode_get_acl() might dereference
-> ->s_fs_info (and, in case of ->permission(), ->s_fs_info->fc->user_ns
-> as well) when called from rcu pathwalk.
-> 
-> Freeing ->s_fs_info->fc is rcu-delayed; we need to make freeing ->s_fs_info
-> and dropping ->user_ns rcu-delayed too.
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+On 2/2/24 11:55, Alice Ryhl wrote:
+> From: Wedson Almeida Filho <wedsonaf@gmail.com>
+>=20
+> This abstraction makes it possible to manipulate the open files for a
+> process. The new `File` struct wraps the C `struct file`. When accessing
+> it using the smart pointer `ARef<File>`, the pointer will own a
+> reference count to the file. When accessing it as `&File`, then the
+> reference does not own a refcount, but the borrow checker will ensure
+> that the reference count does not hit zero while the `&File` is live.
+>=20
+> Since this is intended to manipulate the open files of a process, we
+> introduce an `fget` constructor that corresponds to the C `fget`
+> method. In future patches, it will become possible to create a new fd in
+> a process and bind it to a `File`. Rust Binder will use these to send
+> fds from one process to another.
+>=20
+> We also provide a method for accessing the file's flags. Rust Binder
+> will use this to access the flags of the Binder fd to check whether the
+> non-blocking flag is set, which affects what the Binder ioctl does.
+>=20
+> This introduces a struct for the EBADF error type, rather than just
+> using the Error type directly. This has two advantages:
+> * `File::from_fd` returns a `Result<ARef<File>, BadFdError>`, which the
+>   compiler will represent as a single pointer, with null being an error.
+>   This is possible because the compiler understands that `BadFdError`
+>   has only one possible value, and it also understands that the
+>   `ARef<File>` smart pointer is guaranteed non-null.
+> * Additionally, we promise to users of the method that the method can
+>   only fail with EBADF, which means that they can rely on this promise
+>   without having to inspect its implementation.
+> That said, there are also two disadvantages:
+> * Defining additional error types involves boilerplate.
+> * The question mark operator will only utilize the `From` trait once,
+>   which prevents you from using the question mark operator on
+>   `BadFdError` in methods that return some third error type that the
+>   kernel `Error` is convertible into. (However, it works fine in methods
+>   that return `Error`.)
+>=20
+> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Co-developed-by: Daniel Xu <dxu@dxuuu.xyz>
+> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
+>  fs/file.c                       |   7 +
+>  rust/bindings/bindings_helper.h |   2 +
+>  rust/helpers.c                  |   7 +
+>  rust/kernel/file.rs             | 249 ++++++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs              |   1 +
+>  5 files changed, 266 insertions(+)
+>  create mode 100644 rust/kernel/file.rs
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+
+--=20
+Cheers,
+Benno
+
 
