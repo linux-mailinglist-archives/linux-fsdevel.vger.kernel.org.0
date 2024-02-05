@@ -1,59 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-10312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DE53849A89
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 13:39:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0084C849B12
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 13:55:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1CE41F21E4D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEB862830B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB0E1CABB;
-	Mon,  5 Feb 2024 12:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF70B2E641;
+	Mon,  5 Feb 2024 12:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qmT1E6ti"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X42rM7Ye"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09E91CD02;
-	Mon,  5 Feb 2024 12:36:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECEA22E648;
+	Mon,  5 Feb 2024 12:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707136604; cv=none; b=BpSnyMyLw/W31r1r+xoB1ZsCmtvAXpDx/aXQuGbGiXv9gLY/BH6usnfA2gvxLGIrLmJlmKWfTUQZ0iNLmx6nf8w7chWWm9bz0PYhTIaCzZxRZ65IMqVshDS1oKXkEbjD0UNDczImBSNQtlJguGe2kY5SiGVvjD4jZgG4AsTt5wI=
+	t=1707137300; cv=none; b=jJVfJq7Vn44SHlEubQzOCfKLuDmygOJY8sPNLstCqQtTZIK+KyUuxmOqsTc544nHmuU3G/4Vg2Px2ut/aEgjx6Zkon0p+MId+1XZNF80ybemGmVxc8pMFz9cfwTMsD+uiI3B5A+eFvI3c4KFCScyPl/PZBdPmMgBe+Bw862LZYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707136604; c=relaxed/simple;
-	bh=mMbgFjdRBoeQW13UbL20/IBaORjAvOti7VIDPiwy8wE=;
+	s=arc-20240116; t=1707137300; c=relaxed/simple;
+	bh=gzc6QjV8cFVOsDb+wWPBheBtC01k4PR1RAmuFGN1y7w=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=S73Jx7fyCJeu4HhfmgoDqLJU5T0lLQyLP4DobxxIvju2CDgeKnq2OwMh49QK9iVdvZB8A0IO4jFdjDvn27vDVvowYNK20oeWHz/Z2Q1CE1VhH764qhMMiF+lzUnkQRzp3e/U9DDjYQiBTfrzyUwPcBH3tW6ceh7Sijlq/969HHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qmT1E6ti; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D67CC433C7;
-	Mon,  5 Feb 2024 12:36:43 +0000 (UTC)
+	 Content-Type:MIME-Version; b=MQNkZrLIxtwmF/eQWhmeGWs4KFU94V22QuDTD6rp+T8Oef/A5IX8iYIiTN+8JtGaBCuioQ61jAUJzOviMt+qbPTOxIL/KslQmnag6XqTDQF36r3SVX5PTje3Sk8lDL0RsZLWQdqDzUXitj+p6RgCt5wh9EnjkbWYjc3jgV9Ay3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X42rM7Ye; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B6E0C43394;
+	Mon,  5 Feb 2024 12:48:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707136604;
-	bh=mMbgFjdRBoeQW13UbL20/IBaORjAvOti7VIDPiwy8wE=;
+	s=k20201202; t=1707137299;
+	bh=gzc6QjV8cFVOsDb+wWPBheBtC01k4PR1RAmuFGN1y7w=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=qmT1E6tiuCYcCwmLUJ/OXi4yn3PV3q4//2ha1ehBNFZD3Tu+neKdkLcyspSG8kBoy
-	 KQGfAYVA5Lo1izxTZty5MIqeLRnnigcEWJtmmmfGgajqSFk937+FD/NKxidaNXh97I
-	 l4HW+e7P+9Hc2jm4P8C8v1Wd/KG3RXInq+RFaPJDR4+w7zNEzZuUsulaBmi2j1Z9se
-	 f3wS1roegJcB3oylLmy5EJFN7JKKHCwR6wvbdK2q0pPdzKwzKaeytD6uFixZko05Aa
-	 CcxQABtuz6IEv7qanGqhdzZaxBEe0Lswj5ePB6uSAbbRl/lYArHwHQVbDFa4EWfOeg
-	 7XeL/Ie8M0MDA==
-Message-ID: <bc36104e67120e6e86423fe2e83f9745380c8575.camel@kernel.org>
-Subject: Re: [PATCH 01/13] fs/super.c: don't drop ->s_user_ns until we free
- struct super_block itself
+	b=X42rM7YeDeLWb6UVrFBxTX8mab88N24IoswhAOjJ5rF2fYk6VqyDxx9kABft9E7xr
+	 nsd7ObnhaHzUelKZACZ8HqhAeU1l3tyIG43IRjz82EVARSTr3bGNY9hy6TLsHE9aO8
+	 8J3MLHvmNukOi2GZUlYtsKTJqR1JY90dpzwogXRts3jxzass1cTbVZKTqo5RSuofgv
+	 lRfNLUCekffEsOzQHE4phE6ZsekNPQ3knqvumVBYJS9WatK/HYTObPsNFcY1/D3b7x
+	 8NZOXhOt0gxcvJe4wYj2HoCELHOGRn0j2XEE7KUyqFX9k0YkgIhO+4HsOTfHXD+dRW
+	 TNB2jBPRj6GzA==
+Message-ID: <c33d3939f30df5fb087c9dfd16ae6734eca1708f.camel@kernel.org>
+Subject: Re: [PATCHES] RCU pathwalk race fixes
 From: Jeff Layton <jlayton@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner
  <brauner@kernel.org>, linux-ext4@vger.kernel.org,
  linux-nfs@vger.kernel.org,  Miklos Szeredi <miklos@szeredi.hu>,
  linux-cifs@vger.kernel.org
-Date: Mon, 05 Feb 2024 07:36:42 -0500
-In-Reply-To: <20240204021739.1157830-1-viro@zeniv.linux.org.uk>
+Date: Mon, 05 Feb 2024 07:48:17 -0500
+In-Reply-To: <20240204021436.GH2087318@ZenIV>
 References: <20240204021436.GH2087318@ZenIV>
-	 <20240204021739.1157830-1-viro@zeniv.linux.org.uk>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxwn8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1WvegyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqVT2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtVYrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8snVluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQcDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQfCBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sELZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BBMBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/
 	r0kmR/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2BrQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRIONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZWf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQOlDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7RjiR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27XiQQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBMYXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9qLqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoac8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3FLpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx
@@ -73,63 +71,75 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Sun, 2024-02-04 at 02:17 +0000, Al Viro wrote:
-> Avoids fun races in RCU pathwalk...  Same goes for freeing LSM shite
-> hanging off super_block's arse.
+On Sun, 2024-02-04 at 02:14 +0000, Al Viro wrote:
+> 	We still have some races in filesystem methods when exposed
+> to RCU pathwalk.  The series below is a result of code audit (the
+> second round of it) and it should deal with most of that stuff.
+> Exceptions: ntfs3 ->d_hash()/->d_compare() and ceph_d_revalidate().
+> Up to maintainers (a note for NTFS folks - when documentation says
+> that a method may not block, it *does* imply that blocking allocations
+> are to be avoided.  Really).
 >=20
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  fs/super.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
+> 	Branch is 6.8-rc1-based; it lives in
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git fixes.pathwalk=
+-rcu
 >=20
-> diff --git a/fs/super.c b/fs/super.c
-> index d35e85295489..d6efeba0d0ce 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -274,9 +274,10 @@ static void destroy_super_work(struct work_struct *w=
-ork)
->  {
->  	struct super_block *s =3D container_of(work, struct super_block,
->  							destroy_work);
-> -	int i;
-> -
-> -	for (i =3D 0; i < SB_FREEZE_LEVELS; i++)
-> +	security_sb_free(s);
-> +	put_user_ns(s->s_user_ns);
-> +	kfree(s->s_subtype);
-> +	for (int i =3D 0; i < SB_FREEZE_LEVELS; i++)
->  		percpu_free_rwsem(&s->s_writers.rw_sem[i]);
-
-nit: put_user_ns can call __put_user_ns which ends up queueing yet
-another workqueue job. It might be nice in the future to come up with a
-way to do the work that __put_user_ns does directly here instead of
-queueing it.
-
-OTOH, maybe it's not worth the effort...
-
->  	kfree(s);
->  }
-> @@ -296,9 +297,6 @@ static void destroy_unused_super(struct super_block *=
-s)
->  	super_unlock_excl(s);
->  	list_lru_destroy(&s->s_dentry_lru);
->  	list_lru_destroy(&s->s_inode_lru);
-> -	security_sb_free(s);
-> -	put_user_ns(s->s_user_ns);
-> -	kfree(s->s_subtype);
->  	shrinker_free(s->s_shrink);
->  	/* no delays needed */
->  	destroy_super_work(&s->destroy_work);
-> @@ -409,9 +407,6 @@ static void __put_super(struct super_block *s)
->  		WARN_ON(s->s_dentry_lru.node);
->  		WARN_ON(s->s_inode_lru.node);
->  		WARN_ON(!list_empty(&s->s_mounts));
-> -		security_sb_free(s);
-> -		put_user_ns(s->s_user_ns);
-> -		kfree(s->s_subtype);
->  		call_rcu(&s->rcu, destroy_super_rcu);
->  	}
->  }
+> Individual patches are in followups; ditto for code audit notes.  Beginni=
+ng
+> of the latter should probably be converted into docs; if anyone is willin=
+g
+> to help with such conversion, please say so - I'll be glad to answer any
+> questions, etc.
+>=20
+> If somebody wants to grab bits and pieces of that series into individual
+> filesystem git trees, please say so.  Same for any problems spotted in
+> the patches, obviously.  If nothing shows up, that goes into #fixes and
+> into mainline.
+>=20
+> Shortlog:
+>       fs/super.c: don't drop ->s_user_ns until we free struct super_block=
+ itself
+>       rcu pathwalk: prevent bogus hard errors from may_lookup()
+>       affs: free affs_sb_info with kfree_rcu()
+>       exfat: move freeing sbi, upcase table and dropping nls into rcu-del=
+ayed helper
+>       hfsplus: switch to rcu-delayed unloading of nls and freeing ->s_fs_=
+info
+>       afs: fix __afs_break_callback() / afs_drop_open_mmap() race
+>       nfs: make nfs_set_verifier() safe for use in RCU pathwalk
+>       nfs: fix UAF on pathwalk running into umount
+>       procfs: move dropping pde and pid from ->evict_inode() to ->free_in=
+ode()
+>       procfs: make freeing proc_fs_info rcu-delayed
+>       fuse: fix UAF in rcu pathwalks
+>       cifs_get_link(): bail out in unsafe case
+>       ext4_get_link(): fix breakage in RCU mode
+>=20
+> Diffstat:
+>  fs/affs/affs.h            |  1 +
+>  fs/affs/super.c           |  2 +-
+>  fs/afs/file.c             |  8 ++++++--
+>  fs/exfat/exfat_fs.h       |  1 +
+>  fs/exfat/nls.c            | 14 ++++----------
+>  fs/exfat/super.c          | 20 +++++++++++---------
+>  fs/ext4/symlink.c         |  8 +++++---
+>  fs/fuse/cuse.c            |  3 +--
+>  fs/fuse/fuse_i.h          |  1 +
+>  fs/fuse/inode.c           | 15 +++++++++++----
+>  fs/hfsplus/hfsplus_fs.h   |  1 +
+>  fs/hfsplus/super.c        | 12 +++++++++---
+>  fs/namei.c                |  6 +++++-
+>  fs/nfs/client.c           | 13 ++++++++++---
+>  fs/nfs/dir.c              |  4 ++--
+>  fs/proc/base.c            |  2 --
+>  fs/proc/inode.c           | 19 ++++++++-----------
+>  fs/proc/root.c            |  2 +-
+>  fs/smb/client/cifsfs.c    |  3 +++
+>  fs/super.c                | 13 ++++---------
+>  include/linux/nfs_fs_sb.h |  2 ++
+>  include/linux/proc_fs.h   |  1 +
+>  22 files changed, 88 insertions(+), 63 deletions(-)
+>=20
 
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
