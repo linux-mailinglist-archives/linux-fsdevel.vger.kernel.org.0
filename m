@@ -1,78 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-10368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10369-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FFA284A8E5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 23:14:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E67F84A8EB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 23:15:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 347AA1C28370
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 22:14:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03A15292DD0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 22:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B591D5F84E;
-	Mon,  5 Feb 2024 21:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30BF05FBBF;
+	Mon,  5 Feb 2024 22:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cZCx6byt";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="v6YZPlQz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2132.outbound.protection.outlook.com [40.107.102.132])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA8C5F577;
-	Mon,  5 Feb 2024 21:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893B85FBB8;
+	Mon,  5 Feb 2024 22:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707170367; cv=fail; b=RTZ7zTpbR93DePaRALGUjZSPKQsHt1D0gQnNB99S95uW6yJf77qdwk7niPhluEz8Cq0ISejmSbOGQkmOEwNfqCFIoWLUQgYqCbUQEIXZIT87Z8bRiiFH9E/HUU3FuQiQZUd5rkuKm4aEVgczMAPjOyPz4L1eh7jeVeJmxQzPa/8=
+	t=1707170459; cv=fail; b=k9XO+92nNiDUu3lHPh3g3bR6vSXOv1IpO5dKHqYkPXcRGlNOk+wfrTLLWbWihB/G1tZ74qDRp2tp00c9B7cz8rxQ9vC0RzG7SzOr7Hlflhx6Fm8gIGg2ZTMHMKOGKfswQfiyq5W6Ol8xDmkrtk2BiwS5mW8VIUcGCJ/TBWNvifk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707170367; c=relaxed/simple;
-	bh=hWe1eYndVvRUPlwUiCrLDPVGlaCHEgMh5IC9r8erm/g=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VUnf6+2dOuqLzQlxTWUYaP1KsvYkYTeWfrO1HlnPFVSCxbG+GBhKJ1u2Q9rAE9Xh4M9Qtgjh+hhJutwW6HGqbTXbcc0rxuqYF1Otb6g2QvzRTyq3Yi+YcnI9wWDO+OFjv/55rsqHZ2mIG4PPqQOXmkOpQvmmO7blgUsdHbwL2Qo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com; spf=pass smtp.mailfrom=talpey.com; arc=fail smtp.client-ip=40.107.102.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=talpey.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=talpey.com
+	s=arc-20240116; t=1707170459; c=relaxed/simple;
+	bh=5eLbMmB6xQY4Pc75qtO7phwWIIUED5tYJaKO1Nrm9FI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=E00jesRUsqI+rAmkf1pyaIxFRLej8iPaBIBe+NYIY8C5aNhnlYuChMlejidI6FzPtmWh/okr0Nouy8kjal6mPxhTPJOXMNJ+V3P7Yd+eM9GN48o8R1wMTNT+U4KhCHoA3IxnevTABjyYLGSjFonLlsJOJRsbD8bTeuCGQq0Tfc8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cZCx6byt; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=v6YZPlQz; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 415LFk1s024993;
+	Mon, 5 Feb 2024 22:00:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2023-11-20;
+ bh=OaqiXpnE3hJQ8Uhe+f11uybriOk1/Ut/hFx0SzYTaJ0=;
+ b=cZCx6bytMRHgjxabtkIu2mi3slCZNA1UJsIq/3P2mwSAtzu8VSzJQ5cEccDpR6cn9Aro
+ C8+WGeRyzt0pzHxXTwiV9DfkaXYGKfXkcJL8Yv2mwC1jU6RMui3QpX9DAxUt3mxcKZF7
+ /TOcnTOAzyuLGvWEKD6H0ylt+2n7VOOSuykDpGLCnGokDqrRiWu9sosOPoWPn/4SFUtc
+ 4fSE7IN+42zzvgmGbEtMUDRP1WlEz5o38Qqd6APNtL/cetQfz8kInIAtSvYe9GFb11Fj
+ VyQ3M/FsF3xAdcACPAVmrh0U11MLExKatWSD72vIh71ChUtJE8EqeXYCRMGpEK41B8jt 7A== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3w1c32n8ve-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 05 Feb 2024 22:00:29 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 415LNAWM007103;
+	Mon, 5 Feb 2024 22:00:28 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2169.outbound.protection.outlook.com [104.47.55.169])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3w1bx6jcqb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 05 Feb 2024 22:00:28 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fVj8yv3KQydFlOTfD93Uq0mGiIX2XGp9Ouz8Yq/k7IQoYX0O8MRZBNyIxcyxp89PRxfCZU/Sa5ne3IjAO7gFhfMSErPe5/RG2IBG6/ba0g1EflEPbAdaklUsuGF872jtG8eDzKDIrLV4qVDrHurdVYFwe5NGogXKvTNVF/xJFQsqr0AJQuENa9Jw2Tdk9hCJvoc1rRVBp2TTRxsNmFW7x7zEyX3YGW536C0pwUDy7//QuZIOTuj8i9JJWuG/PyzhF6ThGYaYKxqPhCQ14nsFLNF5/YlZ2l8gorU+yZ5SM0BSfl2e8UesAVOPS5jau316YFue4IdgQ0aJW6oJyxcNLw==
+ b=m5SMoGeXvsLkKwkKmXKNpNk+QNaP/2/1hx4vEirKdM2a+jmjZe95qJYubnEHpEf6pSXfepuA2aOtWnmH0vRSuxjPDtdLyoIMt8KQ/0dsZgfqSgctWT4r3/O25kL1v796pZiw4AvzSlh5CcdRJMuPDruuuGo38pO/j9PA2QpHjA6faWkg0a22PJ0ojEfUzeds2WJk974hRbPuznJ2imeqcNDIK/uiygoZV/NVAfz4aQYsacjQPA4Etzym4QugetE9a2JILVqN0W01c+i//KDOXwv7Y22Evvc6UfKMZ9NCCxLc+BcLClq8dBRZxxz1/Yxa50M8ipajZlny65MzBc3yTw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b6z+rgxW9iQCRxRnvBMB8Q9OmGP0bqAL31xd90jaucE=;
- b=O843ji/FIiJDbEyVOR46wHZXrDCLt7zGwvtVKz2nVsGLVYVZIclll7aIszUqV7Aegu9FHy8CqFJ6vRSoZUzh5V9TqTN0UPU1PQ9I2IS4nQpBFTFtCsmjhjQX9kQE4A6u4iMnLuVAhi9fHsg2I44p2bJl0sY/QuoBrWGO0iInV3IlEwjf5Pf7pNZ47PHMFzGckml8bBKCr2BLLULsgIjzOclGo6EOSuCxtZXuk6dxf+oGqtr4J5smuF4l4vErDw6kZyCJ2DAEUL3qSR96FiQFE4SOGpzZ38Rh1QYGfjqKFTzpG9UiSMOVNXXRX+RVrbewOjgzaX1LEphMWFNw+/m/VQ==
+ bh=OaqiXpnE3hJQ8Uhe+f11uybriOk1/Ut/hFx0SzYTaJ0=;
+ b=kG55E1wbxbgLv652zxOEWwwtcIjdbGwmV6kHKMdMuN4kkRAN2ItlpttV4bjEJtVQgqhSoZwi8EKpCcZTJuOXODkWstz0CMQ49JtGDqao2v8XZsCD3ikMQP9E9A0ZvHSgZOdfXc9shZCeLwGzaJIl3b2jh/lv7qO+rMXongujUnmCPEcMcmhFZQLuZRW7gAi1mXwg4AIpn5F9b6zC+gWONfTvR5DtSysrCDXTG1OfbJ1El9iqfH+UOhxJWYZqJZPcr+e5+Un1+MVDZ5T4HGRFD+szkc8yPEFfPGOgqJ1MLakTByzqeYSH8ic34mCHxtmqoXEKvOwT27q+5EEAyuXmYQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=talpey.com; dmarc=pass action=none header.from=talpey.com;
- dkim=pass header.d=talpey.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=talpey.com;
-Received: from DM6PR01MB4666.prod.exchangelabs.com (2603:10b6:5:6a::23) by
- BL1PR01MB7745.prod.exchangelabs.com (2603:10b6:208:398::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7249.36; Mon, 5 Feb 2024 21:59:21 +0000
-Received: from DM6PR01MB4666.prod.exchangelabs.com
- ([fe80::fa7e:911b:9238:fd72]) by DM6PR01MB4666.prod.exchangelabs.com
- ([fe80::fa7e:911b:9238:fd72%6]) with mapi id 15.20.7249.032; Mon, 5 Feb 2024
- 21:59:21 +0000
-Message-ID: <97f969c3-5ce7-4a60-9056-be42cb0c1888@talpey.com>
-Date: Mon, 5 Feb 2024 16:59:18 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] filelock: don't do security checks on nfsd setlease calls
-Content-Language: en-US
-To: Jeff Layton <jlayton@kernel.org>, NeilBrown <neilb@suse.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Chuck Lever <chuck.lever@oracle.com>, Olga Kornievskaia <kolga@netapp.com>,
- Dai Ngo <Dai.Ngo@oracle.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
- =?UTF-8?B?T25kcmVqIE1vc27DocSNZWs=?= <omosnacek@gmail.com>,
- Zdenek Pytela <zpytela@redhat.com>,
- "linux-cifs@kernel.org" <linux-cifs@kernel.org>
-References: <20240205-bz2248830-v1-1-d0ec0daecba1@kernel.org>
- <170716318935.13976.13465352731929804157@noble.neil.brown.name>
- <cd3f8b0d2d0c0a58472b9a83b9c89dbbc6ad4e5c.camel@kernel.org>
-From: Tom Talpey <tom@talpey.com>
-In-Reply-To: <cd3f8b0d2d0c0a58472b9a83b9c89dbbc6ad4e5c.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MN2PR13CA0033.namprd13.prod.outlook.com
- (2603:10b6:208:160::46) To DM6PR01MB4666.prod.exchangelabs.com
- (2603:10b6:5:6a::23)
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OaqiXpnE3hJQ8Uhe+f11uybriOk1/Ut/hFx0SzYTaJ0=;
+ b=v6YZPlQzYYdTTx9cb2q72fwkKZNq/l6IRfBv3mtJzy9NbPX8Y5gHkp5QAvoE/kcveqG7BCUtq8u/vG2F7oUSg8ABHEKSCSDL/f1fxtX2ke0CR9Xhqvk76q7Uj8/9uX27mYok9X8JMX5SBnJEy08r02vL3+LWyG27hGbjlQHTYyU=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by SA1PR10MB6448.namprd10.prod.outlook.com (2603:10b6:806:29e::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.34; Mon, 5 Feb
+ 2024 22:00:25 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::20c8:7efa:f9a8:7606]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::20c8:7efa:f9a8:7606%4]) with mapi id 15.20.7249.032; Mon, 5 Feb 2024
+ 22:00:24 +0000
+Date: Mon, 5 Feb 2024 17:00:22 -0500
+From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+To: Lokesh Gidra <lokeshgidra@google.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com,
+        david@redhat.com, axelrasmussen@google.com, bgeffon@google.com,
+        willy@infradead.org, jannh@google.com, kaleshsingh@google.com,
+        ngeoffray@google.com, timmurray@google.com, rppt@kernel.org
+Subject: Re: [PATCH v2 3/3] userfaultfd: use per-vma locks in userfaultfd
+ operations
+Message-ID: <20240205220022.a4qy7xlv6jpcsnh7@revolver>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
+	Lokesh Gidra <lokeshgidra@google.com>,
+	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+	kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com,
+	david@redhat.com, axelrasmussen@google.com, bgeffon@google.com,
+	willy@infradead.org, jannh@google.com, kaleshsingh@google.com,
+	ngeoffray@google.com, timmurray@google.com, rppt@kernel.org
+References: <20240129193512.123145-1-lokeshgidra@google.com>
+ <20240129193512.123145-4-lokeshgidra@google.com>
+ <20240129203626.uq5tdic4z5qua5qy@revolver>
+ <CAJuCfpFS=h8h1Tgn55Hv+cr9bUFFoUvejiFQsHGN5yT7utpDMg@mail.gmail.com>
+ <CA+EESO5r+b7QPYM5po--rxQBa9EPi4x1EZ96rEzso288dbpuow@mail.gmail.com>
+ <20240130025803.2go3xekza5qubxgz@revolver>
+ <CA+EESO4+ExV-2oo0rFNpw0sL+_tWZ_MH_rUh-wvssN0y_hr+LA@mail.gmail.com>
+ <20240131214104.rgw3x5vuap43xubi@revolver>
+ <CAJuCfpFB6Udm0pkTwJCOtvrn9+=g05oFgL-dUnEkEO0cGmyvOw@mail.gmail.com>
+ <CA+EESO7ri47BaecbesP8dZCjeAk60+=Fcdc8xc5mbeA4UrYmqQ@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+EESO7ri47BaecbesP8dZCjeAk60+=Fcdc8xc5mbeA4UrYmqQ@mail.gmail.com>
+User-Agent: NeoMutt/20220429
+X-ClientProxiedBy: YT3PR01CA0108.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:85::25) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,320 +125,114 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR01MB4666:EE_|BL1PR01MB7745:EE_
-X-MS-Office365-Filtering-Correlation-Id: 778cccfc-dead-41d9-ed89-08dc2695b4e0
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|SA1PR10MB6448:EE_
+X-MS-Office365-Filtering-Correlation-Id: 44f7aa36-8781-4f1d-e583-08dc2695db07
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	Mp2Io17AoO6xVySzA21V6GIFFElTCxoiqCYHQEHhiLjSs6ekyoekek80o2+T4nPugM3SEnxcLN7MbzU0UpduyX9obRRoGm4+HBYABHiSN20m5DAAxa9VxnIbcRl9k+y0z19jvS9bbypHCPY1OEH+2vtOkGiFmDkxCujnH2Qe13FwDmLSsl7l7/oIL0Nuf9Cf0HJ/zx+E9ndsjGOP11bOB4ilcdLcYpN51jGrq1qBohp/IFXs7myJyG6jkyk5izyPvsW2RsSuSawaH+bZbKlAs4EiGNn+r1v1pvsXQ8PziMIBihwz2Px+3gguYT8QO86jljaEyKsNfVW8t4/LqZcs/g1anIhkB4FzivlVmxJ1DRA8IXcDzPG6auY159ubZ/f7Q0mgI05qiO/uWtoJ3+gPqWizcTWduF5cWdDtIn+8zGo97t86sfVM7NV6EesnMwvnMZ9DIuqf+VnIIQMdWe5Yu8NzX6c/3Hmdunx3UaX6wfzbpk8kV6Z4LjTa3Z8iz5sh1/de4Cgqo40g12bir9BLHP8bzyU7csMJHDKaFduOPhkUPD3d/rymTfWDZ6OX7XDhDzG5CzwAs7NWKe5vAvGnSaWumtBVZqNNAM0PT4gx3ok=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR01MB4666.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230031)(39830400003)(376002)(366004)(346002)(136003)(396003)(230922051799003)(1800799012)(64100799003)(451199024)(186009)(41300700001)(2616005)(26005)(86362001)(7416002)(966005)(6486002)(15650500001)(5660300002)(2906002)(478600001)(110136005)(54906003)(66476007)(66556008)(66946007)(8936002)(4326008)(8676002)(6512007)(36756003)(6506007)(53546011)(6666004)(316002)(31686004)(31696002)(38100700002)(83380400001)(43740500002);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: 
+	+q9/PXc8ICGjPswqFeyCAQZ7h37sf6ZRwmFO5LUImq9UVJQy4GmV7fIe4a8nvQdGkUCdK63CmW3PrafsQIqjzthYx9a+HCZT2440G1P2nulOYRk8aM82XtKZttHE36ZIg/FQlNDci3+M9/NTyN95vPBL8KZpwqOw8xTATo+NBiarrB/AVsjpq6m/keibhiMlJwMaYJJ4gBJKZd2l86cTopHaQVk6YakAN8gYS0vKsebgMe0B1bIZVcG3ynHM3ND4YF1b7oW3K764O1k8M+HAXC2EmwxJN0HChOMvez5GL0uy7UwnetR7kN5KIHbUPb+ApAF4sjrESamxNjOaJ//5ZtnuR8Uynwn+M8co7kYHPkCz0Zd5w0uB+7iEGHKvYMziGmJYvaxl8ndPlriqu2ZwLPWEz6qd2VdKi4RsTMZ+381fTxGsBVLhch2e9XgvzUlrq9lN2h/wqnB7YzWoDey2A3KGUMFuUXfkoRh7Q5/GKTq/JDQtEiN77U0BiE9FbXkEL/Hmpxwu8TvZSergpppUameh9fCXEvuVSHSEot8tLXHYDUYFbHHLlQGEpXVRz4FT
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(136003)(366004)(396003)(376002)(346002)(39860400002)(230922051799003)(1800799012)(186009)(64100799003)(451199024)(7416002)(5660300002)(8936002)(4326008)(8676002)(2906002)(316002)(66946007)(66556008)(6916009)(66476007)(6486002)(6512007)(478600001)(9686003)(6506007)(1076003)(33716001)(38100700002)(86362001)(83380400001)(41300700001)(26005);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?YzErWUdpK3VuM085clRkaDh0cExOZVh5cEdvYXovRmNlSmgvU3FFL3dHSUtM?=
- =?utf-8?B?UVFyN0wySW5VT2F1NVA2OHVYM1dBbU5JU1VueDhqZFo5b21TcHFNby9mZWVq?=
- =?utf-8?B?a3NJR2ZOZ2l2VEZTTW8wWGE5TlU2anhwclFyTit6YS9mK2hRSjFXYXUrUzBi?=
- =?utf-8?B?S1hEOFZCdkpnUnQ4OGhtK0xNUWtEWTlaMStUNFYvOTlEeDY5UE5OSm1yY21E?=
- =?utf-8?B?NGxkellCM3RyeEkyY0ZvSFFMTTE1R1YvOFYyZkQ3QmE0ekNtem5xWlZHY3po?=
- =?utf-8?B?MlRrRzdGTTRZeWZhekNyNWlGTG9VWWRUTHgxMlNTTUJOWG1aVzJ6ZXNMWDE4?=
- =?utf-8?B?em5aNWZmdEJOUk1RS2RvRTlVYVQ3YTF6dHRpdHAzaWhUMm5MUzY4RGdYU2tF?=
- =?utf-8?B?RE53ZllmSXQ4ZFFjM2R6SExENGQ4T1hZUzc1aVJDYTkxaEp6c2NDMnMrR0JC?=
- =?utf-8?B?UWdzWElQeisxdHdYckdWMjhGWnptcXpVaTYva3JlTzVuOUlsdUExODZ2RjBX?=
- =?utf-8?B?M3Q0UUlBU3YzMWVtYkpObmM1STRhZm8wbWkzYTV4T0JKRkJUdUxrdE5pNEVq?=
- =?utf-8?B?T1pGZUg1WEhyeWZPZkMwYWZzQTFKclA1TFQvUVJZY1FzSnRSNlVPcjR2YzN6?=
- =?utf-8?B?NXlrZ2tqajhrUW5PN1IzQmNscldaNHA1aUMrdUdCT1dhOHkwQkxGcFp2cHA0?=
- =?utf-8?B?elpMbWVwWGFrSm5vMkd2d1U3MVVLcXI3WWxTeUxvU2p0Qm1CYjFCcDdxMDN0?=
- =?utf-8?B?Zi81eDIrbkNGRlhWVnFublkrZHhRSDU3cStLWmZjaUllTWVZcHJyd012NGlu?=
- =?utf-8?B?MnNnY0hnbXh4aGhLTEJIb3p3R3YwRm1ydnhjQksxZCt1SW5WZ0hkRjlvS0di?=
- =?utf-8?B?TDljSTR6OUtMYXlBVU81Vlp4c2F3ZXRpc1VWbjBxNkRkQ0ovenhCZUFsNFNV?=
- =?utf-8?B?UFgyZWRvTXdyWW54a244N2EzWFl2UUE4U0JBWHhYQ29JdFNyRXdqdU5pVjFw?=
- =?utf-8?B?dHRXSkZ4NXRQZ2lkZEJ0aXVyaEVCNEVySXhWVlZIWjZ6MWx2SW1mWGJGLy9l?=
- =?utf-8?B?R1lybkExY3BMd3B5QjNZbk5yM1BUQSs1Q2hNRGt6VVowdmx4MEFxbnRlTkk3?=
- =?utf-8?B?cExCcTF1eXRINFQzaGZ2ZnFGV1VVNXpta3dLcnJaTzNCdCtRTDA5SkhDakJY?=
- =?utf-8?B?SDB0L1ZJdElHcmVKMkFFOHh4VndkYXZ2WDNCMlNhYVU0dWtoVU9OT1d2WHdq?=
- =?utf-8?B?clRGa3RyOE9FbS8xUFhJRnlBL2tubGNBS3Z0NlBlcSttK1B5WVJlRGk3K3VO?=
- =?utf-8?B?cFdPb3QxaCtmRDV1UG1WRS9uNDJDNTQ3VjY4MEEzU2lza2k2MG04ZHJodWU1?=
- =?utf-8?B?QWxaK2tadTkwaUtrTmtEWEZXQkxBNnN0NzVCR3hkbFBKMjB1Wms4akNXZ2F4?=
- =?utf-8?B?a1FVTDZab0hFVm1jdyt3SG5VbXREVnF4ZmdEQ3JGc2U5YzJIbk41Vi9xWGls?=
- =?utf-8?B?VDdZcWxxU3VBNTFjWHVhN2pqbFMxa0JmKzhjek1XVEI4U25vQS9sditDdjdO?=
- =?utf-8?B?c3R4WWYxd0c0VDJvU1hFQ3ZTMithYnVKTkp6UEFwWVpraGVmMjh2UUs4QzI0?=
- =?utf-8?B?cnpjRVhhK1g0Q0VtTDBnR05sZGZkNEJvYjg2ZVVTaitkQ1RIbi9mUXNmbDVo?=
- =?utf-8?B?V3BFaUJEWVdDaVBNcW9Ba213YnQ3Y0tFeHNWcnNtdVZmdDBLUFpaQTlMdnV1?=
- =?utf-8?B?K2oxbVE3d2Vxb0x6Q0Y5ZGZXbWowSlRWRGFKakcvclZVTk93eElCYXh0RVVt?=
- =?utf-8?B?Rm8yWExrVEZ5OE5nS2xrcmpFNlhUNjhobVFSLy9HMUtoQ1lQUmk3eGdWbFAr?=
- =?utf-8?B?M3hhblBDbjZ6dHFSa3lkd1BhbEZtYVZ1UVh6TmprRTc5azR3TGd5UUMrdjZi?=
- =?utf-8?B?R2VHbUFreWtKNDhzMTlCTUFBa2VPc09WSHdSd1dta0NTN3YycU94ekNZUmhH?=
- =?utf-8?B?bVpOV09kNk9uUmVpdk5HRy9pNHZXREJST2R1U0Nhb2VjbWpNYnRtVXljUER5?=
- =?utf-8?B?bldrRmx2VXVNZWp4WGxVY2NDTzAxOFNZbTNPbG9JWUJpaGt6N3RKYnU3T3Ur?=
- =?utf-8?Q?iyv9UGNTFM3VXwJHpbstOYFVu?=
-X-OriginatorOrg: talpey.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 778cccfc-dead-41d9-ed89-08dc2695b4e0
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR01MB4666.prod.exchangelabs.com
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?OZOctOBkKXbNNStD+aQHaOvbH4CKxn0bTYwFT2zDgqk3O43v8lL8jHLrysRD?=
+ =?us-ascii?Q?Rq6WR3pmxWzhVusCZK8G4Vk8GaHEMzwaP5uNY6u238oJZ8UDsjgx9AgSLsjK?=
+ =?us-ascii?Q?hZtfS2fGVmdXE/uqb4ANBN68lsDplFzzorh2FvSW3Yrwd5+8PfH+wLll+UIJ?=
+ =?us-ascii?Q?l0sYKXJwaRqSrXfgls+qHby7baMwsWiTv2nPZF6ljO1RCfIiykj4lpTnrCuw?=
+ =?us-ascii?Q?Rhavthc5Njgao73SNTzTQJyiOZVoop3GPGIO2p7Ly98dcROFdYOU1ii6aEMZ?=
+ =?us-ascii?Q?brlAOH3SeuYz2lJEGN0QOhVA1fCkylV6jD7fZJAHE4WU1+see3BK1PoaBwM6?=
+ =?us-ascii?Q?+D7IaJt8ODj6jn3w+spjn5+9d6ozinJug35gP2k1oM6HuHJaaG8cWMjzVYf6?=
+ =?us-ascii?Q?JqEuBsZ7MszwXB6YhLZwK+oMpQIP/c0ymzbO8Xk6BfihGfaIFLPE2Z+rHoOT?=
+ =?us-ascii?Q?EVCu3FIGNFlpytlIIX61mTAoDXVHLZ4KY/0oDkB8pSeW07hWBKOKQigkUp33?=
+ =?us-ascii?Q?+S/WrE+QmYl3zSK1dxazgaGMkS7cZzGA5oHvayKKXEtx9uNA60LWL1iNPMkK?=
+ =?us-ascii?Q?DBc8cVAi5/UQMCA0KIWuLHn34rHQpaT/Jy95byvLA6hEixJX0wsevN5VQl5q?=
+ =?us-ascii?Q?xSdPu3UwU9/m1kaR/ZkvZV1sRHDGhgn5ceOgcF6TJrPcICVzATPFXvXUnMJx?=
+ =?us-ascii?Q?gZNt0H6Uwsqjf1p6p+H6hZEBvFzNaslqu5jhs3BiOJlApvq0N5U41PsUIH5j?=
+ =?us-ascii?Q?ws16qib8H6nmHJYjiAhZ1iVmf7RyyPYvhicRtkFZuyZA9WAuHQeoG0VgJMMb?=
+ =?us-ascii?Q?FkbNRaUV83FI4Jqve3RSWIUrRQI7BTCId97Q9+kRs61iHJJaCN1qv5BSA7lH?=
+ =?us-ascii?Q?aJi/hGDkDilqdJML491uuj9/8EOvwmVesCXtsosChEeKw2zRJw3j1tKCjOR8?=
+ =?us-ascii?Q?s1PLhDoHppLInnw7g8u+CyV6Q0RnRNEkilg8xvj9XkrfeEu7Z96/DmBt4COP?=
+ =?us-ascii?Q?NQaapgAInL4xZOTZGh1hox3/5x6HuQMttsaNPnAo3worv+2RdhdI1fzMeFkW?=
+ =?us-ascii?Q?vMbQlZSEvOTFWLNRlm1O6HkUxDQtKrNLVGV99HLjk+6/LFwMY49cJsaUinZS?=
+ =?us-ascii?Q?ySktf0SV47WEHjDW7omy21lNSuIlQNHN5JFLdcbPrRSmpCBBOKhSlsnvFQAB?=
+ =?us-ascii?Q?XEetBr5uYYKZhfZgTfNPSyEDpWo81jB+lMWM6ZwpACnGeTBNrhkhwTl5+eBh?=
+ =?us-ascii?Q?L2+7JCGYR7N5PZyB1FRTxQZRqCI3g2/Ch1s2ibmk2tdsjkODYl540JePn1oa?=
+ =?us-ascii?Q?SpA4I/4+uX7l6+4UWl4SLJTZ17E8+n08sjbx9QQwaaZBU9tQKcq8CCtyMs9E?=
+ =?us-ascii?Q?ZK2pg/0Q0KQr5gIEzygxwzz5HsHxAjVf1zDlicqU+jbzl3SKINxonfabyrVQ?=
+ =?us-ascii?Q?eb+qfgz11Ec22/AyXE0ZiRG6XbGX3QFsG0lK0Rb10uWdvHfmgJ4ktwieR0AB?=
+ =?us-ascii?Q?G4y2VWNmpVyNLd80w7rr4iaBqLb7tAP0trxoP2K3xn+WQm9kiMnYNmNUG/Tg?=
+ =?us-ascii?Q?b4TpbivDS9sKfAVcn0lhL9GiivwfHBM+5ondQC3J?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	qSYL4HDBdMmh+Hv2YP5wwK9BeTRteOLCp1d46BQSDBvSJlFxsMAFnamE88vUObxFY5lQe4TMI4ofa7SFhEdaffN/GMdx+kqmPP/SYYEUGmg03AxT4ESmIvGxJ0YRkS1btZg3y92yEKqoihVD1HQMGKCei+dMs04Qyv/CUa14TAi910Nb8kReJ2Bm/bw4DsJ9j+rDbh4k33pMf3A1PQGmUQ9NuKr+HkIdS3hT9d3o8EK4pzVqIbqyOxJRIu1edvu3HIzcQilxrBGGw8mu4d5WacU4rOSlddps29D6XWgeqYO4NSIB3u1TMI+ot7BlfteRW4E23LuF8s0uauUTzCawJkUGLMg6nTHQ5Q7dMZyy+Ss0fK2L9fSOa/YkZqLLt1SSr+VpJSFLoQppuso/r0RY7AEyRSYyIWwq1D0TEKtfm9tU7ywZYdkJ4xS4nEUK7QW8q+DLo3IygCkkT+f6xtPynodEp/IoQKrhQ/HjQe+t3Amlhax+JUd1H32Jeimhkl0rR/MsCaGQELjhYivJARGv+Ah+nJ0OtdOeTKifrZB10PFW3Fe6MrnjKIZRvqfmrWLaSu/u7uwjoSuC3lfSaAHlqtJpea23u1HQuCgFaqmyTVs=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44f7aa36-8781-4f1d-e583-08dc2695db07
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2024 21:59:20.8232
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Feb 2024 22:00:24.7632
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2b2dcae7-2555-4add-bc80-48756da031d5
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 93Cu9aSQvxR4IFFsCXb0DyAetOr3Z/grmncOdwXjZG+nt4OUcmX9R3Dx6UYHx4mJ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR01MB7745
+X-MS-Exchange-CrossTenant-UserPrincipalName: saE6E1REaNwbFJ+toGeu29MwRZ7uZy9NuIuyMUGxE+DSrP4XTImwWHuwWyYIJXXnW3GqNzEQ3F3HifB9/ooqwQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR10MB6448
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-05_16,2024-01-31_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0
+ mlxlogscore=742 bulkscore=0 mlxscore=0 adultscore=0 malwarescore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402050165
+X-Proofpoint-GUID: bOn994PU1eDCEWRZctnEuzcaOVDU3BYF
+X-Proofpoint-ORIG-GUID: bOn994PU1eDCEWRZctnEuzcaOVDU3BYF
 
-On 2/5/2024 3:16 PM, Jeff Layton wrote:
-> On Tue, 2024-02-06 at 06:59 +1100, NeilBrown wrote:
->> On Mon, 05 Feb 2024, Jeff Layton wrote:
->>> Zdenek reported seeing some AVC denials due to nfsd trying to set
->>> delegations:
->>>
->>>      type=AVC msg=audit(09.11.2023 09:03:46.411:496) : avc:  denied  { lease } for  pid=5127 comm=rpc.nfsd capability=lease  scontext=system_u:system_r:nfsd_t:s0 tcontext=system_u:system_r:nfsd_t:s0 tclass=capability permissive=0
->>>
->>> When setting delegations on behalf of nfsd, we don't want to do all of
->>> the normal capabilty and LSM checks. nfsd is a kernel thread and runs
->>> with CAP_LEASE set, so the uid checks end up being a no-op in most cases
->>> anyway.
->>>
->>> Some nfsd functions can end up running in normal process context when
->>> tearing down the server. At that point, the CAP_LEASE check can fail and
->>> cause the client to not tear down delegations when expected.
->>>
->>> Also, the way the per-fs ->setlease handlers work today is a little
->>> convoluted. The non-trivial ones are wrappers around generic_setlease,
->>> so when they fail due to permission problems they usually they end up
->>> doing a little extra work only to determine that they can't set the
->>> lease anyway. It would be more efficient to do those checks earlier.
->>>
->>> Transplant the permission checking from generic_setlease to
->>> vfs_setlease, which will make the permission checking happen earlier on
->>> filesystems that have a ->setlease operation. Add a new kernel_setlease
->>> function that bypasses these checks, and switch nfsd to use that instead
->>> of vfs_setlease.
->>>
->>> There is one behavioral change here: prior this patch the
->>> setlease_notifier would fire even if the lease attempt was going to fail
->>> the security checks later. With this change, it doesn't fire until the
->>> caller has passed them. I think this is a desirable change overall. nfsd
->>> is the only user of the setlease_notifier and it doesn't benefit from
->>> being notified about failed attempts.
->>>
->>> Cc: Ondrej Mosnáček <omosnacek@gmail.com>
->>> Reported-by: Zdenek Pytela <zpytela@redhat.com>
->>> Closes: https://bugzilla.redhat.com/show_bug.cgi?id=2248830
->>> Signed-off-by: Jeff Layton <jlayton@kernel.org>
->>
->> Reviewed-by: NeilBrown <neilb@suse.de>
->>
->> It definitely nice to move all the security and sanity check early.
->> This patch allows a minor clean-up in cifs which could possibly be
->> included:
->> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
->> index 2a4a4e3a8751..0f142d1ec64f 100644
->>
->> --- a/fs/smb/client/cifsfs.c
->> +++ b/fs/smb/client/cifsfs.c
->> @@ -1094,9 +1094,6 @@ cifs_setlease(struct file *file, int arg, struct file_lock **lease, void **priv)
->>   	struct inode *inode = file_inode(file);
->>   	struct cifsFileInfo *cfile = file->private_data;
->>   
->> -	if (!(S_ISREG(inode->i_mode)))
->> -		return -EINVAL;
->> -
->>   	/* Check if file is oplocked if this is request for new lease */
->>   	if (arg == F_UNLCK ||
->>   	    ((arg == F_RDLCK) && CIFS_CACHE_READ(CIFS_I(inode))) ||
->>
->>
->> as ->setlease() is now never called for non-ISREG files.
->>
->> NeilBrown
->>
->>
-> 
-> Ahh yeah. Good point. I'm fine with including that if Christian wants to
-> fold it in.
-> 
-> Thanks for the review!
+* Lokesh Gidra <lokeshgidra@google.com> [240205 16:55]:
+...
 
-cifsfs.c is a new file being added to the change, cc-ing linux-cifs
-for awareness. The SMB3 protocol does support leases on directories, so
-this vfs change might be important to note in the future.
+> > > > We can take care of anon_vma as well here right? I can take a bool
+> > > > parameter ('prepare_anon' or something) and then:
+> > > >
+> > > >            if (vma) {
+> > > >                     if (prepare_anon && vma_is_anonymous(vma)) &&
+> > > > !anon_vma_prepare(vma)) {
+> > > >                                       vma = ERR_PTR(-ENOMEM);
+> > > >                                       goto out_unlock;
+> > > >                    }
+> > > > >                 vma_aquire_read_lock(vma);
+> > > >            }
+> > > > out_unlock:
+> > > > >         mmap_read_unlock(mm);
+> > > > >         return vma;
+> > > > > }
+> > >
+> > > Do you need this?  I didn't think this was happening in the code as
+> > > written?  If you need it I would suggest making it happen always and
+> > > ditch the flag until a user needs this variant, but document what's
+> > > going on in here or even have a better name.
+> >
+> > I think yes, you do need this. I can see calls to anon_vma_prepare()
+> > under mmap_read_lock() protection in both mfill_atomic_hugetlb() and
+> > in mfill_atomic(). This means, just like in the pagefault path, we
+> > modify vma->anon_vma under mmap_read_lock protection which guarantees
+> > that adjacent VMAs won't change. This is important because
+> > __anon_vma_prepare() uses find_mergeable_anon_vma() that needs the
+> > neighboring VMAs to be stable. Per-VMA lock guarantees stability of
+> > the VMA we locked but not of its neighbors, therefore holding per-VMA
+> > lock while calling anon_vma_prepare() is not enough. The solution
+> > Lokesh suggests would call anon_vma_prepare() under mmap_read_lock and
+> > therefore would avoid the issue.
+> >
 
-In the meantime, for cifsfs.c:
+...
 
-Acked-by: Tom Talpey <tom@talpey.com>
+> anon_vma_prepare() is also called in validate_move_areas() via move_pages().
 
-Tom.
+Probably worth doing it unconditionally and have a comment as to why it
+is necessary.
 
+Does this avoid your locking workaround?
 
->>> This patch is based on top of a merge of Christian's vfs.file branch
->>> (which has the file_lock/lease split). There is a small merge confict
->>> with Chuck's nfsd-next patch, but it should be fairly simple to resolve.
->>> ---
->>>   fs/locks.c               | 43 +++++++++++++++++++++++++------------------
->>>   fs/nfsd/nfs4layouts.c    |  5 ++---
->>>   fs/nfsd/nfs4state.c      |  8 ++++----
->>>   include/linux/filelock.h |  7 +++++++
->>>   4 files changed, 38 insertions(+), 25 deletions(-)
->>>
->>> diff --git a/fs/locks.c b/fs/locks.c
->>> index 33c7f4a8c729..26d52ef5314a 100644
->>> --- a/fs/locks.c
->>> +++ b/fs/locks.c
->>> @@ -1925,18 +1925,6 @@ static int generic_delete_lease(struct file *filp, void *owner)
->>>   int generic_setlease(struct file *filp, int arg, struct file_lease **flp,
->>>   			void **priv)
->>>   {
->>> -	struct inode *inode = file_inode(filp);
->>> -	vfsuid_t vfsuid = i_uid_into_vfsuid(file_mnt_idmap(filp), inode);
->>> -	int error;
->>> -
->>> -	if ((!vfsuid_eq_kuid(vfsuid, current_fsuid())) && !capable(CAP_LEASE))
->>> -		return -EACCES;
->>> -	if (!S_ISREG(inode->i_mode))
->>> -		return -EINVAL;
->>> -	error = security_file_lock(filp, arg);
->>> -	if (error)
->>> -		return error;
->>> -
->>>   	switch (arg) {
->>>   	case F_UNLCK:
->>>   		return generic_delete_lease(filp, *priv);
->>> @@ -1987,6 +1975,19 @@ void lease_unregister_notifier(struct notifier_block *nb)
->>>   }
->>>   EXPORT_SYMBOL_GPL(lease_unregister_notifier);
->>>   
->>> +
->>> +int
->>> +kernel_setlease(struct file *filp, int arg, struct file_lease **lease, void **priv)
->>> +{
->>> +	if (lease)
->>> +		setlease_notifier(arg, *lease);
->>> +	if (filp->f_op->setlease)
->>> +		return filp->f_op->setlease(filp, arg, lease, priv);
->>> +	else
->>> +		return generic_setlease(filp, arg, lease, priv);
->>> +}
->>> +EXPORT_SYMBOL_GPL(kernel_setlease);
->>> +
->>>   /**
->>>    * vfs_setlease        -       sets a lease on an open file
->>>    * @filp:	file pointer
->>> @@ -2007,12 +2008,18 @@ EXPORT_SYMBOL_GPL(lease_unregister_notifier);
->>>   int
->>>   vfs_setlease(struct file *filp, int arg, struct file_lease **lease, void **priv)
->>>   {
->>> -	if (lease)
->>> -		setlease_notifier(arg, *lease);
->>> -	if (filp->f_op->setlease)
->>> -		return filp->f_op->setlease(filp, arg, lease, priv);
->>> -	else
->>> -		return generic_setlease(filp, arg, lease, priv);
->>> +	struct inode *inode = file_inode(filp);
->>> +	vfsuid_t vfsuid = i_uid_into_vfsuid(file_mnt_idmap(filp), inode);
->>> +	int error;
->>> +
->>> +	if ((!vfsuid_eq_kuid(vfsuid, current_fsuid())) && !capable(CAP_LEASE))
->>> +		return -EACCES;
->>> +	if (!S_ISREG(inode->i_mode))
->>> +		return -EINVAL;
->>> +	error = security_file_lock(filp, arg);
->>> +	if (error)
->>> +		return error;
->>> +	return kernel_setlease(filp, arg, lease, priv);
->>>   }
->>>   EXPORT_SYMBOL_GPL(vfs_setlease);
->>>   
->>> diff --git a/fs/nfsd/nfs4layouts.c b/fs/nfsd/nfs4layouts.c
->>> index 4fa21b74a981..4c0d00bdfbb1 100644
->>> --- a/fs/nfsd/nfs4layouts.c
->>> +++ b/fs/nfsd/nfs4layouts.c
->>> @@ -170,7 +170,7 @@ nfsd4_free_layout_stateid(struct nfs4_stid *stid)
->>>   	spin_unlock(&fp->fi_lock);
->>>   
->>>   	if (!nfsd4_layout_ops[ls->ls_layout_type]->disable_recalls)
->>> -		vfs_setlease(ls->ls_file->nf_file, F_UNLCK, NULL, (void **)&ls);
->>> +		kernel_setlease(ls->ls_file->nf_file, F_UNLCK, NULL, (void **)&ls);
->>>   	nfsd_file_put(ls->ls_file);
->>>   
->>>   	if (ls->ls_recalled)
->>> @@ -199,8 +199,7 @@ nfsd4_layout_setlease(struct nfs4_layout_stateid *ls)
->>>   	fl->c.flc_pid = current->tgid;
->>>   	fl->c.flc_file = ls->ls_file->nf_file;
->>>   
->>> -	status = vfs_setlease(fl->c.flc_file, fl->c.flc_type, &fl,
->>> -			      NULL);
->>> +	status = kernel_setlease(fl->c.flc_file, fl->c.flc_type, &fl, NULL);
->>>   	if (status) {
->>>   		locks_free_lease(fl);
->>>   		return status;
->>> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
->>> index b2c8efb5f793..6d52ecba8e9c 100644
->>> --- a/fs/nfsd/nfs4state.c
->>> +++ b/fs/nfsd/nfs4state.c
->>> @@ -1249,7 +1249,7 @@ static void nfs4_unlock_deleg_lease(struct nfs4_delegation *dp)
->>>   
->>>   	WARN_ON_ONCE(!fp->fi_delegees);
->>>   
->>> -	vfs_setlease(nf->nf_file, F_UNLCK, NULL, (void **)&dp);
->>> +	kernel_setlease(nf->nf_file, F_UNLCK, NULL, (void **)&dp);
->>>   	put_deleg_file(fp);
->>>   }
->>>   
->>> @@ -5532,8 +5532,8 @@ nfs4_set_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
->>>   	if (!fl)
->>>   		goto out_clnt_odstate;
->>>   
->>> -	status = vfs_setlease(fp->fi_deleg_file->nf_file,
->>> -			      fl->c.flc_type, &fl, NULL);
->>> +	status = kernel_setlease(fp->fi_deleg_file->nf_file,
->>> +				      fl->c.flc_type, &fl, NULL);
->>>   	if (fl)
->>>   		locks_free_lease(fl);
->>>   	if (status)
->>> @@ -5571,7 +5571,7 @@ nfs4_set_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
->>>   
->>>   	return dp;
->>>   out_unlock:
->>> -	vfs_setlease(fp->fi_deleg_file->nf_file, F_UNLCK, NULL, (void **)&dp);
->>> +	kernel_setlease(fp->fi_deleg_file->nf_file, F_UNLCK, NULL, (void **)&dp);
->>>   out_clnt_odstate:
->>>   	put_clnt_odstate(dp->dl_clnt_odstate);
->>>   	nfs4_put_stid(&dp->dl_stid);
->>> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
->>> index 4a5ad26962c1..cd6c1c291de9 100644
->>> --- a/include/linux/filelock.h
->>> +++ b/include/linux/filelock.h
->>> @@ -208,6 +208,7 @@ struct file_lease *locks_alloc_lease(void);
->>>   int __break_lease(struct inode *inode, unsigned int flags, unsigned int type);
->>>   void lease_get_mtime(struct inode *, struct timespec64 *time);
->>>   int generic_setlease(struct file *, int, struct file_lease **, void **priv);
->>> +int kernel_setlease(struct file *, int, struct file_lease **, void **);
->>>   int vfs_setlease(struct file *, int, struct file_lease **, void **);
->>>   int lease_modify(struct file_lease *, int, struct list_head *);
->>>   
->>> @@ -357,6 +358,12 @@ static inline int generic_setlease(struct file *filp, int arg,
->>>   	return -EINVAL;
->>>   }
->>>   
->>> +static inline int kernel_setlease(struct file *filp, int arg,
->>> +			       struct file_lease **lease, void **priv)
->>> +{
->>> +	return -EINVAL;
->>> +}
->>> +
->>>   static inline int vfs_setlease(struct file *filp, int arg,
->>>   			       struct file_lease **lease, void **priv)
->>>   {
->>>
->>> ---
->>> base-commit: 1499e59af376949b062cdc039257f811f6c1697f
->>> change-id: 20240202-bz2248830-03e6c7506705
->>>
->>> Best regards,
->>> -- 
->>> Jeff Layton <jlayton@kernel.org>
->>>
->>>
->>>
->>
-> 
+Thanks,
+Liam
 
