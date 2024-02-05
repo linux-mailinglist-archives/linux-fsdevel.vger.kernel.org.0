@@ -1,198 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-10338-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10339-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA9184A015
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 17:58:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F5384A037
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 18:08:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C46651C218AC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 16:58:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B70D281235
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 17:08:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB1141770;
-	Mon,  5 Feb 2024 16:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BA140BEB;
+	Mon,  5 Feb 2024 17:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdAa96kD"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="pThueR9t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1191B3EA9C;
-	Mon,  5 Feb 2024 16:58:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBFAB2C699
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 17:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707152307; cv=none; b=JsrA9ydtCvLudb2n3F06VgTddG5RWE6HeESpLmtr/hcRvJihEPb/835Ao0wh1GRwe/iDrg2aEXHzScAGAQxqcKbEq+d8+5avgQ5zOrXUY734ljyrc6v/HewKt+2ry20O6Vf89+KLXeMrT6WJdDo6Rgd6JLTxSH3uUzTupon+UZU=
+	t=1707152923; cv=none; b=vFBR77Be6nfxKDHbq8h2Z9i0rXKhAk0ywMduwOIcYUK4YRfEsVV1zSCxF18Vk0bLblePX7t6rrJvSfdBoicFEVJiwskClH4BLZhSOJHmALDMj4s4etkCy3K3U5up0syNm0wVpdTJ3QVMNI6XGiIktKpKRZ/paWubhrWyJ+4CqOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707152307; c=relaxed/simple;
-	bh=9FpafEGlyrNhPgZJkrgRLS7U6aCYTe6Poar4f0Fu86c=;
+	s=arc-20240116; t=1707152923; c=relaxed/simple;
+	bh=8gBlKfQm3vRprhFc0/QpnWE8p96XYPuWr7rTbz4Ejy4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UNX2AZ2loPzImhL2BHBwDYF++BgtrPHACT87etOZ+8o3NWj4+bPKrc6VbR4GO2P3ME3pv2tt3Xr38bF69f5AYUQ3qteh+jTXBuqAZsjliJo8IDzS552nPk1kYsEECngwnrQrNrzielmarhz5eWNXSbHxduGkpB040xBesVJlBAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdAa96kD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42EE0C433C7;
-	Mon,  5 Feb 2024 16:58:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707152306;
-	bh=9FpafEGlyrNhPgZJkrgRLS7U6aCYTe6Poar4f0Fu86c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jdAa96kD60IeV9lxQp0ubdqOgUSHcdsjtge2WP6mvoDwpwOe+Rw7nwcU7ORKlVlgr
-	 8Z6UYcfu0rXRgY6H147qPvpixPmJkpZDmWrIwgKeNqmHE5Dyf5eNNmQ5bBvWaONUZO
-	 0/G6+v/VmTdZm/r0jhWTvEEg+oGSkpJiB3YYAtdV41ad/d4EyHHPk7vnDwmNhbZO9W
-	 xGQCvUQAyZvm+DIKz7D+cBrAtQbQgXkRRwM6jx1tMc0pifYl3BcJGyd0M/p6YJjmTK
-	 m/3/iDifHMb1SIEd4HlIJDGTt/kOZPRgXRKA/sGbloE3oJcO4SJAp50Cw6wGa0iRnt
-	 6WaVOdTjOW2yA==
-Date: Mon, 5 Feb 2024 16:58:20 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=lTlbY43S+ZveNo8AaIU3M53GP0pWrt8gmg7oUkkyp3qQl624LqX93DkRLF5/RtFbyFa9RqQ+mb9vwHWFloENDsXgjR0BSo8jj6oA6FiPprKKwdIWZhQc0/1O4h3nhYBoCBbU/UopWzk9yKeI5rxeMUZqrXUibW5KEzqVZ+oNV7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=pThueR9t; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-42a9c21f9ecso27677381cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 09:08:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1707152920; x=1707757720; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8gBlKfQm3vRprhFc0/QpnWE8p96XYPuWr7rTbz4Ejy4=;
+        b=pThueR9tS4++4Ak+63QKJD5ztu0stiKwKjMYm8GGi9NWP+lqt1uz0Qk1hMqaGZ0sTr
+         fPWtCd+6Er9idhCPt1WvCPSvXTC9fC9GPLMkj6ZNKYLoknf0CPuLke9GltXcdBZOvuxr
+         QMbWzMqbX4BQAQm2Z4Fyl/Qm2YXQ+PH33fP3J0bLXIXGackyhFW0peHrgVFTIWQu+rab
+         SfQohNzSaxb3Gg7BUYxxs5LK+Hrs4oWJbn7fVhubCyLl3Iw3uTx17WKAQxtiqxVPH4pm
+         Ie1MIxErmkxewE9orbvfB1z2fHDsEB4SYyMoVokL/kYAP+1AsEFk4YK+1kNm7OOB2JzR
+         oKcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707152920; x=1707757720;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8gBlKfQm3vRprhFc0/QpnWE8p96XYPuWr7rTbz4Ejy4=;
+        b=jhK1J0+je6HQG5qMPBCHcjnbWHGqWTYf07lQ3oLEAPHjKFxLlKHGj3HRE7dwF8EL4R
+         gPSI7fYyOihz7kfzMzVNySeqg2Srp1NBx6q9WqF1/sb41GZcOYqR77EHkJsho+Par9Rt
+         V+Vzl2lQSsdBpWmXf3Wmhyif/AX8aHYxRKFSwAIzGRpazRyJCExa1Emxyb1BOGirsoyh
+         y5b9lFe5RP+MZfS3oi43yvKhBU5xFHVkfYZshypuoSVvzP3Yw7mEDjSlxYN4mi3hZ5X7
+         pmzoIS2f+NtxmvJi9KYDO8OfE1UJgIsQmQdB21ehOB5E2Q8wWijL2MRFgTohbg52/gX9
+         kEDQ==
+X-Gm-Message-State: AOJu0Yx1TsI2JNxVUNdU+1X6siWs/KgtST+7yKD6KiT0BVqvHoa9K3Jz
+	4zroMJiDeS96zGxDogmJidOS6yQT5S0D+U+VfZMLM9wRZheOTKB224xcNYIq78M=
+X-Google-Smtp-Source: AGHT+IFRr68RJWhr55aAuCOmm/7ig7Z946GhQZxCWJnXpgTkXxQZq9u9NN3DdLuHLeVoxwlh1gajUQ==
+X-Received: by 2002:ac8:6bcb:0:b0:42a:48bc:f69 with SMTP id b11-20020ac86bcb000000b0042a48bc0f69mr7977973qtt.35.1707152920631;
+        Mon, 05 Feb 2024 09:08:40 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCWFnZsn/+oaH85mYCSnpv4YgXZiAdaRH0+Rq60h3VhSx80V/GhIDkgZR10vmkuwF1N3jhhz9aRo8LLD4ff5OgXLimlfMXcSIPuyfjqJcxPxDRiouB5DndZ1kQz5dDjvpSVf2qZnwpdmYLKdUUiGGPxIlHQiPas89V0qswdC6497cElumvLrngGqTJkZscqv6ouG2f0OrpG6Ei2Zn4TY19Lk9NbJPoaaQZIBZSq0XCtZUA7d3PA2XkCWjmZueMp2A4tCAorCWj6i6E3kIrdi2y7VdUXMK5IQwL1ODMaERiIbTXBJbVrhlVGqhDyHvDIuotZrahRKcH/dGKlHT6GOh0AiVMK8Tzohvd/1DqWSOsUrv6/uL6cpoulHtaNasUn2g1+as+1/aN3+PukRM38uB/fouGVfLgmdpOE3dunZMoCAT8ZvWsyLQq5HJzPKp8dnEjpdvCDijtK2oY+4Fte+c9yCkKSI9o3pZZZEGbyVB7g/qoYjmnzB6UvMvTFVVXtvqMnEmcwOaYKyi0HF6aat2Ve6C6mKE8L/YuQwof83w3Z5XmIHwIZ2oGMal/R+I06RZSVRWXaOUkQuB8sHRlexzojF3AdtuOI7nq6sqs2lcG4+ML2g+c2ZAxM9tnpLd69JMkvGu7iMwJ1692U5EjqV1QDP6l+mc+OUUzf8X6XSuc3UdFj+vXovcLlbwYzYR22mSvd+Sld4DusAh+aVZhGTkOMpJe7mDCGP0YbiYqikir3ZKx0d
+Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
+        by smtp.gmail.com with ESMTPSA id f22-20020ac84996000000b0042c22902ca2sm112941qtq.81.2024.02.05.09.08.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Feb 2024 09:08:39 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1rX2SV-000d2w-7N;
+	Mon, 05 Feb 2024 13:08:39 -0400
+Date: Mon, 5 Feb 2024 13:08:39 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: James Gowans <jgowans@amazon.com>
+Cc: linux-kernel@vger.kernel.org, Eric Biederman <ebiederm@xmission.com>,
+	kexec@lists.infradead.org, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, iommu@lists.linux.dev,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v8 13/38] KVM: arm64: Manage GCS registers for guests
-Message-ID: <ZcETrPAFFfgAy/PT@finisterre.sirena.org.uk>
-References: <20240203-arm64-gcs-v8-0-c9fec77673ef@kernel.org>
- <20240203-arm64-gcs-v8-13-c9fec77673ef@kernel.org>
- <868r3z6y6v.wl-maz@kernel.org>
- <825d2b35-fa10-43ad-b3b3-b29a77f3fed0@sirena.org.uk>
- <8634u76i36.wl-maz@kernel.org>
+	linux-fsdevel@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+	Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	Alexander Graf <graf@amazon.com>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	"Jan H . Schoenherr" <jschoenh@amazon.de>,
+	Usama Arif <usama.arif@bytedance.com>,
+	Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+	madvenka@linux.microsoft.com, steven.sistare@oracle.com,
+	yuleixzhang@tencent.com
+Subject: Re: [RFC 13/18] vfio: add ioctl to define persistent pgtables on
+ container
+Message-ID: <20240205170839.GA31743@ziepe.ca>
+References: <20240205120203.60312-1-jgowans@amazon.com>
+ <20240205120203.60312-14-jgowans@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="CPooLl9HGmOME8a3"
-Content-Disposition: inline
-In-Reply-To: <8634u76i36.wl-maz@kernel.org>
-X-Cookie: You might have mail.
-
-
---CPooLl9HGmOME8a3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240205120203.60312-14-jgowans@amazon.com>
 
-On Mon, Feb 05, 2024 at 03:34:05PM +0000, Marc Zyngier wrote:
-> Mark Brown <broonie@kernel.org> wrote:
-> > On Mon, Feb 05, 2024 at 09:46:16AM +0000, Marc Zyngier wrote:
+On Mon, Feb 05, 2024 at 12:01:58PM +0000, James Gowans wrote:
+> The previous commits added a file type in pkernfs for IOMMU persistent
+> page tables. Now support actually setting persistent page tables on an
+> IOMMU domain. This is done via a VFIO ioctl on a VFIO container.
 
-> > > We have had this discussion in the past. This must be based on the
-> > > VM's configuration. Guarding the check with the host capability is a
-> > > valuable optimisation, but that's nowhere near enough. See the series
-> > > that I have posted on this very subject (you're on Cc), but you are
-> > > welcome to invent your own mechanism in the meantime.
+Please no changes to VFIO in the iommu area, new features need to be
+implemented on top of iommufd instead.
 
-> > Right, which postdates the version you're replying to and isn't merged
-> > yet - the current code was what you were asking for at the time.
+We already have the infrastructure there to customize iommu_domain
+allocations that this can be implemented on top of.
 
-> v1 and v2 predate it. And if the above is what I did ask, then I must
-> have done a very poor job of explaining what was required. For which I
-> apologise profusely.
-
-To be clear it's what was asked for prior to the switch to the
-forthcoming switch to the parsing idregs scheme, I haven't pulled in
-your idregs work yet since it's being rapidly iterated and this is an
-already large series with dependencies.
-
-> > I'm
-> > expecting to update all these feature series to work with that once it
-> > gets finalised and merged but it's not there yet, I do see I forgot to
-> > put a note in v9 about that like I did for dpISA - sorry about that, I
-> > was too focused on the clone3() rework when rebasing onto the new
-> > kernel.
-
-> > This particular series isn't going to get merged for a while yet anyway
-> > due to the time it'll take for userspace testing, I'm expecting your
-> > series to be in by the time it becomes an issue.
-
-> Right. Then I'll ignore it for the foreseeable future.
-
-Actually now I think about it would you be open to merging the guest
-context switching bit without the rest of the series (pending me fixing
-the issues you raise of course)?  If so I'll split that bit out in the
-hope that we can reduce the size of the series and CC list for the
-userspace support which I imagine would make people a bit happier.
-
-> > > > +		write_sysreg_s(ctxt_sys_reg(ctxt, GCSCRE0_EL1),
-> > > > +			       SYS_GCSCRE0_EL1);
-> > > > +	}
-
-> > > For the benefit of the unsuspecting reviewers, and in the absence of a
-> > > public specification (which the XML drop isn't), it would be good to
-> > > have the commit message explaining the rationale of what gets saved
-> > > when.
-
-> > What are you looking for in terms of rationale here?  The KVM house
-> > style is often very reliant on reader context so it would be good to
-> > know what considerations you'd like to see explicitly addressed.
-
-> Nothing to do with style, everything to do with substance: if nothing
-
-The style I'm referring to there is the style for documentation.
-
-> in the host kernel makes any use of these registers, why are they
-> eagerly saved/restored on nVHE/hVHE? I'm sure you have a reason for
-> it, but it isn't that obvious. Because these two modes need all the
-> help they can get in terms of overhead reduction.
-
-Ah, I see - yes, they should probably be moved somewhere else.  Though
-I'm not clear why some of the other registers that we're saving and
-restoring in the same place are being done eagerly?  The userspace
-TPIDRs stand out for example, they're in taken care of in
-__sysreg_save_user_state() which is called in the same paths.  IIRC my
-thinking there was something along the lines of "this is where we save
-and restore everything else that's just a general system register, I
-should be consistent".
-
-Am I right in thinking kvm_arch_vcpu_load()/_put() would make sense?
-Everything in there currently looked like it was there more due to doing
-something more complex than simple register save/restore and we weren't
-worrying too much about what was going on with just the sysregs.
-
-> > These
-> > registers shouldn't do anything when we aren't running the guest so
-> > they're not terribly ordering sensitive, the EL2 ones will need a bit
-> > more consideration in the face of nested virt.
-
-> The EL2 registers should follow the exact same pattern, specially once
-> you fix the VNCR bugs I pointed out.
-
-Great, that's what I'd thought thanks - I hadn't checked yet.
-
---CPooLl9HGmOME8a3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmXBE6sACgkQJNaLcl1U
-h9AxYAgAgiMyW4DrBuI2SbKKpBxTNqFWS6hwvL/pz27nGc2T9cgR2P2ODSG3A9Cv
-MJh2K7irI4JHl/jj/8GLJLH5IVMOVyVYPtTxauHvCVu+I6RM92hSfVey9I7clK40
-Lxhri2n3D8Tj89RvRi90LvEgM0pJKqGBYYpc+lZBuUVhpsHDx1rwBsuMmryxpbyX
-U9xvwhFc+lNUfrCUYIVp0VThb8QBJzBYs0SSVyM1ggHARaP+t64DzE+vrtI9h5QN
-CQo6qN+H0ojTvx9E0MGZhqBPtNnGOs3jafSq88emxX431D+3kZSJwY4npbfFNQd3
-Il677REj9RoCNO5cSTKMWWb27EzOxg==
-=xxbo
------END PGP SIGNATURE-----
-
---CPooLl9HGmOME8a3--
+Jason
 
