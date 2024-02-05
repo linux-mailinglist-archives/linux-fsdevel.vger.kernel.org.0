@@ -1,209 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-10366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6EF84A8D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 23:13:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4C884A8E1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 23:14:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54D0E1F30133
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 22:13:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0F9E1C27EA1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 22:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68F105C61D;
-	Mon,  5 Feb 2024 21:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FCC5EE92;
+	Mon,  5 Feb 2024 21:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M5VCjZyq"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="rIPn0sI7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1528D5C614
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 21:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB215DF36
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 21:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707170098; cv=none; b=WTxt1MyRCOBnQjrlH9DSZpOnngHe6/G3uHZfzxbki+OBLV+egC7hSp4ScDaPHnx/uwFDOLcd5GDkETfkoRRrGd9HXbVLGnyoKmP3GYilIyHFZ3o6bvTSxX7k5733Q0l3azIe00aop46enhrxec+XAn7/vn2Ev6r6VLtKNtLpGes=
+	t=1707170335; cv=none; b=is2YC1pqZeKrCoNKALIQio2tfqBVa43ceilP3aW1TQTus9IOLJQn+N/H5guizmUFOjvJjDope3QHcW3Ki3GBaBzK5n3wX8a2CYzsviVHs2Zye37+Q9YfRBcATMtR7jAxssf4No6mjikAWyg+5hv1OiMpngVhsLxIPAQDvNk+mkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707170098; c=relaxed/simple;
-	bh=J/wLslb/AFm/pwmtZ8NeoG3aXGAE3L7KF+RaF6q3vJc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dh8v0VfYshk5gWEgvnsgQYeNFkIzyxHHyhYG64dkPf7McIWHeoK84BYr+fXRSBUC5a0OMHDgy10rAxWRGK4GKKcatMLd4PpzTMbtp1chVTB2WN5YBxbqaiO0mK83XIwwx2kJDsCakcqYlEHYoQKpFMlTrGo8S1fAkKTkXugqVEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M5VCjZyq; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-33b1a51743fso3663701f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 13:54:56 -0800 (PST)
+	s=arc-20240116; t=1707170335; c=relaxed/simple;
+	bh=fXqCZbcBxU+Dl9zb7VwlQjoseiraK8MLA3UaXDw+Sok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HQW0oRDvG+pYl5jXGPY5fKYsSLmQbnU1n5EGyRTyRojcOxwOeFiJGlo8mqIp0n7XPNGbCOgti51ePySVLhPm0mXATnM4ce5EV9USclMh8sJwGK535I1XdtbiWU/YiDTCy4OwAli1vpFqGm88Qpo03Sonn/AmhtKSyjZVvLFJbd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=rIPn0sI7; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-5d3907ff128so4318160a12.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 13:58:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707170095; x=1707774895; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=htTuvVyAX4wJ7U4/j+fiU4mrRuOGdWA0fijTiSjZLM4=;
-        b=M5VCjZyq/Oue3A/y5lmkh0prvAduY91px7+EC9zmxrzvguT3I3yLVF8p65cu8frabJ
-         gUVh2ZoTswI32vo6TeVqzPBFF/weZ3Fdyg80C9U/GHfl+t5MvgstkluVHdSX8i2RvpPp
-         v6jt3NOnoNWPbY9m12MGgWC8/YJrYSir8raJ0kNH3f00yMQi+ncdboGJcnbSCaU3nMK5
-         3IbHX6B/h96xrIcCcKb5dqKufvZaXzK9EnPOM6xbW/kqPP++7yqMkhu3HPp4JvDWWcFX
-         Whf/1bcxMFKIuwL1U/q5aW0rzCTo+3e8COCVfCSJKc56wAqp2TFNpXdebpMkPCp/zpAu
-         AktA==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707170332; x=1707775132; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RCce4pV3xPOpa0Za3QiaoPauzc6TdqvdOGmTYYs8YWk=;
+        b=rIPn0sI79mq7NbQHmPpQHNbDU/oLqETMyhOmKVtTBSYBQVoANMs26Zk8TshTBczon0
+         l+PlJJSDx13Qr5uwkSFvaUlYnLj9zTKg26ePCdBecAUqAv8Dk+uAg8vyQMEGZ6oNRZmY
+         RaVAqacTClXWft6fohsAstnbk158fvRfixCWqs/HpYEfBbfQk5LxzCbANso7QvtaWNg2
+         i/18jdpKq/GhuLDpaxBMjnOQl+Dyg0VbpxyA7yRvX6PnORKdrs0YnszefY2l/DeVZCCB
+         ykiHjmAPFJCnpu4+yj7M1aCSAe0DFSstdchSrb4HGyDKDovEinWLpy1CQzJW6bZvhSm3
+         RVfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707170095; x=1707774895;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=htTuvVyAX4wJ7U4/j+fiU4mrRuOGdWA0fijTiSjZLM4=;
-        b=AaEpAN7LFcoQ//yDLcJk6+ceI4Gxqf5i53Fs1gL1H6oHi1CNeNwgRaEdrRo4o62X64
-         PLwFjrxP9RVXfq0nm7Jgcne4Zl/byS1CwFyXbSY3/+TXQuzXVQ2mrbuS01V2Jp3olZAR
-         hSd8/4R+vS2Jmxr8eWkQR2GJEKO6XS1ah+SCN5b0aZGxWXklyU7FNV5KDe4jc/Rf1yUF
-         MDPpum4eWv0YQw4RtVPd9eAgh0KfOYrS8CrNWmRBZUsD3RiGps5ImRH1SctUmpSwe3SU
-         b4673ymGZikfeoxlg60Uj4iEA2wvBcPLb6mxfDvExob29heOqRn75gmoXi09yvxJ8iAh
-         KoBw==
-X-Gm-Message-State: AOJu0YxnZHVfjjVZESHGW2D5pB16BhKoaCTNtAoNPcJfGy49lq/XxFKs
-	02CPtZCKUb0vOOMWhBfTiFIJFkl97GkzJ96KKAQw/YqH783IyEhXmfJ3cdiwHiRrEZbJe0Vo3GT
-	/stmCdjjWuef7jFN1Zpl7PRQYF40p+T4wlYFF
-X-Google-Smtp-Source: AGHT+IHXIaoM8v/s7uf1cZjr4pYirqJZMsxVSKJ5GaStD8mOFri7ZDNfcWpdu/4lTUQiJ7WEfOKXZEoHRA9d/Yu57xc=
-X-Received: by 2002:a5d:56cc:0:b0:33b:178a:6715 with SMTP id
- m12-20020a5d56cc000000b0033b178a6715mr181170wrw.24.1707170095131; Mon, 05 Feb
- 2024 13:54:55 -0800 (PST)
+        d=1e100.net; s=20230601; t=1707170332; x=1707775132;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RCce4pV3xPOpa0Za3QiaoPauzc6TdqvdOGmTYYs8YWk=;
+        b=iTCp7ynR/AAlgVeASI+d/STN5c1yvXdg/yPK+M5UNuGzHzwwfJ3rtrePn0gHRcJdnN
+         TuXeFNjw0xu0LdW+pNfVZLOpxaHljpcP6ILM5tLHkXGGhHefe7PEoaN8t/nzRttnhOon
+         /pVIYcJt3RpMGCFDNOTrjHnOLaDch0QHchobWLoWHR91qFEpmHoGLzeb+dg5YdcnFihL
+         +fACDzuTjoGlQwxJI1aJ/CmADKC7eL/YOinhkW76lP+R7+rRWI5DIVubDE8DMnjVvdkB
+         Rf5MqADEMWlnS6/wuhDS2Nj6suPxfyEI4YMxgJOwOSTSFh644TP9ZIWTgCNpYQ7x736V
+         J20Q==
+X-Gm-Message-State: AOJu0Yyjn/2qv5n/ZVYG1NvrgMCFVudMc201xCoHa3FuTAxPLUwx8l0/
+	C3c7aVAoMGiwBHOvdOvyK8x00SbZkTc38Pbf5uL9HfwozgX5yC3zxWpscVEK/wY=
+X-Google-Smtp-Source: AGHT+IGpyt5NWDGnI0khW1wkoK90/F1ldXluyiDGMdK3jQA9tZXTqTvflL1xE6RlSXU3tUzaKjY8Lg==
+X-Received: by 2002:a05:6a21:2d0a:b0:19c:7e6f:85f2 with SMTP id tw10-20020a056a212d0a00b0019c7e6f85f2mr462782pzb.1.1707170332483;
+        Mon, 05 Feb 2024 13:58:52 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCXfoiv3knB/SSXG8SVBFwzWWBW4atkK43PqHLEoHiySTJ+YmhaUJU2ngxDwfMe1JDaMdpi99UM1XuPBYwlaQ6iz/O4Ya9QxhbGcev8Glr4wO6FK7+kIXHO7pwT7pPg+Qa7JdbDAekq+oL0HJO6+26rNLubU31yvhucCTe387Ccm85s2D6KKw0vSfRvXCPoyHA/qD8PYXTJEKvr/YyRooerssQ==
+Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
+        by smtp.gmail.com with ESMTPSA id m22-20020aa78a16000000b006e035133b72sm350032pfa.134.2024.02.05.13.58.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Feb 2024 13:58:51 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rX6zJ-002Ypp-0V;
+	Tue, 06 Feb 2024 08:58:49 +1100
+Date: Tue, 6 Feb 2024 08:58:49 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH 1/6] fs: super_block->s_uuid_len
+Message-ID: <ZcFaGRV08WQOxCzb@dread.disaster.area>
+References: <20240205200529.546646-1-kent.overstreet@linux.dev>
+ <20240205200529.546646-2-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240129193512.123145-1-lokeshgidra@google.com>
- <20240129193512.123145-4-lokeshgidra@google.com> <20240129203626.uq5tdic4z5qua5qy@revolver>
- <CAJuCfpFS=h8h1Tgn55Hv+cr9bUFFoUvejiFQsHGN5yT7utpDMg@mail.gmail.com>
- <CA+EESO5r+b7QPYM5po--rxQBa9EPi4x1EZ96rEzso288dbpuow@mail.gmail.com>
- <20240130025803.2go3xekza5qubxgz@revolver> <CA+EESO4+ExV-2oo0rFNpw0sL+_tWZ_MH_rUh-wvssN0y_hr+LA@mail.gmail.com>
- <20240131214104.rgw3x5vuap43xubi@revolver> <CAJuCfpFB6Udm0pkTwJCOtvrn9+=g05oFgL-dUnEkEO0cGmyvOw@mail.gmail.com>
-In-Reply-To: <CAJuCfpFB6Udm0pkTwJCOtvrn9+=g05oFgL-dUnEkEO0cGmyvOw@mail.gmail.com>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Mon, 5 Feb 2024 13:54:43 -0800
-Message-ID: <CA+EESO7ri47BaecbesP8dZCjeAk60+=Fcdc8xc5mbeA4UrYmqQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] userfaultfd: use per-vma locks in userfaultfd operations
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, 
-	kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com, 
-	david@redhat.com, axelrasmussen@google.com, bgeffon@google.com, 
-	willy@infradead.org, jannh@google.com, kaleshsingh@google.com, 
-	ngeoffray@google.com, timmurray@google.com, rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240205200529.546646-2-kent.overstreet@linux.dev>
 
-On Mon, Feb 5, 2024 at 1:47=E2=80=AFPM Suren Baghdasaryan <surenb@google.co=
-m> wrote:
->
-> On Wed, Jan 31, 2024 at 1:41=E2=80=AFPM Liam R. Howlett <Liam.Howlett@ora=
-cle.com> wrote:
-> >
-> > * Lokesh Gidra <lokeshgidra@google.com> [240130 21:49]:
-> > > On Mon, Jan 29, 2024 at 6:58=E2=80=AFPM Liam R. Howlett <Liam.Howlett=
-@oracle.com> wrote:
-> > > >
-> > > > * Lokesh Gidra <lokeshgidra@google.com> [240129 19:28]:
-> > > > > On Mon, Jan 29, 2024 at 12:53=E2=80=AFPM Suren Baghdasaryan <sure=
-nb@google.com> wrote:
-> > > > > >
-> > > >
-> >
-> > ...
-> >
-> > > >
-> > > > > Your suggestion is definitely simpler and easier to follow, but d=
-ue to
-> > > > > the overflow situation that Suren pointed out, I would still need=
- to
-> > > > > keep the locking/boolean dance, no? IIUC, even if I were to retur=
-n
-> > > > > EAGAIN to the userspace, there is no guarantee that subsequent io=
-ctls
-> > > > > on the same vma will succeed due to the same overflow, until some=
-one
-> > > > > acquires and releases mmap_lock in write-mode.
-> > > > > Also, sometimes it seems insufficient whether we managed to lock =
-vma
-> > > > > or not. For instance, lock_vma_under_rcu() checks if anon_vma (fo=
-r
-> > > > > anonymous vma) exists. If not then it bails out.
-> > > > > So it seems to me that we have to provide some fall back in
-> > > > > userfaultfd operations which executes with mmap_lock in read-mode=
-.
-> > > >
-> > > > Fair enough, what if we didn't use the sequence number and just loc=
-ked
-> > > > the vma directly?
-> > >
-> > > Looks good to me, unless someone else has any objections.
-> > > >
-> > > > /* This will wait on the vma lock, so once we return it's locked */
-> > > > void vma_aquire_read_lock(struct vm_area_struct *vma)
-> > > > {
-> > > >         mmap_assert_locked(vma->vm_mm);
-> > > >         down_read(&vma->vm_lock->lock);
-> > > > }
-> > > >
-> > > > struct vm_area_struct *lock_vma(struct mm_struct *mm,
-> > > >         unsigned long addr))    /* or some better name.. */
-> > > > {
-> > > >         struct vm_area_struct *vma;
-> > > >
-> > > >         vma =3D lock_vma_under_rcu(mm, addr);
-> > > >         if (vma)
-> > > >                 return vma;
-> > > >
-> > > >         mmap_read_lock(mm);
-> > > >         /* mm sequence cannot change, no mm writers anyways.
-> > > >          * find_mergeable_anon_vma is only a concern in the page fa=
-ult
-> > > >          * path
-> > > >          * start/end won't change under the mmap_lock
-> > > >          * vma won't become detached as we have the mmap_lock in re=
-ad
-> > > >          * We are now sure no writes will change the VMA
-> > > >          * So let's make sure no other context is isolating the vma
-> > > >          */
-> > > >         vma =3D lookup_vma(mm, addr);
-> > > >         if (vma)
-> > > We can take care of anon_vma as well here right? I can take a bool
-> > > parameter ('prepare_anon' or something) and then:
-> > >
-> > >            if (vma) {
-> > >                     if (prepare_anon && vma_is_anonymous(vma)) &&
-> > > !anon_vma_prepare(vma)) {
-> > >                                       vma =3D ERR_PTR(-ENOMEM);
-> > >                                       goto out_unlock;
-> > >                    }
-> > > >                 vma_aquire_read_lock(vma);
-> > >            }
-> > > out_unlock:
-> > > >         mmap_read_unlock(mm);
-> > > >         return vma;
-> > > > }
-> >
-> > Do you need this?  I didn't think this was happening in the code as
-> > written?  If you need it I would suggest making it happen always and
-> > ditch the flag until a user needs this variant, but document what's
-> > going on in here or even have a better name.
->
-> I think yes, you do need this. I can see calls to anon_vma_prepare()
-> under mmap_read_lock() protection in both mfill_atomic_hugetlb() and
-> in mfill_atomic(). This means, just like in the pagefault path, we
-> modify vma->anon_vma under mmap_read_lock protection which guarantees
-> that adjacent VMAs won't change. This is important because
-> __anon_vma_prepare() uses find_mergeable_anon_vma() that needs the
-> neighboring VMAs to be stable. Per-VMA lock guarantees stability of
-> the VMA we locked but not of its neighbors, therefore holding per-VMA
-> lock while calling anon_vma_prepare() is not enough. The solution
-> Lokesh suggests would call anon_vma_prepare() under mmap_read_lock and
-> therefore would avoid the issue.
->
-Thanks, Suren.
-anon_vma_prepare() is also called in validate_move_areas() via move_pages()=
-.
->
-> >
-> > Thanks,
-> > Liam
+On Mon, Feb 05, 2024 at 03:05:12PM -0500, Kent Overstreet wrote:
+> Some weird old filesytems have UUID-like things that we wish to expose
+> as UUIDs, but are smaller; add a length field so that the new
+> FS_IOC_(GET|SET)UUID ioctls can handle them in generic code.
+> 
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> ---
+>  fs/super.c         | 1 +
+>  include/linux/fs.h | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index d35e85295489..ed688d2a58a7 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -375,6 +375,7 @@ static struct super_block *alloc_super(struct file_system_type *type, int flags,
+>  	s->s_time_gran = 1000000000;
+>  	s->s_time_min = TIME64_MIN;
+>  	s->s_time_max = TIME64_MAX;
+> +	s->s_uuid_len = sizeof(s->s_uuid);
+
+So if the filesystem doesn't copy a uuid into sb->s_uuid, then we
+allow those 16 bytes to be pulled from userspace?
+
+Shouldn't this only get set when the filesystem copies it's uuid
+to the superblock?
+
+And then in the get uuid  ioctl, if s_uuid_len is zero we can return
+-ENOENT to indicate the filesystem doesn't have a UUID, rather that
+require userspace to determine a filesystem doesn't have a valid
+UUID somehow...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
