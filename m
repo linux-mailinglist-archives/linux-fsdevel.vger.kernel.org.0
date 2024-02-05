@@ -1,153 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-10331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D849849E4D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 16:33:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E13849E5F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 16:35:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CDF72897DA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 15:33:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE06F1C221E2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 15:35:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04173BB38;
-	Mon,  5 Feb 2024 15:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F0F1364CC;
+	Mon,  5 Feb 2024 15:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fr4Csv9p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvvLnxe0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6303E3A1C3
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 15:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B4B3CF63;
+	Mon,  5 Feb 2024 15:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707147169; cv=none; b=a2uiXSor6tbTBS37QxgdXsiJSMX70mdgorrLifvAENe9RZc4oYORJpt5ZNFrjR0X0qmLbyKnu0w0cZJsJSB+jvsk2zNteJ4Q7AB4kMj+GQXwwg0ZWUCkpAh1Mb/b10Cvn8bpht70qTcT0ChixizI6T7bUqVyV/uCqDeb9J0rw0Y=
+	t=1707147249; cv=none; b=q8nTOAYiCSASzKpB2goUAKuJ4eZ3nTBvfHifO7qdhxLwKa/rhKFtiSPIOWjsAmQBqRF2twfl13rAGGGB6kfZO1fmcZIYllufQ4wg2regc/QgfyYqw/VPExrbPnFgiGG7Km74ri7UlBsAc9jV/v1JmEgkkPi3rwsz6IoJxyBT8A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707147169; c=relaxed/simple;
-	bh=YjybTbiH6+mn+QYS0STDNx5/X3rF3BbV/TwjTuDcDTo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KESCSXMScrEMwQro5MIZOIbUe9/Qs1DWHaiiHoLPfKAb+uMfKqE/QUkdA2WKb6pZPt0dnNuEprrKQV750SC/mxx5reRTyAicx0t6x3rSQZupszrlKNFXtF38kulpI6A66oKvAFFRvo7aQQfnGN/Fam+XRKRUsdjSH1YkB0vB+KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fr4Csv9p; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707147166;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CsHOpyyNz6zLdrRHdpKUhlbdO+IltU0fGAYIWwSsnME=;
-	b=fr4Csv9pm1K+GRLM6pplyZq9MdiFaaDyCXG7Z3NByXJKBxCk9L/W0FlPc8g3DoXeZjp2Wi
-	bQYSktzkpMGJya21CRfUE3q9ws6+gvdxglBjXzK9bqbZoRZcYmWIK6ArZGp7mtvWVGwLKs
-	wSsq2alkuJis71JC8a7q3Nu7f1WNzQs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-217-cs0W5ccaM4ODy2vVK0aelA-1; Mon, 05 Feb 2024 10:32:44 -0500
-X-MC-Unique: cs0W5ccaM4ODy2vVK0aelA-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 348C0863018;
-	Mon,  5 Feb 2024 15:32:44 +0000 (UTC)
-Received: from bfoster (unknown [10.22.32.186])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id C14982166B31;
-	Mon,  5 Feb 2024 15:32:43 +0000 (UTC)
-Date: Mon, 5 Feb 2024 10:34:02 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.com>, David Howells <dhowells@redhat.com>,
+	s=arc-20240116; t=1707147249; c=relaxed/simple;
+	bh=SZ5lOaTcjPLax9RiPdWCg4niKcbES+E0uMPELi0RXuU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qRslNkPnR8VIA6ZMJ2KwdpDZGSRoeAPE0IASsSnR8HmYZDPUdRVomxyiEXQLFN7m7B+mEzq1CUBXditCDceEAPaJJAp4kUWekMygG0FpmYnrp6lPJF2Q2lBHpI7oY+5o7bF+hvc8xmenPFpTcPygUW7ukzx8nSG6f1WtGLXQbiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvvLnxe0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 213CBC433F1;
+	Mon,  5 Feb 2024 15:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707147249;
+	bh=SZ5lOaTcjPLax9RiPdWCg4niKcbES+E0uMPELi0RXuU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DvvLnxe0P4S5yNRw5W2VY9jJ/E1A+shICsu1xDuV/gHmffvHBzURzsVRFJcvUJ8YE
+	 6QBN55llvCBZnj2N7RqNyqqi9c7wb9DYeG2+9zjkVok4Da3nmMRjNTPGl+52PDgjhM
+	 GsH1ZYh1DLMKySBZsxTWhaRwJPkUykxLG+W3eZkFdZ3mhXH9Sw0xcFypYfdPXfZBjP
+	 sHZCaIf8sr9Lx503zRsqr0kqLGI0h6JzFx1tMKuSAoy5MXNktLQyNPGD6r8QxxINLm
+	 5o0ggZ7xvpbbeoBwBLxqbCmkB97jAeDicbiBgGlpnPXzp92m19n0g6qQkAvnLQu4Iz
+	 PpsszaLe4tw5Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1rX0z0-000Su2-Bp;
+	Mon, 05 Feb 2024 15:34:06 +0000
+Date: Mon, 05 Feb 2024 15:34:05 +0000
+Message-ID: <8634u76i36.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <keescook@chromium.org>,
+	Shuah Khan <shuah@kernel.org>,
+	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+	Deepak Gupta <debug@rivosinc.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+	"H.J. Lu" <hjl.tools@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Florian Weimer <fweimer@redhat.com>,
 	Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 13/13] writeback: Remove a use of write_cache_pages()
- from do_writepages()
-Message-ID: <ZcD/6iyU6SR28bf4@bfoster>
-References: <20240203071147.862076-1-hch@lst.de>
- <20240203071147.862076-14-hch@lst.de>
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v8 13/38] KVM: arm64: Manage GCS registers for guests
+In-Reply-To: <825d2b35-fa10-43ad-b3b3-b29a77f3fed0@sirena.org.uk>
+References: <20240203-arm64-gcs-v8-0-c9fec77673ef@kernel.org>
+	<20240203-arm64-gcs-v8-13-c9fec77673ef@kernel.org>
+	<868r3z6y6v.wl-maz@kernel.org>
+	<825d2b35-fa10-43ad-b3b3-b29a77f3fed0@sirena.org.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240203071147.862076-14-hch@lst.de>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, akpm@linux-foundation.org, oliver.upton@linux.dev, james.morse@arm.com, suzuki.poulose@arm.com, arnd@arndb.de, oleg@redhat.com, ebiederm@xmission.com, keescook@chromium.org, shuah@kernel.org, rick.p.edgecombe@intel.com, debug@rivosinc.com, ardb@kernel.org, Szabolcs.Nagy@arm.com, hjl.tools@gmail.com, paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, fweimer@redhat.com, brauner@kernel.org, thiago.bauermann@linaro.org, linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Sat, Feb 03, 2024 at 08:11:47AM +0100, Christoph Hellwig wrote:
-> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+On Mon, 05 Feb 2024 12:35:53 +0000,
+Mark Brown <broonie@kernel.org> wrote:
 > 
-> Use the new writeback_iter() directly instead of indirecting
-> through a callback.
+> On Mon, Feb 05, 2024 at 09:46:16AM +0000, Marc Zyngier wrote:
+> > On Sat, 03 Feb 2024 12:25:39 +0000,
+> > Mark Brown <broonie@kernel.org> wrote:
 > 
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> [hch: ported to the while based iter style]
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
-
-LGTM, modulo Jan's comments:
-
-Reviewed-by: Brian Foster <bfoster@redhat.com>
-
->  mm/page-writeback.c | 31 +++++++++++++++++++------------
->  1 file changed, 19 insertions(+), 12 deletions(-)
+> > > +++ b/arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h
+> > > @@ -25,6 +25,8 @@ static inline void __sysreg_save_user_state(struct kvm_cpu_context *ctxt)
+> > >  {
+> > >  	ctxt_sys_reg(ctxt, TPIDR_EL0)	= read_sysreg(tpidr_el0);
+> > >  	ctxt_sys_reg(ctxt, TPIDRRO_EL0)	= read_sysreg(tpidrro_el0);
+> > > +	if (has_gcs())
+> > > +		ctxt_sys_reg(ctxt, GCSPR_EL0) = read_sysreg_s(SYS_GCSPR_EL0);
 > 
-> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> index 5fe4cdb7dbd61a..53ff2d8219ddb6 100644
-> --- a/mm/page-writeback.c
-> +++ b/mm/page-writeback.c
-> @@ -2577,13 +2577,25 @@ int write_cache_pages(struct address_space *mapping,
->  }
->  EXPORT_SYMBOL(write_cache_pages);
->  
-> -static int writepage_cb(struct folio *folio, struct writeback_control *wbc,
-> -		void *data)
-> +static int writeback_use_writepage(struct address_space *mapping,
-> +		struct writeback_control *wbc)
->  {
-> -	struct address_space *mapping = data;
-> -	int ret = mapping->a_ops->writepage(&folio->page, wbc);
-> -	mapping_set_error(mapping, ret);
-> -	return ret;
-> +	struct folio *folio = NULL;
-> +	struct blk_plug plug;
-> +	int err;
-> +
-> +	blk_start_plug(&plug);
-> +	while ((folio = writeback_iter(mapping, wbc, folio, &err))) {
-> +		err = mapping->a_ops->writepage(&folio->page, wbc);
-> +		mapping_set_error(mapping, err);
-> +		if (err == AOP_WRITEPAGE_ACTIVATE) {
-> +			folio_unlock(folio);
-> +			err = 0;
-> +		}
-> +	}
-> +	blk_finish_plug(&plug);
-> +
-> +	return err;
->  }
->  
->  int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
-> @@ -2599,12 +2611,7 @@ int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
->  		if (mapping->a_ops->writepages) {
->  			ret = mapping->a_ops->writepages(mapping, wbc);
->  		} else if (mapping->a_ops->writepage) {
-> -			struct blk_plug plug;
-> -
-> -			blk_start_plug(&plug);
-> -			ret = write_cache_pages(mapping, wbc, writepage_cb,
-> -						mapping);
-> -			blk_finish_plug(&plug);
-> +			ret = writeback_use_writepage(mapping, wbc);
->  		} else {
->  			/* deal with chardevs and other special files */
->  			ret = 0;
-> -- 
-> 2.39.2
+> > We have had this discussion in the past. This must be based on the
+> > VM's configuration. Guarding the check with the host capability is a
+> > valuable optimisation, but that's nowhere near enough. See the series
+> > that I have posted on this very subject (you're on Cc), but you are
+> > welcome to invent your own mechanism in the meantime.
 > 
+> Right, which postdates the version you're replying to and isn't merged
+> yet - the current code was what you were asking for at the time.
 
+v1 and v2 predate it. And if the above is what I did ask, then I must
+have done a very poor job of explaining what was required. For which I
+apologise profusely.
+
+> I'm
+> expecting to update all these feature series to work with that once it
+> gets finalised and merged but it's not there yet, I do see I forgot to
+> put a note in v9 about that like I did for dpISA - sorry about that, I
+> was too focused on the clone3() rework when rebasing onto the new
+> kernel.
+> 
+> This particular series isn't going to get merged for a while yet anyway
+> due to the time it'll take for userspace testing, I'm expecting your
+> series to be in by the time it becomes an issue.
+
+Right. Then I'll ignore it for the foreseeable future.
+
+> 
+> > > +	if (has_gcs()) {
+> > > +		write_sysreg_el1(ctxt_sys_reg(ctxt, GCSPR_EL1),	SYS_GCSPR);
+> > > +		write_sysreg_el1(ctxt_sys_reg(ctxt, GCSCR_EL1),	SYS_GCSCR);
+> > > +		write_sysreg_s(ctxt_sys_reg(ctxt, GCSCRE0_EL1),
+> > > +			       SYS_GCSCRE0_EL1);
+> > > +	}
+> 
+> > For the benefit of the unsuspecting reviewers, and in the absence of a
+> > public specification (which the XML drop isn't), it would be good to
+> > have the commit message explaining the rationale of what gets saved
+> > when.
+> 
+> What are you looking for in terms of rationale here?  The KVM house
+> style is often very reliant on reader context so it would be good to
+> know what considerations you'd like to see explicitly addressed.
+
+Nothing to do with style, everything to do with substance: if nothing
+in the host kernel makes any use of these registers, why are they
+eagerly saved/restored on nVHE/hVHE? I'm sure you have a reason for
+it, but it isn't that obvious. Because these two modes need all the
+help they can get in terms of overhead reduction.
+
+> These
+> registers shouldn't do anything when we aren't running the guest so
+> they're not terribly ordering sensitive, the EL2 ones will need a bit
+> more consideration in the face of nested virt.
+
+The EL2 registers should follow the exact same pattern, specially once
+you fix the VNCR bugs I pointed out.
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
