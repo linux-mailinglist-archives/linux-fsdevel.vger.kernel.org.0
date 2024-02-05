@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-10286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C74218499B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 13:11:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D237F8499BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 13:13:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A2A5B26D7D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70F621F27A93
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BA420316;
-	Mon,  5 Feb 2024 12:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FED1C6BB;
+	Mon,  5 Feb 2024 12:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="EywkZ7fI"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="KS4I5EHo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C695200AB;
-	Mon,  5 Feb 2024 12:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B873A21112;
+	Mon,  5 Feb 2024 12:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707134766; cv=none; b=TrtEn0EFDa6q9kni+9Q50ayTsVHLS4ncgdEjk873gKHUiKA5t1j+QCA5y9763X6E+GTi/MzyIJO4Iba2So1D4UHWLN5xbqHz49hnOwgB/AVxTSTJpsEPKPSjLpBvOBh2EUSxS4Ls0TPPWtzo8XCt3Y4qLrBXmxGdNkJUV8w9HQI=
+	t=1707134800; cv=none; b=YxJ6wdOQS0TZPvzRInTa1S5d99lTgL89aVwjyXgEE8L+sbQbVWR8cdMY2BdLvhUVOg6G6XZYkehkkd4vHlDHBpqXzir5wcaFGfmOzjd71JSOnLZ1YxjUC6qUCkVkWWbEmPM9Mgd3r5xcn/RgTW7MwLVRoVXFM125TYYXkp7Skw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707134766; c=relaxed/simple;
-	bh=ixoM0Sd7pCRhUQdiB6CxvVkou2FFR6qDgDmLsYAURmU=;
+	s=arc-20240116; t=1707134800; c=relaxed/simple;
+	bh=yhYdhvkUj66URI+HxR9xU2mALUiQmweSZAQjAWuVHXw=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qpHDBZGQ72WunF5mvfKj6q5e3Va1EZt/sb8gVejzt7VPRFmurPWM4HwuHlp75hJb3BVi9IRnxNbX/UhgTH6Hzx/9skDavMQWe38fqbvdPLaoGiy/Kd3g2722azHReXPR0boHqwR6vCmRZvEadUBkIa+LJrKwksmwUuB23ASrTfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=EywkZ7fI; arc=none smtp.client-ip=52.119.213.154
+	 MIME-Version:Content-Type; b=LzgPUhIbuNVAexs0wKTrO0nqm1P+HU2wRm8r/0YBT9wphTVZRnWkGGDrDn49NgI3RmH+IjFj/Cy5iG/uOy9fyEWEYR1pfNR5hB61TcirbB86pRe/1qI50OGpObfLNteAx0wtke33E8dTPYFx6OlzzTFjG6bBjourBaKUL5ZRyiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=KS4I5EHo; arc=none smtp.client-ip=72.21.196.25
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1707134765; x=1738670765;
+  t=1707134799; x=1738670799;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=PZz9j1l+xmnCAt/gSMnG+c7uMbg+JDxTUK6mJnmY1gY=;
-  b=EywkZ7fINIMUY/2tN9n7MFAb0T18hEP31HO8IxhveOGhJH3sa05dWqFh
-   coiXD8Zckk5WX3vBORsjQwIrfWx4Nb5ub6x1lhj8NciceWTpP2y4JQDtQ
-   qRFLvb/M/pLYQnRXw/BxamCSR6Essvn+Ne6oZRuzI6InFuzSlqd17JaDi
-   o=;
+  bh=FiBUV1fiPqoy2U4uMejLoWWd/EiydMvzfGCqIJIuYJY=;
+  b=KS4I5EHoPb/GLevhTJXhrqZGA19Gu0J1gr1dLxgNL42X9GGMElWCxcV6
+   TMkSKYaGibsuGrDtJ/BVIk12A5B2F6AeD63lMV41v1myZ+ZGI6khCfgDA
+   KtYbjAX5a0RIQlGh00w6P5OeRBJ1H9xpdzO4LHNt/rm5sA/HwFOxllbTC
+   U=;
 X-IronPort-AV: E=Sophos;i="6.05,245,1701129600"; 
-   d="scan'208";a="182633597"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2024 12:06:04 +0000
-Received: from EX19MTAEUB002.ant.amazon.com [10.0.17.79:57869]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.28.144:2525] with esmtp (Farcaster)
- id 1dbb430b-a9a2-4718-957f-9c92058f05d9; Mon, 5 Feb 2024 12:06:02 +0000 (UTC)
-X-Farcaster-Flow-ID: 1dbb430b-a9a2-4718-957f-9c92058f05d9
+   d="scan'208";a="378967633"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2024 12:06:35 +0000
+Received: from EX19MTAEUC002.ant.amazon.com [10.0.17.79:8094]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.45.85:2525] with esmtp (Farcaster)
+ id 26f74936-a3bc-4ca0-9d65-59fbb5471a6c; Mon, 5 Feb 2024 12:06:32 +0000 (UTC)
+X-Farcaster-Flow-ID: 26f74936-a3bc-4ca0-9d65-59fbb5471a6c
 Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19MTAEUB002.ant.amazon.com (10.252.51.59) with Microsoft SMTP Server
+ EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Mon, 5 Feb 2024 12:06:02 +0000
+ 15.2.1118.40; Mon, 5 Feb 2024 12:06:32 +0000
 Received: from dev-dsk-jgowans-1a-a3faec1f.eu-west-1.amazon.com
  (172.19.112.191) by EX19D014EUC004.ant.amazon.com (10.252.51.182) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 5 Feb
- 2024 12:05:56 +0000
+ 2024 12:06:26 +0000
 From: James Gowans <jgowans@amazon.com>
 To: <linux-kernel@vger.kernel.org>
 CC: Eric Biederman <ebiederm@xmission.com>, <kexec@lists.infradead.org>,
@@ -72,9 +72,9 @@ CC: Eric Biederman <ebiederm@xmission.com>, <kexec@lists.infradead.org>,
 	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
 	<madvenka@linux.microsoft.com>, <steven.sistare@oracle.com>,
 	<yuleixzhang@tencent.com>
-Subject: [RFC 17/18] pci: Don't clear bus master is persistence enabled
-Date: Mon, 5 Feb 2024 12:02:02 +0000
-Message-ID: <20240205120203.60312-18-jgowans@amazon.com>
+Subject: [RFC 18/18] vfio-pci: Assume device working after liveupdate
+Date: Mon, 5 Feb 2024 12:02:03 +0000
+Message-ID: <20240205120203.60312-19-jgowans@amazon.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240205120203.60312-1-jgowans@amazon.com>
 References: <20240205120203.60312-1-jgowans@amazon.com>
@@ -86,42 +86,59 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: EX19D042UWB002.ant.amazon.com (10.13.139.175) To
+X-ClientProxiedBy: EX19D044UWB004.ant.amazon.com (10.13.139.134) To
  EX19D014EUC004.ant.amazon.com (10.252.51.182)
 
-In order for persistent devices to continue to DMA during kexec the bus
-mastering capability needs to remain on. Do not disable bus mastering if
-pkernfs is enabled, indicating that persistent devices are enabled.
+When re-creating a VFIO device after liveupdate no desctructive actions
+should be taken on it to avoid interrupting any ongoing DMA.
+Specifically bus mastering should not be cleared and the device should
+not be reset. Assume that reset works properly and skip over bus
+mastering reset.
 
-Only persistent devices should have bus mastering left on during kexec
-but this serves as a rough approximation of the functionality needed for
-this pkernfs RFC.
+Ideally this would only be done for persistent devices but in this rough
+RFC there currently is no mechanism at this point to easily tell if a
+device is persisted or not.
 ---
- drivers/pci/pci-driver.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/vfio/pci/vfio_pci_core.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-index 51ec9e7e784f..131127967811 100644
---- a/drivers/pci/pci-driver.c
-+++ b/drivers/pci/pci-driver.c
-@@ -9,6 +9,7 @@
- #include <linux/init.h>
- #include <linux/device.h>
- #include <linux/mempolicy.h>
-+#include <linux/pkernfs.h>
- #include <linux/string.h>
- #include <linux/slab.h>
- #include <linux/sched.h>
-@@ -519,7 +520,8 @@ static void pci_device_shutdown(struct device *dev)
- 	 * If it is not a kexec reboot, firmware will hit the PCI
- 	 * devices with big hammer and stop their DMA any way.
- 	 */
--	if (kexec_in_progress && (pci_dev->current_state <= PCI_D3hot))
-+	if (kexec_in_progress && (pci_dev->current_state <= PCI_D3hot)
-+			&& !pkernfs_enabled())
- 		pci_clear_master(pci_dev);
- }
+diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+index 1929103ee59a..a7f56d43e0a4 100644
+--- a/drivers/vfio/pci/vfio_pci_core.c
++++ b/drivers/vfio/pci/vfio_pci_core.c
+@@ -480,19 +480,25 @@ int vfio_pci_core_enable(struct vfio_pci_core_device *vdev)
+ 			return ret;
+ 	}
  
+-	/* Don't allow our initial saved state to include busmaster */
+-	pci_clear_master(pdev);
++	if (!liveupdate) {
++		/* Don't allow our initial saved state to include busmaster */
++		pci_clear_master(pdev);
++	}
+ 
+ 	ret = pci_enable_device(pdev);
+ 	if (ret)
+ 		goto out_power;
+ 
+-	/* If reset fails because of the device lock, fail this path entirely */
+-	ret = pci_try_reset_function(pdev);
+-	if (ret == -EAGAIN)
+-		goto out_disable_device;
++	if (!liveupdate) {
++		/* If reset fails because of the device lock, fail this path entirely */
++		ret = pci_try_reset_function(pdev);
++		if (ret == -EAGAIN)
++			goto out_disable_device;
+ 
+-	vdev->reset_works = !ret;
++		vdev->reset_works = !ret;
++	} else {
++		vdev->reset_works = 1;
++	}
+ 	pci_save_state(pdev);
+ 	vdev->pci_saved_state = pci_store_saved_state(pdev);
+ 	if (!vdev->pci_saved_state)
 -- 
 2.40.1
 
