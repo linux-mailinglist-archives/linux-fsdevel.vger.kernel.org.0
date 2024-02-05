@@ -1,148 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-10393-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB7D84AA60
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 00:16:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A138784AA75
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 00:24:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF551F2759C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 23:16:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE48CB256C6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 23:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094C14A990;
-	Mon,  5 Feb 2024 23:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274A54D9E4;
+	Mon,  5 Feb 2024 23:24:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="tgmig1Xj"
+	dkim=pass (1024-bit key) header.d=sargun.me header.i=@sargun.me header.b="bYfrFmkU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E129348780
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 23:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92644D5A3
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 23:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707174956; cv=none; b=CDJlrkU7E6KbOQNzC77lieFVdiNYjQ4/DAL5+anUaVGRRQ15aIBTX/jYjxWz6fdBqYmXgHDxPTT7fRFLkgrDLUj2/krZRbKCGGl4QvQEmo/yIiWf9hyBq0TSfhJ4R0kfxy1iqDV/pBMxm2MefaSV3EjrgTxX9XzwykBVszmdGAs=
+	t=1707175469; cv=none; b=WPYVYMLllEbhbkGeePR113uDF7JKasTY/LQyATkh2G/3+nQrq6chiEuhiMMi7Lv/2sMhRi35j5Xbm4alI7FjFIm/FS0RQUjrkL2I1+dH98VuzymZLTETGM53WMgGeo1zaRo9Rfjz36s78HQXd87P4i8qbgol7p+ebI0iB3Ua+dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707174956; c=relaxed/simple;
-	bh=l+qBRd0uhtVCBi7FglZtnBJV6a/zqeKohi35eaar3og=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rNtEAj6HT2OO5CwhXefneJz90CRVnOobSEs5DymJiMea7ZKfeUwzPEcLKNNHyDVBgWk7QLboTnFWl5OtoNT1SO1UwhXFa2VnhQ47WSc458hxf1tMpmJ20bL4qf8gToyWpqLIbD0SfGhC2DG+VpyoL3+g9yfXzSgdlKcRpwHR2po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=tgmig1Xj; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1d8ef977f1eso37844495ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 15:15:54 -0800 (PST)
+	s=arc-20240116; t=1707175469; c=relaxed/simple;
+	bh=9NGjjARXFNOTt3fgpF+1IhCFiMpjWh/egnV5kuc837o=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=Vq92jVtr8qM54Onkh1adKGL50PIGWmnvnjtWNcJJqyXsi3Rtze91VfDUcL4QhyTwKci9qTvfNqVnFLCNm/L8X7yzEkvSWwDXzIUkj6pzeGn4BEG6Iv4t2iaFOeFGaDwp7IW/y6Ag7cKuflDqPAapNdQv4s9xbs6NT2Nww3ze0S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sargun.me; spf=pass smtp.mailfrom=sargun.me; dkim=pass (1024-bit key) header.d=sargun.me header.i=@sargun.me header.b=bYfrFmkU; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sargun.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sargun.me
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a26fa294e56so30855266b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 15:24:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707174954; x=1707779754; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HLDVauXDb3SkVjlIiWsDawP2Lrkb7uN8ijdb1ZnT3GM=;
-        b=tgmig1XjpNVt8fwZ0rBr+vT+Au5hruM0C3p7k7fB+5NqvqEAWaXANSbNvoqZnHqCHL
-         keZJLMuwTtrtOoUvsZRcWg72EfAwHhPn9tDtrv/cZ+Uav0u+NvU5B3GmDmGDpzeqSnhM
-         FzkUc0MQa35dtE+cRymfw0gT1sRIe731Os53KO+w6gyfxWtJQhWc9Kw7LyyngBGD5sop
-         yBboql/alkdugIkDIlnoWg2xpt2521sFCTyFyopiPnojFbN7pXvwAhjFUWoaUYJQ3WOn
-         bAnPYSURGzIs8G1+h4TYKUohYydq53deqF0GXZ+ooVBOabyrBg5lxxETbAfPsEFbymYE
-         mecg==
+        d=sargun.me; s=google; t=1707175464; x=1707780264; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=9NGjjARXFNOTt3fgpF+1IhCFiMpjWh/egnV5kuc837o=;
+        b=bYfrFmkUVDPKH7o2/TzLcuTLfnQiXRVat3+12viAvehjgFV73xdYyYWyiBXEUJqE7G
+         GVo6q76N51RRHcb1pjPJ75/pzYjksZmwf5iTBxhXRTu+7MVlt9+AL5huZnTcoS5shmwi
+         KnwNxNf4AmgbCN84xzDtcZXqRkSAXTzIVefqU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707174954; x=1707779754;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HLDVauXDb3SkVjlIiWsDawP2Lrkb7uN8ijdb1ZnT3GM=;
-        b=qsq9q5dWa0KKUlQ8W6gB7kZiQp7sALJVsn29DRtDWTXetRYnJh9iod3gVuW/bR9+Ev
-         rAa7wnFO87pNlKY807Z5KGpN3Iw5do+OrBJE56r/PJOiByklbhBtASgg/VF+/yfPCnpe
-         bIcrzcIeIzZ3GzufD5v6XAQKaYpZ/wsvK3ZYYK9cUGDBwPccUo49vcuZuAmr3s/n2UIk
-         Ue00VUhXp4kZHtjW/3lgffDhOkdIqsAL78R449Yi89XAf8ow8nbWDFllTMUg+CKiu2qa
-         KXNN9JFj7FawlYvFXGZMMuoF7oxexPWNicLythlWcBC8AVeljlFJ+1ouD8HjB4LLXBRX
-         g2EA==
-X-Gm-Message-State: AOJu0YzC4B6VFrQh/G/PWhn8gjx49sEg5+2L8H/Ztv+PAfHSNwYOrLAs
-	vVn4krPBwYyzpohD7NC2EHy7xRudhoGYESp/PHNbcrx0A5xUpw6oaToaUlDs+xk=
-X-Google-Smtp-Source: AGHT+IE3RZklDuPK3RsSAT5nJ3BuQdhvpthhno9atwmUQdGKYtEs6vhTfLTEZnZ/CbvGV5USvqDzoA==
-X-Received: by 2002:a17:903:1cf:b0:1d9:a4bb:29f2 with SMTP id e15-20020a17090301cf00b001d9a4bb29f2mr720650plh.46.1707174954062;
-        Mon, 05 Feb 2024 15:15:54 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCVg6EM1UWxQB4eSbUussRDKlEYCp9GsHdJ+mKzLNkffYzCq4qGIbm5Fa52ygPxyd12ROmIDr0EhKABFTm7jL0VxvipPjnimMW7859kFnuVmsGOH1hLbPjZQjmD4favBOWTRXCbwPbdTuHneqwjMlmz7qW5Xuseul9RRVQmJA+/UXci5wEhQo68jzK+qP2gUwQzkjB/BPgZng8GYtOhm8L8KdYuqbyW1WOC0qwew+olLEgsRbxzEtWnhVC6GsID24vXEwv50ASkcgyXy9OlkxOJb7nEsvNKjVfySPWR5jthwWt8j6Bm9ZFYf
-Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
-        by smtp.gmail.com with ESMTPSA id kb13-20020a170903338d00b001d9606aac46sm419329plb.212.2024.02.05.15.15.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Feb 2024 15:15:53 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rX8Bq-002aEM-3D;
-	Tue, 06 Feb 2024 10:15:51 +1100
-Date: Tue, 6 Feb 2024 10:15:50 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: JonasZhou <jonaszhou-oc@zhaoxin.com>
-Cc: willy@infradead.org, CobeChen@zhaoxin.com, JonasZhou@zhaoxin.com,
-	LouisQi@zhaoxin.com, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] fs/address_space: move i_mmap_rwsem to mitigate a false
- sharing with i_mmap.
-Message-ID: <ZcFsJvUOVMc8e0yO@dread.disaster.area>
-References: <Zb1DVNGaorZCDS7R@casper.infradead.org>
- <20240205062229.5283-1-jonaszhou-oc@zhaoxin.com>
+        d=1e100.net; s=20230601; t=1707175464; x=1707780264;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9NGjjARXFNOTt3fgpF+1IhCFiMpjWh/egnV5kuc837o=;
+        b=Vtv74HcUO+DGsO4NLXqPZzc3zIpT8EM2725hr5p2e46pyRqDEZUC0lCBaCnCME8DOt
+         AJESARvSqv7flbKOTxM5LgMkiu3z7Lbzfeg6yD2GeeGv2Lv1qP2sY5koaBbz11q9LU4g
+         ot/08kmo0Z/o/OAz4mc2AvC0O7e60H/7x1zQIhjsAmxfsv0hUnSB5yyDLS+cZy4vLv7w
+         VDMwx1TAQS00Lt+p5LbsRtdFKTaX3LbP398fEMyziAxztzV8iGQIY2PodwbhtQKFTc7P
+         jebiqPrEeYvflpEGeF2QS5qUAdboy7kHEz/R30qHI819gylfDeL6ScG4Ju+g3Kupp0vr
+         +GpA==
+X-Gm-Message-State: AOJu0YxGsvk5tpq84NWcOqaPFg6B1pjKwJTPNUkluNd8MbVbZOKdDjKz
+	ofLxg5e9jc2cUuvPbtU4wK/ezRV6KQ6mWw0S3n7kqxQw9VJuzqwNkzl7PK9Spdy51b5VBmjeyEa
+	zeJx0x9OIjoKZe3MUDJJ7Nl9G8Ik0eD9lXipaw7su9Yq5DVSEYwI=
+X-Google-Smtp-Source: AGHT+IERWVySBTxBx/QjZAjLAa2SyKHK3VUnd85ErDBveyr9fSJPfRc3xyl2C8sc/A0Mqe2U/DC9DkM1ATRG6cWh2xA=
+X-Received: by 2002:a17:906:53c8:b0:a38:1e54:91d7 with SMTP id
+ p8-20020a17090653c800b00a381e5491d7mr77657ejo.56.1707175464197; Mon, 05 Feb
+ 2024 15:24:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240205062229.5283-1-jonaszhou-oc@zhaoxin.com>
+From: Sargun Dhillon <sargun@sargun.me>
+Date: Mon, 5 Feb 2024 18:23:47 -0500
+Message-ID: <CAMp4zn8aXNPzq1i8KYmbRfwDBvO5Qefa4isSyS1bwYuvkuBsHg@mail.gmail.com>
+Subject: Fanotify: concurrent work and handling files being executed
+To: Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>, Sweet Tea Dorminy <thesweettea@meta.com>, 
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Feb 05, 2024 at 02:22:29PM +0800, JonasZhou wrote:
-> > On Fri, Feb 02, 2024 at 03:03:51PM +0000, Matthew Wilcox wrote:
-> > > On Fri, Feb 02, 2024 at 05:34:07PM +0800, JonasZhou-oc wrote:
-> > > > In the struct address_space, there is a 32-byte gap between i_mmap
-> > > > and i_mmap_rwsem. Due to the alignment of struct address_space
-> > > > variables to 8 bytes, in certain situations, i_mmap and
-> > > > i_mmap_rwsem may end up in the same CACHE line.
-> > > > 
-> > > > While running Unixbench/execl, we observe high false sharing issues
-> > > > when accessing i_mmap against i_mmap_rwsem. We move i_mmap_rwsem
-> > > > after i_private_list, ensuring a 64-byte gap between i_mmap and
-> > > > i_mmap_rwsem.
-> > > 
-> > > I'm confused.  i_mmap_rwsem protects i_mmap.  Usually you want the lock
-> > > and the thing it's protecting in the same cacheline.  Why is that not
-> > > the case here?
-> >
-> > We actually had this seven months ago:
-> >
-> > https://lore.kernel.org/all/20230628105624.150352-1-lipeng.zhu@intel.com/
-> >
-> > Unfortunately, no argumentation was forthcoming about *why* this was
-> > the right approach.  All we got was a different patch and an assertion
-> > that it still improved performance.
-> >
-> > We need to understand what's going on!  Please don't do the same thing
-> > as the other submitter and just assert that it does.
-> 
-> When running UnixBench/execl, each execl process repeatedly performs 
-> i_mmap_lock_write -> vma_interval_tree_remove/insert -> 
-> i_mmap_unlock_write. As indicated below, when i_mmap and i_mmap_rwsem 
-> are in the same CACHE Line, there will be more HITM.
+One of the issues we've hit recently while using fanotify in an HSM is
+racing with files that are opened for execution.
 
-As I expected, your test is exercising the contention case rather
-than the single, uncontended case. As such, your patch is simply
-optimising the structure layout for the contended case at the
-expense of an extra cacheline miss in the uncontended case.
+There is a race that can result in ETXTBUSY.
+Pid 1: You have a file marked with FAN_OPEN_EXEC_PERM.
+Pid 2: execve(file_by_path)
+Pid 1: gets notification, with file.fd
+Pid 2: blocked, waiting for notification to resolve
+Pid 1: Does work with FD (populates the file)
+Pid 1: writes FAN_ALLOW to the fanotify file descriptor allowing the event.
+Pid 2: continues, and falls through to deny_write_access (and fails)
+Pid 1: closes fd
 
-I'm not an mm expert, so I don't know which case we should optimise
-for.
+Pid 1 can close the FD before responding, but this can result in a
+race if fanotify is being handled in a multi-threaded
+manner.
 
-However, the existing code is not obviously wrong, it's just that
-your micro-benchmark exercises the pathological worst case for the
-optimisation choices made for this structure. Whether the contention
-case is worth optimising is the first decision that needs to be
-made, then people can decide if hacking minor optimisations into the
-code is better than reworking the locking and/or algorithm to avoid
-the contention altogether is a better direction...
+I.e. if there are two threads operating on the same fanotify group,
+and an event's FD has been closed, that can be reused
+by another event. This is largely not a problem because the
+outstanding events are added in a FIFO manner to the outstanding
+event list, and as long as the earlier event is closed and responded
+to without interruption, it should be okay, but it's difficult
+to guarantee that this happens, unless event responses are serialized
+in some fashion, with strict ordering between
+responses.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+There are a couple of ways I see around this:
+1. Have a flag in the fanotify response that's like FAN_CLOSE_FD,
+where fanotify_write closes the fd when
+it processes the response.
+2. Make the response identifier separate from the FD. This can either
+be an IDR / xarray, or a 64-bit always
+incrementing number. The benefit of using an xarray is that responses
+can than be handled in O(1) speed
+whereas the current implementation is O(n) in relationship to the
+number of outstanding events.
+
+This can be implemented by adding an additional piece of response
+metadata, and then that becomes the
+key vs. fd on response.
+---
+
+An aside, ETXTBUSY / i_writecount is a real bummer. We want to be able
+to populate file content lazily,
+and I realize there are many steps between removing the write lock,
+and being able to do this, but given
+that you can achieve this with FUSE, NFS, EROFS / cachefilesd, it
+feels somewhat arbitrary to continue
+to have this in place for executable files only.
 
