@@ -1,135 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-10268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E9A849953
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:58:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2539849975
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 13:01:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE371F22A52
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 11:58:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EE7AB27F44
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CCC11A29A;
-	Mon,  5 Feb 2024 11:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6433B1B94F;
+	Mon,  5 Feb 2024 12:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c777OkkO"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ScYfqAMn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2DF18EB9;
-	Mon,  5 Feb 2024 11:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B594C1B802
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 12:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707134288; cv=none; b=RenZqMSYNP99ssWllrUHxxQo9WaK5gdC2tyo1YsVyfIDNCJK7g0L5rVrLNoyi1w9vU+kdhPonN9HQbiRh84S6NmhQP+NoiM8Gfly/MRWBuEOvSctFz8h0ejw7gPDAx5weQqvSAV47zTojfyJN+aoeGwEIVTPT7mNi/3JJ2AzhR4=
+	t=1707134457; cv=none; b=sbOmSkM3C0usw9hMniSHO17dD7VLj0rw/wWdLM7URDWVFWjRbB9QfKYZ94VktS2zlZ3cHYxJdOYV1v2GPalAYCvt2rlOoIvH9aESXybiewMPJXTP0irVowMvZXGvcpSbRBnDnp10MA5NQiN/yTdEFE3tE/qsUrnN768KrD7h7VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707134288; c=relaxed/simple;
-	bh=7TVjhZRcGSDBg8WholubRtQ/4dPPkNOismsM1iFeAmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VvFuoEt79SM4D091AO0+g5UFalRZR57LPx5BFCBnS0KrD9uAciSFZUmGBUAG+2/ZAN7J7S4wCR2k/8kQv7E0ldcxYiA7i0Hh50h2q8selBQVn6tAfL2LOmDU+yy6+y433fl8p1SIDu5MUmjwYSECCByQT6mYmuv6uxBtLhkp65k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c777OkkO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB73C433C7;
-	Mon,  5 Feb 2024 11:57:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707134288;
-	bh=7TVjhZRcGSDBg8WholubRtQ/4dPPkNOismsM1iFeAmI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c777OkkONkvw4s74UzHN4N9E09qBlbCf/qa18onl7cGFB3rUbkLqV0y5Gbzqf4s01
-	 batHHR5A0KNO6yguYJy3UUB0wRyXmLUbmFz29OHRiL9fuK9JMvlXQGTX/ZCGIjyJsR
-	 cv6DlVpraqRU5gWCQL4vddCV/FtaCevyi5jSzTaR8O0CIp0dteeVByB/l2SLhFZr0z
-	 S9+Kv0zAcRq9nt2/vJH4nrBzUtPx63VWQ1pOGmAin7/jPT99W+q/cWiEZPU68e9NXR
-	 +RTrTIut8cOPsZM4N0yZX99cX0OQU3ichNbIYOdcXkOvt4NNkTmBD3E2XgnADKBc6r
-	 fqn6LF2Ug8Kwg==
-Date: Mon, 5 Feb 2024 12:57:55 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Chuck Lever <chuck.lever@oracle.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>, Eric Van Hensbergen <ericvh@kernel.org>, 
-	Latchesar Ionkov <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>, 
-	Christian Schoenebeck <linux_oss@crudebyte.com>, David Howells <dhowells@redhat.com>, 
-	Marc Dionne <marc.dionne@auristor.com>, Xiubo Li <xiubli@redhat.com>, Ilya Dryomov <idryomov@gmail.com>, 
-	Alexander Aring <aahringo@redhat.com>, David Teigland <teigland@redhat.com>, 
-	Andreas Gruenbacher <agruenba@redhat.com>, Neil Brown <neilb@suse.de>, Olga Kornievskaia <kolga@netapp.com>, 
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
-	Trond Myklebust <trond.myklebust@hammerspace.com>, Anna Schumaker <anna@kernel.org>, Mark Fasheh <mark@fasheh.com>, 
-	Joel Becker <jlbec@evilplan.org>, Joseph Qi <joseph.qi@linux.alibaba.com>, 
-	Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, Shyam Prasad N <sprasad@microsoft.com>, 
-	Namjae Jeon <linkinjeon@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, v9fs@lists.linux.dev, linux-afs@lists.infradead.org, 
-	ceph-devel@vger.kernel.org, gfs2@lists.linux.dev, linux-nfs@vger.kernel.org, 
-	ocfs2-devel@lists.linux.dev, linux-cifs@vger.kernel.org
-Subject: Re: [PATCH v3 04/47] filelock: add some new helper functions
-Message-ID: <20240205-laufen-hosen-38578e076df5@brauner>
-References: <20240131-flsplit-v3-0-c6129007ee8d@kernel.org>
- <20240131-flsplit-v3-4-c6129007ee8d@kernel.org>
- <20240205-wegschauen-unappetitlich-2b0926023605@brauner>
- <de77ec5ade7fac7e72445cb2d10d95efe8bf9c92.camel@kernel.org>
+	s=arc-20240116; t=1707134457; c=relaxed/simple;
+	bh=8yyxMSOs3qWOaGUw5qHXDfU3IDhvN5PI+y0YVXHZLhU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mxa2KKUqcewtmGJRVvC8/cJ8ApcfHZGpOVKqmHmhPHO1veUn9ZWTj6IZusploctCKPyo8oag3D2aoBXfG6W0ldbXUO2hy6FAJFhXCvILIHsmBD1gVmQTR6d9VVu1R1TsMHYB/v0lmrWGpNyVsjRBWrQ9E12qHzLySmo05cvjwPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ScYfqAMn; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4TT4hY4MLLz9t0W;
+	Mon,  5 Feb 2024 13:00:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1707134445;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KnPUfGz5HCEPrHdpxix6s8phXI5/yxsCHOSTi1sP9XY=;
+	b=ScYfqAMnYwtJHz463Q1pp3iTre4db8Kod/U6A90QIpn2MI5ir900vZKUm4pPqkJddq883+
+	+l6/uLUvD3oRi4GL32YOJzqE3724lQeOdU4BeweUukOOE+4/RER7vGw9SSMi1W6I0YKKbc
+	kbX5Hx6YbKm5k14Sd4SAP1OUo8eAsXWhAhuU++4ZvQ3cbyl24rtXHBzHNaErr73Xupfc0o
+	+R/b1bc3rgy0RK9hcEFy3QQ/U6VzCCyNQaTDu4F8Vy4S9V2kS1FQPP+Knp4HnOZgLs4R8R
+	kDdpnxdqO8w9mxrT8GsBWZL/StPpu61gP5TI0kvGc8/9lixh5yQFVWIAg/aJ+Q==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: willy@infradead.org
+Cc: akpm@linux-foundation.org,
+	hare@suse.com,
+	hughd@google.com,
+	kirill.shutemov@linux.intel.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	mcgrof@kernel.org,
+	slava@dubeyko.com,
+	p.raghav@samsung.com,
+	gost.dev@samsung.com
+Subject: Re: [PATCH] mm: Support order-1 folios in the page cache
+Date: Mon,  5 Feb 2024 13:00:39 +0100
+Message-ID: <20240205120039.4053661-1-kernel@pankajraghav.com>
+In-Reply-To: <20231206204442.771430-1-willy@infradead.org>
+References: <20231206204442.771430-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <de77ec5ade7fac7e72445cb2d10d95efe8bf9c92.camel@kernel.org>
+X-Rspamd-Queue-Id: 4TT4hY4MLLz9t0W
 
-On Mon, Feb 05, 2024 at 06:55:44AM -0500, Jeff Layton wrote:
-> On Mon, 2024-02-05 at 12:36 +0100, Christian Brauner wrote:
-> > > diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-> > > index 085ff6ba0653..a814664b1053 100644
-> > > --- a/include/linux/filelock.h
-> > > +++ b/include/linux/filelock.h
-> > > @@ -147,6 +147,29 @@ int fcntl_setlk64(unsigned int, struct file *, unsigned int,
-> > >  int fcntl_setlease(unsigned int fd, struct file *filp, int arg);
-> > >  int fcntl_getlease(struct file *filp);
-> > >  
-> > > 
-> > > 
-> > > 
-> > > 
-> > > 
-> > > 
-> > > 
-> > > +static inline bool lock_is_unlock(struct file_lock *fl)
-> > > +{
-> > > +	return fl->fl_type == F_UNLCK;
-> > > +}
-> > > +
-> > > +static inline bool lock_is_read(struct file_lock *fl)
-> > > +{
-> > > +	return fl->fl_type == F_RDLCK;
-> > > +}
-> > > +
-> > > +static inline bool lock_is_write(struct file_lock *fl)
-> > > +{
-> > > +	return fl->fl_type == F_WRLCK;
-> > > +}
-> > > +
-> > > +static inline void locks_wake_up(struct file_lock *fl)
-> > > +{
-> > > +	wake_up(&fl->fl_wait);
-> > > +}
-> > > +
-> > > +/* for walking lists of file_locks linked by fl_list */
-> > > +#define for_each_file_lock(_fl, _head)	list_for_each_entry(_fl, _head, fl_list)
-> > > +
-> > 
-> > This causes a build warning for fs/ceph/ and fs/afs when
-> > !CONFIG_FILE_LOCKING. I'm about to fold the following diff into this
-> > patch. The diff looks a bit wonky but essentially I've moved
-> > lock_is_unlock(), lock_is_{read,write}(), locks_wake_up() and
-> > for_each_file_lock() out of the ifdef CONFIG_FILE_LOCKING:
-> > 
-> 
-> I sent a patch for this problem yesterday. Did you not get it?
+> Folios of order 1 have no space to store the deferred list.  This is
+> not a problem for the page cache as file-backed folios are never
+> placed on the deferred list.  All we need to do is prevent the core
+> MM from touching the deferred list for order 1 folios and remove the
+> code which prevented us from allocating order 1 folios.
 
-Whoops, probably missed it on the trip back from fosdem.
-I'll double check now.
+I rebased this patch on top of the lbs tree[1] and ran 3 xfstests loop
+with 8k XFS blocksize on a 4k PAGE_SIZE machine. The tests ran fine and
+nothing stood out apart from some known failures.
+
+Are you planning to send a new version of this patch (there are some conflicts
+with the latest baseline)?
+I can also add it along with the LBS minorder series that I will be sending
+out in a week or so, if you are busy.
+
+--
+Pankaj
+
+[1] https://github.com/Panky-codes/linux/commits/large-block-minorder-6.8.0-rc2-v1-8k/
 
