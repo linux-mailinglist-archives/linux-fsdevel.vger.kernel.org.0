@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-10277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C017F849990
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 13:06:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3BD584999A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 13:07:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D25328189A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:06:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3501F25513
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D1B1C69F;
-	Mon,  5 Feb 2024 12:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2CD1BC5B;
+	Mon,  5 Feb 2024 12:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="JSkDIGyr"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="hgi7L/iN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+Received: from smtp-fw-9105.amazon.com (smtp-fw-9105.amazon.com [207.171.188.204])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC28D1C686;
-	Mon,  5 Feb 2024 12:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75A591AAB9;
+	Mon,  5 Feb 2024 12:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707134638; cv=none; b=qYAVKrOnyIG7xicsCDxV3ckmQfZ1w/Uor2B2GKDMINbzXDCNgZIhk1KdmJI1SecoWgF3p0gHg3Q8yCLID+RSmD9DkwbEruq75np1yEcmA0anutU0DU1jgQXaQk0aQ0wCJ+450tiREjp3jMwgoEme77PH3EnDAD4DE69PlIfBFX4=
+	t=1707134676; cv=none; b=fqNjPzPIn2HowPGUce4T9p+JVE5nBCQQChxYNPiqhyc+KterqzkQKmU1ZFgUSi+wTYL8Q2vy54pMm8zeF4bZLhzL89H6tvVdIOZEQYUwVygHyXApbUcMfDKWTQcRufGgIK6YAhzLsAZlVAcpYcEBG4Mcv0J2MGksry0zYBKiMkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707134638; c=relaxed/simple;
-	bh=HphmXgXmCKa5mqdnPL9wBxqcBYTxkbzFB0ny6/qkCB4=;
+	s=arc-20240116; t=1707134676; c=relaxed/simple;
+	bh=5Uxpgc0dI22+UGWqfon6DoCVovwe1kf0HryqXSj4tnM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HZdlIRaBysRkb9SkBJxIXoeqsdwmtPqTHHEREieG2RT6z/jlGM+AknRvsEXMkUDW/hOPGsk2pU64TbJExN4wfmSSpI33qnLtfvZlqNuCe4Xm0On/FIR6SmC14l3FQ6roh1RIp5W8E419GPYkaaUgb9CUOLPS5Y5ngpFsyO4pR4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=JSkDIGyr; arc=none smtp.client-ip=99.78.197.220
+	 MIME-Version:Content-Type; b=ah2mlriwc4GPE2ctEnazWiq/jPss9WrHL6rnoYO1I44DFzSyNmP8V1WYUZFBTqUmN1aH8X4Fi+XMK+wEZFPSAu19It774Sdlcn/WoT+m/s9ZDvHZHD0IrCnecOKvYKeGowIBhr5VXhA8/v/E4LiZ8w+2qIOTu6GZauK/Ueylypw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=hgi7L/iN; arc=none smtp.client-ip=207.171.188.204
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1707134637; x=1738670637;
+  t=1707134674; x=1738670674;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=iY0J0IZ5qTqLG1CI5oIteOfffrC6hlfw7IE0MCx8M3k=;
-  b=JSkDIGyrOfNkdmuDUcA1wlHoiTEd4BH8dtO97qK0NJ2Pte20i/a0OOCm
-   C0j4dmJ+xT+dqfxYjkzyAaHx0JvaB1O29vk4fcn3dFp+/HSh1BHdFnrJJ
-   7nrvM4D8CHbVq1DsiDeLNIbnc82oZ+jmY+bgefcK6RMaqaeUsJlwrjaNP
-   Y=;
+  bh=TxdyyN106bvAzVLll6ZOpOdKPjlViDjzUv1y30GOivQ=;
+  b=hgi7L/iNQzybvsy8wLvuACoX1rTQU+9BfNz+mOnOnpCmhgHmszw0AzbN
+   ecx4I6yCuQAQaPR1PdW9mUikqdyGrxDITMckVJYkohrrJGpepLpavihnW
+   9hFJknCqV2h1HfqVPju/OBrKJiKd1diIYGnwliuFrQotg0gn/AKkqR0aI
+   w=;
 X-IronPort-AV: E=Sophos;i="6.05,245,1701129600"; 
-   d="scan'208";a="63724432"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2024 12:03:55 +0000
-Received: from EX19MTAEUC001.ant.amazon.com [10.0.10.100:51867]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.28.192:2525] with esmtp (Farcaster)
- id 0b48539d-2334-4d72-bccb-1f938dcbdb04; Mon, 5 Feb 2024 12:03:53 +0000 (UTC)
-X-Farcaster-Flow-ID: 0b48539d-2334-4d72-bccb-1f938dcbdb04
+   d="scan'208";a="702759804"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9105.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2024 12:04:26 +0000
+Received: from EX19MTAEUC001.ant.amazon.com [10.0.10.100:58296]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.129:2525] with esmtp (Farcaster)
+ id e132c2ad-2d34-4ccb-890d-621a7e0c08cd; Mon, 5 Feb 2024 12:04:25 +0000 (UTC)
+X-Farcaster-Flow-ID: e132c2ad-2d34-4ccb-890d-621a7e0c08cd
 Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
  EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Mon, 5 Feb 2024 12:03:53 +0000
+ 15.2.1118.40; Mon, 5 Feb 2024 12:04:23 +0000
 Received: from dev-dsk-jgowans-1a-a3faec1f.eu-west-1.amazon.com
  (172.19.112.191) by EX19D014EUC004.ant.amazon.com (10.252.51.182) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 5 Feb
- 2024 12:03:46 +0000
+ 2024 12:04:17 +0000
 From: James Gowans <jgowans@amazon.com>
 To: <linux-kernel@vger.kernel.org>
 CC: Eric Biederman <ebiederm@xmission.com>, <kexec@lists.infradead.org>,
@@ -72,9 +72,9 @@ CC: Eric Biederman <ebiederm@xmission.com>, <kexec@lists.infradead.org>,
 	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
 	<madvenka@linux.microsoft.com>, <steven.sistare@oracle.com>,
 	<yuleixzhang@tencent.com>
-Subject: [RFC 08/18] iommu: Add allocator for pgtables from persistent region
-Date: Mon, 5 Feb 2024 12:01:53 +0000
-Message-ID: <20240205120203.60312-9-jgowans@amazon.com>
+Subject: [RFC 09/18] intel-iommu: Use pkernfs for root/context pgtable pages
+Date: Mon, 5 Feb 2024 12:01:54 +0000
+Message-ID: <20240205120203.60312-10-jgowans@amazon.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240205120203.60312-1-jgowans@amazon.com>
 References: <20240205120203.60312-1-jgowans@amazon.com>
@@ -86,95 +86,116 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: EX19D033UWC001.ant.amazon.com (10.13.139.218) To
+X-ClientProxiedBy: EX19D041UWA001.ant.amazon.com (10.13.139.124) To
  EX19D014EUC004.ant.amazon.com (10.252.51.182)
 
-The specific IOMMU drivers will need to ability to allocate pages from a
-pkernfs IOMMU pgtable file for their pgtables. Also, the IOMMU drivers
-will need to ability to consistent get the same page for the root PGD
-page - add a specific function to get this PGD "root" page. This is
-different to allocating regular pgtable pages because the exact same
-page needs to be *restored* after kexec into the pgd pointer on the
-IOMMU domain struct.
+The previous commits were preparation for using pkernfs memory for IOMMU
+pgtables: a file in the filesystem is available and an allocator to
+allocate 4-KiB pages from that file is available.
 
-To support this sort of allocation the pkernfs region is treated as an
-array of 512 4 KiB pages, the first of which is an allocation bitmap.
+Now use those to actually use pkernfs memory for root and context
+pgtable pages. If pkernfs is enabled then a "region" (physical and
+virtual memory chunk) is fetch from pkernfs and used to drive the
+allocator. Should this rather just be a pointer to a pkernfs inode? That
+abstraction seems leaky but without having the ability to store struct
+files at this point it's probably the more accurate.
+
+The freeing still needs to be hooked into the allocator...
 ---
- drivers/iommu/Makefile        |  1 +
- drivers/iommu/pgtable_alloc.c | 36 +++++++++++++++++++++++++++++++++++
- drivers/iommu/pgtable_alloc.h |  9 +++++++++
- 3 files changed, 46 insertions(+)
- create mode 100644 drivers/iommu/pgtable_alloc.c
- create mode 100644 drivers/iommu/pgtable_alloc.h
+ drivers/iommu/intel/iommu.c | 24 ++++++++++++++++++++----
+ drivers/iommu/intel/iommu.h |  2 ++
+ 2 files changed, 22 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-index 769e43d780ce..cadebabe9581 100644
---- a/drivers/iommu/Makefile
-+++ b/drivers/iommu/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-y += amd/ intel/ arm/ iommufd/
-+obj-y += pgtable_alloc.o
- obj-$(CONFIG_IOMMU_API) += iommu.o
- obj-$(CONFIG_IOMMU_API) += iommu-traces.o
- obj-$(CONFIG_IOMMU_API) += iommu-sysfs.o
-diff --git a/drivers/iommu/pgtable_alloc.c b/drivers/iommu/pgtable_alloc.c
-new file mode 100644
-index 000000000000..f0c2e12f8a8b
---- /dev/null
-+++ b/drivers/iommu/pgtable_alloc.c
-@@ -0,0 +1,36 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include "pgtable_alloc.h"
-+#include <linux/mm.h>
-+
-+/*
-+ * The first 4 KiB is the bitmap - set the first bit in the bitmap.
-+ * Scan bitmap to find next free bits - it's next free page.
-+ */
-+
-+void iommu_alloc_page_from_region(struct pkernfs_region *region, void **vaddr, unsigned long *paddr)
-+{
-+	int page_idx;
-+
-+	page_idx = bitmap_find_free_region(region->vaddr, 512, 0);
-+	*vaddr = region->vaddr + (page_idx << PAGE_SHIFT);
-+	if (paddr)
-+		*paddr = region->paddr + (page_idx << PAGE_SHIFT);
-+}
-+
-+
-+void *pgtable_get_root_page(struct pkernfs_region *region, bool liveupdate)
-+{
-+	/*
-+	 * The page immediately after the bitmap is the root page.
-+	 * It would be wrong for the page to be allocated if we're
-+	 * NOT doing a liveupdate, or for a liveupdate to happen
-+	 * with no allocated page. Detect this mismatch.
-+	 */
-+	if (test_bit(1, region->vaddr) ^ liveupdate) {
-+		pr_err("%sdoing a liveupdate but root pg bit incorrect",
-+				liveupdate ? "" : "NOT ");
-+	}
-+	set_bit(1, region->vaddr);
-+	return region->vaddr + PAGE_SIZE;
-+}
-diff --git a/drivers/iommu/pgtable_alloc.h b/drivers/iommu/pgtable_alloc.h
-new file mode 100644
-index 000000000000..c1666a7be3d3
---- /dev/null
-+++ b/drivers/iommu/pgtable_alloc.h
-@@ -0,0 +1,9 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#include <linux/types.h>
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 744e4e6b8d72..2dd3f055dbce 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -19,6 +19,7 @@
+ #include <linux/memory.h>
+ #include <linux/pci.h>
+ #include <linux/pci-ats.h>
 +#include <linux/pkernfs.h>
+ #include <linux/spinlock.h>
+ #include <linux/syscore_ops.h>
+ #include <linux/tboot.h>
+@@ -28,6 +29,7 @@
+ #include "../dma-iommu.h"
+ #include "../irq_remapping.h"
+ #include "../iommu-sva.h"
++#include "../pgtable_alloc.h"
+ #include "pasid.h"
+ #include "cap_audit.h"
+ #include "perfmon.h"
+@@ -617,7 +619,12 @@ struct context_entry *iommu_context_addr(struct intel_iommu *iommu, u8 bus,
+ 		if (!alloc)
+ 			return NULL;
+ 
+-		context = alloc_pgtable_page(iommu->node, GFP_ATOMIC);
++		if (pkernfs_enabled())
++			iommu_alloc_page_from_region(
++				&iommu->pkernfs_region,
++				(void **) &context, NULL);
++		else
++			context = alloc_pgtable_page(iommu->node, GFP_ATOMIC);
+ 		if (!context)
+ 			return NULL;
+ 
+@@ -1190,7 +1197,15 @@ static int iommu_alloc_root_entry(struct intel_iommu *iommu)
+ {
+ 	struct root_entry *root;
+ 
+-	root = alloc_pgtable_page(iommu->node, GFP_ATOMIC);
++	if (pkernfs_enabled()) {
++		pkernfs_alloc_iommu_root_pgtables(&iommu->pkernfs_region);
++		root = pgtable_get_root_page(
++				&iommu->pkernfs_region,
++				liveupdate);
++	} else {
++		root = alloc_pgtable_page(iommu->node, GFP_ATOMIC);
++	}
 +
-+void iommu_alloc_page_from_region(struct pkernfs_region *region,
-+				  void **vaddr, unsigned long *paddr);
-+
-+void *pgtable_get_root_page(struct pkernfs_region *region, bool liveupdate);
+ 	if (!root) {
+ 		pr_err("Allocating root entry for %s failed\n",
+ 			iommu->name);
+@@ -2790,7 +2805,7 @@ static int __init init_dmars(void)
+ 
+ 		init_translation_status(iommu);
+ 
+-		if (translation_pre_enabled(iommu) && !is_kdump_kernel()) {
++		if (translation_pre_enabled(iommu) && !is_kdump_kernel() && !liveupdate) {
+ 			iommu_disable_translation(iommu);
+ 			clear_translation_pre_enabled(iommu);
+ 			pr_warn("Translation was enabled for %s but we are not in kdump mode\n",
+@@ -2806,7 +2821,8 @@ static int __init init_dmars(void)
+ 		if (ret)
+ 			goto free_iommu;
+ 
+-		if (translation_pre_enabled(iommu)) {
++		/* For the live update case restore pgtables, don't copy */
++		if (translation_pre_enabled(iommu) && !liveupdate) {
+ 			pr_info("Translation already enabled - trying to copy translation structures\n");
+ 
+ 			ret = copy_translation_tables(iommu);
+diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+index e6a3e7065616..a2338e398ba3 100644
+--- a/drivers/iommu/intel/iommu.h
++++ b/drivers/iommu/intel/iommu.h
+@@ -22,6 +22,7 @@
+ #include <linux/bitfield.h>
+ #include <linux/xarray.h>
+ #include <linux/perf_event.h>
++#include <linux/pkernfs.h>
+ 
+ #include <asm/cacheflush.h>
+ #include <asm/iommu.h>
+@@ -672,6 +673,7 @@ struct intel_iommu {
+ 	unsigned long	*copied_tables; /* bitmap of copied tables */
+ 	spinlock_t	lock; /* protect context, domain ids */
+ 	struct root_entry *root_entry; /* virtual address */
++	struct pkernfs_region pkernfs_region;
+ 
+ 	struct iommu_flush flush;
+ #endif
 -- 
 2.40.1
 
