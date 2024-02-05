@@ -1,105 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-10245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0428184951E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 09:10:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B9DF84958C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 09:40:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975631F248BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 08:10:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ED991C21FE6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 08:39:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4596F111A4;
-	Mon,  5 Feb 2024 08:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1790F11706;
+	Mon,  5 Feb 2024 08:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gFzYo+ms";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1W5AvZd6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751F811184;
-	Mon,  5 Feb 2024 08:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CAB8111A0;
+	Mon,  5 Feb 2024 08:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707120636; cv=none; b=ZnsWOHe32bSq3YcbRiEasmnAgO2KWuOWwyLuBVZcmRB2RZrWjPKXEM1ujh9aDh2rNYYEgeu/yZ9MFn+EN1OvagDIC2i79hWNZszlmlEULRiY+OrGbtRIasb9HI+8yhh8F99i3e5AudWBojmuprmuN/T5C+CFyjUnGg8CMvcQWVI=
+	t=1707122380; cv=none; b=gzeZWGnz3xnA1DTuNEKRh+e6o9XV3shrsvgwgLyKfBZzw+UaCo1VP0FJgovqwoz7K0z0EST2yAPcV0lKpqVFoYmoKZbPWJt2IYDJCG4RTQysivoayyvmVARi0dZNV3HIhJNjzw5UzUeVgDffYaFAQtKfVQLWRlYFpWT3vzb8dG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707120636; c=relaxed/simple;
-	bh=lJfLls5gfxNink17J4VWmEfa8CGJgcmPdq9FvLEAIgA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EY1e67ffKQn5ZFR5wJc1R/LmZwyMIWd/YDiMCjoA65P1fQEjdQt2YjNKBuGzX0kIL2rdqGtBgYKJFpU8OqsjeInVRYJq/+7hbgDFf8rMQ62tQ+db+5ejdU8aCUns3GXb/81DUaydEayZbiFfBFv2rzhhhR74lQH+qHUYuTF5oZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 1d47c6aa2b3747909181acbb0103231e-20240205
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.35,REQID:e90204c5-e0b1-407d-855a-d1d3f5b1baaf,IP:10,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:1
-X-CID-INFO: VERSION:1.1.35,REQID:e90204c5-e0b1-407d-855a-d1d3f5b1baaf,IP:10,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:1
-X-CID-META: VersionHash:5d391d7,CLOUDID:23702180-4f93-4875-95e7-8c66ea833d57,B
-	ulkID:240205161028035G384B,BulkQuantity:0,Recheck:0,SF:17|19|42|74|66|38|2
-	4|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,Bulk:nil,QS:nil,BEC:nil
-	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: 1d47c6aa2b3747909181acbb0103231e-20240205
-Received: from mail.kylinos.cn [(39.156.73.10)] by mailgw
-	(envelope-from <chentao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 968780155; Mon, 05 Feb 2024 16:10:25 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 1BE1FE000EBC;
-	Mon,  5 Feb 2024 16:10:25 +0800 (CST)
-X-ns-mid: postfix-65C097F0-91013334
-Received: from kernel.. (unknown [172.20.15.254])
-	by mail.kylinos.cn (NSMail) with ESMTPA id 539BFE000EBC;
-	Mon,  5 Feb 2024 16:10:24 +0800 (CST)
-From: Kunwu Chan <chentao@kylinos.cn>
-To: dlemoal@kernel.org,
-	naohiro.aota@wdc.com,
-	jth@kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kunwu Chan <chentao@kylinos.cn>
-Subject: [PATCH] zonefs: Simplify the allocation of slab caches in zonefs_init_inodecache
-Date: Mon,  5 Feb 2024 16:10:22 +0800
-Message-Id: <20240205081022.433945-1-chentao@kylinos.cn>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1707122380; c=relaxed/simple;
+	bh=glbysHXbTHeXgr5vqZPyAXI1kRCcReCyMqy5wLvmetQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sK6oFExT6Bd/j62uTCQkmIQ4wgHGwSOyE1Up7zjD1hNgYKRcbyIUaiJzNMfjXoPXgAdGe40KXicvY+RHdrsZpkItgEzcqvIC8xGSS1ZuYeoMUGh2Dmsh1eNUjKrOTarGmLgDeOEMEBgQKXXeQxG53W5IXuPnMKYGSxYw17g3mGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gFzYo+ms; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1W5AvZd6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1707122375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=410oVLaTDeyabSNXtoLd0DEYuxw6VZoAesHkjytsmkA=;
+	b=gFzYo+msOvMEqmQChOwt9aQES7HiYfENSE4iVu2jY2ht0dYMaOgcJlESbXeHr8TFE/rSPI
+	kdChic2EqUi6SYMJMLOpiHNIuBy0mR747eBjdTi1P8gkVP0Hvmxqho3Sxauacs0efjCirX
+	EBTErOi618UP4pZJ93kHE7JBatfkH6QBSbiiZuLMLTVkgUUJ3Up0+MZeeBR9T0hwZo2RW3
+	T1ILu/liVJtWjx0ZBeTRwH5ytiL70VbZQ5C7uzB7farneeZsWFuaezpGrGL0mu40MnfP6H
+	2Q715CyvsbPMi7cpEV3K2lPvJT4R3iJ7ELBmYlwJmwm7Q5tb/IMRLJL4sgWegA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1707122375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=410oVLaTDeyabSNXtoLd0DEYuxw6VZoAesHkjytsmkA=;
+	b=1W5AvZd6AD73J8/TVCafIxEOeHTeYFntbFzFdcKPaAtejg3RNTMWK1wKMmOZD2ZSBxdbnW
+	Et6AH5rJwsuRCpCA==
+To: Yoann Congal <yoann.congal@smile.fr>, linux-fsdevel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-serial@vger.kernel.org, x86@kernel.org
+Cc: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Borislav Petkov
+ <bp@alien8.de>,
+ Darren Hart <dvhart@infradead.org>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Davidlohr Bueso <dave@stgolabs.net>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "H . Peter Anvin" <hpa@zytor.com>, Ingo
+ Molnar <mingo@redhat.com>, Jiri Slaby <jirislaby@kernel.org>, Josh
+ Triplett <josh@joshtriplett.org>, Masahiro Yamada <masahiroy@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, Peter Zijlstra
+ <peterz@infradead.org>, Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky
+ <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Willem de Bruijn
+ <willemdebruijn.kernel@gmail.com>, Yoann Congal <yoann.congal@smile.fr>,
+ Vegard Nossum <vegard.nossum@oracle.com>
+Subject: Re: [PATCH v3 1/2] printk: Fix LOG_CPU_MAX_BUF_SHIFT when
+ BASE_SMALL is enabled
+In-Reply-To: <20240204232945.1576403-2-yoann.congal@smile.fr>
+References: <20240204232945.1576403-1-yoann.congal@smile.fr>
+ <20240204232945.1576403-2-yoann.congal@smile.fr>
+Date: Mon, 05 Feb 2024 09:45:27 +0106
+Message-ID: <87bk8vpao0.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Use the new KMEM_CACHE() macro instead of direct kmem_cache_create
-to simplify the creation of SLAB caches.
+On 2024-02-05, Yoann Congal <yoann.congal@smile.fr> wrote:
+> LOG_CPU_MAX_BUF_SHIFT default value depends on BASE_SMALL:
+>   config LOG_CPU_MAX_BUF_SHIFT
+>   	default 12 if !BASE_SMALL
+>   	default 0 if BASE_SMALL
+> But, BASE_SMALL is a config of type int and "!BASE_SMALL" is always
+> evaluated to true whatever is the value of BASE_SMALL.
+>
+> This patch fixes this by using BASE_FULL (type bool) which is equivalent
+> to BASE_SMALL==0.
+>
+> Note: This changes CONFIG_LOG_CPU_MAX_BUF_SHIFT=12 to
+> CONFIG_LOG_CPU_MAX_BUF_SHIFT=0 for BASE_SMALL defconfigs, but that will
+> not be a big impact due to this code in kernel/printk/printk.c:
+>   /* by default this will only continue through for large > 64 CPUs */
+>   if (cpu_extra <= __LOG_BUF_LEN / 2)
+>           return;
+> Systems using CONFIG_BASE_SMALL and having 64+ CPUs should be quite
+> rare.
+>
+> John Ogness <john.ogness@linutronix.de> (printk reviewer) wrote:
+>> For printk this will mean that BASE_SMALL systems were probably
+>> previously allocating/using the dynamic ringbuffer and now they will
+>> just continue to use the static ringbuffer. Which is fine and saves
+>> memory (as it should).
+>
+> Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Closes: https://lore.kernel.org/all/CAMuHMdWm6u1wX7efZQf=2XUAHascps76YQac6rdnQGhc8nop_Q@mail.gmail.com/
+> Reported-by: Vegard Nossum <vegard.nossum@oracle.com>
+> Closes: https://lore.kernel.org/all/f6856be8-54b7-0fa0-1d17-39632bf29ada@oracle.com/
+> Fixes: 4e244c10eab3 ("kconfig: remove unneeded symbol_empty variable")
 
-Signed-off-by: Kunwu Chan <chentao@kylinos.cn>
----
- fs/zonefs/super.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
-
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 93971742613a..9b578e7007e9 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -1387,10 +1387,8 @@ static struct file_system_type zonefs_type =3D {
-=20
- static int __init zonefs_init_inodecache(void)
- {
--	zonefs_inode_cachep =3D kmem_cache_create("zonefs_inode_cache",
--			sizeof(struct zonefs_inode_info), 0,
--			(SLAB_RECLAIM_ACCOUNT | SLAB_MEM_SPREAD | SLAB_ACCOUNT),
--			NULL);
-+	zonefs_inode_cachep =3D KMEM_CACHE(zonefs_inode_info,
-+			SLAB_RECLAIM_ACCOUNT | SLAB_MEM_SPREAD | SLAB_ACCOUNT);
- 	if (zonefs_inode_cachep =3D=3D NULL)
- 		return -ENOMEM;
- 	return 0;
---=20
-2.39.2
-
+Reviewed-by: John Ogness <john.ogness@linutronix.de>
 
