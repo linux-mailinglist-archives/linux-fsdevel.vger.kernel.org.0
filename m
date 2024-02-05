@@ -1,125 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-10394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A138784AA75
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 00:24:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5CC084AA83
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 00:28:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EE48CB256C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 23:24:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14673B20A75
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 23:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274A54D9E4;
-	Mon,  5 Feb 2024 23:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9331248CD2;
+	Mon,  5 Feb 2024 23:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sargun.me header.i=@sargun.me header.b="bYfrFmkU"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pLDN+XsQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92644D5A3
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 Feb 2024 23:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679FC433B0;
+	Mon,  5 Feb 2024 23:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707175469; cv=none; b=WPYVYMLllEbhbkGeePR113uDF7JKasTY/LQyATkh2G/3+nQrq6chiEuhiMMi7Lv/2sMhRi35j5Xbm4alI7FjFIm/FS0RQUjrkL2I1+dH98VuzymZLTETGM53WMgGeo1zaRo9Rfjz36s78HQXd87P4i8qbgol7p+ebI0iB3Ua+dQ=
+	t=1707175714; cv=none; b=eMCMI4gkVEXvhMojLOzI3U6FiZdfKNCa022IjQBaTr0l3CnZ8aHVGw8bsNqqVWLYQdZknFQjigM2hqiYTzStxE60uHeMSrVObbHzCtcVbwh9VT3GxUQnR3A+12Oh2bc3+ix2pgIHre3NC0xfwP2HEJBCpDaL5BBfVSJz6JbhnuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707175469; c=relaxed/simple;
-	bh=9NGjjARXFNOTt3fgpF+1IhCFiMpjWh/egnV5kuc837o=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=Vq92jVtr8qM54Onkh1adKGL50PIGWmnvnjtWNcJJqyXsi3Rtze91VfDUcL4QhyTwKci9qTvfNqVnFLCNm/L8X7yzEkvSWwDXzIUkj6pzeGn4BEG6Iv4t2iaFOeFGaDwp7IW/y6Ag7cKuflDqPAapNdQv4s9xbs6NT2Nww3ze0S8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sargun.me; spf=pass smtp.mailfrom=sargun.me; dkim=pass (1024-bit key) header.d=sargun.me header.i=@sargun.me header.b=bYfrFmkU; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sargun.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sargun.me
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a26fa294e56so30855266b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 15:24:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sargun.me; s=google; t=1707175464; x=1707780264; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9NGjjARXFNOTt3fgpF+1IhCFiMpjWh/egnV5kuc837o=;
-        b=bYfrFmkUVDPKH7o2/TzLcuTLfnQiXRVat3+12viAvehjgFV73xdYyYWyiBXEUJqE7G
-         GVo6q76N51RRHcb1pjPJ75/pzYjksZmwf5iTBxhXRTu+7MVlt9+AL5huZnTcoS5shmwi
-         KnwNxNf4AmgbCN84xzDtcZXqRkSAXTzIVefqU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707175464; x=1707780264;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9NGjjARXFNOTt3fgpF+1IhCFiMpjWh/egnV5kuc837o=;
-        b=Vtv74HcUO+DGsO4NLXqPZzc3zIpT8EM2725hr5p2e46pyRqDEZUC0lCBaCnCME8DOt
-         AJESARvSqv7flbKOTxM5LgMkiu3z7Lbzfeg6yD2GeeGv2Lv1qP2sY5koaBbz11q9LU4g
-         ot/08kmo0Z/o/OAz4mc2AvC0O7e60H/7x1zQIhjsAmxfsv0hUnSB5yyDLS+cZy4vLv7w
-         VDMwx1TAQS00Lt+p5LbsRtdFKTaX3LbP398fEMyziAxztzV8iGQIY2PodwbhtQKFTc7P
-         jebiqPrEeYvflpEGeF2QS5qUAdboy7kHEz/R30qHI819gylfDeL6ScG4Ju+g3Kupp0vr
-         +GpA==
-X-Gm-Message-State: AOJu0YxGsvk5tpq84NWcOqaPFg6B1pjKwJTPNUkluNd8MbVbZOKdDjKz
-	ofLxg5e9jc2cUuvPbtU4wK/ezRV6KQ6mWw0S3n7kqxQw9VJuzqwNkzl7PK9Spdy51b5VBmjeyEa
-	zeJx0x9OIjoKZe3MUDJJ7Nl9G8Ik0eD9lXipaw7su9Yq5DVSEYwI=
-X-Google-Smtp-Source: AGHT+IERWVySBTxBx/QjZAjLAa2SyKHK3VUnd85ErDBveyr9fSJPfRc3xyl2C8sc/A0Mqe2U/DC9DkM1ATRG6cWh2xA=
-X-Received: by 2002:a17:906:53c8:b0:a38:1e54:91d7 with SMTP id
- p8-20020a17090653c800b00a381e5491d7mr77657ejo.56.1707175464197; Mon, 05 Feb
- 2024 15:24:24 -0800 (PST)
+	s=arc-20240116; t=1707175714; c=relaxed/simple;
+	bh=Fk0+oZAIDRthG+u8dq99dvPRt7uamgSucpDNlvNnMYs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hBMkGJCc6p0PrcNWw+KRuVSFYoBbCYXrbPkWD4d5X0/GErucPgRmubR36GxDDnQN5xadI6GdvNXBCBn5UvnsJPNzHkaMoUbvgwNYC0+pQH0WyKcAwTmRfFd64ze4n11JVcSeeb9P48DJyW9Wgk+iNkRNjcocc9vc5u4yyeTcCg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pLDN+XsQ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=JIIsFta4gl+5qv0d4n9e230yiIydCO8J8/m+BzgHJY4=; b=pLDN+XsQvO7t2QiBwVAsF2exSg
+	43QXbQgnOVnj1mYSjjWUqhQQIaxoabHGaq5NTkkUc3GWBbtub4I9WvDfCJ4SDXiDQMRY2eCs9WAxh
+	h2Pr+dqnB24mjyDc7TAC5To74Gv5fyz1fZOAzz+wp95uGCssm5mC+T6Bnji08cIZrNUzvFEOlTWPa
+	UItzDxkf1fGV/Rn/LShITEeTKCPhrUrpSSSYkjxbG0K+nr2zUconALB0abQAMr3SIhpMYoOV65Hbc
+	Zq3wqKl7ex4LL/MbLFfxBj69gDS8zs3JSv8ES963hqgLJuYQe+rHhwo3gTNK/aVEhKPrwLRmH/d+9
+	eJWsmJ8g==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rX8O5-0000000AhsX-1yEZ;
+	Mon, 05 Feb 2024 23:28:29 +0000
+Date: Mon, 5 Feb 2024 23:28:29 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: JonasZhou-oc <JonasZhou-oc@zhaoxin.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, CobeChen@zhaoxin.com,
+	LouisQi@zhaoxin.com, JonasZhou@zhaoxin.com
+Subject: Re: [PATCH] fs/address_space: move i_mmap_rwsem to mitigate a false
+ sharing with i_mmap.
+Message-ID: <ZcFvHfYGH7EwGBRK@casper.infradead.org>
+References: <20240202093407.12536-1-JonasZhou-oc@zhaoxin.com>
+ <Zb0EV8rTpfJVNAJA@casper.infradead.org>
+ <Zb1DVNGaorZCDS7R@casper.infradead.org>
+ <ZcBUat4yjByQC7zg@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Sargun Dhillon <sargun@sargun.me>
-Date: Mon, 5 Feb 2024 18:23:47 -0500
-Message-ID: <CAMp4zn8aXNPzq1i8KYmbRfwDBvO5Qefa4isSyS1bwYuvkuBsHg@mail.gmail.com>
-Subject: Fanotify: concurrent work and handling files being executed
-To: Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>, Sweet Tea Dorminy <thesweettea@meta.com>, 
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZcBUat4yjByQC7zg@dread.disaster.area>
 
-One of the issues we've hit recently while using fanotify in an HSM is
-racing with files that are opened for execution.
+On Mon, Feb 05, 2024 at 02:22:18PM +1100, Dave Chinner wrote:
+> Intuition tells me that what the OP is seeing is the opposite case
+> to above: there is significant contention on the lock. In that case,
+> optimal "contention performance" comes from separating the lock and
+> the objects it protects into different cachelines.
+> 
+> The reason for this is that if the lock and objects it protects are
+> on the same cacheline, lock contention affects both the lock and the
+> objects being manipulated inside the critical section. i.e. attempts
+> to grab the lock pull the cacheline away from the CPU that holds the
+> lock, and then accesses to the object that are protected by the lock
+> then have to pull the cacheline back.
+> 
+> i.e. the cost of the extra memory fetch from an uncontended
+> cacheline is less than the cost of having to repeatedly fetch the
+> memory inside a critical section on a contended cacheline.
+> 
+> I consider optimisation attempts like this the canary in the mine:
+> it won't be long before these or similar workloads report
+> catastrophic lock contention on the lock in question.  Moving items
+> in the structure is equivalent to re-arranging the deck chairs
+> whilst the ship sinks - we might keep our heads above water a
+> little longer, but the ship is still sinking and we're still going
+> to have to fix the leak sooner rather than later...
 
-There is a race that can result in ETXTBUSY.
-Pid 1: You have a file marked with FAN_OPEN_EXEC_PERM.
-Pid 2: execve(file_by_path)
-Pid 1: gets notification, with file.fd
-Pid 2: blocked, waiting for notification to resolve
-Pid 1: Does work with FD (populates the file)
-Pid 1: writes FAN_ALLOW to the fanotify file descriptor allowing the event.
-Pid 2: continues, and falls through to deny_write_access (and fails)
-Pid 1: closes fd
+So the fundamental problem is our data structure.  It's actually two
+problems wrapped up in one bad idea.
 
-Pid 1 can close the FD before responding, but this can result in a
-race if fanotify is being handled in a multi-threaded
-manner.
+i_mmap is a struct rb_root_cached:
 
-I.e. if there are two threads operating on the same fanotify group,
-and an event's FD has been closed, that can be reused
-by another event. This is largely not a problem because the
-outstanding events are added in a FIFO manner to the outstanding
-event list, and as long as the earlier event is closed and responded
-to without interruption, it should be okay, but it's difficult
-to guarantee that this happens, unless event responses are serialized
-in some fashion, with strict ordering between
-responses.
+struct rb_root_cached {
+        struct rb_root rb_root;
+        struct rb_node *rb_leftmost;
+};
 
-There are a couple of ways I see around this:
-1. Have a flag in the fanotify response that's like FAN_CLOSE_FD,
-where fanotify_write closes the fd when
-it processes the response.
-2. Make the response identifier separate from the FD. This can either
-be an IDR / xarray, or a 64-bit always
-incrementing number. The benefit of using an xarray is that responses
-can than be handled in O(1) speed
-whereas the current implementation is O(n) in relationship to the
-number of outstanding events.
+struct rb_root {
+        struct rb_node *rb_node;
+};
 
-This can be implemented by adding an additional piece of response
-metadata, and then that becomes the
-key vs. fd on response.
----
+so it's two pointers into the tree; one to the leftmost node, one
+to the topmost node.  That means we're modifying one or both of these
+pointers frequently.  I imagine it's the rb_root, which is being modified
+frequently because we're always ... appending to the right?  And so
+we're rotating frequently.  Worst case would be if we're appending to
+the left and modifying both pointers.
 
-An aside, ETXTBUSY / i_writecount is a real bummer. We want to be able
-to populate file content lazily,
-and I realize there are many steps between removing the write lock,
-and being able to do this, but given
-that you can achieve this with FUSE, NFS, EROFS / cachefilesd, it
-feels somewhat arbitrary to continue
-to have this in place for executable files only.
+There are things we could do to address this by making rotations less
+frequent for the common case, which I suspect is mapping the entire file.
+And perhaps we should do these things as a stopgap.
+
+The larger problem is that rbtrees suck.  They suck the same way that
+linked lists suck; the CPU can't prefetch very far ahead (or in this
+case down).  It can do a little more work in that it can prefetch both
+the left & right pointers, but it can't fetch the grandchildren until the
+children fetches have finished, so the dependent reads have us stumped.
+
+The solution to this problem is to change the interval tree data structure
+from an Red-Black tree to a B-tree, or something similar where we use
+an array of pointers instead of a single pointer.  Not the Maple Tree;
+that is designed for non-overlapping ranges.  One could take inspiration
+from the Maple Tree and design a very similar data structure that can
+store and iterate over overlapping ranges.  I can't understand the macros
+this late at night, so I don't fully understand what the interval tree
+is doing, but I can probably make a more fully informed observation by
+the end of the week.
 
