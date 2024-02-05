@@ -1,63 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-10283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34288499A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 13:09:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015228499A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 13:09:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 163C21F26880
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:09:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 267A01C21FD4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Feb 2024 12:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6781BF3F;
-	Mon,  5 Feb 2024 12:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE281C283;
+	Mon,  5 Feb 2024 12:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="R3AYRMnS"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ldc/791q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-80006.amazon.com (smtp-fw-80006.amazon.com [99.78.197.217])
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1FE1BDED;
-	Mon,  5 Feb 2024 12:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A0F1D555;
+	Mon,  5 Feb 2024 12:05:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707134718; cv=none; b=IMpi1JE6/plHPXfoTrG1lv8DK1G4m0qLP9hDABUv7auautwokDOz6hAm8RJGHAtlhXdabhGXo23sgH9p48+F3sWMHQN8P3ZjPdX/COGKX9gNQhTbTr8zXWr+Opubk1PTejf5c8GvgGB+zJ+8qKiyExYuZ2GCiZe2mB5ApVqQokc=
+	t=1707134724; cv=none; b=Xj38B/7cbmL4nhpLOAyn3dTSbJi37O08IeNFU1KushXWVTyOJTf/GSsqOlfEmOOHJDS5I5UE5Avs9md3tRBLGcNngpOOld96M03ggHEyIQmwZn/2uAUMQBHe96fc2WnUAtxdkToGFOecuq1tMtt7H+e0KwNx3sfhzo03x4rmsw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707134718; c=relaxed/simple;
-	bh=z8BoM9mBaSRQmeip//Yd1XmcxTr/klkAQB0/G6dx2tY=;
+	s=arc-20240116; t=1707134724; c=relaxed/simple;
+	bh=HqWQLqTIWJhQA/wLFQbrxl5Yh4O/OkFiHi8etjbGQVs=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S7jOIy6WnHIF5sFYrhDhXFafXN+ZK731Ezovmo9A3ryHtKNjHulaAvaVMDBdQhVGiJXSpD077Sfljdbljeih4hv5ny3iMB2apApqvTLhYw/AqfdP0oFEr5wZjZXG/uBhs43LdiqC4TsHu369gyqEaFIm5kYCJY1Rde3XhM/zkL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=R3AYRMnS; arc=none smtp.client-ip=99.78.197.217
+	 MIME-Version:Content-Type; b=fjab8lnUPyg5s84tJmnImIwq4G3TZKxLgHF8ijaIEY7i8MDy449SdtBy3NplA/StpDbjHof76tnDfUIdP7kL6eykBl79iI9Z8hbza2royxhApLvdo0NL18PV0mSuEFR8FNJ/FDVKTdV1sNSt1Q7E2Szd5mKVBftmJJEm0gySzc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ldc/791q; arc=none smtp.client-ip=99.78.197.219
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1707134717; x=1738670717;
+  t=1707134722; x=1738670722;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=mVhmItHN9qmSrpLWsRnSDOh51VJYGjIwmSMhmIPWHpo=;
-  b=R3AYRMnSiKwRmMKtH/lqN0t0jVA1hEeWujguPv2alxxY26X3S7XzQefN
-   CbMyAY1Rw40hw8Q32U8gZ8gatsvonTW4i0VA21ckDc9rQ1AWwQz/O6p+M
-   FzpA83tH+NQsPmMmtOZu3T0MuoB6TXvnFWVtb+BYZJp3/CpOeYlh70u6f
-   A=;
+  bh=VONiUp37V5G8RKTN0EmhvHz4ErjJ4ifKDUQ6e8VlzjQ=;
+  b=ldc/791qw6jJic1Uai0kv46k6X1Wfizk0tOGGdMAT7eR2d3YERm3mklH
+   jHUZ6hCp3vTgh8dtRjl5+2zBoGEDDYu/mFZLH+Ewz+8PELZTA/YOMqNTh
+   L/NuBZM/klXbZjUht1oy+3oiCT1mUrFu2AN4Uu9yLIhAo8xh3H6pCt9XV
+   k=;
 X-IronPort-AV: E=Sophos;i="6.05,245,1701129600"; 
-   d="scan'208";a="271102836"
+   d="scan'208";a="63755776"
 Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.25.36.214])
-  by smtp-border-fw-80006.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2024 12:05:14 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [10.0.17.79:18332]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.28.192:2525] with esmtp (Farcaster)
- id 430958cf-6b4e-40ab-be7a-e53a50074ea7; Mon, 5 Feb 2024 12:05:13 +0000 (UTC)
-X-Farcaster-Flow-ID: 430958cf-6b4e-40ab-be7a-e53a50074ea7
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Feb 2024 12:05:21 +0000
+Received: from EX19MTAEUC001.ant.amazon.com [10.0.10.100:40572]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.14.233:2525] with esmtp (Farcaster)
+ id 27f4f8c6-d18d-45f7-aee0-af42d924df8a; Mon, 5 Feb 2024 12:05:19 +0000 (UTC)
+X-Farcaster-Flow-ID: 27f4f8c6-d18d-45f7-aee0-af42d924df8a
 Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
+ EX19MTAEUC001.ant.amazon.com (10.252.51.155) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Mon, 5 Feb 2024 12:05:13 +0000
+ 15.2.1118.40; Mon, 5 Feb 2024 12:05:19 +0000
 Received: from dev-dsk-jgowans-1a-a3faec1f.eu-west-1.amazon.com
  (172.19.112.191) by EX19D014EUC004.ant.amazon.com (10.252.51.182) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 5 Feb
- 2024 12:05:06 +0000
+ 2024 12:05:13 +0000
 From: James Gowans <jgowans@amazon.com>
 To: <linux-kernel@vger.kernel.org>
 CC: Eric Biederman <ebiederm@xmission.com>, <kexec@lists.infradead.org>,
@@ -72,9 +72,9 @@ CC: Eric Biederman <ebiederm@xmission.com>, <kexec@lists.infradead.org>,
 	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
 	<madvenka@linux.microsoft.com>, <steven.sistare@oracle.com>,
 	<yuleixzhang@tencent.com>
-Subject: [RFC 13/18] vfio: add ioctl to define persistent pgtables on container
-Date: Mon, 5 Feb 2024 12:01:58 +0000
-Message-ID: <20240205120203.60312-14-jgowans@amazon.com>
+Subject: [RFC 14/18] intel-iommu: Allocate domain pgtable pages from pkernfs
+Date: Mon, 5 Feb 2024 12:01:59 +0000
+Message-ID: <20240205120203.60312-15-jgowans@amazon.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240205120203.60312-1-jgowans@amazon.com>
 References: <20240205120203.60312-1-jgowans@amazon.com>
@@ -89,204 +89,305 @@ Content-Type: text/plain
 X-ClientProxiedBy: EX19D046UWA004.ant.amazon.com (10.13.139.76) To
  EX19D014EUC004.ant.amazon.com (10.252.51.182)
 
-The previous commits added a file type in pkernfs for IOMMU persistent
-page tables. Now support actually setting persistent page tables on an
-IOMMU domain. This is done via a VFIO ioctl on a VFIO container.
+In the previous commit VFIO was updated to be able to define persistent
+pgtables on a container. Now the IOMMU driver is updated to accept the
+file for persistent pgtables when the domain is allocated and use that
+file as the source of pages for the pgtables.
 
-Userspace needs to create and open a IOMMU persistent page tables file
-and then supply that fd to the new VFIO_CONTAINER_SET_PERSISTENT_PGTABLES
-ioctl. That ioctl sets the supplied struct file on the
-struct vfio_container. Later when the IOMMU domain is allocated by VFIO,
-VFIO  will check to see if the persistent pagetables have been defined
-and if they have will use the iommu_domain_alloc_persistent API which
-was introduced in the previous commit to pass the struct file down to
-the IOMMU which will actually use it for page tables.
+The iommu_ops.domain_alloc callback is extended to page a struct file
+for the pkernfs domain pgtables file. Most call sites are updated to
+supply NULL here, indicating no persistent pgtables. VFIO's caller is
+updated to plumb the pkernfs file through. When this file is supplied
+the md_domain_init() function convers the file into a pkernfs region and
+uses that region for pgtables.
 
-After kexec userspace needs to open the same IOMMU page table file and
-set it again via the same ioctl so that the IOMMU continues to use the
-same memory region for its page tables for that domain.
+Similarly to the root pgtables there are use after free issues with this
+that need sorting out, and the free() functions also need to be updated
+to free from the pkernfs region.
+
+It may be better to store the struct file on the dmar_domain and map
+file offset to addr every time rather than using a pkernfs region for
+this.
 ---
- drivers/vfio/container.c        | 27 +++++++++++++++++++++++++++
- drivers/vfio/vfio.h             |  2 ++
- drivers/vfio/vfio_iommu_type1.c | 27 +++++++++++++++++++++++++--
- include/uapi/linux/vfio.h       |  9 +++++++++
- 4 files changed, 63 insertions(+), 2 deletions(-)
+ drivers/iommu/intel/iommu.c   | 35 +++++++++++++++++++++++++++--------
+ drivers/iommu/intel/iommu.h   |  1 +
+ drivers/iommu/iommu.c         | 22 ++++++++++++++--------
+ drivers/iommu/pgtable_alloc.c |  7 +++++++
+ drivers/iommu/pgtable_alloc.h |  1 +
+ fs/pkernfs/iommu.c            |  2 +-
+ include/linux/iommu.h         |  6 +++++-
+ include/linux/pkernfs.h       |  1 +
+ 8 files changed, 57 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/vfio/container.c b/drivers/vfio/container.c
-index d53d08f16973..b60fcbf7bad0 100644
---- a/drivers/vfio/container.c
-+++ b/drivers/vfio/container.c
-@@ -11,6 +11,7 @@
- #include <linux/iommu.h>
- #include <linux/miscdevice.h>
- #include <linux/vfio.h>
-+#include <linux/pkernfs.h>
- #include <uapi/linux/vfio.h>
+diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+index 315c6b7f901c..809ca9e93992 100644
+--- a/drivers/iommu/intel/iommu.c
++++ b/drivers/iommu/intel/iommu.c
+@@ -946,7 +946,13 @@ static struct dma_pte *pfn_to_dma_pte(struct dmar_domain *domain,
+ 		if (!dma_pte_present(pte)) {
+ 			uint64_t pteval;
  
- #include "vfio.h"
-@@ -21,6 +22,7 @@ struct vfio_container {
- 	struct rw_semaphore		group_lock;
- 	struct vfio_iommu_driver	*iommu_driver;
- 	void				*iommu_data;
-+	struct file			*persistent_pgtables;
- 	bool				noiommu;
- };
+-			tmp_page = alloc_pgtable_page(domain->nid, gfp);
++			if (domain->pgtables_allocator.vaddr)
++				iommu_alloc_page_from_region(
++						&domain->pgtables_allocator,
++						&tmp_page,
++						NULL);
++			else
++				tmp_page = alloc_pgtable_page(domain->nid, gfp);
  
-@@ -306,6 +308,8 @@ static long vfio_ioctl_set_iommu(struct vfio_container *container,
- 			continue;
- 		}
- 
-+		driver->ops->set_persistent_pgtables(data, container->persistent_pgtables);
-+
- 		ret = __vfio_container_attach_groups(container, driver, data);
- 		if (ret) {
- 			driver->ops->release(data);
-@@ -324,6 +328,26 @@ static long vfio_ioctl_set_iommu(struct vfio_container *container,
- 	return ret;
+ 			if (!tmp_page)
+ 				return NULL;
+@@ -2399,7 +2405,7 @@ static int iommu_domain_identity_map(struct dmar_domain *domain,
+ 				DMA_PTE_READ|DMA_PTE_WRITE, GFP_KERNEL);
  }
  
-+static int vfio_ioctl_set_persistent_pgtables(struct vfio_container *container,
-+		unsigned long arg)
-+{
-+	struct vfio_set_persistent_pgtables set_ppts;
-+	struct file *ppts;
+-static int md_domain_init(struct dmar_domain *domain, int guest_width);
++static int md_domain_init(struct dmar_domain *domain, int guest_width, struct file *ppts);
+ 
+ static int __init si_domain_init(int hw)
+ {
+@@ -2411,7 +2417,7 @@ static int __init si_domain_init(int hw)
+ 	if (!si_domain)
+ 		return -EFAULT;
+ 
+-	if (md_domain_init(si_domain, DEFAULT_DOMAIN_ADDRESS_WIDTH)) {
++	if (md_domain_init(si_domain, DEFAULT_DOMAIN_ADDRESS_WIDTH, NULL)) {
+ 		domain_exit(si_domain);
+ 		si_domain = NULL;
+ 		return -EFAULT;
+@@ -4029,7 +4035,7 @@ static void device_block_translation(struct device *dev)
+ 	info->domain = NULL;
+ }
+ 
+-static int md_domain_init(struct dmar_domain *domain, int guest_width)
++static int md_domain_init(struct dmar_domain *domain, int guest_width, struct file *ppts)
+ {
+ 	int adjust_width;
+ 
+@@ -4042,8 +4048,21 @@ static int md_domain_init(struct dmar_domain *domain, int guest_width)
+ 	domain->iommu_superpage = 0;
+ 	domain->max_addr = 0;
+ 
+-	/* always allocate the top pgd */
+-	domain->pgd = alloc_pgtable_page(domain->nid, GFP_ATOMIC);
++	if (ppts) {
++		unsigned long pgd_phy;
 +
-+	if (copy_from_user(&set_ppts, (void __user *)arg, sizeof(set_ppts)))
-+		return -EFAULT;
++		pkernfs_get_region_for_ppts(
++				ppts,
++				&domain->pgtables_allocator);
++		iommu_get_pgd_page(
++				&domain->pgtables_allocator,
++				(void **) &domain->pgd,
++				&pgd_phy);
 +
-+	ppts = fget(set_ppts.persistent_pgtables_fd);
-+	if (!ppts)
-+		return -EBADF;
-+	if (!pkernfs_is_iommu_domain_pgtables(ppts)) {
-+		fput(ppts);
-+		return -EBADF;
++	} else {
++		/* always allocate the top pgd */
++		domain->pgd = alloc_pgtable_page(domain->nid, GFP_ATOMIC);
 +	}
-+	container->persistent_pgtables = ppts;
-+	return 0;
-+}
-+
- static long vfio_fops_unl_ioctl(struct file *filep,
- 				unsigned int cmd, unsigned long arg)
- {
-@@ -345,6 +369,9 @@ static long vfio_fops_unl_ioctl(struct file *filep,
- 	case VFIO_SET_IOMMU:
- 		ret = vfio_ioctl_set_iommu(container, arg);
- 		break;
-+	case VFIO_CONTAINER_SET_PERSISTENT_PGTABLES:
-+		ret = vfio_ioctl_set_persistent_pgtables(container, arg);
-+		break;
- 	default:
- 		driver = container->iommu_driver;
- 		data = container->iommu_data;
-diff --git a/drivers/vfio/vfio.h b/drivers/vfio/vfio.h
-index 307e3f29b527..6fa301bf6474 100644
---- a/drivers/vfio/vfio.h
-+++ b/drivers/vfio/vfio.h
-@@ -226,6 +226,8 @@ struct vfio_iommu_driver_ops {
- 				  void *data, size_t count, bool write);
- 	struct iommu_domain *(*group_iommu_domain)(void *iommu_data,
- 						   struct iommu_group *group);
-+	int		(*set_persistent_pgtables)(void *iommu_data,
-+						   struct file *ppts);
+ 	if (!domain->pgd)
+ 		return -ENOMEM;
+ 	domain_flush_cache(domain, domain->pgd, PAGE_SIZE);
+@@ -4064,7 +4083,7 @@ static struct iommu_domain blocking_domain = {
+ 	}
  };
  
- struct vfio_iommu_driver {
-diff --git a/drivers/vfio/vfio_iommu_type1.c b/drivers/vfio/vfio_iommu_type1.c
-index eacd6ec04de5..b36edfc5c9ef 100644
---- a/drivers/vfio/vfio_iommu_type1.c
-+++ b/drivers/vfio/vfio_iommu_type1.c
-@@ -75,6 +75,7 @@ struct vfio_iommu {
- 	bool			nesting;
- 	bool			dirty_page_tracking;
- 	struct list_head	emulated_iommu_groups;
-+	struct file		*persistent_pgtables;
- };
- 
- struct vfio_domain {
-@@ -2143,9 +2144,14 @@ static void vfio_iommu_iova_insert_copy(struct vfio_iommu *iommu,
- 
- static int vfio_iommu_domain_alloc(struct device *dev, void *data)
+-static struct iommu_domain *intel_iommu_domain_alloc(unsigned type)
++static struct iommu_domain *intel_iommu_domain_alloc(unsigned int type, struct file *ppts)
  {
-+	/* data is an in pointer to PPTs, and an out to the new domain. */
-+	struct file *ppts = *(struct file **) data;
- 	struct iommu_domain **domain = data;
+ 	struct dmar_domain *dmar_domain;
+ 	struct iommu_domain *domain;
+@@ -4079,7 +4098,7 @@ static struct iommu_domain *intel_iommu_domain_alloc(unsigned type)
+ 			pr_err("Can't allocate dmar_domain\n");
+ 			return NULL;
+ 		}
+-		if (md_domain_init(dmar_domain, DEFAULT_DOMAIN_ADDRESS_WIDTH)) {
++		if (md_domain_init(dmar_domain, DEFAULT_DOMAIN_ADDRESS_WIDTH, ppts)) {
+ 			pr_err("Domain initialization failed\n");
+ 			domain_exit(dmar_domain);
+ 			return NULL;
+diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
+index 4a2f163a86f3..f772fdcf3828 100644
+--- a/drivers/iommu/intel/iommu.h
++++ b/drivers/iommu/intel/iommu.h
+@@ -602,6 +602,7 @@ struct dmar_domain {
+ 	struct list_head dev_pasids;	/* all attached pasids */
+ 	struct list_head domains;	/* all struct dmar_domains on this IOMMU */
  
--	*domain = iommu_domain_alloc(dev->bus);
-+	if (ppts)
-+		*domain = iommu_domain_alloc_persistent(dev->bus, ppts);
-+	else
-+		*domain = iommu_domain_alloc(dev->bus);
- 	return 1; /* Don't iterate */
++	struct pkernfs_region pgtables_allocator;
+ 	struct dma_pte	*pgd;		/* virtual address */
+ 	int		gaw;		/* max guest address width */
+ 
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 3a67e636287a..f26e83d5b159 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -97,7 +97,7 @@ static int iommu_bus_notifier(struct notifier_block *nb,
+ 			      unsigned long action, void *data);
+ static void iommu_release_device(struct device *dev);
+ static struct iommu_domain *__iommu_domain_alloc(const struct bus_type *bus,
+-						 unsigned type);
++						 unsigned int type, struct file *ppts);
+ static int __iommu_attach_device(struct iommu_domain *domain,
+ 				 struct device *dev);
+ static int __iommu_attach_group(struct iommu_domain *domain,
+@@ -1734,7 +1734,7 @@ __iommu_group_alloc_default_domain(const struct bus_type *bus,
+ {
+ 	if (group->default_domain && group->default_domain->type == req_type)
+ 		return group->default_domain;
+-	return __iommu_domain_alloc(bus, req_type);
++	return __iommu_domain_alloc(bus, req_type, NULL);
  }
  
-@@ -2156,6 +2162,8 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 	struct vfio_iommu_group *group;
- 	struct vfio_domain *domain, *d;
- 	bool resv_msi;
-+	/* In/out ptr to iommu_domain_alloc. */
-+	void *domain_alloc_data;
- 	phys_addr_t resv_msi_base = 0;
- 	struct iommu_domain_geometry *geo;
- 	LIST_HEAD(iova_copy);
-@@ -2203,8 +2211,12 @@ static int vfio_iommu_type1_attach_group(void *iommu_data,
- 	 * want to iterate beyond the first device (if any).
- 	 */
- 	ret = -EIO;
--	iommu_group_for_each_dev(iommu_group, &domain->domain,
-+	/* Smuggle the PPTs in the data field; it will be clobbered with the new domain */
-+	domain_alloc_data = iommu->persistent_pgtables;
-+	iommu_group_for_each_dev(iommu_group, &domain_alloc_data,
- 				 vfio_iommu_domain_alloc);
-+	domain->domain = domain_alloc_data;
-+
- 	if (!domain->domain)
- 		goto out_free_domain;
+ /*
+@@ -1971,7 +1971,7 @@ void iommu_set_fault_handler(struct iommu_domain *domain,
+ EXPORT_SYMBOL_GPL(iommu_set_fault_handler);
  
-@@ -3165,6 +3177,16 @@ vfio_iommu_type1_group_iommu_domain(void *iommu_data,
+ static struct iommu_domain *__iommu_domain_alloc(const struct bus_type *bus,
+-						 unsigned type)
++						 unsigned int type, struct file *ppts)
+ {
+ 	struct iommu_domain *domain;
+ 	unsigned int alloc_type = type & IOMMU_DOMAIN_ALLOC_FLAGS;
+@@ -1979,7 +1979,7 @@ static struct iommu_domain *__iommu_domain_alloc(const struct bus_type *bus,
+ 	if (bus == NULL || bus->iommu_ops == NULL)
+ 		return NULL;
+ 
+-	domain = bus->iommu_ops->domain_alloc(alloc_type);
++	domain = bus->iommu_ops->domain_alloc(alloc_type, ppts);
+ 	if (!domain)
+ 		return NULL;
+ 
+@@ -2001,9 +2001,15 @@ static struct iommu_domain *__iommu_domain_alloc(const struct bus_type *bus,
  	return domain;
  }
  
-+int vfio_iommu_type1_set_persistent_pgtables(void *iommu_data,
-+				    struct file *ppts)
++struct iommu_domain *iommu_domain_alloc_persistent(const struct bus_type *bus, struct file *ppts)
 +{
-+
-+	struct vfio_iommu *iommu = iommu_data;
-+
-+	iommu->persistent_pgtables = ppts;
-+	return 0;
++	return __iommu_domain_alloc(bus, IOMMU_DOMAIN_UNMANAGED, ppts);
 +}
++EXPORT_SYMBOL_GPL(iommu_domain_alloc_persistent);
 +
- static const struct vfio_iommu_driver_ops vfio_iommu_driver_ops_type1 = {
- 	.name			= "vfio-iommu-type1",
- 	.owner			= THIS_MODULE,
-@@ -3179,6 +3201,7 @@ static const struct vfio_iommu_driver_ops vfio_iommu_driver_ops_type1 = {
- 	.unregister_device	= vfio_iommu_type1_unregister_device,
- 	.dma_rw			= vfio_iommu_type1_dma_rw,
- 	.group_iommu_domain	= vfio_iommu_type1_group_iommu_domain,
-+	.set_persistent_pgtables = vfio_iommu_type1_set_persistent_pgtables,
- };
+ struct iommu_domain *iommu_domain_alloc(const struct bus_type *bus)
+ {
+-	return __iommu_domain_alloc(bus, IOMMU_DOMAIN_UNMANAGED);
++	return __iommu_domain_alloc(bus, IOMMU_DOMAIN_UNMANAGED, NULL);
+ }
+ EXPORT_SYMBOL_GPL(iommu_domain_alloc);
  
- static int __init vfio_iommu_type1_init(void)
-diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-index afc1369216d9..fa9676bb4b26 100644
---- a/include/uapi/linux/vfio.h
-+++ b/include/uapi/linux/vfio.h
-@@ -1797,6 +1797,15 @@ struct vfio_iommu_spapr_tce_remove {
- };
- #define VFIO_IOMMU_SPAPR_TCE_REMOVE	_IO(VFIO_TYPE, VFIO_BASE + 20)
+@@ -3198,14 +3204,14 @@ static int __iommu_group_alloc_blocking_domain(struct iommu_group *group)
+ 		return 0;
  
-+struct vfio_set_persistent_pgtables {
-+	/*
-+	 * File descriptor for a pkernfs IOMMU pgtables
-+	 * file to be used for persistence.
-+	 */
-+	__u32	persistent_pgtables_fd;
-+};
-+#define VFIO_CONTAINER_SET_PERSISTENT_PGTABLES	_IO(VFIO_TYPE, VFIO_BASE + 21)
-+
- /* ***************************************************************** */
+ 	group->blocking_domain =
+-		__iommu_domain_alloc(dev->dev->bus, IOMMU_DOMAIN_BLOCKED);
++		__iommu_domain_alloc(dev->dev->bus, IOMMU_DOMAIN_BLOCKED, NULL);
+ 	if (!group->blocking_domain) {
+ 		/*
+ 		 * For drivers that do not yet understand IOMMU_DOMAIN_BLOCKED
+ 		 * create an empty domain instead.
+ 		 */
+ 		group->blocking_domain = __iommu_domain_alloc(
+-			dev->dev->bus, IOMMU_DOMAIN_UNMANAGED);
++			dev->dev->bus, IOMMU_DOMAIN_UNMANAGED, NULL);
+ 		if (!group->blocking_domain)
+ 			return -EINVAL;
+ 	}
+@@ -3500,7 +3506,7 @@ struct iommu_domain *iommu_sva_domain_alloc(struct device *dev,
+ 	const struct iommu_ops *ops = dev_iommu_ops(dev);
+ 	struct iommu_domain *domain;
  
- #endif /* _UAPIVFIO_H */
+-	domain = ops->domain_alloc(IOMMU_DOMAIN_SVA);
++	domain = ops->domain_alloc(IOMMU_DOMAIN_SVA, false);
+ 	if (!domain)
+ 		return NULL;
+ 
+diff --git a/drivers/iommu/pgtable_alloc.c b/drivers/iommu/pgtable_alloc.c
+index f0c2e12f8a8b..276db15932cc 100644
+--- a/drivers/iommu/pgtable_alloc.c
++++ b/drivers/iommu/pgtable_alloc.c
+@@ -7,6 +7,13 @@
+  * The first 4 KiB is the bitmap - set the first bit in the bitmap.
+  * Scan bitmap to find next free bits - it's next free page.
+  */
++void iommu_get_pgd_page(struct pkernfs_region *region, void **vaddr, unsigned long *paddr)
++{
++	set_bit(1, region->vaddr);
++	*vaddr = region->vaddr + (1 << PAGE_SHIFT);
++	if (paddr)
++		*paddr = region->paddr + (1 << PAGE_SHIFT);
++}
+ 
+ void iommu_alloc_page_from_region(struct pkernfs_region *region, void **vaddr, unsigned long *paddr)
+ {
+diff --git a/drivers/iommu/pgtable_alloc.h b/drivers/iommu/pgtable_alloc.h
+index c1666a7be3d3..50c3abba922b 100644
+--- a/drivers/iommu/pgtable_alloc.h
++++ b/drivers/iommu/pgtable_alloc.h
+@@ -3,6 +3,7 @@
+ #include <linux/types.h>
+ #include <linux/pkernfs.h>
+ 
++void iommu_get_pgd_page(struct pkernfs_region *region, void **vaddr, unsigned long *paddr);
+ void iommu_alloc_page_from_region(struct pkernfs_region *region,
+ 				  void **vaddr, unsigned long *paddr);
+ 
+diff --git a/fs/pkernfs/iommu.c b/fs/pkernfs/iommu.c
+index f14e76013e85..5d0b256e7dd8 100644
+--- a/fs/pkernfs/iommu.c
++++ b/fs/pkernfs/iommu.c
+@@ -4,7 +4,7 @@
+ #include <linux/io.h>
+ 
+ 
+-void pkernfs_alloc_iommu_domain_pgtables(struct file *ppts, struct pkernfs_region *pkernfs_region)
++void pkernfs_get_region_for_ppts(struct file *ppts, struct pkernfs_region *pkernfs_region)
+ {
+ 	struct pkernfs_inode *pkernfs_inode;
+ 	unsigned long *mappings_block_vaddr;
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 0225cf7445de..01bb89246ef7 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -101,6 +101,7 @@ struct iommu_domain {
+ 	enum iommu_page_response_code (*iopf_handler)(struct iommu_fault *fault,
+ 						      void *data);
+ 	void *fault_data;
++	struct file *persistent_pgtables;
+ 	union {
+ 		struct {
+ 			iommu_fault_handler_t handler;
+@@ -266,7 +267,8 @@ struct iommu_ops {
+ 	void *(*hw_info)(struct device *dev, u32 *length, u32 *type);
+ 
+ 	/* Domain allocation and freeing by the iommu driver */
+-	struct iommu_domain *(*domain_alloc)(unsigned iommu_domain_type);
++	/* If ppts is not null it is a persistent domain; null is non-persistent */
++	struct iommu_domain *(*domain_alloc)(unsigned int tiommu_domain_type, struct file *ppts);
+ 
+ 	struct iommu_device *(*probe_device)(struct device *dev);
+ 	void (*release_device)(struct device *dev);
+@@ -466,6 +468,8 @@ extern bool iommu_present(const struct bus_type *bus);
+ extern bool device_iommu_capable(struct device *dev, enum iommu_cap cap);
+ extern bool iommu_group_has_isolated_msi(struct iommu_group *group);
+ extern struct iommu_domain *iommu_domain_alloc(const struct bus_type *bus);
++extern struct iommu_domain *iommu_domain_alloc_persistent(const struct bus_type *bus,
++							  struct file *ppts);
+ extern void iommu_domain_free(struct iommu_domain *domain);
+ extern int iommu_attach_device(struct iommu_domain *domain,
+ 			       struct device *dev);
+diff --git a/include/linux/pkernfs.h b/include/linux/pkernfs.h
+index 4ca923ee0d82..8aa69ef5a2d8 100644
+--- a/include/linux/pkernfs.h
++++ b/include/linux/pkernfs.h
+@@ -31,6 +31,7 @@ struct pkernfs_region {
+ void pkernfs_alloc_iommu_root_pgtables(struct pkernfs_region *pkernfs_region);
+ void pkernfs_alloc_page_from_region(struct pkernfs_region *pkernfs_region,
+ 				    void **vaddr, unsigned long *paddr);
++void pkernfs_get_region_for_ppts(struct file *ppts, struct pkernfs_region *pkernfs_region);
+ void *pkernfs_region_paddr_to_vaddr(struct pkernfs_region *region, unsigned long paddr);
+ 
+ bool pkernfs_is_iommu_domain_pgtables(struct file *f);
 -- 
 2.40.1
 
