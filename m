@@ -1,59 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-10535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F4584C0C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 00:19:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548D584C0F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 00:34:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D28B92868D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 23:19:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E4A1C21715
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 23:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4661CAB3;
-	Tue,  6 Feb 2024 23:19:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1D51CF95;
+	Tue,  6 Feb 2024 23:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V3imUbc9"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DqohHpns"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9CA1CD32;
-	Tue,  6 Feb 2024 23:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B74B1CD2D;
+	Tue,  6 Feb 2024 23:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707261549; cv=none; b=Xeu2uCD/BmgX9ZNFcd1AEN4n7KMyAS4aHuPjgUA8VyJnMkOppXHSYYzBNDLOJsXuIgb2v+Pv11fhgb65FX/dgAIMWkk7D8zxncc/aueZGHCTSpc2QIS9iBR2WxXjXvi+xkWl+oi5XLj0at27Cr1VfjHV0bCdW7B2UHqkQ6eG3vs=
+	t=1707262439; cv=none; b=Wp+kPyXC9/ocS+26FExWNj6hsFCo2JZtMTevWwMxR73sQEcI6MtN6wGkLScNia0/DH17Oi7VP3vQpzURiZx3Pu2G9EyPlq7MAxT6EqJC8hfU4PsyAY5LFjJRa7gEs/ASg4AbWNoDARHtTTHoqplBECMZRj4qusGYzbjTs9uXm74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707261549; c=relaxed/simple;
-	bh=gvlx9I94wOd50YscJj/a7/Sa/udNt8J7rgpAq6RBAUI=;
+	s=arc-20240116; t=1707262439; c=relaxed/simple;
+	bh=2ujnuBthhHC/WoSoD6QQnKnumAsVCVROyse7z/cd2Sk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z4U9x/hXzs9S1RaCUCnpl4Da4tgaBKj5pbRBnT6VDTV0lWclV00JHblzggb/NOUBiaDyr7sPif8kzUsfBysVXVQVQDZKqxSuAk3Xoyp9y8WB9zeSvtB7u1P8ttjBWY5uhS6Ld8WqoMSLNvEvF1leuxDqRun6vBugO5kYTkPZYPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V3imUbc9; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=aF8ijqeXeJWedsx4I4J9xdTzauUxkCSodJkBjin6O0WLbAFEROlnfRqwgQIJ64I1Yq5WgD49UWN1fiTgvA+++S5LQw3X0NIvARc3LVQqG5nafN0mE6osI14GjRBXoataVSMxXLDbbwAc0i+bGvvnVUVHjCNvF41Jv3TSKP5/hZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DqohHpns; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YnBJkpuBoqzeKQSfi3Ju9Ni6rq1pZ0BC60FbPS8wc5o=; b=V3imUbc9ptSdR1OGzam6nKjdiJ
-	OyV0r349xrtsKkfi/bvCvYLawM9Z/6Tx5up5+foBSS3yzqYPK8fSFBIEVrsfby9mNjJZGEqGXVGIy
-	kD+MjK2IZZgy43TNQctzke2PKOOtlRpvtMGzUhPJc04eL0ox+As4GViiykEPpqjGecHMJontQh+ks
-	IsQBTOFn6k55+4eX4BC/MxdzlH7LTfOE+4N0c9Do1nVPZwf8K089r1Tp4HuigdH4mpOCelgnX1k3B
-	P9txNFiiqSCl9j7HkX6+9fLq7up/8JhqGRNPxQY17uD06kE4EJEmG7jfKER3htGK7PoEJ8TW92KzI
-	57xCNMrw==;
+	bh=8/qSJOR+zkPPH2i9c8ryKssFXsF/wlJRBdyNQ7Hk1aE=; b=DqohHpnsHhxigSOb2sDDtK0Fhc
+	fyh+uGH2Fco/NlpE7qCu1h0/QL08p7YxPsuyrr82HitYHg6Wl50QXE2uT6iPlhiH8TG+3oGbvJTlN
+	Q2tM0egXmVzf8Cq2CKFxaPIwHE6GHtD6rc9vs5lJ34/ALMtAKvYB0XomAiNX97VaykYZH+PilsDL4
+	g/g3eMmOauaS3wMA5ZNZ9wQqGJhIFxATgaihdzr1DPe9v6ITphy1NzysdvfqhkZDvsE3sYE7Ohn9k
+	ZvQ2EzS7RqqmpLIyHYMtgJpHtE3wtyaMSjmMmuVZAa+NQ/6dEylc3uMbVwOcdBnsfaNinNliG2KP0
+	9QDf7r/w==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rXUiJ-0000000DXtL-1MP3;
-	Tue, 06 Feb 2024 23:18:51 +0000
-Date: Tue, 6 Feb 2024 23:18:51 +0000
+	id 1rXUwo-0000000DaA9-1Twe;
+	Tue, 06 Feb 2024 23:33:50 +0000
+Date: Tue, 6 Feb 2024 23:33:50 +0000
 From: Matthew Wilcox <willy@infradead.org>
-To: Steve French <smfrench@gmail.com>
-Cc: David Howells <dhowells@redhat.com>, CIFS <linux-cifs@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	ronnie sahlberg <ronniesahlberg@gmail.com>,
-	"R. Diez" <rdiez-2006@rd10.de>
-Subject: Re: [PATCH] fix netfs/folios regression
-Message-ID: <ZcK-W54WoNQswKfg@casper.infradead.org>
-References: <CAH2r5msJQGww+MAJLpA9qNw_jDt9ymiHO+bcpTkGMJpJdVc=gA@mail.gmail.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: JonasZhou-oc <JonasZhou-oc@zhaoxin.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, CobeChen@zhaoxin.com,
+	LouisQi@zhaoxin.com, JonasZhou@zhaoxin.com
+Subject: Re: [PATCH] fs/address_space: move i_mmap_rwsem to mitigate a false
+ sharing with i_mmap.
+Message-ID: <ZcLB3pCSFRXRodzN@casper.infradead.org>
+References: <20240202093407.12536-1-JonasZhou-oc@zhaoxin.com>
+ <Zb0EV8rTpfJVNAJA@casper.infradead.org>
+ <Zb1DVNGaorZCDS7R@casper.infradead.org>
+ <ZcBUat4yjByQC7zg@dread.disaster.area>
+ <ZcFvHfYGH7EwGBRK@casper.infradead.org>
+ <ZcKmP3zVdBwJVxGd@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,36 +68,51 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAH2r5msJQGww+MAJLpA9qNw_jDt9ymiHO+bcpTkGMJpJdVc=gA@mail.gmail.com>
+In-Reply-To: <ZcKmP3zVdBwJVxGd@dread.disaster.area>
 
-On Tue, Feb 06, 2024 at 05:14:42PM -0600, Steve French wrote:
-> The code in question is a little hard to follow, and may eventually
-> get rewritten by later folio/netfs patches from David Howells but the
-> problem is in
-> cifs_write_back_from_locked_folio() and cifs_writepages_region() where
-> after the write (of maximum write size) completes, the next write
-> skips to the beginning of the next page (leaving the tail end of the
-> previous page unwritten).  This is not an issue with typical servers
-> and typical wsize values because those will almost always be a
-> multiple of 4096, but in the bug report the server in question was old
-> and had sent a value for maximum write size that was not a multiple of
-> 4096.
+On Wed, Feb 07, 2024 at 08:35:59AM +1100, Dave Chinner wrote:
+> > The solution to this problem is to change the interval tree data structure
+> > from an Red-Black tree to a B-tree, or something similar where we use
+> > an array of pointers instead of a single pointer.
 > 
-> This can be a temporary fix, that can be removed as netfs/folios
-> implementation improves here - but in the short term the easiest way
-> to fix this seems to be to round the negotiated maximum_write_size
-> down if not a multiple of 4096, to be a multiple of 4096 (this can be
-> removed in the future when the folios code is found which caused
-> this), and also warn the user if they pick a wsize that is not
-> recommended, not a multiple of 4096.
+> .... B-trees are not immune to pointer chasing problems, either.
+> Most use binary searches within the nodes, and so we have the
+> problem of unpredictable cacheline misses within the nodes as well
+> as being unable to do depth based prefetch similar to rbtrees.
+> 
+> Perhaps we should be looking at something like this:
+> 
+> https://lore.kernel.org/linux-fsdevel/20240126220655.395093-2-kent.overstreet@linux.dev/
 
-Seems like a sensible stopgap, but probably the patch should use
-PAGE_SIZE rather than plain 4096 (what about
-Alpha/Sparc/powerpc-64k/arm64-{16,64}k?)
+I need more data (and maybe Kent has it!)
 
-Also, what if the server says its max-write-size is 2048 bytes?
-Also, does the code work well if the max-write-size is, say, 20480
-bytes?  (ie an odd multiple of PAGE_SIZE is fine; it doesn't need to be
-a power-of-two?)
+Without any data, I believe that Eytzinger layout is an idea that was
+a really good one in the 1990s/2000s and has now passed its expiration
+date because of the changed nature of hardware.
 
+In the mid-90s, we could do O(10) instructions in the time it took to
+service a LLC miss.  Today, it's more like O(2500).  That means it is
+far more important to be predictable than it is to execute the minimum
+number of instructions.  If your B-tree nodes are 256kB in size (I believe
+that's what bacachefs is using?), then Eytzinger layout may make some
+sense, but if you're using smaller nodes (which I further believe is
+appropriate for an in-memory B-tree), then a straight 'load each index
+and compare it' may outperform a search that jumps around inside a node.
+
+I'm pontificating and will happily yield to someone who has data.
+I've tried to mark my assumptions clearly above.
+
+
+Something else I'm not aware of (and filesystem B-trees will not have
+any experience of) is what research exists on efficiently adding new
+entries to a balanced tree so as to minimise rebalances.  Filesystems
+are like the Maple Tree in that for every logical offset inside a file,
+there is precisely one answer to "what physical block does this map to".
+
+For the i_mmap tree, we want instead to answer the question "Which VMAs
+have an intersection with this range of the file", and for the benchmark
+in question, we will have a large number of entries that compare equal to
+each other (they have the same start, and same end, but different values).
+So they could be inserted at many different points in the tree.  We'd like
+to choose the point which causes the least amount of rebalancing.
 
