@@ -1,175 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-10424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B2B484B019
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 09:41:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 072B884B09F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 10:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D0BD1F21E68
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 08:41:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D57CB2218B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 09:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5920D12BEA2;
-	Tue,  6 Feb 2024 08:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D16712FF9F;
+	Tue,  6 Feb 2024 09:00:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kn57VMLd"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sBYs4aO+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152C3405DE
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 08:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F7E12D15B
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 09:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707208750; cv=none; b=BW1lXhBZPUCeeoLsvEk6E5LpR93iilFIpP5FIFeA+OY1qUmehW43Z/6p/y4YjuCfWOVeg73i3I1/ETCVgjg2jyxoKMHqdPSXgZlJRLx03tfpk0KNSQ0P6MV02d/UfG25BMFpV3bkDF5LIMDk77NDa02n2YXrZ/p0uAsDbyi5H54=
+	t=1707210023; cv=none; b=DGeEIz3kqdIGQ64yVYtt521kR3bjlAKtsLVuZXt1oiMaI7dFKADd5rpThNsKo/yhHbmamAnK2nLJbM5XZZg2MymRXuradH9c65JuHv9xHssyjen9lrRN2Ma8mdQXxXhIbrHIU5/k3RcCurelfzXJ70w1VOrMBc+wHqde420Ol0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707208750; c=relaxed/simple;
-	bh=l+JMszkFYy6lH6a9tczp4WqafiooarXArqiBuWtq2nA=;
-	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
-	 Date:Message-ID; b=UIkHQUSb++r7hFUr8yzh7DdS3S8CHMs5hYGmJGPNuajClmvuFsjYbqiCUipAdb1iVy2McXyQ+TBzWwl4LJvHedrhk2nErMZmEpHu6nwKXXyuI9WI4QwauopXJ1ePk6t+I5WKARMhjCgKCfvDheHgjtDsHu9JUqMt4reirUoy4IA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kn57VMLd; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707208748;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1707210023; c=relaxed/simple;
+	bh=SxQjK5o9m31vC6NqNadgVRjnw+ctZnP6AU8Uj28TlSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZzTmiTCUHg8vtrEX3kLiO/Dhuih63l063LG1av8Jsw4t9ymAT71BrXpferML0gYSP5X4QJ6XX9mvkuv7WH7ZlCLru2s+yGi5HVS7sYGeN+ZKgtbGFrKgmJo5a2OrxQSVkOIyOyoSwGSjtKr3ePSGf6mzEY8bNmFLfFU1WjP3m6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sBYs4aO+; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 6 Feb 2024 04:00:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1707210019;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=zVAaAYx+uRJrIVM9VYECDgmw/4CaprkfGNuPI6DSTlw=;
-	b=Kn57VMLdPa5ezyHuJ4Rw7j3q6HVtf+MfyQfje5pnfpsTX5bXUkLEUqDWojyJNOAzLd6kpk
-	5Pfs6/6VJfi7gVzZTlqcWE3+n/oToUip+tKp45D77RVF7IV8lHWU22Ym9NGVDvziKAtcol
-	+KdobRn7RvwhgIAHaKra8gNXPRLXZks=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-343-cq73PueiM7GdY63RPfS8Fg-1; Tue, 06 Feb 2024 03:39:04 -0500
-X-MC-Unique: cq73PueiM7GdY63RPfS8Fg-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1158383B7E6;
-	Tue,  6 Feb 2024 08:39:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.245])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 61BE3492BF0;
-	Tue,  6 Feb 2024 08:39:02 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <520668.1706191347@warthog.procyon.org.uk>
-References: <520668.1706191347@warthog.procyon.org.uk>
-Cc: dhowells@redhat.com, Gao Xiang <xiang@kernel.org>,
-    Jeff Layton <jlayton@kernel.org>,
-    Christian Brauner <brauner@kernel.org>,
-    Matthew Wilcox <willy@infradead.org>,
-    Eric Sandeen <esandeen@redhat.com>, v9fs@lists.linux.dev,
-    linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
-    linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
-    linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: Roadmap for netfslib and local caching (cachefiles)
+	bh=ZBttTWG6B/hRu2GKdAEHTEeg0dT4Isyo/6hlXj+LQvY=;
+	b=sBYs4aO+Y++ATlpT84BjTAhvWvoR0GYL0haejynyHKmKzxc28Vx8Pg51rmmqil7SzLhoiI
+	d5AdLXPE5ZwYz5sYyDaH9a+hTGsy6CsjgIIEBWj6XRBCRXJAap7LePIe9HRmGU7MVsnI1A
+	zn+Kynfd1VuvtLUGES2isUkNIiqoSYY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-ext4@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Dave Chinner <dchinner@redhat.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.or, Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [PATCH 2/6] fs: FS_IOC_GETUUID
+Message-ID: <nmmxuryl7shlwionp6htpiifwosyl53hwbeurkcwkxwxb4ikdk@yxmtogitrx5w>
+References: <20240205200529.546646-1-kent.overstreet@linux.dev>
+ <20240205200529.546646-3-kent.overstreet@linux.dev>
+ <ZcFelmKPb374aebH@dread.disaster.area>
+ <l2zdnuczo24zxc6z6hh7q5mmux3wr5iltscnrc7axdugt6ct2k@qzrpj6vc2ct5>
+ <CAOQ4uxjvEL4P4vV5SKpHVS5DtOwKpxAn4n4+Kfqawcu+H-MC5g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3114773.1707208741.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 06 Feb 2024 08:39:01 +0000
-Message-ID: <3114774.1707208741@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxjvEL4P4vV5SKpHVS5DtOwKpxAn4n4+Kfqawcu+H-MC5g@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-David Howells <dhowells@redhat.com> wrote:
+On Tue, Feb 06, 2024 at 10:24:45AM +0200, Amir Goldstein wrote:
+> On Tue, Feb 6, 2024 at 12:49 AM Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+> >
+> > On Tue, Feb 06, 2024 at 09:17:58AM +1100, Dave Chinner wrote:
+> > > On Mon, Feb 05, 2024 at 03:05:13PM -0500, Kent Overstreet wrote:
+> > > > Add a new generic ioctls for querying the filesystem UUID.
+> > > >
+> > > > These are lifted versions of the ext4 ioctls, with one change: we're not
+> > > > using a flexible array member, because UUIDs will never be more than 16
+> > > > bytes.
+> > > >
+> > > > This patch adds a generic implementation of FS_IOC_GETFSUUID, which
+> > > > reads from super_block->s_uuid; FS_IOC_SETFSUUID is left for individual
+> > > > filesystems to implement.
+> > > >
+> 
+> It's fine to have a generic implementation, but the filesystem should
+> have the option to opt-in for a specific implementation.
+> 
+> There are several examples, even with xfs and btrfs where ->s_uuid
+> does not contain the filesystem's UUID or there is more than one
+> uuid and ->s_uuid is not the correct one to expose to the user.
 
-> Disconnected Operation
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> =
+Yeah, some of you were smoking some good stuff from the stories I've
+been hearing...
 
-> I'm working towards providing support for disconnected operation, so tha=
-t,
-> provided you've got your working set pinned in the cache, you can contin=
-ue to
-> work on your network-provided files when the network goes away and resyn=
-c the
-> changes later.
-> =
+> A model like ioctl_[gs]etflags() looks much more appropriate
+> and could be useful for network filesystems/FUSE as well.
 
-> This is going to require a number of things:
-> =
+A filesystem needs to store two UUIDs (that identify the filesystem as a
+whole).
 
->  (1) A user API by which files can be preloaded into the cache and pinne=
-d.
-> =
+ - Your internal UUID, which can never change because it's referenced in
+   various other on disk data structures
+ - Your external UUID, which identifies the filesystem to the outside
+   world. Users want to be able to change this - which is why it has to
+   be distinct from the internal UUID.
 
->  (2) The ability to track changes in the cache.
-> =
+The internal UUID must never be exposed to the outside world, and that
+includes the VFS; storing your private UUID in sb->s_uuid is wrong -
+separation of concerns.
 
->  (3) A way to synchronise changes on reconnection.
-> =
+yes, I am aware of fscrypt, and yes, someone's going to have to fix
+that.
 
->  (4) A way to communicate to the user when there's a conflict with a thi=
-rd
->      party change on reconnect.  This might involve communicating via sy=
-stemd
->      to the desktop environment to ask the user to indicate how they'd l=
-ike
->      conflicts recolved.
-> =
-
->  (5) A way to prompt the user to re-enter their authentication/crypto ke=
-ys.
-> =
-
->  (6) A way to ask the user how to handle a process that wants to access =
-data
->      we don't have (error/wait) - and how to handle the DE getting stuck=
- in
->      this fashion.
-
-Some further thoughts stemming from a discussion with Willy:
-
- - Would need to store the pre-disconnection metadata as well as any updat=
-ed
-   metadata.  When performing conflict resolution, userspace would need to=
- be
-   able to access these in addition to the current state (local) and curre=
-nt
-   state (server).
-
- - Would need the ability to include extra stats, such as the AFS data
-   version, that are used for cache coherency management.
-
- - Would need to provide an API by which userspace can access both states =
-of
-   the data, possibly including the original data if we still have it in t=
-he
-   cache.  That could be a number of ioctls on the target file.
-
- - Would need a range of resolution options in userspace, not limited to k=
-eep
-   local, keep remote, but also the option to stash one/both somewhere.  M=
-ay
-   also need to provide app-specific resolvers - merging git trees for
-   example, but also what do you do about sqlite databases, say?
-
- - There may be bulk changes that the user would want to resolve in bulk,
-   perhaps by "everything in the subtree" or pattern matching rules,
-   e.g. "disard all .o files" or "take the .o file matching the newest .c =
-file
-   in the same directory".
-
- - May need to change how expired keys are handled so that they aren't alr=
-eady
-   garbage collected, but can continue to be used as a token off which to =
-hang
-   cached access rights.
-
-David
-
+This interface is only for the external/public UUID.
 
