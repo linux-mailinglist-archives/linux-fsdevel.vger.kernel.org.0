@@ -1,124 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-10488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E16584B89C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 15:58:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CE9A84B8C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 16:05:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9C028A99F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 14:58:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4D64289677
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 15:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364ED1350D2;
-	Tue,  6 Feb 2024 14:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9D31332A7;
+	Tue,  6 Feb 2024 15:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDQKX9Ia"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gr0Ql/Fu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CB313329A;
-	Tue,  6 Feb 2024 14:55:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C5313248D;
+	Tue,  6 Feb 2024 15:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707231347; cv=none; b=Ur1Tgzq/d513fE+UwaYy+gzALKpsORmLg9cl5yCNxXXR8YB8xg576HgQmoF497/B+ux/RSsNkuJaNciH4luiYyPg4UVp/xKjm4DzMp5TS901v0US34vfpQI6xnX6gx2G3kJUD1bzt5bKvb9ac2SVVJYVbkIG55iaKn9rnJf6qLc=
+	t=1707231912; cv=none; b=HuS0Z3dTLn4b+GbtsgdZRgjy1uvJWqGzp1Vqro6S/qC6hf9VfdKa/eAb6GJdusQyQOEpIvFFwDm8z86Bg35qtygDEjQwwUvPfmubrcb8a0uhrXHlx1n4gosGmIzliYQHkKRZpZHzhOl/hKXk+YenDczViNKD6kpI+kAP3eBBtWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707231347; c=relaxed/simple;
-	bh=P+XZ9mIc4ZZ7nNbi2oJblEjps9kTAmyVg/UPtun3xME=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:Content-Type:
-	 MIME-Version; b=PNq2JqQyzxHmw+OnUkXLQTwt8rK5Bxv+kwZ+qSv8BP8zOKSfDp6RWWYu8duUxf27VNLPwvDgsG7jBYin079XDR+5xhejHdFroQ7D7A3DMDYDtEG2iji06XcgKb5fOHAVqv1rjmxBg1JcsHZO0iODRIBMYv2oEAp4mYsS0bD2nZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDQKX9Ia; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1707231912; c=relaxed/simple;
+	bh=bVno8WQTGbHurQQwnhVu0vijufkiMDbLKRAxnxjC3Js=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=maZS37Pahv4c3K4BEx2+FGOkUrMnpFt3dP0CRbdri7YIVahO2y64MU8TWkDizRICIFtiK1QUmQktXOB+8oWoxjFqD3nVralQ6npDEq83tgf4Cku3nZDhmzZiwOo+ubBGqsb7T1zRAWwzH+ES8qGq+xWl7w0+pxpY0wC6Y3D+UeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gr0Ql/Fu; arc=none smtp.client-ip=209.85.210.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-40fc6343bd2so38580675e9.1;
-        Tue, 06 Feb 2024 06:55:45 -0800 (PST)
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-6e125818649so3001591a34.1;
+        Tue, 06 Feb 2024 07:05:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707231344; x=1707836144; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:in-reply-to:date
-         :cc:to:from:subject:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=P+XZ9mIc4ZZ7nNbi2oJblEjps9kTAmyVg/UPtun3xME=;
-        b=mDQKX9IaOLI3CS0i+I+hPPHGdT8C4zP9WcwnDhTehso1RztqZM8A0++BrzmAxI0Hb2
-         vwrsuppbQ+m3oyAZMEoAUfJEtPHuN1v2K3f5j2SfVTJUVExM15UOY6hjmXZgWFIRMorI
-         W+eXzyH/Oo30oJnPY7oh7VLdRpp8fa3dN4+IGfF44LZL6pcZ904o2p2NkqLDD3yBUw3M
-         4UAIjr+PLFy5yPW9K7F+WqenMk6t9ghqoqn3UjAsIgGKNvMu960xpvEBf+QUUW6QGgk/
-         oDqkOeYU1XmSVYnx/WI9ZsihHPjVMhi5jaErKkUinCS7w2NDl8pOCQQyDW6tL0A041AZ
-         XTRw==
+        d=gmail.com; s=20230601; t=1707231908; x=1707836708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ioIvR4LsMaW6xA6i7+EQnV42R5bTHmknBpHkYqe7Uv8=;
+        b=gr0Ql/FuruA7uGX+Lr5gM8RFh5zuQqngDZ8NEwprk94/w6uRosssVwl/txD3osnLvQ
+         U+d5D0UsOrmS+tauC7JDB9oPuFbV0/45bJyzDxUVfN13yRqsC+nhV03ZK9Y4eCB1GHUz
+         MvfZD6ysXn2PJ+7HfRTCpy9IhR7i0EdTHA31pxHXzWmyk+22FMzNJ6JrhPyl05RtVMDc
+         DSZHZUQEVtPbs8KlIwgDJg8aPMq6FC8L/9kyUrxv4NDzmEXXsdFC9m3bfsPw+GycR+cB
+         By1aGZiZavYftP15uSUWN0VrJmjbMuLlFYtuhcqgiMUD94HzvO2xkdNHFT5AqRJFCUVD
+         aFmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707231344; x=1707836144;
-        h=mime-version:user-agent:content-transfer-encoding:in-reply-to:date
-         :cc:to:from:subject:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=P+XZ9mIc4ZZ7nNbi2oJblEjps9kTAmyVg/UPtun3xME=;
-        b=E+64AIyRhrlVf9La+iICwQNM1NSCdl+VHBbZMel49HCcjGnWf5jtvMYF6ArUle8Km8
-         cgsTTUMEPp35MEMv9Asxsct06WCCXnH5dKvBYdEYMK/nSY8EfG4jc/sW5RdRnplQX4PX
-         4Itqu9ubC9dfQ1mwIHvbAJSAGCLYhU4ouMTUXuDOj9s3wOwfz/+ysF5WwJ7ueTsmiaOp
-         KDLTICi2BAsYDEjb3LNd4YV18YJi0vJYCRSeQQFEryvdHOm5YV79vZLrEfYAM1t5XWSW
-         aoLWIOPywjmKtzu2vxMhNGIPcEHxdpFPJVXC4OJdV7pP5jXlMwhxK00MHbAKNDvoNgtt
-         IrXg==
-X-Gm-Message-State: AOJu0YwKZgoKGWxw+cCZ7W+7F2H0jEaIl3glsiaLjHLoHg7HGFo6c3b1
-	g+AuJ+G+S3DLzUV4mCYWgv1G0EJzSZdUm4Wu9OP1rRAUZp3vjPY2
-X-Google-Smtp-Source: AGHT+IGCu12mB9a0AFI2Ba4BEGYbcnCAFKhgWjEm1Z6uIPmbfR8ErP1f3Wsb1RcCeZiIJSqC7deq0Q==
-X-Received: by 2002:a05:600c:5103:b0:40f:c404:e2d1 with SMTP id o3-20020a05600c510300b0040fc404e2d1mr2172197wms.19.1707231344009;
-        Tue, 06 Feb 2024 06:55:44 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCWDK15ZzhPti6e+UKpuCLJ+9JFukOTN01W7k15JR3hJm0baSA7FuPj5PJJ3k4HijcEs5Rv0wkhg+3dhva9MPI9JBcXSvUh2zGRNkxVUjgrk0xotEExnIcaBAoYEUHedDS7Sj3CBwlQMCSasEXqn/y6c1pi15Mtxg5/H93/BGjq9uZAO+aW4rgTE7/JxqCootj4DK8Xsq0UsbUFzAh5te8GZotbsqIPtBeM4ONElJifzGw5pPzF8W1/0jxjdbI6jr1VMnqxR80uFjbYtSDRUushRf/+IX8nPWjF5oFWeSVJyMEw6Tt28Csojv1TsQSNLLbPRra+Fp0p729HNQehp/42CpldfO/HExuvqCTbk8X6f/xkCNNZqHhoGihKYVbQ9r//MK6U2gRWPS+6fWfcIo0tmPLmqBXNkW6/lD06BsD7LjSvEquthW8fQsyTBP5HNVBXLVtfmMjgGUTNhJR410OK83eQpJQObg01nURN3rFIK2qECUsVfA9RMzfNM3u++TxUi+3tZE40RwjVydmB1W8nZE8h/U5EChHJk+NKxwaG+J12i0hzjqDBrg+WCfRAH8yw09wHbFWOWvYiPtWEWTGQVKE2XADgkGoZPWJlP7H8Ii5AK55s56WLiWJ0zuuVOGQw8Jb8kgjrwo3htwsLesUC2/Y35SFyrCRLKIUmf033M1/a1CozvepAxGqjRGSUb9Xo2MO1lVmooDGgotT9fNJaL+RMINwks9cI/mihrgjCUSyg2Jv2r
-Received: from ?IPv6:2a01:4b00:d307:1000:f1d3:eb5e:11f4:a7d9? ([2a01:4b00:d307:1000:f1d3:eb5e:11f4:a7d9])
-        by smtp.gmail.com with ESMTPSA id fb4-20020a05600c520400b0040fd3121c4asm2243641wmb.46.2024.02.06.06.55.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Feb 2024 06:55:43 -0800 (PST)
-Message-ID: <888072e30cc003dbed3f41675242b877246e2f0a.camel@gmail.com>
-Subject: Re: [RFC 00/18] Pkernfs: Support persistence for live update
-From: Luca Boccassi <luca.boccassi@gmail.com>
-To: jgowans@amazon.com
-Cc: akpm@linux-foundation.org, anthony.yznaga@oracle.com,
- brauner@kernel.org,  dwmw@amazon.co.uk, ebiederm@xmission.com,
- graf@amazon.com, iommu@lists.linux.dev,  joro@8bytes.org,
- jschoenh@amazon.de, kexec@lists.infradead.org,  kvm@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mm@kvack.org, madvenka@linux.microsoft.com, pbonzini@redhat.com, 
- seanjc@google.com, skinsburskii@linux.microsoft.com,
- steven.sistare@oracle.com,  usama.arif@bytedance.com,
- viro@zeniv.linux.org.uk, will@kernel.org,  yuleixzhang@tencent.com
-Date: Tue, 06 Feb 2024 14:55:42 +0000
-In-Reply-To: <20240205120203.60312-1-jgowans@amazon.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=1e100.net; s=20230601; t=1707231908; x=1707836708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ioIvR4LsMaW6xA6i7+EQnV42R5bTHmknBpHkYqe7Uv8=;
+        b=Q+Ve6RCJWdO0mEZjZpDEZfQOMWcaAi3wBdtlyFQO0bn0+UYKcMfwKYRbxaTj0JsCDR
+         Knhk3gvDsP8tO7HdpS5vYnyRFaFRiEiU90qltvBx9PNTtSibJgQUsUtk/7/TmVUNkUNv
+         JmP8hQ4yGBSFn6DBjU9P2JNqGQ8s/3fwfBp3wkEsmD3lzGxoS1+I1GbWYdkYTqYp7qSk
+         Hx10nUFvNbnMSfWQRLPsvpqmsCifEgRc/AyCDI8ZTmF+ksFmSfuPOqsMMClRZVTp15Xw
+         kGLDRMUHG0u3Y12p/YHAQ7ZQvWRoLNHDRNpGRXm3oRJPBsxkGpd22Yr6CU6wcneRIjNn
+         WevA==
+X-Gm-Message-State: AOJu0YwsstVjALus1sGpm/LtgYtLj210fQsQCnmIkGSxWDpbugtdcura
+	KbpOb/L1G+btsLBLdE6acjFC5Z7u+sI4vFklTPHwjmIsomXpRToGTjO+F0KkDW78mihVtH5rWgX
+	ygzE/kEu8bKTvk5NXgx5jdM3Fv/nFJ2wS3ow=
+X-Google-Smtp-Source: AGHT+IFWVTl6mm2CDlJsEbStomZ4IAGwkcu/Joc866MJc31wLxOcsv3DEJmL9yHTk+0ChG99yqhy1/iteBtcWJn+H6M=
+X-Received: by 2002:a05:6870:5251:b0:204:f0b:3bfd with SMTP id
+ o17-20020a056870525100b002040f0b3bfdmr3094700oai.43.1707231908476; Tue, 06
+ Feb 2024 07:05:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <202401312229.eddeb9a6-oliver.sang@intel.com> <CAOQ4uxiwCGxBBbz3Edsu-aeJbNzh5b-+gvTHwtBFnCvbto2v-g@mail.gmail.com>
+ <CAOQ4uxgAaApTVxxPLKH69PMP-5My=1vS_c6TGqvV5MizMKoaiw@mail.gmail.com> <Zb8vk1Psust0ODrs@xsang-OptiPlex-9020>
+In-Reply-To: <Zb8vk1Psust0ODrs@xsang-OptiPlex-9020>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 6 Feb 2024 17:04:56 +0200
+Message-ID: <CAOQ4uxjFA=P8ZiPjaqP-4Ka35GdqEtKaTTG1XMnts6rOswchCA@mail.gmail.com>
+Subject: Re: [linus:master] [remap_range] dfad37051a: stress-ng.file-ioctl.ops_per_sec
+ -11.2% regression
+To: Oliver Sang <oliver.sang@intel.com>, Christian Brauner <brauner@kernel.org>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
+	Josef Bacik <josef@toxicpanda.com>, Christoph Hellwig <hch@lst.de>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, ying.huang@intel.com, feng.tang@intel.com, 
+	fengwei.yin@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Feb 4, 2024 at 8:33=E2=80=AFAM Oliver Sang <oliver.sang@intel.com> =
+wrote:
+>
+> hi, Amir,
+>
+> On Fri, Feb 02, 2024 at 11:13:56AM +0200, Amir Goldstein wrote:
+> > On Wed, Jan 31, 2024 at 5:47=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
+com> wrote:
+> > >
+> > > On Wed, Jan 31, 2024 at 4:13=E2=80=AFPM kenel test robot <oliver.sang=
+@intel.com> wrote:
+> > > >
+> > > >
+> > > >
+> > > > Hello,
+> > > >
+> > > > kernel test robot noticed a -11.2% regression of stress-ng.file-ioc=
+tl.ops_per_sec on:
+> > > >
+> > > >
+> > > > commit: dfad37051ade6ac0d404ef4913f3bd01954ee51c ("remap_range: mov=
+e permission hooks out of do_clone_file_range()")
+> > > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git mas=
+ter
+> > > >
+> > >
+> > > Can you please try this fix:
+> > >
+> > >  7d4213664bda remap_range: move sanity checks out of do_clone_file_ra=
+nge()
+> > >
+> > > from:
+> > >
+> > > https://github.com/amir73il/linux ovl-fixes
+> > >
+> >
+> > Sorry, Oliver, this was a buggy commit.
+> > I pushed this fixes version to ovl-fixes branch:
+> >
+> >  1c5e7db8e1b2 remap_range: merge do_clone_file_range() into
+> > vfs_clone_file_range()
+> >
+> > Can you please test.
+>
+> the regression disappeared by above commit in our tests.
+>
+> I noticed this branch is based on v6.8-rc2, so I directly tested upon it =
+and its
+> parent (3f01e53bf6). I found 3f01e53bf6 has same data as dfad37051a we re=
+ported.
+>
+> and on 1c5e7db8e1b2, the performance back to the same level before dfad37=
+051a.
+>
 
-> Also, the question of a hard separation between
-> persistent memory and ephemeral memory, compared to allowing
-> arbitrary pages to
-> be persisted. Pkernfs does it via a hard separation defined at boot
-> time, other
-> approaches could make the carving out of persistent pages dynamic.
+Thanks for testing!
 
-Speaking from experience here - in Azure (Boost) we have been using
-hard-carved out memory areas (DAX devices with ranges configured via
-DTB) for persisting state across kexec for ~5 years or so. In a
-nutshell: don't, it's a mistake.
+Christian, can you please amend the fix commit to
+Reported-and-tested-by: kernel test robot <oliver.sang@intel.com>
 
-It's a constant and consistence source of problems, headaches, issues
-and workarounds piled upon workarounds, held together with duct tape
-and prayers. It's just not flexible enough for any modern system. For
-example, unless _all_ the machines are ridicolously overprovisioned in
-terms of memory capacity (and guaranteed to remain so, forever), you
-end up wasting enormous amounts of memory.
-
-In Azure we are very much interested in a nice, well-abstracted, first-
-class replacement for that setup that allows persisting data across
-kexec, and in systemd userspace we'd very much want to use it as well,
-but it really, really needs to be dynamic, and avoid the pitfall of
-hard-configured carved out chunk.
-
---=20
-Kind regards,
-Luca Boccassi
+Thanks,
+Amir.
 
