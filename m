@@ -1,44 +1,44 @@
-Return-Path: <linux-fsdevel+bounces-10443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0449184B357
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 12:22:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD5284B358
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 12:22:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953E61F22469
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 11:22:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9F11F23C0F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 11:22:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C2912F381;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD1612F395;
 	Tue,  6 Feb 2024 11:21:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CAA12E1DC
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 11:21:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 844D012E1FB
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 11:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707218509; cv=none; b=tJRBaVFYVqWYWfsuW/dZ4wbj9cCaEDX2CJ2dL8+2KuaxKgVhDbOxuJ2EVdg/juVNjK0kt1YllIu1PLUM3Z8sL1mHOXjea0UVeWOxoG65W5I4wG6u+In7UwZfDEkEMqq5Y0TZ1saL6d8Jh6YFBAmakMgs/mJQkU3ieT+yZVTm+fU=
+	t=1707218509; cv=none; b=YYtsWyU8kHQC+DMpMoEcD2nx5jP/bpiOnRBE/sirRswL3GAOdd7WZ03Ke2ueA7OPj3Pr41XVYL6xExYTrCQfuM36vbxeSYfj8HC9O7XuIXt2vZ7F7lwmnB5MszqvaNZvAL+RbGWfy/IVw1UJ9jdiFx4KMgjWfKPfkn2R0KQMsJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1707218509; c=relaxed/simple;
-	bh=WhBZb7//qczCh2vYiih2gcMj/njQrQ1K06NmOsOqifk=;
+	bh=vHSDo7KCx0btHIALBG2VZBAVy2FOXYkJrMaofV4+8TM=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HlhToMWpAnIgzZnHEolCPS7hwTQI81X6bJLm7EP6MfPIvyyZgQLa8l1RlO/uXBQhdgyyYjhY7pgBTsL6I4I2WKuw6xQdrJ1wqg4YPvmJfcTiIlFKvSdpHfdquuL6DpNbWtm5INEGHP718GBRZBdHSpjduUlUYGhvFWUA3E1rrXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	 MIME-Version:Content-Type; b=WrD1XhcRYJpNTtEIPjXuew/hDf7i2LO7dHwe953xWppePyb+hhio/0WR7JrcaPBXA4pxqHO2bOe9DRVlUo6VrLK9CdvPo8OHbIS6t6YM9eCVfihDZ142c9A1K9MEU8oSk01JeSBcQXKnQetB+Jfn9nS3wx76O4+CfjnlX/A/wHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4TTggn0Sn1z1FKSg;
-	Tue,  6 Feb 2024 19:17:09 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4TTgks0LBbz1Q8qq;
+	Tue,  6 Feb 2024 19:19:49 +0800 (CST)
 Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id A25D41A0172;
-	Tue,  6 Feb 2024 19:21:44 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 2334D140412;
+	Tue,  6 Feb 2024 19:21:45 +0800 (CST)
 Received: from localhost.localdomain (10.175.112.125) by
  dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 6 Feb 2024 19:21:43 +0800
+ 15.1.2507.35; Tue, 6 Feb 2024 19:21:44 +0800
 From: Kefeng Wang <wangkefeng.wang@huawei.com>
 To: Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>
 CC: Tony Luck <tony.luck@intel.com>, Naoya Horiguchi
@@ -47,9 +47,9 @@ CC: Tony Luck <tony.luck@intel.com>, Naoya Horiguchi
 	<muchun.song@linux.dev>, Benjamin LaHaise <bcrl@kvack.org>,
 	<jglisse@redhat.com>, <linux-aio@kvack.org>, <linux-fsdevel@vger.kernel.org>,
 	Kefeng Wang <wangkefeng.wang@huawei.com>
-Subject: [PATCH rfcv2 03/11] mm: migrate_device: unify migrate folio for MIGRATE_SYNC_NO_COPY
-Date: Tue, 6 Feb 2024 19:21:26 +0800
-Message-ID: <20240206112134.1479464-4-wangkefeng.wang@huawei.com>
+Subject: [PATCH rfcv2 04/11] mm: migrate: remove migrate_folio_extra()
+Date: Tue, 6 Feb 2024 19:21:27 +0800
+Message-ID: <20240206112134.1479464-5-wangkefeng.wang@huawei.com>
 X-Mailer: git-send-email 2.27.0
 In-Reply-To: <20240206112134.1479464-1-wangkefeng.wang@huawei.com>
 References: <20240206112134.1479464-1-wangkefeng.wang@huawei.com>
@@ -64,51 +64,95 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
  dggpemm100001.china.huawei.com (7.185.36.93)
 
-The __migrate_device_pages() won't copy page so MIGRATE_SYNC_NO_COPY
-passed into migrate_folio()/migrate_folio_extra(), actually a easy
-way is just to call folio_migrate_mapping()/folio_migrate_flags(),
-converting it to unify and simplify the migrate device pages, which
-also remove the only call for MIGRATE_SYNC_NO_COPY.
+The migrate_folio_extra() only called in migrate.c now, convert it
+a static function and take a new src_private argument which could
+be shared by migrate_folio() and filemap_migrate_folio() to simplify
+code a bit.
 
 Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 ---
- mm/migrate_device.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ include/linux/migrate.h |  2 --
+ mm/migrate.c            | 33 +++++++++++----------------------
+ 2 files changed, 11 insertions(+), 24 deletions(-)
 
-diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-index ee4d60951670..c0547271eaaa 100644
---- a/mm/migrate_device.c
-+++ b/mm/migrate_device.c
-@@ -695,7 +695,7 @@ static void __migrate_device_pages(unsigned long *src_pfns,
- 		struct page *page = migrate_pfn_to_page(src_pfns[i]);
- 		struct address_space *mapping;
- 		struct folio *newfolio, *folio;
--		int r;
-+		int r, extra_cnt = 0;
+diff --git a/include/linux/migrate.h b/include/linux/migrate.h
+index 2ce13e8a309b..517f70b70620 100644
+--- a/include/linux/migrate.h
++++ b/include/linux/migrate.h
+@@ -63,8 +63,6 @@ extern const char *migrate_reason_names[MR_TYPES];
+ #ifdef CONFIG_MIGRATION
  
- 		if (!newpage) {
- 			src_pfns[i] &= ~MIGRATE_PFN_MIGRATE;
-@@ -757,14 +757,15 @@ static void __migrate_device_pages(unsigned long *src_pfns,
- 			continue;
- 		}
+ void putback_movable_pages(struct list_head *l);
+-int migrate_folio_extra(struct address_space *mapping, struct folio *dst,
+-		struct folio *src, enum migrate_mode mode, int extra_count);
+ int migrate_folio(struct address_space *mapping, struct folio *dst,
+ 		struct folio *src, enum migrate_mode mode);
+ int migrate_pages(struct list_head *l, new_folio_t new, free_folio_t free,
+diff --git a/mm/migrate.c b/mm/migrate.c
+index cdae25b7105f..461badf26eb2 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -655,18 +655,19 @@ EXPORT_SYMBOL(folio_migrate_copy);
+  *                    Migration functions
+  ***********************************************************/
  
-+		BUG_ON(folio_test_writeback(folio));
+-int migrate_folio_extra(struct address_space *mapping, struct folio *dst,
+-		struct folio *src, enum migrate_mode mode, int extra_count)
++static int __migrate_folio(struct address_space *mapping, struct folio *dst,
++			   struct folio *src, void *src_private,
++			   enum migrate_mode mode)
+ {
+ 	int rc;
+ 
+-	BUG_ON(folio_test_writeback(src));	/* Writeback must be complete */
+-
+-	rc = folio_migrate_mapping(mapping, dst, src, extra_count);
+-
++	rc = folio_migrate_mapping(mapping, dst, src, 0);
+ 	if (rc != MIGRATEPAGE_SUCCESS)
+ 		return rc;
+ 
++	if (src_private)
++		folio_attach_private(dst, folio_detach_private(src));
 +
- 		if (migrate && migrate->fault_page == page)
--			r = migrate_folio_extra(mapping, newfolio, folio,
--						MIGRATE_SYNC_NO_COPY, 1);
--		else
--			r = migrate_folio(mapping, newfolio, folio,
--					  MIGRATE_SYNC_NO_COPY);
-+			extra_cnt = 1;
-+		r = folio_migrate_mapping(mapping, newfolio, folio, extra_cnt);
- 		if (r != MIGRATEPAGE_SUCCESS)
- 			src_pfns[i] &= ~MIGRATE_PFN_MIGRATE;
-+		else
-+			folio_migrate_flags(newfolio, folio);
- 	}
+ 	if (mode != MIGRATE_SYNC_NO_COPY)
+ 		folio_migrate_copy(dst, src);
+ 	else
+@@ -687,9 +688,10 @@ int migrate_folio_extra(struct address_space *mapping, struct folio *dst,
+  * Folios are locked upon entry and exit.
+  */
+ int migrate_folio(struct address_space *mapping, struct folio *dst,
+-		struct folio *src, enum migrate_mode mode)
++		  struct folio *src, enum migrate_mode mode)
+ {
+-	return migrate_folio_extra(mapping, dst, src, mode, 0);
++	BUG_ON(folio_test_writeback(src));	/* Writeback must be complete */
++	return __migrate_folio(mapping, dst, src, NULL, mode);
+ }
+ EXPORT_SYMBOL(migrate_folio);
  
- 	if (notified)
+@@ -843,20 +845,7 @@ EXPORT_SYMBOL_GPL(buffer_migrate_folio_norefs);
+ int filemap_migrate_folio(struct address_space *mapping,
+ 		struct folio *dst, struct folio *src, enum migrate_mode mode)
+ {
+-	int ret;
+-
+-	ret = folio_migrate_mapping(mapping, dst, src, 0);
+-	if (ret != MIGRATEPAGE_SUCCESS)
+-		return ret;
+-
+-	if (folio_get_private(src))
+-		folio_attach_private(dst, folio_detach_private(src));
+-
+-	if (mode != MIGRATE_SYNC_NO_COPY)
+-		folio_migrate_copy(dst, src);
+-	else
+-		folio_migrate_flags(dst, src);
+-	return MIGRATEPAGE_SUCCESS;
++	return __migrate_folio(mapping, dst, src, folio_get_private(src), mode);
+ }
+ EXPORT_SYMBOL_GPL(filemap_migrate_folio);
+ 
 -- 
 2.27.0
 
