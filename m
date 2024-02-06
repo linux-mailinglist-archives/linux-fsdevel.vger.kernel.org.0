@@ -1,176 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-10534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C89A84C0B4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 00:15:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F4584C0C2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 00:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E5311F2566E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 23:15:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D28B92868D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 23:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A5A1C69D;
-	Tue,  6 Feb 2024 23:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4661CAB3;
+	Tue,  6 Feb 2024 23:19:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WcSQR0gd"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="V3imUbc9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFA11CD13;
-	Tue,  6 Feb 2024 23:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9CA1CD32;
+	Tue,  6 Feb 2024 23:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707261297; cv=none; b=ok0iuKQ8IgZHj3F18/d9vBYl4tGHhstc+0fVrHPEZ13RZjhrIOrEufvEmtZaL5uAE0P8NZZWXoPgxX7LGEqZPkw9BP7SFYV6c1lh/DFXNQc/91z6tFBs0QISs8wK6WppBfX8gbJrBpcBhDZJUEBTytQ8uhDa84nWlWPwseKu5mc=
+	t=1707261549; cv=none; b=Xeu2uCD/BmgX9ZNFcd1AEN4n7KMyAS4aHuPjgUA8VyJnMkOppXHSYYzBNDLOJsXuIgb2v+Pv11fhgb65FX/dgAIMWkk7D8zxncc/aueZGHCTSpc2QIS9iBR2WxXjXvi+xkWl+oi5XLj0at27Cr1VfjHV0bCdW7B2UHqkQ6eG3vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707261297; c=relaxed/simple;
-	bh=/uEb6jR0llRxX5SjlEJDt+cYl6TgrmJHrp6Hr9lCEtc=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=oBupS2q0q3l16ojHBX/ycGDci5ddBNSE/ZW086bt8gI7Fy2EtZzdQ+G0ZyQjqyjVv3ncA6TqyJhLC/UGQSoMUZNu5RNLv9fcEeSoAhRSU11NWo8jDFXmnU2VEnCcozZ6RgOnJwpqBfVA722EK5VbiRFCaHkdT0TRnGrTXKkZzyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WcSQR0gd; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51165efb684so7343e87.3;
-        Tue, 06 Feb 2024 15:14:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707261294; x=1707866094; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vjqghvpCB2iHALs069ZaG4OVOMOAjrIIrgdIKVWuNVo=;
-        b=WcSQR0gd82lfd0xlFKYfz2UvQLmQMou4uvXKAPINBJivEXTCa77C8eRlLUPogBR+QS
-         H0y0z8rhn7WZOifPhmR33lAsiocXrcx+BwgXEERCY8AK/yMJQi6bLLQ3CVJaQTco1sh9
-         xGXNGS+Le0Q6AxhcCEwrwZBWAoxs1+ct2ZJ8q/SaIwa//XNIbykVlFvQDeHjo0RaeTh/
-         MlfBTF56lz65T5ucD529HtBo8xpm45qWRlwX74oh7yrYPeH4kVPPaMa9lKw9PsPlL/7N
-         wi/xPwW+RRJGRQAZJHjFF/DZuyBKvplr7zj4Aih8h3GZ8rvpdnlkDXhZA1CZosSaw3kB
-         +oYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707261294; x=1707866094;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vjqghvpCB2iHALs069ZaG4OVOMOAjrIIrgdIKVWuNVo=;
-        b=ZniDwAN/lcQcc/CM//rc9hM1X2pWPEvPfoN55vwaerxi01tTv2AAmfG5vRNIDaAKIo
-         xfU/ZHqlDc06L3Yb3faf6Hl9OF/zy1uh7CPUCt0cl3vpwfRuuXCh5JVPBzmxhpiwtfh3
-         lmHSdgkCQeQkbdPcK/eMHhvXANrqirbRJ8iHHSwsKYAsb7xhei8DepLZWboYzlrSDQhN
-         v1QfJfN3Y5YjIK3pwq2blQdhyRcTbALtrwCyS/RYNRTzJxSGoUIajuIw7AaJjtxWKWn1
-         s5Qeqm5jTDAr0eC8wBVKrNAZl80/NXAqQS6CxZDZnLslQruC11OMTWD/aLtfvafBufOp
-         7AmA==
-X-Gm-Message-State: AOJu0Yy9Eax/jV0wVGLs3HTrDZN/90tRigfmkz3A7/G7YmBaLTRUWj44
-	7VzMYpgqV2OYUOTA5Z5OK/Tf9pNNNDPCEjbzcNo30gdILlLNYZz1L6SIgeXzl1gx06Uva35cCFh
-	P5QJ48UstCPM1aze6OayReDwPVmZZEFffcKs=
-X-Google-Smtp-Source: AGHT+IHgpu+5FVFmjZnD51NP10VnrBf8XZMoPIiIk/uea2YJbAdLmFS/d6s4NFyshoMvEjf9M4Lzon1pgrNPMlfsj08=
-X-Received: by 2002:ac2:5211:0:b0:511:19b1:95b6 with SMTP id
- a17-20020ac25211000000b0051119b195b6mr2598935lfl.63.1707261293522; Tue, 06
- Feb 2024 15:14:53 -0800 (PST)
+	s=arc-20240116; t=1707261549; c=relaxed/simple;
+	bh=gvlx9I94wOd50YscJj/a7/Sa/udNt8J7rgpAq6RBAUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z4U9x/hXzs9S1RaCUCnpl4Da4tgaBKj5pbRBnT6VDTV0lWclV00JHblzggb/NOUBiaDyr7sPif8kzUsfBysVXVQVQDZKqxSuAk3Xoyp9y8WB9zeSvtB7u1P8ttjBWY5uhS6Ld8WqoMSLNvEvF1leuxDqRun6vBugO5kYTkPZYPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=V3imUbc9; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YnBJkpuBoqzeKQSfi3Ju9Ni6rq1pZ0BC60FbPS8wc5o=; b=V3imUbc9ptSdR1OGzam6nKjdiJ
+	OyV0r349xrtsKkfi/bvCvYLawM9Z/6Tx5up5+foBSS3yzqYPK8fSFBIEVrsfby9mNjJZGEqGXVGIy
+	kD+MjK2IZZgy43TNQctzke2PKOOtlRpvtMGzUhPJc04eL0ox+As4GViiykEPpqjGecHMJontQh+ks
+	IsQBTOFn6k55+4eX4BC/MxdzlH7LTfOE+4N0c9Do1nVPZwf8K089r1Tp4HuigdH4mpOCelgnX1k3B
+	P9txNFiiqSCl9j7HkX6+9fLq7up/8JhqGRNPxQY17uD06kE4EJEmG7jfKER3htGK7PoEJ8TW92KzI
+	57xCNMrw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rXUiJ-0000000DXtL-1MP3;
+	Tue, 06 Feb 2024 23:18:51 +0000
+Date: Tue, 6 Feb 2024 23:18:51 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Steve French <smfrench@gmail.com>
+Cc: David Howells <dhowells@redhat.com>, CIFS <linux-cifs@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	ronnie sahlberg <ronniesahlberg@gmail.com>,
+	"R. Diez" <rdiez-2006@rd10.de>
+Subject: Re: [PATCH] fix netfs/folios regression
+Message-ID: <ZcK-W54WoNQswKfg@casper.infradead.org>
+References: <CAH2r5msJQGww+MAJLpA9qNw_jDt9ymiHO+bcpTkGMJpJdVc=gA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 6 Feb 2024 17:14:42 -0600
-Message-ID: <CAH2r5msJQGww+MAJLpA9qNw_jDt9ymiHO+bcpTkGMJpJdVc=gA@mail.gmail.com>
-Subject: [PATCH] fix netfs/folios regression
-To: David Howells <dhowells@redhat.com>, CIFS <linux-cifs@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, ronnie sahlberg <ronniesahlberg@gmail.com>, 
-	"R. Diez" <rdiez-2006@rd10.de>
-Content-Type: multipart/mixed; boundary="000000000000f084620610bebe4e"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAH2r5msJQGww+MAJLpA9qNw_jDt9ymiHO+bcpTkGMJpJdVc=gA@mail.gmail.com>
 
---000000000000f084620610bebe4e
-Content-Type: text/plain; charset="UTF-8"
+On Tue, Feb 06, 2024 at 05:14:42PM -0600, Steve French wrote:
+> The code in question is a little hard to follow, and may eventually
+> get rewritten by later folio/netfs patches from David Howells but the
+> problem is in
+> cifs_write_back_from_locked_folio() and cifs_writepages_region() where
+> after the write (of maximum write size) completes, the next write
+> skips to the beginning of the next page (leaving the tail end of the
+> previous page unwritten).  This is not an issue with typical servers
+> and typical wsize values because those will almost always be a
+> multiple of 4096, but in the bug report the server in question was old
+> and had sent a value for maximum write size that was not a multiple of
+> 4096.
+> 
+> This can be a temporary fix, that can be removed as netfs/folios
+> implementation improves here - but in the short term the easiest way
+> to fix this seems to be to round the negotiated maximum_write_size
+> down if not a multiple of 4096, to be a multiple of 4096 (this can be
+> removed in the future when the folios code is found which caused
+> this), and also warn the user if they pick a wsize that is not
+> recommended, not a multiple of 4096.
 
-A case was recently reported where an old (SMB1) server negotiated a
-maximum write size that was not a multiple of PAGE_SIZE, and it caused
-easy to reproduce data corruptions on sequential writes (e.g. cp) for
-files that were bigger than maximum write size.   This could also be
-reproduced by setting the optional mount parm ("wsize") to a
-non-standard value that was not a multiple of 4096.  The problem was
-introduced in 6.3-rc1 or rc2 probably by patch:
-"cifs: Change the I/O paths to use an iterator rather than a page list"
+Seems like a sensible stopgap, but probably the patch should use
+PAGE_SIZE rather than plain 4096 (what about
+Alpha/Sparc/powerpc-64k/arm64-{16,64}k?)
 
-The code in question is a little hard to follow, and may eventually
-get rewritten by later folio/netfs patches from David Howells but the
-problem is in
-cifs_write_back_from_locked_folio() and cifs_writepages_region() where
-after the write (of maximum write size) completes, the next write
-skips to the beginning of the next page (leaving the tail end of the
-previous page unwritten).  This is not an issue with typical servers
-and typical wsize values because those will almost always be a
-multiple of 4096, but in the bug report the server in question was old
-and had sent a value for maximum write size that was not a multiple of
-4096.
+Also, what if the server says its max-write-size is 2048 bytes?
+Also, does the code work well if the max-write-size is, say, 20480
+bytes?  (ie an odd multiple of PAGE_SIZE is fine; it doesn't need to be
+a power-of-two?)
 
-This can be a temporary fix, that can be removed as netfs/folios
-implementation improves here - but in the short term the easiest way
-to fix this seems to be to round the negotiated maximum_write_size
-down if not a multiple of 4096, to be a multiple of 4096 (this can be
-removed in the future when the folios code is found which caused
-this), and also warn the user if they pick a wsize that is not
-recommended, not a multiple of 4096.
-
--- 
-Thanks,
-
-Steve
-
---000000000000f084620610bebe4e
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-smb-Fix-regression-in-writes-when-non-standard-maxim.patch"
-Content-Disposition: attachment; 
-	filename="0001-smb-Fix-regression-in-writes-when-non-standard-maxim.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lsayuvt60>
-X-Attachment-Id: f_lsayuvt60
-
-RnJvbSAxMTVmOTQyNGUyODk5MjY5MDg0MDY5ZTg4Mjk2YjY0ODFhMDI1MGE1IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTdGV2ZSBGcmVuY2ggPHN0ZnJlbmNoQG1pY3Jvc29mdC5jb20+
-CkRhdGU6IFR1ZSwgNiBGZWIgMjAyNCAxNjozNDoyMiAtMDYwMApTdWJqZWN0OiBbUEFUQ0hdIHNt
-YjogRml4IHJlZ3Jlc3Npb24gaW4gd3JpdGVzIHdoZW4gbm9uLXN0YW5kYXJkIG1heGltdW0gd3Jp
-dGUKIHNpemUgbmVnb3RpYXRlZAoKVGhlIGNvbnZlcnNpb24gdG8gbmV0ZnMgaW4gdGhlIDYuMyBr
-ZXJuZWwgY2F1c2VkIGEgcmVncmVzc2lvbiB3aGVuCm1heGltdW0gd3JpdGUgc2l6ZSBpcyBzZXQg
-YnkgdGhlIHNlcnZlciB0byBhbiB1bmV4cGVjdGVkIHZhbHVlIHdoaWNoIGlzCm5vdCBhIG11bHRp
-cGxlIG9mIDQwOTYgKHNpbWlsYXJseSBpZiB0aGUgdXNlciBvdmVycmlkZXMgdGhlIG1heGltdW0K
-d3JpdGUgc2l6ZSBieSBzZXR0aW5nIG1vdW50IHBhcm0gIndzaXplIiwgYnV0IHNldHMgaXQgdG8g
-YSB2YWx1ZSB0aGF0CmlzIG5vdCBhIG11bHRpcGxlIG9mIDQwOTYpLiAgV2hlbiBuZWdvdGlhdGVk
-IHdyaXRlIHNpemUgaXMgbm90IGEKbXVsdGlwbGUgb2YgNDA5NiB0aGUgbmV0ZnMgY29kZSBjYW4g
-c2tpcCB0aGUgZW5kIG9mIHRoZSBmaW5hbApwYWdlIHdoZW4gZG9pbmcgbGFyZ2Ugc2VxdWVudGlh
-bCB3cml0ZXMgY2F1c2luZyBkYXRhIGNvcnJ1cHRpb24uCgpUaGlzIHNlY3Rpb24gb2YgY29kZSBp
-cyBiZWluZyByZXdyaXR0ZW4vcmVtb3ZlZCBkdWUgdG8gYSBsYXJnZQpuZXRmcyBjaGFuZ2UsIGJ1
-dCB1bnRpbCB0aGF0IHBvaW50IChmcm9tIDYuMyBrZXJuZWwgdW50aWwgbm93KQp3ZSBjYW4gbm90
-IHN1cHBvcnQgbm9uLXN0YW5kYXJkIG1heGltdW0gd3JpdGUgc2l6ZXMuCgpBZGQgYSB3YXJuaW5n
-IGlmIGEgdXNlciBzcGVjaWZpZXMgYSB3c2l6ZSBvbiBtb3VudCB0aGF0IGlzIG5vdAphIG11bHRp
-cGxlIG9mIDQwOTYsIGFuZCBhbHNvIGFkZCBhIGNoYW5nZSB3aGVyZSB3ZSByb3VuZCBkb3duIHRo
-ZQptYXhpbXVtIHdyaXRlIHNpemUgaWYgdGhlIHNlcnZlciBuZWdvdGlhdGVzIGEgdmFsdWUgdGhh
-dCBpcyBub3QKYSBtdWx0aXBsZSBvZiA0MDk2LgoKUmVwb3J0ZWQtYnk6IFIuIERpZXoiIDxyZGll
-ei0yMDA2QHJkMTAuZGU+CkZpeGVzOiBkMDgwODlmNjQ5YTAgKCJjaWZzOiBDaGFuZ2UgdGhlIEkv
-TyBwYXRocyB0byB1c2UgYW4gaXRlcmF0b3IgcmF0aGVyIHRoYW4gYSBwYWdlIGxpc3QiKQpTdWdn
-ZXN0ZWQtYnk6IFJvbm5pZSBTYWhsYmVyZyA8cm9ubmllc2FobGJlcmdAZ21haWwuY29tPgpDYzog
-c3RhYmxlQHZnZXIua2VybmVsLm9yZwpDYzogRGF2aWQgSG93ZWxscyA8ZGhvd2VsbHNAcmVkaGF0
-LmNvbT4KU2lnbmVkLW9mZi1ieTogU3RldmUgRnJlbmNoIDxzdGZyZW5jaEBtaWNyb3NvZnQuY29t
-PgotLS0KIGZzL3NtYi9jbGllbnQvY29ubmVjdC5jICAgIHwgMiArLQogZnMvc21iL2NsaWVudC9m
-c19jb250ZXh0LmMgfCAyICsrCiAyIGZpbGVzIGNoYW5nZWQsIDMgaW5zZXJ0aW9ucygrKSwgMSBk
-ZWxldGlvbigtKQoKZGlmZiAtLWdpdCBhL2ZzL3NtYi9jbGllbnQvY29ubmVjdC5jIGIvZnMvc21i
-L2NsaWVudC9jb25uZWN0LmMKaW5kZXggYzVjZjg4ZGUzMmI3Li45Y2ViM2IyYzYxNGIgMTAwNjQ0
-Ci0tLSBhL2ZzL3NtYi9jbGllbnQvY29ubmVjdC5jCisrKyBiL2ZzL3NtYi9jbGllbnQvY29ubmVj
-dC5jCkBAIC0zNDQxLDcgKzM0NDEsNyBAQCBpbnQgY2lmc19tb3VudF9nZXRfdGNvbihzdHJ1Y3Qg
-Y2lmc19tb3VudF9jdHggKm1udF9jdHgpCiAJICovCiAJaWYgKChjaWZzX3NiLT5jdHgtPndzaXpl
-ID09IDApIHx8CiAJICAgIChjaWZzX3NiLT5jdHgtPndzaXplID4gc2VydmVyLT5vcHMtPm5lZ290
-aWF0ZV93c2l6ZSh0Y29uLCBjdHgpKSkKLQkJY2lmc19zYi0+Y3R4LT53c2l6ZSA9IHNlcnZlci0+
-b3BzLT5uZWdvdGlhdGVfd3NpemUodGNvbiwgY3R4KTsKKwkJY2lmc19zYi0+Y3R4LT53c2l6ZSA9
-IHJvdW5kX2Rvd24oc2VydmVyLT5vcHMtPm5lZ290aWF0ZV93c2l6ZSh0Y29uLCBjdHgpLCA0MDk2
-KTsKIAlpZiAoKGNpZnNfc2ItPmN0eC0+cnNpemUgPT0gMCkgfHwKIAkgICAgKGNpZnNfc2ItPmN0
-eC0+cnNpemUgPiBzZXJ2ZXItPm9wcy0+bmVnb3RpYXRlX3JzaXplKHRjb24sIGN0eCkpKQogCQlj
-aWZzX3NiLT5jdHgtPnJzaXplID0gc2VydmVyLT5vcHMtPm5lZ290aWF0ZV9yc2l6ZSh0Y29uLCBj
-dHgpOwpkaWZmIC0tZ2l0IGEvZnMvc21iL2NsaWVudC9mc19jb250ZXh0LmMgYi9mcy9zbWIvY2xp
-ZW50L2ZzX2NvbnRleHQuYwppbmRleCA4MmVhZmUwODE1ZGMuLjU1MTU3Nzc4ZTU1MyAxMDA2NDQK
-LS0tIGEvZnMvc21iL2NsaWVudC9mc19jb250ZXh0LmMKKysrIGIvZnMvc21iL2NsaWVudC9mc19j
-b250ZXh0LmMKQEAgLTExNDEsNiArMTE0MSw4IEBAIHN0YXRpYyBpbnQgc21iM19mc19jb250ZXh0
-X3BhcnNlX3BhcmFtKHN0cnVjdCBmc19jb250ZXh0ICpmYywKIAljYXNlIE9wdF93c2l6ZToKIAkJ
-Y3R4LT53c2l6ZSA9IHJlc3VsdC51aW50XzMyOwogCQljdHgtPmdvdF93c2l6ZSA9IHRydWU7CisJ
-CWlmIChyb3VuZF91cChjdHgtPndzaXplLCA0MDk2KSAhPSBjdHgtPndzaXplKQorCQkJY2lmc19k
-YmcoVkZTLCAid3NpemUgc2hvdWxkIGJlIGEgbXVsdGlwbGUgb2YgNDA5NlxuIik7CiAJCWJyZWFr
-OwogCWNhc2UgT3B0X2FjcmVnbWF4OgogCQljdHgtPmFjcmVnbWF4ID0gSFogKiByZXN1bHQudWlu
-dF8zMjsKLS0gCjIuNDAuMQoK
---000000000000f084620610bebe4e--
 
