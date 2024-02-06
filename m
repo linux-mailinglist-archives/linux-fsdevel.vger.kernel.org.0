@@ -1,163 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-10439-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAFCD84B275
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 11:26:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB2C84B355
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 12:22:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C3DD1C232FF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 10:26:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0E25B22FFE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 11:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E20E12E1E9;
-	Tue,  6 Feb 2024 10:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gwLvPDIF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o3eolBuK";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gwLvPDIF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="o3eolBuK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67B3812EBE4;
+	Tue,  6 Feb 2024 11:21:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A45212E1D1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 10:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD6643AB8
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 11:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707215190; cv=none; b=ZPz2V+xXtBboT+MwngZ+N0Vwm94aJ5HWj+YnOo5s4hl1/lt6w4kq38ecII1JfCs26Dl5BRBlLXPmrG2CaXp064C1ScrN/WUF6t0tRJO26hRwqDjiakj6y5mc8AWV5WxKSO2WgWYP8g8VL+0Quttcj1JlA5+3YuyVcC3MTmMAwPE=
+	t=1707218508; cv=none; b=EGCJ+3gCMo3jWOiRHWUFozwUGDE15eCBkrXRyui2pE1TDPjrMjJDA5N9l8wLLqbgLXgWpXSd58Qt05rfX5LfvIl4rS2ojxgJKadD55quZPwHa4jCqpRrZxnp9JIGmamd0rfNFVaNhjsrTFEThOAFhUwWntl5ivmx/fBZ5UHtyKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707215190; c=relaxed/simple;
-	bh=llzqAYcI6dIQCkjxO/hj9r5AVyxcGEM3OUvwTxHb3oI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uAS99rKzaaiKB9tmnH5OeGrlRt/fDUmPS2NVKBwTQ0uCE2x8milCdsCrAu7UDTeHgqnRw9GiH90QIiYhrkRClSWyjgKf5nId1+KTAUCJZiECg69RefFd53cViT6qC7Try/aNfzsuYJOaW/TcDMqdpSnfCVZKp2+zk8XlPhsYNIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gwLvPDIF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o3eolBuK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gwLvPDIF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=o3eolBuK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 69DA31FB71;
-	Tue,  6 Feb 2024 10:26:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707215186; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=etH+e9Q0Nc6KvT3+p2GmIggYln3XoSK1R34oU8EtHyg=;
-	b=gwLvPDIFOV/NM3S6R539Zz6BxBhZexzSinFUrg/nXqVkg7gpJ6IXo9M15AxsIHBtuJz6GC
-	4z20g/cZwuQKnTKvzN3/ddkzN8pZBt4t5tIuXrOpowjeM45EMnTmlS+Ctb5yty9eulwF44
-	TLc5G4mkWFDc51GGOazsiFXaN3ffVHY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707215186;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=etH+e9Q0Nc6KvT3+p2GmIggYln3XoSK1R34oU8EtHyg=;
-	b=o3eolBuK5/qLA9Iz8rk35t6FJHf2ywGufNW59m7TkJ8mhNJJcvcLzoAFC5eGiR6WbfPq2I
-	qxJb+r3pcGtfYUAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707215186; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=etH+e9Q0Nc6KvT3+p2GmIggYln3XoSK1R34oU8EtHyg=;
-	b=gwLvPDIFOV/NM3S6R539Zz6BxBhZexzSinFUrg/nXqVkg7gpJ6IXo9M15AxsIHBtuJz6GC
-	4z20g/cZwuQKnTKvzN3/ddkzN8pZBt4t5tIuXrOpowjeM45EMnTmlS+Ctb5yty9eulwF44
-	TLc5G4mkWFDc51GGOazsiFXaN3ffVHY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707215186;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=etH+e9Q0Nc6KvT3+p2GmIggYln3XoSK1R34oU8EtHyg=;
-	b=o3eolBuK5/qLA9Iz8rk35t6FJHf2ywGufNW59m7TkJ8mhNJJcvcLzoAFC5eGiR6WbfPq2I
-	qxJb+r3pcGtfYUAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5414F139D8;
-	Tue,  6 Feb 2024 10:26:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id fkCDFFIJwmXpfwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 06 Feb 2024 10:26:26 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3780CA0809; Tue,  6 Feb 2024 11:26:22 +0100 (CET)
-Date: Tue, 6 Feb 2024 11:26:22 +0100
-From: Jan Kara <jack@suse.cz>
-To: Huang Xiaojia <huangxiaojia2@huawei.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	yuehaibing@huawei.com, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH-next] epoll: Remove ep_scan_ready_list() in comments
-Message-ID: <20240206102622.7trt75wozopc3lzy@quack3>
-References: <20240206014353.4191262-1-huangxiaojia2@huawei.com>
+	s=arc-20240116; t=1707218508; c=relaxed/simple;
+	bh=PPYYxet/g8YJ7tA1HCJB3VgTr7Gvgl54gRMbg1TpIPw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E58r1KOlxHxt0uoB2VWI7Y12eokXV9tY/e4n7mvZmY/UR/XOAiMRi6S3wpUQqQYdLEi8EbLKrkhrG56uy9jL/YptofaSEalfmkoZdYbQT14K2X1NvEzcGtII5YRvSNeSWv+FW4ugISHfU6t7O5lT4GOwAfK3gdVQm6vuVJi7Jik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4TTgkp6Hdkz29lQp;
+	Tue,  6 Feb 2024 19:19:46 +0800 (CST)
+Received: from dggpemm100001.china.huawei.com (unknown [7.185.36.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9EB29140412;
+	Tue,  6 Feb 2024 19:21:42 +0800 (CST)
+Received: from localhost.localdomain (10.175.112.125) by
+ dggpemm100001.china.huawei.com (7.185.36.93) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 6 Feb 2024 19:21:41 +0800
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+To: Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>
+CC: Tony Luck <tony.luck@intel.com>, Naoya Horiguchi
+	<naoya.horiguchi@nec.com>, Miaohe Lin <linmiaohe@huawei.com>, Matthew Wilcox
+	<willy@infradead.org>, David Hildenbrand <david@redhat.com>, Muchun Song
+	<muchun.song@linux.dev>, Benjamin LaHaise <bcrl@kvack.org>,
+	<jglisse@redhat.com>, <linux-aio@kvack.org>, <linux-fsdevel@vger.kernel.org>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>
+Subject: [PATCH rfcv2 00/11] mm: migrate: support poison recover from migrate folio
+Date: Tue, 6 Feb 2024 19:21:23 +0800
+Message-ID: <20240206112134.1479464-1-wangkefeng.wang@huawei.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240206014353.4191262-1-huangxiaojia2@huawei.com>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [-0.33 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCPT_COUNT_FIVE(0.00)[6];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,huawei.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.73)[83.75%]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -0.33
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemm100001.china.huawei.com (7.185.36.93)
 
-On Tue 06-02-24 09:43:53, Huang Xiaojia wrote:
-> Since commit 443f1a042233 ("lift the calls of ep_send_events_proc()
-> into the callers"), ep_scan_ready_list() has been removed.
-> But there are still several in comments. All of them should
-> be replaced with other caller functions.
-> 
-> Signed-off-by: Huang Xiaojia <huangxiaojia2@huawei.com>
+The folio migration is widely used in kernel, memory compaction, memory
+hotplug, soft offline page, numa balance, memory demote/promotion, etc,
+but once access a poisoned source folio when migrating, the kerenl will
+panic.
 
-Not really eventpoll expert but from a cursory look this looks fine to me.
-Feel free to add:
+There is a mechanism in the kernel to recover from uncorrectable memory
+errors, ARCH_HAS_COPY_MC(Machine Check Safe Memory Copy), which is already
+used in NVDIMM or core-mm paths(eg, CoW, khugepaged, coredump, ksm copy),
+see copy_mc_to_{user,kernel}, copy_mc_{user_}highpage callers.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+This series of patches provide the recovery mechanism from folio copy for
+the widely used folio migration. Please note, because folio migration is
+no guarantee of success, so we could chose to make folio migration tolerant
+of memory failures, adding folio_mc_copy() which is a #MC versions of
+folio_copy(), once accessing a poisoned source folio, we could return error
+and make the folio migration fail, and this could avoid the similar panic
+shown below.
 
-One nit below:
+  CPU: 1 PID: 88343 Comm: test_softofflin Kdump: loaded Not tainted 6.6.0
+  pc : copy_page+0x10/0xc0
+  lr : copy_highpage+0x38/0x50
+  ...
+  Call trace:
+   copy_page+0x10/0xc0
+   folio_copy+0x78/0x90
+   migrate_folio_extra+0x54/0xa0
+   move_to_new_folio+0xd8/0x1f0
+   migrate_folio_move+0xb8/0x300
+   migrate_pages_batch+0x528/0x788
+   migrate_pages_sync+0x8c/0x258
+   migrate_pages+0x440/0x528
+   soft_offline_in_use_page+0x2ec/0x3c0
+   soft_offline_page+0x238/0x310
+   soft_offline_page_store+0x6c/0xc0
+   dev_attr_store+0x20/0x40
+   sysfs_kf_write+0x4c/0x68
+   kernfs_fop_write_iter+0x130/0x1c8
+   new_sync_write+0xa4/0x138
+   vfs_write+0x238/0x2d8
+   ksys_write+0x74/0x110
 
+rfcv2:
+- Separate __migrate_device_pages() cleanup from patch "remove 
+  migrate_folio_extra()", suggested by Matthew
+- Split folio_migrate_mapping(), move refcount check/freeze out
+  of folio_migrate_mapping(), suggested by Matthew
+- add RB
 
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -206,7 +206,7 @@ struct eventpoll {
->  	 */
->  	struct epitem *ovflist;
->  
-> -	/* wakeup_source used when ep_scan_ready_list is running */
-> +	/* wakeup_source used when ep_send_events or __ep_eventpoll_poll is running */
+Kefeng Wang (11):
+  mm: migrate: simplify __buffer_migrate_folio()
+  mm: migrate_device: use more folio in __migrate_device_pages()
+  mm: migrate_device: unify migrate folio for MIGRATE_SYNC_NO_COPY
+  mm: migrate: remove migrate_folio_extra()
+  mm: remove MIGRATE_SYNC_NO_COPY mode
+  mm: migrate: split folio_migrate_mapping()
+  mm: add folio_mc_copy()
+  mm: migrate: support poisoned recover from migrate folio
+  fs: hugetlbfs: support poison recover from hugetlbfs_migrate_folio()
+  mm: migrate: remove folio_migrate_copy()
+  fs: aio: add explicit check for large folio in aio_migrate_folio()
 
-Please wrap this comment like:
+ fs/aio.c                     |  15 ++--
+ fs/hugetlbfs/inode.c         |   5 +-
+ include/linux/migrate.h      |   3 -
+ include/linux/migrate_mode.h |   5 --
+ include/linux/mm.h           |   1 +
+ mm/balloon_compaction.c      |   8 --
+ mm/migrate.c                 | 157 +++++++++++++++++------------------
+ mm/migrate_device.c          |  28 +++----
+ mm/util.c                    |  20 +++++
+ mm/zsmalloc.c                |   8 --
+ 10 files changed, 115 insertions(+), 135 deletions(-)
 
-	/*
-	 * wakeup_source - used when ep_send_events or __ep_eventpoll_poll is
-	 * running
-	 */
-
-									Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.27.0
+
 
