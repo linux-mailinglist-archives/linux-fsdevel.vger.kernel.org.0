@@ -1,192 +1,249 @@
-Return-Path: <linux-fsdevel+bounces-10532-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6200584C09B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 00:05:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91EEE84C0A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 00:06:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86A1E1C21793
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 23:05:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB3ABB24049
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 23:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66941CD19;
-	Tue,  6 Feb 2024 23:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51C41CD30;
+	Tue,  6 Feb 2024 23:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pfa8rj8d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lvdPV+2C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E0C1C698
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 23:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116651CD17;
+	Tue,  6 Feb 2024 23:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707260718; cv=none; b=sfeFjMJN0E/FHSBPhSVVKQhUKLwSyWEvGoXcBANnGqwN3kyuAvXkimIB/uf6KCr44AkNGKPWQP+0Vh+IWk8z7w6dhgI+9BAkgcxG7zbirO0qeRuiIseGBdi32drj68fn3xEe8vyQeYP/rIdmprWdM2OR1buNBUGewBrfjELEpek=
+	t=1707260746; cv=none; b=C9YOGDie0z0fGTyTItR/963g1X/yi+Npx57RYc3AYLjcGpBYa7+BmU999fwNDFIAqO1Z5bxMD2vN/BApOlNsKsgH+4lgFFNgSsa3jVcAd/e5IL2WDIB3YIiKOi7oFC1ieVV7R2O+z5qOyAd/ltvDe/9Kh7nN/m99T3iT0DA5IuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707260718; c=relaxed/simple;
-	bh=7QPoO7PifBqJV8sy2/s5zmKco4E+SsITAiGa1p+M0P0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=kpSSAeFclpSYYtbzPTNZIO110mVbita8+iqbW+AlOSfUWUuCOK20jObE1G8aJZfLbT+wERLerBsxjQi8aXEOWl7+stH/+1QfH1PduMzV/Cp3Vg9ZAM7i9JaTOl3cMtpITNHB0hthDRf4YVq6SSK0WL0PkPSdf46rLVDWonL0ivY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=pfa8rj8d; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240206230506euoutp027189469d20d3300a68ce11ff1abab4be~xaJFGmzUI2396223962euoutp02W
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 23:05:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240206230506euoutp027189469d20d3300a68ce11ff1abab4be~xaJFGmzUI2396223962euoutp02W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1707260706;
-	bh=D4NpkGWJwWN6KnAZDRStVR1XHUjwfMp1ZAHQ8qzkVao=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=pfa8rj8dbIwzK+cyaHBQw651DYw0zn2wQAB/v0T+a20uPePX/SoOAUoNUQn4TOOp7
-	 GcvKTqjxKF4+5H33n9gNoCnw/yfnJ9zBgkeiadTha7oweTqpsiOlgZYr0ioy564/6e
-	 p++ptNojMCe55bYb4oR7n86XHWS92BIDMoDluoxQ=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240206230505eucas1p2ca96067cf9ce25b9432df241865ccfeb~xaJD59HbV1545315453eucas1p2D;
-	Tue,  6 Feb 2024 23:05:05 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-	eusmges1new.samsung.com (EUCPMTA) with SMTP id E0.3A.09539.12BB2C56; Tue,  6
-	Feb 2024 23:05:05 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240206230505eucas1p1b952da8c57de5dea32339b22e3c98b94~xaJDfaVsD1596415964eucas1p1l;
-	Tue,  6 Feb 2024 23:05:05 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240206230505eusmtrp1b65b0d431452d003e4821a4d574ce28b~xaJDe1ijJ0618706187eusmtrp1W;
-	Tue,  6 Feb 2024 23:05:05 +0000 (GMT)
-X-AuditID: cbfec7f2-515ff70000002543-f8-65c2bb219805
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 0B.A7.10702.02BB2C56; Tue,  6
-	Feb 2024 23:05:05 +0000 (GMT)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240206230504eusmtip1e06c0fdfbc890e18793aae24260a5951~xaJCxAlLA1460514605eusmtip1h;
-	Tue,  6 Feb 2024 23:05:04 +0000 (GMT)
-Message-ID: <65bedd1f-2dd4-49e3-8865-0e6082129e78@samsung.com>
-Date: Wed, 7 Feb 2024 00:05:03 +0100
+	s=arc-20240116; t=1707260746; c=relaxed/simple;
+	bh=nXdR+a6VM2WRCvGRjAN8VSBuD/Uz2750SQd0svzgACE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U/RX5sZG5jsC1KL9VQKOhFOXKqHODe5qb4MkyDhKh4nn1alRW1SoyWiPd7oGfrAZo6OO/fgD36485eJOfideI4EaMfvldZm11p7s845pWvhl8hmxK+pMpJR7ILX9ibY8wSEuB0Jz9LpznevBTXxWYd+uSTjFqd8rGjegQfmmwLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lvdPV+2C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C8CC43390;
+	Tue,  6 Feb 2024 23:05:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707260745;
+	bh=nXdR+a6VM2WRCvGRjAN8VSBuD/Uz2750SQd0svzgACE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lvdPV+2CPODujZO0/HwvdGmj+dOSacaeKhUlP6vw58sJ0Ma4KA4zQykKw+t9xrg5m
+	 w68WaeMmWfvypFp5tWxvktWHVRcfq/xHLo118H2GWtP1h/UA5Z3MXG/YgH+U4Y01rc
+	 1O/PZPRBOsO2b1AHg/hb0Jad3P5vBT6EgiqMz6TV2Hus3Gf4cXST1P0yHCQ+hBoWvS
+	 o6XbCxb6/EVZo5PcgPYDf40uXMcxDy5f1fjKZvn2xWvo4rHBq8vh7xMP2/GFaUi0AL
+	 dfvT4a1zZrVren6mbnuoxq2n4ZXvzWOU8iHQVs9zQYHOa48KGhr2R7mMZEou0b8zLF
+	 OeI7JLD9NCZ4w==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-511490772f6so856e87.2;
+        Tue, 06 Feb 2024 15:05:45 -0800 (PST)
+X-Gm-Message-State: AOJu0YzgAWMBoyYqw7PkvH1DniGTfHESsEZvHqHy/wXd+nuJ4RniQ9Sd
+	2BOxsB0UtUbBbCI0OcfWfbfG4534ks8Z4O/b2hT3UrFDS05ye8ZtysVtrbAN+QmLCEN9MKKEQY5
+	gX9ifcFNW6anQbU3GaEX2Ei/vzss=
+X-Google-Smtp-Source: AGHT+IEMbrPIpSm6OEH2wjHQ/bmWih8c7TetX4tr5aYc278nyCtvtcRboPNHPHMJOQ4NGrPQiVcY9Z4OoBcazk1ridA=
+X-Received: by 2002:a2e:b6c6:0:b0:2d0:aa83:c5a4 with SMTP id
+ m6-20020a2eb6c6000000b002d0aa83c5a4mr2463469ljo.51.1707260744020; Tue, 06 Feb
+ 2024 15:05:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: next: /dev/root: Can't open blockdev
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>, Naresh Kamboju
-	<naresh.kamboju@linaro.org>
-Cc: Jan Kara <jack@suse.cz>, linux-block <linux-block@vger.kernel.org>,
-	Linux-Next Mailing List <linux-next@vger.kernel.org>, open list
-	<linux-kernel@vger.kernel.org>, Linux Regressions
-	<regressions@lists.linux.dev>, linux-fsdevel@vger.kernel.org,
-	lkft-triage@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, Dan Carpenter
-	<dan.carpenter@linaro.org>, Al Viro <viro@zeniv.linux.org.uk>, Anders Roxell
-	<anders.roxell@linaro.org>
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20240206-haarpracht-teehaus-8c3d56b411ea@brauner>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJKsWRmVeSWpSXmKPExsWy7djP87qKuw+lGtz8L2dxa8pvJou/k46x
-	W7w+/InR4sO8VnaL2dObmSz23tK22LP3JIvF5V1z2CwOLmxjtNh6bxq7xa1P/BYb33awW5z/
-	e5zVgdfj969JjB6bVnWyedy5tofN4/a/x8weLzbPZPQ4s+AIu8fnTXIem568ZQrgiOKySUnN
-	ySxLLdK3S+DK+L9+JkvBbZ6K9bcusjQw/ubqYuTkkBAwkfh3+xtTFyMXh5DACkaJbbP62SGc
-	L4wSy47vgMp8ZpS4emQ5I0zLulnLWSASyxklfv2+wgbhfGSUmNL3iQmkilfATuJF3z12EJtF
-	QEWiY+kCdoi4oMTJmU9YQGxRAXmJ+7dmgMWFBQwltrbNArOZBcQlbj2ZDzZHRCBCYvaFRYwg
-	C5gFtjFLfD7fwgaSYANq6HrbBWZzCthLfG9+zQTRLC/RvHU2M8Sp8zklPl8NhbBdJB48eQ/1
-	grDEq+Nb2CFsGYnTk3vA3pEQaGeUWPD7PhOEM4FRouH5LagOa4k7534BbeMA2qApsX6XPogp
-	IeAo8fCrI4TJJ3HjrSDECXwSk7ZNZ4YI80p0tAlBzFCTmHV8HdzWgxcuMU9gVJqFFCqzkHw/
-	C8kzsxDWLmBkWcUonlpanJueWmyYl1quV5yYW1yal66XnJ+7iRGY2k7/O/5pB+PcVx/1DjEy
-	cTAeYpTgYFYS4TXbcSBViDclsbIqtSg/vqg0J7X4EKM0B4uSOK9qinyqkEB6YklqdmpqQWoR
-	TJaJg1OqgclS2aglZlHwSr7PC07r1WSrBhvnZ594aaSSLjPzbHnJv+8/vz1cbbOLPf1Yjpi4
-	D7OO6THLb34Xpq/Mq3xsdGvar/rthonvcxLc5JNf7FPd6uQcX+UUfdbVuyb67vWy7vsr1+X9
-	fz9jwrfd90TD5+pHTVkq/vHBrEc5BvOsLhp8X6gTq73yO9vtRYeqnwoeCvDb2BngfsjMTPXH
-	xhkcC4Mb91wRmH3slvXRxx2OvwrDDdh5GvSnzXt54WdZ5r1gExvuon/zTu6rvzVN/Y70Z5tg
-	D+ULRatattw52yLzqoepKIdvudTqRfcmX/5SLp0mfWzX9r2lTSsmMDTvPBB+6+3nur05mabP
-	RPfk1vy//kxWiaU4I9FQi7moOBEA3ElHgNwDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDIsWRmVeSWpSXmKPExsVy+t/xu7qKuw+lGrQdZrK4NeU3k8XfScfY
-	LV4f/sRo8WFeK7vF7OnNTBZ7b2lb7Nl7ksXi8q45bBYHF7YxWmy9N43d4tYnfouNbzvYLc7/
-	Pc7qwOvx+9ckRo9NqzrZPO5c28PmcfvfY2aPF5tnMnqcWXCE3ePzJjmPTU/eMgVwROnZFOWX
-	lqQqZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehl/F8/k6XgNk/F
-	+lsXWRoYf3N1MXJySAiYSKybtZwFxBYSWMooMX2JMkRcRuLktAZWCFtY4s+1LrYuRi6gmveM
-	EmenHwBL8ArYSbzou8cOYrMIqEh0LF3ADhEXlDg58wnYUFEBeYn7t2aAxYUFDCW2ts0Cs5kF
-	xCVuPZnPBGKLCERIdM06zQqygFlgG7PEqsZ/TBDbZjFLzLkxC2wbG1B311uQMzg5OAXsJb43
-	v2aCmGQm0bW1ixHClpdo3jqbeQKj0Cwkh8xCsnAWkpZZSFoWMLKsYhRJLS3OTc8tNtIrTswt
-	Ls1L10vOz93ECIzmbcd+btnBuPLVR71DjEwcjIcYJTiYlUR4zXYcSBXiTUmsrEotyo8vKs1J
-	LT7EaAoMjYnMUqLJ+cB0klcSb2hmYGpoYmZpYGppZqwkzutZ0JEoJJCeWJKanZpakFoE08fE
-	wSnVwFS4u2nehjPxZUdVX3uWVvJvszr0hsljk+HPv7LfthWFt19vnLCSIWM127f253PFz/id
-	b5h5Y7ra1D3uB2xObn6cmdr9/tp+XV+dg/yvOU0iupj+PdkXE6Tx62+V/sSAGq6phtcuXr05
-	02DPuo5diWGW0TyKrKfmaRpPFlmivUDlxK5rGxN6RAWWLT9ccflqQ95684C83reHU9W/Su0T
-	UFGxDmC6fcbR2bNxsd/a05KqPLOOnon7PKHuxmFjt1dVO10WM67myM2b+tZ3KlOa55YvOYkP
-	lAWva2q1Ndl+2hfjK7G+YmJS4SRjyblM4kHG7MzM515f158WaNWnXFQyb9fFyMlfnRlddNNE
-	meR/vFBiKc5INNRiLipOBAB/HpkRbwMAAA==
-X-CMS-MailID: 20240206230505eucas1p1b952da8c57de5dea32339b22e3c98b94
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240206230505eucas1p1b952da8c57de5dea32339b22e3c98b94
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240206230505eucas1p1b952da8c57de5dea32339b22e3c98b94
-References: <CA+G9fYttTwsbFuVq10igbSvP5xC6bf_XijM=mpUqrJV=uvUirQ@mail.gmail.com>
-	<20240206101529.orwe3ofwwcaghqvz@quack3>
-	<CA+G9fYup=QzTAhV2Bh_p8tujUGYNzGYKBHXkcW7jhhG6QFUo_g@mail.gmail.com>
-	<20240206122857.svm2ptz2hsvk4sco@quack3>
-	<CA+G9fYvKfeRHfY3d_Df+9V+4tE_ZcvMGVJ-acewmgfjxb1qtpg@mail.gmail.com>
-	<20240206-ahnen-abnahmen-73999e173927@brauner>
-	<20240206-haarpracht-teehaus-8c3d56b411ea@brauner>
-	<CGME20240206230505eucas1p1b952da8c57de5dea32339b22e3c98b94@eucas1p1.samsung.com>
+References: <20240206001333.1710070-1-yoann.congal@smile.fr> <20240206001333.1710070-3-yoann.congal@smile.fr>
+In-Reply-To: <20240206001333.1710070-3-yoann.congal@smile.fr>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 7 Feb 2024 08:05:07 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATzkZSK=hYbShOER=PnR7KVUBrDN=RL2Yyw413uMueiXw@mail.gmail.com>
+Message-ID: <CAK7LNATzkZSK=hYbShOER=PnR7KVUBrDN=RL2Yyw413uMueiXw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] printk: Change type of CONFIG_BASE_SMALL to bool
+To: Yoann Congal <yoann.congal@smile.fr>
+Cc: linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, x86@kernel.org, 
+	=?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	Borislav Petkov <bp@alien8.de>, Darren Hart <dvhart@infradead.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Davidlohr Bueso <dave@stgolabs.net>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	John Ogness <john.ogness@linutronix.de>, Josh Triplett <josh@joshtriplett.org>, 
+	Matthew Wilcox <willy@infradead.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Christian,
+On Tue, Feb 6, 2024 at 9:13=E2=80=AFAM Yoann Congal <yoann.congal@smile.fr>=
+ wrote:
+>
+> CONFIG_BASE_SMALL is currently a type int but is only used as a boolean.
+>
+> So, change its type to bool and adapt all usages:
+> CONFIG_BASE_SMALL =3D=3D 0 becomes !IS_ENABLED(CONFIG_BASE_SMALL) and
+> CONFIG_BASE_SMALL !=3D 0 becomes  IS_ENABLED(CONFIG_BASE_SMALL).
+>
+> Signed-off-by: Yoann Congal <yoann.congal@smile.fr>
+> ---
+> NB: This is preliminary work for the following patch removing
+> CONFIG_BASE_FULL (now equivalent to !CONFIG_BASE_SMALL)
+>
+> v3->v4:
+> * Split "switch CONFIG_BASE_SMALL to bool" (this patch) and "Remove the r=
+edundant
+>   config" into two patches
+> * keep CONFIG_BASE_SMALL instead of CONFIG_BASE_FULL
+> ---
+>  arch/x86/include/asm/mpspec.h | 6 +++---
+>  drivers/tty/vt/vc_screen.c    | 2 +-
+>  include/linux/threads.h       | 4 ++--
+>  include/linux/udp.h           | 2 +-
+>  include/linux/xarray.h        | 2 +-
+>  init/Kconfig                  | 8 ++++----
+>  kernel/futex/core.c           | 2 +-
+>  kernel/user.c                 | 2 +-
+>  8 files changed, 14 insertions(+), 14 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/mpspec.h b/arch/x86/include/asm/mpspec.=
+h
+> index 4b0f98a8d338d..c01d3105840cf 100644
+> --- a/arch/x86/include/asm/mpspec.h
+> +++ b/arch/x86/include/asm/mpspec.h
+> @@ -15,10 +15,10 @@ extern int pic_mode;
+>   * Summit or generic (i.e. installer) kernels need lots of bus entries.
+>   * Maximum 256 PCI busses, plus 1 ISA bus in each of 4 cabinets.
+>   */
+> -#if CONFIG_BASE_SMALL =3D=3D 0
+> -# define MAX_MP_BUSSES         260
+> -#else
+> +#ifdef CONFIG_BASE_SMALL
+>  # define MAX_MP_BUSSES         32
+> +#else
+> +# define MAX_MP_BUSSES         260
+>  #endif
+>
+>  #define MAX_IRQ_SOURCES                256
+> diff --git a/drivers/tty/vt/vc_screen.c b/drivers/tty/vt/vc_screen.c
+> index 67e2cb7c96eec..da33c6c4691c0 100644
+> --- a/drivers/tty/vt/vc_screen.c
+> +++ b/drivers/tty/vt/vc_screen.c
+> @@ -51,7 +51,7 @@
+>  #include <asm/unaligned.h>
+>
+>  #define HEADER_SIZE    4u
+> -#define CON_BUF_SIZE (CONFIG_BASE_SMALL ? 256 : PAGE_SIZE)
+> +#define CON_BUF_SIZE (IS_ENABLED(CONFIG_BASE_SMALL) ? 256 : PAGE_SIZE)
+>
+>  /*
+>   * Our minor space:
+> diff --git a/include/linux/threads.h b/include/linux/threads.h
+> index c34173e6c5f18..1674a471b0b4c 100644
+> --- a/include/linux/threads.h
+> +++ b/include/linux/threads.h
+> @@ -25,13 +25,13 @@
+>  /*
+>   * This controls the default maximum pid allocated to a process
+>   */
+> -#define PID_MAX_DEFAULT (CONFIG_BASE_SMALL ? 0x1000 : 0x8000)
+> +#define PID_MAX_DEFAULT (IS_ENABLED(CONFIG_BASE_SMALL) ? 0x1000 : 0x8000=
+)
+>
+>  /*
+>   * A maximum of 4 million PIDs should be enough for a while.
+>   * [NOTE: PID/TIDs are limited to 2^30 ~=3D 1 billion, see FUTEX_TID_MAS=
+K.]
+>   */
+> -#define PID_MAX_LIMIT (CONFIG_BASE_SMALL ? PAGE_SIZE * 8 : \
+> +#define PID_MAX_LIMIT (IS_ENABLED(CONFIG_BASE_SMALL) ? PAGE_SIZE * 8 : \
+>         (sizeof(long) > 4 ? 4 * 1024 * 1024 : PID_MAX_DEFAULT))
+>
+>  /*
+> diff --git a/include/linux/udp.h b/include/linux/udp.h
+> index d04188714dca1..b456417fb4515 100644
+> --- a/include/linux/udp.h
+> +++ b/include/linux/udp.h
+> @@ -24,7 +24,7 @@ static inline struct udphdr *udp_hdr(const struct sk_bu=
+ff *skb)
+>  }
+>
+>  #define UDP_HTABLE_SIZE_MIN_PERNET     128
+> -#define UDP_HTABLE_SIZE_MIN            (CONFIG_BASE_SMALL ? 128 : 256)
+> +#define UDP_HTABLE_SIZE_MIN            (IS_ENABLED(CONFIG_BASE_SMALL) ? =
+128 : 256)
+>  #define UDP_HTABLE_SIZE_MAX            65536
+>
+>  static inline u32 udp_hashfn(const struct net *net, u32 num, u32 mask)
+> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+> index cb571dfcf4b16..3f81ee5f9fb9c 100644
+> --- a/include/linux/xarray.h
+> +++ b/include/linux/xarray.h
+> @@ -1141,7 +1141,7 @@ static inline void xa_release(struct xarray *xa, un=
+signed long index)
+>   * doubled the number of slots per node, we'd get only 3 nodes per 4kB p=
+age.
+>   */
+>  #ifndef XA_CHUNK_SHIFT
+> -#define XA_CHUNK_SHIFT         (CONFIG_BASE_SMALL ? 4 : 6)
+> +#define XA_CHUNK_SHIFT         (IS_ENABLED(CONFIG_BASE_SMALL) ? 4 : 6)
+>  #endif
+>  #define XA_CHUNK_SIZE          (1UL << XA_CHUNK_SHIFT)
+>  #define XA_CHUNK_MASK          (XA_CHUNK_SIZE - 1)
+> diff --git a/init/Kconfig b/init/Kconfig
+> index d50ebd2a2ce42..d4b16cad98502 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -734,7 +734,7 @@ config LOG_CPU_MAX_BUF_SHIFT
+>         int "CPU kernel log buffer size contribution (13 =3D> 8 KB, 17 =
+=3D> 128KB)"
+>         depends on SMP
+>         range 0 21
+> -       default 0 if BASE_SMALL !=3D 0
+> +       default 0 if BASE_SMALL
+>         default 12
+>         depends on PRINTK
+>         help
+> @@ -1941,9 +1941,9 @@ config RT_MUTEXES
+>         default y if PREEMPT_RT
+>
+>  config BASE_SMALL
+> -       int
+> -       default 0 if BASE_FULL
+> -       default 1 if !BASE_FULL
+> +       bool
+> +       default y if !BASE_FULL
+> +       default n
 
-On 06.02.2024 16:53, Christian Brauner wrote:
->> On it.
-> Ok, can you try:
-> git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.super.debug
-> please?
 
 
-I've also encountered this issue during my linux-next daily tests and I 
-confirm that the above branch works fine.
+The shortest form would be:
 
 
-I've applied the diff between e3bfad989976^2 and the above branch 
-(bc7cb6c829e2), which looks following:
-
-diff --git a/init/do_mounts.c b/init/do_mounts.c
-index 279ad28bf4fb..d8ea839463a5 100644
---- a/init/do_mounts.c
-+++ b/init/do_mounts.c
-@@ -19,6 +19,7 @@
-  #include <linux/ramfs.h>
-  #include <linux/shmem_fs.h>
-  #include <linux/ktime.h>
-+#include <linux/task_work.h>
-
-  #include <linux/nfs_fs.h>
-  #include <linux/nfs_fs_sb.h>
-@@ -208,6 +209,10 @@ void __init mount_root_generic(char *name, char 
-*pretty_name, int flags)
-                                 goto out;
-                         case -EACCES:
-                         case -EINVAL:
-+#ifdef CONFIG_BLOCK
-+                               flush_delayed_fput();
-+                               task_work_run();
-+#endif
-                                 continue;
-                 }
-                 /*
+config BASE_SMALL
+        def_bool !BASE_FULL
 
 
-onto next-20240206 and it fixed all boot problems I've observed on my 
-test farm. :)
 
-Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+But, that is not a big deal, as this hunk will
+be removed by 3/3.
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
 
+
+
+Reviewed-by: Masahiro Yamada <masahiroy@kernel.org>
+
+
+
+
+
+
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
