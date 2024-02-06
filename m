@@ -1,112 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-10456-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448E484B596
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 13:53:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E487B84B5A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 13:56:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 775F11C24548
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 12:53:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A02E1285769
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 12:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E8212F39F;
-	Tue,  6 Feb 2024 12:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD1E12B142;
+	Tue,  6 Feb 2024 12:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="CWOVkARt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TngWwIcp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E261E43AB8
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 12:53:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01B02D603
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 12:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707224011; cv=none; b=O6WcbVXbFJGnXOEJ90dFq4PySfTdYFfQUR/KFXrBVDAexUd5922snlY3SwB+rfc5cvhIcZqKM4BwcnI44k1noH91aCo90S7niAF75uPowBZvfoVsrcI/z1Eu3+ozb7V8lUIJzptPrJKfkRvsms2ndazxGS1haf9VbiZbe5JsQCk=
+	t=1707224178; cv=none; b=nbC0wIIqbUIeKZXTSM6qlPGxCuYVk9zgq4oeMmO4+y9OZr7Rf5M+FCpCMxj/az1trWiBw2yuhpm21fQ7ELuS/1Uq7lAZdLgNrDkHG1iLrYP9vC7qmXH0csHb3iIKpSo7FIMXz1BEp6clYrR9aumzBetf+W687QOd3ck+fO92rqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707224011; c=relaxed/simple;
-	bh=xSe5C5JbdmU8o0Dfnn7j6Jfa2oIGtsSyeHqQw1oFkZo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sbXli0gqf5uPul8wzPvUYZB7IpAPhc1J6KvwXwIMOCy1hFqgp7pleyL3PlIJBQ5NJz26IQly2U54SlZvrEem5h0DYpW+pVm5P/denrfiEzHnqSZm7/Osur6SHvxeTa/P025go38JJDZB+6KZdrXdClsCv9adDLL5lXX2zQvs5tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=CWOVkARt; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-51160efad36so313720e87.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Feb 2024 04:53:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1707224005; x=1707828805; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xSe5C5JbdmU8o0Dfnn7j6Jfa2oIGtsSyeHqQw1oFkZo=;
-        b=CWOVkARt01fWLoFBovBEB9BP5YzfTHco+HzoZ25/TTcytMDqNR7ONFojf6r8TG0Azy
-         RkhSHLhKT9EjGKmPYWAH+IgVSyeAjT5q6Q5gLOtACFXvHsDBhoPkKE9ue282xqGn4GbG
-         p+8LyoGAFiQAG7VmJFq/kFuxlE/I+qA1KECHs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707224005; x=1707828805;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xSe5C5JbdmU8o0Dfnn7j6Jfa2oIGtsSyeHqQw1oFkZo=;
-        b=NHAWAGlfuxJGy07NWpeRwzkQGh3xewauYh+/yfoOYvObUQmnJwquWU0qDQ3GqyDkFx
-         w3l/Ifi9blNYt3A5oFVfA0sCiY/KmixA0+8NdGOcqzK6cQIpuR0fP5s/SkBZkSX8izA7
-         EJUZ8LGBvoUyv4BtXuWqZWZKF/JaQGGQO7PyPloPoit8ATBpB4Nzi8u+UtGAfMlvZigI
-         WT5Sd0v2iuo7ZwKHjMtRYkkqyNdyimDVu9mj72AVSqvNde/ahfqQLo1QBk5/RYez2sHD
-         YGXeDJPxMULJ/Lj11DLMI4nan8v8KBHENgGSB0jqGbM86eObue9UnLi58bFE3nIW+Qo2
-         8HBg==
-X-Gm-Message-State: AOJu0YwfBp4b4YHFa100DE064np2peZb/w6SMYjQTZAqOsZ7TfiIld0P
-	JYYU0vTYDBUETxlqqgdm8xqUrS3pM0sGJNOxoGrhKijHbUdMuEa5u1r9U9dRuRpCW67BOmkli4+
-	YNOV1rLcbmHmlNkbp2LkSw19Sph2ZOUUj9+WfAA==
-X-Google-Smtp-Source: AGHT+IHs6wXFtQJ8DCnqBjUzjRyim+CnLZh9zDBCP7L64xUITwRiMOSEuAeBqFEFhLpaSCufRTl4ESwDpJRvNWLXaeI=
-X-Received: by 2002:a05:6512:3d9f:b0:511:4fec:c374 with SMTP id
- k31-20020a0565123d9f00b005114fecc374mr1903944lfv.66.1707224005513; Tue, 06
- Feb 2024 04:53:25 -0800 (PST)
+	s=arc-20240116; t=1707224178; c=relaxed/simple;
+	bh=aHvoIMhqHK8Hz7ZDSGrgTvvDulv0b0MKQAO8XzbAZ1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ECBE9xbl8QXO+8JsALT0myizJIDQm5AzYbe15DaLxQr5reS4OrKHzbcBVgP2JPIdZQcw4Hl3/oXxn/qcSOnBMCfuAD/SXp0vWnMovK2/dTovaA2MBe17PQpSsqkqhpcYlwaXCWYnmH38srPh/SsGIzgmqCoob7nGQIOEoNG0OtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TngWwIcp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 680AEC433C7;
+	Tue,  6 Feb 2024 12:56:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707224177;
+	bh=aHvoIMhqHK8Hz7ZDSGrgTvvDulv0b0MKQAO8XzbAZ1c=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TngWwIcpsDqnTSVv4Ztckm/P8UV/HaH9Z1tRmjRKe2ndkEuDu5juRmeimIUAa7nK2
+	 kEbFMiwK5LA+EcgoaoPXzdaUUviurZPYI4FHZdGHF38EDD4henFpWqsnqfmtoGfyXr
+	 lGVeReM8zbXzGvvCFuYtXJANLRf+bJyU/PNe/QCEKHwWr+YQtx9OnFPIDFLntbvIoR
+	 vOMSRA4ZTZfxzyJYgOKKmmyLV+VDrcEFKGbTHN1YfBxjdx6tjrccVpwhJzQpzfVxnT
+	 xUhwGVFrchuxhufeKG48Rhlb07OdAy7Bc5SeHuoMw4VGbBcR2GcTvwMH4OBh3edPVp
+	 09HUa1/lQZT0A==
+From: Christian Brauner <brauner@kernel.org>
+To: Huang Xiaojia <huangxiaojia2@huawei.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	yuehaibing@huawei.com,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH-next] epoll: Remove ep_scan_ready_list() in comments
+Date: Tue,  6 Feb 2024 13:55:49 +0100
+Message-ID: <20240206-ortskenntnis-ruhen-40acfcab93a8@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240206014353.4191262-1-huangxiaojia2@huawei.com>
+References: <20240206014353.4191262-1-huangxiaojia2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240131230827.207552-1-bschubert@ddn.com> <20240131230827.207552-6-bschubert@ddn.com>
- <CAJfpegvUfQw4TF7Vz_=GMO9Ta=6Yb8zUfRaGMm4AzCXOTdYEAA@mail.gmail.com>
- <CAOQ4uxjVqCAYhn07Bnk6HsXB21t4FFQk91ywS3S8A8u=+B9A=w@mail.gmail.com> <CAOQ4uxjnrZngNcthc9M5U_SBM+267LMEkYxtoR6uZ8J8YNRvng@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjnrZngNcthc9M5U_SBM+267LMEkYxtoR6uZ8J8YNRvng@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 6 Feb 2024 13:53:14 +0100
-Message-ID: <CAJfpegvPCkj-r1m1ndSzNzT2i_oZQUM2PARDTov0vwhqC5JrvA@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] fuse: introduce inode io modes
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, dsingh@ddn.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1064; i=brauner@kernel.org; h=from:subject:message-id; bh=aHvoIMhqHK8Hz7ZDSGrgTvvDulv0b0MKQAO8XzbAZ1c=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQe0sl88yZk/9oGPneWC2XhBfdL/kxvfS9nxNDoVrnor EbFpNWnOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbyu56RYdX9x5U1/SflJ727 Gm2yu4CnMXFGyPolzDttWzsTzdVrfRn+h07a+ENFqprr5vw2PsEOw50M3Jl6nUcqvHUNljuzMz5 gBwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, 6 Feb 2024 at 13:39, Amir Goldstein <amir73il@gmail.com> wrote:
+On Tue, 06 Feb 2024 09:43:53 +0800, Huang Xiaojia wrote:
+> Since commit 443f1a042233 ("lift the calls of ep_send_events_proc()
+> into the callers"), ep_scan_ready_list() has been removed.
+> But there are still several in comments. All of them should
+> be replaced with other caller functions.
+> 
+> 
 
-> I have played with this rebranding of
-> FOPEN_CACHE_IO => FOPEN_NO_PARALLEL_DIO_WRITES
->
-> The meaning of the rebranded flag is:
-> Prevent parallel dio on inode for as long as this file is kept open.
->
-> The io modes code sets this flag implicitly on the first shared mmap.
->
-> Let me know if this makes the external flag easier to swallow.
-> Of course I can make this flag internal and not and FOPEN_ flag
-> at all, but IMO, the code is easier to understand when the type of
-> iocachectl refcount held by any file is specified by its FOPEN_ flags.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-If there's no clear use case that would benefit from having this flag
-on the userspace interface, then I'd recommend not to export it for
-now.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-I understand the need for clarifying the various states that the
-kernel can be, but I think that's a bigger project involving e.g. data
-and metadata cache validity, where the current rules are pretty
-convoluted.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-So for now I'd just stick with the implicit state change by mmap.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-BTW, I started looking at the fuse-backing-fd branch and really hope
-we can get this into shape for the next merge window.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
 
-Thanks,
-Miklos
+[1/1] epoll: Remove ep_scan_ready_list() in comments
+      https://git.kernel.org/vfs/vfs/c/91d5bbf6d41e
 
