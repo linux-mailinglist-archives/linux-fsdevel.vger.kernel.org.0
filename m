@@ -1,164 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-10436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EF0784B250
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 11:17:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E0684B26C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 11:22:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02C3428B17E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 10:17:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94C9A1C23918
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 10:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1375112E1EA;
-	Tue,  6 Feb 2024 10:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D67512E1E9;
+	Tue,  6 Feb 2024 10:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q8YQ2uEN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8RFn8U0p";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ENeWwoV8";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VUEmkgTN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eswa3XIV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0D6912E1F1;
-	Tue,  6 Feb 2024 10:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C5F12B14E;
+	Tue,  6 Feb 2024 10:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707214603; cv=none; b=Nih5Sxv+VkMBJPl6N8x2dyHKXrzbu7VQ07GT8HNxhwu2mOp96eLxKLODqGXD2tfMlb4JPpQn3HNCuS/m4OuyZb1ArBAAHvv1HdKVc7RmhlSIhnqI9ZQVQwPjqYGYhQb5eUJJGx0Jiyk7aI82FVB4am0GH1Z0VBc4ObolhSbtfpo=
+	t=1707214973; cv=none; b=hUUdYruvnstyAKzG6GSJUoRXzW8X73Hi2AR3ShlZMqJnyBzg5oYuQNBsfdBALsKHUZcnJArXkzAgKUMpO+y/TSsqd3QVhT8DbVnkZZpggUWS117BemsZkL2vuCcDSLBcIIPS/r5PHTfKQLMe77DF5IbWTzo3mbPDHscu9uixjGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707214603; c=relaxed/simple;
-	bh=/MWYtwrNcDazX//rRzn6aA+QmI17u6cG1k6o3dpPB+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i+ugy5aTOiPSEg7WXsG5Oo+QnkFamUOmxkrsY3MXal7+e2/Vx8OHzfMqGvIoGHiFKrt8Kkvht/2Q3gV9Iq+tGpwyuknFuOYMWTDFlgy1SfUdxttITb6Jfpa17RxSJFRuPvRzIR6xmMayNE7QjOY4zPN08AmIlzUxdPvlbqW/yRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q8YQ2uEN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8RFn8U0p; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ENeWwoV8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VUEmkgTN; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id EEE3E220F9;
-	Tue,  6 Feb 2024 10:16:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707214600; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2LirOyLh0zu+s7wRq1797ksT14unjmeWiaZ9SYdvS8I=;
-	b=Q8YQ2uENU3Rnr2gHqXLol4WmotIFMOutXpkRfTHW2gLST/88wgUHtVSuOHiXOEv1qqaTsV
-	X6dbQBGfiRKMLof872fAgdr1YmEf6XS3Q0CwFI3weChYmSjTYqJf6950nkko4bfu52A/yv
-	Kp49LCi8benjFvyDS7F+1VPuX8DDkk8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707214600;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2LirOyLh0zu+s7wRq1797ksT14unjmeWiaZ9SYdvS8I=;
-	b=8RFn8U0pEZJ3W+YBB7s1CMNn2MZFUgqLOLhfrZRTAWNpJYaNAED5f7jB7QNb6acc9mKG92
-	4y/avmbiNtmlRSDQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707214599; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2LirOyLh0zu+s7wRq1797ksT14unjmeWiaZ9SYdvS8I=;
-	b=ENeWwoV8nglWM/9SSNvAlvlkV1mVYNIyWRihOLvqUIvBAZguhmuhP43O2x+LfailCUcysw
-	oK+cpxrtTX5Rt2Yh2XGfA0yceJaqbc/nbIoXPkug9ajUqFNft67lkhwru6JOJvWxTuFK6V
-	ZKP0kOzQcRO25YIXXsWxZiRDaUYP+9I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707214599;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2LirOyLh0zu+s7wRq1797ksT14unjmeWiaZ9SYdvS8I=;
-	b=VUEmkgTNEZVNFaY8rrBvaTxjceSk/L43rXxLq8TdvFjZwib94x+lXVaRlpEFiBvqWIfYb3
-	y2wJ37BcN9wrzRCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E349A13A3A;
-	Tue,  6 Feb 2024 10:16:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VHB3NwcHwmXifAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 06 Feb 2024 10:16:39 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A01A2A0809; Tue,  6 Feb 2024 11:16:39 +0100 (CET)
-Date: Tue, 6 Feb 2024 11:16:39 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+8c777e17f74c66068ffa@syzkaller.appspotmail.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, ghandatmanas@gmail.com,
-	jack@suse.cz, jfs-discussion@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	mushi.shar@gmail.com, shaggy@kernel.org,
-	syzkaller-bugs@googlegroups.com, syzkaller@googlegroups.com
-Subject: Re: [syzbot] [jfs?] UBSAN: shift-out-of-bounds in dbSplit
-Message-ID: <20240206101639.waddtknizshby3x3@quack3>
-References: <0000000000005a02da05ea31b295@google.com>
- <000000000000ba28410610b33cc5@google.com>
+	s=arc-20240116; t=1707214973; c=relaxed/simple;
+	bh=lDcrFbajOxQJyzMqUqx8TzZ9sBClVUvvVl6hgim3mhA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dYXOQrCPAGrW2Wks3j+NCEVB7dUMDmKkGqhOHo0D0Ap48N55Zmi/qUI1rT6ZKclipyUeDA2k29/XPA/TBoafGpxbF2XRBnKjv0wLkJoMYLlcyQsRBuq9aDjnAJuLo57vFQY9tdFvbm2F5hxs+bhtGGPDnYtHqCuQDkzwOkcy1JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eswa3XIV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD9AAC43390;
+	Tue,  6 Feb 2024 10:22:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707214973;
+	bh=lDcrFbajOxQJyzMqUqx8TzZ9sBClVUvvVl6hgim3mhA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Eswa3XIVSWu2WDQllGuNSIPaKzkygH/cVXrhv5lbeRn1Kyd9LluwUQgEzTnSciWE4
+	 aQYZNhKhxduye2SpKASqfF1Jy84HLyD10L0jU1e5IklTTKMKzLmZipcqjJUPEVW3zz
+	 PXF6vOW4v35UiRc7MYEdzexWuwQOtSFVp3SRykyMPl/TPFVFKrmi4z1WJDIKTtxXcJ
+	 VHP9IKaXhiXS/7KfaKlYD2EnY89w9l6dkMnfs6/30F3NKfR4nIh7q9i9ptJ7NQTmIL
+	 sDeJVGuP24vF1/P8SlNaLBAC74EBCBsuVCdGkRsTnOvT3jZ6viZcZ4t+OfM773aJPi
+	 nLiB6MV4VTQ0Q==
+From: Christian Brauner <brauner@kernel.org>
+Date: Tue, 06 Feb 2024 11:22:09 +0100
+Subject: [PATCH] fs: relax mount_setattr() permission checks
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000ba28410610b33cc5@google.com>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spamd-Result: default: False [2.89 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-0.01)[47.67%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=26188a62745981b4];
-	 TAGGED_RCPT(0.00)[8c777e17f74c66068ffa];
-	 MIME_GOOD(-0.10)[text/plain];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[12];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[kernel.dk,kernel.org,gmail.com,suse.cz,lists.sourceforge.net,vger.kernel.org,googlegroups.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Level: **
-X-Spam-Score: 2.89
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240206-vfs-mount-rootfs-v1-1-19b335eee133@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAFAIwmUC/x3MwQ6CMAyA4VchPVszp0LwVQiHMTrpgc20QEgI7
+ 271+B3+/wAlYVJ4VQcIbaxcsuF2qSBOIb8JeTSDd/7hvKtxS4pzWfOCUspiaFxIydO9fdYjWPY
+ RSrz/l11vHoISDhJynH4j668za4Tz/AK7P7yffQAAAA==
+To: linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+ Karel Zak <kzak@redhat.com>, stable@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.13-dev-2d940
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2460; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=lDcrFbajOxQJyzMqUqx8TzZ9sBClVUvvVl6hgim3mhA=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQe4qhOL5Cfo558v0SVtUDd2n7LpAST6Mi6SwL/Erjcb
+ Do2siR0lLIwiHExyIopsji0m4TLLeep2GyUqQEzh5UJZAgDF6cATGSOMCNDz9a7a0UCdrfZ1Z+d
+ MSuvyYHBsCnUqoLP3ttruqa9S5EII8OkY9vnpioWyG5LMjq5zPyKcoLI4RO7jyZUS6Z12UW1GTE
+ AAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Tue 06-02-24 01:31:04, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
-> 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
-> 
->     fs: Block writes to mounted block devices
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=110ffd6c180000
-> start commit:   708283abf896 Merge tag 'dmaengine-6.6-rc1' of git://git.ke..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=26188a62745981b4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=8c777e17f74c66068ffa
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=138fb834680000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1399c448680000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
+When we added mount_setattr() I added additional checks compared to the
+legacy do_reconfigure_mnt() and do_change_type() helpers used by regular
+mount(2). If that mount had a parent then verify that the caller and the
+mount namespace the mount is attached to match and if not make sure that
+it's an anonymous mount.
+
+The real rootfs falls into neither category. It is neither an anoymous
+mount because it is obviously attached to the initial mount namespace
+but it also obviously doesn't have a parent mount. So that means legacy
+mount(2) allows changing mount properties on the real rootfs but
+mount_setattr(2) blocks this. I never thought much about this but of
+course someone on this planet of earth changes properties on the real
+rootfs as can be seen in [1].
+
+Since util-linux finally switched to the new mount api in 2.39 not so
+long ago it also relies on mount_setattr() and that surfaced this issue
+when Fedora 39 finally switched to it. Fix this.
+
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=2256843
+Reported-by: Karel Zak <kzak@redhat.com>
+Cc: stable@vger.kernel.org # v5.12+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/namespace.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 437f60e96d40..fb0286920bce 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -4472,10 +4472,15 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
+ 	/*
+ 	 * If this is an attached mount make sure it's located in the callers
+ 	 * mount namespace. If it's not don't let the caller interact with it.
+-	 * If this is a detached mount make sure it has an anonymous mount
+-	 * namespace attached to it, i.e. we've created it via OPEN_TREE_CLONE.
++	 *
++	 * If this mount doesn't have a parent it's most often simply a
++	 * detached mount with an anonymous mount namespace. IOW, something
++	 * that's simply not attached yet. But there are apparently also users
++	 * that do change mount properties on the rootfs itself. That obviously
++	 * neither has a parent nor is it a detached mount so we cannot
++	 * unconditionally check for detached mounts.
+ 	 */
+-	if (!(mnt_has_parent(mnt) ? check_mnt(mnt) : is_anon_ns(mnt->mnt_ns)))
++	if (mnt_has_parent(mnt) && !check_mnt(mnt))
+ 		goto out;
  
-Makes sense.
+ 	/*
 
-#syz fix: fs: Block writes to mounted block devices
+---
+base-commit: 2a42e144dd0b62eaf79148394ab057145afbc3c5
+change-id: 20240206-vfs-mount-rootfs-70aff2e3956d
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
