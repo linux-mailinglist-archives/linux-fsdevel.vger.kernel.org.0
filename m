@@ -1,113 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-10410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD7784ABBF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 02:44:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E5584AC14
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 03:14:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FAF21C235CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 01:44:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1CFB28796A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 02:14:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0AA15C0;
-	Tue,  6 Feb 2024 01:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 880AB56B7C;
+	Tue,  6 Feb 2024 02:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="IlRvU4P0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4E31373
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 01:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C75856B66
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 02:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707183854; cv=none; b=jRpCioe9x7xobbS1VvW5Onudq7JaHMOIXajU9hOP4v5VMwXff1faVJwyokPGm20W3tyjrPgCLlOOE/Bv++C4IbERzrL8v2gY1g2gRsERAtxjrRZcKB1DC9/kogmMo4VJZqFiwVDm8Eps0P+8xNAhqMT13rITbLKnNvtzPN81dZg=
+	t=1707185670; cv=none; b=LoPB8xs6/mEPlDIjUUn+/sLDWT3PAboGko6H++6QJ+xa6vdRSIWvB1V/wVwZj1mPanV+i3Gx+GNu2Yg9xYz6mbMCnUi1brxspa8kMDx6m/q2+GSQ5S5paLt4p7uqwYwNQN4KXo3AlB4XeiQDUjUwDYLkKuJkvjez5obDxrTa+C4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707183854; c=relaxed/simple;
-	bh=f36y5nrtN6YokISYgJlldjZLZLXxYY35d5sKh4DpgvE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b5dPghn01u7hzd4VO6b0CrKfzo0d6dS59Qbhccsz2iVe7J0MO/AVdxnFDzxsm9AAWcZszAtR7liF6eaBnRaCh5OISwF7uysStlDOdK7UdzyaNaHcexHr/EAEPqorNeu2U/aYKuZagcn7iOLt2o5dazwOY2PqF34u+9dMqRGW6YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4TTQwN6bJ0z29l5L;
-	Tue,  6 Feb 2024 09:42:12 +0800 (CST)
-Received: from dggpemm500021.china.huawei.com (unknown [7.185.36.109])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5327C1A0172;
-	Tue,  6 Feb 2024 09:44:08 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by dggpemm500021.china.huawei.com
- (7.185.36.109) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 6 Feb
- 2024 09:44:08 +0800
-From: Huang Xiaojia <huangxiaojia2@huawei.com>
-To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-	<yuehaibing@huawei.com>, <linux-fsdevel@vger.kernel.org>
-CC: <huangxiaojia2@huawei.com>
-Subject: [PATCH-next] epoll: Remove ep_scan_ready_list() in comments
-Date: Tue, 6 Feb 2024 09:43:53 +0800
-Message-ID: <20240206014353.4191262-1-huangxiaojia2@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1707185670; c=relaxed/simple;
+	bh=o25zqqGgJb+/DuJjbPME/jHUMuD6KdaPfV2xdG2bIQQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jd58BgePOtX5kutfrJXjERuM0R0oI6Z0S7hqXTj9gsJwmgH982ur3A0U9WUkpjf/4fhHK1QgE0+qlRXj72byNvvsntY1lAuAJxvOG+vEOF6Ln77Kjsh8xMQLqOEju+WS6DzfJmUkCX9q3Joaw8lP7jV5eKshd+e25uHBGYzkXnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=IlRvU4P0; arc=none smtp.client-ip=209.85.128.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-603fd31f5c2so937697b3.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 18:14:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03; t=1707185667; x=1707790467; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TVFUfHzouElpgk6csojgEtg0jiRXTk/Brz1iEYU1QIQ=;
+        b=IlRvU4P0yFmjhF68oSMMR9AJj4Iuw/GrVjQCyWvoEcQqF4vygb8qaUF9NigxgWrkhn
+         IQTGMjKbwxOhrHXYq/pCXlnnm6H1oOJ212Lst9Ulfp5nZq4ycuEHT8kWr2xoPUiKwcZl
+         T8WVRrFW9QzooB/r8IXK6hpK3gl36UpYRSb0ylrQPWlNTC43QTAmCvACBKdYusyUOiKZ
+         udS7Nl9XYsrt8sirsSlcGEF7gAZUBg0k8FY06CGadcyG/HYoKkhD/NIXuqZZ5XCk6NSb
+         VCzyNbUJOsIUJhavRdjqRXmwbSJ3DIld2QPWRKljSPBxtlJMvVQxYa+IhZ1E1MElrMjk
+         1tMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707185667; x=1707790467;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TVFUfHzouElpgk6csojgEtg0jiRXTk/Brz1iEYU1QIQ=;
+        b=PU5fAExnFMTpZxfHQ3Fl3mY4LSyp2k1exiQeTDpap3GLpU9PnkbMdtUqUvnnDY5PYR
+         qcuFEqjG4Xpm/H7bzCE3u7cLeMZu+N3r8geiR0iEOrd0Vv5FW3MQxz7pn37wLlEHZd3x
+         sjZ9RbAAlVfsi2AtLJFjlPJmN+WeTrUHm0ZrMcHX477jnLuQmSOdkbSce9FP6nXDMtE2
+         Vu5cYx06GzH19maQJ/SHQYqdNfx92conExXUzKGh/LW4LHggruH7mvRQ8GG58/rAOM6T
+         INsd8k+9VdA9SZ/GKFAObi9DBkAcVpmxd1YdAql5SSr3hgFqT+O/zrWxvFwGeSxUwxxB
+         WNTw==
+X-Gm-Message-State: AOJu0YyJcES6pu7A/o1yJqqK15nuCypfpdKWCLt0y7dwLpmhs+mJ5UuX
+	uHMmcE5y6aEB5xOE7tJf0wONOr6rPTNL92WnHwEVDvYj8gRCTI1xC5xDH6+JKDjhmbW4Cp4GpK+
+	TLvQ+ajRWcYQ924cJkV+bmT8fkIO0jQue85HkYA==
+X-Google-Smtp-Source: AGHT+IHalCWBoPrTOGrwUPX186ylELseC9bB/PUuUSj1Plms06LKwNv5q6YlTmjKBZkRPZ64RAiuwyU6eEhZflnqY4g=
+X-Received: by 2002:a81:844e:0:b0:604:1d65:b66b with SMTP id
+ u75-20020a81844e000000b006041d65b66bmr269588ywf.9.1707185666967; Mon, 05 Feb
+ 2024 18:14:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemm500021.china.huawei.com (7.185.36.109)
+References: <20240202-alice-file-v4-0-fc9c2080663b@google.com> <20240202-alice-file-v4-1-fc9c2080663b@google.com>
+In-Reply-To: <20240202-alice-file-v4-1-fc9c2080663b@google.com>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Mon, 5 Feb 2024 21:14:15 -0500
+Message-ID: <CALNs47vWo1Ae2PJ+80xm1eB057DDsF+SbmVun-UHc9+vzpr7nQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/9] rust: types: add `NotThreadSafe`
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since commit 443f1a042233 ("lift the calls of ep_send_events_proc()
-into the callers"), ep_scan_ready_list() has been removed.
-But there are still several in comments. All of them should
-be replaced with other caller functions.
+On Fri, Feb 2, 2024 at 5:56=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
+>
+> This introduces a new marker type for types that shouldn't be thread
+> safe. By adding a field of this type to a struct, it becomes non-Send
+> and non-Sync, which means that it cannot be accessed in any way from
+> threads other than the one it was created on.
+>
+> This is useful for APIs that require globals such as `current` to remain
+> constant while the value exists.
+>
+> We update two existing users in the Kernel to use this helper:
+>
+>  * `Task::current()` - moving the return type of this value to a
+>    different thread would not be safe as you can no longer be guaranteed
+>    that the `current` pointer remains valid.
+>  * Lock guards. Mutexes and spinlocks should be unlocked on the same
+>    thread as where they were locked, so we enforce this using the Send
+>    trait.
+>
+> There are also additional users in later patches of this patchset. See
+> [1] and [2] for the discussion that led to the introducion of this
 
-Signed-off-by: Huang Xiaojia <huangxiaojia2@huawei.com>
----
- fs/eventpoll.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+s/introducion/introduction
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 3534d36a1474..786e023a48b2 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -206,7 +206,7 @@ struct eventpoll {
- 	 */
- 	struct epitem *ovflist;
- 
--	/* wakeup_source used when ep_scan_ready_list is running */
-+	/* wakeup_source used when ep_send_events or __ep_eventpoll_poll is running */
- 	struct wakeup_source *ws;
- 
- 	/* The user that created the eventpoll descriptor */
-@@ -1153,7 +1153,7 @@ static inline bool chain_epi_lockless(struct epitem *epi)
-  * This callback takes a read lock in order not to contend with concurrent
-  * events from another file descriptor, thus all modifications to ->rdllist
-  * or ->ovflist are lockless.  Read lock is paired with the write lock from
-- * ep_scan_ready_list(), which stops all list modifications and guarantees
-+ * ep_start/done_scan(), which stops all list modifications and guarantees
-  * that lists state is seen correctly.
-  *
-  * Another thing worth to mention is that ep_poll_callback() can be called
-@@ -1751,7 +1751,7 @@ static int ep_send_events(struct eventpoll *ep,
- 			 * availability. At this point, no one can insert
- 			 * into ep->rdllist besides us. The epoll_ctl()
- 			 * callers are locked out by
--			 * ep_scan_ready_list() holding "mtx" and the
-+			 * ep_send_events() holding "mtx" and the
- 			 * poll callback will queue them in ep->ovflist.
- 			 */
- 			list_add_tail(&epi->rdllink, &ep->rdllist);
-@@ -1904,7 +1904,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 		__set_current_state(TASK_INTERRUPTIBLE);
- 
- 		/*
--		 * Do the final check under the lock. ep_scan_ready_list()
-+		 * Do the final check under the lock. ep_start/done_scan()
- 		 * plays with two lists (->rdllist and ->ovflist) and there
- 		 * is always a race when both lists are empty for short
- 		 * period of time although events are pending, so lock is
--- 
-2.34.1
+> patch.
+>
+> Link: https://lore.kernel.org/all/nFDPJFnzE9Q5cqY7FwSMByRH2OAn_BpI4H53NQf=
+WIlN6I2qfmAqnkp2wRqn0XjMO65OyZY4h6P4K2nAGKJpAOSzksYXaiAK_FoH_8QbgBI4=3D@pro=
+ton.me/ [1]
+> Link: https://lore.kernel.org/all/nFDPJFnzE9Q5cqY7FwSMByRH2OAn_BpI4H53NQf=
+WIlN6I2qfmAqnkp2wRqn0XjMO65OyZY4h6P4K2nAGKJpAOSzksYXaiAK_FoH_8QbgBI4=3D@pro=
+ton.me/ [2]
+> Suggested-by: Benno Lossin <benno.lossin@proton.me>
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/sync/lock.rs | 15 +++++++++++----
+>  rust/kernel/task.rs      | 10 ++++++----
+>  rust/kernel/types.rs     | 17 +++++++++++++++++
+>  3 files changed, 34 insertions(+), 8 deletions(-)
+>
+> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+> index 149a5259d431..d08d9d32915a 100644
+> --- a/rust/kernel/sync/lock.rs
+> +++ b/rust/kernel/sync/lock.rs
+> @@ -6,8 +6,15 @@
+>  //! spinlocks, raw spinlocks) to be provided with minimal effort.
+>
+>  use super::LockClassKey;
+> -use crate::{bindings, init::PinInit, pin_init, str::CStr, types::Opaque,=
+ types::ScopeGuard};
+> -use core::{cell::UnsafeCell, marker::PhantomData, marker::PhantomPinned}=
+;
+> +use crate::{
+> +    bindings,
+> +    init::PinInit,
+> +    pin_init,
+> +    str::CStr,
+> +    types::ScopeGuard,
+> +    types::{NotThreadSafe, Opaque},
 
+Formatting nit: ScopeGuard could probably be placed in the same group
+as NotThreadSafe & Opaque
+
+> [...]
+> +
+> +/// Zero-sized type to mark types not [`Send`].
+> +///
+> +/// Add this type as a field to your struct if your type should not be s=
+ent to a different task.
+> +/// Since [`Send`] is an auto trait, adding a single field that is `!Sen=
+d` will ensure that the
+> +/// whole type is `!Send`.
+> +///
+> +/// If a type is `!Send` it is impossible to give control over an instan=
+ce of the type to another
+> +/// task. This is useful when a type stores task-local information for e=
+xample file descriptors.
+
+I initially read this thinking it meant to include this type if your
+struct also had a FD rather than being part of the FD. Maybe
+
+    This is useful to include in types that store or reference task-local
+    information. A file descriptor is an example of one such type.
+
+> +pub type NotThreadSafe =3D PhantomData<*mut ()>;
+> +
+> +/// Used to construct instances of type [`NotThreadSafe`] similar to how=
+ we construct
+> +/// `PhantomData`.
+
+I think it sounds slightly better reworded from personal to passive, i.e.
+
+    ... similar to how `PhantomData` is constructed.
+
+> +/// [`NotThreadSafe`]: type@NotThreadSafe
+> +#[allow(non_upper_case_globals)]
+> +pub const NotThreadSafe: NotThreadSafe =3D PhantomData;
+> --
+> 2.43.0.594.gd9cf4e227d-goog
+
+This looks good, sounds nice to make the intent more clear. Nothing
+that isn't optional, so
+
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
