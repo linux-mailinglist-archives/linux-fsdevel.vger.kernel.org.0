@@ -1,254 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-10523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C63984BF20
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 22:17:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5346484BF47
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 22:36:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E806E287391
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 21:17:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 784C51C22EDB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 21:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491851B95D;
-	Tue,  6 Feb 2024 21:17:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38D1E1B977;
+	Tue,  6 Feb 2024 21:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="k1d3oCnY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F40f5fbh";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="k1d3oCnY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F40f5fbh"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="m7ahRL1P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886911B949;
-	Tue,  6 Feb 2024 21:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6622C1B94A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 21:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707254228; cv=none; b=FYPLWrT24Y+c/M4MqeM5jVPS3rtCz4TBPFr82/mBinhuc0O/9WE01yueNfjocADUybULNOrCQMcwW8TpO8KegwKGIBB5NkUTN3uuhxxrzTIX/geJ+zwRal8dRgtK2uhQEB9xroiYI6TOYYd6OEB6p85rPfTnadwyrZcya0F629A=
+	t=1707255365; cv=none; b=aHzh84vXDBRhQMMEi7INuFWSk18MGJsWfWtjZaEj/VkSWVyjp5rZm/8SdQUF02GAzy7XV15Fl7gx2kb4rqJGoXzgeFHDPafvhHJxvMvIrBjjf4lgHCgtwB5m/uNVm6U7P1aOmYEwqMSoeO7NaPSW3ocQ71cKY/GOwa3D/mo406U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707254228; c=relaxed/simple;
-	bh=uwEMzGckHBO1KSpcMS2s/3KiVhfDWEZdmc5ffrHPtsA=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=OXzg4OGsd7Byq9828VGHnvpkii+rv0HOjevp+iMBzDgDkUu2uZbPhPJXL8HbrptZN/X7tkKPWTVz1cdSaLycyWfbjbxJTthHSwkVDdAz7KHik9SGIcDrDR1VkI496Jdys60mrcyWqtIblUdAmrYfD+rrNP4Z0FhaGZMtwilRUqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=k1d3oCnY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F40f5fbh; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=k1d3oCnY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F40f5fbh; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AA6892219C;
-	Tue,  6 Feb 2024 21:17:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1707254224; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=87Ylwb7RHQpUL7m4lvn75IdWsX8BWP7o6iatgAA8NTY=;
-	b=k1d3oCnY6UIT9CwC8F8K19X7A3A4Of/jKOF8wToLJzXbMC3ZWVG84vjTLTGrFuXlxHwuHM
-	m7QOgUBLj+tFMlhDXvM9Ax9zzDYBY6Hkb5KiL4t7LgPf7EVoNXHDRVDEPtAx0i7w09I8OM
-	L/wneE8ke9Ovzr5gNfSk67CuzW/EnJE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1707254224;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=87Ylwb7RHQpUL7m4lvn75IdWsX8BWP7o6iatgAA8NTY=;
-	b=F40f5fbh9qYm2ldnJ7NTe22HeXtso14MjztF9iw7eaVLJpc4MhXoLKnXkM8TLIjqqCu6R1
-	/KjG2wSW+aeB94AA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1707254224; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=87Ylwb7RHQpUL7m4lvn75IdWsX8BWP7o6iatgAA8NTY=;
-	b=k1d3oCnY6UIT9CwC8F8K19X7A3A4Of/jKOF8wToLJzXbMC3ZWVG84vjTLTGrFuXlxHwuHM
-	m7QOgUBLj+tFMlhDXvM9Ax9zzDYBY6Hkb5KiL4t7LgPf7EVoNXHDRVDEPtAx0i7w09I8OM
-	L/wneE8ke9Ovzr5gNfSk67CuzW/EnJE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1707254224;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=87Ylwb7RHQpUL7m4lvn75IdWsX8BWP7o6iatgAA8NTY=;
-	b=F40f5fbh9qYm2ldnJ7NTe22HeXtso14MjztF9iw7eaVLJpc4MhXoLKnXkM8TLIjqqCu6R1
-	/KjG2wSW+aeB94AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8E0B0132DD;
-	Tue,  6 Feb 2024 21:17:00 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wfO8EMyhwmWLOQAAD6G6ig
-	(envelope-from <neilb@suse.de>); Tue, 06 Feb 2024 21:17:00 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1707255365; c=relaxed/simple;
+	bh=9foNO30lxIQVAOir/tTEY/aEn93LIXwsZ3ylGlnEScs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eUYUd/DnNJpKPveqVspJUZpxgWzPDHyoMwg0nDC6mhnMhA41ww2bdIFrVgykRaQATcDJMtJ8ljsY5YKBjH96WRAWthhh/6QuJGUbZSZ23xglQHTZ2JZsoq5pumPmCwdJpUCEN6oNDRwdEvoBJnn/LiWp/D9HBLjpJ+C54P1VdHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=m7ahRL1P; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6e117e0fee8so3203450a34.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Feb 2024 13:36:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707255362; x=1707860162; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7d1cAEA/en06DDamBuUyyFIq84mWg/nOkAan40QbBho=;
+        b=m7ahRL1PZmtWmjnkHDZ6JXnr+LLr8VUoyoCwruPVv+OtQQMtNyq59Tk6SYktsgUgaO
+         GMO0Stc/KJQGREHW3pwZZ8Zp63otdKHua8oxKNvb3FHg5B29eM5Y9KbFf4YyUePnkcq5
+         txd/bktzXEAJfsAv40f9Dg7xewyvkozJfD9JbHiGWdhiujCfWxkoYaTzEEJw/udCiJ33
+         giqnWWUHZWE6/aJttvMaY39NrEor+33QDYBS3gIvunwpYOaZQdNyZf3f3PrIQdn2lWyK
+         YIl1k8x5xTfZFcPzO1CVqS3fH2Fh1Nl7iQfqE29tt/30/xPSFy0LsCOerE5E57yJMZ7Z
+         9BHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707255362; x=1707860162;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7d1cAEA/en06DDamBuUyyFIq84mWg/nOkAan40QbBho=;
+        b=G8dk0duHEVWwGG8/6PUGHWaMwZxIHa+ad3Pl8gCdxg3d8iFL3oI/BNs/G299cVdrIh
+         EeqBa1fHhAY55rsj+Cus+s+8kBViTbSGBidY820ImhkueoNXMwXwJ43wuzefBOAsCmc1
+         N/wJzLvvHr1d1rZvuSTNP97QB+H2+f/1SzvudB9LbWv2CqfSI0QVowxXqHTE8ChQWFkb
+         ULVpHwEl6vJaYiB1Z90+FQzjTk+cyoGT2AsmBN87sIA6NUgJfx65zhX1KAp0kaVpu/Pr
+         SSXsfjG52D/m6OORXqxLgDCFJZjhSuItYdQuv8RDD0IiLsbGDAp77WLzmLB8ER7jSkMS
+         vQZw==
+X-Gm-Message-State: AOJu0YwSowoCgHQ7ONBxVk4K5dBRrMqltrKRxtNbY7/R7AnXB8iFyTFR
+	D0u4XIEchoAQQ9N7sGtio+raa0Ch9b4JnijgQC6nKPz5jE2r74U3wr6r+Jt4N5E=
+X-Google-Smtp-Source: AGHT+IFwsBNz+g6T1MZLKpa+VqxDK828GdyrSsAoosVSfnms+toVCidvBvT29MWYbSG0wcnmvFn0zg==
+X-Received: by 2002:a05:6358:290b:b0:178:8a06:68e2 with SMTP id y11-20020a056358290b00b001788a0668e2mr1015222rwb.29.1707255362196;
+        Tue, 06 Feb 2024 13:36:02 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCXmUXmwHnwnbzNPnNXZb1YHfuTu3hdGBmd0iQj51Kcy6b7WfSAkwWFN05eZW66xLCBO1KGiN5gZH5phqkOY649nvKrAR5NTwe7m2VyLlufm9Hq2HMTG6Cp1Sv5rLVHAMX++f3KlLZsZ91DSrFxaNAxtXrKDTXWOHJJCa8/kVlf/0mDEd1Mv7i42RKbGNuHs4QONnbYv91Q4oINDbIGT4rs16z5xDLglin56tSqGlLydrLfwEbQQPtiJOyQ/f/ItNDKEk+Od90KdUkbGeSv9ry3k7nm+7ucRyAU8LsYKmOrF+aLzXw1iK7x0
+Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
+        by smtp.gmail.com with ESMTPSA id 33-20020a630b21000000b005c662e103a1sm2748504pgl.41.2024.02.06.13.36.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Feb 2024 13:36:01 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rXT6l-002zy6-0j;
+	Wed, 07 Feb 2024 08:35:59 +1100
+Date: Wed, 7 Feb 2024 08:35:59 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: JonasZhou-oc <JonasZhou-oc@zhaoxin.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, CobeChen@zhaoxin.com,
+	LouisQi@zhaoxin.com, JonasZhou@zhaoxin.com
+Subject: Re: [PATCH] fs/address_space: move i_mmap_rwsem to mitigate a false
+ sharing with i_mmap.
+Message-ID: <ZcKmP3zVdBwJVxGd@dread.disaster.area>
+References: <20240202093407.12536-1-JonasZhou-oc@zhaoxin.com>
+ <Zb0EV8rTpfJVNAJA@casper.infradead.org>
+ <Zb1DVNGaorZCDS7R@casper.infradead.org>
+ <ZcBUat4yjByQC7zg@dread.disaster.area>
+ <ZcFvHfYGH7EwGBRK@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Christian Brauner" <brauner@kernel.org>
-Cc: "Jeff Layton" <jlayton@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>, "Jan Kara" <jack@suse.cz>,
- "Chuck Lever" <chuck.lever@oracle.com>,
- "Olga Kornievskaia" <kolga@netapp.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
- "Tom Talpey" <tom@talpey.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
- Ondrej =?utf-8?q?Mosn=C3=A1=C4=8Dek?= <omosnacek@gmail.com>,
- "Zdenek Pytela" <zpytela@redhat.com>
-Subject: Re: [PATCH] filelock: don't do security checks on nfsd setlease calls
-In-reply-to: <20240206-gewaschen-bauen-f7932047a1be@brauner>
-References: <20240205-bz2248830-v1-1-d0ec0daecba1@kernel.org>,
- <170716318935.13976.13465352731929804157@noble.neil.brown.name>,
- <20240206-gewaschen-bauen-f7932047a1be@brauner>
-Date: Wed, 07 Feb 2024 08:16:57 +1100
-Message-id: <170725421733.13976.232570371514420308@noble.neil.brown.name>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_TWELVE(0.00)[13];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,oracle.com,netapp.com,talpey.com,vger.kernel.org,gmail.com,redhat.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZcFvHfYGH7EwGBRK@casper.infradead.org>
 
-On Wed, 07 Feb 2024, Christian Brauner wrote:
-> On Tue, Feb 06, 2024 at 06:59:49AM +1100, NeilBrown wrote:
-> > On Mon, 05 Feb 2024, Jeff Layton wrote:
-> > > Zdenek reported seeing some AVC denials due to nfsd trying to set
-> > > delegations:
-> > >=20
-> > >     type=3DAVC msg=3Daudit(09.11.2023 09:03:46.411:496) : avc:  denied =
- { lease } for  pid=3D5127 comm=3Drpc.nfsd capability=3Dlease  scontext=3Dsys=
-tem_u:system_r:nfsd_t:s0 tcontext=3Dsystem_u:system_r:nfsd_t:s0 tclass=3Dcapa=
-bility permissive=3D0
-> > >=20
-> > > When setting delegations on behalf of nfsd, we don't want to do all of
-> > > the normal capabilty and LSM checks. nfsd is a kernel thread and runs
-> > > with CAP_LEASE set, so the uid checks end up being a no-op in most cases
-> > > anyway.
-> > >=20
-> > > Some nfsd functions can end up running in normal process context when
-> > > tearing down the server. At that point, the CAP_LEASE check can fail and
-> > > cause the client to not tear down delegations when expected.
-> > >=20
-> > > Also, the way the per-fs ->setlease handlers work today is a little
-> > > convoluted. The non-trivial ones are wrappers around generic_setlease,
-> > > so when they fail due to permission problems they usually they end up
-> > > doing a little extra work only to determine that they can't set the
-> > > lease anyway. It would be more efficient to do those checks earlier.
-> > >=20
-> > > Transplant the permission checking from generic_setlease to
-> > > vfs_setlease, which will make the permission checking happen earlier on
-> > > filesystems that have a ->setlease operation. Add a new kernel_setlease
-> > > function that bypasses these checks, and switch nfsd to use that instead
-> > > of vfs_setlease.
-> > >=20
-> > > There is one behavioral change here: prior this patch the
-> > > setlease_notifier would fire even if the lease attempt was going to fail
-> > > the security checks later. With this change, it doesn't fire until the
-> > > caller has passed them. I think this is a desirable change overall. nfsd
-> > > is the only user of the setlease_notifier and it doesn't benefit from
-> > > being notified about failed attempts.
-> > >=20
-> > > Cc: Ondrej Mosn=C3=A1=C4=8Dek <omosnacek@gmail.com>
-> > > Reported-by: Zdenek Pytela <zpytela@redhat.com>
-> > > Closes: https://bugzilla.redhat.com/show_bug.cgi?id=3D2248830
-> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> >=20
-> > Reviewed-by: NeilBrown <neilb@suse.de>
-> >=20
-> > It definitely nice to move all the security and sanity check early.
-> > This patch allows a minor clean-up in cifs which could possibly be
-> > included:
-> > diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> > index 2a4a4e3a8751..0f142d1ec64f 100644
-> >=20
-> > --- a/fs/smb/client/cifsfs.c
-> > +++ b/fs/smb/client/cifsfs.c
-> > @@ -1094,9 +1094,6 @@ cifs_setlease(struct file *file, int arg, struct fi=
-le_lock **lease, void **priv)
-> >  	struct inode *inode =3D file_inode(file);
-> >  	struct cifsFileInfo *cfile =3D file->private_data;
-> > =20
-> > -	if (!(S_ISREG(inode->i_mode)))
-> > -		return -EINVAL;
-> > -
-> >  	/* Check if file is oplocked if this is request for new lease */
-> >  	if (arg =3D=3D F_UNLCK ||
-> >  	    ((arg =3D=3D F_RDLCK) && CIFS_CACHE_READ(CIFS_I(inode))) ||
-> >=20
-> >=20
-> > as ->setlease() is now never called for non-ISREG files.
->=20
-> I've added the following on top. I've made you author and added your
-> SoB. Please tell me if you have any problems with this:
+On Mon, Feb 05, 2024 at 11:28:29PM +0000, Matthew Wilcox wrote:
+> On Mon, Feb 05, 2024 at 02:22:18PM +1100, Dave Chinner wrote:
+> > Intuition tells me that what the OP is seeing is the opposite case
+> > to above: there is significant contention on the lock. In that case,
+> > optimal "contention performance" comes from separating the lock and
+> > the objects it protects into different cachelines.
+> > 
+> > The reason for this is that if the lock and objects it protects are
+> > on the same cacheline, lock contention affects both the lock and the
+> > objects being manipulated inside the critical section. i.e. attempts
+> > to grab the lock pull the cacheline away from the CPU that holds the
+> > lock, and then accesses to the object that are protected by the lock
+> > then have to pull the cacheline back.
+> > 
+> > i.e. the cost of the extra memory fetch from an uncontended
+> > cacheline is less than the cost of having to repeatedly fetch the
+> > memory inside a critical section on a contended cacheline.
+> > 
+> > I consider optimisation attempts like this the canary in the mine:
+> > it won't be long before these or similar workloads report
+> > catastrophic lock contention on the lock in question.  Moving items
+> > in the structure is equivalent to re-arranging the deck chairs
+> > whilst the ship sinks - we might keep our heads above water a
+> > little longer, but the ship is still sinking and we're still going
+> > to have to fix the leak sooner rather than later...
+> 
+> So the fundamental problem is our data structure.  It's actually two
+> problems wrapped up in one bad idea.
+> 
+> i_mmap is a struct rb_root_cached:
+> 
+> struct rb_root_cached {
+>         struct rb_root rb_root;
+>         struct rb_node *rb_leftmost;
+> };
+> 
+> struct rb_root {
+>         struct rb_node *rb_node;
+> };
+> 
+> so it's two pointers into the tree; one to the leftmost node, one
+> to the topmost node.  That means we're modifying one or both of these
+> pointers frequently.  I imagine it's the rb_root, which is being modified
+> frequently because we're always ... appending to the right?  And so
+> we're rotating frequently.  Worst case would be if we're appending to
+> the left and modifying both pointers.
+> 
+> There are things we could do to address this by making rotations less
+> frequent for the common case, which I suspect is mapping the entire file.
+> And perhaps we should do these things as a stopgap.
+> 
+> The larger problem is that rbtrees suck.  They suck the same way that
+> linked lists suck; the CPU can't prefetch very far ahead (or in this
+> case down).  It can do a little more work in that it can prefetch both
+> the left & right pointers, but it can't fetch the grandchildren until the
+> children fetches have finished, so the dependent reads have us stumped.
 
-No problems at all - thanks for doing this!
+Yes, pretty much all balanced binary search trees have this problem.
+I pointed out this problem with rbtrees many years ago when someone
+tried to implement range locks with an rbtree to track locked
+ranges. On modern CPUs, trees with array based nodes (btrees, the
+linux radix tree, etc) are far more efficient. But....
 
-NeilBrown
+> The solution to this problem is to change the interval tree data structure
+> from an Red-Black tree to a B-tree, or something similar where we use
+> an array of pointers instead of a single pointer.
 
+.... B-trees are not immune to pointer chasing problems, either.
+Most use binary searches within the nodes, and so we have the
+problem of unpredictable cacheline misses within the nodes as well
+as being unable to do depth based prefetch similar to rbtrees.
 
->=20
-> From d30e52329760873bf0d7984a442cace3a4b5f39d Mon Sep 17 00:00:00 2001
-> From: NeilBrown <neilb@suse.de>
-> Date: Tue, 6 Feb 2024 14:08:57 +0100
-> Subject: [PATCH] smb: remove redundant check
->=20
-> ->setlease() is never called on non-regular files now. So remove the
-> check from cifs_setlease().
->=20
-> Link: https://lore.kernel.org/r/170716318935.13976.13465352731929804157@nob=
-le.neil.brown.name
-> Signed-off-by: NeilBrown <neilb@suse.de>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/smb/client/cifsfs.c | 3 ---
->  1 file changed, 3 deletions(-)
->=20
-> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
-> index 5eee5b00547f..cbcb98d5f2d7 100644
-> --- a/fs/smb/client/cifsfs.c
-> +++ b/fs/smb/client/cifsfs.c
-> @@ -1094,9 +1094,6 @@ cifs_setlease(struct file *file, int arg, struct file=
-_lease **lease, void **priv
->  	struct inode *inode =3D file_inode(file);
->  	struct cifsFileInfo *cfile =3D file->private_data;
-> =20
-> -	if (!(S_ISREG(inode->i_mode)))
-> -		return -EINVAL;
-> -
->  	/* Check if file is oplocked if this is request for new lease */
->  	if (arg =3D=3D F_UNLCK ||
->  	    ((arg =3D=3D F_RDLCK) && CIFS_CACHE_READ(CIFS_I(inode))) ||
-> --=20
-> 2.43.0
->=20
->=20
+Perhaps we should be looking at something like this:
 
+https://lore.kernel.org/linux-fsdevel/20240126220655.395093-2-kent.overstreet@linux.dev/
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
