@@ -1,243 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-10502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27CC84BB21
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 17:37:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7740384BB47
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 17:45:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E2521F2637A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 16:37:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0250E1F26FCC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 16:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F76134C6;
-	Tue,  6 Feb 2024 16:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26184C85;
+	Tue,  6 Feb 2024 16:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QcM0Morf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qlxh6vka"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F795134BD
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 16:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8656C4A08
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 16:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707237349; cv=none; b=YQyky1jB6TiuYRdLgS4g0P1pKO5NyO2eVPlKZRmkZ7gOWOpyPnY4riIftjXv0OZ3zQrCk3nppP8ud0iBQ7rA8BIQa5jMsx6Wdv0h1S+Co0nyahEahB3xpMlTfNOg9Bm4CRQByh+x26Yl8RCS2PxX0D9zygU7DboNC2ubuO6lMHc=
+	t=1707237902; cv=none; b=gOYzF9tQJiKPQclclfIzcQgNaMFY6xG1btro5qrVmkqWYeHjV6mxE2wJyNeedAXfviUsSS5mr26Btu+vhPKD9vYeUx0zNUq8D9y9GJ/JXB29QlXapM5ykiPQiJCG0lIANyt+j+7eceAqyOkbHqvVDz3nCRwUEeecW1zh0hbxZjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707237349; c=relaxed/simple;
-	bh=TayipBZk+J0C/2i4VnPTBZ7ZdNgABfJvQWSL4hX+Fhw=;
+	s=arc-20240116; t=1707237902; c=relaxed/simple;
+	bh=DLj5K8UkoiMaBEqBBa/z3x3IW3/j7QyfTNipzbo/+ls=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nI0adWlEQtN5ZmYaol+ZUxY3GKsRFvq57Ep6eVunhNYZf7J+baUoO7KDsX+63oW/Lw6RRIEP0ygNLOHxYRew0O3xG+hqwduFGYcvUPhJcqZaeStyc24FIi+0W8kb6U5BimJSpcM7n/qzWKWaKK/rUGetGXi/nExZ/XaymODE7TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QcM0Morf; arc=none smtp.client-ip=209.85.219.49
+	 To:Cc:Content-Type; b=fGmhhgvsWZ8RBc9mijmvCOT7VPXTbvQZoMmypjeglljEdmoxMUYX5tVaNnjsceH0H/1K2GpmAz/7JAaU6CzlrQhAPDiA7MVutogvtAk5u0eHwhx4kw4DZI/h6C7GKq2U6PfbHjD4xOKgUmq7YfXhyNpzCk1tSP53oPiRZc0Fm1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qlxh6vka; arc=none smtp.client-ip=209.85.221.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6818a9fe380so32857296d6.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Feb 2024 08:35:47 -0800 (PST)
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4c03beb85f4so655177e0c.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Feb 2024 08:45:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707237346; x=1707842146; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707237899; x=1707842699; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TayipBZk+J0C/2i4VnPTBZ7ZdNgABfJvQWSL4hX+Fhw=;
-        b=QcM0Morf4Un1zjkVXg46g1LRAfhNy1TvrEVWpYuAdmHd08ehm+Ws8dNsHLSVj20eGo
-         MvtfcLOpHXBqOW9x897TqHkrkLWmR3j+ajWdvObi4Il3uHBwBUCx/5rj/5reN8iZrCut
-         2SiKIr4Jn0g+3O9m0NqadTF+oelKanufGEtPUlL3iAYg2LAv/PAGrZk7AKNuRX0LUnGh
-         UlIn9Aa5FthZdte5Rz40pXOfPeiBRPz0eWQ8F3UzGQ2qe0iqeeGSsSuyPXr19CaKGsaP
-         wu0+Zc/pxEbFObN7wN0E4pVfRXbQHCzgZV6oAs0e7rNsSwzs+oVQZI7p5B48ZayBcaXZ
-         8emQ==
+        bh=DLj5K8UkoiMaBEqBBa/z3x3IW3/j7QyfTNipzbo/+ls=;
+        b=Qlxh6vkaXZvvRYZlv6iZts92d2mukXQ9otc3hfZXAMyjGR+4yP+OEf9PvIQCjfQQb6
+         lm2X/EPgdcDzMetvDk0YJdC3R4tAwmBDSw2RpylnGh3hn2PPd2GKOe63aA+UraSy6jpb
+         Ynzm4nC8rUoJ+CI6flAhXpiQeD0GW+bNlX396dR2jMmRLRptiKUmzGOj1bvn9uVk4enr
+         DE7jaEWY9zh3XwpY7vMUJca4uTI33VKlhNeIJfA6sWE77JTKQWVQyOurTgb+Glg133/q
+         l0p0ecdfPHAaYIfY//v7RFQRkJSCIrXed8TJZo5WHp/btsDQfiGwLZWaLTUjBjkQMm1s
+         G9WA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707237346; x=1707842146;
+        d=1e100.net; s=20230601; t=1707237899; x=1707842699;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TayipBZk+J0C/2i4VnPTBZ7ZdNgABfJvQWSL4hX+Fhw=;
-        b=TAMleqtKqoUgmfiOm6+TwM03tuy/+aYwhxhLi+x5LhfLH6jGTg5HGwhVCtMZWv5rZw
-         2kSbiULrdbm88PMSgNCJvRwhHtwIg0ja1UsULIk3EVvV7hb5L6k+s9NgMifjqvEeC34w
-         edlu2+FnqhFqyv26js0AVb8d/dyUTBdhlDxWbpZlOCiLiMsSD2HAt3mmcNhfDHiGY1BO
-         x9R9/cq7bg/HDzD8QEZq1NgYnc72l/LlIPZLgpjb9fDX3MkwSxqvWNbvFK0lTq7iv+HM
-         9FbPai8PdsWPE9PDML+PctVwDWqobAxnmv7yLmPAXcvCA+wFmJlWLmgTc/tjbm1FcCpU
-         MrdA==
-X-Gm-Message-State: AOJu0YxJpSsPPk70OjmuM8qM7dnLmDQGwhAvpyXD9UN2mJ95cpeS/ySh
-	dNk9tAYsVVAuN6hd+tvK/cMBqoi5XIzdAnS+qADMwIJI2tYKpjEKZcWGWQwE+ezv30L9+hg4cfz
-	j5w1FF4Z7+8Hc2LF5NFU8kbXq77zjDrzVxlU=
-X-Google-Smtp-Source: AGHT+IEJvQI5eM62+4KayqC7qn7MigLmuI6VFlajOF5vpJS9iP1HuVdLkcQwKuoV38bysZA2iPwYy80B2ifApd1zUbk=
-X-Received: by 2002:a05:6214:1bcc:b0:68c:7f6f:2c6 with SMTP id
- m12-20020a0562141bcc00b0068c7f6f02c6mr3116113qvc.36.1707237346260; Tue, 06
- Feb 2024 08:35:46 -0800 (PST)
+        bh=DLj5K8UkoiMaBEqBBa/z3x3IW3/j7QyfTNipzbo/+ls=;
+        b=U7rBHGPHo0oepmMMvoPss1NqkCaHfGdMVnVXiCJpdkVUytUa8Dgys4+EKh3eH83xRz
+         0jKPvjqan7vdEiozcFu0Av+4jFC7gL6B9Xd8oZK7QSGFEpeAM+g90PzsZo9DgmzltMRP
+         oqEjdE4GVwXIDT/Y8XZH3WTvWWIZSPyASV5VXE6MzMnF8ff9HU5rRH3H1FbTPqXiA9Lt
+         f0y5LVjW58+exTe2Qae8LfjLFRv/crBWltVWgrNkoWQlbAf6y/twvhCDQk6EYpvwx28e
+         80uryow4exvrGRXVUGyG/yTBpOa+GJYvW5vNmkC4U55RJD06NDP9TEXvatUUeTiSALW3
+         hGCg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0eu2KBWTWKZHTnCotWWjiuYtHcT5VWsYWOHkh2nS87l4ZvtrOv9SK748lFlh1BexYUaN/5iQlxcpHzN1cPgnSSaMx7ukiwuFMNMmNJw==
+X-Gm-Message-State: AOJu0Yyv7uDGOKLZyM81xWYx64SoO+vfdxqsf8wrhBoT/UEAfUz/qS1s
+	vrxOHfcgpHm+GToU25b9FyLnEVnqv1tAJWAJxH6PpO4Nf5VFANtauhsQ8UvF0gkg45TrgPqVEfT
+	Oy1Ue56Dnp9yVGhhur4PjDSgCSnF26kK+FJg=
+X-Google-Smtp-Source: AGHT+IGnhMyvWOPrnQlNUJqD7wdTDjrq1qqBaZ2yJALg8y3ouUfiMVoIrGUczfqBq+s47KOz0xXMfsebQ6iK2a+52T0=
+X-Received: by 2002:a05:6122:1b09:b0:4c0:1afb:b4cc with SMTP id
+ er9-20020a0561221b0900b004c01afbb4ccmr71331vkb.13.1707237898401; Tue, 06 Feb
+ 2024 08:44:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231208080135.4089880-1-amir73il@gmail.com> <20231213172844.ygjbkyl6i4gj52lt@quack3>
- <CAOQ4uxjMv_3g1XSp41M7eV+Tr+6R2QK0kCY=+AuaMCaGj0nuJA@mail.gmail.com>
- <20231215153108.GC683314@perftesting> <CAOQ4uxjVuhznNZitsjzDCanqtNrHvFN7Rx4dhUEPeFxsM+S22A@mail.gmail.com>
- <20231218143504.abj3h6vxtwlwsozx@quack3> <CAOQ4uxjNzSf6p9G79vcg3cxFdKSEip=kXQs=MwWjNUkPzTZqPg@mail.gmail.com>
- <CAOQ4uxgxCRoqwCs7mr+7YP4mmW7JXxRB20r-fsrFe2y5d3wDqQ@mail.gmail.com> <20240205182718.lvtgfsxcd6htbqyy@quack3>
-In-Reply-To: <20240205182718.lvtgfsxcd6htbqyy@quack3>
+References: <CAMp4zn8aXNPzq1i8KYmbRfwDBvO5Qefa4isSyS1bwYuvkuBsHg@mail.gmail.com>
+ <CAOQ4uxgPY_6oKZFmWitJ-FTuV1YUWHMcNqppiCiMMk46aURMUA@mail.gmail.com>
+ <20240206135028.q56y6stckqnfwlbg@quack3> <CAMp4zn_EtdB2XHsWtNQ72hzruRFGCCCYc7vaRV8W-K7W4v61uw@mail.gmail.com>
+In-Reply-To: <CAMp4zn_EtdB2XHsWtNQ72hzruRFGCCCYc7vaRV8W-K7W4v61uw@mail.gmail.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 6 Feb 2024 18:35:34 +0200
-Message-ID: <CAOQ4uxgMKjEMjPP5HBk0kiZTfkqGU-ezkVpeS22wxL=JmUqhuQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH] fanotify: allow to set errno in FAN_DENY permission response
-To: Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>, 
-	Sweet Tea Dorminy <thesweettea@meta.com>
+Date: Tue, 6 Feb 2024 18:44:47 +0200
+Message-ID: <CAOQ4uxhuPBWD=TYZw974NsKFno-iNYSkHPw6WTfG_69ovS=nJA@mail.gmail.com>
+Subject: Re: Fanotify: concurrent work and handling files being executed
+To: Sargun Dhillon <sargun@sargun.me>
+Cc: Jan Kara <jack@suse.cz>, 
+	Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>, Sweet Tea Dorminy <thesweettea@meta.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 5, 2024 at 8:27=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+On Tue, Feb 6, 2024 at 6:30=E2=80=AFPM Sargun Dhillon <sargun@sargun.me> wr=
+ote:
 >
-> I'm sorry for the delay. The last week was busy and this fell through the
-> cracks.
->
-
-No worries, I was busy as well.
-I did already rebase fan_pre_content & fan_errno [1] (over v6.8-rc2)
-last week, made the small changes I mention here and ran some
-basic tests, but did not complete writing tests.
-Hoping to switch back to it this week.
-
-[1] https://github.com/amir73il/linux/commits/fan_errno
-
-> On Mon 29-01-24 20:30:34, Amir Goldstein wrote:
-> > On Mon, Dec 18, 2023 at 5:53=E2=80=AFPM Amir Goldstein <amir73il@gmail.=
-com> wrote:
-> > > In the HttpDirFS HSM demo, I used FAN_OPEN_PERM on a mount mark
-> > > to deny open of file during the short time that it's content is being
-> > > punched out [1].
-> > > It is quite complicated to explain, but I only used it for denying ac=
-cess,
-> > > not to fill content and not to write anything to filesystem.
-> > > It's worth noting that returning EBUSY in that case would be more mea=
-ningful
-> > > to users.
-> > >
-> > > That's one case in favor of allowing FAN_DENY_ERRNO for FAN_OPEN_PERM=
-,
-> > > but mainly I do not have a proof that people will not need it.
-> > >
-> > > OTOH, I am a bit concerned that this will encourage developer to use
-> > > FAN_OPEN_PERM as a trigger to filling file content and then we are ba=
-ck to
-> > > deadlock risk zone.
-> > >
-> > > Not sure which way to go.
-> > >
-> > > Anyway, I think we agree that there is no reason to merge FAN_DENY_ER=
-RNO
-> > > before FAN_PRE_* events, so we can continue this discussion later whe=
-n
-> > > I post FAN_PRE_* patches - not for this cycle.
+> On Tue, Feb 6, 2024 at 6:50=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
 > >
-> > I started to prepare the pre-content events patches for posting and got=
- back
-> > to this one as well.
+> > On Tue 06-02-24 09:44:29, Amir Goldstein wrote:
+> > > On Tue, Feb 6, 2024 at 1:24=E2=80=AFAM Sargun Dhillon <sargun@sargun.=
+me> wrote:
+> > > >
+> > > > One of the issues we've hit recently while using fanotify in an HSM=
+ is
+> > > > racing with files that are opened for execution.
+> > > >
+> > > > There is a race that can result in ETXTBUSY.
+> > > > Pid 1: You have a file marked with FAN_OPEN_EXEC_PERM.
+> > > > Pid 2: execve(file_by_path)
+> > > > Pid 1: gets notification, with file.fd
+> > > > Pid 2: blocked, waiting for notification to resolve
+> > > > Pid 1: Does work with FD (populates the file)
+> > > > Pid 1: writes FAN_ALLOW to the fanotify file descriptor allowing th=
+e event.
+> > > > Pid 2: continues, and falls through to deny_write_access (and fails=
+)
+> > > > Pid 1: closes fd
 > >
-> > Since we had this discussion I have learned of another use case that
-> > requires filling file content in FAN_OPEN_PERM hook, FAN_OPEN_EXEC_PERM
-> > to be exact.
+> > Right, this is kind of nasty.
 > >
-> > The reason is that unless an executable content is filled at execve() t=
-ime,
-> > there is no other opportunity to fill its content without getting -ETXT=
-BSY.
->
-> Yes, I've been scratching my head over this usecase for a few days. I was
-> thinking whether we could somehow fill in executable (and executed) files=
- on
-> access but it all seemed too hacky so I agree that we probably have to fi=
-ll
-> them in on open.
->
-
-Normally, I think there will not be a really huge executable(?)
-If there were huge executables, they would have likely been broken down
-into smaller loadable libraries which should allow more granular
-content filling,
-but I guess there will always be worst case exceptions.
-
-> > So to keep things more flexible, I decided to add -ETXTBSY to the
-> > allowed errors with FAN_DENY_ERRNO() and to decided to allow
-> > FAN_DENY_ERRNO() with all permission events.
+> > > > Pid 1 can close the FD before responding, but this can result in a
+> > > > race if fanotify is being handled in a multi-threaded
+> > > > manner.
 > >
-> > To keep FAN_DENY_ERRNO() a bit more focused on HSM, I have
-> > added a limitation that FAN_DENY_ERRNO() is allowed only for
-> > FAN_CLASS_PRE_CONTENT groups.
+> > Yep.
+> >
+> > > > I.e. if there are two threads operating on the same fanotify group,
+> > > > and an event's FD has been closed, that can be reused
+> > > > by another event. This is largely not a problem because the
+> > > > outstanding events are added in a FIFO manner to the outstanding
+> > > > event list, and as long as the earlier event is closed and responde=
+d
+> > > > to without interruption, it should be okay, but it's difficult
+> > > > to guarantee that this happens, unless event responses are serializ=
+ed
+> > > > in some fashion, with strict ordering between
+> > > > responses.
+> >
+> > Yes, essentially you must make sure you will not read any new events fr=
+om
+> > the notification queue between fd close & writing of the response. Fran=
+kly,
+> > I find this as quite ugly and asking for trouble (subtle bugs down the
+> > line).
+> >
+> Is there a preference for either refactoring fanotify_event_metadata, or
+> adding this new ID type as a piece of metadata?
 >
-> I have no problem with adding -ETXTBSY to the set of allowed errors. That
-> makes sense. Adding FAN_DENY_ERRNO() to all permission events in
-> FAN_CLASS_PRE_CONTENT groups - OK,
+> I almost feel like the FD should move to being metadata, and we should
+> use ID in place of fd in fanotify_event_metadata. If we use an xarray,
+> it should be reasonable to use a 32-bit identifier, so we don't need
+> to modify the fanotify_event_metadata structure at all.
+>
 
-done that.
+I have a strong preference for FANOTIFY_METADATA_VERSION 4
+because I really would like event->key to be 64bit and in the header,
+but I have a feeling that Jan may have a different opinion..
 
-I am still not very happy about FAN_OPEN_PERM being part of HSM
-event family when I know that O_TRUCT and O_CREAT call this hook
-with sb writers held.
+> > > > There are a couple of ways I see around this:
+> > > > 1. Have a flag in the fanotify response that's like FAN_CLOSE_FD,
+> > > > where fanotify_write closes the fd when
+> > > > it processes the response.
+> > >
+> > > That seems doable and useful.
+> > >
+> I can work on this. We already have FAN_AUDIT and FAN_INFO as optional
+> bits that can be set in the response. I know there's another thread talki=
+ng
+> about using the high-bits for error codes, and I wouldn't want to pollute
+> the higher bits too much if we go down that route.
+>
 
-The irony, is that there is no chance that O_TRUNC will require filling
-content, same if the file is actually being created by O_CREAT, so the
-cases where sb writers is actually needed and the case where content
-filling is needed do not overlap, but I cannot figure out how to get those
-cases out of the HSM risk zone. Ideas?
+There is plenty of bits space still.
+I could implement FAN_CLOSE_FD if we get to a conclusion that it
+will help. it should be quite trivial so better not do conflicting work
+in parallel. But I think that Jan's idea of not opening event->fd at all
+may be better.
 
-> if we don't find anything better - I
-> wanted to hash out another possibility here: Currently all permission
-> events (and thus also the events we plan to use for HSM AFAIU) are using
-> 'fd' to identify file where the event happened. This is used as identifie=
-r
-> for response, can be used to fill in file contents for HSM but it also
-> causes issues such as the problem with exec(2) occasionally failing if th=
-is
-> fd happens to get closed only after exec(2) gets to checking
-> deny_write_access(). So what if we implemented events needed for HSM as F=
-ID
-> events (we'd have think how to match replies to events)? Then the app wou=
-ld
-> open the file for filling in using FID as well as it would naturally clos=
-e
-> the handle before replying so problems with exec(2) would not arise. Thes=
-e
+> I'm also not sure how best to implement capability probing (other than yo=
+u
+> get an EINVAL in userspace and retry without that bit being set).
+>
 
-The two things are independent IMO.
-We can use an event->key instead of event->fd, which I like,
-but we may still leave event->fd as a way to get an FMODE_NONOTIFY
-fd as long as the user closes event->fd before responding or we can
-implement Sargun's suggestion of the FAN_CLOSE_FD response flag.
-
-If a user needs to open an FMODE_NONOTIFY fd from fid, we will
-need to provide a way to do that.
-My WIP pre-lookup event patches [2] implements inheritance of
-FMODE_NONOTIFY from dirfd used for openat().
-Perhaps we can do the same for open_by_handle_at() and inherit
-FMODE_NONOTIFY from mount_fd to implement your suggestion?
-
-[2] https://github.com/amir73il/linux/commits/fan_lookup_perm
-
-> would be essentially new events (so far we didn't allow permission events
-> in FID groups) so allowing FAN_DENY_ERRNO() replies for them would be
-> natural. Overall it would seem like a cleaner "clean room implementation"
-> API?
-
-I like the idea of a clean slate.
-
-Looking a head, for the PRE_PATH events (e.g. lookup,create)
-I was planning to use FAN_EVENT_INFO_TYPE_DFID_NAME
-to carry the last component lookup name, but then also have
-event->fd as the dirfd of lookup/create.
-
-That's a bit ugly duplicity and also it does not cover rename(), because
-if we use FAN_EVENT_INFO_TYPE_{OLD,NEW}_DFID_NAME
-to report names, where would newdirfd, olddirfd be reported?
-
-Your suggestion solves both these questions elegantly and
-if you agree to adapting open_by_handle_at() to cater fanotify needs,
-then we have a plan to propose.
-
-The bad side of clean slate is that it reduces the chances of me
-being able to get pre-content events ready in time for 6.9, which
-is a shame, but we got to do what we got to do ;)
+Yes, easy.
+You can event write a response with FAN_NOFD for fd after
+fanotify_init() to check capability.
+If capability is supported you will get -ENOENT otherwise -INVAL.
 
 Thanks,
 Amir.
