@@ -1,256 +1,328 @@
-Return-Path: <linux-fsdevel+bounces-10413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A83784AC43
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 03:40:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D9984AC4F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 03:48:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0097B2869E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 02:40:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882731C239C9
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 02:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E95B76E2AD;
-	Tue,  6 Feb 2024 02:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 868AD6E2D2;
+	Tue,  6 Feb 2024 02:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="SybyMvBJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB19C56B62;
-	Tue,  6 Feb 2024 02:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206786DD1A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 02:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707187228; cv=none; b=LjUjnoCtkERkG3FYv7fZUCtG9owDScUqm0xpvMBRvhhAkJ3mm4V3Yb2h33ZlkIkKvlfh4elROy5P99Ysm/95nXTDS1jG5wJtGXF/rSXlwK20UDzfbMB7TpfEagM5wM4s8zh33ExVA/PNrT1icrfMtmdbUksSB7GBIYLzEGl6XQ8=
+	t=1707187709; cv=none; b=pBMaVxOmoeU+RJigkc8Gw9Zs8uzsSu6agUuyIj5iiyGwOOrygFw03ipPl+9xRpsgY2Yln9Og9xXwGkqak7wE+OqDMAoHs6CpwqU7AsxtZdd7ARoZC1b+MetuQ23uRGfc48DbQr4FEjftCf/hAaXjb56L9CTZSJ5CG4o+GFHxxZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707187228; c=relaxed/simple;
-	bh=6MzavmIa27EVGiJIPGA6KackNXrvNk/WnRyxDDaM6DU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TUUS6H8qzU3uX3QqvMW8QQQ0KaGOJnWJQwtsQuS9fns+cIQhZ4cMfKyKbv159lq5nmDtiWJ8VN8s1lNQRDaE/zfRq2xdO0xktEcX8U4qo5S/IHCaZ4AMmxJtlZUCKZaWQ02/cPLOQ3BwUWshXACXF+h+sRXCgfzAeq8HlS5C8jY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 4162buqD029897;
-	Tue, 6 Feb 2024 10:37:56 +0800 (+08)
-	(envelope-from zhaoyang.huang@unisoc.com)
-Received: from SHDLP.spreadtrum.com (shmbx06.spreadtrum.com [10.0.1.11])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4TTS8Z2MM3z2SRHsP;
-	Tue,  6 Feb 2024 10:37:50 +0800 (CST)
-Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
- shmbx06.spreadtrum.com (10.0.1.11) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Tue, 6 Feb 2024 11:09:23 +0800
-From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
-To: Jens Axboe <axboe@kernel.dk>, Matthew Wilcox <willy@infradead.org>,
-        Yu
- Zhao <yuzhao@google.com>, <linux-block@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Zhaoyang
- Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
-Subject: [PATCHv9 1/1] block: introduce content activity based ioprio
-Date: Tue, 6 Feb 2024 10:37:40 +0800
-Message-ID: <20240206023740.81351-1-zhaoyang.huang@unisoc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1707187709; c=relaxed/simple;
+	bh=9OzVKt8dleAFVHUaJf2FWAI8P+7Rrlq9X1m8aubTuvE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pl1bi3ZUF7vZMRSzmr/UohO/hy8018sp5BX8Qpe4D2t35KyjniihU7NJhsIAOxGwins1rOi08JyGFwJ3GuKlrQgH62V8M7fAk3nhyW0cLL7Xip0TzGGCW30eNvcxhfHG53ABuzPKWAIEZ4GwjS2AzsvSuNr+ya1WejIJS5PCqcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=SybyMvBJ; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dc6d8f31930so115074276.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 18:48:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umich.edu; s=google-2016-06-03; t=1707187706; x=1707792506; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=isYZDUvsWr/7v30nHxpavVqqhW2SR7yBo8lUWUfPuz4=;
+        b=SybyMvBJSknQOzDFyIVESBl2pUXnBCAj83bq27PJpMVlHYjMKqw0pJayuHxOXL7BsJ
+         HAV2NZV8WEugOIB2bUABJm1DoENeDD/II7Sa5DdTmHeqa8mo8m/Tk68JQYXsAdNj5hS3
+         Y7UuQHGUDwrpbhQhQixtsMJO2eWNS+9UhjMKf+MEURzg0PE+BPfL/wUi+rhh+RJma22i
+         nslV5tXb/gI1GVSRl38Ky87dQsoTJYu3oNQ/f5IyPo7wpN9paXeXhm9q9UF0YaAZlicV
+         I883D2inkbJOfQB6e79gSh5MPFUWJJwp+T/FZULXxr/+TuZbKG2qYJb6/0T03sgZtXtI
+         wEJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707187706; x=1707792506;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=isYZDUvsWr/7v30nHxpavVqqhW2SR7yBo8lUWUfPuz4=;
+        b=aYfuaWGonsTsTyLCD20dsKPqdwXyuolsZq2GiD9gIoV1YPtgm2jV/kwaVZ3BvQzbgf
+         5kE+t6WTfTOMGYU/OgZZ7PKr276XYbrIMJnW41agnYeZqYkOezZKBUzAnrmfLW6X4zCM
+         gBS7YG/2FDpkPRHxQwCBcdqaD3PfIGCpp9+PXc4OyTE8Ks9PIaS4EV5W1q3U+J8AQyK2
+         9Se9DZIKVRcgcfkpoo0uqZ3rZb2vcnILe/LzhKBL62+3QvVKhAVYFahH/3hwJ1EMKqYR
+         o0LXFoeOegc1wsHCZfyOT+OfZMkR141o1fhqGg5w1vtQK5YALIbFw4jLhllGPN0fOhmq
+         ZtIQ==
+X-Gm-Message-State: AOJu0YyvlFzPVVER3aTrOShW8HTeSGncrmn2T1bgKBGX9oAKAQnwtae1
+	j0Z8uNnftiKZozDRp1TVsHHj0ROspNt+xDC3WgDhvpmovv6EqEugKC9Iel2NxSO9Bboojaqhh8S
+	u8LGMddSsyCXeAXJsThSEz2tjJwoCGpoWTQVHlg==
+X-Google-Smtp-Source: AGHT+IEPbFtEPvYCN56yH9yNQS8NYqPda1fHbxAek5H/68ZxD3iz03Yu/GlEBnHjzndnqCkPskBUKo8w2e7mg2dSRzI=
+X-Received: by 2002:a25:d347:0:b0:dc6:b146:8567 with SMTP id
+ e68-20020a25d347000000b00dc6b1468567mr340585ybf.1.1707187705980; Mon, 05 Feb
+ 2024 18:48:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- shmbx06.spreadtrum.com (10.0.1.11)
-X-MAIL:SHSQR01.spreadtrum.com 4162buqD029897
+References: <20240202-alice-file-v4-0-fc9c2080663b@google.com> <20240202-alice-file-v4-3-fc9c2080663b@google.com>
+In-Reply-To: <20240202-alice-file-v4-3-fc9c2080663b@google.com>
+From: Trevor Gross <tmgross@umich.edu>
+Date: Mon, 5 Feb 2024 21:48:14 -0500
+Message-ID: <CALNs47uxe6N7VLqC10k5PH=r-CKBLqGf7JBQMw46LXPUBi3X8w@mail.gmail.com>
+Subject: Re: [PATCH v4 3/9] rust: file: add Rust abstraction for `struct file`
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+On Fri, Feb 2, 2024 at 5:56=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> wr=
+ote:
+>
+> From: Wedson Almeida Filho <wedsonaf@gmail.com>
+>
+> This abstraction makes it possible to manipulate the open files for a
+> process. The new `File` struct wraps the C `struct file`. When accessing
+> it using the smart pointer `ARef<File>`, the pointer will own a
+> reference count to the file. When accessing it as `&File`, then the
+> reference does not own a refcount, but the borrow checker will ensure
+> that the reference count does not hit zero while the `&File` is live.
+>
+> Since this is intended to manipulate the open files of a process, we
+> introduce an `fget` constructor that corresponds to the C `fget`
+> method. In future patches, it will become possible to create a new fd in
+> a process and bind it to a `File`. Rust Binder will use these to send
+> fds from one process to another.
+>
+> We also provide a method for accessing the file's flags. Rust Binder
+> will use this to access the flags of the Binder fd to check whether the
+> non-blocking flag is set, which affects what the Binder ioctl does.
+>
+> This introduces a struct for the EBADF error type, rather than just
+> using the Error type directly. This has two advantages:
+> * `File::from_fd` returns a `Result<ARef<File>, BadFdError>`, which the
+>   compiler will represent as a single pointer, with null being an error.
+>   This is possible because the compiler understands that `BadFdError`
+>   has only one possible value, and it also understands that the
+>   `ARef<File>` smart pointer is guaranteed non-null.
+> * Additionally, we promise to users of the method that the method can
+>   only fail with EBADF, which means that they can rely on this promise
+>   without having to inspect its implementation.
+> That said, there are also two disadvantages:
+> * Defining additional error types involves boilerplate.
+> * The question mark operator will only utilize the `From` trait once,
+>   which prevents you from using the question mark operator on
+>   `BadFdError` in methods that return some third error type that the
+>   kernel `Error` is convertible into. (However, it works fine in methods
+>   that return `Error`.)
+>
+> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Co-developed-by: Daniel Xu <dxu@dxuuu.xyz>
+> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  fs/file.c                       |   7 +
+>  rust/bindings/bindings_helper.h |   2 +
+>  rust/helpers.c                  |   7 +
+>  rust/kernel/file.rs             | 249 ++++++++++++++++++++++++++++++++
+>  rust/kernel/lib.rs              |   1 +
+>  5 files changed, 266 insertions(+)
+>  create mode 100644 rust/kernel/file.rs
+>
+> diff --git a/fs/file.c b/fs/file.c
+> index 3b683b9101d8..f2eab5fcb87f 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -1115,18 +1115,25 @@ EXPORT_SYMBOL(task_lookup_next_fdget_rcu);
+>  /*
+>   * Lightweight file lookup - no refcnt increment if fd table isn't share=
+d.
+>   *
+>   * You can use this instead of fget if you satisfy all of the following
+>   * conditions:
+>   * 1) You must call fput_light before exiting the syscall and returning =
+control
+>   *    to userspace (i.e. you cannot remember the returned struct file * =
+after
+>   *    returning to userspace).
+>   * 2) You must not call filp_close on the returned struct file * in betw=
+een
+>   *    calls to fget_light and fput_light.
+>   * 3) You must not clone the current task in between the calls to fget_l=
+ight
+>   *    and fput_light.
+>   *
+>   * The fput_needed flag returned by fget_light should be passed to the
+>   * corresponding fput_light.
+> + *
+> + * (As an exception to rule 2, you can call filp_close between fget_ligh=
+t and
+> + * fput_light provided that you capture a real refcount with get_file be=
+fore
+> + * the call to filp_close, and ensure that this real refcount is fput *a=
+fter*
+> + * the fput_light call.)
+> + *
+> + * See also the documentation in rust/kernel/file.rs.
+>   */
+>  static unsigned long __fget_light(unsigned int fd, fmode_t mask)
+>  {
 
-Currently, request's ioprio are set via task's schedule priority(when no
-blkcg configured), which has high priority tasks possess the privilege on
-both of CPU and IO scheduling. Furthermore, most of the write requestes
-are launched asynchronosly from kworker which can't know the submitter's
-priorities.
-This commit works as a hint of original policy by promoting the request
-ioprio based on the page/folio's activity. The original idea comes from
-LRU_GEN which provides more precised folio activity than before. This
-commit try to adjust the request's ioprio when certain part of its folios
-are hot, which indicate that this request carry important contents and
-need be scheduled ealier.
+Should this be split to its own patch so it can be applied separately if ne=
+eded?
 
-The filesystem should call bio_set_active_ioprio_folio() after
-calling bio_add_folio. Please be noted that this set of API can not
-handle bvec_try_merge_page cases.
+> [...]
+> +    /// Also known as `O_NDELAY`.
+> +    ///
+> +    /// This is effectively the same flag as [`O_NONBLOCK`] on all archi=
+tectures
+> +    /// except SPARC64.
+> +    pub const O_NDELAY: u32 =3D bindings::O_NDELAY;
 
-This commit is verified on a v6.6 6GB RAM android14 system via 4 test cases
-by calling bio_set_active_ioprio in erofs, ext4, f2fs and blkdev(raw
-partition of gendisk)
+This is O_NDELAY, should the AKA say O_NONBLOCK?
+> [...]
+> +/// Wraps the kernel's `struct file`.
 
-Case 1:
-script[a] which get significant improved fault time as expected[b]*
-where dd's cost also shrink from 55s to 40s.
-(1). fault_latency.bin is an ebpf based test tool which measure all task's
-   iowait latency during page fault when scheduled out/in.
-(2). costmem generate page fault by mmaping a file and access the VA.
-(3). dd generate concurrent vfs io.
+It is probably better to say what it does for the summary, and mention
+what it wraps later.
 
-[a]
-./fault_latency.bin 1 5 > /data/dd_costmem &
-costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
-costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
-costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
-costmem -c0 -a2048000 -b128000 -o0 1>/dev/null &
-dd if=/dev/block/sda of=/data/ddtest bs=1024 count=2048000 &
-dd if=/dev/block/sda of=/data/ddtest1 bs=1024 count=2048000 &
-dd if=/dev/block/sda of=/data/ddtest2 bs=1024 count=2048000 &
-dd if=/dev/block/sda of=/data/ddtest3 bs=1024 count=2048000
-[b]
-                       mainline		commit
-io wait                736us            523us
+> +/// # Refcounting
+> +///
+> +/// Instances of this type are reference-counted. The reference count is=
+ incremented by the
+> +/// `fget`/`get_file` functions and decremented by `fput`. The Rust type=
+ `ARef<File>` represents a
+> +/// pointer that owns a reference count on the file.
+> +///
+> +/// Whenever a process opens a file descriptor (fd), it stores a pointer=
+ to the file in its `struct
+> +/// files_struct`. This pointer owns a reference count to the file, ensu=
+ring the file isn't
+> +/// prematurely deleted while the file descriptor is open. In Rust termi=
+nology, the pointers in
+> +/// `struct files_struct` are `ARef<File>` pointers.
+> +///
+> +/// ## Light refcounts
+> +///
+> +/// Whenever a process has an fd to a file, it may use something called =
+a "light refcount" as a
+> +/// performance optimization. Light refcounts are acquired by calling `f=
+dget` and released with
+> +/// `fdput`. The idea behind light refcounts is that if the fd is not cl=
+osed between the calls to
+> +/// `fdget` and `fdput`, then the refcount cannot hit zero during that t=
+ime, as the `struct
+> +/// files_struct` holds a reference until the fd is closed. This means t=
+hat it's safe to access the
+> +/// file even if `fdget` does not increment the refcount.
+> +///
+> +/// The requirement that the fd is not closed during a light refcount ap=
+plies globally across all
+> +/// threads - not just on the thread using the light refcount. For this =
+reason, light refcounts are
+> +/// only used when the `struct files_struct` is not shared with other th=
+reads, since this ensures
+> +/// that other unrelated threads cannot suddenly start using the fd and =
+close it. Therefore,
+> +/// calling `fdget` on a shared `struct files_struct` creates a normal r=
+efcount instead of a light
+> +/// refcount.
+> +///
+> +/// Light reference counts must be released with `fdput` before the syst=
+em call returns to
+> +/// userspace. This means that if you wait until the current system call=
+ returns to userspace, then
+> +/// all light refcounts that existed at the time have gone away.
+> +///
+> +/// ## Rust references
+> +///
+> +/// The reference type `&File` is similar to light refcounts:
+> +///
+> +/// * `&File` references don't own a reference count. They can only exis=
+t as long as the reference
+> +///   count stays positive, and can only be created when there is some m=
+echanism in place to ensure
+> +///   this.
+> +///
+> +/// * The Rust borrow-checker normally ensures this by enforcing that th=
+e `ARef<File>` from which
+> +///   a `&File` is created outlives the `&File`.
+> +///
+> +/// * Using the unsafe [`File::from_ptr`] means that it is up to the cal=
+ler to ensure that the
+> +///   `&File` only exists while the reference count is positive.
+> +///
+> +/// * You can think of `fdget` as using an fd to look up an `ARef<File>`=
+ in the `struct
+> +///   files_struct` and create an `&File` from it. The "fd cannot be clo=
+sed" rule is like the Rust
+> +///   rule "the `ARef<File>` must outlive the `&File`".
+> +///
+> +/// # Invariants
+> +///
+> +/// * Instances of this type are refcounted using the `f_count` field.
+> +/// * If an fd with active light refcounts is closed, then it must be th=
+e case that the file
+> +///   refcount is positive until all light refcounts of the fd have been=
+ dropped.
+> +/// * A light refcount must be dropped before returning to userspace.
+> +#[repr(transparent)]
+> +pub struct File(Opaque<bindings::file>);
+> +
+> +// SAFETY:
+> +// - `File::dec_ref` can be called from any thread.
+> +// - It is okay to send ownership of `File` across thread boundaries.
 
-* provide correct result for test case 1 in v7 which was compared between
-EMMC and UFS wrongly.
+Shouldn't this be lowecase `file` because it is referring to the
+underlying C object?
 
-Case 2:
-fio -filename=/dev/block/by-name/userdata -rw=randread -direct=0 -bs=4k -size=2000M -numjobs=8 -group_reporting -name=mytest
-mainline: 513MiB/s
-READ: bw=531MiB/s (557MB/s), 531MiB/s-531MiB/s (557MB/s-557MB/s), io=15.6GiB (16.8GB), run=30137-30137msec
-READ: bw=543MiB/s (569MB/s), 543MiB/s-543MiB/s (569MB/s-569MB/s), io=15.6GiB (16.8GB), run=29469-29469msec
-READ: bw=474MiB/s (497MB/s), 474MiB/s-474MiB/s (497MB/s-497MB/s), io=15.6GiB (16.8GB), run=33724-33724msec
-READ: bw=535MiB/s (561MB/s), 535MiB/s-535MiB/s (561MB/s-561MB/s), io=15.6GiB (16.8GB), run=29928-29928msec
-READ: bw=523MiB/s (548MB/s), 523MiB/s-523MiB/s (548MB/s-548MB/s), io=15.6GiB (16.8GB), run=30617-30617msec
-READ: bw=492MiB/s (516MB/s), 492MiB/s-492MiB/s (516MB/s-516MB/s), io=15.6GiB (16.8GB), run=32518-32518msec
-READ: bw=533MiB/s (559MB/s), 533MiB/s-533MiB/s (559MB/s-559MB/s), io=15.6GiB (16.8GB), run=29993-29993msec
-READ: bw=524MiB/s (550MB/s), 524MiB/s-524MiB/s (550MB/s-550MB/s), io=15.6GiB (16.8GB), run=30526-30526msec
-READ: bw=529MiB/s (554MB/s), 529MiB/s-529MiB/s (554MB/s-554MB/s), io=15.6GiB (16.8GB), run=30269-30269msec
-READ: bw=449MiB/s (471MB/s), 449MiB/s-449MiB/s (471MB/s-471MB/s), io=15.6GiB (16.8GB), run=35629-35629msec
+> +unsafe impl Send for File {}
+> [...]
+> +    /// Returns the flags associated with the file.
+> +    ///
+> +    /// The flags are a combination of the constants in [`flags`].
+> +    pub fn flags(&self) -> u32 {
 
-commit: 633MiB/s
-READ: bw=668MiB/s (700MB/s), 668MiB/s-668MiB/s (700MB/s-700MB/s), io=15.6GiB (16.8GB), run=23952-23952msec
-READ: bw=589MiB/s (618MB/s), 589MiB/s-589MiB/s (618MB/s-618MB/s), io=15.6GiB (16.8GB), run=27164-27164msec
-READ: bw=638MiB/s (669MB/s), 638MiB/s-638MiB/s (669MB/s-669MB/s), io=15.6GiB (16.8GB), run=25071-25071msec
-READ: bw=714MiB/s (749MB/s), 714MiB/s-714MiB/s (749MB/s-749MB/s), io=15.6GiB (16.8GB), run=22409-22409msec
-READ: bw=600MiB/s (629MB/s), 600MiB/s-600MiB/s (629MB/s-629MB/s), io=15.6GiB (16.8GB), run=26669-26669msec
-READ: bw=592MiB/s (621MB/s), 592MiB/s-592MiB/s (621MB/s-621MB/s), io=15.6GiB (16.8GB), run=27036-27036msec
-READ: bw=691MiB/s (725MB/s), 691MiB/s-691MiB/s (725MB/s-725MB/s), io=15.6GiB (16.8GB), run=23150-23150msec
-READ: bw=569MiB/s (596MB/s), 569MiB/s-569MiB/s (596MB/s-596MB/s), io=15.6GiB (16.8GB), run=28142-28142msec
-READ: bw=563MiB/s (590MB/s), 563MiB/s-563MiB/s (590MB/s-590MB/s), io=15.6GiB (16.8GB), run=28429-28429msec
-READ: bw=712MiB/s (746MB/s), 712MiB/s-712MiB/s (746MB/s-746MB/s), io=15.6GiB (16.8GB), run=22478-22478msec
+A typedef used here and in the constants module could be useful
 
-Case 3:
-This commit is also verified by the case of launching camera APP which is
-usually considered as heavy working load on both of memory and IO, which
-shows 12%-24% improvement.
+    type FileFlags =3D u32;
 
-		ttl = 0		ttl = 50	ttl = 100
-mainline        2267ms		2420ms		2316ms
-commit          1992ms          1806ms          1998ms
+> +        // This `read_volatile` is intended to correspond to a READ_ONCE=
+ call.
+> +        //
+> +        // SAFETY: The file is valid because the shared reference guaran=
+tees a nonzero refcount.
+> +        //
+> +        // TODO: Replace with `read_once` when available on the Rust sid=
+e.
 
-case 4:
-androbench has no improvment as well as regression in RD/WR test item
-while make a 3% improvement in sqlite items.
+Shouldn't the TODO become a `FIXME(read_once): ...` since it is going
+into the codebase?
 
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
----
-change of v2: calculate page's activity via helper function
-change of v3: solve layer violation by move API into mm
-change of v4: keep block clean by removing the page related API
-change of v5: introduce the macros of bio_add_folio/page for read dir.
-change of v6: replace the macro of bio_add_xxx by submit_bio which
-                iterating the bio_vec before launching bio to block layer
-change of v7: introduce the function bio_set_active_ioprio
-              provide updated test result
-change of v8: provide two sets of APIs for bio_set_active_ioprio_xxx
-change of v9: modify the code according to Matthew's opinion, leave
-	      bio_set_active_ioprio_folio only
----
----
- block/Kconfig       | 15 +++++++++++++++
- block/bio.c         | 33 +++++++++++++++++++++++++++++++++
- include/linux/bio.h |  1 +
- 3 files changed, 49 insertions(+)
+> +        unsafe { core::ptr::addr_of!((*self.as_ptr()).f_flags).read_vola=
+tile() }
+> +    }
+> +}
 
-diff --git a/block/Kconfig b/block/Kconfig
-index f1364d1c0d93..fb3a888194c0 100644
---- a/block/Kconfig
-+++ b/block/Kconfig
-@@ -228,6 +228,21 @@ config BLOCK_HOLDER_DEPRECATED
- config BLK_MQ_STACKING
- 	bool
- 
-+config BLK_CONT_ACT_BASED_IOPRIO
-+	bool "Enable content activity based ioprio"
-+	depends on LRU_GEN
-+	default n
-+	help
-+	  This item enable the feature of adjust bio's priority by
-+	  calculating its content's activity.
-+	  This feature works as a hint of original bio_set_ioprio
-+	  which means rt task get no change of its bio->bi_ioprio
-+	  while other tasks have the opportunity to raise the ioprio
-+	  if the bio take certain numbers of active pages.
-+	  The file system should use the API after bio_add_folio for
-+	  their buffered read/write/sync function to adjust the
-+	  bio->bi_ioprio.
-+
- source "block/Kconfig.iosched"
- 
- endif # BLOCK
-diff --git a/block/bio.c b/block/bio.c
-index 816d412c06e9..2c0b8f2ae4d4 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1476,6 +1476,39 @@ void bio_set_pages_dirty(struct bio *bio)
- }
- EXPORT_SYMBOL_GPL(bio_set_pages_dirty);
- 
-+/*
-+ * bio_set_active_ioprio_folio is helper function to count the bio's
-+ * content's activities which measured by MGLRU.
-+ * The file system should call this function after bio_add_page/folio for
-+ * the buffered read/write/sync.
-+ */
-+#ifdef CONFIG_BLK_CONT_ACT_BASED_IOPRIO
-+void bio_set_active_ioprio_folio(struct bio *bio, struct folio *folio)
-+{
-+	int class, level, hint;
-+	int activities;
-+
-+	/*
-+	 * use bi_ioprio to record the activities, assume no one will set it
-+	 * before submit_bio
-+	 */
-+	bio->bi_ioprio += folio_test_workingset(folio) ? 1 : 0;
-+	activities = IOPRIO_PRIO_DATA(bio->bi_ioprio);
-+	level = IOPRIO_PRIO_LEVEL(bio->bi_ioprio);
-+	hint = IOPRIO_PRIO_HINT(bio->bi_ioprio);
-+
-+	if (activities > bio->bi_vcnt / 2)
-+		class = IOPRIO_CLASS_RT;
-+	else if (activities > bio->bi_vcnt / 4)
-+		class = max(IOPRIO_PRIO_CLASS(get_current_ioprio()), IOPRIO_CLASS_BE);
-+
-+	bio->bi_ioprio = IOPRIO_PRIO_VALUE_HINT(class, level, hint);
-+}
-+#else
-+void bio_set_active_ioprio_folio(struct bio *bio, struct folio *folio) {}
-+#endif
-+EXPORT_SYMBOL_GPL(bio_set_active_ioprio_folio);
-+
- /*
-  * bio_check_pages_dirty() will check that all the BIO's pages are still dirty.
-  * If they are, then fine.  If, however, some pages are clean then they must
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 41d417ee1349..6c36546f6b9b 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -487,6 +487,7 @@ void bio_iov_bvec_set(struct bio *bio, struct iov_iter *iter);
- void __bio_release_pages(struct bio *bio, bool mark_dirty);
- extern void bio_set_pages_dirty(struct bio *bio);
- extern void bio_check_pages_dirty(struct bio *bio);
-+void bio_set_active_ioprio_folio(struct bio *bio, struct folio *folio);
- 
- extern void bio_copy_data_iter(struct bio *dst, struct bvec_iter *dst_iter,
- 			       struct bio *src, struct bvec_iter *src_iter);
--- 
-2.25.1
+Some suggestions but nothing blocking
 
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
