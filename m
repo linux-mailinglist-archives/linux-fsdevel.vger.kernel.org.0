@@ -1,237 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-10423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8126584AFE3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 09:25:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B2B484B019
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 09:41:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A46541C23EEB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 08:25:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D0BD1F21E68
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 08:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C04D812B161;
-	Tue,  6 Feb 2024 08:25:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5920D12BEA2;
+	Tue,  6 Feb 2024 08:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P5FcuUUb"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kn57VMLd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F2D812AAF6;
-	Tue,  6 Feb 2024 08:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152C3405DE
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 08:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707207900; cv=none; b=jl2+M6kP8lo38Fd3gH6Whnr2FgRrxLMgm+ntLN/YmI+UXYIwGa91Jx5o9qhQ69dkJlicnZD8/+2yTQxSLRDb7Y0bAbH/r8KQoYeiOCsySP+R5x5V9KoUmJThiRym4bjGmwqOsBG7URDvgWfvnCb3nl3MTonSp9Zk7eEos9ttgv0=
+	t=1707208750; cv=none; b=BW1lXhBZPUCeeoLsvEk6E5LpR93iilFIpP5FIFeA+OY1qUmehW43Z/6p/y4YjuCfWOVeg73i3I1/ETCVgjg2jyxoKMHqdPSXgZlJRLx03tfpk0KNSQ0P6MV02d/UfG25BMFpV3bkDF5LIMDk77NDa02n2YXrZ/p0uAsDbyi5H54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707207900; c=relaxed/simple;
-	bh=X/L1gjIUUtX0kI2V+7LgpEWJjGlNkaFiW5R2AxG8xts=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ct8kwR9ocu8MtifYp/k5RphWRHhDGeuchTNBH1uRfP/+A1dfE4pXVUQY7ZhqwAqXO8MvOp1meqXS6PP6QRRKOAlHMvNEhN3fw6LSax//uoUKpN2Sw5uxJjh4ikou/xDiDU57dqtj7xcgABq+P+PfNdqrTBz495vy2y3MBm+d9K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P5FcuUUb; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-783d4b3ad96so340510385a.3;
-        Tue, 06 Feb 2024 00:24:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707207897; x=1707812697; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xJnh/hZwLgWNEfFoS0DdwaPWX2fntWPodX2RriYMeW8=;
-        b=P5FcuUUbyQLdEdm2FzuwsUlN+uuNNETGSb8E0uCPEO7s1gXTsk/fQ5RAlDsY6REOGP
-         YZOpJ66IOCThCukZCoykJmZIl5ULj8RRLdiRvctD5PFCL3kPJbohzoDvJssdN4uIyGFa
-         L8j09rMqAgKKUiUn7Z6seDPScja9CsVI8j/AYICVo/PBpfBjBsYG0agm3BZGifmpdYmh
-         +wsVVZW9Qzd70w6eYc7TfcHZG09a4xkMMxH90wj7qFlBDN6WjXICcYCQGjRvoDZewYhG
-         fXgxn6+iXRTVRFQfzj0VZcJwjFY+WBvaqOusWrXwUa/YvQuteMu47tOMgQ+vb7bbT+lZ
-         +mqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707207897; x=1707812697;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xJnh/hZwLgWNEfFoS0DdwaPWX2fntWPodX2RriYMeW8=;
-        b=GUoxlwySZJC2V4tMm7NAvNRTuBQIlmHPHQpJEX0bABMKPnh/cZ9r+w8NXAouaduaLk
-         Zuoi4qRNnVwy28RpCQVPuF9sHqvCqPvb6KKhWaojEwDE10Lk+oP+bJmfWROPmxa7P0d9
-         ndx05NtNLv5axv5GlBmMfQcFJ/NWfYlEFfE4UPHSJfDFVnMr8O2zvkHQwYQcPvRiesMU
-         mKBFK3TJX6ZO+6Qb5tJ9xojx/bDObgm5i/ai/mkNAcqhPIa/HCHXeD8P3OZC5D73ODV2
-         /XWfY90vq1GsUWVbEOaU5jAXu6i5tLrTl584Ctl97PE3QjoJfu3ofqAr7xm1ukChkL7c
-         h8hg==
-X-Gm-Message-State: AOJu0Yx2VnfzIxhiGDb9Looeo29ybnGQlFSGJ/IZ864Ra6d5EbrHC1S7
-	YUF29qCvoqIiMuOaqYuX+bSLu0cVlUVjQHiUdBYHYewkxT4cunVbHV8fqpCGS+OQVhO1fMNItHz
-	KadUsHcPe+1ATMolcV3Du5sUfV9s=
-X-Google-Smtp-Source: AGHT+IGXqi4PAj7TUaBvOsy8jESmmmnmPMJhVrfK/FpfU5yWKUUDHXIKx2eSRTrGXTZRCuV+q1/jMEgqnONnIm2x0TU=
-X-Received: by 2002:ad4:5de3:0:b0:68c:805e:e354 with SMTP id
- jn3-20020ad45de3000000b0068c805ee354mr2122756qvb.38.1707207897461; Tue, 06
- Feb 2024 00:24:57 -0800 (PST)
+	s=arc-20240116; t=1707208750; c=relaxed/simple;
+	bh=l+JMszkFYy6lH6a9tczp4WqafiooarXArqiBuWtq2nA=;
+	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
+	 Date:Message-ID; b=UIkHQUSb++r7hFUr8yzh7DdS3S8CHMs5hYGmJGPNuajClmvuFsjYbqiCUipAdb1iVy2McXyQ+TBzWwl4LJvHedrhk2nErMZmEpHu6nwKXXyuI9WI4QwauopXJ1ePk6t+I5WKARMhjCgKCfvDheHgjtDsHu9JUqMt4reirUoy4IA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kn57VMLd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1707208748;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zVAaAYx+uRJrIVM9VYECDgmw/4CaprkfGNuPI6DSTlw=;
+	b=Kn57VMLdPa5ezyHuJ4Rw7j3q6HVtf+MfyQfje5pnfpsTX5bXUkLEUqDWojyJNOAzLd6kpk
+	5Pfs6/6VJfi7gVzZTlqcWE3+n/oToUip+tKp45D77RVF7IV8lHWU22Ym9NGVDvziKAtcol
+	+KdobRn7RvwhgIAHaKra8gNXPRLXZks=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-343-cq73PueiM7GdY63RPfS8Fg-1; Tue, 06 Feb 2024 03:39:04 -0500
+X-MC-Unique: cq73PueiM7GdY63RPfS8Fg-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1158383B7E6;
+	Tue,  6 Feb 2024 08:39:04 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.245])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 61BE3492BF0;
+	Tue,  6 Feb 2024 08:39:02 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <520668.1706191347@warthog.procyon.org.uk>
+References: <520668.1706191347@warthog.procyon.org.uk>
+Cc: dhowells@redhat.com, Gao Xiang <xiang@kernel.org>,
+    Jeff Layton <jlayton@kernel.org>,
+    Christian Brauner <brauner@kernel.org>,
+    Matthew Wilcox <willy@infradead.org>,
+    Eric Sandeen <esandeen@redhat.com>, v9fs@lists.linux.dev,
+    linux-afs@lists.infradead.org, ceph-devel@vger.kernel.org,
+    linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+    linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: Re: Roadmap for netfslib and local caching (cachefiles)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240205200529.546646-1-kent.overstreet@linux.dev>
- <20240205200529.546646-3-kent.overstreet@linux.dev> <ZcFelmKPb374aebH@dread.disaster.area>
- <l2zdnuczo24zxc6z6hh7q5mmux3wr5iltscnrc7axdugt6ct2k@qzrpj6vc2ct5>
-In-Reply-To: <l2zdnuczo24zxc6z6hh7q5mmux3wr5iltscnrc7axdugt6ct2k@qzrpj6vc2ct5>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 6 Feb 2024 10:24:45 +0200
-Message-ID: <CAOQ4uxjvEL4P4vV5SKpHVS5DtOwKpxAn4n4+Kfqawcu+H-MC5g@mail.gmail.com>
-Subject: Re: [PATCH 2/6] fs: FS_IOC_GETUUID
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-ext4@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Dave Chinner <dchinner@redhat.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.or, 
-	Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3114773.1707208741.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Tue, 06 Feb 2024 08:39:01 +0000
+Message-ID: <3114774.1707208741@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-On Tue, Feb 6, 2024 at 12:49=E2=80=AFAM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> On Tue, Feb 06, 2024 at 09:17:58AM +1100, Dave Chinner wrote:
-> > On Mon, Feb 05, 2024 at 03:05:13PM -0500, Kent Overstreet wrote:
-> > > Add a new generic ioctls for querying the filesystem UUID.
-> > >
-> > > These are lifted versions of the ext4 ioctls, with one change: we're =
-not
-> > > using a flexible array member, because UUIDs will never be more than =
-16
-> > > bytes.
-> > >
-> > > This patch adds a generic implementation of FS_IOC_GETFSUUID, which
-> > > reads from super_block->s_uuid; FS_IOC_SETFSUUID is left for individu=
-al
-> > > filesystems to implement.
-> > >
+David Howells <dhowells@redhat.com> wrote:
 
-It's fine to have a generic implementation, but the filesystem should
-have the option to opt-in for a specific implementation.
+> Disconnected Operation
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> =
 
-There are several examples, even with xfs and btrfs where ->s_uuid
-does not contain the filesystem's UUID or there is more than one
-uuid and ->s_uuid is not the correct one to expose to the user.
+> I'm working towards providing support for disconnected operation, so tha=
+t,
+> provided you've got your working set pinned in the cache, you can contin=
+ue to
+> work on your network-provided files when the network goes away and resyn=
+c the
+> changes later.
+> =
 
-A model like ioctl_[gs]etflags() looks much more appropriate
-and could be useful for network filesystems/FUSE as well.
+> This is going to require a number of things:
+> =
 
-> > > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > > Cc: Christian Brauner <brauner@kernel.org>
-> > > Cc: Jan Kara <jack@suse.cz>
-> > > Cc: Dave Chinner <dchinner@redhat.com>
-> > > Cc: "Darrick J. Wong" <djwong@kernel.org>
-> > > Cc: Theodore Ts'o <tytso@mit.edu>
-> > > Cc: linux-fsdevel@vger.kernel.or
-> > > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > > ---
-> > >  fs/ioctl.c              | 16 ++++++++++++++++
-> > >  include/uapi/linux/fs.h | 16 ++++++++++++++++
-> > >  2 files changed, 32 insertions(+)
-> > >
-> > > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > > index 76cf22ac97d7..858801060408 100644
-> > > --- a/fs/ioctl.c
-> > > +++ b/fs/ioctl.c
-> > > @@ -763,6 +763,19 @@ static int ioctl_fssetxattr(struct file *file, v=
-oid __user *argp)
-> > >     return err;
-> > >  }
-> > >
-> > > +static int ioctl_getfsuuid(struct file *file, void __user *argp)
-> > > +{
-> > > +   struct super_block *sb =3D file_inode(file)->i_sb;
-> > > +
-> > > +   if (WARN_ON(sb->s_uuid_len > sizeof(sb->s_uuid)))
-> > > +           sb->s_uuid_len =3D sizeof(sb->s_uuid);
-> >
-> > A "get"/read only ioctl should not be change superblock fields -
-> > this is not the place for enforcing superblock filed constraints.
-> > Make a helper function super_set_uuid(sb, uuid, uuid_len) for the
-> > filesystems to call that does all the validity checking and then
-> > sets the superblock fields appropriately.
->
-> *nod* good thought...
->
-> > > +struct fsuuid2 {
-> > > +   __u32       fsu_len;
-> > > +   __u32       fsu_flags;
-> > > +   __u8        fsu_uuid[16];
-> > > +};
-> >
-> > Nobody in userspace will care that this is "version 2" of the ext4
-> > ioctl. I'd just name it "fs_uuid" as though the ext4 version didn't
-> > ever exist.
->
-> I considered that - but I decided I wanted the explicit versioning,
-> because too often we live with unfixed mistakes because versioning is
-> ugly, or something?
->
-> Doing a new revision of an API should be a normal, frequent thing, and I
-> want to start making it a convention.
->
-> >
-> > > +
-> > >  /* extent-same (dedupe) ioctls; these MUST match the btrfs ioctl def=
-initions */
-> > >  #define FILE_DEDUPE_RANGE_SAME             0
-> > >  #define FILE_DEDUPE_RANGE_DIFFERS  1
-> > > @@ -215,6 +229,8 @@ struct fsxattr {
-> > >  #define FS_IOC_FSSETXATTR          _IOW('X', 32, struct fsxattr)
-> > >  #define FS_IOC_GETFSLABEL          _IOR(0x94, 49, char[FSLABEL_MAX])
-> > >  #define FS_IOC_SETFSLABEL          _IOW(0x94, 50, char[FSLABEL_MAX])
-> > > +#define FS_IOC_GETFSUUID           _IOR(0x94, 51, struct fsuuid2)
-> > > +#define FS_IOC_SETFSUUID           _IOW(0x94, 52, struct fsuuid2)
-> >
-> > 0x94 is the btrfs ioctl space, not the VFS space - why did you
-> > choose that? That said, what is the VFS ioctl space identifier? 'v',
-> > perhaps?
->
-> "Promoting ioctls from fs to vfs without revising and renaming
-> considered harmful"... this is a mess that could have been avoided if we
-> weren't taking the lazy route.
->
-> And 'v' doesn't look like it to me, I really have no idea what to use
-> here. Does anyone?
->
+>  (1) A user API by which files can be preloaded into the cache and pinne=
+d.
+> =
 
-All the other hoisted FS_IOC_* use the original fs ioctl namespace they
-came from. Although it is not an actual hoist, I'd use:
+>  (2) The ability to track changes in the cache.
+> =
 
-struct fsuuid128 {
-       __u32       fsu_len;
-       __u32       fsu_flags;
-       __u8        fsu_uuid[16];
-};
+>  (3) A way to synchronise changes on reconnection.
+> =
 
-#define FS_IOC_GETFSUUID              _IOR('f', 45, struct fsuuid128)
-#define FS_IOC_SETFSUUID              _IOW('f', 46, struct fsuuid128)
+>  (4) A way to communicate to the user when there's a conflict with a thi=
+rd
+>      party change on reconnect.  This might involve communicating via sy=
+stemd
+>      to the desktop environment to ask the user to indicate how they'd l=
+ike
+>      conflicts recolved.
+> =
 
-Technically, could also overload EXT4_IOC_[GS]ETFSUUID numbers
-because of the different type:
+>  (5) A way to prompt the user to re-enter their authentication/crypto ke=
+ys.
+> =
 
-#define FS_IOC_GETFSUUID              _IOR('f', 44, struct fsuuid128)
-#define FS_IOC_SETFSUUID              _IOW('f', 44, struct fsuuid128)
+>  (6) A way to ask the user how to handle a process that wants to access =
+data
+>      we don't have (error/wait) - and how to handle the DE getting stuck=
+ in
+>      this fashion.
 
-and then ext4 can follow up with this patch, because as far as I can tell,
-the ext4 implementation is already compatible with the new ioctls.
+Some further thoughts stemming from a discussion with Willy:
 
-Thanks,
-Amir.
+ - Would need to store the pre-disconnection metadata as well as any updat=
+ed
+   metadata.  When performing conflict resolution, userspace would need to=
+ be
+   able to access these in addition to the current state (local) and curre=
+nt
+   state (server).
 
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -1613,8 +1613,10 @@ static long __ext4_ioctl(struct file *filp,
-unsigned int cmd, unsigned long arg)
-                return ext4_ioctl_setlabel(filp,
-                                           (const void __user *)arg);
+ - Would need the ability to include extra stats, such as the AFS data
+   version, that are used for cache coherency management.
 
-+       case FS_IOC_GETFSUUID:
-         case EXT4_IOC_GETFSUUID:
-                 return ext4_ioctl_getuuid(EXT4_SB(sb), (void __user *)arg)=
-;
-+       case FS_IOC_SETFSUUID:
-         case EXT4_IOC_SETFSUUID:
-                 return ext4_ioctl_setuuid(filp, (const void __user *)arg);
+ - Would need to provide an API by which userspace can access both states =
+of
+   the data, possibly including the original data if we still have it in t=
+he
+   cache.  That could be a number of ioctls on the target file.
+
+ - Would need a range of resolution options in userspace, not limited to k=
+eep
+   local, keep remote, but also the option to stash one/both somewhere.  M=
+ay
+   also need to provide app-specific resolvers - merging git trees for
+   example, but also what do you do about sqlite databases, say?
+
+ - There may be bulk changes that the user would want to resolve in bulk,
+   perhaps by "everything in the subtree" or pattern matching rules,
+   e.g. "disard all .o files" or "take the .o file matching the newest .c =
+file
+   in the same directory".
+
+ - May need to change how expired keys are handled so that they aren't alr=
+eady
+   garbage collected, but can continue to be used as a token off which to =
+hang
+   cached access rights.
+
+David
+
 
