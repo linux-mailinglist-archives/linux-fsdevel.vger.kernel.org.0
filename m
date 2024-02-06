@@ -1,126 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-10437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E0684B26C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 11:22:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0BC884B272
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 11:24:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94C9A1C23918
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 10:22:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D241F248FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 10:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D67512E1E9;
-	Tue,  6 Feb 2024 10:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634CA12EBC1;
+	Tue,  6 Feb 2024 10:23:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Eswa3XIV"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AfwUCx/D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C5F12B14E;
-	Tue,  6 Feb 2024 10:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D3C12E1EC
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 10:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707214973; cv=none; b=hUUdYruvnstyAKzG6GSJUoRXzW8X73Hi2AR3ShlZMqJnyBzg5oYuQNBsfdBALsKHUZcnJArXkzAgKUMpO+y/TSsqd3QVhT8DbVnkZZpggUWS117BemsZkL2vuCcDSLBcIIPS/r5PHTfKQLMe77DF5IbWTzo3mbPDHscu9uixjGA=
+	t=1707215028; cv=none; b=Gfo/guoVaDjzXSiT1a3IgxYsJjX4T80dkH9+ah+KX5bUzw4BfbuXBKzNC9ouTQod1Pz91NUQ1hHyT4FvfydRv7LDpWVDr+ZZeDaJTbcsAAUJNC4lw0HEONkm1GW2K1uSTKq+dSgaY3uNgugJlkisqF1GLOsV3ismfyCOqC+fHbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707214973; c=relaxed/simple;
-	bh=lDcrFbajOxQJyzMqUqx8TzZ9sBClVUvvVl6hgim3mhA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dYXOQrCPAGrW2Wks3j+NCEVB7dUMDmKkGqhOHo0D0Ap48N55Zmi/qUI1rT6ZKclipyUeDA2k29/XPA/TBoafGpxbF2XRBnKjv0wLkJoMYLlcyQsRBuq9aDjnAJuLo57vFQY9tdFvbm2F5hxs+bhtGGPDnYtHqCuQDkzwOkcy1JQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Eswa3XIV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD9AAC43390;
-	Tue,  6 Feb 2024 10:22:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707214973;
-	bh=lDcrFbajOxQJyzMqUqx8TzZ9sBClVUvvVl6hgim3mhA=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Eswa3XIVSWu2WDQllGuNSIPaKzkygH/cVXrhv5lbeRn1Kyd9LluwUQgEzTnSciWE4
-	 aQYZNhKhxduye2SpKASqfF1Jy84HLyD10L0jU1e5IklTTKMKzLmZipcqjJUPEVW3zz
-	 PXF6vOW4v35UiRc7MYEdzexWuwQOtSFVp3SRykyMPl/TPFVFKrmi4z1WJDIKTtxXcJ
-	 VHP9IKaXhiXS/7KfaKlYD2EnY89w9l6dkMnfs6/30F3NKfR4nIh7q9i9ptJ7NQTmIL
-	 sDeJVGuP24vF1/P8SlNaLBAC74EBCBsuVCdGkRsTnOvT3jZ6viZcZ4t+OfM773aJPi
-	 nLiB6MV4VTQ0Q==
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 06 Feb 2024 11:22:09 +0100
-Subject: [PATCH] fs: relax mount_setattr() permission checks
+	s=arc-20240116; t=1707215028; c=relaxed/simple;
+	bh=JQc7I9dtacgIh6dzApcTtL71VyIWn4aWCD9+Rsus/uU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OIqSoo4tjjX9Mow8PZmwEV9QbDx93TDg8r6IfuhOdW7odKiuag7cgCDAUxXDoAt/BEf3gypT+luDeJlzWN/RPOdEvdNPJMtLrggLTDDPOqzZPijqZ3E3LqoHDaydNoO1J/YcnEPDQ2a1s2IEmfySrAuwOtjPjneL0YCyheFecJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AfwUCx/D; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4c033928deaso299005e0c.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Feb 2024 02:23:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1707215026; x=1707819826; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DvZiY9ihexG/Lq+UzYShBWDLaHBQcaLwobbBS4o9zoI=;
+        b=AfwUCx/DJRNaiaKS1iipnlPsd5rZMmrz3I0s+8EEhKEvO4fZfrHxyhbJE3BovUA43g
+         9tpanRMVnVovsVs3uMjdIu3BWWQRlDzKwCEQa8NaLkKDHYmX+l4DiEJscEkTeSynMpdq
+         OOoiFliI+RBOdL6G2hSQpVC9qiI8wPPo+sNZeHE5Ebp+V5AiUEcHGcFQXl8dJylkzs2l
+         Gogs5RDRwN09qnCUXn9vG32/kXPxcO78z+ipLk8WsqQvi9Knni5kArfFxxxWkndCrdDH
+         Ugju7rBdGrXx5U4xXLXZPUydxBc27pQKhw1DvuXULYMuTlmqPVLF/DG+A+3lo7CJ0Cuh
+         rf6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707215026; x=1707819826;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DvZiY9ihexG/Lq+UzYShBWDLaHBQcaLwobbBS4o9zoI=;
+        b=bIg+XUMiGxD9VDunop55kbNVKSmNDcT2/MYdUSJDLDtnhNv1GexeJw/g+o7TpFH7h4
+         Nw9WwHuC6vG7orvdG5izlSr5FBuo+ilWMfsCKvdlYa9rRrLPaoSKVEee8lNKONYyUvTB
+         Uaeid6bvGJQcwceahERdT0fXcvmGf/VcBBIAXr8BQHv7HBEvuLEHuqBycPsHP+H0nnG7
+         /FgkRvWeSgkE6r7mUhNLk9+HlP3scxH15QmrSZ7WxJoGYUyYvSWjcLiVTOE36DAU4lhn
+         LWZb9R2ZYwDw7pKao6N6tjv5og+eLMda38+MSjPWyRuOgn6sofg0rJPHUpJ7N5RK5Xw+
+         ZHVQ==
+X-Gm-Message-State: AOJu0YyauAEvT5rMD68sPB/RIpAlVEKlBJhgBZZBRSBsvK2urxV7wIBd
+	9lG4D7YaAUvNN9vnICkHlkjYOPnZVFxegmAcbiiJ09wfADDtCDIbDW+jL0S/BvK16chHVSnda+4
+	w5mWBsAmLtItwMYFxgkdWFfZ3duTLpL/Rhicm9Q==
+X-Google-Smtp-Source: AGHT+IGfDOnd2EhP4TWByrQOkcid9KL+1EpEAi8LxcA+nJejScdKhoTZckC004/fc+VBarRks/cvEIzLg7CHcNC2TZ8=
+X-Received: by 2002:a05:6122:17a8:b0:4b9:e8bd:3b2 with SMTP id
+ o40-20020a05612217a800b004b9e8bd03b2mr1876525vkf.2.1707215025681; Tue, 06 Feb
+ 2024 02:23:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240206-vfs-mount-rootfs-v1-1-19b335eee133@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAFAIwmUC/x3MwQ6CMAyA4VchPVszp0LwVQiHMTrpgc20QEgI7
- 271+B3+/wAlYVJ4VQcIbaxcsuF2qSBOIb8JeTSDd/7hvKtxS4pzWfOCUspiaFxIydO9fdYjWPY
- RSrz/l11vHoISDhJynH4j668za4Tz/AK7P7yffQAAAA==
-To: linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
- Karel Zak <kzak@redhat.com>, stable@vger.kernel.org, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.13-dev-2d940
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2460; i=brauner@kernel.org;
- h=from:subject:message-id; bh=lDcrFbajOxQJyzMqUqx8TzZ9sBClVUvvVl6hgim3mhA=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaQe4qhOL5Cfo558v0SVtUDd2n7LpAST6Mi6SwL/Erjcb
- Do2siR0lLIwiHExyIopsji0m4TLLeep2GyUqQEzh5UJZAgDF6cATGSOMCNDz9a7a0UCdrfZ1Z+d
- MSuvyYHBsCnUqoLP3ttruqa9S5EII8OkY9vnpioWyG5LMjq5zPyKcoLI4RO7jyZUS6Z12UW1GTE
- AAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+References: <CA+G9fYttTwsbFuVq10igbSvP5xC6bf_XijM=mpUqrJV=uvUirQ@mail.gmail.com>
+ <20240206101529.orwe3ofwwcaghqvz@quack3>
+In-Reply-To: <20240206101529.orwe3ofwwcaghqvz@quack3>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 6 Feb 2024 15:53:34 +0530
+Message-ID: <CA+G9fYup=QzTAhV2Bh_p8tujUGYNzGYKBHXkcW7jhhG6QFUo_g@mail.gmail.com>
+Subject: Re: next: /dev/root: Can't open blockdev
+To: Jan Kara <jack@suse.cz>
+Cc: linux-block <linux-block@vger.kernel.org>, 
+	Linux-Next Mailing List <linux-next@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
+	Linux Regressions <regressions@lists.linux.dev>, linux-fsdevel@vger.kernel.org, 
+	lkft-triage@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>, 
+	Christian Brauner <brauner@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 
-When we added mount_setattr() I added additional checks compared to the
-legacy do_reconfigure_mnt() and do_change_type() helpers used by regular
-mount(2). If that mount had a parent then verify that the caller and the
-mount namespace the mount is attached to match and if not make sure that
-it's an anonymous mount.
+On Tue, 6 Feb 2024 at 15:45, Jan Kara <jack@suse.cz> wrote:
+>
+> On Tue 06-02-24 14:41:17, Naresh Kamboju wrote:
+> > All qemu's mount rootfs failed on Linux next-20230206 tag due to the following
+> > kernel crash.
+> >
+> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >
+> > Crash log:
+> > ---------
+> > <3>[    3.257960] /dev/root: Can't open blockdev
+> > <4>[    3.258940] VFS: Cannot open root device "/dev/sda" or
+> > unknown-block(8,0): error -16
+>
+> Uhuh, -16 is EBUSY so it seems Christian's block device opening changes are
+> suspect? Do you have some sample kconfig available somewhere?
 
-The real rootfs falls into neither category. It is neither an anoymous
-mount because it is obviously attached to the initial mount namespace
-but it also obviously doesn't have a parent mount. So that means legacy
-mount(2) allows changing mount properties on the real rootfs but
-mount_setattr(2) blocks this. I never thought much about this but of
-course someone on this planet of earth changes properties on the real
-rootfs as can be seen in [1].
+All build information is in this url,
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2byqguFVp7MYAEjKo6nJGba2FcP/
 
-Since util-linux finally switched to the new mount api in 2.39 not so
-long ago it also relies on mount_setattr() and that surfaced this issue
-when Fedora 39 finally switched to it. Fix this.
-
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=2256843
-Reported-by: Karel Zak <kzak@redhat.com>
-Cc: stable@vger.kernel.org # v5.12+
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/namespace.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 437f60e96d40..fb0286920bce 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -4472,10 +4472,15 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
- 	/*
- 	 * If this is an attached mount make sure it's located in the callers
- 	 * mount namespace. If it's not don't let the caller interact with it.
--	 * If this is a detached mount make sure it has an anonymous mount
--	 * namespace attached to it, i.e. we've created it via OPEN_TREE_CLONE.
-+	 *
-+	 * If this mount doesn't have a parent it's most often simply a
-+	 * detached mount with an anonymous mount namespace. IOW, something
-+	 * that's simply not attached yet. But there are apparently also users
-+	 * that do change mount properties on the rootfs itself. That obviously
-+	 * neither has a parent nor is it a detached mount so we cannot
-+	 * unconditionally check for detached mounts.
- 	 */
--	if (!(mnt_has_parent(mnt) ? check_mnt(mnt) : is_anon_ns(mnt->mnt_ns)))
-+	if (mnt_has_parent(mnt) && !check_mnt(mnt))
- 		goto out;
- 
- 	/*
-
----
-base-commit: 2a42e144dd0b62eaf79148394ab057145afbc3c5
-change-id: 20240206-vfs-mount-rootfs-70aff2e3956d
-
+- Naresh
 
