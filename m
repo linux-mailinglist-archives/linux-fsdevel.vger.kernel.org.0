@@ -1,130 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-10402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C799284AB24
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 01:44:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AF69184AB64
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 02:09:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FC0F1C2394D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 00:44:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3C481C23A0F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 01:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAFB1866;
-	Tue,  6 Feb 2024 00:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2635A4A3E;
+	Tue,  6 Feb 2024 01:09:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ILDeD9bl"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vuBnNS2D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4D11362;
-	Tue,  6 Feb 2024 00:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FF094A02
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 01:09:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707180264; cv=none; b=OVmTDbTE584WxTdcpjOCbucsGmmgBvU1SAtNrS2aFUdJUBjyTV9GushPc9mhz/qgUO6sdM4H9wlUfh2jF6Z4zNhtPY30sy7RwEh0eYGaVxb6ULKOuctTmc4DLgFT9lKDjpjVVmb+g9BBB5Ml06i8bLTYTeosDzmtVg+1v7Dfx/I=
+	t=1707181774; cv=none; b=HeGGaH1FMWsH0xHD9jSepAJwm9LU/rcqFN+N/QxPWS41/zZU/fLsXwUftc3etovHkVh6swhtAfcyw+HFuzd+/esw6arUCEjR7dAIOBz85EzalRdYFmO4CQL3Dj8YOC3bFejMVSf1FfwMQGcSAPw3dWjvBmr3PPqOp4MarVk+NS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707180264; c=relaxed/simple;
-	bh=/yyAqzHQD4b67rx9jlayctNJKLPz13q9fnIllnfVOC8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tn7Qlb0x1g/sJYYv2yiSMgr8vEly8xFB1OzlZcuTgPRGCiJ8vtX00m9SkJByseOnXuaGBF8eLfchRXtdnce2SSGQLTd2jkr/exh48eeBEBPx9Esy4iUAYz/nzmsBkLtzCiwq/8bFnDRkRvmfH+s6FUJU8eYY1gZ4e0RTvadNHnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ILDeD9bl; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2d09faadba5so27947441fa.1;
-        Mon, 05 Feb 2024 16:44:22 -0800 (PST)
+	s=arc-20240116; t=1707181774; c=relaxed/simple;
+	bh=GdHdniQnbMOXtlmLfBAIzFnjtasDR34ui/wEy9tYr8s=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=VguWZVE5xi/y81Ud5BQ0LlWU3rbDPdSxGEEnTFGK9AlTEVPlY15I3U6N3Vwq8IoliXH0uw58OuVcj2UTqHWPRk0HZBkcELTWsAmFBQTXjhhSBd1GR2YI5Qj3K2G0RSgykr1tgrTLOWoBzMkuh12gua0ISF1IY2qdUSuaF5XrHQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--lokeshgidra.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vuBnNS2D; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--lokeshgidra.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dc6c47cf679so8831915276.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Feb 2024 17:09:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707180261; x=1707785061; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8OFn31jen0blVfvFsWJzTrRwpe7OQng5QeVgbQtEl5o=;
-        b=ILDeD9bl1rcHHwEgAvs8ELVaduxaTW8pHSi8ansRG4k5aAOKhUmw9nbLOzyrVScZEC
-         KglZ0D/sHP1B8ujRgpzDWmPCPRRKZw/Ge1z6Q7g2RalmCHRT3rQ3ZSRD2tOmtVcM7N++
-         SuhoEUstEkGwYhtpG4QdvCyY9Gc3kAKdt0cwJUJ7Lv9EETnkHGINXZzQkwXnxSaOgLME
-         eYDbsZSYYEfNMIo80NrQd0rtiDR23Z96brXc20stISggIPl82Fsvag3lNHNLfBCcyUIG
-         7fiqhAiuRePxsai2G/oxIjWnrfj2WOzj2cgcDELMAHps4kNzWfXtHtVC4WaIRMZfuLVc
-         d2qA==
+        d=google.com; s=20230601; t=1707181772; x=1707786572; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zFHBvxcNZW2HfjsGIsVhZk87PaG1v642sbVGsClWfxY=;
+        b=vuBnNS2DuUXlqVJ15g75711OjVR9EqNrUnrFoy4+vDmz1KxfJipACqokd3EEMtYFOB
+         M5L949iLtPgfaTpdv/s6ybOCrPn63NCdgkj+WRLJwKB1WYaDFtJVdmnuW8WH/t7BMv5v
+         wDARcLSIRKiiZCCUo0BDJP0mRe44kv9PWKi4BGvd6K4KqOQhZ82UYdHzRG0iuabDfHsN
+         qDbk7B4YVgqfffm2iYoqbngLvu94GKcw5lBcHffBzaeJlO4ciKgs9QkrsC5nuWPnBIif
+         j1JrnSnQXzTU1ugBJx5Qr5QQdONZPI7M0+q5M47CrT8bVd3raBNa6NGigsEyaXNmo5B9
+         SyAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707180261; x=1707785061;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8OFn31jen0blVfvFsWJzTrRwpe7OQng5QeVgbQtEl5o=;
-        b=ZNdB9eDM7rck0NvMuTILwSomlGMt99/5PTutmH8PtkywYFioeDKHOBedqyUVvtCAs0
-         1YTJk+MQZDlpPzhX3CkdENZxf5oG+olS7EpaeryJf4YR+bIgPXz6AAV6MeHHYSbUbAIn
-         6h9F82DM8htQY6xbrZDxNtcTcpbVMAgYC+9M2OXp8hqYj36+sTLbWsYoc1o3jtYEBW0f
-         2CvpUtqCG1B2NEKiI7E09qnXwmMvHJAqxdxrzjuEMzJUM1NgthDysDX1kxeRQKG9dT4S
-         ndhZjhQIGU2UPjnvuGBNllrBBYkH4PL3kMU7ct7KiouNckjjhVrMnuH4eboMl+E7sitD
-         q3BA==
-X-Gm-Message-State: AOJu0Yx2CTuCObeeAkGG36pyMVd31vw/ZmDYCz8X5akMOVe1fnk6/o+a
-	znZBULp1VSfCsaw+jgxFUYuYdPHJh+6fvvfKYb+L9MffDLyoNJlrfbPfg+zmWXlLA/b7DQLby/L
-	STkQRCoskWq7qaocE25Hy0XSyeSU=
-X-Google-Smtp-Source: AGHT+IEVdSuNJJf4BhE+PzKe7H+47Ni2/ANUXOeqBOiT89cpWJWmEd3e6PND6g24dphWUU51GE8YqFTE8DlfLcxRYlc=
-X-Received: by 2002:a2e:700e:0:b0:2d0:a2bd:2a3c with SMTP id
- l14-20020a2e700e000000b002d0a2bd2a3cmr776621ljc.26.1707180260465; Mon, 05 Feb
- 2024 16:44:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1707181772; x=1707786572;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zFHBvxcNZW2HfjsGIsVhZk87PaG1v642sbVGsClWfxY=;
+        b=aRSeJiZyERyU9Q9NbFFctEEv1eyN3hvcQI+vDtbPQJzTK3nULl6OnwFVoDdNrzAkhA
+         GwMKvIlh8iWdNnLE993eZdCtESxkTd2KJjqmVBA37IotdwHDTVNppvhDxYwri17RxBaU
+         clhAtCkrKCuUEwRQPGTlOCzdv+NkDVAYriqY0xTB1+QdHTFg8cl6gYKi+/XtFSPN3acd
+         W6luwpcYYDrnJWR1/bef7kQm+uzBc/MVFQBIo47GOA+BrZio9vW9U3vlrRGb3TPoZLhR
+         Ej0MUX+fZUDdynaA38vuDqK9IfZBrDc2WQ5X9fGkr04OH3AP2tTR5hSHQCjWe02oJbkW
+         deKw==
+X-Gm-Message-State: AOJu0YxdynLHyLKce1XhSFsdqJ7RkgLwENgu+6zdNfEkg1Yrmxf+UKn8
+	LYKYvZ9vA68p/faTjGjzgWvoOYWNdoqmD93CmY9j9VUyS2MzqcZCqkl4xnfFmjLNQmcuZKACw93
+	w+Ov6q/KI2TFbhLgPaeO8Vw==
+X-Google-Smtp-Source: AGHT+IH1RhvmxdMgiLN/uYEOr6sr5Ko2uXZynT5hRnaY5hwDi5R6HBD+SHyb78d2LA94Xo7Ale0nQeBJWCfcO1Y4yQ==
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:713:bb2c:e0e8:becb])
+ (user=lokeshgidra job=sendgmr) by 2002:a05:6902:2842:b0:dc6:519b:5425 with
+ SMTP id ee2-20020a056902284200b00dc6519b5425mr38783ybb.11.1707181772174; Mon,
+ 05 Feb 2024 17:09:32 -0800 (PST)
+Date: Mon,  5 Feb 2024 17:09:16 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240205090552.40567-1-zhaoyang.huang@unisoc.com> <ZcFbl0zP2pK6vEmh@casper.infradead.org>
-In-Reply-To: <ZcFbl0zP2pK6vEmh@casper.infradead.org>
-From: Zhaoyang Huang <huangzhaoyang@gmail.com>
-Date: Tue, 6 Feb 2024 08:44:09 +0800
-Message-ID: <CAGWkznGzWW6yORWvKt5p=2O4S1FtkNe4W42SwYduE70hVkiuBg@mail.gmail.com>
-Subject: Re: [PATCHv8 1/1] block: introduce content activity based ioprio
-To: Matthew Wilcox <willy@infradead.org>
-Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Jens Axboe <axboe@kernel.dk>, 
-	Yu Zhao <yuzhao@google.com>, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	steve.kang@unisoc.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.43.0.594.gd9cf4e227d-goog
+Message-ID: <20240206010919.1109005-1-lokeshgidra@google.com>
+Subject: [PATCH v3 0/3] per-vma locks in userfaultfd
+From: Lokesh Gidra <lokeshgidra@google.com>
+To: akpm@linux-foundation.org
+Cc: lokeshgidra@google.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, surenb@google.com, 
+	kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com, 
+	david@redhat.com, axelrasmussen@google.com, bgeffon@google.com, 
+	willy@infradead.org, jannh@google.com, kaleshsingh@google.com, 
+	ngeoffray@google.com, timmurray@google.com, rppt@kernel.org, 
+	Liam.Howlett@oracle.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 6, 2024 at 6:05=E2=80=AFAM Matthew Wilcox <willy@infradead.org>=
- wrote:
->
-> On Mon, Feb 05, 2024 at 05:05:52PM +0800, zhaoyang.huang wrote:
-> > +void bio_set_active_ioprio(struct bio *bio)
->
-> why does this still exist?  i said no.
-I supplied two sets of APIs in v8, this one is for iterating the bio.
-The reason is bio_add_page/folio could return success without adding a
-page which can not be dealt with bio_set_active_ioprio_folio
->
-> > +void bio_set_active_ioprio_page(struct bio *bio, struct page *page)
->
-> this function should not exist.
->
-> > +void bio_set_active_ioprio_folio(struct bio *bio, struct folio *folio)
->
-> this is the only one which should.  did you even look at the
-> implementation of PageWorkingset?
->
-> > +extern void bio_set_active_ioprio(struct bio *bio);
-> > +extern void bio_set_active_ioprio_folio(struct bio *bio, struct folio =
-*folio);
-> > +extern void bio_set_active_ioprio_page(struct bio *bio, struct page *p=
-age);
->
-> do not mark function prototypes with extern.
->
-> > +#ifdef CONFIG_BLK_CONT_ACT_BASED_IOPRIO
-> > +     /*
-> > +      * bi_cont_act record total activities of bi_io_vec->pages
-> > +      */
-> > +     u64                     bi_cont_act;
-> > +#endif
->
-> what?
->
-> look, you just don't understand.  i've spent too much time replying to
-> you trying to help you.  i give up.  everything to do with this idea is
-> NAKed.  go away.
-Sorry for the confusion, but I have to find a place to record the
-historic bio's activities for bio_set_active_ioprio_folio. There could
-be many bio_add_folios before submit_bio
+Performing userfaultfd operations (like copy/move etc.) in critical
+section of mmap_lock (read-mode) causes significant contention on the
+lock when operations requiring the lock in write-mode are taking place
+concurrently. We can use per-vma locks instead to significantly reduce
+the contention issue.
+
+Android runtime's Garbage Collector uses userfaultfd for concurrent
+compaction. mmap-lock contention during compaction potentially causes
+jittery experience for the user. During one such reproducible scenario,
+we observed the following improvements with this patch-set:
+
+- Wall clock time of compaction phase came down from ~3s to <500ms
+- Uninterruptible sleep time (across all threads in the process) was
+  ~10ms (none in mmap_lock) during compaction, instead of >20s
+
+
+Changes since v2 [2]:
+- Implement and use lock_vma() which uses mmap_lock critical section
+  to lock the VMA using per-vma lock if lock_vma_under_rcu() fails,
+  per Liam R. Howlett. This helps simplify the code and also avoids
+  performing the entire userfaultfd operation under mmap_lock.
+
+Changes since v1 [1]:
+- rebase patches on 'mm-unstable' branch
+
+[1] https://lore.kernel.org/all/20240126182647.2748949-1-lokeshgidra@google.com/
+[2] https://lore.kernel.org/all/20240129193512.123145-1-lokeshgidra@google.com/
+
+Lokesh Gidra (3):
+  userfaultfd: move userfaultfd_ctx struct to header file
+  userfaultfd: protect mmap_changing with rw_sem in userfaulfd_ctx
+  userfaultfd: use per-vma locks in userfaultfd operations
+
+ fs/userfaultfd.c              |  86 +++-------
+ include/linux/mm.h            |  16 ++
+ include/linux/userfaultfd_k.h |  75 +++++++--
+ mm/memory.c                   |  48 ++++++
+ mm/userfaultfd.c              | 300 +++++++++++++++++++++-------------
+ 5 files changed, 331 insertions(+), 194 deletions(-)
+
+-- 
+2.43.0.594.gd9cf4e227d-goog
+
 
