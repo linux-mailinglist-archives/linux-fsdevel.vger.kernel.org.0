@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-10478-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10479-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A3284B7C3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 15:25:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF1A284B7C4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 15:25:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A7E31C218B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 14:25:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8592728C04D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Feb 2024 14:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E37132C0F;
-	Tue,  6 Feb 2024 14:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1291132C0D;
+	Tue,  6 Feb 2024 14:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W/gfPgtY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YWorjpzX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BE73132C01
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 14:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50076132C0A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 Feb 2024 14:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707229508; cv=none; b=g/f/186FCxqfsRXbF+NH/tbaMjMxE95aoM12bd07q07Dff+eLDZK2BjXzop2R1wExcdxPlcKL+b8wgP5zDy/orBmcEYdHcbXnmZmBJZRy1gIR3TIqHtC+MIuEt/UiCeDGF0y9zFT/xpKd4ZnzeanDmrR4RAquI9alujryMgWdxY=
+	t=1707229510; cv=none; b=FD27uzFJJdDfDDEo2nwq7o8w2/vU95QXNtmN1FgDsMAkV+wrItAMfIOoaJrhGrJSmpFB2/S+nNdzl9+zVz3nOhJ5IN/Nq54QW4JwiN4kyS2OY6Y/Wy0YLRePFzIUwFq5t4ApKAs8pxEt4044hkbMOprDfIhp+mASvVv3N0sS9WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707229508; c=relaxed/simple;
-	bh=qk3g+eB8rHG+CqGuXWL6Kq+fKCGENQ/QF4MzcDMzfm4=;
+	s=arc-20240116; t=1707229510; c=relaxed/simple;
+	bh=P+btxCY7RSVXwfrXfDOZGKZUmiasY3ovEnSE8AP6xmA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jLJLfXe4UMB0oiP9zh1vL30TvboPp8e5mwDFDjzY/I77F+p2K4nyiiuAhxOov5G8hjqSJkbOouYmdMAg1ttofxdjIunJaHlRaUZTAxNN0nKB3IHyJp3LL4FOlotSvIrIsPMGigZe+aM28Ud+FRjFgl4cGXqYpZXutt1xwqiZx0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W/gfPgtY; arc=none smtp.client-ip=209.85.128.54
+	 MIME-Version; b=Smq8Jzt8vZnROQkAwKRAuAaG3VZKoAeCKzIP6exjdH2Yo7X0//2N5ydTl2zeM/uHPlOv0G7D9FYkU8epHSOB+B9hytbDTDoKWspgtDJyjgx7Ah+3ZCztioCbYqIK0+N3eB4Mb7qo6yXhhVbuHzAojq6fkIIvj6gkMCaKuSxsS4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YWorjpzX; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-40fe2ed8746so5805805e9.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Feb 2024 06:25:06 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40fc654a718so37166715e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Feb 2024 06:25:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707229505; x=1707834305; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707229506; x=1707834306; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6w+6IpIzqyBB0prz82XVFsSS1wwVL5Tjm5Oc10QusGY=;
-        b=W/gfPgtYlLgEE4DbCsOwLtibE7D0z6gboQ9swPWziYPyz/zdzV8w7gGgWIv3JmVf7X
-         /5BdCTYovKyfNAR2rEYv8w2UapTrc0D5aXW9LLEqyOPCr8cBkHLY9JnUEb1PWzvJ5lhM
-         jHHdvjjAv0vo8AsxPKuMCw/BKeMroyUEOcSpVD9HyUOpYOsWbx71pomoGBVkHJvAr29H
-         3NHwoOtE3FHwwSHNBHs5S8DTY0ROa10KN56H0o4/QpxCdq2nCSzbCCFcjAv59apIVu9F
-         Euz92XvecLOUCbIxKOU5brLUbEJ3jktPgmLIPFcu0ishd2bjrrCHd80Qu3bM1HZ6IvpN
-         RoZA==
+        bh=DCKsYMVjhCqPV/y73w6CgCE26tRKOupMcaRLuTEMIAU=;
+        b=YWorjpzXzEnh/75gWq5Yez7+5rKJv+nUHCDhKoMP6n/h3QUDuOIz3DW8ihBzUSFLXU
+         DaznF02SOfesG40J8uC/T/Gk8lBMP8JQWsl4ao03XiJ/1nG6FxHNXc9+eXo8YaHZehBB
+         c/pnDxg9uEA/yWzC0VXgc4L5h/UktK1jvWsj0bLU/KgNndB63f0wkqv6qy9m9pEEAAI6
+         4RFU8i+ndS+lmqa3Vpt6kF3tu+KrJsVA5T/p79w2P6FMShHvu7lG7n7Jnpd3iPVxOz2y
+         pYX1sXRAL9QMm3D3wlPoCYQiIbMdW3MFYwrFX5ZS+2xqOfGhZekWp8OPclPRe1Ef4AB9
+         pIVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707229505; x=1707834305;
+        d=1e100.net; s=20230601; t=1707229506; x=1707834306;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6w+6IpIzqyBB0prz82XVFsSS1wwVL5Tjm5Oc10QusGY=;
-        b=Hyh1fT025jZI1PuwByUcNzbl1Fr7EwiWRhxZBBjLyHfqg1noGGAq3gNZXav88udhpN
-         XXMHEiWyMSvarzySFtaFzc+kzfFNmAh3Nc5T34OyUpJaA9vT9DHNbxi+/WxjFXAHBECB
-         /SSNCjQ7U95j1BbNyD2m4/oPHxxExhmvw6wwLIzg5mqWgKTkZuyUoK2xOje7HC8XFwtg
-         OySDu+/f5ppATHcyopJahy0hHPIF42KRlPLdaEdCDtWexH7mQKZPMvCIYDgn00MjEl9n
-         Dxb6+w3GzjfRJn3ZDhyCBDdECjjOfMHuSmmMeGYHCQANva5NfVtEvdU2Tev40iPj/5xK
-         qf2g==
-X-Gm-Message-State: AOJu0YwDEO2OYCyF0l11V6PuIUWcuS/FyRcXLzooHL9AIa4nZciIPM4u
-	9TtD6ABdgB+oR21+zGl8CTsBKNUu74BbbMcOMRNED9oYLjmZ80JsRvswlF/Q
-X-Google-Smtp-Source: AGHT+IE6m8gdN64i+z/OQg7rZinLsYVp9H6PdbSutx8bUnYDNFXCUx8goaeIs8a0NWg+o+YzCUY7Zw==
-X-Received: by 2002:a05:600c:4f90:b0:40f:df20:3bc3 with SMTP id n16-20020a05600c4f9000b0040fdf203bc3mr1568279wmq.3.1707229504772;
-        Tue, 06 Feb 2024 06:25:04 -0800 (PST)
-X-Forwarded-Encrypted: i=0; AJvYcCUjoQ9r3JC8cMZufVoxxKQtBnKqx6NZtxKO+SZElmE/gsTqtAqCMZl9CdIlox/fNKhsHbDMDodgHSeXH2hTfqmYApyIupnnhuS2GUvM7g==
+        bh=DCKsYMVjhCqPV/y73w6CgCE26tRKOupMcaRLuTEMIAU=;
+        b=C0RcP/9YAXsMNB2UAnSK7yeu1Bk+VEuf4/cSgwXdhhvNimygMJtWZvNLhtxz4viZOJ
+         Y3Jt6fUtgEhAZounH4wKU5AQWQm5+OEzDekqKjDvtMmcy3HfK8vCLv01cfTDT0BkmtUs
+         QvOypUtRlxENQ+wjYbtL5zeexWf0sKGysSWmSR+j8Usf0XGnuf15jP7clSr/zeuKjtJc
+         ffNEqeShXaI9PQe7C544O+4ueos6rTWQHZbVe6mT8rkE3DO4mJ+Zgb6H5hfNPMdSAQHK
+         4C0CtH3Ep83qt2WneJEWrLh6HFh/cK3uPOCXfVQuKhhx/N1VFLuhmJTOsUO9fdavxuNI
+         M47g==
+X-Gm-Message-State: AOJu0Yy8rLV/KAHxJCT+N2W238TfMsAfW3eYZr6ERWalzvMosx92kvv+
+	k4AY2RpbB+CZ9ZCSIiKHJk31rt0qI5Kg6o+vtPQPoaeEWNR+R3IX5LvHXRRA
+X-Google-Smtp-Source: AGHT+IEMcxil83lH0Bvl1Ymn4wI9PF6EyIF1KuMAzUh60TtxLBF0ClOiYfMK/jHL0aAnj0w/IHU0nQ==
+X-Received: by 2002:a5d:47c2:0:b0:33b:481e:8ddd with SMTP id o2-20020a5d47c2000000b0033b481e8dddmr1805367wrc.62.1707229506234;
+        Tue, 06 Feb 2024 06:25:06 -0800 (PST)
+X-Forwarded-Encrypted: i=0; AJvYcCVgg1gZtAyewyLmbTv7miB8+Ktdo/QP0JhL9xDF1syzUlSG2zlPTB7Ddq8U0rKfph4FfkzG5B8g/Oh3wFEWl/SL/cTD1pC+g34uhtFMFA==
 Received: from amir-ThinkPad-T480.lan (46-117-242-41.bb.netvision.net.il. [46.117.242.41])
-        by smtp.gmail.com with ESMTPSA id c28-20020adfa31c000000b0033b4a6f46d7sm629728wrb.87.2024.02.06.06.25.03
+        by smtp.gmail.com with ESMTPSA id c28-20020adfa31c000000b0033b4a6f46d7sm629728wrb.87.2024.02.06.06.25.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Feb 2024 06:25:03 -0800 (PST)
+        Tue, 06 Feb 2024 06:25:05 -0800 (PST)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Bernd Schubert <bernd.schubert@fastmail.fm>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v15 4/9] fuse: prepare for opening file in passthrough mode
-Date: Tue,  6 Feb 2024 16:24:48 +0200
-Message-Id: <20240206142453.1906268-5-amir73il@gmail.com>
+Subject: [PATCH v15 5/9] fuse: implement open in passthrough mode
+Date: Tue,  6 Feb 2024 16:24:49 +0200
+Message-Id: <20240206142453.1906268-6-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240206142453.1906268-1-amir73il@gmail.com>
 References: <20240206142453.1906268-1-amir73il@gmail.com>
@@ -85,316 +85,334 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In preparation for opening file in passthrough mode, store the
-fuse_open_out argument in ff->args to be passed into fuse_file_io_open()
-with the optional backing_id member.
+After getting a backing file id with FUSE_DEV_IOC_BACKING_OPEN ioctl,
+a FUSE server can reply to an OPEN request with flag FOPEN_PASSTHROUGH
+and the backing file id.
 
-This will be used for setting up passthrough to backing file on open
-reply with FOPEN_PASSTHROUGH flag and a valid backing_id.
+The FUSE server should reuse the same backing file id for all the open
+replies of the same FUSE inode and open will fail (with -EIO) if a the
+server attempts to open the same inode with conflicting io modes or to
+setup passthrough to two different backing files for the same FUSE inode.
+Using the same backing file id for several different inodes is allowed.
 
-Opening a file in passthrough mode may fail for several reasons, such as
-missing capability, conflicting open flags or inode in caching mode.
-Return EIO from fuse_file_io_open() in those cases.
+Opening a new file with FOPEN_DIRECT_IO for an inode that is already
+open for passthrough is allowed, but only if the FOPEN_PASSTHROUGH flag
+and correct backing file id are specified as well.
 
-The combination of FOPEN_PASSTHROUGH and FOPEN_DIRECT_IO is allowed -
-it mean that read/write operations will go directly to the server,
-but mmap will be done to the backing file.
+The read/write IO of such files will not use passthrough operations to
+the backing file, but mmap, which does not support direct_io, will use
+the backing file insead of using the page cache as it always did.
+
+Even though all FUSE passthrough files of the same inode use the same
+backing file as a backing inode reference, each FUSE file opens a unique
+instance of a backing_file object to store the FUSE path that was used
+to open the inode and the open flags of the specific open file.
+
+The per-file, backing_file object is released along with the FUSE file.
+The inode associated fuse_backing object is released when the last FUSE
+passthrough file of that inode is released AND when the backing file id
+is closed by the server using the FUSE_DEV_IOC_BACKING_CLOSE ioctl.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/fuse/dir.c    | 12 +++++++-----
- fs/fuse/file.c   | 34 +++++++++++++++-------------------
- fs/fuse/fuse_i.h | 19 ++++++++++++++++---
- fs/fuse/iomode.c | 48 +++++++++++++++++++++++++++++++++++++++++-------
- 4 files changed, 79 insertions(+), 34 deletions(-)
+ fs/fuse/file.c        |  9 ++++++-
+ fs/fuse/fuse_i.h      | 35 ++++++++++++++++++++++++-
+ fs/fuse/iomode.c      | 51 ++++++++++++++++++++++++++++++++-----
+ fs/fuse/passthrough.c | 59 +++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 145 insertions(+), 9 deletions(-)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index ea635c17572a..95330c2ca3d8 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -615,7 +615,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 	FUSE_ARGS(args);
- 	struct fuse_forget_link *forget;
- 	struct fuse_create_in inarg;
--	struct fuse_open_out outopen;
-+	struct fuse_open_out *outopenp;
- 	struct fuse_entry_out outentry;
- 	struct fuse_inode *fi;
- 	struct fuse_file *ff;
-@@ -659,8 +659,10 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 	args.out_numargs = 2;
- 	args.out_args[0].size = sizeof(outentry);
- 	args.out_args[0].value = &outentry;
--	args.out_args[1].size = sizeof(outopen);
--	args.out_args[1].value = &outopen;
-+	/* Store outarg for fuse_finish_open() */
-+	outopenp = &ff->args->open_outarg;
-+	args.out_args[1].size = sizeof(*outopenp);
-+	args.out_args[1].value = outopenp;
- 
- 	err = get_create_ext(&args, dir, entry, mode);
- 	if (err)
-@@ -676,9 +678,9 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 	    fuse_invalid_attr(&outentry.attr))
- 		goto out_free_ff;
- 
--	ff->fh = outopen.fh;
-+	ff->fh = outopenp->fh;
- 	ff->nodeid = outentry.nodeid;
--	ff->open_flags = outopen.open_flags;
-+	ff->open_flags = outopenp->open_flags;
- 	inode = fuse_iget(dir->i_sb, outentry.nodeid, outentry.generation,
- 			  &outentry.attr, ATTR_TIMEOUT(&outentry), 0);
- 	if (!inode) {
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index eb226457c4bd..04be04b6b2af 100644
+index 04be04b6b2af..bdcee82fef9a 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -50,12 +50,6 @@ static int fuse_send_open(struct fuse_mount *fm, u64 nodeid,
- 	return fuse_simple_request(fm, &args);
- }
- 
--struct fuse_release_args {
--	struct fuse_args args;
--	struct fuse_release_in inarg;
--	struct inode *inode;
--};
--
- struct fuse_file *fuse_file_alloc(struct fuse_mount *fm, bool release)
- {
- 	struct fuse_file *ff;
-@@ -66,9 +60,8 @@ struct fuse_file *fuse_file_alloc(struct fuse_mount *fm, bool release)
- 
- 	ff->fm = fm;
- 	if (release) {
--		ff->release_args = kzalloc(sizeof(*ff->release_args),
--					   GFP_KERNEL_ACCOUNT);
--		if (!ff->release_args) {
-+		ff->args = kzalloc(sizeof(*ff->args), GFP_KERNEL_ACCOUNT);
-+		if (!ff->args) {
- 			kfree(ff);
- 			return NULL;
- 		}
-@@ -87,7 +80,7 @@ struct fuse_file *fuse_file_alloc(struct fuse_mount *fm, bool release)
- 
- void fuse_file_free(struct fuse_file *ff)
- {
--	kfree(ff->release_args);
-+	kfree(ff->args);
- 	mutex_destroy(&ff->readdir.lock);
- 	kfree(ff);
- }
-@@ -110,7 +103,7 @@ static void fuse_release_end(struct fuse_mount *fm, struct fuse_args *args,
- static void fuse_file_put(struct fuse_file *ff, bool sync)
- {
- 	if (refcount_dec_and_test(&ff->count)) {
--		struct fuse_release_args *ra = ff->release_args;
-+		struct fuse_release_args *ra = &ff->args->release_args;
- 		struct fuse_args *args = (ra ? &ra->args : NULL);
- 
- 		if (ra && ra->inode)
-@@ -147,20 +140,21 @@ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
- 	/* Default for no-open */
- 	ff->open_flags = FOPEN_KEEP_CACHE | (isdir ? FOPEN_CACHE_DIR : 0);
- 	if (!noopen) {
--		struct fuse_open_out outarg;
-+		/* Store outarg for fuse_finish_open() */
-+		struct fuse_open_out *outargp = &ff->args->open_outarg;
- 		int err;
- 
--		err = fuse_send_open(fm, nodeid, open_flags, opcode, &outarg);
-+		err = fuse_send_open(fm, nodeid, open_flags, opcode, outargp);
- 		if (!err) {
--			ff->fh = outarg.fh;
--			ff->open_flags = outarg.open_flags;
-+			ff->fh = outargp->fh;
-+			ff->open_flags = outargp->open_flags;
- 		} else if (err != -ENOSYS) {
- 			fuse_file_free(ff);
- 			return ERR_PTR(err);
- 		} else {
- 			/* No release needed */
--			kfree(ff->release_args);
--			ff->release_args = NULL;
-+			kfree(ff->args);
-+			ff->args = NULL;
- 			if (isdir)
- 				fc->no_opendir = 1;
- 			else
-@@ -299,7 +293,7 @@ static void fuse_prepare_release(struct fuse_inode *fi, struct fuse_file *ff,
- 				 unsigned int flags, int opcode, bool sync)
- {
+@@ -295,6 +295,9 @@ static void fuse_prepare_release(struct fuse_inode *fi, struct fuse_file *ff,
  	struct fuse_conn *fc = ff->fm->fc;
--	struct fuse_release_args *ra = ff->release_args;
-+	struct fuse_release_args *ra = &ff->args->release_args;
+ 	struct fuse_release_args *ra = &ff->args->release_args;
  
++	if (fuse_file_passthrough(ff))
++		fuse_passthrough_release(ff, fuse_inode_backing(fi));
++
  	/* Inode is NULL on error path of fuse_create_open() */
  	if (likely(fi)) {
-@@ -317,6 +311,8 @@ static void fuse_prepare_release(struct fuse_inode *fi, struct fuse_file *ff,
- 	if (!ra)
- 		return;
+ 		spin_lock(&fi->lock);
+@@ -1372,7 +1375,7 @@ static void fuse_dio_lock(struct kiocb *iocb, struct iov_iter *from,
+ 		 * have raced, so check it again.
+ 		 */
+ 		if (fuse_io_past_eof(iocb, from) ||
+-		    fuse_file_uncached_io_start(inode) != 0) {
++		    fuse_file_uncached_io_start(inode, NULL) != 0) {
+ 			inode_unlock_shared(inode);
+ 			inode_lock(inode);
+ 			*exclusive = true;
+@@ -2522,6 +2525,10 @@ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
+ 	if (FUSE_IS_DAX(file_inode(file)))
+ 		return fuse_dax_mmap(file, vma);
  
-+	/* ff->args was used for open outarg */
-+	memset(ff->args, 0, sizeof(*ff->args));
- 	ra->inarg.fh = ff->fh;
- 	ra->inarg.flags = flags;
- 	ra->args.in_numargs = 1;
-@@ -339,7 +335,7 @@ void fuse_file_release(struct inode *inode, struct fuse_file *ff,
- 		       unsigned int open_flags, fl_owner_t id, bool isdir)
- {
- 	struct fuse_inode *fi = get_fuse_inode(inode);
--	struct fuse_release_args *ra = ff->release_args;
-+	struct fuse_release_args *ra = &ff->args->release_args;
- 	int opcode = isdir ? FUSE_RELEASEDIR : FUSE_RELEASE;
- 
- 	fuse_prepare_release(fi, ff, open_flags, opcode, false);
++	/* TODO: implement mmap to backing file */
++	if (fuse_file_passthrough(ff))
++		return -ENODEV;
++
+ 	/*
+ 	 * FOPEN_DIRECT_IO handling is special compared to O_DIRECT,
+ 	 * as does not allow MAP_SHARED mmap without FUSE_DIRECT_IO_ALLOW_MMAP.
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index fb9ef02cbf45..eea8f1ffc766 100644
+index eea8f1ffc766..407b24c79ebb 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -213,15 +213,15 @@ enum {
+@@ -266,6 +266,12 @@ struct fuse_file {
+ 	/** Wait queue head for poll */
+ 	wait_queue_head_t poll_wait;
  
- struct fuse_conn;
- struct fuse_mount;
--struct fuse_release_args;
-+union fuse_file_args;
- 
- /** FUSE specific file data */
- struct fuse_file {
- 	/** Fuse connection for this file */
- 	struct fuse_mount *fm;
- 
--	/* Argument space reserved for release */
--	struct fuse_release_args *release_args;
-+	/* Argument space reserved for open/release */
-+	union fuse_file_args *args;
- 
- 	/** Kernel file handle guaranteed to be unique */
- 	u64 kh;
-@@ -320,6 +320,19 @@ struct fuse_args_pages {
- 	unsigned int num_pages;
- };
- 
-+struct fuse_release_args {
-+	struct fuse_args args;
-+	struct fuse_release_in inarg;
-+	struct inode *inode;
-+};
++#ifdef CONFIG_FUSE_PASSTHROUGH
++	/** Reference to backing file in passthrough mode */
++	struct file *passthrough;
++	const struct cred *cred;
++#endif
 +
-+union fuse_file_args {
-+	/* Used during open() */
-+	struct fuse_open_out open_outarg;
-+	/* Used during release() */
-+	struct fuse_release_args release_args;
-+};
-+
- #define FUSE_ARGS(args) struct fuse_args args = {}
+ 	/** Has flock been performed on this file? */
+ 	bool flock:1;
  
- /** The request IO state (for asynchronous processing) */
-diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
-index acd0833ae873..48105f3c00f6 100644
---- a/fs/fuse/iomode.c
-+++ b/fs/fuse/iomode.c
-@@ -138,9 +138,40 @@ void fuse_file_uncached_io_end(struct inode *inode)
- 		wake_up(&fi->direct_io_waitq);
+@@ -1398,7 +1404,7 @@ int fuse_fileattr_set(struct mnt_idmap *idmap,
+ /* iomode.c */
+ int fuse_file_cached_io_start(struct inode *inode);
+ void fuse_file_cached_io_end(struct inode *inode);
+-int fuse_file_uncached_io_start(struct inode *inode);
++int fuse_file_uncached_io_start(struct inode *inode, struct fuse_backing *fb);
+ void fuse_file_uncached_io_end(struct inode *inode);
+ 
+ int fuse_file_io_open(struct file *file, struct inode *inode);
+@@ -1431,11 +1437,38 @@ static inline struct fuse_backing *fuse_inode_backing_set(struct fuse_inode *fi,
+ #endif
  }
  
-+/*
-+ * Open flags that are allowed in combination with FOPEN_PASSTHROUGH.
-+ * A combination of FOPEN_PASSTHROUGH and FOPEN_DIRECT_IO means that read/write
-+ * operations go directly to the server, but mmap is done on the backing file.
-+ * FOPEN_PASSTHROUGH mode should not co-exist with any users of the fuse inode
-+ * page cache, so FOPEN_KEEP_CACHE is a strange and undesired combination.
-+ */
-+#define FOPEN_PASSTHROUGH_MASK \
-+	(FOPEN_PASSTHROUGH | FOPEN_DIRECT_IO | FOPEN_PARALLEL_DIRECT_WRITES | \
-+	 FOPEN_NOFLUSH)
++#ifdef CONFIG_FUSE_PASSTHROUGH
+ struct fuse_backing *fuse_backing_get(struct fuse_backing *fb);
+ void fuse_backing_put(struct fuse_backing *fb);
++#else
 +
-+static int fuse_file_passthrough_open(struct file *file, struct inode *inode)
++static inline struct fuse_backing *fuse_backing_get(struct fuse_backing *fb)
 +{
-+	struct fuse_file *ff = file->private_data;
-+	struct fuse_conn *fc = get_fuse_conn(inode);
-+	int err;
-+
-+	/* Check allowed conditions for file open in passthrough mode */
-+	if (!IS_ENABLED(CONFIG_FUSE_PASSTHROUGH) || !fc->passthrough ||
-+	    (ff->open_flags & ~FOPEN_PASSTHROUGH_MASK))
-+		return -EINVAL;
-+
-+	/* TODO: implement backing file open */
-+	return -EOPNOTSUPP;
-+
-+	/* First passthrough file open denies caching inode io mode */
-+	err = fuse_file_uncached_io_start(inode);
-+
-+	return err;
++	return NULL;
 +}
 +
- /* Open flags to determine regular file io mode */
- #define FOPEN_IO_MODE_MASK \
--	(FOPEN_DIRECT_IO | FOPEN_CACHE_IO)
-+	(FOPEN_DIRECT_IO | FOPEN_CACHE_IO | FOPEN_PASSTHROUGH)
++static inline void fuse_backing_put(struct fuse_backing *fb)
++{
++}
++#endif
++
+ void fuse_backing_files_init(struct fuse_conn *fc);
+ void fuse_backing_files_free(struct fuse_conn *fc);
+ int fuse_backing_open(struct fuse_conn *fc, struct fuse_backing_map *map);
+ int fuse_backing_close(struct fuse_conn *fc, int backing_id);
  
- /* Request access to submit new io to inode via open file */
- int fuse_file_io_open(struct file *file, struct inode *inode)
-@@ -162,7 +193,7 @@ int fuse_file_io_open(struct file *file, struct inode *inode)
- 	 * implement open.
- 	 */
- 	err = -EINVAL;
--	if (FUSE_IS_DAX(inode) || !ff->release_args) {
-+	if (FUSE_IS_DAX(inode) || !ff->args) {
- 		if (iomode_flags)
- 			goto fail;
- 		return 0;
-@@ -170,7 +201,7 @@ int fuse_file_io_open(struct file *file, struct inode *inode)
- 
- 	/*
- 	 * FOPEN_CACHE_IO is an internal flag that is set on file not open in
--	 * direct io mode and it cannot be set explicitly by the server.
-+	 * direct io or passthrough mode and it cannot be set by the server.
- 	 * This includes a file open with O_DIRECT, but server did not specify
- 	 * FOPEN_DIRECT_IO. In this case, a later fcntl() could remove O_DIRECT,
- 	 * so we put the inode in caching mode to prevent parallel dio.
-@@ -178,7 +209,7 @@ int fuse_file_io_open(struct file *file, struct inode *inode)
- 	 */
- 	if (ff->open_flags & FOPEN_CACHE_IO) {
- 		goto fail;
--	} else if (!(ff->open_flags & FOPEN_DIRECT_IO)) {
-+	} else if (!(ff->open_flags & FOPEN_IO_MODE_MASK)) {
- 		ff->open_flags |= FOPEN_CACHE_IO;
- 		ff->open_flags &= ~FOPEN_PARALLEL_DIRECT_WRITES;
- 	}
-@@ -189,6 +220,8 @@ int fuse_file_io_open(struct file *file, struct inode *inode)
- 	err = 0;
- 	if (ff->open_flags & FOPEN_CACHE_IO)
- 		err = fuse_file_cached_io_start(inode);
-+	else if (ff->open_flags & FOPEN_PASSTHROUGH)
-+		err = fuse_file_passthrough_open(file, inode);
- 	if (err)
- 		goto fail;
- 
-@@ -206,17 +239,18 @@ int fuse_file_io_open(struct file *file, struct inode *inode)
- 	return -EIO;
++struct fuse_backing *fuse_passthrough_open(struct file *file,
++					   struct inode *inode,
++					   int backing_id);
++void fuse_passthrough_release(struct fuse_file *ff, struct fuse_backing *fb);
++
++static inline struct file *fuse_file_passthrough(struct fuse_file *ff)
++{
++#ifdef CONFIG_FUSE_PASSTHROUGH
++	return ff->passthrough;
++#else
++	return NULL;
++#endif
++}
++
+ #endif /* _FS_FUSE_I_H */
+diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
+index 48105f3c00f6..dce369f3b201 100644
+--- a/fs/fuse/iomode.c
++++ b/fs/fuse/iomode.c
+@@ -115,13 +115,24 @@ void fuse_file_cached_io_end(struct inode *inode)
  }
  
--/* Request access to submit new io to inode via mmap */
-+/* Request access to submit cached io to inode via mmap */
- int fuse_file_io_mmap(struct fuse_file *ff, struct inode *inode)
+ /* Start strictly uncached io mode where cache access is not allowed */
+-int fuse_file_uncached_io_start(struct inode *inode)
++int fuse_file_uncached_io_start(struct inode *inode, struct fuse_backing *fb)
  {
  	struct fuse_inode *fi = get_fuse_inode(inode);
- 	int err = 0;
- 
- 	/* There are no io modes if server does not implement open */
--	if (!ff->release_args)
-+	if (!ff->args)
- 		return 0;
- 
--	if (WARN_ON(!ff->io_opened))
-+	if (WARN_ON(ff->open_flags & FOPEN_PASSTHROUGH) ||
-+	    WARN_ON(!ff->io_opened))
- 		return -ENODEV;
+-	int err;
++	struct fuse_backing *oldfb;
++	int err = -EBUSY;
  
  	spin_lock(&fi->lock);
+-	err = fuse_inode_deny_io_cache(fi);
++	/* deny conflicting backing files on same fuse inode */
++	oldfb = fuse_inode_backing(fi);
++	if (!oldfb || oldfb == fb)
++		err = fuse_inode_deny_io_cache(fi);
++	/* fuse inode holds a single refcount of backing file */
++	if (!oldfb && !err) {
++		oldfb = fuse_inode_backing_set(fi, fb);
++		WARN_ON_ONCE(oldfb != NULL);
++	} else if (!err) {
++		fuse_backing_put(fb);
++	}
+ 	spin_unlock(&fi->lock);
+ 	return err;
+ }
+@@ -129,13 +140,18 @@ int fuse_file_uncached_io_start(struct inode *inode)
+ void fuse_file_uncached_io_end(struct inode *inode)
+ {
+ 	struct fuse_inode *fi = get_fuse_inode(inode);
++	struct fuse_backing *oldfb = NULL;
+ 	int uncached_io;
+ 
+ 	spin_lock(&fi->lock);
+ 	uncached_io = fuse_inode_allow_io_cache(fi);
++	if (!uncached_io)
++		oldfb = fuse_inode_backing_set(fi, NULL);
+ 	spin_unlock(&fi->lock);
+ 	if (!uncached_io)
+ 		wake_up(&fi->direct_io_waitq);
++	if (oldfb)
++		fuse_backing_put(oldfb);
+ }
+ 
+ /*
+@@ -153,6 +169,7 @@ static int fuse_file_passthrough_open(struct file *file, struct inode *inode)
+ {
+ 	struct fuse_file *ff = file->private_data;
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
++	struct fuse_backing *fb;
+ 	int err;
+ 
+ 	/* Check allowed conditions for file open in passthrough mode */
+@@ -160,11 +177,18 @@ static int fuse_file_passthrough_open(struct file *file, struct inode *inode)
+ 	    (ff->open_flags & ~FOPEN_PASSTHROUGH_MASK))
+ 		return -EINVAL;
+ 
+-	/* TODO: implement backing file open */
+-	return -EOPNOTSUPP;
++	fb = fuse_passthrough_open(file, inode,
++				   ff->args->open_outarg.backing_id);
++	if (IS_ERR(fb))
++		return PTR_ERR(fb);
+ 
+ 	/* First passthrough file open denies caching inode io mode */
+-	err = fuse_file_uncached_io_start(inode);
++	err = fuse_file_uncached_io_start(inode, fb);
++	if (!err)
++		return 0;
++
++	fuse_passthrough_release(ff, fb);
++	fuse_backing_put(fb);
+ 
+ 	return err;
+ }
+@@ -177,6 +201,7 @@ static int fuse_file_passthrough_open(struct file *file, struct inode *inode)
+ int fuse_file_io_open(struct file *file, struct inode *inode)
+ {
+ 	struct fuse_file *ff = file->private_data;
++	struct fuse_inode *fi = get_fuse_inode(inode);
+ 	int iomode_flags = ff->open_flags & FOPEN_IO_MODE_MASK;
+ 	int err;
+ 
+@@ -199,6 +224,13 @@ int fuse_file_io_open(struct file *file, struct inode *inode)
+ 		return 0;
+ 	}
+ 
++	/*
++	 * Server is expected to use FOPEN_PASSTHROUGH for all opens of an inode
++	 * which is already open for passthrough.
++	 */
++	if (fuse_inode_backing(fi) && !(ff->open_flags & FOPEN_PASSTHROUGH))
++		goto fail;
++
+ 	/*
+ 	 * FOPEN_CACHE_IO is an internal flag that is set on file not open in
+ 	 * direct io or passthrough mode and it cannot be set by the server.
+@@ -271,9 +303,14 @@ void fuse_file_io_release(struct fuse_file *ff, struct inode *inode)
+ 	if (!ff->io_opened)
+ 		return;
+ 
+-	/* Last caching file close exits caching inode io mode */
++	/*
++	 * Last caching file close allows passthrough open of inode and
++	 * Last passthrough file close allows caching open of inode.
++	 */
+ 	if (ff->open_flags & FOPEN_CACHE_IO)
+ 		fuse_file_cached_io_end(inode);
++	else if (ff->open_flags & FOPEN_PASSTHROUGH)
++		fuse_file_uncached_io_end(inode);
+ 
+ 	ff->io_opened = false;
+ }
+diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
+index 6604d414adb5..098a1f765e99 100644
+--- a/fs/fuse/passthrough.c
++++ b/fs/fuse/passthrough.c
+@@ -8,6 +8,7 @@
+ #include "fuse_i.h"
+ 
+ #include <linux/file.h>
++#include <linux/backing-file.h>
+ 
+ struct fuse_backing *fuse_backing_get(struct fuse_backing *fb)
+ {
+@@ -163,3 +164,61 @@ int fuse_backing_close(struct fuse_conn *fc, int backing_id)
+ 
+ 	return err;
+ }
++
++/*
++ * Setup passthrough to a backing file.
++ *
++ * Returns an fb object with elevated refcount to be stored in fuse inode.
++ */
++struct fuse_backing *fuse_passthrough_open(struct file *file,
++					   struct inode *inode,
++					   int backing_id)
++{
++	struct fuse_file *ff = file->private_data;
++	struct fuse_conn *fc = ff->fm->fc;
++	struct fuse_backing *fb = NULL;
++	struct file *backing_file;
++	int err;
++
++	err = -EINVAL;
++	if (backing_id <= 0)
++		goto out;
++
++	rcu_read_lock();
++	fb = idr_find(&fc->backing_files_map, backing_id);
++	fb = fuse_backing_get(fb);
++	rcu_read_unlock();
++
++	err = -ENOENT;
++	if (!fb)
++		goto out;
++
++	/* Allocate backing file per fuse file to store fuse path */
++	backing_file = backing_file_open(&file->f_path, file->f_flags,
++					 &fb->file->f_path, fb->cred);
++	err = PTR_ERR(backing_file);
++	if (IS_ERR(backing_file)) {
++		fuse_backing_put(fb);
++		goto out;
++	}
++
++	err = 0;
++	ff->passthrough = backing_file;
++	ff->cred = get_cred(fb->cred);
++out:
++	pr_debug("%s: backing_id=%d, fb=0x%p, backing_file=0x%p, err=%i\n", __func__,
++		 backing_id, fb, ff->passthrough, err);
++
++	return err ? ERR_PTR(err) : fb;
++}
++
++void fuse_passthrough_release(struct fuse_file *ff, struct fuse_backing *fb)
++{
++	pr_debug("%s: fb=0x%p, backing_file=0x%p\n", __func__,
++		 fb, ff->passthrough);
++
++	fput(ff->passthrough);
++	ff->passthrough = NULL;
++	put_cred(ff->cred);
++	ff->cred = NULL;
++}
 -- 
 2.34.1
 
