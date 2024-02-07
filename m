@@ -1,111 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-10664-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10665-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8857084D2C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 21:18:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F59E84D2DE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 21:23:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4395D284684
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 20:18:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B13761C24B06
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 20:23:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A8A1272D7;
-	Wed,  7 Feb 2024 20:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77718127B70;
+	Wed,  7 Feb 2024 20:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEFuw/ej"
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="k4xrhElc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6F0126F37;
-	Wed,  7 Feb 2024 20:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401C0127B5C
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 20:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707337126; cv=none; b=Cx/COZtc7Y6hH5hInCguPVyjAI9OYB3o4Z7pfO+6JOvu7PN5uofOwmsEDkD41b7XeAu3ZcPmJIOwa9cqI62Jr2+x7EVzhHIKy2qH2goUCwsi9a1hzRtfYb9YDaRpqsVrGsuvF0vTcEQsDwVxjQCQNPh2LBeQqBLz8yH1nTBE688=
+	t=1707337409; cv=none; b=m+dZNKXxng4cs0/cIzhSqfM+qPsKlGHr4/IsksZrZ0mTjczanDodmwxY7I5JsbMM0Ju7tPULXKbiXOINsTkSQibuNVDK1gukxzfv3I5yWK7iq0kvHrhbcMNoLMcP0uiyyjJ/CKxlepQuQPY8JuBXdZr06sIkhhhXsQVM+YxzmQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707337126; c=relaxed/simple;
-	bh=3DBdSkr1+oN510ucK4APN7lecmvtDgNwN2r/J31Mba0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B4NzmW+shwoHcNQHfbUfj/dVrWujbzCgpJNgFA3niE829LC/1xb0ilIPDbs3oDYUl+JvP1Q4TO2L2gkU4h7JOkgNmB8ZmJqiu6HjaCDuh15RNrff/NAERV+eQk9YmN/UA05zdHhw6B+jP7VwN5co5sHAqV6zkv9a5RHWtB+itRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEFuw/ej; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E61FC433C7;
-	Wed,  7 Feb 2024 20:18:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707337126;
-	bh=3DBdSkr1+oN510ucK4APN7lecmvtDgNwN2r/J31Mba0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NEFuw/ejNPdZC/T+TmKCAo/eVBLcHKGs+gAzsnAOT1Z3Pk1+kHIFk5qOiqT+x7LvO
-	 ibzQMw15E9lNzOdHZIEI3EVuyp22O8Xfo21T64QhQazWamkzSRHbWdBgaJqbZsp6EL
-	 IbsZxi1ThJgF17+yE0hpL2iruWh2V3Sw0gsHiOPH+DzEo6MjJ04Fml8EqKOGrE6Pio
-	 2c9Okoqr3741mPdoHwQJEVFO7x+lFuBqWjEWOqv8AUFxPCV7vQYQ8+Mk6y/shdNKAk
-	 ZvunoN+G00tuZe1DW516zTmTO5VRY3h5nkUQ8KkNA7C/svrr/+jSYU69TvIARo6ljn
-	 aXXMdSQxTjIrg==
-Date: Wed, 7 Feb 2024 12:18:44 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Joe Damato <jdamato@fastly.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- chuck.lever@oracle.com, jlayton@kernel.org, linux-api@vger.kernel.org,
- brauner@kernel.org, edumazet@google.com, davem@davemloft.net,
- alexander.duyck@gmail.com, sridhar.samudrala@intel.com,
- willemdebruijn.kernel@gmail.com, weiwan@google.com,
- David.Laight@ACULAB.COM, arnd@arndb.de, sdf@google.com,
- amritha.nambiar@intel.com, Jonathan Corbet <corbet@lwn.net>, Alexander Viro
- <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Nathan Lynch
- <nathanl@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Namjae Jeon
- <linkinjeon@kernel.org>, Steve French <stfrench@microsoft.com>, Thomas
- Zimmermann <tzimmermann@suse.de>, Julien Panis <jpanis@baylibre.com>,
- Andrew Waterman <waterman@eecs.berkeley.edu>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, "open
- list:DOCUMENTATION" <linux-doc@vger.kernel.org>, "open list:FILESYSTEMS
- (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH net-next v6 4/4] eventpoll: Add epoll ioctl for
- epoll_params
-Message-ID: <20240207121844.6bf34083@kernel.org>
-In-Reply-To: <20240207191603.GB1313@fastly.com>
+	s=arc-20240116; t=1707337409; c=relaxed/simple;
+	bh=52gKcX+UmVuwAMUKbS3chE8siFn6XrLd+UQ4CKtpUJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dmI7dRdX3iifEMUAy8WOV53JgGmZx7U4wTuB7jf2J+MUrfMnnQWEn0D7q4Ibc35p1Dddt0uqMVIgZfaAv6YRQNbZGmMcSEXVOvs+ZNJ9tQAYw4sck4sK3LLZfNKX8a7qUv9uQaXr5lwdhCxJJwQze5QIjSopu3OSn/e8+e46pWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=k4xrhElc; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6e04ea51984so602748b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 12:23:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1707337407; x=1707942207; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pUv7lvVM6VkpceK/tQ/gnRd5CGoChU/5Uxt3s4/vCy0=;
+        b=k4xrhElcjgnpwa5nBq+3uihGvCEv71F1cbBkJpr8cbJnbMbU8X2GhBWg6+ebz5FU31
+         m8RzIgDggcwWxzcNWpO1Qv0Az28VVfuPR1mhCtwRovxx/wTMCctDgKMLX94OKGHX+A48
+         XVN1TdsRZmbTH8Jx4QeLsZYAOILAvQaaCLeAU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707337407; x=1707942207;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pUv7lvVM6VkpceK/tQ/gnRd5CGoChU/5Uxt3s4/vCy0=;
+        b=RiO31ZatWq7jjUZJiDLZRM8Gg5t8Q/8GkMxRNWr4g1RiMyIUlwKbvp/a37ecEgqA1U
+         0YiCJf6ffTlk2HvMIFdoxAmzVJXre6U+lAqP4kCqR29qvrZYGgQf6mi61GFVtLbcBOje
+         vtpGRsoL+7F9s2yJR5a6mkghhMwesusA9QHkV7xdIgUW/Hp8lTT+xTF4oPWpUp11OBCt
+         GdZKtVUh8lxCq5vlZ+1nBH4R/3xcpcrB0vHS5lOBqJtCDDk9YA030B6FhsfVNpvu8Uxx
+         /Womq+YcnTZhgQCL5XeIWac6HjA27OXzLdeE14325BE0VO+ptWyIdsD6rLYu0ChMSzip
+         tEJw==
+X-Gm-Message-State: AOJu0Yzq3m68wXIz+uswIrVbB8ZqIB6It5FAdCrq+auwtOpMzA50R9xC
+	IWfbRUf0P8UkqAq9WJiY/f2p1Tu5uwIxAUzrdTIYoEaMq3jGZFs8A0P+9srD7Vk=
+X-Google-Smtp-Source: AGHT+IEqzeS299vkOadTe30zptDF57rACEt8HtEWFtpkIBhx8ucnYYZK4I3R+U+qqJwKLVgcRhOAZw==
+X-Received: by 2002:a05:6a00:418f:b0:6e0:5ebe:89f1 with SMTP id ca15-20020a056a00418f00b006e05ebe89f1mr5023588pfb.13.1707337407486;
+        Wed, 07 Feb 2024 12:23:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUCqUE1ygMi5QRm+bprEdVdWJwdWoU7OckQ7HYlQsSwxfrRQ0w1+Q0hpe0/+qzeRc/q+6TlwYqyhmoi4bEJEJAlnHlFDdWGggJFPayc3yYYqjVKrqu62dWm6HcYGrTnk0y5pr1QN42ubb2OzUcBklB5HhZEvkvtPGRKMaxzkDRxJGoEgnTwPOH7rkEGKgU9wLZAqdDHUldk8x+o5bDcTFvl3RA/wwaUfQna0EyzJ1oFge3JzOolnxycEx/8yypvjMXKlz8hXK9+vXwCY8uXzTmJg7yxBskkHf+rslkVZeCJG/xK0d7xowOx5MgOHK5snYF5YwQuxLCB6/FqktgX93hCk7k070E9ePSO9MnXEvOd2tc0rpMB/a2O5pepImHDhG98WmBdRBSedlHuX/80/MAW4FKVpQ9ov3MboTl9SFJr8ftv9rs89G0Di+LaoNaO8FgvcRci4srlT7gzzyfMtv6PU22/C1tpIcqnozgVaYkexZmdM7I0OqPu+7BCJggqnf54LtX/g+g8MKl8hJT3+piYHRj6emQu65mTCirCQdJZo/Ewpm47/9xtFPw9iMOzPfuZTT8b89ARKX48K0G9mQ77QUlamjrDBSuilDsrb9jAMw==
+Received: from fastly.com (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id cl13-20020a056a02098d00b005d34cf68664sm1874233pgb.25.2024.02.07.12.23.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Feb 2024 12:23:27 -0800 (PST)
+Date: Wed, 7 Feb 2024 12:23:23 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	chuck.lever@oracle.com, jlayton@kernel.org,
+	linux-api@vger.kernel.org, brauner@kernel.org, edumazet@google.com,
+	davem@davemloft.net, alexander.duyck@gmail.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	weiwan@google.com, David.Laight@ACULAB.COM, arnd@arndb.de,
+	sdf@google.com, amritha.nambiar@intel.com,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH net-next v6 1/4] eventpoll: support busy poll per epoll
+ instance
+Message-ID: <20240207202323.GA1283@fastly.com>
 References: <20240205210453.11301-1-jdamato@fastly.com>
-	<20240205210453.11301-5-jdamato@fastly.com>
-	<ec9791cf-d0a2-4d75-a7d6-00bcab92e823@kernel.org>
-	<20240207185014.GA1221@fastly.com>
-	<20240207110726.68c07188@kernel.org>
-	<20240207191603.GB1313@fastly.com>
+ <20240205210453.11301-2-jdamato@fastly.com>
+ <20240207110413.0cfedc37@kernel.org>
+ <20240207191407.GA1313@fastly.com>
+ <20240207121124.12941ed9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240207121124.12941ed9@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 
-On Wed, 7 Feb 2024 11:16:03 -0800 Joe Damato wrote:
-> > > netdev maintainers: Jiri marked this with Reviewed-by, but was this review
-> > > what caused "Changes Requested" to be the status set for this patch set in
-> > > patchwork?
-> > > 
-> > > If needed, I'll send a v7 with the changes Jiri suggested and add the
-> > > "Reviewed-by" since the changes are cosmetic, but I wanted to make sure
-> > > this was the reason.  
+On Wed, Feb 07, 2024 at 12:11:24PM -0800, Jakub Kicinski wrote:
+> On Wed, 7 Feb 2024 11:14:08 -0800 Joe Damato wrote:
+> > > Why do we need u64 for usecs? I think u16 would do, and u32 would give
+> > > a very solid "engineering margin". If it was discussed in previous
+> > > versions I think it's worth explaining in the commit message.  
 > > 
-> > Yes, I think that's it.  
+> > In patch 4/4 the value is limited to U32_MAX, but if you prefer I use a u32
+> > here instead, I can make that change.
 > 
-> OK, thanks for letting me know. I wasn't sure if it was because of the
-> netdev/source_inline which marked 1/4 as "fail" because of the inlines
-> added.
-> 
-> Does that need to be changed, as well?
+> Unless you have a clear reason not to, I think using u32 would be more
+> natural? If my head math is right the range for u32 is 4096 sec,
+> slightly over an hour? I'd use u32 and limit it to S32_MAX.
 
-For background our preference is to avoid using static inline in C
-sources, unless the author compiled the code and actually confirmed
-the code doesn't get inlined correctly. But it's not a hard
-requirement, and technically the code is under fs/.
-
-In general the patchwork checks are a bit noisy, see here the top left
-graph of how many of the patches we merge are "all green":
-https://netdev.bots.linux.dev/checks.html
-Some of the checks are also largely outside of our control (checkpatch)
-so consider the patchwork checks as automation for maintainers. 
-The maintainers should respond on the list if any of the failures 
-are indeed legit. 
+OK, that seems fine. Sorry for the noob question, but since that represents
+a fucntional change to patch 4/4, I believe I would need to drop Jiri's
+Reviewed-by, is that right?
 
