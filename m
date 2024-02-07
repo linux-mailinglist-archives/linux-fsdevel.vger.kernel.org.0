@@ -1,134 +1,155 @@
-Return-Path: <linux-fsdevel+bounces-10660-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218BF84D226
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 20:16:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3936F84D24A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 20:39:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5457E1C20E49
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 19:16:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E18E81F24A55
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 19:38:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774CC85C6D;
-	Wed,  7 Feb 2024 19:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A16D82D97;
+	Wed,  7 Feb 2024 19:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="UxaFWWXY"
+	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="dmVV8f1U"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+Received: from sandeen.net (sandeen.net [63.231.237.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FE684FBD;
+	Wed,  7 Feb 2024 19:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.231.237.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707334730; cv=none; b=A932BlsTe1TM6VA/ICB2W4nqzWvlb43vpkyX1OtgpjFiJ6L0L9F6Kk+3MaSyLr0fS9eY7X2dR22nEgffcWKvEBiMyZBMLFmvgStJowKkOhqIYfS0+lb6OTkwlGdpoEknQbfPq3+RkYZ/Fa1y8k2VLPUSrAIcWsqbV5i5X7S6a8U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707334730; c=relaxed/simple;
+	bh=++MTL3pXaFGkwTrZ2UX9O8w73zELvOw8YOi00AODvIQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FYjveUd1dUhbhrLMvrsuXMhxqtlxGWG6/FeSkIjO/qzu0q+JC8ad4EsF+x3mkq0Yad1dQ3lCop8+Pq3gqfMZmSDFySpvh9fYJ7JZcAlu/JeO3fdzJJdYhNui4JEdmFA0uBM6lEbaLNwTHOdG+WfQ+RT3hbinoToiZfJ8Bx+ysAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=dmVV8f1U; arc=none smtp.client-ip=63.231.237.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
+Received: from [10.0.0.71] (usg [10.0.0.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F2318562D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 19:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707333372; cv=none; b=L/9nEcCBc/WHaAUzyIL3R1wgWbro/+Jpi7sk4XKXnWUEiLVcmiaKvUtkxzhhbk2vH5bPFVnIkay2ELUBqzFuvBzKmIQxFFVCjVJaWqu6TPBBPKEYsFh0oohOWrAtbTsXV7qhwR+ho3rDIpY/ef78qZB5o+AeK3xmIPREwACuaAw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707333372; c=relaxed/simple;
-	bh=ne+aULSUpaPEi4743IN+wg1mH2cuE/ImHAUIXCyQB6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QPZ0/RMFdzgq9bUOwRoSBB4XpthUSh7vGT2tP/mOJCcBzvfAR4Xcq/41vxR1BF5S7BQoPdJhTKARrHVpCztEtIGm9S0f7RmUGZpxB+cVpRa7LQOSHHBEAVETY2axP0utcUXG5K3h/SkG7n/56ZD5/lKJa2Re6ty3YZqslUGu6Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=UxaFWWXY; arc=none smtp.client-ip=209.85.167.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3bfedaaeeacso488260b6e.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 11:16:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1707333367; x=1707938167; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sm8na7VDZ32O2vJx51WDZHRCRu6AvXjFSjD2uvcbmz8=;
-        b=UxaFWWXYibJqcRYARqOuCXyRSNfljUIgycHeolNfB01dxd4Dv24IgzZ8BBH9l2xF22
-         UWNUXzMtNi31FqOBOlArbRTk3HoITeC1ohLFBPLgUUddwunOYpUHHxy3PVr99R3aNT5O
-         GB/J0P+y/rY23QhmDH1l162q+eAzlvSdjmiJo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707333367; x=1707938167;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Sm8na7VDZ32O2vJx51WDZHRCRu6AvXjFSjD2uvcbmz8=;
-        b=G2jyC+lhPwogexgVEMPsNfYS0ziZnIYbzRh1CcwfQWgTYDjjj4ZysticBNo8pS/KZN
-         eT2CDrryOYw6qMyZHgPhWZxPdLJrRZrtEnRax/B3MPXOUSczYlzVMbnmhUFapsrMk8a0
-         vqo2HWMme6sa3t33h473EGFLCT7M8jmIaN8JTER9bmBKbuQ8cYTialIkndNb8keJKutL
-         yFUd+tzDpUq3F9VJp9gUOy2Uvwz0bjKnEtKk8BpX/NhW1VuP6rCm48g2vMgvH/0JGPFp
-         cfzFPPvRP1l9reXvVWJkJnzfcm1E+qRnhypmWn251wsDGS3OPx4BoBdsGW0bewoKW3zb
-         1qxw==
-X-Gm-Message-State: AOJu0YwRDpeb5g8VBaWo77xMeDojC+shshX3e+74Oa/bASyPblx6Se19
-	67mw1N33S2VOz7Ef/eHJ/W2S4yy7i3KpjpGzR8mBKMTS9wCo7qN2CqHhdFfh94o=
-X-Google-Smtp-Source: AGHT+IEpdhrPd4EP4V5LmrtuWQvsldZmM0L6GGd8Xxw1V8t7XXLe4+6ucXdG+OY3lX/V7ukb/tUVOA==
-X-Received: by 2002:a05:6359:1010:b0:178:9b37:79f0 with SMTP id ib16-20020a056359101000b001789b3779f0mr3806311rwb.32.1707333367454;
-        Wed, 07 Feb 2024 11:16:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX6KBZY+Rr7BE/6ADjZAkApu/xJQ5/nhz85kwrS26hIlM6jUnEf+5iQmNHQE9Lyjzj4LDpocM+V729LF3BSXS076ZvwLfpXj87M91D1fA/J8zb8UEcXgHrtdkTFDRfrKwhr/utbGVVYTFm9zgX7ptEC8q0fWPfvAlpLRrEU5ypY43MGSebLdUbxu1GSc94smNhwJHVN+V3ZN/hGVr1+8z5Ud9lpjajhV7xfZqbRTJjjptMG8Iabq4fora7t0UsP7z6TaO0ArjoH+eZtIfFoJMc3Rd1OmKu9qEAPzDbb4rtEU6SASddc0wR9Z+qO6ik17h9b+UF7WKZYl1nFmI9rUB13QENxajXPp6I2ZsZQck2XFnU+7+7yR0yCUcixh26AR+O/NQYfvrsfneRy+Pn4Gl0DAn2Rgw1AQLOzFrALAQMi2U8rlv0hRLMM+90PxytYCsKX9488hsaXPve72+cet3hS8+5dIVvwXYHSwibYc/yyGq8jMIpf/YooBY0gziUk+sy4Ya1bwRv0X9muMz+rzT+lfs+qa7AkmauFlBCODhE3Avngb1oNtQbFpyM5ShBYhfGl8WgCN7TnomYKk0NunQlu+wLVu1IZHUdviUB21R0TyVzl5tkj/7XQv5FJQVvmBAv4iFKWltjzjJ9dWSHP1icqA7OfuR9jC+iZNs/ySOICnhlQ9wenwaSoDFcYansTuQamIBqBulBggIenIwDPy9iXyV0Fn2h2OxaAqAQmt5HGoz88ddECBQIiqIIWGwGneVW4hy31dMkg8rCYa8J2E+wkkS3AhbNv9wg4JWenL5Y2x35W3THgEBXbYV6FyiAg6LbfTH2zWwheBq0XMzs3C1a8IMSmCY4ZgXg/4Rf53QC1JwF0VMFioMCYzSus0KRwQY/bdPJ7Lr28j4+b1OnYyEkNKufOb76kwWQS+b1pPKU8F5PR62++syTf+5Iag/KYWLyBQC
- 9rEjkKq0fGBm446COafVJyVns/KhE=
-Received: from fastly.com (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id 126-20020a630084000000b005d8e30897e4sm1955912pga.69.2024.02.07.11.16.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 07 Feb 2024 11:16:07 -0800 (PST)
-Date: Wed, 7 Feb 2024 11:16:03 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chuck.lever@oracle.com, jlayton@kernel.org,
-	linux-api@vger.kernel.org, brauner@kernel.org, edumazet@google.com,
-	davem@davemloft.net, alexander.duyck@gmail.com,
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
-	weiwan@google.com, David.Laight@ACULAB.COM, arnd@arndb.de,
-	sdf@google.com, amritha.nambiar@intel.com,
-	Jonathan Corbet <corbet@lwn.net>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Nathan Lynch <nathanl@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Namjae Jeon <linkinjeon@kernel.org>,
-	Steve French <stfrench@microsoft.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Julien Panis <jpanis@baylibre.com>,
-	Andrew Waterman <waterman@eecs.berkeley.edu>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH net-next v6 4/4] eventpoll: Add epoll ioctl for
- epoll_params
-Message-ID: <20240207191603.GB1313@fastly.com>
-References: <20240205210453.11301-1-jdamato@fastly.com>
- <20240205210453.11301-5-jdamato@fastly.com>
- <ec9791cf-d0a2-4d75-a7d6-00bcab92e823@kernel.org>
- <20240207185014.GA1221@fastly.com>
- <20240207110726.68c07188@kernel.org>
+	by sandeen.net (Postfix) with ESMTPSA id 4187B5CCFF8;
+	Wed,  7 Feb 2024 13:30:00 -0600 (CST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 sandeen.net 4187B5CCFF8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net;
+	s=default; t=1707334200;
+	bh=ZW6Ze3ip8h0vhzwPBz1EamxDDep6suZbxAI9Ob6xCl4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dmVV8f1UphyEfiMVNtX+QL9fxRfNlyF/1ggx7ulJqu1eP4JD/dWHJIOqmdE3gqAam
+	 TyHQnNy/GKv0xbtH1ilvzag6xfkVFsp+WWlhYGx0qxL33ljRKBVbF29T92sTdLUJNi
+	 1c0E+MXl31o3TwXElyERC/sGZNPIUlwKHjziJssxHixoWUNyZIWMkSwLgdzpkSGahZ
+	 1kD2IkeZejecGEc6UIz8Nh+81hqHdJj68BlwF73XEmv3jScAcZDTIf4IBOuAvZfeZd
+	 Gjl1Ho5GsKN0lM2KFRdd3zXMP40C2q6LkV0ty7txHgmlbcZhaQTDKnXqvzH+jGP2Lu
+	 4c5ySs6tiKokw==
+Message-ID: <9f9a740f-3db5-4078-8135-0ec224b26a90@sandeen.net>
+Date: Wed, 7 Feb 2024 13:29:59 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240207110726.68c07188@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Lsf-pc] [LSF/MM/BPF TOPIC] tracing the source of errors
+Content-Language: en-US
+To: Miklos Szeredi <miklos@szeredi.hu>, Jan Kara <jack@suse.cz>
+Cc: lsf-pc <lsf-pc@lists.linux-foundation.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <CAJfpegtw0-88qLjy0QDLyYFZEM7PJCG3R-mBMa9s8TNSVZmJTA@mail.gmail.com>
+ <20240207110041.fwypjtzsgrcdhalv@quack3>
+ <CAJfpegvkP5dic7CXB=ZtwTF4ZhRth1xyUY36svoM9c1pcx=f+A@mail.gmail.com>
+From: Eric Sandeen <sandeen@sandeen.net>
+In-Reply-To: <CAJfpegvkP5dic7CXB=ZtwTF4ZhRth1xyUY36svoM9c1pcx=f+A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 07, 2024 at 11:07:26AM -0800, Jakub Kicinski wrote:
-> On Wed, 7 Feb 2024 10:50:15 -0800 Joe Damato wrote:
-> > > This !! is unnecessary. Nonzero values shall be "converted" to true.
-> > > 
-> > > But FWIW, the above is nothing which should be blocking, so:
-> > "> 
-> > > Reviewed-by: Jiri Slaby <jirislaby@kernel.org>  
-> > 
-> > netdev maintainers: Jiri marked this with Reviewed-by, but was this review
-> > what caused "Changes Requested" to be the status set for this patch set in
-> > patchwork?
-> > 
-> > If needed, I'll send a v7 with the changes Jiri suggested and add the
-> > "Reviewed-by" since the changes are cosmetic, but I wanted to make sure
-> > this was the reason.
+On 2/7/24 5:23 AM, Miklos Szeredi wrote:
+> On Wed, 7 Feb 2024 at 12:00, Jan Kara <jack@suse.cz> wrote:
 > 
-> Yes, I think that's it.
+>> The problem always has been how to implement this functionality in a
+>> transparent way so the code does not become a mess. So if you have some
+>> idea, I'd say go for it :)
+> 
+> My first idea would be to wrap all instances of E* (e.g. ERR(E*)).
+> But this could be made completely transparent by renaming current
+> definition of E* to _E* and defining E* to be the wrapped ones.
+> There's probably a catch (or several catches) somewhere, though.
+> 
+> Thanks,
+> Miklos
+> 
 
-OK, thanks for letting me know. I wasn't sure if it was because of the
-netdev/source_inline which marked 1/4 as "fail" because of the inlines
-added.
+Just FWIW, XFS has kind of been there and back again on wrapping error returns
+with macros.
 
-Does that need to be changed, as well?
+Long ago, we had an XFS_ERROR() macro, i.e.
+
+ 	if (error)
+		return -XFS_ERROR(error);
+
+sprinkled (randomly) throughout the code.
+
+(it didn't make it out through strace, and was pretty clunky but could printk or
+BUG based on which error you were looking for, IIRC.)
+
+In 2014(!) I removed it, pointing out that systemtap could essentially do the
+same thing, and do it more flexibly (see: [PATCH 2/2] xfs: Nuke XFS_ERROR macro):
+
+# probe module("xfs").function("xfs_*").return { if (@defined($return) &&
+$return == VALUE) { ... } }
+
+hch pointed out that systemtap was not a viable option for many, and further
+discussion turned up a slightly kludgey way to use kprobes:
+
+-- from dchinner --
+#!/bin/bash
+
+TRACEDIR=/sys/kernel/debug/tracing
+
+grep -i 't xfs_' /proc/kallsyms | awk '{print $3}' ; while read F; do
+	echo "r:ret_$F $F \$retval" >> $TRACEDIR/kprobe_events
+done
+
+for E in $TRACEDIR/events/kprobes/ret_xfs_*/enable; do
+	echo 1 > $E
+done;
+
+echo 'arg1 > 0xffffffffffffff00' > $TRACEDIR/events/kprobes/filter
+
+for T in $TRACEDIR/events/kprobes/ret_xfs_*/trigger; do
+	echo 'traceoff if arg1 > 0xffffffffffffff00' > $T
+done
+--------
+
+which yields i.e.:
+
+# dd if=/dev/zero of=/mnt/scratch/newfile bs=513 oflag=direct
+dd: error writing ¿/mnt/scratch/newfile¿: Invalid argument
+1+0 records in
+0+0 records out
+0 bytes (0 B) copied, 0.000259882 s, 0.0 kB/s
+root@test4:~# cat /sys/kernel/debug/tracing/trace
+# tracer: nop
+#
+# entries-in-buffer/entries-written: 1/1   #P:16
+#
+#                              _-----=> irqs-off
+#                             / _----=> need-resched
+#                            | / _---=> hardirq/softirq
+#                            || / _--=> preempt-depth
+#                            ||| /     delay
+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+#              | |       |   ||||       |         |
+           <...>-8073  [006] d... 145740.460546: ret_xfs_file_dio_aio_write:
+(xfs_file_aio_write+0x170/0x180 <- xfs_file_dio_aio_write) arg1=0xffffffffffffffea
+
+where that last negative number is the errno.
+
+Not the prettiest thing but something that works today and could maybe be improved?
+
+-Eric
 
