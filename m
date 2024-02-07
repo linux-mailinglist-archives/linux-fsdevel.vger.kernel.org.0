@@ -1,91 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-10649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A01984D0E1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 19:12:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9476E84D0FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 19:16:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49970B26281
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 18:12:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A1C72844BA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 18:16:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D72127B41;
-	Wed,  7 Feb 2024 18:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFB385654;
+	Wed,  7 Feb 2024 18:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SWReDU48"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C043E83A1C
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 18:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0029823DA
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 18:12:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707329062; cv=none; b=qea0VtIvb2iBvp5oqlTimemGV/bUpfN1n9if1t6bf6GbcMppAW7iwG2hjeA3m2HMVzOAyfzSQDqNOT5lgVvjjq5NmdH9fiGHD84yvJAT4rHfFAONw8mYe1G4sCQiIk53zMHDieoS2w2oz8VSiWBJF0gewKDkYDzJ6GuMvph+9z8=
+	t=1707329551; cv=none; b=XKanC0w1dVRa1SBTDwLs3PIdwHS7qW5zXBUu2p0b2nvZNcsWNme+kPcSA2iK/hP6aYIyHavk2BXC+Ac2CdJwR9QG1D7f2kYKac2BfDIu0MhJZNg7iz4x8wF00yOh2KxNBOUNdFnBnW37fRCwpcf+SJ6iKLngKYkIa8uRjbrP1Rk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707329062; c=relaxed/simple;
-	bh=RapUaBGe1lYCwsplJVpK2NUlbFD7FrMX8LDA0xc8fIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Di5JRBWV0ze2VqiaHGho8s+2AzWgNjp2PbKqu2CjW206ieaW/UF5XXk7ckmchFVCRoYDg3j8gC2sXt4/CpjWFb9JDKzf5JkCN4rukcUbUx6arzQ/D3H8hu90NSQ5tDmQL3fJ/uJ62JHiJtrKyU2OgjABMMW0nqqtLjsfRCHfALw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-29041136f73so693612a91.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 10:04:19 -0800 (PST)
+	s=arc-20240116; t=1707329551; c=relaxed/simple;
+	bh=HemVGK6zZne3B0GajBNYqVima/P4OLJW7RPvot4BnIc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fFdO7cAre8B/1n+hnPnJkTN44BHStejIyScC9lPUv6YQnJxc0W13LbOo7EsWKE0oBhAFhyBFImBCFDZm6ARnSx2mHf+bCCi7fSyt5Z1tLoMWAbgD0ZwWdqlfdn9dGF06Jpfv2e29Ty8wJQmeEyRHYW6UvXArPwne3fBLxhhN4XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SWReDU48; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dc6e080c1f0so974690276.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 10:12:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1707329545; x=1707934345; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9hHXbmrv3ps1sMVSmLFG15zm3/Plob5tS/368EqKz5w=;
+        b=SWReDU48FE7BclzS2BxrGrfX+g+CGjiVq0wUg09cuz9SyES6ugYQ7Lm6UvTijviwcO
+         tSkY9hIEDdWyIdw0VWpCZLPduw5Uxtrn6aLpU2VScppiocx0+zKxTVby62emzn8JcOth
+         yFRa0KaCzlOjDXa8L7VecFSlHMKb4eG/N/zaZJyQxcpoVAN3wH+Rf0pDiWsfTTLVdW6D
+         6js/jtMKe06gp35Nziyib/+X8yA7wazlz0VXWZddYfeQPgiYvx9ziTvG47XTWvvI5nby
+         L8t+zNZ/XYGWX1B7kG7BWW9yE5D03ZoJIw2BoavzC5rh1s5UORbC+XfkdQ7jchiRNCZn
+         L/wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707329059; x=1707933859;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RapUaBGe1lYCwsplJVpK2NUlbFD7FrMX8LDA0xc8fIs=;
-        b=qnFIMjZfUK7QmyWC2Bg+s+YAeEY3YmEixCRCxSvUEx93VWzKaDl2PKRQR5HdDnAOdk
-         1kk7nkA4WIg+9hm1EQ+oWcuGXjc5mKjzIvRScoqDmMz+CGmq5E77tSEHn/I3pn/yAAJy
-         UQft3mQPI4TwsokXQwDOqwjaTzzy/TnYPKWpc3NzbS30aGuj77WC9Lw+S4VARUYeBkP8
-         26J9d62HnUnn3fpRYbo6jVT7sB+E+g6lo+QPt7Zo6NArRqIFFtjR77SVUfcCURC+QlcD
-         A2bmyzDkmTnutlp+ELy+IDZznQHdqRxhTIFKm0sEo+kXX/emg0fMS5VDnCVwtysH2POq
-         EsKg==
-X-Gm-Message-State: AOJu0YwlEi4BWOjRCY716mmZYzTiS+APvEBPib2HDP4remSfZeOvm1v5
-	iZTMDS9MtjHBli+6OTN+lpio20zmdpY/VdafWfX6F8LkVKykQIsdb+jeZM9P
-X-Google-Smtp-Source: AGHT+IHm7aEZkmDzqVKwUsR/MzPVlNZXcmQDG+ZynKHIgIaAHtqJcbX00iS0lrxpwCeD27tdnTu6lA==
-X-Received: by 2002:a17:90a:600f:b0:290:4637:1808 with SMTP id y15-20020a17090a600f00b0029046371808mr3692861pji.26.1707329058878;
-        Wed, 07 Feb 2024 10:04:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUg6jQcuWjCxx46f4bqrK6MgJkYB1EmdCHPYLoyyIMKkjotZZVB7Qy1WJUzq37JHtQNgc2L+NfRLaJq3xchd4t7fDiunFOqSlj63Mdou0/qQ8VSaQQliOSNrmP3I8ryRyVUfyh1EPhaEDSGAiplJQaV6RUmzM4fwqxAENXZu16uaWRC9M7DJI3zPYTAlm0mD708D5xNdZ9y8XdMJVChrNUXXHjpkrqLcJ5xPrRQ
-Received: from ?IPV6:2620:0:1000:8411:8633:8b18:c51e:4bae? ([2620:0:1000:8411:8633:8b18:c51e:4bae])
-        by smtp.gmail.com with ESMTPSA id z18-20020a170903019200b001d71df54cdasm1722197plg.274.2024.02.07.10.04.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 Feb 2024 10:04:17 -0800 (PST)
-Message-ID: <ac14af5d-181e-4b4c-ad6f-12ea7b7ae3ef@acm.org>
-Date: Wed, 7 Feb 2024 10:04:14 -0800
+        d=1e100.net; s=20230601; t=1707329545; x=1707934345;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9hHXbmrv3ps1sMVSmLFG15zm3/Plob5tS/368EqKz5w=;
+        b=Lwlh1hJM3z/UdnQib1KX+baXreLT68Sg/K6hJ27qK4RwC30spzUHAzttXYs3nuvwir
+         1Tv6zxMOHjUTEuhYGETY864Qyk/FnezYYQhdKntrUl7LS4gRJbg/27AsqZKcs6PwrrY5
+         cr0jtkN5obtJmONTNPhUINnXVg/0JDiFbMmI4l4h5sA4nvdDe//tr2HI4ip53+Waf/fm
+         dJ1Z9q2Tncxl9+dkg+19cg0blE5sfZG9GNj4q3yM6fnL7/l88CgDi6HYsbW6ZNYzOmyR
+         Zn+zaN3MHkE9DZqCu27AQGBRODM8Apsq7c0XbOghcK0uzBJVWZCE2+81UrA4ja0/nmvg
+         sUKw==
+X-Gm-Message-State: AOJu0Yw0laB+B+4CAOBLx7QEB5sLziqlJqNDm3xwF5ADoi8ZXqTDElUO
+	uNRmjF1hZB4KrF2yOlr8DPbV9GeJBikDcKlH5W/K+zlclgPlRdWa6xRfvUXSuQS5NQzqNuuOXTq
+	bfNpIpRQhLc8yQy155EE/e1pnQ+r3xTkxdS8x
+X-Google-Smtp-Source: AGHT+IHxnQ5vAEAJSNuMes3+eXgpNC1vkbsCULnqxfu1b77zpdub65nMVS21AFiTfVqgPjNJ25GA/1LSAKxOdxXqZY4=
+X-Received: by 2002:a25:ec0e:0:b0:dc7:1d:5db4 with SMTP id j14-20020a25ec0e000000b00dc7001d5db4mr5835418ybh.34.1707329544772;
+ Wed, 07 Feb 2024 10:12:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs, USB gadget: Rework kiocb cancellation
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, Avi Kivity <avi@scylladb.com>,
- Sandeep Dhavale <dhavale@google.com>, Jens Axboe <axboe@kernel.dk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20240206234718.1437772-1-bvanassche@acm.org>
- <20240207-geliebt-badeort-a81cde648cfc@brauner>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240207-geliebt-badeort-a81cde648cfc@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <8fafb8e1-b6be-4d08-945f-b464e3a396c8@I-love.SAKURA.ne.jp>
+ <999a4733-c554-43ca-a6e9-998c939fbeb8@I-love.SAKURA.ne.jp>
+ <202402070622.D2DCD9C4@keescook> <CAHC9VhTJ85d6jBFBMYUoA4CrYgb6i9yHDC_tFce9ACKi7UTa6Q@mail.gmail.com>
+ <202402070740.CFE981A4@keescook> <CAHC9VhT+eORkacqafT_5KWSgkRS-QLz89a2LEVJHvi7z7ts0MQ@mail.gmail.com>
+ <CAHk-=whSMoFWCw=p1Nyu5DJ2hP2k=dYmPp-WjeY8xuc7O=ts7g@mail.gmail.com>
+In-Reply-To: <CAHk-=whSMoFWCw=p1Nyu5DJ2hP2k=dYmPp-WjeY8xuc7O=ts7g@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 7 Feb 2024 13:12:13 -0500
+Message-ID: <CAHC9VhQ4UZGOJg=DCEokKEP7e5S62pSax+XOgiBB-qQ=WGCbOA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] LSM: add security_execve_abort() hook
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <keescook@chromium.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Eric Biederman <ebiederm@xmission.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-security-module <linux-security-module@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/7/24 00:56, Christian Brauner wrote:
-> What's changed that voids Al's objections on that patch from 2018?
-> Specifically
-> https://lore.kernel.org/all/20180406021553.GS30522@ZenIV.linux.org.uk
-> https://lore.kernel.org/all/20180520052720.GY30522@ZenIV.linux.org.uk
+On Wed, Feb 7, 2024 at 12:57=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Wed, 7 Feb 2024 at 16:45, Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > Okay, let's get confirmation from Tetsuo on the current state of
+> > TOMOYO in Linus' tree.  If it is currently broken [..]
+>
+> As far as I understand, the current state is working, just the horrid
+> random flag.
+>
+> So I think the series is a cleanup and worth doing, but also not
+> hugely urgent. But it would probably be good to just get this whole
+> thing over and done with, rather than leave it lingering for another
+> release for no reason.
 
-Thanks for having drawn my attention to Al's feedback. I had not yet
-noticed his feedback but I plan to take a close look at it.
+I've always operated under a policy of "just fixes" during the -rcX
+period of development, but you're the boss.  Once we get something
+suitable for merging I'll send it up to you after it has soaked in
+linux-next for a bit.
 
-Thanks,
-
-Bart.
+--=20
+paul-moore.com
 
