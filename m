@@ -1,206 +1,178 @@
-Return-Path: <linux-fsdevel+bounces-10575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98D884C66B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 09:42:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4894D84C673
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 09:43:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 706F02870E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 08:42:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5BA1F254C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 08:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258D4208C5;
-	Wed,  7 Feb 2024 08:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D9B8ecpX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a/DE9HMm";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="D9B8ecpX";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a/DE9HMm"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D399A20B34;
+	Wed,  7 Feb 2024 08:43:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22986208B2;
-	Wed,  7 Feb 2024 08:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19F420B09
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 08:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707295357; cv=none; b=p3XTUi6XZNzVH3H7wm55pqrfMt8F12p45ylZQXF95sYEId1tkDyrlt+Ir8DGt3aGi8GV33KTcj61x1gbu+lj26uXmOO1uq/RMa4q+cORwzqrAWOyU+lrik6Xh+807OGvPkYV1j7/IYCbUF3NBT4y3nc5pzgi/skOgVDmfUHLkeM=
+	t=1707295404; cv=none; b=RjUrwPh7uLH6OpEqa4lqWPjKmmv2CVHAbkOEuH8oLa0g4oHv6PDv0kvns2uBww9vo37q2pmL3zGFcdqNlEPdoR1fzuZl7VPku7noHgmSgolaycpin7kaHfs8Hx/QwVVMWFIg+AUnTaQECMd3IWpTrNAS5Lsvk20r12WnPrDC0vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707295357; c=relaxed/simple;
-	bh=uffdOHcZH2TfTFxM+Zsni5/ucr3a5SiFcPQaj7PvZXg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RyaQE7GK4ksD8LDhZiutZQ0Npi0qtX4o58bd2hEdZdTAF4N/m+nbNNV2fxXS0B3VArkIgmu8MLAP5xJQphW1+spFKZnBU5/5XICCEW7Jc2XSla6q/nbbOyIlqH6eYsdhKgvRpDE7ZRDm2fzHmI16rjaURLfuzlGx30uFFma5pRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D9B8ecpX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a/DE9HMm; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=D9B8ecpX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a/DE9HMm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 236E81F45B;
-	Wed,  7 Feb 2024 08:42:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707295349; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2g70fPjpQ5IfQrdko+WLA6L2tGMboSG/Vf9GkcU2sHM=;
-	b=D9B8ecpXtDdsnSvQF4JPndq8iFjXGjxZa+fB38klu9RVra65ZPQE7HCe82gb5CfC4SBwYq
-	sas+r21Oc8S+95NiK6k1QsHkv9j7zb6/fFcjqa5Z3JkKuSOLWRIg49Ii9XPAUvJ+zyhpZu
-	mhkpKZiUk7YYcMGBaTokGcOCCFLX/p8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707295349;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2g70fPjpQ5IfQrdko+WLA6L2tGMboSG/Vf9GkcU2sHM=;
-	b=a/DE9HMmPKkuE0y3lNqk20qSVQpF+J5hf7l47fcHv0t8wjx82YmaMwOrdaRh0oN9njYfLQ
-	Upx0hhnWuFiFm+Ag==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707295349; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2g70fPjpQ5IfQrdko+WLA6L2tGMboSG/Vf9GkcU2sHM=;
-	b=D9B8ecpXtDdsnSvQF4JPndq8iFjXGjxZa+fB38klu9RVra65ZPQE7HCe82gb5CfC4SBwYq
-	sas+r21Oc8S+95NiK6k1QsHkv9j7zb6/fFcjqa5Z3JkKuSOLWRIg49Ii9XPAUvJ+zyhpZu
-	mhkpKZiUk7YYcMGBaTokGcOCCFLX/p8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707295349;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2g70fPjpQ5IfQrdko+WLA6L2tGMboSG/Vf9GkcU2sHM=;
-	b=a/DE9HMmPKkuE0y3lNqk20qSVQpF+J5hf7l47fcHv0t8wjx82YmaMwOrdaRh0oN9njYfLQ
-	Upx0hhnWuFiFm+Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 16D7B139D8;
-	Wed,  7 Feb 2024 08:42:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pOOGBXVCw2WeQwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 07 Feb 2024 08:42:29 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B9F9CA0809; Wed,  7 Feb 2024 09:42:24 +0100 (CET)
-Date: Wed, 7 Feb 2024 09:42:24 +0100
-From: Jan Kara <jack@suse.cz>
-To: Brian Foster <bfoster@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.com>,
-	David Howells <dhowells@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	"Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/13] writeback: add a writeback iterator
-Message-ID: <20240207084224.o6nn4l7owwhzb5e3@quack3>
-References: <20240203071147.862076-1-hch@lst.de>
- <20240203071147.862076-13-hch@lst.de>
- <ZcD/4HNZt1zu2eZF@bfoster>
- <ZcJICXOyW7XbiEPp@bfoster>
+	s=arc-20240116; t=1707295404; c=relaxed/simple;
+	bh=m7YzNhGTx8EdreLaLQv6WahRGcqBsoyLRaNgx5AIeZ8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Obmv3DIfRXx8DBI0O4t/edeoD7AIsOrTebb/+Ht4KO7zwAwfX9eRGVSzAAP9j9E4vrBk6J0TsbPv+b5V0ToPfwkqAYyYxuYC+ZLgQCxtZ4ZyT46whOiPosZuA1eviDaUN9hJGR6ng9fQvgYBhR5YHZ3lWnteguhiKlQgPtb3lC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36381f0e0a6so2583605ab.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 00:43:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707295402; x=1707900202;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5cHzaOQQcEQytKXWs8H9MBprsiLU/8XFqHbQYiJ3eXY=;
+        b=ZnZp9MyGMyU7cIvTjTfThW6IgrVxl1k0bCWqy5SjYVdmgev1CJC7f7QowBa4aeq1PZ
+         8oPedT+8ye8swWLvZfL9apT0SyM7X0xIx9tWH+GHHu/s7gNsLqom95I/CLQmApZP1kAI
+         sSc1h7M3hHukSzx50enYqQnFOK2e4PxCa6SsrI4dm1ZG6u0el52CYPQN8SbFkpesfGbm
+         nQxBcAJs/xU54LH96EpcIlonBDGxIvi6FotDH59H1Zrh9UfGP3Gw3DS3Aq2z+CVky+Wd
+         06L8GYZPiJ8DQlTE/L2dzC1hjO0Hc/23Eh2F0KSvU0HiN474Gk6v3zhqBG3Bj/bbkHFm
+         idGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXkp5hUo+Yjx7xg7ZmamkQOR9bZZNaaUsJRQmmAhVQRsxfiF//yupOyszT9cFz08yn2bk46mfsoIxX/WQ+ohkZ9rVXG1KW58OTrdHzMaw==
+X-Gm-Message-State: AOJu0YwGS4053g6qI6AGKFDHPc7gvfASP6u66safOVEUmbEudZLfM9Gl
+	Ill/JNYYLukKIHws4sxLdV6RIBs0mw3Q2fEGNaiopOzYMS5LMRLi9BYAhHo64uTz2m30NIT4p2r
+	JV/nz+jMptIsSaPk7QiTBvDDOKSOhbtUM3lpXs+TsT2UpC4nWylKtFfw=
+X-Google-Smtp-Source: AGHT+IEj7C7Vt1p1cSPScjHI5tRVGFIaP0qrsOagSmyFMRsP4RHKwDPuTJ1XpcZRXkl1bJqWyi7Z42gV4tVHlu9ywtqq85SNrmxR
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZcJICXOyW7XbiEPp@bfoster>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [-2.60 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_SEVEN(0.00)[11];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -2.60
+X-Received: by 2002:a05:6e02:1c2f:b0:363:b5e3:1082 with SMTP id
+ m15-20020a056e021c2f00b00363b5e31082mr284357ilh.4.1707295402015; Wed, 07 Feb
+ 2024 00:43:22 -0800 (PST)
+Date: Wed, 07 Feb 2024 00:43:22 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f6c32a0610c6af48@google.com>
+Subject: [syzbot] [btrfs?] kernel BUG in mapping_try_invalidate
+From: syzbot <syzbot+e017b58b47bacf31a06b@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue 06-02-24 09:54:01, Brian Foster wrote:
-> On Mon, Feb 05, 2024 at 10:33:52AM -0500, Brian Foster wrote:
-> > On Sat, Feb 03, 2024 at 08:11:46AM +0100, Christoph Hellwig wrote:
-> > > Refactor the code left in write_cache_pages into an iterator that the
-> > > file system can call to get the next folio for a writeback operation:
-> > > 
-> > > 	struct folio *folio = NULL;
-> > > 
-> > > 	while ((folio = writeback_iter(mapping, wbc, folio, &error))) {
-> > > 		error = <do per-foli writeback>;
-> > > 	}
-> > > 
-> > > The twist here is that the error value is passed by reference, so that
-> > > the iterator can restore it when breaking out of the loop.
-> > > 
-> > > Handling of the magic AOP_WRITEPAGE_ACTIVATE value stays outside the
-> > > iterator and needs is just kept in the write_cache_pages legacy wrapper.
-> > > in preparation for eventually killing it off.
-> > > 
-> > > Heavily based on a for_each* based iterator from Matthew Wilcox.
-> > > 
-> > > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > > ---
-> > >  include/linux/writeback.h |   4 +
-> > >  mm/page-writeback.c       | 192 ++++++++++++++++++++++----------------
-> > >  2 files changed, 118 insertions(+), 78 deletions(-)
-> > > 
-> > ...
-> > > diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> > > index 3abb053e70580e..5fe4cdb7dbd61a 100644
-> > > --- a/mm/page-writeback.c
-> > > +++ b/mm/page-writeback.c
-> > ...
-> > > @@ -2434,69 +2434,68 @@ static struct folio *writeback_get_folio(struct address_space *mapping,
-> > >  }
-> > >  
-> > >  /**
-> > ...
-> > >   */
-> > > -int write_cache_pages(struct address_space *mapping,
-> > > -		      struct writeback_control *wbc, writepage_t writepage,
-> > > -		      void *data)
-> > > +struct folio *writeback_iter(struct address_space *mapping,
-> > > +		struct writeback_control *wbc, struct folio *folio, int *error)
-> > >  {
-> > ...
-> > > +	} else {
-> > >  		wbc->nr_to_write -= folio_nr_pages(folio);
-> > >  
-> > > -		if (error == AOP_WRITEPAGE_ACTIVATE) {
-> > > -			folio_unlock(folio);
-> > > -			error = 0;
-> > > -		}
-> > > +		WARN_ON_ONCE(*error > 0);
-> > 
-> > Why the warning on writeback error here? It looks like new behavior, but
-> > maybe I missed something. Otherwise the factoring LGTM.
-> 
-> Err, sorry.. I glossed over the > 0 check and read it as < 0.
-> Disregard, this seems reasonable to me as long as we no longer expect
-> those AOP returns (which I'm not really clear on either, but anyways..):
-> 
-> Reviewed-by: Brian Foster <bfoster@redhat.com>
+Hello,
 
-So my understanding is that AOP_WRITEPAGE_ACTIVATE should be now handled
-directly by the caller of ->writepage hook and not by writeback_iter()
-which is the reason why the warning is here.
+syzbot found the following issue on:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+HEAD commit:    99bd3cb0d12e Merge tag 'bcachefs-2024-02-05' of https://ev..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16629540180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=89a5d896b14c4565
+dashboard link: https://syzkaller.appspot.com/bug?extid=e017b58b47bacf31a06b
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/73aa72bd3577/disk-99bd3cb0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6c6bf1614995/vmlinux-99bd3cb0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7df252d11788/bzImage-99bd3cb0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e017b58b47bacf31a06b@syzkaller.appspotmail.com
+
+ process_one_work kernel/workqueue.c:2633 [inline]
+ process_scheduled_works+0x913/0x1420 kernel/workqueue.c:2706
+ worker_thread+0xa5f/0x1000 kernel/workqueue.c:2787
+ kthread+0x2ef/0x390 kernel/kthread.c:388
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:242
+------------[ cut here ]------------
+kernel BUG at mm/filemap.c:2072!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 PID: 16388 Comm: syz-executor.2 Not tainted 6.8.0-rc3-syzkaller-00005-g99bd3cb0d12e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
+RIP: 0010:find_lock_entries+0xfdf/0x1110 mm/filemap.c:2071
+Code: e8 96 4d cb ff eb 2a e8 8f 4d cb ff eb 3a e8 88 4d cb ff eb 4a e8 81 4d cb ff 4c 89 f7 48 c7 c6 a0 41 b3 8b e8 32 0f 10 00 90 <0f> 0b e8 6a 4d cb ff 4c 89 f7 48 c7 c6 a0 4b b3 8b e8 1b 0f 10 00
+RSP: 0018:ffffc90013457520 EFLAGS: 00010246
+RAX: f6dc7e6d18066c00 RBX: 0000000000000000 RCX: ffffc90013457303
+RDX: 0000000000000002 RSI: ffffffff8baac6e0 RDI: ffffffff8bfd93e0
+RBP: ffffc90013457670 R08: ffffffff8f842b6f R09: 1ffffffff1f0856d
+R10: dffffc0000000000 R11: fffffbfff1f0856e R12: ffffc900134575c0
+R13: ffffffffffffffff R14: ffffea0000b3c100 R15: ffffea0000b3c134
+FS:  00007f60b3b6e6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000056197e1c4648 CR3: 000000007d35c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ mapping_try_invalidate+0x162/0x640 mm/truncate.c:499
+ open_ctree+0xa9c/0x2a00 fs/btrfs/disk-io.c:3220
+ btrfs_fill_super fs/btrfs/super.c:940 [inline]
+ btrfs_get_tree_super fs/btrfs/super.c:1860 [inline]
+ btrfs_get_tree+0xe7a/0x1920 fs/btrfs/super.c:2086
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1784
+ fc_mount+0x1b/0xb0 fs/namespace.c:1125
+ btrfs_get_tree_subvol fs/btrfs/super.c:2049 [inline]
+ btrfs_get_tree+0x652/0x1920 fs/btrfs/super.c:2087
+ vfs_get_tree+0x90/0x2a0 fs/super.c:1784
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3352
+ do_mount fs/namespace.c:3692 [inline]
+ __do_sys_mount fs/namespace.c:3898 [inline]
+ __se_sys_mount+0x2d9/0x3c0 fs/namespace.c:3875
+ do_syscall_64+0xf9/0x240
+ entry_SYSCALL_64_after_hwframe+0x6f/0x77
+RIP: 0033:0x7f60b2e7f4aa
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 09 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f60b3b6def8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f60b3b6df80 RCX: 00007f60b2e7f4aa
+RDX: 00000000200051c0 RSI: 0000000020005200 RDI: 00007f60b3b6df40
+RBP: 00000000200051c0 R08: 00007f60b3b6df80 R09: 0000000001000008
+R10: 0000000001000008 R11: 0000000000000202 R12: 0000000020005200
+R13: 00007f60b3b6df40 R14: 00000000000051ab R15: 0000000020000280
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:find_lock_entries+0xfdf/0x1110 mm/filemap.c:2071
+Code: e8 96 4d cb ff eb 2a e8 8f 4d cb ff eb 3a e8 88 4d cb ff eb 4a e8 81 4d cb ff 4c 89 f7 48 c7 c6 a0 41 b3 8b e8 32 0f 10 00 90 <0f> 0b e8 6a 4d cb ff 4c 89 f7 48 c7 c6 a0 4b b3 8b e8 1b 0f 10 00
+RSP: 0018:ffffc90013457520 EFLAGS: 00010246
+RAX: f6dc7e6d18066c00 RBX: 0000000000000000 RCX: ffffc90013457303
+RDX: 0000000000000002 RSI: ffffffff8baac6e0 RDI: ffffffff8bfd93e0
+RBP: ffffc90013457670 R08: ffffffff8f842b6f R09: 1ffffffff1f0856d
+R10: dffffc0000000000 R11: fffffbfff1f0856e R12: ffffc900134575c0
+R13: ffffffffffffffff R14: ffffea0000b3c100 R15: ffffea0000b3c134
+FS:  00007f60b3b6e6c0(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555555ac9938 CR3: 000000007d35c000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
