@@ -1,140 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-10624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D5B84CE07
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 16:29:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C0684CE52
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 16:44:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E6BC287ED3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 15:29:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DEB31C23105
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 15:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D8657FBD3;
-	Wed,  7 Feb 2024 15:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7C48062A;
+	Wed,  7 Feb 2024 15:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NU0KCFI2"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LFw9oKbh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB637FBC4
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 15:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22B180056
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 15:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707319739; cv=none; b=h797IQ8KWNSsqS2Am1AEvQgB3/0GGYKZoGcFPAvTCxg+JnkgxHAiF4VOfbRp0LNI1oX5sywEUmmFr1ps5apZPQ0SLVRekN8bd4YEbWYfIFpCPZvKF7iOFmmy0cLgKC4ifKPPnUv8hmheH/J/1XgncSMWHQ7zDTP5LS6zno9FxGU=
+	t=1707320637; cv=none; b=ZJYT0JeHBhxma6coe961CKI/ejlueKvawi91eQlkKesuiH1yZVPMB8yGpaDkfi/bXTow58nPApSLbKgNk2QbGUgdc2qNH/KX3ywMQ1xAKfDYgKCMM5/vGFf1f2n4/xfUB+BSHy05DFSMX00C+p5lNi6UazJBfwmL7KAfSgkPFNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707319739; c=relaxed/simple;
-	bh=KgcZE+tbSx7VYsRad6qU230OGLkbrGEcFdePnG3XBqw=;
+	s=arc-20240116; t=1707320637; c=relaxed/simple;
+	bh=0vxjX47B6ZgpdmiW7EVKqCFH/j69PxaUc08wp4q8im8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tsd2xGUZi9jfKw/sTtH9GTALlDA8GWPGE9Mkl86lc0j3kxUMHL6r1pYQPtH4dKb2ShOUCAEjsmieG4ONTcF+1ENuCexGin9VjOS894IwicBtKradBQaAJnezRhi2E6/U0e44I8jhlIJ6qlt7OIZcdE0Gplf78hJnIAZ5GYJRRrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=NU0KCFI2; arc=none smtp.client-ip=209.85.160.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-218f4589f0cso273390fac.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 07:28:56 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UFurMnCOjAuAYqxvx5SrqaoQSlfb2i18BLSQxAEebcXIGUqgg8GlRUhP1XE2lUbrrjVkHxxpbZLfyYF3/Jo6p2TYobC++iwpKyb0wizTdgjpuW7ZawJHaP92KScPLbteFt3mdyTSn4D7vfNYfPR5RXWWrBQr1WYrTGiAgGpdIv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LFw9oKbh; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3bda4bd14e2so699417b6e.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 07:43:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1707319736; x=1707924536; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KgcZE+tbSx7VYsRad6qU230OGLkbrGEcFdePnG3XBqw=;
-        b=NU0KCFI2PcXIesrZqDGaMumM07ZvsINqITiEAwBMhskWR31PwJB4q9nWxtvDCTO8Rh
-         IfbIpX2RViygtZEXSpGQCGsTpsDT++li9tKJl1fcXN9y0zRUAUS7k9Vj9IluITTrToXf
-         xPIJsabXnGELRFFBalq7+OpPtmVwCRBvcBFnDUeNl1oL0ZgyAT+2IHM3qrrw8yQd1d29
-         WoNgWFmGjcu4PtpA3hm6bd6GDiVniNDgAiSjev6BW9nIsWDZFtgeSvTTPfYIfoa4Sbxq
-         0UlYxzNH7P8IyUa/gcZr3zalpmpaeVxPmxRrNG8d2DEjrIJKcndJUQSHxUSM1ckT3kjU
-         0zlA==
+        d=chromium.org; s=google; t=1707320634; x=1707925434; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fT7OrhiRuIZhNQcmagLUCZ3268l7RImx+viDE+2dBHY=;
+        b=LFw9oKbh2lMPICDhaQyxT7pKPlavYRiL/Arlh0g7UTbkmB49L4DnCwYdJbT5m+CHle
+         19jOhg/eeC+/hlNcLEpMyGSL8CB1tYivigS0KVsO5Msllav3KxkA2b03joaxYwmto723
+         oFigIKI5waEKkAGVZm8OJizZRptX8YVHaLEII=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707319736; x=1707924536;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KgcZE+tbSx7VYsRad6qU230OGLkbrGEcFdePnG3XBqw=;
-        b=dbrtQfL8ce+cSeKKwIgXzmAr58Xjo2GtEgpUSOY+CGXdxQFHYzwlzctXm7dzZRvWQb
-         bH/O4plr7EpbUTyMV0/PpHxG4zELdeVgtVLRmhfyCjlXPxsCv4JDqVXylhrMQMnPDLNU
-         Qjo+3GypOARwvRxirHSECuo4iY0JDAEOved4IFehc9PWvdOO9WS6+yFGKahtqB8Ya+pp
-         N4EwzAS1JvmY2TUFASWkmtuC+CWG5sn3nEhBGVmsTAGgmjHMrVzgJAqLt5F9lVO5WInv
-         DOnJ8Nt+HBNELj8ALl31VsjCp4i3bn750BTwB0DojTj4DbhDVvH/iZ04IQDocOgoIi5J
-         HBIQ==
-X-Gm-Message-State: AOJu0YyYiw+4UahAzrZqxplD/OPdlUFhk3ZGsHtDGHqKC68D9cxOchcL
-	Rjo8MElZu25gC9oXDw7M9Ll5oQ1vkYCT/0Ry4sX3WHubIoAdewiYywsI8apxHkI=
-X-Google-Smtp-Source: AGHT+IHEL7CFznI2Gw3SaxhMoycGQY1ZAMJ2M/MoHIzeasU/nr/2JepWSFEuheW8Ams28t9PtymRRw==
-X-Received: by 2002:a05:6870:bac7:b0:219:83cc:287c with SMTP id js7-20020a056870bac700b0021983cc287cmr6065943oab.18.1707319736190;
-        Wed, 07 Feb 2024 07:28:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVUY+po1giBXhl03Vf0urto5lU8KkUE0xa/D+uEwt3aAnuuk7whgR0HTCfY+MTVQpslUqqUs/wsMp+t3ROMVbRdiv139tCe2ZBXKAtq4ZceV9PQJGgSNRI8IXanfewIYC0pI3FzZsKmRPGCkekyIVSuYunEdq/NKi0/3z9aOOnSjGhG1HWtDCKx6tkf7sG69wd0voFNXVKcPnx/Nm+iJxlnF6OfGX8tZ9W5Ef2TdHxCT40iWFJmfW6S8uQKXx/coePehrn7fBGc1ApNtwTAo8s/s5HRc5UVF5kRUR22WO8nHBRkrzcJX/Ul/xP8hPJikjNY5otCJsvQrEVBk2ZaVzx3MkqaDTyR4Ul7c2lNd1sQoJE9R4hMA5FyNT4k6cGm9+PELO3Pd2X6HZW5Jm8qV/VAErzvt6LcaoXye2Wua/2AYMT/wp1V94k8M1zgi8oPWuI9edPTgsfIAIs+qSWZnIHymtDR0ZDoa4pbEKoLlGJm39ZpBPkOgypT7AHFEI8rU/GAr/BBLOvIN75lw9qDVd4OTS7E4DjE+P+TXjW/ejHtWFFjkRAxscCfnxXGlxTCjMW8flXh31SrWNWQb7kthgrk5FZ0nc1rQCTq6Q8fWQP0Awd0gAJf2PwiCs47eD05aetIREJ1Gf81uCiJ/HxdH+LBZUmXJT18VOvJdRMBqtyz
-Received: from ziepe.ca (hlfxns017vw-142-68-80-239.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.80.239])
-        by smtp.gmail.com with ESMTPSA id p6-20020a9d76c6000000b006e112c93b1esm228799otl.6.2024.02.07.07.28.55
+        d=1e100.net; s=20230601; t=1707320634; x=1707925434;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fT7OrhiRuIZhNQcmagLUCZ3268l7RImx+viDE+2dBHY=;
+        b=LO8N3QCATRzSzcsPBYDFL+5B6nNSjCCNFxuVVn2yUeQ4hBcZskydfglAT7P99kHMu7
+         9G6J0XVwbqwX4Eh/6nfAZxe/KOoSsiwFMtwwjZ6vKKkaKC9xalbpXPBCwQdX/JVyCpm0
+         JDjttdZzr5Cddh6hQH9nw+HCpzve8jk9iX6xrvc5CAN2DOSwq8IlKpzJj0K1/E8ynbDm
+         7oLBwrYKKV9AVydcoAcdnhZngokMCe3u/1SkFbII6zT2UOR4XNhVTPebw/DluhLO9ETh
+         RboSzF6YzeWvGFnfkaR4OQA43ILp5CQLZeYaIJbk80768xheAmuKYM9iPDvIbHDgTK+s
+         c1nw==
+X-Gm-Message-State: AOJu0YyWC6M5QgYQ1tQiMAqQ9IWGGgs/KkSV65qDFJDP8cQZ/9t+hb+B
+	UofARpGcVe12vnH4HiR3s7cdbaLSHan8SCRKn93rqPyJhF3ZA1azwCdva+f3Ww==
+X-Google-Smtp-Source: AGHT+IF396kKk0rdy004VVPYDuPYv9DwxzXoOR6Kvm9ziqiHthI/RUMfDBLMi4vfaoIZ2sbm9RevTQ==
+X-Received: by 2002:a05:6808:f8b:b0:3bf:ede4:9a57 with SMTP id o11-20020a0568080f8b00b003bfede49a57mr1838228oiw.27.1707320633877;
+        Wed, 07 Feb 2024 07:43:53 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU3PuW6ws9JWC7eVxAlbqXnDHKSk0P2YmIzFI97ctOQmNTs+74DKsJKO4wYGBbGfO42/jRaojmBW5kV4n2FT4d0tr8kH7r4aQUxMEmIK9FSpzX0+pIMCA15w2h9wknJ03TotrXxVbFLDDJMb3tAR9UBjBQ1lm3zQBDxElQLAnLBo/q7iMfJqxCY2fmPncMLgWFvGjIAikLYHUGWVzwlMWYm3vHqlpF/gcN/FnIldLYt0SP7xo1Z2wH1mPSDaOXCGzltp29+grXhTvd+rvan/N/uNyiAlByd2IkHMNf8nbgttrAyvF0AHMlcB0xUerECuwe2T0UC7sguw0Id8vwFxFwXiSEbTTEOxQmlnfedeEq8E4MuJEWbwVUt6ROZfmwaV08Ju508ne3sow==
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id o26-20020a629a1a000000b006e0521c2156sm1834465pfe.173.2024.02.07.07.43.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 07:28:55 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1rXjr4-008ccK-Kk;
-	Wed, 07 Feb 2024 11:28:54 -0400
-Date: Wed, 7 Feb 2024 11:28:54 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Gowans, James" <jgowans@amazon.com>
-Cc: "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-	"kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"Graf (AWS), Alexander" <graf@amazon.de>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>,
-	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
-	"steven.sistare@oracle.com" <steven.sistare@oracle.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"joro@8bytes.org" <joro@8bytes.org>,
-	"ebiederm@xmission.com" <ebiederm@xmission.com>,
-	=?utf-8?B?U2Now7ZuaGVyciwgSmFuIEgu?= <jschoenh@amazon.de>,
-	"will@kernel.org" <will@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"usama.arif@bytedance.com" <usama.arif@bytedance.com>
-Subject: Re: [RFC 00/18] Pkernfs: Support persistence for live update
-Message-ID: <20240207152854.GL31743@ziepe.ca>
-References: <20240205120203.60312-1-jgowans@amazon.com>
- <20240205101040.5d32a7e4.alex.williamson@redhat.com>
- <6387700a8601722838332fdb2f535f9802d2202e.camel@amazon.com>
+        Wed, 07 Feb 2024 07:43:53 -0800 (PST)
+Date: Wed, 7 Feb 2024 07:43:52 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module <linux-security-module@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/3] LSM: add security_execve_abort() hook
+Message-ID: <202402070740.CFE981A4@keescook>
+References: <8fafb8e1-b6be-4d08-945f-b464e3a396c8@I-love.SAKURA.ne.jp>
+ <999a4733-c554-43ca-a6e9-998c939fbeb8@I-love.SAKURA.ne.jp>
+ <202402070622.D2DCD9C4@keescook>
+ <CAHC9VhTJ85d6jBFBMYUoA4CrYgb6i9yHDC_tFce9ACKi7UTa6Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6387700a8601722838332fdb2f535f9802d2202e.camel@amazon.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhTJ85d6jBFBMYUoA4CrYgb6i9yHDC_tFce9ACKi7UTa6Q@mail.gmail.com>
 
-On Wed, Feb 07, 2024 at 02:56:33PM +0000, Gowans, James wrote:
-> 2. Tell VFIO to avoid mapping the memory in again after live update
-> because it already exists.
-> https://github.com/jgowans/qemu/commit/6e4f17f703eaf2a6f1e4cb2576d61683eaee02b0
-> (the above flag should only be set *after* live update...).
+On Wed, Feb 07, 2024 at 10:21:07AM -0500, Paul Moore wrote:
+> On Wed, Feb 7, 2024 at 9:24 AM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > On Sat, Feb 03, 2024 at 07:52:54PM +0900, Tetsuo Handa wrote:
+> > > A regression caused by commit 978ffcbf00d8 ("execve: open the executable
+> > > file before doing anything else") has been fixed by commit 4759ff71f23e
+> > > ("exec: Check __FMODE_EXEC instead of in_execve for LSMs") and commit
+> > > 3eab830189d9 ("uselib: remove use of __FMODE_EXEC"). While fixing this
+> > > regression, Linus commented that we want to remove current->in_execve flag.
+> > >
+> > > The current->in_execve flag was introduced by commit f9ce1f1cda8b ("Add
+> > > in_execve flag into task_struct.") when TOMOYO LSM was merged, and the
+> > > reason was explained in commit f7433243770c ("LSM adapter functions.").
+> > >
+> > > In short, TOMOYO's design is not compatible with COW credential model
+> > > introduced in Linux 2.6.29, and the current->in_execve flag was added for
+> > > emulating security_bprm_free() hook which has been removed by introduction
+> > > of COW credential model.
+> > >
+> > > security_task_alloc()/security_task_free() hooks have been removed by
+> > > commit f1752eec6145 ("CRED: Detach the credentials from task_struct"),
+> > > and these hooks have been revived by commit 1a2a4d06e1e9 ("security:
+> > > create task_free security callback") and commit e4e55b47ed9a ("LSM: Revive
+> > > security_task_alloc() hook and per "struct task_struct" security blob.").
+> > >
+> > > But security_bprm_free() hook did not revive until now. Now that Linus
+> > > wants TOMOYO to stop carrying state across two independent execve() calls,
+> > > and TOMOYO can stop carrying state if a hook for restoring previous state
+> > > upon failed execve() call were provided, this patch revives the hook.
+> > >
+> > > Since security_bprm_committing_creds() and security_bprm_committed_creds()
+> > > hooks are called when an execve() request succeeded, we don't need to call
+> > > security_bprm_free() hook when an execve() request succeeded. Therefore,
+> > > this patch adds security_execve_abort() hook which is called only when an
+> > > execve() request failed after successful prepare_bprm_creds() call.
+> > >
+> > > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> >
+> > This looks good to me.
+> >
+> > Given this touches execve and is related to the recent execve changes,
+> > shall I carry this in the execve tree for testing and send a PR to Linus
+> > for it before v6.8 releases?
+> >
+> > There's already an Ack from Serge, so this seems a reasonable way to go
+> > unless Paul would like it done some other way?
+> 
+> Please hold off on this Kees (see my email from yesterday), I'd prefer
+> to take this via the LSM tree and with the immediate regression
+> resolved I'd prefer this go in during the upcoming merge window and
+> not during the -rcX cycle.  Or am I misunderstanding things about the
+> state of Linus' tree currently?
 
-Definately no to that entire idea. It completely breaks how the memory
-lifetime model works in iommufd.
+My understanding was that TOMOYO is currently broken in Linus's tree. If
+that's true, I'd like to make sure it gets fixed before v6.8 is
+released.
 
-iommufd has to re-establish its pins, and has to rebuild all its
-mapping data structures. Otherwise it won't work correctly at all.
+If it's working okay, then sure, that's fine to wait. :)
 
-This is what I was saying in the other thread, you can't just ignore
-fully restoring the iommu environment.
+-Kees
 
-The end goal must be to have fully reconstituted iommufd with all its
-maps, ioas's, and memory pins back to fully normal operation.
-
-IMHO you need to focus on atomic replace where you go from the frozen
-pkernfs environment to a live operating enviornment by hitlessly
-replacing the IO page table in the HW. Ie going from an
-IOMMU_DOMAIN_PKERFS to an IOMMU_DOMAIN_PAGING owned by iommufd that
-describes exactly the same translation.
-
-"adopting" an entire io page table with unknown contents, and still
-being able to correctly do map/unmap seems way too hard.
-
-Jason
+-- 
+Kees Cook
 
