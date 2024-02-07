@@ -1,88 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-10679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96CAD84D5A6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 23:16:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 016EC84D5A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 23:16:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 999FD1C21E64
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 22:16:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 841CAB28E39
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 22:16:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CF16BFC2;
-	Wed,  7 Feb 2024 22:06:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050EF149DEF;
+	Wed,  7 Feb 2024 22:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Hw1eNxGL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QC66U84L"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF3B6BFBC
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 22:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5CE149DE1
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 22:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707343587; cv=none; b=ScD2Gf/za2d+E/boGUVGWuOaHmumit/ff+MqdZqq6nvZVlqIKbVAVcFKPY40veN/htIpf14RoTg2ePmqB7g3MMwY4wus7149O5ONgxQCJ5B0gTeeMdnbBmtHpt5sgZix5bonlqWvA5vIPO8q3Ks+bnfbOtKM5lwl74JkL2NHyMs=
+	t=1707343649; cv=none; b=JpdYYGhg73orWlbx/4w8zBt/clJqiw4OKZJodYUnrjVPDu22eEvvB9IrpEeVsLHvyed/ZRC/hSJW5IMfKxt/avz1Lqq+/OnEJLVemGbnPDN4+8+Nb/o2UC1EZT/SO9MlVBgbKNPz7ADRXfLdicuzq5eZKqVIgEpz1pB2sK8rrqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707343587; c=relaxed/simple;
-	bh=biGiqT1l0QFYXMIaYo2XtLzf7q4ntlc3YaIsGTidqpY=;
+	s=arc-20240116; t=1707343649; c=relaxed/simple;
+	bh=u9OMmhxX0s42oLm7vizz1zDQD3vd1KooHH9Xj369KHA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jDQCNLXHLnmChtl7vMIy6T8cU9DzOcA8NmZOvZmSC6watqmZNYV3Kb7ijisai0aZR0mhnSmp4ATZJC4vWunBNLkupl+UJBSyfXM7GaLu/yHTbrcl6yHiDMHnvuqkbONsgZicylIq8WiQ96O8DRxF8TGkuKfeS5q7szECVprkcLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Hw1eNxGL; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1d51ba18e1bso10677275ad.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 14:06:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707343585; x=1707948385; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0HPlTRrq5XIK4MU9sqi2YJQ/4Dwpwv3sEVymNXTSZPU=;
-        b=Hw1eNxGLIe22gsHmyVzWKzr5+0LjchZdFf9BIRLk1ai4QASWp8tSh3iJTVoUNqJsi+
-         BoRTblKZ04iIPCMgfurZ7nAmFc2n6NdI6hP0n5RWHyh92r67Jik67h9TVJlk4xcJEPPZ
-         /IJgoiO+UXcCJFFhxNzLfEk5k6Nn0XyZfALHnpWFS8qPdlJ5a8owkEQBO9KlHdLXUWQ8
-         XIbF/Tv54RiI4E3gBoNiF2TDOLBzIhreshpyE7H2xHi71A7gdFXFpgz4zuzwX7jt/IqN
-         bP4hLZh1JNNJ0CfLEwS54JXpOSq9aEzDtKOQapgEFtQOuKI/9l+Ph9CQUiLpJ+IzlHqT
-         sRYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707343585; x=1707948385;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0HPlTRrq5XIK4MU9sqi2YJQ/4Dwpwv3sEVymNXTSZPU=;
-        b=wcOFQdUTPNx5H9+BwvKC3gyediUk7FNbv+5IWZPUtzhfe4kKk6D+vxmhqgRRuOBosf
-         6zgiZRtEYHRb4zRtPDqYuqpkPYhsQ3t95ZqkRHv2hxkr6avPwFh11+bLAOkK6LCTnraV
-         7uXUmr0wzDKMnHjo8sGAkJh4jBltYZgLWZ1OaWceKYgW9nn25X6TOqaxIFxV8M3E8+K9
-         mCi+iLPIyFYq2iXYuvCGtw9NH3yI9gnmMk/QmxJu0Cs8nOfxtvsOwh1YymmepcufxVHO
-         FCJ0ZJ28403a8dqF4BTjKFYcOZmOYpTlrvtHvhq02LzyM9CsTehW8g63OJdyekGw0M49
-         PUNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAw4rav6kpZibUa9lDOPB+kdv/9wTZfJHMCbiGogiuIIdIsabcEVgCoMkRk2YXqqKI6zJ1oZkRWOkYTtIHoVRtCUYp14RRb4A2s1/xzQ==
-X-Gm-Message-State: AOJu0YzKQHq+kDEQtH//aPkjUHxtFMvNJmMMR08nYReHliaepI99pdSA
-	2hwICw8QTZV/jXqFb9QkW4RIeg+sMo3VPHgji3KXkgloiEa+4Sg7GzgaH8EGPCI=
-X-Google-Smtp-Source: AGHT+IEhyFU20nP1sR3Yrh/yUbO6pPsFF41j8NLc6rl7iWSz6JsuuaD5fOr42NFka2JUonH8lt7c1w==
-X-Received: by 2002:a17:902:f815:b0:1d7:48ce:2046 with SMTP id ix21-20020a170902f81500b001d748ce2046mr5308980plb.29.1707343585277;
-        Wed, 07 Feb 2024 14:06:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWxBOfCoZoyhAAVBl7YO6vgH2TPG9O2ovCytRQD2OgJK4As5anXrg2jua6y8RajQO0oHThSkhIPNyM343hWaIX+C6dn/JV5NPgwrLlineDTtfAaofZQySQ5ZvsjnPV+0KLN0aU5JiGSfKTYpILL2nGzm13eockgurE=
-Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
-        by smtp.gmail.com with ESMTPSA id jz4-20020a170903430400b001d8fe6cd0f0sm1954964plb.150.2024.02.07.14.06.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 14:06:24 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rXq3i-003SAa-1k;
-	Thu, 08 Feb 2024 09:06:22 +1100
-Date: Thu, 8 Feb 2024 09:06:22 +1100
-From: Dave Chinner <david@fromorbit.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mvGnTJL2MhmOeM22ivDTiaSb0Z81VmYZUqhGZVO9Nc3/fxvZj00/geQdm2rK8eIPIFw8J4KKzoqPLqtSpEPtkQbUIiPL7gG1ujwfPlHlZ9TJEYXfIIWXeGRkscWPQfwiHa26FRwoArP+I5hgvVRE69W+5kMXkdJRsjYWMQe9R+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QC66U84L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D54AAC433F1;
+	Wed,  7 Feb 2024 22:07:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707343648;
+	bh=u9OMmhxX0s42oLm7vizz1zDQD3vd1KooHH9Xj369KHA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QC66U84L3Mqk9dBRZJZezgEGcxBzKPxRiX96y9gE95sxyPkEe41NlO4L2El+zUT8h
+	 6ppsYlm+EwAgJz96Y4ztP+0HaJhbJNfKGwP61WNCThcg2bRkk98e/OXfbfAM3X/Nrg
+	 EArm+ADVb1DOG1GGNfIRMzwUnKtHNj3PVsHhywn8LTskKnWQdrT6BPFMXnyDqPN++E
+	 BHKin5u6p4a/rBV3gb66+XZHTOw/989ZGSFj/2k+G5GC7Cj7Had2IFKdf/MNSIoT7s
+	 NEEopsGSKNCvLq6KNoMn7rMKshPm2ENh9ojLZgXmh5QjUgXgRK6r0AbJp76gAy9heM
+	 Go+83s3fQe6Qw==
+Date: Wed, 7 Feb 2024 14:07:28 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
 To: Timur Tabi <ttabi@nvidia.com>
-Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"michael@ellerman.id.au" <michael@ellerman.id.au>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Michael Ellerman <michael@ellerman.id.au>
 Subject: Re: [PATCH] debufgs: debugfs_create_blob can set the file size
-Message-ID: <ZcP+3gqQ+LDLt1SP@dread.disaster.area>
+Message-ID: <20240207220728.GL6184@frogsfrogsfrogs>
 References: <20240207200619.3354549-1-ttabi@nvidia.com>
- <ZcP4xsiohW7jOe78@dread.disaster.area>
- <6f7565b9d38a6a9bddb407462ae53eb2ceaf0323.camel@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,45 +59,63 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6f7565b9d38a6a9bddb407462ae53eb2ceaf0323.camel@nvidia.com>
+In-Reply-To: <20240207200619.3354549-1-ttabi@nvidia.com>
 
-On Wed, Feb 07, 2024 at 09:44:19PM +0000, Timur Tabi wrote:
-> On Thu, 2024-02-08 at 08:40 +1100, Dave Chinner wrote:
-> > i_size_write()?
+On Wed, Feb 07, 2024 at 02:06:19PM -0600, Timur Tabi wrote:
+> debugfs_create_blob() is given the size of the blob, so use it to
+> also set the size of the dentry.  For example, efi=debug previously
+> showed
 > 
-> Thanks, I will post a v2.
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_code0
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_code1
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_data0
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_data1
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_data2
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_data3
+> -r-------- 1 root root 0 Feb  7 13:30 boot_services_data4
 > 
-> > 
-> > And why doesn't debugfs_create_file_unsafe() do this already when it
-> > attaches the blob to the inode? 
+> but with this patch it shows
 > 
-> Because it doesn't know the size any more.
+> -r-------- 1 root root  12783616 Feb  7 13:26 boot_services_code0
+> -r-------- 1 root root    262144 Feb  7 13:26 boot_services_code1
+> -r-------- 1 root root  41705472 Feb  7 13:26 boot_services_data0
+> -r-------- 1 root root  23187456 Feb  7 13:26 boot_services_data1
+> -r-------- 1 root root 110645248 Feb  7 13:26 boot_services_data2
+> -r-------- 1 root root   1048576 Feb  7 13:26 boot_services_data3
+> -r-------- 1 root root      4096 Feb  7 13:26 boot_services_data4
 > 
-> The 'blob' in debugfs_create_blob() is this:
+> Signed-off-by: Timur Tabi <ttabi@nvidia.com>
+> ---
+>  fs/debugfs/file.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
 > 
-> struct debugfs_blob_wrapper {
-> 	void *data;
-> 	unsigned long size;
-> };
-> 
-> When it passes the blob to debugfs_create_file_unsafe(), that's passed as
-> "void *data", and so debugfs_create_file_unsafe() doesn't know that it's a
-> 'blob' any more.
+> diff --git a/fs/debugfs/file.c b/fs/debugfs/file.c
+> index c6f4a9a98b85..d97800603a8f 100644
+> --- a/fs/debugfs/file.c
+> +++ b/fs/debugfs/file.c
+> @@ -1152,7 +1152,14 @@ struct dentry *debugfs_create_blob(const char *name, umode_t mode,
+>  				   struct dentry *parent,
+>  				   struct debugfs_blob_wrapper *blob)
+>  {
+> -	return debugfs_create_file_unsafe(name, mode & 0644, parent, blob, &fops_blob);
+> +	struct dentry *dentry;
+> +
+> +	dentry = debugfs_create_file_unsafe(name, mode & 0644, parent, blob, &fops_blob);
+> +	if (!IS_ERR(dentry))
+> +		d_inode(dentry)->i_size = blob->size;
 
-So fix the debugfs_create_file_*() functions to pass a length
-and that way you fix all the "debugfs files have zero length but
-still have data that can be read" problems for everyone? Then the
-zero length problem can be isolated to just the debug objects that don't
-know their size (i.e. are streams of data, not fixed size).
+Aren't you supposed to use i_size_write for this?
 
-IMO, it doesn't help anyone to have one part of the debugfs
-blob/file API to set inode->i_size correctly, but then leave the
-majority of the users still behaving the problematic way (i.e. zero
-size yet with data that can be read). It's just a recipe for
-confusion....
+--D
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> +
+> +	return dentry;
+> +
+>  }
+>  EXPORT_SYMBOL_GPL(debugfs_create_blob);
+>  
+> -- 
+> 2.34.1
+> 
+> 
 
