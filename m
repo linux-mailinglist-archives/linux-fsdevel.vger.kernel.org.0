@@ -1,191 +1,148 @@
-Return-Path: <linux-fsdevel+bounces-10544-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD63384C18D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 01:53:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F4A84C1F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 02:38:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 379271F24021
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 00:53:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 499ECB24BF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 01:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AA7F515;
-	Wed,  7 Feb 2024 00:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7DCC2ED;
+	Wed,  7 Feb 2024 01:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qwUJ5DxY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eHA6Ugd1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947D6EEC4
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 00:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9EBD512;
+	Wed,  7 Feb 2024 01:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707267185; cv=none; b=LfTGayjimCY1rAnBCfOm5aFzCEFCeQ78N3MLUry0g7HnfrbeUVZ7oNU6/TkOnGGdthZI4/zysUgAiR01m1XYJGdmeDrhDLFSJFOA/fqPIW9hI7NRY1ORvcKyevPmd7Bb5oQROSUcF/xI9HbXmHlBG0UTqPO+Zo/PJ5X6Gsfmq/c=
+	t=1707269901; cv=none; b=mmdoWHDVdsCip4El4P/UKawE1qjFASeHfDixcGYom4klyFsvJ+ByM6ZllkiEAmd0ikdrTYtcQ1VivizsAV2RsLwHJKntyv6vzMzxkKnwuXXK2KWNPovfEYE7tW/OjZ9veiHFSselNbSuPSclpeQUFm9/R1qLeRuP4zBZjvDddjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707267185; c=relaxed/simple;
-	bh=i6MOU3XAf6ORd9eWxLKeFNLmu+/lfcJD3ylRSkOkZfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WMJb/W0cz+2WnCRKdW/LrYDJOMf1LfcFceqxPSb0zId8tKcYnezSZm2ICqvIlmh9au3c/tt1vg6St/NiEReHl1KcromUTyrNym1LZwvZpf501NrDtXyBFtkicNq7k5TxvasVj/N6V2pjBkweCv2fRPJNT7nVEQRLIenbTjvKcsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qwUJ5DxY; arc=none smtp.client-ip=91.218.175.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 6 Feb 2024 19:52:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1707267180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xKJg4xDRPfxrmB09U1/OU0Wyf/oKOvuGfaF8SQKeioU=;
-	b=qwUJ5DxYqSpZfutGhz4IjFVNbMmbJchD6Xs8Goyj2c0dLJns/fAD5iKCCBuY8a9hdE1fGY
-	8ryIbZSG0MPPd2VNf2H1DfRcEiDZbW/9ZBOoMuV/bqGAMGTci4/8NEUkRj3RHvGIOvX7w4
-	G8C0D31mwXazZukzt/DJD7ET04zq/rk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
-Cc: brauner@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, Dave Chinner <dchinner@redhat.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Theodore Ts'o <tytso@mit.edu>, 
-	Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [PATCH v2 5/7] fs: FS_IOC_GETSYSFSNAME
-Message-ID: <kx372qkpaasuba7nnyk2u6g2plqc5nkojft4hn3vfbkauaxjkl@pphn5hoo7ixg>
-References: <20240206201858.952303-1-kent.overstreet@linux.dev>
- <20240206201858.952303-6-kent.overstreet@linux.dev>
- <ZcKyIMPy1D1o5Yla@dread.disaster.area>
+	s=arc-20240116; t=1707269901; c=relaxed/simple;
+	bh=xpaKR2Ymf+RGZn7q46X1z3os3aiQmugyN7+r1CRoRL0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ed9OvKh7DkxWADMQWa+bXiGsBJb0EmA8xngW3Upm7kAqIRSAQEp5u52jLNLQwsNI4gr4BPrEEkPYQCoR5bKfOj9pnCSYx8cL+pippst8MUXB9mIxUuVtF4RpFS3ioXoygzjLgVlX7IFrJMoEsmB9GLhgONZuR4AyHF+IPy7gUjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eHA6Ugd1; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-511234430a4so174246e87.3;
+        Tue, 06 Feb 2024 17:38:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707269896; x=1707874696; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BRR8PzYQmgmoJFN6j49S/WzNDY1me1I/s7STh3i5jTE=;
+        b=eHA6Ugd1904R2xqe0+A8JvC0NOitrCvMjr0gMUn2H1zYOOvL4FFlXGxXU9//JDqu4J
+         hV0UmQ9NuSkWZ8beUKhhjB9FLiBELD0v0zDZhoEBkGSvBQEEO02dcaSfRdy1fUdz4tz6
+         gdDsSBZ2WYeplNnObYFERSMRIpDTEXcLY8zIjofGQZub8fT3KvjXagwq/KCSPE940W3K
+         RZOrJawAIM8LOWvV3AL7/SCaXeGhECZ7HpN3JdjN/lHVCjq5HvrBREBGr1MnaWwDSsBS
+         M8j7AJd/tJsev+LdEhHhyXH39z0l/BHuEwPep2CriHeq/4L3eEhelBxHwrJC1Re3/xhJ
+         TUxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707269896; x=1707874696;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BRR8PzYQmgmoJFN6j49S/WzNDY1me1I/s7STh3i5jTE=;
+        b=DPQ9tPjJLfv1+7J1NCu3Qf5Q4AbZN3fm9RtsjTlt1toVGGpcayrWddfG2RAff9rEQr
+         Qo7ODcs0s8oMD3WhpzvTatO0PW3Ulnshe7GFCYE1wYvG51tGA4djziRAfOKLB0Uziyy5
+         Dt6r3X6i8TwRcxf4KRj1XGAIARNnFm0sLvphtTM2BaE47O2V+syra7fwLQK9mQgPPi6e
+         uwAvLT1lQ/UckuSVxKS2KujyT8AB/qg0Vt/yLbvwuaMYcFv2kZ9JGQXs9LQIFi8Y1GN9
+         sWDXqxL68ug64wr/Xr3O4cCaCXRTuv7tXIYtFqWRrO2rgwIk/mpnje5nbohuGi8vCfaW
+         mvLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBZmkH3Fjp/Cn2SZ7+JY2yzmBG6/83uyATDjAv+OPqnE+Jjhfi5p0bmXXeydC2rRVO0D2OnlyLJdyadQeSgA0ZrZXO7U9SrLze4gEqoA5iMcyI0OZdH76Vc+ctea4OykQh7+7CvSpIc24=
+X-Gm-Message-State: AOJu0YyONOqvAjQlJnbs796pBvZBXThWtGEbtQUEljz8t0p7d6DNSFlZ
+	KD0R6nFUxLB9zp+OzWi6Fbi4HKKQQcOjFqnfCSjeUU8kzES/wludgPs6roDDUlxbrC1RA/98zXf
+	yZaHkqf423aCB4a4lurLor5JfuYg=
+X-Google-Smtp-Source: AGHT+IHWVeRFoevEJonT+g3/tVNsAHF4QS5hTRgSA1pbOYTogyQc97c7t5XlEjUcYdKoasVqT0L4oXyqiu0EJ5+E2ms=
+X-Received: by 2002:a05:6512:78c:b0:511:32d3:db3c with SMTP id
+ x12-20020a056512078c00b0051132d3db3cmr2514220lfr.3.1707269896169; Tue, 06 Feb
+ 2024 17:38:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZcKyIMPy1D1o5Yla@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
+References: <CAH2r5msJQGww+MAJLpA9qNw_jDt9ymiHO+bcpTkGMJpJdVc=gA@mail.gmail.com>
+ <ZcK-W54WoNQswKfg@casper.infradead.org>
+In-Reply-To: <ZcK-W54WoNQswKfg@casper.infradead.org>
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 6 Feb 2024 19:38:05 -0600
+Message-ID: <CAH2r5msB0KRXy9xhaFoUP253ed5HqxzKvvkm0G2x2oyKqopxRQ@mail.gmail.com>
+Subject: Re: [PATCH] fix netfs/folios regression
+To: Matthew Wilcox <willy@infradead.org>
+Cc: David Howells <dhowells@redhat.com>, CIFS <linux-cifs@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, ronnie sahlberg <ronniesahlberg@gmail.com>, 
+	"R. Diez" <rdiez-2006@rd10.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 07, 2024 at 09:26:40AM +1100, Dave Chinner wrote:
-> On Tue, Feb 06, 2024 at 03:18:53PM -0500, Kent Overstreet wrote:
-> > Add a new ioctl for getting the sysfs name of a filesystem - the path
-> > under /sys/fs.
-> > 
-> > This is going to let us standardize exporting data from sysfs across
-> > filesystems, e.g. time stats.
-> > 
-> > The returned path will always be of the form "$FSTYP/$SYSFS_IDENTIFIER",
-> > where the sysfs identifier may be a UUID (for bcachefs) or a device name
-> > (xfs).
-> > 
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Cc: Dave Chinner <dchinner@redhat.com>
-> > Cc: "Darrick J. Wong" <djwong@kernel.org>
-> > Cc: Theodore Ts'o <tytso@mit.edu>
-> > Cc: Josef Bacik <josef@toxicpanda.com>
-> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > ---
-> >  fs/ioctl.c              | 17 +++++++++++++++++
-> >  include/linux/fs.h      |  1 +
-> >  include/uapi/linux/fs.h | 10 ++++++++++
-> >  3 files changed, 28 insertions(+)
-> > 
-> > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > index 046c30294a82..7c37765bd04e 100644
-> > --- a/fs/ioctl.c
-> > +++ b/fs/ioctl.c
-> > @@ -776,6 +776,20 @@ static int ioctl_getfsuuid(struct file *file, void __user *argp)
-> >  	return copy_to_user(argp, &u, sizeof(u)) ? -EFAULT : 0;
-> >  }
-> >  
-> > +static int ioctl_get_fs_sysfs_path(struct file *file, void __user *argp)
-> > +{
-> > +	struct super_block *sb = file_inode(file)->i_sb;
-> > +
-> > +	if (!strlen(sb->s_sysfs_name))
-> > +		return -ENOIOCTLCMD;
-> 
-> This relies on the kernel developers getting string termination
-> right and not overflowing buffers.
-> 
-> We can do better, I think, and I suspect that starts with a
-> super_set_sysfs_name() helper....
+> Also, what if the server says its max-write-size is 2048 bytes?
 
-I don't think that's needed here; a standard snprintf() ensures that the
-buffer is null terminated, even if the result overflowed.
+A good question but realistically the worst case I have seen is 16K
+and those servers were ancient (most SMB1 were 64K but for any
+reasonably current server the worst case is typically write size of
+1MB (Azure) or 4MB (Windows and Samba) while some will increase max
+write size (to 8MB) not reduce it.
 
-> > +	struct fssysfspath u = {};
-> 
-> Variable names that look like the cat just walked over the keyboard
-> are difficult to read. Please use some separators here! 
-> 
-> Also, same comment as previous about mixing code and declarations.
-> 
-> > +
-> > +	snprintf(u.name, sizeof(u.name), "%s/%s", sb->s_type->name, sb->s_sysfs_name);
-> 
-> What happens if the combined path overflows the fssysfspath
-> buffer?
+You are right though: setting "smb2 max write" size in Samba
+/etc/samba/smb.conf to 4000 (less than 4096) would cause writes to
+hang (since it would now round down to write size of 0) - so we can't
+set it less than 4K.
 
-It won't; s_sysfs_name is going to be either a UUID or a short device
-name. It can't be a longer device name (like we show in /proc/mounts) -
-here that would lead to ambiguouty.
+When David's patches for netfs/folios integration rewrite are ready I
+do want to see if they fix this bug so we can avoid the game of
+rounding down max write size (fortunately extremely rare when it is
+needed but without this temporary patch we do risk data corruption in
+this strange configurations)
 
-> > +	char			s_sysfs_name[UUID_STRING_LEN + 1];
-> 
-> Can we just kstrdup() the sysfs name and keep a {ptr, len} pair
-> in the sb for this? Then we can treat them as an opaque identifier
-> that isn't actually a string, and we don't have to make up some
-> arbitrary maximum name size, either.
 
-What if we went in a different direction - take your previous suggestion
-to have a helper for setting the name, and then enforce through the API
-that the only valid identifiers are a UUID or a short device name.
 
-super_set_sysfs_identifier_uuid(sb);
-super_set_sysfs_identifier_device(sb);
+On Tue, Feb 6, 2024 at 5:18=E2=80=AFPM Matthew Wilcox <willy@infradead.org>=
+ wrote:
+>
+> On Tue, Feb 06, 2024 at 05:14:42PM -0600, Steve French wrote:
+> > The code in question is a little hard to follow, and may eventually
+> > get rewritten by later folio/netfs patches from David Howells but the
+> > problem is in
+> > cifs_write_back_from_locked_folio() and cifs_writepages_region() where
+> > after the write (of maximum write size) completes, the next write
+> > skips to the beginning of the next page (leaving the tail end of the
+> > previous page unwritten).  This is not an issue with typical servers
+> > and typical wsize values because those will almost always be a
+> > multiple of 4096, but in the bug report the server in question was old
+> > and had sent a value for maximum write size that was not a multiple of
+> > 4096.
+> >
+> > This can be a temporary fix, that can be removed as netfs/folios
+> > implementation improves here - but in the short term the easiest way
+> > to fix this seems to be to round the negotiated maximum_write_size
+> > down if not a multiple of 4096, to be a multiple of 4096 (this can be
+> > removed in the future when the folios code is found which caused
+> > this), and also warn the user if they pick a wsize that is not
+> > recommended, not a multiple of 4096.
+>
+> Seems like a sensible stopgap, but probably the patch should use
+> PAGE_SIZE rather than plain 4096 (what about
+> Alpha/Sparc/powerpc-64k/arm64-{16,64}k?)
+>
+> Also, what if the server says its max-write-size is 2048 bytes?
+> Also, does the code work well if the max-write-size is, say, 20480
+> bytes?  (ie an odd multiple of PAGE_SIZE is fine; it doesn't need to be
+> a power-of-two?)
+>
 
-then we can enforce that the identifier comes from either sb->s_uuid or
-sb->s_dev.
 
-I'll have to check existing filesystems before we commit to that,
-though.
+--=20
+Thanks,
 
-> 
-> >  	unsigned int		s_max_links;
-> >  
-> > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> > index 16a6ecadfd8d..c0f7bd4b6350 100644
-> > --- a/include/uapi/linux/fs.h
-> > +++ b/include/uapi/linux/fs.h
-> > @@ -77,6 +77,10 @@ struct fsuuid2 {
-> >  	__u8	uuid[16];
-> >  };
-> >  
-> > +struct fssysfspath {
-> > +	__u8			name[128];
-> > +};
-> 
-> Undocumented magic number in a UAPI. Why was this chosen?
-
-In this case, I think the magic number is fine - though it could use a
-comment; since it only needs to be used in one place giving it a name is
-a bit pointless.
-
-As to why it was chosen - 64 is the next power of two size up from the
-length of a uuid string length, and 64 should fit any UUID + filesystem
-name. So took that and doubled it.
-
-> IMO, we shouldn't be returning strings that require the the kernel
-> to place NULLs correctly and for the caller to detect said NULLs to
-> determine their length, so something like:
-> 
-> struct fs_sysfs_path {
-> 	__u32			name_len;
-> 	__u8			name[NAME_MAX];
-> };
-> 
-> Seems better to me...
-
-I suppose modern languages are getting away from the whole
-nul-terminated string thing, heh
+Steve
 
