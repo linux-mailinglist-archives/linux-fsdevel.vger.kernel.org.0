@@ -1,168 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-10565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE6A84C4E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 07:19:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 331B284C4FE
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 07:29:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C2B51F26C08
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 06:19:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6AD61F23EE0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 06:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEA81CD31;
-	Wed,  7 Feb 2024 06:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B945F1CD36;
+	Wed,  7 Feb 2024 06:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fd4ls4ap"
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="FXK8EYdf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C00510788;
-	Wed,  7 Feb 2024 06:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D611CD21;
+	Wed,  7 Feb 2024 06:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707286776; cv=none; b=HBMY84p10kufaqfEyBar2sY2c/0ZQTwhz5/fQSKnPenvNRcv98Il3A2smtgrdnYpMsLfwFwC3gQemFjTrPzoPSGhN0cDeNJwNDbvC/S44lChGZnHIZYL0YPRB28WBMqJjggpNSQU47W5suKGqINj1tl88FrTWk7c0zvfMbiN8Ho=
+	t=1707287375; cv=none; b=jt86n/CAjgFmlx4+W8cKi4CmDvhloRStb70KDkFQe7ih9bcVcoHK8WJqcGNlXW63i7K68KTJtQ77ZwnCRmwS1CFAuBsLoCRFMOcxYfWerTdtBrIsqi0iUYlKt2AVhwRBZVgSWYZ3PBg37K4Kz5yILw4O0BcdwKPIqI2Y+bmDMbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707286776; c=relaxed/simple;
-	bh=Zw+zuvVKn7BHCJYKlJtcd0VYWlBnyG3eURH4PJZTXzw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bCo9rUNhYbgunmCIClXYKtCjDf2oiN99hr7/d0SDqKl5LQGKgIfTkIkGiTtK0ycIqWoezjXluslHVYI7IelO6UIG5zHqLsh1qO07Y7B8/VCp59fAIsW3Zf4//FE1c/mNRhx1jIGWjPiKoNDI0IK5JrfkUTfxHIEx0YEjSB8Pf0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fd4ls4ap; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6818f3cf00aso1797006d6.0;
-        Tue, 06 Feb 2024 22:19:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707286774; x=1707891574; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fvxHz8UI4TMnELHil0IULsGrxG7+ElSx4mu4N8xJ1KA=;
-        b=Fd4ls4apCZLNIGOwhLeHBb2VwcCzFehgFsvZl2gGdO5Z4wWMs+G7HeWlBU5QLCLUgp
-         nlnwMwqUGlQge6/u9CZ1ttHeIM5/917tGheA/uHSWJJ39yUa/DMkfpdFkJjnHl2x1e/T
-         7IWqbu1VHX+iNuzHWSbHXrwCRWwfEW2JdPOxfMkaIdLmaUan8YkiryVPDz3KI7ciBxVx
-         ahwcsikcWnNTRjxt0sAsoaHUsrsU8XZfmJV4n099HQs35+YcggKWAYd+LPij3MhLB+Km
-         /L2VH88jnDB6W8jNLoGz7NBB0VUA3O/hX0IilysOxKUxWuUdakhBsCAJBNQfwtMIRQ3d
-         EAkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707286774; x=1707891574;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fvxHz8UI4TMnELHil0IULsGrxG7+ElSx4mu4N8xJ1KA=;
-        b=IBN4e9Tr686dGsBXUGw19tdKN5QfK9S3XFzhOoG2JV98xhMIVGVv1a5SMM6eQQ6RVO
-         hUPjmwN9p6gEdGXV9ygWr4f4p6DtkbNjppXWpfmL+OnuLbcgOEhHuMG67SiXRGOeKCla
-         Qzw8TrZEjjgM7jSs7w66zoUSPImfrr2672nGG/MXNGBFPEggoAnoz7fhrt8k4X8ozFad
-         grQHCTw+vVFI9BfsjZIWN16nGdLREkt5r6Q5JmcqbhQHwAshreqGBN4yyJEyWs82Xk44
-         5QRqFBKhvc+zlH111Tau4u2xhacow3oGIvJDoueDBtFB07X9XgeX/4vnvyfA8h6d80b/
-         t2Yw==
-X-Gm-Message-State: AOJu0YyXWIDoIUbIa8lTj3WZH5rt1khUbLzIF7HYnsOKhyVcJW/XOLRI
-	vmxfQHZYHSYRuxb7tm7lqwpFZLuFUM75C7S9lptH3KjsbMSYaAJsd9Lb71ydTnZtJgecedDW8Ka
-	FFXrCeAjeS+9SC50R2judd03ToP4=
-X-Google-Smtp-Source: AGHT+IHH+mNF5lXuZAsuSpyRHnUZd/EhrIFMnrt2+Dexy3XfE0zvOhtGwBQ6/SaFaAed8UpcWIeI6mjNX75zDlSZ560=
-X-Received: by 2002:ad4:5cc6:0:b0:68c:8775:7593 with SMTP id
- iu6-20020ad45cc6000000b0068c87757593mr5861197qvb.12.1707286774036; Tue, 06
- Feb 2024 22:19:34 -0800 (PST)
+	s=arc-20240116; t=1707287375; c=relaxed/simple;
+	bh=6x3vJX6kM7wbhftNznZY29HcJYqFphVVNiA4oZaqOm0=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t0/bNLq1/Tep4PGbXLDT9W1eIouy1JMseU0r5hJuI1W341WpZVhd+OcjPSfFUcwtlGqYPg8ljOgMnxGXRqZwgTCpgFsbvwQ3FaBB+AosQ61q5339abugChtTPt47tucP4tdGtKOZiBNJ59ylBAmrkjZQ6JwcZwyg/j1hBIUZXfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=FXK8EYdf; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1707287366; bh=mNrdqudaAezA3ReLcqQ98vWG/2UD8jZsIyyvnfXThzQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=FXK8EYdfIZZYQy2+TsZiJzp8jZ5b4gtkdftggD9GxQLUHoF2VWUGafTMRsQAtBcsL
+	 HoX/syskOK6JlpU7U6HTDvX57W6wPLqRxl6Xu2coYNwnx3jro/WSIKEk8+eyobRE8U
+	 2q2thQOvIg9ulfdB4Wf/gmNcUJrBvCoypQqG49qE=
+Received: from pek-lxu-l1.wrs.com ([117.61.28.82])
+	by newxmesmtplogicsvrszc5-0.qq.com (NewEsmtp) with SMTP
+	id 5CE1508B; Wed, 07 Feb 2024 14:23:14 +0800
+X-QQ-mid: xmsmtpt1707286994t3ux03k23
+Message-ID: <tencent_F5A5644EB770B776C6C9B369E36F0963A305@qq.com>
+X-QQ-XMAILINFO: Mkw1Oys1xyjCZNP3mdVVjbU48w+tp+OLCqZBqFjenDCoYA031dEv6nCMD7qnJt
+	 D9jrpfBJyuFZntkoxKvK4TqMiQjCPP0VO3yR/LO4CWeHUwFR+BvVjbx0SXVaPTOR95PjPzayBcWA
+	 wBqcloRjcIL0T6/Nk98zyXmCUELYhM/4z4cPApTgLmHlCQF9JwQgU2TV+xyP1/Rtv4dsyYb4N+FT
+	 /fqAKBAFJ8IAh9hgATOMBQZaqeub8+B55OQagUseKqQ4yIZKZmfM8r9ARhMm3rnpHVVTMGc2nczJ
+	 gbkD5G/79uclVkUKpdJeFJZk7YWzBzhQyFGtXIPozOuwVjeWkoVtQzFyxd+xcItXRE2jao9U07kT
+	 EBP5VTTn0wz8cdHKxwm4Huv1v/EkgZfTKGNKT+yX7+B7sMUMUe/7TF15vmAS1cZ2lhxeaejkw3qG
+	 VQuRBA9wJsIXszPieKKGJVNHkDflH3zk3WzZ5Isvxfp5DYRo/K7ndKFzmaPNbZ9XT1GHy1qw2tzU
+	 6yq2O1Gdch0eHSWc2IDBKJfzLxyLMpUTndC2jzwCy4EwuCku/rok/hWVKzveoltU8aysOFYtLvbG
+	 njjrZIXjiPY3Atrz8eSX0RixjKpjpQ1tbp5q3iHGsZCtG1AFjqFGb7tELC27SPx6ilhkN/8EEl9B
+	 lTEkao5LXA7/bmyTFMKMp+xDVFXsUCXtNBeIf4J+G3wsMyWFRnQFCYahD/gitXDU5XXpymv5vNT+
+	 eORU8Yb2dJYGE+Jy1a3Wd9FOedpArkR1xtkoqNVwrporjY+UZXz4aVbHEdk3RWNva4FehaXhLQ5n
+	 GkKujxF0hce4kIRl6ENDQd8Xcmlyu2whrxAME5UA+LJZgeJQRzQTpr4J4EhOZPCLVLxsvQchDOof
+	 smMZLUnK4/Ab0wjJ91Jhq9jIL97yXbiPZEp8lJ/NBjLgFx+hLSdDjcfnXdKNT9/72Eag3TP4uAVF
+	 6mVBz/SPgNtUsc1E/QpbDcauEhOUpnxfYtc/658qS959xKDDixkwdVaYHUeXdj
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+From: Edward Adam Davis <eadavis@qq.com>
+To: slava@dubeyko.com
+Cc: eadavis@qq.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+57028366b9825d8e8ad0@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH next] hfsplus: fix oob in hfsplus_bnode_read_key
+Date: Wed,  7 Feb 2024 14:23:13 +0800
+X-OQ-MSGID: <20240207062313.2891520-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <9DB6A341-5689-4E4A-B485-A798810751F8@dubeyko.com>
+References: <9DB6A341-5689-4E4A-B485-A798810751F8@dubeyko.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240206201858.952303-1-kent.overstreet@linux.dev>
- <20240206201858.952303-3-kent.overstreet@linux.dev> <ZcKpSU9frvTUb2eq@dread.disaster.area>
-In-Reply-To: <ZcKpSU9frvTUb2eq@dread.disaster.area>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 7 Feb 2024 08:19:22 +0200
-Message-ID: <CAOQ4uxgMY+QeYGn5wH0N9GhJD1h-EWqrng99XxMtXXUCB8zL=g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/7] overlayfs: Convert to super_set_uuid()
-To: Dave Chinner <david@fromorbit.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 6, 2024 at 11:49=E2=80=AFPM Dave Chinner <david@fromorbit.com> =
-wrote:
->
-> On Tue, Feb 06, 2024 at 03:18:50PM -0500, Kent Overstreet wrote:
-> > We don't want to be settingc sb->s_uuid directly anymore, as there's a
-> > length field that also has to be set, and this conversion was not
-> > completely trivial.
+On Tue, 6 Feb 2024 15:05:23 +0300, Viacheslav Dubeyko <slava@dubeyko.com> wrote: 
+> > In hfs_brec_insert(), if data has not been moved to "data_off + size", the size
+> > should not be added when reading search_key from node->page.
 > >
-> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > Cc: Miklos Szeredi <miklos@szeredi.hu>
-> > Cc: Amir Goldstein <amir73il@gmail.com>
-> > Cc: linux-unionfs@vger.kernel.org
+> > Reported-and-tested-by: syzbot+57028366b9825d8e8ad0@syzkaller.appspotmail.com
+> > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 > > ---
-> >  fs/overlayfs/util.c | 14 +++++++++-----
-> >  1 file changed, 9 insertions(+), 5 deletions(-)
+> > fs/hfsplus/brec.c | 3 ++-
+> > 1 file changed, 2 insertions(+), 1 deletion(-)
 > >
-> > diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
-> > index 0217094c23ea..f1f0ee9a9dff 100644
-> > --- a/fs/overlayfs/util.c
-> > +++ b/fs/overlayfs/util.c
-> > @@ -760,13 +760,14 @@ bool ovl_init_uuid_xattr(struct super_block *sb, =
-struct ovl_fs *ofs,
-> >                        const struct path *upperpath)
-> >  {
-> >       bool set =3D false;
-> > +     uuid_t uuid;
-> >       int res;
-> >
-> >       /* Try to load existing persistent uuid */
-> > -     res =3D ovl_path_getxattr(ofs, upperpath, OVL_XATTR_UUID, sb->s_u=
-uid.b,
-> > +     res =3D ovl_path_getxattr(ofs, upperpath, OVL_XATTR_UUID, uuid.b,
-> >                               UUID_SIZE);
-> >       if (res =3D=3D UUID_SIZE)
-> > -             return true;
-> > +             goto success;
-> >
-> >       if (res !=3D -ENODATA)
-> >               goto fail;
-> > @@ -794,14 +795,14 @@ bool ovl_init_uuid_xattr(struct super_block *sb, =
-struct ovl_fs *ofs,
-> >       }
-> >
-> >       /* Generate overlay instance uuid */
-> > -     uuid_gen(&sb->s_uuid);
-> > +     uuid_gen(&uuid);
-> >
-> >       /* Try to store persistent uuid */
-> >       set =3D true;
-> > -     res =3D ovl_setxattr(ofs, upperpath->dentry, OVL_XATTR_UUID, sb->=
-s_uuid.b,
-> > +     res =3D ovl_setxattr(ofs, upperpath->dentry, OVL_XATTR_UUID, uuid=
-.b,
-> >                          UUID_SIZE);
-> >       if (res =3D=3D 0)
-> > -             return true;
-> > +             goto success;
->
-> This is a bit weird. Normally the success case is in line, and we
-> jump out of line for the fail case. I think this is more better:
->
->         if (res)
->                 goto fail;
-> success:
->         super_set_uuid(sb, uuid.b, sizeof(uuid));
->         return true;
-> >
-> >  fail:
-> >       memset(sb->s_uuid.b, 0, UUID_SIZE);
->
-> And then the fail case follows naturally.
->
-
-I agree. Please use the label name
-set_uuid:
-
-Also the memset() in fail: case is not needed anymore, because
-with your change we do not dirty sb->s_uuid in this function.
-
+> > diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
+> > index 1918544a7871..9e0e0c1f15a5 100644
+> > --- a/fs/hfsplus/brec.c
+> > +++ b/fs/hfsplus/brec.c
+> > @@ -138,7 +138,8 @@ int hfs_brec_insert(struct hfs_find_data *fd, void *entry, int entry_len)
+> > * at the start of the node and it is not the new node
+> > */
+> > if (!rec && new_node != node) {
+> > - hfs_bnode_read_key(node, fd->search_key, data_off + size);
+> 
+> As far as I can see, likewise pattern 'data_off + size’ is used multiple times in hfs_brec_insert().
+> It’s real source of potential bugs, for my taste. Could we introduce a special variable (like offset)
+> that can keep calculated value?
+The code after "skip:" only adds size at this point, so currently there is no
+need to add variables for separate management.
+> 
+> > + hfs_bnode_read_key(node, fd->search_key, data_off +
+> > + (idx_rec_off == data_rec_off ? 0 : size));
+> 
+> I believe the code of hfs_brec_insert() is complicated enough.
+> It will be great to rework this code and to add comments with
+> reasonable explanation of the essence of modification. It’s not so easy
+> to follow how moving is related to read the key operation.
+As the case may be, other code is just complex but no issues have been reported.
+It is not recommended to make unfounded optimizations.
+> 
+> What do you think?
 Thanks,
-Amir.
+Edward.
+
 
