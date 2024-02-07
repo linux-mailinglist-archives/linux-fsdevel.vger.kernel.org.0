@@ -1,115 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-10608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F6D484CC6B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 15:13:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49F9084CC69
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 15:13:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 896C81F234C9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 14:13:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0762D2877C4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 14:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 669DB77F12;
-	Wed,  7 Feb 2024 14:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5547C08B;
+	Wed,  7 Feb 2024 14:13:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="AEM1TaGG"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="oU9M4k6D";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Gb8DcpHq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0817A727
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 14:13:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89E276911
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 14:13:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707315226; cv=none; b=uBQwYvLO/4olPcPK8Hu7teOLxXXEmfX0tRPf9HpL5koQY9AW675yKDBRIblbr9/msuXoCFCYAc6o27uE9/2rMI14dWMNHPjH7Wl4yuSHSb0mWar16bGHXG76NU7bmOQu5Dz4ooy6l1LidPqUlMIrn0r6RT2ogOQ7UCxxKpgrP6k=
+	t=1707315224; cv=none; b=cEpELV5lvfJfpaFyaqy5lu4byFy3ESBOawrehuMOXaSJ08XRmUqvdcKAI6rIbpxfOZKTWP6iph6qNJbi+BXj10JKwR4ziwJTbvShslfHuUaDGFpkaa/ztKTqCNvx2wxCaZo0RDpS4HgA/PeGyk0QnCojKdaUeWzdBuD/S+KyDB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707315226; c=relaxed/simple;
-	bh=uDMXyMG6j9ONbezTC0mpLsB4ibSrcJDdL0htrYl1dP8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YKEJRjWhJeGa1pMHXpiH3XddwyqG0PzS93uJYEFm4FrllVE1Cce3pspot3nE+QsBsWDhLorMYXcLVKo6WncQTc9Q1fKKn9BHszZC4KvG+w456SWtZhFJFEDmfpQQJ8hCnnY6q98nC60YCeT7z5X4F2olz0hwQFyB7aSa5DiYIg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=AEM1TaGG; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2d0ce2222a6so2785321fa.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 06:13:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google; t=1707315223; x=1707920023; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uDMXyMG6j9ONbezTC0mpLsB4ibSrcJDdL0htrYl1dP8=;
-        b=AEM1TaGGJL4wfEqm+2q9peXuocQIkjrQDjqZWUgmrqbKh2c6echwGBVUOkHYGtL1Jp
-         02AhZevn+De6PN7zGsB819FgrNnk/pvSqHSCA7PPW//BH4iRu3GtCxMeDnF34BH9WieF
-         R1hLL0ZneyOMPuS0eERh9ZDVSUIzkN/ZJ2rKg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707315223; x=1707920023;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uDMXyMG6j9ONbezTC0mpLsB4ibSrcJDdL0htrYl1dP8=;
-        b=IXMONDD+Vwaufrj60kb4kh5NYm/WhtrU3tseg3KssrQ9vvHp4iEzvK2Efy3M8qSGYP
-         GBqRCZ8ohr+tyfV+34IBvZ/+SAmeEunXcKGPEAl31ZXryXlorskwmNyh1gh7v8Poyj7A
-         MfCukz/pSX7qJOFbV8sHb1POAdXi6C++lZELRopJyLXwUyLmu8f4glBYCKPsz6GBCmFl
-         jxbkeyvWc3ENpJsSJ8GJnGkGA1cwDq1LWib+elkCFBTOImIqdYG5JylcbMpA7PZcIwWu
-         jBnD1mdlVlFtLgdcm8pp1LreGS6U9Og9P0eEnCpu0FbmU2xFW34sizb/Z3aVT0zHizYe
-         gXsA==
-X-Gm-Message-State: AOJu0YykJW1X/tUC1VPv5I2YOAYEGWtbiWOAbnsOZtf3szlKZGAneBAf
-	CBz0SLwWOkwRN6JkgAW3K5hoJ/nAuzRf5Kg8DCEBklhh974UQBB4r9rpqazFbxZtFCHRanPagVw
-	rkYm3mVrCXqsL/8HVbDIRwYRyBnxUoBFrMNimnJ01Nj/R76qK
-X-Google-Smtp-Source: AGHT+IED9YAP6IjuLO7QGzwihwwoadtsQqIErozgRiEhzKfXYz5J89hbN3mS6Tn00zxP0ae3LMxLBAw1f4m1Z4XB0YY=
-X-Received: by 2002:a2e:2206:0:b0:2d0:5f90:2b29 with SMTP id
- i6-20020a2e2206000000b002d05f902b29mr4579555lji.12.1707315222978; Wed, 07 Feb
- 2024 06:13:42 -0800 (PST)
+	s=arc-20240116; t=1707315224; c=relaxed/simple;
+	bh=G6tzeJr76VHxPlPVdoe+8wZ5pa59ZRbDtThMgyx2sOI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iQAfR3PjwJ4NiYipA8n3iFR/lA1lfaOl7SHU2Pj0idpqt5qqWh+vLHM+fKbdhVYSL/FKkW/MiPe3OeTY4VpH+GQ5A5LOYXAzqnQ25bsroonD86UCW6LDTZkz2ZHj+jT8pWJ6fc/vZdl5e08rgyjDNZZ3ddyLyPneYB6GwNvKUZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=oU9M4k6D; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Gb8DcpHq; arc=none smtp.client-ip=64.147.123.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
+	by mailout.west.internal (Postfix) with ESMTP id 6E1483200A40;
+	Wed,  7 Feb 2024 09:13:41 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute7.internal (MEProxy); Wed, 07 Feb 2024 09:13:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1707315220;
+	 x=1707401620; bh=iAO/OIi3ik5Urj6tyMRalIrN5Nfid4IRZULp8S5CUNY=; b=
+	oU9M4k6DgX9PARVLzypu9B88NijnoIUFwqKIQL6IxcT2YbMR196WiQVVebAm2tVI
+	oiDi7L1yDmdSv3PTcTvu1UFNQJsOw4MDVAEyif5VxLx2NSCqGu4jAQyahChqb08J
+	g0B4xWafJ8dZoWaWNIt5+P9l4EaipY+ZEG4nOyv+g+mGSbeNjUluFlWTgsRoaYgK
+	00gRhoZ+kLxL5CYIk1Sw+B5HPAAQGftYoJR7/LexHZc/1s+F30NeG78SXeZ6diS8
+	E48fpy59QV/+1XMfJx6Ye6AfOQjots6pQowzogMyQP4+tP+KwURbq/u/rZTSX5Av
+	Q+gwzm7WAGfaLo9o8PFpkw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1707315220; x=
+	1707401620; bh=iAO/OIi3ik5Urj6tyMRalIrN5Nfid4IRZULp8S5CUNY=; b=G
+	b8DcpHq6ckTp16QEHLzV6cP+M+a1HTcyiMgRVNC/sfqxeTSakyqRcIzbKrSBLC1a
+	JP3jwCLS7BmvDP4v6GHVYyScnT3QPfZVmhvlUP4lY4R/ymgrRFx2Srh1+mPmBlJ8
+	Sa7VWpkOlBnG2QToFNuP4GodvUdq5GdjKj/yXfr3cQbWM7IieWd3oiDCBAv50Il3
+	9KDVPxRMFVV7AopC9bQgcYiv3IXuwcomLhh+xOB3ecmpE8WKt47cTMAng0kkZx8E
+	8SJWNGdWiY2GlNlzW7KsyZSzoGc84GZYnk2bwwYB82XEswNmpto9WJr0jatyE6Bi
+	Jrckvt9bDADI6LiA7xmSw==
+X-ME-Sender: <xms:FJDDZU48W8xUXLP-Q5WOwwXj7Q0Y5TAFjXe_YG0I6mdFl6CC_ovaAg>
+    <xme:FJDDZV7d5H6ZoNGgjBEsP4zTGivkwerwMFRyMHI9tHtnkTjoI03l-wLuO5xOvM4c3
+    vuu12-HDWgBKoKi>
+X-ME-Received: <xmr:FJDDZTcNXTRLDNfoyGk1cPiPo9XazWFCZ3AbN09OEnR0RjVon9WGtI4FkK3hfKgoxh9SeD_JwyGeGlUUzfM8kXsI3-dTPMBrZ8MLapn8C1iywrCxS8G9>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrtddvgdehlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtje
+    ertddtvdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhs
+    tghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgf
+    dvledtudfgtdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthh
+    husggvrhhtsehfrghsthhmrghilhdrfhhm
+X-ME-Proxy: <xmx:FJDDZZJ2FQvVb8pdlqJM4z19Tk21X5911lKmtF6Ks35uU866Wo_Wyw>
+    <xmx:FJDDZYJshifIZaYFsvbJqsmywFl-yDCy1bk385VX5egJOyeZ6DrZIg>
+    <xmx:FJDDZaybd96cXcVt3D7XGvQ3TY9S0LUSHQl9UpjpFa90jwjPHDIXyw>
+    <xmx:FJDDZdGmlmRXX8-6tJgQADnBusDpNZwEFGQh5vbPH9CaLvLLqt5bXw>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 7 Feb 2024 09:13:39 -0500 (EST)
+Message-ID: <072d2ac6-6281-404c-8897-39748c763b39@fastmail.fm>
+Date: Wed, 7 Feb 2024 15:13:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240206094650.1696566-1-quic_hyiwei@quicinc.com>
- <50cdbe95-c14c-49db-86aa-458e87ae9513@joelfernandes.org> <20240207061429.3e29afc8@rorschach.local.home>
-In-Reply-To: <20240207061429.3e29afc8@rorschach.local.home>
-From: Joel Fernandes <joel@joelfernandes.org>
-Date: Wed, 7 Feb 2024 09:13:30 -0500
-Message-ID: <CAEXW_YSUD-CW_=BHbfrfPZAfRUtk_hys5r06uJP2TJJeYJb-1g@mail.gmail.com>
-Subject: Re: [PATCH v4] tracing: Support to dump instance traces by ftrace_dump_on_oops
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Huang Yiwei <quic_hyiwei@quicinc.com>, mhiramat@kernel.org, mark.rutland@arm.com, 
-	mcgrof@kernel.org, keescook@chromium.org, j.granados@samsung.com, 
-	mathieu.desnoyers@efficios.com, corbet@lwn.net, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, quic_bjorande@quicinc.com, quic_tsoni@quicinc.com, 
-	quic_satyap@quicinc.com, quic_aiquny@quicinc.com, kernel@quicinc.com, 
-	Ross Zwisler <zwisler@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] fuse: Create helper function if DIO write needs
+ exclusive lock
+To: Jingbo Xu <jefflexu@linux.alibaba.com>, Bernd Schubert
+ <bschubert@ddn.com>, miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org, dsingh@ddn.com,
+ Amir Goldstein <amir73il@gmail.com>
+References: <20240131230827.207552-1-bschubert@ddn.com>
+ <20240131230827.207552-3-bschubert@ddn.com>
+ <2d0d6581-14de-46c4-a664-f6e193ab2518@linux.alibaba.com>
+ <b9308f8b-cda3-486f-be23-6e84cc0c8b6d@fastmail.fm>
+ <f365c731-9cc5-4340-9c1e-f6f5ab422140@linux.alibaba.com>
+Content-Language: en-US, de-DE, fr
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <f365c731-9cc5-4340-9c1e-f6f5ab422140@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 7, 2024 at 6:14=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org>=
- wrote:
->
-> On Wed, 7 Feb 2024 05:24:58 -0500
-> Joel Fernandes <joel@joelfernandes.org> wrote:
->
-> > Btw, hopefully the "trace off on warning" and related boot parameters a=
-lso apply
-> > to instances, I haven't personally checked but I often couple those wit=
-h the
-> > dump-on-oops ones.
->
-> Currently they do not. It would require an updated interface to do so,
-> as sometimes instances can be used to continue tracing after a warning,
-> so I don't want to make it for all instances.
 
-Thanks for clarifying.
 
-> Perhaps we need an option for these too, and have all options be
-> updated via the command line. That way we don't need to make special
-> boot line parameters for this. If we move these to options (keeping the
-> proc interface for backward compatibility) it would make most features
-> available to all with one change.
+On 2/7/24 14:44, Jingbo Xu wrote:
+> 
+> 
+> On 2/7/24 9:38 PM, Bernd Schubert wrote:
+>>
+>>
+>> On 2/6/24 10:20, Jingbo Xu wrote:
+>>>
+>>>
+>>> On 2/1/24 7:08 AM, Bernd Schubert wrote:
+>>>> @@ -1591,10 +1616,10 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>>>>  	else {
+>>>>  		inode_lock_shared(inode);
+>>>>  
+>>>> -		/* A race with truncate might have come up as the decision for
+>>>> -		 * the lock type was done without holding the lock, check again.
+>>>> +		/*
+>>>> +		 * Previous check was without any lock and might have raced.
+>>>>  		 */
+> 
+> 
+>>>> -		if (fuse_direct_write_extending_i_size(iocb, from)) {
+>>>> +		if (fuse_dio_wr_exclusive_lock(iocb, from)) {
+>>> 			^
+> 
+> I mean, in patch 2/5
+> 
+>> -		if (fuse_direct_write_extending_i_size(iocb, from)) {
+>> +		if (fuse_io_past_eof(iocb, from)) {
+> 
+> is better, otherwise it's not an equivalent change.
 
-Agreed, that would be nice!!
+Ah thanks, good catch! Now I see what you mean. Yeah, we can switch to
+fuse_io_past_eof() here. And yeah, 3/5 changes it back.
+Fortunately there is actually not much harm, as
+fuse_dio_wr_exclusive_lock also calls into fuse_io_past_eof.
 
- - Joel
+
+Thanks,
+Bernd
 
