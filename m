@@ -1,91 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-10595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C7084C93C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 12:09:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E64F784C943
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 12:11:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0071F277B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 11:09:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 764972830FD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 11:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7169A1D531;
-	Wed,  7 Feb 2024 11:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A742318EA1;
+	Wed,  7 Feb 2024 11:11:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 883E91B7F7
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 11:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB0817BD6;
+	Wed,  7 Feb 2024 11:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707304146; cv=none; b=XejyiT8ufrToECdOPoXYXeg5vhxKuceA3+sS2KfdUtMNXy0TV8hDPs34Tz9BWP2RjbPSiTd/PjxIyBAphTP7rXBAYbnReeHDLH2pvkjxyxk3DO5/NQZwNY5m/R7yybhc2zHQWs1UM9vLfwXmum3/ZGhEZFL/jkN+EW+QCuJq4Xk=
+	t=1707304266; cv=none; b=A89A3kzTyZM4iRb3rpmMJW3D377NaEnyy+q2XEQ7jCI8mRIECFPhmByhaoF87oTdzc7/9wyNUGMtNHu/WI9diofBCnM6fMPuWIX92YdT1+7U5Y9e6XKdaHlL4I/sLRhXFHhf6JS4Wb/qlA3LOgW3aOePeFN8BKwsJV6L9zeEIaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707304146; c=relaxed/simple;
-	bh=5PhO/CSyRdS/kcBg1FslvShsADEHbW2yd9KE30COm2w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WTMzux5vpDL20mkB80jNjbILA5+cOgtrGtAfPGLno6M7r0sbAs39lIEBLo75nyHKv5al+9vlcIcKHgZVa6ZW2avIFUzFWzvo+K+oT2z7JoQBNKaIPJyrsqlr+9qTtrWHjXl2uiO3R8npS0NYiNE2GedfHjJKnFuRzlJGNQwATb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7c000114536so30111439f.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 03:09:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707304143; x=1707908943;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ON6px046rR8EBHR3nBWI29k5JFBBUrDnkEhtRqAg3/M=;
-        b=tERstx4Db38DCISUMxjQnYHdVcqAT5vmaq6mgg/hO22/oqvsDSteekMpcBULNbdyek
-         nKaNMbAqNmZ8NZvsXVUTZ3vlOdCiLWv++kH4Pn6LTVcQhJbkXOx2Lvns7ev0eTYknse0
-         aiynoQf7zN7DJWkblFfER7bzZMw7iYXYufZ2axqiMHzswRk9ZtGyFW1WTiXmkBR7e+3n
-         swExZyS7UaNbhBzTs+ycqrY0zhDiVpZeaOtPowXFy7HtCelIFQCUq200OCazna+yxhcL
-         1j7yfmwydNDB/rTNWw2tI6eIv8TvKwAXRi3zTJ5vbsI3A+2prQYugJL5yXMaG44pyK+7
-         LXvA==
-X-Gm-Message-State: AOJu0YyvQHy/neZ19XMQoNmjv+uc+GFWg/4Pj3R0uxyaU/meneOD+hJ1
-	aRUeNhCHMrhgD5ju2S2qesPEzltW2n8xRRre1mMDV1PEJeXLsJel9AKaTXiHdIxTzcB9pp6I45q
-	itp4vX7T1QbUfQhg4vg3PoqNm5HG4xoOGtTzAPvkK85o27X3xg139VGI=
-X-Google-Smtp-Source: AGHT+IFBWylZ9MvHDjQAjrBJ7NsXQEeWoUUUOY5tLH6qSAC3pqHHpyCcIow7X+8Z+EajQDVj05fZB0vZ65RiQl066en/Vn1eR9pE
+	s=arc-20240116; t=1707304266; c=relaxed/simple;
+	bh=bSbwSNh4jw6Hlml5ZP+MdMI2o7ktMWvwYImN2GhPc7w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MBnoZP4YMPXXA3wNmjraMahLd4NuRbh2moOZ/iZiP7c2Mk+5fIHmH7spXcC1iEWW4fsYxwHnjBn3ahlh8J7qqOEa6UnqN1uxv0NXK1YbwBnVgdt7LWIKHVLCO2tGOAHvp6KC11rdaKBvvnTH8w4/Id/yfi/rDQRqwh/h1vtL/ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav412.sakura.ne.jp (fsav412.sakura.ne.jp [133.242.250.111])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 417BAuAe067452;
+	Wed, 7 Feb 2024 20:10:57 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav412.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp);
+ Wed, 07 Feb 2024 20:10:56 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav412.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 417BAuf0067445
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 7 Feb 2024 20:10:56 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
+Date: Wed, 7 Feb 2024 20:10:55 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:160a:b0:7bf:f9d1:ffc6 with SMTP id
- x10-20020a056602160a00b007bff9d1ffc6mr200027iow.4.1707304143713; Wed, 07 Feb
- 2024 03:09:03 -0800 (PST)
-Date: Wed, 07 Feb 2024 03:09:03 -0800
-In-Reply-To: <000000000000a5f23f05ee4865cf@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000027e150610c8b964@google.com>
-Subject: Re: [syzbot] [reiserfs?] KASAN: use-after-free Read in set_de_name_and_namelen
-From: syzbot <syzbot+3969ffae9388a369bab8@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
+Content-Language: en-US
+To: Paul Moore <paul@paul-moore.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
+ <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot suspects this issue was fixed by commit:
+On 2024/02/07 9:00, Paul Moore wrote:
+>> @@ -1223,6 +1223,17 @@ void security_bprm_committed_creds(const struct linux_binprm *bprm)
+>>  	call_void_hook(bprm_committed_creds, bprm);
+>>  }
+>>  
+>> +/**
+>> + * security_execve_abort() - Notify that exec() has failed
+>> + *
+>> + * This hook is for undoing changes which cannot be discarded by
+>> + * abort_creds().
+>> + */
+>> +void security_execve_abort(void)
+>> +{
+>> +	call_void_hook(execve_abort);
+>> +}
+> 
+> I don't have a problem with reinstating something like
+> security_bprm_free(), but I don't like the name security_execve_abort(),
+> especially given that it is being called from alloc_bprm() as well as
+> all of the execve code.  At the risk of bikeshedding this, I'd be much
+> happier if this hook were renamed to security_bprm_free() and the
+> hook's description explained that this hook is called when a linux_bprm
+> instance is being destroyed, after the bprm creds have been released,
+> and is intended to cleanup any internal LSM state associated with the
+> linux_bprm instance.
+> 
+> Are you okay with that?
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Hmm, that will bring us back to v1 of this series.
 
-    fs: Block writes to mounted block devices
+v3 was based on Eric W. Biederman's suggestion
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14fffd6c180000
-start commit:   c3eb11fbb826 Merge tag 'pci-v6.1-fixes-3' of git://git.ker..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8d01b6e3197974dd
-dashboard link: https://syzkaller.appspot.com/bug?extid=3969ffae9388a369bab8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1615d7e5880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15f20981880000
+  If you aren't going to change your design your new hook should be:
+          security_execve_revert(current);
+  Or maybe:
+          security_execve_abort(current);
 
-If the result looks correct, please mark the issue as fixed by replying with:
+  At least then it is based upon the reality that you plan to revert
+  changes to current->security.  Saying anything about creds or bprm when
+  you don't touch them, makes no sense at all.  Causing people to
+  completely misunderstand what is going on, and making it more likely
+  they will change the code in ways that will break TOMOYO.
 
-#syz fix: fs: Block writes to mounted block devices
+at https://lkml.kernel.org/r/8734ug9fbt.fsf@email.froward.int.ebiederm.org .
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
