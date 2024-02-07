@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-10561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED2884C487
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 06:58:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1DDF84C48D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 06:59:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A21871F25DE4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 05:58:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09CD5B20E44
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 05:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47E01CD2E;
-	Wed,  7 Feb 2024 05:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F80A1CD13;
+	Wed,  7 Feb 2024 05:59:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jtUEw2gi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/vAR3l3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C851CD1F;
-	Wed,  7 Feb 2024 05:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3703F1CD1F;
+	Wed,  7 Feb 2024 05:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707285518; cv=none; b=M4EOVdy4mIR5+Dz/pjCn3jj59jlcN9nfME/JUU8NCwFQfZ+beKR8DfdXrtXeP8y64X0rPdW6sYbCikpiP6c/OVv+Da5DT+GfTQ8QiOjtAizf89478QAx7VX/Xhec3UqDs8DFh4SC7zBgfxNcwbGWdQOVRJ+SVSun8Kd4DP1ISBc=
+	t=1707285543; cv=none; b=g/nlXoBRu2JsiwjiLUtO/UqZDWzazhYNX0PuB/I8gRuOj7ex37meYdN84k7XIzfxuRIOmYevyhFi2Ni3e2dvKHt+Zv3MOi+7BHNhbR2dJ7ujxDHS9nR0KIIj/MsYVSkMehItMo04+MCia3zQVN8jQQQffLLXOPaA16s96jvGBaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707285518; c=relaxed/simple;
-	bh=uE6OJVQ9YSoP27CkODIAeXkMzlntU+IcQj/F+5dnDzY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tUMQhdiQpRjt8CM4bwdj/Mql7zL9cBjHcU2ktApyCiXZDYvaDvXmjqdnBRcrlwn+e0ZFWUndQBwRC0QTIdsezDzgyxYJ1NLWos9GrleIeaPeKR73z2ynFiaibSBb5xJnnXwqbNbMXK20y4uO7+PMUpGEmc4re33b1Tq9FBqPgT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jtUEw2gi; arc=none smtp.client-ip=209.85.166.46
+	s=arc-20240116; t=1707285543; c=relaxed/simple;
+	bh=/A2CuqUaviVLc8uxe4U+4x+W/vxua+zfrfUWkP8fdMw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aFkSr9KlTm+fM8Ixznue0Umt8dUIJTJnGc6UPCHOkVWU9CFOJ6ojHwtilyDV6hGMRXpuOqYQo7IcKOJf6eRMvnSHFmqeuT5s1I6my0FVnzEfNVt1uTFT98HtEX/jSpoovcooiRY0BPj4oANKzN8M4vA8SWxwhEWD51cz+74o6uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/vAR3l3; arc=none smtp.client-ip=209.85.222.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7bb5fda069bso14727739f.0;
-        Tue, 06 Feb 2024 21:58:36 -0800 (PST)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-7ce603b9051so102467241.2;
+        Tue, 06 Feb 2024 21:59:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707285515; x=1707890315; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707285540; x=1707890340; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wkwDZBuBbGTcPxqte4yWeQZdnC8yjl5ClvwPnqlCYos=;
-        b=jtUEw2giG5WeTUMjIZsdgbXTpHyZE5HDT0TIrjIbPQcGBJsNHivqs1NBWhjMd7mo8f
-         qzOAlcpOpYVOtTg+L2saxB3R43645LE9QpL+SLvgIKPFudpew4Cv7HzszTQ0lmk+3arn
-         RqncdpkPpYCo5zX2zlFgk+Dhafi79yinzcuUWy2iEuV38gDvoSsZZqWvbQguHXeS6L55
-         Eac63R0Q9iCyuKgD5q//EYjMoNWvy8tNXs3a9oLEYqaWWm2o8xMUO8oPXRmm718TdJ8p
-         FQncOPUw2O+VrXfpv6yUrnZoooisVlwH2/6txc5bu5Qqv5DAXCgnwCCjZ5dXtR+RX5J9
-         aRKg==
+        bh=y+4UD2Jypdak0SBU5rEy7o1e/eSN2ARp9yL+M+702JQ=;
+        b=c/vAR3l3vy37weURzJeLHswVWql2mxmSOqaZY59CUMQDXJjEa02xCVYii8dfw9LLrg
+         lbFLwvL5v9ZznbAVGLbckXBYDiW7ZoKWQ7xwlMkZDYfVyZtXGQHlp2MzOx6pqa5eQscn
+         JYX2Zirmv7CKWDs3PQjrIzdviZCUQGoIoW3/rveQHfUCwFIEtQpcD2atP0n3UtcX4qZm
+         gUhpxdFnSbL6ljzbPmq7gSszvFvlwlNe9BVUF34SXRpzirjFWRkXa69tbT0bzMySsifQ
+         1xnqefkv7ZtdDVrQ0o5YmuYW6W8eAmDHwa/+qdqCBiwguid2bUh1gSCmR+WBXKM/kDVY
+         7r5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707285515; x=1707890315;
+        d=1e100.net; s=20230601; t=1707285540; x=1707890340;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wkwDZBuBbGTcPxqte4yWeQZdnC8yjl5ClvwPnqlCYos=;
-        b=L4eYIdtm0QelE1JY0OJsxopKhC0lSF+FVfrmEIVvQ8/u7pO+MvZTIy1zJMIDjxEJP6
-         QKtG1kZDHw3FYjoIAefcl9yZ7Jk/h6OFEsHPG43T9vSnHCOIp16NNzIibkJqKNTv3NI9
-         zrtsepndazlC+rfvbUMRCaJ0cPvS64/HpNxdBPCbMuYq+KwLlQsiGu0gopWAbIIyEfZF
-         VK6IykkZJwn+P46h6SflBG1B3QHl2pWwxrhWT/DkrtC8z5hhndYVJwmOcljHzztsSPek
-         fqCTbsQxV8mVR5hNnm6hDSblGStYlGvdt7hgCFnDU+SP9hU4cnnWC0yeaUPd2v+NZzhS
-         FyDw==
-X-Gm-Message-State: AOJu0Yx6pJgbv5UUeBcAY8PCt2Mon6gkbgF5BxtJDfDjxMoAeB/9RyOW
-	K3HjNlppgcjcAKe5QlIDZMOu4ORi0/dyF4sHSMc37HVOO55ZHrtrre6/8SGtJ5w=
-X-Google-Smtp-Source: AGHT+IFkCx9oarzlC/nqZWJkzSYlfmZLvGmIpOWg1ZetcBJ5HpCpQCXqyZ9WBOgkR1/kLssi72E1Nw==
-X-Received: by 2002:a6b:a01:0:b0:7c3:ffcd:9dde with SMTP id z1-20020a6b0a01000000b007c3ffcd9ddemr358915ioi.8.1707285515078;
-        Tue, 06 Feb 2024 21:58:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVx3EcbvFQ6Vy1Gf+U/E7IqUB5Iyq9TATAyOhLakq7oM1EixvRR/wpw03gppawHk7jPg9jScdaQcSqGu6W+P6P4I1M55ME8qrHml0vuB1cgDFWhlPNlWxopVM+Pc77tXamEHva7egZGJCUxaFrGyPvOSS6c5inRDKePddLig6zMKabRQ3TlflCgPEdFcYVwqQQdL2kBvTN6gtPpXrnITkgW+q2+tpfsT3YZlZxmoeqAHD9hObZcmDeNEkuy4DuO5TJ3kPJeKJZ+vUF7HiLElgseQirLOXpOY0ar
+        bh=y+4UD2Jypdak0SBU5rEy7o1e/eSN2ARp9yL+M+702JQ=;
+        b=e5QzwI6adAn5iwkOTIl7FU6Q7iS5NRtJxWnoOm0jIWEfOAsbs7YTe3h5Yvja1xqEuj
+         Ssd8a1xlwpGwx56syBd37fg+K+PWuqFkxXtif+Rtwq+lILNoE9w7nJH4QtUIUZxABHMg
+         GMY9tqwkFL0sNqOMnneKMXrDDXrSNCLLOcJDmkJboh3pNluYZjTEAuXAJM7KRE5ZSC5S
+         M/NKXgDy4UrOaAbfrSp6fN5O9OsP3osbVzgTmZiUtukmJyDmfnTbzhT2Vzck6w7C61B3
+         0itu5j/BSzkPTxdA5N5R7XEcxIy3ayKXbPd4K8alyrZ/PWLrnSdJhN1QaOocigiXYPR8
+         FXBg==
+X-Gm-Message-State: AOJu0YwE4DNh7yFuHGBVxXzSmQX7RbrRDaHUGqGC1xP5KhS7Fhg45ev9
+	aNBKCef3XBpPYTpMFftnioDKVuaQpOoirA+8KdHswrD4BxSqMYO5JoYxTaEKDwU=
+X-Google-Smtp-Source: AGHT+IFYpdfbwEmVRWMhgDtfEsKiCbo4I/ZHiW1sauDuBncos5+15k+tfHddjjJBDSxloGb1eTEIgQ==
+X-Received: by 2002:a05:6122:1b09:b0:4c0:1e9f:6576 with SMTP id er9-20020a0561221b0900b004c01e9f6576mr1934399vkb.10.1707285540113;
+        Tue, 06 Feb 2024 21:59:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWIiR17ALAynCUofpgFob5XnhENxVj09T/OUmLZnqpm4TCTxm8GMYLJERawVjTY/VoOxXdYT4wNypVp/uPH32km6uVSScOlWmHEDKUJPlSn9Iiwbb+r8dQY1SMhF/En4ieGaBlh/Yb77m5RYdqz1PCfh6CJfskC+Qv0Sn+2ti13A6Xz8br3wgtgJKtipovTrqrDRaO83TQo9E194nMOAh399AqqaO9Dv1IAhgnUBg/8Vk1e4TbW6aBTeOCtvWSKI3SXwpfxyPBpOAOF+TvgAJEAb1BCLpYgnRnB
 Received: from fedora-laptop.hsd1.nm.comcast.net (c-73-127-246-43.hsd1.nm.comcast.net. [73.127.246.43])
-        by smtp.gmail.com with ESMTPSA id c24-20020a02a618000000b004710f04c411sm109425jam.76.2024.02.06.21.58.34
+        by smtp.gmail.com with ESMTPSA id ep25-20020a0566384e1900b0047125710091sm114810jab.20.2024.02.06.21.58.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 Feb 2024 21:58:34 -0800 (PST)
+        Tue, 06 Feb 2024 21:58:59 -0800 (PST)
 From: Thomas Bertschinger <tahbertschinger@gmail.com>
 To: rust-for-linux@vger.kernel.org,
 	linux-bcachefs@vger.kernel.org,
@@ -75,9 +75,9 @@ To: rust-for-linux@vger.kernel.org,
 	alex.gaynor@gmail.com,
 	wedsonaf@gmail.com
 Cc: Thomas Bertschinger <tahbertschinger@gmail.com>
-Subject: [PATCH RFC 2/3] bcachefs: create framework for Rust bindings
-Date: Tue,  6 Feb 2024 22:58:18 -0700
-Message-ID: <20240207055818.611679-1-tahbertschinger@gmail.com>
+Subject: [PATCH RFC 3/3] bcachefs: introduce Rust module implementation
+Date: Tue,  6 Feb 2024 22:58:45 -0700
+Message-ID: <20240207055845.611710-1-tahbertschinger@gmail.com>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -87,100 +87,236 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds infrastructure for Rust bindings, generated by bindgen, for
-bcachefs internal use. The Rust code is only enabled when a new config
-option, BCACHEFS_RUST, is defined. This option depends on RUST.
+This patch uses the bcachefs bindgen framework to introduce a Rust
+implementation of the module entry and exit functions. With this change,
+bcachefs is now a Rust kernel module (that calls C functions to do most
+of its work).
 
-This change does not generate any bindings; future patches will use the
-framework introduced here to add Rust code to bcachefs.
+This is only if CONFIG_BCACHEFS_RUST is defined; the C implementation of
+the module init and exit code is left around so that bcachefs remains
+usable in kernels compiled without Rust support.
 
 Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
 ---
- fs/bcachefs/.gitignore                 | 3 +++
- fs/bcachefs/Kconfig                    | 6 ++++++
- fs/bcachefs/Makefile                   | 9 +++++++++
- fs/bcachefs/bindgen_parameters         | 5 +++++
- fs/bcachefs/bindings/bindings_helper.h | 3 +++
- fs/bcachefs/bindings/mod.rs            | 3 +++
- 6 files changed, 29 insertions(+)
- create mode 100644 fs/bcachefs/.gitignore
- create mode 100644 fs/bcachefs/bindgen_parameters
- create mode 100644 fs/bcachefs/bindings/bindings_helper.h
- create mode 100644 fs/bcachefs/bindings/mod.rs
+ fs/bcachefs/Makefile                   |  3 ++
+ fs/bcachefs/bcachefs.h                 |  5 ++
+ fs/bcachefs/bcachefs_module.rs         | 66 ++++++++++++++++++++++++++
+ fs/bcachefs/bindgen_parameters         | 13 ++++-
+ fs/bcachefs/bindings/bindings_helper.h |  4 ++
+ fs/bcachefs/bindings/mod.rs            |  2 +
+ fs/bcachefs/super.c                    | 31 ++++++++++--
+ 7 files changed, 120 insertions(+), 4 deletions(-)
+ create mode 100644 fs/bcachefs/bcachefs_module.rs
 
-diff --git a/fs/bcachefs/.gitignore b/fs/bcachefs/.gitignore
-new file mode 100644
-index 000000000000..35be43f02195
---- /dev/null
-+++ b/fs/bcachefs/.gitignore
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+
-+bcachefs_generated.rs
-diff --git a/fs/bcachefs/Kconfig b/fs/bcachefs/Kconfig
-index 5cdfef3b551a..6d40669dca00 100644
---- a/fs/bcachefs/Kconfig
-+++ b/fs/bcachefs/Kconfig
-@@ -33,6 +33,12 @@ config BCACHEFS_QUOTA
- 	depends on BCACHEFS_FS
- 	select QUOTACTL
- 
-+config BCACHEFS_RUST
-+	bool "bcachefs Rust support"
-+	depends on BCACHEFS_FS && RUST
-+	help
-+	This enables the internal Rust bindings for bcachefs.
-+
- config BCACHEFS_ERASURE_CODING
- 	bool "bcachefs erasure coding (RAID5/6) support (EXPERIMENTAL)"
- 	depends on BCACHEFS_FS
 diff --git a/fs/bcachefs/Makefile b/fs/bcachefs/Makefile
-index 1a05cecda7cc..3f209511149c 100644
+index 3f209511149c..252810a4d9a0 100644
 --- a/fs/bcachefs/Makefile
 +++ b/fs/bcachefs/Makefile
-@@ -89,4 +89,13 @@ bcachefs-y		:=	\
+@@ -89,8 +89,11 @@ bcachefs-y		:=	\
  	varint.o		\
  	xattr.o
  
-+always-$(CONFIG_BCACHEFS_RUST)		+= bindings/bcachefs_generated.rs
++bcachefs-$(CONFIG_BCACHEFS_RUST)	+= bcachefs_module.o
+ always-$(CONFIG_BCACHEFS_RUST)		+= bindings/bcachefs_generated.rs
+ 
++$(obj)/bcachefs_module.o: $(src)/bindings/bcachefs_generated.rs
 +
-+$(obj)/bindings/bcachefs_generated.rs: private bindgen_target_flags = \
-+    $(shell grep -Ev '^#|^$$' $(srctree)/$(src)/bindgen_parameters)
+ $(obj)/bindings/bcachefs_generated.rs: private bindgen_target_flags = \
+     $(shell grep -Ev '^#|^$$' $(srctree)/$(src)/bindgen_parameters)
+ 
+diff --git a/fs/bcachefs/bcachefs.h b/fs/bcachefs/bcachefs.h
+index b80c6c9efd8c..3a777592bff4 100644
+--- a/fs/bcachefs/bcachefs.h
++++ b/fs/bcachefs/bcachefs.h
+@@ -1252,4 +1252,9 @@ static inline struct stdio_redirect *bch2_fs_stdio_redirect(struct bch_fs *c)
+ #define BKEY_PADDED_ONSTACK(key, pad)				\
+ 	struct { struct bkey_i key; __u64 key ## _pad[pad]; }
+ 
++#ifdef CONFIG_BCACHEFS_RUST
++int bch2_kset_init(void);
++void bch2_kset_exit(void);
++#endif
 +
-+$(obj)/bindings/bcachefs_generated.rs: $(src)/bindings/bindings_helper.h  \
-+	$(src)/bindgen_parameters FORCE
-+	$(call if_changed_dep,bindgen)
-+
- obj-$(CONFIG_MEAN_AND_VARIANCE_UNIT_TEST)   += mean_and_variance_test.o
-diff --git a/fs/bcachefs/bindgen_parameters b/fs/bcachefs/bindgen_parameters
+ #endif /* _BCACHEFS_H */
+diff --git a/fs/bcachefs/bcachefs_module.rs b/fs/bcachefs/bcachefs_module.rs
 new file mode 100644
-index 000000000000..547212bebd6e
+index 000000000000..8db2de8139bc
 --- /dev/null
-+++ b/fs/bcachefs/bindgen_parameters
-@@ -0,0 +1,5 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+--allowlist-function ''
-+--allowlist-type ''
-+--allowlist-var ''
-diff --git a/fs/bcachefs/bindings/bindings_helper.h b/fs/bcachefs/bindings/bindings_helper.h
-new file mode 100644
-index 000000000000..f8bef3676f71
---- /dev/null
-+++ b/fs/bcachefs/bindings/bindings_helper.h
-@@ -0,0 +1,3 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#include "../bcachefs.h"
-diff --git a/fs/bcachefs/bindings/mod.rs b/fs/bcachefs/bindings/mod.rs
-new file mode 100644
-index 000000000000..19a3ae3c63c6
---- /dev/null
-+++ b/fs/bcachefs/bindings/mod.rs
-@@ -0,0 +1,3 @@
++++ b/fs/bcachefs/bcachefs_module.rs
+@@ -0,0 +1,66 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+include!("bcachefs_generated.rs");
++//! bcachefs
++//!
++//! Rust kernel module for bcachefs.
++
++pub mod bindings;
++
++use kernel::prelude::*;
++
++use crate::bindings::*;
++
++module! {
++    type: Bcachefs,
++    name: "bcachefs",
++    author: "Kent Overstreet <kent.overstreet@gmail.com>",
++    description: "bcachefs filesystem",
++    license: "GPL",
++}
++
++struct Bcachefs;
++
++impl kernel::Module for Bcachefs {
++    #[link_section = ".init.text"]
++    fn init(_module: &'static ThisModule) -> Result<Self> {
++        // SAFETY: this block registers the bcachefs services with the kernel. After succesful
++        // registration, all such services are guaranteed by the kernel to exist as long as the
++        // driver is loaded. In the event of any failure in the registration, all registered
++        // services are unregistered.
++        unsafe {
++            bch2_bkey_pack_test();
++
++            if bch2_kset_init() != 0
++                || bch2_btree_key_cache_init() != 0
++                || bch2_chardev_init() != 0
++                || bch2_vfs_init() != 0
++                || bch2_debug_init() != 0
++            {
++                __drop();
++                return Err(ENOMEM);
++            }
++        }
++
++        Ok(Bcachefs)
++    }
++}
++
++fn __drop() {
++    // SAFETY: The kernel does not allow cleanup_module() (which results in
++    // drop()) to be called unless there are no users of the filesystem.
++    // The *_exit() functions only free data that they confirm is allocated, so
++    // this is safe to call even if the module's init() function did not finish.
++    unsafe {
++        bch2_debug_exit();
++        bch2_vfs_exit();
++        bch2_chardev_exit();
++        bch2_btree_key_cache_exit();
++        bch2_kset_exit();
++    }
++}
++
++impl Drop for Bcachefs {
++    fn drop(&mut self) {
++        __drop();
++    }
++}
+diff --git a/fs/bcachefs/bindgen_parameters b/fs/bcachefs/bindgen_parameters
+index 547212bebd6e..96a63e3a2cc3 100644
+--- a/fs/bcachefs/bindgen_parameters
++++ b/fs/bcachefs/bindgen_parameters
+@@ -1,5 +1,16 @@
+ # SPDX-License-Identifier: GPL-2.0
+ 
+---allowlist-function ''
++--allowlist-function bch2_bkey_pack_test
++--allowlist-function bch2_kset_init
++--allowlist-function bch2_btree_key_cache_init
++--allowlist-function bch2_chardev_init
++--allowlist-function bch2_vfs_init
++--allowlist-function bch2_debug_init
++--allowlist-function bch2_debug_exit
++--allowlist-function bch2_vfs_exit
++--allowlist-function bch2_chardev_exit
++--allowlist-function bch2_btree_key_cache_exit
++--allowlist-function bch2_kset_exit
++
+ --allowlist-type ''
+ --allowlist-var ''
+diff --git a/fs/bcachefs/bindings/bindings_helper.h b/fs/bcachefs/bindings/bindings_helper.h
+index f8bef3676f71..8cf3c35e8ca1 100644
+--- a/fs/bcachefs/bindings/bindings_helper.h
++++ b/fs/bcachefs/bindings/bindings_helper.h
+@@ -1,3 +1,7 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ 
+ #include "../bcachefs.h"
++#include "../btree_key_cache.h"
++#include "../chardev.h"
++#include "../fs.h"
++#include "../debug.h"
+diff --git a/fs/bcachefs/bindings/mod.rs b/fs/bcachefs/bindings/mod.rs
+index 19a3ae3c63c6..d1c3bbbd7b5a 100644
+--- a/fs/bcachefs/bindings/mod.rs
++++ b/fs/bcachefs/bindings/mod.rs
+@@ -1,3 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
++#![allow(missing_docs)]
++
+ include!("bcachefs_generated.rs");
+diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
+index da8697c79a97..343c4bc6e81c 100644
+--- a/fs/bcachefs/super.c
++++ b/fs/bcachefs/super.c
+@@ -69,9 +69,12 @@
+ #include <linux/sysfs.h>
+ #include <crypto/hash.h>
+ 
++#ifndef CONFIG_BCACHEFS_RUST
++/* when enabled, the Rust module exports these modinfo attributes */
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Kent Overstreet <kent.overstreet@gmail.com>");
+ MODULE_DESCRIPTION("bcachefs filesystem");
++#endif
+ MODULE_SOFTDEP("pre: crc32c");
+ MODULE_SOFTDEP("pre: crc64");
+ MODULE_SOFTDEP("pre: sha256");
+@@ -2082,6 +2085,7 @@ struct bch_fs *bch2_fs_open(char * const *devices, unsigned nr_devices,
+ 
+ /* Global interfaces/init */
+ 
++#ifndef CONFIG_BCACHEFS_RUST
+ static void bcachefs_exit(void)
+ {
+ 	bch2_debug_exit();
+@@ -2109,6 +2113,30 @@ static int __init bcachefs_init(void)
+ 	return -ENOMEM;
+ }
+ 
++module_exit(bcachefs_exit);
++module_init(bcachefs_init);
++
++#else /* CONFIG_BCACHEFS_RUST */
++/*
++ * bch2_kset_init() and bch2_kset_exit() are wrappers around the kset functions
++ * to be called from the Rust module init and exit because there is not
++ * currently a Rust API for ksets. If/when a Rust API is provided, these
++ * wrappers can be removed and the Rust kernel module can use that directly.
++ */
++int __init bch2_kset_init(void)
++{
++	bcachefs_kset = kset_create_and_add("bcachefs", NULL, fs_kobj);
++
++	return !bcachefs_kset;
++}
++
++void bch2_kset_exit(void)
++{
++	if (bcachefs_kset)
++		kset_unregister(bcachefs_kset);
++}
++#endif
++
+ #define BCH_DEBUG_PARAM(name, description)			\
+ 	bool bch2_##name;					\
+ 	module_param_named(name, bch2_##name, bool, 0644);	\
+@@ -2119,6 +2147,3 @@ BCH_DEBUG_PARAMS()
+ __maybe_unused
+ static unsigned bch2_metadata_version = bcachefs_metadata_version_current;
+ module_param_named(version, bch2_metadata_version, uint, 0400);
+-
+-module_exit(bcachefs_exit);
+-module_init(bcachefs_init);
 -- 
 2.43.0
 
