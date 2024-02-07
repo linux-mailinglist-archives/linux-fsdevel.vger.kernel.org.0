@@ -1,384 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-10567-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3091984C510
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 07:38:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2AA884C513
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 07:41:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994C31F2378F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 06:38:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A7F42849B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 06:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BB71CD21;
-	Wed,  7 Feb 2024 06:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8261CD30;
+	Wed,  7 Feb 2024 06:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VzvwsCW0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CATlJpE8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8EE1CD2D;
-	Wed,  7 Feb 2024 06:38:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC0214A85;
+	Wed,  7 Feb 2024 06:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707287928; cv=none; b=s56/ftCAqdvAmU5oqEgmBHAAGHtzlIXdzeKmYKCJi47AT8FGeUz05B0obiz2tjyfrKrfIZMoRAIJy+l3v8fACbmJUPK0ndfuBkFgRd0MIOuhLMfRS7lhO/z8NbWYVSsd/k/D9MTj5EOjwZyv0POhTjnAnze0b3OK/cmAmjPOOMw=
+	t=1707288094; cv=none; b=nC/5L8hbXsX4Y4+1FzpZXKW9XJ9NIsvLY/v2RwN+G/EvAqNQJ6PiPxuvnKjvkBd3g8H8AgAky4dortX7E3OwzeMNvPb/FwkQ3zjSdiU9qu8TGU0m0zBQ8MTyOinQXfCYAHTlZmevTk6JTDMqBJ78fbQyG7AivmAkfZfjEyBrpSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707287928; c=relaxed/simple;
-	bh=5XH2+QhIIh6vtV8cZGfPe4lADyppCqTou0VjC/BHAxA=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=S0J6wlnGX3xdQkINbuBdZecWL9/3xaGKK4chYOSB+bjcVYopYjjVYroHy9kPbMJGHGxy/qaLMsviNU5dAenoVnG2YGnCOD9t7S2helJRDSj/kq9FZl6a68pkaVB8KurBAKv9yxdRGho6/5NFw41G9nTrzFnXbMFCHdg/borOzV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VzvwsCW0; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1707287926; x=1738823926;
-  h=date:from:to:cc:subject:message-id;
-  bh=5XH2+QhIIh6vtV8cZGfPe4lADyppCqTou0VjC/BHAxA=;
-  b=VzvwsCW0o6AxVDLl3cmC1Zh4dOgp/5ZM1c02bxr0d9SesmfFoLAd9s+o
-   Pdr62y2docpaiLdOJUwVQw0NBXkPuLILc/OFu/of6CDuPVOz6ziwuHwIY
-   dq/gXRrC8WvDiRhnFPK/M6HAOmaRQQqEJ0n6oXBnJJsVsOSpPSkHjdob3
-   XpYBNs/MbBHE5uasDy8OX1QKMPYsiiSpm/CsNiiFFj2Buu6OnlB8Lznsf
-   oR0tPfJ0baASa55kZW/vDUpzBT0DJ3C/f9nrjd4YpI0FN1RO1+3odZ8L2
-   ZgNKSSQkDnaAuQrX2v7v3nrqQ9GbZaZmz9yoY7g6U4VyJjb0kPBk6E07q
-   w==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10976"; a="23399320"
-X-IronPort-AV: E=Sophos;i="6.05,250,1701158400"; 
-   d="scan'208";a="23399320"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Feb 2024 22:38:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.05,250,1701158400"; 
-   d="scan'208";a="6015081"
-Received: from lkp-server01.sh.intel.com (HELO 01f0647817ea) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 06 Feb 2024 22:38:42 -0800
-Received: from kbuild by 01f0647817ea with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1rXbZu-0002Hc-2Y;
-	Wed, 07 Feb 2024 06:38:38 +0000
-Date: Wed, 07 Feb 2024 14:37:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Memory Management List <linux-mm@kvack.org>,
- ceph-devel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- kunit-dev@googlegroups.com, linux-arm-kernel@lists.infradead.org,
- linux-bcachefs@vger.kernel.org, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- nouveau@lists.freedesktop.org, ntfs3@lists.linux.dev,
- samba-technical@lists.samba.org
-Subject: [linux-next:master] BUILD REGRESSION
- ac139fc7db67968e5061715508b5fc4aa7c40c56
-Message-ID: <202402071439.AER2foE3-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1707288094; c=relaxed/simple;
+	bh=xRn/DhWNvjEAxJbEcMbkLvBH6IdKsaz49Axd2G8pHWU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SQ2p6JLFd6iS6XNL7SYTBW0Kzvb1r0mpbfpF+6pxs1f7pjqHnk79ECuyySiEdu7l4ZeKhQ9vjWfGGFNKnx4BCUoi61VVThrTFVpgvrkQPeH7kzEG6O1VTu7QRc8SkAtLqNFb/lqpdDZS8H0u5ZMGCQWWRXhm2N9dXssu3qXPXgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CATlJpE8; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-68c8d3c445fso1447856d6.1;
+        Tue, 06 Feb 2024 22:41:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707288091; x=1707892891; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oxxVVXToZdIUBGMbsph8ZPdjTKMow+DtFhTgLD0SlYU=;
+        b=CATlJpE8m3S7qWRuVmNYUmBRNeJe1Tqz97b8QA3mdvZSHm9jhzoSwYqFgjtTKA8KbT
+         KCkmuC/X10JZpBHCnY/s73chHC49RnTx53Xllw/u/VCIJGUjiam8hn0WDdbBy6VPBP/8
+         FG4UYFYwpbsFs+9xLmjDvJvgWd2tXCfQJKsKOXnFJitKeoLLqRIWVTuewMNOBH14wjKO
+         MB9CSdOj0rV5itEgKHPFrE3WknYgkPfvsdRtMwmN5AHFC1ytSX3JE8BN5IYzDDLFVcN6
+         15cJN3Z4B3NCgu3WQYTUdI8MJHROuMjfMVFK8hpsPj56PSHb/PK9kxa8N5zryZHbKuZA
+         YomQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707288091; x=1707892891;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oxxVVXToZdIUBGMbsph8ZPdjTKMow+DtFhTgLD0SlYU=;
+        b=UTzoVUp1jNM+J1twDbboVwXi8c5wVxonbqO03eDkZboBPuUQ+vPWheH66PnDMy3ZLK
+         Qh3iSdUp7oJSgT0DgyhyraH8/y08eLwlAPVhYmBnl9xFyiJS72KlfjweuNiyS4Ek+lKy
+         5QJ9F6mbDApEm8CuTXazNK4oKrQAxzHl1QGHfHM5ySXXKElk6Uwgefx7/Yf3s+6wYctE
+         0ln6b9vKkWXRKnR9geEwjiHG8HVQQkuhpCZC8m2Tr5B3bO8dc87Wt1ZRM9AOgTTMdcCX
+         vDDu3QEnqrzdCq7X/Ukwxdaeq16JwHPWcKH5RLEQu9JW+pUjcVHhGVyfhmyCeJ0EvcsA
+         H4Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXreZSrOTfzYqCt6u34Zz1LHJPBrZKUwomNebfRAY1Q+cVD30pvgKiZrDTQtYTuno3PZRrhoVeg1U83qJCXEr/6/Z5+goF6bQs+jM=
+X-Gm-Message-State: AOJu0YxeBpi1nZeNm1b1cL6PsyzAvpE3KPP/yaQnDiLC1PXAT/XmxqUo
+	kd4eCmePY3MJT9agBy5ykjdvoM1H1Etpiae1N9DtrxV6kzOobigvy/0eo+EetdJtOPI1DWCDQ3g
+	STSKYBvn2+pXWH2hmd7SkT01RlDUAbWmvu6w=
+X-Google-Smtp-Source: AGHT+IFsem0B3EyR78CeUXhBbN1BIkh+p+UuQmClFMLrRb8i3XrdJQs/Ab1WwIggt8CDx/55VywuuMwUfqBHI7uwh50=
+X-Received: by 2002:a05:6214:500a:b0:68c:ae6d:2959 with SMTP id
+ jo10-20020a056214500a00b0068cae6d2959mr6138564qvb.26.1707288091604; Tue, 06
+ Feb 2024 22:41:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240207025624.1019754-1-kent.overstreet@linux.dev> <20240207025624.1019754-4-kent.overstreet@linux.dev>
+In-Reply-To: <20240207025624.1019754-4-kent.overstreet@linux.dev>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 7 Feb 2024 08:41:20 +0200
+Message-ID: <CAOQ4uxi-nBzm+h0MkF_P8Efe9tA1q72kBWPWZsrd+owHTf8enQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/7] fs: FS_IOC_GETUUID
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	linux-btrfs@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Dave Chinner <dchinner@redhat.com>, "Darrick J. Wong" <djwong@kernel.org>, "Theodore Ts'o" <tytso@mit.edu>, 
+	linux-fsdevel@vger.kernel.or
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: ac139fc7db67968e5061715508b5fc4aa7c40c56  Add linux-next specific files for 20240206
+On Wed, Feb 7, 2024 at 4:57=E2=80=AFAM Kent Overstreet
+<kent.overstreet@linux.dev> wrote:
+>
+> Add a new generic ioctls for querying the filesystem UUID.
+>
+> These are lifted versions of the ext4 ioctls, with one change: we're not
+> using a flexible array member, because UUIDs will never be more than 16
+> bytes.
+>
+> This patch adds a generic implementation of FS_IOC_GETFSUUID, which
+> reads from super_block->s_uuid. We're not lifting SETFSUUID from ext4 -
+> that can be done on offline filesystems by the people who need it,
+> trying to do it online is just asking for too much trouble.
+>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Dave Chinner <dchinner@redhat.com>
+> Cc: "Darrick J. Wong" <djwong@kernel.org>
+> Cc: Theodore Ts'o <tytso@mit.edu>
+> Cc: linux-fsdevel@vger.kernel.or
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> ---
+>  .../userspace-api/ioctl/ioctl-number.rst         |  3 ++-
+>  fs/ioctl.c                                       | 16 ++++++++++++++++
+>  include/uapi/linux/fs.h                          | 16 ++++++++++++++++
+>  3 files changed, 34 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documen=
+tation/userspace-api/ioctl/ioctl-number.rst
+> index 457e16f06e04..3731ecf1e437 100644
+> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
+> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
+> @@ -82,8 +82,9 @@ Code  Seq#    Include File                             =
+              Comments
+>  0x10  00-0F  drivers/char/s390/vmcp.h
+>  0x10  10-1F  arch/s390/include/uapi/sclp_ctl.h
+>  0x10  20-2F  arch/s390/include/uapi/asm/hypfs.h
+> -0x12  all    linux/fs.h
+> +0x12  all    linux/fs.h                                              BLK=
+* ioctls
+>               linux/blkpg.h
+> +0x15  all    linux/fs.h                                              FS_=
+IOC_* ioctls
+>  0x1b  all                                                            Inf=
+iniBand Subsystem
+>                                                                       <ht=
+tp://infiniband.sourceforge.net/>
+>  0x20  all    drivers/cdrom/cm206.h
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 76cf22ac97d7..74eab9549383 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -763,6 +763,19 @@ static int ioctl_fssetxattr(struct file *file, void =
+__user *argp)
+>         return err;
+>  }
+>
+> +static int ioctl_getfsuuid(struct file *file, void __user *argp)
+> +{
+> +       struct super_block *sb =3D file_inode(file)->i_sb;
+> +       struct fsuuid2 u =3D { .len =3D sb->s_uuid_len, };
+> +
+> +       if (!sb->s_uuid_len)
+> +               return -ENOIOCTLCMD;
+> +
+> +       memcpy(&u.uuid[0], &sb->s_uuid, sb->s_uuid_len);
+> +
+> +       return copy_to_user(argp, &u, sizeof(u)) ? -EFAULT : 0;
+> +}
+> +
+>  /*
+>   * do_vfs_ioctl() is not for drivers and not intended to be EXPORT_SYMBO=
+L()'d.
+>   * It's just a simple helper for sys_ioctl and compat_sys_ioctl.
+> @@ -845,6 +858,9 @@ static int do_vfs_ioctl(struct file *filp, unsigned i=
+nt fd,
+>         case FS_IOC_FSSETXATTR:
+>                 return ioctl_fssetxattr(filp, argp);
+>
+> +       case FS_IOC_GETFSUUID:
+> +               return ioctl_getfsuuid(filp, argp);
+> +
+>         default:
+>                 if (S_ISREG(inode->i_mode))
+>                         return file_ioctl(filp, cmd, argp);
+> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+> index 48ad69f7722e..d459f816cd50 100644
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -64,6 +64,19 @@ struct fstrim_range {
+>         __u64 minlen;
+>  };
+>
+> +/*
+> + * We include a length field because some filesystems (vfat) have an ide=
+ntifier
+> + * that we do want to expose as a UUID, but doesn't have the standard le=
+ngth.
+> + *
+> + * We use a fixed size buffer beacuse this interface will, by fiat, neve=
+r
+> + * support "UUIDs" longer than 16 bytes; we don't want to force all down=
+stream
+> + * users to have to deal with that.
+> + */
+> +struct fsuuid2 {
+> +       __u8    len;
+> +       __u8    uuid[16];
+> +};
+> +
+>  /* extent-same (dedupe) ioctls; these MUST match the btrfs ioctl definit=
+ions */
+>  #define FILE_DEDUPE_RANGE_SAME         0
+>  #define FILE_DEDUPE_RANGE_DIFFERS      1
+> @@ -190,6 +203,9 @@ struct fsxattr {
+>   * (see uapi/linux/blkzoned.h)
+>   */
+>
+> +/* Returns the external filesystem UUID, the same one blkid returns */
+> +#define FS_IOC_GETFSUUID               _IOR(0x15, 0, struct fsuuid2)
 
-Error/Warning reports:
+Please move that to the end of FS_IOC_* ioctls block.
+The fact that it started a new vfs ioctl namespace does not justify startin=
+g
+a different list IMO.
 
-https://lore.kernel.org/oe-kbuild-all/202402061900.rTuYDlo6-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202402062106.cfArbjsv-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202402062134.a6CqAt3s-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202402062139.MKznS4Qf-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202402062151.Kq60k2LK-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202402062210.3YyBVGF1-lkp@intel.com
+uapi readers don't care about the value of the ioctl.
+locality to FS_IOC_GETFSLABEL is more important IMO.
 
-Error/Warning: (recently discovered and may have been fixed)
+Thanks,
+Amir.
 
-arch/sh/boot/compressed/../../../../lib/xz/xz_dec_lzma2.c:648:(.text+0xaf0): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-arch/sh/boot/compressed/../../../../lib/zlib_inflate/inffast.c:132:(.text+0x738): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-arch/sh/boot/compressed/../../../../lib/zlib_inflate/inflate.c:57:(.text+0xbd0): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-arch/sh/boot/compressed/../../../../lib/zlib_inflate/inftrees.c:270:(.text+0x3dc): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-arch/xtensa/boot/lib/inflate.c:91:(.text+0x1a4): undefined reference to `__ubsan_handle_out_of_bounds'
-drivers/gpu/drm/nouveau/nvkm/subdev/gsp/r535.c:1955: warning: Function parameter or struct member 'gsp' not described in 'nvkm_gsp_radix3_sg'
-fs/ceph/locks.c:379:27: warning: unused variable 'lock' [-Wunused-variable]
-make[2]: *** kselftest/livepatch/test_modules: No such file or directory.  Stop.
-powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data202' from `fs/overlayfs/copy_up.o' being placed in section `.bss..Lubsan_data202'
-powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data219' from `kernel/ptrace.o' being placed in section `.bss..Lubsan_data219'
-powerpc-linux-ld: warning: orphan section `.bss..Lubsan_data327' from `kernel/sched/core.o' being placed in section `.bss..Lubsan_data327'
-sh4-linux-ld: arch/sh/boot/compressed/../../../../lib/zlib_inflate/inffast.c:305:(.text+0xac4): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-sh4-linux-ld: arch/sh/boot/compressed/../../../../lib/zlib_inflate/inftrees.c:315:(.text+0x60c): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-sh4-linux-ld: arch/sh/boot/compressed/misc.o:(.debug_addr+0x388): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-sh4-linux-ld: misc.c:(.text+0x23d4): undefined reference to `__ubsan_handle_shift_out_of_bounds'
-xtensa-linux-ld: arch/xtensa/boot/lib/inflate.c:487:(.text+0x546): undefined reference to `__ubsan_handle_out_of_bounds'
 
-Error/Warning ids grouped by kconfigs:
-
-gcc_recent_errors
-|-- arc-randconfig-r113-20240206
-|   `-- drivers-gpu-drm-bridge-imx-imx8mp-hdmi-pvi.c:sparse:sparse:Using-plain-integer-as-NULL-pointer
-|-- arm-randconfig-r071-20240206
-|   `-- fs-ceph-locks.c:warning:unused-variable-lock
-|-- i386-buildonly-randconfig-003-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-randconfig-014-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-randconfig-016-20240206
-|   `-- include-kunit-test.h:warning:s-directive-argument-is-null
-|-- i386-randconfig-052-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- mips-allyesconfig
-|   |-- (.ref.text):relocation-truncated-to-fit:R_MIPS_26-against-start_secondary
-|   `-- (.text):relocation-truncated-to-fit:R_MIPS_26-against-kernel_entry
-|-- nios2-randconfig-001-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- parisc-defconfig
-|   `-- drivers-gpu-drm-nouveau-nvkm-subdev-gsp-r535.c:warning:Function-parameter-or-struct-member-gsp-not-described-in-nvkm_gsp_radix3_sg
-|-- parisc-randconfig-001-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- powerpc-randconfig-r022-20230201
-|   |-- powerpc-linux-ld:warning:orphan-section-bss..Lubsan_data202-from-fs-overlayfs-copy_up.o-being-placed-in-section-.bss..Lubsan_data202
-|   |-- powerpc-linux-ld:warning:orphan-section-bss..Lubsan_data219-from-kernel-ptrace.o-being-placed-in-section-.bss..Lubsan_data219
-|   `-- powerpc-linux-ld:warning:orphan-section-bss..Lubsan_data327-from-kernel-sched-core.o-being-placed-in-section-.bss..Lubsan_data327
-|-- powerpc64-randconfig-003-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- sh-randconfig-r003-20220501
-|   |-- arch-sh-boot-compressed-..-..-..-..-lib-zlib_inflate-inffast.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|   |-- arch-sh-boot-compressed-..-..-..-..-lib-zlib_inflate-inflate.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|   |-- arch-sh-boot-compressed-..-..-..-..-lib-zlib_inflate-inftrees.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|   |-- sh4-linux-ld:arch-sh-boot-compressed-..-..-..-..-lib-zlib_inflate-inffast.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|   `-- sh4-linux-ld:arch-sh-boot-compressed-..-..-..-..-lib-zlib_inflate-inftrees.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|-- sh-randconfig-r015-20220607
-|   `-- sh4-linux-ld:misc.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|-- sh-randconfig-r023-20230502
-|   |-- arch-sh-boot-compressed-..-..-..-..-lib-xz-xz_dec_lzma2.c:(.text):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|   `-- sh4-linux-ld:arch-sh-boot-compressed-misc.o:(.debug_addr):undefined-reference-to-__ubsan_handle_shift_out_of_bounds
-|-- sparc64-randconfig-001-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- sparc64-randconfig-002-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- x86_64-randconfig-003-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- x86_64-randconfig-004-20240206
-|   `-- include-kunit-test.h:warning:s-directive-argument-is-null
-|-- x86_64-randconfig-161-20240206
-|   |-- fs-bcachefs-btree_locking.c-bch2_trans_relock()-warn:passing-zero-to-PTR_ERR
-|   |-- fs-bcachefs-buckets.c-bch2_trans_account_disk_usage_change()-error:we-previously-assumed-trans-disk_res-could-be-null-(see-line-)
-|   `-- mm-huge_memory.c-thpsize_create()-warn:Calling-kobject_put-get-with-state-initialized-unset-from-line:
-|-- x86_64-rhel-8.3-bpf
-|   `-- make:kselftest-livepatch-test_modules:No-such-file-or-directory.-Stop.
-`-- xtensa-randconfig-r022-20220710
-    |-- arch-xtensa-boot-lib-inflate.c:(.text):undefined-reference-to-__ubsan_handle_out_of_bounds
-    `-- xtensa-linux-ld:arch-xtensa-boot-lib-inflate.c:(.text):undefined-reference-to-__ubsan_handle_out_of_bounds
-clang_recent_errors
-|-- arm64-randconfig-002-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-buildonly-randconfig-002-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-buildonly-randconfig-004-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-randconfig-003-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-randconfig-004-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-randconfig-013-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- i386-randconfig-054-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- powerpc-randconfig-003-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- x86_64-randconfig-006-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- x86_64-randconfig-012-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-|-- x86_64-randconfig-014-20240206
-|   `-- fs-ntfs3-frecord.c:warning:unused-variable-i_size
-`-- x86_64-randconfig-122-20240206
-    |-- fs-quota-dquot.c:sparse:sparse:incompatible-types-in-comparison-expression-(different-address-spaces):
-    `-- fs-smb-client-file.c:sparse:sparse:symbol-cifs_req_ops-was-not-declared.-Should-it-be-static
-
-elapsed time: 1479m
-
-configs tested: 179
-configs skipped: 3
-
-tested configs:
-alpha                             allnoconfig   gcc  
-alpha                            allyesconfig   gcc  
-alpha                               defconfig   gcc  
-arc                              allmodconfig   gcc  
-arc                               allnoconfig   gcc  
-arc                              allyesconfig   gcc  
-arc                                 defconfig   gcc  
-arc                   randconfig-001-20240206   gcc  
-arc                   randconfig-002-20240206   gcc  
-arm                              allmodconfig   gcc  
-arm                               allnoconfig   clang
-arm                              allyesconfig   gcc  
-arm                                 defconfig   clang
-arm                        mvebu_v7_defconfig   clang
-arm                        neponset_defconfig   gcc  
-arm                   randconfig-001-20240206   clang
-arm                   randconfig-002-20240206   gcc  
-arm                   randconfig-003-20240206   gcc  
-arm                   randconfig-004-20240206   clang
-arm64                            allmodconfig   clang
-arm64                             allnoconfig   gcc  
-arm64                               defconfig   gcc  
-arm64                 randconfig-001-20240206   gcc  
-arm64                 randconfig-002-20240206   clang
-arm64                 randconfig-003-20240206   gcc  
-arm64                 randconfig-004-20240206   gcc  
-csky                             allmodconfig   gcc  
-csky                              allnoconfig   gcc  
-csky                             allyesconfig   gcc  
-csky                                defconfig   gcc  
-csky                  randconfig-001-20240206   gcc  
-csky                  randconfig-002-20240206   gcc  
-hexagon                          allmodconfig   clang
-hexagon                           allnoconfig   clang
-hexagon                          allyesconfig   clang
-hexagon                             defconfig   clang
-hexagon               randconfig-001-20240206   clang
-hexagon               randconfig-002-20240206   clang
-i386                             allmodconfig   gcc  
-i386                              allnoconfig   gcc  
-i386                             allyesconfig   gcc  
-i386         buildonly-randconfig-001-20240206   clang
-i386         buildonly-randconfig-002-20240206   clang
-i386         buildonly-randconfig-003-20240206   gcc  
-i386         buildonly-randconfig-004-20240206   clang
-i386         buildonly-randconfig-005-20240206   gcc  
-i386         buildonly-randconfig-006-20240206   gcc  
-i386                                defconfig   clang
-i386                  randconfig-001-20240206   clang
-i386                  randconfig-002-20240206   clang
-i386                  randconfig-003-20240206   clang
-i386                  randconfig-004-20240206   clang
-i386                  randconfig-005-20240206   clang
-i386                  randconfig-006-20240206   clang
-i386                  randconfig-011-20240206   clang
-i386                  randconfig-012-20240206   gcc  
-i386                  randconfig-013-20240206   clang
-i386                  randconfig-014-20240206   gcc  
-i386                  randconfig-015-20240206   gcc  
-i386                  randconfig-016-20240206   gcc  
-loongarch                        allmodconfig   gcc  
-loongarch                         allnoconfig   gcc  
-loongarch                           defconfig   gcc  
-loongarch             randconfig-001-20240206   gcc  
-loongarch             randconfig-002-20240206   gcc  
-m68k                             allmodconfig   gcc  
-m68k                              allnoconfig   gcc  
-m68k                             allyesconfig   gcc  
-m68k                                defconfig   gcc  
-m68k                       m5249evb_defconfig   gcc  
-m68k                        mvme147_defconfig   gcc  
-m68k                            q40_defconfig   gcc  
-microblaze                       allmodconfig   gcc  
-microblaze                        allnoconfig   gcc  
-microblaze                       allyesconfig   gcc  
-microblaze                          defconfig   gcc  
-mips                              allnoconfig   gcc  
-mips                             allyesconfig   gcc  
-mips                          malta_defconfig   gcc  
-mips                      maltasmvp_defconfig   gcc  
-mips                           mtx1_defconfig   clang
-nios2                            allmodconfig   gcc  
-nios2                             allnoconfig   gcc  
-nios2                            allyesconfig   gcc  
-nios2                               defconfig   gcc  
-nios2                 randconfig-001-20240206   gcc  
-nios2                 randconfig-002-20240206   gcc  
-openrisc                          allnoconfig   gcc  
-openrisc                         allyesconfig   gcc  
-openrisc                            defconfig   gcc  
-parisc                           allmodconfig   gcc  
-parisc                            allnoconfig   gcc  
-parisc                           allyesconfig   gcc  
-parisc                              defconfig   gcc  
-parisc                randconfig-001-20240206   gcc  
-parisc                randconfig-002-20240206   gcc  
-parisc64                            defconfig   gcc  
-powerpc                          allmodconfig   gcc  
-powerpc                           allnoconfig   gcc  
-powerpc                          allyesconfig   clang
-powerpc                   currituck_defconfig   clang
-powerpc                  iss476-smp_defconfig   gcc  
-powerpc                   microwatt_defconfig   gcc  
-powerpc                      ppc64e_defconfig   gcc  
-powerpc               randconfig-001-20240206   clang
-powerpc               randconfig-002-20240206   gcc  
-powerpc               randconfig-003-20240206   clang
-powerpc                  storcenter_defconfig   gcc  
-powerpc64             randconfig-001-20240206   gcc  
-powerpc64             randconfig-002-20240206   clang
-powerpc64             randconfig-003-20240206   gcc  
-riscv                            allmodconfig   clang
-riscv                             allnoconfig   gcc  
-riscv                            allyesconfig   clang
-riscv                               defconfig   clang
-riscv                 randconfig-001-20240206   gcc  
-riscv                 randconfig-002-20240206   clang
-s390                             allmodconfig   clang
-s390                              allnoconfig   clang
-s390                             allyesconfig   gcc  
-s390                                defconfig   clang
-s390                  randconfig-001-20240206   clang
-s390                  randconfig-002-20240206   clang
-sh                               allmodconfig   gcc  
-sh                                allnoconfig   gcc  
-sh                               allyesconfig   gcc  
-sh                                  defconfig   gcc  
-sh                    randconfig-001-20240206   gcc  
-sh                    randconfig-002-20240206   gcc  
-sh                          sdk7780_defconfig   gcc  
-sh                           se7722_defconfig   gcc  
-sparc                            allmodconfig   gcc  
-sparc                             allnoconfig   gcc  
-sparc                               defconfig   gcc  
-sparc64                          allmodconfig   gcc  
-sparc64                          allyesconfig   gcc  
-sparc64                             defconfig   gcc  
-sparc64               randconfig-001-20240206   gcc  
-sparc64               randconfig-002-20240206   gcc  
-um                               allmodconfig   clang
-um                                allnoconfig   clang
-um                               allyesconfig   gcc  
-um                                  defconfig   clang
-um                    randconfig-001-20240206   clang
-um                    randconfig-002-20240206   gcc  
-um                           x86_64_defconfig   clang
-x86_64                            allnoconfig   clang
-x86_64                           allyesconfig   clang
-x86_64       buildonly-randconfig-001-20240206   gcc  
-x86_64       buildonly-randconfig-002-20240206   clang
-x86_64       buildonly-randconfig-003-20240206   gcc  
-x86_64       buildonly-randconfig-004-20240206   gcc  
-x86_64       buildonly-randconfig-005-20240206   gcc  
-x86_64       buildonly-randconfig-006-20240206   gcc  
-x86_64                              defconfig   gcc  
-x86_64                randconfig-001-20240206   clang
-x86_64                randconfig-002-20240206   clang
-x86_64                randconfig-003-20240206   gcc  
-x86_64                randconfig-004-20240206   gcc  
-x86_64                randconfig-005-20240206   gcc  
-x86_64                randconfig-006-20240206   clang
-x86_64                randconfig-011-20240206   gcc  
-x86_64                randconfig-012-20240206   clang
-x86_64                randconfig-013-20240206   gcc  
-x86_64                randconfig-014-20240206   clang
-x86_64                randconfig-015-20240206   gcc  
-x86_64                randconfig-016-20240206   clang
-x86_64                randconfig-071-20240206   gcc  
-x86_64                randconfig-072-20240206   gcc  
-x86_64                randconfig-073-20240206   gcc  
-x86_64                randconfig-074-20240206   gcc  
-x86_64                randconfig-075-20240206   clang
-x86_64                randconfig-076-20240206   gcc  
-x86_64                          rhel-8.3-rust   clang
-xtensa                           alldefconfig   gcc  
-xtensa                            allnoconfig   gcc  
-xtensa                randconfig-001-20240206   gcc  
-xtensa                randconfig-002-20240206   gcc  
-xtensa                         virt_defconfig   gcc  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +
+>  #define BMAP_IOCTL 1           /* obsolete - kept for compatibility */
+>  #define FIBMAP    _IO(0x00,1)  /* bmap access */
+>  #define FIGETBSZ   _IO(0x00,2) /* get the block size used for bmap */
+> --
+> 2.43.0
+>
+>
 
