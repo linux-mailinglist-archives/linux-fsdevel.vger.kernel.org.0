@@ -1,400 +1,281 @@
-Return-Path: <linux-fsdevel+bounces-10571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 185E984C57A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 08:12:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAF7084C598
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 08:24:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82963B25235
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 07:12:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B4111C23571
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 07:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28AF1F5F0;
-	Wed,  7 Feb 2024 07:12:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF1A200A6;
+	Wed,  7 Feb 2024 07:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YX5skYVt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/fszHe3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863BD1D552;
-	Wed,  7 Feb 2024 07:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D8C200A4
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 07:24:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707289950; cv=none; b=WsvjHswjbPnexpkF6eegchPRRWXWNTYfiwHzXReVhOh7lFfZAYb3g+VhVp0r4tZg78a9eOg9SJ704Gn4k6XEUNJWcPI5krGivIXmIG2pgKPGDQbAtUtC0AyicFZJ80PrX4yO1+TwxLQjmAaExF8VfqeRuVWm4JHJ8VeSFbyYtz4=
+	t=1707290680; cv=none; b=Kroa0oJdhR6dqCg12Kcg/a37KDJSLwbqi07J7DpWZ7FZRBOsU5b8RFTDkEBuxuAaX0jFC6yLap9xvovRbp+/FOmPVp8+MlNiikp3+4/wRde5bVu+iKhKQC3w2Uj3BCNIL4Zm0xiCNnghzXYP5k8my2rGfRInxOX3n2q9QYbAa+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707289950; c=relaxed/simple;
-	bh=Q4w34Nq9evxL9fqfco3XPJoIayQq2rj0ZU9QikzGy+w=;
+	s=arc-20240116; t=1707290680; c=relaxed/simple;
+	bh=Le6wuuUnVScURwwBAuy27cQYLwAVCsyxmamI3dT73bY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n/EwAfCWYvQQQ8hGsrQp9SYy31cedM6gi35UFXRUuMUNAqYSM7GVWpCTqL67jQ9Jhyfs2q/Zo7+cw2mHq/rUAkHt3IKlAs6IghCKryarTsg/iJjDNm2OZhvECiyej9E/KNq7v6Lyyn13d7FjdwWKHcmB2jV7iP/0yJ6xrtibTRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YX5skYVt; arc=none smtp.client-ip=209.85.167.51
+	 To:Cc:Content-Type; b=iiFaKqc4eWUOlar1bYaYtpD5WRny4hMUDB6tsWsjonvm+icKd9avV8yiVjN+P4x8NZB/ru04fjxrTfmSHthx0UyKuJAzNMzf08DlZJNqw6/oNAMAWQq5CA7pa79Rp8ZfSko0AbuJM6x4lhg7FMiEYqGe0roMkVeCo8yoXDhV3lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/fszHe3; arc=none smtp.client-ip=209.85.222.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-51117bfd452so423947e87.3;
-        Tue, 06 Feb 2024 23:12:28 -0800 (PST)
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-7d2940ad0e1so142619241.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Feb 2024 23:24:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707289946; x=1707894746; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pfC6FLphsNXfeoJ4NNyLHvlFNAyZlfkB4NIcbqLP8Do=;
-        b=YX5skYVtEBWJlDNJdUcPhRW2bIOhLcgBh9rt34KXbNBQJ7WVDxV/feMlumQQMpIzY8
-         L2UiFtOAqjj8n21VUZDWAvHT1yJfCSIl+lAQvNX1RRtZ3qyaqSi4gUNITb+dBPk+UJSP
-         pUUNQxw9hHXFXBk115R9PPRuvwmacBxhHJK/LotHOS6rpHc2g7gU8jU77P7/4vvD4pKD
-         filWWvt3EPILFQZIhORxuvVKg/NLfVhnUMRbSCW+VpDFg3LjSrdaJq7XZCQddIdv0oDr
-         l2G+toGVqnaWO6vdG6YWWFePJu4Fr9FlEmCpmjzyCds/yYDqd0HfwYxpBlQlv3ZwJTz6
-         cfDA==
+        d=gmail.com; s=20230601; t=1707290677; x=1707895477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bsw+7/5FM01Ub+RAFBck1P8hJGdjf6aquqFlzwE2888=;
+        b=O/fszHe3DjeSQ+U65PAkoUuUnvgygLgAJ/pUpAXpaqVPTaKgz/4u0Dh2bUanvzzSaY
+         gTpLjPkm9zrPZPq1uNs+zjdDG0kZkXZsiuaepdPAbJ+EDkN9yigtlfEF5ahxmdV11Hvm
+         cB9Wsrmgh/Ta4FsPE3t1pP7lABw2o9iyd7rTguAj/sjsATVsT7Lj1txFzDsDa6EPqykq
+         Njch+1EK/P+lGJnrMrlA8NLcMDP/ToFcTiah699uQwiC9+6Cm8G7LFTTAg3tPI/EZsrj
+         VPfxQEgaUfNhJvFgmr4kJoEqB6b9XqESvrekcqadxyWCv84wjwU0fWRtoQSizKX9+jk7
+         K8hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707289946; x=1707894746;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pfC6FLphsNXfeoJ4NNyLHvlFNAyZlfkB4NIcbqLP8Do=;
-        b=tDXY+5y9lJgKVfWn7Brd8leg3xJo5yDowiR66hO2XYflclfNyBpQP0s8Lg38v22gFH
-         TmA4tRF44tz1DnmjG4Q2tbBOwTLV35XG/A7Hjs89XWYQJi5vLDCDbPfgljJsTG8p7kjf
-         9V2M1nfHVkQoAhTeDLvGBlg8CDSDN/FalzvVqKJaM+kK0HpIkMdB/FMOntsPff8t8PfS
-         52m+Evb5lCcDc0j7imNo3mUt6ineNQEZlmNWud4yRxyC0eeXD8H1i3/ZPLAehz576618
-         9QLw97ZFNiw+XVRIc0HKkm0PFR/f7WK/mTiDs0MeE52xphZBZNn956QWYViNdoTopmnZ
-         q6TA==
-X-Gm-Message-State: AOJu0YyMo+zJh5hFyLcHdedDgeMhVQ1uWdjSy832Zp76FZk7ClcgIUWO
-	3fbapew8uKJLVLfWkbypeP0F/Lto8PtzN78yGh6vl1DlVW7hnhJz69cB9NJPASvahL8d3odPMy1
-	cDi7DheHKaBbnt+H6Db2Wt9GNUNr91FPG
-X-Google-Smtp-Source: AGHT+IH6i8wtD/YBuc3N0SrCXe/3P1mYPXVrILzXoITCbR3G7Zz17CSGSiD01+AVUZLVuYEIRgCmAn5xSsvdd0oo8vw=
-X-Received: by 2002:ac2:5617:0:b0:511:509c:ea04 with SMTP id
- v23-20020ac25617000000b00511509cea04mr2985208lfd.55.1707289946218; Tue, 06
- Feb 2024 23:12:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1707290677; x=1707895477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bsw+7/5FM01Ub+RAFBck1P8hJGdjf6aquqFlzwE2888=;
+        b=Qhct2oTqZl5JYVc1cvNI/aeWgygdTM1BCcl4T5+MCPgrlHrkuedQPBLN4TTrr2INRc
+         L+eyMdn5lKkvRrya3+Gtoq0vLmzXlmciPyr6znbZcUDR3A4dhYhThDNgVfoA1NdM8FDX
+         yOACkhk8JI5LqWKkaWYx3Jik71dk5mi2f4JhM+TPs7RQxMriK2PXBUBxdgAPoWdIWn/6
+         vfOoeGwR0h5BLp1YHdKBbp1gHuNRvE+k75iKCK0XntEyfGV2VrPvah3Uv0ArTFMZJrfn
+         01ZeeD733r7riAGf/IFUI2LOCTf6lrwFw+25O8ZaWgLrRyxPnCFEMP/uB93KHSbXlLOi
+         7B4g==
+X-Gm-Message-State: AOJu0YwCQe1rpTWo6pjSXzYur+zZR7u2N07OTUo92UiwUigVb+K/PCRI
+	oWxcmeqrAT4AJnyFiJr6drHYew2OWa/HIU/SrP/eUOVG/USRb2KUXpUCRaYCGUaMgzBTw60Kdux
+	guxqPTqg/hoLQR+sQ+oYBLrZQfgk=
+X-Google-Smtp-Source: AGHT+IEs3HsfJq4svFYdCVksihm9LI1Psn5UyEAzeOOApH9dBqWk71rDmU+bwFCmFuPBXUFEoEmhF1cLcrGY3omdXVU=
+X-Received: by 2002:a05:6122:4b13:b0:4c0:34e8:d55d with SMTP id
+ fc19-20020a0561224b1300b004c034e8d55dmr1779384vkb.11.1707290677081; Tue, 06
+ Feb 2024 23:24:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAH2r5mswELNv2Mo-aWNoq3fRUC7Rk0TjfY8kwdPc=JSEuZZObw@mail.gmail.com>
- <20240207034117.20714-1-matthew.ruffell@canonical.com> <CAH2r5mu04KHQV3wynaBSrwkptSE_0ARq5YU1aGt7hmZkdsVsng@mail.gmail.com>
- <CAH2r5msJ12ShH+ZUOeEg3OZaJ-OJ53-mCHONftmec7FNm3znWQ@mail.gmail.com>
-In-Reply-To: <CAH2r5msJ12ShH+ZUOeEg3OZaJ-OJ53-mCHONftmec7FNm3znWQ@mail.gmail.com>
-From: Steve French <smfrench@gmail.com>
-Date: Wed, 7 Feb 2024 01:12:14 -0600
-Message-ID: <CAH2r5muiod=thF6tnSrgd_LEUCdqy03a2Ln1RU40OMETqt2Z_A@mail.gmail.com>
-Subject: Re: SMB 1.0 broken between Kernel versions 6.2 and 6.5
-To: Matthew Ruffell <matthew.ruffell@canonical.com>
-Cc: dhowells@redhat.com, linux-cifs@vger.kernel.org, rdiez-2006@rd10.de, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>
-Content-Type: multipart/mixed; boundary="000000000000c602f40610c56af5"
-
---000000000000c602f40610c56af5
+References: <d997c02b-d5ef-41f8-92b6-8c6775899388@spawn.link>
+ <CAOQ4uxhek5ytdN8Yz2tNEOg5ea4NkBb4nk0FGPjPk_9nz-VG3g@mail.gmail.com> <764a49b0-9a82-4042-8e03-10219b152e77@spawn.link>
+In-Reply-To: <764a49b0-9a82-4042-8e03-10219b152e77@spawn.link>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 7 Feb 2024 09:24:25 +0200
+Message-ID: <CAOQ4uxi-46N0uRj7vnSmzv3jCnQmGG==jEcgN5echcrrb1xbDw@mail.gmail.com>
+Subject: Re: [fuse-devel] Proxmox + NFS w/ exported FUSE = EIO
+To: Antonio SJ Musumeci <trapexit@spawn.link>
+Cc: fuse-devel <fuse-devel@lists.sourceforge.net>, Miklos Szeredi <miklos@szeredi.hu>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Bernd Schubert <bernd.schubert@fastmail.fm>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Updated patch - now use PAGE_SIZE instead of hard coding to 4096.
-
-See attached
-
-On Tue, Feb 6, 2024 at 11:32=E2=80=AFPM Steve French <smfrench@gmail.com> w=
-rote:
+On Wed, Feb 7, 2024 at 2:08=E2=80=AFAM Antonio SJ Musumeci <trapexit@spawn.=
+link> wrote:
 >
-> Attached updated patch which also adds check to make sure max write
-> size is at least 4K
->
-> On Tue, Feb 6, 2024 at 10:58=E2=80=AFPM Steve French <smfrench@gmail.com>=
- wrote:
+> On 2/6/24 00:53, Amir Goldstein wrote:
+> > On Tue, Feb 6, 2024 at 4:52=E2=80=AFAM Antonio SJ Musumeci <trapexit@sp=
+awn.link> wrote:
+> >> Hi,
+> >>
+> >> Anyone have users exporting a FUSE filesystem over NFS? Particularly
+> >> from Proxmox (recent release, kernel 6.5.11)? I've gotten a number of
+> >> reports recently from individuals who have such a setup and after some
+> >> time (not easily reproducible, seems usually after software like Plex =
+or
+> >> Jellyfin do a scan of media or a backup process) starts returning EIO
+> >> errors. Not just from NFS but also when trying to access the FUSE moun=
+t
+> >> as well. One person noted that they had moved from Ubuntu 18.04 (kerne=
+l
+> >> 4.15.0) to Proxmox and on Ubuntu had no problems with otherwise the sa=
+me
+> >> settings.
+> >>
+> >> I've not yet been able to reproduced this issue myself but wanted to s=
+ee
+> >> if anyone else has run into this. As far as I can tell from what users
+> >> have reported the FUSE server is still running but isn't receiving mos=
+t
+> >> requests. I do see evidence of statfs calls coming through but nothing
+> >> else. Though the straces I've received typically are after the issues =
+start.
+> >>
+> >> In an effort to rule out the FUSE server... is there anything the serv=
+er
+> >> could do to cause the kernel to return EIO and not forward anything bu=
+t
+> >> statfs? Doesn't seem to matter if direct_io is enabled or attr/entry
+> >> caching is used.
+> >>
+> > This could be the outcome of commit 15db16837a35 ("fuse: fix illegal
+> > access to inode with reused nodeid") in kernel v5.14.
 > >
-> > > his netfslib work looks like quite a big refactor. Is there any plans=
- to land this in 6.8? Or will this be 6.9 / later?
+> > It is not an unintended regression - this behavior replaces what would
+> > have been a potentially severe security violation with an EIO error.
 > >
-> > I don't object to putting them in 6.8 if there was additional review
-> > (it is quite large), but I expect there would be pushback, and am
-> > concerned that David's status update did still show some TODOs for
-> > that patch series.  I do plan to upload his most recent set to
-> > cifs-2.6.git for-next later in the week and target would be for
-> > merging the patch series would be 6.9-rc1 unless major issues were
-> > found in review or testing
+> > As the commit says:
+> > "...With current code, this situation will not be detected and an old f=
+use
+> >      dentry that used to point to an older generation real inode, can b=
+e used to
+> >      access a completely new inode, which should be accessed only via t=
+he new
+> >      dentry."
 > >
-> > On Tue, Feb 6, 2024 at 9:42=E2=80=AFPM Matthew Ruffell
-> > <matthew.ruffell@canonical.com> wrote:
-> > >
-> > > I have bisected the issue, and found the commit that introduces the p=
-roblem:
-> > >
-> > > commit d08089f649a0cfb2099c8551ac47eef0cc23fdf2
-> > > Author: David Howells <dhowells@redhat.com>
-> > > Date:   Mon Jan 24 21:13:24 2022 +0000
-> > > Subject: cifs: Change the I/O paths to use an iterator rather than a =
-page list
-> > > Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
-git/commit/?id=3Dd08089f649a0cfb2099c8551ac47eef0cc23fdf2
-> > >
-> > > $ git describe --contains d08089f649a0cfb2099c8551ac47eef0cc23fdf2
-> > > v6.3-rc1~136^2~7
-> > >
-> > > David, I also tried your cifs-netfs tree available here:
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git=
-/log/?h=3Dcifs-netfs
-> > >
-> > > This tree solves the issue. Specifically:
-> > >
-> > > commit 34efb2a814f1882ddb4a518c2e8a54db119fd0d8
-> > > Author: David Howells <dhowells@redhat.com>
-> > > Date:   Fri Oct 6 18:29:59 2023 +0100
-> > > Subject: cifs: Cut over to using netfslib
-> > > Link: https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-=
-fs.git/commit/?h=3Dcifs-netfs&id=3D34efb2a814f1882ddb4a518c2e8a54db119fd0d8
-> > >
-> > > This netfslib work looks like quite a big refactor. Is there any plan=
-s to land this in 6.8? Or will this be 6.9 / later?
-> > >
-> > > Do you have any suggestions on how to fix this with a smaller delta i=
-n 6.3 -> 6.8-rc3 that the stable kernels can use?
-> > >
-> > > Thanks,
-> > > Matthew
+> > I have made this fix after seeing users get the content of another
+> > file from the one that they opened in NFS!
 > >
+> > libfuse commit 10ecd4f ("test/test_syscalls.c: check unlinked testfiles
+> > at the end of the test") reproduces this problem in a test.
+> > This test does not involve NFS export, but NFS export has higher
+> > likelihood of exposing this issue.
 > >
+> > I wonder if the FUSE filesystems that report the errors have
+> > FUSE_EXPORT_SUPPORT capability?
+> > Not that this capability guarantees anything wrt to this issue.
 > >
-> > --
+> > IMO, the root of all evil wrt NFS+FUSE is that LOOKUP is by ino
+> > without generation with FUSE_EXPORT_SUPPORT, but worse
+> > is that FUSE does not even require FUSE_EXPORT_SUPPORT
+> > capability to export to NFS, but this is legacy FUSE behavior and
+> > I am sure that many people export FUSE filesystems, as your
+> > report proves.
+> >
+> > There is now a proposal for opt-out of NFS export:
+> > https://lore.kernel.org/linux-fsdevel/20240126072120.71867-1-jefflexu@l=
+inux.alibaba.com/
+> > so there will be a way for a FUSE filesystem to prevent misuse.
+> >
+> > Some practical suggestions for users running existing FUSE filesystems:
+> >
+> > - Never export a FUSE filesystem with a fixed fsid
+> > - Everytime one wants to export a FUSE filesystem generate
+> >    a oneshot fsid/uuid to use in exportfs
+> > - Then restarting/re-exporting the FUSE filesystem will result in
+> >    ESTALE errors on NFS client, but not security violations and not EIO
+> >    errors
+> > - This does not give full guarantee, unlinked inodes could still result
+> >    in EIO errors, as the libfuse test demonstrates
+> > - The situation with NFSv4 is slightly better than with NFSv3, because
+> >     with NFSv3, an open file in the client does not keep the FUSE file
+> >     open and increases the chance of evicted FUSE inode for an open
+> >     NFS file
+> >
 > > Thanks,
-> >
-> > Steve
+> > Amir.
 >
+> Thank you Amir for such a detailed response. I'll look into this further
+> but a few questions. To answer your question: yes, the server is setting
+> EXPORT_SUPPORT.
 >
+> 1. The expected behavior, if the above situation occurred, is that the
+> whole of the mount would return EIO? All requests going forward? What
+> about FUSE_STATFS? From what I saw that was coming through.
 >
-> --
-> Thanks,
->
-> Steve
 
+It's only for a specific bad/stale inode which you have an open fd for
+and trying to access, but another FUSE inode object already reused
+its inode number.
 
+> 2. Regarding the tests. I downloaded the latest libfuse, compiled, and
+> ran test_syscalls against the FUSE server. I get no failures when
+> running `./test_syscalls /mnt/fusemount :/mnt/ext4mount -u` or
+> `./test_syscalls /mnt/fusemount -u` where ext4mount is the underlying
+> filesystem and fusemount is the FUSE server's. No error is reported. A
+> strace shows the fstat returning ESTALE at the end but the tests all
+> pass. The mount continues to work after running the test. This is on
+> kernel 6.5.0. Is that expected? It sounds from your description that I
+> should be seeing EIOs somewhere.
+>
 
---=20
+It is expected.
+The test says:
+
+                        // With O_PATH fd, the server does not have to keep
+                        // the inode alive so FUSE inode may be stale or ba=
+d
+                        if (errno =3D=3D ESTALE || errno =3D=3D EIO ||
+                            errno =3D=3D ENOENT || errno =3D=3D EBADF)
+                                return 0;
+
+So it is a matter of chance which error you get.
+But those EIO errors are relatively rare, so if your users see them
+across the fs, it's probably due to something else.
+
+> 3. Thank you for the "practical suggestions". I will compare them to
+> what my users are doing... but are there specific guidelines somewhere
+> for building a FUSE server to ensure NFS export can be supported? This
+
+I have implemented a library/fs-template for writing FUSE passthrough fs
+that supports persistent NFS file handles (i.e. they survive server restart=
+):
+
+https://github.com/amir73il/libfuse/blob/fuse_passthrough/passthrough/fuse_=
+passthrough.cpp
+
+This is an implementation that assumes passthrough to ext4/xfs.
+A generic implementation would require FUSE protocol change.
+
+See: https://lore.kernel.org/linux-fsdevel/CAOQ4uxiJ3qxb_XNWdmQPZ3omT3fjEho=
+MfG=3D3CSKucvoJbj6JSg@mail.gmail.com/
+
+> topic has had limited details available over the years and I/users have
+> had odd behaviors at times that were unclear of the cause. Like this
+> situation or when NFS somehow triggered a request for '..' of the root
+> nodeid (1). Some questions that come to mind: is the generation strictly
+> necessary (practically) for things to work so long as nodeid is unique
+> during a session (64bit nodeid space can last a long time)? Is there
+
+The nodeid space is restarted on server restart and new nodeids are
+assigned to same objects.
+
+Using server inode numbers is more sane but as the test demonstrates
+it is not always enough.
+
+> possibility of conflict if multiple fuse servers used the same
+> nodeid//gen pairs at the same time?
+
+You cannot export two different fs with the same fsid/uuid at the same
+time. NFS won't let you do that.
+
+>  To what degree does the inode value
+> matter? Should old node/gen pairs be kept around forever as noforget
+> libfuse option suggests for NFS?
+
+Does not matter.
+As long as FUSE protocol does lookup by ino without generation
+there is little that the server can do. It can only return the most
+recent generation for that ino.
+
+> Perhaps some of this is obvious but
+> given changes to FUSE over time and the differences between kernel and
+> userspace fs experiences it would be nice to have some of these more
+> niche/complicated situations better flushed out in the official docs.
+>
+
+Would be nice if someone picked up that glove, but nothing about this
+is trivial...
+
+My plan was to contribute fuse_passthrough lib to the libfuse project,
+but my focus has shifted and it requires some work yet to package this lib.
+
+If someone is interested to take up this work and help maintain this
+library, I am willing to help them.
+
 Thanks,
-
-Steve
-
---000000000000c602f40610c56af5
-Content-Type: application/octet-stream; 
-	name=".0001-smb-Fix-regression-in-writes-when-non-standard-maxim.patch.swp"
-Content-Disposition: attachment; 
-	filename=".0001-smb-Fix-regression-in-writes-when-non-standard-maxim.patch.swp"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lsbgc7vq0>
-X-Attachment-Id: f_lsbgc7vq0
-
-YjBWSU0gOS4wAAAAABAAAPQqw2X+qAcA9mMIAHNtZnJlbmNoAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAABzbWZyZW5jaC1UaGlua1BhZC1QNTIAAAAAAAAAAAAAAAAAAAAAAAAAfnNtZnJl
-bmNoL2NpZnMtMi42L3RtcDYvMDAwMS1zbWItRml4LXJlZ3Jlc3Npb24taW4td3JpdGVzLXdoZW4t
-bm9uLXN0YW5kYXJkLW1heGltLnBhdGNoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0AMzIxMAAAAAAjIiEgExJVAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHRwAQB/AAAA
-AgAAAAAAAABMAAAAAAAAAAEAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABhZAAAegEAAMICAAAAEAAA
-TAAAAAAAAAC5DwAAjQ8AAGgPAAAZDwAAAg8AAAEPAAC+DgAAdg4AADIOAADsDQAAqw0AAG0NAAAr
-DQAAKg0AAOsMAACmDAAAcQwAAHAMAAAxDAAA7wsAAK8LAABzCwAAUQsAAFALAAAlCwAAxwoAAI4K
-AABZCgAANgoAAA4KAADZCQAA1QkAAKYJAACCCQAATwkAAE4JAAAPCQAA5wgAAMkIAACrCAAAXAgA
-AEUIAAA/CAAAGwgAANQHAACSBwAASQcAAPAGAADqBgAAkgYAADsGAAA0BgAAEQYAAOwFAACXBQAA
-kgUAAI4FAABqBQAAIwUAAOEEAACcBAAAdAQAAFMEAAAyBAAA3gMAAMwDAACsAwAAkgMAAFwDAAAV
-AwAACwMAAPYCAADOAgAAygIAAMMCAADCAgAAwQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAADIuNDAuMQAtLSAAIAkJY3R4LT5hY3JlZ21heCA9IEhaICogcmVzdWx0LnVpbnRfMzI7
-ACAJY2FzZSBPcHRfYWNyZWdtYXg6ACAJCWJyZWFrOwArCQkJY2lmc19kYmcoVkZTLCAid3NpemUg
-c2hvdWxkIGJlIGEgbXVsdGlwbGUgb2YgNDA5NiAoUEFHRV9TSVpFKVxuIik7ACsJCWlmIChyb3Vu
-ZF91cChjdHgtPndzaXplLCBQQUdFX1NJWkUpICE9IGN0eC0+d3NpemUpACAJCWN0eC0+Z290X3dz
-aXplID0gdHJ1ZTsAIAkJY3R4LT53c2l6ZSA9IHJlc3VsdC51aW50XzMyOwAgCWNhc2UgT3B0X3dz
-aXplOgBAQCAtMTExMSw2ICsxMTExLDggQEAgc3RhdGljIGludCBzbWIzX2ZzX2NvbnRleHRfcGFy
-c2VfcGFyYW0oc3RydWN0IGZzX2NvbnRleHQgKmZjLAArKysgYi9mcy9zbWIvY2xpZW50L2ZzX2Nv
-bnRleHQuYwAtLS0gYS9mcy9zbWIvY2xpZW50L2ZzX2NvbnRleHQuYwBpbmRleCA1MmNiZWYyZWVi
-MjguLjYwMGE3NzA1MmMzYiAxMDA2NDQAZGlmZiAtLWdpdCBhL2ZzL3NtYi9jbGllbnQvZnNfY29u
-dGV4dC5jIGIvZnMvc21iL2NsaWVudC9mc19jb250ZXh0LmMAIAkJY2lmc19zYi0+Y3R4LT5yc2l6
-ZSA9IHNlcnZlci0+b3BzLT5uZWdvdGlhdGVfcnNpemUodGNvbiwgY3R4KTsAIAkgICAgKGNpZnNf
-c2ItPmN0eC0+cnNpemUgPiBzZXJ2ZXItPm9wcy0+bmVnb3RpYXRlX3JzaXplKHRjb24sIGN0eCkp
-KQAgCWlmICgoY2lmc19zYi0+Y3R4LT5yc2l6ZSA9PSAwKSB8fAArCX0AKwkJfQArCQkJY2lmc19k
-YmcoVkZTLCAid3NpemUgdG9vIHNtYWxsLCByZXNldCB0byBtaW5pbXVtIGllIFBBR0VfU0laRSwg
-dXN1YWxseSA0MDk2XG4iKTsAKwkJCWNpZnNfc2ItPmN0eC0+d3NpemUgPSBQQUdFX1NJWkU7ACsJ
-CWlmIChjaWZzX3NiLT5jdHgtPndzaXplID09IDApIHsAKwkJICovACsJCSAqICh3aGljaCB3b3Vs
-ZCBnZXQgcm91bmRlZCBkb3duIHRvIDApIHRoZW4gcmVzZXQgd3NpemUgdG8gYWJzb2x1dGUgbWlu
-aW11bSBlZyA0MDk2ACsJCSAqIGluIHRoZSB2ZXJ5IHVubGlrZWx5IGV2ZW50IHRoYXQgdGhlIHNl
-cnZlciBzZW50IGEgbWF4IHdyaXRlIHNpemUgdW5kZXIgUEFHRV9TSVpFLAArCQkvKgArCQljaWZz
-X3NiLT5jdHgtPndzaXplID0gcm91bmRfZG93bihzZXJ2ZXItPm9wcy0+bmVnb3RpYXRlX3dzaXpl
-KHRjb24sIGN0eCksIFBBR0VfU0laRSk7ACsJICAgIChjaWZzX3NiLT5jdHgtPndzaXplID4gc2Vy
-dmVyLT5vcHMtPm5lZ290aWF0ZV93c2l6ZSh0Y29uLCBjdHgpKSkgewAtCQljaWZzX3NiLT5jdHgt
-PndzaXplID0gc2VydmVyLT5vcHMtPm5lZ290aWF0ZV93c2l6ZSh0Y29uLCBjdHgpOwAtCSAgICAo
-Y2lmc19zYi0+Y3R4LT53c2l6ZSA+IHNlcnZlci0+b3BzLT5uZWdvdGlhdGVfd3NpemUodGNvbiwg
-Y3R4KSkpACAJaWYgKChjaWZzX3NiLT5jdHgtPndzaXplID09IDApIHx8ACAJICovACAJICogdGhl
-IHVzZXIgb24gbW91bnQAQEAgLTM0MzgsOCArMzQzOCwxNyBAQCBpbnQgY2lmc19tb3VudF9nZXRf
-dGNvbihzdHJ1Y3QgY2lmc19tb3VudF9jdHggKm1udF9jdHgpACsrKyBiL2ZzL3NtYi9jbGllbnQv
-Y29ubmVjdC5jAC0tLSBhL2ZzL3NtYi9jbGllbnQvY29ubmVjdC5jAGluZGV4IGJmZDU2OGY4OTcx
-MC4uNDZiM2FlZWJmYmYyIDEwMDY0NABkaWZmIC0tZ2l0IGEvZnMvc21iL2NsaWVudC9jb25uZWN0
-LmMgYi9mcy9zbWIvY2xpZW50L2Nvbm5lY3QuYwAAIDIgZmlsZXMgY2hhbmdlZCwgMTMgaW5zZXJ0
-aW9ucygrKSwgMiBkZWxldGlvbnMoLSkAIGZzL3NtYi9jbGllbnQvZnNfY29udGV4dC5jIHwgIDIg
-KysAIGZzL3NtYi9jbGllbnQvY29ubmVjdC5jICAgIHwgMTMgKysrKysrKysrKystLQAtLS0AU2ln
-bmVkLW9mZi1ieTogU3RldmUgRnJlbmNoIDxzdGZyZW5jaEBtaWNyb3NvZnQuY29tPgBDYzogRGF2
-aWQgSG93ZWxscyA8ZGhvd2VsbHNAcmVkaGF0LmNvbT4AQ2M6IHN0YWJsZUB2Z2VyLmtlcm5lbC5v
-cmcgIyB2Ni4zKwBBY2tlZC1ieTogUm9ubmllIFNhaGxiZXJnIDxyb25uaWVzYWhsYmVyZ0BnbWFp
-bC5jb20+AFN1Z2dlc3RlZC1ieTogUm9ubmllIFNhaGxiZXJnIDxyb25uaWVzYWhsYmVyZ0BnbWFp
-bC5jb20+AEZpeGVzOiBkMDgwODlmNjQ5YTAgKCJjaWZzOiBDaGFuZ2UgdGhlIEkvTyBwYXRocyB0
-byB1c2UgYW4gaXRlcmF0b3IgcmF0aGVyIHRoYW4gYSBwYWdlIGxpc3QiKQBSZXBvcnRlZC1ieTog
-Ui4gRGlleiIgPHJkaWV6LTIwMDZAcmQxMC5kZT4AAHdlIGRvIG5vdCByb3VuZCBpdCBkb3duIHRv
-IHplcm8pLgBhIG11bHRpcGxlIG9mIDQwOTYgKHdlIGFsc28gaGF2ZSB0byBjaGVjayB0byBtYWtl
-IHN1cmUgdGhhdABtYXhpbXVtIHdyaXRlIHNpemUgaWYgdGhlIHNlcnZlciBuZWdvdGlhdGVzIGEg
-dmFsdWUgdGhhdCBpcyBub3QAYSBtdWx0aXBsZSBvZiA0MDk2LCBhbmQgYWxzbyBhZGQgYSBjaGFu
-Z2Ugd2hlcmUgd2Ugcm91bmQgZG93biB0aGUAQWRkIGEgd2FybmluZyBpZiBhIHVzZXIgc3BlY2lm
-aWVzIGEgd3NpemUgb24gbW91bnQgdGhhdCBpcyBub3QAAHdlIGNhbiBub3Qgc3VwcG9ydCBub24t
-c3RhbmRhcmQgbWF4aW11bSB3cml0ZSBzaXplcy4AbmV0ZnMgY2hhbmdlLCBidXQgdW50aWwgdGhh
-dCBwb2ludCAoaWUgZm9yIHRoZSA2LjMga2VybmVsIHVudGlsIG5vdykAVGhpcyBzZWN0aW9uIG9m
-IGNvZGUgaXMgYmVpbmcgcmV3cml0dGVuL3JlbW92ZWQgZHVlIHRvIGEgbGFyZ2UAAHBhZ2Ugd2hl
-biBkb2luZyBsYXJnZSBzZXF1ZW50aWFsIHdyaXRlcywgY2F1c2luZyBkYXRhIGNvcnJ1cHRpb24u
-AG11bHRpcGxlIG9mIDQwOTYgdGhlIG5ldGZzIGNvZGUgY2FuIHNraXAgdGhlIGVuZCBvZiB0aGUg
-ZmluYWwAaXMgbm90IGEgbXVsdGlwbGUgb2YgNDA5NikuICBXaGVuIG5lZ290aWF0ZWQgd3JpdGUg
-c2l6ZSBpcyBub3QgYQB3cml0ZSBzaXplIGJ5IHNldHRpbmcgbW91bnQgcGFybSAid3NpemUiLCBi
-dXQgc2V0cyBpdCB0byBhIHZhbHVlIHRoYXQAbm90IGEgbXVsdGlwbGUgb2YgNDA5NiAoc2ltaWxh
-cmx5IGlmIHRoZSB1c2VyIG92ZXJyaWRlcyB0aGUgbWF4aW11bQBtYXhpbXVtIHdyaXRlIHNpemUg
-aXMgc2V0IGJ5IHRoZSBzZXJ2ZXIgdG8gYW4gdW5leHBlY3RlZCB2YWx1ZSB3aGljaCBpcwBUaGUg
-Y29udmVyc2lvbiB0byBuZXRmcyBpbiB0aGUgNi4zIGtlcm5lbCBjYXVzZWQgYSByZWdyZXNzaW9u
-IHdoZW4AACB3cml0ZSBzaXplIG5lZ290aWF0ZWQAU3ViamVjdDogW1BBVENIIDAxLzI2XSBzbWI6
-IEZpeCByZWdyZXNzaW9uIGluIHdyaXRlcyB3aGVuIG5vbi1zdGFuZGFyZCBtYXhpbXVtAERhdGU6
-IFR1ZSwgNiBGZWIgMjAyNCAxNjozNDoyMiAtMDYwMABGcm9tOiBTdGV2ZSBGcmVuY2ggPHN0ZnJl
-bmNoQG1pY3Jvc29mdC5jb20+AEZyb20gZjJjYTg2MmRlYmQ4Yjk4NzViNTQ0ODU1M2JlMGYyMTc4
-ZmM0MjMxZiBNb24gU2VwIDE3IDAwOjAwOjAwIDIwMDEA
---000000000000c602f40610c56af5--
+Amir.
 
