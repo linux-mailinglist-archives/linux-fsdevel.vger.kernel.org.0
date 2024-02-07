@@ -1,133 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-10619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10620-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB92984CD71
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 15:57:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D72984CDAC
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 16:08:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47F56B26CFD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 14:57:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 124F21F24092
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 15:08:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C9157F7DF;
-	Wed,  7 Feb 2024 14:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC307F7C6;
+	Wed,  7 Feb 2024 15:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="BhyBzEYb"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="INl58ngs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1505E7F477;
-	Wed,  7 Feb 2024 14:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11E55A118
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 15:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707317804; cv=none; b=GRrt4YmOxsuddG6XspMhnI3nSS1q92nAOyPjKFmWO2R4CWi8tMMzN09+jleInu3SAj6TG6P8JRaW82iwJVFnShuJtrWkwHcbKLsLNFDbZaAxWKjzFbKvRqB0du2I5JdI73fzgV+Z571wdGfR/fO3wfH1KpLbiKVtKV2HENB8ExM=
+	t=1707318496; cv=none; b=f4czIeTDXJlmBec70p8uMkhpQOyZl/9mlMaY+4KbDFYGeSaO/5xNRvLqJA6VDKfvgJdC71EuFSa7648PMlL7Ev9lZCtjet9H/O+jWZiTw6YGTuoegYspnF2P6ROOEhPRNJY7dMuwSJXVF+Y2k9MmYUKd9ML4KcCQCQ/gTtOOGyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707317804; c=relaxed/simple;
-	bh=TkFpvZmkphqkK0Mc10r/Fe7liBcw8osCeQ/jSq2WNzk=;
-	h=Subject:From:To:CC:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OGw7QNDKhjYsu1HiiJEwypjE2ZTzzoam9LZmdYqxN2fiJLpGFThGJE9Xe9+CiZsYqgnPGHW8JBo35tlVexJik6E7N0Rd/zUFMHAlDeVidqavbt9S2MHRHEIJkt0IQBYwnLHSoAgWmuEa2j0Pmy8Wkesa4HsaM58cPHjALMxMpKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=BhyBzEYb; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
+	s=arc-20240116; t=1707318496; c=relaxed/simple;
+	bh=1MSigGlUwsLDuS+rgZM2EfvMEhe6b0TG+BujN/YzgN8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=PKQ02acmCDjyV2MjjGugm2e4TnrB+G51f0oIa7VyVRxmqkHtROZey0stLOBVAwaIeYQ4D9NemRuSQwjAd9FI4C3MXXrQyP5zMyxzBtCZ1tJl82C6lpVcMl6r/JKOZQvYm/QJWF1EWWC2cRptWdF1Xrd4MHk4Zol/of7MNQwH5Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=INl58ngs; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2cf4fafa386so9396751fa.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 07:08:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1707317804; x=1738853804;
-  h=from:to:cc:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version:subject;
-  bh=TkFpvZmkphqkK0Mc10r/Fe7liBcw8osCeQ/jSq2WNzk=;
-  b=BhyBzEYbSJL/RtHXiu83YiUoPc6Kp+kadbQWWVG2dsCE+ppdEvmIisbZ
-   YVsFwm7KBUPbzBNEl34Hbq1fKGOmNTstchHY4xBn0vkRvf9PnU/ocDs/l
-   AizigMnLrXUML3d7ao4nuVuRe6MHAgSVSr5NE0yCcVB1eB9inLeByef59
-   4=;
-X-IronPort-AV: E=Sophos;i="6.05,251,1701129600"; 
-   d="scan'208";a="702749743"
-Subject: Re: [RFC 00/18] Pkernfs: Support persistence for live update
-Thread-Topic: [RFC 00/18] Pkernfs: Support persistence for live update
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Feb 2024 14:56:36 +0000
-Received: from EX19MTAEUB001.ant.amazon.com [10.0.17.79:53357]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.33.191:2525] with esmtp (Farcaster)
- id 163cb722-79c0-4cd0-bb34-f3f452cd665d; Wed, 7 Feb 2024 14:56:33 +0000 (UTC)
-X-Farcaster-Flow-ID: 163cb722-79c0-4cd0-bb34-f3f452cd665d
-Received: from EX19D012EUC002.ant.amazon.com (10.252.51.162) by
- EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 7 Feb 2024 14:56:33 +0000
-Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
- EX19D012EUC002.ant.amazon.com (10.252.51.162) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 7 Feb 2024 14:56:33 +0000
-Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
- EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
- 15.02.1118.040; Wed, 7 Feb 2024 14:56:33 +0000
-From: "Gowans, James" <jgowans@amazon.com>
-To: "alex.williamson@redhat.com" <alex.williamson@redhat.com>, "jgg@ziepe.ca"
-	<jgg@ziepe.ca>
-CC: "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "brauner@kernel.org"
-	<brauner@kernel.org>, "Graf (AWS), Alexander" <graf@amazon.de>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "anthony.yznaga@oracle.com"
-	<anthony.yznaga@oracle.com>, "skinsburskii@linux.microsoft.com"
-	<skinsburskii@linux.microsoft.com>, "steven.sistare@oracle.com"
-	<steven.sistare@oracle.com>, "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "seanjc@google.com" <seanjc@google.com>,
-	"Woodhouse, David" <dwmw@amazon.co.uk>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"joro@8bytes.org" <joro@8bytes.org>, "ebiederm@xmission.com"
-	<ebiederm@xmission.com>, =?utf-8?B?U2Now7ZuaGVyciwgSmFuIEgu?=
-	<jschoenh@amazon.de>, "will@kernel.org" <will@kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"usama.arif@bytedance.com" <usama.arif@bytedance.com>
-Thread-Index: AQHaWFZfiDfmUo9FfU6oG+xq/LSkjrD++v0A
-Date: Wed, 7 Feb 2024 14:56:33 +0000
-Message-ID: <6387700a8601722838332fdb2f535f9802d2202e.camel@amazon.com>
-References: <20240205120203.60312-1-jgowans@amazon.com>
-	 <20240205101040.5d32a7e4.alex.williamson@redhat.com>
-In-Reply-To: <20240205101040.5d32a7e4.alex.williamson@redhat.com>
-Accept-Language: en-ZA, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E7A761E4DFFA1B418369CD572A93C5BE@amazon.com>
-Content-Transfer-Encoding: base64
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1707318492; x=1707923292; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2WpTtrSOAciENAFEaWu2UZ0XGYhJn1CS0iU/1Ll3UhU=;
+        b=INl58ngsk/Ja+k21JMbQKItz1OsGlCoHx4sMOGjaqkZ+YEL3vHZ4C0XfvPMh41Pti1
+         DC14DKB33MGYRnIxGyWkLSzdzrPMSFdUjwgaXdQ6LbL5s4XE2OWgxOE7hKpXO9YXnwUv
+         1H+TqHBVhIe+PyAvfxYFxB+HllpYAOUj7lJUwUUnesbe1PfKXdNni2XWQzjWt4eCsgEv
+         Eg0cnjZ+qwIdqM6kFxnX/D5cmHaVCJb8FB0og45cFaMEgQtyPRh3MPT5JNGm7gN+WRjN
+         beQRS8DNzMFKObqY4i33CYIvuc8ofsLHFn2Q5rC983IFbB7eELdQ/cnChiV5PkuW35i3
+         kBuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707318492; x=1707923292;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2WpTtrSOAciENAFEaWu2UZ0XGYhJn1CS0iU/1Ll3UhU=;
+        b=SdeWTiolQghLFo/+Z9l/bXbGirn4zaJUGRxfEQ9jlJUA6M3gUHomuDM2ySBmXrxb66
+         quiHgeuHHKMBAYPWV+LZHUhCcCYg/Ycwhr5rEalF5kgZqHVl08vUZKuuqCkOf3R1Nhtc
+         Nf9cMl0bcgNM55ddQnOc+VcQmmsgIXuc0Rc+iLgLPb3K0TBomEBOQQm6NvG9G5we4tex
+         SgdjeCqUMMUSdE0+14JoYbqVz6DrguL4wOfNIsKqS+n7i88fU8VTvAPFOZCGZv0H7s2C
+         8hGP+fAkoAcMaQ4LyU71Ao8B4IeeAP2XaYqrRoCV6K84my5SrSPseMNs6Q5irL3uUzN4
+         01Yw==
+X-Gm-Message-State: AOJu0Yzf/eTC7zvxsbmW6dsyrTU+1EHl4mWPh2OlPclELwC4L6CnGcEc
+	u2WdJQsNd1lgjbxS9bbq4s7XlXSdPXaJnJSn0f6mnBZxYOdbEZqe7oBY43yAwHw=
+X-Google-Smtp-Source: AGHT+IHkyA0Wh/4Wz1ZB/Ybxp87lVfY5uDn8t9yBY+FNecSLEqy0URL39VMmZqhh7H+6Sdw3ji7KZw==
+X-Received: by 2002:a2e:95c8:0:b0:2d0:ccda:228c with SMTP id y8-20020a2e95c8000000b002d0ccda228cmr1001220ljh.41.1707318491659;
+        Wed, 07 Feb 2024 07:08:11 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVStxBFedKRs9R5BGu0CXxltq4M+c+8pXWbGwaZQwlnVVPRpQRVvSvj14swzGYMZ+HuIqTP+uyuGxTurGwDfWvgcDP9nbvtOJKYnxuiOIr9/NFdAT25OWnfCumikjLEK+M4ifareFMjfgHXGx8FTlKYhrgjvUiGYHWIPS2O8EUqHKxAtvVa1A==
+Received: from smtpclient.apple ([2a00:1370:81a4:169c:483e:32b6:87c8:d693])
+        by smtp.gmail.com with ESMTPSA id k2-20020a2e92c2000000b002d0c85a8197sm206327ljh.76.2024.02.07.07.08.10
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 07 Feb 2024 07:08:11 -0800 (PST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.4\))
+Subject: Re: [PATCH] [v3] hfs: fix a memleak in hfs_find_init
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+In-Reply-To: <20240207121202.3142524-1-alexious@zju.edu.cn>
+Date: Wed, 7 Feb 2024 18:07:43 +0300
+Cc: Desmond Cheong Zhi Xi <desmondcheongzx@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <70F6A045-B985-4C23-BA2F-D6BD7F38A522@dubeyko.com>
+References: <20240207121202.3142524-1-alexious@zju.edu.cn>
+To: Zhipeng Lu <alexious@zju.edu.cn>
+X-Mailer: Apple Mail (2.3696.120.41.1.4)
 
-T24gTW9uLCAyMDI0LTAyLTA1IGF0IDEwOjEwIC0wNzAwLCBBbGV4IFdpbGxpYW1zb24gd3JvdGU6
-DQo+ID4gKiBOZWVkaW5nIHRvIGRyaXZlIGFuZCByZS1oeWRyYXRlIHRoZSBJT01NVSBwYWdlIHRh
-YmxlcyBieSBkZWZpbmluZw0KPiA+IGFuIElPTU1VIGZpbGUuDQo+ID4gUmVhbGx5IHdlIHNob3Vs
-ZCBtb3ZlIHRoZSBhYnN0cmFjdGlvbiBvbmUgbGV2ZWwgdXAgYW5kIG1ha2UgdGhlDQo+ID4gd2hv
-bGUgVkZJTw0KPiA+IGNvbnRhaW5lciBwZXJzaXN0ZW50IHZpYSBhIHBrZXJuZnMgZmlsZS4gVGhh
-dCB3YXkgeW914oCZZCAianVzdCIgcmUtDQo+ID4gb3BlbiB0aGUgVkZJTw0KPiA+IGNvbnRhaW5l
-ciBmaWxlIGFuZCBhbGwgb2YgdGhlIERNQSBtYXBwaW5ncyBpbnNpZGUgVkZJTyB3b3VsZCBhbHJl
-YWR5DQo+ID4gYmUgc2V0IHVwLg0KPiANCj4gTm90ZSB0aGF0IHRoZSB2ZmlvIGNvbnRhaW5lciBp
-cyBvbiBhIHBhdGggdG93YXJkcyBkZXByZWNhdGlvbiwgdGhpcw0KPiBzaG91bGQgYmUgcmVmb2N1
-c2VkIG9uIHZmaW8gcmVsYXRpdmUgdG8gaW9tbXVmZC7CoCBUaGVyZSB3b3VsZCBuZWVkIHRvDQo+
-IGJlIGEgc3Ryb25nIGFyZ3VtZW50IGZvciBhIGNvbnRhaW5lci90eXBlMSBleHRlbnNpb24gdG8g
-c3VwcG9ydCB0aGlzLA0KPiBpb21tdWZkIHdvdWxkIG5lZWQgdG8gYmUgdGhlIGZpcnN0IGNsYXNz
-IGltcGxlbWVudGF0aW9uLsKgIFRoYW5rcywNCg0KQWNrISBXaGVuIEkgZmlyc3Qgc3RhcnRlZCBw
-dXR0aW5nIHBrZXJuZnMgdG9nZXRoZXIsIGlvbW11ZmQgd2Fzbid0DQppbnRlZ3JhdGVkIGludG8g
-UUVNVSB5ZXQsIGhlbmNlIEkgc3R1Y2sgd2l0aCBWRklPIGZvciB0aGlzIFBvQy4NCkknbSB0aHJp
-bGxlZCB0byBzZWUgdGhhdCBpb21tdWZkIG5vdyBzZWVtcyB0byBiZSBpbnRlZ3JhdGVkIGluIFFF
-TVUhDQpHb29kIG9wcG9ydHVuaXR5IHRvIGdldCB0byBncmlwcyB3aXRoIGl0Lg0KDQpUaGUgVkZJ
-Ty1zcGVjaWZpYyBwYXJ0IG9mIHRoaXMgcGF0Y2ggaXMgZXNzZW50aWFsbHkgaW9jdGxzIG9uIHRo
-ZQ0KKmNvbnRhaW5lciogdG8gYmUgYWJsZSB0bzoNCg0KMS4gZGVmaW5lIHBlcnNpc3RlbnQgcGFn
-ZSB0YWJsZXMgKFBQVHMpIG9uIHRoZSBjb250YWluZXJzIHNvIHRoYXQgdGhvc2UNClBQVHMgYXJl
-IHVzZWQgYnkgdGhlIElPTU1VIGRvbWFpbiBhbmQgaGVuY2UgYnkgYWxsIGRldmljZXMgYWRkZWQg
-dG8gdGhhdA0KY29udGFpbmVyLg0KaHR0cHM6Ly9naXRodWIuY29tL2pnb3dhbnMvcWVtdS9jb21t
-aXQvZTg0Y2ZiODE4NmQ3MWY3OTdlZjFmNzJkNTdkODczMjIyYTliNDc5ZQ0KDQoyLiBUZWxsIFZG
-SU8gdG8gYXZvaWQgbWFwcGluZyB0aGUgbWVtb3J5IGluIGFnYWluIGFmdGVyIGxpdmUgdXBkYXRl
-DQpiZWNhdXNlIGl0IGFscmVhZHkgZXhpc3RzLg0KaHR0cHM6Ly9naXRodWIuY29tL2pnb3dhbnMv
-cWVtdS9jb21taXQvNmU0ZjE3ZjcwM2VhZjJhNmYxZTRjYjI1NzZkNjE2ODNlYWVlMDJiMA0KKHRo
-ZSBhYm92ZSBmbGFnIHNob3VsZCBvbmx5IGJlIHNldCAqYWZ0ZXIqIGxpdmUgdXBkYXRlLi4uKS4N
-Cg0KRG8geW91IGhhdmUgYSByb3VnaCBzdWdnZXN0aW9uIGFib3V0IGhvdyBzaW1pbGFyIGNvdWxk
-IGJlIGRvbmUgd2l0aA0KaW9tbXVmZD8NCg0KSkcNCg0K
+
+
+> On Feb 7, 2024, at 3:12 PM, Zhipeng Lu <alexious@zju.edu.cn> wrote:
+>=20
+> If hfs_find_init succeeds but some other function called after it =
+fails,
+> the overall cleanup function of hfs_find_init (i.e. hfs_find_exit) =
+will
+> be called and `fd->search_key` is freed. However, if hfs_find_init =
+fails
+> and returns an error, neither external nor internal deallocation of
+> `fd->search_key` is triggered.
+>=20
+> This observation suggests that there could be a memleak problem in
+> hfs_find_init. In this patch, we add the missing deallocation in the
+> error-handling path (i.e. the default branch of the switch statement) =
+to
+> prevent such memory leak.
+>=20
+> Fixes: b3b2177a2d79 ("hfs: add lock nesting notation to =
+hfs_find_init")
+> Signed-off-by: Zhipeng Lu <alexious@zju.edu.cn>
+> ---
+> Changelog:
+>=20
+> v2: Improve commit message to be more clear.
+> v3: Update commit message.
+
+Looks good. Thanks a lot for reworking the comment section.
+
+Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
+
+Thanks,
+Slava.
+
+> ---
+> fs/hfs/bfind.c | 1 +
+> 1 file changed, 1 insertion(+)
+>=20
+> diff --git a/fs/hfs/bfind.c b/fs/hfs/bfind.c
+> index ef9498a6e88a..7aa3b9aba4d1 100644
+> --- a/fs/hfs/bfind.c
+> +++ b/fs/hfs/bfind.c
+> @@ -36,6 +36,7 @@ int hfs_find_init(struct hfs_btree *tree, struct =
+hfs_find_data *fd)
+> 		mutex_lock_nested(&tree->tree_lock, ATTR_BTREE_MUTEX);
+> 		break;
+> 	default:
+> +		kfree(fd->search_key);
+> 		return -EINVAL;
+> 	}
+> 	return 0;
+> --=20
+> 2.34.1
+>=20
+
+
 
