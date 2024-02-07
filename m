@@ -1,88 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-10672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F9C84D387
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 22:16:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A27E584D395
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 22:18:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA8DC1C21B1D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 21:16:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 551D328B2F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 21:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29A1012836E;
-	Wed,  7 Feb 2024 21:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D21128804;
+	Wed,  7 Feb 2024 21:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Q/YldqDE"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="MxI+RiKJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C370127B65
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 21:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994B112A178
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 21:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707340586; cv=none; b=YI9/DSn0uu3beYuk9vQFdZ7pdMNgvb5dJoz3WKXX2b2d+mwWuSO10PCevYN+or3bQWMekBp+clYvABNJW5gRoiK+epYAC3vsB4tyHJduSzUtltCpxhwJ82UkNPkJSsMVSwDNXrzxr3slbGiJ0mHHQsb8y9/n6k8qe+7f/9mqMLc=
+	t=1707340649; cv=none; b=nGHwlnVliX2jDJs6XQJlLAetLWSgMb5xlQMJNRJjCL6PxgY9PjyZ9TpdCaZ8wfBPvjWUSUShsd2N1y2dd1N3wlbP7PXLP6zgZx9pEuEz00UPPYP+6fm9YtwjB1BgWk7vk426/VmjmyqIrEMwEC2lRJFqqdf/A0Ba/leZ7jyWbZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707340586; c=relaxed/simple;
-	bh=w+fIBjPrK/nT6xuFbVQ1juBBDVb1ZDo31jplpYMA5n4=;
+	s=arc-20240116; t=1707340649; c=relaxed/simple;
+	bh=T6kV93mKmf951Vzyp+KxQ+jc4PnhbRAG5G4THdozP2I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e+iDkaSAtbIHV69TwBE5KJ5/OFGXetlPBxVwE72GqPj9v6IBdQgT/T2rL9GTcfbUHimQMMXfl3xNNBr9ZO9BcXdefQB95Bjk8OQUE6IPOFUJFYVbBwNJc9Ae9peTYKlqp7pb+Dh22ZIXfuad51Acq17xOcMkuI1tzVUAdb/slLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Q/YldqDE; arc=none smtp.client-ip=209.85.215.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=WiAp87MDDKnb0eHDlW87ODxevpXzvMoRRHBY0W/XaRuT9+VmmVL3RPTEBepxzMySCvaWc+ddQuuC0mDFycsV4VSNVvymGiUNn3jPRSKdD7ELQqzJrwU6htWWgGfWWDQ6YnfqkCeFKPcQodNLbar+aJcYERCmP1QGVtQ0pgOsEm0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=MxI+RiKJ; arc=none smtp.client-ip=209.85.215.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-5d4a1e66750so741219a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 13:16:24 -0800 (PST)
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-5cddfe0cb64so789244a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 13:17:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707340584; x=1707945384; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707340647; x=1707945447; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+Gqlkqgjh5mviyHn6MD8miUxLgv9IqeBU6I07NHmQEg=;
-        b=Q/YldqDEbY/bCM6JheFI9FpScrpdO78vVb50ro+eZbfSXo1YK7LE1RsrUMnMNTko8U
-         6m/Fz3A+JXA1Y4+YYuYdA7eQ9krWvg32mPwmMpWimR6Uy6n7vX4TPkdWkdILIw93Au5s
-         oSEzh5j28cdFrPI8PQR3934x//JWqcbLxe9MJTtCt4zKAHQrksVBUEYizrWWqJu5HQ6w
-         6eY4Wu1ggECX3O0Yg6RTHK9XE4y+7serA+adPVf5A+vsUb5FeDmSLdHuvKNyZBAwnxE/
-         Dfz4Tf4rlRUD9OwRnOWdNxzxg1n2hr3N1FUdexSIdprGmzT3fgD0Y0WSoJgp+03WdMwh
-         tDcw==
+        bh=qYBIK21HzGnWZExBGyokNysMH1sTVDfc/C3+Eg1xvkI=;
+        b=MxI+RiKJwA16FWbe/5irAiQHTp55jsnKVICfvys7vlLFSzzlR6jQWNDy/2DD283Uh7
+         RQQMPcn627xG9kNfcSGQll2TumOiJ8ovBmgQmEpuX7KEbUbEp/D2mmJF7+FujTascMVM
+         pRzx05MFrEd0ud1MmTAH80RgdEA0ax+9McIAOO+xqNOxvi/c1MIxbZgqObL1nekdV6oz
+         HbsTZqvxqOi3RcOoTHClpMnOO+lHneo39bMRDQbipV6GjTpmbpoMhAyhN+xeWMXwY4zX
+         aSG5kebQ6vFIIUIhyfjw50XNARGtxLKMMpUU3J1pwD5Uh6lUIFYUePcOv6kj+O9HKbPi
+         J1yQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707340584; x=1707945384;
+        d=1e100.net; s=20230601; t=1707340647; x=1707945447;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+Gqlkqgjh5mviyHn6MD8miUxLgv9IqeBU6I07NHmQEg=;
-        b=dLW1B39z/uY5xlfPFV5UR8u54F9C8zyseYn04uEx0tsbI4KaUPj318PuOANNnbScxQ
-         IOWn9ehyRAphjjsS241908SvT5tVFBLJ0oYcGJMNwcsyVxtKtutNpZ7OHerOXz1yx6lI
-         qPUPRGBCyhxyjCJ6EatsUtF64bMFGYlME+UuUNwvum5I+7MEzvZp1vE0BntUOpCOBY6I
-         RD9dK9/E72fPnAAZk/TsZwHfnLQqg/DtEz48rrtYL+ZLVLl9/q/PMdhjHp5JYP7PktBD
-         7Pg0r3qoYn9TUqT6JYStq3YI/D6S6zLiIYdH0U/XWh2hQ1lj29qg4SK40lz8G1WiUJTe
-         sUiA==
-X-Gm-Message-State: AOJu0Yxc2cPBBY1JEPfHp+RK5FLDNW9NNryvWW4gMrvACU46CYtUyQvN
-	UMLQ5RJUVBtdmh85D2ic8lSQYzcxl/0WZ1PrRhtJIjZIaMX36enXKDL8AFMV7ZM=
-X-Google-Smtp-Source: AGHT+IFePLqKUcwz7TT7inMgRHMqSnOOGtNeTkWD1Yt+i5WWwKtaMmhtffaSfHUiH8/oQpO8GTuxKQ==
-X-Received: by 2002:a05:6a20:3d0e:b0:19c:6a9c:2c76 with SMTP id y14-20020a056a203d0e00b0019c6a9c2c76mr7209700pzi.10.1707340584431;
-        Wed, 07 Feb 2024 13:16:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXb2OVOLLZHdGwuFn/U1Iyk1hXgiAvRmYL2Qd14d66VH8Ss+iP7b5sf0SgSU2ALeeGHpJkdpcAkeIXxqTtjEjZpwCfOPpqGAjuntcTs7iAcihTMjkRvZri8Qz2SNCEz518PVL3NyHcV2A8zvlPGCwzsblGKk908BMoVuCN+F9U0XAD/qDuOY/EXM1hf2sq1h6Wcqv8WBreHLeE6hxRbP0FuBLlS4Fdpyck5eKhRIbulRlLcS6uVl5CTj6/PPdY1CHCHHlf4eQV05tEmN8k3gSnVZ/+CpI51QcvjTCk8fnE7OpkZPz987nPyFjCh5z1D2KbLQxU3SK2D4DW9Dc5XWKPhjPDfebnXv7knUHwCH9VSHILvVjYdEQfDRFp4Dv8phRq0zgRTFp+1T1DMGaW7Fml3ZAemDTjV6CNpe6ugeMguOg==
+        bh=qYBIK21HzGnWZExBGyokNysMH1sTVDfc/C3+Eg1xvkI=;
+        b=XI2B5SanaWBDpshD93MSmPJeymHmJBWG7RQiH4WyCaTQw0i0C/2h34egeL7Qxb2E9g
+         ejcv88Um3OIFOUAB1XfrD7ZB2Pd8MMX5iLFNfoo45N+hWTHeo8LJw3QwLjH/PuLx6eU1
+         7unC8q1KxlGWnN8axxEuR5Mvo4jlDh+LShH+bN/a9fbvc8Pd/RWmx6gfrSeXxBT3ZoPc
+         AerKeLgEDi6nz6jNJ+0G/7PSQ1yo3o+B3R4aJrbX+atIn5UlmChdUlSUx/ZYJGD3I1cB
+         D+e0kycgxzoYjQpd4Q9uE1jty/vPlTgt692rE161TvKz+is55RTjXbw6eW6dqbGVNucR
+         hP7w==
+X-Forwarded-Encrypted: i=1; AJvYcCXTVt0N2XEX8ZspOmSPXoYjhYeWYF2DoHPOwPA+pxg8wmY8t1lG7/CNWO0HUwNMwIQSKYgb3Xx0/7Ukp716LfFF1sGIn5FMDLIwgCjrmg==
+X-Gm-Message-State: AOJu0Yy+ZfniBE+hhn5k0FNxWGL+Qo4enj2CECw2CaY0Coa+RewVp0hP
+	3/UbraJKbYxts56/JAq8uE/Bk59YH22fV5NpKW90ut3WJEOOvMgHS/ErTdw63AM=
+X-Google-Smtp-Source: AGHT+IHoJWVVv+JqNxN0VNInjFwkpKi7xk5dOeJOeNW6H909suS/a53dIiZArzCUk+U22lRCmNHaMA==
+X-Received: by 2002:a05:6a20:939e:b0:19e:6442:cdc with SMTP id x30-20020a056a20939e00b0019e64420cdcmr7333130pzh.11.1707340646965;
+        Wed, 07 Feb 2024 13:17:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVA8ChgLC9erGlb8IoIg46c+AmWLsCZ6xVaXloeeeQrbGlSWOEEG2Tjgxv7Y+UgNR6P/EjzewHTcNmkfdq11SLVQ4zGaTwYMqw25+W0+/3XZfuB8VJgngE/8kwnqPu6mwts8p0Y41tplFs87tFau5SFmnW5NblBmn9PCqP4Ph2eBBA1hwQwI9fuhQYmAYF6TSyppEzAoowwA57BV3K9bR2g4aDaejD5qAhqOB5VoLjT5FJ0R6AwRrhdYB3YNczRHdVDwzsimyS9wZyI4KmiEvqH97DlW9/2EW0RVWkoT+ZLYDr4JGpjGkqJu8KVt3CNS+SeQqZqulQMd00W0TGCrUhGxJm5/nFCC9ivHg==
 Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
-        by smtp.gmail.com with ESMTPSA id d20-20020a170903209400b001d8f111804asm1911449plc.113.2024.02.07.13.16.23
+        by smtp.gmail.com with ESMTPSA id t22-20020a056a00139600b006e04b47e17asm2099088pfg.214.2024.02.07.13.17.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 13:16:24 -0800 (PST)
+        Wed, 07 Feb 2024 13:17:26 -0800 (PST)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1rXpHJ-003R7L-1Z;
-	Thu, 08 Feb 2024 08:16:21 +1100
-Date: Thu, 8 Feb 2024 08:16:21 +1100
+	id 1rXpIK-003R8C-0T;
+	Thu, 08 Feb 2024 08:17:24 +1100
+Date: Thu, 8 Feb 2024 08:17:24 +1100
 From: Dave Chinner <david@fromorbit.com>
-To: syzbot <syzbot+9d0b0d54a8bd799f6ae4@syzkaller.appspotmail.com>
+To: syzbot <syzbot+53b443b5c64221ee8bad@syzkaller.appspotmail.com>
 Cc: axboe@kernel.dk, brauner@kernel.org, chandan.babu@oracle.com,
-	dchinner@redhat.com, djwong@kernel.org, ebiggers@kernel.org,
-	hch@lst.de, jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	sandeen@sandeen.net, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] WARNING: Reset corrupted AGFL on AG NUM. NUM
- blocks leaked. Please unmount and run xfs_repair.
-Message-ID: <ZcPzJWwhd++wGtd8@dread.disaster.area>
-References: <000000000000ffcb2e05fe9a445c@google.com>
- <00000000000053ecb50610bfb6f0@google.com>
+	dchinner@redhat.com, djwong@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] WARNING in xfs_bmapi_convert_delalloc
+Message-ID: <ZcPzZNStEgLX+bAq@dread.disaster.area>
+References: <0000000000001bebd305ee5cd30e@google.com>
+ <00000000000032f84a0610c46f89@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,9 +90,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <00000000000053ecb50610bfb6f0@google.com>
+In-Reply-To: <00000000000032f84a0610c46f89@google.com>
 
-On Tue, Feb 06, 2024 at 04:24:04PM -0800, syzbot wrote:
+On Tue, Feb 06, 2024 at 10:02:05PM -0800, syzbot wrote:
 > syzbot suspects this issue was fixed by commit:
 > 
 > commit 6f861765464f43a71462d52026fbddfc858239a5
@@ -102,23 +101,22 @@ On Tue, Feb 06, 2024 at 04:24:04PM -0800, syzbot wrote:
 > 
 >     fs: Block writes to mounted block devices
 > 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1110ad7be80000
-> start commit:   40f71e7cd3c6 Merge tag 'net-6.4-rc7' of git://git.kernel.o..
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12b0ad7be80000
+> start commit:   e8c127b05766 Merge tag 'net-6.6-rc6' of git://git.kernel.o..
 > git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7ff8f87c7ab0e04e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=9d0b0d54a8bd799f6ae4
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ab4537280000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=148326ef280000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=11e478e28144788c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=53b443b5c64221ee8bad
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a6f291680000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=116bc355680000
 > 
 > If the result looks correct, please mark the issue as fixed by replying with:
 > 
 > #syz fix: fs: Block writes to mounted block devices
 
-Hahahahahaha!
+For real? The test doesn't even open a mounted block device for
+writes...
 
-syzbot, you're drunk. Go home.
-
--Dave
+-Dave.
 -- 
 Dave Chinner
 david@fromorbit.com
