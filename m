@@ -1,308 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-10564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90D184C49C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 07:07:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE6A84C4E7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 07:19:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9F01F2567C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 06:07:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C2B51F26C08
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 06:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0751CD25;
-	Wed,  7 Feb 2024 06:07:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEA81CD31;
+	Wed,  7 Feb 2024 06:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t9puZH7V"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fd4ls4ap"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 938611CD19
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 06:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C00510788;
+	Wed,  7 Feb 2024 06:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707286041; cv=none; b=Nii08gWFE3jjLueS9B792UWOO1AZsaqT8/Jmmtfb1OqqmVkLJkx5HeQRf/eFvdFsF8EV8H9XM6x1oNdxNgdxsRILyGFvKoyDH70TsgD/uCGDC151q/1zeae+Flx/S5NZPs66bywQjwqbFwlsHfyDxIc9+yUNpL5f8F+sj3BVwao=
+	t=1707286776; cv=none; b=HBMY84p10kufaqfEyBar2sY2c/0ZQTwhz5/fQSKnPenvNRcv98Il3A2smtgrdnYpMsLfwFwC3gQemFjTrPzoPSGhN0cDeNJwNDbvC/S44lChGZnHIZYL0YPRB28WBMqJjggpNSQU47W5suKGqINj1tl88FrTWk7c0zvfMbiN8Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707286041; c=relaxed/simple;
-	bh=q0Mk42SfClBmXgR+mRwkON9QCrmzXvm/owjFOgsgmeA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Egkh5XfZBdrUh0QC0UpUB1sy7gNhTucqNR8AbU2SVJWPMpKlNdchX6+Lnbh1kPgLSTixOr+uRrxIYqDC231x1ejM6S/rFpp1KOY88TWzNX8Df1gFluhITfekMT48UQyBnTrvnNAZBshCpiFqc0t6T1UHXLajPb8rLygjqApMPAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t9puZH7V; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 7 Feb 2024 01:07:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1707286036;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rXdRa4zp6MzexystDTSFUKYrLZ3abbocWvQ9PBcVzwc=;
-	b=t9puZH7VCCTNvKi8fyuu0OUIYPAwmi2atp3W9rWCEA7SeHhZwSjVrfg08j0KTQcFyx/wnH
-	mWP82k2NrCnmp6JtnL031Osa7yvkTu8hXT4BD4ItYr+jXYavGClZAUIaBfSnLd7CsVEeZ1
-	mpiw53RuFpFXpQU839qROJwKRIGZqy4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Thomas Bertschinger <tahbertschinger@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, bfoster@redhat.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	wedsonaf@gmail.com
-Subject: Re: [PATCH RFC 3/3] bcachefs: introduce Rust module implementation
-Message-ID: <byanermjc6vyh373uswa5hhbnwcnv3uzgngcvrkbbp5kijr67q@t3g6ox35pnbt>
-References: <20240207055845.611710-1-tahbertschinger@gmail.com>
+	s=arc-20240116; t=1707286776; c=relaxed/simple;
+	bh=Zw+zuvVKn7BHCJYKlJtcd0VYWlBnyG3eURH4PJZTXzw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bCo9rUNhYbgunmCIClXYKtCjDf2oiN99hr7/d0SDqKl5LQGKgIfTkIkGiTtK0ycIqWoezjXluslHVYI7IelO6UIG5zHqLsh1qO07Y7B8/VCp59fAIsW3Zf4//FE1c/mNRhx1jIGWjPiKoNDI0IK5JrfkUTfxHIEx0YEjSB8Pf0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fd4ls4ap; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6818f3cf00aso1797006d6.0;
+        Tue, 06 Feb 2024 22:19:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707286774; x=1707891574; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fvxHz8UI4TMnELHil0IULsGrxG7+ElSx4mu4N8xJ1KA=;
+        b=Fd4ls4apCZLNIGOwhLeHBb2VwcCzFehgFsvZl2gGdO5Z4wWMs+G7HeWlBU5QLCLUgp
+         nlnwMwqUGlQge6/u9CZ1ttHeIM5/917tGheA/uHSWJJ39yUa/DMkfpdFkJjnHl2x1e/T
+         7IWqbu1VHX+iNuzHWSbHXrwCRWwfEW2JdPOxfMkaIdLmaUan8YkiryVPDz3KI7ciBxVx
+         ahwcsikcWnNTRjxt0sAsoaHUsrsU8XZfmJV4n099HQs35+YcggKWAYd+LPij3MhLB+Km
+         /L2VH88jnDB6W8jNLoGz7NBB0VUA3O/hX0IilysOxKUxWuUdakhBsCAJBNQfwtMIRQ3d
+         EAkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707286774; x=1707891574;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fvxHz8UI4TMnELHil0IULsGrxG7+ElSx4mu4N8xJ1KA=;
+        b=IBN4e9Tr686dGsBXUGw19tdKN5QfK9S3XFzhOoG2JV98xhMIVGVv1a5SMM6eQQ6RVO
+         hUPjmwN9p6gEdGXV9ygWr4f4p6DtkbNjppXWpfmL+OnuLbcgOEhHuMG67SiXRGOeKCla
+         Qzw8TrZEjjgM7jSs7w66zoUSPImfrr2672nGG/MXNGBFPEggoAnoz7fhrt8k4X8ozFad
+         grQHCTw+vVFI9BfsjZIWN16nGdLREkt5r6Q5JmcqbhQHwAshreqGBN4yyJEyWs82Xk44
+         5QRqFBKhvc+zlH111Tau4u2xhacow3oGIvJDoueDBtFB07X9XgeX/4vnvyfA8h6d80b/
+         t2Yw==
+X-Gm-Message-State: AOJu0YyXWIDoIUbIa8lTj3WZH5rt1khUbLzIF7HYnsOKhyVcJW/XOLRI
+	vmxfQHZYHSYRuxb7tm7lqwpFZLuFUM75C7S9lptH3KjsbMSYaAJsd9Lb71ydTnZtJgecedDW8Ka
+	FFXrCeAjeS+9SC50R2judd03ToP4=
+X-Google-Smtp-Source: AGHT+IHH+mNF5lXuZAsuSpyRHnUZd/EhrIFMnrt2+Dexy3XfE0zvOhtGwBQ6/SaFaAed8UpcWIeI6mjNX75zDlSZ560=
+X-Received: by 2002:ad4:5cc6:0:b0:68c:8775:7593 with SMTP id
+ iu6-20020ad45cc6000000b0068c87757593mr5861197qvb.12.1707286774036; Tue, 06
+ Feb 2024 22:19:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240207055845.611710-1-tahbertschinger@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20240206201858.952303-1-kent.overstreet@linux.dev>
+ <20240206201858.952303-3-kent.overstreet@linux.dev> <ZcKpSU9frvTUb2eq@dread.disaster.area>
+In-Reply-To: <ZcKpSU9frvTUb2eq@dread.disaster.area>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 7 Feb 2024 08:19:22 +0200
+Message-ID: <CAOQ4uxgMY+QeYGn5wH0N9GhJD1h-EWqrng99XxMtXXUCB8zL=g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/7] overlayfs: Convert to super_set_uuid()
+To: Dave Chinner <david@fromorbit.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 06, 2024 at 10:58:45PM -0700, Thomas Bertschinger wrote:
-> This patch uses the bcachefs bindgen framework to introduce a Rust
-> implementation of the module entry and exit functions. With this change,
-> bcachefs is now a Rust kernel module (that calls C functions to do most
-> of its work).
-> 
-> This is only if CONFIG_BCACHEFS_RUST is defined; the C implementation of
-> the module init and exit code is left around so that bcachefs remains
-> usable in kernels compiled without Rust support.
+On Tue, Feb 6, 2024 at 11:49=E2=80=AFPM Dave Chinner <david@fromorbit.com> =
+wrote:
+>
+> On Tue, Feb 06, 2024 at 03:18:50PM -0500, Kent Overstreet wrote:
+> > We don't want to be settingc sb->s_uuid directly anymore, as there's a
+> > length field that also has to be set, and this conversion was not
+> > completely trivial.
+> >
+> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> > Cc: Miklos Szeredi <miklos@szeredi.hu>
+> > Cc: Amir Goldstein <amir73il@gmail.com>
+> > Cc: linux-unionfs@vger.kernel.org
+> > ---
+> >  fs/overlayfs/util.c | 14 +++++++++-----
+> >  1 file changed, 9 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/fs/overlayfs/util.c b/fs/overlayfs/util.c
+> > index 0217094c23ea..f1f0ee9a9dff 100644
+> > --- a/fs/overlayfs/util.c
+> > +++ b/fs/overlayfs/util.c
+> > @@ -760,13 +760,14 @@ bool ovl_init_uuid_xattr(struct super_block *sb, =
+struct ovl_fs *ofs,
+> >                        const struct path *upperpath)
+> >  {
+> >       bool set =3D false;
+> > +     uuid_t uuid;
+> >       int res;
+> >
+> >       /* Try to load existing persistent uuid */
+> > -     res =3D ovl_path_getxattr(ofs, upperpath, OVL_XATTR_UUID, sb->s_u=
+uid.b,
+> > +     res =3D ovl_path_getxattr(ofs, upperpath, OVL_XATTR_UUID, uuid.b,
+> >                               UUID_SIZE);
+> >       if (res =3D=3D UUID_SIZE)
+> > -             return true;
+> > +             goto success;
+> >
+> >       if (res !=3D -ENODATA)
+> >               goto fail;
+> > @@ -794,14 +795,14 @@ bool ovl_init_uuid_xattr(struct super_block *sb, =
+struct ovl_fs *ofs,
+> >       }
+> >
+> >       /* Generate overlay instance uuid */
+> > -     uuid_gen(&sb->s_uuid);
+> > +     uuid_gen(&uuid);
+> >
+> >       /* Try to store persistent uuid */
+> >       set =3D true;
+> > -     res =3D ovl_setxattr(ofs, upperpath->dentry, OVL_XATTR_UUID, sb->=
+s_uuid.b,
+> > +     res =3D ovl_setxattr(ofs, upperpath->dentry, OVL_XATTR_UUID, uuid=
+.b,
+> >                          UUID_SIZE);
+> >       if (res =3D=3D 0)
+> > -             return true;
+> > +             goto success;
+>
+> This is a bit weird. Normally the success case is in line, and we
+> jump out of line for the fail case. I think this is more better:
+>
+>         if (res)
+>                 goto fail;
+> success:
+>         super_set_uuid(sb, uuid.b, sizeof(uuid));
+>         return true;
+> >
+> >  fail:
+> >       memset(sb->s_uuid.b, 0, UUID_SIZE);
+>
+> And then the fail case follows naturally.
+>
 
-so the module_init in Rust is an interesting test case, but - not much
-point in checking it in if we're not deleting code on the C side.
+I agree. Please use the label name
+set_uuid:
 
-Instead, have you looked at pulling the btree transaction layer bindings
-from -tools into the kernel? That was going to be my starting point;
-once we've got that there's a lot of code we'll be able to rewrite in
-Rust piecmeal (fsck, debugs, alloc_background.c - anything that
-primarily interacts with the transaction layer).
+Also the memset() in fail: case is not needed anymore, because
+with your change we do not dirty sb->s_uuid in this function.
 
-> 
-> Signed-off-by: Thomas Bertschinger <tahbertschinger@gmail.com>
-> ---
->  fs/bcachefs/Makefile                   |  3 ++
->  fs/bcachefs/bcachefs.h                 |  5 ++
->  fs/bcachefs/bcachefs_module.rs         | 66 ++++++++++++++++++++++++++
->  fs/bcachefs/bindgen_parameters         | 13 ++++-
->  fs/bcachefs/bindings/bindings_helper.h |  4 ++
->  fs/bcachefs/bindings/mod.rs            |  2 +
->  fs/bcachefs/super.c                    | 31 ++++++++++--
->  7 files changed, 120 insertions(+), 4 deletions(-)
->  create mode 100644 fs/bcachefs/bcachefs_module.rs
-> 
-> diff --git a/fs/bcachefs/Makefile b/fs/bcachefs/Makefile
-> index 3f209511149c..252810a4d9a0 100644
-> --- a/fs/bcachefs/Makefile
-> +++ b/fs/bcachefs/Makefile
-> @@ -89,8 +89,11 @@ bcachefs-y		:=	\
->  	varint.o		\
->  	xattr.o
->  
-> +bcachefs-$(CONFIG_BCACHEFS_RUST)	+= bcachefs_module.o
->  always-$(CONFIG_BCACHEFS_RUST)		+= bindings/bcachefs_generated.rs
->  
-> +$(obj)/bcachefs_module.o: $(src)/bindings/bcachefs_generated.rs
-> +
->  $(obj)/bindings/bcachefs_generated.rs: private bindgen_target_flags = \
->      $(shell grep -Ev '^#|^$$' $(srctree)/$(src)/bindgen_parameters)
->  
-> diff --git a/fs/bcachefs/bcachefs.h b/fs/bcachefs/bcachefs.h
-> index b80c6c9efd8c..3a777592bff4 100644
-> --- a/fs/bcachefs/bcachefs.h
-> +++ b/fs/bcachefs/bcachefs.h
-> @@ -1252,4 +1252,9 @@ static inline struct stdio_redirect *bch2_fs_stdio_redirect(struct bch_fs *c)
->  #define BKEY_PADDED_ONSTACK(key, pad)				\
->  	struct { struct bkey_i key; __u64 key ## _pad[pad]; }
->  
-> +#ifdef CONFIG_BCACHEFS_RUST
-> +int bch2_kset_init(void);
-> +void bch2_kset_exit(void);
-> +#endif
-> +
->  #endif /* _BCACHEFS_H */
-> diff --git a/fs/bcachefs/bcachefs_module.rs b/fs/bcachefs/bcachefs_module.rs
-> new file mode 100644
-> index 000000000000..8db2de8139bc
-> --- /dev/null
-> +++ b/fs/bcachefs/bcachefs_module.rs
-> @@ -0,0 +1,66 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! bcachefs
-> +//!
-> +//! Rust kernel module for bcachefs.
-> +
-> +pub mod bindings;
-> +
-> +use kernel::prelude::*;
-> +
-> +use crate::bindings::*;
-> +
-> +module! {
-> +    type: Bcachefs,
-> +    name: "bcachefs",
-> +    author: "Kent Overstreet <kent.overstreet@gmail.com>",
-> +    description: "bcachefs filesystem",
-> +    license: "GPL",
-> +}
-> +
-> +struct Bcachefs;
-> +
-> +impl kernel::Module for Bcachefs {
-> +    #[link_section = ".init.text"]
-> +    fn init(_module: &'static ThisModule) -> Result<Self> {
-> +        // SAFETY: this block registers the bcachefs services with the kernel. After succesful
-> +        // registration, all such services are guaranteed by the kernel to exist as long as the
-> +        // driver is loaded. In the event of any failure in the registration, all registered
-> +        // services are unregistered.
-> +        unsafe {
-> +            bch2_bkey_pack_test();
-> +
-> +            if bch2_kset_init() != 0
-> +                || bch2_btree_key_cache_init() != 0
-> +                || bch2_chardev_init() != 0
-> +                || bch2_vfs_init() != 0
-> +                || bch2_debug_init() != 0
-> +            {
-> +                __drop();
-> +                return Err(ENOMEM);
-> +            }
-> +        }
-> +
-> +        Ok(Bcachefs)
-> +    }
-> +}
-> +
-> +fn __drop() {
-> +    // SAFETY: The kernel does not allow cleanup_module() (which results in
-> +    // drop()) to be called unless there are no users of the filesystem.
-> +    // The *_exit() functions only free data that they confirm is allocated, so
-> +    // this is safe to call even if the module's init() function did not finish.
-> +    unsafe {
-> +        bch2_debug_exit();
-> +        bch2_vfs_exit();
-> +        bch2_chardev_exit();
-> +        bch2_btree_key_cache_exit();
-> +        bch2_kset_exit();
-> +    }
-> +}
-> +
-> +impl Drop for Bcachefs {
-> +    fn drop(&mut self) {
-> +        __drop();
-> +    }
-> +}
-> diff --git a/fs/bcachefs/bindgen_parameters b/fs/bcachefs/bindgen_parameters
-> index 547212bebd6e..96a63e3a2cc3 100644
-> --- a/fs/bcachefs/bindgen_parameters
-> +++ b/fs/bcachefs/bindgen_parameters
-> @@ -1,5 +1,16 @@
->  # SPDX-License-Identifier: GPL-2.0
->  
-> ---allowlist-function ''
-> +--allowlist-function bch2_bkey_pack_test
-> +--allowlist-function bch2_kset_init
-> +--allowlist-function bch2_btree_key_cache_init
-> +--allowlist-function bch2_chardev_init
-> +--allowlist-function bch2_vfs_init
-> +--allowlist-function bch2_debug_init
-> +--allowlist-function bch2_debug_exit
-> +--allowlist-function bch2_vfs_exit
-> +--allowlist-function bch2_chardev_exit
-> +--allowlist-function bch2_btree_key_cache_exit
-> +--allowlist-function bch2_kset_exit
-> +
->  --allowlist-type ''
->  --allowlist-var ''
-> diff --git a/fs/bcachefs/bindings/bindings_helper.h b/fs/bcachefs/bindings/bindings_helper.h
-> index f8bef3676f71..8cf3c35e8ca1 100644
-> --- a/fs/bcachefs/bindings/bindings_helper.h
-> +++ b/fs/bcachefs/bindings/bindings_helper.h
-> @@ -1,3 +1,7 @@
->  /* SPDX-License-Identifier: GPL-2.0 */
->  
->  #include "../bcachefs.h"
-> +#include "../btree_key_cache.h"
-> +#include "../chardev.h"
-> +#include "../fs.h"
-> +#include "../debug.h"
-> diff --git a/fs/bcachefs/bindings/mod.rs b/fs/bcachefs/bindings/mod.rs
-> index 19a3ae3c63c6..d1c3bbbd7b5a 100644
-> --- a/fs/bcachefs/bindings/mod.rs
-> +++ b/fs/bcachefs/bindings/mod.rs
-> @@ -1,3 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0
->  
-> +#![allow(missing_docs)]
-> +
->  include!("bcachefs_generated.rs");
-> diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
-> index da8697c79a97..343c4bc6e81c 100644
-> --- a/fs/bcachefs/super.c
-> +++ b/fs/bcachefs/super.c
-> @@ -69,9 +69,12 @@
->  #include <linux/sysfs.h>
->  #include <crypto/hash.h>
->  
-> +#ifndef CONFIG_BCACHEFS_RUST
-> +/* when enabled, the Rust module exports these modinfo attributes */
->  MODULE_LICENSE("GPL");
->  MODULE_AUTHOR("Kent Overstreet <kent.overstreet@gmail.com>");
->  MODULE_DESCRIPTION("bcachefs filesystem");
-> +#endif
->  MODULE_SOFTDEP("pre: crc32c");
->  MODULE_SOFTDEP("pre: crc64");
->  MODULE_SOFTDEP("pre: sha256");
-> @@ -2082,6 +2085,7 @@ struct bch_fs *bch2_fs_open(char * const *devices, unsigned nr_devices,
->  
->  /* Global interfaces/init */
->  
-> +#ifndef CONFIG_BCACHEFS_RUST
->  static void bcachefs_exit(void)
->  {
->  	bch2_debug_exit();
-> @@ -2109,6 +2113,30 @@ static int __init bcachefs_init(void)
->  	return -ENOMEM;
->  }
->  
-> +module_exit(bcachefs_exit);
-> +module_init(bcachefs_init);
-> +
-> +#else /* CONFIG_BCACHEFS_RUST */
-> +/*
-> + * bch2_kset_init() and bch2_kset_exit() are wrappers around the kset functions
-> + * to be called from the Rust module init and exit because there is not
-> + * currently a Rust API for ksets. If/when a Rust API is provided, these
-> + * wrappers can be removed and the Rust kernel module can use that directly.
-> + */
-> +int __init bch2_kset_init(void)
-> +{
-> +	bcachefs_kset = kset_create_and_add("bcachefs", NULL, fs_kobj);
-> +
-> +	return !bcachefs_kset;
-> +}
-> +
-> +void bch2_kset_exit(void)
-> +{
-> +	if (bcachefs_kset)
-> +		kset_unregister(bcachefs_kset);
-> +}
-> +#endif
-> +
->  #define BCH_DEBUG_PARAM(name, description)			\
->  	bool bch2_##name;					\
->  	module_param_named(name, bch2_##name, bool, 0644);	\
-> @@ -2119,6 +2147,3 @@ BCH_DEBUG_PARAMS()
->  __maybe_unused
->  static unsigned bch2_metadata_version = bcachefs_metadata_version_current;
->  module_param_named(version, bch2_metadata_version, uint, 0400);
-> -
-> -module_exit(bcachefs_exit);
-> -module_init(bcachefs_init);
-> -- 
-> 2.43.0
-> 
+Thanks,
+Amir.
 
