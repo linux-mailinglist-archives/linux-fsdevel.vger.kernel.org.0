@@ -1,54 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-10635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D72084CF9A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 18:16:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E45D84CFD7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 18:40:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 300DA28E8F1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 17:16:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC25A28AD73
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 17:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D26D823D8;
-	Wed,  7 Feb 2024 17:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969B98289F;
+	Wed,  7 Feb 2024 17:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wj1uLws0"
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="ElgKNZ5o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27A880C00;
-	Wed,  7 Feb 2024 17:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304CF82877
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 17:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707326162; cv=none; b=ez1GFrLS7eJ72jAW6YDw0kMI2ZDOcu3L6UK6hL8oPg1NEWoNdTjm8PatY5fPioCu9hQPBqvtvFDq9PkjumTuOGLDiv93U1mXtMNnaO4G9junp1xUE6syD3sBLm/laWWLzrlTXf6IeZbm6OBScUrEWpzlw7u8/f50hxZZWKt48jg=
+	t=1707327640; cv=none; b=cRO2DOVvWZIBSYDXl5rIgNGzLbEu/7uYfNU5EdkSxVNxbVAq6IK5+jzKyrV/DkkmNUfqsPC/Lw6szso0m0wsFnoDgWXsR1GRhjC+BkJMq2Np8w/Xh697RdauSQazWWqKVhA+xM/Pv9LeMkTHRO/694HUAbQRaIMYwHjKorRVvC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707326162; c=relaxed/simple;
-	bh=YEJtTqT8spDDKxLpGC2lvI8xDbQGR7mItvjQxB6zfts=;
+	s=arc-20240116; t=1707327640; c=relaxed/simple;
+	bh=rpxr7u3oQ1f9tEqbE9lXrYaJvrFwR/A74/ikjVgV3ZM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F8hGyyO9dtG1jx+VWnBEpaerEYs0rAqFHiGO8R8bvkjumT3HtrFgT0aAY2qAwArRCUoxSAmLG6ipN7K7s1BZ+9jLIx+b6XCE3ibkrlOBf8QjsdMVFQPTTAIVU8Xpk3c7lJyjwZMi2VeegOGqpOV9R4ZG8JaoWRzHKbfW1EYBiOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wj1uLws0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B482C433F1;
-	Wed,  7 Feb 2024 17:16:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707326161;
-	bh=YEJtTqT8spDDKxLpGC2lvI8xDbQGR7mItvjQxB6zfts=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wj1uLws0RC5NTlAAelSW0K6IgDYt7hiw+JS+k6T2vzM6OzXpxw7D1K7pfzQQtgAp7
-	 gOyJEAYvfCbaFNXKD476/2IAyYmRyPxZGa/sVTDqQ0w2u6zIIUEbkowN+jaO3GOK+m
-	 zzkjXYRuYcmqNnOYgdpDTG1JvU6UvHx0A4x1Da+ZWn2hkj59N3/HjRSzhav6TkICqg
-	 qyQP9gMoNJ4V+mHbKLjioF7InzSSQ9yzWcahc3fUHEUflqap4epCiX/jvSMHJG+9G5
-	 sD8r3ZJx/EFSPTVRJMW2kjx4SY9x1wN57tgmG6PC/pzyQv2PEHyI1VQymoHyrrI/i1
-	 Z5Qyi5Vv5QOsg==
-Date: Wed, 7 Feb 2024 09:16:00 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: lsf-pc <lsf-pc@lists.linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] tracing the source of errors
-Message-ID: <20240207171600.GC6226@frogsfrogsfrogs>
-References: <CAJfpegtw0-88qLjy0QDLyYFZEM7PJCG3R-mBMa9s8TNSVZmJTA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IWATgqOPHtMZS0WgCMLI6SA2xkHrg8KV021bE6rBA1q4yXNF2iBIi8BDa9ak1KBvmnaKIr6Ro0/JdnoFSoW+ZsDG7uPdmRrjTeO+35x10D15eMe0gFKy8MbhzdkWU2vk42nB/fSvgOQjtRTdxGDGaNQjNSnz80DvrhqwfIKu1F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=ElgKNZ5o; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from cwcc.thunk.org (pool-173-48-82-236.bstnma.fios.verizon.net [173.48.82.236])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 417HeA6o025052
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 7 Feb 2024 12:40:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1707327611; bh=r9d+Doi+WOPExniXtR89NcGFZiyjO8sS0Kv850JhT+s=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=ElgKNZ5oonmgRLpIzI3lEjYU0M4Q1AG+KxP3Hn5nZrqGeeOyYIQI//NCsu4L21v9R
+	 i/CWDGDO5QJVbhWmAExjfUSsBfRYu71xyN6qi1miw0pzrzhkot8MVXaaxpK5cvTaMT
+	 uUwJpI2inNyLu3pyywvD8/q3vc21Ngn6Zvv2XGnA3KKFlaM3WBQt/3+Eah95gvpxcS
+	 qaGB/DG0mgkdEmYoL0AZp0X7Mh91UK8ZNfj2DTY/wYFmbJf9bUIjRKe1B3fJOuCdhP
+	 BrsNXho4czpGFJL6BTsOOp6m8uxNgSiY+0fbT9ddo3IYeV9Y2N6jZPebI8LM/JKURg
+	 qBZxnLbQDEYYQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+	id C74A215C02FD; Wed,  7 Feb 2024 12:40:09 -0500 (EST)
+Date: Wed, 7 Feb 2024 12:40:09 -0500
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] filesystem visibililty ioctls
+Message-ID: <20240207174009.GF119530@mit.edu>
+References: <20240206201858.952303-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,69 +64,24 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegtw0-88qLjy0QDLyYFZEM7PJCG3R-mBMa9s8TNSVZmJTA@mail.gmail.com>
+In-Reply-To: <20240206201858.952303-1-kent.overstreet@linux.dev>
 
-On Wed, Feb 07, 2024 at 10:54:34AM +0100, Miklos Szeredi wrote:
-> [I'm not planning to attend LSF this year, but I thought this topic
-> might be of interest to those who will.]
+On Tue, Feb 06, 2024 at 03:18:48PM -0500, Kent Overstreet wrote:
+> previous:
+> https://lore.kernel.org/linux-fsdevel/20240206-aufwuchs-atomkraftgegner-dc53ce1e435f@brauner/T/
 > 
-> The errno thing is really ancient and yet quite usable.  But when
-> trying to find out where a particular EINVAL is coming from, that's
-> often mission impossible.
+> Changes since v1:
+>  - super_set_uuid() helper, per Dave
 > 
-> Would it make sense to add infrastructure to allow tracing the source
-> of errors?  E.g.
-> 
-> strace --errno-trace ls -l foo
-> ...
-> statx(AT_FDCWD, "foo", ...) = -1 ENOENT [fs/namei.c:1852]
-> ...
-> 
-> Don't know about others, but this issue comes up quite often for me.
-> 
-> I would implement this with macros that record the place where a
-> particular error has originated, and some way to query the last one
-> (which wouldn't be 100% accurate, but good enough I guess).
+>  - nix FS_IOC_SETUUID - Al raised this and I'm in 100% agreement,
+>    changing a UUID on an existing filesystem is a rare operation that
+>    should only be done when the filesystem is offline; we'd need to
+>    audit/fix a bunch of stuff if we wanted to support this
 
-Hmmm, weren't Kent and Suren working on code tagging for memory
-allocation profiling?  It would be kinda nice to wrap that up in the
-error return paths as well.
+NAK.  First, this happens every single time a VM in the cloud starts
+up, so it happens ZILLIONS of time a day.  Secondly, there is already
+userspace programs --- to wit, tune2fs --- that uses this ioctl, so
+nixing FS_IOC_SETUUID will break userspace programs.
 
-Granted then we end up with some nasty macro mess like:
-
-[Pretend that there's a struct errno_tag, DEFINE_ALLOC_TAG, and
-__alloc_tag_add symbols that looks mostly like struct alloc_tag from [1]
-and then (backslashes elided)]
-
-#define Err(x)
-({
-	int __errno = (x);
-	DEFINE_ERRNO_TAG(_errno_tag);
-
-	trace_return_errno(__this_address, __errno)
-	__errno_tag_add(&_errno_tag, __errno);
-	__errno;
-})
-
-	foo = kmalloc(...);
-	if (!foo)
-		return Err(-ENOMEM);
-
-or
-
-	if (fs_is_messed_up())
-		return Err(-EINVAL);
-
-This would get us the ability to ftrace for where errno returns
-initiate, as well as collect counters for how often we're actually
-doing that in production.  You could even add time_stats too, but
-annotating the entire kernel might be a stretch.
-
---D
-
-[1] https://lwn.net/Articles/906660/
-
-> Thanks,
-> Miklos
-> 
+							- Ted
 
