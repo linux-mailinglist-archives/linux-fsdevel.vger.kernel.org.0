@@ -1,160 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-10625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C0684CE52
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 16:44:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD49A84CE6A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 16:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DEB31C23105
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 15:44:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CDF61F26DA9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 15:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7C48062A;
-	Wed,  7 Feb 2024 15:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3958060E;
+	Wed,  7 Feb 2024 15:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LFw9oKbh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4roDxo8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22B180056
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 15:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F369E7FBD9;
+	Wed,  7 Feb 2024 15:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707320637; cv=none; b=ZJYT0JeHBhxma6coe961CKI/ejlueKvawi91eQlkKesuiH1yZVPMB8yGpaDkfi/bXTow58nPApSLbKgNk2QbGUgdc2qNH/KX3ywMQ1xAKfDYgKCMM5/vGFf1f2n4/xfUB+BSHy05DFSMX00C+p5lNi6UazJBfwmL7KAfSgkPFNQ=
+	t=1707321125; cv=none; b=rzwMcSxkdI+S6o7jSrlyGaRsuUGKS+LIRyTghzFY5ueqVs2BWzoiDv/OdiIiYonA7dFyyWo5dvsf2kESW3B5ZGfmM/iGZh84/wZS/lU1ajEedyWdWnzlxWppNXIUW3QO20I1C5EUJnSYvvbcWF0TKiKSnC/c1BzJbHXLeEszP2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707320637; c=relaxed/simple;
-	bh=0vxjX47B6ZgpdmiW7EVKqCFH/j69PxaUc08wp4q8im8=;
+	s=arc-20240116; t=1707321125; c=relaxed/simple;
+	bh=/1x7h2DpHjWcd/k76A8g5THiTurxMbwv+SYlEW+93sc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UFurMnCOjAuAYqxvx5SrqaoQSlfb2i18BLSQxAEebcXIGUqgg8GlRUhP1XE2lUbrrjVkHxxpbZLfyYF3/Jo6p2TYobC++iwpKyb0wizTdgjpuW7ZawJHaP92KScPLbteFt3mdyTSn4D7vfNYfPR5RXWWrBQr1WYrTGiAgGpdIv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LFw9oKbh; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3bda4bd14e2so699417b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 07:43:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1707320634; x=1707925434; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fT7OrhiRuIZhNQcmagLUCZ3268l7RImx+viDE+2dBHY=;
-        b=LFw9oKbh2lMPICDhaQyxT7pKPlavYRiL/Arlh0g7UTbkmB49L4DnCwYdJbT5m+CHle
-         19jOhg/eeC+/hlNcLEpMyGSL8CB1tYivigS0KVsO5Msllav3KxkA2b03joaxYwmto723
-         oFigIKI5waEKkAGVZm8OJizZRptX8YVHaLEII=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707320634; x=1707925434;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fT7OrhiRuIZhNQcmagLUCZ3268l7RImx+viDE+2dBHY=;
-        b=LO8N3QCATRzSzcsPBYDFL+5B6nNSjCCNFxuVVn2yUeQ4hBcZskydfglAT7P99kHMu7
-         9G6J0XVwbqwX4Eh/6nfAZxe/KOoSsiwFMtwwjZ6vKKkaKC9xalbpXPBCwQdX/JVyCpm0
-         JDjttdZzr5Cddh6hQH9nw+HCpzve8jk9iX6xrvc5CAN2DOSwq8IlKpzJj0K1/E8ynbDm
-         7oLBwrYKKV9AVydcoAcdnhZngokMCe3u/1SkFbII6zT2UOR4XNhVTPebw/DluhLO9ETh
-         RboSzF6YzeWvGFnfkaR4OQA43ILp5CQLZeYaIJbk80768xheAmuKYM9iPDvIbHDgTK+s
-         c1nw==
-X-Gm-Message-State: AOJu0YyWC6M5QgYQ1tQiMAqQ9IWGGgs/KkSV65qDFJDP8cQZ/9t+hb+B
-	UofARpGcVe12vnH4HiR3s7cdbaLSHan8SCRKn93rqPyJhF3ZA1azwCdva+f3Ww==
-X-Google-Smtp-Source: AGHT+IF396kKk0rdy004VVPYDuPYv9DwxzXoOR6Kvm9ziqiHthI/RUMfDBLMi4vfaoIZ2sbm9RevTQ==
-X-Received: by 2002:a05:6808:f8b:b0:3bf:ede4:9a57 with SMTP id o11-20020a0568080f8b00b003bfede49a57mr1838228oiw.27.1707320633877;
-        Wed, 07 Feb 2024 07:43:53 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU3PuW6ws9JWC7eVxAlbqXnDHKSk0P2YmIzFI97ctOQmNTs+74DKsJKO4wYGBbGfO42/jRaojmBW5kV4n2FT4d0tr8kH7r4aQUxMEmIK9FSpzX0+pIMCA15w2h9wknJ03TotrXxVbFLDDJMb3tAR9UBjBQ1lm3zQBDxElQLAnLBo/q7iMfJqxCY2fmPncMLgWFvGjIAikLYHUGWVzwlMWYm3vHqlpF/gcN/FnIldLYt0SP7xo1Z2wH1mPSDaOXCGzltp29+grXhTvd+rvan/N/uNyiAlByd2IkHMNf8nbgttrAyvF0AHMlcB0xUerECuwe2T0UC7sguw0Id8vwFxFwXiSEbTTEOxQmlnfedeEq8E4MuJEWbwVUt6ROZfmwaV08Ju508ne3sow==
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id o26-20020a629a1a000000b006e0521c2156sm1834465pfe.173.2024.02.07.07.43.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 07:43:53 -0800 (PST)
-Date: Wed, 7 Feb 2024 07:43:52 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module <linux-security-module@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] LSM: add security_execve_abort() hook
-Message-ID: <202402070740.CFE981A4@keescook>
-References: <8fafb8e1-b6be-4d08-945f-b464e3a396c8@I-love.SAKURA.ne.jp>
- <999a4733-c554-43ca-a6e9-998c939fbeb8@I-love.SAKURA.ne.jp>
- <202402070622.D2DCD9C4@keescook>
- <CAHC9VhTJ85d6jBFBMYUoA4CrYgb6i9yHDC_tFce9ACKi7UTa6Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q6hng+cGwy959ErJkpp6V5JzKjivlCDbLsPZ4feC9upV8jiSDOZlxwE8ClUV9Zj7zNhF14PwfG3SOHaDr/hg3vsuxuZgI5RKUDKlRN9/O3/VErZ1PpqJ8sboLE9DzqFKfRCRS7BB8MdDX8QLurUbfXGD1mPn87+HQH2sz3QxcA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4roDxo8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D9B4C43394;
+	Wed,  7 Feb 2024 15:52:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707321123;
+	bh=/1x7h2DpHjWcd/k76A8g5THiTurxMbwv+SYlEW+93sc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S4roDxo8tVqC2GezTlb3cfXFcp6weQcwLaiGZmdf1pdhhuOhtMsuGhDXsDCMV8GbO
+	 RLxAo3vtpqHJdWUBeO1ZdBUc+YJEiBqPKnzeW10gKgdzx5yAj262qNEjatFr2oewA5
+	 U96gkG8+cuJWYr/hLXC31VNHfddrz7/y70HWgLAxw3ppS44aI4YAdO6JffVBmwOlG8
+	 XU9HW6HuV+8zPXv4xQ3gBEg6Ps5noXk7cufMK2v4qV4yePWova47vaD8FNN7s7EdTb
+	 NB9oCYbsmwivsZGgDOIpD/iQoZTqpkGenaDhqgpVnREaQgX0b1oUD9pyX7pTlppedD
+	 uLYLbPbnYYeQg==
+Date: Wed, 7 Feb 2024 17:51:44 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-nvme@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] Reclaiming & documenting page flags
+Message-ID: <ZcOnEGyr6y3jei68@kernel.org>
+References: <Zbcn-P4QKgBhyxdO@casper.infradead.org>
+ <Zb9pZTmyb0lPMQs8@kernel.org>
+ <ZcACya-MJr_fNRSH@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTJ85d6jBFBMYUoA4CrYgb6i9yHDC_tFce9ACKi7UTa6Q@mail.gmail.com>
+In-Reply-To: <ZcACya-MJr_fNRSH@casper.infradead.org>
 
-On Wed, Feb 07, 2024 at 10:21:07AM -0500, Paul Moore wrote:
-> On Wed, Feb 7, 2024 at 9:24 AM Kees Cook <keescook@chromium.org> wrote:
-> >
-> > On Sat, Feb 03, 2024 at 07:52:54PM +0900, Tetsuo Handa wrote:
-> > > A regression caused by commit 978ffcbf00d8 ("execve: open the executable
-> > > file before doing anything else") has been fixed by commit 4759ff71f23e
-> > > ("exec: Check __FMODE_EXEC instead of in_execve for LSMs") and commit
-> > > 3eab830189d9 ("uselib: remove use of __FMODE_EXEC"). While fixing this
-> > > regression, Linus commented that we want to remove current->in_execve flag.
-> > >
-> > > The current->in_execve flag was introduced by commit f9ce1f1cda8b ("Add
-> > > in_execve flag into task_struct.") when TOMOYO LSM was merged, and the
-> > > reason was explained in commit f7433243770c ("LSM adapter functions.").
-> > >
-> > > In short, TOMOYO's design is not compatible with COW credential model
-> > > introduced in Linux 2.6.29, and the current->in_execve flag was added for
-> > > emulating security_bprm_free() hook which has been removed by introduction
-> > > of COW credential model.
-> > >
-> > > security_task_alloc()/security_task_free() hooks have been removed by
-> > > commit f1752eec6145 ("CRED: Detach the credentials from task_struct"),
-> > > and these hooks have been revived by commit 1a2a4d06e1e9 ("security:
-> > > create task_free security callback") and commit e4e55b47ed9a ("LSM: Revive
-> > > security_task_alloc() hook and per "struct task_struct" security blob.").
-> > >
-> > > But security_bprm_free() hook did not revive until now. Now that Linus
-> > > wants TOMOYO to stop carrying state across two independent execve() calls,
-> > > and TOMOYO can stop carrying state if a hook for restoring previous state
-> > > upon failed execve() call were provided, this patch revives the hook.
-> > >
-> > > Since security_bprm_committing_creds() and security_bprm_committed_creds()
-> > > hooks are called when an execve() request succeeded, we don't need to call
-> > > security_bprm_free() hook when an execve() request succeeded. Therefore,
-> > > this patch adds security_execve_abort() hook which is called only when an
-> > > execve() request failed after successful prepare_bprm_creds() call.
-> > >
-> > > Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> >
-> > This looks good to me.
-> >
-> > Given this touches execve and is related to the recent execve changes,
-> > shall I carry this in the execve tree for testing and send a PR to Linus
-> > for it before v6.8 releases?
-> >
-> > There's already an Ack from Serge, so this seems a reasonable way to go
-> > unless Paul would like it done some other way?
+On Sun, Feb 04, 2024 at 09:34:01PM +0000, Matthew Wilcox wrote:
+> On Sun, Feb 04, 2024 at 11:39:33AM +0100, Mike Rapoport wrote:
+> > On Mon, Jan 29, 2024 at 04:32:03AM +0000, Matthew Wilcox wrote:
+> > > Our documentation of the current page flags is ... not great.  I think
+> > > I can improve it for the page cache side of things; I understand the
+> > > meanings of locked, writeback, uptodate, dirty, head, waiters, slab,
+> > > mlocked, mappedtodisk, error, hwpoison, readahead, anon_exclusive,
+> > > has_hwpoisoned, hugetlb and large_remappable.
+> > > 
+> > > Where I'm a lot more shaky is the meaning of the more "real MM" flags,
+> > > like active, referenced, lru, workingset, reserved, reclaim, swapbacked,
+> > > unevictable, young, idle, swapcache, isolated, and reported.
+> > > 
+> > > Perhaps we could have an MM session where we try to explain slowly and
+> > > carefully to each other what all these flags actually mean, talk about
+> > > what combinations of them make sense, how we might eliminate some of
+> > > them to make more space in the flags word, and what all this looks like
+> > > in a memdesc world.
+> > > 
+> > > And maybe we can get some documentation written about it!  Not trying
+> > > to nerd snipe Jon into attending this session, but if he did ...
+> > 
+> > I suspect Jon will be there anyway, but not sure he'd be willing to do the
+> > writing :)
+> > 
+> > I was going to propose the "mm docs" session again, but this one seems more
+> > useful than talking yet again about how hard it is to get MM documentation
+> > done.
 > 
-> Please hold off on this Kees (see my email from yesterday), I'd prefer
-> to take this via the LSM tree and with the immediate regression
-> resolved I'd prefer this go in during the upcoming merge window and
-> not during the -rcX cycle.  Or am I misunderstanding things about the
-> state of Linus' tree currently?
+> I'm doing my best to write documentation as I go.  I think we're a bit
+> better off than we were last year.  Do we have scripts to tell us which
+> public functions (ie EXPORT_SYMBOL and static inline functions in header
+> files) have kernel-doc?  And could we run them against kernels from, say,
+> April 2023, 2022, 2021, 2020, 2019 (and in two months against April 2024)
+> and see how we're doing in terms of percentage undocumented functions?
 
-My understanding was that TOMOYO is currently broken in Linus's tree. If
-that's true, I'd like to make sure it gets fixed before v6.8 is
-released.
+We didn't have such script, but it was easy to compare "grep
+EXPORT_SYMBOL\|static inline" with ".. c:function" in kernel-doc.
+We do improve slowly, but we are still below 50% with kernel-doc for
+EXPORT_SYMBOL functions and slightly above 10% for static inlines.
 
-If it's working okay, then sure, that's fine to wait. :)
+Although with static inlines it's quite possible that the percentage of
+actual public API documentation is higher because some of the functions in
+inlcude/linux/ are only used inside mm.
 
--Kees
+There are also APIs that are not EXPORT_SYMBOL, but I didn't find an easy
+way to check how well there are documented.
+
+EXPORT_SYMBOL
+version     	funcs	docs	percent
+v5.0        	514	177	34
+v5.6        	538	208	38
+v5.12       	550	209	38
+v5.17       	580	228	39
+v6.3        	580	235	40
+v6.8-rc1    	565	238	42
+
+static inline
+version     	funcs	docs	percent
+v5.0        	581	33	5
+v5.6        	596	41	6
+v5.12       	629	42	6
+v5.17       	746	74	9
+v6.3        	867	95	10
+v6.8-rc1    	944	116	12
+
+ 
+> There's also the problem of getting long-form documentation done.
+> But I think that's a different problem from getting kernel-doc written.
+> Looking at the 55 commits in the last year to Documentation/mm, we seems
+> to be doing a pretty good job of keeping the documentation we have up
+> to date.  Just not a great job of adding new documentation.
+
+I agree that long-form documentation is a different problem from getting
+kernel-doc written and we are not doing a great job in writing new
+documentation.
 
 -- 
-Kees Cook
+Sincerely yours,
+Mike.
 
