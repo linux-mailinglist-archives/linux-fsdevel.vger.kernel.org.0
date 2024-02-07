@@ -1,102 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-10682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AAB484D5B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 23:19:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76DD484D5C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 23:23:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C62ED1C25B6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 22:19:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33A3D28543C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 22:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9841EA72;
-	Wed,  7 Feb 2024 22:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1CB149DF3;
+	Wed,  7 Feb 2024 22:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="i9EdvZpE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rWLYDSc1";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kfv3f70U";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="+iWRhUIA"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="gKN7KGCY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B57149DE8;
-	Wed,  7 Feb 2024 22:18:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9A31CFA9
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 Feb 2024 22:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707344340; cv=none; b=bdhoOlgZSMAwor/ObxniBHh3H2kqbT6Pi6CMBYdkht8MQB7dE+upXnG+SXd21/i15PZX7Qgu0Fcebig6kOT0NJAy82CK5OELSWrWX+d1NLmjHsom/9sRzk+AVQvQ4GDdQAoVtG5eUnHEvDWUSmD7wrHOx6YTisMZfq8xoFPFWHg=
+	t=1707344574; cv=none; b=jesvl7NwuX3UHubZuxHfdqC4R05imzPPNXb4/BXALLGFlE2pVcuSGmdyHdfVbOLIB+DWB+vE/Y/Bs4yCt6zxbUe35Dwf4D3ddQhs6aQWhPwk5iO49D3NZle4Zng9nu5+ujAZWPDTXJacR2pTmD3xmIaGpbE7CKhiWeF/lQ2IAlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707344340; c=relaxed/simple;
-	bh=bx+KURCYSGlETV+r29jDrgPWZ+/PJ7n49T3tpO3jhKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K8GNTtPwNgSqmiM1Kiu3Uw77IgQB9SXh4jNrvktjdPoqXtVZ4eiA2PByyx5ZvlWja9zm3bL/XZ5C/obVWQ+ornFGrz8kOvGAXa1a4X48fNw9MFZ3ODNsTiUSJCKIvVfzGCUNBvWx7yuvFtkwulBWADG4gPN6l0QUR8WNT/BUHWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=i9EdvZpE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rWLYDSc1; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kfv3f70U; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=+iWRhUIA; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CFD732220A;
-	Wed,  7 Feb 2024 22:18:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707344336; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=goluLwcuX68TlGMIeX0uo6uwWYziPKeRnES2FOv7XD8=;
-	b=i9EdvZpE4brZX7uKo4nWXIlUAMiTu1g8s/GapJXkzjSPCT0IMWkIBbD0XjnIn234X7nXXU
-	+rRaF7HaNKFO4Zvi+heGJ5nblKhJUL0HEkU5SCp8KW5e3iW+GmT6i8GVNV2Hhi4eyHa94y
-	X5QxfOBJ/ALQfJ4c2norfz8JUT67wcY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707344336;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=goluLwcuX68TlGMIeX0uo6uwWYziPKeRnES2FOv7XD8=;
-	b=rWLYDSc1KHvbg0Y/VXyqlOwP9wHlTbzxiOVr2rfPbI5Ku5jRH3JX5T9y5Hd+iQWM0Dl1cy
-	w6YDf1+Oj9+hmzCQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707344334; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=goluLwcuX68TlGMIeX0uo6uwWYziPKeRnES2FOv7XD8=;
-	b=kfv3f70UJdkswQswPkgWSVlK7JsruYEFaOGhCm9aPBKozXsIv68GCbciMbNx7y5TY0d+0c
-	prkIhLT7H4dWKnCTEY/jIn8hJMzqr7MyTEanFIQp/8IWJyaNCiPz4EvMjXAMcw099/nUU3
-	eK/rS52dGm7RlBmW6y3yzBjGOZ3Ob0g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707344334;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=goluLwcuX68TlGMIeX0uo6uwWYziPKeRnES2FOv7XD8=;
-	b=+iWRhUIAaw/CTSPN3xRgqLOKiY+xPI13THkHsy9on96k1Epo0A17MmiJSO3HbT1311BOlz
-	AgXfRsvrQjJ5inCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BDEE71326D;
-	Wed,  7 Feb 2024 22:18:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RLhYLs4BxGUfJQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 07 Feb 2024 22:18:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 5F0BFA0809; Wed,  7 Feb 2024 23:18:50 +0100 (CET)
-Date: Wed, 7 Feb 2024 23:18:50 +0100
-From: Jan Kara <jack@suse.cz>
-To: Dave Chinner <david@fromorbit.com>
-Cc: syzbot <syzbot+53b443b5c64221ee8bad@syzkaller.appspotmail.com>,
-	axboe@kernel.dk, brauner@kernel.org, chandan.babu@oracle.com,
-	dchinner@redhat.com, djwong@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] WARNING in xfs_bmapi_convert_delalloc
-Message-ID: <20240207221850.hrqrnra4bkgjsqbg@quack3>
-References: <0000000000001bebd305ee5cd30e@google.com>
- <00000000000032f84a0610c46f89@google.com>
- <ZcPzZNStEgLX+bAq@dread.disaster.area>
+	s=arc-20240116; t=1707344574; c=relaxed/simple;
+	bh=Q1ZnclMUkWeKZLEbIuC4uq7gXp37yDU3MUx+Y70Hs2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OwhmIU6qYjzXhzx2hYW6PQk/jb3cPrgu2e1a926DSdImnQWasOXJv10jYtJ0bafhBeGDFDp67WBcP448xsCX0iLypoNh1HZzZnn7xy9i4oYtUoL85NWFR/ff/3siZaQ1tskeIU/Z7gGjyaRHaD8QKrKFub4Bc6Uu7IRIMEdzBVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=gKN7KGCY; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=96TPxCOQZwTkyLWVnLUX+mBG9RHYJgjY0f/4wjeTl7M=; b=gKN7KGCY3CSrB1pak7byljeOU8
+	vufcpNYERL4ZjqGYSZE+rB4x1mRbLvyIOqH7e4qYn3L95ue5J8GPpByTV54JdEcWqyURQd7UNXsVW
+	YfD898NzHAN3Vfi74BQcCHFZKSUFgjO2byr+91TaQYOLUzxPphoAQHRC2diecyj3JFRTG9yOrnJ1L
+	skF6iR2vd1t7wqLWuM3pJ8R4LOfB8HOHizocMwZdMYWN7iz9m5IXmhAqSOFdnmvzgTcCETo+zc5eQ
+	XKzMu50gGv28XqEHi4ashUL6OKCAryh/Wws+cTut6LRSLh/z0RbA0vKWEBXvsoTQE4o5oPYcrcKH9
+	h3KizWHQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rXqJc-002zWH-2e;
+	Wed, 07 Feb 2024 22:22:48 +0000
+Date: Wed, 7 Feb 2024 22:22:48 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>
+Subject: [RFC] ->d_name accesses
+Message-ID: <20240207222248.GB608142@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,74 +60,77 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZcPzZNStEgLX+bAq@dread.disaster.area>
-X-Spam-Level: *
-X-Spamd-Bar: +
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=kfv3f70U;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=+iWRhUIA
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [1.49 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 TO_DN_SOME(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.00)[30.60%];
-	 SUBJECT_HAS_QUESTION(0.00)[];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=11e478e28144788c];
-	 TAGGED_RCPT(0.00)[53b443b5c64221ee8bad];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[12];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,syzkaller.appspot.com:url,suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Score: 1.49
-X-Rspamd-Queue-Id: CFD732220A
-X-Spam-Flag: NO
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu 08-02-24 08:17:24, Dave Chinner wrote:
-> On Tue, Feb 06, 2024 at 10:02:05PM -0800, syzbot wrote:
-> > syzbot suspects this issue was fixed by commit:
-> > 
-> > commit 6f861765464f43a71462d52026fbddfc858239a5
-> > Author: Jan Kara <jack@suse.cz>
-> > Date:   Wed Nov 1 17:43:10 2023 +0000
-> > 
-> >     fs: Block writes to mounted block devices
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12b0ad7be80000
-> > start commit:   e8c127b05766 Merge tag 'net-6.6-rc6' of git://git.kernel.o..
-> > git tree:       upstream
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=11e478e28144788c
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=53b443b5c64221ee8bad
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14a6f291680000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=116bc355680000
-> > 
-> > If the result looks correct, please mark the issue as fixed by replying with:
-> > 
-> > #syz fix: fs: Block writes to mounted block devices
-> 
-> For real? The test doesn't even open a mounted block device for
-> writes...
+	There are very few places that legitimitely can do stores to
+dentry->d_name.  Basically, it's dentry creation and d_move() guts.
+Unforutunately, there is a _lot_ of places where we access ->d_name -
+every ->lookup(), ->create(), ->unlink(), etc. instances has to do
+just that - that's how the directory entry name is passed to those.
 
-I was also confused by this. Somehow this commit makes the reproducer stop
-working but I have no idea how that's possible.
+	Verifying that nobody is playing silly buggers with ->d_name
+contents take, IME, several hours of code audit.  And that has to
+be repeated every cycle.  Compiler is no help there - it's grep over
+the tree, exclude the irrelevant hits (struct dirent has a field
+with that name, so does e.g. UFS directory entry, etc.) and looking
+through the 900-odd places that remain after that.  Not fun, to
+put it politely.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+	One way to do that would be to replace d_name with
+	union {
+		const struct qstr d_name;
+		struct qstr __d_name;
+	};
+and let the the places that want to modify it use __d_name.
+Tempting, but the thing that makes me rather nervous about this
+approach is that such games with unions are straying into
+the nasal demon country (C99 6.7.3[5]), inviting the optimizers
+to play.  Matt Wilcox pointed out that mainline already has
+i_nlink/__i_nlink pair, but...  there are fewer users of those
+and the damage from miscompiles would be less sensitive.
+Patch along those lines would be pretty simple, though.
+
+	There's an alternative way to get rid of that headache
+that ought to be safer:
+
+* add an inlined helper,
+static inline const struct qstr *d_name(const struct dentry *d)
+{
+	return &d->d_name;
+}
+
+* gradually convert the accesses to ->d_name to calls of that helper -
+e.g.
+	ret = udf_fiiter_find_entry(dir, &dentry->d_name, &iter);
+becoming
+	ret = udf_fiiter_find_entry(dir, d_name(dentry), &iter);
+while
+        err = msdos_find(dir, dentry->d_name.name, dentry->d_name.len, &sinfo);
+becomes either
+        err = msdos_find(dir, d_name(dentry)->name, d_name(dentry)->len, &sinfo);
+or, if msdos_find() gets converted to passing const struct qstr *
+instead of passing name and length as separate arguments,
+        err = msdos_find(dir, d_name(dentry), &sinfo);
+I am *NOT* suggesting doing that step in a single conversion - that
+would cause too many conflicts, wouldn't be easy to automate and there's
+a considerable pile of places that would be better off with conversion
+like above and those should be decided on case-by-case basis.  However,
+it's not hard to do as a patch series, with very few dependencies other
+than "need to have that helper in place".  And it's not hard to keep
+track of unconverted instances.  Some of the existing functions would
+need struct qstr * argument constified - 4 of those in current mainline
+(the same functions would need that treatment with anon union approach
+as well; again, there are very few of them and it's not hard to do).
+
+* once everything is converted (with the exception of several places in
+fs/dcache.c and this d_name() inline itself), we can declared the use
+of d_name() mandatory and rename the field to e.g. __d_name.
+
+At that point audits become as easy as grep for new name of the field
+and for casts to struct qstr * - compiler will take care of the rest.
+
+That variant is longer, but it's not too large either.  And it feels
+safer wrt optimizer behaviour...
+
+Preferences, comments?
 
