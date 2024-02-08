@@ -1,83 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-10689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E2C384D67A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 00:05:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0351D84D6EA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 01:05:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62F51F22876
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Feb 2024 23:05:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 354651C22599
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 00:05:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F03AC20310;
-	Wed,  7 Feb 2024 23:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BAC72576A;
+	Thu,  8 Feb 2024 00:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="jFhQWVq8"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="kEqDNOBB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EAD61EB23;
-	Wed,  7 Feb 2024 23:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E601EA95
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Feb 2024 00:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707347105; cv=none; b=PlFhpsvnCw8RNRUCSdDMFQaEhEvAuIb4Auqb7fEdghCBCaxYhaP1dP3l48kxO673OzfOrpj7DZ5Da1DBaKu3OQpPclPnzPjOoem9pSXTjn6PrTMQ1IF/ybvtNvkGKusWlLf5rHlsHZBb/50/DE3RtG7asJNb3uQLQKUnwXFkxAw=
+	t=1707350694; cv=none; b=nZkMkLWKpy7g7f6ywHgG14ej5LBbWIj+24PBPsFgTs+9nTisAu9UUc6usdRSclUuEATc+wdvVvdRL732nkeRcMfViCq4QSRdMhBlIXvdbYAR9rzJcVp0WxBJXMGXB7z6HuMhr8RUAebkA/fkWoms3tyoF+gqN02kjMmzoEZtJzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707347105; c=relaxed/simple;
-	bh=4BjASI5o6tvggVKonNgqERKXvBBiAS/dqPsYkoe6JOY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=idtqsOQhGPk3AlvLljIAwP3NUWG4j1qBkX57nkK9deljv65n+hOqLAK/BgRgjC7PTkFYCr8+hvmieNzmw5LwJBSoxXY09+hHQJz61YLxhRS7ZZmXDvVyIUhhcT+AFn2Sj9hYr6amfV1bwQGbLpFvMTjD+BRMZALZOnlPQWvtciY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=jFhQWVq8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE3BAC433C7;
-	Wed,  7 Feb 2024 23:05:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1707347104;
-	bh=4BjASI5o6tvggVKonNgqERKXvBBiAS/dqPsYkoe6JOY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jFhQWVq8EzKzmIwAYefphQlZM82G1QoacYIaQqrzJjEkJ8smUiTB7x2X8H4PF4CqV
-	 EmIcBSo6fVVTyMyoVWUnCWptsPR7si2Eeuy1YL8glOP/ec7ZgX/g/pU07BZBDxrgjZ
-	 rH1GtqasLYCAeJmiNFD5lKiAMfTUF5t9LFSj8bvs=
-Date: Wed, 7 Feb 2024 15:05:03 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Sourav Panda <souravpanda@google.com>
-Cc: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org,
- mike.kravetz@oracle.com, muchun.song@linux.dev, rppt@kernel.org,
- david@redhat.com, rdunlap@infradead.org, chenlinxuan@uniontech.com,
- yang.yang29@zte.com.cn, tomas.mudrunka@gmail.com, bhelgaas@google.com,
- ivan@cloudflare.com, pasha.tatashin@soleen.com, yosryahmed@google.com,
- hannes@cmpxchg.org, shakeelb@google.com, kirill.shutemov@linux.intel.com,
- wangkefeng.wang@huawei.com, adobriyan@gmail.com, vbabka@suse.cz,
- Liam.Howlett@Oracle.com, surenb@google.com, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-mm@kvack.org, willy@infradead.org, weixugc@google.com
-Subject: Re: [PATCH v7 0/1] mm: report per-page metadata information
-Message-Id: <20240207150503.ca18b372f899091af5e6c40b@linux-foundation.org>
-In-Reply-To: <20240129224204.1812062-1-souravpanda@google.com>
-References: <20240129224204.1812062-1-souravpanda@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1707350694; c=relaxed/simple;
+	bh=gabRMLM/A1bSe96IN7Y/ex0LcrEYgjRU+pNBbVb/BTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qSWpwztPz5RPmse53r2sKN3Mu67fSYYv1/kv0vBb0VvNFA2pyvowZuAbVWmHjmY0w/UO/nZPN+UX/FB/fRZCpVP6mxhzC+CQA1EleLRJNSO0n1pyMhJT+GnUI0eI1Cp70LkCrxkvCcH6qhMLcX5O1mw/yIn4njyrWwROt1v2U4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=kEqDNOBB; arc=none smtp.client-ip=115.124.30.113
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1707350684; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=kW65nYleLzY2lUSoH1IvIy3wzpupQ+VfBfFUwoZ7Shw=;
+	b=kEqDNOBB9ttvgCkypsJvazevXG8CSY9mKb5QGu4rD8VI17a8bW0oc0atl8ZlzoUobYCN/iQspGOjn+5A2l9j1kSdqbU/mX2m3nt7whL3ZLbjVjHeX8CuVwDi2Qz2UmBuwZ+uCwJD/tkszdwqtv1HfvtC/fJgksX6UutSj/hiuoM=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R431e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045168;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0W0Hs1fb_1707350683;
+Received: from 192.168.31.58(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0W0Hs1fb_1707350683)
+          by smtp.aliyun-inc.com;
+          Thu, 08 Feb 2024 08:04:43 +0800
+Message-ID: <d13251fc-dfd0-4634-9d3f-43a8afe47752@linux.alibaba.com>
+Date: Thu, 8 Feb 2024 08:04:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] fuse: Create helper function if DIO write needs
+ exclusive lock
+Content-Language: en-US
+To: Bernd Schubert <bernd.schubert@fastmail.fm>,
+ Bernd Schubert <bschubert@ddn.com>, miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org, dsingh@ddn.com,
+ Amir Goldstein <amir73il@gmail.com>
+References: <20240131230827.207552-1-bschubert@ddn.com>
+ <20240131230827.207552-3-bschubert@ddn.com>
+ <2d0d6581-14de-46c4-a664-f6e193ab2518@linux.alibaba.com>
+ <b9308f8b-cda3-486f-be23-6e84cc0c8b6d@fastmail.fm>
+ <f365c731-9cc5-4340-9c1e-f6f5ab422140@linux.alibaba.com>
+ <072d2ac6-6281-404c-8897-39748c763b39@fastmail.fm>
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <072d2ac6-6281-404c-8897-39748c763b39@fastmail.fm>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Mon, 29 Jan 2024 14:42:03 -0800 Sourav Panda <souravpanda@google.com> wrote:
 
-> This patch adds two new per-node fields, namely nr_page_metadata and
-> nr_page_metadata_boot to /sys/devices/system/node/nodeN/vmstat and a
-> global PageMetadata field to /proc/meminfo. This information can be
-> used by users to see how much memory is being used by per-page
-> metadata, which can vary depending on build configuration, machine
-> architecture, and system use.
 
-I'm not seeing why this is very useful.  OK, you look at it and it
-tells you a number, but what action can a user take based upon that
-number?
+On 2/7/24 10:13 PM, Bernd Schubert wrote:
+> 
+> 
+> On 2/7/24 14:44, Jingbo Xu wrote:
+>>
+>>
+>> On 2/7/24 9:38 PM, Bernd Schubert wrote:
+>>>
+>>>
+>>> On 2/6/24 10:20, Jingbo Xu wrote:
+>>>>
+>>>>
+>>>> On 2/1/24 7:08 AM, Bernd Schubert wrote:
+>>>>> @@ -1591,10 +1616,10 @@ static ssize_t fuse_direct_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>>>>>  	else {
+>>>>>  		inode_lock_shared(inode);
+>>>>>  
+>>>>> -		/* A race with truncate might have come up as the decision for
+>>>>> -		 * the lock type was done without holding the lock, check again.
+>>>>> +		/*
+>>>>> +		 * Previous check was without any lock and might have raced.
+>>>>>  		 */
+>>
+>>
+>>>>> -		if (fuse_direct_write_extending_i_size(iocb, from)) {
+>>>>> +		if (fuse_dio_wr_exclusive_lock(iocb, from)) {
+>>>> 			^
+>>
+>> I mean, in patch 2/5
+>>
+>>> -		if (fuse_direct_write_extending_i_size(iocb, from)) {
+>>> +		if (fuse_io_past_eof(iocb, from)) {
+>>
+>> is better, otherwise it's not an equivalent change.
+> 
+> Ah thanks, good catch! Now I see what you mean. Yeah, we can switch to
+> fuse_io_past_eof() here. And yeah, 3/5 changes it back.
+> Fortunately there is actually not much harm, as
+> fuse_dio_wr_exclusive_lock also calls into fuse_io_past_eof.
+> 
 
-Please tell us more about the value of this, the use cases, what
-prompted you to expend effort on this.
+Yeah fortunately we needn't retest it as patch 3/5 changes it back.
+
+The whole series is good.  The comment is just from per-patch basis.
+
+Thanks,
+Jingbo
 
