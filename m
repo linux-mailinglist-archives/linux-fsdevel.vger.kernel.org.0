@@ -1,70 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-10803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23AD84E789
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 19:17:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F390384E7AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 19:29:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BD0D1C21946
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 18:17:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 311D71C223CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 18:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB42C85C67;
-	Thu,  8 Feb 2024 18:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54ED58663B;
+	Thu,  8 Feb 2024 18:29:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mFIO8uGd"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nRc+TAnK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+Received: from mgamail.intel.com (mgamail.intel.com [134.134.136.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C369984FCF
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Feb 2024 18:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B46C85C77;
+	Thu,  8 Feb 2024 18:29:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.134.136.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707416217; cv=none; b=CbKNM4gIknbplnN3Maiz7fYzYEB7hzIYR3NLL/MQpSc5QFMZmBZXZb02D70LiOFEp5DsJUCnvgi6NjHrsFlr7YaoA5acym49QJQJwUnQMw2QtsZT+WCJ19CDW5xlU1rx93Q8lZYk1dM0s8XTSqPsAWPDjHUq1JeErNLQ66HejJQ=
+	t=1707416968; cv=none; b=tj1c4GAWJKkDU5s7CJgV5l6AMrpcRgK+MewyjcCNDpkM4JhDp4tScsam32a+VSLMfTZHYTB9MDFLcU3qfyo3aClmJXsHmRddUX1w1APxymiU4H+QVFDUuIJcTkAYuLil2jGb0kC2hWIIfy8WQACvf6HiItk+zSeeD/ZVqbsCRJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707416217; c=relaxed/simple;
-	bh=rNIUCtETKvDI8Hv/odLDvKRUeV4HCM5UfBToRIWw2l8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jFhDA0N6M98GjAL0dRUevis0P4WrSxydy/jN5Qr/VMeahBFCTHVnEtxoMwKlxVBKmRTPkScj5GQYjFrggoQKxgd1TzoA0uFSU7PjMR541OLoK2Oqn+wOzdCyOcfc/bEtPsriZzwsCLazCWWehchFNCLRj4MGj7U/QwUN0MEI5h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mFIO8uGd; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 8 Feb 2024 13:16:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1707416213;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ohRz5RiPMWtF4kQys3+fHCi2fJWaQsjPzFcmqjjn6uQ=;
-	b=mFIO8uGdB89nmUic8AwkwN/N7++x061NZ24AL5tSHcH20Bn48dQ0aCv55vQ+DPZgSka/d/
-	O97djDj+V69+bOVgngSYsLduPsvSQL+2wjDGJ+vSerWricoq3Dg4Cvs75I/gPLqF/zhGHQ
-	eBOJfNpCxn0YhcEG9yW+iZxlh87LweM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Christian Brauner <brauner@kernel.org>
+	s=arc-20240116; t=1707416968; c=relaxed/simple;
+	bh=+Mgb9O8JxfiO2LjvLytloVwnGb5SjOO6d7SN0mzNpYo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pdg9zGJTZh21QSEOWprCkPAKZh7yidddzhGrBy3Km7nHShv7FXxrGRxtVmcHPwmEGjNbm97/jaYMla2k2iAHAnDRCS3pb1+n76admvZWFOrfYla4oJsZD/kf5aEDcpFsy25x4r7gM1Vu2n1Zp+ELvgknE7/7Nc8XWzswQhQADf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nRc+TAnK; arc=none smtp.client-ip=134.134.136.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1707416967; x=1738952967;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=+Mgb9O8JxfiO2LjvLytloVwnGb5SjOO6d7SN0mzNpYo=;
+  b=nRc+TAnKfsQRnfRNWfILQg0ohJ6GGIGpbNzsiSFnsq+vqTOxcEDjzf/e
+   YMdRFhDXlPn1d0rd5hB2hGwWpe1elwGhCh3hgTNZUiRGAweisQUH4QEzG
+   ubBQFUC1ZPn9m0MHBkDSexgGKU19QP+QdWuMyP9XNBHmwBPYnwC8Rd7PW
+   DLzQyQZFc4iqTmuoLA56AZlU/BCyGF5fb77MZKdp+Gm/OAX7C7n0Ei+PY
+   IbwSRBAYxS+hPNfxAxWUUtx5yzivVmBYU4NzQjcVlaNH5kcJPSb/Z1o4u
+   8H9uCl21OxqO8gANj7s+pnGkIu2cefepH9Rwjiv8sJYaBEv32g09u9ijM
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10978"; a="395702300"
+X-IronPort-AV: E=Sophos;i="6.05,254,1701158400"; 
+   d="scan'208";a="395702300"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2024 10:29:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,254,1701158400"; 
+   d="scan'208";a="2099541"
+Received: from ercutler-mobl.amr.corp.intel.com (HELO [10.209.94.1]) ([10.209.94.1])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2024 10:29:26 -0800
+Message-ID: <ba75294dfb5bf4dd046d54de6c3e57698592dacc.camel@linux.intel.com>
+Subject: Re: [PATCH 1/7] fs/writeback: avoid to writeback non-expired inode
+ in kupdate writeback
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Kemeng Shi <shikemeng@huaweicloud.com>, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz
 Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] filesystem visibililty ioctls
-Message-ID: <udx7fz67ooha5cv3hkphb5pyuoqefgqzrr27at76beixeofqgv@hfsqreh2ozlt>
-References: <20240206201858.952303-1-kent.overstreet@linux.dev>
- <20240208-bachforelle-teilung-f5f2301e5acc@brauner>
+Date: Thu, 08 Feb 2024 10:29:26 -0800
+In-Reply-To: <20240208172024.23625-2-shikemeng@huaweicloud.com>
+References: <20240208172024.23625-1-shikemeng@huaweicloud.com>
+	 <20240208172024.23625-2-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240208-bachforelle-teilung-f5f2301e5acc@brauner>
-X-Migadu-Flow: FLOW_OUT
 
-On Thu, Feb 08, 2024 at 10:48:31AM +0100, Christian Brauner wrote:
-> > Christain, if nothing else comes up, are you ready to take this?
-> 
-> I'm amazed how consistently you mistype my name. Sorry, I just read
-> that. Yep, I'm about to pick this up.
+On Fri, 2024-02-09 at 01:20 +0800, Kemeng Shi wrote:
+>=20
+> =20
+> +static void filter_expired_io(struct bdi_writeback *wb)
+> +{
+> +	struct inode *inode, *tmp;
+> +	unsigned long expired_jiffies =3D jiffies -
+> +		msecs_to_jiffies(dirty_expire_interval * 10);
 
-Gah, am I becoming dyslexic in my old age...
+We have kupdate trigger time hard coded with a factor of 10 to expire inter=
+val here.
+The kupdate trigger time "mssecs_to_jiffies(dirty_expire_interval * 10)" is
+also used in wb_writeback().  It will be better to have a macro or #define
+to encapsulate the trigger time so if for any reason we need
+to tune the trigger time, we just need to change it at one place.
+
+Tim
+
+> +
+> +	spin_lock(&wb->list_lock);
+> +	list_for_each_entry_safe(inode, tmp, &wb->b_io, i_io_list)
+> +		if (inode_dirtied_after(inode, expired_jiffies))
+> +			redirty_tail(inode, wb);
+> +
+> +	list_for_each_entry_safe(inode, tmp, &wb->b_more_io, i_io_list)
+> +		if (inode_dirtied_after(inode, expired_jiffies))
+> +			redirty_tail(inode, wb);
+> +	spin_unlock(&wb->list_lock);
+> +}
+> +
+>  /*
+>   * Explicit flushing or periodic writeback of "old" data.
+>   *
+> @@ -2070,6 +2087,9 @@ static long wb_writeback(struct bdi_writeback *wb,
+>  	long progress;
+>  	struct blk_plug plug;
+> =20
+> +	if (work->for_kupdate)
+> +		filter_expired_io(wb);
+> +
+>  	blk_start_plug(&plug);
+>  	for (;;) {
+>  		/*
+
 
