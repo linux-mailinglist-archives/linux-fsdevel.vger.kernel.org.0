@@ -1,143 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-10706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9770A84D7C0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 03:21:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 691FC84D80A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 04:03:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83BB11C221AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 02:21:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EF361F231AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 03:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D6C200BA;
-	Thu,  8 Feb 2024 02:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1EF1D532;
+	Thu,  8 Feb 2024 03:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gw3N8FAu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aG/2miJD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9CB1EB46
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Feb 2024 02:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E271D527;
+	Thu,  8 Feb 2024 03:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707358903; cv=none; b=uVL3MrLyAenu/7smipzI+GyPNfAiH+X17Qtv63D+MZoijxvpQPde6vbTC5zdOXOF7mfbO4tKwgx+i4aTUZRTVaJ5PjslaFs8DRvYNj5Qp3OgLlY2Id4ZYKZbS6k5ZGVWRa65gqvlHkEyrk+1gEngDXtzsmMBMqr95ZXLX17rX+c=
+	t=1707361381; cv=none; b=DTTZsKJ1GLrbBnZsAMkMhqphB1Cmxm1xWvR3FFW+P9sFO1NcCsikgFnyDLptx9dMo7hcNuk7Kzqi2590sdxHC46/28gxjIDIzD1uwdpj5KQsiW89tQy4hynb6syWoD2XJC1YS/2a50JupqfidwP3Wd6F1iJWGizLZEvyxlkr4Io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707358903; c=relaxed/simple;
-	bh=S7Fyth2o7C0oeXrP7QWtpfU2zEaeDUSuyoZcs6zwH3g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fIbsWaAgf/X+p/qyW/bxAK/4ezDTRUGtWPflQpjxtEbheH4RVH1i6H1/WZ8MuMuqXLQP4hDPdols5sZ6nKHI/fKI51eARQmKbqoE9bEqGT3YQ230Xj/aX461tf/yXpCjc3WW+2UaUSEYsOLEi+DfmDRjKUneLoZxWxbF3/Y3Uio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gw3N8FAu; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-5d4d15ec7c5so1027962a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Feb 2024 18:21:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707358901; x=1707963701; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OcrpujjG4PsCPev9+m1Qsti6EPTjolmttW9lJssf8t4=;
-        b=gw3N8FAu9tCkAGjNhNd9gHTZNT08ca/dw2te3FR1FGnXI5EsqsRtn5aAZJTpguyU71
-         D5lHJmClJHXpkqhTb/jDIbeHRge0fXDKbxM5u9QDy5EgCka07euPXTe8zjco041Agjbs
-         HdIwPGd7AhhWus8E9kXNhYWkZCHUmHL5jI693xnS4etGUGOQ76ZmO4ZKC7BRZz6ZRBAl
-         X4JRTCJ5ymNJ4JHgREBxL1KgHF9XSG/h/o2HsHiyO99mUbQrvacf/UOzn27QJRMA45wL
-         AGEwTGp/a8K0cQaGzWRJpro5LrvyEAQC+vCh+3MTaiEvkUMS1VimmqOgKEHSXNsAXykh
-         7ayg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707358901; x=1707963701;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OcrpujjG4PsCPev9+m1Qsti6EPTjolmttW9lJssf8t4=;
-        b=p0MZh19kzAs0ktKgkFTqaz8yXGlDGswNOCf8SxF/QSs44ghph5N5tdJGqlKnzft8uu
-         AxVgGzcj1pyaERWkpsKERY4vMmr57EsJb7Y+eDOKrz/pwAqID/BSdW6w3M22yR6U8V4y
-         PnlbOSAQdvpYMUbwTFfJTgF1gqM0RsYCc2CVkQhzixMDUxVn5rjN/Ln7fLt22pXSne7B
-         6XYuQu4ERBJx1SuJDyRiQI+1ByVTWE62kHj6swTI2+OFlG8GUKX1mlM+WFEKI43sETLC
-         S39OK1Lo9D7+i2m32QemMG14POAIqSsVnOYEfYGziCj2jC89nWpXZPSQ+KvhW2tkhZZW
-         0fvw==
-X-Gm-Message-State: AOJu0YwXNac4yhZhbPo5vwCoDEbEgIl0BZvsv+qY6OXnatWEDYYb7tnc
-	rx64uiGAf/OLrwuMxudBsS/ORCU7Oz6SJRo1inmVlL6lwPAMO7HdcUtZp3jD
-X-Google-Smtp-Source: AGHT+IG77yBwbvX6TZ07fxx954Kl0xconK69f1HIPUW2vgAdRQWz/9jDsxC1xFZ84KKz3h/NODcHyw==
-X-Received: by 2002:a17:90a:fd0e:b0:296:5941:d25d with SMTP id cv14-20020a17090afd0e00b002965941d25dmr4041994pjb.49.1707358901432;
-        Wed, 07 Feb 2024 18:21:41 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUgYcsyKVKI9m7HlDfzGndyefC10AjFAWiu9xRz9/uC52rjpmWsGLx/0xrzYZIYfwmQVi+zjF707Mskg9zhMmVWkYYR4FzJIxA1ZW8LErhp3j7vc+jNpsvg
-Received: from petra.lan ([2607:fa18:9ffd:1:3fa5:2e62:9e44:c48d])
-        by smtp.gmail.com with ESMTPSA id li16-20020a17090b48d000b00296fac6f7b6sm64007pjb.47.2024.02.07.18.21.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 Feb 2024 18:21:41 -0800 (PST)
-From: Alex Henrie <alexhenrie24@gmail.com>
-To: linux-fsdevel@vger.kernel.org,
-	jack@suse.cz,
-	linux@rainbow-software.org
-Cc: Alex Henrie <alexhenrie24@gmail.com>
-Subject: [PATCH] isofs: handle CDs with bad root inode but good Joliet root directory
-Date: Wed,  7 Feb 2024 19:21:32 -0700
-Message-ID: <20240208022134.451490-1-alexhenrie24@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1707361381; c=relaxed/simple;
+	bh=gCp4+3KXtXmU2pDbRIv0pZycO02wlcy/xdhCfLUsbSQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JP4WZYOY/yOAiqEL3d41YIbIod81yOAivyokWbAsilVViRRrT3MtkIa5diEslNC9UHEMDi+ch7JCXnrEyz3glzbI+mCjFWZOyTm5yJzfAhlMwi3TWFs3MGgzmi4R0lRGFt32V9y/r8coTnWTOq71SbYxHptl2KVTL9QQ2w1Ajn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aG/2miJD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 911AEC433F1;
+	Thu,  8 Feb 2024 03:03:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707361380;
+	bh=gCp4+3KXtXmU2pDbRIv0pZycO02wlcy/xdhCfLUsbSQ=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=aG/2miJDoPXVvUO7JbdKTqvdl5RJCB+kwfWB5Ykx0BRuVddp9A69wm5c19K59Eo3f
+	 /RUBz/W9EWlk0jRzZ3KfuHtfuGaTneQo8oATrYtGV4eGRod6OvXVWpECXGUiI53wZK
+	 b4SxC5Yl2mnhe6yzD58gk5zJzEZ4m+1MWedAyBCb7TYBf2e0HscTS/6WH8VfkStOWD
+	 sFFL0Xhuvpb/2qlnWGx7fSkEkDZjsENr/Wad4geQkmjKjFfaQaW/sAoKMjyhanTNgU
+	 Ejk7TYgysXEBEWB/FS2x7diDnszknX1fo0jHfSTA2f5dlCNwv+/kv9TaUdmVymlzFy
+	 MFcie9BGRFtAA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BF26C4828F;
+	Thu,  8 Feb 2024 03:03:00 +0000 (UTC)
+From: Taylor Jackson via B4 Relay <devnull+taylor.a.jackson.me.com@kernel.org>
+Date: Thu, 08 Feb 2024 03:02:54 +0000
+Subject: [PATCH v2] fs/mnt_idmapping.c: Return -EINVAL when no map is
+ written
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20240208-mnt-idmap-inval-v2-1-58ef26d194e0@me.com>
+X-B4-Tracking: v=1; b=H4sIAF5ExGUC/3WNyw7CIBQFf6W5azE8bMWu/A/TBRSwNxFooCGah
+ n8Xu3c5k5w5O2Sb0GYYux2SLZgxhgb81MG8qPC0BE1j4JRfKKcD8WFryquVYCjqRZg0QoneSeE
+ MtNWarMP3UXxMjRfMW0yf46Cwn/3fKowwMkjtlNa3ay/E3dvzHD1MtdYvwx1MZKsAAAA=
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Seth Forshee <sforshee@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Taylor Jackson <taylor.a.jackson@me.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1707361379; l=1297;
+ i=taylor.a.jackson@me.com; s=20240206; h=from:subject:message-id;
+ bh=y6gRCATQD4BQ+HtUr3Y6tmpmjhF1EH0eWIIzJbmFHZw=;
+ b=xgJWSv9ONnVT6GLyCRj6fBt71hj75Q+dupY5rzp8TyN5h3llr5WNNsvfSWm0VOyXJP1K/yq6o
+ 323miYF4kyXCKxCPSsqNNvQBBGURN9XwnlJuC4SIqzgv2/LTWvpqcjR
+X-Developer-Key: i=taylor.a.jackson@me.com; a=ed25519;
+ pk=NO7ntQpjIG1IGTO7F8OnLJDKSHUakhrhAli+PL72OLA=
+X-Endpoint-Received:
+ by B4 Relay for taylor.a.jackson@me.com/20240206 with auth_id=127
+X-Original-From: Taylor Jackson <taylor.a.jackson@me.com>
+Reply-To: <taylor.a.jackson@me.com>
 
-I have a CD copy of the original Tom Clancy's Ghost Recon game from
-2001. The disc mounts without error on Windows, but on Linux mounting
-fails with the message "isofs_fill_super: get root inode failed". The
-error originates in isofs_read_inode, which returns -EIO because de_len
-is 0. The superblock on this disc appears to be intentionally corrupt as
-a form of copy protection.
+From: Taylor Jackson <taylor.a.jackson@me.com>
 
-When the root inode is unusable, instead of giving up immediately, try
-to continue with the Joliet file table. This fixes the Ghost Recon CD
-and probably other copy-protected CDs too.
+Currently, it is possible to create an idmapped mount using a user
+namespace without any mappings. However, this yields an idmapped
+mount that doesn't actually map the ids. With the following change,
+it will no longer be possible to create an idmapped mount when using
+a user namespace with no mappings, and will instead return EINVAL,
+an “invalid argument” error code.
 
-Signed-off-by: Alex Henrie <alexhenrie24@gmail.com>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Taylor Jackson <taylor.a.jackson@me.com>
 ---
- fs/isofs/inode.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+Changes in v2:
+- Updated commit message based on feedback 
+- Link to v1: https://lore.kernel.org/r/20240206-mnt-idmap-inval-v1-1-68bfabb97533@me.com
+---
+ fs/mnt_idmapping.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-index 3e4d53e26f94..86a767fa1e16 100644
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -908,8 +908,22 @@ static int isofs_fill_super(struct super_block *s, void *data, int silent)
- 	 * we then decide whether to use the Joliet descriptor.
+diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
+index 64c5205e2b5e..3c60f1eaca61 100644
+--- a/fs/mnt_idmapping.c
++++ b/fs/mnt_idmapping.c
+@@ -214,7 +214,7 @@ static int copy_mnt_idmap(struct uid_gid_map *map_from,
+ 	 * anything at all.
  	 */
- 	inode = isofs_iget(s, sbi->s_firstdatazone, 0);
--	if (IS_ERR(inode))
--		goto out_no_root;
-+
-+	/*
-+	 * Fix for broken CDs with a corrupt root inode but a correct Joliet
-+	 * root directory.
-+	 */
-+	if (IS_ERR(inode)) {
-+		if (joliet_level) {
-+			printk(KERN_NOTICE
-+				"ISOFS: root inode is unusable. "
-+				"Disabling Rock Ridge and switching to Joliet.");
-+			sbi->s_rock = 0;
-+			inode = NULL;
-+		} else {
-+			goto out_no_root;
-+		}
-+	}
+ 	if (nr_extents == 0)
+-		return 0;
++		return -EINVAL;
  
  	/*
- 	 * Fix for broken CDs with Rock Ridge and empty ISO root directory but
-@@ -939,7 +953,8 @@ static int isofs_fill_super(struct super_block *s, void *data, int silent)
- 			sbi->s_firstdatazone = first_data_zone;
- 			printk(KERN_DEBUG
- 				"ISOFS: changing to secondary root\n");
--			iput(inode);
-+			if (inode != NULL)
-+				iput(inode);
- 			inode = isofs_iget(s, sbi->s_firstdatazone, 0);
- 			if (IS_ERR(inode))
- 				goto out_no_root;
+ 	 * Here we know that nr_extents is greater than zero which means
+
+---
+base-commit: 54be6c6c5ae8e0d93a6c4641cb7528eb0b6ba478
+change-id: 20240206-mnt-idmap-inval-18d3a35f83fd
+
+Best regards,
 -- 
-2.43.0
+Taylor Jackson <taylor.a.jackson@me.com>
 
 
