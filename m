@@ -1,155 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-10828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC64384E8FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 20:34:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0BA784E8FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 20:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7858287435
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 19:34:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D6B92892D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 19:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC80B381B3;
-	Thu,  8 Feb 2024 19:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6930F381C7;
+	Thu,  8 Feb 2024 19:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MUkSyufh"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FSerNsBx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C39383B5
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Feb 2024 19:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47189149DFF;
+	Thu,  8 Feb 2024 19:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707420846; cv=none; b=qSsyF+BnGfW6EPL6Rcx2Q7A5nQgBuj75hltDxVQjYbJA1mE5ytlujlgDpH27C3VM05+Ce+9DHGvadq6R51SAsX+PqbQ26NMBYqS7xzy/PsHv9DuWQ/6LRHURMnguajyt727JD3oryP1wbv5wYcOgc950iLlK/MZ12PS0engxY3c=
+	t=1707420879; cv=none; b=Wlymc8d532wRvj/RFyui5Sn/gkdCAo7Pei6O0IvgANtY8DrFhqJMZ3djzmkww1HWDrwSOvoLaTo4B9oVeNEHdOqQYN7bGnGXI6/cUUyDBlxk4i4SPfdpsoZHvaHkEmdjpGaotwDou1sajsjQHsNipsj+8A67uoxgKIaEfbD0R74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707420846; c=relaxed/simple;
-	bh=+Z8lwzYvckFWiP6BYN7U4cbT3GpIw1MQ1kqj+vQrUcc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tFqudsN5qAnKe9UUuky96jLLv5SZsLn4opBP7TDSF7cPMf8dqAY6AiFgxNo0gqUn8qEJ147WRytga93kEkMsUkW56LUSMz56qDRawwIcWDRvUhIPxndxo8SHYAYqFloXYUBw4n1lsHFzVIPLTsh7n4NTf38kYR4gkGov+O21sRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MUkSyufh; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707420842;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aD5G43Xjkg+KfiRuemAiqEi3KXzjNIYSfelc8YcP8kc=;
-	b=MUkSyufhQ/L3Z2ZXL+mSI/6Cm2D94Tb8WUK8xPJWU10LQE3uxwffYYxLCSYl4a3RLyAazP
-	Mo3jA8Izlsm9uoaEfLAG0sh/zHUSH+0DODiyemV1RCokA+2zyHbRAiRBJP6IN1BeF4CVL/
-	o4+h6XIjODYKREOqT7ovzXyZcSZX0bk=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-362-5dtf-tMLPp6mIZwW96qeNg-1; Thu,
- 08 Feb 2024 14:33:59 -0500
-X-MC-Unique: 5dtf-tMLPp6mIZwW96qeNg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4A2413C0BE47;
-	Thu,  8 Feb 2024 19:33:58 +0000 (UTC)
-Received: from localhost (unknown [10.39.192.44])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 9FA9B112131D;
-	Thu,  8 Feb 2024 19:33:57 +0000 (UTC)
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Alyssa Ross <hi@alyssa.is>,
-	gmaglione@redhat.com,
-	virtio-fs@lists.linux.dev,
-	vgoyal@redhat.com,
-	mzxreary@0pointer.de,
-	Greg KH <gregkh@linuxfoundation.org>,
-	miklos@szeredi.hu,
-	Stefan Hajnoczi <stefanha@redhat.com>
-Subject: [PATCH v2 3/3] virtiofs: emit uevents on filesystem events
-Date: Thu,  8 Feb 2024 14:32:11 -0500
-Message-ID: <20240208193212.731978-4-stefanha@redhat.com>
-In-Reply-To: <20240208193212.731978-1-stefanha@redhat.com>
-References: <20240208193212.731978-1-stefanha@redhat.com>
+	s=arc-20240116; t=1707420879; c=relaxed/simple;
+	bh=jfFt98aIUuomsKcXihueoohkKAJPf25VK+fpiRdbjcM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pK1gnQglN2EMfWK/wru5BhBtVvRJRVbcb/eRH24/xAA7HMMGD5yIRR18hvEp1WoJTHEs8jWeg7HzuxncMd1WEiH66Bc2OEouyFfSiptst3IT9NMqsw3ZQpokkl8QNRsmrKzKiTOJ73Ovc48fQ9A3luegdR8u/zZ9VhBfdY2hI4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FSerNsBx; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1707420878; x=1738956878;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=jfFt98aIUuomsKcXihueoohkKAJPf25VK+fpiRdbjcM=;
+  b=FSerNsBxAfqzw8TWiiAZ75aTZsEqND7yffMFQ4+t/srPWzvhTXtMQdEs
+   sPpiDppNZteVMdLkaXiEpoEQ90FvdWqwKw1j9UxKyeV02h2BLRnGc9Y/o
+   08NKiaJAos6PSnFnDj1Q8zgtwqd5NnAbmjuFHM6rTCq2BE8nfUj/1Yn4w
+   roWnNegROrln7ZwCVnRI8Q0r0/iL0fD+bIu/xKgAoC96BqHqnH116kzH4
+   V2Sunw6750PUOf11B9n+lhso8EnYtX0MeckX4yMBtdbC87jpqLe8oKeIn
+   MlF/n7pDmEiyXqYkHk2jwzIuwFPly8lNShfUTJAj8oSlRLOmvAXC1fJL9
+   w==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10978"; a="26750608"
+X-IronPort-AV: E=Sophos;i="6.05,254,1701158400"; 
+   d="scan'208";a="26750608"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2024 11:34:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,254,1701158400"; 
+   d="scan'208";a="1774319"
+Received: from ercutler-mobl.amr.corp.intel.com (HELO [10.209.94.1]) ([10.209.94.1])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2024 11:34:37 -0800
+Message-ID: <623f1fe08c8bbd7e49f2dc124892ac864cd7dac0.camel@linux.intel.com>
+Subject: Re: [PATCH 4/7] fs/writeback: remove unneeded check in
+ writeback_single_inode
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Kemeng Shi <shikemeng@huaweicloud.com>, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 08 Feb 2024 11:34:36 -0800
+In-Reply-To: <20240208172024.23625-5-shikemeng@huaweicloud.com>
+References: <20240208172024.23625-1-shikemeng@huaweicloud.com>
+	 <20240208172024.23625-5-shikemeng@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
 
-Alyssa Ross <hi@alyssa.is> requested that virtiofs notifies userspace
-when filesytems become available. This can be used to detect when a
-filesystem with a given tag is hotplugged, for example. uevents allow
-userspace to detect changes without resorting to polling.
+On Fri, 2024-02-09 at 01:20 +0800, Kemeng Shi wrote:
+> I_DIRTY_ALL consists of I_DIRTY_TIME and I_DIRTY, so I_DIRTY_TIME must
+> be set when any bit of I_DIRTY_ALL is set but I_DIRTY is not set.
 
-The tag is included as a uevent property so it's easy for userspace to
-identify the filesystem in question even when the sysfs directory goes
-away during removal.
+/s/any bit of/some bit in/
 
-Here are example uevents:
+>=20
+> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
 
-  # udevadm monitor -k -p
+Reviewed by: Tim Chen <tim.c.chen@linux.intel.com>
 
-  KERNEL[111.113221] add      /fs/virtiofs/2 (virtiofs)
-  ACTION=add
-  DEVPATH=/fs/virtiofs/2
-  SUBSYSTEM=virtiofs
-  TAG=test
-
-  KERNEL[165.527167] remove   /fs/virtiofs/2 (virtiofs)
-  ACTION=remove
-  DEVPATH=/fs/virtiofs/2
-  SUBSYSTEM=virtiofs
-  TAG=test
-
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
----
- fs/fuse/virtio_fs.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 28e96b7cde00..18a8f531e5d4 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -270,6 +270,17 @@ static void virtio_fs_start_all_queues(struct virtio_fs *fs)
- 	}
- }
- 
-+static void virtio_fs_uevent(struct virtio_fs *fs, enum kobject_action action)
-+{
-+	char tag_str[sizeof("TAG=") +
-+		     sizeof_field(struct virtio_fs_config, tag) + 1];
-+	char *envp[] = {tag_str, NULL};
-+
-+	snprintf(tag_str, sizeof(tag_str), "TAG=%s", fs->tag);
-+
-+	kobject_uevent_env(&fs->kobj, action, envp);
-+}
-+
- /* Add a new instance to the list or return -EEXIST if tag name exists*/
- static int virtio_fs_add_instance(struct virtio_device *vdev,
- 				  struct virtio_fs *fs)
-@@ -309,6 +320,8 @@ static int virtio_fs_add_instance(struct virtio_device *vdev,
- 
- 	mutex_unlock(&virtio_fs_mutex);
- 
-+	virtio_fs_uevent(fs, KOBJ_ADD);
-+
- 	return 0;
- }
- 
-@@ -977,6 +990,8 @@ static void virtio_fs_remove(struct virtio_device *vdev)
- {
- 	struct virtio_fs *fs = vdev->priv;
- 
-+	virtio_fs_uevent(fs, KOBJ_REMOVE);
-+
- 	mutex_lock(&virtio_fs_mutex);
- 	/* This device is going away. No one should get new reference */
- 	list_del_init(&fs->list);
--- 
-2.43.0
+> ---
+>  fs/fs-writeback.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+> index 2619f74ced70..b61bf2075931 100644
+> --- a/fs/fs-writeback.c
+> +++ b/fs/fs-writeback.c
+> @@ -1788,7 +1788,7 @@ static int writeback_single_inode(struct inode *ino=
+de,
+>  		else if (!(inode->i_state & I_SYNC_QUEUED)) {
+>  			if ((inode->i_state & I_DIRTY))
+>  				redirty_tail_locked(inode, wb);
+> -			else if (inode->i_state & I_DIRTY_TIME) {
+> +			else {
+>  				inode->dirtied_when =3D jiffies;
+>  				inode_io_list_move_locked(inode,
+>  							  wb,
 
 
