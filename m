@@ -1,82 +1,83 @@
-Return-Path: <linux-fsdevel+bounces-10800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A930084E715
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 18:50:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D664684E71B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 18:50:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3B271C26C4D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 17:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBF7F1C26D72
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 17:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9171E485;
-	Thu,  8 Feb 2024 17:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748DA85C77;
+	Thu,  8 Feb 2024 17:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I314OgUw"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wpwXr4iM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3299B82D71
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Feb 2024 17:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE4D8562C
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Feb 2024 17:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707414490; cv=none; b=EwgubMd3LQHYhn/exrKS85TtiCk2uAqoXRCFHd58magL2D8fSQP4kuFNq7F75LI9Dqg2XpOYPbNCgEMx5dQCAQPu8iasw0/+E3N6o3dNnWJHuPFLo+vUZMPh8fSAPf3UIlTanmEqwm12c7Lkx8cH29CDUhLfNQKl4Vtna1Xyli0=
+	t=1707414577; cv=none; b=HS7ho5taPKo2pEyMw/la+UZWiebwfO5tX9VdWOx24NeojxT5DbbVTX0VGp9GrXm94vOgYRbrtDMTfmmNUYQ94CW+1Ai/NajL6Mn0QDIMrZl/fegwjkfmpBGEGwSkvMJnsUZGrB9uuurdkHHTQMDhz4xdl3sa/bcmmFg3iGhJojQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707414490; c=relaxed/simple;
-	bh=z4H3q+V584X3cloLoQL4z7W9A39ryrm0xdBvifZpO/k=;
+	s=arc-20240116; t=1707414577; c=relaxed/simple;
+	bh=zda74WXXHe+dpK7C/1O9euGmKfSWLYZHT6inIgr65PI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P2pcO/D02ZF4wkgJhBLQtsrbBmTxa2kHfE3TSUfpjgI88W1zfUvMs1TE7/4O6+tRtQs3zEAwb75QSEObpKExq4bRwPx94JwANWiwSWbqZEQMaNlyeJ5SSmTMKSc/GmnROhmW0Hv+2NWL29x1snF/rOyHD++wO4/G76JHltuVg/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I314OgUw; arc=none smtp.client-ip=209.85.208.48
+	 To:Cc:Content-Type; b=JJZaKA0nvi3PZUzZ8OMhwYb2/UfCL2IBqnInumURK101A6WVxhFmKOWQCdggjQhERqN/NOIkiSidXmxvHreO+29AyccY/YQsDtZC4cUWGGW1gzkxFiRCnsMLJUIN8kr1sUlfy/jRzhalF/FrD+4PnSAzUjozcDC1vzEnxGqMkLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wpwXr4iM; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-560530f4e21so15437a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Feb 2024 09:48:08 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-40f00adacfeso87075e9.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Feb 2024 09:49:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707414487; x=1708019287; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1707414574; x=1708019374; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S2CdXbb7WVGaal0hzp3f8lJdjgHwhFUuWNRhD/Ru7SU=;
-        b=I314OgUwNasim2y3Bv0LjVyVJWpF9z9HVY4Ut50y6BCu5UZKylGtEd5f7GVRLWr3wH
-         aOhD8srKNPfAY2lAQTbZ/eLFTBvuojpaHZdEcpDHplyUr+ssx7BPiU87zI3Rh3PIdoML
-         7MwkiWm2QnItoSwuzx7NO5Pd8lK4NdlzpuLzb9VZeXS9mOdBQeGDkhX3GhmhK1DcdIzv
-         TnNwnur2vp+D2KLESJFhKs845jicVEiJB8TXpivqRoqvBXxCEm2T0c2xxyX29Dob8RaB
-         rjYmIuibPORxTVn5ImgfXr901CD3y0JTVSAwxNeXIkFexkq8/RnuuNXqS+dPWshQx8LR
-         zBDA==
+        bh=CCfiShFFpvtKtiBytNdjmOBh5smtgUcYd0nNspQ9STQ=;
+        b=wpwXr4iMM2ZmAY9vuJlWMUTByLGQ09rbhpPMp49OFpUWFuBUEC5n5F4vTyDG5dZxQu
+         lXPweZIr2v/bvCTf7MH2XFOGNP+cXL2dO/wXgRTSHacBexo5xadUSqxFq3CJ7nMdAPVS
+         NjgIquP28LQLu7YLBJZzdhTNZ2B/k4JgVTS3F6H9Tc6iUG/6i0wIuA3+bbfIHELu0nky
+         dSMbIb3CwyEDnqK/aZZMTJH6/YOTkipeOLYEsbQAnVKMyzJGTUliuhyDs4pjGP14BsbC
+         15gzd8QflAHc3G5avRvEhONseNY1vLeH7SBeOqPhMqdqYzYLlZxHu44jYCkLywWoDgre
+         0mcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707414487; x=1708019287;
+        d=1e100.net; s=20230601; t=1707414574; x=1708019374;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=S2CdXbb7WVGaal0hzp3f8lJdjgHwhFUuWNRhD/Ru7SU=;
-        b=iV/Fdi9s5/pVG4yYBxuDK/UMA03N/pgBCeaDfMlUsagh9cDNgb+dD0iW+jx9MUdQ2x
-         R12uTvoNwjFhlDwZPfjVC83y9RmfpzNFj7xCfbC/uc+dGIWzrqRtK1tchqdsX/gmR6rI
-         +mI8TgNEox2xHutCSjzmMYtCj7Jy7IUYJexFKT6QtVSv/BcpvfULnEUcz2oLOnYIGsBT
-         hHtW3An74OOJQnzcKzahp7Y0bw1MXEIhXFFcQre3P/9UQ5oWXXZAAHmxtBoJTFnS8zD+
-         lyDXnsDhQfbqRZJv4gP5tceJPGSaARu/qxLUUQGNXH5oAsogEO7MT2/idrkeZUNUg56l
-         oFGw==
-X-Gm-Message-State: AOJu0Yxy94mZ2k2dQXuLg+0zLRWgwRHakOgaDr6fgdrdjLMO2a+8soeg
-	DEj9Hk7ARGHES4unWllB/olngPVNZkWCPmPLJgoPngPmwX27xzdhi7cPfMZ9HPQCfcOWj5QE7Zo
-	lD7OwqKWLF1qLiXm47IqA4ekih3unFOtT7QNO
-X-Google-Smtp-Source: AGHT+IFx6D9+1QvqcwypiSW4MNJJCbBsNotpLlHoiufV7R69opJf1sckm7W6l77vtmstilA8dQaKIFFUNabofjpkE64=
-X-Received: by 2002:a50:9e45:0:b0:55f:a1af:bade with SMTP id
- z63-20020a509e45000000b0055fa1afbademr418410ede.4.1707414487236; Thu, 08 Feb
- 2024 09:48:07 -0800 (PST)
+        bh=CCfiShFFpvtKtiBytNdjmOBh5smtgUcYd0nNspQ9STQ=;
+        b=Dm/EvPbkCvRdMRu4+05mp5iWM8FyHhF8q3x0lQ8eNW2jUKRtnq2MnjwQvWEo9B965G
+         exje4dB4ZTGdihx77JCMC/8bnqDVnvUNoLBegmNn9r/R1Zf10IVD533Sn89XGuEfd0LX
+         WS7e4LufXxkNuxiLfbB/493sAW5SR73GlNjpindgKP/o6WPdt600/Wp2HlYPcIZqRxQP
+         5UpNpWWgYRUNat4YmcLWFC3w0hJLHV2+jNxp9Njxq8+9VHVnorhypQk14y01vtZIXlBM
+         teRmoKF4PXYM8fH8hByVPenEV5UbQkMvIc9h7lI9voseJ/o7Wz0QpJpEOSIk2gYhTKyG
+         JvoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtmLoZVFUyEc4bsedORG9xOrFAyUhaekTd2GXgGC+IyF603NDIUWwasVQiWv0rbChFLx2K0TsbdThxj6mXYpnh/7BL+uoW9h4Ja4JwzA==
+X-Gm-Message-State: AOJu0YyXgbeqzd5GyCSEyEAIQSIpiY9px6qEjqv6NJIDjcqqcFHqsG4Y
+	YS+PUK07ICRtpGhoFhCl5vGdVdvOUGfuW75eD1TyaPvVl0uxF1/M8UcvOgE5XZ/n5d0HwVRjh4S
+	FtyaB/lk4a0T9Pc39qqpdNn4TIbUQOXdZ+90w
+X-Google-Smtp-Source: AGHT+IEstkMTSitlbM4q+eTyETgEQ6arnNpmDwi2H2dhpRlCslml1hPB7df4QjwKC06oN3wleuc+F11zwRfxak+YwIg=
+X-Received: by 2002:a05:600c:cc6:b0:410:3ce8:8386 with SMTP id
+ fk6-20020a05600c0cc600b004103ce88386mr2420wmb.0.1707414574332; Thu, 08 Feb
+ 2024 09:49:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240205210453.11301-1-jdamato@fastly.com> <20240205210453.11301-3-jdamato@fastly.com>
- <20240207110429.7fbf391e@kernel.org>
-In-Reply-To: <20240207110429.7fbf391e@kernel.org>
+References: <20240205210453.11301-1-jdamato@fastly.com> <20240205210453.11301-4-jdamato@fastly.com>
+ <20240207110437.292f7eaf@kernel.org>
+In-Reply-To: <20240207110437.292f7eaf@kernel.org>
 From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 8 Feb 2024 18:47:54 +0100
-Message-ID: <CANn89iKVoGUKZSBHanZ8zksmpnnysH1jng4KMgGpaqoyrP06Aw@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 2/4] eventpoll: Add per-epoll busy poll packet budget
+Date: Thu, 8 Feb 2024 18:49:23 +0100
+Message-ID: <CANn89iLBROzWjTxr4wFyEuCmBj9zoRkEwMGOLxUAJA683paVSg@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 3/4] eventpoll: Add per-epoll prefer busy poll option
 To: Jakub Kicinski <kuba@kernel.org>
 Cc: Joe Damato <jdamato@fastly.com>, linux-kernel@vger.kernel.org, 
 	netdev@vger.kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, 
@@ -92,21 +93,23 @@ Content-Transfer-Encoding: quoted-printable
 On Wed, Feb 7, 2024 at 8:04=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wro=
 te:
 >
-> On Mon,  5 Feb 2024 21:04:47 +0000 Joe Damato wrote:
-> > When using epoll-based busy poll, the packet budget is hardcoded to
-> > BUSY_POLL_BUDGET (8). Users may desire larger busy poll budgets, which
-> > can potentially increase throughput when busy polling under high networ=
-k
-> > load.
+> On Mon,  5 Feb 2024 21:04:48 +0000 Joe Damato wrote:
+> > When using epoll-based busy poll, the prefer_busy_poll option is hardco=
+ded
+> > to false. Users may want to enable prefer_busy_poll to be used in
+> > conjunction with gro_flush_timeout and defer_hard_irqs_count to keep de=
+vice
+> > IRQs masked.
 > >
-> > Other busy poll methods allow setting the busy poll budget via
-> > SO_BUSY_POLL_BUDGET, but epoll-based busy polling uses a hardcoded
-> > value.
+> > Other busy poll methods allow enabling or disabling prefer busy poll vi=
+a
+> > SO_PREFER_BUSY_POLL, but epoll-based busy polling uses a hardcoded valu=
+e.
 > >
-> > Fix this edge case by adding support for a per-epoll context busy poll
-> > packet budget. If not specified, the default value (BUSY_POLL_BUDGET) i=
-s
-> > used.
+> > Fix this edge case by adding support for a per-epoll context
+> > prefer_busy_poll option. The default is false, as it was hardcoded befo=
+re
+> > this change.
 >
 > Reviewed-by: Jakub Kicinski <kuba@kernel.org>
 
