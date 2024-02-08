@@ -1,113 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-10862-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10863-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C76E84EBD0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 23:42:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1CC284EBDB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 23:45:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B5771F245CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 22:42:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 460181F27B5F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 22:45:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BDE50272;
-	Thu,  8 Feb 2024 22:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8792150261;
+	Thu,  8 Feb 2024 22:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="AeGeX7kQ"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lezzZ+tt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0DC482F2;
-	Thu,  8 Feb 2024 22:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E864750253
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 Feb 2024 22:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707432139; cv=none; b=OUmwGJbsDQ89bvrd6EFNCmVk7zdNjpg1fm3fB0lf4xEarjtfk0/YOaJCRIdRFsuHnizbgZjZBURcWhO2UJcoMv7B2fQeIOgYirIR3g5YSGCN9BQ2+9LyA8Q/h6IYJiaxdntQHwwoCFFgwENP1umUKBgcqhlM/XdOOIn+5O/5k8w=
+	t=1707432311; cv=none; b=I39re9/2ts7r0TB4KlL0ND7eUrTyq2w3lTmS/UYt1tsKEWEfL9ZJMmvpHovyuySPL3z7F5V0dY2F39Utt5WZcuN2550lazGesKgj+duW0sVOiicBg+ryHJiVnVOQtIQpGQK8VcfXJ3xKV7wgByB0qEQ9qkUcU4h9ayJN5fFWLQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707432139; c=relaxed/simple;
-	bh=NhfI9CxiogmvQ0tMHv4XKQ/4Wsf7q5uvmw1GU45BQKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kJcViq5/bfi/HucI4awXnzsUEGCzhRM5ca/3+JjSaXWC6jhugpogsWHkqCDC87qtMlOv06WkGhu+Mk18P8jHABhdGxSLoi2vGWynIUAZnaRWWoa0zxflu5ALzLtk552zjH3oKJTYTmhBfn/JoLOUiO13W4ibim0fnbXShEpBoME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=AeGeX7kQ; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1707432135;
-	bh=NhfI9CxiogmvQ0tMHv4XKQ/4Wsf7q5uvmw1GU45BQKQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AeGeX7kQ49yC5AcFerxBLe7y0eJHatSpT7NcXeuTVU3oluYj8errrXmqswmseoPDt
-	 D3ah1MieEHfNwBYykfLwXfXMMJbWeH5Zqo33eaidaJZ1q+zAH9sZN2YmfxvMKEjwHu
-	 5j2FukA0KclYpCmLbg7kz7Wjwu5xKanWlKr6Bk8cW+OSlDRriqz7L6zshIVtQRAyp9
-	 ZO2cU55CX/E18xCLyVCPeykZB4Mg1jf69kP7nxVaPDwcPX1LiA+FTLz4/TivoHzyJo
-	 3vmVzcWJiVPjogNnn1zBLhuRHyDt53WwNUxVQ31iSPU5xO5LMeNLKZljKT5OBcmDB6
-	 j43QH2gh7IKEQ==
-Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TWBnM0z5GzY2Z;
-	Thu,  8 Feb 2024 17:42:15 -0500 (EST)
-Message-ID: <5328e7f0-0864-4626-aa6c-fef5f3f62dc8@efficios.com>
-Date: Thu, 8 Feb 2024 17:42:21 -0500
+	s=arc-20240116; t=1707432311; c=relaxed/simple;
+	bh=W0JffnIev88BcC8Hl6egW1rjoWWfB2jwFQZciSPudNI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QG6G18HvMkxuWSJykIlTFMj4ExCNtkfXYKX5MZ+y9PBUvxyDA1RWz6djGe9lrPLlClfBRbvC+gJIZQ4kTBBXmFhAPpbhHxHZeZynMvs6yodquBjZm5wpwnT74/LJObP6UYz4fk5KhG3zGmNDi4dO6BLabHGkkOfRy8CORlsTEfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lezzZ+tt; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 8 Feb 2024 17:45:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1707432306;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W0JffnIev88BcC8Hl6egW1rjoWWfB2jwFQZciSPudNI=;
+	b=lezzZ+tth1kRqJyrWGGU9sTfubrW+ImjbBA+pOL5Zyj77Jb6V2xSyYhT2JTnYLoPj+y9mr
+	N18RVopOFvf0ZYMtdbC8uL3XxLfP02z43Rf0IIfpkP7D9+gXog6JghmhcFAuXNwhGvPUP2
+	QPc0CxJsE0Ao+uuOmFiOydtKo77qCqQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>
+Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
+	Matthew Wilcox <willy@infradead.org>, lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-block@vger.kernel.org, linux-ide@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	Kent Overstreet <kent.overstreet@gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Removing GFP_NOFS
+Message-ID: <4qc7h3gun5lkv3p5piftgkhgmlbrgqteut3vxtjrme47kyn7q7@62ogk3chsrme>
+References: <ZZcgXI46AinlcBDP@casper.infradead.org>
+ <ZZzP6731XwZQnz0o@dread.disaster.area>
+ <3ba0dffa-beea-478f-bb6e-777b6304fb69@kernel.org>
+ <ZcUQfzfQ9R8X0s47@tiehlicka>
+ <3aa399bb-5007-4d12-88ae-ed244e9a653f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/12] dax: Check for data cache aliasing at runtime
-Content-Language: en-US
-To: Dan Williams <dan.j.williams@intel.com>, Arnd Bergmann <arnd@arndb.de>,
- Dave Chinner <david@fromorbit.com>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Matthew Wilcox <willy@infradead.org>, Russell King <linux@armlinux.org.uk>,
- linux-arch@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-xfs@vger.kernel.org, dm-devel@lists.linux.dev, nvdimm@lists.linux.dev,
- linux-s390@vger.kernel.org
-References: <20240208184913.484340-1-mathieu.desnoyers@efficios.com>
- <20240208184913.484340-7-mathieu.desnoyers@efficios.com>
- <65c54a13c52e_afa429444@dwillia2-xfh.jf.intel.com.notmuch>
- <0e6792eb-7504-464a-aefd-d2a803adb440@efficios.com>
- <65c557a2e77f7_afa429490@dwillia2-xfh.jf.intel.com.notmuch>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <65c557a2e77f7_afa429490@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3aa399bb-5007-4d12-88ae-ed244e9a653f@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On 2024-02-08 17:37, Dan Williams wrote:
-> Mathieu Desnoyers wrote:
->> On 2024-02-08 16:39, Dan Williams wrote:
->> [...]
->>>
->>> So per other feedback on earlier patches, I think this hunk deserves to
->>> be moved to its own patch earlier in the series as a standalone fixup.
->>
->> Done.
->>
->>>
->>> Rest of this patch looks good to me.
->>
->> Adding your Acked-by to what is left of this patch if OK with you.
-> 
-> You can add:
-> 
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> 
-> ...after that re-org.
+On Thu, Feb 08, 2024 at 08:55:05PM +0100, Vlastimil Babka (SUSE) wrote:
+> - NOWAIT - as said already, we need to make sure we're not turning an
+> allocation that relied on too-small-to-fail into a null pointer exception or
+> BUG_ON(!page). It's probably not feasible to audit everything that can be
+> called underneath when adding a new scoped NOWAIT. Static analysis probably
+> won't be powerful enough as well. Kent suggested fault injection [1]. We
+> have the framework for a system-wide one but I don't know if anyone is
+> running it and how successful it is.
 
-Just to make sure: are you OK with me adding your Reviewed-by
-only for what is left of this patch, or also to the other driver
-patches after integrating your requested changes ?
+I've also got a better fault injection library in the pipeline - I'll be
+posting it after memory allocation profiling is merged, since that has
+the library code needed for the new fault injection.
 
-Thanks,
+The new stuff gives us (via the same hooks for memory allocation
+profiling), per callsite individually controllable injection points -
+which means it's way easier to inject memory allocation failures into
+existing tests and write tests that cover a specific codepath.
 
-Mathieu
+e.g. what I used to do with this code was flip on random memory
+allocation failures for all code in fs/bcachefs/ after mounting, and I
+had every test doing that (at one point in time, bcachefs could handle
+_any_ allocation failure after startup without reporting an error to
+userspace, but sadly not quite anymore).
 
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+that, plus code coverage analysis should make this pretty tractable.
 
