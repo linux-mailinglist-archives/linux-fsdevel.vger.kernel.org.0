@@ -1,334 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-10867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10868-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727C484EE32
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 01:09:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5176884EE7D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 02:02:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EA361C22C9C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 00:09:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 764BD1C23A16
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 01:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34D236F;
-	Fri,  9 Feb 2024 00:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BD515D0;
+	Fri,  9 Feb 2024 01:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fjvxQy6C"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cZS9bhiq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64779364
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 00:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707437365; cv=none; b=AmfjT+UkZM/kcNpMHzV9o5PpUIGZvKfONnfmXBoZPepvqMEjNDDrSGsD1O4cN0NYXgfygTIkbbyJfJ7zaarRXn1VJBe1vp3Tp2rZg/VgrJ6VW+PQMnEhx8PnbyqITnty1KYATurRqUFOVeI4D9dxcKk7dHV0d61g8g2K+cdsR3A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707437365; c=relaxed/simple;
-	bh=VnMubbcLEYRPOwowFN4Hbhtf0C0MsyAYWFiCKpDGt9I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=riRGQZ6xL4vrYnOjabRmitBe+PBqETJ1ZFzDPEABPGBN6eATN/JVgoZ2TlapX4FLu+Q/j+3d/DNcWA4GTwOp7db0vpxy0YSbg++MiTUSmO2gMAkdQPKGUyyPZaeCtWxUHAY4xv/IaBY5Y4OEXUIU53f8VeQdnlkYRdhnaYvXSu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fjvxQy6C; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707437362;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kIacy2orDvO4RnhNB+PIOV6IoOj1+fjYkNVIo1wEK28=;
-	b=fjvxQy6CiEznva6D1nZZfBXjcOlbxP+IWS7wteJ3z+dsdCQwUJKPqjPhqMWjo4ewZlbTRa
-	Sg0cA+07dXHz2a2xIf1c95yv0p2msK0PsAo7r1wKGLiwNTbWC9gc0fmB+TKz260dDpLMH9
-	32aGp5Ed282cYGgz0EdrRfTgqX1Yr5o=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-369-drlpKP7kPNmGvo1g6QDfiQ-1; Thu, 08 Feb 2024 19:09:19 -0500
-X-MC-Unique: drlpKP7kPNmGvo1g6QDfiQ-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D51D0830DCD;
-	Fri,  9 Feb 2024 00:09:18 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.22.32.174])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 94E35C1690E;
-	Fri,  9 Feb 2024 00:09:18 +0000 (UTC)
-From: Bill O'Donnell <bodonnel@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: dlemoal@kernel.org,
-	Bill O'Donnell <bodonnel@redhat.com>
-Subject: [PATCH] zonefs: convert zonefs to use the new mount api
-Date: Thu,  8 Feb 2024 18:08:57 -0600
-Message-ID: <20240209000857.21040-1-bodonnel@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D9B781F;
+	Fri,  9 Feb 2024 01:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707440517; cv=fail; b=qAaaObPvDgfEKmPJ+GgL9WZvounUO5BDJiqu7LWXzv069W2j7K5jPtz2iNG5sUejd/8e2dUvN2LKsL5+LpSInT4yvXkeFz8NwonZHskloAe1/A7H3fdKTnUpOsijsCbcNMAXm0ELyo3Uov4uf8vpZlUNw+tajQjIjAzZhZACS4A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707440517; c=relaxed/simple;
+	bh=KO0NB6VA/DHde+u1QidACgniSizD023az229gkFgXlE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=oPW2TvW34IeiTYuVgvMZDIw3r+CiFcXSmLt+RryQIMM3K6Jhbqc44zbJAEtPdm+TZJYCeTiTVWs39PUXyOpUfXzzM10kHo3IMQmZ+rB1e4hCIN0hVYcOQyPvOJ2civ2BJqRs2VqKXceu5nOY7f5I+zy78x7x7Ot61c86gUtX+Us=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cZS9bhiq; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1707440516; x=1738976516;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=KO0NB6VA/DHde+u1QidACgniSizD023az229gkFgXlE=;
+  b=cZS9bhiqYFzpzmnGV0Mj7MuOEq+TX5Azs5jnzCwRyRP4W8VjRQs1GInK
+   cBWKQv0vYrDSa9mNev7ISyfdQqx//V+MYexhoET5PKA2aN2DzTah89q5r
+   NjxXR+vt4cse9IDCCHa5qTYCXRet7b+rjA0psqUFiCyLeU52f/as9os1S
+   1/vpj6s85QzjqLYRUia/1X4vgCUnvvufe/95H9OKU5k33Pg10AMDOh0HB
+   w3uFk7Cb5I91RKoNsrocfb5nCs9SBZB8jSg4Rf4D4POF6mvvNGBYx0P7I
+   jE+naARTjFd2KcOib0TA0g8Jr4JBrGRI14u2qzBmeeQOMSFcqxgKqUnfh
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10978"; a="1232455"
+X-IronPort-AV: E=Sophos;i="6.05,255,1701158400"; 
+   d="scan'208";a="1232455"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Feb 2024 17:01:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.05,255,1701158400"; 
+   d="scan'208";a="6440034"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Feb 2024 17:01:54 -0800
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 8 Feb 2024 17:01:53 -0800
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 8 Feb 2024 17:01:53 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Thu, 8 Feb 2024 17:01:53 -0800
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 8 Feb 2024 17:01:53 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jsdlWAMjbrP3Tb0Ig9mjxjffxMJzI8L0QeyJJoMN+LPmwoNh3mbRQ8e/hQ3oJp5pN1Ez4lOtrGOPrvN0fELvHRMIyp8R/m1DPTIzz4jMSss2KFCIGRGQlanBPwmJpkC+AFdQ6sMblzNVXdJQqVwyHa1t12G+lG806/O+IkpVKT2aFXbuQXmAiIAIsyfr3Oh0Jckt8JTO4nOxxPNtz9+sJPU8/2ZyaxhTkCZtg5htJYJGQ3I+90QdiIB9vzqHcYWO1FlaEQyfnTKR+XPiLhLodu1WUGM0YDdw5V95fSeEqugsf4McdjPpXaR8kbNFCwOiOOKi/ZiXlLF0sMmQ5ay9Pg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HIGOUd0Jtz8jRSAzNb3Ekwk4Hbncu74Q8gho6EfnMIc=;
+ b=NHt1YnnLJYdDjbEhet0EQJeQjn5/Rv2XQbo08AwTaCJzx3Er+4RDvtqt4vlHJr4BxFamdevAFltZrnM3mnAk2VSwavFlKEoBIrWJV0GVsW5lB4wY174lXxbe8iKpKd3ejXhyNKPBLHBljzPyMOZTRiQRD+gRjW3MRZ1Bi4AcnXnLDETRp+Di+ctJCEg4ekx1whkFbR72ct9+eHmL76LbEKUwBaH972mRtOAiOCCgIuMFt4kmgraEUymc2PsVW0cl/vjrF57vNNItTZuVZQZOM3cHjtPYyrixW9wjNoI7G5ylRoTIUvnwXI3ByRhstXAcC8uQgwyq+2lxlh1cZYJUNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by CH0PR11MB5266.namprd11.prod.outlook.com (2603:10b6:610:e1::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.38; Fri, 9 Feb
+ 2024 01:01:51 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6257:f90:c7dd:f0b2]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6257:f90:c7dd:f0b2%4]) with mapi id 15.20.7270.024; Fri, 9 Feb 2024
+ 01:01:51 +0000
+Date: Thu, 8 Feb 2024 17:01:48 -0800
+From: Dan Williams <dan.j.williams@intel.com>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Dan Williams
+	<dan.j.williams@intel.com>, Arnd Bergmann <arnd@arndb.de>, Dave Chinner
+	<david@fromorbit.com>
+CC: <linux-kernel@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>, Vishal Verma
+	<vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox
+	<willy@infradead.org>, Russell King <linux@armlinux.org.uk>,
+	<linux-arch@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-xfs@vger.kernel.org>, <dm-devel@lists.linux.dev>,
+	<nvdimm@lists.linux.dev>, <linux-s390@vger.kernel.org>
+Subject: Re: [PATCH v4 06/12] dax: Check for data cache aliasing at runtime
+Message-ID: <65c5797cc88be_5a7f29421@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20240208184913.484340-1-mathieu.desnoyers@efficios.com>
+ <20240208184913.484340-7-mathieu.desnoyers@efficios.com>
+ <65c54a13c52e_afa429444@dwillia2-xfh.jf.intel.com.notmuch>
+ <0e6792eb-7504-464a-aefd-d2a803adb440@efficios.com>
+ <65c557a2e77f7_afa429490@dwillia2-xfh.jf.intel.com.notmuch>
+ <5328e7f0-0864-4626-aa6c-fef5f3f62dc8@efficios.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <5328e7f0-0864-4626-aa6c-fef5f3f62dc8@efficios.com>
+X-ClientProxiedBy: MW4PR03CA0157.namprd03.prod.outlook.com
+ (2603:10b6:303:8d::12) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CH0PR11MB5266:EE_
+X-MS-Office365-Filtering-Correlation-Id: a62a6431-639c-4cc9-0d7c-08dc290ab328
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 3pWXP+h89SGQErhKSSj4nyTgUBorxnztsN3ZLgxd6PsCfOxNT0CmO+pWrMROb6Qjbb9UjmVylkFidTX4H32/7bMd1fGXHYbn8SUUID5VQrngAmblBvccjY8nmsvgqRsHoXfIvaZnkutRC9AwEc5ywp0H0YAILdvPT1yo/AcUco6ahz+5KlooOx4l1nsAuOAbffWCu5pRC446kuQ9yaHu8tZLOoHGd0AcudE3e4KqbbJInyQDnka3QrF2z835i/BRwzyKsPBf0xSbOvgDGxFNApqQFG3cWazNJqyUZy6n5Ml8jmXwVFrvqDXvkBFPzBSmn7TQMd0czyR1kF3spfGRiUsGwN6vywpIDm6aVdt4zUk6ZJV9uqG78j8T35+L5bZzEUdfB+LtzMNh+gXjgPYGMKsi0xAmICZ81cls4xDEiaa49Of4ivQ3wFIetSeCAVtV69FRPLOqKqVfYRKjkayiOnKUNbzl0nPNKpHmkjRKc5yxLeXTMQfb1ELbQ1WZn5yq506vRgu0/Jmobw4Lp/oUqvtUSjvsDeq4VdcqgqTPIclmKbhewEmEQ5v+qLELxmRr
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(39860400002)(396003)(376002)(346002)(366004)(230922051799003)(64100799003)(186009)(1800799012)(451199024)(2906002)(5660300002)(7416002)(4744005)(41300700001)(83380400001)(6666004)(86362001)(82960400001)(38100700002)(26005)(6512007)(54906003)(66946007)(9686003)(110136005)(6506007)(66556008)(478600001)(66476007)(6486002)(53546011)(8936002)(8676002)(4326008)(316002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?bmkmWqiPjsidYoPB/Jw5tH4bqSgzAvg3OSsDtcMdesNzodQ6cMPwlQ8pG+vy?=
+ =?us-ascii?Q?c+IDqLewDa0UZ70ubdqlmysiLXRXHQLCoqu5uH8Rlzm0cTivsCBFab69J6Q5?=
+ =?us-ascii?Q?E2UqxzelOavrYzXzW/v35Yszl7s2rHQxnBowLAh6GobjSJIvGahV7RJaKQLD?=
+ =?us-ascii?Q?fQqj33oWtAUB6pxCWISYwITBpixkKT6c5bk9ZbsGbfEG4r0CP7uYm96piZHA?=
+ =?us-ascii?Q?37VlyPBZMI9+6b/nSrBCAYY8rPsFzbDbsymk3NK/0p4vWX5DBHaZ1we9zOwH?=
+ =?us-ascii?Q?ubJbNhQKIInjgTiGcAqcZruzxbIxRJjGpRLw7Ut1qbxovwUv3yBLFhoBvy0f?=
+ =?us-ascii?Q?JS6yFEvam+utGN5CvwEfsQ+yl6ZWHleX0WT8WPT9fpNCNZ6mxnRnOtpj4uwy?=
+ =?us-ascii?Q?5Ln98e5OjTkxtbXQMiueAXWyDXkWNiNlXEc1DUvVbZLseuVPZi7vHo3u5FNz?=
+ =?us-ascii?Q?Leg4EHf+FENe7kvBJDPQO7dMu+l/VPrvHbC6aEevJ3aKVJvrDUdd4H07JOxA?=
+ =?us-ascii?Q?L7FbjuTKTS4bWRsrpyr7nbRa9kxjiAZLYsxEJN/QVp+5RK2A+BJ6cHtmB7Fa?=
+ =?us-ascii?Q?PyBZcwIETO9MLwIplxDwsZitEWc4P/Mfr3LYdJEndN8V+QaqmROY2h8sSruP?=
+ =?us-ascii?Q?Gd5TlhXumcjV6hzhtPQen9wm6qk9y1jFHVsthvwo1LT9yzaRCU3G+oscqijs?=
+ =?us-ascii?Q?VcImlkOenKJ0ggiVjyM6jE8GZOQdqKKNvdpJ4pYbjrJ2XrHCkgjjem4NV3Sg?=
+ =?us-ascii?Q?ibNf1DGASp/mzR9n3X8va3gEiduYfkAmKlzu8IrPQPSMIBPzACAFNtFpWU1C?=
+ =?us-ascii?Q?Ya9x2JnIezRLJJh4QFTJewZLc2Q7JBR8S252oZJPrVF9JeZ7hsEkQG/hVOvR?=
+ =?us-ascii?Q?09N3nX4QZ5Wxrmp0Jay71cmQH0rcQ2+UUTAu3L7qGagfgPGKDVHvXlos9TSq?=
+ =?us-ascii?Q?AGWinJawdZgJhzlUvs5EAfUBbHUUpxC0Xt4jh+G0uOiIsX710VYN3fqtuEi6?=
+ =?us-ascii?Q?MnECTzKrbL1y9DNNrK2T9r/dsS3Y2xpX+WAi5vpW5gEW/Y0uTayb5n3nsUZF?=
+ =?us-ascii?Q?Xzsb2gsrCjv+TS0lMbcCl5HbTepwTWCj6tL9D2vOzhPWgmmmIDLLU9zsOJXI?=
+ =?us-ascii?Q?j++m0YQJapU4lD5UBT7a0HdzYGmnYxxnIvKFq0tMyA6l7dYiH1AeQQzYN8cC?=
+ =?us-ascii?Q?/KCrt59z4+kkOT2fp+ZNWQ6RSyVmmJqwc4k2JiDDSMpoNaTlxEm6/YaoygdS?=
+ =?us-ascii?Q?ExAY3bKSThgjCkEmQJhta/H+2p/uqRBgKuo6VC0K7w/NB5EV/x5b78USq/+5?=
+ =?us-ascii?Q?BE+Pd0bOzLN7PsmSDgEPfbb/ftG4RcHhQKHqh9QOfjeHtMchIcGK3mn9GS8d?=
+ =?us-ascii?Q?VwyFrIAo+gR4WDRgWYJZihxpsBUX5DdJBovOwegwhpdR/lME/tz1hlwQ2kbu?=
+ =?us-ascii?Q?9QviALOAEWT7NilB27iXV6ngXDtwbRyL/Ky7PWPvVIXrqxTlZjRSEkXs9Z/d?=
+ =?us-ascii?Q?skEW5O+IHW377J1uM8HGNGKU16rQf1p7RyrClFXMUDEBrhCbOn8IJnoQdMZh?=
+ =?us-ascii?Q?6G4o0038sGqigCv3j83kFX7bhougiw+65nfXv6+SYIbAvP8buDlGa3rQO2sV?=
+ =?us-ascii?Q?iA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a62a6431-639c-4cc9-0d7c-08dc290ab328
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Feb 2024 01:01:51.3545
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dO85l20Go248D8jVbSeJJBhxoTzTMfTTxt9ZXYhoLHpJD4zma+XO38ke0W04OU5NArSMTPeSQ1NaCXlGxc+sXM5X4LKoLCrXojNA3cEl78o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5266
+X-OriginatorOrg: intel.com
 
-Convert the zonefs filesystem to use the new mount API.
-Tested using the zonefs test suite from:
-https://github.com/damien-lemoal/zonefs-tools
+Mathieu Desnoyers wrote:
+> On 2024-02-08 17:37, Dan Williams wrote:
+> > Mathieu Desnoyers wrote:
+> >> On 2024-02-08 16:39, Dan Williams wrote:
+> >> [...]
+> >>>
+> >>> So per other feedback on earlier patches, I think this hunk deserves to
+> >>> be moved to its own patch earlier in the series as a standalone fixup.
+> >>
+> >> Done.
+> >>
+> >>>
+> >>> Rest of this patch looks good to me.
+> >>
+> >> Adding your Acked-by to what is left of this patch if OK with you.
+> > 
+> > You can add:
+> > 
+> > Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> > 
+> > ...after that re-org.
+> 
+> Just to make sure: are you OK with me adding your Reviewed-by
+> only for what is left of this patch, or also to the other driver
+> patches after integrating your requested changes ?
 
-Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
----
- fs/zonefs/super.c | 156 ++++++++++++++++++++++++++--------------------
- 1 file changed, 90 insertions(+), 66 deletions(-)
-
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index e6a75401677d..6b8ecd2e55b8 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -15,13 +15,13 @@
- #include <linux/writeback.h>
- #include <linux/quotaops.h>
- #include <linux/seq_file.h>
--#include <linux/parser.h>
- #include <linux/uio.h>
- #include <linux/mman.h>
- #include <linux/sched/mm.h>
- #include <linux/crc32.h>
- #include <linux/task_io_accounting_ops.h>
--
-+#include <linux/fs_parser.h>
-+#include <linux/fs_context.h>
- #include "zonefs.h"
- 
- #define CREATE_TRACE_POINTS
-@@ -460,58 +460,47 @@ static int zonefs_statfs(struct dentry *dentry, struct kstatfs *buf)
- }
- 
- enum {
--	Opt_errors_ro, Opt_errors_zro, Opt_errors_zol, Opt_errors_repair,
--	Opt_explicit_open, Opt_err,
-+	Opt_errors, Opt_explicit_open,
- };
- 
--static const match_table_t tokens = {
--	{ Opt_errors_ro,	"errors=remount-ro"},
--	{ Opt_errors_zro,	"errors=zone-ro"},
--	{ Opt_errors_zol,	"errors=zone-offline"},
--	{ Opt_errors_repair,	"errors=repair"},
--	{ Opt_explicit_open,	"explicit-open" },
--	{ Opt_err,		NULL}
-+struct zonefs_context {
-+	unsigned long s_mount_opts;
- };
- 
--static int zonefs_parse_options(struct super_block *sb, char *options)
--{
--	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
--	substring_t args[MAX_OPT_ARGS];
--	char *p;
--
--	if (!options)
--		return 0;
--
--	while ((p = strsep(&options, ",")) != NULL) {
--		int token;
-+static const struct constant_table zonefs_param_errors[] = {
-+	{"remount-ro",		ZONEFS_MNTOPT_ERRORS_RO},
-+	{"zone-ro",		ZONEFS_MNTOPT_ERRORS_ZRO},
-+	{"zone-offline",	ZONEFS_MNTOPT_ERRORS_ZOL},
-+	{"repair", 		ZONEFS_MNTOPT_ERRORS_REPAIR},
-+	{}
-+};
- 
--		if (!*p)
--			continue;
-+static const struct fs_parameter_spec zonefs_param_spec[] = {
-+	fsparam_enum	("errors",		Opt_errors, zonefs_param_errors),
-+	fsparam_flag	("explicit-open",	Opt_explicit_open),
-+	{}
-+};
- 
--		token = match_token(p, tokens, args);
--		switch (token) {
--		case Opt_errors_ro:
--			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
--			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_RO;
--			break;
--		case Opt_errors_zro:
--			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
--			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_ZRO;
--			break;
--		case Opt_errors_zol:
--			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
--			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_ZOL;
--			break;
--		case Opt_errors_repair:
--			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
--			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_REPAIR;
--			break;
--		case Opt_explicit_open:
--			sbi->s_mount_opts |= ZONEFS_MNTOPT_EXPLICIT_OPEN;
--			break;
--		default:
--			return -EINVAL;
--		}
-+static int zonefs_parse_param(struct fs_context *fc, struct fs_parameter *param)
-+{
-+	struct zonefs_context *ctx = fc->fs_private;
-+	struct fs_parse_result result;
-+	int opt;
-+
-+	opt = fs_parse(fc, zonefs_param_spec, param, &result);
-+	if (opt < 0)
-+		return opt;
-+
-+	switch (opt) {
-+	case Opt_errors:
-+		ctx->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
-+		ctx->s_mount_opts |= result.uint_32;
-+		break;
-+	case Opt_explicit_open:
-+		ctx->s_mount_opts |= ZONEFS_MNTOPT_EXPLICIT_OPEN;
-+		break;
-+	default:
-+		return -EINVAL;
- 	}
- 
- 	return 0;
-@@ -533,11 +522,19 @@ static int zonefs_show_options(struct seq_file *seq, struct dentry *root)
- 	return 0;
- }
- 
--static int zonefs_remount(struct super_block *sb, int *flags, char *data)
-+static int zonefs_get_tree(struct fs_context *fc);
-+
-+static int zonefs_reconfigure(struct fs_context *fc)
- {
--	sync_filesystem(sb);
-+	struct zonefs_context *ctx = fc->fs_private;
-+	struct super_block *sb = fc->root->d_sb;
-+	struct zonefs_sb_info *sbi = sb->s_fs_info;
- 
--	return zonefs_parse_options(sb, data);
-+	sync_filesystem(fc->root->d_sb);
-+	/* Copy new options from ctx into sbi. */
-+	sbi->s_mount_opts = ctx->s_mount_opts;
-+
-+	return 0;
- }
- 
- static int zonefs_inode_setattr(struct mnt_idmap *idmap,
-@@ -1197,7 +1194,6 @@ static const struct super_operations zonefs_sops = {
- 	.alloc_inode	= zonefs_alloc_inode,
- 	.free_inode	= zonefs_free_inode,
- 	.statfs		= zonefs_statfs,
--	.remount_fs	= zonefs_remount,
- 	.show_options	= zonefs_show_options,
- };
- 
-@@ -1242,9 +1238,10 @@ static void zonefs_release_zgroup_inodes(struct super_block *sb)
-  * sub-directories and files according to the device zone configuration and
-  * format options.
-  */
--static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
-+static int zonefs_fill_super(struct super_block *sb, struct fs_context *fc)
- {
- 	struct zonefs_sb_info *sbi;
-+	struct zonefs_context *ctx = fc->fs_private;
- 	struct inode *inode;
- 	enum zonefs_ztype ztype;
- 	int ret;
-@@ -1281,21 +1278,17 @@ static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
- 	sbi->s_uid = GLOBAL_ROOT_UID;
- 	sbi->s_gid = GLOBAL_ROOT_GID;
- 	sbi->s_perm = 0640;
--	sbi->s_mount_opts = ZONEFS_MNTOPT_ERRORS_RO;
--
-+	sbi->s_mount_opts = ctx->s_mount_opts;
- 	atomic_set(&sbi->s_wro_seq_files, 0);
- 	sbi->s_max_wro_seq_files = bdev_max_open_zones(sb->s_bdev);
- 	atomic_set(&sbi->s_active_seq_files, 0);
-+
- 	sbi->s_max_active_seq_files = bdev_max_active_zones(sb->s_bdev);
- 
- 	ret = zonefs_read_super(sb);
- 	if (ret)
- 		return ret;
- 
--	ret = zonefs_parse_options(sb, data);
--	if (ret)
--		return ret;
--
- 	zonefs_info(sb, "Mounting %u zones", bdev_nr_zones(sb->s_bdev));
- 
- 	if (!sbi->s_max_wro_seq_files &&
-@@ -1356,12 +1349,6 @@ static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
- 	return ret;
- }
- 
--static struct dentry *zonefs_mount(struct file_system_type *fs_type,
--				   int flags, const char *dev_name, void *data)
--{
--	return mount_bdev(fs_type, flags, dev_name, data, zonefs_fill_super);
--}
--
- static void zonefs_kill_super(struct super_block *sb)
- {
- 	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
-@@ -1376,17 +1363,54 @@ static void zonefs_kill_super(struct super_block *sb)
- 	kfree(sbi);
- }
- 
-+static void zonefs_free_fc(struct fs_context *fc)
-+{
-+	struct zonefs_context *ctx = fc->fs_private;
-+
-+	kfree(ctx);
-+}
-+
-+static const struct fs_context_operations zonefs_context_ops = {
-+	.parse_param    = zonefs_parse_param,
-+	.get_tree       = zonefs_get_tree,
-+	.reconfigure	= zonefs_reconfigure,
-+	.free           = zonefs_free_fc,
-+};
-+
-+/*
-+ * Set up the filesystem mount context.
-+ */
-+static int zonefs_init_fs_context(struct fs_context *fc)
-+{
-+	struct zonefs_context *ctx;
-+
-+	ctx = kzalloc(sizeof(struct zonefs_context), GFP_KERNEL);
-+	if (!ctx)
-+		return 0;
-+	ctx->s_mount_opts = ZONEFS_MNTOPT_ERRORS_RO;
-+	fc->ops = &zonefs_context_ops;
-+	fc->fs_private = ctx;
-+
-+	return 0;
-+}
-+
- /*
-  * File system definition and registration.
-  */
- static struct file_system_type zonefs_type = {
- 	.owner		= THIS_MODULE,
- 	.name		= "zonefs",
--	.mount		= zonefs_mount,
- 	.kill_sb	= zonefs_kill_super,
- 	.fs_flags	= FS_REQUIRES_DEV,
-+	.init_fs_context	= zonefs_init_fs_context,
-+	.parameters	= zonefs_param_spec,
- };
- 
-+static int zonefs_get_tree(struct fs_context *fc)
-+{
-+	return get_tree_bdev(fc, zonefs_fill_super);
-+}
-+
- static int __init zonefs_init_inodecache(void)
- {
- 	zonefs_inode_cachep = kmem_cache_create("zonefs_inode_cache",
--- 
-2.43.0
-
+Sure, if you make all those changes go ahead and propagate my
+Reviewed-by across the set.
 
