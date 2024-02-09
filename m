@@ -1,88 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-10987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D00884F9B9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 17:37:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CF784FA01
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 17:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDA221F237E5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 16:37:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C686AB23938
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 16:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31B157B3F3;
-	Fri,  9 Feb 2024 16:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03E9C84A35;
+	Fri,  9 Feb 2024 16:46:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="FSTbVW6P"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="VoZypl58"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C6A7B3D1
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 16:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879FB83CA2
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 16:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707496613; cv=none; b=T45LycllZX72VjxsAr/uniWAsS7aEkK1ukuUUKcaRHb2pli/tTY0iF/d4oiD9xqwkwAOoy2FAyOUTDYvZZd9TwXCGc/X/cNRF3FmUbjLxM72kD5KTPLjekIex5ipFHYnDIUl8T/ZpRBWjNhR2mBfnvwMDU1v2kYuwiumH8Iu+R4=
+	t=1707497196; cv=none; b=pej7/oXzNzvI3JgKNHOzVlbl6JqT+W/AXJYC1k4tb1oZs3aPUw5lkPOVU8b1GcNTmF7Qxp6AnLsFSUrAT2UpMqk+Iib3HPsK2G/52gB7ineFPKRkKZJBYtTduHWkQDC6MfVAXywVGPaTmBAfPU5LYM1cOJVFLa4rNjo05vW53Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707496613; c=relaxed/simple;
-	bh=/AE1H+OrhUdRbYZncgCyaiVeqGri3bI4xE/lSfbbuAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OB2mxa7wxoMj2vjZbzMYQEtEWHd1VF+XZHWMVUn0NsFx21zYHp3p8gt5AZp7kdKSBl8ZtSZUzN76LAxNJgJd82xd8arGeWsBaEyCltwYPUEsrHYMcGoXfjGegaUb/CMiegJhFgkjXk0xxFCGWDnDYAmHrFCQUScKdVkyK5xFZKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=FSTbVW6P; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=JYPwv5nf79wQp7dvamybvTyIQ6FenV1h4xi8o+FKCEQ=; b=FSTbVW6PXuddu/swoP5ml6gtav
-	dbPQB8D9URwvaLedNgIhh7yu3pMndQKsV1vKqysRz9fXzR/YGYn/PB7ZYV49xi/vP/pE05nV1bb9q
-	ZXpd/7tIWvyFPcUkH3xST7pTvFeEQvcinFdy5oqvZB81wYZw5/qJSBWZC9rrIxHEfa8ktM/Do5KHD
-	eJxeqYpU/VGEhJar6zqDc6qlODmezqdx1XEQybQiATkade6L1gtCH2iXypJr1HqdFmZTjGfw9py9Q
-	GW2QaZIyMnhp0SYaET8njqE9SPi6/EH161m/cAoStr4k0U+9m6qWUOUNBVftya7IAaaoYj+oTj/Zt
-	JLDS1DIA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rYTrq-004JWC-0S;
-	Fri, 09 Feb 2024 16:36:46 +0000
-Date: Fri, 9 Feb 2024 16:36:46 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Dmitry Antipov <dmantipov@yandex.ru>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	linux-fsdevel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH] [RFC] fs: prefer kfree_rcu() in fasync_remove_entry()
-Message-ID: <20240209163646.GD608142@ZenIV>
-References: <20240209125220.330383-1-dmantipov@yandex.ru>
- <20240209-hierzu-getrunken-0b1a3bfc7d16@brauner>
+	s=arc-20240116; t=1707497196; c=relaxed/simple;
+	bh=aMoYoR9g55AaLeVo9SY8jJROmLnxcwP3+F1g3wH2V2s=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NpDYId6ohF6nF2q2HWnlQsoTt9H/bfWB/o3LWsalFRo5CuJrmFWw3Lp2NZxhOxPOVqCOmToyM9XJrAN1eL1uhuZWfZH0gjRY3yRl2Oo6lxBww8p+EDRVg7XKJTQEfJ6AT/XW5a580R4YOoi2L9G0NnbAtvOEjwRLWk/p9E1Mo9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=VoZypl58; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-363acc3bbd8so473115ab.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 08:46:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1707497191; x=1708101991; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5Bk3lXdWdssF56AafgWiOY8EEPqiJtfg/ku6dTvlXx0=;
+        b=VoZypl58goZxJ/s3qVAPjoEfp1esHUmxHSWUk6uVXpN6tLQTHv8VyWxvhtvnPmCyJZ
+         82end2yHxyi11P+a/XVOC/uJpU5elcJa/sosiy7f6p+U9fJwS+m81UB0A8D93BwmcP1z
+         zVvsujeyWAotqyfY9nhNYeSz1f96rvdiJEDNTdHTdSZ8YSvl/urUORno47Y/qHEu7FhF
+         HZNGGBF36OYgCdHdRf/oACqi9664yP8cCSAzWS3Gj121aVV6IPNa7J40LTL02fs+yx3B
+         K62mfW1/NTLPlciJyDNqR+oZMtWpCEO22xkPgH1t+1Hhj/knVyv+5+09FAmIALxoMU2J
+         zrrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707497191; x=1708101991;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5Bk3lXdWdssF56AafgWiOY8EEPqiJtfg/ku6dTvlXx0=;
+        b=IceokyNM/iPUBssi6w3DsHgIw1urL/Eu0FDepFtAMyr300RXFY2nRHzj2eSQXrW17D
+         C8Tn1cTtPd1F9zZNvfYQx3VAqMjlJqyzJPpCfpEXB+ursMBYP4bhsw6sgGgCq2ALgYN3
+         zgfyuJAscKDpLZcoQWHENWw/ltfBp8SksIpCbj31WmVgCAt+FVswqzMEfGi2dD0D1jjL
+         Yv6mfVuOcdIlLPUxNxC/Fk7bUlrmiOs8+DUNDRKpDu5TWiunxWWopHRhBuQwAbP63fAv
+         d2cB8jq2X+3RjfEyeApSLytCKWLTBJPA+ZA5mBOpIQLB3NNgvWn51iO8VYBIvCIXmj3J
+         Khfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUbuY+D6xIrCoaZSXz3+CdJnDqLB9jSUp33Kcpw+axqy+Wo3sh4UJhMiExVzP5AZVDF1qjerKppIvRhBKk2y4Ez+XNg3uZEUVDF+2Z1zg==
+X-Gm-Message-State: AOJu0YwvLomxysx/WUj/mlAjz0BKDLpWf15OiofdYdxqUcmIrYuWmUVf
+	rfBkP8QtUEplMY2ffb2yIjaB++ZlYXo8o2KJdbr7TJTDg/S7t9etf0lDiCk3TxS81GB30916oIA
+	gYcE=
+X-Google-Smtp-Source: AGHT+IF6KMyUQlSpXVnL5nXkIR4nChS6NBUQlTJeIWKJrcsyklo83lMphVGTAdaTQZOpeSidn/HpMg==
+X-Received: by 2002:a05:6e02:1d99:b0:363:c82e:57d9 with SMTP id h25-20020a056e021d9900b00363c82e57d9mr2500117ila.3.1707497191257;
+        Fri, 09 Feb 2024 08:46:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWJMIZMvr8B0jVeCz3hmgZ0EiIU6T7xB0RAkxgn9deHQnDVRxvqzSa2p4oeiHrSkrLZtH8OqNDPqYkVAhEbRqqbhwgW3SkcKTiZFYk/7j6FV3TNlsgV6bFAClumGqvEnlOl
+Received: from [127.0.0.1] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id y2-20020a056e021be200b00363ca35b55dsm188716ilv.3.2024.02.09.08.46.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 Feb 2024 08:46:29 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: Tony Solomonik <tony.solomonik@gmail.com>
+Cc: willy@infradead.org, linux-fsdevel@vger.kernel.org, brauner@kernel.org
+In-Reply-To: <20240202121724.17461-1-tony.solomonik@gmail.com>
+References: <20240124083301.8661-1-tony.solomonik@gmail.com>
+ <20240202121724.17461-1-tony.solomonik@gmail.com>
+Subject: Re: [PATCH v9 0/2] io_uring: add support for ftruncate
+Message-Id: <170749718943.1657287.1724106194346542608.b4-ty@kernel.dk>
+Date: Fri, 09 Feb 2024 09:46:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240209-hierzu-getrunken-0b1a3bfc7d16@brauner>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.12.5-dev-2aabd
 
-On Fri, Feb 09, 2024 at 03:22:15PM +0100, Christian Brauner wrote:
-> On Fri, Feb 09, 2024 at 03:52:19PM +0300, Dmitry Antipov wrote:
-> > In 'fasync_remove_entry()', prefer 'kfree_rcu()' over 'call_rcu()' with dummy
-> > 'fasync_free_rcu()' callback. This is mostly intended in attempt to fix weird
-> > https://syzkaller.appspot.com/bug?id=6a64ad907e361e49e92d1c4c114128a1bda2ed7f,
-> > where kmemleak may consider 'fa' as unreferenced during RCU grace period. See
-> > https://lore.kernel.org/stable/20230930174657.800551-1-joel@joelfernandes.org
-> > as well. Comments are highly appreciated.
-> > 
-> > Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
-> > ---
+
+On Fri, 02 Feb 2024 14:17:22 +0200, Tony Solomonik wrote:
+> This patch adds support for doing truncate through io_uring, eliminating
+> the need for applications to roll their own thread pool or offload
+> mechanism to be able to do non-blocking truncates.
 > 
-> Yeah, according to commit ae65a5211d90 ("mm/slab: document kfree() as
-> allowed for kmem_cache_alloc() objects") this is now guaranteed to work
-> for kmem_cache_alloc() objects since slab is gone. So independent of
-> syzbot this seems like a decent enough cleanup.
+> Tony Solomonik (2):
+>   Add do_ftruncate that truncates a struct file
+>   io_uring: add support for ftruncate
+> 
+> [...]
 
-Sure, but we'd better make very sure that it does *NOT* get picked by any
--stable prior to 6.4.
+Applied, thanks!
+
+[1/2] Add do_ftruncate that truncates a struct file
+      (no commit info)
+[2/2] io_uring: add support for ftruncate
+      (no commit info)
+
+Best regards,
+-- 
+Jens Axboe
+
+
+
 
