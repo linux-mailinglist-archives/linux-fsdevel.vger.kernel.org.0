@@ -1,114 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-10941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E8C84F4D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 12:49:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05B6984F4D5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 12:50:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 036DE1F258D9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 11:49:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B620928D50D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 11:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE152EAE5;
-	Fri,  9 Feb 2024 11:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C60D2E84A;
+	Fri,  9 Feb 2024 11:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="00YtOFe9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VmNA8lMA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C312E633
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 11:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C572929CF8
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 11:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707479365; cv=none; b=M6aVb5GpxJ9eF4SwUTO+o8NYEnIAuJWdSgjHC588nXZpHS7KDEXQLZm5tA57wfihO8gGLeaZqZc2FrXmQlwQ8WFGg16Rsn2EgcMEQY+mtg+AaxTanIq2S8iXweUljOaLPnRzvBBL3rGTjtxc+aXFBNHAK4vNKiO8q+r2wIJHbXY=
+	t=1707479422; cv=none; b=MlbJEWRA9pkU+S/DzRLc5NszPF9LN6bW1mUS1dpbib1tFrm49vlJhOcEIc4rmQa1VzH5+jSAHTBpDAXovVebO9qEoc1oi3cxunLF9aPTYDhG4k8pv8uPg7dv4LldReDFlMUjmnil7iEQyfsatqNhZIrCRpUBs7Ui05PTCBP+6rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707479365; c=relaxed/simple;
-	bh=yhanlhyHf9vUwAPCSVHqqZzMUqMS696JtJ0CS6AX8Q0=;
+	s=arc-20240116; t=1707479422; c=relaxed/simple;
+	bh=gAvd7U/OnwLZlOS9bnzYjNQ7Bialnhg1WBrsJ13XsmY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=laXWQYkVaTk+95yD+D5SuCPV3D9XdHPmnpslDbAfq1Bzr1t1rlPNdiTkzo9uyQmHo6Ut9w80/FjLl0rLUIPY2YixjZQZMoT7aG15lhGQecNKs2LAwMmCVFAqxaeOcK516KlfyylRQWFWg6ttddysm1SHxukzQ4KFdaVGUbtKI5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=00YtOFe9; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4c01ac04569so325289e0c.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 03:49:19 -0800 (PST)
+	 To:Cc:Content-Type; b=YqD42LmGg23DNH4ZMiuvOVpUuROK07HzVks1NV4BjlyWqZbLnV/ff0aLJafyI3/1HHOwAv73ISLYFl4MYlCeDpih42HeunT8RUWgzMCeX2lNR+tc2Gu7kfRuwJ8ZjmNvaotMVag5AF1roEsgoR8GHH4YIAyhN7hM+R6XNQXgMWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VmNA8lMA; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3bbb4806f67so523768b6e.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 03:50:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707479359; x=1708084159; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707479417; x=1708084217; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l++3fpOv/6kAkEAKZFY83iwVJR4LI0xsh9dQ+P6yYAk=;
-        b=00YtOFe9KCUPwTrp7V68TNfnALSahkWowasBb6FIEJKxH5jML9I1ydKl6G8Qzhfmnz
-         2hKmrwW1shDPz6lzFxNTcrh9/MxB/wKKWhU6pd6Pyi3+YUXoXvSllWY6n0Ed2z5PhBry
-         fIi0DQ7LgFWeHrI+HB1iDwITmT9QpflKmLnTQqK3EX2DKxA4AhrF+bLFdSVUQwouVdEI
-         C8cF95SWS5ws6F7z3H1ItI5VPwZdcaVnyoi/g8mk6sxnuMX6mdq01g7emyp5/UUgieH6
-         678sTlROwjfcV62eqZCbsURIPTlCfn7R04R5kqMo4Nyk/1tkuQyM2KWYbzokW7S8CbtQ
-         OQyg==
+        bh=/bKD5h6wGnGHn/ulblxf6l0v/ICTEl3Xld2zF9z/GjQ=;
+        b=VmNA8lMA19OqygZrJ/k9wnNFJpv0jP0MBF/710bL2JB0Ch4jLqcEmxdP8xw8DKXNJ1
+         FzCWsoc1XanAFZ7IomJrp6g8QaIBav54kVE2B6cqNU/uU9hPrYFH3wbPLrs3ndPD+o/C
+         0TcME0E1W5sp5GqX40Cb33M8vFqst+ozKsMXlSzAarBC8O7Hh9R7W0KucNzeaLbjRGfB
+         jFim63/r6ilRhnRcLAGfpVOGJURJKhvP/cJG2iYzrQHIEue9cTYy2++qHer50AnYtUp+
+         6Iqn3AnIhdx52Du2RpiqPSVhvFsdMZTC+YeSih1oeutJmBxLO4deqkSXGg1l7cvnkkRL
+         HdLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707479359; x=1708084159;
+        d=1e100.net; s=20230601; t=1707479417; x=1708084217;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=l++3fpOv/6kAkEAKZFY83iwVJR4LI0xsh9dQ+P6yYAk=;
-        b=GSrQPkzYJRK6GE+uWeeKJrO4B1uPfgPq+30clG2ZCv0uH3SqhtRIU+2SNkRQr/5a3B
-         0Ua4BR5IwhXz6Acl0caRQhBGgCxDdeBWHGtYMFrrT8J1mldi9nkyLGnveS2TmdUJM2i7
-         08kCPQKFMY/3FuF/2m7LnuZxikwSf81wUMedaPy+mfQwEMv/CQRryzXmqw/4AR3TIWP3
-         PuZWNr8+7sCEShOVTVAQM6wl2bXx4U31vvu4KZ/dSE43FQ8Rq2+SlWk/71BJmo0jFNHq
-         zYFOA0zY24ojjQsLb/uG/m/gAmB0/MJ2WR7TtX6gbnZy/Mo7Wy39V413YiaHTtq0h8U1
-         NRSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVryUDZpCMmClMGO1ck72LvoN4QNvBSThI9DnBTN1Ep96ScMeXAMF2eN3S4IyxQWo6MBF9xybcUrH4R3VwAMufPqjnykAoeaTvZffWl8A==
-X-Gm-Message-State: AOJu0Yzsx9S9YW5iZNcdH8rBLSxP2OyV4IVQnu1xKhePh/ppmZATRNgx
-	Bh9m48qwHo5xOPnOjhYNNd6o204PROf5NUZUZJWKgUXXpa+Ei8MYmA0NFFhkLWFdWXZBhgqGrK6
-	hjQdU19ne3aRfgYKAF2RTfrOtHRi5HWr2bnWb
-X-Google-Smtp-Source: AGHT+IGeozrhqlsnoi4sKjmwc1iTJHC3DWdheQh5u+tCcxJb1BYvfzzbx2OvfKUcWmt/yMinTt/VeLkRIu4BWCWdkl4=
-X-Received: by 2002:a1f:ec01:0:b0:4c0:2ada:2f19 with SMTP id
- k1-20020a1fec01000000b004c02ada2f19mr1210515vkh.15.1707479358796; Fri, 09 Feb
- 2024 03:49:18 -0800 (PST)
+        bh=/bKD5h6wGnGHn/ulblxf6l0v/ICTEl3Xld2zF9z/GjQ=;
+        b=fXt7ry0k7UliprFLm0wqJ1nuigNKwQiQ6Uy33uLE77AU0s8rGnz+bDTYaw692JFJMM
+         0Bg06kpYJHmAcLQOs8AknhDHmfmpMOCDnM1EFQ/kNU4bWuhEvVFfZNdRZjhnQn3zgpAN
+         JEywHUv0YqDbIsu8DDbgohx3TEiUrVnqhOT9OZ9uQXbUq6zl4tfA3MJiYOFGrFHUvv6I
+         PtAZFHvq8kIVi9XZSKgrkGbe4QeT2cuxtlPI4aHyabeAz264JQhtj1gTpiQ9SFB3gCQv
+         EdmS5A/HS+7/LVBBgSZH50oANELzGqUaRN+UwCPcXDtVWnuXjNflLwq2X2XbKT+8Z9em
+         hYKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTqeGo2BMqKkQn0eNk/HARU/87UIqf910LlzFQ7bgKJrpBOsDrJMj0vjnnSJCjMyYyTuvWUXuABXhCVrl4+cHGFCiOgSSdn6lZVripew==
+X-Gm-Message-State: AOJu0YxZaHBeSMUI3oDkmYxGc0GPAR9EVmjb3XVFgCFNf34cWpVbKfTc
+	erwbSDNs2UfMElwhDkihvPs3ceBrwfUZ35x9DmLlAsORHAyrQZgeN5+1fGveLQ1LFKSx3FSPdde
+	BZBNiHO98MJl1brSgi3fiI3lwDLk=
+X-Google-Smtp-Source: AGHT+IG/ZeU2MYihWiVUAzDEBIp4sSx3olDS2wkVEiaJHAy1vFyU0q0dAMwCRoVgUjz/ZdnSdkWkoXMJJjjs2+ZslaA=
+X-Received: by 2002:a05:6808:1986:b0:3bf:b977:33ed with SMTP id
+ bj6-20020a056808198600b003bfb97733edmr1413538oib.45.1707479416800; Fri, 09
+ Feb 2024 03:50:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240209-alice-file-v5-0-a37886783025@google.com> <20240209-alice-file-v5-1-a37886783025@google.com>
-In-Reply-To: <20240209-alice-file-v5-1-a37886783025@google.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 9 Feb 2024 12:49:07 +0100
-Message-ID: <CAH5fLgiFzPcOH95tw9MwJmgfgBzE+rWxhk0050OTYmqgprPn5A@mail.gmail.com>
-Subject: Re: [PATCH v5 1/9] rust: types: add `NotThreadSafe`
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>
+References: <20240208170603.2078871-1-amir73il@gmail.com> <20240208170603.2078871-9-amir73il@gmail.com>
+ <CAJfpeguUBet0zCdESe7dasC7YpCEC816CMMRF_s1UYmgU=Ja=w@mail.gmail.com>
+ <CAOQ4uxhBuSQmku70oydUxZmfACuvEqUUvtVcTSJGYOWHj5hvRg@mail.gmail.com> <CAJfpeguR5Gt+vcyduE+PT+8BmTOJgv+KnpoSueHVbBgFdMNfGQ@mail.gmail.com>
+In-Reply-To: <CAJfpeguR5Gt+vcyduE+PT+8BmTOJgv+KnpoSueHVbBgFdMNfGQ@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 9 Feb 2024 13:50:05 +0200
+Message-ID: <CAOQ4uxjb5NhQ0k4QZgAmkp==Lj6_KurZEMFwtH5O3-uUDJggUw@mail.gmail.com>
+Subject: Re: [PATCH v3 8/9] fuse: introduce inode io modes
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org, 
+	Bernd Schubert <bschubert@ddn.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 9, 2024 at 12:18=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
-> +    types::{NotThreadSafe, ScopeGuard, Opaque},
+On Fri, Feb 9, 2024 at 12:56=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
+wrote:
+>
+> On Fri, 9 Feb 2024 at 11:35, Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> > No reason apart from "symmetry" with the other io mode FOPEN flags.
+> > I will use an internal flag.
+>
+> Okay.
+>
+> Other ff->open_flags are set at open time and never changed.
+> FOPEN_CACHE_IO doesn't fit into that pattern.
+>
+> > I added io_open to fix a bug in an earlier version where fuse_file_rele=
+ase()
+> > was called on the error path after fuse_file_io_open() failed.
+> >
+> > The simple change would be to replace FOPEN_CACHE_IO flag
+> > with ff->io_cache_opened bit.
+>
+> Right.
+>
+> >
+> > I assume you meant to change ff->io_opened to an enum:
+> > { FUSE_IO_NONE, FUSE_IO_CACHE, FUSE_IO_DIRECT,
+> >   FUSE_IO_PASSTHROUGH }
+> >
+> > Is that what you mean?
+>
+> I just meant ff->io_cache_opened is only set when the cache counter
+> needs decrementing.  The logic is simpler and is trivially right.
+>
 
-Oops. This one doesn't pass rustfmt. Embarrassing.
+Ok. but I'll leave it named io_opened because with fuse passthrough
+io_opened means either positive or negative refcount:
 
-I was hoping that this would be the last version. Maybe Miguel can fix
-the ordering here when he takes it? (Assuming I don't need to send a
-v6.)
+void fuse_file_io_release(struct fuse_file *ff, struct inode *inode)
+{
+        if (!ff->io_opened)
+                return;
 
-It's supposed to be:
-types::{NotThreadSafe, Opaque, ScopeGuard},
+        /*
+         * Last caching file close allows passthrough open of inode and
+         * Last passthrough file close allows caching open of inode.
+         */
+        if (ff->open_flags & FOPEN_PASSTHROUGH)
+                fuse_file_uncached_io_end(inode);
+        else
+                fuse_file_cached_io_end(inode);
 
-There shouldn't be any other issues in this patchset.
+        ff->io_opened =3D false;
+}
 
-Alice
+Thanks,
+Amir.
 
