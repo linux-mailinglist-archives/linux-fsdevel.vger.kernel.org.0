@@ -1,214 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-10944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10945-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C864384F512
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 13:13:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE1084F514
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 13:15:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED12B1C21ABD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 12:13:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECB0EB22FB3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 12:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFAA31759;
-	Fri,  9 Feb 2024 12:12:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 047D631758;
+	Fri,  9 Feb 2024 12:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UmmW1eAg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cAHW9tdV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5254689
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 12:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA30931A82
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 12:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707480776; cv=none; b=E2LgL3fxRndcGk3oKlJJzoo7Au9H27g9Qgwcdso2kf9VnyIqi1oAg0nSWiW5qTnAdxStgK9fbLataf4BUpU89w8CaWHPwSI70Oj6D42Y06KeKx6gMHlQH91xfh5/YgPpja/OdfIA7T+2nlS4L7klpw6SxxJL611IK60f11xeRKg=
+	t=1707480945; cv=none; b=MWIx/sALygISskjGli42h3ITvPKRIZSiUORSTWD4wQDXoCSlooBC3DNjzmPO1RCVu3yphNHJKEHnV1wxvCBqEbzGSKD5fsQND0QQvtNo9ikQ8NeGyrX7LeomfLXxp7tgZsz8oGw4Na1YSMSPPfacsR56sYwu48gMunXOW79Yrvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707480776; c=relaxed/simple;
-	bh=AdZwYy03Z+RlRTB8+mojQI3HHtiCb/HCLs/tvdyQIvM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aHqHH3rH9QYe7ENfiW2NpDoVAzoOqDJbZV88t57wpVL2WFx/pXjdFeD3noZYqM1ff1pTmUtoA9OSIsCn6NFBN4fwOfSijwjsw58dcGKuIRoHVDQf1eV+AV3nn3+EQ6jUwuQRgTORR/NBgBCpABTtpXLBpgzjTiLdnUFckT83rPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UmmW1eAg; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-42a9f4935a6so14818211cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 04:12:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707480770; x=1708085570; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lkWat1ZcPTFVPKXPMx1CEXUldoA1mGsayuRtblqmlJk=;
-        b=UmmW1eAgOO91pnqEX0K1EEPqOZgcUX12Zlv1m8moAlxuKnGhoSQusHZtmTK+EJ1RXr
-         CEjdO1DSGQ8weG3QCg8NAzhGrKUfDbU0gX6kL7h9zd9DFZFL0/NL5mWky3zUWsZACiRp
-         q8pZdUZ4qlynXmbLZ7zr9Fy4d2sLYBPEb1LiIO7OEXE6SMw0hcWvZ8dzwq1zq/rt35I8
-         8kckccE6ZNDzgY06O4Vm3ml6Y8KSnWKL4CxHe5yedFelaHX8tlpfJkrmpi04tc4GGO1M
-         vAwMTO5BtKfww39baj22LMnZtPbrLDxkTe7PqYRVesqbOxaLHsdTBdCmxQRZS3NHeebc
-         qEFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707480770; x=1708085570;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lkWat1ZcPTFVPKXPMx1CEXUldoA1mGsayuRtblqmlJk=;
-        b=ZLradOAA4nH59CltWhufwHvyq+kNgB4y342k47WIIovzpXt+ywXJV1V+NMR3+bGEJW
-         WXV8gQSj59l40qc6MHS8vzxzECIPC2XKKK/30HhPBle7C80GXciRWKFjILbuCnfHWOlL
-         VoCZB7Xzv1F9HDRCfeD/5oTd3fISJ7D7sxNSqwxLrvmk4MYeJ3XHYgUMmefTu63BskcQ
-         GJZJHIMmq9OosRdT0x2U0PeVza1O88fc62DnEYcf4bKyk5x1ZqYGhAfTwRFOrLJ2bOHm
-         XHedDcH1k3ikMuDDzDK0EgNpHZsrkvFx6LjwBOVOr6stmpuaP+NDRBwTmP2E8l8HRlp+
-         XFjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtpFis30kWeUbwQaGSACWc1Eig/rmo4r7FYC005ba5CR1gmqzHMGqzPWCXF6vspLLtlQNcG46i4h7/UtsuJLGKlm3i9G00duAvLUuryA==
-X-Gm-Message-State: AOJu0YyaDSkpAIkWTjNOqAPbpzXvpcZSkhYC/6In+ALDF6XN/UEt2yiD
-	2Tp+hn/gUiJp+/8rHi3qMnL90wr8FenvftfA0+8Wsy/Wz5I6Uy43vLAuYR+L4JP2SUmKBNgzEF+
-	ZWZe5x6ygTxxtWT73UYZmRbz5C+y14ESiBsw=
-X-Google-Smtp-Source: AGHT+IGxFFCJiGiV+lPgtPbcOPBdZxC2rc/RmsKzMJFzznfYAgvnE1fa6mP/kziLRpD2rmHRlE05CkCFF6VE1E7Yt+I=
-X-Received: by 2002:a05:6214:5154:b0:68c:7f05:a42f with SMTP id
- kh20-20020a056214515400b0068c7f05a42fmr902348qvb.18.1707480770200; Fri, 09
- Feb 2024 04:12:50 -0800 (PST)
+	s=arc-20240116; t=1707480945; c=relaxed/simple;
+	bh=e79MOPaRbllW9/C4S/Z+oXRmRTxBzW+Gz2JxEgu7tyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S6AuJ8BiLTRB6reJj2LJ1cO/KVg7pCcLVJ+iCdphe/QN+ULFIJjucVefQijSbYjFkV0E0nQNwzXdZY8Y6KKovcEQXKHhZ4YoOjNilz7sywHzjfkNoS1O4nwxwwhMCaqLrfmfbM6iqroHWcY/X9wrAVxuAT0DQtBR1bkSD+C/7z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cAHW9tdV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1707480938;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GN80HCnPEnqEWtK9KmJd4ZzgmyniZlrwmVQxfEJJizc=;
+	b=cAHW9tdVmo3dYG7UwQgUEdPPDo+4etB/hv8biKL6znJZKyXbdY73VOXgBGvdV5q9D8L8KN
+	Y3L5cGno743E1J3uy1TpS9nv6Zs/yZK3Op4y1sm+Dq8erWv6nKxpX1jorQ287Fan+Tx7kY
+	TvVYnVW9d/8pFinNS2UJCwG8Rg5ugKc=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-lZEwhNVRM4i8EXIBka_5iQ-1; Fri,
+ 09 Feb 2024 07:15:35 -0500
+X-MC-Unique: lZEwhNVRM4i8EXIBka_5iQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 01B9E3C0ED55;
+	Fri,  9 Feb 2024 12:15:35 +0000 (UTC)
+Received: from localhost (unknown [10.39.193.29])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 5BA3E400D29B;
+	Fri,  9 Feb 2024 12:15:34 +0000 (UTC)
+Date: Fri, 9 Feb 2024 07:15:32 -0500
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-fsdevel@vger.kernel.org, Alyssa Ross <hi@alyssa.is>,
+	gmaglione@redhat.com, virtio-fs@lists.linux.dev, vgoyal@redhat.com,
+	mzxreary@0pointer.de, miklos@szeredi.hu
+Subject: Re: [PATCH v2 3/3] virtiofs: emit uevents on filesystem events
+Message-ID: <20240209121532.GC748645@fedora>
+References: <20240208193212.731978-1-stefanha@redhat.com>
+ <20240208193212.731978-4-stefanha@redhat.com>
+ <2024020943-hedge-majority-ef34@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240208170603.2078871-1-amir73il@gmail.com> <20240208170603.2078871-10-amir73il@gmail.com>
- <CAJfpegtcqPgb6zwHtg7q7vfC4wgo7YPP48O213jzfF+UDqZraw@mail.gmail.com>
- <1be6f498-2d56-4c19-9f93-0678ad76e775@fastmail.fm> <f44c0101-0016-4f82-a02d-0dcfefbf4e96@fastmail.fm>
-In-Reply-To: <f44c0101-0016-4f82-a02d-0dcfefbf4e96@fastmail.fm>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 9 Feb 2024 14:12:38 +0200
-Message-ID: <CAOQ4uxi9X=a6mvmXXdrSYX-r5EUdVfRiGW0nwFj2ZZTzHQJ5jw@mail.gmail.com>
-Subject: Re: [PATCH v3 9/9] fuse: allow parallel dio writes with FUSE_DIRECT_IO_ALLOW_MMAP
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	Bernd Schubert <bschubert@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="/FiZpmtG6bhB391g"
+Content-Disposition: inline
+In-Reply-To: <2024020943-hedge-majority-ef34@gregkh>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
+
+
+--/FiZpmtG6bhB391g
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 9, 2024 at 1:48=E2=80=AFPM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
->
->
-> On 2/9/24 12:21, Bernd Schubert wrote:
-> >
-> >
-> > On 2/9/24 11:50, Miklos Szeredi wrote:
-> >> On Thu, 8 Feb 2024 at 18:09, Amir Goldstein <amir73il@gmail.com> wrote=
-:
-> >>
-> >>>  static int fuse_inode_get_io_cache(struct fuse_inode *fi)
-> >>>  {
-> >>> +       int err =3D 0;
-> >>> +
-> >>>         assert_spin_locked(&fi->lock);
-> >>> -       if (fi->iocachectr < 0)
-> >>> -               return -ETXTBSY;
-> >>> -       if (fi->iocachectr++ =3D=3D 0)
-> >>> -               set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
-> >>> -       return 0;
-> >>> +       /*
-> >>> +        * Setting the bit advises new direct-io writes to use an exc=
-lusive
-> >>> +        * lock - without it the wait below might be forever.
-> >>> +        */
-> >>> +       set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
-> >>> +       while (!err && fuse_is_io_cache_wait(fi)) {
-> >>> +               spin_unlock(&fi->lock);
-> >>> +               err =3D wait_event_killable(fi->direct_io_waitq,
-> >>> +                                         !fuse_is_io_cache_wait(fi))=
-;
-> >>> +               spin_lock(&fi->lock);
-> >>> +       }
-> >>> +       /*
-> >>> +        * Enter caching mode or clear the FUSE_I_CACHE_IO_MODE bit i=
-f we
-> >>> +        * failed to enter caching mode and no other caching open exi=
-sts.
-> >>> +        */
-> >>> +       if (!err)
-> >>> +               fi->iocachectr++;
-> >>> +       else if (fi->iocachectr <=3D 0)
-> >>> +               clear_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
-> >>
-> >> This seems wrong:  if the current task is killed, and there's anther
-> >> task trying to get cached open mode, then clearing
-> >> FUSE_I_CACHE_IO_MODE will allow new parallel writes, breaking this
-> >> logic.
-> >
-> > This is called holding a spin lock, another task cannot enter here?
-> > Neither can direct-IO, because it is also locked out. The bit helps DIO
-> > code to avoid trying to do parallel DIO without the need to take a spin
-> > lock. When DIO decides it wants to do parallel IO, it first has to get
-> > past fi->iocachectr < 0 - if there is another task trying to do cache
-> > IO, either DIO gets < 0 first and the other cache task has to wait, or
-> > cache tasks gets > 0 and dio will continue with the exclusive lock. Or
-> > do I miss something?
->
-> Now I see what you mean, there is an unlock and another task might have a=
-lso already set the bit
->
-> I think this should do
->
-> diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
-> index acd0833ae873..7c22edd674cb 100644
-> --- a/fs/fuse/iomode.c
-> +++ b/fs/fuse/iomode.c
-> @@ -41,6 +41,8 @@ static int fuse_inode_get_io_cache(struct fuse_inode *f=
-i)
->                 err =3D wait_event_killable(fi->direct_io_waitq,
->                                           !fuse_is_io_cache_wait(fi));
->                 spin_lock(&fi->lock);
-> +               if (!err)
-> +                       /* Another interrupted task might have unset it *=
-/
-> +                       set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
->         }
->         /*
->          * Enter caching mode or clear the FUSE_I_CACHE_IO_MODE bit if we
+On Fri, Feb 09, 2024 at 10:39:04AM +0000, Greg KH wrote:
+> On Thu, Feb 08, 2024 at 02:32:11PM -0500, Stefan Hajnoczi wrote:
+> > Alyssa Ross <hi@alyssa.is> requested that virtiofs notifies userspace
+> > when filesytems become available. This can be used to detect when a
+> > filesystem with a given tag is hotplugged, for example. uevents allow
+> > userspace to detect changes without resorting to polling.
+> >=20
+> > The tag is included as a uevent property so it's easy for userspace to
+> > identify the filesystem in question even when the sysfs directory goes
+> > away during removal.
+> >=20
+> > Here are example uevents:
+> >=20
+> >   # udevadm monitor -k -p
+> >=20
+> >   KERNEL[111.113221] add      /fs/virtiofs/2 (virtiofs)
+> >   ACTION=3Dadd
+> >   DEVPATH=3D/fs/virtiofs/2
+> >   SUBSYSTEM=3Dvirtiofs
+> >   TAG=3Dtest
+> >=20
+> >   KERNEL[165.527167] remove   /fs/virtiofs/2 (virtiofs)
+> >   ACTION=3Dremove
+> >   DEVPATH=3D/fs/virtiofs/2
+> >   SUBSYSTEM=3Dvirtiofs
+> >   TAG=3Dtest
+> >=20
+> > Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
+> > ---
+> >  fs/fuse/virtio_fs.c | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> >=20
+> > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> > index 28e96b7cde00..18a8f531e5d4 100644
+> > --- a/fs/fuse/virtio_fs.c
+> > +++ b/fs/fuse/virtio_fs.c
+> > @@ -270,6 +270,17 @@ static void virtio_fs_start_all_queues(struct virt=
+io_fs *fs)
+> >  	}
+> >  }
+> > =20
+> > +static void virtio_fs_uevent(struct virtio_fs *fs, enum kobject_action=
+ action)
+> > +{
+> > +	char tag_str[sizeof("TAG=3D") +
+> > +		     sizeof_field(struct virtio_fs_config, tag) + 1];
+> > +	char *envp[] =3D {tag_str, NULL};
+> > +
+> > +	snprintf(tag_str, sizeof(tag_str), "TAG=3D%s", fs->tag);
+> > +
+> > +	kobject_uevent_env(&fs->kobj, action, envp);
+> > +}
+> > +
+> >  /* Add a new instance to the list or return -EEXIST if tag name exists=
+*/
+> >  static int virtio_fs_add_instance(struct virtio_device *vdev,
+> >  				  struct virtio_fs *fs)
+> > @@ -309,6 +320,8 @@ static int virtio_fs_add_instance(struct virtio_dev=
+ice *vdev,
+> > =20
+> >  	mutex_unlock(&virtio_fs_mutex);
+> > =20
+> > +	virtio_fs_uevent(fs, KOBJ_ADD);
+>=20
+> Why do you have to explicitly ask for the event?  Doesn't sysfs trigger
+> this for you automatically?  Set the kset uevent callback for this,
+> right?
 
-I think this race can happen even if we remove killable_
-not sure - anyway, with fuse passthrough there is another error
-condition:
+I haven't found a way to get an implicit KOBJ_ADD uevent. device_add()
+and other kset_uevent_ops users emit KOBJ_ADD manually too. Grepping for
+KOBJ_ADD in fs/sysfs/ and lib/ doesn't produce any useful results
+either.
 
-        /*
-         * Check if inode entered passthrough io mode while waiting for par=
-allel
-         * dio write completion.
-         */
-        if (fuse_inode_backing(fi))
-                err =3D -ETXTBSY;
-
-But in this condition, all waiting tasks should abort the wait,
-so it does not seem a problem to clean the flag.
-
-Anyway, IMO it is better to set the flag before every wait and on
-success. Like below.
+It is possible to eliminate the explicit KOBJ_REMOVE though because
+kobject_del() already calls it. I will fix that and switch to
+kset_uevent_ops->uevent().
 
 Thanks,
-Amir.
+Stefan
 
---- a/fs/fuse/iomode.c
-+++ b/fs/fuse/iomode.c
-@@ -35,8 +35,8 @@ static int fuse_inode_get_io_cache(struct fuse_inode *fi)
-         * Setting the bit advises new direct-io writes to use an exclusive
-         * lock - without it the wait below might be forever.
-         */
--       set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
-        while (!err && fuse_is_io_cache_wait(fi)) {
-+               set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
-                spin_unlock(&fi->lock);
-                err =3D wait_event_killable(fi->direct_io_waitq,
-                                          !fuse_is_io_cache_wait(fi));
-@@ -53,8 +53,8 @@ static int fuse_inode_get_io_cache(struct fuse_inode *fi)
-         * Enter caching mode or clear the FUSE_I_CACHE_IO_MODE bit if we
-         * failed to enter caching mode and no other caching open exists.
-         */
--       if (!err)
--               fi->iocachectr++;
-+       if (!err && fi->iocachectr++ =3D=3D 0)
-+               set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
-        else if (fi->iocachectr <=3D 0)
-                clear_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
-        return err;
+--/FiZpmtG6bhB391g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmXGF2QACgkQnKSrs4Gr
+c8g1UAf/S5yE/egI+P0Q+DB28udaKIV1yPl+kl01D1ZlZUnqvrS72ocK+8XVdUX/
+Kk/x/LQTRqMfMrmvsEBv6prGpp7PSSSKS2/s2oD4eEWBiK7QJSrjhzxtRPdU4OGk
+6LuxD3p95LIaBXqMF88Hwwi17MNNz+3QqtJhQMC3Kpx2D97AEOYNuFHmlifl/X8G
+zNbbTLVFKcUEt4AxsTvga6jzabrrlwrk56pZfN0GG/JXjWg+BsXMhYI3N5fbz/OY
+jNtuO9vVN60RZHwjWZtK1dTIChVxU2z0v9a1nLOk02TsihWNl4xTa78TuKp7QNz4
+r6iP0npz3i4ShN1iMSQ9Bi8iLJPeeA==
+=+kc1
+-----END PGP SIGNATURE-----
+
+--/FiZpmtG6bhB391g--
+
 
