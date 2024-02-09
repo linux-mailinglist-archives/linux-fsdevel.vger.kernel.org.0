@@ -1,120 +1,327 @@
-Return-Path: <linux-fsdevel+bounces-10954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB2084F5DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 14:28:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A61284F621
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 14:44:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AA491C22A87
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 13:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B97ED1F247C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 13:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D75853F9F4;
-	Fri,  9 Feb 2024 13:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Jei6QD35"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3ED3C47B;
+	Fri,  9 Feb 2024 13:44:33 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90973F9CF
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 13:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9163C1E487;
+	Fri,  9 Feb 2024 13:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707485236; cv=none; b=Dh392vaYF+WALEH3oERCRHj3TilbOlSQCXl5jBVvyyoFldr/ir6xGEplrpzo4+jZiMHojV9ag2AEGIuTsajQ/V+Ilr+OgqTfl9hJFl0WHE1aJP+Nbj8lsklcto61+vmPDajkbZpxDBR3aS7ck+8GEA2wXSHlGP9RBRoCSMrthPY=
+	t=1707486273; cv=none; b=rOzSdRK74HWJATeBOOsmLIRQibFEhUQqG5AWZLhcfy6x0AvhSM1R8f07LUnNGoXQOWhIB1u+9+iogqcPn9o9rxbt0JzOjEHlY7iRsqzqrE+gnDnWHeydw+4GnnY3JLlVsyfgHnJsbR3Z3pUMlLrdghFMFdaY1Nid6mFqnCSKnMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707485236; c=relaxed/simple;
-	bh=eT/Jc7OiOyp6dIAUfJMyXt5WHFxuMnxspcqZBhUQefQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rZS8q/qlr6/E2iQliqL3MhbJgQ5DFmn8Bp6ddbow3TvQgjUKEm+DDiAehqeX5JWHccFstFbXVjDH7Srk8Ts7YjbsPKxh3hfTCOR2YAFwhTEU7a8tOvoypyJxdDXVMEHfRkts40stqdcve7ZDdCnZtSSXjc79xX3ezLECqMh/DLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Jei6QD35; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a3850ce741bso94763466b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 05:27:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1707485231; x=1708090031; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+/coNF+Lf8pCX8TmGm8edvPiVdHcmXYMoyUEQ6cgX/4=;
-        b=Jei6QD35fOqqIkMTry+DG8zFtoerDjGS5Alkg2KbiKFfKvUBVysot99GXS9gkg97Qr
-         eOoW69Qik3PW7bf3e6kSOdYs/0pxXsmVhBNZIyxLzLmL9JP4CaVXR51Jw+SFW91ffxBm
-         wY5OuWVpq/92RbjlSwsgisV9pU7rMoj2nHX/A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707485231; x=1708090031;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+/coNF+Lf8pCX8TmGm8edvPiVdHcmXYMoyUEQ6cgX/4=;
-        b=u4rriznAK5URJ6qHRWORgnsIQNNzhas9QXO4tq5Lp9rq7ynVAkXPQKE9sCQxZ+ty9J
-         G2GSJeF68Y5ToZTJ5VjY0kve100NZdHanFekBJymbwHuYTyjwKg/iXTd0343oIvK7KhE
-         dzow0AKXj0SIYC3lsCIrKy/R4nnFl1fh25wzRZdWT6X7LbyhbLa0WsyRV7aRrBbBl+Mi
-         /QmTLBW+YIrI5WpU6PaeCZ9pe8oe5Vh9lpiDRrVq1xVvd/XAzfboCvxbxxDongJt9Ysi
-         uj1EyjhN0MfP6W3ckRuKgDDbKbESECEmWZmw8GDlRuw+rEmqWAJYiIKjKAJ9alpHoN4o
-         19Cg==
-X-Gm-Message-State: AOJu0YxjCGuvj1zVL+NI96HzARRuBRaPHL2nBUVp5bvoaSBiv6OitjQf
-	kjAZYdd+/q7PksMFDFGJcw/Z3a2lKmoHOlbXnNDJfdw8ebR0JhvRXDnulmluXzM08zuH+4sB8v0
-	tOE8HOve7SCDxDtcvwg4Td8LhlL3i6QLweQk3AA==
-X-Google-Smtp-Source: AGHT+IEa/EJLJSPKj9ReQAcsryaqf811ty6GPohdF7ph0g20WN9kFrcvlUVHk9ho+csKAzyJj68jbClI+5+YTWLwxbo=
-X-Received: by 2002:a17:906:af8d:b0:a38:3a78:1d0c with SMTP id
- mj13-20020a170906af8d00b00a383a781d0cmr1017322ejb.55.1707485231163; Fri, 09
- Feb 2024 05:27:11 -0800 (PST)
+	s=arc-20240116; t=1707486273; c=relaxed/simple;
+	bh=IgoMaZM9kw0Wpb/KvMD5/2YbdK7ysD6H6KO4z/h6t3c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=GRwhBcmNdbztbLvfU4ZBAvyrnWm9cP5u4UEQPreprYqaBW+cgY+zOqdsjzj9AcFQAyCiQoj3omwYDhuxhpdOS3P8/lCGKFogKNLE4K4pfeNY7pGrzVapY1BLHIMgAZfYrMdEa8cms1ab+/3Yn7L2VOFOCPpqNBKac98e442OQCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9D9BDA7;
+	Fri,  9 Feb 2024 05:45:09 -0800 (PST)
+Received: from [10.57.47.119] (unknown [10.57.47.119])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B0283F762;
+	Fri,  9 Feb 2024 05:44:21 -0800 (PST)
+Message-ID: <8ce2cd7b-7702-45aa-b4c8-25a01c27ed83@arm.com>
+Date: Fri, 9 Feb 2024 13:44:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240208170603.2078871-1-amir73il@gmail.com> <20240208170603.2078871-10-amir73il@gmail.com>
- <CAJfpegtcqPgb6zwHtg7q7vfC4wgo7YPP48O213jzfF+UDqZraw@mail.gmail.com>
- <1be6f498-2d56-4c19-9f93-0678ad76e775@fastmail.fm> <f44c0101-0016-4f82-a02d-0dcfefbf4e96@fastmail.fm>
- <CAOQ4uxi9X=a6mvmXXdrSYX-r5EUdVfRiGW0nwFj2ZZTzHQJ5jw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxi9X=a6mvmXXdrSYX-r5EUdVfRiGW0nwFj2ZZTzHQJ5jw@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 9 Feb 2024 14:26:59 +0100
-Message-ID: <CAJfpeguKM5MHEyukHv2OE=6hce5Go2ydPMqzTiJ-MjxS0YH=DQ@mail.gmail.com>
-Subject: Re: [PATCH v3 9/9] fuse: allow parallel dio writes with FUSE_DIRECT_IO_ALLOW_MMAP
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org, 
-	Bernd Schubert <bschubert@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/10] iommu/vt-d: add wrapper functions for page
+ allocations
+Content-Language: en-GB
+To: Pasha Tatashin <pasha.tatashin@soleen.com>, akpm@linux-foundation.org,
+ alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev,
+ baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org,
+ corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org,
+ heiko@sntech.de, iommu@lists.linux.dev, jernej.skrabec@gmail.com,
+ jonathanh@nvidia.com, joro@8bytes.org, krzysztof.kozlowski@linaro.org,
+ linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+ lizefan.x@bytedance.com, marcan@marcan.st, mhiramat@kernel.org,
+ m.szyprowski@samsung.com, paulmck@kernel.org, rdunlap@infradead.org,
+ samuel@sholland.org, suravee.suthikulpanit@amd.com, sven@svenpeter.dev,
+ thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com,
+ vdumpa@nvidia.com, wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com,
+ rientjes@google.com, bagasdotme@gmail.com, mkoutny@suse.com
+References: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
+ <20240207174102.1486130-2-pasha.tatashin@soleen.com>
+From: Robin Murphy <robin.murphy@arm.com>
+In-Reply-To: <20240207174102.1486130-2-pasha.tatashin@soleen.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 9 Feb 2024 at 13:12, Amir Goldstein <amir73il@gmail.com> wrote:
+On 2024-02-07 5:40 pm, Pasha Tatashin wrote:
+[...]> diff --git a/drivers/iommu/iommu-pages.h 
+b/drivers/iommu/iommu-pages.h
+> new file mode 100644
+> index 000000000000..c412d0aaa399
+> --- /dev/null
+> +++ b/drivers/iommu/iommu-pages.h
+> @@ -0,0 +1,204 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * Copyright (c) 2024, Google LLC.
+> + * Pasha Tatashin <pasha.tatashin@soleen.com>
+> + */
+> +
+> +#ifndef __IOMMU_PAGES_H
+> +#define __IOMMU_PAGES_H
+> +
+> +#include <linux/vmstat.h>
+> +#include <linux/gfp.h>
+> +#include <linux/mm.h>
+> +
+> +/*
+> + * All page allocation that are performed in the IOMMU subsystem must use one of
 
-> I think this race can happen even if we remove killable_
+"All page allocations" is too broad; As before, this is only about 
+pagetable allocations, or I guess for the full nuance, allocations of 
+pagetables and other per-iommu_domain configuration structures which are 
+reasonable to report as "pagetables" to userspace.
 
-Without _killable, the loop will exit with iocachectr >= 0, hence the
-FUSE_I_CACHE_IO_MODE will not be cleared.
+> + * the functions below.  This is necessary for the proper accounting as IOMMU
+> + * state can be rather large, i.e. multiple gigabytes in size.
+> + */
+> +
+> +/**
+> + * __iommu_alloc_pages_node - allocate a zeroed page of a given order from
+> + * specific NUMA node.
+> + * @nid: memory NUMA node id
+> + * @gfp: buddy allocator flags
+> + * @order: page order
+> + *
+> + * returns the head struct page of the allocated page.
+> + */
+> +static inline struct page *__iommu_alloc_pages_node(int nid, gfp_t gfp,
+> +						    int order)
+> +{
+> +	struct page *page;
+> +
+> +	page = alloc_pages_node(nid, gfp | __GFP_ZERO, order);
+> +	if (unlikely(!page))
+> +		return NULL;
+> +
+> +	return page;
+> +}
 
-> not sure - anyway, with fuse passthrough there is another error
-> condition:
->
->         /*
->          * Check if inode entered passthrough io mode while waiting for parallel
->          * dio write completion.
->          */
->         if (fuse_inode_backing(fi))
->                 err = -ETXTBSY;
->
-> But in this condition, all waiting tasks should abort the wait,
-> so it does not seem a problem to clean the flag.
+All 3 invocations of this only use the returned struct page to trivially 
+derive page_address(), so we really don't need it; just clean up these 
+callsites a bit more.
 
-Ah, this complicates things.  But I think it's safe to clear
-FUSE_I_CACHE_IO_MODE in this case, since other
-fuse_inode_get_io_cache() calls will also fail.
+> +
+> +/**
+> + * __iommu_alloc_pages - allocate a zeroed page of a given order.
+> + * @gfp: buddy allocator flags
+> + * @order: page order
+> + *
+> + * returns the head struct page of the allocated page.
+> + */
+> +static inline struct page *__iommu_alloc_pages(gfp_t gfp, int order)
+> +{
+> +	struct page *page;
+> +
+> +	page = alloc_pages(gfp | __GFP_ZERO, order);
+> +	if (unlikely(!page))
+> +		return NULL;
+> +
+> +	return page;
+> +}
 
-> Anyway, IMO it is better to set the flag before every wait and on
-> success. Like below.
+Same for the single invocation of this one.
 
-This would still have  the race, since there will be a window during
-which the FUSE_I_CACHE_IO_MODE flag has been cleared and new parallel
-writes can start, even though there are one or more waiters for cached
-open.
+> +
+> +/**
+> + * __iommu_alloc_page_node - allocate a zeroed page at specific NUMA node.
+> + * @nid: memory NUMA node id
+> + * @gfp: buddy allocator flags
+> + *
+> + * returns the struct page of the allocated page.
+> + */
+> +static inline struct page *__iommu_alloc_page_node(int nid, gfp_t gfp)
+> +{
+> +	return __iommu_alloc_pages_node(nid, gfp, 0);
+> +}
 
-Not that this would be a problem in practice, but I also don't see
-removing the _killable being a big issue.
+There are no users of this at all.
+
+> +
+> +/**
+> + * __iommu_alloc_page - allocate a zeroed page
+> + * @gfp: buddy allocator flags
+> + *
+> + * returns the struct page of the allocated page.
+> + */
+> +static inline struct page *__iommu_alloc_page(gfp_t gfp)
+> +{
+> +	return __iommu_alloc_pages(gfp, 0);
+> +}
+> +
+> +/**
+> + * __iommu_free_pages - free page of a given order
+> + * @page: head struct page of the page
+> + * @order: page order
+> + */
+> +static inline void __iommu_free_pages(struct page *page, int order)
+> +{
+> +	if (!page)
+> +		return;
+> +
+> +	__free_pages(page, order);
+> +}
+> +
+> +/**
+> + * __iommu_free_page - free page
+> + * @page: struct page of the page
+> + */
+> +static inline void __iommu_free_page(struct page *page)
+> +{
+> +	__iommu_free_pages(page, 0);
+> +}
+
+Beyond one more trivial Intel cleanup for __iommu_alloc_pages(), these 3 
+are then only used by tegra-smmu, so honestly I'd be inclined to just 
+open-code there page_address()/virt_to_page() conversions as appropriate 
+there (once again I think the whole thing could in fact be refactored to 
+not use struct pages at all because all it's ever ultimately doing with 
+them is page_address(), but that would be a bigger job so definitely 
+out-of-scope for this series).
+
+> +
+> +/**
+> + * iommu_alloc_pages_node - allocate a zeroed page of a given order from
+> + * specific NUMA node.
+> + * @nid: memory NUMA node id
+> + * @gfp: buddy allocator flags
+> + * @order: page order
+> + *
+> + * returns the virtual address of the allocated page
+> + */
+> +static inline void *iommu_alloc_pages_node(int nid, gfp_t gfp, int order)
+> +{
+> +	struct page *page = __iommu_alloc_pages_node(nid, gfp, order);
+> +
+> +	if (unlikely(!page))
+> +		return NULL;
+
+As a general point I'd prefer to fold these checks into the accounting 
+function itself rather than repeat them all over.
+
+> +
+> +	return page_address(page);
+> +}
+> +
+> +/**
+> + * iommu_alloc_pages - allocate a zeroed page of a given order
+> + * @gfp: buddy allocator flags
+> + * @order: page order
+> + *
+> + * returns the virtual address of the allocated page
+> + */
+> +static inline void *iommu_alloc_pages(gfp_t gfp, int order)
+> +{
+> +	struct page *page = __iommu_alloc_pages(gfp, order);
+> +
+> +	if (unlikely(!page))
+> +		return NULL;
+> +
+> +	return page_address(page);
+> +}
+> +
+> +/**
+> + * iommu_alloc_page_node - allocate a zeroed page at specific NUMA node.
+> + * @nid: memory NUMA node id
+> + * @gfp: buddy allocator flags
+> + *
+> + * returns the virtual address of the allocated page
+> + */
+> +static inline void *iommu_alloc_page_node(int nid, gfp_t gfp)
+> +{
+> +	return iommu_alloc_pages_node(nid, gfp, 0);
+> +}
+
+TBH I'm not entirely convinced that saving 4 characters per invocation 
+times 11 invocations makes this wrapper worthwhile :/
+
+> +
+> +/**
+> + * iommu_alloc_page - allocate a zeroed page
+> + * @gfp: buddy allocator flags
+> + *
+> + * returns the virtual address of the allocated page
+> + */
+> +static inline void *iommu_alloc_page(gfp_t gfp)
+> +{
+> +	return iommu_alloc_pages(gfp, 0);
+> +}
+> +
+> +/**
+> + * iommu_free_pages - free page of a given order
+> + * @virt: virtual address of the page to be freed.
+> + * @order: page order
+> + */
+> +static inline void iommu_free_pages(void *virt, int order)
+> +{
+> +	if (!virt)
+> +		return;
+> +
+> +	__iommu_free_pages(virt_to_page(virt), order);
+> +}
+> +
+> +/**
+> + * iommu_free_page - free page
+> + * @virt: virtual address of the page to be freed.
+> + */
+> +static inline void iommu_free_page(void *virt)
+> +{
+> +	iommu_free_pages(virt, 0);
+> +}
+> +
+> +/**
+> + * iommu_free_pages_list - free a list of pages.
+> + * @page: the head of the lru list to be freed.
+> + *
+> + * There are no locking requirement for these pages, as they are going to be
+> + * put on a free list as soon as refcount reaches 0. Pages are put on this LRU
+> + * list once they are removed from the IOMMU page tables. However, they can
+> + * still be access through debugfs.
+> + */
+> +static inline void iommu_free_pages_list(struct list_head *page)
+
+Nit: I'd be inclined to call this iommu_put_pages_list for consistency.
+
+> +{
+> +	while (!list_empty(page)) {
+> +		struct page *p = list_entry(page->prev, struct page, lru);
+> +
+> +		list_del(&p->lru);
+> +		put_page(p);
+> +	}
+> +}
+
+I realise now you've also missed the common freelist freeing sites in 
+iommu-dma.
 
 Thanks,
-Miklos
+Robin.
+
+> +
+> +#endif	/* __IOMMU_PAGES_H */
 
