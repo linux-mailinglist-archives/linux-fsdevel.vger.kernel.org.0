@@ -1,94 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-10895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10896-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF50184F2D8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 10:57:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CCFA84F2D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 10:57:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FA04B29925
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 09:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39EB3289F8B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 09:57:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E7267E89;
-	Fri,  9 Feb 2024 09:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C4D67E66;
+	Fri,  9 Feb 2024 09:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cUdAj7Ia"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="XuWP7lIy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 339A067E90;
-	Fri,  9 Feb 2024 09:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CF4766B5F
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 09:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707472593; cv=none; b=t611BDA94CX8yahimZc2+zPSzky7YLPFM+vdrsM/qjyOrAsNE2rzhQ6eDiDGOx/Q8enug1jDXMwdQefhyMp892kyViQ43gRLA9PF4bhZvjHu1srg/pe0ZjoF1lMwgwAZxlmtUZJrz6Xj7F+qksPTuzDU6NNAD7FiyVzEA5PIHcM=
+	t=1707472648; cv=none; b=otxJ9FeOib7rRtmwFIwdGAYSNB396ERrp1BUSiDp0pVhQKKcLIsX7q2KermhszKAEQVwC1E73Ax+bnELtHBRp12dku7j6p8OvN45RNZCzR7ZsHkCtCLBuT/FTSKhErT25on4sXabHUMPfpxpKqMClnbTGJHMZc/h23hh6soH3C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707472593; c=relaxed/simple;
-	bh=xYEtR0Wr2t6KUJov/TRaojVdpD4mNvA5x9mBkXjvx6E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GiPi4iYe17xnGDCDydJU6/4IOlrxJfUGuKTZSN6Ze3Uc0oLuZS3kAZVg7tfU2zWrynPlqPASNZdVSIEK7PcT3KMbFBAnorMByGSxBq2e2rM7prEfCt9CffAIHQ/SVNgYLqIPVoNFrWlP5727fhY7kVqNBE+fGnHuRB9xV+4zxOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cUdAj7Ia; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A79E2C433C7;
-	Fri,  9 Feb 2024 09:56:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707472592;
-	bh=xYEtR0Wr2t6KUJov/TRaojVdpD4mNvA5x9mBkXjvx6E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cUdAj7Iahkgr5Q6NWtXGxYvOl/rJpHVTWnfo3glfNrjL6pHaZeHwmQUiJbcul2RRJ
-	 UKGYtLqvOd/+KQtfM26Qa65dJ3KoQyZmI1LikiWgXt3Py+DnyYEDL+YNpo+OQ6gWua
-	 ggGnviTBDn0dC1nfu7gVRTK5rKX/3n5Q9iJyzVa8NnRRMn81ctyAL7q7UNx/XrGP/P
-	 Ho0E7gPdZWV6/TdJOSDVNDGEYINEXsnHb9JyPwpR3RPYbD2578wQTxlhwJ3o2wtxJE
-	 e2RfrMoZW65K8reAXsEORo85jV/5kAUZmyE/Um8j6z8S6XQoExierkC/Cu3DrbB+LD
-	 1qBf/njye9Kxw==
-Date: Fri, 9 Feb 2024 10:56:23 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: viro@zeniv.linux.org.uk, chuck.lever@oracle.com, jlayton@kernel.org, 
-	neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org, 
-	stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org, 
-	mic@digikod.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v9 12/25] security: Introduce file_post_open hook
-Message-ID: <20240209-wertlos-opern-45e9bce87014@brauner>
-References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
- <20240115181809.885385-13-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1707472648; c=relaxed/simple;
+	bh=1tgQ9pAQGezRgnEqBgCXyijBhkLKBenWcIFuv0m4I8M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UcQQPiyj5Oc3tbMaC7eab+14GQZUecm/8zPnVab59XUUZSbrk04sWQrT+uJxLapoKu+ZswK+IZvo1bHsvQR9Memi0pV/jUTIGMFRFcM8cdU0QD6TYU+QqSqN1RxIUxsYvevfQT5swERuSdX7DUEEJ34mcaeWHaZBPV3RywU/5nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=XuWP7lIy; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a38291dbe65so87361766b.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 01:57:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1707472644; x=1708077444; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2zdT0cH8ypCu6giL2+e+8Y36Nksk/SaEM9Yqj0E3asY=;
+        b=XuWP7lIyoApkDMrj4oSWkm0nKk9+/QzVrRR7HQtD1SWRxbNdRdH7jMksyCgb5qWygH
+         LA3/bU2aKcRgkmICcC/GBkVK2Dfi2UXpUNCQlOesChQaelfyUjJjYIK4yTmRnQQcxlW5
+         e4RUmJ41RNkzCsjLCpVz9prjWgZTaCOq8oyu0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707472644; x=1708077444;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2zdT0cH8ypCu6giL2+e+8Y36Nksk/SaEM9Yqj0E3asY=;
+        b=ZC9QMdHe/s3oN7lCrzrHaQo/pdIhZWpB8GGnoRg05NDgJ4Bnl5JwOXfrVc2tckSNiw
+         pMLNfD1P8lS8p5pawGPyisQ6fBkoN/EUF/AZBVSepkqkt6sv8ZF9s2gitk0s8fsBeUqi
+         4EkwTdU/doW/aHJvuW31GxHUZcNI2z2Y+/pV/QgzG1gySwWq6hNYYwnCpMNRa0/Lhk2k
+         2oVOzaBvJKHhihBd6MpfpVznss4rDQwCKpTPC6J2J4mxmD50SCB6ayRcn2hOxj6Tok8F
+         FDRecyqhUtkShFaSkcIo+hM6aJTduXj+aHsetK+9XS3FF7oSzzkpRXD73gPu2Q+1M0Nb
+         lN4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXIlwTyW3trPq/mwYVh5pNF10D4uVYk2MxIjh9IinUioV8GGwTMNkBmpyVFh9vR31xs4VdaOY6G/BkAeQAqr1YEQruD5cek4n7V5Cqing==
+X-Gm-Message-State: AOJu0YyPSDz7fvMtmiKmKkLjdfp4f6SWhvwcQDjEnsK8x4vuOYB92y7C
+	GVAKWq3NbgSXd1O7fjMRLftZyXdvPwomWGZa54Hy3weR2oZ91YEZ6Wcmlaqt35mrU5cp9/095VU
+	p+Aw1l8V3D2fUWAUbHuvzLDFmA3u0hdX8xDWvug==
+X-Google-Smtp-Source: AGHT+IE2hm0RqomSRu+yFUfttemhVmES+idi2cWobjq/tN8y6SoxsaoCd0GXIJjyPIvtxW9aP3Id44kyiZ1qBoBnmwM=
+X-Received: by 2002:a17:907:20bb:b0:a37:2153:a2ca with SMTP id
+ pw27-20020a17090720bb00b00a372153a2camr751583ejb.1.1707472644193; Fri, 09 Feb
+ 2024 01:57:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240115181809.885385-13-roberto.sassu@huaweicloud.com>
+References: <20240208170603.2078871-1-amir73il@gmail.com> <20240208170603.2078871-6-amir73il@gmail.com>
+In-Reply-To: <20240208170603.2078871-6-amir73il@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 9 Feb 2024 10:57:13 +0100
+Message-ID: <CAJfpegs4O1mXJUeWfQmT+B2X9xoXp9r8HoYLV_627WLpF+s64Q@mail.gmail.com>
+Subject: Re: [PATCH v3 5/9] fuse: allocate ff->release_args only if release is needed
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jan 15, 2024 at 07:17:56PM +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> In preparation to move IMA and EVM to the LSM infrastructure, introduce the
-> file_post_open hook. Also, export security_file_post_open() for NFS.
-> 
-> Based on policy, IMA calculates the digest of the file content and
-> extends the TPM with the digest, verifies the file's integrity based on
-> the digest, and/or includes the file digest in the audit log.
-> 
-> LSMs could similarly take action depending on the file content and the
-> access mask requested with open().
-> 
-> The new hook returns a value and can cause the open to be aborted.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  fs/namei.c                    |  2 ++
+On Thu, 8 Feb 2024 at 18:09, Amir Goldstein <amir73il@gmail.com> wrote:
 
-Acked-by: Christian Brauner <brauner@kernel.org>
+> @@ -132,15 +134,16 @@ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
+>         struct fuse_conn *fc = fm->fc;
+>         struct fuse_file *ff;
+>         int opcode = isdir ? FUSE_OPENDIR : FUSE_OPEN;
+> +       int noopen = isdir ? fc->no_opendir : fc->no_open;
+
+bool?
+
+>
+> -       ff = fuse_file_alloc(fm);
+> +       ff = fuse_file_alloc(fm, !noopen);
+>         if (!ff)
+>                 return ERR_PTR(-ENOMEM);
+>
+>         ff->fh = 0;
+>         /* Default for no-open */
+>         ff->open_flags = FOPEN_KEEP_CACHE | (isdir ? FOPEN_CACHE_DIR : 0);
+> -       if (isdir ? !fc->no_opendir : !fc->no_open) {
+> +       if (!noopen) {
+
+I think this would be more readable without the double negation, i.e
+if the bool variable was called e.g. "open".
+
+Thanks,
+Miklos
 
