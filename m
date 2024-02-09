@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-10927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767D384F47C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 12:22:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B3084F47D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 12:22:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88BC5B26CBF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 11:21:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B3DB2812EC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 11:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2C53C492;
-	Fri,  9 Feb 2024 11:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BCE3D0DD;
+	Fri,  9 Feb 2024 11:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fMwpJ181"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U1/hEMt+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f201.google.com (mail-lj1-f201.google.com [209.85.208.201])
+Received: from mail-lj1-f202.google.com (mail-lj1-f202.google.com [209.85.208.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECFE737718
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 11:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5FB3C46E
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 11:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707477550; cv=none; b=A3myPLwRJVrY7+tttYNA3LYpbBzJjPFT/YUdRVGE8FMD6VodAyaqFfKlWAlyCFn9kKm+z/3xpBq/Wv3GJYfVZP2l8MwoZwCdFppLtSvFreU8JqNM+4a6RpVKv2MbcVuO+CuJQ2duBUPcVuXWtwzuqQG+zWVNIWL7J+Vv8IJ4KC0=
+	t=1707477552; cv=none; b=l6aRJ9wypQWKXCOlYikOI/CbDAO6xt4GCSTotn+ItkFy+XTVHRgqEHAOUiXKebEC92XrqcM9lvrZ34pM5M9Ee3anqC3DU6Ai1v9YYPZ8xGC+NGLtMp8/oc0w/JxP6QXWFTuu991aVgeuW90zpn+Qi+VJliirQzs+5y/LiloP4go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707477550; c=relaxed/simple;
-	bh=jpdPd0bnKJx0v5IohdnvKzMyKCUyMI+4XjIMSwBUtJM=;
+	s=arc-20240116; t=1707477552; c=relaxed/simple;
+	bh=E1buk0zzZWt+ClaaZ+b63yUoP42+YT0Qbdk1d5cyqEs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Nbhrz8WwajZSvrBt0fouQxe1wFklsX6l6bxlWw/qTFQMZaSvyOa/qbEuvo7HBRUvf2wAziAb/NhiSrNcM5/Y7J96v8x4qIs4VoGMm1XP+65irIMgFLfJHZ044/3df8ee/GHZeOlG5STG47YCZtPw2b/4Fb5quABL5sau/yXt3R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fMwpJ181; arc=none smtp.client-ip=209.85.208.201
+	 To:Cc:Content-Type; b=T//yZYfavh+ICl0xRXYHqWz3K+h+pSFVcF5qUvAK1G2gd/yMsQOpIjLBHdOcsElLEMiTueLallDOGfBAmEmUcPxfk9NbVmJnvk9TOOl+HRnJDPrPe8v3NiqVcIHd//Zp3wKD99Od4UZTA3lVlCAsXB77fz71Dn5TVTGHXK11VhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U1/hEMt+; arc=none smtp.client-ip=209.85.208.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-lj1-f201.google.com with SMTP id 38308e7fff4ca-2d0c3f8d557so7208211fa.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 03:19:07 -0800 (PST)
+Received: by mail-lj1-f202.google.com with SMTP id 38308e7fff4ca-2d0be4e5cf2so8379721fa.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 03:19:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707477546; x=1708082346; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1707477549; x=1708082349; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dH78NmaaVu9DkNui20oQ6e4x0KTKrZZbiJBCrE6Owok=;
-        b=fMwpJ181JsBSwEf+xWaG3/SYXBV5CQTgm1fer7YnRjhCUr5NquV/xRfFcboy8INDkb
-         Wnx1ERJ9xVZhflkG7NnCDayOEv8HGbkC52S2tl/rqNP3VIQbVRoMIuGV9yFRKBa2lsyR
-         9Rj2kUB/1jwG/MMtrUpoHc4voNBRpwQuWhMybDKLG8FtpPnQz3Ic3DTBjc1WVsJKqd/u
-         nnAaqg1jv9r1wV/VOkJFE83Q/Lm0GLUfodwwIoGzCj9/tqJEfTVrUmeps2YgaBQI3mYS
-         YJ7nrUsXUUcT8Epn9pBekTXpz1vkD+hO0YxeHftcIMFgHQSsC6wSIhLCIeTx2aFQzvmT
-         EwUA==
+        bh=VdMtlvXSdpyuBlQLT4isky8KfbOQu099bwECdJmsAI8=;
+        b=U1/hEMt+fyH24R0QU6b92lYfSv5xUPhKdUi+t65OwFvAY6xkoeHQ5n2+MpqmqEC45/
+         ieDXnSqjH4x4iscsAQuabLs9seVQWmebMUw8NCiuoYe2sqJSZphd3qUSM1JXoytbuOBV
+         ecsP+zbi6Qce8vL8YVkZmC+mnEuqwchmE7zW8g5bWFhW3HPRs0UYys1hzRFUsGPXAmr8
+         YlwIMcImeSyD7UcXxwo6MHrfeNa2rA03V3WUwwJHsG8WMZwBV5g8/GdB85xzqmWKgSme
+         7aniK5cmsa8vMNfdAUQe6HlRa80bM4HKUlXCLDRaJGuNBCcVKOUrXwfwNnh7vw0MhjPr
+         zRBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707477546; x=1708082346;
+        d=1e100.net; s=20230601; t=1707477549; x=1708082349;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dH78NmaaVu9DkNui20oQ6e4x0KTKrZZbiJBCrE6Owok=;
-        b=PIT4M5L36Agivf8pUpASEhEDr/LF32I6cz6g7hTVh61u0ZARK5RZrMiEvXpUccik03
-         +yGpAVIRMRMCxP3pZCkI7vDP0EaxNTukeYyJjiOYC0aT3sl6B+MeIPAW5s64p4ERFSKX
-         rmJgPDzTiz7l9LYtOj0Kg5FW7tIF5UHVQmGWQavGpY0u/OjBly4gQZ2zzvPtWB+cEKqh
-         QoI6n2U7IkFQiqQhqccX08ix2d0jCAll8fPGIjywU3w5CBMJ0ogwhvtQmpIB2oBbFzkZ
-         iEo464kaQPA3mpN3AxiM51f0HLGsWUJOZjnaZGCdHOVmdd/7sFSi6gTgjZBCF62Tvjyj
-         soeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbg0KtY0gR5GtOiOuDA+K03QRHHyvylP+TM6kSPRlFitFL0upa254XGSfWR4wAmmSrKHlBz3KJ+yI6SqgKPyebMAreb4fnNYLpv/amqw==
-X-Gm-Message-State: AOJu0Yw87RT1/7HAfz3ScbO+Sz1x3VFBGlplK+vSdQPC1wdGogtRVorI
-	/nQwyv3wwoBY6Q2MFlyuP1t5PfXFzAakgTXaFxi6bRISvD/5VttkX9uVli6ifuTN0vTe+0CrYrq
-	6t7nbC5eduEHZ8g==
-X-Google-Smtp-Source: AGHT+IGS2oaZYt1srNujLjVmLRS+TgMSmBPm6JQj4xflUDKrNakN3Id603Ljx2qc+uq4Olgz3CXsgeZodx6cTZ8=
+        bh=VdMtlvXSdpyuBlQLT4isky8KfbOQu099bwECdJmsAI8=;
+        b=KHqyTbiHpEbuDjpB8RxhQflAhPTbntZ3MV7nmdVvfEGBkQ1ASxfT61/9jp3Tmq9RYg
+         DBbD3LDJeXPE2RV+QMxXvqgx9wY32ffu1ckAhr1WnugHRFPvxsuPz6Xz17H71wIsTjoN
+         20kh+fhm68d2LHsFB+Mdc91qAOHeewLstY1s2PYRQIZDX1cVK93Fi1+gUSwNeMKvuP4Z
+         NkjKxV8DlFQvaYfr7h+LzJdRNJih8OVvY1O+sTfvZnJAaUHIfiQkTJ9H0VD6chYEuKV9
+         I5Qo6vh8VDoikeNKG/pE1Dt4Id4ia0lDqSTtbl8PCPL9hc4/Lz8L01ud/3SL/uVEqfQu
+         jDYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSjtaeDfFvR/t1wu81njJhG7gk+iGpfINrlQXH5vXozjuGy8K41nH2YH6HUbQqBdVEZYW2r2E8EaryqX0ruQFJrZTmUV0PlwFbrOpKDw==
+X-Gm-Message-State: AOJu0YzLx6NrzB5K8I1x4i0HShxOHYcVUObN2qbLLboTzq+GV3qa6TEX
+	SH/d2Sz3SELBV9dz3HTMlGgGy6JwmI3ja2z0SO7Eirdg6Fo9fuwkMCmQK41Zg1yJXjNeYLrmRor
+	V1WLm6QB1NUbSKQ==
+X-Google-Smtp-Source: AGHT+IHnRYPAoWbAMC+WZ+vqhhPrrFWco1EiFwfv2Uqa0rqOjoQ0lVzPQCeD2STSoOOKqJtmb40+YrokVd1rkC0=
 X-Received: from aliceryhl2.c.googlers.com ([fda3:e722:ac3:cc00:68:949d:c0a8:572])
- (user=aliceryhl job=sendgmr) by 2002:a05:651c:3c5:b0:2d0:d4d5:ae1c with SMTP
- id f5-20020a05651c03c500b002d0d4d5ae1cmr1228ljp.3.1707477545846; Fri, 09 Feb
- 2024 03:19:05 -0800 (PST)
-Date: Fri, 09 Feb 2024 11:18:19 +0000
+ (user=aliceryhl job=sendgmr) by 2002:a05:6512:36c1:b0:511:7c00:fb36 with SMTP
+ id e1-20020a05651236c100b005117c00fb36mr111lfs.10.1707477548849; Fri, 09 Feb
+ 2024 03:19:08 -0800 (PST)
+Date: Fri, 09 Feb 2024 11:18:20 +0000
 In-Reply-To: <20240209-alice-file-v5-0-a37886783025@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -74,22 +74,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240209-alice-file-v5-0-a37886783025@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5091; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=4MEaahIDL8tWEqa8QqxP69ykw7VMt4xM9gXmsdnnpis=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBlxgoTvYPgkAnbZVxHmgiO+gQPznHds8k46wwuJ
- MredE562XyJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZcYKEwAKCRAEWL7uWMY5
- RtJQD/sEDIZSqHxDN3nJargoXJ16TZZD2XdbWOh/p5vtwMsyAeGLE9OeZDO+l4qmX/vzv1c2Shm
- JwyjAWkpt2FRHvpmP3XXi/3JIefGh98lCSC345lEzOWIMkk1gOa/PdxzPT+vU/f3VahQTmCaKHv
- oBPiBtlh6qYQiM+gUE0KzRgWPfNphRjYc5ZX7EFKL+3Z9Pkpxsc3a+BDxhhF5rsfaaFyQMQ56zS
- Nr887zw1Q5B/A9NOShHBQYe9TwazetkTKpQGBru+2TiYEqqKdohhWoTTqMF5Cb3YCUldHySQTNv
- FIEYF7Ix/wa1GnwChc9xfCiojLbJY1beQw5wRmDJ9Xj5pNZDDni6XlQ6evAxSaOMMraDEbNiHs5
- VnAYKCgEA9BAMYAL7vW9yq5Zjxzn2pzE6NnS1Th+mbb8PTQ8L9v1sPknUdr60rU1M7B2zDZaIkA
- jw84LQ+PxUeZJk5ilgtzk6MO5Cb40lMYJ7S9efrYIXaZb6OBfvRtWWaYizRsCpphAX2Z3p3P/R6
- 9mhNHhSHJkVWE3Bo86kKyKz8lp1d48r2OepUJsyxAL0rz5AcOsQnp4T7+1otubS9PQ/PJCJdwrW
- MNAokD2n0VSroP021QoRGx6IJvRTAS10mN+pDIDaNX5N4+F76IotOXUe8V8Rat52C6n+94RpgRT pb5OJWjKzH4EhkA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7824; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=E1buk0zzZWt+ClaaZ+b63yUoP42+YT0Qbdk1d5cyqEs=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBlxgoTxQ7fOeQVqeJHhvMo3R4TWUWv4Zre9VHmv
+ 1n6+dozzJiJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZcYKEwAKCRAEWL7uWMY5
+ RoTID/9DrBtrSeP6a7LrW8zdrFLqeLQwwj3lFqnnNrTM5QW+TdfhVwnLMnRTGE0+zgC05ke+Gja
+ CZmAOET4+/vTYR24qksd1KZsRj8jCgg5xlc+Mq1/t2A/x/CUP4+oArC9rX4YZK3777fVV1m1Ac0
+ bLuMffDV9reg3o85hMLAjyxk3PBDGqN+OWHnjwdNYy0gsWHUMN170+74qr5xgJUfIcIJVTItP0M
+ QG1JsSs6EbrwR+OBo/TchCNF6VLu5O0ZjC0yKqDQZdJfbs0aeqHGGi4tiyhxJX3FR2QYcH+MUGq
+ vbGN4vPIy6dgVwHaClly3eBpi4vuCZiYXKEDbT9baigwQbZC/ZA1dwVMTVM5i2mikL1wg9HuSf6
+ xo+/zXyqysdcRlK7WmTGOQQm9xL6VLcUMtw7cql35bKXsA/UoTOFVoHUum2oYiLy0KnXwcn+Vhh
+ q9Xc99KnXgEqroKeTSbFbO0f27sGvLDgIVVKrputudqRtzI4RwOeY3z9BhcpPP+G0ubccGV8FO6
+ nAcUENW/W3vAANq8eWdUGyMY7axO8w3ayfurOy2qNbMDmXUzIfjiq5G8xZ/K8IkzMkWbGjrlrWA
+ xwzn1rpRENlTrg+ej6ywS506rraGmNyYseWQhal7cvOX72nz2GHsEu68IQqnlM5Lm6gl7lVeyFT D5PnyAJZebOT5YA==
 X-Mailer: b4 0.13-dev-26615
-Message-ID: <20240209-alice-file-v5-6-a37886783025@google.com>
-Subject: [PATCH v5 6/9] rust: file: add `FileDescriptorReservation`
+Message-ID: <20240209-alice-file-v5-7-a37886783025@google.com>
+Subject: [PATCH v5 7/9] rust: file: add `Kuid` wrapper
 From: Alice Ryhl <aliceryhl@google.com>
 To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
 	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
@@ -107,125 +107,241 @@ Cc: Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>,
 	Martin Rodriguez Reboredo <yakoyoku@gmail.com>
 Content-Type: text/plain; charset="utf-8"
 
-From: Wedson Almeida Filho <wedsonaf@gmail.com>
+Adds a wrapper around `kuid_t` called `Kuid`. This allows us to define
+various operations on kuids such as equality and current_euid. It also
+lets us provide conversions from kuid into userspace values.
 
-Allow for the creation of a file descriptor in two steps: first, we
-reserve a slot for it, then we commit or drop the reservation. The first
-step may fail (e.g., the current process ran out of available slots),
-but commit and drop never fail (and are mutually exclusive).
+Rust Binder needs these operations because it needs to compare kuids for
+equality, and it needs to tell userspace about the pid and uid of
+incoming transactions.
 
-This is needed by Rust Binder when fds are sent from one process to
-another. It has to be a two-step process to properly handle the case
-where multiple fds are sent: The operation must fail or succeed
-atomically, which we achieve by first reserving the fds we need, and
-only installing the files once we have reserved enough fds to send the
-files.
+To read kuids from a `struct task_struct`, you must currently use
+various #defines that perform the appropriate field access under an RCU
+read lock. Currently, we do not have a Rust wrapper for rcu_read_lock,
+which means that for this patch, there are two ways forward:
 
-Fd reservations assume that the value of `current` does not change
-between the call to get_unused_fd_flags and the call to fd_install (or
-put_unused_fd). By not implementing the Send trait, this abstraction
-ensures that the `FileDescriptorReservation` cannot be moved into a
-different process.
+ 1. Inline the methods into Rust code, and use __rcu_read_lock directly
+    rather than the rcu_read_lock wrapper. This gives up lockdep for
+    these usages of RCU.
 
-Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+ 2. Wrap the various #defines in helpers and call the helpers from Rust.
+
+This patch uses the second option. One possible disadvantage of the
+second option is the possible introduction of speculation gadgets, but
+as discussed in [1], the risk appears to be acceptable.
+
+Of course, once a wrapper for rcu_read_lock is available, it is
+preferable to use that over either of the two above approaches.
+
+Link: https://lore.kernel.org/all/202312080947.674CD2DC7@keescook/ [1]
 Reviewed-by: Benno Lossin <benno.lossin@proton.me>
 Reviewed-by: Martin Rodriguez Reboredo <yakoyoku@gmail.com>
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
- rust/kernel/file.rs | 72 ++++++++++++++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 71 insertions(+), 1 deletion(-)
+ rust/bindings/bindings_helper.h |  1 +
+ rust/helpers.c                  | 45 ++++++++++++++++++++++++++++
+ rust/kernel/cred.rs             |  5 ++--
+ rust/kernel/task.rs             | 66 +++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 115 insertions(+), 2 deletions(-)
 
-diff --git a/rust/kernel/file.rs b/rust/kernel/file.rs
-index 3a64c5022941..fb903b7f23fe 100644
---- a/rust/kernel/file.rs
-+++ b/rust/kernel/file.rs
-@@ -9,7 +9,7 @@
-     bindings,
-     cred::Credential,
-     error::{code::*, Error, Result},
--    types::{ARef, AlwaysRefCounted, Opaque},
-+    types::{ARef, AlwaysRefCounted, NotThreadSafe, Opaque},
- };
- use core::ptr;
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index 5ca497d786f0..4194b057ef6b 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -15,6 +15,7 @@
+ #include <linux/jiffies.h>
+ #include <linux/mdio.h>
+ #include <linux/phy.h>
++#include <linux/pid_namespace.h>
+ #include <linux/security.h>
+ #include <linux/slab.h>
+ #include <linux/refcount.h>
+diff --git a/rust/helpers.c b/rust/helpers.c
+index fd633d9db79a..58e3a9dff349 100644
+--- a/rust/helpers.c
++++ b/rust/helpers.c
+@@ -142,6 +142,51 @@ void rust_helper_put_task_struct(struct task_struct *t)
+ }
+ EXPORT_SYMBOL_GPL(rust_helper_put_task_struct);
  
-@@ -248,6 +248,76 @@ unsafe fn dec_ref(obj: ptr::NonNull<File>) {
++kuid_t rust_helper_task_uid(struct task_struct *task)
++{
++	return task_uid(task);
++}
++EXPORT_SYMBOL_GPL(rust_helper_task_uid);
++
++kuid_t rust_helper_task_euid(struct task_struct *task)
++{
++	return task_euid(task);
++}
++EXPORT_SYMBOL_GPL(rust_helper_task_euid);
++
++#ifndef CONFIG_USER_NS
++uid_t rust_helper_from_kuid(struct user_namespace *to, kuid_t uid)
++{
++	return from_kuid(to, uid);
++}
++EXPORT_SYMBOL_GPL(rust_helper_from_kuid);
++#endif /* CONFIG_USER_NS */
++
++bool rust_helper_uid_eq(kuid_t left, kuid_t right)
++{
++	return uid_eq(left, right);
++}
++EXPORT_SYMBOL_GPL(rust_helper_uid_eq);
++
++kuid_t rust_helper_current_euid(void)
++{
++	return current_euid();
++}
++EXPORT_SYMBOL_GPL(rust_helper_current_euid);
++
++struct user_namespace *rust_helper_current_user_ns(void)
++{
++	return current_user_ns();
++}
++EXPORT_SYMBOL_GPL(rust_helper_current_user_ns);
++
++pid_t rust_helper_task_tgid_nr_ns(struct task_struct *tsk,
++				  struct pid_namespace *ns)
++{
++	return task_tgid_nr_ns(tsk, ns);
++}
++EXPORT_SYMBOL_GPL(rust_helper_task_tgid_nr_ns);
++
+ struct kunit *rust_helper_kunit_get_current_test(void)
+ {
+ 	return kunit_get_current_test();
+diff --git a/rust/kernel/cred.rs b/rust/kernel/cred.rs
+index fdd899040098..961e94b6a657 100644
+--- a/rust/kernel/cred.rs
++++ b/rust/kernel/cred.rs
+@@ -8,6 +8,7 @@
+ 
+ use crate::{
+     bindings,
++    task::Kuid,
+     types::{AlwaysRefCounted, Opaque},
+ };
+ 
+@@ -59,11 +60,11 @@ pub fn get_secid(&self) -> u32 {
+     }
+ 
+     /// Returns the effective UID of the given credential.
+-    pub fn euid(&self) -> bindings::kuid_t {
++    pub fn euid(&self) -> Kuid {
+         // SAFETY: By the type invariant, we know that `self.0` is valid. Furthermore, the `euid`
+         // field of a credential is never changed after initialization, so there is no potential
+         // for data races.
+-        unsafe { (*self.0.get()).euid }
++        Kuid::from_raw(unsafe { (*self.0.get()).euid })
      }
  }
  
-+/// A file descriptor reservation.
-+///
-+/// This allows the creation of a file descriptor in two steps: first, we reserve a slot for it,
-+/// then we commit or drop the reservation. The first step may fail (e.g., the current process ran
-+/// out of available slots), but commit and drop never fail (and are mutually exclusive).
-+///
-+/// Dropping the reservation happens in the destructor of this type.
-+///
-+/// # Invariants
-+///
-+/// The fd stored in this struct must correspond to a reserved file descriptor of the current task.
-+pub struct FileDescriptorReservation {
-+    fd: u32,
-+    /// Prevent values of this type from being moved to a different task.
+diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
+index b579367fb923..f46ea3ba9e8e 100644
+--- a/rust/kernel/task.rs
++++ b/rust/kernel/task.rs
+@@ -9,6 +9,7 @@
+     types::{NotThreadSafe, Opaque},
+ };
+ use core::{
++    cmp::{Eq, PartialEq},
+     ffi::{c_int, c_long, c_uint},
+     ops::Deref,
+     ptr,
+@@ -96,6 +97,12 @@ unsafe impl Sync for Task {}
+ /// The type of process identifiers (PIDs).
+ type Pid = bindings::pid_t;
+ 
++/// The type of user identifiers (UIDs).
++#[derive(Copy, Clone)]
++pub struct Kuid {
++    kuid: bindings::kuid_t,
++}
++
+ impl Task {
+     /// Returns a raw pointer to the current task.
+     ///
+@@ -157,12 +164,31 @@ pub fn pid(&self) -> Pid {
+         unsafe { *ptr::addr_of!((*self.0.get()).pid) }
+     }
+ 
++    /// Returns the UID of the given task.
++    pub fn uid(&self) -> Kuid {
++        // SAFETY: By the type invariant, we know that `self.0` is valid.
++        Kuid::from_raw(unsafe { bindings::task_uid(self.0.get()) })
++    }
++
++    /// Returns the effective UID of the given task.
++    pub fn euid(&self) -> Kuid {
++        // SAFETY: By the type invariant, we know that `self.0` is valid.
++        Kuid::from_raw(unsafe { bindings::task_euid(self.0.get()) })
++    }
++
+     /// Determines whether the given task has pending signals.
+     pub fn signal_pending(&self) -> bool {
+         // SAFETY: By the type invariant, we know that `self.0` is valid.
+         unsafe { bindings::signal_pending(self.0.get()) != 0 }
+     }
+ 
++    /// Returns the given task's pid in the current pid namespace.
++    pub fn pid_in_current_ns(&self) -> Pid {
++        // SAFETY: We know that `self.0.get()` is valid by the type invariant, and passing a null
++        // pointer as the namespace is correct for using the current namespace.
++        unsafe { bindings::task_tgid_nr_ns(self.0.get(), ptr::null_mut()) }
++    }
++
+     /// Wakes up the task.
+     pub fn wake_up(&self) {
+         // SAFETY: By the type invariant, we know that `self.0.get()` is non-null and valid.
+@@ -172,6 +198,46 @@ pub fn wake_up(&self) {
+     }
+ }
+ 
++impl Kuid {
++    /// Get the current euid.
++    #[inline]
++    pub fn current_euid() -> Kuid {
++        // SAFETY: Just an FFI call.
++        Self::from_raw(unsafe { bindings::current_euid() })
++    }
++
++    /// Create a `Kuid` given the raw C type.
++    #[inline]
++    pub fn from_raw(kuid: bindings::kuid_t) -> Self {
++        Self { kuid }
++    }
++
++    /// Turn this kuid into the raw C type.
++    #[inline]
++    pub fn into_raw(self) -> bindings::kuid_t {
++        self.kuid
++    }
++
++    /// Converts this kernel UID into a userspace UID.
 +    ///
-+    /// The `fd_install` and `put_unused_fd` functions assume that the value of `current` is
-+    /// unchanged since the call to `get_unused_fd_flags`. By adding this marker to this type, we
-+    /// prevent it from being moved across task boundaries, which ensures that `current` does not
-+    /// change while this value exists.
-+    _not_send: NotThreadSafe,
-+}
-+
-+impl FileDescriptorReservation {
-+    /// Creates a new file descriptor reservation.
-+    pub fn get_unused_fd_flags(flags: u32) -> Result<Self> {
-+        // SAFETY: FFI call, there are no safety requirements on `flags`.
-+        let fd: i32 = unsafe { bindings::get_unused_fd_flags(flags) };
-+        if fd < 0 {
-+            return Err(Error::from_errno(fd));
-+        }
-+        Ok(Self {
-+            fd: fd as u32,
-+            _not_send: NotThreadSafe,
-+        })
-+    }
-+
-+    /// Returns the file descriptor number that was reserved.
-+    pub fn reserved_fd(&self) -> u32 {
-+        self.fd
-+    }
-+
-+    /// Commits the reservation.
-+    ///
-+    /// The previously reserved file descriptor is bound to `file`. This method consumes the
-+    /// [`FileDescriptorReservation`], so it will not be usable after this call.
-+    pub fn fd_install(self, file: ARef<File>) {
-+        // SAFETY: `self.fd` was previously returned by `get_unused_fd_flags`. We have not yet used
-+        // the fd, so it is still valid, and `current` still refers to the same task, as this type
-+        // cannot be moved across task boundaries.
-+        //
-+        // Furthermore, the file pointer is guaranteed to own a refcount by its type invariants,
-+        // and we take ownership of that refcount by not running the destructor below.
-+        unsafe { bindings::fd_install(self.fd, file.as_ptr()) };
-+
-+        // `fd_install` consumes both the file descriptor and the file reference, so we cannot run
-+        // the destructors.
-+        core::mem::forget(self);
-+        core::mem::forget(file);
++    /// Uses the namespace of the current task.
++    #[inline]
++    pub fn into_uid_in_current_ns(self) -> bindings::uid_t {
++        // SAFETY: Just an FFI call.
++        unsafe { bindings::from_kuid(bindings::current_user_ns(), self.kuid) }
 +    }
 +}
 +
-+impl Drop for FileDescriptorReservation {
-+    fn drop(&mut self) {
-+        // SAFETY: By the type invariants of this type, `self.fd` was previously returned by
-+        // `get_unused_fd_flags`. We have not yet used the fd, so it is still valid, and `current`
-+        // still refers to the same task, as this type cannot be moved across task boundaries.
-+        unsafe { bindings::put_unused_fd(self.fd) };
++impl PartialEq for Kuid {
++    #[inline]
++    fn eq(&self, other: &Kuid) -> bool {
++        // SAFETY: Just an FFI call.
++        unsafe { bindings::uid_eq(self.kuid, other.kuid) }
 +    }
 +}
 +
- /// Represents the `EBADF` error code.
- ///
- /// Used for methods that can only fail with `EBADF`.
++impl Eq for Kuid {}
++
+ // SAFETY: The type invariants guarantee that `Task` is always ref-counted.
+ unsafe impl crate::types::AlwaysRefCounted for Task {
+     fn inc_ref(&self) {
 
 -- 
 2.43.0.687.g38aa6559b0-goog
