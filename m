@@ -1,114 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-10889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26AD084F29F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 10:50:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F3E84F2A1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 10:50:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CABED1F26A1A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 09:50:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BF411C259EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 09:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CADC67E80;
-	Fri,  9 Feb 2024 09:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58C7C67C67;
+	Fri,  9 Feb 2024 09:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tj23qJkh"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Exd8fA8w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDBF66B54;
-	Fri,  9 Feb 2024 09:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AA267C5D
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 09:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707472215; cv=none; b=qbjEfw6Xk1NCIi+0EDa0XncgYioj2W6s+NTAbWa1yDIkuuDx7L3TxyOEFoMuLbLtoD3WR8ZrsrIwveTkUFVbNNmWW6TjkTMYxv0g5IsNuZrK4KZJ9PVXovjED2BcUg0dgbWkVaE9WqV3uWUiTqaYqQO+zVJ8WLzff11PmgM7EtM=
+	t=1707472229; cv=none; b=AMhJ/4daAxIpqgPY74oTsDvBYHf79ces3fVC1lp8GMngOgp6yT2+hMS1IF2N5jVYrbjXeg0Tbx/+SsvPH1Vm8IaQxY2Rjickg0ZR5JxtA/59iwiLbVFNBDUq6D/BpEJbJM6yMmmE50jpPbkT4LtybJDP9LTsE7Z3Viwu/pXobhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707472215; c=relaxed/simple;
-	bh=p9KT0bMR+IID1hXXuOL2WksmLXvhHF8bNUuC9TAfm+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jD7aMfJg+jSO6Xi+hkqms2kYcuruPgkUHpAbAMvFREMc+MqTEu1DqC5MFaeQMVjyMJqD89K8HOfvPZEkMoM3Uu6Ui6EOHEwEqiabbLu0erQApW5DpnvNJi3mHlhTl0W8bjD1Op4DS3JpPXWU8E08mOsdJOC9f3td6Ig94oNH+8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tj23qJkh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD211C433F1;
-	Fri,  9 Feb 2024 09:50:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707472214;
-	bh=p9KT0bMR+IID1hXXuOL2WksmLXvhHF8bNUuC9TAfm+0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tj23qJkhmVHPXUAdr5N2zoIBOtiVMhgLk0BsGvQiaIvxYCTuSQH5S327SU/teJOgP
-	 r0C/F+Xn6q3Y4FVKXDsFRskERs4mjCUAo0lYnxNtnyj2BdDkNe++YOvj6eF/ZeTVcs
-	 gQuE8h8p/mThFnYZ1WTPqCxTMpENjFZgzR1MI38U3uWpbO0w06mO0cXGIIRd+EJF+l
-	 Kh050UFuf6avm8IK9y0Mp9Up5jIWGUM26zHnw9mgZrzVO362Cl6PT0xJ7gfRoS17nN
-	 eEe1iYCUk7M3a79BYQ+vhdXO+IjG+Xazskk5yVi1oUWMOCO+d/biTL7kmxW6pPeRzo
-	 CnuniTtr224EQ==
-Date: Fri, 9 Feb 2024 10:50:05 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: viro@zeniv.linux.org.uk, chuck.lever@oracle.com, jlayton@kernel.org, 
-	neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org, 
-	stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org, 
-	mic@digikod.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v9 20/25] ima: Move to LSM infrastructure
-Message-ID: <20240209-zensor-antilopen-e6c5e64b8706@brauner>
-References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
- <20240115181809.885385-21-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1707472229; c=relaxed/simple;
+	bh=Bn5RkImYl8J6pTC20AM8lGVV4tK6w7pGgStnPFGpx20=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RzKaqVaOjaXMlR3jklN28QzadLbt6aB3X2AILLp3zTKx9DWrhNEeLvgf3v2nc8gj8h9pmLMAVlYo+Ix99uTxSs4HczqIbmGW4/NTvh4MAJ9W8EDt0EHuTK6RPTVbcdFiQnUfRvk/SB4eSWCWWV34xnJM8uzek3VGnyX1mvJbY9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Exd8fA8w; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-55790581457so1198023a12.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 01:50:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1707472225; x=1708077025; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/JNRz50THrJhcBN3+4zL2hC4VNdKTNtkNYCxHgnlivw=;
+        b=Exd8fA8wvCnbQhKgd8Hb/ypurZXbDpveXDh/2SBRpb7pmAu+zestYO8XpYDYn0L2v9
+         jiWJekZivH3hSl9lvs7L3u6iVOJ0UGNJF2Ja400DIFoNg6nCBBSrDrgYb6TDyWJIzLh7
+         wNlXJiX6nUr72MOoPhv4TwOH6O13agIMeVAJA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707472225; x=1708077025;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/JNRz50THrJhcBN3+4zL2hC4VNdKTNtkNYCxHgnlivw=;
+        b=rBOYfqKFHh5qfSlm13ph7Wk8l5yFZz0umfUEXJCPo+0OsecfUiZgkcYVVIMrYorIvA
+         EK4MlZ0TQNZ/4SPrDv7XbrfBTOnmNyUBhhIAskUpctigIhUIW4uRkoq0GoTdzikRDakH
+         EQa/6kV6jr/zPsIrGAvKsCEc8iUx/BkE/Zi/NTGY7sUPSUlhyVePWQji4gTvZ9qzGRiM
+         pQ4GO/U0GDnqpxsCkFuCHFxQgjU3V6Vu6uLdTKI6LAyx1YJe9MSG6OH2v4bQN8ADxdsO
+         bovepSex5Cc5AAgbzEkFXLC2YORvbPNl6q/6CgR+O2mCMlelqRP45RWaADL7mk0lu2Kp
+         4P7A==
+X-Gm-Message-State: AOJu0Yxw83hYVdR3+tQzavf3Eh3n3ESq2+z2Mpy+4I1d7KKFPHajDpeS
+	5YiIJg/QboNRytPdNnLenSCX2QCkg6CtTQtA6our9AAaSWM1AFMFkwPVAP2ob4nNeNU/6+dkixm
+	zQimOBB6Z6E72CKu3C3Wy7w0tAXla5tlD7BB/jw==
+X-Google-Smtp-Source: AGHT+IGViPqvCwulF+cP8RnKGxNKMbtFfe+DXWnF0xKnYdw5cXFhSUbM7FlqyEjBKUQz4hvjed+1YTBpfnfHjo5GvFI=
+X-Received: by 2002:a17:906:3415:b0:a3c:266:954b with SMTP id
+ c21-20020a170906341500b00a3c0266954bmr261283ejb.22.1707472224711; Fri, 09 Feb
+ 2024 01:50:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240115181809.885385-21-roberto.sassu@huaweicloud.com>
+References: <20240208170603.2078871-1-amir73il@gmail.com> <20240208170603.2078871-3-amir73il@gmail.com>
+In-Reply-To: <20240208170603.2078871-3-amir73il@gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 9 Feb 2024 10:50:13 +0100
+Message-ID: <CAJfpegvzxAeq-mWJjwVNxi01zGXqUek7DZH3d0Kb0VO9FjGk3g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/9] fuse: Create helper function if DIO write needs
+ exclusive lock
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org, 
+	Bernd Schubert <bschubert@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jan 15, 2024 at 07:18:04PM +0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Move hardcoded IMA function calls (not appraisal-specific functions) from
-> various places in the kernel to the LSM infrastructure, by introducing a
-> new LSM named 'ima' (at the end of the LSM list and always enabled like
-> 'integrity').
-> 
-> Having IMA before EVM in the Makefile is sufficient to preserve the
-> relative order of the new 'ima' LSM in respect to the upcoming 'evm' LSM,
-> and thus the order of IMA and EVM function calls as when they were
-> hardcoded.
-> 
-> Make moved functions as static (except ima_post_key_create_or_update(),
-> which is not in ima_main.c), and register them as implementation of the
-> respective hooks in the new function init_ima_lsm().
-> 
-> Select CONFIG_SECURITY_PATH, to ensure that the path-based LSM hook
-> path_post_mknod is always available and ima_post_path_mknod() is always
-> executed to mark files as new, as before the move.
-> 
-> A slight difference is that IMA and EVM functions registered for the
-> inode_post_setattr, inode_post_removexattr, path_post_mknod,
-> inode_post_create_tmpfile, inode_post_set_acl and inode_post_remove_acl
-> won't be executed for private inodes. Since those inodes are supposed to be
-> fs-internal, they should not be of interest of IMA or EVM. The S_PRIVATE
-> flag is used for anonymous inodes, hugetlbfs, reiserfs xattrs, XFS scrub
-> and kernel-internal tmpfs files.
-> 
-> Conditionally register ima_post_key_create_or_update() if
-> CONFIG_IMA_MEASURE_ASYMMETRIC_KEYS is enabled. Also, conditionally register
-> ima_kernel_module_request() if CONFIG_INTEGRITY_ASYMMETRIC_KEYS is enabled.
-> 
-> Finally, add the LSM_ID_IMA case in lsm_list_modules_test.c.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Acked-by: Chuck Lever <chuck.lever@oracle.com>
-> ---
->  fs/file_table.c                               |   2 -
->  fs/namei.c                                    |   6 -
->  fs/nfsd/vfs.c                                 |   7 --
->  fs/open.c                                     |   1 -
+On Thu, 8 Feb 2024 at 18:08, Amir Goldstein <amir73il@gmail.com> wrote:
+> @@ -2468,7 +2493,8 @@ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
+>                 return fuse_dax_mmap(file, vma);
+>
+>         if (ff->open_flags & FOPEN_DIRECT_IO) {
+> -               /* Can't provide the coherency needed for MAP_SHARED
+> +               /*
+> +                * Can't provide the coherency needed for MAP_SHARED
+>                  * if FUSE_DIRECT_IO_ALLOW_MMAP isn't set.
+>                  */
+>                 if ((vma->vm_flags & VM_MAYSHARE) && !fc->direct_io_allow_mmap)
 
-Acked-by: Christian Brauner <brauner@kernel.org>
+This last hunk seems to belong in the previous patch.
+
+Thanks,
+Miklos
 
