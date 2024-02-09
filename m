@@ -1,284 +1,334 @@
-Return-Path: <linux-fsdevel+bounces-10866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F3584EDFF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 00:44:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 727C484EE32
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 01:09:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0995DB29B4A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Feb 2024 23:40:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EA361C22C9C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 00:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E51756474;
-	Thu,  8 Feb 2024 23:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34D236F;
+	Fri,  9 Feb 2024 00:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IU0zvL5z"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fjvxQy6C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715D756458;
-	Thu,  8 Feb 2024 23:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64779364
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 00:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707434762; cv=none; b=Tpw8BCGEgZ0IN+QR2Y4W8+MdlJvYLeCt7zxDUGXWb/joVHBsuFrYisGr3aWQG50dUuS+F3H9Ng7MIi0Kad+BXIuXt0BzhlWJp9hlCZ9SYhbhxHIfc0a6Xa/p8WB5ygLFDhI7VDeWd/JzB+Ye/fa9sgy7n/pwonKoka98GTam5BI=
+	t=1707437365; cv=none; b=AmfjT+UkZM/kcNpMHzV9o5PpUIGZvKfONnfmXBoZPepvqMEjNDDrSGsD1O4cN0NYXgfygTIkbbyJfJ7zaarRXn1VJBe1vp3Tp2rZg/VgrJ6VW+PQMnEhx8PnbyqITnty1KYATurRqUFOVeI4D9dxcKk7dHV0d61g8g2K+cdsR3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707434762; c=relaxed/simple;
-	bh=ltOS/Js3Dm6l4sxheTCRdreloaB158cvUG64Xz6J9dk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h9hO8FmxFbEDZl5t6Mihzl8NhjV1JQWMADfAroaIc/oWHlyPiIo1VzU5aPWKCJJorh7rfgCCpWB+YmKxiVbaT7x8t4HO286GCRWrMrLBYUupEhdpXIeQqDma7zaITewkWZfMKTMdbXdehuvRzmTwxdloIm1+/sw0xRXhuXbOz+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IU0zvL5z; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-511689cc22aso577614e87.0;
-        Thu, 08 Feb 2024 15:26:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707434758; x=1708039558; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ijliBSIb+fWqPQdA69fOELGAiVQKN7CFVcarJ41DoRw=;
-        b=IU0zvL5zqaBRb2LW/Xmxuka+CP6zBReH13Xc7+VHTu1Q0soDot2eFr6Ffkfuh3C2Ik
-         hoh4IBK+cW8r0frsuwi1PoMmTVAxdM3lVbhaiFXifN7rrcblec9CZIHz7FalNjZd0Q0Z
-         cabw9RNAvJagtVUoLdstbSOYLz0qlpOpKLGFtashEvwyHocktvz8v0M8m6P63v9sFUIp
-         E3RF+ZLLuvrYZMKZqXxmO9JhojAo1C9x2Rguij+NWbglartSBGT268ZdSsYNALN5PYgu
-         T8c7sH3tEBqtVU6uKPFo+ut2Gt/YL8HKnNXO7fFREtqS4h/f8hBDNeI/lpUFqgPNi6Yw
-         ZLEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707434758; x=1708039558;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ijliBSIb+fWqPQdA69fOELGAiVQKN7CFVcarJ41DoRw=;
-        b=cZlKUkfRtTMzq3RDgFbk5nUpZz+n3RBAwQV7XUQfSxN4xrOiyb5HBTls4rEwl750VP
-         Hv5KkHkQ72fmEuH7KTfC8E+82ztFcQPJmojzS5TwHlTxatlkEjhlY0ECOpTj83FtoCwZ
-         tJ4Mc2keII+0641gFoPXUTd5vs7vE/p9a1JogyDypALdCcthia9b7TMMWkrC7nAuGayz
-         iUq1dXBjhmkyV5qjxfkaNZ7yKkOWYRwybr5RYw2cJUOFgBI18KeLXTA6s/JiePHdb8Km
-         3TxtZpBxwh+ZAB7ltJtGaJJmF1/ZGgkVY1gG7bcdRAVQA4/ft6qNd8GvxznQ3LRAvEpG
-         4OWw==
-X-Forwarded-Encrypted: i=1; AJvYcCXg4SokhEC4QvuNQbAX9UBD0tlrPbtJZF9TZhAUuL5cO8jXVr+s63UVI6OOechhmQEZ7aZgHv3sepLIEEU+qbyIeQkWKDuqvfs+HNx407CkdHkn3tFBYyGxS+Ly+yCYT1F3MpWbi345peM=
-X-Gm-Message-State: AOJu0YyOjvgd4sGYzjucXWwUlD2zfg/ROsMydlwBtRjOo3xc5zZCp6gl
-	hF1ljzxeJne8amU/x2MIUi1aocKZGRh1ZBaQMjtShlodejQQBuEb3Ll094sFHYFy9xDuZW5/WRs
-	LcPo81bwppYsmHs43UJfNsHUF228=
-X-Google-Smtp-Source: AGHT+IFZvm6/IEtLrKWwT7b8HLfBb9pgpb2VK/+4B/qJTJEnIkJ68GYUmI9B0SgHpzFJg7bn+ds7pwLUUBIrhUvt/HE=
-X-Received: by 2002:a05:6512:3ac:b0:511:48ab:2f9c with SMTP id
- v12-20020a05651203ac00b0051148ab2f9cmr370135lfp.42.1707434758096; Thu, 08 Feb
- 2024 15:25:58 -0800 (PST)
+	s=arc-20240116; t=1707437365; c=relaxed/simple;
+	bh=VnMubbcLEYRPOwowFN4Hbhtf0C0MsyAYWFiCKpDGt9I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=riRGQZ6xL4vrYnOjabRmitBe+PBqETJ1ZFzDPEABPGBN6eATN/JVgoZ2TlapX4FLu+Q/j+3d/DNcWA4GTwOp7db0vpxy0YSbg++MiTUSmO2gMAkdQPKGUyyPZaeCtWxUHAY4xv/IaBY5Y4OEXUIU53f8VeQdnlkYRdhnaYvXSu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fjvxQy6C; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1707437362;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kIacy2orDvO4RnhNB+PIOV6IoOj1+fjYkNVIo1wEK28=;
+	b=fjvxQy6CiEznva6D1nZZfBXjcOlbxP+IWS7wteJ3z+dsdCQwUJKPqjPhqMWjo4ewZlbTRa
+	Sg0cA+07dXHz2a2xIf1c95yv0p2msK0PsAo7r1wKGLiwNTbWC9gc0fmB+TKz260dDpLMH9
+	32aGp5Ed282cYGgz0EdrRfTgqX1Yr5o=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-369-drlpKP7kPNmGvo1g6QDfiQ-1; Thu, 08 Feb 2024 19:09:19 -0500
+X-MC-Unique: drlpKP7kPNmGvo1g6QDfiQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D51D0830DCD;
+	Fri,  9 Feb 2024 00:09:18 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.32.174])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 94E35C1690E;
+	Fri,  9 Feb 2024 00:09:18 +0000 (UTC)
+From: Bill O'Donnell <bodonnel@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: dlemoal@kernel.org,
+	Bill O'Donnell <bodonnel@redhat.com>
+Subject: [PATCH] zonefs: convert zonefs to use the new mount api
+Date: Thu,  8 Feb 2024 18:08:57 -0600
+Message-ID: <20240209000857.21040-1-bodonnel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAH2r5mswELNv2Mo-aWNoq3fRUC7Rk0TjfY8kwdPc=JSEuZZObw@mail.gmail.com>
- <20240207034117.20714-1-matthew.ruffell@canonical.com> <CAH2r5mu04KHQV3wynaBSrwkptSE_0ARq5YU1aGt7hmZkdsVsng@mail.gmail.com>
- <CAH2r5msJ12ShH+ZUOeEg3OZaJ-OJ53-mCHONftmec7FNm3znWQ@mail.gmail.com>
- <CAH2r5muiod=thF6tnSrgd_LEUCdqy03a2Ln1RU40OMETqt2Z_A@mail.gmail.com> <CAH2r5mvzyxP7vHQVcT6ieP4NmXDAz2UqTT7G4yrxcVObkV_3YQ@mail.gmail.com>
-In-Reply-To: <CAH2r5mvzyxP7vHQVcT6ieP4NmXDAz2UqTT7G4yrxcVObkV_3YQ@mail.gmail.com>
-From: Steve French <smfrench@gmail.com>
-Date: Thu, 8 Feb 2024 17:25:46 -0600
-Message-ID: <CAH2r5msRy_KB95yyqrRbTmcaL-5Y_Wh+zD8KYfu+mtroO1d2UQ@mail.gmail.com>
-Subject: Re: SMB 1.0 broken between Kernel versions 6.2 and 6.5
-To: Matthew Ruffell <matthew.ruffell@canonical.com>
-Cc: dhowells@redhat.com, linux-cifs@vger.kernel.org, rdiez-2006@rd10.de, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Shyam Prasad N <nspmangalore@gmail.com>
-Content-Type: multipart/mixed; boundary="0000000000003be0dc0610e7223f"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
---0000000000003be0dc0610e7223f
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Convert the zonefs filesystem to use the new mount API.
+Tested using the zonefs test suite from:
+https://github.com/damien-lemoal/zonefs-tools
 
-Minor update to patch following suggestion by Shyam - more accurately
-state the PAGE_SIZE in the debug message from:
+Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
+---
+ fs/zonefs/super.c | 156 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 90 insertions(+), 66 deletions(-)
 
-   cifs_dbg(VFS, "wsize should be a multiple of 4096 (PAGE_SIZE)\n");
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index e6a75401677d..6b8ecd2e55b8 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -15,13 +15,13 @@
+ #include <linux/writeback.h>
+ #include <linux/quotaops.h>
+ #include <linux/seq_file.h>
+-#include <linux/parser.h>
+ #include <linux/uio.h>
+ #include <linux/mman.h>
+ #include <linux/sched/mm.h>
+ #include <linux/crc32.h>
+ #include <linux/task_io_accounting_ops.h>
+-
++#include <linux/fs_parser.h>
++#include <linux/fs_context.h>
+ #include "zonefs.h"
+ 
+ #define CREATE_TRACE_POINTS
+@@ -460,58 +460,47 @@ static int zonefs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ }
+ 
+ enum {
+-	Opt_errors_ro, Opt_errors_zro, Opt_errors_zol, Opt_errors_repair,
+-	Opt_explicit_open, Opt_err,
++	Opt_errors, Opt_explicit_open,
+ };
+ 
+-static const match_table_t tokens = {
+-	{ Opt_errors_ro,	"errors=remount-ro"},
+-	{ Opt_errors_zro,	"errors=zone-ro"},
+-	{ Opt_errors_zol,	"errors=zone-offline"},
+-	{ Opt_errors_repair,	"errors=repair"},
+-	{ Opt_explicit_open,	"explicit-open" },
+-	{ Opt_err,		NULL}
++struct zonefs_context {
++	unsigned long s_mount_opts;
+ };
+ 
+-static int zonefs_parse_options(struct super_block *sb, char *options)
+-{
+-	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+-	substring_t args[MAX_OPT_ARGS];
+-	char *p;
+-
+-	if (!options)
+-		return 0;
+-
+-	while ((p = strsep(&options, ",")) != NULL) {
+-		int token;
++static const struct constant_table zonefs_param_errors[] = {
++	{"remount-ro",		ZONEFS_MNTOPT_ERRORS_RO},
++	{"zone-ro",		ZONEFS_MNTOPT_ERRORS_ZRO},
++	{"zone-offline",	ZONEFS_MNTOPT_ERRORS_ZOL},
++	{"repair", 		ZONEFS_MNTOPT_ERRORS_REPAIR},
++	{}
++};
+ 
+-		if (!*p)
+-			continue;
++static const struct fs_parameter_spec zonefs_param_spec[] = {
++	fsparam_enum	("errors",		Opt_errors, zonefs_param_errors),
++	fsparam_flag	("explicit-open",	Opt_explicit_open),
++	{}
++};
+ 
+-		token = match_token(p, tokens, args);
+-		switch (token) {
+-		case Opt_errors_ro:
+-			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+-			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_RO;
+-			break;
+-		case Opt_errors_zro:
+-			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+-			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_ZRO;
+-			break;
+-		case Opt_errors_zol:
+-			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+-			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_ZOL;
+-			break;
+-		case Opt_errors_repair:
+-			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+-			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_REPAIR;
+-			break;
+-		case Opt_explicit_open:
+-			sbi->s_mount_opts |= ZONEFS_MNTOPT_EXPLICIT_OPEN;
+-			break;
+-		default:
+-			return -EINVAL;
+-		}
++static int zonefs_parse_param(struct fs_context *fc, struct fs_parameter *param)
++{
++	struct zonefs_context *ctx = fc->fs_private;
++	struct fs_parse_result result;
++	int opt;
++
++	opt = fs_parse(fc, zonefs_param_spec, param, &result);
++	if (opt < 0)
++		return opt;
++
++	switch (opt) {
++	case Opt_errors:
++		ctx->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
++		ctx->s_mount_opts |= result.uint_32;
++		break;
++	case Opt_explicit_open:
++		ctx->s_mount_opts |= ZONEFS_MNTOPT_EXPLICIT_OPEN;
++		break;
++	default:
++		return -EINVAL;
+ 	}
+ 
+ 	return 0;
+@@ -533,11 +522,19 @@ static int zonefs_show_options(struct seq_file *seq, struct dentry *root)
+ 	return 0;
+ }
+ 
+-static int zonefs_remount(struct super_block *sb, int *flags, char *data)
++static int zonefs_get_tree(struct fs_context *fc);
++
++static int zonefs_reconfigure(struct fs_context *fc)
+ {
+-	sync_filesystem(sb);
++	struct zonefs_context *ctx = fc->fs_private;
++	struct super_block *sb = fc->root->d_sb;
++	struct zonefs_sb_info *sbi = sb->s_fs_info;
+ 
+-	return zonefs_parse_options(sb, data);
++	sync_filesystem(fc->root->d_sb);
++	/* Copy new options from ctx into sbi. */
++	sbi->s_mount_opts = ctx->s_mount_opts;
++
++	return 0;
+ }
+ 
+ static int zonefs_inode_setattr(struct mnt_idmap *idmap,
+@@ -1197,7 +1194,6 @@ static const struct super_operations zonefs_sops = {
+ 	.alloc_inode	= zonefs_alloc_inode,
+ 	.free_inode	= zonefs_free_inode,
+ 	.statfs		= zonefs_statfs,
+-	.remount_fs	= zonefs_remount,
+ 	.show_options	= zonefs_show_options,
+ };
+ 
+@@ -1242,9 +1238,10 @@ static void zonefs_release_zgroup_inodes(struct super_block *sb)
+  * sub-directories and files according to the device zone configuration and
+  * format options.
+  */
+-static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
++static int zonefs_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
+ 	struct zonefs_sb_info *sbi;
++	struct zonefs_context *ctx = fc->fs_private;
+ 	struct inode *inode;
+ 	enum zonefs_ztype ztype;
+ 	int ret;
+@@ -1281,21 +1278,17 @@ static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
+ 	sbi->s_uid = GLOBAL_ROOT_UID;
+ 	sbi->s_gid = GLOBAL_ROOT_GID;
+ 	sbi->s_perm = 0640;
+-	sbi->s_mount_opts = ZONEFS_MNTOPT_ERRORS_RO;
+-
++	sbi->s_mount_opts = ctx->s_mount_opts;
+ 	atomic_set(&sbi->s_wro_seq_files, 0);
+ 	sbi->s_max_wro_seq_files = bdev_max_open_zones(sb->s_bdev);
+ 	atomic_set(&sbi->s_active_seq_files, 0);
++
+ 	sbi->s_max_active_seq_files = bdev_max_active_zones(sb->s_bdev);
+ 
+ 	ret = zonefs_read_super(sb);
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = zonefs_parse_options(sb, data);
+-	if (ret)
+-		return ret;
+-
+ 	zonefs_info(sb, "Mounting %u zones", bdev_nr_zones(sb->s_bdev));
+ 
+ 	if (!sbi->s_max_wro_seq_files &&
+@@ -1356,12 +1349,6 @@ static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
+ 	return ret;
+ }
+ 
+-static struct dentry *zonefs_mount(struct file_system_type *fs_type,
+-				   int flags, const char *dev_name, void *data)
+-{
+-	return mount_bdev(fs_type, flags, dev_name, data, zonefs_fill_super);
+-}
+-
+ static void zonefs_kill_super(struct super_block *sb)
+ {
+ 	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+@@ -1376,17 +1363,54 @@ static void zonefs_kill_super(struct super_block *sb)
+ 	kfree(sbi);
+ }
+ 
++static void zonefs_free_fc(struct fs_context *fc)
++{
++	struct zonefs_context *ctx = fc->fs_private;
++
++	kfree(ctx);
++}
++
++static const struct fs_context_operations zonefs_context_ops = {
++	.parse_param    = zonefs_parse_param,
++	.get_tree       = zonefs_get_tree,
++	.reconfigure	= zonefs_reconfigure,
++	.free           = zonefs_free_fc,
++};
++
++/*
++ * Set up the filesystem mount context.
++ */
++static int zonefs_init_fs_context(struct fs_context *fc)
++{
++	struct zonefs_context *ctx;
++
++	ctx = kzalloc(sizeof(struct zonefs_context), GFP_KERNEL);
++	if (!ctx)
++		return 0;
++	ctx->s_mount_opts = ZONEFS_MNTOPT_ERRORS_RO;
++	fc->ops = &zonefs_context_ops;
++	fc->fs_private = ctx;
++
++	return 0;
++}
++
+ /*
+  * File system definition and registration.
+  */
+ static struct file_system_type zonefs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "zonefs",
+-	.mount		= zonefs_mount,
+ 	.kill_sb	= zonefs_kill_super,
+ 	.fs_flags	= FS_REQUIRES_DEV,
++	.init_fs_context	= zonefs_init_fs_context,
++	.parameters	= zonefs_param_spec,
+ };
+ 
++static int zonefs_get_tree(struct fs_context *fc)
++{
++	return get_tree_bdev(fc, zonefs_fill_super);
++}
++
+ static int __init zonefs_init_inodecache(void)
+ {
+ 	zonefs_inode_cachep = kmem_cache_create("zonefs_inode_cache",
+-- 
+2.43.0
 
-to
-
-   cifs_dbg(VFS, "wsize should be a multiple of %ld (PAGE_SIZE)\n", PAGE_SI=
-ZE);
-
-On Wed, Feb 7, 2024 at 8:50=E2=80=AFAM Steve French <smfrench@gmail.com> wr=
-ote:
->
-> I had attached the wrong file - reattaching the correct patch (ie that
-> updates the previous version to use PAGE_SIZE instead of 4096)
->
-> On Wed, Feb 7, 2024 at 1:12=E2=80=AFAM Steve French <smfrench@gmail.com> =
-wrote:
-> >
-> > Updated patch - now use PAGE_SIZE instead of hard coding to 4096.
-> >
-> > See attached
-> >
-> > On Tue, Feb 6, 2024 at 11:32=E2=80=AFPM Steve French <smfrench@gmail.co=
-m> wrote:
-> > >
-> > > Attached updated patch which also adds check to make sure max write
-> > > size is at least 4K
-> > >
-> > > On Tue, Feb 6, 2024 at 10:58=E2=80=AFPM Steve French <smfrench@gmail.=
-com> wrote:
-> > > >
-> > > > > his netfslib work looks like quite a big refactor. Is there any p=
-lans to land this in 6.8? Or will this be 6.9 / later?
-> > > >
-> > > > I don't object to putting them in 6.8 if there was additional revie=
-w
-> > > > (it is quite large), but I expect there would be pushback, and am
-> > > > concerned that David's status update did still show some TODOs for
-> > > > that patch series.  I do plan to upload his most recent set to
-> > > > cifs-2.6.git for-next later in the week and target would be for
-> > > > merging the patch series would be 6.9-rc1 unless major issues were
-> > > > found in review or testing
-> > > >
-> > > > On Tue, Feb 6, 2024 at 9:42=E2=80=AFPM Matthew Ruffell
-> > > > <matthew.ruffell@canonical.com> wrote:
-> > > > >
-> > > > > I have bisected the issue, and found the commit that introduces t=
-he problem:
-> > > > >
-> > > > > commit d08089f649a0cfb2099c8551ac47eef0cc23fdf2
-> > > > > Author: David Howells <dhowells@redhat.com>
-> > > > > Date:   Mon Jan 24 21:13:24 2022 +0000
-> > > > > Subject: cifs: Change the I/O paths to use an iterator rather tha=
-n a page list
-> > > > > Link: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/li=
-nux.git/commit/?id=3Dd08089f649a0cfb2099c8551ac47eef0cc23fdf2
-> > > > >
-> > > > > $ git describe --contains d08089f649a0cfb2099c8551ac47eef0cc23fdf=
-2
-> > > > > v6.3-rc1~136^2~7
-> > > > >
-> > > > > David, I also tried your cifs-netfs tree available here:
-> > > > >
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs=
-.git/log/?h=3Dcifs-netfs
-> > > > >
-> > > > > This tree solves the issue. Specifically:
-> > > > >
-> > > > > commit 34efb2a814f1882ddb4a518c2e8a54db119fd0d8
-> > > > > Author: David Howells <dhowells@redhat.com>
-> > > > > Date:   Fri Oct 6 18:29:59 2023 +0100
-> > > > > Subject: cifs: Cut over to using netfslib
-> > > > > Link: https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/li=
-nux-fs.git/commit/?h=3Dcifs-netfs&id=3D34efb2a814f1882ddb4a518c2e8a54db119f=
-d0d8
-> > > > >
-> > > > > This netfslib work looks like quite a big refactor. Is there any =
-plans to land this in 6.8? Or will this be 6.9 / later?
-> > > > >
-> > > > > Do you have any suggestions on how to fix this with a smaller del=
-ta in 6.3 -> 6.8-rc3 that the stable kernels can use?
-> > > > >
-> > > > > Thanks,
-> > > > > Matthew
-> > > >
-> > > >
-> > > >
-> > > > --
-> > > > Thanks,
-> > > >
-> > > > Steve
-> > >
-> > >
-> > >
-> > > --
-> > > Thanks,
-> > >
-> > > Steve
-> >
-> >
-> >
-> > --
-> > Thanks,
-> >
-> > Steve
->
->
->
-> --
-> Thanks,
->
-> Steve
-
-
-
---=20
-Thanks,
-
-Steve
-
---0000000000003be0dc0610e7223f
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-smb-Fix-regression-in-writes-when-non-standard-maxim.patch"
-Content-Disposition: attachment; 
-	filename="0001-smb-Fix-regression-in-writes-when-non-standard-maxim.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_lsduk1l70>
-X-Attachment-Id: f_lsduk1l70
-
-RnJvbSAxMGI3ZGFmMTQyN2Q2YmNlOGMwMWI4MzYxNzJlODk2ODlmZTBhZWNmIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBTdGV2ZSBGcmVuY2ggPHN0ZnJlbmNoQG1pY3Jvc29mdC5jb20+
-CkRhdGU6IFR1ZSwgNiBGZWIgMjAyNCAxNjozNDoyMiAtMDYwMApTdWJqZWN0OiBbUEFUQ0hdIHNt
-YjogRml4IHJlZ3Jlc3Npb24gaW4gd3JpdGVzIHdoZW4gbm9uLXN0YW5kYXJkIG1heGltdW0gd3Jp
-dGUKIHNpemUgbmVnb3RpYXRlZAoKVGhlIGNvbnZlcnNpb24gdG8gbmV0ZnMgaW4gdGhlIDYuMyBr
-ZXJuZWwgY2F1c2VkIGEgcmVncmVzc2lvbiB3aGVuCm1heGltdW0gd3JpdGUgc2l6ZSBpcyBzZXQg
-YnkgdGhlIHNlcnZlciB0byBhbiB1bmV4cGVjdGVkIHZhbHVlIHdoaWNoIGlzCm5vdCBhIG11bHRp
-cGxlIG9mIDQwOTYgKHNpbWlsYXJseSBpZiB0aGUgdXNlciBvdmVycmlkZXMgdGhlIG1heGltdW0K
-d3JpdGUgc2l6ZSBieSBzZXR0aW5nIG1vdW50IHBhcm0gIndzaXplIiwgYnV0IHNldHMgaXQgdG8g
-YSB2YWx1ZSB0aGF0CmlzIG5vdCBhIG11bHRpcGxlIG9mIDQwOTYpLiAgV2hlbiBuZWdvdGlhdGVk
-IHdyaXRlIHNpemUgaXMgbm90IGEKbXVsdGlwbGUgb2YgNDA5NiB0aGUgbmV0ZnMgY29kZSBjYW4g
-c2tpcCB0aGUgZW5kIG9mIHRoZSBmaW5hbApwYWdlIHdoZW4gZG9pbmcgbGFyZ2Ugc2VxdWVudGlh
-bCB3cml0ZXMsIGNhdXNpbmcgZGF0YSBjb3JydXB0aW9uLgoKVGhpcyBzZWN0aW9uIG9mIGNvZGUg
-aXMgYmVpbmcgcmV3cml0dGVuL3JlbW92ZWQgZHVlIHRvIGEgbGFyZ2UKbmV0ZnMgY2hhbmdlLCBi
-dXQgdW50aWwgdGhhdCBwb2ludCAoaWUgZm9yIHRoZSA2LjMga2VybmVsIHVudGlsIG5vdykKd2Ug
-Y2FuIG5vdCBzdXBwb3J0IG5vbi1zdGFuZGFyZCBtYXhpbXVtIHdyaXRlIHNpemVzLgoKQWRkIGEg
-d2FybmluZyBpZiBhIHVzZXIgc3BlY2lmaWVzIGEgd3NpemUgb24gbW91bnQgdGhhdCBpcyBub3QK
-YSBtdWx0aXBsZSBvZiA0MDk2LCBhbmQgYWxzbyBhZGQgYSBjaGFuZ2Ugd2hlcmUgd2Ugcm91bmQg
-ZG93biB0aGUKbWF4aW11bSB3cml0ZSBzaXplIGlmIHRoZSBzZXJ2ZXIgbmVnb3RpYXRlcyBhIHZh
-bHVlIHRoYXQgaXMgbm90CmEgbXVsdGlwbGUgb2YgNDA5NiAod2UgYWxzbyBoYXZlIHRvIGNoZWNr
-IHRvIG1ha2Ugc3VyZSB0aGF0CndlIGRvIG5vdCByb3VuZCBpdCBkb3duIHRvIHplcm8pLgoKUmVw
-b3J0ZWQtYnk6IFIuIERpZXoiIDxyZGllei0yMDA2QHJkMTAuZGU+CkZpeGVzOiBkMDgwODlmNjQ5
-YTAgKCJjaWZzOiBDaGFuZ2UgdGhlIEkvTyBwYXRocyB0byB1c2UgYW4gaXRlcmF0b3IgcmF0aGVy
-IHRoYW4gYSBwYWdlIGxpc3QiKQpTdWdnZXN0ZWQtYnk6IFJvbm5pZSBTYWhsYmVyZyA8cm9ubmll
-c2FobGJlcmdAZ21haWwuY29tPgpBY2tlZC1ieTogUm9ubmllIFNhaGxiZXJnIDxyb25uaWVzYWhs
-YmVyZ0BnbWFpbC5jb20+ClJldmlld2VkLWJ5OiBTaHlhbSBQcmFzYWQgTiA8c3ByYXNhZEBtaWNy
-b3NvZnQuY29tPgpDYzogc3RhYmxlQHZnZXIua2VybmVsLm9yZyAjIHY2LjMrCkNjOiBEYXZpZCBI
-b3dlbGxzIDxkaG93ZWxsc0ByZWRoYXQuY29tPgpTaWduZWQtb2ZmLWJ5OiBTdGV2ZSBGcmVuY2gg
-PHN0ZnJlbmNoQG1pY3Jvc29mdC5jb20+Ci0tLQogZnMvc21iL2NsaWVudC9jb25uZWN0LmMgICAg
-fCAxMyArKysrKysrKysrKy0tCiBmcy9zbWIvY2xpZW50L2ZzX2NvbnRleHQuYyB8ICAyICsrCiAy
-IGZpbGVzIGNoYW5nZWQsIDEzIGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0t
-Z2l0IGEvZnMvc21iL2NsaWVudC9jb25uZWN0LmMgYi9mcy9zbWIvY2xpZW50L2Nvbm5lY3QuYwpp
-bmRleCBiZmQ1NjhmODk3MTAuLjc5Y2U0YTI5ZDFlZiAxMDA2NDQKLS0tIGEvZnMvc21iL2NsaWVu
-dC9jb25uZWN0LmMKKysrIGIvZnMvc21iL2NsaWVudC9jb25uZWN0LmMKQEAgLTM0MzgsOCArMzQz
-OCwxNyBAQCBpbnQgY2lmc19tb3VudF9nZXRfdGNvbihzdHJ1Y3QgY2lmc19tb3VudF9jdHggKm1u
-dF9jdHgpCiAJICogdGhlIHVzZXIgb24gbW91bnQKIAkgKi8KIAlpZiAoKGNpZnNfc2ItPmN0eC0+
-d3NpemUgPT0gMCkgfHwKLQkgICAgKGNpZnNfc2ItPmN0eC0+d3NpemUgPiBzZXJ2ZXItPm9wcy0+
-bmVnb3RpYXRlX3dzaXplKHRjb24sIGN0eCkpKQotCQljaWZzX3NiLT5jdHgtPndzaXplID0gc2Vy
-dmVyLT5vcHMtPm5lZ290aWF0ZV93c2l6ZSh0Y29uLCBjdHgpOworCSAgICAoY2lmc19zYi0+Y3R4
-LT53c2l6ZSA+IHNlcnZlci0+b3BzLT5uZWdvdGlhdGVfd3NpemUodGNvbiwgY3R4KSkpIHsKKwkJ
-Y2lmc19zYi0+Y3R4LT53c2l6ZSA9IHJvdW5kX2Rvd24oc2VydmVyLT5vcHMtPm5lZ290aWF0ZV93
-c2l6ZSh0Y29uLCBjdHgpLCBQQUdFX1NJWkUpOworCQkvKgorCQkgKiBpbiB0aGUgdmVyeSB1bmxp
-a2VseSBldmVudCB0aGF0IHRoZSBzZXJ2ZXIgc2VudCBhIG1heCB3cml0ZSBzaXplIHVuZGVyIFBB
-R0VfU0laRSwKKwkJICogKHdoaWNoIHdvdWxkIGdldCByb3VuZGVkIGRvd24gdG8gMCkgdGhlbiBy
-ZXNldCB3c2l6ZSB0byBhYnNvbHV0ZSBtaW5pbXVtIGVnIDQwOTYKKwkJICovCisJCWlmIChjaWZz
-X3NiLT5jdHgtPndzaXplID09IDApIHsKKwkJCWNpZnNfc2ItPmN0eC0+d3NpemUgPSBQQUdFX1NJ
-WkU7CisJCQljaWZzX2RiZyhWRlMsICJ3c2l6ZSB0b28gc21hbGwsIHJlc2V0IHRvIG1pbmltdW0g
-aWUgUEFHRV9TSVpFLCB1c3VhbGx5IDQwOTZcbiIpOworCQl9CisJfQogCWlmICgoY2lmc19zYi0+
-Y3R4LT5yc2l6ZSA9PSAwKSB8fAogCSAgICAoY2lmc19zYi0+Y3R4LT5yc2l6ZSA+IHNlcnZlci0+
-b3BzLT5uZWdvdGlhdGVfcnNpemUodGNvbiwgY3R4KSkpCiAJCWNpZnNfc2ItPmN0eC0+cnNpemUg
-PSBzZXJ2ZXItPm9wcy0+bmVnb3RpYXRlX3JzaXplKHRjb24sIGN0eCk7CmRpZmYgLS1naXQgYS9m
-cy9zbWIvY2xpZW50L2ZzX2NvbnRleHQuYyBiL2ZzL3NtYi9jbGllbnQvZnNfY29udGV4dC5jCmlu
-ZGV4IDUyY2JlZjJlZWIyOC4uOGIwOTBmNzA5MTk0IDEwMDY0NAotLS0gYS9mcy9zbWIvY2xpZW50
-L2ZzX2NvbnRleHQuYworKysgYi9mcy9zbWIvY2xpZW50L2ZzX2NvbnRleHQuYwpAQCAtMTExMSw2
-ICsxMTExLDggQEAgc3RhdGljIGludCBzbWIzX2ZzX2NvbnRleHRfcGFyc2VfcGFyYW0oc3RydWN0
-IGZzX2NvbnRleHQgKmZjLAogCWNhc2UgT3B0X3dzaXplOgogCQljdHgtPndzaXplID0gcmVzdWx0
-LnVpbnRfMzI7CiAJCWN0eC0+Z290X3dzaXplID0gdHJ1ZTsKKwkJaWYgKHJvdW5kX3VwKGN0eC0+
-d3NpemUsIFBBR0VfU0laRSkgIT0gY3R4LT53c2l6ZSkKKwkJCWNpZnNfZGJnKFZGUywgIndzaXpl
-IHNob3VsZCBiZSBhIG11bHRpcGxlIG9mICVsZCAoUEFHRV9TSVpFKVxuIiwgUEFHRV9TSVpFKTsK
-IAkJYnJlYWs7CiAJY2FzZSBPcHRfYWNyZWdtYXg6CiAJCWN0eC0+YWNyZWdtYXggPSBIWiAqIHJl
-c3VsdC51aW50XzMyOwotLSAKMi40MC4xCgo=
---0000000000003be0dc0610e7223f--
 
