@@ -1,157 +1,219 @@
-Return-Path: <linux-fsdevel+bounces-10877-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10878-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8777184F015
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 07:05:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A458384F07D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 08:01:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21CE91F27654
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 06:05:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C94031C228E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 07:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E596A57300;
-	Fri,  9 Feb 2024 06:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47BF657BE;
+	Fri,  9 Feb 2024 07:01:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QMJ10+o9"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="E3VmzKT/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D767157305
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 06:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44893651B4;
+	Fri,  9 Feb 2024 07:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707458736; cv=none; b=qrG/Cgid1CquPk/OGmXjOjIa2l2e2CGwltHlNc06Kq62SXf91bLVvclmqHXvFPR0OEeQVSrmv2o8RwH8RHg0yyQpS72z2mdnmPMDc98h4RoIQSxjafAFDpJyyefsVUYI4kaoj7lLwg9f/DTocvUhOqVztCUJw3Sotn3w1OIZRXs=
+	t=1707462087; cv=none; b=V++KNyoE2/sDxKwzM/Pe9uNWS3kNPgL/DKavNw0UExn/GhQ4/17ehY4pl5uX6MEnANPsYVbO/r2n20w3Q60ayrODmYV29W9YpCvoLALk2tW7vXnfpOGeeAmpvPAEs5aDH6MG/EROHq/XNobi0TOm72Eruz9794kT2XYFuf9vGEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707458736; c=relaxed/simple;
-	bh=cH83PS7HwdJW8FtjMj80qWZv1lEG21X3ifw1rrIx0/4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=baajsPkRjawMW8D5NfQdN/+dqqwmiWVg6x1ZaQ+VkpTnh2J/D0CKtdWCht4obm2l23KZHC1GQXbfrnJa7EacIOoBoCIcyTTLo01ABsKpCIODUowPBpngsXUtHo3KU9+KQz4qmYXYCfN5Xu3d3EAMWVJlsTTjz2yPIrI95tI0Pk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QMJ10+o9; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dc238cb1b17so585462276.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Feb 2024 22:05:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707458734; x=1708063534; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GRFcZ4ndEy6kiJza1UnB91+knLXtCyyvZjJD4Xyf4H8=;
-        b=QMJ10+o9di8GJCC4c5MySg2xPT4cLGAV5uFaHtZAwrlDjWHdIXLDVMq5zR6LBW0BO0
-         TPG0e4SCmwRcCLnoPmdf0S+5motqTMPSuGR09rtgdbIQyUn9NFlZRZFcit3E/GwYGBd+
-         S5qZR9mauu+hniKNKzGzAu0dLPkV8Khc8/AHFutME9q+plsdysVtpbgKrMWHVP3YSF69
-         cAwBV9l3NGvznwy7dCDugSWq//Lc9husVvCx+0Quf7YrFOA6qY3jp2w6fICIinlHrpCo
-         mOTrQkWqZ4PZggh8jUAwwu5gwMDlVlT1LUYw/hxZ6guYhQ3jsneNpaB64Zua9sg8Jq+A
-         1A3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707458734; x=1708063534;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GRFcZ4ndEy6kiJza1UnB91+knLXtCyyvZjJD4Xyf4H8=;
-        b=ZhYHOYVNxmkR0JM3w4bzbP4O+HZSGn0T+VjRKDTNmkHhpxxbjmCXuHWwi4lbVnbf9C
-         s6F6WK8yEzB2JU5FEguHnYmIivPF8G58WID/Rj//W9Xy3ob3bGvABtBJ9h/OUBecvZuP
-         hgIeHPBXQ4sOjg29HyYjnJkBPcTl+QciYgkZK+gA7Wz/AqZ4yyxqus0IB3iFjIzLNRM4
-         Yw/8xfqBunL5Dtvt5EBtFhLvPLuzgbP5OpV2ymxgzw2jf/NTspc+kXXnH1wk92zftx2n
-         zWd5Um3tBboBZKMl8g4YXf2BcWe9G5wZHPb8k5vuG7NUhxbDxN9yT99GIlevGi8LZ0Kt
-         2iww==
-X-Gm-Message-State: AOJu0Yy7IBe4L0llSiTSvYs15BSeNLd2n9fSeUDktLP9OxlHA59l50OG
-	uQuCvFY0izC/rIAA3Tgc3H9KZ6CjvJMghkNa9++w1//60/Q9CTiJrSe+swdtCq0UmOUNJc7LysB
-	/cUgI+2zv5ls3vh7LPEBKCicrxwjIoCCu
-X-Google-Smtp-Source: AGHT+IEIn5NZFI/BSMEEO3XB2cPlcTghNiuUWrO0vUJJWeFGuiAaWjT+5ky/2h49wE/briObep96gHjIRYDIE2i5FKM=
-X-Received: by 2002:a25:9190:0:b0:dc6:aeba:5aaf with SMTP id
- w16-20020a259190000000b00dc6aeba5aafmr499830ybl.19.1707458733662; Thu, 08 Feb
- 2024 22:05:33 -0800 (PST)
+	s=arc-20240116; t=1707462087; c=relaxed/simple;
+	bh=FbvfLimCRTIizgrKaU2lF8zyXFZz6p1xNTqV1ED8pWU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iGgXLRCCeyp3Bglku9MB/iRyGPjEW1hXWZnGP3LPaBJyCoA1BCEKKqHUPtQxqKbZ1jnM00d0otsAEcLsVGBQjl9HadktAAM5+BGcQe2b0qur3b1kjwG/zMGGpjx/qfoTHnRTYYcBOeVEisqfcJv5JvET0Ios0KqgG7WEFttJ9lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=E3VmzKT/; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 4196TnCX007002;
+	Fri, 9 Feb 2024 07:01:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=SU+RhwOCJyXKUQy8eP7qCl/A4QdJg+opYZJ7tZXEN1I=;
+ b=E3VmzKT/wdQxJHYFux42SZt3KUOjuOzpv2OWqdpyMb6FfU+tNPVF5m0msMviZsBNMDdR
+ ql1BD2XaemQcBe1H8s8A2j2WJmRcm4O0ja5MS8rEfb6wILJkOVdlBZA3IYJJW6VphZ08
+ KH8Qbn4Wvd3dOXYnJ7bEVZvSwzZKrKqlSCRG4+/hrCDbjibx91Wxu5oQIm72pxGEPrab
+ LT+AkZuz7JF9Q5ZeMqyGxvPRDnJc36fQRJlfBfhZNkSf44OqT6Dk8s2FDTFMUgcvQ59X
+ cQ2N05mPyt73a3dT1Y2ILC+hWKM4iaK7PfcrWAEqK4mvM+XQw9FLJvnjUhxFKbMgrWlG AA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w5a6dxcd6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Feb 2024 07:01:05 +0000
+Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 4196rnw5026969;
+	Fri, 9 Feb 2024 07:01:05 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w5a6dxcc2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Feb 2024 07:01:05 +0000
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 4194GSMg008539;
+	Fri, 9 Feb 2024 07:01:04 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3w221kh8kv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 09 Feb 2024 07:01:04 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 419712a842074864
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 9 Feb 2024 07:01:02 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 431092004F;
+	Fri,  9 Feb 2024 07:01:02 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0AC8220040;
+	Fri,  9 Feb 2024 07:00:59 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.98.150])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  9 Feb 2024 07:00:58 +0000 (GMT)
+Date: Fri, 9 Feb 2024 12:30:56 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: hch@lst.de, djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
+        dchinner@redhat.com, jack@suse.cz, chandan.babu@oracle.com,
+        martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        tytso@mit.edu, jbongio@google.com
+Subject: Re: [PATCH 4/6] fs: xfs: Support atomic write for statx
+Message-ID: <ZcXNidyoaVJMFKYW@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20240124142645.9334-1-john.g.garry@oracle.com>
+ <20240124142645.9334-5-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240208022134.451490-1-alexhenrie24@gmail.com> <20240208105954.tovgh4borl7qbsqr@quack3>
-In-Reply-To: <20240208105954.tovgh4borl7qbsqr@quack3>
-From: Alex Henrie <alexhenrie24@gmail.com>
-Date: Thu, 8 Feb 2024 23:04:57 -0700
-Message-ID: <CAMMLpeSyps-7QfPc5KkiLMcPC3iVnZBAw7-aAaNR3mj8BVURAw@mail.gmail.com>
-Subject: Re: [PATCH] isofs: handle CDs with bad root inode but good Joliet
- root directory
-To: Jan Kara <jack@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux@rainbow-software.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240124142645.9334-5-john.g.garry@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Or_oZ37MC-AVzjU37NrZ8eyd8WXaqE_I
+X-Proofpoint-ORIG-GUID: AgQW3RwfUqVAr-JFgQp5bQTIRPYOtQ_Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-09_04,2024-02-08_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 clxscore=1015 spamscore=0
+ impostorscore=0 mlxlogscore=999 adultscore=0 lowpriorityscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
+ definitions=main-2402090048
 
-On Thu, Feb 8, 2024 at 3:59=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 07-02-24 19:21:32, Alex Henrie wrote:
-> > I have a CD copy of the original Tom Clancy's Ghost Recon game from
-> > 2001. The disc mounts without error on Windows, but on Linux mounting
-> > fails with the message "isofs_fill_super: get root inode failed". The
-> > error originates in isofs_read_inode, which returns -EIO because de_len
-> > is 0. The superblock on this disc appears to be intentionally corrupt a=
-s
-> > a form of copy protection.
-> >
-> > When the root inode is unusable, instead of giving up immediately, try
-> > to continue with the Joliet file table. This fixes the Ghost Recon CD
-> > and probably other copy-protected CDs too.
-> >
-> > Signed-off-by: Alex Henrie <alexhenrie24@gmail.com>
->
-> Thanks! I've added the patch to my tree. Just made two minor tweaks on
-> commit:
->
-> > @@ -908,8 +908,22 @@ static int isofs_fill_super(struct super_block *s,=
- void *data, int silent)
-> >        * we then decide whether to use the Joliet descriptor.
-> >        */
-> >       inode =3D isofs_iget(s, sbi->s_firstdatazone, 0);
-> > -     if (IS_ERR(inode))
-> > -             goto out_no_root;
-> > +
-> > +     /*
-> > +      * Fix for broken CDs with a corrupt root inode but a correct Jol=
-iet
-> > +      * root directory.
-> > +      */
-> > +     if (IS_ERR(inode)) {
-> > +             if (joliet_level) {
->
-> Here I've added "&& sbi->s_firstdatazone !=3D first_data_zone" to make su=
-re
-> joliet extension has a different inode. Not sure if such media would be
-> valid but even if it was not, we should not crash the kernel (which would
-> happen in that case because we don't expect inode to be NULL).
->
-> > +                     printk(KERN_NOTICE
-> > +                             "ISOFS: root inode is unusable. "
-> > +                             "Disabling Rock Ridge and switching to Jo=
-liet.");
-> > +                     sbi->s_rock =3D 0;
-> > +                     inode =3D NULL;
-> > +             } else {
-> > +                     goto out_no_root;
-> > +             }
-> > +     }
-> >
-> >       /*
-> >        * Fix for broken CDs with Rock Ridge and empty ISO root director=
-y but
-> > @@ -939,7 +953,8 @@ static int isofs_fill_super(struct super_block *s, =
-void *data, int silent)
-> >                       sbi->s_firstdatazone =3D first_data_zone;
-> >                       printk(KERN_DEBUG
-> >                               "ISOFS: changing to secondary root\n");
-> > -                     iput(inode);
-> > +                     if (inode !=3D NULL)
-> > +                             iput(inode);
->
-> This isn't needed. iput() handles NULL inode just fine.
+Hi John,
 
-I tried out your two changes and the patch still works great. Thank
-you for noticing and fixing those details, and thanks for the quick
-review!
+Thanks for the patch, I've added some review comments and questions
+below.
 
--Alex
+On Wed, Jan 24, 2024 at 02:26:43PM +0000, John Garry wrote:
+> Support providing info on atomic write unit min and max for an inode.
+> 
+> For simplicity, currently we limit the min at the FS block size, but a
+> lower limit could be supported in future.
+> 
+> The atomic write unit min and max is limited by the guaranteed extent
+> alignment for the inode.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  fs/xfs/xfs_iops.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
+>  fs/xfs/xfs_iops.h |  4 ++++
+>  2 files changed, 49 insertions(+)
+> 
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index a0d77f5f512e..0890d2f70f4d 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -546,6 +546,44 @@ xfs_stat_blksize(
+>  	return PAGE_SIZE;
+>  }
+>  
+> +void xfs_get_atomic_write_attr(
+> +	struct xfs_inode *ip,
+> +	unsigned int *unit_min,
+> +	unsigned int *unit_max)
+> +{
+> +	xfs_extlen_t		extsz = xfs_get_extsz(ip);
+> +	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
+> +	struct block_device	*bdev = target->bt_bdev;
+> +	unsigned int		awu_min, awu_max, align;
+> +	struct request_queue	*q = bdev->bd_queue;
+> +	struct xfs_mount	*mp = ip->i_mount;
+> +
+> +	/*
+> +	 * Convert to multiples of the BLOCKSIZE (as we support a minimum
+> +	 * atomic write unit of BLOCKSIZE).
+> +	 */
+> +	awu_min = queue_atomic_write_unit_min_bytes(q);
+> +	awu_max = queue_atomic_write_unit_max_bytes(q);
+> +
+> +	awu_min &= ~mp->m_blockmask;
+> +	awu_max &= ~mp->m_blockmask;
+
+I don't understand why we try to round down the awu_max to blocks size
+here and not just have an explicit check of (awu_max < blocksize).
+
+I think the issue with changing the awu_max is that we are using awu_max
+to also indirectly reflect the alignment so as to ensure we don't cross
+atomic boundaries set by the hw (eg we check uint_max % atomic alignment
+== 0 in scsi). So once we change the awu_max, there's a chance that even
+if an atomic write aligns to the new awu_max it still doesn't have the
+right alignment and fails. 
+
+It works right now since eveything is power of 2 but it should cause
+issues incase we decide to remove that limitation.  Anyways, I think
+this implicit behavior of things working since eveything is a power of 2
+should atleast be documented in a comment, so these things are
+immediately clear. 
+
+> +
+> +	align = XFS_FSB_TO_B(mp, extsz);
+> +
+> +	if (!awu_max || !xfs_inode_atomicwrites(ip) || !align ||
+> +	    !is_power_of_2(align)) {
+
+Correct me if I'm wrong but here as well, the is_power_of_2(align) is
+esentially checking if the align % uinit_max == 0 (or vice versa if
+unit_max is greater) so that an allocation of extsize will always align
+nicely as needed by the device. 
+
+So maybe we should use the % expression explicitly so that the intention
+is immediately clear.
+
+> +		*unit_min = 0;
+> +		*unit_max = 0;
+> +	} else {
+> +		if (awu_min)
+> +			*unit_min = min(awu_min, align);
+
+How will the min() here work? If awu_min is the minumum set by the
+device, how can statx be allowed to advertise something smaller than
+that?
+
+If I understand correctly, right now the way we set awu_min in scsi and
+nvme, the follwoing should usually be true for a sane device:
+
+ awu_min <= blocks size of fs <= align
+
+ so the min() anyways becomes redundant, but if we do assume that there
+ might be some weird devices with awu_min absurdly large (SCSI with
+ high atomic granularity) we still can't actually advertise a min
+ smaller than that of the device, or am I missing something here?
+
+> +		else
+> +			*unit_min = mp->m_sb.sb_blocksize;
+> +
+> +		*unit_max = min(awu_max, align);
+> +	}
+> +}
+> +
+
+Regards,
+ojaswin
 
