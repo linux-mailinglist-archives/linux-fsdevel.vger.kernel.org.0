@@ -1,177 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-10940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1008984F4D1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 12:48:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64E8C84F4D3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 12:49:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86EE228C998
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 11:48:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 036DE1F258D9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 11:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD2362E84F;
-	Fri,  9 Feb 2024 11:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE152EAE5;
+	Fri,  9 Feb 2024 11:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="kk4YB3LC";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sx1UmmJl"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="00YtOFe9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005382E821
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 11:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17C312E633
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 11:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707479288; cv=none; b=L7FlzbXT1pGp91yvqHZaoY62qFzz7hrly3ECPpr1lGzxLm1iARknaTREChm/8jIQYPpHCfBfMlXaG7KxcROPb/RrcFpXK+YBJHW/txa3IQG4MpRLrtTzMexgDqSG2BlPafgqQu6I5j0PyxiJ6BCIhT3uYVB0Uotq0iFGjhLHQdI=
+	t=1707479365; cv=none; b=M6aVb5GpxJ9eF4SwUTO+o8NYEnIAuJWdSgjHC588nXZpHS7KDEXQLZm5tA57wfihO8gGLeaZqZc2FrXmQlwQ8WFGg16Rsn2EgcMEQY+mtg+AaxTanIq2S8iXweUljOaLPnRzvBBL3rGTjtxc+aXFBNHAK4vNKiO8q+r2wIJHbXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707479288; c=relaxed/simple;
-	bh=NFAgzTV/pCc9pwS5djqKfejxxgrFg52+gnz9vYbwDug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=krGSQWHqQK1GytySQrwUGEqUDQaS3nMgtH33qa+uynxUgyoWCQpHI0Fzk6RH0/8Znl8Yu6AyBL9JWyBpOe4cbgqSr/CQJLysNjMTDIfhOfYvD09Z2g0KyOzs36AkcIKr/jAQybIshtDf3AvFWxcRCb9IqNr0oTWJKkmmOZualxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=kk4YB3LC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=sx1UmmJl; arc=none smtp.client-ip=64.147.123.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailout.west.internal (Postfix) with ESMTP id A3E123200AFA;
-	Fri,  9 Feb 2024 06:48:05 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Fri, 09 Feb 2024 06:48:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1707479285;
-	 x=1707565685; bh=2G/9345amfKEIoEsMPnBDm3W58I07RtAvo6wBGvkhHE=; b=
-	kk4YB3LCCfyBqbMMzZ9PhZOkb98TEmckUe09SqP/LO0lFBEudU8oMni9pbKNtliP
-	yTxj/LI9G8GJTzEhJ4U2zZ7emWNt0kCN2IC1IBig92UJBU/S7L7WNh+FE0avDfaj
-	LFxtPQ1estQxELumA50WHbDDePFHFYALhVN9aBauGz9OH1mLgf6aNRLAte5Zmrld
-	sA0ui71ajXSSPJ+xlBkijBhHF6LrQYkq64N+1GjbWFsOfnBXwtZvF2ao9y39cusr
-	v6JNgmUrM/ZA+zZCz4wbdPMFLLVUxWKPH349+VKURDx4boi8/bkYoDSmcntysJ0z
-	m0JZM8IvznI+l57mk4YCpQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1707479285; x=
-	1707565685; bh=2G/9345amfKEIoEsMPnBDm3W58I07RtAvo6wBGvkhHE=; b=s
-	x1UmmJld213rT/Fe/LOtDv5VgeVOJS+qtY2Fhlxym0wUG+tQ7uTKp0mHWTThOO/M
-	6K7QdQmaxBKGRAOIKAGt8vOARhHYNBHUG3gV/TSQnjEqCUM/3H4X0xr4UeQpQb75
-	iCdhgCZTcM2snqXVr6Ua2kf5x25kZMiXU7nGLIB3rIzH10cmOha+Hgyiv6D8CjgK
-	IrldQcgXqSxJLU2Z8Rylblewpll+z6pv/wz7IQEt3QQxCMmUtAqAJu9sStrvcwk/
-	y2PmNBQ9xDPaOFqYqphZM20tHtOxQAFPwxwvyC/dnRDnALvjPCENjSy5oW8kPpwQ
-	KRJWjxrDo8eiXwntPcP4A==
-X-ME-Sender: <xms:9BDGZbptD7SY7bkhh2MVUTD959YkjpchbpQy_GmOOs6Q8lrS_OZilQ>
-    <xme:9BDGZVrwlELI_uDXtDBOlB4TphroD2UzNMda4t7pY5ivAaImH7e3dWC53pjAoqaQ5
-    Xxa42ggd_6iSFMx>
-X-ME-Received: <xmr:9BDGZYOKs79bS6ivZAfquJ26fMKBlZLODN4o4Ng936bU8VCArEAC0HxT_WPxjWNw7k5caVD-bj8f8GliTeKMwSepHLj6Nf_td_OxbHg1VzSPQzAR6buY>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrtdeigdefvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepuegvrhhn
-    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
-    drfhhmqeenucggtffrrghtthgvrhhnpeevhffgvdeltddugfdtgfegleefvdehfeeiveej
-    ieefveeiteeggffggfeulefgjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhf
-    mh
-X-ME-Proxy: <xmx:9BDGZe4Xi30m4Vd4qXyYyJBx3idSbKB0k1BbTSotJX6JyO-TCozIUQ>
-    <xmx:9BDGZa7IZBvbVlyAayDP7YlL3OS8nR3GWhSBku4_YCZRNb_HgFtSSw>
-    <xmx:9BDGZWhihJtrCt8NZWjLfzDc2VxXkUcv5DC2aewQkqcVFligWTIhhw>
-    <xmx:9RDGZaH9kvDnZdvm-yKDstkgroLv-ZLHTqDxeVpJZvu5z-iKL65gxA>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 9 Feb 2024 06:48:04 -0500 (EST)
-Message-ID: <f44c0101-0016-4f82-a02d-0dcfefbf4e96@fastmail.fm>
-Date: Fri, 9 Feb 2024 12:48:03 +0100
+	s=arc-20240116; t=1707479365; c=relaxed/simple;
+	bh=yhanlhyHf9vUwAPCSVHqqZzMUqMS696JtJ0CS6AX8Q0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=laXWQYkVaTk+95yD+D5SuCPV3D9XdHPmnpslDbAfq1Bzr1t1rlPNdiTkzo9uyQmHo6Ut9w80/FjLl0rLUIPY2YixjZQZMoT7aG15lhGQecNKs2LAwMmCVFAqxaeOcK516KlfyylRQWFWg6ttddysm1SHxukzQ4KFdaVGUbtKI5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=00YtOFe9; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4c01ac04569so325289e0c.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 03:49:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1707479359; x=1708084159; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l++3fpOv/6kAkEAKZFY83iwVJR4LI0xsh9dQ+P6yYAk=;
+        b=00YtOFe9KCUPwTrp7V68TNfnALSahkWowasBb6FIEJKxH5jML9I1ydKl6G8Qzhfmnz
+         2hKmrwW1shDPz6lzFxNTcrh9/MxB/wKKWhU6pd6Pyi3+YUXoXvSllWY6n0Ed2z5PhBry
+         fIi0DQ7LgFWeHrI+HB1iDwITmT9QpflKmLnTQqK3EX2DKxA4AhrF+bLFdSVUQwouVdEI
+         C8cF95SWS5ws6F7z3H1ItI5VPwZdcaVnyoi/g8mk6sxnuMX6mdq01g7emyp5/UUgieH6
+         678sTlROwjfcV62eqZCbsURIPTlCfn7R04R5kqMo4Nyk/1tkuQyM2KWYbzokW7S8CbtQ
+         OQyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707479359; x=1708084159;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l++3fpOv/6kAkEAKZFY83iwVJR4LI0xsh9dQ+P6yYAk=;
+        b=GSrQPkzYJRK6GE+uWeeKJrO4B1uPfgPq+30clG2ZCv0uH3SqhtRIU+2SNkRQr/5a3B
+         0Ua4BR5IwhXz6Acl0caRQhBGgCxDdeBWHGtYMFrrT8J1mldi9nkyLGnveS2TmdUJM2i7
+         08kCPQKFMY/3FuF/2m7LnuZxikwSf81wUMedaPy+mfQwEMv/CQRryzXmqw/4AR3TIWP3
+         PuZWNr8+7sCEShOVTVAQM6wl2bXx4U31vvu4KZ/dSE43FQ8Rq2+SlWk/71BJmo0jFNHq
+         zYFOA0zY24ojjQsLb/uG/m/gAmB0/MJ2WR7TtX6gbnZy/Mo7Wy39V413YiaHTtq0h8U1
+         NRSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVryUDZpCMmClMGO1ck72LvoN4QNvBSThI9DnBTN1Ep96ScMeXAMF2eN3S4IyxQWo6MBF9xybcUrH4R3VwAMufPqjnykAoeaTvZffWl8A==
+X-Gm-Message-State: AOJu0Yzsx9S9YW5iZNcdH8rBLSxP2OyV4IVQnu1xKhePh/ppmZATRNgx
+	Bh9m48qwHo5xOPnOjhYNNd6o204PROf5NUZUZJWKgUXXpa+Ei8MYmA0NFFhkLWFdWXZBhgqGrK6
+	hjQdU19ne3aRfgYKAF2RTfrOtHRi5HWr2bnWb
+X-Google-Smtp-Source: AGHT+IGeozrhqlsnoi4sKjmwc1iTJHC3DWdheQh5u+tCcxJb1BYvfzzbx2OvfKUcWmt/yMinTt/VeLkRIu4BWCWdkl4=
+X-Received: by 2002:a1f:ec01:0:b0:4c0:2ada:2f19 with SMTP id
+ k1-20020a1fec01000000b004c02ada2f19mr1210515vkh.15.1707479358796; Fri, 09 Feb
+ 2024 03:49:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 9/9] fuse: allow parallel dio writes with
- FUSE_DIRECT_IO_ALLOW_MMAP
-Content-Language: en-US, de-DE, fr
-To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, Bernd Schubert <bschubert@ddn.com>
-References: <20240208170603.2078871-1-amir73il@gmail.com>
- <20240208170603.2078871-10-amir73il@gmail.com>
- <CAJfpegtcqPgb6zwHtg7q7vfC4wgo7YPP48O213jzfF+UDqZraw@mail.gmail.com>
- <1be6f498-2d56-4c19-9f93-0678ad76e775@fastmail.fm>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <1be6f498-2d56-4c19-9f93-0678ad76e775@fastmail.fm>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240209-alice-file-v5-0-a37886783025@google.com> <20240209-alice-file-v5-1-a37886783025@google.com>
+In-Reply-To: <20240209-alice-file-v5-1-a37886783025@google.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 9 Feb 2024 12:49:07 +0100
+Message-ID: <CAH5fLgiFzPcOH95tw9MwJmgfgBzE+rWxhk0050OTYmqgprPn5A@mail.gmail.com>
+Subject: Re: [PATCH v5 1/9] rust: types: add `NotThreadSafe`
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, Kees Cook <keescook@chromium.org>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Trevor Gross <tmgross@umich.edu>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Feb 9, 2024 at 12:18=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+> +    types::{NotThreadSafe, ScopeGuard, Opaque},
 
+Oops. This one doesn't pass rustfmt. Embarrassing.
 
-On 2/9/24 12:21, Bernd Schubert wrote:
-> 
-> 
-> On 2/9/24 11:50, Miklos Szeredi wrote:
->> On Thu, 8 Feb 2024 at 18:09, Amir Goldstein <amir73il@gmail.com> wrote:
->>
->>>  static int fuse_inode_get_io_cache(struct fuse_inode *fi)
->>>  {
->>> +       int err = 0;
->>> +
->>>         assert_spin_locked(&fi->lock);
->>> -       if (fi->iocachectr < 0)
->>> -               return -ETXTBSY;
->>> -       if (fi->iocachectr++ == 0)
->>> -               set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
->>> -       return 0;
->>> +       /*
->>> +        * Setting the bit advises new direct-io writes to use an exclusive
->>> +        * lock - without it the wait below might be forever.
->>> +        */
->>> +       set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
->>> +       while (!err && fuse_is_io_cache_wait(fi)) {
->>> +               spin_unlock(&fi->lock);
->>> +               err = wait_event_killable(fi->direct_io_waitq,
->>> +                                         !fuse_is_io_cache_wait(fi));
->>> +               spin_lock(&fi->lock);
->>> +       }
->>> +       /*
->>> +        * Enter caching mode or clear the FUSE_I_CACHE_IO_MODE bit if we
->>> +        * failed to enter caching mode and no other caching open exists.
->>> +        */
->>> +       if (!err)
->>> +               fi->iocachectr++;
->>> +       else if (fi->iocachectr <= 0)
->>> +               clear_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
->>
->> This seems wrong:  if the current task is killed, and there's anther
->> task trying to get cached open mode, then clearing
->> FUSE_I_CACHE_IO_MODE will allow new parallel writes, breaking this
->> logic.
-> 
-> This is called holding a spin lock, another task cannot enter here?
-> Neither can direct-IO, because it is also locked out. The bit helps DIO
-> code to avoid trying to do parallel DIO without the need to take a spin
-> lock. When DIO decides it wants to do parallel IO, it first has to get
-> past fi->iocachectr < 0 - if there is another task trying to do cache
-> IO, either DIO gets < 0 first and the other cache task has to wait, or
-> cache tasks gets > 0 and dio will continue with the exclusive lock. Or
-> do I miss something?
+I was hoping that this would be the last version. Maybe Miguel can fix
+the ordering here when he takes it? (Assuming I don't need to send a
+v6.)
 
-Now I see what you mean, there is an unlock and another task might have also already set the bit
+It's supposed to be:
+types::{NotThreadSafe, Opaque, ScopeGuard},
 
-I think this should do
+There shouldn't be any other issues in this patchset.
 
-diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
-index acd0833ae873..7c22edd674cb 100644
---- a/fs/fuse/iomode.c
-+++ b/fs/fuse/iomode.c
-@@ -41,6 +41,8 @@ static int fuse_inode_get_io_cache(struct fuse_inode *fi)
-                err = wait_event_killable(fi->direct_io_waitq,
-                                          !fuse_is_io_cache_wait(fi));
-                spin_lock(&fi->lock);
-+               if (!err)
-+			/* Another interrupted task might have unset it */
-+                       set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
-        }
-        /*
-         * Enter caching mode or clear the FUSE_I_CACHE_IO_MODE bit if we
+Alice
 
