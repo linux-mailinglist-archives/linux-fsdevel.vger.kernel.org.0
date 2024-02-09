@@ -1,192 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-10960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93EB084F73F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 15:28:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A2D284F744
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 15:29:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EA561F221C5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 14:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F29F5284342
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 14:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C19B69973;
-	Fri,  9 Feb 2024 14:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFA86997D;
+	Fri,  9 Feb 2024 14:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZXpPNRmQ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="n2KL3eDA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BF2364D6
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 14:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7575E69956
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 14:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707488888; cv=none; b=A/TXNGEgqmeeaBQkSB7XFu2WUtLGxdTdt6kYwltmSUQkGG3Uxv3cuipeQk+UK+vfp9IvjfcJ1Ys9nl6VyAizhjKAwqVsgbYpw8Lsx8bCq1KfuZM+0hwxWCzhmJAZu831+U4wVLjVaIJ6WtruSNU7DOHLLi1UlXTPPS1P1cnW0hg=
+	t=1707488948; cv=none; b=Sahsns+jhlfCkkncVmL4wuP8jWLH0h65Zc15qXS26ow9KZ/XrErT1nbnjJE1oW9qcRcF045HW0DLGToWQEs665enk+SsjlydQDvcgKXn9aJ3JDO1dMu0h0++DCqg+1v+M+vtL2UnhTw3x5poIzv3th86mJfHP3SE6OisLIq8Rk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707488888; c=relaxed/simple;
-	bh=HUx7t17vxGA5IaYOV8ff1kr8+jU/9ANSxbnT6H9GSco=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=iMM/CC84efDH2bSK48N/93r1uYZxKmAGM+JDOlZwiyKZjGNItJwpUPAIyRdMFk28RVemjYeXlOTnFxIg9LZADlip0irCAWzSRPzOiZLPYrkzss/g7huvhFeS4s4zkaHWiXlu8T/MdIyUiGGUtc8x5Sb6QxqkELvn8s+sNtvej14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZXpPNRmQ; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-604b44e1dc9so19412507b3.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 06:28:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707488886; x=1708093686; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uCfsv6GrpUFnVCwcL3J5Wem8yNPUxVMsIIYMkBzD0b0=;
-        b=ZXpPNRmQeW+Sm8OzwxON1DpjmSlXeodKp3uxsBZq1Cg5uqJA8J7OR0zmKyk1akz2Yy
-         5EywEk/vM6zchQkTO/MSC9+Yucn6xjqlLJXS5II+SRuUGG5D3/myvb/anp4h/lhMlUIG
-         ZcZcRAnBDNFUNDeH/AEX9RhWOJlV1M6SbJDFo/Eax51+lByy3q3Dg7L8HJx5FRfGnOhl
-         sabcrTwvk8718sVD0CAGGXFZLyzHPoNW6pzR4LcloHCjJlb0MDm2i6LNBXTuYHY0+3L1
-         YbngJFU/xjyYwKCM/BH9Ajz03VQupmY8A4LEcC1lUozX9lXFnBzk7XDTJUskDv3PBTXF
-         fhHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707488886; x=1708093686;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uCfsv6GrpUFnVCwcL3J5Wem8yNPUxVMsIIYMkBzD0b0=;
-        b=JTGt92UEu/KZoWb1nqK/uMJhE+GUkxzl0/DgsKfpebFTPwQicy0KlB+u34EVqckIqO
-         h5LuSNoz+FfK3fxx+Wupk0evW9MfC7aZndnAVkJNAh5HcyQzCNFaRXIom4k6slJPRzDv
-         jGy51C0AB3auxPnjP+LwRgFOXMDdCAtHRuYML5VluPJkO5u2wKtc7G2g0TMfRqB712tw
-         sPJlm7j9hX7Sy16qOG/DG87wctkAM08HHY/IO//RCIUAZEuDNvlwQPGA4JYKyuaeAZZM
-         fYDHXV3J9fYZQUEkzsd6+BLrbqbkCi8mO1jMX32Dh0yAFlUQWdiaSxsvB2Y+N/dHyv4n
-         8TLg==
-X-Gm-Message-State: AOJu0YzNSPBj8JtkH74p6KsQ48oUBL7y2vD6Qeh3At2BTnY9ONw4Q9as
-	VGB+4LfDQZ5QBPKPvYNGXqoxUBh6VWVc/7LB78OAMQhoquOJ6ggWVQfsDEo7lx2/5KhGTMycodj
-	pEw==
-X-Google-Smtp-Source: AGHT+IHy+djrwH9lBwMcfClT+8pK1QZMj2IcA9F/oSlT9qX98kneABwsfBtcWfL+f67hdIOBZn1ACZ3Dunw=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a81:6d82:0:b0:5ff:a885:65b with SMTP id
- i124-20020a816d82000000b005ffa885065bmr252030ywc.10.1707488885935; Fri, 09
- Feb 2024 06:28:05 -0800 (PST)
-Date: Fri, 9 Feb 2024 06:28:04 -0800
-In-Reply-To: <e7125fcb-52b1-4942-9ae7-c85049e92e5c@arm.com>
+	s=arc-20240116; t=1707488948; c=relaxed/simple;
+	bh=Dswm6KHnt6fctGMQEhkJJsY2zjJGUEaprm9g9WiZFfQ=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version:
+	 References; b=UDKVWjhsCQTHUvbg8cEUDI9upu9w0w3+pIvDqg91F/MxIYifiaEfB37sE1WFlEQiutb+5rWcn31jqFRusQ9DrOzmQcDldl/PBX3au1VsHycAs6T/y8RH20JrGV8H/yFc+c+CYMQYTFyvzN8amC/BuJg24jlvbxnQIJI3yA3HtHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=n2KL3eDA; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240209142904euoutp02ce564f886d3d0c1bb9b090ca4e273e79~yOCX3KOq82377223772euoutp02Y
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 14:29:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240209142904euoutp02ce564f886d3d0c1bb9b090ca4e273e79~yOCX3KOq82377223772euoutp02Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1707488944;
+	bh=Dswm6KHnt6fctGMQEhkJJsY2zjJGUEaprm9g9WiZFfQ=;
+	h=From:To:CC:Subject:Date:References:From;
+	b=n2KL3eDASHuDHAmLDNeV3h0bS6bxQ2xkSCMjp+bLEfxXqBf+eUhWG/ATcjg7wwv4D
+	 5//xY4jRI5JMj9VS/cRLzvuKyP7zfmEHeQUcKVHomYniFi612c4nKMEI5meIt53taN
+	 D5ndrjjkSlIxTuCKKH3e866X0VFtGah9LIduUfRs=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240209142903eucas1p2ea029c7e25afcab2b3116ee58615490f~yOCXVzbKe2329623296eucas1p2U;
+	Fri,  9 Feb 2024 14:29:03 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id E7.2E.09552.FA636C56; Fri,  9
+	Feb 2024 14:29:03 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240209142903eucas1p1f211ca6fc40a788e833de062e2772c41~yOCW6KAeo3259232592eucas1p1B;
+	Fri,  9 Feb 2024 14:29:03 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240209142903eusmtrp17c0f58b9cd349b795e4af0519634af71~yOCW5hFSC0528405284eusmtrp1w;
+	Fri,  9 Feb 2024 14:29:03 +0000 (GMT)
+X-AuditID: cbfec7f5-853ff70000002550-86-65c636af76a3
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 8E.A3.10702.FA636C56; Fri,  9
+	Feb 2024 14:29:03 +0000 (GMT)
+Received: from CAMSVWEXC01.scsc.local (unknown [106.1.227.71]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240209142903eusmtip1f20a48f3b94b23fb7387f39f331b4b72~yOCWwn82c2720027200eusmtip1u;
+	Fri,  9 Feb 2024 14:29:03 +0000 (GMT)
+Received: from CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) by
+	CAMSVWEXC01.scsc.local (2002:6a01:e347::6a01:e347) with Microsoft SMTP
+	Server (TLS) id 15.0.1497.2; Fri, 9 Feb 2024 14:29:02 +0000
+Received: from CAMSVWEXC02.scsc.local ([::1]) by CAMSVWEXC02.scsc.local
+	([fe80::3c08:6c51:fa0a:6384%13]) with mapi id 15.00.1497.012; Fri, 9 Feb
+	2024 14:29:02 +0000
+From: Daniel Gomez <da.gomez@samsung.com>
+To: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
+	"hughd@google.com" <hughd@google.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>
+CC: "dagmcr@gmail.com" <dagmcr@gmail.com>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"willy@infradead.org" <willy@infradead.org>, "hch@infradead.org"
+	<hch@infradead.org>, "mcgrof@kernel.org" <mcgrof@kernel.org>, Pankaj Raghav
+	<p.raghav@samsung.com>, "gost.dev@samsung.com" <gost.dev@samsung.com>,
+	"Daniel Gomez" <da.gomez@samsung.com>
+Subject: [RFC PATCH 0/9] shmem: fix llseek in hugepages
+Thread-Topic: [RFC PATCH 0/9] shmem: fix llseek in hugepages
+Thread-Index: AQHaW2RT7xV/K52STUGwCHRBbQ9MBQ==
+Date: Fri, 9 Feb 2024 14:29:01 +0000
+Message-ID: <20240209142901.126894-1-da.gomez@samsung.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FC9A37F54832EA47B4528BC8F1D3C09F@scsc.local>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20231016115028.996656-1-michael.roth@amd.com> <20231016115028.996656-5-michael.roth@amd.com>
- <e7125fcb-52b1-4942-9ae7-c85049e92e5c@arm.com>
-Message-ID: <ZcY2VRsRd03UQdF7@google.com>
-Subject: Re: [PATCH RFC gmem v1 4/8] KVM: x86: Add gmem hook for invalidating memory
-From: Sean Christopherson <seanjc@google.com>
-To: Steven Price <steven.price@arm.com>
-Cc: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, "tabba@google.com" <tabba@google.com>, linux-coco@lists.linux.dev, 
-	linux-mm@kvack.org, linux-crypto@vger.kernel.org, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	pbonzini@redhat.com, isaku.yamahata@intel.com, ackerleytng@google.com, 
-	vbabka@suse.cz, ashish.kalra@amd.com, nikunj.dadhania@amd.com, 
-	jroedel@suse.de, pankaj.gupta@amd.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrOKsWRmVeSWpSXmKPExsWy7djP87rrzY6lGvTNNLSYs34Nm8Xrw58Y
+	Lc72/WazOD1hEZPF0099LBazpzczWezZe5LF4vKuOWwW99b8Z7W4MeEpo8X5v8dZLX7/mMPm
+	wOOxc9Zddo8Fm0o9Nq/Q8ti0qpPNY9OnSeweJ2b8ZvE4s+AIu8fnTXIem568ZQrgjOKySUnN
+	ySxLLdK3S+DKmDTxBXtBh3jFvxnxDYx7xLoYOTkkBEwkls/9zNLFyMUhJLCCUeLq7oXMEM4X
+	RomtF/9DZT4zSpyb858dpmVpx1JGiMRyRonOhs1McFWvLy2BypxmlLg//wQzwuS9f5hA+tkE
+	NCX2ndzEDpIQEXjOKNG6+yOYwyxwm1liTvssoH4ODmEBc4nFU5JAGkQEbCQ2NTQzQdh6Elfb
+	1jOC2CwCKhKHDxwCK+cVsJKYMTkbJMwoICvxaOUvsFuZBcQlbj2ZzwRxt6DEotl7mCFsMYl/
+	ux6yQdg6EmevP2GEsA0kti7dxwJhK0p0HLvJBjKeGejm9bv0IUZaSsx+P4sNwlaUmNL9EGwV
+	L9D4kzOfgMNLQuAfp8ST1Uuh4eUi8X3OF6i9whKvjm+BistInJ7cwzKBUXsWklNnIaybhWTd
+	LCTrZiFZt4CRdRWjeGppcW56arFxXmq5XnFibnFpXrpecn7uJkZg2jv97/jXHYwrXn3UO8TI
+	xMF4iFGCg1lJhDdkyZFUId6UxMqq1KL8+KLSnNTiQ4zSHCxK4ryqKfKpQgLpiSWp2ampBalF
+	MFkmDk6pBibj9CW9N7WPdSWxXd6u2hCwYfeMC8/ULqSeqeH1tFNdkFE8TV2DL1RQqXqr3qTr
+	e66sS1zEP+vU/t3RH35dV/kV/Y7rc4Dvio690U/eyksfCzA7uC23qT7H6fvfDA+LHquPX1vE
+	w5bllEc67Xrp7PPA6l1TupHz/JonRQdzHXc7aW8SytrRFS3kpGfy/oHf34ttKUG+l4ofrKxy
+	mXVYd6tE5r3ZT9fH/OXfU3VDIzTpXtpeEa267vKb/05PDZrnWqh/TIzVSGj3hbdeGpY5qyWN
+	X1nHZ4se9NvqFzLhWd8NBfPG3gszjtV4uHzb+F3jcW1fmqnsJ6mfRjNd81bb/mYNk5rOp+UQ
+	6f/16P+Ut0osxRmJhlrMRcWJAAPfo1nqAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEKsWRmVeSWpSXmKPExsVy+t/xu7rrzY6lGpz6ImIxZ/0aNovXhz8x
+	Wpzt+81mcXrCIiaLp5/6WCxmT29mstiz9ySLxeVdc9gs7q35z2pxY8JTRovzf4+zWvz+MYfN
+	gcdj56y77B4LNpV6bF6h5bFpVSebx6ZPk9g9Tsz4zeJxZsERdo/Pm+Q8Nj15yxTAGaVnU5Rf
+	WpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CXMWniC/aCDvGK
+	fzPiGxj3iHUxcnJICJhILO1YyghiCwksZZS4Oc8QIi4jsfHLVVYIW1jiz7UuNoiaj4wSTS1B
+	EPZpRomlzxIh7BWMEo83VYHYbAKaEvtObmLvYuTiEBF4yigx/fchFhCHWeA2s8Sc9llA2zg4
+	hAXMJRZPSQJpEBGwkdjU0MwEYetJXG1bD3YQi4CKxOEDh8DKeQWsJGZMzgYJMwrISjxa+Ysd
+	xGYWEJe49WQ+E8SdAhJL9pxnhrBFJV4+/gd1v47E2etPGCFsA4mtS/exQNiKEh3HbrKBjGcG
+	unn9Ln2IkZYSs9/PYoOwFSWmdD8EW8UrIChxcuYTlgmMUrOQbJ6F0D0LSfcsJN2zkHQvYGRd
+	xSiSWlqcm55bbKRXnJhbXJqXrpecn7uJEZiYth37uWUH48pXH/UOMTJxMB5ilOBgVhLhDVly
+	JFWINyWxsiq1KD++qDQntfgQoykwgCYyS4km5wNTY15JvKGZgamhiZmlgamlmbGSOK9nQUei
+	kEB6YklqdmpqQWoRTB8TB6dUAxMb3zzDTbHmLzeznFxxT3ONdmmKt+2pW6rq27izFJ2PbpFa
+	65+Xv/7pCvu1bzz3x0jLrpkdK7Fkd+pVA/GpOzt79nKYfz6vX1PGvN9C7q+LcEFZZE3+Fcur
+	V182fJt8pCbXZ6P2sQ8WFS9eNlS+0nvV6zd915U9b+8xCv257rbh0e+ngf8C2qzO8GwqZ639
+	4/lv4z/tCedPMP7+feaKti2bZsuFHaw2f2YsOL6si+3vnt8rPcTYnfje7djJa/jWwe/1DoUI
+	s7nHNyXtmDPl+pHHv7dulWjmkytfFXbl3J87VW7KM46rfI/z5c+L9ZsecNTRq7/+W2zrxaVV
+	86tC5pxJyqw5pXGrvWDONBdm/dOflViKMxINtZiLihMBVjP0VtUDAAA=
+X-CMS-MailID: 20240209142903eucas1p1f211ca6fc40a788e833de062e2772c41
+X-Msg-Generator: CA
+X-RootMTR: 20240209142903eucas1p1f211ca6fc40a788e833de062e2772c41
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240209142903eucas1p1f211ca6fc40a788e833de062e2772c41
+References: <CGME20240209142903eucas1p1f211ca6fc40a788e833de062e2772c41@eucas1p1.samsung.com>
 
-On Fri, Feb 09, 2024, Steven Price wrote:
-> On 16/10/2023 12:50, Michael Roth wrote:
-> > In some cases, like with SEV-SNP, guest memory needs to be updated in a
-> > platform-specific manner before it can be safely freed back to the host.
-> > Wire up arch-defined hooks to the .free_folio kvm_gmem_aops callback to
-> > allow for special handling of this sort when freeing memory in response
-> > to FALLOC_FL_PUNCH_HOLE operations and when releasing the inode, and go
-> > ahead and define an arch-specific hook for x86 since it will be needed
-> > for handling memory used for SEV-SNP guests.
-> 
-> Hi all,
-> 
-> Arm CCA has a similar need to prepare/unprepare memory (granule
-> delegate/undelegate using our terminology) before it is used for
-> protected memory.
-> 
-> However I see a problem with the current gmem implementation that the
-> "invalidations" are not precise enough for our RMI API. When punching a
-> hole in the memfd the code currently hits the same path (ending in
-> kvm_unmap_gfn_range()) as if a VMA is modified in the same range (for
-> the shared version).
->
-> The Arm CCA architecture doesn't allow the protected memory to be removed and
-> refaulted without the permission of the guest (the memory contents would be
-> wiped in this case).
-
-TDX behaves almost exactly like CCA.  Well, that's not technically true, strictly
-speaking, as there are TDX APIs that do allow for *temporarily* marking mappings
-!PRESENT, but those aren't in play for invalidation events like this.
-
-SNP does allow zapping page table mappings, but fully removing a page, as PUNCH_HOLE
-would do, is destructive, so SNP also behaves the same way for all intents and
-purposes.
-
-> One option that I've considered is to implement a seperate CCA ioctl to
-> notify KVM whether the memory should be mapped protected.
-
-That's what KVM_SET_MEMORY_ATTRIBUTES+KVM_MEMORY_ATTRIBUTE_PRIVATE is for, no?
-
-> The invalidations would then be ignored on ranges that are currently
-> protected for this guest.
-
-That's backwards.  Invalidations on a guest_memfd should affect only *protected*
-mappings.  And for that, the plan/proposal is to plumb only_{shared,private} flags
-into "struct kvm_gfn_range"[1] so that guest_memfd invalidations don't zap shared
-mappings, and mmu_notifier invalidation don't zap private mappings.  Sample usage
-in the TDX context[2] (disclaimer, I'm pretty sure I didn't write most of that
-patch despite, I only provided a rough sketch).
-
-[1] https://lore.kernel.org/all/20231027182217.3615211-13-seanjc@google.com
-[2] https://lore.kernel.org/all/0b308fb6dd52bafe7153086c7f54bfad03da74b1.1705965635.git.isaku.yamahata@intel.com
-
-> This 'solves' the problem nicely except for the case where the VMM
-> deliberately punches holes in memory which the guest is using.
-
-I don't see what problem there is to solve in this case.  PUNCH_HOLE is destructive,
-so don't do that.
-
-> The issue in this case is that there's no way of failing the punch hole
-> operation - we can detect that the memory is in use and shouldn't be
-> freed, but this callback doesn't give the opportunity to actually block
-> the freeing of the memory.
-
-Why is this KVM's problem?  E.g. the same exact thing happens without guest_memfd
-if userspace munmap()s memory the guest is using.
-
-> Sadly there's no easy way to map from a physical page in a gmem back to
-> which VM (and where in the VM) the page is mapped. So actually ripping
-> the page out of the appropriate VM isn't really possible in this case.
-
-I don't follow.  guest_memfd has a 1:1 binding with a VM *and* a gfn, how can you
-not know what exactly needs to be invalidated?
-
-> How is this situation handled on x86? Is it possible to invalidate and
-> then refault a protected page without affecting the memory contents? My
-> guess is yes and that is a CCA specific problem - is my understanding
-> correct?
-> 
-> My current thoughts for CCA are one of three options:
-> 
-> 1. Represent shared and protected memory as two separate memslots. This
-> matches the underlying architecture more closely (the top address bit is
-> repurposed as a 'shared' flag), but I don't like it because it's a
-> deviation from other CoCo architectures (notably pKVM).
-> 
-> 2. Allow punch-hole to fail on CCA if the memory is mapped into the
-> guest's protected space. Again, this is CCA being different and also
-> creates nasty corner cases where the gmem descriptor could have to
-> outlive the VMM - so looks like a potential source of memory leaks.
-> 
-> 3. 'Fix' the invalidation to provide more precise semantics. I haven't
-> yet prototyped it but it might be possible to simply provide a flag from
-> kvm_gmem_invalidate_begin specifying that the invalidation is for the
-> protected memory. KVM would then only unmap the protected memory when
-> this flag is set (avoiding issues with VMA updates causing spurious unmaps).
-> 
-> Fairly obviously (3) is my preferred option, but it relies on the
-> guarantees that the "invalidation" is actually a precise set of
-> addresses where the memory is actually being freed.
-
-#3 is what we are planning for x86, and except for the only_{shared,private} flags,
-the requisite functionality should already be in Linus' tree, though it does need
-to be wired up for ARM.
+SGksDQoNClRoZSBmb2xsb3dpbmcgc2VyaWVzIGZpeGVzIHRoZSBnZW5lcmljLzI4NSBhbmQgZ2Vu
+ZXJpYy80MzYgZnN0ZXN0cyBmb3IgaHVnZQ0KcGFnZXMgKGh1Z2U9YWx3YXlzKS4gVGhlc2UgYXJl
+IHRlc3RzIGZvciBsbHNlZWsgKFNFRUtfSE9MRSBhbmQgU0VFS19EQVRBKS4NCg0KVGhlIGltcGxl
+bWVudGF0aW9uIHRvIGZpeCBhYm92ZSB0ZXN0cyBpcyBiYXNlZCBvbiBpb21hcCBwZXItYmxvY2sg
+dHJhY2tpbmcgZm9yDQp1cHRvZGF0ZSBhbmQgZGlydHkgc3RhdGVzIGJ1dCBhcHBsaWVkIHRvIHNo
+bWVtIHVwdG9kYXRlIGZsYWcuDQoNClRoZSBtb3RpdmF0aW9uIGlzIHRvIGF2b2lkIGFueSByZWdy
+ZXNzaW9ucyBpbiB0bXBmcyBvbmNlIGl0IGdldHMgc3VwcG9ydCBmb3INCmxhcmdlIGZvbGlvcy4N
+Cg0KVGVzdGluZyB3aXRoIGtkZXZvcHMNClRlc3RpbmcgaGFzIGJlZW4gcGVyZm9ybWVkIHVzaW5n
+IGZzdGVzdHMgd2l0aCBrZGV2b3BzIGZvciB0aGUgdjYuOC1yYzIgdGFnLg0KVGhlcmUgYXJlIGN1
+cnJlbnRseSBkaWZmZXJlbnQgcHJvZmlsZXMgc3VwcG9ydGVkIFsxXSBhbmQgZm9yIGVhY2ggb2Yg
+dGhlc2UsDQphIGJhc2VsaW5lIG9mIDIwIGxvb3BzIGhhcyBiZWVuIHBlcmZvcm1lZCB3aXRoIHRo
+ZSBmb2xsb3dpbmcgZmFpbHVyZXMgZm9yDQpodWdlcGFnZXMgcHJvZmlsZXM6IGdlbmVyaWMvMDgw
+LCBnZW5lcmljLzEyNiwgZ2VuZXJpYy8xOTMsIGdlbmVyaWMvMjQ1LA0KZ2VuZXJpYy8yODUsIGdl
+bmVyaWMvNDM2LCBnZW5lcmljLzU1MSwgZ2VuZXJpYy82MTkgYW5kIGdlbmVyaWMvNzMyLg0KDQpJ
+ZiBhbnlvbmUgaW50ZXJlc3RlZCwgcGxlYXNlIGZpbmQgYWxsIG9mIHRoZSBmYWlsdXJlcyBpbiB0
+aGUgZXhwdW5nZXMgZGlyZWN0b3J5Og0KaHR0cHM6Ly9naXRodWIuY29tL2xpbnV4LWtkZXZvcHMv
+a2Rldm9wcy90cmVlL21hc3Rlci93b3JrZmxvd3MvZnN0ZXN0cy9leHB1bmdlcy82LjguMC1yYzIv
+dG1wZnMvdW5hc3NpZ25lZA0KDQpbMV0gdG1wZnMgcHJvZmlsZXMgc3VwcG9ydGVkIGluIGtkZXZv
+cHM6IGRlZmF1bHQsIHRtcGZzX25vc3dhcF9odWdlX25ldmVyLA0KdG1wZnNfbm9zd2FwX2h1Z2Vf
+YWx3YXlzLCB0bXBmc19ub3N3YXBfaHVnZV93aXRoaW5fc2l6ZSwNCnRtcGZzX25vc3dhcF9odWdl
+X2FkdmlzZSwgdG1wZnNfaHVnZV9hbHdheXMsIHRtcGZzX2h1Z2Vfd2l0aGluX3NpemUgYW5kDQp0
+bXBmc19odWdlX2FkdmlzZS4NCg0KTW9yZSBpbmZvcm1hdGlvbjoNCmh0dHBzOi8vZ2l0aHViLmNv
+bS9saW51eC1rZGV2b3BzL2tkZXZvcHMvdHJlZS9tYXN0ZXIvd29ya2Zsb3dzL2ZzdGVzdHMvZXhw
+dW5nZXMvNi44LjAtcmMyL3RtcGZzL3VuYXNzaWduZWQNCg0KQWxsIHRoZSBwYXRjaGVzIGhhcyBi
+ZWVuIHRlc3RlZCBvbiB0b3Agb2YgdjYuOC1yYzIgYW5kIHJlYmFzZWQgb250byBsYXRlc3QgbmV4
+dA0KdGFnIGF2YWlsYWJsZSAobmV4dC0yMDI0MDIwOSkuDQoNCkRhbmllbA0KDQpEYW5pZWwgR29t
+ZXogKDgpOg0KICBzaG1lbTogYWRkIHBlci1ibG9jayB1cHRvZGF0ZSB0cmFja2luZyBmb3IgaHVn
+ZXBhZ2VzDQogIHNobWVtOiBtb3ZlIGZvbGlvIHplcm8gb3BlcmF0aW9uIHRvIHdyaXRlX2JlZ2lu
+KCkNCiAgc2htZW06IGV4aXQgc2htZW1fZ2V0X2ZvbGlvX2dmcCgpIGlmIGJsb2NrIGlzIHVwdG9k
+YXRlDQogIHNobWVtOiBjbGVhcl9oaWdocGFnZSgpIGlmIGJsb2NrIGlzIG5vdCB1cHRvZGF0ZQ0K
+ICBzaG1lbTogc2V0IGZvbGlvIHVwdG9kYXRlIHdoZW4gcmVjbGFpbQ0KICBzaG1lbTogY2hlY2sg
+aWYgYSBibG9jayBpcyB1cHRvZGF0ZSBiZWZvcmUgc3BsaWNlIGludG8gcGlwZQ0KICBzaG1lbTog
+Y2xlYXIgdXB0b2RhdGUgYmxvY2tzIGFmdGVyIFBVTkNIX0hPTEUNCiAgc2htZW06IGVuYWJsZSBw
+ZXItYmxvY2sgdXB0b2RhdGUNCg0KUGFua2FqIFJhZ2hhdiAoMSk6DQogIHNwbGljZTogZG9uJ3Qg
+Y2hlY2sgZm9yIHVwdG9kYXRlIGlmIHBhcnRpYWxseSB1cHRvZGF0ZSBpcyBpbXBsDQoNCiBmcy9z
+cGxpY2UuYyB8ICAxNyArKy0NCiBtbS9zaG1lbS5jICB8IDM0MCArKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tDQogMiBmaWxlcyBjaGFuZ2VkLCAzMzIg
+aW5zZXJ0aW9ucygrKSwgMjUgZGVsZXRpb25zKC0pDQoNCi0tIA0KMi40My4wDQo=
 
