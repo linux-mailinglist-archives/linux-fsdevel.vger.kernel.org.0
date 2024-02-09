@@ -1,175 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-11004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A418C84FC4D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 19:51:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A144D84FC84
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 20:01:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65E16285603
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 18:51:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9FAC1C2637B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 19:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C268288F;
-	Fri,  9 Feb 2024 18:51:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 469FB8289B;
+	Fri,  9 Feb 2024 19:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="QjH4Tz9d"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B62580BF8
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 18:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6DA763E3
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 19:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707504692; cv=none; b=tJVdy1Oz+/Rbi26gfhlJtEic3Bwh0SrwkcftqsWX82olTthK2VsjInDcGldA5f3KuvhF3ddwBYAufsNL4ObfPkEWuOLqx/aBpO8QetnZhPmcVjqx+z9tK5Cspr6UqKP4CDd1E/QQ+laaoSeHOAXmPNAfWPB1bedOJr6r170i1aY=
+	t=1707505277; cv=none; b=hirhNQmzgdER6mcQb7GlXiegLluJZEY9LQNgbe//6nsYYaudnIGHwVpmRhD4V6m+K1lrBCQ/d9B/a4p9IrxvYTVzUmJbCo8+7/ccNzBPSzP7agoE3zcXMXMZt8wA5NfrwJ+I1i8NDnd7xGkBcosFpGtFLuOxul1Vu4yhmoVXEJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707504692; c=relaxed/simple;
-	bh=Tu0ElYYCxwfDUVwALkCxB1vEswdt7vcITJbQk2Tz/t4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=T+IUJDd+6rMsaxrVz7lGclP65dqWelFRnJ7T/fORtOvby+GNB37S9jlM7jzkIyjVGe90kqkTqlzTMiHM9vSguYBWSdMSLdugaShfj/PPmSxD08Ze6tlBu6/hhsCZhnsJyN6widvlG7m0weJEH+mD6pHRIpCy5WToIDMdWGr/Z4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-36387e7abccso8593475ab.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 10:51:30 -0800 (PST)
+	s=arc-20240116; t=1707505277; c=relaxed/simple;
+	bh=A6nixm9+pytVx29gZ1u6InMe44RI3ah/j/zSFqY5qPg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DdivthW3pugWdJOlJ4TWDOkFDn/vYR5evsPJf8Xk+Rsu9Bf1Zp/jnxGMXZcxu89rN4zwsgP4epuskj9aJw6fEVsoYdJpYUt9c+VORUMexEDIljWCggOuV761+EsRMioDn3bgUq/a2T3aN0JmgoxsMa2QwIjOB4LkTY+uAXnlBL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com; spf=none smtp.mailfrom=soleen.com; dkim=fail (0-bit key) header.d=soleen.com header.i=@soleen.com header.b=QjH4Tz9d reason="key not found in DNS"; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=soleen.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-6e12d0af927so808528a34.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 11:01:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1707505275; x=1708110075; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A6nixm9+pytVx29gZ1u6InMe44RI3ah/j/zSFqY5qPg=;
+        b=QjH4Tz9d+y5onMYkIxLLxqn0XMOp51rpc21fBqX/T6NMpHVrOFT1XCWvWjhnjozecp
+         KzxtI4L124U2yykx6Gav8jT2xv1InuoiBFEqYu7jqhNinpwz31qmcWSQMUMRMF329SQb
+         h25odb6c3n0zElyVXFZoI7QvoxbtNpjp0rcpYIRo6lGu0J0YsvKHXgy0D4/ir3xzRjph
+         J/3/AmMOOOXC74bOedxaT9rYBAByPbX/aeRxJmcqwm2ZGrBX110eZyPNMpjZHdzZl0Gf
+         bfHPVHb2nArw/o10GvwtEEbZi2LXNbBrxO5BAJrjYTCdXfz0HOsYOA5KDvYDvymflCIX
+         6w8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707504689; x=1708109489;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eaQFh3BM5KkXzHuxJBu4/3J2wMPDItc2ahT0DVe0s04=;
-        b=MBTRoBJ4CIDg3qYhOtYQMHqExJUewNWTaBkk0Anz4t9CijoBHDaxsjJiNwCM+/D1+O
-         SBrfhGwcSCyEq2ucV34MjHwHY1CWWNZUcooEzYH79mn4bSfMmuGtde+D+yvjCmXnRVfT
-         QxdjHg/RwccMGwtxXmrKlr1aeg61ycrAtPxIgdkP1zdGM7XaVglAOaomheUvM9pivz/f
-         gzqYoNeWAIqDWip0b0E3bDe9/06sYpgEPyMVIM0rz1s08oclgNfoTTPa4xvYXKsY3AZj
-         k3r9iTtJHnDjZb8TkwfQTQbrti9HjoZ9fUe5UJ9pEAJgXgjpyNx6rPtESgI1MaUQp3tT
-         9B+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVvgrF5ymJnJaUVThSguhO0JbLSEA72W0eY6JKglW2C2nDB9MADrRgpNnEfa6u2fVuqoqgeXIP+oF45eP+2+AUIu47N+yl+IJuBt7Vscg==
-X-Gm-Message-State: AOJu0Yzo8/tZu57EKqevaieThK1gYZ5m4g9LokQVlFn2zT9sLhpAhixH
-	EC8M1MLZ+aON7IxAuppcmsmKW4/ROW5fuA8KaDx/pnTr/HDRzDZmy/fh+VBJLAYKeZJvduJKdUm
-	UlsIjhqzQ9UCSQjCUZIDaQOSM8n2ZA2UmE5oC8rLZqlhsd3yfyiYo5CE=
-X-Google-Smtp-Source: AGHT+IGQGyisrSeC7tNSvzRN8yfk04MLfykEDeKBoW2cZ9dfUj1lfobhy0PRtZq5TRm6hPpmtKJ13GAe+CmXgYP01idUM801xuT0
+        d=1e100.net; s=20230601; t=1707505275; x=1708110075;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A6nixm9+pytVx29gZ1u6InMe44RI3ah/j/zSFqY5qPg=;
+        b=QArLSnVm/iY2UgIPWhtSSmOXBl13f67mPDxEZVXYDCd0lFJsfbjWizXLHLxhilxnhP
+         kzgnHusD7NEZHvlwN/fP9Xp57intYz/VurDm7PoLw89KG4dgtCiHsE4WW70fM0uKGqtz
+         JJVB4v7DCLMsHrNKJ8O4Uld8KuOPDz919Pgcbz/jN0UBu90ls55k/jcJj4bwPDdZdfpQ
+         xJ0FfnhBIOvurwwDbjKuc926xzekQIhquig3qZ5loCmQgXrJS1q6IXBY60nHGcQ9rlqE
+         K7yEw5pV8bnaAg9leAcLmFFjW75sxRfGQMvsTQWMUfbj5kUSEw+ROA8dP26t32T7IizT
+         12TQ==
+X-Gm-Message-State: AOJu0YwlqWBf7UgZyu9VUil5274R46GhUZQuEQGgO8wOUuY/vpTnreuL
+	xas1evHaDiZoENv+VvlR+bz55/lAVxmMr2YVlmZbM3W0s+QylvpPINFKYpW+doKtXtehzsGHwpm
+	WZpdfl9QAa6MNbmiAp7ARdjA9mTuNjbBSjETjpg==
+X-Google-Smtp-Source: AGHT+IFk85AK/GUYg3sBgSG/PbDJz6nuE4vk8ZoEGio36nkbZvD4VZo1ESUanwCzArrVosJa8bsMEnRS+HyilbasQKI=
+X-Received: by 2002:a05:6830:141a:b0:6e0:faab:cff4 with SMTP id
+ v26-20020a056830141a00b006e0faabcff4mr3036212otp.13.1707505274772; Fri, 09
+ Feb 2024 11:01:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d02:b0:363:b5f6:7379 with SMTP id
- i2-20020a056e021d0200b00363b5f67379mr886ila.4.1707504689525; Fri, 09 Feb 2024
- 10:51:29 -0800 (PST)
-Date: Fri, 09 Feb 2024 10:51:29 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000078bc8c0610f76abc@google.com>
-Subject: [syzbot] [fs?] WARNING in pagemap_scan_pmd_entry (2)
-From: syzbot <syzbot+0748a3a1931714d970d0@syzkaller.appspotmail.com>
-To: Liam.Howlett@Oracle.com, akpm@linux-foundation.org, david@redhat.com, 
-	hughd@google.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	ryan.roberts@arm.com, syzkaller-bugs@googlegroups.com, 
-	usama.anjum@collabora.com, wangkefeng.wang@huawei.com
+References: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
+ <CGME20240207174117eucas1p237865b0a39f3a6d1a6650150efe22e83@eucas1p2.samsung.com>
+ <20240207174102.1486130-6-pasha.tatashin@soleen.com> <a1c452f9-c265-4934-82c2-8c9278d087ec@samsung.com>
+In-Reply-To: <a1c452f9-c265-4934-82c2-8c9278d087ec@samsung.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Fri, 9 Feb 2024 14:00:37 -0500
+Message-ID: <CA+CK2bCax2NVhVwiVdyWG0Fpj7W8gi2Tmz1guNKOFNf9O1tfng@mail.gmail.com>
+Subject: Re: [PATCH v4 05/10] iommu/exynos: use page allocation function
+ provided by iommu-pages.h
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, paulmck@kernel.org, rdunlap@infradead.org, 
+	robin.murphy@arm.com, samuel@sholland.org, suravee.suthikulpanit@amd.com, 
+	sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org, 
+	tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, will@kernel.org, 
+	yu-cheng.yu@intel.com, rientjes@google.com, bagasdotme@gmail.com, 
+	mkoutny@suse.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Feb 9, 2024 at 6:26=E2=80=AFAM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> On 07.02.2024 18:40, Pasha Tatashin wrote:
+> > Convert iommu/exynos-iommu.c to use the new page allocation functions
+> > provided in iommu-pages.h.
+> >
+> > Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> > Acked-by: David Rientjes <rientjes@google.com>
+> > Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-syzbot found the following issue on:
-
-HEAD commit:    547ab8fc4cb0 Merge tag 'loongarch-fixes-6.8-2' of git://gi..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=146d3360180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3d64aaed894826fe
-dashboard link: https://syzkaller.appspot.com/bug?extid=0748a3a1931714d970d0
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=107153c4180000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b1c918180000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/baf9b6ea7fce/disk-547ab8fc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4387f7514b49/vmlinux-547ab8fc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/26bbd5d6cf3a/bzImage-547ab8fc.xz
-
-The issue was bisected to:
-
-commit 12f6b01a0bcbeeab8cc9305673314adb3adf80f7
-Author: Muhammad Usama Anjum <usama.anjum@collabora.com>
-Date:   Mon Aug 21 14:15:15 2023 +0000
-
-    fs/proc/task_mmu: add fast paths to get/clear PAGE_IS_WRITTEN flag
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=126a175c180000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=116a175c180000
-console output: https://syzkaller.appspot.com/x/log.txt?x=166a175c180000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+0748a3a1931714d970d0@syzkaller.appspotmail.com
-Fixes: 12f6b01a0bcb ("fs/proc/task_mmu: add fast paths to get/clear PAGE_IS_WRITTEN flag")
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5069 at arch/x86/include/asm/pgtable.h:404 pte_uffd_wp arch/x86/include/asm/pgtable.h:404 [inline]
-WARNING: CPU: 1 PID: 5069 at arch/x86/include/asm/pgtable.h:404 pagemap_scan_pmd_entry+0xa15/0x2e10 fs/proc/task_mmu.c:2195
-Modules linked in:
-CPU: 1 PID: 5069 Comm: syz-executor103 Not tainted 6.8.0-rc3-syzkaller-00041-g547ab8fc4cb0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
-RIP: 0010:pte_uffd_wp arch/x86/include/asm/pgtable.h:404 [inline]
-RIP: 0010:pagemap_scan_pmd_entry+0xa15/0x2e10 fs/proc/task_mmu.c:2195
-Code: 2d 67 ff 83 e3 42 bf 40 00 00 00 48 89 de e8 b2 32 67 ff 48 83 fb 40 0f 85 6d fe ff ff e8 c3 2d 67 ff eb 05 e8 bc 2d 67 ff 90 <0f> 0b 90 e9 5d fe ff ff e8 ae 2d 67 ff 31 c0 48 89 44 24 20 4d 89
-RSP: 0018:ffffc9000395f5c0 EFLAGS: 00010293
-RAX: ffffffff822c3974 RBX: 07ffffffffff040a RCX: ffff888023abbb80
-RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-RBP: ffffc9000395f830 R08: ffffffff822c393b R09: fffff5200072be88
-R10: dffffc0000000000 R11: fffff5200072be88 R12: dffffc0000000000
-R13: 000000002007d000 R14: ffffc9000395f740 R15: ffff888023eef3e0
-FS:  000055555572c380(0000) GS:ffff8880b9500000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000200007c8 CR3: 0000000075868000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- walk_pmd_range mm/pagewalk.c:143 [inline]
- walk_pud_range mm/pagewalk.c:221 [inline]
- walk_p4d_range mm/pagewalk.c:256 [inline]
- walk_pgd_range+0xba1/0x17e0 mm/pagewalk.c:293
- __walk_page_range+0x132/0x720 mm/pagewalk.c:395
- walk_page_range+0x4c8/0x6c0 mm/pagewalk.c:521
- do_pagemap_scan fs/proc/task_mmu.c:2471 [inline]
- do_pagemap_cmd+0xb11/0x1340 fs/proc/task_mmu.c:2513
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:871 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:857
- do_syscall_64+0xf9/0x240
- entry_SYSCALL_64_after_hwframe+0x6f/0x77
-RIP: 0033:0x7f948bf61b69
-Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffffdc7d4d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007ffffdc7d510 RCX: 00007f948bf61b69
-RDX: 00000000200007c0 RSI: 00000000c0606610 RDI: 0000000000000004
-RBP: 00007ffffdc7d510 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffffdc7d4f0 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thank you,
+Pasha
 
