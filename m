@@ -1,327 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-10956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A61284F621
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 14:44:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7382984F66E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 15:03:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B97ED1F247C8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 13:44:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 986F01C25C5C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 14:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3ED3C47B;
-	Fri,  9 Feb 2024 13:44:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D63665BB6;
+	Fri,  9 Feb 2024 14:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZK5+Ykg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9163C1E487;
-	Fri,  9 Feb 2024 13:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69DE72E630;
+	Fri,  9 Feb 2024 14:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707486273; cv=none; b=rOzSdRK74HWJATeBOOsmLIRQibFEhUQqG5AWZLhcfy6x0AvhSM1R8f07LUnNGoXQOWhIB1u+9+iogqcPn9o9rxbt0JzOjEHlY7iRsqzqrE+gnDnWHeydw+4GnnY3JLlVsyfgHnJsbR3Z3pUMlLrdghFMFdaY1Nid6mFqnCSKnMI=
+	t=1707487411; cv=none; b=pfTGtwe+tLjdZYOa8DdwJd0RxrBZMtCbw6yy3nMadrmOOLy6cSTAckduO08Ae6USYvv57YX0crweHAOnNRNZ3m8QMueJUMCfDgSw7lYJA5iRQevkBYgcy7Un1jzxaK0l4UwxSa5CKb+Rtv62WXDZ0wVZv8Tch/ZeUZwCCblLnSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707486273; c=relaxed/simple;
-	bh=IgoMaZM9kw0Wpb/KvMD5/2YbdK7ysD6H6KO4z/h6t3c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=GRwhBcmNdbztbLvfU4ZBAvyrnWm9cP5u4UEQPreprYqaBW+cgY+zOqdsjzj9AcFQAyCiQoj3omwYDhuxhpdOS3P8/lCGKFogKNLE4K4pfeNY7pGrzVapY1BLHIMgAZfYrMdEa8cms1ab+/3Yn7L2VOFOCPpqNBKac98e442OQCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9D9BDA7;
-	Fri,  9 Feb 2024 05:45:09 -0800 (PST)
-Received: from [10.57.47.119] (unknown [10.57.47.119])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6B0283F762;
-	Fri,  9 Feb 2024 05:44:21 -0800 (PST)
-Message-ID: <8ce2cd7b-7702-45aa-b4c8-25a01c27ed83@arm.com>
-Date: Fri, 9 Feb 2024 13:44:20 +0000
+	s=arc-20240116; t=1707487411; c=relaxed/simple;
+	bh=CaJ3SN9Ab0eZrK9li+Kwg+fpoQ9lcd+6mNQpA5nqPcw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ochiwYzLutQp9q8iKPgOybsAq+pMYmtlJ6K1jrKT4Kw6BoDd9tnPC03Wpr374fKvhfGYbtb3QZyaBQeFkWiXAoPqGs62fFUDQnly5u+BbsqpyhL48+KMDOnT+DZS7uPtlRn+F1yP0T9U3hyzo/zhHqdQrEVjRyDZ8nqCtaJUkN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZK5+Ykg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01261C433F1;
+	Fri,  9 Feb 2024 14:03:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707487410;
+	bh=CaJ3SN9Ab0eZrK9li+Kwg+fpoQ9lcd+6mNQpA5nqPcw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AZK5+YkgIJugHBsYz+x3Z3QRFKgCVOksZHccfJO5r43c4z/cNBQ7ji+cEAlUj5ciy
+	 GbiMCovO/IX4pj1bgqV8p4fJ0sHt4q+uHr1LPvbXmHPKG44uwVBgowtzuCpW/9aHLM
+	 27Ycvest5AvTZrOcPwIHhGcICRkKfNvkEO5dZFW/XqaQ1psvOhwA8iyU80wkzpXXOt
+	 f53t0lbrVh6D0WADSkMJyJnlvOswz+afinDLBiw17IWb9bVBd7nS0enA+R7hlsSN9K
+	 ureytuEK6B/An3oFmEJQjjW8AevizhbC645sClpLYbo9Q6bk4kDL64H4FO/f2Kyjqo
+	 FiAL1LTTUnhTA==
+Date: Fri, 9 Feb 2024 15:03:23 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: Eric Biggers <ebiggers@kernel.org>, viro@zeniv.linux.org.uk, 
+	jaegeuk@kernel.org, tytso@mit.edu, amir73il@gmail.com, linux-ext4@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 04/12] fscrypt: Drop d_revalidate for valid dentries
+ during lookup
+Message-ID: <20240209-netto-ungehalten-35cfdd4b6473@brauner>
+References: <20240129204330.32346-1-krisman@suse.de>
+ <20240129204330.32346-5-krisman@suse.de>
+ <20240131004724.GC2020@sol.localdomain>
+ <871q9x2vwj.fsf@mailhost.krisman.be>
+ <20240201032433.GB1526@sol.localdomain>
+ <87le82yl7k.fsf@mailhost.krisman.be>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/10] iommu/vt-d: add wrapper functions for page
- allocations
-Content-Language: en-GB
-To: Pasha Tatashin <pasha.tatashin@soleen.com>, akpm@linux-foundation.org,
- alim.akhtar@samsung.com, alyssa@rosenzweig.io, asahi@lists.linux.dev,
- baolu.lu@linux.intel.com, bhelgaas@google.com, cgroups@vger.kernel.org,
- corbet@lwn.net, david@redhat.com, dwmw2@infradead.org, hannes@cmpxchg.org,
- heiko@sntech.de, iommu@lists.linux.dev, jernej.skrabec@gmail.com,
- jonathanh@nvidia.com, joro@8bytes.org, krzysztof.kozlowski@linaro.org,
- linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
- lizefan.x@bytedance.com, marcan@marcan.st, mhiramat@kernel.org,
- m.szyprowski@samsung.com, paulmck@kernel.org, rdunlap@infradead.org,
- samuel@sholland.org, suravee.suthikulpanit@amd.com, sven@svenpeter.dev,
- thierry.reding@gmail.com, tj@kernel.org, tomas.mudrunka@gmail.com,
- vdumpa@nvidia.com, wens@csie.org, will@kernel.org, yu-cheng.yu@intel.com,
- rientjes@google.com, bagasdotme@gmail.com, mkoutny@suse.com
-References: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
- <20240207174102.1486130-2-pasha.tatashin@soleen.com>
-From: Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <20240207174102.1486130-2-pasha.tatashin@soleen.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87le82yl7k.fsf@mailhost.krisman.be>
 
-On 2024-02-07 5:40 pm, Pasha Tatashin wrote:
-[...]> diff --git a/drivers/iommu/iommu-pages.h 
-b/drivers/iommu/iommu-pages.h
-> new file mode 100644
-> index 000000000000..c412d0aaa399
-> --- /dev/null
-> +++ b/drivers/iommu/iommu-pages.h
-> @@ -0,0 +1,204 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2024, Google LLC.
-> + * Pasha Tatashin <pasha.tatashin@soleen.com>
-> + */
-> +
-> +#ifndef __IOMMU_PAGES_H
-> +#define __IOMMU_PAGES_H
-> +
-> +#include <linux/vmstat.h>
-> +#include <linux/gfp.h>
-> +#include <linux/mm.h>
-> +
-> +/*
-> + * All page allocation that are performed in the IOMMU subsystem must use one of
+On Fri, Feb 02, 2024 at 11:50:07AM -0300, Gabriel Krisman Bertazi wrote:
+> Eric Biggers <ebiggers@kernel.org> writes:
+> 
+> > On Wed, Jan 31, 2024 at 03:35:40PM -0300, Gabriel Krisman Bertazi wrote:
+> >> Eric Biggers <ebiggers@kernel.org> writes:
+> >> 
+> >> > On Mon, Jan 29, 2024 at 05:43:22PM -0300, Gabriel Krisman Bertazi wrote:
+> >> >> Unencrypted and encrypted-dentries where the key is available don't need
+> >> >> to be revalidated with regards to fscrypt, since they don't go stale
+> >> >> from under VFS and the key cannot be removed for the encrypted case
+> >> >> without evicting the dentry.  Mark them with d_set_always_valid, to
+> >> >
+> >> > "d_set_always_valid" doesn't appear in the diff itself.
+> >> >
+> >> >> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+> >> >> index 4aaf847955c0..a22997b9f35c 100644
+> >> >> --- a/include/linux/fscrypt.h
+> >> >> +++ b/include/linux/fscrypt.h
+> >> >> @@ -942,11 +942,22 @@ static inline int fscrypt_prepare_rename(struct inode *old_dir,
+> >> >>  static inline void fscrypt_prepare_lookup_dentry(struct dentry *dentry,
+> >> >>  						 bool is_nokey_name)
+> >> >>  {
+> >> >> -	if (is_nokey_name) {
+> >> >> -		spin_lock(&dentry->d_lock);
+> >> >> +	spin_lock(&dentry->d_lock);
+> >> >> +
+> >> >> +	if (is_nokey_name)
+> >> >>  		dentry->d_flags |= DCACHE_NOKEY_NAME;
+> >> >> -		spin_unlock(&dentry->d_lock);
+> >> >> +	else if (dentry->d_flags & DCACHE_OP_REVALIDATE &&
+> >> >> +		 dentry->d_op->d_revalidate == fscrypt_d_revalidate) {
+> >> >> +		/*
+> >> >> +		 * Unencrypted dentries and encrypted dentries where the
+> >> >> +		 * key is available are always valid from fscrypt
+> >> >> +		 * perspective. Avoid the cost of calling
+> >> >> +		 * fscrypt_d_revalidate unnecessarily.
+> >> >> +		 */
+> >> >> +		dentry->d_flags &= ~DCACHE_OP_REVALIDATE;
+> >> >>  	}
+> >> >> +
+> >> >> +	spin_unlock(&dentry->d_lock);
+> >> >
+> >> > This makes lookups in unencrypted directories start doing the
+> >> > spin_lock/spin_unlock pair.  Is that really necessary?
+> >> >
+> >> > These changes also make the inline function fscrypt_prepare_lookup() very long
+> >> > (when including the fscrypt_prepare_lookup_dentry() that's inlined into it).
+> >> > The rule that I'm trying to follow is that to the extent that the fscrypt helper
+> >> > functions are inlined, the inline part should be a fast path for unencrypted
+> >> > directories.  Encrypted directories should be handled out-of-line.
+> >> >
+> >> > So looking at the original fscrypt_prepare_lookup():
+> >> >
+> >> > 	static inline int fscrypt_prepare_lookup(struct inode *dir,
+> >> > 						 struct dentry *dentry,
+> >> > 						 struct fscrypt_name *fname)
+> >> > 	{
+> >> > 		if (IS_ENCRYPTED(dir))
+> >> > 			return __fscrypt_prepare_lookup(dir, dentry, fname);
+> >> >
+> >> > 		memset(fname, 0, sizeof(*fname));
+> >> > 		fname->usr_fname = &dentry->d_name;
+> >> > 		fname->disk_name.name = (unsigned char *)dentry->d_name.name;
+> >> > 		fname->disk_name.len = dentry->d_name.len;
+> >> > 		return 0;
+> >> > 	}
+> >> >
+> >> > If you could just add the DCACHE_OP_REVALIDATE clearing for dentries in
+> >> > unencrypted directories just before the "return 0;", hopefully without the
+> >> > spinlock, that would be good.  Yes, that does mean that
+> >> > __fscrypt_prepare_lookup() will have to handle it too, for the case of dentries
+> >> > in encrypted directories, but that seems okay.
+> >> 
+> >> ok, will do.  IIUC, we might be able to do without the d_lock
+> >> provided there is no store tearing.
+> >> 
+> >> But what was the reason you need the d_lock to set DCACHE_NOKEY_NAME
+> >> during lookup?  Is there a race with parallel lookup setting d_flag that
+> >> I couldn't find? Or is it another reason?
+> >
+> > d_flags is documented to be protected by d_lock.  So for setting
+> > DCACHE_NOKEY_NAME, fs/crypto/ just does the safe thing of taking d_lock.  I
+> > never really looked into whether the lock can be skipped there (i.e., whether
+> > anything else can change d_flags while ->lookup is running), since this code
+> > only ran for no-key names, for which performance isn't really important.
+> 
+> Yes, I was looking for the actual race that could happen here, and
+> couldn't find one. As far as I understand it, the only thing that could
+> see the dentry during a lookup would be a parallel lookup, but those
+> will be held waiting for completion in d_alloc_parallel, and won't touch
+> d_flags.  Currently, right after this code, we call d_set_d_op() in
+> generic_set_encrypted_ci_d_ops(), which will happily write d_flags without
+> the d_lock. If this is a problem here, we have a problem there.
+> 
+> What I really don't want to do is keep the lock for DCACHE_NOKEY_NAME,
+> but drop it for unsetting DCACHE_OP_REVALIDATE right in the same field,
+> without a good reason.  I get the argument that unencrypted
+> dentries are a much hotter path and we care more.  But the locking rules
+> of ->d_lookup don't change for both cases.
 
-"All page allocations" is too broad; As before, this is only about 
-pagetable allocations, or I guess for the full nuance, allocations of 
-pagetables and other per-iommu_domain configuration structures which are 
-reasonable to report as "pagetables" to userspace.
-
-> + * the functions below.  This is necessary for the proper accounting as IOMMU
-> + * state can be rather large, i.e. multiple gigabytes in size.
-> + */
-> +
-> +/**
-> + * __iommu_alloc_pages_node - allocate a zeroed page of a given order from
-> + * specific NUMA node.
-> + * @nid: memory NUMA node id
-> + * @gfp: buddy allocator flags
-> + * @order: page order
-> + *
-> + * returns the head struct page of the allocated page.
-> + */
-> +static inline struct page *__iommu_alloc_pages_node(int nid, gfp_t gfp,
-> +						    int order)
-> +{
-> +	struct page *page;
-> +
-> +	page = alloc_pages_node(nid, gfp | __GFP_ZERO, order);
-> +	if (unlikely(!page))
-> +		return NULL;
-> +
-> +	return page;
-> +}
-
-All 3 invocations of this only use the returned struct page to trivially 
-derive page_address(), so we really don't need it; just clean up these 
-callsites a bit more.
-
-> +
-> +/**
-> + * __iommu_alloc_pages - allocate a zeroed page of a given order.
-> + * @gfp: buddy allocator flags
-> + * @order: page order
-> + *
-> + * returns the head struct page of the allocated page.
-> + */
-> +static inline struct page *__iommu_alloc_pages(gfp_t gfp, int order)
-> +{
-> +	struct page *page;
-> +
-> +	page = alloc_pages(gfp | __GFP_ZERO, order);
-> +	if (unlikely(!page))
-> +		return NULL;
-> +
-> +	return page;
-> +}
-
-Same for the single invocation of this one.
-
-> +
-> +/**
-> + * __iommu_alloc_page_node - allocate a zeroed page at specific NUMA node.
-> + * @nid: memory NUMA node id
-> + * @gfp: buddy allocator flags
-> + *
-> + * returns the struct page of the allocated page.
-> + */
-> +static inline struct page *__iommu_alloc_page_node(int nid, gfp_t gfp)
-> +{
-> +	return __iommu_alloc_pages_node(nid, gfp, 0);
-> +}
-
-There are no users of this at all.
-
-> +
-> +/**
-> + * __iommu_alloc_page - allocate a zeroed page
-> + * @gfp: buddy allocator flags
-> + *
-> + * returns the struct page of the allocated page.
-> + */
-> +static inline struct page *__iommu_alloc_page(gfp_t gfp)
-> +{
-> +	return __iommu_alloc_pages(gfp, 0);
-> +}
-> +
-> +/**
-> + * __iommu_free_pages - free page of a given order
-> + * @page: head struct page of the page
-> + * @order: page order
-> + */
-> +static inline void __iommu_free_pages(struct page *page, int order)
-> +{
-> +	if (!page)
-> +		return;
-> +
-> +	__free_pages(page, order);
-> +}
-> +
-> +/**
-> + * __iommu_free_page - free page
-> + * @page: struct page of the page
-> + */
-> +static inline void __iommu_free_page(struct page *page)
-> +{
-> +	__iommu_free_pages(page, 0);
-> +}
-
-Beyond one more trivial Intel cleanup for __iommu_alloc_pages(), these 3 
-are then only used by tegra-smmu, so honestly I'd be inclined to just 
-open-code there page_address()/virt_to_page() conversions as appropriate 
-there (once again I think the whole thing could in fact be refactored to 
-not use struct pages at all because all it's ever ultimately doing with 
-them is page_address(), but that would be a bigger job so definitely 
-out-of-scope for this series).
-
-> +
-> +/**
-> + * iommu_alloc_pages_node - allocate a zeroed page of a given order from
-> + * specific NUMA node.
-> + * @nid: memory NUMA node id
-> + * @gfp: buddy allocator flags
-> + * @order: page order
-> + *
-> + * returns the virtual address of the allocated page
-> + */
-> +static inline void *iommu_alloc_pages_node(int nid, gfp_t gfp, int order)
-> +{
-> +	struct page *page = __iommu_alloc_pages_node(nid, gfp, order);
-> +
-> +	if (unlikely(!page))
-> +		return NULL;
-
-As a general point I'd prefer to fold these checks into the accounting 
-function itself rather than repeat them all over.
-
-> +
-> +	return page_address(page);
-> +}
-> +
-> +/**
-> + * iommu_alloc_pages - allocate a zeroed page of a given order
-> + * @gfp: buddy allocator flags
-> + * @order: page order
-> + *
-> + * returns the virtual address of the allocated page
-> + */
-> +static inline void *iommu_alloc_pages(gfp_t gfp, int order)
-> +{
-> +	struct page *page = __iommu_alloc_pages(gfp, order);
-> +
-> +	if (unlikely(!page))
-> +		return NULL;
-> +
-> +	return page_address(page);
-> +}
-> +
-> +/**
-> + * iommu_alloc_page_node - allocate a zeroed page at specific NUMA node.
-> + * @nid: memory NUMA node id
-> + * @gfp: buddy allocator flags
-> + *
-> + * returns the virtual address of the allocated page
-> + */
-> +static inline void *iommu_alloc_page_node(int nid, gfp_t gfp)
-> +{
-> +	return iommu_alloc_pages_node(nid, gfp, 0);
-> +}
-
-TBH I'm not entirely convinced that saving 4 characters per invocation 
-times 11 invocations makes this wrapper worthwhile :/
-
-> +
-> +/**
-> + * iommu_alloc_page - allocate a zeroed page
-> + * @gfp: buddy allocator flags
-> + *
-> + * returns the virtual address of the allocated page
-> + */
-> +static inline void *iommu_alloc_page(gfp_t gfp)
-> +{
-> +	return iommu_alloc_pages(gfp, 0);
-> +}
-> +
-> +/**
-> + * iommu_free_pages - free page of a given order
-> + * @virt: virtual address of the page to be freed.
-> + * @order: page order
-> + */
-> +static inline void iommu_free_pages(void *virt, int order)
-> +{
-> +	if (!virt)
-> +		return;
-> +
-> +	__iommu_free_pages(virt_to_page(virt), order);
-> +}
-> +
-> +/**
-> + * iommu_free_page - free page
-> + * @virt: virtual address of the page to be freed.
-> + */
-> +static inline void iommu_free_page(void *virt)
-> +{
-> +	iommu_free_pages(virt, 0);
-> +}
-> +
-> +/**
-> + * iommu_free_pages_list - free a list of pages.
-> + * @page: the head of the lru list to be freed.
-> + *
-> + * There are no locking requirement for these pages, as they are going to be
-> + * put on a free list as soon as refcount reaches 0. Pages are put on this LRU
-> + * list once they are removed from the IOMMU page tables. However, they can
-> + * still be access through debugfs.
-> + */
-> +static inline void iommu_free_pages_list(struct list_head *page)
-
-Nit: I'd be inclined to call this iommu_put_pages_list for consistency.
-
-> +{
-> +	while (!list_empty(page)) {
-> +		struct page *p = list_entry(page->prev, struct page, lru);
-> +
-> +		list_del(&p->lru);
-> +		put_page(p);
-> +	}
-> +}
-
-I realise now you've also missed the common freelist freeing sites in 
-iommu-dma.
-
-Thanks,
-Robin.
-
-> +
-> +#endif	/* __IOMMU_PAGES_H */
+Even if it were to work in this case I don't think it is generally safe
+to do. But also, for DCACHE_OP_REVALIDATE afaict this is an
+optimization. Why don't you simply accept the raciness, just like fuse
+does in fuse_dentry_settime(), check for DCACHE_OP_REVALIDATE locklessly
+and only take the lock if that thing is set?
 
