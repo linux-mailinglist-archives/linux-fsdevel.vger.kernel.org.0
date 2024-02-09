@@ -1,153 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-10943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F290F84F4FD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 13:03:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C864384F512
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 13:13:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B800D28C7E5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 12:03:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED12B1C21ABD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 12:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A32328B1;
-	Fri,  9 Feb 2024 12:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFAA31759;
+	Fri,  9 Feb 2024 12:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UmmW1eAg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D3812E630;
-	Fri,  9 Feb 2024 12:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C5254689
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 12:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707480211; cv=none; b=CXrAZ42b1z5HqaoB0Sn778zf1t4xyZH0kN+ddfOQDYZrizn9Ba5xTCs9G0FIy3lXwGHKF0pGAnB2dRarUL8M2CUJyjwdcYwWseTJW0MWA0JrgNXMAVuRo+8Gmgwuu5w8yIgfi0EuM3lay/YwVkCTV5rYQEeDtWamWrM6y/ZuiaM=
+	t=1707480776; cv=none; b=E2LgL3fxRndcGk3oKlJJzoo7Au9H27g9Qgwcdso2kf9VnyIqi1oAg0nSWiW5qTnAdxStgK9fbLataf4BUpU89w8CaWHPwSI70Oj6D42Y06KeKx6gMHlQH91xfh5/YgPpja/OdfIA7T+2nlS4L7klpw6SxxJL611IK60f11xeRKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707480211; c=relaxed/simple;
-	bh=BhA/UikenM4m0IyfeHs3E+dkP69p7UWIJfw5VFHgk24=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=brJx/cQC5LWOZnAB7EiCvcPfLjwyigMZaHefHf1hZyqHCwZh4ThybmE52nP5ARE0e50TmXZEEBD+TO+mV2w5BbAQASuTVnKtgyjHUnzHnKZ7S7wckaYJgH0+F0KRz43oVDuKke+K6FfAHDqNY1l7ILNKjUEDXUfvd4JtboShyn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4TWXDB6LM8z9xvhR;
-	Fri,  9 Feb 2024 19:48:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id DB61B14086B;
-	Fri,  9 Feb 2024 20:03:09 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAXBChtFMZlv1EoAg--.21619S2;
-	Fri, 09 Feb 2024 13:03:09 +0100 (CET)
-Message-ID: <f61cb90858d866ed3eb7a2b607152c4aa2a52f5d.camel@huaweicloud.com>
-Subject: Re: [PATCH v9 12/25] security: Introduce file_post_open hook
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, chuck.lever@oracle.com, jlayton@kernel.org, 
- neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, 
- paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- zohar@linux.ibm.com,  dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
- dhowells@redhat.com,  jarkko@kernel.org, stephen.smalley.work@gmail.com,
- eparis@parisplace.org,  casey@schaufler-ca.com, shuah@kernel.org,
- mic@digikod.net,  linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,  linux-nfs@vger.kernel.org,
- linux-security-module@vger.kernel.org,  linux-integrity@vger.kernel.org,
- keyrings@vger.kernel.org,  selinux@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>,
- Stefan Berger <stefanb@linux.ibm.com>
-Date: Fri, 09 Feb 2024 13:02:49 +0100
-In-Reply-To: <20240209-giert-erlenholz-b131fa85ee36@brauner>
-References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
-	 <20240115181809.885385-13-roberto.sassu@huaweicloud.com>
-	 <20240209-luftleer-jobangebote-6d6ab29b7191@brauner>
-	 <86ab971f45c2ff11dcbdeab78b4b050f07495f55.camel@huaweicloud.com>
-	 <20240209-giert-erlenholz-b131fa85ee36@brauner>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1707480776; c=relaxed/simple;
+	bh=AdZwYy03Z+RlRTB8+mojQI3HHtiCb/HCLs/tvdyQIvM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aHqHH3rH9QYe7ENfiW2NpDoVAzoOqDJbZV88t57wpVL2WFx/pXjdFeD3noZYqM1ff1pTmUtoA9OSIsCn6NFBN4fwOfSijwjsw58dcGKuIRoHVDQf1eV+AV3nn3+EQ6jUwuQRgTORR/NBgBCpABTtpXLBpgzjTiLdnUFckT83rPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UmmW1eAg; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-42a9f4935a6so14818211cf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 04:12:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707480770; x=1708085570; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lkWat1ZcPTFVPKXPMx1CEXUldoA1mGsayuRtblqmlJk=;
+        b=UmmW1eAgOO91pnqEX0K1EEPqOZgcUX12Zlv1m8moAlxuKnGhoSQusHZtmTK+EJ1RXr
+         CEjdO1DSGQ8weG3QCg8NAzhGrKUfDbU0gX6kL7h9zd9DFZFL0/NL5mWky3zUWsZACiRp
+         q8pZdUZ4qlynXmbLZ7zr9Fy4d2sLYBPEb1LiIO7OEXE6SMw0hcWvZ8dzwq1zq/rt35I8
+         8kckccE6ZNDzgY06O4Vm3ml6Y8KSnWKL4CxHe5yedFelaHX8tlpfJkrmpi04tc4GGO1M
+         vAwMTO5BtKfww39baj22LMnZtPbrLDxkTe7PqYRVesqbOxaLHsdTBdCmxQRZS3NHeebc
+         qEFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707480770; x=1708085570;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lkWat1ZcPTFVPKXPMx1CEXUldoA1mGsayuRtblqmlJk=;
+        b=ZLradOAA4nH59CltWhufwHvyq+kNgB4y342k47WIIovzpXt+ywXJV1V+NMR3+bGEJW
+         WXV8gQSj59l40qc6MHS8vzxzECIPC2XKKK/30HhPBle7C80GXciRWKFjILbuCnfHWOlL
+         VoCZB7Xzv1F9HDRCfeD/5oTd3fISJ7D7sxNSqwxLrvmk4MYeJ3XHYgUMmefTu63BskcQ
+         GJZJHIMmq9OosRdT0x2U0PeVza1O88fc62DnEYcf4bKyk5x1ZqYGhAfTwRFOrLJ2bOHm
+         XHedDcH1k3ikMuDDzDK0EgNpHZsrkvFx6LjwBOVOr6stmpuaP+NDRBwTmP2E8l8HRlp+
+         XFjg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtpFis30kWeUbwQaGSACWc1Eig/rmo4r7FYC005ba5CR1gmqzHMGqzPWCXF6vspLLtlQNcG46i4h7/UtsuJLGKlm3i9G00duAvLUuryA==
+X-Gm-Message-State: AOJu0YyaDSkpAIkWTjNOqAPbpzXvpcZSkhYC/6In+ALDF6XN/UEt2yiD
+	2Tp+hn/gUiJp+/8rHi3qMnL90wr8FenvftfA0+8Wsy/Wz5I6Uy43vLAuYR+L4JP2SUmKBNgzEF+
+	ZWZe5x6ygTxxtWT73UYZmRbz5C+y14ESiBsw=
+X-Google-Smtp-Source: AGHT+IGxFFCJiGiV+lPgtPbcOPBdZxC2rc/RmsKzMJFzznfYAgvnE1fa6mP/kziLRpD2rmHRlE05CkCFF6VE1E7Yt+I=
+X-Received: by 2002:a05:6214:5154:b0:68c:7f05:a42f with SMTP id
+ kh20-20020a056214515400b0068c7f05a42fmr902348qvb.18.1707480770200; Fri, 09
+ Feb 2024 04:12:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwAXBChtFMZlv1EoAg--.21619S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr4UAr1ftFWDuF4xKF17KFg_yoW8Kw4rpa
-	y5J3Z8GF4kGry7Cr9IvF90qFnYg392qFyUXrZxX34UArnFqrnI9F47Cr15uFyqqr1xGr10
-	vr429r9xWr1UArJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkYb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6x
-	AIw20EY4v20xvaj40_WFyUJVCq3wCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv
-	6xkF7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1c4S7UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAIBF1jj5Y3PwAAsh
+References: <20240208170603.2078871-1-amir73il@gmail.com> <20240208170603.2078871-10-amir73il@gmail.com>
+ <CAJfpegtcqPgb6zwHtg7q7vfC4wgo7YPP48O213jzfF+UDqZraw@mail.gmail.com>
+ <1be6f498-2d56-4c19-9f93-0678ad76e775@fastmail.fm> <f44c0101-0016-4f82-a02d-0dcfefbf4e96@fastmail.fm>
+In-Reply-To: <f44c0101-0016-4f82-a02d-0dcfefbf4e96@fastmail.fm>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 9 Feb 2024 14:12:38 +0200
+Message-ID: <CAOQ4uxi9X=a6mvmXXdrSYX-r5EUdVfRiGW0nwFj2ZZTzHQJ5jw@mail.gmail.com>
+Subject: Re: [PATCH v3 9/9] fuse: allow parallel dio writes with FUSE_DIRECT_IO_ALLOW_MMAP
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	Bernd Schubert <bschubert@ddn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-02-09 at 12:34 +0100, Christian Brauner wrote:
-> On Fri, Feb 09, 2024 at 11:46:16AM +0100, Roberto Sassu wrote:
-> > On Fri, 2024-02-09 at 11:12 +0100, Christian Brauner wrote:
-> > > On Mon, Jan 15, 2024 at 07:17:56PM +0100, Roberto Sassu wrote:
-> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > >=20
-> > > > In preparation to move IMA and EVM to the LSM infrastructure, intro=
-duce the
-> > > > file_post_open hook. Also, export security_file_post_open() for NFS=
-.
-> > > >=20
-> > > > Based on policy, IMA calculates the digest of the file content and
-> > > > extends the TPM with the digest, verifies the file's integrity base=
-d on
-> > > > the digest, and/or includes the file digest in the audit log.
-> > > >=20
-> > > > LSMs could similarly take action depending on the file content and =
-the
-> > > > access mask requested with open().
-> > > >=20
-> > > > The new hook returns a value and can cause the open to be aborted.
-> > > >=20
-> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > > ---
-> > > >  fs/namei.c                    |  2 ++
-> > > >  fs/nfsd/vfs.c                 |  6 ++++++
-> > > >  include/linux/lsm_hook_defs.h |  1 +
-> > > >  include/linux/security.h      |  6 ++++++
-> > > >  security/security.c           | 17 +++++++++++++++++
-> > > >  5 files changed, 32 insertions(+)
-> > > >=20
-> > > > diff --git a/fs/namei.c b/fs/namei.c
-> > > > index 71c13b2990b4..fb93d3e13df6 100644
-> > > > --- a/fs/namei.c
-> > > > +++ b/fs/namei.c
-> > > > @@ -3620,6 +3620,8 @@ static int do_open(struct nameidata *nd,
-> > > >  	error =3D may_open(idmap, &nd->path, acc_mode, open_flag);
-> > > >  	if (!error && !(file->f_mode & FMODE_OPENED))
-> > > >  		error =3D vfs_open(&nd->path, file);
-> > > > +	if (!error)
-> > > > +		error =3D security_file_post_open(file, op->acc_mode);
-> > >=20
-> > > What does it do for O_CREAT? IOW, we managed to create that thing and=
- we
-> > > managed to open that thing. Can security_file_post_open() and
-> > > ima_file_check() fail afterwards even for newly created files?
-> >=20
-> > $ strace touch test-file
-> > ...
-> > openat(AT_FDCWD, "test-file", O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, 066=
-6) =3D -1 EPERM (Operation not permitted)
->=20
-> Ah, meh. I was hoping IMA just wouldn't care about this case.
+On Fri, Feb 9, 2024 at 1:48=E2=80=AFPM Bernd Schubert
+<bernd.schubert@fastmail.fm> wrote:
+>
+>
+>
+> On 2/9/24 12:21, Bernd Schubert wrote:
+> >
+> >
+> > On 2/9/24 11:50, Miklos Szeredi wrote:
+> >> On Thu, 8 Feb 2024 at 18:09, Amir Goldstein <amir73il@gmail.com> wrote=
+:
+> >>
+> >>>  static int fuse_inode_get_io_cache(struct fuse_inode *fi)
+> >>>  {
+> >>> +       int err =3D 0;
+> >>> +
+> >>>         assert_spin_locked(&fi->lock);
+> >>> -       if (fi->iocachectr < 0)
+> >>> -               return -ETXTBSY;
+> >>> -       if (fi->iocachectr++ =3D=3D 0)
+> >>> -               set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
+> >>> -       return 0;
+> >>> +       /*
+> >>> +        * Setting the bit advises new direct-io writes to use an exc=
+lusive
+> >>> +        * lock - without it the wait below might be forever.
+> >>> +        */
+> >>> +       set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
+> >>> +       while (!err && fuse_is_io_cache_wait(fi)) {
+> >>> +               spin_unlock(&fi->lock);
+> >>> +               err =3D wait_event_killable(fi->direct_io_waitq,
+> >>> +                                         !fuse_is_io_cache_wait(fi))=
+;
+> >>> +               spin_lock(&fi->lock);
+> >>> +       }
+> >>> +       /*
+> >>> +        * Enter caching mode or clear the FUSE_I_CACHE_IO_MODE bit i=
+f we
+> >>> +        * failed to enter caching mode and no other caching open exi=
+sts.
+> >>> +        */
+> >>> +       if (!err)
+> >>> +               fi->iocachectr++;
+> >>> +       else if (fi->iocachectr <=3D 0)
+> >>> +               clear_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
+> >>
+> >> This seems wrong:  if the current task is killed, and there's anther
+> >> task trying to get cached open mode, then clearing
+> >> FUSE_I_CACHE_IO_MODE will allow new parallel writes, breaking this
+> >> logic.
+> >
+> > This is called holding a spin lock, another task cannot enter here?
+> > Neither can direct-IO, because it is also locked out. The bit helps DIO
+> > code to avoid trying to do parallel DIO without the need to take a spin
+> > lock. When DIO decides it wants to do parallel IO, it first has to get
+> > past fi->iocachectr < 0 - if there is another task trying to do cache
+> > IO, either DIO gets < 0 first and the other cache task has to wait, or
+> > cache tasks gets > 0 and dio will continue with the exclusive lock. Or
+> > do I miss something?
+>
+> Now I see what you mean, there is an unlock and another task might have a=
+lso already set the bit
+>
+> I think this should do
+>
+> diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
+> index acd0833ae873..7c22edd674cb 100644
+> --- a/fs/fuse/iomode.c
+> +++ b/fs/fuse/iomode.c
+> @@ -41,6 +41,8 @@ static int fuse_inode_get_io_cache(struct fuse_inode *f=
+i)
+>                 err =3D wait_event_killable(fi->direct_io_waitq,
+>                                           !fuse_is_io_cache_wait(fi));
+>                 spin_lock(&fi->lock);
+> +               if (!err)
+> +                       /* Another interrupted task might have unset it *=
+/
+> +                       set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
+>         }
+>         /*
+>          * Enter caching mode or clear the FUSE_I_CACHE_IO_MODE bit if we
 
-Actually it doesn't. I added code to artifically create the situation
-(to see what happens if a new LSM does that).
+I think this race can happen even if we remove killable_
+not sure - anyway, with fuse passthrough there is another error
+condition:
 
-Roberto
+        /*
+         * Check if inode entered passthrough io mode while waiting for par=
+allel
+         * dio write completion.
+         */
+        if (fuse_inode_backing(fi))
+                err =3D -ETXTBSY;
 
+But in this condition, all waiting tasks should abort the wait,
+so it does not seem a problem to clean the flag.
+
+Anyway, IMO it is better to set the flag before every wait and on
+success. Like below.
+
+Thanks,
+Amir.
+
+--- a/fs/fuse/iomode.c
++++ b/fs/fuse/iomode.c
+@@ -35,8 +35,8 @@ static int fuse_inode_get_io_cache(struct fuse_inode *fi)
+         * Setting the bit advises new direct-io writes to use an exclusive
+         * lock - without it the wait below might be forever.
+         */
+-       set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
+        while (!err && fuse_is_io_cache_wait(fi)) {
++               set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
+                spin_unlock(&fi->lock);
+                err =3D wait_event_killable(fi->direct_io_waitq,
+                                          !fuse_is_io_cache_wait(fi));
+@@ -53,8 +53,8 @@ static int fuse_inode_get_io_cache(struct fuse_inode *fi)
+         * Enter caching mode or clear the FUSE_I_CACHE_IO_MODE bit if we
+         * failed to enter caching mode and no other caching open exists.
+         */
+-       if (!err)
+-               fi->iocachectr++;
++       if (!err && fi->iocachectr++ =3D=3D 0)
++               set_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
+        else if (fi->iocachectr <=3D 0)
+                clear_bit(FUSE_I_CACHE_IO_MODE, &fi->state);
+        return err;
 
