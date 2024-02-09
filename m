@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-10901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2078A84F305
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 11:13:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 948D384F313
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 11:16:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60653B28D16
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 10:13:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EB15288A8B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 10:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404CE69943;
-	Fri,  9 Feb 2024 10:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63F56994A;
+	Fri,  9 Feb 2024 10:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gQjpBvPK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PblVL+e2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D66AA2A;
-	Fri,  9 Feb 2024 10:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E556B67E87;
+	Fri,  9 Feb 2024 10:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707473582; cv=none; b=alT/olZXHiCuESAvt0+UezaTE9wU5Qzc4UVhWPpM/RlxAFnWefVqCHRmsDPkYEG/XC4gE+NROvHjDn0bKRz7Z/2M37ytLrl9AAh4KDuC4wOAUN99tNfsyVwbO0kGBxKnTVgnLZQuyok59Z3K4w6Fuh4BOTSownQxtZWe3lNLcLw=
+	t=1707473765; cv=none; b=S0YsvEVnx/l62X2Rzy09U4UT4wkfplaD8BEsLat92l6IgpLye68LE80rQNlLserMXq8HryGoA2nVRCMdR0vKqDhI3nq5LzIRywfM6RpMA3egTGJAvfgNaIP1ypQwn7uCe0PJcV9BNUL/RslU30b10QCNZiUySQiP/wSlDAOjJtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707473582; c=relaxed/simple;
-	bh=H0y37gda2ZDnmJWj/UJIDPUg2JgDXz6/cSxRRvWmyOY=;
+	s=arc-20240116; t=1707473765; c=relaxed/simple;
+	bh=q8fR1D8+jl7lB6gqzYm90K9sVNvbh2Q3/zJ/S55QVss=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BImmXq9/C7mt8ryKnSsEahjnRZjkgpCWHyJDbV9KFVnTRRbeXxr00GTg7AHoCGRIzq50rYOuKcK2mgwEJrSS+E9jPFbyovTkL9pzWufHgzhFEbMw6dGbneUC38J8f8aCbzMuHtyCFQAPAYpzf1zolVApzBD5vhssnFv+JMn0mRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gQjpBvPK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A794BC433C7;
-	Fri,  9 Feb 2024 10:12:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gv/py/LWgqGmBCROB1W8NL8wmqak96QMvbg8I6QM3mguGEJiA0OEOxq8Nfx3/9WdiGjKpCKkSmR3OiqUM6TTcM+16a8dwIqsd8ggRVIUZENMlc2irOBQnUv0jOxCpC+RiLX6ru7i+tpS6fgpKmLyyEu9ZpoXfZNXQ3HC4zBCe0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PblVL+e2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0002C433C7;
+	Fri,  9 Feb 2024 10:15:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707473582;
-	bh=H0y37gda2ZDnmJWj/UJIDPUg2JgDXz6/cSxRRvWmyOY=;
+	s=k20201202; t=1707473764;
+	bh=q8fR1D8+jl7lB6gqzYm90K9sVNvbh2Q3/zJ/S55QVss=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gQjpBvPKCvzhpYFRJo8TGy9M5ZB/fjFlw/xS0ExMQuhsPsUbFvlrQexg8S5lXxFmq
-	 08A16PS6yvmjmuHAR8Y5qf5twkBHIeTt4LzWBFhSXIIvwwNUAI1Fnelpws+pLJmUeb
-	 v1E+3llJGdcYoCYWSx+7kHQD4lIPD7dQqwlqDWTCuCPn5RLRtLMEkpXyYAFRuiKSJm
-	 uEyCt3UvH5+2nCuX0CRVTvRmp7u3abJXC1G3JkGP6sgiZBSSUOXLguJf45J+yRPvKK
-	 sIqlbjAM7WL5MNaCWwzctcconq8T62POGa6bVnIy0DjFC1jlx/hgK2XPqHmrNPmRYj
-	 zdA3i3crniH/w==
-Date: Fri, 9 Feb 2024 11:12:52 +0100
+	b=PblVL+e2LpOmfBHti6Wm3KE2GCrizQbBpfvUqt+OYDSNEfihR+3XKMUdO/nQZX961
+	 mlRlxLgV+5ps3JUhVz0Q0wahDJfcvh1v0LY2w/NNu0uujJMNSv3S/1nbak/tMPrfu8
+	 9584RWL3h+JzxPO4gRkhagZjUOVTbza1ZpfYr99wtxAZUiwbaGDxMQWcNhfq37Txqm
+	 MdHtmCwkMIvfjiNcXbE6oI9oELUl+8FnmvbAo4VG4y4Hh/NnJalz2rAvVq3je0pocr
+	 DRaoz+/9K7LNvJAwP7WnyVb2sOgz6O8xXfNYiy5ywbRuBwHuqM1sK+qI04BiGYK2JD
+	 p9etu16D15kJw==
+Date: Fri, 9 Feb 2024 11:15:53 +0100
 From: Christian Brauner <brauner@kernel.org>
 To: Roberto Sassu <roberto.sassu@huaweicloud.com>
 Cc: viro@zeniv.linux.org.uk, chuck.lever@oracle.com, jlayton@kernel.org, 
@@ -52,12 +52,11 @@ Cc: viro@zeniv.linux.org.uk, chuck.lever@oracle.com, jlayton@kernel.org,
 	mic@digikod.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
 	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH v9 12/25] security: Introduce file_post_open hook
-Message-ID: <20240209-luftleer-jobangebote-6d6ab29b7191@brauner>
+	linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v9 13/25] security: Introduce file_release hook
+Message-ID: <20240209-latent-dachziegel-96a3a9663c7c@brauner>
 References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
- <20240115181809.885385-13-roberto.sassu@huaweicloud.com>
+ <20240115181809.885385-14-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,47 +65,45 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240115181809.885385-13-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20240115181809.885385-14-roberto.sassu@huaweicloud.com>
 
-On Mon, Jan 15, 2024 at 07:17:56PM +0100, Roberto Sassu wrote:
+On Mon, Jan 15, 2024 at 07:17:57PM +0100, Roberto Sassu wrote:
 > From: Roberto Sassu <roberto.sassu@huawei.com>
 > 
-> In preparation to move IMA and EVM to the LSM infrastructure, introduce the
-> file_post_open hook. Also, export security_file_post_open() for NFS.
+> In preparation for moving IMA and EVM to the LSM infrastructure, introduce
+> the file_release hook.
 > 
-> Based on policy, IMA calculates the digest of the file content and
-> extends the TPM with the digest, verifies the file's integrity based on
-> the digest, and/or includes the file digest in the audit log.
+> IMA calculates at file close the new digest of the file content and writes
+> it to security.ima, so that appraisal at next file access succeeds.
 > 
-> LSMs could similarly take action depending on the file content and the
-> access mask requested with open().
+> An LSM could implement an exclusive access scheme for files, only allowing
+> access to files that have no references.
 > 
-> The new hook returns a value and can cause the open to be aborted.
+> The new hook cannot return an error and cannot cause the operation to be
+> reverted.
 > 
 > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 > ---
->  fs/namei.c                    |  2 ++
->  fs/nfsd/vfs.c                 |  6 ++++++
+>  fs/file_table.c               |  1 +
 >  include/linux/lsm_hook_defs.h |  1 +
->  include/linux/security.h      |  6 ++++++
->  security/security.c           | 17 +++++++++++++++++
->  5 files changed, 32 insertions(+)
+>  include/linux/security.h      |  4 ++++
+>  security/security.c           | 11 +++++++++++
+>  4 files changed, 17 insertions(+)
 > 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 71c13b2990b4..fb93d3e13df6 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3620,6 +3620,8 @@ static int do_open(struct nameidata *nd,
->  	error = may_open(idmap, &nd->path, acc_mode, open_flag);
->  	if (!error && !(file->f_mode & FMODE_OPENED))
->  		error = vfs_open(&nd->path, file);
-> +	if (!error)
-> +		error = security_file_post_open(file, op->acc_mode);
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index de4a2915bfd4..c72dc75f2bd3 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -385,6 +385,7 @@ static void __fput(struct file *file)
+>  	eventpoll_release(file);
+>  	locks_remove_file(file);
+>  
+> +	security_file_release(file);
+>  	ima_file_free(file);
 
-What does it do for O_CREAT? IOW, we managed to create that thing and we
-managed to open that thing. Can security_file_post_open() and
-ima_file_check() fail afterwards even for newly created files?
+This has always been an extremely dicy hook in here and that's caused us
+issues before for stacking filesystems so I'm not enthusiastic about
+exposing this to all LSMs. So reluctantly,
+
+Acked-by: Christian Brauner <brauner@kernel.org>
 
