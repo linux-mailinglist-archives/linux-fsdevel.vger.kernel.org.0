@@ -1,139 +1,358 @@
-Return-Path: <linux-fsdevel+bounces-10870-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10871-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13BE784EEAB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 02:55:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A827284EECE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 03:10:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED949B233CD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 01:55:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DEB11F26B67
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 02:10:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466A81370;
-	Fri,  9 Feb 2024 01:55:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080C6139E;
+	Fri,  9 Feb 2024 02:10:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="PewTwzEb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OA+ybCGL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398D6A34
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 01:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674CFEA4
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 02:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707443721; cv=none; b=qhkSpR8qdmm6LGolz6N8BjXBsTFGNAmjcFOjzJUdLinLFn40Td41edR85wi8ilPA7vdSTg9fp+aTxcYB9WQdKnuyNqKNlhCf6OkXXVWXN6o8nEMTCUl910nBlkHrZ9RW+wS1cT6ihV54Iog8YducOq7hssUUA47nQPyR6b51ugc=
+	t=1707444603; cv=none; b=PIdwJ0XE6Bk7R77CvGIyhzAohFzGX4Ll4UcOGfUKs3ZRSyLIC4N5n1+ASf/mimw5FaNSD1e4ZCgbMjB+2XWgBVmJtDGZk9WRUKU7hR8kL57PdCDCH4UX9sqb4Rnjhw6MKFlX4sSY8/09BVX33/xlsNctluWsp4SSGG9LPXZCbsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707443721; c=relaxed/simple;
-	bh=km8RfSoIhq4OlQItyglFP30YRBjC2JQ86CUek4SLJFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tlgHCEvWGTIfiBWoaqrzcdG3Cl+uO6bMtUDm0htIK+k7L6/NlnGj0es7sP+ouK0RMarTCp5leUHirKcqX7KkpBh+dhD7WGqxElvVV4zZb36dRqQ9FwnV8uFw3ZrEyBQXyzs1q3+b0PR5vysUZaMKoOZ+dcejscxRddh+vEz2xYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=PewTwzEb; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1d932f6ccfaso3769695ad.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Feb 2024 17:55:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707443719; x=1708048519; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FPcxmfF1K+emjGX7/juChDlmt4cDFHRmhTmTnNlE/Ts=;
-        b=PewTwzEbHpz1Myll3pCkxUeLClRcyX0uqOX91Bmk8gPFOSn3PDOzb64LZrg2ruLpYC
-         MbPWWJNF0GS2r/r4BJXOsBJLOi7e+SC6j8L4JHOsSTyWV69oQUE4mR/OHm0DLaRhrubG
-         BY+QJorXARzhLIbdGVeHl2ogW0DLJaFZQVmK+J0pJBe+idBNh9QzYYh7AC09aRQkpgxK
-         KrVnM7OtFR/UK8+uT+IHkqRSqn4JV3qPvmiJvQfsOfakQZQ+c9dN1SDdhhMepO/dM8uk
-         DYfBcDlpNr7CPCMp0FluTD0d+gUJa6ErwYu4wHYrol7XikMtYQhMffkAJPNf1VCa2gVT
-         hbOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707443719; x=1708048519;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FPcxmfF1K+emjGX7/juChDlmt4cDFHRmhTmTnNlE/Ts=;
-        b=arFbg5I2VvnGQLqZ68LlbNYb7P/PQOzAVpjnVBd9BU9JhJcltqcYjCxxbKnf8DCKCv
-         hqXGfBkLElGCt2QBY0o0bNOVN+vuFqhDwtyhqLpI/ERwrHxHf7Wl8VNViGvNM8aBnGgf
-         8h6VXKNYa5MBCk4J5UF2V1f3fJhZBLNwvQDc/HTJ3yThS3JhOOzt5V6eM74R0YRrGA4f
-         4gP7mWL9D7WBwmAZy+rcYOmcUkyVBeDp4twAEsAI/bfUB0Gz+t7Jk1GGB9VHpjgsRz44
-         KKDeI4Rd2YVgv6f63uuUmSV0cbXfHCAO+fD1qlMC8CygdjKjJg26PC9Ky40x4Bp+P/aF
-         ameQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9ssDMXa43XjnjDct3bF2ptXGhTK8LzbGwDNptrsh23tG5FD4AzwWTXThcNC4OFCFNQbPBrnbe/KDwFqiDTSMJMj/FplKowBwMboyBrw==
-X-Gm-Message-State: AOJu0YzYNCHTqOn/LT0rdC9T+Majbauv2t7gscAr121jaGB2r2Pk33u9
-	NkmWZO9V1/XXZ19ISyBbkBMkqZKfy0WTnuGDvTSGof+cZKFylqzxThTh9/SJwHM=
-X-Google-Smtp-Source: AGHT+IGGQ//i5yw3BV9iZEZHf7YAhLEeHJnu7fbFVOuv6QJ6Q3i2u60pix7ahaQAHDgvGPyN99ChrQ==
-X-Received: by 2002:a17:903:40c7:b0:1d7:3067:aab5 with SMTP id t7-20020a17090340c700b001d73067aab5mr197967pld.57.1707443719552;
-        Thu, 08 Feb 2024 17:55:19 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU1PvnZbiSzchAIBR5d5DntiI+g6t6bp6Qdq9z31jaP4L/jxarBoPRNW5d+fcFZ0eWMk6rfe7NF1+jTu9kD9QccvyK0vfbpjx5xzZWHll0K3V17nWt87wHGkPe28UmC4RaTINg7WPROmJY3pRQCn69HstkGwG5hwU2pBTgBDhu3I3fMGyRWCfREIfZ0ZVdF
-Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
-        by smtp.gmail.com with ESMTPSA id kj11-20020a17090306cb00b001d8edfec673sm423161plb.214.2024.02.08.17.55.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Feb 2024 17:55:19 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rYG6m-003y41-2g;
-	Fri, 09 Feb 2024 12:55:16 +1100
-Date: Fri, 9 Feb 2024 12:55:16 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	lsf-pc <lsf-pc@lists.linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] tracing the source of errors
-Message-ID: <ZcWGBLGYzNWZC+ze@dread.disaster.area>
-References: <CAJfpegtw0-88qLjy0QDLyYFZEM7PJCG3R-mBMa9s8TNSVZmJTA@mail.gmail.com>
- <ZcP4GewZ9jPw5NbA@dread.disaster.area>
- <ZcT5540Bv7U8qoUa@casper.infradead.org>
+	s=arc-20240116; t=1707444603; c=relaxed/simple;
+	bh=eRU+btySBBf/pGfbLVhsX9184UgOj7DoBXE9c/WbYrw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KGF2Kfy+YmJfe8qNZ/5r+AaIz5ag5/uPbkUkU46K4BjDyKVV/i0zsUQgVlL7VLF3xlBg0i0R1T61j6JYU9PEqxkF+RZu4p/od2v03KFMIgqgQddWwX+EhjXFkLixZwaK30NOyzEG0PIXjrwp5ZltnOVNiKSimyakIprTxw0EAno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OA+ybCGL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71065C433C7;
+	Fri,  9 Feb 2024 02:10:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707444602;
+	bh=eRU+btySBBf/pGfbLVhsX9184UgOj7DoBXE9c/WbYrw=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=OA+ybCGL5b2KPcPfPPwFtzUF+PV8JpfcwhFTrg3fOiC25hqbqYOmwCWsQvdb+xqkA
+	 yXFbzX+at1HsdMbuv4mnBwypxC6ozeEtBlD3bhhWMGqJDE5kWluoeKg1A4fs4eQl9y
+	 orPuTCRvkGxGi3pXsChJCN51QzmSjuMmpr8dix7d2FeMyN2L0ULBO6U5ueEjCS6eqk
+	 shIurSIvuauYpmWGwI4/zXO4Trwga1X7meqsHY9rvpVYahc5dqsJoLrCOQ8C0/urGZ
+	 lw5QRQN8/UQsZWfA2xCZwd7wzJRbhlWXFNmh9K+bUvghKB89ayzWCfXVclF3Cusm1b
+	 VREUj6/58Zudw==
+Message-ID: <54dca606-e67f-4933-b8ca-a5e2095193ae@kernel.org>
+Date: Fri, 9 Feb 2024 11:10:00 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZcT5540Bv7U8qoUa@casper.infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] zonefs: convert zonefs to use the new mount api
+Content-Language: en-US
+To: Bill O'Donnell <bodonnel@redhat.com>, linux-fsdevel@vger.kernel.org
+References: <20240209000857.21040-1-bodonnel@redhat.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20240209000857.21040-1-bodonnel@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 08, 2024 at 03:57:27PM +0000, Matthew Wilcox wrote:
-> On Thu, Feb 08, 2024 at 08:37:29AM +1100, Dave Chinner wrote:
-> > ftrace using the function_graph tracer will emit the return values
-> > of the functions if you use it with the 'funcgraph-retval' option.
+On 2/9/24 09:08, Bill O'Donnell wrote:
+> Convert the zonefs filesystem to use the new mount API.
+> Tested using the zonefs test suite from:
+> https://github.com/damien-lemoal/zonefs-tools
 > 
-> OK, but that may not be fine grained enough.  Why is mmap() returning
-> -ENOMEM?
+> Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
+
+Thanks for doing this. I will run tests on this but I do have a few nits below.
+
+> ---
+>  fs/zonefs/super.c | 156 ++++++++++++++++++++++++++--------------------
+>  1 file changed, 90 insertions(+), 66 deletions(-)
 > 
-> unsigned long do_mmap(struct file *file, unsigned long addr,
-> ...
->        /* Careful about overflows.. */
->         len = PAGE_ALIGN(len);
->         if (!len)
->                 return -ENOMEM;
-> ...
->         /* Too many mappings? */
->         if (mm->map_count > sysctl_max_map_count)
->                 return -ENOMEM;
-> 
-> So it can distinguish between mmap() returning ENOMEM because
-> get_unmapped_area() returned ENOMEM and do_mmap() returning ENOMEM of
-> its own accord (right?),
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> index e6a75401677d..6b8ecd2e55b8 100644
+> --- a/fs/zonefs/super.c
+> +++ b/fs/zonefs/super.c
+> @@ -15,13 +15,13 @@
+>  #include <linux/writeback.h>
+>  #include <linux/quotaops.h>
+>  #include <linux/seq_file.h>
+> -#include <linux/parser.h>
+>  #include <linux/uio.h>
+>  #include <linux/mman.h>
+>  #include <linux/sched/mm.h>
+>  #include <linux/crc32.h>
+>  #include <linux/task_io_accounting_ops.h>
+> -
+> +#include <linux/fs_parser.h>
+> +#include <linux/fs_context.h>
 
-The call stack trace should tell you which function the error
-originated from, yes?
+Please keep the whiteline here.
 
-> but it can't tell you which of the above two
-> cases you hit.  Or can it?
+>  #include "zonefs.h"
+>  
+>  #define CREATE_TRACE_POINTS
+> @@ -460,58 +460,47 @@ static int zonefs_statfs(struct dentry *dentry, struct kstatfs *buf)
+>  }
+>  
+>  enum {
+> -	Opt_errors_ro, Opt_errors_zro, Opt_errors_zol, Opt_errors_repair,
+> -	Opt_explicit_open, Opt_err,
+> +	Opt_errors, Opt_explicit_open,
+>  };
+>  
+> -static const match_table_t tokens = {
+> -	{ Opt_errors_ro,	"errors=remount-ro"},
+> -	{ Opt_errors_zro,	"errors=zone-ro"},
+> -	{ Opt_errors_zol,	"errors=zone-offline"},
+> -	{ Opt_errors_repair,	"errors=repair"},
+> -	{ Opt_explicit_open,	"explicit-open" },
+> -	{ Opt_err,		NULL}
+> +struct zonefs_context {
+> +	unsigned long s_mount_opts;
+>  };
+>  
+> -static int zonefs_parse_options(struct super_block *sb, char *options)
+> -{
+> -	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> -	substring_t args[MAX_OPT_ARGS];
+> -	char *p;
+> -
+> -	if (!options)
+> -		return 0;
+> -
+> -	while ((p = strsep(&options, ",")) != NULL) {
+> -		int token;
+> +static const struct constant_table zonefs_param_errors[] = {
+> +	{"remount-ro",		ZONEFS_MNTOPT_ERRORS_RO},
+> +	{"zone-ro",		ZONEFS_MNTOPT_ERRORS_ZRO},
+> +	{"zone-offline",	ZONEFS_MNTOPT_ERRORS_ZOL},
+> +	{"repair", 		ZONEFS_MNTOPT_ERRORS_REPAIR},
+> +	{}
+> +};
+>  
+> -		if (!*p)
+> -			continue;
+> +static const struct fs_parameter_spec zonefs_param_spec[] = {
+> +	fsparam_enum	("errors",		Opt_errors, zonefs_param_errors),
+> +	fsparam_flag	("explicit-open",	Opt_explicit_open),
+> +	{}
+> +};
+>  
+> -		token = match_token(p, tokens, args);
+> -		switch (token) {
+> -		case Opt_errors_ro:
+> -			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+> -			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_RO;
+> -			break;
+> -		case Opt_errors_zro:
+> -			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+> -			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_ZRO;
+> -			break;
+> -		case Opt_errors_zol:
+> -			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+> -			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_ZOL;
+> -			break;
+> -		case Opt_errors_repair:
+> -			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+> -			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_REPAIR;
+> -			break;
+> -		case Opt_explicit_open:
+> -			sbi->s_mount_opts |= ZONEFS_MNTOPT_EXPLICIT_OPEN;
+> -			break;
+> -		default:
+> -			return -EINVAL;
+> -		}
+> +static int zonefs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> +{
+> +	struct zonefs_context *ctx = fc->fs_private;
+> +	struct fs_parse_result result;
+> +	int opt;
+> +
+> +	opt = fs_parse(fc, zonefs_param_spec, param, &result);
+> +	if (opt < 0)
+> +		return opt;
+> +
+> +	switch (opt) {
+> +	case Opt_errors:
+> +		ctx->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+> +		ctx->s_mount_opts |= result.uint_32;
+> +		break;
+> +	case Opt_explicit_open:
+> +		ctx->s_mount_opts |= ZONEFS_MNTOPT_EXPLICIT_OPEN;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+>  	}
+>  
+>  	return 0;
+> @@ -533,11 +522,19 @@ static int zonefs_show_options(struct seq_file *seq, struct dentry *root)
+>  	return 0;
+>  }
+>  
+> -static int zonefs_remount(struct super_block *sb, int *flags, char *data)
+> +static int zonefs_get_tree(struct fs_context *fc);
 
-Never used it, but it might be able to - the "sym-offset" option
-will display exact offsets of the function in the trace. If you then
-add "funcgraph-tail" it will emit the function being returned from.
-If the return location is generated with an offset indicating the
-actual return, then it might tell you the exact location.
+Why the forward definition ? It seems that you could define this function here
+directly.
 
-If it doesn't, then this would seem like a reasonable thing to add
-to ftrace - function return tracing with a filter to grab the return
-location when the return value is less than 0 seems exactly the sort
-of thing ftrace was intended to be used for...
+> +
+> +static int zonefs_reconfigure(struct fs_context *fc)
+>  {
+> -	sync_filesystem(sb);
+> +	struct zonefs_context *ctx = fc->fs_private;
+> +	struct super_block *sb = fc->root->d_sb;
+> +	struct zonefs_sb_info *sbi = sb->s_fs_info;
+>  
+> -	return zonefs_parse_options(sb, data);
+> +	sync_filesystem(fc->root->d_sb);
+> +	/* Copy new options from ctx into sbi. */
+> +	sbi->s_mount_opts = ctx->s_mount_opts;
+> +
+> +	return 0;
+>  }
+>  
+>  static int zonefs_inode_setattr(struct mnt_idmap *idmap,
+> @@ -1197,7 +1194,6 @@ static const struct super_operations zonefs_sops = {
+>  	.alloc_inode	= zonefs_alloc_inode,
+>  	.free_inode	= zonefs_free_inode,
+>  	.statfs		= zonefs_statfs,
+> -	.remount_fs	= zonefs_remount,
+>  	.show_options	= zonefs_show_options,
+>  };
+>  
+> @@ -1242,9 +1238,10 @@ static void zonefs_release_zgroup_inodes(struct super_block *sb)
+>   * sub-directories and files according to the device zone configuration and
+>   * format options.
+>   */
+> -static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
+> +static int zonefs_fill_super(struct super_block *sb, struct fs_context *fc)
+>  {
+>  	struct zonefs_sb_info *sbi;
+> +	struct zonefs_context *ctx = fc->fs_private;
+>  	struct inode *inode;
+>  	enum zonefs_ztype ztype;
+>  	int ret;
+> @@ -1281,21 +1278,17 @@ static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
+>  	sbi->s_uid = GLOBAL_ROOT_UID;
+>  	sbi->s_gid = GLOBAL_ROOT_GID;
+>  	sbi->s_perm = 0640;
+> -	sbi->s_mount_opts = ZONEFS_MNTOPT_ERRORS_RO;
+> -
+> +	sbi->s_mount_opts = ctx->s_mount_opts;
 
--Dave.
+Please keep the white line here...
+
+>  	atomic_set(&sbi->s_wro_seq_files, 0);
+>  	sbi->s_max_wro_seq_files = bdev_max_open_zones(sb->s_bdev);
+>  	atomic_set(&sbi->s_active_seq_files, 0);
+> +
+
+...and remove this one. The initializations here are "grouped" together byt
+"theme" (sbi standard stuff first and zone resource accounting in a second
+"paragraph". I like to keep it that way.
+
+>  	sbi->s_max_active_seq_files = bdev_max_active_zones(sb->s_bdev);
+>  
+>  	ret = zonefs_read_super(sb);
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = zonefs_parse_options(sb, data);
+> -	if (ret)
+> -		return ret;
+> -
+>  	zonefs_info(sb, "Mounting %u zones", bdev_nr_zones(sb->s_bdev));
+>  
+>  	if (!sbi->s_max_wro_seq_files &&
+> @@ -1356,12 +1349,6 @@ static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
+>  	return ret;
+>  }
+>  
+> -static struct dentry *zonefs_mount(struct file_system_type *fs_type,
+> -				   int flags, const char *dev_name, void *data)
+> -{
+> -	return mount_bdev(fs_type, flags, dev_name, data, zonefs_fill_super);
+> -}
+> -
+>  static void zonefs_kill_super(struct super_block *sb)
+>  {
+>  	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> @@ -1376,17 +1363,54 @@ static void zonefs_kill_super(struct super_block *sb)
+>  	kfree(sbi);
+>  }
+>  
+> +static void zonefs_free_fc(struct fs_context *fc)
+> +{
+> +	struct zonefs_context *ctx = fc->fs_private;
+
+I do not think you need this variable.
+
+> +
+> +	kfree(ctx);
+
+Is it safe to not set fc->fs_private to NULL ?
+
+> +}
+> +
+> +static const struct fs_context_operations zonefs_context_ops = {
+> +	.parse_param    = zonefs_parse_param,
+> +	.get_tree       = zonefs_get_tree,
+> +	.reconfigure	= zonefs_reconfigure,
+> +	.free           = zonefs_free_fc,
+> +};
+> +
+> +/*
+> + * Set up the filesystem mount context.
+> + */
+> +static int zonefs_init_fs_context(struct fs_context *fc)
+> +{
+> +	struct zonefs_context *ctx;
+> +
+> +	ctx = kzalloc(sizeof(struct zonefs_context), GFP_KERNEL);
+> +	if (!ctx)
+> +		return 0;
+
+return 0 ? Shouldn't this be "return -ENOMEM" ?
+
+> +	ctx->s_mount_opts = ZONEFS_MNTOPT_ERRORS_RO;
+> +	fc->ops = &zonefs_context_ops;
+> +	fc->fs_private = ctx;
+> +
+> +	return 0;
+> +}
+> +
+>  /*
+>   * File system definition and registration.
+>   */
+>  static struct file_system_type zonefs_type = {
+>  	.owner		= THIS_MODULE,
+>  	.name		= "zonefs",
+> -	.mount		= zonefs_mount,
+>  	.kill_sb	= zonefs_kill_super,
+>  	.fs_flags	= FS_REQUIRES_DEV,
+> +	.init_fs_context	= zonefs_init_fs_context,
+> +	.parameters	= zonefs_param_spec,
+
+Please re-align everything together.
+
+>  };
+>  
+> +static int zonefs_get_tree(struct fs_context *fc)
+> +{
+> +	return get_tree_bdev(fc, zonefs_fill_super);
+> +}
+> +
+>  static int __init zonefs_init_inodecache(void)
+>  {
+>  	zonefs_inode_cachep = kmem_cache_create("zonefs_inode_cache",
+
 -- 
-Dave Chinner
-david@fromorbit.com
+Damien Le Moal
+Western Digital Research
+
 
