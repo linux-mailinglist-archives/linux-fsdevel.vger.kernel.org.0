@@ -1,131 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-10886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B525484F275
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 10:42:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECEE84F271
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 10:42:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D98001C24597
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 09:42:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9641A1C24C1A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 09:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB1267C5B;
-	Fri,  9 Feb 2024 09:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rd10.de header.i=@rd10.de header.b="jpFo3RVz"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D651467E8A;
+	Fri,  9 Feb 2024 09:42:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [194.59.206.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D93E679FE;
-	Fri,  9 Feb 2024 09:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.59.206.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B2B66B52
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 09:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707471738; cv=none; b=ISZrBkDKoKuH7LA8sxMsCeZn52/PejX43JDA9bd/x6ZBk0e1d6b+xGvVqApvmmmjaHWlyAF2xfQVlK4LzKJtp3CGbpFNYYxEnZnR/rudRt63I0kU86NSy5O8BRqHbjd5TaqwkYWYVPG8okG0+L1hxhNMluGW8FTwmgAniBJRHho=
+	t=1707471725; cv=none; b=DzHjxmMOx5FirLm2tcDTgBccS5XX3wxBHmMQd6Nj6dB0KgFglT6JN2L6mpUbT52PuQrSZNMkZv9fPRMXkYsRCc8XVa/v/HIrSG7flyIrcfpguZiWjXr+mF9u7CdpASLfOXQtRvr8M2FeWVFXrDR60juEdal5o8t2Pab5bSsw1OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707471738; c=relaxed/simple;
-	bh=VpbPPD2abpD/atAVzzmAsiRhcyN5uyakVD9kGT25DM4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X0KQ1rQGGeXK3ptZiaMnDifyZVYqKSLCJ/HrT1g2YE/a2DoFFQlE6OGvSvYGkAqjXFT3ac5GRsXz4LGQMROKuf3kEVy4JtMd2qdxIRST+o2n7n01vExJ4UjToKYv4KoctDUIrjqa8DIhG/QPso1TAifbS7bkNFQtcwpDPZ9N/Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rd10.de; spf=pass smtp.mailfrom=rd10.de; dkim=pass (2048-bit key) header.d=rd10.de header.i=@rd10.de header.b=jpFo3RVz; arc=none smtp.client-ip=194.59.206.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rd10.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rd10.de
-Received: from relay02-mors.netcup.net (localhost [127.0.0.1])
-	by relay02-mors.netcup.net (Postfix) with ESMTPS id 4TWTQh6rnlz42xT;
-	Fri,  9 Feb 2024 10:42:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rd10.de; s=key2;
-	t=1707471725; bh=VpbPPD2abpD/atAVzzmAsiRhcyN5uyakVD9kGT25DM4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jpFo3RVz03t+mf4FQsAqZyZCLFr4Dh8llvo3/zRq4OZSK7LkRpBoQ9rQ6Fj+HbLB8
-	 sNswweQF4rqQODV6CUv/tQn135LdM77DFWQEURLtNm7eMYz5frxc91VGuk3xXP+eOw
-	 kQVTJJdRHqcm7MnPcrb/G1y17sUYWIo6hw+9beohbcyZdHyAoxD6M9jT72Dlt1ZDED
-	 xZSyflNjTx1SNuTi3bNg4EUgR861cgRS0drRvkr5n6cCyLCbH43RhsOqmW1k6k+6cP
-	 kHZLUPwHcuD0Ow2JvUce6eH6f3/orcnk/qKy0AcZOIIWbLK0EV9HQ5DUXr4nBVU2eM
-	 fC/d7HlG/vxpA==
-Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
-	by relay02-mors.netcup.net (Postfix) with ESMTPS id 4TWTQh6TBLz7wVm;
-	Fri,  9 Feb 2024 10:42:04 +0100 (CET)
-Received: from mx2eb1.netcup.net (unknown [10.243.12.53])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4TWTQg2mFpz8sbF;
-	Fri,  9 Feb 2024 10:42:03 +0100 (CET)
-Received: from [IPV6:2003:cf:cf12:7800:df32:47f6:a74f:aa6f] (p200300cfcf127800df3247f6a74faa6f.dip0.t-ipconnect.de [IPv6:2003:cf:cf12:7800:df32:47f6:a74f:aa6f])
-	by mx2eb1.netcup.net (Postfix) with ESMTPSA id 9D8E41016DF;
-	Fri,  9 Feb 2024 10:41:58 +0100 (CET)
-Authentication-Results: mx2eb1;
-        spf=pass (sender IP is 2003:cf:cf12:7800:df32:47f6:a74f:aa6f) smtp.mailfrom=rdiez-2006@rd10.de smtp.helo=[IPV6:2003:cf:cf12:7800:df32:47f6:a74f:aa6f]
-Received-SPF: pass (mx2eb1: connection is authenticated)
-Message-ID: <617c148c-4a18-49b4-974a-18f1f500358e@rd10.de>
-Date: Fri, 9 Feb 2024 10:41:58 +0100
+	s=arc-20240116; t=1707471725; c=relaxed/simple;
+	bh=HBblHBVK+T/pHGkEyVDd8ntNpVOP52/53m6DEgx70f8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=T0VUOQmkaawOIl55+939/MKfd+OZxS59piVizk2ODZzMGi1GKpil72hkC0RpexsCfQor8Q6pVO2pirDjGHGIaQZuKgOQzepjD3HtMxRTVSOLW1TGD9GguacHXw0sO99lj+RLu3fwMw4+h/CQ3W2rxKefpz7hMfJ9EVN1VVbPCZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7baa6cc3af2so77711539f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 01:42:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707471723; x=1708076523;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hkWlHeW+Ii/nHAjy7BeA1S7Bb1G242rO9yBCBU7fW6w=;
+        b=dgo7NamyOGaK0H9sO5aYsa94g2gQ7MDf4fFgUobMxMPfOOnC5BU1GmFuhmFOpxeJun
+         D/J3EoV/H3vLc5NLslhoXqxEbd6tg690hY3pZOkEJKaNpLKQwHQ3RzbZYFo0arzKq9IR
+         GIPvuAvVqMueTsTnrelR24bx+7G5eLSsT+b5kpG6ZzasST+AaFtrO/IlgHa9SLvG8qEg
+         h7ePC4LsAVLA5Y8uo5YsuGjeG+IpjWJRPpEhPUeRG7yMmeN20CLbUAzCFFsck4PPRizr
+         f/CXayrtpqUtHPYXf6g+aJFRvJLjg82UUF8QAIHalaqYUnSsvjiK5y8qasnNSnCXv49x
+         U2mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBbJbrah8FkJnP5RCQgjTBMR5dce4dpqBnhHZasKRFPglNgBM087nKFzesIRUm2t5Ufy0vk6xJcxO3WQHCx+jhHysrbkCzbnlRaeODnQ==
+X-Gm-Message-State: AOJu0Yw76ti2UnPmXZLjnkd1HcgOR8vQu1YaPh6If2d6bQfqEJ4wWMXc
+	UAPXQGbNOS6dce2wQXXjZZGXtcqvPotgtqpfQKBnjYuLF08S9FQBwABamResLfsJwvACCLZy6b3
+	lhZ6KOGEB+VG+FmI3IDRZg+6Q8dEo0NF/4qgFH67qkuNI4iA+n3sQC3I=
+X-Google-Smtp-Source: AGHT+IHPX85UTLCU5j1b0GQA9sPLwiT+M3atEFtbQzJofqSpI8Q0b3O6bOG9fHOfNkzfkIJ16bAKD32qqwCZip7LGiHzeUZ2whCU
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: SMB 1.0 broken between Kernel versions 6.2 and 6.5
-Content-Language: en-GB, es
-To: Matthew Ruffell <matthew.ruffell@canonical.com>
-Cc: dhowells@redhat.com, linux-cifs@vger.kernel.org,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Matthew Wilcox <willy@infradead.org>, Steve French <smfrench@gmail.com>
-References: 
- <CAH2r5mswELNv2Mo-aWNoq3fRUC7Rk0TjfY8kwdPc=JSEuZZObw@mail.gmail.com>
- <20240207034117.20714-1-matthew.ruffell@canonical.com>
- <CAH2r5mu04KHQV3wynaBSrwkptSE_0ARq5YU1aGt7hmZkdsVsng@mail.gmail.com>
- <CAH2r5msJ12ShH+ZUOeEg3OZaJ-OJ53-mCHONftmec7FNm3znWQ@mail.gmail.com>
- <CAH2r5muiod=thF6tnSrgd_LEUCdqy03a2Ln1RU40OMETqt2Z_A@mail.gmail.com>
- <CAH2r5mvzyxP7vHQVcT6ieP4NmXDAz2UqTT7G4yrxcVObkV_3YQ@mail.gmail.com>
- <CAKAwkKuJvFDFG7=bCYmj0jdMMhYTLUnyGDuEAubToctbNqT5CQ@mail.gmail.com>
- <CAH2r5mt9gPhUSka56yk28+nksw7=LPuS4VAMzGQyJEOfcpOc=g@mail.gmail.com>
- <CAKAwkKsm3dvM_zGtYR8VHzHyA_6hzCie3mhA4gFQKYtWx12ZXw@mail.gmail.com>
-From: "R. Diez" <rdiez-2006@rd10.de>
-In-Reply-To: 
- <CAKAwkKsm3dvM_zGtYR8VHzHyA_6hzCie3mhA4gFQKYtWx12ZXw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-PPP-Message-ID: <170747171908.17604.5646654263356021088@mx2eb1.netcup.net>
-X-Rspamd-Queue-Id: 9D8E41016DF
-X-Rspamd-Server: rspamd-worker-8404
-X-NC-CID: CT6WUtMWv2WOJl+6yF1RJndA/4CnXC/crGMNg0fY
+X-Received: by 2002:a05:6602:6427:b0:7c3:b6:ebb5 with SMTP id
+ gn39-20020a056602642700b007c300b6ebb5mr33233iob.2.1707471723280; Fri, 09 Feb
+ 2024 01:42:03 -0800 (PST)
+Date: Fri, 09 Feb 2024 01:42:03 -0800
+In-Reply-To: <00000000000075136e05fbf73d67@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000087bf8a0610efbdcc@google.com>
+Subject: Re: [syzbot] [hfs?] KASAN: slab-use-after-free Read in hfsplus_read_wrapper
+From: syzbot <syzbot+4b52080e97cde107939d@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hallo Matthew:
+syzbot suspects this issue was fixed by commit:
 
-> [...]
-> If the user does set their own "wsize", any value that is not a multiple of
-> PAGE_SIZE is dangerous right? Shouldn't we prevent the user from corrupting
-> their data (un)intentionally if they happen to specify a wrong value?
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-I already pointed that out in my e-mail dated 07.02.24 together with other potential issues:
+    fs: Block writes to mounted block devices
 
-https://www.spinics.net/lists/linux-cifs/msg30973.html
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15065d50180000
+start commit:   88035e5694a8 Merge tag 'hid-for-linus-2023121201' of git:/..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=be2bd0a72b52d4da
+dashboard link: https://syzkaller.appspot.com/bug?extid=4b52080e97cde107939d
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=148fa88ae80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15067cc6e80000
 
-I'll recap here:
+If the result looks correct, please mark the issue as fixed by replying with:
 
-1) If the user specifies a wsize which is not multiple of PAGE_SIZE, I would abort, instead of issuing a warning. Like you said, it's too risky, you will corrupt data and you may not see the warning in an automated environment where connections are scripted.
+#syz fix: fs: Block writes to mounted block devices
 
-2) Whether error or warning, I would state in the message that this is a temporary limitation. This "fix", which is more of a work-around, will probably be used for years, and people are going to think that the multiple of PAGE_SIZE is a permanent limitation in the client or the SMB protocol, which is not the case.
-
-3) I am worried that, if the server states 60 KiB, and the CIFS client rounds it up to 64 KiB, then the connection will no longer work, because the CIFS client is exceeding the maximum that the server stated.
-
-I wouldn't warn, I would just abort the connection in this case too.
-
-With an old Windows Server and a page size of 64 KiB (like some ARM architecture already has), it is no longer an unlikely scenario, it will certainly occur. In my case, the connection negotiated a wsize of 16580, even though the server should actually default to 16644 bytes(?). In any case, well below 64 KiB.
-
-
-Now that I mentioned misleading messages: The man page for mount.cifs, parameters rsize and wsize, talks about "maximum amount of data the kernel will request", and about the "maximum size that servers will accept". It is not clear that this is a maximum value for the negotiation phase, so 1) you do not have to worry about setting it too high on the Linux client, as the server will not reject it but negotiate it down if necessary (is that true?), and 2) the negotiation result may actually be much lower than the value you requested, but that is fine, as it wasn't really a hard request, but a soft petition.
-
-I suggest that you guys rephrase that man page, in order to prevent other people scratching their heads again.
-
-I would write something along this line: "Maximum amount of data that the kernel will negotiate for read [or write] requests in bytes. Maximum size that servers will negotiate is typically ...".
-
-By the way, the current option naming is quite misleading too. I am guessing that you can specify "wsize=xxx" and then "mount -l" will show "wsize=yyy", leaving you wondering why your value was not actually taken. Or, like it happened this time, other people automatically assume that I specified a wsize, when I didn't. I would have called these parameters "maxwsize" and "negotiatedwsize", to make the distinction clear. I wonder if it is not too late to change the name of the one listed by "mount -l", that is, the "negotiatedwsize".
-
-Regards,
-   rdiez
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
