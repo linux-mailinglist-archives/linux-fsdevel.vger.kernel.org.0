@@ -1,244 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-10899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BC5484F2F7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 11:11:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE4584F2FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 11:12:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B701C287313
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 10:11:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8C85B27114
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 10:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03762692FF;
-	Fri,  9 Feb 2024 10:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E7867E98;
+	Fri,  9 Feb 2024 10:12:21 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B11167E8A;
-	Fri,  9 Feb 2024 10:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D61067E84
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 10:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707473502; cv=none; b=cgCAp7LMlXR4Vc8cjfmMw8QGHoPm1HApeVJ0l3K4BOoxYyrJqkZLXXdiXL12n0hH64+v4LHjStyRI0btUAhOOHC/+CMciuPX4b8CEn4l6RMjiedN4K/hgDncJOPi7TgryPyyJurNYP6c0pGJkSZqAa0Bi0Jo9krGI3CK1K7A0Zs=
+	t=1707473541; cv=none; b=doiXPv2/g9JrPXTzOpD8UuJT5HInckK594vL6d8eD+p5kbKbtPnLcCnWoQuvaW19zKlQBVnOaDQbpUaPkvFoZFkpytfgiNd6Junn5WezYe+PE0UIlPQ5//9GSbXekvSdGPnyFzWLJCf7B+NZZ/X8gzQjhlU67Ka3gY8UxX+R5Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707473502; c=relaxed/simple;
-	bh=sJ+o92d/lwk1g9oSwisR/d0SlJfcelUCjwmiemb5sy8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=li/Z+NMcDh1qtOEXGLzwQuAv03OzPQwyVQOvh2tWae0SaiTi8d51j8qWYYkwydGSOKza+1V0JebFxGi5n5dDQuBDOThgSOHQxsag0l2eIDatonweTH1Whe38jnn5ikSFmTM9fLPIQf1/JO0yxMFzART0TNZgg4qnbmblGPKGFXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9739BDA7;
-	Fri,  9 Feb 2024 02:12:20 -0800 (PST)
-Received: from [10.1.37.16] (e122027.cambridge.arm.com [10.1.37.16])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C16773F5A1;
-	Fri,  9 Feb 2024 02:11:34 -0800 (PST)
-Message-ID: <e7125fcb-52b1-4942-9ae7-c85049e92e5c@arm.com>
-Date: Fri, 9 Feb 2024 10:11:32 +0000
+	s=arc-20240116; t=1707473541; c=relaxed/simple;
+	bh=V1uwFoAuKMTQPxxhZI98r3aoMxvLgJAxwcNl79gFRJc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nnGgDnw6su7MIsbo2eEAt3hFdhTmQljckifJkRnHkkXQHms2lmfWE/LiCSjRfzIAFgOLrrSnjrLLLHHgML/BEmDmKmkAEi9mRCQPV13khxV6YFXMACY91XAn3HTo4xMzUCJRSGPN8XpmJWWXj3nuiE29owhDwBkeMaMHC55y+4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-363ca646a1dso6354355ab.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 02:12:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707473539; x=1708078339;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7Zfviyanj+n+GMag83/XDKa0Ucf1btJFowkA8So62j8=;
+        b=qbfjPDK62Cc3SORiBGInXu0CVXQWLqNlKtdh19IwdJ14MS8/L7Mdzx8eob4QG1JXPY
+         PQuKnb4uwiHnDBxCreqGRs5wGG7W6Z3PWItp8mQpbAG4AVXb/kI8NvdlpT0V9zlLSu3A
+         jrqSCI3xl/4WSkHLl1yBH3aZFuMPEropCmP0ArDbNdrssimSdbJq6bxsYSVs/79HTSdC
+         6kcG1wGSUAHbVaAK11/rO29IkB3e88Gvm0zyzOkaJMmJXXkJkQ0tlqTPtSRCJHl2wi77
+         XLZlZglggHz3feZxygkmjX7M5GFHLhZUUfDmpUL3u7xAk9zXZ8mZt/Ia/MXOWYinCFpk
+         FmbQ==
+X-Gm-Message-State: AOJu0YxmL2IJ1QeoEPoUEj7oopaBAfGICdI2mI17+QpdJ3Pkg2Kc+UvI
+	oj+7xaoBIUs1KS7LZGPs78i64GGRv/1kgnC4vyIjH2s/1Oo697KB037OF2uFngzpuJ32hDG0Ol8
+	SWEroKM7LOYPSpjXyj0iRr7VOSj0AoWepqMqQbIkrgnHfoXUBDxfBJxObMg==
+X-Google-Smtp-Source: AGHT+IFJ5TU+63YYAhynzFO/S0mGmYE10rOeV1wkk7DtVwvP/05nAitkquB/nvqz1IZOiYYhftjCJkhngiXzq3vGZDlpr7Hk/G3J
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC gmem v1 4/8] KVM: x86: Add gmem hook for invalidating
- memory
-To: Michael Roth <michael.roth@amd.com>, kvm@vger.kernel.org,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- "tabba@google.com" <tabba@google.com>
-Cc: linux-coco@lists.linux.dev, linux-mm@kvack.org,
- linux-crypto@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, pbonzini@redhat.com, seanjc@google.com,
- isaku.yamahata@intel.com, ackerleytng@google.com, vbabka@suse.cz,
- ashish.kalra@amd.com, nikunj.dadhania@amd.com, jroedel@suse.de,
- pankaj.gupta@amd.com
-References: <20231016115028.996656-1-michael.roth@amd.com>
- <20231016115028.996656-5-michael.roth@amd.com>
-Content-Language: en-GB
-From: Steven Price <steven.price@arm.com>
-In-Reply-To: <20231016115028.996656-5-michael.roth@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a42:b0:363:ac48:e28d with SMTP id
+ u2-20020a056e021a4200b00363ac48e28dmr93372ilv.3.1707473538895; Fri, 09 Feb
+ 2024 02:12:18 -0800 (PST)
+Date: Fri, 09 Feb 2024 02:12:18 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000bfd4ca0610f02993@google.com>
+Subject: [syzbot] [fs?] KASAN: use-after-free Read in sysv_new_inode
+From: syzbot <syzbot+2e64084fa0c65e8706c9@syzkaller.appspotmail.com>
+To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 16/10/2023 12:50, Michael Roth wrote:
-> In some cases, like with SEV-SNP, guest memory needs to be updated in a
-> platform-specific manner before it can be safely freed back to the host.
-> Wire up arch-defined hooks to the .free_folio kvm_gmem_aops callback to
-> allow for special handling of this sort when freeing memory in response
-> to FALLOC_FL_PUNCH_HOLE operations and when releasing the inode, and go
-> ahead and define an arch-specific hook for x86 since it will be needed
-> for handling memory used for SEV-SNP guests.
+Hello,
 
-Hi all,
+syzbot found the following issue on:
 
-Arm CCA has a similar need to prepare/unprepare memory (granule
-delegate/undelegate using our terminology) before it is used for
-protected memory.
+HEAD commit:    23e11d031852 Add linux-next specific files for 20240205
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=11933ca8180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6f1d38572a4a0540
+dashboard link: https://syzkaller.appspot.com/bug?extid=2e64084fa0c65e8706c9
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-However I see a problem with the current gmem implementation that the
-"invalidations" are not precise enough for our RMI API. When punching a
-hole in the memfd the code currently hits the same path (ending in
-kvm_unmap_gfn_range()) as if a VMA is modified in the same range (for
-the shared version). The Arm CCA architecture doesn't allow the
-protected memory to be removed and refaulted without the permission of
-the guest (the memory contents would be wiped in this case).
+Unfortunately, I don't have any reproducer for this issue yet.
 
-One option that I've considered is to implement a seperate CCA ioctl to
-notify KVM whether the memory should be mapped protected. The
-invalidations would then be ignored on ranges that are currently
-protected for this guest.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b4e82c0f5cca/disk-23e11d03.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/018dac30c4d4/vmlinux-23e11d03.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ee21a2f37a73/bzImage-23e11d03.xz
 
-This 'solves' the problem nicely except for the case where the VMM
-deliberately punches holes in memory which the guest is using.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2e64084fa0c65e8706c9@syzkaller.appspotmail.com
 
-The issue in this case is that there's no way of failing the punch hole
-operation - we can detect that the memory is in use and shouldn't be
-freed, but this callback doesn't give the opportunity to actually block
-the freeing of the memory.
+==================================================================
+BUG: KASAN: use-after-free in sysv_new_inode+0xfdd/0x1170 fs/sysv/ialloc.c:153
+Read of size 2 at addr ffff88803b1f61ce by task syz-executor.4/7277
 
-Sadly there's no easy way to map from a physical page in a gmem back to
-which VM (and where in the VM) the page is mapped. So actually ripping
-the page out of the appropriate VM isn't really possible in this case.
+CPU: 1 PID: 7277 Comm: syz-executor.4 Not tainted 6.8.0-rc3-next-20240205-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1e7/0x2e0 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ sysv_new_inode+0xfdd/0x1170 fs/sysv/ialloc.c:153
+ sysv_mknod+0x4e/0xe0 fs/sysv/namei.c:53
+ lookup_open fs/namei.c:3494 [inline]
+ open_last_lookups fs/namei.c:3563 [inline]
+ path_openat+0x1425/0x3240 fs/namei.c:3793
+ do_filp_open+0x235/0x490 fs/namei.c:3823
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1404
+ do_sys_open fs/open.c:1419 [inline]
+ __do_sys_openat fs/open.c:1435 [inline]
+ __se_sys_openat fs/open.c:1430 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1430
+ do_syscall_64+0xfb/0x240
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+RIP: 0033:0x7f86a7c7dda9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f86a8a900c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f86a7dabf80 RCX: 00007f86a7c7dda9
+RDX: 000000000000275a RSI: 0000000020000040 RDI: ffffffffffffff9c
+RBP: 00007f86a7cca47a R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f86a7dabf80 R15: 00007fff47892ea8
+ </TASK>
 
-How is this situation handled on x86? Is it possible to invalidate and
-then refault a protected page without affecting the memory contents? My
-guess is yes and that is a CCA specific problem - is my understanding
-correct?
+The buggy address belongs to the physical page:
+page:ffffea0000ec7d80 refcount:0 mapcount:0 mapping:0000000000000000 index:0x1 pfn:0x3b1f6
+flags: 0xfff80000000000(node=0|zone=1|lastcpupid=0xfff)
+page_type: 0xffffffff()
+raw: 00fff80000000000 dead000000000100 dead000000000122 0000000000000000
+raw: 0000000000000001 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as freed
+page last allocated via order 0, migratetype Movable, gfp_mask 0x141cca(GFP_HIGHUSER_MOVABLE|__GFP_COMP|__GFP_WRITE), pid 16881, tgid 16881 (syz-executor.3), ts 1415422682739, free_ts 1421164748730
+ set_page_owner include/linux/page_owner.h:31 [inline]
+ post_alloc_hook+0x1ea/0x210 mm/page_alloc.c:1539
+ prep_new_page mm/page_alloc.c:1546 [inline]
+ get_page_from_freelist+0x34eb/0x3680 mm/page_alloc.c:3353
+ __alloc_pages+0x256/0x680 mm/page_alloc.c:4609
+ alloc_pages_mpol+0x3e8/0x680 mm/mempolicy.c:2263
+ alloc_pages mm/mempolicy.c:2334 [inline]
+ folio_alloc+0x12b/0x330 mm/mempolicy.c:2341
+ filemap_alloc_folio+0xdf/0x500 mm/filemap.c:975
+ __filemap_get_folio+0x431/0xbc0 mm/filemap.c:1919
+ ext4_da_write_begin+0x5b9/0xa50 fs/ext4/inode.c:2885
+ generic_perform_write+0x322/0x640 mm/filemap.c:3921
+ ext4_buffered_write_iter+0xc6/0x350 fs/ext4/file.c:299
+ ext4_file_write_iter+0x1de/0x1a10
+ __kernel_write_iter+0x435/0x8c0 fs/read_write.c:523
+ dump_emit_page fs/coredump.c:888 [inline]
+ dump_user_range+0x46d/0x910 fs/coredump.c:915
+ elf_core_dump+0x3d5e/0x4630 fs/binfmt_elf.c:2077
+ do_coredump+0x1bab/0x2b50 fs/coredump.c:764
+ get_signal+0x146b/0x1850 kernel/signal.c:2882
+page last free pid 16881 tgid 16881 stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1140 [inline]
+ free_unref_page_prepare+0x968/0xa90 mm/page_alloc.c:2388
+ free_unref_page_list+0x5a3/0x850 mm/page_alloc.c:2574
+ release_pages+0x2744/0x2a80 mm/swap.c:1042
+ __folio_batch_release+0x84/0x100 mm/swap.c:1062
+ folio_batch_release include/linux/pagevec.h:83 [inline]
+ truncate_inode_pages_range+0x457/0xf70 mm/truncate.c:362
+ ext4_evict_inode+0x21c/0xf30 fs/ext4/inode.c:193
+ evict+0x2a8/0x630 fs/inode.c:666
+ __dentry_kill+0x20d/0x630 fs/dcache.c:603
+ dput+0x19f/0x2b0 fs/dcache.c:845
+ __fput+0x678/0x8a0 fs/file_table.c:384
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0xa1b/0x27e0 kernel/exit.c:878
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1027
+ get_signal+0x176e/0x1850 kernel/signal.c:2896
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:310
+ exit_to_user_mode_loop kernel/entry/common.c:105 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ irqentry_exit_to_user_mode+0x79/0x280 kernel/entry/common.c:225
 
-My current thoughts for CCA are one of three options:
+Memory state around the buggy address:
+ ffff88803b1f6080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff88803b1f6100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>ffff88803b1f6180: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                                              ^
+ ffff88803b1f6200: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ ffff88803b1f6280: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
 
-1. Represent shared and protected memory as two separate memslots. This
-matches the underlying architecture more closely (the top address bit is
-repurposed as a 'shared' flag), but I don't like it because it's a
-deviation from other CoCo architectures (notably pKVM).
 
-2. Allow punch-hole to fail on CCA if the memory is mapped into the
-guest's protected space. Again, this is CCA being different and also
-creates nasty corner cases where the gmem descriptor could have to
-outlive the VMM - so looks like a potential source of memory leaks.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-3. 'Fix' the invalidation to provide more precise semantics. I haven't
-yet prototyped it but it might be possible to simply provide a flag from
-kvm_gmem_invalidate_begin specifying that the invalidation is for the
-protected memory. KVM would then only unmap the protected memory when
-this flag is set (avoiding issues with VMA updates causing spurious unmaps).
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Fairly obviously (3) is my preferred option, but it relies on the
-guarantees that the "invalidation" is actually a precise set of
-addresses where the memory is actually being freed.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Comments, thoughts, objections welcome!
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Steve
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-> Signed-off-by: Michael Roth <michael.roth@amd.com>
-> ---
->  arch/x86/include/asm/kvm-x86-ops.h |  1 +
->  arch/x86/include/asm/kvm_host.h    |  1 +
->  arch/x86/kvm/x86.c                 |  7 +++++++
->  include/linux/kvm_host.h           |  4 ++++
->  virt/kvm/Kconfig                   |  4 ++++
->  virt/kvm/guest_memfd.c             | 14 ++++++++++++++
->  6 files changed, 31 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/kvm-x86-ops.h b/arch/x86/include/asm/kvm-x86-ops.h
-> index 0c113f42d5c7..f1505a5fa781 100644
-> --- a/arch/x86/include/asm/kvm-x86-ops.h
-> +++ b/arch/x86/include/asm/kvm-x86-ops.h
-> @@ -135,6 +135,7 @@ KVM_X86_OP(complete_emulated_msr)
->  KVM_X86_OP(vcpu_deliver_sipi_vector)
->  KVM_X86_OP_OPTIONAL_RET0(vcpu_get_apicv_inhibit_reasons);
->  KVM_X86_OP_OPTIONAL_RET0(gmem_prepare)
-> +KVM_X86_OP_OPTIONAL(gmem_invalidate)
->  
->  #undef KVM_X86_OP
->  #undef KVM_X86_OP_OPTIONAL
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 66fc89d1858f..dbec74783f48 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1754,6 +1754,7 @@ struct kvm_x86_ops {
->  	unsigned long (*vcpu_get_apicv_inhibit_reasons)(struct kvm_vcpu *vcpu);
->  
->  	int (*gmem_prepare)(struct kvm *kvm, kvm_pfn_t pfn, gfn_t gfn, int max_order);
-> +	void (*gmem_invalidate)(kvm_pfn_t start, kvm_pfn_t end);
->  };
->  
->  struct kvm_x86_nested_ops {
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 33a4cc33d86d..0e95c3a95e59 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -13308,6 +13308,13 @@ int kvm_arch_gmem_prepare(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn, int max_ord
->  }
->  #endif
->  
-> +#ifdef CONFIG_HAVE_KVM_GMEM_INVALIDATE
-> +void kvm_arch_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end)
-> +{
-> +	static_call_cond(kvm_x86_gmem_invalidate)(start, end);
-> +}
-> +#endif
-> +
->  int kvm_spec_ctrl_test_value(u64 value)
->  {
->  	/*
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index c7f82c2f1bcf..840a5be5962a 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -2429,4 +2429,8 @@ static inline int kvm_gmem_get_pfn(struct kvm *kvm,
->  int kvm_arch_gmem_prepare(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn, int max_order);
->  #endif
->  
-> +#ifdef CONFIG_HAVE_KVM_GMEM_INVALIDATE
-> +void kvm_arch_gmem_invalidate(kvm_pfn_t start, kvm_pfn_t end);
-> +#endif
-> +
->  #endif
-> diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
-> index 992cf6ed86ef..7fd1362a7ebe 100644
-> --- a/virt/kvm/Kconfig
-> +++ b/virt/kvm/Kconfig
-> @@ -113,3 +113,7 @@ config KVM_GENERIC_PRIVATE_MEM
->  config HAVE_KVM_GMEM_PREPARE
->         bool
->         depends on KVM_PRIVATE_MEM
-> +
-> +config HAVE_KVM_GMEM_INVALIDATE
-> +       bool
-> +       depends on KVM_PRIVATE_MEM
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index 72ff8b7b31d5..b4c4df259fb8 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -369,12 +369,26 @@ static int kvm_gmem_error_page(struct address_space *mapping, struct page *page)
->  	return MF_DELAYED;
->  }
->  
-> +#ifdef CONFIG_HAVE_KVM_GMEM_INVALIDATE
-> +static void kvm_gmem_free_folio(struct folio *folio)
-> +{
-> +	struct page *page = folio_page(folio, 0);
-> +	kvm_pfn_t pfn = page_to_pfn(page);
-> +	int order = folio_order(folio);
-> +
-> +	kvm_arch_gmem_invalidate(pfn, pfn + (1ul << order));
-> +}
-> +#endif
-> +
->  static const struct address_space_operations kvm_gmem_aops = {
->  	.dirty_folio = noop_dirty_folio,
->  #ifdef CONFIG_MIGRATION
->  	.migrate_folio	= kvm_gmem_migrate_folio,
->  #endif
->  	.error_remove_page = kvm_gmem_error_page,
-> +#ifdef CONFIG_HAVE_KVM_GMEM_INVALIDATE
-> +	.free_folio = kvm_gmem_free_folio,
-> +#endif
->  };
->  
->  static int kvm_gmem_getattr(struct mnt_idmap *idmap, const struct path *path,
-
+If you want to undo deduplication, reply with:
+#syz undup
 
