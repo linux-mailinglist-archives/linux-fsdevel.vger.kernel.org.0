@@ -1,91 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-11028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11030-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FC684FF4D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 22:57:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02D3850013
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 23:36:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF8E52813E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 21:57:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 055DCB2D7C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 22:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A4720DE8;
-	Fri,  9 Feb 2024 21:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A82374DE;
+	Fri,  9 Feb 2024 22:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="SB+99+Bj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D862D294
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 21:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A123F374D4;
+	Fri,  9 Feb 2024 22:32:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707515846; cv=none; b=R0iuDaSN6rPtrGhG437XGxKULnq99BwxC2U4wOltFnXv84Sb9+bJTonDRuT+/HjO2E8/ynvFV6mwFLjLNwqRMfmOXF6M8Y4/KqsXbzjTNKcaoWcj4JFoYEhE6mAbUaHQGdLGcTao0bfFeG26EKrrSm+thmRqETPiwx/XVgNqKO0=
+	t=1707517975; cv=none; b=R3bqkVkqHF8Xt5d5g4Y08/wydqBBwbbZCVohU620ygH4Nvv0n7l6tllF2/ABuQi9jUXnj3069bP9i9b4sqATlBe429dP5H3oStCSpFNlwwVeGWRExDj7dWSMVSmclNO0NNzCWV7O5+VWuVagiUItB45nn0MoLBewVmqcLM74Rc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707515846; c=relaxed/simple;
-	bh=c0mfDbADGEw9TbZGVrQJOrXbLsG3BFBcmUOmUynfdvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X65AdnsulpnxAI8kqjkZghGqOG6DF0vd/OLyItfJ2lMhU6o1NXe14MwJuYMBiHeIIitg0pYGU8b6XFGifI0jqYFZN7Zt54N6PZxFjAxrNoOjhMEE8qHE6INOdEiGxvTD2u4YwKQxlf87hQ4Jpaoe2d5QvNpcRD+kSPCVY34G/lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1d72f71f222so12650375ad.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 13:57:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707515844; x=1708120644;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=c0mfDbADGEw9TbZGVrQJOrXbLsG3BFBcmUOmUynfdvs=;
-        b=NotyswZlcRl+0YGWYE7wm+rflSDicP4vqSsT41uNmASflL610fQHxjawGMtubYN7xQ
-         krCRykeeBlda2AxekK6nVBat5s1i8GHwmPOgmceCexbpckkrc5Buu9x9j9xhimwWU4nM
-         UcMFXIHpib2upsNj6rlxjrozdf7t8AsxI67bS9vtM0mQs5BuCmNFjWKz/H/3R1q/woUD
-         25uajCcijxbGube66AWYgfxTR7VKHA0yKYuvHT5UNYPTpluYAZ/km/Ew1BiHBUPc5BT1
-         puo42rnu7vLA3xfOBoD9U7O91v9uOdNZWfdZaJumBDYOePKGrsEKEWyki4vwIlMZgprK
-         IMpA==
-X-Gm-Message-State: AOJu0YzmwR7Vk5sXhYCioETf7UHoFrCunQVydamWP8KBjG0zX4RGVWZq
-	iEfW3I2gFxRTenzJHDjHkEhQnuk2YX6i+PQrTaQesybvXQTu2qcj
-X-Google-Smtp-Source: AGHT+IHWWAFPB+A28ZKHS5O/A1ePPYyZFhQ6ddgiUGsMTIHeFtkmpCkT70lvY+e9ay/GIsjSOiedtQ==
-X-Received: by 2002:a17:902:ce92:b0:1d9:542c:ebf9 with SMTP id f18-20020a170902ce9200b001d9542cebf9mr632733plg.45.1707515844348;
-        Fri, 09 Feb 2024 13:57:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUNG/f6rrAkIq1rnZlsLJ3QjGUigjwUyiCzdiu4iba/w/nqgUW3ls4BvRzmxdTM3Lc3JsWLDDymO2g/ukQSpVKCCcPGlM8Ot2k7OUQQK44OOggm9fVBq+qTiOW0oUzgEoN9cP0qUWHou234H2S5aV2fEto=
-Received: from ?IPV6:2620:0:1000:8411:a246:a93a:6012:6a43? ([2620:0:1000:8411:a246:a93a:6012:6a43])
-        by smtp.gmail.com with ESMTPSA id ko7-20020a17090307c700b001d94a3f3987sm1950121plb.184.2024.02.09.13.57.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Feb 2024 13:57:23 -0800 (PST)
-Message-ID: <8e6759b1-15da-40b7-85a5-7c6ae91d51e5@acm.org>
-Date: Fri, 9 Feb 2024 13:57:22 -0800
+	s=arc-20240116; t=1707517975; c=relaxed/simple;
+	bh=mxSQgiHlybAgyETmfC8M0E9iRnzlwV0Vzk4GIBsvgE4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M+8QGgqDGdNnHFemXxmr0UPwgJRQurvYuf7rfGWWg3sL0Y8Xy4LdoktXJcky+vRzMTVpoNLseNlxm2cCG/TgQVNDkeM2yIX/MV3+rJfakdsM2wLmsjJ5j+6vW0eLpA+2QKYoJthGWZN/gIMU/IQhR5naaN+7B6b6396imP/dUyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=SB+99+Bj; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ih75kBvK/GaZxC3xY7qa2xlO0zPuURVDit2B4aob+Sc=; b=SB+99+BjB6SVTMennKxfT0fztH
+	qnQHHc/0LvkRuITPICY+ULSUjunc8RzJItWGx4rT0R8b9y4FC2nrpBdEhBGKfuTsqIOGLOLsa1zaw
+	iZsYzElXPPdq/OYxcC1apUrENn6Bc/nonMZhqrQgNzgq+Z3+aF9xN5FRjVfFMJFLrjiXIr9pvN7QX
+	cRSLX45xdC068DZ0LsnKnmKPZEDhc5cxvIWtkryWNNiIqRcnBYkz3P+D/OQvmJO/5NsyUE+xKA+yz
+	aIm+9nRq0dwhZoidTH2hKzfZi5ETI8UWUjhjfLjnvTQmU84HwCF7kvbrhNSU+vPXzxTEjB5lvz6ab
+	yKvcpohA==;
+Received: from [179.234.233.159] (helo=morissey..)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1rYZQ9-00FjSP-9d; Fri, 09 Feb 2024 23:32:33 +0100
+From: =?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>
+To: Asahi Lina <lina@asahilina.net>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	=?UTF-8?q?Ma=C3=ADra=20Canal?= <mcanal@igalia.com>
+Subject: [PATCH v7 0/2] rust: xarray: Add an abstraction for XArray
+Date: Fri,  9 Feb 2024 19:31:06 -0300
+Message-ID: <20240209223201.2145570-2-mcanal@igalia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/hfsplus: wrapper.c: fix kernel-doc warnings
-Content-Language: en-US
-To: Randy Dunlap <rdunlap@infradead.org>, linux-fsdevel@vger.kernel.org
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>
-References: <20231206024317.31020-1-rdunlap@infradead.org>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20231206024317.31020-1-rdunlap@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 12/5/23 18:43, Randy Dunlap wrote:
-> - * @op: direction of I/O
-> - * @op_flags: request op flags
-> + * @opf: request op flags
+This abstraction is part of the set of dependencies I need to upstream
+rustgem, a virtual GEM provider driver in the DRM [1]. Also, this
+abstraction will be useful for the upstreaming process of the drm/asahi
+driver.
 
-(just noticed this patch)
+Best Regards,
+- Maíra
 
-The new comment is worse than the original comments. This would be a
-better explanation of the 'opf' argument:
+Changelog
+=========
 
-+ * @opf: I/O operation type and flags
+v1 -> v2: https://lore.kernel.org/r/20230224-rust-xarray-v1-1-80f0904ce5d3@asahilina.net
 
-Thanks,
+- Added Pin requirement for all XArray operations, to close a
+  soundness hole due to the lock in the XArray (locks are not safe to
+  move while locked). Creation does not require pinning in place, since
+  the lock cannot be acquired at that point.
+- Added safety note to Drop impl about why we don't need to do the lock
+  unlock dance to ensure soundness in case of a dropped lock guard.
+- Downstream drm/asahi driver was also rebased on this version to prove
+  it works (previously it was still on a pre-v1 version).
+- This still depends on the Error series (v1). v2 of that will need a
+  trivial rename of Error::from_kernel_errno -> Error::from_errno. If
+  this version of XArray ends up looking good, I'll send a trivial v4 of
+  XArray with the rename, after sending the v2 of the Error series.
 
-Bart.
+v2 -> v3: https://lore.kernel.org/r/20230224-rust-xarray-v2-1-4eeb0134944c@asahilina.net
+
+- Updated to the error v2/v3 series API.
+- Renamed `err` to `ret` for consistency with the other instance.
+
+v3 -> v4: https://lore.kernel.org/rust-for-linux/20230224-rust-xarray-v3-1-04305b1173a5@asahilina.net/
+
+- Rebase on top of rust-next.
+
+v4 -> v5: https://lore.kernel.org/rust-for-linux/20231126131210.1384490-1-mcanal@igalia.com/T/
+
+- Use Gary's suggestion for the Deref trait - no unsafe code! (Benno Lossin)
+- Use NonNull (Benno Lossin)
+- Not spelling out the lifetimes (Benno Lossin)
+- Change XArray invariants (Benno Lossin)
+- Add all SAFETY comments (Benno Lossin)
+- Use `kernel::error::to_result` (Benno Lossin)
+- s/alloc_limits/alloc_limits_opt (Benno Lossin)
+- Split unsafe block (Benno Lossin)
+- Make error handling of the function `alloc_limits_opt` through `ScopeGuard` (Benno Lossin)
+- Use `ScopeGuard` in the function `get` (Benno Lossin)
+
+v5 -> v6: https://lore.kernel.org/rust-for-linux/20231201195300.1329092-1-mcanal@igalia.com/T/
+
+- Update constants to the new format (RUST_CONST_HELPER)
+- Add invariant for `self.0` being a pointer derived from `T::from_foreign` (Benno Lossin)
+- Fix the place of the INVARIANT comments (Benno Lossin)
+- Use the Pin-Init API (Benno Lossin)
+- Remove PhantomPinned from XArray (Benno Lossin)
+- Add new requirements for calling `xa_unlock()` (Benno Lossin)
+- Improve SAFETY comments (Benno Lossin)
+- Split unsafe block (Benno Lossin)
+- s/alloc_limits_opt/insert_between (Benno Lossin)
+- Specify the target type of the cast (Andreas Hindborg/Trevor Gross)
+- Guarantee that T is 4-byte aligned (Andreas Hindborg)
+- Add code examples in the code (Boqun Feng)
+
+v6 -> v7: https://lore.kernel.org/rust-for-linux/20240116151728.370238-1-mcanal@igalia.com/T/
+
+- Change the INVARIANT from `Guard` (Boqun Feng)
+- Change the INVARIANT from `XArray` (Boqun Feng)
+- Change INVARIANT to # Invariant (Benno Lossin)
+- Move XArray definition to the top of the file (Benno Lossin)
+- Show structs from examples (Benno Lossin)
+- Import XArray directly (Benno Lossin)
+- Adjust some SAFETY comments (Benno Lossin & Alice Ryhl)
+- Reestructure the NonNull block (Alice Ryhl)
+- Create method `to_index()` (Alice Ryhl)
+- Use `drop(T::from_foreign(new))` (Alice Ryhl)
+- Both Sync and Send requires Send (Alice Ryhl)
+- Add FOREIGN_ALIGN to trait ForeignOwnable (Alice Ryhl)
+
+[1] https://github.com/mairacanal/linux/pull/11
+
+Asahi Lina (1):
+  rust: xarray: Add an abstraction for XArray
+
+Maíra Canal (1):
+  rust: types: add FOREIGN_ALIGN to ForeignOwnable
+
+ rust/bindings/bindings_helper.h |  17 ++
+ rust/helpers.c                  |  37 +++
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/sync/arc.rs         |   2 +
+ rust/kernel/types.rs            |   7 +
+ rust/kernel/xarray.rs           | 396 ++++++++++++++++++++++++++++++++
+ 6 files changed, 460 insertions(+)
+ create mode 100644 rust/kernel/xarray.rs
+
+--
+2.43.0
+
 
