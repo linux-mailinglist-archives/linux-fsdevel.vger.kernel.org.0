@@ -1,109 +1,382 @@
-Return-Path: <linux-fsdevel+bounces-10989-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C08384FA5A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 17:59:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF9A84FA62
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 17:59:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8651EB2B432
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 16:59:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03ECC28CDF6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 16:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8587983CB5;
-	Fri,  9 Feb 2024 16:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FCA85C56;
+	Fri,  9 Feb 2024 16:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LkeSd6de"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="elFz1iYs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B0080C0C
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 16:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9548562A
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 16:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707497733; cv=none; b=RhGO71X9Gz1r7AgcSG27zIGHiVW0OacCwAbazrVSnSZq6B1lijZUjILJbk+iS24MjwmQzSECmvHdyg2MjY8U8vnGohL7ArOnM+ZfPiKGSF6fVDPPXsVsljmpY5WDHYXqolzfF7ZxKo/QvzbGdhQVxiIq6VdYLLNXL0Wx+32n6Jw=
+	t=1707497756; cv=none; b=heunCNidMNrLZeYmH3cn0t3P+QC8w11mfRTHFYnMkDIzOAHKmoxAtDpXeLQQBStquimjDQ/ZuEG/r0jZmYOOTWoLK7lKiLBMPct5LgkKzhZYFQ47NlsSyyD9Dt6/f1+JfE+chSa4B92sXar8/K3CpRSq/nkyUmi1pw6HQDM6xz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707497733; c=relaxed/simple;
-	bh=ustzi+l3+pr0aiqpQxCr5kx8+KYEHAMBXRZsfaLVyf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GFTKwewQKA1+JqZPYomEFvc60eNW+RGaVY292NSK2ddxe1vbzlu+oSAQF2b8slCpOf15GXf/maC4Pegxb2S+P1x+AiOaI167r6RdCHS86fDINzblLbYwBxnfBjir00DsOU5eGTQiZwc5TtnUkigkjDVqEpfGFRMyRnQl91AYArk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LkeSd6de; arc=none smtp.client-ip=209.85.166.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-7c3e06c8608so12516339f.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 08:55:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1707497730; x=1708102530; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kmzmubT4VmH1H6I1YLfCyIqyIIl+DdbQ1/9lvmO8VLc=;
-        b=LkeSd6deqbFhRwpKXb+XL4A7pDr+066+WS8RSxwC6MmvbenE6zQz8g93twAFwWOk8p
-         T1NzCMqdoJ4CUTIIYfhEGuR+cGxb32nO9LegWFL/tNmrsHZ6K1okUgabFT2Q8qTDj7Lr
-         sWcEtDD8m1GJrJiEJEizycHslEfSEfAGI3V1GhZSE0Jnxoe+i4Fj5wZO1u9WnnNWoM+v
-         zFosAhYDo8PefSCdot1Cpp3hO13sXOw2IcUW0pIesKCgrPPeE6zHMkiE31S1D2KKR9yH
-         NJe3FRVyoOUk4IYKA4vs+iivCKH8d1dhGY2/HZ2FNkpfmD2k18vpOxJxsumnh8caklno
-         szEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707497730; x=1708102530;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kmzmubT4VmH1H6I1YLfCyIqyIIl+DdbQ1/9lvmO8VLc=;
-        b=L16KmAgTB3Yc++26lhtbsikcDxukJ9AO9ql4FLFjJ3cAzKCJzzAe3bhCPB14Zqun0A
-         x9jhKtJ9MpbgdGUi8b9LXQzaQQyeJMgZP0pnqiZv76v3BWp0nCFpQUwwCev+m9Ri5ass
-         0rc893I1THPss07M4bqkLLXZyPHDWQwRNn0tKr/jwtq7SIDyPXbdOS3HB0o64Atb8VC3
-         ExpaOZ6IY7qKnURO9QL4Cm3DdhNOkFEAXq8sIqmTzY8znRGFXvRammMUnqo25DRQfXjY
-         57W1KXOQd4T+nHwrMVI36Hdox9QDlxGbhJIWf74/gD1Rl59EuzZrk5qEzmrGQleTRP9Q
-         zt8g==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ0XuDLWjHpc3KQx6Q1oEYERS0XykXR6GyrpNKYXDZRQuTr5Ue8deJcChfQiTinJa/gV4SXCqlKuEWTBJ0d/BxSy4lOguzRSVuzQ3VZQ==
-X-Gm-Message-State: AOJu0YzkAqira5D91bJBBXPEAwh0r1VZHVwEQ5gaTWkzh+3vyN3qZIa9
-	w+gEYpQOY4t5VApdmIt/yvTT1T2YjJIizKHV4oqbuWbOE1kJp/E3edlQ1miHLnc7oixX7mqG75g
-	J5tg=
-X-Google-Smtp-Source: AGHT+IGojECrpFOK4U5p113sKM9JAy3gKgc7YTKLnqILnbvJH37ELajv8Mrnx2pTKWyR4EvdFLlNvQ==
-X-Received: by 2002:a5e:8d04:0:b0:7c3:f2c1:e8aa with SMTP id m4-20020a5e8d04000000b007c3f2c1e8aamr2715286ioj.0.1707497729919;
-        Fri, 09 Feb 2024 08:55:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXa2CA7GhNQFpMVIbaFvk3LMVtJG8finHb68Hv+JqdBe2BucnPCHhdnrjZrCk2cy9cTEmbgZPVPj9UomykFbyji80ouv65z583SebCgj5Eem3HTGe5Emsr3UjxYK8MYVBI1
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id gm21-20020a0566024f5500b007c41e541b8fsm493707iob.32.2024.02.09.08.55.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 Feb 2024 08:55:29 -0800 (PST)
-Message-ID: <0a90a042-a56d-4c97-b4a1-12951a231a16@kernel.dk>
-Date: Fri, 9 Feb 2024 09:55:28 -0700
+	s=arc-20240116; t=1707497756; c=relaxed/simple;
+	bh=7714CKHW48PHFblzrTkdEL2BUKx67e7+0EV/IV50A/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pZRLxl3KoW9oJtBtfVT2f0O1TOHd6twzWB1PuSRW5JVd6JPlEvkGYdlf+TyOmYvd2ojHE3/UgKGk5GwwFNOoJDw3+kwWzhIk82lEzCwUR/bOfIydWRZDBlV8kYIc3zqQ9x67+EJe8PQuqfBZ5Pe8VO/5OIgYoulmXcDqxgtzBww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=elFz1iYs; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1707497753;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sL+ofHaA6qkvKS8NQqYBzY53+wD0U1HeESIJKFSgtF4=;
+	b=elFz1iYsRpjL7ayKig1KEBl+e2Yfibu/0BkrCcr2Kx9OvVcySZ9xfy3m7HxeJ+X4lkaG6q
+	FpjqrX6NaEINw01sjl9gADBDX3gWpKCeFoSo4KFl+2gidRP2OWSws8NmsClpk3Eb2f1D1S
+	JYIR+KpePFtimV1rEbYJgkpBwVapt28=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-28-xl4UwJNzOKqwE4WOCyb2iw-1; Fri, 09 Feb 2024 11:55:52 -0500
+X-MC-Unique: xl4UwJNzOKqwE4WOCyb2iw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4BC03862DC2;
+	Fri,  9 Feb 2024 16:55:52 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.32.174])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 0524D2026D06;
+	Fri,  9 Feb 2024 16:55:51 +0000 (UTC)
+Date: Fri, 9 Feb 2024 10:55:50 -0600
+From: Bill O'Donnell <bodonnel@redhat.com>
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] zonefs: convert zonefs to use the new mount api
+Message-ID: <ZcZZFseicmkgzTwU@redhat.com>
+References: <20240209000857.21040-1-bodonnel@redhat.com>
+ <54dca606-e67f-4933-b8ca-a5e2095193ae@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/2] io_uring: add support for ftruncate
-Content-Language: en-US
-To: Tony Solomonik <tony.solomonik@gmail.com>
-Cc: willy@infradead.org, linux-fsdevel@vger.kernel.org, brauner@kernel.org
-References: <20240124083301.8661-1-tony.solomonik@gmail.com>
- <20240202121724.17461-1-tony.solomonik@gmail.com>
- <170749718943.1657287.1724106194346542608.b4-ty@kernel.dk>
- <CAD62OrGiBX5YuKr_qRzCXPR5Cx_0Vw3Dei9f95Qww1rL45ejdA@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAD62OrGiBX5YuKr_qRzCXPR5Cx_0Vw3Dei9f95Qww1rL45ejdA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <54dca606-e67f-4933-b8ca-a5e2095193ae@kernel.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
 
-On 2/9/24 9:50 AM, Tony Solomonik wrote:
-> 🎉
+On Fri, Feb 09, 2024 at 11:10:00AM +0900, Damien Le Moal wrote:
+> On 2/9/24 09:08, Bill O'Donnell wrote:
+> > Convert the zonefs filesystem to use the new mount API.
+> > Tested using the zonefs test suite from:
+> > https://github.com/damien-lemoal/zonefs-tools
+> > 
+> > Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
+> 
+> Thanks for doing this. I will run tests on this but I do have a few nits below.
 
-Just a note that your base was older than the current one. Hence
-the opcode value for truncate shifted one down, FIXED_FD_INSTALL
-is in there now. So had to hand-apply both patches, but nothing
-major. I'll get the liburing side sorted too.
+I will provide a v2 with the changes you suggest, with one exception (please
+see my note within).
 
-Thanks for working through this, and congrats on landing the
-patches :-)
+> 
+> > ---
+> >  fs/zonefs/super.c | 156 ++++++++++++++++++++++++++--------------------
+> >  1 file changed, 90 insertions(+), 66 deletions(-)
+> > 
+> > diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> > index e6a75401677d..6b8ecd2e55b8 100644
+> > --- a/fs/zonefs/super.c
+> > +++ b/fs/zonefs/super.c
+> > @@ -15,13 +15,13 @@
+> >  #include <linux/writeback.h>
+> >  #include <linux/quotaops.h>
+> >  #include <linux/seq_file.h>
+> > -#include <linux/parser.h>
+> >  #include <linux/uio.h>
+> >  #include <linux/mman.h>
+> >  #include <linux/sched/mm.h>
+> >  #include <linux/crc32.h>
+> >  #include <linux/task_io_accounting_ops.h>
+> > -
+> > +#include <linux/fs_parser.h>
+> > +#include <linux/fs_context.h>
+> 
+> Please keep the whiteline here.
+> 
+> >  #include "zonefs.h"
+> >  
+> >  #define CREATE_TRACE_POINTS
+> > @@ -460,58 +460,47 @@ static int zonefs_statfs(struct dentry *dentry, struct kstatfs *buf)
+> >  }
+> >  
+> >  enum {
+> > -	Opt_errors_ro, Opt_errors_zro, Opt_errors_zol, Opt_errors_repair,
+> > -	Opt_explicit_open, Opt_err,
+> > +	Opt_errors, Opt_explicit_open,
+> >  };
+> >  
+> > -static const match_table_t tokens = {
+> > -	{ Opt_errors_ro,	"errors=remount-ro"},
+> > -	{ Opt_errors_zro,	"errors=zone-ro"},
+> > -	{ Opt_errors_zol,	"errors=zone-offline"},
+> > -	{ Opt_errors_repair,	"errors=repair"},
+> > -	{ Opt_explicit_open,	"explicit-open" },
+> > -	{ Opt_err,		NULL}
+> > +struct zonefs_context {
+> > +	unsigned long s_mount_opts;
+> >  };
+> >  
+> > -static int zonefs_parse_options(struct super_block *sb, char *options)
+> > -{
+> > -	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> > -	substring_t args[MAX_OPT_ARGS];
+> > -	char *p;
+> > -
+> > -	if (!options)
+> > -		return 0;
+> > -
+> > -	while ((p = strsep(&options, ",")) != NULL) {
+> > -		int token;
+> > +static const struct constant_table zonefs_param_errors[] = {
+> > +	{"remount-ro",		ZONEFS_MNTOPT_ERRORS_RO},
+> > +	{"zone-ro",		ZONEFS_MNTOPT_ERRORS_ZRO},
+> > +	{"zone-offline",	ZONEFS_MNTOPT_ERRORS_ZOL},
+> > +	{"repair", 		ZONEFS_MNTOPT_ERRORS_REPAIR},
+> > +	{}
+> > +};
+> >  
+> > -		if (!*p)
+> > -			continue;
+> > +static const struct fs_parameter_spec zonefs_param_spec[] = {
+> > +	fsparam_enum	("errors",		Opt_errors, zonefs_param_errors),
+> > +	fsparam_flag	("explicit-open",	Opt_explicit_open),
+> > +	{}
+> > +};
+> >  
+> > -		token = match_token(p, tokens, args);
+> > -		switch (token) {
+> > -		case Opt_errors_ro:
+> > -			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+> > -			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_RO;
+> > -			break;
+> > -		case Opt_errors_zro:
+> > -			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+> > -			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_ZRO;
+> > -			break;
+> > -		case Opt_errors_zol:
+> > -			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+> > -			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_ZOL;
+> > -			break;
+> > -		case Opt_errors_repair:
+> > -			sbi->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+> > -			sbi->s_mount_opts |= ZONEFS_MNTOPT_ERRORS_REPAIR;
+> > -			break;
+> > -		case Opt_explicit_open:
+> > -			sbi->s_mount_opts |= ZONEFS_MNTOPT_EXPLICIT_OPEN;
+> > -			break;
+> > -		default:
+> > -			return -EINVAL;
+> > -		}
+> > +static int zonefs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> > +{
+> > +	struct zonefs_context *ctx = fc->fs_private;
+> > +	struct fs_parse_result result;
+> > +	int opt;
+> > +
+> > +	opt = fs_parse(fc, zonefs_param_spec, param, &result);
+> > +	if (opt < 0)
+> > +		return opt;
+> > +
+> > +	switch (opt) {
+> > +	case Opt_errors:
+> > +		ctx->s_mount_opts &= ~ZONEFS_MNTOPT_ERRORS_MASK;
+> > +		ctx->s_mount_opts |= result.uint_32;
+> > +		break;
+> > +	case Opt_explicit_open:
+> > +		ctx->s_mount_opts |= ZONEFS_MNTOPT_EXPLICIT_OPEN;
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> >  	}
+> >  
+> >  	return 0;
+> > @@ -533,11 +522,19 @@ static int zonefs_show_options(struct seq_file *seq, struct dentry *root)
+> >  	return 0;
+> >  }
+> >  
+> > -static int zonefs_remount(struct super_block *sb, int *flags, char *data)
+> > +static int zonefs_get_tree(struct fs_context *fc);
+> 
+> Why the forward definition ? It seems that you could define this function here
+> directly.
+> 
+> > +
+> > +static int zonefs_reconfigure(struct fs_context *fc)
+> >  {
+> > -	sync_filesystem(sb);
+> > +	struct zonefs_context *ctx = fc->fs_private;
+> > +	struct super_block *sb = fc->root->d_sb;
+> > +	struct zonefs_sb_info *sbi = sb->s_fs_info;
+> >  
+> > -	return zonefs_parse_options(sb, data);
+> > +	sync_filesystem(fc->root->d_sb);
+> > +	/* Copy new options from ctx into sbi. */
+> > +	sbi->s_mount_opts = ctx->s_mount_opts;
+> > +
+> > +	return 0;
+> >  }
+> >  
+> >  static int zonefs_inode_setattr(struct mnt_idmap *idmap,
+> > @@ -1197,7 +1194,6 @@ static const struct super_operations zonefs_sops = {
+> >  	.alloc_inode	= zonefs_alloc_inode,
+> >  	.free_inode	= zonefs_free_inode,
+> >  	.statfs		= zonefs_statfs,
+> > -	.remount_fs	= zonefs_remount,
+> >  	.show_options	= zonefs_show_options,
+> >  };
+> >  
+> > @@ -1242,9 +1238,10 @@ static void zonefs_release_zgroup_inodes(struct super_block *sb)
+> >   * sub-directories and files according to the device zone configuration and
+> >   * format options.
+> >   */
+> > -static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
+> > +static int zonefs_fill_super(struct super_block *sb, struct fs_context *fc)
+> >  {
+> >  	struct zonefs_sb_info *sbi;
+> > +	struct zonefs_context *ctx = fc->fs_private;
+> >  	struct inode *inode;
+> >  	enum zonefs_ztype ztype;
+> >  	int ret;
+> > @@ -1281,21 +1278,17 @@ static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
+> >  	sbi->s_uid = GLOBAL_ROOT_UID;
+> >  	sbi->s_gid = GLOBAL_ROOT_GID;
+> >  	sbi->s_perm = 0640;
+> > -	sbi->s_mount_opts = ZONEFS_MNTOPT_ERRORS_RO;
+> > -
+> > +	sbi->s_mount_opts = ctx->s_mount_opts;
+> 
+> Please keep the white line here...
+> 
+> >  	atomic_set(&sbi->s_wro_seq_files, 0);
+> >  	sbi->s_max_wro_seq_files = bdev_max_open_zones(sb->s_bdev);
+> >  	atomic_set(&sbi->s_active_seq_files, 0);
+> > +
+> 
+> ...and remove this one. The initializations here are "grouped" together byt
+> "theme" (sbi standard stuff first and zone resource accounting in a second
+> "paragraph". I like to keep it that way.
+> 
+> >  	sbi->s_max_active_seq_files = bdev_max_active_zones(sb->s_bdev);
+> >  
+> >  	ret = zonefs_read_super(sb);
+> >  	if (ret)
+> >  		return ret;
+> >  
+> > -	ret = zonefs_parse_options(sb, data);
+> > -	if (ret)
+> > -		return ret;
+> > -
+> >  	zonefs_info(sb, "Mounting %u zones", bdev_nr_zones(sb->s_bdev));
+> >  
+> >  	if (!sbi->s_max_wro_seq_files &&
+> > @@ -1356,12 +1349,6 @@ static int zonefs_fill_super(struct super_block *sb, void *data, int silent)
+> >  	return ret;
+> >  }
+> >  
+> > -static struct dentry *zonefs_mount(struct file_system_type *fs_type,
+> > -				   int flags, const char *dev_name, void *data)
+> > -{
+> > -	return mount_bdev(fs_type, flags, dev_name, data, zonefs_fill_super);
+> > -}
+> > -
+> >  static void zonefs_kill_super(struct super_block *sb)
+> >  {
+> >  	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+> > @@ -1376,17 +1363,54 @@ static void zonefs_kill_super(struct super_block *sb)
+> >  	kfree(sbi);
+> >  }
+> >  
+> > +static void zonefs_free_fc(struct fs_context *fc)
+> > +{
+> > +	struct zonefs_context *ctx = fc->fs_private;
+> 
+> I do not think you need this variable.
+> 
+> > +
+> > +	kfree(ctx);
+> 
+> Is it safe to not set fc->fs_private to NULL ?
 
--- 
-Jens Axboe
+I agree that ctx is not needed, and instead kfree(fc->fs_private) is
+sufficient. However, since other fs conversions do not simply set
+fc->fs_private to NULL, kfree(fc_fs_private) is preferred here.
 
+> 
+> > +}
+> > +
+> > +static const struct fs_context_operations zonefs_context_ops = {
+> > +	.parse_param    = zonefs_parse_param,
+> > +	.get_tree       = zonefs_get_tree,
+> > +	.reconfigure	= zonefs_reconfigure,
+> > +	.free           = zonefs_free_fc,
+> > +};
+> > +
+> > +/*
+> > + * Set up the filesystem mount context.
+> > + */
+> > +static int zonefs_init_fs_context(struct fs_context *fc)
+> > +{
+> > +	struct zonefs_context *ctx;
+> > +
+> > +	ctx = kzalloc(sizeof(struct zonefs_context), GFP_KERNEL);
+> > +	if (!ctx)
+> > +		return 0;
+> 
+> return 0 ? Shouldn't this be "return -ENOMEM" ?
+> 
+> > +	ctx->s_mount_opts = ZONEFS_MNTOPT_ERRORS_RO;
+> > +	fc->ops = &zonefs_context_ops;
+> > +	fc->fs_private = ctx;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  /*
+> >   * File system definition and registration.
+> >   */
+> >  static struct file_system_type zonefs_type = {
+> >  	.owner		= THIS_MODULE,
+> >  	.name		= "zonefs",
+> > -	.mount		= zonefs_mount,
+> >  	.kill_sb	= zonefs_kill_super,
+> >  	.fs_flags	= FS_REQUIRES_DEV,
+> > +	.init_fs_context	= zonefs_init_fs_context,
+> > +	.parameters	= zonefs_param_spec,
+> 
+> Please re-align everything together.
+> 
+> >  };
+> >  
+> > +static int zonefs_get_tree(struct fs_context *fc)
+> > +{
+> > +	return get_tree_bdev(fc, zonefs_fill_super);
+> > +}
+> > +
+> >  static int __init zonefs_init_inodecache(void)
+> >  {
+> >  	zonefs_inode_cachep = kmem_cache_create("zonefs_inode_cache",
+> 
+> -- 
+> Damien Le Moal
+> Western Digital Research
+> 
 
 
