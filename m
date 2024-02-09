@@ -1,203 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-10884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686A884F251
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 10:35:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B525484F275
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 10:42:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09ACDB211E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 09:35:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D98001C24597
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 09:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB88679E2;
-	Fri,  9 Feb 2024 09:34:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB1267C5B;
+	Fri,  9 Feb 2024 09:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M1j0i4e/"
+	dkim=pass (2048-bit key) header.d=rd10.de header.i=@rd10.de header.b="jpFo3RVz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay.yourmailgateway.de (relay.yourmailgateway.de [194.59.206.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65618339AE;
-	Fri,  9 Feb 2024 09:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D93E679FE;
+	Fri,  9 Feb 2024 09:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.59.206.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707471298; cv=none; b=ciqsn6pv8QvtS41tBkIetNSosOJNJHrqJ5ZXEx8w4PHLP+9Fp2WAAPrISwAqgxW6l1NOmyTaO3UuV/+zIb9/Y5axF5tvFFH+PEWXaBY7i0t+zvMM/iONQuiX3OssfT9HvXzcHAQdGwjQB/d5y27/DjyNZgynnHmlHKwEqCNll88=
+	t=1707471738; cv=none; b=ISZrBkDKoKuH7LA8sxMsCeZn52/PejX43JDA9bd/x6ZBk0e1d6b+xGvVqApvmmmjaHWlyAF2xfQVlK4LzKJtp3CGbpFNYYxEnZnR/rudRt63I0kU86NSy5O8BRqHbjd5TaqwkYWYVPG8okG0+L1hxhNMluGW8FTwmgAniBJRHho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707471298; c=relaxed/simple;
-	bh=Dl8+7wqvbWf28CAnnHsxj1BPsEuDTnBPdGgGo5EbXqg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pQDm/ypSGOhg2hWvB71Wem1Gzvd6K9obJVkxCsYXdsU3NGsVEzQFj2sVRtUY+lf1fi0xw1NqqfO0o3jHn1bBNuCCo2fzSwgTI6xt+Xe2d2Kud50680O1OVsjCxP8Q6V6HrR3vXWYNEx5tf9Vxmh2Hx8WYKGdyxOlclNrV1X3ABE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M1j0i4e/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21139C433C7;
-	Fri,  9 Feb 2024 09:34:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707471297;
-	bh=Dl8+7wqvbWf28CAnnHsxj1BPsEuDTnBPdGgGo5EbXqg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=M1j0i4e/4Pe2gBfUglOh5E7B1BX/SEOvUO+84VHkhvPbcz1jK/H6+phGQloEwtq8T
-	 I9OjvsyNJWg17T8kzVrGtN3yxJTxbdviGqDUzrZP48XxXRWLToYbaqk+Od7ScY36Lm
-	 H0VNiyBuS6OPv+CcjiKYBwBzRNagEJoxh88605IV6K/4QXklvf/+LIMRmf7eCdgM9M
-	 e1yW24mkkZfrbzvAwyxX+eZFztt7e43TqCAYkHkB3CjpcZTsw6jhulFUfAbH7wS/JE
-	 QItO9UI+yH2W3walP7dU9RMm2SA5+vXodKZX8wqZqvHexQVBY1V9Q8KjG9KLx6y9Lv
-	 y0dpIqEZS5ACg==
-Date: Fri, 9 Feb 2024 10:34:52 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Bart Van Assche <bvanassche@acm.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, 
-	Avi Kivity <avi@scylladb.com>, Sandeep Dhavale <dhavale@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] fs, USB gadget: Rework kiocb cancellation
-Message-ID: <20240209-katapultieren-lastkraftwagen-d28bbc0a92b2@brauner>
-References: <20240208215518.1361570-1-bvanassche@acm.org>
- <9e83c34a-63ab-47ea-9c06-14303dbbeaa9@kernel.dk>
+	s=arc-20240116; t=1707471738; c=relaxed/simple;
+	bh=VpbPPD2abpD/atAVzzmAsiRhcyN5uyakVD9kGT25DM4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=X0KQ1rQGGeXK3ptZiaMnDifyZVYqKSLCJ/HrT1g2YE/a2DoFFQlE6OGvSvYGkAqjXFT3ac5GRsXz4LGQMROKuf3kEVy4JtMd2qdxIRST+o2n7n01vExJ4UjToKYv4KoctDUIrjqa8DIhG/QPso1TAifbS7bkNFQtcwpDPZ9N/Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rd10.de; spf=pass smtp.mailfrom=rd10.de; dkim=pass (2048-bit key) header.d=rd10.de header.i=@rd10.de header.b=jpFo3RVz; arc=none smtp.client-ip=194.59.206.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rd10.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rd10.de
+Received: from relay02-mors.netcup.net (localhost [127.0.0.1])
+	by relay02-mors.netcup.net (Postfix) with ESMTPS id 4TWTQh6rnlz42xT;
+	Fri,  9 Feb 2024 10:42:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rd10.de; s=key2;
+	t=1707471725; bh=VpbPPD2abpD/atAVzzmAsiRhcyN5uyakVD9kGT25DM4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jpFo3RVz03t+mf4FQsAqZyZCLFr4Dh8llvo3/zRq4OZSK7LkRpBoQ9rQ6Fj+HbLB8
+	 sNswweQF4rqQODV6CUv/tQn135LdM77DFWQEURLtNm7eMYz5frxc91VGuk3xXP+eOw
+	 kQVTJJdRHqcm7MnPcrb/G1y17sUYWIo6hw+9beohbcyZdHyAoxD6M9jT72Dlt1ZDED
+	 xZSyflNjTx1SNuTi3bNg4EUgR861cgRS0drRvkr5n6cCyLCbH43RhsOqmW1k6k+6cP
+	 kHZLUPwHcuD0Ow2JvUce6eH6f3/orcnk/qKy0AcZOIIWbLK0EV9HQ5DUXr4nBVU2eM
+	 fC/d7HlG/vxpA==
+Received: from policy02-mors.netcup.net (unknown [46.38.225.35])
+	by relay02-mors.netcup.net (Postfix) with ESMTPS id 4TWTQh6TBLz7wVm;
+	Fri,  9 Feb 2024 10:42:04 +0100 (CET)
+Received: from mx2eb1.netcup.net (unknown [10.243.12.53])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by policy02-mors.netcup.net (Postfix) with ESMTPS id 4TWTQg2mFpz8sbF;
+	Fri,  9 Feb 2024 10:42:03 +0100 (CET)
+Received: from [IPV6:2003:cf:cf12:7800:df32:47f6:a74f:aa6f] (p200300cfcf127800df3247f6a74faa6f.dip0.t-ipconnect.de [IPv6:2003:cf:cf12:7800:df32:47f6:a74f:aa6f])
+	by mx2eb1.netcup.net (Postfix) with ESMTPSA id 9D8E41016DF;
+	Fri,  9 Feb 2024 10:41:58 +0100 (CET)
+Authentication-Results: mx2eb1;
+        spf=pass (sender IP is 2003:cf:cf12:7800:df32:47f6:a74f:aa6f) smtp.mailfrom=rdiez-2006@rd10.de smtp.helo=[IPV6:2003:cf:cf12:7800:df32:47f6:a74f:aa6f]
+Received-SPF: pass (mx2eb1: connection is authenticated)
+Message-ID: <617c148c-4a18-49b4-974a-18f1f500358e@rd10.de>
+Date: Fri, 9 Feb 2024 10:41:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9e83c34a-63ab-47ea-9c06-14303dbbeaa9@kernel.dk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: SMB 1.0 broken between Kernel versions 6.2 and 6.5
+Content-Language: en-GB, es
+To: Matthew Ruffell <matthew.ruffell@canonical.com>
+Cc: dhowells@redhat.com, linux-cifs@vger.kernel.org,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, Steve French <smfrench@gmail.com>
+References: 
+ <CAH2r5mswELNv2Mo-aWNoq3fRUC7Rk0TjfY8kwdPc=JSEuZZObw@mail.gmail.com>
+ <20240207034117.20714-1-matthew.ruffell@canonical.com>
+ <CAH2r5mu04KHQV3wynaBSrwkptSE_0ARq5YU1aGt7hmZkdsVsng@mail.gmail.com>
+ <CAH2r5msJ12ShH+ZUOeEg3OZaJ-OJ53-mCHONftmec7FNm3znWQ@mail.gmail.com>
+ <CAH2r5muiod=thF6tnSrgd_LEUCdqy03a2Ln1RU40OMETqt2Z_A@mail.gmail.com>
+ <CAH2r5mvzyxP7vHQVcT6ieP4NmXDAz2UqTT7G4yrxcVObkV_3YQ@mail.gmail.com>
+ <CAKAwkKuJvFDFG7=bCYmj0jdMMhYTLUnyGDuEAubToctbNqT5CQ@mail.gmail.com>
+ <CAH2r5mt9gPhUSka56yk28+nksw7=LPuS4VAMzGQyJEOfcpOc=g@mail.gmail.com>
+ <CAKAwkKsm3dvM_zGtYR8VHzHyA_6hzCie3mhA4gFQKYtWx12ZXw@mail.gmail.com>
+From: "R. Diez" <rdiez-2006@rd10.de>
+In-Reply-To: 
+ <CAKAwkKsm3dvM_zGtYR8VHzHyA_6hzCie3mhA4gFQKYtWx12ZXw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-PPP-Message-ID: <170747171908.17604.5646654263356021088@mx2eb1.netcup.net>
+X-Rspamd-Queue-Id: 9D8E41016DF
+X-Rspamd-Server: rspamd-worker-8404
+X-NC-CID: CT6WUtMWv2WOJl+6yF1RJndA/4CnXC/crGMNg0fY
 
-On Thu, Feb 08, 2024 at 03:14:43PM -0700, Jens Axboe wrote:
-> On 2/8/24 2:55 PM, Bart Van Assche wrote:
-> > diff --git a/drivers/usb/gadget/function/f_fs.c b/drivers/usb/gadget/function/f_fs.c
-> > index 6bff6cb93789..4837e3071263 100644
-> > --- a/drivers/usb/gadget/function/f_fs.c
-> > +++ b/drivers/usb/gadget/function/f_fs.c
-> > @@ -31,7 +31,6 @@
-> >  #include <linux/usb/composite.h>
-> >  #include <linux/usb/functionfs.h>
-> >  
-> > -#include <linux/aio.h>
-> >  #include <linux/kthread.h>
-> >  #include <linux/poll.h>
-> >  #include <linux/eventfd.h>
-> > @@ -1157,23 +1156,16 @@ ffs_epfile_open(struct inode *inode, struct file *file)
-> >  	return stream_open(inode, file);
-> >  }
-> >  
-> > -static int ffs_aio_cancel(struct kiocb *kiocb)
-> > +static void ffs_epfile_cancel_kiocb(struct kiocb *kiocb)
-> >  {
-> >  	struct ffs_io_data *io_data = kiocb->private;
-> >  	struct ffs_epfile *epfile = kiocb->ki_filp->private_data;
-> >  	unsigned long flags;
-> > -	int value;
-> >  
-> >  	spin_lock_irqsave(&epfile->ffs->eps_lock, flags);
-> > -
-> >  	if (io_data && io_data->ep && io_data->req)
-> > -		value = usb_ep_dequeue(io_data->ep, io_data->req);
-> > -	else
-> > -		value = -EINVAL;
-> > -
-> > +		usb_ep_dequeue(io_data->ep, io_data->req);
-> >  	spin_unlock_irqrestore(&epfile->ffs->eps_lock, flags);
-> > -
-> > -	return value;
-> >  }
-> 
-> I'm assuming the NULL checks can go because it's just the async parts
-> now?
-> 
-> > @@ -634,6 +619,8 @@ static void free_ioctx_reqs(struct percpu_ref *ref)
-> >  	queue_rcu_work(system_wq, &ctx->free_rwork);
-> >  }
-> >  
-> > +static void aio_cancel_and_del(struct aio_kiocb *req);
-> > +
-> 
-> Just move the function higher up? It doesn't have any dependencies.
-> 
-> > @@ -1552,6 +1538,24 @@ static ssize_t aio_setup_rw(int rw, const struct iocb *iocb,
-> >  	return __import_iovec(rw, buf, len, UIO_FASTIOV, iovec, iter, compat);
-> >  }
-> >  
-> > +static void aio_add_rw_to_active_reqs(struct kiocb *req)
-> > +{
-> > +	struct aio_kiocb *aio = container_of(req, struct aio_kiocb, rw);
-> > +	struct kioctx *ctx = aio->ki_ctx;
-> > +	unsigned long flags;
-> > +
-> > +	/*
-> > +	 * If the .cancel_kiocb() callback has been set, add the request
-> > +	 * to the list of active requests.
-> > +	 */
-> > +	if (!req->ki_filp->f_op->cancel_kiocb)
-> > +		return;
-> > +
-> > +	spin_lock_irqsave(&ctx->ctx_lock, flags);
-> > +	list_add_tail(&aio->ki_list, &ctx->active_reqs);
-> > +	spin_unlock_irqrestore(&ctx->ctx_lock, flags);
-> > +}
-> 
-> This can use spin_lock_irq(), always called from process context.
-> 
-> > +/* Must be called only for IOCB_CMD_POLL requests. */
-> > +static void aio_poll_cancel(struct aio_kiocb *aiocb)
-> > +{
-> > +	struct poll_iocb *req = &aiocb->poll;
-> > +	struct kioctx *ctx = aiocb->ki_ctx;
-> > +
-> > +	lockdep_assert_held(&ctx->ctx_lock);
-> > +
-> > +	if (!poll_iocb_lock_wq(req))
-> > +		return;
-> > +
-> > +	WRITE_ONCE(req->cancelled, true);
-> > +	if (!req->work_scheduled) {
-> > +		schedule_work(&aiocb->poll.work);
-> > +		req->work_scheduled = true;
-> > +	}
-> > +	poll_iocb_unlock_wq(req);
-> > +}
-> 
-> Not your code, it's just moved, but this looks racy. Might not matter,
-> and obviously beyond the scope of this change.
-> 
-> > +{
-> > +	void (*cancel_kiocb)(struct kiocb *) =
-> > +		req->rw.ki_filp->f_op->cancel_kiocb;
-> > +	struct kioctx *ctx = req->ki_ctx;
-> > +
-> > +	lockdep_assert_held(&ctx->ctx_lock);
-> > +
-> > +	switch (req->ki_opcode) {
-> > +	case IOCB_CMD_PREAD:
-> > +	case IOCB_CMD_PWRITE:
-> > +	case IOCB_CMD_PREADV:
-> > +	case IOCB_CMD_PWRITEV:
-> > +		if (cancel_kiocb)
-> > +			cancel_kiocb(&req->rw);
-> > +		break;
-> > +	case IOCB_CMD_FSYNC:
-> > +	case IOCB_CMD_FDSYNC:
-> > +		break;
-> > +	case IOCB_CMD_POLL:
-> > +		aio_poll_cancel(req);
-> > +		break;
-> > +	default:
-> > +		WARN_ONCE(true, "invalid aio operation %d\n", req->ki_opcode);
-> > +	}
-> > +
-> > +	list_del_init(&req->ki_list);
-> > +}
-> 
-> Why don't you just keep ki_cancel() and just change it to a void return
-> that takes an aio_kiocb? Then you don't need this odd switch, or adding
-> an opcode field just for this. That seems cleaner.
-> 
-> Outside of these little nits, looks alright. I'd still love to kill the
-> silly cancel code just for the gadget bits, but that's for another day.
+Hallo Matthew:
 
-Well, I'd prefer to kill it if we can asap. Because then we can lose
-that annoying file_operations addition. That really rubs me the wrong way.
+> [...]
+> If the user does set their own "wsize", any value that is not a multiple of
+> PAGE_SIZE is dangerous right? Shouldn't we prevent the user from corrupting
+> their data (un)intentionally if they happen to specify a wrong value?
 
-> And since the gadget and aio code basically never changes, a cleaned up
-> variant of the this patch should be trivial enough to backport to
-> stable, so I don't think we need to worry about doing a fixup first.
+I already pointed that out in my e-mail dated 07.02.24 together with other potential issues:
+
+https://www.spinics.net/lists/linux-cifs/msg30973.html
+
+I'll recap here:
+
+1) If the user specifies a wsize which is not multiple of PAGE_SIZE, I would abort, instead of issuing a warning. Like you said, it's too risky, you will corrupt data and you may not see the warning in an automated environment where connections are scripted.
+
+2) Whether error or warning, I would state in the message that this is a temporary limitation. This "fix", which is more of a work-around, will probably be used for years, and people are going to think that the multiple of PAGE_SIZE is a permanent limitation in the client or the SMB protocol, which is not the case.
+
+3) I am worried that, if the server states 60 KiB, and the CIFS client rounds it up to 64 KiB, then the connection will no longer work, because the CIFS client is exceeding the maximum that the server stated.
+
+I wouldn't warn, I would just abort the connection in this case too.
+
+With an old Windows Server and a page size of 64 KiB (like some ARM architecture already has), it is no longer an unlikely scenario, it will certainly occur. In my case, the connection negotiated a wsize of 16580, even though the server should actually default to 16644 bytes(?). In any case, well below 64 KiB.
+
+
+Now that I mentioned misleading messages: The man page for mount.cifs, parameters rsize and wsize, talks about "maximum amount of data the kernel will request", and about the "maximum size that servers will accept". It is not clear that this is a maximum value for the negotiation phase, so 1) you do not have to worry about setting it too high on the Linux client, as the server will not reject it but negotiate it down if necessary (is that true?), and 2) the negotiation result may actually be much lower than the value you requested, but that is fine, as it wasn't really a hard request, but a soft petition.
+
+I suggest that you guys rephrase that man page, in order to prevent other people scratching their heads again.
+
+I would write something along this line: "Maximum amount of data that the kernel will negotiate for read [or write] requests in bytes. Maximum size that servers will negotiate is typically ...".
+
+By the way, the current option naming is quite misleading too. I am guessing that you can specify "wsize=xxx" and then "mount -l" will show "wsize=yyy", leaving you wondering why your value was not actually taken. Or, like it happened this time, other people automatically assume that I specified a wsize, when I didn't. I would have called these parameters "maxwsize" and "negotiatedwsize", to make the distinction clear. I wonder if it is not too late to change the name of the one listed by "mount -l", that is, the "negotiatedwsize".
+
+Regards,
+   rdiez
+
 
