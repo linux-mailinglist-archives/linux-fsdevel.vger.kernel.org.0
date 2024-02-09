@@ -1,144 +1,276 @@
-Return-Path: <linux-fsdevel+bounces-10975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-10976-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35DED84F888
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 16:29:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA8C84F91D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 17:03:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA28FB23C31
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 15:29:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66DC91F239C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Feb 2024 16:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EA474E2B;
-	Fri,  9 Feb 2024 15:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8790762D7;
+	Fri,  9 Feb 2024 16:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kngy2wSt"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="czUBZDRI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D5D69DE5
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 15:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BC776030
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 Feb 2024 16:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707492529; cv=none; b=IT0Wvutv6S7EmhA2DNy+GTSOlvUrHjhBlTLdW8uTyAvfyeHDQYnPSucYlESoiC+jWDadppz2TsNS511XG92R7hflUhI8/iLb30VX28K5zy/yUb44zOOepVBYHzCZswACl0cH/YJanDzIDROQtbVM+cJqiZz3OaxtJWiJP4b3XFo=
+	t=1707494604; cv=none; b=Mn6gni92JvsxtyHgeHguW7DK/oUlncDk6a2HDiWSlI8cBn36pUzGhO9bhWXNEAk/oiqAafiOU268uJrg7OXF22ZIqZxZOAWew8NrtQ+qtPvsAZKGuq+DpTelyNKuCyzYZp79FrkmnoFYsDDHK5lXpNlpmbusTuypO67HX4FIhKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707492529; c=relaxed/simple;
-	bh=QAcdewfzL9rjMKlZsFH94bqyapeBvmn6xAexRvcMc5w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tKaDEuZE2sFpN5rj6+nTtotOYZZG/GXOukHE/mA1q62w3O8V4q/IGg1wOhQUUVSI2rXc1hpCJVI7wrCs6I6yFLg+jtZBmbBg8yLGdYTQK7WbEnOn5jQcA8OrzNP/vMXSgONM87vjr4veBbOG4/E8dDI0IRj2JYzLzF9W49iQTNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kngy2wSt; arc=none smtp.client-ip=209.85.160.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-214dbe25f8aso497901fac.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 Feb 2024 07:28:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707492527; x=1708097327; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J2yvCAylobsi5Ph+c6y5RW3S28Dkum3q3doPwpvgnC4=;
-        b=Kngy2wStc5VHf92R6ReuQxgJp8zY7pXQ+GIvAbxqeasQKXB/stC1EZ4/D2PcbP+ZIH
-         LuZS3yrRmaPSrT4KLh4xzPRTeavDju3zcZYxR24HthyBKOwDCwjd8p0zu7spoyuur3MI
-         WfUhz6MndnYv8ej01cSbb6nmVqsAHQQ+gR9lqMHqfV6Z5cyQM6oKwejzrPK651r8WFlx
-         rGqR1emQBnuJI/Mrt/fFzcysg4tbI70vAuD8v68BR8hmJqO1SpagoyhEih4Os1lsseMR
-         YNmfApwB7Bzm9UD4Ue0078DfWOS3mcn+JNHuMoVWC/E2+D/Xmy56zhCVtQvmA3jMtzIh
-         DHIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707492527; x=1708097327;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J2yvCAylobsi5Ph+c6y5RW3S28Dkum3q3doPwpvgnC4=;
-        b=aANuPXuqAvXo1V4Ir1ebhLLPfHLGjktHK/jF1QRFFdZr3GRb/ti0Znqea92CRp/nCu
-         sQcRsS2ldQN/EZPDgWl2ka+rv6nKYogHX74C0icv4fMs3suAT36yLRQGxCnsad2uVq49
-         f4lUQX6tAjDJSS4SmDPDsMjH2EQ/mhotlXWZzgNX0fQm4GIEPBghaUDAkvZfHYE+rltl
-         UrTkpx/qr+i71fNVtB47ES72NUoO6uCp41d/irWiP1dOHZRJjSBsSC09j52fe6fMuq2n
-         QhZtWEF3q4M4bG4EXMRIanXrRwjVXgYNp+vi8PtG3et4MvNN6BM62nwXd2RSwrjPjtkK
-         6Gag==
-X-Gm-Message-State: AOJu0Yzleb6jyNTdC3ml1DEBDOw0e67T7a3pYsIqUZHipO0iyxn2p/R5
-	t1/jdOBVM5aB8AiZcCmJFVhQ4zjzdNrR9+jc5UypUy/dJZIF1426DpxR5IYK5c/6G1Xaeccnpq8
-	g5CR4id7f41eoQ3oHC/TEM2qZ45Y=
-X-Google-Smtp-Source: AGHT+IFkd09RxD0tJ8KjLT7HoqOPLWJQJ8Qd0nqQJuIoVeH/zat+YS45MT4jCwb5mdtbplZ3htHkOWSJ4ZaRcn6NyX8=
-X-Received: by 2002:a05:6870:ec91:b0:219:c875:49b4 with SMTP id
- eo17-20020a056870ec9100b00219c87549b4mr1746456oab.8.1707492527062; Fri, 09
- Feb 2024 07:28:47 -0800 (PST)
+	s=arc-20240116; t=1707494604; c=relaxed/simple;
+	bh=vlQD8ZEEeMI1Uu1eigZ4Z6Cvst12jN+Wj4JCBQxSfU4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F9dLbz6tDq0knxPnv50580XnpFIm2KNxGhgHCct+kFQtAwsfIZQlEDPqY4K6SYep0M/uKzq3Q56eZoy38ctte7zSAVoPF3RmSRHg44QupFXfvg2f6t0gg+ccvdrPe90jihEEG7NUha6rHYFL4VZRQJZJ5Pkdt2Ov8HvXuI8wzbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=czUBZDRI; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1707494599;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=adgMAjwxJTvri5oreCpxlFPQcfsRb8fC7vO93bohN1g=;
+	b=czUBZDRIbXmVrKBOv/iLkm5x0j/EmEM4r+HKvCkX8ETTDyDtlN6Hx1zo2AHe8oOPHTMV4w
+	yjzDmbsbW+/Qmie5WWQk74AJBFBFamxLC+Er2CEmGPc1cFGyp8xeg1qSkhYSOveSZhFhGL
+	IvTZlRjpf/52zr9B7py6ybyV109nccs=
+From: Sergei Shtepa <sergei.shtepa@linux.dev>
+To: axboe@kernel.dk,
+	hch@infradead.org,
+	corbet@lwn.net,
+	snitzer@kernel.org
+Cc: linux-block@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v7 0/8] filtering and snapshots of a block devices
+Date: Fri,  9 Feb 2024 17:01:56 +0100
+Message-Id: <20240209160204.1471421-1-sergei.shtepa@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240208170603.2078871-1-amir73il@gmail.com> <20240208170603.2078871-10-amir73il@gmail.com>
- <CAJfpegtcqPgb6zwHtg7q7vfC4wgo7YPP48O213jzfF+UDqZraw@mail.gmail.com>
- <1be6f498-2d56-4c19-9f93-0678ad76e775@fastmail.fm> <f44c0101-0016-4f82-a02d-0dcfefbf4e96@fastmail.fm>
- <CAOQ4uxi9X=a6mvmXXdrSYX-r5EUdVfRiGW0nwFj2ZZTzHQJ5jw@mail.gmail.com> <CAJfpeguKM5MHEyukHv2OE=6hce5Go2ydPMqzTiJ-MjxS0YH=DQ@mail.gmail.com>
-In-Reply-To: <CAJfpeguKM5MHEyukHv2OE=6hce5Go2ydPMqzTiJ-MjxS0YH=DQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 9 Feb 2024 17:28:34 +0200
-Message-ID: <CAOQ4uxh8+4cwfNj4Mh+=9bkFqAaJXWUpGa-3MP7vwQCo6M_EGw@mail.gmail.com>
-Subject: Re: [PATCH v3 9/9] fuse: allow parallel dio writes with FUSE_DIRECT_IO_ALLOW_MMAP
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, linux-fsdevel@vger.kernel.org, 
-	Bernd Schubert <bschubert@ddn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Feb 9, 2024 at 3:27=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> w=
-rote:
->
-> On Fri, 9 Feb 2024 at 13:12, Amir Goldstein <amir73il@gmail.com> wrote:
->
-> > I think this race can happen even if we remove killable_
->
-> Without _killable, the loop will exit with iocachectr >=3D 0, hence the
-> FUSE_I_CACHE_IO_MODE will not be cleared.
->
-> > not sure - anyway, with fuse passthrough there is another error
-> > condition:
-> >
-> >         /*
-> >          * Check if inode entered passthrough io mode while waiting for=
- parallel
-> >          * dio write completion.
-> >          */
-> >         if (fuse_inode_backing(fi))
-> >                 err =3D -ETXTBSY;
-> >
-> > But in this condition, all waiting tasks should abort the wait,
-> > so it does not seem a problem to clean the flag.
->
-> Ah, this complicates things.  But I think it's safe to clear
-> FUSE_I_CACHE_IO_MODE in this case, since other
-> fuse_inode_get_io_cache() calls will also fail.
->
+Hi all.
 
-Right.
+I am happy to offer an improved version of the block device filtering 
+mechanism (blkfilter) and module for creating snapshots of block devices
+(blksnap).
 
-> > Anyway, IMO it is better to set the flag before every wait and on
-> > success. Like below.
->
-> This would still have  the race, since there will be a window during
-> which the FUSE_I_CACHE_IO_MODE flag has been cleared and new parallel
-> writes can start, even though there are one or more waiters for cached
-> open.
->
-> Not that this would be a problem in practice, but I also don't see
-> removing the _killable being a big issue.
+The filtering block device mechanism is implemented in the block layer.
+This allows to attach and detach block device filters. Filters extend the
+functionality of the block layer. See more in 
+Documentation/block/blkfilter.rst.
 
-ok. Remove killable.
+The main purpose of snapshots of block devices is to provide backups of
+them. See more in Documentation/block/blksnap.rst. The tool, library and
+tests for working with blksnap can be found on github. 
+Link: https://github.com/veeam/blksnap/tree/stable-v2.0
+There is also documentation from which you can learn how to manage the
+module using the library and the console tool.
 
-Pushed branches fuse_io_mode-090224 and fuse-backing-fd-090224
-with requested fixes.
+Based on LK v6.8-rc3 with Christoph's patchset "clean up blk_mq_submit_bio".
+Link: https://lore.kernel.org/linux-block/50fbe76b-d77d-4a7e-bda4-3a3b754fbd7e@kernel.org/T/#t
 
-Note that I had to update libfuse fuse-backing-fd branch, because when
-removing FOPEN_CACHE_IO, I changed the constant value of
-FOPEN_PASSTHOUGH.
+I express my appreciation and gratitude to Christoph. Thanks to his
+attention to the project, it was possible to raise the quality of the code.
+I probably wouldn't have made version 7 if it wasn't for his help.
+I am sure that the blksnap module will improve the quality of backup tools
+for Linux.
 
-Passes my sanity tests.
-Bernd, please verify that I did not break anything on your end.
+v7 changes:
+- The location of the filtering of I/O units has been changed. This made it
+  possible to remove the additional call bio_queue_enter().
+- Remove configs BLKSNAP_DIFF_BLKDEV and BLKSNAP_CHUNK_DIFF_BIO_SYNC.
+- To process the ioctl, the switch statement is used instead of a table
+  with functions.
+- Instead of a file descriptor, the module gets a path on the file system.
+  This allows the kernel module to correctly open a file or block device
+  with exclusive access rights.
+- Fixed a bio leaking bugs.
 
-Thanks,
-Amir.
+v6 changes:
+- The difference storage has been changed.
+  In the previous version, the file was created only to reserve sector
+  ranges on a block device. The data was stored directly to the block
+  device in these sector ranges. Now saving and reading data is done using
+  'VFS' using vfs_iter_write() and vfs_iter_read() functions. This allows
+  not to depend on the filesystem and use, for example, tmpfs. Using an
+  unnamed temporary file allows hiding it from other processes and
+  automatically release it when the snapshot is closed.
+  However, now the module does not allow adding a block device to the
+  snapshot on which the difference storage is located. There is no way to
+  ensure the immutability of file metadata when writing data to a file.
+  This means that the metadata of the filesystem may change, which may
+  cause damage to the snapshot.
+- _IOW and _IOR were mixed up - fixed. 
+- Protection against the use of the snapshots for block devices with
+  hardware inline encryption and data integrity was implemented.
+  Compatibility with them was not planned and has not been tested at the
+  moment.
+
+v5 changes:
+- Rebase for "kernel/git/axboe/linux-block.git" branch "for-6.5/block".
+  Link: https://git.kernel.org/pub/scm/linux/kernel/git/axboe/linux-block.git/log/?h=for-6.5/block
+
+v4 changes:
+- Structures for describing the state of chunks are allocated dynamically.
+  This reduces memory consumption, since the struct chunk is allocated only
+  for those blocks for which the snapshot image state differs from the
+  original block device.
+- The algorithm for calculating the chunk size depending on the size of the
+  block device has been changed. For large block devices, it is now
+  possible to allocate a larger number of chunks, and their size is smaller.
+- For block devices, a 'filter' file has been added to /sys/block/<device>.
+  It displays the name of the filter that is attached to the block device.
+- Fixed a problem with the lack of protection against re-adding a block
+  device to a snapshot.
+- Fixed a bug in the algorithm of allocating the next bio for a chunk.
+  This problem was occurred on large disks, for which a chunk consists of
+  at least two bio.
+- The ownership mechanism of the diff_area structure has been changed.
+  This fixed the error of prematurely releasing the diff_area structure
+  when destroying the snapshot.
+- Documentation corrected.
+- The Sparse analyzer is passed.
+- Use __u64 type instead pointers in UAPI.
+
+v3 changes:
+- New block device I/O controls BLKFILTER_ATTACH and BLKFILTER_DETACH allow
+  to attach and detach filters.
+- New block device I/O control BLKFILTER_CTL allow sending command to
+  attached block device filter.
+- The copy-on-write algorithm for processing I/O units has been optimized
+  and has become asynchronous.
+- The snapshot image reading algorithm has been optimized and has become
+  asynchronous.
+- Optimized the finite state machine for processing chunks.
+- Fixed a tracking block size calculation bug.
+
+v2 changes:
+- Added documentation for Block Device Filtering Mechanism.
+- Added documentation for Block Devices Snapshots Module (blksnap).
+- The MAINTAINERS file has been updated.
+- Optimized queue code for snapshot images.
+- Fixed comments, log messages and code for better readability.
+
+v1 changes:
+- Forgotten "static" declarations have been added.
+- The text of the comments has been corrected.
+- It is possible to connect only one filter, since there are no others in
+  upstream.
+- Do not have additional locks for attach/detach filter.
+- blksnap.h moved to include/uapi/.
+- #pragma once and commented code removed.
+- uuid_t removed from user API.
+- Removed default values for module parameters from the configuration file.
+- The debugging code for tracking memory leaks has been removed.
+- Simplified Makefile.
+- Optimized work with large memory buffers, CBT tables are now in virtual
+  memory.
+- The allocation code of minor numbers has been optimized.
+- The implementation of the snapshot image block device has been
+  simplified, now it is a bio-based block device.
+- Removed initialization of global variables with null values.
+- only one bio is used to copy one chunk.
+- Checked on ppc64le.
+
+Sergei Shtepa (8):
+  documentation: filtering and snapshots of a block devices
+  block: filtering of a block devices
+  block: header file of the blksnap module interface
+  block: module management interface functions
+  block: handling and tracking I/O units
+  block: difference storage implementation
+  block: snapshot and snapshot image block device
+  block: Kconfig, Makefile and MAINTAINERS files
+
+ Documentation/block/blkfilter.rst             |  66 ++
+ Documentation/block/blksnap.rst               | 351 ++++++++++
+ Documentation/block/index.rst                 |   2 +
+ .../userspace-api/ioctl/ioctl-number.rst      |   1 +
+ MAINTAINERS                                   |  17 +
+ block/Makefile                                |   3 +-
+ block/bdev.c                                  |   2 +
+ block/blk-core.c                              |  26 +-
+ block/blk-filter.c                            | 257 +++++++
+ block/blk-mq.c                                |   7 +-
+ block/blk-mq.h                                |   2 +-
+ block/blk.h                                   |  11 +
+ block/genhd.c                                 |  10 +
+ block/ioctl.c                                 |   7 +
+ block/partitions/core.c                       |   9 +
+ drivers/block/Kconfig                         |   2 +
+ drivers/block/Makefile                        |   2 +
+ drivers/block/blksnap/Kconfig                 |  12 +
+ drivers/block/blksnap/Makefile                |  15 +
+ drivers/block/blksnap/cbt_map.c               | 225 +++++++
+ drivers/block/blksnap/cbt_map.h               |  90 +++
+ drivers/block/blksnap/chunk.c                 | 631 ++++++++++++++++++
+ drivers/block/blksnap/chunk.h                 | 134 ++++
+ drivers/block/blksnap/diff_area.c             | 577 ++++++++++++++++
+ drivers/block/blksnap/diff_area.h             | 175 +++++
+ drivers/block/blksnap/diff_buffer.c           | 114 ++++
+ drivers/block/blksnap/diff_buffer.h           |  37 +
+ drivers/block/blksnap/diff_storage.c          | 290 ++++++++
+ drivers/block/blksnap/diff_storage.h          | 103 +++
+ drivers/block/blksnap/event_queue.c           |  81 +++
+ drivers/block/blksnap/event_queue.h           |  64 ++
+ drivers/block/blksnap/main.c                  | 481 +++++++++++++
+ drivers/block/blksnap/params.h                |  16 +
+ drivers/block/blksnap/snapimage.c             | 135 ++++
+ drivers/block/blksnap/snapimage.h             |  10 +
+ drivers/block/blksnap/snapshot.c              | 462 +++++++++++++
+ drivers/block/blksnap/snapshot.h              |  65 ++
+ drivers/block/blksnap/tracker.c               | 369 ++++++++++
+ drivers/block/blksnap/tracker.h               |  78 +++
+ include/linux/blk-filter.h                    |  72 ++
+ include/linux/blk_types.h                     |   1 +
+ include/linux/sched.h                         |   1 +
+ include/uapi/linux/blk-filter.h               |  35 +
+ include/uapi/linux/blksnap.h                  | 384 +++++++++++
+ include/uapi/linux/fs.h                       |   3 +
+ 45 files changed, 5430 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/block/blkfilter.rst
+ create mode 100644 Documentation/block/blksnap.rst
+ create mode 100644 block/blk-filter.c
+ create mode 100644 drivers/block/blksnap/Kconfig
+ create mode 100644 drivers/block/blksnap/Makefile
+ create mode 100644 drivers/block/blksnap/cbt_map.c
+ create mode 100644 drivers/block/blksnap/cbt_map.h
+ create mode 100644 drivers/block/blksnap/chunk.c
+ create mode 100644 drivers/block/blksnap/chunk.h
+ create mode 100644 drivers/block/blksnap/diff_area.c
+ create mode 100644 drivers/block/blksnap/diff_area.h
+ create mode 100644 drivers/block/blksnap/diff_buffer.c
+ create mode 100644 drivers/block/blksnap/diff_buffer.h
+ create mode 100644 drivers/block/blksnap/diff_storage.c
+ create mode 100644 drivers/block/blksnap/diff_storage.h
+ create mode 100644 drivers/block/blksnap/event_queue.c
+ create mode 100644 drivers/block/blksnap/event_queue.h
+ create mode 100644 drivers/block/blksnap/main.c
+ create mode 100644 drivers/block/blksnap/params.h
+ create mode 100644 drivers/block/blksnap/snapimage.c
+ create mode 100644 drivers/block/blksnap/snapimage.h
+ create mode 100644 drivers/block/blksnap/snapshot.c
+ create mode 100644 drivers/block/blksnap/snapshot.h
+ create mode 100644 drivers/block/blksnap/tracker.c
+ create mode 100644 drivers/block/blksnap/tracker.h
+ create mode 100644 include/linux/blk-filter.h
+ create mode 100644 include/uapi/linux/blk-filter.h
+ create mode 100644 include/uapi/linux/blksnap.h
+
+-- 
+2.34.1
+
 
