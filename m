@@ -1,195 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-11044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11045-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D82D85038D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Feb 2024 09:48:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BDE98503C8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Feb 2024 11:07:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 955D81F23588
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Feb 2024 08:48:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A5A1F23341
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Feb 2024 10:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42DE8358A5;
-	Sat, 10 Feb 2024 08:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6306E364AC;
+	Sat, 10 Feb 2024 10:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="qIU57IBH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lH9UT/Fc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4181928DA4;
-	Sat, 10 Feb 2024 08:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293E13FF4
+	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Feb 2024 10:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707554925; cv=none; b=d399pwsVowUqjdKIqhk8ZFlqt3j5stwUJEnJTmy+fehoJpimSUmu7b8rS9DVyJH+f6SWxeUqG0S6B/Hc0U/AUcpeAecPvGSdFlBupaPCJAi3oA3prGOx+YoyHuovN925HlW+yhdUtMVP589SUI09onrikx7EevVyZ8X4DghBNsE=
+	t=1707559613; cv=none; b=MVr0f92i2JWim5q2QfV2NIcRlmiWa75ftMwdLg20Wmt1Oiz0gs8it3MFsrX/6KIItpOD0AyKekKwTveOEnLgMUlSVPPBc1ghdib1AnjxBF6P8Lxp5bB9bqs6bcdKmARViAf5BVzOp6v95L+azexnrt8NEk+cHZrC/Fj/SOUCY/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707554925; c=relaxed/simple;
-	bh=by42dogj3zUmkKNyU1HJbDJGDyfM4sSev9s3YWrABgQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=k2OHXgKP+IXJK+Xl2Kh/cC//V3SAqp4pSZ5ejKfsMGzeha5DEaiVGacXgMLamvQ/iJlw/toFq5k+zi2MS2GdneQLAyznjlZG524eZj+Y1TYgE0SJ5Hh18a/hYhbD/AtviMrHrSLCwJBa7HuybPjJqM+h7m1TxBgj4c4UYRgIW4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=qIU57IBH; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.com;
-	s=s31663417; t=1707554915; x=1708159715; i=quwenruo.btrfs@gmx.com;
-	bh=by42dogj3zUmkKNyU1HJbDJGDyfM4sSev9s3YWrABgQ=;
-	h=X-UI-Sender-Class:Date:Subject:To:References:From:In-Reply-To;
-	b=qIU57IBHWbi8iO4qZ5lgyMQYMaRNMQcIxYZjg8iXc/T9iUpnvT8QnOUOeDK//f2I
-	 AKhSnMjvMiuz/37W7NBRfeB1m48wGiCpZrb43/G3fuLZlgJE1PBJP0js0vtYti9yh
-	 5t9ViUg34rxVgVdD5BhPxpjlZy+MDTcqZn4Z1UNSDi+U7Mup7OaI8r4wrigPMARuX
-	 +plxuOogEHFRQj90FMZ4MNNZ74Ervfx+RmQDV3j+rVrkN7MfY10PeL1G06nA1H+NV
-	 TdhUC4/MhvIcHF4loCP7TM5z+4x4eWczbb3J3FJuZP4/CLfaJ2EB6Am7pdOjOqeY0
-	 6srTk+WTq+qzNltHrQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.101] ([159.196.52.54]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MhU5b-1r3E6j1uJX-00eb1k; Sat, 10
- Feb 2024 09:48:35 +0100
-Message-ID: <9175d10b-035c-4151-80bc-f76bddc194ba@gmx.com>
-Date: Sat, 10 Feb 2024 19:18:29 +1030
+	s=arc-20240116; t=1707559613; c=relaxed/simple;
+	bh=4cxdB4Uv9nD/EY/k02/VTju42hj9QO5eshudCnuJVz4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Rf1qdAlXypdTiSQky5HnRF5a4R8bHLu4I7wO2eyaM7ziwDXe04bCyK9QbmISDd6DGoK69SFCp91axUyrY2U0jEEBJT0ZMVRFgE0Er8oALx2ue3rqdZjlnG3ejFRHfProWk4Y1adrnTRlhRp2MTY5S0iaknm+RDg4uTLjcDA9S4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lH9UT/Fc; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3392b12dd21so935089f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Feb 2024 02:06:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1707559610; x=1708164410; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1OeKp4hItBg+Wx9ixJ7goS/W0BoB9IHS5clqqGWuYFo=;
+        b=lH9UT/FcPs/nIHF1017zh9xyKEcz1VVVJA5XYGKy8FvmKgauf1NwoPvisuKPtBgsgA
+         uAHGPFxnBYB+SKBBXScbkp+Ta6tbSosV573NhZMLZZRw1UEgWeEgFihHHXBD7GjRJHfU
+         lOXR39KuoSvp75M4LbD8B/6e8xyIXgysAhzn6XKeutkjggDXLH1UcQvdc7gu6MAphkFo
+         XWEgf8fn7c0OTksuY76kUadj1yFkJhyrO2TrBnks35dVZ4eazzgxCcbB4nwzKNUDwqOt
+         MyJIKFmEcRlOo3wxmIQJ3tOQx/ugweCPHEjZ0rdFRWr0so3q9xHy/6qtVC+DkIKmrMa0
+         K/NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707559610; x=1708164410;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1OeKp4hItBg+Wx9ixJ7goS/W0BoB9IHS5clqqGWuYFo=;
+        b=ovJGOjzmhMXC5uA1c42buRWny61bosu9i1+NHygWqk93XnAl1X5NfqP8DScBt5N13H
+         JHqbk/bk4PKil7iQiH58+2PUQPdyVLDRQFBruNAiDU/1czaWqLAfVKhiHm/aqWBi8zOi
+         h3LH4bChe9ukjRv/B1M6/sDdpvylAePUMNidTWuUxwVPecp+RiOYNeyrcc/k1OidLy9q
+         X/DazRKYtLbea0tAucAXep5PITO9n92tUwD/b6gzgiCad/OBcVpkm3f9R+EjB7+XV73g
+         7tc8iEsdlqp4ZRBr6H0xe7LjiTcDqD9hYaRmqyvUblrszrh0p+MYf3YOJAmWgsIDPQlU
+         0Xhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVU3YZqpHuZHM7+nM2YqrFfgAxVDip7w9kuQur1ybpgKimPszozioYEv26nCJ03jy7i/jyC8RhPbSdqd9g1XegfMf62hR/W3USU4owEbw==
+X-Gm-Message-State: AOJu0YxEfoWTBsKbFnC64Ju5QkuG+SDDbckiqj8VzyVyUJXXeFgg1NHr
+	zJQMdqIP/RYDRwH3PnSk2B8HJROpIIynpHtpyXtop+2Rcra/kVUv
+X-Google-Smtp-Source: AGHT+IFmDrfpGd7yuJCUrN4IltCrnm6VM8ZtY6M4MXnheDL5tNFAzMlfDh+YUqIzTgp/lJJ9fo6slw==
+X-Received: by 2002:a05:6000:1002:b0:33b:39d6:666d with SMTP id a2-20020a056000100200b0033b39d6666dmr986485wrx.36.1707559609522;
+        Sat, 10 Feb 2024 02:06:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUR50No3HcUuHpqH3GwhkmhI2MSRYKNqAxiL5MjqahH5UcRXUdyojguyvyRAB9nPNsOZmNgfXAqwUT4I+J7+OVWMFH4QR3B6//jiQLUsg==
+Received: from amir-ThinkPad-T480.lan (85-250-217-151.bb.netvision.net.il. [85.250.217.151])
+        by smtp.gmail.com with ESMTPSA id p13-20020a5d4e0d000000b0033b4b1d180esm1456334wrt.43.2024.02.10.02.06.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 10 Feb 2024 02:06:48 -0800 (PST)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] dcache: rename d_genocide()
+Date: Sat, 10 Feb 2024 12:06:43 +0200
+Message-Id: <20240210100643.2207350-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] Monthly btrfs report (Feb 2024)
-Content-Language: en-US
-To: syzbot <syzbot+listad2f01a497df9ab5d719@syzkaller.appspotmail.com>,
- clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
- linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <000000000000c47db50610f92cf9@google.com>
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
- pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
- BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
- XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
- jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
- LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
- mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
- CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
- tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
- INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
- DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
- iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
-In-Reply-To: <000000000000c47db50610f92cf9@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:epPBEk7HpEzTDkp3gxgPXB0p5toGWaSyAiNyjzgQaWFKoPJA8BV
- 8sjRR/aSiS57nYrCqwlTM7yc0uy0TLd+Iq+S7XyLRjqYQVIupT0s3uuk0Wkppb5t6aRltAn
- TF6jTKInsguQGsStA2Itq3qYLaRQ2glafsz8Za8F2XhfjN/Mgf0SlN2VBu9GrDXMJJ3FKeE
- h/xxTMnZqZ7ZHuo3bgooA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VuQ85KAy/UU=;5dkLB88JIXoOxzUzjUYzALMv++T
- 6969Ys3tEqB3KkgoHy0FFubm+tjoutwdNOm8b1WYUUdr0TWtvaolMLUim4l/fDWYZ0qjodGB8
- BOLfj/pqC4ZE2+qtvZJ2SgiXYOeZaAXdrRxYf/P4KxB9MKkNxsh10/axsFhlbDFyoWQZBKqXs
- 77F7Oue+EukCDm3QkQEYRuppq3YaWwCysieWrYwV50p+zvhvaxdFVJ2ZEs/oW3HWLnbGIO4MQ
- E0+omnffuKdmVY+ehU6CoWBe+hl47+aF9gqO93JlLvaZKoeciuAJh+qftWq8IZMIsND22Ylir
- aG8rixE+Ut28AL9BQ3webVAmNEQ+htpK0d3M0aTondJe+E/FJt7mxYiuX2HE6Z+cX5Sq1YBrO
- cAPXQ4TrU55Ku2d4dFTmetjnHitFb0pDhFjDj6Jg+542yk+IhV1N/tV8/KZZdi2mbylNtmezy
- ARtCWZ5f3qwHaWzdqbtN29+OuMWTozZS13FFklUUGyfIHJq2FNGTbuac7qoH7aEfYU3cSAygc
- /E2vS7gUkZbAJichq3v44TXDEXV/8YtCKO9lf6CdMvi86X2tjTIISiH1XKOTUlSOEMSC0qHgF
- dU8hPx/dou0F2ABPO8+D/zvYI8+U3qrMbcT6m3IWWEPWqABbHtDGdhO+npSNJzkA6FeHQbHe+
- DLjk5sOle8SUbCelew5geld6wk7DQOGIHYdTh57dlDYm8lRzmg7GJZUXjROxLceIMdfggK1JN
- K+Bs8D3Vs7qmIIp/uUp4Sfn70QqgOuazwhGBuACSWBFpxzH2MllFuJNG6GDqg/bbDyn5dGAcN
- YYAmJvsCbYXtigLWB/KpeElUQ68knhtWocCRIeBcKKCho=
+Content-Transfer-Encoding: 8bit
 
+Political context aside, using analogies from the real world in code
+is supposed to help us human programmers understand the code better.
 
+In the case of d_genocide(), not only is it a very dark analogy, but it's
+also a bad one, because d_genocide() does not actually kill any dentries.
 
-On 2024/2/10 07:27, syzbot wrote:
-> Hello btrfs maintainers/developers,
->
-> This is a 31-day syzbot report for the btrfs subsystem.
-> All related reports/information can be found at:
-> https://syzkaller.appspot.com/upstream/s/btrfs
->
-> During the period, 1 new issues were detected and 1 were fixed.
-> In total, 43 issues are still open and 51 have been fixed so far.
->
-> Some of the still happening issues:
->
-> Ref  Crashes Repro Title
-> <1>  5804    Yes   kernel BUG in close_ctree
->                     https://syzkaller.appspot.com/bug?extid=3D2665d678ff=
-fcc4608e18
+Rename it to dput_dcache_for_umount() and rename the DCACHE_GENOCIDE
+flag to DCACHE_SB_DYING.
 
-I'm not sure why, but I never had a good experience reproducing the bug
-using the C reproduer.
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+---
 
-Furthermore, for this particular case, using that C reproducer only
-reduced tons of duplicated dmesg of:
+Al,
 
-[  162.264838] btrfs: Unknown parameter 'noinode_cache'
-[  162.308573] loop0: detected capacity change from 0 to 32768
-[  162.308964] btrfs: Unknown parameter 'noinode_cache'
-[  162.313582] loop1: detected capacity change from 0 to 32768
-[  162.314070] btrfs: Unknown parameter 'noinode_cache'
-[  162.323629] loop3: detected capacity change from 0 to 32768
-[  162.324000] btrfs: Unknown parameter 'noinode_cache'
-[  162.328046] loop2: detected capacity change from 0 to 32768
-[  162.328417] btrfs: Unknown parameter 'noinode_cache'
+I am not usually for PC culture and I know that you are on team
+"freedom of speech" ;-), but IMO this one stood out for its high ratio
+of bad taste vs. usefulness.
 
-Unlike the latest report which shows a lot of other things.
+The patch is based on your revert of "get rid of DCACHE_GENOCIDE".
+I was hoping that you could queue my patch along with the revert.
 
-Anyone can help verifying the C reproducer?
-Or I'm doing something wrong withe the reproducer?
+BTW, why was d_genocide() only dropping refcounts on the s_root tree
+and not on the s_roots trees like shrink_dcache_for_umount()?
+Is it because dentries on s_roots are not supposed to be hashed?
 
 Thanks,
-Qu
-> <2>  2636    Yes   WARNING in btrfs_space_info_update_bytes_may_use
->                     https://syzkaller.appspot.com/bug?extid=3D8edfa01e46=
-fd9fe3fbfb
-> <3>  251     Yes   INFO: task hung in lock_extent
->                     https://syzkaller.appspot.com/bug?extid=3Deaa05fbc75=
-63874b7ad2
-> <4>  245     Yes   WARNING in btrfs_chunk_alloc
->                     https://syzkaller.appspot.com/bug?extid=3De8e56d5d31=
-d38b5b47e7
-> <5>  224     Yes   WARNING in btrfs_remove_chunk
->                     https://syzkaller.appspot.com/bug?extid=3De8582cc168=
-81ec70a430
-> <6>  125     Yes   kernel BUG in insert_state_fast
->                     https://syzkaller.appspot.com/bug?extid=3D9ce4a36127=
-ca92b59677
-> <7>  99      Yes   kernel BUG in btrfs_free_tree_block
->                     https://syzkaller.appspot.com/bug?extid=3Da306f914b4=
-d01b3958fe
-> <8>  88      Yes   kernel BUG in set_state_bits
->                     https://syzkaller.appspot.com/bug?extid=3Db9d2e54d23=
-01324657ed
-> <9>  79      Yes   WARNING in btrfs_commit_transaction (2)
->                     https://syzkaller.appspot.com/bug?extid=3Ddafbca0e20=
-fbc5946925
-> <10> 74      Yes   WARNING in btrfs_put_transaction
->                     https://syzkaller.appspot.com/bug?extid=3D3706b1df47=
-f2464f0c1e
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> To disable reminders for individual bugs, reply with the following comma=
-nd:
-> #syz set <Ref> no-reminders
->
-> To change bug's subsystems, reply with:
-> #syz set <Ref> subsystems: new-subsystem
->
-> You may send multiple commands in a single email message.
->
+Amir.
+
+ fs/dcache.c            | 13 ++++++++-----
+ fs/internal.h          |  2 +-
+ fs/super.c             |  3 +--
+ include/linux/dcache.h |  2 +-
+ 4 files changed, 11 insertions(+), 9 deletions(-)
+
+diff --git a/fs/dcache.c b/fs/dcache.c
+index 6ebccba33336..61ecc98c49a8 100644
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -3054,24 +3054,27 @@ bool is_subdir(struct dentry *new_dentry, struct dentry *old_dentry)
+ }
+ EXPORT_SYMBOL(is_subdir);
+ 
+-static enum d_walk_ret d_genocide_kill(void *data, struct dentry *dentry)
++/* make umount_check() happy before killing sb */
++static enum d_walk_ret dput_for_umount(void *data, struct dentry *dentry)
+ {
+ 	struct dentry *root = data;
+ 	if (dentry != root) {
+ 		if (d_unhashed(dentry) || !dentry->d_inode)
+ 			return D_WALK_SKIP;
+ 
+-		if (!(dentry->d_flags & DCACHE_GENOCIDE)) {
+-			dentry->d_flags |= DCACHE_GENOCIDE;
++		if (!(dentry->d_flags & DCACHE_SB_DYING)) {
++			dentry->d_flags |= DCACHE_SB_DYING;
+ 			dentry->d_lockref.count--;
+ 		}
+ 	}
+ 	return D_WALK_CONTINUE;
+ }
+ 
+-void d_genocide(struct dentry *parent)
++/* drop last references before shrink_dcache_for_umount() */
++void dput_dcache_for_umount(struct super_block *sb)
+ {
+-	d_walk(parent, parent, d_genocide_kill);
++	if (sb->s_root)
++		d_walk(sb->s_root, sb->s_root, dput_for_umount);
+ }
+ 
+ void d_mark_tmpfile(struct file *file, struct inode *inode)
+diff --git a/fs/internal.h b/fs/internal.h
+index b67406435fc0..27bda8a3ff9d 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -215,10 +215,10 @@ extern char *simple_dname(struct dentry *, char *, int);
+ extern void dput_to_list(struct dentry *, struct list_head *);
+ extern void shrink_dentry_list(struct list_head *);
+ extern void shrink_dcache_for_umount(struct super_block *);
++extern void dput_dcache_for_umount(struct super_block *);
+ extern struct dentry *__d_lookup(const struct dentry *, const struct qstr *);
+ extern struct dentry *__d_lookup_rcu(const struct dentry *parent,
+ 				const struct qstr *name, unsigned *seq);
+-extern void d_genocide(struct dentry *);
+ 
+ /*
+  * pipe.c
+diff --git a/fs/super.c b/fs/super.c
+index d35e85295489..42b3189fbe06 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -1235,8 +1235,7 @@ EXPORT_SYMBOL(kill_anon_super);
+ 
+ void kill_litter_super(struct super_block *sb)
+ {
+-	if (sb->s_root)
+-		d_genocide(sb->s_root);
++	dput_dcache_for_umount(sb);
+ 	kill_anon_super(sb);
+ }
+ EXPORT_SYMBOL(kill_litter_super);
+diff --git a/include/linux/dcache.h b/include/linux/dcache.h
+index d07cf2f1bb7d..0ce8543b64d7 100644
+--- a/include/linux/dcache.h
++++ b/include/linux/dcache.h
+@@ -173,7 +173,7 @@ struct dentry_operations {
+ #define DCACHE_DONTCACHE		BIT(7) /* Purge from memory on final dput() */
+ 
+ #define DCACHE_CANT_MOUNT		BIT(8)
+-#define DCACHE_GENOCIDE			BIT(9)
++#define DCACHE_SB_DYING			BIT(9)
+ #define DCACHE_SHRINK_LIST		BIT(10)
+ 
+ #define DCACHE_OP_WEAK_REVALIDATE	BIT(11)
+-- 
+2.34.1
+
 
