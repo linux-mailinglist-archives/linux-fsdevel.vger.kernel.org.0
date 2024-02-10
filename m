@@ -1,95 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-11053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933CE850579
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Feb 2024 17:55:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 835D9850748
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Feb 2024 00:27:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55D70285E70
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Feb 2024 16:55:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B58D81C20E8C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Feb 2024 23:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B3E5C918;
-	Sat, 10 Feb 2024 16:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B3360240;
+	Sat, 10 Feb 2024 23:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vy54Gspn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA5539ACA;
-	Sat, 10 Feb 2024 16:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D4835FF07
+	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Feb 2024 23:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707584148; cv=none; b=V75KDCMZwfuUBDriT7PY/JMQeWijiQhadvpchGwIu/5A/BsYstGqIO9Rb/burj6Z/+9R0SLqtVgVsM0uoYc9yAHsiDLMfNWAL8bfyiuW3tjfivSsN0Hg/hLn3f/V9c2GMJr5Jv69i6LEyyiEAYsQiWRg5YmHqw6uKtZ9Q+xgvZA=
+	t=1707607645; cv=none; b=psVWfDadoESLCnscVFD5zUe64Ud1pF0Swn5oIo2O4lmE7Q4V86KqwADg1DcX8sLdRcM6BYd/9IpsHlmgzrONM5MVWmeE7EZvYOYMY3gbMsLQElIOzFWT7kTAxYOQCBraYfB9jEUQDmaYBqQidVQmYW0SP5Z+NJ5bZ6nKt4P2y8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707584148; c=relaxed/simple;
-	bh=/ApXomi0/8JKhyR2ADsF4R8Vy9yMVYlz+v5zz2OZtDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SadMXOo0i+jkF1gOQ9x/4k2/ZFbRt8ACXawX2JebrgCwt+0es6fnYkDD9tXisI3xRShmqRArJGv5V4b1TtJiaRYtTnG3poiFATe2dsMCrZGQ9rtmIWHQ2yRsVOB9DP8KNxWTDpRt/l6QUhDAaJ+TtKgWiZOQbG9Npz3Mz94fWVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1d7431e702dso18183355ad.1;
-        Sat, 10 Feb 2024 08:55:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707584146; x=1708188946;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X2leUJquGAS3T/lK4j1j+pzSXbxqTub1o2Ka6/pvtPQ=;
-        b=cW7A7Inb1M1jacLQJpdtJqPh5QjHU6HdUYTzGYw0bn0ADqB1UT0+7f0sszEIWXpijp
-         LxEdjLWdbRx5xVQlUSQCFVinAp8BqLZqaCzQ7Tz7HO1/HAB4MZVmhFrA0DlhLUSglvQw
-         YE9GxWwrCtY6KxB/c7/2YNs7iccOOKDUT6ZV0y1aqAqCFkoKnKJRZaKXt1/IoArAN05g
-         lCReY5rbws+88Y89z+nJjSA2w4mdVj8Y5SYrODlHOMPXc2P0EjxhjDEofTKLRG+m5zBn
-         b08LdWaKS/KYu/Pi2AyfhLXUDcyqlWDl/+f1mj9uOo32duYjk6yPBH+ZuGc8eUB/13JW
-         bmvQ==
-X-Gm-Message-State: AOJu0Ywd9ja2hap/9D2cMlXo9ZrIQfKI1Vjk4gPOtmccQBxT+3mFdIc5
-	dmdXpyhfMOv9QXSvTfqVGOM9/Qtp5ErsTeEPFyyGFVH2hwEOyj5v
-X-Google-Smtp-Source: AGHT+IG5ykGOVAchSHKQdBC8A9ytcJvwovwSiOIhuMxyUZCJwbSguGp1FMauXxpD/JBAzLcG2YXaHg==
-X-Received: by 2002:a17:902:ec8f:b0:1da:e86:3d9e with SMTP id x15-20020a170902ec8f00b001da0e863d9emr3424416plg.43.1707584146353;
-        Sat, 10 Feb 2024 08:55:46 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX50jHsg4IyXpACTu0GshmsSgXOQj7zh3wI+AhDLwpvcjBY0V6lRSwgnHV6X+CyhqA45vzvR3rlCgB/0MsuJHjeRH9j9dCXHCGo5wtAn+63UqjEl9mR+QmMipF38WVJiQmJjXnCIunZ0E5I/YCdFuqWuuh66MGh3DUt4wpm7ByL9FB96YricUZIaJPWrH9rSX5zAzcUzew0Ty4eZhgmrR2th/xY6IzpQ4Re96YisCVUZGDkHqlRsJ/nzYAuwC2j3Yqm
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
-        by smtp.gmail.com with ESMTPSA id q13-20020a170902c74d00b001d9412c8318sm3264272plq.25.2024.02.10.08.55.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Feb 2024 08:55:45 -0800 (PST)
-Message-ID: <e955c7c5-019a-41c6-99f7-f8e3dbee652d@acm.org>
-Date: Sat, 10 Feb 2024 08:55:44 -0800
+	s=arc-20240116; t=1707607645; c=relaxed/simple;
+	bh=H9TyBsS2FeOii05Yyfj9owxMN+73mvLkya1tI9ox5Ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nEJElnK03b1CKglyBWAlmcqOth6hoApH5qwFl+C73dAH8GgeJFmOXJewNdH2MwF+kwcHOfWZNAHilZzNpdQNwG56wBk94KttY/NtwcSP7/CUFx272krrVyxJKeuGcl/YpJkNcSx1QdbZn9BtbVKf97iQdxbSXbMTDyYDvfjOhT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vy54Gspn; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=HZ51g0UGzeKqB9nWdGMxiSkghV0SKmVNRgT9K/Yj5ak=; b=vy54Gspnc3WSfLM6sjV/2eFuX3
+	82T0fIsCl1b6cU4pR0Ss2IO9zC6Gh3WKquTWFV43yFK4qf4yNfSn6PeE8fyz5bMvBg3aL2BxgY2FU
+	OHwWMqC6IxlhLCJKrvVtuNrS7hny8AywGFPdI/05Fawekew+Sxn4bmHV1mNNeyE0wXWC4yJK3YF2b
+	JdCEhF0lwzQWoufbnZJCYFV5eLSJWmwJThaatba5dtoOz4sH+BRf0y0CkqeRgKnWExLwG2B1RJL5l
+	oDE81DSAX9WmwrtL7kqh6sU7HegSFEHrOeYiofjJsRy6ytgnXrmnjBvtXt1IiVIUpO9cHsQoi++qa
+	doYMQ4rQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+	id 1rYwkg-005NJl-2y;
+	Sat, 10 Feb 2024 23:27:19 +0000
+Date: Sat, 10 Feb 2024 23:27:18 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] dcache: rename d_genocide()
+Message-ID: <20240210232718.GG608142@ZenIV>
+References: <20240210100643.2207350-1-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] fs, USB gadget: Remove libaio I/O cancellation support
-Content-Language: en-US
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, Avi Kivity <avi@scylladb.com>,
- Sandeep Dhavale <dhavale@google.com>, Jens Axboe <axboe@kernel.dk>,
- stable@vger.kernel.org
-References: <20240209193026.2289430-1-bvanassche@acm.org>
- <2024021022-ahoy-vintage-b210@gregkh>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <2024021022-ahoy-vintage-b210@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240210100643.2207350-1-amir73il@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 2/10/24 02:20, Greg Kroah-Hartman wrote:
-> On Fri, Feb 09, 2024 at 11:30:26AM -0800, Bart Van Assche wrote:
->> Fixes: 63b05203af57 ("[PATCH] AIO: retry infrastructure fixes and enhancements")
+On Sat, Feb 10, 2024 at 12:06:43PM +0200, Amir Goldstein wrote:
+
+> I am not usually for PC culture and I know that you are on team
+> "freedom of speech" ;-), but IMO this one stood out for its high ratio
+> of bad taste vs. usefulness.
 > 
-> I can't see this git id in Linus's tree, are you sure it is correct?
+> The patch is based on your revert of "get rid of DCACHE_GENOCIDE".
+> I was hoping that you could queue my patch along with the revert.
+> 
+> BTW, why was d_genocide() only dropping refcounts on the s_root tree
+> and not on the s_roots trees like shrink_dcache_for_umount()?
+> Is it because dentries on s_roots are not supposed to be hashed?
 
-Thanks Greg for having looked this up. I had not yet realized this but that
-git commit ID comes from a historic tree. Is there a standard way for referring
-to patches from historic trees? See also
-https://stackoverflow.com/questions/3264283/linux-kernel-historical-git-repository-with-full-history
+Because secondary roots make no sense for "everything's in dcache"
+kind of filesystems, mostly.
 
-Thanks,
+FWIW, I don't believe that cosmetic renaming is the right thing to
+do here.  The real issue here is that those fs-pinned dentries are
+hard to distinguish.  The rule is "if dentry on such filesystem is
+positive and hashed, that contributes 1 to its refcount".
 
-Bart.
+Unfortunately, that doesn't come with sane locking rules.
+If nothing else, I would rather have an explicit flag set along
+with bumping ->d_count on creation side and cleared along with
+dropping refcount on removal, both under ->d_lock.
 
+Another piece of ugliness is the remaining places that try to
+open-code simple_recursive_removal(); they get it wrong more
+often than not.  Connected to the previous, since that's where
+those games with simple_unlink()/simple_rmdir() and associated
+fun with refcounts tend to happen.
+
+I'm trying to untangle that mess - on top of that revert,
+obviously.  Interposing your patch in there is doable, of course,
+but it's not particularly useful, IMO, especially since the
+whole d_genocide() thing is quite likely to disappear, turning
+kill_litter_super() into an alias for kill_anon_super().
 
