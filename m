@@ -1,94 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-11037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 128E6850288
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Feb 2024 05:23:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FFD3850295
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Feb 2024 05:59:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1351B2481D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Feb 2024 04:23:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 927A41C22BE4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Feb 2024 04:59:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA9C5684;
-	Sat, 10 Feb 2024 04:23:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6ED6AB7;
+	Sat, 10 Feb 2024 04:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KA9FF85I"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iJ3OtuSV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB1923B9
-	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Feb 2024 04:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D85524A
+	for <linux-fsdevel@vger.kernel.org>; Sat, 10 Feb 2024 04:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707538995; cv=none; b=S/EggTLe/T80TC+UYs1cyPVe92iyCejqUBUv5Tb51ydAdP3ou4Y1/twhTM791KP+nBZMsiEp5KyPjIbUvFKsmU5gWKQYXtcQKAfOy9LsSplfKv29kVxpAuTYZK+6BWeI8rm/VfEnLsVCXwLi157zgG9DtMn+9m7D47tBtUo3aSE=
+	t=1707541186; cv=none; b=cbNSKMbvbeW0cVWSoC7bdiaCiaQJY6vQJG2s68uq7fvM+BjjywG0tVkz6uvi0HZ9N/P5ZnqmH5ecUy299yP1Rabta2voWqgb9KQd8E0DYjpMszZwoullN/8ubzXJcYGFRI38Z8eBhOJxytxSRVo2a9mZF/u5uNs9pbKdux8yLME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707538995; c=relaxed/simple;
-	bh=j+2el+523u3pxi9+th9Ef9IcW5653uVfKukSPEg1Jx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sihJC10aEiftTusnan1A+JiiqbRSfrA4NLoVkW+S83/PqKTjnj+P5joJ5Gzg247MZ61k+t8hhnHzMia5P6/6ONLNeXI+bZRNwM7fi9poQ1fwSFBXFUjx5b286vIUmsY9uRRFjBJDlV4zAlxlvnfVINBK2W1cUhM85JXk6jt7+Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KA9FF85I; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+	s=arc-20240116; t=1707541186; c=relaxed/simple;
+	bh=1hMSzKlU/8kdzNK0ZhfKer6MS58iESJPzqeH9XaJRhk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=puNGy7eqvR8a+sHrb64rLIfwTwK7DNa0DBGsoqVfV6dQT2N/hoUmX10gjqt2HkEIh9smy61qjK/Ds3PsU6hcbn9l27jDvrnasPFpH+/LB+tmU7atN/4dxlRkD8/K3c2CqP1hKe0P1QNmqsKR3apeWECZ4p4mbtNZyhpbdQVm4X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iJ3OtuSV; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=GU+ma5Z/YTP9YWv1qIHlmA4u3GjUo9MFVKM50BS4Cmw=; b=KA9FF85I285h5P6MbaudS3DxN1
-	zP1qg8ghQIU0DxP+WlsvxP79oKaEZg0R+Agf9VaFNgaLzfOKz6XRYUMGBTKlkcHIcLx9xx8X1toU/
-	lVTNUQ/A5ImDa+ZcbCcruae3vIE6WRjj2/cr0pU41pKdEG6EaLFVjT9Aa67QoW/ZSEiQu454w1Oc5
-	r19AOM5dwmpt4/6UOof20zfCsGLQb58U4QGru6vTR8oEmq3s6+u4M8RORuWjMfHd9B2RVzV0VYQS4
-	WiX1akO5IEAZA0+3iRcs/QHqsPItAm+Gk1kLWBk95S9tkpZAlSUy1q2kNzK3n4caK0Co3r/munGT+
-	v8FyOXJQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-	id 1rYetP-004eqJ-1r;
-	Sat, 10 Feb 2024 04:23:07 +0000
-Date: Sat, 10 Feb 2024 04:23:07 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Nathan Chancellor <nathan@kernel.org>
-Subject: Re: [RFC] ->d_name accesses
-Message-ID: <20240210042307.GF608142@ZenIV>
-References: <20240207222248.GB608142@ZenIV>
- <ZcQKYydYzCT04AyT@casper.infradead.org>
- <CAKwvOdmX20oymAbxJeKSOkqgxiOEJgXgx+wy998qUviTtxv0uw@mail.gmail.com>
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=3Nljb9PCm+3BSksLB4/hye2aApASFSnrOrHjYRJX5Kk=; b=iJ3OtuSV5XS2/o4y71qAOLhhjW
+	iAWpvuu4D2hHS53tl/JLJslI+Ub5O8dSN4eew0QtNuiR6wXpBo+17Dq8akHdlO2P6nqjiczbBPOJg
+	gHpBKnmA47Gk+WJHq1QOQvAxhMO/Qh/Ut2v+e9ZP89n4I3qWbOC13OHQJRXjIoZqoyVFXIWqy7XHL
+	Xuq+yRlhduOnZ+qF1Tp/Uk2sKGji98Uf4nGpJnuZB9guE56vP5SXCEwCmDVBNPdYia9Xw81qbpxtK
+	UDoi7v378I+2VuFDl+cXHmXcRN8dLsrm6KbjeMh8JLPf8RNfZ1GOvJsZTBKZ3YN1eAMLCUfvfUUla
+	agt6NNtA==;
+Received: from [50.53.50.0] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rYfSp-00000001DjS-3MFq;
+	Sat, 10 Feb 2024 04:59:43 +0000
+Message-ID: <fbb4cbf0-5cb8-40b6-b1a5-b61ca4a30a79@infradead.org>
+Date: Fri, 9 Feb 2024 20:59:41 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKwvOdmX20oymAbxJeKSOkqgxiOEJgXgx+wy998qUviTtxv0uw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/hfsplus: wrapper.c: fix kernel-doc warnings
+Content-Language: en-US
+To: Bart Van Assche <bvanassche@acm.org>, linux-fsdevel@vger.kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jens Axboe <axboe@kernel.dk>
+References: <20231206024317.31020-1-rdunlap@infradead.org>
+ <8e6759b1-15da-40b7-85a5-7c6ae91d51e5@acm.org>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <8e6759b1-15da-40b7-85a5-7c6ae91d51e5@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 09, 2024 at 11:10:10AM -0800, Nick Desaulniers wrote:
 
-> I have 100% observed llvm throw out writes to objects declared as
-> const where folks tried to write via "casting away the const" (since
-> that's UB) which resulted in boot failures in the Linux kernel
-> affecting android devices.  I can't find the commit in question at the
-> moment, but seemed to have made some kind of note in it in 2020.
-> https://android-review.git.corp.google.com/c/platform/prebuilts/clang/host/linux-x86/+/1201901/1/RELEASE_NOTES.md
+
+On 2/9/24 13:57, Bart Van Assche wrote:
+> On 12/5/23 18:43, Randy Dunlap wrote:
+>> - * @op: direction of I/O
+>> - * @op_flags: request op flags
+>> + * @opf: request op flags
 > 
-> That said, I just tried Al's union, and don't observe such optimizations.
-> https://godbolt.org/z/zrj71E8W5
+> (just noticed this patch)
+> 
+> The new comment is worse than the original comments. This would be a
+> better explanation of the 'opf' argument:
+> 
+> + * @opf: I/O operation type and flags
 
-The really shitty part is not the missing stores; it's reordered loads.
-If
-	spin_lock(&dentry->d_lock);
-	name = dentry->d_name.name;
-	len = dentry->d_name.len;
-	something(name, len);
-	spin_unlock(&dentry->d_lock);
-has the compiler go "->d_name is const, so I can bloody well move
-the load before that spin_lock() call", we really have a problem.
+Agreed. I'll send an update.
 
-Can it reorder the loads of const member wrt e.g. barrier()?  If
-that's the case, this approach is no-go and accessor is the only
-feasible alternative.
+thanks.
+-- 
+#Randy
 
