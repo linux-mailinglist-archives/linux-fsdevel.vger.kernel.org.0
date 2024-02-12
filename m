@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-11131-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C4F851971
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 17:36:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6107585197C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 17:36:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE141F22D40
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 16:36:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B47F282CB8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 16:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4CC3F8D0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC813FB03;
 	Mon, 12 Feb 2024 16:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="EkF+I8nC"
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="oRgHB71P"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C29B1EEE4;
-	Mon, 12 Feb 2024 16:31:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26971210E4;
+	Mon, 12 Feb 2024 16:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707755466; cv=none; b=ZmnFXibo/9C6ET7sfibz0iQi6q/irqsmP31nmBE4hcMtQR5vTo7eczGl1pJPmUZYgyuELL8QC5yjApnDVgq7AiHd8A0SuYNs2Fz+13A2br1xotMRm9ZwbDlyl88HKq3+hvi7p8vU+uQCyT3E6apWJTjMHsNeGfHvrYnmp68nE1A=
+	t=1707755466; cv=none; b=QXb/RydcfZLOUbTYnlLdXD5f4V1cFb7K2QOKBceAB6C8lbsy1ENwyi4hOVLHiaS3eh9YGBYhBotlyYSA4sY52yOL7JvzPXzgNfdImXX7DOnrMzO3p4OQCv5hnO5m8CCrmShr8yeKt3FKon4SyOGNo8CXjk+ABp7SRCd5zEdrHs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1707755466; c=relaxed/simple;
-	bh=q/9jEJfnqEQkc3MaRhsxgrh4+o9HVwSNE5hPfxrTXB8=;
+	bh=ecUyvilxXmAuEa6CVYKrKIA8K8l2tVUUJHjpsI0Te00=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Qk75W7L/IwH92HLTA7l4B8oF8sXHQ6JqgAH13nRgvaL1+PGKq8nXvdxWR+gI8e2yi8geswacm6uCrXLU5Cek6uvWs1ttnKSlBZJt86lEPGEeXuBLYvnpfs8LAXPUpGuPSzqsFF2gAd3JyjLZfQiRIglsvcaeLgdMNp7eGbW2/rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=EkF+I8nC; arc=none smtp.client-ip=167.114.26.122
+	 MIME-Version; b=VjBm2gKMVdaohw1TqmYNASuc22gl8KGgwZKuFukZp+BLkqYBXGd9A8cDqJOjNLgeXYod+URsCCEAa9Icaicp3itIxarBl2vkcLM0HBhwXLIxB4No6vOKnOfePFvGJYPgM2ixDK3SjXvVy5ERpAPokJMLcLJEXHEhjR/GNuBycH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=oRgHB71P; arc=none smtp.client-ip=167.114.26.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1707755463;
-	bh=q/9jEJfnqEQkc3MaRhsxgrh4+o9HVwSNE5hPfxrTXB8=;
+	s=smtpout1; t=1707755464;
+	bh=ecUyvilxXmAuEa6CVYKrKIA8K8l2tVUUJHjpsI0Te00=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EkF+I8nCzGXwgsjLIO9z5hrj4YLXkG1Gy+qBhoGBPBzwMSQ2ngaByzqZ8MwMu7uYR
-	 HVuW3uAHo7KnmvGrg8FW5d8BZO/OcZAetn3pHPCIKXU3OWKZQrd1Gq04mjZpxP50jP
-	 v2sxs0xOImWi8VD0bUUiy+VYH/NlIQft+vc+QCvBV0VT3G9XLCd+o0JpXhqhRW8rT6
-	 HOmpfq2rS2ZnfBh8TL+swhmVq8Py5ZEKkF6SvmeGs+vHNFDGloUyRXskUrpYkosMzK
-	 D8W0MOk5fYJK6ialW8Gs/5HZdIgZbPC1bGBNdK+vbFrB6x2RODeex/oO2dOq6vh+67
-	 oMJWvt2aRlatw==
+	b=oRgHB71P8SmaCX/tCeZteHX4/MQWsvX38WZLcuAntTjvfEvdxOg7QpPKiM9bQVwyf
+	 RsV+U02IEvhJ2YU1a0i36eAEEMIT4JK3BXnzDIqYi2uVGBkSzRpHZVyizYFBrY4wrv
+	 yQGWxe/GORBjLpbRChTfuyQZT32Quy4z7G01Z6CTjmK/33sZZz3v44j7hdbznfWTe8
+	 3ZNCtjU8laXZNvJdYxHxQew/vONsjZs/fE1EWjjpmAVIBe4o0HLQ3ouDp0PAKNC/NR
+	 leOkRceGOfzokWkAdLU3lPjBl1kaJFjwlYsLTfacQdKe8jagU6YZWvacZYOmSf3Dvt
+	 SMemhEKFzt3sA==
 Received: from thinkos.internal.efficios.com (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TYVMC3L1TzXvQ;
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TYVMC6SRczYQx;
 	Mon, 12 Feb 2024 11:31:03 -0500 (EST)
 From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To: Dan Williams <dan.j.williams@intel.com>,
@@ -63,10 +63,13 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	dm-devel@lists.linux.dev,
 	nvdimm@lists.linux.dev,
-	linux-s390@vger.kernel.org
-Subject: [PATCH v5 1/8] dax: alloc_dax() return ERR_PTR(-EOPNOTSUPP) for CONFIG_DAX=n
-Date: Mon, 12 Feb 2024 11:30:54 -0500
-Message-Id: <20240212163101.19614-2-mathieu.desnoyers@efficios.com>
+	linux-s390@vger.kernel.org,
+	Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>
+Subject: [PATCH v5 2/8] nvdimm/pmem: Treat alloc_dax() -EOPNOTSUPP failure as non-fatal
+Date: Mon, 12 Feb 2024 11:30:55 -0500
+Message-Id: <20240212163101.19614-3-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240212163101.19614-1-mathieu.desnoyers@efficios.com>
 References: <20240212163101.19614-1-mathieu.desnoyers@efficios.com>
@@ -78,17 +81,18 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Change the return value from NULL to PTR_ERR(-EOPNOTSUPP) for
-CONFIG_DAX=n to be consistent with the fact that CONFIG_DAX=y
-never returns NULL.
+In preparation for checking whether the architecture has data cache
+aliasing within alloc_dax(), modify the error handling of nvdimm/pmem
+pmem_attach_disk() to treat alloc_dax() -EOPNOTSUPP failure as non-fatal.
 
-This is done in preparation for using cpu_dcache_is_aliasing() in a
-following change which will properly support architectures which detect
-data cache aliasing at runtime.
+[ Based on commit "nvdimm/pmem: Fix leak on dax_add_host() failure". ]
 
 Fixes: d92576f1167c ("dax: does not work correctly with virtual aliasing caches")
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Cc: Alasdair Kergon <agk@redhat.com>
+Cc: Mike Snitzer <snitzer@kernel.org>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Dan Williams <dan.j.williams@intel.com>
@@ -105,43 +109,43 @@ Cc: linux-xfs@vger.kernel.org
 Cc: dm-devel@lists.linux.dev
 Cc: nvdimm@lists.linux.dev
 ---
- drivers/dax/super.c | 5 +++++
- include/linux/dax.h | 6 +-----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/nvdimm/pmem.c | 22 ++++++++++++----------
+ 1 file changed, 12 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-index 0da9232ea175..205b888d45bf 100644
---- a/drivers/dax/super.c
-+++ b/drivers/dax/super.c
-@@ -319,6 +319,11 @@ EXPORT_SYMBOL_GPL(dax_alive);
-  * that any fault handlers or operations that might have seen
-  * dax_alive(), have completed.  Any operations that start after
-  * synchronize_srcu() has run will abort upon seeing !dax_alive().
-+ *
-+ * Note, because alloc_dax() returns an ERR_PTR() on error, callers
-+ * typically store its result into a local variable in order to check
-+ * the result. Therefore, care must be taken to populate the struct
-+ * device dax_dev field make sure the dax_dev is not leaked.
-  */
- void kill_dax(struct dax_device *dax_dev)
- {
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index b463502b16e1..df2d52b8a245 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -86,11 +86,7 @@ static inline void *dax_holder(struct dax_device *dax_dev)
- static inline struct dax_device *alloc_dax(void *private,
- 		const struct dax_operations *ops)
- {
--	/*
--	 * Callers should check IS_ENABLED(CONFIG_DAX) to know if this
--	 * NULL is an error or expected.
--	 */
--	return NULL;
-+	return ERR_PTR(-EOPNOTSUPP);
- }
- static inline void put_dax(struct dax_device *dax_dev)
- {
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 9fe358090720..e9898457a7bd 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -560,17 +560,19 @@ static int pmem_attach_disk(struct device *dev,
+ 	dax_dev = alloc_dax(pmem, &pmem_dax_ops);
+ 	if (IS_ERR(dax_dev)) {
+ 		rc = PTR_ERR(dax_dev);
+-		goto out;
++		if (rc != -EOPNOTSUPP)
++			goto out;
++	} else {
++		set_dax_nocache(dax_dev);
++		set_dax_nomc(dax_dev);
++		if (is_nvdimm_sync(nd_region))
++			set_dax_synchronous(dax_dev);
++		pmem->dax_dev = dax_dev;
++		rc = dax_add_host(dax_dev, disk);
++		if (rc)
++			goto out_cleanup_dax;
++		dax_write_cache(dax_dev, nvdimm_has_cache(nd_region));
+ 	}
+-	set_dax_nocache(dax_dev);
+-	set_dax_nomc(dax_dev);
+-	if (is_nvdimm_sync(nd_region))
+-		set_dax_synchronous(dax_dev);
+-	pmem->dax_dev = dax_dev;
+-	rc = dax_add_host(dax_dev, disk);
+-	if (rc)
+-		goto out_cleanup_dax;
+-	dax_write_cache(dax_dev, nvdimm_has_cache(nd_region));
+ 	rc = device_add_disk(dev, disk, pmem_attribute_groups);
+ 	if (rc)
+ 		goto out_remove_host;
 -- 
 2.39.2
 
