@@ -1,89 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-11097-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5436A85102F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 11:00:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B720851049
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 11:05:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E73871F213CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 10:00:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE4821C21D4B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 10:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCA117C67;
-	Mon, 12 Feb 2024 09:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2E517C70;
+	Mon, 12 Feb 2024 10:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NIpTByYP"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iC1o0ssq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0B01BDC2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 09:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B9417BBE
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 10:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707731967; cv=none; b=NXJRZTVH43ytQQmfv5mwfZWYF8doXB8Otwm0XiUuXYB1AsKuOSa54pXgo+HnpP6JuzvLezIoaYBWpj98UUzCSsk74lm52ynF84ClN8MCCm7izZaBto4nE6sFXrz8xD6LBvwE29OFvxVIZDCZbW8SMNbK2Z7lzAX7wMg3oZSMzFw=
+	t=1707732300; cv=none; b=eJ8FzdD6TUnyTCpu1pyxmPku8bNJCRADsyMdMOG8h/AdxvP760iFAnEyevqrN1tLkfUFlNTU+5JEMMLEVKBonSQB/GSyL6eG4iUepjtfBuVL/ZHkgc1Yhw1j5Fat1Oh44VKhbEHxL5Ip4cx7D2IcGL/h9UkfgWnV5UjRKMrUr6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707731967; c=relaxed/simple;
-	bh=Wrt+qIySAgiHc7gyjfBHoo8kesbs+XZ+YBHPtgL/QxA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mNlTsQbDBSuOza9JiJ9yy5R6KsQJyr7mhreA1RoBe+EETKkN72Y0dCyv5H50i/kClXMtENmSYZtdi7DeBZtQw5lL9bye0H2lT8QgwkPk1jK4V5afVv1wsxBIik17D56gj0D20t73jNQ5T4qL5zadZ2Z2EVXVCbSanWHlVRBmnbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NIpTByYP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABD30C433C7;
-	Mon, 12 Feb 2024 09:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707731966;
-	bh=Wrt+qIySAgiHc7gyjfBHoo8kesbs+XZ+YBHPtgL/QxA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NIpTByYPHuTvHeGJ2j+hNYeq+VPNDfnEluUIH8tFdyouqtyLoZuAFt3ugljelSNoX
-	 nWe1F9PqAf3rgu4H+lF0/1FzzwW73faA/ZelYGa+S5Clpj/KUCKX52Vga6jaa9gZO6
-	 m2s2z4OALCyZrlje2PfKPAknE89UXgLKHCOLQWYgyuGgkt3Ol1hIZLQv2/SCySc6ks
-	 MDwhyuEuWp3qo9XurDt2PmA8lSOhCE4iCjy/daCn7XDfeDvJ/cuD3jafAzkPopI3RJ
-	 H+sFZXlaelYfc/9eWGDtWXVU6iBCsblxqt2Enc3Q5dlCfG7dZYh3FvOsBH3KKr+i/U
-	 twl0KqOWKDx7A==
-Date: Mon, 12 Feb 2024 10:59:16 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Dmitry Antipov <dmantipov@yandex.ru>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Joel Fernandes <joel@joelfernandes.org>, 
-	linux-fsdevel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH] [RFC] fs: prefer kfree_rcu() in fasync_remove_entry()
-Message-ID: <20240212-wettmachen-magisch-bb4f18ab0b7e@brauner>
-References: <20240209125220.330383-1-dmantipov@yandex.ru>
- <20240209-hierzu-getrunken-0b1a3bfc7d16@brauner>
- <20240209163646.GD608142@ZenIV>
+	s=arc-20240116; t=1707732300; c=relaxed/simple;
+	bh=ggduzU9L1RUTLLiPLM4EOtwsbNI4tWctUrmL552s1jo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q4IFhUAgYO0ORUkWzQYRJsHTvXbjCinoFgMGFd3WiqRVLIBLak9hIXk17Ggx1R7jaRz3+8M+JY9ea/utN9nVdkByafMzYrUZqvqMHQ12d12h+onnYim8WPoKY1jmgdnyNoGpSSHqiKyP+kqh481WJATdkC2nmtbW93cbtc1wPVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iC1o0ssq; arc=none smtp.client-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-7d2940ad0e1so1735964241.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 02:04:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1707732298; x=1708337098; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ggduzU9L1RUTLLiPLM4EOtwsbNI4tWctUrmL552s1jo=;
+        b=iC1o0ssqIXRXXD8GfJHqXimLiw/iVWyakgdgApwtkSjSLJSZuDxmYqDVFaROpR6znS
+         c9I+mwoUjARm+lO5dGG9ROKrZveRQXbxhPByIlnitJSC+nhrWs2lrhpwkpY7lqi2fqfb
+         XDsODwFuZH+2GbaSbSmHiad95ciCHNekTm7rWhduAhcTxhPlK+zHLcDqGeCYgDFYgQjZ
+         b321VahMNBNj65aiJxr5Hr6K/pi2SIV9bnFgqDjI9DoDe6faOrXczdkgeTo/3LxgwRNq
+         NaFH5ASoeVqVYicvLcpB6zKfzJutUwT1Zd0UWXaWYGY3kky9ap6WNwUhWo705sBrzJQ1
+         QmeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707732298; x=1708337098;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ggduzU9L1RUTLLiPLM4EOtwsbNI4tWctUrmL552s1jo=;
+        b=dWJVK+ZCusVTtdwE1MZFRa6H/qmgyZjyG0W2rUHDe7R2ZNmcpoy20vojCFEyH9eqyS
+         4UbrFmSoFAiqK2FJ7ggS0xJpz7YbXw/9/j1WdSnaA7vSDoyNVkFd7YCa/6fA3KjgcqD4
+         RsNWsn0VI8qsJnl2Lfd9Z2J2khLhrFjjV1A5cIE9D9I9xF3EZ6TtIbts+uEvaR3BWpFw
+         knhrIbd8g7NLa92Zs1hRk2PP3dKT1CjBL6msAnBSjmN8dJew7b5NGpLfYq08e3bMjSwL
+         hHgl8SmjGza+pDFprIa8YQcjmQ7BsLxRWA1ECiiGGATyp40Fo8DM6hfr/H2InAD44qKo
+         Fv/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXEXgfeUCGAxJ5EEuK7yiMB45qyN8xUuGxETWdhdwDmi0E4Nh/8eXCg2SSrMRdM/xYr/fGyeHnB3R0r7JsHrXDQTglqERLCp9X0KJ+XRw==
+X-Gm-Message-State: AOJu0YwEd81dvy7e+lZh3a6lqaEdLXoToy7JCs5IVZFlIpZY8K6yb0aD
+	/+pgLNEJf9wHdX4mSTokv8eqqOv8JsK7VufRm92ByIfPMWFh0AzFd9VHJntKrmOG7hFl+PXPeFj
+	XcArAlpERLBgYPOV05sKJ4fLJoTo9fhXwGI9V
+X-Google-Smtp-Source: AGHT+IEd49py4OLNX4mf5CeRvn2sftXgoKqJgVKe0kGtx19XgPRbHY6OUXT+lpg/lNJ+Ows2+YxSA63IQJz7omMeAsc=
+X-Received: by 2002:a05:6102:2a59:b0:46d:61e8:46a with SMTP id
+ gt25-20020a0561022a5900b0046d61e8046amr3708124vsb.28.1707732297773; Mon, 12
+ Feb 2024 02:04:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240209163646.GD608142@ZenIV>
+References: <20240209-alice-file-v5-0-a37886783025@google.com>
+ <20240209-alice-file-v5-7-a37886783025@google.com> <CALNs47tTTbWL3T9rk_ismPT0Bwi8Kcm5aT9k8jfPsh=1wKvrPA@mail.gmail.com>
+In-Reply-To: <CALNs47tTTbWL3T9rk_ismPT0Bwi8Kcm5aT9k8jfPsh=1wKvrPA@mail.gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 12 Feb 2024 11:04:47 +0100
+Message-ID: <CAH5fLgj8u925_5qW3n7OBd3tPxxdy4=BR=yWvzhyLN6TT6M+dQ@mail.gmail.com>
+Subject: Re: [PATCH v5 7/9] rust: file: add `Kuid` wrapper
+To: Trevor Gross <tmgross@umich.edu>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Kees Cook <keescook@chromium.org>, Matthew Wilcox <willy@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 09, 2024 at 04:36:46PM +0000, Al Viro wrote:
-> On Fri, Feb 09, 2024 at 03:22:15PM +0100, Christian Brauner wrote:
-> > On Fri, Feb 09, 2024 at 03:52:19PM +0300, Dmitry Antipov wrote:
-> > > In 'fasync_remove_entry()', prefer 'kfree_rcu()' over 'call_rcu()' with dummy
-> > > 'fasync_free_rcu()' callback. This is mostly intended in attempt to fix weird
-> > > https://syzkaller.appspot.com/bug?id=6a64ad907e361e49e92d1c4c114128a1bda2ed7f,
-> > > where kmemleak may consider 'fa' as unreferenced during RCU grace period. See
-> > > https://lore.kernel.org/stable/20230930174657.800551-1-joel@joelfernandes.org
-> > > as well. Comments are highly appreciated.
-> > > 
-> > > Signed-off-by: Dmitry Antipov <dmantipov@yandex.ru>
-> > > ---
-> > 
-> > Yeah, according to commit ae65a5211d90 ("mm/slab: document kfree() as
-> > allowed for kmem_cache_alloc() objects") this is now guaranteed to work
-> > for kmem_cache_alloc() objects since slab is gone. So independent of
-> > syzbot this seems like a decent enough cleanup.
-> 
-> Sure, but we'd better make very sure that it does *NOT* get picked by any
-> -stable prior to 6.4.
+On Sat, Feb 10, 2024 at 8:43=E2=80=AFAM Trevor Gross <tmgross@umich.edu> wr=
+ote:
+>
+> On Fri, Feb 9, 2024 at 5:22=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> =
+wrote:
+> >
+> > Of course, once a wrapper for rcu_read_lock is available, it is
+> > preferable to use that over either of the two above approaches.
+>
+> Is this worth a FIXME?
 
-Yeah, sure. I've not marked it for stable exactly because of that. _But_
-we can't exactly control AUTOSEL. Maybe there's a way. In any case, I'll
-keep an eye out for it and will reply appropriately.
+Shrug. I think a patch to introduce rcu_read_lock would go through the
+helpers as a matter of course either way. But it also doesn't hurt.
+
+Alice
 
