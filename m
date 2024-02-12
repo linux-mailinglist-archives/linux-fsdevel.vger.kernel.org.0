@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-11186-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE06E851EAB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 21:29:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF27851EAF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 21:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 393831F20EEA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 20:29:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE6C1F22FBA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 20:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23534C60B;
-	Mon, 12 Feb 2024 20:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAC61EB3D;
+	Mon, 12 Feb 2024 20:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tAv1716J"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K37EeqSz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E17046551;
-	Mon, 12 Feb 2024 20:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1268A1EA78
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 20:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707769753; cv=none; b=CeIxJJcLrojDctgP7PHIAfmX95nNIrtwgsqxsjL3IBg3swecZdAtUQPXqFlLrrczWHH9TRw4Fto7QM+lG12mmSunFRR6OVW2LS5hjoBIFmBAUvHTXiJstrYunMihdYyvLgbBM5ASifSv7K9HkLSwFtTwNwld7xnklLoqqXAm2ds=
+	t=1707769879; cv=none; b=C+HpXOBLOgERvKyuglBSpmHT7bijyzvh33s3do7o5ZBx7TCi6TkxvEQ3xIKVR1eL7ilO7+T/VekZpAWWh65FO+DbejnW52yAGfANKgex5rtHRbjj36/2JrBzWzzm4CZHClsjfUXgBwE521zTNO+3Lh54vSQe9VnyP2QmJF+Bnus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707769753; c=relaxed/simple;
-	bh=eSMPcnqleewvsCZOjcxX6j+WVDKLH3kGFH0udq8XuOQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Wttk7MdccOB4IXmfEC5SAImVoD+rarb0N+X/IWR6ADizPsaOiM8Wu//sa9BBtMuKPtDvXaZFkJRNld5jxrl/1ph1n+lqrr+YHeqVOaSUD0hrK/VwPS+5GzD2u7gSMq7emi0YsWEJ76K3loYsSjgBHvbuECM+373Mj+HfOJO3Zp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tAv1716J; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41CKN0SZ003408;
-	Mon, 12 Feb 2024 20:28:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=JhR4CnsbNNlV55xXkJZROwtBvgr65QVEvejYyFSklRU=;
- b=tAv1716JGfXUJ56oTLAfdJEAD2xUh5bWfDi9/epslC9qI0QdHGhMP/isop8LFXZYitAa
- X5/DINpovaNb3ALNwWh0aQicSxSlX3WzOwvXd3m9k02/VXzF/4GKcMhiTOmgiyW+dOXr
- lwoTKH3TjlQWp9nDIbr6sM9Q9zGbt2g9THl4Zxm4b32c9xkVgn0QCLEPjsCf/n9T9XhT
- tgfV7J7oxNDKtRSUSArXMorP4r5rMg0LzL0C7ErqQlUsn9GZiHTasnhq2ToHLX53pHpd
- O31Ey5sgcha96GI93Q+qCuG+6760LshZH1SRDukLhKwsbjemnWFUeLvqXosjvZNfu8iA 3w== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w7taf8470-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Feb 2024 20:28:45 +0000
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41CKQ2sa011682;
-	Mon, 12 Feb 2024 20:28:44 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w7taf845d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Feb 2024 20:28:44 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41CJ3q0B004297;
-	Mon, 12 Feb 2024 20:28:43 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3w6kv036ey-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Feb 2024 20:28:43 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41CKSeM546268780
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 12 Feb 2024 20:28:42 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7FD7C5805D;
-	Mon, 12 Feb 2024 20:28:38 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9BE8E58055;
-	Mon, 12 Feb 2024 20:28:34 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 12 Feb 2024 20:28:34 +0000 (GMT)
-Message-ID: <7940b9d0-3133-4b08-b397-ad9ee34e3b34@linux.ibm.com>
-Date: Mon, 12 Feb 2024 15:28:33 -0500
+	s=arc-20240116; t=1707769879; c=relaxed/simple;
+	bh=qOp4mJSDugxvSyT3atCGWs2GDYtIKZTeCj2zEcb71Y4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IKPHBvw8etNuhva+iMYJPwxZR9mVmIW05Abch6nXL3N50VigvL41Ic1xDISybUsCWrCSaig2lfeN5q3bDWtyorILdhQUDlG1MhtBAukD16cltFWD0oyaefcY0tS7UABI5inAlYwrOXvmYbpGDN2ivRDeASTVRn0mh4UDOv2e7FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K37EeqSz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1707769875;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D3H0vrP2FTidiK65VLlIw70duaMJhS1BeFRsB+zgkXk=;
+	b=K37EeqSz3VznLTUz2cc4csxmsjYgI3hZ8cjIyZyP5uVNZX3gWWwMhsTdKnYnYeoM/oIx1s
+	ucPfvp9yNxbsI+mKwMPw/ewu4uqhBgTGKgFI2qEn9iM7AlEnv+D1c86NUe0bd1yK1wLpqn
+	c/ziH3fNLW8xxGyd2dvFP+rjks0J98o=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-584-GDArDQidOcyQs8jqdpu79w-1; Mon, 12 Feb 2024 15:31:14 -0500
+X-MC-Unique: GDArDQidOcyQs8jqdpu79w-1
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-363b68b9af3so30637325ab.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 12:31:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707769872; x=1708374672;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D3H0vrP2FTidiK65VLlIw70duaMJhS1BeFRsB+zgkXk=;
+        b=QYZdDxD/hlQOnxzCr5ETVO1iGkvANeC+rLfmgT/HIDNhQ5lZxZtt53LZk02XWywqON
+         gzKgMzglEqHuVtCMBHVZwzA+I9mbmzT7zlJmkSUfEDI2wt6hAglaSgrZ5afYPDVvVliD
+         tWcr+h6SiacG9FEa5OhoiqJ6x2edq5ggPGw+KF2hfVdgFCWdNC/bg4DD7Hv796AU/jsF
+         4+I3PHY1Y/uD/avlih9uBJCouQRWrgTgMi7U1gKr0f8xMlvp71gOInwMnRdY46YRWILs
+         0D0d4TAdWtqYrYnjbR/ymEfM9gYu3yTo2sPjdcUHCgyZ30IN8jASdgxOKq+qD85oa29Q
+         Xgiw==
+X-Gm-Message-State: AOJu0Yy/0fi6YO1RydBKAR6lLo9WLdWc4Mnzz9SUY5hDWsIUpyOTXGvB
+	5jG/Q9xG2hICkyO5spmKX1AfYUS00Wj95nmdTKisQFJNYBhAuQv/YMY8IzfX1R82fixesuQRNwK
+	peRiIOPxCo02cemca+U177oFkY25RA0ti+KDZjmIQE8VqRd0TFgFdGHdXsX/fmvtO50kU93xKaQ
+	wKZD5t/yjmrpgbYJqIlZc5/oc6r6K+mzeY7JTxVE1I441Pqw==
+X-Received: by 2002:a92:c90d:0:b0:363:c919:2713 with SMTP id t13-20020a92c90d000000b00363c9192713mr10184992ilp.22.1707769872628;
+        Mon, 12 Feb 2024 12:31:12 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE/n4ShZIaaZuCJiPlgYLEbN0u8oWOKNdubqsQrtVHzPsb1E3BC29lfp7FOZD2TpsKJGnUHVQ==
+X-Received: by 2002:a92:c90d:0:b0:363:c919:2713 with SMTP id t13-20020a92c90d000000b00363c9192713mr10184973ilp.22.1707769872284;
+        Mon, 12 Feb 2024 12:31:12 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVk7m4RRXnHMNq8SyQtXDx1VXxqm9RQNK0vvDTIZZQseuoYFOy9IK/8LWWhF/6BDyMgrekrHEBJQUut1NAfpZk7CfqDNKY7IVPWW5NlTkj9GyJckmOLslA=
+Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
+        by smtp.gmail.com with ESMTPSA id bm17-20020a056e02331100b00363c5391adbsm2089035ilb.77.2024.02.12.12.31.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 Feb 2024 12:31:11 -0800 (PST)
+Message-ID: <1adcfcc9-5ac8-4a53-a6a5-e8b9b41a9a83@redhat.com>
+Date: Mon, 12 Feb 2024 14:31:10 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,79 +83,100 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 19/25] integrity: Move
- integrity_kernel_module_request() to IMA
+Subject: Re: [PATCH] udf: convert to new mount API
 Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>
-Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
-        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
-        jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-        dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org,
-        mic@digikod.net, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Roberto Sassu <roberto.sassu@huawei.com>
-References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
- <20240115181809.885385-20-roberto.sassu@huaweicloud.com>
- <fd6ddc3d-e5d3-4b9c-b00b-ac2b1f22d653@linux.ibm.com>
- <CAHC9VhTY=X7z5SRQZzFe25FGB2E3FBBkuZ_YYA1+ETyr7pv=tA@mail.gmail.com>
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <CAHC9VhTY=X7z5SRQZzFe25FGB2E3FBBkuZ_YYA1+ETyr7pv=tA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: IG8gA7VCiIuoNiLherBpxii_bnuMc-F5
-X-Proofpoint-ORIG-GUID: n2O60wZIGE2TuBwcELMLALmk7ji0iQ_T
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-12_16,2024-02-12_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- malwarescore=0 phishscore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0
- adultscore=0 clxscore=1015 spamscore=0 mlxlogscore=999 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2402120158
+From: Eric Sandeen <sandeen@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Jan Kara <jack@suse.cz>, Bill O'Donnell <billodo@redhat.com>,
+ David Howells <dhowells@redhat.com>
+References: <739fe39a-0401-4f5d-aef7-759ef82b36bd@redhat.com>
+In-Reply-To: <739fe39a-0401-4f5d-aef7-759ef82b36bd@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2/12/24 12:56, Paul Moore wrote:
-> On Mon, Feb 12, 2024 at 12:48 PM Stefan Berger <stefanb@linux.ibm.com> wrote:
->> On 1/15/24 13:18, Roberto Sassu wrote:
+On 2/9/24 1:43 PM, Eric Sandeen wrote:
+> Convert the UDF filesystem to the new mount API.
 > 
-> ...
+> UDF is slightly unique in that it always preserves prior mount
+> options across a remount, so that's handled by udf_init_options().
 > 
->>> +/**
->>> + * ima_kernel_module_request - Prevent crypto-pkcs1pad(rsa,*) requests
->>> + * @kmod_name: kernel module name
->>> + *
->>> + * We have situation, when public_key_verify_signature() in case of RSA > + * algorithm use alg_name to store internal information in order to
->>> + * construct an algorithm on the fly, but crypto_larval_lookup() will try
->>> + * to use alg_name in order to load kernel module with same name.
->>> + * Since we don't have any real "crypto-pkcs1pad(rsa,*)" kernel modules,
->>> + * we are safe to fail such module request from crypto_larval_lookup().
->>> + *
->>> + * In this way we prevent modprobe execution during digsig verification
->>> + * and avoid possible deadlock if modprobe and/or it's dependencies
->>> + * also signed with digsig.
->>
->> This text needs to some reformulation at some point..
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> ---
 > 
-> There is no time like the present.  If you have a suggestion I would
-> love to hear it and I'm sure Roberto would too.
+> Tested by running through xfstests, as well as some targeted testing of
+> remount behavior.
 > 
+> NB: I did not convert i.e any udf_err() to errorf(fc, ) because the former
+> does some nice formatting, not sure how or if you'd like to handle that, Jan?
+> 
+>  fs/udf/super.c | 495 +++++++++++++++++++++++++------------------------
+>  1 file changed, 255 insertions(+), 240 deletions(-)
+> 
+> diff --git a/fs/udf/super.c b/fs/udf/super.c
+> index 928a04d9d9e0..03fa98fe4e1c 100644
+> --- a/fs/udf/super.c
+> +++ b/fs/udf/super.c
 
-My interpretation of the issue after possibly lossy decoding of the 
-above sentences:
+...
 
-Avoid a deadlock by rejecting a virtual kernel module with the name 
-"crypto-pkcs1pad(rsa,*)". This module may be requested by 
-crypto_larval_lookup() while trying to verify an RSA signature in 
-public_key_verify_signature(). Since the loading of the RSA module may 
-itself cause the request for an RSA signature verification it will 
-otherwise lead to a deadlock.
+> +	case Opt_gid:
+> +		if (0 == kstrtoint(param->string, 10, &uv)) {
+>  			uopt->gid = make_kgid(current_user_ns(), uv);
+>  			if (!gid_valid(uopt->gid))
+> -				return 0;
+> +				return -EINVAL;
+>  			uopt->flags |= (1 <<  );
+> -			break;
+> -		case Opt_uid:
+> -			if (match_uint(args, &uv))
+> -				return 0;
+> +		} else if (!strcmp(param->string, "forget")) {
+> +			uopt->flags |= (1 << UDF_FLAG_GID_FORGET);
+> +		} else if (!strcmp(param->string, "ignore")) {
+> +			/* this option is superseded by gid=<number> */
+> +			;
+> +		} else {
+> +			return -EINVAL;
+> +		}
+> +		break;
+
+I wonder if I need to redo this and not directly set the make_kgid option
+into uopt->gid. We do test that uopt->gid is valid, and return an error, and
+skip setting UDF_FLAG_GID_SET, but ...
+
+...
+
+> -static int udf_fill_super(struct super_block *sb, void *options, int silent)
+> +static int udf_fill_super(struct super_block *sb, struct fs_context *fc)
+>  {
+>  	int ret = -EINVAL;
+>  	struct inode *inode = NULL;
+> -	struct udf_options uopt;
+> +	struct udf_options *uopt = fc->fs_private;
+>  	struct kernel_lb_addr rootdir, fileset;
+>  	struct udf_sb_info *sbi;
+>  	bool lvid_open = false;
+> -
+> -	uopt.flags = (1 << UDF_FLAG_USE_AD_IN_ICB) | (1 << UDF_FLAG_STRICT);
+> -	/* By default we'll use overflow[ug]id when UDF inode [ug]id == -1 */
+> -	uopt.uid = make_kuid(current_user_ns(), overflowuid);
+> -	uopt.gid = make_kgid(current_user_ns(), overflowgid);
+
+this initialization (now moved to udf_init_options) gets overwritten
+even if the [gu]id was invalid during parsing ...
+
+> +	sbi->s_flags = uopt->flags;
+> +	sbi->s_uid = uopt->uid;
+> +	sbi->s_gid = uopt->gid;
+
+... and gets set into sbi here.
+
+In the past (I think) the whole mount would fail with an invalid UID/GID but w/
+fsconfig, we could just fail that one config and continue with the rest.
+
+It looks like sbi->s_[gu]id is not accessed unless UDF_FLAG_[GU]ID_SET is
+set, but maybe it's best to never set something invalid into the uopt.
+
+-Eric
 
 
