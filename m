@@ -1,102 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-11122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C5385156E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 14:39:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEA5A8515A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 14:47:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E96F31F2223F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 13:39:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86C2F2849DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 13:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8874D11B;
-	Mon, 12 Feb 2024 13:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947B34653A;
+	Mon, 12 Feb 2024 13:39:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vR7e3xt/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="syssijZ8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="vR7e3xt/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="syssijZ8"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bETrA4AA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318CD3BB4E;
-	Mon, 12 Feb 2024 13:28:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E3646542
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 13:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707744536; cv=none; b=ANNKW3F97Cmbh+LDo9dRZcC/b19TqAgGAeoe60D+pvCNspep8ZxDHtw4rNXTEkBAuyPXO1goJumXjSUAfGMhAHsFsjxzTk2SbTsb6dADB0PStbNdgAA16GxePzdzfgKREde+zPXaSS8eeGLo9VuxfYEVCW7Jf8nFMtLinOMqQs0=
+	t=1707745182; cv=none; b=VRMaeD3b2CUHMsd5ViErhYhiwyI1gbuBQpr6vo8UgFcUpBK2LtSoi7cgkqH9T0ww0G5MJhqpP4a4hbkkKnbL4pr7P7Z+FFUbkArtMr6Y1VMhmYkB0AXN/0nUEKThvCdUtNz4weovLYxHPGD54d7ajP7cBu+9xDnZ35KHIa8j9zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707744536; c=relaxed/simple;
-	bh=gtNWNqW+p053rHN1mhZLDu6kAzHlUBS/GKYNIgNduGM=;
+	s=arc-20240116; t=1707745182; c=relaxed/simple;
+	bh=y4MykJUXdhoEb+0BGWt8fQgpbiWGjqQkC2tgBVcDciU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qnjN0iz6PzGOADsDW6vlwxHI/36BbVjT82BR3fuhTjCsfDIF+cKh8SkfJdKa4/1vPYXQZFgMSje0OZj1EBLLRRj257o1r3HLpAMSlwDzpAtopOSWrszqNEjmCMN1pnsxTHmiCH/t6Th/qHt5iMcDfVAyefAOXFtuqohnH3a7tzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vR7e3xt/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=syssijZ8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=vR7e3xt/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=syssijZ8; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5171B21C2B;
-	Mon, 12 Feb 2024 13:28:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707744533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BanuI/VMryBmroOQ5fN0SeU23q8tPDB36HD1VnmYVS6eHeUaXG8kWPRChzHvkjqR6wbP2CC1kAkHy9QjlPsVxqth25PxXo4vCgAxVbLmrDmR/mHSqC+vaBhlnGtSUeWPwaohZFVNJxWT0peQRl4CZwDSeYGUAkqmAWhdrEuMlC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bETrA4AA; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 12 Feb 2024 08:39:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1707745177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+ltX91ZleV/4/D3s8Gkh2BZLWSXktt3sddwV27eMAeo=;
-	b=vR7e3xt/E75AmOPL2iZbtiE5Pv5qPfJldpsbxKJndM2kuyBR6NkIE6ktoREoFS6QhcPu8+
-	xs0JmrO/MT/0R+jeIs1H4c8564/Kr7u7O0ps6IzEq8j4Sj7AeiMSKStSR53QzotlXPigW8
-	0uuqOTF5ijp9tpjT6IIAZT1w+ZXjeV8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707744533;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ltX91ZleV/4/D3s8Gkh2BZLWSXktt3sddwV27eMAeo=;
-	b=syssijZ8cvRD+m3WeKBUwB/ecZSftsy+FZWhwLOMixKhuppZrbEpdrE3UtlmhvVjNqYj9y
-	A2/xFvueX0mVwGAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707744533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ltX91ZleV/4/D3s8Gkh2BZLWSXktt3sddwV27eMAeo=;
-	b=vR7e3xt/E75AmOPL2iZbtiE5Pv5qPfJldpsbxKJndM2kuyBR6NkIE6ktoREoFS6QhcPu8+
-	xs0JmrO/MT/0R+jeIs1H4c8564/Kr7u7O0ps6IzEq8j4Sj7AeiMSKStSR53QzotlXPigW8
-	0uuqOTF5ijp9tpjT6IIAZT1w+ZXjeV8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707744533;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+ltX91ZleV/4/D3s8Gkh2BZLWSXktt3sddwV27eMAeo=;
-	b=syssijZ8cvRD+m3WeKBUwB/ecZSftsy+FZWhwLOMixKhuppZrbEpdrE3UtlmhvVjNqYj9y
-	A2/xFvueX0mVwGAw==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 45EDC13212;
-	Mon, 12 Feb 2024 13:28:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id gU8TERUdymVzNAAAn2gu4w
-	(envelope-from <jack@suse.cz>); Mon, 12 Feb 2024 13:28:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id EB326A0809; Mon, 12 Feb 2024 14:28:52 +0100 (CET)
-Date: Mon, 12 Feb 2024 14:28:52 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+2c4a3b922a860084cc7f@syzkaller.appspotmail.com>
-Cc: adilger.kernel@dilger.ca, axboe@kernel.dk, brauner@kernel.org,
-	eadavis@qq.com, jack@suse.cz, libaokun1@huawei.com,
-	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	tytso@mit.edu, viro@zeniv.linux.org.uk, willy@infradead.org,
-	yangerkun@huawei.com
-Subject: Re: [syzbot] [ext4?] WARNING in lock_two_nondirectories
-Message-ID: <20240212132852.5fxliee4izjkx74w@quack3>
-References: <000000000000e17185060c8caaad@google.com>
- <000000000000b9df7e061123f594@google.com>
+	bh=87TCBaNU5o6Vxo7PXgbxsTc2mzZkmFF+JQAg6IQuI5w=;
+	b=bETrA4AArtw4k2Zz7GaCKViZgXXMu3vy899ykUTeqHMTPXjJD7r7kYmHdKfp5FYMhJ7mTv
+	eFZMTdTQeSoR1XOuextz30Xq7ZZkBaiM103fZiRhZV5SW+Cr2k/3sEfOdqp8kSBctP2lPD
+	COtJudRmpOMPqfwe7i4SWaDJcbNzHS8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Brian Foster <bfoster@redhat.com>
+Cc: Dave Chinner <david@fromorbit.com>, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Dave Chinner <dchinner@redhat.com>, "Darrick J. Wong" <djwong@kernel.org>, 
+	Theodore Ts'o <tytso@mit.edu>
+Subject: Re: [PATCH v2 3/7] fs: FS_IOC_GETUUID
+Message-ID: <dfnric7xlns3u2hc4s4zfeotxpksmvnkvr5dv7hogvothdb3un@b5icg6irxyr5>
+References: <20240206201858.952303-1-kent.overstreet@linux.dev>
+ <20240206201858.952303-4-kent.overstreet@linux.dev>
+ <ZcKsIbRRfeXfCObl@dread.disaster.area>
+ <cm4wbdmpuq6mlyfqrb3qqwyysa3qao6t5sc2eq3ykmgb4ptpab@qkyberqtvrtt>
+ <ZcN+8iOBR97t451x@bfoster>
+ <krc2udjtkvylugzuledk7hre7rizmiajrgkiwvwcmsxtgxobyz@miqndphw7uhi>
+ <ZcoTROgZiKOfp3iM@bfoster>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -105,62 +65,100 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000b9df7e061123f594@google.com>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spamd-Result: default: False [2.62 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-0.28)[74.44%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[qq.com];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=e043d554f0a5f852];
-	 TAGGED_RCPT(0.00)[2c4a3b922a860084cc7f];
-	 MIME_GOOD(-0.10)[text/plain];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 R_RATELIMIT(0.00)[to_ip_from(RL9mptuuj8f371ag1nhgyt86ac)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[15];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,syzkaller.appspot.com:url,suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[dilger.ca,kernel.dk,kernel.org,qq.com,suse.cz,huawei.com,vger.kernel.org,googlegroups.com,mit.edu,zeniv.linux.org.uk,infradead.org];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Level: **
-X-Spam-Score: 2.62
-X-Spam-Flag: NO
+In-Reply-To: <ZcoTROgZiKOfp3iM@bfoster>
+X-Migadu-Flow: FLOW_OUT
 
-On Sun 11-02-24 16:00:04, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+On Mon, Feb 12, 2024 at 07:47:00AM -0500, Brian Foster wrote:
+> On Thu, Feb 08, 2024 at 04:57:02PM -0500, Kent Overstreet wrote:
+> > On Wed, Feb 07, 2024 at 08:05:29AM -0500, Brian Foster wrote:
+> > > On Tue, Feb 06, 2024 at 05:37:22PM -0500, Kent Overstreet wrote:
+> > > > On Wed, Feb 07, 2024 at 09:01:05AM +1100, Dave Chinner wrote:
+> > > > > On Tue, Feb 06, 2024 at 03:18:51PM -0500, Kent Overstreet wrote:
+> > > > > > +static int ioctl_getfsuuid(struct file *file, void __user *argp)
+> > > > > > +{
+> > > > > > +	struct super_block *sb = file_inode(file)->i_sb;
+> > > > > > +
+> > > > > > +	if (!sb->s_uuid_len)
+> > > > > > +		return -ENOIOCTLCMD;
+> > > > > > +
+> > > > > > +	struct fsuuid2 u = { .len = sb->s_uuid_len, };
+> > > > > > +	memcpy(&u.uuid[0], &sb->s_uuid, sb->s_uuid_len);
+> > > > > > +
+> > > > > > +	return copy_to_user(argp, &u, sizeof(u)) ? -EFAULT : 0;
+> > > > > > +}
+> > > > > 
+> > > > > Can we please keep the declarations separate from the code? I always
+> > > > > find this sort of implicit scoping of variables both difficult to
+> > > > > read (especially in larger functions) and a landmine waiting to be
+> > > > > tripped over. This could easily just be:
+> > > > > 
+> > > > > static int ioctl_getfsuuid(struct file *file, void __user *argp)
+> > > > > {
+> > > > > 	struct super_block *sb = file_inode(file)->i_sb;
+> > > > > 	struct fsuuid2 u = { .len = sb->s_uuid_len, };
+> > > > > 
+> > > > > 	....
+> > > > > 
+> > > > > and then it's consistent with all the rest of the code...
+> > > > 
+> > > > The way I'm doing it here is actually what I'm transitioning my own code
+> > > > to - the big reason being that always declaring variables at the tops of
+> > > > functions leads to separating declaration and initialization, and worse
+> > > > it leads people to declaring a variable once and reusing it for multiple
+> > > > things (I've seen that be a source of real bugs too many times).
+> > > > 
+> > > 
+> > > I still think this is of questionable value. I know I've mentioned
+> > > similar concerns to Dave's here on the bcachefs list, but still have not
+> > > really seen any discussion other than a bit of back and forth on the
+> > > handful of generally accepted (in the kernel) uses of this sort of thing
+> > > for limiting scope in loops/branches and such.
+> > > 
+> > > I was skimming through some more recent bcachefs patches the other day
+> > > (the journal write pipelining stuff) where I came across one or two
+> > > medium length functions where this had proliferated, and I found it kind
+> > > of annoying TBH. It starts to almost look like there are casts all over
+> > > the place and it's a bit more tedious to filter out logic from the
+> > > additional/gratuitous syntax, IMO.
+> > > 
+> > > That's still just my .02, but there was also previous mention of
+> > > starting/having discussion on this sort of style change. Is that still
+> > > the plan? If so, before or after proliferating it throughout the
+> > > bcachefs code? ;) I am curious if there are other folks in kernel land
+> > > who think this makes enough sense that they'd plan to adopt it. Hm?
+> > 
+> > That was the discussion :)
+> > 
+> > bcachefs is my codebase, so yes, I intend to do it there. I really think
+> > this is an instance where you and Dave are used to the way C has
+> > historically forced us to do things; our brains get wired to read code a
+> > certain way and changes are jarring.
+> > 
 > 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
+> Heh, fair enough. That's certainly your prerogative. I'm certainly not
+> trying to tell you what to do or not with bcachefs. That's at least
+> direct enough that it's clear it's not worth debating too much. ;)
 > 
->     fs: Block writes to mounted block devices
+> > But take a step back; if we were used to writing code the way I'm doing
+> > it, and you were arguing for putting declarations at the tops of
+> > functions, what would the arguments be?
+> > 
 > 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15477434180000
-> start commit:   a39b6ac3781d Linux 6.7-rc5
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e043d554f0a5f852
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2c4a3b922a860084cc7f
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1687292ee80000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d8adbce80000
+> I think my thought process would be similar. I.e., is the proposed
+> benefit of such a change worth the tradeoffs?
 > 
-> If the result looks correct, please mark the issue as fixed by replying with:
+> > I would say you're just breaking up the flow of ideas for no reason; a
+> > chain of related statements now includes a declaration that isn't with
+> > the actual logic.
+> > 
+> > And bugs due to variable reuse, missed initialization - there's real
+> > reasons not to do it that way.
+> > 
+> 
+> And were I in that position, I don't think I would reduce a decision
+> that affects readability/reviewability of my subsystem to a nontrivial
+> degree (for other people, at least) to that single aspect. This would be
+> the answer to the question: "is this worth considering?"
 
-Another repro that seems to be corrupting the fs metadata:
-
-#syz fix: fs: Block writes to mounted block devices
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+If you feel this affected by this, how are you going to cope with Rust?
 
