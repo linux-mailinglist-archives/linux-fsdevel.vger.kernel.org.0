@@ -1,78 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-11146-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52C56851A60
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 18:00:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF6C851A61
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 18:00:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09EF8285DF1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 17:00:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B35B61C20CA0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 17:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC40A3E49E;
-	Mon, 12 Feb 2024 17:00:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFFA3EA7A;
+	Mon, 12 Feb 2024 17:00:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="frMUGRTf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Sw2dT58X"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36EF3E46D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 16:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329263E47B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 17:00:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707757201; cv=none; b=MMIbPsqWRUC/kwbNeaQ+bHK60mYQtisbPdEE4bjILijAOYHSYrBna0s1u8Fawj8KJZUrCSKuot6OwoOxqYKLhSll9u2S6hIsQh1H3en181UTnwBjwjpglpNdnWVO7zVFyDV/MNBGXjDDZlhLnnP1k4h8i4N/VkCvZikSfoN1SvE=
+	t=1707757201; cv=none; b=Pktw31vRw3dxnHyO/Lk2OalKuHpyA7rXO9J8FD6e8rMBbK4BDh0UA5G7oD53sez7Vl6yRv084HXcvVNt2hgxRh0iTs9/9uh/eLZx39B7V9si3c+uCHSgQXnptZylBorPKWnHCyeIA0jK74dpDg1rojFbZcE1Na5KAAoY33bdwTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1707757201; c=relaxed/simple;
-	bh=cvhOJNMgYbCTZs0crMMOB5Pl60dq3zxJ6bSAHeiofko=;
+	bh=J8eqmJ+xrgEjOXP2VKM/OiQv88UWMfaFDCsYsiGjLNY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jdTMHeqO2ZkmsXw/cduFOxCwrlotO5vD5r1RFhAWjUE5o2HjRxMtJo+Q9M0n3IBT97G+UOzkOHrHo+gh9Nuf8SDShlbah6+HAWoSrzMb5reNsELAqMSXoG2yuTXtgASfA+mvYROh913xZ3TQtcj+eJrUFrMcprzlTmJAdR9Zyl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=frMUGRTf; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=EtTtuorvhTXKRhfNU+GyZ2CT5I8wYprXN3XqwE6bAE2V1hnRF6G4daL/mDlAPd54UVUqkUPS7ZGkTQCc/F4xfenphH0pGM/EaJJh2jMxCXDLBquWLTPdRNbSab0y15u4Q+f4mpRB72+VwMtjO2gJdrZHALtHHpopZgQxkFR/09k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Sw2dT58X; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707757198;
+	s=mimecast20190719; t=1707757199;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2eZDjHaP7Kupt8d6Iu2ty2GFMw3W0f+xpOseohnHwTk=;
-	b=frMUGRTfKyeKDbS4I0tG0iEi27f8GlYS/Jn779TwFuDjdrzrH5BGlwEicG39b/4AYgG/UN
-	iPp05JsSmPdMwUAAF3bT7T9WoPLMYmdsarrqdlhNvKsnJQkbhqU5qDrR/tkWjoKnnAXM0/
-	ehoCqXFwIbv/EuIGWvaTEYAhhbvNELA=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=Tj+M9muz5Mq0wRvQVjpVNnfnNXBZ0GExMp5ECK241aI=;
+	b=Sw2dT58XLRNeLL/mlkQ0M2PqrS7XWsMJde2Umg8tCuVp9XkAxHgi12fy5tTMqiv2eW5JVA
+	/iytxs8xg9zuH1yAI5UtTmpxfZvV/oUXSn5GoVmYDBYArcdUylhUNXfDQxltKJGSvc5efr
+	XM+AD0A1zBlCSg7u/CnJFGyx21dFxxA=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-501-S-ubIfxjPc6MV7HFlYot8Q-1; Mon, 12 Feb 2024 11:59:56 -0500
-X-MC-Unique: S-ubIfxjPc6MV7HFlYot8Q-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5600db7aa23so1995698a12.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 08:59:56 -0800 (PST)
+ us-mta-453-BBVLG6ixMdC7f3yaYfp76w-1; Mon, 12 Feb 2024 11:59:57 -0500
+X-MC-Unique: BBVLG6ixMdC7f3yaYfp76w-1
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-560a5f882c5so4635399a12.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 08:59:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707757195; x=1708361995;
+        d=1e100.net; s=20230601; t=1707757196; x=1708361996;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2eZDjHaP7Kupt8d6Iu2ty2GFMw3W0f+xpOseohnHwTk=;
-        b=drqs7LX5U7BgFTAVeqE3NkCcb5mnCl3krK3BySRrxD8Lp3k1MX57R3cMNhArH7Nb1e
-         itkkXjHprAZAUFEpp/72Z0NP0M6SrqQrNsXDgNt9oFvt0IWJKGWDeK3TggYcdsSz/hcG
-         /N+x9hpMCV1twQAvKr/ikRyyk8qdenEveSLQuelqxf/FzSLwSzHvfTz3B/K8UKljiOPS
-         4kjaYzh3zHAbmv8UUI5CHaT7sxKOuG3yywEPJz+zh+OMgdk1cvFzL6+iaayiq1Dgexvh
-         nN9ZFxCvvqTAnq2XCkPW+Q5YN4/767ksOEhn+nD8PflWTgtDW7byc9CDm8HW/urU6/wx
-         o7VA==
-X-Gm-Message-State: AOJu0YyEI3MxaSptrwY9xljW71F9QgKQRjT2bEsxtwr9MEaRkQ1XcgHG
-	36OmK7I4BGpa4AAmZ+2xdGcP/kxCCMtWXcgpSXK8nmSUIyun9WfmLHBqpQQh5t+/5maliQKh7Sl
-	9qO9Kam/EmbyAgtr5z/op6/dYvwFHMEub7fxzxFQB4SWbhWQYe4tqpFuoUh54TvEgaRqdYw==
-X-Received: by 2002:a05:6402:544:b0:55f:c3c1:34e with SMTP id i4-20020a056402054400b0055fc3c1034emr1476951edx.15.1707757195351;
-        Mon, 12 Feb 2024 08:59:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGyQP1vpD0d7s1DLfQrdN0VArL3Z7/S/UGhBKfUY5OPPaBlXP9kgpE6F85URgM94E6HCoBQBw==
-X-Received: by 2002:a05:6402:544:b0:55f:c3c1:34e with SMTP id i4-20020a056402054400b0055fc3c1034emr1476936edx.15.1707757195175;
-        Mon, 12 Feb 2024 08:59:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVMULeE9s3nH+f2UMQCVjIYAATNr91A4Ha5f9VSJraW6oqpiPL3tmAHAY6PdEz054BS664a2YaRiaMUr/8qUiCssI9wfT114LLRO4KVxI9+V0jszODBczr1+t3NlI/Rz45VtOoo6Ui5gEPxUDyPQKU3N9O2/8/ta9Zk1gx9LBEHd/xz9LtHu9mXtCI9WUv9KptxyN5Fs3L6rp+W5VAUwLQh/y9gvRq8YnP/
+        bh=Tj+M9muz5Mq0wRvQVjpVNnfnNXBZ0GExMp5ECK241aI=;
+        b=SuAbbbUNkbugXbwzSbuM5gWtXefoOn9VuiV80KQzukKjoz/vJjPCD2TZmyF5IVYUEQ
+         s2sVanyZtCp7EDI9aN9vysdDayW9Ki+Nb2N753HaQz3W0oqbcdj239UUTvYyXUhBc86c
+         iBERHWzDmA1LFdUIyhIA+51pIRbodw1oNsNwEV8+nSmSTUEBWXdVVkzmnLKviDuIOFWo
+         w/ROGUvwDZwcPIXDOCBNlMdOifSAWZ1M1UkORYMcnUXYZRURAtndHp+PFcBeg4jBxdtx
+         wi467wBMJYqPGMJvF5+rw0pUWAwkMPK+WiWWgIjWiORb3POmUZ9hAbsCtCQV0rP/42wJ
+         AKsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJo8vMqUxnrngqTpUFwl3jAXERX6T7XCS9WA8v/6tqab9hDXopS7aTvGT3Lsde1MAlDqpf+bxwQxrXFN/48czj6MlfRcOZpNjU+QnqSg==
+X-Gm-Message-State: AOJu0YweHaf7u3ThYsPS2mrvRSBM/SEaNn91Na2omLNcbo4W2lg1S40U
+	7xWZCKIaT0FduEhTdn2+zhbaQYXy+mQmXStJstwXgB2R3q4jx6QCZphG2EKyxouT9RZJ2phq3Aq
+	9N3IUNfk3/5qAjmdCkfxXaIyBv4qTG1lk9dW8tCVhk7J2oe5vghjYroHC5hYrpw==
+X-Received: by 2002:a05:6402:643:b0:561:a278:db1d with SMTP id u3-20020a056402064300b00561a278db1dmr67925edx.6.1707757196581;
+        Mon, 12 Feb 2024 08:59:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEtqgz4uDExeajTYum89SlbgYY0K3Z01N1uVXi9SYRLiSvtRtku9Z+tCv2eTqpRFWJ/gbf9fg==
+X-Received: by 2002:a05:6402:643:b0:561:a278:db1d with SMTP id u3-20020a056402064300b00561a278db1dmr67909edx.6.1707757196375;
+        Mon, 12 Feb 2024 08:59:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXd8xaYpRWEUrz+josrTDL3E9m0a+PSI6wgXDuVhsf3ik78yVwT2Ddbg3N5a663Pq2+tpp6LpEMQlBz08yajX0H7kOwxBeuZdhVdQPzfxc+WqGEDp4BbZLcDH7J/vo26O5JT9BJQYaQ5GHeJmXRxLSTy9tSrH3cdl3PvAgFyDxa7FiOozrc3PfBWwJFQdz6ZJWpICF6sP79f5bYix07U88Jvt8Gejd0cC7N
 Received: from thinky.redhat.com ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id 14-20020a0564021f4e00b0056176e95a88sm2620261edz.32.2024.02.12.08.59.53
+        by smtp.gmail.com with ESMTPSA id 14-20020a0564021f4e00b0056176e95a88sm2620261edz.32.2024.02.12.08.59.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Feb 2024 08:59:54 -0800 (PST)
+        Mon, 12 Feb 2024 08:59:55 -0800 (PST)
 From: Andrey Albershteyn <aalbersh@redhat.com>
 To: fsverity@lists.linux.dev,
 	linux-xfs@vger.kernel.org,
@@ -81,9 +82,9 @@ To: fsverity@lists.linux.dev,
 	djwong@kernel.org,
 	ebiggers@kernel.org
 Cc: Andrey Albershteyn <aalbersh@redhat.com>
-Subject: [PATCH v4 05/25] fs: add FS_XFLAG_VERITY for verity files
-Date: Mon, 12 Feb 2024 17:58:02 +0100
-Message-Id: <20240212165821.1901300-6-aalbersh@redhat.com>
+Subject: [PATCH v4 06/25] fsverity: pass log_blocksize to end_enable_verity()
+Date: Mon, 12 Feb 2024 17:58:03 +0100
+Message-Id: <20240212165821.1901300-7-aalbersh@redhat.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240212165821.1901300-1-aalbersh@redhat.com>
 References: <20240212165821.1901300-1-aalbersh@redhat.com>
@@ -95,87 +96,115 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add extended attribute FS_XFLAG_VERITY for inodes with fs-verity
-enabled.
+XFS will need to know log_blocksize to remove the tree in case of an
+error. The size is needed to calculate offsets of particular Merkle
+tree blocks.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
 ---
- Documentation/filesystems/fsverity.rst | 12 ++++++++++++
- fs/ioctl.c                             | 11 +++++++++++
- include/uapi/linux/fs.h                |  1 +
- 3 files changed, 24 insertions(+)
+ fs/btrfs/verity.c        | 4 +++-
+ fs/ext4/verity.c         | 3 ++-
+ fs/f2fs/verity.c         | 3 ++-
+ fs/verity/enable.c       | 6 ++++--
+ include/linux/fsverity.h | 4 +++-
+ 5 files changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/filesystems/fsverity.rst b/Documentation/filesystems/fsverity.rst
-index 13e4b18e5dbb..19e59e87999e 100644
---- a/Documentation/filesystems/fsverity.rst
-+++ b/Documentation/filesystems/fsverity.rst
-@@ -326,6 +326,18 @@ the file has fs-verity enabled.  This can perform better than
- FS_IOC_GETFLAGS and FS_IOC_MEASURE_VERITY because it doesn't require
- opening the file, and opening verity files can be expensive.
- 
-+FS_IOC_FSGETXATTR
-+-----------------
-+
-+Since Linux v6.9, FS_XFLAG_VERITY (0x00020000) file attribute is set for verity
-+files. The attribute can be observed via lsattr.
-+
-+    [root@vm:~]# lsattr /mnt/test/foo
-+    --------------------V- /mnt/test/foo
-+
-+Note that this attribute cannot be set with FS_IOC_FSSETXATTR as enabling verity
-+requires input parameters. See FS_IOC_ENABLE_VERITY.
-+
- .. _accessing_verity_files:
- 
- Accessing verity files
-diff --git a/fs/ioctl.c b/fs/ioctl.c
-index 76cf22ac97d7..38c00e47c069 100644
---- a/fs/ioctl.c
-+++ b/fs/ioctl.c
-@@ -481,6 +481,8 @@ void fileattr_fill_xflags(struct fileattr *fa, u32 xflags)
- 		fa->flags |= FS_DAX_FL;
- 	if (fa->fsx_xflags & FS_XFLAG_PROJINHERIT)
- 		fa->flags |= FS_PROJINHERIT_FL;
-+	if (fa->fsx_xflags & FS_XFLAG_VERITY)
-+		fa->flags |= FS_VERITY_FL;
+diff --git a/fs/btrfs/verity.c b/fs/btrfs/verity.c
+index 66e2270b0dae..84e9b1480241 100644
+--- a/fs/btrfs/verity.c
++++ b/fs/btrfs/verity.c
+@@ -621,6 +621,7 @@ static int btrfs_begin_enable_verity(struct file *filp)
+  * @desc:              verity descriptor to write out (NULL in error conditions)
+  * @desc_size:         size of the verity descriptor (variable with signatures)
+  * @merkle_tree_size:  size of the merkle tree in bytes
++ * @tree_blocksize:    size of the Merkle tree block
+  *
+  * If desc is null, then VFS is signaling an error occurred during verity
+  * enable, and we should try to rollback. Otherwise, attempt to finish verity.
+@@ -628,7 +629,8 @@ static int btrfs_begin_enable_verity(struct file *filp)
+  * Returns 0 on success, negative error code on error.
+  */
+ static int btrfs_end_enable_verity(struct file *filp, const void *desc,
+-				   size_t desc_size, u64 merkle_tree_size)
++				   size_t desc_size, u64 merkle_tree_size,
++				   unsigned int tree_blocksize)
+ {
+ 	struct btrfs_inode *inode = BTRFS_I(file_inode(filp));
+ 	int ret = 0;
+diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+index 2f37e1ea3955..da2095a81349 100644
+--- a/fs/ext4/verity.c
++++ b/fs/ext4/verity.c
+@@ -189,7 +189,8 @@ static int ext4_write_verity_descriptor(struct inode *inode, const void *desc,
  }
- EXPORT_SYMBOL(fileattr_fill_xflags);
  
-@@ -511,6 +513,8 @@ void fileattr_fill_flags(struct fileattr *fa, u32 flags)
- 		fa->fsx_xflags |= FS_XFLAG_DAX;
- 	if (fa->flags & FS_PROJINHERIT_FL)
- 		fa->fsx_xflags |= FS_XFLAG_PROJINHERIT;
-+	if (fa->flags & FS_VERITY_FL)
-+		fa->fsx_xflags |= FS_XFLAG_VERITY;
+ static int ext4_end_enable_verity(struct file *filp, const void *desc,
+-				  size_t desc_size, u64 merkle_tree_size)
++				  size_t desc_size, u64 merkle_tree_size,
++				  unsigned int tree_blocksize)
+ {
+ 	struct inode *inode = file_inode(filp);
+ 	const int credits = 2; /* superblock and inode for ext4_orphan_del() */
+diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
+index 4fc95f353a7a..b4461b9f47a3 100644
+--- a/fs/f2fs/verity.c
++++ b/fs/f2fs/verity.c
+@@ -144,7 +144,8 @@ static int f2fs_begin_enable_verity(struct file *filp)
  }
- EXPORT_SYMBOL(fileattr_fill_flags);
  
-@@ -641,6 +645,13 @@ static int fileattr_set_prepare(struct inode *inode,
- 	    !(S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode)))
- 		return -EINVAL;
+ static int f2fs_end_enable_verity(struct file *filp, const void *desc,
+-				  size_t desc_size, u64 merkle_tree_size)
++				  size_t desc_size, u64 merkle_tree_size,
++				  unsigned int tree_blocksize)
+ {
+ 	struct inode *inode = file_inode(filp);
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+diff --git a/fs/verity/enable.c b/fs/verity/enable.c
+index c284f46d1b53..04e060880b79 100644
+--- a/fs/verity/enable.c
++++ b/fs/verity/enable.c
+@@ -274,7 +274,8 @@ static int enable_verity(struct file *filp,
+ 	 * Serialized with ->begin_enable_verity() by the inode lock.
+ 	 */
+ 	inode_lock(inode);
+-	err = vops->end_enable_verity(filp, desc, desc_size, params.tree_size);
++	err = vops->end_enable_verity(filp, desc, desc_size, params.tree_size,
++				      params.block_size);
+ 	inode_unlock(inode);
+ 	if (err) {
+ 		fsverity_err(inode, "%ps() failed with err %d",
+@@ -300,7 +301,8 @@ static int enable_verity(struct file *filp,
  
-+	/*
-+	 * Verity cannot be set through FS_IOC_FSSETXATTR/FS_IOC_SETFLAGS.
-+	 * See FS_IOC_ENABLE_VERITY
-+	 */
-+	if (fa->fsx_xflags & FS_XFLAG_VERITY)
-+		return -EINVAL;
-+
- 	/* Extent size hints of zero turn off the flags. */
- 	if (fa->fsx_extsize == 0)
- 		fa->fsx_xflags &= ~(FS_XFLAG_EXTSIZE | FS_XFLAG_EXTSZINHERIT);
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index 48ad69f7722e..6e63ea832d4f 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -140,6 +140,7 @@ struct fsxattr {
- #define FS_XFLAG_FILESTREAM	0x00004000	/* use filestream allocator */
- #define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
- #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
-+#define FS_XFLAG_VERITY		0x00020000	/* fs-verity sealed inode */
- #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
+ rollback:
+ 	inode_lock(inode);
+-	(void)vops->end_enable_verity(filp, NULL, 0, params.tree_size);
++	(void)vops->end_enable_verity(filp, NULL, 0, params.tree_size,
++				      params.block_size);
+ 	inode_unlock(inode);
+ 	goto out;
+ }
+diff --git a/include/linux/fsverity.h b/include/linux/fsverity.h
+index 1eb7eae580be..ab7b0772899b 100644
+--- a/include/linux/fsverity.h
++++ b/include/linux/fsverity.h
+@@ -51,6 +51,7 @@ struct fsverity_operations {
+ 	 * @desc: the verity descriptor to write, or NULL on failure
+ 	 * @desc_size: size of verity descriptor, or 0 on failure
+ 	 * @merkle_tree_size: total bytes the Merkle tree took up
++	 * @tree_blocksize: size of the Merkle tree block
+ 	 *
+ 	 * If desc == NULL, then enabling verity failed and the filesystem only
+ 	 * must do any necessary cleanups.  Else, it must also store the given
+@@ -65,7 +66,8 @@ struct fsverity_operations {
+ 	 * Return: 0 on success, -errno on failure
+ 	 */
+ 	int (*end_enable_verity)(struct file *filp, const void *desc,
+-				 size_t desc_size, u64 merkle_tree_size);
++				 size_t desc_size, u64 merkle_tree_size,
++				 unsigned int tree_blocksize);
  
- /* the read-only stuff doesn't really belong here, but any other place is
+ 	/**
+ 	 * Get the verity descriptor of the given inode.
 -- 
 2.42.0
 
