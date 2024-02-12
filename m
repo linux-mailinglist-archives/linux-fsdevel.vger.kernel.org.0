@@ -1,192 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-11182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5439A851DE8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 20:30:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D07851E1C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 20:48:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78E781C2178D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 19:30:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBF9F1C21DAB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 19:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB46A47793;
-	Mon, 12 Feb 2024 19:30:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1DE47F4D;
+	Mon, 12 Feb 2024 19:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qlAJEgm/"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nxvjID8z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F092A46549
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 19:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AB947F45;
+	Mon, 12 Feb 2024 19:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707766212; cv=none; b=Ycync5AUy/4UmDzISgaL7q3FX1kC34Cci88quptAz0bIYy212gXvVkWUIWz4VXXX3BeOX0NVwrLiBSy2SqDJQU023v92lJsNSbTiYI4rf7jC7AzNiOe3VdRKCASzxQYmAWkDof8XIkh8M6zUomRmYlVFOnxK0Xoo1kX6e893ZrU=
+	t=1707767278; cv=none; b=skfmIl3jOljPoV105VLmbu/KTLIXxEwY+Pp7bsSmf+1v6lcf5XLkUld8Nged3E4B5dg/Wz36Z3Wn8WSLi1yBuz2MfpeRqbJ9X+gmD6a4HUM6Ka4UKNCoeK9lKGmqrnikMFDtrQKGLddPKWbu6cf5xLFLPSONkVyPAnzkF444mX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707766212; c=relaxed/simple;
-	bh=FkxTJSO+33GpN+suj4JefqxDZgPdW8qomujZLe4SOyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZympnrzvuIP+2reYHIWNPd32a2ZbgA8FKIju5iwsDssVECroqM3wnjdgLMKhECzcxll+LuXXPB/yZY8iB6KcVxNvarnpYkXaOpZigQNxcwqK2AIb0V4CYhzlDtTcc7e9wHijagEmSVVEyywT+2vmZUGjXBUIhE5qDcvq5KbSEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qlAJEgm/; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 12 Feb 2024 14:30:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1707766207;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rn+g3POrCt16v7JX8rOl/Zs5Xf7fDMrrf9BRGk2OghE=;
-	b=qlAJEgm/CtrwPB/nNjb/vD8B55ZNOWsm5jV92wK+E5nqfANbsMzyK1sF+vJMb50sKllkDV
-	soOrFT4O6IJ7Ik/CqAfSvHUWFGw1xEuigZ7G+ivDvjSoDAMh8kTuZdpM0mIWsj5f1+wh6M
-	lJ2xYc5vs/HXrMgJ8ngbq2VC/Igqep4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dave Chinner <david@fromorbit.com>
-Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>, 
-	Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>, 
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-block@vger.kernel.org, linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, Kent Overstreet <kent.overstreet@gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Removing GFP_NOFS
-Message-ID: <cepmpv7vdq7i6277wheqqnqsniqnkomvh7sn3535rcacvorkuu@5caayyz44qzr>
-References: <ZZcgXI46AinlcBDP@casper.infradead.org>
- <ZZzP6731XwZQnz0o@dread.disaster.area>
- <3ba0dffa-beea-478f-bb6e-777b6304fb69@kernel.org>
- <ZcUQfzfQ9R8X0s47@tiehlicka>
- <3aa399bb-5007-4d12-88ae-ed244e9a653f@kernel.org>
- <ZclyYBO0vcQHZ5dV@dread.disaster.area>
- <5p4zwxtfqwm3wgvzwqfg6uwy5m3lgpfypij4fzea63gu67ve4t@77to5kukmiic>
- <ZcmgFThkhh9HYsXh@dread.disaster.area>
+	s=arc-20240116; t=1707767278; c=relaxed/simple;
+	bh=zJTgtxIKXgoU9MG2O9BnZcboJP5eJ6Oewa5Hsjb/uRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qX9mVrH9aWJq+vbGLmi8lutP9pdkEdzBjusnudixg2mTaavIQK5Jh2ekdfwRto5tH7DLM0Ok3mUguZFTDOE23LpKO0215b3oqszG6HRgAopvF79hd4JOqRVO9Sns7zUgqOPwjf7BUDvkoZ9SGIAsIPegVMaGHvV7HCg/yrA5mx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nxvjID8z; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41CJffmB020322;
+	Mon, 12 Feb 2024 19:47:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ mime-version : subject : to : cc : references : from : in-reply-to :
+ content-type : content-transfer-encoding; s=pp1;
+ bh=6L3jpxBwkyfcvRtH8S/uSaadMDWnvfPBo1NAJUDPJUk=;
+ b=nxvjID8zwQcQynlc6Me8SNDzFKVHc8Tsn/lvnutsNlnI/d9gjMH2sXwjaZThXhPYUNGu
+ FGGWWIe175KQBGtX0kooKCVaCbFmTHtmXnUNlb/9e4qyobKRbTUD8bPF34uOkfx90SGS
+ haBvaTiTuwR06O9QW6XgBg40EsRhuJTOAEGvGf8k0CfQhKdsQ+fNbSnlbiBQRidKBkA5
+ OoDK+m1xHRjDOO2ozZ2a8xZS1RjFWLxugwT06+e8cDacoXpoeAsv/uTYRQY+0ClBAEEO
+ HqCPROFBFc6ueNnO/inoxKuTX/7qF/otZsXk7ICyawfypqZPGrSlD5+vnd0bsTwb7aFF LA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w7sgw0b2x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Feb 2024 19:47:27 +0000
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41CJgDOR021802;
+	Mon, 12 Feb 2024 19:47:27 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w7sgw0b2f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Feb 2024 19:47:26 +0000
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41CIQVXR032605;
+	Mon, 12 Feb 2024 19:47:25 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3w6kftb2em-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Feb 2024 19:47:25 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41CJlMxd21889752
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 Feb 2024 19:47:25 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BD80758055;
+	Mon, 12 Feb 2024 19:47:22 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2019F58043;
+	Mon, 12 Feb 2024 19:47:21 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 12 Feb 2024 19:47:21 +0000 (GMT)
+Message-ID: <155295d9-6cf3-4e66-9bfa-27c1a8e62694@linux.ibm.com>
+Date: Mon, 12 Feb 2024 14:47:20 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZcmgFThkhh9HYsXh@dread.disaster.area>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 24/25] ima: Make it independent from 'integrity' LSM
+Content-Language: en-US
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, eparis@parisplace.org,
+        casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Roberto Sassu <roberto.sassu@huawei.com>
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+ <20240115181809.885385-25-roberto.sassu@huaweicloud.com>
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20240115181809.885385-25-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Dx0riDMbYA92UQJVBQpjCX7PeCl41sXr
+X-Proofpoint-ORIG-GUID: lBW5bSawebGnMLF6HBsmtLn_O5yit_IQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-12_16,2024-02-12_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=561
+ bulkscore=0 priorityscore=1501 phishscore=0 malwarescore=0 spamscore=0
+ clxscore=1015 impostorscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
+ definitions=main-2402120152
 
-On Mon, Feb 12, 2024 at 03:35:33PM +1100, Dave Chinner wrote:
-> On Sun, Feb 11, 2024 at 09:06:33PM -0500, Kent Overstreet wrote:
-> > That's because in general most code in the IO path knows how to make
-> > effective use of biosets and mempools (which may take some work! you
-> > have to ensure that you're always able to make forward progress when
-> > memory is limited, and in particular that you don't double allocate from
-> > the same mempool if you're blocking the first allocation from
-> > completing/freeing).
-> 
-> Yes, I understand this, and that's my point: NOIO context tends to
-> be able to use mempools and other mechanisms to prevent memory
-> allocation failure, not NOFAIL.
-> 
-> The IO layers are request based and that enables one-in, one out
-> allocation pools that can guarantee single IO progress. That's all
-> the IO layers need to guarantee to the filesystems so that forwards
-> progress can always be made until memory pressure.
-> 
-> However, filesystems cannot guarantee "one in, one out" allocation
-> behaviour. A transaction can require a largely unbound number of
-> memory allocations to succeed to make progress through to
-> completion, and so things like mempools -cannot be used- to prevent
-> memory allocation failures whilst providing a forwards progress
-> guarantee.
 
-I don't see that that's actually true. There's no requirement that
-arbitrarily large IOs must be done atomically, within a single
-transaction: there's been at most talk of eventually doing atomic writes
-through the pagecache, but the people on that can't even finish atomic
-writes through the block layer, so who knows when that'll happen.
 
-I generally haven't been running into filesyste operations that require
-an unbounded number of memory allocations (reflink is a bit of an
-exception in the current bcachefs code, and even that is just a
-limitation I could solve if I really wanted to...)
+On 1/15/24 13:18, Roberto Sassu wrote:
+> From: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Make the 'ima' LSM independent from the 'integrity' LSM by introducing IMA
+> own integrity metadata (ima_iint_cache structure, with IMA-specific fields
+> from the integrity_iint_cache structure), and by managing it directly from
+> the 'ima' LSM.
+> 
+> Create ima_iint.c and introduce the same integrity metadata management
+> functions found in iint.c (renamed with ima_). However, instead of putting
+> metadata in an rbtree, reserve space from IMA in the inode security blob
+> for a pointer, and introduce the ima_inode_set_iint()/ima_inode_get_iint()
+> primitives to store/retrieve that pointer. This improves search time from
+> logarithm to constant.
 
-> Hence a NOFAIL scope if useful at the filesystem layer for
-> filesystem objects to ensure forwards progress under memory
-> pressure, but it is compeltely unnecessary once we transition to the
-> IO layer where forwards progress guarantees ensure memory allocation
-> failures don't impede progress.
-> 
-> IOWs, we only need NOFAIL at the NOFS layers, not at the NOIO
-> layers. The entry points to the block layer should transition the
-> task to NOIO context and restore the previous context on exit. Then
-> it becomes relatively trivial to apply context based filtering of
-> allocation behaviour....
-> 
-> > > i.e NOFAIL scopes are not relevant outside the subsystem that sets
-> > > it.  Hence we likely need helpers to clear and restore NOFAIL when
-> > > we cross an allocation context boundaries. e.g. as we cross from
-> > > filesystem to block layer in the IO stack via submit_bio(). Maybe
-> > > they should be doing something like:
-> > > 
-> > > 	nofail_flags = memalloc_nofail_clear();
-> > 
-> > NOFAIL is not a scoped thing at all, period; it is very much a
-> > _callsite_ specific thing, and it depends on whether that callsite has a
-> > fallback.
-> 
-> *cough*
-> 
-> As I've already stated, NOFAIL allocation has been scoped in XFS for
-> the past 20 years.
-> 
-> Every memory allocation inside a transaction *must* be NOFAIL unless
-> otherwise specified because memory allocation inside a dirty
-> transaction is a fatal error.
+logarithmic
 
-Say you start to incrementally mempoolify your allocations inside a
-transaction - those mempools aren't going to do anything if there's a
-scoped NOFAIL, and sorting that out is going to get messy fast.
+> 
+> Consequently, don't include the inode pointer as field in the
+> ima_iint_cache structure, since the association with the inode is clear.
+> Since the inode field is missing in ima_iint_cache, pass the extra inode
+> parameter to ima_get_verity_digest().
+> 
+> Prefer storing the pointer instead of the entire ima_iint_cache structure,
+> to avoid too much memory pressure. Use the same mechanism as before, a
+> cache named ima_iint_cache (renamed from iint_cache), to quickly allocate
+> a new ima_iint_cache structure when requested by the IMA policy.
+> 
+> Create the new ima_iint_cache in ima_iintcache_init(),
+> called by init_ima_lsm(), during the initialization of the 'ima' LSM. And,
+> register ima_inode_free_security() to free the ima_iint_cache structure, if
+> exists.
+> 
+> Replace integrity_iint_cache with ima_iint_cache in various places of the
+> IMA code. Also, replace integrity_inode_get() and integrity_iint_find(),
+> respectively with ima_inode_get() and ima_iint_find().
+> 
+> Finally, move the remaining IMA-specific flags
+> to security/integrity/ima/ima.h, since they are now unnecessary in the
+> common integrity layer.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 
-> However, that scoping has never been
-> passed to the NOIO contexts below the filesytsem - it's scoped
-> purely within the filesystem itself and doesn't pass on to other
-> subsystems the filesystem calls into.
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
-How is that managed?
-> 
-> > The most obvious example being, as mentioned previously, mempools.
-> 
-> Yes, they require one-in, one-out guarantees to avoid starvation and
-> ENOMEM situations. Which, as we've known since mempools were
-> invented, these guarantees cannot be provided by most filesystems.
-> 
-> > > > - NOWAIT - as said already, we need to make sure we're not turning an
-> > > > allocation that relied on too-small-to-fail into a null pointer exception or
-> > > > BUG_ON(!page).
-> > > 
-> > > Agreed. NOWAIT is removing allocation failure constraints and I
-> > > don't think that can be made to work reliably. Error injection
-> > > cannot prove the absence of errors  and so we can never be certain
-> > > the code will always operate correctly and not crash when an
-> > > unexepected allocation failure occurs.
-> > 
-> > You saying we don't know how to test code?
-> 
-> Yes, that's exactly what I'm saying.
-> 
-> I'm also saying that designing algorithms that aren't fail safe is
-> poor design. If you get it wrong and nothing bad can happen as a
-> result, then the design is fine.
-> 
-> But if the result of missing something accidentally is that the
-> system is guaranteed to crash when that is hit, then failure is
-> guaranteed and no amount of testing will prevent that failure from
-> occurring.
-> 
-> And we suck at testing, so we absolutely need to design fail
-> safe algorithms and APIs...
-
-GFP_NOFAIL dosen't magically make your algorithm fail safe, though.
-
-Suren and I are trying to get memory allocation profiling into 6.9, and
-I'll be posting the improved fault injection immediately afterwards -
-this is what I used to use to make sure every allocation failure path in
-the bcachefs predecessor was tested. Hopefully that'll make things
-easier...
 
