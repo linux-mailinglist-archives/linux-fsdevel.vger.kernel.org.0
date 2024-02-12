@@ -1,91 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-11106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A9C68511C8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 12:07:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 407F08511EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 12:11:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C23121F24EE5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 11:07:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFF58280CDD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 11:11:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F4F3984D;
-	Mon, 12 Feb 2024 11:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED18738DDB;
+	Mon, 12 Feb 2024 11:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Locg0NS6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C03938FAA
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 11:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 595B628387;
+	Mon, 12 Feb 2024 11:11:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707736025; cv=none; b=ZXYmBvklkixsALCElGkLBlBpk1v6tx0naS0bimRh6IQPDbcG9Yb8JAU1CQbiw2YXhYhndRuord/dHPlmxUj045fPjW3PevVmOqYNRRmoLEJ04yWS5it8XSDXewKYOsbXvON+Pj24bBJOcR8LYnqVb8PQQLgPP/UGfv1UwJRj52M=
+	t=1707736297; cv=none; b=s2lRdRb2L7XDmUqKlneRQUeFDQTnazTG38phC6sHROf+wC6mXpzwGnXI0vzD50hCN3w6fOUPdTdCf4V/87A7Ke+B1b0A/Q7FiXlo43dK4KW5IF2GX5CsHFOZrI8YbB2OLmV0JeupWEFUhus+bKhS8xjWG7eFSYfg1q+Qzf5gap8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707736025; c=relaxed/simple;
-	bh=TiTTw+hGF84P0tRgaBMy2VpXj54TRkQdwyGXOuSJuRg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TW4luAjAc/sgqnzl9GJe/x0UDpl0aFcFXog5pnYvpVYs9riu4itF8s/W47tvJINOTNk1SLVrHUI+x7lMeAWjbtoS1JdyDO500yuiQ48iwhyE903WqGVK2QjG1Ea7joOPKlgK4t1rNa0xNiyQxN4vJlfVbTKA97vAcmCQd5JLWoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-363c6714987so30434005ab.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 03:07:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707736023; x=1708340823;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x/xJQPp3141bB6LLHb+O47KgAgODwbbVCXQLBM4yS0E=;
-        b=S9MzwFt8ivVxNdhoYf0QKFLsEdEKFK5SXFN/JvGpT95W2uc4/GEdKkU9ORYc1CaPPj
-         AX8gKiHWmkQ7FU3CQMbpnKcJc6mIKVIGOMsTvuBvksG4Hya1fGkrKVYdQTzONyl4PuOU
-         OFao55upRVkac98j2tqL6Mx+8Yn8XOwcbWFqelWP0Yzzvqffl4fyhXCcBQFvSPqWdKzO
-         Bim7LElddJWbsjc14mTfDH1FFtLCYWtg4vEl02dxyhSi4iNm8sXxDIKefpo06hNiWuqh
-         xa+wlXd0ALqoo27Z+nbWa3aOASfOsva699RERj9ghugPkPqH0jjNSnuNlpv1xoeTY87g
-         wX4g==
-X-Gm-Message-State: AOJu0YyZ/EfUmvKXIHoDNExlOGrWqiyHE70Rg261CJzfJy0h1So7soUk
-	laJS1g7U5NJvwHuzSX4OkBJkC3vh9oaO/13fIB65sQB/Vuf2PrU64tOVCi01EWpRIkLbu/GXuCs
-	Zlk0ZqPCoP1SlhXIPf9RKnRjvEYGmOwskRAn6Q7j9BxlTo0nOzWzQ9cc=
-X-Google-Smtp-Source: AGHT+IH16WGqEbfrd3+o1CSIasNblQnZGNn7ZhqheuO8ThHR5IJ3F8URiBZA5m1q8b0W7FZFL4ADFHowhQo3vgmeTSNPXWhV6RB9
+	s=arc-20240116; t=1707736297; c=relaxed/simple;
+	bh=fmFXpzMLiXEhfZ2iwoIMSDtmszK/t2dPiZLskOnlv0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kApFAu1Z8bLyEIGpmzPfqNcDSyumqb+4DDU+2PmEM85JL/58NyxAf/Xk1rpTiz6GAQ7+sywRY6+D6MWC0oE3ZQLHcfzcs+624BUTowDdTFTJJ1GHy06m5chGRKoD02torOwjoLRxjCLEHj9s3vXO42VgzLtc+JvmEG9lv8DCw54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Locg0NS6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F707C433F1;
+	Mon, 12 Feb 2024 11:09:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707736296;
+	bh=fmFXpzMLiXEhfZ2iwoIMSDtmszK/t2dPiZLskOnlv0M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Locg0NS67Nd65HnzswOHyuI2e981RMHTJCEIP510Wwi7MgA6rWBOxQ7HnlxFa+xqH
+	 8pee/Qt9be0vDo4pylorsBEjCejMAl32UH2+vCh50JE/0xiGlTJ8qxAcRoH29lncwg
+	 vT4m2Eq3D9LNPaNZnq6bfBdrZcTolSsd2EKAT5OtlUrAIfdwiE/6zSGYoJYLILhu+t
+	 KYCW8Y1UOk/7UV8VsaClH8FmVcQfrNa4aCox7a5VObBxL4ZttFaajd6JWYPNjFQixl
+	 9Px88SujVIFZbt6qmWuKKmBL/u7+Jnn6DaKjct/ALjDKPnD2c3pH0qxZWfP+xNpbhA
+	 5gETYGZqRUlKA==
+Date: Mon, 12 Feb 2024 12:09:47 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@chromium.org>, 
+	Allen Webb <allenwebb@google.com>, Dmitry Torokhov <dtor@google.com>, 
+	Paul Moore <paul@paul-moore.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v9 1/8] landlock: Add IOCTL access right
+Message-ID: <20240212-gelungen-holzfiguren-3a07655ad780@brauner>
+References: <20240209170612.1638517-1-gnoack@google.com>
+ <20240209170612.1638517-2-gnoack@google.com>
+ <ZcdYrJfhiNEtqIEW@google.com>
+ <036db535-587a-4e1b-bd44-345af3b51ddf@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2e:b0:363:ac48:e28d with SMTP id
- g14-20020a056e021a2e00b00363ac48e28dmr679193ile.3.1707736023784; Mon, 12 Feb
- 2024 03:07:03 -0800 (PST)
-Date: Mon, 12 Feb 2024 03:07:03 -0800
-In-Reply-To: <000000000000ddb17905ee995d32@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000011649a06112d474c@google.com>
-Subject: Re: [syzbot] [reiserfs?] KASAN: use-after-free Read in reiserfs_release_objectid
-From: syzbot <syzbot+909a2191a4352fd77d25@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <036db535-587a-4e1b-bd44-345af3b51ddf@app.fastmail.com>
 
-syzbot suspects this issue was fixed by commit:
+On Sat, Feb 10, 2024 at 12:49:23PM +0100, Arnd Bergmann wrote:
+> On Sat, Feb 10, 2024, at 12:06, Günther Noack wrote:
+> > On Fri, Feb 09, 2024 at 06:06:05PM +0100, Günther Noack wrote:
+> >
+> > The IOCTL command in question is FIONREAD: fs/ioctl.c implements
+> > FIONREAD directly for S_ISREG files, but it does call the FIONREAD
+> > implementation in the VFS layer for other file types.
+> >
+> > The question we are asking ourselves is:
+> >
+> > * Can we let processes safely use FIONREAD for all files which get
+> >   opened for the purpose of reading, or do we run the risk of
+> >   accidentally exposing surprising IOCTL implementations which have
+> >   completely different purposes?
+> >
+> >   Is it safe to assume that the VFS layer FIONREAD implementations are
+> >   actually implementing FIONREAD semantics?
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Yes, otherwise this should considered a bug.
 
-    fs: Block writes to mounted block devices
+> >
+> > * I know there have been accidental collisions of IOCTL command
+> >   numbers in the past -- Hypothetically, if this were to happen in one
+> >   of the VFS implementations of FIONREAD, would that be considered a
+> >   bug that would need to get fixed in that implementation?
+> 
+> Clearly it's impossible to be sure no driver has a conflict
+> on this particular ioctl, but the risk for one intentionally
+> overriding it should be fairly low.
+> 
+> There are a couple of possible issues I can think of:
+> 
+> - the numeric value of FIONREAD is different depending
+>   on the architecture, with at least four different numbers
+>   aliasing to it. This is probably harmless but makes it
+>   harder to look for accidental conflicts.
+> 
+> - Aside from FIONREAD, it is sometimes called SIOCINQ
+>   (for sockets) or TIOCINQ (for tty). These still go
+>   through the same VFS entry point and as far as I can
+>   tell always have the same semantics (writing 4 bytes
+>   of data with the count of the remaining bytes in the
+>   fd).
+> 
+> - There are probably a couple of drivers that do something
+>   in their ioctl handler without actually looking at
+>   the command number.
+> 
+> If you want to be really sure you get this right, you
+> could add a new callback to struct file_operations
+> that handles this for all drivers, something like
+> 
+> static int ioctl_fionread(struct file *filp, int __user *arg)
+> {
+>      int n;
+> 
+>      if (S_ISREG(inode->i_mode))
+>          return put_user(i_size_read(inode) - filp->f_pos, arg);
+> 
+>      if (!file->f_op->fionread)
+>          return -ENOIOCTLCMD;
+> 
+>      n = file->f_op->fionread(filp);
+> 
+>      if (n < 0)
+>          return n;
+> 
+>      return put_user(n, arg);
+> }
+> 
+> With this, you can go through any driver implementing
+> FIONREAD/SIOCINQ/TIOCINQ and move the code from .ioctl
+> into .fionread. This probably results in cleaner code
+> overall, especially in drivers that have no other ioctl
+> commands besides this one.
+> 
+> Since sockets and ttys tend to have both SIOCINQ/TIOCINQ
+> and SIOCOUTQ/TIOCOUTQ (unlike regular files), it's
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14df7cec180000
-start commit:   ca57f02295f1 afs: Fix fileserver probe RTT handling
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2325e409a9a893e1
-dashboard link: https://syzkaller.appspot.com/bug?extid=909a2191a4352fd77d25
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1563673d880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=134d9425880000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+I'm not excited about adding a bunch of methods to struct
+file_operations for this stuff.
 
