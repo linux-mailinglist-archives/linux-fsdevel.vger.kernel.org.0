@@ -1,108 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-11174-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11175-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FFE5851C43
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 18:59:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F80A851C56
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 19:00:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3E1D1F22BD3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 17:59:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0769284715
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 18:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6F247A60;
-	Mon, 12 Feb 2024 17:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05D934176D;
+	Mon, 12 Feb 2024 17:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FW81aVlN"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LRiaR+iH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19324654E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 17:55:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B187841776
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 17:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707760512; cv=none; b=oYQefqQCLNWfgdqzGUWbjeNV80MlMsJbATXN4M0XLJSvdLHuwlLx37LQMNt8U7NenrwNf/HswQDblZVsPguGMJdPeifCk3jnRFZdA+zME3AtXMHXa+j+KcJ/yjIbGt1CtURr01rk1ZN2DLZSOtZ+++M/nOzW3T/jEo+vT/TjWRc=
+	t=1707760624; cv=none; b=noLesTIjdL+HvVeVYbSNdGQqaqFdZ0S8JxL+xC5J8X1Qr+/f02uUGa743GldCVwJ28DcZ9IeXKglhsSK2k9fbHYWTj2tVqNMLobVS8QeaEXbrUEgaHNnGdhqCJTHbFFL3IwF1k5cAtzZmjTn+AkU7cBZn2UqFkN13ZoOiqvFZxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707760512; c=relaxed/simple;
-	bh=Og8NnqP02pab6hxhGswPot4+uZWlv3wF0Kx/7BPs+og=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=fTIhNK4C6Vo8V6nRWdZQvAFkxE0jRObcLAytY1LlfEE6Gz9s/kAeAyGnlkdNaG4dGVbZh2R8V7YxN/li8ZHHIb+wbp5vAuYY+f+NUTsDh2P3kSu4BK2/cO4V3L5xxBQF55Fh/MTbJ0iruX+SeFozSvYWE2z2eVHwYH2UBu0tgqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FW81aVlN; arc=none smtp.client-ip=209.85.222.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-7d2a67daa25so49613241.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 09:55:10 -0800 (PST)
+	s=arc-20240116; t=1707760624; c=relaxed/simple;
+	bh=GO+XqADvFPujimGfIAAMQ9biA+SOVkTb0kZua4dtRds=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pF7cGxZrGjigl9ewY3MJSKtW0Mi5mz6z92GuIK6HcEzAECM9gyv2dq3y2s/qXrMx/Pr/kN188qap7Tps/B2SF2RmFZfC5tJ8fTTNOEWBFuSQKxAV9Rrobk8QxNQuNRPhhJlfKGFQl7bgOObnrOzZsk1TFIUsT6YnWXUz3AcGIWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LRiaR+iH; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-60779014458so4117497b3.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 09:57:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1707760509; x=1708365309; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=3t18idpy1yL8hjQMjo5EA0cSeouRX8+0f9MTy1s1S9E=;
-        b=FW81aVlNH/BZR7XB6KSg9JUX43XkT524bJJN/na1N8YGEV/8nJiSKNEH4+Y9HOK8ON
-         Og0bM9IG/Niffc/U1puuUBWQ28932tn7Dk/p0wg9IQjmUA4kWzqWcSyobwk54GAYQ28F
-         HhbARWgTvPp3WqZPbayUAzST7xTgYh8B+jeMAwo5P+ZSVAypqQgUHjPmMzauOmeUxYp2
-         VAZfynnFRoqGk1dSnbZcoL0Frbwtjp+mpevzWO7lhQecxvNtwZ4GURtTJcWsZLkldLwu
-         GgVZAN5spajPqFW26TJ2Rn/0rlNLruCQ34ZCBv9JFoFJQinVWh2UeNlsWc62Rahro9ng
-         CfQA==
+        d=paul-moore.com; s=google; t=1707760621; x=1708365421; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GywgT/kIpRIiEaoNj7SzkmI6fseY2YuE7XBhiV1W3IM=;
+        b=LRiaR+iHlnh9kzMtOaWL8uSftEEFJ52PPgddWsecZFY4BgcuAlwZK4R4dL/SZh1mrE
+         Y2w7AzzbskSyTKL8jhIgfcCH1JKlqWdBJlWj/6pLDwhsGSvJ7JPrbBN/CwPj5looxEM8
+         lHZ/TNidgCuBjffnQET4rpNppKqx732X6YNmBP9YmEE6Nx0uqWgRwx5aZdrWcv/7bfLq
+         S6kD2XXIyP+9wPD23o3fFt4nVhgPZe6OizA3ViMyaIA5hEaSQcPiCDVyBqqBaNJARkg+
+         GEz0ooTgJSysfQSHZSy7xILJ+U8sJOILqkDOKoayxnGfmKzmn0lxKxGLankZqDCiZa/w
+         RTPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707760509; x=1708365309;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3t18idpy1yL8hjQMjo5EA0cSeouRX8+0f9MTy1s1S9E=;
-        b=j/BzDU1BIC6PPG7A/ntXYyMR90vgzz12AOVsprUyvd+5stc0Mwm7Jkw6J//6Dspb/z
-         GiCUYG/6a813p1qvazlGl+G6k//Fhi5H1l5xhb8g/7ABNsQ+CGY8YIgOnfvu7fDyZ0A0
-         Qvz8oAUCqYTSZyCzF8V6ZTGo/kqQSM9lr5/lJRJnZ1JHKF9yWVT8yyCCwH2jOQESfloI
-         9E8p+vKzw+1H2c0j4cbSyFPQrUlLT9DT97qmbfuige9wuAYJb19OpKhW7QKvjarMOaNO
-         f5yw1QsY1uWHXErEyI08+hGbLrOCyFyIvgYzNoAeWrtCce4Syk90oOg3J96ZzZTikpTd
-         0N5g==
-X-Gm-Message-State: AOJu0Yy4a38iSjEMZrwmMTArikXvuMLhNbuETwmQ1LgyuG8qwHHHw5lL
-	dJgLMX6lNTnaNIDMYrPFW+ekgen4QIE3e0ahKTIw/0vf/Hzqbs7lUlyYqYZQeOY6crriVjz078x
-	cPxW9jrgzTYKQiHnoV3HV1R2dKra5YUVT9ZROYBGu9QX86pMmWpE=
-X-Google-Smtp-Source: AGHT+IE+fTlUlm6S5i/bXd/mDL8so/lGTPpD+/HFFykbPEgOk5IuqJAenCRnR7NuEVF9ZDb1qbAIbtcT+Jirb2/ibvk=
-X-Received: by 2002:a1f:e0c3:0:b0:4c0:51da:bb6d with SMTP id
- x186-20020a1fe0c3000000b004c051dabb6dmr3908276vkg.8.1707760509453; Mon, 12
- Feb 2024 09:55:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1707760621; x=1708365421;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GywgT/kIpRIiEaoNj7SzkmI6fseY2YuE7XBhiV1W3IM=;
+        b=r7PN+NWMdCw8FOHkJAEN1H/QiL1G39fCkpv4uAhdhqC3y5tuwMQGsXAGSThIGYoc8D
+         qpV1JN/nyxcbUGWwManENnFVvv3euP38oUAiydBOhzRZJfsc7oabd3irbNq6uSLa4Bq3
+         uBQgvJ0bTTQo71EdND9i8MZQ+ef3UdsH2EoCNFCYGS2hmG9kRfiabYUwO6FUQar0wO7N
+         xZkldv4LKsshjbcysFxyWLQ6cJCy49kFKXxRui79HG4oovy9nPSLjur9NhhRkvUYvpWl
+         3RJ/b0WAh8/I3KzNVwi/Pbtbvr0vwgeP6OyyxVSGrGbb/u3mRWgJ2HY27MRh2jek14qs
+         8xJA==
+X-Gm-Message-State: AOJu0Yx4bupFDErqbxmLT/WNtFsWOyer9JtHgJY7Y0JhMGWoHEITrn4l
+	mrySU+1C1hArEsoebBSKz8oK4wNoCg2KDJo+ZXSd/GfPOdAs3zzmDceldp+4oC9KuPcRf9Sh/oS
+	BVK3o6xgKIi9XXKcPopNXZgZC9y8kYmo/lwow
+X-Google-Smtp-Source: AGHT+IGjhdaYUNjwcSJFIvuNyHx9uH/3Qz50J2Oo2Jf2sLDKqyYEZrikDyUgVsDTlP7Ry4VIyaFcE3Lr2B40t4UjJbg=
+X-Received: by 2002:a81:d507:0:b0:5ff:aa34:7c5f with SMTP id
+ i7-20020a81d507000000b005ffaa347c5fmr4677040ywj.46.1707760621630; Mon, 12 Feb
+ 2024 09:57:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 12 Feb 2024 23:24:58 +0530
-Message-ID: <CA+G9fYsY7Uz_CnyqgyhAr6QsS9dJzC-9wMoDwq0=9=Rzmz5S5Q@mail.gmail.com>
-Subject: next: fs/quota/quota_tree.c:674:8: error: variable 'blk' is
- uninitialized when used here [-Werror,-Wuninitialized]
-To: linux-fsdevel@vger.kernel.org, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
-Cc: Jan Kara <jack@suse.cz>, Dan Carpenter <dan.carpenter@linaro.org>
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+ <20240115181809.885385-20-roberto.sassu@huaweicloud.com> <fd6ddc3d-e5d3-4b9c-b00b-ac2b1f22d653@linux.ibm.com>
+In-Reply-To: <fd6ddc3d-e5d3-4b9c-b00b-ac2b1f22d653@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 12 Feb 2024 12:56:50 -0500
+Message-ID: <CAHC9VhTY=X7z5SRQZzFe25FGB2E3FBBkuZ_YYA1+ETyr7pv=tA@mail.gmail.com>
+Subject: Re: [PATCH v9 19/25] integrity: Move integrity_kernel_module_request()
+ to IMA
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
+	kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org, 
+	serge@hallyn.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org, 
+	stephen.smalley.work@gmail.com, eparis@parisplace.org, casey@schaufler-ca.com, 
+	shuah@kernel.org, mic@digikod.net, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	keyrings@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-I encountered the following build warnings/errors while compiling the x86_64
-kernel on Linux next-20240212 tag with clang toolchain.
+On Mon, Feb 12, 2024 at 12:48=E2=80=AFPM Stefan Berger <stefanb@linux.ibm.c=
+om> wrote:
+> On 1/15/24 13:18, Roberto Sassu wrote:
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+...
 
-fs/quota/quota_tree.c:674:8: error: variable 'blk' is uninitialized
-when used here [-Werror,-Wuninitialized]
-  674 |               blk);
-      |                             ^~~
-include/linux/quotaops .h:34:41: note: expanded from macro 'quota_error'
-   34 |         __quota_error((sb), __func__, fmt , ## args)
-      |                                                ^~~~
-fs/quota/quota_tree.c:666:10: note: initialize the variable 'blk' to
-silence this warning
-  666 |         uint blk;
-      |                 ^
-      |                  = 0
-1 error generated.
+> > +/**
+> > + * ima_kernel_module_request - Prevent crypto-pkcs1pad(rsa,*) requests
+> > + * @kmod_name: kernel module name
+> > + *
+> > + * We have situation, when public_key_verify_signature() in case of RS=
+A > + * algorithm use alg_name to store internal information in order to
+> > + * construct an algorithm on the fly, but crypto_larval_lookup() will =
+try
+> > + * to use alg_name in order to load kernel module with same name.
+> > + * Since we don't have any real "crypto-pkcs1pad(rsa,*)" kernel module=
+s,
+> > + * we are safe to fail such module request from crypto_larval_lookup()=
+.
+> > + *
+> > + * In this way we prevent modprobe execution during digsig verificatio=
+n
+> > + * and avoid possible deadlock if modprobe and/or it's dependencies
+> > + * also signed with digsig.
+>
+> This text needs to some reformulation at some point..
 
-Links:
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2cFjnmDh1oofs8YfpPEBSMDvU9R/
+There is no time like the present.  If you have a suggestion I would
+love to hear it and I'm sure Roberto would too.
 
-As per the other reports, this has been fixed in Jan's tree.
-https://lore.kernel.org/all/20240212131615.6jvnwweivkydv3j7@quack3/
-
---
-Linaro LKFT
-https://lkft.linaro.org
+--=20
+paul-moore.com
 
