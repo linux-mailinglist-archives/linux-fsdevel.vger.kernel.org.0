@@ -1,133 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-11071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B48AD850CCD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 03:01:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CD11850CDA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 03:06:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 706DC287B6C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 02:00:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A710E1F24A61
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 02:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533761FA4;
-	Mon, 12 Feb 2024 02:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5413FDB;
+	Mon, 12 Feb 2024 02:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GxbPFSd2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0892217C2;
-	Mon, 12 Feb 2024 02:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568D91848
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 02:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707703251; cv=none; b=I4Nv1FBCepaOfAyXDEmdMB3TzRCliLYcDqYMKIPFAEEKD7kPIA4gdTUk5hnBcrYJPDCRdWtoqS3chN90xr/FbqD2nN78rc7LCQuNMDqfzbY4jjqNqY1EezKBDpt2L2/DTFP7r7Hms9t95t+oel3AdegGVehZ2/A0Zp74DPe4Yz0=
+	t=1707703602; cv=none; b=Lb68AkF3jlFdpg1uN4k4enFSWZix7pLxIGtXbefzsQuPKhOh+czm8F6yepk3c93FoXbsUwWj0RZEfy7bEECFyxXa1WAuZ4OzTXk6ZY4OmhfInUr5MCJUS5vSuM8DidZ2l20xuLvzpNivIxtZaWxT/WtjmQSmO9FuS4pt441e+y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707703251; c=relaxed/simple;
-	bh=6Lf06nnCwCLxaCHtDslobILzwXHZSIpo66gcQObBuEo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IifZjXZeo27JALVm9EgPwJDFq+05dZykjqc7G3aZWLUnBxJ+CbVJCtO3kJkFTl005oF+aohZBODMOPeo74h1MnbRIwM1n9ADhmZbcXrCItZH5tdXfgLCrxCfr3YmVMTX8UUylE5ySuWafuuhwknZqKGqOwtq9IdVjrsFQFgtEqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22A1BDA7;
-	Sun, 11 Feb 2024 18:01:27 -0800 (PST)
-Received: from [10.162.40.23] (unknown [10.162.40.23])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0AA2A3F762;
-	Sun, 11 Feb 2024 18:00:43 -0800 (PST)
-Message-ID: <e0521fe5-f7d5-404a-b646-6630ddd8a244@arm.com>
-Date: Mon, 12 Feb 2024 07:30:40 +0530
+	s=arc-20240116; t=1707703602; c=relaxed/simple;
+	bh=PtR6O5zZ11yErUWhE9os+Sw1jkakz3YXuvpeb+zUVY4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MW8O89C/K9ZB5fcRYTBWzBrfWojMGSe5Mu+OBLgnmQ4U6Y+yaGnzwr5mJZhGXrhy2g+5EItAjpWcCYavuagS49PAPsODPDEJOYLasUysyelDsrlDQSOw8Q7Oavt0uk4UUNkfawaXe1Pkxtg2owRtDGUcgs6tzo2dUqE2/Q9H7Es=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GxbPFSd2; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 11 Feb 2024 21:06:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1707703598;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ODlaXhkp4vNT3K0AelVxp1/w7y1kMZExEnw/9cBEPxU=;
+	b=GxbPFSd26AFaNHCeMPJ02uyrdsbSMtgY+mZM1EFMOAauPC7HPf+I9ClVXfiBaoYx0XD23/
+	u0MT8umyB5uGwJ6JBSJH23EzW85RaPUn2PCFDyi07wGWg8RFh4aatF/e8vO2nCaAXTh6Kz
+	OCc6I8tCD9HbuCTq3aRTDGozxbRosrs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>, 
+	Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>, 
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-block@vger.kernel.org, linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, Kent Overstreet <kent.overstreet@gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Removing GFP_NOFS
+Message-ID: <5p4zwxtfqwm3wgvzwqfg6uwy5m3lgpfypij4fzea63gu67ve4t@77to5kukmiic>
+References: <ZZcgXI46AinlcBDP@casper.infradead.org>
+ <ZZzP6731XwZQnz0o@dread.disaster.area>
+ <3ba0dffa-beea-478f-bb6e-777b6304fb69@kernel.org>
+ <ZcUQfzfQ9R8X0s47@tiehlicka>
+ <3aa399bb-5007-4d12-88ae-ed244e9a653f@kernel.org>
+ <ZclyYBO0vcQHZ5dV@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-Subject: Re: [PATCH] fs/proc/task_mmu: Add display flag for VM_MAYOVERLAY
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20240208084805.1252337-1-anshuman.khandual@arm.com>
- <fb157154-5661-4925-b2c5-7952188b28f5@redhat.com>
- <20240208124035.1c96c256d6e8c65f70b18675@linux-foundation.org>
- <2e7496af-0988-49fb-9582-bf6a94f08198@redhat.com>
-Content-Language: en-US
-In-Reply-To: <2e7496af-0988-49fb-9582-bf6a94f08198@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZclyYBO0vcQHZ5dV@dread.disaster.area>
+X-Migadu-Flow: FLOW_OUT
 
+On Mon, Feb 12, 2024 at 12:20:32PM +1100, Dave Chinner wrote:
+> On Thu, Feb 08, 2024 at 08:55:05PM +0100, Vlastimil Babka (SUSE) wrote:
+> > On 2/8/24 18:33, Michal Hocko wrote:
+> > > On Thu 08-02-24 17:02:07, Vlastimil Babka (SUSE) wrote:
+> > >> On 1/9/24 05:47, Dave Chinner wrote:
+> > >> > On Thu, Jan 04, 2024 at 09:17:16PM +0000, Matthew Wilcox wrote:
+> > >> 
+> > >> Your points and Kent's proposal of scoped GFP_NOWAIT [1] suggests to me this
+> > >> is no longer FS-only topic as this isn't just about converting to the scoped
+> > >> apis, but also how they should be improved.
+> > > 
+> > > Scoped GFP_NOFAIL context is slightly easier from the semantic POV than
+> > > scoped GFP_NOWAIT as it doesn't add a potentially unexpected failure
+> > > mode. It is still tricky to deal with GFP_NOWAIT requests inside the
+> > > NOFAIL scope because that makes it a non failing busy wait for an
+> > > allocation if we need to insist on scope NOFAIL semantic. 
+> > > 
+> > > On the other hand we can define the behavior similar to what you
+> > > propose with RETRY_MAYFAIL resp. NORETRY. Existing NOWAIT users should
+> > > better handle allocation failures regardless of the external allocation
+> > > scope.
+> > > 
+> > > Overriding that scoped NOFAIL semantic with RETRY_MAYFAIL or NORETRY
+> > > resembles the existing PF_MEMALLOC and GFP_NOMEMALLOC semantic and I do
+> > > not see an immediate problem with that.
+> > > 
+> > > Having more NOFAIL allocations is not great but if you need to
+> > > emulate those by implementing the nofail semantic outside of the
+> > > allocator then it is better to have those retries inside the allocator
+> > > IMO.
+> > 
+> > I see potential issues in scoping both the NOWAIT and NOFAIL
+> > 
+> > - NOFAIL - I'm assuming Dave is adding __GFP_NOFAIL to xfs allocations or
+> > adjacent layers where he knows they must not fail for his transaction. But
+> > could the scope affect also something else underneath that could fail
+> > without the failure propagating in a way that it affects xfs?
+> 
+> Memory allocaiton failures below the filesystem (i.e. in the IO
+> path) will fail the IO, and if that happens for a read IO within
+> a transaction then it will have the same effect as XFS failing a
+> memory allocation. i.e. it will shut down the filesystem.
+> 
+> The key point here is the moment we go below the filesystem we enter
+> into a new scoped allocation context with a guaranteed method of
+> returning errors: NOIO and bio errors.
 
-On 2/10/24 04:01, David Hildenbrand wrote:
-> On 08.02.24 21:40, Andrew Morton wrote:
->> On Thu, 8 Feb 2024 17:48:26 +0100 David Hildenbrand <david@redhat.com> wrote:
->>
->>> On 08.02.24 09:48, Anshuman Khandual wrote:
->>>> VM_UFFD_MISSING flag is mutually exclussive with VM_MAYOVERLAY flag as they
->>>> both use the same bit position i.e 0x00000200 in the vm_flags. Let's update
->>>> show_smap_vma_flags() to display the correct flags depending on CONFIG_MMU.
->>>>
->>>> Cc: Andrew Morton <akpm@linux-foundation.org>
->>>> Cc: David Hildenbrand <david@redhat.com>
->>>> Cc: linux-kernel@vger.kernel.org
->>>> Cc: linux-fsdevel@vger.kernel.org
->>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>>> ---
->>>> This applies on v6.8-rc3
->>>>
->>>>    fs/proc/task_mmu.c | 4 ++++
->>>>    1 file changed, 4 insertions(+)
->>>>
->>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
->>>> index 3f78ebbb795f..1c4eb25cfc17 100644
->>>> --- a/fs/proc/task_mmu.c
->>>> +++ b/fs/proc/task_mmu.c
->>>> @@ -681,7 +681,11 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
->>>>            [ilog2(VM_HUGEPAGE)]    = "hg",
->>>>            [ilog2(VM_NOHUGEPAGE)]    = "nh",
->>>>            [ilog2(VM_MERGEABLE)]    = "mg",
->>>> +#ifdef CONFIG_MMU
->>>>            [ilog2(VM_UFFD_MISSING)]= "um",
->>>> +#else
->>>> +        [ilog2(VM_MAYOVERLAY)]    = "ov",
->>>> +#endif /* CONFIG_MMU */
->>>>            [ilog2(VM_UFFD_WP)]    = "uw",
->>>>    #ifdef CONFIG_ARM64_MTE
->>>>            [ilog2(VM_MTE)]        = "mt",
->>>
->>> Reviewed-by: David Hildenbrand <david@redhat.com>
->>
->> I'm thinking
->>
->> Fixes: b6b7a8faf05c ("mm/nommu: don't use VM_MAYSHARE for MAP_PRIVATE mappings")
->> Cc: <stable@vger.kernel.org>
-> 
-> I'm having a hard time believing that anybody that runs a !MMU kernel would actually care about this bit being exposed as "ov" instead of "uw".
-> 
-> So in my thinking, one could even update Documentation/filesystems/proc.rst to just mention that "uw" on !MMU is only used for internal purposes.
-> 
-> But now, I actually read what that structure says:
-> 
-> "Don't forget to update Documentation/ on changes."
-> 
-> So, let's look there: Documentation/filesystems/proc.rst
-> 
-> "Note that there is no guarantee that every flag and associated mnemonic will be present in all further kernel releases. Things get changed, the flags may be vanished or the reverse -- new added. Interpretation of their meaning might change in future as well. So each consumer of these flags has to follow each specific kernel version for the exact semantic.
-> 
-> This file is only present if the CONFIG_MMU kernel configuration option is enabled."
-> 
-> And in fact
-> 
-> $ git grep MMU fs/proc/Makefile
-> fs/proc/Makefile:proc-$(CONFIG_MMU)     := task_mmu.o
+Hang on, you're conflating NOIO to mean something completely different -
+NOIO means "don't recurse in reclaim", it does _not_ mean anything about
+what happens when the allocation fails, and in particular it definitely
+does _not_ mean that failing the allocation is going to result in an IO
+error.
 
-Ahh! you are right, completely missed that.
+That's because in general most code in the IO path knows how to make
+effective use of biosets and mempools (which may take some work! you
+have to ensure that you're always able to make forward progress when
+memory is limited, and in particular that you don't double allocate from
+the same mempool if you're blocking the first allocation from
+completing/freeing).
 
+> i.e NOFAIL scopes are not relevant outside the subsystem that sets
+> it.  Hence we likely need helpers to clear and restore NOFAIL when
+> we cross an allocation context boundaries. e.g. as we cross from
+> filesystem to block layer in the IO stack via submit_bio(). Maybe
+> they should be doing something like:
 > 
-> 
-> So I rewoke my RB, this patch should be dropped and was never even tested unless I am missing something important.
+> 	nofail_flags = memalloc_nofail_clear();
 
-Fair enough, let's drop this patch. I found this via code inspection while
-looking into VM_UFFD_MISSING definition, booted with default configs which
-has CONFIG_MMU enabled. But this was an oversight, my bad.
+NOFAIL is not a scoped thing at all, period; it is very much a
+_callsite_ specific thing, and it depends on whether that callsite has a
+fallback.
+
+The most obvious example being, as mentioned previously, mempools.
+
+> > - NOWAIT - as said already, we need to make sure we're not turning an
+> > allocation that relied on too-small-to-fail into a null pointer exception or
+> > BUG_ON(!page).
+> 
+> Agreed. NOWAIT is removing allocation failure constraints and I
+> don't think that can be made to work reliably. Error injection
+> cannot prove the absence of errors  and so we can never be certain
+> the code will always operate correctly and not crash when an
+> unexepected allocation failure occurs.
+
+You saying we don't know how to test code? Come on, that's just throwing
+your hands up and giving up. We can write error injection tests that
+cycle through each injection point and test them individuall and then
+verify that they've been tested with coverage analysis.
+
+Anyways, NOWAIT is no different here from NORETRY/RETRY_MAYFAIL. We need
+to be able to handle allocation failures, period...
 
