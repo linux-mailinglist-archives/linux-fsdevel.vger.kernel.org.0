@@ -1,77 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-11191-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11192-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F9FC851FCC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 22:39:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95298851FDB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 22:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D71F1C22DEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 21:39:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C917285884
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 21:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3412C4D9EE;
-	Mon, 12 Feb 2024 21:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71BA4DA15;
+	Mon, 12 Feb 2024 21:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3K8eOlS2"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lPWrGyT4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF954D5A0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 21:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D12374CDE1
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 21:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707773976; cv=none; b=n7aNRok3E/1760Xo2CL+cNO0rRMaTndTFBint48HgrXGKfEwq6WhcdmUuwz8eqrhFW2pO0DCTeNBYo8vigWDkKGy0qi7xKb0AXHxzsVmHrR4wGrpn1+6v5aV7C+Ik/iE2JGokEPQ6uVvPV6s1mcpLyyL41XvRB+KvsraPN78E38=
+	t=1707773979; cv=none; b=UrcgAnisx5OkxLL8KKU6UbMesB/ZScptDvshIF1cCe98lZaMcDRgNh5WK9PH2PrPeRPM/vQuKkWb6ccUkrPlT/rOHcS0Fb5/QLXXCHSNrTpvE6+A0jyIOqbiHQiUmX68bc17zjWZz7LgM176Wc6lL+Zwjjblr7fSSRQ6fmy0OBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707773976; c=relaxed/simple;
-	bh=s3LEGYg8VUwRWvZpWWOEEverrgI0r872J86EZP7SPxw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=dDndnqCt0YXZ/sXYNt9EdBgf1Zj1g6g+47xJ6gnT+KeUMeBCYR6AjSDr0riprLk/VcWis6dzxbkIO2BY782a4yJPtpMUXyf8TV21iAskswI2VWZltcggJXnXNHjortR+/UNd+fkipc1m+FQsi5SQy8zvgxjHT8thn9kp27XhGJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3K8eOlS2; arc=none smtp.client-ip=209.85.219.202
+	s=arc-20240116; t=1707773979; c=relaxed/simple;
+	bh=4xkDGU/X5xzLc5cKiZc3zBzY0U1w4d/h7QDR3WZvS5I=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Isi0YkD/t6mYci8vshLGCtpr8+gloq6gOY4I3yL/orR31NGEr4NoSCoMc9ixYVeNRi5L7hoc7rdxI7RYPcOazWwvAS5BcqvM4ne90gSetzKsmIDfzQnOzauJtRLTs772boZhtlJ2XXMiglHoKN+19M0kAn74fNmN+p+wrGy9+VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lPWrGyT4; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc6b26845cdso5925798276.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 13:39:33 -0800 (PST)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc6dbdcfd39so7590231276.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 13:39:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707773972; x=1708378772; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vA/ePHR05wabM4Y5MMpygOj0r4Hku8hMtHDwkSr6xQQ=;
-        b=3K8eOlS2fg2MQ3a3n/2AUg6ViRTW1C6K26sF+QSzMvOShaxAmsfaYbHk5sC/5Xch04
-         0IdRPV31S8TJxahklR+wQ3ZAVgmLTb0076g6n2bjDUKE1Ws5e8amDAzALSo5xl5+KCGk
-         zLqFWFe7uH9lyCq53DUwEvjSVAHSuG78oWes9u5mRQf+zm471q8JcERFV9TsPlY4TQlt
-         e0TFOnLdPCt7yQTpGfGRdFhky5LUaLBEYpyf/syXl91QqOM6Nf70VIPq7ceytPJM+aFc
-         sMB/7Q/OChvpVpQ/PVfwvWCZUzBVaEWhTph96dE8EOZzHt8csRMnqfDTERv84ruw5bWg
-         wPSQ==
+        d=google.com; s=20230601; t=1707773975; x=1708378775; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UEMHu7rdWBA2FK/B5eccMh9Pcx3Z9fwrCFD55ivM58g=;
+        b=lPWrGyT4xIkTy8INqKfDGS35CNspto/FHVnMe//BIBrV2g34ndWuOyZz8lzk7oEEWw
+         SykRPH+ud1ds6oe4qYGJSljHswPl3NXAEXjmAptEVB535Fbs4zJRFwzbIwiF2gmU0e59
+         xjZlbjvZhrFv47ZsKLBwx8Jd9z5+YkKknLfasvzNllwwwS2jxIfzZiQzapihPlRGFswj
+         44G2YSiWKmgKCtU7vMF7OlN/IQl524qHibi08rSMEiBIQ5CR/TGPYWa3MnVl9xc7PbNG
+         JA0oGyOhk0uXnOqJShuz0rjy0sCQky6GakTVljCjFCC0EK3iFrJH4rwSRyOrVPO9EKTB
+         S2Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707773972; x=1708378772;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vA/ePHR05wabM4Y5MMpygOj0r4Hku8hMtHDwkSr6xQQ=;
-        b=r5OZP64knxqbbCTWKu8N8W98KHxvnShx/z33dsEdeb/uTHYgFbiYx9d9xlyTpAHLVg
-         l8NvMIczyzcreml2j4Ycd+GvIJt5II9MRT7rWvjXgFnEaWfXgBXsOs1pPfp0RELvfOeZ
-         ypJP5LlI4wu+VnK/Hunm7F48W53fcAy8fpiqszqTUK9uzXpKY3SkSTYoXepOepmC/H6/
-         ORXFyuXqCMKBvStBf1OncStTX0aEBoTdni0+Rxzdg4Ci/BM+CroGFysjCojJZksN+RBD
-         tNlDVbLBuE9qSTpiE07M5Z/9JpN/ZSzZG+zLNPf5mAVZ03zBxLOw3jqtBO/59AAlbwrb
-         iUsw==
-X-Gm-Message-State: AOJu0YxohK8buTDteX9RzptUIar35xUmcYZUKoLUnMCKFsUGNmlRaSoq
-	XaYneAnuvU3+BTkCOYrjBpCpYqFs9kosMS4BZ2oLmGq6UhZ1pRcn2ImcPF2Sd7LZRDySkr8KeaI
-	79g==
-X-Google-Smtp-Source: AGHT+IGYazuIgsgZwBWVLtlsmQQd5LxodV8fFUctMuX5ciXn0PoDOAWUoAo/h1A3Z0RCnVOsgEP5hOuPMuk=
+        d=1e100.net; s=20230601; t=1707773975; x=1708378775;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UEMHu7rdWBA2FK/B5eccMh9Pcx3Z9fwrCFD55ivM58g=;
+        b=rDZVait//Up/sNKxchEF7/ZwhlE5B94QL4kDxIv5d97kTsM0NXoTJZe1PS9/wYrUcF
+         H4Rm9YTajqziGrT3FuFbn73E65dcQ0lHfmphRwCzPrXsXPM3G+aPjyoDfXSSZdpltDsI
+         Tx6W3T5Kv2bQmVOO8YpT8o0VPPNORefrbl6Bsf44ZVhA9By5jTIz+2tDr2GOTkCpTCeA
+         AfLj1MofhSIQah9k5ztjHK2H02bcRylrC2+tOjupjKBERM6os0I/QzTYDHlsk7vLni32
+         XiFCpjJ0ipO9BTSxjM1GFgHmYocjeza/dldMvzL2x1Ge3f3z/Quc/vHL4rssAUQ8IFhe
+         j2mw==
+X-Gm-Message-State: AOJu0YwmI8s2/zKvgsa9wEercwxz4sy5nVbAE8MM+MHFORjCRO+7oh0y
+	jYTABCrRCHJeReWPgnICzUT6HuE2zYDzLkrkbDFIMwWnN4NQm5Im8dbu0yfCMLYztz+tPtGka1a
+	GKg==
+X-Google-Smtp-Source: AGHT+IHRC17IGymCwraaE36VsZx1XRfqk/4cdiLSk63iyubj5ReAhK21VAXT2xYjmsZbV1LFTPiUTjH318E=
 X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:201:b848:2b3f:be49:9cbc])
- (user=surenb job=sendgmr) by 2002:a05:6902:188c:b0:dbd:b165:441 with SMTP id
- cj12-20020a056902188c00b00dbdb1650441mr2291367ybb.0.1707773972271; Mon, 12
- Feb 2024 13:39:32 -0800 (PST)
-Date: Mon, 12 Feb 2024 13:38:46 -0800
+ (user=surenb job=sendgmr) by 2002:a05:6902:10c2:b0:dc6:d2c8:6e50 with SMTP id
+ w2-20020a05690210c200b00dc6d2c86e50mr1230828ybu.7.1707773974574; Mon, 12 Feb
+ 2024 13:39:34 -0800 (PST)
+Date: Mon, 12 Feb 2024 13:38:47 -0800
+In-Reply-To: <20240212213922.783301-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20240212213922.783301-1-surenb@google.com>
 X-Mailer: git-send-email 2.43.0.687.g38aa6559b0-goog
-Message-ID: <20240212213922.783301-1-surenb@google.com>
-Subject: [PATCH v3 00/35] Memory allocation profiling
+Message-ID: <20240212213922.783301-2-surenb@google.com>
+Subject: [PATCH v3 01/35] lib/string_helpers: Add flags param to string_get_size()
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz, 
@@ -98,266 +103,332 @@ Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
 	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
 	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
 	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
-	cgroups@vger.kernel.org
+	cgroups@vger.kernel.org, Andy Shevchenko <andy@kernel.org>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, 
+	Paul Mackerras <paulus@samba.org>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	"=?UTF-8?q?Noralf=20Tr=C3=B8nnes?=" <noralf@tronnes.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Memory allocation, v3 and final:
+From: Kent Overstreet <kent.overstreet@linux.dev>
 
-Overview:
-Low overhead [1] per-callsite memory allocation profiling. Not just for debug
-kernels, overhead low enough to be deployed in production.
+The new flags parameter allows controlling
+ - Whether or not the units suffix is separated by a space, for
+   compatibility with sort -h
+ - Whether or not to append a B suffix - we're not always printing
+   bytes.
 
-We're aiming to get this in the next merge window, for 6.9. The feedback
-we've gotten has been that even out of tree this patchset has already
-been useful, and there's a significant amount of other work gated on the
-code tagging functionality included in this patchset [2].
+Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Cc: Andy Shevchenko <andy@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>
+Cc: "Noralf Tr=C3=B8nnes" <noralf@tronnes.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+---
+ arch/powerpc/mm/book3s64/radix_pgtable.c      |  2 +-
+ drivers/block/virtio_blk.c                    |  4 ++--
+ drivers/gpu/drm/gud/gud_drv.c                 |  2 +-
+ drivers/mmc/core/block.c                      |  4 ++--
+ drivers/mtd/spi-nor/debugfs.c                 |  6 ++---
+ .../ethernet/chelsio/cxgb4/cxgb4_debugfs.c    |  4 ++--
+ drivers/scsi/sd.c                             |  8 +++----
+ include/linux/string_helpers.h                | 11 +++++-----
+ lib/string_helpers.c                          | 22 ++++++++++++++-----
+ lib/test-string_helpers.c                     |  4 ++--
+ mm/hugetlb.c                                  |  8 +++----
+ 11 files changed, 42 insertions(+), 33 deletions(-)
 
-Example output:
-  root@moria-kvm:~# sort -h /proc/allocinfo|tail
-   3.11MiB     2850 fs/ext4/super.c:1408 module:ext4 func:ext4_alloc_inode
-   3.52MiB      225 kernel/fork.c:356 module:fork func:alloc_thread_stack_node
-   3.75MiB      960 mm/page_ext.c:270 module:page_ext func:alloc_page_ext
-   4.00MiB        2 mm/khugepaged.c:893 module:khugepaged func:hpage_collapse_alloc_folio
-   10.5MiB      168 block/blk-mq.c:3421 module:blk_mq func:blk_mq_alloc_rqs
-   14.0MiB     3594 include/linux/gfp.h:295 module:filemap func:folio_alloc_noprof
-   26.8MiB     6856 include/linux/gfp.h:295 module:memory func:folio_alloc_noprof
-   64.5MiB    98315 fs/xfs/xfs_rmap_item.c:147 module:xfs func:xfs_rui_init
-   98.7MiB    25264 include/linux/gfp.h:295 module:readahead func:folio_alloc_noprof
-    125MiB     7357 mm/slub.c:2201 module:slub func:alloc_slab_page
-
-Since v2:
- - tglx noticed a circular header dependency between sched.h and percpu.h;
-   a bunch of header cleanups were merged into 6.8 to ameliorate this [3].
-
- - a number of improvements, moving alloc_hooks() annotations to the
-   correct place for better tracking (mempool), and bugfixes.
-
- - looked at alternate hooking methods.
-   There were suggestions on alternate methods (compiler attribute,
-   trampolines), but they wouldn't have made the patchset any cleaner
-   (we still need to have different function versions for accounting vs. no
-   accounting to control at which point in a call chain the accounting
-   happens), and they would have added a dependency on toolchain
-   support.
-
-Usage:
-kconfig options:
- - CONFIG_MEM_ALLOC_PROFILING
- - CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT
- - CONFIG_MEM_ALLOC_PROFILING_DEBUG
-   adds warnings for allocations that weren't accounted because of a
-   missing annotation
-
-sysctl:
-  /proc/sys/vm/mem_profiling
-
-Runtime info:
-  /proc/allocinfo
-
-Notes:
-
-[1]: Overhead
-To measure the overhead we are comparing the following configurations:
-(1) Baseline with CONFIG_MEMCG_KMEM=n
-(2) Disabled by default (CONFIG_MEM_ALLOC_PROFILING=y &&
-    CONFIG_MEM_ALLOC_PROFILING_BY_DEFAULT=n)
-(3) Enabled by default (CONFIG_MEM_ALLOC_PROFILING=y &&
-    CONFIG_MEM_ALLOC_PROFILING_BY_DEFAULT=y)
-(4) Enabled at runtime (CONFIG_MEM_ALLOC_PROFILING=y &&
-    CONFIG_MEM_ALLOC_PROFILING_BY_DEFAULT=n && /proc/sys/vm/mem_profiling=1)
-(5) Baseline with CONFIG_MEMCG_KMEM=y && allocating with __GFP_ACCOUNT
-
-Performance overhead:
-To evaluate performance we implemented an in-kernel test executing
-multiple get_free_page/free_page and kmalloc/kfree calls with allocation
-sizes growing from 8 to 240 bytes with CPU frequency set to max and CPU
-affinity set to a specific CPU to minimize the noise. Below are results
-from running the test on Ubuntu 22.04.2 LTS with 6.8.0-rc1 kernel on
-56 core Intel Xeon:
-
-                        kmalloc                 pgalloc
-(1 baseline)            6.764s                  16.902s
-(2 default disabled)    6.793s (+0.43%)         17.007s (+0.62%)
-(3 default enabled)     7.197s (+6.40%)         23.666s (+40.02%)
-(4 runtime enabled)     7.405s (+9.48%)         23.901s (+41.41%)
-(5 memcg)               13.388s (+97.94%)       48.460s (+186.71%)
-
-Memory overhead:
-Kernel size:
-
-   text           data        bss         dec         diff
-(1) 26515311	      18890222    17018880    62424413
-(2) 26524728	      19423818    16740352    62688898    264485
-(3) 26524724	      19423818    16740352    62688894    264481
-(4) 26524728	      19423818    16740352    62688898    264485
-(5) 26541782	      18964374    16957440    62463596    39183
-
-Memory consumption on a 56 core Intel CPU with 125GB of memory:
-Code tags:           192 kB
-PageExts:         262144 kB (256MB)
-SlabExts:           9876 kB (9.6MB)
-PcpuExts:            512 kB (0.5MB)
-
-Total overhead is 0.2% of total memory.
-
-[2]: Improved fault injection is the big one; the alloc_hooks() macro
-this patchset introduces is also used for per-callsite fault injection
-points in the dynamic fault injection patchset, which means we can
-easily do fault injection on a per module or per file basis; this makes
-it much easier to integrate memory fault injection into existing tests.
-
-Vlastimil recently raised concerns about exposing GFP_NOWAIT as a
-PF_MEMALLOC_* flag, as this might introduce GFP_NOWAIT to allocation
-paths that have never had their failure paths tested - this is something
-we need to address.
-
-[3]: The circular dependency looks to be unavoidable; the issue is that
-alloc_tag_save() -> current -> get_current() requires percpu.h, and
-percpu.h requires sched.h because of course it does. But this doesn't
-actually cause build errors because we're only using macros, so the main
-concern is just not leaving a difficult-to-disentangle minefield for
-later.
-So, sched.h is now pretty close to being a types only header that
-imports types and declares types - this is the header cleanups that were
-merged for 6.8.
-
-
-Kent Overstreet (11):
-  lib/string_helpers: Add flags param to string_get_size()
-  scripts/kallysms: Always include __start and __stop symbols
-  fs: Convert alloc_inode_sb() to a macro
-  mm/slub: Mark slab_free_freelist_hook() __always_inline
-  mempool: Hook up to memory allocation profiling
-  xfs: Memory allocation profiling fixups
-  mm: percpu: Introduce pcpuobj_ext
-  mm: percpu: Add codetag reference into pcpuobj_ext
-  mm: vmalloc: Enable memory allocation profiling
-  rhashtable: Plumb through alloc tag
-  MAINTAINERS: Add entries for code tagging and memory allocation
-    profiling
-
-Suren Baghdasaryan (24):
-  mm: enumerate all gfp flags
-  mm: introduce slabobj_ext to support slab object extensions
-  mm: introduce __GFP_NO_OBJ_EXT flag to selectively prevent slabobj_ext
-    creation
-  mm/slab: introduce SLAB_NO_OBJ_EXT to avoid obj_ext creation
-  mm: prevent slabobj_ext allocations for slabobj_ext and kmem_cache
-    objects
-  slab: objext: introduce objext_flags as extension to
-    page_memcg_data_flags
-  lib: code tagging framework
-  lib: code tagging module support
-  lib: prevent module unloading if memory is not freed
-  lib: add allocation tagging support for memory allocation profiling
-  lib: introduce support for page allocation tagging
-  mm: percpu: increase PERCPU_MODULE_RESERVE to accommodate allocation
-    tags
-  change alloc_pages name in dma_map_ops to avoid name conflicts
-  mm: enable page allocation tagging
-  mm: create new codetag references during page splitting
-  mm/page_ext: enable early_page_ext when
-    CONFIG_MEM_ALLOC_PROFILING_DEBUG=y
-  lib: add codetag reference into slabobj_ext
-  mm/slab: add allocation accounting into slab allocation and free paths
-  mm/slab: enable slab allocation tagging for kmalloc and friends
-  mm: percpu: enable per-cpu allocation tagging
-  lib: add memory allocations report in show_mem()
-  codetag: debug: skip objext checking when it's for objext itself
-  codetag: debug: mark codetags for reserved pages as empty
-  codetag: debug: introduce OBJEXTS_ALLOC_FAIL to mark failed slab_ext
-    allocations
-
- Documentation/admin-guide/sysctl/vm.rst       |  16 ++
- Documentation/filesystems/proc.rst            |  28 ++
- MAINTAINERS                                   |  16 ++
- arch/alpha/kernel/pci_iommu.c                 |   2 +-
- arch/mips/jazz/jazzdma.c                      |   2 +-
- arch/powerpc/kernel/dma-iommu.c               |   2 +-
- arch/powerpc/mm/book3s64/radix_pgtable.c      |   2 +-
- arch/powerpc/platforms/ps3/system-bus.c       |   4 +-
- arch/powerpc/platforms/pseries/vio.c          |   2 +-
- arch/x86/kernel/amd_gart_64.c                 |   2 +-
- drivers/block/virtio_blk.c                    |   4 +-
- drivers/gpu/drm/gud/gud_drv.c                 |   2 +-
- drivers/iommu/dma-iommu.c                     |   2 +-
- drivers/mmc/core/block.c                      |   4 +-
- drivers/mtd/spi-nor/debugfs.c                 |   6 +-
- .../ethernet/chelsio/cxgb4/cxgb4_debugfs.c    |   4 +-
- drivers/parisc/ccio-dma.c                     |   2 +-
- drivers/parisc/sba_iommu.c                    |   2 +-
- drivers/scsi/sd.c                             |   8 +-
- drivers/staging/media/atomisp/pci/hmm/hmm.c   |   2 +-
- drivers/xen/grant-dma-ops.c                   |   2 +-
- drivers/xen/swiotlb-xen.c                     |   2 +-
- fs/xfs/kmem.c                                 |   4 +-
- fs/xfs/kmem.h                                 |  10 +-
- include/asm-generic/codetag.lds.h             |  14 +
- include/asm-generic/vmlinux.lds.h             |   3 +
- include/linux/alloc_tag.h                     | 188 +++++++++++++
- include/linux/codetag.h                       |  83 ++++++
- include/linux/dma-map-ops.h                   |   2 +-
- include/linux/fortify-string.h                |   5 +-
- include/linux/fs.h                            |   6 +-
- include/linux/gfp.h                           | 126 +++++----
- include/linux/gfp_types.h                     | 101 +++++--
- include/linux/memcontrol.h                    |  56 +++-
- include/linux/mempool.h                       |  73 +++--
- include/linux/mm.h                            |   8 +
- include/linux/mm_types.h                      |   4 +-
- include/linux/page_ext.h                      |   1 -
- include/linux/pagemap.h                       |   9 +-
- include/linux/percpu.h                        |  27 +-
- include/linux/pgalloc_tag.h                   | 105 +++++++
- include/linux/rhashtable-types.h              |  11 +-
- include/linux/sched.h                         |  24 ++
- include/linux/slab.h                          | 184 +++++++------
- include/linux/string.h                        |   4 +-
- include/linux/string_helpers.h                |  11 +-
- include/linux/vmalloc.h                       |  60 +++-
- init/Kconfig                                  |   4 +
- kernel/dma/mapping.c                          |   4 +-
- kernel/kallsyms_selftest.c                    |   2 +-
- kernel/module/main.c                          |  25 +-
- lib/Kconfig.debug                             |  31 +++
- lib/Makefile                                  |   3 +
- lib/alloc_tag.c                               | 213 +++++++++++++++
- lib/codetag.c                                 | 258 ++++++++++++++++++
- lib/rhashtable.c                              |  52 +++-
- lib/string_helpers.c                          |  22 +-
- lib/test-string_helpers.c                     |   4 +-
- mm/compaction.c                               |   7 +-
- mm/filemap.c                                  |   6 +-
- mm/huge_memory.c                              |   2 +
- mm/hugetlb.c                                  |   8 +-
- mm/kfence/core.c                              |  14 +-
- mm/kfence/kfence.h                            |   4 +-
- mm/memcontrol.c                               |  56 +---
- mm/mempolicy.c                                |  52 ++--
- mm/mempool.c                                  |  36 +--
- mm/mm_init.c                                  |  10 +
- mm/page_alloc.c                               |  66 +++--
- mm/page_ext.c                                 |  13 +
- mm/page_owner.c                               |   2 +-
- mm/percpu-internal.h                          |  26 +-
- mm/percpu.c                                   | 120 ++++----
- mm/show_mem.c                                 |  15 +
- mm/slab.h                                     | 176 ++++++++++--
- mm/slab_common.c                              |  65 ++++-
- mm/slub.c                                     | 138 ++++++----
- mm/util.c                                     |  44 +--
- mm/vmalloc.c                                  |  88 +++---
- scripts/kallsyms.c                            |  13 +
- scripts/module.lds.S                          |   7 +
- 81 files changed, 2126 insertions(+), 695 deletions(-)
- create mode 100644 include/asm-generic/codetag.lds.h
- create mode 100644 include/linux/alloc_tag.h
- create mode 100644 include/linux/codetag.h
- create mode 100644 include/linux/pgalloc_tag.h
- create mode 100644 lib/alloc_tag.c
- create mode 100644 lib/codetag.c
-
--- 
+diff --git a/arch/powerpc/mm/book3s64/radix_pgtable.c b/arch/powerpc/mm/boo=
+k3s64/radix_pgtable.c
+index c6a4ac766b2b..27aa5a083ff0 100644
+--- a/arch/powerpc/mm/book3s64/radix_pgtable.c
++++ b/arch/powerpc/mm/book3s64/radix_pgtable.c
+@@ -260,7 +260,7 @@ print_mapping(unsigned long start, unsigned long end, u=
+nsigned long size, bool e
+ 	if (end <=3D start)
+ 		return;
+=20
+-	string_get_size(size, 1, STRING_UNITS_2, buf, sizeof(buf));
++	string_get_size(size, 1, STRING_SIZE_BASE2, buf, sizeof(buf));
+=20
+ 	pr_info("Mapped 0x%016lx-0x%016lx with %s pages%s\n", start, end, buf,
+ 		exec ? " (exec)" : "");
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 2bf14a0e2815..94fba7f57079 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -934,9 +934,9 @@ static void virtblk_update_capacity(struct virtio_blk *=
+vblk, bool resize)
+ 	nblocks =3D DIV_ROUND_UP_ULL(capacity, queue_logical_block_size(q) >> 9);
+=20
+ 	string_get_size(nblocks, queue_logical_block_size(q),
+-			STRING_UNITS_2, cap_str_2, sizeof(cap_str_2));
++			STRING_SIZE_BASE2, cap_str_2, sizeof(cap_str_2));
+ 	string_get_size(nblocks, queue_logical_block_size(q),
+-			STRING_UNITS_10, cap_str_10, sizeof(cap_str_10));
++			0, cap_str_10, sizeof(cap_str_10));
+=20
+ 	dev_notice(&vdev->dev,
+ 		   "[%s] %s%llu %d-byte logical blocks (%s/%s)\n",
+diff --git a/drivers/gpu/drm/gud/gud_drv.c b/drivers/gpu/drm/gud/gud_drv.c
+index 9d7bf8ee45f1..6b1748e1f666 100644
+--- a/drivers/gpu/drm/gud/gud_drv.c
++++ b/drivers/gpu/drm/gud/gud_drv.c
+@@ -329,7 +329,7 @@ static int gud_stats_debugfs(struct seq_file *m, void *=
+data)
+ 	struct gud_device *gdrm =3D to_gud_device(entry->dev);
+ 	char buf[10];
+=20
+-	string_get_size(gdrm->bulk_len, 1, STRING_UNITS_2, buf, sizeof(buf));
++	string_get_size(gdrm->bulk_len, 1, STRING_SIZE_BASE2, buf, sizeof(buf));
+ 	seq_printf(m, "Max buffer size: %s\n", buf);
+ 	seq_printf(m, "Number of errors:  %u\n", gdrm->stats_num_errors);
+=20
+diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+index 32d49100dff5..1cded1e9aca4 100644
+--- a/drivers/mmc/core/block.c
++++ b/drivers/mmc/core/block.c
+@@ -2557,7 +2557,7 @@ static struct mmc_blk_data *mmc_blk_alloc_req(struct =
+mmc_card *card,
+=20
+ 	blk_queue_write_cache(md->queue.queue, cache_enabled, fua_enabled);
+=20
+-	string_get_size((u64)size, 512, STRING_UNITS_2,
++	string_get_size((u64)size, 512, STRING_SIZE_BASE2,
+ 			cap_str, sizeof(cap_str));
+ 	pr_info("%s: %s %s %s%s\n",
+ 		md->disk->disk_name, mmc_card_id(card), mmc_card_name(card),
+@@ -2753,7 +2753,7 @@ static int mmc_blk_alloc_rpmb_part(struct mmc_card *c=
+ard,
+=20
+ 	list_add(&rpmb->node, &md->rpmbs);
+=20
+-	string_get_size((u64)size, 512, STRING_UNITS_2,
++	string_get_size((u64)size, 512, STRING_SIZE_BASE2,
+ 			cap_str, sizeof(cap_str));
+=20
+ 	pr_info("%s: %s %s %s, chardev (%d:%d)\n",
+diff --git a/drivers/mtd/spi-nor/debugfs.c b/drivers/mtd/spi-nor/debugfs.c
+index 2dbda6b6938a..f6c3ca430df1 100644
+--- a/drivers/mtd/spi-nor/debugfs.c
++++ b/drivers/mtd/spi-nor/debugfs.c
+@@ -85,7 +85,7 @@ static int spi_nor_params_show(struct seq_file *s, void *=
+data)
+=20
+ 	seq_printf(s, "name\t\t%s\n", info->name);
+ 	seq_printf(s, "id\t\t%*ph\n", SPI_NOR_MAX_ID_LEN, nor->id);
+-	string_get_size(params->size, 1, STRING_UNITS_2, buf, sizeof(buf));
++	string_get_size(params->size, 1, STRING_SIZE_BASE2, buf, sizeof(buf));
+ 	seq_printf(s, "size\t\t%s\n", buf);
+ 	seq_printf(s, "write size\t%u\n", params->writesize);
+ 	seq_printf(s, "page size\t%u\n", params->page_size);
+@@ -130,14 +130,14 @@ static int spi_nor_params_show(struct seq_file *s, vo=
+id *data)
+ 		struct spi_nor_erase_type *et =3D &erase_map->erase_type[i];
+=20
+ 		if (et->size) {
+-			string_get_size(et->size, 1, STRING_UNITS_2, buf,
++			string_get_size(et->size, 1, STRING_SIZE_BASE2, buf,
+ 					sizeof(buf));
+ 			seq_printf(s, " %02x (%s) [%d]\n", et->opcode, buf, i);
+ 		}
+ 	}
+=20
+ 	if (!(nor->flags & SNOR_F_NO_OP_CHIP_ERASE)) {
+-		string_get_size(params->size, 1, STRING_UNITS_2, buf, sizeof(buf));
++		string_get_size(params->size, 1, STRING_SIZE_BASE2, buf, sizeof(buf));
+ 		seq_printf(s, " %02x (%s)\n", nor->params->die_erase_opcode, buf);
+ 	}
+=20
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c b/drivers/n=
+et/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+index 14e0d989c3ba..7d5fbebd36fc 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_debugfs.c
+@@ -3457,8 +3457,8 @@ static void mem_region_show(struct seq_file *seq, con=
+st char *name,
+ {
+ 	char buf[40];
+=20
+-	string_get_size((u64)to - from + 1, 1, STRING_UNITS_2, buf,
+-			sizeof(buf));
++	string_get_size((u64)to - from + 1, 1, STRING_SIZE_BASE2,
++			buf, sizeof(buf));
+ 	seq_printf(seq, "%-15s %#x-%#x [%s]\n", name, from, to, buf);
+ }
+=20
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index 0833b3e6aa6e..e23bcb1d1ffa 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2731,10 +2731,10 @@ sd_print_capacity(struct scsi_disk *sdkp,
+ 	if (!sdkp->first_scan && old_capacity =3D=3D sdkp->capacity)
+ 		return;
+=20
+-	string_get_size(sdkp->capacity, sector_size,
+-			STRING_UNITS_2, cap_str_2, sizeof(cap_str_2));
+-	string_get_size(sdkp->capacity, sector_size,
+-			STRING_UNITS_10, cap_str_10, sizeof(cap_str_10));
++	string_get_size(sdkp->capacity, sector_size, STRING_SIZE_BASE2,
++			cap_str_2, sizeof(cap_str_2));
++	string_get_size(sdkp->capacity, sector_size, 0,
++			cap_str_10, sizeof(cap_str_10));
+=20
+ 	sd_printk(KERN_NOTICE, sdkp,
+ 		  "%llu %d-byte logical blocks: (%s/%s)\n",
+diff --git a/include/linux/string_helpers.h b/include/linux/string_helpers.=
+h
+index 58fb1f90eda5..a54467d891db 100644
+--- a/include/linux/string_helpers.h
++++ b/include/linux/string_helpers.h
+@@ -17,14 +17,13 @@ static inline bool string_is_terminated(const char *s, =
+int len)
+ 	return memchr(s, '\0', len) ? true : false;
+ }
+=20
+-/* Descriptions of the types of units to
+- * print in */
+-enum string_size_units {
+-	STRING_UNITS_10,	/* use powers of 10^3 (standard SI) */
+-	STRING_UNITS_2,		/* use binary powers of 2^10 */
++enum string_size_flags {
++	STRING_SIZE_BASE2	=3D (1 << 0),
++	STRING_SIZE_NOSPACE	=3D (1 << 1),
++	STRING_SIZE_NOBYTES	=3D (1 << 2),
+ };
+=20
+-int string_get_size(u64 size, u64 blk_size, enum string_size_units units,
++int string_get_size(u64 size, u64 blk_size, enum string_size_flags flags,
+ 		    char *buf, int len);
+=20
+ int parse_int_array_user(const char __user *from, size_t count, int **arra=
+y);
+diff --git a/lib/string_helpers.c b/lib/string_helpers.c
+index 7713f73e66b0..a5d7d1caed70 100644
+--- a/lib/string_helpers.c
++++ b/lib/string_helpers.c
+@@ -19,11 +19,17 @@
+ #include <linux/string.h>
+ #include <linux/string_helpers.h>
+=20
++enum string_size_units {
++	STRING_UNITS_10,	/* use powers of 10^3 (standard SI) */
++	STRING_UNITS_2,		/* use binary powers of 2^10 */
++};
++
+ /**
+  * string_get_size - get the size in the specified units
+  * @size:	The size to be converted in blocks
+  * @blk_size:	Size of the block (use 1 for size in bytes)
+- * @units:	units to use (powers of 1000 or 1024)
++ * @flags:	units to use (powers of 1000 or 1024), whether to include space
++ *		separator
+  * @buf:	buffer to format to
+  * @len:	length of buffer
+  *
+@@ -34,14 +40,16 @@
+  * Return value: number of characters of output that would have been writt=
+en
+  * (which may be greater than len, if output was truncated).
+  */
+-int string_get_size(u64 size, u64 blk_size, const enum string_size_units u=
+nits,
++int string_get_size(u64 size, u64 blk_size, enum string_size_flags flags,
+ 		    char *buf, int len)
+ {
++	enum string_size_units units =3D flags & flags & STRING_SIZE_BASE2
++		? STRING_UNITS_2 : STRING_UNITS_10;
+ 	static const char *const units_10[] =3D {
+-		"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"
++		"", "k", "M", "G", "T", "P", "E", "Z", "Y"
+ 	};
+ 	static const char *const units_2[] =3D {
+-		"B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB"
++		"", "Ki", "Mi", "Gi", "Ti", "Pi", "Ei", "Zi", "Yi"
+ 	};
+ 	static const char *const *const units_str[] =3D {
+ 		[STRING_UNITS_10] =3D units_10,
+@@ -128,8 +136,10 @@ int string_get_size(u64 size, u64 blk_size, const enum=
+ string_size_units units,
+ 	else
+ 		unit =3D units_str[units][i];
+=20
+-	return snprintf(buf, len, "%u%s %s", (u32)size,
+-			tmp, unit);
++	return snprintf(buf, len, "%u%s%s%s%s", (u32)size, tmp,
++			(flags & STRING_SIZE_NOSPACE)		? "" : " ",
++			unit,
++			(flags & STRING_SIZE_NOBYTES)		? "" : "B");
+ }
+ EXPORT_SYMBOL(string_get_size);
+=20
+diff --git a/lib/test-string_helpers.c b/lib/test-string_helpers.c
+index 9a68849a5d55..0b01ffca96fb 100644
+--- a/lib/test-string_helpers.c
++++ b/lib/test-string_helpers.c
+@@ -507,8 +507,8 @@ static __init void __test_string_get_size(const u64 siz=
+e, const u64 blk_size,
+ 	char buf10[string_get_size_maxbuf];
+ 	char buf2[string_get_size_maxbuf];
+=20
+-	string_get_size(size, blk_size, STRING_UNITS_10, buf10, sizeof(buf10));
+-	string_get_size(size, blk_size, STRING_UNITS_2, buf2, sizeof(buf2));
++	string_get_size(size, blk_size, 0, buf10, sizeof(buf10));
++	string_get_size(size, blk_size, STRING_SIZE_BASE2, buf2, sizeof(buf2));
+=20
+ 	test_string_get_size_check("STRING_UNITS_10", exp_result10, buf10,
+ 				   size, blk_size);
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index ed1581b670d4..26a8028e4bb7 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3475,7 +3475,7 @@ static void __init hugetlb_hstate_alloc_pages_onenode=
+(struct hstate *h, int nid)
+ 	if (i =3D=3D h->max_huge_pages_node[nid])
+ 		return;
+=20
+-	string_get_size(huge_page_size(h), 1, STRING_UNITS_2, buf, 32);
++	string_get_size(huge_page_size(h), 1, STRING_SIZE_BASE2, buf, 32);
+ 	pr_warn("HugeTLB: allocating %u of page size %s failed node%d.  Only allo=
+cated %lu hugepages.\n",
+ 		h->max_huge_pages_node[nid], buf, nid, i);
+ 	h->max_huge_pages -=3D (h->max_huge_pages_node[nid] - i);
+@@ -3561,7 +3561,7 @@ static void __init hugetlb_hstate_alloc_pages(struct =
+hstate *h)
+ 	if (i < h->max_huge_pages) {
+ 		char buf[32];
+=20
+-		string_get_size(huge_page_size(h), 1, STRING_UNITS_2, buf, 32);
++		string_get_size(huge_page_size(h), 1, STRING_SIZE_BASE2, buf, 32);
+ 		pr_warn("HugeTLB: allocating %lu of page size %s failed.  Only allocated=
+ %lu hugepages.\n",
+ 			h->max_huge_pages, buf, i);
+ 		h->max_huge_pages =3D i;
+@@ -3607,7 +3607,7 @@ static void __init report_hugepages(void)
+ 	for_each_hstate(h) {
+ 		char buf[32];
+=20
+-		string_get_size(huge_page_size(h), 1, STRING_UNITS_2, buf, 32);
++		string_get_size(huge_page_size(h), 1, STRING_SIZE_BASE2, buf, 32);
+ 		pr_info("HugeTLB: registered %s page size, pre-allocated %ld pages\n",
+ 			buf, h->free_huge_pages);
+ 		pr_info("HugeTLB: %d KiB vmemmap can be freed for a %s page\n",
+@@ -4527,7 +4527,7 @@ static int __init hugetlb_init(void)
+ 				char buf[32];
+=20
+ 				string_get_size(huge_page_size(&default_hstate),
+-					1, STRING_UNITS_2, buf, 32);
++					1, STRING_SIZE_BASE2, buf, 32);
+ 				pr_warn("HugeTLB: Ignoring hugepages=3D%lu associated with %s page siz=
+e\n",
+ 					default_hstate.max_huge_pages, buf);
+ 				pr_warn("HugeTLB: Using hugepages=3D%lu for number of default huge pag=
+es\n",
+--=20
 2.43.0.687.g38aa6559b0-goog
 
 
