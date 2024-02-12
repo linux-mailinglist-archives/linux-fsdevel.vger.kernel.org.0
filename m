@@ -1,182 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-11187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCF27851EAF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 21:31:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32E5851F1E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 22:06:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FE6C1F22FBA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 20:31:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C7B1C21EFF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 21:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAC61EB3D;
-	Mon, 12 Feb 2024 20:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9F243AA8;
+	Mon, 12 Feb 2024 21:06:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K37EeqSz"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Fnn3m8Qp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1268A1EA78
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 20:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9763B4BAA6;
+	Mon, 12 Feb 2024 21:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707769879; cv=none; b=C+HpXOBLOgERvKyuglBSpmHT7bijyzvh33s3do7o5ZBx7TCi6TkxvEQ3xIKVR1eL7ilO7+T/VekZpAWWh65FO+DbejnW52yAGfANKgex5rtHRbjj36/2JrBzWzzm4CZHClsjfUXgBwE521zTNO+3Lh54vSQe9VnyP2QmJF+Bnus=
+	t=1707771994; cv=none; b=AdkmaG4Y3EcIeuXOdlty2Bti5IpvNkRt0gIF4c2AQZfbgRCwJENu5iMx+irJZOe331O5mQrOLbenpkEwpc7//BwShejaaA/lXtbrBOmrSBOKcH2C8etaoNN4KezxgMTHRV81rroIzlFZSj7rQMohZviliN7BACgS24adIm7rUr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707769879; c=relaxed/simple;
-	bh=qOp4mJSDugxvSyT3atCGWs2GDYtIKZTeCj2zEcb71Y4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IKPHBvw8etNuhva+iMYJPwxZR9mVmIW05Abch6nXL3N50VigvL41Ic1xDISybUsCWrCSaig2lfeN5q3bDWtyorILdhQUDlG1MhtBAukD16cltFWD0oyaefcY0tS7UABI5inAlYwrOXvmYbpGDN2ivRDeASTVRn0mh4UDOv2e7FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K37EeqSz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707769875;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D3H0vrP2FTidiK65VLlIw70duaMJhS1BeFRsB+zgkXk=;
-	b=K37EeqSz3VznLTUz2cc4csxmsjYgI3hZ8cjIyZyP5uVNZX3gWWwMhsTdKnYnYeoM/oIx1s
-	ucPfvp9yNxbsI+mKwMPw/ewu4uqhBgTGKgFI2qEn9iM7AlEnv+D1c86NUe0bd1yK1wLpqn
-	c/ziH3fNLW8xxGyd2dvFP+rjks0J98o=
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
- [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-584-GDArDQidOcyQs8jqdpu79w-1; Mon, 12 Feb 2024 15:31:14 -0500
-X-MC-Unique: GDArDQidOcyQs8jqdpu79w-1
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-363b68b9af3so30637325ab.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 12:31:14 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707769872; x=1708374672;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D3H0vrP2FTidiK65VLlIw70duaMJhS1BeFRsB+zgkXk=;
-        b=QYZdDxD/hlQOnxzCr5ETVO1iGkvANeC+rLfmgT/HIDNhQ5lZxZtt53LZk02XWywqON
-         gzKgMzglEqHuVtCMBHVZwzA+I9mbmzT7zlJmkSUfEDI2wt6hAglaSgrZ5afYPDVvVliD
-         tWcr+h6SiacG9FEa5OhoiqJ6x2edq5ggPGw+KF2hfVdgFCWdNC/bg4DD7Hv796AU/jsF
-         4+I3PHY1Y/uD/avlih9uBJCouQRWrgTgMi7U1gKr0f8xMlvp71gOInwMnRdY46YRWILs
-         0D0d4TAdWtqYrYnjbR/ymEfM9gYu3yTo2sPjdcUHCgyZ30IN8jASdgxOKq+qD85oa29Q
-         Xgiw==
-X-Gm-Message-State: AOJu0Yy/0fi6YO1RydBKAR6lLo9WLdWc4Mnzz9SUY5hDWsIUpyOTXGvB
-	5jG/Q9xG2hICkyO5spmKX1AfYUS00Wj95nmdTKisQFJNYBhAuQv/YMY8IzfX1R82fixesuQRNwK
-	peRiIOPxCo02cemca+U177oFkY25RA0ti+KDZjmIQE8VqRd0TFgFdGHdXsX/fmvtO50kU93xKaQ
-	wKZD5t/yjmrpgbYJqIlZc5/oc6r6K+mzeY7JTxVE1I441Pqw==
-X-Received: by 2002:a92:c90d:0:b0:363:c919:2713 with SMTP id t13-20020a92c90d000000b00363c9192713mr10184992ilp.22.1707769872628;
-        Mon, 12 Feb 2024 12:31:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE/n4ShZIaaZuCJiPlgYLEbN0u8oWOKNdubqsQrtVHzPsb1E3BC29lfp7FOZD2TpsKJGnUHVQ==
-X-Received: by 2002:a92:c90d:0:b0:363:c919:2713 with SMTP id t13-20020a92c90d000000b00363c9192713mr10184973ilp.22.1707769872284;
-        Mon, 12 Feb 2024 12:31:12 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVk7m4RRXnHMNq8SyQtXDx1VXxqm9RQNK0vvDTIZZQseuoYFOy9IK/8LWWhF/6BDyMgrekrHEBJQUut1NAfpZk7CfqDNKY7IVPWW5NlTkj9GyJckmOLslA=
-Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
-        by smtp.gmail.com with ESMTPSA id bm17-20020a056e02331100b00363c5391adbsm2089035ilb.77.2024.02.12.12.31.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Feb 2024 12:31:11 -0800 (PST)
-Message-ID: <1adcfcc9-5ac8-4a53-a6a5-e8b9b41a9a83@redhat.com>
-Date: Mon, 12 Feb 2024 14:31:10 -0600
+	s=arc-20240116; t=1707771994; c=relaxed/simple;
+	bh=WOCaTXiHT/gTBKz8I905kYg3HZ4wKewbyQbmdauMPR8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=k+uDoxtIvLomulUUUoTj21svYeudqWgku6nS99ZXDHlnOYPOIKn5Uc/0QdraIWnEZwnGpzmXbEkYcR1tZZocGeOnIQHFgFiwAx8w5Z+sO8PIXSEThJo91rB0h17eX82VBO7VhDxKMRmFdI/oYT9uB/vNYEswTjT56mDVIW2CBOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Fnn3m8Qp; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41CL2bq3016465;
+	Mon, 12 Feb 2024 21:05:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=hyjD0aJ8LyZ5qPFArghXLMKuTGD3SIZmoUaIuuQVY9Y=;
+ b=Fnn3m8QpmWYfZumwDcGlFwlCTkbm3uOga+Y0pr/VZ1wIMh+axHs0qNanh5jDtTH/60hm
+ 323acb9ir0gM8WKwFDZUS3mUKb9gWf7tMJJykMIYh/yBDV9bNWX0aLABX0OfVpX6ClMR
+ /XUHD/McWWyHWXsDsU/k2BQw37x3U/NCOMFTmgVvNOaPS4TptgBsZPc7wAxGmTsYXa/P
+ JUedqpZf8rimyuDdnnladbQ7br+s9saqc0zSIsnJd7TMsQ1rw1Mi/y68EI2lFlkF9UJY
+ cEeb/FVJ9EstukwOvscPc1vLBwoOXsdKo3StYCDpbl2D5KOxAVFIJ2vrtmk90dg8Jlo8 dg== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w7tw9g47v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Feb 2024 21:05:57 +0000
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41CL3iEC019822;
+	Mon, 12 Feb 2024 21:05:56 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w7tw9g470-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Feb 2024 21:05:56 +0000
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41CJGmgo024878;
+	Mon, 12 Feb 2024 21:00:55 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3w6mfp34p1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Feb 2024 21:00:55 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41CL0qYl28181202
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 Feb 2024 21:00:54 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6524358076;
+	Mon, 12 Feb 2024 21:00:52 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BB5725805C;
+	Mon, 12 Feb 2024 21:00:50 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.73.237])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 12 Feb 2024 21:00:50 +0000 (GMT)
+Message-ID: <305cd1291a73d788c497fe8f78b574d771b8ba41.camel@linux.ibm.com>
+Subject: Re: [PATCH v9 12/25] security: Introduce file_post_open hook
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org,
+        neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+        dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org,
+        mic@digikod.net
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Roberto Sassu
+	 <roberto.sassu@huawei.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Date: Mon, 12 Feb 2024 16:00:50 -0500
+In-Reply-To: <20240115181809.885385-13-roberto.sassu@huaweicloud.com>
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+	 <20240115181809.885385-13-roberto.sassu@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] udf: convert to new mount API
-Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>, Bill O'Donnell <billodo@redhat.com>,
- David Howells <dhowells@redhat.com>
-References: <739fe39a-0401-4f5d-aef7-759ef82b36bd@redhat.com>
-In-Reply-To: <739fe39a-0401-4f5d-aef7-759ef82b36bd@redhat.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: fwTq-ORuY4eUEMDSmtEUx3WTaqBFlsH8
+X-Proofpoint-ORIG-GUID: ixco56Pb_Pr-9e5H6t8K6WSdAPs_nZUT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-12_16,2024-02-12_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
+ priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0
+ mlxlogscore=999 bulkscore=0 clxscore=1011 spamscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402120163
 
-On 2/9/24 1:43 PM, Eric Sandeen wrote:
-> Convert the UDF filesystem to the new mount API.
-> 
-> UDF is slightly unique in that it always preserves prior mount
-> options across a remount, so that's handled by udf_init_options().
-> 
-> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-> ---
-> 
-> Tested by running through xfstests, as well as some targeted testing of
-> remount behavior.
-> 
-> NB: I did not convert i.e any udf_err() to errorf(fc, ) because the former
-> does some nice formatting, not sure how or if you'd like to handle that, Jan?
-> 
->  fs/udf/super.c | 495 +++++++++++++++++++++++++------------------------
->  1 file changed, 255 insertions(+), 240 deletions(-)
-> 
-> diff --git a/fs/udf/super.c b/fs/udf/super.c
-> index 928a04d9d9e0..03fa98fe4e1c 100644
-> --- a/fs/udf/super.c
-> +++ b/fs/udf/super.c
+Hi Roberto,
 
-...
 
-> +	case Opt_gid:
-> +		if (0 == kstrtoint(param->string, 10, &uv)) {
->  			uopt->gid = make_kgid(current_user_ns(), uv);
->  			if (!gid_valid(uopt->gid))
-> -				return 0;
-> +				return -EINVAL;
->  			uopt->flags |= (1 <<  );
-> -			break;
-> -		case Opt_uid:
-> -			if (match_uint(args, &uv))
-> -				return 0;
-> +		} else if (!strcmp(param->string, "forget")) {
-> +			uopt->flags |= (1 << UDF_FLAG_GID_FORGET);
-> +		} else if (!strcmp(param->string, "ignore")) {
-> +			/* this option is superseded by gid=<number> */
-> +			;
-> +		} else {
-> +			return -EINVAL;
-> +		}
-> +		break;
+> diff --git a/security/security.c b/security/security.c
+> index d9d2636104db..f3d92bffd02f 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2972,6 +2972,23 @@ int security_file_open(struct file *file)
+>  	return fsnotify_perm(file, MAY_OPEN);  <===  Conflict
 
-I wonder if I need to redo this and not directly set the make_kgid option
-into uopt->gid. We do test that uopt->gid is valid, and return an error, and
-skip setting UDF_FLAG_GID_SET, but ...
+Replace with "return fsnotify_open_perm(file);"
 
-...
+>  }
+>  
 
-> -static int udf_fill_super(struct super_block *sb, void *options, int silent)
-> +static int udf_fill_super(struct super_block *sb, struct fs_context *fc)
->  {
->  	int ret = -EINVAL;
->  	struct inode *inode = NULL;
-> -	struct udf_options uopt;
-> +	struct udf_options *uopt = fc->fs_private;
->  	struct kernel_lb_addr rootdir, fileset;
->  	struct udf_sb_info *sbi;
->  	bool lvid_open = false;
-> -
-> -	uopt.flags = (1 << UDF_FLAG_USE_AD_IN_ICB) | (1 << UDF_FLAG_STRICT);
-> -	/* By default we'll use overflow[ug]id when UDF inode [ug]id == -1 */
-> -	uopt.uid = make_kuid(current_user_ns(), overflowuid);
-> -	uopt.gid = make_kgid(current_user_ns(), overflowgid);
+The patch set doesn't apply cleaning to 6.8-rcX without this change.  Unless
+there are other issues, I can make the change.
 
-this initialization (now moved to udf_init_options) gets overwritten
-even if the [gu]id was invalid during parsing ...
+thanks,
 
-> +	sbi->s_flags = uopt->flags;
-> +	sbi->s_uid = uopt->uid;
-> +	sbi->s_gid = uopt->gid;
-
-... and gets set into sbi here.
-
-In the past (I think) the whole mount would fail with an invalid UID/GID but w/
-fsconfig, we could just fail that one config and continue with the rest.
-
-It looks like sbi->s_[gu]id is not accessed unless UDF_FLAG_[GU]ID_SET is
-set, but maybe it's best to never set something invalid into the uopt.
-
--Eric
+Mimi
 
 
