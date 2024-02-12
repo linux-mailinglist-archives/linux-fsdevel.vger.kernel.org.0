@@ -1,120 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-11099-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E98E08510B0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 11:24:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 051428510BB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 11:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87F0C1F2266F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 10:24:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 982851F238A4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 10:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BDB218624;
-	Mon, 12 Feb 2024 10:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cU4TXmjb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C131862A;
+	Mon, 12 Feb 2024 10:25:27 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE221B273;
-	Mon, 12 Feb 2024 10:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3941A1804A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 10:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707733469; cv=none; b=gNzRYnBl/3XMjT/hcywxLONmnxEfBUYS5eVMDS1QYZq/XJz3HtQnZVGZ2v2SFs07Nq2pDAXSJ75g8QtwOnmvKSBW8m+X2ssr+Nk8F5y7iAneDY5AEx18U2ct9JvIx+fnVwQtUF25OTJBAEbBE8+YNv/HRCoTENHVfCUP+GXDUPw=
+	t=1707733526; cv=none; b=hLXVG8ZCaAbFpWkVOq236HhcilU5MTtYDnyzi5pBY9NHixELC5Li3EC5WmqxEmdImZBt/sBsHeFDSudHBVzQz0Yh/YtS6OskbxgUOzkvzU7ozK34JtnckSh92TCo1SeXV9ewVLVNDR+2USitsgnGKO4IYgUPdWooiSm/c2mPnK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707733469; c=relaxed/simple;
-	bh=/IkSyB87unJUMSt0t7EdxVIcPTv7ssGTsQqsknTFmlY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d+uEu6+DM3xkIITz60myBUYuZD+f0Ze0hkMfRlFG5XkbiOVTc51JDLuFLYwAj4gYq5hDN0dBax+nwcaX3QYsPMTSQSvRURwpTZZNSpIH2jjOVhLm0GhZVy/HUYAdEG1rXkq+hSIGapItyF0lUU3SfehxDVtssxceLD/6w/ypsI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cU4TXmjb; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rjQFj2Y3qw5mwmHLRiMU4jGR0CXRoHG5WfGG9b74Q3A=; b=cU4TXmjbQ8YvfC7Gfc1RedGceJ
-	Nj46EdFUx5xoSvev+Uh4BQgqZ9PYjSYA8R+mWQItKpbzvniRq5InhuKK62Z+U/1jKU0tqDl3g278M
-	fuPxpYzV934A1mAgdh6elHtOrQCPkkd0WuvYIFGyWupR4VzF5bGOuYhJvWrB1dUCgcjCEkOGFdY2k
-	mDsG0ROIYyWy/9lD43cV2s4vO9UAldXJvp3WeXE1oTwki+pqrdahMa5w5QLzSZcUROEhiLjl14anp
-	RWz39xL4+AD/11nI7O0Ni8kvXrWei6D76bGYnVBQQQQ/RmAHUEGWYu3GffRIfh85bD3WJ7t5sz7UE
-	TsLNwc6g==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rZTU6-0000000Adzq-18Cf;
-	Mon, 12 Feb 2024 10:24:22 +0000
-Date: Mon, 12 Feb 2024 10:24:22 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Zhang Yi <yi.zhang@huaweicloud.com>, linux-ext4@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, jack@suse.cz, hch@infradead.org,
-	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
-	yukuai3@huawei.com, wangkefeng.wang@huawei.com
-Subject: Re: [RFC PATCH v3 00/26] ext4: use iomap for regular file's buffered
- IO path and enable large foilo
-Message-ID: <Zcnx1pP_iZBf6Y-t@casper.infradead.org>
-References: <20240212061842.GB6180@frogsfrogsfrogs>
- <87ttmef3fp.fsf@doe.com>
+	s=arc-20240116; t=1707733526; c=relaxed/simple;
+	bh=Vmw7e+ikPueKBaDfuv+MIArZmdJU/DDtIWJtNorjxXM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=eHAiJkf7MeWouREBUHRC7LO8BzgxYXjsn+UX6J4HHM0nmYAdG+kUv06vjFO2FhXUxYcyxFdUH0NPjKa8UYnNwbpNtnABX91fxJ9UL58j6tAbobz5vH9EAPBvGIsY5BhHgDQSZFkxixtn490zDA66mTzDJB0x4T5GhYzB1eXFO1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-363ee8646b2so19707615ab.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 02:25:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707733524; x=1708338324;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=PzKjOzRjJUG3ahnARCa3HwD7nlfVuV2trdR+qXnTPfw=;
+        b=niaW3zK/EZv3yU6tWnhkMc0j93VQElyOL6sdTVZrKTjc18rcOgPCBx0TbKEGasoyvz
+         n+2FVbgalhWB8xAyQWp6CEjj4Awtlh/cepy1O77l+BpF2kJbO4odczdnjVSLHC/QMakS
+         FNd6ziy86iOzaeRzcEZTae2Rz7aVrgwbtBI/KmJdMGLRu/oVQEOw51l+RKAgaJe98+Og
+         AOhQ0zOljix1HWu6kMFxE9nBRKbfvtTZo5ZcR0ih0JQEIbeFG887Kv6kFnZ1XGEyk7cY
+         WOjidhJ+c0qMwjfSVJjo/5HFdWC19PIrVxSc/13qopYjA+9TXKf++R27EiRDlrxf+Z/G
+         kxnw==
+X-Forwarded-Encrypted: i=1; AJvYcCXr62agHnhZvEHvTJNiKUblkrgVk1L98bzBjLRzrR47jJTd8ej5YpBwITV5pxXQOUt9Duke6pVHICr8OTK6R7pj2Iw0K7N3zE8fkqc8tg==
+X-Gm-Message-State: AOJu0YxCFUgIyr09RBg+Ak+20nOuqKiBFr2aLGgmOqtBwwBSl4d956hY
+	0I3y6E1N4CIdoNVRyfDBs8djHPeC431Wu+jLJqN+Y3+/dLqib4SA/dt0hhHXUcaEEN4UiAQywuv
+	lzIOqdiqyXgutOLlJd+/v033/SHnE41my+kY6Y/kodbRrxEFZiTyphfY=
+X-Google-Smtp-Source: AGHT+IFiTle8Gbcz3iNrAkr2fd/Q6GA5XfsTDKt+6lm3VilkGuMQnYKloeg/jE75OwHDwwWOtikvHHqaW1QKdw+oNcBirA7C/J6I
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ttmef3fp.fsf@doe.com>
+X-Received: by 2002:a05:6e02:1d8d:b0:363:819c:926d with SMTP id
+ h13-20020a056e021d8d00b00363819c926dmr566793ila.1.1707733524623; Mon, 12 Feb
+ 2024 02:25:24 -0800 (PST)
+Date: Mon, 12 Feb 2024 02:25:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001b399c06112cb236@google.com>
+Subject: [syzbot] Monthly udf report (Feb 2024)
+From: syzbot <syzbot+listd2c42195477ba0041ed0@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Feb 12, 2024 at 02:46:10PM +0530, Ritesh Harjani wrote:
-> "Darrick J. Wong" <djwong@kernel.org> writes:
-> > though iirc willy never got the performance to match because iomap
-> 
-> Ohh, can you help me provide details on what performance benchmark was
-> run? I can try and run them when I rebase.
+Hello udf maintainers/developers,
 
-I didn't run a benchmark, we just knew what would happen (on rotating
-storage anyway).
+This is a 31-day syzbot report for the udf subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/udf
 
-> > didn't have a mechanism for the caller to tell it "run the IO now even
-> > though you don't have a complete page, because the indirect block is the
-> > next block after the 11th block".
-> 
-> Do you mean this for a large folio? I still didn't get the problem you
-> are referring here. Can you please help me explain why could that be a
-> problem?
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 12 issues are still open and 22 have been fixed so far.
 
-A classic ext2 filesystem lays out a 16kB file like this (with 512
-byte blocks):
+Some of the still happening issues:
 
-file offset	disk block
-0-6KiB		1000-1011
-6KiB-16KiB	1013-1032
+Ref Crashes Repro Title
+<1> 2077    Yes   WARNING in udf_truncate_extents
+                  https://syzkaller.appspot.com/bug?extid=43fc5ba6dcb33e3261ca
+<2> 375     Yes   KMSAN: uninit-value in udf_update_tag
+                  https://syzkaller.appspot.com/bug?extid=d31185aa54170f7fc1f5
+<3> 22      Yes   WARNING in udf_setsize (2)
+                  https://syzkaller.appspot.com/bug?extid=db6df8c0f578bc11e50e
 
-What's in block 1012?  The indirect block!  The block which tells ext2
-that blocks 12-31 of the file are in disk blocks 1013-1032.  So we can't
-issue the read for them until we've finished the read for block 1012.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Buffer heads have a solution for this, BH_Boundary.  ext2 sets it for
-block 11 which prompts mpage.c to submit the read immediately (see
-the various calls to buffer_boundary()).  Then ext2 will submit the read
-for block 1012 and the two reads will be coalesced by the IO scheduler.
-So we still end up doing two reads instead of one, but that's
-unavoidable because fragmentation might have meant that 6KiB-16KiB were
-not stored at 1013-1032.
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-There's no equivalent iomap solution.  What needs to happen is:
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
- - iomap_folio_state->read_bytes_pending needs to be initialised to
-   folio_size(), not 0.
- - Remove "ifs->read_bytes_pending += plen" from iomap_readpage_iter()
- - Subtract plen in the iomap_block_needs_zeroing() case
- - Submit a bio at the end of each iomap_readpage_iter() call
-
-Now iomap will behave the same way as mpage, only without needing a
-flag to do it (instead it will assume that the filesystem coalesces
-adjacent ranges, which it should do anyway for good performance).
+You may send multiple commands in a single email message.
 
