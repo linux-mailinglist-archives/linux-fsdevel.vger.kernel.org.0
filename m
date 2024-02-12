@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-11152-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11154-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE28851A6B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 18:01:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE990851A6E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 18:01:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42808286599
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 17:01:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2A441C2247E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 17:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078323F9C3;
-	Mon, 12 Feb 2024 17:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2873F9E5;
+	Mon, 12 Feb 2024 17:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OXrPjITo"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FrYCtM4l"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF52F3D96C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 17:00:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4096F3F9D8
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 17:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707757211; cv=none; b=PzY/9lQY8sMNNVHo31NSVmqwjfxXDDtyr1TYfsnfE8Dozw0t7PV9HVL0+Aw6Nr5iRtDxVOGUHCbZl3CrGqiSXgXoe01YnEGlxNNhJjnxKa5K8jLu1vuepUmTnKGV3+eW0zVeZQSpwvKJI5wPZTsLEAjSL5zsrYP0txor7VS0WA8=
+	t=1707757213; cv=none; b=XQZ8YgKSYCe/3ZrUNoUBiUcOj4t/ZahoeRnkfoF9Vz1sfjQzLWhi88ZmPJ8T8r600XHbqjcbZSxEa7cgMUzwX7k/sTWCfmkV//7BtjTgYlmKM5Kq1AgUVTJqthrax0ek+djVrQqiuSAAI2m+aN+KDSNTkUlBUMeFfzKTmsS73sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707757211; c=relaxed/simple;
-	bh=7l53g4r9uK3eL4SXXr6ZAW/3PpM1Ss0BM47wmOGH+oU=;
+	s=arc-20240116; t=1707757213; c=relaxed/simple;
+	bh=hmR+S5AY0nRCFeAH5bAxDWzUXlpVSiwnk6LNs/KSvyE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TYkL1UzTGahGauBk6xnwekdiTytJt22NDMUTp/CbzH/qE1dckTABLJFLn+bdE/rIBxjkIknjqd3tCRnQFjgTBl1o6bLFWJHBIMPecIh2UhlcaMKR4CqXspmZTAOnuijX/rta/Fe7Fp9nqnKTsAsqyCjai55iKM2XDtIJoDfQvZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OXrPjITo; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=oQ20yY7+DHWL/7OHq4kLHsIr7qynqX3etkUcRNa3jHW3mFLydmy1LnRU6aSI7QRtDSpSWxut/G6wc6AopWfkyKGxg7f6NSU21NlVo3fdXWq1DXGK5fzXAdmaz6PzdcHyDatSEON+OGbvjSbNXWyIf5Haq7x9qAf0gvyERHjXBbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FrYCtM4l; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707757209;
+	s=mimecast20190719; t=1707757211;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=RflzGF+DQN60/OpUvC96cyl+K5968zvCI4MfQmmPzEc=;
-	b=OXrPjIToLRwSaAFCrfJ7XB7/4KtqiPSjRYQ2EkJzXxWcBEhfUWckuUuSS3KcOnvhiYv2Mg
-	I9P4KJ6rTn90psfH/NGAZh5ogsyk2346Q/DynxliizlEb2+4cPRdFMZY9hHrdGxNZHkqbc
-	sts74rj7gMk5f0pFx6eDyxLMg71+AwA=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=AmNNlJPhUFaXIob1BwyjdQcuVkHPCpZ8IwBssOpb1Po=;
+	b=FrYCtM4lKcwYEvskBThWc3o7wv416CYKZ/KHzEDxd1+ZbJGOeWySPKvI0P25W0w35U/EeJ
+	j+fOCLuFtQtRcDGbj0SnGQahlS4MC588ht1mJlIDzqFfd5k1b+4FHvlxfMqwnMWisKchby
+	x99FbUTyqhHp8X4r+z1Y8PiefukKWCo=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-636-oNsRe1yDNU-laTq6rdi49Q-1; Mon, 12 Feb 2024 12:00:07 -0500
-X-MC-Unique: oNsRe1yDNU-laTq6rdi49Q-1
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-2d101f2e09fso5535861fa.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 09:00:07 -0800 (PST)
+ us-mta-630-Fi652-xsOV-6SGKeX3FFZg-1; Mon, 12 Feb 2024 12:00:10 -0500
+X-MC-Unique: Fi652-xsOV-6SGKeX3FFZg-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-511535180b4so2586433e87.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 09:00:09 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707757206; x=1708362006;
+        d=1e100.net; s=20230601; t=1707757207; x=1708362007;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RflzGF+DQN60/OpUvC96cyl+K5968zvCI4MfQmmPzEc=;
-        b=U8j0jGe6bcXop13CDrzcCTkW8rxZMMNFdVLciXCgK+L9Zsczpd3sKEAmVZvYZo0MB7
-         dqkmmIFwQwqJwSaBR0kLw4Bp+pmgdLAYKZlkJLHNf9s3RKc2CKm659ebR5oHLQN5CTqT
-         qisDf/cQQ1LmeWBs7FxHDOIyTNa+L5dVaMYwUDyPYiqUzMYWpq2Ji/GO9XG1mafqOS92
-         FDG1hcVILSF1Nc+toYr3fSxGPrwiplqhZCrDEIDAHDKK1UBkyNaL+qODyNzWSFS6NRD2
-         giVf59EYt+JvUkLh/VgrwLHygn8VX1DpaCIwdbJtWUn51Cws7LPYMnEs6RCApOpZJbt/
-         /kUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUY9xNDhNgRbLh7bH0F+0esYmA1b660qbTHt+tbx3ahoNU8OJmCB1rkOpMvisskt6OaW8dvYWfrD29mYjqicNBLUGPoSBDewLfSST2gNA==
-X-Gm-Message-State: AOJu0YyEjlwm4cTWbm0BlLdkhl1kjmagzNLMZVu1WGE2uhEUmAZneZV8
-	1XRj/iy8cBEkAjsbhvhn6tFI/UpZ2hkub3OtbduLKDSQ+nWrT3MPoQ7T0hf3+dIErPmipQ2wW+m
-	HATym1n0CbJKZzPVr+wkiK+zFeYTjqV5qVwCIAcbdCpzKIUCo6XKjmXtFAL93KiXRbzaEeQ==
-X-Received: by 2002:a2e:a714:0:b0:2d0:c3f8:d3b7 with SMTP id s20-20020a2ea714000000b002d0c3f8d3b7mr4320303lje.8.1707757205864;
-        Mon, 12 Feb 2024 09:00:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG72MY/zWOPQ2v6XwG+yAyFluuh1CkAYjSjeHPHCrF1ln3wDLd477OAaxYVkHR1fVJIi26RWQ==
-X-Received: by 2002:a2e:a714:0:b0:2d0:c3f8:d3b7 with SMTP id s20-20020a2ea714000000b002d0c3f8d3b7mr4320288lje.8.1707757205588;
-        Mon, 12 Feb 2024 09:00:05 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUCI5xWx6JvLyWfSAJ6Q4WFI2AndwXEgkjcWOi3n7UScazaiXlJQ3F+5O3ZEeLnF3mMvZUMM0Kqk2f6Elig3wKaA0R4H3TluAWPPO6pG3SjLSFg5pBrn8aRmVycUWixqOVOv+k7yfAnsc5xBH+B9zh0oK5WbAWxOLh7Eq3i2nz9PR12zhEnwLMV2j69+GVLpDZbKGuppdns9JNzBj4DslocMxNUPuwqDyFW
+        bh=AmNNlJPhUFaXIob1BwyjdQcuVkHPCpZ8IwBssOpb1Po=;
+        b=d+/eY1Fzhah4iu7oGrEzgdGlNNY4d69uGMUzTbEW1xvkDVSjLYxT6GS3weNdyu3ZTC
+         mVB+/Mh2GY+WcpYTmuUcbbXdSTDo5FAUfrdki4Mm3KTJa6qBPor9MdLjNYgQvQSkJoAZ
+         Jl3zCoNV1ARMRojy73mVyClThWmGX7uaUNlTTlss6HAp4pZmXR3otThO9ulONPSibmrr
+         t2etqIqaJ/x3rVrDK1+LDLS+owvHh19b6SQrd5w0MaxrmQ1G4klM80xS+toJemt7nl/i
+         DTsIxrmWV5OkuH8eR+5R2yKLqPFmN1z8pQAzvn0o0lkA5ZUWnjXV/pfba7biz32F+HhF
+         RjVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXc91NzEtEcQ3ElALn1Pni0rLCGZyhqMaiQZs+lWi7488OeAZmQfM5ZuvjQlfpWxJJb6vpIaKXynUQQX4Jl44Pjd48EX4BSTYaQ4uWaiA==
+X-Gm-Message-State: AOJu0YwYfyIqkah95FZxydnjOVhAQ5nK1VR4QJi0bftKTF3mjupXv7oZ
+	ofWo1sRI80x6G1Xg/mzKgxGGhuEvZsE6elGRcQk9fzV/siJXyFPjweGUtFn4kTV5tDkED29/f4E
+	801y2ugwEfS6FNV50PSTLnwWMcyLl0d5L2fiyr6o7cfFUDsNxPpYsvrdzX1FKdw==
+X-Received: by 2002:a05:651c:cf:b0:2d0:cf14:c190 with SMTP id 15-20020a05651c00cf00b002d0cf14c190mr4346982ljr.50.1707757207048;
+        Mon, 12 Feb 2024 09:00:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHyrud5wesvlVfmqztFwgue5DmNAK+DEbeWoNwqXMq50tEhnxQmKL0df6lGsY5NyQZ3shEGHw==
+X-Received: by 2002:a05:651c:cf:b0:2d0:cf14:c190 with SMTP id 15-20020a05651c00cf00b002d0cf14c190mr4346969ljr.50.1707757206827;
+        Mon, 12 Feb 2024 09:00:06 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWJTI843yXTJ0emfk+epBVW2Le2UXrN5BlrF0Bou7qm6A8KahxOqRBQllpGfPzXBzdoSauxL9r6u49ZS1kbiVX9NrgbkiV5CEXwk+11AVv9RHcJQVy+m4zL/XoXw+eNTH+a9VZoNpjdQfgdrvg9ZwU+YsvEBTPGfZG1m0DDZnEv4O3CXY70pYIHx8DTC6DQG25L7O5IP5wjNRbPzB0pEw7YGYCtNqXRWlTA
 Received: from thinky.redhat.com ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id 14-20020a0564021f4e00b0056176e95a88sm2620261edz.32.2024.02.12.09.00.03
+        by smtp.gmail.com with ESMTPSA id 14-20020a0564021f4e00b0056176e95a88sm2620261edz.32.2024.02.12.09.00.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Feb 2024 09:00:03 -0800 (PST)
+        Mon, 12 Feb 2024 09:00:06 -0800 (PST)
 From: Andrey Albershteyn <aalbersh@redhat.com>
 To: fsverity@lists.linux.dev,
 	linux-xfs@vger.kernel.org,
@@ -82,9 +82,9 @@ To: fsverity@lists.linux.dev,
 	djwong@kernel.org,
 	ebiggers@kernel.org
 Cc: Andrey Albershteyn <aalbersh@redhat.com>
-Subject: [PATCH v4 12/25] xfs: add XFS_DA_OP_BUFFER to make xfs_attr_get() return buffer
-Date: Mon, 12 Feb 2024 17:58:09 +0100
-Message-Id: <20240212165821.1901300-13-aalbersh@redhat.com>
+Subject: [PATCH v4 13/25] xfs: introduce workqueue for post read IO work
+Date: Mon, 12 Feb 2024 17:58:10 +0100
+Message-Id: <20240212165821.1901300-14-aalbersh@redhat.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20240212165821.1901300-1-aalbersh@redhat.com>
 References: <20240212165821.1901300-1-aalbersh@redhat.com>
@@ -96,120 +96,123 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-With XBF_VERITY_SEEN flag on xfs_buf XFS can track which buffers
-contain verified Merkle tree blocks. However, we also need to expose
-the buffer to pass a reference of underlying page to fs-verity.
+As noted by Dave there are two problems with using fs-verity's
+workqueue in XFS:
 
-This patch adds XFS_DA_OP_BUFFER to tell xfs_attr_get() to
-xfs_buf_hold() underlying buffer and return it as xfs_da_args->bp.
-The caller must then xfs_buf_rele() the buffer. Therefore, XFS will
-hold a reference to xfs_buf till fs-verity is verifying xfs_buf's
-content.
+1. High priority workqueues are used within XFS to ensure that data
+   IO completion cannot stall processing of journal IO completions.
+   Hence using a WQ_HIGHPRI workqueue directly in the user data IO
+   path is a potential filesystem livelock/deadlock vector.
+
+2. The fsverity workqueue is global - it creates a cross-filesystem
+   contention point.
+
+This patch adds per-filesystem, per-cpu workqueue for fsverity
+work.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
 ---
- fs/xfs/libxfs/xfs_attr.c        |  5 ++++-
- fs/xfs/libxfs/xfs_attr_leaf.c   |  7 +++++++
- fs/xfs/libxfs/xfs_attr_remote.c | 13 +++++++++++--
- fs/xfs/libxfs/xfs_da_btree.h    |  5 ++++-
- 4 files changed, 26 insertions(+), 4 deletions(-)
+ fs/xfs/xfs_aops.c  | 15 +++++++++++++--
+ fs/xfs/xfs_linux.h |  1 +
+ fs/xfs/xfs_mount.h |  1 +
+ fs/xfs/xfs_super.c |  9 +++++++++
+ 4 files changed, 24 insertions(+), 2 deletions(-)
 
-diff --git a/fs/xfs/libxfs/xfs_attr.c b/fs/xfs/libxfs/xfs_attr.c
-index f9846df41669..8e3138af4a5f 100644
---- a/fs/xfs/libxfs/xfs_attr.c
-+++ b/fs/xfs/libxfs/xfs_attr.c
-@@ -252,6 +252,8 @@ xfs_attr_get_ilocked(
-  * If the attribute is found, but exceeds the size limit set by the caller in
-  * args->valuelen, return -ERANGE with the size of the attribute that was found
-  * in args->valuelen.
-+ *
-+ * Using XFS_DA_OP_BUFFER the caller have to release the buffer args->bp.
-  */
- int
- xfs_attr_get(
-@@ -270,7 +272,8 @@ xfs_attr_get(
- 	args->hashval = xfs_da_hashname(args->name, args->namelen);
+diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+index 7a6627404160..70e444c151b2 100644
+--- a/fs/xfs/xfs_aops.c
++++ b/fs/xfs/xfs_aops.c
+@@ -548,19 +548,30 @@ xfs_vm_bmap(
+ 	return iomap_bmap(mapping, block, &xfs_read_iomap_ops);
+ }
  
- 	/* Entirely possible to look up a name which doesn't exist */
--	args->op_flags = XFS_DA_OP_OKNOENT;
-+	args->op_flags = XFS_DA_OP_OKNOENT |
-+					(args->op_flags & XFS_DA_OP_BUFFER);
- 
- 	lock_mode = xfs_ilock_attr_map_shared(args->dp);
- 	error = xfs_attr_get_ilocked(args);
-diff --git a/fs/xfs/libxfs/xfs_attr_leaf.c b/fs/xfs/libxfs/xfs_attr_leaf.c
-index 6374bf107242..51aa5d5df76c 100644
---- a/fs/xfs/libxfs/xfs_attr_leaf.c
-+++ b/fs/xfs/libxfs/xfs_attr_leaf.c
-@@ -2449,6 +2449,13 @@ xfs_attr3_leaf_getvalue(
- 		name_loc = xfs_attr3_leaf_name_local(leaf, args->index);
- 		ASSERT(name_loc->namelen == args->namelen);
- 		ASSERT(memcmp(args->name, name_loc->nameval, args->namelen) == 0);
++static inline struct workqueue_struct *
++xfs_fsverity_wq(
++	struct address_space	*mapping)
++{
++	if (fsverity_active(mapping->host))
++		return XFS_I(mapping->host)->i_mount->m_postread_workqueue;
++	return NULL;
++}
 +
-+		/* must be released by the caller */
-+		if (args->op_flags & XFS_DA_OP_BUFFER) {
-+			xfs_buf_hold(bp);
-+			args->bp = bp;
-+		}
+ STATIC int
+ xfs_vm_read_folio(
+ 	struct file		*unused,
+ 	struct folio		*folio)
+ {
+-	return iomap_read_folio(folio, &xfs_read_iomap_ops, NULL);
++	return iomap_read_folio(folio, &xfs_read_iomap_ops,
++				xfs_fsverity_wq(folio->mapping));
+ }
+ 
+ STATIC void
+ xfs_vm_readahead(
+ 	struct readahead_control	*rac)
+ {
+-	iomap_readahead(rac, &xfs_read_iomap_ops, NULL);
++	iomap_readahead(rac, &xfs_read_iomap_ops,
++			xfs_fsverity_wq(rac->mapping));
+ }
+ 
+ static int
+diff --git a/fs/xfs/xfs_linux.h b/fs/xfs/xfs_linux.h
+index d7873e0360f0..9c76e025b5d8 100644
+--- a/fs/xfs/xfs_linux.h
++++ b/fs/xfs/xfs_linux.h
+@@ -64,6 +64,7 @@ typedef __u32			xfs_nlink_t;
+ #include <linux/xattr.h>
+ #include <linux/mnt_idmapping.h>
+ #include <linux/debugfs.h>
++#include <linux/fsverity.h>
+ 
+ #include <asm/page.h>
+ #include <asm/div64.h>
+diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+index 503fe3c7edbf..f64bf75f50d6 100644
+--- a/fs/xfs/xfs_mount.h
++++ b/fs/xfs/xfs_mount.h
+@@ -109,6 +109,7 @@ typedef struct xfs_mount {
+ 	struct xfs_mru_cache	*m_filestream;  /* per-mount filestream data */
+ 	struct workqueue_struct *m_buf_workqueue;
+ 	struct workqueue_struct	*m_unwritten_workqueue;
++	struct workqueue_struct	*m_postread_workqueue;
+ 	struct workqueue_struct	*m_reclaim_workqueue;
+ 	struct workqueue_struct	*m_sync_workqueue;
+ 	struct workqueue_struct *m_blockgc_wq;
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 5a2512d20bd0..b2b6c1f24c42 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -553,6 +553,12 @@ xfs_init_mount_workqueues(
+ 	if (!mp->m_unwritten_workqueue)
+ 		goto out_destroy_buf;
+ 
++	mp->m_postread_workqueue = alloc_workqueue("xfs-pread/%s",
++			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
++			0, mp->m_super->s_id);
++	if (!mp->m_postread_workqueue)
++		goto out_destroy_postread;
 +
- 		return xfs_attr_copy_value(args,
- 					&name_loc->nameval[args->namelen],
- 					be16_to_cpu(name_loc->valuelen));
-diff --git a/fs/xfs/libxfs/xfs_attr_remote.c b/fs/xfs/libxfs/xfs_attr_remote.c
-index d440393b40eb..72908e0e1c86 100644
---- a/fs/xfs/libxfs/xfs_attr_remote.c
-+++ b/fs/xfs/libxfs/xfs_attr_remote.c
-@@ -424,9 +424,18 @@ xfs_attr_rmtval_get(
- 			error = xfs_attr_rmtval_copyout(mp, bp, args->dp->i_ino,
- 							&offset, &valuelen,
- 							&dst);
--			xfs_buf_relse(bp);
--			if (error)
-+			xfs_buf_unlock(bp);
-+			/* must be released by the caller */
-+			if (args->op_flags & XFS_DA_OP_BUFFER)
-+				args->bp = bp;
-+			else
-+				xfs_buf_rele(bp);
-+
-+			if (error) {
-+				if (args->op_flags & XFS_DA_OP_BUFFER)
-+					xfs_buf_rele(args->bp);
- 				return error;
-+			}
+ 	mp->m_reclaim_workqueue = alloc_workqueue("xfs-reclaim/%s",
+ 			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
+ 			0, mp->m_super->s_id);
+@@ -586,6 +592,8 @@ xfs_init_mount_workqueues(
+ 	destroy_workqueue(mp->m_reclaim_workqueue);
+ out_destroy_unwritten:
+ 	destroy_workqueue(mp->m_unwritten_workqueue);
++out_destroy_postread:
++	destroy_workqueue(mp->m_postread_workqueue);
+ out_destroy_buf:
+ 	destroy_workqueue(mp->m_buf_workqueue);
+ out:
+@@ -601,6 +609,7 @@ xfs_destroy_mount_workqueues(
+ 	destroy_workqueue(mp->m_inodegc_wq);
+ 	destroy_workqueue(mp->m_reclaim_workqueue);
+ 	destroy_workqueue(mp->m_unwritten_workqueue);
++	destroy_workqueue(mp->m_postread_workqueue);
+ 	destroy_workqueue(mp->m_buf_workqueue);
+ }
  
- 			/* roll attribute extent map forwards */
- 			lblkno += map[i].br_blockcount;
-diff --git a/fs/xfs/libxfs/xfs_da_btree.h b/fs/xfs/libxfs/xfs_da_btree.h
-index 706baf36e175..1534f4102a47 100644
---- a/fs/xfs/libxfs/xfs_da_btree.h
-+++ b/fs/xfs/libxfs/xfs_da_btree.h
-@@ -59,6 +59,7 @@ typedef struct xfs_da_args {
- 	uint8_t		filetype;	/* filetype of inode for directories */
- 	void		*value;		/* set of bytes (maybe contain NULLs) */
- 	int		valuelen;	/* length of value */
-+	struct xfs_buf	*bp;		/* OUT: xfs_buf which contains the attr */
- 	unsigned int	attr_filter;	/* XFS_ATTR_{ROOT,SECURE,INCOMPLETE} */
- 	unsigned int	attr_flags;	/* XATTR_{CREATE,REPLACE} */
- 	xfs_dahash_t	hashval;	/* hash value of name */
-@@ -93,6 +94,7 @@ typedef struct xfs_da_args {
- #define XFS_DA_OP_REMOVE	(1u << 6) /* this is a remove operation */
- #define XFS_DA_OP_RECOVERY	(1u << 7) /* Log recovery operation */
- #define XFS_DA_OP_LOGGED	(1u << 8) /* Use intent items to track op */
-+#define XFS_DA_OP_BUFFER	(1u << 9) /* Return underlying buffer */
- 
- #define XFS_DA_OP_FLAGS \
- 	{ XFS_DA_OP_JUSTCHECK,	"JUSTCHECK" }, \
-@@ -103,7 +105,8 @@ typedef struct xfs_da_args {
- 	{ XFS_DA_OP_NOTIME,	"NOTIME" }, \
- 	{ XFS_DA_OP_REMOVE,	"REMOVE" }, \
- 	{ XFS_DA_OP_RECOVERY,	"RECOVERY" }, \
--	{ XFS_DA_OP_LOGGED,	"LOGGED" }
-+	{ XFS_DA_OP_LOGGED,	"LOGGED" }, \
-+	{ XFS_DA_OP_BUFFER,	"BUFFER" }
- 
- /*
-  * Storage for holding state during Btree searches and split/join ops.
 -- 
 2.42.0
 
