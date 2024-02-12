@@ -1,95 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-11181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 664D6851DDF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 20:28:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5439A851DE8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 20:30:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 932491C21763
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 19:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78E781C2178D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 19:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4D24654F;
-	Mon, 12 Feb 2024 19:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB46A47793;
+	Mon, 12 Feb 2024 19:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qlAJEgm/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A335845C18;
-	Mon, 12 Feb 2024 19:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F092A46549
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 19:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707766087; cv=none; b=AEc0/w1QsblWTslJ++Oy6YTS+uHZnDTMRwacyYcIoZe7dCAaXdp6CCGeL2OXXGiFPXt9OI+X4BiwnhgzZ5OTGRSFMsbo0NAsGBCEUS/BCuhRMtrawhpzWoqoyS49DGfdj/xg7FT+g1F6dEP03sMzaHpiFmUAnPIGjNfSNA1M7nU=
+	t=1707766212; cv=none; b=Ycync5AUy/4UmDzISgaL7q3FX1kC34Cci88quptAz0bIYy212gXvVkWUIWz4VXXX3BeOX0NVwrLiBSy2SqDJQU023v92lJsNSbTiYI4rf7jC7AzNiOe3VdRKCASzxQYmAWkDof8XIkh8M6zUomRmYlVFOnxK0Xoo1kX6e893ZrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707766087; c=relaxed/simple;
-	bh=oX3KI5dCCNi1lSCS7AZPVFpiNTbUOTFE6Qw6GTFVYfg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cb1ApQ92DGjaektsQxXgt3+KZQePT8e1pdrKI1IuGzM0BsKwG0+Pr5mhkDPnvOkQFg3QFuAaAUwv17/XnDAsNQSyemmKaY3wNFsKKUqMuCab7BoyXdVCeiQfbFlAmTKRloDDsukpH6dIkyqOiVbUZS8j3s38DejiKCeieCZDjsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3c03d6e5e56so773391b6e.1;
-        Mon, 12 Feb 2024 11:28:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707766084; x=1708370884;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oX3KI5dCCNi1lSCS7AZPVFpiNTbUOTFE6Qw6GTFVYfg=;
-        b=C957Dtt399uxFpCkOKTfHilhJ3F9cAWJ9ykhnsqpRLVuZx0mKhPcEpoQqGYc0S+Ea5
-         un3OZNEfsnxq4yPQ5h/MGL+2l6ncUCmT/fm5AcdQBXJzk8FaWeJnz1n9d+xKHLW4qH/S
-         p8ICBCtZ2ebGsVCN6yprsJLARxcRANyoIGX5bTi2H3qeXnz5/uK3OlWteZpThrILCZmd
-         cjacHb9vHUTB+e/jUdmkyUGaJ4QZDBZYlec7/JleGMuSOrwF8seUHQxmDWvJClxkJnzH
-         4O1kRk+iUiN4PCeKg5ZWevbJJhDUirIuT1LpZYtWHDcj05/PNMvgNKOC2mebeFi/yrVo
-         ixvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVFrSx6t9mc1+B7wg9wMKgWmNqv0OPtTVXOWzd0WQ5kccqW8PncMT0sFIlueZRXcBDBHicVBEBIjTxQlWKeVePjdurHpy1tDryajmtPmOBHdTlHH4NCBplSbQcOoXSIVzjcKxBdbQ==
-X-Gm-Message-State: AOJu0Yz0zhsF3nURnY105opP4OA5wFMYK/EbzeefPwXSTl9uAjO5gEye
-	ZJRsUPmqvS8x0KcAvHUiH0w44fPRuZxoPGngqMGr0DIL0OI3fDMl
-X-Google-Smtp-Source: AGHT+IFMBXa2YD/yLM0Waohsogq5i8wTlUdjTol9bgBe6MJf+GTMNm+LdMm374K0IlJBpgnDgzkYFg==
-X-Received: by 2002:a05:6358:999e:b0:179:1f8b:445a with SMTP id j30-20020a056358999e00b001791f8b445amr9498668rwb.22.1707766084516;
-        Mon, 12 Feb 2024 11:28:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVL0aDYPOurhVg9Tka+0JLdWIiBkmMJJBL8zm6g1WGJkuzxB2I6DlVsZsVi3ZSzjybTeGj4Q1sSUpyooxcCQkl3fnf9hI7lpVVBsWk7JcUq0WEmxHzwT0IPZPvqEMojnH0CzlhSfbHzDrtVkGq5++fQesKpboNJ6CCJYOBfTh79czGAMzJ8J2nZ2ySQb8iPWhUxupasjkH0mhasf8CH6xEvddEJLR+noLjCtScJV/wE+K4qVpjs3Q8vWBmBFg==
-Received: from ?IPV6:2620:0:1000:8411:dfc4:6edd:16dd:210a? ([2620:0:1000:8411:dfc4:6edd:16dd:210a])
-        by smtp.gmail.com with ESMTPSA id w13-20020aa7858d000000b006e03b82016asm5905491pfn.33.2024.02.12.11.28.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Feb 2024 11:28:04 -0800 (PST)
-Message-ID: <4e47c7d4-ece3-4b8e-a4df-80d212f673fb@acm.org>
-Date: Mon, 12 Feb 2024 11:28:02 -0800
+	s=arc-20240116; t=1707766212; c=relaxed/simple;
+	bh=FkxTJSO+33GpN+suj4JefqxDZgPdW8qomujZLe4SOyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iZympnrzvuIP+2reYHIWNPd32a2ZbgA8FKIju5iwsDssVECroqM3wnjdgLMKhECzcxll+LuXXPB/yZY8iB6KcVxNvarnpYkXaOpZigQNxcwqK2AIb0V4CYhzlDtTcc7e9wHijagEmSVVEyywT+2vmZUGjXBUIhE5qDcvq5KbSEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qlAJEgm/; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 12 Feb 2024 14:30:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1707766207;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rn+g3POrCt16v7JX8rOl/Zs5Xf7fDMrrf9BRGk2OghE=;
+	b=qlAJEgm/CtrwPB/nNjb/vD8B55ZNOWsm5jV92wK+E5nqfANbsMzyK1sF+vJMb50sKllkDV
+	soOrFT4O6IJ7Ik/CqAfSvHUWFGw1xEuigZ7G+ivDvjSoDAMh8kTuZdpM0mIWsj5f1+wh6M
+	lJ2xYc5vs/HXrMgJ8ngbq2VC/Igqep4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Vlastimil Babka (SUSE)" <vbabka@kernel.org>, 
+	Michal Hocko <mhocko@suse.com>, Matthew Wilcox <willy@infradead.org>, 
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-block@vger.kernel.org, linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, Kent Overstreet <kent.overstreet@gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Removing GFP_NOFS
+Message-ID: <cepmpv7vdq7i6277wheqqnqsniqnkomvh7sn3535rcacvorkuu@5caayyz44qzr>
+References: <ZZcgXI46AinlcBDP@casper.infradead.org>
+ <ZZzP6731XwZQnz0o@dread.disaster.area>
+ <3ba0dffa-beea-478f-bb6e-777b6304fb69@kernel.org>
+ <ZcUQfzfQ9R8X0s47@tiehlicka>
+ <3aa399bb-5007-4d12-88ae-ed244e9a653f@kernel.org>
+ <ZclyYBO0vcQHZ5dV@dread.disaster.area>
+ <5p4zwxtfqwm3wgvzwqfg6uwy5m3lgpfypij4fzea63gu67ve4t@77to5kukmiic>
+ <ZcmgFThkhh9HYsXh@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs, USB gadget: Rework kiocb cancellation
-Content-Language: en-US
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, Avi Kivity <avi@scylladb.com>,
- Sandeep Dhavale <dhavale@google.com>, stable@vger.kernel.org
-References: <20240208215518.1361570-1-bvanassche@acm.org>
- <9e83c34a-63ab-47ea-9c06-14303dbbeaa9@kernel.dk>
- <20240209-katapultieren-lastkraftwagen-d28bbc0a92b2@brauner>
- <9a7294ef-6812-43bb-af50-a2b4659f2d15@kernel.dk>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <9a7294ef-6812-43bb-af50-a2b4659f2d15@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZcmgFThkhh9HYsXh@dread.disaster.area>
+X-Migadu-Flow: FLOW_OUT
 
-On 2/9/24 10:12, Jens Axboe wrote:
-> Greg, can you elaborate on how useful cancel is for gadgets? Is it one
-> of those things that was wired up "just because", or does it have
-> actually useful cases?
+On Mon, Feb 12, 2024 at 03:35:33PM +1100, Dave Chinner wrote:
+> On Sun, Feb 11, 2024 at 09:06:33PM -0500, Kent Overstreet wrote:
+> > That's because in general most code in the IO path knows how to make
+> > effective use of biosets and mempools (which may take some work! you
+> > have to ensure that you're always able to make forward progress when
+> > memory is limited, and in particular that you don't double allocate from
+> > the same mempool if you're blocking the first allocation from
+> > completing/freeing).
+> 
+> Yes, I understand this, and that's my point: NOIO context tends to
+> be able to use mempools and other mechanisms to prevent memory
+> allocation failure, not NOFAIL.
+> 
+> The IO layers are request based and that enables one-in, one out
+> allocation pools that can guarantee single IO progress. That's all
+> the IO layers need to guarantee to the filesystems so that forwards
+> progress can always be made until memory pressure.
+> 
+> However, filesystems cannot guarantee "one in, one out" allocation
+> behaviour. A transaction can require a largely unbound number of
+> memory allocations to succeed to make progress through to
+> completion, and so things like mempools -cannot be used- to prevent
+> memory allocation failures whilst providing a forwards progress
+> guarantee.
 
-I found two use cases in the Android Open Source Project and have submitted
-CLs that request to remove the io_cancel() calls from that code. Although I
-think I understand why these calls were added, the race conditions that
-these io_cancel() calls try to address cannot be addressed completely by
-calling io_cancel().
+I don't see that that's actually true. There's no requirement that
+arbitrarily large IOs must be done atomically, within a single
+transaction: there's been at most talk of eventually doing atomic writes
+through the pagecache, but the people on that can't even finish atomic
+writes through the block layer, so who knows when that'll happen.
 
-Bart.
+I generally haven't been running into filesyste operations that require
+an unbounded number of memory allocations (reflink is a bit of an
+exception in the current bcachefs code, and even that is just a
+limitation I could solve if I really wanted to...)
 
+> Hence a NOFAIL scope if useful at the filesystem layer for
+> filesystem objects to ensure forwards progress under memory
+> pressure, but it is compeltely unnecessary once we transition to the
+> IO layer where forwards progress guarantees ensure memory allocation
+> failures don't impede progress.
+> 
+> IOWs, we only need NOFAIL at the NOFS layers, not at the NOIO
+> layers. The entry points to the block layer should transition the
+> task to NOIO context and restore the previous context on exit. Then
+> it becomes relatively trivial to apply context based filtering of
+> allocation behaviour....
+> 
+> > > i.e NOFAIL scopes are not relevant outside the subsystem that sets
+> > > it.  Hence we likely need helpers to clear and restore NOFAIL when
+> > > we cross an allocation context boundaries. e.g. as we cross from
+> > > filesystem to block layer in the IO stack via submit_bio(). Maybe
+> > > they should be doing something like:
+> > > 
+> > > 	nofail_flags = memalloc_nofail_clear();
+> > 
+> > NOFAIL is not a scoped thing at all, period; it is very much a
+> > _callsite_ specific thing, and it depends on whether that callsite has a
+> > fallback.
+> 
+> *cough*
+> 
+> As I've already stated, NOFAIL allocation has been scoped in XFS for
+> the past 20 years.
+> 
+> Every memory allocation inside a transaction *must* be NOFAIL unless
+> otherwise specified because memory allocation inside a dirty
+> transaction is a fatal error.
+
+Say you start to incrementally mempoolify your allocations inside a
+transaction - those mempools aren't going to do anything if there's a
+scoped NOFAIL, and sorting that out is going to get messy fast.
+
+> However, that scoping has never been
+> passed to the NOIO contexts below the filesytsem - it's scoped
+> purely within the filesystem itself and doesn't pass on to other
+> subsystems the filesystem calls into.
+
+How is that managed?
+> 
+> > The most obvious example being, as mentioned previously, mempools.
+> 
+> Yes, they require one-in, one-out guarantees to avoid starvation and
+> ENOMEM situations. Which, as we've known since mempools were
+> invented, these guarantees cannot be provided by most filesystems.
+> 
+> > > > - NOWAIT - as said already, we need to make sure we're not turning an
+> > > > allocation that relied on too-small-to-fail into a null pointer exception or
+> > > > BUG_ON(!page).
+> > > 
+> > > Agreed. NOWAIT is removing allocation failure constraints and I
+> > > don't think that can be made to work reliably. Error injection
+> > > cannot prove the absence of errors  and so we can never be certain
+> > > the code will always operate correctly and not crash when an
+> > > unexepected allocation failure occurs.
+> > 
+> > You saying we don't know how to test code?
+> 
+> Yes, that's exactly what I'm saying.
+> 
+> I'm also saying that designing algorithms that aren't fail safe is
+> poor design. If you get it wrong and nothing bad can happen as a
+> result, then the design is fine.
+> 
+> But if the result of missing something accidentally is that the
+> system is guaranteed to crash when that is hit, then failure is
+> guaranteed and no amount of testing will prevent that failure from
+> occurring.
+> 
+> And we suck at testing, so we absolutely need to design fail
+> safe algorithms and APIs...
+
+GFP_NOFAIL dosen't magically make your algorithm fail safe, though.
+
+Suren and I are trying to get memory allocation profiling into 6.9, and
+I'll be posting the improved fault injection immediately afterwards -
+this is what I used to use to make sure every allocation failure path in
+the bcachefs predecessor was tested. Hopefully that'll make things
+easier...
 
