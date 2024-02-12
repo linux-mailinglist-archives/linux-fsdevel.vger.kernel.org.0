@@ -1,165 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-11118-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11119-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548C08513D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 13:54:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF738513F5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 14:00:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D2042826D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 12:54:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 453681F2315E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 13:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5919E3A1CA;
-	Mon, 12 Feb 2024 12:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCD13A1B4;
+	Mon, 12 Feb 2024 13:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="blBBnxsI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x6Mtn4sn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="blBBnxsI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x6Mtn4sn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bx+kF18+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C233A1A0;
-	Mon, 12 Feb 2024 12:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BBA39FFE;
+	Mon, 12 Feb 2024 13:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707742436; cv=none; b=VwUxRLtOyF6/2zltGc6183fCt+RHNDNZ58SOHxSJeUcDHJeH7LD9ntxIzYpSBVlsFxrWbU28haqKm6Yjt8cdFaqdre/zstPlhPUsukPahPgLEVu0rlwjGiikbthRFBmhyAosI3RkrhkKO+aE28Y5xpofg6nJYz1YDDLtcNNrL8k=
+	t=1707742835; cv=none; b=K4HwIPCeAXtpQ2uaxp+BKrItVa7Rh7PHHA24nKbbObKxylmtCKncI0tZhQeipEQORtyL21RxEWUZqvhoVSqcBfV1pAp/iLRLh2W3jmrJOfvitRPbILPzVtnOVq5WNjb8u5w6bQrFKM5Tyoyhs44GPIXCgEWKYSopjmX8xPBHfvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707742436; c=relaxed/simple;
-	bh=zEEPERWAdTrhjwmxXlHsS+ZYiXFEbsEpCzMvbKm3akY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fJgSVZgK2EbZW5/eUHKzgEK8O/MzAXEAxvBrQieg97RS/lyaDZXnUVFkGAKWXV8s6BGGvdhkNEIWR6zWTwfnAIwJjW1KG9g/QEZh/Zg+662YZ5VjxUJztyk/tfa64ppYeuAl4bFitIGpaiARIYuUJomsSoCBKRhoVRXCd/qFToM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=blBBnxsI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x6Mtn4sn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=blBBnxsI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x6Mtn4sn; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1D9BD1FD5C;
-	Mon, 12 Feb 2024 12:53:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707742433; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pAZ/gYikrs8yVuOIp6nlbQr7mCVwrUgtlMKBFaRKkS4=;
-	b=blBBnxsIXJEGXACREy0dKQe2pdgz8fnzp0LY8wGmhh2wAapQXieoeLilClmecppNEEFEHM
-	IbwN7PlcRBiZ7Pfni8SxzDAf7+e9YsgXR3d9nwogpvqGXn2R4By2vjzY4flExae/6tpmKT
-	w4+wG2PLzTpugd98S7SN+1T8pLBpab8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707742433;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pAZ/gYikrs8yVuOIp6nlbQr7mCVwrUgtlMKBFaRKkS4=;
-	b=x6Mtn4snmCNIvFZceNEKhiX/5lW2/JqdktFeMquGGhqBesZ2eLjq/XeaRZbWakWr0xEniE
-	YlNQNoblx3niJpDA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707742433; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pAZ/gYikrs8yVuOIp6nlbQr7mCVwrUgtlMKBFaRKkS4=;
-	b=blBBnxsIXJEGXACREy0dKQe2pdgz8fnzp0LY8wGmhh2wAapQXieoeLilClmecppNEEFEHM
-	IbwN7PlcRBiZ7Pfni8SxzDAf7+e9YsgXR3d9nwogpvqGXn2R4By2vjzY4flExae/6tpmKT
-	w4+wG2PLzTpugd98S7SN+1T8pLBpab8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707742433;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pAZ/gYikrs8yVuOIp6nlbQr7mCVwrUgtlMKBFaRKkS4=;
-	b=x6Mtn4snmCNIvFZceNEKhiX/5lW2/JqdktFeMquGGhqBesZ2eLjq/XeaRZbWakWr0xEniE
-	YlNQNoblx3niJpDA==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 05F9913212;
-	Mon, 12 Feb 2024 12:53:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id eMlpAeEUymWiKwAAn2gu4w
-	(envelope-from <jack@suse.cz>); Mon, 12 Feb 2024 12:53:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B92AFA0809; Mon, 12 Feb 2024 13:53:52 +0100 (CET)
-Date: Mon, 12 Feb 2024 13:53:52 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+174ea873dedcd7fb6de3@syzkaller.appspotmail.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, bvanassche@acm.org,
-	damien.lemoal@opensource.wdc.com, jack@suse.cz, jlayton@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	neilb@suse.de, reiserfs-devel@vger.kernel.org, song@kernel.org,
-	syzkaller-bugs@googlegroups.com, willy@infradead.org,
-	yi.zhang@huawei.com
-Subject: Re: [syzbot] [reiserfs?] KASAN: vmalloc-out-of-bounds Read in
- cleanup_bitmap_list
-Message-ID: <20240212125352.tbaqzi7uphz66igg@quack3>
-References: <000000000000cc796105ec1e4c7b@google.com>
- <00000000000098e3db0610fdf2a5@google.com>
+	s=arc-20240116; t=1707742835; c=relaxed/simple;
+	bh=aPEce8iGKTp2tOgGLV5BSLoGJ1V3rA/nAT8AZDNOKXg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aMnRnTKXtlXRes2wrFm2Rz/yNwU2LkKdnIOLciwuocm4Gr+GcpTyg7R4sly7lTNv7RnszE1uO1TX6DB+DpVqqyIvO0pMS9izQcxf7K/u0EgyBE/z/Dkolb/U21x5/lw5FBTdcfc1mGP5MjmAKqqHRUtUEvKKWO32Lf2dC1rW2Aw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bx+kF18+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50B49C433C7;
+	Mon, 12 Feb 2024 13:00:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707742834;
+	bh=aPEce8iGKTp2tOgGLV5BSLoGJ1V3rA/nAT8AZDNOKXg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bx+kF18+gFz/VXBRlkk7kvMsPZIol4pIOmUJrcsfvSt39GK0rcewspFodtSHYEuFo
+	 fpyqkQJw8s6/0PDFKVkVaQtRgetVX0qj0UqhXK9J2Z+PC5bC+mIYTF3YzOTY/Sjixs
+	 7K6NlSG2B7rxMvSqqQq8bVyU17/YQ/eJZjR7Y5cGWxMByWRfZjE5Otd5+AtR1q7B/4
+	 tR5exKCfvYG3CwvJuhYyuSi/tuV+2ZUDMEtRA1wW8oDBjoA54B85ue8wC40X1ZJZxd
+	 F8kRNF/ARtTYMx//ld4OqNp/W14Wfv3fwcWmz8EKeecz7XbZw8GWQ3eLyABYKETu3F
+	 3tfqEXgS6hZhg==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Mon, 12 Feb 2024 14:00:11 +0100
+Message-ID: <20240212-vfs-fixes-bd692dfd338a@brauner>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000098e3db0610fdf2a5@google.com>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [2.90 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 R_RATELIMIT(0.00)[to_ip_from(RLj5qg6pr6odqsqbkcmx7r3up3)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.00)[34.73%];
-	 SUBJECT_HAS_QUESTION(0.00)[];
-	 ARC_NA(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=f8e72bae38c079e4];
-	 TAGGED_RCPT(0.00)[174ea873dedcd7fb6de3];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[15];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Level: **
-X-Spam-Score: 2.90
-X-Spam-Flag: NO
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3143; i=brauner@kernel.org; h=from:subject:message-id; bh=aPEce8iGKTp2tOgGLV5BSLoGJ1V3rA/nAT8AZDNOKXg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSeEotVfHG+wv2Vy6ptmja8Zzkiyz9JNUeLNW59Pqkpi e0wv+GEjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlINjD84dq93yJg5X1rn9PM OWraRZ+naUWn/TdQnWNcMnMSd4N6IMM/+6dtF19fPj/lruSjdSfCjq++WPPz2kT1nNBumxM/4lb N4QcA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri 09-02-24 18:39:03, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
-> 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
-> 
->     fs: Block writes to mounted block devices
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1257a6ec180000
-> start commit:   f5837722ffec Merge tag 'mm-hotfixes-stable-2023-12-27-15-0..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=f8e72bae38c079e4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=174ea873dedcd7fb6de3
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14db6ca1e80000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12159e5ee80000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
+Hey Linus,
 
-Makes sense.
- 
-#syz fix: fs: Block writes to mounted block devices
+/* Summary */
+This contains two small fixes:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+* Fix performance regression introduced by moving the security permission hook
+  out of do_clone_file_range() and into its caller vfs_clone_file_range(). This
+  causes the security hook to be called in situation were it wasn't called
+  before as the fast permission checks were left in do_clone_file_range(). Fix
+  this by merging the two implementations back together and restoring the old
+  ordering: fast permission checks first, expensive ones later.
+
+* Tweak mount_setattr() permission checking so that mount properties on the
+  real rootfs can be changed.
+
+  When we added mount_setattr() we added additional checks compared to legacy
+  mount(2). If the mouna had a parent then verify that the caller and the mount
+  namespace the mount is attached to match and if not make sure that it's an
+  anonymous mount.
+
+  But the real rootfs falls into neither category. It is neither an anoymous
+  mount because it is obviously attached to the initial mount namespace but it
+  also obviously doesn't have a parent mount. So that means legacy mount(2)
+  allows changing mount properties on the real rootfs but mount_setattr(2)
+  blocks this. This causes regressions (See the commit for details).
+
+  Fix this by relaxing the check. If the mount has a parent or if it isn't a
+  detached mount, verify that the mount namespaces of the caller and the mount
+  are the same. Technically, we could probably write this even simpler and
+  check that the mount namespaces match if it isn't a detached mount. But the
+  slightly longer check makes it clearer what conditions one needs to think
+  about.
+
+/* Testing */
+clang: Debian clang version 16.0.6 (19)
+gcc: (Debian 13.2.0-7) 13.2.0
+
+All patches are based on v6.8-rc1 and have been sitting in linux-next.
+No build failures or warnings were observed.
+
+/* Conflicts */
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with
+current mainline.
+
+The following changes since commit 6613476e225e090cc9aad49be7fa504e290dd33d:
+
+  Linux 6.8-rc1 (2024-01-21 14:11:32 -0800)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.8-rc5.fixes
+
+for you to fetch changes up to 46f5ab762d048dad224436978315cbc2fa79c630:
+
+  fs: relax mount_setattr() permission checks (2024-02-07 21:16:29 +0100)
+
+Please consider pulling these changes from the signed vfs-6.8-rc5.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.8-rc5.fixes
+
+----------------------------------------------------------------
+Amir Goldstein (1):
+      remap_range: merge do_clone_file_range() into vfs_clone_file_range()
+
+Christian Brauner (1):
+      fs: relax mount_setattr() permission checks
+
+ fs/namespace.c         | 11 ++++++++---
+ fs/overlayfs/copy_up.c | 14 ++++++--------
+ fs/remap_range.c       | 31 +++++++++----------------------
+ include/linux/fs.h     |  3 ---
+ 4 files changed, 23 insertions(+), 36 deletions(-)
 
