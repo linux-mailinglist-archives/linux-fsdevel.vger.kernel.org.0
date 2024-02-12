@@ -1,245 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-11247-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11248-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6103F8521C0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 23:49:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 328268521C9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 23:54:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA74B1F22F2C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 22:49:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7431B2112D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Feb 2024 22:54:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346ED4EB3D;
-	Mon, 12 Feb 2024 22:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C914F610;
+	Mon, 12 Feb 2024 22:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IE7oNZWe"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XkapfqvF";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="LmImTAaw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09ED34E1C5
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 22:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707778178; cv=none; b=eaXNXS0JR1RImHnuHdZ2p2ZVlWA7/GBgvDkez2f/dMl5sKxB+haASRgOylWYFxT4de9drEstbUfGa4C3KBwKBYvUiOx48QK1Tn8kKWRjAQhEqPT1vPa1lb5mvzvisw6RcqgwbENDfcELNKE8mNnUmrb8xtd5MTHL0H52kL3643E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707778178; c=relaxed/simple;
-	bh=jJ7Q+uAzBM/2QUtMSW3fMxfNQj/NahTWX0hTiFl7U4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MS5ASEax5uCLr/gEBmMvOcOns4PwmN2INFeGeOI5cc5qaJk9REtMSJ5IDK6FoHzz/pCvYa908W9Y6uBv5cWRfIh/vytaEHxz2i+3epqZC9wByYNkWUVEJQZvomoJHR0gqZCYiCdAybsipKNtQPo0i6/sT3MBqzZ/dimPvpNF5Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IE7oNZWe; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1d76671e5a4so30873015ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 14:49:35 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCC34EB5C;
+	Mon, 12 Feb 2024 22:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707778447; cv=fail; b=iYDBS9nM/S7M+jkXpCNccWIrrh9vr3JGH+uR9OPEty/46WUYj63u/BrJKzi/Mzylm1JX2/obK3Dl4Bhh3jv1Jij4D3psgonA9RcQNPiFjQKQfgHS8y35ukmZIgDmS8puUQngMbvg9sOrjpc/Gh6h0AvIVnN5oyIIGzLcp7kSZBw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707778447; c=relaxed/simple;
+	bh=XQ5g6KRxV7QTGjc/bC8N4Yx2KfxHWo8XiODd4R2GSHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Rw4ZFwdkSlCega1zcjVSjFIefK+nuhtKVPIZidt8OuBLY7cVaalJdlTtazkQg3a4jmGgbq2VPifQnHe4bl2i4dfatx8FhJEDLUMaqPaTTAr4uXzhb/hUgB3pJKhhRUKMnPZDCwooYx7uPunVNj5nyu2DY6updKxigkm5SurWQ8M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XkapfqvF; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=LmImTAaw; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=Oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41CLJdLC018740;
+	Mon, 12 Feb 2024 22:53:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=corp-2023-11-20;
+ bh=VhqWbhlRJD5NwguMKaSXCJ32ooMCAeUIspznOjSq4Ac=;
+ b=XkapfqvFRAQMC7vRVWC29m/ExD+WMExBubqF4h/f5eNLPslsPomB4v8fY6X7g1Fb5Ntz
+ jSouFfXvFb/szkSqOrxG36LVeF+GhWMP1/wIbH/aWCBUjI9iTs3WE7FTo2DkSGadE+Y9
+ d0ARuZDrwQ6JewOsvo/rGdL5qlys90zCqdC/sORyaf4+RPqQxuPKoR5bt/Cylo3Rv4a6
+ cAWR0WvoTYFkruaWkq71LBIT4/seAJU7WAYPCir3bsY6mNNg7V4pcMp020HrQz4uTKMo
+ vF300ktvA8x/BAYH5pIdXsqNhJvcrESHVpPxU9jmwiAtST5bRoTwzpDr218vvO3FOO5v Tw== 
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3w7u53r5wf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 Feb 2024 22:53:42 +0000
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 41CMlbDF015414;
+	Mon, 12 Feb 2024 22:53:42 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3w5yk6fcvb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 12 Feb 2024 22:53:41 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d7hKdbazWRl3H3hEFFLOfPF6N6asgfmPGoTnAxtz+8UZDRErQwoLUiml4R1XCIpw12td8wWnx1h+s0ue+Od7IdXZ8XoFjarcz0d6e2JFwnP6MhpfFwOPyvQk/94KDo1GDhYv8V1/f2eF1X7kFblUbKJ7m6OBQ4Wa3uz5oldO28tiPYSWFpHq1X7R0wGKhOhvrxcV7TgCI/uV3wIHA1+5Gw1FeFbewGkZpejJGQlGblRa0uQSMqcDiek0MUZXCvis8DxYjZiXr+dJIMNLvd1g9AOtKdyuWMBxS6oxYM50B1MlYq1vbnlIPcwkj3vEqc8m0HFHW0CKZIKvzY2aGZI6pw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VhqWbhlRJD5NwguMKaSXCJ32ooMCAeUIspznOjSq4Ac=;
+ b=fXZOXnoULhVMFRhVd7x4DBosTDmfYGaapiTs2XA05T/X12fQ7YZd1mDI2byG3rz0HODL1sS0lq8hH1EqCxTkZ1hQvQX8O0PKJTsdvNKUJTStPg3vjzjIxWjahwkE0EBghf04Ow0gWjcVoSBMEtnKxgDqMQB6TlPEWDt598VYDjvl5TzcjUpLnIJYxf0khfWpUf3AGeWS5S1kiimVEvTF4wAWBTdo21D325SgFtMk11izNxaV6mAwcD3LsuOhEThFb2h3XxE1Uaf3e3hn6PKYDSXGL06rIRYAbffyY5tBuQLVFPXj41i1gF1Znmm37Tq3+q9ViPtDk9KjlmgKh0bL+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1707778175; x=1708382975; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xx+E2mv21N0lU1zbrbyeE8PV+0+SQ7K7DmnAXJKKlPc=;
-        b=IE7oNZWeS73+rgfvuVW0cw0U6tpbZYbfeOHUiV8+WVWzTj3n6S6ROeEBzcCVScF81V
-         qCz4l5KUih2yz5w9S/++VzLJHY4duzNWfKuR1tzi+Y7MmJ3DFCLRrpH5s35lBmK1fvzz
-         AGvopWt5YlUBzDOyScAuQnBlPvx46X2011z+M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707778175; x=1708382975;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xx+E2mv21N0lU1zbrbyeE8PV+0+SQ7K7DmnAXJKKlPc=;
-        b=pfQHj71K/MEsZFVof2cgfGqQxj1oLyn3IDRZwQq7vXzoWXZyUdNCOYH4nOxGlKAeaB
-         3CZUGe2FPY8GR6JHjZmMSdi2hqS7JZEGSHRG38aXvkVIfRLg9oLbCJvcK1IXnXguVfnH
-         KWHf0qjrFzoOA1mSJs+ezr++oVFaSbhI1f+bhycpjLW4wwdSVqDV8nHQylKhjiub4GbJ
-         HGkKZNWo6S2o7jaSLz1vOzGny7ITphtZ4wiJWJ3Uaspv99ZPhUmHa4LTF3KoY2pkqWju
-         4yZNikvnIDfVtXaeRTIHihGC3zKMy5W01HGFKzVgO+CI9LRTUsACUjsveuQNJ05fKohR
-         D5ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7VOH5DnDfdY20QOBc3PAgmXUfyQETeDPOTkTrUzzqbyPcvYAaMjOv6SPju5IeCYVqF2HuD+BhAyTp+4piGtWwztAiMVVdZTcUY1gybg==
-X-Gm-Message-State: AOJu0YxGnoNeXGw/H5JOtDBrkjbcpIy5DI17AeCo5JstTe2BlIUSPyGj
-	/WAN43+J3HxoQjV/R09GbPEMI0W4E+hEEbX7CZCjihJg1DOFjRgLv616ogBO8g==
-X-Google-Smtp-Source: AGHT+IFhdBwz0gkUHXypIGqz/59W5VQq7xXUv7g5AJuySlRLjNX5zZEVE7mi47XR/49TsBREqCstWw==
-X-Received: by 2002:a17:902:f54e:b0:1d9:4544:ed22 with SMTP id h14-20020a170902f54e00b001d94544ed22mr9047716plf.42.1707778175450;
-        Mon, 12 Feb 2024 14:49:35 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUasX8XpzsSiDZ5/EFiO7pro9PNRyHSQqtLX17pXnFY6qHBIb3d0CatX0NjldJ2PIwuY8MFElGCiBNMf1vy8L++HSYbuXBJ6AZvmBWue0hbc7GGdbfvzgL1xNSjTfM9X5+ku0Yd02eXA1Fb287VhTjN4I3F2u/jh5y1xCVgzJR9RKBSTcdsL3dVakoYqC0QGWEcuLIvThYkH09TucQGniMYD9Hy5lpNpuDkIKRIrZtqX15u2ENuIryu60uAgOeNnkC5z9phPyK8U3UIEyEbopJ6O3xKqIXBCuCXLKQSuMwCOAUdQUY8u0MEx4lSn60txGtd6/rcMmjHo8BlE4D91TT5e/PtYivpmNWde+QdxXxO1g1J8Wxp6AjdZqiQvCuJspekBpiI1yois+s9psLLwVurUsoM08nC9VIoLWscj4RAQo7eqcvr3M/CWVxf2Eqf5S5e7dRIGH/475snDdZDbxLykVvtNsfHe0jxNnhuKfMo/sgOqTnAi4/31NC2A/8ttOA3uIN0T5OED1gvzRtZoCCSI4TE8FmGVQHQT09FvO3sHnVyrkDAVSQn6xJiJwRws4QIv4z+F2OLLPP5Yqumj94miFYqmOEEptLqMEb4FNByAGeMRWfIsD5mNQx16rkqPDgxn774LFEHt6u9Rf4B8f4eRWOBTslPPY54XfDRLRhyP9CZDOq2ZhfiJSPdfj6kiDCOaj+DqIgsHECinmKRBHYLRPse782vR1gbs1q6Ldg0Jn9FP81oaA==
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id s13-20020a17090330cd00b001d8d56a8b9fsm846040plc.105.2024.02.12.14.49.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Feb 2024 14:49:34 -0800 (PST)
-Date: Mon, 12 Feb 2024 14:49:34 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
-	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
-	mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
-	liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, peterx@redhat.com, david@redhat.com,
-	axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
-	nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
-	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
-	pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com,
-	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com,
-	ndesaulniers@google.com, vvvvvv@google.com,
-	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
-	vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
-	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
-	elver@google.com, dvyukov@google.com, shakeelb@google.com,
-	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
-	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VhqWbhlRJD5NwguMKaSXCJ32ooMCAeUIspznOjSq4Ac=;
+ b=LmImTAaw06DVIzICTWhJgiJX5g1fWMpwSryqCCTxZVlvs7pYFjaSXvgrtO80Sr1DLtT5QSPtZdOv9rbVMXjt88scIVISMXnoxpZ6bzzPB2Ah+DSPX+eNn2QXziVhCKDrNB7a4CMBUJ/jh+u9g6JjIyk/VdmNXzSEuOSnT/70sqw=
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
+ by IA1PR10MB7166.namprd10.prod.outlook.com (2603:10b6:208:3f4::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7270.37; Mon, 12 Feb
+ 2024 22:53:15 +0000
+Received: from DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::20c8:7efa:f9a8:7606]) by DS0PR10MB7933.namprd10.prod.outlook.com
+ ([fe80::20c8:7efa:f9a8:7606%4]) with mapi id 15.20.7270.033; Mon, 12 Feb 2024
+ 22:53:15 +0000
+Date: Mon, 12 Feb 2024 17:53:12 -0500
+From: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+To: Lokesh Gidra <lokeshgidra@google.com>
+Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        selinux@vger.kernel.org, surenb@google.com, kernel-team@android.com,
+        aarcange@redhat.com, peterx@redhat.com, david@redhat.com,
+        axelrasmussen@google.com, bgeffon@google.com, willy@infradead.org,
+        jannh@google.com, kaleshsingh@google.com, ngeoffray@google.com,
+        timmurray@google.com, rppt@kernel.org
+Subject: Re: [PATCH v4 3/3] userfaultfd: use per-vma locks in userfaultfd
+ operations
+Message-ID: <20240212225312.eq4aebhukeor5g3h@revolver>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@Oracle.com>,
+	Lokesh Gidra <lokeshgidra@google.com>, akpm@linux-foundation.org,
 	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
-	cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 34/35] codetag: debug: introduce OBJEXTS_ALLOC_FAIL to
- mark failed slab_ext allocations
-Message-ID: <202402121448.AF0AA8E@keescook>
-References: <20240212213922.783301-1-surenb@google.com>
- <20240212213922.783301-35-surenb@google.com>
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+	surenb@google.com, kernel-team@android.com, aarcange@redhat.com,
+	peterx@redhat.com, david@redhat.com, axelrasmussen@google.com,
+	bgeffon@google.com, willy@infradead.org, jannh@google.com,
+	kaleshsingh@google.com, ngeoffray@google.com, timmurray@google.com,
+	rppt@kernel.org
+References: <20240209030654.lxh4krmxmiuszhab@revolver>
+ <CA+EESO4Ar8o3HMPF_b9KGbH2ytk1gNSJo0ucNAdMDX_OhgTe=A@mail.gmail.com>
+ <20240209190605.7gokzhg7afy7ibyf@revolver>
+ <CA+EESO7uR4azkf-V=E4XWTCaDL7xxNwNxcdnRi4hKaJQWxyxcA@mail.gmail.com>
+ <20240209193110.ltfdc6nolpoa2ccv@revolver>
+ <CA+EESO4mbS_zB6AutaGZz1Jdx1uLFy5JqhyjnDHND4tY=3bn7Q@mail.gmail.com>
+ <20240212151959.vnpqzvpvztabxpiv@revolver>
+ <CA+EESO706V0OuX4pmX87t4YqrOxa9cLVXhhTPkFh22wLbVDD8Q@mail.gmail.com>
+ <20240212201134.fqys2zlixy4z565s@revolver>
+ <CA+EESO6=tVK6xUGTHG+6yCUGarXb_vHmjOuqEQ_d4gCe8V3=xA@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+EESO6=tVK6xUGTHG+6yCUGarXb_vHmjOuqEQ_d4gCe8V3=xA@mail.gmail.com>
+User-Agent: NeoMutt/20220429
+X-ClientProxiedBy: CH2PR08CA0019.namprd08.prod.outlook.com
+ (2603:10b6:610:5a::29) To DS0PR10MB7933.namprd10.prod.outlook.com
+ (2603:10b6:8:1b8::15)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240212213922.783301-35-surenb@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|IA1PR10MB7166:EE_
+X-MS-Office365-Filtering-Correlation-Id: d9ad2aed-80cc-4ba5-7299-08dc2c1d65e1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	JtWp0feZeslz87j9oRu1wXpIK0XvbXBgexV/Q7bH/b8ph8LryeXVLcnzjZR//57SnD9KIw5LlqNN0deEK9gvp8rgOrf4ce1uQhAMqk5ghBbQTdwBaDQ6maXmVYcJxzV67IRU1lwJasZxY/Sf40T7hWToqZYyG0golUfm3Jga0kGeZQJcwNxUfmAA56zsaC9PTgCdGBnS0JwIqeoeJh/dFFidwK+OM4J1XSoYI4yiWeM6oT7WPhstakhnIF3z/Ll8BR3ZHu88aspUco+3JeVRV4P3HVghr7KvxEtRox+CQoh458n3dhTets/JZ4UpaxeoQ2s2OIznbWxhFh/Ndr6Nb49U+ph4zw4r6ymFwhtBq3zUKfufJWEJTMLHqXLyWDDKZYBAujyBd1NIhlwi9axJ+Rwy3NNOCuq72JihbqaKqnU4NHbYAoWToA/0NLqsj9SclPiWAskJSa/opNqLj1jR2CTtX/xGhYvlTgNqyMZ1pi9qduCk8/TfKa7Um067OkfPvMwck+qzUKFdCIpmlUvudecWDBs7r+V5vv0exdzRuInxgVRXo/1FFgFyJ+WwU5Z3
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7916004)(376002)(346002)(366004)(136003)(39860400002)(396003)(230922051799003)(451199024)(64100799003)(1800799012)(186009)(33716001)(4744005)(7416002)(2906002)(1076003)(478600001)(41300700001)(6486002)(8676002)(8936002)(6916009)(4326008)(26005)(83380400001)(66556008)(66476007)(66946007)(6506007)(5660300002)(6512007)(9686003)(316002)(6666004)(38100700002)(86362001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?x9I8kUJ6i76O9VsLQJepFLq5A5KRNyYRiIevtRaz7V4Aw5bf71oeoNT8p4uu?=
+ =?us-ascii?Q?SkmMqy8AGhB7cyNCszErvN6oXTfT7XUdmTdYFUdFl0d3ahZlPj3MhodBNNlP?=
+ =?us-ascii?Q?l0C649pGVQjCER6W2KDhOlJLA1iKIMm/rBeJ0k0BtU3hKc9begMC0i7bPey7?=
+ =?us-ascii?Q?Wod0VtRCik+KLPhGwkXfLFkcWCL/ZW6mkxL9QwRcooCZB/aCCgieCYbwFpjh?=
+ =?us-ascii?Q?NLm0SZ44al+Zfmza2MP9R/9DOp1MkzX29lNqU/sc7z/rDesf/mI1cZ6yfrBX?=
+ =?us-ascii?Q?k/VivwqbVZHwc9hKnuEN/B6dlNJimV6XTZV/ZAWRyCFBF6Eu2WR3URWW9Bz5?=
+ =?us-ascii?Q?LotTO/ilLiwACALDU/N3VdgY7LjEVVxngwQTihcF3T22MBiinWDO2Cg+1r2v?=
+ =?us-ascii?Q?bksTGxLKnkJYDHS39t9D5cdGerX3zL3aDMQNvtXEFIAFMsiT5Mvv2jpzv1Zs?=
+ =?us-ascii?Q?rm+S534Y3KlxrgLH2hsiF++aY9VenP2XMON4KdGjX4BtbK+iRrm5ACL5510y?=
+ =?us-ascii?Q?gaczYn7uQnHmDINpzHlGniclxUFvng7rq+7+Qrq2b31RUKiml8CXEMs1sCEw?=
+ =?us-ascii?Q?f3RrdZVH32DmloyToR610Bm9tM0IYd98aUOlEL1sXWFXvYaWZVESs9ITDQ5Y?=
+ =?us-ascii?Q?BeaqSNR3VkwkL8sHa8p+pGk57Szq/lZ7Sm1G7Sg7NtBMcGWAbW4fypA+kx+4?=
+ =?us-ascii?Q?RjtTwiEmdKHARnM31hE8EVY1Q2kdyN/uGLCUM8motL350smsQ48Na7zy8MMi?=
+ =?us-ascii?Q?J9RTHpX9MwshdiYKnhdvWQpHcpQlU2vEu+zc1N8KkzBeMKMg0lOLrzOYNt6J?=
+ =?us-ascii?Q?SdQetLvibTCmELVhtXaPfX6Zx/3gc/SyEL61+4E2m+9X0JS/o7dpszf8fkIj?=
+ =?us-ascii?Q?PnY3rdanWw4Oe5gwv+w64rJQbJYWQTN9w10PoLdsKJ+oGy9h6E3t8F9AJtVa?=
+ =?us-ascii?Q?dxOry/B7NLMF+852Tqo+E8h+cIcnxHLZMv75f4shYvizhMfBfLoU8iBn+mJG?=
+ =?us-ascii?Q?jl7b2TAevMHt7vjY/XE4zk/7Qd8yavcI5xiKMwyY57IKneMIE03pAPy2TKWQ?=
+ =?us-ascii?Q?iFulS478chefujoNE/AS5WKUHQP3KhdRfrTOFBMdiFE6Mo8IPs/5SFNzQ+xw?=
+ =?us-ascii?Q?JWzPl/Ij/kjDeAL0m60a60DH6nbFzV27CS/eY8YNW+wQJZxxH6LX/6LZgI84?=
+ =?us-ascii?Q?go/oIdJ+wy5wngCzWCbTRMULH3Rt/atVgurIHHIoZA1q8XThfeND9wtytjnM?=
+ =?us-ascii?Q?6yDGSV6EhSTXrA9ldeD2sBwAERHo5FIUbD+hEYpa69qOUp9dmiVbD6/NZC8i?=
+ =?us-ascii?Q?k3/5Z5S4BUZ6XN+eIDk7Pq4jwr4odSSLxcFx2aoFSxwO87XRNtgx6Jn/sVnN?=
+ =?us-ascii?Q?LlZmyfyyBx0LK4+OfmVzHnqbn3okovkct/InkV3nyDI8ikW4IhDWmjjaCfgm?=
+ =?us-ascii?Q?kvRX8OpDwdHx+SIquzZ8yb7QlwQvkY/LnUxiLRDwgznWYKZoyrSy6EJIhoYo?=
+ =?us-ascii?Q?ucCogRkRLNKKTRwti9+oyu9TRm9eScMK7FSzcDomEwwYybGFa7seknQiQgyO?=
+ =?us-ascii?Q?ntBoz8Da8t/w9KoTbV635+3dy6txWMv9KkZoEvvU9GgIWP4TDjCqgftyQyHU?=
+ =?us-ascii?Q?nw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	CF7dNrwUrOj6W+G8VCofQMy912OnPfdqaTydc4bGa2jtu/X9jmhTqJ8pgZuKB+ABzhNjXZ7vg1Nk8JWPDbHZ7k8Xma8Z7AZeaxi/opYPYyGEg/l0y3ZXdAajq9QCDVAWfi+u6olYMsUk2I6tICu/7b9Dh34eXMnG5ZPpOl3AfWOXZqhDQac9ULWf5Qsua/17yZqtcUM5uRrHJ6Hds0hKbxgUsZE9DnJ9s8MjGLh/3r4Ds+yGUkwyNNKRaCPJ6XVOttV8aSXGWsdmuwq0Tqppuj1WmxivhF3s4F+m2M04PNnJyY+X1/QZq2jpEazWG8vgM7upNpLF8rNcRziJ1n3KIGxmkREIw9sPBn9SfSlQaBcZyTAaYEiWmnADA6/ZaQGeFqNjeXm1wkBAke9KXffu5f00Qok7rpbGpj/nGjbP439sw1Ruagjt4urJipL4b0ecpW5UDLRAnBLtK5CCQyott9UpSjL6HAjHYoB1zldWFVlCK7ZqlvyWmhtFKQorerwjNxDanypgSGQZQ8VOgKPlbaBADadBONgHEALON5M296reJSUkxNdYFXOXLMfMvWXJtixnhMtOUgYjxlKu6CbViCuSB1ZK9jSDEOGoGs7pUJU=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9ad2aed-80cc-4ba5-7299-08dc2c1d65e1
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Feb 2024 22:53:15.6817
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NVxGrbHA+8LLpULcFe16pbX+cV9fiuIDhbcKrKRoCCAaACAnXpUNsCacc9YafmDaiLUVL4Elw7KmxJ7L4VExrw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB7166
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-12_18,2024-02-12_03,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 adultscore=0 spamscore=0 mlxlogscore=702 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
+ definitions=main-2402120179
+X-Proofpoint-ORIG-GUID: rj5vNhiGqhKnHe3lVzysbGADtAzFmmT2
+X-Proofpoint-GUID: rj5vNhiGqhKnHe3lVzysbGADtAzFmmT2
 
-On Mon, Feb 12, 2024 at 01:39:20PM -0800, Suren Baghdasaryan wrote:
-> If slabobj_ext vector allocation for a slab object fails and later on it
-> succeeds for another object in the same slab, the slabobj_ext for the
-> original object will be NULL and will be flagged in case when
-> CONFIG_MEM_ALLOC_PROFILING_DEBUG is enabled.
-> Mark failed slabobj_ext vector allocations using a new objext_flags flag
-> stored in the lower bits of slab->obj_exts. When new allocation succeeds
-> it marks all tag references in the same slabobj_ext vector as empty to
-> avoid warnings implemented by CONFIG_MEM_ALLOC_PROFILING_DEBUG checks.
+* Lokesh Gidra <lokeshgidra@google.com> [240212 17:31]:
+> I have also introduced a handler for finding dst_vma and preparing its
+> anon_vma, which is used in lock_vma() and find_vmas_mm_locked().
 > 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> ---
->  include/linux/memcontrol.h |  4 +++-
->  mm/slab.h                  | 25 +++++++++++++++++++++++++
->  mm/slab_common.c           | 22 +++++++++++++++-------
->  3 files changed, 43 insertions(+), 8 deletions(-)
+> Sounds good?
 > 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 2b010316016c..f95241ca9052 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -365,8 +365,10 @@ enum page_memcg_data_flags {
->  #endif /* CONFIG_MEMCG */
->  
->  enum objext_flags {
-> +	/* slabobj_ext vector failed to allocate */
-> +	OBJEXTS_ALLOC_FAIL = __FIRST_OBJEXT_FLAG,
->  	/* the next bit after the last actual flag */
-> -	__NR_OBJEXTS_FLAGS  = __FIRST_OBJEXT_FLAG,
-> +	__NR_OBJEXTS_FLAGS  = (__FIRST_OBJEXT_FLAG << 1),
->  };
->  
->  #define OBJEXTS_FLAGS_MASK (__NR_OBJEXTS_FLAGS - 1)
-> diff --git a/mm/slab.h b/mm/slab.h
-> index cf332a839bf4..7bb3900f83ef 100644
-> --- a/mm/slab.h
-> +++ b/mm/slab.h
-> @@ -586,9 +586,34 @@ static inline void mark_objexts_empty(struct slabobj_ext *obj_exts)
->  	}
->  }
->  
-> +static inline void mark_failed_objexts_alloc(struct slab *slab)
-> +{
-> +	slab->obj_exts = OBJEXTS_ALLOC_FAIL;
+> > I've also thought of how you can name the abstraction in the functions:
+> > use a 'prepare() and complete()' to find/lock and unlock what you need.
+> > Might be worth exploring?  If we fail to 'prepare()' then we don't need
+> > to 'complete()', which means there won't be mismatched locking hanging
+> > around.  Maybe it's too late to change to this sort of thing, but I
+> > thought I'd mention it.
+> >
+> Nice suggestion! But after (fortunately) finding the function names
+> that are self-explanatory, dropping them seems like going in the wrong
+> direction. Please let me know if you think this is a missing piece. I
+> am open to incorporating this.
 
-Uh, does this mean slab->obj_exts is suddenly non-NULL? Is everything
-that accesses obj_exts expecting this?
+This plan sounds good, thanks!
 
--Kees
+Regards,
+Liam
 
-> +}
-> +
-> +static inline void handle_failed_objexts_alloc(unsigned long obj_exts,
-> +			struct slabobj_ext *vec, unsigned int objects)
-> +{
-> +	/*
-> +	 * If vector previously failed to allocate then we have live
-> +	 * objects with no tag reference. Mark all references in this
-> +	 * vector as empty to avoid warnings later on.
-> +	 */
-> +	if (obj_exts & OBJEXTS_ALLOC_FAIL) {
-> +		unsigned int i;
-> +
-> +		for (i = 0; i < objects; i++)
-> +			set_codetag_empty(&vec[i].ref);
-> +	}
-> +}
-> +
-> +
->  #else /* CONFIG_MEM_ALLOC_PROFILING_DEBUG */
->  
->  static inline void mark_objexts_empty(struct slabobj_ext *obj_exts) {}
-> +static inline void mark_failed_objexts_alloc(struct slab *slab) {}
-> +static inline void handle_failed_objexts_alloc(unsigned long obj_exts,
-> +			struct slabobj_ext *vec, unsigned int objects) {}
->  
->  #endif /* CONFIG_MEM_ALLOC_PROFILING_DEBUG */
->  
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index d5f75d04ced2..489c7a8ba8f1 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -214,29 +214,37 @@ int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
->  			gfp_t gfp, bool new_slab)
->  {
->  	unsigned int objects = objs_per_slab(s, slab);
-> -	unsigned long obj_exts;
-> -	void *vec;
-> +	unsigned long new_exts;
-> +	unsigned long old_exts;
-> +	struct slabobj_ext *vec;
->  
->  	gfp &= ~OBJCGS_CLEAR_MASK;
->  	/* Prevent recursive extension vector allocation */
->  	gfp |= __GFP_NO_OBJ_EXT;
->  	vec = kcalloc_node(objects, sizeof(struct slabobj_ext), gfp,
->  			   slab_nid(slab));
-> -	if (!vec)
-> +	if (!vec) {
-> +		/* Mark vectors which failed to allocate */
-> +		if (new_slab)
-> +			mark_failed_objexts_alloc(slab);
-> +
->  		return -ENOMEM;
-> +	}
->  
-> -	obj_exts = (unsigned long)vec;
-> +	new_exts = (unsigned long)vec;
->  #ifdef CONFIG_MEMCG
-> -	obj_exts |= MEMCG_DATA_OBJEXTS;
-> +	new_exts |= MEMCG_DATA_OBJEXTS;
->  #endif
-> +	old_exts = slab->obj_exts;
-> +	handle_failed_objexts_alloc(old_exts, vec, objects);
->  	if (new_slab) {
->  		/*
->  		 * If the slab is brand new and nobody can yet access its
->  		 * obj_exts, no synchronization is required and obj_exts can
->  		 * be simply assigned.
->  		 */
-> -		slab->obj_exts = obj_exts;
-> -	} else if (cmpxchg(&slab->obj_exts, 0, obj_exts)) {
-> +		slab->obj_exts = new_exts;
-> +	} else if (cmpxchg(&slab->obj_exts, old_exts, new_exts) != old_exts) {
->  		/*
->  		 * If the slab is already in use, somebody can allocate and
->  		 * assign slabobj_exts in parallel. In this case the existing
-> -- 
-> 2.43.0.687.g38aa6559b0-goog
-> 
-
--- 
-Kees Cook
 
