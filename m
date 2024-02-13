@@ -1,125 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-11402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21C68536D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 18:08:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C49B5853712
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 18:17:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55281B22CA2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 17:08:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F7221F29D57
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 17:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B04F55FF01;
-	Tue, 13 Feb 2024 17:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8AA75FDC7;
+	Tue, 13 Feb 2024 17:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iCCw0gWT"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AyoMW9YA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121395FEEB;
-	Tue, 13 Feb 2024 17:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606285FDB7
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 17:17:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707844082; cv=none; b=P30IqzBYnM+IIx7gdLTgrsvPJto59fFtJNe4Y93BGvfs2Tc5VGS7oy5ly3QGvMSDDupHWfnhSroLum/tTk/o5zIRlwRPmgQVzhzWt1dkELktZWrQ00yaRxhOTGFZykAaVjU6G27SxDruVVMmLOdJvIPYbN+PZOisHs7u7DTbxGE=
+	t=1707844660; cv=none; b=OOmuNvylN3IJoxU/0thaybbxdQLJM8ldBUxGted+Gf527ofdpUI+p++GVC5MatYr4CgT8fvOKBUS3Cbq/gy/XALck19JkSA3AHpef3TzZgrDRJniogQFiSAjcGNiOTHyBsI+U46Tub3sgnH29en9DywFX8gMJ1g3psSZzV61LvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707844082; c=relaxed/simple;
-	bh=kMKt48JtyhnSZZmYJ+tvCCqJgAdUtaJZ3EdoLQoxG8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NMtiFnmue5DkO4yzaapB7Oti3qvzrl2jDEBtgmriu5tyUOeOOYFsYhT7pHJ0lAkaJap+vl54vEsvw7BTH2LeBYd8Xl/8KS+EMN1wGz8aHCOqu5kUtuTRFT5YKgMeWj8oTKBoETYf0Qz+baJbVpx3kgMiaB6OD6j6tgBIo0CDwD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iCCw0gWT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72026C433F1;
-	Tue, 13 Feb 2024 17:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707844081;
-	bh=kMKt48JtyhnSZZmYJ+tvCCqJgAdUtaJZ3EdoLQoxG8s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iCCw0gWTjAL16cZFq1cKkWv34iqARLorO+GqyHVEmPmfKRM7IFt5RlIGulxSTJX+L
-	 vNAsup03pZfjMdBvoSGqmT7lhjtiX0dIkIoCVZ/QdTvWUB7CyXztNE7xrPenIuZC6S
-	 +mRelsv033/oQl+98xqRrieXD3LkrMFIzlupPKBoHc1mG4B43fxU/bwRod84hDaQvx
-	 hi1BbVvZRog4Da8V5cnnokfX2mBhuNf737SUxr/QXftnZviTv+4b5bQzS2aWu0BZ5G
-	 TceR8R12VIk/+VS0N+j5eE0IohF+orI9ueQmDxwFzzKDVE4/J6VFemmWD9qRSMCSIW
-	 JI3ze1A+iHe7A==
-Date: Tue, 13 Feb 2024 09:08:00 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: hch@lst.de, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	dchinner@redhat.com, jack@suse.cz, chandan.babu@oracle.com,
-	martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com
-Subject: Re: [PATCH 2/6] fs: Add FS_XFLAG_ATOMICWRITES flag
-Message-ID: <20240213170800.GZ6184@frogsfrogsfrogs>
-References: <20240124142645.9334-1-john.g.garry@oracle.com>
- <20240124142645.9334-3-john.g.garry@oracle.com>
- <20240202175701.GI6184@frogsfrogsfrogs>
- <28399201-e99f-4b03-b2c0-b66cc0d21ce6@oracle.com>
+	s=arc-20240116; t=1707844660; c=relaxed/simple;
+	bh=38kx9jmZ+jYww0779Ipx7DvRovCFEMpqxhaviyzCy3A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MfsKru+VuvndsN2/5TTj3NgDfaslZaKRfgeT0gPNgbc1AH03vaHaPzI8AlnT/VImbkdwddWJbzundDzAJZhNQXDlr5/aZuR13ouJArDFalR/35e+9/QYXtjDCsTNCHuVtEdk//p+Dowpn4sSS6NQwgt5g2zMhM8Oz9eqx2UuUhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AyoMW9YA; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a3d2587116aso43147666b.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 09:17:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1707844656; x=1708449456; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fz+HP5pKdIXtr5W2norUinvVaUURHHECi/4WZsXtlUc=;
+        b=AyoMW9YAxWTxwMReVlhbCVDmrh84/q/Y2nsb0tqjhUPwtJERGorclcx8XFzHRLfNLj
+         HEsv6xXktaJ8ogy9GQDh1BaYMUdKIxFnIeKxnDw97xIPCtWjOS0IyPhWrL+ojPMCq/0/
+         uwe2yVIEqlYJaIH1kvicqCk8qGUR9qpuu3D/g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707844656; x=1708449456;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fz+HP5pKdIXtr5W2norUinvVaUURHHECi/4WZsXtlUc=;
+        b=PSKGwQw+eBy/beJCI9kme77YHlCwE0KbVQPa/MSnHSCQ+Nnz0eQMTW2m8O2QQOp/tB
+         ecbrPyCiL0VOMsK5myCzqk1ZaJkM/xqYm6phOXqRkIKMlYydfCdj7g+G9q01BAD/NyFH
+         zlTMS/7EyvX9O4rRPesHl3n6MqVt4YjtppU18mPvb8WnRPunevUNWgsXihg+OjeTMlcc
+         9KtuNDkOCInGjF731mgXOS7E2m4UoZ4UvRvfGuFHAFfWaquwtB3Qi7mX8/exsiSGQXLT
+         O91C1kZxgjtX+uFz6iMXo8JgHDO6+Kqf/CkhP86YAfx6dS2aTyzUnggLQG0kMfbp5Faw
+         zZSQ==
+X-Gm-Message-State: AOJu0YyseTybJQCFFqLVH6ulosxKDD7uHbQKlxnAZm1+5GpnKcX4RZL8
+	+HZGSw7P7Djtr7CCS35V+cM8IAUZtTwSQQeJTvOQLOJUGe/78JCtfWQ1/mhTOl73I1AX4IamkyO
+	RlSIdog==
+X-Google-Smtp-Source: AGHT+IEcp4A8Ai2QaRrcCs1XOJTHcwmLI+ZOezXjv1R8RmxsuGCOzvnPvYMdjHb3pd3zwUSDQ15zuw==
+X-Received: by 2002:a17:906:4f09:b0:a3d:1798:deab with SMTP id t9-20020a1709064f0900b00a3d1798deabmr1310289eju.6.1707844656247;
+        Tue, 13 Feb 2024 09:17:36 -0800 (PST)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id lz23-20020a170906fb1700b00a3af8158bd7sm1474854ejb.67.2024.02.13.09.17.35
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Feb 2024 09:17:35 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5600c43caddso5555898a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 09:17:35 -0800 (PST)
+X-Received: by 2002:aa7:d1cb:0:b0:55f:99:c895 with SMTP id g11-20020aa7d1cb000000b0055f0099c895mr220909edp.20.1707844655189;
+ Tue, 13 Feb 2024 09:17:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <28399201-e99f-4b03-b2c0-b66cc0d21ce6@oracle.com>
+References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org> <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
+In-Reply-To: <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 13 Feb 2024 09:17:18 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjr+K+x8bu2=gSK8SehNWnY3MGxdfO9L25tKJHTUK0x0w@mail.gmail.com>
+Message-ID: <CAHk-=wjr+K+x8bu2=gSK8SehNWnY3MGxdfO9L25tKJHTUK0x0w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
+To: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
+	Tycho Andersen <tycho@tycho.pizza>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Feb 05, 2024 at 12:58:30PM +0000, John Garry wrote:
-> On 02/02/2024 17:57, Darrick J. Wong wrote:
-> > On Wed, Jan 24, 2024 at 02:26:41PM +0000, John Garry wrote:
-> > > Add a flag indicating that a regular file is enabled for atomic writes.
-> > 
-> > This is a file attribute that mirrors an ondisk inode flag.  Actual
-> > support for untorn file writes (for now) depends on both the iflag and
-> > the underlying storage devices, which we can only really check at statx
-> > and pwrite time.  This is the same story as FS_XFLAG_DAX, which signals
-> > to the fs that we should try to enable the fsdax IO path on the file
-> > (instead of the regular page cache), but applications have to query
-> > STAT_ATTR_DAX to find out if they really got that IO path.
-> 
-> To be clear, are you suggesting to add this info to the commit message?
+On Tue, 13 Feb 2024 at 08:46, Christian Brauner <brauner@kernel.org> wrote:
+>
+> * Each struct pid will refer to a different inode but the same struct
+>   pid will refer to the same inode if it's opened multiple times. In
+>   contrast to now where each struct pid refers to the same inode.
 
-That and a S_ATOMICW flag for the inode that triggers the proposed
-STAT_ATTR_ATOMICWRITES flag.
+The games for this are disgusting. This needs to be done some other way.
 
-> > "try to enable atomic writes", perhaps? >
-> > (and the comment for FS_XFLAG_DAX ought to read "try to use DAX for IO")
-> 
-> To me that sounds like "try to use DAX for IO, and, if not possible, fall
-> back on some other method" - is that reality of what that flag does?
+Yes, I realize that you copied what Al did for nsfs. It's still
+entirely disgusting.
 
-As hch said, yes.
+To quote the Romans: "Quod licet Al, non licet bovi".
 
---D
+It might be a *bit* less disgusting if we hid the casting games with
+"atomic_long_xyz" by having nice wrappers that do "atomic_ptr_xyz".
+Because having an "atomic_long_t" and stuffing a dentry pointer in it
+is just too ugly for words.
 
-> Thanks,
-> John
-> 
-> > 
-> > --D
-> > 
-> > > 
-> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> > > ---
-> > >   include/uapi/linux/fs.h | 1 +
-> > >   1 file changed, 1 insertion(+)
-> > > 
-> > > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> > > index a0975ae81e64..b5b4e1db9576 100644
-> > > --- a/include/uapi/linux/fs.h
-> > > +++ b/include/uapi/linux/fs.h
-> > > @@ -140,6 +140,7 @@ struct fsxattr {
-> > >   #define FS_XFLAG_FILESTREAM	0x00004000	/* use filestream allocator */
-> > >   #define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
-> > >   #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
-> > > +#define FS_XFLAG_ATOMICWRITES	0x00020000	/* atomic writes enabled */
-> > >   #define FS_XFLAG_HASATTR	0x80000000	/* no DIFLAG for this	*/
-> > >   /* the read-only stuff doesn't really belong here, but any other place is
-> > > -- 
-> > > 2.31.1
-> > > 
-> > > 
-> 
-> 
+But I do think that if we're going to do the same disgusting thing
+that nsfs does, then the whole "keep one dentry" logic needs to be
+shared between the two filesystem. Not be two different copies of the
+same inscrutable thing.
+
+Because they *are* the same thing, although you wrote the pidfs copy
+slightly differently.
+
+I was ok with one incredibly ugly thing, but I'm not ok with having it
+copied and duplicated.
+
+               Linus
 
