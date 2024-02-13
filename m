@@ -1,185 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-11331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2758A852BFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 10:10:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ABF2852C70
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 10:39:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A68891F221E5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 09:10:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1763E283645
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 09:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4951BDC2;
-	Tue, 13 Feb 2024 09:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TE/eMZ9m"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE75A24A1D;
+	Tue, 13 Feb 2024 09:36:08 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AF251B971;
-	Tue, 13 Feb 2024 09:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4AF2375F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 09:36:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707815438; cv=none; b=F+FHarnfoGV56G2GWhT184FCgCSJishodlyTooGzEjaCBDPdD73BhqGLZNXirU3xurGf4pl3eigyvNeuZvL0JKrA1L6oR65+VnyzgJAbI6AAsJE1xms8hr6Pb5PN6rHWvNjl3HRgpbUTVUUebdOPCqgmZpYJuSBqOtiDcvycsGs=
+	t=1707816968; cv=none; b=PZaC2C6IpaSuIXUcfgaEHcCBW09rFSfYJJNvIpyZlKNiKsQTtxMZuifWJ6VSdrOcX1Eu3iwOjJRY66jOc1EnVVkJjPeQVEAapwJRiX84MVxyPniN63wURYj1T5mI5i16PpcyQzyyBI7KFCBucKgPSmi0LJi118W3aUDB7czHKus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707815438; c=relaxed/simple;
-	bh=tU1izEN1R300M3GRjsbx3Ptb75JlUiW5CWuiqarnev0=;
-	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=CmgZ/5dOvzkxlS7PdjMeU7rnMozBIANxJy8ASCcbqbewvOvOxBmBxIo+eNzR1CwFlD3nLutF9BkqHYg60xATxXkCIL5RKEYuJyr+IZ91oA1pELzOEriKOZuW4v4GhLGgD/PaLMCxOiC6K59QLyVD1vhv6+PW/Jbu3mY1fWihLpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TE/eMZ9m; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6e09493eb8eso2492439b3a.1;
-        Tue, 13 Feb 2024 01:10:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707815436; x=1708420236; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=W1/O2QjCeIjREkCInLlmtuYFHINhFGizDhhNZ+7JUBQ=;
-        b=TE/eMZ9mWVsdNEIq4TZcvdNMTVbB8yVs98qgNZWR9TUt624gh0idYSINbZZ1PQtPMW
-         aAGfhowUanziPAdm189ryz6kE4wfTi5p6JD8H7XZela7nc+fKK6QWvw64DP3VcnDTolr
-         Kv6sOVJFGf/TVeNk2hn9lBiIu3BdW5ocplk2oQGIpWrehSpCzKKyD7MeEKbj2xwcS9Xn
-         y3Ze7Bf8NzE1uWN8NVkA+w95rfj2nVnDfuMzSZDRJv0Kgj0ScR8mB30o8cCgbOQoBiW9
-         i9ISFxM7sJJBoWN7Cj97Skw66aVMEmB9GWKIYQn0EebODhFCjow6Cq3mbN6Ljln4On68
-         NVNw==
+	s=arc-20240116; t=1707816968; c=relaxed/simple;
+	bh=gB9pF2IRnItjsStceZOJgtsH/zgzqRAJJ6aBRP8TlIo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iyAapKLhxMSM0nxR27NGJar2ft4W6RfNNljsUfZN19ZojbF7Ma9b8QmyiBkQhcfgvp7zfb0eFwMoYnT+lPB9nDQi3n2Fgpn+A8jhPFq+crWbAuYH9N586AAusRONn1+SPfMHXPtAC2YsStRZgVliks7+vRh2Up9DRn1EncEgWVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7bf48e0f513so486526739f.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 01:36:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707815436; x=1708420236;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=W1/O2QjCeIjREkCInLlmtuYFHINhFGizDhhNZ+7JUBQ=;
-        b=H5CNacFj+tdAw3PlkznCgSR1L6Mo/7sTyLv8eaxrzeMKBpmCZ88HTm1roaWY5i3HCM
-         t5yVeCzChe2Gk0twoNa7jw2NhbTQJVRJpHH6Wb1tuoTa79uAcpD/cT0CRW+W/3347awu
-         F87GYewD6lMk+Qwo7yuXDw1cg3A3xNbRLnIhv/UW8p3lH3s28S/u50yzH5EsKsS8nOgm
-         l38NW+9sEQW8Dva+6r89osaAj3jAz3/CNCT1eKlG3oQabgG75Xk0kfqf03COUqvf1IVk
-         VpDAduFbzSPQAjYLPSteFYcP1r56D9Jz1W/PkANtu42/Alhyp2BcdGnqm+ZGQ/QeeyNJ
-         DWNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5FnKcaBPIcmLayf7N39FxPuMs6f2W4VPbLNqYUthcMkajyaNn7uR3Hr8AiyhS77hEu80FmZfCEd5Wu4t01hgc7vCHViaRnda/IDBfAL+5hz0gNFNplZtx8M4GNQ5jPB4qrJYExi7m/7m+MX2g2zICqXy8W2lnzeemTmb3WBT+CDto5Z0J+A==
-X-Gm-Message-State: AOJu0YztV6lleTHVwM0Cj+HsGSr5L5dsQrWoQBDGcHQq8r7Ap5yZRg6x
-	UbHcbn25IO1gVEzh38IrfXCFI5qePfqZmJcRSkW166hmjjBaKabw
-X-Google-Smtp-Source: AGHT+IGat9zcEfbh7wFP8V0eWZQEkCCMSR9MkFJn/3a4Dii6KmWVG5zgviI+hT2Whj4qR1SjogI/Eg==
-X-Received: by 2002:a05:6a21:3a87:b0:19e:9da4:1a10 with SMTP id zv7-20020a056a213a8700b0019e9da41a10mr2970622pzb.21.1707815436247;
-        Tue, 13 Feb 2024 01:10:36 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXLgSrCUNLapaSsvzyiglcq5q2LrPXePcu8HJTHizask0YkkN964YKPndHwH/K0nGCRz4THtIq0YTf/2AE+KIxHKMlIyzrAZmMiPyMmILGMvqliGbLyrof8cAEdc/5eqR9ZAvOZJVZVfF2NsLvd0K5m2v1R5EKv/plf4sBosbfxZHs/kZsXO/8rAyxFYv9vIjGv8paofCTlbAKPKxC+u1Fo0t0limMLh35I0LXpEoPnrX+N4ydDNrAiocFzgjER198Q7V7aPZhsHnW0Yl/zQ1Qk2dmxSfFcUCU1NloKjUJPDYW+ju3Mwrd/Y4qI6X5h53P0UpgvVEjcYi0kp36Xl1/I67/zd2ydzfiWB0bPn2tNnTk+GHBIUMUE9M7GzCd74/BdMOjcBhueMXUe1mfHFsOPaRDxl28phiPJY0AHI38aKGvDiEesn1Rb
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id lm17-20020a056a003c9100b006e080d792acsm6797067pfb.184.2024.02.13.01.10.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Feb 2024 01:10:35 -0800 (PST)
-Date: Tue, 13 Feb 2024 14:40:29 +0530
-Message-Id: <87a5o4viey.fsf@doe.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, hch@lst.de, djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, jack@suse.cz, chandan.babu@oracle.com
-Cc: martin.petersen@oracle.com, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com
-Subject: Re: [PATCH 0/6] block atomic writes for XFS
-In-Reply-To: <875feb7e-7e2e-4f91-9b9b-ce4f74854648@oracle.com>
+        d=1e100.net; s=20230601; t=1707816966; x=1708421766;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ejmJHoSutOTLtAXSDyUaj9KDqD1qf6XgyfbLUi69VDI=;
+        b=ULsVzV2ioTGfdQkeDk4Iu2ZM+9fVRmjJ9tPAqI3Pq2I/X666JQ1RI8n/VdwhfDweAn
+         tWvPlFvlQy9jPM2m0cXv+0qCdW16I0WAm5H1NI3UKQzzqqcHFOhO8/3Dj+M0trAx+liO
+         sy67f12TWgTzgKzvefc7tbG5XB6032oN6SD2Qs7wC3qQjVl5Mecx3sKj/3bzACrwzQMH
+         O/jRNQPqpI/Lb5RXXtTDBfczRN53vgQFFAIDKnFk/k76WVCSxJWvjDTB4Ro9vK8iqMLu
+         JaPwiUCkhyB1HTT3IH8R6lOtFVs6eOPFVzulGXFDiLyu27QIJb57qOhHNVF+xK8F59pU
+         dItw==
+X-Gm-Message-State: AOJu0Yx+EFmdk1AQEtwARDSsqr+6EPDE0H9RZEG+ta/7cPyzciApmaNm
+	nOG5GQG89KA8awBYfIYAGFrjy3SEFgE+UKSs+y/KOiplYNON0xeQzk3IXcLAiY6J2WRCcK6UPh2
+	6msHUMyMQs6AG9AFrCdlP7XbNNfWn1GtoSYi8gdh/EKLbLjkhxmy47+U=
+X-Google-Smtp-Source: AGHT+IEnypRnnduK0++8Kzb3OZ3IgCZSNrsFE6lWS8ZuFX+JdVG46nZmpYa2s1v0Ens4vt7ghmy7mqj915xOsfZ0xHJrPxrbY6Bt
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6638:6d15:b0:471:107d:6708 with SMTP id
+ he21-20020a0566386d1500b00471107d6708mr126223jab.1.1707816966146; Tue, 13 Feb
+ 2024 01:36:06 -0800 (PST)
+Date: Tue, 13 Feb 2024 01:36:06 -0800
+In-Reply-To: <00000000000079c7640604eefa47@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009bd5560611401f9d@google.com>
+Subject: Re: [syzbot] [jfs?] kernel BUG in txLock
+From: syzbot <syzbot+451384fb192454e258de@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
+	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-John Garry <john.g.garry@oracle.com> writes:
+syzbot suspects this issue was fixed by commit:
 
-> On 13/02/2024 07:45, Ritesh Harjani (IBM) wrote:
->> John Garry <john.g.garry@oracle.com> writes:
->> 
->>> This series expands atomic write support to filesystems, specifically
->>> XFS. Since XFS rtvol supports extent alignment already, support will
->>> initially be added there. When XFS forcealign feature is merged, then we
->>> can similarly support atomic writes for a non-rtvol filesystem.
->>>
->>> Flag FS_XFLAG_ATOMICWRITES is added as an enabling flag for atomic writes.
->>>
->>> For XFS rtvol, support can be enabled through xfs_io command:
->>> $xfs_io -c "chattr +W" filename
->>> $xfs_io -c "lsattr -v" filename
->>> [realtime, atomic-writes] filename
->> 
->> Hi John,
->> 
->> I first took your block atomic write patch series [1] and then applied this
->> series on top. I also compiled xfsprogs with chattr atomic write support from [2].
->> 
->> [1]: https://lore.kernel.org/linux-nvme/20240124113841.31824-1-john.g.garry@oracle.com/T/#m4ad28b480a8e12eb51467e17208d98ca50041ff2
->> [2]: https://github.com/johnpgarry/xfsprogs-dev/commits/atomicwrites/
->> 
->> 
->> But while setting +W attr, I see an Invalid argument error. Is there
->> anything I need to do first?
->> 
->> root@ubuntu:~# /root/xt/xfsprogs-dev/io/xfs_io -c "chattr +W" /mnt1/test/f1
->> xfs_io: cannot set flags on /mnt1/test/f1: Invalid argument
->> 
->> root@ubuntu:~# /root/xt/xfsprogs-dev/io/xfs_io -c "lsattr -v" /mnt1/test/f1
->> [realtime] /mnt1/test/f1
->
-> Can you provide your full steps?
->
-> I'm doing something like:
->
-> # /mkfs.xfs -r rtdev=/dev/sdb,extsize=16k -d rtinherit=1 /dev/sda
-> meta-data=/dev/sda               isize=512    agcount=4, agsize=22400 blks
->           =                       sectsz=512   attr=2, projid32bit=1
->           =                       crc=1        finobt=1, sparse=1, rmapbt=0
->           =                       reflink=0    bigtime=1 inobtcount=1 
-> nrext64=0
-> data     =                       bsize=4096   blocks=89600, imaxpct=25
->           =                       sunit=0      swidth=0 blks
-> naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
-> log      =internal log           bsize=4096   blocks=16384, version=2
->           =                       sectsz=512   sunit=0 blks, lazy-count=1
-> realtime =/dev/sdb               extsz=16384  blocks=89600, rtextents=22400
-> # mount /dev/sda mnt -o rtdev=/dev/sdb
-> [    5.553482] XFS (sda): EXPERIMENTAL atomic writes feature in use. Use 
-> at your own risk!
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-My bad, I missed to see your xfsprogs change involve setting this
-feature flag as well during mkfs time itself. I wasn't using the right
-mkfs utility.
+    fs: Block writes to mounted block devices
 
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1588d6ec180000
+start commit:   65d6e954e378 Merge tag 'gfs2-v6.5-rc5-fixes' of git://git...
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ff0db7a15ba54ead
+dashboard link: https://syzkaller.appspot.com/bug?extid=451384fb192454e258de
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=140b48c8680000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15276fb8680000
 
-> [    5.556752] XFS (sda): Mounting V5 Filesystem 
-> 6e0820e6-4d44-4c3e-89f2-21b4d4480f88
-> [    5.602315] XFS (sda): Ending clean mount
-> #
-> # touch mnt/file
-> # /xfs_io -c "lsattr -v" mnt/file
-> [realtime] mnt/file
-> #
-> #
-> # /xfs_io -c "chattr +W" mnt/file
-> # /xfs_io -c "lsattr -v" mnt/file
-> [realtime, atomic-writes] mnt/file
->
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Yup, this seems to work fine. Thanks!
+#syz fix: fs: Block writes to mounted block devices
 
-> And then we can check limits:
->
-> # /test-statx -a /root/mnt/file
-> dump_statx results=9fff
->    Size: 0               Blocks: 0          IO Block: 16384   regular file
-> Device: 08:00           Inode: 131         Links: 1
-> Access: (0644/-rw-r--r--)  Uid:     0   Gid:     0
-> Access: 2024-02-13 08:31:51.962900974+0000
-> Modify: 2024-02-13 08:31:51.962900974+0000
-> Change: 2024-02-13 08:31:51.969900974+0000
->   Birth: 2024-02-13 08:31:51.962900974+0000
-> stx_attributes_mask=0x603070
->          STATX_ATTR_WRITE_ATOMIC set
->          unit min: 4096
->          unit max: 16384
->          segments max: 1
-> Attributes: 0000000000400000 (........ ........ ........ ........ 
-> ........ .?-..... ..--.... .---....)
-> #
-> #
->
-> Does xfs_io have a statx function? If so, I can add support for atomic 
-> writes for statx there. In the meantime, that test-statx code is also on 
-> my branch, and can be run on the block device file (to sanity check that 
-> the rtvol device supports atomic writes).
->
-> Thanks,
-> John
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
