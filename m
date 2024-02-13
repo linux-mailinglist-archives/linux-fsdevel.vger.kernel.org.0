@@ -1,154 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-11367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B958B85317F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 14:14:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F37A8531AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 14:22:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4917AB250C7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 13:14:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DC33B22AA2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 13:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A496455C34;
-	Tue, 13 Feb 2024 13:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GN4MZxdr"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D6E55E43;
+	Tue, 13 Feb 2024 13:22:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AD555C03
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 13:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78A9855E41
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 13:22:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707830039; cv=none; b=S2q7cSpSLNECmqtQPfrIsi1lBDslJJ3OiS/3LLOqjTK5TkiDJH061cRIdG5OboxpfXKt+ouWyoLXiyOPArmY259lN+rLmnfymlealWWo20JMYh0Azc0j1KS7dnBV6Ab5aQ2Cd2/6l2ZOHAYnYFpun9UPWougY+Tzb4vFUDcT5sM=
+	t=1707830524; cv=none; b=fpKBf/jvdfasEcYQwMI4T+cKH9M+cU7PbgEcPQfy/SOTnTEuv+H1dt4j6T+bYK3YtxrAJgEHdB0vV0qP5XcRaPHYvzuJfueFbG1U5AbAyE0/qM3P1YZWVHtM2CuwdSmjS5O9mi3QmtlUf1fwPLznz93s3w/pq3WeCqvZVtSkgIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707830039; c=relaxed/simple;
-	bh=7FBpWBbWzBXHIKgl2tq+O44Trivzk8mNpb/YfWXNbx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tDCKRik0voNougb7uEQ4lNeQgHML5ZIq0LzMOLzTqmcvIAPiFHWkzN3vT+eKuPzsXg+HQ//EsKXF5FS2jfZeM6Qf/yi+ggb0k2gh41dwQkKda+LR82Zn6BppCBpBO5ZXri7btqtPbMVIW2ayi1aDMr63Y3xhkZR+sYXem2GddZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GN4MZxdr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707830036;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lrJK7/vivRjYFBV9aMR7eUFZf9Hk2Ry4XzHvi+/bIaM=;
-	b=GN4MZxdrM6IJiHXMe6nHiqVXZOoqskVxwbuFqnqTFVQSHMfnDoQlilZidz5SQERS6LiGsp
-	5acxtRdEj3SmWbETmafiIPxNmUyLr/fXymUdF+AFKGSF6ww48vQej8GIWVEl5NK5SdKAXx
-	gnOCbH/WrDQ51wqRd12K9BIY2BQzR4E=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-586-Rve8DbtKO0WXuzTho1yCQQ-1; Tue, 13 Feb 2024 08:13:53 -0500
-X-MC-Unique: Rve8DbtKO0WXuzTho1yCQQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 88428101A52A;
-	Tue, 13 Feb 2024 13:13:52 +0000 (UTC)
-Received: from bfoster (unknown [10.22.16.56])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 2308F2022AAC;
-	Tue, 13 Feb 2024 13:13:52 +0000 (UTC)
-Date: Tue, 13 Feb 2024 08:15:29 -0500
-From: Brian Foster <bfoster@redhat.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.com>,
-	David Howells <dhowells@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/14] writeback: don't call mapping_set_error in
- writepage_cb
-Message-ID: <ZctrcZSvO8rjRwrp@bfoster>
-References: <20240212071348.1369918-1-hch@lst.de>
- <20240212071348.1369918-2-hch@lst.de>
- <20240213130713.ysuxaqcwizqwjke2@quack3>
+	s=arc-20240116; t=1707830524; c=relaxed/simple;
+	bh=WCWqpEWxIIzybG/fHZHmHyhLo+i18DFBT57pGNH7hN4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Emk/F4eihXm0+PaYqcgcGiDUWO5H7IRRSw+ycq706vMyqSpd5cGIZ3YQn1KYqz4Z9HrTbbsQqkYyrnju1qJviJVf6QzuK49Swoh2dBWqaMtwtDfoXJtgzDgvZQVFiOO6q3aCAuI3wv8YuUObBrPsOcdgRm9otbfCGfOUSLZLClY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-363befae30fso39798945ab.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 05:22:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707830522; x=1708435322;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gYC1BcP9cXtmRiUh/zwpL7m1Q5/5Z9cxadj63ttyamk=;
+        b=cmKgWl0WVIKKht5BZyf5bfZLJH/Det5GPKg6uhxen9a4oUtB0aDKCXxuz5Sn/r1wMQ
+         6Uzi0PTIZDWvXpTmut3rzhZbMzUZXYrI6pQe9PcMOfWhOhkOwgOSlIWiX54PnUxCx4ei
+         LJYw1R1yZHRGpI2C53gvUtv/lnwMi2TFkzVjet7dGlQjyB5rN/B1Txovw8FdWmsx9HRc
+         YGmi7q1lRRw1Gs0iprhcAQWmHVW8uFlVDALw9hivZsfp+34hYwWF5+03TGdiIhUmgK/D
+         0oKM+dkWlTM9AhQ9HQ2E/48JuAc+Yungt2378q6WX4C+CVl9TSrlRNjX0Z2Uvcfyg5tS
+         zqaA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3Ypdsjaud9BOTSBgJ6zYZMj/WE2vP7Tk9dUmVmfgXMzHgtJVNhF+vTf89yXDM4ZcE0iBwYGARuNjRxyup2LmvGcDMX9zzuk4vJtH7Yw==
+X-Gm-Message-State: AOJu0Ywb7fIIUl9ShY3LeZqb69TRWstNMOMiSRwyGfrc1R7AqWXXmfqH
+	ekktk3yZFi7EqxhhnXwDyyWTHIbIggnnXoclUienkEgPKRBd5PTe2cZjQg48FkC4nDS4/ff2+hG
+	DrzjbdCQ8bc6l99sBmu8Vtg38OzZEV0YB+KW572YCHXCyLhlk8KH+tpk=
+X-Google-Smtp-Source: AGHT+IGXI9Iojtpc1dEyKuCK0zBZZu4EdKWp8NMzR1lQhvbivqq5MzT9OLkVQE3n8Drb6/z7HxEtFBz5mx7G+UHYnIpXgZl/rNDk
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240213130713.ysuxaqcwizqwjke2@quack3>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
+X-Received: by 2002:a05:6e02:1d8c:b0:363:cc38:db22 with SMTP id
+ h12-20020a056e021d8c00b00363cc38db22mr845029ila.3.1707830522756; Tue, 13 Feb
+ 2024 05:22:02 -0800 (PST)
+Date: Tue, 13 Feb 2024 05:22:02 -0800
+In-Reply-To: <0000000000000faabc05ee84f596@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a545940611434746@google.com>
+Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_create_pending_block_groups
+From: syzbot <syzbot+5fd11a1f057a67a03a1b@syzkaller.appspotmail.com>
+To: anand.jain@oracle.com, brauner@kernel.org, clm@fb.com, dsterba@suse.com, 
+	johannes.thumshirn@wdc.com, josef@toxicpanda.com, linux-btrfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 13, 2024 at 02:07:13PM +0100, Jan Kara wrote:
-> On Mon 12-02-24 08:13:35, Christoph Hellwig wrote:
-> > writepage_cb is the iterator callback for write_cache_pages, which
-> > already tracks all errors and returns them to the caller.  There is
-> > no need to additionally cal mapping_set_error which is intended
->                           ^^^ call
-> 
-> > for contexts where the error can't be directly returned (e.g. the
-> > I/O completion handlers).
-> > 
-> > Remove the mapping_set_error call in writepage_cb which is not only
-> > superfluous but also buggy as it can be called with the error argument
-> > set to AOP_WRITEPAGE_ACTIVATE, which is not actually an error but a
-> > magic return value asking the caller to unlock the page.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> 
-> Our error handling in writeback has always been ... spotty. E.g.
-> block_write_full_page() and iomap_writepage_map() call mapping_set_error()
-> as well so this seems to be a common way to do things, OTOH ext4 calls
-> mapping_set_error() only on IO completion. I guess the question is how
-> an error in ->writepages from background writeback should propagate to
-> eventual fsync(2) caller? Because currently such error propagates all the
-> way up to writeback_sb_inodes() where it is silently dropped...
-> 
+syzbot suspects this issue was fixed by commit:
 
-A couple related notes from skimming around:
+commit a1912f712188291f9d7d434fba155461f1ebef66
+Author: Josef Bacik <josef@toxicpanda.com>
+Date:   Wed Nov 22 17:17:55 2023 +0000
 
-- Things like iomap might make this call in I/O completion paths, but
-  then invoke bio completion paths on submission side errors (i.e.
-  iomap_submit_ioend() -> bio_endio()).
-- __writeback_single_inode() calls filemap_fdatawait() shortly after
-  do_writepages(), which basically looks like it relies on mapping error
-  state to propagate error within the writeback path.
+    btrfs: remove code for inode_cache and recovery mount options
 
-The call removed by this path only seems to apply to contexts that don't
-define their own .writepages, so it's not clear to me how much this
-really matters. It just seems like it's a little hard to quantify
-whether this is an undesireable change in behavior or not.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113ba042180000
+start commit:   a4d7d7011219 Merge tag 'spi-fix-v6.4-rc5' of git://git.ker..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
+dashboard link: https://syzkaller.appspot.com/bug?extid=5fd11a1f057a67a03a1b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17887659280000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13ac4e93280000
 
-Brian
+If the result looks correct, please mark the issue as fixed by replying with:
 
-> 								Honza
-> 
-> > ---
-> >  mm/page-writeback.c | 5 ++---
-> >  1 file changed, 2 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-> > index 3f255534986a2f..62901fa905f01e 100644
-> > --- a/mm/page-writeback.c
-> > +++ b/mm/page-writeback.c
-> > @@ -2534,9 +2534,8 @@ static int writepage_cb(struct folio *folio, struct writeback_control *wbc,
-> >  		void *data)
-> >  {
-> >  	struct address_space *mapping = data;
-> > -	int ret = mapping->a_ops->writepage(&folio->page, wbc);
-> > -	mapping_set_error(mapping, ret);
-> > -	return ret;
-> > +
-> > +	return mapping->a_ops->writepage(&folio->page, wbc);
-> >  }
-> >  
-> >  int do_writepages(struct address_space *mapping, struct writeback_control *wbc)
-> > -- 
-> > 2.39.2
-> > 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
-> 
+#syz fix: btrfs: remove code for inode_cache and recovery mount options
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
