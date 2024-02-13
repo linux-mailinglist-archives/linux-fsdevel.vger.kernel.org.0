@@ -1,136 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-11405-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11406-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A86C085378E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 18:26:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D02C685387C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 18:37:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 662C528A8B8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 17:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B563286DAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 17:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AEE5FF15;
-	Tue, 13 Feb 2024 17:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3381E604B5;
+	Tue, 13 Feb 2024 17:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uRgat5YL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1035F54E;
-	Tue, 13 Feb 2024 17:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0A160277;
+	Tue, 13 Feb 2024 17:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707845197; cv=none; b=R1bYXXkVa4eSjI5bzrWNcIqyHTGQ7e5foFalkIsNMZLrsAbs1RpzkqLm2DcpwV3EbmMTRUQIIbK4tp+kFybwcvXJ+GDnNJHlbG3QjLbafVbjNFjtfzmxqnK6W/kt+dkTy4hYGkHi2Dx0Zs1o1BF8Y/RZHBhl8U7j6M5PmDwuNMA=
+	t=1707845825; cv=none; b=GUyo34wwukATmeCBmy4UJYYnWuu+hUz3fAYIhcCkWIgimHIm6NEywo3+rWCaDuL3aCfL/bnP9WWPTR0r78V7hfhjLdlRwIrcVTZFgXGcbdLi5IQZ/dUcuhxvXSkZuEaFY1h3jFdLneGYrvZX+Ab4WzXvyLZQOxhtai0gJpMUEBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707845197; c=relaxed/simple;
-	bh=R4W/x6sdikq9L5mixsfBJrQlDgWaZ0hlbKehGewQpgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Bpv+ETvxc3uxOp4XmDz1Cw1ZpprtDQkn21HxeeumLOTto2Pwqc4ZcK9AdTuuAt1RoKaCGiTYqnsIVqcm1sTphAFRNZOgFzk8+0q3Tp/T7m2zYuNFIB+FzecHVP5kv7kvriGoBM9WcbuUF/jrm+6O2B42GsQCL+MpSZroLNydico=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 724E71FB;
-	Tue, 13 Feb 2024 09:27:15 -0800 (PST)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 155943F5A1;
-	Tue, 13 Feb 2024 09:26:27 -0800 (PST)
-Message-ID: <b008bd2d-a189-481f-917d-bb045c43cb07@arm.com>
-Date: Tue, 13 Feb 2024 17:26:26 +0000
+	s=arc-20240116; t=1707845825; c=relaxed/simple;
+	bh=weTfkdDGfVyj9ft48D1i7g/tBfv43g3swJkzlG5GT7Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E1KU2SKw4JXvkeWdc0BJWm7Cf6QL/5zVGfAiWgy+KkCKzxWYeeT5lFi+utGRsm4+X3bezpImAXYzEXQrLZPH3hidCYzFYRpUl/Ib/1LWdAYVihM6ql5kUBWeHecgAS6X224pOH6uPmREePSK9zsfTQzdhn3jb8TYQPmUub+YyBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uRgat5YL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 299A0C43390;
+	Tue, 13 Feb 2024 17:37:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707845825;
+	bh=weTfkdDGfVyj9ft48D1i7g/tBfv43g3swJkzlG5GT7Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uRgat5YLmBlCUakEyYE3n6PfDxy+ugO7fNxY/oIoUHCH/jNIZxiw6luO2bZ5Ln0zO
+	 8dc2au/LoB7zgGiIqfXN45FSe5p2blBJknTqydtiZ5Ak86al+yRm58ncY3pAebrBbv
+	 pZh26fXkrJcJz17DKn+pcumVclhI3SyOUOl5FryZ6geh2yOfbenW3zn4VxUAzTPCrQ
+	 VJ6cuGU2+fPCKziiJ9wOSjb72APkkw65xXOGXGRCef/mDtszsyeBFPd82tpsMGFw4Z
+	 PuQ8u9bpTNFpGL/6PzGEHFEMEe/61VgPTK+60+5NtxPhh2jDpvdt441hr8FFl94DDd
+	 7N73lD7HI2dKQ==
+Date: Tue, 13 Feb 2024 09:37:04 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: hch@lst.de, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	dchinner@redhat.com, jack@suse.cz, chandan.babu@oracle.com,
+	martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH 4/6] fs: xfs: Support atomic write for statx
+Message-ID: <20240213173704.GB6184@frogsfrogsfrogs>
+References: <20240124142645.9334-1-john.g.garry@oracle.com>
+ <20240124142645.9334-5-john.g.garry@oracle.com>
+ <20240202180517.GJ6184@frogsfrogsfrogs>
+ <9b966c59-3b9f-4093-9913-c9b8a3469a8b@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 01/10] iommu/vt-d: add wrapper functions for page
- allocations
-Content-Language: en-GB
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io,
- asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com,
- cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com,
- dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de,
- iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com,
- joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st,
- mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org,
- rdunlap@infradead.org, samuel@sholland.org, suravee.suthikulpanit@amd.com,
- sven@svenpeter.dev, thierry.reding@gmail.com, tj@kernel.org,
- tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, will@kernel.org,
- yu-cheng.yu@intel.com, rientjes@google.com, bagasdotme@gmail.com,
- mkoutny@suse.com
-References: <20240207174102.1486130-1-pasha.tatashin@soleen.com>
- <20240207174102.1486130-2-pasha.tatashin@soleen.com>
- <8ce2cd7b-7702-45aa-b4c8-25a01c27ed83@arm.com>
- <CA+CK2bC=XyUhoSP9f0XBqEnQ-P5mMT2U=5dfzRSc9C=2b+bstQ@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-In-Reply-To: <CA+CK2bC=XyUhoSP9f0XBqEnQ-P5mMT2U=5dfzRSc9C=2b+bstQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b966c59-3b9f-4093-9913-c9b8a3469a8b@oracle.com>
 
-On 10/02/2024 2:21 am, Pasha Tatashin wrote:
-[...]
->>> +/**
->>> + * iommu_alloc_pages_node - allocate a zeroed page of a given order from
->>> + * specific NUMA node.
->>> + * @nid: memory NUMA node id
->>> + * @gfp: buddy allocator flags
->>> + * @order: page order
->>> + *
->>> + * returns the virtual address of the allocated page
->>> + */
->>> +static inline void *iommu_alloc_pages_node(int nid, gfp_t gfp, int order)
->>> +{
->>> +     struct page *page = __iommu_alloc_pages_node(nid, gfp, order);
->>> +
->>> +     if (unlikely(!page))
->>> +             return NULL;
->>
->> As a general point I'd prefer to fold these checks into the accounting
->> function itself rather than repeat them all over.
+On Mon, Feb 05, 2024 at 01:10:54PM +0000, John Garry wrote:
+> On 02/02/2024 18:05, Darrick J. Wong wrote:
+> > On Wed, Jan 24, 2024 at 02:26:43PM +0000, John Garry wrote:
+> > > Support providing info on atomic write unit min and max for an inode.
+> > > 
+> > > For simplicity, currently we limit the min at the FS block size, but a
+> > > lower limit could be supported in future.
+> > > 
+> > > The atomic write unit min and max is limited by the guaranteed extent
+> > > alignment for the inode.
+> > > 
+> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
+> > > ---
+> > >   fs/xfs/xfs_iops.c | 45 +++++++++++++++++++++++++++++++++++++++++++++
+> > >   fs/xfs/xfs_iops.h |  4 ++++
+> > >   2 files changed, 49 insertions(+)
+> > > 
+> > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > > index a0d77f5f512e..0890d2f70f4d 100644
+> > > --- a/fs/xfs/xfs_iops.c
+> > > +++ b/fs/xfs/xfs_iops.c
+> > > @@ -546,6 +546,44 @@ xfs_stat_blksize(
+> > >   	return PAGE_SIZE;
+> > >   }
+> > > +void xfs_get_atomic_write_attr(
+> > 
+> > static void?
 > 
-> For the free functions this saves a few cycles by not repeating this
-> check again inside __free_pages(), to keep things symmetrical it makes
-> sense to keep __iomu_free_account and __iomu_alloc_account the same.
-> With the other clean-up there are not that many of these checks left.
-
-__free_pages() doesn't accept NULL, so __iommu_free_pages() shouldn't 
-need a check; free_pages() does, but correspondingly iommu_free_pages() 
-needs its own check up-front to avoid virt_to_page(NULL); either way it 
-means there are no callers of iommu_free_account() who should be passing 
-NULL.
-
-The VA-returning allocators of course need to avoid page_address(NULL), 
-so I clearly made this comment in the wrong place to begin with, oops. 
-In the end I guess that will leave __iommu_alloc_pages() as the only 
-caller of iommu_alloc_account() who doesn't already need to handle their 
-own NULL. OK, I'm convinced, apologies for having to bounce it off you 
-to work it through :)
-
->>> + */
->>> +static inline void *iommu_alloc_page_node(int nid, gfp_t gfp)
->>> +{
->>> +     return iommu_alloc_pages_node(nid, gfp, 0);
->>> +}
->>
->> TBH I'm not entirely convinced that saving 4 characters per invocation
->> times 11 invocations makes this wrapper worthwhile :/
+> We use this in the iomap and statx code
 > 
-> Let's keep them. After the clean-up that you suggested, there are
-> fewer functions left in this file, but I think that it is cleaner to
-> keep these remaining, as it is beneficial to easily distinguish when
-> exactly one page is allocated vs when multiple are allocated via code
-> search.
+> > 
+> > > +	struct xfs_inode *ip,
+> > > +	unsigned int *unit_min,
+> > > +	unsigned int *unit_max)
+> > 
+> > Weird indenting here.
+> 
+> hmmm... I thought that this was the XFS style
+> 
+> Can you show how it should look?
 
-But is it, really? It's not at all obvious to me *why* it would be 
-significantly interesting to distinguish fixed order-0 allocations from 
-higher-order or variable-order (which may still be 0) ones. After all, 
-there's no regular alloc_page_node() wrapper, yet plenty more callers of 
-alloc_pages_node(..., 0) :/
+The parameter declarations should line up with the local variables:
 
-Thanks,
-Robin.
+void
+xfs_get_atomic_write_attr(
+	struct xfs_inode	*ip,
+	unsigned int		*unit_min,
+	unsigned int		*unit_max)
+{
+	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
+	struct block_device	*bdev = target->bt_bdev;
+	struct request_queue	*q = bdev->bd_queue;
+	struct xfs_mount	*mp = ip->i_mount;
+	unsigned int		awu_min, awu_max, align;
+	xfs_extlen_t		extsz = xfs_get_extsz(ip);
+
+> > 
+> > > +{
+> > > +	xfs_extlen_t		extsz = xfs_get_extsz(ip);
+> > > +	struct xfs_buftarg	*target = xfs_inode_buftarg(ip);
+> > > +	struct block_device	*bdev = target->bt_bdev;
+> > > +	unsigned int		awu_min, awu_max, align;
+> > > +	struct request_queue	*q = bdev->bd_queue;
+> > > +	struct xfs_mount	*mp = ip->i_mount;
+> > > +
+> > > +	/*
+> > > +	 * Convert to multiples of the BLOCKSIZE (as we support a minimum
+> > > +	 * atomic write unit of BLOCKSIZE).
+> > > +	 */
+> > > +	awu_min = queue_atomic_write_unit_min_bytes(q);
+> > > +	awu_max = queue_atomic_write_unit_max_bytes(q);
+> > > +
+> > > +	awu_min &= ~mp->m_blockmask;
+> > 
+> > Why do you round /down/ the awu_min value here?
+> 
+> This is just to ensure that we returning *unit_min >= BLOCKSIZE
+> 
+> For example, if awu_min, max 1K, 64K from the bdev, we now have 0 and 64K.
+> And below this gives us awu_min, max of 4k, 64k.
+> 
+> Maybe there is a more logical way of doing this.
+
+	awu_min = roundup(queue_atomic_write_unit_min_bytes(q),
+			  mp->m_sb.sb_blocksize);
+
+?
+
+> 
+> > 
+> > > +	awu_max &= ~mp->m_blockmask;
+> > 
+> > Actually -- since the atomic write units have to be powers of 2, why is
+> > rounding needed here at all?
+> 
+> Sure, but the bdev can report a awu_min < BLOCKSIZE
+> 
+> > 
+> > > +
+> > > +	align = XFS_FSB_TO_B(mp, extsz);
+> > > +
+> > > +	if (!awu_max || !xfs_inode_atomicwrites(ip) || !align ||
+> > > +	    !is_power_of_2(align)) {
+> > 
+> > ...and if you take my suggestion to make a common helper to validate the
+> > atomic write unit parameters, this can collapse into:
+> > 
+> > 	alloc_unit_bytes = xfs_inode_alloc_unitsize(ip);
+> > 	if (!xfs_inode_has_atomicwrites(ip) ||
+> > 	    !bdev_validate_atomic_write(bdev, alloc_unit_bytes))  > 		/* not supported, return zeroes */
+> > 		*unit_min = 0;
+> > 		*unit_max = 0;
+> > 		return;
+> > 	}
+> > 
+> > 	*unit_min = max(alloc_unit_bytes, awu_min);
+> > 	*unit_max = min(alloc_unit_bytes, awu_max);
+> 
+> Again, we need to ensure that *unit_min >= BLOCKSIZE
+
+The file allocation unit and hence the return value of
+xfs_inode_alloc_unitsize is always a multiple of sb_blocksize.
+
+--D
+
+> Thanks,
+> John
+> 
+> 
 
