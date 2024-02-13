@@ -1,101 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-11410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11411-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C3D85395B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 19:03:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B359853980
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 19:09:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE6A71C270BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 18:03:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F4881C21346
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 18:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D56F60866;
-	Tue, 13 Feb 2024 18:01:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BDE60865;
+	Tue, 13 Feb 2024 18:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HElHxNGr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/uCALGm7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="HElHxNGr";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/uCALGm7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NvrI4gk5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1535FF03;
-	Tue, 13 Feb 2024 18:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69542605A3;
+	Tue, 13 Feb 2024 18:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707847308; cv=none; b=iuJh4T34k6h2hl9vuU5QMzseHwz6DGqJkPMXRBzRTKrT5bBRsUy5z1jDzn0XK8WegfUaA87nL+lsh0UWq7GWjrYw12DRutk9iUDOiGK2LDMGuzxP9dzvD8poUPjK2MrDBY4mmSCQe8PpIDV0aZrSJA0yuBLGVkRa+LCBqopm6q8=
+	t=1707847710; cv=none; b=c/n5/zloO5El/2P6m0MFx3W7upexRkBoo25d7TQWWvDZArXdxNUBb5X87h7pbjVrAOEgZga31YY3suotyB9kFl9C/N/vrbWEf9wxv+6qg38T2Z+Ujz8JFtaK8SS4wEvcdpXDwqg7cEM+LoYrTSEHdFKjhvBzlDvUgGM8QTntHjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707847308; c=relaxed/simple;
-	bh=ziUL0vpBFrvYvuGsMd8ENnQh9dC1bxGQCRxrlqGxYjg=;
+	s=arc-20240116; t=1707847710; c=relaxed/simple;
+	bh=rgKIeqWZt/N5yMxignTV2UYSxYoX+Ts53cD2sMPC6S4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IXnL/XhaKybL7PD+zm7smcUDEAtvtDVtHisoIm1Q0gUnsxkCwBNIUIrOuV905UyAiV2NdJoC9PScWCLemBv9RpHcZLfOO81VNgstRW6l3+3Hngzuo7RtZ4iO8jQalSmp2k6P5ULNxOc+vEgWKfWoxwROAZx3/ZL51wLo3aJXjxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HElHxNGr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/uCALGm7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=HElHxNGr; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/uCALGm7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0983D22169;
-	Tue, 13 Feb 2024 18:01:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707847305;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UwNvlIUgI+gWzspCh3VgD1U9XMRfUMoaMGUgItxdUCA=;
-	b=HElHxNGrG+W8jP40M9xHF9Qqoe92KHxZJi2sNeu91zcxTTlOGTVC0uGmxjU+qogCnNb3Br
-	/z6VRAsbkVXr+QrAmCROIvWKeyd3pMEW+3vuHRCg+QiTuvalE25Bop7C7Bxkxce+Z5ZkFC
-	DDMsTO5sqv1G1saYfK0nrmsIMVnswaA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707847305;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UwNvlIUgI+gWzspCh3VgD1U9XMRfUMoaMGUgItxdUCA=;
-	b=/uCALGm7ZBHJWmOaYcSTEKXLUk/P1NOxLSymC60ijWqtm36H+ThlN1arQfIUMBWTyLPyUC
-	rBBg2MCzTfGA0wAg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707847305;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UwNvlIUgI+gWzspCh3VgD1U9XMRfUMoaMGUgItxdUCA=;
-	b=HElHxNGrG+W8jP40M9xHF9Qqoe92KHxZJi2sNeu91zcxTTlOGTVC0uGmxjU+qogCnNb3Br
-	/z6VRAsbkVXr+QrAmCROIvWKeyd3pMEW+3vuHRCg+QiTuvalE25Bop7C7Bxkxce+Z5ZkFC
-	DDMsTO5sqv1G1saYfK0nrmsIMVnswaA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707847305;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UwNvlIUgI+gWzspCh3VgD1U9XMRfUMoaMGUgItxdUCA=;
-	b=/uCALGm7ZBHJWmOaYcSTEKXLUk/P1NOxLSymC60ijWqtm36H+ThlN1arQfIUMBWTyLPyUC
-	rBBg2MCzTfGA0wAg==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id DDA951329E;
-	Tue, 13 Feb 2024 18:01:44 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id UMXuNYiuy2UXIAAAn2gu4w
-	(envelope-from <dsterba@suse.cz>); Tue, 13 Feb 2024 18:01:44 +0000
-Date: Tue, 13 Feb 2024 19:01:11 +0100
-From: David Sterba <dsterba@suse.cz>
-To: syzbot <syzbot+5fd11a1f057a67a03a1b@syzkaller.appspotmail.com>
-Cc: anand.jain@oracle.com, brauner@kernel.org, clm@fb.com, dsterba@suse.com,
-	johannes.thumshirn@wdc.com, josef@toxicpanda.com,
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_create_pending_block_groups
-Message-ID: <20240213180111.GE355@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <0000000000000faabc05ee84f596@google.com>
- <000000000000a545940611434746@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jNofCyjwgH7hhKtP+NefMjUkrWgym25LND3FTe+uGq/Z5mnGE4XK1fgPxyJwVvFEGMhJEnGCGMpmox/krNpBeK+ihUlFg5pZeQPepbG8aCSAuO+LP/QulMfGxMCjMJ0Y5CvKRLX3WhW5Wim8RT3M/HuwmVGWQAHF1ZwKxE192Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NvrI4gk5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5082C433F1;
+	Tue, 13 Feb 2024 18:08:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707847710;
+	bh=rgKIeqWZt/N5yMxignTV2UYSxYoX+Ts53cD2sMPC6S4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NvrI4gk589ZOgkDJQ0t9KhA8P09BHR8yiwioNPXRKcAHTUs9ObNJLKLQRhu3/mAR3
+	 pwUbfTBi9E2ajp27qCoNI3O8gKtwHBDVn9WAuiO89LWL1pjoYVgkT2Bpt1UX4B5mvy
+	 q2CB0UhCNsQ6OIIj38gwKAh+pYonIpY9uEaUk2yOvP8mWSt0iGFBXGonRz2YleB8sK
+	 rm3zbtGEnpXYHOVdK1b9c3GaCpghYZkaXzEeQEL94SqdBJtC1Q5g+05knTmBVP1hI+
+	 P30hVNniC/laBNBrTg2WAvmfNHb5qglrHICH4xGEW1YSMsx5+u4f3L2Aqfl0/0xcFl
+	 dLpY4iHTPFBEQ==
+Date: Tue, 13 Feb 2024 10:08:29 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: hch@lst.de, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	dchinner@redhat.com, jack@suse.cz, chandan.babu@oracle.com,
+	martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH 1/6] fs: iomap: Atomic write support
+Message-ID: <20240213180829.GD6184@frogsfrogsfrogs>
+References: <20240124142645.9334-1-john.g.garry@oracle.com>
+ <20240124142645.9334-2-john.g.garry@oracle.com>
+ <20240202172513.GZ6226@frogsfrogsfrogs>
+ <2f91a71e-413b-47b6-8bc9-a60c86ed6f6b@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -104,66 +63,195 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000000000000a545940611434746@google.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spamd-Result: default: False [2.70 / 50.00];
-	 ARC_NA(0.00)[];
-	 HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4];
-	 TAGGED_RCPT(0.00)[5fd11a1f057a67a03a1b];
-	 REPLYTO_ADDR_EQ_FROM(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 BAYES_HAM(-0.00)[43.12%];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_SEVEN(0.00)[11];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Level: **
-X-Spam-Score: 2.70
-X-Spam-Flag: NO
+In-Reply-To: <2f91a71e-413b-47b6-8bc9-a60c86ed6f6b@oracle.com>
 
-On Tue, Feb 13, 2024 at 05:22:02AM -0800, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
+On Mon, Feb 05, 2024 at 11:29:57AM +0000, John Garry wrote:
+> On 02/02/2024 17:25, Darrick J. Wong wrote:
+> > On Wed, Jan 24, 2024 at 02:26:40PM +0000, John Garry wrote:
+> > > Add flag IOMAP_ATOMIC_WRITE to indicate to the FS that an atomic write
+> > > bio is being created and all the rules there need to be followed.
+> > > 
+> > > It is the task of the FS iomap iter callbacks to ensure that the mapping
+> > > created adheres to those rules, like size is power-of-2, is at a
+> > > naturally-aligned offset, etc. However, checking for a single iovec, i.e.
+> > > iter type is ubuf, is done in __iomap_dio_rw().
+> > > 
+> > > A write should only produce a single bio, so error when it doesn't.
+> > > 
+> > > Signed-off-by: John Garry <john.g.garry@oracle.com>
+> > > ---
+> > >   fs/iomap/direct-io.c  | 21 ++++++++++++++++++++-
+> > >   fs/iomap/trace.h      |  3 ++-
+> > >   include/linux/iomap.h |  1 +
+> > >   3 files changed, 23 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> > > index bcd3f8cf5ea4..25736d01b857 100644
+> > > --- a/fs/iomap/direct-io.c
+> > > +++ b/fs/iomap/direct-io.c
+> > > @@ -275,10 +275,12 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> > >   static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+> > >   		struct iomap_dio *dio)
+> > >   {
+> > > +	bool atomic_write = iter->flags & IOMAP_ATOMIC;
+> > >   	const struct iomap *iomap = &iter->iomap;
+> > >   	struct inode *inode = iter->inode;
+> > >   	unsigned int fs_block_size = i_blocksize(inode), pad;
+> > >   	loff_t length = iomap_length(iter);
+> > > +	const size_t iter_len = iter->len;
+> > >   	loff_t pos = iter->pos;
+> > >   	blk_opf_t bio_opf;
+> > >   	struct bio *bio;
+> > > @@ -381,6 +383,9 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+> > >   					  GFP_KERNEL);
+> > >   		bio->bi_iter.bi_sector = iomap_sector(iomap, pos);
+> > >   		bio->bi_ioprio = dio->iocb->ki_ioprio;
+> > > +		if (atomic_write)
+> > > +			bio->bi_opf |= REQ_ATOMIC;
+> > 
+> > This really ought to be in iomap_dio_bio_opflags.  Unless you can't pass
+> > REQ_ATOMIC to bio_alloc*, in which case there ought to be a comment
+> > about why.
 > 
-> commit a1912f712188291f9d7d434fba155461f1ebef66
-> Author: Josef Bacik <josef@toxicpanda.com>
-> Date:   Wed Nov 22 17:17:55 2023 +0000
+> I think that should be ok
 > 
->     btrfs: remove code for inode_cache and recovery mount options
+> > 
+> > Also, what's the meaning of REQ_OP_READ | REQ_ATOMIC?
+> 
+> REQ_ATOMIC will be ignored for REQ_OP_READ. I'm following the same policy as
+> something like RWF_SYNC for a read.
+> 
+> However, if FMODE_CAN_ATOMIC_WRITE is unset, then REQ_ATOMIC will be
+> rejected for both REQ_OP_READ and REQ_OP_WRITE.
+> 
+> > Does that
+> > actually work?  I don't know what that means, and "block: Add REQ_ATOMIC
+> > flag" says that's not a valid combination.  I'll complain about this
+> > more below.
+> 
+> Please note that I do mention that this flag is only meaningful for
+> pwritev2(), like RWF_SYNC, here:
+> https://lore.kernel.org/linux-api/20240124112731.28579-3-john.g.garry@oracle.com/
+> 
+> > 
+> > > +
+> > >   		bio->bi_private = dio;
+> > >   		bio->bi_end_io = iomap_dio_bio_end_io;
+> > > @@ -397,6 +402,12 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+> > >   		}
+> > >   		n = bio->bi_iter.bi_size;
+> > > +		if (atomic_write && n != iter_len) {
+> > 
+> > s/iter_len/orig_len/ ?
+> 
+> ok, I can change the name if you prefer
+> 
+> > 
+> > > +			/* This bio should have covered the complete length */
+> > > +			ret = -EINVAL;
+> > > +			bio_put(bio);
+> > > +			goto out;
+> > > +		}
+> > >   		if (dio->flags & IOMAP_DIO_WRITE) {
+> > >   			task_io_account_write(n);
+> > >   		} else {
+> > > @@ -554,12 +565,17 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+> > >   	struct blk_plug plug;
+> > >   	struct iomap_dio *dio;
+> > >   	loff_t ret = 0;
+> > > +	bool is_read = iov_iter_rw(iter) == READ;
+> > > +	bool atomic_write = (iocb->ki_flags & IOCB_ATOMIC) && !is_read;
+> > 
+> > Hrmm.  So if the caller passes in an IOCB_ATOMIC iocb with a READ iter,
+> > we'll silently drop IOCB_ATOMIC and do the read anyway?  That seems like
+> > a nonsense combination, but is that ok for some reason?
+> 
+> Please see above
+> 
+> > 
+> > >   	trace_iomap_dio_rw_begin(iocb, iter, dio_flags, done_before);
+> > >   	if (!iomi.len)
+> > >   		return NULL;
+> > > +	if (atomic_write && !iter_is_ubuf(iter))
+> > > +		return ERR_PTR(-EINVAL);
+> > 
+> > Does !iter_is_ubuf actually happen?
+> 
+> Sure, if someone uses iovcnt > 1 for pwritev2
+> 
+> Please see __import_iovec(), where only if iovcnt == 1 we create iter_type
+> == ITER_UBUF, if > 1 then we have iter_type == ITER_IOVEC
 
-This does not look like a fix, it's an unrelated change, the reported
-problem probably depends on timing.
+Ok.  The iter stuff (especially the macros) confuse the hell out of me
+every time I go reading through that.
 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=113ba042180000
-> start commit:   a4d7d7011219 Merge tag 'spi-fix-v6.4-rc5' of git://git.ker..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7474de833c217bf4
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5fd11a1f057a67a03a1b
+> > Why don't we support any of the
+> > other ITER_ types?  Is it because hardware doesn't want vectored
+> > buffers?
+> It's related how we can determine atomic_write_unit_max for the bdev.
+> 
+> We want to give a definitive max write value which we can guarantee to
+> always fit in a BIO, but not mandate any extra special iovec
+> length/alignment rules.
+> 
+> Without any iovec length or alignment rules (apart from direct IO rules that
+> an iovec needs to be bdev logical block size and length aligned) , if a user
+> provides many iovecs, then we may only be able to only fit bdev LBS of data
+> (typically 512B) in each BIO vector, and thus we need to give a
+> pessimistically low atomic_write_unit_max value.
+> 
+> If we say that iovcnt max == 1, then we know that we can fit PAGE size of
+> data in each BIO vector (ignoring first/last vectors), and this will give a
+> reasonably large atomic_write_unit_max value.
+> 
+> Note that we do now provide this iovcnt max value via statx, but always
+> return 1 for now. This was agreed with Christoph, please see:
+> https://lore.kernel.org/linux-nvme/20240117150200.GA30112@lst.de/
 
-The log says that there's an attempt do
-"balance: start -f -susage=6,vrange=0..9223372036854775809"
+Got it.  We can always add ITER_IOVEC support later if we figure out a
+sane way to restrain userspace. :)
 
-which looks suspicious but should be otherwise harmless, the range is
-only considered. What is possible problem is that it's for the system
-block group:
+> > 
+> > I really wish there was more commenting on /why/ we do things here:
+> > 
+> > 	if (iocb->ki_flags & IOCB_ATOMIC) {
+> > 		/* atomic reads do not make sense */
+> > 		if (iov_iter_rw(iter) == READ)
+> > 			return ERR_PTR(-EINVAL);
+> > 
+> > 		/*
+> > 		 * block layer doesn't want to handle handle vectors of
+> > 		 * buffers when performing an atomic write i guess?
+> > 		 */
+> > 		if (!iter_is_ubuf(iter))
+> > 			return ERR_PTR(-EINVAL);
+> > 
+> > 		iomi.flags |= IOMAP_ATOMIC;
+> > 	}
+> 
+> ok, I can make this more clear.
+> 
+> Note: It would be nice if we could check this in xfs_iomap_write_direct() or
+> a common VFS helper (which xfs_iomap_write_direct() calls), but iter is not
+> available there.
 
-nfo (device loop0): balance: start -f -susage=6,vrange=0..9223372036854775809
-------------[ cut here ]------------
-BTRFS: Transaction aborted (error -28)
-WARNING: CPU: 0 PID: 5028 at fs/btrfs/block-group.c:2686 btrfs_create_pending_block_groups+0x10b7/0x1220 fs/btrfs/block-group.c:2686
-Modules linked in:
-CPU: 0 PID: 5028 Comm: syz-executor115 Not tainted 6.6.0-syzkaller-00207-g14ab6d425e80 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/09/2023
-RIP: 0010:btrfs_create_pending_block_groups+0x10b7/0x1220 fs/btrfs/block-group.c:2686
+No, do not put generic stuff like that in XFS, leave it here in iomap.
+
+> I could just check iter_is_ubuf() on its own in the vfs rw path, but I would
+> like to keep the checks as close together as possible.
+
+Yeah, and I want you to put as many of the checks in the VFS as
+possible so that we (or really Ojaswin) don't end up copy-pasting all
+that validation into ext4 and every other filesystem that wants to
+expose untorn writes.
+
+AFAICT the only things XFS really needs to do on its own is check that
+the xfs_inode_alloc_unit() is a power of two if untorn writes are
+present; and adjusting the awu min/max for statx reporting.
+
+--D
+
+> Thanks,
+> John
+> 
 
