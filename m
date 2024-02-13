@@ -1,66 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-11361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8246185308B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 13:31:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2765A8530E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 13:49:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CAA628B5A3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 12:31:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B20C1C220FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 12:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B7142079;
-	Tue, 13 Feb 2024 12:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19B943ADC;
+	Tue, 13 Feb 2024 12:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="CSuaviJj"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UwyOLhTg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cdzcLpil";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UwyOLhTg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cdzcLpil"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0D613BB3A;
-	Tue, 13 Feb 2024 12:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B89F43AC8
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 12:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707827466; cv=none; b=t3WlcQshQG9R3QAqW4DwQOEGUAhjFWmV38n59ba1I4EaqEeoE2ViDY2T/wzACkR7xhHiVNN4rkRKiXJUtR4Pm6x0NUbOZurOEGWQCmPFrNJlzDmONS9qVJK3gk9y5FNFAmFojH9Fakm9WPz7G9NPZyHULVuzxdClUonQEGINZIk=
+	t=1707828578; cv=none; b=pFsCwHpLOkoK/Z+gaCOxZ8l2Wj+eHPVbbGTS70o5X78u5FsVrq9bVCIDhLO8GAGL3osFvEnHFREX8837HVQ68P21jMeApagqDSMEdzA5524h8MyDJQJ9vLAYPBnM8Z64xwQ1oyXUfhsBtWtIydcxEBSbcZWgeZfUhBlWvgPDN/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707827466; c=relaxed/simple;
-	bh=HFtJQftRt81qsj3WKtpyVLXu2ijNvznvMiSPy4K+l70=;
+	s=arc-20240116; t=1707828578; c=relaxed/simple;
+	bh=SkdT9ZPYWE+j04E++FYeSc/wN1HiHgSpI3w6ph4LVCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=owY+KZWUUZbk3bLZxpoaO3ZP7zB12XaEULV8EOPT7J7CjNM8lCHNkp/aG5SSinJaKEBiHtpk7g+sDWFJ+ldDigywxZKOUVwwKgBHcvGeQbs73BZ+9dtJLq02jNMCUfLPvDbWkBKyRQBDinuXnrhMiDkIg8HyBRF1ryn3JogAlZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=CSuaviJj; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	 Content-Type:Content-Disposition:In-Reply-To; b=E5j6hNPz3UP0pgKFQzDOFyO5TW59+lX9FpeBHgBJPMYL2l8Xt98e5mKn6htH6IGcK02WP4NydBnXSosXSh2A6SCjgnLPRWxcwGN7mk8YBMEemfhKaHEbuxysj7ixDchxnBPojBXLiTq1Y3ktOLqH5+kchYS28jyXJDQwtTwv/6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UwyOLhTg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cdzcLpil; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UwyOLhTg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cdzcLpil; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4TZ0zh3xD5z9sn6;
-	Tue, 13 Feb 2024 13:30:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1707827456;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3901221A33;
+	Tue, 13 Feb 2024 12:49:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1707828574; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DIg66RdJU9OwFIwtt981TU+bUHnJVsypvaGrWF5aizw=;
-	b=CSuaviJj+ifluOeWtUWWsQGTD3QjgppzGm9qLW8AykSBIRq6Dfao2ZGDO5Yl37FzE74c+v
-	FDz19HU4mjMDeXcn7Musbnf7H/WZC7q3Zsf26mYStBJoz8Ae90lLr25c0SuMrQaxCgEe2r
-	w3efZBlHdAUamsHtzqeCYkmg/Vf+QJdj1gSBuo4m5XN1XlPkb3nAhHpMCmWAOXKvi4+AgF
-	jXJIO9pnnrA/VeIwuYGSOARj/YFsGs6ODUwqy1TseNW3BhAORIQWILJUfZ8CpcZCTm2tK6
-	2o4pCdpqfbdbWtE/aVDtWC97iPMIjXayFEyu5bq8aqQtX6jh50neal+phvb/fg==
-Date: Tue, 13 Feb 2024 13:30:51 +0100
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>, linux-mm@kvack.org, 
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Zach O'Keefe <zokeefe@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, mcgrof@kernel.org, gost.dev@samsung.com
-Subject: Re: [PATCH v3 0/7] Split a folio to any lower order folios
-Message-ID: <qzbcjn4gcyxla4gwuj6smlnwknz2wvo5wrjctin6eengjfqjei@lzkxv3iy6bol>
-References: <20230403201839.4097845-1-zi.yan@sent.com>
+	bh=1vGX3Qw4kyZciPZJoA2a0olYEA6p0qlsWrGUfxV5754=;
+	b=UwyOLhTgyetygFN+58nOr9HhkVmsRavAIzPhxEgEJxNvyaj0bCj5FAeazombqOY+noYsrT
+	OcixVre22rCUnNWFcE2kfeEXhlkUt0+RSovxlrnO+Gia7ZETlhEIAfhRsIwJK8AsYgdBxU
+	VOketRb2sPlOEU4bTgZnOSrWpQ5Tr/E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1707828574;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1vGX3Qw4kyZciPZJoA2a0olYEA6p0qlsWrGUfxV5754=;
+	b=cdzcLpilTdJCEA5fjitgPnm9sSht139+PQ99MEmlupsaKfGqXCxpjOd2gDUB/Ir3N/sE5R
+	UEt+tIuGU865x5Ag==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1707828574; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1vGX3Qw4kyZciPZJoA2a0olYEA6p0qlsWrGUfxV5754=;
+	b=UwyOLhTgyetygFN+58nOr9HhkVmsRavAIzPhxEgEJxNvyaj0bCj5FAeazombqOY+noYsrT
+	OcixVre22rCUnNWFcE2kfeEXhlkUt0+RSovxlrnO+Gia7ZETlhEIAfhRsIwJK8AsYgdBxU
+	VOketRb2sPlOEU4bTgZnOSrWpQ5Tr/E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1707828574;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1vGX3Qw4kyZciPZJoA2a0olYEA6p0qlsWrGUfxV5754=;
+	b=cdzcLpilTdJCEA5fjitgPnm9sSht139+PQ99MEmlupsaKfGqXCxpjOd2gDUB/Ir3N/sE5R
+	UEt+tIuGU865x5Ag==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 2E2BB13A0E;
+	Tue, 13 Feb 2024 12:49:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id 8489C15ly2W1VgAAn2gu4w
+	(envelope-from <jack@suse.cz>); Tue, 13 Feb 2024 12:49:34 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id D2F10A0809; Tue, 13 Feb 2024 13:49:33 +0100 (CET)
+Date: Tue, 13 Feb 2024 13:49:33 +0100
+From: Jan Kara <jack@suse.cz>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Bill O'Donnell <billodo@redhat.com>,
+	David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH] udf: convert to new mount API
+Message-ID: <20240213124933.ftbnf3inbfbp77g4@quack3>
+References: <739fe39a-0401-4f5d-aef7-759ef82b36bd@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,44 +101,221 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230403201839.4097845-1-zi.yan@sent.com>
+In-Reply-To: <739fe39a-0401-4f5d-aef7-759ef82b36bd@redhat.com>
+X-Spam-Level: 
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UwyOLhTg;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cdzcLpil
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-5.51 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_DKIM_ARC_DNSWL_HI(-1.00)[];
+	 RCPT_COUNT_FIVE(0.00)[5];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_IN_DNSWL_HI(-0.50)[2a07:de40:b281:104:10:150:64:98:from];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Score: -5.51
+X-Rspamd-Queue-Id: 3901221A33
+X-Spam-Flag: NO
 
-Hi Zi yan,
-
-> From: Zi Yan <ziy@nvidia.com>
+On Fri 09-02-24 13:43:09, Eric Sandeen wrote:
+> Convert the UDF filesystem to the new mount API.
 > 
-> Hi all,
+> UDF is slightly unique in that it always preserves prior mount
+> options across a remount, so that's handled by udf_init_options().
+
+Well, ext4 does this as well AFAICT. See e.g. ext4_apply_options() and how
+it does:
+
+        sbi->s_mount_opt &= ~ctx->mask_s_mount_opt;
+        sbi->s_mount_opt |= ctx->vals_s_mount_opt;
+        sbi->s_mount_opt2 &= ~ctx->mask_s_mount_opt2;
+        sbi->s_mount_opt2 |= ctx->vals_s_mount_opt2;
+        sb->s_flags &= ~ctx->mask_s_flags;
+        sb->s_flags |= ctx->vals_s_flags;
+
+so it really modifies the current superblock state, not overwrites it.
+
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> ---
 > 
-> File folio supports any order and people would like to support flexible orders
-> for anonymous folio[1] too. Currently, split_huge_page() only splits a huge
-> page to order-0 pages, but splitting to orders higher than 0 is also useful.
-> This patchset adds support for splitting a huge page to any lower order pages
-> and uses it during file folio truncate operations.
+> Tested by running through xfstests, as well as some targeted testing of
+> remount behavior.
 > 
+> NB: I did not convert i.e any udf_err() to errorf(fc, ) because the former
+> does some nice formatting, not sure how or if you'd like to handle that, Jan?
 
-I recently posted patches to enable block size > page size(Large Block
-Sizes) in XFS[1].
-The main idea of LBS is to have a notion of minimum order in the 
-page cache that corresponds to the filesystem block size.
+Which one would you like to convert? I didn't find any obvious
+candidates... Or do you mean the messages in udf_fill_super() when we find
+on-disk inconsistencies or similar? I guess we can leave that for later
+because propagating 'fc' into all the validation functions will be a lot of
+churn.
 
-Ability to split a folio based on a given order is something that would
-definitely optimize the LBS implementation.
+> +static void udf_init_options(struct fs_context *fc, struct udf_options *uopt)
+> +{
+> +	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
+> +		struct super_block *sb = fc->root->d_sb;
+> +		struct udf_sb_info *sbi = UDF_SB(sb);
+> +
+> +		uopt->flags = sbi->s_flags;
+> +		uopt->uid   = sbi->s_uid;
+> +		uopt->gid   = sbi->s_gid;
+> +		uopt->umask = sbi->s_umask;
+> +		uopt->fmode = sbi->s_fmode;
+> +		uopt->dmode = sbi->s_dmode;
+> +		uopt->nls_map = NULL;
+> +	} else {
+> +		uopt->flags = (1 << UDF_FLAG_USE_AD_IN_ICB) | (1 << UDF_FLAG_STRICT);
+> +		/* By default we'll use overflow[ug]id when UDF inode [ug]id == -1 */
 
-The current implementation refuses to split a large folio if it has a
-minimum order set in the page cache [2]. What we would like to have instead
-is to split it based on the minimum order. The main use is of course being
-able to free some folios during partial truncate operation.
+Nit: Please wrap these two lines.
 
-Your patch was also suggested by willy during our LPC talk[3].
+> +		uopt->uid = make_kuid(current_user_ns(), overflowuid);
+> +		uopt->gid = make_kgid(current_user_ns(), overflowgid);
+> +		uopt->umask = 0;
+> +		uopt->fmode = UDF_INVALID_MODE;
+> +		uopt->dmode = UDF_INVALID_MODE;
+> +		uopt->nls_map = NULL;
+> +		uopt->session = 0xFFFFFFFF;
+> +	}
+> +}
+> +
+> +static int udf_init_fs_context(struct fs_context *fc)
+> +{
+> +	struct udf_options *uopt;
+> +
+> +	uopt = kzalloc(sizeof(*uopt), GFP_KERNEL);
+> +	if (!uopt)
+> +		return -ENOMEM;
+> +
+> +	udf_init_options(fc, uopt);
+> +
+> +	fc->fs_private = uopt;
+> +	fc->ops = &udf_context_ops;
+> +
+> +	return 0;
+> +}
+> +
+> +static void udf_free_fc(struct fs_context *fc)
+> +{
+> +	kfree(fc->fs_private);
+> +}
 
-I tried rebasing your patch and there were a lot of non-trivial conflicts.
-Is there any plans on sending a new version?
+So I think we need to unload uopt->nls_map in case we eventually failed the
+mount (which means we also need to zero uopt->nls_map if we copy it to the
+sbi).
 
+> +static const struct fs_parameter_spec udf_param_spec[] = {
+> +	fsparam_flag	("novrs",		Opt_novrs),
+> +	fsparam_flag	("nostrict",		Opt_nostrict),
+> +	fsparam_u32	("bs",			Opt_bs),
+> +	fsparam_flag	("unhide",		Opt_unhide),
+> +	fsparam_flag	("undelete",		Opt_undelete),
+> +	fsparam_flag	("noadinicb",		Opt_noadinicb),
+> +	fsparam_flag	("adinicb",		Opt_adinicb),
 
-[1] https://lore.kernel.org/linux-xfs/20240213093713.1753368-1-kernel@pankajraghav.com/
-[2] https://lore.kernel.org/linux-xfs/20240213093713.1753368-9-kernel@pankajraghav.com/
-[3] https://youtu.be/ar72r5Xf7x4?si=XDb-g7SSIgS-5TkP&t=1457
+We could actually use the fs_param_neg_with_no for the above. I don't
+insist but it's an interesting exercise :)
 
---
-Pankaj
+> +	fsparam_flag	("shortad",		Opt_shortad),
+> +	fsparam_flag	("longad",		Opt_longad),
+> +	fsparam_string	("gid",			Opt_gid),
+> +	fsparam_string	("uid",			Opt_uid),
+> +	fsparam_u32	("umask",		Opt_umask),
+> +	fsparam_u32	("session",		Opt_session),
+> +	fsparam_u32	("lastblock",		Opt_lastblock),
+> +	fsparam_u32	("anchor",		Opt_anchor),
+> +	fsparam_u32	("volume",		Opt_volume),
+> +	fsparam_u32	("partition",		Opt_partition),
+> +	fsparam_u32	("fileset",		Opt_fileset),
+> +	fsparam_u32	("rootdir",		Opt_rootdir),
+> +	fsparam_flag	("utf8",		Opt_utf8),
+> +	fsparam_string	("iocharset",		Opt_iocharset),
+> +	fsparam_u32	("mode",		Opt_fmode),
+> +	fsparam_u32	("dmode",		Opt_dmode),
+> +	{}
+> + };
+> + 
+> +static int udf_parse_param(struct fs_context *fc, struct fs_parameter *param)
+
+...
+
+> +	unsigned int n;
+> +	struct udf_options *uopt = fc->fs_private;
+> +	struct fs_parse_result result;
+> +	int token;
+> +	bool remount = (fc->purpose & FS_CONTEXT_FOR_RECONFIGURE);
+> +
+> +	token = fs_parse(fc, udf_param_spec, param, &result);
+> +	if (token < 0)
+> +		return token;
+> +
+> +	switch (token) {
+> +	case Opt_novrs:
+> +		uopt->novrs = 1;
+
+I guess we can make this just an ordinary flag as a prep patch?
+
+> +		break;
+> +	case Opt_bs:
+> +		n = result.uint_32;;
+				  ^^ one is enough ;)
+
+> +		if (n != 512 && n != 1024 && n != 2048 && n != 4096)
+> +			return -EINVAL;
+> +		uopt->blocksize = n;
+> +		uopt->flags |= (1 << UDF_FLAG_BLOCKSIZE_SET);
+> +		break;
+> +	case Opt_unhide:
+> +		uopt->flags |= (1 << UDF_FLAG_UNHIDE);
+> +		break;
+> +	case Opt_undelete:
+> +		uopt->flags |= (1 << UDF_FLAG_UNDELETE);
+> +		break;
+
+These two are nops so we should deprecate them and completely ignore them.
+I'm writing it here mostly as a reminder to myself as a work item after the
+conversion is done :)
+
+> +	case Opt_noadinicb:
+> +		uopt->flags &= ~(1 << UDF_FLAG_USE_AD_IN_ICB);
+> +		break;
+> +	case Opt_adinicb:
+> +		uopt->flags |= (1 << UDF_FLAG_USE_AD_IN_ICB);
+> +		break;
+> +	case Opt_shortad:
+> +		uopt->flags |= (1 << UDF_FLAG_USE_SHORT_AD);
+> +		break;
+> +	case Opt_longad:
+> +		uopt->flags &= ~(1 << UDF_FLAG_USE_SHORT_AD);
+> +		break;
+> +	case Opt_gid:
+> +		if (0 == kstrtoint(param->string, 10, &uv)) {
+Nit:
+		    ^^ I prefer "kstrtoint() == 0"
+
+Otherwise looks good.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
