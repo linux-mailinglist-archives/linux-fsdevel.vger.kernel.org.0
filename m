@@ -1,247 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-11431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A65853C95
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:02:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5626C853CE7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:19:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0343285C80
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 21:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11934286BBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 21:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845056166A;
-	Tue, 13 Feb 2024 21:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D99D384A43;
+	Tue, 13 Feb 2024 21:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ZG4QS4o8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E2C5DF3C;
-	Tue, 13 Feb 2024 21:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0DFD839ED;
+	Tue, 13 Feb 2024 21:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707858116; cv=none; b=M7z+6qOZcFV51sdC5SesMZFIToL5PmjX8stTJW6GzW0ABI/4xKobRLyssIByozu0z8OdPRhW8+DSn69C+Oo3pXMnCRCAP095b1y5UEhweaWzmWhEKlepE6LLxiaEAoctqAePDgiVbtpYcO+s3+CKvfj1K0/B7vMt43bqicYBDiA=
+	t=1707858365; cv=none; b=XlUYMtpRJOd+/6HgZ+WbNankB8F0lbNbe80B0f7GUgNuCfaXsD7Tm+6mSsLYrsVul/YtSIB4lCNdcz3qIZTOWuKMpjg5deCHqVKZP7oR8X9qrOGRVHO566MC2l1hbW/9cJ5OekbZTRi7eb+pb8dM0FFlYBzHIj8LMGcDcjCMwAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707858116; c=relaxed/simple;
-	bh=o7+6gUMfCgFkn+ZhV4RScqPHO3sa/QXuGPZsTH6M3eo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=saEmZv3BRU1iMtYO79V+Z1kbrpFLGDNhwTWbwPyMp7SpUwnB3gcEWk17d7bjIiuAS/9FAIIVCKB1PdgBulO7nUiRsf4f1RWAsoeExo7WWzzxWjM0uy07cIaYJzuIbV8Ncmd+XQyt0fYtHYJWFY3bBiFSfuYssewzyzLnrBuV68Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1d93ddd76adso34526495ad.2;
-        Tue, 13 Feb 2024 13:01:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707858114; x=1708462914;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IkZcQXtyypvexqT1ZYOLU6OKg8/PnPd/S57/jAViE0c=;
-        b=axrFYqvJ330XlyPdLwwNiByAcnT8p9PxoyWlJA1pgS1X6Mb0fSYKOcVnTTLSv9waMZ
-         FgwhwkdB4KZfY3+ICj/8p6l7Vpof5UQZynrrT112TKhg2KT+vYN09RkDDHnv5uAi5Tro
-         fJrA/1ojVHbp1fGmUojjPpYpvoCUZyNygbSi2pwHjBbqptxly6xpokyNvGg1ejT3mL7A
-         q2h6IlQNxwx9Ntk6MeixOgVPBoqb2J912JmDD/MnR6tq7FzuTBgYDI2s764PTdIcIpxJ
-         j5bpfAHTudCuU9zqIglFc/KquiSsOTFVL1KekAUmSAX6ytRLZjdlsc+DhCMaS7ItoAWa
-         NqMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMBt82cWrrMMOYhUwdWU6c80pvdUmbUcBBTz8YJlin0JeSYNuj1CNJ3jsM+LReg49fnBE4lxvfN3sr/tsZaQ+B854XU0fjT0GK9tXWr5xY/hTJPsDrWcZ5/0YNvqEYG9+oiy4w+A==
-X-Gm-Message-State: AOJu0Yyf+YsgP05QC6JDyt34aycifcocr4SIoutbHdZEcAUwIctvBlZX
-	u35tCu6ok5Lc1I1hdsH2OqXfvUugnvU1XE2CR4lan5wVx8GvQalEiE7BZHTa
-X-Google-Smtp-Source: AGHT+IG5gtFeFrrFXsWLDOPPJU8Zm0y9uwr26PVR9xfFcMLudtc/wi9q09qo+1w2YO7Jg2UqWWdNcQ==
-X-Received: by 2002:a17:902:e88e:b0:1da:25a9:ba12 with SMTP id w14-20020a170902e88e00b001da25a9ba12mr872572plg.28.1707858113526;
-        Tue, 13 Feb 2024 13:01:53 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUUO87Tyd+JhdaVueCDppafVrVIrm/BzUnWA7c5c7vrQLM1Njb9B4iVDOMfPRkMRXZRrMIHzSzb2fr0aE+aiII+s1rJjm56vsa/viWTFhm2G3DwgDjmO4UNJ8xjbq6lXgg2pllTQX8Z3KmWZYcPb/rAYXPyjoF7wdsgkN9AXU5lt/qFzGO50aHZSVa34qxeyPIfQwhmse1oAq85uA6XRp9s17weltjD9ntEWCj8H14rS2M4MgIU7xBkk0zpIg==
-Received: from ?IPV6:2620:0:1000:8411:85a5:575d:be51:8037? ([2620:0:1000:8411:85a5:575d:be51:8037])
-        by smtp.gmail.com with ESMTPSA id ky6-20020a170902f98600b001db4e014ed9sm475956plb.149.2024.02.13.13.01.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Feb 2024 13:01:53 -0800 (PST)
-Message-ID: <3304d956-9273-4701-91ce-08248ffd5007@acm.org>
-Date: Tue, 13 Feb 2024 13:01:51 -0800
+	s=arc-20240116; t=1707858365; c=relaxed/simple;
+	bh=xgl7lHB5nFNYdQ9gjvd365a6aa0rerNmO4jYedWe+RU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RpTp32o6ttj7XBlYO8yCtjjnIPNHnsSWQ9oil+x1B0zu3Vf9f0IQCPoqSZojd7tPh7BvqkRXst4N1lSLgCX8HX0Aw+jpkRqBkD3XqEAG9ENTgcjRm02a1P9P7Novz1OVmrHw+gkaxsGgzw5x4c3Yd6hLEooA2TsIgy8sZ5kjAYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ZG4QS4o8; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4TZDPy5hp7z9smr;
+	Tue, 13 Feb 2024 22:05:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1707858358;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rlGuEk+lrsb7TKIHP84bbBdxjJkSQOe0GzEds4VJ6uo=;
+	b=ZG4QS4o883VynvBzMh26WK5TOHr+yNiz10QE3/MYTdpyJpXlNQqm8MlMY0oqBHmrcxR/U2
+	gfSusG0OqEUHDp90Y/iktmMcvIgx+9GuKg3P8OnIkbBbRqYxmqNVWUGmQPBpBRo7pEPsbc
+	Sb5QjfDMhZl9fIaTZ+Hzjf+/pfS1LjAo1I5rwJoG+hiMoXlZ6pSsNWnTA9aPQSObgodAZc
+	9W+bG8TtxtZ7w7jkMVvPfgCf/ESTLeAZeTcG9cKXaFMzmCdY8V1XBUK7bXjvvz/SZt8KyJ
+	wFB462Hdk6dO/xWQLnJgY8R/EtL3P+irS0UR8Nyp/iBAViXjWL92ymaGxC5zzQ==
+Date: Tue, 13 Feb 2024 22:05:54 +0100
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	mcgrof@kernel.org, gost.dev@samsung.com, akpm@linux-foundation.org, 
+	kbusch@kernel.org, chandan.babu@oracle.com, p.raghav@samsung.com, 
+	linux-kernel@vger.kernel.org, hare@suse.de, willy@infradead.org, linux-mm@kvack.org, 
+	david@fromorbit.com
+Subject: Re: [RFC v2 01/14] fs: Allow fine-grained control of folio sizes
+Message-ID: <xy45wh2y55oinrvkhea36yxtnqmsoikp7eawaa2b5ejivfv4ku@ob72fvbkj4uh>
+References: <20240213093713.1753368-1-kernel@pankajraghav.com>
+ <20240213093713.1753368-2-kernel@pankajraghav.com>
+ <20240213163431.GS6184@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fs, USB gadget: Rework kiocb cancellation
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, Avi Kivity <avi@scylladb.com>,
- Sandeep Dhavale <dhavale@google.com>, stable@vger.kernel.org
-References: <20240208215518.1361570-1-bvanassche@acm.org>
- <9e83c34a-63ab-47ea-9c06-14303dbbeaa9@kernel.dk>
- <20240209-katapultieren-lastkraftwagen-d28bbc0a92b2@brauner>
- <9a7294ef-6812-43bb-af50-a2b4659f2d15@kernel.dk>
- <4e47c7d4-ece3-4b8e-a4df-80d212f673fb@acm.org>
-In-Reply-To: <4e47c7d4-ece3-4b8e-a4df-80d212f673fb@acm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240213163431.GS6184@frogsfrogsfrogs>
 
-On 2/12/24 11:28, Bart Van Assche wrote:
-> On 2/9/24 10:12, Jens Axboe wrote:
->> Greg, can you elaborate on how useful cancel is for gadgets? Is it one
->> of those things that was wired up "just because", or does it have
->> actually useful cases?
+On Tue, Feb 13, 2024 at 08:34:31AM -0800, Darrick J. Wong wrote:
+> On Tue, Feb 13, 2024 at 10:37:00AM +0100, Pankaj Raghav (Samsung) wrote:
+> > From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> > 
+> > Some filesystems want to be able to limit the maximum size of folios,
+> > and some want to be able to ensure that folios are at least a certain
+> > size.  Add mapping_set_folio_orders() to allow this level of control.
+> > The max folio order parameter is ignored and it is always set to
+> > MAX_PAGECACHE_ORDER.
 > 
-> I found two use cases in the Android Open Source Project and have submitted
-> CLs that request to remove the io_cancel() calls from that code. Although I
-> think I understand why these calls were added, the race conditions that
-> these io_cancel() calls try to address cannot be addressed completely by
-> calling io_cancel().
+> Why?  If MAX_PAGECACHE_ORDER is 8 and I instead pass in max==3, I'm
+> going to be surprised by my constraint being ignored.  Maybe I said that
+> because I'm not prepared to handle an order-7 folio; or some customer
+> will have some weird desire to twist this knob to make their workflow
+> faster.
+> 
+> --D
+Maybe I should have been explicit. We are planning to add support
+for min order in the first round, and we want to add support for max order
+once the min order support is upstreamed. It was done mainly to reduce
+the scope and testing of this series.
 
-(replying to my own e-mail) The adb daemon (adbd) maintainers asked me to
-preserve the I/O cancellation code in adbd because it was introduced recently
-in that code to fix an important bug. Does everyone agree with the approach of
-the untested patches below?
+I definitely agree there are usecases for setting the max order. It is
+also the feedback we got from LPC.
 
-Thanks,
+So one idea would be not to expose max option until we add the support
+for max order? So filesystems can only set the min_order with the
+initial support?
 
-Bart.
-
------------------------------------------------------------------------------
-[PATCH 1/2] fs/aio: Restrict kiocb_set_cancel_fn() to I/O submitted
-  by libaio
-
-If kiocb_set_cancel_fn() is called for I/O submitted by io_uring, the
-following kernel warning appears:
-
-WARNING: CPU: 3 PID: 368 at fs/aio.c:598 kiocb_set_cancel_fn+0x9c/0xa8
-Call trace:
-  kiocb_set_cancel_fn+0x9c/0xa8
-  ffs_epfile_read_iter+0x144/0x1d0
-  io_read+0x19c/0x498
-  io_issue_sqe+0x118/0x27c
-  io_submit_sqes+0x25c/0x5fc
-  __arm64_sys_io_uring_enter+0x104/0xab0
-  invoke_syscall+0x58/0x11c
-  el0_svc_common+0xb4/0xf4
-  do_el0_svc+0x2c/0xb0
-  el0_svc+0x2c/0xa4
-  el0t_64_sync_handler+0x68/0xb4
-  el0t_64_sync+0x1a4/0x1a8
-
-Fix this by setting the IOCB_AIO_RW flag for read and write I/O that is
-submitted by libaio.
-
-Suggested-by: Jens Axboe <axboe@kernel.dk>
----
-  fs/aio.c           | 9 ++++++++-
-  include/linux/fs.h | 2 ++
-  2 files changed, 10 insertions(+), 1 deletion(-)
-
-diff --git a/fs/aio.c b/fs/aio.c
-index bb2ff48991f3..da18dbcfcb22 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -593,6 +593,13 @@ void kiocb_set_cancel_fn(struct kiocb *iocb, kiocb_cancel_fn *cancel)
-  	struct kioctx *ctx = req->ki_ctx;
-  	unsigned long flags;
-
-+	/*
-+	 * kiocb didn't come from aio or is neither a read nor a write, hence
-+	 * ignore it.
-+	 */
-+	if (!(iocb->ki_flags & IOCB_AIO_RW))
-+		return;
-+
-  	if (WARN_ON_ONCE(!list_empty(&req->ki_list)))
-  		return;
-
-@@ -1509,7 +1516,7 @@ static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb)
-  	req->ki_complete = aio_complete_rw;
-  	req->private = NULL;
-  	req->ki_pos = iocb->aio_offset;
--	req->ki_flags = req->ki_filp->f_iocb_flags;
-+	req->ki_flags = req->ki_filp->f_iocb_flags | IOCB_AIO_RW;
-  	if (iocb->aio_flags & IOCB_FLAG_RESFD)
-  		req->ki_flags |= IOCB_EVENTFD;
-  	if (iocb->aio_flags & IOCB_FLAG_IOPRIO) {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index ed5966a70495..c2dcc98cb4c8 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -352,6 +352,8 @@ enum rw_hint {
-   * unrelated IO (like cache flushing, new IO generation, etc).
-   */
-  #define IOCB_DIO_CALLER_COMP	(1 << 22)
-+/* kiocb is a read or write operation submitted by fs/aio.c. */
-+#define IOCB_AIO_RW		(1 << 23)
-
-  /* for use in trace events */
-  #define TRACE_IOCB_STRINGS \
-
------------------------------------------------------------------------------
-
-[PATCH 2/2] fs/aio: Make io_cancel() generate completions again
-
-The following patch accidentally removed the code for delivering
-completions for cancelled reads and writes to user space: "[PATCH 04/33]
-aio: remove retry-based AIO"
-(https://lore.kernel.org/all/1363883754-27966-5-git-send-email-koverstreet@google.com/)
- From that patch:
-
--	if (kiocbIsCancelled(iocb)) {
--		ret = -EINTR;
--		aio_complete(iocb, ret, 0);
--		/* must not access the iocb after this */
--		goto out;
--	}
-
-This leads to a leak in user space of a struct iocb. Hence this patch
-that restores the code that reports to user space that a read or write
-has been cancelled successfully.
----
-  fs/aio.c | 27 +++++++++++----------------
-  1 file changed, 11 insertions(+), 16 deletions(-)
-
-diff --git a/fs/aio.c b/fs/aio.c
-index da18dbcfcb22..28223f511931 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -2165,14 +2165,11 @@ COMPAT_SYSCALL_DEFINE3(io_submit, compat_aio_context_t, ctx_id,
-  #endif
-
-  /* sys_io_cancel:
-- *	Attempts to cancel an iocb previously passed to io_submit.  If
-- *	the operation is successfully cancelled, the resulting event is
-- *	copied into the memory pointed to by result without being placed
-- *	into the completion queue and 0 is returned.  May fail with
-- *	-EFAULT if any of the data structures pointed to are invalid.
-- *	May fail with -EINVAL if aio_context specified by ctx_id is
-- *	invalid.  May fail with -EAGAIN if the iocb specified was not
-- *	cancelled.  Will fail with -ENOSYS if not implemented.
-+ *	Attempts to cancel an iocb previously passed to io_submit(). If the
-+ *	operation is successfully cancelled 0 is returned. May fail with
-+ *	-EFAULT if any of the data structures pointed to are invalid. May
-+ *	fail with -EINVAL if aio_context specified by ctx_id is invalid. Will
-+ *	fail with -ENOSYS if not implemented.
-   */
-  SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
-  		struct io_event __user *, result)
-@@ -2203,14 +2200,12 @@ SYSCALL_DEFINE3(io_cancel, aio_context_t, ctx_id, struct iocb __user *, iocb,
-  	}
-  	spin_unlock_irq(&ctx->ctx_lock);
-
--	if (!ret) {
--		/*
--		 * The result argument is no longer used - the io_event is
--		 * always delivered via the ring buffer. -EINPROGRESS indicates
--		 * cancellation is progress:
--		 */
--		ret = -EINPROGRESS;
--	}
-+	/*
-+	 * The result argument is no longer used - the io_event is always
-+	 * delivered via the ring buffer.
-+	 */
-+	if (ret == 0 && kiocb->rw.ki_flags & IOCB_AIO_RW)
-+		aio_complete_rw(&kiocb->rw, -EINTR);
-
-  	percpu_ref_put(&ctx->users);
-
-
------------------------------------------------------------------------------
+> > +static inline void mapping_set_folio_orders(struct address_space *mapping,
+> > +					    unsigned int min, unsigned int max)
+> > +{
+> > +	if (min == 1)
+> > +		min = 2;
+> > +	if (max < min)
+> > +		max = min;
+> > +	if (max > MAX_PAGECACHE_ORDER)
+> > +		max = MAX_PAGECACHE_ORDER;
+> > +
+> > +	/*
+> > +	 * XXX: max is ignored as only minimum folio order is supported
+> > +	 * currently.
+> > +	 */
+> > +	mapping->flags = (mapping->flags & ~AS_FOLIO_ORDER_MASK) |
+> > +			 (min << AS_FOLIO_ORDER_MIN) |
+> > +			 (MAX_PAGECACHE_ORDER << AS_FOLIO_ORDER_MAX);
+> > +}
+> > +
 
