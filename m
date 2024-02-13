@@ -1,136 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-11471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE3D853E5B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 23:15:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ED3E853E69
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 23:17:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EC391C208E6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 339A11C231F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51525627FC;
-	Tue, 13 Feb 2024 22:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B66263130;
+	Tue, 13 Feb 2024 22:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ErAo2G/h"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fiR1SseL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F1E627FB
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 22:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5045F63136
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 22:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707862198; cv=none; b=sMDS7q7vfdQ4wfuwuec+S2UTL3mF48TWKsEGicGfwWh6xv2z8Qzi3EwlIpDZLICk+BENY7o9OwR1HzzdSdM3G6W3tUDey6GlH0B6PFJA8VTlAk+SNQAloNJsnUlCKmKuUOGPGueZTrD+gAMZMN3KPTic9V6U+dLXmhBWQMynWe0=
+	t=1707862456; cv=none; b=GiKRmiu7ki8tYoknHUmAH9WTD8MuLoNrE4eTtOW45IVqItLU1ZxKIpAfPmg6Jc1FV8sLF+uGrweHp97GaY6EcQjdPNzP5McsRCGqi0HyQxQBR5+r4JHSLCCRlU5Kvn+JQ87gRsEVnGnAUs36PhBDHX/kHcX3XfYQ7Aqcskw3dwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707862198; c=relaxed/simple;
-	bh=W8CKXLRXzCPIbeiYhYvLTtnfDtGO8TmN5pF7T5jBlOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hS7UvTO87II3WgTipksaGmB8S/kNtJBzbdFkake5MJKOfadkmsIXV4Y1VQmOLLJxFS4GxVXmf9yTmGHo60UEjpNZEW73U4SEuheaMxZcXhKFnzWpDGrjj1x6YNzjbROXHyJcvULcjUm3Re+0oNpZ7glESa94eFo5M4oVBEy+JsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ErAo2G/h; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1d70b0e521eso36992765ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 14:09:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707862196; x=1708466996; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KHrAkUvYa6loZ8pQ9MvgMBm7Y/FcJKqjouZpJd3Deg4=;
-        b=ErAo2G/hJ/ZxmlbuU9tjLAdCWW2ovpypumay2kxa3Q4ub7fwWqDo94g2yvKnIrlZG8
-         eCCec52cAgWrPjktmrsyQqTbFm+lCLeW8GJfPmQi6ekECy4qrXtGKc/XgQICTzaNqYfY
-         LwVBbXwijBQR7+Bq1HCkbdaj101v2hC7wMYESLg7FuYSGh7KWkPMeK/fLri4DZb38mGR
-         Co06+kfrnFyjim5orX5wksGvdzVyN5NvF45lMsb4D6wHE9AvbPBMcgsW25Nv42awDlak
-         jrbjUdD72BLFExhEtghrcyK9kFNBDoxc3iv11fFQpvtnJngncV8BMiGjn45IVsp5ptsr
-         9puQ==
+	s=arc-20240116; t=1707862456; c=relaxed/simple;
+	bh=LF1SbVel55UlBy2cCY59l4DXqJLB0mGwNGAfhvwgG/Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fDCXh52J6Na5/0t5PEdSABAAtp0Gcn9BVrrHlYHGk7ZdSIe0Joy6yIK018BSs0HCU2hGwM7ks9PxXK+Z0K9maX6RHnwfI1XkrflmBVIUV/Lb0OTMSU3WBc9e7tK64uZuyMgsQbnPKDErcExVs05pZk3R4UNdnkTWmKphbTgXLpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fiR1SseL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1707862454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VlR4oL4JYqbRBSZyJNMBAjatqbYDx/+zQJL/01o4kgo=;
+	b=fiR1SseLwI9wdj7/e7xjQ7ew8sa5HKfRd2bmeXiwgdOUTCJJNSvOGHzd/r1LjaQFQbxnvv
+	b61oYMhASiP1Fpt541zq1UniiJb7oTHm89jKxSNr2Kk6xPP/xXRHkx7eg1ZD8ONzPeA7ra
+	Dyj0uGxVHJlTXKevRF5tRytNWFWnmbI=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-528-T38cPzeeNpqVeo6tOnpx9g-1; Tue, 13 Feb 2024 17:14:12 -0500
+X-MC-Unique: T38cPzeeNpqVeo6tOnpx9g-1
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-411e24b69f7so500695e9.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 14:14:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707862196; x=1708466996;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1707862450; x=1708467250;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KHrAkUvYa6loZ8pQ9MvgMBm7Y/FcJKqjouZpJd3Deg4=;
-        b=G+INGupUPasV9b0uXwB+fPRl1cymz9KcChKz8FMKTTW6dr6vtWAtHnbb/ntYln2wiU
-         tKwfYproOviFHR9FXvNemDMkM+LQ2Qza1jef8XQ/1mKY/kH7TZ3SbfJGiiqVg0EQzIdo
-         RlRuzeI+MJvbRRdZCrHIPd4mSSwc1hv1auXDZuRq+UCdwHcWL1wdmJwgJrwDPAM0NpAm
-         pY8d2XjYwDzGOfJ+hk73EKropCC6MJgGh3H3DTfkGg7BxiS1Y0y5QTF69Y4JvfRhInvz
-         05m3oqf0r/xQ3VcqjItdNB8/dZu9OmLNQjTE5KGqE/a3uhQt4fYFxQW83Ad+Q9v3Q46c
-         DJaA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBZpNnGlHrnBUOs7sgbcVEivYHU19qN0TIR+5es+1jJWvuImmWsln8GUPv36FjhRpLVZ+KaFj8/JVhuHYo/oHpAU6cWfJQlYZmjgb3NQ==
-X-Gm-Message-State: AOJu0Yz94TAi0BBFdi0ACFQ9HHLTUwGgcNOJC9ixX0O1W3ZMqz9be1d1
-	OiyWs6jOlge6lU8KPHTeIARYzKSy6CSnJHngYNs3/Tgs+S0e7R45xaQcy090PQE=
-X-Google-Smtp-Source: AGHT+IGgqUUsjn257/XY2P22HF+jK6l4KCqtveCToMslA6YTTEIfSnRD2gkjjAU8E2S7/q7gFf6VFw==
-X-Received: by 2002:a17:902:e5d0:b0:1d9:14fb:d142 with SMTP id u16-20020a170902e5d000b001d914fbd142mr1287192plf.32.1707862196652;
-        Tue, 13 Feb 2024 14:09:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU0ESVTZZSVdnxEus9YiyUaZmdXAgx/Xl1gU3CR6MVu9J4mZ+RaM5oZScWBYV6lzac7Dd70RSYsCsBl6RjMuqdB1SViohyMqK9AjP/0Nubsg9spL66O5OJ9Ilh7PBEprTOECIhR4U6k6dNjIhuTIXL/2IwZhep/x5ggajcUnMC/bk5OAyhKaCOSKT/Fhh0h9gzWNpDTA1yDdR0F3fWjhBlbaaNq9IE4qPiAV6YN6DHzTGkL0o98qmyE1stg1SerRm983++Xdcd9i9cIKm6UmxT76yjpRoBGWL4/rDpAF6zXb4cbDPR+ZUd4YdnTtJs5vpMd34GoiUONqcfhPSbbZ7BjT1L6j/ImosHNqAYul6ynTtmVdRe1uBCKFj0KHY0Z7CP/NUPO++Ga4G3eJACOq5GzM8gHlKkeW/vvvzQ=
-Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
-        by smtp.gmail.com with ESMTPSA id jc19-20020a17090325d300b001db2ff16acasm1894517plb.128.2024.02.13.14.09.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Feb 2024 14:09:56 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1ra0yP-0067hn-1k;
-	Wed, 14 Feb 2024 09:09:53 +1100
-Date: Wed, 14 Feb 2024 09:09:53 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	mcgrof@kernel.org, gost.dev@samsung.com, akpm@linux-foundation.org,
-	kbusch@kernel.org, djwong@kernel.org, chandan.babu@oracle.com,
-	p.raghav@samsung.com, linux-kernel@vger.kernel.org, hare@suse.de,
-	willy@infradead.org, linux-mm@kvack.org
-Subject: Re: [RFC v2 04/14] readahead: set file_ra_state->ra_pages to be at
- least mapping_min_order
-Message-ID: <ZcvosYG9F0ImM9OS@dread.disaster.area>
-References: <20240213093713.1753368-1-kernel@pankajraghav.com>
- <20240213093713.1753368-5-kernel@pankajraghav.com>
+        bh=VlR4oL4JYqbRBSZyJNMBAjatqbYDx/+zQJL/01o4kgo=;
+        b=Iq2UrULfEF9lnospUglcY3rTzLmJ8LtNqnvyHO/HnLmX54YO/XV+McZgoOZBfGUPHV
+         TsVQyQWz1EhsNMDVps3vBS+qQaHHLVx8gof0KrLBUe4Q6Y5tWfEu3LVCvLpCY3N/Ei2K
+         29Mgm59+9MM0MSv6RQHCaadm16p6IWhmMfb/TM6Hv+IlzzCvy9zKEiH3xuEbTh5DwNrp
+         BuSriGXr5h0jOtIJ3tml/utUsgRxDHVhPXMER3j0G0G9QeRm+sVMSk7AJxiY1cbsHRuq
+         ZFkazKGQwvqc6Bmyl/4UlNNClQp2rhSGimGpuXyvLSKO7HyplVc4WTw81ImJl6sdmyxk
+         kLZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMjItiIQEqVfoC9T0HTZzjidryTGSeNGy4H6AGRVKGzuAWVf3yNHuuAEX7YP4suyOduUbbI+NWF6pj+lod033hnJUYxmQofN6lpmK6lw==
+X-Gm-Message-State: AOJu0YyFmO81dlEPD8k394R8hQPCo3UKQsK7aiQmgp3zYX2VwrBTklYC
+	o26FvOyF58ZofCaXnrf5H9y/TVRmPgeckDNFGyZwhWrScuN3ubzMDVbY89EIA3uTs9Gyuy3nwO7
+	1RC1JgcnYsEHwWHvAnn5T/VSeHaXxtlTgO96hWcsT1/NBPlthVtuSf3ZBeSwiFs0=
+X-Received: by 2002:a5d:60c7:0:b0:33c:e2d7:79d1 with SMTP id x7-20020a5d60c7000000b0033ce2d779d1mr353597wrt.69.1707862450636;
+        Tue, 13 Feb 2024 14:14:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IErAoSjKfrma+gHwUWBHmpYT2aLgb15aWidjKLV37wWIJEkEY384dO2RLMkvCpcKFdwkrlBHw==
+X-Received: by 2002:a5d:60c7:0:b0:33c:e2d7:79d1 with SMTP id x7-20020a5d60c7000000b0033ce2d779d1mr353588wrt.69.1707862450280;
+        Tue, 13 Feb 2024 14:14:10 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWtuP+IbgLY/GmMYBOvY3F6tEijrtrqWhYEclFgAYpN3kpUFXSyfEfaVTnTWdTy6QVhbf4XwKvmyx/cBkhVnBNnIWEGW4YaIO+Q8PKBiDREAqsVRi8mP1knFUoRvZXQ4L/cculgweo9NvGGEXcZGJ7Mge8lT2S3Y7VHpkK5hkDXAzS6Afy3IJ2qdokgL/fepZJFu/ecB8vTzGLJaGuwD0iyOMvCA0R4xZ0lPk4ZZMFm+uqjIJ1Uz7Jyrxcfn2M9bMJKHO5T+IUQmaGLcOhnBrYpcV8QCVxw7A0DdvGDEjIWNN/v4rA3DG09WDbyIIF+DvPWKUWhEdXaUg9xGcmtysgno4ihHC06Igj674u2Mp4Vo0KqxIjrSQaVmV24VM8NEuxa1Q/cAcS4OblvDUHI37ZzO+lKNIuOGVW/xdAwE2pX2zURPIm4LJb2taxcyheiFosNKNbu01lFrjY7jpTigCEP8y4QFHd064ar9gPe8/y/HdFTV+ZfT77Oai/pgesp8hbLEhrB8SHorfodTKvPstfLqmwMBToHK6vMUXNVWHYyQ5SeABGQrBj+Ay8=
+Received: from ?IPV6:2003:d8:2f3c:3f00:7177:eb0c:d3d2:4b0e? (p200300d82f3c3f007177eb0cd3d24b0e.dip0.t-ipconnect.de. [2003:d8:2f3c:3f00:7177:eb0c:d3d2:4b0e])
+        by smtp.gmail.com with ESMTPSA id e12-20020a5d594c000000b0033ce1ef4e7asm1601631wri.13.2024.02.13.14.14.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Feb 2024 14:14:09 -0800 (PST)
+Message-ID: <bac6136e-7990-45b8-9bcd-94181b63f18e@redhat.com>
+Date: Tue, 13 Feb 2024 23:14:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240213093713.1753368-5-kernel@pankajraghav.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/7] mm: thp: split huge page to any lower order pages
+ (except order-1).
+Content-Language: en-US
+To: Luis Chamberlain <mcgrof@kernel.org>, Zi Yan <ziy@nvidia.com>
+Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, linux-mm@kvack.org,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Zach O'Keefe <zokeefe@google.com>, Hugh Dickins <hughd@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20240213215520.1048625-1-zi.yan@sent.com>
+ <20240213215520.1048625-6-zi.yan@sent.com>
+ <Zcvns2HCB61cwvgE@bombadil.infradead.org>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <Zcvns2HCB61cwvgE@bombadil.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 13, 2024 at 10:37:03AM +0100, Pankaj Raghav (Samsung) wrote:
-> From: Luis Chamberlain <mcgrof@kernel.org>
+On 13.02.24 23:05, Luis Chamberlain wrote:
+> On Tue, Feb 13, 2024 at 04:55:18PM -0500, Zi Yan wrote:
+>> From: Zi Yan <ziy@nvidia.com>
+>> Order-1 folio is not supported because _deferred_list, which is used by
+>> partially mapped folios, is stored in subpage 2 and an order-1 folio only
+>> has subpage 0 and 1.
 > 
-> Set the file_ra_state->ra_pages in file_ra_state_init() to be at least
-> mapping_min_order of pages if the bdi->ra_pages is less than that.
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> ---
->  mm/readahead.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/mm/readahead.c b/mm/readahead.c
-> index 2648ec4f0494..4fa7d0e65706 100644
-> --- a/mm/readahead.c
-> +++ b/mm/readahead.c
-> @@ -138,7 +138,12 @@
->  void
->  file_ra_state_init(struct file_ra_state *ra, struct address_space *mapping)
->  {
-> +	unsigned int min_nrpages = mapping_min_folio_nrpages(mapping);
-> +	unsigned int max_pages = inode_to_bdi(mapping->host)->io_pages;
-> +
->  	ra->ra_pages = inode_to_bdi(mapping->host)->ra_pages;
-> +	if (ra->ra_pages < min_nrpages && min_nrpages < max_pages)
-> +		ra->ra_pages = min_nrpages;
+> The LBS patches has the patch from Matthew which enables and allowed us
+> to successfully test order 1. So this restriction could be dropped if
+> that gets merged.
 
-Why do we want to clamp readahead in this case to io_pages?
+For anon folios it will still be in place, so the restriction will only 
+be dropped for !anon.
 
-We're still going to be allocating a min_order folio in the page
-cache, but it is far more efficient to initialise the entire folio
-all in a single readahead pass than it is to only partially fill it
-with data here and then have to issue and wait for more IO to bring
-the folio fully up to date before we can read out data out of it,
-right?
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Cheers,
+
+David / dhildenb
+
 
