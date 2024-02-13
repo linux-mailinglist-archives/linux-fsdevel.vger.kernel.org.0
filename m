@@ -1,118 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-11295-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD3D85280B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 05:44:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F4885285E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 06:46:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B496B216C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 04:44:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3AC728618D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 05:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7305D11C82;
-	Tue, 13 Feb 2024 04:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D413012B97;
+	Tue, 13 Feb 2024 05:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FO3zXqG/"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xrZHcyPL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386AD1119F;
-	Tue, 13 Feb 2024 04:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07AD11C8B;
+	Tue, 13 Feb 2024 05:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707799474; cv=none; b=t1RzCbmgjwnajJgSeqBEgI+3ONDIEn6vXLVYSUiqBAOblZZH0Ez9T3XdbFsAGUFVCrD4LLcyhQcYlBGjcviK6u8ZfCtIxNRGeraHMWYIkAHm2MOFw5DTVH4s1Thuas6xCtiSY9NLlrzTxYuvKxx04zfJX2wmppBqbbIA1ZUxBKE=
+	t=1707803203; cv=none; b=E3mo1McldWfzkf/cVf+iWNXoESch/PlR+D8fPL59SCDcqXlWpgdRn3dxdS48zrTvCholeItVzhev1uQUh7UqicSXKNqUSTt7UKmAlQEgF7Vhyc4RckSOVnnafsNRlwi752e26w+/Sij0xaGkccST5zwoeDJ+UidG1r14dGYDOAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707799474; c=relaxed/simple;
-	bh=gnalbakfUEoOVuduLGkajwEg9F3QSmxtaFgbnbfzLCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JCkJDkPCh5y7CeBoLYP8MGsUvy44QwfDyk2GyRuyVoHUk9xIOQ40aCi7QVciWHce74UizGgUCwBG+/6L4j1nrSKqBlPGrrLi4qOLLnt04rqCKH4HHL1GHBuY7szOTKZw21YJOzko9Odj3kY6KxmXoUGg+DEL5Ru8QUvWh+TFXZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FO3zXqG/; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1707799465;
-	bh=gnalbakfUEoOVuduLGkajwEg9F3QSmxtaFgbnbfzLCg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FO3zXqG/u0XUNzD7u/XRn6hsYQgbLHIKn7VBtzv1ogBR6c1s7hpxxn8ePE0/FcXzy
-	 svO99ZISnkx8X5b2W7WUDPDd/lrLIm+wMAouCKv2rf2dZIhHrJxqRcS3jlRxUIU/Tq
-	 L5XEKFCNde8m/eP4QyRKASXFVjF2PdTWXBCkqws4lpLUOff1GFaGHQfYZNXg0j85i8
-	 cYIgYlM6BEbDBZZWo+CD/pfsj7yeAvWI/DlBJYmwJ+Y7uvLCwDcCgzzSzIPr6RfigF
-	 S2o12acOiDEHMtfdtnAzZgyHR+lAB/0UutA1i+4CmUKFIXiwjNvspFJUFgJgQLrTQG
-	 0ofxPSOZUnOjA==
-Received: from [100.90.194.27] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ehristev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B67EF378203B;
-	Tue, 13 Feb 2024 04:44:20 +0000 (UTC)
-Message-ID: <1b7d51df-4995-4a4a-8ec4-f1ea4975e44c@collabora.com>
-Date: Tue, 13 Feb 2024 06:44:16 +0200
+	s=arc-20240116; t=1707803203; c=relaxed/simple;
+	bh=OhoOvy2YQ1SbnEI1+kQKR/O2PW10e5EPQFYdwTDzNB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=agJEh4IDSJsdsn68kSo6UDtgHvjFBTKzH8KpDZRBxeKPNRVHeShWrDsd8+GUmFIkrQxkVXHPV2+rLkm0hbCsnSIxHMIQQEN7gYD1FMEfFZIkPkS15+sXdU5LuLO842rthik2lSaiJ7iwk0JmoEGp/Lq9sIQ5uXfCOZFQ6zB2GW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xrZHcyPL; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=T3oaY7gdOOxrlvC+Ug5bN838TmkbxRk5QZ7DRKmSkjg=; b=xrZHcyPLkZHEDdjmrk+cnQA+xy
+	0AkdwwRG+DaStdTpZtJRXi7YdqCsSSB5ScDf2AMPZ4rdY7/J7au0yFOM/aQkPRmcgxqoJJ2tg9Wq0
+	PKp7d80Jdfa5rJnkIIx63gdIWW+wVREJQNfo+0TvK0njQDTR4M4fIVKrvqKdilYmcrHexy4f0W6GE
+	6lTnp87fdtqVZNBFze1rXiMASKxZ8dvlOjd0qZHBXvb0klJyLxr76HMRZTxFSsodHcD5svV638mvl
+	BelEMwroYY15e3rj/n4RpzqImMiL94y443lDFASin5rJEmMNWp0bY4j64qDzAzZWkMwtZ0sME2ACr
+	ms6UMe9A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rZlct-000000081r5-2JOd;
+	Tue, 13 Feb 2024 05:46:39 +0000
+Date: Mon, 12 Feb 2024 21:46:39 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
+	hch@infradead.org, djwong@kernel.org, willy@infradead.org,
+	zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+	yukuai3@huawei.com, wangkefeng.wang@huawei.com
+Subject: Re: [RFC PATCH v3 07/26] iomap: don't increase i_size if it's not a
+ write operation
+Message-ID: <ZcsCP4h-ExNOcdD6@infradead.org>
+References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
+ <20240127015825.1608160-8-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v9 1/3] libfs: Introduce case-insensitive string
- comparison helper
-To: Gabriel Krisman Bertazi <krisman@suse.de>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
- chao@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org,
- linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- jack@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- kernel@collabora.com, Gabriel Krisman Bertazi <krisman@collabora.com>,
- Eric Biggers <ebiggers@google.com>
-References: <20240208064334.268216-1-eugen.hristev@collabora.com>
- <20240208064334.268216-2-eugen.hristev@collabora.com>
- <87ttmivm1i.fsf@mailhost.krisman.be>
- <ff492e0f-3760-430e-968a-8b2adab13f3f@collabora.com>
- <87plx5u2do.fsf@mailhost.krisman.be>
-Content-Language: en-US
-From: Eugen Hristev <eugen.hristev@collabora.com>
-In-Reply-To: <87plx5u2do.fsf@mailhost.krisman.be>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240127015825.1608160-8-yi.zhang@huaweicloud.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 2/9/24 16:40, Gabriel Krisman Bertazi wrote:
-> Eugen Hristev <eugen.hristev@collabora.com> writes:
-> 
->> On 2/8/24 20:38, Gabriel Krisman Bertazi wrote:
-> 
->>> (untested)
->>
->> I implemented your suggestion, but any idea about testing ? I ran smoke on xfstests
->> and it appears to be fine, but maybe some specific test case might try the
->> different paths here ?
-> 
-> Other than running the fstests quick group for each affected filesystems
-> looking for regressions, the way I'd do it is create a few files and
-> look them up with exact and inexact name matches.  While doing that,
-> observe through bpftrace which functions got called and what they
-> returned.
-> 
-> Here, since you are testing the uncached lookup, you want to make sure
-> to drop the cached version prior to each lookup.
-> 
+Wouldn't it make more sense to just move the size manipulation to the
+write-only code?  An untested version of that is below.  With this
+the naming of the status variable becomes even more confusing than
+it already is, maybe we need to do a cleanup of the *_write_end
+calling conventions as it always returns the passed in copied value
+or 0.
 
-
-Hello Gabriel,
-
-With the changes you suggested, I get these errors now :
-
-[  107.409410] EXT4-fs error (device sda1): ext4_lookup:1816: inode #521217: comm
-ls: 'CUC' linked to parent dir
-ls: cannot access '/media/CI_dir/CUC': Structure needs cleaning
-total 8
-drwxr-xr-x 2 root root 4096 Feb 12 11:51 .
-drwxr-xr-x 4 root root 4096 Feb 12 11:47 ..
--????????? ? ?    ?       ?            ? CUC
-
-Do you have any idea about what is wrong ?
-
-Thanks,
-Eugen
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 3dab060aed6d7b..8401a9ca702fc0 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -876,34 +876,13 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
+ 		size_t copied, struct folio *folio)
+ {
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+-	loff_t old_size = iter->inode->i_size;
+-	size_t ret;
+-
+-	if (srcmap->type == IOMAP_INLINE) {
+-		ret = iomap_write_end_inline(iter, folio, pos, copied);
+-	} else if (srcmap->flags & IOMAP_F_BUFFER_HEAD) {
+-		ret = block_write_end(NULL, iter->inode->i_mapping, pos, len,
+-				copied, &folio->page, NULL);
+-	} else {
+-		ret = __iomap_write_end(iter->inode, pos, len, copied, folio);
+-	}
+-
+-	/*
+-	 * Update the in-memory inode size after copying the data into the page
+-	 * cache.  It's up to the file system to write the updated size to disk,
+-	 * preferably after I/O completion so that no stale data is exposed.
+-	 */
+-	if (pos + ret > old_size) {
+-		i_size_write(iter->inode, pos + ret);
+-		iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
+-	}
+-	__iomap_put_folio(iter, pos, ret, folio);
+ 
+-	if (old_size < pos)
+-		pagecache_isize_extended(iter->inode, old_size, pos);
+-	if (ret < len)
+-		iomap_write_failed(iter->inode, pos + ret, len - ret);
+-	return ret;
++	if (srcmap->type == IOMAP_INLINE)
++		return iomap_write_end_inline(iter, folio, pos, copied);
++	if (srcmap->flags & IOMAP_F_BUFFER_HEAD)
++		return block_write_end(NULL, iter->inode->i_mapping, pos, len,
++					copied, &folio->page, NULL);
++	return __iomap_write_end(iter->inode, pos, len, copied, folio);
+ }
+ 
+ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+@@ -918,6 +897,7 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+ 
+ 	do {
+ 		struct folio *folio;
++		loff_t old_size;
+ 		size_t offset;		/* Offset into folio */
+ 		size_t bytes;		/* Bytes to write to folio */
+ 		size_t copied;		/* Bytes copied from user */
+@@ -964,7 +944,24 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+ 
+ 		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
+ 		status = iomap_write_end(iter, pos, bytes, copied, folio);
++		/*
++		 * Update the in-memory inode size after copying the data into
++		 * the page cache.  It's up to the file system to write the
++		 * updated size to disk, preferably after I/O completion so that
++		 * no stale data is exposed.
++		 */
++		old_size = iter->inode->i_size;
++		if (pos + status > old_size) {
++			i_size_write(iter->inode, pos + status);
++			iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
++		}
++		__iomap_put_folio(iter, pos, status, folio);
+ 
++		if (old_size < pos)
++			pagecache_isize_extended(iter->inode, old_size, pos);
++		if (status < bytes)
++			iomap_write_failed(iter->inode, pos + status,
++						bytes - status);
+ 		if (unlikely(copied != status))
+ 			iov_iter_revert(i, copied - status);
+ 
+@@ -1334,6 +1331,7 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+ 			bytes = folio_size(folio) - offset;
+ 
+ 		bytes = iomap_write_end(iter, pos, bytes, bytes, folio);
++		__iomap_put_folio(iter, pos, bytes, folio);
+ 		if (WARN_ON_ONCE(bytes == 0))
+ 			return -EIO;
+ 
+@@ -1398,6 +1396,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 		folio_mark_accessed(folio);
+ 
+ 		bytes = iomap_write_end(iter, pos, bytes, bytes, folio);
++		__iomap_put_folio(iter, pos, bytes, folio);
+ 		if (WARN_ON_ONCE(bytes == 0))
+ 			return -EIO;
+ 
 
