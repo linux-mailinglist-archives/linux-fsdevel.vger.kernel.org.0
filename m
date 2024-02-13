@@ -1,152 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-11261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 021A08522FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 01:13:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC143852305
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 01:15:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A72E280E7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 00:13:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 218C41F233C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 00:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9775017CD;
-	Tue, 13 Feb 2024 00:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 544FE4696;
+	Tue, 13 Feb 2024 00:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d42skFIQ"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="hRFx8OzL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50770ED8
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 00:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245471381
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 00:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707783212; cv=none; b=Y04my9qWss53IX7Fbk/lKQ2Aj+/JgSglLZQOsn9+XBY/AunFMf9Eqg1vU7j6mIxTnBKw2ORC/22Rn9vFsQI42Da7hqW2bELcCvvxNPJu5VFECbe1qjCer1rwzTPXDfS3JZ3yLfIdCow7aGRkGpQMHQYL32Pu9mHDm2kKYOCTlEw=
+	t=1707783300; cv=none; b=bBtEmJLZld1YkyqqFdoH0HY1k1Oa5tnl92n7EZYEMWzXHu+ib1jkTUacGO8XBRT9Ka/z0PfhdVz0YkEkrwj3klT7z7s5Rjg5mUAtwqfzmkhpCFKB6BL4Bamy8j286nmAR19ezLXkei+500Fay8+U6adDI5m75ASYcHYiLNyzoJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707783212; c=relaxed/simple;
-	bh=Y4omvdBChe/Cln2+OaJ7L3X93j9YxKgL4u9haJFA7RM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TfEVXUm1j9QEH89lFGq+BFW4Wx0ig6lUC1EDCG2lpGiEYN5auUlIeKuYeP2bltNVq8NIo3ikvTdY2I7+9ot/Nr1OLIUcJLMDrDHUIrMKXrPsjbDsMn6zR7XL59/ubMFADbJKeRFDZ48pfJTcO2f1RFdn6GI8voZWAjv8/R6iKis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d42skFIQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707783209;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2x59ospy2hIhOih411eScu4ZlRyx6LgiuUyCvAkpzyY=;
-	b=d42skFIQ+D4xgyH8kI29B3lIDG6XSx/GbWIkacV/0kgq7Mr0eGjnRtNR1jed6Sytl8QnRX
-	tAMQ3C/tYaNogQH5YpLUIdhVdLnGEXCCtMZU+8j2Jdmqw34TXUoGjXoVW2COhomsqVha6t
-	jorVvRyF+rMHCVeKJfqlU/MzNh8cLhg=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-379-jdhaNizROZ6w5C-5L_QIPg-1; Mon, 12 Feb 2024 19:13:26 -0500
-X-MC-Unique: jdhaNizROZ6w5C-5L_QIPg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5E58E83B7E6;
-	Tue, 13 Feb 2024 00:13:26 +0000 (UTC)
-Received: from localhost (unknown [10.39.195.51])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 53E682166B31;
-	Tue, 13 Feb 2024 00:13:25 +0000 (UTC)
-From: Stefan Hajnoczi <stefanha@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: miklos@szeredi.hu,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Alyssa Ross <hi@alyssa.is>,
-	mzxreary@0pointer.de,
-	gmaglione@redhat.com,
-	vgoyal@redhat.com,
-	virtio-fs@lists.linux.dev,
-	Stefan Hajnoczi <stefanha@redhat.com>
-Subject: [PATCH v4 3/3] virtiofs: emit uevents on filesystem events
-Date: Mon, 12 Feb 2024 19:11:49 -0500
-Message-ID: <20240213001149.904176-4-stefanha@redhat.com>
-In-Reply-To: <20240213001149.904176-1-stefanha@redhat.com>
-References: <20240213001149.904176-1-stefanha@redhat.com>
+	s=arc-20240116; t=1707783300; c=relaxed/simple;
+	bh=p+IVeRU3f9COk3wBMTH0iIf+8fVqKG0n9hzN9kdq2Xc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YB5DXj90Qked2+wfjhHp69Mddw1eCHR0Lq83hZKDb3wuxmbzLny2cdfFdQQNV7BOCCO5gqVeWaqXJRu+dQkSUEKgNtjHCJVsAr9aZn6+NjUL+2vF7RNDppTuJe5dtek6Cz8ztJWsHHrS16SN3Rb5J5imMVwBE2xhHkI2VeRGlvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com; spf=none smtp.mailfrom=soleen.com; dkim=fail (0-bit key) header.d=soleen.com header.i=@soleen.com header.b=hRFx8OzL reason="key not found in DNS"; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=soleen.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-6e2e096e2ccso927148a34.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 16:14:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1707783298; x=1708388098; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zpkbch4s+SL6zR3ce+cP/IOGuaScUrbATNvaMsX6gQU=;
+        b=hRFx8OzLpzZfkX2KYjLz4MEK93nwhIERYV36+ueQxJxoEiHKMQL/1nEjdZ+7VSdbnf
+         siT39azOSxjFsh9kTAOIuasSKEjL0EFsOsuZ1OEiypY/Q3hVEUMNHWJWjqyTUj/IyQFT
+         tLV1wc7OS5h52ntKwWemX0veu7L2EfUlY9A7hdSorOd5CLoGWAIZ7u6C3IDp4GDa1eqD
+         epkpLwBxzRsy+dYvA+NpDHfSpCTF+zyOMqrG10Sb+ySK6Cm1hzKZ5DHceUiz02THdlF9
+         aF33k3ujEKG2VjS0Cn7Yf/4/qpOuWXFxZJbKA+6dw8lTQE4hLZDefHslyXT+60uZCqLy
+         eXnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707783298; x=1708388098;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zpkbch4s+SL6zR3ce+cP/IOGuaScUrbATNvaMsX6gQU=;
+        b=fW2OVANbeWHMikVmZwRYak51dcph6AmyQ3wr/Og+p2OT5rGV9wfqgokSURFcqDdH9n
+         QgzyJmzuJoFbb3Zx8MpYhsxtCbXfV/O7zyBRfQHsrJ6rrwxPfcMtQdYTFTIhcQKdjOYT
+         8+oEl4goyrfcHAVelAipJT87fTgi2U19Qd6mBSykN3m7P4Eo+ydYq3cCRyw4tCq3pKzJ
+         fIxktH/BlkCrj3j9cky+k5zqKr+CKMt3Np6J+2HzoxilIY7xyyGv4PRnt7xL7BqTY3/3
+         BmoqX9lrT2zVjQreHsr1adpqXNURmykcbuKtefArsXmAMEzUa52W8yZPJIRu8wMI/6jn
+         zRPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUW7NxiQrCsKcI9hR/exknuXqCzrAc3iQ9XPA1+DE25snB3YHyIX79Nlm6C4Gjz6xWGPEQ8dk9x9+4FL7eYhztKb3XvhxKAamfp7E/KZw==
+X-Gm-Message-State: AOJu0Yy9P3DSzvi81EAAxDr1MmgXj+/4XBa0e5TPJ0DlpxCoyb3oLsVD
+	mS30Zpei/qmu3JvU5GmKAJ6rD2dkeiBchzPAxYLyHbNSpmADpzG5ZN5WFYi9OyZI1KUdccP3fI1
+	hSOxuS00KdTYIgH15ZuG8RfcZoLZhk6roZ2QRSw==
+X-Google-Smtp-Source: AGHT+IENA2I2vQZTmviXZDRj9zPa9m0qm240EbRNcQEFbOk5GS9Qd9oHISJT+KIV/8e+A1RHV9ji5tIu3nuHQqetP/o=
+X-Received: by 2002:a05:6830:12c2:b0:6e2:e953:6fee with SMTP id
+ a2-20020a05683012c200b006e2e9536feemr3152110otq.24.1707783298148; Mon, 12 Feb
+ 2024 16:14:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.6
+References: <20240212213922.783301-1-surenb@google.com>
+In-Reply-To: <20240212213922.783301-1-surenb@google.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Mon, 12 Feb 2024 19:14:20 -0500
+Message-ID: <CA+CK2bBLD-mZ4ne56Awxbiy0EGpJq69k5qUKZwcXVB1Rt581TQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/35] Memory allocation profiling
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org, 
+	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, 
+	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
+	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
+	rppt@kernel.org, paulmck@kernel.org, yosryahmed@google.com, yuzhao@google.com, 
+	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
+	glider@google.com, elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Alyssa Ross <hi@alyssa.is> requested that virtiofs notifies userspace
-when filesytems become available. This can be used to detect when a
-filesystem with a given tag is hotplugged, for example. uevents allow
-userspace to detect changes without resorting to polling.
+On Mon, Feb 12, 2024 at 4:39=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> Memory allocation, v3 and final:
+>
+> Overview:
+> Low overhead [1] per-callsite memory allocation profiling. Not just for d=
+ebug
+> kernels, overhead low enough to be deployed in production.
+>
+> We're aiming to get this in the next merge window, for 6.9. The feedback
+> we've gotten has been that even out of tree this patchset has already
+> been useful, and there's a significant amount of other work gated on the
+> code tagging functionality included in this patchset [2].
+>
+> Example output:
+>   root@moria-kvm:~# sort -h /proc/allocinfo|tail
+>    3.11MiB     2850 fs/ext4/super.c:1408 module:ext4 func:ext4_alloc_inod=
+e
+>    3.52MiB      225 kernel/fork.c:356 module:fork func:alloc_thread_stack=
+_node
+>    3.75MiB      960 mm/page_ext.c:270 module:page_ext func:alloc_page_ext
+>    4.00MiB        2 mm/khugepaged.c:893 module:khugepaged func:hpage_coll=
+apse_alloc_folio
+>    10.5MiB      168 block/blk-mq.c:3421 module:blk_mq func:blk_mq_alloc_r=
+qs
+>    14.0MiB     3594 include/linux/gfp.h:295 module:filemap func:folio_all=
+oc_noprof
+>    26.8MiB     6856 include/linux/gfp.h:295 module:memory func:folio_allo=
+c_noprof
+>    64.5MiB    98315 fs/xfs/xfs_rmap_item.c:147 module:xfs func:xfs_rui_in=
+it
+>    98.7MiB    25264 include/linux/gfp.h:295 module:readahead func:folio_a=
+lloc_noprof
+>     125MiB     7357 mm/slub.c:2201 module:slub func:alloc_slab_page
 
-The tag is included as a uevent property so it's easy for userspace to
-identify the filesystem in question even when the sysfs directory goes
-away during removal.
+This kind of memory profiling would be an incredible asset in cloud
+environments.
 
-Here are example uevents:
+Over the past year, we've encountered several kernel memory overhead
+issues. Two particularly severe cases involved excessively large IOMMU
+page tables (20GB per machine) and IOVA magazines (up to 8GB).
+Considering thousands of machines were affected, the cumulative memory
+waste was huge.
 
-  # udevadm monitor -k -p
-
-  KERNEL[111.113221] add      /fs/virtiofs/2 (virtiofs)
-  ACTION=add
-  DEVPATH=/fs/virtiofs/2
-  SUBSYSTEM=virtiofs
-  TAG=test
-
-  KERNEL[165.527167] remove   /fs/virtiofs/2 (virtiofs)
-  ACTION=remove
-  DEVPATH=/fs/virtiofs/2
-  SUBSYSTEM=virtiofs
-  TAG=test
-
-Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
----
- fs/fuse/virtio_fs.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
-
-diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 99b6113bbd13..62a44603740c 100644
---- a/fs/fuse/virtio_fs.c
-+++ b/fs/fuse/virtio_fs.c
-@@ -306,6 +306,8 @@ static int virtio_fs_add_instance(struct virtio_device *vdev,
- 
- 	mutex_unlock(&virtio_fs_mutex);
- 
-+	kobject_uevent(&fs->kobj, KOBJ_ADD);
-+
- 	return 0;
- }
- 
-@@ -1565,9 +1567,22 @@ static struct file_system_type virtio_fs_type = {
- 	.kill_sb	= virtio_kill_sb,
- };
- 
-+static int virtio_fs_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
-+{
-+	const struct virtio_fs *fs = container_of(kobj, struct virtio_fs, kobj);
-+
-+	add_uevent_var(env, "TAG=%s", fs->tag);
-+	return 0;
-+}
-+
-+static const struct kset_uevent_ops virtio_fs_uevent_ops = {
-+	.uevent = virtio_fs_uevent,
-+};
-+
- static int __init virtio_fs_sysfs_init(void)
- {
--	virtio_fs_kset = kset_create_and_add("virtiofs", NULL, fs_kobj);
-+	virtio_fs_kset = kset_create_and_add("virtiofs", &virtio_fs_uevent_ops,
-+					     fs_kobj);
- 	if (!virtio_fs_kset)
- 		return -ENOMEM;
- 	return 0;
--- 
-2.43.0
-
+While we eventually resolved these issues with custom kernel profiling
+hacks (some based on this series) and kdump analysis, comprehensive
+memory profiling would have significantly accelerated the diagnostic
+process, pinpointing the precise source of the allocations.
 
