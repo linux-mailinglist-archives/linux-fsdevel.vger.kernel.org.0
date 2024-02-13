@@ -1,134 +1,147 @@
-Return-Path: <linux-fsdevel+bounces-11263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11264-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3309985230C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 01:16:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED94285239E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 01:29:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABD2BB22294
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 00:16:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B8071C21ABF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 00:29:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C884A1854;
-	Tue, 13 Feb 2024 00:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F11879D9;
+	Tue, 13 Feb 2024 00:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0Fi+X0EZ"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wQRjbjOy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70BF79C1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 00:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA4A55796
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 00:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707783327; cv=none; b=tFg8ZWUSz5F2KtT3y8bSkVTHTNvYGNshJx6JsEq4+2lsmyOTrmF8u9MCZINhbxd5Nm4r/nDhsc0rjq5Y9YWJ0xWeRII6Yd/kImAYG/2wA2zMN0IVn+Umtg2m26fJsfYHXsqIMXfIuNvGW8UIlLbl6J2NzrHBtLdaMj5onDQe5LI=
+	t=1707783586; cv=none; b=p596j6TIXuuZQugYqAu7PYks7Trst2FFWD2ul6zvDS6RQEAxRA+DJq2+0A7CPUrmGjkGa+WRBya1fLSU1hWHLpvXx0rA7gkuB7AqtEDwERoXJdMAzeTC7XUZC/E0edob1x9AUmjhFcW49JouxCYfzgb0QylCHOOt1AeEPtFgk10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707783327; c=relaxed/simple;
-	bh=7Wwz+pVnHJ9jIYCJ6OslYOBAl9//CS1GWKGLZ0scfs8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M8MFzApOgNF87Nn3qC9I9LFd01j2C11wKgZcT74cwcc44LU8IYu3ArrAg49xe6NxxMPWNasNmApOvtsndnRQUOZ2cpBMZkQkj/5OgJ99L4jkOHzIsolxQDt90kbcQAxtvnVcxaALaHGyS8DonxT2AZAz4bBhZx6HxgAToFkAzCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0Fi+X0EZ; arc=none smtp.client-ip=209.85.219.171
+	s=arc-20240116; t=1707783586; c=relaxed/simple;
+	bh=vIwOtGsDzqC6GvHsB1Ywa4a3VYOkSPAQAcBcMttGK5E=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tNrlB7B0rP6O0RalUg1SQ+XAQr2qKkNDHjtsIK44V1ty38qPAw+eNmPOgJZOAktTFFaEuQS0NaM/wWANcUHDJuOQiTwZPqBMDHwwUYbKMOoM0C3jjr5QgbbJQnXg8Al3eOiXUq1pirl4Dua2h8jnxcXhMdBGHdvVT+/PKU6VLXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--lokeshgidra.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wQRjbjOy; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-dc23bf7e5aaso3476499276.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 16:15:24 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--lokeshgidra.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-604a247b168so69945977b3.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 16:19:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707783324; x=1708388124; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7Wwz+pVnHJ9jIYCJ6OslYOBAl9//CS1GWKGLZ0scfs8=;
-        b=0Fi+X0EZMVaI/UinNhEXfp0t8Cm5470SB2bK6OadTq7R3yvD+/e0lXmBXENPBhxCDy
-         IysoKO9VDa2guh3MlMCWAvFHHPbEq2TEKG0/1zVc/P5GwMHHucu8VszDo60LhpjLIU1s
-         pZaiz3JxDGP5DhSNubs4wBl9pI4YT4BWZzyzrE1D2ImFXtmwl5DqWAo5gfj5UFKdrrs+
-         HF3nTcIj9y3xQBaJcTV4EC3MmXTKb5gxTH4s/wMmVLWDAXTXW+JoIcnEYfwEOMv0nYeh
-         X+eTco00/QlypK57fsP5qA3YaPj7IwiS7Vt3cc7xqW9huiwTvWw0jPmpjkZ2dxI3dn+Z
-         euFA==
+        d=google.com; s=20230601; t=1707783583; x=1708388383; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=wYp0cW/LgWI9ONT8F6R5Ej86mgi7Qlg0RXGsGKtpVus=;
+        b=wQRjbjOyJfTEUsqjAXLbp1F3qm8rGErGNXUpRjjc9JLWYgwjx7dfqxMIzEpzAXJera
+         wKUV3jipe4utWjwAg3ZGXPkRCnKjne39/B89hOUzLZw5EZsiAMcZVLs5D/8jdN7TdngO
+         rM7RLQJpXLtRO3EjEIZP/YKb3dFVEiohyXPqVdkOvFg0wpWxPnM+WH6vTmEPbYacS8CV
+         wYPhBjTmIBhQxKOx5rX7NYzsnM4prxsL0R5i0GXO3hqQqePbO4xFtGPkNxjgA+Fg1+0l
+         1vMJbnyU8KgqElowPmYrB/4XvA00ocTVw+bWXbNc1M7/HJykq64FEyp3zp+DhfpytXqh
+         fvDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707783324; x=1708388124;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Wwz+pVnHJ9jIYCJ6OslYOBAl9//CS1GWKGLZ0scfs8=;
-        b=f/g1XDbTuSjBEHNPpl7qddntbdA3axihmE+jydoMUdWak8f8TZo2owUadwkzRoYjld
-         aGL99GNGP1V1S38gBnhwKy38Z3kEijb9HrtwARhvRT4iqYo4iuJAXyGQB7MWUw53ORwn
-         /18GLJFwsdjrpvlioGtl4tyz5/eUWIyRgY+IRhu4SKosdIpqcG3vFNcMd6nLcB7fHSLG
-         OPLSG0u9+LKQFKTHrh7isvwckRESYqHdZqb8hR+0dhZGDVk8i+1qAkKyJgCNVmeRg71Q
-         Z0ANuCtMh+p8jCQaEEre9AjGRvt5XPdrwmsanHoIYjVLyM7Zc71dY/tU2bhgfNW8duAd
-         3bDw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgaHBd0X2UjeR3WdPKDbT6ALx+ZXBqJi51Uf+lSySj2Osbs1DqLbW9M6RYKbfnVxBeYKtIM399LFSsHzB5l4wmHswco6ajm+D+Y6GHkg==
-X-Gm-Message-State: AOJu0Yz8q6idTnzPEq0Xtb4RQZwaoDl9kTNQBrr1CbMAlu4zQ6SVWP1n
-	ihQUrDidIhHT6U1b38snO4wb3rF0PSniwIBihDQa1nEurXORKU8Kr0gk4c19WH0AaQ5FeHegg3X
-	oNovORWdxJ+y/iCM6R2LiQUab7Ly3w7II2JKR
-X-Google-Smtp-Source: AGHT+IFIduuZE1STvNicF9DxUXXadRzIx8lN/0f7DXD7a7IgTSoghi+1HrvGMrI5m8lZfvX3Zk7o2MADsuuEWWIky8I=
-X-Received: by 2002:a25:ac68:0:b0:dc6:d158:98f0 with SMTP id
- r40-20020a25ac68000000b00dc6d15898f0mr6974706ybd.52.1707783323411; Mon, 12
- Feb 2024 16:15:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1707783583; x=1708388383;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wYp0cW/LgWI9ONT8F6R5Ej86mgi7Qlg0RXGsGKtpVus=;
+        b=dWWD9Wmn0jtMXng7QuTfStuwrPzDptcxWpRH+WgyvNLKMvBiW8s1JZDpfc/pNuKB1l
+         v9rAxGHQTq+jxlAxMERuVhz3kJ36IPiEufHufRa2LUpGHAaAQn3THxPi//T/ae/Szhvs
+         ogcCmHLXyzs1flfbtej2KAdh0GnJxFf2Ybn/UDtDNOlAJNZDpdnKHpZOJYt3EOcwpp/W
+         z9Cg7dbp5zdH4DYVU6WuD3Xf6NadsEesQljGPUZGA79dbC0igExRhKnqEzcbrxXSF/kC
+         qmxpNdTeaArsFbxyeHmOn8YCmxFkTtSeNVDk+S/9ylS81YdbMGv361HaKOs2kHmZoGms
+         EKAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTbMz9TH+0ko/sCt8T0mWKZ3l2e+dGznv8ePyFrkRePGEzZDBLl4RpCn5Xb2+KOu1gq09br2tFhIgTgRE9Qk2ehLaE2e4x4Ie0v1pxOA==
+X-Gm-Message-State: AOJu0YwCiHHbYhmi8alEAuOGRRfj79gyKo+ZO9TZn7eMMo65JKLCYdhd
+	n8c+mQSPA+LaW76CUrjE9oFIH8wNKjZzHTm9TThb/W1odmW20UfLUS+j0sZcDTATZeHOIHyA7Vf
+	VQ2DXVAdVzXuSA4aEem4P3g==
+X-Google-Smtp-Source: AGHT+IETpVKlK4W4ES+O6uH9bAYT9eFgcT5Mcr7AWYf1RXBnBN+OIklD/nT02bdob/BzELYAfud81u94YEZ4Zw50uQ==
+X-Received: from lg.mtv.corp.google.com ([2620:15c:211:202:fd80:ef0f:6359:fc4c])
+ (user=lokeshgidra job=sendgmr) by 2002:a81:a107:0:b0:604:228:7e with SMTP id
+ y7-20020a81a107000000b006040228007emr2397004ywg.8.1707783583386; Mon, 12 Feb
+ 2024 16:19:43 -0800 (PST)
+Date: Mon, 12 Feb 2024 16:19:17 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240212213922.783301-1-surenb@google.com> <20240212213922.783301-34-surenb@google.com>
- <202402121445.B6EDB95@keescook>
-In-Reply-To: <202402121445.B6EDB95@keescook>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 12 Feb 2024 16:15:12 -0800
-Message-ID: <CAJuCfpEoS=ea90EHHc-Kwg3G3_ZWsVgKvhRiZ4SVuGARBe=vnA@mail.gmail.com>
-Subject: Re: [PATCH v3 33/35] codetag: debug: mark codetags for reserved pages
- as empty
-To: Kees Cook <keescook@chromium.org>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
-	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
-	corbet@lwn.net, void@manifault.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, 
-	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
-	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
-	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
-	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
-	hughd@google.com, andreyknvl@gmail.com, ndesaulniers@google.com, 
-	vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com, 
-	ytcoode@gmail.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com, 
-	vschneid@redhat.com, cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com, 
-	42.hyeyoo@gmail.com, glider@google.com, elver@google.com, dvyukov@google.com, 
-	shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com, 
-	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
-	kernel-team@android.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
-	cgroups@vger.kernel.org
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.43.0.687.g38aa6559b0-goog
+Message-ID: <20240213001920.3551772-1-lokeshgidra@google.com>
+Subject: [PATCH v5 0/3] per-vma locks in userfaultfd
+From: Lokesh Gidra <lokeshgidra@google.com>
+To: akpm@linux-foundation.org
+Cc: lokeshgidra@google.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, surenb@google.com, 
+	kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com, 
+	david@redhat.com, axelrasmussen@google.com, bgeffon@google.com, 
+	willy@infradead.org, jannh@google.com, kaleshsingh@google.com, 
+	ngeoffray@google.com, timmurray@google.com, rppt@kernel.org, 
+	Liam.Howlett@oracle.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 12, 2024 at 2:45=E2=80=AFPM Kees Cook <keescook@chromium.org> w=
-rote:
->
-> On Mon, Feb 12, 2024 at 01:39:19PM -0800, Suren Baghdasaryan wrote:
-> > To avoid debug warnings while freeing reserved pages which were not
-> > allocated with usual allocators, mark their codetags as empty before
-> > freeing.
->
-> How do these get their codetags to begin with?
+Performing userfaultfd operations (like copy/move etc.) in critical
+section of mmap_lock (read-mode) causes significant contention on the
+lock when operations requiring the lock in write-mode are taking place
+concurrently. We can use per-vma locks instead to significantly reduce
+the contention issue.
 
-The space for the codetag reference is inside the page_ext and that
-reference is set to NULL. So, unless we set the reference as empty
-(set it to CODETAG_EMPTY), the free routine will detect that we are
-freeing an allocation that has never been accounted for and will issue
-a warning. To prevent this warning we use this CODETAG_EMPTY to denote
-that this codetag reference is expected to be empty because it was not
-allocated in a usual way.
+Android runtime's Garbage Collector uses userfaultfd for concurrent
+compaction. mmap-lock contention during compaction potentially causes
+jittery experience for the user. During one such reproducible scenario,
+we observed the following improvements with this patch-set:
 
-> Regardless:
->
-> Reviewed-by: Kees Cook <keescook@chromium.org>
->
-> --
-> Kees Cook
+- Wall clock time of compaction phase came down from ~3s to <500ms
+- Uninterruptible sleep time (across all threads in the process) was
+  ~10ms (none in mmap_lock) during compaction, instead of >20s
+
+Changes since v4 [4]:
+- Fix possible deadlock in find_and_lock_vmas() which may arise if
+  lock_vma() is used for both src and dst vmas.
+- Ensure we lock vma only once if src and dst vmas are same.
+- Fix error handling in move_pages() after successfully locking vmas.
+- Introduce helper function for finding dst vma and preparing its
+  anon_vma when done in mmap_lock critical section, per Liam Howlett.
+- Introduce helper function for finding dst and src vmas when done in
+  mmap_lock critical section.
+
+Changes since v3 [3]:
+- Rename function names to clearly reflect which lock is being taken,
+  per Liam Howlett.
+- Have separate functions and abstractions in mm/userfaultfd.c to avoid
+  confusion around which lock is being acquired/released, per Liam Howlett.
+- Prepare anon_vma for all private vmas, anonymous or file-backed,
+  per Jann Horn.
+
+Changes since v2 [2]:
+- Implement and use lock_vma() which uses mmap_lock critical section
+  to lock the VMA using per-vma lock if lock_vma_under_rcu() fails,
+  per Liam R. Howlett. This helps simplify the code and also avoids
+  performing the entire userfaultfd operation under mmap_lock.
+
+Changes since v1 [1]:
+- rebase patches on 'mm-unstable' branch
+
+[1] https://lore.kernel.org/all/20240126182647.2748949-1-lokeshgidra@google.com/
+[2] https://lore.kernel.org/all/20240129193512.123145-1-lokeshgidra@google.com/
+[3] https://lore.kernel.org/all/20240206010919.1109005-1-lokeshgidra@google.com/
+[4] https://lore.kernel.org/all/20240208212204.2043140-1-lokeshgidra@google.com/
+
+Lokesh Gidra (3):
+  userfaultfd: move userfaultfd_ctx struct to header file
+  userfaultfd: protect mmap_changing with rw_sem in userfaulfd_ctx
+  userfaultfd: use per-vma locks in userfaultfd operations
+
+ fs/userfaultfd.c              |  86 ++-----
+ include/linux/userfaultfd_k.h |  75 ++++--
+ mm/userfaultfd.c              | 450 ++++++++++++++++++++++++++--------
+ 3 files changed, 421 insertions(+), 190 deletions(-)
+
+-- 
+2.43.0.687.g38aa6559b0-goog
+
 
