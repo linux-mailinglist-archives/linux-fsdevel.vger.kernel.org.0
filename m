@@ -1,136 +1,253 @@
-Return-Path: <linux-fsdevel+bounces-11354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210DA852EFE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 12:19:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A51E852F44
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 12:28:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57A8DB22B60
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 11:19:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D998B1F21ACC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 11:28:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB24B37168;
-	Tue, 13 Feb 2024 11:19:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D81376FA;
+	Tue, 13 Feb 2024 11:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZZEg/ZnC"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nWOUkteQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB14E33CFC;
-	Tue, 13 Feb 2024 11:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A44B374C5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 11:25:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707823163; cv=none; b=P5HWe+HAZtaEzB7MP5UduBL12fCj7ovmG/7oe/LO5aM6kIpRXSAvQZf5zUsX2vcs5CuC7AbU2cdmPLF3apVjINWHyGKpq/52GBF4fyG/VArFJAS7RJU0qYjfoeDh9oSAgK12DPW7POAKEHjRSASSnJ4CD6rlL+C7U1oKJt0SyYY=
+	t=1707823510; cv=none; b=HRFwxgeOU7eAfbtojChzvTI39Fn26xR+XKuILrxWzTfQqGdkJfe9fKhy/4DAS5vquIPepO6Gj7X3a5rVdGYyJjNxitbvfNzFv5mGEyDMVH8FVX1Xhf57cVc7z2kohVcRdICJdvOb1iR3mvDvwgrMhte0hekDGRfuusfOVZ7VEko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707823163; c=relaxed/simple;
-	bh=U7WN3EXjdjDY+WOk1krQTvyOnm0+62Jv90SPNEBQJN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iqNbBaSbLvDe9ahW9FsMtV4RD4+epPL3xLvkbY87LLLoL0RBwjU9jVUpBTMDJlUlQqcz18h6ZGKcDE4zwt1ThCuPQARR9eKjT0VsSynJoK0LxlKTIHukEqhOHkTWILNFd9zQwnPDw8zs0D3IScGtCLPjVkbzptM6H5QObPEE7Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZZEg/ZnC; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41DAI2V3018656;
-	Tue, 13 Feb 2024 11:18:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=kRixhbN6Ym1Zmusnenh11GI105dw0bqQnIm1JeLCSK8=;
- b=ZZEg/ZnCZtXf+0rAXEh14DIZ8Sye5Nhv5T7O/GHGqhe/UlUBxyyIjoPTy+kciAagGdPa
- GN5A8rXGjLKKzQq5azUSEepMOhG1uAfv2MPHyLvkEPgkJVSEpKyMUoV+o6akZPot8bgZ
- rQxFMy5cJURaY3EA+zCymd6cySK6yRVWgj83u6aX9PqjCXSbHQSP+a3F9lVtAQU03W7Z
- cNVAbaZ5MibgX3c9/TPRO+DvscRxn4PXsP2cu6rx6BmYvr6JcXO2Kf3VfGBOeM6ixewH
- ViLcLfXfoS/DiZeOOHY7DyW3aHWKQk7MwYu4CJoSHcMD61K/mv1ztVb85syzviIuF7VA cw== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w86hts9w4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Feb 2024 11:18:56 +0000
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41DB1fNm022081;
-	Tue, 13 Feb 2024 11:18:55 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w86hts9vm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Feb 2024 11:18:55 +0000
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41D8P7Jh016479;
-	Tue, 13 Feb 2024 11:18:54 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3w6mymeuwd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 13 Feb 2024 11:18:54 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41DBIpXF45809942
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 13 Feb 2024 11:18:53 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6A7F120040;
-	Tue, 13 Feb 2024 11:18:51 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E9C362004D;
-	Tue, 13 Feb 2024 11:18:50 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 13 Feb 2024 11:18:50 +0000 (GMT)
-Date: Tue, 13 Feb 2024 12:18:49 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-        Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Russell King <linux@armlinux.org.uk>, linux-arch@vger.kernel.org,
-        linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-        dm-devel@lists.linux.dev, nvdimm@lists.linux.dev,
-        linux-s390@vger.kernel.org, Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Mikulas Patocka <mpatocka@redhat.com>
-Subject: Re: [PATCH v5 4/8] dcssblk: Handle alloc_dax() -EOPNOTSUPP failure
-Message-ID: <20240213111849.6534-A-hca@linux.ibm.com>
-References: <20240212163101.19614-1-mathieu.desnoyers@efficios.com>
- <20240212163101.19614-5-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1707823510; c=relaxed/simple;
+	bh=Zw8haxAapUBG44nEylJwQccZGFGgWD0ChLnhmjrvZNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=lMG2Dr77s1SDqKdjmEozH1Jc+Nq7OAOBa/q5++tW0zBVX6/ALJ+AptHcCI4EdAbNUgBa0lzDwD4KRSW7bBRg2A53TOaUIllTgLUZL5e5iNxdXfocWmvgxG91hv3PGfbbQYGPoiaNd0BrBqy5IVN3FsrFyxaxIIrAQvZlFhfWm2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nWOUkteQ; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-33ce2121d5dso59384f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 03:25:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1707823505; x=1708428305; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c7B1VdNEjxdBHUG+t3lw56dnlzhGxxWmEE0AwtlQokM=;
+        b=nWOUkteQTjFRGq8xUbJgA4b5tA7kklIZ/tVCWet1dHXNrVQJb+gUS7YOwVIa3TOosf
+         0prgb7d8lsWlmXuUI5tDovUulHiIBp4+rvRkoNOqvW/dMA07R4EH/J5Nxa2iFJhqvmKc
+         GjSFjCxXL9mfOHgirVkERoYLEO+G6tvqh5pCAsuDQZpixsGQuiOQ4PRIm6eKnwLIxFSx
+         U1vEegxGPnCRDPoKyCgd8hJC5OOrYu+BtURGK6pewwl95PmIgP6eBM9xAnxQI4W4Zhka
+         97yRPiyQxpF3Fmv2veKvOe8Y1UyhkQcfyM+dl1xvCHFYOQz9sn1bsg5n5JuIkqFxmcAs
+         9q1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707823505; x=1708428305;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=c7B1VdNEjxdBHUG+t3lw56dnlzhGxxWmEE0AwtlQokM=;
+        b=qMGo7SDAHCAm5+jOAvILeXKO0yc1PLiaipt1TvvNcQj6l1Rm+mRCcBXgN8N4X75/At
+         HrRloA+1331sv/ew5/e2UGTkEb7Fa5uOSxJLuPC78H8g2RFpSTrU9f/ldg+6PHwhe8Jt
+         1SXKgA/WpSzxbg3rEFf0Sg8i6xZzSfH4DXYUIMJcKDhW8RhuE/ILTBR4H50m+wYGF4kU
+         fZ6l8MGXWtDO7IqdXYz8X+sdHnpJR8SJePmFk76YoJhthY6+3Ul2akKXx0J0FpDizQts
+         F6WMw10eVZkMUNI7Ujv38Yf303zn23yZU+1xP9U2vgKvxZujb9aJvdXWHR0558eDYyyx
+         m5KA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMYT30cc2Yy3QKtB8keC0oUHQmNm3zVJC2nnM4dyN/baiZESEiG6wzKp/KE4e/qQQqk5GxV3DdjoyOBVEJFChbsspzJVp1BT2DQs5P6Q==
+X-Gm-Message-State: AOJu0YyEp23qFMD9AxbrlXc2Q5x6Y4LFLm2t/FvVUMV7VmTLWFFbF0CX
+	2AOj1g4RfVqwehI/bfoBn3xxdhveeuOz8LDz4AboSjOwaZD6joyc0cnb2ZHf9KN4iRtkPGaigYm
+	tW1Vz7LVHz4J77SPEREP5rWgrS1JImFZdVGEL7f4UxqQK39jxdf2F
+X-Google-Smtp-Source: AGHT+IFDvKZilqGPmprSihukL2cOV+DX1TDTDe1cz5RyBlvdIbIU9j0HXFdr6eKEBuH81WUcfNsiM9yJ0Ex2CNjDRAA=
+X-Received: by 2002:adf:eec9:0:b0:33b:2281:ef32 with SMTP id
+ a9-20020adfeec9000000b0033b2281ef32mr7382022wrp.69.1707823505374; Tue, 13 Feb
+ 2024 03:25:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240212163101.19614-5-mathieu.desnoyers@efficios.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: v7etkd58sOZye-tw7r45w1hzzfW55uLg
-X-Proofpoint-GUID: ex2g2pAdh4h8FGNj8JP3P_9xuvlIPkmS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-13_06,2024-02-12_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- lowpriorityscore=0 mlxscore=0 mlxlogscore=800 malwarescore=0
- priorityscore=1501 spamscore=0 clxscore=1011 bulkscore=0 impostorscore=0
- adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2311290000 definitions=main-2402130089
+References: <20240213001920.3551772-1-lokeshgidra@google.com>
+ <20240213001920.3551772-4-lokeshgidra@google.com> <20240213033307.zbhrpjigco7vl56z@revolver>
+In-Reply-To: <20240213033307.zbhrpjigco7vl56z@revolver>
+From: Lokesh Gidra <lokeshgidra@google.com>
+Date: Tue, 13 Feb 2024 03:24:53 -0800
+Message-ID: <CA+EESO5TNubw4vi08P6BO-4XKTLNVeNfjM92ieZJTd_oJt9Ygw@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] userfaultfd: use per-vma locks in userfaultfd operations
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lokesh Gidra <lokeshgidra@google.com>, 
+	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, surenb@google.com, 
+	kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com, 
+	david@redhat.com, axelrasmussen@google.com, bgeffon@google.com, 
+	willy@infradead.org, jannh@google.com, kaleshsingh@google.com, 
+	ngeoffray@google.com, timmurray@google.com, rppt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 12, 2024 at 11:30:57AM -0500, Mathieu Desnoyers wrote:
-> In preparation for checking whether the architecture has data cache
-> aliasing within alloc_dax(), modify the error handling of dcssblk
-> dcssblk_add_store() to handle alloc_dax() -EOPNOTSUPP failures.
-> 
-> Considering that s390 is not a data cache aliasing architecture,
-> and considering that DCSSBLK selects DAX, a return value of -EOPNOTSUPP
-> from alloc_dax() should make dcssblk_add_store() fail.
-> 
-> Fixes: d92576f1167c ("dax: does not work correctly with virtual aliasing caches")
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-...
-> ---
->  drivers/s390/block/dcssblk.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+On Mon, Feb 12, 2024 at 7:33=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
+>
+> * Lokesh Gidra <lokeshgidra@google.com> [240212 19:19]:
+> > All userfaultfd operations, except write-protect, opportunistically use
+> > per-vma locks to lock vmas. On failure, attempt again inside mmap_lock
+> > critical section.
+> >
+> > Write-protect operation requires mmap_lock as it iterates over multiple
+> > vmas.
+> >
+> > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+> > ---
+> >  fs/userfaultfd.c              |  13 +-
+> >  include/linux/userfaultfd_k.h |   5 +-
+> >  mm/userfaultfd.c              | 392 ++++++++++++++++++++++++++--------
+> >  3 files changed, 312 insertions(+), 98 deletions(-)
+> >
+> ...
+>
+> > +
+> > +static __always_inline
+> > +struct vm_area_struct *find_vma_and_prepare_anon(struct mm_struct *mm,
+> > +                                              unsigned long addr)
+> > +{
+> > +     struct vm_area_struct *vma;
+> > +
+> > +     mmap_assert_locked(mm);
+> > +     vma =3D vma_lookup(mm, addr);
+> > +     if (!vma)
+> > +             vma =3D ERR_PTR(-ENOENT);
+> > +     else if (!(vma->vm_flags & VM_SHARED) && anon_vma_prepare(vma))
+> > +             vma =3D ERR_PTR(-ENOMEM);
+>
+> Nit: I just noticed that the code below says anon_vma_prepare() is unlike=
+ly.
+>
+Thanks for catching this. I'll add it in next version.
+> ...
+>
+> > +static struct vm_area_struct *lock_mm_and_find_dst_vma(struct mm_struc=
+t *dst_mm,
+> > +                                                    unsigned long dst_=
+start,
+> > +                                                    unsigned long len)
+> > +{
+> > +     struct vm_area_struct *dst_vma;
+> > +     int err;
+> > +
+> > +     mmap_read_lock(dst_mm);
+> > +     dst_vma =3D find_vma_and_prepare_anon(dst_mm, dst_start);
+> > +     if (IS_ERR(dst_vma)) {
+> > +             err =3D PTR_ERR(dst_vma);
+>
+> It's sort of odd you decode then re-encode this error, but it's correct
+> the way you have it written.  You could just encode ENOENT instead?
 
-Acked-by: Heiko Carstens <hca@linux.ibm.com>
+Thanks. It was an oversight. I'll fix it.
+>
+> > +             goto out_unlock;
+> > +     }
+> > +
+> > +     if (validate_dst_vma(dst_vma, dst_start + len))
+> > +             return dst_vma;
+> > +
+> > +     err =3D -ENOENT;
+> > +out_unlock:
+> > +     mmap_read_unlock(dst_mm);
+> > +     return ERR_PTR(err);
+> >  }
+> > +#endif
+> >
+> ...
+>
+> > +static __always_inline
+> > +long find_vmas_mm_locked(struct mm_struct *mm,
+>
+> int would probably do?
+> > +                      unsigned long dst_start,
+> > +                      unsigned long src_start,
+> > +                      struct vm_area_struct **dst_vmap,
+> > +                      struct vm_area_struct **src_vmap)
+> > +{
+> > +     struct vm_area_struct *vma;
+> > +
+> > +     mmap_assert_locked(mm);
+> > +     vma =3D find_vma_and_prepare_anon(mm, dst_start);
+> > +     if (IS_ERR(vma))
+> > +             return PTR_ERR(vma);
+> > +
+> > +     *dst_vmap =3D vma;
+> > +     /* Skip finding src_vma if src_start is in dst_vma */
+> > +     if (src_start >=3D vma->vm_start && src_start < vma->vm_end)
+> > +             goto out_success;
+> > +
+> > +     vma =3D vma_lookup(mm, src_start);
+> > +     if (!vma)
+> > +             return -ENOENT;
+> > +out_success:
+> > +     *src_vmap =3D vma;
+> > +     return 0;
+> > +}
+> > +
+> > +#ifdef CONFIG_PER_VMA_LOCK
+> > +static long find_and_lock_vmas(struct mm_struct *mm,
+>
+> This could also be an int return type, I must be missing something?
+
+If you look at ERR_PTR() etc. macros, they all use 'long' for
+conversions. Also, this file uses long/ssize_t/int at different
+places. So I went in favor of long. I'm sure int would work just fine
+too. Let me know if you want me to change it to int.
+>
+> ...
+>
+> > +     *src_vmap =3D lock_vma_under_rcu(mm, src_start);
+> > +     if (likely(*src_vmap))
+> > +             return 0;
+> > +
+> > +     /* Undo any locking and retry in mmap_lock critical section */
+> > +     vma_end_read(*dst_vmap);
+> > +
+> > +     mmap_read_lock(mm);
+> > +     err =3D find_vmas_mm_locked(mm, dst_start, src_start, dst_vmap, s=
+rc_vmap);
+> > +     if (!err) {
+> > +             /*
+> > +              * See comment in lock_vma() as to why not using
+> > +              * vma_start_read() here.
+> > +              */
+> > +             down_read(&(*dst_vmap)->vm_lock->lock);
+> > +             if (*dst_vmap !=3D *src_vmap)
+> > +                     down_read(&(*src_vmap)->vm_lock->lock);
+> > +     }
+> > +     mmap_read_unlock(mm);
+> > +     return err;
+> > +}
+> > +#else
+> > +static long lock_mm_and_find_vmas(struct mm_struct *mm,
+> > +                               unsigned long dst_start,
+> > +                               unsigned long src_start,
+> > +                               struct vm_area_struct **dst_vmap,
+> > +                               struct vm_area_struct **src_vmap)
+> > +{
+> > +     long err;
+> > +
+> > +     mmap_read_lock(mm);
+> > +     err =3D find_vmas_mm_locked(mm, dst_start, src_start, dst_vmap, s=
+rc_vmap);
+> > +     if (err)
+> > +             mmap_read_unlock(mm);
+> > +     return err;
+> >  }
+> > +#endif
+>
+> This section is much easier to understand.  Thanks.
+
+I'm glad finally the patch is easier to follow. Thanks so much for
+your prompt reviews.
+>
+> Thanks,
+> Liam
 
