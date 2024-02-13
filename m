@@ -1,128 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-11485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03EA2853EF9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 23:45:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 309E9853F04
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 23:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEE6A2883B3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:45:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B99A1B288EC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:46:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB526280B;
-	Tue, 13 Feb 2024 22:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="bJZB4ozt"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84CB66280E;
+	Tue, 13 Feb 2024 22:46:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF026169F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 22:45:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 075DA626B2;
+	Tue, 13 Feb 2024 22:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707864310; cv=none; b=qRo/XHwcsJpemxlvqgI/708AuI22XNs/aOSbdfHUg98tsBkBTk63CPdxog1Xzy5MpKslGXITeQsEKtOIyUzk16+4mrp9k7FXPxkucF60hVC4rooyWMmNG3Iztlitj/C0vvO3PxOJ2tFNwlEMA4LHxVRF6cYWkOZWGmt/ZIstzIs=
+	t=1707864372; cv=none; b=uFfAUCfKb1k+vMYIpdbZofbIhyvzVzcovZRkfuwhkj8PwIvdg/jhM4KxIlOMYPi8i98pu9kRtHUz+LrSTSqv4vj7iGs8YmdWKJZWNQxHuwp8lJIExNP6htXT2eVkH8RyBI5KfFOXp2bVyr9dIMLqX7Ks1veUa2CIlhPySusbgKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707864310; c=relaxed/simple;
-	bh=HBYciFeZBNHgQsYnR6EeVMEsINZyKu5uLE+AmLv/jjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R+TsXW4uUdKoSjmp2mes0lNbvGaGukI5juEceQfCdpwi9c5sncKZ7zghusCeV5GzDlbV6lcTJvZGyzqt3UXh0ZrbgqQDsKQdiWb8opHv8hw36TlrqO/qxGspTkwfxL3oDg0gCRROuAohldNQGC+VsLTpMgCnQ9MaXcv5zHNrkNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=bJZB4ozt; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-6d9f94b9186so4049675b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 14:45:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707864307; x=1708469107; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VSX+f82UonQUib7g2mNUoZMszrXmjLE1tVvT69rZd4k=;
-        b=bJZB4oztXzNtD0mM4yzJN3tF3CC56qYCy35KlYe/cocJWq58cE/fjW+tImjoZrNl8O
-         IJEUQSg+zmgovotdGcG/Awk7mY/gjCvmW98h4szuVuLLOpCNMMIupmbFyDc9dDqMqbmI
-         SGlIFKDJTevEuvXlX3Xe2F/S2FYsKN4ZkP9ORmgdEwmjkcZHFuwOyv5OiGBkeI2jyFjD
-         GeIbzt8NiYbHc+krnkK5JQ6AcZUR1uSp8zAVAb5mKn/qfD0pC1I6hp5mjqNczFYLg8+d
-         gAxg9GoRn+Q5wLm5J1hSZ+FuX+afKO9tlLY4z7C7/lG5NsDV0XFvGtFSYRg3E0yqhIDI
-         e56Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707864307; x=1708469107;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VSX+f82UonQUib7g2mNUoZMszrXmjLE1tVvT69rZd4k=;
-        b=S+3glsXYZPopLdzcYWlVD0GvdOsc44zqW6TKJCiswwUVsflKD92lRpZm7qnFkSpAz5
-         Q0OBob2zwbuNLBbK1zZmk+ZjFuFMb10MCON7ko+tQRYodyZpK2jvKpb+15SoSeLIjIEg
-         NCPMy/msx23GyAURum16956wHIh0+jCVnyZU8394FlPQcliGrQ+rHcL1g++k4VWBViH3
-         7Q3NqVR8xFOOK8hYbExPgNBcp0UXd86UYqI/QS7Mr5/VaRwIc4qAyatX3lKo67ARvMkY
-         lU/oJnGz0buNY7RemMCzpwJqlJHQMGO49vHYMvReEcLkpcZ3a45k1X3+SzDoDCVQutLF
-         RsCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpbQM07ImEM+nUy6A8Po+1S/Q97aZUtyVrv6674u6MbKo6SbzdRgH6DlEwMhQZMvzEdNnja7LlIhVsRW686LKLjkl+wBy438lb17WGag==
-X-Gm-Message-State: AOJu0YwyrRhpwNKZHirg8TIXAMnqbgKvttQCYHZeBhEzzh1ZQtlwF95Q
-	GQo2lwsLnmL7BQfVMw9qS6xlAA0KTw7wIQvuyXzMvMIcNvGotvFH3jWJAR0et24=
-X-Google-Smtp-Source: AGHT+IFH5HuMfmvbE4pmOe8SUsWhXGmBy/f8wCL8BkqKfjRUwp7p68YSbmTclZDRaoQsSL6V13FV8Q==
-X-Received: by 2002:a05:6a20:43a0:b0:1a0:60b2:45b with SMTP id i32-20020a056a2043a000b001a060b2045bmr1445690pzl.6.1707864306761;
-        Tue, 13 Feb 2024 14:45:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUuBRLYz/ZMeJAh5p4WoSM7f4br1opheRIOVUqkjHYvdjjF+sUGuH9OCmB++AXrk+SYj0c14b2v3mPw++EN5XDbXUgzFjupG5q/2qyZlwfpXk7ulACrPgHmp4r3KNjuLVlqX12ACdOM6raWkbIOSUq2HvhIHlPQKjzHqg2RSsAnT6WjoVb9ntIfUxaXQ78lEaHrGDv1By1Kx5UK/Y9eYvQtynsSTLzuvYmO/JroPwUvPGCYTRZsNKaVHDXL2Wgr68Ql9oDQEQBRIXLlsJAB5f9dVuP6JW0oOzHEGa1FnkQfY1sJUTbp7aeZP+0CR3s3kN7F/lWm0sk7hJOK661u6uz4PF40Z9d0XYHNhlZk242dwNhEkKooSKpml+jjj+Xroa6a3KvQe2FjcC3GQztgrVCGprCGpX0MeQ8Z2Ck=
-Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
-        by smtp.gmail.com with ESMTPSA id r18-20020a62e412000000b006e0503f467bsm7953728pfh.39.2024.02.13.14.45.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Feb 2024 14:45:06 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1ra1WQ-0068Mq-2a;
-	Wed, 14 Feb 2024 09:45:02 +1100
-Date: Wed, 14 Feb 2024 09:45:02 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	mcgrof@kernel.org, gost.dev@samsung.com, akpm@linux-foundation.org,
-	kbusch@kernel.org, djwong@kernel.org, chandan.babu@oracle.com,
-	p.raghav@samsung.com, linux-kernel@vger.kernel.org, hare@suse.de,
-	willy@infradead.org, linux-mm@kvack.org
-Subject: Re: [RFC v2 13/14] xfs: add an experimental CONFIG_XFS_LBS option
-Message-ID: <Zcvw7hcMsOSCrCvg@dread.disaster.area>
-References: <20240213093713.1753368-1-kernel@pankajraghav.com>
- <20240213093713.1753368-14-kernel@pankajraghav.com>
- <Zcvc20gqm6U6xaD0@dread.disaster.area>
- <gsxwuko2bmajg7wshcxx26p5afmzi6hpvc5u6oecp5slnybdr6@fdky2ksbpvki>
+	s=arc-20240116; t=1707864372; c=relaxed/simple;
+	bh=6AWrD9fLn9rIoWsfdQ1zN/JM/sKG+z0lxc9s0V1f1BY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=K2L2GgG5UXbunjvUu53WSY3kBT4M1pNs7CWMYUv5/4CXZ9oFFgfgHlr30XzzZiXNhovAWcEivwrIl3J42LMBLVy6E0T8zR+WXp/9bEdqbxeV7sEMkGhvLgnEIEUb/NeWb2QacjiR7i8+2XL5vOcM4/wdBQlEsWLJJero2/+71fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29488C433C7;
+	Tue, 13 Feb 2024 22:46:04 +0000 (UTC)
+Date: Tue, 13 Feb 2024 17:47:33 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kees Cook <keescook@chromium.org>
+Cc: Suren Baghdasaryan <surenb@google.com>, "Darrick J. Wong"
+ <djwong@kernel.org>, akpm@linux-foundation.org, kent.overstreet@linux.dev,
+ mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+ roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+ willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
+ void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
+ catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+ tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+ x86@kernel.org, peterx@redhat.com, david@redhat.com, axboe@kernel.dk,
+ mcgrof@kernel.org, masahiroy@kernel.org, nathan@kernel.org,
+ dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
+ paulmck@kernel.org, pasha.tatashin@soleen.com, yosryahmed@google.com,
+ yuzhao@google.com, dhowells@redhat.com, hughd@google.com,
+ andreyknvl@gmail.com, ndesaulniers@google.com, vvvvvv@google.com,
+ gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
+ vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com,
+ bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+ iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+ elver@google.com, dvyukov@google.com, shakeelb@google.com,
+ songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+ minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+ cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 13/35] lib: add allocation tagging support for memory
+ allocation profiling
+Message-ID: <20240213174733.086b2e3e@gandalf.local.home>
+In-Reply-To: <202402131436.2CA91AE@keescook>
+References: <20240212213922.783301-1-surenb@google.com>
+	<20240212213922.783301-14-surenb@google.com>
+	<202402121433.5CC66F34B@keescook>
+	<CAJuCfpGU+UhtcWxk7M3diSiz-b7H64_7NMBaKS5dxVdbYWvQqA@mail.gmail.com>
+	<20240213222859.GE6184@frogsfrogsfrogs>
+	<CAJuCfpGHrCXoK828KkmahJzsO7tJsz=7fKehhkWOT8rj-xsAmA@mail.gmail.com>
+	<202402131436.2CA91AE@keescook>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <gsxwuko2bmajg7wshcxx26p5afmzi6hpvc5u6oecp5slnybdr6@fdky2ksbpvki>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 13, 2024 at 10:54:07PM +0100, Pankaj Raghav (Samsung) wrote:
-> On Wed, Feb 14, 2024 at 08:19:23AM +1100, Dave Chinner wrote:
-> > On Tue, Feb 13, 2024 at 10:37:12AM +0100, Pankaj Raghav (Samsung) wrote:
-> > > From: Pankaj Raghav <p.raghav@samsung.com>
-> > > 
-> > > Add an experimental CONFIG_XFS_LBS option to enable LBS support in XFS.
-> > > Retain the ASSERT for PAGE_SHIFT if CONFIG_XFS_LBS is not enabled.
-> > > 
-> > > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+On Tue, 13 Feb 2024 14:38:16 -0800
+Kees Cook <keescook@chromium.org> wrote:
+
+> > > Save yourself a cycle of "rework the whole fs interface only to have
+> > > someone else tell you no" and put it in debugfs, not sysfs.  Wrangling
+> > > with debugfs is easier than all the macro-happy sysfs stuff; you don't
+> > > have to integrate with the "device" model; and there is no 'one value
+> > > per file' rule.  
 > > 
-> > NAK.
-> > 
-> > There it no reason for this existing - the same code is run
-> > regardless of the state of this config variable just with a
-> > difference in min folio order. All it does is increase the test
-> > matrix arbitrarily - now we have two kernel configs we have to test
-> > and there's no good reason for doing that.
+> > Thanks for the input. This file used to be in debugfs but reviewers
+> > felt it belonged in /proc if it's to be used in production
+> > environments. Some distros (like Android) disable debugfs in
+> > production.  
 > 
-> I did not have this CONFIG in the first round but I thought it might
-> help retain the existing behaviour until we deem the feature stable.
-> 
-> But I get your point. So we remove this CONFIG and just have an
-> experimental warning during mount when people are using the LBS support?
+> FWIW, I agree debugfs is not right. If others feel it's right in /proc,
+> I certainly won't NAK -- it's just been that we've traditionally been
+> trying to avoid continuing to pollute the top-level /proc and instead
+> associate new things with something in /sys.
 
-Yes.
+You can create your own file system, but I would suggest using kernfs for it ;-)
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+If you look in /sys/kernel/ you'll see a bunch of kernel file systems already there:
+
+ ~# mount |grep kernel
+ securityfs on /sys/kernel/security type securityfs (rw,nosuid,nodev,noexec,relatime)
+ debugfs on /sys/kernel/debug type debugfs (rw,nosuid,nodev,noexec,relatime)
+ tracefs on /sys/kernel/tracing type tracefs (rw,nosuid,nodev,noexec,relatime)
+ configfs on /sys/kernel/config type configfs (rw,nosuid,nodev,noexec,relatime)
+
+-- Steve
 
