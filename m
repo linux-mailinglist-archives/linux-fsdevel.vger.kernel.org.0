@@ -1,161 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-11413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0904F8539E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 19:27:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C328B853A0D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 19:42:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3DEE28E3E1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 18:26:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7868C1F248EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 18:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B3C60885;
-	Tue, 13 Feb 2024 18:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4fyKHwCt"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39BBC10A29;
+	Tue, 13 Feb 2024 18:42:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 453C160875
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 18:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF4910A0E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 18:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707848743; cv=none; b=GOZYzgur6AIqejUl5ibSB23IaHNIk1EW43Nmi1QMJBhaId9J77C/NojIpfVd/fl/mupdOmasD9GaAdtsMTh39EQY3SNlQBp49RxkJBLfh5q03YroMxCb3xUlNnscaWwWHrEfgM9UsNvmJzfvxnLKO0UEjkuyy5XcKiO54sRWczc=
+	t=1707849725; cv=none; b=WvJwz/Ryhpix7MyCvl8JRbZwlPnLNzRB4Udr6SqzC4RDvFIlK2zEXuMHVw9aU10QbJrnGqk52mR6DekAdnimLXNYwRLzRNgLq6eD9CHRiqt1fAtRu3AUhbPCMoADWnbwviBf2BgZw1vGNGNvqiZolJNu5Xrwgz8jnSe7ZsLV3lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707848743; c=relaxed/simple;
-	bh=hXifl7jh2X5sBOfSgmT8CE6ZtI1Jxw0At59d/7DJ06A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=shR03Cklb0DkuKsscXFHY4zfgeqxYmNgA8VIrzGbPob/gmdtIbb5+pQplOks97lBG5LNlux5lU3tYSbZslPo6olVcBDSjdeHYPrK2uLv+glFH4misp1/XaqaOh0Le/0A7ofclfJSpoojr48knPz19aMdm9ed7jTvDd+8O7bMKWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4fyKHwCt; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dcc73148611so1145263276.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 10:25:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707848740; x=1708453540; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zAYeUGx8AxWS5HRIkW2e+QEILi32w1ZSQIfACi9TajU=;
-        b=4fyKHwCtLskQ03IhzTRiYYiXpwDMYrh8xBhEQBTh8vLcZGzdntwtRIMOdDK3wrVYVO
-         BGWyX6Ik/ldVw7hb2QGnJWIYEulLUbM2Cty5coOygDToPtN7EV+IEDqiGfANO5b6GWE+
-         p4mn8gLVlexdTb519m+2Z5GbmiX6QmFVWHKsbtCxVTLP5Bm1Hr6VCxAql23aJmwgy1c5
-         HwJ+HHAnQE9AyuOQtvnVCjp/1eoA7ToOaEEK5iqp30A2gNoYj+Q4+l/9xVMY/10rAoaP
-         vVWVsS4khq1O4fl5O0IFNRGiPYyryV9uV1U0hahjVt42PXXvHB6K3++KtcHNhBlkt3Ml
-         DMXA==
+	s=arc-20240116; t=1707849725; c=relaxed/simple;
+	bh=gGTofCRKDI0Z9TW+TeMYIS+KXW44FQb7kapqG3xt0NI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Hz0mc6uyErJtXWATX4JAD9eWKI5w4Cmi1b+H4fEhOJqGRFCHtDWSs1xLFVZelWo9RNLn0kQADIJdbxjCINHx5arZvJRC3GO8uFqr+q/2182BGlRapM2Xhcn2uK5XNi2Lea+TxslyrDUKl6nZ7Vl4hPHR+HuEtYP2Wf6ULy3TMe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-363da08fc19so40907185ab.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 10:42:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707848740; x=1708453540;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zAYeUGx8AxWS5HRIkW2e+QEILi32w1ZSQIfACi9TajU=;
-        b=LMBRWgz/MvIIqWM8uIiaflMQTeFpChkPUKfNnmqMbju6Zgko3pnFgdU6PuHsJXPiNp
-         dqgrGff81CImglJo0Y+klRrcpWp0mNDIcglcEf5H5YtjxOi9wC6bIK5HkHFkGPmDfkqm
-         edJpwr66eMUvNEOc0UYNHNvixeHT0g1Aha4o014kUwZ4+dRBF0t3Tz7m/B5OdqFY2t6Q
-         Wlw44sWM4mDiDVi/wWdtUaaZVurqiORIFyc9xSDA6yL8SjMgU144hM2ivK6s1PjwRUzW
-         oGuuaFsDVLnDTqlGewIWtw7RTXyf9kRuxd6i5NUJWKRIHgyAD/gdV2aWII5CV/05DAoE
-         mexQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyshb0xpc5yo0OXdE4lDr62hKS0AN9SxQGVm8TsXFzchTeKHak9wXcvddxPfJRnw06OMGm/d+s65v4XRIlofSdsbkOEdVqlSGIpJDREQ==
-X-Gm-Message-State: AOJu0YyefiiPOJcAdlOGserDD+SHvXeRRT+eeVWsTxEULnuGsMB8wH/z
-	Thyxfwhh5JIxiKnZsQk0RIkoX6TRsV5oiNXmqFqEw+NS4qSQye1YJ8zNqFOVa58Ath6ryB+70on
-	Q+TuzLo8UEkoKDTuFRkLH87ZG9InD2EeANi8A
-X-Google-Smtp-Source: AGHT+IGdRu8XKjUJKRkKvDcznUTg4skBmOiJkJhaDQ64RKBRaLdu5QQmvMpAyevdDiDk4nn6WgNwUyj1RoTIjp+I6YU=
-X-Received: by 2002:a25:5f09:0:b0:dcc:6e60:7024 with SMTP id
- t9-20020a255f09000000b00dcc6e607024mr48458ybb.45.1707848738732; Tue, 13 Feb
- 2024 10:25:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1707849723; x=1708454523;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aiiASvbc7a26H8Bub12QdvoOFsqbdc7cNoE+2hwgvwk=;
+        b=jckweTkeo+A4wW+zMSaUwrVFeRjhqMrGnKspG6sYfo5BjMzwYCE6MspL4cZ9xiga0Q
+         Yo2aXYB+pmJ2c5rrMJo2yGl6SmpCP3CgRpGKCh9/ceVoZzA27t2rlZ0hCG020VFn4d8p
+         r9JVn/ZMcOJmTWZxOO5SN5KpBM4krCRA6PEPNBfHWqP6dAmnc39tzzPvVMoZvTnUu85X
+         tlLcWfBEhjcXvc4CALwnvYXCCOdl81Zu9I7xCMmZTTKeCwAYE0pTsiqmug6I30IyWge4
+         nCz6m8nsfr9Qb0ubtb1bf6pczyENVq3+B/HewYZr2FzyR0jd6H+HLzBhn8+XCL84TypR
+         QQeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVDJBwmVee5GPU/6xoc69wWTOws93vB7j7k92YaoOFjQGO/eL43UKOcLKB7vo3HZ93Yd3BBIfWCZ6sNN/CDLpnuzlsW+yBBwihiwi0nbw==
+X-Gm-Message-State: AOJu0Yyj9xnbhuz7quSw8aRSSYnWDhs5dDTbgaDlGWNokOPRFduPUuX/
+	aW6UlBHw75C4U2tZueaELAul1zliPEsTi2mk7eRbrtMDSZt8lD9o1Nol5CPVShp/dUE6dK3EDo5
+	CvJM01Rx6/1lLVn1UKyj1+sIZ47nPSSkWdmo2WZC/M/no0vjxVkaiYd4=
+X-Google-Smtp-Source: AGHT+IENo1xPvITOHRQQJ+M5KbsV17Ysd+dOGuZAlsgGB+yI15qx8x+sXPoucnIA7sf0wLWSQPaLwLfwWQ3yIBkYN186lvWoDH8J
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240213001920.3551772-1-lokeshgidra@google.com>
- <20240213001920.3551772-4-lokeshgidra@google.com> <20240213033307.zbhrpjigco7vl56z@revolver>
- <CA+EESO5TNubw4vi08P6BO-4XKTLNVeNfjM92ieZJTd_oJt9Ygw@mail.gmail.com>
- <20240213170609.s3queephdyxzrz7j@revolver> <CA+EESO5URPpJj35-jQy+Lrp1EtKms8r1ri2ZY3ZOpsSJU+CScw@mail.gmail.com>
-In-Reply-To: <CA+EESO5URPpJj35-jQy+Lrp1EtKms8r1ri2ZY3ZOpsSJU+CScw@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 13 Feb 2024 10:25:26 -0800
-Message-ID: <CAJuCfpFXWJovv6G4ou2nK2W1D2-JGb5Hw8m77-pOq4Rh24-q9A@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] userfaultfd: use per-vma locks in userfaultfd operations
-To: Lokesh Gidra <lokeshgidra@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, 
-	kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com, 
-	david@redhat.com, axelrasmussen@google.com, bgeffon@google.com, 
-	willy@infradead.org, jannh@google.com, kaleshsingh@google.com, 
-	ngeoffray@google.com, timmurray@google.com, rppt@kernel.org
+X-Received: by 2002:a05:6e02:1a03:b0:363:ba7e:ddc0 with SMTP id
+ s3-20020a056e021a0300b00363ba7eddc0mr30763ild.0.1707849723685; Tue, 13 Feb
+ 2024 10:42:03 -0800 (PST)
+Date: Tue, 13 Feb 2024 10:42:03 -0800
+In-Reply-To: <00000000000042f98c05f16c0792@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001c3739061147c07d@google.com>
+Subject: Re: [syzbot] [ntfs3?] BUG: unable to handle kernel paging request in step_into
+From: syzbot <syzbot+0994679b6f098bb3da6d@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, anton@tuxera.com, 
+	axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 13, 2024 at 10:14=E2=80=AFAM Lokesh Gidra <lokeshgidra@google.c=
-om> wrote:
->
-> On Tue, Feb 13, 2024 at 9:06=E2=80=AFAM Liam R. Howlett <Liam.Howlett@ora=
-cle.com> wrote:
-> >
-> > * Lokesh Gidra <lokeshgidra@google.com> [240213 06:25]:
-> > > On Mon, Feb 12, 2024 at 7:33=E2=80=AFPM Liam R. Howlett <Liam.Howlett=
-@oracle.com> wrote:
-> > > >
-> > > > * Lokesh Gidra <lokeshgidra@google.com> [240212 19:19]:
-> > > > > All userfaultfd operations, except write-protect, opportunistical=
-ly use
-> > > > > per-vma locks to lock vmas. On failure, attempt again inside mmap=
-_lock
-> > > > > critical section.
-> > > > >
-> > > > > Write-protect operation requires mmap_lock as it iterates over mu=
-ltiple
-> > > > > vmas.
-> > > > >
-> > > > > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-> > > > > ---
-> > > > >  fs/userfaultfd.c              |  13 +-
-> > > > >  include/linux/userfaultfd_k.h |   5 +-
-> > > > >  mm/userfaultfd.c              | 392 ++++++++++++++++++++++++++--=
-------
-> > > > >  3 files changed, 312 insertions(+), 98 deletions(-)
-> > > > >
-> > > > ...
-> >
-> > I just remembered an issue with the mmap tree that exists today that yo=
-u
-> > needs to be accounted for in this change.
-> >
-> > If you hit a NULL VMA, you need to fall back to the mmap_lock() scenari=
-o
-> > today.
->
-> Unless I'm missing something, isn't that already handled in the patch?
-> We get the VMA outside mmap_lock critical section only via
-> lock_vma_under_rcu() (in lock_vma() and find_and_lock_vmas()) and in
-> both cases if we get NULL in return, we retry in mmap_lock critical
-> section with vma_lookup(). Wouldn't that suffice?
+syzbot suspects this issue was fixed by commit:
 
-I think that case is handled correctly by lock_vma().
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-Sorry for coming back a bit late. The overall patch looks quite good
-but the all these #ifdef CONFIG_PER_VMA_LOCK seem unnecessary to me.
-Why find_and_lock_vmas() and lock_mm_and_find_vmas() be called the
-same name (find_and_lock_vmas()) and in one case it would lock only
-the VMA and in the other case it takes mmap_lock? Similarly
-unlock_vma() would in one case unlock the VMA and in the other drop
-the mmap_lock? That would remove all these #ifdefs from the code.
-Maybe this was already discussed?
+    fs: Block writes to mounted block devices
 
-> >
-> > This is a necessity to avoid a race of removal/replacement of a VMA in
-> > the mmap(MAP_FIXED) case.  In this case, we munmap() prior to mmap()'in=
-g
-> > an area - which means you could see a NULL when there never should have
-> > been a null.
-> >
-> > Although this would be exceedingly rare, you need to handle this case.
-> >
-> > Sorry I missed this earlier,
-> > Liam
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10656c42180000
+start commit:   bff687b3dad6 Merge tag 'block-6.2-2022-12-29' of git://git..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=68e0be42c8ee4bb4
+dashboard link: https://syzkaller.appspot.com/bug?extid=0994679b6f098bb3da6d
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11307974480000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c567f2480000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
