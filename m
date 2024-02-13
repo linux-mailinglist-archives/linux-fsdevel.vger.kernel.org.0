@@ -1,95 +1,207 @@
-Return-Path: <linux-fsdevel+bounces-11278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A333285274B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 03:09:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C388185274E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 03:13:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EEA828716A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 02:09:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 632B81F23721
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 02:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150E74C9F;
-	Tue, 13 Feb 2024 02:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03179290E;
+	Tue, 13 Feb 2024 02:13:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jB3cf+to"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dqPJlW7j";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fASBLpnQ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="dqPJlW7j";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fASBLpnQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900ED4687
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 02:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDFF15A8;
+	Tue, 13 Feb 2024 02:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707790142; cv=none; b=fJ0iEWvMPHzY1khIaTD6PmLeTkmKhy0+Epw5eGOIWQbjsp+H56hHqXqQ/02j41VfoCoKgLVJM69TCq3SMq1IyWkvfIGKBs+Xv1EOPC4pmoKhR1DGg20Q5/y5rvf5yiLIhPyNhuByh4BGLe7xqBH44ckS0AydNCneY/tCjzY0Vwk=
+	t=1707790415; cv=none; b=eHOu5SYjLrjjd1RVCMxFFugSBp5rWx/vABYf3elfYGgEJME8z9HxXgoiDXhqZPHjbv7w3FRLqyj4zTP8ZuYbpRYBVjaKXIdghfZ51MZXxktTMcfVIaIhj5NgehM1aDMzF9I12XXg4WF10KBE1sdD7KLGW8D2Nakl2WEzy9A1vHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707790142; c=relaxed/simple;
-	bh=bSH6niJkb/nxz60hjIplohE5t2I54cG+Yi9YAJ0nIWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fqla0cC2baOOIEDaNc9toMKF3yo04wHysPzLOCXsJiCrfGUbRtthAkxHfdm/eUjHk0P1lKzct3ydHMf5XLUtVt7r8Qt/QXsxIe/IDTfSeRsGei2Ih+AqXY7AW1d1iQeKP2A3f48BQamGoEqqeM1RGsFJcz3TPN4iUuF2fGy5X+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jB3cf+to; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 12 Feb 2024 21:08:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1707790138;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lKnD7PD7vHFoDrdYFBy0aSAjzzsTiox2zmAp9jUaeUo=;
-	b=jB3cf+toUIgh4WRnofpxNLsUtSjV8FWhNPjGE3TxFN2aHuUKMaKW/k/FKCrg95huIAE8vg
-	1DptOGDgE4p5+0wKKAn7cUzEeup1I6Bd7OUmai5FE8zZTqtIOX58n58fV16NjN6wT+pgxg
-	zhmNnkLjJoV7XN2H1w2Kx2/R/EABNYg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Kees Cook <keescook@chromium.org>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, 
-	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
-	mgorman@suse.de, dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
-	corbet@lwn.net, void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de, 
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
-	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
-	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
-	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, hughd@google.com, 
-	andreyknvl@gmail.com, ndesaulniers@google.com, vvvvvv@google.com, 
-	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
-	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
-	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
-	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, minchan@google.com, 
-	kaleshsingh@google.com, kernel-team@android.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-modules@vger.kernel.org, 
-	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 23/35] mm/slub: Mark slab_free_freelist_hook()
- __always_inline
-Message-ID: <3xhfgmrlktq55aggiy2beupy6hby33voxl65hqqxz55tivdbbi@j66oaehpauhz>
-References: <20240212213922.783301-1-surenb@google.com>
- <20240212213922.783301-24-surenb@google.com>
- <202402121631.5954CFB@keescook>
+	s=arc-20240116; t=1707790415; c=relaxed/simple;
+	bh=f9Q1bWLEzbbsAhp7nJxkHkdQFLYCGdX+j1umZutzTNg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jvWzx7svHvuYPxONZG1W1+MAJzYD3+bOwIVT3g1/CwEFX+Pt/6vlmWyKa/wYfaKsB9wbzrxG1mHFU6pFwiimQNGXoAvNDjpC7kxqXUhxezEX9bYt863yDlazIzx2/vmxtUIikdI3FBBmPOeGzR/bcoxO7JH2hKL8SxwSxHtitQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dqPJlW7j; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fASBLpnQ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=dqPJlW7j; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fASBLpnQ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 17E5B21CE5;
+	Tue, 13 Feb 2024 02:13:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1707790411; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=eW78Xuqcn60yMHNbU4RXHh3/QH4X8hmzi2JDB8FI7H8=;
+	b=dqPJlW7jRXJ3k4MaObms8lmszxZQ+4H9u4M8uoLMHQLSwgFTV4sBZMV3wvnhVhfyPYVsla
+	/z7zwD8nC6YmRwSDP3+APqCzBMBbeZ/5sfHGxOKnfC2co1CZgYRClxhu93NyVBPsNmRAWo
+	o0MbBZP2x4QsCZjBH3iB4HGkr5fMpK0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1707790411;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=eW78Xuqcn60yMHNbU4RXHh3/QH4X8hmzi2JDB8FI7H8=;
+	b=fASBLpnQuV23Hh+1jQN6Fv5mwW10avjKOiG9MCrllN4S9iyf145/m87TxMBfeSktIRNTVJ
+	QFus0V2P/ZK++VDA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1707790411; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=eW78Xuqcn60yMHNbU4RXHh3/QH4X8hmzi2JDB8FI7H8=;
+	b=dqPJlW7jRXJ3k4MaObms8lmszxZQ+4H9u4M8uoLMHQLSwgFTV4sBZMV3wvnhVhfyPYVsla
+	/z7zwD8nC6YmRwSDP3+APqCzBMBbeZ/5sfHGxOKnfC2co1CZgYRClxhu93NyVBPsNmRAWo
+	o0MbBZP2x4QsCZjBH3iB4HGkr5fMpK0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1707790411;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=eW78Xuqcn60yMHNbU4RXHh3/QH4X8hmzi2JDB8FI7H8=;
+	b=fASBLpnQuV23Hh+1jQN6Fv5mwW10avjKOiG9MCrllN4S9iyf145/m87TxMBfeSktIRNTVJ
+	QFus0V2P/ZK++VDA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C314813A4B;
+	Tue, 13 Feb 2024 02:13:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zKRmKUrQymX6dwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 13 Feb 2024 02:13:30 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: ebiggers@kernel.org,
+	viro@zeniv.linux.org.uk
+Cc: jaegeuk@kernel.org,
+	tytso@mit.edu,
+	amir73il@gmail.com,
+	linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org,
+	brauner@kernel.org,
+	Gabriel Krisman Bertazi <krisman@suse.de>
+Subject: [PATCH v6 00/10] Set casefold/fscrypt dentry operations through sb->s_d_op
+Date: Mon, 12 Feb 2024 21:13:11 -0500
+Message-ID: <20240213021321.1804-1-krisman@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202402121631.5954CFB@keescook>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Bar: /
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=dqPJlW7j;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=fASBLpnQ
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [0.49 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 TO_DN_SOME(0.00)[];
+	 R_MISSING_CHARSET(2.50)[];
+	 BROKEN_CONTENT_TYPE(1.50)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[10];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-3.00)[100.00%];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 MID_CONTAINS_FROM(1.00)[];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FREEMAIL_CC(0.00)[kernel.org,mit.edu,gmail.com,vger.kernel.org,lists.sourceforge.net,suse.de];
+	 RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: 0.49
+X-Rspamd-Queue-Id: 17E5B21CE5
+X-Spam-Flag: NO
 
-On Mon, Feb 12, 2024 at 04:31:14PM -0800, Kees Cook wrote:
-> On Mon, Feb 12, 2024 at 01:39:09PM -0800, Suren Baghdasaryan wrote:
-> > From: Kent Overstreet <kent.overstreet@linux.dev>
-> > 
-> > It seems we need to be more forceful with the compiler on this one.
-> 
-> Sure, but why?
+Hi,
 
-Wasn't getting inlined without it, and that's one we do want inlined -
-it's only called in one place.
+v6 of this patchset applying the comments from Eric and the suggestion from
+Christian. Thank you for your feedback.
+
+Eric, since this is getting close to merging, how do you want to handle
+it? I will take patch 1 through my tree already, are you fine if I merge
+this through unicode or do you want to take it through fscrypt?
+
+As usual, this survived fstests on ext4 and f2fs.
+
+Thank you,
+
+---
+original cover letter:
+
+When case-insensitive and fscrypt were adapted to work together, we moved the
+code that sets the dentry operations for case-insensitive dentries(d_hash and
+d_compare) to happen from a helper inside ->lookup.  This is because fscrypt
+wants to set d_revalidate only on some dentries, so it does it only for them in
+d_revalidate.
+
+But, case-insensitive hooks are actually set on all dentries in the filesystem,
+so the natural place to do it is through s_d_op and let d_alloc handle it [1].
+In addition, doing it inside the ->lookup is a problem for case-insensitive
+dentries that are not created through ->lookup, like those coming
+open-by-fhandle[2], which will not see the required d_ops.
+
+This patchset therefore reverts to using sb->s_d_op to set the dentry operations
+for case-insensitive filesystems.  In order to set case-insensitive hooks early
+and not require every dentry to have d_revalidate in case-insensitive
+filesystems, it introduces a patch suggested by Al Viro to disable d_revalidate
+on some dentries on the fly.
+
+It survives fstests encrypt and quick groups without regressions.  Based on
+v6.7-rc1.
+
+[1] https://lore.kernel.org/linux-fsdevel/20231123195327.GP38156@ZenIV/
+[2] https://lore.kernel.org/linux-fsdevel/20231123171255.GN38156@ZenIV/
+
+Gabriel Krisman Bertazi (10):
+  ovl: Always reject mounting over case-insensitive directories
+  fscrypt: Factor out a helper to configure the lookup dentry
+  fscrypt: Drop d_revalidate for valid dentries during lookup
+  fscrypt: Drop d_revalidate once the key is added
+  libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
+  libfs: Add helper to choose dentry operations at mount-time
+  ext4: Configure dentry operations at dentry-creation time
+  f2fs: Configure dentry operations at dentry-creation time
+  ubifs: Configure dentry operations at dentry-creation time
+  libfs: Drop generic_set_encrypted_ci_d_ops
+
+ fs/crypto/hooks.c       | 15 ++++------
+ fs/ext4/namei.c         |  1 -
+ fs/ext4/super.c         |  1 +
+ fs/f2fs/namei.c         |  1 -
+ fs/f2fs/super.c         |  1 +
+ fs/libfs.c              | 62 +++++++++++------------------------------
+ fs/overlayfs/params.c   | 14 ++++++++--
+ fs/ubifs/dir.c          |  1 -
+ fs/ubifs/super.c        |  1 +
+ include/linux/fs.h      | 11 +++++++-
+ include/linux/fscrypt.h | 61 +++++++++++++++++++++++++++++++++++-----
+ 11 files changed, 100 insertions(+), 69 deletions(-)
+
+-- 
+2.43.0
+
 
