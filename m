@@ -1,54 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-11441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29AA8853D44
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:37:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 296DD853D48
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:38:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D19F71F252E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 21:37:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5A69B26EC4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 21:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2473F61690;
-	Tue, 13 Feb 2024 21:37:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B3B62173;
+	Tue, 13 Feb 2024 21:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OWJepqos"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qf4/d1Yg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8008D612F9;
-	Tue, 13 Feb 2024 21:37:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0246216A;
+	Tue, 13 Feb 2024 21:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707860240; cv=none; b=qJZxCh7Q0JhxpjygxmOiFDkHVXqVVzLTQGoqwhSlxJUSYEYEq2qsD38lHktCLk7sw3T23m19gd+glu5zV3KeiUenjy2y4KhvKSGOVzGHNoikaN26aAHSW1FG9n7oAJ5Hw5Rt7uAkqG8P4WzPs4YPp4m7Lz5Xcb+JRkWzF5mJfQY=
+	t=1707860247; cv=none; b=bFbN3VGzqtqCVAPxiyxu6/yWZ28O7KFMnEP5/n84RSUCoQhimr/zy3T2IlvjbPYyQ3BojbZ1OapE/SEtXasiPGKFu1wjKEeFyh09s9V9Qm+xGucCnBvItdfUBALXie/Gtjui+3xAU5aKh1ignQZpQ9pf96qqyiy7FCuQkZhi+YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707860240; c=relaxed/simple;
-	bh=iZuJJf2L4A/9BC89nmeB2uDzQCKPBrFKPnqEznO8JRo=;
-	h=Subject:From:To:Cc:Date:Message-ID:MIME-Version:Content-Type; b=e8TN/afQsszFgPyntHfjOSSPeKLr2evpqyiY5cVKRy3Fo39zxJpHbcMOHdQELNd2jipQffr7dANTpEiGPIxo1JB6N2QhCP8n1nQHPur4ckgYYzo6bHbkjdZX4qp0np7V3peDC3+QxRcEpps4uAkTX9FmfACClQoQS7lMm2CsXXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OWJepqos; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F12E5C433C7;
-	Tue, 13 Feb 2024 21:37:18 +0000 (UTC)
+	s=arc-20240116; t=1707860247; c=relaxed/simple;
+	bh=DgxR48FdvStP6/D6Ne/g9o7gPlflm/a2urdscmeMLJk=;
+	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t5HFQiwQeGxylnHZUuPwcMHYVxdeC2vOhdihTRuvN7O1Atv8aDHIdlPiFeCp08X8+Mk1KV2ZJFk0mpNo9q23P/A6mXQWISmRyzONcLXlPNGqSSNdYuGpXVW24X+u3o4X8EyMqa9ybLAAt9ntviAPTqK1oiF9Vwi/0yO6jscAgKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qf4/d1Yg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FEAFC433C7;
+	Tue, 13 Feb 2024 21:37:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707860240;
-	bh=iZuJJf2L4A/9BC89nmeB2uDzQCKPBrFKPnqEznO8JRo=;
-	h=Subject:From:To:Cc:Date:From;
-	b=OWJepqosehGJPEZO9d/bePFqq3qbGgUjY6fPdj83QbSZf8s2XoJbVbgneG20oEQAz
-	 GxrRDaga5RZZ+TC0H73HccGqy8D4/HeGvSDSXa7ziV7gJpNk5HsxiunstM6tJZwErf
-	 y8U4X+oboJmNthftzoEtEFU3UUu9K+8eFqsNV5lp/ApXH58N+h7hUYBN07bQHJyqNz
-	 NbYCkRe5fJ2B0ILcMqPjmuAeNVlEORLvikJXZcyf0/eRVMS2VMjzQM75r50SY7rcTx
-	 ISJfFK+/0E2ob1Tt+Z8zCOTYh5iFXWRMoW8JJLll9Qa6RZDM91txTIfemPmv4EAFpg
-	 ncWwNqsHnQnKA==
-Subject: [PATCH RFC 0/7] Use Maple Trees for simple_offset utilities
+	s=k20201202; t=1707860247;
+	bh=DgxR48FdvStP6/D6Ne/g9o7gPlflm/a2urdscmeMLJk=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=Qf4/d1YgBMtbSniw/Z88hN4lMjBLBDisTs5pGMp+UPlKkqlI/sbFKI33U7LRO+2ay
+	 nZw+t7hHnnJwPjgKmA75MYvWUwvIOtRcjz3V9PQoKiIoqz6xKCa+mEUmeNtI5m/xko
+	 SQQBO4/wd0ZrZcGZupAzXrUFuFIawodE9jPpQ6ep8tXj3VS6SNGKgCEYPyJERgFyxb
+	 4/68TNcUkF28v5gcfRkJsUDp3Su9HGYgbFLfdxfM4zAMXfFr5VRJEdc/pvAmBvdD5e
+	 mvOJ7KOHuIm9/QluD4G7YhZraRi4VI/iw19vVrf79E9C+AuWSWbxBaJ0bcueJeh/9s
+	 +zD9/Ry1/SiRw==
+Subject: [PATCH RFC 1/7] libfs: Rename "so_ctx"
 From: Chuck Lever <cel@kernel.org>
 To: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
  hughd@google.com, akpm@linux-foundation.org, Liam.Howlett@oracle.com,
  oliver.sang@intel.com, feng.tang@intel.com
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  maple-tree@lists.infradead.org, linux-mm@kvack.org, lkp@intel.com
-Date: Tue, 13 Feb 2024 16:37:17 -0500
+Date: Tue, 13 Feb 2024 16:37:25 -0500
 Message-ID: 
+ <170786024524.11135.12492553100384328157.stgit@91.116.238.104.host.secureserver.net>
+In-Reply-To: 
+ <170785993027.11135.8830043889278631735.stgit@91.116.238.104.host.secureserver.net>
+References: 
  <170785993027.11135.8830043889278631735.stgit@91.116.238.104.host.secureserver.net>
 User-Agent: StGit/1.5
 Precedence: bulk
@@ -60,40 +65,40 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-In an effort to address slab fragmentation issues reported a few
-months ago, I've replaced the use of xarrays for the directory
-offset map in "simple" file systems (including tmpfs).
+From: Chuck Lever <chuck.lever@oracle.com>
 
-This patch set passes functional testing and is ready for code
-review. But I don't have the facilities to re-run the performance
-tests that identified the regression. We expect the performance of
-this implementation will need additional improvement.
+Most of instances of "so_ctx" were renamed before the simple offset
+work was merged, but there were a few that were missed.
 
-Thanks to Liam Howlett for helping me get this working.
-
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
+ fs/libfs.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Chuck Lever (6):
-      libfs: Rename "so_ctx"
-      libfs: Define a minimum directory offset
-      libfs: Add simple_offset_empty()
-      maple_tree: Add mtree_alloc_cyclic()
-      libfs: Convert simple directory offsets to use a Maple Tree
-      libfs: Re-arrange locking in offset_iterate_dir()
+diff --git a/fs/libfs.c b/fs/libfs.c
+index eec6031b0155..bfbe1a8c5d2d 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -271,7 +271,7 @@ void simple_offset_init(struct offset_ctx *octx)
+  * @octx: directory offset ctx to be updated
+  * @dentry: new dentry being added
+  *
+- * Returns zero on success. @so_ctx and the dentry offset are updated.
++ * Returns zero on success. @octx and the dentry's offset are updated.
+  * Otherwise, a negative errno value is returned.
+  */
+ int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
+@@ -430,8 +430,8 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
+ 
+ static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+ {
+-	struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
+-	XA_STATE(xas, &so_ctx->xa, ctx->pos);
++	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
++	XA_STATE(xas, &octx->xa, ctx->pos);
+ 	struct dentry *dentry;
+ 
+ 	while (true) {
 
-Liam R. Howlett (1):
-      test_maple_tree: testing the cyclic allocation
-
-
- fs/libfs.c                 | 125 +++++++++++++++++++++++--------------
- include/linux/fs.h         |   6 +-
- include/linux/maple_tree.h |   7 +++
- lib/maple_tree.c           |  93 +++++++++++++++++++++++++++
- lib/test_maple_tree.c      |  44 +++++++++++++
- mm/shmem.c                 |   4 +-
- 6 files changed, 227 insertions(+), 52 deletions(-)
-
---
-Chuck Lever
 
 
