@@ -1,117 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-11383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B15F853508
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 16:45:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A33DD8535B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 17:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E8C91C22F71
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 15:45:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1309E1F21BDE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 16:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0625EE7E;
-	Tue, 13 Feb 2024 15:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371335F846;
+	Tue, 13 Feb 2024 16:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="Vmj1mmLQ"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NrQsyi7e";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oTK1LIk8";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NrQsyi7e";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oTK1LIk8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3863A5F56B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 15:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04FE65F;
+	Tue, 13 Feb 2024 16:09:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707839134; cv=none; b=f0cezgdGvCc2OHr7nPyrix1bpkyxRTAosngfWtXsm+EY3l3LgSlb/mLS2iYBQlEdqxqxizzhkIDFx0BTsuSoZ45ZAHXekWCfsbBXkqAcoQ6iPgSvd47B2NbAK2JcgGyr4PnL2RKzREmJuQ1ndic6nj7fmjb3jMSff5mHrqybJH4=
+	t=1707840561; cv=none; b=a8cOy6d/0JGeU0y/xJaUF8zCYAHbBNHWPFoCIJi+hLwKAoTywrEgUzL44zKelZLSRbSXLgr+MTMEcHaPFlxtgy1YQ9q5qrF5F3MFiZDwHBcdKIIvVeWw9aBcwuQcuWMxLdEB/aBl0LNk34b7TNVryNWDQjMClXbLQmds2dtpX4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707839134; c=relaxed/simple;
-	bh=Mb7cfkVoTPe9SpFqQPiRQCgZRgp43WdceLq+nhIl53M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RPOjNssdY1qHYq7v/AHJYwiEgALpkrVLQxMPKwKHw+YCK42oTfeHCKG+gBiZSJx2gcx9rd8A46Y1nVJMNdVCymuMR9j76C+vN/onQZUMWs/YBBKj7o9GoQXABlRvLDgQOCX9AaRhxT3ghc5FVcTjZMyChFS8wsbIb1M1uJ9zAfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com; spf=none smtp.mailfrom=soleen.com; dkim=fail (0-bit key) header.d=soleen.com header.i=@soleen.com header.b=Vmj1mmLQ reason="key not found in DNS"; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=soleen.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7872614af89so8779885a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 07:45:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1707839131; x=1708443931; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=r+5lFm1GOYo46btsIaJvA6S/B+CQsp17IG3lccG/v6g=;
-        b=Vmj1mmLQ4yhugjb/lPfx3+kxHd1E/h0Kv5YjC6n1verDh8bforL8WJmTrmhqdYgyPX
-         56y9RZo1Mc5U/mF8FPCurWhd+rExv7UZueNkedhf/F3UMF4+TPDSL5z8wNhEeajGsva1
-         RCpTP8BbUJksyQEqy8waWFK14wWRVqePBgqfNsbDvyEJP5lN8zOpVxyRtyXGGxCqS9c+
-         eqSxQH/KlzMgGlgL+X73aBsTzO3bzsCM6zp8Bgti1AKInfQCsdy01WaodSCDPOx/76N3
-         k9pq74Hhw6oeQhYWQr/K8cMbwAzbnEL8K3HilA2scUgyGNxbQVBZCq4/4ORbpCYcCO5L
-         CfOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707839131; x=1708443931;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=r+5lFm1GOYo46btsIaJvA6S/B+CQsp17IG3lccG/v6g=;
-        b=Q/n/NKR+EZqJkd/0nHj5OPvoCPPGE4U7jHw6CzwmLLwlR63UIOUX7moeCQwONYJL9Z
-         nwxAgsNHk6ozxHnoWue0GgxVRfFWiuLH+cL8DCZ3wsXlpAzzwHX8FBSuo6qq2tEMg7Qn
-         yJoWRZ/GmdrVRRc7BIIDrJLdYtzKQwLi/zIjusGk4nKz9R8wwbb/mEJqOqJZ7zEMm7Eo
-         Jy5oUhIJiZzHP832eN02emQIukRtoOkSzbwdt28UhaMnS1lZVfJuMbvfIyPXQkj7EVD5
-         I40GQNYWHwaKBW03b7YdF4cY2Dc1SFlN3T9VWHTcdjRSq1K/C8jqkOB22b4vheyVvULp
-         QJKQ==
-X-Gm-Message-State: AOJu0YypT/gEcz7a3zcmMlphRSLazL3xL2Lc8SiJqXL8lBD3llQS5cGK
-	0onRRGLQzaNHIXP/zZxD+bXmCK2GB2YWQeTvxpZX3PnOrV6WHSBY9TiyHFMZdFUpPLCxr8nqreD
-	NTPexStskbLfqBiObB8fkhWGY3cpslAfbQ21Uww==
-X-Google-Smtp-Source: AGHT+IFqChznTFjr/EeidSN571ZA0nQfVJvF+Fp0E+Y2flaP6eNCXc4z1s3ADkdtr1CrUfrPgpTF+9pex3Z052b1w5U=
-X-Received: by 2002:a05:620a:618b:b0:787:1db5:f0de with SMTP id
- or11-20020a05620a618b00b007871db5f0demr2991955qkn.26.1707839131046; Tue, 13
- Feb 2024 07:45:31 -0800 (PST)
+	s=arc-20240116; t=1707840561; c=relaxed/simple;
+	bh=S/GRXv9DFjc7yF8QJeC4bdwYNBcaL3z76O2ybsYr6ZQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=StYU+ZIkfce1fNWXIpFqzXBOv7usutD3d0+JY+NTBy2kI5b3ByXvcj3ePQPRknnmISLsn2vti94ScEjRj+mPF3yCft9M5/arnaMPCEjlAREJI2pCaKzbVbQMOaofh/WZ0/1HZ3y40au83KSEfwAwrrvwgLh5Ar3I03BFqfV8Jp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NrQsyi7e; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oTK1LIk8; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NrQsyi7e; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oTK1LIk8; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0BCF221C42;
+	Tue, 13 Feb 2024 16:09:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1707840558; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zubravQy7jVbUoW/ZL/MweR2V9SuJRaNpDAgWH+si7c=;
+	b=NrQsyi7eL0Z8MNW3teN7s7NjS59N9Cv5z81m8t+3jwF++XZK/cJAMx9lQsQ8eXjKHKtPhE
+	WLIYfwWxxH6j/MgaeVK0xr43Gin/lx7FIAo9zUXS2+cIdLf8nDBSAS5i5Oawrzei5zA7wC
+	Z3ajU2KtGeGno1pzikYmBgnvjgaYeSY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1707840558;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zubravQy7jVbUoW/ZL/MweR2V9SuJRaNpDAgWH+si7c=;
+	b=oTK1LIk883C4Bl1hG5vCRjrkMxD6cI6iRlY7IzZeyJHztiGOfgHWgulmR8O0JFT/0/m6BM
+	NoIt2VnzNXQ+tJCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1707840558; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zubravQy7jVbUoW/ZL/MweR2V9SuJRaNpDAgWH+si7c=;
+	b=NrQsyi7eL0Z8MNW3teN7s7NjS59N9Cv5z81m8t+3jwF++XZK/cJAMx9lQsQ8eXjKHKtPhE
+	WLIYfwWxxH6j/MgaeVK0xr43Gin/lx7FIAo9zUXS2+cIdLf8nDBSAS5i5Oawrzei5zA7wC
+	Z3ajU2KtGeGno1pzikYmBgnvjgaYeSY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1707840558;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zubravQy7jVbUoW/ZL/MweR2V9SuJRaNpDAgWH+si7c=;
+	b=oTK1LIk883C4Bl1hG5vCRjrkMxD6cI6iRlY7IzZeyJHztiGOfgHWgulmR8O0JFT/0/m6BM
+	NoIt2VnzNXQ+tJCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BC40D1370C;
+	Tue, 13 Feb 2024 16:09:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ArjcJy2Uy2VkSwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 13 Feb 2024 16:09:17 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Eugen Hristev <eugen.hristev@collabora.com>
+Cc: tytso@mit.edu,  adilger.kernel@dilger.ca,  jaegeuk@kernel.org,
+  chao@kernel.org,  viro@zeniv.linux.org.uk,  brauner@kernel.org,
+  linux-ext4@vger.kernel.org,  linux-f2fs-devel@lists.sourceforge.net,
+  jack@suse.cz,  linux-kernel@vger.kernel.org,
+  linux-fsdevel@vger.kernel.org,  kernel@collabora.com,  Gabriel Krisman
+ Bertazi <krisman@collabora.com>,  Eric Biggers <ebiggers@google.com>
+Subject: Re: [RESEND PATCH v9 1/3] libfs: Introduce case-insensitive string
+ comparison helper
+In-Reply-To: <1b7d51df-4995-4a4a-8ec4-f1ea4975e44c@collabora.com> (Eugen
+	Hristev's message of "Tue, 13 Feb 2024 06:44:16 +0200")
+Organization: SUSE
+References: <20240208064334.268216-1-eugen.hristev@collabora.com>
+	<20240208064334.268216-2-eugen.hristev@collabora.com>
+	<87ttmivm1i.fsf@mailhost.krisman.be>
+	<ff492e0f-3760-430e-968a-8b2adab13f3f@collabora.com>
+	<87plx5u2do.fsf@mailhost.krisman.be>
+	<1b7d51df-4995-4a4a-8ec4-f1ea4975e44c@collabora.com>
+Date: Tue, 13 Feb 2024 11:09:16 -0500
+Message-ID: <875xyse47n.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
- <20231226200205.562565-11-pasha.tatashin@soleen.com> <20240213131210.GA28926@willie-the-truck>
-In-Reply-To: <20240213131210.GA28926@willie-the-truck>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Tue, 13 Feb 2024 10:44:53 -0500
-Message-ID: <CA+CK2bB4Z+z8tocO79AdsAy+gmN_4aVHgFUsm_gYLUJ2zV1A6A@mail.gmail.com>
-Subject: Re: [PATCH v3 10/10] iommu: account IOMMU allocated memory
-To: Will Deacon <will@kernel.org>
-Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
-	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
-	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
-	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
-	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
-	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
-	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
-	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
-	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
-	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
-	yu-cheng.yu@intel.com, rientjes@google.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NrQsyi7e;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=oTK1LIk8
+X-Spamd-Result: default: False [-1.66 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 HAS_ORG_HEADER(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_TWELVE(0.00)[15];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-1.35)[90.50%]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 0BCF221C42
+X-Spam-Level: 
+X-Spam-Score: -1.66
+X-Spam-Flag: NO
 
-> >  SecPageTables
-> > -              Memory consumed by secondary page tables, this currently
-> > -              currently includes KVM mmu allocations on x86 and arm64.
-> > +              Memory consumed by secondary page tables, this currently includes
-> > +              KVM mmu and IOMMU allocations on x86 and arm64.
+Eugen Hristev <eugen.hristev@collabora.com> writes:
 
-Hi Will,
+> On 2/9/24 16:40, Gabriel Krisman Bertazi wrote:
+>> Eugen Hristev <eugen.hristev@collabora.com> writes:
+> With the changes you suggested, I get these errors now :
+>
+> [  107.409410] EXT4-fs error (device sda1): ext4_lookup:1816: inode #521217: comm
+> ls: 'CUC' linked to parent dir
+> ls: cannot access '/media/CI_dir/CUC': Structure needs cleaning
+> total 8
+> drwxr-xr-x 2 root root 4096 Feb 12 11:51 .
+> drwxr-xr-x 4 root root 4096 Feb 12 11:47 ..
+> -????????? ? ?    ?       ?            ? CUC
+>
+> Do you have any idea about what is wrong ?
 
-> While I can see the value in this for IOMMU mappings managed by VFIO,
-> doesn't this end up conflating that with the normal case of DMA domains?
-> For systems that e.g. rely on an IOMMU for functional host DMA, it seems
-> wrong to subject that to accounting constraints.
+Hm, there's a bug somewhere. The lookup got broken and ls got an error.
+Did you debug it a bit?  can you share the code and a reproducer?
 
-The accounting constraints are only applicable when GFP_KERNEL_ACCOUNT
-is passed to the iommu mapping functions. We do that from the vfio,
-iommufd, and vhost. Without this flag, the memory useage is reported
-in /proc/meminfo as part of  SecPageTables field, but not constrained
-in cgroup.
+From a quick look at the example I suggested, utf8_strncasecmp* return 0
+on match, but ext4_match should return true when matched. So remember to
+negate the output:
 
-Pasha
+...
+res = !utf8_strncasecmp(um, name, &dirent);
+...
+
+-- 
+Gabriel Krisman Bertazi
 
