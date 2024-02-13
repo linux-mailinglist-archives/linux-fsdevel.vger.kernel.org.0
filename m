@@ -1,154 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-11483-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11484-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0BF1853EE2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 23:38:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD588853EF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 23:44:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5158E1F2963E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:38:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57EF6B27446
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5512E629E2;
-	Tue, 13 Feb 2024 22:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0242D627EE;
+	Tue, 13 Feb 2024 22:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JN+F//BL"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="EgHPKu9v"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6B5627EC
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 22:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF10262177
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 22:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707863900; cv=none; b=QhEwsvQ5HdPvFasGp9c8sB0vb9qgRakB5hYyEEURzhIgt0ED0D83xFQz+UxEtUj8v7W7sA+9j/AwbwN7bXPoglnESEy1NvSvI5SMUI7e/yM54K+ZQ+nZ7PZRr3UeJTu1RDkF95Ob4LdXVohkre/teZmYosFKeuJeonrXW+yExqE=
+	t=1707864283; cv=none; b=eJXD5rE+H4gzpidxs8rGZA5r8BVJ5/8E7SZ8/BRRP3RgPr7hTs/FHiVsS71CtB6MFJN8bsw8cFDo1ZPP/w1Sb3rz957/JWUrMRZyxXUub9JRRp3gV+jj2y4oqW4vdmGEZ+zYw3myF7i5AWyYwMMbCylP3kCvE9FjfKvyTJVfr/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707863900; c=relaxed/simple;
-	bh=5lmrd2HyuhPw/NKgKAo36swBOE5JwrmFU/lD03z4V0M=;
+	s=arc-20240116; t=1707864283; c=relaxed/simple;
+	bh=DkHZ2mjgTqxGFzmhJ0GZhDKs3oxoxJfE7ld+YCwH9JY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oX0mJ6ldncMQnjqJ4c8c7IQUD55X65Ew67nY2HI+0zMl/fIItv997Wfp5L0Ow6dLy/JHVyDSsUXqDmApqydh7+1bw7Epc2Z/8fMG8HrQqPH/3Tllje+Aly2Ddow4BL/0XCFExvd/ylx6t7xb5hcCdr5Q9Ph+o+8p3K9ZNZPqk3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=JN+F//BL; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-298cc60ee66so320130a91.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 14:38:18 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JCn4d88MUnMYQFBmHJXVzf6JCxy0d+wqGj/2RZtRqA1kdff73PMtqX4M/gkYqkisT3SKJolY2gYwxabvuuHeEXB5S28O658hUvmv83LCoP2MRTx1HvboM7zzhZoaUqktszoR9kmi9nhmNSEO9kUVTJYjVPDeRRpswrALRypAzAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=EgHPKu9v; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6e104196e6eso685789b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 14:44:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1707863898; x=1708468698; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2hiMS9Vllp3coocjvge8ABDhc28Vq8F9ZVWNu08lRdE=;
-        b=JN+F//BLH7Bz/09VqERqN2GIBcP+TbsfziWnzCv44cKRm8+QI8c6fsRD8VpVYozHp4
-         ZeuKjVg6bOhmyfSX6+yICv4uU2evm5CXHVx+of1l7AFBToCop6DZL81gdRz04pUSfjQV
-         3rjHtZtyuSsrybiPg1kzNoz8Z1CYySDw4MrwU=
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707864281; x=1708469081; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=u1sKZkLPjgDOF5m3bXTmn29vEuAR6iiKektHF/NRrR0=;
+        b=EgHPKu9v+3GFnsl3y1lZDHpxZEqIkFI3reDPwhM/EoRbCPzmOnwM7TiWaFvDZI9Y5a
+         Ub/vcCcluRTyabDkZB+B2wBAueSpYutmxH/02kgOIuQRV/MYKjwGButoFmo5/uY0y7Ii
+         z4GWE0GYfTlrb8dWegen/WU0CXPceZR5JTJIABZGnCkDwZd6a2ivA+rNSr4xTnJpxxw1
+         z+BrcV/xIQpqx4bl64J9mDEbH88SRw4F5R8NsODSUT5NKaMaqMXqzTleJTgJTJbFlb6n
+         ZJwonTn9vVKV28O2U4JEnrgt97QNqiNMKkf6BcWs+H+qoND5JYrisqBjAV4M1hPthqnR
+         4qgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707863898; x=1708468698;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2hiMS9Vllp3coocjvge8ABDhc28Vq8F9ZVWNu08lRdE=;
-        b=THfQJTpwAEu+eF/ucEozl/WfH1SRcOmDEXNBMvBLN4lKOCzrtRkD315ooNM0R2wbST
-         HxoSK2iI6Q+/bv1oIfoiwVIjpybGuNR0R9t5IZOMJvxKN6VV5aE5O2rZLJ6sMFJJ0G7m
-         5zTW48FxOipinCtHrSHaPQruwKpbd8GOhSllk1hVvA81WEz+lQbB3eUDQGjl7riSg/u8
-         XjVllrL6EneiQFnJsHioW1GGTawXiovB1oF8kdI0WD5Hgb4iSXYIfIPyXaIaTtMEOKVh
-         AWzI2+CdfT3pJsVLhiPja4ha2FLB7e6/alZY92YGwev5Pd0ym4jd6SIrW2M1Ub18yiRq
-         axEA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0G27kTcSoN2urv7lEQ3tjza7hd9y6WptbQNaq4aoMNOIm8N9NeI2nndiVSRXivS2LN/ZPzqAMfGQV7i3YM3Kc3pv5qVoGDZ/YA6u6+w==
-X-Gm-Message-State: AOJu0YxkpM+6LCP5SSxDc/7jkNdx5ij2+3s5v3fVu3jfeZzLeBwaXHsk
-	88bAjjEX/gCQydTj2GKVIuu2mMk0RVhxDg59pekJHq98I7hR7eHO4S+4IxWMBA==
-X-Google-Smtp-Source: AGHT+IE89BKAX6X+Al/HN6rgXjncoMtWEvqiu4lqGZS4dH3e78NFlTKLgL96lwHD/24OxhZvDCwx7A==
-X-Received: by 2002:a17:90b:24f:b0:297:1a1d:ca86 with SMTP id fz15-20020a17090b024f00b002971a1dca86mr997602pjb.0.1707863897956;
-        Tue, 13 Feb 2024 14:38:17 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUAJMGyS+cfE4Vm2UEiNKI/hecsbcAVG5WU/JHrRKkPbyIxrhsVjUn6Zi9OuF7mJnze7EYdor6qYoOKsCn8l4tMQmYmK/j47yu3M/lPS0Y9IgNhGhxdzHYC8jRKF6rcYTdZaVet8GHijHrj38weF04EDit6f8h5F20f2KGuxpehNQx3o3nAJox+coa8a+bjPvLNx0oEvLdolQ+1lVVE1tOCDnC2pgOuoKCMVZMqjMwPFqNvV7uULLMZiLRgxI8gwLUpFy/uV6qID+9NjuBNYMG12vCZHM7WCP8Bdd/jNaEXKRzpcngBW/+mwAuZ+gPLq9Ts+obYMaH3/Un48+/pL4/Lu6yj7TGH0wp2nRRqVVMMbLJMARzVsoQcMSapaM3EtoFqwoxydbubxnv3yVpvPThtnhILB0yRor3VOUu6pH/xtpAUORQUgIExaI8bixGj7KfPYv+uqJ71f3YzyS7zHqDC3D6peX5jywvDEn2CoBxOoF9qZyOgpIwmy6K+eWdJJtn187KGDWfVsmIu5FaSEbq4susI7ZxfLL1Rmz1bQ5sq4PhxOWIzGjs6L740RyKsDndaNQEXn3jZmwrl3+Cfq3vuCb9nM+t0chloxM8OhhopMK8HSW48i2nxxMPLu1cQBlEA0KpkMHRrltEIKuhNqiYXuyvb4j6P62sHq8bVVDcROr2w/LNlYg5lS203DjRScHnWHA+YRRiCxw9nSigv402S5c1vOEEGgb/528h2sdwRyBoL+ZLMZ7Q9d/5S8UAa+eMaYQSXcs8oQ9VlgNcIpfQm26V+
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id 60-20020a17090a09c200b00298b2d60ae8sm40014pjo.11.2024.02.13.14.38.17
+        d=1e100.net; s=20230601; t=1707864281; x=1708469081;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u1sKZkLPjgDOF5m3bXTmn29vEuAR6iiKektHF/NRrR0=;
+        b=cwUkoaRWAVAncKf4HivDxcsF40AzxJh2hAxd23s64cUcPSagEG665pikcs/8aDEsSe
+         eOPPdwo6Ou+DfSakZH4QmRjMNsGEnOYmX45qjIt7cB41O+3pwMvRnT7Gk5FEgoWkPaIe
+         97RRtsqwHCCPLiniaCuuMRojkreb5Bjjn16+xNP+CYz02aEmQ4kzqZ0j6TuS+AwKNLcE
+         HTOQIIil4yhqMn9V1wQV5BM/v22mQQVk+hQo2Fs/xWauy4NizuX3up94kggFJ0VFeuS/
+         brlyEoBCicgVMkIvZJtSeOvasn5dYWiAbC+aRzgQCLlk5iPhp7uIr4h7u4qB10+bXy4x
+         0DDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWH7IoBECrgv7QoB08vT3aVDs7m8GxWgsLUJBd+XsMDrKc8xtGDfqP9Hv+XZPKgwdU3EbSIiAKGxu3L0uwxbDOLpvfzd8v2VILeUbUtMQ==
+X-Gm-Message-State: AOJu0YxqSqnwddfObwTSYgwRC+GtuXqk8vTy5ceooABgyGfEdiQWZuky
+	ZZMHL7twjyLxAvCboHsyyhFS0glkfm5er75/G1OYoKUYDXeVIBU4I9hUiclNpOE=
+X-Google-Smtp-Source: AGHT+IEEfZk2QvJm0SnvWBUF2nizLOAjdHL84kGnsQEnz4ta77+jkalKGer0Gupu4/rPGedCeEooAA==
+X-Received: by 2002:a05:6a20:d809:b0:19e:ba40:83e9 with SMTP id iv9-20020a056a20d80900b0019eba4083e9mr1461948pzb.17.1707864281250;
+        Tue, 13 Feb 2024 14:44:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXLIL+5HbWfGdrbIFKF29jZ7ekgxR3Cem75R2GxM2SCb2adZY4DmlDpHJDBxWhw5qcwpLxmaOOHL13+l7ewRF6slNN34C0Dtmv4tppu8BPbrWlpYoN/mBus0eEZiBc1GirGPpePLR0PlbCqHsiYq5lvQJXhvVqnSMv2vAaToodBoUu2x2ERjz0mmPTt5yMJJjIW3/heHmiJ/lzYRKmcpK/r91qVHRI999G5V14FkT+8zJ+jaFFRJG4d7vnpV2knDFWXhjsAZNapkWUR2hOeNE/U/hnSnjXPepPqJ0c4o4+0UWNP0k/LhCAb4F3qrPFni1SK8Oudg3w4mRVLSxOXM5nqMmjP/ZzTEydIiaMjBGttWrNbAx19Rdby6PC1gqcsA5JQlSFLhjCotVJgdF61kXdSTJfD7PdXFJ8Z70zB8WBzOBfyvw==
+Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
+        by smtp.gmail.com with ESMTPSA id n8-20020aa78a48000000b006e06936c7a6sm7948075pfa.200.2024.02.13.14.44.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Feb 2024 14:38:17 -0800 (PST)
-Date: Tue, 13 Feb 2024 14:38:16 -0800
-From: Kees Cook <keescook@chromium.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, akpm@linux-foundation.org,
-	kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
-	corbet@lwn.net, void@manifault.com, peterz@infradead.org,
-	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
-	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
-	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
-	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
-	tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
-	paulmck@kernel.org, pasha.tatashin@soleen.com,
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
-	hughd@google.com, andreyknvl@gmail.com, ndesaulniers@google.com,
-	vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com,
-	ytcoode@gmail.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
-	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
-	glider@google.com, elver@google.com, dvyukov@google.com,
-	shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
-	rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
-	kernel-team@android.com, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-modules@vger.kernel.org,
-	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 13/35] lib: add allocation tagging support for memory
- allocation profiling
-Message-ID: <202402131436.2CA91AE@keescook>
-References: <20240212213922.783301-1-surenb@google.com>
- <20240212213922.783301-14-surenb@google.com>
- <202402121433.5CC66F34B@keescook>
- <CAJuCfpGU+UhtcWxk7M3diSiz-b7H64_7NMBaKS5dxVdbYWvQqA@mail.gmail.com>
- <20240213222859.GE6184@frogsfrogsfrogs>
- <CAJuCfpGHrCXoK828KkmahJzsO7tJsz=7fKehhkWOT8rj-xsAmA@mail.gmail.com>
+        Tue, 13 Feb 2024 14:44:40 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1ra1W2-0068M2-0u;
+	Wed, 14 Feb 2024 09:44:38 +1100
+Date: Wed, 14 Feb 2024 09:44:38 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, mcgrof@kernel.org,
+	gost.dev@samsung.com, akpm@linux-foundation.org, kbusch@kernel.org,
+	chandan.babu@oracle.com, p.raghav@samsung.com,
+	linux-kernel@vger.kernel.org, hare@suse.de, willy@infradead.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC v2 12/14] xfs: make the calculation generic in
+ xfs_sb_validate_fsb_count()
+Message-ID: <Zcvw1rrE4CiVzkmc@dread.disaster.area>
+References: <20240213093713.1753368-1-kernel@pankajraghav.com>
+ <20240213093713.1753368-13-kernel@pankajraghav.com>
+ <20240213162611.GP6184@frogsfrogsfrogs>
+ <loupixsa7jfjuhry2vm7o6j4k3qsdq6yvupcrbbum2m3hpuxau@5n72zpj5vrjh>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpGHrCXoK828KkmahJzsO7tJsz=7fKehhkWOT8rj-xsAmA@mail.gmail.com>
+In-Reply-To: <loupixsa7jfjuhry2vm7o6j4k3qsdq6yvupcrbbum2m3hpuxau@5n72zpj5vrjh>
 
-On Tue, Feb 13, 2024 at 02:35:29PM -0800, Suren Baghdasaryan wrote:
-> On Tue, Feb 13, 2024 at 2:29 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Mon, Feb 12, 2024 at 05:01:19PM -0800, Suren Baghdasaryan wrote:
-> > > On Mon, Feb 12, 2024 at 2:40 PM Kees Cook <keescook@chromium.org> wrote:
-> > > >
-> > > > On Mon, Feb 12, 2024 at 01:38:59PM -0800, Suren Baghdasaryan wrote:
-> > > > > Introduce CONFIG_MEM_ALLOC_PROFILING which provides definitions to easily
-> > > > > instrument memory allocators. It registers an "alloc_tags" codetag type
-> > > > > with /proc/allocinfo interface to output allocation tag information when
-> > > >
-> > > > Please don't add anything new to the top-level /proc directory. This
-> > > > should likely live in /sys.
-> > >
-> > > Ack. I'll find a more appropriate place for it then.
-> > > It just seemed like such generic information which would belong next
-> > > to meminfo/zoneinfo and such...
-> >
-> > Save yourself a cycle of "rework the whole fs interface only to have
-> > someone else tell you no" and put it in debugfs, not sysfs.  Wrangling
-> > with debugfs is easier than all the macro-happy sysfs stuff; you don't
-> > have to integrate with the "device" model; and there is no 'one value
-> > per file' rule.
+On Tue, Feb 13, 2024 at 10:48:17PM +0100, Pankaj Raghav (Samsung) wrote:
+> On Tue, Feb 13, 2024 at 08:26:11AM -0800, Darrick J. Wong wrote:
+> > On Tue, Feb 13, 2024 at 10:37:11AM +0100, Pankaj Raghav (Samsung) wrote:
+> > > From: Pankaj Raghav <p.raghav@samsung.com>
+> > > 
+> > > Instead of assuming that PAGE_SHIFT is always higher than the blocklog,
+> > > make the calculation generic so that page cache count can be calculated
+> > > correctly for LBS.
+> > > 
+> > > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> > > ---
+> > >  fs/xfs/xfs_mount.c | 6 +++++-
+> > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+> > > index aabb25dc3efa..bfbaaecaf668 100644
+> > > --- a/fs/xfs/xfs_mount.c
+> > > +++ b/fs/xfs/xfs_mount.c
+> > > @@ -133,9 +133,13 @@ xfs_sb_validate_fsb_count(
+> > >  {
+> > >  	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
+> > >  	ASSERT(sbp->sb_blocklog >= BBSHIFT);
+> > > +	unsigned long mapping_count;
+> > 
+> > Nit: indenting
+> > 
+> > 	unsigned long		mapping_count;
 > 
-> Thanks for the input. This file used to be in debugfs but reviewers
-> felt it belonged in /proc if it's to be used in production
-> environments. Some distros (like Android) disable debugfs in
-> production.
+> I will add this in the next revision.
+> > 
+> > > +	uint64_t bytes = nblocks << sbp->sb_blocklog;
+> > 
+> > What happens if someone feeds us a garbage fs with sb_blocklog > 64?
+> > Or did we check that previously, so an overflow isn't possible?
+> > 
+> I was thinking of possibility of an overflow but at the moment the 
+> blocklog is capped at 16 (65536 bytes) right? mkfs refuses any block
+> sizes more than 64k. And we have check for this in xfs_validate_sb_common()
+> in the kernel, which will catch it before this happens?
 
-FWIW, I agree debugfs is not right. If others feel it's right in /proc,
-I certainly won't NAK -- it's just been that we've traditionally been
-trying to avoid continuing to pollute the top-level /proc and instead
-associate new things with something in /sys.
+The sb_blocklog is checked in the superblock verifier when we first read in the
+superblock:
 
+	    sbp->sb_blocksize < XFS_MIN_BLOCKSIZE                       ||
+            sbp->sb_blocksize > XFS_MAX_BLOCKSIZE                       ||
+            sbp->sb_blocklog < XFS_MIN_BLOCKSIZE_LOG                    ||
+            sbp->sb_blocklog > XFS_MAX_BLOCKSIZE_LOG                    ||
+            sbp->sb_blocksize != (1 << sbp->sb_blocklog)                ||
+
+#define XFS_MAX_BLOCKSIZE_LOG 16
+
+However, we pass mp->m_sb.sb_dblocks or m_sb.sb_rblocks to this
+function, and they are validated by the same verifier as invalid
+if:
+
+	    sbp->sb_dblocks > XFS_MAX_DBLOCKS(sbp)
+
+#define XFS_MAX_DBLOCKS(s) ((xfs_rfsblock_t)(s)->sb_agcount *
+                                             (s)->sb_agblocks)
+
+Which means as long as someone can corrupt some combination of
+sb_dblocks, sb_agcount and sb_agblocks that allows sb_dblocks to be
+greater than 2^48 on a 64kB fsb fs, then that the above code:
+
+	uint64_t bytes = nblocks << sbp->sb_blocklog;
+
+will overflow.
+
+I also suspect that we can feed a huge rtdev to this new code
+and have it overflow without needing to corrupt the superblock in
+any way....
+
+-Dave.
 -- 
-Kees Cook
+Dave Chinner
+david@fromorbit.com
 
