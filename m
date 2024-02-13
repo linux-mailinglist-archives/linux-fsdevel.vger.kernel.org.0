@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-11386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF90F8535F0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 17:26:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584958535F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 17:27:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F33DA1C22346
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 16:26:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95B11F244FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 16:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556DD5F876;
-	Tue, 13 Feb 2024 16:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298445F87E;
+	Tue, 13 Feb 2024 16:27:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UXuj59mV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FiG74dt6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB655D91C;
-	Tue, 13 Feb 2024 16:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800A85D91C;
+	Tue, 13 Feb 2024 16:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707841572; cv=none; b=TsaEc1ox2OnE7f2GBrTJ0u2XAh/Py1VKMppZNb1Hisv8eBfFBJAEQH2GZG0wtX9mHmkjor0HL+roOIi3sPUjU8T8mXAOWMD2APVlpDDBVY8Q90arcmWYL6wJPUfNujzX7p7LdEZk8Nw71M2liDN4zry6j4FlpyF+iQeXadZuWIg=
+	t=1707841625; cv=none; b=TFn03EWXAIxi+hhUYJ1Y77ECOHcN29xD7YTOaL1wFR6uf38ss4k9slHpw3TU1fQpqtEpYYyPdiQGTM1Be64a94Fhn1CUXrqRlmiAADl66C4zhpNO9+3oQVbi59op+fp6KTlwv+5UxL6GcWuXrnxfPLa0QQr5P/Fox4u3LLfMMxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707841572; c=relaxed/simple;
-	bh=TBfQpsjoMY7jrNA/FeZM1dUOfhL8fb7O2OuwjJxxz9A=;
+	s=arc-20240116; t=1707841625; c=relaxed/simple;
+	bh=I4j0ct2ZX+hSPlx2NUqgKxHFmaIO2IKKpDrBU5uH/1g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nNeJ0VruZVBr1T8GZqsXPj+05LHF2ivsbGuLLQJS48nvnD2cOn7ckYYKMSTmraNj6ws4pE/zNMVTD/rBlZUYFOymm3lciB1dM6O/eC/632kv5Y6ABG8W95ZCs7X96Cp8cjUFF325MymGFn4L7ypV0hiqXbM9bQSZYJmt6ps+2x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UXuj59mV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 261F3C433F1;
-	Tue, 13 Feb 2024 16:26:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MJggN+2d+ggQz0ssubvwJvOtwg4wbgQoRdUzSOpfwPKUCEqFhV6muHPE2NYPTok04x2tAg+bi+AkRi/1iC4lwWE7VeURNTPcAsofS+6bm7sTwHF1z1U8L6iKKEA3e0DEc1INf3llbgrRqbD2/GtswqgT3QhgJT3uSbJ27eWCJZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FiG74dt6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08BB6C433F1;
+	Tue, 13 Feb 2024 16:27:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707841572;
-	bh=TBfQpsjoMY7jrNA/FeZM1dUOfhL8fb7O2OuwjJxxz9A=;
+	s=k20201202; t=1707841625;
+	bh=I4j0ct2ZX+hSPlx2NUqgKxHFmaIO2IKKpDrBU5uH/1g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UXuj59mVbe41ruT+hc23UrwHz5GEpU9LaQu6usf8oy6UrO5tR3wXQWP9DsYDqcp/p
-	 f4yvbjgZEZwZCtk0v9CnaFBG2TKsI/XHd2ozlArf53ihmaBW0DiEMVSjkzolA/O1gf
-	 7G1wO74ukiATY7yiOnKLKZ5iCSi4EILVAmDGR8Q+hG6J3ZJmyqA2Vd0XItpTDC1oIL
-	 HnVKdhX5cjj220+j/3l2QmflzrmgrV5FBGUGdc64RFXLGYVDluv8VVEmwswirF/+AI
-	 v5Kx6M8NurqK/NrHOJwpsrw5MCnmHoFmmsHr/7eTYP7pYSoKl/9NxRf4XRs9vyTpkQ
-	 0kV+bynbFJMbQ==
-Date: Tue, 13 Feb 2024 08:26:11 -0800
+	b=FiG74dt60bJgg/aftLkydqOKtA4Hv58E9b1DOO9oSnq5kCkUx/WmmqIhjmCLGc/jY
+	 /mibd0lq2JXVJql4GDprEpgl8UkiAh8cvZKlaUXiAHuBEdY4QwAZ6/ms76Sty9OMil
+	 OKR18SChm/vN4taJNcZ+GaeMF3ABHyaOeAYq5EeAwxpancgtVsvfjk/25tGrH7o/5n
+	 hPLkqUMy8QpowQw1tjeOWHB2g0roL76ibATwDBSjSdSzrpFkg7YLFZspp72NGegvCU
+	 NeLB93fX+4YeqCJA2YwbtgLEmKSu9IJoGB+jTldkMQpav89jLuZwGvaKruC6zmIiOv
+	 /u5nimIGxC4oA==
+Date: Tue, 13 Feb 2024 08:27:04 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	mcgrof@kernel.org, gost.dev@samsung.com, akpm@linux-foundation.org,
 	kbusch@kernel.org, chandan.babu@oracle.com, p.raghav@samsung.com,
 	linux-kernel@vger.kernel.org, hare@suse.de, willy@infradead.org,
-	linux-mm@kvack.org, david@fromorbit.com
-Subject: Re: [RFC v2 12/14] xfs: make the calculation generic in
- xfs_sb_validate_fsb_count()
-Message-ID: <20240213162611.GP6184@frogsfrogsfrogs>
+	linux-mm@kvack.org, david@fromorbit.com,
+	Dave Chinner <dchinner@redhat.com>
+Subject: Re: [RFC v2 11/14] xfs: expose block size in stat
+Message-ID: <20240213162704.GQ6184@frogsfrogsfrogs>
 References: <20240213093713.1753368-1-kernel@pankajraghav.com>
- <20240213093713.1753368-13-kernel@pankajraghav.com>
+ <20240213093713.1753368-12-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,53 +62,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240213093713.1753368-13-kernel@pankajraghav.com>
+In-Reply-To: <20240213093713.1753368-12-kernel@pankajraghav.com>
 
-On Tue, Feb 13, 2024 at 10:37:11AM +0100, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
+On Tue, Feb 13, 2024 at 10:37:10AM +0100, Pankaj Raghav (Samsung) wrote:
+> From: Dave Chinner <dchinner@redhat.com>
 > 
-> Instead of assuming that PAGE_SHIFT is always higher than the blocklog,
-> make the calculation generic so that page cache count can be calculated
-> correctly for LBS.
+> For block size larger than page size, the unit of efficient IO is
+> the block size, not the page size. Leaving stat() to report
+> PAGE_SIZE as the block size causes test programs like fsx to issue
+> illegal ranges for operations that require block size alignment
+> (e.g. fallocate() insert range). Hence update the preferred IO size
+> to reflect the block size in this case.
 > 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> [mcgrof: forward rebase in consideration for commit
+> dd2d535e3fb29d ("xfs: cleanup calculating the stat optimal I/O size")]
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 > ---
->  fs/xfs/xfs_mount.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+>  fs/xfs/xfs_iops.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-> index aabb25dc3efa..bfbaaecaf668 100644
-> --- a/fs/xfs/xfs_mount.c
-> +++ b/fs/xfs/xfs_mount.c
-> @@ -133,9 +133,13 @@ xfs_sb_validate_fsb_count(
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index a0d77f5f512e..8791a9d80897 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -515,6 +515,8 @@ xfs_stat_blksize(
+>  	struct xfs_inode	*ip)
 >  {
->  	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
->  	ASSERT(sbp->sb_blocklog >= BBSHIFT);
-> +	unsigned long mapping_count;
+>  	struct xfs_mount	*mp = ip->i_mount;
+> +	unsigned long	default_size = max_t(unsigned long, PAGE_SIZE,
+> +					     mp->m_sb.sb_blocksize);
 
-Nit: indenting
+Nit: wonky indentation, but...
 
-	unsigned long		mapping_count;
+>  
+>  	/*
+>  	 * If the file blocks are being allocated from a realtime volume, then
+> @@ -543,7 +545,7 @@ xfs_stat_blksize(
+>  			return 1U << mp->m_allocsize_log;
+>  	}
+>  
+> -	return PAGE_SIZE;
+> +	return default_size;
 
-> +	uint64_t bytes = nblocks << sbp->sb_blocklog;
-
-What happens if someone feeds us a garbage fs with sb_blocklog > 64?
-Or did we check that previously, so an overflow isn't possible?
-
-> +
-> +	mapping_count = bytes >> PAGE_SHIFT;
-
-Does this result in truncation when unsigned long is 32 bits?
+...why not return max_t(...) directly here?
 
 --D
 
->  
->  	/* Limited by ULONG_MAX of page cache index */
-> -	if (nblocks >> (PAGE_SHIFT - sbp->sb_blocklog) > ULONG_MAX)
-> +	if (mapping_count > ULONG_MAX)
->  		return -EFBIG;
->  	return 0;
 >  }
+>  
+>  STATIC int
 > -- 
 > 2.43.0
 > 
