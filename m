@@ -1,136 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-11382-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCF508534BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 16:34:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B15F853508
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 16:45:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97630282BA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 15:34:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E8C91C22F71
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 15:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019665EE8A;
-	Tue, 13 Feb 2024 15:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0625EE7E;
+	Tue, 13 Feb 2024 15:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FaJ+SJ2r"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=soleen.com header.i=@soleen.com header.b="Vmj1mmLQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C559D5EE6E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 15:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3863A5F56B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 15:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707838437; cv=none; b=lRRyJuVyAOU9pu9onBX6HrtlalvcNozOo3eH9kVdPfZkTIj25NWFJ9jatBJTnbWDap+XSdPxstRYkJsPFT3WS1wP6dCtT3uXXYta95p9qLZXOp1I/U2qNJjVmhlB8YjTRXth5Q40JPhJhGwRJoGSeZaWxUdsMMZ+hRnpMrUEz8Q=
+	t=1707839134; cv=none; b=f0cezgdGvCc2OHr7nPyrix1bpkyxRTAosngfWtXsm+EY3l3LgSlb/mLS2iYBQlEdqxqxizzhkIDFx0BTsuSoZ45ZAHXekWCfsbBXkqAcoQ6iPgSvd47B2NbAK2JcgGyr4PnL2RKzREmJuQ1ndic6nj7fmjb3jMSff5mHrqybJH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707838437; c=relaxed/simple;
-	bh=1wgOC11E4WsIHJN8sQAbPNgNjm1Tj7LN4SZFvsn5QAw=;
+	s=arc-20240116; t=1707839134; c=relaxed/simple;
+	bh=Mb7cfkVoTPe9SpFqQPiRQCgZRgp43WdceLq+nhIl53M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TcHR0oFFFFtBWdZa9kpX2VQ7sdrV2c3UZbt369DMLYvN4WQbRj6Fpo0+CywuQ/sTjAgttwK56EeK7zIisUXCfV+ORCUYnp9sy6QSeniRaXiQJM6tG3ue2iJtN/4ivimSJCTSHiY7ceZSEqjlwe3kTcb7JavxqZZFLJDDCMsTqNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FaJ+SJ2r; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dcc80d6004bso793147276.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 07:33:54 -0800 (PST)
+	 To:Cc:Content-Type; b=RPOjNssdY1qHYq7v/AHJYwiEgALpkrVLQxMPKwKHw+YCK42oTfeHCKG+gBiZSJx2gcx9rd8A46Y1nVJMNdVCymuMR9j76C+vN/onQZUMWs/YBBKj7o9GoQXABlRvLDgQOCX9AaRhxT3ghc5FVcTjZMyChFS8wsbIb1M1uJ9zAfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com; spf=none smtp.mailfrom=soleen.com; dkim=fail (0-bit key) header.d=soleen.com header.i=@soleen.com header.b=Vmj1mmLQ reason="key not found in DNS"; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=soleen.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7872614af89so8779885a.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 07:45:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1707838434; x=1708443234; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WqydKoyTOasPxiPJoWDY9vsZCIGGHm243lsYdLUdgFs=;
-        b=FaJ+SJ2rWv9CKMitnT5LLuR41tbjkrm+BMWVk5oD+ec/erdSd9QVZ2je05QqdnMRWk
-         Im9W0wj5gHWVvnF2/3Oma13A1S5T+br7kgBW/UFFPMaSUFiGbNlBIxfTdJlmxdh52UUf
-         /hruPYfY4OxF4TPP7Huzhtzpuxl4e9co9fH1yQajmkbDGsktPzyqUXWSQG7yj+xzUOXR
-         voiLBL6f/Vkb5iHgvEQ86RFnJNBzxZ6hNVQWFUZGuVN94AHcc/dueNO1wElhkCRbEHLA
-         0GmF5ZbfUFqLBPr1WQ5pEI+kFOBsp/k3RBLKJjlSVHcE8WVQtkGPF+1j2LqDeLfvBj0q
-         +DSw==
+        d=soleen.com; s=google; t=1707839131; x=1708443931; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=r+5lFm1GOYo46btsIaJvA6S/B+CQsp17IG3lccG/v6g=;
+        b=Vmj1mmLQ4yhugjb/lPfx3+kxHd1E/h0Kv5YjC6n1verDh8bforL8WJmTrmhqdYgyPX
+         56y9RZo1Mc5U/mF8FPCurWhd+rExv7UZueNkedhf/F3UMF4+TPDSL5z8wNhEeajGsva1
+         RCpTP8BbUJksyQEqy8waWFK14wWRVqePBgqfNsbDvyEJP5lN8zOpVxyRtyXGGxCqS9c+
+         eqSxQH/KlzMgGlgL+X73aBsTzO3bzsCM6zp8Bgti1AKInfQCsdy01WaodSCDPOx/76N3
+         k9pq74Hhw6oeQhYWQr/K8cMbwAzbnEL8K3HilA2scUgyGNxbQVBZCq4/4ORbpCYcCO5L
+         CfOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707838434; x=1708443234;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WqydKoyTOasPxiPJoWDY9vsZCIGGHm243lsYdLUdgFs=;
-        b=Nv4NYEVSaUMcyEG/sMPiaPcpKM+hsSobQI5zqCT5uR9GD4HqTHxNDJBu0X52b79GlU
-         Msc//jYeS+WV8oo/lKDkctNLsI2goqlPebmyTwLRXGgdYc8nNA5TGNlewhTY4EDrZqwR
-         OTtcBuq0cU9NbCpGOKh9/LUU7zLwT2g+7yEn0OJP+gmpc4jC0XPq8vPLbljaRN6vG8LH
-         LKrHe8x5ZYWYDmfc6NR1hah0Ms+fF1ArfG2riWMswexJarAz+7k2qDz8QhNc7QSVPAzw
-         8hAzcrVhnf0RxOnjLCxRw1RMh+ZgL8e5T1/bj+bIBPJGYpIs6OggpsB02Rp5GTo0GsFm
-         Ndzg==
-X-Gm-Message-State: AOJu0YzX4HSMmcKN6agsd9FvBFcV6XhszsRE5Lf9+2O3iF70a8cjXAAs
-	ZnRPUQCA6wTHeEwYQ1GDfvnG5OEpw8GRJWmT+S4fQiXnnyFmb2tJST5muz3j8aoGopagBbrhcgu
-	/k/5vye9NVHrd/874An6zgauaC3lHdaIu7cGP
-X-Google-Smtp-Source: AGHT+IHnyTIkOdFHIvfDQnb3DdpYo/kENKzsoxJTQjNhdWhD9FR1CMXLFwKe75ZdrflWgWwKWc2sbhF4w4SE8MNPLwk=
-X-Received: by 2002:a05:6902:569:b0:dc6:bbeb:d889 with SMTP id
- a9-20020a056902056900b00dc6bbebd889mr7861710ybt.52.1707838433767; Tue, 13 Feb
- 2024 07:33:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1707839131; x=1708443931;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r+5lFm1GOYo46btsIaJvA6S/B+CQsp17IG3lccG/v6g=;
+        b=Q/n/NKR+EZqJkd/0nHj5OPvoCPPGE4U7jHw6CzwmLLwlR63UIOUX7moeCQwONYJL9Z
+         nwxAgsNHk6ozxHnoWue0GgxVRfFWiuLH+cL8DCZ3wsXlpAzzwHX8FBSuo6qq2tEMg7Qn
+         yJoWRZ/GmdrVRRc7BIIDrJLdYtzKQwLi/zIjusGk4nKz9R8wwbb/mEJqOqJZ7zEMm7Eo
+         Jy5oUhIJiZzHP832eN02emQIukRtoOkSzbwdt28UhaMnS1lZVfJuMbvfIyPXQkj7EVD5
+         I40GQNYWHwaKBW03b7YdF4cY2Dc1SFlN3T9VWHTcdjRSq1K/C8jqkOB22b4vheyVvULp
+         QJKQ==
+X-Gm-Message-State: AOJu0YypT/gEcz7a3zcmMlphRSLazL3xL2Lc8SiJqXL8lBD3llQS5cGK
+	0onRRGLQzaNHIXP/zZxD+bXmCK2GB2YWQeTvxpZX3PnOrV6WHSBY9TiyHFMZdFUpPLCxr8nqreD
+	NTPexStskbLfqBiObB8fkhWGY3cpslAfbQ21Uww==
+X-Google-Smtp-Source: AGHT+IFqChznTFjr/EeidSN571ZA0nQfVJvF+Fp0E+Y2flaP6eNCXc4z1s3ADkdtr1CrUfrPgpTF+9pex3Z052b1w5U=
+X-Received: by 2002:a05:620a:618b:b0:787:1db5:f0de with SMTP id
+ or11-20020a05620a618b00b007871db5f0demr2991955qkn.26.1707839131046; Tue, 13
+ Feb 2024 07:45:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
- <20240115181809.885385-13-roberto.sassu@huaweicloud.com> <305cd1291a73d788c497fe8f78b574d771b8ba41.camel@linux.ibm.com>
- <CAHC9VhQ7DgPJtNTRCYneu_XnpRmuwfPCW+FqVuS=k6U5-F6pJw@mail.gmail.com> <05ad625b0f5a0e6c095abee5507801da255b36cd.camel@huaweicloud.com>
-In-Reply-To: <05ad625b0f5a0e6c095abee5507801da255b36cd.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 13 Feb 2024 10:33:42 -0500
-Message-ID: <CAHC9VhR2M_MWHs34kn-WH3Wr0sgT09WKveecy7onkFhUb1-gEg@mail.gmail.com>
-Subject: Re: [PATCH v9 12/25] security: Introduce file_post_open hook
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, 
-	Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org, serge@hallyn.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, dhowells@redhat.com, 
-	jarkko@kernel.org, stephen.smalley.work@gmail.com, eparis@parisplace.org, 
-	casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Stefan Berger <stefanb@linux.ibm.com>
+References: <20231226200205.562565-1-pasha.tatashin@soleen.com>
+ <20231226200205.562565-11-pasha.tatashin@soleen.com> <20240213131210.GA28926@willie-the-truck>
+In-Reply-To: <20240213131210.GA28926@willie-the-truck>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 13 Feb 2024 10:44:53 -0500
+Message-ID: <CA+CK2bB4Z+z8tocO79AdsAy+gmN_4aVHgFUsm_gYLUJ2zV1A6A@mail.gmail.com>
+Subject: Re: [PATCH v3 10/10] iommu: account IOMMU allocated memory
+To: Will Deacon <will@kernel.org>
+Cc: akpm@linux-foundation.org, alim.akhtar@samsung.com, alyssa@rosenzweig.io, 
+	asahi@lists.linux.dev, baolu.lu@linux.intel.com, bhelgaas@google.com, 
+	cgroups@vger.kernel.org, corbet@lwn.net, david@redhat.com, 
+	dwmw2@infradead.org, hannes@cmpxchg.org, heiko@sntech.de, 
+	iommu@lists.linux.dev, jernej.skrabec@gmail.com, jonathanh@nvidia.com, 
+	joro@8bytes.org, krzysztof.kozlowski@linaro.org, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-rockchip@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev, 
+	linux-tegra@vger.kernel.org, lizefan.x@bytedance.com, marcan@marcan.st, 
+	mhiramat@kernel.org, m.szyprowski@samsung.com, paulmck@kernel.org, 
+	rdunlap@infradead.org, robin.murphy@arm.com, samuel@sholland.org, 
+	suravee.suthikulpanit@amd.com, sven@svenpeter.dev, thierry.reding@gmail.com, 
+	tj@kernel.org, tomas.mudrunka@gmail.com, vdumpa@nvidia.com, wens@csie.org, 
+	yu-cheng.yu@intel.com, rientjes@google.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 13, 2024 at 7:59=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Mon, 2024-02-12 at 16:16 -0500, Paul Moore wrote:
-> > On Mon, Feb 12, 2024 at 4:06=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com=
-> wrote:
-> > >
-> > > Hi Roberto,
-> > >
-> > >
-> > > > diff --git a/security/security.c b/security/security.c
-> > > > index d9d2636104db..f3d92bffd02f 100644
-> > > > --- a/security/security.c
-> > > > +++ b/security/security.c
-> > > > @@ -2972,6 +2972,23 @@ int security_file_open(struct file *file)
-> > > >       return fsnotify_perm(file, MAY_OPEN);  <=3D=3D=3D  Conflict
-> > >
-> > > Replace with "return fsnotify_open_perm(file);"
-> > >
-> > > >  }
-> > > >
-> > >
-> > > The patch set doesn't apply cleaning to 6.8-rcX without this change. =
- Unless
-> > > there are other issues, I can make the change.
-> >
-> > I take it this means you want to pull this via the IMA/EVM tree?
->
-> Not sure about that, but I have enough changes to do to make a v10.
+> >  SecPageTables
+> > -              Memory consumed by secondary page tables, this currently
+> > -              currently includes KVM mmu allocations on x86 and arm64.
+> > +              Memory consumed by secondary page tables, this currently includes
+> > +              KVM mmu and IOMMU allocations on x86 and arm64.
 
-Sorry, I should have been more clear, the point I was trying to
-resolve was who was going to take this patchset (eventually).  There
-are other patches destined for the LSM tree that touch the LSM hooks
-in a way which will cause conflicts with this patchset, and if
-you/Mimi are going to take this via the IMA/EVM tree - which is fine
-with me - I need to take that into account when merging things in the
-LSM tree during this cycle.  It's not a big deal either way, it would
-just be nice to get an answer on that within the next week.
+Hi Will,
 
---=20
-paul-moore.com
+> While I can see the value in this for IOMMU mappings managed by VFIO,
+> doesn't this end up conflating that with the normal case of DMA domains?
+> For systems that e.g. rely on an IOMMU for functional host DMA, it seems
+> wrong to subject that to accounting constraints.
+
+The accounting constraints are only applicable when GFP_KERNEL_ACCOUNT
+is passed to the iommu mapping functions. We do that from the vfio,
+iommufd, and vhost. Without this flag, the memory useage is reported
+in /proc/meminfo as part of  SecPageTables field, but not constrained
+in cgroup.
+
+Pasha
 
