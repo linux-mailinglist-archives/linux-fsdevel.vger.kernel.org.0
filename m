@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-11346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11347-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0031A852CAB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 10:43:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA43852CAD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 10:43:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4EC04B25ABC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 09:43:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A67C428A2FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 09:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BA85381D;
-	Tue, 13 Feb 2024 09:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1411954670;
+	Tue, 13 Feb 2024 09:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="lAJKQkv8"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="ENbwnnNB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E956537E3;
-	Tue, 13 Feb 2024 09:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0473053E18;
+	Tue, 13 Feb 2024 09:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707817089; cv=none; b=T/yHYKfrF7fDWoTpBPSsYl/0f3X0ruNxGYM/qXt35skuUko4woleCejFACYdQmAxwnR7DU9OvtILoUh+2E0/QHh1LL61DLw+9WtFGYHS4dN5MiBpIONcv5i49HCBDBsCZCn8N/6vhPV2sD2V5MHPFUEOQnVYo4zcgzdaemM6Ib4=
+	t=1707817092; cv=none; b=izdmjXkaM/kC5zsWSuNzk6M0EJoeA0vMclFtecLa3imYfYWpBLwu4t3s9qo4HUUU0sRFjfGAClIrHHEdNePRTGmje8kJQXp8/mFNFpKeQkeW6m0xVrKK5doarWampHtzkcs2UzbfXqBbkrcKolgzGlWDqcdZiQf4C2cUtudwDfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707817089; c=relaxed/simple;
-	bh=7g8Bs2Rmp6gOJnEQAVWC55gjo2MoxR/e102tY8njEUU=;
+	s=arc-20240116; t=1707817092; c=relaxed/simple;
+	bh=ua/0/Cz1VYv5tIBaRlFGPxVYgrAUWB1V+tD6GkDOKdY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H91bQu7aYiYsZ8MQZxCLxm9FwAA7C3sO3uWKUU955vFwHSs3au6Sz3peoGNyhoHzZpIrY08x5pmKjI84rcQP30BnNLUczUwNyoRsQZzO1yaSR8fW6iGbcWNL22iD16dLD5Ph9uOOGXQSQOCPeE9QlYY8YqHJJXAU/D68t+w2B0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=lAJKQkv8; arc=none smtp.client-ip=80.241.56.171
+	 MIME-Version; b=ss3A6nmehEvto6mhjjaqqEhFl88FR8NDq2nKrK0Ty3rczB/T48jy8aCuLJiOFyTS3cpdXHrwVzSDrfo6++mDvVZcw2HxjLhl/cQuO8RZJPJvLm0KM1yszY3VCr2SpnbsFi27S2OVZlfgeO3OLMcxKeFFQLvG5BMSkuEujWKah7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=ENbwnnNB; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4TYx8D3Xykz9t40;
-	Tue, 13 Feb 2024 10:38:04 +0100 (CET)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4TYx8H2fChz9sSH;
+	Tue, 13 Feb 2024 10:38:07 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1707817084;
+	s=MBO0001; t=1707817087;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+2ss5SlGBbWn5UCkRFfS2rrVeqSyvxI6jrmUJVBEXU4=;
-	b=lAJKQkv8JFUfAalsowcHUM0qevPxPDym9zxQEdcsGZ1QD34oloukLEkuEh9wYi/vwk3vTz
-	88MWHR5ma60yh6fcF9kNUWOoPzhytLjV6Ujqkm3NEpqVKXssY+AJ7VmlsSzPHrbWqiHHA/
-	nnbX4EV4Fhls9o8I6ajQX4wDUiZx29RHWX8bCkX0wpri4sldWbDFrGm1ryQp5raRgie1qr
-	Lqsie4oCOj0gEl5zUVTbX8ms0OBr8KlMQBHEY4+8qUfqB3zPYcRNxXNbTgt3YZGojnJJEv
-	sgKHAUiic9WDKzyryMjZWH9/hR/YdqHkJvfMwSZBVuLypx3foevRXAeEudMk+A==
+	bh=ydvUqzYBcKzyH4ZGo5x0A9m5vNe3qnV9Z0vpVQaGpLg=;
+	b=ENbwnnNBjOlMkTNsWgmN/QeJZ4bByf9vXC2SH9MWslItb5E3wLNJdxS5OYwgUczoQQxGFa
+	jJLfvCUFWE4S4XIaf/gyJsxDpV54gpCGO6Q09Hr3W1Zl8hpSte2SCg/NxBVzt13u5b+rtn
+	u9QhTF7FnDJlW3xsb7G6zptXw5QVnwjAOVIogxhjlYniqe0K1ORrtaGBSqFIq7XIZecY9G
+	asCnrkLcVOePpZAFLxRLQb3P4hXMoiEeVmElnhxfjx+/5h/OFo9SJwBVx77eiPLb+MoeAw
+	aa/PQKwI9st5rNiozYJhatwuGinu3iv/klvwOtrhhlSPwM2BtJQuDhCzDDR5jA==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
@@ -64,9 +64,9 @@ Cc: mcgrof@kernel.org,
 	willy@infradead.org,
 	linux-mm@kvack.org,
 	david@fromorbit.com
-Subject: [RFC v2 13/14] xfs: add an experimental CONFIG_XFS_LBS option
-Date: Tue, 13 Feb 2024 10:37:12 +0100
-Message-ID: <20240213093713.1753368-14-kernel@pankajraghav.com>
+Subject: [RFC v2 14/14] xfs: enable block size larger than page size support
+Date: Tue, 13 Feb 2024 10:37:13 +0100
+Message-ID: <20240213093713.1753368-15-kernel@pankajraghav.com>
 In-Reply-To: <20240213093713.1753368-1-kernel@pankajraghav.com>
 References: <20240213093713.1753368-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -76,56 +76,82 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4TYx8H2fChz9sSH
 
 From: Pankaj Raghav <p.raghav@samsung.com>
 
-Add an experimental CONFIG_XFS_LBS option to enable LBS support in XFS.
-Retain the ASSERT for PAGE_SHIFT if CONFIG_XFS_LBS is not enabled.
+Page cache now has the ability to have a minimum order when allocating
+a folio which is a prerequisite to add support for block size > page
+size. Enable it in XFS under CONFIG_XFS_LBS.
 
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 ---
- fs/xfs/Kconfig     | 11 +++++++++++
- fs/xfs/xfs_mount.c |  4 +++-
- 2 files changed, 14 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_icache.c | 8 ++++++--
+ fs/xfs/xfs_super.c  | 8 +++-----
+ 2 files changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
-index 567fb37274d3..6b0db2f7dc13 100644
---- a/fs/xfs/Kconfig
-+++ b/fs/xfs/Kconfig
-@@ -216,3 +216,14 @@ config XFS_ASSERT_FATAL
- 	  result in warnings.
- 
- 	  This behavior can be modified at runtime via sysfs.
-+
-+config XFS_LBS
-+	bool "XFS large block size support (EXPERIMENTAL)"
-+	depends on XFS_FS
-+	help
-+	  Set Y to enable support for filesystem block size > system's
-+	  base page size.
-+
-+	  This feature is considered EXPERIMENTAL.  Use with caution!
-+
-+	  If unsure, say N.
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index bfbaaecaf668..596aa2cdefbc 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -131,11 +131,13 @@ xfs_sb_validate_fsb_count(
- 	xfs_sb_t	*sbp,
- 	uint64_t	nblocks)
+diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+index dba514a2c84d..9de81caf7ad4 100644
+--- a/fs/xfs/xfs_icache.c
++++ b/fs/xfs/xfs_icache.c
+@@ -73,6 +73,7 @@ xfs_inode_alloc(
+ 	xfs_ino_t		ino)
  {
--	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
- 	ASSERT(sbp->sb_blocklog >= BBSHIFT);
- 	unsigned long mapping_count;
- 	uint64_t bytes = nblocks << sbp->sb_blocklog;
+ 	struct xfs_inode	*ip;
++	int			min_order = 0;
  
-+	if (!IS_ENABLED(CONFIG_XFS_LBS))
-+		ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
-+
- 	mapping_count = bytes >> PAGE_SHIFT;
+ 	/*
+ 	 * XXX: If this didn't occur in transactions, we could drop GFP_NOFAIL
+@@ -88,7 +89,8 @@ xfs_inode_alloc(
+ 	/* VFS doesn't initialise i_mode or i_state! */
+ 	VFS_I(ip)->i_mode = 0;
+ 	VFS_I(ip)->i_state = 0;
+-	mapping_set_large_folios(VFS_I(ip)->i_mapping);
++	min_order = max(min_order, ilog2(mp->m_sb.sb_blocksize) - PAGE_SHIFT);
++	mapping_set_folio_orders(VFS_I(ip)->i_mapping, min_order, MAX_PAGECACHE_ORDER);
  
- 	/* Limited by ULONG_MAX of page cache index */
+ 	XFS_STATS_INC(mp, vn_active);
+ 	ASSERT(atomic_read(&ip->i_pincount) == 0);
+@@ -313,6 +315,7 @@ xfs_reinit_inode(
+ 	dev_t			dev = inode->i_rdev;
+ 	kuid_t			uid = inode->i_uid;
+ 	kgid_t			gid = inode->i_gid;
++	int			min_order = 0;
+ 
+ 	error = inode_init_always(mp->m_super, inode);
+ 
+@@ -323,7 +326,8 @@ xfs_reinit_inode(
+ 	inode->i_rdev = dev;
+ 	inode->i_uid = uid;
+ 	inode->i_gid = gid;
+-	mapping_set_large_folios(inode->i_mapping);
++	min_order = max(min_order, ilog2(mp->m_sb.sb_blocksize) - PAGE_SHIFT);
++	mapping_set_folio_orders(inode->i_mapping, min_order, MAX_PAGECACHE_ORDER);
+ 	return error;
+ }
+ 
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 5a2512d20bd0..6a3f0f6727eb 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -1625,13 +1625,11 @@ xfs_fs_fill_super(
+ 		goto out_free_sb;
+ 	}
+ 
+-	/*
+-	 * Until this is fixed only page-sized or smaller data blocks work.
+-	 */
+-	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
++	if (!IS_ENABLED(CONFIG_XFS_LBS) && mp->m_sb.sb_blocksize > PAGE_SIZE) {
+ 		xfs_warn(mp,
+ 		"File system with blocksize %d bytes. "
+-		"Only pagesize (%ld) or less will currently work.",
++		"Only pagesize (%ld) or less will currently work. "
++		"Enable Experimental CONFIG_XFS_LBS for this support",
+ 				mp->m_sb.sb_blocksize, PAGE_SIZE);
+ 		error = -ENOSYS;
+ 		goto out_free_sb;
 -- 
 2.43.0
 
