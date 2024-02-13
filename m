@@ -1,221 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-11289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8DC285276E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 03:14:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB02585277D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 03:20:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BF8D281A4B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 02:14:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 415FCB238F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 02:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD49610E;
-	Tue, 13 Feb 2024 02:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F70539E;
+	Tue, 13 Feb 2024 02:20:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q5qpj6UY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F0snALmO";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Q5qpj6UY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="F0snALmO"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4Jrb9xtg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7338A937;
-	Tue, 13 Feb 2024 02:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD651C13
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 02:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707790446; cv=none; b=ZbkPJgbR9r4Ar6xGmh0IWnGYinbikgUcYR/oPp1uGfmnrZcv1i5bQ1oKejGZKFXKmFJuNlNwR0hFHgQBvy44R5sSztusdDsCxnM/QzicnL+fVciXcCdptlc47599utaXDxqfCWlb19kHNBOETUuHDgdMVATAAbCRsrOAT149pCI=
+	t=1707790829; cv=none; b=VZBoOdxB2RVQodMXCjsGRbhJuO4PRqvj3gloq3Pr8f287JOSNj+3b2qhC+uWMs9z8DCBtOzC/GvT2bYjQuQGHNrjxkF8GmX+HwvNmoUSL2XPxwBqgXxdiBRVW5ESDMQWS+hrw2mMbm7xYMeg5aHeq2n+0QyT5tjXUhs9mGSoDOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707790446; c=relaxed/simple;
-	bh=KOnqlMNszEIlSwX+P2d5aY5eD+NpqDq/T3vISrCyP7Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dH7giyPYIfeZ5OT/VPo2f4851iA6lNFQ60qvD8AQf5/f+KuJNZkFAjJDQPMF2EG3xCBD63kUjSwzdMNxrIlnPYflJ7Mk+a5abDBujzENpdFNUjbNDOU6ftnsPRpdkgYk9+6HugBV9scEs1dnaj7vSk+M8tCdqbf+1ddXH/ydl/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q5qpj6UY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F0snALmO; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Q5qpj6UY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=F0snALmO; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 146A621E2B;
-	Tue, 13 Feb 2024 02:14:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1707790443; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fmdpLcH0KspyYreOUudTmM94kWGbFgdXTKIvo+uwB7A=;
-	b=Q5qpj6UYl5fG7t1w15t0BgBKVCItOlkcNRz2sYya+Xq/fytdDuCK7a8238Q1ZHc5UKu6NH
-	nw1pw+xbvguisi/oBj7GNjdwjRLxdwtcRxS/vV8R8QEzDdP1ugm02hNwlzSbvrmlMTeVOj
-	Y85ebNHqC0AFQzJ4PSGWWIXHqVvQQM0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1707790443;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fmdpLcH0KspyYreOUudTmM94kWGbFgdXTKIvo+uwB7A=;
-	b=F0snALmO1EucW+Hag0frlR+scJlsml5SdSWgTcFk+tmHC8Wklxz+U0TLEAzBonPpfmQ7BK
-	iszs7d6nUyF256AQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1707790443; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fmdpLcH0KspyYreOUudTmM94kWGbFgdXTKIvo+uwB7A=;
-	b=Q5qpj6UYl5fG7t1w15t0BgBKVCItOlkcNRz2sYya+Xq/fytdDuCK7a8238Q1ZHc5UKu6NH
-	nw1pw+xbvguisi/oBj7GNjdwjRLxdwtcRxS/vV8R8QEzDdP1ugm02hNwlzSbvrmlMTeVOj
-	Y85ebNHqC0AFQzJ4PSGWWIXHqVvQQM0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1707790443;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fmdpLcH0KspyYreOUudTmM94kWGbFgdXTKIvo+uwB7A=;
-	b=F0snALmO1EucW+Hag0frlR+scJlsml5SdSWgTcFk+tmHC8Wklxz+U0TLEAzBonPpfmQ7BK
-	iszs7d6nUyF256AQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE63B13A4B;
-	Tue, 13 Feb 2024 02:14:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Jho4LGrQymU1eAAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 13 Feb 2024 02:14:02 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: ebiggers@kernel.org,
-	viro@zeniv.linux.org.uk
-Cc: jaegeuk@kernel.org,
-	tytso@mit.edu,
-	amir73il@gmail.com,
-	linux-ext4@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org,
-	brauner@kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v6 10/10] libfs: Drop generic_set_encrypted_ci_d_ops
-Date: Mon, 12 Feb 2024 21:13:21 -0500
-Message-ID: <20240213021321.1804-11-krisman@suse.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240213021321.1804-1-krisman@suse.de>
-References: <20240213021321.1804-1-krisman@suse.de>
+	s=arc-20240116; t=1707790829; c=relaxed/simple;
+	bh=S9sbRuvYiarABejv+1FZRtHjtyC1exllh7yCDkk639Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AJ6h8pJGEMabsRJpca0N6gSgLc0cLePvMDIlmabAly/F+8LgWfmG53DHfk/Rj72UooSRhpaPl8rpfhleZGGnvKhcS98xyDawCUUAkKAHjJ0rMQyoeEjh1wOzJY9wSmUiZUM9Q2tE+D0vRD2rT8bMofgbGmUhzFhiPacupyxEzUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4Jrb9xtg; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dbed179f0faso3416153276.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Feb 2024 18:20:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1707790825; x=1708395625; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S9sbRuvYiarABejv+1FZRtHjtyC1exllh7yCDkk639Q=;
+        b=4Jrb9xtgZZd68Cd8qtWKkms3W8lyscetML+GV9VkniajxjX00oCm8vO3er0J1tOJYG
+         KXV6U73T7/ahxivChBXpV+Epa+r+05A2t154aRf14aPl3XbChON6p22PKWX4U7vAzS9o
+         brwAToX8177IfGEf9W+XIqe1YPvjrVvfL9p54qZ1sWP3PGzpzREqC3UGYZKQKBZySG2k
+         Ww0YUiGkRHSadsneVBJVnVGSj/Fif1gMg/8vv70xOYtj2wcjiPng2kr+bKGBZYgVzATG
+         OKxyy6fQiAVrWs5pOrlgKVY84DYPBwXY7IoUnb6KCj+HNchnZ6OPi4x27n09k46FAdxz
+         ByRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707790825; x=1708395625;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S9sbRuvYiarABejv+1FZRtHjtyC1exllh7yCDkk639Q=;
+        b=kinC0ghp7/Hd0Hwqep0SNi5R6Rnx9KgmcbSWAdB+r8WfdzEggN0tyWM6AeZ0Fi/26X
+         YCyFUMvuY7qpDz6xmozSEcNT3sAHGuK2FZw/oqBVVGVIsRG0dYnIdqoMlosQf0byMtsG
+         NwM/wMnz1v9jVYsA34Wjyh3HYOz9ndL7p9gRuuLG4o+2hJ3dopA+K1KovuxLHv8V0jqz
+         lb8a8dyrLg/+ajB+Ve8s9pG5JkZ1FcpecgQAju4sfJkQzfFwtbcQp0eku/xolRziQU+u
+         67ocFpBudmsVVrxCYBhq3zCB5sRY1f3agSP+mn+LtCcwoB2eMWVvVDssAW6t1tlNP8pN
+         g9/Q==
+X-Gm-Message-State: AOJu0YyJ4CLCX+o+mRUgnRX7zfxFfKLlEINuIbkzcgqM+y/pr62VbRHb
+	4NroeRG4uqczasOrsETfbLOGW2UOd34oP7OzTj3uEzMOCGPxKaX7kN9+m6evfAdBEbCQrmrwI3i
+	gLbOly05B7aYAH6c5xxdrTJkPcqlSB5R78k1I
+X-Google-Smtp-Source: AGHT+IF7VIKyAprzsQj97Z263Qoier3okujGUFo7m34RyS9jjnxf5dSV3vlCD/UI6jUXKLUqELRXLl2excxB7HnDSlw=
+X-Received: by 2002:a25:df91:0:b0:dc6:de93:7929 with SMTP id
+ w139-20020a25df91000000b00dc6de937929mr863370ybg.26.1707790825358; Mon, 12
+ Feb 2024 18:20:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: ***
-X-Spamd-Bar: +++
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Q5qpj6UY;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=F0snALmO
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [3.49 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 TO_DN_SOME(0.00)[];
-	 R_MISSING_CHARSET(2.50)[];
-	 BROKEN_CONTENT_TYPE(1.50)[];
-	 R_RATELIMIT(0.00)[to_ip_from(RLsauj8dn5fwzrhashi71pkysg)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[10];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 MID_CONTAINS_FROM(1.00)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FREEMAIL_CC(0.00)[kernel.org,mit.edu,gmail.com,vger.kernel.org,lists.sourceforge.net,suse.de];
-	 RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: 3.49
-X-Rspamd-Queue-Id: 146A621E2B
-X-Spam-Flag: NO
+References: <20240212213922.783301-1-surenb@google.com> <20240212213922.783301-6-surenb@google.com>
+ <202402121413.94791C74D5@keescook>
+In-Reply-To: <202402121413.94791C74D5@keescook>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 12 Feb 2024 18:20:13 -0800
+Message-ID: <CAJuCfpGkdAy58nR02_PSVXc4=R3faRUL-7Hack3R_aWmAgk5HA@mail.gmail.com>
+Subject: Re: [PATCH v3 05/35] mm: introduce slabobj_ext to support slab object extensions
+To: Kees Cook <keescook@chromium.org>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org, 
+	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, 
+	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
+	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
+	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
+	hughd@google.com, andreyknvl@gmail.com, ndesaulniers@google.com, 
+	vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com, 
+	ytcoode@gmail.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com, 
+	vschneid@redhat.com, cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com, 
+	42.hyeyoo@gmail.com, glider@google.com, elver@google.com, dvyukov@google.com, 
+	shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com, 
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
+	kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-No filesystems depend on it anymore, and it is generally a bad idea.
-Since all dentries should have the same set of dentry operations in
-case-insensitive capable filesystems, it should be propagated through
-->s_d_op.
+On Mon, Feb 12, 2024 at 2:14=E2=80=AFPM Kees Cook <keescook@chromium.org> w=
+rote:
+>
+> On Mon, Feb 12, 2024 at 01:38:51PM -0800, Suren Baghdasaryan wrote:
+> > Currently slab pages can store only vectors of obj_cgroup pointers in
+> > page->memcg_data. Introduce slabobj_ext structure to allow more data
+> > to be stored for each slab object. Wrap obj_cgroup into slabobj_ext
+> > to support current functionality while allowing to extend slabobj_ext
+> > in the future.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>
+> It looks like this doesn't change which buckets GFP_KERNEL_ACCOUNT comes
+> out of, is that correct? I'd love it if we didn't have separate buckets
+> so GFP_KERNEL and GFP_KERNEL_ACCOUNT came from the same pools (so that
+> the randomized pools would cover GFP_KERNEL_ACCOUNT ...)
 
-Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
----
- fs/libfs.c         | 34 ----------------------------------
- include/linux/fs.h |  1 -
- 2 files changed, 35 deletions(-)
+This should not affect KMEM accounting in any way. We are simply
+changing the vector of obj_cgroup objects to hold complex objects
+which can contain more fields in addition to the original obj_cgroup
+(in our case it's the codetag reference).
+Unless I misunderstood your question?
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index 0aa388ee82ff..35124987f162 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1788,40 +1788,6 @@ static const struct dentry_operations generic_encrypted_dentry_ops = {
- };
- #endif
- 
--/**
-- * generic_set_encrypted_ci_d_ops - helper for setting d_ops for given dentry
-- * @dentry:	dentry to set ops on
-- *
-- * Casefolded directories need d_hash and d_compare set, so that the dentries
-- * contained in them are handled case-insensitively.  Note that these operations
-- * are needed on the parent directory rather than on the dentries in it, and
-- * while the casefolding flag can be toggled on and off on an empty directory,
-- * dentry_operations can't be changed later.  As a result, if the filesystem has
-- * casefolding support enabled at all, we have to give all dentries the
-- * casefolding operations even if their inode doesn't have the casefolding flag
-- * currently (and thus the casefolding ops would be no-ops for now).
-- *
-- * Encryption works differently in that the only dentry operation it needs is
-- * d_revalidate, which it only needs on dentries that have the no-key name flag.
-- * The no-key flag can't be set "later", so we don't have to worry about that.
-- */
--void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
--{
--#if IS_ENABLED(CONFIG_UNICODE)
--	if (dentry->d_sb->s_encoding) {
--		d_set_d_op(dentry, &generic_ci_dentry_ops);
--		return;
--	}
--#endif
--#ifdef CONFIG_FS_ENCRYPTION
--	if (dentry->d_flags & DCACHE_NOKEY_NAME) {
--		d_set_d_op(dentry, &generic_encrypted_dentry_ops);
--		return;
--	}
--#endif
--}
--EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
--
- /**
-  * generic_set_sb_d_ops - helper for choosing the set of
-  * filesystem-wide dentry operations for the enabled features
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index c985d9392b61..c0cfc53f95bb 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3201,7 +3201,6 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
- 
- extern int generic_check_addressable(unsigned, u64);
- 
--extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
- extern void generic_set_sb_d_ops(struct super_block *sb);
- 
- static inline bool sb_has_encoding(const struct super_block *sb)
--- 
-2.43.0
-
+>
+> Regardless:
+>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+>
+> --
+> Kees Cook
 
