@@ -1,194 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-11418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45310853A8A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 20:08:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C042853AB7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 20:18:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF4A62842C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 19:08:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B09351C249D2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 19:18:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C9661CA8F;
-	Tue, 13 Feb 2024 19:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F395FDA1;
+	Tue, 13 Feb 2024 19:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NNWl3pGA"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hZEvGTPT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B0E1CA94;
-	Tue, 13 Feb 2024 19:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707851269; cv=fail; b=HaJDdq4Wc77d/9lrGRoUdrCnUK3TyNYp2zyaWaHq8bDN4EiuyZz3bpfiQ4ZohsGvFIkn/g0PaH1M/fKqPliOQ2ASqkflMCFeIubMM0upX8UFYNkIQCJ7Colb4OUAY/AakFLCQQZaYGwBViT3PwzY2k1N4gUTWqo4dieMRgHdnSw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707851269; c=relaxed/simple;
-	bh=xjfBr4j4ouh+foOVW5nUXybbssU67fUGH1Tl12BJ4Vc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=nyW1If2xqvpyfcjZA2t0NtjfekOrIwoOOeO6TA68OxlwNGXhDHOuPTRudYX42fvHgLPZsJv67vrAMs7CUS5qw3vhulqeTGlTJUyHjSxqzig/J20F92aKTzButbSkhe0skjKXFEuQjzM7VwZvje+sbct3gNWcM7mskkuKj9m7JVc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NNWl3pGA; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1707851269; x=1739387269;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=xjfBr4j4ouh+foOVW5nUXybbssU67fUGH1Tl12BJ4Vc=;
-  b=NNWl3pGAAnA1QcqvQXQ1ouslnjm9eK3p2pW7+8CflGdc/5zmay24lw5g
-   lgtCvPd3+xT0R23Pq3AAs2nXGQu+feDz+21T+osBnEfy0F2YqoHBvYBkU
-   K9T/sFi5jT3jHmLV+dcZaLvvwmTHRwoy5ENWfUbC4CF4rkaXuSkY+15uN
-   ObeEsJ9omSBMI5XaLB8ROKJDozm/pNJI2dhgDNPaHSt2v4OA7zJUWQjL0
-   JCqLWuy5cSln9M6+FI7eCZRkuI0X2Fl5SyBg0FGaZ8TCmtWTHjK2dcx7s
-   gymcQ9nCchfQWWRgtRtrSp2fuahzymtwcbVxDWBSiGcZblxcVBf2sz2rh
-   g==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10982"; a="1756396"
-X-IronPort-AV: E=Sophos;i="6.06,158,1705392000"; 
-   d="scan'208";a="1756396"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Feb 2024 11:07:48 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,158,1705392000"; 
-   d="scan'208";a="7584948"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Feb 2024 11:07:47 -0800
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 13 Feb 2024 11:07:47 -0800
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Tue, 13 Feb 2024 11:07:47 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Tue, 13 Feb 2024 11:07:46 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=K6BmwhAs2EX5GhJTtA2Xhbk3/5M94C/1R13Eorfx/yGLc+ULE8jGmOMLzCAZ7JKWCf9z3zDHBo2evBliCbeEnCtVubp+2bZHS5REQxCdEIBkaayv/X3lt2MUmXMmQcMQzZWlpAQsMgkiNjnO/Ljo6ihecQqoZnAddZ3B94v6Sy25NWrCkXS7NzNqQhDijeNWPSlGEYJdbxmMBi8/2VsBIKJ9ESyvzjJfLBd8cRMC1It3YUsfJO3c+svMAQGKtRevbc7qISeuDqTCGW5nlQ9TsXah8QhAv8keSKY6sjuFoTEQ3PGhCAULiY2t8xk2Yv8vLVsaGTEv/tnN/PFdfmkiuQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aNhb5KOoC1Uj0BDnRgE87gVPUBfebv1GfG0Cj0ux0h8=;
- b=CtW1FMpBN79/y5pAg3DkyDtJKR+RUVkXs6WSudnErRAvbJxe3+58bAFphgkGAiXxLR0fTGMmj40j9DL39ivKXT0nC/7vIOYCGWctA7WSHKc6DtoEsDzspbvurXgXgJTttLz6vnORM0gq+GCeDkaJB74qdaVNn1nsI2ymsNCN4wR8y1NoAczmRD/rWOfyq2Pykb5h/5Odo34jp9SHTEzxli9IQl7N9Z6Usast0KbdreD+eWud1xbO7Ehezt6RIugwPcKqxHax+tm5RO/eKBSrqIQeuD4iJjBra7Gp0h3pz5bREhdQKMRDWow4L6cs2F5NpGzkPkm/uBTZcyrSm6tIOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by CO1PR11MB5138.namprd11.prod.outlook.com (2603:10b6:303:94::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7270.39; Tue, 13 Feb
- 2024 19:07:45 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6257:f90:c7dd:f0b2]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6257:f90:c7dd:f0b2%4]) with mapi id 15.20.7270.036; Tue, 13 Feb 2024
- 19:07:45 +0000
-Date: Tue, 13 Feb 2024 11:07:42 -0800
-From: Dan Williams <dan.j.williams@intel.com>
-To: Lukas Wunner <lukas@wunner.de>, Mathieu Desnoyers
-	<mathieu.desnoyers@efficios.com>
-CC: Dan Williams <dan.j.williams@intel.com>, Arnd Bergmann <arnd@arndb.de>,
-	Dave Chinner <david@fromorbit.com>, <linux-kernel@vger.kernel.org>, "Andrew
- Morton" <akpm@linux-foundation.org>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>,
-	Russell King <linux@armlinux.org.uk>, <linux-arch@vger.kernel.org>,
-	<linux-cxl@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-xfs@vger.kernel.org>,
-	<dm-devel@lists.linux.dev>, <nvdimm@lists.linux.dev>,
-	<linux-s390@vger.kernel.org>
-Subject: Re: [PATCH v5 1/8] dax: alloc_dax() return ERR_PTR(-EOPNOTSUPP) for
- CONFIG_DAX=n
-Message-ID: <65cbbdfe19172_29b129476@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-References: <20240212163101.19614-1-mathieu.desnoyers@efficios.com>
- <20240212163101.19614-2-mathieu.desnoyers@efficios.com>
- <20240213063226.GA4740@wunner.de>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240213063226.GA4740@wunner.de>
-X-ClientProxiedBy: MW4PR04CA0057.namprd04.prod.outlook.com
- (2603:10b6:303:6a::32) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6212C10A3A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 19:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707851912; cv=none; b=jxfDCT/EK6yXN2L+XmTCpZbTvxyf+IY60NNvqcYlEBMz200KUiSbMxozxR2RNyNZIGwluMLpCwCnTH7pnepWvTAcz4wRS4qBCw/G0qVjLrJlxUX/QoF0CwHqsqOpxY/Fflp9RH6S6/Ezqtj/L668wqGCeeClN1bs0aeSemk9T+k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707851912; c=relaxed/simple;
+	bh=a5mMRWzTFO8UllGnXCIR+TWz9Xn1DAwcV6AGubTqrF8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FYXSW8gtOWmtMQoS96IoLVkAkEkoh+lZBAz0nkAuGPEiIXPHcBXM6Ivh+8w7jxs00jfRVIElZ8RWG+JFOq1zAOYYKZk3eAO1cOgsFYcDRW0NQKpB09mZUhbKvryYVlGrx5mJvERx6WqL+Qp5zThoOUxUOTRAlQGn5liqLVthmuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hZEvGTPT; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-33aea66a31cso2787062f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 11:18:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1707851907; x=1708456707; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yCX6UoytF2NcZYARqpkHqcF31HoM7Upx7WmM/K8jfRI=;
+        b=hZEvGTPTsxHkB4dexv/sIqnOe39nr2IK+1KSjy+5wlC6NXB5D4H/iQBMPMjFm6R6ry
+         D4whKsYpLIse8I87XO2rHNZbP3htNbrLCBDgo/SblGeJVFMX6vg+3CKjkfHW++yI+b0M
+         evkWPApR2niJA5qnsNlQ5CpmoaOUBd5wUsRZUlC+I8y3pt0pGz/zrfuck2MgqLghf4rn
+         ojtiyUer4WDDvRFRnPyJG53g5FT4uqXHN3yfDUZP0nwUOY0GVgWKrefJ3obLVNWmN8Id
+         8/kmfHi9NAVoe65+BRuhEDyV0O/II9lTfMOA4gXyhhMJqIEE1QT2M028LuCzj1vQlA9+
+         ek2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707851907; x=1708456707;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yCX6UoytF2NcZYARqpkHqcF31HoM7Upx7WmM/K8jfRI=;
+        b=D2Zu+acJe8Icr/Jh1o/qjz/vY4bJyCdluJ9vJnvPt5pC9Y/JGyT0QShDv2kGB/Os+E
+         /LVo/kg5/Q7BcaRdJNaeEmozvLHN7grjnn1zk8g0UqlnheAjEYnoatyhsJkX/pFDk9aI
+         xm7YBEEz4GiAO9/YtvWoxhEBvuTZSGfX8NXIXN4DHDqVR4ErGu3d+fnOBLRRAoHs0Kah
+         7OR7tixBcGASnK+8AewGG/c2M8sqM97Ev4x4NSpBUgd5q0efzzvatbqOBw2TScsCb3A2
+         NUsQSr8tg2GFtV02P/qmSWcVq72H995I7lzAA7LKRddknoFZAVAJQlWHi0Ra0jalp/ic
+         EIiw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6aLsqw51ObGvmlDvx1/kjafFIl6ezhCTyqu39Jcfr3lO/VuZWM9XQz5mGri8LISpSpDBq/VahF9M+fbIYzBnmsh55GPWSFGpQSst2JQ==
+X-Gm-Message-State: AOJu0YxgHV41j7vw5Tsypckb3uRRAzRg62G6a7IoumExA/6Z0+j04F2t
+	gdJPrGl1p89rcF3c7wB+lQktYei/d+L2EEwjIQVOnJSE9cVdL9105ykh0KuLFNXfrzVAvnRqgAv
+	gIuSs/0lR2rUDYBdyZhA0kb8Syz6xgQ5QcSC4
+X-Google-Smtp-Source: AGHT+IEMHwkro+xsqN6z9qNfjrhRyFhmvQhXDoENBJPQ6ipKebPJrHzy8YnGUaSmsX5qm/wdi6FYHsoNKdwoTN72x5c=
+X-Received: by 2002:a5d:54cc:0:b0:33b:45b6:b589 with SMTP id
+ x12-20020a5d54cc000000b0033b45b6b589mr160513wrv.66.1707851907393; Tue, 13 Feb
+ 2024 11:18:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CO1PR11MB5138:EE_
-X-MS-Office365-Filtering-Correlation-Id: 17881b32-effb-4449-9e1f-08dc2cc70f65
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HUojAbJ+CRaO2WRuXtmBtYMitJt3WJM8DG5jwVkhKM1hEHRLCi0Ri5UJD9UgBWr5IKcgyg9l4K/PzjWcrhMtmV8U92bK6EZ8eXuV+yj+IwQAivtGEq90h50BUHqdIFX53hxgB7HDgBc49qp7iu193OILfbsK3KVX5hwRKlAE2N4uP7ooXRWKcPOq85U3jIC/RjyE4Rn/7nf5tf9LtpUx9Z5gqXIHdWIRnimue/9GCSRm+iiEff4s48MCQ/pfTS2yF+c+awen0a8X/Bj07tZFQD34CsWiE9Pdkn8M3H0MANDd7I6iUy9kzUJJyB6h3rPh3j872bwUxABkyBAmh05Ht8dZzV6DD2Mb/gNcBkDwAPmto76P24M98SkloNg4P7owelgDyM4GhA70Ol8JugEgYOHnDfg4pEj/PxsoJLiPVEiI0/FGwH1DJDTcPC9ABSXYDcDQjLC0+yH0/Rraw5wXQ+V/ZfuNugxVhePJ9TYxWIak2JXXTKuGEyLHBNLmfrbKfajN9iZRy+gzp43m3HenTSbRR88QYNLfHQeO4Y9eOto5qh0K9B+aS57kd/ETXwOG
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(366004)(396003)(136003)(39860400002)(376002)(346002)(230922051799003)(64100799003)(1800799012)(451199024)(186009)(9686003)(478600001)(6512007)(6486002)(41300700001)(8936002)(8676002)(5660300002)(7416002)(4326008)(2906002)(4744005)(110136005)(6506007)(6666004)(66476007)(316002)(66556008)(54906003)(66946007)(83380400001)(82960400001)(86362001)(38100700002)(26005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?1Q14BU0s3KiyA+YTU6bIabCvLspWMM2p3V04k6mUrUtYV3c+AJCHPJ2ezMeC?=
- =?us-ascii?Q?lwElHNOTXtxUBW/g4dpc13bgHcNNdvAUhrdnG/G52+U0I5DIySuaCXokzaWF?=
- =?us-ascii?Q?/qAt9SoQ2Q7wEXjJ4GgmM8kaic4gc58u9Cvpq1acdDrb1iJgO9KqP25E8HUs?=
- =?us-ascii?Q?WKGAwd4hOc2HLQf18YjSbMmQhmMfGtaaNO+PGESVHBqqziqA1C5pFTJcX7dK?=
- =?us-ascii?Q?CwK9wl7ir7qrUP5Q5tg3fAJJbkAkHMKvEHu72EUGHP6BN3oTX84rkRVqSlve?=
- =?us-ascii?Q?lAAPx+sLIXUJ+InczmeKLUgNmvAmqvgxomHccCF1wS1UlnoV45P6MKZMty7y?=
- =?us-ascii?Q?h0ZthV5v0yZbBZZ1GpXVeIQja3DPsrBrBEj2klX9ynzEGxlj+NaAJcag+RVd?=
- =?us-ascii?Q?NfdrswHRt4qY3vqOyKOH5S9+4pJiP6RFyeN0Cht3SxGhRi+ozTfT12L3aDrA?=
- =?us-ascii?Q?d8Gw8xotbLLIAfbqxW+PAwaP4ApnAGhCb/5HtC3i8h9acBU9ChadqHpPOKHj?=
- =?us-ascii?Q?Hwr2nY+TGxtEZZkY9F1XULc6ZkD+yFWhSwYzutmgayzKemLoTC0v2KzJ5NE+?=
- =?us-ascii?Q?0/HwG7KnchAv8jvFNXQmYMdNcGI/MRXkgS5DmpnC0MKlPxLBjtctQavAK1pR?=
- =?us-ascii?Q?8F/Mqm+jQyAWsAaMHhvRbWAHXzUHJW2nxqF5bYYGKsJxXacDmThaVZxygoqt?=
- =?us-ascii?Q?JeGZKx/+Vx+Ab8Abfg6mU+5lPKwUsgeFFPhSqGQI4ix40bOqXZmun0Wk7Fo8?=
- =?us-ascii?Q?BBPiUDb1tXWrbU451e6dkYIcUdh7pXugw37cFW5JOWzGqpjdDq4lm10J6UAa?=
- =?us-ascii?Q?W3jy/r9BDDYu6phW16opayb6IMeFew+0swrGHlF7NlGfGyfjg4cl9joffbEO?=
- =?us-ascii?Q?K5MEBV9rao/DutgW7iuXp2EvOdaYPsRB81cYSIDt1x4j14veFsIfyd8MY51l?=
- =?us-ascii?Q?YbnZuWYljNdAUIr8mhllSIvDfqtnfED0/iA7n/Hhdm+5dQke1+kkDzeDPkIC?=
- =?us-ascii?Q?6GyDOfEVpjENe5oIJ2N7YY27mhFhZNGrZpnM9/fqjiZWDNmcww16q3xZPAO5?=
- =?us-ascii?Q?c9A1wVKJP7X6GTPjOFAEXVODap29RpfOrxhLWzqtZeN9aAouOR+NBNR5Xx+/?=
- =?us-ascii?Q?pIj/t89gY6+xalVp8R1XyjnHfSiI2CNpfPYNmFlD+HLAjGwpN4A44xBqe8EM?=
- =?us-ascii?Q?fU2ZNBfIk7Hv8poBtKp1zhXhNjF5uLny/eYbNUOj7eEo1m/Y/Ycl5AgxpMy9?=
- =?us-ascii?Q?j9d5/KH2Q6MLrOJfXiUjRomzc2jes2oXEGk+aG08DBKcy7NKAJcY2RfLGl+L?=
- =?us-ascii?Q?QGrU1nV2r0yv1h6FeFvVcWKJkgltRl0c67NnY22bzIeolgznJBYl25patMy0?=
- =?us-ascii?Q?x49tyT0vlOnusXZDm62sg7LT/fibk/vJDV8k9gwOyylakXXpzy7JUD7UnoAl?=
- =?us-ascii?Q?uSePNQWlQmEclRG0NqycKG63oUyGcastPJRJLqnVdywmOZotMcs+SgL03tBg?=
- =?us-ascii?Q?/oHIrsGcXYMFk8shnP3ZCcwBaZMYhd64WpEVvVRS8k5BOjN+/kaJ08cgN62s?=
- =?us-ascii?Q?i8sawNNol6xDONgzOpKRuGUO5bCeZu3r9iJg5O1/9G6Ghm/2Dz6aSivqRSEk?=
- =?us-ascii?Q?Ew=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 17881b32-effb-4449-9e1f-08dc2cc70f65
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Feb 2024 19:07:45.0567
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0TEeTi2558ZC4UAY/WplHee0ppzbS0EtLoqSurvVUEXrpPawrThA3tMmQbz09bPcvLMr4Ud2egruv8+kEXDSQ1MNDn50I6oHjU8UHpuqIVM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5138
-X-OriginatorOrg: intel.com
+References: <20240213001920.3551772-1-lokeshgidra@google.com>
+ <20240213001920.3551772-4-lokeshgidra@google.com> <20240213033307.zbhrpjigco7vl56z@revolver>
+ <CA+EESO5TNubw4vi08P6BO-4XKTLNVeNfjM92ieZJTd_oJt9Ygw@mail.gmail.com>
+ <20240213170609.s3queephdyxzrz7j@revolver> <CA+EESO5URPpJj35-jQy+Lrp1EtKms8r1ri2ZY3ZOpsSJU+CScw@mail.gmail.com>
+ <CAJuCfpFXWJovv6G4ou2nK2W1D2-JGb5Hw8m77-pOq4Rh24-q9A@mail.gmail.com>
+ <20240213184905.tp4i2ifbglfzlwi6@revolver> <CAJuCfpG+8uypn3Mw0GNBj0TUM51gaSdAnGZB-RE4HdJs7dKb0A@mail.gmail.com>
+In-Reply-To: <CAJuCfpG+8uypn3Mw0GNBj0TUM51gaSdAnGZB-RE4HdJs7dKb0A@mail.gmail.com>
+From: Lokesh Gidra <lokeshgidra@google.com>
+Date: Tue, 13 Feb 2024 11:18:15 -0800
+Message-ID: <CA+EESO6M5VudYK-CqT2snvs25dnrdTLzzKAjoSe7368X-PcFew@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] userfaultfd: use per-vma locks in userfaultfd operations
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, akpm@linux-foundation.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, 
+	kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com, 
+	david@redhat.com, axelrasmussen@google.com, bgeffon@google.com, 
+	willy@infradead.org, jannh@google.com, kaleshsingh@google.com, 
+	ngeoffray@google.com, timmurray@google.com, rppt@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Lukas Wunner wrote:
-> On Mon, Feb 12, 2024 at 11:30:54AM -0500, Mathieu Desnoyers wrote:
-> > Change the return value from NULL to PTR_ERR(-EOPNOTSUPP) for
-> > CONFIG_DAX=n to be consistent with the fact that CONFIG_DAX=y
-> > never returns NULL.
-> 
-> All the callers of alloc_dax() only check for IS_ERR().
-> 
-> Doesn't this result in a change of behavior in all the callers?
-> Previously they'd ignore the NULL return value and continue,
-> now they'll error out.
-> 
-> Given that, seems dangerous to add a Fixes tag with a v4.0 commit
-> and thus risk regressing all stable kernels.
+On Tue, Feb 13, 2024 at 10:57=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
+com> wrote:
+>
+> On Tue, Feb 13, 2024 at 10:49=E2=80=AFAM Liam R. Howlett
+> <Liam.Howlett@oracle.com> wrote:
+> >
+> > * Suren Baghdasaryan <surenb@google.com> [240213 13:25]:
+> > > On Tue, Feb 13, 2024 at 10:14=E2=80=AFAM Lokesh Gidra <lokeshgidra@go=
+ogle.com> wrote:
+> > > >
+> > > > On Tue, Feb 13, 2024 at 9:06=E2=80=AFAM Liam R. Howlett <Liam.Howle=
+tt@oracle.com> wrote:
+> > > > >
+> > > > > * Lokesh Gidra <lokeshgidra@google.com> [240213 06:25]:
+> > > > > > On Mon, Feb 12, 2024 at 7:33=E2=80=AFPM Liam R. Howlett <Liam.H=
+owlett@oracle.com> wrote:
+> > > > > > >
+> > > > > > > * Lokesh Gidra <lokeshgidra@google.com> [240212 19:19]:
+> > > > > > > > All userfaultfd operations, except write-protect, opportuni=
+stically use
+> > > > > > > > per-vma locks to lock vmas. On failure, attempt again insid=
+e mmap_lock
+> > > > > > > > critical section.
+> > > > > > > >
+> > > > > > > > Write-protect operation requires mmap_lock as it iterates o=
+ver multiple
+> > > > > > > > vmas.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+> > > > > > > > ---
+> > > > > > > >  fs/userfaultfd.c              |  13 +-
+> > > > > > > >  include/linux/userfaultfd_k.h |   5 +-
+> > > > > > > >  mm/userfaultfd.c              | 392 ++++++++++++++++++++++=
+++++--------
+> > > > > > > >  3 files changed, 312 insertions(+), 98 deletions(-)
+> > > > > > > >
+> > > > > > > ...
+> > > > >
+> > > > > I just remembered an issue with the mmap tree that exists today t=
+hat you
+> > > > > needs to be accounted for in this change.
+> > > > >
+> > > > > If you hit a NULL VMA, you need to fall back to the mmap_lock() s=
+cenario
+> > > > > today.
+> > > >
+> > > > Unless I'm missing something, isn't that already handled in the pat=
+ch?
+> > > > We get the VMA outside mmap_lock critical section only via
+> > > > lock_vma_under_rcu() (in lock_vma() and find_and_lock_vmas()) and i=
+n
+> > > > both cases if we get NULL in return, we retry in mmap_lock critical
+> > > > section with vma_lookup(). Wouldn't that suffice?
+> > >
+> > > I think that case is handled correctly by lock_vma().
+> >
+> > Yeah, it looks good.  I had a bit of a panic as I forgot to check that
+> > and I was thinking of a previous version.  I rechecked and v5 looks
+> > good.
+> >
+> > >
+> > > Sorry for coming back a bit late. The overall patch looks quite good
+> > > but the all these #ifdef CONFIG_PER_VMA_LOCK seem unnecessary to me.
+> > > Why find_and_lock_vmas() and lock_mm_and_find_vmas() be called the
+> > > same name (find_and_lock_vmas()) and in one case it would lock only
+> > > the VMA and in the other case it takes mmap_lock? Similarly
+> > > unlock_vma() would in one case unlock the VMA and in the other drop
+> > > the mmap_lock? That would remove all these #ifdefs from the code.
+> > > Maybe this was already discussed?
+> >
+> > Yes, I don't think we should be locking the mm in lock_vma(), as it
+> > makes things hard to follow.
+> >
+> > We could use something like uffd_prepare(), uffd_complete() but I
+> > thought of those names rather late in the cycle, but I've already cause=
+d
+> > many iterations of this patch set and that clean up didn't seem as vita=
+l
+> > as simplicity and clarity of the locking code.
 
-Oh, good catch, yes that Fixes tag should be:
+I anyway have to send another version to fix the error handling that
+you reported earlier. I can take care of this in that version.
 
-4e4ced93794a dax: Move mandatory ->zero_page_range() check in alloc_dax()
+mfill_atomic...() functions (annoyingly) have to sometimes unlock and
+relock. Using prepare/complete in that context seems incompatible.
 
-...as that was the one that updated the alloc_dax() calling convention
-without fixing up the CONFIG_DAX=n case.
+>
+> Maybe lock_vma_for_uffd()/unlock_vma_for_uffd()? Whatever name is
+> better I'm fine with it but all these #ifdef's sprinkled around don't
+> contribute to the readability.
 
-This is a pre-requisite for restoring DAX operation on ARM32.
+I'll wait for an agreement on this because I too don't like using so
+many ifdef's either.
+
+Since these functions are supposed to have prototype depending on
+mfill/move, how about the following names:
+
+uffd_lock_mfill_vma()/uffd_unlock_mfill_vma()
+uffd_lock_move_vmas()/uffd_unlock_move_vmas()
+
+Of course, I'm open to other suggestions as well.
+
+> Anyway, I don't see this as a blocker, just nice to have.
+>
+> >
+> > Thanks,
+> > Liam
+> >
+> > --
+> > To unsubscribe from this group and stop receiving emails from it, send =
+an email to kernel-team+unsubscribe@android.com.
+> >
 
