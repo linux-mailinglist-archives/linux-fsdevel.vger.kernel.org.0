@@ -1,182 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-11496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C8D853FC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 00:12:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294E0853FD6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 00:14:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF1CA1F2236E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 23:12:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 247A2B2C3A0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 23:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A5A9629FA;
-	Tue, 13 Feb 2024 23:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FE56310A;
+	Tue, 13 Feb 2024 23:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="jleKe4w/"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h9atok+b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sandeen.net (sandeen.net [63.231.237.45])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9D4629E4
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 23:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.231.237.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707865891; cv=none; b=Y/H52FNFfX9QP7mZSH2dIOM+tNf3TKcBSOOFe7f+2ScKrK8Kzc6f7xLq9asq6j5Jzq280QZfG7yR5Rb2wAb06rg8ZxvA7mBbxxUdVW9lUm9bg50LxBWKxKCNgyGcutYNrd/AZ6qpu/PYdbtsI3LAzpl209e3VxF464X4zRBMHOs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707865891; c=relaxed/simple;
-	bh=6GgBZp2b0JdUpy+KCwsIDxNbSGXoJ7c06JhVdileA0k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qKCoEUp6Cw451yHbJWaF97Xcbjv+wnfhhBGX03ZRn956kGA5OESn7ykpYuXEHLrvc3+5ueGok3Ykpy8QltJejmWbjf+mMKs6vWsfPqSIJZv1BFH1VUW5chOJRsqDnV+QnnJgEimiaoXKr06ZaUiP+2BVJ8rlyfAnEWoLuizJiBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=jleKe4w/; arc=none smtp.client-ip=63.231.237.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
-Received: from [10.0.0.71] (usg [10.0.0.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sandeen.net (Postfix) with ESMTPSA id 7663E33505B;
-	Tue, 13 Feb 2024 17:11:28 -0600 (CST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 sandeen.net 7663E33505B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net;
-	s=default; t=1707865888;
-	bh=SqOA29FiEcosyTGHVSyG0WnTn9ex0aq855MZHtmH66o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jleKe4w/9Fb8ZvYZ7JfD8ZvQMxQLJf+MOAzlyqGDpwgjaHyJ4DNoxlWfSTi9XID/T
-	 o4H0GohWiyUHVErdyNTku45Ck3E17Jglju+yaHz7mduJkHfc0S8yFbWdzHc8PWSOp9
-	 XaOoVRkCfZuHwAfOenPX+Jsh/O030m4b4B9Jaw80ZszMNUc8lgM6TvHzgN4g7n6GTl
-	 irRO7B/CE85n9ez47DUqi4YbnbcISKshMuRieNIImeZ7YPjU3MkLf75U0qJuhWxUYB
-	 8zYVsD6fJZQHlADW8ulTFWqYJPw0frxeivXytftnJDmf8niuCvLMRB7iTI8VELwEDE
-	 EGGw0rjVhrudg==
-Message-ID: <af9f80ae-3ecf-4efd-a0e2-e0f3b2520950@sandeen.net>
-Date: Tue, 13 Feb 2024 17:11:27 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BD0629FC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 23:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707865973; cv=none; b=UT1Shj1/OXEQXTJZ7mEqqUrQB0wWTF0PzTu+xuMbABwty9bTOjO5eDcex6Ky1acVe7FLMYfIhA+axbifUx2sNzJ2VbyHd4ZgFDusVLK7JGE3kZ4q125PDbZ3puEno/lnxkuPWpOQe/rTSr56HcvXUx8aH7TmliOHwym6n7NXWzs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707865973; c=relaxed/simple;
+	bh=t/GNKJjR0V0zS70LICAX4TznhKRY5yMu/IpFWVmDNEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SMO7D2Ceedag3vUt/9+/gJDRfEoy2cu/zRYQ5fpXP81ga0JkdxysnFMjP38fXyQT+Oi7rEuRUFiRso54Onf/WP4xUd2tYXWgy7qWD3/cTS6PkAx+fqpHY8kJ9J8cvzZraIMgOiB/FLnInfsU/Ef3gRtch1qz2ixSbmdKoP9+4No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h9atok+b; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 13 Feb 2024 18:12:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1707865969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f0TdyX1LIEW+TxM6rJOce5L4g2KmC9LD2hQu+Hn6Qhs=;
+	b=h9atok+bNTD+zHkmI6A2NHUgvmo8eVZgh6aU/9Qcl03lpjJfJ/1wsuZzmWLjw+g7wxcsRp
+	JX8RPH+/uKCoYHAC2BLMPKw+KQV5cFLc7TOGWPD9OGUL0fPCpEuqn3SpP9ZYd3I1wcCauT
+	g+9IJHpgkBrntaAMqtoVKGKLAjbphxI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: David Hildenbrand <david@redhat.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	akpm@linux-foundation.org, vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
+	mgorman@suse.de, dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, nathan@kernel.org, 
+	dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org, 
+	paulmck@kernel.org, pasha.tatashin@soleen.com, yosryahmed@google.com, 
+	yuzhao@google.com, dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
+	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, minchan@google.com, 
+	kaleshsingh@google.com, kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-modules@vger.kernel.org, 
+	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 00/35] Memory allocation profiling
+Message-ID: <xbehqbtjp5wi4z2ppzrbmlj6vfazd2w5flz3tgjbo37tlisexa@caq633gciggt>
+References: <Zctfa2DvmlTYSfe8@tiehlicka>
+ <CAJuCfpEsWfZnpL1vUB2C=cxRi_WxhxyvgGhUg7WdAxLEqy6oSw@mail.gmail.com>
+ <9e14adec-2842-458d-8a58-af6a2d18d823@redhat.com>
+ <2hphuyx2dnqsj3hnzyifp5yqn2hpgfjuhfu635dzgofr5mst27@4a5dixtcuxyi>
+ <6a0f5d8b-9c67-43f6-b25e-2240171265be@redhat.com>
+ <CAJuCfpEtOhzL65eMDk2W5SchcquN9hMCcbfD50a-FgtPgxh4Fw@mail.gmail.com>
+ <adbb77ee-1662-4d24-bcbf-d74c29bc5083@redhat.com>
+ <r6cmbcmalryodbnlkmuj2fjnausbcysmolikjguqvdwkngeztq@45lbvxjavwb3>
+ <CAJuCfpF4g1jeEwHVHjQWwi5kqS-3UqjMt7GnG0Kdz5VJGyhK3Q@mail.gmail.com>
+ <a9b0440b-844e-4e45-a546-315d53322aad@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] udf: convert to new mount API
-Content-Language: en-US
-To: Jan Kara <jack@suse.cz>, Eric Sandeen <sandeen@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Bill O'Donnell <billodo@redhat.com>,
- David Howells <dhowells@redhat.com>
-References: <739fe39a-0401-4f5d-aef7-759ef82b36bd@redhat.com>
- <20240213124933.ftbnf3inbfbp77g4@quack3>
-From: Eric Sandeen <sandeen@sandeen.net>
-In-Reply-To: <20240213124933.ftbnf3inbfbp77g4@quack3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a9b0440b-844e-4e45-a546-315d53322aad@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 2/13/24 6:49 AM, Jan Kara wrote:
-> On Fri 09-02-24 13:43:09, Eric Sandeen wrote:
->> Convert the UDF filesystem to the new mount API.
-
-...
-
->> +static void udf_init_options(struct fs_context *fc, struct udf_options *uopt)
->> +{
->> +	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
->> +		struct super_block *sb = fc->root->d_sb;
->> +		struct udf_sb_info *sbi = UDF_SB(sb);
->> +
->> +		uopt->flags = sbi->s_flags;
->> +		uopt->uid   = sbi->s_uid;
->> +		uopt->gid   = sbi->s_gid;
->> +		uopt->umask = sbi->s_umask;
->> +		uopt->fmode = sbi->s_fmode;
->> +		uopt->dmode = sbi->s_dmode;
->> +		uopt->nls_map = NULL;
->> +	} else {
->> +		uopt->flags = (1 << UDF_FLAG_USE_AD_IN_ICB) | (1 << UDF_FLAG_STRICT);
->> +		/* By default we'll use overflow[ug]id when UDF inode [ug]id == -1 */
+On Wed, Feb 14, 2024 at 12:02:30AM +0100, David Hildenbrand wrote:
+> On 13.02.24 23:59, Suren Baghdasaryan wrote:
+> > On Tue, Feb 13, 2024 at 2:50 PM Kent Overstreet
+> > <kent.overstreet@linux.dev> wrote:
+> > > 
+> > > On Tue, Feb 13, 2024 at 11:48:41PM +0100, David Hildenbrand wrote:
+> > > > On 13.02.24 23:30, Suren Baghdasaryan wrote:
+> > > > > On Tue, Feb 13, 2024 at 2:17 PM David Hildenbrand <david@redhat.com> wrote:
+> > > > > > 
+> > > > > > On 13.02.24 23:09, Kent Overstreet wrote:
+> > > > > > > On Tue, Feb 13, 2024 at 11:04:58PM +0100, David Hildenbrand wrote:
+> > > > > > > > On 13.02.24 22:58, Suren Baghdasaryan wrote:
+> > > > > > > > > On Tue, Feb 13, 2024 at 4:24 AM Michal Hocko <mhocko@suse.com> wrote:
+> > > > > > > > > > 
+> > > > > > > > > > On Mon 12-02-24 13:38:46, Suren Baghdasaryan wrote:
+> > > > > > > > > > [...]
+> > > > > > > > > > > We're aiming to get this in the next merge window, for 6.9. The feedback
+> > > > > > > > > > > we've gotten has been that even out of tree this patchset has already
+> > > > > > > > > > > been useful, and there's a significant amount of other work gated on the
+> > > > > > > > > > > code tagging functionality included in this patchset [2].
+> > > > > > > > > > 
+> > > > > > > > > > I suspect it will not come as a surprise that I really dislike the
+> > > > > > > > > > implementation proposed here. I will not repeat my arguments, I have
+> > > > > > > > > > done so on several occasions already.
+> > > > > > > > > > 
+> > > > > > > > > > Anyway, I didn't go as far as to nak it even though I _strongly_ believe
+> > > > > > > > > > this debugging feature will add a maintenance overhead for a very long
+> > > > > > > > > > time. I can live with all the downsides of the proposed implementation
+> > > > > > > > > > _as long as_ there is a wider agreement from the MM community as this is
+> > > > > > > > > > where the maintenance cost will be payed. So far I have not seen (m)any
+> > > > > > > > > > acks by MM developers so aiming into the next merge window is more than
+> > > > > > > > > > little rushed.
+> > > > > > > > > 
+> > > > > > > > > We tried other previously proposed approaches and all have their
+> > > > > > > > > downsides without making maintenance much easier. Your position is
+> > > > > > > > > understandable and I think it's fair. Let's see if others see more
+> > > > > > > > > benefit than cost here.
+> > > > > > > > 
+> > > > > > > > Would it make sense to discuss that at LSF/MM once again, especially
+> > > > > > > > covering why proposed alternatives did not work out? LSF/MM is not "too far"
+> > > > > > > > away (May).
+> > > > > > > > 
+> > > > > > > > I recall that the last LSF/MM session on this topic was a bit unfortunate
+> > > > > > > > (IMHO not as productive as it could have been). Maybe we can finally reach a
+> > > > > > > > consensus on this.
+> > > > > > > 
+> > > > > > > I'd rather not delay for more bikeshedding. Before agreeing to LSF I'd
+> > > > > > > need to see a serious proposl - what we had at the last LSF was people
+> > > > > > > jumping in with half baked alternative proposals that very much hadn't
+> > > > > > > been thought through, and I see no need to repeat that.
+> > > > > > > 
+> > > > > > > Like I mentioned, there's other work gated on this patchset; if people
+> > > > > > > want to hold this up for more discussion they better be putting forth
+> > > > > > > something to discuss.
+> > > > > > 
+> > > > > > I'm thinking of ways on how to achieve Michal's request: "as long as
+> > > > > > there is a wider agreement from the MM community". If we can achieve
+> > > > > > that without LSF, great! (a bi-weekly MM meeting might also be an option)
+> > > > > 
+> > > > > There will be a maintenance burden even with the cleanest proposed
+> > > > > approach.
+> > > > 
+> > > > Yes.
+> > > > 
+> > > > > We worked hard to make the patchset as clean as possible and
+> > > > > if benefits still don't outweigh the maintenance cost then we should
+> > > > > probably stop trying.
+> > > > 
+> > > > Indeed.
+> > > > 
+> > > > > At LSF/MM I would rather discuss functonal
+> > > > > issues/requirements/improvements than alternative approaches to
+> > > > > instrument allocators.
+> > > > > I'm happy to arrange a separate meeting with MM folks if that would
+> > > > > help to progress on the cost/benefit decision.
+> > > > Note that I am only proposing ways forward.
+> > > > 
+> > > > If you think you can easily achieve what Michal requested without all that,
+> > > > good.
+> > > 
+> > > He requested something?
+> > 
+> > Yes, a cleaner instrumentation. Unfortunately the cleanest one is not
+> > possible until the compiler feature is developed and deployed. And it
+> > still would require changes to the headers, so don't think it's worth
+> > delaying the feature for years.
+> > 
 > 
-> Nit: Please wrap these two lines.
-
-Done, noticed that after sending, sorry!
-
->> +static void udf_free_fc(struct fs_context *fc)
->> +{
->> +	kfree(fc->fs_private);
->> +}
+> I was talking about this: "I can live with all the downsides of the proposed
+> implementationas long as there is a wider agreement from the MM community as
+> this is where the maintenance cost will be payed. So far I have not seen
+> (m)any acks by MM developers".
 > 
-> So I think we need to unload uopt->nls_map in case we eventually failed the
-> mount (which means we also need to zero uopt->nls_map if we copy it to the
-> sbi).
+> I certainly cannot be motivated at this point to review and ack this,
+> unfortunately too much negative energy around here.
 
-Hmm let me look into that - I guess there are ways for i.e. udf_fill_super
-can fail that wouldn't free it before we got here.
+David, this kind of reaction is exactly why I was telling Andrew I was
+going to submit this as a direct pull request to Linus.
 
->> +static const struct fs_parameter_spec udf_param_spec[] = {
->> +	fsparam_flag	("novrs",		Opt_novrs),
->> +	fsparam_flag	("nostrict",		Opt_nostrict),
->> +	fsparam_u32	("bs",			Opt_bs),
->> +	fsparam_flag	("unhide",		Opt_unhide),
->> +	fsparam_flag	("undelete",		Opt_undelete),
->> +	fsparam_flag	("noadinicb",		Opt_noadinicb),
->> +	fsparam_flag	("adinicb",		Opt_adinicb),
-> 
-> We could actually use the fs_param_neg_with_no for the above. I don't
-> insist but it's an interesting exercise :)
-
-good idea, done.
-
-...
-
->> +	switch (token) {
->> +	case Opt_novrs:
->> +		uopt->novrs = 1;
-> 
-> I guess we can make this just an ordinary flag as a prep patch?
-
-Sorry, not sure what you mean by this?
-
-Oh, a uopt->flag. Ok, I can do that.
-
->> +		break;
->> +	case Opt_bs:
->> +		n = result.uint_32;;
-> 				  ^^ one is enough ;)
-> 
->> +		if (n != 512 && n != 1024 && n != 2048 && n != 4096)
->> +			return -EINVAL;
->> +		uopt->blocksize = n;
->> +		uopt->flags |= (1 << UDF_FLAG_BLOCKSIZE_SET);
->> +		break;
->> +	case Opt_unhide:
->> +		uopt->flags |= (1 << UDF_FLAG_UNHIDE);
->> +		break;
->> +	case Opt_undelete:
->> +		uopt->flags |= (1 << UDF_FLAG_UNDELETE);
->> +		break;
-> 
-> These two are nops so we should deprecate them and completely ignore them.
-> I'm writing it here mostly as a reminder to myself as a work item after the
-> conversion is done :)
-
-ok ;)
- 
->> +	case Opt_noadinicb:
->> +		uopt->flags &= ~(1 << UDF_FLAG_USE_AD_IN_ICB);
->> +		break;
->> +	case Opt_adinicb:
->> +		uopt->flags |= (1 << UDF_FLAG_USE_AD_IN_ICB);
->> +		break;
->> +	case Opt_shortad:
->> +		uopt->flags |= (1 << UDF_FLAG_USE_SHORT_AD);
->> +		break;
->> +	case Opt_longad:
->> +		uopt->flags &= ~(1 << UDF_FLAG_USE_SHORT_AD);
->> +		break;
->> +	case Opt_gid:
->> +		if (0 == kstrtoint(param->string, 10, &uv)) {
-> Nit:
-> 		    ^^ I prefer "kstrtoint() == 0"
-
-No problem.
-
--Eric
-
-> Otherwise looks good.
-> 
-> 								Honza
-
+This is an important feature; if we can't stay focused ot the technical
+and get it done that's what I'll do.
 
