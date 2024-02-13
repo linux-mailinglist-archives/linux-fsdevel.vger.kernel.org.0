@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-11443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A198853D49
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:38:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22B51853D4B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:38:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56FB028FD8D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 21:38:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4B0529017C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 21:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994256167E;
-	Tue, 13 Feb 2024 21:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F8062146;
+	Tue, 13 Feb 2024 21:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/MEawuU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sb+F8d6i"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED835612FE;
-	Tue, 13 Feb 2024 21:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC5D612FE;
+	Tue, 13 Feb 2024 21:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707860255; cv=none; b=gPPErK0qRkQHam2HyJOoBmWhCRJP9Zeo9X78oPmaGhzSs1JR1QtsXF3qo73r46fyjAgm+1l2wpQyUCsZCCvaN9gPqJ3lEC8fvYzk0fCNQyZL7Ns+/505fqJ/l29OyO1R/SnKHhvnh9aoBNIxfxcUYPdJnn0WtmaTXQw2wktCQyc=
+	t=1707860262; cv=none; b=ol3klbs8h7D8Ghp2YGu7mzah7RXB1SSLXT65UTcggiUnSrnlR1x7n4SggOzpGP/VXKHK3d9ObOMfsFXz8nKwn7g5UwdEXfaH2A7mpioeFxvQrI9nmY+a7RIbVPGijuYxNPvhe5NCqJlvZeB3uJ/E05NQ89W+IuO3VaYxxFAoc10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707860255; c=relaxed/simple;
-	bh=O0qvn792AlXiXQ1lPPSwqR9KB9RhTSpZi4O/hP+kqjE=;
+	s=arc-20240116; t=1707860262; c=relaxed/simple;
+	bh=Mc8iA4R+RvlCogjizmfuBdLaRuEY94aY5Pgh2nLn8ac=;
 	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kTFCLqsV6zZCsC7e3ajXCAozB41GhRegOtp+DOuRE1kk6ToUIxtP6KGtvPGz2UjaO5TzwmJ5JSQqjn0MgpVknVnwuHLwbDFBF6p9yiMut/1KYQrgVV3Tm+Pkf5YcDQZixSxES4xK60knu/kj4+xCd1BfdrK6ivp4ivVYEHNHlr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/MEawuU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D906C43390;
-	Tue, 13 Feb 2024 21:37:33 +0000 (UTC)
+	 MIME-Version:Content-Type; b=iArl/XWpnrGqAwYGOoH1E5ISwibdm2IP2szQjsYMEzSjoavM8GGt58NSnzTQrVNgRz+85Z2CzFSkBekd2mGb194Kn7eIvoC0lXOMWulxgQ90/7HVWtotCWyqTtwOqoX56EuO4WMQlZV4Fa3Ym96oZuvvOKV3cRQds025+cfjyeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sb+F8d6i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1874C433C7;
+	Tue, 13 Feb 2024 21:37:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707860254;
-	bh=O0qvn792AlXiXQ1lPPSwqR9KB9RhTSpZi4O/hP+kqjE=;
+	s=k20201202; t=1707860261;
+	bh=Mc8iA4R+RvlCogjizmfuBdLaRuEY94aY5Pgh2nLn8ac=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Z/MEawuUMQulNCp3MzLp2FmSSCfSgusNftEj26+lYW33qg3nVQgaYiwA/JCowq7NM
-	 UoX2zesRaT68Nrwd8NX3XY9+HeCzOAKrXh9q+a2QuyR3XFug07/4eurf+sd/VWQwQz
-	 u6UnXVo1sm6+EFDsCqRoRkAXjb/yXCTJW2mUFtRM/z3D12EH5T4iDL3KGIH4lRDfkm
-	 LGL5+KOaU4C13CeGv8HXfxKN1X702KXavl8GCO3zYbhf/FzrlS1bI10WT8bpxMnz2a
-	 Jc2Ikzn20LMe/okVAdTAeuZjsWRAww2x+GFLS+XM3E5c8lhxYbjiKkMAs/IyqJULrd
-	 wSQ6F6bJbwXGQ==
-Subject: [PATCH RFC 2/7] libfs: Define a minimum directory offset
+	b=Sb+F8d6imFeQ45gYeWAN4/BMaT90jG5csQsCSot0PbyMT88i+74CZeUtTPvUxmuUP
+	 t7FsY5dTvXbuSKoD8EVHTD8zCxRCTcuApqgMgZ21lhygy+SW4ZxqjBJsTye+y9s532
+	 2VQycVXwzvuXfNBx7QujixZBOFpQ2k+da0/+MZ5FsbBHbiJ8Y7tUguIoLfpsAiomNz
+	 6mFTz8/lMazFoYkJqBJagtYvSSnkHH7k2ksf24CyKW+70KC7jCqYsBGrvQtH3C0jxc
+	 G2qH/gokXheDzLuRZiLeolXi1GnEcqa3Y+gPx9AVvs6JbEzWwH8p7cstiyVtjXES19
+	 iDaqW0CwmhJ/A==
+Subject: [PATCH RFC 3/7] libfs: Add simple_offset_empty()
 From: Chuck Lever <cel@kernel.org>
 To: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
  hughd@google.com, akpm@linux-foundation.org, Liam.Howlett@oracle.com,
  oliver.sang@intel.com, feng.tang@intel.com
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  maple-tree@lists.infradead.org, linux-mm@kvack.org, lkp@intel.com
-Date: Tue, 13 Feb 2024 16:37:32 -0500
+Date: Tue, 13 Feb 2024 16:37:39 -0500
 Message-ID: 
- <170786025248.11135.14453586596030949713.stgit@91.116.238.104.host.secureserver.net>
+ <170786025969.11135.16880338029664682984.stgit@91.116.238.104.host.secureserver.net>
 In-Reply-To: 
  <170785993027.11135.8830043889278631735.stgit@91.116.238.104.host.secureserver.net>
 References: 
@@ -67,59 +67,100 @@ Content-Transfer-Encoding: 7bit
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-This value is used in several places, so make it a symbolic
-constant.
+For simple filesystems that use directory offset mapping, rely
+strictly on the directory offset map to tell when a directory has
+no children.
+
+After this patch is applied, the emptiness test holds only the RCU
+read lock when the directory being tested has no children.
+
+In addition, this adds another layer of confirmation that
+simple_offset_add/remove() are working as expected.
 
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/libfs.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ fs/libfs.c         |   32 ++++++++++++++++++++++++++++++++
+ include/linux/fs.h |    1 +
+ mm/shmem.c         |    4 ++--
+ 3 files changed, 35 insertions(+), 2 deletions(-)
 
 diff --git a/fs/libfs.c b/fs/libfs.c
-index bfbe1a8c5d2d..a38af72f4719 100644
+index a38af72f4719..3cf773950f93 100644
 --- a/fs/libfs.c
 +++ b/fs/libfs.c
-@@ -240,6 +240,11 @@ const struct inode_operations simple_dir_inode_operations = {
- };
- EXPORT_SYMBOL(simple_dir_inode_operations);
- 
-+/* 0 is '.', 1 is '..', so always start with offset 2 or more */
-+enum {
-+	DIR_OFFSET_MIN	= 2,
-+};
-+
- static void offset_set(struct dentry *dentry, u32 offset)
- {
- 	dentry->d_fsdata = (void *)((uintptr_t)(offset));
-@@ -261,9 +266,7 @@ void simple_offset_init(struct offset_ctx *octx)
- {
- 	xa_init_flags(&octx->xa, XA_FLAGS_ALLOC1);
- 	lockdep_set_class(&octx->xa.xa_lock, &simple_offset_xa_lock);
--
--	/* 0 is '.', 1 is '..', so always start with offset 2 */
--	octx->next_offset = 2;
-+	octx->next_offset = DIR_OFFSET_MIN;
+@@ -313,6 +313,38 @@ void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry)
+ 	offset_set(dentry, 0);
  }
  
++/**
++ * simple_offset_empty - Check if a dentry can be unlinked
++ * @dentry: dentry to be tested
++ *
++ * Returns 0 if @dentry is a non-empty directory; otherwise returns 1.
++ */
++int simple_offset_empty(struct dentry *dentry)
++{
++	struct inode *inode = d_inode(dentry);
++	struct offset_ctx *octx;
++	struct dentry *child;
++	unsigned long index;
++	int ret = 1;
++
++	if (!inode || !S_ISDIR(inode->i_mode))
++		return ret;
++
++	index = 2;
++	octx = inode->i_op->get_offset_ctx(inode);
++	xa_for_each(&octx->xa, index, child) {
++		spin_lock(&child->d_lock);
++		if (simple_positive(child)) {
++			spin_unlock(&child->d_lock);
++			ret = 0;
++			break;
++		}
++		spin_unlock(&child->d_lock);
++	}
++
++	return ret;
++}
++
  /**
-@@ -276,7 +279,7 @@ void simple_offset_init(struct offset_ctx *octx)
-  */
- int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
+  * simple_offset_rename_exchange - exchange rename with directory offsets
+  * @old_dir: parent of dentry being moved
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ed5966a70495..03d141809a2c 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3267,6 +3267,7 @@ struct offset_ctx {
+ void simple_offset_init(struct offset_ctx *octx);
+ int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry);
+ void simple_offset_remove(struct offset_ctx *octx, struct dentry *dentry);
++int simple_offset_empty(struct dentry *dentry);
+ int simple_offset_rename_exchange(struct inode *old_dir,
+ 				  struct dentry *old_dentry,
+ 				  struct inode *new_dir,
+diff --git a/mm/shmem.c b/mm/shmem.c
+index d7c84ff62186..6fed524343cb 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3374,7 +3374,7 @@ static int shmem_unlink(struct inode *dir, struct dentry *dentry)
+ 
+ static int shmem_rmdir(struct inode *dir, struct dentry *dentry)
  {
--	static const struct xa_limit limit = XA_LIMIT(2, U32_MAX);
-+	static const struct xa_limit limit = XA_LIMIT(DIR_OFFSET_MIN, U32_MAX);
- 	u32 offset;
- 	int ret;
+-	if (!simple_empty(dentry))
++	if (!simple_offset_empty(dentry))
+ 		return -ENOTEMPTY;
  
-@@ -481,7 +484,7 @@ static int offset_readdir(struct file *file, struct dir_context *ctx)
- 		return 0;
+ 	drop_nlink(d_inode(dentry));
+@@ -3431,7 +3431,7 @@ static int shmem_rename2(struct mnt_idmap *idmap,
+ 		return simple_offset_rename_exchange(old_dir, old_dentry,
+ 						     new_dir, new_dentry);
  
- 	/* In this case, ->private_data is protected by f_pos_lock */
--	if (ctx->pos == 2)
-+	if (ctx->pos == DIR_OFFSET_MIN)
- 		file->private_data = NULL;
- 	else if (file->private_data == ERR_PTR(-ENOENT))
- 		return 0;
+-	if (!simple_empty(new_dentry))
++	if (!simple_offset_empty(new_dentry))
+ 		return -ENOTEMPTY;
+ 
+ 	if (flags & RENAME_WHITEOUT) {
 
 
 
