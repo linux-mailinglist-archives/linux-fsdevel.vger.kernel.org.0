@@ -1,124 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-11504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA0D854057
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 00:50:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4E7854066
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 00:55:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1A731F23E5B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 23:50:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC42E286B5A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 23:55:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5A6633F0;
-	Tue, 13 Feb 2024 23:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ADAB849C;
+	Tue, 13 Feb 2024 23:54:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="FfBP6i2F"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="iZIWTFME"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 102C562810
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 23:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37736313C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 23:54:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707868227; cv=none; b=mpbJ8ujmBFQsstGgOIJwZ0fiG3cBN7Dt1Faf7ykT+A0Wtsy6Y/D80Uj24DHwFaZ6C1hcsDQ0JIrW0qFOFr+GV6rlAOptn+t22XrTRMjpkqkUp+a4x/82Bu1v8VLOpK45V61OBD4qBcB1ffI7QJqKBtypZigZzM5RJ/+3kPCiJV8=
+	t=1707868489; cv=none; b=rGEBbCNxF/OBhnp0li60lJEpG+HJBLA+RDrAGtactzgSg2e93+sgD0X6WAjziQhoMz/yOLlMn52lZx3lJTJcTpXolSGUGtaQ/SLjbvuSqekhbjwOm0eM4d51uHgEl2MQA8NNOSpF/lbBYQM/ivsIg+oImrLOQX978ST0kwaprds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707868227; c=relaxed/simple;
-	bh=oWycodL9L3zii0Ov8/Q+DQMHgh0JEikOVGPhH652GPM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ryo8yOVYsJOHDsrRNNoZeQX8pHOD02/iDaCE6aRFhZOH9rBFr7uM8q4y7SIyALjOksJgQRIqjAsukL/SKGqQKdt5q8LrxnYOkTcM4oELnVe6ka+IP+K3GkAPLg1kB8rk1WOyAGiYQ+K6ZG6VevHNCNih57bTzBKxpjG8mbvBFYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=FfBP6i2F; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1d751bc0c15so43990775ad.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 15:50:25 -0800 (PST)
+	s=arc-20240116; t=1707868489; c=relaxed/simple;
+	bh=azZvqzbTFipUnuC8HX9TaKZdjTIk9iGcAhgBe6cJRrA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mR1BCKAlksLJHdc4JemkJ7Xoz5lu7hNC1G2BmXpK0rsGDCuXb5rmPGZKIiPffUshuikM8W20b+f+PPyypUUbkI5DOwCexSVQLlQG4TYAa6APPoaAd2TnVk1gc/PcbM7Ep+9EZEnlnQgY9PHux6wMwwybi2OB9LfRqxpfQxr6HYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=iZIWTFME; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-42c424b74faso14855011cf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 15:54:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1707868225; x=1708473025; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IYMQSSFks5P2/r408Gknbi9pYvYwzKSkrlXyjrfh77c=;
-        b=FfBP6i2FgQZ2YUpoPQaYycA/5CAia9oRP77PYB6SL2rhQ0Gkh9R68FeXvzJFH1JWEl
-         iw691uB04BFMTURrqFwquSeizCFC6x7PzSPm9q0WVgoUY43mAW8BVqi2RmRPrTaP9XOZ
-         W80VSIxU6TCQSAdxxEHTO58Hrvs1J8lkvNuA/UkqtTU701WXhUb345j2ixObwMaXtunj
-         krwoVCzX7RyzMhAi5tuqLkryHt62QZq6nzZDA2N8U6EUxVtGvhPOrs8vjHJGJMexlVce
-         A2FXe08yGefZzK/rZcrrnhvlBt95SL91ZjLvrFISObJxBGReKPp4AoAvzKfWQ6pdxPEt
-         mESg==
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1707868486; x=1708473286; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=azZvqzbTFipUnuC8HX9TaKZdjTIk9iGcAhgBe6cJRrA=;
+        b=iZIWTFME+t+1SHOM4yinordj9CYruFblhTVUvUm/W2nVLfGoAk0wGwx47CyflginyL
+         eJ0RfbdAzZCfikmzvtiggCm3X0xJxdc6vf9baCea+zdo48Ua4RoG90WIMjqjxySsISZW
+         Jlw7/YPzvUoMOXACZx/Ohyb+YgL9kD4+Ikcg4OMr49xmcF46nGxwG8VQMluOOeAZG7IR
+         tgZCffzEPQbegLqUTg7lQzJHp0W/4ij9QTKCspJcUqyCjwYKvN6UgUaLHG3V+Gby6bxd
+         zKJ9KT/8VMAc3EdhCSFH696NoT8yEs8oEgKCYxE/72LrScYPwq98k25LYKxT0fN7HZqP
+         J+kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707868225; x=1708473025;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IYMQSSFks5P2/r408Gknbi9pYvYwzKSkrlXyjrfh77c=;
-        b=RVztFjRlONS4HZl0KJjHtvLjSAIgDBXpCEmIHeIqHWUkJ77KufK4aEuD+wNu/8Tt8P
-         9w27ObaiUKBqRHeuiuJCAqqMSJcV96JcN7gWrcDIeRusAly3uKUjrcO16lPZb8gQ7iVe
-         eFvsDoXQjQZYd6ASGr8844xpfdEtvg3cQshr+pd83gereoOD9WX88neZDRgFfNbz1iGw
-         cyYYb0YjbCnzx8MgIMAdOPdKAbPhYMdNz5sAUaiSYsiLzB5BavXALzhkhuLL+XMyq0LD
-         Y4Q4C2Zf1PNFFBjaq7B8ZsTZ+qGiJaW9sg71A0QxQbZXoB5H5qJ0nBTWLcVF3O2eU/Rm
-         FC3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWPUIPEtUY0tP66dQTOWv7fgm31/l71BxSn5SIs7XA+FfIkYjjo0yUBMyFb3NwCKfUcTkSnInI2r34Y7+Tr10el//gHsmfsvDaUT6kBIA==
-X-Gm-Message-State: AOJu0Ywrobm4xQyf6IpIhbvLm+xhXPvjptVBop7GScZe2FxcbERkY0ei
-	gGkB1/wOLKWN4uLG95R9dAhbsRsHKMhcFIiMIZirH03dF2ZmqVDeQb9NEBNokoU=
-X-Google-Smtp-Source: AGHT+IF6zlBphRv2UyLjtBaQyeX0AKwUx82y5z3w17Y0iKO+2tEkGu7gy45BCPQV9/quH1r+E/HbrQ==
-X-Received: by 2002:a17:902:ab8f:b0:1db:2ad9:9393 with SMTP id f15-20020a170902ab8f00b001db2ad99393mr964554plr.48.1707868225444;
-        Tue, 13 Feb 2024 15:50:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUI7WapGKA5HInhT2xg3cyB085Cx4TiIwK3oURVy7Mt75n3BPzYEoV1R6LYcSVaUKFGLBEWL6W48qCAzF/HqCzB5I41KmFhdxefeEzKFZx0mWrPEFPFAvQ60+qj45lykZ7TWrgpe+WUl2xB9iKmIUkrRG2LRm8EijirWucVYI31QRpQBJLSR/W4qZ1czK667qxBiGZViG8gMp+IZo4xSROsfdQ6YyY9JPr6p/jmQdUlU2MYjGUsUWHF+f6/MS1fWqP7akaP+yhqMG7tceQwu/ntM50nkvnb05XeH2sN05pkOWMm3Kokjmcs83T2xOMcy2gAzuh6xsfK43eL6q7oFF4q3sAHOfxE+MVkPu38SQFVIIxLl3ovABUjqy+53cMFXsl4VR3j1Hd5NkpO8E4V+Gvao9Lo2MnAHw7er21iQUY3mQnDWzhy0sW2DxFTCQOcoAdu5rY2jAs8tw==
-Received: from dread.disaster.area (pa49-181-38-249.pa.nsw.optusnet.com.au. [49.181.38.249])
-        by smtp.gmail.com with ESMTPSA id kj6-20020a17090306c600b001d9c0c321c6sm2620188plb.67.2024.02.13.15.50.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Feb 2024 15:50:25 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1ra2Xe-0069aG-2Y;
-	Wed, 14 Feb 2024 10:50:22 +1100
-Date: Wed, 14 Feb 2024 10:50:22 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: John Garry <john.g.garry@oracle.com>, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, chandan.babu@oracle.com, martin.petersen@oracle.com,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	ojaswin@linux.ibm.com
-Subject: Re: [PATCH 0/6] block atomic writes for XFS
-Message-ID: <ZcwAPq8e/ZpAwhYf@dread.disaster.area>
-References: <20240124142645.9334-1-john.g.garry@oracle.com>
- <20240213072237.GA24218@lst.de>
+        d=1e100.net; s=20230601; t=1707868486; x=1708473286;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=azZvqzbTFipUnuC8HX9TaKZdjTIk9iGcAhgBe6cJRrA=;
+        b=biSJAzmFdZIG/r106PattfXbyzPVKzzKKvYii/14jszi7tZ+mVbnuYs6zUrBFnNpTL
+         6VcaDFMBzM1RvpR5tCbkejS1fR0sglCm1+xIY4c7/p0QOHAnYBsaQ/hqIaa0eX6oqDUV
+         5RO2UgzPLn6LAV1K7A1MiAHV6FEM1UM7WzWnjEvLpVXFaWpoREalaC/n6dxN9XjSfyHg
+         tOIUK56fyQ5gg9h152hstJNxlK+gEVYKhl/OCJ6k7iXhuHYW8WvKNhabREhBnbHpB+f0
+         lOjkhauc2Js735rbXSxQOIzCWe7ufVFBqLk/BKFB1adgBT3bfme6wJ7d17+i8VoEwmZQ
+         n02Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW5uZc+UjAQDeLWByBs3YtqP03lWlij6if4cHmHzf7QjAlHJQJ+FRJb86DUWUILdPLsqCD9s4r1HmRejSAyAJA8ggytApUeeo856Jshew==
+X-Gm-Message-State: AOJu0YyNip9E3kbWB9/ICIycEMfoEq9vw+VG5M+GZw4e8bVekanKEKZ2
+	45RHPspYVkWBNHtRluOewaJu5rk3EhV0Il/a/rZWS5ZYn1/rlpFU7KayzYD4DUg+vpKe6UkX1cj
+	i7Sbqo6ichFNwxYLPXt2DJXUzV5Y2FwaPO5mfXg==
+X-Google-Smtp-Source: AGHT+IEvHYDq5ElFOxC+Jycs64+Hk1KrOdwVZPwmI5s/vqF7SbUqUg8DtswJfzCkhvxh12zppSmre5tJAe7RcmjwUGQ=
+X-Received: by 2002:a05:622a:41:b0:42c:6fb6:8d2b with SMTP id
+ y1-20020a05622a004100b0042c6fb68d2bmr1159462qtw.46.1707868486727; Tue, 13 Feb
+ 2024 15:54:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240213072237.GA24218@lst.de>
+References: <Zctfa2DvmlTYSfe8@tiehlicka> <CAJuCfpEsWfZnpL1vUB2C=cxRi_WxhxyvgGhUg7WdAxLEqy6oSw@mail.gmail.com>
+ <9e14adec-2842-458d-8a58-af6a2d18d823@redhat.com> <2hphuyx2dnqsj3hnzyifp5yqn2hpgfjuhfu635dzgofr5mst27@4a5dixtcuxyi>
+ <6a0f5d8b-9c67-43f6-b25e-2240171265be@redhat.com> <CAJuCfpEtOhzL65eMDk2W5SchcquN9hMCcbfD50a-FgtPgxh4Fw@mail.gmail.com>
+ <adbb77ee-1662-4d24-bcbf-d74c29bc5083@redhat.com> <r6cmbcmalryodbnlkmuj2fjnausbcysmolikjguqvdwkngeztq@45lbvxjavwb3>
+ <CAJuCfpF4g1jeEwHVHjQWwi5kqS-3UqjMt7GnG0Kdz5VJGyhK3Q@mail.gmail.com>
+ <a9b0440b-844e-4e45-a546-315d53322aad@redhat.com> <xbehqbtjp5wi4z2ppzrbmlj6vfazd2w5flz3tgjbo37tlisexa@caq633gciggt>
+ <c842347d-5794-4925-9b95-e9966795b7e1@redhat.com> <CAJuCfpFB-WimQoC1s-ZoiAx+t31KRu1Hd9HgH3JTMssnskdvNw@mail.gmail.com>
+In-Reply-To: <CAJuCfpFB-WimQoC1s-ZoiAx+t31KRu1Hd9HgH3JTMssnskdvNw@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Tue, 13 Feb 2024 18:54:09 -0500
+Message-ID: <CA+CK2bCvaoSRUjBZXFbyZi-1mPedNL3sZmUA9fHwcBB00eDygw@mail.gmail.com>
+Subject: Re: [PATCH v3 00/35] Memory allocation profiling
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: David Hildenbrand <david@redhat.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org, vbabka@suse.cz, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org, 
+	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, 
+	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, nathan@kernel.org, 
+	dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org, 
+	paulmck@kernel.org, yosryahmed@google.com, yuzhao@google.com, 
+	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
+	glider@google.com, elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 13, 2024 at 08:22:37AM +0100, Christoph Hellwig wrote:
-> From reading the series and the discussions with Darrick and Dave
-> I'm coming more and more back to my initial position that tying this
-> user visible feature to hardware limits is wrong and will just keep
-> on creating ever more painpoints in the future.
+> > I tried to be helpful, finding ways *not having to* bypass the MM
+> > community to get MM stuff merged.
+> >
+> > The reply I got is mostly negative energy.
+> >
+> > So you don't need my help here, understood.
+> >
+> > But I will fight against any attempts to bypass the MM community.
+>
+> Well, I'm definitely not trying to bypass the MM community, that's why
+> this patchset is posted. Not sure why people can't voice their opinion
+> on the benefit/cost balance of the patchset over the email... But if a
+> meeting would be more productive I'm happy to set it up.
 
-Yes, that's pretty much what I've been trying to say from the start.
+Discussing these concerns during the next available MM Alignment
+session makes sense. At a minimum, Suren and Kent can present their
+reasons for believing the current approach is superior to the
+previously proposed alternatives.
 
-The functionality atomic writes need from the filesystem is for
-extent alignment constraints to be applied to all extent
-manipulations, not just allocation.  This is the same functionality
-that DAX based XFS filesystems need to guarantee PMD aligned
-extents.
+However, delaying the discussion and feature merge until after LSF/MM
+seems unnecessary. As I mentioned earlier in this thread, we've
+already leveraged the concepts within this feature to debug
+unexplained memory overhead, saving us many terabytes of memory. This
+was just the initial benefit; we haven't even explored its full
+potential to track every allocation path.
 
-IOWs, the required filesystem extent alignment functionality is not
-specific to atomic writes and it is not specific to a particular
-type of storage hardware.
-
-If we implement the generic extent alignment constraints properly,
-everything else from there is just a matter of configuring the
-filesystem geometry to match the underlying hardware capability.
-mkfs can do that for us, like it already does for RAID storage...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Pasha
 
