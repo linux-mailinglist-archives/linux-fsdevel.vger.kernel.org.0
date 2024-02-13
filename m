@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-11327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A03A852B1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 09:28:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA34852B39
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 09:30:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31BEB284440
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 08:28:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A177A28167C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 08:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F881B971;
-	Tue, 13 Feb 2024 08:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F853E578;
+	Tue, 13 Feb 2024 08:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oe1lbD0s"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JiyRDzmV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C38B1B592;
-	Tue, 13 Feb 2024 08:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0316218026;
+	Tue, 13 Feb 2024 08:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707812849; cv=none; b=Y5/hEaECGh/Km9j16a8IHkxWZp8z40apHVFNt6DWLdL/ltro7MYB3vWJr+/5tS+F+7VWwo+3dNbyexpa2hFMNyL19LxNtcRosUiESBoOto+3K6qtnY4gMyewAZCqF+iK/mVH6dL1htmhcB5HACVbwMWOHgepdqFvQkIxSSv6kvw=
+	t=1707813014; cv=none; b=cwPAZn1fQ7WLNwALdks5lm2zLDLTIMz4XCKDO7ArwXzAlwocuYkswtPKr/IbnvrnLgglJU0fPoKMQaBzWbM9cwpKnuOKnuWXYPR5eO5V2QwEKBtqrR3Pk1/Wqd0PwnVvnwKI8NliA4AVP782fvjBtV8taz0bBo5dwNiHTjwX7MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707812849; c=relaxed/simple;
-	bh=uafGeBbQdA3tymCA3tWJBrlrcdnQCGekk71oGHgR4d0=;
+	s=arc-20240116; t=1707813014; c=relaxed/simple;
+	bh=CloOXvX3e3OyBad9i8X+MAxCoHVaXSE6mAVeTadKyHs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fEgSa+xb7NseCfuw93YE3yXnGYiIOSuGcGk8icdWxgL0h2GFSx4aXFsE/fdxct4+NIzsbzt8FCnR9oqQ4iBvq32/77nA+cyPKM7b6DqfRCPb/YUioIpwRK06QsOgwLLrCQFl5HPIA+etwo7/1SbXWYPrEnmhwbewgl65DCTn0+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oe1lbD0s; arc=none smtp.client-ip=209.85.218.43
+	 To:Cc:Content-Type; b=o+7IfvuQr97sZeghIUE6MQ74ClueY4Y+b5rkDQirpEe0ZA1NXbcsKoNjiQ12cLg7YWTfkSjeilbAsm1qpZFnNWO/9sKe7nQGgTOe0+H5ESSzvf+NQkHsYp8VNWx62Yae7kvc8cBo85E+yOFd5i8MkhtYNsaE9MbarrZbcql0IqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JiyRDzmV; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a3832ef7726so469289166b.0;
-        Tue, 13 Feb 2024 00:27:27 -0800 (PST)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a3cc8f0c97fso166320166b.0;
+        Tue, 13 Feb 2024 00:30:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1707812845; x=1708417645; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707813011; x=1708417811; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iNGA8ZHGAdrm/kUeu0sTwlf3VcWW6Pp9gwsOjSJOS+s=;
-        b=Oe1lbD0sQSnEAzziF8TTz8fVz5XARWLd5y4xcYE8Xvycsf5EZPRTUpx/3qsKEitfXe
-         x3yKNpHeAZN3Gssw58XVHxM1VHK8pNqW6huyK2XvPX+Ry+9CVmkdJ7ZHC2OfNB2XybFA
-         17xqPjLqsgENJ5HzBSP7O9M+b0GmvFBylsPtjeh02o2MqraH/0WuQ17ce6dHl603qDCI
-         KjSZBg8RhrXSr1hQGuR90a8M1ps7hZn0FDQSi9vGKdIWLX3OexXUvjdjIEaWUhlkR2ko
-         Awtz8x+RHKoOgSlfSEmngWFCNKv2IsTkt4dShBJAPGEf5W4YVADo8/1ePS6yk35IzbQa
-         fa4w==
+        bh=UVoibj/kriuj68qpqrmYwyDO76NZZTUK51M4zJowuXg=;
+        b=JiyRDzmVtu7qFQSJxeuvH1GlrRsg59b8das0TSoIaX8WccaN+jvM1iJZKtIUPwsMiZ
+         AMZNs1Nzx1dczXdWoYmm+P3jj5AYvJPfMUs1xTIvftcCGASTCl2yvBfNPzYKZ8xrMTht
+         E57/K5j9P/K3t251uiGjoEWv54IwVcSTFmGhZtq62vltUugmllsugdXLc/kwts5WOZQQ
+         XreW0+YUznNJpOjuS25jM/fxzlvjoHZg6Wn0pBFD3dQueNyT1gnuPK+J48aylm7jYFfQ
+         zRVnLc4bVfMr9XoDXWRB0EY7Np34Gndmd2sRCqhtiui4GJ08PkblcYKvA6DEv0ZPJgV9
+         kcGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707812845; x=1708417645;
+        d=1e100.net; s=20230601; t=1707813011; x=1708417811;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iNGA8ZHGAdrm/kUeu0sTwlf3VcWW6Pp9gwsOjSJOS+s=;
-        b=jtqHJEranLT1GzDFLuWn8d505Y+pmX1UWEPTRgvpY8xdiJA+yE/AA68ZsIq9Df604X
-         XvsjmEm/lWwvYHqpbCOCsq7gi7T5zLwdFuxr0DZKBA5xhubji9KqWpvHEaC/LN3lh2NU
-         qRsKN3hQ3Ce96SOkGsPlp8LRSgs9tfRAUT1tUjztcrnAeicAuX3B9MvW1qUrqHt2KZYO
-         ZjIjFaUSMOb3nulROQn1qFsWxbvMN/WFVB8/htjYuATnrjx2TvPTX7uMURdyAM6gw7tE
-         Gjg9C4ndudtzJg/OsgQXJchKOb3ynKoSDtnPFlOYK1TBKNhGXyqnJNlCrPAARBzlMuua
-         ThCA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrh2/ngeAji7dpL+z2DAjEoXj22MZRchb+NMjojeiXH/MaXBLAWI1hSwK3AE+nl6fT6UXTKzDg6TSDiJNrkrASOuIjN8i6C3OVVb/fEl8DrapGu7iAitRWQr5mP1tdu0CN1ZekpUPRk1qQ50RJLVuGgt3OnL/3ki1zs00c+NUUkpIM8zpSxAQcRaIlPCwTiRo6Vp7HAmqGH5GMgSRME3eQj+C1ce+xcLgZybL/jJk/vkcMve02MXjlpH4VR8j/1ayiUqUI5ZQiA6aUlu/scxxjaitjOD7V2CWqsg==
-X-Gm-Message-State: AOJu0YxJiMxKvyNyVyrbFX/absRDOGyfXHoufqJyR1vC3c6WUY5ftsrh
-	1ZgJNvN93RNz1RQ6QRIeIe6ZZa42FfolVjOKOHnRG8gUiUGRv36c8SAZzZ9UlyJv73bb0KGLzYk
-	d8JI87+u/5qI23hrqh5ofDXxJjTg=
-X-Google-Smtp-Source: AGHT+IHiWMLrwo5bn92RcxNVJHJJozT1VynVrAKPo4QX0LJ4mwZF+SLpK21LEEy+wgmtP5RFPridAor3NfrCIEw3scE=
-X-Received: by 2002:a17:906:ceca:b0:a38:3db5:a846 with SMTP id
- si10-20020a170906ceca00b00a383db5a846mr5777021ejb.67.1707812845309; Tue, 13
- Feb 2024 00:27:25 -0800 (PST)
+        bh=UVoibj/kriuj68qpqrmYwyDO76NZZTUK51M4zJowuXg=;
+        b=Rv+lvl+2DW4cd9qiT5Tf7l5As08KL+lcXqONynVOMj6OQlCK2x86j2B72oHQ6Mm6ss
+         HwlzoGbX5+pQAJEj/9Y419P3NVAUyD0KYkg8VJGkObu6nG+NfN4xoqoKh43CMoBtU4Wg
+         TEo2Zjq7V2Jqjo995T9PN06VMOC+vg77ZXATVpFEz6iQuEjk70dwo4q29jx+rtPrRG0I
+         BeGxD/nJ8Zj+5i70UTSbyZkD0D0ERrQg+s7bEqUoEb4Dm1iFxnMn3w9T3xsKsRxBzI9q
+         wY6st2zgRqS16mTulB524e1qHKLmInpA5x811YoNWEWWbLrTo74LrVGgOEQk36MOJ5ZO
+         qXfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWA1hs6PDRQ1h1OZR+exmK0KURerX4V9Efp5TEodOGFqEZcqNvX4lgJt3Mott8y3jMATfvs7dOnE2SfT+FFyo0H1I5exvh/lFpy0S15DB0Pr4ck7yFpASQEDQwkwLkaBoh/ogwgSSoo1Y1IBlIqfEl7ku/kSKwE+mpRP5gdQJu/CvvG86GGV8QYA+IZpIUAJf2y4wNUUjk0ve28DI3b5mYaJj6IZjVbcdkhxv05HDTkl7uzc4vSjnpQU3ERm1CdxzyGrLUXspgqTI3r8Mq+r20iYxgeJNMCxzKOVw==
+X-Gm-Message-State: AOJu0YyuL57iGlEW0ulwhRQRKH71OmmoFuARWVgVEbvNp8lNUybDq1Vj
+	eJDLOWWP9mzu6ynO53znCYAQ7OIlo4XPPMn84M96nceQsT3Fn9txBYBlTpjjsSHpGx02Hn9TNYA
+	CfLaMr55O+MGIB96D732oMq5xs4A=
+X-Google-Smtp-Source: AGHT+IGx/YbYc3+LQ8reBTPjQn19LHdQNalJWBrwb4F8AS6CetNmE5OP52aorlUQ8qqrg2PWp0Ni3QIDkvdkx5+GGkc=
+X-Received: by 2002:a17:907:7896:b0:a3d:704:d688 with SMTP id
+ ku22-20020a170907789600b00a3d0704d688mr613690ejc.47.1707813011047; Tue, 13
+ Feb 2024 00:30:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -72,10 +72,11 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20240212213922.783301-1-surenb@google.com> <20240212213922.783301-2-surenb@google.com>
-In-Reply-To: <20240212213922.783301-2-surenb@google.com>
+ <CAHp75Vek3DEYLHnpUDBo_bYSd-ksN_66=LQ5s0Z+EhnNvhybpw@mail.gmail.com>
+In-Reply-To: <CAHp75Vek3DEYLHnpUDBo_bYSd-ksN_66=LQ5s0Z+EhnNvhybpw@mail.gmail.com>
 From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 13 Feb 2024 10:26:48 +0200
-Message-ID: <CAHp75Vek3DEYLHnpUDBo_bYSd-ksN_66=LQ5s0Z+EhnNvhybpw@mail.gmail.com>
+Date: Tue, 13 Feb 2024 10:29:34 +0200
+Message-ID: <CAHp75VcftSPtAjOH-96wdyVhAYWAbOzZtfgm6J2Vwt1=-QTb=Q@mail.gmail.com>
 Subject: Re: [PATCH v3 01/35] lib/string_helpers: Add flags param to string_get_size()
 To: Suren Baghdasaryan <surenb@google.com>
 Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
@@ -109,84 +110,92 @@ Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Feb 12, 2024 at 11:39=E2=80=AFPM Suren Baghdasaryan <surenb@google.=
-com> wrote:
+On Tue, Feb 13, 2024 at 10:26=E2=80=AFAM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 >
-> From: Kent Overstreet <kent.overstreet@linux.dev>
+> On Mon, Feb 12, 2024 at 11:39=E2=80=AFPM Suren Baghdasaryan <surenb@googl=
+e.com> wrote:
+> >
+> > From: Kent Overstreet <kent.overstreet@linux.dev>
+> >
+> > The new flags parameter allows controlling
+> >  - Whether or not the units suffix is separated by a space, for
+> >    compatibility with sort -h
+> >  - Whether or not to append a B suffix - we're not always printing
+> >    bytes.
+
+And you effectively missed to _add_ the test cases for the modified code.
+Formal NAK for this, the rest is discussable, the absence of tests is not.
+
+> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 >
-> The new flags parameter allows controlling
->  - Whether or not the units suffix is separated by a space, for
->    compatibility with sort -h
->  - Whether or not to append a B suffix - we're not always printing
->    bytes.
+> It seems most of my points from the previous review were refused...
 >
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-
-It seems most of my points from the previous review were refused...
-
-...
-
-You can move the below under --- cutter, so it won't pollute the git histor=
-y.
-
-> Cc: Andy Shevchenko <andy@kernel.org>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> Cc: Paul Mackerras <paulus@samba.org>
-> Cc: "Michael S. Tsirkin" <mst@redhat.com>
-> Cc: Jason Wang <jasowang@redhat.com>
-> Cc: "Noralf Tr=C3=B8nnes" <noralf@tronnes.org>
-> Cc: Jens Axboe <axboe@kernel.dk>
-> ---
-
-...
-
-> --- a/include/linux/string_helpers.h
-> +++ b/include/linux/string_helpers.h
-> @@ -17,14 +17,13 @@ static inline bool string_is_terminated(const char *s=
-, int len)
-
-...
-
-> -/* Descriptions of the types of units to
-> - * print in */
-> -enum string_size_units {
-> -       STRING_UNITS_10,        /* use powers of 10^3 (standard SI) */
-> -       STRING_UNITS_2,         /* use binary powers of 2^10 */
-> +enum string_size_flags {
-> +       STRING_SIZE_BASE2       =3D (1 << 0),
-> +       STRING_SIZE_NOSPACE     =3D (1 << 1),
-> +       STRING_SIZE_NOBYTES     =3D (1 << 2),
->  };
-
-Do not kill documentation, I already said that. Or i.o.w. document this.
-Also the _SIZE is ambigous (if you don't want UNITS, use SIZE_FORMAT.
-
-Also why did you kill BASE10 here? (see below as well)
-
-...
-
-> --- a/lib/string_helpers.c
-> +++ b/lib/string_helpers.c
-> @@ -19,11 +19,17 @@
->  #include <linux/string.h>
->  #include <linux/string_helpers.h>
+> ...
 >
-> +enum string_size_units {
-> +       STRING_UNITS_10,        /* use powers of 10^3 (standard SI) */
-> +       STRING_UNITS_2,         /* use binary powers of 2^10 */
-> +};
+> You can move the below under --- cutter, so it won't pollute the git hist=
+ory.
+>
+> > Cc: Andy Shevchenko <andy@kernel.org>
+> > Cc: Michael Ellerman <mpe@ellerman.id.au>
+> > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > Cc: Paul Mackerras <paulus@samba.org>
+> > Cc: "Michael S. Tsirkin" <mst@redhat.com>
+> > Cc: Jason Wang <jasowang@redhat.com>
+> > Cc: "Noralf Tr=C3=B8nnes" <noralf@tronnes.org>
+> > Cc: Jens Axboe <axboe@kernel.dk>
+> > ---
+>
+> ...
+>
+> > --- a/include/linux/string_helpers.h
+> > +++ b/include/linux/string_helpers.h
+> > @@ -17,14 +17,13 @@ static inline bool string_is_terminated(const char =
+*s, int len)
+>
+> ...
+>
+> > -/* Descriptions of the types of units to
+> > - * print in */
+> > -enum string_size_units {
+> > -       STRING_UNITS_10,        /* use powers of 10^3 (standard SI) */
+> > -       STRING_UNITS_2,         /* use binary powers of 2^10 */
+> > +enum string_size_flags {
+> > +       STRING_SIZE_BASE2       =3D (1 << 0),
+> > +       STRING_SIZE_NOSPACE     =3D (1 << 1),
+> > +       STRING_SIZE_NOBYTES     =3D (1 << 2),
+> >  };
+>
+> Do not kill documentation, I already said that. Or i.o.w. document this.
+> Also the _SIZE is ambigous (if you don't want UNITS, use SIZE_FORMAT.
+>
+> Also why did you kill BASE10 here? (see below as well)
+>
+> ...
+>
+> > --- a/lib/string_helpers.c
+> > +++ b/lib/string_helpers.c
+> > @@ -19,11 +19,17 @@
+> >  #include <linux/string.h>
+> >  #include <linux/string_helpers.h>
+> >
+> > +enum string_size_units {
+> > +       STRING_UNITS_10,        /* use powers of 10^3 (standard SI) */
+> > +       STRING_UNITS_2,         /* use binary powers of 2^10 */
+> > +};
+>
+> Why do we need this duplication?
+>
+> ...
+>
+> > +       enum string_size_units units =3D flags & flags & STRING_SIZE_BA=
+SE2
+> > +               ? STRING_UNITS_2 : STRING_UNITS_10;
+>
+> Double flags check is redundant.
 
-Why do we need this duplication?
 
-...
-
-> +       enum string_size_units units =3D flags & flags & STRING_SIZE_BASE=
-2
-> +               ? STRING_UNITS_2 : STRING_UNITS_10;
-
-Double flags check is redundant.
 
 --=20
 With Best Regards,
