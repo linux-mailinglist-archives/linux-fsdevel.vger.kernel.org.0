@@ -1,56 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-11442-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296DD853D48
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:38:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A198853D49
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 22:38:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5A69B26EC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 21:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56FB028FD8D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 21:38:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B3B62173;
-	Tue, 13 Feb 2024 21:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 994256167E;
+	Tue, 13 Feb 2024 21:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qf4/d1Yg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/MEawuU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0246216A;
-	Tue, 13 Feb 2024 21:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED835612FE;
+	Tue, 13 Feb 2024 21:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707860247; cv=none; b=bFbN3VGzqtqCVAPxiyxu6/yWZ28O7KFMnEP5/n84RSUCoQhimr/zy3T2IlvjbPYyQ3BojbZ1OapE/SEtXasiPGKFu1wjKEeFyh09s9V9Qm+xGucCnBvItdfUBALXie/Gtjui+3xAU5aKh1ignQZpQ9pf96qqyiy7FCuQkZhi+YU=
+	t=1707860255; cv=none; b=gPPErK0qRkQHam2HyJOoBmWhCRJP9Zeo9X78oPmaGhzSs1JR1QtsXF3qo73r46fyjAgm+1l2wpQyUCsZCCvaN9gPqJ3lEC8fvYzk0fCNQyZL7Ns+/505fqJ/l29OyO1R/SnKHhvnh9aoBNIxfxcUYPdJnn0WtmaTXQw2wktCQyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707860247; c=relaxed/simple;
-	bh=DgxR48FdvStP6/D6Ne/g9o7gPlflm/a2urdscmeMLJk=;
+	s=arc-20240116; t=1707860255; c=relaxed/simple;
+	bh=O0qvn792AlXiXQ1lPPSwqR9KB9RhTSpZi4O/hP+kqjE=;
 	h=Subject:From:To:Cc:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t5HFQiwQeGxylnHZUuPwcMHYVxdeC2vOhdihTRuvN7O1Atv8aDHIdlPiFeCp08X8+Mk1KV2ZJFk0mpNo9q23P/A6mXQWISmRyzONcLXlPNGqSSNdYuGpXVW24X+u3o4X8EyMqa9ybLAAt9ntviAPTqK1oiF9Vwi/0yO6jscAgKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qf4/d1Yg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FEAFC433C7;
-	Tue, 13 Feb 2024 21:37:26 +0000 (UTC)
+	 MIME-Version:Content-Type; b=kTFCLqsV6zZCsC7e3ajXCAozB41GhRegOtp+DOuRE1kk6ToUIxtP6KGtvPGz2UjaO5TzwmJ5JSQqjn0MgpVknVnwuHLwbDFBF6p9yiMut/1KYQrgVV3Tm+Pkf5YcDQZixSxES4xK60knu/kj4+xCd1BfdrK6ivp4ivVYEHNHlr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/MEawuU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D906C43390;
+	Tue, 13 Feb 2024 21:37:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1707860247;
-	bh=DgxR48FdvStP6/D6Ne/g9o7gPlflm/a2urdscmeMLJk=;
+	s=k20201202; t=1707860254;
+	bh=O0qvn792AlXiXQ1lPPSwqR9KB9RhTSpZi4O/hP+kqjE=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Qf4/d1YgBMtbSniw/Z88hN4lMjBLBDisTs5pGMp+UPlKkqlI/sbFKI33U7LRO+2ay
-	 nZw+t7hHnnJwPjgKmA75MYvWUwvIOtRcjz3V9PQoKiIoqz6xKCa+mEUmeNtI5m/xko
-	 SQQBO4/wd0ZrZcGZupAzXrUFuFIawodE9jPpQ6ep8tXj3VS6SNGKgCEYPyJERgFyxb
-	 4/68TNcUkF28v5gcfRkJsUDp3Su9HGYgbFLfdxfM4zAMXfFr5VRJEdc/pvAmBvdD5e
-	 mvOJ7KOHuIm9/QluD4G7YhZraRi4VI/iw19vVrf79E9C+AuWSWbxBaJ0bcueJeh/9s
-	 +zD9/Ry1/SiRw==
-Subject: [PATCH RFC 1/7] libfs: Rename "so_ctx"
+	b=Z/MEawuUMQulNCp3MzLp2FmSSCfSgusNftEj26+lYW33qg3nVQgaYiwA/JCowq7NM
+	 UoX2zesRaT68Nrwd8NX3XY9+HeCzOAKrXh9q+a2QuyR3XFug07/4eurf+sd/VWQwQz
+	 u6UnXVo1sm6+EFDsCqRoRkAXjb/yXCTJW2mUFtRM/z3D12EH5T4iDL3KGIH4lRDfkm
+	 LGL5+KOaU4C13CeGv8HXfxKN1X702KXavl8GCO3zYbhf/FzrlS1bI10WT8bpxMnz2a
+	 Jc2Ikzn20LMe/okVAdTAeuZjsWRAww2x+GFLS+XM3E5c8lhxYbjiKkMAs/IyqJULrd
+	 wSQ6F6bJbwXGQ==
+Subject: [PATCH RFC 2/7] libfs: Define a minimum directory offset
 From: Chuck Lever <cel@kernel.org>
 To: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
  hughd@google.com, akpm@linux-foundation.org, Liam.Howlett@oracle.com,
  oliver.sang@intel.com, feng.tang@intel.com
 Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  maple-tree@lists.infradead.org, linux-mm@kvack.org, lkp@intel.com
-Date: Tue, 13 Feb 2024 16:37:25 -0500
+Date: Tue, 13 Feb 2024 16:37:32 -0500
 Message-ID: 
- <170786024524.11135.12492553100384328157.stgit@91.116.238.104.host.secureserver.net>
+ <170786025248.11135.14453586596030949713.stgit@91.116.238.104.host.secureserver.net>
 In-Reply-To: 
  <170785993027.11135.8830043889278631735.stgit@91.116.238.104.host.secureserver.net>
 References: 
@@ -67,38 +67,59 @@ Content-Transfer-Encoding: 7bit
 
 From: Chuck Lever <chuck.lever@oracle.com>
 
-Most of instances of "so_ctx" were renamed before the simple offset
-work was merged, but there were a few that were missed.
+This value is used in several places, so make it a symbolic
+constant.
 
 Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
- fs/libfs.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/libfs.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
 diff --git a/fs/libfs.c b/fs/libfs.c
-index eec6031b0155..bfbe1a8c5d2d 100644
+index bfbe1a8c5d2d..a38af72f4719 100644
 --- a/fs/libfs.c
 +++ b/fs/libfs.c
-@@ -271,7 +271,7 @@ void simple_offset_init(struct offset_ctx *octx)
-  * @octx: directory offset ctx to be updated
-  * @dentry: new dentry being added
-  *
-- * Returns zero on success. @so_ctx and the dentry offset are updated.
-+ * Returns zero on success. @octx and the dentry's offset are updated.
-  * Otherwise, a negative errno value is returned.
+@@ -240,6 +240,11 @@ const struct inode_operations simple_dir_inode_operations = {
+ };
+ EXPORT_SYMBOL(simple_dir_inode_operations);
+ 
++/* 0 is '.', 1 is '..', so always start with offset 2 or more */
++enum {
++	DIR_OFFSET_MIN	= 2,
++};
++
+ static void offset_set(struct dentry *dentry, u32 offset)
+ {
+ 	dentry->d_fsdata = (void *)((uintptr_t)(offset));
+@@ -261,9 +266,7 @@ void simple_offset_init(struct offset_ctx *octx)
+ {
+ 	xa_init_flags(&octx->xa, XA_FLAGS_ALLOC1);
+ 	lockdep_set_class(&octx->xa.xa_lock, &simple_offset_xa_lock);
+-
+-	/* 0 is '.', 1 is '..', so always start with offset 2 */
+-	octx->next_offset = 2;
++	octx->next_offset = DIR_OFFSET_MIN;
+ }
+ 
+ /**
+@@ -276,7 +279,7 @@ void simple_offset_init(struct offset_ctx *octx)
   */
  int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
-@@ -430,8 +430,8 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
- 
- static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
  {
--	struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
--	XA_STATE(xas, &so_ctx->xa, ctx->pos);
-+	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
-+	XA_STATE(xas, &octx->xa, ctx->pos);
- 	struct dentry *dentry;
+-	static const struct xa_limit limit = XA_LIMIT(2, U32_MAX);
++	static const struct xa_limit limit = XA_LIMIT(DIR_OFFSET_MIN, U32_MAX);
+ 	u32 offset;
+ 	int ret;
  
- 	while (true) {
+@@ -481,7 +484,7 @@ static int offset_readdir(struct file *file, struct dir_context *ctx)
+ 		return 0;
+ 
+ 	/* In this case, ->private_data is protected by f_pos_lock */
+-	if (ctx->pos == 2)
++	if (ctx->pos == DIR_OFFSET_MIN)
+ 		file->private_data = NULL;
+ 	else if (file->private_data == ERR_PTR(-ENOENT))
+ 		return 0;
 
 
 
