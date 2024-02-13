@@ -1,168 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-11423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7BA0853B40
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 20:38:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9EC3853B78
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 20:46:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EBB0287CA5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 19:38:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD6141C26E3B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 19:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81CC60DE4;
-	Tue, 13 Feb 2024 19:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E2C60DC6;
+	Tue, 13 Feb 2024 19:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KVx+9tSL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcmjU3gs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9168B60DC9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 19:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425AF60BBE
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 19:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707853028; cv=none; b=mdZ77IaPneeGqrvp6KN8ROC7O0ISkpOm6vIPtCqnejSJuIjo7+PBFkQblVQcdyW92ByXjiO+8Ng+lVyCf37j0h5Z+pg1v9mp+rcNGv87gYBRvF8lCTNu7wvTAWGMifJ5ZYVUHINv2kNYxUf9RmyFUbqlbzZ0y5PnVClw86Sqxlg=
+	t=1707853573; cv=none; b=fk5ZmnQNK4s7MhzoA4ExgBNnbQ1aRyWMS0bnIddjVm0lJqxHwDipQz28ClXjMBZYB7+w9vQjWuk6fQVfD5M4KoiguAL3VmwzFT3QFpgax/hs0+qwjx6Xe1fuJb62/wW+N5z8maedjyyaLKqeQYUlKlohJftImWMTWJtMc8jGwRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707853028; c=relaxed/simple;
-	bh=u46SKisFUMLX/7IWDChtoyZvekWmFrOtp6qva/dUUug=;
+	s=arc-20240116; t=1707853573; c=relaxed/simple;
+	bh=RbDfP/KMGEth+3kSTcU1xLC7L1GOl5iMPziXMCk9WRs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MGoj6aeBNQSCyPywIzdXCc6Qma5zEpdfkkA9t62TU4vYlDssJlkCq3DKHdLEPIbM9qX2Q1pibPcAPlBDX1LoOIEv2lMFAoqjl/6kanuBQV99r4YKujiGrh17WVBLxujSIULynTQrQIWkrB0unngpPDGUL8KZyP4N2WOo1LryxaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KVx+9tSL; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-33b2960ff60so39534f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 11:37:06 -0800 (PST)
+	 To:Cc:Content-Type; b=s8aE9SRAb7jhwSQz4+mlzCkGpG4YZHKhbtVlXu6nHyzVmwX0IsORSP8HcLkXv46Y4JGbQNvGkkm+EUkr7RTU4ClN/G6CoLlMpXBAC+ylANSYyirN2CzdCBBzdi14SpkMacEZFVf3opRWH8JS1JNxL0fyuopKs26VpRXKv+xZeQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KcmjU3gs; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a3be744df3fso500797566b.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 11:46:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707853025; x=1708457825; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1707853569; x=1708458369; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=di/4NnCIukfz7My68Fc8zeRyDvoUNBZ0RwAPGewxckI=;
-        b=KVx+9tSLFzP/sXM2mUrcc3OkwN7oi0FvB57jDskUUzkHFGMMg7TJlbbYANeuveYZIb
-         OqKc7T3yPxk83MRMMerk/1eTr2b5DF0ln9wJ23w3BugDM8l71Lw7rkgUSB+9t1nsz4CZ
-         Hz7pK3RK6mXEhyner87vvdDfoTfCswqF2vKQ7PybAgnKLY6jZ+M5Hj712cpR6WGXxRks
-         w2Lr+YmQmZhm0cHmHFdz0PYdAlHkHLWPh3md1RxvqlTXMduoFvH+mRrQ5quFqlsc0Oem
-         xQ3adxTyZRwqCFCE5USZgVfN8wMe6DgK04rerIcoY7pDBxppxfxjKFHf8GkaVFtmp3v8
-         R4ZA==
+        bh=uQx4By0jSDouJwi4s5NdwNmViJCcNqrnaQajLGkTfGQ=;
+        b=KcmjU3gsgJzCbKQsLRFb933PD5fYFECsk2Cdl8Uhc4KXdtX/GSTIbO0/4+JH7VCCF7
+         kljafDo3L5mCrl321oXuX6GEAF4D3VMDHKZbSrf4k6cNYwdALa27+OLbNNDjoyYqq+0j
+         uizdVbLjLqCIg9sR4gM3sAY6pB8yn116wmXQKElC29jIUf1mkuNuU7wDObEy1f6z/7nX
+         lqZvub/fHIJxVCOjP2Z9+Lzt0IaTvrx8Nny86/U/uiqDP6XkRBWQ2royHwS1Qsk8KteA
+         kEsWdMlbplic5Ri3WV0uGG9/WCHwzWDL6gUYujihnEBrGlDD1dj9O+PB30EpZa3ToQJk
+         p+1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707853025; x=1708457825;
+        d=1e100.net; s=20230601; t=1707853569; x=1708458369;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=di/4NnCIukfz7My68Fc8zeRyDvoUNBZ0RwAPGewxckI=;
-        b=V+pn5Ha4MAE+ILeY5Xp404Z2ny+f2ZMac1C3keI4kOfVhVJNXygJC7MAKMJcKzgo0a
-         mIA8vc7inEse0RsjEhX1iaGL4JiqJ16KmFtwh+nSK87lV53xWemRpbHi/nekrOcklXBW
-         onRYzXcSOozcDgjl1qAUAIZos28klLGy1DhdVRgTCHn4k4ktNGoB9YtKHYNv10T4ljm9
-         hcWew6hnvXApAmtO+wSRaYiiBcBq86G4BQhdkksVcBDW0KS8eyxqAsBPZLA2z3Kvqh5M
-         /QYjy0xQm509+EzhmvGfnGAAolFRyV0A4TGuBmYUTVLVH7dexvuw585vrekd5iCg6W+T
-         5c7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWcP+x93YLWAQ8nygSJXR0S+40REj26+VfGYCyJZOyw/mRQpEvqiwcFBQYUbUW3tLXUAf3XyQrI/+YHILAta9TPY99DXSQ2hcfwZ5NjnA==
-X-Gm-Message-State: AOJu0Yz+JH+ZRIVtWQ1lFub1xD0JHfjittmMX5zB5N1qRQwJxY9h+wM1
-	LvvbNnvpftsTAP36vRpeWmYL4+W8H98KO8PKQRX2Q35rbVTlqgdfpbGHxytYpIeMasoFYgIhDyQ
-	vO0eaT8wYY4/qPcTXYlJtAkEG3ktNVEbhKjWt
-X-Google-Smtp-Source: AGHT+IF/X0BETIZY0DVItf74GRHk+a/+RMMSZBAlSw2R6aVsGAmjD3msuAjj/xJbHNp5zhWUpY5vNmKVyF9bPKq3C3w=
-X-Received: by 2002:adf:e946:0:b0:33c:e084:aaf9 with SMTP id
- m6-20020adfe946000000b0033ce084aaf9mr448611wrn.4.1707853024662; Tue, 13 Feb
- 2024 11:37:04 -0800 (PST)
+        bh=uQx4By0jSDouJwi4s5NdwNmViJCcNqrnaQajLGkTfGQ=;
+        b=r9ejl/o+7VehrELif3YVQiackrtQdEiTA72RrByGL9275T+9dViEOXQa6neA+1TUkR
+         3fnNDwRFwRlDJ/iC9IUJpOpdMpED7OOfBF6hoXAUYQub2cgfhficy7Yvwze48DW6vENl
+         KcY3yQBvaZmVschi6SLcXiprzH8QIo7qWoNf4JvqIWDpqsSxdCrdxRoWHVzbbc8V77fY
+         1Jd0N58+I6/T6SdQqHnz6iwVVaMI9I2iIyoMoAxntC9XzNJMbprgihIKZ5mmRJcOMOQz
+         Do25oXXZ/bP/y7p/DU0LIxWRU6/AY76YnpSOvA8TWu1Vd7KNxTPl/sh64hg45Bw7Zsk/
+         +vDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXuVhcDVJIKxbhXmt4sOP09+ioOgsEYINDnWqzS0AHwKSsB4OWYE0ChAOWJl0JLdy33gieARIjTqZK17G1vFQF1VvhJ7IfslYbUTFpFZA==
+X-Gm-Message-State: AOJu0YwynoF1C9eeiJpYYlm6LpIXn7ESYPi3smNXZPk8nZUUa9CGiQWa
+	PYcvjcFc1Es1lafH5gc7w7kfXEZHKdI7pv1lQmpC46sXlXvzyR6fWToT8Pqbf4oNazW7qKywYRd
+	/NQRE2OgpkJ7//iDRBHaDJHFjmIBtWf2OWpE=
+X-Google-Smtp-Source: AGHT+IHF/GOwf2HV5tfGJ29p5vTYmP1MIsT9LmMsGvbeGPNrAHuIULT7OTtX4FCYkcrII5Zt2v5MH2ZeRlTUYginhtw=
+X-Received: by 2002:a17:906:d111:b0:a38:350:bbdd with SMTP id
+ b17-20020a170906d11100b00a380350bbddmr214077ejz.48.1707853569255; Tue, 13 Feb
+ 2024 11:46:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240213001920.3551772-1-lokeshgidra@google.com>
- <20240213001920.3551772-4-lokeshgidra@google.com> <20240213033307.zbhrpjigco7vl56z@revolver>
- <CA+EESO5TNubw4vi08P6BO-4XKTLNVeNfjM92ieZJTd_oJt9Ygw@mail.gmail.com>
- <20240213170609.s3queephdyxzrz7j@revolver> <CA+EESO5URPpJj35-jQy+Lrp1EtKms8r1ri2ZY3ZOpsSJU+CScw@mail.gmail.com>
- <CAJuCfpFXWJovv6G4ou2nK2W1D2-JGb5Hw8m77-pOq4Rh24-q9A@mail.gmail.com>
- <20240213184905.tp4i2ifbglfzlwi6@revolver> <CAJuCfpG+8uypn3Mw0GNBj0TUM51gaSdAnGZB-RE4HdJs7dKb0A@mail.gmail.com>
- <CA+EESO6M5VudYK-CqT2snvs25dnrdTLzzKAjoSe7368X-PcFew@mail.gmail.com>
- <20240213192744.5fqwrlqz5bbvqtf5@revolver> <CAJuCfpEvdK-jOS9a7yv1_KnFeyu8665gFtk871ac-y+3BiMbVw@mail.gmail.com>
-In-Reply-To: <CAJuCfpEvdK-jOS9a7yv1_KnFeyu8665gFtk871ac-y+3BiMbVw@mail.gmail.com>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Tue, 13 Feb 2024 11:36:52 -0800
-Message-ID: <CA+EESO6TowKNh10+tzwawBemykVcVDP+_ep1fg-_RiqBzfR7ew@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] userfaultfd: use per-vma locks in userfaultfd operations
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, 
-	kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com, 
-	david@redhat.com, axelrasmussen@google.com, bgeffon@google.com, 
-	willy@infradead.org, jannh@google.com, kaleshsingh@google.com, 
-	ngeoffray@google.com, timmurray@google.com, rppt@kernel.org
+References: <20240116113247.758848-1-amir73il@gmail.com> <20240116120434.gsdg7lhb4pkcppfk@quack3>
+ <CAOQ4uxjioTjpxueE8OF_SjgqknDAsDVmCbG6BSmGLB_kqXRLmg@mail.gmail.com>
+ <20240124160758.zodsoxuzfjoancly@quack3> <CAOQ4uxiDyULTaJcBsYy_GLu8=DVSRzmntGR2VOyuOLsiRDZPhw@mail.gmail.com>
+In-Reply-To: <CAOQ4uxiDyULTaJcBsYy_GLu8=DVSRzmntGR2VOyuOLsiRDZPhw@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 13 Feb 2024 21:45:56 +0200
+Message-ID: <CAOQ4uxj-waY5KZ20-=F4Gb3F196P-2bc4Q1EDcr_GDraLZHsKQ@mail.gmail.com>
+Subject: Re: [PATCH v3] fsnotify: optimize the case of no parent watcher
+To: Jan Kara <jack@suse.cz>
+Cc: Jens Axboe <axboe@kernel.dk>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 13, 2024 at 11:31=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
-com> wrote:
+On Wed, Jan 24, 2024 at 6:20=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
 >
-> On Tue, Feb 13, 2024 at 11:27=E2=80=AFAM Liam R. Howlett
-> <Liam.Howlett@oracle.com> wrote:
+> On Wed, Jan 24, 2024 at 6:08=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
 > >
-> > * Lokesh Gidra <lokeshgidra@google.com> [240213 14:18]:
-> > ...
-> >
-> > > > > We could use something like uffd_prepare(), uffd_complete() but I
-> > > > > thought of those names rather late in the cycle, but I've already=
- caused
-> > > > > many iterations of this patch set and that clean up didn't seem a=
-s vital
-> > > > > as simplicity and clarity of the locking code.
-> > >
-> > > I anyway have to send another version to fix the error handling that
-> > > you reported earlier. I can take care of this in that version.
-> > >
-> > > mfill_atomic...() functions (annoyingly) have to sometimes unlock and
-> > > relock. Using prepare/complete in that context seems incompatible.
-> > >
+> > On Tue 16-01-24 14:53:00, Amir Goldstein wrote:
+> > > On Tue, Jan 16, 2024 at 2:04=E2=80=AFPM Jan Kara <jack@suse.cz> wrote=
+:
 > > > >
-> > > > Maybe lock_vma_for_uffd()/unlock_vma_for_uffd()? Whatever name is
-> > > > better I'm fine with it but all these #ifdef's sprinkled around don=
-'t
-> > > > contribute to the readability.
+> > > > On Tue 16-01-24 13:32:47, Amir Goldstein wrote:
+> > > > > If parent inode is not watching, check for the event in masks of
+> > > > > sb/mount/inode masks early to optimize out most of the code in
+> > > > > __fsnotify_parent() and avoid calling fsnotify().
+> > > > >
+> > > > > Jens has reported that this optimization improves BW and IOPS in =
+an
+> > > > > io_uring benchmark by more than 10% and reduces perf reported CPU=
+ usage.
+> > > > >
+> > > > > before:
+> > > > >
+> > > > > +    4.51%  io_uring  [kernel.vmlinux]  [k] fsnotify
+> > > > > +    3.67%  io_uring  [kernel.vmlinux]  [k] __fsnotify_parent
+> > > > >
+> > > > > after:
+> > > > >
+> > > > > +    2.37%  io_uring  [kernel.vmlinux]  [k] __fsnotify_parent
+> > > > >
+> > > > > Reported-and-tested-by: Jens Axboe <axboe@kernel.dk>
+> > > > > Link: https://lore.kernel.org/linux-fsdevel/b45bd8ff-5654-4e67-90=
+a6-aad5e6759e0b@kernel.dk/
+> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > > > > ---
+> > > > >
+> > > > > Jan,
+> > > > >
+> > > > > Considering that this change looks like a clear win and it actual=
+ly
+> > > > > the change that you suggested, I cleaned it up a bit and posting =
+for
+> > > > > your consideration.
+> > > >
+> > > > Agreed, I like this. What did you generate this patch against? It d=
+oes not
+> > > > apply on top of current Linus' tree (maybe it needs the change sitt=
+ing in
+> > > > VFS tree - which is fine I can wait until that gets merged)?
+> > > >
 > > >
-> > > I'll wait for an agreement on this because I too don't like using so
-> > > many ifdef's either.
-> > >
-> > > Since these functions are supposed to have prototype depending on
-> > > mfill/move, how about the following names:
-> > >
-> > > uffd_lock_mfill_vma()/uffd_unlock_mfill_vma()
-> > > uffd_lock_move_vmas()/uffd_unlock_move_vmas()
-> > >
-> > > Of course, I'm open to other suggestions as well.
-> > >
+> > > Yes, it is on top of Christian's vfs-fixes branch.
 > >
-> > I'm happy with those if you remove the vma/vmas from the name.
+> > Merged your improvement now (and I've split off the cleanup into a sepa=
+rate
+> > change and dropped the creation of fsnotify_path() which seemed a bit
+> > pointless with a single caller). All pushed out.
+> >
 >
-> Sounds good to me.
->
-Sure. I'll do that:
 
-Asking to avoid any more iterations: these functions should call the
-currently defined ones or should replace them. For instance, should I
-do the following:
+Jan & Jens,
 
-#ifdef CONFIG_PER_VMA_LOCK
-... uffd_mfill_lock()
-{
-        return find_and_lock_dst_vma(...);
-}
-#else
-...uffd_mfill_lock()
-{
-       return lock_mm_and_find_dst_vma(...);
-}
-#endif
+Although Jan has already queued this v3 patch with sufficient performance
+improvement for Jens' workloads, I got a performance regression report from
+kernel robot on will-it-scale microbenchmark (buffered write loop)
+on my fan_pre_content patches, so I tried to improve on the existing soluti=
+on.
 
-or have the function replace
-find_and_lock_dst_vma()/lock_mm_and_find_dst_vma() ?
+I tried something similar to v1/v2 patches, where the sb keeps accounting
+of the number of watchers for specific sub-classes of events.
 
-> >
-> > --
-> > To unsubscribe from this group and stop receiving emails from it, send =
-an email to kernel-team+unsubscribe@android.com.
-> >
+I've made two major changes:
+1. moved to counters into a per-sb state object fsnotify_sb_connector
+    as Christian requested
+2. The counters are by fanotify classes, not by specific events, so they
+    can be used to answer the questions:
+a) Are there any fsnotify watchers on this sb?
+b) Are there any fanotify permission class listeners on this sb?
+c) Are there any fanotify pre-content (a.k.a HSM) class listeners on this s=
+b?
+
+I think that those questions are very relevant in the real world, because
+a positive answer to (b) and (c) is quite rare in the real world, so the
+overhead on the permission hooks could be completely eliminated in
+the common case.
+
+If needed, we can further bisect the class counters per specific painful
+events (e.g. FAN_ACCESS*), but there is no need to do that before
+we see concrete benchmark results.
+
+Jens,
+
+If you feel like it, you can see if this branch further improves your
+workloads:
+
+https://github.com/amir73il/linux/commits/fsnotify-perf/
+
+Jan,
+
+Whenever you have the time, feel free to see if this is a valid direction,
+if not for the perf optimization then we are going to need the
+fsnotify_sb_connector container for other features as well.
+
+Thanks!
+Amir.
 
