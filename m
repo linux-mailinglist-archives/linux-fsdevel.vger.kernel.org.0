@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-11378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BEEB853422
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 16:04:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F94785342D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 16:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA7642841AE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 15:04:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69AE61C27BE4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 15:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D775FDA1;
-	Tue, 13 Feb 2024 15:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F2A5DF1D;
+	Tue, 13 Feb 2024 15:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="szUl72B+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pB4wlgdE";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="o9IGtX0d";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qKc059pN"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="amNn2S+6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ew4JhEA5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="amNn2S+6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ew4JhEA5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CA65F875;
-	Tue, 13 Feb 2024 15:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D1E56763;
+	Tue, 13 Feb 2024 15:03:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707836546; cv=none; b=o1Jiv+6mFSEbkgBx+fq/yIe1kV16mszOFfXAh8gNGtQ6cyISAvD07HR61SxbxjPdtM0EAzitWzJvIAGFqXCHNFHcow+wogKzNk2qizisjklFJ6uk5qUX0d5hNd2fAQiO10xH1ltDncvaLGiEU87/Yk9QyKLLFbgxXQz5o0qmLws=
+	t=1707836591; cv=none; b=IAyLJCewdDGzc15Ch9LcUwX2QlKLMUd+Oy6aAo4Nbnyq8FDui5TBkadO1XBiNAr1BcPGAaz7cunaiwRLZ2XHEhXdvsC3Xt6Ej/KBXtb4MKigeGyftETNP5GGWerdDbzr156F/iFaMofPZSUlJLp6oNHCmhTRehFC3/oiL84NbNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707836546; c=relaxed/simple;
-	bh=eD3n1DvnnA0M9NFRVpspeNsUx9c6TLcRCtfrJaIZcys=;
+	s=arc-20240116; t=1707836591; c=relaxed/simple;
+	bh=rxk0KyQWVjZoaN8wPKSKIZm8r5uFKZq672KgMX9dO2c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mDWDV0/UaO0RVBsnMUpbILK7nATtPfgxZyLVIBvxPzLS+E43rxc5ufrO/rbfrTjYmee0FoJ6Z3HnFDAliDsq9kpWJRp90e2Y0V6h3cX2/jlrJ5jpQwBNAk4z6jWC0Z0QwtTIV1WzQr63f1yBq72cW34V4+2rapSzaD9Kkh59hTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=szUl72B+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pB4wlgdE; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=o9IGtX0d; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qKc059pN; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=XV46NpnNKsYM7TLsmEG5T43QExmt5csgnCj8uIqW1bFcc/KRrTaSacsB948D0y4LeZ6bbitO0nt/FCH9oMzX7KNhZSWsSgu/CLygHgTBCf6JGtN4Ci+b64QUc25lcgkwJ01Sy1OhgkDjp9kxQ3HUBd8coBZjlZQMvR5BgXJUSA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=amNn2S+6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ew4JhEA5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=amNn2S+6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ew4JhEA5; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3AE8421AFD;
-	Tue, 13 Feb 2024 15:02:21 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 33EA121AFD;
+	Tue, 13 Feb 2024 15:03:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1707836543; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1707836588; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YT1Rr5EWPvxoN+JMJcAcT2S5g9ul6hPcJDVKcRLYfJ4=;
-	b=szUl72B+6uo1DF7EH2JHX7ZuNfwKO9N5ZK9CYmHPgFApxJ76c41tdr3VYjfdZ4VWopRy+R
-	v86gHcXZswxZVlB1uOrg27bIHL+YowY2sMbupA74jRu8bk/YjXBG23xkV7OrqODSyVh/tF
-	qZ5Fxd1dbythUDszV6YVZIqpoUjnDXM=
+	bh=GDOFs0WO1Kh3sGEuSHtoM1IiBCKCvcC5tKE9PnzxSAc=;
+	b=amNn2S+6fYUzk/ySzOvwbGH6bpgFqShjzqcZJkw046F3fn4x8reO1VIiATftIeOi7hao1M
+	qb1ubQIJdJDp/OdU9SONWI/wxVgQG7AU0EGVfYappjYNwoEs+bS8sI02O3tjZtWw/lyQS+
+	mqxYlxQoM9iOuAEPeaBE4kmcz6rGJgU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1707836543;
+	s=susede2_ed25519; t=1707836588;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YT1Rr5EWPvxoN+JMJcAcT2S5g9ul6hPcJDVKcRLYfJ4=;
-	b=pB4wlgdErdYLk2ZZK7SOEhpOT94jvQ885Sycon3Vg6KyfDqnRZXpRVjXiTfMf0YYljMJLE
-	xlsnfIeE4/f8P5Cw==
+	bh=GDOFs0WO1Kh3sGEuSHtoM1IiBCKCvcC5tKE9PnzxSAc=;
+	b=ew4JhEA54qq0tfcfRb84zmgW6AF8QZlNFASFRszuzB9FDZ1BsMWZwKyLeeHqD14ZDfU6+R
+	JkGU7pvmkxt5TABA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1707836541; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1707836588; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YT1Rr5EWPvxoN+JMJcAcT2S5g9ul6hPcJDVKcRLYfJ4=;
-	b=o9IGtX0dCKnhUL5WW4GxZwsXndxBXQfy+f8gbuAOn/8d5rIzuRxOvMPwNw1l1qbLB+e96H
-	3UGfopXY2EZ/1pWQ+3u6GeiKtnHFTccpgxH4n7zshA1rI0JODqG+CJOO7Tu/3uU03WdBKi
-	NZu5qVRTt8Xxw88iKGMmgcdxkGcXjB4=
+	bh=GDOFs0WO1Kh3sGEuSHtoM1IiBCKCvcC5tKE9PnzxSAc=;
+	b=amNn2S+6fYUzk/ySzOvwbGH6bpgFqShjzqcZJkw046F3fn4x8reO1VIiATftIeOi7hao1M
+	qb1ubQIJdJDp/OdU9SONWI/wxVgQG7AU0EGVfYappjYNwoEs+bS8sI02O3tjZtWw/lyQS+
+	mqxYlxQoM9iOuAEPeaBE4kmcz6rGJgU=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1707836541;
+	s=susede2_ed25519; t=1707836588;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YT1Rr5EWPvxoN+JMJcAcT2S5g9ul6hPcJDVKcRLYfJ4=;
-	b=qKc059pNKsq65TuPbj3YpSNhE/bQf5j5AlEM/PpbkVwv5hHTMNAk0GpfXrdgXufpErhIyS
-	V+1d6okHsIFTjNDQ==
+	bh=GDOFs0WO1Kh3sGEuSHtoM1IiBCKCvcC5tKE9PnzxSAc=;
+	b=ew4JhEA54qq0tfcfRb84zmgW6AF8QZlNFASFRszuzB9FDZ1BsMWZwKyLeeHqD14ZDfU6+R
+	JkGU7pvmkxt5TABA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F37BB13404;
-	Tue, 13 Feb 2024 15:02:20 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E774813404;
+	Tue, 13 Feb 2024 15:03:07 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([10.150.64.162])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GOhHOnyEy2VlMwAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 13 Feb 2024 15:02:20 +0000
-Message-ID: <45e982ba-c983-4c57-96cb-6bd0d342a46f@suse.de>
-Date: Tue, 13 Feb 2024 16:02:20 +0100
+	id AM5kNquEy2VlMwAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 13 Feb 2024 15:03:07 +0000
+Message-ID: <6fc4adcd-c7a3-4ca3-b309-13b484e75d12@suse.de>
+Date: Tue, 13 Feb 2024 16:03:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,8 +95,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 08/14] mm: do not split a folio if it has minimum folio
- order requirement
+Subject: Re: [RFC v2 09/14] mm: Support order-1 folios in the page cache
 Content-Language: en-US
 To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
  linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
@@ -105,76 +104,67 @@ Cc: mcgrof@kernel.org, gost.dev@samsung.com, akpm@linux-foundation.org,
  p.raghav@samsung.com, linux-kernel@vger.kernel.org, willy@infradead.org,
  linux-mm@kvack.org, david@fromorbit.com
 References: <20240213093713.1753368-1-kernel@pankajraghav.com>
- <20240213093713.1753368-9-kernel@pankajraghav.com>
+ <20240213093713.1753368-10-kernel@pankajraghav.com>
 From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240213093713.1753368-9-kernel@pankajraghav.com>
+In-Reply-To: <20240213093713.1753368-10-kernel@pankajraghav.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spamd-Result: default: False [-0.22 / 50.00];
-	 ARC_NA(0.00)[];
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=amNn2S+6;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ew4JhEA5
+X-Spamd-Result: default: False [-0.35 / 50.00];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
 	 XM_UA_NO_VERSION(0.01)[];
-	 FROM_HAS_DN(0.00)[];
 	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 BAYES_HAM(-0.13)[67.80%];
-	 MIME_GOOD(-0.10)[text/plain];
 	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[14];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[samsung.com:email,suse.de:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 MID_RHS_MATCH_FROM(0.00)[]
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 BAYES_HAM(-0.05)[60.49%];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 RCPT_COUNT_TWELVE(0.00)[14];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[infradead.org:email,suse.de:dkim,suse.de:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 RCVD_TLS_ALL(0.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -0.35
+X-Rspamd-Queue-Id: 33EA121AFD
 X-Spam-Level: 
 X-Spam-Flag: NO
-X-Spam-Score: -0.22
+X-Spamd-Bar: /
 
 On 2/13/24 10:37, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
+> From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 > 
-> As we don't have a way to split a folio to a any given lower folio
-> order yet, avoid splitting the folio in split_huge_page_to_list() if it
-> has a minimum folio order requirement.
+> Folios of order 1 have no space to store the deferred list.  This is
+> not a problem for the page cache as file-backed folios are never
+> placed on the deferred list.  All we need to do is prevent the core
+> MM from touching the deferred list for order 1 folios and remove the
+> code which prevented us from allocating order 1 folios.
 > 
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> Link: https://lore.kernel.org/linux-mm/90344ea7-4eec-47ee-5996-0c22f42d6a6a@google.com/
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 > ---
->   mm/huge_memory.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
+>   include/linux/huge_mm.h |  7 +++++--
+>   mm/filemap.c            |  2 --
+>   mm/huge_memory.c        | 23 ++++++++++++++++++-----
+>   mm/internal.h           |  4 +---
+>   mm/readahead.c          |  3 ---
+>   5 files changed, 24 insertions(+), 15 deletions(-)
 > 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 94c958f7ebb5..d897efc51025 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3026,6 +3026,19 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
->   			goto out;
->   		}
->   
-> +		/*
-> +		 * Do not split if mapping has minimum folio order
-> +		 * requirement.
-> +		 *
-> +		 * XXX: Once we have support for splitting to any lower
-> +		 * folio order, then it could be split based on the
-> +		 * min_folio_order.
-> +		 */
-> +		if (mapping_min_folio_order(mapping)) {
-> +			ret = -EAGAIN;
-> +			goto out;
-> +		}
-> +
->   		gfp = current_gfp_context(mapping_gfp_mask(mapping) &
->   							GFP_RECLAIM_MASK);
->   
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
 Cheers,
 
 Hannes
+
 
 
