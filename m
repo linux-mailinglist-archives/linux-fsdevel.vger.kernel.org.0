@@ -1,253 +1,183 @@
-Return-Path: <linux-fsdevel+bounces-11355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A51E852F44
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 12:28:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45AA8852FBE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 12:42:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D998B1F21ACC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 11:28:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A92E1C25211
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 11:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D81376FA;
-	Tue, 13 Feb 2024 11:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nWOUkteQ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A52381B4;
+	Tue, 13 Feb 2024 11:42:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail3-163.sinamail.sina.com.cn (mail3-163.sinamail.sina.com.cn [202.108.3.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A44B374C5
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 11:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8454A38DDF
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 11:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707823510; cv=none; b=HRFwxgeOU7eAfbtojChzvTI39Fn26xR+XKuILrxWzTfQqGdkJfe9fKhy/4DAS5vquIPepO6Gj7X3a5rVdGYyJjNxitbvfNzFv5mGEyDMVH8FVX1Xhf57cVc7z2kohVcRdICJdvOb1iR3mvDvwgrMhte0hekDGRfuusfOVZ7VEko=
+	t=1707824539; cv=none; b=GxIk7Fp2UeYOyJZ5t7rtoo19pyz12JUYp5Ch42ow30to4Mx3h8s9P8e+f2vcpyrTd7j3Y5tVqetCGnlrUyWOXowhCkH9J/3lC9TRYyPovd9Joq641AflE6zsMe5DnFdh7wqWncn66fzv5Qj83ab4pyHiFbJ1FQkYMe5hcGdTWic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707823510; c=relaxed/simple;
-	bh=Zw8haxAapUBG44nEylJwQccZGFGgWD0ChLnhmjrvZNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=lMG2Dr77s1SDqKdjmEozH1Jc+Nq7OAOBa/q5++tW0zBVX6/ALJ+AptHcCI4EdAbNUgBa0lzDwD4KRSW7bBRg2A53TOaUIllTgLUZL5e5iNxdXfocWmvgxG91hv3PGfbbQYGPoiaNd0BrBqy5IVN3FsrFyxaxIIrAQvZlFhfWm2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nWOUkteQ; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-33ce2121d5dso59384f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 03:25:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707823505; x=1708428305; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c7B1VdNEjxdBHUG+t3lw56dnlzhGxxWmEE0AwtlQokM=;
-        b=nWOUkteQTjFRGq8xUbJgA4b5tA7kklIZ/tVCWet1dHXNrVQJb+gUS7YOwVIa3TOosf
-         0prgb7d8lsWlmXuUI5tDovUulHiIBp4+rvRkoNOqvW/dMA07R4EH/J5Nxa2iFJhqvmKc
-         GjSFjCxXL9mfOHgirVkERoYLEO+G6tvqh5pCAsuDQZpixsGQuiOQ4PRIm6eKnwLIxFSx
-         U1vEegxGPnCRDPoKyCgd8hJC5OOrYu+BtURGK6pewwl95PmIgP6eBM9xAnxQI4W4Zhka
-         97yRPiyQxpF3Fmv2veKvOe8Y1UyhkQcfyM+dl1xvCHFYOQz9sn1bsg5n5JuIkqFxmcAs
-         9q1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707823505; x=1708428305;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c7B1VdNEjxdBHUG+t3lw56dnlzhGxxWmEE0AwtlQokM=;
-        b=qMGo7SDAHCAm5+jOAvILeXKO0yc1PLiaipt1TvvNcQj6l1Rm+mRCcBXgN8N4X75/At
-         HrRloA+1331sv/ew5/e2UGTkEb7Fa5uOSxJLuPC78H8g2RFpSTrU9f/ldg+6PHwhe8Jt
-         1SXKgA/WpSzxbg3rEFf0Sg8i6xZzSfH4DXYUIMJcKDhW8RhuE/ILTBR4H50m+wYGF4kU
-         fZ6l8MGXWtDO7IqdXYz8X+sdHnpJR8SJePmFk76YoJhthY6+3Ul2akKXx0J0FpDizQts
-         F6WMw10eVZkMUNI7Ujv38Yf303zn23yZU+1xP9U2vgKvxZujb9aJvdXWHR0558eDYyyx
-         m5KA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMYT30cc2Yy3QKtB8keC0oUHQmNm3zVJC2nnM4dyN/baiZESEiG6wzKp/KE4e/qQQqk5GxV3DdjoyOBVEJFChbsspzJVp1BT2DQs5P6Q==
-X-Gm-Message-State: AOJu0YyEp23qFMD9AxbrlXc2Q5x6Y4LFLm2t/FvVUMV7VmTLWFFbF0CX
-	2AOj1g4RfVqwehI/bfoBn3xxdhveeuOz8LDz4AboSjOwaZD6joyc0cnb2ZHf9KN4iRtkPGaigYm
-	tW1Vz7LVHz4J77SPEREP5rWgrS1JImFZdVGEL7f4UxqQK39jxdf2F
-X-Google-Smtp-Source: AGHT+IFDvKZilqGPmprSihukL2cOV+DX1TDTDe1cz5RyBlvdIbIU9j0HXFdr6eKEBuH81WUcfNsiM9yJ0Ex2CNjDRAA=
-X-Received: by 2002:adf:eec9:0:b0:33b:2281:ef32 with SMTP id
- a9-20020adfeec9000000b0033b2281ef32mr7382022wrp.69.1707823505374; Tue, 13 Feb
- 2024 03:25:05 -0800 (PST)
+	s=arc-20240116; t=1707824539; c=relaxed/simple;
+	bh=oSxe1FJZlCGcbRapDJTRHz75Y/P6sXJvOGbg3MtEggU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SfvJgWCIa5Tz/bFUO7ufjgLjZwT5pxxp7FylGLo9CKrSrnL6bbjhJkU1W7ZnR2Glw3EatfRmOkNLMh9V7NQXI9EZdsvaWX4E2iORrFe8xprG3AJCuLRgM4qK3o40ScI4opDXaYXAKTn49xsO6pTVsARNFJJxpbRXrJW3U4pD1o8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=202.108.3.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.59.61])
+	by sina.com (10.182.253.22) with ESMTP
+	id 65CB558C00007BC9; Tue, 13 Feb 2024 19:42:06 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3290486816228
+X-SMAIL-UIID: FEEA4E0FB2D3410CBE3ECB306D4FB6FA-20240213-194206-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+c2ada45c23d98d646118@syzkaller.appspotmail.com>
+Cc: almaz.alexandrovich@paragon-software.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	ntfs3@lists.linux.dev,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [ntfs3?] possible deadlock in ntfs_set_state (2)
+Date: Tue, 13 Feb 2024 19:41:50 +0800
+Message-ID: <20240213114151.982-1-hdanton@sina.com>
+In-Reply-To: <000000000000998cff06113e1d91@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240213001920.3551772-1-lokeshgidra@google.com>
- <20240213001920.3551772-4-lokeshgidra@google.com> <20240213033307.zbhrpjigco7vl56z@revolver>
-In-Reply-To: <20240213033307.zbhrpjigco7vl56z@revolver>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Tue, 13 Feb 2024 03:24:53 -0800
-Message-ID: <CA+EESO5TNubw4vi08P6BO-4XKTLNVeNfjM92ieZJTd_oJt9Ygw@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] userfaultfd: use per-vma locks in userfaultfd operations
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lokesh Gidra <lokeshgidra@google.com>, 
-	akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, surenb@google.com, 
-	kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com, 
-	david@redhat.com, axelrasmussen@google.com, bgeffon@google.com, 
-	willy@infradead.org, jannh@google.com, kaleshsingh@google.com, 
-	ngeoffray@google.com, timmurray@google.com, rppt@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 12, 2024 at 7:33=E2=80=AFPM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> * Lokesh Gidra <lokeshgidra@google.com> [240212 19:19]:
-> > All userfaultfd operations, except write-protect, opportunistically use
-> > per-vma locks to lock vmas. On failure, attempt again inside mmap_lock
-> > critical section.
-> >
-> > Write-protect operation requires mmap_lock as it iterates over multiple
-> > vmas.
-> >
-> > Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
-> > ---
-> >  fs/userfaultfd.c              |  13 +-
-> >  include/linux/userfaultfd_k.h |   5 +-
-> >  mm/userfaultfd.c              | 392 ++++++++++++++++++++++++++--------
-> >  3 files changed, 312 insertions(+), 98 deletions(-)
-> >
-> ...
->
-> > +
-> > +static __always_inline
-> > +struct vm_area_struct *find_vma_and_prepare_anon(struct mm_struct *mm,
-> > +                                              unsigned long addr)
-> > +{
-> > +     struct vm_area_struct *vma;
-> > +
-> > +     mmap_assert_locked(mm);
-> > +     vma =3D vma_lookup(mm, addr);
-> > +     if (!vma)
-> > +             vma =3D ERR_PTR(-ENOENT);
-> > +     else if (!(vma->vm_flags & VM_SHARED) && anon_vma_prepare(vma))
-> > +             vma =3D ERR_PTR(-ENOMEM);
->
-> Nit: I just noticed that the code below says anon_vma_prepare() is unlike=
-ly.
->
-Thanks for catching this. I'll add it in next version.
-> ...
->
-> > +static struct vm_area_struct *lock_mm_and_find_dst_vma(struct mm_struc=
-t *dst_mm,
-> > +                                                    unsigned long dst_=
-start,
-> > +                                                    unsigned long len)
-> > +{
-> > +     struct vm_area_struct *dst_vma;
-> > +     int err;
-> > +
-> > +     mmap_read_lock(dst_mm);
-> > +     dst_vma =3D find_vma_and_prepare_anon(dst_mm, dst_start);
-> > +     if (IS_ERR(dst_vma)) {
-> > +             err =3D PTR_ERR(dst_vma);
->
-> It's sort of odd you decode then re-encode this error, but it's correct
-> the way you have it written.  You could just encode ENOENT instead?
+On Mon, 12 Feb 2024 23:12:22 -0800
+> HEAD commit:    716f4aaa7b48 Merge tag 'vfs-6.8-rc5.fixes' of git://git.ke..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=100fd062180000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=1d7c92dd8d5c7a1e
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c2ada45c23d98d646118
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11fcbd48180000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f6e642180000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/ca4bf59e5a18/disk-716f4aaa.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/3d7ade517e63/vmlinux-716f4aaa.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/e13f7054c0c1/bzImage-716f4aaa.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/00ba9c2f3dd0/mount_0.gz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+c2ada45c23d98d646118@syzkaller.appspotmail.com
+> 
+> loop0: detected capacity change from 0 to 4096
+> ntfs3: loop0: Different NTFS sector size (4096) and media sector size (512).
+> ntfs3: loop0: ino=5, "/" ntfs_iget5
+> ============================================
+> WARNING: possible recursive locking detected
+> 6.8.0-rc4-syzkaller-00003-g716f4aaa7b48 #0 Not tainted
+> --------------------------------------------
+> syz-executor354/5071 is trying to acquire lock:
+> ffff888070ee0100 (&ni->ni_lock#3){+.+.}-{3:3}, at: ntfs_set_state+0x1ff/0x6c0 fs/ntfs3/fsntfs.c:947
+> 
+> but task is already holding lock:
+> ffff888070de3c00 (&ni->ni_lock#3){+.+.}-{3:3}, at: ni_trylock fs/ntfs3/ntfs_fs.h:1141 [inline]
+> ffff888070de3c00 (&ni->ni_lock#3){+.+.}-{3:3}, at: ni_write_inode+0x1bc/0x1010 fs/ntfs3/frecord.c:3265
+> 
+This report looks false positive but raises the question -- what made lockedp
+pull the wrong trigger? Because of the correct lock_class_key in mutex_init()
+instead of &ni->ni_lock?
 
-Thanks. It was an oversight. I'll fix it.
->
-> > +             goto out_unlock;
-> > +     }
-> > +
-> > +     if (validate_dst_vma(dst_vma, dst_start + len))
-> > +             return dst_vma;
-> > +
-> > +     err =3D -ENOENT;
-> > +out_unlock:
-> > +     mmap_read_unlock(dst_mm);
-> > +     return ERR_PTR(err);
-> >  }
-> > +#endif
-> >
-> ...
->
-> > +static __always_inline
-> > +long find_vmas_mm_locked(struct mm_struct *mm,
->
-> int would probably do?
-> > +                      unsigned long dst_start,
-> > +                      unsigned long src_start,
-> > +                      struct vm_area_struct **dst_vmap,
-> > +                      struct vm_area_struct **src_vmap)
-> > +{
-> > +     struct vm_area_struct *vma;
-> > +
-> > +     mmap_assert_locked(mm);
-> > +     vma =3D find_vma_and_prepare_anon(mm, dst_start);
-> > +     if (IS_ERR(vma))
-> > +             return PTR_ERR(vma);
-> > +
-> > +     *dst_vmap =3D vma;
-> > +     /* Skip finding src_vma if src_start is in dst_vma */
-> > +     if (src_start >=3D vma->vm_start && src_start < vma->vm_end)
-> > +             goto out_success;
-> > +
-> > +     vma =3D vma_lookup(mm, src_start);
-> > +     if (!vma)
-> > +             return -ENOENT;
-> > +out_success:
-> > +     *src_vmap =3D vma;
-> > +     return 0;
-> > +}
-> > +
-> > +#ifdef CONFIG_PER_VMA_LOCK
-> > +static long find_and_lock_vmas(struct mm_struct *mm,
->
-> This could also be an int return type, I must be missing something?
-
-If you look at ERR_PTR() etc. macros, they all use 'long' for
-conversions. Also, this file uses long/ssize_t/int at different
-places. So I went in favor of long. I'm sure int would work just fine
-too. Let me know if you want me to change it to int.
->
-> ...
->
-> > +     *src_vmap =3D lock_vma_under_rcu(mm, src_start);
-> > +     if (likely(*src_vmap))
-> > +             return 0;
-> > +
-> > +     /* Undo any locking and retry in mmap_lock critical section */
-> > +     vma_end_read(*dst_vmap);
-> > +
-> > +     mmap_read_lock(mm);
-> > +     err =3D find_vmas_mm_locked(mm, dst_start, src_start, dst_vmap, s=
-rc_vmap);
-> > +     if (!err) {
-> > +             /*
-> > +              * See comment in lock_vma() as to why not using
-> > +              * vma_start_read() here.
-> > +              */
-> > +             down_read(&(*dst_vmap)->vm_lock->lock);
-> > +             if (*dst_vmap !=3D *src_vmap)
-> > +                     down_read(&(*src_vmap)->vm_lock->lock);
-> > +     }
-> > +     mmap_read_unlock(mm);
-> > +     return err;
-> > +}
-> > +#else
-> > +static long lock_mm_and_find_vmas(struct mm_struct *mm,
-> > +                               unsigned long dst_start,
-> > +                               unsigned long src_start,
-> > +                               struct vm_area_struct **dst_vmap,
-> > +                               struct vm_area_struct **src_vmap)
-> > +{
-> > +     long err;
-> > +
-> > +     mmap_read_lock(mm);
-> > +     err =3D find_vmas_mm_locked(mm, dst_start, src_start, dst_vmap, s=
-rc_vmap);
-> > +     if (err)
-> > +             mmap_read_unlock(mm);
-> > +     return err;
-> >  }
-> > +#endif
->
-> This section is much easier to understand.  Thanks.
-
-I'm glad finally the patch is easier to follow. Thanks so much for
-your prompt reviews.
->
-> Thanks,
-> Liam
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+> 
+>        CPU0
+>        ----
+>   lock(&ni->ni_lock#3);
+>   lock(&ni->ni_lock#3);
+> 
+>  *** DEADLOCK ***
+> 
+>  May be due to missing lock nesting notation
+> 
+> 3 locks held by syz-executor354/5071:
+>  #0: ffff88802223a420 (sb_writers#9){.+.+}-{0:0}, at: do_sys_ftruncate+0x25c/0x390 fs/open.c:191
+>  #1: ffff888070de3ea0 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:802 [inline]
+>  #1: ffff888070de3ea0 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: do_truncate+0x20c/0x310 fs/open.c:64
+>  #2: ffff888070de3c00 (&ni->ni_lock#3){+.+.}-{3:3}, at: ni_trylock fs/ntfs3/ntfs_fs.h:1141 [inline]
+>  #2: ffff888070de3c00 (&ni->ni_lock#3){+.+.}-{3:3}, at: ni_write_inode+0x1bc/0x1010 fs/ntfs3/frecord.c:3265
+> 
+> stack backtrace:
+> CPU: 0 PID: 5071 Comm: syz-executor354 Not tainted 6.8.0-rc4-syzkaller-00003-g716f4aaa7b48 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:88 [inline]
+>  dump_stack_lvl+0x1e7/0x2e0 lib/dump_stack.c:106
+>  check_deadlock kernel/locking/lockdep.c:3062 [inline]
+>  validate_chain+0x15c0/0x58e0 kernel/locking/lockdep.c:3856
+>  __lock_acquire+0x1345/0x1fd0 kernel/locking/lockdep.c:5137
+>  lock_acquire+0x1e3/0x530 kernel/locking/lockdep.c:5754
+>  __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+>  __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+>  ntfs_set_state+0x1ff/0x6c0 fs/ntfs3/fsntfs.c:947
+>  ntfs_iget5+0x3f0/0x3b70 fs/ntfs3/inode.c:535
+>  ni_update_parent+0x943/0xdd0 fs/ntfs3/frecord.c:3218
+>  ni_write_inode+0xde9/0x1010 fs/ntfs3/frecord.c:3324
+>  ntfs_truncate fs/ntfs3/file.c:410 [inline]
+>  ntfs3_setattr+0x950/0xb40 fs/ntfs3/file.c:703
+>  notify_change+0xb9f/0xe70 fs/attr.c:499
+>  do_truncate+0x220/0x310 fs/open.c:66
+>  do_sys_ftruncate+0x2f7/0x390 fs/open.c:194
+>  do_syscall_64+0xfb/0x240
+>  entry_SYSCALL_64_after_hwframe+0x6f/0x77
+> RIP: 0033:0x7fd0ca446639
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fff0baab678 EFLAGS: 00000246 ORIG_RAX: 000000000000004d
+> RAX: ffffffffffffffda RBX: 00007fff0baab848 RCX: 00007fd0ca446639
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000004
+> RBP: 00007fd0ca4d8610 R08: 0000000000000000 R09: 00007fff0baab848
+> R10: 000000000001f20a R11: 0000000000000246 R12: 0000000000000001
+> R13: 00007fff0baab838 R14: 0000000000000001 R15: 0000000000000001
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
 
