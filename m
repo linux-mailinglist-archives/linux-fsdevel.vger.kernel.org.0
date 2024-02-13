@@ -1,60 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-11259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79EF68522F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 01:13:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A91868522F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 01:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E56D1F2342A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 00:13:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F1251F23469
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Feb 2024 00:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35DDE80C;
-	Tue, 13 Feb 2024 00:13:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 311B0362;
+	Tue, 13 Feb 2024 00:13:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RkZbbrrk"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MycqBYf/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1711764C
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 00:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4DFA65F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 00:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707783208; cv=none; b=RQ64Ko6ie5HQt8x1tWxX4lVCfdndLKULuJ9zLJ2u/eobWLXcJKXqYLItClqVgF1qQKHj4jjdDCqNMCp7qrLTQPOH/EZCeTMU/VhBa9Ai67pZq7HwzIjXvugGA+9wb8UsFTST61AznYxl+wJF4IBaR5jalUqVT3ibH1tfd8IUaoY=
+	t=1707783211; cv=none; b=d60s5Gjw+9DB/I4a5PgUhXK+SMWbm9a1prctpdMH8eVY/R4vkBPRem4kUw72WMSUXUghWtpyih3Plcz9QmjVIq81BhU/tMrxACmyJDhDkpWDNc0i4bpbw6lqW4jmFVzGVX2Jd+0oI2hUt10+Bk29aF6fH3hOUpOLS+B2oXrGFL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707783208; c=relaxed/simple;
-	bh=hd8ZTq2sDwWRqeoAKm381lzAkHmMP0UWzosyI6LCFoY=;
+	s=arc-20240116; t=1707783211; c=relaxed/simple;
+	bh=c2HD21lZBiSCzISTX6aWDiXMYHWN0WxClU3WDkdgt/U=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bSBvXtYm4DhgDeGB7UB7gla6wjCtPQJelgEAWU0sOLUw5+Fv1x4MQib/uhH+xDYslq5zjEsfFgAaMLAoc0m3V4nnXSD+v8HZMDv3qgBFFQikPNX6Qs32zGLIIAtLQm+CHxK78R6qszk/adUlTAbV2j49gprP5ZZv3CWGgBp3yn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RkZbbrrk; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=CvqKsZtpO6D1LdikYsyIxkcQ/4GK7Yb1ZVbLxmuFWAoUAJPCMyJ4KOjUvaz+4vyTPTLgrvtRJZwqhXr7JrAt2FsBOfhORVZ727Cw55pNVxrAyjhD5EpIKPbR2r5h7Q0X9eTEpkJA3nVw+bApUmgB3jF/oYTeadyMCndK7eS8Sik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MycqBYf/; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707783206;
+	s=mimecast20190719; t=1707783207;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=DVtLq4kSxxcXAHECUE/gwzTexd/LJnjpTSpOjMxsz6I=;
-	b=RkZbbrrkqTgE95jx0KwjHcau+pzRf+et3glGb1KrITl7R8SRnmbp7o1eTrXC5fYmHO8J7x
-	ZJ+87EWygGjlzwqW4P6JNJMw8NB7tP9njFH7y5mr5ChLL8O3aXH/pVP2CuVFm39w94vuWv
-	O6ET/AEZEUHoxc93aQKG0wNE59xYrWY=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-160-7SEf2osaPxOlNcVNJ_rqLg-1; Mon,
- 12 Feb 2024 19:13:21 -0500
-X-MC-Unique: 7SEf2osaPxOlNcVNJ_rqLg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+	bh=Hn2ioYeKBL4fAh7nuXlrXEktL+jwYd7j8jQulCJM38w=;
+	b=MycqBYf/dNDXQpsyrK2lg6Koqiaz2WaB9mREkuAh/iuIOpeoY72h17RapfvcMXqpIJ6INs
+	9UVdrv/wnVenEQguvM0H2zh9P5JqVyqJJIhiAl2z5zB0RX//QXuCDQgWp7/6mPy9tdeaNt
+	2ZFvxBI0YwNOD8b2+V4oECgEFyfuqLY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-212-uevUhdGBPjW3QbB9QHZEZg-1; Mon, 12 Feb 2024 19:13:24 -0500
+X-MC-Unique: uevUhdGBPjW3QbB9QHZEZg-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0DC541C068DB;
-	Tue, 13 Feb 2024 00:13:21 +0000 (UTC)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DC69E85A588;
+	Tue, 13 Feb 2024 00:13:23 +0000 (UTC)
 Received: from localhost (unknown [10.39.195.51])
-	by smtp.corp.redhat.com (Postfix) with ESMTP id 12578112131D;
-	Tue, 13 Feb 2024 00:13:19 +0000 (UTC)
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 0071C4015471;
+	Tue, 13 Feb 2024 00:13:22 +0000 (UTC)
 From: Stefan Hajnoczi <stefanha@redhat.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: miklos@szeredi.hu,
@@ -65,9 +65,9 @@ Cc: miklos@szeredi.hu,
 	vgoyal@redhat.com,
 	virtio-fs@lists.linux.dev,
 	Stefan Hajnoczi <stefanha@redhat.com>
-Subject: [PATCH v4 1/3] virtiofs: forbid newlines in tags
-Date: Mon, 12 Feb 2024 19:11:47 -0500
-Message-ID: <20240213001149.904176-2-stefanha@redhat.com>
+Subject: [PATCH v4 2/3] virtiofs: export filesystem tags through sysfs
+Date: Mon, 12 Feb 2024 19:11:48 -0500
+Message-ID: <20240213001149.904176-3-stefanha@redhat.com>
 In-Reply-To: <20240213001149.904176-1-stefanha@redhat.com>
 References: <20240213001149.904176-1-stefanha@redhat.com>
 Precedence: bulk
@@ -77,37 +77,289 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.3
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-Newlines in virtiofs tags are awkward for users and potential vectors
-for string injection attacks.
+The virtiofs filesystem is mounted using a "tag" which is exported by
+the virtiofs device:
 
+  # mount -t virtiofs <tag> /mnt
+
+The virtiofs driver knows about all the available tags but these are
+currently not exported to user space.
+
+People have asked for these tags to be exported to user space. Most
+recently Lennart Poettering has asked for it as he wants to scan the
+tags and mount virtiofs automatically in certain cases.
+
+https://gitlab.com/virtio-fs/virtiofsd/-/issues/128
+
+This patch exports tags at /sys/fs/virtiofs/<N>/tag where N is the id of
+the virtiofs device. The filesystem tag can be obtained by reading this
+"tag" file.
+
+There is also a symlink at /sys/fs/virtiofs/<N>/device that points to
+the virtiofs device that exports this tag.
+
+This patch converts the existing struct virtio_fs into a full kobject.
+It already had a refcount so it's an easy change. The virtio_fs objects
+can then be exposed in a kset at /sys/fs/virtiofs/. Note that virtio_fs
+objects may live slightly longer than we wish for them to be exposed to
+userspace, so kobject_del() is called explicitly when the underlying
+virtio_device is removed. The virtio_fs object is freed when all
+references are dropped (e.g. active mounts) but disappears as soon as
+the virtiofs device is gone.
+
+Originally-by: Vivek Goyal <vgoyal@redhat.com>
 Signed-off-by: Stefan Hajnoczi <stefanha@redhat.com>
 ---
- fs/fuse/virtio_fs.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ fs/fuse/virtio_fs.c                         | 112 ++++++++++++++++----
+ Documentation/ABI/testing/sysfs-fs-virtiofs |  11 ++
+ 2 files changed, 101 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-fs-virtiofs
 
 diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
-index 5f1be1da92ce..d84dacbdce2c 100644
+index d84dacbdce2c..99b6113bbd13 100644
 --- a/fs/fuse/virtio_fs.c
 +++ b/fs/fuse/virtio_fs.c
-@@ -323,6 +323,16 @@ static int virtio_fs_read_tag(struct virtio_device *vdev, struct virtio_fs *fs)
- 		return -ENOMEM;
- 	memcpy(fs->tag, tag_buf, len);
- 	fs->tag[len] = '\0';
+@@ -31,6 +31,9 @@
+ static DEFINE_MUTEX(virtio_fs_mutex);
+ static LIST_HEAD(virtio_fs_instances);
+ 
++/* The /sys/fs/virtio_fs/ kset */
++static struct kset *virtio_fs_kset;
 +
-+	/* While the VIRTIO specification allows any character, newlines are
-+	 * awkward on mount(8) command-lines and cause problems in the sysfs
-+	 * "tag" attr and uevent TAG= properties. Forbid them.
+ enum {
+ 	VQ_HIPRIO,
+ 	VQ_REQUEST
+@@ -55,7 +58,7 @@ struct virtio_fs_vq {
+ 
+ /* A virtio-fs device instance */
+ struct virtio_fs {
+-	struct kref refcount;
++	struct kobject kobj;
+ 	struct list_head list;    /* on virtio_fs_instances */
+ 	char *tag;
+ 	struct virtio_fs_vq *vqs;
+@@ -161,18 +164,40 @@ static inline void dec_in_flight_req(struct virtio_fs_vq *fsvq)
+ 		complete(&fsvq->in_flight_zero);
+ }
+ 
+-static void release_virtio_fs_obj(struct kref *ref)
++static ssize_t tag_show(struct kobject *kobj,
++		struct kobj_attribute *attr, char *buf)
+ {
+-	struct virtio_fs *vfs = container_of(ref, struct virtio_fs, refcount);
++	struct virtio_fs *fs = container_of(kobj, struct virtio_fs, kobj);
++
++	return sysfs_emit(buf, fs->tag);
++}
++
++static struct kobj_attribute virtio_fs_tag_attr = __ATTR_RO(tag);
++
++static struct attribute *virtio_fs_attrs[] = {
++	&virtio_fs_tag_attr.attr,
++	NULL
++};
++ATTRIBUTE_GROUPS(virtio_fs);
++
++static void virtio_fs_ktype_release(struct kobject *kobj)
++{
++	struct virtio_fs *vfs = container_of(kobj, struct virtio_fs, kobj);
+ 
+ 	kfree(vfs->vqs);
+ 	kfree(vfs);
+ }
+ 
++static const struct kobj_type virtio_fs_ktype = {
++	.release = virtio_fs_ktype_release,
++	.sysfs_ops = &kobj_sysfs_ops,
++	.default_groups = virtio_fs_groups,
++};
++
+ /* Make sure virtiofs_mutex is held */
+ static void virtio_fs_put(struct virtio_fs *fs)
+ {
+-	kref_put(&fs->refcount, release_virtio_fs_obj);
++	kobject_put(&fs->kobj);
+ }
+ 
+ static void virtio_fs_fiq_release(struct fuse_iqueue *fiq)
+@@ -243,25 +268,44 @@ static void virtio_fs_start_all_queues(struct virtio_fs *fs)
+ }
+ 
+ /* Add a new instance to the list or return -EEXIST if tag name exists*/
+-static int virtio_fs_add_instance(struct virtio_fs *fs)
++static int virtio_fs_add_instance(struct virtio_device *vdev,
++				  struct virtio_fs *fs)
+ {
+ 	struct virtio_fs *fs2;
+-	bool duplicate = false;
++	int ret;
+ 
+ 	mutex_lock(&virtio_fs_mutex);
+ 
+ 	list_for_each_entry(fs2, &virtio_fs_instances, list) {
+-		if (strcmp(fs->tag, fs2->tag) == 0)
+-			duplicate = true;
++		if (strcmp(fs->tag, fs2->tag) == 0) {
++			mutex_unlock(&virtio_fs_mutex);
++			return -EEXIST;
++		}
+ 	}
+ 
+-	if (!duplicate)
+-		list_add_tail(&fs->list, &virtio_fs_instances);
++	/* Use the virtio_device's index as a unique identifier, there is no
++	 * need to allocate our own identifiers because the virtio_fs instance
++	 * is only visible to userspace as long as the underlying virtio_device
++	 * exists.
 +	 */
-+	if (strchr(fs->tag, '\n')) {
-+		dev_dbg(&vdev->dev, "refusing virtiofs tag with newline character\n");
-+		return -EINVAL;
++	fs->kobj.kset = virtio_fs_kset;
++	ret = kobject_add(&fs->kobj, NULL, "%d", vdev->index);
++	if (ret < 0) {
++		mutex_unlock(&virtio_fs_mutex);
++		return ret;
 +	}
 +
++	ret = sysfs_create_link(&fs->kobj, &vdev->dev.kobj, "device");
++	if (ret < 0) {
++		kobject_del(&fs->kobj);
++		mutex_unlock(&virtio_fs_mutex);
++		return ret;
++	}
++
++	list_add_tail(&fs->list, &virtio_fs_instances);
+ 
+ 	mutex_unlock(&virtio_fs_mutex);
+ 
+-	if (duplicate)
+-		return -EEXIST;
  	return 0;
  }
  
+@@ -274,7 +318,7 @@ static struct virtio_fs *virtio_fs_find_instance(const char *tag)
+ 
+ 	list_for_each_entry(fs, &virtio_fs_instances, list) {
+ 		if (strcmp(fs->tag, tag) == 0) {
+-			kref_get(&fs->refcount);
++			kobject_get(&fs->kobj);
+ 			goto found;
+ 		}
+ 	}
+@@ -875,7 +919,7 @@ static int virtio_fs_probe(struct virtio_device *vdev)
+ 	fs = kzalloc(sizeof(*fs), GFP_KERNEL);
+ 	if (!fs)
+ 		return -ENOMEM;
+-	kref_init(&fs->refcount);
++	kobject_init(&fs->kobj, &virtio_fs_ktype);
+ 	vdev->priv = fs;
+ 
+ 	ret = virtio_fs_read_tag(vdev, fs);
+@@ -897,7 +941,7 @@ static int virtio_fs_probe(struct virtio_device *vdev)
+ 	 */
+ 	virtio_device_ready(vdev);
+ 
+-	ret = virtio_fs_add_instance(fs);
++	ret = virtio_fs_add_instance(vdev, fs);
+ 	if (ret < 0)
+ 		goto out_vqs;
+ 
+@@ -906,11 +950,10 @@ static int virtio_fs_probe(struct virtio_device *vdev)
+ out_vqs:
+ 	virtio_reset_device(vdev);
+ 	virtio_fs_cleanup_vqs(vdev);
+-	kfree(fs->vqs);
+ 
+ out:
+ 	vdev->priv = NULL;
+-	kfree(fs);
++	kobject_put(&fs->kobj);
+ 	return ret;
+ }
+ 
+@@ -934,6 +977,8 @@ static void virtio_fs_remove(struct virtio_device *vdev)
+ 	mutex_lock(&virtio_fs_mutex);
+ 	/* This device is going away. No one should get new reference */
+ 	list_del_init(&fs->list);
++	sysfs_remove_link(&fs->kobj, "device");
++	kobject_del(&fs->kobj);
+ 	virtio_fs_stop_all_queues(fs);
+ 	virtio_fs_drain_all_queues_locked(fs);
+ 	virtio_reset_device(vdev);
+@@ -1520,21 +1565,43 @@ static struct file_system_type virtio_fs_type = {
+ 	.kill_sb	= virtio_kill_sb,
+ };
+ 
++static int __init virtio_fs_sysfs_init(void)
++{
++	virtio_fs_kset = kset_create_and_add("virtiofs", NULL, fs_kobj);
++	if (!virtio_fs_kset)
++		return -ENOMEM;
++	return 0;
++}
++
++static void __exit virtio_fs_sysfs_exit(void)
++{
++	kset_unregister(virtio_fs_kset);
++	virtio_fs_kset = NULL;
++}
++
+ static int __init virtio_fs_init(void)
+ {
+ 	int ret;
+ 
++	ret = virtio_fs_sysfs_init();
++	if (ret < 0)
++		return ret;
++
+ 	ret = register_virtio_driver(&virtio_fs_driver);
+ 	if (ret < 0)
+-		return ret;
++		goto sysfs_exit;
+ 
+ 	ret = register_filesystem(&virtio_fs_type);
+-	if (ret < 0) {
+-		unregister_virtio_driver(&virtio_fs_driver);
+-		return ret;
+-	}
++	if (ret < 0)
++		goto unregister_virtio_driver;
+ 
+ 	return 0;
++
++unregister_virtio_driver:
++	unregister_virtio_driver(&virtio_fs_driver);
++sysfs_exit:
++	virtio_fs_sysfs_exit();
++	return ret;
+ }
+ module_init(virtio_fs_init);
+ 
+@@ -1542,6 +1609,7 @@ static void __exit virtio_fs_exit(void)
+ {
+ 	unregister_filesystem(&virtio_fs_type);
+ 	unregister_virtio_driver(&virtio_fs_driver);
++	virtio_fs_sysfs_exit();
+ }
+ module_exit(virtio_fs_exit);
+ 
+diff --git a/Documentation/ABI/testing/sysfs-fs-virtiofs b/Documentation/ABI/testing/sysfs-fs-virtiofs
+new file mode 100644
+index 000000000000..4839dbce997e
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-fs-virtiofs
+@@ -0,0 +1,11 @@
++What:		/sys/fs/virtiofs/<n>/tag
++Date:		Feb 2024
++Contact:	virtio-fs@lists.linux.dev
++Description:
++		[RO] The mount "tag" that can be used to mount this filesystem.
++
++What:		/sys/fs/virtiofs/<n>/device
++Date:		Feb 2024
++Contact:	virtio-fs@lists.linux.dev
++Description:
++		Symlink to the virtio device that exports this filesystem.
 -- 
 2.43.0
 
