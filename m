@@ -1,123 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-11585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B06B4854F35
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 17:56:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23599854F6F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 18:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C1E1283612
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 16:56:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B9F7B2B634
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 17:04:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1464E60867;
-	Wed, 14 Feb 2024 16:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10D626087C;
+	Wed, 14 Feb 2024 17:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="aP6eNqCb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ERNJznFb"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D951604BC;
-	Wed, 14 Feb 2024 16:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D2D5FDD4;
+	Wed, 14 Feb 2024 17:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707929752; cv=none; b=gGg+zAVWRgws+NTYmPwWrAovxhn7j8f0KKes6Gkd/GavkUhdolVF2sv+0dc78MQCYTzMwRiXalKX2EmfQ5WxnVYXlNbKnNx8bDAFK9WkiK4igkaMOaSSyDV9jcdpCbFujXblAF/uDCY9+B+Dk4cvjw2GFaahNjQNvXvnMIdNvPg=
+	t=1707930242; cv=none; b=kVnYfoklPU3bc6ul10CUAa6Ld5C0BjFOwwrGvIb4a67rU1PxyBBzE+UqPioU6yZ9ditQDSxU+J4z/x08N9I0pSqMvTAIxywa+UWexIfAsoNFB+6NB7lRbZqVxeHqqK2TABLQ20ZnQ8CB+DadJde/AUHs5NSzn/vianmjsVx1kp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707929752; c=relaxed/simple;
-	bh=Z1j0awbyiMqQJioymUvLXxMTBT0EGAz3kMP8dpbtft4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Qh9x31qTahDzxkLEMayQnWXSWt+TevPz6hxOoQrQIItZMqc9r7xlbL1eI74g8OvOmZ6i7JChSdKYxlSBcEANUssaXbHFOMXIpr7GFOzJi44h4/VkwGB1KrS8IVRdEcNIVH5fnHojpQQGObcAYPflsykxYsS3F+unmt/gX2XScNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=aP6eNqCb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57F71C433C7;
-	Wed, 14 Feb 2024 16:55:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1707929751;
-	bh=Z1j0awbyiMqQJioymUvLXxMTBT0EGAz3kMP8dpbtft4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=aP6eNqCb/UgW05i+ulED3dJ38CFlbF46c9ImepcRNWw3cqV444ebJY3dOVwDX0TpF
-	 Zry6nkCkfDuDtI3bkVsahvhtqzq0e6p7PwaST0Yzxnx6S2AOkZW5cKbC+D8uj2KfhL
-	 cXIdI5wkzTTOR16ASzaWYyPLnnwcg8bFmbhrKB3U=
-Date: Wed, 14 Feb 2024 08:55:48 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, David Hildenbrand
- <david@redhat.com>, Michal Hocko <mhocko@suse.com>, vbabka@suse.cz,
- hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
- dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
- corbet@lwn.net, void@manifault.com, peterz@infradead.org,
- juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
- arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
- axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
- nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
- rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
- yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
- hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
- ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
- ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
- iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
- elver@google.com, dvyukov@google.com, shakeelb@google.com,
- songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
- minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-arch@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
- cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 00/35] Memory allocation profiling
-Message-Id: <20240214085548.d3608627739269459480d86e@linux-foundation.org>
-In-Reply-To: <CAJuCfpF4g1jeEwHVHjQWwi5kqS-3UqjMt7GnG0Kdz5VJGyhK3Q@mail.gmail.com>
-References: <20240212213922.783301-1-surenb@google.com>
-	<Zctfa2DvmlTYSfe8@tiehlicka>
-	<CAJuCfpEsWfZnpL1vUB2C=cxRi_WxhxyvgGhUg7WdAxLEqy6oSw@mail.gmail.com>
-	<9e14adec-2842-458d-8a58-af6a2d18d823@redhat.com>
-	<2hphuyx2dnqsj3hnzyifp5yqn2hpgfjuhfu635dzgofr5mst27@4a5dixtcuxyi>
-	<6a0f5d8b-9c67-43f6-b25e-2240171265be@redhat.com>
-	<CAJuCfpEtOhzL65eMDk2W5SchcquN9hMCcbfD50a-FgtPgxh4Fw@mail.gmail.com>
-	<adbb77ee-1662-4d24-bcbf-d74c29bc5083@redhat.com>
-	<r6cmbcmalryodbnlkmuj2fjnausbcysmolikjguqvdwkngeztq@45lbvxjavwb3>
-	<CAJuCfpF4g1jeEwHVHjQWwi5kqS-3UqjMt7GnG0Kdz5VJGyhK3Q@mail.gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1707930242; c=relaxed/simple;
+	bh=aNT9Q60E6NVkQENhpyv0nYecctSGARo/x1kAK3Ece+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BK3m0myFrYmki8i3wPT/qONC6wUrt5DGljb0T329cGCm6GgQAG0lAJMEV1pFvNr9fOh6WvoKtrtToPAkbRSDnJv1YuynTzGCsdnX1XOC0LOw77NRFjClT4vAPskdjGZoRcOyydhdrTyj22LN8vgTnIsFwlZCSSGfRvepAAQJQ5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ERNJznFb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8F8AC433C7;
+	Wed, 14 Feb 2024 17:04:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707930241;
+	bh=aNT9Q60E6NVkQENhpyv0nYecctSGARo/x1kAK3Ece+o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ERNJznFbmzNdbYIgv703RahL/gAfd3tLwgp0nNTdut21G82Be5UqJRLj19OQdEI3P
+	 EvEsJb5956q9MFqCQDGQK8FZ8orsES/A2nkHb89+77RngsKPLNHbnfzYN1Jlp1SkuY
+	 5BWTTQMk6sOBYyjXismzj/jOpx5yD00waFzOTGII87EsO2SAR2aafw6XBg2kX5eYcX
+	 vZbtslse8kt29MNCDIUmcKGAMmGcZKgeVkVnTNeudEgyW4i58IopFZwykLwko2otsX
+	 dUBBN3BRLKhByZmzEsTl6Qf25kyqdoCa3CS4gQ1eYRJQ01D6gO1Zt0qg8OuvdTPEjV
+	 lpJ7jz69itNKA==
+Date: Wed, 14 Feb 2024 09:04:01 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Chandan Babu R <chandanbabu@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Shirley Ma <shirley.ma@oracle.com>
+Subject: Re: shmem patches headsup: Re: [ANNOUNCE] xfs-linux: for-next
+ updated to 9ee85f235efe
+Message-ID: <20240214170401.GA616564@frogsfrogsfrogs>
+References: <87frxva65g.fsf@debian-BULLSEYE-live-builder-AMD64>
+ <20240214080305.GA10568@lst.de>
+ <877cj7a1zw.fsf@debian-BULLSEYE-live-builder-AMD64>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877cj7a1zw.fsf@debian-BULLSEYE-live-builder-AMD64>
 
-On Tue, 13 Feb 2024 14:59:11 -0800 Suren Baghdasaryan <surenb@google.com> wrote:
-
-> > > If you think you can easily achieve what Michal requested without all that,
-> > > good.
+On Wed, Feb 14, 2024 at 01:51:42PM +0530, Chandan Babu R wrote:
+> On Wed, Feb 14, 2024 at 09:03:05 AM +0100, Christoph Hellwig wrote:
+> > On Wed, Feb 14, 2024 at 12:18:41PM +0530, Chandan Babu R wrote:
+> >> The for-next branch of the xfs-linux repository at:
+> >> 
+> >> 	https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+> >> 
+> >> has just been updated.
 > >
-> > He requested something?
+> > <snip>
+> >
+> >> Christoph Hellwig (17):
+> >>       [f23e079e024c] mm: move mapping_set_update out of <linux/swap.h>
+> >>       [604ee858a8c8] shmem: move shmem_mapping out of line
+> >>       [8481cd645af6] shmem: set a_ops earlier in shmem_symlink
+> >>       [9b4ec2cf0154] shmem: move the shmem_mapping assert into shmem_get_folio_gfp
+> >>       [36e3263c623a] shmem: export shmem_get_folio
+> >>       [74f6fd19195a] shmem: export shmem_kernel_file_setup
+> >>       [eb84b86441e3] shmem: document how to "persist" data when using shmem_*file_setup
+> >
+> > I would have prefer an ACK or even a shared branch in the MM tree
+> > for these.  But as it's been impossible to get any feedback from
+> > the shmem and mm maintainer maybe this is the right thing to do.
+> >
 > 
-> Yes, a cleaner instrumentation. Unfortunately the cleanest one is not
-> possible until the compiler feature is developed and deployed. And it
-> still would require changes to the headers, so don't think it's worth
-> delaying the feature for years.
+> I am sorry. I completely forgot about the requirement for an ack from the MM
+> maintainers. Thanks for bringing it to notice.
 
-Can we please be told much more about this compiler feature? 
-Description of what it is, what it does, how it will affect this kernel
-feature, etc.
+These seven patches have been out for review for nineteen days.
 
-Who is developing it and when can we expect it to become available?
+Patches 4, 5, and 7 have been out for review for FORTY TWO DAYS.
 
-Will we be able to migrate to it without back-compatibility concerns? 
-(I think "you need quite recent gcc for memory profiling" is
-reasonable).
+willy reviewed them after I asked him (thank you willy!), but this kind
+of lead time for fairly minor patches is unworkable.
 
+If you two are so overworked that you cannot provide feedback in under
+six weeks, then I really need you to ask your manager for more help
+hiring staff so that you can delegate tasks and unburden yourselves.
+Stalling everyone else is a shitty thing to do.  Long feedback cycles
+are destructive to developing things together -- look at what XFS has
+become.
 
+Or just let the patches go in and hch and I will deal with the
+regression reports.  Maybe we'll even learn a few things in the process.
+Spreading knowledge around the community and decentralizing to reduce
+bus factor are two key points of free software, right?
 
-Because: if the maintainability issues which Michel describes will be
-significantly addressed with the gcc support then we're kinda reviewing
-the wrong patchset.  Yes, it may be a maintenance burden initially, but
-at some (yet to be revealed) time in the future, this will be addressed
-with the gcc support?
+In the meantime, this is blocking me from preparing online repair pull
+requests for XFS for 6.9 because those patches need the stuff at the end
+of the diet-v3 series.
 
+--D
+
+> -- 
+> Chandan
+> 
 
