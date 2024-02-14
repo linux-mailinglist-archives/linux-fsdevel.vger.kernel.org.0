@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-11522-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11523-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3624C8544B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 10:12:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A9A8544CB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 10:14:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F0341F25527
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 09:12:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 827AB1F262F5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 09:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBE0111BE;
-	Wed, 14 Feb 2024 09:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1C2125B0;
+	Wed, 14 Feb 2024 09:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YnfpYJ9h"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BUZ2+EVG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8AFC13C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 09:12:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7427210A31
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 09:14:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707901930; cv=none; b=WNAOkao4MbF6oQh58HPRhAxL8upGCZK9D79PwqXLMvPMMh0AEeuLV7Ftr0BP5cR7uEwEDeljVR02d6EDMKVuuqHwwxkawHhLq8L/6f16DK+fSfHokdrqNi8/A5EtP3AiU1xMdFg60+3WqAfQEzUj/lExeq9k43xPsv6DPlT+T4A=
+	t=1707902055; cv=none; b=Hq8J60OU1l6xKkurjhYExidZgjx/gXELE6oW+Cr3huPl8/blNuBtYi399yNsMefCw3EvTwJs0Lz66AtLfW9IROmXlzZK5A/AAa0re12uUlFoMyln87JvxDRHhpKDt68vOnkrHtO2ftCzoddaBDFVfUSfIOzx4rKCdRP/f/Kz8Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707901930; c=relaxed/simple;
-	bh=b/mhMZ0zKqCT3ertcABmL3CKUgHpNWzDTwLWzbWXPU0=;
+	s=arc-20240116; t=1707902055; c=relaxed/simple;
+	bh=vtR61y4sN+L/+ao7o/NIKSd9KRV2BjPDABQwHbHGFmw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jKBsbKanPQD6e9N3G5LA8SD33KbVygXv+NPT6CycQRtVpROF1EImfp+FqltniCqYPpHs61n3ZKm/ShtviIKkVs0k7iKDhTm64h0fJLo23IywmBZywVRUy05KzyjI+jGLGrgCG5G10JOfL691bZOm6BszCaO3eQvDiA6Z3NxzMvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YnfpYJ9h; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=jwSQqeYuBWODwvnrTIKmffgK/4lYlt2p2xI06elR1DOPVRqNc0JfjbStajXPoYMqY4a9G3hveavYbREyGLviTIlQFrvVmxY+R3SXnkeodXi9BzD27oBStN+jK0De4W4hCsBEM8GJCNiIWJ3Cvr5vhqQZ7b5UVLf509X3scgtSh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BUZ2+EVG; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1707901927;
+	s=mimecast20190719; t=1707902052;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=VZA6DFg+WwA52lCBTWxrutolHXxVdoWwm9k2EKmKknw=;
-	b=YnfpYJ9haw6IPWosF0W1mmD4ydIJT2jB4T9FpY6rOkT+HvZI5tLAraOPXjbP8+T+D/wiGx
-	4L7iXNUmNmGbWRho7/ZFFe2vDymsn+Q+FmXLZrwMOFAEuQzaEpg/ia0/ouaZXGvMM06Icb
-	22KAIXd5QOWWc16bGre/WtYRaxuf7eY=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=yF6KCGZ2SgAsNegJkudNmU2sSgptrONfebjoagaAkcY=;
+	b=BUZ2+EVGqQBgF1YdkZLG8lcFKbmyQ0oWMmIyne/BpcfvOXQS08eYnDxbQBugwGJqtcpVSH
+	xmgD/DjtoYPA6ZsZl9a5SZhaxSwLFWdjgDwPWUXGiH+k3sKh9MIrdZPAkrzZg121xJxT8t
+	2h6SXZegMEDwWDsf0zo5EwBnsr2+E4I=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-201-Fh50xFDqPxm0ZZncQkHSGA-1; Wed, 14 Feb 2024 04:12:06 -0500
-X-MC-Unique: Fh50xFDqPxm0ZZncQkHSGA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-411ce6e7643so5995085e9.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 01:12:05 -0800 (PST)
+ us-mta-553-G-ufD1vkNveR5Acmi1nVEQ-1; Wed, 14 Feb 2024 04:14:10 -0500
+X-MC-Unique: G-ufD1vkNveR5Acmi1nVEQ-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-33ce7272575so308472f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 01:14:10 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707901925; x=1708506725;
+        d=1e100.net; s=20230601; t=1707902049; x=1708506849;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
          :references:cc:to:content-language:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VZA6DFg+WwA52lCBTWxrutolHXxVdoWwm9k2EKmKknw=;
-        b=wkxjWFWuhFvdVATuiSx+RsdLIoEUC/IB9b/05Ef9IXm6LhYsh7BGPNetL7Iq2JzkYc
-         DwvcF+Cs9mPNStcHCmiZm9tBUugCE/dwB1rODqRl43R5nqMaAgg3mPIJegMNzqqgqrop
-         Qxq+DReIOp4utLSe2IKO0T0BtkULsUJLHfX4o0emcs0KMeBLujSBCiaaqWUzANEpgRfA
-         bI/hOu29pbb37W8TUrKqdanD76WaP5lHPgR7Qiv981sR5DKNouVBT+Fly0hVjMRXwhCA
-         HHpEN7l0bWFoqL4cyrdmrvzaGv87vXZp1r6MhOUYDnLeJwr5rb1RnUc7ZKMaSaa1W2Uh
-         6yWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQcOFiXk3Kq2iVnLDGxML0TJU2CxOzFY2pVzdxmt/EgM5PYuRLQvoVIQGfjlgJDbexqdgKH4KOjeuehJJxaEduFkWOFuxABD1/WlwxNw==
-X-Gm-Message-State: AOJu0YyMdofz8xU9PQUJDmcrTdVutVkbMDUDXjO3A7az+jXR2Ca2h6+o
-	bvhSswT/HaV2nUw2tQh7N6DtwFNd9HCtval1o9bUpftKEBcVRRgnuD50BmekI/rlVv2RdADbyYb
-	zA5J8dSRFeIi9mz9n74VygJDAoav4u6XfXiWw17pc8xCkahEabDHm3jNbG2HpnhQ=
-X-Received: by 2002:a05:600c:4f92:b0:40e:f9df:3531 with SMTP id n18-20020a05600c4f9200b0040ef9df3531mr1616937wmq.8.1707901924980;
-        Wed, 14 Feb 2024 01:12:04 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGhZev06DT+wQwCDjrhbCZX5g30BdTp6oDhqJnXloyJB+rxmBte2E2NuMdQoDmK9WLQFWbF2g==
-X-Received: by 2002:a05:600c:4f92:b0:40e:f9df:3531 with SMTP id n18-20020a05600c4f9200b0040ef9df3531mr1616906wmq.8.1707901924586;
-        Wed, 14 Feb 2024 01:12:04 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVqS5g1CamuPWuk5EE/YsfGdQ1wTy8LozYCBRvSt2P3zg16qUWY8dW+1xuaxuONCVcCdHJw3/UW+h98SehqzecRpIqVlzAg31i+hD3r80gW1+6nMLemeKSOEJbS8/HrqPqly9CCdvTw1mthL8iW+M/PxzA6fh5IxXwBdhsPzhqzLSCs7uGOkszPxvApMK1WjazzELLLqw7ZiRHgfty3p3sh/sr62OCU3r9R/TGfJb2ilnhapoqu4z7m50VpIGlcE1EOeDQ2g465iosRXhYo/Tfr+wZ094zbS35DEzLzTKXBfXl/EHR8Uy1F7hHeLZ2GUEJ4F+TnR+VBUsDkrXUcIndVNf+luwxNPKSP1C4MqbTF+WOXzB1uOoFWR0BEYXvnV6OmYCr0KZZQYvUSGUpuoS9gXqJmtyT+S/jqpjMejsR0KslcYGZezqp7PxCAeSO2LWeyWrz2J+HbHvld8T6tp67K7wrNNrfY1c2ipxFVhSvdIRs4ZQVc/qJ73yzPGrQSV7M+uOqtrjp9/lUs4ZQAe3j3xn23CV3IbMhfaoM67TNynePh6EffyzumwL+H4+SAsXgH
+        bh=yF6KCGZ2SgAsNegJkudNmU2sSgptrONfebjoagaAkcY=;
+        b=bCxcAZsVtkzHiPQkKJ6ttcSiKy6bmoA6vAY7iyckZ1xzlwHutpDE4v3Aj8rm/M1wIF
+         BexSWdnTC7UU7EOsv72OxVWwSF+KC9Xz0TVzetxFgmLsy/JoCWbuxumydw5RkIBYJcKg
+         73aB5TwpM7IR1udWN6PFcR1DtbfZJzSxxZpJgjAhhlRYgh5lcZzV9TxHRbYK+zoH7CE8
+         tjyDq0YaUC+I7NTc11WZlKYoPCemkZuagdSWYWUC/s65iRuAhJDvaLFpuTYpHeAsXXGn
+         cFa2zegvDOH0VgUGgQpOgwkj4MRLVn77xsttOqn31wWpzsRUX82eFdmq7MsNp+YprAb6
+         TbYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUfuZhGUGmFFBrWjTqnhjWBf4UpfrqaICJWxueQ/jTzKElbGv6WhxUz9kw2NmKnfFZL4/TuKNuzbrGNNM6P7R/RCtNV/LKB0Zz+qxBiPA==
+X-Gm-Message-State: AOJu0YyfjwHNuRHAa8tcz3z6+FXTGeVmNw4fuCVeiENC1cRwESjjBUad
+	anaA+GCI28xSxRuvu3tGVASIIYPX9ZUgscILyGPiYqAMyH5UjSJdFWNYLcBLaibfubQeSesOkvw
+	hs0n4SsrVH/0cHxQztic4XA+MEo+lcTWcaxpfBBd9sDvMq54NzYe8KH/cZlP1ZUw=
+X-Received: by 2002:a5d:4fce:0:b0:33b:6267:c594 with SMTP id h14-20020a5d4fce000000b0033b6267c594mr1349244wrw.10.1707902049469;
+        Wed, 14 Feb 2024 01:14:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGARvO3alTod/7fEEMprPUww3ZuSO77uKkZhZPmv4kYJGvEw1gD2bI2kkXnpmfnuumVCc9x5A==
+X-Received: by 2002:a5d:4fce:0:b0:33b:6267:c594 with SMTP id h14-20020a5d4fce000000b0033b6267c594mr1349234wrw.10.1707902049108;
+        Wed, 14 Feb 2024 01:14:09 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWfC+oqcJxekVmFZDfLL8+ZEkSTIXEf0lqJvPGIBIVEVQ3syv9iqUCzwHg0ersrQawhtBD4SoAjeOdOyGZxchiiMbSPfcQkmp8Lkb1py99Fl8CwLLw4zwbDKHXNLcZmA72adapBLeJBSj7hXAYZ75xbFJO5YLYfLB3SHdp97YSPcFyttsoI4ko6QMTQsQ5mDFtHMYFbHaFPqhGPgPgtR7sHUOE8i1oBE76PF7kU3zVO8CTSjKyD4KBoxRT9VGpeuVp3C3tkmaevIEkn1hIjoAOLq4YkO5cC8zEGOzh3akZiGQPMoIKgqfKsNId7O58APBOpme8vVxN/DKSO3+FZZJHHgekMZmKesWCDvK0g2euaEbFmI5ZaN0g8PKMyKBSjYAgWfh2ymj6RPjSj1+FYQq2hyr4hISaPr60P+TtVMSD7JBC1mIXV/41d+Pij/p0ZQQS7xDXnRZUlGJvh3pGY62qofsJuWd5eYQh9Ar+0apfS9VIhHu5rGOLnfls4PAa9rZiwom31N1x7RZ8Xi+ouPl7h0z8xVHhR2hMujQP/46dTjHU32siECcuwoaNipbdkTu+4
 Received: from ?IPV6:2003:d8:2f3c:3f00:7177:eb0c:d3d2:4b0e? (p200300d82f3c3f007177eb0cd3d24b0e.dip0.t-ipconnect.de. [2003:d8:2f3c:3f00:7177:eb0c:d3d2:4b0e])
-        by smtp.gmail.com with ESMTPSA id m10-20020a05600c4f4a00b00411e6243e70sm1308929wmq.12.2024.02.14.01.12.03
+        by smtp.gmail.com with ESMTPSA id g9-20020a5d5409000000b0033cf0f5a01fsm504394wrv.33.2024.02.14.01.14.07
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Feb 2024 01:12:04 -0800 (PST)
-Message-ID: <27691f5d-2218-4247-b688-cd16d46961c3@redhat.com>
-Date: Wed, 14 Feb 2024 10:12:02 +0100
+        Wed, 14 Feb 2024 01:14:08 -0800 (PST)
+Message-ID: <73b550a1-05f2-46b2-a0bc-574fabe8460a@redhat.com>
+Date: Wed, 14 Feb 2024 10:14:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -84,8 +84,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/7] mm/memcg: use order instead of nr in
- split_page_memcg()
+Subject: Re: [PATCH v4 2/7] mm/page_owner: use order instead of nr in
+ split_page_owner()
 Content-Language: en-US
 To: Zi Yan <ziy@nvidia.com>, "Pankaj Raghav (Samsung)"
  <kernel@pankajraghav.com>, linux-mm@kvack.org
@@ -100,7 +100,7 @@ Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
  cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-kselftest@vger.kernel.org
 References: <20240213215520.1048625-1-zi.yan@sent.com>
- <20240213215520.1048625-2-zi.yan@sent.com>
+ <20240213215520.1048625-3-zi.yan@sent.com>
 From: David Hildenbrand <david@redhat.com>
 Autocrypt: addr=david@redhat.com; keydata=
  xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
@@ -147,7 +147,7 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240213215520.1048625-2-zi.yan@sent.com>
+In-Reply-To: <20240213215520.1048625-3-zi.yan@sent.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -159,53 +159,48 @@ On 13.02.24 22:55, Zi Yan wrote:
 > 
 > Signed-off-by: Zi Yan <ziy@nvidia.com>
 > ---
->   include/linux/memcontrol.h | 4 ++--
->   mm/huge_memory.c           | 3 ++-
->   mm/memcontrol.c            | 3 ++-
+>   include/linux/page_owner.h | 8 ++++----
+>   mm/huge_memory.c           | 2 +-
 >   mm/page_alloc.c            | 4 ++--
->   4 files changed, 8 insertions(+), 6 deletions(-)
+>   mm/page_owner.c            | 3 ++-
+>   4 files changed, 9 insertions(+), 8 deletions(-)
 > 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index 4e4caeaea404..173bbb53c1ec 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -1163,7 +1163,7 @@ static inline void memcg_memory_event_mm(struct mm_struct *mm,
->   	rcu_read_unlock();
+> diff --git a/include/linux/page_owner.h b/include/linux/page_owner.h
+> index 119a0c9d2a8b..d7878523adfc 100644
+> --- a/include/linux/page_owner.h
+> +++ b/include/linux/page_owner.h
+> @@ -11,7 +11,7 @@ extern struct page_ext_operations page_owner_ops;
+>   extern void __reset_page_owner(struct page *page, unsigned short order);
+>   extern void __set_page_owner(struct page *page,
+>   			unsigned short order, gfp_t gfp_mask);
+> -extern void __split_page_owner(struct page *page, unsigned int nr);
+> +extern void __split_page_owner(struct page *page, int order);
+>   extern void __folio_copy_owner(struct folio *newfolio, struct folio *old);
+>   extern void __set_page_owner_migrate_reason(struct page *page, int reason);
+>   extern void __dump_page_owner(const struct page *page);
+> @@ -31,10 +31,10 @@ static inline void set_page_owner(struct page *page,
+>   		__set_page_owner(page, order, gfp_mask);
 >   }
 >   
-> -void split_page_memcg(struct page *head, unsigned int nr);
-> +void split_page_memcg(struct page *head, int order);
->   
->   unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
->   						gfp_t gfp_mask,
-> @@ -1621,7 +1621,7 @@ void count_memcg_event_mm(struct mm_struct *mm, enum vm_event_item idx)
+> -static inline void split_page_owner(struct page *page, unsigned int nr)
+> +static inline void split_page_owner(struct page *page, int order)
+>   {
+>   	if (static_branch_unlikely(&page_owner_inited))
+> -		__split_page_owner(page, nr);
+> +		__split_page_owner(page, order);
+>   }
+>   static inline void folio_copy_owner(struct folio *newfolio, struct folio *old)
+>   {
+> @@ -60,7 +60,7 @@ static inline void set_page_owner(struct page *page,
 >   {
 >   }
->   
-> -static inline void split_page_memcg(struct page *head, unsigned int nr)
-> +static inline void split_page_memcg(struct page *head, int order)
->   {
->   }
->   
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 016e20bd813e..0cd5fba0923c 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -2877,9 +2877,10 @@ static void __split_huge_page(struct page *page, struct list_head *list,
->   	unsigned long offset = 0;
->   	unsigned int nr = thp_nr_pages(head);
->   	int i, nr_dropped = 0;
-> +	int order = folio_order(folio);
+>   static inline void split_page_owner(struct page *page,
+> -			unsigned short order)
+> +			int order)
 
-You could calculate "nr" from "order" here, removing the usage of 
-thp_nr_pages().
+I assume this will fit into a single line now.
 
->   
->   	/* complete memcg works before add pages to LRU */
-> -	split_page_memcg(head, nr);
-> +	split_page_memcg(head, order);
->   
->   	if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
+
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
