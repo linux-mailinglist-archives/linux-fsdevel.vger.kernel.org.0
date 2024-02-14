@@ -1,179 +1,304 @@
-Return-Path: <linux-fsdevel+bounces-11510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E208542BD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 07:20:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E570854308
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 07:45:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A321C272BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 06:20:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22913286527
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 06:45:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AF3111A0;
-	Wed, 14 Feb 2024 06:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F1711193;
+	Wed, 14 Feb 2024 06:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="frEKCXWj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E6jFj9mx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB3810A2A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 06:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A4DB677
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 06:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707891629; cv=none; b=e3KoQJAq6pmZzNRB8UnG8OCJuDexK6ntTZCbw3dkDyGgY9VA1j1BCWW4SNg3iL2aOb3SVP1bhGguSu0x4ShWWEZgJRNjQQ+Ct3Zu411pxjeBz2OYkbaQQ0kDx9m8mWsElXOJJ08Est8FR8YaTN2GaKTaC/TJWrF/y4bEvmxKwGg=
+	t=1707893130; cv=none; b=ayeAnjAmupI9JBZCdDfO153Q4chyj03WP5Y0q8K0f4LIN4QC2ZhDqRum+ysPMI85K/9TEFKbVS8bUHkFhWfN9xvBj4zP2F6rMZPsOD5NTMJCpVJQ7ufptsHuAdAuSy7UIK9SPR/U3Q+GdFHYDH1vuOGOrSNq21zS5SXygDcpXRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707891629; c=relaxed/simple;
-	bh=mPZvfWNgR9UvijIIJJg1XLOXvrF3xKs/y4S11I2T7Mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PPrk01opNk85xyZ0cHEqMFxkOnpWevPdMJfdvO/pLJzO8JEOnHTXKTTk7jlTivsAGLnTR0ZZ8mFpHRfHOiVfmCNJi6WKzAnyRR8zgEnODTLTAK9AuUaEoMplugWqNDwZ6boaSOAkmMFv+flKq5Zc+0HF4UyK+wkySHWAzczP9Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=frEKCXWj; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-42aa4a9d984so24070011cf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 22:20:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1707891626; x=1708496426; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mPZvfWNgR9UvijIIJJg1XLOXvrF3xKs/y4S11I2T7Mc=;
-        b=frEKCXWjz3d2XuOUYzdId9W6Mvn73jhIIjZV2UtP6WyaWc+D189xwP5w9kl+nSGfMv
-         92wT3Ax40rNcFpOR+78CXna5fylDXfI6Hpiij0UumIVVKLviUy2TBLD/fQ4JiX8hcSKk
-         lDb1xW+VEfETTFCtbvp6CurH0ifNSGWGK9795xsbLYIgyGs6dgO9WOfTiI+Y04tJwTwz
-         U2B8EUisd2LXc0KXZhBK0T+8L+7pSUgqhfIrW+lqZMIXTuHrXKY6BZ+bKZmBwZFp1CkH
-         S+9RnGWorvD7Btw1UXhsTSfLoPpByNUBhDeBmUW9EuyIbEp1u9AceE9ovXck9gVbMmaP
-         b6Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707891626; x=1708496426;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mPZvfWNgR9UvijIIJJg1XLOXvrF3xKs/y4S11I2T7Mc=;
-        b=G/Kd9CWfslHamX4g06zwB1xhpqtrelOETt3V1xKt1QcFhr638BzzAlkHM+iTaSxZzg
-         /JC51GFI4BRXndgOt9lJm3NoEkOkmROEQOEFaGjTurwsniVcYvRY4KpyPZVhkEo3Q/uN
-         gekcdGI11Mk15/mEgbr1yD7PJU/N+pZyHVb+xNgarU5NT8EGv/km3TLUrsbJd3Zcu9yP
-         HYSTdXQ+F6bwsnzewvhZZTvcdrz7w+ZdciM1U82kDlSur6xgZ4Q/QIM1uXQ+tjFSkvNA
-         4MeF3y7RJYL5vU4WrJRTcZ/9o3YjrTCB/ZBlsBudRtTW59GyJojZwj/DOlqq1fv9XbIr
-         IYyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXASzOSYWwDFMLMwSL44mppklvvnktyKLsENke6kQbrHUr9M9yn08PloT+MkLg7r1NEk6lJQhRi3D995kQ2iomwGkF2oK9Vrkxm3vCMbw==
-X-Gm-Message-State: AOJu0YxiRHOEN0fcrqtreQExLVsejKXUp1Spo2diSMD9MKeUmXzyFi7v
-	OQVvse4Q/Z5xSbEz3+zY5DVne7k8IrEKZdmpGRN6abYg2ahcnq5Sh11NSAuoL2M=
-X-Google-Smtp-Source: AGHT+IFnioDUv96AzhWE99fGuZ2JnAOUfdgv/2QX4e5KUyJeUPqxV+8qOH1R7pvVEl8yrhK7A4y3Cw==
-X-Received: by 2002:a05:622a:1045:b0:42c:70a8:1b3f with SMTP id f5-20020a05622a104500b0042c70a81b3fmr1875328qte.7.1707891626471;
-        Tue, 13 Feb 2024 22:20:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; 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
-Received: from localhost ([2620:10d:c091:400::5:6326])
-        by smtp.gmail.com with ESMTPSA id l13-20020ac8078d000000b0042c613a5cf3sm1755053qth.33.2024.02.13.22.20.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Feb 2024 22:20:25 -0800 (PST)
-Date: Wed, 14 Feb 2024 01:20:20 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
-	vbabka@suse.cz, roman.gushchin@linux.dev, mgorman@suse.de,
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
-	corbet@lwn.net, void@manifault.com, peterz@infradead.org,
-	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
-	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
-	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
-	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
-	tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
-	paulmck@kernel.org, pasha.tatashin@soleen.com,
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
-	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
-	ndesaulniers@google.com, vvvvvv@google.com,
-	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
-	vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
-	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
-	elver@google.com, dvyukov@google.com, shakeelb@google.com,
-	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
-	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arch@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
-	cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 00/35] Memory allocation profiling
-Message-ID: <20240214062020.GA989328@cmpxchg.org>
-References: <20240212213922.783301-1-surenb@google.com>
+	s=arc-20240116; t=1707893130; c=relaxed/simple;
+	bh=tTuVr3i8XE2tA7zMiIuLnCk4pd4uJeSLOWAgHFhHd8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NvBTzCyFw6QHzm0YPDndo5NKXKmLwZUdugQ4A/5LZeX1llp6Vgssmy+jWVVP8VbK+coMq1UMH3E87VTJ8Da83dwlH7BfDrcfGAg0+VPz54pTRf4Cy8mj8VFjvigDwcqmahAFlvB01gZf98QTiC9JuuJ1MIok8M/Z1e4JspxuGR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E6jFj9mx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7DD9C433F1;
+	Wed, 14 Feb 2024 06:45:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707893129;
+	bh=tTuVr3i8XE2tA7zMiIuLnCk4pd4uJeSLOWAgHFhHd8U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=E6jFj9mxOxAsessn1qJWp/ME689P9Mr+JF07f4VN7N/tPYF0xEHHJcUDeMkTRyCdi
+	 +FEqo03IlSaltfWz57pSO9t0/RVoGxdwAQbwpMe+i63SsKPSW94tYxNlnVQCuwPmof
+	 fZn268bRMruJC8/TUzIL9eU1P9GiAo2FbgLr0YiMmaQyzPI6RPNOcvlgIsyn3ln/Zv
+	 LkEqbwtwC+WX36P/Sz18TcHEhPEXrS5lLrFtGp+beUjc23LB0PtBFna+sn8chdRy/S
+	 OmVrvLBhf4W8zWRoQ8EZEz0KWKIdGfZepIFI+FG4Zgkk8fVquemWZ7LvLqMzJ8+vXM
+	 0qsZ6IrXBL9pA==
+From: Damien Le Moal <dlemoal@kernel.org>
+To: linux-fsdevel@vger.kernel.org
+Cc: Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Subject: [PATCH] zonefs: Improve error handling
+Date: Wed, 14 Feb 2024 15:45:26 +0900
+Message-ID: <20240214064526.3433662-1-dlemoal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240212213922.783301-1-surenb@google.com>
+Content-Transfer-Encoding: 8bit
 
-I'll do a more throrough code review, but before the discussion gets
-too sidetracked, I wanted to add my POV on the overall merit of the
-direction that is being proposed here.
+Write error handling is racy and can sometime lead to the error recovery
+path wrongly changing the inode size of a sequential zone file to an
+incorrect value  which results in garbage data being readable at the end
+of a file. There are 2 problems:
 
-I have backported and used this code for debugging production issues
-before. Logging into a random host with an unfamiliar workload and
-being able to get a reliable, comprehensive list of kernel memory
-consumers is one of the coolest things I have seen in a long
-time. This is a huge improvement to sysadmin quality of life.
+1) zonefs_file_dio_write() updates a zone file write pointer offset
+   after issuing a direct IO with iomap_dio_rw(). This update is done
+   only if the IO succeed for synchronous direct writes. However, for
+   asynchronous direct writes, the update is done without waiting for
+   the IO completion so that the next asynchronous IO can be
+   immediately issued. However, if an asynchronous IO completes with a
+   failure right before the i_truncate_mutex lock protecting the update,
+   the update may change the value of the inode write pointer offset
+   that was corrected by the error path (zonefs_io_error() function).
 
-It's also a huge improvement for MM developers. We're the first points
-of contact for memory regressions that can be caused by pretty much
-any driver or subsystem in the kernel.
+2) zonefs_io_error() is called when a read or write error occurs. This
+   function executes a report zone operation using the callback function
+   zonefs_io_error_cb(), which does all the error recovery handling
+   based on the current zone condition, write pointer position and
+   according to the mount options being used. However, depending on the
+   zoned device being used, a report zone callback may be executed in a
+   context that is different from the context of __zonefs_io_error(). As
+   a result, zonefs_io_error_cb() may be executed without the inode
+   truncate mutex lock held, which can lead to invalid error processing.
 
-I encourage anybody who is undecided on whether this is worth doing to
-build a kernel with these patches applied and run it on their own
-machine. I think you'll be surprised what you'll find - and how myopic
-and uninformative /proc/meminfo feels in comparison to this. Did you
-know there is a lot more to modern filesystems than the VFS objects we
-are currently tracking? :)
+Fix both problems as follows:
+- Problem 1: Perform the inode write pointer offset update before a
+  direct write is issued with iomap_dio_rw(). This is safe to do as
+  partial direct writes are not supported (IOMAP_DIO_PARTIAL is not
+  set) and any failed IO will trigger the execution of zonefs_io_error()
+  which will correct the inode write pointer offset to reflect the
+  current state of the one on the device.
+- Problem 2: Change zonefs_io_error_cb() into zonefs_handle_io_error()
+  and call this function directly from __zonefs_io_error() after
+  obtaining the zone information using blkdev_report_zones() with a
+  simple callback function that copies to a local stack variable the
+  struct blk_zone obtained from the device. This ensures that error
+  handling is performed holding the inode truncate mutex.
+  This change also simplifies error handling for conventional zone files
+  by bypassing the execution of report zones entirely. This is safe to
+  do because the condition of conventional zones cannot be read-only or
+  offline and conventional zone files are always fully mapped with a
+  constant file size.
 
-Then imagine what this looks like on a production host running a
-complex mix of filesystems, enterprise networking, bpf programs, gpus
-and accelerators etc.
+Reported-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Fixes: 8dcc1a9d90c1 ("fs: New zonefs file system")
+Cc: stable@vger.kernel.org
+Signed-off-by: Damien Le Moal <dlemoal@kernel.org>
+---
+ fs/zonefs/file.c  | 42 +++++++++++++++++++-----------
+ fs/zonefs/super.c | 66 +++++++++++++++++++++++++++--------------------
+ 2 files changed, 65 insertions(+), 43 deletions(-)
 
-Backporting the code to a slightly older production kernel wasn't too
-difficult. The instrumentation layering is explicit, clean, and fairly
-centralized, so resolving minor conflicts around the _noprof renames
-and the wrappers was pretty straight-forward.
+diff --git a/fs/zonefs/file.c b/fs/zonefs/file.c
+index 6ab2318a9c8e..dba5dcb62bef 100644
+--- a/fs/zonefs/file.c
++++ b/fs/zonefs/file.c
+@@ -348,7 +348,12 @@ static int zonefs_file_write_dio_end_io(struct kiocb *iocb, ssize_t size,
+ 	struct zonefs_inode_info *zi = ZONEFS_I(inode);
+ 
+ 	if (error) {
+-		zonefs_io_error(inode, true);
++		/*
++		 * For Sync IOs, error recovery is called from
++		 * zonefs_file_dio_write().
++		 */
++		if (!is_sync_kiocb(iocb))
++			zonefs_io_error(inode, true);
+ 		return error;
+ 	}
+ 
+@@ -491,6 +496,14 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+ 			ret = -EINVAL;
+ 			goto inode_unlock;
+ 		}
++		/*
++		 * Advance the zone write pointer offset. This assumes that the
++		 * IO will succeed, which is OK to do because we do not allow
++		 * partial writes (IOMAP_DIO_PARTIAL is not set) and if the IO
++		 * fails, the error path will correct the write pointer offset.
++		 */
++		z->z_wpoffset += count;
++		zonefs_inode_account_active(inode);
+ 		mutex_unlock(&zi->i_truncate_mutex);
+ 	}
+ 
+@@ -504,20 +517,19 @@ static ssize_t zonefs_file_dio_write(struct kiocb *iocb, struct iov_iter *from)
+ 	if (ret == -ENOTBLK)
+ 		ret = -EBUSY;
+ 
+-	if (zonefs_zone_is_seq(z) &&
+-	    (ret > 0 || ret == -EIOCBQUEUED)) {
+-		if (ret > 0)
+-			count = ret;
+-
+-		/*
+-		 * Update the zone write pointer offset assuming the write
+-		 * operation succeeded. If it did not, the error recovery path
+-		 * will correct it. Also do active seq file accounting.
+-		 */
+-		mutex_lock(&zi->i_truncate_mutex);
+-		z->z_wpoffset += count;
+-		zonefs_inode_account_active(inode);
+-		mutex_unlock(&zi->i_truncate_mutex);
++	/*
++	 * For a failed IO or partial completion, trigger error recovery
++	 * to update the zone write pointer offset to a correct value.
++	 * For asynchronous IOs, zonefs_file_write_dio_end_io() may already
++	 * have executed error recovery if the IO already completed when we
++	 * reach here. However, we cannot know that and execute error recovery
++	 * again (that will not change anything).
++	 */
++	if (zonefs_zone_is_seq(z)) {
++		if (ret > 0 && ret != count)
++			ret = -EIO;
++		if (ret < 0 && ret != -EIOCBQUEUED)
++			zonefs_io_error(inode, true);
+ 	}
+ 
+ inode_unlock:
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index 93971742613a..b6e8e7c96251 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -246,16 +246,18 @@ static void zonefs_inode_update_mode(struct inode *inode)
+ 	z->z_mode = inode->i_mode;
+ }
+ 
+-struct zonefs_ioerr_data {
+-	struct inode	*inode;
+-	bool		write;
+-};
+-
+ static int zonefs_io_error_cb(struct blk_zone *zone, unsigned int idx,
+ 			      void *data)
+ {
+-	struct zonefs_ioerr_data *err = data;
+-	struct inode *inode = err->inode;
++	struct blk_zone *z = data;
++
++	*z = *zone;
++	return 0;
++}
++
++static void zonefs_handle_io_error(struct inode *inode, struct blk_zone *zone,
++				   bool write)
++{
+ 	struct zonefs_zone *z = zonefs_inode_zone(inode);
+ 	struct super_block *sb = inode->i_sb;
+ 	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+@@ -270,8 +272,8 @@ static int zonefs_io_error_cb(struct blk_zone *zone, unsigned int idx,
+ 	data_size = zonefs_check_zone_condition(sb, z, zone);
+ 	isize = i_size_read(inode);
+ 	if (!(z->z_flags & (ZONEFS_ZONE_READONLY | ZONEFS_ZONE_OFFLINE)) &&
+-	    !err->write && isize == data_size)
+-		return 0;
++	    !write && isize == data_size)
++		return;
+ 
+ 	/*
+ 	 * At this point, we detected either a bad zone or an inconsistency
+@@ -292,7 +294,7 @@ static int zonefs_io_error_cb(struct blk_zone *zone, unsigned int idx,
+ 	 * In all cases, warn about inode size inconsistency and handle the
+ 	 * IO error according to the zone condition and to the mount options.
+ 	 */
+-	if (zonefs_zone_is_seq(z) && isize != data_size)
++	if (isize != data_size)
+ 		zonefs_warn(sb,
+ 			    "inode %lu: invalid size %lld (should be %lld)\n",
+ 			    inode->i_ino, isize, data_size);
+@@ -352,8 +354,6 @@ static int zonefs_io_error_cb(struct blk_zone *zone, unsigned int idx,
+ 	zonefs_i_size_write(inode, data_size);
+ 	z->z_wpoffset = data_size;
+ 	zonefs_inode_account_active(inode);
+-
+-	return 0;
+ }
+ 
+ /*
+@@ -367,23 +367,25 @@ void __zonefs_io_error(struct inode *inode, bool write)
+ {
+ 	struct zonefs_zone *z = zonefs_inode_zone(inode);
+ 	struct super_block *sb = inode->i_sb;
+-	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+ 	unsigned int noio_flag;
+-	unsigned int nr_zones = 1;
+-	struct zonefs_ioerr_data err = {
+-		.inode = inode,
+-		.write = write,
+-	};
++	struct blk_zone zone;
+ 	int ret;
+ 
+ 	/*
+-	 * The only files that have more than one zone are conventional zone
+-	 * files with aggregated conventional zones, for which the inode zone
+-	 * size is always larger than the device zone size.
++	 * Conventional zone have no write pointer and cannot become read-only
++	 * or offline. So simply fake a report for a single or aggregated zone
++	 * and let zonefs_handle_io_error() correct the zone inode information
++	 * according to the mount options.
+ 	 */
+-	if (z->z_size > bdev_zone_sectors(sb->s_bdev))
+-		nr_zones = z->z_size >>
+-			(sbi->s_zone_sectors_shift + SECTOR_SHIFT);
++	if (!zonefs_zone_is_seq(z)) {
++		zone.start = z->z_sector;
++		zone.len = z->z_size >> SECTOR_SHIFT;
++		zone.wp = zone.start + zone.len;
++		zone.type = BLK_ZONE_TYPE_CONVENTIONAL;
++		zone.cond = BLK_ZONE_COND_NOT_WP;
++		zone.capacity = zone.len;
++		goto handle_io_error;
++	}
+ 
+ 	/*
+ 	 * Memory allocations in blkdev_report_zones() can trigger a memory
+@@ -394,12 +396,20 @@ void __zonefs_io_error(struct inode *inode, bool write)
+ 	 * the GFP_NOIO context avoids both problems.
+ 	 */
+ 	noio_flag = memalloc_noio_save();
+-	ret = blkdev_report_zones(sb->s_bdev, z->z_sector, nr_zones,
+-				  zonefs_io_error_cb, &err);
+-	if (ret != nr_zones)
++	ret = blkdev_report_zones(sb->s_bdev, z->z_sector, 1,
++				  zonefs_io_error_cb, &zone);
++	memalloc_noio_restore(noio_flag);
++
++	if (ret != 1) {
+ 		zonefs_err(sb, "Get inode %lu zone information failed %d\n",
+ 			   inode->i_ino, ret);
+-	memalloc_noio_restore(noio_flag);
++		zonefs_warn(sb, "remounting filesystem read-only\n");
++		sb->s_flags |= SB_RDONLY;
++		return;
++	}
++
++handle_io_error:
++	zonefs_handle_io_error(inode, &zone, write);
+ }
+ 
+ static struct kmem_cache *zonefs_inode_cachep;
+-- 
+2.43.0
 
-When we talk about maintenance cost, a fair shake would be to weigh it
-against the cost and reliability of our current method: evaluating
-consumers in the kernel on a case-by-case basis and annotating the
-alloc/free sites by hand; then quibbling with the MM community about
-whether that consumer is indeed significant enough to warrant an entry
-in /proc/meminfo, and what the catchiest name for the stat would be.
-
-I think we can agree that this is vastly less scalable and more
-burdensome than central annotations around a handful of mostly static
-allocator entry points. Especially considering the rate of change in
-the kernel as a whole, and that not everybody will think of the
-comprehensive MM picture when writing a random driver. And I think
-that's generous - we don't even have the network stack in meminfo.
-
-So I think what we do now isn't working. In the Meta fleet, at any
-given time the p50 for unaccounted kernel memory is several gigabytes
-per host. The p99 is between 15% and 30% of total memory. That's a
-looot of opaque resource usage we have to accept on faith.
-
-For hunting down regressions, all it takes is one untracked consumer
-in the kernel to really throw a wrench into things. It's difficult to
-find in the noise with tracing, and if it's not growing after an
-initial allocation spike, you're pretty much out of luck finding it at
-all. Raise your hand if you've written a drgn script to walk pfns and
-try to guess consumers from the state of struct page :)
-
-I agree we should discuss how the annotations are implemented on a
-technical basis, but my take is that we need something like this.
-
-In a codebase of our size, I don't think the allocator should be
-handing out memory without some basic implied tracking of where it's
-going. It's a liability for production environments, and it can hide
-bad memory management decisions in drivers and other subsystems for a
-very long time.
 
