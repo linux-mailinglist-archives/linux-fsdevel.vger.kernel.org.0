@@ -1,93 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-11591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF985855095
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 18:43:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BE078550DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 18:53:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C60B1F2AF18
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 17:43:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3C2B29112D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 17:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED0B127B6D;
-	Wed, 14 Feb 2024 17:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8949912883B;
+	Wed, 14 Feb 2024 17:52:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZZE+mQ5S"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IUp0RzOj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7F0127B61;
-	Wed, 14 Feb 2024 17:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0F091272BE
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 17:52:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707932533; cv=none; b=ojQrl7/a9k3HI7hYDakYFd3NyBN/p0OV7WmqQRjUP0pJjCJ2rRibum4Q+CLFz86W/RSBG8FqWEGGshOagpac2A6wUxWbIhbD3NcLtJdnNaXptvc6HZiFYYHHwtupyftHBB8RVGKkCbVtv2NpSrE9UiNsE3O9xW9qWk1HTUbZzwE=
+	t=1707933158; cv=none; b=bUSujvhmxHhFAv+GDjMgsfm88M9UBc3XkUjOHisO79epf/pEMAfgs/+w+Z1pU0OJYobMJ0URS3XIRGmn6h4EYrclK6sVRF+ZHs7rW22B1eN3xh8ofTrqMfLWg9nBO+ZYN9rX4wsQV/w/FC8lG+b1LLkOHwxfnV8S9CNw1pbTfL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707932533; c=relaxed/simple;
-	bh=9HAt1wH13l4e0td53MGTulRzGQf3ZC8x9JSGKEjhRPc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d3FNgccesC7WdPbhtOBxFepTDZubR8x/1ZMzGcooNhUWgVClBkPBzqJphfG2MHFJz2J3j2/vxj3Y9J4zuHLoF84Y2vsfWmw+OM3eZydS2G9LNSSDzA7aVx8eP1OXHx2380iyADoP00s1RIqpWsbJZ8yXSxscTMgT3uXkCP/Cnuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZZE+mQ5S; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=rCqjAOgUyt+KMQLgmOWKy4Rs0nGvE2mK6EC5NStgV8w=; b=ZZE+mQ5See51z9iONY/ajauZMI
-	LG1Qhb8X+IG7BISS8BakhilYQMPpTfsVxD2LWepJLQBUKOtFLhiglbuurDPppkrMxWRaZL+Og1Y6L
-	wZuLU+GYHsQqrCgGucwWqX1DfOrAns/gfmVKEUzgrEtnSkWXbutxgEKVFFZJjAShiazMNX+QMtuVl
-	MHx8+l8TFookK3bmI6LB3nsJOKVJ0MYZlo2h15peXjSoOnVhyTN3/+vTSlTtlth+ZeGFnP84B7bLF
-	DTBHK6nvo3lMdxNsj9X3Cl1xtrOBQMuEs+XX2AD7hh1pFAkXipPHlFUO4iz1s0vtORhBHWw5wAYd2
-	gYspOO3g==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1raJGt-0000000DmZm-1rQf;
-	Wed, 14 Feb 2024 17:42:11 +0000
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: fstests@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	patches@lists.linux.dev,
-	Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH fstests] common/config: fix CANON_DEVS=yes when file does not exist
-Date: Wed, 14 Feb 2024 09:42:08 -0800
-Message-ID: <20240214174209.3284958-1-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1707933158; c=relaxed/simple;
+	bh=ludUKPauweTDD8POxHffFJwhelusk8jo87YHW7heVtY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQeGze7oHpNv73v5fAP9LY86d4SZyTaizsJW+mjMGPC2vIPo8yUAZG8ZvJYWBjzCgBXbODfQBhbQECAy0910kCPviFy4gE98BsRcRe0pIBzlMAppBTCCx+a4PsB+6pHyFPqPExSACySTboazKgaXPyr7PVtxx/CNvY+iETakqeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IUp0RzOj; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 14 Feb 2024 12:52:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1707933154;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=leY9N3alrQ22C+fXPazgCJacTsU7ND5Lt0yRBT6Nl7E=;
+	b=IUp0RzOjGR+ggmt5QyQRdV5SyNmk5BeYvtJPmMdFZ/0gdArxfBF61ir/qJD7o6ZZlPI1fa
+	T++b6tnGr9lt+Pc8uqq9a0m6P/fzXGm/Y4Z0gDlSz3GfalRNyLUnqF6AUPN+VvXSj2JW0v
+	2fUSwnZl9xW1aSObJLfJA6MLK5YNJzA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Suren Baghdasaryan <surenb@google.com>, 
+	David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>, vbabka@suse.cz, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, 
+	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, axboe@kernel.dk, 
+	mcgrof@kernel.org, masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org, 
+	tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org, 
+	pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
+	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org, 
+	ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org, 
+	ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com, 
+	vschneid@redhat.com, cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com, 
+	42.hyeyoo@gmail.com, glider@google.com, elver@google.com, dvyukov@google.com, 
+	shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 00/35] Memory allocation profiling
+Message-ID: <7c3walgmzmcygchqaylcz2un5dandlnzdqcohyooryurx6utxr@66adcw7f26c3>
+References: <Zctfa2DvmlTYSfe8@tiehlicka>
+ <CAJuCfpEsWfZnpL1vUB2C=cxRi_WxhxyvgGhUg7WdAxLEqy6oSw@mail.gmail.com>
+ <9e14adec-2842-458d-8a58-af6a2d18d823@redhat.com>
+ <2hphuyx2dnqsj3hnzyifp5yqn2hpgfjuhfu635dzgofr5mst27@4a5dixtcuxyi>
+ <6a0f5d8b-9c67-43f6-b25e-2240171265be@redhat.com>
+ <CAJuCfpEtOhzL65eMDk2W5SchcquN9hMCcbfD50a-FgtPgxh4Fw@mail.gmail.com>
+ <adbb77ee-1662-4d24-bcbf-d74c29bc5083@redhat.com>
+ <r6cmbcmalryodbnlkmuj2fjnausbcysmolikjguqvdwkngeztq@45lbvxjavwb3>
+ <CAJuCfpF4g1jeEwHVHjQWwi5kqS-3UqjMt7GnG0Kdz5VJGyhK3Q@mail.gmail.com>
+ <20240214085548.d3608627739269459480d86e@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240214085548.d3608627739269459480d86e@linux-foundation.org>
+X-Migadu-Flow: FLOW_OUT
 
-CANON_DEVS=yes allows you to use symlinks for devices, so fstests
-resolves them back to the real backind device. The iteration for
-resolving the backind device works obviously if you have the file
-present, but if one was not present there is a parsing error. Fix
-this parsing error introduced by a0c36009103b8 ("fstests: add helper
-to canonicalize devices used to enable persistent disks").
+On Wed, Feb 14, 2024 at 08:55:48AM -0800, Andrew Morton wrote:
+> On Tue, 13 Feb 2024 14:59:11 -0800 Suren Baghdasaryan <surenb@google.com> wrote:
+> 
+> > > > If you think you can easily achieve what Michal requested without all that,
+> > > > good.
+> > >
+> > > He requested something?
+> > 
+> > Yes, a cleaner instrumentation. Unfortunately the cleanest one is not
+> > possible until the compiler feature is developed and deployed. And it
+> > still would require changes to the headers, so don't think it's worth
+> > delaying the feature for years.
+> 
+> Can we please be told much more about this compiler feature? 
+> Description of what it is, what it does, how it will affect this kernel
+> feature, etc.
+> 
+> Who is developing it and when can we expect it to become available?
+> 
+> Will we be able to migrate to it without back-compatibility concerns? 
+> (I think "you need quite recent gcc for memory profiling" is
+> reasonable).
+> 
+> 
+> 
+> Because: if the maintainability issues which Michel describes will be
+> significantly addressed with the gcc support then we're kinda reviewing
+> the wrong patchset.  Yes, it may be a maintenance burden initially, but
+> at some (yet to be revealed) time in the future, this will be addressed
+> with the gcc support?
 
-Fixes: a0c36009103b8 ("fstests: add helper to canonicalize devices used to enable persistent disks"
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- common/config | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Even if we had compiler magic, after considering it more I don't think
+the patchset would be improved by it - I would still prefer to stick
+with the macro approach.
 
-diff --git a/common/config b/common/config
-index a3b15b96f336..2a1434bb11b9 100644
---- a/common/config
-+++ b/common/config
-@@ -679,7 +679,7 @@ _canonicalize_devices()
- 			if [ -L $i ]; then
- 				NEW_SCRATCH_POOL="$NEW_SCRATCH_POOL $(readlink -e $i)"
- 			else
--				NEW_SCRATCH_POOL="$NEW_SCRATCH_POOL $i)"
-+				NEW_SCRATCH_POOL="$NEW_SCRATCH_POOL $i"
- 			fi
- 		done
- 		SCRATCH_DEV_POOL="$NEW_SCRATCH_POOL"
--- 
-2.42.0
+There's also a lot of unresolved questions about whether the compiler
+approach would even end being what we need; we need macro expansion to
+happen in the caller of the allocation function, and that's another
+level of hooking that I don't think the compiler people are even
+considering yet, since cpp runs before the main part of the compiler; if
+C macros worked and were implemented more like Rust macros I'm sure it
+could be done - in fact, I think this could all be done in Rust
+_without_ any new compiler support - but in C, this is a lot to ask.
 
+Let's look at the instrumentation again. There's two steps:
+
+- Renaming the original function to _noprof
+- Adding a hooked version of the original function.
+
+We need to do the renaming regardless of what approach we take in order
+to correctly handle allocations that happen inside the context of an
+existing alloc tag hook but should not be accounted to the outer
+context; we do that by selecting the alloc_foo() or alloc_foo_noprof()
+version as appropriate.
+
+It's important to get this right; consider slab object extension
+vectors or the slab allocator allocating pages from the page allocator.
+
+Second step, adding a hooked version of the original function. We do
+that with
+
+#define alloc_foo(...) alloc_hooks(alloc_foo_noprof(__VA_ARGS__))
+
+That's pretty clean, if you ask me. The only way to make it more succint
+be if it were possible for a C macro to define a new macro, then it
+could be just
+
+alloc_fn(alloc_foo);
+
+But honestly, the former is probably preferable anyways from a ctags/cscope POV.
 
