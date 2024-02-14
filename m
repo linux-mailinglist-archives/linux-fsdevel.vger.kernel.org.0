@@ -1,105 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-11590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11591-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DFA3855077
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 18:38:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF985855095
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 18:43:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4103A1F2AB11
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 17:38:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C60B1F2AF18
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 17:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 574F983A1A;
-	Wed, 14 Feb 2024 17:38:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED0B127B6D;
+	Wed, 14 Feb 2024 17:42:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="bS0LZlXP"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZZE+mQ5S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C725F865;
-	Wed, 14 Feb 2024 17:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA7F0127B61;
+	Wed, 14 Feb 2024 17:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707932301; cv=none; b=IeCwLGQlPuGJR3vcgA1xRmjEp1V/TfIXHV8YLgSLxQeGJB+hhUQzapvW2UUvJrGHiJFm2cW2VFVgxY1TVbH466Izq4jiji6NkS+6Z6TzyNK9jCGlN2GccRCknetZ/kW7NHdeWNddWgJHgGST7eYVxcKL17uekoFDNzMCUyljUYw=
+	t=1707932533; cv=none; b=ojQrl7/a9k3HI7hYDakYFd3NyBN/p0OV7WmqQRjUP0pJjCJ2rRibum4Q+CLFz86W/RSBG8FqWEGGshOagpac2A6wUxWbIhbD3NcLtJdnNaXptvc6HZiFYYHHwtupyftHBB8RVGKkCbVtv2NpSrE9UiNsE3O9xW9qWk1HTUbZzwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707932301; c=relaxed/simple;
-	bh=s6HeBJyfIPnyqjs4144G8v3FowXnX150xUdsdubyEh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VdtknJFFN8AJUDL2rW+ftSMUZCmVq8hNVPy/+u/81Jg0buqsnZyPINeKeybbxURzXGcThvxaBW3wSKie4Oy6V2aQqUw5kCVGz1Nr+HkP8PYOHoClWXv7cKg2XGYelxOHL3VrJXE25SezCZ/X1owYD+oCqvFatDltusjfIIB3Lu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=bS0LZlXP; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4TZllr01Ppz9sqP;
-	Wed, 14 Feb 2024 18:38:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1707932296;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sENgyQIfMJrprwSCQD6BnlwUXKHmIs45mARoOV6LcHI=;
-	b=bS0LZlXPS54FRT/AI0C8xeZlvGsjQeTurUngmAUx3VgaKmOdICNJAzvuS8Hcz5Cbe3a3Zq
-	fc98QmzKnvfPDogUpKx9Sz6mLV6arx/Lhmn7gyGj1lXtOqZcMq6lfaJzsYcGsKVGhW5IUM
-	tM2z80U3jR/Pf/6V+89v1Zz70v/xO2+kOIat8NJKTuprLGP+X/HOHUP9HNxSasAeaox2vX
-	XjV/oYg74OeZRfnJAvlGVTX1A+Y486vAS19kFNvYUmwzjaFuPU9UWP4gzbt9Py9hVH3IFa
-	9og1z8puLb9xNQnyaxBmt9KDJoUuqd0P+RBHP8+c2U0ITezBkYFOeFmXfj+uWA==
-Date: Wed, 14 Feb 2024 18:38:11 +0100
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: "\"Matthew Wilcox (Oracle)\"" <willy@infradead.org>, 
-	linux-mm@kvack.org, David Hildenbrand <david@redhat.com>, 
-	Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>, 
-	"\"Kirill A . Shutemov\"" <kirill.shutemov@linux.intel.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	=?utf-8?Q?=22Michal_Koutn=C3=BD=22?= <mkoutny@suse.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	"\"Zach O'Keefe\"" <zokeefe@google.com>, Hugh Dickins <hughd@google.com>, 
-	Mcgrof Chamberlain <mcgrof@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 0/7] Split a folio to any lower order folios
-Message-ID: <fggmw4jfozww47c3pbpbad7v5ew3jvvgiqg7ccloz6xl5xd4dy@2nxr5lhhzbcb>
-References: <20240213215520.1048625-1-zi.yan@sent.com>
- <FC18B703-54B3-4BC4-B298-5057E8F26A70@nvidia.com>
+	s=arc-20240116; t=1707932533; c=relaxed/simple;
+	bh=9HAt1wH13l4e0td53MGTulRzGQf3ZC8x9JSGKEjhRPc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d3FNgccesC7WdPbhtOBxFepTDZubR8x/1ZMzGcooNhUWgVClBkPBzqJphfG2MHFJz2J3j2/vxj3Y9J4zuHLoF84Y2vsfWmw+OM3eZydS2G9LNSSDzA7aVx8eP1OXHx2380iyADoP00s1RIqpWsbJZ8yXSxscTMgT3uXkCP/Cnuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZZE+mQ5S; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=rCqjAOgUyt+KMQLgmOWKy4Rs0nGvE2mK6EC5NStgV8w=; b=ZZE+mQ5See51z9iONY/ajauZMI
+	LG1Qhb8X+IG7BISS8BakhilYQMPpTfsVxD2LWepJLQBUKOtFLhiglbuurDPppkrMxWRaZL+Og1Y6L
+	wZuLU+GYHsQqrCgGucwWqX1DfOrAns/gfmVKEUzgrEtnSkWXbutxgEKVFFZJjAShiazMNX+QMtuVl
+	MHx8+l8TFookK3bmI6LB3nsJOKVJ0MYZlo2h15peXjSoOnVhyTN3/+vTSlTtlth+ZeGFnP84B7bLF
+	DTBHK6nvo3lMdxNsj9X3Cl1xtrOBQMuEs+XX2AD7hh1pFAkXipPHlFUO4iz1s0vtORhBHWw5wAYd2
+	gYspOO3g==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1raJGt-0000000DmZm-1rQf;
+	Wed, 14 Feb 2024 17:42:11 +0000
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: fstests@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Luis Chamberlain <mcgrof@kernel.org>
+Subject: [PATCH fstests] common/config: fix CANON_DEVS=yes when file does not exist
+Date: Wed, 14 Feb 2024 09:42:08 -0800
+Message-ID: <20240214174209.3284958-1-mcgrof@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <FC18B703-54B3-4BC4-B298-5057E8F26A70@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Wed, Feb 14, 2024 at 12:18:14PM -0500, Zi Yan wrote:
-> Hi Pankaj,
-> 
-> On 13 Feb 2024, at 16:55, Zi Yan wrote:
-> 
-> > From: Zi Yan <ziy@nvidia.com>
-> >
-> > Hi all,
-> >
-> > File folio supports any order and multi-size THP is upstreamed[1], so both
-> > file and anonymous folios can be >0 order. Currently, split_huge_page()
-> > only splits a huge page to order-0 pages, but splitting to orders higher than
-> > 0 is going to better utilize large folios. In addition, Large Block
-> > Sizes in XFS support would benefit from it[2]. This patchset adds support for
-> 
-> Just talked to Matthew about his order-1 pagecache folio, I am planning to
-> grab that into this one, so that I can remove the restriction in my patches
-> and you guys do not need to do that in your patchset. Let me know if it works
-> for you.
-> 
+CANON_DEVS=yes allows you to use symlinks for devices, so fstests
+resolves them back to the real backind device. The iteration for
+resolving the backind device works obviously if you have the file
+present, but if one was not present there is a parsing error. Fix
+this parsing error introduced by a0c36009103b8 ("fstests: add helper
+to canonicalize devices used to enable persistent disks").
 
-Cool! Sounds good to me. I generally base my baseline based on -rcs. So
-I might include it while sending for reviews until 6.8. I will remove
-that patch once this gets in for the 6.9 merge window.
+Fixes: a0c36009103b8 ("fstests: add helper to canonicalize devices used to enable persistent disks"
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ common/config | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks.
---
-Pankaj
+diff --git a/common/config b/common/config
+index a3b15b96f336..2a1434bb11b9 100644
+--- a/common/config
++++ b/common/config
+@@ -679,7 +679,7 @@ _canonicalize_devices()
+ 			if [ -L $i ]; then
+ 				NEW_SCRATCH_POOL="$NEW_SCRATCH_POOL $(readlink -e $i)"
+ 			else
+-				NEW_SCRATCH_POOL="$NEW_SCRATCH_POOL $i)"
++				NEW_SCRATCH_POOL="$NEW_SCRATCH_POOL $i"
+ 			fi
+ 		done
+ 		SCRATCH_DEV_POOL="$NEW_SCRATCH_POOL"
+-- 
+2.42.0
+
 
