@@ -1,209 +1,288 @@
-Return-Path: <linux-fsdevel+bounces-11526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89B2D85454D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 10:31:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 132E2854567
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 10:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F913291313
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 09:31:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF64F282E01
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 09:34:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23AD14000;
-	Wed, 14 Feb 2024 09:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 827B6134B7;
+	Wed, 14 Feb 2024 09:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WvqSNRqh";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lQr6ZTw6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M0DyIO7r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C79212B69;
-	Wed, 14 Feb 2024 09:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707903061; cv=fail; b=aFyR+9h/yfPzX7qVOhceNSuKdW28ZB3PUaCasLz1if0fom7IQIBBCzf1dK8hol0pL44e5Aab37GAkzlF+gNMMuVgfkd0oTuehCNu9s3oOhamd0Wt1TMRwc8mCjgYjHCz+2nRfg6Ienhec1vQxg/JeQjQNCQRCKJsJbPr9kduxcE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707903061; c=relaxed/simple;
-	bh=zqFrfky8wuDweIt/pHjeCJzFTBWp0d/2Ktya8xahX7U=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Q0xqMesfnr2uh6a5YiYkqYwOdqlmqYiYaS0RvxYAclLkqpy4E1IdVX+mFF3ZLrD+AijdSiLz4Up9ry7i59zdqx6yiHnzKKYJaj9bdsv/LkMHyi6DMDRjJcsH+U3+iXSuCnJy4tj2mVlJqk5t335FKqZX37hd0FdNvOxSf0DUZ6g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WvqSNRqh; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lQr6ZTw6; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41E8i62v023013;
-	Wed, 14 Feb 2024 09:30:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=aR5Q/EUW3PodunWeed+p3znwn1EkAGVeldQ40LsaLiM=;
- b=WvqSNRqhQPvFaMD+tHhDjMV/pcQfko8pBaCxlHWKDlzPteHqlgn/JeYttRwz2ar3AAUk
- pSUVAo3svDRqqfsxwKSA91o3Dt/ua0gwauweaR8yY4QUnaVDeFHkTh1f/vO8Dsjy4K11
- V9p8E9squVhsPdWCvOzTuBA80XeSkFwMaEVC0IxX5dxvM7NnsWc7Ghw0xA4cqlPtAzEL
- JvBEJ8VMwDvtRilQ/sj2NcJ++b4XiifB/7UN36lSmE+x5QtH/bOnDSFUwo2NahgdBGKv
- psJr0xPuuZ5p7rnPDJu5PCwU1q+lN3T1vZK2AgHTTt1CTAk616jKJdzqlyTYEAxjPElc PQ== 
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3w8ry108ta-6
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Feb 2024 09:30:31 +0000
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 41E7eJnL031496;
-	Wed, 14 Feb 2024 09:24:50 GMT
-Received: from nam04-dm6-obe.outbound.protection.outlook.com (mail-dm6nam04lp2041.outbound.protection.outlook.com [104.47.73.41])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3w5yk8nvws-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Feb 2024 09:24:50 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Bp9JEqOVmKkCBNXkUDcY9L4FVFiIJctrX9PpO89aHTxfGfQcE06PwTL+AGnPZ9QrLscCFzOUQQMh1RyQkABOejMv4zEEXKJXiGh9fDC8s1gc0G+oyo3pyuS/J5QQqEbO95hr1VSen98uJ8xDCJSaVLn620VYcvr+NmFdl0cJ0hz8ZeCj0mJd18gsJ+yyEfn1cpAHMjrHULyzFk/kXcQ6Cx/W7aXKCDf90nH5c9TUuVW2EujmJ+867Yd4PV6doSKC8zFAJ4bGRqIJGFgBta3OS18K19e4FjJiBUsI2YJyKBTNE3niBTECMngCQdNzSDB2KQCHx2qkcm+8TyZ85Wqgaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aR5Q/EUW3PodunWeed+p3znwn1EkAGVeldQ40LsaLiM=;
- b=ijZqTnSHtbBdBrlvQxJbseV1eyhAiFOL0g504ZPtym8D27HvDDTbMo2hTBzvxj19JA2mW4dw6utCEeMDCs7WCB7cDTpTKkuarwmehhLAng+mw6dWFAk1X5tGRbCPn++VP0CrlZjYhlRCoTyLg3Ih/N0//vhAg+UvQJLjnpqTLUknpZPnwMf64wwgE4qvlkujrXejCBXGQfcT3djPpVAniwoihalq0dUbqo/PrZOMdENn82Ou4ESGGtx4WPnuKunH01E66VaMUDPl2FLPFya/FomgmfV2sQmmwr2jQ/8R1cSza7tsnRUTb9tCPhqhMuxhjNEGuBpk9Yt0gnc8Bo9blw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aR5Q/EUW3PodunWeed+p3znwn1EkAGVeldQ40LsaLiM=;
- b=lQr6ZTw6eB+gavtn3aUZxHDk3c20GPuWzpVCTMpzd90dEqiPP65PiG0Nrh3HGnYKNSoByZgMiakpH71DmjfD1Kph1rUm2KGAuffaRJlREwrAr6Uetbplp5ghK8V6m9nDyr5e+Ucc0FVelZ2UI9Z5Vb0KW6xL/kb78LokJhsrs8k=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by DS0PR10MB6871.namprd10.prod.outlook.com (2603:10b6:8:134::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7249.36; Wed, 14 Feb
- 2024 09:24:48 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::56f9:2210:db18:61c4]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::56f9:2210:db18:61c4%4]) with mapi id 15.20.7292.026; Wed, 14 Feb 2024
- 09:24:48 +0000
-Message-ID: <75f08d51-e4e0-4899-8258-81470c044134@oracle.com>
-Date: Wed, 14 Feb 2024 09:24:42 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 07/15] block: Limit atomic write IO size according to
- atomic_write_max_sectors
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>
-Cc: axboe@kernel.dk, kbusch@kernel.org, sagi@grimberg.me, jejb@linux.ibm.com,
-        martin.petersen@oracle.com, djwong@kernel.org, viro@zeniv.linux.org.uk,
-        brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-scsi@vger.kernel.org, ming.lei@redhat.com, ojaswin@linux.ibm.com,
-        bvanassche@acm.org
-References: <20240124113841.31824-1-john.g.garry@oracle.com>
- <20240124113841.31824-8-john.g.garry@oracle.com>
- <20240213062620.GD23128@lst.de>
- <749e8de5-8bbb-4fb5-a0c0-82937a9dfa38@oracle.com>
- <20240214072610.GA9881@lst.de>
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20240214072610.GA9881@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM8P251CA0001.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:20b:21b::6) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54184168DF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 09:34:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707903260; cv=none; b=X3yzaBxEpC6x7xYXJzXmvLZT7UrPKVd6nH0azqxoT4EHrFrnRzydbHTa1MRAESAOlQBUfla6hVAv4akzcOw4hGupECtiOw/bLiAlOgOr6WKAtt0qHDlimyj9AdIaPCRCzdxZfZwqTPK1J7ARb8Fms4Ifp9JjUeEoYaNf3WbOO9w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707903260; c=relaxed/simple;
+	bh=FxSgUwsnEmLismW7KZS+woIOBL3X3s8QTre4gaV0ORU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WMBct10j4bmafk4QWIBaYtl66C7cjHJpqdUYfnTBHckQr0PDZ3j35RigINO8GMdQAnbAhatcG17HqOcvyZW88kM3XR2MOYb23zFVyZHphXtXlRCczBxB3AjES4ONPE9iwuXmjQkQalKLT7pE0JvgYkhXAsJlVjgK4UVppHjDUFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M0DyIO7r; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1707903256;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=qgy6GGYXXuaVuritCAHxcL8acV3jG8qW6OTkGDcq1DM=;
+	b=M0DyIO7r/QF5NP7xbpaHT6hEkfiN9C6ZsBmye3RF3lK/xJkfXgkDTmPpJDsosMbhQbvBu6
+	6HXQ5EPdieZFNtwjk4WyV0BOC/Zk/05kx0E8w7+M0QMcA/6BMjEaKIZWqnjJMfVaaHloV2
+	9rcAixnBI/FGqCjqslm0JfXu8AItUYo=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-588-907QsXA2NRiEUxsdTJoILw-1; Wed, 14 Feb 2024 04:34:14 -0500
+X-MC-Unique: 907QsXA2NRiEUxsdTJoILw-1
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-33b2238ceceso2358670f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 01:34:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707903253; x=1708508053;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :references:cc:to:content-language:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qgy6GGYXXuaVuritCAHxcL8acV3jG8qW6OTkGDcq1DM=;
+        b=Q6ehE6X4WBtboJVmbWUeQWKiRw+PvJO0dIqVATgE7oz77yolv3oBYXhAIhznzqzlal
+         ATwuJhTs10yX/oJL92e8zYB2vivyyNfY4s3xf0Q0O5DXGY1LoqR/JzLE3pq0/jaCKion
+         SBa5SQD4JgmihIO4/QZRl2C2hv4E7qOPOJm+potWINXP2nZjrTlOqPsvK8sSJVQupm76
+         +FVA5Od8wy73v+lmOrTmtUQ4uaD5bnDBP2Oowl096M3Ygi1i+37oQCQ3p2eZMpg6rLtp
+         RLznmPJf7hIOiFMEDi4fNLXYSlVpSE1Chipx9s1ISmRtbbPCp6f80YlCbRlNpQ6S3g8R
+         ETmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkAVYx573rkoNEstgqlybgBoWzSMkz2N9Kf/LWMhqKYZqzz7NDhjtIXdM1k1uE16i0SAfezJPrYEFbF186u6EJl6nNjRqat+WW2XDuQQ==
+X-Gm-Message-State: AOJu0YxN7AgjsynwhxXO0HlgKQRdv5I74D4XUuEVd3OeEGBMEF+BMgme
+	Et6bFTqXZoy1o+4tCrUa+0nc12tjwIzWPLY61rdimr9fmuUOusuT15nNx91LA+RwbThmveKMwSC
+	rYhUXZPYHxiEuOQdDok3/yO54sSnqX/VBVY/E64nUZX13GIOx1QYggyugOw1OBSU=
+X-Received: by 2002:a5d:5001:0:b0:33b:68bc:6e73 with SMTP id e1-20020a5d5001000000b0033b68bc6e73mr1241982wrt.42.1707903253634;
+        Wed, 14 Feb 2024 01:34:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHTKmko1G9G/pee2ZiIe9NSxdTOYkWa8OLYM08WwbRBQZV9vdrjk9NQvxiRYAK2xGkX0Z9PEw==
+X-Received: by 2002:a5d:5001:0:b0:33b:68bc:6e73 with SMTP id e1-20020a5d5001000000b0033b68bc6e73mr1241961wrt.42.1707903253189;
+        Wed, 14 Feb 2024 01:34:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVOVgPexUBHiz71w0Ncw2wb5WblHGZcjzqljN+RKJvXEV26t3QZyu3Q/2CF52LOfzIlIVzJz9WuCDV9iTj0/AXsUvkibhf190GgJnJqKyUyJQ8HyxoHcv8u0nr/9FggrkpZaTADQ4zuu/P4D0hfOhBJoASA1J3dZkqNQTP3g6YoLm/RQxx4Yd2OCL6K1zX856PT46s1Pr4P0awOpzSDed6PhBTCYbs8hROATCFL5jlXXdsrS0/QWhNgM48wX1SS9TsGGuuUta/5t4X3CWSP4cI6vkA3/KCyZlPp3bSq1dHsw+3eDE7EGgvMoAJbq0TEHL9trc+jpZxe+AK6z+kOixjfRG2KSr/kcaD0wjVKqHFyRvXrnpj5KuvLhIIfafwwBgUUKhWl0LhM4IgAcX0XqUJLXkw5SkA6cNKtTQIX/sJuB0GEh3ETe5fX4jfXnUBwPhYOpczYXJ1BXODwfx8efnnz3FakvU6i9wuXseIea6Mf2BARrbDnsvflq7h7xAA5rnXJtjkFYJG0UYMXLyF8JQsP9yScItNqdrAWx9AY4sQscsz/TyCzKwcvZoweCe8+cy32
+Received: from ?IPV6:2003:d8:2f3c:3f00:7177:eb0c:d3d2:4b0e? (p200300d82f3c3f007177eb0cd3d24b0e.dip0.t-ipconnect.de. [2003:d8:2f3c:3f00:7177:eb0c:d3d2:4b0e])
+        by smtp.gmail.com with ESMTPSA id bj5-20020a0560001e0500b0033b2799815csm12156827wrb.86.2024.02.14.01.34.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Feb 2024 01:34:12 -0800 (PST)
+Message-ID: <48219ffc-62dc-430a-8055-6fb9ab533e7f@redhat.com>
+Date: Wed, 14 Feb 2024 10:34:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS0PR10MB6871:EE_
-X-MS-Office365-Filtering-Correlation-Id: 369c02a7-255c-4db2-8ad1-08dc2d3eca05
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	szFPcCyeOWgcImYp1Y85s/XwlebzcSWu1VwLfkktnAI3CVvU+fDNWH395uoVFGVKkkiotm1r4CtOrUxSEDI8O4FJ/UvqtIWyf3yyNY/zpRRKnte99ZGcO4XLldQExktxdhLGt34lNGVGRzsLsUzWiJyhqTaUQlGLZd4OzH9Gwy+C5d2haVFL5ODp6aCu5oChM2WPsjykgbgygSR5uLkZ01e4YMV0BHI8vDSAz+ihzFa2U0UYuY1t3Dl2uytB72HteDaYEK6YRN6Zo/LODcRZhWUfxS0eXyE2bHlcQ6ULhoW0bg7qGmsTsti369Z6sSZ50pB5KXrAM0q54kdhmePqionSa5nFvuCE4lJiIg6cY3ZMp4Jqyc1DmP0WsBM9IaGBgWxXp5cnBYzcjxDqA8Ite9kE+soz/7akmoP2DrXh3O+fyH9ef9ug8vn+S5h/w8Z3xXbKq0rWgIXNdMxkIP1xLGjLmPJfXapQ7Bt31WLkLhRp/7EJfTZkvbCAVPgwVpjj8/ZNpNOpaeURk3fdOEqtEdLKPBmD7ERU8Sf90RxcSbA1NFzVQsE7J5BM3MyZJxuB
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(136003)(396003)(366004)(376002)(346002)(230922051799003)(1800799012)(451199024)(64100799003)(186009)(2906002)(5660300002)(4744005)(31686004)(7416002)(26005)(86362001)(66899024)(41300700001)(38100700002)(8676002)(31696002)(66946007)(2616005)(36916002)(6486002)(6506007)(66476007)(6512007)(83380400001)(53546011)(6666004)(8936002)(66556008)(36756003)(478600001)(4326008)(6916009)(316002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?eFUzNmhOc050dGVhRUpCZ3YwNkdKRGJXQmp2dkN2SmJmcVVHd1dYV0YvbG9O?=
- =?utf-8?B?K2VBdklUbzA5S3ppT2NkdFNVdGk0bmY4T3h3NThIbzJnM2JxZ2twVUlZaVhF?=
- =?utf-8?B?MEUzYWdab0xTZDU3UUtqQkx5SEZCN1B6eXNXam5pT09QbmQrWm1mMWNySGpm?=
- =?utf-8?B?emhJSko3LzdzV0U5YnhZNXhQekhrb1AvV0o5WEFFMGRGVit4MXh3djBWM2pl?=
- =?utf-8?B?OXU5aEtnMDN5YzBzcTl2TU5ianFobjRodkxoRTVlWHBiS2VjMHJGeUYrS00y?=
- =?utf-8?B?c1FDYTVkVnBPclgxWTNodXBYUncycUZIME5Xem5wYlBEbUpLeUptWmtKNjJU?=
- =?utf-8?B?Uk9IOFhndHFjYVNDVmpGcVEvdGQ2RlUxcnFVelJKdFpZSWJKMDBKNmxQR052?=
- =?utf-8?B?eTM0OE53UTJRT0pmTW8wVjloV3lLYlFLQVdaMzg5NXcrSFNIdUFycUlZbXJD?=
- =?utf-8?B?UU1QWjBRMkdkR2tNdGZMaEpmUzB5VUxpNTJiZ3RtS3YrZWN4d3IwejJYNVM1?=
- =?utf-8?B?L3ZiWURNVmwwdUdlYjdIY2I2SkZLR3hQb3ZWZ2h5VWQ2Z3lsakkxT2MvRWo4?=
- =?utf-8?B?czBVbkpOc1krRWNPSE0vN29nZ2R5TzBsR1NJUWZGajc2K3Bwai9sZUh6eHBU?=
- =?utf-8?B?SGU0RnRMN2d2WEI5T3ViY1gzRXZ6YkNzcTNNdmV5ZktEWE1PREhwMkgxeEdv?=
- =?utf-8?B?K1R5S1I5K1RRb3cwNFJLVDFVVVBkRXV5ZnptTGNHSkkzcFJPT3pSTTNXNlFk?=
- =?utf-8?B?RXo2UWJMRFJDMEhmWERLZkxDSlNPK3VqTWRZSVdUcm5sSmFqREsvRWZYT1ho?=
- =?utf-8?B?dFZqeG9qaXhjWEx6Ung2dW5IbFhudUdvWUZTRXlZazQrR1lJM1BYRXZUR0hj?=
- =?utf-8?B?a2RGdWYxYWNRNVd4bkdGOGRxLzJEWlZZNkV3NDJmTFpXU1RzaVpGa25ObWVm?=
- =?utf-8?B?T2cvZDBUSHlGZThhay80OUpSVVdidGVOOEZud0NRVmJObVZKUGk3Wno5VFhl?=
- =?utf-8?B?N0RzUTVzaVhGNXV6UXRtTFMxdWQvaEtoWm5kV1UzSVNpaXF4TFhoN2xNQWFT?=
- =?utf-8?B?V3FsU21YcEF5dTFQZGxvbldtZHFHNWIwcmZNeHN4K0V4eFEwREl2VzdyYzZz?=
- =?utf-8?B?d1laZW5VbXJQQzFyYmpaWE1UVHF6RFNCaUVsMjZaRXJXZXdIY2MzOCt1WXdG?=
- =?utf-8?B?cExlaVZsUm9uQlhNZFFNd0czdGhqTHpicXJXN1ZVcXN3QWxLbzZJdCtsMW1u?=
- =?utf-8?B?Qzk1NytGS0ovbFRMdDdTWmZndTdMck5WUlR1ZWdSdllBelg3YWtva3FueU4r?=
- =?utf-8?B?cDVUeGNUS1MwUldOVDM5TlRDNE5pTkxGU0JMZEp2S3hORUVYY3RDSXpTdlhv?=
- =?utf-8?B?UmhGalJ4M2NsMWZ2aG1OZnZkY1lOQVY1d0lPZFZ0eEhzMEJjRlVPUmV0SXA4?=
- =?utf-8?B?REZ3VExZV2Z2amhaSDVtSHhabDVVaVdTWmVaWGE3dExvSlovSXE3MHpoVitJ?=
- =?utf-8?B?R3FUY09wc1lLL3pkL05RQ0dpUUdRLzFlZjNUb3RwR3M3YlJZSkl4VTgyblQz?=
- =?utf-8?B?dng0Si96QXh0bmhjK1Fjem5scFExS2k2d21xYTR2KzNVbVRLZVR0Tkl1Q0lh?=
- =?utf-8?B?UUJqWTdOM2FWT1ZLcWZFc28yK0hzQzVwMjc1ME1OV3JVZk9KdFV4VjB3YmJ1?=
- =?utf-8?B?NFRvdVZ2UmVjVEFocHZpM2xaRlN6VDVTTVdZaVZ0WmVWclNVbUxqUktFUmhW?=
- =?utf-8?B?WVNaRU5sYVA2RmlYUTBjaTRDd3NoMUhVVGtMT29MMk4vVG81bjJGTVp4UWY4?=
- =?utf-8?B?elltUENLZGw2aEhQVDd2VkgvVXlMU1k4WlJ5ZHFTTFhKWWtOWVRTTGRFVVpn?=
- =?utf-8?B?by9vMDhjd3VFM29hYTkxcUpKSFNTc0ZXTjhjdnU5V2F5OUlKY2ZLbHhsNXh1?=
- =?utf-8?B?bm5KUVVWVWQ1ejlWTHR0TGZUYUZsNGRVMmR1YlJvTXMzOVE3SnV5Wm9WdWo2?=
- =?utf-8?B?bjErWWQvQVkwdy9ONVhPQkZvSXR6NjJ2RlJkNXFKQldMV1JXZmFUUnM4Qi9m?=
- =?utf-8?B?M0hhSnV5SXJQeDNTOHY1L1dQb0VpSjVERTFyek9GOHV0Sm1UY3VIN3dFS3dR?=
- =?utf-8?B?QzNWRklCaHlzKzE2cHBzQ0RhQWFzdkk1OXNZVFROT1lTSFNwaTFkeDhuSEIr?=
- =?utf-8?B?bnc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	/UL6dwi+YF/+2iOUEhaXVcEfGo7k5XsiI6qxmLhchxacBY2FVj7rvyx0o+QTmklEN8MMvRf/EHlj/McT7fKwS4Y+TxjvT2fVjX8oPQKjxs5QB8u8wewGs+QzVaRLCxszgQU6vH5Evra09ydxbDs2AB7xTaXJRGgyvqrArInjfNjCE7xzOU5qA+DAERtpSU/WoQS7208WmJlXTG2+Pe8zGvuB+ZKI0WR77jNCx2MkIOdS6+K7gSqliaSeVYGy5XXPw5gOwJ4z8CmvY45pW0NeLn11sh9ED1E/19Rf11K4dK4AeBvyCGAcPL2a3rlKXs54Y/D33zjQM5sAjIDLWCi2bPSmqS4mu8TZXYCPxwxw8STrsW/7vMkWAiEehjwuzroW95lvOoSwnzyZ6/BnuqocMMKJ7A6iiH5VBV6324wo3bPx+pUXV1OHAXhuwGhWD05GCeoCiyFU1lSq6WNwaQ7tp7JeRbZFHQWcQ+amMl6/FvTEm3wvDkcjYjPuO6EB3job9pfW8UPTM80sWdU5nA+fJscUh8md0e5Xxxq5nUIvwnea/ACFTABmjYNfSZqYED/FLvvYoqo9nVZZX7ysRmDHBvcVdl1MQ/6DyGUcH42Jd/Y=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 369c02a7-255c-4db2-8ad1-08dc2d3eca05
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2024 09:24:48.2161
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 1Y4cX34tRMKi+qbdSXPKqq1kwn4cyN7Sc1VOcpBHOy51/e4U/BqKJe1h7mgesl6vdqj8jGn3IhBhL5wyp2992w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6871
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-14_02,2024-02-12_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxscore=0 spamscore=0
- adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=990 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2311290000
- definitions=main-2402140073
-X-Proofpoint-ORIG-GUID: s0awLkMpll6b157E0moajxiMgvQsEPr_
-X-Proofpoint-GUID: s0awLkMpll6b157E0moajxiMgvQsEPr_
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/7] mm: page_owner: add support for splitting to any
+ order in split page_owner.
+Content-Language: en-US
+To: Zi Yan <ziy@nvidia.com>, "Pankaj Raghav (Samsung)"
+ <kernel@pankajraghav.com>, linux-mm@kvack.org
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, Roman Gushchin <roman.gushchin@linux.dev>,
+ Zach O'Keefe <zokeefe@google.com>, Hugh Dickins <hughd@google.com>,
+ Mcgrof Chamberlain <mcgrof@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20240213215520.1048625-1-zi.yan@sent.com>
+ <20240213215520.1048625-5-zi.yan@sent.com>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240213215520.1048625-5-zi.yan@sent.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 14/02/2024 07:26, Christoph Hellwig wrote:
-> On Tue, Feb 13, 2024 at 08:15:08AM +0000, John Garry wrote:
->> I'm note sure if that would be better in the fops.c patch (or not added)
+On 13.02.24 22:55, Zi Yan wrote:
+> From: Zi Yan <ziy@nvidia.com>
 > 
-> We'll need the partition check.  If you want to get fancy you could
-> also add the atomic boundary offset thing there as a partitions would
-> make devices with that "feature" useful again, although I'd prefer to
-> only deal with that if the need actually arises.
-
-Yeah, that is my general philosophy about possible weird HW.
-
+> It adds a new_order parameter to set new page order in page owner.
+> It prepares for upcoming changes to support split huge page to any
+> lower order.
 > 
-> The right place is in the core infrastructure, the bdev patch is just
-> a user of the block infrastructure.  bdev really are just another
-> file system and a consumer of the block layer APIs.
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>   include/linux/page_owner.h | 10 +++++-----
+>   mm/huge_memory.c           |  2 +-
+>   mm/page_alloc.c            |  4 ++--
+>   mm/page_owner.c            |  9 +++++----
+>   4 files changed, 13 insertions(+), 12 deletions(-)
+> 
+> diff --git a/include/linux/page_owner.h b/include/linux/page_owner.h
+> index d7878523adfc..a784ba69f67f 100644
+> --- a/include/linux/page_owner.h
+> +++ b/include/linux/page_owner.h
+> @@ -11,7 +11,7 @@ extern struct page_ext_operations page_owner_ops;
+>   extern void __reset_page_owner(struct page *page, unsigned short order);
+>   extern void __set_page_owner(struct page *page,
+>   			unsigned short order, gfp_t gfp_mask);
+> -extern void __split_page_owner(struct page *page, int order);
+> +extern void __split_page_owner(struct page *page, int old_order, int new_order);
+>   extern void __folio_copy_owner(struct folio *newfolio, struct folio *old);
+>   extern void __set_page_owner_migrate_reason(struct page *page, int reason);
+>   extern void __dump_page_owner(const struct page *page);
+> @@ -31,10 +31,10 @@ static inline void set_page_owner(struct page *page,
+>   		__set_page_owner(page, order, gfp_mask);
+>   }
+>   
+> -static inline void split_page_owner(struct page *page, int order)
+> +static inline void split_page_owner(struct page *page, int old_order, int new_order)
+>   {
+>   	if (static_branch_unlikely(&page_owner_inited))
+> -		__split_page_owner(page, order);
+> +		__split_page_owner(page, old_order, new_order);
+>   }
+>   static inline void folio_copy_owner(struct folio *newfolio, struct folio *old)
+>   {
+> @@ -56,11 +56,11 @@ static inline void reset_page_owner(struct page *page, unsigned short order)
+>   {
+>   }
+>   static inline void set_page_owner(struct page *page,
+> -			unsigned int order, gfp_t gfp_mask)
+> +			unsigned short order, gfp_t gfp_mask)
+>   {
+>   }
+>   static inline void split_page_owner(struct page *page,
+> -			int order)
+> +			int old_order, int new_order)
+>   {
+>   }
+>   static inline void folio_copy_owner(struct folio *newfolio, struct folio *folio)
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 3d30eccd3a7f..ad7133c97428 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -2919,7 +2919,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+>   	unlock_page_lruvec(lruvec);
+>   	/* Caller disabled irqs, so they are still disabled here */
+>   
+> -	split_page_owner(head, order);
+> +	split_page_owner(head, order, 0);
+>   
+>   	/* See comment in __split_huge_page_tail() */
+>   	if (PageAnon(head)) {
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 9d4dd41d0647..e0f107b21c98 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -2652,7 +2652,7 @@ void split_page(struct page *page, unsigned int order)
+>   
+>   	for (i = 1; i < (1 << order); i++)
+>   		set_page_refcounted(page + i);
+> -	split_page_owner(page, order);
+> +	split_page_owner(page, order, 0);
+>   	split_page_memcg(page, order, 0);
+>   }
+>   EXPORT_SYMBOL_GPL(split_page);
+> @@ -4837,7 +4837,7 @@ static void *make_alloc_exact(unsigned long addr, unsigned int order,
+>   		struct page *page = virt_to_page((void *)addr);
+>   		struct page *last = page + nr;
+>   
+> -		split_page_owner(page, order);
+> +		split_page_owner(page, order, 0);
+>   		split_page_memcg(page, order, 0);
+>   		while (page < --last)
+>   			set_page_refcounted(last);
+> diff --git a/mm/page_owner.c b/mm/page_owner.c
+> index 1319e402c2cf..ebbffa0501db 100644
+> --- a/mm/page_owner.c
+> +++ b/mm/page_owner.c
+> @@ -292,19 +292,20 @@ void __set_page_owner_migrate_reason(struct page *page, int reason)
+>   	page_ext_put(page_ext);
+>   }
+>   
+> -void __split_page_owner(struct page *page, int order)
+> +void __split_page_owner(struct page *page, int old_order, int new_order)
+>   {
+>   	int i;
+>   	struct page_ext *page_ext = page_ext_get(page);
+>   	struct page_owner *page_owner;
+> -	unsigned int nr = 1 << order;
+> +	unsigned int old_nr = 1 << old_order;
+> +	unsigned int new_nr = 1 << new_order;
+>   
+>   	if (unlikely(!page_ext))
+>   		return;
+>   
+> -	for (i = 0; i < nr; i++) {
+> +	for (i = 0; i < old_nr; i += new_nr) {
+>   		page_owner = get_page_owner(page_ext);
+> -		page_owner->order = 0;
+> +		page_owner->order = new_order;
+>   		page_ext = page_ext_next(page_ext);
 
-ok, I'll try to find a good place for it.
+Staring at __set_page_owner_handle(), we do set all 1<<order page_exts 
+(corresponding to 1<<order "struct page"s) to have ->order set.
 
-Thanks,
-John
+Wouldn't you have to do the same here?
+
+for (i = 0; i < 1 << old_order; i++) {
+	page_owner = get_page_owner(page_ext);
+	page_owner->order = new_order;
+	page_ext = page_ext_next(page_ext);
+}
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
