@@ -1,68 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-11570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6B30854D5C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 16:51:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F59854D92
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 17:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92E3C28B242
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 15:51:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF911F2AD87
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 16:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE875EE76;
-	Wed, 14 Feb 2024 15:51:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE715F873;
+	Wed, 14 Feb 2024 16:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="oJgKmevx"
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="pWIk5zuX";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="rrdpvnmv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A125C615;
-	Wed, 14 Feb 2024 15:51:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1BF5D916;
+	Wed, 14 Feb 2024 16:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707925893; cv=none; b=EpM/6hQ6m+BDddHDOepKmlcY+/aNo0PgSpDk1PpibvPV5prI1rigGSu00cxkxuOIVF2aWw1OusZ5IB9Crr/UmQJFDvsUKZQqFbG2gZC977Leto7AxqutQ7TQG3JGOUxec7JDcKkQgpQWQuTDn6gCab5Vszh00ZS/EvJZX7iBX9s=
+	t=1707926552; cv=none; b=qbXVTQ16XxtD7ly4Z9BvGkqLyJyCRz5F17G6RrubAh9GkLzIG5aHJQpH8PaGeOzFolal/BPXaafyXeadrEIjoxrRmw1PWjL4lsIKiM1umSQLYwHZBwhPxUjYUpR9EstYY3QMyP41ia3vcuMB7lVzNydraFnwvbwaHz5Dp8MKVyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707925893; c=relaxed/simple;
-	bh=bRaUsM+Uzf09nnHuj5/m679j6WW4bIQ9LC1jJ0hClJo=;
+	s=arc-20240116; t=1707926552; c=relaxed/simple;
+	bh=Vjmjh3llp7BlyhYgyDjPni4l/NzWqKQp3MPK/MYXb5I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uO/uX8IJGXNg+BxwTri+7dMySgXLrw8wsGkbVK2ramTJ2IU0HhCsZsvbryzAwaSBJfXQ6pVvIPs7yyjCAFoocNM7oU8vL03BTceqYBpUBwo2sVA5zc+q8eIX4VkM4gWXVguiwskYq/xXf7gqwRYTpB/GmmDWb5JrW02RuZW7FwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=oJgKmevx; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	 Content-Type:Content-Disposition:In-Reply-To; b=LUNPSW421jdDQgNNIvQy5/0kCVqHmyj+uBkzxFACJjD5tQHJLVuIBH9DczBUchISSzkgwPHm+VBKtD1iE1linvYMjDsXOdCXytcCEgbYBE6JToq+wrjtzhW9q6KIBJC7CXkWOPpRJrK3EgSP8HM//bZLf6qijJHuKiusE2+Lst0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=pWIk5zuX; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=rrdpvnmv; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4TZjNZ5Zyjz9sZZ;
-	Wed, 14 Feb 2024 16:51:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1707925886;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D1B8421EB6;
+	Wed, 14 Feb 2024 16:02:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1707926549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uvRxRUirHGWYGjoW5odKQxfL8aAW2NExn/9k0sqlsuY=;
-	b=oJgKmevxuE6YOihKJil5WtpmnnL/lRWqZVwijXduz8jb+QWVrPdGzO5ngbvtLp+WXXMwEu
-	NpxC3Zfg1ABJsNEgxncesLhI3dWYoLPhegT8D/FHjc3+5TquElV7jzzw7sbvfcFO9OBe7X
-	XqIpdaIRlR0PpWsIvJdQNn7UoDyuwXzAb1UQVeaEd5qwdvlTDZ0EDjNKBLu9ihP8I/3U/T
-	mQVY7dtXXTAOVF2omkKDbwIwT/aFGM6shr7XuPd8qSj7gjae7cQ12mvGH2ERjRTON5+wW7
-	VJSCo+ClN6RbgWei3lr/BJZsL2aXFWMQRiv38m7CnG0YyKXz4yYflriN8N8VrQ==
-Date: Wed, 14 Feb 2024 16:51:22 +0100
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, mcgrof@kernel.org, gost.dev@samsung.com, 
-	akpm@linux-foundation.org, kbusch@kernel.org, chandan.babu@oracle.com, p.raghav@samsung.com, 
-	linux-kernel@vger.kernel.org, hare@suse.de, willy@infradead.org, linux-mm@kvack.org
-Subject: Re: [RFC v2 12/14] xfs: make the calculation generic in
- xfs_sb_validate_fsb_count()
-Message-ID: <2h5ikaxcij2rpekaenf2fnlh4dquwpnkjy7eaqfwk75tbkkmuw@ehbfsjjumgdp>
-References: <20240213093713.1753368-1-kernel@pankajraghav.com>
- <20240213093713.1753368-13-kernel@pankajraghav.com>
- <20240213162611.GP6184@frogsfrogsfrogs>
- <loupixsa7jfjuhry2vm7o6j4k3qsdq6yvupcrbbum2m3hpuxau@5n72zpj5vrjh>
- <Zcvw1rrE4CiVzkmc@dread.disaster.area>
+	bh=pPXp/+cRrehfUHk2IR8IXdxKLmNDOpV5ikCDlFNmYEA=;
+	b=pWIk5zuXuhl6gONhU7unHCikdmp3ePqIfuVV/fRNzIjAZJu5zNcFPcZb7aimaNy3pgSpvQ
+	e3UGg7VHm+WzAzqFDPrnxAC3HZzgq5o4PcFY5z8ynJaPVtrYZ0HV43hukomLVaPd0BfiMD
+	VMJL5ZQsV6ebPnwnr8MqbkkfZka139g=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1707926548; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pPXp/+cRrehfUHk2IR8IXdxKLmNDOpV5ikCDlFNmYEA=;
+	b=rrdpvnmvQplLj7Zw7mnKjtggZIVn2c3JHRtqp2UICpidV2uBqb6O4HFDkvPZAqOCRMfAzk
+	tayx2Yu8HmqHmbhsuk34DEtn1oEM6AWyk6PjCzgAShPTp4CJ6UKzhZSk2OrDA12CxO8k7u
+	nH3aZJD6781ON3G/cdM1hEKsMcMd+oY=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A66B913A72;
+	Wed, 14 Feb 2024 16:02:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BzUCKBTkzGW2MAAAD6G6ig
+	(envelope-from <mhocko@suse.com>); Wed, 14 Feb 2024 16:02:28 +0000
+Date: Wed, 14 Feb 2024 17:02:28 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+	vbabka@suse.cz, roman.gushchin@linux.dev, mgorman@suse.de,
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org,
+	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
+	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
+	tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
+	paulmck@kernel.org, pasha.tatashin@soleen.com,
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+	ndesaulniers@google.com, vvvvvv@google.com,
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
+	vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+	elver@google.com, dvyukov@google.com, shakeelb@google.com,
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+	cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 00/35] Memory allocation profiling
+Message-ID: <ZczkFH1dxUmx6TM3@tiehlicka>
+References: <20240212213922.783301-1-surenb@google.com>
+ <20240214062020.GA989328@cmpxchg.org>
+ <ZczSSZOWMlqfvDg8@tiehlicka>
+ <ifz44lao4dbvvpzt7zha3ho7xnddcdxgp4fkeacqleu5lo43bn@f3dbrmcuticz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,69 +109,72 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zcvw1rrE4CiVzkmc@dread.disaster.area>
+In-Reply-To: <ifz44lao4dbvvpzt7zha3ho7xnddcdxgp4fkeacqleu5lo43bn@f3dbrmcuticz>
+X-Spam-Level: 
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=rrdpvnmv
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-1.01 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 RCVD_IN_DNSWL_HI(-0.50)[2a07:de40:b281:106:10:150:64:167:received];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 TO_DN_SOME(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.com:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_GT_50(0.00)[73];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-0.00)[32.12%];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	 RCVD_DKIM_ARC_DNSWL_HI(-1.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 TO_MATCH_ENVRCPT_SOME(0.00)[];
+	 DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 FREEMAIL_CC(0.00)[cmpxchg.org,google.com,linux-foundation.org,suse.cz,linux.dev,suse.de,stgolabs.net,infradead.org,oracle.com,lwn.net,manifault.com,redhat.com,arm.com,kernel.org,arndb.de,linutronix.de,linux.intel.com,kernel.dk,soleen.com,gmail.com,chromium.org,linuxfoundation.org,linaro.org,goodmis.org,linux.com,lge.com,bytedance.com,akamai.com,android.com,vger.kernel.org,lists.linux.dev,kvack.org,googlegroups.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[];
+	 RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from]
+X-Spam-Score: -1.01
+X-Rspamd-Queue-Id: D1B8421EB6
+X-Spam-Flag: NO
 
-> > I was thinking of possibility of an overflow but at the moment the 
-> > blocklog is capped at 16 (65536 bytes) right? mkfs refuses any block
-> > sizes more than 64k. And we have check for this in xfs_validate_sb_common()
-> > in the kernel, which will catch it before this happens?
+On Wed 14-02-24 10:01:14, Kent Overstreet wrote:
+> On Wed, Feb 14, 2024 at 03:46:33PM +0100, Michal Hocko wrote:
+> > On Wed 14-02-24 01:20:20, Johannes Weiner wrote:
+> > [...]
+> > > I agree we should discuss how the annotations are implemented on a
+> > > technical basis, but my take is that we need something like this.
+> > 
+> > I do not think there is any disagreement on usefulness of a better
+> > memory allocation tracking. At least for me the primary problem is the
+> > implementation. At LFSMM last year we have heard that existing tracing
+> > infrastructure hasn't really been explored much. Cover letter doesn't
+> > really talk much about those alternatives so it is really hard to
+> > evaluate whether the proposed solution is indeed our best way to
+> > approach this.
 > 
-> The sb_blocklog is checked in the superblock verifier when we first read in the
-> superblock:
-> 
-> 	    sbp->sb_blocksize < XFS_MIN_BLOCKSIZE                       ||
->             sbp->sb_blocksize > XFS_MAX_BLOCKSIZE                       ||
->             sbp->sb_blocklog < XFS_MIN_BLOCKSIZE_LOG                    ||
->             sbp->sb_blocklog > XFS_MAX_BLOCKSIZE_LOG                    ||
->             sbp->sb_blocksize != (1 << sbp->sb_blocklog)                ||
-> 
-> #define XFS_MAX_BLOCKSIZE_LOG 16
-> 
-> However, we pass mp->m_sb.sb_dblocks or m_sb.sb_rblocks to this
-> function, and they are validated by the same verifier as invalid
-> if:
-> 
-> 	    sbp->sb_dblocks > XFS_MAX_DBLOCKS(sbp)
-> 
-> #define XFS_MAX_DBLOCKS(s) ((xfs_rfsblock_t)(s)->sb_agcount *
->                                              (s)->sb_agblocks)
-> 
-> Which means as long as someone can corrupt some combination of
-> sb_dblocks, sb_agcount and sb_agblocks that allows sb_dblocks to be
-> greater than 2^48 on a 64kB fsb fs, then that the above code:
-> 
-> 	uint64_t bytes = nblocks << sbp->sb_blocklog;
-> 
-> will overflow.
-> 
-> I also suspect that we can feed a huge rtdev to this new code
-> and have it overflow without needing to corrupt the superblock in
-> any way....
+> Michal, we covered this before.
 
-So we could use the check_mul_overflow to detect these cases:
+It is a good practice to summarize previous discussions in the cover
+letter. Especially when there are different approaches discussed over a
+longer time period or when the topic is controversial.
 
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index 596aa2cdefbc..23faa993fb80 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -132,8 +132,12 @@ xfs_sb_validate_fsb_count(
-        uint64_t        nblocks)
- {
-        ASSERT(sbp->sb_blocklog >= BBSHIFT);
--       unsigned long mapping_count;
--       uint64_t bytes = nblocks << sbp->sb_blocklog;
-+       uint64_t mapping_count;
-+       uint64_t bytes;
-+
-+       if (check_mul_overflow(nblocks, (1 << sbp->sb_blocklog), &bytes))
-+               return -EFBIG;
- 
-        if (!IS_ENABLED(CONFIG_XFS_LBS))
-                ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
+I do not see anything like that here. Neither for the existing tracing
+infrastructure, page owner nor performance concerns discussed before
+etc. Look, I do not want to nit pick or insist on formalisms but having
+those data points layed out would make any further discussion much more
+smooth.
 
-> 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+-- 
+Michal Hocko
+SUSE Labs
 
