@@ -1,153 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-11609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1249855403
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 21:31:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87C68554A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 22:22:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78353284068
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 20:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DE911F214E0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 21:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24B612882A;
-	Wed, 14 Feb 2024 20:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EE6513F008;
+	Wed, 14 Feb 2024 21:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e4v7JGa7"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bPl+nWhq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9D81DDD6
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 20:31:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB9E13EFF1
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 21:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707942665; cv=none; b=stC3FcaMxDyxgvybQG6Q64RYlUSbOx/Ni3/tZze0vlStxFBKXuPXWstKw6AML+BQyuSjuLmHetd0/xW4yb2hFp3/dDR9tsObRl0n4c9nQc7XH5tn1oskVMLYxgSpk5Wqz6JOBY6ohyl0rLs+1n0M06keK6VPqP0OaX28Lh3YwnI=
+	t=1707945719; cv=none; b=n0TyayBXciVOWGnBGx+GU/P3EEtiaqpN/yJxOW7p7zbDawzrzvQlqM1hegpH45Oa1V7L1qbmfXUWo7DOX2yaxq0ve/bv8+6aJV5YTE0qQ77BsXhsBPhNZp/4WgkiGcuLWxJEk44cHyUEEYFdm0JAGKLEDN5/GgNa/lrWWuoSi/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707942665; c=relaxed/simple;
-	bh=Vd0j1FX9Ch3W6HoLjw5jsyZYk+r6JPnPHoqpsjH65ZQ=;
+	s=arc-20240116; t=1707945719; c=relaxed/simple;
+	bh=b0xMIcRt9SLSL0Q4PzKXSxEAiCcZcUoeIRlPO4qsUAY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QrobwqNGW1435jvJFVaeWq36AhFhptfdN1OH1GYK9Azabe3cAJBNKWBumPGZRkVDiXssd4OjK43S1FHOXFYJIVyI+WBDMF7xB21vvu9aZqyBf3Uholf3oQSIYUWNoFWwQtOj+C3PA2Y3m3XCXxXlzedim3F3SACdYaHt5J4/W+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e4v7JGa7; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dc745927098so63347276.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 12:31:03 -0800 (PST)
+	 To:Cc:Content-Type; b=VrubVh9b6WzV9wskAaG+N1EuTqcDzTuTM7iBhHCvhOtDybtp6PISxC2zBnGk5wxCxRyDQNQsbkOqHD6+osZv1vxLClqJaPy1M5It6yeRwQ5hhW+ZrnR2gcUm8kNJECNJOjsUYfaMiVrKWbU4hB9Ycj5upomIPcvLGM1spPSmzzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bPl+nWhq; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-607815b5772so2406707b3.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 13:21:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1707942662; x=1708547462; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1707945716; x=1708550516; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NcEj/SyVb+AY5aiDL6vEY+YAlLL1EeaxcCrjK4Q+5oY=;
-        b=e4v7JGa7cWYIZNAW0huk/3rwOI/kwWdnUfrxj+106qY9WYGnNPyqqU+s/GPTR66aYq
-         E6Z9CoturLO7WL9zR8anrnxQ1tb+X+eCL/0xXobCI1PZu988h9jXDuQTqjlbLLhKlZjJ
-         l/Cqu8qc/n297fQbIV4Ppz5rL240ZYKpmBE2mnjVkY7hK06kO+MoKsA0DD5SlnFxEpPW
-         lTYSBU/elbShzB86eaf1oNF1Zo/wl1EYTb90LOaZ7ulyXM1m0BUsR58hYhdeRibgMo0I
-         vIHn30dBEWG2tg1H+Av6fegtFpmgrihEA1yRuOTVjHYV64g7odZ1JazgkMmJJb7cgpvH
-         xsMA==
+        bh=ludDExKUqMptEvphl/NE5ulFWudwk9xh8twHjzhcpOg=;
+        b=bPl+nWhq6aBeZ7cbSJ46V+E5Gzs5+Wt/QU83LXFm47Uest2ir9SF6GisGm3KrjiFRw
+         D/VxIEHk0xY7G+MC6kz3Zq2Ffx4j2naZg03wkFHINrhZIvIAud2kHg2CKffL+Jnzr6uo
+         Vsnc9KxYhGX1ThowbdztncNBEkBoVQmIR4Eix3MJ/GteXiiIhYohtfRC81+ITlAuNFUv
+         VaiOE2AYJ8gmwvtgctO9+OhI2e17f3H39B+IVWSGeLDDdOY63tFQ0gZlA7lvg4E+HOA7
+         N41/f0I/9sQkEquBGt7IAQ+ubz2r3MNGY4xg2usprjiJZlfWc4EyxeFhR9tMpzcTCiOu
+         O2QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1707942662; x=1708547462;
+        d=1e100.net; s=20230601; t=1707945716; x=1708550516;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NcEj/SyVb+AY5aiDL6vEY+YAlLL1EeaxcCrjK4Q+5oY=;
-        b=di5P5R5/oVWLCgFj4yH3w7B1GSoJlalkguTaJ9YzRL9ObvtgJzoig79s3zZAu1V61j
-         CobFlSxp21qwGs6GZ3JAbGXmbVXYI8ygyorvfWacCZcKNzuVLTY7FHPC+ySz7RytEmZn
-         fVQEwiwQZbNjF1MR7o7cn34vxaZvMKDd+t+DUy6BKQCdVmzQ7PEMsMITSpOD4UaliHEl
-         +eX12N23h5Ng/sQ8bODrtM6Mu7Rar/VtJ2Y2bbI3fw5yof6RZa5iwAd4oUINaCLGfHQ5
-         GStob3cXM0d2TUhUDoLDPAvt2XQgACe71A7Z/eK70LI60vnKd7QSCA+De6r4OHOC3o1h
-         lF/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXPfBCNI17ekdDq83qrIPA8NhAtd9tsmNF7oiriji9u7zcvR0F3qARBBQtEu63p+f143uQgtL/fVbGBtfaf7o7nmo6hbcgNczGnlE5VPw==
-X-Gm-Message-State: AOJu0YwPT9d86rrKMTGe7QHoLUKXOh8mkWlZsvsZMcfSPY8MSxwWM7z5
-	5Mt7FPS9BCWUCxgb8EVzk4Jb+H4r+vUK+Kof9R1mTKcNzmVVRuaP0FbYqOpsOeM+8zlaoqBGib3
-	eiVSDbRGJYWaEydn143hQM0QxOVwM6fN+0MFf
-X-Google-Smtp-Source: AGHT+IFqoJj5aCwpmg00G6ZaLb2aiZ8b3im8fm6yEl4ijg46+lI254clzZhzLZ0Iv0kb6bhFH6lVLC2hnoLSZAsSoRU=
-X-Received: by 2002:a25:4115:0:b0:dc6:bbeb:d889 with SMTP id
- o21-20020a254115000000b00dc6bbebd889mr3283052yba.52.1707942662262; Wed, 14
- Feb 2024 12:31:02 -0800 (PST)
+        bh=ludDExKUqMptEvphl/NE5ulFWudwk9xh8twHjzhcpOg=;
+        b=LjTnTjxG0Ql0eQ1zseJffc6rwg1tRkbvn0bDRTvp1QzvDUEJo+VLIDn5MMP0a5byLP
+         T/Ac46XDVgOD0h/jSQWfwp3sPOY+xKEMk0M/y3olqVjs88c2sAXgr7c8z8N/PN7mi957
+         7xjbbssU5Wn23enwuHk2fSjfa6IVSJ0u8Rrihl9G7X56zjmx9JApu4plyduVZqJ6gmz/
+         Gk9zb8Fari9fFyF1lCXJVqyGlCg2sVI5i9H/ATeOVyjnuacw4J4wZgTQgx5QoiYEW+r7
+         OIggfu0+G1VrEUkVnYP85++bgg5Iv+E9FFrHQJfdzzdWClaNBIW+/LAXHObto2iIQM2b
+         DBtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8M3BIrOzJwKUXQsFW2wXfNHdVXwOUeITrOn1A8jePaW+R3GEQiC4OlXgT2krHYpHmzNSmyfqk/9s/8/Rnv8rGJAqDzpjou6I4/VmJwA==
+X-Gm-Message-State: AOJu0Yy4LM25c3hq1tVF4mpZqHwknduv8Yh41zIN/FIxFhDSiFeFXhkH
+	3UEht0bS/zDWm1ufzabBGF/zTlPL14ND8OpnFZk3SVKGwGfK3MxL2k6Ii/bhLL1kgePY5QPXkAu
+	k9WNZ6akKOoLx/DeBZf/Pw0/scs1S7rZ3ehCu
+X-Google-Smtp-Source: AGHT+IGpDAmB1ikTVU1E5KjthEFFmc/sTniREdzcyKzjsKUMtOXwCK5kuZpdwNzeTiBcIUEmSY5KYid4S5OCYvYRXxc=
+X-Received: by 2002:a0d:d7c4:0:b0:607:75e7:a66a with SMTP id
+ z187-20020a0dd7c4000000b0060775e7a66amr2644503ywd.22.1707945716175; Wed, 14
+ Feb 2024 13:21:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240212213922.783301-1-surenb@google.com> <4f24986587b53be3f9ece187a3105774eb27c12f.camel@linux.intel.com>
- <CAJuCfpGnnsMFu-2i6-d=n1N89Z3cByN4N1txpTv+vcWSBrC2eg@mail.gmail.com> <Zc0f7u5yCq-Iwh3A@google.com>
-In-Reply-To: <Zc0f7u5yCq-Iwh3A@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 14 Feb 2024 12:30:49 -0800
-Message-ID: <CAJuCfpEbdC4k=4aeEO=YfX2tZhkdOVaehAv9Ts7S42B_bmm=Ow@mail.gmail.com>
-Subject: Re: [PATCH v3 00/35] Memory allocation profiling
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Tim Chen <tim.c.chen@linux.intel.com>, akpm@linux-foundation.org, 
-	kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
-	corbet@lwn.net, void@manifault.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, 
-	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
-	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
-	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
-	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
-	yuzhao@google.com, dhowells@redhat.com, hughd@google.com, 
-	andreyknvl@gmail.com, keescook@chromium.org, ndesaulniers@google.com, 
-	vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com, 
-	ytcoode@gmail.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com, 
-	vschneid@redhat.com, cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com, 
-	42.hyeyoo@gmail.com, glider@google.com, elver@google.com, dvyukov@google.com, 
-	shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com, 
-	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
-	kernel-team@android.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
-	cgroups@vger.kernel.org
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+ <20240115181809.885385-13-roberto.sassu@huaweicloud.com> <305cd1291a73d788c497fe8f78b574d771b8ba41.camel@linux.ibm.com>
+ <CAHC9VhQ7DgPJtNTRCYneu_XnpRmuwfPCW+FqVuS=k6U5-F6pJw@mail.gmail.com>
+ <05ad625b0f5a0e6c095abee5507801da255b36cd.camel@huaweicloud.com>
+ <CAHC9VhR2M_MWHs34kn-WH3Wr0sgT09WKveecy7onkFhUb1-gEg@mail.gmail.com> <63afc94126521629bb7656b6e6783d6614ee898a.camel@linux.ibm.com>
+In-Reply-To: <63afc94126521629bb7656b6e6783d6614ee898a.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 14 Feb 2024 16:21:45 -0500
+Message-ID: <CAHC9VhQGiSq2LTm7TBvCwDB_NcMe_JjORLbuHVfC4UpJQi_N4g@mail.gmail.com>
+Subject: Re: [PATCH v9 12/25] security: Introduce file_post_open hook
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
+	kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org, 
+	serge@hallyn.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
+	dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com, 
+	eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org, 
+	mic@digikod.net, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, 
+	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Stefan Berger <stefanb@linux.ibm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 14, 2024 at 12:17=E2=80=AFPM Yosry Ahmed <yosryahmed@google.com=
-> wrote:
->
-> > > > Performance overhead:
-> > > > To evaluate performance we implemented an in-kernel test executing
-> > > > multiple get_free_page/free_page and kmalloc/kfree calls with alloc=
-ation
-> > > > sizes growing from 8 to 240 bytes with CPU frequency set to max and=
- CPU
-> > > > affinity set to a specific CPU to minimize the noise. Below are res=
-ults
-> > > > from running the test on Ubuntu 22.04.2 LTS with 6.8.0-rc1 kernel o=
-n
-> > > > 56 core Intel Xeon:
-> > > >
-> > > >                         kmalloc                 pgalloc
-> > > > (1 baseline)            6.764s                  16.902s
-> > > > (2 default disabled)    6.793s (+0.43%)         17.007s (+0.62%)
-> > > > (3 default enabled)     7.197s (+6.40%)         23.666s (+40.02%)
-> > > > (4 runtime enabled)     7.405s (+9.48%)         23.901s (+41.41%)
-> > > > (5 memcg)               13.388s (+97.94%)       48.460s (+186.71%)
-> >
-> > (6 default disabled+memcg)    13.332s (+97.10%)         48.105s (+184.6=
-1%)
-> > (7 default enabled+memcg)     13.446s (+98.78%)       54.963s (+225.18%=
+On Wed, Feb 14, 2024 at 3:07=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Tue, 2024-02-13 at 10:33 -0500, Paul Moore wrote:
+> > On Tue, Feb 13, 2024 at 7:59=E2=80=AFAM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > > On Mon, 2024-02-12 at 16:16 -0500, Paul Moore wrote:
+> > > > On Mon, Feb 12, 2024 at 4:06=E2=80=AFPM Mimi Zohar <zohar@linux.ibm=
+.com> wrote:
+> > > > > Hi Roberto,
+> > > > >
+> > > > >
+> > > > > > diff --git a/security/security.c b/security/security.c
+> > > > > > index d9d2636104db..f3d92bffd02f 100644
+> > > > > > --- a/security/security.c
+> > > > > > +++ b/security/security.c
+> > > > > > @@ -2972,6 +2972,23 @@ int security_file_open(struct file *file=
 )
->
-> I think these numbers are very interesting for folks that already use
-> memcg. Specifically, the difference between 6 & 7, which seems to be
-> ~0.85% and ~14.25%. IIUC, this means that the extra overhead is
-> relatively much lower if someone is already using memcgs.
-
-Well, yes, percentage-wise it's much lower. If you look at the
-absolute difference between 6 & 7 vs 2 & 3, it's quite close.
-
->
-> >
-> > (6) shows a bit better performance than (5) but it's probably noise. I
-> > would expect them to be roughly the same. Hope this helps.
-> >
+> > > > > >       return fsnotify_perm(file, MAY_OPEN);  <=3D=3D=3D  Confli=
+ct
+> > > > >
+> > > > > Replace with "return fsnotify_open_perm(file);"
+> > > > >
+> > > > > >  }
+> > > > > >
+> > > > >
+> > > > > The patch set doesn't apply cleaning to 6.8-rcX without this
+> > > > > change.  Unless
+> > > > > there are other issues, I can make the change.
 > > > >
+> > > > I take it this means you want to pull this via the IMA/EVM tree?
 > > >
-> > >
+> > > Not sure about that, but I have enough changes to do to make a v10.
+>
+> @Roberto:  please add my "Reviewed-by" to the remaining patches.
+>
+> >
+> > Sorry, I should have been more clear, the point I was trying to
+> > resolve was who was going to take this patchset (eventually).  There
+> > are other patches destined for the LSM tree that touch the LSM hooks
+> > in a way which will cause conflicts with this patchset, and if
+> > you/Mimi are going to take this via the IMA/EVM tree - which is fine
+> > with me - I need to take that into account when merging things in the
+> > LSM tree during this cycle.  It's not a big deal either way, it would
+> > just be nice to get an answer on that within the next week.
+>
+> Similarly there are other changes for IMA and EVM.  If you're willing to =
+create
+> a topic branch for just the v10 patch set that can be merged into your tr=
+ee and
+> into my tree, I'm fine with your upstreaming v10. (I'll wait to send my p=
+ull
+> request after yours.)  Roberto will add my Ack's to the integrity, IMA, a=
+nd EVM
+> related patches.  However if you're not willing to create a topic branch,=
+ I'll
+> upstream the v10 patch set.
+
+I'm not a big fan of sharing topic branches across different subsystem
+trees, I'd much rather just agree that one tree or another takes the
+patchset and the others plan accordingly.  Based on our previous
+discussions I was under the impression that you wanted me to merge
+this patchset into lsm/dev, but it looks like that is no longer the
+case - which is okay by me.
+
+Assuming Roberto gets a v10 out soon, do you expect to merge the v10
+patchset and send it up during the upcoming merge window (for v6.9),
+or are you expecting to wait until after the upcoming merge window
+closes and target v6.10?  Once again, either is fine, I'm just trying
+to coordinate this with other patches.
+
+--=20
+paul-moore.com
 
