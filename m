@@ -1,177 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-11606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C596E8553AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 21:08:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF238553C0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 21:11:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BFAF1F2AE6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 20:08:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD53292A24
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 20:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9962C13DBB1;
-	Wed, 14 Feb 2024 20:08:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3832313DB9F;
+	Wed, 14 Feb 2024 20:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XO4ti+F8"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RR1NvtO6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4692613A888;
-	Wed, 14 Feb 2024 20:08:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADF51339B6;
+	Wed, 14 Feb 2024 20:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707941289; cv=none; b=lK7rO3tuBI7LPpW2KD9dewlV0nI2AnsXyvixk5penrGsX/RpBYFAc4bu79UkwW+5PRZFrze/YmyO5bnWQnPYE3CtsBdsCOrGn10ktliBz2LNvHHo58Ouk3idDKxQtMTm9AAq504tF03BB/W7CbJ/Q+yz9ZJDIDbkuzkEbNc5Oo4=
+	t=1707941500; cv=none; b=gXZXt5xbXqRgD1CpdPIySE62tk7if53bFgnTWG7MnM6ThSy4vPr/7SW0kz7VJOTRQ5Y74+R87o+S3TVceEUV5gxUQHUd7aRzSdfQHPUjMkBrzpBk/PxeXCA31HBKj64LS3NgP157ZQmbNEVWQV+JKjYXvfpDajyMTgALTt4oZUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707941289; c=relaxed/simple;
-	bh=0c27WM48Hr69yQ4BRbSljfY+8max5aVHrUQMsvmvoT0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:Mime-Version; b=rGXh9vzZ+mmwWZGkm30yg52gEsaQcN2MOdm5gRYvMIdxaKslP0BZQw507K2stJttasCJvxsGAQrGRECj1RgUwRfX+49JAoELWj51pe4/JuYCYQGglmNn9WTR/jZHmIoVCzd9zTBbuep2lySmnAl+6/sf281G10LWA2luIhM2VLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XO4ti+F8; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41EJvFTF004798;
-	Wed, 14 Feb 2024 20:07:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=mXHxoZ42mf/ESBqj6s5bnVAfG0vN7uRQxTDbGz8SwAo=;
- b=XO4ti+F8dvznCzwOMommY2wHzUPRF12PQUnYJO8wcMld4+xLiaDZrncmLdNb92rQ7TNe
- RQ+9rYnPchBKUFw5S9Fl7I38jgR7LO6LKwUUOB0dExBhkPLH6UbwCM16YyMy4XS2iK2r
- +0gh0WxTiNUirdOxbsuLbSFMGF0eadMRe4+BzFbNOEyWOpeZYWi0E0go6AeH/J1ElsT2
- sExdubjt5KshLHd61G8KyAJvOgkxAqxFZJV+1qsKFpJwgPGTcHLj9XBxFxl787CNPkXw
- AuT6Oi0YJiz5OVwSzTfJppPGbBIYD6oTQ2vUShlvwWT49EtCY3XXiM+cGR1oI6+ZznNS ug== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w944jranh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 20:07:32 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41EJvn2l007248;
-	Wed, 14 Feb 2024 20:07:32 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w944jramk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 20:07:31 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41EIYP1m004329;
-	Wed, 14 Feb 2024 20:07:30 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3w6kv0gd5r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 20:07:30 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41EK7RHI19005960
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Feb 2024 20:07:29 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8504C5805A;
-	Wed, 14 Feb 2024 20:07:27 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EF2835805E;
-	Wed, 14 Feb 2024 20:07:25 +0000 (GMT)
-Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.101.207])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 14 Feb 2024 20:07:25 +0000 (GMT)
-Message-ID: <63afc94126521629bb7656b6e6783d6614ee898a.camel@linux.ibm.com>
-Subject: Re: [PATCH v9 12/25] security: Introduce file_post_open hook
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Paul Moore <paul@paul-moore.com>,
-        Roberto Sassu
-	 <roberto.sassu@huaweicloud.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com,
-        jlayton@kernel.org, neilb@suse.de, kolga@netapp.com,
-        Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org,
-        serge@hallyn.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-        dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com,
-        eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org,
-        mic@digikod.net, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
-        keyrings@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Date: Wed, 14 Feb 2024 15:07:25 -0500
-In-Reply-To: <CAHC9VhR2M_MWHs34kn-WH3Wr0sgT09WKveecy7onkFhUb1-gEg@mail.gmail.com>
-References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
-	 <20240115181809.885385-13-roberto.sassu@huaweicloud.com>
-	 <305cd1291a73d788c497fe8f78b574d771b8ba41.camel@linux.ibm.com>
-	 <CAHC9VhQ7DgPJtNTRCYneu_XnpRmuwfPCW+FqVuS=k6U5-F6pJw@mail.gmail.com>
-	 <05ad625b0f5a0e6c095abee5507801da255b36cd.camel@huaweicloud.com>
-	 <CAHC9VhR2M_MWHs34kn-WH3Wr0sgT09WKveecy7onkFhUb1-gEg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
+	s=arc-20240116; t=1707941500; c=relaxed/simple;
+	bh=ugMuiBhXaOfS6JO62Z0RIeo0yfNv3ZBX5Go5vrWXW3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ct22FMbDZROsQUe7VG/+yvBuCqB2+rdyJ3kXH7Jwd2mnNUhUvbQ0fVf4cfOeGZdHBslvIt4rTBEPfBLzjzdKTBDITaOiezLzgfI/TjZWyTrTq+tERR/2wuUUbK/fwFfICiLbu49w+nYXRiV7RLzlcwM/q02NfyyXCXhe+tbR9zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RR1NvtO6; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=nzG+mcwtKVReimCU6zx6inAB8xN7+k5Rvm7slPc1wIQ=; b=RR1NvtO6ycswu7Qr0ZPqrP4PWj
+	LNdeaqOqje4bdXi5DGOLcJDnCljck4gLPwvxmpGg8C/jn79uWuGkbeFakgpo4KvpoMMRm70tWfZDc
+	h3a/ClEjQy04HJCqcZoIa/UuoeMoErlzWJoYqeLBdkmpqNldKK5Ug+mvnI8Vi5gGJet7oyeLsxC8z
+	+uOHoreKUHyO7UI0Eg000CpPo780XBDKMyscM4NHbSlGKzsohlEU4AXPBnnT0TbasI2aUH2uGAqAv
+	VT5RE0ttZFCIN/1yTreaWG+Pgjj3ls1T3klTMs2e08Bnya7OFeXFa6z3SYcbhGwmuray0OLL9Q41J
+	vX72BgkQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1raLb0-0000000HUak-0HCQ;
+	Wed, 14 Feb 2024 20:11:06 +0000
+Date: Wed, 14 Feb 2024 20:11:05 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+	mgorman@suse.de, dave@stgolabs.net, liam.howlett@oracle.com,
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org,
+	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
+	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
+	tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
+	paulmck@kernel.org, pasha.tatashin@soleen.com,
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+	ndesaulniers@google.com, vvvvvv@google.com,
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
+	vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+	elver@google.com, dvyukov@google.com, shakeelb@google.com,
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+	cgroups@vger.kernel.org, Andy Shevchenko <andy@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	Paul Mackerras <paulus@samba.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>
+Subject: Re: [PATCH v3 01/35] lib/string_helpers: Add flags param to
+ string_get_size()
+Message-ID: <Zc0eWURJL64C3vqn@casper.infradead.org>
+References: <20240212213922.783301-1-surenb@google.com>
+ <20240212213922.783301-2-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 3pmfVPR_ZkYzTv8MNJbgBILvsfAhufy_
-X-Proofpoint-GUID: pUskxnPY1Bl82nL8IEpe0UmPvkoY0NWY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-14_12,2024-02-14_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 phishscore=0 clxscore=1015 priorityscore=1501
- spamscore=0 suspectscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2402140157
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240212213922.783301-2-surenb@google.com>
 
-On Tue, 2024-02-13 at 10:33 -0500, Paul Moore wrote:
-> On Tue, Feb 13, 2024 at 7:59 AM Roberto Sassu
-> <roberto.sassu@huaweicloud.com> wrote:
-> > On Mon, 2024-02-12 at 16:16 -0500, Paul Moore wrote:
-> > > On Mon, Feb 12, 2024 at 4:06 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > > > Hi Roberto,
-> > > > 
-> > > > 
-> > > > > diff --git a/security/security.c b/security/security.c
-> > > > > index d9d2636104db..f3d92bffd02f 100644
-> > > > > --- a/security/security.c
-> > > > > +++ b/security/security.c
-> > > > > @@ -2972,6 +2972,23 @@ int security_file_open(struct file *file)
-> > > > >       return fsnotify_perm(file, MAY_OPEN);  <===  Conflict
-> > > > 
-> > > > Replace with "return fsnotify_open_perm(file);"
-> > > > 
-> > > > >  }
-> > > > > 
-> > > > 
-> > > > The patch set doesn't apply cleaning to 6.8-rcX without this
-> > > > change.  Unless
-> > > > there are other issues, I can make the change.
-> > > 
-> > > I take it this means you want to pull this via the IMA/EVM tree?
-> > 
-> > Not sure about that, but I have enough changes to do to make a v10.
+On Mon, Feb 12, 2024 at 01:38:47PM -0800, Suren Baghdasaryan wrote:
+> -	string_get_size(size, 1, STRING_UNITS_2, buf, sizeof(buf));
+> +	string_get_size(size, 1, STRING_SIZE_BASE2, buf, sizeof(buf));
 
-@Roberto:  please add my "Reviewed-by" to the remaining patches.
+This patch could be a whole lot smaller if ...
 
-> 
-> Sorry, I should have been more clear, the point I was trying to
-> resolve was who was going to take this patchset (eventually).  There
-> are other patches destined for the LSM tree that touch the LSM hooks
-> in a way which will cause conflicts with this patchset, and if
-> you/Mimi are going to take this via the IMA/EVM tree - which is fine
-> with me - I need to take that into account when merging things in the
-> LSM tree during this cycle.  It's not a big deal either way, it would
-> just be nice to get an answer on that within the next week.
+> +++ b/include/linux/string_helpers.h
+> @@ -17,14 +17,13 @@ static inline bool string_is_terminated(const char *s, int len)
+>  	return memchr(s, '\0', len) ? true : false;
+>  }
+>  
+> -/* Descriptions of the types of units to
+> - * print in */
+> -enum string_size_units {
+> -	STRING_UNITS_10,	/* use powers of 10^3 (standard SI) */
+> -	STRING_UNITS_2,		/* use binary powers of 2^10 */
+> +enum string_size_flags {
+> +	STRING_SIZE_BASE2	= (1 << 0),
+> +	STRING_SIZE_NOSPACE	= (1 << 1),
+> +	STRING_SIZE_NOBYTES	= (1 << 2),
 
-Similarly there are other changes for IMA and EVM.  If you're willing to create
-a topic branch for just the v10 patch set that can be merged into your tree and
-into my tree, I'm fine with your upstreaming v10. (I'll wait to send my pull
-request after yours.)  Roberto will add my Ack's to the integrity, IMA, and EVM
-related patches.  However if you're not willing to create a topic branch, I'll
-upstream the v10 patch set.
+you just added:
 
-thanks,
+#define	STRING_UNITS_10		0
+#define STRING_UNITS_2		STRING_SIZE_BASE2
 
-Mimi
+and you wouldn't need to change any of the callers.
 
 
