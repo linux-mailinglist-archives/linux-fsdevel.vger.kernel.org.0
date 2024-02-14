@@ -1,335 +1,479 @@
-Return-Path: <linux-fsdevel+bounces-11593-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11594-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 004A9855173
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 19:05:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276BB85520F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 19:27:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 258121C290DE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 18:05:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F9C1F29A75
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 18:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3607129A70;
-	Wed, 14 Feb 2024 17:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E78A128395;
+	Wed, 14 Feb 2024 18:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aK+8VjyI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Psgv+7MZ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="aK+8VjyI";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Psgv+7MZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AIjp7SGb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E17C127B51;
-	Wed, 14 Feb 2024 17:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3257128360
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 18:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707933552; cv=none; b=Zgu9o4G5j9Jos+HuS0vo4E4Lw/DB7fwJ7R199lwrNPWqUCxdUMcVAdDLuHk7XrLj+MGyIibQr1JQ9ZnHWRTsQy2NmGaNEz7sMwuLwiJDmjv3LElUlhwTSCk2LGpSZQnYJxMMMj470UXkK/ejQ9BtEcu8sHG3UQIBpqgl/2DjtO8=
+	t=1707935260; cv=none; b=KOZOpratNg06JAR2tX9lVL9wKyIbsFqPctGkbSJugLv67K6xH2Q8HvhxevVw/HTEE+JplAZdbS1KGU53AXk/+1sXo5llMrUAw+zBJUvzKdK/AV5onOXpwFCIEiC9EEBpCCJFbulGhmIYoHJB93W7OGMM0LoUEF6aOAl7UCsvf8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707933552; c=relaxed/simple;
-	bh=9V0iplNY41PM7qEgN8bqjGbfH2zuN+jagfpAQuGGGCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pSQI/OmUEAFvL2979z3i/3eS/SLSalTdzShB8F9yCfFJ/1R0iB4kLPjNZu4pbl+uzbfUdkNSVoPMF5eOnQ9Cp9BuvmBR7aKWTm093Ajs4oXa7kYQR+UT67tanWILP9lK12CTEioLAVMGWr/6OPszIsD9xdSoy4UraFxsbM8GsFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aK+8VjyI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Psgv+7MZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=aK+8VjyI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Psgv+7MZ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 147452207D;
-	Wed, 14 Feb 2024 17:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707933548; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f2RWtNk8U1R2XRFQl1j1CoYNmJnR10fxgpFPBsng0LI=;
-	b=aK+8VjyIaHpcdTKDOIsz5Dbg+qMpGN+F023AOzqddNbIfq73gfsEKREJMDDJVrMeddBxDH
-	y/jmcG8oIsiuYjaYRXJ6hRHScHzyIkrEsxooTPm81qEVH9/NYPfK+XH92v4riFamS0n3vK
-	g0CfCWblAz1VGwP7B6hXh/8EdncqQxM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707933548;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f2RWtNk8U1R2XRFQl1j1CoYNmJnR10fxgpFPBsng0LI=;
-	b=Psgv+7MZTA60P9ZPDJ7pfz/hWkKqrnS24bNJS16VF6X116lWn7Dj9qqKsI0svfIgaI+dz6
-	w/Ig421ykrX9vsAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1707933548; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f2RWtNk8U1R2XRFQl1j1CoYNmJnR10fxgpFPBsng0LI=;
-	b=aK+8VjyIaHpcdTKDOIsz5Dbg+qMpGN+F023AOzqddNbIfq73gfsEKREJMDDJVrMeddBxDH
-	y/jmcG8oIsiuYjaYRXJ6hRHScHzyIkrEsxooTPm81qEVH9/NYPfK+XH92v4riFamS0n3vK
-	g0CfCWblAz1VGwP7B6hXh/8EdncqQxM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1707933548;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f2RWtNk8U1R2XRFQl1j1CoYNmJnR10fxgpFPBsng0LI=;
-	b=Psgv+7MZTA60P9ZPDJ7pfz/hWkKqrnS24bNJS16VF6X116lWn7Dj9qqKsI0svfIgaI+dz6
-	w/Ig421ykrX9vsAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5910813A6D;
-	Wed, 14 Feb 2024 17:59:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Om60FGv/zGWRTgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 14 Feb 2024 17:59:07 +0000
-Message-ID: <3cf2acae-cb8d-455a-b09d-a1fdc52f5774@suse.cz>
-Date: Wed, 14 Feb 2024 18:59:06 +0100
+	s=arc-20240116; t=1707935260; c=relaxed/simple;
+	bh=eWMcKuQcX//tv42JjDwySXAX7+Ft4kCcsDdJ75TKCg4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sMJ/LeFVkVjLs8IpDSOiJfNdIC3iuPwlXRK3ksCKb6acEl3yXdgJW+jd3Cxw6hhCCw02Wn/Zwujfqsk7JvrpZU12avaDb2ExVYRVJzXU6lWvL4tM8kN/rGoMw3FTNXJuLHMPYW048SZwVFFU6aIyudPJRfcgO0NixqdKxoa21Qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AIjp7SGb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48696C433F1;
+	Wed, 14 Feb 2024 18:27:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1707935259;
+	bh=eWMcKuQcX//tv42JjDwySXAX7+Ft4kCcsDdJ75TKCg4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AIjp7SGbGYG4mpDgQ1c4+A6DhBBCW02B5TqQDQrUVlzZCXev+dWbsem7PN9qRfRk7
+	 kJ8MQhDLWXontLnucRrpMQHDLVaeSeXcyW6e/Y+iULRNH3VgmwZrxDWQz+ESDHxFJn
+	 0uoKAgckqu5f0ZE7txoVL2U/Tu2nCyiZmI/ZC6hVflJ9eP+cznQQ9frzVQ9R2R/v6+
+	 Th/fMjwqJg1p4bvFST27Eq+IK14M5kWLYtJeMDTruRn28QHkL6M3QP0Wn2dFpgCfcp
+	 GpKsn88gkQV16BoFcuCeBA5GCR94lSgweX9BrKMCCe7hM1SyphyGsMYEHLjn+J3va/
+	 bVNb0xc9KatEQ==
+Date: Wed, 14 Feb 2024 19:27:35 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
+	Seth Forshee <sforshee@kernel.org>, Tycho Andersen <tycho@tycho.pizza>
+Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
+Message-ID: <20240214-kanal-laufleistung-d884f8a1f5f2@brauner>
+References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org>
+ <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
+ <CAHk-=wjr+K+x8bu2=gSK8SehNWnY3MGxdfO9L25tKJHTUK0x0w@mail.gmail.com>
+ <20240214-kredenzen-teamarbeit-aafb528b1c86@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/35] mm: introduce slabobj_ext to support slab object
- extensions
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, mhocko@suse.com, hannes@cmpxchg.org,
- roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
- willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
- void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
- catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de,
- mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
- peterx@redhat.com, david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
- masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
- muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
- pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com,
- dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com,
- keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com,
- gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
- vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org,
- bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
- penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
- glider@google.com, elver@google.com, dvyukov@google.com,
- shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
- rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
- kernel-team@android.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-modules@vger.kernel.org,
- kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-References: <20240212213922.783301-1-surenb@google.com>
- <20240212213922.783301-6-surenb@google.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20240212213922.783301-6-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=aK+8VjyI;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Psgv+7MZ
-X-Spamd-Result: default: False [-5.30 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 XM_UA_NO_VERSION(0.01)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 MID_RHS_MATCH_FROM(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DWL_DNSWL_HI(-3.50)[suse.cz:dkim];
-	 BAYES_HAM(-3.00)[100.00%];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 TO_MATCH_ENVRCPT_SOME(0.00)[];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_GT_50(0.00)[73];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 FREEMAIL_CC(0.00)[linux.dev,suse.com,cmpxchg.org,suse.de,stgolabs.net,infradead.org,oracle.com,lwn.net,manifault.com,redhat.com,arm.com,kernel.org,arndb.de,linutronix.de,linux.intel.com,kernel.dk,soleen.com,google.com,gmail.com,chromium.org,linuxfoundation.org,linaro.org,goodmis.org,linux.com,lge.com,bytedance.com,akamai.com,android.com,vger.kernel.org,lists.linux.dev,kvack.org,googlegroups.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 147452207D
-X-Spam-Level: 
-X-Spam-Score: -5.30
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240214-kredenzen-teamarbeit-aafb528b1c86@brauner>
 
-On 2/12/24 22:38, Suren Baghdasaryan wrote:
-> Currently slab pages can store only vectors of obj_cgroup pointers in
-> page->memcg_data. Introduce slabobj_ext structure to allow more data
-> to be stored for each slab object. Wrap obj_cgroup into slabobj_ext
-> to support current functionality while allowing to extend slabobj_ext
-> in the future.
+On Wed, Feb 14, 2024 at 03:40:26PM +0100, Christian Brauner wrote:
+> On Tue, Feb 13, 2024 at 09:17:18AM -0800, Linus Torvalds wrote:
+> > On Tue, 13 Feb 2024 at 08:46, Christian Brauner <brauner@kernel.org> wrote:
+> > >
+> > > * Each struct pid will refer to a different inode but the same struct
+> > >   pid will refer to the same inode if it's opened multiple times. In
+> > >   contrast to now where each struct pid refers to the same inode.
+> > 
+> > The games for this are disgusting. This needs to be done some other way.
 > 
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Yeah, I'm not particularly happy about it and I did consider deviating
+> from this completely and doing a lookup based on stashed inode number
+> alone. But that would've been a bit more code. Let me see though.
 
-...
+Ok, that turned out to be simpler than I had evisioned - unless I made
+horrible mistakes:
 
-> +static inline bool need_slab_obj_ext(void)
-> +{
-> +	/*
-> +	 * CONFIG_MEMCG_KMEM creates vector of obj_cgroup objects conditionally
-> +	 * inside memcg_slab_post_alloc_hook. No other users for now.
-> +	 */
-> +	return false;
-> +}
-> +
-> +static inline struct slabobj_ext *
-> +prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
-> +{
-> +	struct slab *slab;
-> +
-> +	if (!p)
-> +		return NULL;
-> +
-> +	if (!need_slab_obj_ext())
-> +		return NULL;
-> +
-> +	slab = virt_to_slab(p);
-> +	if (!slab_obj_exts(slab) &&
-> +	    WARN(alloc_slab_obj_exts(slab, s, flags, false),
-> +		 "%s, %s: Failed to create slab extension vector!\n",
-> +		 __func__, s->name))
-> +		return NULL;
-> +
-> +	return slab_obj_exts(slab) + obj_to_index(s, slab, p);
+From c96d88910d029ea639902d245619acbd910fc32d Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Mon, 12 Feb 2024 16:32:38 +0100
+Subject: [PATCH] [RFC] pidfd: add pidfdfs
 
-This is called in slab_post_alloc_hook() and the result stored to obj_exts
-but unused. Maybe introduce this only in a later patch where it becomes
-relevant?
+This moves pidfds from the anonymous inode infrastructure to a tiny
+pseudo filesystem. This has been on my todo for quite a while as it will
+unblock further work that we weren't able to do simply because of the
+very justified limitations of anonymous inodes. Moving pidfds to a tiny
+pseudo filesystem allows:
 
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -201,6 +201,54 @@ struct kmem_cache *find_mergeable(unsigned int size, unsigned int align,
->  	return NULL;
->  }
->  
-> +#ifdef CONFIG_SLAB_OBJ_EXT
-> +/*
-> + * The allocated objcg pointers array is not accounted directly.
-> + * Moreover, it should not come from DMA buffer and is not readily
-> + * reclaimable. So those GFP bits should be masked off.
-> + */
-> +#define OBJCGS_CLEAR_MASK	(__GFP_DMA | __GFP_RECLAIMABLE | \
-> +				__GFP_ACCOUNT | __GFP_NOFAIL)
-> +
-> +int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
-> +			gfp_t gfp, bool new_slab)
+* statx() on pidfds becomes useful for the first time.
+* pidfds can be compared simply via statx() and then comparing inode
+  numbers.
+* pidfds have unique inode numbers for the system lifetime.
+* struct pid is now stashed in inode->i_private instead of
+  file->private_data. This means it is now possible to introduce
+  concepts that operate on a process once all file descriptors have been
+  closed. A concrete example is kill-on-last-close.
+* file->private_data is freed up for per-file options for pidfds.
+* Each struct pid will refer to a different inode but the same struct
+  pid will refer to the same inode if it's opened multiple times. In
+  contrast to now where each struct pid refers to the same inode. Even
+  if we were to move to anon_inode_create_getfile() which creates new
+  inodes we'd still be associating the same struct pid with multiple
+  different inodes.
 
-Since you're moving this function between files anyway, could you please
-instead move it to mm/slub.c. I expect we'll eventually (maybe even soon)
-move the rest of performance sensitive kmemcg hooks there as well to make
-inlining possible.
+The tiny pseudo filesystem is not visible anywhere in userspace exactly
+like e.g., pipefs and sockfs. There's no lookup, there's no complex
+inode operations, nothing. Dentries and inodes are always deleted when
+the last pidfd is closed.
 
-> +{
-> +	unsigned int objects = objs_per_slab(s, slab);
-> +	unsigned long obj_exts;
-> +	void *vec;
-> +
-> +	gfp &= ~OBJCGS_CLEAR_MASK;
-> +	vec = kcalloc_node(objects, sizeof(struct slabobj_ext), gfp,
-> +			   slab_nid(slab));
-> +	if (!vec)
-> +		return -ENOMEM;
-> +
-> +	obj_exts = (unsigned long)vec;
-> +#ifdef CONFIG_MEMCG
-> +	obj_exts |= MEMCG_DATA_OBJEXTS;
-> +#endif
-> +	if (new_slab) {
-> +		/*
-> +		 * If the slab is brand new and nobody can yet access its
-> +		 * obj_exts, no synchronization is required and obj_exts can
-> +		 * be simply assigned.
-> +		 */
-> +		slab->obj_exts = obj_exts;
-> +	} else if (cmpxchg(&slab->obj_exts, 0, obj_exts)) {
-> +		/*
-> +		 * If the slab is already in use, somebody can allocate and
-> +		 * assign slabobj_exts in parallel. In this case the existing
-> +		 * objcg vector should be reused.
-> +		 */
-> +		kfree(vec);
-> +		return 0;
-> +	}
-> +
-> +	kmemleak_not_leak(vec);
-> +	return 0;
-> +}
-> +#endif /* CONFIG_SLAB_OBJ_EXT */
-> +
->  static struct kmem_cache *create_cache(const char *name,
->  		unsigned int object_size, unsigned int align,
->  		slab_flags_t flags, unsigned int useroffset,
-> diff --git a/mm/slub.c b/mm/slub.c
-> index 2ef88bbf56a3..1eb1050814aa 100644
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -683,10 +683,10 @@ static inline bool __slab_update_freelist(struct kmem_cache *s, struct slab *sla
->  
->  	if (s->flags & __CMPXCHG_DOUBLE) {
->  		ret = __update_freelist_fast(slab, freelist_old, counters_old,
-> -				            freelist_new, counters_new);
-> +					    freelist_new, counters_new);
->  	} else {
->  		ret = __update_freelist_slow(slab, freelist_old, counters_old,
-> -				            freelist_new, counters_new);
-> +					    freelist_new, counters_new);
->  	}
->  	if (likely(ret))
->  		return true;
-> @@ -710,13 +710,13 @@ static inline bool slab_update_freelist(struct kmem_cache *s, struct slab *slab,
->  
->  	if (s->flags & __CMPXCHG_DOUBLE) {
->  		ret = __update_freelist_fast(slab, freelist_old, counters_old,
-> -				            freelist_new, counters_new);
-> +					    freelist_new, counters_new);
->  	} else {
->  		unsigned long flags;
->  
->  		local_irq_save(flags);
->  		ret = __update_freelist_slow(slab, freelist_old, counters_old,
-> -				            freelist_new, counters_new);
-> +					    freelist_new, counters_new);
+We allocate a new inode for each struct pid and we reuse that inode for
+all pidfds. We use iget_locked() to find that inode again based on the
+inode number which isn't recycled. We allocate a new dentry for each
+pidfd that uses the same inode. That is similar to anonymous inodes
+which reuse the same inode for thousands of dentries. For pidfds we're
+talking way less than that. There usually won't be a lot of concurrent
+openers of the same struct pid. They can probably often be counted on
+two hands. I know that systemd does use separate pidfd for the same
+struct pid for various complex process tracking issues. So I think with
+that things actually become way simpler. Especially because we don't
+have to care about lookup. Dentries and inodes continue to be always
+deleted.
 
-I can see the mixing of tabs and spaces is wrong but perhaps not fix it as
-part of the series?
+The code is entirely optional and fairly small. If it's not selected we
+fallback to anonymous inodes. Heavily inspired by nsfs which uses a
+similar stashing mechanism just for namespaces.
 
->  		local_irq_restore(flags);
->  	}
->  	if (likely(ret))
-> @@ -1881,13 +1881,25 @@ static inline enum node_stat_item cache_vmstat_idx(struct kmem_cache *s)
->  		NR_SLAB_RECLAIMABLE_B : NR_SLAB_UNRECLAIMABLE_B;
->  }
->  
-> -#ifdef CONFIG_MEMCG_KMEM
-> -static inline void memcg_free_slab_cgroups(struct slab *slab)
-> +#ifdef CONFIG_SLAB_OBJ_EXT
-> +static inline void free_slab_obj_exts(struct slab *slab)
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/Kconfig                 |   6 ++
+ fs/pidfdfs.c               | 134 ++++++++++++++++++++++++++++++++++++-
+ include/linux/pid.h        |   3 +
+ include/linux/pidfdfs.h    |   9 +++
+ include/uapi/linux/magic.h |   1 +
+ init/main.c                |   2 +
+ kernel/fork.c              |  13 +---
+ kernel/nsproxy.c           |   2 +-
+ kernel/pid.c               |   2 +
+ 9 files changed, 158 insertions(+), 14 deletions(-)
+ create mode 100644 include/linux/pidfdfs.h
 
-Right, freeing is already here, so makes sense put the allocation here as well.
-
-> @@ -3817,6 +3820,7 @@ void slab_post_alloc_hook(struct kmem_cache *s,	struct obj_cgroup *objcg,
->  		kmemleak_alloc_recursive(p[i], s->object_size, 1,
->  					 s->flags, init_flags);
->  		kmsan_slab_alloc(s, p[i], init_flags);
-> +		obj_exts = prepare_slab_obj_exts_hook(s, flags, p[i]);
-
-Yeah here's the hook used. Doesn't it generate a compiler warning? Maybe at
-least postpone the call until the result is further used.
-
->  	}
->  
->  	memcg_slab_post_alloc_hook(s, objcg, flags, size, p);
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 89fdbefd1075..c7ed65e34820 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -174,6 +174,12 @@ source "fs/proc/Kconfig"
+ source "fs/kernfs/Kconfig"
+ source "fs/sysfs/Kconfig"
+ 
++config FS_PIDFD
++	bool "Pseudo filesystem for process file descriptors"
++	depends on 64BIT
++	help
++	  Pidfdfs implements advanced features for process file descriptors.
++
+ config TMPFS
+ 	bool "Tmpfs virtual memory file system support (former shm fs)"
+ 	depends on SHMEM
+diff --git a/fs/pidfdfs.c b/fs/pidfdfs.c
+index 55e8396e7fc4..80caf1759f97 100644
+--- a/fs/pidfdfs.c
++++ b/fs/pidfdfs.c
+@@ -1,9 +1,11 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <linux/anon_inodes.h>
+ #include <linux/file.h>
+ #include <linux/fs.h>
+ #include <linux/magic.h>
+ #include <linux/mount.h>
+ #include <linux/pid.h>
++#include <linux/pidfdfs.h>
+ #include <linux/pid_namespace.h>
+ #include <linux/poll.h>
+ #include <linux/proc_fs.h>
+@@ -12,12 +14,25 @@
+ #include <linux/seq_file.h>
+ #include <uapi/linux/pidfd.h>
+ 
++struct pid *pidfd_pid(const struct file *file)
++{
++	if (file->f_op != &pidfd_fops)
++		return ERR_PTR(-EBADF);
++#ifdef CONFIG_FS_PIDFD
++	return file_inode(file)->i_private;
++#else
++	return file->private_data;
++#endif
++}
++
+ static int pidfd_release(struct inode *inode, struct file *file)
+ {
++#ifndef CONFIG_FS_PIDFD
+ 	struct pid *pid = file->private_data;
+ 
+ 	file->private_data = NULL;
+ 	put_pid(pid);
++#endif
+ 	return 0;
+ }
+ 
+@@ -59,7 +74,7 @@ static int pidfd_release(struct inode *inode, struct file *file)
+  */
+ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
+ {
+-	struct pid *pid = f->private_data;
++	struct pid *pid = pidfd_pid(f);
+ 	struct pid_namespace *ns;
+ 	pid_t nr = -1;
+ 
+@@ -93,7 +108,7 @@ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
+  */
+ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
+ {
+-	struct pid *pid = file->private_data;
++	struct pid *pid = pidfd_pid(file);
+ 	bool thread = file->f_flags & PIDFD_THREAD;
+ 	struct task_struct *task;
+ 	__poll_t poll_flags = 0;
+@@ -121,3 +136,118 @@ const struct file_operations pidfd_fops = {
+ 	.show_fdinfo	= pidfd_show_fdinfo,
+ #endif
+ };
++
++#ifdef CONFIG_FS_PIDFD
++static struct vfsmount *pidfdfs_mnt __ro_after_init;
++static struct super_block *pidfdfs_sb __ro_after_init;
++static u64 pidfdfs_ino = 0;
++
++static void pidfdfs_evict_inode(struct inode *inode)
++{
++	struct pid *pid = inode->i_private;
++
++	clear_inode(inode);
++	put_pid(pid);
++}
++
++static const struct super_operations pidfdfs_sops = {
++	.drop_inode	= generic_delete_inode,
++	.evict_inode	= pidfdfs_evict_inode,
++	.statfs		= simple_statfs,
++};
++
++static char *pidfdfs_dname(struct dentry *dentry, char *buffer, int buflen)
++{
++	return dynamic_dname(buffer, buflen, "pidfd:[%lu]",
++			     d_inode(dentry)->i_ino);
++}
++
++const struct dentry_operations pidfdfs_dentry_operations = {
++	.d_delete	= always_delete_dentry,
++	.d_dname	= pidfdfs_dname,
++};
++
++static int pidfdfs_init_fs_context(struct fs_context *fc)
++{
++	struct pseudo_fs_context *ctx;
++
++	ctx = init_pseudo(fc, PIDFDFS_MAGIC);
++	if (!ctx)
++		return -ENOMEM;
++
++	ctx->ops = &pidfdfs_sops;
++	ctx->dops = &pidfdfs_dentry_operations;
++	return 0;
++}
++
++static struct file_system_type pidfdfs_type = {
++	.name			= "pidfdfs",
++	.init_fs_context	= pidfdfs_init_fs_context,
++	.kill_sb		= kill_anon_super,
++};
++
++struct file *pidfdfs_alloc_file(struct pid *pid, unsigned int flags)
++{
++
++	struct inode *inode;
++	struct file *pidfd_file;
++
++	inode = iget_locked(pidfdfs_sb, pid->ino);
++	if (!inode)
++		return ERR_PTR(-ENOMEM);
++
++	if (inode->i_state & I_NEW) {
++		inode->i_ino = pid->ino;
++		inode->i_mode = S_IFREG | S_IRUGO;
++		inode->i_fop = &pidfd_fops;
++		inode->i_flags |= S_IMMUTABLE;
++		inode->i_private = get_pid(pid);
++		simple_inode_init_ts(inode);
++		unlock_new_inode(inode);
++	}
++
++	pidfd_file = alloc_file_pseudo(inode, pidfdfs_mnt, "", flags, &pidfd_fops);
++	if (IS_ERR(pidfd_file))
++		iput(inode);
++
++	return pidfd_file;
++}
++
++void pid_init_pidfdfs(struct pid *pid)
++{
++	pid->ino = ++pidfdfs_ino;
++}
++
++void __init pidfdfs_init(void)
++{
++	int err;
++
++	err = register_filesystem(&pidfdfs_type);
++	if (err)
++		panic("Failed to register pidfdfs pseudo filesystem");
++
++	pidfdfs_mnt = kern_mount(&pidfdfs_type);
++	if (IS_ERR(pidfdfs_mnt))
++		panic("Failed to mount pidfdfs pseudo filesystem");
++
++	pidfdfs_sb = pidfdfs_mnt->mnt_sb;
++}
++
++#else /* !CONFIG_FS_PIDFD */
++
++struct file *pidfdfs_alloc_file(struct pid *pid, unsigned int flags)
++{
++	struct file *pidfd_file;
++
++	pidfd_file = anon_inode_getfile("[pidfd]", &pidfd_fops, pid,
++					flags | O_RDWR);
++	if (IS_ERR(pidfd_file))
++		return pidfd_file;
++
++	get_pid(pid);
++	return pidfd_file;
++}
++
++void pid_init_pidfdfs(struct pid *pid) { }
++void __init pidfdfs_init(void) { }
++#endif
+diff --git a/include/linux/pid.h b/include/linux/pid.h
+index 8124d57752b9..7b6f5deab36a 100644
+--- a/include/linux/pid.h
++++ b/include/linux/pid.h
+@@ -55,6 +55,9 @@ struct pid
+ 	refcount_t count;
+ 	unsigned int level;
+ 	spinlock_t lock;
++#ifdef CONFIG_FS_PIDFD
++	unsigned long ino;
++#endif
+ 	/* lists of tasks that use this pid */
+ 	struct hlist_head tasks[PIDTYPE_MAX];
+ 	struct hlist_head inodes;
+diff --git a/include/linux/pidfdfs.h b/include/linux/pidfdfs.h
+new file mode 100644
+index 000000000000..760dbc163625
+--- /dev/null
++++ b/include/linux/pidfdfs.h
+@@ -0,0 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_PIDFDFS_H
++#define _LINUX_PIDFDFS_H
++
++struct file *pidfdfs_alloc_file(struct pid *pid, unsigned int flags);
++void __init pidfdfs_init(void);
++void pid_init_pidfdfs(struct pid *pid);
++
++#endif /* _LINUX_PIDFDFS_H */
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index 6325d1d0e90f..a0d5480115c5 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -101,5 +101,6 @@
+ #define DMA_BUF_MAGIC		0x444d4142	/* "DMAB" */
+ #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
+ #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
++#define PIDFDFS_MAGIC		0x50494446	/* "PIDF" */
+ 
+ #endif /* __LINUX_MAGIC_H__ */
+diff --git a/init/main.c b/init/main.c
+index e24b0780fdff..0663003f3146 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -99,6 +99,7 @@
+ #include <linux/init_syscalls.h>
+ #include <linux/stackdepot.h>
+ #include <linux/randomize_kstack.h>
++#include <linux/pidfdfs.h>
+ #include <net/net_namespace.h>
+ 
+ #include <asm/io.h>
+@@ -1059,6 +1060,7 @@ void start_kernel(void)
+ 	seq_file_init();
+ 	proc_root_init();
+ 	nsfs_init();
++	pidfdfs_init();
+ 	cpuset_init();
+ 	cgroup_init();
+ 	taskstats_init_early();
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 662a61f340ce..eab2fcc90342 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -102,6 +102,7 @@
+ #include <linux/iommu.h>
+ #include <linux/rseq.h>
+ #include <uapi/linux/pidfd.h>
++#include <linux/pidfdfs.h>
+ 
+ #include <asm/pgalloc.h>
+ #include <linux/uaccess.h>
+@@ -1985,14 +1986,6 @@ static inline void rcu_copy_process(struct task_struct *p)
+ #endif /* #ifdef CONFIG_TASKS_TRACE_RCU */
+ }
+ 
+-struct pid *pidfd_pid(const struct file *file)
+-{
+-	if (file->f_op == &pidfd_fops)
+-		return file->private_data;
+-
+-	return ERR_PTR(-EBADF);
+-}
+-
+ /**
+  * __pidfd_prepare - allocate a new pidfd_file and reserve a pidfd
+  * @pid:   the struct pid for which to create a pidfd
+@@ -2030,13 +2023,11 @@ static int __pidfd_prepare(struct pid *pid, unsigned int flags, struct file **re
+ 	if (pidfd < 0)
+ 		return pidfd;
+ 
+-	pidfd_file = anon_inode_getfile("[pidfd]", &pidfd_fops, pid,
+-					flags | O_RDWR);
++	pidfd_file = pidfdfs_alloc_file(pid, flags | O_RDWR);
+ 	if (IS_ERR(pidfd_file)) {
+ 		put_unused_fd(pidfd);
+ 		return PTR_ERR(pidfd_file);
+ 	}
+-	get_pid(pid); /* held by pidfd_file now */
+ 	/*
+ 	 * anon_inode_getfile() ignores everything outside of the
+ 	 * O_ACCMODE | O_NONBLOCK mask, set PIDFD_THREAD manually.
+diff --git a/kernel/nsproxy.c b/kernel/nsproxy.c
+index 15781acaac1c..6ec3deec68c2 100644
+--- a/kernel/nsproxy.c
++++ b/kernel/nsproxy.c
+@@ -573,7 +573,7 @@ SYSCALL_DEFINE2(setns, int, fd, int, flags)
+ 	if (proc_ns_file(f.file))
+ 		err = validate_ns(&nsset, ns);
+ 	else
+-		err = validate_nsset(&nsset, f.file->private_data);
++		err = validate_nsset(&nsset, pidfd_pid(f.file));
+ 	if (!err) {
+ 		commit_nsset(&nsset);
+ 		perf_event_namespaces(current);
+diff --git a/kernel/pid.c b/kernel/pid.c
+index c1d940fbd314..dbff84493bff 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -42,6 +42,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/sched/task.h>
+ #include <linux/idr.h>
++#include <linux/pidfdfs.h>
+ #include <net/sock.h>
+ #include <uapi/linux/pidfd.h>
+ 
+@@ -270,6 +271,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+ 
+ 	upid = pid->numbers + ns->level;
+ 	spin_lock_irq(&pidmap_lock);
++	pid_init_pidfdfs(pid);
+ 	if (!(ns->pid_allocated & PIDNS_ADDING))
+ 		goto out_unlock;
+ 	for ( ; upid >= pid->numbers; --upid) {
+-- 
+2.43.0
 
 
