@@ -1,40 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-11575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4551854E0C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 17:24:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B022C854E5D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 17:30:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FF0A2827AE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 16:24:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D537B1C284D6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 16:30:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7185B60DDD;
-	Wed, 14 Feb 2024 16:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893ED61679;
+	Wed, 14 Feb 2024 16:25:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A32E60B97;
-	Wed, 14 Feb 2024 16:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8496A013;
+	Wed, 14 Feb 2024 16:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707927774; cv=none; b=WyntgX+auHcZYBMx0jItzkcyzM0QuUpvi0bp71WRR4VAMIh2dlctc1bLbnYwYdTLSL6YJZ5B8KRDT24AjvBNguecdqBmINC7K/pQ3rc1iqHWdaOwxkTiYTasU1W7k5Fz6zYk6HQURiEw9HsyxOEmPwZwCnJX3jWjDRGcgv1DjIw=
+	t=1707927914; cv=none; b=iLdAsyJ1LmlfSM9LsBVw/OuRaOkrW+DuBE/hs5gpU1K37+xd5V3SNclI9o84bCSgHOnIExOIp1TaCq4zaKFX6eO/em1DnHMiRw65x76vRehwjwC7pBiHlLmWqUM+LTCg01k2+p0ovlqn7jDAX2ra9Ivu8FnLIUsn7aF64pDSZNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707927774; c=relaxed/simple;
-	bh=tPeIGdk9ABSJ2vtL7S2gwGOmRk4EEkM+iWIHuT7Lkzs=;
+	s=arc-20240116; t=1707927914; c=relaxed/simple;
+	bh=Iz4EgZOSFR1zigQnY5oEHTIwS7VOPzZ8Ty+S62gU0GM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PS962roqco3C//5W7sgHSFzpMt6QFc2M2ish3+DQoyvZ0V3lHwes+zHov4gZI1WT3+emNPdXypsVublt87nXslAMpJY5d3ILULujTVu8t2vhaOLELf4rvB8qiMnkn1WLHRn9LXsRGEUFBrva/k+M54/HNzt7FwvdGN4rMa//r2U=
+	 In-Reply-To:Content-Type; b=HSp3LTGlL9/0OBaMaOgeXSM2e6lLzO37ktcoxVoCHqyutk07E6wayDHgowDOIkRAPuZq0Q0akK7YR6syHtT1QhE4l5+Ci2A5PHqZVPrzTyn+ckbwdPekKA8q3sZoL0ugixZGJnmVqE/D5JwVHrQ+jUpkc6AjIvVR3wy/0eX65AY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC6721FB;
-	Wed, 14 Feb 2024 08:23:31 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4018E1FB;
+	Wed, 14 Feb 2024 08:25:52 -0800 (PST)
 Received: from [10.57.64.120] (unknown [10.57.64.120])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 32A5B3F762;
-	Wed, 14 Feb 2024 08:22:48 -0800 (PST)
-Message-ID: <6c986b83-e00d-46fe-8c88-374f8e6bd0fa@arm.com>
-Date: Wed, 14 Feb 2024 16:22:46 +0000
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AFAD03F762;
+	Wed, 14 Feb 2024 08:25:08 -0800 (PST)
+Message-ID: <48e15a5a-b8e8-4ed7-91df-049f5525f648@arm.com>
+Date: Wed, 14 Feb 2024 16:25:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -42,8 +42,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/7] mm: thp: split huge page to any lower order pages
- (except order-1).
+Subject: Re: [PATCH v4 6/7] mm: truncate: split huge page cache page to a
+ non-zero order if possible.
 Content-Language: en-GB
 To: Zi Yan <ziy@nvidia.com>
 Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, linux-mm@kvack.org,
@@ -59,234 +59,115 @@ Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, linux-mm@kvack.org,
  cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  linux-kselftest@vger.kernel.org
 References: <20240213215520.1048625-1-zi.yan@sent.com>
- <20240213215520.1048625-6-zi.yan@sent.com>
- <de66b9fb-ee84-473f-a69a-2ac8554f6000@arm.com>
- <6859C8DA-5B7F-458E-895C-763BA782F4B9@nvidia.com>
+ <20240213215520.1048625-7-zi.yan@sent.com>
+ <cbb1d6a0-66dd-47d0-8733-f836fe050374@arm.com>
+ <1C274CBB-C809-442E-9575-858460C0F62D@nvidia.com>
 From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <6859C8DA-5B7F-458E-895C-763BA782F4B9@nvidia.com>
+In-Reply-To: <1C274CBB-C809-442E-9575-858460C0F62D@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/02/2024 16:11, Zi Yan wrote:
-> On 14 Feb 2024, at 5:38, Ryan Roberts wrote:
+On 14/02/2024 16:19, Zi Yan wrote:
+> On 14 Feb 2024, at 5:43, Ryan Roberts wrote:
 > 
 >> On 13/02/2024 21:55, Zi Yan wrote:
 >>> From: Zi Yan <ziy@nvidia.com>
 >>>
->>> To split a THP to any lower order (except order-1) pages, we need to
->>> reform THPs on subpages at given order and add page refcount based on the
->>> new page order. Also we need to reinitialize page_deferred_list after
->>> removing the page from the split_queue, otherwise a subsequent split will
->>> see list corruption when checking the page_deferred_list again.
->>>
->>> It has many uses, like minimizing the number of pages after
->>> truncating a huge pagecache page. For anonymous THPs, we can only split
->>> them to order-0 like before until we add support for any size anonymous
->>> THPs.
->>
->> multi-size THP is now upstream. Not sure if this comment still makes sense.
-> Will change it to reflect the fact that multi-size THP is already upstream.
-> 
->> Still its not completely clear to me how you would integrate this new machinery
->> and decide what non-zero order to split anon THP to?
-> 
-> Originally, it was developed along with my 1GB THP support. So it was intended
-> to split order-18 to order-9. But for now, like you and David said in the cover
-> letter email thread, we might not want to use it for anonymous large folios
-> until we find a necessary use case.
-> 
->>>
->>> Order-1 folio is not supported because _deferred_list, which is used by
->>> partially mapped folios, is stored in subpage 2 and an order-1 folio only
->>> has subpage 0 and 1.
+>>> To minimize the number of pages after a huge page truncation, we do not
+>>> need to split it all the way down to order-0. The huge page has at most
+>>> three parts, the part before offset, the part to be truncated, the part
+>>> remaining at the end. Find the greatest common divisor of them to
+>>> calculate the new page order from it, so we can split the huge
+>>> page to this order and keep the remaining pages as large and as few as
+>>> possible.
 >>>
 >>> Signed-off-by: Zi Yan <ziy@nvidia.com>
 >>> ---
->>>  include/linux/huge_mm.h |  21 +++++---
->>>  mm/huge_memory.c        | 114 +++++++++++++++++++++++++++++++---------
->>>  2 files changed, 101 insertions(+), 34 deletions(-)
+>>>  mm/truncate.c | 21 +++++++++++++++++++--
+>>>  1 file changed, 19 insertions(+), 2 deletions(-)
 >>>
->>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>> index 5adb86af35fc..de0c89105076 100644
->>> --- a/include/linux/huge_mm.h
->>> +++ b/include/linux/huge_mm.h
->>> @@ -265,10 +265,11 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+>>> diff --git a/mm/truncate.c b/mm/truncate.c
+>>> index 725b150e47ac..49ddbbf7a617 100644
+>>> --- a/mm/truncate.c
+>>> +++ b/mm/truncate.c
+>>> @@ -21,6 +21,7 @@
+>>>  #include <linux/task_io_accounting_ops.h>
+>>>  #include <linux/shmem_fs.h>
+>>>  #include <linux/rmap.h>
+>>> +#include <linux/gcd.h>
+>>>  #include "internal.h"
 >>>
->>>  void folio_prep_large_rmappable(struct folio *folio);
->>>  bool can_split_folio(struct folio *folio, int *pextra_pins);
->>> -int split_huge_page_to_list(struct page *page, struct list_head *list);
->>> +int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->>> +		unsigned int new_order);
->>>  static inline int split_huge_page(struct page *page)
->>>  {
->>> -	return split_huge_page_to_list(page, NULL);
->>> +	return split_huge_page_to_list_to_order(page, NULL, 0);
->>>  }
->>>  void deferred_split_folio(struct folio *folio);
->>>
->>> @@ -422,7 +423,8 @@ can_split_folio(struct folio *folio, int *pextra_pins)
->>>  	return false;
->>>  }
->>>  static inline int
->>> -split_huge_page_to_list(struct page *page, struct list_head *list)
->>> +split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->>> +		unsigned int new_order)
->>>  {
->>>  	return 0;
->>>  }
->>> @@ -519,17 +521,20 @@ static inline bool thp_migration_supported(void)
->>>  }
->>>  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->>>
->>> -static inline int split_folio_to_list(struct folio *folio,
->>> -		struct list_head *list)
->>> +static inline int split_folio_to_list_to_order(struct folio *folio,
->>> +		struct list_head *list, int new_order)
->>>  {
->>> -	return split_huge_page_to_list(&folio->page, list);
->>> +	return split_huge_page_to_list_to_order(&folio->page, list, new_order);
->>>  }
->>>
->>> -static inline int split_folio(struct folio *folio)
->>> +static inline int split_folio_to_order(struct folio *folio, int new_order)
->>>  {
->>> -	return split_folio_to_list(folio, NULL);
->>> +	return split_folio_to_list_to_order(folio, NULL, new_order);
->>>  }
->>>
->>> +#define split_folio_to_list(f, l) split_folio_to_list_to_order(f, l, 0)
->>> +#define split_folio(f) split_folio_to_order(f, 0)
->>> +
 >>>  /*
->>>   * archs that select ARCH_WANTS_THP_SWAP but don't support THP_SWP due to
->>>   * limitations in the implementation like arm64 MTE can override this to
->>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->>> index ad7133c97428..d0e555a8ea98 100644
->>> --- a/mm/huge_memory.c
->>> +++ b/mm/huge_memory.c
->>> @@ -2718,11 +2718,14 @@ void vma_adjust_trans_huge(struct vm_area_struct *vma,
->>>
->>>  static void unmap_folio(struct folio *folio)
+>>> @@ -210,7 +211,8 @@ int truncate_inode_folio(struct address_space *mapping, struct folio *folio)
+>>>  bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
 >>>  {
->>> -	enum ttu_flags ttu_flags = TTU_RMAP_LOCKED | TTU_SPLIT_HUGE_PMD |
->>> -		TTU_SYNC | TTU_BATCH_FLUSH;
->>> +	enum ttu_flags ttu_flags = TTU_RMAP_LOCKED | TTU_SYNC |
->>> +		TTU_BATCH_FLUSH;
+>>>  	loff_t pos = folio_pos(folio);
+>>> -	unsigned int offset, length;
+>>> +	unsigned int offset, length, remaining;
+>>> +	unsigned int new_order = folio_order(folio);
 >>>
->>>  	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+>>>  	if (pos < start)
+>>>  		offset = start - pos;
+>>> @@ -221,6 +223,7 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+>>>  		length = length - offset;
+>>>  	else
+>>>  		length = end + 1 - pos - offset;
+>>> +	remaining = folio_size(folio) - offset - length;
 >>>
->>> +	if (folio_test_pmd_mappable(folio))
->>> +		ttu_flags |= TTU_SPLIT_HUGE_PMD;
+>>>  	folio_wait_writeback(folio);
+>>>  	if (length == folio_size(folio)) {
+>>> @@ -235,11 +238,25 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+>>>  	 */
+>>>  	folio_zero_range(folio, offset, length);
+>>>
+>>> +	/*
+>>> +	 * Use the greatest common divisor of offset, length, and remaining
+>>> +	 * as the smallest page size and compute the new order from it. So we
+>>> +	 * can truncate a subpage as large as possible. Round up gcd to
+>>> +	 * PAGE_SIZE, otherwise ilog2 can give -1 when gcd/PAGE_SIZE is 0.
+>>> +	 */
+>>> +	new_order = ilog2(round_up(gcd(gcd(offset, length), remaining),
+>>> +				   PAGE_SIZE) / PAGE_SIZE);
 >>
->> Should we split this change out? I think it makes sense independent of this series?
->>
+>> Given you have up to 2 regions remaining, isn't it possible that you want a
+>> different order for both those regions (or even multiple orders within the same
+>> region)? I guess you just choose gcd for simplicity?
 > 
-> Sure. Since multi-size THP is upstream, this avoid unnecessary code path if
-> the THP is not PMD-mapped.
+> Right. You raise the same concern as Hugh[1]. I am minimizing the call of
+> split_huge_page_to_list_to_order() and you and Hugh want to minimize the
+> number of folios after the split. Yours will give better outcome after split,
+> but requires either multiple calls or a more sophisticated implementation
+> of page split[2]. We probably can revisit this once splitting to any order
+> gets wider use.
+
+Yeah, fair enough. Sorry hadn't read Hugh's original feedback.
+
 > 
 >>> +
->>>  	/*
->>>  	 * Anon pages need migration entries to preserve them, but file
->>>  	 * pages can simply be left unmapped, then faulted back on demand.
->>> @@ -2756,7 +2759,6 @@ static void lru_add_page_tail(struct page *head, struct page *tail,
->>>  		struct lruvec *lruvec, struct list_head *list)
->>>  {
->>>  	VM_BUG_ON_PAGE(!PageHead(head), head);
->>> -	VM_BUG_ON_PAGE(PageCompound(tail), head);
->>>  	VM_BUG_ON_PAGE(PageLRU(tail), head);
->>>  	lockdep_assert_held(&lruvec->lru_lock);
->>>
->>> @@ -2777,7 +2779,8 @@ static void lru_add_page_tail(struct page *head, struct page *tail,
->>>  }
->>>
->>>  static void __split_huge_page_tail(struct folio *folio, int tail,
->>> -		struct lruvec *lruvec, struct list_head *list)
->>> +		struct lruvec *lruvec, struct list_head *list,
->>> +		unsigned int new_order)
->>>  {
->>>  	struct page *head = &folio->page;
->>>  	struct page *page_tail = head + tail;
->>> @@ -2847,10 +2850,15 @@ static void __split_huge_page_tail(struct folio *folio, int tail,
->>>  	 * which needs correct compound_head().
->>>  	 */
->>>  	clear_compound_head(page_tail);
->>> +	if (new_order) {
->>> +		prep_compound_page(page_tail, new_order);
->>> +		folio_prep_large_rmappable(page_folio(page_tail));
->>> +	}
->>>
->>>  	/* Finally unfreeze refcount. Additional reference from page cache. */
->>> -	page_ref_unfreeze(page_tail, 1 + (!folio_test_anon(folio) ||
->>> -					  folio_test_swapcache(folio)));
->>> +	page_ref_unfreeze(page_tail,
->>> +		1 + ((!folio_test_anon(folio) || folio_test_swapcache(folio)) ?
->>> +			     folio_nr_pages(page_folio(page_tail)) : 0));
->>>
->>>  	if (folio_test_young(folio))
->>>  		folio_set_young(new_folio);
->>> @@ -2868,7 +2876,7 @@ static void __split_huge_page_tail(struct folio *folio, int tail,
->>>  }
->>>
->>>  static void __split_huge_page(struct page *page, struct list_head *list,
->>> -		pgoff_t end)
->>> +		pgoff_t end, unsigned int new_order)
->>>  {
->>>  	struct folio *folio = page_folio(page);
->>>  	struct page *head = &folio->page;
->>> @@ -2877,10 +2885,11 @@ static void __split_huge_page(struct page *page, struct list_head *list,
->>>  	unsigned long offset = 0;
->>>  	unsigned int nr = thp_nr_pages(head);
->>>  	int i, nr_dropped = 0;
->>> +	unsigned int new_nr = 1 << new_order;
->>>  	int order = folio_order(folio);
->>>
->>>  	/* complete memcg works before add pages to LRU */
->>> -	split_page_memcg(head, order, 0);
->>> +	split_page_memcg(head, order, new_order);
->>>
->>>  	if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
->>>  		offset = swp_offset(folio->swap);
->>> @@ -2893,8 +2902,8 @@ static void __split_huge_page(struct page *page, struct list_head *list,
->>>
->>>  	ClearPageHasHWPoisoned(head);
->>>
->>> -	for (i = nr - 1; i >= 1; i--) {
->>> -		__split_huge_page_tail(folio, i, lruvec, list);
->>> +	for (i = nr - new_nr; i >= new_nr; i -= new_nr) {
->>> +		__split_huge_page_tail(folio, i, lruvec, list, new_order);
->>>  		/* Some pages can be beyond EOF: drop them from page cache */
->>>  		if (head[i].index >= end) {
->>>  			struct folio *tail = page_folio(head + i);
->>> @@ -2910,29 +2919,41 @@ static void __split_huge_page(struct page *page, struct list_head *list,
->>>  			__xa_store(&head->mapping->i_pages, head[i].index,
->>>  					head + i, 0);
->>>  		} else if (swap_cache) {
->>> +			/*
->>> +			 * split anonymous THPs (including swapped out ones) to
->>> +			 * non-zero order not supported
->>> +			 */
->>> +			VM_WARN_ONCE(new_order,
->>> +				"Split swap-cached anon folio to non-0 order not supported");
+>>> +	/* order-1 THP not supported, downgrade to order-0 */
+>>> +	if (new_order == 1)
+>>> +		new_order = 0;
 >>
->> Why isn't it supported? Even if it's not supported, is this level the right
->> place to enforce these kinds of policy decisions? I wonder if we should be
->> leaving that to the higher level to decide?
+>> I guess this would need to change if supporting order-1 file folios?
 > 
-> Is the swap-out small-size THP without splitting merged? This needs that patchset.
-
-No not yet. I have to respin it. Its on my todo list.
-
-I'm not sure I understand the dependency though?
-
-> You are right that a warning here is not appropriate. I will fail the splitting
-> if the folio is swapcached and going to be split into >0 order.
+> Right.
 > 
->>>  			__xa_store(&swap_cache->i_pages, offset + i,
->>>  					head + i, 0);
->>>  		}
->>>  	}
->>>
+>>> +
+>>> +
+>>>  	if (folio_has_private(folio))
+>>>  		folio_invalidate(folio, offset, length);
+>>>  	if (!folio_test_large(folio))
+>>>  		return true;
+>>> -	if (split_folio(folio) == 0)
+>>> +	if (split_huge_page_to_list_to_order(&folio->page, NULL, new_order) == 0)
+>>
+>> I know you are discussing removing this patch, but since you created
+>> split_folio_to_order() wouldn't that be better here?
 > 
+> Sure. Will change the patch locally.
+> 
+> [1] https://lore.kernel.org/linux-mm/9dd96da-efa2-5123-20d4-4992136ef3ad@google.com/
+> [2] https://lore.kernel.org/linux-mm/0AC0520E-1BD2-497E-A7ED-05394400BFC9@nvidia.com/
 > 
 > --
 > Best Regards,
