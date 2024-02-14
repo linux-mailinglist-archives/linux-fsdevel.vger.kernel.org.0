@@ -1,80 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-11559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D3A854BD1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 15:46:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FAD2854C0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 16:00:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FA2B1F218A6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 14:46:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5DAEB23F52
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 15:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE1A5B21C;
-	Wed, 14 Feb 2024 14:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B5BD5BADB;
+	Wed, 14 Feb 2024 15:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="G/fg/fXE";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="G/fg/fXE"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jfoJ/wmk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A9A5A7A1;
-	Wed, 14 Feb 2024 14:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D635B1F3;
+	Wed, 14 Feb 2024 15:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707921998; cv=none; b=KQETrUM356GJ2vQ4poPqlxNI+Dvae8ZHloc0sbA4BQmOTKjnWAZnQLWRTwlTB1t4o4Yg+ER1YA1iwe0jC1k04Mfgj7uNr0ncaM6hHjk/gceqc3qg5Pvpj7aNDAAb4PU2qa7LgEXN3kpEG3qGmxkVraJYAOy3EXf7CgUymV1Ttmg=
+	t=1707922842; cv=none; b=swLvXy+KY4ZMDzf7Qher6/BH2nQcWQ3ZYy0GXu4JFetNPzdr9WOVuf3Gn1m5AqpVa5fljAgzbMqmT+6j10OiTZ1JgKiOaneT19VhchStogNVbRixTLrH952cWQSEx3y+N2aJd1P1PDwot/zivv36475pyHz5W1rDJK3eAlx0bzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707921998; c=relaxed/simple;
-	bh=rn+ZMoLKcmq4pEsTZ8FfVyz+GcEVWfCdy4jk0Bj7Vas=;
+	s=arc-20240116; t=1707922842; c=relaxed/simple;
+	bh=J/8B9sj/gh69TjG907GBC0ybnivmqovG5E80SUw+iQs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CXERSHB6uegeowSjpX1dgwEIpPBH1XWEuc3ex94HAxlGZTK4gkS/9aPjG7sT3uyxgHx/hHKL3qJE4m61z4iBju3dHLSCrZ3zgl6K/Kfi1Rbj5uPOlM0j4YrCZSBsGptuTw9nuKddg0QPWccuuhzpCMfIllD7296epUEQdBGXlAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=G/fg/fXE; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=G/fg/fXE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AABE1220CA;
-	Wed, 14 Feb 2024 14:46:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1707921994; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L7XYt0NyV1LLmmYXD5SRXg7RDztZSN4xXat2vk9BckU=;
-	b=G/fg/fXE/BxmwJaDpB5G6+sbfW69+fMUQ0OzLitvcmHEv1Ds8G+GL4LdouO/fwIfpKsqYP
-	K1h5IhLHPiF9QIXH9zu5TsmsC3q6YrtzaT+6raFWjZBU+43wC0WrFSHBXIgYFSN3RNg2dN
-	Cy4YpNtjfnssPK+JWHc4gG9YwWLpq0E=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1707921994; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L7XYt0NyV1LLmmYXD5SRXg7RDztZSN4xXat2vk9BckU=;
-	b=G/fg/fXE/BxmwJaDpB5G6+sbfW69+fMUQ0OzLitvcmHEv1Ds8G+GL4LdouO/fwIfpKsqYP
-	K1h5IhLHPiF9QIXH9zu5TsmsC3q6YrtzaT+6raFWjZBU+43wC0WrFSHBXIgYFSN3RNg2dN
-	Cy4YpNtjfnssPK+JWHc4gG9YwWLpq0E=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C19613A72;
-	Wed, 14 Feb 2024 14:46:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Hbm4GUrSzGUzGAAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Wed, 14 Feb 2024 14:46:34 +0000
-Date: Wed, 14 Feb 2024 15:46:33 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-	kent.overstreet@linux.dev, vbabka@suse.cz, roman.gushchin@linux.dev,
-	mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
-	liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, peterx@redhat.com, david@redhat.com,
+	 Content-Type:Content-Disposition:In-Reply-To; b=i+pgrpdw985tqxBW6M7jTcmkEiF0umnUXBXe9DyGWplXNnq5IISSWpkUtz9euNA7A0tSXMFXa0M6+lyd36+XfPx+UUVnQB5tul+lZuLSLAobwzDWBaSGA71XqXe/jNMPyE5MIHjNqkWnyRe6BXA9JDpAx9CGU14YAVCgTIMgwJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jfoJ/wmk; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=N9oS2vBFsBe7fjNywvimN9eVDsY+Q1p8TnsuDCbqyL8=; b=jfoJ/wmkTGQGza6aS6As/LoHT2
+	7f9nxqD9DDcP98YSEsCWUa2KUHKv3yOMXShjBerqUVejBrYgV37I0QICjylxkLAH01QVhY7zARA99
+	4cl5s8aYSnpH9z5inXWSTSNKWmmn9IJe3FSG3ZYYFRXX3lh0u0p+v8DKBDUFgcmrOVRSGaYZRCpVG
+	dswefOzAR6MusqozarzFQUAhf9oOgDNXGT+36hpSGg/Z2EcMWzrPYznsnnyW204WH1S7lTL0sGgVN
+	r5hkA+WxnCp1BeMai4eWKbYBadnRcJrtDVtupo9eMxQVeW09i9IRSU1xAJnexHy0C9unE+tOPNqUd
+	EaHb7PIg==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1raGjw-0000000Gs4u-1uPd;
+	Wed, 14 Feb 2024 15:00:00 +0000
+Date: Wed, 14 Feb 2024 15:00:00 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+	David Hildenbrand <david@redhat.com>,
+	Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+	mgorman@suse.de, dave@stgolabs.net, liam.howlett@oracle.com,
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org,
+	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
+	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
 	axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
 	nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
 	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
@@ -95,9 +76,17 @@ Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
 	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
 	cgroups@vger.kernel.org
 Subject: Re: [PATCH v3 00/35] Memory allocation profiling
-Message-ID: <ZczSSZOWMlqfvDg8@tiehlicka>
-References: <20240212213922.783301-1-surenb@google.com>
- <20240214062020.GA989328@cmpxchg.org>
+Message-ID: <ZczVcOXtmA2C3XX8@casper.infradead.org>
+References: <Zctfa2DvmlTYSfe8@tiehlicka>
+ <CAJuCfpEsWfZnpL1vUB2C=cxRi_WxhxyvgGhUg7WdAxLEqy6oSw@mail.gmail.com>
+ <9e14adec-2842-458d-8a58-af6a2d18d823@redhat.com>
+ <2hphuyx2dnqsj3hnzyifp5yqn2hpgfjuhfu635dzgofr5mst27@4a5dixtcuxyi>
+ <6a0f5d8b-9c67-43f6-b25e-2240171265be@redhat.com>
+ <CAJuCfpEtOhzL65eMDk2W5SchcquN9hMCcbfD50a-FgtPgxh4Fw@mail.gmail.com>
+ <adbb77ee-1662-4d24-bcbf-d74c29bc5083@redhat.com>
+ <r6cmbcmalryodbnlkmuj2fjnausbcysmolikjguqvdwkngeztq@45lbvxjavwb3>
+ <CAJuCfpF4g1jeEwHVHjQWwi5kqS-3UqjMt7GnG0Kdz5VJGyhK3Q@mail.gmail.com>
+ <ea5vqiv5rt5cdbrlrdep5flej2pysqbfvxau4cjjbho64652um@7rz23kesqdup>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,66 +95,34 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240214062020.GA989328@cmpxchg.org>
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b="G/fg/fXE"
-X-Spamd-Result: default: False [-0.31 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 RCVD_DKIM_ARC_DNSWL_HI(-1.00)[];
-	 BAYES_HAM(-0.00)[26.79%];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 TO_MATCH_ENVRCPT_SOME(0.00)[];
-	 DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	 DKIM_TRACE(0.00)[suse.com:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_GT_50(0.00)[73];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[google.com,linux-foundation.org,linux.dev,suse.cz,suse.de,stgolabs.net,infradead.org,oracle.com,lwn.net,manifault.com,redhat.com,arm.com,kernel.org,arndb.de,linutronix.de,linux.intel.com,kernel.dk,soleen.com,gmail.com,chromium.org,linuxfoundation.org,linaro.org,goodmis.org,linux.com,lge.com,bytedance.com,akamai.com,android.com,vger.kernel.org,lists.linux.dev,kvack.org,googlegroups.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 RCVD_IN_DNSWL_HI(-1.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -0.31
-X-Rspamd-Queue-Id: AABE1220CA
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Bar: /
+In-Reply-To: <ea5vqiv5rt5cdbrlrdep5flej2pysqbfvxau4cjjbho64652um@7rz23kesqdup>
 
-On Wed 14-02-24 01:20:20, Johannes Weiner wrote:
-[...]
-> I agree we should discuss how the annotations are implemented on a
-> technical basis, but my take is that we need something like this.
+On Tue, Feb 13, 2024 at 06:08:45PM -0500, Kent Overstreet wrote:
+> This is what instrumenting an allocation function looks like:
+> 
+> #define krealloc_array(...)                     alloc_hooks(krealloc_array_noprof(__VA_ARGS__))
+> 
+> IOW, we have to:
+>  - rename krealloc_array to krealloc_array_noprof
+>  - replace krealloc_array with a one wrapper macro call
+> 
+> Is this really all we're getting worked up over?
+> 
+> The renaming we need regardless, because the thing that makes this
+> approach efficient enough to run in production is that we account at
+> _one_ point in the callstack, we don't save entire backtraces.
 
-I do not think there is any disagreement on usefulness of a better
-memory allocation tracking. At least for me the primary problem is the
-implementation. At LFSMM last year we have heard that existing tracing
-infrastructure hasn't really been explored much. Cover letter doesn't
-really talk much about those alternatives so it is really hard to
-evaluate whether the proposed solution is indeed our best way to
-approach this.
+I'm probably going to regret getting involved in this thread, but since
+Suren already decided to put me on the cc ...
 
-> In a codebase of our size, I don't think the allocator should be
-> handing out memory without some basic implied tracking of where it's
-> going. It's a liability for production environments, and it can hide
-> bad memory management decisions in drivers and other subsystems for a
-> very long time.
+There might be a way to do it without renaming.  We have a bit of the
+linker script called SCHED_TEXT which lets us implement
+in_sched_functions().  ie we could have the equivalent of
 
-Fully agreed! It is quite common to see oom reports with a large portion
-of memory unaccounted and this really presents additional cost on the
-debugging side.
+include/linux/sched/debug.h:#define __sched             __section(".sched.text")
 
--- 
-Michal Hocko
-SUSE Labs
+perhaps #define __memalloc __section(".memalloc.text")
+which would do all the necessary magic to know where the backtrace
+should stop.
+
 
