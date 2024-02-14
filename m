@@ -1,154 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-11528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3B58854642
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 10:39:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA5E854658
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 10:46:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1542C1C214E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 09:39:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC151C2179C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 09:46:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E9616428;
-	Wed, 14 Feb 2024 09:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C832312E44;
+	Wed, 14 Feb 2024 09:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DoXGmsP4"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AH16laAd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ecTqLGVy";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AH16laAd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ecTqLGVy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FA113FFC;
-	Wed, 14 Feb 2024 09:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BFA2134A9;
+	Wed, 14 Feb 2024 09:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707903554; cv=none; b=nwttFn1YpEs6tTxdAGO8L7OeXdDJjQhYIV7I21Bb0QLK90cyIuiF+ulaN2I4PAfZqXzDmyFXXG3K5uRij8PwpTbB1Xu9xo9HLAOK/oBUmRm3vh3yAU7QB3CV+0QnMWXXNhTJkBBMzMrr/Bj+bzjTQlfXgwuFpSSDYv2BY1ESrNk=
+	t=1707903965; cv=none; b=dC+Pb/7pvUssL9oENf59VqfON5KHpjHuDJEcboTWMPcaujwX1cmb2m6ph2rM6wf9xh7uoSj+AV+s6TNIUr5qrMaC8Ss0brBKGL2u3oLqRPx4qflW3eapvb/4j86HQFy1YyijosqAKMmcv/qZkVURTq8cCEReNeDjL9j1DSQT1Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707903554; c=relaxed/simple;
-	bh=UWInf7VyNRnbUUOfxbPM+OMaftXsfWaPUjTVPMbbifg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=reePuEvmFgY9LqnJshIPK0tvJzeHHuqMOXL167E1lKV+giYCmMaxqH8z7Xfwcw6d+4gZ1RTNBVa8hRe6UbpjdFBbG9aLFn3h2GRXCEZnBKCwZX0Ee+1KC4R6xzJ1Hof3UlzcE8ZOIAI+tLe6EUcXTSfZqlKdFIEcZT8DwW+sfKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DoXGmsP4; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41E9Wmfh018847;
-	Wed, 14 Feb 2024 09:38:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- mime-version : subject : to : cc : references : from : in-reply-to :
- content-type : content-transfer-encoding; s=pp1;
- bh=cUcJoLtY+nDexHMnGYoZp3U7wjuUH4CdIXmbB/RLu4c=;
- b=DoXGmsP4K81+9XjLJWWthfIK5HcFnGRXVnTNhQYKLpE4UNiWNdYWzWhdVKjraBl8JpJO
- alqg64zxAP4okpf2tHNQAyQp6Tayak6XgScxJmec1e5bo3LoqxQpwt4XOwaF/YFDcdXh
- 72vYSUxrkb2O9p8AoigIZHgAnmdE3Wb2wr24BR1CecBCic4R5g2TYDnX0ib+lIhMvlrP
- gjoFxH356Ua64DRJuOjc4gEt2A+BTmDPK5eu5q0XdZ84K386dVI0yh949B4ZlkP1DlUO
- cxyAaAEtLli14uzMpXVurlO3pT87em81jCiBWtk/jp3KDvhYrEufewqHBTV3oJNPxkm3 ew== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w8tyrr4f4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 09:38:48 +0000
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41E9X0Ub019301;
-	Wed, 14 Feb 2024 09:38:47 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w8tyrr4et-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 09:38:47 +0000
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41E8xTQw032553;
-	Wed, 14 Feb 2024 09:38:46 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3w6kftna01-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Feb 2024 09:38:46 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41E9chpo14877390
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 14 Feb 2024 09:38:45 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3C22C5806A;
-	Wed, 14 Feb 2024 09:38:43 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 26BC05805C;
-	Wed, 14 Feb 2024 09:38:36 +0000 (GMT)
-Received: from [9.109.198.187] (unknown [9.109.198.187])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 14 Feb 2024 09:38:35 +0000 (GMT)
-Message-ID: <c130133f-7c4c-4875-a850-1a8ac9ad4845@linux.ibm.com>
-Date: Wed, 14 Feb 2024 15:08:34 +0530
+	s=arc-20240116; t=1707903965; c=relaxed/simple;
+	bh=K+lhWbx0yxGWZ0i2OnK+9Eytn5NgHZSRTY9qc4RNnbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V1RlWdMq8CL5Wz8Anp+s5nTZdiQSgiOFzamSFShsFbfBLaKgTWDgDdhq4nLdlSDSItY7DErOoidB9kpnv+7q4RSty7UVsk3W1aUtrTf9PVk/8ZDbVVKYx0SjUfeEO/Zu1V87lqIGikiQDCTj7LpNkYzEKlGQ7/TVxVxe03GIxzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AH16laAd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ecTqLGVy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AH16laAd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ecTqLGVy; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 7F6DC1F7EC;
+	Wed, 14 Feb 2024 09:46:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1707903960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=haymRKrSqrh0B+mONyIe7Y9TYIPAd2zJDwlRYXl1K3Q=;
+	b=AH16laAdxZnW5KymEtVjIRAzfVvWMH53LGnj7DpN8IGYdUAaAPaznfG2hOXHIA3G3AO0Ne
+	Vt6IO8OXbF4dhk45gwpM8UFE2TjehAsIFW+EeZsEMcYaB5ONQA6I759+6Dl1eFoRzhVZ+Q
+	Md04SF5TjDF5T68Y72M4ElHQ5CmEcBQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1707903960;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=haymRKrSqrh0B+mONyIe7Y9TYIPAd2zJDwlRYXl1K3Q=;
+	b=ecTqLGVym8CdwcwvXg19yD7mUCjt91wC1lffTGDNdE6JiXwkNDqGUImHCElVvCtfS0vYRc
+	gvzKs5pFIWZ8SfBQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1707903960; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=haymRKrSqrh0B+mONyIe7Y9TYIPAd2zJDwlRYXl1K3Q=;
+	b=AH16laAdxZnW5KymEtVjIRAzfVvWMH53LGnj7DpN8IGYdUAaAPaznfG2hOXHIA3G3AO0Ne
+	Vt6IO8OXbF4dhk45gwpM8UFE2TjehAsIFW+EeZsEMcYaB5ONQA6I759+6Dl1eFoRzhVZ+Q
+	Md04SF5TjDF5T68Y72M4ElHQ5CmEcBQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1707903960;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=haymRKrSqrh0B+mONyIe7Y9TYIPAd2zJDwlRYXl1K3Q=;
+	b=ecTqLGVym8CdwcwvXg19yD7mUCjt91wC1lffTGDNdE6JiXwkNDqGUImHCElVvCtfS0vYRc
+	gvzKs5pFIWZ8SfBQ==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 6F5FB13A1A;
+	Wed, 14 Feb 2024 09:46:00 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id q+gmG9iLzGWASwAAn2gu4w
+	(envelope-from <jack@suse.cz>); Wed, 14 Feb 2024 09:46:00 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 09067A0809; Wed, 14 Feb 2024 10:45:56 +0100 (CET)
+Date: Wed, 14 Feb 2024 10:45:55 +0100
+From: Jan Kara <jack@suse.cz>
+To: syzbot <syzbot+0994679b6f098bb3da6d@syzkaller.appspotmail.com>
+Cc: almaz.alexandrovich@paragon-software.com, anton@tuxera.com,
+	axboe@kernel.dk, brauner@kernel.org, jack@suse.cz,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev,
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [ntfs3?] BUG: unable to handle kernel paging request in
+ step_into
+Message-ID: <20240214094555.bcmnrnae3jndqjez@quack3>
+References: <00000000000042f98c05f16c0792@google.com>
+ <0000000000001c3739061147c07d@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 10/15] block: Add fops atomic write support
-Content-Language: en-US
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, brauner@kernel.org, bvanassche@acm.org,
-        dchinner@redhat.com, djwong@kernel.org, hch@lst.de, jack@suse.cz,
-        jbongio@google.com, jejb@linux.ibm.com, kbusch@kernel.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
-        martin.petersen@oracle.com, ming.lei@redhat.com, ojaswin@linux.ibm.com,
-        sagi@grimberg.me, tytso@mit.edu, viro@zeniv.linux.org.uk
-References: <20240124113841.31824-11-john.g.garry@oracle.com>
- <20240213093619.106770-1-nilay@linux.ibm.com>
- <9ffc3102-2936-4f83-b69d-bbf64793b9ca@oracle.com>
- <e99cf4ef-40ec-4e66-956f-c9e2aebb4621@linux.ibm.com>
- <30909525-73e4-42cb-a695-672b8e5a6235@oracle.com>
-From: Nilay Shroff <nilay@linux.ibm.com>
-In-Reply-To: <30909525-73e4-42cb-a695-672b8e5a6235@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: p7_p2wy0T2tbh-50wJFh1wKiPX3doLPk
-X-Proofpoint-ORIG-GUID: DUfNKTmlVXqE-eL32_o5hvhwgMYyPpUV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-14_03,2024-02-12_03,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 impostorscore=0 malwarescore=0 phishscore=0
- mlxlogscore=999 lowpriorityscore=0 clxscore=1015 spamscore=0
- suspectscore=0 mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.12.0-2311290000 definitions=main-2402140074
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0000000000001c3739061147c07d@google.com>
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=AH16laAd;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=ecTqLGVy
+X-Spamd-Result: default: False [2.67 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 BAYES_HAM(-0.02)[51.86%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=68e0be42c8ee4bb4];
+	 TAGGED_RCPT(0.00)[0994679b6f098bb3da6d];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_TWELVE(0.00)[12];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,suse.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[];
+	 SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: 2.67
+X-Rspamd-Queue-Id: 7F6DC1F7EC
+X-Spam-Level: **
+X-Spam-Flag: NO
+X-Spamd-Bar: ++
 
-
-
-On 2/13/24 17:22, John Garry wrote:
-> On 13/02/2024 11:08, Nilay Shroff wrote:
->>> It's relied that atomic_write_unit_max is <= atomic_write_boundary and both are a power-of-2. Please see the NVMe patch, which this is checked. Indeed, it would not make sense if atomic_write_unit_max > atomic_write_boundary (when non-zero).
->>>
->>> So if the write is naturally aligned and its size is <= atomic_write_unit_max, then it cannot be straddling a boundary.
->> Ok fine but in case the device doesn't support namespace atomic boundary size (i.e. NABSPF is zero) then still do we need
->> to restrict IO which crosses the atomic boundary?
+On Tue 13-02-24 10:42:03, syzbot wrote:
+> syzbot suspects this issue was fixed by commit:
 > 
-> Is there a boundary if NABSPF is zero?
-If NABSPF is zero then there's no boundary and so we may not need to worry about IO crossing boundary.
-
-Even though, the atomic boundary is not defined, this function doesn't allow atomic write crossing atomic_write_unit_max_bytes.
-For instance, if AWUPF is 63 and an IO starts atomic write from logical block #32 and the number of logical blocks to be written
-in this IO equals to #64 then it's not allowed. However if this same IO starts from logical block #0 then it's allowed.
-So my point here's that can this restriction be avoided when atomic boundary is zero (or not defined)? 
-
-Also, it seems that the restriction implemented for atomic write to succeed are very strict. For example, atomic-write can't
-succeed if an IO starts from logical block #8 and the number of logical blocks to be written in this IO equals to #16. 
-In this particular case, IO is well within atomic-boundary (if it's defined) and atomic-size-limit, so why do we NOT want to 
-allow it? Is it intentional? I think, the spec doesn't mention about such limitation.
-
+> commit 6f861765464f43a71462d52026fbddfc858239a5
+> Author: Jan Kara <jack@suse.cz>
+> Date:   Wed Nov 1 17:43:10 2023 +0000
 > 
->>
->> I am quoting this from NVMe spec (Command Set Specification, revision 1.0a, Section 2.1.4.3) :
->> "To ensure backwards compatibility, the values reported for AWUN, AWUPF, and ACWU shall be set such that
->> they  are  supported  even  if  a  write  crosses  an  atomic  boundary.  If  a  controller  does  not
->> guarantee atomicity across atomic boundaries, the controller shall set AWUN, AWUPF, and ACWU to 0h (1 LBA)."
+>     fs: Block writes to mounted block devices
 > 
-> How about respond to the NVMe patch in this series, asking this question?
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10656c42180000
+> start commit:   bff687b3dad6 Merge tag 'block-6.2-2022-12-29' of git://git..
+> git tree:       upstream
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=68e0be42c8ee4bb4
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0994679b6f098bb3da6d
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11307974480000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c567f2480000
 > 
-Yes I will send this query to the NVMe patch in this series.
+> If the result looks correct, please mark the issue as fixed by replying with:
+> 
+> #syz fix: fs: Block writes to mounted block devices
 
-Thanks,
---Nilay
+There seem to be other reproducers which keep working and they don't seem
+to be doing anything with the device. So I don't think this is really
+fixing it.
+
+								Honza
+
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
