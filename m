@@ -1,168 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-11605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11606-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C95A855398
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 21:00:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C596E8553AB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 21:08:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 867411F25090
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 20:00:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BFAF1F2AE6C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 20:08:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF9C13DBAA;
-	Wed, 14 Feb 2024 20:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9962C13DBB1;
+	Wed, 14 Feb 2024 20:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V0Dtva7q"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XO4ti+F8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B844C13DB88
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 20:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4692613A888;
+	Wed, 14 Feb 2024 20:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707940830; cv=none; b=fMao0ugWctpZCWnArfMOfgFOgSE6af5brxZIJRkEBkk53QLBIF2dKbVwE+AbAyZU5sVnS03mtDhDCOxn+xpu+TqGPMlKzWXodtvuSh30wI2/G6LBTfYqbeBqVn5A42uzl6yrv5GayfWFJoKpJf24AsMg2G6kxQ5ECePWPHw3dos=
+	t=1707941289; cv=none; b=lK7rO3tuBI7LPpW2KD9dewlV0nI2AnsXyvixk5penrGsX/RpBYFAc4bu79UkwW+5PRZFrze/YmyO5bnWQnPYE3CtsBdsCOrGn10ktliBz2LNvHHo58Ouk3idDKxQtMTm9AAq504tF03BB/W7CbJ/Q+yz9ZJDIDbkuzkEbNc5Oo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707940830; c=relaxed/simple;
-	bh=sG1eMeXm6V7HoOMCkcfIrnxVJDrJycSjo8dnKLtS7so=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MCtzN1b863GxrVUAJ34dALCed6igDnjlUabQIxRFxGntMsxxhbz7yDzKx8gHfmyWEkyL4J1ajio/GVr6/y75woe4U2LyrzhkY4WrlE+KudH6ivV2GHrifxcmXeMdd9p58WIEl0V8GgkYx4LfDBkRjt5wrTO3JVnx0kBa72YrmNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V0Dtva7q; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 14 Feb 2024 15:00:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1707940826;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pf30Mbuh5b/kObn023v7ccfUflKK/+7eCEEfg4Q4/Xo=;
-	b=V0Dtva7qS2reHkZJi6PJ+HEovBCR0hF1cHRtyU3vqEVbBd8vXfQIrh8jm2X0ifBBI4P+IO
-	H5vrvDEyaz0upotCLVyuYanif0dGbMLFqnWADl59CQ4rEdihhMwhzsvSw9R6sR/elwVruF
-	7JlRVAQ9ZPkvUkS27LLag/qy7F3NQ4g=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>, vbabka@suse.cz, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net, 
-	willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com, 
-	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, 
-	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, axboe@kernel.dk, 
-	mcgrof@kernel.org, masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org, 
-	tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org, 
-	pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
-	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org, 
-	ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org, 
-	ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com, 
-	vschneid@redhat.com, cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com, 
-	42.hyeyoo@gmail.com, glider@google.com, elver@google.com, dvyukov@google.com, 
-	shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
-	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 00/35] Memory allocation profiling
-Message-ID: <stxem77cvysbfllp46dtgsgawzdtkr662ymw3jgo564ekssna3@t7iw7azgyqvy>
-References: <9e14adec-2842-458d-8a58-af6a2d18d823@redhat.com>
- <2hphuyx2dnqsj3hnzyifp5yqn2hpgfjuhfu635dzgofr5mst27@4a5dixtcuxyi>
- <6a0f5d8b-9c67-43f6-b25e-2240171265be@redhat.com>
- <CAJuCfpEtOhzL65eMDk2W5SchcquN9hMCcbfD50a-FgtPgxh4Fw@mail.gmail.com>
- <adbb77ee-1662-4d24-bcbf-d74c29bc5083@redhat.com>
- <r6cmbcmalryodbnlkmuj2fjnausbcysmolikjguqvdwkngeztq@45lbvxjavwb3>
- <CAJuCfpF4g1jeEwHVHjQWwi5kqS-3UqjMt7GnG0Kdz5VJGyhK3Q@mail.gmail.com>
- <20240214085548.d3608627739269459480d86e@linux-foundation.org>
- <7c3walgmzmcygchqaylcz2un5dandlnzdqcohyooryurx6utxr@66adcw7f26c3>
- <CAJuCfpGi6g3rG8aVmXveSxKvXnfm+5gLKS=Q4ouQBDaTxSuhww@mail.gmail.com>
+	s=arc-20240116; t=1707941289; c=relaxed/simple;
+	bh=0c27WM48Hr69yQ4BRbSljfY+8max5aVHrUQMsvmvoT0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=rGXh9vzZ+mmwWZGkm30yg52gEsaQcN2MOdm5gRYvMIdxaKslP0BZQw507K2stJttasCJvxsGAQrGRECj1RgUwRfX+49JAoELWj51pe4/JuYCYQGglmNn9WTR/jZHmIoVCzd9zTBbuep2lySmnAl+6/sf281G10LWA2luIhM2VLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XO4ti+F8; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41EJvFTF004798;
+	Wed, 14 Feb 2024 20:07:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=mXHxoZ42mf/ESBqj6s5bnVAfG0vN7uRQxTDbGz8SwAo=;
+ b=XO4ti+F8dvznCzwOMommY2wHzUPRF12PQUnYJO8wcMld4+xLiaDZrncmLdNb92rQ7TNe
+ RQ+9rYnPchBKUFw5S9Fl7I38jgR7LO6LKwUUOB0dExBhkPLH6UbwCM16YyMy4XS2iK2r
+ +0gh0WxTiNUirdOxbsuLbSFMGF0eadMRe4+BzFbNOEyWOpeZYWi0E0go6AeH/J1ElsT2
+ sExdubjt5KshLHd61G8KyAJvOgkxAqxFZJV+1qsKFpJwgPGTcHLj9XBxFxl787CNPkXw
+ AuT6Oi0YJiz5OVwSzTfJppPGbBIYD6oTQ2vUShlvwWT49EtCY3XXiM+cGR1oI6+ZznNS ug== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w944jranh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Feb 2024 20:07:32 +0000
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41EJvn2l007248;
+	Wed, 14 Feb 2024 20:07:32 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w944jramk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Feb 2024 20:07:31 +0000
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41EIYP1m004329;
+	Wed, 14 Feb 2024 20:07:30 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3w6kv0gd5r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 14 Feb 2024 20:07:30 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41EK7RHI19005960
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 14 Feb 2024 20:07:29 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8504C5805A;
+	Wed, 14 Feb 2024 20:07:27 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EF2835805E;
+	Wed, 14 Feb 2024 20:07:25 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.101.207])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 14 Feb 2024 20:07:25 +0000 (GMT)
+Message-ID: <63afc94126521629bb7656b6e6783d6614ee898a.camel@linux.ibm.com>
+Subject: Re: [PATCH v9 12/25] security: Introduce file_post_open hook
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Paul Moore <paul@paul-moore.com>,
+        Roberto Sassu
+	 <roberto.sassu@huaweicloud.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, chuck.lever@oracle.com,
+        jlayton@kernel.org, neilb@suse.de, kolga@netapp.com,
+        Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org,
+        serge@hallyn.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+        dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com,
+        eparis@parisplace.org, casey@schaufler-ca.com, shuah@kernel.org,
+        mic@digikod.net, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, selinux@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Date: Wed, 14 Feb 2024 15:07:25 -0500
+In-Reply-To: <CAHC9VhR2M_MWHs34kn-WH3Wr0sgT09WKveecy7onkFhUb1-gEg@mail.gmail.com>
+References: <20240115181809.885385-1-roberto.sassu@huaweicloud.com>
+	 <20240115181809.885385-13-roberto.sassu@huaweicloud.com>
+	 <305cd1291a73d788c497fe8f78b574d771b8ba41.camel@linux.ibm.com>
+	 <CAHC9VhQ7DgPJtNTRCYneu_XnpRmuwfPCW+FqVuS=k6U5-F6pJw@mail.gmail.com>
+	 <05ad625b0f5a0e6c095abee5507801da255b36cd.camel@huaweicloud.com>
+	 <CAHC9VhR2M_MWHs34kn-WH3Wr0sgT09WKveecy7onkFhUb1-gEg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpGi6g3rG8aVmXveSxKvXnfm+5gLKS=Q4ouQBDaTxSuhww@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 3pmfVPR_ZkYzTv8MNJbgBILvsfAhufy_
+X-Proofpoint-GUID: pUskxnPY1Bl82nL8IEpe0UmPvkoY0NWY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-14_12,2024-02-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 phishscore=0 clxscore=1015 priorityscore=1501
+ spamscore=0 suspectscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402140157
 
-On Wed, Feb 14, 2024 at 11:24:23AM -0800, Suren Baghdasaryan wrote:
-> On Wed, Feb 14, 2024 at 9:52 AM Kent Overstreet
-> <kent.overstreet@linux.dev> wrote:
-> >
-> > On Wed, Feb 14, 2024 at 08:55:48AM -0800, Andrew Morton wrote:
-> > > On Tue, 13 Feb 2024 14:59:11 -0800 Suren Baghdasaryan <surenb@google.com> wrote:
-> > >
-> > > > > > If you think you can easily achieve what Michal requested without all that,
-> > > > > > good.
-> > > > >
-> > > > > He requested something?
-> > > >
-> > > > Yes, a cleaner instrumentation. Unfortunately the cleanest one is not
-> > > > possible until the compiler feature is developed and deployed. And it
-> > > > still would require changes to the headers, so don't think it's worth
-> > > > delaying the feature for years.
-> > >
-> > > Can we please be told much more about this compiler feature?
-> > > Description of what it is, what it does, how it will affect this kernel
-> > > feature, etc.
-> > >
-> > > Who is developing it and when can we expect it to become available?
-> > >
-> > > Will we be able to migrate to it without back-compatibility concerns?
-> > > (I think "you need quite recent gcc for memory profiling" is
-> > > reasonable).
-> > >
-> > >
-> > >
-> > > Because: if the maintainability issues which Michel describes will be
-> > > significantly addressed with the gcc support then we're kinda reviewing
-> > > the wrong patchset.  Yes, it may be a maintenance burden initially, but
-> > > at some (yet to be revealed) time in the future, this will be addressed
-> > > with the gcc support?
-> >
-> > Even if we had compiler magic, after considering it more I don't think
-> > the patchset would be improved by it - I would still prefer to stick
-> > with the macro approach.
-> >
-> > There's also a lot of unresolved questions about whether the compiler
-> > approach would even end being what we need; we need macro expansion to
-> > happen in the caller of the allocation function
+On Tue, 2024-02-13 at 10:33 -0500, Paul Moore wrote:
+> On Tue, Feb 13, 2024 at 7:59 AM Roberto Sassu
+> <roberto.sassu@huaweicloud.com> wrote:
+> > On Mon, 2024-02-12 at 16:16 -0500, Paul Moore wrote:
+> > > On Mon, Feb 12, 2024 at 4:06 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > > > Hi Roberto,
+> > > > 
+> > > > 
+> > > > > diff --git a/security/security.c b/security/security.c
+> > > > > index d9d2636104db..f3d92bffd02f 100644
+> > > > > --- a/security/security.c
+> > > > > +++ b/security/security.c
+> > > > > @@ -2972,6 +2972,23 @@ int security_file_open(struct file *file)
+> > > > >       return fsnotify_perm(file, MAY_OPEN);  <===  Conflict
+> > > > 
+> > > > Replace with "return fsnotify_open_perm(file);"
+> > > > 
+> > > > >  }
+> > > > > 
+> > > > 
+> > > > The patch set doesn't apply cleaning to 6.8-rcX without this
+> > > > change.  Unless
+> > > > there are other issues, I can make the change.
+> > > 
+> > > I take it this means you want to pull this via the IMA/EVM tree?
+> > 
+> > Not sure about that, but I have enough changes to do to make a v10.
+
+@Roberto:  please add my "Reviewed-by" to the remaining patches.
+
 > 
-> For the record, that's what this attribute will be doing. So it should
-> cover our usecase.
+> Sorry, I should have been more clear, the point I was trying to
+> resolve was who was going to take this patchset (eventually).  There
+> are other patches destined for the LSM tree that touch the LSM hooks
+> in a way which will cause conflicts with this patchset, and if
+> you/Mimi are going to take this via the IMA/EVM tree - which is fine
+> with me - I need to take that into account when merging things in the
+> LSM tree during this cycle.  It's not a big deal either way, it would
+> just be nice to get an answer on that within the next week.
 
-That wasn't clear in the meeting we had the other day; all that was
-discussed there was the attribute syntax, as I recall.
+Similarly there are other changes for IMA and EVM.  If you're willing to create
+a topic branch for just the v10 patch set that can be merged into your tree and
+into my tree, I'm fine with your upstreaming v10. (I'll wait to send my pull
+request after yours.)  Roberto will add my Ack's to the integrity, IMA, and EVM
+related patches.  However if you're not willing to create a topic branch, I'll
+upstream the v10 patch set.
 
-So say that does work out (and I don't think that's a given; if I were a
-compiler person I don't think I'd be interested in this strange half
-macro, half inline function beast); all that has accomplished is to get
-rid of the need for the renaming - the _noprof() versions of functions.
+thanks,
 
-So then how do you distinguish where in the callstack the accounting
-happens?
+Mimi
 
-If you say "it happens at the outermost wrapper", then what happens is
-
- - Extra overhead for all the inner wrapper invocations, where they have
-   to now check "actually, we already have an alloc tag, don't do
-   anything". That's a cost, and given how much time we spent shaving
-   cycles and branches during development it's not one we want.
-
- - Inner allocations that shouldn't be accounted to the outer context
-   are now a major problem, because they silently will be accounted
-   there and never noticed.
-
-   With our approach, inner allocations are by default (i.e. when we
-   haven't switched them to the _noprof() variant) accounted to their
-   own alloc tag; that way, when we're reading the /proc/allocinfo
-   output, we can examine them and check if they should be collapsed to
-   the outer context. With this approach they won't be seen.
-
-So no, we still don't want the compiler approach.
 
