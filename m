@@ -1,75 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-11561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0371F854C19
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 16:02:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42D4F854C3C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 16:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36CD21C27E58
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 15:02:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DD9FB284CD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 15:11:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02B65D489;
-	Wed, 14 Feb 2024 15:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566935C90D;
+	Wed, 14 Feb 2024 15:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ntCXoZ0V"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="kH0iXx3O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C0A55CDDD
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 15:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F77B5BADB;
+	Wed, 14 Feb 2024 15:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707922890; cv=none; b=Yc7QUrQgXFObL/LyOAg+v8P8mX+COXnofLUioqN33G9ktrjYTZA4CI651M1/kubDlkhGQ4yEuraSjS58WgDzRJ3vtV7zQb+EfwkoRZ3y0ZaSe4IdIgTCQTUZyxfnIJME89+y9bmt7myGMquTq0kDoW2K3Ut6Djl+EMqzvV73j0A=
+	t=1707923469; cv=none; b=XtnERapfleKE6ptLD+TwxEN1WsA6LZ96HosjH6q3D1cXwdLK6BwoSUz1Cg87LOJpiXZgE/x4hcc9tBBEzbmv/xfF/+ABKyhJCCS/+m/mrXlBRUWN5xyIZh/cGorPmYZhUDw28ynqrMA0iX4ID5QEKXLFpMPRQQV5o2v3gg5DrPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707922890; c=relaxed/simple;
-	bh=NtSv8J+99riBcAJlhZXyLjUBO+73SEMOIxIgW1tEnlw=;
+	s=arc-20240116; t=1707923469; c=relaxed/simple;
+	bh=PF39l2bZrJFGfu/twCh0/YL/uVsfoTDiSFMxz8HbfrM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iZOJK9EZ95Xv/PwAph+yDWX67UWJ/4/oRaBDZD+6dPpWnKfIQyChwUnUy581BvpM6Y2aBMX7ZSci+tzxlz7GC5Lpi0+60Cj4HXm7tyRc52CD/MGwTvnxm3HpxbuiR25GV1+Wk6IhEktQCvCpMYciZtx8oZz87ikSNxakOOYx40g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ntCXoZ0V; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 14 Feb 2024 10:01:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1707922886;
+	 Content-Type:Content-Disposition:In-Reply-To; b=TcOlzuw00g1GNq9J4EA+D5r9iktJ97sSLEBgmKqXFiD54YsxotiCYkxJJxl1GKRnpXd+KXdyDd3qaQIrR3yEfDdCsm79tjB92gr1X7/gbvCQbBSglaxQ0lYmOImBQKFuvJsP95t+/AKBnsApGjZd6NmSS03hYLEDPZU6wbmpSSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=kH0iXx3O; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4TZhTt1K3zz9sQh;
+	Wed, 14 Feb 2024 16:10:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1707923458;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=t/AETcYHznmpv4/j2syV358dOWN8/yUI1GROKTci8BI=;
-	b=ntCXoZ0VMMCAIYtsPiibjtpORudbEFoAtU1qYcguvGF7mSfGX7qoRUBfyl4bB4idy/W63v
-	fvLCK5XGJcO/TsFo6VG2fL+RXP2HusW2uO949y7vUaBPjM7wvWHNvrysfaEyXdkkF/pz8M
-	wHqh5GWyZyyGIKiP8Dc8AerWtRI9mCY=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, 
-	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, vbabka@suse.cz, 
-	roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net, willy@infradead.org, 
-	liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, 
-	peterx@redhat.com, david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, 
-	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org, tj@kernel.org, 
-	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, hughd@google.com, 
-	andreyknvl@gmail.com, keescook@chromium.org, ndesaulniers@google.com, 
-	vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com, 
-	ytcoode@gmail.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, 
-	cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
-	glider@google.com, elver@google.com, dvyukov@google.com, shakeelb@google.com, 
-	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, minchan@google.com, 
-	kaleshsingh@google.com, kernel-team@android.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-modules@vger.kernel.org, 
-	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 00/35] Memory allocation profiling
-Message-ID: <ifz44lao4dbvvpzt7zha3ho7xnddcdxgp4fkeacqleu5lo43bn@f3dbrmcuticz>
-References: <20240212213922.783301-1-surenb@google.com>
- <20240214062020.GA989328@cmpxchg.org>
- <ZczSSZOWMlqfvDg8@tiehlicka>
+	bh=y5oOwF/jwjqn3ZhiI16vrltxvvH9rJjUK6O56MFSA3w=;
+	b=kH0iXx3OU2AoKeH6+Kv7FS4/2NWtV8KoexHqWiCOdkUo/NakgP/SLL8kn3XbonyRiPvxM1
+	xweUKOFsXEph+f1Y+4qHbZXJJ5fAmfSGM/7WEMES0alv+D2bW/ce+9YByMx38zZay/6AEZ
+	CVscFMEvW50awHywXWFu8qw8IJDRfMiTFa8RLU6ekYW0SODWCv6jisilBIKhE8JmyyUqVB
+	wM5W6asehG6X4ku8nSNfuDsIEYAuyLEOjJ87tHBFSTd1QZWTXqPBjfoy5nEs6JyWfqxFtX
+	HPsytRboAbF6mpy6GcpR1vakUMivXpK3sGt5PXj1JOa0P1kyotHYuNx1Uz84pw==
+Date: Wed, 14 Feb 2024 16:10:51 +0100
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	mcgrof@kernel.org, gost.dev@samsung.com, akpm@linux-foundation.org, 
+	kbusch@kernel.org, djwong@kernel.org, chandan.babu@oracle.com, p.raghav@samsung.com, 
+	linux-kernel@vger.kernel.org, hare@suse.de, willy@infradead.org, linux-mm@kvack.org
+Subject: Re: [RFC v2 05/14] readahead: align index to mapping_min_order in
+ ondemand_ra and force_ra
+Message-ID: <dgtdqakqkyqvnjeujt2j5dwkolwlx7cna6ounuask2vrxyj64s@na6tkgwllyoe>
+References: <20240213093713.1753368-1-kernel@pankajraghav.com>
+ <20240213093713.1753368-6-kernel@pankajraghav.com>
+ <ZcvtUOecezQD7Mm6@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,34 +69,130 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZczSSZOWMlqfvDg8@tiehlicka>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <ZcvtUOecezQD7Mm6@dread.disaster.area>
 
-On Wed, Feb 14, 2024 at 03:46:33PM +0100, Michal Hocko wrote:
-> On Wed 14-02-24 01:20:20, Johannes Weiner wrote:
-> [...]
-> > I agree we should discuss how the annotations are implemented on a
-> > technical basis, but my take is that we need something like this.
+> > @@ -324,6 +325,13 @@ void force_page_cache_ra(struct readahead_control *ractl,
+> >  	 * be up to the optimal hardware IO size
+> >  	 */
+> >  	index = readahead_index(ractl);
+> > +	if (!IS_ALIGNED(index, min_nrpages)) {
+> > +		unsigned long old_index = index;
+> > +
+> > +		index = round_down(index, min_nrpages);
+> > +		nr_to_read += (old_index - index);
+> > +	}
 > 
-> I do not think there is any disagreement on usefulness of a better
-> memory allocation tracking. At least for me the primary problem is the
-> implementation. At LFSMM last year we have heard that existing tracing
-> infrastructure hasn't really been explored much. Cover letter doesn't
-> really talk much about those alternatives so it is really hard to
-> evaluate whether the proposed solution is indeed our best way to
-> approach this.
+> 	new_index = mapping_align_start_index(mapping, index);
+> 	if (new_index != index) {
+> 		nr_to_read += index - new_index;
+> 		index = new_index
+Looks good.
 
-Michal, we covered this before.
+> 	}
+> 
+> > +
+> >  	max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
+> >  	nr_to_read = min_t(unsigned long, nr_to_read, max_pages);
+> 
+> This needs to have a size of at least the minimum folio order size
+> so readahead can fill entire folios, not get neutered to the maximum
+> IO size the underlying storage supports.
 
-To do this with tracing you'd have to build up data structures
-separately, in userspace, that would mirror the allocator's data
-structures; you would have to track every single allocation so that you
-could match up the free event to the place it was allocated.
+So something like:
 
-Even if it could be built, which I doubt, it'd be completely non viable
-because the performance would be terrible.
+> >  	max_pages = max_t(unsigned long, bdi->io_pages, ra->ra_pages);
+> >  	nr_to_read = min_t(unsigned long, nr_to_read, max_pages);
+nr_to_read = max(nr_to_read, min_order);
 
-Like I said, we covered all this before; if you're going to spend so
-much time on these threads you really should be making a better attempt
-at keeping up with what's been talked about.
+> 
+> > + * For higher order address space requirements we ensure no initial reads
+> > + * are ever less than the min number of pages required.
+> > + *
+> > + * We *always* cap the max io size allowed by the device.
+> >   */
+> > -static unsigned long get_init_ra_size(unsigned long size, unsigned long max)
+> > +static unsigned long get_init_ra_size(unsigned long size,
+> > +				      unsigned int min_nrpages,
+> > +				      unsigned long max)
+> >  {
+> >  	unsigned long newsize = roundup_pow_of_two(size);
+> >  
+> > +	newsize = max_t(unsigned long, newsize, min_nrpages);
+> 
+> This really doesn't need to care about min_nrpages. That rounding
+> can be done in the caller when the new size is returned.
+
+Sounds good.
+
+> 
+> >  	if (newsize <= max / 32)
+> >  		newsize = newsize * 4;
+> 
+> >  
+> >  
+> > @@ -561,7 +583,11 @@ static void ondemand_readahead(struct readahead_control *ractl,
+> >  	unsigned long add_pages;
+> >  	pgoff_t index = readahead_index(ractl);
+> >  	pgoff_t expected, prev_index;
+> > -	unsigned int order = folio ? folio_order(folio) : 0;
+> > +	unsigned int min_order = mapping_min_folio_order(ractl->mapping);
+> > +	unsigned int min_nrpages = mapping_min_folio_nrpages(ractl->mapping);
+> > +	unsigned int order = folio ? folio_order(folio) : min_order;
+> 
+> Huh? If we have a folio, then the order is whatever that folio is,
+> otherwise we use min_order. What if the folio is larger than
+> min_order? Doesn't that mean that this:
+> 
+> > @@ -583,8 +609,8 @@ static void ondemand_readahead(struct readahead_control *ractl,
+> >  	expected = round_down(ra->start + ra->size - ra->async_size,
+> >  			1UL << order);
+> >  	if (index == expected || index == (ra->start + ra->size)) {
+> > -		ra->start += ra->size;
+> > -		ra->size = get_next_ra_size(ra, max_pages);
+> > +		ra->start += round_down(ra->size, min_nrpages);
+> > +		ra->size = get_next_ra_size(ra, min_nrpages, max_pages);
+> 
+> may set up the incorrect readahead range because the folio order is
+> larger than min_nrpages?
+
+Hmm... So I think we should just increment ra->start by ra->size, and
+make sure to round the new size we get from get_next_ra_size() to
+min_nrpages. Then we will not disturb the readahead range and always
+increase the range in multiples of min_nrpages:
+
+ra->start += ra->size;
+ra->size = round_up(get_next_ra_size(ra, max_pages), min_nrpages);
+
+> 
+> >  		ra->async_size = ra->size;
+> >  		goto readit;
+> >  	}
+> > @@ -603,13 +629,18 @@ static void ondemand_readahead(struct readahead_control *ractl,
+> >  				max_pages);
+> >  		rcu_read_unlock();
+> >  
+> > +		start = round_down(start, min_nrpages);
+> 
+> 		start = mapping_align_start_index(mapping, start);
+> > +
+> > +		VM_BUG_ON(folio->index & (folio_nr_pages(folio) - 1));
+> > +
+> >  		if (!start || start - index > max_pages)
+> >  			return;
+> >  
+> >  		ra->start = start;
+> >  		ra->size = start - index;	/* old async_size */
+> > +
+> >  		ra->size += req_size;
+> > -		ra->size = get_next_ra_size(ra, max_pages);
+> > +		ra->size = get_next_ra_size(ra, min_nrpages, max_pages);
+> 
+> 		ra->size = max(min_nrpages, get_next_ra_size(ra, max_pages));
+
+If this is a round_up of size instead of max operation, we can
+always ensure the ra->start from index aligned to min_nrpages. See my
+reasoning in the previous comment.
+
+--
+Pankaj
 
