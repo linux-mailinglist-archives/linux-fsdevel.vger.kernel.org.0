@@ -1,239 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-11509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7088541A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 03:57:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92E208542BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 07:20:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBE841F23E83
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 02:57:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A321C272BB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Feb 2024 06:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A779449;
-	Wed, 14 Feb 2024 02:56:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74AF3111A0;
+	Wed, 14 Feb 2024 06:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="O9p6Yb/J"
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="frEKCXWj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2047.outbound.protection.outlook.com [40.107.95.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6211D6127;
-	Wed, 14 Feb 2024 02:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707879413; cv=fail; b=k6rMvW5nflHWzVc3sKOM/9ZMyOEUyv7l1HbffJb2u/Yh7ZGE7p8X8N6GYTGud32tV1NQ/A6EOJp68yfNbtpH347CYksXS6iysDO+zfcQWF1G0V9z+mIA20a891wRub6EfiXpPIiZ2Q5qUCegUvzVbGnHxHvov13D+i+LiWCmIk4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707879413; c=relaxed/simple;
-	bh=13fEx3uSVqarsFmbGHfbRLEvzEKEI7iLWC1MViINoWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KOHXGpEt/LM3wEUVuKCfIT18yv8bZzbc1QdbJgRSrIUZZKdyE/oAJSVDJ1qYGN1NVOhaUrtiJ4a40DpPOkZVpoOnJIWUI67QYF0Uii0BQ1hLxwNwjBvkhRqNHflA69fKiX4TVfeF30IYXnlIz6VEaiRIrldCfSdJ60f1LQjcvsU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=O9p6Yb/J; arc=fail smtp.client-ip=40.107.95.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HNJFOjt2c49GNb1M54a/C6MXpDdXLya5CZSjAuyCctj/HD6RmCRPvnzCqCKJX2xGvDlo62VuFYhvpTNdgmZ6zzP41ii3Sk879k3hRbDNtEi923jpcHS37KrVgiA95vU4Xdi+IcM8/IwncsuT4Rdq72hnDWGjQ65+Zbuoa5jYf10yJhjRANgDQy12gypdMI9k2F2mQDVHn/2wud8euTrjo/N5BMX+BFo0+rjNVb+Xo/nfnUDpa8W93B+WDzbbBXFwzuZZTyE2WFatrU0YX9ztdlLUbJfuraTJkwc97SwMg8uGajbqCZ7Rgq0toWJRPFV4C8kV/jxv6gJaxC1ivS1G8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nEWoI5Tzn3wyg97ZVXeF7CU4aMHs06hl/7GKbHjdKxk=;
- b=Ox4OaAZaWth1Kg8mPPEm9cPzhUf150sS8KudRp5XT4XPW5agLvDWwzb5IDCkT8gE9ShGU2sE6TnqtENr+/z9WOlFZM/0xERAJHuPZbGkfPbepqcxmvyE/DniE9g68hMboj7o8F4L97M1YTmmR3tnKNuOCCabVNhHdRyX+mv/WziD8CY46YHFmPWvBLObKEfS4YmDj8xXAA4GBqzDZkxhsyPXUltXypmCj3oBxm67ImOWhkA5/0CHx0N1G+3BVumoIvXkz3JaBlF6a4rWxlDNmtB5SLVy6zKiHieXyk4xVwQG9+98/UWl7KGQgN9Ta3XVMPkNShosfVm++RURnTYx2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nEWoI5Tzn3wyg97ZVXeF7CU4aMHs06hl/7GKbHjdKxk=;
- b=O9p6Yb/Js2bZRl41Al7e5JTx8PFIbYD+cJGTNk7NZ/kCsshZE9nhgfHDlmW5JrAFQZmsOT2EAtncmcLFJ0hpVWxxlnJ1jj5V9kF39aITpsKYmbGxTFwZF/JfL3hnnJ+lf1zxHfMo/GHBk6y9ZVh1f20gQSCmjDuyBVL7QgaviMsTuK+VdVSj063NXuAXTv/lN64ergl+97rcHAUvqdd3lkyegRC21lTSGEK5f9nTm0+/6hY3kuly86VAu6F5I6EJi/Uqbuo+bBcz+V0740XQf1KAh/5f3dUYJOMm793XkA/8lTilmySOKFjKVM9CDfFvFOtFi24hLBDpjMoYzBGOdg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com (2603:10b6:8:73::18) by
- CY8PR12MB7315.namprd12.prod.outlook.com (2603:10b6:930:51::21) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7292.12; Wed, 14 Feb 2024 02:56:48 +0000
-Received: from DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::db3e:28df:adc1:9c15]) by DS7PR12MB5744.namprd12.prod.outlook.com
- ([fe80::db3e:28df:adc1:9c15%5]) with mapi id 15.20.7292.013; Wed, 14 Feb 2024
- 02:56:47 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: "\"Pankaj Raghav (Samsung)\"" <kernel@pankajraghav.com>,
- linux-mm@kvack.org, "\"Matthew Wilcox (Oracle)\"" <willy@infradead.org>,
- David Hildenbrand <david@redhat.com>, Yang Shi <shy828301@gmail.com>,
- Yu Zhao <yuzhao@google.com>,
- "\"Kirill A . Shutemov\"" <kirill.shutemov@linux.intel.com>,
- Ryan Roberts <ryan.roberts@arm.com>,
- =?utf-8?q?=22Michal_Koutn=C3=BD=22?= <mkoutny@suse.com>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- "\"Zach O'Keefe\"" <zokeefe@google.com>, Hugh Dickins <hughd@google.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v4 5/7] mm: thp: split huge page to any lower order pages
- (except order-1).
-Date: Tue, 13 Feb 2024 21:56:45 -0500
-X-Mailer: MailMate (1.14r6018)
-Message-ID: <5CF2076E-E56F-4E79-AD95-F58111A623C7@nvidia.com>
-In-Reply-To: <0A9F291F-E6B3-48C0-A2B5-3C893F02AE1D@nvidia.com>
-References: <20240213215520.1048625-1-zi.yan@sent.com>
- <20240213215520.1048625-6-zi.yan@sent.com>
- <Zcvns2HCB61cwvgE@bombadil.infradead.org>
- <698B47BD-5E5E-4B8F-A998-8692A4918A5D@nvidia.com>
- <0A9F291F-E6B3-48C0-A2B5-3C893F02AE1D@nvidia.com>
-Content-Type: multipart/signed;
- boundary="=_MailMate_AEEA94DD-FD34-48DA-AA55-B24C5F506FC5_=";
- micalg=pgp-sha512; protocol="application/pgp-signature"
-X-ClientProxiedBy: BL0PR03CA0018.namprd03.prod.outlook.com
- (2603:10b6:208:2d::31) To DS7PR12MB5744.namprd12.prod.outlook.com
- (2603:10b6:8:73::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFB3810A2A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 06:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707891629; cv=none; b=e3KoQJAq6pmZzNRB8UnG8OCJuDexK6ntTZCbw3dkDyGgY9VA1j1BCWW4SNg3iL2aOb3SVP1bhGguSu0x4ShWWEZgJRNjQQ+Ct3Zu411pxjeBz2OYkbaQQ0kDx9m8mWsElXOJJ08Est8FR8YaTN2GaKTaC/TJWrF/y4bEvmxKwGg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707891629; c=relaxed/simple;
+	bh=mPZvfWNgR9UvijIIJJg1XLOXvrF3xKs/y4S11I2T7Mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PPrk01opNk85xyZ0cHEqMFxkOnpWevPdMJfdvO/pLJzO8JEOnHTXKTTk7jlTivsAGLnTR0ZZ8mFpHRfHOiVfmCNJi6WKzAnyRR8zgEnODTLTAK9AuUaEoMplugWqNDwZ6boaSOAkmMFv+flKq5Zc+0HF4UyK+wkySHWAzczP9Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=frEKCXWj; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-42aa4a9d984so24070011cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Feb 2024 22:20:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1707891626; x=1708496426; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mPZvfWNgR9UvijIIJJg1XLOXvrF3xKs/y4S11I2T7Mc=;
+        b=frEKCXWjz3d2XuOUYzdId9W6Mvn73jhIIjZV2UtP6WyaWc+D189xwP5w9kl+nSGfMv
+         92wT3Ax40rNcFpOR+78CXna5fylDXfI6Hpiij0UumIVVKLviUy2TBLD/fQ4JiX8hcSKk
+         lDb1xW+VEfETTFCtbvp6CurH0ifNSGWGK9795xsbLYIgyGs6dgO9WOfTiI+Y04tJwTwz
+         U2B8EUisd2LXc0KXZhBK0T+8L+7pSUgqhfIrW+lqZMIXTuHrXKY6BZ+bKZmBwZFp1CkH
+         S+9RnGWorvD7Btw1UXhsTSfLoPpByNUBhDeBmUW9EuyIbEp1u9AceE9ovXck9gVbMmaP
+         b6Zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707891626; x=1708496426;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mPZvfWNgR9UvijIIJJg1XLOXvrF3xKs/y4S11I2T7Mc=;
+        b=G/Kd9CWfslHamX4g06zwB1xhpqtrelOETt3V1xKt1QcFhr638BzzAlkHM+iTaSxZzg
+         /JC51GFI4BRXndgOt9lJm3NoEkOkmROEQOEFaGjTurwsniVcYvRY4KpyPZVhkEo3Q/uN
+         gekcdGI11Mk15/mEgbr1yD7PJU/N+pZyHVb+xNgarU5NT8EGv/km3TLUrsbJd3Zcu9yP
+         HYSTdXQ+F6bwsnzewvhZZTvcdrz7w+ZdciM1U82kDlSur6xgZ4Q/QIM1uXQ+tjFSkvNA
+         4MeF3y7RJYL5vU4WrJRTcZ/9o3YjrTCB/ZBlsBudRtTW59GyJojZwj/DOlqq1fv9XbIr
+         IYyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXASzOSYWwDFMLMwSL44mppklvvnktyKLsENke6kQbrHUr9M9yn08PloT+MkLg7r1NEk6lJQhRi3D995kQ2iomwGkF2oK9Vrkxm3vCMbw==
+X-Gm-Message-State: AOJu0YxiRHOEN0fcrqtreQExLVsejKXUp1Spo2diSMD9MKeUmXzyFi7v
+	OQVvse4Q/Z5xSbEz3+zY5DVne7k8IrEKZdmpGRN6abYg2ahcnq5Sh11NSAuoL2M=
+X-Google-Smtp-Source: AGHT+IFnioDUv96AzhWE99fGuZ2JnAOUfdgv/2QX4e5KUyJeUPqxV+8qOH1R7pvVEl8yrhK7A4y3Cw==
+X-Received: by 2002:a05:622a:1045:b0:42c:70a8:1b3f with SMTP id f5-20020a05622a104500b0042c70a81b3fmr1875328qte.7.1707891626471;
+        Tue, 13 Feb 2024 22:20:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVyB4jFMHn+EGrswmDu1/pylqxzZS/7CEIDA9h5gu8tDWbdJ3ly8gQnCVDTj72KRibP+jAgu2ZRcQ/Q9a2f8mOD/8WXTApSC1qyCuHeU4+OP9RxDNN1OsO4haGA3xEgG8cBl+GFQKumMlACRPRyQJPu8vDu/OBVCiXC5h2Kc+UhHUN0uxIr4+CnlS8fi5EPSbA+LawgUvKtz3ZJACCe2oZdSez0fKge0ggM1gE4IT9Kqde0gLbAT0+TTaW2dEquOn5OWonOfMHlY3LgDmFyknOkT5W5eN0ZeXug1LFzG17semLCLr5AExvGYfmRQRDfU40g5L7KZnrImSIabsA13nCEDFDEsSslvrMcNaUb7t5eK7uOlxufthSTIpxY20ZQU3xPLCzAO+l1Ldckgh7k6tNNU06NoQR8ttw70zX1yKVuoWLDxjsxoj1T8wPB+5OL+GcWyt0wZa982UdziuBAHRENHQ0DQXXyXvCaQFyw1xsOKMQ7S7pmzVU3wvsVR5JUy1l6N8WUSUtuVMbsHyQijVWlF9mlMKaXIWaNBamQ9/S60ZP2p3zWinc2XX8gTox0N0h/Q0S2X5vFuIQ5UHcJrM5PUkbVJJNXCJyBC8ucShST/aG9b+YvQah2fi9VIDywwpfMIFK9M0YySaLklvdQV5uUU9LsM1ywmjyRyDGDk2WX41U+gOwGiADEmhGmUF0lSSQB5mWzXk6HCLoGXObkbI4tPYw+luBGD1XlhJpzMfqud8YIQO/OFkOahUuSX4+N3goBrvN3ZGHcTJUDPDc3LB08lvkBzmvCkMRH6ncHmyuNsvgmosgXfyXpuZFZkvLjViPXzM8cRsxd+8nU3DvvwLMl5itUgBMRkaIXUozPyGyG4FTV6l/TeUOqoFkVygQu+LVUyJl+62Jk4R/hoPm1djda/Ishy9+m0pREhG7BHUf/REwC5VSeNUF37sLHauvrCpMG+X
+ WKicboE37DS7u3tPg+DN6EyK9ZAffCPdEkt2GF4XjAD2FnpADLiQVhGEq9Gq4x+WxVYIxnp7gxNGLxBm8TMis3mOlYQAdsIAvOSs8asdMvcSD25bG3gnLj9UKC1UKFf9aomJJB1ZKsIUjeqI2tRkeW/yf4Kcw2IqeFnyHjGKNQy1IldFxWzTnPTBNkHSNG6OZ7MHYp+nAysigPe3NYOe4Q5wbEutodr/NCeHs32gpONYfZhmrW19yPiWOyLuVChJlCWN/VhC335HRwM4Jr/3BjSnCvvbALRiLovEnzTWuwZusbptsgKAhf0pYy7Hj0O7mtI8Ipnh/4IbbGPoMN5arUoYLuSiC+F5FfROUz8hpEFNUUDL2AjbfwdHaatdbz/lhYwKm/0Eh46IibKUNBiDhVOuavk+6b194zhv0/CtvOV8FsHHEClx2D7Cjspyg+wLeUr5giZvnI8UB/IuG9+h/ALXycq0Q9ApV+74ekx9PtkzI2OBvC4NMelG/r5quHjtuJHtIzSEv7q7awQD23dieYar23cVHEPeDfPHFuaPAy/4S5RGl2QcRcwFxWNfIom7IFQS0jkYJu+FGuA2+uIbbjOXmcFA6+1f5cZnuCanLkH5nPRjzob2X4MKTarRGr73/himyWAHgMpj/7MG/senK/ELpDrSMOR9ILccmRutMaJYoT5BKk8QgRYlqxQQp/InILivj9wt6yn8wcG/ZlIk7Okj8ru9qLMBeJ/MA/eO9VzJ3RXkyt0bs3guJS9LyL5AetyXjHQDTm4NjWPUuvUoxp7fw6PVUWqv58Vt7B3YrRCsqrOsuTL8mQl+aXclP+RFSIv7QZBkmRVu87kVHgZltKUF98f2vLoKjI1gpQOjthlGqVicBoS6tNmoGtL1A76HVtYGtQ6OJi5g3LWPFa1xgahdCjQAbbgZ54quqQtuyqxGcgXGMfJYexzVuYVZmdOOI931sL2IwF3ykaiUQtqU5UJz7+ZmloPtGW1sO
+ xtSy5GrkpnxXCEcybhjX/cUg0mDzafJYrWnWySSCMVwaThVHLFt/1LixORhIqMKVVGi/7OQeIomQZ7uRH6Pc2OtQdIsIQMy69S0RxK/8Av+XN15iNlxkhZLazp0BOiiSmWSZKEaTMf+OYvsKI
+Received: from localhost ([2620:10d:c091:400::5:6326])
+        by smtp.gmail.com with ESMTPSA id l13-20020ac8078d000000b0042c613a5cf3sm1755053qth.33.2024.02.13.22.20.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Feb 2024 22:20:25 -0800 (PST)
+Date: Wed, 14 Feb 2024 01:20:20 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
+	vbabka@suse.cz, roman.gushchin@linux.dev, mgorman@suse.de,
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org,
+	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
+	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
+	tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
+	paulmck@kernel.org, pasha.tatashin@soleen.com,
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+	ndesaulniers@google.com, vvvvvv@google.com,
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
+	vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+	elver@google.com, dvyukov@google.com, shakeelb@google.com,
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+	cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 00/35] Memory allocation profiling
+Message-ID: <20240214062020.GA989328@cmpxchg.org>
+References: <20240212213922.783301-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB5744:EE_|CY8PR12MB7315:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5386b68e-7915-4753-3dd1-08dc2d0895e8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info:
-	gxDcKvDWWOWg+2BkjCWQ5mz3366mS4lri9qtOLOMRkX95D5FPY965Dt2GsNxUCDP9BB2ZSLZWIwKHa+pFvQIM8XEPHc2xFAgJlrbnFWpEdPFmaoqAK0qKMqXhgi0NvkRSw57C0+GVVKR6/A+u1rcR7QuIeaq9TIR+ipi+RhFvCfGpNDHTe1JQY0+WhjoNxa+4iEmjy2mgxkekw3FPxGPb94Qktloj1r97tiO8mvGrqfRRZgnS4U4jLZ3umJjO01PocayQMQA1/K2QZ+SpSlfhZ6HOHAiKi41Z+qX2z3XyXTM7PlE36WuWDrzX2X52K73Gwf3CGRxvfDb4Wzkfa4dgJpQvlW0//AvEye+r+mSpCtntlqlNNislWoTneP3SraP72GZ6l3+nnTFJsothWvaDpqOeNiyk6QNCqIYA04Kud2FQ+JY7lPdll3sDjCHytFVNd04QS2NYVurUvRysO/HAQx1an3OGLR2js2ibXHHYO6AWNeeseP8Fgwgx40hysuqBDjdL1K+S2bQbVn1Vz4htQvh4jXSZ7xuzHmUrp0hyG1T+KZ7eglNccA7sSXjXYXO
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB5744.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(39860400002)(346002)(376002)(366004)(396003)(230922051799003)(186009)(1800799012)(451199024)(64100799003)(316002)(36756003)(235185007)(5660300002)(2906002)(38100700002)(33656002)(7416002)(86362001)(66946007)(6916009)(53546011)(26005)(6512007)(54906003)(4326008)(6506007)(2616005)(66476007)(8676002)(8936002)(83380400001)(66556008)(478600001)(6486002)(41300700001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KBHfPTQb3jcBYS5DRI3vY311D9/ULCxE6avPIvN5VyJgDqu/eAbPSDqF1DMY?=
- =?us-ascii?Q?PHK5TnJctyFtQh3cQe3HCaZC9lF7lvdVaKRtT7qAamUUTb7qIHfLW7dWTMR3?=
- =?us-ascii?Q?lNTJ4kOZU5PfwjcOfTyYhtf5ySdS0QgrnBXoDxIHAYEno+tNKIcrlagtyu0o?=
- =?us-ascii?Q?AmiNFF7NwuTRRjMIx6DwYMA/IJeKPKchtfBi7Hb080SSRMXQBWOCQZmhl1Z4?=
- =?us-ascii?Q?wtWmdGDFy5fX1RQPQzt5ZLCMJ3uVecV6UbNOybZV62e+4m4auXX8wXA0w/N4?=
- =?us-ascii?Q?JHl+TIWZ0hLgJ1qfpVUGUmYv4nyf6gSUwThNrC2aR+WIunL8Mvbl3CeQF5W0?=
- =?us-ascii?Q?iIyoc6G4on2tDKfb7EIkROTB3GXzGeNQh/G+P5foXha3CnxOOdjdZlpciBPX?=
- =?us-ascii?Q?xgzJDEm0cuMUF9WeOxf5CF9eZP+g4CE4oyORPLUWhUosAbNIGHoerNeo7Gvq?=
- =?us-ascii?Q?ETHACMy0dUmca+SWOy0HhAmh5+3kKpzyT7CLSFw8xSfuig4kqpKEjdyRBRC1?=
- =?us-ascii?Q?rpKdbiimmrO9T7CBMth5RbnQv6EgSExC4v5eAi8S994SWf4oB5lx3xPkc0y0?=
- =?us-ascii?Q?b5eoqRtfIRY1BRX0FoQKuVo2tq5bKLV1VnD2e7WxLuTNH3zuB2DdDNNdpCuE?=
- =?us-ascii?Q?d3fChX/7PxPp5SYLnM54GOC91uFlQeS71wApqPca+xCPYVu2yytsbqKGibTo?=
- =?us-ascii?Q?uIiwVeAuirbaM8lMKsJCVEjT73uaYXA7P4teGUEabDy7Hh4NDTvboqNFFvNa?=
- =?us-ascii?Q?OOOSUeZtUWG1V1tnxkdXabm4tCNPwKy2jksADIUXyMDUMT4lVG6+7t7cPOMg?=
- =?us-ascii?Q?zlZfYzI/R1gk88wag0BPAEJvucoNc0/G4S52kTPt5UxK00uhe8AIy+YY3TuK?=
- =?us-ascii?Q?gLaCcTzyvZyF8a9Zof/0fyPL0gxmsCtOyeiZM4KBbabYTrzQjscCGRzBAmkM?=
- =?us-ascii?Q?y6qUYekx7mez0uakMrc1iSdxQcaGW78Hg55DtSQq3B94HMuwMPyIoLEn3KqY?=
- =?us-ascii?Q?cR/lEI37xzlTRoufZG7iLWqt22MXJcPr+tChK7gT907kvg7vQaxrgdCaHcaD?=
- =?us-ascii?Q?ZB056QJVQgdpLGiDffNytzbhyRBu17f66AVY96N6k9A47l8UGlCYfcrzHBkz?=
- =?us-ascii?Q?6vgb41FN/dYwgA8u8uzoZ4oZnDGnArVX/PGmSw/QqZe2rrF4umkMepFcstEq?=
- =?us-ascii?Q?3isTjDLTrG0g7BoU9vGFbZf3qFfoxBeIrvB9XryGr8MPDa+t0Ye5JtWHxJf2?=
- =?us-ascii?Q?R+An/jCVSl5rO0/jBWudyzoA65lwHBMNlhSNt+hxQiWpBTWdRozvHli6Tuoi?=
- =?us-ascii?Q?0x1bBIavy5Vvdflx6PUmy7T4YqpzbVW0AZAtOnUPqYeRn/25bH3vtGys+isn?=
- =?us-ascii?Q?zqZ/uBn7OR9OBDbv58S4K+TBNQ4w+FjsqJcDU8oOLZoRSquVGif/pp0W96sP?=
- =?us-ascii?Q?YCMsAcKbx2oxfMTIAF5DmB/Q3xMH2jlICgYjqjnMc6Y851H6QcTVdu++7o9a?=
- =?us-ascii?Q?1NgRcrF/94Cp+26kSxt/FAptvsXQ5c6kd67TAAoBixq8p+dxYXw4Gy06PAk0?=
- =?us-ascii?Q?So/pU8g+nTinmOaOOLo=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5386b68e-7915-4753-3dd1-08dc2d0895e8
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB5744.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2024 02:56:47.9015
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6k3ob/sqmiyvuK8ShnwUOLOwatuoEWldxO3CrFJ+4k86O85On+qlfYXI3J4aMBLd
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7315
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240212213922.783301-1-surenb@google.com>
 
---=_MailMate_AEEA94DD-FD34-48DA-AA55-B24C5F506FC5_=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+I'll do a more throrough code review, but before the discussion gets
+too sidetracked, I wanted to add my POV on the overall merit of the
+direction that is being proposed here.
 
-On 13 Feb 2024, at 17:19, Zi Yan wrote:
+I have backported and used this code for debugging production issues
+before. Logging into a random host with an unfamiliar workload and
+being able to get a reliable, comprehensive list of kernel memory
+consumers is one of the coolest things I have seen in a long
+time. This is a huge improvement to sysadmin quality of life.
 
-> On 13 Feb 2024, at 17:15, Zi Yan wrote:
->
->> On 13 Feb 2024, at 17:05, Luis Chamberlain wrote:
->>
->>> On Tue, Feb 13, 2024 at 04:55:18PM -0500, Zi Yan wrote:
->>>> From: Zi Yan <ziy@nvidia.com>
->>>> Order-1 folio is not supported because _deferred_list, which is used=
- by
->>>> partially mapped folios, is stored in subpage 2 and an order-1 folio=
- only
->>>> has subpage 0 and 1.
->>>
->>> The LBS patches has the patch from Matthew which enables and allowed =
-us
->>> to successfully test order 1. So this restriction could be dropped if=
+It's also a huge improvement for MM developers. We're the first points
+of contact for memory regressions that can be caused by pretty much
+any driver or subsystem in the kernel.
 
->>> that gets merged.
->>
->> OK. But it only applies to file-backed folios IIUC. Anonymous folios s=
-till
->> cannot be split to order-1.
->
-> Something like this would lift the restriction:
+I encourage anybody who is undecided on whether this is worth doing to
+build a kernel with these patches applied and run it on their own
+machine. I think you'll be surprised what you'll find - and how myopic
+and uninformative /proc/meminfo feels in comparison to this. Did you
+know there is a lot more to modern filesystems than the VFS objects we
+are currently tracking? :)
 
-Actually this, since folio_prep_large_rmappable() is changed by that patc=
-h:
+Then imagine what this looks like on a production host running a
+complex mix of filesystems, enterprise networking, bpf programs, gpus
+and accelerators etc.
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 0564b007cbd1..05eeeafaa9dc 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2852,7 +2852,7 @@ static void __split_huge_page_tail(struct folio *fo=
-lio, int tail,
-        clear_compound_head(page_tail);
-        if (new_order) {
-                prep_compound_page(page_tail, new_order);
--               folio_prep_large_rmappable(page_folio(page_tail));
-+               new_folio =3D folio_prep_large_rmappable(new_folio);
-        }
+Backporting the code to a slightly older production kernel wasn't too
+difficult. The instrumentation layering is explicit, clean, and fairly
+centralized, so resolving minor conflicts around the _noprof renames
+and the wrappers was pretty straight-forward.
 
-        /* Finally unfreeze refcount. Additional reference from page cach=
-e. */
-@@ -3045,9 +3045,9 @@ int split_huge_page_to_list_to_order(struct page *p=
-age, struct list_head *list,
-        VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
-        VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
+When we talk about maintenance cost, a fair shake would be to weigh it
+against the cost and reliability of our current method: evaluating
+consumers in the kernel on a case-by-case basis and annotating the
+alloc/free sites by hand; then quibbling with the MM community about
+whether that consumer is indeed significant enough to warrant an entry
+in /proc/meminfo, and what the catchiest name for the stat would be.
 
--       /* Cannot split THP to order-1 (no order-1 THPs) */
--       if (new_order =3D=3D 1) {
--               VM_WARN_ONCE(1, "Cannot split to order-1 folio");
-+       /* Cannot split anonymous folios to order-1 (no order-1 anon foli=
-os) */
-+       if (new_order =3D=3D 1 && folio_test_anon(folio)) {
-+               VM_WARN_ONCE(1, "Cannot split to order-1 anonymous folio"=
-);
-                return -EINVAL;
-        }
+I think we can agree that this is vastly less scalable and more
+burdensome than central annotations around a handful of mostly static
+allocator entry points. Especially considering the rate of change in
+the kernel as a whole, and that not everybody will think of the
+comprehensive MM picture when writing a random driver. And I think
+that's generous - we don't even have the network stack in meminfo.
 
---
-Best Regards,
-Yan, Zi
+So I think what we do now isn't working. In the Meta fleet, at any
+given time the p50 for unaccounted kernel memory is several gigabytes
+per host. The p99 is between 15% and 30% of total memory. That's a
+looot of opaque resource usage we have to accept on faith.
 
---=_MailMate_AEEA94DD-FD34-48DA-AA55-B24C5F506FC5_=
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename=signature.asc
-Content-Type: application/pgp-signature; name=signature.asc
+For hunting down regressions, all it takes is one untracked consumer
+in the kernel to really throw a wrench into things. It's difficult to
+find in the noise with tracing, and if it's not growing after an
+initial allocation spike, you're pretty much out of luck finding it at
+all. Raise your hand if you've written a drgn script to walk pfns and
+try to guess consumers from the state of struct page :)
 
------BEGIN PGP SIGNATURE-----
+I agree we should discuss how the annotations are implemented on a
+technical basis, but my take is that we need something like this.
 
-iQJDBAEBCgAtFiEE6rR4j8RuQ2XmaZol4n+egRQHKFQFAmXMK+0PHHppeUBudmlk
-aWEuY29tAAoJEOJ/noEUByhUzksP/0hfFTrmzRI3eqI/b5dhJlPMLyOfv1UKR5df
-lPjmyMIOlstWocpO5C01WPBoZfdPNhnb30oujWLx49z1+ioxHMB7EFR5kJmmkHOV
-N1/DDX1NmVT6b2RHYTU6siexERbImeSIf9hppWJ7jHM+nbC5nxr9yn3psbdQSd86
-TAVSg9+BwIaibwc6n5f8CxjnwdjP705mus6H12zL56A+T32N49N+NbNt9BSmi0RI
-lThX5zjP0/QOX8R70KjlCBajGPb0zpPbuWvQfDLG83H5GfsgPOKtFzB2p3s83BG8
-mO3/gGBZNDMOkhT1kf8Q2HU3Nveeo4kHICoduPwbIqy9vqW/OJ5xzOcKYCI7WjyS
-tE5w4TiSZUf8gQY5dmlktgoSgr2I2Uv9UEk2+d5G4OPRfVwSZK5spQSXmjd2OUDm
-3j+wTLPIjcUcG9PbKBHyhxfJor8piSK/LhVd98HmUCGv36/oDf5I0pEZn/AkgnOO
-qhIq4TpUzczhtJ5d6QiQT1GqbxAx3vWiO/jLXoRntOFmyt9zzAldsl+8wnHBrosL
-RyB33xYPgVH0ETHtf/Y+dzTQ48zD3Q5tAZR789ifh8bzxASU7Bprg4stTaWk7lOw
-tt4jlBJzxLW50LILpVFPK8QAL4611bykfp4GLVlEKdQ32FIynslTVwsjR8qWrVGz
-6U1fUp2/
-=RqS/
------END PGP SIGNATURE-----
-
---=_MailMate_AEEA94DD-FD34-48DA-AA55-B24C5F506FC5_=--
+In a codebase of our size, I don't think the allocator should be
+handing out memory without some basic implied tracking of where it's
+going. It's a liability for production environments, and it can hide
+bad memory management decisions in drivers and other subsystems for a
+very long time.
 
