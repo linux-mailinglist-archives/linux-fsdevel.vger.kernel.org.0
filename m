@@ -1,74 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-11751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11752-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37CD1856E00
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 20:47:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9AD856E7F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 21:22:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE7921F219AC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 19:47:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F53AB2576A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 20:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0538813A897;
-	Thu, 15 Feb 2024 19:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C00213AA56;
+	Thu, 15 Feb 2024 20:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S7qJ/RpN"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fyDN9U4/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BwTk6WcO";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fyDN9U4/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BwTk6WcO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8F313699A;
-	Thu, 15 Feb 2024 19:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E6D13959C;
+	Thu, 15 Feb 2024 20:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708026417; cv=none; b=PtTGBN8pNdhjlFewM3dk8cJ22B48m+8jogmRUDC6JDKzUmSBv3NrPhQHODfhW1AU3Jgfj/Lap3P2LaWDnUZtYvc0cuIiNc5it3/vyDLEkxFBL0i41B+lKOUp+UpjQ9OMEDk4M0JcnJnwc/PLUvHyOkW6/lzL+MBQR/haz609AH0=
+	t=1708028533; cv=none; b=SguGoVOY9E966DcDO97S1ZFye61gncC08R6Pihx8gOv4k9iEdyi4BoiapVjvNGv2zCebbHt2BVoIJLbJS+nCgtyJyF1OCLmPd6Bfc+eOLfEhSKqRFAU6BLUNX0jb6Ka/JLaHqPSTyK1qYtNsmiwQep4dOYFy1wsNKlc+kGrEwnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708026417; c=relaxed/simple;
-	bh=SvNJx9ibctbQXoy8zzAv4TWr8cJ8eTvpaV2PlD9kGZI=;
+	s=arc-20240116; t=1708028533; c=relaxed/simple;
+	bh=1sAlfiUyLqC/42u5WdlSFvGKZdqnhnY/hW80I5Hne0s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZXYx6mLADD7uXbO+cRU2phyU7cjktrnRng0EfLCpHy0VTmEpff/WZos01zIOln8D9KUM7+HFPlZLqvBE0ttq5JyhjrewnSV4Jo9FePXWNkOczWzkwv7Ae0Yz0eKZV7sEmm5NECxVHAgrM9b2nzRMEH3YddnharMTTyHcZFnbUmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S7qJ/RpN; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-68873473ce6so7464436d6.0;
-        Thu, 15 Feb 2024 11:46:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708026415; x=1708631215; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0a9EFonqMBn2eHbLHRvN6s4nh6pQCa5EAdO92aYTphs=;
-        b=S7qJ/RpNM0gy/KaCy3biAl6HWtM4rqsdcPnB/YH9ruIPIVcYUXUrmLhleYjk3QkJoV
-         v9/s7T+LnuvmwZbsmFXf+7K7yO2uvnSZ4eYcA5XTxVdqbzK9ewTKIPVQdg85EkpcqVzl
-         aknkR6wPxin6kyR+vc/8stG93q0rYTEayUV5ydy0nS/SltBHUuwXnDwBOYdZXhiUhm7O
-         EGHyTnoIYo9ZRqB8lvrNJOboBWIhbuqZJgkRKqMmOheMbax7NlvJMWqpXFMo4hqMk47F
-         yJTY0LjfV2i1cwgoWkr2jZVSZyV042djwAzEDIWEz2oLMpVYg29//0TkebfBGSKj36ar
-         ZLBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708026415; x=1708631215;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0a9EFonqMBn2eHbLHRvN6s4nh6pQCa5EAdO92aYTphs=;
-        b=Up/D3sB2rgK7FKKWo13QtrdusJKRXjrHQx8qvuETFCcykMXlm9MK0n9u4CiHzMnPVF
-         9kdPAr7+5nUWNkbUWF+0qyz8aLpzfhxEesEktCj5voAQ3u5qhcLsYgHJBhkpPc6zzfEX
-         PwG65k32jvUJv/41fjjIHZe60/yZWluTidSRZajvVjj646Am0JgjK65gkvzguJ9Vv/BI
-         Td7b5L+cD+jhoIMW29A1AiZn9bFLOyBUwrsrebefxLLt9XpuB8SHaIl5rZx3l783JmX4
-         tgTaEOfX3ZBgX8u3/X9rKaInpfrXuPc+WmgfsCw6HF8C1F5mpivL0cK4Do2J2XbULNmA
-         ov5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWw/GIEoW9E6ZvIh+Btku6EMFefuIclZgk9wOslmteXC+CzqPr37wZ7K4M5IrmZzuyIo1yJLHXQVgQm60/TShMSAyBpb6zdPjl4hom0nqNEMa9u5GKVtcstbcUOyDuQ1RNgkVWsvu/vftMGwIH2xsm3vkipZ092NyPR2Mn1mwo+ZtMcnxfTdGA=
-X-Gm-Message-State: AOJu0Yz0xDN3SprO38la5PNsdNAthoYl9JRNfC2MaLiXSCJgHj8BS113
-	gjTBUJHNrC41jseBPC2ICqbkUSthykt+sflPKNxg3XtiSQdnMyehIuDt3VVNWHD6Rw==
-X-Google-Smtp-Source: AGHT+IFUlCyEzpVqAiRhaKG/YKslsjBvW/1ZGIwwpMuMpyt9VGtgXczGDx9ymu2IxKEw8fJvFKJiLQ==
-X-Received: by 2002:ad4:5c8f:0:b0:686:a185:dc11 with SMTP id o15-20020ad45c8f000000b00686a185dc11mr3520139qvh.55.1708026414655;
-        Thu, 15 Feb 2024 11:46:54 -0800 (PST)
-Received: from [10.56.180.189] (184-057-057-014.res.spectrum.com. [184.57.57.14])
-        by smtp.gmail.com with ESMTPSA id og11-20020a056214428b00b0068f2b1d9415sm413691qvb.23.2024.02.15.11.46.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Feb 2024 11:46:54 -0800 (PST)
-Message-ID: <da1e04bf-7dcc-46c8-af30-d1f92941740d@gmail.com>
-Date: Thu, 15 Feb 2024 14:46:52 -0500
+	 In-Reply-To:Content-Type; b=FuxFqUnrAiuR6gsF0470lijGAWEUu6vbcc5A31siKFa4t0zEwhLvzUN15L/LmJ01A6niXE9ZbekW6ECtOxK8qWjx1by8cE+X2VxxMD5IBUoBlSZJojTCOVOWd379PX7IOhKKld9oN5oZWDpwIYHVilFaMGHKuesCMBzPzF63FZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fyDN9U4/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BwTk6WcO; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fyDN9U4/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BwTk6WcO; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1BFFF1F8D9;
+	Thu, 15 Feb 2024 20:22:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1708028529; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+PvwLOkhLs20C3GH06d6BicWz8S2K2wPQ3EkGdP8tjQ=;
+	b=fyDN9U4/AWiJg7n/Ot+hmcJ3eO/iy+4wR8VghNMMsaZEFyvOfaPkOvOVvDq2I457tMO7lt
+	EzYnQ3Rs+Bb+39he43kxtsDka1L2HfiA94nnBcCxPkk/NdR78i6EI+4qinR2XKjVSOuA0c
+	59rJ9CmZHRVQj1vVOW/91YcW/TsmXfA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1708028529;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+PvwLOkhLs20C3GH06d6BicWz8S2K2wPQ3EkGdP8tjQ=;
+	b=BwTk6WcO2bzcQNWckWXoRwyXeoTj9pDbrBgoFK2MBYXpW/4jyFifpgxKiK3ENRMnx+A4Qv
+	Swr43Y+7PhBXo+Bw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1708028529; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+PvwLOkhLs20C3GH06d6BicWz8S2K2wPQ3EkGdP8tjQ=;
+	b=fyDN9U4/AWiJg7n/Ot+hmcJ3eO/iy+4wR8VghNMMsaZEFyvOfaPkOvOVvDq2I457tMO7lt
+	EzYnQ3Rs+Bb+39he43kxtsDka1L2HfiA94nnBcCxPkk/NdR78i6EI+4qinR2XKjVSOuA0c
+	59rJ9CmZHRVQj1vVOW/91YcW/TsmXfA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1708028529;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+PvwLOkhLs20C3GH06d6BicWz8S2K2wPQ3EkGdP8tjQ=;
+	b=BwTk6WcO2bzcQNWckWXoRwyXeoTj9pDbrBgoFK2MBYXpW/4jyFifpgxKiK3ENRMnx+A4Qv
+	Swr43Y+7PhBXo+Bw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6778A13A82;
+	Thu, 15 Feb 2024 20:22:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 9ufzF3ByzmWgOwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 15 Feb 2024 20:22:08 +0000
+Message-ID: <320cd134-b767-4f29-869b-d219793ba8a1@suse.cz>
+Date: Thu, 15 Feb 2024 21:22:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,93 +95,123 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [LSF/MM/BPF TOPIC] Dropping page cache of individual fs
-To: Jan Kara <jack@suse.cz>
-Cc: Matthew Wilcox <willy@infradead.org>,
- Christian Brauner <brauner@kernel.org>, lsf-pc@lists.linux-foundation.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-btrfs@vger.kernel.org, linux-block@vger.kernel.org,
- Christoph Hellwig <hch@infradead.org>
-References: <20240116-tagelang-zugnummer-349edd1b5792@brauner>
- <20240116114519.jcktectmk2thgagw@quack3>
- <20240117-tupfen-unqualifiziert-173af9bc68c8@brauner>
- <20240117143528.idmyeadhf4yzs5ck@quack3>
- <ZafpsO3XakIekWXx@casper.infradead.org>
- <3107a023-3173-4b3d-9623-71812b1e7eb6@gmail.com>
- <20240215135709.4zmfb7qlerztbq6b@quack3>
+Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in show_mem()
 Content-Language: en-US
-From: Adrian Vovk <adrianvovk@gmail.com>
-In-Reply-To: <20240215135709.4zmfb7qlerztbq6b@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+To: Kent Overstreet <kent.overstreet@linux.dev>,
+ Suren Baghdasaryan <surenb@google.com>
+Cc: Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
+ hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
+ dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
+ corbet@lwn.net, void@manifault.com, peterz@infradead.org,
+ juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+ david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+ nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
+ rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
+ yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+ hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+ ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
+ ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+ iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+ elver@google.com, dvyukov@google.com, shakeelb@google.com,
+ songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+ minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+ cgroups@vger.kernel.org
+References: <20240212213922.783301-1-surenb@google.com>
+ <20240212213922.783301-32-surenb@google.com> <Zc3X8XlnrZmh2mgN@tiehlicka>
+ <CAJuCfpHc2ee_V6SGAc_31O_ikjGGNivhdSG+2XNcc9vVmzO-9g@mail.gmail.com>
+ <Zc4_i_ED6qjGDmhR@tiehlicka>
+ <CAJuCfpHq3N0h6dGieHxD6Au+qs=iKAifFrHAMxTsHTcDrOwSQA@mail.gmail.com>
+ <ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -2.79
+X-Spamd-Result: default: False [-2.79 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 XM_UA_NO_VERSION(0.01)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 BAYES_HAM(-3.00)[100.00%];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 TO_MATCH_ENVRCPT_SOME(0.00)[];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-0.976];
+	 RCPT_COUNT_GT_50(0.00)[73];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 FREEMAIL_CC(0.00)[suse.com,linux-foundation.org,cmpxchg.org,linux.dev,suse.de,stgolabs.net,infradead.org,oracle.com,lwn.net,manifault.com,redhat.com,arm.com,kernel.org,arndb.de,linutronix.de,linux.intel.com,kernel.dk,soleen.com,google.com,gmail.com,chromium.org,linuxfoundation.org,linaro.org,goodmis.org,linux.com,lge.com,bytedance.com,akamai.com,android.com,vger.kernel.org,lists.linux.dev,kvack.org,googlegroups.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Flag: NO
 
-On 2/15/24 08:57, Jan Kara wrote:
-> On Mon 29-01-24 19:13:17, Adrian Vovk wrote:
->> Hello! I'm the "GNOME people" who Christian is referring to
-> Got back to thinking about this after a while...
->
->> On 1/17/24 09:52, Matthew Wilcox wrote:
->>> I feel like we're in an XY trap [1].  What Christian actually wants is
->>> to not be able to access the contents of a file while the device it's
->>> on is suspended, and we've gone from there to "must drop the page cache".
->> What we really want is for the plaintext contents of the files to be gone
->> from memory while the dm-crypt device backing them is suspended.
->>
->> Ultimately my goal is to limit the chance that an attacker with access to a
->> user's suspended laptop will be able to access the user's encrypted data. I
->> need to achieve this without forcing the user to completely log out/power
->> off/etc their system; it must be invisible to the user. The key word here is
->> limit; if we can remove _most_ files from memory _most_ of the time Ithink
->> luksSuspend would be a lot more useful against cold boot than it is today.
-> Well, but if your attack vector are cold-boot attacks, then how does
-> freeing pages from the page cache help you? I mean sure the page allocator
-> will start tracking those pages with potentially sensitive content as free
-> but unless you also zero all of them, this doesn't help anything against
-> cold-boot attacks? The sensitive memory content is still there...
->
-> So you would also have to enable something like zero-on-page-free and
-> generally the cost of this is going to be pretty big?
+On 2/15/24 19:29, Kent Overstreet wrote:
+> On Thu, Feb 15, 2024 at 08:47:59AM -0800, Suren Baghdasaryan wrote:
+>> On Thu, Feb 15, 2024 at 8:45 AM Michal Hocko <mhocko@suse.com> wrote:
+>> >
+>> > On Thu 15-02-24 06:58:42, Suren Baghdasaryan wrote:
+>> > > On Thu, Feb 15, 2024 at 1:22 AM Michal Hocko <mhocko@suse.com> wrote:
+>> > > >
+>> > > > On Mon 12-02-24 13:39:17, Suren Baghdasaryan wrote:
+>> > > > [...]
+>> > > > > @@ -423,4 +424,18 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
+>> > > > >  #ifdef CONFIG_MEMORY_FAILURE
+>> > > > >       printk("%lu pages hwpoisoned\n", atomic_long_read(&num_poisoned_pages));
+>> > > > >  #endif
+>> > > > > +#ifdef CONFIG_MEM_ALLOC_PROFILING
+>> > > > > +     {
+>> > > > > +             struct seq_buf s;
+>> > > > > +             char *buf = kmalloc(4096, GFP_ATOMIC);
+>> > > > > +
+>> > > > > +             if (buf) {
+>> > > > > +                     printk("Memory allocations:\n");
+>> > > > > +                     seq_buf_init(&s, buf, 4096);
+>> > > > > +                     alloc_tags_show_mem_report(&s);
+>> > > > > +                     printk("%s", buf);
+>> > > > > +                     kfree(buf);
+>> > > > > +             }
+>> > > > > +     }
+>> > > > > +#endif
+>> > > >
+>> > > > I am pretty sure I have already objected to this. Memory allocations in
+>> > > > the oom path are simply no go unless there is absolutely no other way
+>> > > > around that. In this case the buffer could be preallocated.
+>> > >
+>> > > Good point. We will change this to a smaller buffer allocated on the
+>> > > stack and will print records one-by-one. Thanks!
+>> >
+>> > __show_mem could be called with a very deep call chains. A single
+>> > pre-allocated buffer should just do ok.
+>> 
+>> Ack. Will do.
+> 
+> No, we're not going to permanently burn 4k here.
+> 
+> It's completely fine if the allocation fails, there's nothing "unsafe"
+> about doing a GFP_ATOMIC allocation here.
 
-Yes you are right. Just marking pages as free isn't enough.
-
-I'm sure it's reasonable enough to zero out the pages that are getting 
-free'd at our request. But the difficulty here is to try and clear pages 
-that were freed previously for other reasons, unless we're zeroing out 
-all pages on free. So I suppose that leaves me with a couple questions:
-
-- As far as I know, the kernel only naturally frees pages from the page 
-cache when they're about to be given to some program for imminent use. 
-But then in the case the page isn't only free'd, but also zero'd out 
-before it's handed over to the program (because giving a program access 
-to a page filled with potentially sensitive data is a bad idea!). Is 
-this correct?
-
-- Are there other situations (aside from drop_caches) where the kernel 
-frees pages from the page cache? Especially without having to zero them 
-anyway? In other words, what situations would turning on some 
-zero-pages-on-free setting actually hurt performance?
-
-- Does dismounting a filesystem completely zero out the removed fs's 
-pages from the page cache?
-
-- I remember hearing somewhere of some Linux support for zeroing out all 
-pages in memory if they're free'd from the page cache. However, I spent 
-a while trying to find this (how to turn it on, benchmarks) and I 
-couldn't find it. Do you know if such a thing exists, and if so how to 
-turn it on? I'm curious of the actual performance impact of it.
-
->> I understand that perfectly wiping all the files out of memory without
->> completely unmounting the filesystem isn't feasible, and that's probably OK
->> for our use-case. As long as most files can be removed from memory most of
->> the time, anyway...
-> OK, understood. I guess in that case something like BLKFLSBUF ioctl on
-> steroids (to also evict filesystem caches, not only the block device) could
-> be useful for you.
->
-> 								Honza
-
-Best,
-
-Adrian
-
+Well, I think without __GFP_NOWARN it will cause a warning and thus
+recursion into __show_mem(), potentially infinite? Which is of course
+trivial to fix, but I'd myself rather sacrifice a bit of memory to get this
+potentially very useful output, if I enabled the profiling. The necessary
+memory overhead of page_ext and slabobj_ext makes the printing buffer
+overhead negligible in comparison?
 
