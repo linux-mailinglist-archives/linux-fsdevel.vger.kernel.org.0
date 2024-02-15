@@ -1,195 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-11778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11779-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C67A4857178
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:20:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D158A857189
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:24:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB7B51C22073
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:20:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E710B2339A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852431468F4;
-	Thu, 15 Feb 2024 23:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9C0145B11;
+	Thu, 15 Feb 2024 23:24:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="Tu/KY/w0"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bkuWqqaU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149D514600E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 23:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7912B13475C;
+	Thu, 15 Feb 2024 23:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708039056; cv=none; b=iU16mLmuuN1UOBKMmgVHQHJ+vPk5HwGCqSBypU7dg1GP/cRir+fu7CxPAUIQcBPP6g6MaSFd07wmr+vZI4K3cTi9JafkSM00x2AX61k0qV1dpK6mDW3Eka1M7ziypQJnBsYXZrnz+GsgNcXM6+rQYP9xwA9302TmsSe/cRx+rwc=
+	t=1708039469; cv=none; b=cJH2jJmg/CDMlxiiC1KbxRK7dYXjlsNyWN6nXU6lxiAqDNEIEt2EtVHML3v+dNnHwFcNwmknf/WjZFqSgg6OnCOry/tkfLQQFpedZZPlgxD/5qxU9si1E3qTp2ZpAFjuvPuAPn+nZGFL/vw3/a/UqVxVkmZP4RMXXhs56Qq02xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708039056; c=relaxed/simple;
-	bh=IQzXo8YAC7z3kfvXEALYTSg4Bkn7ckildzJH7UoOgRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VGPPpcKzNQp9MkJdn9tntEYiP0K8Nt/etvUSJmMIuRYvcPz9D5OD9zgLGMaRaGvFCqumKMdxHa5zgy6qjNjgj1NFbXKvoywkGC236a/Q7AxQE3GjyuOpExtXDVl4R62C7VTibekbnGLsxSI1d8lAPNVYcxLxrrMlt7GAIG4EXV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=Tu/KY/w0; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-296dcd75be7so1217928a91.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 15:17:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1708039053; x=1708643853; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2/et5MSWxRm/qeqE7m6EKR3xHrEpnYGsOApna7Ov6Ak=;
-        b=Tu/KY/w0ogFz+aDAE7+EsAre2Q45YrjUPCMfM/DtpS+hEe7PwFkRGOSYovQfj6I6Vk
-         uF46N0Q+wSnw+6W5i211RL7hATdAzQyzGjwWbndHC6xPzqpF/93Idqo/qrnVCwkCzib6
-         wlUeVgZv1xaECXxiVwb64VuSJVjC6ucxSZLza1KyaDCU0QPQ271ZgutIHa0KmDcMhSQl
-         gv5wnIRI5OV9u0g/kdAl0gKaqjfdJ7QZyRoQTuYlzBjVgsTq397AjHuwUJS6JkXOy4Bk
-         YaGtCJliUdf69ccPXhBlCIsEa5ZhKm4nhY362pLdg2yXIJWs+RoHNQRj2Z6LZb/Ab1r7
-         bOFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708039053; x=1708643853;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2/et5MSWxRm/qeqE7m6EKR3xHrEpnYGsOApna7Ov6Ak=;
-        b=cIRd0Cw0dj1GvAdBV18t2LHERfJVHKN4GhC6hXTZXYYY84boI9VRKq35s0adEk1Lp7
-         DAxHmtw1irYAXW5IvnZZaE7cJ3W8EE7vqMh3kzMEPI9G4rHSyscHAGPCsuV5sDOiD/5X
-         HEBGhr8zoV9Tusu0VAwdMScZ2FFeIaD3tgSUsw3n4ZdJheVfunuaEjatarpt1AD1+r0b
-         X0mT4j18CazSzsVUFq8qPlaF/ctz/sJYbPloZZw3LZYn+P0Yrgl7HCkM23ZBdg4sdufe
-         gvDmagyv9GipejVs2xECpGM9D3s/cRXBuLfiXnvqYi9NcqZ9TsaVqz/vmq21uaYErie3
-         ugNg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJJzW9u5fJwCi1Z1QLEXtIjXc3Sf34VuW5CYIuJ/Q2djFFCmD8tjyPzVFtvwXhr7hYYfQnsN09/q/OI786OqIBN+HK/zQ2yvLvxtCWxQ==
-X-Gm-Message-State: AOJu0YxgYQde0TB9H5B09aNGio/x6s4Dhaby3ChRmy1tdQ89QLg2rtgW
-	W2ChnljexFkMEeLXejWUXgRCsKM+Xr0u8nNZk7af59R7m4llCLKL5pz8Fgo869E=
-X-Google-Smtp-Source: AGHT+IFhA4H/FgqLaX5RroaIei6TRFkU6Su0sp4d98cSsiQq3PYmJvaE1sS4txnHDPpO9+9KxCEcqg==
-X-Received: by 2002:a17:90a:ac08:b0:296:3a5:6fb8 with SMTP id o8-20020a17090aac0800b0029603a56fb8mr3007778pjq.25.1708039053227;
-        Thu, 15 Feb 2024 15:17:33 -0800 (PST)
-Received: from dread.disaster.area (pa49-195-8-86.pa.nsw.optusnet.com.au. [49.195.8.86])
-        by smtp.gmail.com with ESMTPSA id eu16-20020a17090af95000b00296f3401cabsm336168pjb.41.2024.02.15.15.17.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Feb 2024 15:17:32 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rakyv-0072Pt-2a;
-	Fri, 16 Feb 2024 10:17:29 +1100
-Date: Fri, 16 Feb 2024 10:17:29 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Adrian Vovk <adrianvovk@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-btrfs@vger.kernel.org,
-	linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Dropping page cache of individual fs
-Message-ID: <Zc6biamtwBxICqWO@dread.disaster.area>
-References: <20240116-tagelang-zugnummer-349edd1b5792@brauner>
- <20240116114519.jcktectmk2thgagw@quack3>
- <20240117-tupfen-unqualifiziert-173af9bc68c8@brauner>
- <20240117143528.idmyeadhf4yzs5ck@quack3>
- <ZafpsO3XakIekWXx@casper.infradead.org>
- <3107a023-3173-4b3d-9623-71812b1e7eb6@gmail.com>
- <20240215135709.4zmfb7qlerztbq6b@quack3>
- <da1e04bf-7dcc-46c8-af30-d1f92941740d@gmail.com>
+	s=arc-20240116; t=1708039469; c=relaxed/simple;
+	bh=c0DueKZiAOAwvmHTn8r0NCMCSCOYfX1U98L77P7a8W8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JA8dZnLBa2ge6Y3efjov0xg/jBfK07x3Eyj0eKti06HpAfeiSoKBm9DCfWTbUWvYuVXwCQ778RdQ8Aq3LnL1O51CeRLO+WjObE6wlhpEIu2zjnNquAV7Q+jXqIyfNAMbCEKnDvf6A9MENxwK8j7WrEhQ9q50KDP3LtUAjLKg5d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bkuWqqaU; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1708039467; x=1739575467;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=c0DueKZiAOAwvmHTn8r0NCMCSCOYfX1U98L77P7a8W8=;
+  b=bkuWqqaUkAfWbW3tOs/Ek6Uh6tJ1oj084R1p3W3glyAE3iAOFm15v1su
+   bG3x4Uh03d3BcfULydI/d9xVy3m0E/TQovcpk/QeZBLxm2Wuz8Z/VcKd5
+   6TfwM1J9XE1m9B/U+biHkQiY1+e1mteiJS+LugkIN/axnE5aOPirh4+9c
+   /XiyLdFA6DBGSH9dKbGsHPZfiyMh3GL44uN8jcHNLUeRke948nEK+HZz0
+   lAd2qZUxKjegVU6kQ3ywm3dWnZZx2QZXk8D6MZwCTRHS9pQYdlQG/kH64
+   SUrgt5qOHgUCTDwWxdzNS56TEpEhPIW1RwxTfjyK0G6VBpeZrQjOEl50T
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10985"; a="5127824"
+X-IronPort-AV: E=Sophos;i="6.06,162,1705392000"; 
+   d="scan'208";a="5127824"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2024 15:19:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,162,1705392000"; 
+   d="scan'208";a="4077327"
+Received: from jmjohns4-mobl1.amr.corp.intel.com (HELO [10.209.57.138]) ([10.209.57.138])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Feb 2024 15:19:33 -0800
+Message-ID: <38e34171-e116-46ee-8e2b-de7cc96d265e@intel.com>
+Date: Thu, 15 Feb 2024 15:19:33 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da1e04bf-7dcc-46c8-af30-d1f92941740d@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in show_mem()
+Content-Language: en-US
+To: Steven Rostedt <rostedt@goodmis.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
+ hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
+ dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
+ corbet@lwn.net, void@manifault.com, peterz@infradead.org,
+ juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
+ arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+ david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+ nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
+ rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
+ yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+ hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+ ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
+ ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, bsegall@google.com, bristot@redhat.com,
+ vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+ iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+ elver@google.com, dvyukov@google.com, shakeelb@google.com,
+ songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+ minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+ cgroups@vger.kernel.org
+References: <20240212213922.783301-1-surenb@google.com>
+ <20240212213922.783301-32-surenb@google.com> <Zc3X8XlnrZmh2mgN@tiehlicka>
+ <CAJuCfpHc2ee_V6SGAc_31O_ikjGGNivhdSG+2XNcc9vVmzO-9g@mail.gmail.com>
+ <Zc4_i_ED6qjGDmhR@tiehlicka>
+ <CAJuCfpHq3N0h6dGieHxD6Au+qs=iKAifFrHAMxTsHTcDrOwSQA@mail.gmail.com>
+ <ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
+ <320cd134-b767-4f29-869b-d219793ba8a1@suse.cz>
+ <efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
+ <20240215180742.34470209@gandalf.local.home>
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20240215180742.34470209@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 15, 2024 at 02:46:52PM -0500, Adrian Vovk wrote:
-> On 2/15/24 08:57, Jan Kara wrote:
-> > On Mon 29-01-24 19:13:17, Adrian Vovk wrote:
-> > > Hello! I'm the "GNOME people" who Christian is referring to
-> > Got back to thinking about this after a while...
-> > 
-> > > On 1/17/24 09:52, Matthew Wilcox wrote:
-> > > > I feel like we're in an XY trap [1].  What Christian actually wants is
-> > > > to not be able to access the contents of a file while the device it's
-> > > > on is suspended, and we've gone from there to "must drop the page cache".
-> > > What we really want is for the plaintext contents of the files to be gone
-> > > from memory while the dm-crypt device backing them is suspended.
-> > > 
-> > > Ultimately my goal is to limit the chance that an attacker with access to a
-> > > user's suspended laptop will be able to access the user's encrypted data. I
-> > > need to achieve this without forcing the user to completely log out/power
-> > > off/etc their system; it must be invisible to the user. The key word here is
-> > > limit; if we can remove _most_ files from memory _most_ of the time Ithink
-> > > luksSuspend would be a lot more useful against cold boot than it is today.
-> > Well, but if your attack vector are cold-boot attacks, then how does
-> > freeing pages from the page cache help you? I mean sure the page allocator
-> > will start tracking those pages with potentially sensitive content as free
-> > but unless you also zero all of them, this doesn't help anything against
-> > cold-boot attacks? The sensitive memory content is still there...
-> > 
-> > So you would also have to enable something like zero-on-page-free and
-> > generally the cost of this is going to be pretty big?
-> 
-> Yes you are right. Just marking pages as free isn't enough.
-> 
-> I'm sure it's reasonable enough to zero out the pages that are getting
-> free'd at our request. But the difficulty here is to try and clear pages
-> that were freed previously for other reasons, unless we're zeroing out all
-> pages on free. So I suppose that leaves me with a couple questions:
-> 
-> - As far as I know, the kernel only naturally frees pages from the page
-> cache when they're about to be given to some program for imminent use.
+On 2/15/24 15:07, Steven Rostedt wrote:
+> Just adding the patches increases the size by 5k. But the rest shows an
+> increase of 259k, and you are worried about 4k (and possibly less?)???
 
-Memory pressure does cause cache reclaim. Not just page cache, but
-also slab caches and anything else various subsystems can clean up
-to free memory..
-
-> But
-> then in the case the page isn't only free'd, but also zero'd out before it's
-> handed over to the program (because giving a program access to a page filled
-> with potentially sensitive data is a bad idea!). Is this correct?
-
-Memory exposed to userspace is zeroed before userspace can access
-it.  Kernel memory is not zeroed unless the caller specifically asks
-for it to be zeroed.
-
-> - Are there other situations (aside from drop_caches) where the kernel frees
-> pages from the page cache? Especially without having to zero them anyway? In
-
-truncate(), fallocate(), direct IO, fadvise(), madvise(), etc. IOWs,
-there are lots of runtime vectors that cause page cache to be freed.
-
-> other words, what situations would turning on some zero-pages-on-free
-> setting actually hurt performance?
-
-Lots.  page contents are typically cold when the page is freed so
-the zeroing is typically memory latency and bandwidth bound. And
-doing it on free means there isn't any sort of "cache priming"
-performance benefits that we get with zeroing at allocation because
-the page contents are not going to be immediately accessed by the
-kernel or userspace.
-
-> - Does dismounting a filesystem completely zero out the removed fs's pages
-> from the page cache?
-
-No. It just frees them. No explicit zeroing.
-
-> - I remember hearing somewhere of some Linux support for zeroing out all
-> pages in memory if they're free'd from the page cache. However, I spent a
-> while trying to find this (how to turn it on, benchmarks) and I couldn't
-> find it. Do you know if such a thing exists, and if so how to turn it on?
-> I'm curious of the actual performance impact of it.
-
-You can test it for yourself: the init_on_free kernel command line
-option controls whether the kernel zeroes on free.
-
-Typical distro configuration is: 
-
-$ sudo dmesg |grep auto-init
-[    0.018882] mem auto-init: stack:all(zero), heap alloc:on, heap free:off
-$
-
-So this kernel zeroes all stack memory, page and heap memory on
-allocation, and does nothing on free...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Doesn't the new page_ext thingy add a pointer per 'struct page', or
+~0.2% of RAM, or ~32MB on a 16GB laptop?  I, too, am confused why 4k is
+even remotely an issue.
 
