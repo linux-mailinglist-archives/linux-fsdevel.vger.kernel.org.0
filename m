@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-11782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11783-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18BE38571FE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BE585721A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:55:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD00F1F23E28
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:53:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A87751F23F1D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36CB145FF7;
-	Thu, 15 Feb 2024 23:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F240F14830D;
+	Thu, 15 Feb 2024 23:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AX8VvR4l"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V1agdiFf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D47145324;
-	Thu, 15 Feb 2024 23:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B287B146007
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 23:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708041116; cv=none; b=UPu/+tzqwpvqaejZVqrQGY2ooJFO+Q3tW0vaZAQmrluXqMgYpL1NIY7kUKBEzAanumSpWIfza9TgaqtxWyBKfaEbHPBec5CFYcOW2ODretycvjCk9VTtgse17sOZvDn0NzCnlVzon9fGGeb1gDaGf8sqoHCGxbQXsk58FnK5L/A=
+	t=1708041280; cv=none; b=Hp7s+CMhC7mqxrUWBJ4vymccorOISzhLn+X16ZmUyApoU17gnhFunkZzZ/I+Kj8MkIslS/3KkP7d4/0ARRU1+Ucox+0Hm7VPAf/5I2pvqFuTxKrW7znv8mhDz5pg2mAcvnXyxdwqV51EWqTmWDjlA8srVOPSoiU8mScX2t0jgys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708041116; c=relaxed/simple;
-	bh=+Q5LCbfshzsAZdu2xMUBI5sVBfTSUWyS3SLTEBuBLFU=;
+	s=arc-20240116; t=1708041280; c=relaxed/simple;
+	bh=XH/LH5AcQ9vTPSWj8ejMl5YLc1dGNFipWkDEygmqHUw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tBjkyV16IfUf/3xehJ6j7zrZNdLcR2HXp+lzNGcMxil1dAiuBPZkhZZG4rN6ahH2OYYEadn2HQrsXjq06Nr/SwzYrOkwJGMhGxlTx7O5jCAbFXwQw1VHxmesEf8ZAWPVwZflYK+R6Yzi8lmS2I7fPnJA+RWTQgWJfIjPSmZlq5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AX8VvR4l; arc=none smtp.client-ip=95.215.58.185
+	 Content-Type:Content-Disposition:In-Reply-To; b=dQp4J4Zl1l29sz5Y0woClca0ADDrOfO4YBuwFKh1DiybrNnpgcjqffI6Xgq5pGD8BaeefIKfT/+gOS+34Zzaaua00fJoB8XhUKs3CvzEblQHj2N1r7QxrUZG6Xdu3Lbd3W0Ko4xJpKKMXe/mGX0q+fIVEQ8Qx98SiaAgcnQhO5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V1agdiFf; arc=none smtp.client-ip=91.218.175.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 15 Feb 2024 18:51:41 -0500
+Date: Thu, 15 Feb 2024 18:54:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1708041111;
+	t=1708041276;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fn06dkJ1+mAaWpggeUdl7NGUJOJXRgTvflxoZrn/p3U=;
-	b=AX8VvR4luSIKxjOW3kIPF4f8jCsn0k7LGyQ/dc1uxcl77umiNOAVr6Tu53YSB1J9xNktKT
-	0U9aZdYfTGQtk/VNGVpka453ky7CfEdKYdVC+PyEzsFA+OPOAMQ5phcorB0KJ1vyZn5Tz1
-	MR90Q0CtrObSpQ3vR5b3OC1C1lIokhI=
+	bh=K2uij+2SL3ce4+254m7l2JMunInmvxqqhYhnbhOg6QE=;
+	b=V1agdiFf2PWalNLvXcX/pEaaYs1LzTR99jNKgHHksR9pk5/i4sCMiqHAc6qlownhM5WAyl
+	OqzNpW/LSM50S1rLe7LeKiTEyj4Uqd2FpbwOOt1xn3GjS5Kqmd+qtGSoP3zkFaJ1MFitLS
+	Rmu6c2taXzQ47IwNRs2zeWhJq1hQz2g=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, 
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Vlastimil Babka <vbabka@suse.cz>, 
 	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org, 
 	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net, 
 	willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com, 
@@ -66,9 +66,8 @@ Cc: Vlastimil Babka <vbabka@suse.cz>,
 	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
 	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, cgroups@vger.kernel.org
 Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in show_mem()
-Message-ID: <jpmlfejxcmxa7vpsuyuzykahr6kz5vjb44ecrzfylw7z4un3g7@ia3judu4xkfp>
-References: <20240212213922.783301-1-surenb@google.com>
- <20240212213922.783301-32-surenb@google.com>
+Message-ID: <6mjunla45lkwqvkq7jegiw5lfmufg4y53zegevep3iwvy77xub@2nfmbeo6tvz2>
+References: <20240212213922.783301-32-surenb@google.com>
  <Zc3X8XlnrZmh2mgN@tiehlicka>
  <CAJuCfpHc2ee_V6SGAc_31O_ikjGGNivhdSG+2XNcc9vVmzO-9g@mail.gmail.com>
  <Zc4_i_ED6qjGDmhR@tiehlicka>
@@ -77,6 +76,7 @@ References: <20240212213922.783301-1-surenb@google.com>
  <320cd134-b767-4f29-869b-d219793ba8a1@suse.cz>
  <efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
  <20240215180742.34470209@gandalf.local.home>
+ <38e34171-e116-46ee-8e2b-de7cc96d265e@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,69 +85,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240215180742.34470209@gandalf.local.home>
+In-Reply-To: <38e34171-e116-46ee-8e2b-de7cc96d265e@intel.com>
 X-Migadu-Flow: FLOW_OUT
 
-On Thu, Feb 15, 2024 at 06:07:42PM -0500, Steven Rostedt wrote:
-> On Thu, 15 Feb 2024 15:33:30 -0500
-> Kent Overstreet <kent.overstreet@linux.dev> wrote:
+On Thu, Feb 15, 2024 at 03:19:33PM -0800, Dave Hansen wrote:
+> On 2/15/24 15:07, Steven Rostedt wrote:
+> > Just adding the patches increases the size by 5k. But the rest shows an
+> > increase of 259k, and you are worried about 4k (and possibly less?)???
 > 
-> > > Well, I think without __GFP_NOWARN it will cause a warning and thus
-> > > recursion into __show_mem(), potentially infinite? Which is of course
-> > > trivial to fix, but I'd myself rather sacrifice a bit of memory to get
-> > > this potentially very useful output, if I enabled the profiling. The
-> > > necessary memory overhead of page_ext and slabobj_ext makes the
-> > > printing buffer overhead negligible in comparison?  
-> > 
-> > __GFP_NOWARN is a good point, we should have that.
-> > 
-> > But - and correct me if I'm wrong here - doesn't an OOM kick in well
-> > before GFP_ATOMIC 4k allocations are failing? I'd expect the system to
-> > be well and truly hosed at that point.
-> > 
-> > If we want this report to be 100% reliable, then yes the preallocated
-> > buffer makes sense - but I don't think 100% makes sense here; I think we
-> > can accept ~99% and give back that 4k.
-> 
-> I just compiled v6.8-rc4 vanilla (with a fedora localmodconfig build) and
-> saved it off (vmlinux.orig), then I compiled with the following:
-> 
-> Applied the patches but did not enable anything:	vmlinux.memtag-off
-> Enabled MEM_ALLOC_PROFILING:				vmlinux.memtag
-> Enabled MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT:		vmlinux.memtag-default-on
-> Enabled MEM_ALLOC_PROFILING_DEBUG:			vmlinux.memtag-debug
-> 
-> And here's what I got:
-> 
->    text         data            bss     dec             hex filename
-> 29161847        18352730        5619716 53134293        32ac3d5 vmlinux.orig
-> 29162286        18382638        5595140 53140064        32ada60 vmlinux.memtag-off		(+5771)
-> 29230868        18887662        5275652 53394182        32ebb06 vmlinux.memtag			(+259889)
-> 29230746        18887662        5275652 53394060        32eba8c vmlinux.memtag-default-on	(+259767) dropped?
-> 29276214        18946374        5177348 53399936        32ed180 vmlinux.memtag-debug		(+265643)
-> 
-> Just adding the patches increases the size by 5k. But the rest shows an
-> increase of 259k, and you are worried about 4k (and possibly less?)???
+> Doesn't the new page_ext thingy add a pointer per 'struct page', or
+> ~0.2% of RAM, or ~32MB on a 16GB laptop?  I, too, am confused why 4k is
+> even remotely an issue.
 
-Most of that is data (505024), not text (68582, or 66k).
+page_ext adds a separate per-page array; it itself does not add a
+pointer to strugt page, it's an array lookup that uses the page pfn.
 
-The data is mostly the alloc tags themselves (one per allocation
-callsite, and you compiled the entire kernel), so that's expected.
-
-Of the text, a lot of that is going to be slowpath stuff - module load
-and unload hooks, formatt and printing the output, other assorted bits.
-
-Then there's Allocation and deallocating obj extensions vectors - not
-slowpath but not super fast path, not every allocation.
-
-The fastpath instruction count overhead is pretty small
- - actually doing the accounting - the core of slub.c, page_alloc.c,
-   percpu.c
- - setting/restoring the alloc tag: this is overhead we add to every
-   allocation callsite, so it's the most relevant - but it's just a few
-   instructions.
-
-So that's the breakdown. Definitely not zero overhead, but that fixed
-memory overhead (and additionally, the percpu counters) is the price we
-pay for very low runtime CPU overhead.
+We do add a pointer to page_ext, and that's (for now) unavoidable
+overhead - but we'll be looking at referencing code tags by index, and
+if that works out we'll be able to kill the page_ext dependency and just
+store the alloc tag index in page bits.
 
