@@ -1,231 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-11767-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55278856F9F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 22:55:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2E7856FB8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:01:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 886901C21ED8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 21:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF737281D17
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 22:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E11B41420D2;
-	Thu, 15 Feb 2024 21:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16C6A145334;
+	Thu, 15 Feb 2024 22:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="XEuIaBAO";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="XEuIaBAO"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kGt/QKgT";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="NPW1aLB2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A15B13F006;
-	Thu, 15 Feb 2024 21:55:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708034102; cv=none; b=cBj7xjeFX0CnaRmLo5+GMu814IteGRvAbFFAmyxA5v/sdHC9G/2mVdWmxWVwNovDFNwcr+TT6AFc3XT5N29EZoowDvlXIc0ps0q7nRZz6Nx3oTdtvdJYqPdVMy3uiD7piwKTRsn3rvKwC1f/cN8Vtu8s81h1m/n3sYegrxpFwBM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708034102; c=relaxed/simple;
-	bh=EB3SfacV8ivD3eAhKkH8T1nctItZs4WuWtn0yuuD5oQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ERMyOzAoHeyB7sZ8mBHak1f2Qe4Acir//PxV+OVOLTvuICh1rBWB4TaSDDr2SBbbnAyHkxuVPfslvb5oi2r73hhs4BZOwDawvLxqR1cSM167Tly291JhIGU6MC38N9+mTq0g92NU0wrFpmcXuyhIhXGV05lFQeggRF/luN0VsxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=XEuIaBAO; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=XEuIaBAO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6268E1FB3E;
-	Thu, 15 Feb 2024 21:54:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1708034098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=78B4kvvPSh8JDp9MHEmUxKS9HotTbXRsyldcw+EPHkU=;
-	b=XEuIaBAOxeePupxKYra105qK2slJRCLUXGOEKQ/xnXZZAwW+48by16u68ar6eWKoaSYpjc
-	Tn/7hEvXdWLkIhptV62iov5EAoxylOrXOVNApwCagldQRDJOnig0gYDPyKJkkVw/yS/2ue
-	VFnq+zX2B3UORW2oSne33WmHN03TH+E=
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1708034098; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=78B4kvvPSh8JDp9MHEmUxKS9HotTbXRsyldcw+EPHkU=;
-	b=XEuIaBAOxeePupxKYra105qK2slJRCLUXGOEKQ/xnXZZAwW+48by16u68ar6eWKoaSYpjc
-	Tn/7hEvXdWLkIhptV62iov5EAoxylOrXOVNApwCagldQRDJOnig0gYDPyKJkkVw/yS/2ue
-	VFnq+zX2B3UORW2oSne33WmHN03TH+E=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 38FD213A82;
-	Thu, 15 Feb 2024 21:54:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QXBuDTKIzmWKTwAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Thu, 15 Feb 2024 21:54:58 +0000
-Date: Thu, 15 Feb 2024 22:54:53 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
-	corbet@lwn.net, void@manifault.com, peterz@infradead.org,
-	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
-	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
-	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
-	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
-	tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
-	paulmck@kernel.org, pasha.tatashin@soleen.com,
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
-	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
-	ndesaulniers@google.com, vvvvvv@google.com,
-	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
-	vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
-	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
-	elver@google.com, dvyukov@google.com, shakeelb@google.com,
-	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
-	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, linux-arch@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
-	cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in show_mem()
-Message-ID: <Zc6ILbveSQvDtayj@tiehlicka>
-References: <20240212213922.783301-1-surenb@google.com>
- <20240212213922.783301-32-surenb@google.com>
- <Zc3X8XlnrZmh2mgN@tiehlicka>
- <CAJuCfpHc2ee_V6SGAc_31O_ikjGGNivhdSG+2XNcc9vVmzO-9g@mail.gmail.com>
- <Zc4_i_ED6qjGDmhR@tiehlicka>
- <CAJuCfpHq3N0h6dGieHxD6Au+qs=iKAifFrHAMxTsHTcDrOwSQA@mail.gmail.com>
- <ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
- <320cd134-b767-4f29-869b-d219793ba8a1@suse.cz>
- <efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9451420B8;
+	Thu, 15 Feb 2024 22:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708034438; cv=fail; b=Irb4wm8MM7dEfMIiEbIfQGr4KqcqLuBEJqySk7kXGWYXssCcHbSkVDhhb2W83uhcCZhXvaa5GKXz7DwqLgheM16pN9YDGwurQEtda8+7qGpsfeueHpbFC+oDnz/zQ/Jr24nlYt913OCvB8w4iSNjOVWylxAwmNqkCrAXyeAKl3c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708034438; c=relaxed/simple;
+	bh=IIc9Hm6XcKO7BDVhZqgSiExVsbRDnX4FykhVD/isMEo=;
+	h=To:Cc:Subject:From:Message-ID:References:Date:In-Reply-To:
+	 Content-Type:MIME-Version; b=U83K+zneQVGQu0pMSKG80PbVtbb1JEYWqQYcy8s7fEzopKzk+igl0rW12OyzzpNAzZMGNWCufun0KLiZV4ELeGwNT2YeeD+NJhU8ktbsizl0zOERdw+dhcRFaUMWoBLxJu64xUL+EWdlQ238VRBWZnJkkwfG1tQOusMVS8YEQBc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kGt/QKgT; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=NPW1aLB2; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41FLSxe1001931;
+	Thu, 15 Feb 2024 22:00:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : message-id : references : date : in-reply-to : content-type :
+ mime-version; s=corp-2023-11-20;
+ bh=TV9i+qr/oCOz/BgiJBTZAkfdcwnrILSlvF17rF0ygz4=;
+ b=kGt/QKgTfpTMSfRwNEFi0Au4ahSqiLHUMWA2wsuiLrx88HiwokCaG5f94aE6fcC7DK2g
+ g+0p9FZFX7A46O6UX6aUx6JJqSiKTjH+w9nXDkld6G7rO4qIQrM+oZFGLkiDDigYfrmp
+ CsySzKVKPuV24d/SKexhV4S1mGoyx/+B9z+fqzwqSxeltB0VOsprbLvliTyxMJGNPx1Y
+ ZX5bPzg9GrR0pQNINk5HIraHiHOccbT1gaBs1Fr7VcsWyVkJYFoZk65rtFJDm8xBY6xL
+ brnjCmWRffJrmomAtthPPPw5DMhGgBo4ac6/z284oWKq3JlOfcW7qNXEM0aQnruxZgrZ iQ== 
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3w91f03pn4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 15 Feb 2024 22:00:17 +0000
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 41FLxKZF013824;
+	Thu, 15 Feb 2024 22:00:16 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2040.outbound.protection.outlook.com [104.47.57.40])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3w6ape3dtg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 15 Feb 2024 22:00:16 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=S4WQTutDpyCMB3K1o/PfhoEKztXbYwYESDecalhzUBlE6XdCBMSLyv39zxSp+DO6kPhJx4Ivol10qAVTX23sFuNPbU0IamisLGzG5W0x0nl6fZZiVqBNBmFBPXcgpMBlmw6dlMhXnu/hO3YiOim3eaMbwBsH++rmXVXyav4Sfg1scixjUDDQLuChBR2V9uZqCzGA9uta+OV0GtFLc00rzo78HxTHJhXWk1dPx6gX/lwvch5VWniIEzESdjHM9M2KHWqifhkGxczjF4HweG1Ygj4xg6URwEDdV4JKRJKk7FPT3NTwJtoqg/Ta3PzPi+6G0BzQsJ7+MyOd6jY5ME6XNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TV9i+qr/oCOz/BgiJBTZAkfdcwnrILSlvF17rF0ygz4=;
+ b=cAqBDQsiQ2KTmgmYdK/CADegWkD3e1k25mS4ImuUQxaLacba4UDD1HuNKs7VQYTUtDzB6J83SVDSwqrtFs0qjhPAbo4U+dO4Qu3/Tme95fxISY5qF5T0GTnvzMOQNrdeWuOkA6iR3Osh6UYMU0XkBV5SWcXcAr37iiwuDIf/jMCerq0OtbPfw0229/1BuOUX7jbxizKvwVrHgA0HkCZI63iJ0UTdlZypP1zRwIM5a6sxUN+ztWIY7G8jGV3R9uyWOi64JE6UZbiqXrgBJSrkvWJK4v0848VpHduzx6wgWAfFh51ye0UmVFBG9QmnFvAXXqz515Q6XSyw7X5SMZQHYg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TV9i+qr/oCOz/BgiJBTZAkfdcwnrILSlvF17rF0ygz4=;
+ b=NPW1aLB2Zeb8FhTZmet3H9dT1LuiMVlvVencx4w1ATwl1hRgng0u8cieSnpaWU1C8EODEhjDiOSj+8EosrNI0SYInNY8JMeV+H968gie+B+Ir8X7NB5fQBnSmuDh6926MBEuSMy4xAk8d/u8jl5ou7jS/en7TkYOdXNLmpG10Xo=
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com (2603:10b6:510:3d::12)
+ by PH0PR10MB4616.namprd10.prod.outlook.com (2603:10b6:510:34::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.26; Thu, 15 Feb
+ 2024 22:00:14 +0000
+Received: from PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::1b19:1cdf:6ae8:1d79]) by PH0PR10MB4759.namprd10.prod.outlook.com
+ ([fe80::1b19:1cdf:6ae8:1d79%4]) with mapi id 15.20.7292.027; Thu, 15 Feb 2024
+ 22:00:14 +0000
+To: Bart Van Assche <bvanassche@acm.org>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Christoph
+ Hellwig <hch@lst.de>,
+        Daejun Park <daejun7.park@samsung.com>,
+        Kanchan
+ Joshi <joshi.k@samsung.com>,
+        Damien Le Moal <dlemoal@kernel.org>,
+        "James
+ E.J. Bottomley" <jejb@linux.ibm.com>
+Subject: Re: [PATCH v9 11/19] scsi: sd: Translate data lifetime information
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <yq15xype6k9.fsf@ca-mkp.ca.oracle.com>
+References: <20240130214911.1863909-1-bvanassche@acm.org>
+	<20240130214911.1863909-12-bvanassche@acm.org>
+	<yq1h6i9e7v7.fsf@ca-mkp.ca.oracle.com>
+	<7e3662b4-30c0-496b-be19-378c5fab5f33@acm.org>
+Date: Thu, 15 Feb 2024 17:00:10 -0500
+In-Reply-To: <7e3662b4-30c0-496b-be19-378c5fab5f33@acm.org> (Bart Van Assche's
+	message of "Thu, 15 Feb 2024 13:51:21 -0800")
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P123CA0263.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:194::16) To PH0PR10MB4759.namprd10.prod.outlook.com
+ (2603:10b6:510:3d::12)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
-X-Spam-Level: 
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=XEuIaBAO
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	 BAYES_HAM(-3.00)[100.00%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 TO_MATCH_ENVRCPT_SOME(0.00)[];
-	 DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	 DKIM_TRACE(0.00)[suse.com:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_GT_50(0.00)[73];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[suse.cz,google.com,linux-foundation.org,cmpxchg.org,linux.dev,suse.de,stgolabs.net,infradead.org,oracle.com,lwn.net,manifault.com,redhat.com,arm.com,kernel.org,arndb.de,linutronix.de,linux.intel.com,kernel.dk,soleen.com,gmail.com,chromium.org,linuxfoundation.org,linaro.org,goodmis.org,linux.com,lge.com,bytedance.com,akamai.com,android.com,vger.kernel.org,lists.linux.dev,kvack.org,googlegroups.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Score: -2.51
-X-Rspamd-Queue-Id: 6268E1FB3E
-X-Spam-Flag: NO
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB4759:EE_|PH0PR10MB4616:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4a3ab9ed-4c44-487f-305b-08dc2e717d0a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	1Bqj15BDgjQZSfgTy1Drjr4YsNaZKyRmrBW9WBXIeQUd21EUM4Kh1Ko8znSX8vp+z7RaIyHsTg1aswQ5dMp3Kj6GhxXBIOvfNVy+4WL0mdi5rNaMXOiLCGch1ZLiu2PE0c8HlJWXek6fSneRVJuZI8qyFZ4/g+Owtt+GdgOkfq+eObGDqAuyM6PDvR7hXZaeiqFgLhxWA44jIoxXdz1vhq6e1DaV3kLzP0qUh2amKTRx50fXwaD/h7r4m6epMUkL2J1ON0T3ouYmRN0YLKoUsz5kFjT1+kwlVLQU3SupZCnB9p52vfsIeq+VAc0LFbYKALAf2lVFoEwq0IBZqcn0Mzi2o8pN6LPadw2C30+sIIdXwsWYNNfXPeyGyBHjPjbMDuI0F0QEQ8+PdONXgo/XjyA6HtUQiSBVBASs+ee2NAstBnM8FfMaynlirwVhlRxWUjwehzM2RFaEQfxmM5gPTqODn+5MC0PHVObBckbYnEyYq8gJ7BHL+i3kRIGnU5AEz8ilI9sn794Z/riGDb2MZTBZESRSrUY23fDN9DL4p4r/BuTK7/483baeNLACSutZ
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB4759.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(136003)(366004)(396003)(376002)(346002)(230922051799003)(64100799003)(1800799012)(186009)(451199024)(26005)(38100700002)(83380400001)(4326008)(6916009)(7416002)(4744005)(5660300002)(66946007)(66476007)(66556008)(8936002)(8676002)(2906002)(6506007)(36916002)(6512007)(6486002)(478600001)(6666004)(41300700001)(316002)(54906003)(86362001);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?us-ascii?Q?Uyihj2EPnh/gesPlNgBNLN10PVWnV/em+fAxgPmmxhPHTukno3ASEhuGdfVc?=
+ =?us-ascii?Q?z5SPeZ7ohxiSCb8Cft37+jtLWy4jR4DQp4LzF8j8oaAaMBXpqGDAL6KHNToP?=
+ =?us-ascii?Q?EhdOIP3nHGVpg5vi34oewAR1EPNUNzFRNBN6T/LhgNghzOTzV9967+W7XDCX?=
+ =?us-ascii?Q?unnpZqUqosfk6GjhimvXmnhIunZzYkDjrECKiSVaWdOhhbYnv0foDYiIEUmV?=
+ =?us-ascii?Q?zGM8Bm7hfd/rxTAqtbHrBuQTxSrmyx3zusllZzzU9rPE7OEm4VquxpzW1nBB?=
+ =?us-ascii?Q?7IDbLHim96pplIxzj1EfJA0AWoBb13v/T4aJ2koP3VsW/d6Ywcnamq4VzteL?=
+ =?us-ascii?Q?Tl8VCOV03g/X81SPQ88yjjXHRlQ5g8MJpgvKQ0oS0Fly5T8c7TY7wqRP9hMe?=
+ =?us-ascii?Q?AymSl+q5hDQbeDJfsce9+zViQZ3YEqJhl512i5J15Pg8hIBK4IjXJDsE2Ty0?=
+ =?us-ascii?Q?Krah8MofLgkyALf5boM7/F6+FwL4RIExl+jWXxvwIN57RD83pC6KT3NfFoUB?=
+ =?us-ascii?Q?FnqhgxocyQl0PCOK+V3yrwpMnUtXG37+YHHd0DjSvpIRbpjBE6DuQMiS7OOw?=
+ =?us-ascii?Q?yMV1vlfPMSTCVgt0h0W6VxnDilTpN6RLQYA3Ai+Y7e9DvWNznWAMl1EVQRqd?=
+ =?us-ascii?Q?WNDN1dAOoEWHWIJHe5uuwJLu2BhtJOROLR7Sv0n3LUpYV19lSQTKyTEX3VGz?=
+ =?us-ascii?Q?hEuDNYTMvThOewkynTpyh7AkwJ74aqhSSaCCoEpT39SXydGZNm5fRMlkmeum?=
+ =?us-ascii?Q?mCs8i6xHHHwCAs1O/lwweXjCEexPQEJJoSySbDuygpTBaCSHc1lPCM54rvPh?=
+ =?us-ascii?Q?BlJay58Xg1J0mOHpBFsnLa+Qn2R79DYnnnqoAKQ483jJTAC2fiV4djsDqJj5?=
+ =?us-ascii?Q?sMh2nFqKM+4ui+1Rt+hV7VZMZoH1CfqVCK1jJQuQyjieoKwH5fMdYncb/gdk?=
+ =?us-ascii?Q?6UrO6KyOQkuLHfQhWASynDH85eHtOe0U5bmRwDcUjDExFQbtvTw2obYFgEYR?=
+ =?us-ascii?Q?jHVFdkA1uuBMvQED6itK215cDmJ1QFsj/zmo0/IgnUQL1KHE+WLxffBO910e?=
+ =?us-ascii?Q?EnFQy3PveIKt8ky2+FW4Y85g/OHAlSqzhOPCME7nTmG3E7VHaw4JnZYHtQuN?=
+ =?us-ascii?Q?KPmn0uEJZok+GOo8pngJPh+dpQXjkZJ1wH5yFAZKr8EoeINNpM8yVxWHWO0t?=
+ =?us-ascii?Q?PMW/KqGuRj4SBj+8/s/0ohtxVK8HPgNdYGrv8LxC/9xdBQ0HIXHal7JZnSdN?=
+ =?us-ascii?Q?DHAeu4kRNnORm+m8HpsO56OAZXiloHrhA8RnRDCPkleqL6G5BehtLsP4vioA?=
+ =?us-ascii?Q?H08YscA5ExY5svXik+jKkWjOrFnc9dZH/KxW16vHjvJ5VC0IwAQME05bYVCw?=
+ =?us-ascii?Q?uXknmw9mGoWkaVkJltW2aKkowSGBRaS/RUmCyU6YEu4yYmtxi1HzpN108cDF?=
+ =?us-ascii?Q?HVTT5o7bq1bL6sOu6xgd+gvZgDiJwKLTn3JBSAwtifS34w88ib2hlG9XJKRC?=
+ =?us-ascii?Q?0c3LENazfmeU0F6qmqTjSKkEq5Ztg2klb8Rpws/jO/CFsgi9eyJRqEFvMF8t?=
+ =?us-ascii?Q?VfuPZdsEto1SKR2crgu8gnzbXZDuBG30XBkDn1/IEoDxQRHBrRzmhZqLUHHI?=
+ =?us-ascii?Q?Ag=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	BYQDEa2+PJqdIqt/PgxdjsU/c3ZfPhCdeFxs0eYyxeAEuWWVLdOZFZgu3q0MjRoEaq7ExhMyaSddNE0S/HL2kMy9ZFpmOwejZ8EGEV/YCP83ZMgijfYA1pcvwABaIarV+GN2G6jPM9ELf0TD3oWyn2qAi63lJrcXUTO9VnJLKqRVcBRoDCEgRHECCcHYAOYwqv/f26EPx4X8scWt4CJUmlO4i/MYruMjBJIrGuOyU8BMWYtFxmBlrW+0OVuIHIMoaYmdIVO/AjTCj/kVGVjP3guG81j/IOUG5dn3OrvA3OysXGsPU+F0jrqvE3A3IlbdDFnNa60f1Tu0rAzuvbbPvDgCIA+E08izipeBwa/hHDQqPkg+3Zqkb6vzu2uMsiVVd3/0lAADvt8cBIwjPpDLsXyKQp+a7wzFSsCD8Bgu3WAgzx7ZGU0jyjgbTZ2Gh2hdlg+PUFDAuRKH4WmdB/LHeNJDczUiIWsbFBqggoQRMfehTG7Eg2pS1MLIP5zQjK/klUaJxpkBKUkIGXF/QQqCaSaQRsmGGf+hEgTPqKdcVE0YeES5w+zXh29T/NjIJ0W8Xft4dqkCQm+gynlaDmHQ6L+hkqzMsOadCU1VdMyGMi0=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a3ab9ed-4c44-487f-305b-08dc2e717d0a
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB4759.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Feb 2024 22:00:14.4641
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ikgOzINAHqqHVVjZLugmLwuRWFWbo2Yk8r8oFmv5prXkT1Fe/SBeBUput6QeYJ2QNwFZZIwKcU830x5v4X6qwWDL04WrRoAT1TVr+SyO9eI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4616
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-15_21,2024-02-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 adultscore=0
+ suspectscore=0 mlxscore=0 phishscore=0 bulkscore=0 malwarescore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402150171
+X-Proofpoint-ORIG-GUID: hGKXdUTKW3qmS6fYVw0iMUjAnx7rUYGw
+X-Proofpoint-GUID: hGKXdUTKW3qmS6fYVw0iMUjAnx7rUYGw
 
-On Thu 15-02-24 15:33:30, Kent Overstreet wrote:
-> On Thu, Feb 15, 2024 at 09:22:07PM +0100, Vlastimil Babka wrote:
-> > On 2/15/24 19:29, Kent Overstreet wrote:
-> > > On Thu, Feb 15, 2024 at 08:47:59AM -0800, Suren Baghdasaryan wrote:
-> > >> On Thu, Feb 15, 2024 at 8:45 AM Michal Hocko <mhocko@suse.com> wrote:
-> > >> >
-> > >> > On Thu 15-02-24 06:58:42, Suren Baghdasaryan wrote:
-> > >> > > On Thu, Feb 15, 2024 at 1:22 AM Michal Hocko <mhocko@suse.com> wrote:
-> > >> > > >
-> > >> > > > On Mon 12-02-24 13:39:17, Suren Baghdasaryan wrote:
-> > >> > > > [...]
-> > >> > > > > @@ -423,4 +424,18 @@ void __show_mem(unsigned int filter, nodemask_t *nodemask, int max_zone_idx)
-> > >> > > > >  #ifdef CONFIG_MEMORY_FAILURE
-> > >> > > > >       printk("%lu pages hwpoisoned\n", atomic_long_read(&num_poisoned_pages));
-> > >> > > > >  #endif
-> > >> > > > > +#ifdef CONFIG_MEM_ALLOC_PROFILING
-> > >> > > > > +     {
-> > >> > > > > +             struct seq_buf s;
-> > >> > > > > +             char *buf = kmalloc(4096, GFP_ATOMIC);
-> > >> > > > > +
-> > >> > > > > +             if (buf) {
-> > >> > > > > +                     printk("Memory allocations:\n");
-> > >> > > > > +                     seq_buf_init(&s, buf, 4096);
-> > >> > > > > +                     alloc_tags_show_mem_report(&s);
-> > >> > > > > +                     printk("%s", buf);
-> > >> > > > > +                     kfree(buf);
-> > >> > > > > +             }
-> > >> > > > > +     }
-> > >> > > > > +#endif
-> > >> > > >
-> > >> > > > I am pretty sure I have already objected to this. Memory allocations in
-> > >> > > > the oom path are simply no go unless there is absolutely no other way
-> > >> > > > around that. In this case the buffer could be preallocated.
-> > >> > >
-> > >> > > Good point. We will change this to a smaller buffer allocated on the
-> > >> > > stack and will print records one-by-one. Thanks!
-> > >> >
-> > >> > __show_mem could be called with a very deep call chains. A single
-> > >> > pre-allocated buffer should just do ok.
-> > >> 
-> > >> Ack. Will do.
-> > > 
-> > > No, we're not going to permanently burn 4k here.
-> > > 
-> > > It's completely fine if the allocation fails, there's nothing "unsafe"
-> > > about doing a GFP_ATOMIC allocation here.
-> > 
-> > Well, I think without __GFP_NOWARN it will cause a warning and thus
-> > recursion into __show_mem(), potentially infinite? Which is of course
-> > trivial to fix, but I'd myself rather sacrifice a bit of memory to get this
-> > potentially very useful output, if I enabled the profiling. The necessary
-> > memory overhead of page_ext and slabobj_ext makes the printing buffer
-> > overhead negligible in comparison?
-> 
-> __GFP_NOWARN is a good point, we should have that.
-> 
-> But - and correct me if I'm wrong here - doesn't an OOM kick in well
-> before GFP_ATOMIC 4k allocations are failing?
 
-Not really, GFP_ATOMIC users can compete with reclaimers and consume
-those reserves.
+Bart,
 
-> I'd expect the system to
-> be well and truly hosed at that point.
+>> Wouldn't it be appropriate to check sdkp->permanent_stream_count
+>> here?
+>> rq->write_hint being set doesn't help if the device uses 6-byte
+>> commands.
+>
+> Something like this untested change?
+>
+> @@ -1256,7 +1283,8 @@ static blk_status_t sd_setup_read_write_cmnd(struct scsi_cmnd *cmd)
+>  		ret = sd_setup_rw16_cmnd(cmd, write, lba, nr_blocks,
+>  					 protect | fua, dld);
+>  	} else if ((nr_blocks > 0xff) || (lba > 0x1fffff) ||
+> -		   sdp->use_10_for_rw || protect) {
+> +		   sdp->use_10_for_rw || protect ||
+> +		   (rq->write_hint && sdkp->permanent_stream_count)) {
+>  		ret = sd_setup_rw10_cmnd(cmd, write, lba, nr_blocks,
+>  					 protect | fua);
+>  	} else {
 
-It is OOMed...
- 
-> If we want this report to be 100% reliable, then yes the preallocated
-> buffer makes sense - but I don't think 100% makes sense here; I think we
-> can accept ~99% and give back that 4k.
+Do we even care about rq->write_hint being set? sd_group_number() will
+check that later.
 
-Think about that from the memory reserves consumers. The atomic reserve
-is a scarse resource and now you want to use it for debugging purposes
-for which you could have preallocated.
+In my book, the device supporting permanent streams is a good heuristic
+not to bother with 6-byte commands.
+
+Another option would be to simply set use_16_for_rw when streams are
+supported like Damien does for ZBC.
+
 -- 
-Michal Hocko
-SUSE Labs
+Martin K. Petersen	Oracle Linux Engineering
 
