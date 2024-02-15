@@ -1,170 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-11771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4536857069
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:18:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2D1685706B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D81CD1C22586
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 22:18:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21A9E1C226AD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 22:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF031474A2;
-	Thu, 15 Feb 2024 22:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C1914534D;
+	Thu, 15 Feb 2024 22:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DWJbIM8e"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="xfQ9X2XK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC162145337
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 22:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26EC1419A2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 22:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708035211; cv=none; b=r18zl1BFye7HqWq5iTycIqC3bwrZE2v1cYrG7Cwy0vHPBE7aDcKkXr9Dl0JTY+wf/SPGKFPTqXw2+6IcczWFgXP1RvghRhWfOZB1fUMhN5CK2f9fwzWY6H0CxvOwynfZkmgaif9RnmbwrMY8BOiH3pYna9YB6J/Ikz6K494Y/rQ=
+	t=1708035467; cv=none; b=tGgOLLN/hK9uagUTZ/9TsVbAZzuUu7Ko5stNVhQi8P2RAErbwa7wZuEyQBS09d9FJHDbhG4jlmPXFKDVwgd0p2e3yfj6j/WbKayMPM+mFpKWNf50kjlBXKXzGFCJe23HAr5xMTHe2rm+pu7HXUetWyTEjjC3LSJF+D/r7D0bB4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708035211; c=relaxed/simple;
-	bh=BVWjDf4o/TkcyA5Y0ezqJIZKlfMABZXNy+d1zmxL6O0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mCHFNisPEPq8MkJr3UNNbiwG0vF6JmO+YMTaBbZBaEwPGu31y+Z2ZdpplJvBIhkMA2p+NCu94PlA7Yp5aSyExDlesMrM7LWnN/vI2IBCWqP6g5L3EXQVsPXNXmxzawUQfTW2HKzHU12+YppcDDw5Qbz/6+WZwrmk0BAg9L92skM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DWJbIM8e; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-607f8482b88so806367b3.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 14:13:29 -0800 (PST)
+	s=arc-20240116; t=1708035467; c=relaxed/simple;
+	bh=BQqDidOkOg8KsFEst22N7rF6XggxOYOcJqHQu+R7DRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YQTLD4/fVxutGbcFVDHNQZCUywjAl/a/ATQTqAD1UGfQbTY8dOFKsntEcTiJivbznJfl4Ihv5qSqMzepdFfxkyEYseRt7A1IY2/urisidHnSg/u7P1wD+wdOCnO2Xek+kiNmQPhana1QJ5U69e1x7HDapdSsPInyhKv6blApbNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=xfQ9X2XK; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-6e08dd0fa0bso1182874b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 14:17:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1708035209; x=1708640009; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vVXTqIldo+bBUN2qGPMpdu4xA8ur5OmocrNHlsGX//8=;
-        b=DWJbIM8eXUW5wl7hvwc8j6i2t54I6HpkWFDS870hjI0B7QWRFkEoivThQJnpaunmZX
-         tF7XoNHnQuCSp75OmcaHKNhkPJyeEe18VSmiZ180F5X8zi9e7JDjGhlTCtuiLxXuJQ4x
-         UiHjDBblfmSvDOP2rLUZGEuqtBEvVRg773tUHiUg9HRPiPTcCf4NLv8ruD0cDNox9CDR
-         4c117wN33k4jkH6SrG3T8kRDubnPDGl2lLTqQCdd3KOqKCvvRDUXoKFQrWnR/VmvNiLm
-         LgJcYRwMO1zmZ3b/0cJKlmVRaiOkt3pVhHmzsochxzAmx9ZTolQAyr38gWeC8T7qmx2l
-         Ifeg==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1708035465; x=1708640265; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xqLyuCsW475xlDjq9rWu9xXNC03QbYPQjapLSP5f0Io=;
+        b=xfQ9X2XKs9MrO/SLlwLJ27onS3/+9RMeqVmviiSCcbXryhsWH9Hjte0MemFBKbakLK
+         qwskVAKZn/SNqqPfCvG3Gb2SWrhAK5LHmWor7pnmpyrkm5k5rkr0+LU7Lao0XWYhJlqz
+         OHvJRqOJpPwsruRRizGbnD5zRUqCqycAMPmRGrRV06jyDYDBd/fj46zpWOpvtp1Pg5UV
+         r4vscWUqp0pnZAJ2G0mFoDbMXmBSxulUXO1OgQLUYTs+CKkysfRNlJAQo791E8eE/rxk
+         lgXej9PZjxhhX+cScHHmUcJn/Fi2c5Am7ydf5KAhsEbgqsMP8vDIZ+uArbKoMhTSH80P
+         1spQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708035209; x=1708640009;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vVXTqIldo+bBUN2qGPMpdu4xA8ur5OmocrNHlsGX//8=;
-        b=KmxXxDw6BAKAWc4sx1ms4DrAgM/wgCb08SO1quCTh06T81zrI153gWl+zrDV4a5OET
-         dXZoIx9Av+wU6TZta0DN/QXXINWoCKBpIPPzLhnnsQkWiWX+fVaMJAzQNu9D/IdF35ZK
-         /qc70NkgyRxkaNw+hwy7bz3T3Qg5o+tvuPzA27vdYr0C9nnIoF/sdUSzfLOeVbIqsEtK
-         vbjikeVXwm0eXgn38s6QvHq8ipUEGn//C2fLGQ6WvnfCEAYv0a8EVHw+UP2lZpnsjgo+
-         JFyGdospyTdB0y5I6UKmKM2QnqHvpno95XA7DxhlJQjtXq/c18NHH9JkKpE1msAuU0HH
-         WopA==
-X-Forwarded-Encrypted: i=1; AJvYcCXvAHsS0aN2IU2rbNEGxAbfRuRvrGAtvGFubmUKaxS3s3ub6R/YUuHI4sb1z+NXFkUIGT2IFZEEBsqyi0jmkDDKGMcBC9Q/1PtzkUbW1g==
-X-Gm-Message-State: AOJu0YzfTmmE+RB7saoyiW1ELEkwOKBHgOOZtykX2/z6haPinF77YVbM
-	HEEdegg47pFRVedbxOm07E9dDSOVPcFOhALzQnoWvD0AJUdtJ+2KsIpYDAjE4SARPvicAFmcHXa
-	/AgK4OAX2viMwz8i3zvQ3iYoBaoqUfcWQ1MNS
-X-Google-Smtp-Source: AGHT+IFpfAHbdwwQWobmayk2rC70GIR5llMLqhN7V0gqU4ymPn9T6FJZX+4/04lZlSOrJu1fJl+ZwYg9qZBTYuElGSc=
-X-Received: by 2002:a0d:cc4a:0:b0:607:cc6a:dcc5 with SMTP id
- o71-20020a0dcc4a000000b00607cc6adcc5mr3136666ywd.16.1708035208322; Thu, 15
- Feb 2024 14:13:28 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708035465; x=1708640265;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xqLyuCsW475xlDjq9rWu9xXNC03QbYPQjapLSP5f0Io=;
+        b=bHyP5YO+Ww6OtcRcXQWIJl/SHmXGKmJ4RZQgaVrekKo1Uj2pVpy46L1Rxjwib6wESz
+         e2qX4p8bKkY9mYGtqYdHKq0ox01t5CKTjipjiuWackRIqPHGCTMWAboS7K7Yckdvpxma
+         V9Zg4n/QsUpQgRbYDfC3zLHYK2EtCpiAelvNaQt8ahXJB78gSpWYE7SruW7Px2GkZnYL
+         DvV+l9rzRDIDGNXBJ87f2vA7rVZGBcYfx3sBtOBQ6zG/pUSygk3XInPuT+qItRj3KoOj
+         ZPxFkcDOGln1vgXSTjMFp6OqpyzvXwroaFxBgo0yHKvqFmNZoqQ4wEh2ppfMltRFWMPS
+         fHSA==
+X-Forwarded-Encrypted: i=1; AJvYcCViVWC+2eJQy8B8V+UZY9LCf3M2yX0PRlwAEIBh7GQf+xc3aqg0synONm55ftSCEWrWKXjZznkB/y7hf/4SaPGzKeyj99NvOB+mK0MXvQ==
+X-Gm-Message-State: AOJu0Yz+r0qEW3/NPMVVthvElonJNljbIKQBWJMjS+pzaE4rgtDl8Rzb
+	UGCHWpZAK4H242QNJM7RaN+nQQJUzWNsCc39NyLS8TPsbfLcPQBXxI4//TKuJ0A=
+X-Google-Smtp-Source: AGHT+IF10IvncuJisp6y8CXRYam75Te24+bLDVMAcYz6fel6DiwBkZwF0/fv9w3QDOMhFdZye4KjRg==
+X-Received: by 2002:a05:6a20:d043:b0:199:7628:286d with SMTP id hv3-20020a056a20d04300b001997628286dmr7498930pzb.30.1708035465181;
+        Thu, 15 Feb 2024 14:17:45 -0800 (PST)
+Received: from dread.disaster.area (pa49-195-8-86.pa.nsw.optusnet.com.au. [49.195.8.86])
+        by smtp.gmail.com with ESMTPSA id m22-20020a637116000000b005dc4fc80b21sm1905442pgc.70.2024.02.15.14.17.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Feb 2024 14:17:44 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1rak33-0071FQ-33;
+	Fri, 16 Feb 2024 09:17:41 +1100
+Date: Fri, 16 Feb 2024 09:17:41 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	mcgrof@kernel.org, gost.dev@samsung.com, akpm@linux-foundation.org,
+	kbusch@kernel.org, djwong@kernel.org, chandan.babu@oracle.com,
+	p.raghav@samsung.com, linux-kernel@vger.kernel.org, hare@suse.de,
+	willy@infradead.org, linux-mm@kvack.org
+Subject: Re: [RFC v2 14/14] xfs: enable block size larger than page size
+ support
+Message-ID: <Zc6NhXas68+5k84v@dread.disaster.area>
+References: <20240213093713.1753368-1-kernel@pankajraghav.com>
+ <20240213093713.1753368-15-kernel@pankajraghav.com>
+ <ZcvgSSbIqm4N6TVJ@dread.disaster.area>
+ <n45xfink7g4fhdrnp4i7tp6tsebvncxicbe4hooswtwwydlakd@4zviowhp53rs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240212213922.783301-1-surenb@google.com> <20240212213922.783301-9-surenb@google.com>
- <02cb04cd-0d8d-4948-b3ef-036160c52e64@suse.cz>
-In-Reply-To: <02cb04cd-0d8d-4948-b3ef-036160c52e64@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 15 Feb 2024 14:13:17 -0800
-Message-ID: <CAJuCfpFj_vboiRZvpeuRpYK6ma-j-x2ry6dFbkaC=K51m8bQxA@mail.gmail.com>
-Subject: Re: [PATCH v3 08/35] mm: prevent slabobj_ext allocations for
- slabobj_ext and kmem_cache objects
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
-	corbet@lwn.net, void@manifault.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, 
-	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
-	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
-	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
-	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
-	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org, 
-	ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org, 
-	ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org, 
-	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
-	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
-	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
-	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
-	cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <n45xfink7g4fhdrnp4i7tp6tsebvncxicbe4hooswtwwydlakd@4zviowhp53rs>
 
-On Thu, Feb 15, 2024 at 1:44=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 2/12/24 22:38, Suren Baghdasaryan wrote:
-> > Use __GFP_NO_OBJ_EXT to prevent recursions when allocating slabobj_ext
-> > objects. Also prevent slabobj_ext allocations for kmem_cache objects.
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  mm/slab.h        | 6 ++++++
-> >  mm/slab_common.c | 2 ++
-> >  2 files changed, 8 insertions(+)
-> >
-> > diff --git a/mm/slab.h b/mm/slab.h
-> > index 436a126486b5..f4ff635091e4 100644
-> > --- a/mm/slab.h
-> > +++ b/mm/slab.h
-> > @@ -589,6 +589,12 @@ prepare_slab_obj_exts_hook(struct kmem_cache *s, g=
-fp_t flags, void *p)
-> >       if (!need_slab_obj_ext())
-> >               return NULL;
-> >
-> > +     if (s->flags & SLAB_NO_OBJ_EXT)
-> > +             return NULL;
-> > +
-> > +     if (flags & __GFP_NO_OBJ_EXT)
-> > +             return NULL;
->
-> Since we agreed to postpone this function, when it appears later it can h=
-ave
-> those in.
+On Wed, Feb 14, 2024 at 05:35:49PM +0100, Pankaj Raghav (Samsung) wrote:
+> > >  	struct xfs_inode	*ip;
+> > > +	int			min_order = 0;
+> > >  
+> > >  	/*
+> > >  	 * XXX: If this didn't occur in transactions, we could drop GFP_NOFAIL
+> > > @@ -88,7 +89,8 @@ xfs_inode_alloc(
+> > >  	/* VFS doesn't initialise i_mode or i_state! */
+> > >  	VFS_I(ip)->i_mode = 0;
+> > >  	VFS_I(ip)->i_state = 0;
+> > > -	mapping_set_large_folios(VFS_I(ip)->i_mapping);
+> > > +	min_order = max(min_order, ilog2(mp->m_sb.sb_blocksize) - PAGE_SHIFT);
+> > > +	mapping_set_folio_orders(VFS_I(ip)->i_mapping, min_order, MAX_PAGECACHE_ORDER);
+> > 
+> > That's pretty nasty. You're using max() to hide underflow in the
+> > subtraction to clamp the value to zero. And you don't need ilog2()
+> > because we have the log of the block size in the superblock already.
+> > 
+> > 	int			min_order = 0;
+> > 	.....
+> > 	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
+> > 		min_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
+> how is it underflowing if I am comparing two values of type int?
 
-Yes, I think that works. Will have this in the same patch.
+Folio order is supposed to be unsigned. Negative orders are not
+valid values.  So you're hacking around an unsigned underflow by
+using signed ints, then hiding the fact that unsigned subtraction
+would underflow check behind a max(0, underflowing calc) construct
+that works only because you're using signed ints rather than
+unsigned ints for the order.
 
->
-> >       slab =3D virt_to_slab(p);
-> >       if (!slab_obj_exts(slab) &&
-> >           WARN(alloc_slab_obj_exts(slab, s, flags, false),
-> > diff --git a/mm/slab_common.c b/mm/slab_common.c
-> > index 6bfa1810da5e..83fec2dd2e2d 100644
-> > --- a/mm/slab_common.c
-> > +++ b/mm/slab_common.c
-> > @@ -218,6 +218,8 @@ int alloc_slab_obj_exts(struct slab *slab, struct k=
-mem_cache *s,
-> >       void *vec;
-> >
-> >       gfp &=3D ~OBJCGS_CLEAR_MASK;
-> > +     /* Prevent recursive extension vector allocation */
-> > +     gfp |=3D __GFP_NO_OBJ_EXT;
->
-> And this could become part of 6/35 mm: introduce __GFP_NO_OBJ_EXT ... ?
+It also implicitly relies on the max_order being zero at that point
+in time, so if we change the value of max order in future before
+this check, this check may not fuction correctly in future.
 
-Yes, that will eliminate this patch. Thanks!
+Please: use unsigned ints for order, and explicitly write the
+code so it doesn't ever need negative values that could underflow.
 
->
-> >       vec =3D kcalloc_node(objects, sizeof(struct slabobj_ext), gfp,
-> >                          slab_nid(slab));
-> >       if (!vec)
->
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
