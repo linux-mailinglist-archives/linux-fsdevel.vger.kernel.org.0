@@ -1,162 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-11781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CCAA8571D0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:48:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18BE38571FE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:53:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C07EB248DB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:48:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD00F1F23E28
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419A7145B26;
-	Thu, 15 Feb 2024 23:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36CB145FF7;
+	Thu, 15 Feb 2024 23:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aYui0xY1"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AX8VvR4l"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A79138489
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 23:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D47145324;
+	Thu, 15 Feb 2024 23:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708040876; cv=none; b=WRGTp/JZmt7EMNYZrQLJVhUKsneJPh7paOLlhGyhtZ2vYxJkous6Azf+SYj+c8+e7k5iRN5bSjSHlw4/XzI/M2wyEe6rf066Gw4hugJ9Ti8yNBRhKUK8IsmpgoFpPPr/BdPvT/In/H3gmy69K4VBMXpAXzGFmzwYB/V9M/QizQo=
+	t=1708041116; cv=none; b=UPu/+tzqwpvqaejZVqrQGY2ooJFO+Q3tW0vaZAQmrluXqMgYpL1NIY7kUKBEzAanumSpWIfza9TgaqtxWyBKfaEbHPBec5CFYcOW2ODretycvjCk9VTtgse17sOZvDn0NzCnlVzon9fGGeb1gDaGf8sqoHCGxbQXsk58FnK5L/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708040876; c=relaxed/simple;
-	bh=i0JkEoazbe7olxPfKu+G8Uy4A1Di4zZuZedbjzHoSNI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ficS7vcgSvHxWhWafw7ZGpDW4Yh4hDcOPmVAiRocfo//piTQEkYtalaBmQy/u/gJGmXRER0Mjh6ERRbxziN2W0jgxUvwTFe1js2qfeJOs3EjrussXcdviL84XH1ydmf8KVseBviCPdaMKb7wQepzE7U5V7WCMsyOKS8pBFeZ6cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aYui0xY1; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dcc73148611so1628456276.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 15:47:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1708040873; x=1708645673; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TNqNjWyj5Im8N6xWYYajO215Bvq50L/4j9hhElLNjXY=;
-        b=aYui0xY188H+UoJn+hSOIc4QjrEciHSFIhXKUFqjYi0ete6C2JbxdY6QFA6cM/v5a4
-         gMxYJhHM08soJ6YqWCgI9z7aUsQ6A2jhx50dNzjEOFi0ztlp6thiEHMAE7ShGokQe8O3
-         EjiapTGcLiGf0BquSSdEsphdKiOesT7UmLOw+1qUmyi0qUJaIyEIkDTJzZP9+i+F44U4
-         lQV0UsHBoUb8xZNBMzVWmWJXxfnHoLhYCqdT1afaiS8aZND8ToH8KIuEyh/AgmfvMwqL
-         mq2ZCJehDA7PItvedNp1h/vmnu+lnhkO6ae/YqNuofk4RUA7ElpwAT7RBXYgLNmeG+M5
-         atag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708040873; x=1708645673;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TNqNjWyj5Im8N6xWYYajO215Bvq50L/4j9hhElLNjXY=;
-        b=cRU39HVU2RC7aGXw3JIpI/0Q7imOk9I5B3cr7UYyUbh/RGvM6T7yO1f9JM88L8Gi22
-         Vusjw6gZf3QUUuP0MWQUomrDTpu2+xBB2RmtFbBsTWQ1slQtBdKI2+7pT4xxLTsmcoFT
-         KA/k1AwZdt0bTS5/Hrnyuf9UR0WpslWIcOWtsOs0vjuMDVBTh4aJuQiqhq2P6rcm4PcB
-         SD0jkyNfOe4wqBJ9xpyWqVgX0zTh/RdqYIOAhXDQjnnRKQJcsiqBIBa/28QaMIqHPT5Y
-         NDaWAaL7s6BwXsdZp+pIxYbAWehSMNYyVAdN4825AO69mGHDIuhd9y0YEX19mz2TRyBZ
-         jj0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVeILOPlKdtwj90eNiV7IfNWAlSVqEE7H73Zre26a3xmkMygTiJunK8Wrba39s8NPVgcqzheXqMNoTJnG/Y3FbHCZKyrzVfUlzurYHKWg==
-X-Gm-Message-State: AOJu0YwUD1oum/YP7nvn6MOKoUWCQnlFxzqNN6lHho6L9JEo/G/leizs
-	vfeFSOLSK5AiQoH8fAPOcnnq37yMwBVRrWcklup8VTQu9Rtq3ikZ8ODgwCaWpLEErdJ0Y7pUBrX
-	pKvvU19HB6hAFZQBYWGm4xNSbj2M2vJyYSoA7
-X-Google-Smtp-Source: AGHT+IGj4sYe0xwnV8Z27fpJ5XIo46jQrmblbhi+Z75L6k1QenA7Kck+4HBXyW1C8ZgM8RHcSbfHoYCrtsSiiXbyGWQ=
-X-Received: by 2002:a25:69c6:0:b0:dcc:99b6:830b with SMTP id
- e189-20020a2569c6000000b00dcc99b6830bmr2991821ybc.19.1708040873125; Thu, 15
- Feb 2024 15:47:53 -0800 (PST)
+	s=arc-20240116; t=1708041116; c=relaxed/simple;
+	bh=+Q5LCbfshzsAZdu2xMUBI5sVBfTSUWyS3SLTEBuBLFU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tBjkyV16IfUf/3xehJ6j7zrZNdLcR2HXp+lzNGcMxil1dAiuBPZkhZZG4rN6ahH2OYYEadn2HQrsXjq06Nr/SwzYrOkwJGMhGxlTx7O5jCAbFXwQw1VHxmesEf8ZAWPVwZflYK+R6Yzi8lmS2I7fPnJA+RWTQgWJfIjPSmZlq5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AX8VvR4l; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 15 Feb 2024 18:51:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1708041111;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fn06dkJ1+mAaWpggeUdl7NGUJOJXRgTvflxoZrn/p3U=;
+	b=AX8VvR4luSIKxjOW3kIPF4f8jCsn0k7LGyQ/dc1uxcl77umiNOAVr6Tu53YSB1J9xNktKT
+	0U9aZdYfTGQtk/VNGVpka453ky7CfEdKYdVC+PyEzsFA+OPOAMQ5phcorB0KJ1vyZn5Tz1
+	MR90Q0CtrObSpQ3vR5b3OC1C1lIokhI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, 
+	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, david@redhat.com, 
+	axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, nathan@kernel.org, 
+	dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org, 
+	paulmck@kernel.org, pasha.tatashin@soleen.com, yosryahmed@google.com, 
+	yuzhao@google.com, dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com, bristot@redhat.com, 
+	vschneid@redhat.com, cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com, 
+	42.hyeyoo@gmail.com, glider@google.com, elver@google.com, dvyukov@google.com, 
+	shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev, 
+	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in show_mem()
+Message-ID: <jpmlfejxcmxa7vpsuyuzykahr6kz5vjb44ecrzfylw7z4un3g7@ia3judu4xkfp>
+References: <20240212213922.783301-1-surenb@google.com>
+ <20240212213922.783301-32-surenb@google.com>
+ <Zc3X8XlnrZmh2mgN@tiehlicka>
+ <CAJuCfpHc2ee_V6SGAc_31O_ikjGGNivhdSG+2XNcc9vVmzO-9g@mail.gmail.com>
+ <Zc4_i_ED6qjGDmhR@tiehlicka>
+ <CAJuCfpHq3N0h6dGieHxD6Au+qs=iKAifFrHAMxTsHTcDrOwSQA@mail.gmail.com>
+ <ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
+ <320cd134-b767-4f29-869b-d219793ba8a1@suse.cz>
+ <efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
+ <20240215180742.34470209@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
- <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com> <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
- <202402070631.7B39C4E8@keescook> <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
- <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com> <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
-In-Reply-To: <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 15 Feb 2024 18:47:42 -0500
-Message-ID: <CAHC9VhTac1ZuAzD5w=NtSYryu8vYxHnCx0NsMP-C4nmqiffA-Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Eric Biederman <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-security-module <linux-security-module@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Serge Hallyn <serge@hallyn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240215180742.34470209@gandalf.local.home>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Feb 15, 2024 at 9:33=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2024/02/15 6:46, Paul Moore wrote:
-> >> To quickly summarize, there are two paths forward that I believe are
-> >> acceptable from a LSM perspective, pick either one and send me an
-> >> updated patchset.
-> >>
-> >> 1. Rename the hook to security_bprm_free() and update the LSM hook
-> >> description as I mentioned earlier in this thread.
-> >>
-> >> 2. Rename the hook to security_execve_revert(), move it into the
-> >> execve related functions, and update the LSM hook description to
-> >> reflect that this hook is for reverting execve related changes to the
-> >> current task's internal LSM state beyond what is possible via the
-> >> credential hooks.
-> >
-> > Hi Tetsuo, I just wanted to check on this and see if you've been able
-> > to make any progress?
-> >
->
-> I'm fine with either approach. Just worrying that someone doesn't like
-> overhead of unconditionally calling security_bprm_free() hook.
-> If everyone is fine with below one, I'll post v4 patchset.
+On Thu, Feb 15, 2024 at 06:07:42PM -0500, Steven Rostedt wrote:
+> On Thu, 15 Feb 2024 15:33:30 -0500
+> Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> 
+> > > Well, I think without __GFP_NOWARN it will cause a warning and thus
+> > > recursion into __show_mem(), potentially infinite? Which is of course
+> > > trivial to fix, but I'd myself rather sacrifice a bit of memory to get
+> > > this potentially very useful output, if I enabled the profiling. The
+> > > necessary memory overhead of page_ext and slabobj_ext makes the
+> > > printing buffer overhead negligible in comparison?  
+> > 
+> > __GFP_NOWARN is a good point, we should have that.
+> > 
+> > But - and correct me if I'm wrong here - doesn't an OOM kick in well
+> > before GFP_ATOMIC 4k allocations are failing? I'd expect the system to
+> > be well and truly hosed at that point.
+> > 
+> > If we want this report to be 100% reliable, then yes the preallocated
+> > buffer makes sense - but I don't think 100% makes sense here; I think we
+> > can accept ~99% and give back that 4k.
+> 
+> I just compiled v6.8-rc4 vanilla (with a fedora localmodconfig build) and
+> saved it off (vmlinux.orig), then I compiled with the following:
+> 
+> Applied the patches but did not enable anything:	vmlinux.memtag-off
+> Enabled MEM_ALLOC_PROFILING:				vmlinux.memtag
+> Enabled MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT:		vmlinux.memtag-default-on
+> Enabled MEM_ALLOC_PROFILING_DEBUG:			vmlinux.memtag-debug
+> 
+> And here's what I got:
+> 
+>    text         data            bss     dec             hex filename
+> 29161847        18352730        5619716 53134293        32ac3d5 vmlinux.orig
+> 29162286        18382638        5595140 53140064        32ada60 vmlinux.memtag-off		(+5771)
+> 29230868        18887662        5275652 53394182        32ebb06 vmlinux.memtag			(+259889)
+> 29230746        18887662        5275652 53394060        32eba8c vmlinux.memtag-default-on	(+259767) dropped?
+> 29276214        18946374        5177348 53399936        32ed180 vmlinux.memtag-debug		(+265643)
+> 
+> Just adding the patches increases the size by 5k. But the rest shows an
+> increase of 259k, and you are worried about 4k (and possibly less?)???
 
-My guess is that based on the previous comments people are going to
-prefer option #2 above, but we'll see what everyone says.  I did have
-one comment, below ...
+Most of that is data (505024), not text (68582, or 66k).
 
->  fs/exec.c                     |    1 +
->  include/linux/lsm_hook_defs.h |    1 +
->  include/linux/security.h      |    5 +++++
->  security/security.c           |   12 ++++++++++++
->  4 files changed, 19 insertions(+)
+The data is mostly the alloc tags themselves (one per allocation
+callsite, and you compiled the entire kernel), so that's expected.
 
-...
+Of the text, a lot of that is going to be slowpath stuff - module load
+and unload hooks, formatt and printing the output, other assorted bits.
 
-> diff --git a/security/security.c b/security/security.c
-> index 3aaad75c9ce8..ba2f480b2bdb 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1223,6 +1223,18 @@ void security_bprm_committed_creds(const struct li=
-nux_binprm *bprm)
->         call_void_hook(bprm_committed_creds, bprm);
->  }
->
-> +/**
-> + * security_bprm_free() - Notify of completion of an exec()
+Then there's Allocation and deallocating obj extensions vectors - not
+slowpath but not super fast path, not every allocation.
 
-The short summary above doesn't match the summary below.  If we stick
-with the security_bprm_free() approach please change "Notify of
-completion of an exec()" to "Notify LSMs of a bprm free event" or
-similar.
+The fastpath instruction count overhead is pretty small
+ - actually doing the accounting - the core of slub.c, page_alloc.c,
+   percpu.c
+ - setting/restoring the alloc tag: this is overhead we add to every
+   allocation callsite, so it's the most relevant - but it's just a few
+   instructions.
 
-> + * This hook is called when a linux_bprm instance is being destroyed, af=
-ter
-> + * the bprm creds have been released, and is intended to cleanup any int=
-ernal
-> + * LSM state associated with the linux_bprm instance.
-> + */
-> +void security_bprm_free(void)
-> +{
-> +       call_void_hook(bprm_free);
-> +}
-> +
->  /**
->   * security_fs_context_submount() - Initialise fc->security
->   * @fc: new filesystem context
->
-
---=20
-paul-moore.com
+So that's the breakdown. Definitely not zero overhead, but that fixed
+memory overhead (and additionally, the percpu counters) is the price we
+pay for very low runtime CPU overhead.
 
