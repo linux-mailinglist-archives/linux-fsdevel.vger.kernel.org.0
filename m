@@ -1,274 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-11689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F6C6856144
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 12:17:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 687DC8560FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 12:10:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB47DB27833
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 10:48:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F7432903C8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 11:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA4D12EBFA;
-	Thu, 15 Feb 2024 10:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B5212B15E;
+	Thu, 15 Feb 2024 11:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XIycMjcm";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="yKta1aky"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0931350EB;
-	Thu, 15 Feb 2024 10:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707993453; cv=none; b=R2rgFljw3NUefMl9+YrdNqM0bcYm8tbfXG6G4Q/tOt/TBUhIaIBex8K7xz/2fk7L0e4u3D8qK1K0d8I8EDIJDpv/u8GgT7EL9l2BRftZqafCYSmxXZwN04BTtMkijJgFATNYQ7kVo0e7bZD2eMDXzuuNT1rLGr37QUG7ICeY7ts=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707993453; c=relaxed/simple;
-	bh=6pDNjirN0csgffvdwyGCh7PvsfoDg+SXCp+EeNhVQTk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kfRLOWWhJ0mcRWQr8JJ5BnP1TMhFJIQOIcbreB0U1gdzlsaW1MBW9gUzyfmb8wRkL1eIpjb/b4MtsfaYfYI5AIBKxU7Rn57h16ankaWiX31NCt8GRPjCXParGhRdK66DAROXCDK+RQXqWP3VaLmHaDygpWPUIQQ+2npDeenOOss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4Tb9xl2bGXz9v7Z2;
-	Thu, 15 Feb 2024 18:18:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 086C61405A2;
-	Thu, 15 Feb 2024 18:37:18 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwA3LxjQ6M1l4QeNAg--.58293S11;
-	Thu, 15 Feb 2024 11:37:17 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	chuck.lever@oracle.com,
-	jlayton@kernel.org,
-	neilb@suse.de,
-	kolga@netapp.com,
-	Dai.Ngo@oracle.com,
-	tom@talpey.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	dhowells@redhat.com,
-	jarkko@kernel.org,
-	stephen.smalley.work@gmail.com,
-	omosnace@redhat.com,
-	casey@schaufler-ca.com,
-	shuah@kernel.org,
-	mic@digikod.net
-Cc: linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	selinux@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH v10 19/25] integrity: Move integrity_kernel_module_request() to IMA
-Date: Thu, 15 Feb 2024 11:31:07 +0100
-Message-Id: <20240215103113.2369171-20-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240215103113.2369171-1-roberto.sassu@huaweicloud.com>
-References: <20240215103113.2369171-1-roberto.sassu@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7C6127B6D;
+	Thu, 15 Feb 2024 11:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1707995346; cv=fail; b=AGXPDZyHlG9ieNgwgYi9186vf2HOxzIunRjkzZyJki5kfD3s8LlFJhRt3baCTNnZ/EzFeBwnsT0ofoSZXSbzDFD0Pq1Am20uTCrl3XDs8xrELo4aYk5fXP/7z8mmqPrpboz8UHursxmDh7wcmZT2GmO1w95nIKN01G945EN4ZPA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1707995346; c=relaxed/simple;
+	bh=DNqdyqei5l6xuDJG7CQhT+VMHPPgw8q0O24uN6y9urc=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OAS52oAahOLjtOtl0VP3NStMlLDSqDxHSaSQrIEht106+hltlqWaHcq8k2GUCdPW8FROM7vAECP2HkQ+CJufC18GQc14agLzmywO2FA1vwDk74iWj0Od8LQEv01KFLxv7hzIkFeNK6ztLksKZjczJrkefsEtWvJdUFvdgkrNuXU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XIycMjcm; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=yKta1aky; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41F6igCo018109;
+	Thu, 15 Feb 2024 11:08:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : from : to : cc : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=cHANw+pONghhRSkL/qHZwBFBtNyU511T2IX/VVZ9GoM=;
+ b=XIycMjcm9nvst48S5rsQK8zH965RvJzTx9V9N9zskfigpDXWVt/FqJ1mw4e9eSbzCxza
+ RaTiwLXJeZVdKd2081Uq9peexfeVLJezz4cYC0i/twTrzXAehJvsC3ADAi/ol0CI33TT
+ ZPmbAIdvgcozvzhgcKuDeL4CdXq6kYG/H20UoVJ+GQJDq/UsiDT6aWHAAVKOrs+r5kKE
+ PIjVScCEatFidZisHGgddpz8EwFRyWb5WE+KFLrFX1Pd9+2O5RjFUGVLJ0Y/n04/6pcP
+ s5lgMPoBu7NsRTFRmUCroMfPbJ45r5kqU2yhMgwoyXT6madMvG3AHt+u3ieLExQ68vj1 Xg== 
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3w91f02259-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 15 Feb 2024 11:08:47 +0000
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 41FAtR2G015066;
+	Thu, 15 Feb 2024 11:08:47 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2100.outbound.protection.outlook.com [104.47.58.100])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3w5yka2v8t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 15 Feb 2024 11:08:47 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZV9EFzddLxN+PQZ9phnYmsowAy1TWC39D+7eiqv/PqwHH1qLk1zuZ2FRXC48Ho7dm0f/BeM6CqZR94clbCu1hqvmr/IKAoy5pNXRxL7iDb4DYEEhIniPfofgankfF80UPpTn4gkuHcymRaZTYDFADs4gRAZnsbUHEoHFNaTqBTvTQOG4ZOjWX5bqW75TuLpQxLQFybQkNtHEEuHTQdiIdfjNHJqbgdsMk4KmmbUlnKWzbfg8KNbNWOgEehRIKdSd+kR6YgeeL9gjlE0glSQvUnNg81nPFhE0J4lu6Akkb2beZEFllDkcbo7cek/WO0YyIRmbEKrcVZAzcMZPGbwhZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cHANw+pONghhRSkL/qHZwBFBtNyU511T2IX/VVZ9GoM=;
+ b=BpIi62nKe/VtgCsWbYYXsdR/2h6Ki5JsgF7XIQl8GQHBHKWBh5P4DHeMNA5hxGxK0ZKhnDyn9ICOrYj9q5X1W6eCswbMOelboE0kx4mAxBWLfnpqie8S0p1oMq5akgGpOPRuL49Wsjz2vAg7rwhcI9MaGR/fc+GEtykNLlM9VHrTX+kfpHko4Z8HTIDUT9NTgYuiIePCIH/UqYE0KMwllh12ntc9HU68xihnU6gc31QVSwn1Lri80b7jiQUmpWvJ8eTCPQKyVDKZqIF0Lnl9AIiRixMl656HlbZYNA07uwWrHQqYbY5ncalkSFwMDLFg08rM93rHYJpodvc5ytZbGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cHANw+pONghhRSkL/qHZwBFBtNyU511T2IX/VVZ9GoM=;
+ b=yKta1akySv9hDA5udZ0WJzttpdQNzUJGaiZRWZm/umuA/raj+gxoN+kzXsTfFvXAtVmictY8vNfXqD/44ypjFOTwmAKuRls1iAFZFz2Sg6jzfCEL5mg92XNrv7ikgG/nx8N1x8gKiu4RjiG3sy3oqVEV8yNPOswoHz6DfISkQ+c=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by PH7PR10MB6276.namprd10.prod.outlook.com (2603:10b6:510:210::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7270.44; Thu, 15 Feb
+ 2024 11:08:44 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::56f9:2210:db18:61c4]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::56f9:2210:db18:61c4%4]) with mapi id 15.20.7292.026; Thu, 15 Feb 2024
+ 11:08:44 +0000
+Message-ID: <8f83e1b3-c9d9-4be2-9c95-249e1b1bd898@oracle.com>
+Date: Thu, 15 Feb 2024 11:08:40 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] fs: iomap: Atomic write support
+From: John Garry <john.g.garry@oracle.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
+        chandan.babu@oracle.com, martin.petersen@oracle.com,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+        ojaswin@linux.ibm.com
+References: <20240124142645.9334-1-john.g.garry@oracle.com>
+ <20240124142645.9334-2-john.g.garry@oracle.com>
+ <20240202172513.GZ6226@frogsfrogsfrogs>
+ <2f91a71e-413b-47b6-8bc9-a60c86ed6f6b@oracle.com>
+ <20240213065518.GA23539@lst.de>
+ <cf2e7d4b-9ad0-4013-8e5a-48047c588411@oracle.com>
+Content-Language: en-US
+Organization: Oracle Corporation
+In-Reply-To: <cf2e7d4b-9ad0-4013-8e5a-48047c588411@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P265CA0280.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:37a::17) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwA3LxjQ6M1l4QeNAg--.58293S11
-X-Coremail-Antispam: 1UD129KBjvJXoW3Ar13WF1xZr45Kr1UuF43Awb_yoWxXw17pa
-	95KFW5Jry8Zr97CaykAF1xCa45K3yfGrW3WrsxCr1fCFn0vr4qvr47JF13Xry3WrWrJF4F
-	grs2qr13Cw1qy37anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBab4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVWxJr0_GcWl84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAF
-	wI0_Cr1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2
-	Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s02
-	6x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42
-	IY6xIIjxv20xvE14v26r4j6ryUMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJr0_GcWlIxAI
-	cVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2js
-	IEc7CjxVAFwI0_Cr1j6rxdYxBIdaVFxhVjvjDU0xZFpf9x07UdfHUUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAOBF1jj5pfaAAAsX
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|PH7PR10MB6276:EE_
+X-MS-Office365-Filtering-Correlation-Id: 13b6edc7-6611-406f-9742-08dc2e167964
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	HhJzn1VYNn+NepwoAPuMGWJF6fCKctINo7nQ7jqoVFP8XQTQuBA3NxNZgwHjJceTelXN+1WZHLSVfH6U638irdhTTh8gBRgDxF78nUdl9cXQkRiKFoZk+ZaokFCApG9TJ7d21ZPArtDo4LdzaF0kPEJ4E5DLk0FZEyu7vSNhMEqx3fW6nACWVNA3tQa4Ul4kPfdyfIDHpOsUTKQ7M5vJrSClrG6Dm00KSTFBi8KMdUzXJMr5EOsGy4KD9l90CHDNZTvR8pYj7R6cjWo+SnMcTcstylAGgs1//oJENbP4p7zv5/T3+WBF/acD9DKYJ+uubenLFbEklc64mJAG+QSrGNo+jilu7xhoeXDZsAxRPFMBYuf+uDX3XwEs2wwGXf9IJ56y7OoiKghYItY2HsEHSkR7l7Hbj53Rgvd4TEj75zQ4HtypefwZgKp6dRmsS2iSNZsIkDoeRmktqDgU2SmNODmP5mJ3fztvRnyy1dJghEWSHp+pAcneAjMrO4EF978BKwE6etjJ0LvZ6GiqkiOwyfxfb303jO6I6um1KGElPKGaFTLvIkpx9InMIWDFA3Bq
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(136003)(39860400002)(376002)(346002)(366004)(396003)(230922051799003)(186009)(64100799003)(1800799012)(451199024)(5660300002)(66476007)(66556008)(66946007)(4744005)(2906002)(8936002)(4326008)(8676002)(7416002)(6916009)(36756003)(31696002)(86362001)(38100700002)(478600001)(6506007)(316002)(36916002)(53546011)(6666004)(6486002)(6512007)(26005)(2616005)(41300700001)(31686004);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?bHNPdUZ3c2NzZmJqdE42THVvMFR0cXM0WkoycnAwTnMwWmVPVkFzVUNrT3hp?=
+ =?utf-8?B?eTArM01LcEZmdlNmTGVnMHo5elNlRjA0Y2ZmcUVhK081QnNQbGZQNlZQUitx?=
+ =?utf-8?B?TTNtaHJ3b1ZIaExrRUpmbTRQQ00rZDJhQ3JwOFZKdmNDQzQ2Y0NMcnEzUEZ0?=
+ =?utf-8?B?M1RvZDNkd1hZVzErSDZMV1loRkEvNFhPNEFIaVJQZFBBcUJPd1NJMDBpb3FU?=
+ =?utf-8?B?NEw0RWY0QUNnQzNxMzNvaUFIbmRyWDNjQ3c3U2FhR0xFNFY5amF5d09DV2dB?=
+ =?utf-8?B?NC9EV0lpMWpNak9rcGJXR04vK2hSUGVuWjhGU3FqTDk4ZlZZdnZ6dWx6VVRW?=
+ =?utf-8?B?R29hUnRFSjE0aGsyR2NZd1Nhb3RZVHFaQU9MSDVGYUsrempSWGQ1M1dFdmYr?=
+ =?utf-8?B?dzg4U2tPY3NJY1dvUEMrZkduYzB4UUQ2U2VnKy95VTNNQ3Y3NWlZZU92cFlq?=
+ =?utf-8?B?YktIMGRmck1vWUlvNkhUSVlnL21uV0JVMUZ3Z3V5V3RiTDkyYlByTnRlaVRY?=
+ =?utf-8?B?ZStpRm9KbklFT3I4eXZKalA2VzFJV2VqN3pseFNyMlZXcVQ4MGFKUCtyZ1NV?=
+ =?utf-8?B?Ym1ZcDUzK3kwM09FWUxIT1Q4THBRbmxHQXV2dXd0bmpXc21zMEg1Z3lwMVRZ?=
+ =?utf-8?B?K2txUnc5RXBvMDdGdlVwRndLTlJOVDhKN0RjM1FWL3ltUjdXS0tUbFBjUkQ5?=
+ =?utf-8?B?QXg1dGVTcXJLTUdYb0ZlSitNR0dNV1JaR3J2cVZkeWRDOTNCcklUUWRaRmV5?=
+ =?utf-8?B?aDVYZkc2b1VDVkhYaHBmakY3cDlsZ0VxMGwvVjNuRnMzN2trKzdKaHpmQzlO?=
+ =?utf-8?B?QitLMkYvbHBuRW1oSVBlK2lUMi9TeTRoTms2dmhFZ3ZzWlc5T0hKb3B6T1VV?=
+ =?utf-8?B?YjVnK2VKRGpsZ1Y4bUR6Q3JCL2lscXY2eVE4U1VDNDBZM2g5Rmt4bSsrcDFk?=
+ =?utf-8?B?Sng3c3VOcXVodmx1SHd0VkVUYll6eWxsS2JHdEVsZU1JYzNwZ01ydGZIRlZT?=
+ =?utf-8?B?VzRndml1TkRtWFB5UmxjWHVYd0t5MFJtcEVEaWZBWEViLzAxbWtDQjdJV2Vk?=
+ =?utf-8?B?U3kvdllGRmdYNyt2MEpPSHN6N3BldWcxb2ZNV3ZDSEZxcG00Q1RuOExRRDVu?=
+ =?utf-8?B?anZhdHBLMHI5VDJxZmNPdTBIYTlMcHNQUS95aDBXd092cTlMU0pNTC8wV1RZ?=
+ =?utf-8?B?OFhlVU0zR3NNNWYwSVZSSTF3MUhuZVlpaGhld2ZQK0Q2SzhzeDMwcDVtWE5W?=
+ =?utf-8?B?YXZCUUszS2t1eTV6ajZLakFnOC9wQXBaMENYcnIvRllNa0RJd045azlyTU02?=
+ =?utf-8?B?MUZXNGx1NGhLcGM3cmkyaGZXdjB0VFgzRlZjRGNsSkpzNlU5Y0J2U3FHa2Jm?=
+ =?utf-8?B?c01iU0VmcG1MUkhiVFdGNGxrUUkybko1NlFlYWlPNzdmSW81VHlLUEs3djJ6?=
+ =?utf-8?B?Z0srbE9Mb25IM2pveHJ0SmhJVjBaelV4SDIxWkRJNXgvSk1pTmYxZHp0bVpv?=
+ =?utf-8?B?OGRvZzYyNTJzbm1tK3JWa0tjejd4QnNlZzhyOEZBQjRwWWhDREZxbFVsdUlR?=
+ =?utf-8?B?TThLOExGRmFXcWFlUTc4QkJESGdGb25UN0xrTXBFZUhXTERLYVBWQllYTVlp?=
+ =?utf-8?B?ME82WVY2QzhJcmVtZktsb2lTWW56R0JvYlo5UnNqMzBJQW5JSDEveWVKdyt3?=
+ =?utf-8?B?RWx4UWtvdC84YW0vRm9VMEtEQk8wb3JNQzJYakNkRmwzbjBSakIxc2dua0ZF?=
+ =?utf-8?B?R2xSNHgrSjR4cmZNeDA2RFdSaml5ZEUvOXVjL1ZQbFRnait5U1pLaHB0Y1Bj?=
+ =?utf-8?B?a3d5K1hOTTA1elArZlBKTXdjQkpqeDV5QTE3VGtBUzFrQldmTlVRY2hyREM2?=
+ =?utf-8?B?c2NMVDIxY3pOTWZ2azdNQURNYUNhS2Z3TDFFa3V0NFJJUUYxMGVySVZJM2Nr?=
+ =?utf-8?B?U2NLU3EvM1VEckxzT09RbWZiL1l2dkZqMWx1SFl5TnBTZURFN2ZIenhIL2l6?=
+ =?utf-8?B?N1ovcnVPazQ0Q0RxdFBkMFg5WDZBVHV0TlpsYmRtb05JT1dpM2VCaUduMHdJ?=
+ =?utf-8?B?VUdLaVo4NjkvYzZHQVkzV1dZZnYzWDdLZkpxQUdXSnZOMFlLZG5uYmprSEV2?=
+ =?utf-8?B?V2Zia3BoS3JRcmVMYUtHbDRHMXVtK3lCNlRjSUM0MGFSK3dCMHZ4UFhJOUNP?=
+ =?utf-8?B?Tmc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	Z6t+SgApPipwzZ9EMYU9X/u/PN1ZjP5c+EL02dqEBUwhGoTLolCBAfGCXjBA8Gx5krpl8N6rXAkicaFO90rIfIB54EDdvdV16gE/BYbw5Q6y3zvPx8XK/Y3leDSJmTnfX6Hhl/CY/HW9jrCXdPDyKhDyCrR1Awh1ve0orAV7Zru9PyWpJ099v2PanxosQg0vBfCk8z+UICtM98xJzP7TWLkTaK7R2uRShdmU5p1Cmp0RO09tmkQXaLA0xr3lkejdCvHw+limB8hqxS9tXkxbjpXuw0A4Ltnlxoh20Z65m0KW2RCnPOrqwot4xR2/n6Ov+iRCANEEKnHmhs3n2B2vysBnS4uou904XuZ2gj7itHFL/fXdd5ZGeEUE2viXBgv3XZwTNjxgsGi5sd1jeAAWz3XTEY7/Aaf96RYS4B193QUG/7lNqKe6L/3zaR6HENYWwPbmiblBIkzKWxAUaLQ6dXMQOE2hiyPn5xsrnXWuTfOrh82CidNl3wl26pcl9GPnIa5xRx5Sc5sgNAWVc1si6fD9OTCek6mQ4iwV6o6X+nAD5nUj1WtgHhTt5UO91aOHOZiUfZnpkKa9pUJp+HaWKHLVeeemcaMgG5jzJhABenw=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13b6edc7-6611-406f-9742-08dc2e167964
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Feb 2024 11:08:44.2529
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: m2Aqtf9pREcOQi/Kefk3ss/zyYeJm431mxM5iUqC7005HjMZNkTuMa2FW0zH4qXwDSCvrJE8vlfJtPueYzB03Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6276
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-15_10,2024-02-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 spamscore=0
+ mlxlogscore=882 bulkscore=0 phishscore=0 mlxscore=0 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402150088
+X-Proofpoint-ORIG-GUID: T8S3fRmy1C1QVdMNRfCRuHU_b34VWude
+X-Proofpoint-GUID: T8S3fRmy1C1QVdMNRfCRuHU_b34VWude
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On 13/02/2024 08:20, John Garry wrote:
+> On 13/02/2024 06:55, Christoph Hellwig wrote:
+>> On Mon, Feb 05, 2024 at 11:29:57AM +0000, John Garry wrote:
+>>>> Also, what's the meaning of REQ_OP_READ | REQ_ATOMIC?
+>>> REQ_ATOMIC will be ignored for REQ_OP_READ. I'm following the same 
+>>> policy
+>>> as something like RWF_SYNC for a read.
+>> We've been rather sloppy with these flags in the past, which isn't
+>> a good thing.  Let's add proper checking for new interfaces.
 
-In preparation for removing the 'integrity' LSM, move
-integrity_kernel_module_request() to IMA, and rename it to
-ima_kernel_module_request(). Rewrite the function documentation, to explain
-better what the problem is.
+How about something like this:
 
-Compile it conditionally if CONFIG_INTEGRITY_ASYMMETRIC_KEYS is enabled,
-and call it from security.c (removed afterwards with the move of IMA to the
-LSM infrastructure).
+----8<----
 
-Adding this hook cannot be avoided, since IMA has no control on the flags
-passed to crypto_alloc_sig() in public_key_verify_signature(), and thus
-cannot pass CRYPTO_NOLOAD, which solved the problem for EVM hashing with
-commit e2861fa71641 ("evm: Don't deadlock if a crypto algorithm is
-unavailable").
+-static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
++static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags, int 
+type)
+  {
+   int kiocb_flags = 0;
 
-EVM alone does not need to implement this hook, first because there is no
-mutex to deadlock, and second because even if it had it, there should be a
-recursive call. However, since verification from EVM can be initiated only
-by setting inode metadata, deadlock would occur if modprobe would do the
-same while loading a kernel module (which is unlikely).
+...
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Acked-by: Mimi Zohar <zohar@linux.ibm.com>
----
- include/linux/ima.h                    | 10 ++++++++
- include/linux/integrity.h              | 13 ----------
- security/integrity/digsig_asymmetric.c | 23 ------------------
- security/integrity/ima/ima_main.c      | 33 ++++++++++++++++++++++++++
- security/security.c                    |  2 +-
- 5 files changed, 44 insertions(+), 37 deletions(-)
++ if (flags & RWF_ATOMIC) {
++ 	if (type == READ)
++ 		return -EOPNOTSUPP;
++ 	if (!(ki->ki_filp->f_mode & FMODE_CAN_ATOMIC_WRITE))
++ 		return -EOPNOTSUPP;
++ }
+   kiocb_flags |= (__force int) (flags & RWF_SUPPORTED);
+   if (flags & RWF_SYNC)
+  	 kiocb_flags |= IOCB_DSYNC;
 
-diff --git a/include/linux/ima.h b/include/linux/ima.h
-index 31ef6c3c3207..0f9af283cbc8 100644
---- a/include/linux/ima.h
-+++ b/include/linux/ima.h
-@@ -256,4 +256,14 @@ static inline bool ima_appraise_signature(enum kernel_read_file_id func)
- 	return false;
- }
- #endif /* CONFIG_IMA_APPRAISE && CONFIG_INTEGRITY_TRUSTED_KEYRING */
-+
-+#if defined(CONFIG_IMA) && defined(CONFIG_INTEGRITY_ASYMMETRIC_KEYS)
-+extern int ima_kernel_module_request(char *kmod_name);
-+#else
-+static inline int ima_kernel_module_request(char *kmod_name)
-+{
-+	return 0;
-+}
-+
-+#endif
- #endif /* _LINUX_IMA_H */
-diff --git a/include/linux/integrity.h b/include/linux/integrity.h
-index 2ea0f2f65ab6..ef0f63ef5ebc 100644
---- a/include/linux/integrity.h
-+++ b/include/linux/integrity.h
-@@ -42,17 +42,4 @@ static inline void integrity_load_keys(void)
- }
- #endif /* CONFIG_INTEGRITY */
- 
--#ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
--
--extern int integrity_kernel_module_request(char *kmod_name);
--
--#else
--
--static inline int integrity_kernel_module_request(char *kmod_name)
--{
--	return 0;
--}
--
--#endif /* CONFIG_INTEGRITY_ASYMMETRIC_KEYS */
--
- #endif /* _LINUX_INTEGRITY_H */
-diff --git a/security/integrity/digsig_asymmetric.c b/security/integrity/digsig_asymmetric.c
-index 895f4b9ce8c6..de603cf42ac7 100644
---- a/security/integrity/digsig_asymmetric.c
-+++ b/security/integrity/digsig_asymmetric.c
-@@ -132,26 +132,3 @@ int asymmetric_verify(struct key *keyring, const char *sig,
- 	pr_debug("%s() = %d\n", __func__, ret);
- 	return ret;
- }
--
--/**
-- * integrity_kernel_module_request - prevent crypto-pkcs1pad(rsa,*) requests
-- * @kmod_name: kernel module name
-- *
-- * We have situation, when public_key_verify_signature() in case of RSA
-- * algorithm use alg_name to store internal information in order to
-- * construct an algorithm on the fly, but crypto_larval_lookup() will try
-- * to use alg_name in order to load kernel module with same name.
-- * Since we don't have any real "crypto-pkcs1pad(rsa,*)" kernel modules,
-- * we are safe to fail such module request from crypto_larval_lookup().
-- *
-- * In this way we prevent modprobe execution during digsig verification
-- * and avoid possible deadlock if modprobe and/or it's dependencies
-- * also signed with digsig.
-- */
--int integrity_kernel_module_request(char *kmod_name)
--{
--	if (strncmp(kmod_name, "crypto-pkcs1pad(rsa,", 20) == 0)
--		return -EINVAL;
--
--	return 0;
--}
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 02021ee467d3..3891b83efdb3 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -1091,6 +1091,39 @@ int ima_measure_critical_data(const char *event_label,
- }
- EXPORT_SYMBOL_GPL(ima_measure_critical_data);
- 
-+#ifdef CONFIG_INTEGRITY_ASYMMETRIC_KEYS
-+
-+/**
-+ * ima_kernel_module_request - Prevent crypto-pkcs1pad(rsa,*) requests
-+ * @kmod_name: kernel module name
-+ *
-+ * Avoid a verification loop where verifying the signature of the modprobe
-+ * binary requires executing modprobe itself. Since the modprobe iint->mutex
-+ * is already held when the signature verification is performed, a deadlock
-+ * occurs as soon as modprobe is executed within the critical region, since
-+ * the same lock cannot be taken again.
-+ *
-+ * This happens when public_key_verify_signature(), in case of RSA algorithm,
-+ * use alg_name to store internal information in order to construct an
-+ * algorithm on the fly, but crypto_larval_lookup() will try to use alg_name
-+ * in order to load a kernel module with same name.
-+ *
-+ * Since we don't have any real "crypto-pkcs1pad(rsa,*)" kernel modules,
-+ * we are safe to fail such module request from crypto_larval_lookup(), and
-+ * avoid the verification loop.
-+ *
-+ * Return: Zero if it is safe to load the kernel module, -EINVAL otherwise.
-+ */
-+int ima_kernel_module_request(char *kmod_name)
-+{
-+	if (strncmp(kmod_name, "crypto-pkcs1pad(rsa,", 20) == 0)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+#endif /* CONFIG_INTEGRITY_ASYMMETRIC_KEYS */
-+
- static int __init init_ima(void)
- {
- 	int error;
-diff --git a/security/security.c b/security/security.c
-index f8d9ebeb4c31..48dc3db4c834 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -3250,7 +3250,7 @@ int security_kernel_module_request(char *kmod_name)
- 	ret = call_int_hook(kernel_module_request, 0, kmod_name);
- 	if (ret)
- 		return ret;
--	return integrity_kernel_module_request(kmod_name);
-+	return ima_kernel_module_request(kmod_name);
- }
- 
- /**
--- 
-2.34.1
+---->8----
 
+I don't see a better place to add this check.
+
+John
 
