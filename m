@@ -1,172 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-11639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11640-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA4B8559D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 05:30:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F513855A0A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 06:14:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B4602912E6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 04:30:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1E6C1C22470
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 05:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B408618038;
-	Thu, 15 Feb 2024 04:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZZgwhKJI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C048FB667;
+	Thu, 15 Feb 2024 05:14:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBE2DDD9;
-	Thu, 15 Feb 2024 04:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D2079F4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 05:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1707971279; cv=none; b=GTKFYL/PedXKZfTpol8bPnfAnDBLlyKZnRGPHFdYAzN/h8LLleJ/awIZ3tx5NtOcjMjGtYZNCmu5ePhbkKMG9VmFO2i9OYXpLq5P0dhM9z6UAxQ7Nm5V8Abokrgj7ShGeEQ7QU4rQ7klMujD6te5fvBmy13zCApaSrUO52Z5rXY=
+	t=1707974047; cv=none; b=gIX/9XuHGasHcr8thPQ3HQPomtGCaJIYQ9IRukwpa8K9KLETFecisdxvmu1WdLa+rr7dL16tMbDZjfhSQPDnG/vvj2sFHYkQRPn/QJjQQh2ED/vb0P9MC1Mzwe1jsm8hqiJ871FCm8mUYgx8IIYX+to1Utx4FQs8cpkkcZ6gg7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1707971279; c=relaxed/simple;
-	bh=PJX9nxRLEeoQwdUnmOqN3H2dctwppjpelMENczAYtJo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CagqRbVWCCHxrMGLpwy8rs9FAXVIKfopvmExIAr1jEQNbg3OlHPqMPzFkZgPAmlqAishRYAUrwm7Lz6Jo322E4HrOQl01ixgv8y3z2U/IKkUC8jo51FMrz7L6ugotJJmGZ2lD3PUQHv1Vzedsg7yGyBAX2upvuUQEPYe/L9Brmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZZgwhKJI; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1707971275;
-	bh=PJX9nxRLEeoQwdUnmOqN3H2dctwppjpelMENczAYtJo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ZZgwhKJIFf7Dca21dG8DyHBxCG7bWPazxrJMg8S4zPiqK4NyHGXStqH798q6X2cxx
-	 4l7xgMRSV6+GrS1inT20T5fnzEcYwB7j3ghvjeHSqUOBp9t/CLLhIA3NB4erz9eGVi
-	 gU7VI1U0B0g0X24tsdadh7um1UwOWVg3Ll1ULT16GCBCCCP0cI+yLou3c30j4X/0/c
-	 +A/4kmGzuhn/aWqS2mS7rBvstcJ6S2O9lWFenRIIJFMoCRNTsHJnCqes4YDVMHiFPn
-	 ZgsAzzWYxSH/K6amRz67PxQ5wkBGgljYH22Gees/i08csya0NDHbv/utwrVfguLKma
-	 cl165W1QtuAtQ==
-Received: from eugen-station.. (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ehristev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 32B3137820A1;
-	Thu, 15 Feb 2024 04:27:50 +0000 (UTC)
-From: Eugen Hristev <eugen.hristev@collabora.com>
-To: tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	jaegeuk@kernel.org,
-	chao@kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel@collabora.com,
-	eugen.hristev@collabora.com,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	krisman@suse.de,
-	Gabriel Krisman Bertazi <krisman@collabora.com>,
-	Eric Biggers <ebiggers@google.com>
-Subject: [PATCH v10 8/8] f2fs: Move CONFIG_UNICODE defguards into the code flow
-Date: Thu, 15 Feb 2024 06:26:54 +0200
-Message-Id: <20240215042654.359210-9-eugen.hristev@collabora.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240215042654.359210-1-eugen.hristev@collabora.com>
-References: <20240215042654.359210-1-eugen.hristev@collabora.com>
+	s=arc-20240116; t=1707974047; c=relaxed/simple;
+	bh=u2zTvaigkuJAkh2Bm7RwzFPDKiy8E7ZaQMlfwujq1to=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=OGIbVeUNCuLG5AIEK8gRCA6V5J7CuR20tprZppXQ2lTa+sTflvLDOEcrgkK5Vg3qvk+Q8qt1ul2n3ki9n859FFSH1ajtxqkotbsaLN5AU5c3mehxC2tvr0DcPxBbQgXG4ch+weWF2D/ycmBHPlBTnTuKwqA7l6mkImxY9+w3gIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-363cef35a5eso3505955ab.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Feb 2024 21:14:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1707974045; x=1708578845;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=833iic8uS6oQb0u2s6ULb+vs6qVpUUqEMT9wxJUBre0=;
+        b=NEse2YVddkC0mUO59jBR3PZ+xP0p9fJhvWMaeAk/cMbotc0EYHPWvGtqYzjK89hpX0
+         vmJb8NySM+mUUNRW2HyXQNFxmL0ju46boyTPlMKTTkvLC2VeBZ9nvqqxar1LeJGCMGTz
+         FJaEaFr764orpEbkrgMZaxFDdTOWAtzF9tKlgLDdUHBlNmtvD4l7INTEKlUSha3SKK7D
+         e5Odu93Zli/t0NeaFFxk4Ml8KKZ9p+/6cdPupRMxbI/PVRpFI+z5OBFthDgE4RkpJxdj
+         IlQ5IsyT4KbcgQRV8RagCHIBNtQT81AYnuv0cDWeCceAT0EDGqWVcrYVDd1zphmvIQCS
+         gybQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXjNdH8u9J3sW1NTuVpSLaiiZtkeV1z6g14NrJ8pV9OzQt4zSlnOGQoJPR/6bkQNZaQpim+V/eTmI5gyLzWJYQ1ULrB4wbvU3+wMFuqZA==
+X-Gm-Message-State: AOJu0YxMhVZeGaTkTzMWYhddDEWlLiOrh4N8inZ1hepyXDzA+J+Dsw7D
+	4y7ItTE/XN/dS7w4NhmQFGv8FwiwU0H68wOcCUXouSWoODtYrwKVj99e48r3Zfd9xVx3YBZCWmY
+	i76Ila5BkSwFC9oZpQK11mhLsUpDicV0naxdzyWRUedtnOaoax16KaeI=
+X-Google-Smtp-Source: AGHT+IGwo2Km0QbPqs+xCV/X1YBQCNiq02WGU+O3hroB+S6cLCUqdysdrb1ky+UxiUyUXtIsyMc0dCia1ge+gPgv8pa+molAyFdf
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:220b:b0:363:bc70:f1b1 with SMTP id
+ j11-20020a056e02220b00b00363bc70f1b1mr55404ilf.2.1707974045245; Wed, 14 Feb
+ 2024 21:14:05 -0800 (PST)
+Date: Wed, 14 Feb 2024 21:14:05 -0800
+In-Reply-To: <000000000000caa956060ddf5db1@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000040a8cd061164b23a@google.com>
+Subject: Re: [syzbot] [reiserfs?] general protection fault in __fget_files (2)
+From: syzbot <syzbot+63cebbb27f598a7f901b@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, chouhan.shreyansh630@gmail.com, 
+	eadavis@qq.com, jack@suse.cz, jeffm@suse.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, 
+	rkovhaev@gmail.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-From: Gabriel Krisman Bertazi <krisman@collabora.com>
+syzbot suspects this issue was fixed by commit:
 
-Instead of a bunch of ifdefs, make the unicode built checks part of the
-code flow where possible, as requested by Torvalds.
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-Reviewed-by: Eric Biggers <ebiggers@google.com>
-Reviewed-by: Chao Yu <chao@kernel.org>
-Signed-off-by: Gabriel Krisman Bertazi <krisman@collabora.com>
-[eugen.hristev@collabora.com: port to 6.8-rc3]
-Signed-off-by: Eugen Hristev <eugen.hristev@collabora.com>
----
- fs/f2fs/namei.c | 10 ++++------
- fs/f2fs/super.c |  8 ++++----
- 2 files changed, 8 insertions(+), 10 deletions(-)
+    fs: Block writes to mounted block devices
 
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index ba11298b7837..c317bfd1c344 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -577,8 +577,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 		goto out_iput;
- 	}
- out_splice:
--#if IS_ENABLED(CONFIG_UNICODE)
--	if (!inode && IS_CASEFOLDED(dir)) {
-+	if (IS_ENABLED(CONFIG_UNICODE) && !inode && IS_CASEFOLDED(dir)) {
- 		/* Eventually we want to call d_add_ci(dentry, NULL)
- 		 * for negative dentries in the encoding case as
- 		 * well.  For now, prevent the negative dentry
-@@ -587,7 +586,7 @@ static struct dentry *f2fs_lookup(struct inode *dir, struct dentry *dentry,
- 		trace_f2fs_lookup_end(dir, dentry, ino, err);
- 		return NULL;
- 	}
--#endif
-+
- 	new = d_splice_alias(inode, dentry);
- 	trace_f2fs_lookup_end(dir, !IS_ERR_OR_NULL(new) ? new : dentry,
- 				ino, IS_ERR(new) ? PTR_ERR(new) : err);
-@@ -640,16 +639,15 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
- 	f2fs_delete_entry(de, page, dir, inode);
- 	f2fs_unlock_op(sbi);
- 
--#if IS_ENABLED(CONFIG_UNICODE)
- 	/* VFS negative dentries are incompatible with Encoding and
- 	 * Case-insensitiveness. Eventually we'll want avoid
- 	 * invalidating the dentries here, alongside with returning the
- 	 * negative dentries at f2fs_lookup(), when it is better
- 	 * supported by the VFS for the CI case.
- 	 */
--	if (IS_CASEFOLDED(dir))
-+	if (IS_ENABLED(CONFIG_UNICODE) && IS_CASEFOLDED(dir))
- 		d_invalidate(dentry);
--#endif
-+
- 	if (IS_DIRSYNC(dir))
- 		f2fs_sync_fs(sbi->sb, 1);
- fail:
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 1b718bebfaa1..07c54981cb6b 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -312,7 +312,7 @@ struct kmem_cache *f2fs_cf_name_slab;
- static int __init f2fs_create_casefold_cache(void)
- {
- 	f2fs_cf_name_slab = f2fs_kmem_cache_create("f2fs_casefolded_name",
--							F2FS_NAME_LEN);
-+						   F2FS_NAME_LEN);
- 	return f2fs_cf_name_slab ? 0 : -ENOMEM;
- }
- 
-@@ -1360,13 +1360,13 @@ static int parse_options(struct super_block *sb, char *options, bool is_remount)
- 		return -EINVAL;
- 	}
- #endif
--#if !IS_ENABLED(CONFIG_UNICODE)
--	if (f2fs_sb_has_casefold(sbi)) {
-+
-+	if (!IS_ENABLED(CONFIG_UNICODE) && f2fs_sb_has_casefold(sbi)) {
- 		f2fs_err(sbi,
- 			"Filesystem with casefold feature cannot be mounted without CONFIG_UNICODE");
- 		return -EINVAL;
- 	}
--#endif
-+
- 	/*
- 	 * The BLKZONED feature indicates that the drive was formatted with
- 	 * zone alignment optimization. This is optional for host-aware
--- 
-2.34.1
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16fbb3dc180000
+start commit:   f5837722ffec Merge tag 'mm-hotfixes-stable-2023-12-27-15-0..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=da1c95d4e55dda83
+dashboard link: https://syzkaller.appspot.com/bug?extid=63cebbb27f598a7f901b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1230c7e9e80000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=133d189ae80000
 
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
