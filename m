@@ -1,94 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-11699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B713C856357
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 13:38:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD1185637A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 13:43:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A41E1F22F2E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 12:38:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7809281B67
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 12:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628E912CDBA;
-	Thu, 15 Feb 2024 12:38:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94D512D75B;
+	Thu, 15 Feb 2024 12:42:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SFCehM1i";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZD2C3IWP";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="SFCehM1i";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZD2C3IWP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B33412CD84
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 12:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C6C012AACB;
+	Thu, 15 Feb 2024 12:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708000687; cv=none; b=hyALht58jc7hWiT8pMyqvRfTCZbCyYqeN+JFmqL/KNYY3hoGo4iyxZGc/21hkda4WTxGbbNKT5BfZJ229dD2iDXNJpJiDSY8cT6aNjI8fezeEkYE912a9nmPpg3REpBlrJwenY5Cw5djX+sOjLF0SZr9JVBoIOjlq7PJeRCxmwI=
+	t=1708000976; cv=none; b=thP7GcCTjpOuuun8uJILfPgUjPcy6QqdaZxQ0Gbl41sDNqCD/y7Ebf5TP487E1vzbfqlKi3kpHMSGHxV+F8u6euMYDQeeKZ/h2MIFwihGNvMO4PK7NejNVgC9vFTBQ4qCW9Xr44em2bhOqbn1k0nY4pJIbyiDO14RXV5QxhGpRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708000687; c=relaxed/simple;
-	bh=LznutpEVOxHt4TsC0YpPkpc5D9HK8cOlRg1tQl6qTLM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=mYLR2hWgbIkWXQHk2lwWSrzMHVGfr7u4jsn0k1JSP7NtGiGH814748+KH8zb5bYYHTnqso8LIA3ARwrk+2caHV39hJo7Okbdxa0saBupWb4C5HFyx3PfahFMGTaJa59tV3AjHJ0Vr9NJiNGcqraqfl62NB8LHtdTzDh++iMNI/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7c495a44754so36488739f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 04:38:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708000685; x=1708605485;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y4EiGIu2mTjtQ2BKESlH87IOtFfw0dlvPHITGr5W5T4=;
-        b=drBCmI+IxdaMl/lju+VqrPUAihyBH8m8fkoWA9+GAeDIBwUEzseg2jmWE25hI7B4Xi
-         rC1GldmKHlXvYa9FdiodmZphWQflfSA7bb1M+N6B88dh1HJelik2twf3laEUUvDcJisH
-         +RTbRl9cJ7GQRSVypOYWiQj+7T+H+Xl4XE85KEmUTSl0rJ87wzsEvoENY/igVq83hzlY
-         2waFkX1Yt12KG8tM05ZTWOVblXu9qMskYN5B2+HdauWUucnctgZNyRQgcKBHcxrtanVd
-         hrkcCI3fqsK9hznUUoX92zRPG6gTjaOgpgI5SZRyYyx/Vemk+RPADWaccLKohD9g+xAr
-         UQUA==
-X-Forwarded-Encrypted: i=1; AJvYcCWcVXj5Uw1/yMfYxTfbN9xRRpfZVYGXwaEWM2XURp/nTjX+NVskl63KA8eqbrrmAvvQMDwVzUZzvn11bc11SDkSlZhNKw8gai/6b4GHng==
-X-Gm-Message-State: AOJu0YwSbGswjpDbV2g57kg7JzUeYfmbh/HrVht64yGkNHg3tD7c4Sd/
-	wjndCrtPPefVAg7gt56c/9kvqh809b5m1GVD/BJLGRfdwvRzMRikKAHvYW9rVX5I8BPiE0/qZLe
-	BvjuLwZJKS4M155qC19ue5+XjWEBPpHQ/WT630S2ePLQyNP+LtlYIylQ=
-X-Google-Smtp-Source: AGHT+IFL92pJv2bjiJRhXIiR95FF9dQns631ia4A87d6518YNfgSwHqS1NKPmdx+39TqBAEzlU9IOeqWxjvpkl7HaHm7mH6Rg4Wu
+	s=arc-20240116; t=1708000976; c=relaxed/simple;
+	bh=L7i0tcy2cKPGn87m/3kZ9L7ExtZnPY9SJSD9OsMRP8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fx8ehYw2T9U6Le4DLwCHHlF6Ae7Ye9/1og0/xDZIy33spdo68n8jh2FkcjMqlnEQLcOwiU/+fIeSuAfQ/XW5xScJSmbIAqMRHz9pvIvmRLcuYbHazZA53/LofCFux1SPHSa93fKlogprBMtmp2wjUcEtN5INw5mg+kMxAgUlL2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SFCehM1i; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZD2C3IWP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=SFCehM1i; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZD2C3IWP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 010891F88F;
+	Thu, 15 Feb 2024 12:42:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1708000972; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xllyM6ganl1nkUdTCw7dKs4zu1EaUQeku+Rjbl7poO4=;
+	b=SFCehM1i0eL+sOnqh6j56G4C/q2zS+cbmhg5mLeK71FLcnOiHc6cxMoD4IhU08kh3glFXP
+	q+8Hy/BxIOVsPqoWXSih1xbyTGeHW6/8Za/nx5MhvCEEVyiALHMmeHpIaqdUCrZjoRUSqP
+	ThPhgtf506qzJBb1S3ZDaBWvberFkG4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1708000972;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xllyM6ganl1nkUdTCw7dKs4zu1EaUQeku+Rjbl7poO4=;
+	b=ZD2C3IWPN70iRjUwEZcMgKUegCNZK9lM6VlWwkd3uS6MQL4FW4DrdYcnIbFvTxVtd1pd7m
+	IsVBucz/sNZkaxCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1708000972; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xllyM6ganl1nkUdTCw7dKs4zu1EaUQeku+Rjbl7poO4=;
+	b=SFCehM1i0eL+sOnqh6j56G4C/q2zS+cbmhg5mLeK71FLcnOiHc6cxMoD4IhU08kh3glFXP
+	q+8Hy/BxIOVsPqoWXSih1xbyTGeHW6/8Za/nx5MhvCEEVyiALHMmeHpIaqdUCrZjoRUSqP
+	ThPhgtf506qzJBb1S3ZDaBWvberFkG4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1708000972;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xllyM6ganl1nkUdTCw7dKs4zu1EaUQeku+Rjbl7poO4=;
+	b=ZD2C3IWPN70iRjUwEZcMgKUegCNZK9lM6VlWwkd3uS6MQL4FW4DrdYcnIbFvTxVtd1pd7m
+	IsVBucz/sNZkaxCA==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id E22AD139D0;
+	Thu, 15 Feb 2024 12:42:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id tzgtN8sGzmWsEAAAn2gu4w
+	(envelope-from <jack@suse.cz>); Thu, 15 Feb 2024 12:42:51 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 8E7C5A0809; Thu, 15 Feb 2024 13:42:47 +0100 (CET)
+Date: Thu, 15 Feb 2024 13:42:47 +0100
+From: Jan Kara <jack@suse.cz>
+To: Chuck Lever <cel@kernel.org>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	hughd@google.com, akpm@linux-foundation.org,
+	Liam.Howlett@oracle.com, oliver.sang@intel.com, feng.tang@intel.com,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	maple-tree@lists.infradead.org, linux-mm@kvack.org, lkp@intel.com
+Subject: Re: [PATCH RFC 1/7] libfs: Rename "so_ctx"
+Message-ID: <20240215124247.yfzxqbp6dirnvgrf@quack3>
+References: <170785993027.11135.8830043889278631735.stgit@91.116.238.104.host.secureserver.net>
+ <170786024524.11135.12492553100384328157.stgit@91.116.238.104.host.secureserver.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:4387:b0:471:3c6d:b574 with SMTP id
- bo7-20020a056638438700b004713c6db574mr10331jab.4.1708000684861; Thu, 15 Feb
- 2024 04:38:04 -0800 (PST)
-Date: Thu, 15 Feb 2024 04:38:04 -0800
-In-Reply-To: <000000000000a3818b05f18916e0@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000018f2c806116ae6d3@google.com>
-Subject: Re: [syzbot] [reiserfs?] BUG: unable to handle kernel paging request
- in reiserfs_readdir_inode
-From: syzbot <syzbot+3f6ef04b7cf85153b528@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	jfs-discussion@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, 
-	shaggy@kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <170786024524.11135.12492553100384328157.stgit@91.116.238.104.host.secureserver.net>
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_TWELVE(0.00)[14];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[99.98%]
+X-Spam-Flag: NO
 
-syzbot suspects this issue was fixed by commit:
+On Tue 13-02-24 16:37:25, Chuck Lever wrote:
+> From: Chuck Lever <chuck.lever@oracle.com>
+> 
+> Most of instances of "so_ctx" were renamed before the simple offset
+> work was merged, but there were a few that were missed.
+> 
+> Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Looks good. Feel free to add:
 
-    fs: Block writes to mounted block devices
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14ffd320180000
-start commit:   534293368afa Merge tag 'kbuild-fixes-v6.3' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9688428cfef5e8d5
-dashboard link: https://syzkaller.appspot.com/bug?extid=3f6ef04b7cf85153b528
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=138d82bac80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1123fed2c80000
+								Honza
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> ---
+>  fs/libfs.c |    6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/libfs.c b/fs/libfs.c
+> index eec6031b0155..bfbe1a8c5d2d 100644
+> --- a/fs/libfs.c
+> +++ b/fs/libfs.c
+> @@ -271,7 +271,7 @@ void simple_offset_init(struct offset_ctx *octx)
+>   * @octx: directory offset ctx to be updated
+>   * @dentry: new dentry being added
+>   *
+> - * Returns zero on success. @so_ctx and the dentry offset are updated.
+> + * Returns zero on success. @octx and the dentry's offset are updated.
+>   * Otherwise, a negative errno value is returned.
+>   */
+>  int simple_offset_add(struct offset_ctx *octx, struct dentry *dentry)
+> @@ -430,8 +430,8 @@ static bool offset_dir_emit(struct dir_context *ctx, struct dentry *dentry)
+>  
+>  static void *offset_iterate_dir(struct inode *inode, struct dir_context *ctx)
+>  {
+> -	struct offset_ctx *so_ctx = inode->i_op->get_offset_ctx(inode);
+> -	XA_STATE(xas, &so_ctx->xa, ctx->pos);
+> +	struct offset_ctx *octx = inode->i_op->get_offset_ctx(inode);
+> +	XA_STATE(xas, &octx->xa, ctx->pos);
+>  	struct dentry *dentry;
+>  
+>  	while (true) {
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
