@@ -1,169 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-11774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892E18570B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:49:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E8B58570CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:54:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EC74B23187
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 22:49:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CBB1283742
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 22:54:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341921419A9;
-	Thu, 15 Feb 2024 22:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026CC145347;
+	Thu, 15 Feb 2024 22:54:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DARco0iC"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s7GjinpF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB6513B298;
-	Thu, 15 Feb 2024 22:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAD613B299
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 22:54:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708037331; cv=none; b=Z505DMCScV6sJoGH4Wqz5QfRHgpG3v5BgUIMSrKkHDFoSYHitw7kSzWOBhnRHWIqr4xnrHYEJWczXU7JrTNMnpo1ij1UPZi+r/2+0U/N4WbOApky1G7QQYhmBPYglW//INSqTtz4+yVcVSXe3Ff73tZEVZ0/7vj8QP6lYlomuc4=
+	t=1708037680; cv=none; b=j+sVq2rbkuW/CcYbwVm35cds16L/j8aHaXTEOCRBRZsmgH4cVjxuISBksxGPWWk4y9V7xciT/rSnceqgNcR5WRNM72OmA29+1Ez1pHCef6ACw5EeX6tOcxwf/trd8CL1/rW+hblcGMRo7+ziUDFeREJcvlFDuJduDFnyDnUARFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708037331; c=relaxed/simple;
-	bh=O2YipuwbWV1YLastP336dH3q8Zkm6CgW4TI5yh0PFMM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=WHPx1FoG366V3821XzheezXPF93ie1i6xihgrFVwPi0kY62swn8u3dJeY5PezE89l+r3JVhCHEGkR57JUyQ7Ypsvlm8nGqCbFFY/Jrcz9fqf68jztXQB6NpnVpjVKiidcqjxFwlc0BdUXD8G4uMRJwQZ4Lirtx4hd1JASR1spvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DARco0iC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B9DAC433C7;
-	Thu, 15 Feb 2024 22:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1708037331;
-	bh=O2YipuwbWV1YLastP336dH3q8Zkm6CgW4TI5yh0PFMM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DARco0iCdfuae92XExh7ksU1jOCySljoFJvUjTDn6qsullpN+UZD19SQnJFqhMYAZ
-	 oOm+fymLMFt8D+F9JZKcJYJsu3fAkB0Xfg6t5w4Y8bHGlrMdP//45q1dE8IjOYoDXb
-	 P21Fkvnul+Og6eWw2GUVO+Duw3g99sqJQjsFXikQ=
-Date: Thu, 15 Feb 2024 14:48:49 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, David Hildenbrand
- <david@redhat.com>, Barry Song <21cnbao@gmail.com>, John Hubbard
- <jhubbard@nvidia.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: Re: [PATCH v2] mm/filemap: Allow arch to request folio size for
- exec memory
-Message-Id: <20240215144849.aba06863acc08b8ded09a187@linux-foundation.org>
-In-Reply-To: <20240215154059.2863126-1-ryan.roberts@arm.com>
-References: <20240215154059.2863126-1-ryan.roberts@arm.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1708037680; c=relaxed/simple;
+	bh=vpFxO4vaBL6utiq3PQIPAVgPBDoFbQo1foIo5AqK8Qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TPnz+knajRjFhlxtNKF1BmuhwFV/nRaGEsYPsZycjZDYh+CINgp0frNPer/1v0Px1fxmvFFYf7uLIiNDM8e0xiCQN8859age0NYp9b+bnh305C9FRvKowWEaJSPrmNO6DqYL4jvatHjC+iC9IdxAbbk0XzF7SXCz0MRsbDAVnlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s7GjinpF; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 15 Feb 2024 17:54:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1708037676;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZDSi9l3t5jb4xqm42oA6b90TgSdD5o5/qEQqj726Xko=;
+	b=s7GjinpFAKYCSUH++IShUfbdX2oRHH7jMoJOiFXnURQJriQJpk2c1g6IKodkBsWFrf3tMo
+	lRA7KcUWR9thLhS4EQcOGTvPoXKrv2i+J/AXkZWZfF3jhzdVpibqSVtKnHN1t1gucGHdc8
+	uhGVZUZbURioLMmI/fU2b1rDFnFpKMs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, 
+	Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, hannes@cmpxchg.org, 
+	roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net, willy@infradead.org, 
+	liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com, peterz@infradead.org, 
+	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, 
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, 
+	peterx@redhat.com, david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, 
+	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org, tj@kernel.org, 
+	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, hughd@google.com, 
+	andreyknvl@gmail.com, keescook@chromium.org, ndesaulniers@google.com, 
+	vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com, 
+	ytcoode@gmail.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
+	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, 
+	cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
+	glider@google.com, elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, minchan@google.com, 
+	kaleshsingh@google.com, kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-modules@vger.kernel.org, 
+	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in show_mem()
+Message-ID: <ojym6woqflzp6qarjgfubzq6wjgcju4cv4t3kfpfk77xhnxt3t@xmuarv3rdqsq>
+References: <20240212213922.783301-1-surenb@google.com>
+ <20240212213922.783301-32-surenb@google.com>
+ <Zc3X8XlnrZmh2mgN@tiehlicka>
+ <CAJuCfpHc2ee_V6SGAc_31O_ikjGGNivhdSG+2XNcc9vVmzO-9g@mail.gmail.com>
+ <Zc4_i_ED6qjGDmhR@tiehlicka>
+ <CAJuCfpHq3N0h6dGieHxD6Au+qs=iKAifFrHAMxTsHTcDrOwSQA@mail.gmail.com>
+ <ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
+ <320cd134-b767-4f29-869b-d219793ba8a1@suse.cz>
+ <efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
+ <Zc6ILbveSQvDtayj@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zc6ILbveSQvDtayj@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 15 Feb 2024 15:40:59 +0000 Ryan Roberts <ryan.roberts@arm.com> wrote:
-
-> Change the readahead config so that if it is being requested for an
-> executable mapping, do a synchronous read of an arch-specified size in a
-> naturally aligned manner.
-
-Some nits:
-
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -1115,6 +1115,18 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
->   */
->  #define arch_wants_old_prefaulted_pte	cpu_has_hw_af
+On Thu, Feb 15, 2024 at 10:54:53PM +0100, Michal Hocko wrote:
+> On Thu 15-02-24 15:33:30, Kent Overstreet wrote:
+> > If we want this report to be 100% reliable, then yes the preallocated
+> > buffer makes sense - but I don't think 100% makes sense here; I think we
+> > can accept ~99% and give back that 4k.
 > 
-> +/*
-> + * Request exec memory is read into pagecache in at least 64K folios. The
-> + * trade-off here is performance improvement due to storing translations more
-> + * effciently in the iTLB vs the potential for read amplification due to reading
+> Think about that from the memory reserves consumers. The atomic reserve
+> is a scarse resource and now you want to use it for debugging purposes
+> for which you could have preallocated.
 
-"efficiently"
+_Memory_ is a finite resource that we shouldn't be using unnecessarily. 
 
-> + * data from disk that won't be used. The latter is independent of base page
-> + * size, so we set a page-size independent block size of 64K. This size can be
-> + * contpte-mapped when 4K base pages are in use (16 pages into 1 iTLB entry),
-> + * and HPA can coalesce it (4 pages into 1 TLB entry) when 16K base pages are in
-> + * use.
-> + */
-> +#define arch_wants_exec_folio_order() ilog2(SZ_64K >> PAGE_SHIFT)
-> +
+We don't need this for the entire time we're under memory pressure; just
+the short duration it takes to generate the report, then it's back
+available for other users.
 
-To my eye, "arch_wants_foo" and "arch_want_foo" are booleans.  Either
-this arch wants a particular treatment or it does not want it.
+You would have us dedicate 4k, from system bootup, that can never be
+used by other users.
 
-I suggest a better name would be "arch_exec_folio_order".
-
->  static inline bool pud_sect_supported(void)
->  {
->  	return PAGE_SIZE == SZ_4K;
-> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-> index aab227e12493..6cdd145cbbb9 100644
-> --- a/include/linux/pgtable.h
-> +++ b/include/linux/pgtable.h
-> @@ -407,6 +407,18 @@ static inline bool arch_has_hw_pte_young(void)
->  }
->  #endif
-> 
-> +#ifndef arch_wants_exec_folio_order
-> +/*
-> + * Returns preferred minimum folio order for executable file-backed memory. Must
-> + * be in range [0, PMD_ORDER]. Negative value implies that the HW has no
-> + * preference and mm will not special-case executable memory in the pagecache.
-> + */
-
-I think this comment contains material which would be useful above the
-other arch_wants_exec_folio_order() implementation - the "must be in
-range" part.  So I suggest all this material be incorporated into a
-single comment which describes arch_wants_exec_folio_order().  Then
-this comment can be removed entirely.  Assume the reader knows to go
-seek the other definition for the commentary.
-
-> +static inline int arch_wants_exec_folio_order(void)
-> +{
-> +	return -1;
-> +}
-> +#endif
-> +
->  #ifndef arch_check_zapped_pte
->  static inline void arch_check_zapped_pte(struct vm_area_struct *vma,
->  					 pte_t pte)
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 142864338ca4..7954274de11c 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3118,6 +3118,25 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->  	}
->  #endif
-> 
-> +	/*
-> +	 * Allow arch to request a preferred minimum folio order for executable
-> +	 * memory. This can often be beneficial to performance if (e.g.) arm64
-> +	 * can contpte-map the folio. Executable memory rarely benefits from
-> +	 * read-ahead anyway, due to its random access nature.
-
-"readahead"
-
-> +	 */
-> +	if (vm_flags & VM_EXEC) {
-> +		int order = arch_wants_exec_folio_order();
-> +
-> +		if (order >= 0) {
-> +			fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-> +			ra->size = 1UL << order;
-> +			ra->async_size = 0;
-> +			ractl._index &= ~((unsigned long)ra->size - 1);
-> +			page_cache_ra_order(&ractl, ra, order);
-> +			return fpin;
-> +		}
-> +	}
-> +
->  	/* If we don't want any read-ahead, don't bother */
->  	if (vm_flags & VM_RAND_READ)
->  		return fpin;
-
+Again: this makes no sense. The whole point of having watermarks and
+shared reserves is so that every codepath doesn't have to have its own
+dedicated, private reserve, so that we can make better use of a shared
+finite resource.
 
