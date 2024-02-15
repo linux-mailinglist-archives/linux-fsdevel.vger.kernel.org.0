@@ -1,163 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-11780-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11781-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A50785718F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:26:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CCAA8571D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4DB51F22FF0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:26:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C07EB248DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E7C145B15;
-	Thu, 15 Feb 2024 23:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419A7145B26;
+	Thu, 15 Feb 2024 23:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aYui0xY1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8707413B2AB;
-	Thu, 15 Feb 2024 23:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A79138489
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 23:47:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708039563; cv=none; b=rBmTRMmLwHyk6fskQHTNUzWcv20qDMxOU32C9/w3QE85W+G3la0PbIvArsgRG779zwQIkGbU2kgWQL6NfCEzTBBha3vldG2IMjtBhy85trEZ2wTz7A3eY4w3EXYasBCbVi/cZG816aX3o9jwU+LZNF133UxYz7/OUX2krmS6gUE=
+	t=1708040876; cv=none; b=WRGTp/JZmt7EMNYZrQLJVhUKsneJPh7paOLlhGyhtZ2vYxJkous6Azf+SYj+c8+e7k5iRN5bSjSHlw4/XzI/M2wyEe6rf066Gw4hugJ9Ti8yNBRhKUK8IsmpgoFpPPr/BdPvT/In/H3gmy69K4VBMXpAXzGFmzwYB/V9M/QizQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708039563; c=relaxed/simple;
-	bh=XS5bJqlP4STQgp1DfmpPHfkB4RaRvPoEvv+ra766L+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gI1HFXSuCMFRc5NHOWZGJ1P9hJdHEvsoSuXX3VH88Sz9MZ1HcA8ybXqIey6j1FSz3hGEG5E4tqXSPLTVn6kyhbflJo7mbqI6TPFJrhm53IkWWaAFEGfq4b30CiNvb0qB4rIICedJNyIrGx14wm7k9egYhq+817EPlDv3CZ7bdwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6610C433F1;
-	Thu, 15 Feb 2024 23:25:55 +0000 (UTC)
-Date: Thu, 15 Feb 2024 18:27:29 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- akpm@linux-foundation.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
- mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
- liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
- peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
- david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
- nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
- rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
- yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
- hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
- ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
- ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, bsegall@google.com, bristot@redhat.com,
- vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
- iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
- elver@google.com, dvyukov@google.com, shakeelb@google.com,
- songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
- minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-arch@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
- cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in
- show_mem()
-Message-ID: <20240215182729.659f3f1c@gandalf.local.home>
-In-Reply-To: <20240215181648.67170ed5@gandalf.local.home>
-References: <20240212213922.783301-1-surenb@google.com>
-	<20240212213922.783301-32-surenb@google.com>
-	<Zc3X8XlnrZmh2mgN@tiehlicka>
-	<CAJuCfpHc2ee_V6SGAc_31O_ikjGGNivhdSG+2XNcc9vVmzO-9g@mail.gmail.com>
-	<Zc4_i_ED6qjGDmhR@tiehlicka>
-	<CAJuCfpHq3N0h6dGieHxD6Au+qs=iKAifFrHAMxTsHTcDrOwSQA@mail.gmail.com>
-	<ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
-	<320cd134-b767-4f29-869b-d219793ba8a1@suse.cz>
-	<efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
-	<20240215180742.34470209@gandalf.local.home>
-	<20240215181648.67170ed5@gandalf.local.home>
-X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1708040876; c=relaxed/simple;
+	bh=i0JkEoazbe7olxPfKu+G8Uy4A1Di4zZuZedbjzHoSNI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ficS7vcgSvHxWhWafw7ZGpDW4Yh4hDcOPmVAiRocfo//piTQEkYtalaBmQy/u/gJGmXRER0Mjh6ERRbxziN2W0jgxUvwTFe1js2qfeJOs3EjrussXcdviL84XH1ydmf8KVseBviCPdaMKb7wQepzE7U5V7WCMsyOKS8pBFeZ6cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aYui0xY1; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dcc73148611so1628456276.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 15:47:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1708040873; x=1708645673; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TNqNjWyj5Im8N6xWYYajO215Bvq50L/4j9hhElLNjXY=;
+        b=aYui0xY188H+UoJn+hSOIc4QjrEciHSFIhXKUFqjYi0ete6C2JbxdY6QFA6cM/v5a4
+         gMxYJhHM08soJ6YqWCgI9z7aUsQ6A2jhx50dNzjEOFi0ztlp6thiEHMAE7ShGokQe8O3
+         EjiapTGcLiGf0BquSSdEsphdKiOesT7UmLOw+1qUmyi0qUJaIyEIkDTJzZP9+i+F44U4
+         lQV0UsHBoUb8xZNBMzVWmWJXxfnHoLhYCqdT1afaiS8aZND8ToH8KIuEyh/AgmfvMwqL
+         mq2ZCJehDA7PItvedNp1h/vmnu+lnhkO6ae/YqNuofk4RUA7ElpwAT7RBXYgLNmeG+M5
+         atag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708040873; x=1708645673;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TNqNjWyj5Im8N6xWYYajO215Bvq50L/4j9hhElLNjXY=;
+        b=cRU39HVU2RC7aGXw3JIpI/0Q7imOk9I5B3cr7UYyUbh/RGvM6T7yO1f9JM88L8Gi22
+         Vusjw6gZf3QUUuP0MWQUomrDTpu2+xBB2RmtFbBsTWQ1slQtBdKI2+7pT4xxLTsmcoFT
+         KA/k1AwZdt0bTS5/Hrnyuf9UR0WpslWIcOWtsOs0vjuMDVBTh4aJuQiqhq2P6rcm4PcB
+         SD0jkyNfOe4wqBJ9xpyWqVgX0zTh/RdqYIOAhXDQjnnRKQJcsiqBIBa/28QaMIqHPT5Y
+         NDaWAaL7s6BwXsdZp+pIxYbAWehSMNYyVAdN4825AO69mGHDIuhd9y0YEX19mz2TRyBZ
+         jj0A==
+X-Forwarded-Encrypted: i=1; AJvYcCVeILOPlKdtwj90eNiV7IfNWAlSVqEE7H73Zre26a3xmkMygTiJunK8Wrba39s8NPVgcqzheXqMNoTJnG/Y3FbHCZKyrzVfUlzurYHKWg==
+X-Gm-Message-State: AOJu0YwUD1oum/YP7nvn6MOKoUWCQnlFxzqNN6lHho6L9JEo/G/leizs
+	vfeFSOLSK5AiQoH8fAPOcnnq37yMwBVRrWcklup8VTQu9Rtq3ikZ8ODgwCaWpLEErdJ0Y7pUBrX
+	pKvvU19HB6hAFZQBYWGm4xNSbj2M2vJyYSoA7
+X-Google-Smtp-Source: AGHT+IGj4sYe0xwnV8Z27fpJ5XIo46jQrmblbhi+Z75L6k1QenA7Kck+4HBXyW1C8ZgM8RHcSbfHoYCrtsSiiXbyGWQ=
+X-Received: by 2002:a25:69c6:0:b0:dcc:99b6:830b with SMTP id
+ e189-20020a2569c6000000b00dcc99b6830bmr2991821ybc.19.1708040873125; Thu, 15
+ Feb 2024 15:47:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
+ <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com> <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
+ <202402070631.7B39C4E8@keescook> <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
+ <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com> <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
+In-Reply-To: <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 15 Feb 2024 18:47:42 -0500
+Message-ID: <CAHC9VhTac1ZuAzD5w=NtSYryu8vYxHnCx0NsMP-C4nmqiffA-Q@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Eric Biederman <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-security-module <linux-security-module@vger.kernel.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Serge Hallyn <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 15 Feb 2024 18:16:48 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Thu, Feb 15, 2024 at 9:33=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> On 2024/02/15 6:46, Paul Moore wrote:
+> >> To quickly summarize, there are two paths forward that I believe are
+> >> acceptable from a LSM perspective, pick either one and send me an
+> >> updated patchset.
+> >>
+> >> 1. Rename the hook to security_bprm_free() and update the LSM hook
+> >> description as I mentioned earlier in this thread.
+> >>
+> >> 2. Rename the hook to security_execve_revert(), move it into the
+> >> execve related functions, and update the LSM hook description to
+> >> reflect that this hook is for reverting execve related changes to the
+> >> current task's internal LSM state beyond what is possible via the
+> >> credential hooks.
+> >
+> > Hi Tetsuo, I just wanted to check on this and see if you've been able
+> > to make any progress?
+> >
+>
+> I'm fine with either approach. Just worrying that someone doesn't like
+> overhead of unconditionally calling security_bprm_free() hook.
+> If everyone is fine with below one, I'll post v4 patchset.
 
-> On Thu, 15 Feb 2024 18:07:42 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> >    text         data            bss     dec             hex filename
-> > 29161847        18352730        5619716 53134293        32ac3d5 vmlinux.orig
-> > 29162286        18382638        5595140 53140064        32ada60 vmlinux.memtag-off		(+5771)
-> > 29230868        18887662        5275652 53394182        32ebb06 vmlinux.memtag			(+259889)
-> > 29230746        18887662        5275652 53394060        32eba8c vmlinux.memtag-default-on	(+259767) dropped?
-> > 29276214        18946374        5177348 53399936        32ed180 vmlinux.memtag-debug		(+265643)  
-> 
-> If you plan on running this in production, and this increases the size of
-> the text by 68k, have you measured the I$ pressure that this may induce?
-> That is, what is the full overhead of having this enabled, as it could
-> cause more instruction cache misses?
-> 
-> I wonder if there has been measurements of it off. That is, having this
-> configured in but default off still increases the text size by 68k. That
-> can't be good on the instruction cache.
-> 
+My guess is that based on the previous comments people are going to
+prefer option #2 above, but we'll see what everyone says.  I did have
+one comment, below ...
 
-I should have read the cover letter ;-)  (someone pointed me to that on IRC):
+>  fs/exec.c                     |    1 +
+>  include/linux/lsm_hook_defs.h |    1 +
+>  include/linux/security.h      |    5 +++++
+>  security/security.c           |   12 ++++++++++++
+>  4 files changed, 19 insertions(+)
 
-> Performance overhead:
-> To evaluate performance we implemented an in-kernel test executing
-> multiple get_free_page/free_page and kmalloc/kfree calls with allocation
-> sizes growing from 8 to 240 bytes with CPU frequency set to max and CPU
-> affinity set to a specific CPU to minimize the noise. Below are results
-> from running the test on Ubuntu 22.04.2 LTS with 6.8.0-rc1 kernel on
-> 56 core Intel Xeon:
+...
 
-These are micro benchmarks, were any larger benchmarks taken? As
-microbenchmarks do not always show I$ issues (because the benchmark itself
-will warm up the cache). The cache issue could slow down tasks at a bigger
-picture, as it can cause more cache misses.
+> diff --git a/security/security.c b/security/security.c
+> index 3aaad75c9ce8..ba2f480b2bdb 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1223,6 +1223,18 @@ void security_bprm_committed_creds(const struct li=
+nux_binprm *bprm)
+>         call_void_hook(bprm_committed_creds, bprm);
+>  }
+>
+> +/**
+> + * security_bprm_free() - Notify of completion of an exec()
 
-Running other benchmarks under perf and recording the cache misses between
-the different configs would be a good picture to show.
+The short summary above doesn't match the summary below.  If we stick
+with the security_bprm_free() approach please change "Notify of
+completion of an exec()" to "Notify LSMs of a bprm free event" or
+similar.
 
-> 
->                         kmalloc                 pgalloc
-> (1 baseline)            6.764s                  16.902s
-> (2 default disabled)    6.793s (+0.43%)         17.007s (+0.62%)
-> (3 default enabled)     7.197s (+6.40%)         23.666s (+40.02%)
-> (4 runtime enabled)     7.405s (+9.48%)         23.901s (+41.41%)
-> (5 memcg)               13.388s (+97.94%)       48.460s (+186.71%)
+> + * This hook is called when a linux_bprm instance is being destroyed, af=
+ter
+> + * the bprm creds have been released, and is intended to cleanup any int=
+ernal
+> + * LSM state associated with the linux_bprm instance.
+> + */
+> +void security_bprm_free(void)
+> +{
+> +       call_void_hook(bprm_free);
+> +}
+> +
+>  /**
+>   * security_fs_context_submount() - Initialise fc->security
+>   * @fc: new filesystem context
+>
 
-
-> 
-> Memory overhead:
-> Kernel size:
-> 
->    text           data        bss         dec         diff
-> (1) 26515311	      18890222    17018880    62424413
-> (2) 26524728	      19423818    16740352    62688898    264485
-> (3) 26524724	      19423818    16740352    62688894    264481
-> (4) 26524728	      19423818    16740352    62688898    264485
-> (5) 26541782	      18964374    16957440    62463596    39183
-
-Similar to my builds.
-
-
-> 
-> Memory consumption on a 56 core Intel CPU with 125GB of memory:
-> Code tags:           192 kB
-> PageExts:         262144 kB (256MB)
-> SlabExts:           9876 kB (9.6MB)
-> PcpuExts:            512 kB (0.5MB)
-> 
-> Total overhead is 0.2% of total memory.
-
-
-All this, and we are still worried about 4k for useful debugging :-/
-
--- Steve
+--=20
+paul-moore.com
 
