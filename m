@@ -1,133 +1,169 @@
-Return-Path: <linux-fsdevel+bounces-11773-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90405857071
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:20:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892E18570B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 23:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B5C8286EB9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 22:20:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EC74B23187
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 22:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED853145343;
-	Thu, 15 Feb 2024 22:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341921419A9;
+	Thu, 15 Feb 2024 22:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="warTRfq4"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="DARco0iC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE0F13B289
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 22:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB6513B298;
+	Thu, 15 Feb 2024 22:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708035595; cv=none; b=gaBLzryew+IZ1m6rQpyLARVzib25RPGRUqg64epw8dFll61J6iVlr0bp326TG5vsAmQ+6rdFZaTuGTU4hYqPjXortUdXCkz5TpmIVCu1zAQ/Y69duzaQnW65U71ORdVxHq7lXwbxQ6DCIBd6W+dzTYkTa8HCqJ0ruYMJuxZZk2E=
+	t=1708037331; cv=none; b=Z505DMCScV6sJoGH4Wqz5QfRHgpG3v5BgUIMSrKkHDFoSYHitw7kSzWOBhnRHWIqr4xnrHYEJWczXU7JrTNMnpo1ij1UPZi+r/2+0U/N4WbOApky1G7QQYhmBPYglW//INSqTtz4+yVcVSXe3Ff73tZEVZ0/7vj8QP6lYlomuc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708035595; c=relaxed/simple;
-	bh=aF59DJKg+GxnyqLQw5fUxg2rlzvMMS+kzrvQ8I5o6Ws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZnQ0+bE/9Un5QGNv2U6JkgBWZtF1lQ32FqUMLrSK6S290v08VqSATMcwQ6iKAnm6slhrN5T0TpEeJQdviqXG76eN+hJyqRxQ3WCs5epaXKp0HM0FL0XdHsOaJ4Usddom7U7uBl/NAb2zWOoDaACdqU0cwgQkKbLNpeIV6XphVW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=warTRfq4; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-607d9c4fa90so10704727b3.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 14:19:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1708035592; x=1708640392; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EIA+RVykCQtMd4uKP0jMkGSiYfomHvLOKfcmRsJzzt8=;
-        b=warTRfq4aGCOluf9txmlSg2EquhkOqio/rOzNniP3AA3Rk81mKe4z5vV/wPNyH/1LJ
-         MKf5BB23aVJFp+1NmkdiNO0/Z6nYJwb26nqNdwCalUzLwDOuJe4bAWkfkv1C3TZb1MwM
-         KCjLWJTxWmUnbjCKglDkXMi9OJXsrmcrlAyjHMkcCIsGw3DEys6DxyRI6b5v4AnQGmPW
-         DAYNvKO1NwSGJ8CJEZihlc+RtYcYiL4USemv489klwmS6zGuZIWebdZIHXTycDnYtoLA
-         kS9ErTodhdBFq4gzbABL4Y/WT6zKG6rUDZniPzw261dIe7q0rU+GEqXPI/EEi/6BnhxJ
-         ZlcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708035593; x=1708640393;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EIA+RVykCQtMd4uKP0jMkGSiYfomHvLOKfcmRsJzzt8=;
-        b=wOBlD9YhWBOnU7fLMcyTe3VPO1oK/kPvgLDUp0HquYMN8ZDDyp3pz59JZj1YwRvgXP
-         mhLQNnk+3MmuLW/o3pF5GmVYtOrhOkIQq/39CNLWIZmXglVOVDYv9DY/IjK0Ye8WZHLG
-         iqUe1CpFY+IBUmnU482uehIylGcs5UBZ5V2IYzJSqxvy2ST4+tit/gU3Xt+vpG/TsIZS
-         Q/07Wk5QIK0Z+9Foyl8GKsgj1D+CIzEqH5DVLPxTfzXIuEVtGJaA++hk1UYD6Fe9jUdk
-         IJe/9SIpD2DGt1ZGS2d3LOoMoZTXCjRjBKUbhniRBOWR9JQfsEhR3O63RlP8wH7ZSD7J
-         eIeg==
-X-Forwarded-Encrypted: i=1; AJvYcCXo2XWuGBfoUcQrJRH455trHgAvyiXde1pKHPi1t8NKCQPfauwdw0zAtZQr05eAhBnuOHUNXAaF3m5rMUNnWxoJGoWbul3kux1V02/LJw==
-X-Gm-Message-State: AOJu0YwgXHlzlTM8zK1hrAHpS75hTlhOy7Pyj/jLD7piVmoScigD0+AX
-	P9awnPXMaRCFGdeclK86ix04F40SzktbbMkZUb93XtQdY1PqDhJCPhEHr/9nH6j9fqp+XBjVRH3
-	HFwxQXiOw7yNVrlFNe+HuMZvUrUWe0Esxq6au
-X-Google-Smtp-Source: AGHT+IH5Y8G4M+psLtl5ozUOu2RjeWfSvT5C53fM4Wva+peYjIwy6mOS42gzLlAZlpmBSbzeIubfKTtWZadUROXeA8I=
-X-Received: by 2002:a81:a103:0:b0:607:c8fe:c4c3 with SMTP id
- y3-20020a81a103000000b00607c8fec4c3mr3441262ywg.30.1708035592344; Thu, 15 Feb
- 2024 14:19:52 -0800 (PST)
+	s=arc-20240116; t=1708037331; c=relaxed/simple;
+	bh=O2YipuwbWV1YLastP336dH3q8Zkm6CgW4TI5yh0PFMM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=WHPx1FoG366V3821XzheezXPF93ie1i6xihgrFVwPi0kY62swn8u3dJeY5PezE89l+r3JVhCHEGkR57JUyQ7Ypsvlm8nGqCbFFY/Jrcz9fqf68jztXQB6NpnVpjVKiidcqjxFwlc0BdUXD8G4uMRJwQZ4Lirtx4hd1JASR1spvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=DARco0iC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B9DAC433C7;
+	Thu, 15 Feb 2024 22:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1708037331;
+	bh=O2YipuwbWV1YLastP336dH3q8Zkm6CgW4TI5yh0PFMM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DARco0iCdfuae92XExh7ksU1jOCySljoFJvUjTDn6qsullpN+UZD19SQnJFqhMYAZ
+	 oOm+fymLMFt8D+F9JZKcJYJsu3fAkB0Xfg6t5w4Y8bHGlrMdP//45q1dE8IjOYoDXb
+	 P21Fkvnul+Og6eWw2GUVO+Duw3g99sqJQjsFXikQ=
+Date: Thu, 15 Feb 2024 14:48:49 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>, David Hildenbrand
+ <david@redhat.com>, Barry Song <21cnbao@gmail.com>, John Hubbard
+ <jhubbard@nvidia.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: Re: [PATCH v2] mm/filemap: Allow arch to request folio size for
+ exec memory
+Message-Id: <20240215144849.aba06863acc08b8ded09a187@linux-foundation.org>
+In-Reply-To: <20240215154059.2863126-1-ryan.roberts@arm.com>
+References: <20240215154059.2863126-1-ryan.roberts@arm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240215182756.3448972-1-lokeshgidra@google.com> <20240215182756.3448972-4-lokeshgidra@google.com>
-In-Reply-To: <20240215182756.3448972-4-lokeshgidra@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 15 Feb 2024 14:19:41 -0800
-Message-ID: <CAJuCfpFe2spt082fdB99ow+pqGj+DKnep6cHxoVYRVYgyO9uhg@mail.gmail.com>
-Subject: Re: [PATCH v7 3/4] mm: add vma_assert_locked() for !CONFIG_PER_VMA_LOCK
-To: Lokesh Gidra <lokeshgidra@google.com>
-Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, 
-	kernel-team@android.com, aarcange@redhat.com, peterx@redhat.com, 
-	david@redhat.com, axelrasmussen@google.com, bgeffon@google.com, 
-	willy@infradead.org, jannh@google.com, kaleshsingh@google.com, 
-	ngeoffray@google.com, timmurray@google.com, rppt@kernel.org, 
-	Liam.Howlett@oracle.com, ryan.roberts@arm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 15, 2024 at 10:28=E2=80=AFAM Lokesh Gidra <lokeshgidra@google.c=
-om> wrote:
->
-> vma_assert_locked() is needed to replace mmap_assert_locked() once we
-> start using per-vma locks in userfaultfd operations.
->
-> In !CONFIG_PER_VMA_LOCK case when mm is locked, it implies that the
-> given VMA is locked.
+On Thu, 15 Feb 2024 15:40:59 +0000 Ryan Roberts <ryan.roberts@arm.com> wrote:
 
-Yes, makes sense. With per-vma locks used in more places, this makes
-replacing mmap_assert_locked() with vma_assert_locked() very
-straight-forward.
+> Change the readahead config so that if it is being requested for an
+> executable mapping, do a synchronous read of an arch-specified size in a
+> naturally aligned manner.
 
->
-> Signed-off-by: Lokesh Gidra <lokeshgidra@google.com>
+Some nits:
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -1115,6 +1115,18 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+>   */
+>  #define arch_wants_old_prefaulted_pte	cpu_has_hw_af
+> 
+> +/*
+> + * Request exec memory is read into pagecache in at least 64K folios. The
+> + * trade-off here is performance improvement due to storing translations more
+> + * effciently in the iTLB vs the potential for read amplification due to reading
 
-> ---
->  include/linux/mm.h | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 3c85634b186c..5ece3ad34ef8 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -781,6 +781,11 @@ static inline struct vm_area_struct *lock_vma_under_=
-rcu(struct mm_struct *mm,
->         return NULL;
->  }
->
-> +static inline void vma_assert_locked(struct vm_area_struct *vma)
-> +{
-> +       mmap_assert_locked(vma->vm_mm);
-> +}
+"efficiently"
+
+> + * data from disk that won't be used. The latter is independent of base page
+> + * size, so we set a page-size independent block size of 64K. This size can be
+> + * contpte-mapped when 4K base pages are in use (16 pages into 1 iTLB entry),
+> + * and HPA can coalesce it (4 pages into 1 TLB entry) when 16K base pages are in
+> + * use.
+> + */
+> +#define arch_wants_exec_folio_order() ilog2(SZ_64K >> PAGE_SHIFT)
 > +
->  static inline void release_fault_lock(struct vm_fault *vmf)
+
+To my eye, "arch_wants_foo" and "arch_want_foo" are booleans.  Either
+this arch wants a particular treatment or it does not want it.
+
+I suggest a better name would be "arch_exec_folio_order".
+
+>  static inline bool pud_sect_supported(void)
 >  {
->         mmap_read_unlock(vmf->vma->vm_mm);
-> --
-> 2.43.0.687.g38aa6559b0-goog
->
+>  	return PAGE_SIZE == SZ_4K;
+> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+> index aab227e12493..6cdd145cbbb9 100644
+> --- a/include/linux/pgtable.h
+> +++ b/include/linux/pgtable.h
+> @@ -407,6 +407,18 @@ static inline bool arch_has_hw_pte_young(void)
+>  }
+>  #endif
+> 
+> +#ifndef arch_wants_exec_folio_order
+> +/*
+> + * Returns preferred minimum folio order for executable file-backed memory. Must
+> + * be in range [0, PMD_ORDER]. Negative value implies that the HW has no
+> + * preference and mm will not special-case executable memory in the pagecache.
+> + */
+
+I think this comment contains material which would be useful above the
+other arch_wants_exec_folio_order() implementation - the "must be in
+range" part.  So I suggest all this material be incorporated into a
+single comment which describes arch_wants_exec_folio_order().  Then
+this comment can be removed entirely.  Assume the reader knows to go
+seek the other definition for the commentary.
+
+> +static inline int arch_wants_exec_folio_order(void)
+> +{
+> +	return -1;
+> +}
+> +#endif
+> +
+>  #ifndef arch_check_zapped_pte
+>  static inline void arch_check_zapped_pte(struct vm_area_struct *vma,
+>  					 pte_t pte)
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 142864338ca4..7954274de11c 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3118,6 +3118,25 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+>  	}
+>  #endif
+> 
+> +	/*
+> +	 * Allow arch to request a preferred minimum folio order for executable
+> +	 * memory. This can often be beneficial to performance if (e.g.) arm64
+> +	 * can contpte-map the folio. Executable memory rarely benefits from
+> +	 * read-ahead anyway, due to its random access nature.
+
+"readahead"
+
+> +	 */
+> +	if (vm_flags & VM_EXEC) {
+> +		int order = arch_wants_exec_folio_order();
+> +
+> +		if (order >= 0) {
+> +			fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+> +			ra->size = 1UL << order;
+> +			ra->async_size = 0;
+> +			ractl._index &= ~((unsigned long)ra->size - 1);
+> +			page_cache_ra_order(&ractl, ra, order);
+> +			return fpin;
+> +		}
+> +	}
+> +
+>  	/* If we don't want any read-ahead, don't bother */
+>  	if (vm_flags & VM_RAND_READ)
+>  		return fpin;
+
 
