@@ -1,172 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-11712-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D804F85660F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 15:34:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5453285662E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 15:43:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BC381F26008
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 14:34:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 875521C23328
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Feb 2024 14:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BC4132C28;
-	Thu, 15 Feb 2024 14:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E378132489;
+	Thu, 15 Feb 2024 14:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="mFnMCnWW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98785132466;
-	Thu, 15 Feb 2024 14:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EDC37156;
+	Thu, 15 Feb 2024 14:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708007637; cv=none; b=aKTezvMF3FbS4xkqqJdmWW+7fyvZwN76S8UwyouQXs5g5uxoDRNcm1tf50S5xkxMnjo35SWRzw9bJqYUbOI0kYZ/I+Qmip9hF6bqULrXY93IoxrIrFAx5fqC9xBMkRXxe75pRlQspnFrEIGp1kQmva0WIkuDj98fwnZwivPse5s=
+	t=1708008226; cv=none; b=F9YS7W2MWRB6oJttrQp567zlyIU/7pMQWEgzMSZ0PnBKOXOC7KoWecjSKr23FLQ5fB4OlaQYs1hXXoKHAINq9EsqlRyh5Si65yYC+Ujcw8TUVveg9T2+mJKGc3bMeSYPOarMkkry9qsGRpv0alOdlQOZz5gLqy9E9YwPNIvvxXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708007637; c=relaxed/simple;
-	bh=JjG8FYokVUNHfzEnKKz3D+XcAp7il/pNBEJYDLFwHK0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DR0bTkNmioWNsQ690tanQdWZsDETZurpjS1unnkrGoEGWrIDq9pAZaCMKJ1rQyRXv/wFuIlFi3Z2Do8Myj8zU2duxiWadQLnD2CaEtStag5zdHEpGvXSupP5inJdIFvO3s2Kbrh3Pfjgcz8+WSGAKh2STiHvxY3WDvWr5GuFkIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav413.sakura.ne.jp (fsav413.sakura.ne.jp [133.242.250.112])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 41FEXX5I090129;
-	Thu, 15 Feb 2024 23:33:33 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav413.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp);
- Thu, 15 Feb 2024 23:33:33 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav413.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 41FEXWSX090118
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 15 Feb 2024 23:33:33 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <76bcd199-6c14-484f-8d4d-5a9c4a07ff7b@I-love.SAKURA.ne.jp>
-Date: Thu, 15 Feb 2024 23:33:32 +0900
+	s=arc-20240116; t=1708008226; c=relaxed/simple;
+	bh=ln3eEO71W6a/HB4BpqVFvAzjOL06V7sQyyqCuiIm4o8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e4+tHHMsOm3J5P1+tOWwC9s0mF0mWQwuWQJCSFflk5uADX/lFuotGV1hPSR2MC+VxpoXkdbkl6Hs/ggq5erFIaVak/bukIoITRbqanMHI1mAaEnyfJIYO3T+VOhno22nMdqhg6Bbq6qaqzxObk2fD8eOzg0r1AJ7VDtPgXAxgBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=mFnMCnWW; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1708008217;
+	bh=ln3eEO71W6a/HB4BpqVFvAzjOL06V7sQyyqCuiIm4o8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mFnMCnWWSY/oz3cfgAglZzFkfce2dfZOYQ36NDRHuc70+Pbjjz2mWVQ6nWjD+rPZ1
+	 WnE4nMw6J5orU72fJQAg/GCstx2ZUapfZLe/PMqhyMNtmgHWX0clQFg34C+3CaNZyU
+	 1ly9rs6uD/lKyBlOHw6VZLJ05n39hjoOnRBll8RamfKOswbZWOhR28yN9vBd3pb8Vj
+	 hAoDrvplCH3rEk/qakzkdJgoqBMHOgnUMi8nxxYB9SB4+g81R+ABljrhLqNo17Tk/K
+	 wyk1n6kXqRHB/uXMNwYIuDE3W3Aj7ZZxG3nVplBs4j48GYzaE1PzLbw2SKxoFY1M/z
+	 YKY+fj3hAQcJQ==
+Received: from thinkos.internal.efficios.com (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4TbHqs08r0zZD5;
+	Thu, 15 Feb 2024 09:43:37 -0500 (EST)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To: Dan Williams <dan.j.williams@intel.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dave Chinner <david@fromorbit.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Fan Ni <fan.ni@samsung.com>,
+	Alasdair Kergon <agk@redhat.com>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Russell King <linux@armlinux.org.uk>,
+	linux-arch@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-xfs@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	nvdimm@lists.linux.dev
+Subject: [PATCH v2] nvdimm/pmem: Fix leak on dax_add_host() failure
+Date: Thu, 15 Feb 2024 09:43:24 -0500
+Message-Id: <20240215144324.95436-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] LSM: add security_execve_abort() hook
-Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>, Eric Biederman <ebiederm@xmission.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>, Serge Hallyn <serge@hallyn.com>
-References: <894cc57c-d298-4b60-a67d-42c1a92d0b92@I-love.SAKURA.ne.jp>
- <ab82c3ffce9195b4ebc1a2de874fdfc1@paul-moore.com>
- <1138640a-162b-4ba0-ac40-69e039884034@I-love.SAKURA.ne.jp>
- <202402070631.7B39C4E8@keescook>
- <CAHC9VhS1yHyzA-JuDLBQjyyZyh=sG3LxsQxB9T7janZH6sqwqw@mail.gmail.com>
- <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHC9VhTTj9U-wLLqrHN5xHp8UbYyWfu6nTXuyk8EVcYR7GB6=Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024/02/15 6:46, Paul Moore wrote:
->> To quickly summarize, there are two paths forward that I believe are
->> acceptable from a LSM perspective, pick either one and send me an
->> updated patchset.
->>
->> 1. Rename the hook to security_bprm_free() and update the LSM hook
->> description as I mentioned earlier in this thread.
->>
->> 2. Rename the hook to security_execve_revert(), move it into the
->> execve related functions, and update the LSM hook description to
->> reflect that this hook is for reverting execve related changes to the
->> current task's internal LSM state beyond what is possible via the
->> credential hooks.
-> 
-> Hi Tetsuo, I just wanted to check on this and see if you've been able
-> to make any progress?
-> 
+Fix a leak on dax_add_host() error, where "goto out_cleanup_dax" is done
+before setting pmem->dax_dev, which therefore issues the two following
+calls on NULL pointers:
 
-I'm fine with either approach. Just worrying that someone doesn't like
-overhead of unconditionally calling security_bprm_free() hook.
-If everyone is fine with below one, I'll post v4 patchset.
+out_cleanup_dax:
+        kill_dax(pmem->dax_dev);
+        put_dax(pmem->dax_dev);
 
- fs/exec.c                     |    1 +
- include/linux/lsm_hook_defs.h |    1 +
- include/linux/security.h      |    5 +++++
- security/security.c           |   12 ++++++++++++
- 4 files changed, 19 insertions(+)
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+Reviewed-by: Fan Ni <fan.ni@samsung.com>
+Cc: Alasdair Kergon <agk@redhat.com>
+Cc: Mike Snitzer <snitzer@kernel.org>
+Cc: Mikulas Patocka <mpatocka@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: linux-arch@vger.kernel.org
+Cc: linux-cxl@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-xfs@vger.kernel.org
+Cc: dm-devel@lists.linux.dev
+Cc: nvdimm@lists.linux.dev
+---
+Changes since v1:
+- Add Reviewed-by tags.
+---
+ drivers/nvdimm/pmem.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index af4fbb61cd53..cbee988445c6 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1530,6 +1530,7 @@ static void free_bprm(struct linux_binprm *bprm)
- 		kfree(bprm->interp);
- 	kfree(bprm->fdpath);
- 	kfree(bprm);
-+	security_bprm_free();
- }
- 
- static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int flags)
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index 76458b6d53da..0ef298231de2 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -54,6 +54,7 @@ LSM_HOOK(int, 0, bprm_creds_from_file, struct linux_binprm *bprm, const struct f
- LSM_HOOK(int, 0, bprm_check_security, struct linux_binprm *bprm)
- LSM_HOOK(void, LSM_RET_VOID, bprm_committing_creds, const struct linux_binprm *bprm)
- LSM_HOOK(void, LSM_RET_VOID, bprm_committed_creds, const struct linux_binprm *bprm)
-+LSM_HOOK(void, LSM_RET_VOID, bprm_free, void)
- LSM_HOOK(int, 0, fs_context_submount, struct fs_context *fc, struct super_block *reference)
- LSM_HOOK(int, 0, fs_context_dup, struct fs_context *fc,
- 	 struct fs_context *src_sc)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index d0eb20f90b26..b12d20071a8f 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -299,6 +299,7 @@ int security_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *
- int security_bprm_check(struct linux_binprm *bprm);
- void security_bprm_committing_creds(const struct linux_binprm *bprm);
- void security_bprm_committed_creds(const struct linux_binprm *bprm);
-+void security_bprm_free(void);
- int security_fs_context_submount(struct fs_context *fc, struct super_block *reference);
- int security_fs_context_dup(struct fs_context *fc, struct fs_context *src_fc);
- int security_fs_context_parse_param(struct fs_context *fc, struct fs_parameter *param);
-@@ -648,6 +649,10 @@ static inline void security_bprm_committed_creds(const struct linux_binprm *bprm
- {
- }
- 
-+static inline void security_bprm_free(void)
-+{
-+}
-+
- static inline int security_fs_context_submount(struct fs_context *fc,
- 					   struct super_block *reference)
- {
-diff --git a/security/security.c b/security/security.c
-index 3aaad75c9ce8..ba2f480b2bdb 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1223,6 +1223,18 @@ void security_bprm_committed_creds(const struct linux_binprm *bprm)
- 	call_void_hook(bprm_committed_creds, bprm);
- }
- 
-+/**
-+ * security_bprm_free() - Notify of completion of an exec()
-+ *
-+ * This hook is called when a linux_bprm instance is being destroyed, after
-+ * the bprm creds have been released, and is intended to cleanup any internal
-+ * LSM state associated with the linux_bprm instance.
-+ */
-+void security_bprm_free(void)
-+{
-+	call_void_hook(bprm_free);
-+}
-+
- /**
-  * security_fs_context_submount() - Initialise fc->security
-  * @fc: new filesystem context
+diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+index 4e8fdcb3f1c8..9fe358090720 100644
+--- a/drivers/nvdimm/pmem.c
++++ b/drivers/nvdimm/pmem.c
+@@ -566,12 +566,11 @@ static int pmem_attach_disk(struct device *dev,
+ 	set_dax_nomc(dax_dev);
+ 	if (is_nvdimm_sync(nd_region))
+ 		set_dax_synchronous(dax_dev);
++	pmem->dax_dev = dax_dev;
+ 	rc = dax_add_host(dax_dev, disk);
+ 	if (rc)
+ 		goto out_cleanup_dax;
+ 	dax_write_cache(dax_dev, nvdimm_has_cache(nd_region));
+-	pmem->dax_dev = dax_dev;
+-
+ 	rc = device_add_disk(dev, disk, pmem_attribute_groups);
+ 	if (rc)
+ 		goto out_remove_host;
+-- 
+2.39.2
 
 
