@@ -1,118 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-11812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11813-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD13857564
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 05:43:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F3085756E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 05:59:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A6D28504D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 04:43:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D8D8B22DC4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 04:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5058312E78;
-	Fri, 16 Feb 2024 04:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QBYbynhN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00F312E6D;
+	Fri, 16 Feb 2024 04:59:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69A210A14
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 04:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291D4125C7
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 04:59:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708058620; cv=none; b=LweRAdiwWd3y2QEDA/GB+U3dqZ5CAL6CKHCx2p7WcTrIxGqxuzrrI22ZLIdhvymwMs4/xTa58/G9y1TPzwdGt4D6Ru0/WPT8MTUUMrQz2Rct0t6m4FQGu8IXNK3LpKs/MzxyceZkL1FEW2GVXl54nFOUjmWKt/prynOMXNw/yTQ=
+	t=1708059545; cv=none; b=cZbMRuJGPIMKyih2P4BjB0WAiPrf0caHMwAScvA93COmkbJy7+HWcGki33jD8LU/Ue8/+pyf23Q3r4SGi79LvVbO/6YZZ4lJza5cpF3vydbW7Y1GImO24UZkYjR68UpdBMj0sZDxqQeRPG7b6odQD3kNdcYnZT9+6AuLeC9f+zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708058620; c=relaxed/simple;
-	bh=waeuX8RtjIW86KprZNCOqRp/iiUFgtT5YVoezffu7hk=;
-	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
-	 From:To:Cc:Subject:References:In-Reply-To; b=MtkhLd6iZ374okYUBp9zk0y2wRUJcqeST+3Ny03KU3pxpu34UCOpdilT6qEAqKS2dZT1zI6YFv5nvi/Lm1H+scPlpN+HAz48zL44r99jSg6258EwQo+XJfNfh2T6ibwsqQrXausz2N+QHGzu/+LjPWIVVM4o1vkhSX1yJZHKAzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QBYbynhN; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-68f2a6fdeffso4893436d6.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 20:43:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1708058617; x=1708663417; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hzH2XjdwcrudKK0By8Y9Nwkfc0y204g7SCh9Xtz36uI=;
-        b=QBYbynhNm8tm4vtdLyIvMt4Z2Zw06EGImgeGy0UxZw8I8v3PH1UoZU15fXXsza7pr3
-         0DiSaO4AgoLH864p9y6EK/IUAzWOkbDxO1zpB0L6ZlRLiTFvRe3/ZAGMR4NT3r2KSvUT
-         DuUYIK3JZ6eYl3E6XGDdycU8Mvi8ClRnqREG/QRHmW/PtTw91XI3RmZPnajFuGUcTFlZ
-         /Z9ogEJgRdSq8/YY1IA/W+QhWM890BLLr1IUSou+ADEvV+tq4Cc8fW600rXRkiRlhQv4
-         uDXs6dgWvdheOELMLWtwzXTmzysYMq5aQT9or6Aq/Ap74n22SX8wBxDlI5DpsM8/4Faq
-         b5Xg==
+	s=arc-20240116; t=1708059545; c=relaxed/simple;
+	bh=+AGLJ+h6ksQ1LMrUfaPJw1kfoY13+VERfmtwUV0/xm8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ax76+92K44iu+M/+pobI8GqHCd8+yVPDmrPW4DGfYF/4wSC+eSq+rQNpaCGrIE43yN/JNQNdGz7aHw/MUIoWzv570mCtoYOyNDKiFrJyN1F6SqeNZkY+Grmlpzzwwtp/1lNQisyilL0wnt8NJLRPbySmVZPIBd/Mis1bNXDLH4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-36414a7850aso15879805ab.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 20:59:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708058617; x=1708663417;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :content-disposition:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hzH2XjdwcrudKK0By8Y9Nwkfc0y204g7SCh9Xtz36uI=;
-        b=UgQE+7rUM8z3R6OxCoUpL2721CAvdMN4dmdV0QM/MW9m+DpGo55Z4+aNQ5o/5LWizW
-         E1Ge8IbSKv7Hr4KmB32Fv07aGmzcL+PlHDAJiPxPFkDbC05m9kT+gy2wgfn8VaHqL+GV
-         cW3zQi+oxj368pq9n1yWnVpwA+8lVKTJgSw4yhbP4W5Kt3ow693TRjuSSM22CfKKWTnK
-         zQ3g3A2W28+a5h5ynRdYXqhsVfTaLbIo2q1gnaYdAQtMmK9YX/zEIbpZ1oW5Xo+2SgwG
-         d4CUFmfjhC/MZIXKzm+swU92g8hEEVsMGicP1WM4xONBCpTbp2/R7ATyU9EKLWXI/B0J
-         38tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLUUdZQ7UvaNnFy0v+Gztsb4aZUkbmEnuBww0xrkZ5HCtimNtHFBKhE8ESHoJheHAtKp72U8dooNT2cioHTJfdBTOu9McA0eBvQM5crA==
-X-Gm-Message-State: AOJu0YznTVjUGO8P5+Cbdr+aCOy2U+IcpYBrhnBZh/MSdAy25D+egiQR
-	yQqjuxAYBAqmvW1chwBmY4fyoWsoFclrJTFswVSVdbTG1qariQjOB+jWHz9OJA==
-X-Google-Smtp-Source: AGHT+IH4Re2re96Bj4x8lZKg32bzmDSpm8k6SPGJJSdEF1RKaSe7UJnZBT4cDAJ/C8/g+lnnFGrBLg==
-X-Received: by 2002:a05:6214:23ce:b0:68d:129e:f5c1 with SMTP id hr14-20020a05621423ce00b0068d129ef5c1mr4407697qvb.45.1708058617658;
-        Thu, 15 Feb 2024 20:43:37 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id og8-20020a056214428800b0068c4b445991sm1367791qvb.67.2024.02.15.20.43.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Feb 2024 20:43:37 -0800 (PST)
-Date: Thu, 15 Feb 2024 23:43:36 -0500
-Message-ID: <2cdfefc8661d0a82c28250fc22a93a47@paul-moore.com>
+        d=1e100.net; s=20230601; t=1708059543; x=1708664343;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JculTRychqwIzbiVTR2hbbWMlo9K2vSRcy7NOSpjdFc=;
+        b=A8EusJEXVbN2bLZzy0JpO5FZRposfWRTHs1r+UbUuO4nK1bqc3OJeoTGciwB43Xsky
+         Uwtbn3vHu1og7bpKzMFSm5U7qba/JaisqzmMHWup0k7UhgN1PwBk656VRav/3w0y9cFk
+         4JHcY7CTsU2VnQTgLQ9wXRluYIjpBTjyCnelRudUfqiCjKbuq4bnEP7raq9NsMPPkLxD
+         NXEO2Dh9lMbmA6fd+F9+iYVEmTcm/FIx6WQeIMgJ02vmh3njl7AwxXsEjXZ1zEvhoVM/
+         cFa6OtxgYmWVz7rjsTCF+wweBgmA3uur5BulAz1mKKIsPIJ9gTQtuGlRkJt+F1pW3f3y
+         hpdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJl/K7zbqIw0Cc3NymwO6h2SLYKYuk7o6mgBvJkTqzjM8/VXYQOh/3yYDz7wQBemwJxqpkLQha14JvD/hRJlbq3iKWG+LSxVoRZszSLQ==
+X-Gm-Message-State: AOJu0YyggMwDnuQ2cg6mr1OUHQcy/o/iQ1MJsWxffEyb7A3VOJM6a1GQ
+	rzT8ka/PINkjLl7btjRP84sCKye3xR2Uvcaj8oh+bujxEinttc/YVHyf74GTpcSMEwFQMxzVWfo
+	7H2XQMJl2oy6HHYlJwN5bMeaWO1iO4F08KEHMFFvESFp3ZjXe0QW33KY=
+X-Google-Smtp-Source: AGHT+IG8V/bytoc11b1/xnBwTe9cwikfexDe7rGUBOXKjOIuOWeIt138WrdbT0Z2LLvL3fWDIHkULxgTTGnYyB59KvUPbLFgzdS4
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=utf-8 
-Content-Disposition: inline 
-Content-Transfer-Encoding: 8bit
-From: Paul Moore <paul@paul-moore.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, kolga@netapp.com, Dai.Ngo@oracle.com, tom@talpey.com, jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org, stephen.smalley.work@gmail.com, omosnace@redhat.com, casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, keyrings@vger.kernel.org, selinux@vger.kernel.org, linux-kselftest@vger.kernel.org, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v10 0/25] security: Move IMA and EVM to the LSM
- infrastructure
-References: <20240215103113.2369171-1-roberto.sassu@huaweicloud.com>
-In-Reply-To: <20240215103113.2369171-1-roberto.sassu@huaweicloud.com>
+MIME-Version: 1.0
+X-Received: by 2002:a92:c568:0:b0:363:8b04:6df7 with SMTP id
+ b8-20020a92c568000000b003638b046df7mr297584ilj.0.1708059543346; Thu, 15 Feb
+ 2024 20:59:03 -0800 (PST)
+Date: Thu, 15 Feb 2024 20:59:03 -0800
+In-Reply-To: <00000000000096592405e5dcaa9f@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000005626e80611789a1b@google.com>
+Subject: Re: [syzbot] [exfat?] [ntfs3?] INFO: task hung in __generic_file_fsync
+ (3)
+From: syzbot <syzbot+ed920a72fd23eb735158@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, axboe@kernel.dk, 
+	brauner@kernel.org, david@fromorbit.com, fgheet255t@gmail.com, 
+	hdanton@sina.com, jack@suse.cz, linkinjeon@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ntfs3@lists.linux.dev, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-On Feb 15, 2024 Roberto Sassu <roberto.sassu@huaweicloud.com> wrote:
-> 
-> IMA and EVM are not effectively LSMs, especially due to the fact that in
-> the past they could not provide a security blob while there is another LSM
-> active.
-> 
-> That changed in the recent years, the LSM stacking feature now makes it
-> possible to stack together multiple LSMs, and allows them to provide a
-> security blob for most kernel objects. While the LSM stacking feature has
-> some limitations being worked out, it is already suitable to make IMA and
-> EVM as LSMs.
-> 
-> The main purpose of this patch set is to remove IMA and EVM function calls,
-> hardcoded in the LSM infrastructure and other places in the kernel, and to
-> register them as LSM hook implementations, so that those functions are
-> called by the LSM infrastructure like other regular LSMs.
+syzbot suspects this issue was fixed by commit:
 
-As discussed earlier, I've just merged this into the lsm/dev tree; a big
-thank you to Roberto for working on this and to all helped along the way
-with reviews, testing, etc.  I've wanted to see IMA/EVM integrated as
-proper LSMs for a while and I'm very happy to finally see it happening.
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-Mimi, Roberto, I'm going to hold off on merging anything into the lsm/dev
-tree for a few days in case you decide you would prefer to take these
-patches yourselves.  If I don't hear anything from the two of you, I'll
-plan to send these to Linus during the next merge window.
+    fs: Block writes to mounted block devices
 
---
-paul-moore.com
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=131679fc180000
+start commit:   200e340f2196 Merge tag 'pull-work.dcache' of git://git.ker..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a3f4d6985d3164cd
+dashboard link: https://syzkaller.appspot.com/bug?extid=ed920a72fd23eb735158
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15dd033e080000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16dbfa46080000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
