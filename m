@@ -1,103 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-11838-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11839-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A46198579B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 11:01:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0838579E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 11:06:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B0C31F24736
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 10:01:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23CED286E34
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 10:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB011CA88;
-	Fri, 16 Feb 2024 09:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB5A1C69D;
+	Fri, 16 Feb 2024 10:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XJ3gdO8x";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eRAqEXl6";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XJ3gdO8x";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eRAqEXl6"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="u7RYAcMw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CB31B812;
-	Fri, 16 Feb 2024 09:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA021BF3F;
+	Fri, 16 Feb 2024 10:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708077538; cv=none; b=rtEwwqsDeswZsomUv9DrJnDAN6u7hv56KcDHEux7py8AZKwJVBGX2x0hFsbXV+skOrsXTiBv5Tkw53mMkofSjh424L/8jj0uPX5aZsEG9J4KfxYU5xfQgnVgosZyzwuY9oBskkQd3lRhLX9/GHPqCnHX2s+ZJ6wQCRFx+MxlR8g=
+	t=1708077997; cv=none; b=SfGO3BeLNUDq7Qv0gVuVAqvinC9c+eu9KJM/XTv3lsK1//uDRRSPaNAvTJ1qWlD00zt0b4POJLZ68HyQUNz04yj/1nta4kA48HoW4qVuEEuuKHjEeLJLF8EkoIBbrrZUv6ltBdc0zIC+nLm7WGpnInac0A3zb3aKq5pn7zMXCkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708077538; c=relaxed/simple;
-	bh=dISV4Bpjf+vg1Qohm9s3s5/Blp3tV56jKsaOnn9rR3s=;
+	s=arc-20240116; t=1708077997; c=relaxed/simple;
+	bh=qalaB5YcsuNePVX7yX2RMrC8XWaEwwf8H40aPA0BNDE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=haPzwssK4f6VUy4YP7DoPPDha2PGHOPpzBTfSGClDhiUSEfyaDNCpmgK0Sd4mZvttIUM9562MHcvQf+muWR3x7szmftML9xYjGrdS/tK6nNvs7Fd/Gnq5TN/B4nbc2Oe49gujlPRxzh18wB+0D+4RpV+tjVCHk1mbRoT26bd3b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XJ3gdO8x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eRAqEXl6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XJ3gdO8x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eRAqEXl6; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	 Content-Type:Content-Disposition:In-Reply-To; b=rvbLhRL55r0rI2uAPoaa8DEvocoOnFg75iy83z2iUD9lsMmPYYo0FT2FLnoZe+3m3DcV7qUSaFpxDh/syqehqeh+9cuDVc9GzBUtcWddkw1VW3RurSEYLreMpkWd2ys9M5fSNBJ/7aOXS+VGNDP7UoRxItWCNmhJHNaBCp2ltE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=u7RYAcMw; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0F03322060;
-	Fri, 16 Feb 2024 09:58:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1708077533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4TbndZ0N6tz9snk;
+	Fri, 16 Feb 2024 11:06:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1708077986;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=dT0rk885hi+AHcX8Qg062FXAV5FIIm3x22shuB55fZs=;
-	b=XJ3gdO8xIkZI9heyAh6F89zUzNz7tJeBcnQd7R+D0ZeW3iN60i/wQyy+ZVKMUCPSjdUIF/
-	umoJ+UP9IxBbWu7/2lDndpaG4Ac3+zRRq132ppoXVqTUBNtTmHjCPkcSD5YTxeJ2+UlAqo
-	7zGphWOsG/fDf5hhTSv9ST9e9YyjGqk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1708077533;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dT0rk885hi+AHcX8Qg062FXAV5FIIm3x22shuB55fZs=;
-	b=eRAqEXl67zVmje1ov7/53MTKGU3LQHi2ypqyLaO3t3GlE8JDA+LDgf38lRhm4obU1vGJSf
-	UuAP8kD6bANhbsDg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1708077533; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dT0rk885hi+AHcX8Qg062FXAV5FIIm3x22shuB55fZs=;
-	b=XJ3gdO8xIkZI9heyAh6F89zUzNz7tJeBcnQd7R+D0ZeW3iN60i/wQyy+ZVKMUCPSjdUIF/
-	umoJ+UP9IxBbWu7/2lDndpaG4Ac3+zRRq132ppoXVqTUBNtTmHjCPkcSD5YTxeJ2+UlAqo
-	7zGphWOsG/fDf5hhTSv9ST9e9YyjGqk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1708077533;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dT0rk885hi+AHcX8Qg062FXAV5FIIm3x22shuB55fZs=;
-	b=eRAqEXl67zVmje1ov7/53MTKGU3LQHi2ypqyLaO3t3GlE8JDA+LDgf38lRhm4obU1vGJSf
-	UuAP8kD6bANhbsDg==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 0471013421;
-	Fri, 16 Feb 2024 09:58:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id qYASAd0xz2VHAgAAn2gu4w
-	(envelope-from <jack@suse.cz>); Fri, 16 Feb 2024 09:58:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B1E3FA0807; Fri, 16 Feb 2024 10:58:48 +0100 (CET)
-Date: Fri, 16 Feb 2024 10:58:48 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+ed920a72fd23eb735158@syzkaller.appspotmail.com>
-Cc: almaz.alexandrovich@paragon-software.com, axboe@kernel.dk,
-	brauner@kernel.org, david@fromorbit.com, fgheet255t@gmail.com,
-	hdanton@sina.com, jack@suse.cz, linkinjeon@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ntfs3@lists.linux.dev, sj1557.seo@samsung.com,
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [exfat?] [ntfs3?] INFO: task hung in
- __generic_file_fsync (3)
-Message-ID: <20240216095848.bufsxoaarnkdlmcb@quack3>
-References: <00000000000096592405e5dcaa9f@google.com>
- <0000000000005626e80611789a1b@google.com>
+	bh=qQCyd4+RAcgA/+yjcYQaov3P2x0z6l0myi/TdMlnugk=;
+	b=u7RYAcMwMqlhw5zr5alamnS4sLimwlabotnFFKAHV8A+2O03mKdQq4oIOC3ETVYPrh86Vn
+	2hA0XKH/bp0takB2EwV1l1+5w3scKiB6LQHdSRMpvgo2xrtBUcprCKYYEGyELVqFJ/Gkmi
+	pAhNUBVorXF18ltMbFmUEYHkVMPYLSHEuIFICGYm9udRgqjmDUSZ0pKxzXPONsny67XcMh
+	TfMI3GWVSMS60ODyuS/mrdbD6I17s1VJFcuApk0fSpB4IK+VwczFuY/PzjOMcP/Ih+AnMp
+	HAnj71mnz4vp5IxANH6iKU+ItyJydsjxkMLT0exQ+fPHouHPDmslbm6uWjDmpQ==
+Date: Fri, 16 Feb 2024 11:06:20 +0100
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	David Hildenbrand <david@redhat.com>, Yang Shi <shy828301@gmail.com>, Yu Zhao <yuzhao@google.com>, 
+	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Zach O'Keefe <zokeefe@google.com>, Hugh Dickins <hughd@google.com>, 
+	Mcgrof Chamberlain <mcgrof@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, gost.dev@samsung.com
+Subject: Re: [PATCH v4 0/7] Split a folio to any lower order folios
+Message-ID: <dvamjmlss62p5pf4das7nu5q35ftf4jlk3viwzyyvzasv4qjns@h3omqs7ecstd>
+References: <20240213215520.1048625-1-zi.yan@sent.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,72 +70,68 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000005626e80611789a1b@google.com>
-X-Spam-Level: *
-X-Spamd-Bar: +
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XJ3gdO8x;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=eRAqEXl6
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [1.49 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	 TO_DN_SOME(0.00)[];
-	 R_RATELIMIT(0.00)[to_ip_from(RLxr3to48eg89ueqwmmq68679o)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.00)[36.96%];
-	 SUBJECT_HAS_QUESTION(0.00)[];
-	 ARC_NA(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com,sina.com];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=a3f4d6985d3164cd];
-	 TAGGED_RCPT(0.00)[ed920a72fd23eb735158];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[15];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,syzkaller.appspot.com:url,suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 FREEMAIL_CC(0.00)[paragon-software.com,kernel.dk,kernel.org,fromorbit.com,gmail.com,sina.com,suse.cz,vger.kernel.org,lists.linux.dev,samsung.com,googlegroups.com,zeniv.linux.org.uk];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Score: 1.49
-X-Rspamd-Queue-Id: 0F03322060
-X-Spam-Flag: NO
+In-Reply-To: <20240213215520.1048625-1-zi.yan@sent.com>
+X-Rspamd-Queue-Id: 4TbndZ0N6tz9snk
 
-On Thu 15-02-24 20:59:03, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
-> 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
-> 
->     fs: Block writes to mounted block devices
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=131679fc180000
-> start commit:   200e340f2196 Merge tag 'pull-work.dcache' of git://git.ker..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=a3f4d6985d3164cd
-> dashboard link: https://syzkaller.appspot.com/bug?extid=ed920a72fd23eb735158
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15dd033e080000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16dbfa46080000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
+Hi Zi Yan,
 
-Makes some sense and since there are no reproducers:
- 
-#syz fix: fs: Block writes to mounted block devices
+On Tue, Feb 13, 2024 at 04:55:13PM -0500, Zi Yan wrote:
+> From: Zi Yan <ziy@nvidia.com>
+> 
+> Hi all,
+> 
+> File folio supports any order and multi-size THP is upstreamed[1], so both
+> file and anonymous folios can be >0 order. Currently, split_huge_page()
+> only splits a huge page to order-0 pages, but splitting to orders higher than
+> 0 is going to better utilize large folios. In addition, Large Block
+> Sizes in XFS support would benefit from it[2]. This patchset adds support for
+> splitting a large folio to any lower order folios and uses it during file
+> folio truncate operations.
 
-									Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I added your patches on top of my patches, but removed patch 6 and I
+added this instead:
+
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 725b150e47ac..dd07e2e327a8 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -239,7 +239,8 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+                folio_invalidate(folio, offset, length);
+        if (!folio_test_large(folio))
+                return true;
+-       if (split_folio(folio) == 0)
++       if (split_folio_to_order(folio,
++                                mapping_min_folio_order(folio->mapping)) == 0)
+                return true;
+        if (folio_test_dirty(folio))
+                return false;
+
+I ran genric/476 fstest[1] with SOAK_DURATION set to 360 seconds. This
+test uses fstress to do a lot of writes, truncate operations, etc. I ran
+this on XFS with **64k block size on a 4k page size system**.
+
+I recorded the vm event for split page and this was the result I got:
+
+Before your patches:
+root@debian:~/xfstests# cat /proc/vmstat  | grep split
+thp_split_page 0
+thp_split_page_failed 5819
+
+After your patches:
+root@debian:~/xfstests# cat /proc/vmstat  | grep split
+thp_split_page 5846
+thp_split_page_failed 20
+
+Your patch series definitely helps with splitting the folios while still
+maintaining the min_folio_order that LBS requires.
+
+We are still discussing how to quantify this benefit in terms of some
+metric with this support. If you have some ideas here, let me know.
+
+I will run the whole xfstests tonight to check for any regressions.
+
+--
+Pankaj
+
+[1] https://github.com/kdave/xfstests/blob/master/tests/generic/476
 
