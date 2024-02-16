@@ -1,118 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-11787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A93857268
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 01:20:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B22857270
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 01:22:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A422A1C23A6E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12D691F21588
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC445256;
-	Fri, 16 Feb 2024 00:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B1A6110;
+	Fri, 16 Feb 2024 00:22:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C11C38F;
-	Fri, 16 Feb 2024 00:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9077441F;
+	Fri, 16 Feb 2024 00:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708042814; cv=none; b=MR1e8WcBea5SeFpZeIouZHgq+82aGYUKJPSkTeZJyoItsxINUECva8RI0Ym5ST02UG/8Uxnyi2okkLTUbucTvQKeDzTdbUtjd3cA63L1/yHG6aT2mAnX1VkYZINrtptfYEtMBZ6MdHqBdsspTeEnskqBcf9jAHUNisbZWBBjsAU=
+	t=1708042929; cv=none; b=FNve/a3ePMDAuMERCZCEf6omFHsb6UmdvIGMdALpIssm48VtgMmD7Znjgis32yaBm3GNW/o62cDOWHzBOfWXiv/65jduheMLY03JxVWLpTN/dojAH/Gq5+iwtlCklv/DCJ6KpzpTIVybynXc23SbcgTDknm3vgdEpvOhKoj7BFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708042814; c=relaxed/simple;
-	bh=GD1Wa7SHUnGt9gUDi+iC0B1+iivxZqph8uOCh9oMSdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A/MGmBanpdj7MoHYk33IxLyrSLNMbKdYdXZNbg1ss6gTa9cqkYr2rPu1Kclw3vsEPk03803+Vay3y6ZolMK2kO4/ZV+iEiH4FLg6uD/DoeBgasXt26+mMsRaYrYGpGFUVcM5FdwAeudh5vJYpvKTCWMDQ9JWMKZArzLWQOG3Pbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D7BAC433C7;
-	Fri, 16 Feb 2024 00:20:07 +0000 (UTC)
-Date: Thu, 15 Feb 2024 19:21:41 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan
- <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- akpm@linux-foundation.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
- mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
- liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
- peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
- david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
- nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
- rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
- yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
- hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
- ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
- ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, bsegall@google.com, bristot@redhat.com,
- vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
- iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
- elver@google.com, dvyukov@google.com, shakeelb@google.com,
- songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
- minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-arch@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
- cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in
- show_mem()
-Message-ID: <20240215192141.03421b85@gandalf.local.home>
-In-Reply-To: <jpmlfejxcmxa7vpsuyuzykahr6kz5vjb44ecrzfylw7z4un3g7@ia3judu4xkfp>
-References: <20240212213922.783301-1-surenb@google.com>
-	<20240212213922.783301-32-surenb@google.com>
-	<Zc3X8XlnrZmh2mgN@tiehlicka>
-	<CAJuCfpHc2ee_V6SGAc_31O_ikjGGNivhdSG+2XNcc9vVmzO-9g@mail.gmail.com>
-	<Zc4_i_ED6qjGDmhR@tiehlicka>
-	<CAJuCfpHq3N0h6dGieHxD6Au+qs=iKAifFrHAMxTsHTcDrOwSQA@mail.gmail.com>
-	<ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
-	<320cd134-b767-4f29-869b-d219793ba8a1@suse.cz>
-	<efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
-	<20240215180742.34470209@gandalf.local.home>
-	<jpmlfejxcmxa7vpsuyuzykahr6kz5vjb44ecrzfylw7z4un3g7@ia3judu4xkfp>
-X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1708042929; c=relaxed/simple;
+	bh=nalTQbTVfjoB4G4U4Iv0Pl38flllybjmyeKYUD9dEQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J08aN1UYGVP9vw0zEnpJaDxRWHFL5X9TYEAxdUZ4juewpyzN7hZEiGF0GCQ2zqDIKJ3nLCQUceLsZ93CaGbe5qFU1R/wBy6NS8/3FpXczuTM+t9DPMpd5WoEuwTCIUNev1ga20UILjpQdjvelWBUTDNe3bbBY4c/JIXYp6RvEsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6da9c834646so1359819b3a.3;
+        Thu, 15 Feb 2024 16:22:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708042927; x=1708647727;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nalTQbTVfjoB4G4U4Iv0Pl38flllybjmyeKYUD9dEQQ=;
+        b=a5JBg48A13UrWyz7PR70ysGGF+Mqb0LGsvgUHZewbE47EFBx4Z4PUfxRKx9u0EPO1N
+         q9MrM8vYxVwZHkbOIiIHaa9lCwUMwaH/InSHb9Z/QTvuOOvx9EzgOJZrL/qIwoiD+sEs
+         ZdoTQRU+rIgHxHPAvWPYqk2QDmtUbk9CN6yI+IUwzzkFEkaP+nB5YnpZqDWMo6pqiAWB
+         i6rh2XR8USxiR1FGobxqCWAQLB0dFld1EhcuhWn06S37aTtueQuMbEvT5Fg1PDQAy4bg
+         aVod7dxLv0iaFWXFHuBwHHLi6O9TX3YgQwYm9vcoRQ7L7qUuzADjaltUiL0ybsb0ImPh
+         Xibw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRopJd+0g80H0uohwndb/7g92xDKMZZehF4kS7Cn3QgncGU+AvwhLzvWjVRfWVUxVQ3ID33K2QjX9hstwUH77sZsPy2GwyGQZpDthRyTeQye7oL6JZrM3rinHBGNuGidDZivQMfP78t6qZ
+X-Gm-Message-State: AOJu0Ywm4HCSq1Toir4E5EN44rznE37n1IW3FLvTPjaKuzP5eawubu8N
+	fTItlgNPA8HNlvfA7LGZv6gPog45V4mCcBLmycmcJKZk3yKhhe30u30MknFP
+X-Google-Smtp-Source: AGHT+IFchL/G43WoVIYoXIbt1nEHrqq0XvNj77xFeRiCshYs5+JhsDlF3l9UKkNcTisKFiwq74tmGg==
+X-Received: by 2002:a05:6a00:3d4d:b0:6de:1e25:48e8 with SMTP id lp13-20020a056a003d4d00b006de1e2548e8mr4801967pfb.14.1708042927030;
+        Thu, 15 Feb 2024 16:22:07 -0800 (PST)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
+        by smtp.gmail.com with ESMTPSA id ka38-20020a056a0093a600b006e1377847bdsm357601pfb.50.2024.02.15.16.22.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Feb 2024 16:22:06 -0800 (PST)
+Message-ID: <424cd3a3-dc20-420c-a478-958f1aa2f1e6@acm.org>
+Date: Thu, 15 Feb 2024 16:22:04 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 11/19] scsi: sd: Translate data lifetime information
+Content-Language: en-US
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+ Christoph Hellwig <hch@lst.de>, Daejun Park <daejun7.park@samsung.com>,
+ Kanchan Joshi <joshi.k@samsung.com>, Damien Le Moal <dlemoal@kernel.org>,
+ "James E.J. Bottomley" <jejb@linux.ibm.com>
+References: <20240130214911.1863909-1-bvanassche@acm.org>
+ <20240130214911.1863909-12-bvanassche@acm.org>
+ <yq1h6i9e7v7.fsf@ca-mkp.ca.oracle.com>
+ <7e3662b4-30c0-496b-be19-378c5fab5f33@acm.org>
+ <yq15xype6k9.fsf@ca-mkp.ca.oracle.com>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <yq15xype6k9.fsf@ca-mkp.ca.oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Thu, 15 Feb 2024 18:51:41 -0500
-Kent Overstreet <kent.overstreet@linux.dev> wrote:
+On 2/15/24 14:00, Martin K. Petersen wrote:
+> Another option would be to simply set use_16_for_rw when streams are
+> supported like Damien does for ZBC.
 
-> Most of that is data (505024), not text (68582, or 66k).
-> 
+Setting use_10_for_rw may work better since devices that support data
+lifetime information will support WRITE(10) while it is not guaranteed
+that these devices support WRITE(16). As an example, WRITE(10) support
+is required by the UFS standard while WRITE(16) support is optional.
 
-And the 4K extra would have been data too.
+Thanks,
 
-> The data is mostly the alloc tags themselves (one per allocation
-> callsite, and you compiled the entire kernel), so that's expected.
-> 
-> Of the text, a lot of that is going to be slowpath stuff - module load
-> and unload hooks, formatt and printing the output, other assorted bits.
-> 
-> Then there's Allocation and deallocating obj extensions vectors - not
-> slowpath but not super fast path, not every allocation.
-> 
-> The fastpath instruction count overhead is pretty small
->  - actually doing the accounting - the core of slub.c, page_alloc.c,
->    percpu.c
->  - setting/restoring the alloc tag: this is overhead we add to every
->    allocation callsite, so it's the most relevant - but it's just a few
->    instructions.
-> 
-> So that's the breakdown. Definitely not zero overhead, but that fixed
-> memory overhead (and additionally, the percpu counters) is the price we
-> pay for very low runtime CPU overhead.
-
-But where are the benchmarks that are not micro-benchmarks. How much
-overhead does this cause to those? Is it in the noise, or is it noticeable?
-
--- Steve
+Bart.
 
