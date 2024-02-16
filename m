@@ -1,93 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-11899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED90858927
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 23:48:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2CD9858A1C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 00:26:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49428B22641
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 22:48:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D6E91F21B8C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 23:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B96148FE5;
-	Fri, 16 Feb 2024 22:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF1114A08D;
+	Fri, 16 Feb 2024 23:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="C1BPf5NM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A5E1487C3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 22:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14032149001
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 23:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708123685; cv=none; b=psbQX+EfFrCp3mTEO0F/CWylYvm3OpZ9dWxzcsXyRiTDrH/b/2cILT4GsdmVMjizZHGDk0dospJjO+tfwfux+hTFov5SAKjoYUGZmNypH+hGwon5UzJUhalozkqdlhFmR/AL/Tw4XL9To4tH8nyPKTiCCkT0mtvJ1S7QltCQNyA=
+	t=1708125983; cv=none; b=NphMlhSju3sqPrr5G8PTKbNOV8yP8dikqJVvPZfLxvtgVMADjdyiHksi8MAVGPZtRzxa0QEAJW7WfBweRWrlXzcUqRQ+LOwynrHx6nkdZibtfH4LBSM7Jw3TzUxWLxUUM1ucCC89A6Vd3he0c6V08pEp7B33/xgvnOik/7G8Lcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708123685; c=relaxed/simple;
-	bh=Oc8/VVHL3mJzxSm9wwcBnL/NkDYsxziPs924FwSBpcw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=gmlHHFemdRXd7JxMJpcR7I6QdXfkmZ4bSY4NvrZx4eIp/bArSNvQsn7czELOtFeMhQv0YQpdBYaYXbBNpPbHp0R/LwwgS2S/Xd/iMi7m86O9ow94IUOOkwGfCMR0P48UyU0gsGz6OH9YTtYfhN2i9DprZj7EHVZ0GVqhbrz1p4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-36516d55c5fso3311215ab.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 14:48:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708123683; x=1708728483;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FgA0grvx/iurskLb7osrvJiMpOml1Vk2dU3E8tYqYNQ=;
-        b=VzE4SGaEAoMeodf3heDQ0dejKcBtKm6Nmib3kXT5D+qo+POvQeRAWuT8APvi2dUv8J
-         Mn45mu2HRXvRduaZ4aj0yMguxricyGyHnLrbKblCTAw2al4BN0certtJqHjPSdCPh5hk
-         P1nav/WOdKTE7yqcb1kdOtuyJh2zI51crJnjaozhVJglqBMvTpQunR6aRx4DviKVm2o/
-         +k3cNFAzC81tYAFk6ViYa2wAnTJAU2Ws+VocvAnfYfYSnBFuX9z3vCgViF1U0tVjdmnu
-         F3s2hLReDFjNlTkl9UR2BBx4uRDO4rIz4AxdzNUIELb2mh2peOM7EvtL6KPHKzl1dwmu
-         wgAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSvovygPqIuCaYhKdsDe3RC5Gvoa5fxjCO+WODSTwtxUf62D+fFONwapNYH/0RRDGK8kKUk1ocW6HXvDMCIy7pqfBeFaARzAzVMHQxuw==
-X-Gm-Message-State: AOJu0YwBrNMs3pzFgz7TLOxdjgg7fk7Gd4xvvvGPW574++3yW/nfLIIL
-	hmpqipFBunCEHgdz1ToDkkBX1jsGUaOxZ7G6dazlQwthwGIbluqQAiuIhJX2VOPZa/9U+4ZIN1P
-	iTrAl71Q4QZuY0JegyDvLfy59L449NlPAQO2a8xp8wiOsV6rNBaz5myM=
-X-Google-Smtp-Source: AGHT+IG7sgyLqJEM4CdSPqmCU6u6X75Kn3VHzvRg1bqrsbQgtfcdDFL24k1piEhpu3S3maBCtZ+28CkM1eb1SnD5QQSXMiwAp8np
+	s=arc-20240116; t=1708125983; c=relaxed/simple;
+	bh=HjwfytaqXF8iH9Dbpef0PBEdfS3nBXLDDCpMfB7MbjI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qxyqrKnVviuWhwc37jZzmLhxLhcvOzt+oJsbFU733aeyCUHoh8eBxEULWhdCBJPpeHUg0ZUjiag3zDeIwVmVT4pmgFSYf/04eLYgw9lzWZ/mY3/yxvIbMUTWGwDPydJvDcE2QsgRjN6dZ19TThNbdmMJ0xlZOoRUx3SjATIxcnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=C1BPf5NM; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 16 Feb 2024 18:26:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1708125977;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i1dxXMhVUP1rgHFbx3bYUtrQ4Vj3OMrjAfFZh9B2nko=;
+	b=C1BPf5NM9g0o4QItUPGRDmMrvEdGWmyuKm4wf1nFggUVoULHG8BShovAlb221Bb8TlJ2Ja
+	KutXp2dyrtywnpnLlJsZyWbMnLgEtGr2j6xQgJwjPAMGkgKbYaLIt/Hwmsmi7ACHkQBytE
+	lKW+kj7xiaratGuJKp1Q6urfXB8QmCo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Kees Cook <keescook@chromium.org>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, 
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
+	mgorman@suse.de, dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
+	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
+	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, hughd@google.com, 
+	andreyknvl@gmail.com, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
+	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, minchan@google.com, 
+	kaleshsingh@google.com, kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-modules@vger.kernel.org, 
+	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 13/35] lib: add allocation tagging support for memory
+ allocation profiling
+Message-ID: <lvrwtp73y2upktswswekhhilrp2i742tmhcxi2c4gayyn24qd2@hdktbg3qutgb>
+References: <20240212213922.783301-1-surenb@google.com>
+ <20240212213922.783301-14-surenb@google.com>
+ <202402121433.5CC66F34B@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d1e:b0:363:c25b:75e4 with SMTP id
- i30-20020a056e021d1e00b00363c25b75e4mr545125ila.5.1708123683116; Fri, 16 Feb
- 2024 14:48:03 -0800 (PST)
-Date: Fri, 16 Feb 2024 14:48:03 -0800
-In-Reply-To: <000000000000520d3405f075a026@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005d6c8106118789ea@google.com>
-Subject: Re: [syzbot] [reiserfs?] divide error in do_journal_end (3)
-From: syzbot <syzbot+74b838cfa47fc9554471@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, bvanassche@acm.org, jack@suse.cz, 
-	jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, reiserfs-devel@vger.kernel.org, song@kernel.org, 
-	syzkaller-bugs@googlegroups.com, willy@infradead.org, yi.zhang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202402121433.5CC66F34B@keescook>
+X-Migadu-Flow: FLOW_OUT
 
-syzbot suspects this issue was fixed by commit:
+On Mon, Feb 12, 2024 at 02:40:12PM -0800, Kees Cook wrote:
+> On Mon, Feb 12, 2024 at 01:38:59PM -0800, Suren Baghdasaryan wrote:
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index ffe8f618ab86..da68a10517c8 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -770,6 +770,10 @@ struct task_struct {
+> >  	unsigned int			flags;
+> >  	unsigned int			ptrace;
+> >  
+> > +#ifdef CONFIG_MEM_ALLOC_PROFILING
+> > +	struct alloc_tag		*alloc_tag;
+> > +#endif
+> 
+> Normally scheduling is very sensitive to having anything early in
+> task_struct. I would suggest moving this the CONFIG_SCHED_CORE ifdef
+> area.
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
-
-    fs: Block writes to mounted block devices
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=15009b1c180000
-start commit:   610a9b8f49fb Linux 6.7-rc8
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=655f8abe9fe69b3b
-dashboard link: https://syzkaller.appspot.com/bug?extid=74b838cfa47fc9554471
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=177f6ca1e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11e6349ae80000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+This is even hotter than the scheduler members; we actually do want it
+up front.
 
