@@ -1,451 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-11820-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 594108575B0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 06:40:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 489118575B6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 06:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAA37B22447
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 05:40:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 677BC1C2261B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 05:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945DD14A8D;
-	Fri, 16 Feb 2024 05:40:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="PaSxzXxr"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C73134B6;
+	Fri, 16 Feb 2024 05:45:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE32F14294
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 05:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE934125DB
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 05:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708062043; cv=none; b=ARR1Ay8Jv93XDsLTNDKP45TchWPbxf01LFsTchW2r/ytnfFF9L7nb9lP+wEY2sJo6FWi5UeDdKILGKMkfnIGJF7lpjJJW00ieYD0Z3YyjjK5LF4LPDiMqgx92Df8Onno8pyfQ/83XoqA6O0GiwemXYtuwxjCTLqoPkU5vJwRxro=
+	t=1708062328; cv=none; b=oDD/vSFKqJJUrQmKQckpKgqESLRZ2v7gpFevKCwJvEXgKq9X4hXF7NwO4zfAM+EIbE/+enXoU2snckZdUSlcVNDvIUJLYhVctQLi7jCyD3TB2kAtO6EMD4NWLg0eRvpdEgxuzY60lwSV/8HBABJWZA/h8quF281xh2t9yvdTLZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708062043; c=relaxed/simple;
-	bh=xWhBmMKcI/nP3gcdjkp3AAXeNPAcSkbra6MqIEYjhFc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kEpy4Pb1/ZfBgVOWNaWEfekvuVY2qJaJjOOjzQNMi0tH9XVM/Vr5yI9vkKwDbQKhw3elkJs2Kbk8eaP/PwKWpU1WDglNtuwYLvVoDAwXk6d5tWbarGr6Q+Ke6mfTNrPGbLBScZzTlbXMBV48YNtSwzGhXfvRA3WtjJeZIImywHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=PaSxzXxr; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pj1-f72.google.com (mail-pj1-f72.google.com [209.85.216.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id D4DB540A15
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 05:40:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1708062039;
-	bh=g0nB89Iz0YHAvplmLLvt1SAPbgyM6rOD4Tu/+/NoPYY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=PaSxzXxr0yB8Popy6r+hcmKXLClPItO3QyHssx16q2mLWyNf2VA+Okpj/ssqInNJ9
-	 67bTblcGaOoR9iTUVLMWKGPyImQKe+KC6395xpsRYnVlbzU2dkxerShfS5rQo/R/UR
-	 qnPAaKrrNGdyIN1HJkXgsnsR9yRcidXjp/JXGwmzDRqjSj+LV4kiFan07JVOCFYBhe
-	 HfORAXzIMSS4jRwgQguW6sUPFuAmOC5p4qBUBFYpYd/qnuKxQOtzg7Ai2GdGakwlQe
-	 0Qd3EY3yep70XH0Mto3fJ9dFQXbjCxi84huN8otrbg7S/qOgHr9nM+jjKpjpp8G7iE
-	 EDU4ihV//IPOg==
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-299103ff6e6so728752a91.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 21:40:38 -0800 (PST)
+	s=arc-20240116; t=1708062328; c=relaxed/simple;
+	bh=NXeerdPnSdjRJMAOoy0b+p1owK1ag5JZVRlrO+XLnFM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=QE5K4pkW6Giky1k1jsumXAehS/oMZ+WuRV2x6tQf9W8h8xjGL9qBo2/ZreazBoAocxIOMIsm5NpOALekZJvRE5HGZDuSuydFVq5Q7SEYpsz7IkOd/1EuA3vooNbHxn+7esFVmqmC2l/8qnXWrZ3QV0Er1dO4pIV8bVarFBmT+Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3610073a306so13248965ab.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Feb 2024 21:45:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708062037; x=1708666837;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g0nB89Iz0YHAvplmLLvt1SAPbgyM6rOD4Tu/+/NoPYY=;
-        b=GBmsUEqDY18t4oBHU30qm0vWfmpZSMmI+JAoewORpXIAusmOy0+R19tfpcgtm9rKyd
-         uKMvRSuH+L9eAY1tlAeYabHDp4LnOSNy8iwShL/HnbXAB7W+mNSXVJrefj61UKyfLldA
-         tbk1svzoiuUE+F9ctoq4ProqhlX+lupkwVkZlFjyypMrnv0hjrSF2BWilItBxxZk7a1o
-         O/MxTE0sQ1Bzbp1Vnu09GthZWh44K9QUD1kze2Lg3o671wED1ZHUEYeAHCsOBm/QvOcY
-         BVwDH6ihaMajmAovK3Z0QHEQ2b1aUQB6JVPun2LAx5PshrcUMvv6vB37R8LlnFd9m7lb
-         2p6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUCsyO+2yqplT8wUWaSzTIv0GD1LOCVMgIHQhFkVZeJzZkLQ2nwDWjntb5/1xW35dT9ep8eGfF4PE5NVrWFbBYxX7U9niIEuMPmyvs7yA==
-X-Gm-Message-State: AOJu0Ywvx6rBpsiyhdRgG9fwrYixRGJIOlmFxscgM1GkCb3t/i3uLqIS
-	rBKRuB3UjWZCmCioHF5QXxtDtSMMAdo+zFJ8CsroZmIMVliUnJZ5j0cRwyO40k2FBHY4ObJGuxO
-	Ar7K3atjRlhikEq2hwDUpRTycWIcWiYsqHMI5mid05rwuHx/kawb9iIERcwPrwZKrNuAuhlBsml
-	DjpVLo+OM+wYRqkbSOMY7v8QPNcEcqB1ACCKby2ynggdClWbRoCh93zA==
-X-Received: by 2002:a17:90a:c908:b0:297:228a:fa6c with SMTP id v8-20020a17090ac90800b00297228afa6cmr3930357pjt.3.1708062037428;
-        Thu, 15 Feb 2024 21:40:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEK0fkTl0eeT0JQUhavBcBGZZRTpFD8W4RSYnvV92Mit6Qr2YTGDa58ASJioi61JU9wM5ELgg8aKv427bS8tCo=
-X-Received: by 2002:a17:90a:c908:b0:297:228a:fa6c with SMTP id
- v8-20020a17090ac90800b00297228afa6cmr3930343pjt.3.1708062037062; Thu, 15 Feb
- 2024 21:40:37 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708062326; x=1708667126;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VbMnwxI0bsWGHkIgRlCRYPURp0x7Da8PjZhkcBzxrIk=;
+        b=HEVEEQ1e/w0sgkD0lMOtl8QIaKAl3Zx2cOnEl6s9wT0pfn4lI8Gn6LkYnqwVVHFGqO
+         wyKqB/Fcw+zslNSvVTd1AzOnoJnoiZV0ehMVNkefv/M0RHHH/mTy9j2ObggHOhOvmiWN
+         hc/dwnYwd0RJq0PcqCpuAsVGlrTwOn/HF62Gt+4AHf6vXYCel1R1h25HnI1Vg4Mxvtvt
+         YG+g8d/VfO6nfsizjRMkibVDutEdqGdLRmD4GDBlAaA3MmbTyOiTnDwntMFk7MPc4duV
+         JD76vrRFmV8Dy3gXU8imyhdbM3+heDHZQHBqPgfmsbr7jLn84yQyIrVN9wzBbPKDFfIb
+         Zrkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWm/uqzRwBp3cCMkoU6rTeE0ojgSko2HroFyU/wY8fPjr5nSy4kVP6eerIpI7tnP+crB+wQFeBg4r4j8pR+9J4S7rbdmCOPnu8Mj0vFIA==
+X-Gm-Message-State: AOJu0YzRBWEwJyoTMUhcKDHaZFA9iz8xxb04xgRxY/+Zl3S8h6zWUygY
+	aB3iNkEydfLKwSxaVn7x/x+GVtyjupCK0z94+xmd+ue6lvxSLssfRDyg8DevqT/DjTsUEWx9QCG
+	Kz6QFgWSelg2/QYFc7hHHKVJ31rtB2OlaETl1nUNl0oYW36wUGgiIU+8=
+X-Google-Smtp-Source: AGHT+IFIgJMUnbYJEWOTsYZF3gO/ldOeMCK6h12ZamDBIKLbO7DV8UZZBZVadxEdTzG74omaDR4Db2ukCOqPK+8WytHVbozM3OBZ
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAH2r5mswELNv2Mo-aWNoq3fRUC7Rk0TjfY8kwdPc=JSEuZZObw@mail.gmail.com>
- <20240207034117.20714-1-matthew.ruffell@canonical.com> <CAH2r5mu04KHQV3wynaBSrwkptSE_0ARq5YU1aGt7hmZkdsVsng@mail.gmail.com>
- <CAH2r5msJ12ShH+ZUOeEg3OZaJ-OJ53-mCHONftmec7FNm3znWQ@mail.gmail.com>
- <CAH2r5muiod=thF6tnSrgd_LEUCdqy03a2Ln1RU40OMETqt2Z_A@mail.gmail.com>
- <CAH2r5mvzyxP7vHQVcT6ieP4NmXDAz2UqTT7G4yrxcVObkV_3YQ@mail.gmail.com>
- <CAKAwkKuJvFDFG7=bCYmj0jdMMhYTLUnyGDuEAubToctbNqT5CQ@mail.gmail.com>
- <CAH2r5mt9gPhUSka56yk28+nksw7=LPuS4VAMzGQyJEOfcpOc=g@mail.gmail.com>
- <CAKAwkKsm3dvM_zGtYR8VHzHyA_6hzCie3mhA4gFQKYtWx12ZXw@mail.gmail.com>
- <CAH2r5mvSsmm2WzAakAKWGJMs3C-9+z0EJ-msV0Qjkt5q9ZPBzA@mail.gmail.com>
- <CAH2r5mvPz2CUyKDZv_9fYGu=9L=3UiME7xaJGBbu+iF8CH8YEQ@mail.gmail.com>
- <CAKAwkKu=v8GYX0Mhf1mzDYWT2v6dnLB=_zs7jk6trocAN2++4g@mail.gmail.com> <CAH2r5mvdPzy8v=yzaZYemYxFJ5u29No7yWTeZKzsLmfp2Rtsow@mail.gmail.com>
-In-Reply-To: <CAH2r5mvdPzy8v=yzaZYemYxFJ5u29No7yWTeZKzsLmfp2Rtsow@mail.gmail.com>
-From: Matthew Ruffell <matthew.ruffell@canonical.com>
-Date: Fri, 16 Feb 2024 18:40:25 +1300
-Message-ID: <CAKAwkKtA_wYbQ7Fyrd2xvA549GXrqdQy_dL8AxwmP3VP74L0+A@mail.gmail.com>
-Subject: Re: SMB 1.0 broken between Kernel versions 6.2 and 6.5
-To: Steve French <smfrench@gmail.com>
-Cc: dhowells@redhat.com, linux-cifs@vger.kernel.org, rdiez-2006@rd10.de, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>, 
-	Shyam Prasad N <nspmangalore@gmail.com>
+X-Received: by 2002:a05:6e02:12c8:b0:363:c919:eec7 with SMTP id
+ i8-20020a056e0212c800b00363c919eec7mr339653ilm.6.1708062326068; Thu, 15 Feb
+ 2024 21:45:26 -0800 (PST)
+Date: Thu, 15 Feb 2024 21:45:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000331e0906117940f9@google.com>
+Subject: [syzbot] [mm?] WARNING in move_pages
+From: syzbot <syzbot+06ae923a4359a62d0bac@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, axelrasmussen@google.com, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, lokeshgidra@google.com, peterx@redhat.com, 
+	rppt@kernel.org, syzkaller-bugs@googlegroups.com, usama.anjum@collabora.com, 
+	viro@zeniv.linux.org.uk
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Steve,
+Hello,
 
-I have also tested this patch, and it is functionally the same as the
-previous one.
+syzbot found the following issue on:
 
-I'm happy with this, please pick it up in your tree for 6.8 if possible.
+HEAD commit:    ae00c445390b Add linux-next specific files for 20240212
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=126cddf4180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4eb3a27eddb32a14
+dashboard link: https://syzkaller.appspot.com/bug?extid=06ae923a4359a62d0bac
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16aa2720180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1437d320180000
 
-Thanks,
-Matthew
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8b2a2d0b511f/disk-ae00c445.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a668a09c9d03/vmlinux-ae00c445.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4ad623928692/bzImage-ae00c445.xz
 
-On Fri, 16 Feb 2024 at 17:22, Steve French <smfrench@gmail.com> wrote:
->
-> Lightly updated with Shyam's modulo suggestion
->
->
-> On Thu, Feb 15, 2024 at 9:46=E2=80=AFPM Matthew Ruffell
-> <matthew.ruffell@canonical.com> wrote:
-> >
-> > Hi Steve,
-> >
-> > I tested the patch ontop of 6.8-rc4 and it works great.
-> >
-> > $ sudo mount -t cifs -o username=3Dubuntu,vers=3D1.0,wsize=3D16850
-> > //192.168.122.172/sambashare ~/share
-> > $ mount -l
-> > //192.168.122.172/sambashare on /home/ubuntu/share type cifs
-> > (rw,relatime,vers=3D1.0,cache=3Dstrict,username=3Dubuntu,uid=3D0,noforc=
-euid,gid=3D0,noforcegid,
-> > addr=3D192.168.122.172,soft,unix,posixpaths,serverino,mapposix,acl,rsiz=
-e=3D1048576,wsize=3D16384,bsize=3D1048576,retrans=3D1,echo_interval=3D60,ac=
-timeo=3D1,closetimeo=3D1)
-> > $ sudo dmesg | tail
-> > [   48.767560] Use of the less secure dialect vers=3D1.0 is not
-> > recommended unless required for access to very old servers
-> > [   48.768399] CIFS: VFS: Use of the less secure dialect vers=3D1.0 is
-> > not recommended unless required for access to very old servers
-> > [   48.769427] CIFS: VFS: wsize rounded down to 16384 to multiple of
-> > PAGE_SIZE 4096
-> > [   48.770069] CIFS: Attempting to mount //192.168.122.172/sambashare
-> >
-> > Setting the wsize=3D16850 rounds it down to 16384 like clockwork.
-> >
-> > I have built R. Diez a new distro kernel with the patch applied, and wi=
-ll ask
-> > him to test it. He did test the last one, which worked, and also rounde=
-d down
-> > the wsize that was negotiated with his old 1.0 server.
-> >
-> > When I get some time I can help try bisect and locate the folios/netfs =
-data
-> > corruption, but I think this is a good solution for the time being, or =
-until
-> > the netfslib changeover happens.
-> >
-> > Thanks,
-> > Matthew
-> >
-> > On Thu, 15 Feb 2024 at 20:32, Steve French <smfrench@gmail.com> wrote:
-> > >
-> > > Minor update to patch to work around the folios/netfs data corruption=
-.
-> > >
-> > > In addition to printing the warning if "wsize=3D" is specified on mou=
-nt
-> > > with a size that is not a multiple of PAGE_SIZE, it also rounds the
-> > > wsize down to the nearest multiple of PAGE_SIZE (as it was already
-> > > doing if the server tried to negotiate a wsize that was not a multipl=
-e
-> > > of PAGE_SIZE).
-> > >
-> > > On Fri, Feb 9, 2024 at 2:25=E2=80=AFPM Steve French <smfrench@gmail.c=
-om> wrote:
-> > > >
-> > > > > > If the user does set their own "wsize", any value that is not a=
- multiple of
-> > > > > PAGE_SIZE is dangerous right?
-> > > >
-> > > > Yes for kernels 6.3 through 6.8-rc such a write size (ie that is no=
-t a
-> > > > multiple of page size) can
-> > > > be dangerous - that is why I added the warning on mount if the user
-> > > > specifies the
-> > > > potentially problematic wsize, since the wsize specified on mount
-> > > > unlike the server
-> > > > negotiated maximum write size is under the user's control.  The ser=
-ver
-> > > > negotiated
-> > > > maximum write size can't be controlled by the user, so for this
-> > > > temporary fix we are
-> > > > forced to round it down.   The actually bug is due to a folios/netf=
-s
-> > > > bug that David or
-> > > > one of the mm experts may be able to spot (and fix) so for this
-> > > > temporary workaround
-> > > > I wanted to do the smaller change here so we don't have to revert i=
-t
-> > > > later. I got close to
-> > > > finding the actual bug (where the offset was getting reset, rounded=
- up
-> > > > incorrectly
-> > > > inside one of the folios routines mentioned earlier in the thread) =
-but
-> > > > wanted to get something
-> > > >
-> > > > On Fri, Feb 9, 2024 at 2:51=E2=80=AFAM Matthew Ruffell
-> > > > <matthew.ruffell@canonical.com> wrote:
-> > > > >
-> > > > > Hi Steve,
-> > > > >
-> > > > > Yes, I am specifying "wsize" on the mount in my example, as its a=
- little easier
-> > > > > to reproduce the issue that way.
-> > > > >
-> > > > > If the user does set their own "wsize", any value that is not a m=
-ultiple of
-> > > > > PAGE_SIZE is dangerous right? Shouldn't we prevent the user from =
-corrupting
-> > > > > their data (un)intentionally if they happen to specify a wrong va=
-lue? Especially
-> > > > > since we know about it now. I know there haven't been any other r=
-eports in the
-> > > > > year or so between 6.3 and present day, so there probably isn't a=
-ny users out
-> > > > > there actually setting their own "wsize", but it still feels bad =
-to allow users
-> > > > > to expose themselves to data corruption in this form.
-> > > > >
-> > > > > Please consider also rounding down "wsize" set on mount command l=
-ine to a safe
-> > > > > multiple of PAGE_SIZE. The code will only be around until David's=
- netfslib cut
-> > > > > over is merged anyway.
-> > > > >
-> > > > > I built a distro kernel and sent it to R. Diez for testing, so ho=
-pefully we will
-> > > > > have some testing performed against an actual SMB server that sen=
-ds a dangerous
-> > > > > wsize during negotiation. I'll let you know how that goes, or R. =
-Diez, you can
-> > > > > tell us about how it goes here.
-> > > > >
-> > > > > Thanks,
-> > > > > Matthew
-> > > > >
-> > > > > On Fri, 9 Feb 2024 at 18:38, Steve French <smfrench@gmail.com> wr=
-ote:
-> > > > > >
-> > > > > > Are you specifying "wsize" on the mount in your example?  The i=
-ntent
-> > > > > > of the patch is to warn the user using a non-recommended wsize =
-(since
-> > > > > > the user can control and fix that) but to force round_down when=
- the
-> > > > > > server sends a dangerous wsize (ie one that is not a multiple o=
-f
-> > > > > > 4096).
-> > > > > >
-> > > > > > On Thu, Feb 8, 2024 at 3:31=E2=80=AFAM Matthew Ruffell
-> > > > > > <matthew.ruffell@canonical.com> wrote:
-> > > > > > >
-> > > > > > > Hi Steve,
-> > > > > > >
-> > > > > > > I built your latest patch ontop of 6.8-rc3, but the problem s=
-till persists.
-> > > > > > >
-> > > > > > > Looking at dmesg, I see the debug statement from the second h=
-unk, but not from
-> > > > > > > the first hunk, so I don't believe that wsize was ever rounde=
-d down to
-> > > > > > > PAGE_SIZE.
-> > > > > > >
-> > > > > > > [  541.918267] Use of the less secure dialect vers=3D1.0 is n=
-ot
-> > > > > > > recommended unless required for access to very old servers
-> > > > > > > [  541.920913] CIFS: VFS: Use of the less secure dialect vers=
-=3D1.0 is
-> > > > > > > not recommended unless required for access to very old server=
-s
-> > > > > > > [  541.923533] CIFS: VFS: wsize should be a multiple of 4096 =
-(PAGE_SIZE)
-> > > > > > > [  541.924755] CIFS: Attempting to mount //192.168.122.172/sa=
-mbashare
-> > > > > > >
-> > > > > > > $ sha256sum sambashare/testdata.txt
-> > > > > > > 9e573a0aa795f9cd4de4ac684a1c056dbc7d2ba5494d02e71b6225ff5f0fd=
-866
-> > > > > > > sambashare/testdata.txt
-> > > > > > > $ less sambashare/testdata.txt
-> > > > > > > ...
-> > > > > > > 8dc8da96f7e5de0f312a2dbcc3c5c6facbfcc2fc206e29283274582ec93da=
-a2a1496ca8edd49e3c1
-> > > > > > > 6b^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^@^=
-@^@^@^@^@^@^@^@^@^@^
-> > > > > > > ...
-> > > > > > >
-> > > > > > > Would you be able compile and test your patch and see if we e=
-nter the logic from
-> > > > > > > the first hunk?
-> > > > > > >
-> > > > > > > I'll be happy to test a V2 tomorrow.
-> > > > > > >
-> > > > > > > Thanks,
-> > > > > > > Matthew
-> > > > > > >
-> > > > > > > On Thu, 8 Feb 2024 at 03:50, Steve French <smfrench@gmail.com=
-> wrote:
-> > > > > > > >
-> > > > > > > > I had attached the wrong file - reattaching the correct pat=
-ch (ie that
-> > > > > > > > updates the previous version to use PAGE_SIZE instead of 40=
-96)
-> > > > > > > >
-> > > > > > > > On Wed, Feb 7, 2024 at 1:12=E2=80=AFAM Steve French <smfren=
-ch@gmail.com> wrote:
-> > > > > > > > >
-> > > > > > > > > Updated patch - now use PAGE_SIZE instead of hard coding =
-to 4096.
-> > > > > > > > >
-> > > > > > > > > See attached
-> > > > > > > > >
-> > > > > > > > > On Tue, Feb 6, 2024 at 11:32=E2=80=AFPM Steve French <smf=
-rench@gmail.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > Attached updated patch which also adds check to make su=
-re max write
-> > > > > > > > > > size is at least 4K
-> > > > > > > > > >
-> > > > > > > > > > On Tue, Feb 6, 2024 at 10:58=E2=80=AFPM Steve French <s=
-mfrench@gmail.com> wrote:
-> > > > > > > > > > >
-> > > > > > > > > > > > his netfslib work looks like quite a big refactor. =
-Is there any plans to land this in 6.8? Or will this be 6.9 / later?
-> > > > > > > > > > >
-> > > > > > > > > > > I don't object to putting them in 6.8 if there was ad=
-ditional review
-> > > > > > > > > > > (it is quite large), but I expect there would be push=
-back, and am
-> > > > > > > > > > > concerned that David's status update did still show s=
-ome TODOs for
-> > > > > > > > > > > that patch series.  I do plan to upload his most rece=
-nt set to
-> > > > > > > > > > > cifs-2.6.git for-next later in the week and target wo=
-uld be for
-> > > > > > > > > > > merging the patch series would be 6.9-rc1 unless majo=
-r issues were
-> > > > > > > > > > > found in review or testing
-> > > > > > > > > > >
-> > > > > > > > > > > On Tue, Feb 6, 2024 at 9:42=E2=80=AFPM Matthew Ruffel=
-l
-> > > > > > > > > > > <matthew.ruffell@canonical.com> wrote:
-> > > > > > > > > > > >
-> > > > > > > > > > > > I have bisected the issue, and found the commit tha=
-t introduces the problem:
-> > > > > > > > > > > >
-> > > > > > > > > > > > commit d08089f649a0cfb2099c8551ac47eef0cc23fdf2
-> > > > > > > > > > > > Author: David Howells <dhowells@redhat.com>
-> > > > > > > > > > > > Date:   Mon Jan 24 21:13:24 2022 +0000
-> > > > > > > > > > > > Subject: cifs: Change the I/O paths to use an itera=
-tor rather than a page list
-> > > > > > > > > > > > Link: https://git.kernel.org/pub/scm/linux/kernel/g=
-it/torvalds/linux.git/commit/?id=3Dd08089f649a0cfb2099c8551ac47eef0cc23fdf2
-> > > > > > > > > > > >
-> > > > > > > > > > > > $ git describe --contains d08089f649a0cfb2099c8551a=
-c47eef0cc23fdf2
-> > > > > > > > > > > > v6.3-rc1~136^2~7
-> > > > > > > > > > > >
-> > > > > > > > > > > > David, I also tried your cifs-netfs tree available =
-here:
-> > > > > > > > > > > >
-> > > > > > > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/dho=
-wells/linux-fs.git/log/?h=3Dcifs-netfs
-> > > > > > > > > > > >
-> > > > > > > > > > > > This tree solves the issue. Specifically:
-> > > > > > > > > > > >
-> > > > > > > > > > > > commit 34efb2a814f1882ddb4a518c2e8a54db119fd0d8
-> > > > > > > > > > > > Author: David Howells <dhowells@redhat.com>
-> > > > > > > > > > > > Date:   Fri Oct 6 18:29:59 2023 +0100
-> > > > > > > > > > > > Subject: cifs: Cut over to using netfslib
-> > > > > > > > > > > > Link: https://git.kernel.org/pub/scm/linux/kernel/g=
-it/dhowells/linux-fs.git/commit/?h=3Dcifs-netfs&id=3D34efb2a814f1882ddb4a51=
-8c2e8a54db119fd0d8
-> > > > > > > > > > > >
-> > > > > > > > > > > > This netfslib work looks like quite a big refactor.=
- Is there any plans to land this in 6.8? Or will this be 6.9 / later?
-> > > > > > > > > > > >
-> > > > > > > > > > > > Do you have any suggestions on how to fix this with=
- a smaller delta in 6.3 -> 6.8-rc3 that the stable kernels can use?
-> > > > > > > > > > > >
-> > > > > > > > > > > > Thanks,
-> > > > > > > > > > > > Matthew
-> > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > > --
-> > > > > > > > > > > Thanks,
-> > > > > > > > > > >
-> > > > > > > > > > > Steve
-> > > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > --
-> > > > > > > > > > Thanks,
-> > > > > > > > > >
-> > > > > > > > > > Steve
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > --
-> > > > > > > > > Thanks,
-> > > > > > > > >
-> > > > > > > > > Steve
-> > > > > > > >
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > --
-> > > > > > > > Thanks,
-> > > > > > > >
-> > > > > > > > Steve
-> > > > > >
-> > > > > >
-> > > > > >
-> > > > > > --
-> > > > > > Thanks,
-> > > > > >
-> > > > > > Steve
-> > > >
-> > > >
-> > > >
-> > > > --
-> > > > Thanks,
-> > > >
-> > > > Steve
-> > >
-> > >
-> > >
-> > > --
-> > > Thanks,
-> > >
-> > > Steve
->
->
->
-> --
-> Thanks,
->
-> Steve
+The issue was bisected to:
+
+commit 31d97016c80a83daa4c938014c81282810a14773
+Author: Lokesh Gidra <lokeshgidra@google.com>
+Date:   Thu Feb 8 21:22:04 2024 +0000
+
+    userfaultfd: use per-vma locks in userfaultfd operations
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=170b3442180000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=148b3442180000
+console output: https://syzkaller.appspot.com/x/log.txt?x=108b3442180000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+06ae923a4359a62d0bac@syzkaller.appspotmail.com
+Fixes: 31d97016c80a ("userfaultfd: use per-vma locks in userfaultfd operations")
+
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5065 at mm/userfaultfd.c:1706 move_pages+0x438/0xff0 mm/userfaultfd.c:1706
+Modules linked in:
+CPU: 0 PID: 5065 Comm: syz-executor296 Not tainted 6.8.0-rc4-next-20240212-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
+RIP: 0010:move_pages+0x438/0xff0 mm/userfaultfd.c:1706
+Code: 0b 90 e9 d2 fe ff ff 90 0f 0b 90 31 ff 4c 89 e6 e8 6d 72 90 ff 4d 85 e4 74 2b e8 83 6d 90 ff e9 ba fd ff ff e8 79 6d 90 ff 90 <0f> 0b 90 45 31 e4 e9 a9 fd ff ff e8 68 6d 90 ff 45 31 e4 45 31 ff
+RSP: 0018:ffffc9000345f640 EFLAGS: 00010293
+RAX: ffffffff82036f37 RBX: 1ffff9200068bedc RCX: ffff88801fc41e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000345f770 R08: ffffffff82036e0e R09: 1ffffffff1f0cfa5
+R10: dffffc0000000000 R11: fffffbfff1f0cfa6 R12: 0000000000000000
+R13: dffffc0000000000 R14: ffff88801ec54188 R15: 0000000000000000
+FS:  0000555556d1f380(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000005fdeb8 CR3: 000000001fd14000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ userfaultfd_move fs/userfaultfd.c:2008 [inline]
+ userfaultfd_ioctl+0x5c10/0x72c0 fs/userfaultfd.c:2126
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:871 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:857
+ do_syscall_64+0xfb/0x240
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+RIP: 0033:0x7fe1b68902e9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe594e4008 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007ffe594e41d8 RCX: 00007fe1b68902e9
+RDX: 0000000020000000 RSI: 00000000c028aa05 RDI: 0000000000000003
+RBP: 00007fe1b6903610 R08: 00007ffe594e41d8 R09: 00007ffe594e41d8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffe594e41c8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
