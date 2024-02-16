@@ -1,82 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-11786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22CF4857254
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 01:14:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71A93857268
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 01:20:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C51A02829A6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:14:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A422A1C23A6E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E70746B1;
-	Fri, 16 Feb 2024 00:14:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NmuFr7oc"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC445256;
+	Fri, 16 Feb 2024 00:20:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCC1320A;
-	Fri, 16 Feb 2024 00:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C11C38F;
+	Fri, 16 Feb 2024 00:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708042484; cv=none; b=LqKkqju+PWdzbEIai+0FfCo2or/GirgB5DMGzDaOj2msLPGTAqmlki2qTn4GFnC+fvwy0o2bhLB5eT/TujHf1/iRGTEHvxOFPwJkVKYVSInfxkI431aLHuT/MJ2G5PKKK/SW0uxHP7W7DNZ3yXAT9kEbnHNK0sKtJ6QZw/bFLDQ=
+	t=1708042814; cv=none; b=MR1e8WcBea5SeFpZeIouZHgq+82aGYUKJPSkTeZJyoItsxINUECva8RI0Ym5ST02UG/8Uxnyi2okkLTUbucTvQKeDzTdbUtjd3cA63L1/yHG6aT2mAnX1VkYZINrtptfYEtMBZ6MdHqBdsspTeEnskqBcf9jAHUNisbZWBBjsAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708042484; c=relaxed/simple;
-	bh=8459CvzrorfNe/cHAzd0ENqIMMQm58MSFuttK55PuAY=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=aoOQXz4IWy8j7t1Xp4GJ/X1UL3g8GnB4He5mKjTytTKOIxcyO7wqiTM7bcUpyZMrCzApIjINTw278t1LPsbv94w86ZLbgO5sN0EKqoGTd4DRDwxsaLmwT+0kR7R8hOHbDutXQaZ727fJm195jKuJ+8UamuGGOZDRemEIC3+DwtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NmuFr7oc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65C5DC433F1;
-	Fri, 16 Feb 2024 00:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1708042483;
-	bh=8459CvzrorfNe/cHAzd0ENqIMMQm58MSFuttK55PuAY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NmuFr7ocD51+UfkvZDHdvyhHagtotjPmkxo7YcRAWBCFwI6mcb1Dk8SCHmgCXuvdB
-	 n0AX/l1ga0WmPPMZCUeBERXcafl8pl0yCjOhZDCFHuAUl6NY44ayokHvZqWCiY91PU
-	 uv3zTNGTY0GhIcYj/dVFAIW1OmfzQsp3zc+0Nm5E=
-Date: Thu, 15 Feb 2024 16:14:41 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Sourav Panda <souravpanda@google.com>
-Cc: corbet@lwn.net, gregkh@linuxfoundation.org, rafael@kernel.org,
- mike.kravetz@oracle.com, muchun.song@linux.dev, rppt@kernel.org,
- david@redhat.com, rdunlap@infradead.org, chenlinxuan@uniontech.com,
- yang.yang29@zte.com.cn, tomas.mudrunka@gmail.com, bhelgaas@google.com,
- ivan@cloudflare.com, pasha.tatashin@soleen.com, yosryahmed@google.com,
- hannes@cmpxchg.org, shakeelb@google.com, kirill.shutemov@linux.intel.com,
- wangkefeng.wang@huawei.com, adobriyan@gmail.com, vbabka@suse.cz,
- Liam.Howlett@Oracle.com, surenb@google.com, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-mm@kvack.org, willy@infradead.org, weixugc@google.com
-Subject: Re: [PATCH v8 1/1] mm: report per-page metadata information
-Message-Id: <20240215161441.c8a2350a61f6929c0dbe9e7b@linux-foundation.org>
-In-Reply-To: <20240214225741.403783-2-souravpanda@google.com>
-References: <20240214225741.403783-1-souravpanda@google.com>
-	<20240214225741.403783-2-souravpanda@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1708042814; c=relaxed/simple;
+	bh=GD1Wa7SHUnGt9gUDi+iC0B1+iivxZqph8uOCh9oMSdQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A/MGmBanpdj7MoHYk33IxLyrSLNMbKdYdXZNbg1ss6gTa9cqkYr2rPu1Kclw3vsEPk03803+Vay3y6ZolMK2kO4/ZV+iEiH4FLg6uD/DoeBgasXt26+mMsRaYrYGpGFUVcM5FdwAeudh5vJYpvKTCWMDQ9JWMKZArzLWQOG3Pbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D7BAC433C7;
+	Fri, 16 Feb 2024 00:20:07 +0000 (UTC)
+Date: Thu, 15 Feb 2024 19:21:41 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan
+ <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ akpm@linux-foundation.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+ mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
+ liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
+ peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+ david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+ nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
+ rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
+ yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+ hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+ ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
+ ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, bsegall@google.com, bristot@redhat.com,
+ vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+ iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+ elver@google.com, dvyukov@google.com, shakeelb@google.com,
+ songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+ minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+ cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in
+ show_mem()
+Message-ID: <20240215192141.03421b85@gandalf.local.home>
+In-Reply-To: <jpmlfejxcmxa7vpsuyuzykahr6kz5vjb44ecrzfylw7z4un3g7@ia3judu4xkfp>
+References: <20240212213922.783301-1-surenb@google.com>
+	<20240212213922.783301-32-surenb@google.com>
+	<Zc3X8XlnrZmh2mgN@tiehlicka>
+	<CAJuCfpHc2ee_V6SGAc_31O_ikjGGNivhdSG+2XNcc9vVmzO-9g@mail.gmail.com>
+	<Zc4_i_ED6qjGDmhR@tiehlicka>
+	<CAJuCfpHq3N0h6dGieHxD6Au+qs=iKAifFrHAMxTsHTcDrOwSQA@mail.gmail.com>
+	<ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
+	<320cd134-b767-4f29-869b-d219793ba8a1@suse.cz>
+	<efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
+	<20240215180742.34470209@gandalf.local.home>
+	<jpmlfejxcmxa7vpsuyuzykahr6kz5vjb44ecrzfylw7z4un3g7@ia3judu4xkfp>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Wed, 14 Feb 2024 14:57:40 -0800 Sourav Panda <souravpanda@google.com> wrote:
+On Thu, 15 Feb 2024 18:51:41 -0500
+Kent Overstreet <kent.overstreet@linux.dev> wrote:
 
-> Adds two new per-node fields, namely nr_memmap and nr_memmap_boot,
-> to /sys/devices/system/node/nodeN/vmstat and a global Memmap field
-> to /proc/meminfo. This information can be used by users to see how
-> much memory is being used by per-page metadata, which can vary
-> depending on build configuration, machine architecture, and system
-> use.
+> Most of that is data (505024), not text (68582, or 66k).
+> 
 
-Would this information be available by the proposed memory
-allocation profiling?
+And the 4K extra would have been data too.
 
-https://lkml.kernel.org/r/20240212213922.783301-1-surenb@google.com
+> The data is mostly the alloc tags themselves (one per allocation
+> callsite, and you compiled the entire kernel), so that's expected.
+> 
+> Of the text, a lot of that is going to be slowpath stuff - module load
+> and unload hooks, formatt and printing the output, other assorted bits.
+> 
+> Then there's Allocation and deallocating obj extensions vectors - not
+> slowpath but not super fast path, not every allocation.
+> 
+> The fastpath instruction count overhead is pretty small
+>  - actually doing the accounting - the core of slub.c, page_alloc.c,
+>    percpu.c
+>  - setting/restoring the alloc tag: this is overhead we add to every
+>    allocation callsite, so it's the most relevant - but it's just a few
+>    instructions.
+> 
+> So that's the breakdown. Definitely not zero overhead, but that fixed
+> memory overhead (and additionally, the percpu counters) is the price we
+> pay for very low runtime CPU overhead.
+
+But where are the benchmarks that are not micro-benchmarks. How much
+overhead does this cause to those? Is it in the noise, or is it noticeable?
+
+-- Steve
 
