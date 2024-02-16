@@ -1,248 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-11802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12674857337
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 02:14:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3522D85733F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 02:15:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 920C6B22911
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 01:14:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD4011F2215E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 01:15:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AC314276;
-	Fri, 16 Feb 2024 01:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IJuHR3LP"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DB017741;
+	Fri, 16 Feb 2024 01:11:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7261F13FF2;
-	Fri, 16 Feb 2024 01:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E175817991;
+	Fri, 16 Feb 2024 01:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708045687; cv=none; b=kw+1CnCJtZcFe1oHonRVpAo8xkEG8hH8Y+iEeh1ILZSRKl+mImHunNYbajLe2k9+VGdbICSMvgZynM7hcnAhX/DX7agDZtgacZDp7POEqJ8f72triHB0+3o1JFEMeVM7YJFuH+hCXyrMIuEo/sPqLlNqyCmxdm+GiswnJyDVOY4=
+	t=1708045873; cv=none; b=uWpHVoY4jRHcWz5DQf9bWm4ZtslKyYuSPHqOusEzweptyQIKri2FxjYGmH+NAriFTim8SXwG5VM5xuNKbvhRPrnf08HbNKk1hkDqf7vp8RnzMoGbOUb7eD3o/hmjn8h+F9K+HTlXVvZmFFQlOrXdqpLpFYuVHqDoJFuaSDtgbPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708045687; c=relaxed/simple;
-	bh=My17f7uHZuJxcTtAV9t+RcWRqII/pvS+5iVRXxFEj/A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dd9EcJBdSvPLvocdS4KOhutdsI0rcSrjji7ATCUnc+0Jw/dtJnvsHOE1V5FpG+1ICAdasVU4CtQDAZfRhsrEendbgZqOZe5UkGD5EM/pGlHzlYFgXrGEWu0Zb0FHxG+Br30+2KuhqX4Z4z1jnW7BhcnYnDK3Aoo5N9w3RVsgqR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IJuHR3LP; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=qm60aItTwcr3Su9bNh4f1xdBtrQH68Cvyk9SmUymlAQ=; b=IJuHR3LPpMwjbWKKIimIXZMjWd
-	Nxpf9YZhVXkj1dbBwMnQuRq6RwN0tq2cjBXB5liLBa+ze8ZaRBHuCAV+VNhqZRgYA7gPZzJyjErDz
-	z71tLa9Y3wFs5ihE+2lTWNzH9YWkk3nVAzsOWHPvNPlOx9KLFKbJKaYyD6r2tG1VCriQEnlykv4kc
-	3OO6kiQS8QtJWosbwb/JfBmlnAvBnihks+ICUPQUU+MHo71eOnsT7Y7vsK/L/gutbJwji/wOVTOEU
-	4Jk4Cu8bjowRkSrV6hvFpSNYKCZrYER2Gpk6/Jt+qCA6nSrMJx/Z7U8VCB6gluXmzYkccWgWwIo/J
-	fX36Z5+Q==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1ramhx-00000000gsF-0EMQ;
-	Fri, 16 Feb 2024 01:08:05 +0000
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: fstests@vger.kernel.org,
-	anand.jain@oracle.com
-Cc: linux-fsdevel@vger.kernel.org,
-	kdevops@lists.linux.dev,
-	patches@lists.linux.dev,
-	Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH v2 fstests] check: add support for --start-after
-Date: Thu, 15 Feb 2024 17:08:02 -0800
-Message-ID: <20240216010803.164750-1-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1708045873; c=relaxed/simple;
+	bh=oztQecXN6o6vKFvgQ7Cw0FO8kgeZTEB225WAZJbSFVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=d2DYsxpCOnHXhOKOv5BbVWqN4iDTUYiwbiIUaKzPBzbbklhKpOcot0MqFJ70KACSSrXupx7OpYD5StI96JjM2nUWFy5/TBqbUDLE5NS9dFysp38yGo95cVjekkZIxmppTqs19P3b/qJrLNlD++9hav529QCWBogXD8+UsCVeXg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C847C433F1;
+	Fri, 16 Feb 2024 01:11:05 +0000 (UTC)
+Date: Thu, 15 Feb 2024 20:12:39 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan
+ <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ akpm@linux-foundation.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+ mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
+ liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
+ peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+ david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+ nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
+ rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
+ yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+ hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+ ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
+ ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, bsegall@google.com, bristot@redhat.com,
+ vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+ iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+ elver@google.com, dvyukov@google.com, shakeelb@google.com,
+ songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+ minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+ cgroups@vger.kernel.org
+Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in
+ show_mem()
+Message-ID: <20240215201239.30ea2ca8@gandalf.local.home>
+In-Reply-To: <a3ha7fchkeugpthmatm5lw7chg6zxkapyimn3qio3pkoipg4tc@3j6xfdfoustw>
+References: <Zc4_i_ED6qjGDmhR@tiehlicka>
+	<CAJuCfpHq3N0h6dGieHxD6Au+qs=iKAifFrHAMxTsHTcDrOwSQA@mail.gmail.com>
+	<ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
+	<320cd134-b767-4f29-869b-d219793ba8a1@suse.cz>
+	<efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
+	<20240215180742.34470209@gandalf.local.home>
+	<jpmlfejxcmxa7vpsuyuzykahr6kz5vjb44ecrzfylw7z4un3g7@ia3judu4xkfp>
+	<20240215192141.03421b85@gandalf.local.home>
+	<uhagqnpumyyqsnf4qj3fxm62i6la47yknuj4ngp6vfi7hqcwsy@lm46eypwe2lp>
+	<20240215193915.2d457718@gandalf.local.home>
+	<a3ha7fchkeugpthmatm5lw7chg6zxkapyimn3qio3pkoipg4tc@3j6xfdfoustw>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Often times one is running a new test baseline we want to continue to
-start testing where we left off if the last test was a crash. To do
-this the first thing that occurred to me was to use the check.time
-file as an expunge file but that doesn't work so well if you crashed
-as the file turns out empty.
+On Thu, 15 Feb 2024 19:50:24 -0500
+Kent Overstreet <kent.overstreet@linux.dev> wrote:
 
-So instead add super simple argument --start-after which let's you
-skip all tests until the test infrastructure has "seen" the test
-you want to skip. This does obviously work best if you are not using
-a random order, but that is rather implied. If you do use a random
-order --start-after still works, the final output will however just
-be randomized of course, but it should let you skip a failed known
-crash at least. The real value to --start-after though is for when
-you use a non-randomized order.
+> > All nice, but where are the benchmarks? This looks like it will have an
+> > affect on cache and you can talk all you want about how it will not be an
+> > issue, but without real world benchmarks, it's meaningless. Numbers talk.  
+> 
+> Steve, you're being demanding. We provided sufficient benchmarks to show
+> the overhead is low enough for production, and then I gave you a
+> detailed breakdown of where our overhead is and where it'll show up. I
+> think that's reasonable.
 
-If the target test is not found in your test list we complain and
-bail. This is not as obvious when you specify groups, so likewise
-we do a special check when you use groups to ensure the test is at
-least part of one group.
+It's not unreasonable or demanding to ask for benchmarks. You showed only
+micro-benchmarks that do not show how cache misses may affect the system.
+Honestly, it sounds like you did run other benchmarks and didn't like the
+results and are fighting to not have to produce them. Really, how hard is
+it? There's lots of benchmarks you can run, like hackbench, stress-ng,
+dbench. Why is this so difficult for you?
 
-Demo:
-
-root@demo-xfs-reflink /var/lib/xfstests # ./check -s xfs_reflink -n -g soak --start-after generic/025
-Start after test generic/025 not found in any group specified.
-Be sure you specify a test present in one of your test run groups if using --start-after.
-
-Your set of groups have these tests:
-
-generic/476 generic/521 generic/522 generic/616 generic/617 generic/642 generic/650
-
-root@demo-xfs-reflink /var/lib/xfstests # ./check -s xfs_reflink -n -g soak --start-after generic/522
-SECTION       -- xfs_reflink
-RECREATING    -- xfs on /dev/loop16
-FSTYP         -- xfs (non-debug)
-PLATFORM      -- Linux/x86_64 demo-xfs-reflink 6.5.0-5-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.5.13-1 (2023-11-29)
-MKFS_OPTIONS  -- -f -f -m reflink=1,rmapbt=1, -i sparse=1, /dev/loop5
-MOUNT_OPTIONS -- /dev/loop5 /media/scratch
-
-generic/616
-generic/617
-generic/642
-generic/650
-
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
-
-Changes since v1:
-
-This all addresses Anand Jain's feedback.
-
- - Skip tests completely which are not going to be run
- - Sanity test to ensure the test is part of a group, if you listed
-   groups, and if not provide a useful output giving the list of all
-   tests in your group so you can know better which one is a valid test
-   to skip
- - Sanity test to ensure the test you specified is valid
- - Moves the trim during file processing now using a routine
-   trim_start_after()
-
- check | 52 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 52 insertions(+)
-
-diff --git a/check b/check
-index 71b9fbd07522..1c76f33192ba 100755
---- a/check
-+++ b/check
-@@ -18,6 +18,8 @@ showme=false
- have_test_arg=false
- randomize=false
- exact_order=false
-+start_after=false
-+start_after_test=""
- export here=`pwd`
- xfile=""
- subdir_xfile=""
-@@ -80,6 +82,7 @@ check options
-     -b			brief test summary
-     -R fmt[,fmt]	generate report in formats specified. Supported formats: xunit, xunit-quiet
-     --large-fs		optimise scratch device for large filesystems
-+    --start-after	only start testing after the test specified
-     -s section		run only specified section from config file
-     -S section		exclude the specified section from the config file
-     -L <n>		loop tests <n> times following a failure, measuring aggregate pass/fail metrics
-@@ -120,6 +123,8 @@ examples:
-  check -x stress xfs/*
-  check -X .exclude -g auto
-  check -E ~/.xfstests.exclude
-+ check --start-after btrfs/010
-+ check -n -g soak --start-after generic/522
- '
- 	    exit 1
- }
-@@ -204,6 +209,24 @@ trim_test_list()
- 	rm -f $tmp.grep
- }
- 
-+# takes the list of tests to run in $tmp.list and skips all tests until
-+# the specified test is found. This will ensure the tests start after the
-+# test specified, it skips the test specified.
-+trim_start_after()
-+{
-+	local skip_test="$1"
-+	local starts_regexp=$(echo $skip_test | sed -e 's|\/|\\/|')
-+	local grep_start_after=" | awk 'f;/.*'$starts_regexp'/{f=1}'"
-+
-+	if grep -q $skip_test $tmp.list ; then
-+		rm -f $tmp.grep
-+		awk 'f;/.*'$starts_regexp'/{f=1}' $tmp.list > $tmp.tmp
-+		mv $tmp.tmp $tmp.list
-+	else
-+		echo "Test $skip_test not found in test list, be sure to use a valid test if using --start-after"
-+		exit 1
-+	fi
-+}
- 
- _wallclock()
- {
-@@ -233,6 +256,9 @@ _prepare_test_list()
- 		# no test numbers, do everything
- 		get_all_tests
- 	else
-+		local group_all
-+		local start_after_found=0
-+		list=""
- 		for group in $GROUP_LIST; do
- 			list=$(get_group_list $group)
- 			if [ -z "$list" ]; then
-@@ -240,11 +266,28 @@ _prepare_test_list()
- 				exit 1
- 			fi
- 
-+			if [[ $start_after && $start_after_found -ne 1 ]]; then
-+				echo $list | grep -q $start_after_test
-+				if [[ $? -eq 0 ]]; then
-+					start_after_found=1
-+				fi
-+			fi
- 			for t in $list; do
- 				grep -s "^$t\$" $tmp.list >/dev/null || \
- 							echo "$t" >>$tmp.list
- 			done
-+			group_all="$group_all $list"
- 		done
-+		if [[ $start_after && $start_after_found -ne 1 ]]; then
-+			group_all=$(echo $group_all | sed -e 's|tests/||g')
-+			echo "Start after test $start_after_test not found in any group specified."
-+			echo "Be sure you specify a test present in one of your test run groups if using --start-after."
-+			echo
-+			echo "Your set of groups have these tests:"
-+			echo
-+			echo -e $group_all
-+			exit 1
-+		fi
- 	fi
- 
- 	# Specified groups to exclude
-@@ -258,6 +301,10 @@ _prepare_test_list()
- 		trim_test_list $list
- 	done
- 
-+	if [[ $start_after ]]; then
-+		trim_start_after $start_after_test
-+	fi
-+
- 	# sort the list of tests into numeric order unless we're running tests
- 	# in the exact order specified
- 	if ! $exact_order; then
-@@ -313,6 +360,11 @@ while [ $# -gt 0 ]; do
- 				<(sed "s/#.*$//" $xfile)
- 		fi
- 		;;
-+	--start-after)
-+		start_after=true
-+		start_after_test="$2"
-+		shift
-+		;;
- 	-s)	RUN_SECTION="$RUN_SECTION $2"; shift ;;
- 	-S)	EXCLUDE_SECTION="$EXCLUDE_SECTION $2"; shift ;;
- 	-l)	diff="diff" ;;
--- 
-2.43.0
-
+-- Steve
 
