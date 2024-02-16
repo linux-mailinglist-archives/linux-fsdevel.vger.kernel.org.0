@@ -1,179 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-11873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190E68583B5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 18:13:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4579B8583BD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 18:14:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C93BF28246A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 17:13:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3A6128366A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 17:14:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C42A13328F;
-	Fri, 16 Feb 2024 17:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IhonjF7i"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00D5131E30;
+	Fri, 16 Feb 2024 17:11:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AB5133287
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 17:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD43130E4F;
+	Fri, 16 Feb 2024 17:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708103491; cv=none; b=T3FEBV6iDWNB6jwGpLuqpvPM+N9rBds+nwiV8YiXjXe5v1J56WPCt8oqQ5D6dj6tERNxJjYEdXtpId1lr365ug+sU7yeJLtss7g75lVsvRfv6dPqkDX62yVIdAENGpTxmLNxHCFUFiOfIkDOYdB1FMA3Fo3e+xaSErpK1Hu48/M=
+	t=1708103509; cv=none; b=CQpoAPCfKdNfQXAO1BdxNRMV02lMDl6g4wXWcpPmaddoO9gHctGXqtEmuDnoUyZPC7LarBORhtGU9PSvyAyU+H3Dx+ROBsxc9o6btv362XSDdO5K9O4513HWwFJPc5gZabF6Qu5N2aK3NEHFK+U0B8qPJ2cRmPIbXYnJhrUOUn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708103491; c=relaxed/simple;
-	bh=s5/J21l0Vb16qAasTR2af/DM49VlLYJehTHe2iQrZgA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c4tQr/33uaUMDdmK+j4dThi/wkjiZsvTcSFcex+XqAVJ4IjjznyQygv08dDKhbhyc8FwPeckZZzpaXuuDiQexw5OCT30VZT9R102RnapQoFV8UtBbeWZGIzHqBb/SVLj1YZWo5sWcdN7Pfb/6iTZxFZjBlNmuyU29cdjAQhs/jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IhonjF7i; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-607bfa4c913so21752397b3.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 09:11:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1708103488; x=1708708288; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uuBxuiKdZN3KVCrAhLvxlGbAMwEHkyTmKhPVF6pp06o=;
-        b=IhonjF7i5YFBSeoTWMrM3zJPshDaeWbhHkyvFnB+NDDQ+Ij7VL1y4CDWuUtJ3qQLKl
-         Au2LnVhttTY8EleOOAm8nAZxngUYvF8wO9XVhoNzUP7uRfsFK7nsIze8PDhcPxzxV3D6
-         mY5DAN0NDRyj7KYkKpaZbc/I74WFsIAVT6M7orsE99u+Y6LhXh3tpyK0pYUpcZVO14LV
-         iRr1SyOi5R2XYruaFZcRpTauoDgU2vsEtDFpLIIU5MvTRJYmFF61013C/57ZufhKGjMe
-         7voZSdkoVMKYEfSFym991AfVyG+N6LxkRFWrdXJdC/stdT+Z6pCznTPs3dldYjYueFhU
-         aklw==
+	s=arc-20240116; t=1708103509; c=relaxed/simple;
+	bh=kyrFySfD33DfjMotSRjE71WBERyw/qE/LQ5gGoYlAJo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WQN1RjRIqf9DbfOJZSnY0xgH436LFHEgRGdbmls5ZWr+Y/gGMcKKU+trFcfKmWxfFOgrsX0UJS0VSyaAswGRaUTcWcbWBy453LqkUDamCYR+LfxUJHNfxoRcMOkVvFf+QsQaRct/xTBmMbEulaeiLUnJfNBzSmDi3nabDg1lh3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1d94323d547so8540345ad.3;
+        Fri, 16 Feb 2024 09:11:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708103488; x=1708708288;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uuBxuiKdZN3KVCrAhLvxlGbAMwEHkyTmKhPVF6pp06o=;
-        b=A/qFQgv+UvU2QFLUQAVWRFr/mOEoqxykre5FXn7qTq+M6xpsPYkIWrPu/y3c5hLeyB
-         q+P9e1Ut6FfHsGNutZ0I3RkBsChWI+jFxXNIR5pBKHTYtlGk1rJ+8NdQOS8t06ZnYnw2
-         BnOZeBXf+NEBS0NWDxHpZl9HeuNJKv/HO/dVb4EohXb0C4HRw74dU2b+gCjzwZp5EL3F
-         9/hdQZn0FsoNE5KganbhsgBC4g5cx4f/2AbQ6utIxjwRo9zvq2oWdyuQXezq4jfgckwa
-         uoBPbEdYOkDyJ94EPcwFlZmhLbv3J3hdrRb8YGkzXhLgCxdz2wXVAK2ctk14FHp1pQFt
-         fSbg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOquHJ+O7Y/Wt7KMwRMr3mpjfyIdqapqAW0H67nKNxUojZsp+soYjk+9Mn3/7jbBtzJaoS+8tHKg6QQzsvMaXSF1HFyS9PvtfykfJ3KA==
-X-Gm-Message-State: AOJu0YwYygvRJzosRg9eyE/2xMgpZNub/nIcSJI2BNmtTB9/w5OchQvf
-	h105s8zV9ddBSvp+CKjHE/cnJQawo5xOrptmVfqS4AbJw21dRgd1kqvNPrKCcf1hxkGNbkkqhDf
-	ySXFcAhnjEho18Fn5jzv5rEj2+bdrp+rIkagc
-X-Google-Smtp-Source: AGHT+IGrTdDphKuPSMMFIAFPJovR9x9JDU4EDFPzTY0y3WFZl7FqMruLomlujQStik0SDQEztF8S9x7Y+PwqmZ025HY=
-X-Received: by 2002:a81:8391:0:b0:607:e1c0:450b with SMTP id
- t139-20020a818391000000b00607e1c0450bmr4624095ywf.0.1708103488010; Fri, 16
- Feb 2024 09:11:28 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708103507; x=1708708307;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kSuzb8DqbcddqazNcXeQYXhIgH29Q4MURStfPcjLULA=;
+        b=v/Nmk8WJk3BlJuRXJt/Ds3QCxfejv3ln/K/W80r4ULoqQt5rFkbrgWSgPiD74HPUKO
+         n1n4epdsm9cf3YLx9wYUCzWVp0jDcNidPO5uO8U2hwOWt9iRu9uFgUfHza4T3wGqXX7j
+         AG46r7sr6hSZIVaevTojJngyKVRA5qcZZz3rVNY6M/7QIGOVZGSsG7l7ZN3cPsDF1JNm
+         chBbhkKg7bT52bofdq6Gi3PqZjoX65bWVfBwu17jSmm12fXGW6SUcTbubzRYY9SgUf4Y
+         U1Yf2MJNd+CjW7G8kXYAYHBk0oQnm94yiI0lwis1PQJh5Z7rzhM031ooLuvt8mBPVShe
+         9OHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWw8GCnbfjSh9CZtvLaC4qDG4fEXNURAN2ELz/JYTIrYx6MrLOe0K6V/L+x5T+voIHdjwGNaP1v417I0TgwNlAID0P4KGezycGNcn/Af9qwbZxycc0Ru2NkdavD5mNFYYFQaLQuVA==
+X-Gm-Message-State: AOJu0Yxf0zSGy9NA3OCwy8BZjChlYn2aCCpYIJLEe0YvLZofjHDl3ibU
+	APj6TAh5U4rFqaqR7QfileEX54lvAoqRh29Bf1PLM1hd07knnUTY
+X-Google-Smtp-Source: AGHT+IG331XjoMtNRThXXnRDunQFRUpE1MOOB8nfLq5iNWvlJsUs8AfBgaFdVPSmrQfnRelEw/AJEQ==
+X-Received: by 2002:a17:90a:b887:b0:299:4ac2:1514 with SMTP id o7-20020a17090ab88700b002994ac21514mr544771pjr.6.1708103507206;
+        Fri, 16 Feb 2024 09:11:47 -0800 (PST)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
+        by smtp.gmail.com with ESMTPSA id mt4-20020a17090b230400b002991a647c8fsm262224pjb.10.2024.02.16.09.11.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 16 Feb 2024 09:11:46 -0800 (PST)
+Message-ID: <9d3138e1-3ac0-47c0-b768-a285eb38d224@acm.org>
+Date: Fri, 16 Feb 2024 09:11:43 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240212213922.783301-1-surenb@google.com> <20240212213922.783301-22-surenb@google.com>
- <ec0f9be2-d544-45a6-b6a9-178872b27bd4@suse.cz> <vjtuo55tzxrezoxz54zav5oxp5djngtyftkgrj2mnimf4wqq6a@hedzv4xlrgv7>
-In-Reply-To: <vjtuo55tzxrezoxz54zav5oxp5djngtyftkgrj2mnimf4wqq6a@hedzv4xlrgv7>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 16 Feb 2024 09:11:17 -0800
-Message-ID: <CAJuCfpEsoC_hkhwOU8dNSe5HCFX-xiKsVivqyXbVmuEE-_F2ow@mail.gmail.com>
-Subject: Re: [PATCH v3 21/35] mm/slab: add allocation accounting into slab
- allocation and free paths
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Vlastimil Babka <vbabka@suse.cz>, akpm@linux-foundation.org, mhocko@suse.com, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
-	corbet@lwn.net, void@manifault.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, 
-	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
-	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
-	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
-	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
-	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org, 
-	ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org, 
-	ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org, 
-	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
-	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
-	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
-	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
-	cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] fs/aio: Make io_cancel() generate completions
+ again
+Content-Language: en-US
+To: Christoph Hellwig <hch@lst.de>
+Cc: Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+ Avi Kivity <avi@scylladb.com>, Sandeep Dhavale <dhavale@google.com>,
+ Jens Axboe <axboe@kernel.dk>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Kent Overstreet <kent.overstreet@linux.dev>,
+ stable@vger.kernel.org
+References: <20240215204739.2677806-1-bvanassche@acm.org>
+ <20240215204739.2677806-3-bvanassche@acm.org> <20240216071325.GA10830@lst.de>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20240216071325.GA10830@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 16, 2024 at 8:39=E2=80=AFAM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> On Fri, Feb 16, 2024 at 05:31:11PM +0100, Vlastimil Babka wrote:
-> > On 2/12/24 22:39, Suren Baghdasaryan wrote:
-> > > Account slab allocations using codetag reference embedded into slabob=
-j_ext.
-> > >
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > Co-developed-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> > > ---
-> > >  mm/slab.h | 26 ++++++++++++++++++++++++++
-> > >  mm/slub.c |  5 +++++
-> > >  2 files changed, 31 insertions(+)
-> > >
-> > > diff --git a/mm/slab.h b/mm/slab.h
-> > > index 224a4b2305fb..c4bd0d5348cb 100644
-> > > --- a/mm/slab.h
-> > > +++ b/mm/slab.h
-> > > @@ -629,6 +629,32 @@ prepare_slab_obj_exts_hook(struct kmem_cache *s,=
- gfp_t flags, void *p)
-> > >
-> > >  #endif /* CONFIG_SLAB_OBJ_EXT */
-> > >
-> > > +#ifdef CONFIG_MEM_ALLOC_PROFILING
-> > > +
-> > > +static inline void alloc_tagging_slab_free_hook(struct kmem_cache *s=
-, struct slab *slab,
-> > > +                                   void **p, int objects)
-> > > +{
-> > > +   struct slabobj_ext *obj_exts;
-> > > +   int i;
-> > > +
-> > > +   obj_exts =3D slab_obj_exts(slab);
-> > > +   if (!obj_exts)
-> > > +           return;
-> > > +
-> > > +   for (i =3D 0; i < objects; i++) {
-> > > +           unsigned int off =3D obj_to_index(s, slab, p[i]);
-> > > +
-> > > +           alloc_tag_sub(&obj_exts[off].ref, s->size);
-> > > +   }
-> > > +}
-> > > +
-> > > +#else
-> > > +
-> > > +static inline void alloc_tagging_slab_free_hook(struct kmem_cache *s=
-, struct slab *slab,
-> > > +                                   void **p, int objects) {}
-> > > +
-> > > +#endif /* CONFIG_MEM_ALLOC_PROFILING */
-> >
-> > You don't actually use the alloc_tagging_slab_free_hook() anywhere? I s=
-ee
-> > it's in the next patch, but logically should belong to this one.
->
-> I don't think it makes any sense to quibble about introducing something
-> in one patch that's not used until the next patch; often times, it's
-> just easier to review that way.
+On 2/15/24 23:13, Christoph Hellwig wrote:
+> On Thu, Feb 15, 2024 at 12:47:39PM -0800, Bart Van Assche wrote:
+>> The following patch accidentally removed the code for delivering
+>> completions for cancelled reads and writes to user space: "[PATCH 04/33]
+>> aio: remove retry-based AIO"
+>> (https://lore.kernel.org/all/1363883754-27966-5-git-send-email-koverstreet@google.com/)
+> 
+> Umm, that was more than 10 years ago.  What code do you have that
+> is this old, and only noticed that it needs the completions now?
 
-Yeah, there were several cases where I was debating with myself which
-way to split a patch (same was, as you noticed, with
-prepare_slab_obj_exts_hook()). Since we already moved
-prepare_slab_obj_exts_hook(), alloc_tagging_slab_free_hook() will
-probably move into the same patch. I'll go over the results once more
-to see if the new split makes more sense, if not will keep it here.
-Thanks!
+USB cancellation is being used and still works. It's only the completions
+that are missing.
+
+This patch was submitted less than two years ago and fixes a bug in the adb
+daemon: "adbd: Dequeue pending USB write requests upon receiving CNXN"
+(https://android.googlesource.com/platform/packages/modules/adb/+/4dd4da41e6b004fa0d49575ac87e8db877f3a116).
+My questions about that patch are as follows (I have not yet found an adbd
+expert who can help me with answering these questions):
+* Are the io_cancel() calls racy? If the io_cancel() calls are delayed, will
+   this break the fix for the bug described in the patch description?
+* Should the reported bug perhaps be fixed by improving the adb protocol,
+   e.g. by including a session ID in the adb protocol header?
+
+Thanks,
+
+Bart.
 
