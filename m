@@ -1,60 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-11890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63A68586AB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 21:23:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF6398586AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 21:24:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 153291C21A49
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 20:23:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 658091F236F6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 20:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC6BA13AA48;
-	Fri, 16 Feb 2024 20:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6FEB13958B;
+	Fri, 16 Feb 2024 20:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JPDdKcSU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BREFQPUE"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43ACF139567;
-	Fri, 16 Feb 2024 20:23:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EF67135A6F;
+	Fri, 16 Feb 2024 20:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708114986; cv=none; b=R7io9+kEB8xovDRzbgFsEo9zat2LDSeKSFA1+8KefKMbwzxsXr1NFzw8vuzgeZVdhDp3TXQEucon/Oram7JXrTk4UcthzhBAKyrgd+OYMAJDJAUeQHi7C3i7XTf7ZJKUTlyZEsBuLdgCSxqswNvkrmIHcOhHlGbw7lf8qSjz6fw=
+	t=1708115039; cv=none; b=W/ZyNW0UflRYyP/hmXQHFwKevKoSJQBFZd4dYHrOPJYjYpqymjw9GkZzgW6IUMle+qlvhjTNaHqbRtN4kRpq1z4ClT9eEZ9t2oJ08J6FrfRCMbztZ1QiLcwGuh6tMTj5HROpeBLEJtcNk08qnUcL/oJopeVfwM0H/ScVeLTwnMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708114986; c=relaxed/simple;
-	bh=FZKDvxwOLKdXeXYFLErtJaz9RUHYu0Q/oOHwXC/6poQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WCgLuNVpUkf5v7Tn/K0dcy1R7B3+6ZBGQTSf3dzRf2zRGgOOcuzSkljcKIJxbCzqG+8sR2kyh0f/eQyXni5Zvxm+vqkEA4G0grikH7TPrnIcUwJ3hm08orjb/zw+ACczGMfsaewcfywmO6J7qlzblVnNv8sD9sYkWyqTPxCV6FI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JPDdKcSU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 881A8C433C7;
-	Fri, 16 Feb 2024 20:23:03 +0000 (UTC)
+	s=arc-20240116; t=1708115039; c=relaxed/simple;
+	bh=Sq/Mpf4CU1DDxAJaU5smyIB6OI93uNYISckA1rqgEqc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iB1ruXJJeSyQXtiVpWlmnoVzK6HCFHMjd4QBpMlOuamQeIvWRME/wgHBBDc17nUNExiTZ0Yc0DrdMtsoYC5p6HwA1LbeP6FVs4d0AQOhqcuH1j1CjmpdgCWEFJOYqNV9KcjGpEBgv/jAHRJ7/KC39Zx79RFpHrBv88yDA6IDe0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BREFQPUE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9DD7C433C7;
+	Fri, 16 Feb 2024 20:23:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708114985;
-	bh=FZKDvxwOLKdXeXYFLErtJaz9RUHYu0Q/oOHwXC/6poQ=;
+	s=k20201202; t=1708115038;
+	bh=Sq/Mpf4CU1DDxAJaU5smyIB6OI93uNYISckA1rqgEqc=;
 	h=From:To:Cc:Subject:Date:From;
-	b=JPDdKcSU1v7J4n2vhyqtW0wo+yuczCaaDoXyAiVLDiVfD4fjvF8z33nTw5/YUrgxF
-	 4hfexzkX3VXEJRBNJH/XXBwUIdfTjbRSUmXTyxkbID0oYvjKDkhxsQOOiGNK1wnJhE
-	 OUzxHdS6lE9CA/1zP8cRM0RP35hSBLZGivQSNIYLqZ/IGAVJ0yF9XN8pPyfpkORUjX
-	 m/OorVNf1LFJeMU8fNHEQmLwfSPOi9GO+igiUmg574vQlkr9KX+G8GpQUJQRdtPyxS
-	 utLzqNDPLEK0p6RlWee0BCXZ5iwwPkQ5pJq4Oyb5OQyMHcAB8fnSGkGKPM6iF5D5Or
-	 ElmtWeeTJO8mg==
+	b=BREFQPUE+Lg3oFG94/XQbjW6/X+N9Fgw8T5AM64uUsoM72l6MQ59lraq2doPeAmw0
+	 gDuJLNl+241uzB2b51z9SyZ4hC6DZvvm8yLd+PNsKAmnUOL68zlMmfjN0bfQWpM0pd
+	 Ars2RqyFjk6GCUfQyBKbiffJqgbSCHUu46VLLSCSBmyGaMUALsTwJlygoySG7izBUr
+	 6eivxdVnqLOuY8O6W2m+xBwAjiQN5gdxr7EYCRV6hBsrzlx5tWGshcsXdz0XtpvgtM
+	 AepxHs04hMDnSrPQU+THAkdsqYO1fmCnnMVMRLhwc6uL3gfRhk411oeGOh0wolXfkP
+	 qZaPK+/EP9M6w==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Dan Williams <dan.j.williams@intel.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	kernel test robot <lkp@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
 	Jan Kara <jack@suse.cz>,
-	Jane Chu <jane.chu@oracle.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andi Kleen <ak@linux.intel.com>,
 	linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dax: add set_dax_nomc() and set_dax_nocache() stub helpers
-Date: Fri, 16 Feb 2024 21:22:51 +0100
-Message-Id: <20240216202300.2492566-1-arnd@kernel.org>
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] fs/select: rework stack allocation hack for clang
+Date: Fri, 16 Feb 2024 21:23:34 +0100
+Message-Id: <20240216202352.2492798-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -66,60 +69,55 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-In some randconfig builds, the IS_ERR() check appears to not get completely
-eliminated, resulting in the compiler to insert references to these two
-functions that cause a link failure:
+A while ago, we changed the way that select() and poll() preallocate
+a temporary buffer just under the size of the static warning limit of
+1024 bytes, as clang was frequently going slightly above that limit.
 
-ERROR: modpost: "set_dax_nocache" [drivers/md/dm-mod.ko] undefined!
-ERROR: modpost: "set_dax_nomc" [drivers/md/dm-mod.ko] undefined!
+The warnings have recently returned and I took another look. As it turns
+out, clang is not actually inherently worse at reserving stack space,
+it just happens to inline do_select() into core_sys_select(), while gcc
+never inlines it.
 
-Add more stub functions for the dax-disabled case here to make it build again.
+Annotate do_select() to never be inlined and in turn remove the special
+case for the allocation size. This should give the same behavior for
+both clang and gcc all the time and once more avoids those warnings.
 
-Fixes: d888f6b0a766 ("dm: treat alloc_dax() -EOPNOTSUPP failure as non-fatal")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202402160420.e4QKwoGO-lkp@intel.com/
+Fixes: ad312f95d41c ("fs/select: avoid clang stack usage warning")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- include/linux/dax.h | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ fs/select.c          | 2 +-
+ include/linux/poll.h | 4 ----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/include/linux/dax.h b/include/linux/dax.h
-index df2d52b8a245..4527c10016fb 100644
---- a/include/linux/dax.h
-+++ b/include/linux/dax.h
-@@ -64,6 +64,9 @@ void dax_write_cache(struct dax_device *dax_dev, bool wc);
- bool dax_write_cache_enabled(struct dax_device *dax_dev);
- bool dax_synchronous(struct dax_device *dax_dev);
- void set_dax_synchronous(struct dax_device *dax_dev);
-+void set_dax_nocache(struct dax_device *dax_dev);
-+void set_dax_nomc(struct dax_device *dax_dev);
-+
- size_t dax_recovery_write(struct dax_device *dax_dev, pgoff_t pgoff,
- 		void *addr, size_t bytes, struct iov_iter *i);
- /*
-@@ -108,6 +111,12 @@ static inline bool dax_synchronous(struct dax_device *dax_dev)
- static inline void set_dax_synchronous(struct dax_device *dax_dev)
- {
+diff --git a/fs/select.c b/fs/select.c
+index 11a3b1312abe..9515c3fa1a03 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -476,7 +476,7 @@ static inline void wait_key_set(poll_table *wait, unsigned long in,
+ 		wait->_key |= POLLOUT_SET;
  }
-+static inline void set_dax_nocache(struct dax_device *dax_dev)
-+{
-+}
-+static inline void set_dax_nomc(struct dax_device *dax_dev)
-+{
-+}
- static inline bool daxdev_mapping_supported(struct vm_area_struct *vma,
- 				struct dax_device *dax_dev)
- {
-@@ -120,9 +129,6 @@ static inline size_t dax_recovery_write(struct dax_device *dax_dev,
- }
- #endif
  
--void set_dax_nocache(struct dax_device *dax_dev);
--void set_dax_nomc(struct dax_device *dax_dev);
--
- struct writeback_control;
- #if defined(CONFIG_BLOCK) && defined(CONFIG_FS_DAX)
- int dax_add_host(struct dax_device *dax_dev, struct gendisk *disk);
+-static int do_select(int n, fd_set_bits *fds, struct timespec64 *end_time)
++static noinline_for_stack int do_select(int n, fd_set_bits *fds, struct timespec64 *end_time)
+ {
+ 	ktime_t expire, *to = NULL;
+ 	struct poll_wqueues table;
+diff --git a/include/linux/poll.h b/include/linux/poll.h
+index a9e0e1c2d1f2..d1ea4f3714a8 100644
+--- a/include/linux/poll.h
++++ b/include/linux/poll.h
+@@ -14,11 +14,7 @@
+ 
+ /* ~832 bytes of stack space used max in sys_select/sys_poll before allocating
+    additional memory. */
+-#ifdef __clang__
+-#define MAX_STACK_ALLOC 768
+-#else
+ #define MAX_STACK_ALLOC 832
+-#endif
+ #define FRONTEND_STACK_ALLOC	256
+ #define SELECT_STACK_ALLOC	FRONTEND_STACK_ALLOC
+ #define POLL_STACK_ALLOC	FRONTEND_STACK_ALLOC
 -- 
 2.39.2
 
