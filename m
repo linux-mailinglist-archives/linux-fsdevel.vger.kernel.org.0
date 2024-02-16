@@ -1,282 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-11840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E8E7857A16
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 11:15:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8F3857A18
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 11:16:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B87E1F224B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 10:15:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87192284D19
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 10:16:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397CE2031A;
-	Fri, 16 Feb 2024 10:15:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4898208C0;
+	Fri, 16 Feb 2024 10:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LpVGkkeB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aPmGard6";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LpVGkkeB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aPmGard6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BC7200C9
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 10:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC35200BF;
+	Fri, 16 Feb 2024 10:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708078519; cv=none; b=ufAmWRCGvk1LdvJNVdz9DY3zguA4wGlWbGDzqEUGxqixWvEmPMEWUdCfCByKNrhxIdfdi/0x65KoUydFSUq77oVnnSGGiN15B1Q29fWVPyXaHBNyaMrvRZ25xoJLPXrAxPZKnt1vOy8Vmn41ISMgIS7GQdbFp1VlhyjbQOliR/I=
+	t=1708078557; cv=none; b=Y9WApQVRDk/08yPruY+BLcIlP3nDN5RnEf1gSRNnooaQ213w/NBBWPhd7ovFTTS2xB48tUrNqqbALKLmyojG9bhfOHm73xyoJEgliOGA5iAXA0Tr0Q3H1wlATzro1SlSHRaCWj09q75F5In66mjkiyRTv6nsYrP11QUCbEChriQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708078519; c=relaxed/simple;
-	bh=YwoKoOd80tW8+Pr0Ieo+G1+Gv97JTqZHAZl7BOs2kAI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bCpAl9k/zzCWWRBwJc5MR7xK49sk9hdQV+Y2g6LJNE5F57GLDtiYrPaJEubu3meF6S9fzSoIt1D+6q/B9aRz4RYMKAejlQPOGF4ZsnTm5jh7w3tyulj7BD2/OdSt1zu76/1NGYdaxkMSwdKlajENzs+hLJKtME8LlzzswMgd/2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-364f951ecc1so11049095ab.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 02:15:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708078517; x=1708683317;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=moQ8sFKtLQoeo5n8lLiIU+t/1UYmC2uUZEV0FOvabRg=;
-        b=WLW7erd34zMHh8cYfd9fqGkOgfta6fD27odvMqjL4sdxLZSJT6JNrEeZUWgotyGDx2
-         2SQHJnT/gbzpZ1lIkSwYDYcBxB8/qn8zDoM0LMYnEopNt1kiaavRxN1r7CWmztfZntVs
-         bILcfZNXs0y4DYp9CN9iSS8hH4+2I9j1ze1zESnTOSTtpz/+s4ryU8imG6225ZY7ouho
-         /8OJWLQBPKfsncqW0MInlAklTa8L7T2eSsu0KNO8hZG+gp0EgEkXTr0/JoK4+8Tj8rw8
-         Xqs6542fP9PpOf4G1HSDL5OQ7QQuqTPTjPuTCicHyOdIn6pSmtT/BeNHJQuhRHg9L/vW
-         GaIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdhMA9ysCT2xKIDomPnKXJpFEGnS9R+dJmMke7uBklIxXQAMj6CM5IbTxoV5PdVuxGl3mW2Zyi8ZueQDfmJSSpkwqMIMaoBBSTdWkmBQ==
-X-Gm-Message-State: AOJu0Yz2i1gMF3pAP6dQuHuslcMmGbc5YQU6shq5Vj9GgecdcFYCvBhx
-	Ue6OQp5X6LlKsFNov+orGmcs1uhGZXMWpgQoSoae0sVc9LAXtcnVp66Lz8ZueJ7BLJyZwv4Rxy4
-	m4tI10MqAqCshygG1+GYxaG4M6YiUPcCCuRQ0QjdDtAt8sCw4DqY4Ny0=
-X-Google-Smtp-Source: AGHT+IHfgUdZ/18YJvY6CyzoGnjWgo2xRyJJDfLy4KvLjGEvHkhLD3H+6Pmt6jbGmCXLh6l9l1ZgXKJ0R/FdYZ5JUxbWX+BsrH5A
+	s=arc-20240116; t=1708078557; c=relaxed/simple;
+	bh=YIYxvojQxw6XOlXKkIdL2ea1QJikSQ5k5vlsedIHYp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B7fT+OUfYqtlqma2yiLAfzSDQeS/9ty3g/XRT73gF11PTx2wIfeMmlqZLP6apcF0LxslNBw1MeEo4xSWUEW0PQxc9WnqwT+zt/kzU8xPRo9+DAomoenRleG72KivrmHODuG4GiESPFrPuv/guRRxJGDHv+PH6Nyb/lEmOZJE9Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LpVGkkeB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aPmGard6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LpVGkkeB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aPmGard6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 76AC721EC9;
+	Fri, 16 Feb 2024 10:15:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1708078550; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RwO2sfrBZnb90QrTcYZAEyA1bZtsunbgLx7PRRLi+s4=;
+	b=LpVGkkeBrh50QgIsYxDbL+ccnWdpkp5F/sXSjHRPWlHZ4/P+aHbpbdnBU9tPYTYijHQRo5
+	iFYOs7LIV4rCrj+nDCkb/yB6qcZmYQj9bD0LFEatn1uo1dbxSW/fh2x+BM3W3WNy74A+2A
+	nqm26ZC1nbmEwTqKsVfvgk+46DOhQIk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1708078550;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RwO2sfrBZnb90QrTcYZAEyA1bZtsunbgLx7PRRLi+s4=;
+	b=aPmGard6iLZ9Lpa6jmNBfVhUlkN0RZi85t3/p3vBhUwAqdu+BlFLb8ejJeBGGezQhKu1Zt
+	uMz7rBK+9wSXXtCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1708078550; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RwO2sfrBZnb90QrTcYZAEyA1bZtsunbgLx7PRRLi+s4=;
+	b=LpVGkkeBrh50QgIsYxDbL+ccnWdpkp5F/sXSjHRPWlHZ4/P+aHbpbdnBU9tPYTYijHQRo5
+	iFYOs7LIV4rCrj+nDCkb/yB6qcZmYQj9bD0LFEatn1uo1dbxSW/fh2x+BM3W3WNy74A+2A
+	nqm26ZC1nbmEwTqKsVfvgk+46DOhQIk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1708078550;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RwO2sfrBZnb90QrTcYZAEyA1bZtsunbgLx7PRRLi+s4=;
+	b=aPmGard6iLZ9Lpa6jmNBfVhUlkN0RZi85t3/p3vBhUwAqdu+BlFLb8ejJeBGGezQhKu1Zt
+	uMz7rBK+9wSXXtCA==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 5DF6C13343;
+	Fri, 16 Feb 2024 10:15:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id +ojoFtY1z2XbBQAAn2gu4w
+	(envelope-from <jack@suse.cz>); Fri, 16 Feb 2024 10:15:50 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 14499A0807; Fri, 16 Feb 2024 11:15:46 +0100 (CET)
+Date: Fri, 16 Feb 2024 11:15:46 +0100
+From: Jan Kara <jack@suse.cz>
+To: "Liam R. Howlett" <Liam.Howlett@Oracle.com>
+Cc: Jan Kara <jack@suse.cz>, Chuck Lever <cel@kernel.org>,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, hughd@google.com,
+	akpm@linux-foundation.org, oliver.sang@intel.com,
+	feng.tang@intel.com, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, maple-tree@lists.infradead.org,
+	linux-mm@kvack.org, lkp@intel.com
+Subject: Re: [PATCH RFC 7/7] libfs: Re-arrange locking in offset_iterate_dir()
+Message-ID: <20240216101546.xjcpzyb3pgf2eqm4@quack3>
+References: <170785993027.11135.8830043889278631735.stgit@91.116.238.104.host.secureserver.net>
+ <170786028847.11135.14775608389430603086.stgit@91.116.238.104.host.secureserver.net>
+ <20240215131638.cxipaxanhidb3pev@quack3>
+ <20240215170008.22eisfyzumn5pw3f@revolver>
+ <20240215171622.gsbjbjz6vau3emkh@quack3>
+ <20240215210742.grjwdqdypvgrpwih@revolver>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c24c:0:b0:363:c25b:75e7 with SMTP id
- k12-20020a92c24c000000b00363c25b75e7mr264141ilo.3.1708078517203; Fri, 16 Feb
- 2024 02:15:17 -0800 (PST)
-Date: Fri, 16 Feb 2024 02:15:17 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000443bc506117d05c1@google.com>
-Subject: [syzbot] [kernfs?] KASAN: slab-use-after-free Read in kernfs_get
-From: syzbot <syzbot+615e0ade319f27aeab87@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240215210742.grjwdqdypvgrpwih@revolver>
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_TWELVE(0.00)[14];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_NOT_FQDN(0.50)[];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Flag: NO
 
-Hello,
+On Thu 15-02-24 16:07:42, Liam R. Howlett wrote:
+> * Jan Kara <jack@suse.cz> [240215 12:16]:
+> > On Thu 15-02-24 12:00:08, Liam R. Howlett wrote:
+> > > * Jan Kara <jack@suse.cz> [240215 08:16]:
+> > > > On Tue 13-02-24 16:38:08, Chuck Lever wrote:
+> > > > > From: Chuck Lever <chuck.lever@oracle.com>
+> > > > > 
+> > > > > Liam says that, unlike with xarray, once the RCU read lock is
+> > > > > released ma_state is not safe to re-use for the next mas_find() call.
+> > > > > But the RCU read lock has to be released on each loop iteration so
+> > > > > that dput() can be called safely.
+> > > > > 
+> > > > > Thus we are forced to walk the offset tree with fresh state for each
+> > > > > directory entry. mt_find() can do this for us, though it might be a
+> > > > > little less efficient than maintaining ma_state locally.
+> > > > > 
+> > > > > Since offset_iterate_dir() doesn't build ma_state locally any more,
+> > > > > there's no longer a strong need for offset_find_next(). Clean up by
+> > > > > rolling these two helpers together.
+> > > > > 
+> > > > > Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+> > > > 
+> > > > Well, in general I think even xas_next_entry() is not safe to use how
+> > > > offset_find_next() was using it. Once you drop rcu_read_lock(),
+> > > > xas->xa_node could go stale. But since you're holding inode->i_rwsem when
+> > > > using offset_find_next() you should be protected from concurrent
+> > > > modifications of the mapping (whatever the underlying data structure is) -
+> > > > that's what makes xas_next_entry() safe AFAIU. Isn't that enough for the
+> > > > maple tree? Am I missing something?
+> > > 
+> > > If you are stopping, you should be pausing the iteration.  Although this
+> > > works today, it's not how it should be used because if we make changes
+> > > (ie: compaction requires movement of data), then you may end up with a
+> > > UAF issue.  We'd have no way of knowing you are depending on the tree
+> > > structure to remain consistent.
+> > 
+> > I see. But we have versions of these structures that have locking external
+> > to the structure itself, don't we?
+> 
+> Ah, I do have them - but I don't want to propagate its use as the dream
+> is that it can be removed.
+> 
+> 
+> > Then how do you imagine serializing the
+> > background operations like compaction? As much as I agree your argument is
+> > "theoretically clean", it seems a bit like a trap and there are definitely
+> > xarray users that are going to be broken by this (e.g.
+> > tag_pages_for_writeback())...
+> 
+> I'm not sure I follow the trap logic.  There are locks for the data
+> structure that need to be followed for reading (rcu) and writing
+> (spinlock for the maple tree).  If you don't correctly lock the data
+> structure then you really are setting yourself up for potential issues
+> in the future.
+> 
+> The limitations are outlined in the documentation as to how and when to
+> lock.  I'm not familiar with the xarray users, but it does check for
+> locking with lockdep, but the way this is written bypasses the lockdep
+> checking as the locks are taken and dropped without the proper scope.
+> 
+> If you feel like this is a trap, then maybe we need to figure out a new
+> plan to detect incorrect use?
 
-syzbot found the following issue on:
+OK, I was a bit imprecise. What I wanted to say is that this is a shift in
+the paradigm in the sense that previously, we mostly had (and still have)
+data structure APIs (lists, rb-trees, radix-tree, now xarray) that were
+guaranteeing that unless you call into the function to mutate the data
+structure it stays intact. Now maple trees are shifting more in a direction
+of black-box API where you cannot assume what happens inside. Which is fine
+but then we have e.g. these iterators which do not quite follow this
+black-box design and you have to remember subtle details like calling
+"mas_pause()" before unlocking which is IMHO error-prone. Ideally, users of
+the black-box API shouldn't be exposed to the details of the internal
+locking at all (but then the performance suffers so I understand why you do
+things this way). Second to this ideal variant would be if we could detect
+we unlocked the lock without calling xas_pause() and warn on that. Or maybe
+xas_unlock*() should be calling xas_pause() automagically and we'd have
+similar helpers for RCU to do the magic for you?
 
-HEAD commit:    4f5e5092fdbf Merge tag 'net-6.8-rc5' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c58494180000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1d7c92dd8d5c7a1e
-dashboard link: https://syzkaller.appspot.com/bug?extid=615e0ade319f27aeab87
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> Looking through tag_pages_for_writeback(), it does what is necessary to
+> keep a safe state - before it unlocks it calls xas_pause().  We have the
+> same on maple tree; mas_pause().  This will restart the next operation
+> from the root of the tree (the root can also change), to ensure that it
+> is safe.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+OK, I've missed the xas_pause(). Thanks for correcting me.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d430539932db/disk-4f5e5092.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/6369586e33b7/vmlinux-4f5e5092.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9c1e38f80254/bzImage-4f5e5092.xz
+> If you have other examples you think are unsafe then I can have a look
+> at them as well.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+615e0ade319f27aeab87@syzkaller.appspotmail.com
+I'm currently not aware of any but I'll let you know if I find some.
+Missing xas/mas_pause() seems really easy.
 
-usb 4-1: Direct firmware load for ueagle-atm/adi930.fw failed with error -2
-usb 4-1: Falling back to sysfs fallback for: ueagle-atm/adi930.fw
-==================================================================
-BUG: KASAN: slab-use-after-free in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-BUG: KASAN: slab-use-after-free in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-BUG: KASAN: slab-use-after-free in kernfs_get+0x20/0x90 fs/kernfs/dir.c:526
-Read of size 4 at addr ffff888029e1f3e0 by task kworker/0:0/8
-
-CPU: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.8.0-rc4-syzkaller-00180-g4f5e5092fdbf #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/25/2024
-Workqueue: events request_firmware_work_func
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1e7/0x2e0 lib/dump_stack.c:106
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x167/0x540 mm/kasan/report.c:488
- kasan_report+0x142/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- instrument_atomic_read include/linux/instrumented.h:68 [inline]
- atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
- kernfs_get+0x20/0x90 fs/kernfs/dir.c:526
- sysfs_get include/linux/sysfs.h:653 [inline]
- create_dir lib/kobject.c:87 [inline]
- kobject_add_internal+0x483/0x8a0 lib/kobject.c:238
- kobject_add_varg lib/kobject.c:372 [inline]
- kobject_add+0x152/0x220 lib/kobject.c:424
- device_add+0x4b5/0xca0 drivers/base/core.c:3563
- fw_load_sysfs_fallback drivers/base/firmware_loader/fallback.c:86 [inline]
- fw_load_from_user_helper drivers/base/firmware_loader/fallback.c:162 [inline]
- firmware_fallback_sysfs+0x307/0x9e0 drivers/base/firmware_loader/fallback.c:238
- _request_firmware+0xc97/0x1250 drivers/base/firmware_loader/main.c:910
- request_firmware_work_func+0x12a/0x280 drivers/base/firmware_loader/main.c:1161
- process_one_work kernel/workqueue.c:2633 [inline]
- process_scheduled_works+0x913/0x1420 kernel/workqueue.c:2706
- worker_thread+0xa5f/0x1000 kernel/workqueue.c:2787
- kthread+0x2ef/0x390 kernel/kthread.c:388
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:242
- </TASK>
-
-Allocated by task 8:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:314 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:340
- kasan_slab_alloc include/linux/kasan.h:201 [inline]
- slab_post_alloc_hook mm/slub.c:3813 [inline]
- slab_alloc_node mm/slub.c:3860 [inline]
- kmem_cache_alloc+0x16f/0x340 mm/slub.c:3867
- kmem_cache_zalloc include/linux/slab.h:701 [inline]
- __kernfs_new_node+0xd8/0x880 fs/kernfs/dir.c:615
- kernfs_new_node+0x13a/0x240 fs/kernfs/dir.c:691
- kernfs_create_dir_ns+0x43/0x120 fs/kernfs/dir.c:1052
- sysfs_create_dir_ns+0x189/0x3a0 fs/sysfs/dir.c:59
- create_dir lib/kobject.c:73 [inline]
- kobject_add_internal+0x40d/0x8a0 lib/kobject.c:238
- kobject_add_varg lib/kobject.c:372 [inline]
- kobject_add+0x152/0x220 lib/kobject.c:424
- device_add+0x4b5/0xca0 drivers/base/core.c:3563
- fw_load_sysfs_fallback drivers/base/firmware_loader/fallback.c:86 [inline]
- fw_load_from_user_helper drivers/base/firmware_loader/fallback.c:162 [inline]
- firmware_fallback_sysfs+0x307/0x9e0 drivers/base/firmware_loader/fallback.c:238
- _request_firmware+0xc97/0x1250 drivers/base/firmware_loader/main.c:910
- request_firmware_work_func+0x12a/0x280 drivers/base/firmware_loader/main.c:1161
- process_one_work kernel/workqueue.c:2633 [inline]
- process_scheduled_works+0x913/0x1420 kernel/workqueue.c:2706
- worker_thread+0xa5f/0x1000 kernel/workqueue.c:2787
- kthread+0x2ef/0x390 kernel/kthread.c:388
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:242
-
-Freed by task 9:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x4e/0x60 mm/kasan/generic.c:640
- poison_slab_object+0xa6/0xe0 mm/kasan/common.c:241
- __kasan_slab_free+0x34/0x70 mm/kasan/common.c:257
- kasan_slab_free include/linux/kasan.h:184 [inline]
- slab_free_hook mm/slub.c:2121 [inline]
- slab_free mm/slub.c:4299 [inline]
- kmem_cache_free+0x102/0x2a0 mm/slub.c:4363
- kernfs_put+0x2a4/0x420 fs/kernfs/dir.c:569
- __kernfs_remove+0x76e/0x880 fs/kernfs/dir.c:1499
- kernfs_remove+0x7a/0xa0 fs/kernfs/dir.c:1519
- __kobject_del+0xd1/0x300 lib/kobject.c:601
- kobject_del+0x45/0x60 lib/kobject.c:624
- device_del+0x83d/0xa30 drivers/base/core.c:3834
- usb_disconnect+0x60b/0x950 drivers/usb/core/hub.c:2295
- hub_port_connect drivers/usb/core/hub.c:5323 [inline]
- hub_port_connect_change drivers/usb/core/hub.c:5623 [inline]
- port_event drivers/usb/core/hub.c:5783 [inline]
- hub_event+0x1e62/0x50f0 drivers/usb/core/hub.c:5865
- process_one_work kernel/workqueue.c:2633 [inline]
- process_scheduled_works+0x913/0x1420 kernel/workqueue.c:2706
- worker_thread+0xa5f/0x1000 kernel/workqueue.c:2787
- kthread+0x2ef/0x390 kernel/kthread.c:388
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:242
-
-The buggy address belongs to the object at ffff888029e1f3e0
- which belongs to the cache kernfs_node_cache of size 168
-The buggy address is located 0 bytes inside of
- freed 168-byte region [ffff888029e1f3e0, ffff888029e1f488)
-
-The buggy address belongs to the physical page:
-page:ffffea0000a787c0 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x29e1f
-flags: 0xfff00000000800(slab|node=0|zone=1|lastcpupid=0x7ff)
-page_type: 0xffffffff()
-raw: 00fff00000000800 ffff8880162b4dc0 ffffea0001d9c7c0 0000000000000004
-raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x112cc0(GFP_USER|__GFP_NOWARN|__GFP_NORETRY), pid 20250, tgid 20246 (syz-executor.1), ts 407489926347, free_ts 399703976306
- set_page_owner include/linux/page_owner.h:31 [inline]
- post_alloc_hook+0x1ea/0x210 mm/page_alloc.c:1533
- prep_new_page mm/page_alloc.c:1540 [inline]
- get_page_from_freelist+0x33ea/0x3580 mm/page_alloc.c:3311
- __alloc_pages+0x255/0x680 mm/page_alloc.c:4567
- __alloc_pages_node include/linux/gfp.h:238 [inline]
- alloc_pages_node include/linux/gfp.h:261 [inline]
- alloc_slab_page+0x5f/0x160 mm/slub.c:2190
- allocate_slab mm/slub.c:2354 [inline]
- new_slab+0x84/0x2f0 mm/slub.c:2407
- ___slab_alloc+0xd17/0x13e0 mm/slub.c:3540
- __slab_alloc mm/slub.c:3625 [inline]
- __slab_alloc_node mm/slub.c:3678 [inline]
- slab_alloc_node mm/slub.c:3850 [inline]
- kmem_cache_alloc+0x24d/0x340 mm/slub.c:3867
- kmem_cache_zalloc include/linux/slab.h:701 [inline]
- __kernfs_new_node+0xd8/0x880 fs/kernfs/dir.c:615
- kernfs_new_node+0x13a/0x240 fs/kernfs/dir.c:691
- __kernfs_create_file+0x49/0x2f0 fs/kernfs/file.c:1025
- sysfs_add_file_mode_ns+0x24a/0x310 fs/sysfs/file.c:307
- create_files fs/sysfs/group.c:64 [inline]
- internal_create_group+0x4f4/0xf20 fs/sysfs/group.c:152
- internal_create_groups fs/sysfs/group.c:192 [inline]
- sysfs_create_groups+0x56/0x120 fs/sysfs/group.c:218
- device_add_groups drivers/base/core.c:2727 [inline]
- device_add_attrs+0x199/0x600 drivers/base/core.c:2847
- device_add+0x57d/0xca0 drivers/base/core.c:3579
- netdev_register_kobject+0x17e/0x310 net/core/net-sysfs.c:2055
-page last free pid 55 tgid 55 stack trace:
- reset_page_owner include/linux/page_owner.h:24 [inline]
- free_pages_prepare mm/page_alloc.c:1140 [inline]
- free_unref_page_prepare+0x968/0xa90 mm/page_alloc.c:2346
- free_unref_page+0x37/0x3f0 mm/page_alloc.c:2486
- kasan_depopulate_vmalloc_pte+0x74/0x90 mm/kasan/shadow.c:415
- apply_to_pte_range mm/memory.c:2619 [inline]
- apply_to_pmd_range mm/memory.c:2663 [inline]
- apply_to_pud_range mm/memory.c:2699 [inline]
- apply_to_p4d_range mm/memory.c:2735 [inline]
- __apply_to_page_range+0x8ec/0xe40 mm/memory.c:2769
- kasan_release_vmalloc+0x9a/0xb0 mm/kasan/shadow.c:532
- __purge_vmap_area_lazy+0x163f/0x1a10 mm/vmalloc.c:1770
- drain_vmap_area_work+0x40/0xd0 mm/vmalloc.c:1804
- process_one_work kernel/workqueue.c:2633 [inline]
- process_scheduled_works+0x913/0x1420 kernel/workqueue.c:2706
- worker_thread+0xa5f/0x1000 kernel/workqueue.c:2787
- kthread+0x2ef/0x390 kernel/kthread.c:388
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1b/0x30 arch/x86/entry/entry_64.S:242
-
-Memory state around the buggy address:
- ffff888029e1f280: fb fb fb fc fc fc fc fc fc fc fc fc fc fb fb fb
- ffff888029e1f300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888029e1f380: fb fb fc fc fc fc fc fc fc fc fc fc fa fb fb fb
-                                                       ^
- ffff888029e1f400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888029e1f480: fb fc fc fc fc fc fc fc fc fc fc 00 00 00 00 00
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
