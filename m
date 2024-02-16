@@ -1,110 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-11796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127058572EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 01:56:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC4CF8572F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 01:58:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 143F4281092
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:56:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEBC41C21814
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A31D267;
-	Fri, 16 Feb 2024 00:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6D5BE5E;
+	Fri, 16 Feb 2024 00:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KYXR1+er"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NziljXAa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5B89445;
-	Fri, 16 Feb 2024 00:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F929443;
+	Fri, 16 Feb 2024 00:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708044882; cv=none; b=TbGu90giDw3o4acrkNtvDyuvhPPjc3RNJ5fDV58/4LhztENJbWhqvaRadEvJatkABgGLaOjZDX8UtO9JSlG51S1zwRkzJL9zEmqfqJ30PUn8j+qRO2WUpIGaYMZO2sbPrVrgN9v3EaeTvhgjqO3FZUZCsoHJGlXEkNRDlB2yKiE=
+	t=1708045081; cv=none; b=KOsLLwGXKEyrF7gA1HfGaSilzBdJdXjTx2yBHvLREkPq51hyx+Bs2QytQaaAUXVDpagpCPM/k6c6+uzsptBwPPXU50uz/66ycqjdewHv7W2NgGIblbt1yU139oUgncI9DnFVnaP3we1kWflvBFEkJZzqozwXenvQMCMUJJ/L7EE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708044882; c=relaxed/simple;
-	bh=ZIEOMXwsk6UMZSFSW/RNZRCFWY8oX4WOTkp26Ser0Og=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GA8lakSEqejppXhcUxfAg4xo+67t84NGGfXJUHW42AvOr8fzSrEqyNuwLniJ8p7TZrrB3tFQOJab4bQdyP0xUPs1voLJYGZlsHJq/Yp6A1PGLXzL9JDbBgkkQ8D5k4c36l8cY2+rDbt/lXVFip0n+OFCqJ3sieDDJWBVALPZFac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KYXR1+er; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAA5BC433F1;
-	Fri, 16 Feb 2024 00:54:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1708044881;
-	bh=ZIEOMXwsk6UMZSFSW/RNZRCFWY8oX4WOTkp26Ser0Og=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KYXR1+er6CkT6dVj5BHoTm5sdpzXInSUFDjwd/A/Yjb7LGJBkBRSRWj5hWf4h9LKS
-	 C+G7d4aLzLoAak5aMT/1pDhdwp5e2TSMBrg/VJtTWmvU2Yy7hQLmAYDDo5TkqKMuWM
-	 2DEbMt/kOf0QnfRdomb4IRyy3uv3wiqCnc9MsNuo=
-Date: Thu, 15 Feb 2024 16:54:38 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: kent.overstreet@linux.dev, mhocko@suse.com, vbabka@suse.cz,
- hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
- dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
- corbet@lwn.net, void@manifault.com, peterz@infradead.org,
- juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
- arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
- david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
- nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
- rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
- yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
- hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
- ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
- ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
- iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
- elver@google.com, dvyukov@google.com, shakeelb@google.com,
- songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
- minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-arch@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
- cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 13/35] lib: add allocation tagging support for memory
- allocation profiling
-Message-Id: <20240215165438.cd4f849b291c9689a19ba505@linux-foundation.org>
-In-Reply-To: <20240212213922.783301-14-surenb@google.com>
-References: <20240212213922.783301-1-surenb@google.com>
-	<20240212213922.783301-14-surenb@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1708045081; c=relaxed/simple;
+	bh=fT4BK4v0vw0QmXZmUXqjIWAaiwOlJdKTDaW84jKtOQ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=as5G3yD+VsfPf5e37SJbC+x9ljXCIZKWyWrELzUxepeXdgE7nRQ4FYpC1voVD6D69Hknk2RDfBCiza85EG1k0woqIkVNgaevDpe8KXq36FjAG2SfPLiHt5XDdaG70QBwAFitUNPn7zbm1jUX8O4ibrwfRClygyw6XrNKMx86onI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=NziljXAa; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Rg6keNXeCzOyvnz/qJIf0xHBc+UX5gdIdINZ7tsu7Xw=; b=NziljXAaygDB3mcdw4/YBOsBVJ
+	Qtvp6PQFvcuaCuE+7XRi1f1qP1CSdT7T0a8NnhpZwL+ganDoDemR24/m/s7Jf+tg5xdScrWx/0gYa
+	NbtwOtR0SurZ+1jrCln/Nz2RruCuRnDP0+272eqqrIlX3/XzJ9oOIp5PG9Da8PEjzZgRwwx00QhaD
+	vP7sqNCStpsJgGhwm/FZD5bhUQsnY1R9YJAfBmZzFXcPLe+MBIk0tP9zGDJMrmV31yXdsiT7V7nkB
+	dDVcGkPOMr1QU/hjbkPqz24E83cITqAbAl88P5qojIT92b0bKclYd6o1aFAzJiHRtC5opve9NGBHd
+	2DNZbUuQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1ramY3-00000003KzI-0jn6;
+	Fri, 16 Feb 2024 00:57:51 +0000
+Date: Fri, 16 Feb 2024 00:57:51 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Ryan Roberts <ryan.roberts@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Barry Song <21cnbao@gmail.com>, John Hubbard <jhubbard@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2] mm/filemap: Allow arch to request folio size for exec
+ memory
+Message-ID: <Zc6zD4zfsrkRlHe6@casper.infradead.org>
+References: <20240215154059.2863126-1-ryan.roberts@arm.com>
+ <Zc6mcDlcnOZIjqGm@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zc6mcDlcnOZIjqGm@dread.disaster.area>
 
-On Mon, 12 Feb 2024 13:38:59 -0800 Suren Baghdasaryan <surenb@google.com> wrote:
+On Fri, Feb 16, 2024 at 11:04:00AM +1100, Dave Chinner wrote:
+> > The reason for the low liklihood is that the current readahead algorithm
+> > starts with an order-2 folio and increases the folio order by 2 every
+> > time the readahead mark is hit. But most executable memory is faulted in
+> > fairly randomly and so the readahead mark is rarely hit and most
+> > executable folios remain order-2.
+> 
+> Yup, this is a bug in the readahead code, and really has nothing to
+> do with executable files, mmap or the architecture.  We don't want
+> some magic new VM_EXEC min folio size per architecture thingy to be
+> set - we just want readahead to do the right thing.
+> 
+> Indeed, we are already adding a mapping minimum folio order
+> directive to the address space to allow for filesystem block sizes
+> greater than PAGE_SIZE. That's the generic mechanism that this
+> functionality requires. See here:
+> 
+> https://lore.kernel.org/linux-xfs/20240213093713.1753368-5-kernel@pankajraghav.com/
+> 
+> (Probably worth reading some of the other readahead mods in that
+> series and the discussion because readahead needs to ensure that it
+> fill entire high order folios in a single IO to avoid partial folio
+> up-to-date states from partial reads.)
+> 
+> IOWs, it seems to me that we could use this proposed generic mapping
+> min order functionality when mmap() is run and VM_EXEC is set to set
+> the min order to, say, 64kB. Then the readahead code would simply do
+> the right thing, as would all other reads and writes to that
+> mapping.
+> 
+> We could trigger this in the ->mmap() method of the filesystem so
+> that filesysetms that can use large folios can turn it on, whilst
+> other filesystems remain blissfully unaware of the functionality.
+> Filesystems could also do smarter things here, too. eg. enable PMD
+> alignment for large mapped files....
 
-> +Example output.
-> +
-> +::
-> +
-> +    > cat /proc/allocinfo
-> +
-> +      153MiB     mm/slub.c:1826 module:slub func:alloc_slab_page
-> +     6.08MiB     mm/slab_common.c:950 module:slab_common func:_kmalloc_order
-> +     5.09MiB     mm/memcontrol.c:2814 module:memcontrol func:alloc_slab_obj_exts
-> +     4.54MiB     mm/page_alloc.c:5777 module:page_alloc func:alloc_pages_exact
-> +     1.32MiB     include/asm-generic/pgalloc.h:63 module:pgtable func:__pte_alloc_one
+We already enable PMD alignment for large mapped files (which caused
+some shrieking from those who believe that ASLR continues to offer
+worthwhile protection), commit efa7df3e3bb5.
 
-I don't really like the fancy MiB stuff.  Wouldn't it be better to just
-present the amount of memory in plain old bytes, so people can use sort
--n on it?  And it's easier to tell big-from-small at a glance because
-big has more digits.
-
-Also, the first thing any sort of downstream processing of this data is
-going to have to do is to convert the fancified output back into
-plain-old-bytes.  So why not just emit plain-old-bytes?
-
-If someone wants the fancy output (and nobody does) then that can be
-done in userspace.
+My problem with your minimum order proposal is that it would be a
+hard failure if we couldn't get an order-4 folio.  I think we'd do
+better to set the ra_state parameters to 64KiB at mmap time (and I
+think that's better done in the MM, not in each FS)
 
