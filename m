@@ -1,95 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-11788-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B22857270
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 01:22:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FED385727F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 01:26:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12D691F21588
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:22:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72ADB1F215E2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 00:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B1A6110;
-	Fri, 16 Feb 2024 00:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE818D271;
+	Fri, 16 Feb 2024 00:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aHIYNU4s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9077441F;
-	Fri, 16 Feb 2024 00:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2969228E8;
+	Fri, 16 Feb 2024 00:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708042929; cv=none; b=FNve/a3ePMDAuMERCZCEf6omFHsb6UmdvIGMdALpIssm48VtgMmD7Znjgis32yaBm3GNW/o62cDOWHzBOfWXiv/65jduheMLY03JxVWLpTN/dojAH/Gq5+iwtlCklv/DCJ6KpzpTIVybynXc23SbcgTDknm3vgdEpvOhKoj7BFE=
+	t=1708043184; cv=none; b=lm/P+F9UDWnCJQLfgC1NqvsIX95A2S+YGv9IVj3P6qsT5PJ8fa+7O7kNgCN1W8gjrVSYE29zxxWGTE/upoin4gVzHRFXPnh/DjPJTzRyuFFtbve9KCGokvZ+59QJQzJq4wo9ZqKW6MQOJEovHTWOrztcI7idOcI7jlRJglV9RDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708042929; c=relaxed/simple;
-	bh=nalTQbTVfjoB4G4U4Iv0Pl38flllybjmyeKYUD9dEQQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J08aN1UYGVP9vw0zEnpJaDxRWHFL5X9TYEAxdUZ4juewpyzN7hZEiGF0GCQ2zqDIKJ3nLCQUceLsZ93CaGbe5qFU1R/wBy6NS8/3FpXczuTM+t9DPMpd5WoEuwTCIUNev1ga20UILjpQdjvelWBUTDNe3bbBY4c/JIXYp6RvEsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-6da9c834646so1359819b3a.3;
-        Thu, 15 Feb 2024 16:22:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708042927; x=1708647727;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nalTQbTVfjoB4G4U4Iv0Pl38flllybjmyeKYUD9dEQQ=;
-        b=a5JBg48A13UrWyz7PR70ysGGF+Mqb0LGsvgUHZewbE47EFBx4Z4PUfxRKx9u0EPO1N
-         q9MrM8vYxVwZHkbOIiIHaa9lCwUMwaH/InSHb9Z/QTvuOOvx9EzgOJZrL/qIwoiD+sEs
-         ZdoTQRU+rIgHxHPAvWPYqk2QDmtUbk9CN6yI+IUwzzkFEkaP+nB5YnpZqDWMo6pqiAWB
-         i6rh2XR8USxiR1FGobxqCWAQLB0dFld1EhcuhWn06S37aTtueQuMbEvT5Fg1PDQAy4bg
-         aVod7dxLv0iaFWXFHuBwHHLi6O9TX3YgQwYm9vcoRQ7L7qUuzADjaltUiL0ybsb0ImPh
-         Xibw==
-X-Forwarded-Encrypted: i=1; AJvYcCVRopJd+0g80H0uohwndb/7g92xDKMZZehF4kS7Cn3QgncGU+AvwhLzvWjVRfWVUxVQ3ID33K2QjX9hstwUH77sZsPy2GwyGQZpDthRyTeQye7oL6JZrM3rinHBGNuGidDZivQMfP78t6qZ
-X-Gm-Message-State: AOJu0Ywm4HCSq1Toir4E5EN44rznE37n1IW3FLvTPjaKuzP5eawubu8N
-	fTItlgNPA8HNlvfA7LGZv6gPog45V4mCcBLmycmcJKZk3yKhhe30u30MknFP
-X-Google-Smtp-Source: AGHT+IFchL/G43WoVIYoXIbt1nEHrqq0XvNj77xFeRiCshYs5+JhsDlF3l9UKkNcTisKFiwq74tmGg==
-X-Received: by 2002:a05:6a00:3d4d:b0:6de:1e25:48e8 with SMTP id lp13-20020a056a003d4d00b006de1e2548e8mr4801967pfb.14.1708042927030;
-        Thu, 15 Feb 2024 16:22:07 -0800 (PST)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
-        by smtp.gmail.com with ESMTPSA id ka38-20020a056a0093a600b006e1377847bdsm357601pfb.50.2024.02.15.16.22.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Feb 2024 16:22:06 -0800 (PST)
-Message-ID: <424cd3a3-dc20-420c-a478-958f1aa2f1e6@acm.org>
-Date: Thu, 15 Feb 2024 16:22:04 -0800
+	s=arc-20240116; t=1708043184; c=relaxed/simple;
+	bh=oXtwZtSuO9glftnKm5bDsm0gbH6HrsEW0khA9h2R97U=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=DQwaNu4Al00k96r/9VRXvq1JKGdUyXx1+UFYCiKxH6cyqB2RVDy5pdmGgq1XTObDeBXsxtg89SZTfoCY1s8UaXlaiwcGXElV3P1m8ApjwWxexPkU5hQ4lvF/OO12fxf8l/VSyLZjqa2dTd/Yk1XTAeMtK7lTG+5om08RkdpKIF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aHIYNU4s; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41FMtnth028679;
+	Fri, 16 Feb 2024 00:25:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
+ from : to : cc : date : in-reply-to : references : content-type :
+ mime-version : content-transfer-encoding; s=pp1;
+ bh=Om9oyXgDiFyioTn4kHbDdu9jyc7RJhYiunD0WE9LJcY=;
+ b=aHIYNU4sNfsa6W1Zi2SHNnYp5pAsdwkhgkxJcFYINTcs7hJVzXD1EVzqpEhsQw9vmW54
+ 1AUJMWoYDVuVJx6grRr+rbtVY2w8d2UjRvNHeiATyyb/V4Id7ll/q4t4K9kkWwbF76vf
+ j2Cm+vKS7fWCcn05rSyIYpYOC3RHWwGIQl8vhUK2MQ5fwFRVl/O4wmtSfVPLFc1bI/4z
+ WnInjoiLggCOIG2skURkMzY32fQ4Puohw0GxcsUOQKf4h2y33musZLxiyLV0Uu17uJ/O
+ 5yaUNhukbVWTLYDDZzJxo+gUPF+gWxMjEcxCYbSsCtxF1l3cj+kJNp6WNffJWAkLfWT5 Iw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w9uucsfcr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Feb 2024 00:25:48 +0000
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41G0MkpP026872;
+	Fri, 16 Feb 2024 00:25:47 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3w9uucsfc1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Feb 2024 00:25:47 +0000
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41FLD05g009728;
+	Fri, 16 Feb 2024 00:25:46 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3w6p637q1k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 16 Feb 2024 00:25:46 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41G0Ph1735258676
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 16 Feb 2024 00:25:45 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A2A2B58061;
+	Fri, 16 Feb 2024 00:25:43 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EF01158058;
+	Fri, 16 Feb 2024 00:25:41 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.113.219])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 16 Feb 2024 00:25:41 +0000 (GMT)
+Message-ID: <6154a26bb0efc2abbfc51df4bf1adc8279854f3c.camel@linux.ibm.com>
+Subject: Re: [PATCH v10 19/25] integrity: Move
+ integrity_kernel_module_request() to IMA
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, jack@suse.cz, chuck.lever@oracle.com,
+        jlayton@kernel.org, neilb@suse.de, kolga@netapp.com,
+        Dai.Ngo@oracle.com, tom@talpey.com, paul@paul-moore.com,
+        jmorris@namei.org, serge@hallyn.com, dmitry.kasatkin@gmail.com,
+        eric.snowberg@oracle.com, dhowells@redhat.com, jarkko@kernel.org,
+        stephen.smalley.work@gmail.com, omosnace@redhat.com,
+        casey@schaufler-ca.com, shuah@kernel.org, mic@digikod.net
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        selinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        Roberto Sassu
+	 <roberto.sassu@huawei.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+Date: Thu, 15 Feb 2024 19:25:41 -0500
+In-Reply-To: <09d6fa08e2d62720759f57237043a2dd9b5208ca.camel@huaweicloud.com>
+References: <20240215103113.2369171-1-roberto.sassu@huaweicloud.com>
+	 <20240215103113.2369171-20-roberto.sassu@huaweicloud.com>
+	 <09d6fa08e2d62720759f57237043a2dd9b5208ca.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-22.el8) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 11/19] scsi: sd: Translate data lifetime information
-Content-Language: en-US
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
- Christoph Hellwig <hch@lst.de>, Daejun Park <daejun7.park@samsung.com>,
- Kanchan Joshi <joshi.k@samsung.com>, Damien Le Moal <dlemoal@kernel.org>,
- "James E.J. Bottomley" <jejb@linux.ibm.com>
-References: <20240130214911.1863909-1-bvanassche@acm.org>
- <20240130214911.1863909-12-bvanassche@acm.org>
- <yq1h6i9e7v7.fsf@ca-mkp.ca.oracle.com>
- <7e3662b4-30c0-496b-be19-378c5fab5f33@acm.org>
- <yq15xype6k9.fsf@ca-mkp.ca.oracle.com>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <yq15xype6k9.fsf@ca-mkp.ca.oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: eVp6Z66UPLJF9IDvI4kibR2k_-D2yKlM
+X-Proofpoint-GUID: 8F3OPV3UWb5PHaUQpiMgR3h1AV3Tc70q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-15_23,2024-02-14_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxlogscore=999
+ suspectscore=0 spamscore=0 malwarescore=0 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 adultscore=0 impostorscore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402160001
 
-On 2/15/24 14:00, Martin K. Petersen wrote:
-> Another option would be to simply set use_16_for_rw when streams are
-> supported like Damien does for ZBC.
+On Thu, 2024-02-15 at 17:09 +0100, Roberto Sassu wrote:
+> On Thu, 2024-02-15 at 11:31 +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > 
+> > In preparation for removing the 'integrity' LSM, move
+> > integrity_kernel_module_request() to IMA, and rename it to
+> > ima_kernel_module_request(). Rewrite the function documentation, to explain
+> > better what the problem is.
+> > 
+> > Compile it conditionally if CONFIG_INTEGRITY_ASYMMETRIC_KEYS is enabled,
+> > and call it from security.c (removed afterwards with the move of IMA to the
+> > LSM infrastructure).
+> > 
+> > Adding this hook cannot be avoided, since IMA has no control on the flags
+> > passed to crypto_alloc_sig() in public_key_verify_signature(), and thus
+> > cannot pass CRYPTO_NOLOAD, which solved the problem for EVM hashing with
+> > commit e2861fa71641 ("evm: Don't deadlock if a crypto algorithm is
+> > unavailable").
+> > 
+> > EVM alone does not need to implement this hook, first because there is no
+> > mutex to deadlock, and second because even if it had it, there should be a
+> > recursive call. However, since verification from EVM can be initiated only
+> > by setting inode metadata, deadlock would occur if modprobe would do the
+> > same while loading a kernel module (which is unlikely).
+> > 
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > Acked-by: Paul Moore <paul@paul-moore.com>
+> > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> > Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+> 
+> I hope the change of the ima_kernel_module_request() documentation is
+> fine for everyone.
+> 
+> If not, let me know.
 
-Setting use_10_for_rw may work better since devices that support data
-lifetime information will support WRITE(10) while it is not guaranteed
-that these devices support WRITE(16). As an example, WRITE(10) support
-is required by the UFS standard while WRITE(16) support is optional.
+Thanks, Roberto.  The updated kernel-doc looks good.
 
-Thanks,
+Mimi
 
-Bart.
 
