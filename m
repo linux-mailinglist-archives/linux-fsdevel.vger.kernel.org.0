@@ -1,187 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-11827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA7A38577E5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 09:47:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A649B85780E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 09:53:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C31041F22794
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 08:47:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CE391F219A0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 08:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D272F1B7F0;
-	Fri, 16 Feb 2024 08:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752E11CA8C;
+	Fri, 16 Feb 2024 08:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XBAf9glz"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yA/4iNTU";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OKTSAEdQ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MsHa2qgD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4HijluMb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-175.mta0.migadu.com (out-175.mta0.migadu.com [91.218.175.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3C141B7EA;
-	Fri, 16 Feb 2024 08:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CF01C6BC;
+	Fri, 16 Feb 2024 08:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708072972; cv=none; b=Z2wyjZrZ2UFzs2iu1UmH8dfRXIeXGSv6FzsHAYuvcyvtFYMYB6m5ykb7iVGYxIb2WAdCLRtLsWTO8IcGmi8H1AoVOr50Kqa8ZYuUMA93yUGVOh3nb6dtNXhxNpb9XSKlav7dpY6Uh5vE2arHspgat/VZsrHCG7WDiowUr2vE15g=
+	t=1708073449; cv=none; b=LLP90U4AQvRvN7ugOxa1btqHgEpN/G4/myA+Ls6aXBgHbqHYfJzZ7zmvyvu0EZ+HY7XPXvZSIPapQr30mT9Gu1dzrwNzUsdMqo8nDjIyqzm4G5ZcyNPBDC4JltqFXhCX6s75UVqL/rjZNaTUTUk2WGin/6w2TaafK+g1yV3Ub8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708072972; c=relaxed/simple;
-	bh=b53VFsoNua1SMZqHjnIYy5K7hQcfzKzegpUx8kXZyjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D2CRGIGH2QtpDO924U8sCBgiyaBO1/pGHEa3LIpHrb5AJjYBvRjyOs1LWSYg2eGVhXpV7uNv5DM1D99QOXZMbHi5y8GLFDbF/VBuqX5c7n/esAbk+Rg4xD7437cYvLRa9pSaiv6PE7qRPMmIAtDsHSwBcWjKK0McI8T7vvR9rx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XBAf9glz; arc=none smtp.client-ip=91.218.175.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 16 Feb 2024 03:42:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1708072966;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1708073449; c=relaxed/simple;
+	bh=yGT4FHDQGazhdbI/CEPDEVMPDIKAQ4DhuZOaL/hilGc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KTy7UNLwSTqkNPhAyZBrJlqHhR2X/wPEeo8gNMWAqW4al79U3HxKu2avENQLJZOj0BkX3P1d63E3jGpDWC3qZgF0WEwcCxdH0BzqOiJi0QPGrpLm+B9Xfms8vyX9/U84HkQC/rkyUt7T32fnghIMgFRqG5x8oVACpx1xTdt2ZOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yA/4iNTU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OKTSAEdQ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MsHa2qgD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4HijluMb; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EB4E021F7E;
+	Fri, 16 Feb 2024 08:50:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1708073446; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iD3JwaVQ74VDSKWCWZ1B7FlzTV5HffeulQedls0mqs0=;
-	b=XBAf9glzfRroBpjYY88uxjbSeNe6nZkW/0CXOHHsLM6By7g/JCALirh+eoFHaaqsSDTPQ2
-	p0DHixc5L1OKMb9Iz2FgNbI18R8cvnQR9Y15IGd3LB03PHcrWC6cMtuwIB34H07uDGwSie
-	r35pkeuC/79+KtJtKkxhiztqNUSrJug=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, 
-	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
-	mgorman@suse.de, dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
-	corbet@lwn.net, void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de, 
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
-	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
-	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
-	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, hughd@google.com, 
-	andreyknvl@gmail.com, keescook@chromium.org, ndesaulniers@google.com, 
-	vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com, 
-	ytcoode@gmail.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, 
-	cl@linux.com, penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
-	glider@google.com, elver@google.com, dvyukov@google.com, shakeelb@google.com, 
-	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, minchan@google.com, 
-	kaleshsingh@google.com, kernel-team@android.com, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-modules@vger.kernel.org, 
-	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Subject: Re: [PATCH v3 00/35] Memory allocation profiling
-Message-ID: <plijmr6acz2cvrfokgc46bt5budre5d5ed3alpapu4gvhkqkmn@55yhfdhigjp3>
-References: <20240212213922.783301-1-surenb@google.com>
- <87sf1s4xef.fsf@intel.com>
+	bh=LvS88A1JZEeIqJIhe88zQYazuSktyNUKiwnG9k26ga0=;
+	b=yA/4iNTUqEHccnKB1z66YL2dzLg6sK1GL094zaEuj86ov+1DS8px+e7N+FD+6UOoxL+hET
+	a6lfnD8rSL+k5Kpa/+qQilTpVUcCW+apQ7/X8hCA0bvGBSjhiTKKM5kFasWyPCKhwvXLte
+	963wM1MWXhSKnZKJcQC8iHq8r4lfbFI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1708073446;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LvS88A1JZEeIqJIhe88zQYazuSktyNUKiwnG9k26ga0=;
+	b=OKTSAEdQiQOE8QGbehxaksfU4xFFfvbOGD6CVt9rRI12E/+Xejag/fOBwE1jxEW+sGHhKg
+	icATO2U/0LamPeCg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1708073443; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LvS88A1JZEeIqJIhe88zQYazuSktyNUKiwnG9k26ga0=;
+	b=MsHa2qgDMGrpba+EungtRB3gKcd1mAeCYnHbKWGZYMw/SQvw9DiqUo9EErZ8M7sMcyP6RG
+	RK6h/aPqWH9WJi4p9mZ0TqgjpGee9KRFe7uPaqgah31OZo6pY5y4FPhnqmVR6Vv6bGKkTT
+	CAp5/x4fPl5c6RGeBvw0LRnpDPAKPcM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1708073443;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LvS88A1JZEeIqJIhe88zQYazuSktyNUKiwnG9k26ga0=;
+	b=4HijluMb7Xd7CSzHohZEysAuvCcSdzvrC8J0c602jaX9pjeHwcb45OdKVf3sUKTqTBIdpa
+	zRznxQnOpK6ORGAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5FF7E1398D;
+	Fri, 16 Feb 2024 08:50:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Na8jF+Mhz2WqYwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 16 Feb 2024 08:50:43 +0000
+Message-ID: <af9eab14-367b-4832-8b78-66ca7e6ab328@suse.cz>
+Date: Fri, 16 Feb 2024 09:50:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sf1s4xef.fsf@intel.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 13/35] lib: add allocation tagging support for memory
+ allocation profiling
+Content-Language: en-US
+To: Kees Cook <keescook@chromium.org>, Suren Baghdasaryan <surenb@google.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, akpm@linux-foundation.org,
+ kent.overstreet@linux.dev, mhocko@suse.com, hannes@cmpxchg.org,
+ roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+ willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net,
+ void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
+ catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de,
+ mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+ peterx@redhat.com, david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+ masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
+ muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
+ pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com,
+ dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com,
+ ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
+ ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+ iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+ elver@google.com, dvyukov@google.com, shakeelb@google.com,
+ songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+ minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+ cgroups@vger.kernel.org
+References: <20240212213922.783301-1-surenb@google.com>
+ <20240212213922.783301-14-surenb@google.com>
+ <202402121433.5CC66F34B@keescook>
+ <CAJuCfpGU+UhtcWxk7M3diSiz-b7H64_7NMBaKS5dxVdbYWvQqA@mail.gmail.com>
+ <20240213222859.GE6184@frogsfrogsfrogs>
+ <CAJuCfpGHrCXoK828KkmahJzsO7tJsz=7fKehhkWOT8rj-xsAmA@mail.gmail.com>
+ <202402131436.2CA91AE@keescook>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <202402131436.2CA91AE@keescook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=MsHa2qgD;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=4HijluMb
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-3.00 / 50.00];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 XM_UA_NO_VERSION(0.01)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 BAYES_HAM(-3.00)[100.00%];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 TO_MATCH_ENVRCPT_SOME(0.00)[];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 MX_GOOD(-0.01)[];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 RCPT_COUNT_GT_50(0.00)[74];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 FREEMAIL_CC(0.00)[kernel.org,linux-foundation.org,linux.dev,suse.com,cmpxchg.org,suse.de,stgolabs.net,infradead.org,oracle.com,lwn.net,manifault.com,redhat.com,arm.com,arndb.de,linutronix.de,linux.intel.com,kernel.dk,soleen.com,google.com,gmail.com,linuxfoundation.org,linaro.org,goodmis.org,linux.com,lge.com,bytedance.com,akamai.com,android.com,vger.kernel.org,lists.linux.dev,kvack.org,googlegroups.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Score: -3.00
+X-Rspamd-Queue-Id: EB4E021F7E
+X-Spam-Flag: NO
 
-On Fri, Feb 16, 2024 at 10:38:00AM +0200, Jani Nikula wrote:
-> On Mon, 12 Feb 2024, Suren Baghdasaryan <surenb@google.com> wrote:
-> > Memory allocation, v3 and final:
-> >
-> > Overview:
-> > Low overhead [1] per-callsite memory allocation profiling. Not just for debug
-> > kernels, overhead low enough to be deployed in production.
-> >
-> > We're aiming to get this in the next merge window, for 6.9. The feedback
-> > we've gotten has been that even out of tree this patchset has already
-> > been useful, and there's a significant amount of other work gated on the
-> > code tagging functionality included in this patchset [2].
+On 2/13/24 23:38, Kees Cook wrote:
+> On Tue, Feb 13, 2024 at 02:35:29PM -0800, Suren Baghdasaryan wrote:
+>> On Tue, Feb 13, 2024 at 2:29 PM Darrick J. Wong <djwong@kernel.org> wrote:
+>> >
+>> > On Mon, Feb 12, 2024 at 05:01:19PM -0800, Suren Baghdasaryan wrote:
+>> > > On Mon, Feb 12, 2024 at 2:40 PM Kees Cook <keescook@chromium.org> wrote:
+>> > > >
+>> > > > On Mon, Feb 12, 2024 at 01:38:59PM -0800, Suren Baghdasaryan wrote:
+>> > > > > Introduce CONFIG_MEM_ALLOC_PROFILING which provides definitions to easily
+>> > > > > instrument memory allocators. It registers an "alloc_tags" codetag type
+>> > > > > with /proc/allocinfo interface to output allocation tag information when
+>> > > >
+>> > > > Please don't add anything new to the top-level /proc directory. This
+>> > > > should likely live in /sys.
+>> > >
+>> > > Ack. I'll find a more appropriate place for it then.
+>> > > It just seemed like such generic information which would belong next
+>> > > to meminfo/zoneinfo and such...
+>> >
+>> > Save yourself a cycle of "rework the whole fs interface only to have
+>> > someone else tell you no" and put it in debugfs, not sysfs.  Wrangling
+>> > with debugfs is easier than all the macro-happy sysfs stuff; you don't
+>> > have to integrate with the "device" model; and there is no 'one value
+>> > per file' rule.
+>> 
+>> Thanks for the input. This file used to be in debugfs but reviewers
+>> felt it belonged in /proc if it's to be used in production
+>> environments. Some distros (like Android) disable debugfs in
+>> production.
 > 
-> I wonder if it wouldn't be too much trouble to write at least a brief
-> overview document under Documentation/ describing what this is all
-> about? Even as follow-up. People seeing the patch series have the
-> benefit of the cover letter and the commit messages, but that's hardly
-> documentation.
-> 
-> We have all these great frameworks and tools but their discoverability
-> to kernel developers isn't always all that great.
+> FWIW, I agree debugfs is not right. If others feel it's right in /proc,
+> I certainly won't NAK -- it's just been that we've traditionally been
+> trying to avoid continuing to pollute the top-level /proc and instead
+> associate new things with something in /sys.
 
-commit f589b48789de4b8f77bfc70b9f3ab2013c01eaf2
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Wed Feb 14 01:13:04 2024 -0500
-
-    memprofiling: Documentation
-    
-    Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-
-diff --git a/Documentation/mm/allocation-profiling.rst b/Documentation/mm/allocation-profiling.rst
-new file mode 100644
-index 000000000000..d906e9360279
---- /dev/null
-+++ b/Documentation/mm/allocation-profiling.rst
-@@ -0,0 +1,68 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+===========================
-+MEMORY ALLOCATION PROFILING
-+===========================
-+
-+Low overhead (suitable for production) accounting of all memory allocations,
-+tracked by file and line number.
-+
-+Usage:
-+kconfig options:
-+ - CONFIG_MEM_ALLOC_PROFILING
-+ - CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT
-+ - CONFIG_MEM_ALLOC_PROFILING_DEBUG
-+   adds warnings for allocations that weren't accounted because of a
-+   missing annotation
-+
-+sysctl:
-+  /proc/sys/vm/mem_profiling
-+
-+Runtime info:
-+  /proc/allocinfo
-+
-+Example output:
-+  root@moria-kvm:~# sort -h /proc/allocinfo|tail
-+   3.11MiB     2850 fs/ext4/super.c:1408 module:ext4 func:ext4_alloc_inode
-+   3.52MiB      225 kernel/fork.c:356 module:fork func:alloc_thread_stack_node
-+   3.75MiB      960 mm/page_ext.c:270 module:page_ext func:alloc_page_ext
-+   4.00MiB        2 mm/khugepaged.c:893 module:khugepaged func:hpage_collapse_alloc_folio
-+   10.5MiB      168 block/blk-mq.c:3421 module:blk_mq func:blk_mq_alloc_rqs
-+   14.0MiB     3594 include/linux/gfp.h:295 module:filemap func:folio_alloc_noprof
-+   26.8MiB     6856 include/linux/gfp.h:295 module:memory func:folio_alloc_noprof
-+   64.5MiB    98315 fs/xfs/xfs_rmap_item.c:147 module:xfs func:xfs_rui_init
-+   98.7MiB    25264 include/linux/gfp.h:295 module:readahead func:folio_alloc_noprof
-+    125MiB     7357 mm/slub.c:2201 module:slub func:alloc_slab_page
-+
-+
-+Theory of operation:
-+
-+Memory allocation profiling builds off of code tagging, which is a library for
-+declaring static structs (that typcially describe a file and line number in
-+some way, hence code tagging) and then finding and operating on them at runtime
-+- i.e. iterating over them to print them in debugfs/procfs.
-+
-+To add accounting for an allocation call, we replace it with a macro
-+invocation, alloc_hooks(), that
-+ - declares a code tag
-+ - stashes a pointer to it in task_struct
-+ - calls the real allocation function
-+ - and finally, restores the task_struct alloc tag pointer to its previous value.
-+
-+This allows for alloc_hooks() calls to be nested, with the most recent one
-+taking effect. This is important for allocations internal to the mm/ code that
-+do not properly belong to the outer allocation context and should be counted
-+separately: for example, slab object extension vectors, or when the slab
-+allocates pages from the page allocator.
-+
-+Thus, proper usage requires determining which function in an allocation call
-+stack should be tagged. There are many helper functions that essentially wrap
-+e.g. kmalloc() and do a little more work, then are called in multiple places;
-+we'll generally want the accounting to happen in the callers of these helpers,
-+not in the helpers themselves.
-+
-+To fix up a given helper, for example foo(), do the following:
-+ - switch its allocation call to the _noprof() version, e.g. kmalloc_noprof()
-+ - rename it to foo_noprof()
-+ - define a macro version of foo() like so:
-+   #define foo(...) alloc_hooks(foo_noprof(__VA_ARGS__))
+Sysfs is really a "one value per file" thing though. /proc might be ok for a
+single overview file.
 
