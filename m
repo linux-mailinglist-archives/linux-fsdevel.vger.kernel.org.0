@@ -1,108 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-11874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4579B8583BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 18:14:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B718583F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 18:19:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3A6128366A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 17:14:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9F06B2605A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 17:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00D5131E30;
-	Fri, 16 Feb 2024 17:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD21130E2F;
+	Fri, 16 Feb 2024 17:18:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="bQxTPOn9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD43130E4F;
-	Fri, 16 Feb 2024 17:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D43912FB31
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 17:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708103509; cv=none; b=CQpoAPCfKdNfQXAO1BdxNRMV02lMDl6g4wXWcpPmaddoO9gHctGXqtEmuDnoUyZPC7LarBORhtGU9PSvyAyU+H3Dx+ROBsxc9o6btv362XSDdO5K9O4513HWwFJPc5gZabF6Qu5N2aK3NEHFK+U0B8qPJ2cRmPIbXYnJhrUOUn0=
+	t=1708103928; cv=none; b=Y3Qb1D47umFYeDRP1EdKgtY2cF4mACvE6uVD+9LldvPmNatHKqdqXVzQly+Rdw67yrntdr0VuUywbe2Le6nqfvf84o2HVQFeKKhXlAoPRpuJPmuqS9C98ScoZALTEnCJdRFxV7fQnd3OR2iJsnMP0PQVrQB7e7FzQnUt0X3tjuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708103509; c=relaxed/simple;
-	bh=kyrFySfD33DfjMotSRjE71WBERyw/qE/LQ5gGoYlAJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WQN1RjRIqf9DbfOJZSnY0xgH436LFHEgRGdbmls5ZWr+Y/gGMcKKU+trFcfKmWxfFOgrsX0UJS0VSyaAswGRaUTcWcbWBy453LqkUDamCYR+LfxUJHNfxoRcMOkVvFf+QsQaRct/xTBmMbEulaeiLUnJfNBzSmDi3nabDg1lh3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1d94323d547so8540345ad.3;
-        Fri, 16 Feb 2024 09:11:47 -0800 (PST)
+	s=arc-20240116; t=1708103928; c=relaxed/simple;
+	bh=2eKrnC6xOIWZ1NTwD/IJazyXMwCp/t3u/M4Pc8vdQNQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gsnFcZG82DqJxgncC53hOIdJ2uynsg2bgb5B6e2DeC7n/oaUSBvqhj0m9C/UjfTDZjwgzWGZkFQ0E/rfYN8OPqQ6sSEU80xqD7llMgRTgOdN1mpoX36xRa0DomqOCm5P6Th4Fzq8D1NE980rfpRnnxAJB4NPLi77otFWnrrx7MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=bQxTPOn9; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-42c758f075dso27988561cf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 09:18:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708103925; x=1708708725; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ttXNwKWugMJyygslP182txVVK8JBh5UVtMFEymJTCI0=;
+        b=bQxTPOn9WTXLnpyhxDEsmtOgQUNtA+cfA8a1UJ/SnidZ4cNowB3IzH91BFmbR8yVVX
+         n5w9F5nCodKqFu4cv6Uo1TVdfDutrblXDoFJCBkpZNdgpsd3jAvxKQvocFs73FqfCfnZ
+         Ty8VcdWL0UVMUiz/dwFRCwY4UMecgApLg+pC9V7lKjQCnK/TDEMitZ+rOeF6cfrnwUTN
+         LvwR1PIp8T9BlpxILOqJFiRfZN2sNWNAIXHBG51pGvUgQ4AI+Dmqk3zSvYQ5y0/2lE1r
+         bNuROBCX77VZOrM68PUxyOF9LjQHmtZ0WcLMbANRzuWCLmEccyY6XJidFLSGtG0TnzLC
+         MGGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708103507; x=1708708307;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kSuzb8DqbcddqazNcXeQYXhIgH29Q4MURStfPcjLULA=;
-        b=v/Nmk8WJk3BlJuRXJt/Ds3QCxfejv3ln/K/W80r4ULoqQt5rFkbrgWSgPiD74HPUKO
-         n1n4epdsm9cf3YLx9wYUCzWVp0jDcNidPO5uO8U2hwOWt9iRu9uFgUfHza4T3wGqXX7j
-         AG46r7sr6hSZIVaevTojJngyKVRA5qcZZz3rVNY6M/7QIGOVZGSsG7l7ZN3cPsDF1JNm
-         chBbhkKg7bT52bofdq6Gi3PqZjoX65bWVfBwu17jSmm12fXGW6SUcTbubzRYY9SgUf4Y
-         U1Yf2MJNd+CjW7G8kXYAYHBk0oQnm94yiI0lwis1PQJh5Z7rzhM031ooLuvt8mBPVShe
-         9OHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWw8GCnbfjSh9CZtvLaC4qDG4fEXNURAN2ELz/JYTIrYx6MrLOe0K6V/L+x5T+voIHdjwGNaP1v417I0TgwNlAID0P4KGezycGNcn/Af9qwbZxycc0Ru2NkdavD5mNFYYFQaLQuVA==
-X-Gm-Message-State: AOJu0Yxf0zSGy9NA3OCwy8BZjChlYn2aCCpYIJLEe0YvLZofjHDl3ibU
-	APj6TAh5U4rFqaqR7QfileEX54lvAoqRh29Bf1PLM1hd07knnUTY
-X-Google-Smtp-Source: AGHT+IG331XjoMtNRThXXnRDunQFRUpE1MOOB8nfLq5iNWvlJsUs8AfBgaFdVPSmrQfnRelEw/AJEQ==
-X-Received: by 2002:a17:90a:b887:b0:299:4ac2:1514 with SMTP id o7-20020a17090ab88700b002994ac21514mr544771pjr.6.1708103507206;
-        Fri, 16 Feb 2024 09:11:47 -0800 (PST)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net. [73.231.117.72])
-        by smtp.gmail.com with ESMTPSA id mt4-20020a17090b230400b002991a647c8fsm262224pjb.10.2024.02.16.09.11.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Feb 2024 09:11:46 -0800 (PST)
-Message-ID: <9d3138e1-3ac0-47c0-b768-a285eb38d224@acm.org>
-Date: Fri, 16 Feb 2024 09:11:43 -0800
+        d=1e100.net; s=20230601; t=1708103925; x=1708708725;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ttXNwKWugMJyygslP182txVVK8JBh5UVtMFEymJTCI0=;
+        b=Uk1/rzZDCuE7hLEEEqqUNAwZsOobUa7ttMVoU2IOG4ZXBKJe0mYUGR/4YzLXsU66Rs
+         Un6XHRzNvIU2HSB9OxSsZXM/A6OFtynxU9bQK3XA5rrJ70SDAoBpsKjnUGtievwjxWXG
+         851Zcektn1yqOWrDe9cpNjSNOtpNgIEUzVu3NwbKIn1JhSl0Sub0TwMn1CnSQM00s9wf
+         nNy2ETIYf7J/MEl0bE8i1Ha2v7dH8DPPkHlhBPOC1pqi6OlSZuEz42hRdwAAyGYO36Uy
+         GhaX7ecAA0HGiDZ3Wr50Y/Ib7agdmXlg0ybMN2j2/S9S/YPkCnBg2xXdwIsgjCfsdupW
+         za/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUgRuML2dasLo8sJPMO9HrzdIZPNLj78NbNhbLykSAThBg/n/A/2SAVY69Osi4tHHAC9NF1JZC6Fg57rDDusGk3V10ql5YYTz3/BdOCdg==
+X-Gm-Message-State: AOJu0Yy6UhoIyKwNbQxvIUl9lA4iV/E3fxHVLZKj0JlYBjrmLMdilUHg
+	SMf5evHlJUU0pTwhTIOjBqKNG+ANt9TwHQEk+tRQzXbWUZNoTG689RYDQJROB5eDdOZCHkXo3gx
+	ogZ0nEA+GqPLlRC3z+zgupXTHputDcb7VAM30AQ==
+X-Google-Smtp-Source: AGHT+IGK94jPimX8q7FvTT5r2WHXeqQfvdyDWPQi6YyK2aTQJC/GbkrY2OBKc6aAMFaGl9yMXVM9CDJXDWJJ3i4OZS8=
+X-Received: by 2002:a05:622a:130d:b0:42c:7b12:70bd with SMTP id
+ v13-20020a05622a130d00b0042c7b1270bdmr14455790qtk.9.1708103925488; Fri, 16
+ Feb 2024 09:18:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] fs/aio: Make io_cancel() generate completions
- again
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
- Avi Kivity <avi@scylladb.com>, Sandeep Dhavale <dhavale@google.com>,
- Jens Axboe <axboe@kernel.dk>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Kent Overstreet <kent.overstreet@linux.dev>,
- stable@vger.kernel.org
-References: <20240215204739.2677806-1-bvanassche@acm.org>
- <20240215204739.2677806-3-bvanassche@acm.org> <20240216071325.GA10830@lst.de>
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20240216071325.GA10830@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240212213922.783301-1-surenb@google.com> <20240212213922.783301-14-surenb@google.com>
+ <20240215165438.cd4f849b291c9689a19ba505@linux-foundation.org>
+ <wdj72247rptlp4g7dzpvgrt3aupbvinskx3abxnhrxh32bmxvt@pm3d3k6rn7pm>
+ <CA+CK2bBod-1FtrWQH89OUhf0QMvTar1btTsE0wfROwiCumA8tg@mail.gmail.com>
+ <iqynyf7tiei5xgpxiifzsnj4z6gpazujrisdsrjagt2c6agdfd@th3rlagul4nn> <CAJuCfpHxaCQ_sy0u88EcdkgsV-GX3AbhCaiaRW-DWYFvZK1=Ew@mail.gmail.com>
+In-Reply-To: <CAJuCfpHxaCQ_sy0u88EcdkgsV-GX3AbhCaiaRW-DWYFvZK1=Ew@mail.gmail.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Fri, 16 Feb 2024 12:18:09 -0500
+Message-ID: <CA+CK2bCsW34RQtKhrp=1=3opMcfB=NSsLTnpwSejkULvo7CbTw@mail.gmail.com>
+Subject: Re: [PATCH v3 13/35] lib: add allocation tagging support for memory
+ allocation profiling
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Andrew Morton <akpm@linux-foundation.org>, 
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
+	mgorman@suse.de, dave@stgolabs.net, willy@infradead.org, 
+	liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
+	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
+	rppt@kernel.org, paulmck@kernel.org, yosryahmed@google.com, yuzhao@google.com, 
+	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
+	glider@google.com, elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/15/24 23:13, Christoph Hellwig wrote:
-> On Thu, Feb 15, 2024 at 12:47:39PM -0800, Bart Van Assche wrote:
->> The following patch accidentally removed the code for delivering
->> completions for cancelled reads and writes to user space: "[PATCH 04/33]
->> aio: remove retry-based AIO"
->> (https://lore.kernel.org/all/1363883754-27966-5-git-send-email-koverstreet@google.com/)
-> 
-> Umm, that was more than 10 years ago.  What code do you have that
-> is this old, and only noticed that it needs the completions now?
+> > Personally, I hate trying to count long strings digits by eyeball...
+>
+> Maybe something like this work for everyone then?:
+>
+> 160432128 (153MiB)     mm/slub.c:1826 module:slub func:alloc_slab_page
 
-USB cancellation is being used and still works. It's only the completions
-that are missing.
+That would be even harder to parse.
 
-This patch was submitted less than two years ago and fixes a bug in the adb
-daemon: "adbd: Dequeue pending USB write requests upon receiving CNXN"
-(https://android.googlesource.com/platform/packages/modules/adb/+/4dd4da41e6b004fa0d49575ac87e8db877f3a116).
-My questions about that patch are as follows (I have not yet found an adbd
-expert who can help me with answering these questions):
-* Are the io_cancel() calls racy? If the io_cancel() calls are delayed, will
-   this break the fix for the bug described in the patch description?
-* Should the reported bug perhaps be fixed by improving the adb protocol,
-   e.g. by including a session ID in the adb protocol header?
+This one liner should converts bytes to human readable size:
+sort -rn /proc/allocinfo | numfmt --to=iec
 
-Thanks,
+Also, a "alloctop" script that would auto-update the current top
+allocators would be useful to put in tools/mm/
 
-Bart.
+Pasha
 
