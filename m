@@ -1,128 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-11856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B82A858203
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 16:59:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B88B685822C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 17:12:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EDF31C228F4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 15:59:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F4B728444A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 16:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAD4132470;
-	Fri, 16 Feb 2024 15:57:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CD112FF6F;
+	Fri, 16 Feb 2024 16:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C3dk/DW6"
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="J33MIMhw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355C4130AC8;
-	Fri, 16 Feb 2024 15:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D109D12F58A;
+	Fri, 16 Feb 2024 16:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708099073; cv=none; b=kD6QL42ifpZSsLdpHsSPqcZeKz/5tTrnFsqzIpf4LIuaE11xV/bL/x+2u0B8Ys5C/koPeqKJ2Gd/Pm9WrJFqvadPN2gS9bS772fXWnPS1nOADnzwafx6SKy+14XBq97XYtivXbzCgbVGvdZ3AB16mJBhHg8ShM6Tv4IPQsW7TSw=
+	t=1708099946; cv=none; b=lWRraa+Q14LR5I5KG/rIGbcFfPbg4Iji5Tn48FECamsGc/k/pnrSVC1XfGN68VNUeMYBYuCPe/mwZa5R9OOir2LqJWLst9Tw5KYmGGyyO9ctNC/1ZLNn2p0Br6YhJurMKAT21EvA3t2UVwMRXx/7jJT6XwMvzZL167ujqGYvcfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708099073; c=relaxed/simple;
-	bh=ITD6vm4D0hcte0a35hM4My1XHmKxCPQiRxMuV5erL6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TTiXYdF5W+TPPa5YqXJ2URWD52+3m/mR7sQ/0Wu3POHCzSSxT72fHDt7tFtcd8WfT7N6jMgnU0ukI/pdMbeo7LiomQHIBLnvBYgTrBdvO+57UBH+dUBwRnTHt3t4Npkn3mZm7U3EDO3PoZJXBDTJtee56bn4IR9rOzrBW6xGkok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C3dk/DW6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=zCyJDd9dKPDmdypQXGurJ7KaNpNOw4+5thN7/7/eyiU=; b=C3dk/DW6uAoWvTuhYne1bfRsVK
-	AFRFMv8cN14x0aHBmtqjvahsWzQK+FPnbZDYVHperY/+KHBRo1XhXb567u60YCv08qQ8J+MVeSGQ9
-	1x119URCwWtBQXYV5u3Fp+ktf+Afjf9+nsUaJK0ZIpmn+63y/Im5SUjp7ZE7tKmRq/ZslvmgixOt2
-	n7hihfuNkMxshd73kzO/yEJcUSTS7FrMe7ixIAu8TEU5eWUaZzyK7H2DC5OzqwyWkPuio4mo83+iB
-	tbNOT59j9CjoFtIoRSKPUX3mgyxqdcuioLt3X5Ufel4z7HraKIzr9R/PBYNEpjMM3ypzTo9Y3duO1
-	qGjm3Vcw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rb0as-000000053rW-287p;
-	Fri, 16 Feb 2024 15:57:42 +0000
-Date: Fri, 16 Feb 2024 15:57:42 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jan Kara <jack@suse.cz>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Chuck Lever <cel@kernel.org>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, hughd@google.com, akpm@linux-foundation.org,
-	oliver.sang@intel.com, feng.tang@intel.com,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	maple-tree@lists.infradead.org, linux-mm@kvack.org, lkp@intel.com
-Subject: Re: [PATCH RFC 7/7] libfs: Re-arrange locking in offset_iterate_dir()
-Message-ID: <Zc-F9i0bcyN-j-GK@casper.infradead.org>
-References: <170785993027.11135.8830043889278631735.stgit@91.116.238.104.host.secureserver.net>
- <170786028847.11135.14775608389430603086.stgit@91.116.238.104.host.secureserver.net>
- <20240215131638.cxipaxanhidb3pev@quack3>
- <20240215170008.22eisfyzumn5pw3f@revolver>
- <20240215171622.gsbjbjz6vau3emkh@quack3>
- <20240215210742.grjwdqdypvgrpwih@revolver>
- <20240216101546.xjcpzyb3pgf2eqm4@quack3>
+	s=arc-20240116; t=1708099946; c=relaxed/simple;
+	bh=j5ltBz0S3ICkzCrc/XcApSY34K9YqHdS5mIysJ7Jd74=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pUuIR7eE3iPfd5zzmLNm+bU5Bgexbj5OhtBgoa2kOssFFDk4YPgfmD9Cy2mGMdCLM5/6rfPOZzH3m5rSNSk7xaJco2TcFvv62m+nBN1wVhbTY+H4BQ0wgqV6Z1m5rSt4nX7+ncPK6mV5652OGtlUb1cutiN6VvmB2fN57L68c74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=J33MIMhw; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1708099932;
+	bh=j5ltBz0S3ICkzCrc/XcApSY34K9YqHdS5mIysJ7Jd74=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=J33MIMhwZk5o7KEheMPmr1d83pdskjJ17R8laWareJbgXesmkpn6RDFWFkNHcr5Wp
+	 mVpzGv2eFlPhGyKG76pJU7J4ctLWrAqNaDaCe9dnQm572yvxl2Tgf31z1dmiapsKhu
+	 37bHMZ6hPN6Sffp+H0HvNh8icfMjLkUhwv38wV2Uqs1YIfPLJZo9S/D4NnPVUOoduG
+	 H2Y1cTYPGukbVxjb7OuZSzVb9AOhBDLrPLkaxMyaOE7vrsEDvJWZYI8mTfQ+0PD1Pv
+	 WRvy5/PoG7SI9yl9QyYpSAJfFX+l4RQRSyzi8rXEYkPpnZxN5l+D6O4UAG6DmQi48R
+	 56MVY5X4U/yEg==
+Received: from [172.16.0.134] (192-222-143-198.qc.cable.ebox.net [192.222.143.198])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Tbxlc1zQxzZmV;
+	Fri, 16 Feb 2024 11:12:12 -0500 (EST)
+Message-ID: <8a5ca852-1c83-4479-8e4d-5a274482df25@efficios.com>
+Date: Fri, 16 Feb 2024 11:12:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240216101546.xjcpzyb3pgf2eqm4@quack3>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] nvdimm/pmem: Fix leak on dax_add_host() failure
+Content-Language: en-US
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>,
+ Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Vishal Verma <vishal.l.verma@intel.com>, Matthew Wilcox
+ <willy@infradead.org>, Russell King <linux@armlinux.org.uk>,
+ linux-arch@vger.kernel.org, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-xfs@vger.kernel.org, dm-devel@lists.linux.dev, nvdimm@lists.linux.dev,
+ Dan Williams <dan.j.williams@intel.com>, Dave Chinner <david@fromorbit.com>,
+ Arnd Bergmann <arnd@arndb.de>
+References: <20240215144324.95436-1-mathieu.desnoyers@efficios.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+In-Reply-To: <20240215144324.95436-1-mathieu.desnoyers@efficios.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 16, 2024 at 11:15:46AM +0100, Jan Kara wrote:
-> On Thu 15-02-24 16:07:42, Liam R. Howlett wrote:
-> > The limitations are outlined in the documentation as to how and when to
-> > lock.  I'm not familiar with the xarray users, but it does check for
-> > locking with lockdep, but the way this is written bypasses the lockdep
-> > checking as the locks are taken and dropped without the proper scope.
-> > 
-> > If you feel like this is a trap, then maybe we need to figure out a new
-> > plan to detect incorrect use?
+On 2024-02-15 09:43, Mathieu Desnoyers wrote:
+> Fix a leak on dax_add_host() error, where "goto out_cleanup_dax" is done
+> before setting pmem->dax_dev, which therefore issues the two following
+> calls on NULL pointers:
+
+Hi Andrew,
+
+I notice that you should update the patch you have in your tree
+(https://git.kernel.org/pub/scm/linux/kernel/git/akpm/25-new.git/tree/patches/nvdimm-pmem-fix-leak-on-dax_add_host-failure.patch)
+with this updated version which includes additional Reviewed-by tags and
+removes unneeded context that appears to be taken from the previous cover
+letter.
+
+Following your request, I have extracted this patch from the series.
+
+Thanks,
+
+Mathieu
+
 > 
-> OK, I was a bit imprecise. What I wanted to say is that this is a shift in
-> the paradigm in the sense that previously, we mostly had (and still have)
-> data structure APIs (lists, rb-trees, radix-tree, now xarray) that were
-> guaranteeing that unless you call into the function to mutate the data
-> structure it stays intact.
+> out_cleanup_dax:
+>          kill_dax(pmem->dax_dev);
+>          put_dax(pmem->dax_dev);
+> 
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+> Reviewed-by: Fan Ni <fan.ni@samsung.com>
+> Cc: Alasdair Kergon <agk@redhat.com>
+> Cc: Mike Snitzer <snitzer@kernel.org>
+> Cc: Mikulas Patocka <mpatocka@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: linux-arch@vger.kernel.org
+> Cc: linux-cxl@vger.kernel.org
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: linux-xfs@vger.kernel.org
+> Cc: dm-devel@lists.linux.dev
+> Cc: nvdimm@lists.linux.dev
+> ---
+> Changes since v1:
+> - Add Reviewed-by tags.
+> ---
+>   drivers/nvdimm/pmem.c | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/nvdimm/pmem.c b/drivers/nvdimm/pmem.c
+> index 4e8fdcb3f1c8..9fe358090720 100644
+> --- a/drivers/nvdimm/pmem.c
+> +++ b/drivers/nvdimm/pmem.c
+> @@ -566,12 +566,11 @@ static int pmem_attach_disk(struct device *dev,
+>   	set_dax_nomc(dax_dev);
+>   	if (is_nvdimm_sync(nd_region))
+>   		set_dax_synchronous(dax_dev);
+> +	pmem->dax_dev = dax_dev;
+>   	rc = dax_add_host(dax_dev, disk);
+>   	if (rc)
+>   		goto out_cleanup_dax;
+>   	dax_write_cache(dax_dev, nvdimm_has_cache(nd_region));
+> -	pmem->dax_dev = dax_dev;
+> -
+>   	rc = device_add_disk(dev, disk, pmem_attribute_groups);
+>   	if (rc)
+>   		goto out_remove_host;
 
-hm, no.  The radix tree never guaranteed that to you; I just documented
-that it wasn't guaranteed for the XArray.
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
-> Now maple trees are shifting more in a direction
-> of black-box API where you cannot assume what happens inside. Which is fine
-> but then we have e.g. these iterators which do not quite follow this
-> black-box design and you have to remember subtle details like calling
-> "mas_pause()" before unlocking which is IMHO error-prone. Ideally, users of
-> the black-box API shouldn't be exposed to the details of the internal
-> locking at all (but then the performance suffers so I understand why you do
-> things this way). Second to this ideal variant would be if we could detect
-> we unlocked the lock without calling xas_pause() and warn on that. Or maybe
-> xas_unlock*() should be calling xas_pause() automagically and we'd have
-> similar helpers for RCU to do the magic for you?
-
-If you're unlocking the lock that protects a data structure while still
-using that data structure, you should always be aware that you're doing
-something very dangerous!  It's no different from calling inode_unlock()
-inside a filesystem.  Sure, you can do it, but you'd better be ready to
-deal with the consequences.
-
-The question is, do we want to be able to defragment slabs or not?
-My thinking is "yes", for objects where we can ensure there are no
-current users (at least after an RCU grace period), we want to be able
-to move them.  That does impose certain costs (and subtleties), but just
-like fast-GUP and lockless page-cache, I think it's worth doing.
-
-Of course, we don't have slab defragmentation yet, so we're not getting
-any benefit from this.  The most recent attempt was in 2019:
-https://lore.kernel.org/linux-mm/20190603042637.2018-1-tobin@kernel.org/
-but there were earlier attepts in 2017:
-https://lore.kernel.org/linux-mm/20171227220636.361857279@linux.com/
-and 2008:
-https://lore.kernel.org/linux-mm/20080216004526.763643520@sgi.com/
-
-so I have to believe it's something we want, just haven't been able to
-push across the "merge this now" line.
 
