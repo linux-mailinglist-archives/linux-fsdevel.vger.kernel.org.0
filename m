@@ -1,88 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-11848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A85857C73
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 13:21:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77CC3857D9D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 14:23:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4EECB23BB0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 12:21:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7898B250D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Feb 2024 13:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6660478B46;
-	Fri, 16 Feb 2024 12:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MRZM3/AD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B43129A9B;
+	Fri, 16 Feb 2024 13:23:22 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70662CCB4
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 12:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C64177F0D
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 13:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708086069; cv=none; b=QxyUPdJ+G9QCJVjpVf9Amhe8E2eIvleuVpcpyh9vXiDoD5M9r/qI/Y2PeLUdHDGLOa+YSvuAbBS/cZT3IOtJKWKZyY6DWtomdGdA1PWxRbWcM2V61nfVH5aPMxodyC9XgttuQZjVZYANSGRVm8cYmQZeERORt0v8PSFePi+SmE8=
+	t=1708089802; cv=none; b=M4TCOrWAsdmg/gn+UYXo5IV3bBjd1mcAYG+kPosV07pwmqlMk1cUPTI5BtMNPI5ykOMa/NeLUg/wQb5w9HBJ7GFxD8M5WhAau3MMMcwak8Q/sBdVGHf+wt8SMgdoIXHeYokxgUbZmojzhn4holRv28Jl14nKQNKZ0jiD7VGaSiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708086069; c=relaxed/simple;
-	bh=ebbMrhSfT5llU7LPbtghLvjsFm9Pe7wCK4cf1a+w8P4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SdC71g8Nhqcmc/lpSDJdu3i6Q8lxKjO+heO/HSpsWOUoK260utq1jnyQGPFeDtZoJWvbwORqD1sBFSShRxwuo79Pbd7HIsCnf9fv4IM2GySX3EkiEONNgImulQafsaO8SzECNzSRCPcAD5kJ7QnmBuVfTCCgunHFBF5GDyGhvw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MRZM3/AD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA5A7C433C7;
-	Fri, 16 Feb 2024 12:21:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708086069;
-	bh=ebbMrhSfT5llU7LPbtghLvjsFm9Pe7wCK4cf1a+w8P4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MRZM3/ADh+vMyCKbmLsehHB4hLGFWB+Df825iXM1TCKbQ5t0rkj4Unz8qM7GeAsCx
-	 Ee4sDi7BCNs7VhVTqvoOPH4KGWgX/z8joUgxYdGNIDmSgYYggHqgOzAS4lmi7aOnZ5
-	 10JTIid0vArXvzYovCqyXYG9Pd4NdHh8OJOrVWstGv5IW9mor8wNlzbMcAbSyabegn
-	 d7kD01UhW0PpGyCLno/EoYw0KpoMU8ev6kk7rB8AoGURM414iUhWG/KBllPJPsUfLD
-	 3ZXt0urRstYl06sIpVx18C9XFj4By6zJQ6dOVzjAh8EOpHaowvBT6SeCXSkWOqKgpl
-	 fMZ9COQ8JRFSQ==
-From: Damien Le Moal <dlemoal@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] zonefs fixes for 6.8-rc5
-Date: Fri, 16 Feb 2024 21:21:07 +0900
-Message-ID: <20240216122107.3914026-1-dlemoal@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1708089802; c=relaxed/simple;
+	bh=FqSWe7JHiE+uJcy2YTdzs/EetirgcQbQTZpnVkzmo8Q=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=U7z69AChDVJD37wowEKDrGqQ5cHoQrhdmUX2kJ7fwRoGscd1u1HFj2M8mW0EKMVSmrqH+1VEVlTQObuh5nnYbg8RC1HEGZb+EbTyscJpKkQfJeCiNAWD9STbFb7FfwW/ePkheP+C2L++7HnmuF1cxJ1Zu9J4ESL94QrNlrElO48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-36512fcf643so1581875ab.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 05:23:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708089800; x=1708694600;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pui2IuVeVwTnvL6WtkW/nNwS2Ezf2FXXIiCC2gR7PNI=;
+        b=U0BG2wA68fjTY8JZwyH8RFdgkXuHojF277z+xAHF8oAhT0hMh10ejrev4M4atTL5Zp
+         icqOAw8X/OCIShxmsRfeDMRXwqtTo+fUPQpYJMX9YLHZq1oDxiv5zTPgUmf45EMTWyXC
+         I4E4Z0CCcZs8YosPkDoiibIhNS1cJzAv4QEHvtI71vU8B/5bFUGBcv3hbJo0ElY0qESp
+         gcGa//M7tpMUaihG6/HpLtLx1r80dGI2jxiA0fZBQWxHSuIvm7iL2yGXu8QUBGh/QixI
+         U811zIjXcW13oW9398wn9+9z7Fif/5w0bX8+4uIsjzoLtCUTPVQANOUaRXUJpKZdsWUv
+         pcgA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFrfqwUlRMdOTM6i6eSoE/zvl6i1vm//OPwZFIXi7ppI+QVeiX8Fk9CypX2GAS6WT+LUYAbgThFXJ0kC82J5pE9piUquCxmQnIyLjOcw==
+X-Gm-Message-State: AOJu0YzLk5TewkW6CdtoAVzRc5zvKdOD7y2IAjote75KQ+UWCtbrAsAQ
+	wG6s5vnF8vqs3UtYsGhaRcB2FERCdoNg1E+inZ+eLDin6bCXi2rVsCLrsrakN3jcqMUppbB9ARr
+	LGjzbjKs68J8/o56nDgTdW75bDPQlsCnfk05P1149P2ujyInDOx2VC0E=
+X-Google-Smtp-Source: AGHT+IHP3zirBrdpmR87Ieqf/kCU11sHaFTXhByBqF1DIC5U6wixLWGetyvp0XpBzZg6W+D+cSFdv2yl1SN+mh8JUPbcqnKzWsq0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:154f:b0:363:9d58:8052 with SMTP id
+ j15-20020a056e02154f00b003639d588052mr368389ilu.2.1708089800292; Fri, 16 Feb
+ 2024 05:23:20 -0800 (PST)
+Date: Fri, 16 Feb 2024 05:23:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ca829f06117fa50c@google.com>
+Subject: [syzbot] Monthly v9fs report (Feb 2024)
+From: syzbot <syzbot+listc76971b2e26402bae4ab@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, ericvh@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lucho@ionkov.net, 
+	syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-From: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Hello v9fs maintainers/developers,
 
-Linus,
+This is a 31-day syzbot report for the v9fs subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/v9fs
 
-The following changes since commit 841c35169323cd833294798e58b9bf63fa4fa1de:
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 5 issues are still open and 26 have been fixed so far.
 
-  Linux 6.8-rc4 (2024-02-11 12:18:13 -0800)
+Some of the still happening issues:
 
-are available in the Git repository at:
+Ref Crashes Repro Title
+<1> 1611    Yes   WARNING in v9fs_fid_get_acl
+                  https://syzkaller.appspot.com/bug?extid=a83dc51a78f0f4cf20da
+<2> 265     Yes   BUG: corrupted list in p9_fd_cancelled (2)
+                  https://syzkaller.appspot.com/bug?extid=1d26c4ed77bc6c5ed5e6
+<3> 9       Yes   KASAN: slab-use-after-free Read in v9fs_stat2inode_dotl
+                  https://syzkaller.appspot.com/bug?extid=7a3d75905ea1a830dbe5
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs tags/zonefs-6.8-rc5
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-for you to fetch changes up to 14db5f64a971fce3d8ea35de4dfc7f443a3efb92:
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-  zonefs: Improve error handling (2024-02-16 10:20:35 +0900)
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-----------------------------------------------------------------
-zonefs fixes for 6.8.0-rc5
-
- - Fix direct write error handling to avoid a race between failed IO
-   completion and the submission path itself which can result in an
-   invalid file size exposed to the user after the failed IO.
-
-----------------------------------------------------------------
-Damien Le Moal (1):
-      zonefs: Improve error handling
-
- fs/zonefs/file.c  | 42 ++++++++++++++++++++++-------------
- fs/zonefs/super.c | 66 ++++++++++++++++++++++++++++++++-----------------------
- 2 files changed, 65 insertions(+), 43 deletions(-)
+You may send multiple commands in a single email message.
 
