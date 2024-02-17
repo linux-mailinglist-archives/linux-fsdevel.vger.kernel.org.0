@@ -1,160 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-11910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719C2858E55
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 10:31:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39068858F33
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 12:57:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7E7D1F21F22
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 09:31:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD509B22011
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 11:57:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322A81D553;
-	Sat, 17 Feb 2024 09:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B416A02F;
+	Sat, 17 Feb 2024 11:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kqeokdX0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CCD1D525;
-	Sat, 17 Feb 2024 09:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8AE069DE4;
+	Sat, 17 Feb 2024 11:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708162296; cv=none; b=l5OvcSVxZRzWB3AvpKJmGROeI6LUufVIyYLBdibAEjUPwASx3Gb8uXW8Ii/b7eA+cd6tAO+IJfG9Mo/vfCobkpPgyjcr3FpaStL3qjVvVsbzScgGVHezCZdUtsiC46eqgUyOYmGcWBN3k3gedgLgAyVViAQJduj0D35dNEYCH4I=
+	t=1708171053; cv=none; b=UsPL2Ug8kL4ZIAqsKb/IWcMty9alzqIn1XSwUgBbLj/CF+Wu1VbTRY0kK/HFfgc8OO5lhuryUR6FJbxKz/HA+feYwkTRwKg8scakOPD6+7W4AkkI/VrMH6JKNRJdZnIVeGHYO+mPun61b5clqkw3IMFMrRctIZE40N5duCOSpvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708162296; c=relaxed/simple;
-	bh=OLvOvd+ZV+lea0d9gFrxv+fwwSEy+ijPUHHEfKWAEdA=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=dMVT9xodJMmAJO+50D2MEHib6H1dsh8Ye7lxrKu2HEUoV8lQrXQGJrIww1cYabXrWCQpJTT00YMcfye8JkKR5m9RSIigf9Yor50HJQp2qb1Udl6QYVm+7qW16jxHSLyXam5UHhCmU2xr8L8zbp1DrP9ayyb/852iBwUNjjL8FJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TcNpd6cgyz4f3knq;
-	Sat, 17 Feb 2024 17:31:21 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id B96C41A0390;
-	Sat, 17 Feb 2024 17:31:26 +0800 (CST)
-Received: from [10.174.176.34] (unknown [10.174.176.34])
-	by APP1 (Coremail) with SMTP id cCh0CgAn9g7nfNBlPbkfEQ--.27281S3;
-	Sat, 17 Feb 2024 17:31:20 +0800 (CST)
-Subject: Re: [RFC PATCH v3 00/26] ext4: use iomap for regular file's buffered
- IO path and enable large foilo
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
- hch@infradead.org, willy@infradead.org, zokeefe@google.com,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
- wangkefeng.wang@huawei.com
-References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
- <20240212061842.GB6180@frogsfrogsfrogs>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <cfb9d61b-be8c-e1fc-1c0d-e25607d99e4a@huaweicloud.com>
-Date: Sat, 17 Feb 2024 17:31:18 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1708171053; c=relaxed/simple;
+	bh=DYE5MHoB4iU6UqVOI9xCwDqXRm2zS5gEUdWLduWrELE=;
+	h=From:Message-ID:Subject:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Xzc4gTCmQQEKM2OBwPUSTgoxuIwtBBgN5Z/t7G9S9EV9DNkpf34Eb1FTWJmkNKzr5wf2ld8vWAGYlA+P8JJTis3nNcSZCjLzaLpDwsc8xTCEHYPloebcdppjSlFkRLSrR/gCWhnQ8Pfrh+7h6jrSEwT41wx7p5N+gws0OQUmZzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kqeokdX0; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4125f065ed6so856825e9.2;
+        Sat, 17 Feb 2024 03:57:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708171050; x=1708775850; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:subject:message-id:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vUsOgHzp8r6kWIn49FLfR/dfD+6UhIXiD2CyZpx4J48=;
+        b=kqeokdX0ny9ziPwGVPJ7GXnOwcQ96fAr/D4Nwu7C7dDbswCWQi6gwnhZ6hpeg0wLhH
+         7pOBLu0d+zllb8XclBVUaDlBAiSZXwB5wU/GrC4OF8pTh0YvCmT7x05J2afB+FRGy2K/
+         m1HFHLPi7n7RWK+Z0T7QfNuzUYEtQgWJYx+yMR0m5Oo3kXjUUO0tGDuZ23OS8cZxqBh5
+         rpObjSqMmDYFCN5jCKYE4bWOsHpIQe78vykXOhhb7nz3RahnEpVmws4vrQY5GOLAyYWh
+         zd0+h9YPw0SbUcJbJCqWAKouz7A8jpVHNDFrBRafKqkBr71E4CJgTZJjqOqFRjHhTDBU
+         /0BQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708171050; x=1708775850;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:subject:message-id:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vUsOgHzp8r6kWIn49FLfR/dfD+6UhIXiD2CyZpx4J48=;
+        b=j0CZHGM9jMc+MQ9qmBYv+up9rT9pWIKI9ZH8SYvoVauer4nDvREyDjJO+OIS/8ZiLX
+         oknPJ5dQMQip6VKEXqXRlFC65ZdsiBjeW4HDELnbYkWMOzKT6QyuD7DD/PWGx0sOWoHg
+         qSb+16P+pGz0p3LEc4eQCQsnki6hiOdoLDOW7JLLlSD5zLdHGVvSTU7z2RSHwvUzlULL
+         Nv58EB62fSwF0+AmrxCbyuN/H8GXuUNMlHUj/d6i0B06B2zUi3gxr7PZeWMkOGr8Byd0
+         Jbliaxk/HqsIOeWWFE3PXUkg2YwXveTajlrwWD4iDrcP/QEw46lWk0CFL/4kKiyupt01
+         q8mw==
+X-Forwarded-Encrypted: i=1; AJvYcCWYsE0aGjN85ZaTnsQ4KidKGVV5vwRrBvDQRNowHZ93XOa5OlXwUrc1r4oH9flf+16DjBspv5uV9e9jbqnrMquQ9hnerzL4ULatVO1EWNrppZqz670CDKsz9VD0tiWRHM6DUWs9M7KgajttlPUQhZBX856xuAp23Kar0vyy4qld4fHLTH5/z3pBo3Q4sw9+mz9Nv7+tuOsP
+X-Gm-Message-State: AOJu0Yx/LNoTlkVh0eCGw/RsSbEjMQIQpTg42mSC5hclSnL9FzUeozZG
+	JOZ26K2KE0aZgCCxI+6UlwH687CN1cYGiu1Ot7RzvHaOyGnHBVcv
+X-Google-Smtp-Source: AGHT+IEgt4lASuS58P85SkCYtQ+4L6sOssHAkGTZm9qejp+87GdqbxGLue1Q9HifEME4xc7jobqShQ==
+X-Received: by 2002:a05:600c:3ba6:b0:411:d89d:d7ba with SMTP id n38-20020a05600c3ba600b00411d89dd7bamr6456069wms.7.1708171049914;
+        Sat, 17 Feb 2024 03:57:29 -0800 (PST)
+Received: from 192.168.10.34 ([39.45.172.107])
+        by smtp.gmail.com with ESMTPSA id je11-20020a05600c1f8b00b0040fdf5e6d40sm5096840wmb.20.2024.02.17.03.57.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Feb 2024 03:57:29 -0800 (PST)
+From: Muhammad Usama Anjum <musamaanjum@gmail.com>
+X-Google-Original-From: Muhammad Usama Anjum <MUsamaAnjum@gmail.com>
+Message-ID: <0e96289fdbda200b9608284c7d5fb72546ce4267.camel@gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Reclaiming & documenting page flags
+To: Matthew Wilcox <willy@infradead.org>, lsf-pc@lists.linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+ linux-block@vger.kernel.org, linux-ide@vger.kernel.org, 
+ linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org,
+ bpf@vger.kernel.org
+Date: Sat, 17 Feb 2024 16:57:51 +0500
+In-Reply-To: <Zbcn-P4QKgBhyxdO@casper.infradead.org>
+References: <Zbcn-P4QKgBhyxdO@casper.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.0-1 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240212061842.GB6180@frogsfrogsfrogs>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgAn9g7nfNBlPbkfEQ--.27281S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxZFyDXw4rCF1xAryDXrWkWFg_yoW5trW8pF
-	Z09Fy3Krs5Kry8Wa92vw4Utr4j9w4rGr47JFy3Wry7ZF4DCF1SgFn7KF1Yva98Ar4fG340
-	vF4UA34xuan0yrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_
-	WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rWUJVWrZr1UMIIF0xvEx4A2jsIE
-	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
-	9x07UZ18PUUUUU=
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On 2024/2/12 14:18, Darrick J. Wong wrote:
-> On Sat, Jan 27, 2024 at 09:57:59AM +0800, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> Hello,
->>
->> This is the third version of RFC patch series that convert ext4 regular
->> file's buffered IO path to iomap and enable large folio. It's rebased on
->> 6.7 and Christoph's "map multiple blocks per ->map_blocks in iomap
->> writeback" series [1]. I've fixed all issues found in the last about 3
->> weeks of stress tests and fault injection tests in v2. I hope I've
->> covered most of the corner cases, and any comments are welcome. :)
->>
->> Changes since v2:
->>  - Update patch 1-6 to v3 [2].
->>  - iomap_zero and iomap_unshare don't need to update i_size and call
->>    iomap_write_failed(), introduce a new helper iomap_write_end_simple()
->>    to avoid doing that.
->>  - Factor out ext4_[ext|ind]_map_blocks() parts from ext4_map_blocks(),
->>    introduce a new helper ext4_iomap_map_one_extent() to allocate
->>    delalloc blocks in writeback, which is always under i_data_sem in
->>    write mode. This is done to prevent the writing back delalloc
->>    extents become stale if it raced by truncate.
->>  - Add a lock detection in mapping_clear_large_folios().
->> Changes since v1:
->>  - Introduce seq count for iomap buffered write and writeback to protect
->>    races from extents changes, e.g. truncate, mwrite.
->>  - Always allocate unwritten extents for new blocks, drop dioread_lock
->>    mode, and make no distinctions between dioread_lock and
->>    dioread_nolock.
->>  - Don't add ditry data range to jinode, drop data=ordered mode, and
->>    make no distinctions between data=ordered and data=writeback mode.
->>  - Postpone updating i_disksize to endio.
->>  - Allow splitting extents and use reserved space in endio.
->>  - Instead of reimplement a new delayed mapping helper
->>    ext4_iomap_da_map_blocks() for buffer write, try to reuse
->>    ext4_da_map_blocks().
->>  - Add support for disabling large folio on active inodes.
->>  - Support online defragmentation, make file fall back to buffer_head
->>    and disable large folio in ext4_move_extents().
->>  - Move ext4_nonda_switch() in advance to prevent deadlock in mwrite.
->>  - Add dirty_len and pos trace info to trace_iomap_writepage_map().
->>  - Update patch 1-6 to v2.
->>
->> This series only support ext4 with the default features and mount
->> options, doesn't support inline_data, bigalloc, dax, fs_verity, fs_crypt
->> and data=journal mode, ext4 would fall back to buffer_head path
-> 
-> Do you plan to add bigalloc or !extents support as a part 2 patchset?
+On Mon, 2024-01-29 at 04:32 +0000, Matthew Wilcox wrote:
+> Our documentation of the current page flags is ... not great.  I think
+> I can improve it for the page cache side of things; I understand the
+> meanings of locked, writeback, uptodate, dirty, head, waiters, slab,
+> mlocked, mappedtodisk, error, hwpoison, readahead, anon_exclusive,
+> has_hwpoisoned, hugetlb and large_remappable.
+>=20
+> Where I'm a lot more shaky is the meaning of the more "real MM" flags,
+> like active, referenced, lru, workingset, reserved, reclaim, swapbacked,
+> unevictable, young, idle, swapcache, isolated, and reported.
+>=20
+> Perhaps we could have an MM session where we try to explain slowly and
+> carefully to each other what all these flags actually mean, talk about
+> what combinations of them make sense, how we might eliminate some of
+> them to make more space in the flags word, and what all this looks like
+> in a memdesc world.
+>=20
+> And maybe we can get some documentation written about it!  Not trying
+> to nerd snipe Jon into attending this session, but if he did ...
+This is great idea. Instead of having a session to write
+documentation, we can have a session which would be documentation
+itself even if nobody translates it to text.
 
-Hello,
-
-Sorry for the late reply since I was on the vacation of Chinese New Year.
-I've been working on bigalloc support recently and it's going relatively
-well, but have no plans to support !extents yet, I would start looking
-into it after I finish rebasing my another patch set "ext4: more
-accurate metadata reservaion for delalloc mount option" mentioned in my
-TODO list.
-
-> 
-> An ext2 port to iomap has been (vaguely) in the works for a while,
-> though iirc willy never got the performance to match because iomap
-> didn't have a mechanism for the caller to tell it "run the IO now even
-> though you don't have a complete page, because the indirect block is the
-> next block after the 11th block".
-> 
-
-Thanks for pointing this out and the explanation given by Matthew. IIUC,
-this problem also affects ext4 in !extents mode, but not affects bigalloc,
-right?
-
-Thanks,
-Yi.
+>=20
+> [thanks to Amir for reminding me that I meant to propose this topic]
+>=20
 
 
