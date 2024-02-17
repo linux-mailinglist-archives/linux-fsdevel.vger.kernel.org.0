@@ -1,93 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-11907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EFC6858D93
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 07:55:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D474858DE2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 09:12:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F35671F21D8B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 06:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDFC3282E79
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 08:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0836D1CD07;
-	Sat, 17 Feb 2024 06:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CEB1CD2F;
+	Sat, 17 Feb 2024 08:12:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531BF1CAA2
-	for <linux-fsdevel@vger.kernel.org>; Sat, 17 Feb 2024 06:55:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318041CF8A;
+	Sat, 17 Feb 2024 08:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708152906; cv=none; b=XxWuMtHt6SNICAnuk43gB92TU20AjWaelgJ3xRnQ19I2q9CQuwNywM+jSimDbDkn3xK0f8iPJIyiial/n3Q4gdDh5aJt6UDc4+HpRXiT17u9oSrzzw/UVEo0/ihiXHHQnrdS0NWqMrN2I2GfQ7U3b+icnOW1R2A5TnCw3n2Cv4g=
+	t=1708157559; cv=none; b=aK2pPwTyGgVez/Loi3ngkpdrrv1QKzADH/QdQ++nlka5EtkpWi6YBr/FRu3uSJqjOQmoWaAFxZMYCkSnwTfDCwANCiKZN/1BpQb8S4JrJV3kGGFFlK+xC/7IjuS3OnfBmYeF2rseMZz9MpNIEWHhD9YofpB8ya2xIjYobe2j5RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708152906; c=relaxed/simple;
-	bh=XCKmRa8OvWWr/wpERXwIUEIe4VxxedApN8DupDmFWFg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QgVtX9g6MG3VZ8oqaFiU/T1QKH7NuIgOmSEc4npVkWCsX6R5CbW9HFScSopwGJ6N6bs1yOBZnEAQRhNVOWJmExQ6qTNRYry87b4IO5STbHdeM+siVgTBe6sjdJZiuSXzT94LoClvhYD2zECCT6217dmNqDV40fbrdxAFe/uT5GY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-364ff869140so16505525ab.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 22:55:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708152904; x=1708757704;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eE/v1a6EPuJ4IWbbdsxCBh4oB8voPOR3Qt95C7NeL9M=;
-        b=jRJKFT8T1e9GRWUYEwVKl/6HXvngfyxTLV59tjJILdSV4U0wULMiG4wIScIfyNSosV
-         EhFMD29PBJUwrxn/6s+KZkxyhabxYjHWqTnX9Q7lvbM5WkyEzcOFQ+SLvtx2+RexUJ7U
-         YeQ/6MOmqH5klN4K7RkI75plKN2mRNO0sqP7LMquzgAtvHfn6v77P61WNGKKF5xLRCnn
-         8h2exw06Bc1PvV81mbZdR5HaVn+VzFjZZcRj/ZxVtEDYAVdSRLM0DkXMkwE4AnzHXre1
-         MeaZEFgNC/fvLGX/WBcMh1tZbu5HQ6vKDEam/p/KES4K71YZcXNQHXg0w9Tj+DrVFm71
-         7lWg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3eN+vJCEpda37waz6VSr7NvVdQWd8bWi5ZzJ24SN/Wf/2g5f7TNLNwiS1hHMT+Hv8qe+a0tSiNDxw/jbU7eC/P993dQ6cBVcaE44isQ==
-X-Gm-Message-State: AOJu0YxjcbBWW4fXtKQPVdGkCsrN5HDjHHAXxE7aw7SntcL4KytUsv9R
-	YevUblhBDofJJVRlMValWJVGdjDw+XBjV7J6UATSERcD5wXh0jmJFKHFWNyn+0ZGHVpK7w9C4xH
-	T40QFvyUwNz2tHTrxUcludiMHRhHU+W/Rtp9JzETUYa9EBwhVYHBOtU8=
-X-Google-Smtp-Source: AGHT+IEsTWnd3Zmtdyp3LBGnhw/QBCcmSqa++u4WlR6/Mep/n6UHU5tUgL+YBVoPEHfe9m2ZELZURir5PEUKbFB0otAf5ThLEN7F
+	s=arc-20240116; t=1708157559; c=relaxed/simple;
+	bh=76RXlR/msdWs4e9OX1WpKtSooLAmtPygvVwdSqDyayY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HN0JeeQaKl3Osrv43WiGyRW/9NNbuofw+SSsbMpqQbpqPTUNGSUnEdsuDGgGBO2TokqPtX5FWjFlVci827zGKfOiVtDe6TRB/LaS77kHxuDE5RhYpMKYaLIHnq53fO6vRBuLSZg8JBN8D12sUOVMuuw3QkfNgLG/Gu8Qv+U/VbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4TcM2D44glz1xnkR;
+	Sat, 17 Feb 2024 16:11:16 +0800 (CST)
+Received: from dggpeml500021.china.huawei.com (unknown [7.185.36.21])
+	by mail.maildlp.com (Postfix) with ESMTPS id BC3AA18001B;
+	Sat, 17 Feb 2024 16:12:34 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by dggpeml500021.china.huawei.com
+ (7.185.36.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Sat, 17 Feb
+ 2024 16:12:34 +0800
+From: Baokun Li <libaokun1@huawei.com>
+To: <netfs@lists.linux.dev>
+CC: <dhowells@redhat.com>, <jlayton@kernel.org>, <linux-cachefs@redhat.com>,
+	<linux-erofs@lists.ozlabs.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <libaokun1@huawei.com>,
+	<stable@vger.kernel.org>
+Subject: [PATCH RESEND] cachefiles: fix memory leak in cachefiles_add_cache()
+Date: Sat, 17 Feb 2024 16:14:31 +0800
+Message-ID: <20240217081431.796809-1-libaokun1@huawei.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16ca:b0:365:1f2b:7be8 with SMTP id
- 10-20020a056e0216ca00b003651f2b7be8mr2901ilx.5.1708152904555; Fri, 16 Feb
- 2024 22:55:04 -0800 (PST)
-Date: Fri, 16 Feb 2024 22:55:04 -0800
-In-Reply-To: <0000000000000d7d6e05fb6bd2d7@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001924f506118e5748@google.com>
-Subject: Re: [syzbot] [ext4?] KASAN: use-after-free Read in ext4_search_dir
-From: syzbot <syzbot+34a0f26f0f61c4888ea4@syzkaller.appspotmail.com>
-To: adilger.kernel@dilger.ca, axboe@kernel.dk, brauner@kernel.org, 
-	jack@suse.cz, linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu, 
-	yebin10@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpeml500021.china.huawei.com (7.185.36.21)
 
-syzbot suspects this issue was fixed by commit:
+The following memory leak was reported after unbinding /dev/cachefiles:
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+==================================================================
+unreferenced object 0xffff9b674176e3c0 (size 192):
+  comm "cachefilesd2", pid 680, jiffies 4294881224
+  hex dump (first 32 bytes):
+    01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+  backtrace (crc ea38a44b):
+    [<ffffffff8eb8a1a5>] kmem_cache_alloc+0x2d5/0x370
+    [<ffffffff8e917f86>] prepare_creds+0x26/0x2e0
+    [<ffffffffc002eeef>] cachefiles_determine_cache_security+0x1f/0x120
+    [<ffffffffc00243ec>] cachefiles_add_cache+0x13c/0x3a0
+    [<ffffffffc0025216>] cachefiles_daemon_write+0x146/0x1c0
+    [<ffffffff8ebc4a3b>] vfs_write+0xcb/0x520
+    [<ffffffff8ebc5069>] ksys_write+0x69/0xf0
+    [<ffffffff8f6d4662>] do_syscall_64+0x72/0x140
+    [<ffffffff8f8000aa>] entry_SYSCALL_64_after_hwframe+0x6e/0x76
+==================================================================
 
-    fs: Block writes to mounted block devices
+Put the reference count of cache_cred in cachefiles_daemon_unbind() to
+fix the problem. And also put cache_cred in cachefiles_add_cache() error
+branch to avoid memory leaks.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12d6758a180000
-start commit:   7475e51b8796 Merge tag 'net-6.7-rc2' of git://git.kernel.o..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d05dd66e2eb2c872
-dashboard link: https://syzkaller.appspot.com/bug?extid=34a0f26f0f61c4888ea4
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10221a14e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112fd18f680000
+Fixes: 9ae326a69004 ("CacheFiles: A cache that backs onto a mounted filesystem")
+CC: stable@vger.kernel.org
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+ fs/cachefiles/cache.c  | 2 ++
+ fs/cachefiles/daemon.c | 1 +
+ 2 files changed, 3 insertions(+)
 
-If the result looks correct, please mark the issue as fixed by replying with:
+diff --git a/fs/cachefiles/cache.c b/fs/cachefiles/cache.c
+index 7077f72e6f47..f449f7340aad 100644
+--- a/fs/cachefiles/cache.c
++++ b/fs/cachefiles/cache.c
+@@ -168,6 +168,8 @@ int cachefiles_add_cache(struct cachefiles_cache *cache)
+ 	dput(root);
+ error_open_root:
+ 	cachefiles_end_secure(cache, saved_cred);
++	put_cred(cache->cache_cred);
++	cache->cache_cred = NULL;
+ error_getsec:
+ 	fscache_relinquish_cache(cache_cookie);
+ 	cache->cache = NULL;
+diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
+index 3f24905f4066..6465e2574230 100644
+--- a/fs/cachefiles/daemon.c
++++ b/fs/cachefiles/daemon.c
+@@ -816,6 +816,7 @@ static void cachefiles_daemon_unbind(struct cachefiles_cache *cache)
+ 	cachefiles_put_directory(cache->graveyard);
+ 	cachefiles_put_directory(cache->store);
+ 	mntput(cache->mnt);
++	put_cred(cache->cache_cred);
+ 
+ 	kfree(cache->rootdirname);
+ 	kfree(cache->secctx);
+-- 
+2.31.1
 
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
