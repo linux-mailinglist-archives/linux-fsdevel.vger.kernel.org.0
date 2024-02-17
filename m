@@ -1,94 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-11912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11913-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC651858F92
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 14:05:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ABAC858FE0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 15:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91941282FCB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 13:05:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1C111F2200C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 14:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1918B7A737;
-	Sat, 17 Feb 2024 13:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CCE7AE6B;
+	Sat, 17 Feb 2024 14:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K3SdzMKy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AFDF65BCA
-	for <linux-fsdevel@vger.kernel.org>; Sat, 17 Feb 2024 13:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D22942A96
+	for <linux-fsdevel@vger.kernel.org>; Sat, 17 Feb 2024 14:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708175104; cv=none; b=pPOE4XfgN/gi/eA4dnyngD0jrbc48KRdPWIFv6fnUNukNwCz5azb3epJlhOti84+U3/eGdqZy6qcqNdnfKEdkZP1cNkE6C0pwQ55DtECa2zSSjkXoejzMM3qZSG93Ct9rHhtjx6bDHCGpjKjkEfaG6G4z3cajYDyKGc6SZ+FqYc=
+	t=1708178442; cv=none; b=GSW9IwME5qi1zA0tGxcGK9aQG0obIWX9xnjZxWaGg0y5LLPuqony55lg/E2YU/xyKqPpzOvHCU/UeblTwMQyASouvzxMAfOrojnjyam7TLDfeUlsBuMagv7ogFD8D9Zw6KWOXkjmehs6YfqXtEvwm47od8cW5CRDl5bfy/95hO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708175104; c=relaxed/simple;
-	bh=3nrOran+3E/6VsB078+tXDWuibeDv+JF7NmZjhbKaME=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=myca/iXiWR095iGTd9Iub2xZfBfyScg8TbnVnnAzF0+HETeg81VYukOYAfmQTNER2uLo/azUDlCE1Q8dP4V59PJSXImiMHHQi/vGi2EWbRh+XWUlLNbxJlMYFCgAPVn4q5VauuQh5QFN8PZIV3dbi4XjDBvsJ6GANWsAg94Dies=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7c00a1374ecso196603039f.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Feb 2024 05:05:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708175102; x=1708779902;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FThBQXYga9w1cWMyp/yRXDDAEE94fJrZ4ihdn0r8aIQ=;
-        b=qd55Nsk0COZqZuJZX+8StDSYG2CH5/fr8tYpLClTW/5tAVUmLF9k61e0z+f1X0bkIt
-         Mx9oM8OzsyHQ916sr4e6ZU12uOcUEepMZef4KRgHdxqhktFyopwqdzJ5/ja1s0MgpAu+
-         34ayD1zMUFZOhn1Y+zZap8kRby9qyQmNCy/tkrPky2+h+2f3zsAWThpiJBc6rfrBFW1L
-         SD/Z/MiKgdsur8DT5Bm5d6oja/2o2GmV4+IvnltdXXFPXeRFujk5omUL1LH3vZ5ZSAfM
-         5xKb23Q5lo5dwJ7u33BlAj2P8FXfdZ1fNdCaDzNUnQI7jh3GftpFXb8adH+BH/Zeto+3
-         OEPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVcRcrYENAtJwph6LNYjMEyYnr4hExF9Bzv3nEWmL4whEXJ+PL0NuVWpUPo7Mj6pUlnMzSWbfvR59caN1ALFGAnXAtRIgW619VOk4B5tA==
-X-Gm-Message-State: AOJu0Yz5+NYBaB6YEtcf/cQCvu0GuRLoiUnIHlPypUbO/3UX0azqJaJY
-	vOFDJVC9Gvu5x+CbS1K2btrVyz2mJRm3We8BDXB8G9muAS8bVB58tqZDlheKq8oqnArfPjPM5XL
-	Y2fv7xaDRaH7AB3s1QjiffQOq1OQingdTTfKhQArw5OycuQ4l6Ja0whA=
-X-Google-Smtp-Source: AGHT+IEX9WITVv4GtTYdnW4Gcm9u1rwfgoZb080R3rLYEmMo/IgaR6FjIYJegvp5dLVSAfB3thDnrcKX+MYpjj+ledVz59058AXK
+	s=arc-20240116; t=1708178442; c=relaxed/simple;
+	bh=hOtNnDWKysX+78J5S0qf1n5yUp9rsNswcd6qtm0eaDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=syYpNx41ljny7tAXTl8FZQvn+3NJpE0SIRvIkn/gmrhuYSwWeo0x6tlN7524Z/DwzJ3o3ZrWAfkNXPMFDcieJfeAjC/GPQm8xgZHYM7QRmtp37JMUkYkVxJV4UaEeYv0BuJ3Gk4NV3B3TVY44OG/A/vUsomDB8QfDSacn6GJrTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K3SdzMKy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1708178440;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XyMzDIR8J9H+stxJHv4qSgc1X1lzUltOn9HOx337RJE=;
+	b=K3SdzMKygBt5iQ1PIth5m9xeEUpBYBnuV1TSPG3qQn3vBVHTjCf9tUzN0dq0f/c9GioUlH
+	CWIBf55EyN/2v8Hz69756aVhC/nPpGIHbY4KCxzDxyO2sRfe1KNqAfEVy2rLqwgH5sfO40
+	hVqLd0fsUgPMQzfy4QfVA3wdRglGmws=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-501-7i3jfpKbOca3yGv000klnA-1; Sat, 17 Feb 2024 09:00:37 -0500
+X-MC-Unique: 7i3jfpKbOca3yGv000klnA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0BCB983B7E5;
+	Sat, 17 Feb 2024 14:00:37 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.33])
+	by smtp.corp.redhat.com (Postfix) with SMTP id 43B708CED;
+	Sat, 17 Feb 2024 14:00:34 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sat, 17 Feb 2024 14:59:19 +0100 (CET)
+Date: Sat, 17 Feb 2024 14:59:16 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+	Seth Forshee <sforshee@kernel.org>,
+	Tycho Andersen <tycho@tycho.pizza>
+Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
+Message-ID: <20240217135916.GA21813@redhat.com>
+References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org>
+ <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
+ <CAHk-=wjr+K+x8bu2=gSK8SehNWnY3MGxdfO9L25tKJHTUK0x0w@mail.gmail.com>
+ <20240214-kredenzen-teamarbeit-aafb528b1c86@brauner>
+ <20240214-kanal-laufleistung-d884f8a1f5f2@brauner>
+ <CAHk-=whkaJFHu0C-sBOya9cdEYq57Uxqm5eeJJ9un8NKk2Nz6A@mail.gmail.com>
+ <20240215-einzuarbeiten-entfuhr-0b9330d76cb0@brauner>
+ <20240216-gewirbelt-traten-44ff9408b5c5@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:388c:b0:363:a059:670b with SMTP id
- cn12-20020a056e02388c00b00363a059670bmr436688ilb.4.1708175102569; Sat, 17 Feb
- 2024 05:05:02 -0800 (PST)
-Date: Sat, 17 Feb 2024 05:05:02 -0800
-In-Reply-To: <00000000000046238c05f69776ab@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000033f84e06119382d7@google.com>
-Subject: Re: [syzbot] [ntfs3?] kernel BUG in ntfs_end_buffer_async_read
-From: syzbot <syzbot+72ba5fe5556d82ad118b@syzkaller.appspotmail.com>
-To: almaz.alexandrovich@paragon-software.com, anton@tuxera.com, 
-	axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-ntfs-dev@lists.sourceforge.net, ntfs3@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240216-gewirbelt-traten-44ff9408b5c5@brauner>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.5
 
-syzbot suspects this issue was fixed by commit:
+On 02/16, Christian Brauner wrote:
+>
+> +struct file *pidfdfs_alloc_file(struct pid *pid, unsigned int flags)
+> +{
+> +
+> +	struct inode *inode;
+> +	struct file *pidfd_file;
+> +
+> +	inode = iget_locked(pidfdfs_sb, pid->ino);
+> +	if (!inode)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	if (inode->i_state & I_NEW) {
+> +		inode->i_ino = pid->ino;
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+I guess this is unnecessary, iget_locked() should initialize i_ino if I_NEW ?
 
-    fs: Block writes to mounted block devices
+But I have a really stupid (I know nothing about vfs) question, why do we
+need pidfdfs_ino and pid->ino ? Can you explain why pidfdfs_alloc_file()
+can't simply use, say, iget_locked(pidfdfs_sb, (unsigned long)pid) ?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14016cf8180000
-start commit:   dfab92f27c60 Merge tag 'nfs-for-6.5-1' of git://git.linux-..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=71a52faf60231bc7
-dashboard link: https://syzkaller.appspot.com/bug?extid=72ba5fe5556d82ad118b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c987eca80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=144a738f280000
+IIUC, if this pid is freed and then another "struct pid" has the same address
+we can rely on __wait_on_freeing_inode() ?
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Oleg.
 
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
