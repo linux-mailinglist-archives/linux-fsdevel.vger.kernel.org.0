@@ -1,67 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-11904-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11903-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34A50858D7A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 07:26:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEBA5858D79
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 07:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1F041F22517
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 06:26:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD8FC1C212C4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Feb 2024 06:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 903AE1CD26;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B021CAA1;
 	Sat, 17 Feb 2024 06:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XrMFYxl3"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PSM2Juy3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 622BD1CAA2
-	for <linux-fsdevel@vger.kernel.org>; Sat, 17 Feb 2024 06:25:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C531CA9F
+	for <linux-fsdevel@vger.kernel.org>; Sat, 17 Feb 2024 06:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708151150; cv=none; b=jdfxPsp5AolblM2XYGcB356P7GUg26rG8WM09cEIdr78Up7RIVnYDGSaHqSN4nw7j7QYy7GUPqfl4lP1obBdZxj4QpqvDVA3S/fRGkntytaLYykBPaNiOddmzpEsDZOZoL7s+5gFqAw0w/9leGSFRLfDDC4ibDdp22a4B4cwBX0=
+	t=1708151149; cv=none; b=cCeqSkTNNagWCueBxQRTKZRLUBjIsZiYe733LOVcdiTqcT+0lt6nKPH0aGGLHGzuSsVYXqGs95UXeQismwikqRTI+dSBdFcvPDtOX2r58YNqNo16iKVnrKWD0XpdYPn0Df7ZAKalLOWTzg2Ee40uCTajFpX7LDqK2pPhyXEOeDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708151150; c=relaxed/simple;
-	bh=J8yZ3FuS1LWrR5jVIrwba2SyB7GFZoxGQ5Gq7wzczYA=;
+	s=arc-20240116; t=1708151149; c=relaxed/simple;
+	bh=Y9GWQSNdeMe/TiCQJCjXENrVrfi7E3amSjOSWzM2S1o=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qkVGFTMzFaY6F36V+6QmmXnjsyJSXDrhRaDWfGKEKKDk96vt7SBWtoTjRm4Xv5bRLGDwSKDmcc9CFJcr2fVBDhwBm62a0Xy6rUbB5jSQxUjNJVcrCYI68SuAbnqDCuEhN4YwuwKkCSZBCiqhw5AWG7zrgPDjjhRQ9SBHiz9R3kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=XrMFYxl3; arc=none smtp.client-ip=209.85.210.178
+	 MIME-Version; b=VjMFNJIaYyeHKkjnPUP6qYoaktsWZHAxoXGeOvuRaAmIbhdbl/uiVaaYPK0LPgjTcrBVfZzf15b+zJy3kPsDNWsDC7LNgfpAaLcCQlrvwWEHDGoNHEUeTQUOPx5AndsR0ZyhznJEcMxGzcVnxjWPlUuKs7gwq+m0XdSxSUcgERA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PSM2Juy3; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-6e11a779334so1764250b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 22:25:48 -0800 (PST)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1d73066880eso26756125ad.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Feb 2024 22:25:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google; t=1708151147; x=1708755947; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PfIR0fBKHcHTu35XI9I/l5YesMfUJfSS9sUu5LMaD84=;
-        b=XrMFYxl3HbmiYA5MznqQAnAqEKe3T3Dm0cR6E0hq86QLu74Lvhhb7IOERfDTKi3C2Y
-         VocL+m200E/RatXK7Usd3mwvwPIs8cSWxwewolMMJ14LnrNvpomSxHwsI+eyf59ipSwY
-         6i409nuhdmpRiaDccspRbhRV6R9lXtZKQLQKk=
+        bh=E2RXdELjA1+Y5TPLiUTm0d2mhfp+RAxxenDK5Rv9UCY=;
+        b=PSM2Juy3NgnPRmxXplM3Wgy7959T+vLMrYBXBrlbGwTI4LRMympMzyf7Oba6Kxq+M0
+         oLkEU/4veTGKHBrBNvnNeXue0AEP1spIBpvIvX+eYMlFgP3lCl//sJc5aUhqjeNGVwX4
+         0IhOfT2NCGli2rJy/vCZS4aywrhoQOywPKfxU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1708151147; x=1708755947;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PfIR0fBKHcHTu35XI9I/l5YesMfUJfSS9sUu5LMaD84=;
-        b=NJtRZQG92nE8X6RsIuOzcdLvSIaNxOzGptlYkUIyFXJ6addyif641jFg34ds8lzjvk
-         CkK6GFgmofXmLP3dFSJKOgmBAXDL+1vIGSW2empV/7gswfLVUgeXoCTV4eu1Chxcfghm
-         iOko54+iwH4vuPHxxPUdIzQE3djobKxUgeut8JZ8cqOr8NhbPPgcvO/E/r8Q6KmfRSVF
-         jCf7iEaCUBjpFMjgk770SOki7pEpq9tDcYmaGRk7EPKbvy8V6ZaWHULRJ6WpfotR878D
-         2+vwGzMAXA/HxS3VkkhiQMidgJv+JEn79LVHm9pioo+N7f6xH2LhD1YV3WuZ4B4EG7z8
-         61Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCX8vnFozHa0ixXgmyRGjpo9r3DMFlHZDcVe+Qf0A/veYVqtdyJzkWfhelXAfK+Y9/pi/Wbp7c/+ATz3444I3htareimFj5F0QmaS7MSuQ==
-X-Gm-Message-State: AOJu0YytSTqhn17sOKC3UqrH8njePmDFptZspE6Fdb7jRpZwo43X3BXp
-	7vvC+lpJK0FEgTaIF+SbAAuzxnaAFPyuChMyJYd1f5dF40nMUh9TMqTcdd8DVA==
-X-Google-Smtp-Source: AGHT+IEN7kra6nhd0C/U//cqra0sN9TAy99jtLP7gl6N1oR+rsshp77a8Yk2AxFV0aGXX6usEqGwwA==
-X-Received: by 2002:a05:6a00:2292:b0:6e0:8c11:9878 with SMTP id f18-20020a056a00229200b006e08c119878mr13296297pfe.7.1708151147635;
+        bh=E2RXdELjA1+Y5TPLiUTm0d2mhfp+RAxxenDK5Rv9UCY=;
+        b=l5csZzT4aJp4cH2blPJ9mTZDitvpHw/16GPAFZODnNsMmgGIx4aQ7Kw/wmfSjWWZhR
+         LVxwjUozvwqMw6GuTeCVETzw7EdNGpYI8/buImwOsWcHE9SbMd7hVEad742llzwfsqku
+         ltgyINFPKW52S9rLMESzYI5blh2sIUgx5CFK0av0TVXD2s1E09R2G72heXOmvPD3afCz
+         3ra2qAzZlCEc7Va00VtwlEn6XpUPhadWn4UZqt+UtpqOlnn3cBRSHbGjSzfCdcDVP9OW
+         qQGQQgmnma7HPBX+ylYipfH8YnqmawKn+spjBP5Dpru+ih3W6z/JWyitxN1nS0CpWT69
+         FN0w==
+X-Forwarded-Encrypted: i=1; AJvYcCUudai7Yu8FvqoZEjnJsFu1ZWszOlIoGDQwARXkkpmTjFuQKApXGadBYOVZp3p6x8PeNOwM/kWZgNCdfoNh+A3WRZO7k85Tlv2HpWnw4g==
+X-Gm-Message-State: AOJu0YyV33tnYSaYQT/wbDgdKuTJLAciwf/Zu1mNTqeHOJSq3xN4Jr71
+	GsYc3sifAOYxezAbsyLHU2nC3PzVoeqjWpqYzUMdO4qdv8WIBoH5Jhdg0vyCdw==
+X-Google-Smtp-Source: AGHT+IFmbsrgSelSyVzmXuB/u0yC3Rb3JZKRSRjPThoVTEFLQ9HMIMVjPwpT7DE29BVipx3A1VGplg==
+X-Received: by 2002:a17:902:e80d:b0:1d9:427a:991 with SMTP id u13-20020a170902e80d00b001d9427a0991mr8385363plg.20.1708151147280;
         Fri, 16 Feb 2024 22:25:47 -0800 (PST)
 Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id p9-20020aa79e89000000b006e35c1aceeesm233949pfq.197.2024.02.16.22.25.46
+        by smtp.gmail.com with ESMTPSA id mm11-20020a1709030a0b00b001db6da30331sm788247plb.86.2024.02.16.22.25.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 16 Feb 2024 22:25:46 -0800 (PST)
 From: Kees Cook <keescook@chromium.org>
@@ -69,6 +69,13 @@ To: Jiri Kosina <jikos@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>,
 	y0un9n132@gmail.com,
 	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
@@ -77,12 +84,6 @@ Cc: Kees Cook <keescook@chromium.org>,
 	Peter Zijlstra <peterz@infradead.org>,
 	Qi Zheng <zhengqi.arch@bytedance.com>,
 	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	x86@kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
 	Josh Poimboeuf <jpoimboe@kernel.org>,
 	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
 	Rick Edgecombe <rick.p.edgecombe@intel.com>,
@@ -90,12 +91,11 @@ Cc: Kees Cook <keescook@chromium.org>,
 	Bjorn Helgaas <bhelgaas@google.com>,
 	Tony Battersby <tonyb@cybernetics.com>,
 	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
+	x86@kernel.org,
 	linux-hardening@vger.kernel.org
-Subject: [PATCH 1/2] x86: Increase brk randomness entropy on x86_64
-Date: Fri, 16 Feb 2024 22:25:43 -0800
-Message-Id: <20240217062545.1631668-1-keescook@chromium.org>
+Subject: [PATCH 2/2] binfmt_elf: Leave a gap between .bss and brk
+Date: Fri, 16 Feb 2024 22:25:44 -0800
+Message-Id: <20240217062545.1631668-2-keescook@chromium.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240217062035.work.493-kees@kernel.org>
 References: <20240217062035.work.493-kees@kernel.org>
@@ -105,27 +105,27 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1595; i=keescook@chromium.org;
- h=from:subject; bh=J8yZ3FuS1LWrR5jVIrwba2SyB7GFZoxGQ5Gq7wzczYA=;
- b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBl0FFofylSSc0zctidXuws91GIZAfUD3EvfMTgD
- C7ILFWiQEWJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZdBRaAAKCRCJcvTf3G3A
- JuvKD/0YST+WQlVawQvhCb3pQXdND3wneO4rAAc1MIaPKKYFGzOMCeSQYBifV0JEeFHph1WsrQC
- n4+hCw/MTLwSm24DnSu1EEevAaPtL2voVeq16UMZrkG/yapEWn3+250s3daI8qSEHpaTs+lqmrY
- 20PeyS18a3NDnzD6VRtlc/Ud4NM4lTrD59tsR9Zypsk8QkTOW11SzkDOU36Vewr5lvz9WlASgCb
- uX115bQ6YNYuZQkpWi0z4MlnmeNcdOuQnupP0FwTKJDVMHrN+vvFac+rR68LNoQtHQMqb0yZKXr
- iaQfIX0RbdI1t7Ns/XMSdQQfLgvkslY3PnQ7KanuL/2iVQSA+qYKaUHT1q5rU9VB+w3Dck4Dmye
- Mw0zNvdQB8Y4A4EnGY6HYyO6ucLRSQtEfIuXbYYszYSq6wZmHI2F8gQrXTQN6dKrHavZBh6DOSY
- Ep4Xtnl5207P/j3tkJ2WlgxPesAECiupJebylL9V96dhr12EkUmNs83ixnDjhgIhd/q1C66ZLuD
- gOP5XrfxOIcEw0QQFj8sFRcjpHdAnouwZruQruo4ED1IAeSMX2ThvD6Di09uNBuIX4r27aUDkF4
- PMMxi3r0jO2Iy/OhTCP2lOG3dtuz7BSAH3EaHzmxqr7QyGazjc6Mux/rumcsyyFjQTLaXMsCYg5 3MpCUeeX8WL+hxg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1512; i=keescook@chromium.org;
+ h=from:subject; bh=Y9GWQSNdeMe/TiCQJCjXENrVrfi7E3amSjOSWzM2S1o=;
+ b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBl0FFoSMLWKnRZV/Xpg3nYIyPCuv0NWoUMuFI3f
+ ssQMNwOx8mJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCZdBRaAAKCRCJcvTf3G3A
+ JvXFD/0ZGY+pv/RW0jEwUr/fOJKrMeYvRA+q8dAhwBU4yZf/9WvOK1OItaQt6erwqczIQcGDsKX
+ RWFEhlQbXwgzOXrwCvEVU3X/MwTvOZFnZ0wTXOJZIuqX6uhvJuDZYq+kDfDixzSf+vvZ5N5gZBO
+ TJzXBbBFV7TqO+okj4IS3xOJWZewgGjhNT8vbeQcPdzj69HDDkXXfpLkoSfygpZcWqlp9XDZiNy
+ vXK3r7lesiRP3IhhoJj7l67XzCYktFTMcgxwx7uHCkePYddv5NSQpYuV1e3GrWYPneqbU/ta/RX
+ cWwsnNmxh2abzRU47UKh05W/uYImIbey5l0CSZI/7QN6m152TAREIrmIXwl2k22fjZgwgd+Apv8
+ 4oW4U/bqzoG9w1PMnHKDMQ9jsdEQB9hjMCKn8XCd+7Gv1wyNPPDXV5RFfLYuFJeaPMBdmXP7zFy
+ E345+0/LhEK6UZl9XBsjpHxXtro8hrLNXyQJNR0dzipAEXd7VeizjMBrL4dibLwpq9Vt5GEwcbV
+ rdHrk6W8yGkeyTm7dflKIXZxINWwAC8JEcnyTOaMiaSf+7Trt7zTSHdjJwqs75llY8Q2hwdTTG3
+ H4HQ8+CnaTwekWZMYV2AJy4oOxU2TWbO/56rrPwpm2xEE837qZM9Jz9EeaTLbA9t0NKKZotRk7n IeAJGDC3TTWSd+A==
 X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-In commit c1d171a00294 ("x86: randomize brk"), arch_randomize_brk() was
-defined to use a 32MB range (13 bits of entropy), but was never increased
-when moving to 64-bit. The default arch_randomize_brk() uses 32MB for
-32-bit tasks, and 1GB (18 bits of entropy) for 64-bit tasks. Update
-x86_64 to match the entropy used by arm64 and other 64-bit architectures.
+Currently the brk starts its randomization immediately after .bss,
+which means there is a chance that when the random offset is 0, linear
+overflows from .bss can reach into the brk area. Leave at least a single
+page gap between .bss and brk (when it has not already been explicitly
+relocated into the mmap range).
 
 Reported-by: y0un9n132@gmail.com
 Closes: https://lore.kernel.org/linux-hardening/CA+2EKTVLvc8hDZc+2Yhwmus=dzOUG5E4gV7ayCbu0MPJTZzWkw@mail.gmail.com/
@@ -133,35 +133,31 @@ Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
 Cc: Jiri Kosina <jikos@kernel.org>
 Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Qi Zheng <zhengqi.arch@bytedance.com>
-Cc: Alexandre Ghiti <alexghiti@rivosinc.com>
-Cc: x86@kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-mm@kvack.org
 ---
- arch/x86/kernel/process.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ fs/binfmt_elf.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index ab49ade31b0d..45a9d496fe2a 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -1030,7 +1030,10 @@ unsigned long arch_align_stack(unsigned long sp)
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 5397b552fbeb..7862962f7a85 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1262,6 +1262,9 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
+ 		    elf_ex->e_type == ET_DYN && !interpreter) {
+ 			mm->brk = mm->start_brk = ELF_ET_DYN_BASE;
++		} else {
++			/* Otherwise leave a gap between .bss and brk. */
++			mm->brk = mm->start_brk = mm->brk + PAGE_SIZE;
+ 		}
  
- unsigned long arch_randomize_brk(struct mm_struct *mm)
- {
--	return randomize_page(mm->brk, 0x02000000);
-+	if (mmap_is_ia32())
-+		return randomize_page(mm->brk, SZ_32M);
-+
-+	return randomize_page(mm->brk, SZ_1G);
- }
- 
- /*
+ 		mm->brk = mm->start_brk = arch_randomize_brk(mm);
 -- 
 2.34.1
 
