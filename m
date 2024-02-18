@@ -1,100 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-11945-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788E18595F7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 10:30:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D845D85962C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 11:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A50561C20DBA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 09:30:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89E271F2268B
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 10:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC666134BC;
-	Sun, 18 Feb 2024 09:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3E7A2D059;
+	Sun, 18 Feb 2024 10:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0F9+hhd"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AFPJCfo5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3047A12E4B
-	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Feb 2024 09:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C409D2D047;
+	Sun, 18 Feb 2024 10:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708248634; cv=none; b=OQaA96wcvQz/TPs6hicft2GhVxd7VjINgeImAXhNZ4uPn1kxaj4VvSP9rEfo3SNOJIiPJTw8d/CSN/meysJzORul294slIorfP/+pSNj1hfFOAuVPl2DchAMpV2KlIvokq5sLmEsuotmrqT+8cHyjMik9JnwXEkV73Yy9nYDIYE=
+	t=1708251598; cv=none; b=L+G/bOnY0gDjdLgN8TesYzwZ8ZwQ+HK7ZhEvFyk2xe+9t588fFqXhpNyUNRPt8bWc1i60j/M81J/dJ5AjEjtuzakJ/8RP49powJbHKQdfMO/63ju8P1mwzl4pDR4NtGRaj3T5rUCYS0kpOR28qknYbL3MT92TRQ5ijgMt248PIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708248634; c=relaxed/simple;
-	bh=1q4idVLa5rjd2Xez73iysntFP9xTgV7YWIq4WcWea5U=;
+	s=arc-20240116; t=1708251598; c=relaxed/simple;
+	bh=JK7js32ODxWd2IYgaKayzCZ2uwHXLXIH5AK5JBEaZpM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=afidMnLf8u7OfAXQydXpyOKWArwzv6ba7V1JZLbGSfQQgb4xk/guyUaWUPasyXJKhSJ7tWAjJeMeaXEG6D0CAQ8ryYA2aKKbm8Lc38QNyB4uW365skT3GcOEiugORz8EfLe/jaqv09P43dQD/mAbQSS2tj8B8aiWuT3VuWtuszE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0F9+hhd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D82AC433C7;
-	Sun, 18 Feb 2024 09:30:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708248633;
-	bh=1q4idVLa5rjd2Xez73iysntFP9xTgV7YWIq4WcWea5U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W0F9+hhd2wlmvD4ai16UTuIlu7IrKUJGQClY9ZW+1cD3iiS+hBdlenK47YzZfhQ6C
-	 TWlxjZsUv6Ro+56N2ITfS6H3/ty4lDwO2iOMz25XAoSVN24HX94OzIh2LqeoNM/OvG
-	 al+39GpN9d6wVUW8hMwFeshQwrtm25C+FP1TkYvEqDNVQ1HTqRSqkCDNnk7pVv7zRc
-	 N15o3xFNMi8pQkt2YwQmo9FNnghKcFH5xCJyKCgOHFq6+323oGe5loOdZbUOjqocvW
-	 g/2nnjFp51A0U6Ydx6VaSW7Wksa8agYpxRG49l95UekPmvf815zCE/+76iGyxg63RX
-	 7tZ7DbU/AfxsA==
-Date: Sun, 18 Feb 2024 10:30:29 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, 
-	Seth Forshee <sforshee@kernel.org>, Tycho Andersen <tycho@tycho.pizza>
-Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
-Message-ID: <20240218-hautzellen-digital-0e5903ff1bb0@brauner>
-References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org>
- <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
- <CAHk-=wjr+K+x8bu2=gSK8SehNWnY3MGxdfO9L25tKJHTUK0x0w@mail.gmail.com>
- <20240214-kredenzen-teamarbeit-aafb528b1c86@brauner>
- <20240214-kanal-laufleistung-d884f8a1f5f2@brauner>
- <CAHk-=whkaJFHu0C-sBOya9cdEYq57Uxqm5eeJJ9un8NKk2Nz6A@mail.gmail.com>
- <20240215-einzuarbeiten-entfuhr-0b9330d76cb0@brauner>
- <20240216-gewirbelt-traten-44ff9408b5c5@brauner>
- <20240217135916.GA21813@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BiI+KfGk2hmQSh6SiY+1ciZGM7ixNHnzyLYOMFW6wvGLghm07USy/UKXkrSzXfeDtaKSbjRDY0qgeEh7Aj2MnEHly4V5AmxrunB0DvLYsoMpuK+La96HDTY5h9Zy4XeXQX/9CGi+TYj+fuIkqqQk6kbZmBVKY7n75t0yITHLBsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AFPJCfo5; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1708251596; x=1739787596;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JK7js32ODxWd2IYgaKayzCZ2uwHXLXIH5AK5JBEaZpM=;
+  b=AFPJCfo5OTwHzsWjR8rcGeVBVTrp1TvA4MvUOI6zqSsqNJw7Kaez4hXw
+   ejeQW59/maYjBTqLtcpzbA9d8tGJbv3dlb9tkAWbuWtMibOqTpnKoDted
+   oxpJY5caw2O8S0vScx32OhOdSn2UxDfg0hHnfY+fCfhxQ3Xb6yl1eU3oD
+   alwxi2ubqOCEqQu9TVXf1oqm0qD6k/Zlk2BDUyOjapZqulZPLCHWt3lCx
+   dOZ/YklPhuUdmT/BXCc4x6OJ/o39pQ87nfJDD4J8QNop0YGuuPtiOg4cF
+   kmtCiPKDPJNFSNkUhBi/rVw9wFo4GEX3DMrYQ7hgQ8/YzFGhvY2nghAaG
+   Q==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10987"; a="13744915"
+X-IronPort-AV: E=Sophos;i="6.06,168,1705392000"; 
+   d="scan'208";a="13744915"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2024 02:19:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,168,1705392000"; 
+   d="scan'208";a="4193821"
+Received: from tassilo.jf.intel.com (HELO tassilo) ([10.54.38.190])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Feb 2024 02:19:54 -0800
+Date: Sun, 18 Feb 2024 02:19:53 -0800
+From: Andi Kleen <ak@linux.intel.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Jan Kara <jack@suse.cz>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] fs/select: rework stack allocation hack for clang
+Message-ID: <ZdHZydVbQ7rIhMYV@tassilo>
+References: <20240216202352.2492798-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240217135916.GA21813@redhat.com>
+In-Reply-To: <20240216202352.2492798-1-arnd@kernel.org>
 
-On Sat, Feb 17, 2024 at 02:59:16PM +0100, Oleg Nesterov wrote:
-> On 02/16, Christian Brauner wrote:
-> >
-> > +struct file *pidfdfs_alloc_file(struct pid *pid, unsigned int flags)
-> > +{
-> > +
-> > +	struct inode *inode;
-> > +	struct file *pidfd_file;
-> > +
-> > +	inode = iget_locked(pidfdfs_sb, pid->ino);
-> > +	if (!inode)
-> > +		return ERR_PTR(-ENOMEM);
-> > +
-> > +	if (inode->i_state & I_NEW) {
-> > +		inode->i_ino = pid->ino;
-> 
-> I guess this is unnecessary, iget_locked() should initialize i_ino if I_NEW ?
+I suspect given the larger default stack now we could maybe just increase the
+warning limit too, but that should be fine.
 
-Yes, it does. I just like to be explicit in such cases.
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
 
-> 
-> But I have a really stupid (I know nothing about vfs) question, why do we
-> need pidfdfs_ino and pid->ino ? Can you explain why pidfdfs_alloc_file()
-> can't simply use, say, iget_locked(pidfdfs_sb, (unsigned long)pid) ?
-> 
-> IIUC, if this pid is freed and then another "struct pid" has the same address
-> we can rely on __wait_on_freeing_inode() ?
 
-Yeah, I had thought about something like this but see Linus' reply.
 
