@@ -1,201 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-11962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11963-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9B08599D1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 23:29:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D748859A27
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 00:02:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 785FF281777
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 22:29:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC66B2814D6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 23:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D11E745D7;
-	Sun, 18 Feb 2024 22:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Kkq8occd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vi14/Cxb";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Kkq8occd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vi14/Cxb"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406F771B4A;
+	Sun, 18 Feb 2024 23:02:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB37D65BDB;
-	Sun, 18 Feb 2024 22:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8172AF10
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Feb 2024 23:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708295334; cv=none; b=C1Pr1sQVg24t/NtmNGhnXTG2xy5wt/Uhe8CkwkfUPyjOSXXMff789Ks5oHy3smOgwg2rtFd5xK7TkL6T7gCMnlfN8xgH8dU3U0ictJcm5I50cx6I6qrU33OSxaDpjHd0gpbGmTPAbz8+y6zlsfp7PjhZqfv93F1HbQuqzLiOL3s=
+	t=1708297325; cv=none; b=p/2erBy2qR/h7jGhJW1pFDE8EMyU4P6T97dXWjlns8a+BRapK7rGlWcp2CpuJULoqULmdIhdFrdew4+PwGtw8uYiDU2Z3tCFh8Rv2E87glOMQUttkMLBS/A39cKBV8UPv820dp5tENuhiwQI6EKIlcbB/ytGMIDfuYabQDYnYdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708295334; c=relaxed/simple;
-	bh=Uj5Oy4S8z6qdzsmn9DPo/NQUyt0aNfVEjkLbHnv86dM=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=urxBOPaUU92D4/KBPBFq3BHf7KNccH7bfb5MVda6JicDBps2MnKlkxwzgOJYdW1pUlsu+mdc79IQkLs6zsxsPb90fYoB8vbzfcTagwa2bRT1s/rD4k8plEnD3fGR1N6R8hVuGsYqVLmt0t1B/DPKuQjO1ierkpU7xVwSMsxhod0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Kkq8occd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vi14/Cxb; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Kkq8occd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vi14/Cxb; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 51EFA1FCF8;
-	Sun, 18 Feb 2024 22:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1708295325; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qnG5SiORvKW2Xi5axh412GtTGevEmeL/8o5GMM3myBI=;
-	b=Kkq8occdCxhc04PejF3VcThY0Xjlc9+DV81DPfSuD8rRyELJRYZpW+aJZT9wQ6E+TC1iL5
-	CYVND63yT4HnZKXvuiHCQ0RKGoP+CQpu52aImZkdSdWj66TCNWaJV9foGeJ6cESxdBxIIu
-	qSP9gYWFHEBmSX996wT2hQlquLyWvG4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1708295325;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qnG5SiORvKW2Xi5axh412GtTGevEmeL/8o5GMM3myBI=;
-	b=vi14/CxbLmbDle4oFB4QTA2sCtb0zwUM8WI/A2jLwU2S9I/ZUzqpqWX0GWjWbZEWMi1T13
-	EglzsjA0E5ydYSBw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1708295325; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qnG5SiORvKW2Xi5axh412GtTGevEmeL/8o5GMM3myBI=;
-	b=Kkq8occdCxhc04PejF3VcThY0Xjlc9+DV81DPfSuD8rRyELJRYZpW+aJZT9wQ6E+TC1iL5
-	CYVND63yT4HnZKXvuiHCQ0RKGoP+CQpu52aImZkdSdWj66TCNWaJV9foGeJ6cESxdBxIIu
-	qSP9gYWFHEBmSX996wT2hQlquLyWvG4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1708295325;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qnG5SiORvKW2Xi5axh412GtTGevEmeL/8o5GMM3myBI=;
-	b=vi14/CxbLmbDle4oFB4QTA2sCtb0zwUM8WI/A2jLwU2S9I/ZUzqpqWX0GWjWbZEWMi1T13
-	EglzsjA0E5ydYSBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B6E5139D8;
-	Sun, 18 Feb 2024 22:28:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id GIrSBJqE0mWeCAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Sun, 18 Feb 2024 22:28:42 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1708297325; c=relaxed/simple;
+	bh=gx08vrFga24mpJKJ6CkD8XwWwRlSzoVynbkz6tjlUdU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NFYu411FtI7UBLI46PLXVF221aFzrbIbAX5lqjMt7fS/3Da9a28i33HTZU2sp1yI4RbtsPbc8Trzonzby78urGgdjdxROd6hpBHqyRlAwLECMFnKwroJT12euAcezlrbI5vT6QLDPtlqDY24IaNEggEF4X7kdtm2wCplo+a98gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-363dfabfb34so35337575ab.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Feb 2024 15:02:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708297323; x=1708902123;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jbqMO01/H/iqr4yf8kLtqB/zmeOqiP/DRUeUMAwyX08=;
+        b=gd+CuOWdUzu1iVNWQk4IH414F2NTjLup6tzpxirrsLEpmaNe08rbOI3tARWfiMZ9Dk
+         uJUB0uIgte/dKLvusHFQDB6rKdLNygUaz6OuhwuMCRh/ikGKBUxpgyJBdTOnviXsV7Ac
+         6AjL2c6sv1WDv49xELIpdoPBfDboO6qv33guQnjD9S0EXL3DHvh0BSGbwhUoe7+8kBPs
+         nZ/8zflhDSXnlx3/tXN9QpvCnKy4T6xLIA9jZySWYU0YKVUWk3Y+vEvCDPB9gLmriPIe
+         hf9AfUyUxWmKm2m4TP1GyHEUiIznwgIDbkfqezxS/yz6RmrRguOX0SvDwcN1inVR8bjx
+         e1Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3gVHklbCdDd2RW8vHgXNfWQsM9UYJm8tiXr6Y+SBKc/WpsMLUj2wQHFURTgAy/1ZL4lTtx7QttGi4Mr+rqKnFZ7bYz+wsXJJz9haboQ==
+X-Gm-Message-State: AOJu0YzEzCnS9pTtFvI7nHOfgqhEePHzjLOIgGUmHrhr4Jpw9zg7NPfv
+	18iKaRmWlQUKfGFYUtvpDy/xjOcR6jl72Xe7rdUMY+ElYVb21tCDCQ6Q11RIPHoMD5fpFf1fvG+
+	Zn3XuT2WwNPLRipWmnWIndS7bKqvQWzwHUAEPoxh8nl4Xg1p8dlSxT0s=
+X-Google-Smtp-Source: AGHT+IESg5nnX2NxCKLcT/j7td4ev2NPLuE2YZ2CwDqs2gyjCZhR5rLABe2T5nq7AHEkvwhfpPGVVoAbHx10tudQ9hnZVE8Tt9ji
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Christian Brauner" <brauner@kernel.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Alexander Aring" <alex.aring@gmail.com>,
- "Chuck Lever" <chuck.lever@oracle.com>, "Jan Kara" <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- "kernel test robot" <oliver.sang@intel.com>,
- "Jeff Layton" <jlayton@kernel.org>
-Subject: Re: [PATCH] filelock: fix deadlock detection in POSIX locking
-In-reply-to: <20240218-flsplit4-v1-1-26454fc090f2@kernel.org>
-References: <20240218-flsplit4-v1-1-26454fc090f2@kernel.org>
-Date: Mon, 19 Feb 2024 09:28:39 +1100
-Message-id: <170829531945.1530.2712558842533100280@noble.neil.brown.name>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [0.65 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-0.75)[84.04%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 RCPT_COUNT_SEVEN(0.00)[10];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,intel.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,gmail.com,oracle.com,suse.cz,vger.kernel.org,intel.com];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: 0.65
+X-Received: by 2002:a05:6e02:1d92:b0:365:21f4:701a with SMTP id
+ h18-20020a056e021d9200b0036521f4701amr328766ila.4.1708297323738; Sun, 18 Feb
+ 2024 15:02:03 -0800 (PST)
+Date: Sun, 18 Feb 2024 15:02:03 -0800
+In-Reply-To: <00000000000081dba605f19d42dd@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000026ff9b0611aff742@google.com>
+Subject: Re: [syzbot] [reiserfs?] kernel BUG in reiserfs_cut_from_item
+From: syzbot <syzbot+b2c969f18c4ab30419f9@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	yijiangshan@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 19 Feb 2024, Jeff Layton wrote:
-> The FL_POSIX check in __locks_insert_block was inadvertantly broken
-> recently and is now inserting only OFD locks instead of only legacy
-> POSIX locks.
->=20
-> This breaks deadlock detection in POSIX locks, and may also be the root
-> cause of a performance regression noted by the kernel test robot.
-> Restore the proper sense of the test.
->=20
-> Fixes: b6be3714005c ("filelock: convert __locks_insert_block, conflict and =
-deadlock checks to use file_lock_core")
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202402181229.f8147f40-oliver.sang@in=
-tel.com
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
-> Disregard what I said earlier about this bug being harmless. It broke
-> deadlock detection in POSIX locks (LTP fcntl17 shows the bug). This
-> patch fixes it. It may be best to squash this into the patch that
-> introduced the regression.
->=20
-> I'm not certain if this fixes the performance regression that the KTR
-> noticed recently in this patch, but that's what got me looking more
-> closely, so I'll give it credit for reporting this. Hopefully it'll
-> confirm that result for us.
-> ---
->  fs/locks.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 26d52ef5314a..90c8746874de 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -812,7 +812,7 @@ static void __locks_insert_block(struct file_lock_core =
-*blocker,
->  	list_add_tail(&waiter->flc_blocked_member,
->  		      &blocker->flc_blocked_requests);
-> =20
-> -	if ((blocker->flc_flags & (FL_POSIX|FL_OFDLCK)) =3D=3D (FL_POSIX|FL_OFDLC=
-K))
-> +	if ((blocker->flc_flags & (FL_POSIX|FL_OFDLCK)) =3D=3D FL_POSIX)
->  		locks_insert_global_blocked(waiter);
+syzbot suspects this issue was fixed by commit:
 
-I wonder how that happened... sorry I didn't notice it in my review.
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-Reviewed-by: NeilBrown <neilb@suse.de>
+    fs: Block writes to mounted block devices
 
-Thanks,
-NeilBrown
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1272f362180000
+start commit:   88603b6dc419 Linux 6.2-rc2
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9babfdc3dd4772d0
+dashboard link: https://syzkaller.appspot.com/bug?extid=b2c969f18c4ab30419f9
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14edd048480000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a5c50c480000
 
+If the result looks correct, please mark the issue as fixed by replying with:
 
-> =20
->  	/* The requests in waiter->flc_blocked are known to conflict with
->=20
-> ---
-> base-commit: 292fcaa1f937345cb65f3af82a1ee6692c8df9eb
-> change-id: 20240218-flsplit4-e843536f4c11
->=20
-> Best regards,
-> --=20
-> Jeff Layton <jlayton@kernel.org>
->=20
->=20
+#syz fix: fs: Block writes to mounted block devices
 
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
