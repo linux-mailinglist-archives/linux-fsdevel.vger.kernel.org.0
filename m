@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-11941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11942-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 303058594A5
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 05:42:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A93A68594C9
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 06:44:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D62461F22430
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 04:42:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E333B20DEC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 05:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52B04C97;
-	Sun, 18 Feb 2024 04:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E97E4C80;
+	Sun, 18 Feb 2024 05:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJSkD6Sw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6BA2F4A
-	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Feb 2024 04:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6162F50
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Feb 2024 05:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708231324; cv=none; b=gdUPgsOFd+0Q+KtnH9V38kdw7TNagyn/PXTsJsnkEk2rfx2RdzKjPf/zVryLIS7UmuMLLnRYnNYrpAjtAoyOxhDk60RTAL4jk7UjkzbXmBqpGxQ5QLczEnKaIOQ3lgKv/4LjjBuEt6tXLnc3VhojXx0JxtYzh4XPYdeCknn/WFM=
+	t=1708235066; cv=none; b=jiAcfEjY6kYnmmVs3i6msEEcJBCnntg3HgZLIZei+O6sHP1S97aBqyzOGVQqAMf183ZlXzYSYSiJqOX9rrmAdLfd5bOvPPpQ6KG73cNDaZF1COh/ezaYvZfFaKnhL2MhkLKf5D7ZEkAWt/pJyIx44Pjf9KbcbtEc+8YeNJzn3vk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708231324; c=relaxed/simple;
-	bh=dPfk3d/IgI4et8CrB7+zM5ARrgakQRE9gXrevq701Rk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NPYaS6otM3ZLz4TjO4rchnBLVdP68cJ78Z2RSUEtp8Au8MwNcUdzKrnVQaXOuOenu9VK6iNesCK3dOHumEcYTPgjtdg2IPCiN75z5Cj0UlWTlNwKQrq5iC2ULTAEeljVxG3XiDSPOwbcIMOy3YudIQt2xPa8z5LoaLHyIrBqwm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-365067c1349so20848865ab.3
-        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Feb 2024 20:42:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708231322; x=1708836122;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kmjy4yq7SJeeKhzBuewZUYc+eWoeO+NkF0b7ie1wfJA=;
-        b=LXxh+xs/SxRUKwLeYF4TOHWc6zTG2+WeALIuL1q1KrYK55dbx2rtBqhdE3PAMocdaa
-         YgbzdhWXmaNQJTH+5lNwCPvlloPQUvPnI/70JY0b+JmZXbxyxEzZQ7ponZjuJc0Ck6se
-         JE73tEPzdwB5Vc70kifh511fRrXwqZ4N4RA+XZUL/Wcxl2X9ADzZ2pYuD3e9IzhwO7be
-         ZDxXOByoubbyFehpBNVyR7++K3Lyhadj4amk5VCbXLZ3rKvkpcGS8a28Ee9c+gaPDEo2
-         Ti6XHSr5g26pA064dPw5ceHWoF9NwpQ05RiFA/lqbPSbz7wXurzLcRfOXgCSpvXo3EHD
-         /zaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVaM9MxRVbcu6MKHLxDldq2Bw87lAJzdnJqp4IL4v4q/fVq2pWNfmMwR4VfZvHIGobkgRLYu8COOHsexcIpUXOOeZR10fuc4N+vjL/Gg==
-X-Gm-Message-State: AOJu0YyaYM/buxKpNMZ+2GZKhJEhUxAtUWMAnLmkiJOVdfpSrdubbsLw
-	PFcfxsC/OjBQIbNsTrUsDVhOwbAyvTZNnUPKttMcPuMoVoqwunb/Bo1IZAZ4JyMgk1V1bqDhstu
-	eNrkxK7QiqnEAIeVj8IVKWCwDfyzvvQoHUZbzc5FTiHo7iyfURUdDJCo=
-X-Google-Smtp-Source: AGHT+IH8UuBu8FbOSB1H9dYXew9V4/LxafJNnjWpw/jgXH4Ca3AQgXbRaotAwzLPnehrAoL18NmodA0UO8+dZ3Z0olx7/O0s8Su+
+	s=arc-20240116; t=1708235066; c=relaxed/simple;
+	bh=GVpq0tCBxAHE6XOWWI2PQO0aSuROWq/GbG+5INhPXfo=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=azQop4pPcT69zFw0W0leOJnyS0DoI4xWILXwIcAq/vypBOm1LXCsd2pvT67bwmbSSBRHOay2ydeykcG7e6JvLI7EIUjgoD+aFf8YaWH2z4+Wq6AeZMPWah3fKXRAnFXdDryAMQppUDCxntCIilIxbpIbUI4g3lYZ8EIYzkXHDs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJSkD6Sw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BAF3C433F1
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Feb 2024 05:44:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708235065;
+	bh=GVpq0tCBxAHE6XOWWI2PQO0aSuROWq/GbG+5INhPXfo=;
+	h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+	b=dJSkD6SwjUJWXGr/DJQFX+SdQG+hgsIIVVBF4/Gnep5Z/P/qN4Yziw99iIj0xzEqg
+	 3W3jmTyuJ2KfqcrgdLPcjdxQgTCpItx+5JCVwUQBM5PBdQUbWbfdRSWrAqLPGnq5yr
+	 +qpzpVzNHeRmRqfWi/AwT2tabIXAXh/RRratxNoTuCux8uY8Tx/HkaIER3zkAsODcu
+	 EaqCNPgOGaDXKfxDX21PgQzYvvBgwdrKWp7g3N3wCvvB+qu1MJIvUNjxSLpQCo3EW4
+	 kl8RuIf+qGJMzOwDkCG55Y295e1/EMbqgss7TFaQo/+AhWkbem2P1B1GfQ8v0Bezyd
+	 poZI2LhFcSdyw==
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3c031a077d5so1621007b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 17 Feb 2024 21:44:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVd1wPdY+4oTrl+xU+v8iPQWPdSS00soewsohQt49Uo2MFMClchy8TxiEqj52Q3qItDddTZEvVHqCV/9x3OMf9gScewyaR6g3Jk02Z9uA==
+X-Gm-Message-State: AOJu0YyneP6tnsVH1i4O6ILBAA88PuQPag+5c7sbkZjgDAhIS5ATv3jK
+	kFqrH4BG48piHPGNpBpU1PwOct4Juni0cHIVs9UuJEWDCslBUKupPNAR2txWxNefkN4f0LZSFMT
+	kdmZYwN+HCrvwbnlNzkvZpMG4PAY=
+X-Google-Smtp-Source: AGHT+IERmGq1Pr3R1PclCxW08TFUh4Pb4lbe545qVpgcTTLpBsimshFx+L4DybTkwOOdIRJBEhMmybrViBHAuYGQfHE=
+X-Received: by 2002:a05:6808:4487:b0:3c0:4719:45ad with SMTP id
+ eq7-20020a056808448700b003c0471945admr13532908oib.40.1708235064739; Sat, 17
+ Feb 2024 21:44:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1aa2:b0:363:7b86:21bd with SMTP id
- l2-20020a056e021aa200b003637b8621bdmr715271ilv.4.1708231322355; Sat, 17 Feb
- 2024 20:42:02 -0800 (PST)
-Date: Sat, 17 Feb 2024 20:42:02 -0800
-In-Reply-To: <000000000000375f00060eb11585@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000029d2820611a09994@google.com>
-Subject: Re: [syzbot] [nilfs?] KASAN: use-after-free Read in nilfs_set_link
-From: syzbot <syzbot+4936b06b07f365af31cc@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, jack@suse.cz, 
-	konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+Received: by 2002:ac9:7bd1:0:b0:51a:6e80:39f1 with HTTP; Sat, 17 Feb 2024
+ 21:44:23 -0800 (PST)
+In-Reply-To: <PUZPR04MB63167444783A68A96C950E5981532@PUZPR04MB6316.apcprd04.prod.outlook.com>
+References: <PUZPR04MB63167444783A68A96C950E5981532@PUZPR04MB6316.apcprd04.prod.outlook.com>
+From: Namjae Jeon <linkinjeon@kernel.org>
+Date: Sun, 18 Feb 2024 14:44:23 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8yvGvstGxej2nOXeH8ByU-jZWnJG521LTUzk10GX1k5Q@mail.gmail.com>
+Message-ID: <CAKYAXd8yvGvstGxej2nOXeH8ByU-jZWnJG521LTUzk10GX1k5Q@mail.gmail.com>
+Subject: Re: [PATCH v1] exfat: fix appending discontinuous clusters to empty file
+To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc: "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "erichong@qnap.com" <erichong@qnap.com>, 
+	"Andy.Wu@sony.com" <Andy.Wu@sony.com>, "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
 Content-Type: text/plain; charset="UTF-8"
 
-syzbot suspects this issue was fixed by commit:
-
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
-
-    fs: Block writes to mounted block devices
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10639b34180000
-start commit:   52b1853b080a Merge tag 'i2c-for-6.7-final' of git://git.ke..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=655f8abe9fe69b3b
-dashboard link: https://syzkaller.appspot.com/bug?extid=4936b06b07f365af31cc
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11d62025e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13c38055e80000
-
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+2024-02-17 15:38 GMT+09:00, Yuezhang.Mo@sony.com <Yuezhang.Mo@sony.com>:
+> Eric Hong found that when using ftruncate to expand an empty file,
+> exfat_ent_set() will fail if discontinuous clusters are allocated.
+> The reason is that the empty file does not have a cluster chain,
+> but exfat_ent_set() attempts to append the newly allocated cluster
+> to the cluster chain. In addition, exfat_find_last_cluster() only
+> supports finding the last cluster in a non-empty file.
+>
+> So this commit adds a check whether the file is empty. If the file
+> is empty, exfat_find_last_cluster() and exfat_ent_set() are no longer
+> called as they do not need to be called.
+>
+> Fixes: f55c096f62f1 ("exfat: do not zero the extended part")
+> Reported-by: Eric Hong <erichong@qnap.com>
+> Closes: https://github.com/namjaejeon/linux-exfat-oot/issues/66
+> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Applied it to #dev.
+Thanks for your patch.
 
