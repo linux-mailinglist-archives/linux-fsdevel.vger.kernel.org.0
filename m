@@ -1,273 +1,557 @@
-Return-Path: <linux-fsdevel+bounces-11956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A74AE8597B1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 16:57:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670CF85985C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 18:54:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F8301F213DB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 15:57:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8EF71F219DB
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 17:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA436D1B5;
-	Sun, 18 Feb 2024 15:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8CF6EB77;
+	Sun, 18 Feb 2024 17:54:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="U+fYLf/Z";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="lyziksOj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdnCeXgp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E4912E61;
-	Sun, 18 Feb 2024 15:57:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708271857; cv=fail; b=A1EY6H4KhL0aTO4x/A5Q6nC2030Xa9SvGH6JZ1F8jH9lpaWnAIGww7MxNfdE+yNzz0tsH15Ar7yNkOqMggK51KKeCaN0ZtkygQLLssZDWI+LNRxYoH+ZQqDiYVffBg8aaMcgO9oZtTsucUbmLB3B0VQies3fiPnAC2ZqdNc4xJI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708271857; c=relaxed/simple;
-	bh=eIyZiHcDEC6iDzcGR6cA9berH/wq5T22XxT06REE5pQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=UIl4et0/jvo2bUYPjVmKDYosumoZdx6zkjbADtTc1YUP8DD/Pwi+knBHos7bHed6QPZzf+Pk0OgXqzOSdfniJOvO6mo2xW93qPh6M+IeXIrltkDu6NP3ILEzaGPGZpyMZdTQjFw4sj3AjIxoqjzkmKGS8r279HCIeK8AOFP7EfQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=U+fYLf/Z; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=lyziksOj; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41IBmg3U026561;
-	Sun, 18 Feb 2024 15:57:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : content-type : in-reply-to :
- mime-version; s=corp-2023-11-20;
- bh=V0OdHrbDm6Jg2G1vrWWD7Js4fMnggFo+9ZrYeXp57yM=;
- b=U+fYLf/ZjHKeCVENCPUUU0gnDIUzAjCFwb4du/nnmtsd1819En7IgERrHZkkvl9Qivxi
- 9tu9ZWLbR1+s8cqj0H3NsbbI9a8vx3Ni+C0Vy3gq3VL/6AT3bby+LYh7OfxrmDiy1cHM
- e4XLdNwGQAfU0d3d/xQ2Dqpc03Q+xpy65A7h7eH8dg+x4BzP7WrLKHGg4IQ0+EODyJHL
- GomM+1RmYYfKpE2lXfrMjQJT/Nz2dz89VgyFit7vObtetQ0WRkPZ3cG7exDg6L6ZpIMy
- bgeEqsdnIEdT4Oo4QAsMh+FrRImELTaeS+Tx97Pk3hmHHAmtLDLoZpn+WfIhrwpZG+6w Sw== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3wakd22chp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 18 Feb 2024 15:57:14 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 41IE9c45008483;
-	Sun, 18 Feb 2024 15:57:13 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3wak84wrdb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 18 Feb 2024 15:57:13 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NWBLAIqXRDSmAyvtbJMyeddsWXUV3kAhVUYy9K6UJo5DaxARy1NTAArXwBhdsIflGfZthAagEquRkjFrNuxZQWRsBjnf4uSX4arKNtJ4HinYtLGdD5wna1n70YsMGz3DvOSyzXAA30/HoqlVi+MgjBLpctZftzZKK8In/i2EA4WR1Tms8vT9F3r0lXJsvguyFPC3zVxEbfVwlkhUKfTAgLyepOd/0X6+WQ4iOaMAyn8dKOWgZE53TjK/6nL50iTFe1CaG6mBGhmi1pz6ZdJZHrJspMW+RrLCh2vwta4XlGhKL0izxU/k13Vz5wDKN5Fejk2UvCO0ZPXS0SCqk5jj+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V0OdHrbDm6Jg2G1vrWWD7Js4fMnggFo+9ZrYeXp57yM=;
- b=QGRSZaguyIq1IzYOGtzq8vXGLD2DHt0GAHKCFio8vmzUhTqwOyI1B7Hiem+D3UnM+puizTlU+n/TsHjvsw2GkrN67G2JAHCahnjeUZBOWtZ0kuKgI8LpAgvAwJMhHS4RALGa+JpLj0y3NC9+JJ0cb//7FSM7vDcPBiA0+gBT0hBuYEYqDGlaoKPCKCo4p1icCUqIaUik/9jAz8CV7zcCtsQmEdbGz8pQ4BNJ65i6tAlYfAcdtVfQif0D6m/breqSLc1BZfcFjbXL9f3Xe1Fqzh3rjWVe58SYNYDuom0fXWqkBGKfcHh010BZcQFdgp2qJgOEKdDxqA++otfqQvbgFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V0OdHrbDm6Jg2G1vrWWD7Js4fMnggFo+9ZrYeXp57yM=;
- b=lyziksOjKpD06QWKn0sasQ92BgUa0TcEXrjoooyHWT2bhU7w76Q0cG7RD8Lcg/L370p0g0e/1UB+Xx2AtIr/4xTEO4brqz6vFl6eHpJYUkdibJInSea3MufqX78+LTup8ijrCDG0JYaGjYdTq+y2RYne6FxKOdp3eHS6NlEcbHI=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by PH0PR10MB5754.namprd10.prod.outlook.com (2603:10b6:510:148::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.34; Sun, 18 Feb
- 2024 15:57:10 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::ad12:a809:d789:a25b]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::ad12:a809:d789:a25b%4]) with mapi id 15.20.7292.029; Sun, 18 Feb 2024
- 15:57:10 +0000
-Date: Sun, 18 Feb 2024 10:57:07 -0500
-From: Chuck Lever <chuck.lever@oracle.com>
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: Jan Kara <jack@suse.cz>, Chuck Lever <cel@kernel.org>,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, hughd@google.com,
-        akpm@linux-foundation.org, Liam.Howlett@oracle.com,
-        feng.tang@intel.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, maple-tree@lists.infradead.org,
-        linux-mm@kvack.org, lkp@intel.com
-Subject: Re: [PATCH RFC 6/7] libfs: Convert simple directory offsets to use a
- Maple Tree
-Message-ID: <ZdIo0yNCFpkN_zBH@manet.1015granger.net>
-References: <170785993027.11135.8830043889278631735.stgit@91.116.238.104.host.secureserver.net>
- <170786028128.11135.4581426129369576567.stgit@91.116.238.104.host.secureserver.net>
- <20240215130601.vmafdab57mqbaxrf@quack3>
- <Zc4VfZ4/ejBEOt6s@tissot.1015granger.net>
- <ZdFlPbvexMir0WZO@xsang-OptiPlex-9020>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZdFlPbvexMir0WZO@xsang-OptiPlex-9020>
-X-ClientProxiedBy: CH0P221CA0048.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:610:11d::29) To BN0PR10MB5128.namprd10.prod.outlook.com
- (2603:10b6:408:117::24)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A2A6D1AB
+	for <linux-fsdevel@vger.kernel.org>; Sun, 18 Feb 2024 17:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708278884; cv=none; b=tg4kl2KmKUYCa/LqC+6IFoXt1BLpxXyyEhb/LQGHAyhnQs5afn/CZV/IUs8IQ3SS/7zIg7tfEQ5q1tty992q90nUWyW5pIfNfvNwltBekQ+m5Qscor+fUIPRVLYkwX49ZFiF2XyUaeBdfq3TRW4daVGXHraWGgvJuzkfgjXRczE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708278884; c=relaxed/simple;
+	bh=M5jww2/61W7r1ypyZ7QvU93Sm/UzHmZQhMGtg8OSj74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKuSsjXzAH63vsuVfWz20j99QHshCb5IXUhzVs+VEGfyfPzdcOEBqd5y48OOYxb/MvJrDxmxIr8yF7ZiWJnPYvT8i/t4KzBpOijxDbenkEJCgQr/hLw41EuoRpd4Nq9XNlSxkU6nfh8hWVRsUcNGZVk2rRRl8zrYqnakIoDpQY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdnCeXgp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95ABAC433C7;
+	Sun, 18 Feb 2024 17:54:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708278884;
+	bh=M5jww2/61W7r1ypyZ7QvU93Sm/UzHmZQhMGtg8OSj74=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RdnCeXgpcClDJ9VMvLWdiGt798kWNFA0LbG59wL/vGK6/L1iPD8NdHImzV2dEBEYi
+	 DPfTQ/EaNfbATOzu2C4q2TZHZ3wQaaQpfSz+F6SBbVcqo/IPomfO76gLtGIGMR0IRf
+	 2Rf/l5+nF2l+ZIBs7oi1Q5HfmrZevTfMyTKPykrOQwVdfecVUf3Rxvy1y0ulHDCjwt
+	 mJ1cSQdb8/FokLIo2QMMupes1H4FLAWDJuqnm5lKtZIxWf6/c3Iu1N+3c5Hi+FyEjZ
+	 w5336rIxiZj2D+TEQBoSiDRpcUMrJQrmVU5WHJCVN/qdeRZKs+nAEOkx7M7S1xzsq4
+	 Jyk0ObMZO927w==
+Date: Sun, 18 Feb 2024 18:54:40 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>, 
+	Tycho Andersen <tycho@tycho.pizza>
+Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
+Message-ID: <20240218-neufahrzeuge-brauhaus-fb0eb6459771@brauner>
+References: <CAHk-=wjr+K+x8bu2=gSK8SehNWnY3MGxdfO9L25tKJHTUK0x0w@mail.gmail.com>
+ <20240214-kredenzen-teamarbeit-aafb528b1c86@brauner>
+ <20240214-kanal-laufleistung-d884f8a1f5f2@brauner>
+ <CAHk-=whkaJFHu0C-sBOya9cdEYq57Uxqm5eeJJ9un8NKk2Nz6A@mail.gmail.com>
+ <20240215-einzuarbeiten-entfuhr-0b9330d76cb0@brauner>
+ <20240216-gewirbelt-traten-44ff9408b5c5@brauner>
+ <20240217135916.GA21813@redhat.com>
+ <CAHk-=whFXk2awwYoE7-7BO=ugFXDUJTh05gWgJk0Db1KP1VvDg@mail.gmail.com>
+ <20240218-gremien-kitzeln-761dc0cdc80c@brauner>
+ <20240218-anomalie-hissen-295c5228d16b@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN0PR10MB5128:EE_|PH0PR10MB5754:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7442ef19-c18b-4dfa-fbec-08dc309a43eb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	HSuhSkcCD5WTYBIDvGHVRhPN6wRiIYqIOhlbG8RujPwzVicOJ7kriUcfQpY87wJERR00uwfKx4G0HdSCXpe/DLydlFMLer3EZBgGo+4I12jyqfObfopSIbtLcBLpUwpub3BBF//KVGEUWgdKVD4mHtOA5XS9Am9AQ0g3s2GR0Jn1m83GMcB5DMhN0QcrrkmZRCky5BpKcFVPM2PHsqSfW4KohEUjCjyepjQ0RAyGMajujBkgcMGsA3VdraolqOB83iov2nETSHzBZhO64icTl4LduXyk4F2IZVfO3PE7cFDua1vfzVaKNljgpZMqjhsexlj1rK3su92B/kyUP+6nkk3EN73P2WAOYZcfzYtalp9eiHriEVZlAypkHJH49mJZib6RCuah+xaKYPG/wrP7+UOyA6uxKdf3KtTlpIAlxh8kLe8CemHYEap31U+4aksCfUzw8BkE7LzQMcP3LZNbNOcKiDJmDaieoRJ9tXoH1PyrBSBNsAAUQo8oZVXFUoQMnRVHOIZ71pJx0IalYTauJqMBiY5UttsxPgIKoJ5zTa8=
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(39860400002)(396003)(376002)(136003)(366004)(346002)(230922051799003)(64100799003)(186009)(451199024)(1800799012)(38100700002)(26005)(54906003)(316002)(4326008)(6916009)(8676002)(66476007)(66556008)(66946007)(86362001)(2906002)(8936002)(7416002)(5660300002)(83380400001)(41300700001)(44832011)(6512007)(966005)(6486002)(6506007)(9686003)(478600001)(6666004);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?us-ascii?Q?80WkNWdzckhtz/X8E1MU/AFAnjao17Mz8Uq6B8W5dLvwN/kT7a4XJ3rK+IcE?=
- =?us-ascii?Q?SKtmnsbuPuaoGHnaCjZS/QO+PQKSKt5sZB+IdY5zwbdW4y61sclZ/cMV5qDd?=
- =?us-ascii?Q?5vsWJKvC47llZYgZ6w5v1Sg9brpmzInaA0uTQUk3OwHRq7N6vj2ega9BIvB/?=
- =?us-ascii?Q?3TLwqWgKLNbY53VoWV6voNtM9JAr/td+h3kjXZQoYeo5L3Hz3ke4AeXInaRl?=
- =?us-ascii?Q?TycOJo8YU3YGN7a+vyX1piBb8kVvhzAvhbzjQdPlGDBrOXHumcX++6rXtHxL?=
- =?us-ascii?Q?n6vlpVelWUcxZNG3CNaBH7o+9QnVUgu0EpgrS6spQrzew17B0AC0eIzpM0RH?=
- =?us-ascii?Q?ZPfxFE5Ky2VpYEjJwAPHjavgEy6zI6m/Jy0OH2o8WPDlSYI3I+T4AeC3Bi/3?=
- =?us-ascii?Q?pzt8v65X4PAJ5lo8z6Ifhr5HNBTXwrs25UTCtJbLZGRly0bV1p1w/NlbTBLd?=
- =?us-ascii?Q?QxqUGu7tB8EyMjV3nAyKJeb7FD8XZw52HTgYIs/HzRKFfMEhveRoQ5n3nk+l?=
- =?us-ascii?Q?1oBTepx4s1Bi2Wm5s4/OYGncs/3IR5EK+PirGm/nG+fDHvuNPPGNBcxhs/Zx?=
- =?us-ascii?Q?ZmB0vL4NegK6WfgfXla/El5AY5OflrmIB5czOO1KXRFkNu8JrMMwIaC20/fj?=
- =?us-ascii?Q?Ep989U5VFYDnSgMz6BJcwTdhR0bwRpWBw5oUjLauKjvUz5uq4/s/5H9RnYcK?=
- =?us-ascii?Q?JKIKA8NJm5SGFczdc2Hm+nBKFDrNQBJ8Of8/ZUkO5qPE7oeh4nf6SL3Vrsnz?=
- =?us-ascii?Q?9k1OrfeQQjurN+qS+yflpXWf/poWVdmixnKlsMq10wOMxRtzj0+3Vq5DYGm2?=
- =?us-ascii?Q?OMGTGNOdtRwmLV+7cFAexUmmQsWCeF80uYEW6ulsIZqHFcXPUEeD4Exnb31r?=
- =?us-ascii?Q?xsChKrUYs1jfkI5i6pd5HW6tMMFzVVt5t1Zy76RGMzLOoWMc7KdA3icsaY1r?=
- =?us-ascii?Q?cr6zeitKVJO48u8dxpUcqBmc71DFAH5VQJ1A9qGyYflkEAhZm4gYFjVwAU95?=
- =?us-ascii?Q?TEKKpNnNOY+aJB9jTBCpXxEQhKgm72VRe7sOJFNgLnEoyjeOyA7aBllYpx7z?=
- =?us-ascii?Q?nQmaf+vYF/x+bIXM97YemriPOO8l8TDSrhekSt6KfgQTPjT8GKwaSPzWTZsw?=
- =?us-ascii?Q?OWQpuNtteLTE27xsWXCqVoEEjsyGp2lUSGKrCFVR2vJ2CjKCj/LfjLy/Mns2?=
- =?us-ascii?Q?hLt4qDCTITMl4jPNd9jA0PTfrc9NdiglJAyMfkyTLZv8QXUi+IT6I91JwFRa?=
- =?us-ascii?Q?x1onpRLxQs5W1id+naMOORFVJrRg5TE3b3JuZ1UzDjzU3irWInMZjAViyxxo?=
- =?us-ascii?Q?SQx4LxaQrUJ1g+NYJR0hShMPXfAsq5VMmtUVT1l2R72AqQfR+5AI4ofDLgnx?=
- =?us-ascii?Q?fUkOJWtXGKV+fWFD2lOrGQh2EM2nD0HCzFe6cvSK1RbZWTQ/7gpbLZ59JWbj?=
- =?us-ascii?Q?Su9MeH1hE157BnsTKk6h0SvZSRYpO3ho5vkLKO+NffmLlH4aPH/hAgHvzNF5?=
- =?us-ascii?Q?mSjoS/q7PfUOLyaWYxzr3aa1CIMShOgM3JvxHKMeksrRVq6k2WUrYSfO7MlQ?=
- =?us-ascii?Q?HHD+ErDJx3XVuE3VRu5PSLP7ml7N0SFVKDllrkZ29tBGqBxXwXMRHK8QsPXq?=
- =?us-ascii?Q?8A=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	wDi5UfDrtaAiK3HntmRF6yM3DlSwzQY5lHXUIFdAgMkxmbr5QvcWeNrLJiWE/OuvOaVcIVCSE5W5c/h/9w8FA2T0pJDoh6ZASK37/bDpduHAtSMx3dEUv5WwKOcJiSaRz41gWMkYlFEx8PGhE9FkYKT3ayNRHp9nQODyM0ksT++gGw9XodH7OdJQAfkW1FQ4F0ns/qQYotKKrxn9qO9hHFzeMzuBYyHvDpjUyATB7fMwatCXkb6+2CG1PLNXIwb8DN0e4cz+fUoMfcqtEHbJRl4eQinUXDVdp4fSPT5KNIvNM/Z5hu7XJtcwz4pvQKWr4n8TOCt8raxAlT6U8Iv1EKuqCL80G9w/0vXWtF/zEk0fVTYL/10RF7lP9Rn2kZeJ3zp/SnuvOlDI1s6wWJrT4T66G8vVTw5NP5BlXB+EP2H9MTGZipdwn2Ae4rfEk/pirGxVIqxqpxbAS92kbbXyt2B8K+6/tvWewEKniwYuI5dQjp7MGWk49cLdxE97J04mYPuOWEEW3gJ+sEVHaAi8RGRuIT/1lOHpPCbE7ALkUAbZ2ueJpGzKBVDsB2YX+rWSoDkiT0pKYG4YHRKJWxP3FXBoP+tAEZWuZJextyZ9tIk=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7442ef19-c18b-4dfa-fbec-08dc309a43eb
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Feb 2024 15:57:10.6368
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OxhYx64y2HHMi+rpqyTYBBNowfWnu4FtEgiysDVZ6MFR+oZ9846Of3LuuInDvDbxocPPNQOZ7SoWJ9Gp2qqa5g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB5754
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-18_14,2024-02-16_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0
- adultscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2402180123
-X-Proofpoint-GUID: 23nk_ALCNJqC23VkyRU0mk_6bJcyOBzc
-X-Proofpoint-ORIG-GUID: 23nk_ALCNJqC23VkyRU0mk_6bJcyOBzc
+Content-Type: multipart/mixed; boundary="hsyok4z45phifsuu"
+Content-Disposition: inline
+In-Reply-To: <20240218-anomalie-hissen-295c5228d16b@brauner>
 
-On Sun, Feb 18, 2024 at 10:02:37AM +0800, Oliver Sang wrote:
-> hi, Chuck Lever,
-> 
-> On Thu, Feb 15, 2024 at 08:45:33AM -0500, Chuck Lever wrote:
-> > On Thu, Feb 15, 2024 at 02:06:01PM +0100, Jan Kara wrote:
-> > > On Tue 13-02-24 16:38:01, Chuck Lever wrote:
-> > > > From: Chuck Lever <chuck.lever@oracle.com>
-> > > > 
-> > > > Test robot reports:
-> > > > > kernel test robot noticed a -19.0% regression of aim9.disk_src.ops_per_sec on:
-> > > > >
-> > > > > commit: a2e459555c5f9da3e619b7e47a63f98574dc75f1 ("shmem: stable directory offsets")
-> > > > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> > > > 
-> > > > Feng Tang further clarifies that:
-> > > > > ... the new simple_offset_add()
-> > > > > called by shmem_mknod() brings extra cost related with slab,
-> > > > > specifically the 'radix_tree_node', which cause the regression.
-> > > > 
-> > > > Willy's analysis is that, over time, the test workload causes
-> > > > xa_alloc_cyclic() to fragment the underlying SLAB cache.
-> > > > 
-> > > > This patch replaces the offset_ctx's xarray with a Maple Tree in the
-> > > > hope that Maple Tree's dense node mode will handle this scenario
-> > > > more scalably.
-> > > > 
-> > > > In addition, we can widen the directory offset to an unsigned long
-> > > > everywhere.
-> > > > 
-> > > > Suggested-by: Matthew Wilcox <willy@infradead.org>
-> > > > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > > Closes: https://lore.kernel.org/oe-lkp/202309081306.3ecb3734-oliver.sang@intel.com
-> > > > Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+
+--hsyok4z45phifsuu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+On Sun, Feb 18, 2024 at 12:33:41PM +0100, Christian Brauner wrote:
+> On Sun, Feb 18, 2024 at 12:15:02PM +0100, Christian Brauner wrote:
+> > On Sat, Feb 17, 2024 at 09:30:19AM -0800, Linus Torvalds wrote:
+> > > On Sat, 17 Feb 2024 at 06:00, Oleg Nesterov <oleg@redhat.com> wrote:
+> > > >
+> > > > But I have a really stupid (I know nothing about vfs) question, why do we
+> > > > need pidfdfs_ino and pid->ino ? Can you explain why pidfdfs_alloc_file()
+> > > > can't simply use, say, iget_locked(pidfdfs_sb, (unsigned long)pid) ?
+> > > >
+> > > > IIUC, if this pid is freed and then another "struct pid" has the same address
+> > > > we can rely on __wait_on_freeing_inode() ?
 > > > 
-> > > OK, but this will need the performance numbers.
+> > > Heh. Maybe it would work, but we really don't want to expose core
+> > > kernel pointers to user space as the inode number.
 > > 
-> > Yes, I totally concur. The point of this posting was to get some
-> > early review and start the ball rolling.
+> > And then also the property that the inode number is unique for the
+> > system lifetime is extremely useful for userspace and I would like to
+> > retain that property.
 > > 
-> > Actually we expect roughly the same performance numbers now. "Dense
-> > node" support in Maple Tree is supposed to be the real win, but
-> > I'm not sure it's ready yet.
-> > 
-> > 
-> > > Otherwise we have no idea
-> > > whether this is worth it or not. Maybe you can ask Oliver Sang? Usually
-> > > 0-day guys are quite helpful.
-> > 
-> > Oliver and Feng were copied on this series.
-> 
-> we are in holidays last week, now we are back.
-> 
-> I noticed there is v2 for this patch set
-> https://lore.kernel.org/all/170820145616.6328.12620992971699079156.stgit@91.116.238.104.host.secureserver.net/
-> 
-> and you also put it in a branch:
-> https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git
-> "simple-offset-maple" branch.
-> 
-> we will test aim9 performance based on this branch. Thanks
-
-Very much appreciated!
-
-
-> > > > @@ -330,9 +329,9 @@ int simple_offset_empty(struct dentry *dentry)
-> > > >  	if (!inode || !S_ISDIR(inode->i_mode))
-> > > >  		return ret;
-> > > >  
-> > > > -	index = 2;
-> > > > +	index = DIR_OFFSET_MIN;
 > > > 
-> > > This bit should go into the simple_offset_empty() patch...
+> > > So then we'd have to add extra hackery to that (ie we'd have to
+> > > intercept stat calls, and we'd have to have something else for
+> > > ->d_dname() etc..).
 > > > 
-> > > > @@ -434,15 +433,15 @@ static loff_t offset_dir_llseek(struct file *file, loff_t offset, int whence)
-> > > >  
-> > > >  	/* In this case, ->private_data is protected by f_pos_lock */
-> > > >  	file->private_data = NULL;
-> > > > -	return vfs_setpos(file, offset, U32_MAX);
-> > > > +	return vfs_setpos(file, offset, MAX_LFS_FILESIZE);
-> > > 					^^^
-> > > Why this? It is ULONG_MAX << PAGE_SHIFT on 32-bit so that doesn't seem
-> > > quite right? Why not use ULONG_MAX here directly?
+> > > Those are all things that the VFS does support, but ...
+> > > 
+> > > So I do prefer Christian's new approach, although some of it ends up
+> > > being a bit unclear.
+> > > 
+> > > Christian, can you explain why this:
+> > > 
+> > >         spin_lock(&alias->d_lock);
+> > >         dget_dlock(alias);
+> > >         spin_unlock(&alias->d_lock);
+> > > 
+> > > instead of just 'dget()'?
 > > 
-> > I initially changed U32_MAX to ULONG_MAX, but for some reason, the
-> > length checking in vfs_setpos() fails. There is probably a sign
-> > extension thing happening here that I don't understand.
+> > No reason other than I forgot to switch to dget().
 > > 
+> > > 
+> > > Also, while I found the old __ns_get_path() to be fairly disgusting, I
+> > > actually think it's simpler and clearer than playing around with the
+> > > dentry alias list. So my expectation on code sharing was that you'd
 > > 
-> > > Otherwise the patch looks good to me.
+> > It's overall probably also cheaper, I think.
 > > 
-> > As always, thank you for your review.
+> > > basically lift the old __ns_get_path(), make *that* the helper, and
+> > > just pass it an argument that is the pointer to the filesystem
+> > > "stashed" entry...
+> > > 
+> > > And yes, using "atomic_long_t" for stashed is a crime against
+> > > humanity. It's also entirely pointless. There are no actual atomic
+> > > operations that the code wants except for reading and writing (aka
+> > > READ_ONCE() and WRITE_ONCE()) and cmpxchg (aka just cmpxchg()). Using
+> > > "atomic_long_t" buys the code nothing, and only makes things more
+> > > complicated and requires crazy casts.
 > > 
-> > 
-> > -- 
-> > Chuck Lever
+> > Yup, I had that as a draft and that introduced struct ino_stash which
+> > contained a dentry pointer and the inode number using cmpxchg(). But I
+> > decided against this because ns_common.h would require to have access to
+> > ino_stash definition so we wouldn't just able to hide it in internal.h
+> > where it should belong.
+> 
+> Right, I remember. The annoying thing will be how to cleanly handle this
+> without having to pass too many parameters because we need d_fsdata, the
+> vfsmount, and the inode->i_fop. So let me see if I can get this to
+> something that doesn't look too ugly.
 
+So, I'm running out of time today so I'm appending the draft I jotted
+down now (untested).
+Roughly, here's what I think would work for both nsfs and pidfs (I got
+the hint and will rename from pidfdfs ;)). The thing that makes it a bit
+tricky is that we need to indicate to the caller whether we've reused a
+stashed or added a new inode/dentry so the caller can put the reference
+to the object it took for i_private in case we reused a dentry/inode. On
+EAGAIN i_private is property of the fs and will be cleaned up in
+->evict(). Alternative is a callback for getting a reference which I
+think is also ugly. Better suggestions welcome of course.
+
+--hsyok4z45phifsuu
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0001-RFC-UNTESTED-LIKELY-STILL-BROKEN-internal-add-path_f.patch"
+
+From 281553f0059a889476dba5f4460570ea08ceefe5 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Sun, 18 Feb 2024 14:50:13 +0100
+Subject: [PATCH 1/3] [RFC UNTESTED LIKELY STILL BROKEN] internal: add
+ path_from_stashed()
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/internal.h |  3 ++
+ fs/libfs.c    | 78 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 81 insertions(+)
+
+diff --git a/fs/internal.h b/fs/internal.h
+index b67406435fc0..cfddaec6fbf6 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -310,3 +310,6 @@ ssize_t __kernel_write_iter(struct file *file, struct iov_iter *from, loff_t *po
+ struct mnt_idmap *alloc_mnt_idmap(struct user_namespace *mnt_userns);
+ struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *idmap);
+ void mnt_idmap_put(struct mnt_idmap *idmap);
++int path_from_stashed(struct dentry **stashed, unsigned long ino,
++		      struct vfsmount *mnt, const struct file_operations *fops,
++		      void *data, struct path *path);
+diff --git a/fs/libfs.c b/fs/libfs.c
+index eec6031b0155..af46a83cd476 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1973,3 +1973,81 @@ struct timespec64 simple_inode_init_ts(struct inode *inode)
+ 	return ts;
+ }
+ EXPORT_SYMBOL(simple_inode_init_ts);
++
++static inline struct dentry *get_stashed_dentry(struct dentry *stashed)
++{
++	struct dentry *dentry;
++
++	rcu_read_lock();
++	dentry = READ_ONCE(stashed);
++	if (!dentry || !lockref_get_not_dead(&dentry->d_lockref))
++		dentry = NULL;
++	rcu_read_unlock();
++	return dentry;
++}
++
++static struct dentry *stash_dentry(struct dentry **stashed, unsigned long ino,
++				   struct super_block *sb,
++				   const struct file_operations *fops,
++				   void *data)
++{
++	struct dentry *dentry;
++	struct inode *inode;
++
++	dentry = d_alloc_anon(sb);
++	if (!dentry)
++		return ERR_PTR(-ENOMEM);
++
++	inode = new_inode_pseudo(sb);
++	if (!inode) {
++		dput(dentry);
++		return ERR_PTR(-ENOMEM);
++	}
++
++	inode->i_ino = ino;
++	inode->i_flags |= S_IMMUTABLE;
++	inode->i_mode = S_IFREG | S_IRUGO;
++	inode->i_fop = fops;
++	inode->i_private = data;
++	simple_inode_init_ts(inode);
++
++	/* @data is now owned by the fs */
++	d_instantiate(dentry, inode);
++
++	if (cmpxchg(stashed, NULL, dentry)) {
++		d_delete(dentry); /* make sure ->d_prune() does nothing */
++		dput(dentry);
++		cpu_relax();
++		return ERR_PTR(-EAGAIN);
++	}
++
++	return dentry;
++}
++
++/*
++ * Try to retrieve stashed dentry or allocate a new one. Indicate to the caller
++ * whether we reused an existing one by returning 0 or when we added a new one
++ * by returning 1. This allows the caller to put any references. Alternative is
++ * a callback which is ugly.
++ */
++int path_from_stashed(struct dentry **stashed, unsigned long ino,
++		      struct vfsmount *mnt, const struct file_operations *fops,
++		      void *data, struct path *path)
++{
++	struct dentry *dentry;
++	int ret = 0;
++
++	dentry = get_stashed_dentry(*stashed);
++	if (dentry)
++		goto out_path;
++
++	dentry = stash_dentry(stashed, ino, mnt->mnt_sb, fops, data);
++	if (IS_ERR(dentry))
++		return PTR_ERR(dentry);
++	ret = 1;
++
++out_path:
++	path->dentry = dentry;
++	path->mnt = mntget(mnt);
++	return ret;
++}
 -- 
-Chuck Lever
+2.43.0
+
+
+--hsyok4z45phifsuu
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0002-RFC-UNTESTED-LIKELY-STILL-BROKEN-nsfs-convert-to-pat.patch"
+
+From ecf6c69f62a3b96926d1a4bb5f43dc18d6a60b0a Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Sun, 18 Feb 2024 14:51:23 +0100
+Subject: [PATCH 2/3] [RFC UNTESTED LIKELY STILL BROKEN] nsfs: convert to
+ path_from_stashed() helper
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/nsfs.c                 | 70 +++++++++------------------------------
+ include/linux/ns_common.h |  2 +-
+ include/linux/proc_ns.h   |  2 +-
+ 3 files changed, 18 insertions(+), 56 deletions(-)
+
+diff --git a/fs/nsfs.c b/fs/nsfs.c
+index 34e1e3e36733..31d02fb6cb2e 100644
+--- a/fs/nsfs.c
++++ b/fs/nsfs.c
+@@ -38,7 +38,7 @@ static void ns_prune_dentry(struct dentry *dentry)
+ 	struct inode *inode = d_inode(dentry);
+ 	if (inode) {
+ 		struct ns_common *ns = inode->i_private;
+-		atomic_long_set(&ns->stashed, 0);
++		WRITE_ONCE(ns->stashed, NULL);
+ 	}
+ }
+ 
+@@ -56,54 +56,6 @@ static void nsfs_evict(struct inode *inode)
+ 	ns->ops->put(ns);
+ }
+ 
+-static int __ns_get_path(struct path *path, struct ns_common *ns)
+-{
+-	struct vfsmount *mnt = nsfs_mnt;
+-	struct dentry *dentry;
+-	struct inode *inode;
+-	unsigned long d;
+-
+-	rcu_read_lock();
+-	d = atomic_long_read(&ns->stashed);
+-	if (!d)
+-		goto slow;
+-	dentry = (struct dentry *)d;
+-	if (!lockref_get_not_dead(&dentry->d_lockref))
+-		goto slow;
+-	rcu_read_unlock();
+-	ns->ops->put(ns);
+-got_it:
+-	path->mnt = mntget(mnt);
+-	path->dentry = dentry;
+-	return 0;
+-slow:
+-	rcu_read_unlock();
+-	inode = new_inode_pseudo(mnt->mnt_sb);
+-	if (!inode) {
+-		ns->ops->put(ns);
+-		return -ENOMEM;
+-	}
+-	inode->i_ino = ns->inum;
+-	simple_inode_init_ts(inode);
+-	inode->i_flags |= S_IMMUTABLE;
+-	inode->i_mode = S_IFREG | S_IRUGO;
+-	inode->i_fop = &ns_file_operations;
+-	inode->i_private = ns;
+-
+-	dentry = d_make_root(inode);	/* not the normal use, but... */
+-	if (!dentry)
+-		return -ENOMEM;
+-	dentry->d_fsdata = (void *)ns->ops;
+-	d = atomic_long_cmpxchg(&ns->stashed, 0, (unsigned long)dentry);
+-	if (d) {
+-		d_delete(dentry);	/* make sure ->d_prune() does nothing */
+-		dput(dentry);
+-		cpu_relax();
+-		return -EAGAIN;
+-	}
+-	goto got_it;
+-}
+-
+ int ns_get_path_cb(struct path *path, ns_get_path_helper_t *ns_get_cb,
+ 		     void *private_data)
+ {
+@@ -113,10 +65,16 @@ int ns_get_path_cb(struct path *path, ns_get_path_helper_t *ns_get_cb,
+ 		struct ns_common *ns = ns_get_cb(private_data);
+ 		if (!ns)
+ 			return -ENOENT;
+-		ret = __ns_get_path(path, ns);
++		ret = path_from_stashed(&ns->stashed, ns->inum, nsfs_mnt,
++					&ns_file_operations, ns, path);
++		if (!ret || ret != -EAGAIN)
++			ns->ops->put(ns);
+ 	} while (ret == -EAGAIN);
+ 
+-	return ret;
++	if (ret < 0)
++		return ret;
++
++	return 0;
+ }
+ 
+ struct ns_get_path_task_args {
+@@ -163,10 +121,13 @@ int open_related_ns(struct ns_common *ns,
+ 			return PTR_ERR(relative);
+ 		}
+ 
+-		err = __ns_get_path(&path, relative);
++		err = path_from_stashed(&ns->stashed, ns->inum, nsfs_mnt,
++					&ns_file_operations, ns, &path);
++		if (!err || err != -EAGAIN)
++			ns->ops->put(ns);
+ 	} while (err == -EAGAIN);
+ 
+-	if (err) {
++	if (err < 0) {
+ 		put_unused_fd(fd);
+ 		return err;
+ 	}
+@@ -249,7 +210,8 @@ bool ns_match(const struct ns_common *ns, dev_t dev, ino_t ino)
+ static int nsfs_show_path(struct seq_file *seq, struct dentry *dentry)
+ {
+ 	struct inode *inode = d_inode(dentry);
+-	const struct proc_ns_operations *ns_ops = dentry->d_fsdata;
++	const struct ns_common *ns = inode->i_private;
++	const struct proc_ns_operations *ns_ops = ns->ops;
+ 
+ 	seq_printf(seq, "%s:[%lu]", ns_ops->name, inode->i_ino);
+ 	return 0;
+diff --git a/include/linux/ns_common.h b/include/linux/ns_common.h
+index 0f1d024bd958..7d22ea50b098 100644
+--- a/include/linux/ns_common.h
++++ b/include/linux/ns_common.h
+@@ -7,7 +7,7 @@
+ struct proc_ns_operations;
+ 
+ struct ns_common {
+-	atomic_long_t stashed;
++	struct dentry *stashed;
+ 	const struct proc_ns_operations *ops;
+ 	unsigned int inum;
+ 	refcount_t count;
+diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
+index 49539bc416ce..5ea470eb4d76 100644
+--- a/include/linux/proc_ns.h
++++ b/include/linux/proc_ns.h
+@@ -66,7 +66,7 @@ static inline void proc_free_inum(unsigned int inum) {}
+ 
+ static inline int ns_alloc_inum(struct ns_common *ns)
+ {
+-	atomic_long_set(&ns->stashed, 0);
++	WRITE_ONCE(ns->stashed, NULL);
+ 	return proc_alloc_inum(&ns->inum);
+ }
+ 
+-- 
+2.43.0
+
+
+--hsyok4z45phifsuu
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0003-RFC-UNTESTED-LIKELY-STILL-BROKEN-pidfds-convert-to-p.patch"
+
+From 9bd2f66776f06621ae4a71d511615272971ef293 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Sun, 18 Feb 2024 14:52:24 +0100
+Subject: [PATCH 3/3] [RFC UNTESTED LIKELY STILL BROKEN] pidfds: convert to
+ path_from_stashed() helper
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/pidfdfs.c        | 43 ++++++++++++++++++++++++++-----------------
+ include/linux/pid.h |  1 +
+ kernel/pid.c        |  1 +
+ 3 files changed, 28 insertions(+), 17 deletions(-)
+
+diff --git a/fs/pidfdfs.c b/fs/pidfdfs.c
+index be4e74cec8b9..3e1204553ef2 100644
+--- a/fs/pidfdfs.c
++++ b/fs/pidfdfs.c
+@@ -14,6 +14,8 @@
+ #include <linux/seq_file.h>
+ #include <uapi/linux/pidfd.h>
+ 
++#include "internal.h"
++
+ struct pid *pidfd_pid(const struct file *file)
+ {
+ 	if (file->f_op != &pidfd_fops)
+@@ -161,9 +163,21 @@ static char *pidfdfs_dname(struct dentry *dentry, char *buffer, int buflen)
+ 			     d_inode(dentry)->i_ino);
+ }
+ 
++static void pidfdfs_prune_dentry(struct dentry *dentry)
++{
++	struct inode *inode;
++
++	inode = d_inode(dentry);
++	if (inode) {
++		struct pid *pid = inode->i_private;
++		WRITE_ONCE(pid->stashed, NULL);
++	}
++}
++
+ const struct dentry_operations pidfdfs_dentry_operations = {
+ 	.d_delete	= always_delete_dentry,
+ 	.d_dname	= pidfdfs_dname,
++	.d_prune	= pidfdfs_prune_dentry,
+ };
+ 
+ static int pidfdfs_init_fs_context(struct fs_context *fc)
+@@ -188,27 +202,22 @@ static struct file_system_type pidfdfs_type = {
+ struct file *pidfdfs_alloc_file(struct pid *pid, unsigned int flags)
+ {
+ 
+-	struct inode *inode;
+ 	struct file *pidfd_file;
++	struct path path;
++	int ret;
+ 
+-	inode = iget_locked(pidfdfs_sb, pid->ino);
+-	if (!inode)
+-		return ERR_PTR(-ENOMEM);
+-
+-	if (inode->i_state & I_NEW) {
+-		inode->i_ino = pid->ino;
+-		inode->i_mode = S_IFREG | S_IRUGO;
+-		inode->i_fop = &pidfd_fops;
+-		inode->i_flags |= S_IMMUTABLE;
+-		inode->i_private = get_pid(pid);
+-		simple_inode_init_ts(inode);
+-		unlock_new_inode(inode);
+-	}
++	do {
++		ret = path_from_stashed(&pid->stashed, pid->ino, pidfdfs_mnt,
++					&pidfd_fops, pid, &path);
++	} while (ret == -EAGAIN);
+ 
+-	pidfd_file = alloc_file_pseudo(inode, pidfdfs_mnt, "", flags, &pidfd_fops);
+-	if (IS_ERR(pidfd_file))
+-		iput(inode);
++	if (ret < 0)
++		return ERR_PTR(ret);
+ 
++	if (ret)
++		get_pid(pid);
++	pidfd_file = dentry_open(&path, flags, current_cred());
++	path_put(&path);
+ 	return pidfd_file;
+ }
+ 
+diff --git a/include/linux/pid.h b/include/linux/pid.h
+index 7b6f5deab36a..3d1e817a809f 100644
+--- a/include/linux/pid.h
++++ b/include/linux/pid.h
+@@ -56,6 +56,7 @@ struct pid
+ 	unsigned int level;
+ 	spinlock_t lock;
+ #ifdef CONFIG_FS_PIDFD
++	struct dentry *stashed;
+ 	unsigned long ino;
+ #endif
+ 	/* lists of tasks that use this pid */
+diff --git a/kernel/pid.c b/kernel/pid.c
+index 2c0a9e8f58e2..f2f418ecf232 100644
+--- a/kernel/pid.c
++++ b/kernel/pid.c
+@@ -277,6 +277,7 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
+ 	if (!(ns->pid_allocated & PIDNS_ADDING))
+ 		goto out_unlock;
+ #ifdef CONFIG_FS_PIDFD
++	pid->stashed = NULL;
+ 	pid->ino = ++pidfdfs_ino;
+ #endif
+ 	for ( ; upid >= pid->numbers; --upid) {
+-- 
+2.43.0
+
+
+--hsyok4z45phifsuu--
 
