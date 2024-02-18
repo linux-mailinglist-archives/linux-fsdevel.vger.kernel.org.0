@@ -1,139 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-11961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F2F8598FF
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 20:13:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA9B08599D1
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 23:29:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8A8BB21288
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 19:13:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 785FF281777
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Feb 2024 22:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5391A6F53E;
-	Sun, 18 Feb 2024 19:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D11E745D7;
+	Sun, 18 Feb 2024 22:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Kkq8occd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vi14/Cxb";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Kkq8occd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="vi14/Cxb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD091D696;
-	Sun, 18 Feb 2024 19:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB37D65BDB;
+	Sun, 18 Feb 2024 22:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708283581; cv=none; b=gsiv0VJAG4RCsysNDJFVqXx5ffkInEi7JYXaZrGWOq3VXNmDdroURF9D5q6LR4pHZlwbjaIw1Aq/CUeeBcddNGcGkVOis6keE+ZmLzius+mCT6fpuH3ylO67amektZwh/3QJPP2GHvuJH3c7iqqEMivQBAPr0CtU24Obgt7SusM=
+	t=1708295334; cv=none; b=C1Pr1sQVg24t/NtmNGhnXTG2xy5wt/Uhe8CkwkfUPyjOSXXMff789Ks5oHy3smOgwg2rtFd5xK7TkL6T7gCMnlfN8xgH8dU3U0ictJcm5I50cx6I6qrU33OSxaDpjHd0gpbGmTPAbz8+y6zlsfp7PjhZqfv93F1HbQuqzLiOL3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708283581; c=relaxed/simple;
-	bh=zO/LuEh8ruW5c8elMQENCvHE5l8w1EYu5MI98z83Z88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IchtMZp5E/kqOvmknycNQKCmkPraO/B0gMFAxrYecqOYbZ0jGdpAqSP1P6qZdcIJy646A+M3if4TyFdtb36sa/B4TycPc5y1IrQIlilMcRUjB37UsZb5SpnwzrLtnVGCUCnyGD2L2w56BRsXjv/RvYy3S/rDdlr98krSUX4WLZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id DA44B1C006B; Sun, 18 Feb 2024 20:12:56 +0100 (CET)
-Date: Sun, 18 Feb 2024 20:12:56 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, mingo@redhat.com,
-	peterz@infradead.org, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, surenb@google.com,
-	michael.christie@oracle.com, mst@redhat.com, mjguzik@gmail.com,
-	npiggin@gmail.com, zhangpeng.00@bytedance.com, hca@linux.ibm.com
-Subject: Re: [PATCH AUTOSEL 5.10 7/8] exec: Distinguish in_execve from in_exec
-Message-ID: <ZdJWuMifIiNnrLbZ@duo.ucw.cz>
-References: <20240202184156.541981-1-sashal@kernel.org>
- <20240202184156.541981-7-sashal@kernel.org>
+	s=arc-20240116; t=1708295334; c=relaxed/simple;
+	bh=Uj5Oy4S8z6qdzsmn9DPo/NQUyt0aNfVEjkLbHnv86dM=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=urxBOPaUU92D4/KBPBFq3BHf7KNccH7bfb5MVda6JicDBps2MnKlkxwzgOJYdW1pUlsu+mdc79IQkLs6zsxsPb90fYoB8vbzfcTagwa2bRT1s/rD4k8plEnD3fGR1N6R8hVuGsYqVLmt0t1B/DPKuQjO1ierkpU7xVwSMsxhod0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Kkq8occd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vi14/Cxb; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Kkq8occd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=vi14/Cxb; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 51EFA1FCF8;
+	Sun, 18 Feb 2024 22:28:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1708295325; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qnG5SiORvKW2Xi5axh412GtTGevEmeL/8o5GMM3myBI=;
+	b=Kkq8occdCxhc04PejF3VcThY0Xjlc9+DV81DPfSuD8rRyELJRYZpW+aJZT9wQ6E+TC1iL5
+	CYVND63yT4HnZKXvuiHCQ0RKGoP+CQpu52aImZkdSdWj66TCNWaJV9foGeJ6cESxdBxIIu
+	qSP9gYWFHEBmSX996wT2hQlquLyWvG4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1708295325;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qnG5SiORvKW2Xi5axh412GtTGevEmeL/8o5GMM3myBI=;
+	b=vi14/CxbLmbDle4oFB4QTA2sCtb0zwUM8WI/A2jLwU2S9I/ZUzqpqWX0GWjWbZEWMi1T13
+	EglzsjA0E5ydYSBw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1708295325; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qnG5SiORvKW2Xi5axh412GtTGevEmeL/8o5GMM3myBI=;
+	b=Kkq8occdCxhc04PejF3VcThY0Xjlc9+DV81DPfSuD8rRyELJRYZpW+aJZT9wQ6E+TC1iL5
+	CYVND63yT4HnZKXvuiHCQ0RKGoP+CQpu52aImZkdSdWj66TCNWaJV9foGeJ6cESxdBxIIu
+	qSP9gYWFHEBmSX996wT2hQlquLyWvG4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1708295325;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qnG5SiORvKW2Xi5axh412GtTGevEmeL/8o5GMM3myBI=;
+	b=vi14/CxbLmbDle4oFB4QTA2sCtb0zwUM8WI/A2jLwU2S9I/ZUzqpqWX0GWjWbZEWMi1T13
+	EglzsjA0E5ydYSBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B6E5139D8;
+	Sun, 18 Feb 2024 22:28:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GIrSBJqE0mWeCAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Sun, 18 Feb 2024 22:28:42 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="RWb6j82WY1Y0XPxm"
-Content-Disposition: inline
-In-Reply-To: <20240202184156.541981-7-sashal@kernel.org>
+From: "NeilBrown" <neilb@suse.de>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Christian Brauner" <brauner@kernel.org>,
+ "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Alexander Aring" <alex.aring@gmail.com>,
+ "Chuck Lever" <chuck.lever@oracle.com>, "Jan Kara" <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "kernel test robot" <oliver.sang@intel.com>,
+ "Jeff Layton" <jlayton@kernel.org>
+Subject: Re: [PATCH] filelock: fix deadlock detection in POSIX locking
+In-reply-to: <20240218-flsplit4-v1-1-26454fc090f2@kernel.org>
+References: <20240218-flsplit4-v1-1-26454fc090f2@kernel.org>
+Date: Mon, 19 Feb 2024 09:28:39 +1100
+Message-id: <170829531945.1530.2712558842533100280@noble.neil.brown.name>
+Authentication-Results: smtp-out2.suse.de;
+	none
+X-Spamd-Result: default: False [0.65 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 BAYES_HAM(-0.75)[84.04%];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 RCPT_COUNT_SEVEN(0.00)[10];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,intel.com:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,gmail.com,oracle.com,suse.cz,vger.kernel.org,intel.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: 0.65
 
-
---RWb6j82WY1Y0XPxm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi!
-
-> From: Kees Cook <keescook@chromium.org>
+On Mon, 19 Feb 2024, Jeff Layton wrote:
+> The FL_POSIX check in __locks_insert_block was inadvertantly broken
+> recently and is now inserting only OFD locks instead of only legacy
+> POSIX locks.
 >=20
-> [ Upstream commit 90383cc07895183c75a0db2460301c2ffd912359 ]
+> This breaks deadlock detection in POSIX locks, and may also be the root
+> cause of a performance regression noted by the kernel test robot.
+> Restore the proper sense of the test.
 >=20
-> Just to help distinguish the fs->in_exec flag from the current->in_execve
-> flag, add comments in check_unsafe_exec() and copy_fs() for more
-> context. Also note that in_execve is only used by TOMOYO now.
-
-These are just a whitespace changes, we should not need them.
-
-Best regards,
-								Pavel
-
-> +++ b/fs/exec.c
-> @@ -1565,6 +1565,7 @@ static void check_unsafe_exec(struct linux_binprm *=
-bprm)
->  	}
->  	rcu_read_unlock();
+> Fixes: b6be3714005c ("filelock: convert __locks_insert_block, conflict and =
+deadlock checks to use file_lock_core")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202402181229.f8147f40-oliver.sang@in=
+tel.com
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> Disregard what I said earlier about this bug being harmless. It broke
+> deadlock detection in POSIX locks (LTP fcntl17 shows the bug). This
+> patch fixes it. It may be best to squash this into the patch that
+> introduced the regression.
+>=20
+> I'm not certain if this fixes the performance regression that the KTR
+> noticed recently in this patch, but that's what got me looking more
+> closely, so I'll give it credit for reporting this. Hopefully it'll
+> confirm that result for us.
+> ---
+>  fs/locks.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 26d52ef5314a..90c8746874de 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -812,7 +812,7 @@ static void __locks_insert_block(struct file_lock_core =
+*blocker,
+>  	list_add_tail(&waiter->flc_blocked_member,
+>  		      &blocker->flc_blocked_requests);
 > =20
-> +	/* "users" and "in_exec" locked for copy_fs() */
->  	if (p->fs->users > n_fs)
->  		bprm->unsafe |=3D LSM_UNSAFE_SHARE;
->  	else
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index aa015416c569..65cfe85de8d5 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -806,7 +806,7 @@ struct task_struct {
->  	 */
->  	unsigned			sched_remote_wakeup:1;
+> -	if ((blocker->flc_flags & (FL_POSIX|FL_OFDLCK)) =3D=3D (FL_POSIX|FL_OFDLC=
+K))
+> +	if ((blocker->flc_flags & (FL_POSIX|FL_OFDLCK)) =3D=3D FL_POSIX)
+>  		locks_insert_global_blocked(waiter);
+
+I wonder how that happened... sorry I didn't notice it in my review.
+
+Reviewed-by: NeilBrown <neilb@suse.de>
+
+Thanks,
+NeilBrown
+
+
 > =20
-> -	/* Bit to tell LSMs we're in execve(): */
-> +	/* Bit to tell TOMOYO we're in execve(): */
->  	unsigned			in_execve:1;
->  	unsigned			in_iowait:1;
->  #ifndef TIF_RESTORE_SIGMASK
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 633b0af1d1a7..906dbaf25058 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -1452,6 +1452,7 @@ static int copy_fs(unsigned long clone_flags, struc=
-t task_struct *tsk)
->  	if (clone_flags & CLONE_FS) {
->  		/* tsk->fs is already what we want */
->  		spin_lock(&fs->lock);
-> +		/* "users" and "in_exec" locked for check_unsafe_exec() */
->  		if (fs->in_exec) {
->  			spin_unlock(&fs->lock);
->  			return -EAGAIN;
+>  	/* The requests in waiter->flc_blocked are known to conflict with
+>=20
+> ---
+> base-commit: 292fcaa1f937345cb65f3af82a1ee6692c8df9eb
+> change-id: 20240218-flsplit4-e843536f4c11
+>=20
+> Best regards,
+> --=20
+> Jeff Layton <jlayton@kernel.org>
+>=20
+>=20
 
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---RWb6j82WY1Y0XPxm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZdJWuAAKCRAw5/Bqldv6
-8vEZAKCsYpt/9YYcVItFN4Cb+Qx3eGNUzACePikZNygBi7iNKiPV0JHUidFNPlk=
-=Wlsl
------END PGP SIGNATURE-----
-
---RWb6j82WY1Y0XPxm--
 
