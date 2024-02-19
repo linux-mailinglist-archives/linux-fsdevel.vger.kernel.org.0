@@ -1,119 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-12056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12057-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CC0785ACB1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 21:00:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6459E85ACE1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 21:14:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B799FB2457E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 20:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20DD9288F93
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 20:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBEA5478B;
-	Mon, 19 Feb 2024 19:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEA6535C6;
+	Mon, 19 Feb 2024 20:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="C5oqa2b0"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J3w1tZlH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C9A54675
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 19:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F4251C5F;
+	Mon, 19 Feb 2024 20:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708372751; cv=none; b=BxN72oPTXTYa6xlG1ozi0yfmkHe8IaIb2sT2XFKIDiJDybhfdUOHab0K3m40fIEL4BRp2H2Vmf2l8EXIMcAfSMFx9q8I483VA0ZwM4szPsydY6vNDQqk1k57SACQKXMvHk/mFcMzJ5hd1YHlmv5NsP2y2BS47T1MHgIKWXtL3HU=
+	t=1708373630; cv=none; b=EG9pOGa/4HkE+pKIE0Y459YINqTPUoXAFbg4Uu0LJdgK4okwwXVzUC5iye/tsd2mcFKH+qYoNPlZuOg7SRwOtrBJbFS9aCnp8ZWBDl/taluaTx52JwXh72XnZAjinZJrvh+I7If2oBoP1W3xsD3y7m1sV7APCd5hjgUsc6wjz98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708372751; c=relaxed/simple;
-	bh=ofjInoWHKA5k7Bh2Hd1BX7kszhP5rQ6joRa/kjdDVVE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cKKFIljzIlpLaR6D4hXREL/no2Z1hyFsDiE11xp6r/mxv9bp9TrH7rCBZzmJB+hBt6jKoz+jXd7k9haOlwdJ9oVRBlq+1aCJb94eUo0J5C8D9w3UJ9IuV0gCTA3w3EgR2aiOVSHX/llt5iRNv612jR73mcNjczBGsdbpqxBGYIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=C5oqa2b0; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-512b84bdaf1so1438482e87.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 11:59:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1708372747; x=1708977547; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JGvC62IGF3u3yi/URM7lyrZg3XibNCK1lsVTIkk+gFY=;
-        b=C5oqa2b0vXH89aS+ZfD1cqcV+n7Q6k1aBwuNDYHPWo1WxItLoW0iqqYfDc6e7wxV5c
-         RLHtMFuYjd5wS+Wi+ca5P3lecVkHLatL+AFaOj1L8UZcIaPGxPRaLWb4FUAOlkbpj5Fc
-         Yx8ONzU6iOvgPoav8grtJJnROS2YkuBgq46Uo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708372747; x=1708977547;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JGvC62IGF3u3yi/URM7lyrZg3XibNCK1lsVTIkk+gFY=;
-        b=vB89bR3zFX/N7w5iMN2CzuyK/yfO3vHMz7JPu5H+TOgvD17nl32nTD2yQOQkDI0xRl
-         qBv9rgD9o3XWZO01lXHT+vbf36TLmyOIDUUqMtdYcR0A9Wzf7+S1Dt9OrhlPldxeLQAA
-         rU94fgdSe6IhHf8DiZoS0Wfiz36hA/3RfGwf9N4QfbBF3CARknXRRkolvvslKHcRrghp
-         g11ZxD0cwVlUc+orTmWA9DjPvyodtSM2Twy1+NCMUNwyFt3Io0FmDw6CGF8GuT7FGTxd
-         KzowzIb9cSGE4hYxi6xYNiOmjz6O+O4aQnlWGpnDF35V1B2eM24Tae8fHHXu5mzWCVaY
-         8wPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJLcbhyycvEX+EJdv0l5bgUDtpBDAqvLH2FQIuEbWJZ5ZYXe3cxNYR96CpTWCiGoSMOti5REIRJJZ12Fh2oR+hfMMqdi3W3lcfk41WCg==
-X-Gm-Message-State: AOJu0YzCf0+UPN2luQOJNYI5T8tpRVyJI2IOzl3/W+l2o9CimUr/a3XR
-	M3SoJzd6Vg0FpbBLcp3tj+fWK0sZPIqEea+XlGNJvRVoikoPoEX5HyFv97EWfr4Cz+4BzP12PsM
-	jxGRnbg6IBPwdfgKzSXDFEMEppxAj+ESjjr85S+/Vxj829YAc3OU=
-X-Google-Smtp-Source: AGHT+IFrqbY0boOgYQoJljY9NUPsrocT0RXCr2QyYsnrZXgv+eT6Bo4ASt3NfJWz7o/1kNtCD6Uj8V/4/bV4nO7M/Js=
-X-Received: by 2002:ac2:5584:0:b0:512:a899:34e9 with SMTP id
- v4-20020ac25584000000b00512a89934e9mr4139621lfg.58.1708372746765; Mon, 19 Feb
- 2024 11:59:06 -0800 (PST)
+	s=arc-20240116; t=1708373630; c=relaxed/simple;
+	bh=GwZAYrAuDcsDsQed6SP/B+Tv7/f9pk2vi2Hp9BGCVi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B4VjPX/D2YlFsxoV+nHMhcAue6m7mGnZZIaZQfj9HzmL4GK94pWZ+oMl2qz+FWVgEBxG8FpyH+qi59csZaS7WYpPuUhst9j5QFp5/ERSI2q1cCL6sPwFfQnE6YKalHux9CfZ5zEmWmrd7xp6KrLFkPWGzlTaW3ERXW8iOIE5TNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=J3w1tZlH; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Jchb+LZCv2qEJtD+Rt9qzwfdoWc+U+2jiOKWjU4NWow=; b=J3w1tZlHo7drwooqkjX3y5SPfH
+	elaMwmvPoX1hmpg+4MB+cvamg309guKr/Ij2Y6t81FG4QQUXolrnW9AUb0SOp3+MK6Ie3VVQP3a+B
+	4qZ90X44sLH/lAnfmD3eeelqIMhkJOgeoLSevHh91GjJ5TmJfsDTNFaAKSCd23L28KzNUXaDcUunY
+	HPTk5lWwmN0VUSVaPnhMxLoHcMDre1m70lSGojq4FjeyhUPbbSR9IKfD/GuJzTrpogXa4wracCW9z
+	ZnjwkrluXe78+suPeKnfQquNV1HZkGZ9jbVhHpsSobEIXAOMuEZZgbrzezqoSfQhfvl4dUmSsYV28
+	ZmkmHbGA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rcA1I-0000000DgB5-1OL3;
+	Mon, 19 Feb 2024 20:13:44 +0000
+Date: Mon, 19 Feb 2024 20:13:44 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-block@vger.kernel.org,
+	linux-ide@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-nvme@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [LSF/MM/BPF TOPIC] Reclaiming & documenting page flags
+Message-ID: <ZdO2eABfGoPNnR07@casper.infradead.org>
+References: <Zbcn-P4QKgBhyxdO@casper.infradead.org>
+ <Zb9pZTmyb0lPMQs8@kernel.org>
+ <ZcACya-MJr_fNRSH@casper.infradead.org>
+ <ZcOnEGyr6y3jei68@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d997c02b-d5ef-41f8-92b6-8c6775899388@spawn.link>
- <CAOQ4uxhek5ytdN8Yz2tNEOg5ea4NkBb4nk0FGPjPk_9nz-VG3g@mail.gmail.com>
- <b9cec6b7-0973-4d61-9bef-120e3c4654d7@spawn.link> <CAOQ4uxgZR4OtCkdrpcDGCK-MqZEHcrx+RY4G94saqaXVkL4cKA@mail.gmail.com>
- <23a6120a-e417-4ba8-9988-19304d4bd229@spawn.link> <93b170b4-9892-4a32-b4f1-6a18b67eb359@fastmail.fm>
- <BAQ4wsbXlrpVWedBrk1ij49tru5E6jxB11oY2VoWH5C7scO9FgmKRkQIsVekwRNgfxxxwWwWapZlBGSGQFSjSVhMs01urB1nLE4-_o5OOiU=@spawn.link>
- <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com> <8fd58ae6-164c-4653-a979-b12ee577fe65@fastmail.fm>
-In-Reply-To: <8fd58ae6-164c-4653-a979-b12ee577fe65@fastmail.fm>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 19 Feb 2024 20:58:55 +0100
-Message-ID: <CAJfpegvgwZsoFpEUnqPkAXCST3bZYgWNy4NXKHOfnWQic_yvHw@mail.gmail.com>
-Subject: Re: [fuse-devel] Proxmox + NFS w/ exported FUSE = EIO
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Antonio SJ Musumeci <trapexit@spawn.link>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	fuse-devel <fuse-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZcOnEGyr6y3jei68@kernel.org>
 
-On Mon, 19 Feb 2024 at 20:55, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
->
->
->
-> On 2/19/24 20:38, Miklos Szeredi wrote:
-> > On Mon, 19 Feb 2024 at 20:05, Antonio SJ Musumeci <trapexit@spawn.link> wrote:
-> >
-> >> This is what I see from the kernel:
-> >>
-> >> lookup(nodeid=3, name=.);
-> >> lookup(nodeid=3, name=..);
-> >> lookup(nodeid=1, name=dir2);
-> >> lookup(nodeid=1, name=..);
-> >> forget(nodeid=3);
-> >> forget(nodeid=1);
-> >
-> > This is really weird.  It's a kernel bug, no arguments, because kernel
-> > should never send a forget against the root inode.   But that
-> > lookup(nodeid=1, name=..); already looks bogus.
->
-> Why exactly bogus?
->
-> reconnect_path()
->                 if (IS_ROOT(dentry))
->                         parent = reconnect_one(mnt, dentry, nbuf);
+On Wed, Feb 07, 2024 at 05:51:44PM +0200, Mike Rapoport wrote:
+> On Sun, Feb 04, 2024 at 09:34:01PM +0000, Matthew Wilcox wrote:
+> > I'm doing my best to write documentation as I go.  I think we're a bit
+> > better off than we were last year.  Do we have scripts to tell us which
+> > public functions (ie EXPORT_SYMBOL and static inline functions in header
+> > files) have kernel-doc?  And could we run them against kernels from, say,
+> > April 2023, 2022, 2021, 2020, 2019 (and in two months against April 2024)
+> > and see how we're doing in terms of percentage undocumented functions?
+> 
+> We didn't have such script, but it was easy to compare "grep
+> EXPORT_SYMBOL\|static inline" with ".. c:function" in kernel-doc.
+> We do improve slowly, but we are still below 50% with kernel-doc for
+> EXPORT_SYMBOL functions and slightly above 10% for static inlines.
 
-It's only getting this far if (dentry->d_flags & DCACHE_DISCONNECTED),
-but that doesn't make sense on the root dentry.  It does happen,
-though, I'm just not seeing yet how.
+Thanks for doing this!  Data is good ;-)
 
-Thanks,
-Miklos
+I just came across an interesting example of a function which I believe
+should NOT have kernel-doc.  But it should have documentation for why it
+doesn't have kernel-doc!  Any thoughts about how we might accomplish that?
+
+The example is filemap_range_has_writeback().  It's EXPORT_SYMBOL_GPL()
+and it's a helper function for filemap_range_needs_writeback().
+filemap_range_needs_writeback() has kernel-doc, but nobody should be
+calling filemap_range_has_writeback() directly, so it shouldn't even
+exist in the htmldocs.  But we should have a comment on it saying
+"Use filemap_range_needs_writeback(), don't use this", in case anyone
+discovers it.  And the existance of that comment should be enough to
+tell our tools to not flag this as a function that needs kernel-doc.
+
 
