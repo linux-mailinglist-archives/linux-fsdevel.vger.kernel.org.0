@@ -1,153 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-12055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4003885AC89
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 20:55:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CC0785ACB1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 21:00:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F22BE2826DB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 19:55:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B799FB2457E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 20:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5791524A5;
-	Mon, 19 Feb 2024 19:55:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFBEA5478B;
+	Mon, 19 Feb 2024 19:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="kQhzDOOU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LGZsYdSa"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="C5oqa2b0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6F950A97
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 19:55:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C9A54675
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 19:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708372539; cv=none; b=pAhAq+dVamwXDGP+KNaLFBgoGuxtVDkLQduWfCQyhqG1d8yTBrNPc2yaO7jw3Tclg6QxY4gbpCK/5KVTZpNw/qWv7736u3OGaZvX+/pPT9MBgnCWrqFLb0Q5lU794E8yezm5RafoFp0yBu4Z6ix0gKEP4/+B4kPiw+kHeh9GN2E=
+	t=1708372751; cv=none; b=BxN72oPTXTYa6xlG1ozi0yfmkHe8IaIb2sT2XFKIDiJDybhfdUOHab0K3m40fIEL4BRp2H2Vmf2l8EXIMcAfSMFx9q8I483VA0ZwM4szPsydY6vNDQqk1k57SACQKXMvHk/mFcMzJ5hd1YHlmv5NsP2y2BS47T1MHgIKWXtL3HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708372539; c=relaxed/simple;
-	bh=hv23sH8I7WrSzpzT73mZRsnAUGtxpeTJs0/RryABox4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BvrO91cH8aBRvUbGAl5vh3ywLuqI3snSCMRwGjtsM1dC7Y4DbTR3TPvWfkV2/qa1c4zA87WeijPvNvNOM5EhHFrxcIDEe+NsJ9v/CoGODwn62kNMoNUBjFkY+egvGDcrtXc5iqHGB1pMbMQ+0plom4mfAI+fW97I4fETIrVSemE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=kQhzDOOU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LGZsYdSa; arc=none smtp.client-ip=64.147.123.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailout.west.internal (Postfix) with ESMTP id 4ECCA3200A2A;
-	Mon, 19 Feb 2024 14:55:36 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Mon, 19 Feb 2024 14:55:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1708372535;
-	 x=1708458935; bh=nf/Xn5XMXRHtKQ5fya1LoKeLPbtugUFK8J3++VbOkbE=; b=
-	kQhzDOOUxaEtSoFcU5O5YgK1K8qC4L6UPnYxfl6gqDZAl2BeAKKkpMBJSxUsmZIR
-	q7I5XCFQty6eYiNW73aIME1a7utMeaScdCirIPRRzFkrKcsvJfLGrVFLpVkDSJO7
-	9CWrY8cG5un28+3eS5IN8cASK9waG0nd6kK/jwyeAFaUf7ljcmwoEjRcGXcNKSlT
-	RoS4ovgX026V6Si7KHd4rlCo5+YSi8IRejBW1iOuENHxUadp2A/yjPZZkD3nSFfS
-	BIQ2kWd8bNFiXdY99Ga9fPIurGOd+8uJvZpRq7Alf/4Q5xww9RDacEeprdxie/1u
-	qRyKk/H6AyOi0Sf9cFOfzQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1708372535; x=
-	1708458935; bh=nf/Xn5XMXRHtKQ5fya1LoKeLPbtugUFK8J3++VbOkbE=; b=L
-	GZsYdSa7+XoXYRnjB9peb5HKtvUqUVQfHKW10Fm7mdGZ+prEshxp/i7uMlKtOUSx
-	xAqQAoyPSmF/GCxCzJMqJf8x6/8cc9OFzGmjm3sFt4TNVm8vPwXQoDv4GXvAkxFn
-	zlyOfplvbfBCvjSBqrTueaGp2eaekEBMx6pQ2ihOgYcxQdz5xaXswXoViSiwB2b2
-	N8jTEqDuQm42mcCuuCXWbWiGucG2gEFbNyUaDDzTlNsBjHeaNNesZkU6njNSqvh4
-	7ILXuFq8/WgMhMsA6DW+HtijLkHS1HrQrKRLGo950zC1iQ2+xxX8/bkV9qXffFOZ
-	upLP47owxj8ybtsz6Ta3w==
-X-ME-Sender: <xms:N7LTZTvNPcQ1WY0tA0nM1_udKglEnLh06Rt2GX2RSRDbZ_JCdGdrYg>
-    <xme:N7LTZUeADbkNu5wsONdA7VML55hT9zTVwLuMzw2k6PD8iO6tF7SlyW114x03l5d2-
-    CCL3KFjPAagGNbH>
-X-ME-Received: <xmr:N7LTZWzA07alWgXC6VuTRUzdQkEPq-8I3_9qExOQpOZcYk9g-RIwC80LN6hRaZDc2T09jPLgycTkjtS0umePxDNQSlnq7tRk9q4IZBNd8wRA1VaQYos3>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgdduvdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
-    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
-    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfgtdfggeelfedvheefieev
-    jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
-    fhhm
-X-ME-Proxy: <xmx:N7LTZSNifWeZrUYAZ3McUEXODbt0TtC1QXFUStoMLJbp9pzIHPIEUQ>
-    <xmx:N7LTZT__FcWWY1uuTP7KiFtOmJRVTsOfMltUWOTVh9d9G8K9oJ2QUg>
-    <xmx:N7LTZSXkqh6HkM2dHs0Yhb9jJUMcz4TRw48iSeq7VkM6hlNCTN8PcA>
-    <xmx:N7LTZfYDgprpe0lZmxZ6g3Rv_bPZUtl7CzWRtlBn3sImG5FlNruVYQ>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 19 Feb 2024 14:55:34 -0500 (EST)
-Message-ID: <8fd58ae6-164c-4653-a979-b12ee577fe65@fastmail.fm>
-Date: Mon, 19 Feb 2024 20:55:33 +0100
+	s=arc-20240116; t=1708372751; c=relaxed/simple;
+	bh=ofjInoWHKA5k7Bh2Hd1BX7kszhP5rQ6joRa/kjdDVVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cKKFIljzIlpLaR6D4hXREL/no2Z1hyFsDiE11xp6r/mxv9bp9TrH7rCBZzmJB+hBt6jKoz+jXd7k9haOlwdJ9oVRBlq+1aCJb94eUo0J5C8D9w3UJ9IuV0gCTA3w3EgR2aiOVSHX/llt5iRNv612jR73mcNjczBGsdbpqxBGYIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=C5oqa2b0; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-512b84bdaf1so1438482e87.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 11:59:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1708372747; x=1708977547; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JGvC62IGF3u3yi/URM7lyrZg3XibNCK1lsVTIkk+gFY=;
+        b=C5oqa2b0vXH89aS+ZfD1cqcV+n7Q6k1aBwuNDYHPWo1WxItLoW0iqqYfDc6e7wxV5c
+         RLHtMFuYjd5wS+Wi+ca5P3lecVkHLatL+AFaOj1L8UZcIaPGxPRaLWb4FUAOlkbpj5Fc
+         Yx8ONzU6iOvgPoav8grtJJnROS2YkuBgq46Uo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708372747; x=1708977547;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JGvC62IGF3u3yi/URM7lyrZg3XibNCK1lsVTIkk+gFY=;
+        b=vB89bR3zFX/N7w5iMN2CzuyK/yfO3vHMz7JPu5H+TOgvD17nl32nTD2yQOQkDI0xRl
+         qBv9rgD9o3XWZO01lXHT+vbf36TLmyOIDUUqMtdYcR0A9Wzf7+S1Dt9OrhlPldxeLQAA
+         rU94fgdSe6IhHf8DiZoS0Wfiz36hA/3RfGwf9N4QfbBF3CARknXRRkolvvslKHcRrghp
+         g11ZxD0cwVlUc+orTmWA9DjPvyodtSM2Twy1+NCMUNwyFt3Io0FmDw6CGF8GuT7FGTxd
+         KzowzIb9cSGE4hYxi6xYNiOmjz6O+O4aQnlWGpnDF35V1B2eM24Tae8fHHXu5mzWCVaY
+         8wPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJLcbhyycvEX+EJdv0l5bgUDtpBDAqvLH2FQIuEbWJZ5ZYXe3cxNYR96CpTWCiGoSMOti5REIRJJZ12Fh2oR+hfMMqdi3W3lcfk41WCg==
+X-Gm-Message-State: AOJu0YzCf0+UPN2luQOJNYI5T8tpRVyJI2IOzl3/W+l2o9CimUr/a3XR
+	M3SoJzd6Vg0FpbBLcp3tj+fWK0sZPIqEea+XlGNJvRVoikoPoEX5HyFv97EWfr4Cz+4BzP12PsM
+	jxGRnbg6IBPwdfgKzSXDFEMEppxAj+ESjjr85S+/Vxj829YAc3OU=
+X-Google-Smtp-Source: AGHT+IFrqbY0boOgYQoJljY9NUPsrocT0RXCr2QyYsnrZXgv+eT6Bo4ASt3NfJWz7o/1kNtCD6Uj8V/4/bV4nO7M/Js=
+X-Received: by 2002:ac2:5584:0:b0:512:a899:34e9 with SMTP id
+ v4-20020ac25584000000b00512a89934e9mr4139621lfg.58.1708372746765; Mon, 19 Feb
+ 2024 11:59:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [fuse-devel] Proxmox + NFS w/ exported FUSE = EIO
-Content-Language: en-US, de-DE, fr
-To: Miklos Szeredi <miklos@szeredi.hu>,
- Antonio SJ Musumeci <trapexit@spawn.link>
-Cc: Amir Goldstein <amir73il@gmail.com>,
- linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- fuse-devel <fuse-devel@lists.sourceforge.net>
 References: <d997c02b-d5ef-41f8-92b6-8c6775899388@spawn.link>
  <CAOQ4uxhek5ytdN8Yz2tNEOg5ea4NkBb4nk0FGPjPk_9nz-VG3g@mail.gmail.com>
- <b9cec6b7-0973-4d61-9bef-120e3c4654d7@spawn.link>
- <CAOQ4uxgZR4OtCkdrpcDGCK-MqZEHcrx+RY4G94saqaXVkL4cKA@mail.gmail.com>
- <23a6120a-e417-4ba8-9988-19304d4bd229@spawn.link>
- <93b170b4-9892-4a32-b4f1-6a18b67eb359@fastmail.fm>
+ <b9cec6b7-0973-4d61-9bef-120e3c4654d7@spawn.link> <CAOQ4uxgZR4OtCkdrpcDGCK-MqZEHcrx+RY4G94saqaXVkL4cKA@mail.gmail.com>
+ <23a6120a-e417-4ba8-9988-19304d4bd229@spawn.link> <93b170b4-9892-4a32-b4f1-6a18b67eb359@fastmail.fm>
  <BAQ4wsbXlrpVWedBrk1ij49tru5E6jxB11oY2VoWH5C7scO9FgmKRkQIsVekwRNgfxxxwWwWapZlBGSGQFSjSVhMs01urB1nLE4-_o5OOiU=@spawn.link>
- <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com> <8fd58ae6-164c-4653-a979-b12ee577fe65@fastmail.fm>
+In-Reply-To: <8fd58ae6-164c-4653-a979-b12ee577fe65@fastmail.fm>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Mon, 19 Feb 2024 20:58:55 +0100
+Message-ID: <CAJfpegvgwZsoFpEUnqPkAXCST3bZYgWNy4NXKHOfnWQic_yvHw@mail.gmail.com>
+Subject: Re: [fuse-devel] Proxmox + NFS w/ exported FUSE = EIO
+To: Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc: Antonio SJ Musumeci <trapexit@spawn.link>, Amir Goldstein <amir73il@gmail.com>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	fuse-devel <fuse-devel@lists.sourceforge.net>
+Content-Type: text/plain; charset="UTF-8"
 
+On Mon, 19 Feb 2024 at 20:55, Bernd Schubert <bernd.schubert@fastmail.fm> wrote:
+>
+>
+>
+> On 2/19/24 20:38, Miklos Szeredi wrote:
+> > On Mon, 19 Feb 2024 at 20:05, Antonio SJ Musumeci <trapexit@spawn.link> wrote:
+> >
+> >> This is what I see from the kernel:
+> >>
+> >> lookup(nodeid=3, name=.);
+> >> lookup(nodeid=3, name=..);
+> >> lookup(nodeid=1, name=dir2);
+> >> lookup(nodeid=1, name=..);
+> >> forget(nodeid=3);
+> >> forget(nodeid=1);
+> >
+> > This is really weird.  It's a kernel bug, no arguments, because kernel
+> > should never send a forget against the root inode.   But that
+> > lookup(nodeid=1, name=..); already looks bogus.
+>
+> Why exactly bogus?
+>
+> reconnect_path()
+>                 if (IS_ROOT(dentry))
+>                         parent = reconnect_one(mnt, dentry, nbuf);
 
-
-On 2/19/24 20:38, Miklos Szeredi wrote:
-> On Mon, 19 Feb 2024 at 20:05, Antonio SJ Musumeci <trapexit@spawn.link> wrote:
-> 
->> This is what I see from the kernel:
->>
->> lookup(nodeid=3, name=.);
->> lookup(nodeid=3, name=..);
->> lookup(nodeid=1, name=dir2);
->> lookup(nodeid=1, name=..);
->> forget(nodeid=3);
->> forget(nodeid=1);
-> 
-> This is really weird.  It's a kernel bug, no arguments, because kernel
-> should never send a forget against the root inode.   But that
-> lookup(nodeid=1, name=..); already looks bogus.
-
-Why exactly bogus?
-
-reconnect_path()
-		if (IS_ROOT(dentry))
-			parent = reconnect_one(mnt, dentry, nbuf);
-
-reconnect_one()
-		if (mnt->mnt_sb->s_export_op->get_parent)
-			parent = mnt->mnt_sb->s_export_op->get_parent(dentry);
-
-
-fuse_get_parent()
-	if (!fc->export_support)
-		return ERR_PTR(-ESTALE);
-
-	err = fuse_lookup_name(child_inode->i_sb, get_node_id(child_inode),
-			       &dotdot_name, &outarg, &inode);
-
-
+It's only getting this far if (dentry->d_flags & DCACHE_DISCONNECTED),
+but that doesn't make sense on the root dentry.  It does happen,
+though, I'm just not seeing yet how.
 
 Thanks,
-Bernd
+Miklos
 
