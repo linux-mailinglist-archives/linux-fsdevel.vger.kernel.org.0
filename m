@@ -1,98 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-11967-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A69859A89
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 02:27:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47AE859AA5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 03:12:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3FE22B20C47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 01:27:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 642AE1F20CD6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 02:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 912A82103;
-	Mon, 19 Feb 2024 01:27:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68CE1FDB;
+	Mon, 19 Feb 2024 02:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Dfl9+CHh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD1A394;
-	Mon, 19 Feb 2024 01:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC0D1FA3
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 02:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708306045; cv=none; b=aPOsKMcymPKFmTPNOSwOT3HBfe3MHF1hKFB8Vryvu2Zj5kD3eo/suvnSlBK+JcZwA8l47urCyfpQi436E1wyMpoU2YWfha1Ls+mL0liUbt1CusV2Bef1vH2xJeA8sfn1u33CmW40jjZ7mAEgFGp/s2h0SeApIJs3/8A0IWvCRww=
+	t=1708308721; cv=none; b=Ud2t4feyHFSihoyHZvMm0lC7GiGQW+C2OLONrDT0s61oHwlngg6D3BHr9jZUI0zxPE0hyqodh17rfiK9//XUA+2LN+mP7etsISn35M0Ah0qqag+N9cVxwKAwnbBGBmIYHxas6uGrL6ZB4Mr4GgSqjV1kezfbQJPEPppXgANtSSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708306045; c=relaxed/simple;
-	bh=nZlbLHyY0YVnKcaZOenBPUXzs5bUv0S9z+LEegjabiw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=TFhbol7Fj6RmGvduu0/roowRmjyVjDkBLUIhuK0j1EpxCusoeNPqyOKPJuqM9XLSk5gx4+qG2lvhV3jdfjlZCoNPnNX3KfRFB9zRJQA1XM1b3xWVAWHtPhSYUzAlOlvNeKA0mT8wRdBP12VGtaibA//RI4FgelpIizmdbdCRb4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TdPz56pTPz4f3jMl;
-	Mon, 19 Feb 2024 09:27:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id CEEE21A0175;
-	Mon, 19 Feb 2024 09:27:18 +0800 (CST)
-Received: from [10.174.176.34] (unknown [10.174.176.34])
-	by APP1 (Coremail) with SMTP id cCh0CgBnOBF0rtJlCMbOEQ--.37361S3;
-	Mon, 19 Feb 2024 09:27:18 +0800 (CST)
-Subject: Re: [RFC PATCH v3 08/26] iomap: add pos and dirty_len into
- trace_iomap_writepage_map
-To: Christoph Hellwig <hch@infradead.org>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, tytso@mit.edu,
- adilger.kernel@dilger.ca, jack@suse.cz, ritesh.list@gmail.com,
- djwong@kernel.org, willy@infradead.org, zokeefe@google.com,
- yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
- wangkefeng.wang@huawei.com
-References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
- <20240127015825.1608160-9-yi.zhang@huaweicloud.com>
- <Zcm0c7aMoWp7mPST@infradead.org>
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-Message-ID: <f27e25cb-5407-4bf5-13ce-bae4e5b4c111@huaweicloud.com>
-Date: Mon, 19 Feb 2024 09:27:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+	s=arc-20240116; t=1708308721; c=relaxed/simple;
+	bh=foDXcE8AQIVgf8zNBAtJxrl/QCj3Mxl+ldQYrYCEiDo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ukq2IHV/qQwCA46jsAtueQ/BtcM3Kt3pKaLn2GSBMslJ90/lVrZ5w317iCGdN/PNbHFllNdZNQnK8lRAUJ++gQO3AYodMBWA8oUkzNh1UsSZMWfW2RssZH9qNVIDJVl2D0bNPv++wrXpj8Kwuz+QjlVepFRryB2eqxEIn4NiSuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Dfl9+CHh; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.17.1.24/8.17.1.24) with ESMTP id 41J16e0M027087;
+	Mon, 19 Feb 2024 02:11:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding:content-type; s=qcppdkim1; bh=vP3YmMR
+	yprsla96yQCYLMk5FXkbXxSTW6XNDsbCj1Ek=; b=Dfl9+CHhi3g+BDAuBXQZlL6
+	mSuDxIgfhae2ulkzDG2nIggRZQqROL3ZN8XDc7rUqh/PlAUNeNQ49rRcqFk25z43
+	Xiq6hj305wE95oaB0sA3oMmgsdtVP2Q7FOvMoRAkoa8YYWj7VDxIr/Q1i0GqUohK
+	7nh/htQvPaMg8eigXceYWDEi1BkWqm8ncmxRN/n5od/hDf78VCGc01L1JiPitnjc
+	oxslXqhWLFVjlmOyrN+H5aQY305SdVOrSm4aVhI50lPt9uex4jjl8C2FaHmnsM6n
+	M2fqnYU1L/KmujxvnYf5CHzGgFBqWZ9blziZHXeUuC0a0tvSEOPXSxFv9opRyJA=
+	=
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3wav1at3kx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Feb 2024 02:11:56 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 41J2Bui6019205
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 Feb 2024 02:11:56 GMT
+Received: from maow2-gv.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Sun, 18 Feb 2024 18:11:54 -0800
+From: Kassey Li <quic_yingangl@quicinc.com>
+To: <brauner@kernel.org>, <djwong@kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC: <quic_yingangl@quicinc.com>
+Subject: [PATCH] iomap: Add processed for iomap_iter
+Date: Mon, 19 Feb 2024 10:11:38 +0800
+Message-ID: <20240219021138.3481763-1-quic_yingangl@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zcm0c7aMoWp7mPST@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:cCh0CgBnOBF0rtJlCMbOEQ--.37361S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYs7kC6x804xWl14x267AKxVW5JVWrJwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
-	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
-	17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
-	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Wr1j6rW3
-	Jr1lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7IUbG2NtUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Wa-CfATY8VMAoWedZetXe-5I86NxBz7M
+X-Proofpoint-GUID: Wa-CfATY8VMAoWedZetXe-5I86NxBz7M
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-18_21,2024-02-16_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 mlxlogscore=860 mlxscore=0 impostorscore=0 suspectscore=0
+ lowpriorityscore=0 spamscore=0 phishscore=0 clxscore=1011 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2401310000 definitions=main-2402190016
 
-On 2024/2/12 14:02, Christoph Hellwig wrote:
-> Looks good:
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> 
-> Can you submit this for inclusion in the vfs tree?
-> .
-> 
-Sure, I will send it out separately.
+processed: The number of bytes processed by the body in the
+most recent  iteration, or a negative errno. 0 causes the iteration to
+stop.
 
-Thanks,
-Yi.
+The processed is useful to check when the loop breaks.
+
+Signed-off-by: Kassey Li <quic_yingangl@quicinc.com>
+---
+ fs/iomap/trace.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+index c16fd55f5595..ff87ac58b6b7 100644
+--- a/fs/iomap/trace.h
++++ b/fs/iomap/trace.h
+@@ -165,6 +165,7 @@ TRACE_EVENT(iomap_iter,
+ 		__field(u64, ino)
+ 		__field(loff_t, pos)
+ 		__field(u64, length)
++		__field(s64, processed)
+ 		__field(unsigned int, flags)
+ 		__field(const void *, ops)
+ 		__field(unsigned long, caller)
+@@ -174,15 +175,17 @@ TRACE_EVENT(iomap_iter,
+ 		__entry->ino = iter->inode->i_ino;
+ 		__entry->pos = iter->pos;
+ 		__entry->length = iomap_length(iter);
++		__entry->processed = iter->processed;
+ 		__entry->flags = iter->flags;
+ 		__entry->ops = ops;
+ 		__entry->caller = caller;
+ 	),
+-	TP_printk("dev %d:%d ino 0x%llx pos 0x%llx length 0x%llx flags %s (0x%x) ops %ps caller %pS",
++	TP_printk("dev %d:%d ino 0x%llx pos 0x%llx length 0x%llx processed %lld flags %s (0x%x) ops %ps caller %pS",
+ 		  MAJOR(__entry->dev), MINOR(__entry->dev),
+ 		   __entry->ino,
+ 		   __entry->pos,
+ 		   __entry->length,
++		   __entry->processed,
+ 		   __print_flags(__entry->flags, "|", IOMAP_FLAGS_STRINGS),
+ 		   __entry->flags,
+ 		   __entry->ops,
+-- 
+2.25.1
 
 
