@@ -1,223 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-11965-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11966-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C829859A4F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 02:05:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87465859A58
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 02:15:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0302B1F212B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 01:05:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 279351F21265
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 01:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAAE1C3E;
-	Mon, 19 Feb 2024 01:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fz+QvxkG"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32F11FC4;
+	Mon, 19 Feb 2024 01:14:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A74394
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 01:05:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29E8653;
+	Mon, 19 Feb 2024 01:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708304710; cv=none; b=b/Yp5E1RtsG+xm7LWHuiyrAhBdb0lWsORuEJL2PNnO1A+sNhPK/wXstnSuZkfgdxOnCnbxO1xAX7+heH6zNEJyF6pUBPnJxG45lqKp87AG4vHk65TATAT7E/OSBKX/uOFUqKive/Vj7M+qShsuB1/80NIZjcVol3IjtY3ANRVO4=
+	t=1708305289; cv=none; b=oCoaj/QM4bQgLgby+E7c1TOCS1xPWQ85pHdrLkV/ddh7heAtWcowTd1oIb8NQKTuDWTe470RD11RReQNmBY1e+BctOUs6jBACgzFXVu4Gz9FSwUdOXZsA3mFtWWDBKfx+geupTbucjl8WFlg2UfyXXW8ZNRghAxdzlyZZ6h4Obk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708304710; c=relaxed/simple;
-	bh=RN/oOnbxOXJRjgABecn+1xhjdfXant7wAu1DO9OYV0M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pTUf/VahciLmYLpzCGd1j0TJeR2t8SaYFtP/eH0NkYlR50G4Y1F5pd3Axyu4b+eIHvk+ibnmMecnf3OAZa2u6X3CwAIKZv0uugXXF3sD0/3FapPGRUurVm3Laij8qUyrTVgsWLSqFvz5YnWvb8NarMdDTo8rRj9oDsoR7ohBsBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fz+QvxkG; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dc6dcd9124bso3563794276.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Feb 2024 17:05:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1708304708; x=1708909508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mIDaOHUmOnFQVc3Wwg+6+LPaeJ2ta81+Eqz5TMzPBys=;
-        b=fz+QvxkGr229b6bOrKWi9XavB8I5cjL/HDA9sjZn+pP0oqOmBxKuzRnbZm2bmE6Nue
-         0X98b9HQ0mJuVpQCJ8NsQDg7bMdv4O6KJJIzE6uqTskf5hlTpRx6+OMe0ARgOY0bFZZP
-         2QfpxR5ErVjv499/jVaEHj6IeV8mVNVWmXWCC4NkPE8oA+lEidFad5YsZfvgtKh3Orr/
-         hP0JbfDr5YYpgdcjnvL68K/qXF24lAuS2EDLWGYZeMwuDeXvtJBb4N5JExgrI8l5DAHr
-         B6lYOoDQJXe0Lhw9wpOcJKkd84rfPiGTDy54w80WJjCEq8y9G66FW8jcJBmU1Nibcmw/
-         qh9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708304708; x=1708909508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mIDaOHUmOnFQVc3Wwg+6+LPaeJ2ta81+Eqz5TMzPBys=;
-        b=LU0fPw7sHVb0TvZxHuvHCkrRD0wlNbsvPwFd1graUYm+nwzbfEuBHHEw9nBphA1pvY
-         /MZLWoiIIqE8Y3V5Kk1vN6LLg/ILRx1cLzbs7JbgD9n9ZkxbughYEinkatB6MP664YWS
-         ZPdBDcTDDimnUvehwWrrtJjRq+SAzYBdVbgJLFTIMLY3T06gC2tdjZ6iGkc/CeK6YnbS
-         wxCXvuQIQEY7bO6fwPW5v/dkXRG0ZTmVax/Qsz4jyTQk+ImF4t4FEWGZJc5tx+CwMyCY
-         t4/dF9LjI7np3m+8OdGvHtkUWyHRKJinw3CKRxbDs8DnHyHqEXtbQgdrrVDeQcux0lE8
-         I5+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW43WO+gGurrZvIHBFPXq6dcTEcmKm9NE4L+5UFRQOZp2+UQESnWYJtT9Csq/zY+JBkAa3wsNVoRVVujHUjgUza41CP5Lj/4L1Ti05bAA==
-X-Gm-Message-State: AOJu0YxXKxgDyEVoLAIpopn068nSYmDKpHMnBfNcr/rUPhY5Ehy72W4O
-	CfXM6ktHrnKnArmZN2EqQMlJI93hioeIrA6IPDifRZJy+H/WmugP5ZVaLo81gME0Kb82mMQVonf
-	a67+Nr/NX7Szr2i0CZfLhhB5DjWjOfQocbtl7
-X-Google-Smtp-Source: AGHT+IFAFF6IWWYhF0S9T//EmmWIuYGcDfDoGsA7me1Exr/qYPq0aAoDdEWC37Tru9GNL3XObftohrbEHommrFTiK+w=
-X-Received: by 2002:a5b:b43:0:b0:dcc:eb38:199c with SMTP id
- b3-20020a5b0b43000000b00dcceb38199cmr10258615ybr.56.1708304707680; Sun, 18
- Feb 2024 17:05:07 -0800 (PST)
+	s=arc-20240116; t=1708305289; c=relaxed/simple;
+	bh=ITsvUtLFTp1JieH+22e8FWpa1zzr2LROlPgee2QxikY=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=I7qlAL/VUCxWeEXr9ByiXRLyR1xDKMLWxSbv+1vleMWqQCknwWpWgHfB6+wcpdpmhHsQwzoDvcti18vIyGzpHoAYzGIOLgFGHRNhrhhPcdm14jDNyyemiULtUVcyPKC7g9o13HvagDaZRDKTkHg4tcrudMgNoneVpdZAB9cv9VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TdPhY1MDMz4f3jdF;
+	Mon, 19 Feb 2024 09:14:37 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 158FF1A0172;
+	Mon, 19 Feb 2024 09:14:42 +0800 (CST)
+Received: from [10.174.176.34] (unknown [10.174.176.34])
+	by APP1 (Coremail) with SMTP id cCh0CgDHlxB_q9JlUdbNEQ--.27706S3;
+	Mon, 19 Feb 2024 09:14:41 +0800 (CST)
+Subject: Re: [RFC PATCH v3 07/26] iomap: don't increase i_size if it's not a
+ write operation
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-ext4@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ jack@suse.cz, ritesh.list@gmail.com, djwong@kernel.org, willy@infradead.org,
+ zokeefe@google.com, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, wangkefeng.wang@huawei.com
+References: <20240127015825.1608160-1-yi.zhang@huaweicloud.com>
+ <20240127015825.1608160-8-yi.zhang@huaweicloud.com>
+ <ZcsCP4h-ExNOcdD6@infradead.org>
+ <74ab3c3e-3daf-5374-75e5-bcb25ffdb527@huaweicloud.com>
+ <ZdKTFp4v1kQuLg9e@dread.disaster.area>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+Message-ID: <fce8b7e1-281a-6756-edbc-ca993dd03ebc@huaweicloud.com>
+Date: Mon, 19 Feb 2024 09:14:39 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.12.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240212213922.783301-1-surenb@google.com> <20240212213922.783301-33-surenb@google.com>
- <f0a56027-472d-44a6-aba5-912bd50ee3ae@suse.cz>
-In-Reply-To: <f0a56027-472d-44a6-aba5-912bd50ee3ae@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 19 Feb 2024 01:04:54 +0000
-Message-ID: <CAJuCfpGUTu7uhcR-23=0d3Wnn8ZbDtNwTaFnukd9qYYVHS9aSA@mail.gmail.com>
-Subject: Re: [PATCH v3 32/35] codetag: debug: skip objext checking when it's
- for objext itself
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
-	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
-	corbet@lwn.net, void@manifault.com, peterz@infradead.org, 
-	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org, 
-	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
-	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
-	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
-	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
-	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
-	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org, 
-	ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org, 
-	ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org, 
-	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
-	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
-	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
-	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
-	cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZdKTFp4v1kQuLg9e@dread.disaster.area>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgDHlxB_q9JlUdbNEQ--.27706S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw17Ww48ZFWxWr48ur1xZrb_yoW8Gry5pr
+	9093ZYkr1ktF1SyrZ7Aay7Xa4rK34xKFy7JF9rWw15JrZ8Zw1Skr48Xa45ua4DA397Xr4F
+	v3yvy34rCa15ZFDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
+	e2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE
+	14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf
+	9x07UZ18PUUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Fri, Feb 16, 2024 at 6:39=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> On 2/12/24 22:39, Suren Baghdasaryan wrote:
-> > objext objects are created with __GFP_NO_OBJ_EXT flag and therefore hav=
-e
-> > no corresponding objext themselves (otherwise we would get an infinite
-> > recursion). When freeing these objects their codetag will be empty and
-> > when CONFIG_MEM_ALLOC_PROFILING_DEBUG is enabled this will lead to fals=
-e
-> > warnings. Introduce CODETAG_EMPTY special codetag value to mark
-> > allocations which intentionally lack codetag to avoid these warnings.
-> > Set objext codetags to CODETAG_EMPTY before freeing to indicate that
-> > the codetag is expected to be empty.
-> >
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > ---
-> >  include/linux/alloc_tag.h | 26 ++++++++++++++++++++++++++
-> >  mm/slab.h                 | 25 +++++++++++++++++++++++++
-> >  mm/slab_common.c          |  1 +
-> >  mm/slub.c                 |  8 ++++++++
-> >  4 files changed, 60 insertions(+)
-> >
-> > diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
-> > index 0a5973c4ad77..1f3207097b03 100644
->
-> ...
->
-> > index c4bd0d5348cb..cf332a839bf4 100644
-> > --- a/mm/slab.h
-> > +++ b/mm/slab.h
-> > @@ -567,6 +567,31 @@ static inline struct slabobj_ext *slab_obj_exts(st=
-ruct slab *slab)
-> >  int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
-> >                       gfp_t gfp, bool new_slab);
-> >
-> > +
-> > +#ifdef CONFIG_MEM_ALLOC_PROFILING_DEBUG
-> > +
-> > +static inline void mark_objexts_empty(struct slabobj_ext *obj_exts)
-> > +{
-> > +     struct slabobj_ext *slab_exts;
-> > +     struct slab *obj_exts_slab;
-> > +
-> > +     obj_exts_slab =3D virt_to_slab(obj_exts);
-> > +     slab_exts =3D slab_obj_exts(obj_exts_slab);
-> > +     if (slab_exts) {
-> > +             unsigned int offs =3D obj_to_index(obj_exts_slab->slab_ca=
-che,
-> > +                                              obj_exts_slab, obj_exts)=
-;
-> > +             /* codetag should be NULL */
-> > +             WARN_ON(slab_exts[offs].ref.ct);
-> > +             set_codetag_empty(&slab_exts[offs].ref);
-> > +     }
-> > +}
-> > +
-> > +#else /* CONFIG_MEM_ALLOC_PROFILING_DEBUG */
-> > +
-> > +static inline void mark_objexts_empty(struct slabobj_ext *obj_exts) {}
-> > +
-> > +#endif /* CONFIG_MEM_ALLOC_PROFILING_DEBUG */
-> > +
->
-> I assume with alloc_slab_obj_exts() moved to slub.c, mark_objexts_empty()
-> could move there too.
+On 2024/2/19 7:30, Dave Chinner wrote:
+> On Sat, Feb 17, 2024 at 04:55:51PM +0800, Zhang Yi wrote:
+>> On 2024/2/13 13:46, Christoph Hellwig wrote:
+>>> Wouldn't it make more sense to just move the size manipulation to the
+>>> write-only code?  An untested version of that is below.  With this
+>>
+>> Sorry for the late reply and thanks for your suggestion, The reason why
+>> I introduced this new helper iomap_write_end_simple() is I don't want to
+>> open code __iomap_put_folio() in each caller since corresponding to
+>> iomap_write_begin(), it's the responsibility for iomap_write_end_*() to
+>> put and unlock folio, so I'd like to keep it in iomap_write_end_*().
+> 
+> Just because we currently put the folio in iomap_write_end_*(), it
+> doesn't mean we must always do it that way.
+> 
+>> But I don't feel strongly about it, it's also fine by me to just move
+>> the size manipulation to the write-only code if you think it's better.
+> 
+> I agree with Christoph that it's better to move the i_size update
+> into iomap_write_iter() than it is to implement a separate write_end
+> function that does not update the i_size. The iter functions already
+> do work directly on the folio that iomap_write_begin() returns, so
+> having them drop the folio when everything is done isn't a huge
+> deal...
+> 
 
-No, I think mark_objexts_empty() belongs here. This patch introduced
-the function and uses it. Makes sense to me to keep it all together.
+Sure, I will revise it as you suggested in my next iteration.
 
->
-> >  static inline bool need_slab_obj_ext(void)
-> >  {
-> >  #ifdef CONFIG_MEM_ALLOC_PROFILING
-> > diff --git a/mm/slab_common.c b/mm/slab_common.c
-> > index 21b0b9e9cd9e..d5f75d04ced2 100644
-> > --- a/mm/slab_common.c
-> > +++ b/mm/slab_common.c
-> > @@ -242,6 +242,7 @@ int alloc_slab_obj_exts(struct slab *slab, struct k=
-mem_cache *s,
-> >                * assign slabobj_exts in parallel. In this case the exis=
-ting
-> >                * objcg vector should be reused.
-> >                */
-> > +             mark_objexts_empty(vec);
-> >               kfree(vec);
-> >               return 0;
-> >       }
-> > diff --git a/mm/slub.c b/mm/slub.c
-> > index 4d480784942e..1136ff18b4fe 100644
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -1890,6 +1890,14 @@ static inline void free_slab_obj_exts(struct sla=
-b *slab)
-> >       if (!obj_exts)
-> >               return;
-> >
-> > +     /*
-> > +      * obj_exts was created with __GFP_NO_OBJ_EXT flag, therefore its
-> > +      * corresponding extension will be NULL. alloc_tag_sub() will thr=
-ow a
-> > +      * warning if slab has extensions but the extension of an object =
-is
-> > +      * NULL, therefore replace NULL with CODETAG_EMPTY to indicate th=
-at
-> > +      * the extension for obj_exts is expected to be NULL.
-> > +      */
-> > +     mark_objexts_empty(obj_exts);
-> >       kfree(obj_exts);
-> >       slab->obj_exts =3D 0;
-> >  }
->
+Thanks,
+Yi.
+
 
