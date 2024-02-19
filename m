@@ -1,208 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-12047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12049-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A143685ABBF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 20:06:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC2585ABE0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 20:17:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17A8BB24641
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 19:05:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BFC61C2177A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 19:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CEC4C617;
-	Mon, 19 Feb 2024 19:05:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82965524B7;
+	Mon, 19 Feb 2024 19:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b="NnwskEQB"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L+vMdNx5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s7FAO35e";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="L+vMdNx5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="s7FAO35e"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4317.proton.ch (mail-4317.proton.ch [185.70.43.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9F34C3D4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 19:05:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277FE5026E;
+	Mon, 19 Feb 2024 19:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708369552; cv=none; b=P5mgH8JqE2GQQtmUfWylXttHCOKNLneuo4X6C4fB0BAcAZ9OYXZlT3VDb+D4QHQnT5PFmPx7vNQHQlBmSm+YVrJrOU3gHSJnEz5wQ+peK4aXnA+Ie84i9hurIQ5E3xwiROAIXQBVjaKHusw9w5IavRNlzLGN+XiH1DpQzdvs+pg=
+	t=1708370242; cv=none; b=EuuZK7hDt8/a6fztLghV0ppviae0JfjjYv4xV20lCmjj/5xnSpOSYMDYRqaD/I5IrwAV7ycLeh0qAXyZ8TjdxgW8jeBGWjeq9QpB47yQ9JU6xJKv/0SD6ofwHiFjkfeoSbWwvfr/tGYt4tk6WnBlca7bzbgJrULcSI/u9jP+d3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708369552; c=relaxed/simple;
-	bh=Emo1tUSSIqxJcDfABCAsgRWSne7/TG2nyXcyPizg3SU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lM6OHq+/wzlP+CtXzETN6W7OaFtcrNpfWeYZ3ZvbCldLLT1sgyKL+XhTk3CmDPTw7EA+Hs6JF6Do9bAEhNMabY6dK40LUFVUIcaLTDFcYqRiwNklHgo1trKwEpUnMdG1Xhmu0cO8azxKc+ZGf5r+Xi7ZpBiE+4hylX2rLBCbjDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link; spf=pass smtp.mailfrom=spawn.link; dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b=NnwskEQB; arc=none smtp.client-ip=185.70.43.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spawn.link
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=spawn.link;
-	s=protonmail3; t=1708369539; x=1708628739;
-	bh=Emo1tUSSIqxJcDfABCAsgRWSne7/TG2nyXcyPizg3SU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=NnwskEQBd5cTvlr7zS9uJjIzN/doM1baNNQxX4E5L0XdLMheLQ64GgqZyCmr5kDx1
-	 NB2na2QTkmbOpoXgkoRx58W3WQhav0PgauzVn5CRey/79hcYzWau7AvK9OPoVCktIq
-	 HNVV/aZxUdHxWmRclAvSgA0QOwbxobdJM0JZ7E7OJuTXwfUwyCdzudNoyPs2bOdA2I
-	 lOEvYNV88/LYkfqfbmSh+4HMResR9zpaG9dVCvEBkDKMAxDXqBMgQts+86DESy2BIr
-	 W0JBi/GL6fJf3EooltevPX6wYl7ZRX5PsJlBbCX0oxKWyUvebUDYt0Kll7PW0hkC2M
-	 eRilAoqc7HwkQ==
-Date: Mon, 19 Feb 2024 19:05:19 +0000
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-From: Antonio SJ Musumeci <trapexit@spawn.link>
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, fuse-devel <fuse-devel@lists.sourceforge.net>
-Subject: Re: [fuse-devel] Proxmox + NFS w/ exported FUSE = EIO
-Message-ID: <BAQ4wsbXlrpVWedBrk1ij49tru5E6jxB11oY2VoWH5C7scO9FgmKRkQIsVekwRNgfxxxwWwWapZlBGSGQFSjSVhMs01urB1nLE4-_o5OOiU=@spawn.link>
-In-Reply-To: <93b170b4-9892-4a32-b4f1-6a18b67eb359@fastmail.fm>
-References: <d997c02b-d5ef-41f8-92b6-8c6775899388@spawn.link> <CAOQ4uxhek5ytdN8Yz2tNEOg5ea4NkBb4nk0FGPjPk_9nz-VG3g@mail.gmail.com> <b9cec6b7-0973-4d61-9bef-120e3c4654d7@spawn.link> <CAOQ4uxgZR4OtCkdrpcDGCK-MqZEHcrx+RY4G94saqaXVkL4cKA@mail.gmail.com> <23a6120a-e417-4ba8-9988-19304d4bd229@spawn.link> <93b170b4-9892-4a32-b4f1-6a18b67eb359@fastmail.fm>
-Feedback-ID: 55718373:user:proton
+	s=arc-20240116; t=1708370242; c=relaxed/simple;
+	bh=sRfczU3h38e9XwnW/0H/0VrVNL08337uFZQFx5xcBrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uvFdRoSfwXKhsZCpsa/22r1ZD0Z0voSXhBbmsHQk1yvG8gifli5AG8aM+FhtYaeoKOXUQ+wANE0u9bICbetqmM6ChI2pMrgpWUJiPRgojDhOlNYu6N6XTojoMjCN40772wwLlKa3u5QV+Zo+g6vs5Fb/08S++W0SQ86nhmvrpfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L+vMdNx5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s7FAO35e; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=L+vMdNx5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=s7FAO35e; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 345AF21CDF;
+	Mon, 19 Feb 2024 19:17:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1708370239;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hP0JzOSxa8Ak34PkLlYrH+BW+BeCI1kfUuoJPW8HusA=;
+	b=L+vMdNx52tHJkwchBcBa001qK+SZbtkZ0/HROkYFTpK0Mp6T669V9VwOkeXDQTpQ2fHujp
+	itj6yObR2GSzdmVyzY6nN++Gzw11Xb9rJnuhobwQBRoOg7xeCeTWPpEjTMyFFVrVdH1zO/
+	QWJf0rogCt/jib7V0aowiiggrz/iFOo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1708370239;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hP0JzOSxa8Ak34PkLlYrH+BW+BeCI1kfUuoJPW8HusA=;
+	b=s7FAO35emUqsBT78ndugZlEtb/uTp91WcAJqAHeiXy2r8Or+q1xNYrwiD46+AOf7djzZ9L
+	PZKkia9ha8+FKbAg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1708370239;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hP0JzOSxa8Ak34PkLlYrH+BW+BeCI1kfUuoJPW8HusA=;
+	b=L+vMdNx52tHJkwchBcBa001qK+SZbtkZ0/HROkYFTpK0Mp6T669V9VwOkeXDQTpQ2fHujp
+	itj6yObR2GSzdmVyzY6nN++Gzw11Xb9rJnuhobwQBRoOg7xeCeTWPpEjTMyFFVrVdH1zO/
+	QWJf0rogCt/jib7V0aowiiggrz/iFOo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1708370239;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hP0JzOSxa8Ak34PkLlYrH+BW+BeCI1kfUuoJPW8HusA=;
+	b=s7FAO35emUqsBT78ndugZlEtb/uTp91WcAJqAHeiXy2r8Or+q1xNYrwiD46+AOf7djzZ9L
+	PZKkia9ha8+FKbAg==
+Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 0B3F5139C6;
+	Mon, 19 Feb 2024 19:17:19 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap2.dmz-prg2.suse.org with ESMTPSA
+	id ciGVAj+p02UMUgAAn2gu4w
+	(envelope-from <dsterba@suse.cz>); Mon, 19 Feb 2024 19:17:19 +0000
+Date: Mon, 19 Feb 2024 20:16:34 +0100
+From: David Sterba <dsterba@suse.cz>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
+	jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
+	jack@suse.cz, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
+	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
+	io-uring@vger.kernel.org, nilay@linux.ibm.com,
+	ritesh.list@gmail.com,
+	Prasad Singamsetty <prasad.singamsetty@oracle.com>
+Subject: Re: [PATCH v4 03/11] fs: Initial atomic write support
+Message-ID: <20240219191634.GY355@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20240219130109.341523-1-john.g.garry@oracle.com>
+ <20240219130109.341523-4-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240219130109.341523-4-john.g.garry@oracle.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Bar: /
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=L+vMdNx5;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=s7FAO35e
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.26 / 50.00];
+	 HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
+	 TO_DN_SOME(0.00)[];
+	 REPLYTO_ADDR_EQ_FROM(0.00)[];
+	 R_RATELIMIT(0.00)[to_ip_from(RLpoxz4e4fx16srn3jiqdcgp9j)];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 BAYES_HAM(-0.55)[80.88%];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 RCPT_COUNT_TWELVE(0.00)[26];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.cz:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FREEMAIL_CC(0.00)[kernel.dk,kernel.org,lst.de,grimberg.me,linux.ibm.com,oracle.com,zeniv.linux.org.uk,redhat.com,suse.cz,vger.kernel.org,lists.infradead.org,mit.edu,google.com,kvack.org,gmail.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Score: -0.26
+X-Rspamd-Queue-Id: 345AF21CDF
+X-Spam-Flag: NO
 
-On Monday, February 19th, 2024 at 5:36 AM, Bernd Schubert <bernd.schubert@f=
-astmail.fm> wrote:
+On Mon, Feb 19, 2024 at 01:01:01PM +0000, John Garry wrote:
+> From: Prasad Singamsetty <prasad.singamsetty@oracle.com>
+> --- a/include/uapi/linux/fs.h
+> +++ b/include/uapi/linux/fs.h
+> @@ -301,9 +301,12 @@ typedef int __bitwise __kernel_rwf_t;
+>  /* per-IO O_APPEND */
+>  #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
+>  
+> +/* Atomic Write */
+> +#define RWF_ATOMIC	((__force __kernel_rwf_t)0x00000040)
 
->
->
->
->
-> On 2/18/24 01:48, Antonio SJ Musumeci wrote:
->
-> > On 2/7/24 01:04, Amir Goldstein wrote:
-> >
-> > > On Wed, Feb 7, 2024 at 5:05=E2=80=AFAM Antonio SJ Musumeci trapexit@s=
-pawn.link wrote:
-> > >
-> > > > On 2/6/24 00:53, Amir Goldstein wrote:
-> > > > only for a specific inode object to which you have an open fd for.
-> > > > Certainly not at the sb/mount level.
-> > >
-> > > Thanks,
-> > > Amir.
-> >
-> > Thanks again Amir.
-> >
-> > I've narrowed down the situation but I'm still struggling to pinpoint
-> > the specifics. And I'm unfortunately currently unable to replicate usin=
-g
-> > any of the passthrough examples. Perhaps some feature I'm enabling (or
-> > not). My next steps are looking at exactly what differences there are i=
-n
-> > the INIT reply.
-> >
-> > I'm seeing a FUSE_LOOKUP request coming in for ".." of nodeid 1.
-> >
-> > I have my FUSE fs setup about as simply as I can. Single threaded. attr
-> > and entry/neg-entry caching off. direct-io on. EXPORT_SUPPORT is
-> > enabled. The mountpoint is exported via NFS. On the same host I mount
-> > NFS. I mount it on another host as well.
-> >
-> > On the local machine I loop reading a large file using dd
-> > (if=3D/mnt/nfs/file, of=3D/dev/null). After it finished I echo 3 >
-> > drop_caches. That alone will go forever. If on the second machine I
-> > start issuing `ls -lh /mnt/nfs` repeatedly after a moment it will
-> > trigger the issue.
-> >
-> > `ls` will successfully statx /mnt/nfs and the following openat and
-> > getdents also return successfully. As it iterates over the output of
-> > getdents statx's for directories fail with EIO and files succeed as
-> > normal. In my FUSE server for each EIO failure I'm seeing a lookup for
-> > ".." on nodeid 1. Afterwards all lookups fail on /mnt/nfs. The only
-> > request that seems to work is statfs.
-> >
-> > This was happening some time ago without me being able to reproduce it
-> > so I put a check to see if that was happening and return -ENOENT.
-> > However, looking over libfuse HLAPI it looks like fuse_lib_lookup
-> > doesn't handle this situation. Perhaps a segv waiting to happen?
-> >
-> > If I remove EXPORT_SUPPORT I'm no longer triggering the issue (which I
-> > guess makes sense.)
-> >
-> > Any ideas on how/why ".." for root node is coming in? Is that valid? It
-> > only happens when using NFS? I know there is talk of adding the ability
-> > of refusing export but what is the consequence of disabling
-> > EXPORT_SUPPORT? Is there a performance or capability difference? If it
-> > is a valid request what should I be returning?
->
->
-> If you don't set EXPORT_SUPPORT, it just returns -ESTALE in the kernel
-> side functions - which is then probably handled by the NFS client. I
-> don't think it can handle that in all situations, though. With
-> EXPORT_SUPPORT an uncached inode is attempted to be opened with the name
-> "." and the node-id set in the lookup call. Similar for parent, but
-> ".." is used.
->
-> A simple case were this would already fail without NFS, but with the
-> same API
->
-> name_to_handle_at()
-> umount fuse
-> mount fuse
-> open_by_handle_at
->
->
-> I will see if I can come up with a simple patch that just passes these
-> through to fuse-server
->
->
-> static const struct export_operations fuse_export_operations =3D {
-> .fh_to_dentry =3D fuse_fh_to_dentry,
-> .fh_to_parent =3D fuse_fh_to_parent,
-> .encode_fh =3D fuse_encode_fh,
-> .get_parent =3D fuse_get_parent,
-> };
->
->
->
->
-> Cheers,
-> Bernd
-
-Thank you but I'm not sure I'm able to piece together the answers to my que=
-stions from that.
-
-Perhaps my ignorance of the kernel side is showing but how can the root nod=
-e have a parent? If it can have a parent then does that mean that the HLAPI=
- has a possible bug in lookup?
-
-I handle "." and ".." just fine for non-root nodes. But this is `lookup(nod=
-eid=3D1,name=3D"..");`.
-
-Given the relative directory structure:
-
-* /dir1/
-* /dir2/
-* /dir3/
-* /file1
-* /file2
-
-This is what I see from the kernel:
-
-lookup(nodeid=3D3, name=3D.);
-lookup(nodeid=3D3, name=3D..);
-lookup(nodeid=3D1, name=3Ddir2);
-lookup(nodeid=3D1, name=3D..);
-forget(nodeid=3D3);
-forget(nodeid=3D1);
-
-lookup(nodeid=3D4, name=3D.);
-lookup(nodeid=3D4, name=3D..);
-lookup(nodeid=3D1, name=3Ddir3);
-lookup(nodeid=3D1, name=3D..);
-forget(nodeid=3D4);
-
-lookup(nodeid=3D5, name=3D.);
-lookup(nodeid=3D5, name=3D..);
-lookup(nodeid=3D1, name=3Ddir1);
-lookup(nodeid=3D1, name=3D..);
-forget(nodeid=3D5);
-forget(nodeid=3D1);
-
-
-It isn't clear to me what the proper response is for lookup(nodeid=3D1, nam=
-e=3D..). Make something up? From userspace if you stat "/.." you get detail=
-s for "/". If I respond to that lookup request with the details of root nod=
-e it errors out.
+Should this be 0x20 so it's the next bit after RWF_APPEND?
 
