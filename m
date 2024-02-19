@@ -1,77 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-12022-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330F385A5DE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 15:26:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 516C385A627
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 15:39:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94BE81F21EE6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 14:26:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8461DB21570
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 14:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F67A376E5;
-	Mon, 19 Feb 2024 14:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5FDE1DDF6;
+	Mon, 19 Feb 2024 14:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="X6rgod5W";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="X6rgod5W"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KWPFwFJD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3054B37160;
-	Mon, 19 Feb 2024 14:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7032A1E533
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 14:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708352791; cv=none; b=GsY2DiChj6L+4EumfxUKiRcHy3/a6m1qiwhjkUfJBHZEtIBwTZojRfx7jOJE0git7JZlJxzG7MhAJmuQzoiSyS5Wpd8s0XictVWm5Mx8dxbHviaz8xbV6kAa3aQWcMODSm88Bjy7aXph52hmmk0UwixNign1pKPcaWt45pItv/M=
+	t=1708353557; cv=none; b=hyGvf9I60rAa+9o9KFztwo3y5LyoLcvfmP3x1Sh/zFsLyrhOer9EiCePkoJhm5GphtzrEoXmYj3S93ukT//1YEA2GgbtFAbpWh2WxR9UALCeL1R5+1i7VPTv+dp/c/scwvOMyum4jgGTTEEz6mBHkXlWywy6QmaHK8mOk/cInJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708352791; c=relaxed/simple;
-	bh=tDeLBVZBhJnHFKvYyiFdc/Oh6W2qYH8MubgFjeGN0t8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oqNK7RsbXgKnqbsWngL02bLmZLe2zSGvYeHkTxxNQQ16zC2PfSQITmjgF9eGpJtKb9rmX119YuE/KUxMrlgpPoS+hxVO12Ke02xFikv1ptq1vpoZOOCo8/P4zL75sCCxmbRu/mKh/EnSo0/owk50erShfY4ik6e3cxdI5klBjsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=X6rgod5W; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=X6rgod5W; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1708352788;
-	bh=tDeLBVZBhJnHFKvYyiFdc/Oh6W2qYH8MubgFjeGN0t8=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=X6rgod5WNqiue37EBcG75bN+ZiZTpoNYon5iS1qMIA6pcgOykm/icAWOADJtAQDLx
-	 z7jhf4a/X/mFCarEQ/7q8bfsK5Vc6/tt30BzUm0sTpjTWG+h3oYLvSM+FZDKtg6yjX
-	 5hLko2nQBZalmgCPP0TPoBzs97/ef68sf56J3cck=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 5A17A1286952;
-	Mon, 19 Feb 2024 09:26:28 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id iFERsniFKniF; Mon, 19 Feb 2024 09:26:28 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1708352788;
-	bh=tDeLBVZBhJnHFKvYyiFdc/Oh6W2qYH8MubgFjeGN0t8=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=X6rgod5WNqiue37EBcG75bN+ZiZTpoNYon5iS1qMIA6pcgOykm/icAWOADJtAQDLx
-	 z7jhf4a/X/mFCarEQ/7q8bfsK5Vc6/tt30BzUm0sTpjTWG+h3oYLvSM+FZDKtg6yjX
-	 5hLko2nQBZalmgCPP0TPoBzs97/ef68sf56J3cck=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	s=arc-20240116; t=1708353557; c=relaxed/simple;
+	bh=iAYLQ/ry4Ws2zpmoqOww5l5/+sgF7NvkadRmo19kmW0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mu8F9bBzXUtjUJ2GAXVQ/+LW2bOtdR7K3xei8s9c3omu9uMietWwcyOYa59l/TiaTq9deTczuVudhGhBpzESk0gm26Z6Qt8L4XrL3XNglcdu9j24x0bl79c6rc80th3+6k1j66i5yGNCELDpGS7JHi1wEFRQtNStXJfyxbyoEyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KWPFwFJD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1708353553;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=zRNUK86yxiv/OwmKYhoDvWlQYRo9iQoXDxOJPggkFCc=;
+	b=KWPFwFJDMUefH9bX5Tiw8hbCNLyk1z16IL2TlBQO6S/ghd3xwIVMfeRWRJYMyd5UljA72K
+	A92yU/KRk8ZY+dshHvEzjwf4ICNjuhRsaA4q9VlGpPk2/XPCV3uMRolQsVvs9vuVV49d6s
+	GsOf7nsR8FndoHR+ve4kJiKQ95M8j8U=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-331-0HMhFc7UODeaRflfNH66Xw-1; Mon, 19 Feb 2024 09:39:09 -0500
+X-MC-Unique: 0HMhFc7UODeaRflfNH66Xw-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits))
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 987511286941;
-	Mon, 19 Feb 2024 09:26:27 -0500 (EST)
-Message-ID: <141b4c7ecda2a8c064586d064b8d1476d8de3617.camel@HansenPartnership.com>
-Subject: Re: [LSF TOPIC] beyond uidmapping, & towards a better security model
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lsf-pc@lists.linux-foundation.org
-Cc: Christian Brauner <christian@brauner.io>, =?ISO-8859-1?Q?St=E9phane?=
-	Graber <stgraber@stgraber.org>
-Date: Mon, 19 Feb 2024 09:26:25 -0500
-In-Reply-To: <tixdzlcmitz2kvyamswcpnydeypunkify5aifsmfihpecvat7d@pmgcepiilpi6>
-References: 
-	<tixdzlcmitz2kvyamswcpnydeypunkify5aifsmfihpecvat7d@pmgcepiilpi6>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 65111185A780;
+	Mon, 19 Feb 2024 14:39:09 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.15])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 3AB65492BE2;
+	Mon, 19 Feb 2024 14:39:08 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>
+Cc: David Howells <dhowells@redhat.com>,
+	Markus Suvanto <markus.suvanto@gmail.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	Daniil Dulov <d.dulov@aladdin.ru>,
+	linux-afs@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] afs: Miscellaneous fixes
+Date: Mon, 19 Feb 2024 14:39:01 +0000
+Message-ID: <20240219143906.138346-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,86 +72,35 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
 
-On Sat, 2024-02-17 at 15:56 -0500, Kent Overstreet wrote:
-> AKA - integer identifiers considered harmful
-> 
-> Any time you've got a namespace that's just integers, if you ever end
-> up needing to subdivide it you're going to have a bad time.
-> 
-> This comes up all over the place - for another example, consider
-> ioctl numbering, where keeping them organized and collision free is a
-> major headache.
-> 
-> For UIDs, we need to be able to subdivide the UID namespace for e.g.
-> containers and mounting filesystems as an unprivileged user - but
-> since we just have an integer identifier, this requires complicated
-> remapping and updating and maintaining a global table.
-> 
-> Subdividing a UID to create new permissions domains should be a
-> cheap, easy operation, and it's not.
-> 
-> The solution (originally from plan9, of course) is - UIDs shouldn't
-> be numbers, they should be strings; and additionally, the strings
-> should be paths.
-> 
-> Then, if 'alice' is a user, 'alice.foo' and 'alice.bar' would be
-> subusers, created by alice without any privileged operations or
-> mucking with outside system state, and 'alice' would be superuser
-> w.r.t. 'alice.foo' and 'alice.bar'.
-> 
-> What's this get us?
+Hi Christian,
 
-I would have to say that changing kuid for a string doesn't really buy
-us anything except a load of complexity for no very real gain. 
-However, since the current kuid is u32 and exposed uid is u16 and there
-is already a proposal to make use of this somewhat in the way you
-envision, there might be a possibility to re-express kuid as an array
-of u16s without much disruption.  Each adjacent pair could represent
-the owner at the top and the userns assigned uid underneath.  That
-would neatly solve the nesting problem the current upper 16 bits
-proposal has.
+Here are some fixes for afs, if you could take them?
 
-However, neither proposal would get us out of the problem of mount
-mapping because we'd have to keep the filesystem permission check on
-the owning uid unless told otherwise.
+ (1) Fix searching for the AFS fileserver record for an incoming callback
+     in a mixed IPv4/IPv6 environment.
 
-> Much better, easier to use sandboxing - and maybe we can kill off a
-> _whole_ lot of other stuff, too. 
-> 
-> Apparmour and selinux are fundamentally just about sandboxing
-> programs so they can't own everything owned by the user they're run
-> by.
-> 
-> But if we have an easy way to say "exec this program as a subuser of
-> the current user..."
-> 
-> Then we can control what that program can access with just our
-> existing UNIX permission and acls.
-> 
-> This would be a pretty radical change, and there's a number of things
-> to explore - lots of brainstorming to do.
-> 
->  - How can we do this without breaking absolutely everything?
-> Obviously,
->    any syscalls that communicate in terms of UIDs and GIDs are a
->    problem; can we come up with a compat layer so that most stuff
-> more
->    or less still works?
-> 
->  - How can we do this a way that's the most orthogonal, that gets us
-> the
->    most bang for our buck? How can we kill off as much security model
->    stupidity as possible? How can we make sandboxing _dead easy_ for
-> new
->    applications?
+ (2) Fix the size of a buffer in afs_update_volume_status() to avoid
+     overrunning it and use snprintf() as well.
 
-So all of the above could be covered by a u16 kuid array with the last
-element exposed to the user as the uid.  However, there are still
-problems even with that approach: the unmapped uid/gid is something
-some containers rely on and, as I said above, the mount mapping still
-would have to be admin assigned.
+The patches can be found here:
 
-James
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-fixes
+
+Thanks,
+David
+
+Daniil Dulov (1):
+  afs: Increase buffer size in afs_update_volume_status()
+
+Marc Dionne (1):
+  afs: Fix ignored callbacks over ipv4
+
+ fs/afs/internal.h |  6 ++----
+ fs/afs/main.c     |  3 +--
+ fs/afs/server.c   | 14 +++++---------
+ fs/afs/volume.c   |  4 ++--
+ 4 files changed, 10 insertions(+), 17 deletions(-)
 
 
