@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-11970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74774859B07
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 04:38:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD130859B19
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 04:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A82121C21287
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 03:38:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368632812A9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 03:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E8946B3;
-	Mon, 19 Feb 2024 03:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 837D7523D;
+	Mon, 19 Feb 2024 03:42:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="oYFUEVPB"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="gvt1Zjfh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04072442A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 03:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D195228
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 03:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708313898; cv=none; b=T8YrOdMS2RaphtyAhX9t0Lpa002Wj9FMrQHemts0CReWqaZdq1kc+a8ogRM29Lu/pNBPB00M8h/U2+GnB2LM5Z5ok1N4ZWA3GSn6a3cRburjGeyBIJMBBl8+iKSqz1DVPEJHxAyEcnsOw9dlnqZBgkwmWLcoHJRVyhr1U0ghMM0=
+	t=1708314158; cv=none; b=pKmSSf29xp61CeOl+t++bSTqosnbY0RYYHyRtURp8Fehpc6dDaycj5Acc7B4sNUH9NjBB5C2T+ZfhaNwOyVHxkQD45BgrNR6OFFlMXySCx4ggRrGrybIMC2eK0mwkYCYnDuC7zW1dBgjic8WAa3UaC68HBFWTWYnpmw1ce4Rir8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708313898; c=relaxed/simple;
-	bh=dv6zeaFrRvbAqGuha6VsK0ygAyWi2WBXbRGFN+cxJJY=;
+	s=arc-20240116; t=1708314158; c=relaxed/simple;
+	bh=Hu/euHj5j899YVWzN9wf612S7R2Z3CPK4e4MYBKPJa8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uf3eI3p+GD2L/mYgyZdLmlJqmhNIvPuXtfU9ecMSolTsSgUIEyuH7w9Ezdz0Y1DeBBqR5K2TDhJ3lyH3HRmFvO6adHrs7qJFpnEZ2PRKWPLsefBXYLuFflzArVQMOSAYAA7mY6uhRUhKa4+UN02nhjCJDRksgUGB7+ozyUOyodw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=oYFUEVPB; arc=none smtp.client-ip=209.85.216.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=pdKG7v12VAeOnMfN/2GDZKuO98UDG2J2pFK3mF8WKMhZKxsHkfbionED5DV3DW5s+mPccqTelbKPT4feZEjsl+s6+LssXyurVCSl/E4MJDkyE11ZQgUdq50WOCMuaqbYd7bqqhMeKn+cK5+pjv+0q52OmxEogb8wDXcS1Jzdp3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=gvt1Zjfh; arc=none smtp.client-ip=209.85.167.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2998950e951so122497a91.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Feb 2024 19:38:16 -0800 (PST)
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3bbbc6bcc78so3071378b6e.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Feb 2024 19:42:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1708313896; x=1708918696; darn=vger.kernel.org;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1708314155; x=1708918955; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=snkAwXlGmKMGPxH6OPqiR7B5ATkC+pV6nS/zNfbY9Vc=;
-        b=oYFUEVPBgH5Vigt/fsajt37Tyqp0QSQVlYm+YL/w+nxqVJWmtuzXhpZl8mopYiqiXa
-         ih/YU4mDqKQp7kUsiO3WpTsa1u2Q2nQwO+vLsGFqJkQZ00qrHsDj1k+jcoNEl9HjDarY
-         q0MlNq8KEl5Jq13+bnS5HT5zjzgAf+RAPkveYRyJhJu2lrIkz2Hi+QKD5dWEq1PY2LQw
-         w21+Q/tKZ2Xa9+zfS7dhwDSwOlmdWqRz5OY1rKLd/Un0QOUm8cI8yWjbJU7FO2EOFmI2
-         +JNqsP50/ctpTc+n4MxANfTA1+u94+QXXid57UjAVWkHtHfdbM75GtJiX9v6sx0BgzRX
-         SKXQ==
+        bh=eyiPZACU0oUbgHtW/CjAbawigtEMb+yd9pHo7XpiTxc=;
+        b=gvt1Zjfh/BkhzRyOHCVwRbDXyKyPx+drUq56KoK6c8jbXgHTXNF2lKIhVB37MxDOO5
+         SYqzsFNAKJpbFU4S6V8EyBugOcgTPNhxYDTnTZoqFE413oLG+p+yYcXjhYjAhRy+2Gst
+         sD2DkdsAzXVEtJYtQja0P6kI9fDGS7GXwydBvdZ/rM40b6ufDyiWw+Y3wdq70p3QxVjQ
+         F9qzMt6zonQpccFi/1aOYwvR0wJeavHoGSAe1QtuxNiM3iGoukiZDEDIdpPALWkKeL10
+         H3pBfTlvnYyG8lAVuFTTGO1v3y1ovgfxrTiTbzRZjZFfcfWkPvf+qHcIwkFBZ/eBbJr/
+         Ah9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708313896; x=1708918696;
+        d=1e100.net; s=20230601; t=1708314155; x=1708918955;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=snkAwXlGmKMGPxH6OPqiR7B5ATkC+pV6nS/zNfbY9Vc=;
-        b=WD/E43A01wtWTx7EMOOC+Ddlmc/IRD/v2pammgF/tl34yaLmEz6sqD9bWpB+X/ZUlB
-         Irl7G+g4wsqw4r71sH165AMg0XepT8IIpcobNMI1WsSAHtngTOGR5ueHwSrx8KWSAtRb
-         PWHlY0aA3R3rJWNoYayJ4AF6JTu11Q2HJRHynTXRvrrBkkBRhXt+GbL4P1IQ/+vGAfov
-         9WZJXTcSMa+aCS8PZt2B6Ag/O8in9yRMWH5GZ57iQavpl63Pzdb1DOmZK8rFkTh8KsWP
-         srIkuI01MxidI5bhHVbQ8A3YHqyf7PwtyUqonptYEHMpy44k2cD92In2X4xQJ/5o/LmQ
-         n5Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLIpSo86BC0BgibVPCm6OOEHi7cJlmefzktKPBDKI5xuV1tw3HHNDB18Vlykdb/StMIKRnj3NjdihK31dyHBwzXbO9buF7m8mNrjgIUA==
-X-Gm-Message-State: AOJu0YyBXsol4oim4uGzlq9u8vo/eTB2IdGTeEdvlJHjtwZaRspofQH3
-	9hMA2ARsaZeewZ9oVkW4k7GAsiScx1ZC1QS3yPqetDbpBM3YSB6AwzzqhETR5C8=
-X-Google-Smtp-Source: AGHT+IFD58ZsKpdgAYSoAuHc6zxmZ42otJO9CrU80mux2WyOXUdV/N1NvIgiKkl34xRS9rvGCNiplg==
-X-Received: by 2002:a17:90b:2306:b0:299:489f:a126 with SMTP id mt6-20020a17090b230600b00299489fa126mr3293858pjb.41.1708313896144;
-        Sun, 18 Feb 2024 19:38:16 -0800 (PST)
+        bh=eyiPZACU0oUbgHtW/CjAbawigtEMb+yd9pHo7XpiTxc=;
+        b=Z8Cla5oZX7KettIWAICJDNW1w85b6qrmuorfLlFwpCMKthtQ/Ko+8OCFImINBtOdkp
+         5rE+1xNnTov2DzesqV7b3GTOOH1l1KqPdl63vAD7rxvb+oQBb1YrrJAlUAghdjAawdYn
+         el3KbtQYDsxHP8q09iPyPKZS1qWUmTo6qaNqdi/hABRB7QVdRrF4x51zFy9NlqawQr52
+         3Y+FivyP8p0TZmxF39WLNqXFwFdnFJvAivUyMTyKp2A1+C+Deh+KVjTam2ZluAKp/CoF
+         d/99hDeSfFP2lTD5g8aC/+2irRoELqqeJSIq1IW6mExv6XbuHmlcDQvI/pstvPj7U7BU
+         WaVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGnzCDu7FeJnDR3fBoaAuEg24cj1bVjMAUl7PsWQr601s44q+G93sZJe4znOuXO55R29xV2ISl4gKkletaF8D49ppqmSjDxyNqApEz9g==
+X-Gm-Message-State: AOJu0Ywqodl5dnD327K9wfXi9TWkGK9KFvTW6GUDn+CVMuC8zOzgUkbO
+	zGMtthtsE52tfQ4whccmFp2MmEmwWd92oTlv46mY38JC53Ij2xeYGZqRBItdKvE=
+X-Google-Smtp-Source: AGHT+IG247sHaGRl0dGx31RZj3qfKm4TNVdNxXI0dcCXMIdpylbZRR4lU0I0kGWWKmP/wgjk9l782Q==
+X-Received: by 2002:a05:6808:1296:b0:3c0:4653:6e9e with SMTP id a22-20020a056808129600b003c046536e9emr13956348oiw.6.1708314155496;
+        Sun, 18 Feb 2024 19:42:35 -0800 (PST)
 Received: from dread.disaster.area (pa49-181-247-196.pa.nsw.optusnet.com.au. [49.181.247.196])
-        by smtp.gmail.com with ESMTPSA id c24-20020a17090ad91800b0029948cb4367sm3954944pjv.23.2024.02.18.19.38.15
+        by smtp.gmail.com with ESMTPSA id fb39-20020a056a002da700b006e44bce8318sm1695413pfb.124.2024.02.18.19.42.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Feb 2024 19:38:15 -0800 (PST)
+        Sun, 18 Feb 2024 19:42:35 -0800 (PST)
 Received: from dave by dread.disaster.area with local (Exim 4.96)
 	(envelope-from <david@fromorbit.com>)
-	id 1rbuTs-008S7J-2H;
-	Mon, 19 Feb 2024 14:38:12 +1100
-Date: Mon, 19 Feb 2024 14:38:12 +1100
+	id 1rbuY4-008SAI-30;
+	Mon, 19 Feb 2024 14:42:32 +1100
+Date: Mon, 19 Feb 2024 14:42:32 +1100
 From: Dave Chinner <david@fromorbit.com>
 To: Luis Chamberlain <mcgrof@kernel.org>
 Cc: fstests@vger.kernel.org, anand.jain@oracle.com, aalbersh@redhat.com,
 	djwong@kernel.org, linux-fsdevel@vger.kernel.org,
 	kdevops@lists.linux.dev, patches@lists.linux.dev
-Subject: Re: [PATCH 2/3] check: add support for --list-group-tests
-Message-ID: <ZdLNJD5pYaK84w3r@dread.disaster.area>
+Subject: Re: [PATCH 3/3] check: add --print-start-done to enhance watchdogs
+Message-ID: <ZdLOKCYnM3XybqQp@dread.disaster.area>
 References: <20240216181859.788521-1-mcgrof@kernel.org>
- <20240216181859.788521-3-mcgrof@kernel.org>
+ <20240216181859.788521-4-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,27 +88,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240216181859.788521-3-mcgrof@kernel.org>
+In-Reply-To: <20240216181859.788521-4-mcgrof@kernel.org>
 
-On Fri, Feb 16, 2024 at 10:18:58AM -0800, Luis Chamberlain wrote:
-> Since the prior commit adds the ability to list groups but is used
-> only when we use --start-after, let's add an option which leverages this
-> to also allow us to easily query which tests are part of the groups
-> specified.
+On Fri, Feb 16, 2024 at 10:18:59AM -0800, Luis Chamberlain wrote:
+> fstests specific watchdogs want to know when the full test suite will
+> start and end. Right now the kernel ring buffer can get augmented but we
+> can't know for sure if it was due to a test or some odd hardware issue
+> after fstests ran. This is specially true for systems left running tests in
+> loops in automation where we are not running things ourselves but rather just
+> get access to kernel logs, or for filesystem runner watdogs such as the one
+> in kdevops [0]. It is also often not easy to determine for sure based on
+> just logs when fstests check really has completed unless we have a
+> matching log of who spawned that test runner. Although we could keep track of
+> this ourselves by an annotation locally on the test runner, it is useful to
+> have independent tools which are not attached to the process which spawned
+> check to just peak into a system and verify the system's progress with
+> fstests by just using the kernel log. Keeping this in the test target kernel
+> ring buffer enables these use cases.
 > 
-> This can be used for dynamic test configuration suites such as kdevops
-> which may want to take advantage of this information to deterministically
-> determine if a test falls part of a specific group.
-> Demo:
-> 
-> root@demo-xfs-reflink /var/lib/xfstests # ./check --list-group-tests -g soak
-> 
-> generic/019 generic/388 generic/475 generic/476 generic/521 generic/522 generic/616 generic/617 generic/642 generic/648 generic/650 xfs/285 xfs/517 xfs/560 xfs/561 xfs/562 xfs/565 xfs/570 xfs/571 xfs/572 xfs/573 xfs/574 xfs/575 xfs/576 xfs/577 xfs/578 xfs/579 xfs/580 xfs/581 xfs/582 xfs/583 xfs/584 xfs/585 xfs/586 xfs/587 xfs/588 xfs/589 xfs/590 xfs/591 xfs/592 xfs/593 xfs/594 xfs/595 xfs/727 xfs/729 xfs/800
+> This is useful for example for filesyste checker specific watchdogs like the
+> one in kdevops so that the watchdog knows when to start hunting for crashes
+> based just on the kernel ring buffer, and so it also knows when the show is
+> over.
 
-So how is this different to ./check -n -g soak?
-
-'-n' is supposed to show you want tests are going to be run
-without actually running them, so why can't you use that?
+Why can't the runner that requires timing information in the
+kernel log just emit a message to the kernel log before it
+runs check and again immediately after completion of the check
+script?
 
 -Dave.
 -- 
