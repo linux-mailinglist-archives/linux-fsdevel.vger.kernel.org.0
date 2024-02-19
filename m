@@ -1,99 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-12054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE34285AC88
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 20:55:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4003885AC89
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 20:55:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A6B2B24090
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 19:55:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F22BE2826DB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 19:55:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A963535AF;
-	Mon, 19 Feb 2024 19:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5791524A5;
+	Mon, 19 Feb 2024 19:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b="MNOg0jEV"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="kQhzDOOU";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LGZsYdSa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4018.proton.ch (mail-4018.proton.ch [185.70.40.18])
+Received: from wout2-smtp.messagingengine.com (wout2-smtp.messagingengine.com [64.147.123.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE5451037
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 19:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6F950A97
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 19:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708372472; cv=none; b=KA9XPSCq+UHfhz2JHpt65IiytDjQYhworsufGkPVOczjuVF1bFnYtA9Ter9KIh16txq2owtskL9rQG6qcBg6M0Im936hWhphzBLIaihbIyQKtk3mukD1x2ncB3yFQC/r5OdRq3ftRNiBVaP8OM3B9ATI61GV2MZfmamsiGlaaC8=
+	t=1708372539; cv=none; b=pAhAq+dVamwXDGP+KNaLFBgoGuxtVDkLQduWfCQyhqG1d8yTBrNPc2yaO7jw3Tclg6QxY4gbpCK/5KVTZpNw/qWv7736u3OGaZvX+/pPT9MBgnCWrqFLb0Q5lU794E8yezm5RafoFp0yBu4Z6ix0gKEP4/+B4kPiw+kHeh9GN2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708372472; c=relaxed/simple;
-	bh=/4j+jQDpNKpBVpwkV6DfSXBy/Lf71+itJc6sOl1ptdE=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jzPayRUji0MR5iRLTj2eXo2CPGEDjmC3m8m3bn6ILPaxmas+xEc6WBZ3opN/NzxF4PHgGNMnwh2Ng71H1MCd86wiWWwKLi8ZXNThfSa6YBXN7p/D9s011W9gXfe1nV28O7NEJCOIve3wlpd8iVWji1iW7TfRc9RJt/v5b0/bXP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link; spf=pass smtp.mailfrom=spawn.link; dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b=MNOg0jEV; arc=none smtp.client-ip=185.70.40.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spawn.link
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=spawn.link;
-	s=protonmail3; t=1708372461; x=1708631661;
-	bh=J3XM/6WgtKeR1IY9BPGcBpSOih5jcbJyTvRHjPtvLXo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=MNOg0jEVJxX7hQCXerQr9LX6+VUbE5fS8wpePC3l9/JaiPCU+y6s1m2AkK1T+Kgyf
-	 jHHzTbwGmW1BsdAg/YTfFfPEvWhMOKRK3k2x+9UwW6l6dB03S4Ha3R9ifxLqT6eK0E
-	 VS15dHpXTakfKCw+z8m+18TFj9uzGIjP0mFAw/vtMQDYCHWK7rRl6Cd/60eT+S5Ze4
-	 6p5Q8ySRxe60AYS71H5Ibn9o6yjHjF3LGgxxqH6NzMszL4w7gCFoZZ/A4DW3LOW1i+
-	 zStsvGp7NLg+mTCst6+0TC4CI1084euE+VHQH2OX/rLvFFQpK7WkBeOwPOiCbAFSB5
-	 wFgNni5lkpmmg==
-Date: Mon, 19 Feb 2024 19:54:13 +0000
-To: Miklos Szeredi <miklos@szeredi.hu>
-From: Antonio SJ Musumeci <trapexit@spawn.link>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Amir Goldstein <amir73il@gmail.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, fuse-devel <fuse-devel@lists.sourceforge.net>
-Subject: Re: [fuse-devel] Proxmox + NFS w/ exported FUSE = EIO
-Message-ID: <5b7139d5-52fd-4fd0-8fa0-df0a38d96a33@spawn.link>
-In-Reply-To: <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com>
-References: <d997c02b-d5ef-41f8-92b6-8c6775899388@spawn.link> <CAOQ4uxhek5ytdN8Yz2tNEOg5ea4NkBb4nk0FGPjPk_9nz-VG3g@mail.gmail.com> <b9cec6b7-0973-4d61-9bef-120e3c4654d7@spawn.link> <CAOQ4uxgZR4OtCkdrpcDGCK-MqZEHcrx+RY4G94saqaXVkL4cKA@mail.gmail.com> <23a6120a-e417-4ba8-9988-19304d4bd229@spawn.link> <93b170b4-9892-4a32-b4f1-6a18b67eb359@fastmail.fm> <BAQ4wsbXlrpVWedBrk1ij49tru5E6jxB11oY2VoWH5C7scO9FgmKRkQIsVekwRNgfxxxwWwWapZlBGSGQFSjSVhMs01urB1nLE4-_o5OOiU=@spawn.link> <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com>
-Feedback-ID: 55718373:user:proton
+	s=arc-20240116; t=1708372539; c=relaxed/simple;
+	bh=hv23sH8I7WrSzpzT73mZRsnAUGtxpeTJs0/RryABox4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BvrO91cH8aBRvUbGAl5vh3ywLuqI3snSCMRwGjtsM1dC7Y4DbTR3TPvWfkV2/qa1c4zA87WeijPvNvNOM5EhHFrxcIDEe+NsJ9v/CoGODwn62kNMoNUBjFkY+egvGDcrtXc5iqHGB1pMbMQ+0plom4mfAI+fW97I4fETIrVSemE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=kQhzDOOU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LGZsYdSa; arc=none smtp.client-ip=64.147.123.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.west.internal (Postfix) with ESMTP id 4ECCA3200A2A;
+	Mon, 19 Feb 2024 14:55:36 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Mon, 19 Feb 2024 14:55:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1708372535;
+	 x=1708458935; bh=nf/Xn5XMXRHtKQ5fya1LoKeLPbtugUFK8J3++VbOkbE=; b=
+	kQhzDOOUxaEtSoFcU5O5YgK1K8qC4L6UPnYxfl6gqDZAl2BeAKKkpMBJSxUsmZIR
+	q7I5XCFQty6eYiNW73aIME1a7utMeaScdCirIPRRzFkrKcsvJfLGrVFLpVkDSJO7
+	9CWrY8cG5un28+3eS5IN8cASK9waG0nd6kK/jwyeAFaUf7ljcmwoEjRcGXcNKSlT
+	RoS4ovgX026V6Si7KHd4rlCo5+YSi8IRejBW1iOuENHxUadp2A/yjPZZkD3nSFfS
+	BIQ2kWd8bNFiXdY99Ga9fPIurGOd+8uJvZpRq7Alf/4Q5xww9RDacEeprdxie/1u
+	qRyKk/H6AyOi0Sf9cFOfzQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1708372535; x=
+	1708458935; bh=nf/Xn5XMXRHtKQ5fya1LoKeLPbtugUFK8J3++VbOkbE=; b=L
+	GZsYdSa7+XoXYRnjB9peb5HKtvUqUVQfHKW10Fm7mdGZ+prEshxp/i7uMlKtOUSx
+	xAqQAoyPSmF/GCxCzJMqJf8x6/8cc9OFzGmjm3sFt4TNVm8vPwXQoDv4GXvAkxFn
+	zlyOfplvbfBCvjSBqrTueaGp2eaekEBMx6pQ2ihOgYcxQdz5xaXswXoViSiwB2b2
+	N8jTEqDuQm42mcCuuCXWbWiGucG2gEFbNyUaDDzTlNsBjHeaNNesZkU6njNSqvh4
+	7ILXuFq8/WgMhMsA6DW+HtijLkHS1HrQrKRLGo950zC1iQ2+xxX8/bkV9qXffFOZ
+	upLP47owxj8ybtsz6Ta3w==
+X-ME-Sender: <xms:N7LTZTvNPcQ1WY0tA0nM1_udKglEnLh06Rt2GX2RSRDbZ_JCdGdrYg>
+    <xme:N7LTZUeADbkNu5wsONdA7VML55hT9zTVwLuMzw2k6PD8iO6tF7SlyW114x03l5d2-
+    CCL3KFjPAagGNbH>
+X-ME-Received: <xmr:N7LTZWzA07alWgXC6VuTRUzdQkEPq-8I3_9qExOQpOZcYk9g-RIwC80LN6hRaZDc2T09jPLgycTkjtS0umePxDNQSlnq7tRk9q4IZBNd8wRA1VaQYos3>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekgdduvdelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeeuvghr
+    nhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrih
+    hlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledtudfgtdfggeelfedvheefieev
+    jeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdr
+    fhhm
+X-ME-Proxy: <xmx:N7LTZSNifWeZrUYAZ3McUEXODbt0TtC1QXFUStoMLJbp9pzIHPIEUQ>
+    <xmx:N7LTZT__FcWWY1uuTP7KiFtOmJRVTsOfMltUWOTVh9d9G8K9oJ2QUg>
+    <xmx:N7LTZSXkqh6HkM2dHs0Yhb9jJUMcz4TRw48iSeq7VkM6hlNCTN8PcA>
+    <xmx:N7LTZfYDgprpe0lZmxZ6g3Rv_bPZUtl7CzWRtlBn3sImG5FlNruVYQ>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 19 Feb 2024 14:55:34 -0500 (EST)
+Message-ID: <8fd58ae6-164c-4653-a979-b12ee577fe65@fastmail.fm>
+Date: Mon, 19 Feb 2024 20:55:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [fuse-devel] Proxmox + NFS w/ exported FUSE = EIO
+Content-Language: en-US, de-DE, fr
+To: Miklos Szeredi <miklos@szeredi.hu>,
+ Antonio SJ Musumeci <trapexit@spawn.link>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ fuse-devel <fuse-devel@lists.sourceforge.net>
+References: <d997c02b-d5ef-41f8-92b6-8c6775899388@spawn.link>
+ <CAOQ4uxhek5ytdN8Yz2tNEOg5ea4NkBb4nk0FGPjPk_9nz-VG3g@mail.gmail.com>
+ <b9cec6b7-0973-4d61-9bef-120e3c4654d7@spawn.link>
+ <CAOQ4uxgZR4OtCkdrpcDGCK-MqZEHcrx+RY4G94saqaXVkL4cKA@mail.gmail.com>
+ <23a6120a-e417-4ba8-9988-19304d4bd229@spawn.link>
+ <93b170b4-9892-4a32-b4f1-6a18b67eb359@fastmail.fm>
+ <BAQ4wsbXlrpVWedBrk1ij49tru5E6jxB11oY2VoWH5C7scO9FgmKRkQIsVekwRNgfxxxwWwWapZlBGSGQFSjSVhMs01urB1nLE4-_o5OOiU=@spawn.link>
+ <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+In-Reply-To: <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2/19/24 13:38, Miklos Szeredi wrote:
-> On Mon, 19 Feb 2024 at 20:05, Antonio SJ Musumeci <trapexit@spawn.link> w=
-rote:
->=20
+
+
+On 2/19/24 20:38, Miklos Szeredi wrote:
+> On Mon, 19 Feb 2024 at 20:05, Antonio SJ Musumeci <trapexit@spawn.link> wrote:
+> 
 >> This is what I see from the kernel:
 >>
->> lookup(nodeid=3D3, name=3D.);
->> lookup(nodeid=3D3, name=3D..);
->> lookup(nodeid=3D1, name=3Ddir2);
->> lookup(nodeid=3D1, name=3D..);
->> forget(nodeid=3D3);
->> forget(nodeid=3D1);
->=20
+>> lookup(nodeid=3, name=.);
+>> lookup(nodeid=3, name=..);
+>> lookup(nodeid=1, name=dir2);
+>> lookup(nodeid=1, name=..);
+>> forget(nodeid=3);
+>> forget(nodeid=1);
+> 
 > This is really weird.  It's a kernel bug, no arguments, because kernel
 > should never send a forget against the root inode.   But that
-> lookup(nodeid=3D1, name=3D..); already looks bogus.
->=20
-> Will try to untangle this by code review, but instructions to
-> reproduce could be a big help.
->=20
-> Thanks,
-> Miklos
+> lookup(nodeid=1, name=..); already looks bogus.
 
-Thank you.
+Why exactly bogus?
 
-I'll try to build something bespoke against current libfuse.
+reconnect_path()
+		if (IS_ROOT(dentry))
+			parent = reconnect_one(mnt, dentry, nbuf);
 
-That forget(nodeid=3D1) is coming in after my code detects that=20
-lookup(nodeid=3D1, name=3D"..") and returns -ENOENT. Which in a way makes=
-=20
-sense. Though it seems to happen no matter what I return. Returning the=20
-same as lookup(nodeid=3D1, name=3D".") results in the same behavior. I've=
-=20
-not tried creating a fake node with a new nodeid/generation though.
+reconnect_one()
+		if (mnt->mnt_sb->s_export_op->get_parent)
+			parent = mnt->mnt_sb->s_export_op->get_parent(dentry);
 
+
+fuse_get_parent()
+	if (!fc->export_support)
+		return ERR_PTR(-ESTALE);
+
+	err = fuse_lookup_name(child_inode->i_sb, get_node_id(child_inode),
+			       &dotdot_name, &outarg, &inode);
+
+
+
+Thanks,
+Bernd
 
