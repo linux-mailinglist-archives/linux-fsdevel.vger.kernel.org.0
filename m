@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-12035-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12036-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C2585A953
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 17:53:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC95E85A964
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 17:54:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5D21283EF4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 16:53:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 998BB2864A7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 16:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1328B41C83;
-	Mon, 19 Feb 2024 16:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5C74439F;
+	Mon, 19 Feb 2024 16:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h86xzF8J"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MNs0ogeY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BEE41770;
-	Mon, 19 Feb 2024 16:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE2D41C85;
+	Mon, 19 Feb 2024 16:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708361584; cv=none; b=cK/D/l2F+/iDTaP1xXmwUSrgPp/8p2k1tnOkTXm0iHu4c3UdrEGgXfwgah5gnB17MHJm8lt67hEh68N6UpkULi1HXRQblB6iENaIdnSBFNZ1BXlGZu/HYHQsgeX65WYqsYI7jlgh5dxhBkDcUYiH8tVmHykWY7Fsk659CsNIr3k=
+	t=1708361684; cv=none; b=bB8qfuk6wBRrgi3pkfD6pQGZZQQxPP9xaznbBBFCOJLwhC5nfehsSdSCUWbDzcKh+5icRuAzEUcCKL0JDAuDxeGC4PWnbQi0ZTwWsYZRuyRKTLj1fzCJ/ng96pwTr7NlhExjXl9/19xMZlelRN1rnSjr2K5tpyvpuT2lL2dk2Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708361584; c=relaxed/simple;
-	bh=kI1TDFnjzqoHHflIKZRsHmh469jjbM+AR43RgSlc6E4=;
+	s=arc-20240116; t=1708361684; c=relaxed/simple;
+	bh=yUPZofgi/Cbwfp1xWRriBGvlPuQtbUzrKZZm9vexYGs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e2KjycpM1f6jKstrnmOUp0ewuTJAIhFgk41NHWC/4xEa/6sbv+gBpRnQmX4TikE462RSBSCvN8W5CGHQb+DJ6RqTgpyZGtmUFN1x2Rbc9/AKzXqIxdXAuWfF946MZlSNweeuabNlss1C2TjsyLFAvvLL73xaTcLfD/Ewun2QzcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h86xzF8J; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKOzj4+8JTyZ+6CErTOVTWwmzbuCGbJHYAAmRHSFd7G+PVD5YbKVsCahBrHWv5utbNm1zNuprpaMvYL+Ubj7fO6NK3wMAEjd0n+aMQNNHCZzsFRyhFMDjl2g40e3GNEinnQ5wrCka0kvcZ7R1R2ornThUzMn4v5tRFPwFiyuZCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MNs0ogeY; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mBU6F4FMvCmlzghULKN4T+OEFNdK6km1uxFjLAbwvo0=; b=h86xzF8J2+X4PqV2CAcEzzI0fQ
-	KsHosJXJRfwYYPnTlNXH7tAt6ycp64Qx2vSllLBJ/9h09IHDmF20dOvFgMtK3gJpt4ZbH6c67FeNn
-	rEbNTBqWLPJapSBr1Z+hRozwKjU3umAvV1yS6zlENLkGpzigh1uAf0gfcrXWWnVZeyHgUOyBNaD0U
-	h9rAMCEohPYK4qL7qcoqpW7fWM4mTnem1pRgh4Xvu1tYYRl3OrDoqUWqD1Dn/XLVXA4UzkAuXGNDj
-	qz0Ua080uzuZGqtfxaShdXDDRQ9gFm+D4cWP+cDMO/TBXjCWc1a0pnAFpjSISyJaD5yHwVyS/2rJB
-	ObGZJbTg==;
+	bh=UA0zSdCdoiDx17eLepIKHTwRQfmJAAj0B1OmftPBvCU=; b=MNs0ogeYPKq6Yi9e17KE7p1o6e
+	OQmhpcZfUdN4S4+BiPeDrIXGHbp44yPum7VvcN2pFaaDeyEMEHqAn0FPMueYb8xKg7k70SmydLgUT
+	OxbrLY14FJ+RIwEoKA6e3QiV1PiBEOkG3kuE4N5OxPfSX05zT4yLUndGSMjg+SgIMvPaa2fFMTh0v
+	a9WfgD75aZNwQduy7mKkHwaQt8h5pmAasQ2/8fkMk3JKv1vfW0VmfABgS8MITOxx/kOHZp2Cr1lWd
+	7VEnP+MQoCxzox2HFsm3A6livQMnK0/n0EBpP9nHcKYyE8fVfajzB+OUTvTUHugP42X06B35kAZ0+
+	RFCHNPAQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rc6sz-0000000DIii-3GsA;
-	Mon, 19 Feb 2024 16:52:57 +0000
-Date: Mon, 19 Feb 2024 16:52:57 +0000
+	id 1rc6ud-0000000DIpA-3H5r;
+	Mon, 19 Feb 2024 16:54:39 +0000
+Date: Mon, 19 Feb 2024 16:54:39 +0000
 From: Matthew Wilcox <willy@infradead.org>
 To: David Howells <dhowells@redhat.com>
 Cc: Christian Brauner <christian@brauner.io>,
@@ -52,10 +52,11 @@ Cc: Christian Brauner <christian@brauner.io>,
 	Marc Dionne <marc.dionne@auristor.com>,
 	Daniil Dulov <d.dulov@aladdin.ru>, linux-afs@lists.infradead.org,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] afs: Fix ignored callbacks over ipv4
-Message-ID: <ZdOHaTLPkV8VlU7x@casper.infradead.org>
+Subject: Re: [PATCH 2/2] afs: Increase buffer size in
+ afs_update_volume_status()
+Message-ID: <ZdOHz_wlks58QulB@casper.infradead.org>
 References: <20240219143906.138346-1-dhowells@redhat.com>
- <20240219143906.138346-2-dhowells@redhat.com>
+ <20240219143906.138346-3-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,28 +65,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240219143906.138346-2-dhowells@redhat.com>
+In-Reply-To: <20240219143906.138346-3-dhowells@redhat.com>
 
-On Mon, Feb 19, 2024 at 02:39:02PM +0000, David Howells wrote:
-> +++ b/fs/afs/internal.h
-> @@ -321,8 +321,7 @@ struct afs_net {
->  	struct list_head	fs_probe_slow;	/* List of afs_server to probe at 5m intervals */
->  	struct hlist_head	fs_proc;	/* procfs servers list */
->  
-> -	struct hlist_head	fs_addresses4;	/* afs_server (by lowest IPv4 addr) */
-> -	struct hlist_head	fs_addresses6;	/* afs_server (by lowest IPv6 addr) */
-> +	struct hlist_head	fs_addresses;	/* afs_server (by lowest IPv6 addr) */
+On Mon, Feb 19, 2024 at 02:39:03PM +0000, David Howells wrote:
+> From: Daniil Dulov <d.dulov@aladdin.ru>
+> 
+> The max length of volume->vid value is 20 characters.
+> So increase idbuf[] size up to 24 to avoid overflow.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> [DH: Actually, it's 20 + NUL, so increase it to 24 and use snprintf()]
+> 
+> Fixes: d2ddc776a458 ("afs: Overhaul volume and server record caching and fileserver rotation")
+> Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Link: https://lore.kernel.org/r/20240211150442.3416-1-d.dulov@aladdin.ru/ # v1
+> Link: https://lore.kernel.org/r/20240212083347.10742-1-d.dulov@aladdin.ru/ # v2
 
-Comment is out of date ...
-
-> @@ -561,8 +560,7 @@ struct afs_server {
->  	struct afs_server __rcu	*uuid_next;	/* Next server with same UUID */
->  	struct afs_server	*uuid_prev;	/* Previous server with same UUID */
->  	struct list_head	probe_link;	/* Link in net->fs_probe_list */
-> -	struct hlist_node	addr4_link;	/* Link in net->fs_addresses4 */
-> -	struct hlist_node	addr6_link;	/* Link in net->fs_addresses6 */
-> +	struct hlist_node	addr_link;	/* Link in net->fs_addresses6 */
-
-Ditto
-
+Tag it for stable?
 
