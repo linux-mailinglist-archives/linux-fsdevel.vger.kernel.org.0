@@ -1,167 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-12004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D902085A3F4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 13:56:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB4A85A407
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 14:01:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E66F8B238DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 12:56:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70A95B24EAC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 13:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D198731A93;
-	Mon, 19 Feb 2024 12:56:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B459536124;
+	Mon, 19 Feb 2024 13:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Vz/b3y+W";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UvmK2WYN";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dJBbbMw6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rx0TOfk1"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WHTKpei2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 710BF2E847;
-	Mon, 19 Feb 2024 12:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8004B35F0C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 13:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708347368; cv=none; b=a6U6PuISXgAVfYZyGVQtPoMNHcMavmO6TDn302BPPPPbPYSR+9yXUqxzkO14U3+lCKQ+HZ3s93P9e/BMWUJjqgaMG7oIJKNGCEQ1/8SLcSExEMYUkjEqhjE2PEtyaB2bvXI89RLVkrJGDqijwEXFyrH8aY22sbZKU1m4fNJ3lb0=
+	t=1708347656; cv=none; b=IsdA+fTl6d9+Ab8N1QvjwFBnQHg5VZY8uY9xIZvdMIWNt78IJuSAs+N9MS+J7ZmWv/8hVneKIvGNm77aIoI5o8UTrCKOBqwUksVrbSE0vn2BthKgvoBrlKBidwWRcGpeYF88o4nlToKbqdTLqt6o+mfM8pnHKv4XtE7SSI9ON7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708347368; c=relaxed/simple;
-	bh=1xMUyCp7MByC4pxmGHlkXU0SqaRPNqUQxypzPEEGZTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HjK0DNteR+JFxVMG1tUk28og76XG948z+4PqJT64oqm+DD9VOpw77NCg0JcLuphx9jviYkjl0N+zvhgQaF5zQYtiVMhmEqK2gSCWr1yUE5Nl7xvRYo9fV8R9OGSTdolIKI8+izgq/gY74KCu1oLI6vFU50YeVaDZ2DTdxdGctlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Vz/b3y+W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UvmK2WYN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dJBbbMw6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rx0TOfk1; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
+	s=arc-20240116; t=1708347656; c=relaxed/simple;
+	bh=dHWiwi/4MsahdbBRvdAXd0W5GApiDgwNTSRWlu2vpSE=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=VUKNqpc6+zlKoUuNlcEJiFo25oc22md5pA7vqiUH6uhkfNKkod8qQ3Us5wSYJzo6c2lx935nw17nvWi8KGv0RKeUXc62CU3kHYUNRkoCdJfgZzleqqkLBCRMn4wnG7pfKTGP2UZSc2m3TlLwbDjNfPXjItcUJfP4Z2+i+MjDc4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WHTKpei2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1708347653;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TwNcCYcnKDEqL3qwv8hEJSNKkkqFQa2yy0ZaFvuYG/I=;
+	b=WHTKpei2dDzPv87YFnrLdAD4IuLXDSN31x9SSJE5z9ETXQfJBbfzycTFWDI5FDYRlv5aL3
+	vwH+qw6ercpeWaT2LCEXJhs1fF26ggREOtNJnVnyV7a+Mh8sP7AnGyNvvKDB5jSQ0N2dGs
+	ZR+Dey+LO0/v9AAYN+JyQ4/5Okd38Jk=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-401-EKdDHX6EOFScijXKBRs-bg-1; Mon,
+ 19 Feb 2024 08:00:48 -0500
+X-MC-Unique: EKdDHX6EOFScijXKBRs-bg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A385B1F7F7;
-	Mon, 19 Feb 2024 12:56:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1708347364; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TWRdspdcX3pYQWfNbt9wzvKxEQREQ1wZYPUI0lwbR2o=;
-	b=Vz/b3y+Wis0IDsEdSmDxJ3aRR3Zin6jo/maOrkKPkZj1Q/1REQuE+san0w//NOGMxzE5et
-	MFePVK0vOWNbxzufnHqyU+NqmIWWc6Ve3dsPEcjx5XvBgPdPFedYF0oxABiod0hRN3orvT
-	dY07EKNYQCrTyOiuZdM0MKow9/F4c1s=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1708347364;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TWRdspdcX3pYQWfNbt9wzvKxEQREQ1wZYPUI0lwbR2o=;
-	b=UvmK2WYNhvzljgDn657vqNCu4O5jODq4IzP5sIIcXiBqncQeVCnDg1EYSlFVIB7qQ0Lwr/
-	MjEU3Hkf/Y2G4RCw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1708347362; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TWRdspdcX3pYQWfNbt9wzvKxEQREQ1wZYPUI0lwbR2o=;
-	b=dJBbbMw649OgT1w3qsyvKW7FWn2KkHKOvMsaRti5xE6lEg7FhW34huv5CbBQZ8HSrIQdb+
-	JvDiIs8nFLO5pvYexmnxyyPsERkgWR7qMnIFozVUflsb7FqLiLAprDpmG8dxED30rjjRQv
-	ZOeZtJqMM+AoFPh0lruNvzFJOsVQm8Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1708347362;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TWRdspdcX3pYQWfNbt9wzvKxEQREQ1wZYPUI0lwbR2o=;
-	b=rx0TOfk1P728XPAdp67rvDcPpemYH2UXp/ybsqyEDScOPyWIdbdqUoZZ9waagM7ytA+1uW
-	3N5OhMQWyK2i9YCQ==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 93DB2139C6;
-	Mon, 19 Feb 2024 12:56:02 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id zoIRJOJP02VOfQAAn2gu4w
-	(envelope-from <jack@suse.cz>); Mon, 19 Feb 2024 12:56:02 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3D7F7A0806; Mon, 19 Feb 2024 13:56:02 +0100 (CET)
-Date: Mon, 19 Feb 2024 13:56:02 +0100
-From: Jan Kara <jack@suse.cz>
-To: syzbot <syzbot+427fed3295e9a7e887f2@syzkaller.appspotmail.com>
-Cc: agruenba@redhat.com, axboe@kernel.dk, brauner@kernel.org,
-	cluster-devel@redhat.com, elver@google.com, gfs2@lists.linux.dev,
-	jack@suse.cz, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nogikh@google.com,
-	peterz@infradead.org, rpeterso@redhat.com,
-	syzkaller-bugs@googlegroups.com, valentin.schneider@arm.com
-Subject: Re: [syzbot] [gfs2?] general protection fault in gfs2_dump_glock (2)
-Message-ID: <20240219125602.mytnw647csn777bc@quack3>
-References: <00000000000050a49105f63ed997@google.com>
- <00000000000077ce280611bace5b@google.com>
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 937BD1C05AA6;
+	Mon, 19 Feb 2024 13:00:47 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.15])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 14603AC0C;
+	Mon, 19 Feb 2024 13:00:45 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20240217081431.796809-1-libaokun1@huawei.com>
+References: <20240217081431.796809-1-libaokun1@huawei.com>
+To: Christian Brauner <christian@brauner.io>
+Cc: dhowells@redhat.com, netfs@lists.linux.dev, jlayton@kernel.org,
+    Baokun Li <libaokun1@huawei.com>, linux-cachefs@redhat.com,
+    linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH RESEND] cachefiles: fix memory leak in cachefiles_add_cache()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000077ce280611bace5b@google.com>
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [2.89 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 BAYES_HAM(-0.01)[45.13%];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=5eadbf0d3c2ece89];
-	 TAGGED_RCPT(0.00)[427fed3295e9a7e887f2];
-	 MIME_GOOD(-0.10)[text/plain];
-	 R_RATELIMIT(0.00)[to_ip_from(RLf9gkbf6uh3yspgf5h4jyjkwo)];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[15];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,syzkaller.appspot.com:url,suse.cz:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[];
-	 SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Level: **
-X-Spam-Score: 2.89
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <131232.1708347645.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 19 Feb 2024 13:00:45 +0000
+Message-ID: <131233.1708347645@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.1
 
-On Mon 19-02-24 03:58:05, syzbot wrote:
-> syzbot suspects this issue was fixed by commit:
-> 
-> commit 6f861765464f43a71462d52026fbddfc858239a5
-> Author: Jan Kara <jack@suse.cz>
-> Date:   Wed Nov 1 17:43:10 2023 +0000
-> 
->     fs: Block writes to mounted block devices
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14238a3c180000
-> start commit:   58390c8ce1bd Merge tag 'iommu-updates-v6.4' of git://git.k..
-> git tree:       upstream
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=5eadbf0d3c2ece89
-> dashboard link: https://syzkaller.appspot.com/bug?extid=427fed3295e9a7e887f2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172bead8280000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14d01d08280000
-> 
-> If the result looks correct, please mark the issue as fixed by replying with:
-> 
-> #syz fix: fs: Block writes to mounted block devices
+Hi Christian,
 
-I don't see anything that suspicious in the reproducers but there's no
-working reproducer anymore. So I'm leaving this upto gfs2 maintainers to
-decide.
+Could you take this through your VFS tree please?
 
-								Honza
+> The following memory leak was reported after unbinding /dev/cachefiles:
+> =
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> unreferenced object 0xffff9b674176e3c0 (size 192):
+>   comm "cachefilesd2", pid 680, jiffies 4294881224
+>   hex dump (first 32 bytes):
+>     01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>   backtrace (crc ea38a44b):
+>     [<ffffffff8eb8a1a5>] kmem_cache_alloc+0x2d5/0x370
+>     [<ffffffff8e917f86>] prepare_creds+0x26/0x2e0
+>     [<ffffffffc002eeef>] cachefiles_determine_cache_security+0x1f/0x120
+>     [<ffffffffc00243ec>] cachefiles_add_cache+0x13c/0x3a0
+>     [<ffffffffc0025216>] cachefiles_daemon_write+0x146/0x1c0
+>     [<ffffffff8ebc4a3b>] vfs_write+0xcb/0x520
+>     [<ffffffff8ebc5069>] ksys_write+0x69/0xf0
+>     [<ffffffff8f6d4662>] do_syscall_64+0x72/0x140
+>     [<ffffffff8f8000aa>] entry_SYSCALL_64_after_hwframe+0x6e/0x76
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> =
+
+> Put the reference count of cache_cred in cachefiles_daemon_unbind() to
+> fix the problem. And also put cache_cred in cachefiles_add_cache() error
+> branch to avoid memory leaks.
+> =
+
+> Fixes: 9ae326a69004 ("CacheFiles: A cache that backs onto a mounted file=
+system")
+> CC: stable@vger.kernel.org
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+
+and add:
+
+Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Acked-by: David Howells <dhowells@redhat.com>
+
 
