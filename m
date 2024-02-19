@@ -1,188 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-11990-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-11991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C483C85A0BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 11:16:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3521185A173
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 11:54:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 483BD1F21F76
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 10:16:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 321D7B22172
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Feb 2024 10:54:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65912562A;
-	Mon, 19 Feb 2024 10:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lEAKcObJ"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C6AB28E0F;
+	Mon, 19 Feb 2024 10:54:19 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81BA25603
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 10:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDB828DCB
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 10:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708337772; cv=none; b=V2Gra/AjUJWuZYiAFcxZX0QswX1Dm6L8eJu99RfQEyRTarQ4bZARYgHgY5Ln734SWBdbZq/Ij+0hjFUw9S1j6JlrtO5HhgdkvHhgeS2pDofCZzgkv1PNLl44aNl0fER4/qyt/O8PBVfCLNJzlBQ/6v82+cQGQprPhqEQazsbnLo=
+	t=1708340059; cv=none; b=nnHOX9yTCKzKJVnEXWOyd0Nc/zKgqLb1S+dI90IKXIRUaxEajbb65RQCW8f5XNGWEP5ZA/OMST/pV0aZbu0a2ZSU+hAZI3oaSMUZT2zbeFn852Q6rDxf27cjF/YHFUlaGkM7Wxlx8xFbfveaqM4gZLGH3b8WkJfxaDRXW9vFwNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708337772; c=relaxed/simple;
-	bh=LfGonh/vxzEvh4ssbdF8peYR0PFMnQMns4BKb2UYKGY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=E4658Xzeymm4YEg9J5o7LzwXUkX6n6kGOdvq9aPl4HnGOoIulnEmUTKgAAk3St1CNU6zRsgwUdyaan8e1HV+UiWz/mqGWlqp4+T3tspnM7lgA3oT0Ww7hbJn7wzwkJQjI/JyAHibKMxEycJJNe8Bwa+wWIvh/VXyx23cXAqTwp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lEAKcObJ; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6002317a427so33481227b3.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 02:16:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1708337770; x=1708942570; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nGxwSEo7jdD6QsMjGOSy8a5TjT863H0VEZLOli0MF44=;
-        b=lEAKcObJaq5f79BNkmV7VmD9rpFJ5JMWtHsQAAiJgo86tPKsCHchOZw79mB20sMKHF
-         dMJVjUN2T3LSJSpNjSf6ejgR3vRovNuhNftSzKx0lvCCJwmko99Gq2ACZvrUqPWa9Rzl
-         kj5kCUAJ8Hf+DRo33zHV5imrHHoheBohjbyugZCvZdPI9xR4Cu9SDabcPwNo3E8LSVP5
-         7nk1DjbdhKPnKq2m4cxc6ohzaZ08vzjXYavHSp6y/hNdJnabPxxSWTghdIQFOz9w4ao5
-         kNpcM40ZbJVzpZbLi9OkCMtLqs5P0LXt8lNemjt0KZ4sqmng5bf3ecff5yIT5319j0YU
-         izXw==
+	s=arc-20240116; t=1708340059; c=relaxed/simple;
+	bh=vcmWLpsbR5n9RKGU2WnaOKPU7Yuwl2Bb2ZNlUPIMcCI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=u34TJjnVhCdrsE1MnXHTk9Qblg0WNPFEiCWeRfN61X//nN633UX/99XcGkikfoAdgSGd9xIufjCsLFMhQP5KM7AEZZNZ0FHSvFocYrL8HQzVMhgrWEyf+DUkkmGcH5LM9HL7rfyW0c+GtnIXlibU3/Gtfu1nU9IebuiwwqOqEMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7c064b035acso319225239f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Feb 2024 02:54:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708337770; x=1708942570;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nGxwSEo7jdD6QsMjGOSy8a5TjT863H0VEZLOli0MF44=;
-        b=dnZZclq2knR99syBIsSyM+3JfV7DRLfKTbirL90XJEGUsvccLY5m/qyIaPHYeIFm3m
-         DEFneFSQS3dpCOFrHCyStuvlrVGCYQmWqLgeyUOKwfp8bSE7Tk7dNnjdcEWJyeKumiew
-         CyQpuCc5RgT6D//RQHt3BYWppV6ylHchY0P6P1VcsmQ1QO5IZQ9LL0DNyT+h68TsXOL+
-         k/nZrBoeXlq4NjHmXWjllDM7GeL7AyeOt6zMfXF5Aeg5+oiHyd3nXML3NdclZPsZ4jYH
-         4C4zHr6mDaqEBfPNKt8J253llpU+JsWtnOuuEtHXFrooedV1KGdwMLeogeObn8js9uXI
-         08WA==
-X-Forwarded-Encrypted: i=1; AJvYcCXu+fkPOZ3g4AN4JKISpFVGMsDxK/KPUyKX/YtrDKr8ck45Koc9pOsD8JipqBP2/9QoOwP/WNOvVdDXr15dVIN/tNld5uTQtpi3UxG1TQ==
-X-Gm-Message-State: AOJu0YwBbMyItbpdZBprt3G17B80iyRSgbf1NwdWEPyJz8+UZsHLMjt6
-	f6bDpLpAXEsXAxgHCElErW9D1ukPPImLUm3UUsqBVcfLj8MsyLTT+l3QrdSZWA==
-X-Google-Smtp-Source: AGHT+IFJoAVuMYzdGhio7jIt4XIuZS5LYL15OslIBX+wn0f8UO4hUX2IbPCCvqiWaqIn1dV8z44Zlg==
-X-Received: by 2002:a81:431f:0:b0:608:e2f:e3d2 with SMTP id q31-20020a81431f000000b006080e2fe3d2mr4916030ywa.22.1708337769682;
-        Mon, 19 Feb 2024 02:16:09 -0800 (PST)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id dt15-20020a05690c250f00b00607f86fa184sm1476113ywb.99.2024.02.19.02.16.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Feb 2024 02:16:08 -0800 (PST)
-Date: Mon, 19 Feb 2024 02:15:47 -0800 (PST)
-From: Hugh Dickins <hughd@google.com>
-To: Daniel Gomez <da.gomez@samsung.com>
-cc: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-    "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>, 
-    "hughd@google.com" <hughd@google.com>, 
-    "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-    "dagmcr@gmail.com" <dagmcr@gmail.com>, 
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-    "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-    "willy@infradead.org" <willy@infradead.org>, 
-    "hch@infradead.org" <hch@infradead.org>, 
-    "mcgrof@kernel.org" <mcgrof@kernel.org>, 
-    Pankaj Raghav <p.raghav@samsung.com>, 
-    "gost.dev@samsung.com" <gost.dev@samsung.com>
-Subject: Re: [RFC PATCH 0/9] shmem: fix llseek in hugepages
-In-Reply-To: <25i3n46nanffixvzdby6jwxgboi64qnleixz33dposwuwmzj7p@6yvgyakozars>
-Message-ID: <e3602f54-b333-7c8c-0031-6a14b32a3990@google.com>
-References: <20240209142901.126894-1-da.gomez@samsung.com> <CGME20240214194911eucas1p187ae3bc5b2be4e0d2155f9ce792fdf8b@eucas1p1.samsung.com> <25i3n46nanffixvzdby6jwxgboi64qnleixz33dposwuwmzj7p@6yvgyakozars>
+        d=1e100.net; s=20230601; t=1708340056; x=1708944856;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jk5EspbERIA8uUIF9TL7Tb+L6jCRUl5vlESHpidcuZc=;
+        b=LLoNd1Uirisjc6r3SBQ0IDQz582hVv4a05OjEkYemOOW58y0wQYNvu68VeM0SkCIeW
+         Psc3tkA7XOveGGBAnkdYuMjCdwkEvq/FYpZBW89nG9Y0/rGrJAnx6GmAjPnmjClNayvP
+         CcmJ029uR+756ExkKlEQGC7OwjWA9pHHKj7i7/fubB9NIwJ7SLh426sYL8uuroPdQS9T
+         mS8B3koc+7ZGkR+kREm7kvcAGFn+o2bisRDgBN8YYIsY2oKpbSVLHrsHFDeUKmeNKvzs
+         iJz4GhehCWcEDtbR+Jn04xeNtyTqLxbX11RbUmZsSTl86i42/gh/SDtiqnex9MpL+eO5
+         5Jrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgqe4AA9flpuR0WhWh8Bvq40/RyJAyu4Y5Gu/zg22FOHnRhu7vw424fhlJs2ZddnXzBR/1Q/JIVRj3Ldzdx6jwkEhCB2uZyjEvof38dA==
+X-Gm-Message-State: AOJu0Yxedpq+edi9y5h1a+kVrwifb5aYu8gnppvPKVku9Ddb22b8YyXV
+	MJclyHV7HlzOJTqxfHeH8cvzlM46zvK0x7ME1Wjd0OnBkiJxPcC0xiu++/xDd+vkKA0Szy03LGr
+	xQ+Q81Ox/HHiofLScwb302CepPgTY8ODWJzbXZKDtQ9qx71RQI0e6GZ4=
+X-Google-Smtp-Source: AGHT+IHhBF6fp0Jnn7wYY17cmd8VUoh94pZXEYHyQl4ojI/qWuxyam31nMsi1y3qV4CIjdv6lbez3Oc8cN5vk76QJp82TsVGcCzQ
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-Received: by 2002:a05:6e02:1b0f:b0:365:26e3:6e60 with SMTP id
+ i15-20020a056e021b0f00b0036526e36e60mr398541ilv.0.1708340056777; Mon, 19 Feb
+ 2024 02:54:16 -0800 (PST)
+Date: Mon, 19 Feb 2024 02:54:16 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003d6c9d0611b9ea2d@google.com>
+Subject: [syzbot] [nilfs?] INFO: task hung in nilfs_segctor_thread (2)
+From: syzbot <syzbot+c8166c541d3971bf6c87@syzkaller.appspotmail.com>
+To: konishi.ryusuke@gmail.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 14 Feb 2024, Daniel Gomez wrote:
-> On Fri, Feb 09, 2024 at 02:29:01PM +0000, Daniel Gomez wrote:
-> > Hi,
-> > 
-> > The following series fixes the generic/285 and generic/436 fstests for huge
-> > pages (huge=always). These are tests for llseek (SEEK_HOLE and SEEK_DATA).
-> > 
-> > The implementation to fix above tests is based on iomap per-block tracking for
-> > uptodate and dirty states but applied to shmem uptodate flag.
-> 
-> Hi Hugh, Andrew,
-> 
-> Could you kindly provide feedback on these patches/fixes? I'd appreciate your
-> input on whether we're headed in the right direction, or maybe not.
+Hello,
 
-I am sorry, Daniel, but I see this series as misdirected effort.
+syzbot found the following issue on:
 
-We do not want to add overhead to tmpfs and the kernel, just to pass two
-tests which were (very reasonably) written for fixed block size, before
-the huge page possibility ever came in.
+HEAD commit:    f735966ee23c Merge branches 'for-next/reorg-va-space' and ..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=12dbb3dc180000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d47605a39da2cf06
+dashboard link: https://syzkaller.appspot.com/bug?extid=c8166c541d3971bf6c87
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
 
-If one opts for transparent huge pages in the filesystem, then of course
-the dividing line between hole and data becomes more elastic than before.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-It would be a serious bug if lseek ever reported an area of non-0 data as
-in a hole; but I don't think that is what generic/285 or generic/436 find.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/bdea2316c4db/disk-f735966e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/75ba7806a91c/vmlinux-f735966e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/208f119d45ed/Image-f735966e.gz.xz
 
-Beyond that, "man 2 lseek" is very forgiving of filesystem implementation.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c8166c541d3971bf6c87@syzkaller.appspotmail.com
 
-I'll send you my stack of xfstests patches (which, as usual, I cannot
-afford the time now to re-review and post): there are several tweaks to
-seek_sanity_test in there for tmpfs huge pages, along with other fixes
-for tmpfs (and some fixes to suit an old 32-bit build environment).
+INFO: task segctord:26558 blocked for more than 143 seconds.
+      Not tainted 6.8.0-rc3-syzkaller-gf735966ee23c #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:segctord        state:D stack:0     pid:26558 tgid:26558 ppid:2      flags:0x00000008
+Call trace:
+ __switch_to+0x314/0x560 arch/arm64/kernel/process.c:556
+ context_switch kernel/sched/core.c:5400 [inline]
+ __schedule+0x1498/0x24b4 kernel/sched/core.c:6727
+ __schedule_loop kernel/sched/core.c:6802 [inline]
+ schedule+0xb8/0x19c kernel/sched/core.c:6817
+ schedule_preempt_disabled+0x18/0x2c kernel/sched/core.c:6874
+ rwsem_down_write_slowpath+0xcfc/0x1aa0 kernel/locking/rwsem.c:1178
+ __down_write_common kernel/locking/rwsem.c:1306 [inline]
+ __down_write kernel/locking/rwsem.c:1315 [inline]
+ down_write+0xb4/0xc0 kernel/locking/rwsem.c:1580
+ nilfs_transaction_lock+0x178/0x33c fs/nilfs2/segment.c:357
+ nilfs_segctor_thread_construct fs/nilfs2/segment.c:2523 [inline]
+ nilfs_segctor_thread+0x3cc/0xd78 fs/nilfs2/segment.c:2608
+ kthread+0x288/0x310 kernel/kthread.c:388
+ ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:860
 
-With those tweaks, generic/285 and generic/436 and others (but not all)
-have been passing on huge tmpfs for several years.  If you see something
-you'd like to add your name to in that stack, or can improve upon, please
-go ahead and post to the fstests list (Cc me).
+Showing all locks held in the system:
+1 lock held by khungtaskd/29:
+ #0: ffff80008ee43fc0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire+0xc/0x44 include/linux/rcupdate.h:297
+2 locks held by getty/5931:
+ #0: ffff0000d82710a0 (&tty->ldisc_sem){++++}-{0:0}, at: ldsem_down_read+0x3c/0x4c drivers/tty/tty_ldsem.c:340
+ #1: ffff800093fe72f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x41c/0x1228 drivers/tty/n_tty.c:2201
+1 lock held by syz-executor.0/6205:
+ #0: ffff0000d6d12c68 (&pipe->mutex/1){+.+.}-{3:3}, at: rcu_lock_acquire+0xc/0x44 include/linux/rcupdate.h:297
+2 locks held by kworker/u4:26/13298:
+6 locks held by syz-executor.2/26553:
+1 lock held by segctord/26558:
+ #0: ffff00011fc2d2a0
+ (&nilfs->ns_segctor_sem){++++}-{3:3}, at: nilfs_transaction_lock+0x178/0x33c fs/nilfs2/segment.c:357
+1 lock held by syz-executor.3/11586:
+ #0: ffff0000c346f8b8 (&nft_net->commit_mutex){+.+.}-{3:3}, at: nf_tables_valid_genid+0x3c/0xd4 net/netfilter/nf_tables_api.c:10624
+1 lock held by syz-executor.1/11588:
+1 lock held by syz-executor.2/11593:
+ #0: ffff0001485282b8 (&nft_net->commit_mutex){+.+.}-{3:3}, at: nf_tables_valid_genid+0x3c/0xd4 net/netfilter/nf_tables_api.c:10624
+1 lock held by syz-executor.4/11594:
+ #0: ffff0000d343fcb8 (&nft_net->commit_mutex){+.+.}-{3:3}, at: nf_tables_valid_genid+0x3c/0xd4 net/netfilter/nf_tables_api.c:10624
+4 locks held by syz-executor.0/11595:
+ #0: ffff0001b400ef58 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:559 [inline]
+ #0: ffff0001b400ef58 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1385 [inline]
+ #0: ffff0001b400ef58 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1699 [inline]
+ #0: ffff0001b400ef58 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x2e0/0x24b4 kernel/sched/core.c:6643
+ #1: ffff0001b3ffac88 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x3c0/0x618 kernel/sched/psi.c:988
+ #2: ffff0001b401cc88 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_change+0x100/0x234 kernel/sched/psi.c:912
+ #3: ffff0001b401cc88 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_change+0x100/0x234 kernel/sched/psi.c:912
 
-Thanks,
-Hugh
+=============================================
 
-> 
-> Thanks,
-> Daniel
-> 
-> > 
-> > The motivation is to avoid any regressions in tmpfs once it gets support for
-> > large folios.
-> > 
-> > Testing with kdevops
-> > Testing has been performed using fstests with kdevops for the v6.8-rc2 tag.
-> > There are currently different profiles supported [1] and for each of these,
-> > a baseline of 20 loops has been performed with the following failures for
-> > hugepages profiles: generic/080, generic/126, generic/193, generic/245,
-> > generic/285, generic/436, generic/551, generic/619 and generic/732.
-> > 
-> > If anyone interested, please find all of the failures in the expunges directory:
-> > https://github.com/linux-kdevops/kdevops/tree/master/workflows/fstests/expunges/6.8.0-rc2/tmpfs/unassigned
-> > 
-> > [1] tmpfs profiles supported in kdevops: default, tmpfs_noswap_huge_never,
-> > tmpfs_noswap_huge_always, tmpfs_noswap_huge_within_size,
-> > tmpfs_noswap_huge_advise, tmpfs_huge_always, tmpfs_huge_within_size and
-> > tmpfs_huge_advise.
-> > 
-> > More information:
-> > https://github.com/linux-kdevops/kdevops/tree/master/workflows/fstests/expunges/6.8.0-rc2/tmpfs/unassigned
-> > 
-> > All the patches has been tested on top of v6.8-rc2 and rebased onto latest next
-> > tag available (next-20240209).
-> > 
-> > Daniel
-> > 
-> > Daniel Gomez (8):
-> >   shmem: add per-block uptodate tracking for hugepages
-> >   shmem: move folio zero operation to write_begin()
-> >   shmem: exit shmem_get_folio_gfp() if block is uptodate
-> >   shmem: clear_highpage() if block is not uptodate
-> >   shmem: set folio uptodate when reclaim
-> >   shmem: check if a block is uptodate before splice into pipe
-> >   shmem: clear uptodate blocks after PUNCH_HOLE
-> >   shmem: enable per-block uptodate
-> > 
-> > Pankaj Raghav (1):
-> >   splice: don't check for uptodate if partially uptodate is impl
-> > 
-> >  fs/splice.c |  17 ++-
-> >  mm/shmem.c  | 340 ++++++++++++++++++++++++++++++++++++++++++++++++----
-> >  2 files changed, 332 insertions(+), 25 deletions(-)
-> > 
-> > -- 
-> > 2.43.0
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
