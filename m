@@ -1,316 +1,244 @@
-Return-Path: <linux-fsdevel+bounces-12187-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7702885CB9F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 00:01:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC84A85CBA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 00:03:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 994021C21AA5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 23:01:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BB661C21B87
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 23:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D321B15442C;
-	Tue, 20 Feb 2024 23:01:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D846D154434;
+	Tue, 20 Feb 2024 23:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CcoswLMS"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i7jMSMQk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1qvswjm5";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="i7jMSMQk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1qvswjm5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C67154429
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 23:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88534763E8;
+	Tue, 20 Feb 2024 23:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708470090; cv=none; b=ktSvhX6qOlim4MZ8GOPYlTdxJL0dCG6A5PnbarGSALJm0M4P2rQgBHIiCJIVSMwG/lYh0/tNk4hrac2vcGJBgbIz+Iowmb8X7mEE8SarxDNJRb34H8ecJko+5uXf5+yMGNOh3Ux5lG5OyFOMxbMhk0Gl0DMN8xxEQ2b2jowrY0M=
+	t=1708470204; cv=none; b=cZ5Yur5JxVs58yZNgcVU4wxHgAfkKCRvosyQbjEz+s0cGKitsgMcl6WX33cfdaiONCnxEhjjaxia3qbmHicxWOxmPEQl680tw4RyWwAkJvvTC4rbKZz//YNRZDfUB8TEg/nbjmElNrNlEIZJfF88oD3cu/BUHcbISDSevIbrJOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708470090; c=relaxed/simple;
-	bh=T2CP7q8wSqlZKl4e6mNNd3d+tWM6nIG4oyI/sSjT/pQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ww4xuROadJwLSLiw2TomV3fg8lPG8/49rHtiKqJkpxWWAV2jItfymmWVxdpInVk6q18RkGh9Dd9sgUxuhwsobUkZCKCf3xK3sb7pGlE2eG/e04aEtr1tyKrJpTG0r7oqdK2cDwG1Ydkwig3cwO0Jnsm5rWi6AqOORsxZFwYqsT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CcoswLMS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1708470087;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EnT+4WPmJ6q/ESkK4OLN7nmck6WuuTV+Q7zl1qXrtHI=;
-	b=CcoswLMS8xo7SCgnzynZamdsBD291BCCkRQiEXMJsALo+3RHWBzzvufVF67IzH/iM7Dp58
-	qr7V8ZbwGYvdmQpHPu7+btxdCY0+7QzQNYkfTaIFaX5P1ldLGKTCU+X9/PjjLKCKxIePXo
-	XrVb3Lrp2BSOLiG6s1AgAbYjsySPdjo=
-Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
- by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-63-1RQxnM1dO0iqNEvp5ysrSA-1; Tue,
- 20 Feb 2024 18:01:25 -0500
-X-MC-Unique: 1RQxnM1dO0iqNEvp5ysrSA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+	s=arc-20240116; t=1708470204; c=relaxed/simple;
+	bh=nOwq1O6o5gI4UVjj1xHw2KYACb9RT6S4411/ujxy5Lw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FTns1UP63lS4NY7R57OqC0RHdPMptowPWeC0WsTho/k7l1pLmyKxp7DZrJ7cm+ySOA+6qOgtlo63h0MJCu0Ww/x6G7cxHozm1y1tjUuWOyNCGfyXp1RCHFMyaKx6uZl+7usXu2IG8oLchWazcAdp/Tuk+gXaKW5Ksl+I812mlMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i7jMSMQk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1qvswjm5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=i7jMSMQk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1qvswjm5; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0075028B6AAC;
-	Tue, 20 Feb 2024 23:01:25 +0000 (UTC)
-Received: from redhat.com (unknown [10.22.33.227])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 9B67BC01644;
-	Tue, 20 Feb 2024 23:01:24 +0000 (UTC)
-Date: Tue, 20 Feb 2024 17:01:23 -0600
-From: Bill O'Donnell <bodonnel@redhat.com>
-To: Eric Sandeen <sandeen@sandeen.net>
-Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org,
-	David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH v2] efs: convert efs to use the new mount api
-Message-ID: <ZdUvQ5zPRxNohtSU@redhat.com>
-References: <20240220164729.179594-1-bodonnel@redhat.com>
- <c3528c22-8385-455f-8b72-a6302b60c360@sandeen.net>
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B47EC21EC0;
+	Tue, 20 Feb 2024 23:03:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1708470194; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WF1IXh+fBnSN8LQbhCP/XIN1EbVVDvvTkk0nMzutoiw=;
+	b=i7jMSMQk7cleGz/czFetNQYmji0YBhI+Rpe/S4RNzrjaPs334KRqcFNgd8baNZaeSv4gcb
+	B8ThL3hXGv+4JIJ3ph+DZBm314tpaphHanOxhvUvO2ETGKKjnCEE7ZcX/Hx1Ua5SUQOGxE
+	d9PLaeNPKh6KcpMpGSyylXhXU990IYY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1708470194;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WF1IXh+fBnSN8LQbhCP/XIN1EbVVDvvTkk0nMzutoiw=;
+	b=1qvswjm5EoNFxZ2Pfu9puIJJj0ydlCpLpSKobCjmDLPFO1kUGoh6BxbP1jbCZ5qwL98QOK
+	pBaLl1xcxY643yCg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1708470194; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WF1IXh+fBnSN8LQbhCP/XIN1EbVVDvvTkk0nMzutoiw=;
+	b=i7jMSMQk7cleGz/czFetNQYmji0YBhI+Rpe/S4RNzrjaPs334KRqcFNgd8baNZaeSv4gcb
+	B8ThL3hXGv+4JIJ3ph+DZBm314tpaphHanOxhvUvO2ETGKKjnCEE7ZcX/Hx1Ua5SUQOGxE
+	d9PLaeNPKh6KcpMpGSyylXhXU990IYY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1708470194;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WF1IXh+fBnSN8LQbhCP/XIN1EbVVDvvTkk0nMzutoiw=;
+	b=1qvswjm5EoNFxZ2Pfu9puIJJj0ydlCpLpSKobCjmDLPFO1kUGoh6BxbP1jbCZ5qwL98QOK
+	pBaLl1xcxY643yCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7BB6D139D0;
+	Tue, 20 Feb 2024 23:03:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id FCoqGLIv1WW2LwAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 20 Feb 2024 23:03:14 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: viro@zeniv.linux.org.uk,  jaegeuk@kernel.org,  tytso@mit.edu,
+  amir73il@gmail.com,  linux-ext4@vger.kernel.org,
+  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
+  brauner@kernel.org
+Subject: Re: [PATCH v6 03/10] fscrypt: Drop d_revalidate for valid dentries
+ during lookup
+In-Reply-To: <20240214235904.GH1638@sol.localdomain> (Eric Biggers's message
+	of "Wed, 14 Feb 2024 15:59:04 -0800")
+Organization: SUSE
+References: <20240213021321.1804-1-krisman@suse.de>
+	<20240213021321.1804-4-krisman@suse.de>
+	<20240214235904.GH1638@sol.localdomain>
+Date: Tue, 20 Feb 2024 18:03:13 -0500
+Message-ID: <87o7caagcu.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c3528c22-8385-455f-8b72-a6302b60c360@sandeen.net>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
+Content-Type: text/plain
+X-Spam-Level: 
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=i7jMSMQk;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=1qvswjm5
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 HAS_ORG_HEADER(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[9];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,mit.edu,gmail.com,vger.kernel.org,lists.sourceforge.net];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Score: -4.51
+X-Rspamd-Queue-Id: B47EC21EC0
+X-Spam-Flag: NO
 
-On Tue, Feb 20, 2024 at 03:05:38PM -0600, Eric Sandeen wrote:
-> On 2/20/24 8:45 AM, Bill O'Donnell wrote:
-> > Convert the efs filesystem to use the new mount API.
-> > 
-> > Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
-> > ---
-> > 
-> > Changelog:
-> > v2: Remove efs_param_spec and efs_parse_param, since no mount options.
-> 
-> A few more items below
-> 
-> > ---
-> >  fs/efs/super.c | 91 +++++++++++++++++++++++++++++++++-----------------
-> >  1 file changed, 61 insertions(+), 30 deletions(-)
-> > 
-> > diff --git a/fs/efs/super.c b/fs/efs/super.c
-> > index f17fdac76b2e..d86c84e9e497 100644
-> > --- a/fs/efs/super.c
-> > +++ b/fs/efs/super.c
-> > @@ -14,19 +14,13 @@
-> >  #include <linux/buffer_head.h>
-> >  #include <linux/vfs.h>
-> >  #include <linux/blkdev.h>
-> > -
-> > +#include <linux/fs_context.h>
-> >  #include "efs.h"
-> >  #include <linux/efs_vh.h>
-> >  #include <linux/efs_fs_sb.h>
-> >  
-> >  static int efs_statfs(struct dentry *dentry, struct kstatfs *buf);
-> > -static int efs_fill_super(struct super_block *s, void *d, int silent);
-> > -
-> > -static struct dentry *efs_mount(struct file_system_type *fs_type,
-> > -	int flags, const char *dev_name, void *data)
-> > -{
-> > -	return mount_bdev(fs_type, flags, dev_name, data, efs_fill_super);
-> > -}
-> > +static int efs_init_fs_context(struct fs_context *fc);
-> >  
-> >  static void efs_kill_sb(struct super_block *s)
-> >  {
-> > @@ -35,15 +29,6 @@ static void efs_kill_sb(struct super_block *s)
-> >  	kfree(sbi);
-> >  }
-> >  
-> > -static struct file_system_type efs_fs_type = {
-> > -	.owner		= THIS_MODULE,
-> > -	.name		= "efs",
-> > -	.mount		= efs_mount,
-> > -	.kill_sb	= efs_kill_sb,
-> > -	.fs_flags	= FS_REQUIRES_DEV,
-> > -};
-> > -MODULE_ALIAS_FS("efs");
-> > -
-> >  static struct pt_types sgi_pt_types[] = {
-> >  	{0x00,		"SGI vh"},
-> >  	{0x01,		"SGI trkrepl"},
-> > @@ -63,6 +48,17 @@ static struct pt_types sgi_pt_types[] = {
-> >  	{0,		NULL}
-> >  };
-> >  
-> > +/*
-> > + * File system definition and registration.
-> > + */
-> > +static struct file_system_type efs_fs_type = {
-> > +	.owner			= THIS_MODULE,
-> > +	.name			= "efs",
-> > +	.kill_sb		= efs_kill_sb,
-> > +	.fs_flags		= FS_REQUIRES_DEV,
-> > +	.init_fs_context	= efs_init_fs_context,
-> > +};
-> > +MODULE_ALIAS_FS("efs");
-> >  
-> >  static struct kmem_cache * efs_inode_cachep;
-> >  
-> > @@ -108,18 +104,10 @@ static void destroy_inodecache(void)
-> >  	kmem_cache_destroy(efs_inode_cachep);
-> >  }
-> >  
-> > -static int efs_remount(struct super_block *sb, int *flags, char *data)
-> > -{
-> > -	sync_filesystem(sb);
-> > -	*flags |= SB_RDONLY;
-> > -	return 0;
-> > -}
-> > -
-> >  static const struct super_operations efs_superblock_operations = {
-> >  	.alloc_inode	= efs_alloc_inode,
-> >  	.free_inode	= efs_free_inode,
-> >  	.statfs		= efs_statfs,
-> > -	.remount_fs	= efs_remount,
-> >  };
-> >  
-> >  static const struct export_operations efs_export_ops = {
-> > @@ -249,26 +237,26 @@ static int efs_validate_super(struct efs_sb_info *sb, struct efs_super *super) {
-> >  	return 0;    
-> >  }
-> >  
-> > -static int efs_fill_super(struct super_block *s, void *d, int silent)
-> > +static int efs_fill_super(struct super_block *s, struct fs_context *fc)
-> >  {
-> >  	struct efs_sb_info *sb;
-> >  	struct buffer_head *bh;
-> >  	struct inode *root;
-> >  
-> > - 	sb = kzalloc(sizeof(struct efs_sb_info), GFP_KERNEL);
-> > +	sb = kzalloc(sizeof(struct efs_sb_info), GFP_KERNEL);
-> 
-> Ok, I guess this and elsewhere is fixing up whitespace oddities,
-> not adding them. :)
+Eric Biggers <ebiggers@kernel.org> writes:
 
-Yeah, I fixed some tabs to spaces whitespace, when I was in that area of code.
+> On Mon, Feb 12, 2024 at 09:13:14PM -0500, Gabriel Krisman Bertazi wrote:
+>> Finally, we need to clean the dentry->flags even for unencrypted
+>> dentries, so the ->d_lock might be acquired even for them.  In order to
+>
+> might => must?
+>
+>> diff --git a/include/linux/fscrypt.h b/include/linux/fscrypt.h
+>> index 47567a6a4f9d..d1f17b90c30f 100644
+>> --- a/include/linux/fscrypt.h
+>> +++ b/include/linux/fscrypt.h
+>> @@ -951,10 +951,29 @@ static inline int fscrypt_prepare_rename(struct inode *old_dir,
+>>  static inline void fscrypt_prepare_dentry(struct dentry *dentry,
+>>  					  bool is_nokey_name)
+>>  {
+>> +	/*
+>> +	 * This code tries to only take ->d_lock when necessary to write
+>> +	 * to ->d_flags.  We shouldn't be peeking on d_flags for
+>> +	 * DCACHE_OP_REVALIDATE unlocked, but in the unlikely case
+>> +	 * there is a race, the worst it can happen is that we fail to
+>> +	 * unset DCACHE_OP_REVALIDATE and pay the cost of an extra
+>> +	 * d_revalidate.
+>> +	 */
+>>  	if (is_nokey_name) {
+>>  		spin_lock(&dentry->d_lock);
+>>  		dentry->d_flags |= DCACHE_NOKEY_NAME;
+>>  		spin_unlock(&dentry->d_lock);
+>> +	} else if (dentry->d_flags & DCACHE_OP_REVALIDATE &&
+>> +		   dentry->d_op->d_revalidate == fscrypt_d_revalidate) {
+>> +		/*
+>> +		 * Unencrypted dentries and encrypted dentries where the
+>> +		 * key is available are always valid from fscrypt
+>> +		 * perspective. Avoid the cost of calling
+>> +		 * fscrypt_d_revalidate unnecessarily.
+>> +		 */
+>> +		spin_lock(&dentry->d_lock);
+>> +		dentry->d_flags &= ~DCACHE_OP_REVALIDATE;
+>> +		spin_unlock(&dentry->d_lock);
+>>  	}
+>>  }
+>
+> Does this all get optimized out when !CONFIG_FS_ENCRYPTION?
+>
+> As-is, I don't think the d_revalidate part will be optimized out.
+>
 
-> 
-> >  	if (!sb)
-> >  		return -ENOMEM;
-> >  	s->s_fs_info = sb;
-> >  	s->s_time_min = 0;
-> >  	s->s_time_max = U32_MAX;
-> > - 
-> > +
-> >  	s->s_magic		= EFS_SUPER_MAGIC;
-> >  	if (!sb_set_blocksize(s, EFS_BLOCKSIZE)) {
-> >  		pr_err("device does not support %d byte blocks\n",
-> >  			EFS_BLOCKSIZE);
-> >  		return -EINVAL;
-> 
-> I think this can (should?) be converted to:
-> 
-> 		return invalf(fc,
-> 			"device does not support %d byte blocks",
-> 			EFS_BLOCKSIZE);
-> 
-> and similarly for other error printing failures along the fill_super path,
-> with appropriate variants of invalf()/errorf()/warnf()/etc
-> 
-> (dhowells - am I right about this?)
+it seems to get optimized out:
 
-I'm still looking at this.
+This is ext4_lookup built with CONFIG_FS_ENCRYPTION=n
 
-> 
-> >  	}
-> > -  
-> > +
-> >  	/* read the vh (volume header) block */
-> >  	bh = sb_bread(s, 0);
-> >  
-> > @@ -294,7 +282,7 @@ static int efs_fill_super(struct super_block *s, void *d, int silent)
-> >  		pr_err("cannot read superblock\n");
-> >  		return -EIO;
-> >  	}
-> > -		
-> > +
-> >  	if (efs_validate_super(sb, (struct efs_super *) bh->b_data)) {
-> >  #ifdef DEBUG
-> >  		pr_warn("invalid superblock at block %u\n",
-> > @@ -328,6 +316,49 @@ static int efs_fill_super(struct super_block *s, void *d, int silent)
-> >  	return 0;
-> >  }
-> >  
-> > +static void efs_free_fc(struct fs_context *fc)
-> > +{
-> > +	kfree(fc->fs_private);
-> > +}
-> 
-> unneeded; see below
+ffffffff814ca3e0 <ext4_lookup>:
+ffffffff814ca3e0:       e8 5b b5 c3 ff          call   ffffffff81105940 <__fentry__>
+ffffffff814ca3e5:       41 54                   push   %r12
+ffffffff814ca3e7:       55                      push   %rbp
+ffffffff814ca3e8:       53                      push   %rbx
+ffffffff814ca3e9:       48 83 ec 58             sub    $0x58,%rsp
+ffffffff814ca3ed:       8b 56 24                mov    0x24(%rsi),%edx
+ffffffff814ca3f0:       65 48 8b 04 25 28 00    mov    %gs:0x28,%rax
+ffffffff814ca3f7:       00 00
+ffffffff814ca3f9:       48 89 44 24 50          mov    %rax,0x50(%rsp)
+ffffffff814ca3fe:       31 c0                   xor    %eax,%eax
+ffffffff814ca400:       48 c7 c0 dc ff ff ff    mov    $0xffffffffffffffdc,%rax
+ffffffff814ca407:       81 fa ff 00 00 00       cmp    $0xff,%edx
+ffffffff814ca40d:       76 21                   jbe    ffffffff814ca430 <ext4_lookup+0x50>
+ffffffff814ca40f:       48 8b 4c 24 50          mov    0x50(%rsp),%rcx
+ffffffff814ca414:       65 48 33 0c 25 28 00    xor    %gs:0x28,%rcx
+ffffffff814ca41b:       00 00
+ffffffff814ca41d:       0f 85 cd 01 00 00       jne    ffffffff814ca5f0 <ext4_lookup+0x210>  <- (__stack_chk_fail)
+ffffffff814ca423:       48 83 c4 58             add    $0x58,%rsp
+ffffffff814ca427:       5b                      pop    %rbx
+ffffffff814ca428:       5d                      pop    %rbp
+ffffffff814ca429:       41 5c                   pop    %r12
+ffffffff814ca42b:       e9 70 21 8b 00          jmp    ffffffff81d7c5a0 <__x86_return_thunk>
+ffffffff814ca430:       48 89 f3                mov    %rsi,%rbx
+ffffffff814ca433:       89 54 24 20             mov    %edx,0x20(%rsp)
+ffffffff814ca437:       48 8d 76 20             lea    0x20(%rsi),%rsi
+ffffffff814ca43b:       48 8b 43 28             mov    0x28(%rbx),%rax
+ffffffff814ca43f:       48 8d 54 24 10          lea    0x10(%rsp),%rdx
+ffffffff814ca444:       48 89 fd                mov    %rdi,%rbp
+ffffffff814ca447:       48 89 74 24 10          mov    %rsi,0x10(%rsp)
+ffffffff814ca44c:       48 89 44 24 18          mov    %rax,0x18(%rsp)
+ffffffff814ca451:       e8 ca f0 ff ff          call   ffffffff814c9520 <ext4_fname_setup_ci_filename>
 
-Agreed.
+[..]
 
-> 
-> > +static int efs_get_tree(struct fs_context *fc)
-> > +{
-> > +	return get_tree_bdev(fc, efs_fill_super);
-> > +}
-> > +
-> > +static int efs_reconfigure(struct fs_context *fc)
-> > +{
-> > +	sync_filesystem(fc->root->d_sb);
-> 
-> I think you need:
-> 
-> 	fc->sb_flags |= SB_RDONLY;
-> 
-> here to preserve the original behavior in efs_remount()
+I had also confirmed previously that fscrypt_lookup_prepare and
+fscrypt_prepare_dentry gets correctly inlined into
+ext4_fname_prepare_lookup.
 
-Good catch. I had noticed that /proc/mounts changed the permission to rw,
-but not behaving as rw.
 
-> 
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +struct efs_context {
-> > +	unsigned long s_mount_opts;
-> > +};
-> 
-> This looks unused, and probably also copied from zonefs, which used it
-> to store mount options - something efs doesn't have.
+> You may need to create a !CONFIG_FS_ENCRYPTION stub explicitly.
 
-Agreed.
+But, in spite of gcc doing the right thing now, fscrypt_prepare_dentry
+might grow in the future. So, if you don't mind, I will still add the
+stub explicitly, as you suggested.
 
-> 
-> > +
-> > +static const struct fs_context_operations efs_context_opts = {
-> > +	.get_tree	= efs_get_tree,
-> > +	.reconfigure	= efs_reconfigure,
-> > +	.free		= efs_free_fc,
-> > +};
-> > +
-> > +/*
-> > + * Set up the filesystem mount context.
-> > + */
-> > +static int efs_init_fs_context(struct fs_context *fc)
-> > +{
-> > +	struct efs_context *ctx;
-> > +
-> > +	ctx = kzalloc(sizeof(struct efs_context), GFP_KERNEL);
-> > +	if (!ctx)
-> > +		return -ENOMEM;
-> > +	fc->fs_private = ctx;
-> 
-> so there's no reason to allocate and assign it here.
-> which means efs_free_fc() doesn't need to exist either.
+thanks,
 
-Agreed.
-
-> 
-> > +	fc->ops = &efs_context_opts;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static int efs_statfs(struct dentry *dentry, struct kstatfs *buf) {
-> >  	struct super_block *sb = dentry->d_sb;
-> >  	struct efs_sb_info *sbi = SUPER_INFO(sb);
-> 
-
+-- 
+Gabriel Krisman Bertazi
 
