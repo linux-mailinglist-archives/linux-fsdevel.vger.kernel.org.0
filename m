@@ -1,187 +1,285 @@
-Return-Path: <linux-fsdevel+bounces-12179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E1585C64D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 21:59:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2789985C6E0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 22:06:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E03A2841C9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 20:59:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9084A1F2172A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 21:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032E2151CCC;
-	Tue, 20 Feb 2024 20:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9DA151CF0;
+	Tue, 20 Feb 2024 21:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RpASEgxw"
+	dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b="mwq8F39W"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+Received: from sandeen.net (sandeen.net [63.231.237.45])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358C6133987
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 21:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.231.237.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708463148; cv=none; b=ZTST7VocDykFN8DdxEwZogywOvMeHjw6pWx8LwEgaPL0puLjFqujlXcF0QW2eiA+dzdDv0OtoYir/wFJyQnjCMm9PmqJ1HFoKeYyIqTjHJaCeoV8FM+us3UYauF9z2lFRtPn39jnwBNRP7kvrrrhH/3r5QYGUHUzABGVXpPhka4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708463148; c=relaxed/simple;
+	bh=Sa9XnNzOUnbgNkYAHS4e7F8S26nCdLi0piZgpOKNeDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ir430bKFbPYqjGA+rpFFOrwO+QFVQcUYK1b1MuCUa7hDpZTowBdIcBMPss8aVmuYxxSjOWdoCCIQ2VEmqE3/fZOUITTn4eCVTUSFziGZUWJrSMdqtfMWxEwNKVgruO05u0P6YTq6MR81CYrRcuwuF4pTKAfKgmk7Xj8tUEREQsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net; spf=pass smtp.mailfrom=sandeen.net; dkim=pass (2048-bit key) header.d=sandeen.net header.i=@sandeen.net header.b=mwq8F39W; arc=none smtp.client-ip=63.231.237.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sandeen.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandeen.net
+Received: from [10.0.0.71] (usg [10.0.0.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5474D1509BC
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 20:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708462780; cv=none; b=UdojBiLUa4X6j7ZOkk1srQq5ZzeiKmAF7RoBDEb5HEdSNHr+rCnKULd/Ni57ea9ly6xg/JkYU57/FooauAB+oyaenF8t9GyKeAlGCmsHZsmm0AHadrf2Tq4zqD3ennI4bhPsCwfuhC+vIFzCoHmmakt1raJZ3Op6lf6lQAu4YHM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708462780; c=relaxed/simple;
-	bh=lAWvibZYCLZJ18pHlosxEIJ4ZpAXKtZDbRFFnu5UjNY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N86mFZRQNikAf0N9/AqkhPhphzfotHJaGmX3vAOkAV6bAxWULVaZ14mi3JRYQdp4unTO36wdsR5giUxasZHnTCENi+U7Ra4kqlB5z/WVoydmLgDXY4HwAfbjSPzQ6+pPK41mMo84puhGA1zj2QEkA0oi0NTZTslvJPBj/sDXB8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RpASEgxw; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6080a3eecd4so39484977b3.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 12:59:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1708462777; x=1709067577; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lAWvibZYCLZJ18pHlosxEIJ4ZpAXKtZDbRFFnu5UjNY=;
-        b=RpASEgxwkOgocmvj8fdC72Q+wuzIgJgO+as12KY3i+3OKhqA0Ur+2USxl5/WxSw7GT
-         n/AMBdCT+NTGrnnWMXZNONo+JRE2hKpdLW4UQg+45cK1Vr17TS6vIb4n2/DhEHIy4d7e
-         viLLUOpZyT8mEju/VwiV32CdbT3D3Db5FmEh33LidWpziEM3Xm6EyhVWeEmbumCQVMwh
-         3EvUT49/Gu+st7rv1CM9V40ySq27BReRViIotx1s9womXle68aBdsps1pt5ryPw3uboK
-         Wu/FLi2Y7MjnzUpQD8y9evXWvjXFJw41+uWmmnpaTaYrNcDOQLMgcV4e9aA76TuP0gVN
-         ICIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708462777; x=1709067577;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lAWvibZYCLZJ18pHlosxEIJ4ZpAXKtZDbRFFnu5UjNY=;
-        b=qPx0kodcGGRLo93f+tC+WxB+LDejEzkf+2NvcVzYeAfIVO3mDjVDBlw6XAU0BYPT8w
-         JGXTpRUTZ4+mWt35UXV6N+G1sU39c6BwFZn73tsbkXncRWuf91WNUIRj8vN3jdG9me1D
-         fi5zrdwZ1d9MHrAqkdwQXsdej582QlYXP5/QvM7tTNO+RkRf4hfM7lp75ydOSZ6WaeL5
-         CHzyy1tRxZsdOaa4yKaQoq52To364c66I+dSuNNB8I3j6wzMKw1zLv6oG4ctsdCxgYTr
-         VBiih0YbzHbx3i6cn+VksNeYF9ptLbQWGf49YNS07ky0g7AM2Df8W8zKZ/TZ4R2UnZ60
-         TBcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVymvIIyyjE2KhwaUyS+Dv+53ZR4bKI9oiozI7CU02OtzUyyVnHZzS7+W8i0lowHIwpBZk/s/Kms3aoPtRzbmWjy5tCwkqSjqQdX2o9rw==
-X-Gm-Message-State: AOJu0YyXYLxkXhtFGaK3yNojznw2MP4NhXn9Ud/eCjLH6fvvV2/RA85q
-	z5iRBiZhNDeLLUecBF301p+byKDeCSKjPDIS6xsyY7J9GCxyM2GXH9s6tHEF4no22m+5TTeBfSG
-	0e97jE9ubt3QQ1aZuHi7GxF9vKFYVOMWQQRTR
-X-Google-Smtp-Source: AGHT+IEUBep3JbSfIFxIrjxLVKPObAawmbo2MZhL9tIpGGThj6+3JFdPMLwKRYjCckQD2YbEpyoHbPFSy5F0AEYQhEA=
-X-Received: by 2002:a81:7c55:0:b0:607:910c:9cb3 with SMTP id
- x82-20020a817c55000000b00607910c9cb3mr16089286ywc.36.1708462776952; Tue, 20
- Feb 2024 12:59:36 -0800 (PST)
+	by sandeen.net (Postfix) with ESMTPSA id 2BA5E33505B;
+	Tue, 20 Feb 2024 15:05:39 -0600 (CST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 sandeen.net 2BA5E33505B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sandeen.net;
+	s=default; t=1708463139;
+	bh=dtYaL3N7QMcl7lULZfyZA9xhkGblVJ7tPRoP0kgwW5c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=mwq8F39WQzgG+65RjWMDqIhfso75OjbyNQRp+wKD4nMCnp6e67qN6uVDSc+kK1xBO
+	 dDUfqA2v+hZjoQ7/LI+sj+K+jSdg1ZJ2hU80hbaZnpxF6G3OemPrYw8cv+QE6KBuPv
+	 bcTVj/FFxjjvnMyCO+nAdJzsjf8EyaWZz2/WlsmJFa/3gDmrx5Txfh4Ij1S5fQjz6Q
+	 mXsiScSE6AE4kQq9HWqA7P60mjjI8zYJVXyKN3nGUK9Cz3KJ9HwqBHrlcTrY5s2r5K
+	 4ZtHqc0SXDOQnkjvUwttQcW6Al5QZc7zPmCKtDcu29cpCFo7yPLDH7DztvURgUDY0E
+	 FH9q5HdORkzhw==
+Message-ID: <c3528c22-8385-455f-8b72-a6302b60c360@sandeen.net>
+Date: Tue, 20 Feb 2024 15:05:38 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zc3X8XlnrZmh2mgN@tiehlicka> <CAJuCfpHc2ee_V6SGAc_31O_ikjGGNivhdSG+2XNcc9vVmzO-9g@mail.gmail.com>
- <Zc4_i_ED6qjGDmhR@tiehlicka> <CAJuCfpHq3N0h6dGieHxD6Au+qs=iKAifFrHAMxTsHTcDrOwSQA@mail.gmail.com>
- <ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
- <320cd134-b767-4f29-869b-d219793ba8a1@suse.cz> <efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
- <20240215180742.34470209@gandalf.local.home> <20240215181648.67170ed5@gandalf.local.home>
- <20240215182729.659f3f1c@gandalf.local.home> <mi5zw42r6c2yfg7fr2pfhfff6hudwizybwydosmdiwsml7vqna@a5iu6ksb2ltk>
- <CAJuCfpEARb8t8pc8WVZYB=yPk6G_kYGmJTMOdgiMHaYYKW3fUA@mail.gmail.com> <e017b7bc-d747-46e6-a89d-4ce558ed79b0@suse.cz>
-In-Reply-To: <e017b7bc-d747-46e6-a89d-4ce558ed79b0@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 20 Feb 2024 12:59:23 -0800
-Message-ID: <CAJuCfpFYAnDcyBtnPK_fc6PmFMJ6B4OqS=F7-QTidZ+QtJQx1A@mail.gmail.com>
-Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in show_mem()
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Steven Rostedt <rostedt@goodmis.org>, 
-	Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org, hannes@cmpxchg.org, 
-	roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net, 
-	willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net, 
-	void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de, 
-	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, 
-	peterx@redhat.com, david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, 
-	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org, tj@kernel.org, 
-	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org, 
-	pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com, 
-	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
-	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
-	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com, 
-	bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org, 
-	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
-	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
-	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
-	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
-	cgroups@vger.kernel.org, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] efs: convert efs to use the new mount api
+Content-Language: en-US
+To: Bill O'Donnell <bodonnel@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc: brauner@kernel.org, David Howells <dhowells@redhat.com>
+References: <20240220164729.179594-1-bodonnel@redhat.com>
+From: Eric Sandeen <sandeen@sandeen.net>
+In-Reply-To: <20240220164729.179594-1-bodonnel@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 20, 2024 at 10:27=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
-rote:
->
-> On 2/19/24 18:17, Suren Baghdasaryan wrote:
-> > On Thu, Feb 15, 2024 at 3:56=E2=80=AFPM Kent Overstreet
-> > <kent.overstreet@linux.dev> wrote:
-> >>
-> >> On Thu, Feb 15, 2024 at 06:27:29PM -0500, Steven Rostedt wrote:
-> >> > All this, and we are still worried about 4k for useful debugging :-/
-> >
-> > I was planning to refactor this function to print one record at a time
-> > with a smaller buffer but after discussing with Kent, he has plans to
-> > reuse this function and having the report in one buffer is needed for
-> > that.
->
-> We are printing to console, AFAICS all the code involved uses plain print=
-k()
-> I think it would be way easier to have a function using printk() for this
-> use case than the seq_buf which is more suitable for /proc and friends. T=
-hen
-> all concerns about buffers would be gone. It wouldn't be that much of a c=
-ode
-> duplication?
+On 2/20/24 8:45 AM, Bill O'Donnell wrote:
+> Convert the efs filesystem to use the new mount API.
+> 
+> Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
+> ---
+> 
+> Changelog:
+> v2: Remove efs_param_spec and efs_parse_param, since no mount options.
 
-Ok, after discussing this with Kent, I'll change this patch to provide
-a function returning N top consumers (the array and N will be provided
-by the caller) and then we can print one record at a time with much
-less memory needed. That should address reusability concerns, will use
-memory more efficiently and will allow for more flexibility (more/less
-than 10 records if needed).
-Thanks for the feedback, everyone!
+A few more items below
 
->
-> >> Every additional 4k still needs justification. And whether we burn a
-> >> reserve on this will have no observable effect on user output in
-> >> remotely normal situations; if this allocation ever fails, we've alrea=
-dy
-> >> been in an OOM situation for awhile and we've already printed out this
-> >> report many times, with less memory pressure where the allocation woul=
-d
-> >> have succeeded.
-> >
-> > I'm not sure this claim will always be true, specifically in the case
-> > of low-end devices with relatively low amounts of reserves and in the
->
-> That's right, GFP_ATOMIC failures can easily happen without prior OOMs.
-> Consider a system where userspace allocations fill the memory as they
-> usually do, up to high watermark. Then a burst of packets is received and
-> handled by GFP_ATOMIC allocations that deplete the reserves and can't cau=
-se
-> OOMs (OOM is when we fail to reclaim anything, but we are allocating from=
- a
-> context that can't reclaim), so the very first report would be an GFP_ATO=
-MIC
-> failure and now it can't allocate that buffer for printing.
->
-> I'm sure more such scenarios exist, Cc: Tetsuo who I recall was an expert=
- on
-> this topic.
->
-> > presence of a possible quick memory usage spike. We should also
-> > consider a case when panic_on_oom is set. All we get is one OOM
-> > report, so we get only one chance to capture this report. In any case,
-> > I don't yet have data to prove or disprove this claim but it will be
-> > interesting to test it with data from the field once the feature is
-> > deployed.
-> >
-> > For now I think with Vlastimil's __GFP_NOWARN suggestion the code
-> > becomes safe and the only risk is to lose this report. If we get cases
-> > with reports missing this data, we can easily change to reserved
-> > memory.
->
+> ---
+>  fs/efs/super.c | 91 +++++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 61 insertions(+), 30 deletions(-)
+> 
+> diff --git a/fs/efs/super.c b/fs/efs/super.c
+> index f17fdac76b2e..d86c84e9e497 100644
+> --- a/fs/efs/super.c
+> +++ b/fs/efs/super.c
+> @@ -14,19 +14,13 @@
+>  #include <linux/buffer_head.h>
+>  #include <linux/vfs.h>
+>  #include <linux/blkdev.h>
+> -
+> +#include <linux/fs_context.h>
+>  #include "efs.h"
+>  #include <linux/efs_vh.h>
+>  #include <linux/efs_fs_sb.h>
+>  
+>  static int efs_statfs(struct dentry *dentry, struct kstatfs *buf);
+> -static int efs_fill_super(struct super_block *s, void *d, int silent);
+> -
+> -static struct dentry *efs_mount(struct file_system_type *fs_type,
+> -	int flags, const char *dev_name, void *data)
+> -{
+> -	return mount_bdev(fs_type, flags, dev_name, data, efs_fill_super);
+> -}
+> +static int efs_init_fs_context(struct fs_context *fc);
+>  
+>  static void efs_kill_sb(struct super_block *s)
+>  {
+> @@ -35,15 +29,6 @@ static void efs_kill_sb(struct super_block *s)
+>  	kfree(sbi);
+>  }
+>  
+> -static struct file_system_type efs_fs_type = {
+> -	.owner		= THIS_MODULE,
+> -	.name		= "efs",
+> -	.mount		= efs_mount,
+> -	.kill_sb	= efs_kill_sb,
+> -	.fs_flags	= FS_REQUIRES_DEV,
+> -};
+> -MODULE_ALIAS_FS("efs");
+> -
+>  static struct pt_types sgi_pt_types[] = {
+>  	{0x00,		"SGI vh"},
+>  	{0x01,		"SGI trkrepl"},
+> @@ -63,6 +48,17 @@ static struct pt_types sgi_pt_types[] = {
+>  	{0,		NULL}
+>  };
+>  
+> +/*
+> + * File system definition and registration.
+> + */
+> +static struct file_system_type efs_fs_type = {
+> +	.owner			= THIS_MODULE,
+> +	.name			= "efs",
+> +	.kill_sb		= efs_kill_sb,
+> +	.fs_flags		= FS_REQUIRES_DEV,
+> +	.init_fs_context	= efs_init_fs_context,
+> +};
+> +MODULE_ALIAS_FS("efs");
+>  
+>  static struct kmem_cache * efs_inode_cachep;
+>  
+> @@ -108,18 +104,10 @@ static void destroy_inodecache(void)
+>  	kmem_cache_destroy(efs_inode_cachep);
+>  }
+>  
+> -static int efs_remount(struct super_block *sb, int *flags, char *data)
+> -{
+> -	sync_filesystem(sb);
+> -	*flags |= SB_RDONLY;
+> -	return 0;
+> -}
+> -
+>  static const struct super_operations efs_superblock_operations = {
+>  	.alloc_inode	= efs_alloc_inode,
+>  	.free_inode	= efs_free_inode,
+>  	.statfs		= efs_statfs,
+> -	.remount_fs	= efs_remount,
+>  };
+>  
+>  static const struct export_operations efs_export_ops = {
+> @@ -249,26 +237,26 @@ static int efs_validate_super(struct efs_sb_info *sb, struct efs_super *super) {
+>  	return 0;    
+>  }
+>  
+> -static int efs_fill_super(struct super_block *s, void *d, int silent)
+> +static int efs_fill_super(struct super_block *s, struct fs_context *fc)
+>  {
+>  	struct efs_sb_info *sb;
+>  	struct buffer_head *bh;
+>  	struct inode *root;
+>  
+> - 	sb = kzalloc(sizeof(struct efs_sb_info), GFP_KERNEL);
+> +	sb = kzalloc(sizeof(struct efs_sb_info), GFP_KERNEL);
+
+Ok, I guess this and elsewhere is fixing up whitespace oddities,
+not adding them. :)
+
+>  	if (!sb)
+>  		return -ENOMEM;
+>  	s->s_fs_info = sb;
+>  	s->s_time_min = 0;
+>  	s->s_time_max = U32_MAX;
+> - 
+> +
+>  	s->s_magic		= EFS_SUPER_MAGIC;
+>  	if (!sb_set_blocksize(s, EFS_BLOCKSIZE)) {
+>  		pr_err("device does not support %d byte blocks\n",
+>  			EFS_BLOCKSIZE);
+>  		return -EINVAL;
+
+I think this can (should?) be converted to:
+
+		return invalf(fc,
+			"device does not support %d byte blocks",
+			EFS_BLOCKSIZE);
+
+and similarly for other error printing failures along the fill_super path,
+with appropriate variants of invalf()/errorf()/warnf()/etc
+
+(dhowells - am I right about this?)
+
+>  	}
+> -  
+> +
+>  	/* read the vh (volume header) block */
+>  	bh = sb_bread(s, 0);
+>  
+> @@ -294,7 +282,7 @@ static int efs_fill_super(struct super_block *s, void *d, int silent)
+>  		pr_err("cannot read superblock\n");
+>  		return -EIO;
+>  	}
+> -		
+> +
+>  	if (efs_validate_super(sb, (struct efs_super *) bh->b_data)) {
+>  #ifdef DEBUG
+>  		pr_warn("invalid superblock at block %u\n",
+> @@ -328,6 +316,49 @@ static int efs_fill_super(struct super_block *s, void *d, int silent)
+>  	return 0;
+>  }
+>  
+> +static void efs_free_fc(struct fs_context *fc)
+> +{
+> +	kfree(fc->fs_private);
+> +}
+
+unneeded; see below
+
+> +static int efs_get_tree(struct fs_context *fc)
+> +{
+> +	return get_tree_bdev(fc, efs_fill_super);
+> +}
+> +
+> +static int efs_reconfigure(struct fs_context *fc)
+> +{
+> +	sync_filesystem(fc->root->d_sb);
+
+I think you need:
+
+	fc->sb_flags |= SB_RDONLY;
+
+here to preserve the original behavior in efs_remount()
+
+> +
+> +	return 0;
+> +}
+> +
+> +struct efs_context {
+> +	unsigned long s_mount_opts;
+> +};
+
+This looks unused, and probably also copied from zonefs, which used it
+to store mount options - something efs doesn't have.
+
+> +
+> +static const struct fs_context_operations efs_context_opts = {
+> +	.get_tree	= efs_get_tree,
+> +	.reconfigure	= efs_reconfigure,
+> +	.free		= efs_free_fc,
+> +};
+> +
+> +/*
+> + * Set up the filesystem mount context.
+> + */
+> +static int efs_init_fs_context(struct fs_context *fc)
+> +{
+> +	struct efs_context *ctx;
+> +
+> +	ctx = kzalloc(sizeof(struct efs_context), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +	fc->fs_private = ctx;
+
+so there's no reason to allocate and assign it here.
+which means efs_free_fc() doesn't need to exist either.
+
+> +	fc->ops = &efs_context_opts;
+> +
+> +	return 0;
+> +}
+> +
+>  static int efs_statfs(struct dentry *dentry, struct kstatfs *buf) {
+>  	struct super_block *sb = dentry->d_sb;
+>  	struct efs_sb_info *sbi = SUPER_INFO(sb);
+
 
