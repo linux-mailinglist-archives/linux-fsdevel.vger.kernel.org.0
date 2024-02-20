@@ -1,167 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-12157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12158-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D4585BF3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 16:00:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 727B585BF6C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 16:06:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51298282337
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 15:00:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D439283356
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 15:06:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092A274274;
-	Tue, 20 Feb 2024 14:59:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1MHaQJL8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KvYwjIm3";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="1MHaQJL8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KvYwjIm3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9508C73187;
+	Tue, 20 Feb 2024 15:06:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B962B67E91;
-	Tue, 20 Feb 2024 14:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D7F71B3F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 15:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708441189; cv=none; b=QDT2xJgRECCIp3P0Cf1eOVDMGwKV98+ZczTw9sush0Ne5/oGy8ngDEwANy42OADlNnhaz2XvjrQxiTLAc4Y7Ag/C9k5s0gaFecVeDvFSnAAdZaNjg/08rl6ja7v88AocgjvERQYklh6KUSz7ZZav6qm9DAN0TBLkXgKy0V6wp8c=
+	t=1708441565; cv=none; b=OvGYZHnRy3RdMIfuls97fAchPeRwIEvv1pwIbQPGNknh91Fu4CcW1L0eM2OhfFt2G1xrgEGuXK4p+fshA/kUj+E/3Efu1p2s2oOeiggGxJCRiRJ3cpENRCSnXDfsJLSUTFlE0sRaXTFERjJTZEf+t1wtA97hfq3Knd4uI8W0BgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708441189; c=relaxed/simple;
-	bh=+6dpGBqTRme9HOoPA5CvCblwTs/y4BuSqvP6fWdqjs8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Mpx13h8f2j9sH0PUjpnPY38TQTTDuvilrMK83fEc6epMJMgTNQ22fQJ8c1bmsV5xwWzERTlcgs3KHmZlRDP/9fX4lrngXaDRo+DgvsCxfaaBg5oqNh9SSjLNCA/Q4e/GE++eFgS0u4hnPiBMNLOFAGizGEPG2LZ7SrwxZ146Hl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1MHaQJL8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KvYwjIm3; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=1MHaQJL8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KvYwjIm3; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C43111F898;
-	Tue, 20 Feb 2024 14:59:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1708441185; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mvro3zekXoZ0IqphOQMb6DozUfJPZwilwfAcT3oRVog=;
-	b=1MHaQJL8i7D8jEJnULlFdqwVhl0mVJmTxyTAfnOT33B3Ex2QuFyhxl/cqxfxLO5aYih85i
-	7nflvsvX6whA4y8pu7ig/SCRzXkTON+G+OEOHDN11Za0LtUBpvU0LQ742MdGbVvgtkqrnr
-	3eOSj79u8cjfnuTj/hh5AQSc4GhghBo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1708441185;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mvro3zekXoZ0IqphOQMb6DozUfJPZwilwfAcT3oRVog=;
-	b=KvYwjIm34gjCXKk+/Khnf2ICGcGzqO8Mmy5RtPzBxH3pdVakyzgegMS4uu4Gjt7GLDZfY3
-	7/2yo2ZijfeAGtBg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1708441185; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mvro3zekXoZ0IqphOQMb6DozUfJPZwilwfAcT3oRVog=;
-	b=1MHaQJL8i7D8jEJnULlFdqwVhl0mVJmTxyTAfnOT33B3Ex2QuFyhxl/cqxfxLO5aYih85i
-	7nflvsvX6whA4y8pu7ig/SCRzXkTON+G+OEOHDN11Za0LtUBpvU0LQ742MdGbVvgtkqrnr
-	3eOSj79u8cjfnuTj/hh5AQSc4GhghBo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1708441185;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mvro3zekXoZ0IqphOQMb6DozUfJPZwilwfAcT3oRVog=;
-	b=KvYwjIm34gjCXKk+/Khnf2ICGcGzqO8Mmy5RtPzBxH3pdVakyzgegMS4uu4Gjt7GLDZfY3
-	7/2yo2ZijfeAGtBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7FD76139D0;
-	Tue, 20 Feb 2024 14:59:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pBv1GGG+1GU4PwAAD6G6ig
-	(envelope-from <krisman@suse.de>); Tue, 20 Feb 2024 14:59:45 +0000
-From: Gabriel Krisman Bertazi <krisman@suse.de>
-To: Eugen Hristev <eugen.hristev@collabora.com>
-Cc: tytso@mit.edu,  adilger.kernel@dilger.ca,  linux-ext4@vger.kernel.org,
-  jaegeuk@kernel.org,  chao@kernel.org,
-  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  kernel@collabora.com,
-  viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz,  Gabriel
- Krisman Bertazi <krisman@collabora.com>
-Subject: Re: [PATCH v10 3/8] libfs: Introduce case-insensitive string
- comparison helper
-In-Reply-To: <fb32fc72-5434-4852-b7e9-f63fc03a8248@collabora.com> (Eugen
-	Hristev's message of "Tue, 20 Feb 2024 09:36:40 +0200")
-Organization: SUSE
-References: <20240215042654.359210-1-eugen.hristev@collabora.com>
-	<20240215042654.359210-4-eugen.hristev@collabora.com>
-	<87zfw0bd6y.fsf@mailhost.krisman.be>
-	<50d2afaa-fd7e-4772-ac84-24e8994bfba8@collabora.com>
-	<87msrwbj18.fsf@mailhost.krisman.be>
-	<fb32fc72-5434-4852-b7e9-f63fc03a8248@collabora.com>
-Date: Tue, 20 Feb 2024 09:59:44 -0500
-Message-ID: <871q97b2qn.fsf@mailhost.krisman.be>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1708441565; c=relaxed/simple;
+	bh=QGSpzD8IrL2IL2FVOH+KRPNBrRVxL+/XdPkqbD0Yrgs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NHrXTp0IfrScE6vpK0ZjavqFCIw29Ylv2TYxT1fqN+uJOUzy6bnMZdCGvWaTcMIwyf/vRvim+6yMNrLkmuqzltC/+QUumaFthi75Cb0bz9FdWB13MNKJp6sk095X6OmG/aB6tqUEDrMk09o7gZK9BG/ZfbuljzZyRzUkMTjf4ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7c0088dc494so235059339f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 07:06:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708441563; x=1709046363;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+yTxsOwUhHvJATauDuWZBUQRT5fbxREug4NmWnZkrzE=;
+        b=M2SXRpEzBXpb2Rg5GPFuUdG/t8g+cDURx6uH+FIe3pnnk71asoSemIZU7+4YDN3Z4h
+         sB2Hni1cQLsxPVXJP6Fm3JV+JXffl4tLip9wYaQDUa2YrDP3TPUP+DlL5rsU6GOfija3
+         FSUYb+38VYd/Scgt7H5NDnGddEOCIqVsGHIK/U5E1bbSRBGIZW9Wu7TYa8KFwXpWoUqW
+         CivOw7l5bjx2p2hZQ9K4wE5dEo7oVF0mBfWT7bRzvSQASgRcXgHJeSa5TtrJYtlxYGeF
+         uvMNw8gY48xakm2M7hAYjIS6Xs+tJ0SpsJSziXT6S15FfZFdautNsjC+vYl4qlgHliNO
+         QgDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2uVsPnMq1D21HcfMDk7wVvj2fMVa6oEpcCECnuxd4aGGtA5V4iRDDsceSKq8GP1EGIpVPWBCC10N5vsWGmSvWNXIjPi5mpUpz6+vyUQ==
+X-Gm-Message-State: AOJu0YxcE7vDuSk6+hh4ZXQzghXV+kEHO9KmPP9ne4SxPtIzdu/Hl4HQ
+	lrY6t7CrO0kXhXviDLWKLGDaUj3RXxfB5ygjG2xP12j52MK5OEYY1pydotKC5KuH3u7BD9IJlZl
+	Yk045kS2/LJk2Eu7XLicZ1ZPjmfT6YbRcWMMLshjQQATCq0CoAP09X7A=
+X-Google-Smtp-Source: AGHT+IFdqJve6wJsxc9By8rzEOYNew2XImrd8r7hRr7EXK4O0t9yzUL8Ic/2bOauglDK4zzjRVPIP13b8gmSQayyuKpXBAYVt79z
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spamd-Result: default: False [-0.90 / 50.00];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 HAS_ORG_HEADER(0.00)[];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 BAYES_HAM(-0.80)[84.80%];
-	 ARC_NA(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[14];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[collabora.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 RCVD_TLS_ALL(0.00)[]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -0.90
+X-Received: by 2002:a05:6e02:1d91:b0:365:88b:3fba with SMTP id
+ h17-20020a056e021d9100b00365088b3fbamr794506ila.1.1708441562919; Tue, 20 Feb
+ 2024 07:06:02 -0800 (PST)
+Date: Tue, 20 Feb 2024 07:06:02 -0800
+In-Reply-To: <000000000000bdf37505f1a7fc09@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000007a3b2a0611d18c03@google.com>
+Subject: Re: [syzbot] [ntfs3?] kernel panic: stack is corrupted in run_unpack_ex
+From: syzbot <syzbot+ba698041fcdf4d0214bb@syzkaller.appspotmail.com>
+To: almaz.alexandrovich@paragon-software.com, axboe@kernel.dk, 
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, 
+	yuran.pereira@hotmail.com
+Content-Type: text/plain; charset="UTF-8"
 
-Eugen Hristev <eugen.hristev@collabora.com> writes:
+syzbot suspects this issue was fixed by commit:
 
-> Okay, I am changing it.
->
-> By the way, is this supposed to work like this on case-insensitive directories ?
->
-> user@debian-rockchip-rock5b-rk3588:~$ ls -la /media/CI_dir/*cuc
-> ls: cannot access '/media/CI_dir/*cuc': No such file or directory
-> user@debian-rockchip-rock5b-rk3588:~$ ls -la /media/CI_dir/*CUC
-> -rw-r--r-- 1 root root 0 Feb 12 17:47 /media/CI_dir/CUC
-> user@debian-rockchip-rock5b-rk3588:~$ ls -la /media/CI_dir/cuc
-> -rw-r--r-- 1 root root 0 Feb 12 17:47 /media/CI_dir/cuc
-> user@debian-rockchip-rock5b-rk3588:~$
->
->
-> basically wildcards don't work.
+commit 6f861765464f43a71462d52026fbddfc858239a5
+Author: Jan Kara <jack@suse.cz>
+Date:   Wed Nov 1 17:43:10 2023 +0000
 
-Yes, at least from a kernel point of view.  Your shell does wildcards in
-userspace, probably by doing getdents and then comparing with possible
-matches.  Since the shell itself is not case-insensitive aware, its
-comparison is case-sensitive, and you get these apparent weird
-semantics.
+    fs: Block writes to mounted block devices
 
-Not ideal from a user point of view.  But not a kernel bug.  If it
-pushes people away from using case-insensitive directories in their
-day-to-day work and leave it to only be used by Windows compatibility
-layers, maybe that's a win? :)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=149d61e8180000
+start commit:   41c03ba9beea Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8cdb1e7bec4b955a
+dashboard link: https://syzkaller.appspot.com/bug?extid=ba698041fcdf4d0214bb
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11e43f56480000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13fbabea480000
 
--- 
-Gabriel Krisman Bertazi
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: fs: Block writes to mounted block devices
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
