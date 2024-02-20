@@ -1,133 +1,227 @@
-Return-Path: <linux-fsdevel+bounces-12171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B7485C35F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 19:09:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6343585C39D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 19:27:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA98D1C21718
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 18:09:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18D58284EE2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 18:27:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB9877F2F;
-	Tue, 20 Feb 2024 18:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 226B182888;
+	Tue, 20 Feb 2024 18:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZY07BMqD"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IxxD5z05";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EGjwc1aS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IxxD5z05";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EGjwc1aS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEED6D1A8;
-	Tue, 20 Feb 2024 18:09:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8380C81AC4;
+	Tue, 20 Feb 2024 18:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708452572; cv=none; b=WlHg7CXg4hdbpnEMEITLpYd7ZTsv9WA3ttlVZafixKD2D10I5CF6GsoLpMVJKUXdicRRo7JdHGwQ1RKpufaXQdrKX1BNG9tdG1JuqaPaJai2jpmmN3NcPDVkzO/KLezAVqkozVU+rNnRsNC6zweq5oKIu+JkHvGTWZrVZCPvo8I=
+	t=1708453651; cv=none; b=LDRdB0B3i8xrtyVkyNVlvEs+iRzmf6v9cN37UpfoNXLBenlWccRcfCyW3apiGLaWOX8V/XO9ZkZgZzCNcXLI3wsPoyKTPQxqye/QGUERNt05IayJuno4g312xOXsEacfKM/ht5uunK12g1CL1L+9UQoKMHV8i7s3s5HIiiS8uXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708452572; c=relaxed/simple;
-	bh=tPWeZ1qRuWVXE/rrq7qVGTOTw/AlwbHnoQ41Kwp3AQE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=RMulBLczziaPUHa+uayyW+04fukT9wd/JNpx+CiXH8BDb0f5jN2vX/mCBZvJcux6NzV3cgDwQTcxrzYU6H6F3IMlQKx4w+zLkYq9FkQy3uK5zNf7ffADPPQYEfc5v7zy1WBPzNapaUqloYix7AbXo8RfTYdqkVsLfItErJvRpXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZY07BMqD; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2d1080cba75so55243391fa.0;
-        Tue, 20 Feb 2024 10:09:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708452569; x=1709057369; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lCA+rpRvWHa0gdI+SBPsLlnk7CtGNTdjDq+Gt1oJr7w=;
-        b=ZY07BMqDLFO8p2ZIdHVwYZBp3JA6lqphWZJmkgJVFpOdqeO9zhRBT6hYWVbSZc4f62
-         ZMuxbsRZ2/0Vdl6aDfIjMsFdJMwPSxgK93VEpBiiTLO6CgaUo5iK3tgmLk/CCqEdMoyw
-         X2Qdv8xg0jiuEKdEWQSwDal07e9Q6V5EQ3EGZ9OgY512pRmtSQSk56nD7bz3NP5j/6Nh
-         CQxBsSLLh3wuUk4wR7dX3TfrHL62r90nUpLipNb+Q8K+AtaH9+srnDMkaIp6O8uO6S85
-         a6ciQ0Bf7J5OznEDG4zH55V/yjJ5POhEX/iwPz0ogx0vkn/zS9x54UB0xxStC19WADcv
-         lqYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708452569; x=1709057369;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lCA+rpRvWHa0gdI+SBPsLlnk7CtGNTdjDq+Gt1oJr7w=;
-        b=StfnhY5MF8KgTNK0IwLQovCNjecNYmAFJ7Tsb9HowT1C061+sM6us93lGfKCBpvLM3
-         6dXlERVf94+SudfhC3+HBXTn6ls5rbq/Qs/gJhsKPIm6LSS+56rgV3aaAXT7Kc0FoSmp
-         NJFSI3q5EAO5l+u+tIarwkIQxVViGdChCXAhBHH15GWzsHXA2ABCQrmiBsEPUK9V4Fai
-         c3cUKrYfKQGadXtUS9e9BejWH2N8j2GputL97WgbxBiEtWCCDLivK2L/J8CbZsga4BFI
-         kOi3QmV1K/T1oWH0qj3LBEtQ6CD3CYqDmYWMmNPRzppavs+XJjwnBLWrul4zJCOKNGfv
-         R1QA==
-X-Forwarded-Encrypted: i=1; AJvYcCVB4qXS6DhjDKyUweR3/vn58kbEE+V+S085zPzDxae3d2lckDe+M6vuzU2Ecz8BsOdeqMxkdWfK6uHtSv517O8VEUqSTnZONJAiVEDRh3fXzxe+i+HUhu0d0DL5ECANbmTs7sT1eUtaXNw=
-X-Gm-Message-State: AOJu0YwVXSmt4uOpNL8jKsn7kHa+RVDlmrSjfce+jsIYzTBuOQaJHMAO
-	NPBgiAVkLJbpUdqoWBIi/ZzdJC0W/5nbkzma0DfH24IsuNhA1kDOcUiOEd/biOgWF1H4cnw/bxa
-	0bHMn9qahT9+ulbxyDUpU/28eWl7T59hydEHKSg==
-X-Google-Smtp-Source: AGHT+IE7JnacY/Ay9AFFtmTzAWUNFIS1+xe46vcWjFQAe7NhUiGg/wK0RixRDKsonXhJD0viq/sSraHjVkcZkVK2wtU=
-X-Received: by 2002:a05:651c:609:b0:2d2:2b74:4bdd with SMTP id
- k9-20020a05651c060900b002d22b744bddmr2337816lje.8.1708452568397; Tue, 20 Feb
- 2024 10:09:28 -0800 (PST)
+	s=arc-20240116; t=1708453651; c=relaxed/simple;
+	bh=OJkratr22VFfCbpm7Y4TEVF5H+VxTfzYWK8qM7R7Bmw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RF3v84y5WsS4nTojCsEIxsCHX6PTybJZ28PzSx15RVjv+bQNOR9tE8RsihATFPdM+OUo14AsKyMgGnLMSHyluU9yAxkbYsZV6889YwNc0Lw4lzSa7wgjNBGsjuwDyJGSCWrZVK+a4CFVREXjL4oL+wciFp+MZcEhm6ISLNOPWcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IxxD5z05; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EGjwc1aS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IxxD5z05; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EGjwc1aS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 279D421FDD;
+	Tue, 20 Feb 2024 18:27:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1708453647; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZilpvBzNJyAotgmhs4yPhtveHoML0rb6UBsNzTh2fy0=;
+	b=IxxD5z05As9iwNt64pXwo9uMrmiMPOx8LkjV0Fqt9JDJTqgYJsDWFpdeeOZ6naB/Yats4r
+	j/dPrszvU95YLT0h9IkQS+uuBZiA3xuxqNBxE9MX7vilfRnf/estNQhT+NL6Sn4IguNupc
+	ro8ag87CYBCPjZh9LLlOn3yXWmPIcRU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1708453647;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZilpvBzNJyAotgmhs4yPhtveHoML0rb6UBsNzTh2fy0=;
+	b=EGjwc1aSk9FAHIhSFQeC/OSVGYAmMzA+6CUGwcOr3GWEprXkm1AzuTEWFhTlt3mVD0WADw
+	zit1C1mKEB3w86Dw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1708453647; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZilpvBzNJyAotgmhs4yPhtveHoML0rb6UBsNzTh2fy0=;
+	b=IxxD5z05As9iwNt64pXwo9uMrmiMPOx8LkjV0Fqt9JDJTqgYJsDWFpdeeOZ6naB/Yats4r
+	j/dPrszvU95YLT0h9IkQS+uuBZiA3xuxqNBxE9MX7vilfRnf/estNQhT+NL6Sn4IguNupc
+	ro8ag87CYBCPjZh9LLlOn3yXWmPIcRU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1708453647;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZilpvBzNJyAotgmhs4yPhtveHoML0rb6UBsNzTh2fy0=;
+	b=EGjwc1aSk9FAHIhSFQeC/OSVGYAmMzA+6CUGwcOr3GWEprXkm1AzuTEWFhTlt3mVD0WADw
+	zit1C1mKEB3w86Dw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 895C6139D0;
+	Tue, 20 Feb 2024 18:27:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zQTVIA7v1GUGcgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 20 Feb 2024 18:27:26 +0000
+Message-ID: <e017b7bc-d747-46e6-a89d-4ce558ed79b0@suse.cz>
+Date: Tue, 20 Feb 2024 19:27:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 20 Feb 2024 12:09:17 -0600
-Message-ID: <CAH2r5ms2Hn1cmYEmmbGXTpCo2DY8FY8mfMewcvzEe2S-vjV0pQ@mail.gmail.com>
-Subject: folio oops
-To: David Howells <dhowells@redhat.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	CIFS <linux-cifs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in show_mem()
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Michal Hocko <mhocko@suse.com>,
+ akpm@linux-foundation.org, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+ mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
+ liam.howlett@oracle.com, corbet@lwn.net, void@manifault.com,
+ peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+ david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+ nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
+ rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
+ yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+ hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+ ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
+ ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, bsegall@google.com, bristot@redhat.com,
+ vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+ iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+ elver@google.com, dvyukov@google.com, shakeelb@google.com,
+ songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+ minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+ cgroups@vger.kernel.org, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+References: <Zc3X8XlnrZmh2mgN@tiehlicka>
+ <CAJuCfpHc2ee_V6SGAc_31O_ikjGGNivhdSG+2XNcc9vVmzO-9g@mail.gmail.com>
+ <Zc4_i_ED6qjGDmhR@tiehlicka>
+ <CAJuCfpHq3N0h6dGieHxD6Au+qs=iKAifFrHAMxTsHTcDrOwSQA@mail.gmail.com>
+ <ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
+ <320cd134-b767-4f29-869b-d219793ba8a1@suse.cz>
+ <efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
+ <20240215180742.34470209@gandalf.local.home>
+ <20240215181648.67170ed5@gandalf.local.home>
+ <20240215182729.659f3f1c@gandalf.local.home>
+ <mi5zw42r6c2yfg7fr2pfhfff6hudwizybwydosmdiwsml7vqna@a5iu6ksb2ltk>
+ <CAJuCfpEARb8t8pc8WVZYB=yPk6G_kYGmJTMOdgiMHaYYKW3fUA@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <CAJuCfpEARb8t8pc8WVZYB=yPk6G_kYGmJTMOdgiMHaYYKW3fUA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=IxxD5z05;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=EGjwc1aS
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 XM_UA_NO_VERSION(0.01)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 BAYES_HAM(-3.00)[100.00%];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 TO_MATCH_ENVRCPT_SOME(0.00)[];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_GT_50(0.00)[74];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 FREEMAIL_CC(0.00)[goodmis.org,suse.com,linux-foundation.org,cmpxchg.org,linux.dev,suse.de,stgolabs.net,infradead.org,oracle.com,lwn.net,manifault.com,redhat.com,arm.com,kernel.org,arndb.de,linutronix.de,linux.intel.com,kernel.dk,soleen.com,google.com,gmail.com,chromium.org,linuxfoundation.org,linaro.org,linux.com,lge.com,bytedance.com,akamai.com,android.com,vger.kernel.org,lists.linux.dev,kvack.org,googlegroups.com,I-love.SAKURA.ne.jp];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 279D421FDD
+X-Spam-Level: 
+X-Spam-Score: -1.80
+X-Spam-Flag: NO
 
-FYI - I hit this oops in xfstests (around generic/048) today.  This is
-with 6.8-rc5
+On 2/19/24 18:17, Suren Baghdasaryan wrote:
+> On Thu, Feb 15, 2024 at 3:56 PM Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+>>
+>> On Thu, Feb 15, 2024 at 06:27:29PM -0500, Steven Rostedt wrote:
+>> > All this, and we are still worried about 4k for useful debugging :-/
+> 
+> I was planning to refactor this function to print one record at a time
+> with a smaller buffer but after discussing with Kent, he has plans to
+> reuse this function and having the report in one buffer is needed for
+> that.
 
-Any thoughts?
+We are printing to console, AFAICS all the code involved uses plain printk()
+I think it would be way easier to have a function using printk() for this
+use case than the seq_buf which is more suitable for /proc and friends. Then
+all concerns about buffers would be gone. It wouldn't be that much of a code
+duplication?
 
-125545.834971] task:xfs_io          state:D stack:0     pid:1697299
-tgid:1697299 ppid:1692194 flags:0x00004002
-[125545.834987] Call Trace:
-[125545.834992]  <TASK>
-[125545.835002]  __schedule+0x2cb/0x760
-[125545.835022]  schedule+0x33/0x110
-[125545.835031]  io_schedule+0x46/0x80
-[125545.835039]  folio_wait_bit_common+0x136/0x330
-[125545.835052]  ? __pfx_wake_page_function+0x10/0x10
-[125545.835069]  folio_wait_bit+0x18/0x30
-[125545.835076]  folio_wait_writeback+0x2b/0xa0
-[125545.835087]  __filemap_fdatawait_range+0x93/0x110
-[125545.835104]  filemap_write_and_wait_range+0x94/0xc0
-[125545.835120]  cifs_flush+0x9a/0x140 [cifs]
-[125545.835315]  filp_flush+0x35/0x90
-[125545.835329]  filp_close+0x14/0x30
-[125545.835341]  put_files_struct+0x85/0xf0
-[125545.835354]  exit_files+0x47/0x60
-[125545.835365]  do_exit+0x295/0x530
-[125545.835377]  ? wake_up_state+0x10/0x20
-[125545.835391]  do_group_exit+0x35/0x90
-[125545.835403]  __x64_sys_exit_group+0x18/0x20
-[125545.835414]  do_syscall_64+0x74/0x140
-[125545.835424]  ? handle_mm_fault+0xad/0x380
-[125545.835437]  ? do_user_addr_fault+0x338/0x6b0
-[125545.835446]  ? irqentry_exit_to_user_mode+0x6b/0x1a0
-[125545.835458]  ? irqentry_exit+0x43/0x50
-[125545.835467]  ? exc_page_fault+0x94/0x1b0
-[125545.835478]  entry_SYSCALL_64_after_hwframe+0x6e/0x76
-[125545.835490] RIP: 0033:0x7f9b67eea36d
-[125545.835549] RSP: 002b:00007ffde6442cd8 EFLAGS: 00000202 ORIG_RAX:
-00000000000000e7
-[125545.835560] RAX: ffffffffffffffda RBX: 00007f9b68000188 RCX:
-00007f9b67eea36d
-[125545.835566] RDX: 00000000000000e7 RSI: ffffffffffffff28 RDI:
-0000000000000000
-[125545.835572] RBP: 0000000000000001 R08: 0000000000000000 R09:
-0000000000000000
-[125545.835576] R10: 00005b88e60ec720 R11: 0000000000000202 R12:
-0000000000000000
-[125545.835582] R13: 0000000000000000 R14: 00007f9b67ffe860 R15:
-00007f9b680001a0
-[125545.835597]  </TASK>
+>> Every additional 4k still needs justification. And whether we burn a
+>> reserve on this will have no observable effect on user output in
+>> remotely normal situations; if this allocation ever fails, we've already
+>> been in an OOM situation for awhile and we've already printed out this
+>> report many times, with less memory pressure where the allocation would
+>> have succeeded.
+> 
+> I'm not sure this claim will always be true, specifically in the case
+> of low-end devices with relatively low amounts of reserves and in the
 
+That's right, GFP_ATOMIC failures can easily happen without prior OOMs.
+Consider a system where userspace allocations fill the memory as they
+usually do, up to high watermark. Then a burst of packets is received and
+handled by GFP_ATOMIC allocations that deplete the reserves and can't cause
+OOMs (OOM is when we fail to reclaim anything, but we are allocating from a
+context that can't reclaim), so the very first report would be an GFP_ATOMIC
+failure and now it can't allocate that buffer for printing.
 
--- 
-Thanks,
+I'm sure more such scenarios exist, Cc: Tetsuo who I recall was an expert on
+this topic.
 
-Steve
+> presence of a possible quick memory usage spike. We should also
+> consider a case when panic_on_oom is set. All we get is one OOM
+> report, so we get only one chance to capture this report. In any case,
+> I don't yet have data to prove or disprove this claim but it will be
+> interesting to test it with data from the field once the feature is
+> deployed.
+> 
+> For now I think with Vlastimil's __GFP_NOWARN suggestion the code
+> becomes safe and the only risk is to lose this report. If we get cases
+> with reports missing this data, we can easily change to reserved
+> memory.
+
 
