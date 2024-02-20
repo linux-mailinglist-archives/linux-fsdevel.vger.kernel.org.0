@@ -1,186 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-12177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C94085C595
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 21:14:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67BED85C5C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 21:28:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 808ED1C222B5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 20:14:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42371F21BAE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 20:28:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E3814AD19;
-	Tue, 20 Feb 2024 20:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FEE14AD26;
+	Tue, 20 Feb 2024 20:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="livCMehg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acwU73RU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B5D612D7;
-	Tue, 20 Feb 2024 20:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5549A612D7;
+	Tue, 20 Feb 2024 20:28:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708460080; cv=none; b=V+RgeqmbZOdw5GIABJWkdQAT8pyA+gWeDxYdPgX6dqFN3xVNz7DdLgjevFYUn8oxwuq1Adn3smUa/vKejyu+P/w4OnKW35qw71iSqgNFIvMmX4/RQeKuVKfUosNbnFfTJLCokaBg44Yw/waceA5UzZwkzzafCphzXhcV+lm9gtg=
+	t=1708460890; cv=none; b=lxGQIc1ID02t1iH+teosut+34bR+c7rICcOa5fmN3RR+YQR1++n0tW603AISYP0AbhgoEGUtw/nJ96fiwt6Xeq1ZEULPTXdWX7jflJ+4acGJ4R2mFGG/ukAijRECu+hGcU5OR4I9+nYCcnhsd4Qq78kNYI7yMv2r6D9zdeC+/Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708460080; c=relaxed/simple;
-	bh=PhnmgydTViRe3a3Z0MeKX2O9Z2j/9jkmyt+EI/YkIDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ID6zwQuReBnMNNu0dPh6ZWExaNgbYRR0qg100OFq0tY3iAJED/4xvjW5ccAX7cnJUtjq0YCpCL8ztMWclYjVYsZwXA57DNNHpqXga9x+/co98Y97y2z22ymrSXdCY/TbjtBSP8MEITvap+5ubwoTZz1V8yUvCtnRaU64WzWuHpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=livCMehg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0852DC433C7;
-	Tue, 20 Feb 2024 20:14:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708460079;
-	bh=PhnmgydTViRe3a3Z0MeKX2O9Z2j/9jkmyt+EI/YkIDg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=livCMehgZsyylqxmsXVj6i8xUdU6xpehFod2AwCiN5tpwFKJ1EI6uVpnpUk1SD1pP
-	 GAOlkj14vHO/qPvkX0d2id7JAYJfmORLe28tPRQkxNkQE6Rd+nls0vM8PGBKwrFQaU
-	 Z6Hn1f36OwFyKU9OKK+mfymo53Iz1gvB0Pk8YA6mTWUndRC5NI4pVkVYdWAFBH06HP
-	 wpOkoK5yJIv0PkCR2AWd/nyXrwJz1hOuoOPB1/Rw7cDtv6Mla+4AxXh12qp+hhLjEp
-	 yd71FoqwR1k2BDtT0dWYNV11Xg/QhMr2farOiz7zqwo8yti2+//d2OrlM8Ac/4z8v3
-	 SQyYG8IyDqVJw==
-Date: Tue, 20 Feb 2024 20:14:30 +0000
-From: Mark Brown <broonie@kernel.org>
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-Cc: "corbet@lwn.net" <corbet@lwn.net>, "ardb@kernel.org" <ardb@kernel.org>,
-	"maz@kernel.org" <maz@kernel.org>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"keescook@chromium.org" <keescook@chromium.org>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"oleg@redhat.com" <oleg@redhat.com>,
-	"arnd@arndb.de" <arnd@arndb.de>,
-	"ebiederm@xmission.com" <ebiederm@xmission.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"sorear@fastmail.com" <sorear@fastmail.com>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"thiago.bauermann@linaro.org" <thiago.bauermann@linaro.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"musl@lists.openwall.com" <musl@lists.openwall.com>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v8 00/38] arm64/gcs: Provide support for GCS in userspace
-Message-ID: <527e2b4d-5d2b-4993-a30a-834e77a23a40@sirena.org.uk>
-References: <20240203-arm64-gcs-v8-0-c9fec77673ef@kernel.org>
- <22a53b78-10d7-4a5a-a01e-b2f3a8c22e94@app.fastmail.com>
- <4c7bdf8fde9cc45174f10b9221fa58ffb450b755.camel@intel.com>
+	s=arc-20240116; t=1708460890; c=relaxed/simple;
+	bh=A1MvHpPolzHclZTFrT7Mz0QU8ANDs5FPUBzDEWHT0CY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OGnl/TyN9gpAXYW2vp0rZ86AozKG10cT2GyV9ZBpAn2XxC9nDjqQiB8KV0Dul8RVZhcoZtQ8UTISWbOkJafbwGU7fSIVFh6LPUJJw8QIedzOspUC8RV1gYenPX8qwyJY+0UmhPGm8HrYRQ213SFmdMmmerBsqK4cH9+3aBrvaWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acwU73RU; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2d2533089f6so954051fa.1;
+        Tue, 20 Feb 2024 12:28:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708460886; x=1709065686; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PQVaoZMHrUwH8D7MZfopuI7iW1uozR+J2Oa9ClCShe4=;
+        b=acwU73RU2TUu6yoVUaysVqt/HEvLikMrryyudYkZ165moWWQ2POTNuPF2oZS9Jura0
+         mhSNyy2v3SS5yshshJarmVxzYx82nzP2ZjGpDx1BqWPNzerQJUwdnidmiYkApVvrdTbv
+         Gj9b99Irm94DpRfsM9ZzaG+80OP4wYKeKo4oPDjOQxfQl6ojOB0wZQY2sAhr0BV7he97
+         4wdPJLg3tedU61aKSP6eHIfF3uc8vOp+Yuryje4u7U6DoFxI9leacM5WXf8vB5xuU9kX
+         IuAdNQAsumUVAK3I7ygeQh/3WlWSlvrG1BwxYm8cDOrz6yg6YDsW/OwmtNpbEwPDtGQE
+         RD+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708460886; x=1709065686;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PQVaoZMHrUwH8D7MZfopuI7iW1uozR+J2Oa9ClCShe4=;
+        b=EgW1OaNZfxHYSQbFhnaarzZdYah76tfdCIEIMWgrf+/NQ4sOEcnWek3k5WFgIG5ldY
+         wSjkIhryjDpBWDM8iafm0SnDg7cslFPmo5n0tgc+AawYoqgcnC/fdHqmqgk0fQgjR4dQ
+         JnD8/N5N3rAnpO2v1n5hE47WfjvNSWes295HNa8VdOeiAglj/aXICWTibzdJKhm7XRVr
+         Rt9x5g/2Tln13akNZfGYX/gVkC8wICGBZY+To18PUcmNMqfRR5CDQF+2dzanSRBn8dPP
+         GjEueThWUZohPmOB+ROaDv1f3xiINAJ4roOOJt2YJvNO4VEAxG/XVEFB3tTbH5/7CF19
+         liCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkFu15UVJauyptr/ffcgcp1eSVVOKVvxSFosisxzqNDd9SwKarY4MXVrSv9yvPUfpTAUIu2HsXgmTtV0Zgos/iumc8LQtMVBNqsTEOBZ+WBH+0FFwiso5aB7E5qZ3/jLF7t8jT0aQCdV4=
+X-Gm-Message-State: AOJu0Yx2E+Zg/FLu+Y0ukPIojcIGrACv7Cz/A9CLEHXNviXP7osv9rOl
+	lo9sF1Ym4HpQBCAM7dpRSe8GOW9A3aGM73iUujyTLsMg/nkfF+dXw8EEjVrAvOi5zrn3mfTDMF/
+	R7DR6GfOVfpoCs7reta+rl7HFB0SkhHby/nMS1A==
+X-Google-Smtp-Source: AGHT+IH1KNc70gSIB80eTdvh4FlG9U0Ct/lHcE6W2pXVGDaJoDOX7jbiPwHtYgk06K6S27wWu0OFtDm6M28zG3leIL4=
+X-Received: by 2002:a05:651c:232:b0:2d2:4783:872a with SMTP id
+ z18-20020a05651c023200b002d24783872amr2007251ljn.29.1708460886148; Tue, 20
+ Feb 2024 12:28:06 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="LFlVuq7xn7hg1UEJ"
-Content-Disposition: inline
-In-Reply-To: <4c7bdf8fde9cc45174f10b9221fa58ffb450b755.camel@intel.com>
-X-Cookie: E = MC ** 2 +- 3db
-
-
---LFlVuq7xn7hg1UEJ
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+References: <CAH2r5ms2Hn1cmYEmmbGXTpCo2DY8FY8mfMewcvzEe2S-vjV0pQ@mail.gmail.com>
+ <ZdT-SOlTdrDoFqnX@casper.infradead.org>
+In-Reply-To: <ZdT-SOlTdrDoFqnX@casper.infradead.org>
+From: Steve French <smfrench@gmail.com>
+Date: Tue, 20 Feb 2024 14:27:54 -0600
+Message-ID: <CAH2r5msF5n+5OCQ=JzYL-FVQEeCax-JutaUVcni5Bkcd8z26tw@mail.gmail.com>
+Subject: Re: folio oops
+To: Matthew Wilcox <willy@infradead.org>
+Cc: David Howells <dhowells@redhat.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	CIFS <linux-cifs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 20, 2024 at 06:41:05PM +0000, Edgecombe, Rick P wrote:
-> On Tue, 2024-02-20 at 11:36 -0500, Stefan O'Rear wrote:
+On Tue, Feb 20, 2024 at 1:32=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Tue, Feb 20, 2024 at 12:09:17PM -0600, Steve French wrote:
+> > FYI - I hit this oops in xfstests (around generic/048) today.  This is
+> > with 6.8-rc5
+> >
+> > Any thoughts?
+>
+> Umm, this isn't an oops, it's just a backtrace.  Do you have anything
+> that was printed before the backtrace?  I'd expect to see something
+> complaining about sleeping for too long, since this is where we wait for
+> writeback to finish ... the bug is probably something not calling
+> folio_end_writeback() when it should.
 
-> > 2. Shadow stack faults on non-shadow stack pages, if flexible shadow
-> > stack
-> > =A0=A0 handling is in effect, cause the affected page to become a shadow
-> > stack
-> > =A0=A0 page.=A0 When this happens, the page filled with invalid address
-> > tokens.
+That makes more sense - looking at the saved kernel log I do see
+evidence that writes could have timed out (in this case due to
+reconnects to a Windows server repeatedly failing)
 
-> Hmm, could the shadow stack underflow onto the real stack then? Not
-> sure how bad that is. INCSSP (incrementing the SSP register on x86)
-> loops are not rare so it seems like something that could happen.
+2024-02-20T12:05:52.416215-06:00 smfrench-ThinkPad-P52 kernel:
+[125520.747835] CIFS: VFS: No writable handle in writepages rc=3D-9
+2024-02-20T12:05:55.743942-06:00 smfrench-ThinkPad-P52 kernel:
+[125524.077358] CIFS: VFS: \\ has not responded in 180 seconds.
+Reconnecting...
+2024-02-20T12:05:57.024052-06:00 smfrench-ThinkPad-P52 kernel:
+[125524.077367] CIFS: VFS: unable to get chan index for server: 0x2bf
+2024-02-20T12:05:57.024077-06:00 smfrench-ThinkPad-P52 kernel:
+[125525.357444] CIFS: VFS: \\ has not responded in 180 seconds.
+Reconnecting...
+2024-02-20T12:05:57.024080-06:00 smfrench-ThinkPad-P52 kernel:
+[125525.357469] CIFS: VFS: unable to get chan index for server: 0x2c0
 
-Yes, they'd trash any pages of normal stack they touch as they do so but
-otherwise seems similar to overflow.
+And interestingly I also see some "invalid argument" errors later
+which I have not seen for session setup before.
 
-> The situation (for arm and riscv too I think?) is that some
-> applications will just not work automatically due to custom stack
-> switching implementations. (user level threading libraries, JITs, etc).
-> So=A0I think it should be ok to ask for apps to change to enable shadow
-> stack and we should avoid doing anything too awkward in pursuit of
-> getting it to work completely transparently.
+2024-02-20T12:06:17.048083-06:00 smfrench-ThinkPad-P52 kernel:
+[125545.382363] CIFS: VFS: \\ Send error in SessSetup =3D -22
 
-Yes, on arm64 anything that rewrites or is otherwise clever with the
-stack is going to have to understand that the GCS exists on arm64 and do
-matching rewrites/updates for the GCS.  This includes anything that
-switches stacks, it will need to use GCS specific instructions to change
-the current shadow stack pointer.
 
-> > MAP_SHARED; I consider this sufficiently perverse application
-> > behavior that
-> > it is not necessary to ensure exclusive use of the underlying pages
-> > while
-> > a shadow stack pte exists.=A0 (Applications that use MAP_SHARED for
-> > stacks
-> > do not get the full benefit of the shadow stack but they keep
-> > POSIX.1-2004
-> > conformance, applications that allocate stacks exclusively in
-> > MAP_PRIVATE
-> > memory lose no security.)
 
-> On x86 we don't support MAP_SHARED shadow stacks. There is a whole
-> snarl around the dirty bit in the PTE. I'm not sure it's impossible but
-> it was gladly avoided. There is also a benefit in avoiding having them
-> get mapped as writable in a different context.
 
-Similarly for arm64, I think we can physically do it IIRC but between
-having to map via map_shadow_stack() for security reasons and it just
-generally not seeming like a clever idea the implementation shouldn't
-actually let you get a MAP_SHARED GCS it's not something that's been
-considered.
+> > 125545.834971] task:xfs_io          state:D stack:0     pid:1697299
+> > tgid:1697299 ppid:1692194 flags:0x00004002
+> > [125545.834987] Call Trace:
+> > [125545.834992]  <TASK>
+> > [125545.835002]  __schedule+0x2cb/0x760
+> > [125545.835022]  schedule+0x33/0x110
+> > [125545.835031]  io_schedule+0x46/0x80
+> > [125545.835039]  folio_wait_bit_common+0x136/0x330
+> > [125545.835052]  ? __pfx_wake_page_function+0x10/0x10
+> > [125545.835069]  folio_wait_bit+0x18/0x30
+> > [125545.835076]  folio_wait_writeback+0x2b/0xa0
+> > [125545.835087]  __filemap_fdatawait_range+0x93/0x110
+> > [125545.835104]  filemap_write_and_wait_range+0x94/0xc0
+> > [125545.835120]  cifs_flush+0x9a/0x140 [cifs]
+> > [125545.835315]  filp_flush+0x35/0x90
+> > [125545.835329]  filp_close+0x14/0x30
+> > [125545.835341]  put_files_struct+0x85/0xf0
+> > [125545.835354]  exit_files+0x47/0x60
+> > [125545.835365]  do_exit+0x295/0x530
+> > [125545.835377]  ? wake_up_state+0x10/0x20
+> > [125545.835391]  do_group_exit+0x35/0x90
+> > [125545.835403]  __x64_sys_exit_group+0x18/0x20
+> > [125545.835414]  do_syscall_64+0x74/0x140
+> > [125545.835424]  ? handle_mm_fault+0xad/0x380
+> > [125545.835437]  ? do_user_addr_fault+0x338/0x6b0
+> > [125545.835446]  ? irqentry_exit_to_user_mode+0x6b/0x1a0
+> > [125545.835458]  ? irqentry_exit+0x43/0x50
+> > [125545.835467]  ? exc_page_fault+0x94/0x1b0
+> > [125545.835478]  entry_SYSCALL_64_after_hwframe+0x6e/0x76
+> > [125545.835490] RIP: 0033:0x7f9b67eea36d
+> > [125545.835549] RSP: 002b:00007ffde6442cd8 EFLAGS: 00000202 ORIG_RAX:
+> > 00000000000000e7
+> > [125545.835560] RAX: ffffffffffffffda RBX: 00007f9b68000188 RCX:
+> > 00007f9b67eea36d
+> > [125545.835566] RDX: 00000000000000e7 RSI: ffffffffffffff28 RDI:
+> > 0000000000000000
+> > [125545.835572] RBP: 0000000000000001 R08: 0000000000000000 R09:
+> > 0000000000000000
+> > [125545.835576] R10: 00005b88e60ec720 R11: 0000000000000202 R12:
+> > 0000000000000000
+> > [125545.835582] R13: 0000000000000000 R14: 00007f9b67ffe860 R15:
+> > 00007f9b680001a0
+> > [125545.835597]  </TASK>
+> >
+> >
+> > --
+> > Thanks,
+> >
+> > Steve
+> >
 
-> > I am substantially less familiar with GCS and SHSTK than with
-> > Zicfiss.
-> > It is likely that a syscall or other mechanism is needed to
-> > initialize the
-> > shadow stack in flexible memory for makecontext.
 
-> The ucontext stacks (and alt shadow stacks is the plan) need to have a
-> "restore token". So, yea, you would probably need some syscall to
-> "convert" the normal stack memory into shadow stack with a restore
-> token.
 
-Similar considerations for GCS, we need tokens and we don't want
-userspace to be able to write by itself in the normal case.
+--=20
+Thanks,
 
---LFlVuq7xn7hg1UEJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmXVCCUACgkQJNaLcl1U
-h9CH3gf+IJkDKy0uUAtsKGOEXiHDZs6dgXAT43RbQM/ofajONSRA7nEWsZHy7IWP
-Tcz0hVz2/ellXMMRHdtDCKYxE3ugSuE8UQSOLGt2B3R1TDmgkXPW8GWOtV/eIUYS
-rJEPCtPF35R3ezGjIYnLBQvSoFNjD4TNyygIvjh6d3Wc8m+aXtiC/whvINTuzOVv
-SnYa3aFliCl153Ck0/3GzAiFCbGFUY3qVhKBwbk6MLITlRf9mF5bLp8e5Zzf49yj
-9qGcHcDETmpcxDVRJ7oAzh8gqQqein8FOyFDkREnT59O7DdNNTx8m/K29UOnBuLF
-z/qP3IZSjbKlJ3d/XfSVG0mTnYnohw==
-=e50G
------END PGP SIGNATURE-----
-
---LFlVuq7xn7hg1UEJ--
+Steve
 
