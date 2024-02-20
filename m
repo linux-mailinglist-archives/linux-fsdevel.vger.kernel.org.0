@@ -1,185 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-12178-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12179-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67BED85C5C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 21:28:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E1585C64D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 21:59:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42371F21BAE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 20:28:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E03A2841C9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 20:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98FEE14AD26;
-	Tue, 20 Feb 2024 20:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032E2151CCC;
+	Tue, 20 Feb 2024 20:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="acwU73RU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RpASEgxw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5549A612D7;
-	Tue, 20 Feb 2024 20:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5474D1509BC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 20:59:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708460890; cv=none; b=lxGQIc1ID02t1iH+teosut+34bR+c7rICcOa5fmN3RR+YQR1++n0tW603AISYP0AbhgoEGUtw/nJ96fiwt6Xeq1ZEULPTXdWX7jflJ+4acGJ4R2mFGG/ukAijRECu+hGcU5OR4I9+nYCcnhsd4Qq78kNYI7yMv2r6D9zdeC+/Eo=
+	t=1708462780; cv=none; b=UdojBiLUa4X6j7ZOkk1srQq5ZzeiKmAF7RoBDEb5HEdSNHr+rCnKULd/Ni57ea9ly6xg/JkYU57/FooauAB+oyaenF8t9GyKeAlGCmsHZsmm0AHadrf2Tq4zqD3ennI4bhPsCwfuhC+vIFzCoHmmakt1raJZ3Op6lf6lQAu4YHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708460890; c=relaxed/simple;
-	bh=A1MvHpPolzHclZTFrT7Mz0QU8ANDs5FPUBzDEWHT0CY=;
+	s=arc-20240116; t=1708462780; c=relaxed/simple;
+	bh=lAWvibZYCLZJ18pHlosxEIJ4ZpAXKtZDbRFFnu5UjNY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OGnl/TyN9gpAXYW2vp0rZ86AozKG10cT2GyV9ZBpAn2XxC9nDjqQiB8KV0Dul8RVZhcoZtQ8UTISWbOkJafbwGU7fSIVFh6LPUJJw8QIedzOspUC8RV1gYenPX8qwyJY+0UmhPGm8HrYRQ213SFmdMmmerBsqK4cH9+3aBrvaWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=acwU73RU; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2d2533089f6so954051fa.1;
-        Tue, 20 Feb 2024 12:28:08 -0800 (PST)
+	 To:Cc:Content-Type; b=N86mFZRQNikAf0N9/AqkhPhphzfotHJaGmX3vAOkAV6bAxWULVaZ14mi3JRYQdp4unTO36wdsR5giUxasZHnTCENi+U7Ra4kqlB5z/WVoydmLgDXY4HwAfbjSPzQ6+pPK41mMo84puhGA1zj2QEkA0oi0NTZTslvJPBj/sDXB8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RpASEgxw; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6080a3eecd4so39484977b3.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 12:59:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708460886; x=1709065686; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1708462777; x=1709067577; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PQVaoZMHrUwH8D7MZfopuI7iW1uozR+J2Oa9ClCShe4=;
-        b=acwU73RU2TUu6yoVUaysVqt/HEvLikMrryyudYkZ165moWWQ2POTNuPF2oZS9Jura0
-         mhSNyy2v3SS5yshshJarmVxzYx82nzP2ZjGpDx1BqWPNzerQJUwdnidmiYkApVvrdTbv
-         Gj9b99Irm94DpRfsM9ZzaG+80OP4wYKeKo4oPDjOQxfQl6ojOB0wZQY2sAhr0BV7he97
-         4wdPJLg3tedU61aKSP6eHIfF3uc8vOp+Yuryje4u7U6DoFxI9leacM5WXf8vB5xuU9kX
-         IuAdNQAsumUVAK3I7ygeQh/3WlWSlvrG1BwxYm8cDOrz6yg6YDsW/OwmtNpbEwPDtGQE
-         RD+g==
+        bh=lAWvibZYCLZJ18pHlosxEIJ4ZpAXKtZDbRFFnu5UjNY=;
+        b=RpASEgxwkOgocmvj8fdC72Q+wuzIgJgO+as12KY3i+3OKhqA0Ur+2USxl5/WxSw7GT
+         n/AMBdCT+NTGrnnWMXZNONo+JRE2hKpdLW4UQg+45cK1Vr17TS6vIb4n2/DhEHIy4d7e
+         viLLUOpZyT8mEju/VwiV32CdbT3D3Db5FmEh33LidWpziEM3Xm6EyhVWeEmbumCQVMwh
+         3EvUT49/Gu+st7rv1CM9V40ySq27BReRViIotx1s9womXle68aBdsps1pt5ryPw3uboK
+         Wu/FLi2Y7MjnzUpQD8y9evXWvjXFJw41+uWmmnpaTaYrNcDOQLMgcV4e9aA76TuP0gVN
+         ICIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708460886; x=1709065686;
+        d=1e100.net; s=20230601; t=1708462777; x=1709067577;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PQVaoZMHrUwH8D7MZfopuI7iW1uozR+J2Oa9ClCShe4=;
-        b=EgW1OaNZfxHYSQbFhnaarzZdYah76tfdCIEIMWgrf+/NQ4sOEcnWek3k5WFgIG5ldY
-         wSjkIhryjDpBWDM8iafm0SnDg7cslFPmo5n0tgc+AawYoqgcnC/fdHqmqgk0fQgjR4dQ
-         JnD8/N5N3rAnpO2v1n5hE47WfjvNSWes295HNa8VdOeiAglj/aXICWTibzdJKhm7XRVr
-         Rt9x5g/2Tln13akNZfGYX/gVkC8wICGBZY+To18PUcmNMqfRR5CDQF+2dzanSRBn8dPP
-         GjEueThWUZohPmOB+ROaDv1f3xiINAJ4roOOJt2YJvNO4VEAxG/XVEFB3tTbH5/7CF19
-         liCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVkFu15UVJauyptr/ffcgcp1eSVVOKVvxSFosisxzqNDd9SwKarY4MXVrSv9yvPUfpTAUIu2HsXgmTtV0Zgos/iumc8LQtMVBNqsTEOBZ+WBH+0FFwiso5aB7E5qZ3/jLF7t8jT0aQCdV4=
-X-Gm-Message-State: AOJu0Yx2E+Zg/FLu+Y0ukPIojcIGrACv7Cz/A9CLEHXNviXP7osv9rOl
-	lo9sF1Ym4HpQBCAM7dpRSe8GOW9A3aGM73iUujyTLsMg/nkfF+dXw8EEjVrAvOi5zrn3mfTDMF/
-	R7DR6GfOVfpoCs7reta+rl7HFB0SkhHby/nMS1A==
-X-Google-Smtp-Source: AGHT+IH1KNc70gSIB80eTdvh4FlG9U0Ct/lHcE6W2pXVGDaJoDOX7jbiPwHtYgk06K6S27wWu0OFtDm6M28zG3leIL4=
-X-Received: by 2002:a05:651c:232:b0:2d2:4783:872a with SMTP id
- z18-20020a05651c023200b002d24783872amr2007251ljn.29.1708460886148; Tue, 20
- Feb 2024 12:28:06 -0800 (PST)
+        bh=lAWvibZYCLZJ18pHlosxEIJ4ZpAXKtZDbRFFnu5UjNY=;
+        b=qPx0kodcGGRLo93f+tC+WxB+LDejEzkf+2NvcVzYeAfIVO3mDjVDBlw6XAU0BYPT8w
+         JGXTpRUTZ4+mWt35UXV6N+G1sU39c6BwFZn73tsbkXncRWuf91WNUIRj8vN3jdG9me1D
+         fi5zrdwZ1d9MHrAqkdwQXsdej582QlYXP5/QvM7tTNO+RkRf4hfM7lp75ydOSZ6WaeL5
+         CHzyy1tRxZsdOaa4yKaQoq52To364c66I+dSuNNB8I3j6wzMKw1zLv6oG4ctsdCxgYTr
+         VBiih0YbzHbx3i6cn+VksNeYF9ptLbQWGf49YNS07ky0g7AM2Df8W8zKZ/TZ4R2UnZ60
+         TBcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVymvIIyyjE2KhwaUyS+Dv+53ZR4bKI9oiozI7CU02OtzUyyVnHZzS7+W8i0lowHIwpBZk/s/Kms3aoPtRzbmWjy5tCwkqSjqQdX2o9rw==
+X-Gm-Message-State: AOJu0YyXYLxkXhtFGaK3yNojznw2MP4NhXn9Ud/eCjLH6fvvV2/RA85q
+	z5iRBiZhNDeLLUecBF301p+byKDeCSKjPDIS6xsyY7J9GCxyM2GXH9s6tHEF4no22m+5TTeBfSG
+	0e97jE9ubt3QQ1aZuHi7GxF9vKFYVOMWQQRTR
+X-Google-Smtp-Source: AGHT+IEUBep3JbSfIFxIrjxLVKPObAawmbo2MZhL9tIpGGThj6+3JFdPMLwKRYjCckQD2YbEpyoHbPFSy5F0AEYQhEA=
+X-Received: by 2002:a81:7c55:0:b0:607:910c:9cb3 with SMTP id
+ x82-20020a817c55000000b00607910c9cb3mr16089286ywc.36.1708462776952; Tue, 20
+ Feb 2024 12:59:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAH2r5ms2Hn1cmYEmmbGXTpCo2DY8FY8mfMewcvzEe2S-vjV0pQ@mail.gmail.com>
- <ZdT-SOlTdrDoFqnX@casper.infradead.org>
-In-Reply-To: <ZdT-SOlTdrDoFqnX@casper.infradead.org>
-From: Steve French <smfrench@gmail.com>
-Date: Tue, 20 Feb 2024 14:27:54 -0600
-Message-ID: <CAH2r5msF5n+5OCQ=JzYL-FVQEeCax-JutaUVcni5Bkcd8z26tw@mail.gmail.com>
-Subject: Re: folio oops
-To: Matthew Wilcox <willy@infradead.org>
-Cc: David Howells <dhowells@redhat.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	CIFS <linux-cifs@vger.kernel.org>
+References: <Zc3X8XlnrZmh2mgN@tiehlicka> <CAJuCfpHc2ee_V6SGAc_31O_ikjGGNivhdSG+2XNcc9vVmzO-9g@mail.gmail.com>
+ <Zc4_i_ED6qjGDmhR@tiehlicka> <CAJuCfpHq3N0h6dGieHxD6Au+qs=iKAifFrHAMxTsHTcDrOwSQA@mail.gmail.com>
+ <ruxvgrm3scv7zfjzbq22on7tj2fjouydzk33k7m2kukm2n6uuw@meusbsciwuut>
+ <320cd134-b767-4f29-869b-d219793ba8a1@suse.cz> <efxe67vo32epvmyzplmpd344nw2wf37azicpfhvkt3zz4aujm3@n27pl5j5zahj>
+ <20240215180742.34470209@gandalf.local.home> <20240215181648.67170ed5@gandalf.local.home>
+ <20240215182729.659f3f1c@gandalf.local.home> <mi5zw42r6c2yfg7fr2pfhfff6hudwizybwydosmdiwsml7vqna@a5iu6ksb2ltk>
+ <CAJuCfpEARb8t8pc8WVZYB=yPk6G_kYGmJTMOdgiMHaYYKW3fUA@mail.gmail.com> <e017b7bc-d747-46e6-a89d-4ce558ed79b0@suse.cz>
+In-Reply-To: <e017b7bc-d747-46e6-a89d-4ce558ed79b0@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 20 Feb 2024 12:59:23 -0800
+Message-ID: <CAJuCfpFYAnDcyBtnPK_fc6PmFMJ6B4OqS=F7-QTidZ+QtJQx1A@mail.gmail.com>
+Subject: Re: [PATCH v3 31/35] lib: add memory allocations report in show_mem()
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Steven Rostedt <rostedt@goodmis.org>, 
+	Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org, hannes@cmpxchg.org, 
+	roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, corbet@lwn.net, 
+	void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de, tglx@linutronix.de, 
+	mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org, 
+	peterx@redhat.com, david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, 
+	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org, tj@kernel.org, 
+	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org, 
+	pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com, 
+	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, bsegall@google.com, 
+	bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org, 
+	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
+	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 20, 2024 at 1:32=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
-> wrote:
+On Tue, Feb 20, 2024 at 10:27=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> w=
+rote:
 >
-> On Tue, Feb 20, 2024 at 12:09:17PM -0600, Steve French wrote:
-> > FYI - I hit this oops in xfstests (around generic/048) today.  This is
-> > with 6.8-rc5
+> On 2/19/24 18:17, Suren Baghdasaryan wrote:
+> > On Thu, Feb 15, 2024 at 3:56=E2=80=AFPM Kent Overstreet
+> > <kent.overstreet@linux.dev> wrote:
+> >>
+> >> On Thu, Feb 15, 2024 at 06:27:29PM -0500, Steven Rostedt wrote:
+> >> > All this, and we are still worried about 4k for useful debugging :-/
 > >
-> > Any thoughts?
+> > I was planning to refactor this function to print one record at a time
+> > with a smaller buffer but after discussing with Kent, he has plans to
+> > reuse this function and having the report in one buffer is needed for
+> > that.
 >
-> Umm, this isn't an oops, it's just a backtrace.  Do you have anything
-> that was printed before the backtrace?  I'd expect to see something
-> complaining about sleeping for too long, since this is where we wait for
-> writeback to finish ... the bug is probably something not calling
-> folio_end_writeback() when it should.
+> We are printing to console, AFAICS all the code involved uses plain print=
+k()
+> I think it would be way easier to have a function using printk() for this
+> use case than the seq_buf which is more suitable for /proc and friends. T=
+hen
+> all concerns about buffers would be gone. It wouldn't be that much of a c=
+ode
+> duplication?
 
-That makes more sense - looking at the saved kernel log I do see
-evidence that writes could have timed out (in this case due to
-reconnects to a Windows server repeatedly failing)
+Ok, after discussing this with Kent, I'll change this patch to provide
+a function returning N top consumers (the array and N will be provided
+by the caller) and then we can print one record at a time with much
+less memory needed. That should address reusability concerns, will use
+memory more efficiently and will allow for more flexibility (more/less
+than 10 records if needed).
+Thanks for the feedback, everyone!
 
-2024-02-20T12:05:52.416215-06:00 smfrench-ThinkPad-P52 kernel:
-[125520.747835] CIFS: VFS: No writable handle in writepages rc=3D-9
-2024-02-20T12:05:55.743942-06:00 smfrench-ThinkPad-P52 kernel:
-[125524.077358] CIFS: VFS: \\ has not responded in 180 seconds.
-Reconnecting...
-2024-02-20T12:05:57.024052-06:00 smfrench-ThinkPad-P52 kernel:
-[125524.077367] CIFS: VFS: unable to get chan index for server: 0x2bf
-2024-02-20T12:05:57.024077-06:00 smfrench-ThinkPad-P52 kernel:
-[125525.357444] CIFS: VFS: \\ has not responded in 180 seconds.
-Reconnecting...
-2024-02-20T12:05:57.024080-06:00 smfrench-ThinkPad-P52 kernel:
-[125525.357469] CIFS: VFS: unable to get chan index for server: 0x2c0
-
-And interestingly I also see some "invalid argument" errors later
-which I have not seen for session setup before.
-
-2024-02-20T12:06:17.048083-06:00 smfrench-ThinkPad-P52 kernel:
-[125545.382363] CIFS: VFS: \\ Send error in SessSetup =3D -22
-
-
-
-
-> > 125545.834971] task:xfs_io          state:D stack:0     pid:1697299
-> > tgid:1697299 ppid:1692194 flags:0x00004002
-> > [125545.834987] Call Trace:
-> > [125545.834992]  <TASK>
-> > [125545.835002]  __schedule+0x2cb/0x760
-> > [125545.835022]  schedule+0x33/0x110
-> > [125545.835031]  io_schedule+0x46/0x80
-> > [125545.835039]  folio_wait_bit_common+0x136/0x330
-> > [125545.835052]  ? __pfx_wake_page_function+0x10/0x10
-> > [125545.835069]  folio_wait_bit+0x18/0x30
-> > [125545.835076]  folio_wait_writeback+0x2b/0xa0
-> > [125545.835087]  __filemap_fdatawait_range+0x93/0x110
-> > [125545.835104]  filemap_write_and_wait_range+0x94/0xc0
-> > [125545.835120]  cifs_flush+0x9a/0x140 [cifs]
-> > [125545.835315]  filp_flush+0x35/0x90
-> > [125545.835329]  filp_close+0x14/0x30
-> > [125545.835341]  put_files_struct+0x85/0xf0
-> > [125545.835354]  exit_files+0x47/0x60
-> > [125545.835365]  do_exit+0x295/0x530
-> > [125545.835377]  ? wake_up_state+0x10/0x20
-> > [125545.835391]  do_group_exit+0x35/0x90
-> > [125545.835403]  __x64_sys_exit_group+0x18/0x20
-> > [125545.835414]  do_syscall_64+0x74/0x140
-> > [125545.835424]  ? handle_mm_fault+0xad/0x380
-> > [125545.835437]  ? do_user_addr_fault+0x338/0x6b0
-> > [125545.835446]  ? irqentry_exit_to_user_mode+0x6b/0x1a0
-> > [125545.835458]  ? irqentry_exit+0x43/0x50
-> > [125545.835467]  ? exc_page_fault+0x94/0x1b0
-> > [125545.835478]  entry_SYSCALL_64_after_hwframe+0x6e/0x76
-> > [125545.835490] RIP: 0033:0x7f9b67eea36d
-> > [125545.835549] RSP: 002b:00007ffde6442cd8 EFLAGS: 00000202 ORIG_RAX:
-> > 00000000000000e7
-> > [125545.835560] RAX: ffffffffffffffda RBX: 00007f9b68000188 RCX:
-> > 00007f9b67eea36d
-> > [125545.835566] RDX: 00000000000000e7 RSI: ffffffffffffff28 RDI:
-> > 0000000000000000
-> > [125545.835572] RBP: 0000000000000001 R08: 0000000000000000 R09:
-> > 0000000000000000
-> > [125545.835576] R10: 00005b88e60ec720 R11: 0000000000000202 R12:
-> > 0000000000000000
-> > [125545.835582] R13: 0000000000000000 R14: 00007f9b67ffe860 R15:
-> > 00007f9b680001a0
-> > [125545.835597]  </TASK>
+>
+> >> Every additional 4k still needs justification. And whether we burn a
+> >> reserve on this will have no observable effect on user output in
+> >> remotely normal situations; if this allocation ever fails, we've alrea=
+dy
+> >> been in an OOM situation for awhile and we've already printed out this
+> >> report many times, with less memory pressure where the allocation woul=
+d
+> >> have succeeded.
 > >
+> > I'm not sure this claim will always be true, specifically in the case
+> > of low-end devices with relatively low amounts of reserves and in the
+>
+> That's right, GFP_ATOMIC failures can easily happen without prior OOMs.
+> Consider a system where userspace allocations fill the memory as they
+> usually do, up to high watermark. Then a burst of packets is received and
+> handled by GFP_ATOMIC allocations that deplete the reserves and can't cau=
+se
+> OOMs (OOM is when we fail to reclaim anything, but we are allocating from=
+ a
+> context that can't reclaim), so the very first report would be an GFP_ATO=
+MIC
+> failure and now it can't allocate that buffer for printing.
+>
+> I'm sure more such scenarios exist, Cc: Tetsuo who I recall was an expert=
+ on
+> this topic.
+>
+> > presence of a possible quick memory usage spike. We should also
+> > consider a case when panic_on_oom is set. All we get is one OOM
+> > report, so we get only one chance to capture this report. In any case,
+> > I don't yet have data to prove or disprove this claim but it will be
+> > interesting to test it with data from the field once the feature is
+> > deployed.
 > >
-> > --
-> > Thanks,
-> >
-> > Steve
-> >
-
-
-
---=20
-Thanks,
-
-Steve
+> > For now I think with Vlastimil's __GFP_NOWARN suggestion the code
+> > becomes safe and the only risk is to lose this report. If we get cases
+> > with reports missing this data, we can easily change to reserved
+> > memory.
+>
 
