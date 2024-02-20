@@ -1,520 +1,218 @@
-Return-Path: <linux-fsdevel+bounces-12141-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F0DD85B781
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 10:31:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D14F685B7A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 10:36:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D49288360
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 09:31:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DD991F2577C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 09:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CB360ED0;
-	Tue, 20 Feb 2024 09:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93896612C6;
+	Tue, 20 Feb 2024 09:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CyMHfHEA"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cjWNuJ6j";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ea/4RYxB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E42964CD0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 09:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708421329; cv=none; b=PjY3ULZLmk3CRo6ynX4XT1oW+aJzUCo+8JvsXniYfFwjH+tzh8Sq9EDn9ETf3icpPaov3OymKkhHcxDx3tDHQYbT9MY4sUaJzTNQT4XDkN5McRZlZ4r3MixDV/cQsez0mP8zLvDoM9kyXXvMTWE01GvY4E03XuDJIwvAbT+c0oo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708421329; c=relaxed/simple;
-	bh=aENrpF6P2Li0J5c9iKSwwW15d0q+FsSRPaXVDh8H5nQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HEHgZTJ7WvR8H/tGJfgECGt+czR84Kl5fydWfjfek/iFqVOdJBLzzuYQnoWnT+S0sa6K5Mvv52xM51bJS48to5roiObozxoWhRS8MZsTlsXdyp7xRmrJyyFv1XVr3imjjnc+a+/ELyR0M4mwSXb/KTF48WGO0MWsWlkyWDJhnkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CyMHfHEA; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-563e6131140so4746554a12.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 01:28:47 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECD160EDF;
+	Tue, 20 Feb 2024 09:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708421758; cv=fail; b=u0gmjs6DHY1JeDrdBJDHGyS+z7g8+v7XHav0rmekeKxIBiigFunx7/rLZrCe86ohB9kLCrgQU63LxpFnyCR3TJh4/58/65jMZ0r/X4eBIoYjB1J0Q7A1KUG3YCwzdxUfHYcuAO7t7MadNFtcUjQrUqOQ+ueHLT3mEdWU+Yk7Tp8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708421758; c=relaxed/simple;
+	bh=yP7kpKkbKFnLYxqn5cCT+V0pKL9hOI4MFuIZRmzhFrk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Ay+nLxTokzbwZRaOPmAnn0TxtEyz2jHL43KV/cLtavpdahfS5Uc31RcZDyO4VdvXJ4+kYbuz1yQwefb+RZrHhMrbu48Ae+7WOPUQtiwqmszOWGAO4GXH7k+rgDa+/o+niqL4feTst6NDKdL73mWIOAtqJAmuVlaXr+7qqMKoUCA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cjWNuJ6j; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ea/4RYxB; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41K8wpEK030922;
+	Tue, 20 Feb 2024 09:35:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2023-11-20;
+ bh=Uk6OIf+2Fu31pDoe5pYJ+Tq0Bsh9NOGycmXcG05Nm+E=;
+ b=cjWNuJ6ju7TRmZe/DH7ugcfdsj4gqZH84K1h+W1k3QXSv+Tg2jp/XspGHxE/Gd50FDye
+ 2F1J8K4l4qA0tSRm81LMa/jMM7MMsLl6u5MDHrpZsZl2exmWXGeY8jw/MTbGFJxbbo2d
+ 87gdPBksA/TNfrutDFOv6KW5c8wpUGq0FMzKMOvshPcE5+BhFPZwJwRqOKWPPkL8kdhE
+ Dd0DF/DlvFAf3gF2CZ8G/E6Du6S5lU47t1VcKI+NBoVH9p5FAtzRvX5xRZZerwXxGP91
+ nVG1G6SDZe30/KDhIPGVMLOJj5w6F4VUGaJyJvPi25i/qbeh8rgY1PlGk1fO46TuI5j+ EA== 
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3wamucx6qy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 20 Feb 2024 09:35:31 +0000
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 41K8D1Up006745;
+	Tue, 20 Feb 2024 09:35:31 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2041.outbound.protection.outlook.com [104.47.66.41])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3wak877m59-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 20 Feb 2024 09:35:31 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nunXMpkKFjALgoHjb9K5aZlKgnbSxdzlka499YNhB6nHAWpI60lUkux+ugLGIUEIv9PT678UqygQTVuu+Upu3FVFhUKKgrNiEvRAQdJd5pXOtKcU44b5KZXIlGTHD7TfMPde5M42qRq21Z20oBWRqOyy6qy/Gn8eEhHSC4mpUEBobzGaJQQnF90yQ9tF9s1kETuYr3qp+I1Yubbo213N2wCDZ/LS48PFPRfLoU9k98wI/EkLV8ABL7yKv2vh1DIU2ssJlG5NZuF1N5M8OHxl1mL86Nd09vyW6/PAvznI5/q22pYBu5q+Id/0QUY6ncZUobRQvRmL/IkfMKkQiylbZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Uk6OIf+2Fu31pDoe5pYJ+Tq0Bsh9NOGycmXcG05Nm+E=;
+ b=hmFlQmmMMR/5o6K8OPDS0rSxziyytmdLGJP3mbghWur0zig+K3jDP7OdMI+DBW72wFFd26Hvq4Yh1y0fiiAPP4x9uT9GrXzArHlXrIgIiJvnGMcP0v14O+nRTgSfLH44rfror0EAOc0O/ofCMe5n3g0iuYGyVhmnr2wAt50pZ7BtiqkwG2PZq9BCPbqxfXWIXNCMELMs2Ff/BE3caZdUNov1TxTj8Dt/pamP9cy4DgM04Zpx/E7io8fClulmknTd/c1y67QlJ7dVZ5RYn2jz18toMMeuD5Tm0JjBXCbXkYPir+03jIKdo60M3+RWf75dNgDOyaiyQsn1CpFS4m+hcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1708421326; x=1709026126; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=v+EkyM++YIrsW/V5CCx1zZ3Et3tMoJsoGeRD8+dlvMk=;
-        b=CyMHfHEA/byw8Dq9IjsgKZ8V1uOLV9vb5FG9tH4AKug0FpQGiPnZ/GW26R+LjF5jW3
-         1eO7+w9G4NoedRF7guSE/m/L+eONSbmmsxpH29OV8xsCLxG4ELqfN42GHCS0AQInTquY
-         EDJbuLX+Wd1/K4pdzThzdjqc8I4+7xISUcf8w/FxSmPBbNo2cu2nBeuDiUZ+8D469v4O
-         v3ARr/UcBUdtdvpAJB8sV5/Z79s1HpRj6rWogYg/UIdzW4PW8SCSilWTuJIdU+ey8V4B
-         RlkxEgCFbr3YmvGY/vaMMUV16Tm6JeriMr9unKYS4V1E0kA0vaz9Jxlwln+KWc5lf1u+
-         59nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708421326; x=1709026126;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v+EkyM++YIrsW/V5CCx1zZ3Et3tMoJsoGeRD8+dlvMk=;
-        b=uTrNcbi0ZnZQ7fTV6aX8wu8GafkVleGUhiI5FciLP1JQLqXENeYyENVPseT7zkp24t
-         eLVj6AGO2h2PVD0rUSjvBlhQ8DKrqjoEtypTQd7FgyIvPYLPEudWaO+y67yjFPbMr2K1
-         E3KCfgsK6Q/9vTlRlJujH0lZoshSO3KEdiSPRsyafzTeO6jWQ0O4hk5pSMdBQ7+5hTM7
-         3GVDUm0iaJzG6z0Jvgg6cS06ulRLBVAf4U+Jyx7obAEJ3EGJdV2X7dMwn0DTxNrVF2oP
-         B1pMkNCscuKloY4vwLIvg7FiXzPdlXGHhgQUPvQIeyb6ArEIHQa5wDPpFPRhTfVs77hh
-         wcAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZg9+JVzfBRXRlgR2vh6WtUzXDDP+cEe1PXsqFeeB0ro0LBuNzcWfOSKCuk0ZX+aZhPH4GPCtgmsABZ+YqE7Qe7PX/gzJDf7KOp89s+g==
-X-Gm-Message-State: AOJu0YwsfGa/kFxiVUiEuqfigzsPmG9POgjTyO4tXPYC1InJEmwCUdhF
-	eUXEcm5bpV7RdSq65H63f4X98pbi5u79+MhxHEPalwgifePHCO25L5jsCRcM45qXJb8aukTrCrE
-	aAw==
-X-Google-Smtp-Source: AGHT+IHWimJH/1mUsRr2jPvB6bYFOCJPTwnQWpocgIsq4PW29tPp7dLuh4wwcUsYAGpjbODnAgOU2g==
-X-Received: by 2002:aa7:c493:0:b0:564:d24c:64b5 with SMTP id m19-20020aa7c493000000b00564d24c64b5mr597501edq.26.1708421325557;
-        Tue, 20 Feb 2024 01:28:45 -0800 (PST)
-Received: from google.com (229.112.91.34.bc.googleusercontent.com. [34.91.112.229])
-        by smtp.gmail.com with ESMTPSA id l15-20020a056402124f00b00564c8800f66sm373671edw.14.2024.02.20.01.28.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Feb 2024 01:28:45 -0800 (PST)
-Date: Tue, 20 Feb 2024 09:28:41 +0000
-From: Matt Bobrowski <mattbobrowski@google.com>
-To: bpf@vger.kernel.org
-Cc: ast@kernel.org, andrii@kernel.org, kpsingh@google.com, jannh@google.com,
-	jolsa@kernel.org, daniel@iogearbox.net, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH bpf-next 11/11] bpf/selftests: adapt selftests test_d_path
- for BPF kfunc bpf_path_d_path()
-Message-ID: <7e27b0d22d89253243fc676a6cd675e0e8ea93b1.1708377880.git.mattbobrowski@google.com>
-References: <cover.1708377880.git.mattbobrowski@google.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Uk6OIf+2Fu31pDoe5pYJ+Tq0Bsh9NOGycmXcG05Nm+E=;
+ b=ea/4RYxBtJ0eqJPKMpXVw3gseBzMxZuKToTNRy8wcqxDVWGu4PGl1VqHeCwl+vzsFqa+3JNUnfKfltiLBLntGYfWYRD2rJH61orQWYFy08nhdlhj7UKaBKtajuVaYSHX72LUeIQtL5fBFngky1xqYMZifUcw30EDIx9I/pz/+eY=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by SJ0PR10MB6349.namprd10.prod.outlook.com (2603:10b6:a03:477::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.39; Tue, 20 Feb
+ 2024 09:35:28 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::56f9:2210:db18:61c4]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::56f9:2210:db18:61c4%4]) with mapi id 15.20.7292.036; Tue, 20 Feb 2024
+ 09:35:28 +0000
+Message-ID: <8b4234f3-3fa7-47ca-bbcf-0198a102f7a9@oracle.com>
+Date: Tue, 20 Feb 2024 09:35:22 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 06/11] block: Add atomic write support for statx
+Content-Language: en-US
+To: Christoph Hellwig <hch@lst.de>
+Cc: axboe@kernel.dk, kbusch@kernel.org, sagi@grimberg.me, jejb@linux.ibm.com,
+        martin.petersen@oracle.com, djwong@kernel.org, viro@zeniv.linux.org.uk,
+        brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org,
+        ojaswin@linux.ibm.com, linux-aio@kvack.org,
+        linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org,
+        nilay@linux.ibm.com, ritesh.list@gmail.com,
+        Prasad Singamsetty <prasad.singamsetty@oracle.com>
+References: <20240219130109.341523-1-john.g.garry@oracle.com>
+ <20240219130109.341523-7-john.g.garry@oracle.com>
+ <20240220082902.GC13785@lst.de>
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20240220082902.GC13785@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0223.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:1a6::12) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1708377880.git.mattbobrowski@google.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SJ0PR10MB6349:EE_
+X-MS-Office365-Filtering-Correlation-Id: 16fed12a-5e59-45ee-fd10-08dc31f74631
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 
+	hI956LWUVjwhs7T1GDkNsdHYiiHN7a5s+P72rdUq+NKNtO7Wk/UIW8xFAmWUmSmBOiAFldPNjW35SQlRZFmnZwInQzHZd9rDkifGgnpvRotA685re/aOwTOMwB2kJptBnyjK0Fi4XUnpftbfuoyqxgnW7QzTtkKUNfYr5STN3a1+yZfk5tu4JwoWtRNO+2voQQNXBWWGeRbuAWA/O+1vXaCJUx7phOrPbRx7yZJWua5n0AkGjj2afLxLklXGx6t5kCGxylAgZGo4/FjUbmmvTW6KWHS/12NhIlFnUMh3iUI/PEeGqaGLKPJGVyipDl+B8X/csv8HGHGEHh+1kXA82+q36k0SfwPnFFT/toxMpeu98XRa3UN3zgTvRlKPSRiDOiChaEHYq7U3VQBFRF6P5mrIxhVj4y7Qvf3/sS7Es5v8l7Y1MEkeCwBxj/vllTek1qIeN68BKrT0viUtZ70ulGmp9JZbe3jfKekunOAZc6u3VBqxrFxYEdoZNexyYw11LBf7bkZQhLIP7ahW3/eedl2j4SwfTYC9TDNTux6NFGE=
+X-Forefront-Antispam-Report: 
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: 
+	=?utf-8?B?cm4wSUFVOHN0Z0FCTGZzeHFWeVFhdlNLUFczYk14UUhtTGdmRTZCakNwbVUw?=
+ =?utf-8?B?czh3KzVOSWtIQlZicjRlVFZTUkVBamNvM1NMdXlWcnlLZkJCOXdSUmRFaERQ?=
+ =?utf-8?B?RWFiVEJ0d3NJdi9TZlQ0T0xEMEtEc1F6S01zbktxcmNoOVc0alJXSTdCenln?=
+ =?utf-8?B?dmFkYU8zR2Zqb2xHSGtCQkhrR2duYkFQZmNFdTJHZk5kTEJpM1I4cVdhTGVh?=
+ =?utf-8?B?elVtTE5nTlpjdFlaYUh1d29LU0RiVTF3WVoxS3ovQjBZemU3cVY2dzd3WWRx?=
+ =?utf-8?B?aE5nTzZtQXdNaysrMVhTc3N1QVFwQS9zdk54UnVzVDJUaUdQUmdBREFZWnBB?=
+ =?utf-8?B?WXplMGRIUWY2ekErWndGbG9LYXlYOXNiQ1VCeDkzYjlBWnc3NndOWEhzUVdE?=
+ =?utf-8?B?NTdmTEw0YjJteU1nOUNjQlZXblpZR1B2b1hieHJrd3FLTW5UT2NtWk1jSVBt?=
+ =?utf-8?B?U0kwbERkRWN6NjBFYXNhRlVaQkJtTE1nVEZDM1RvN1dwZlhWNXlsRjNGc3Ur?=
+ =?utf-8?B?TDZtcUVlZFMzU1VSc1pzakY5QW5NUEVzSGdrcVgwY2liSDNwd2s2bDdPVnJv?=
+ =?utf-8?B?SktGTHJ5N21MbGMrZ0NJSEhvM2VyYXQ1YVdQSC9HOU0rOGppemMwcWxXV0lY?=
+ =?utf-8?B?cjZOSUNFallUSWZkKzNHSkpOUXNIcytQWjdNa0NQNnNSekVmcmtHWllGQ1RE?=
+ =?utf-8?B?bjN5SEk4bytHejN0Y3Y4dzhkR2cwNzJhQ3BaZVN5WFBLaHQ2Y3E5aURvOWFS?=
+ =?utf-8?B?ZTlJeVJsVGRvdit1UFpwbzM5dVBZY1l0eUJoZTBoMUdtSCtQRkFZNkdFY2RO?=
+ =?utf-8?B?MlJWUXpnU0tSdkdTNERHSk9OYkJkQkRvMkZ1bm5KTmZMVEkrek9id0VIdVJM?=
+ =?utf-8?B?N3VtamswQVlPUHd6am5VSDlLMDZYdDZORXZ2WllDNGowTDgycTNmbTJSMU5T?=
+ =?utf-8?B?S0dNZGsxdDRWU2MzK2krSXlMRHdZTm9CQk1LTlRLajdZMlY1OE5UVGJWZ0xP?=
+ =?utf-8?B?Y09xaUw3clR0bmM4bmtzemRzeXBqZ0g4YzUvenFPNktjSkVhVFlEVE0wZGNZ?=
+ =?utf-8?B?RGQ1QkVQTnNhczY0NHlNYmRkcnVObk5FRjIrRUlPWjBNVmFSZWhyc2VsaGFB?=
+ =?utf-8?B?bjN6cFBjMzQzdVh6d01YTmh1dXhiamk5cm43WGF1dGNraFo4TzJNNTE1bk42?=
+ =?utf-8?B?cUxPeGdyckJZWk1lUjd2TndhN1BLanpXR3ZtS2NoZzQ1ZHBtSUJCcTlOS1pq?=
+ =?utf-8?B?SVNZNk9vOEt6SjNXQWtMVll3UGt6WnNKVzc5MTRxbkhyY25RTkxiQm84Y0dB?=
+ =?utf-8?B?bU1HRlErbm85Yit0dTNRclM2L1lwck80SXJlUUlhWFFpMlBadWpRQlVjZVNI?=
+ =?utf-8?B?dFZZRzUycFBRWHBpZWYyTVpQcDZ1ZUdBalVDK2hwREtwbldIaTE2YVhMUyt5?=
+ =?utf-8?B?ZFJ3NTlZNnUyWjl0MUQ5TWp5bGlSa2xUV29pekE2MzdDeE95Z3hHczNCT2Fw?=
+ =?utf-8?B?bWgzdGFYTW5nYlFLNlBZMkVzb2wxTy9RQ0lvYkhBdnNXYW9YTEdheG4wWjBp?=
+ =?utf-8?B?MW51WjFVdEFUTncwS0xoTFlXMGxGeUwwdTVFYmgvRTNQcDNsNzM5S3BlMTJG?=
+ =?utf-8?B?QUY0dVBpdHE0Wld5Z05jVDdycDl2ZDNQVE15U2FOdFFiTnJ2UW9hOHAvNUlw?=
+ =?utf-8?B?cGpJcWQ0engydW82ckMxdUVHTEZTUGJTbEgzZmNtSkNsbU9wUWdXL3YxZER1?=
+ =?utf-8?B?N3VoRWMwMVFIUGJPQ2tzbzBnRjQ2dHZBaGt4bGExbExrVHJsTUhIaHBia1F5?=
+ =?utf-8?B?T2FPSTFsdE5KQTBoelJISWUvaXZvWGpsNVdzZ2RpcVRERXJtN1ZDSEdJMldK?=
+ =?utf-8?B?U2NNeGlaemtOU1ZoaHBxd1pGWGhtOXdPZE5XV3MyZ214QUtqMGx5VndEU3VN?=
+ =?utf-8?B?NlA4b0lkbkhoM0V2MWVyOXN5SkNPWVhJRW93Z2RFRTNNRmVWRTE4YnBqTTJx?=
+ =?utf-8?B?a3h2VEZ0SEUzMmtGcldPMmJMWXZMcTBqUW1CZnBNbTNwTjJ6TnJadGQ3YnBk?=
+ =?utf-8?B?YnBLaG9VWVU0VUJjYzNNVnNGLzYrQkx4MXlLYzJvbmRGNXFrRXFLR2xRR3FN?=
+ =?utf-8?B?UEdGRXI2aTJxYThHZFZPenRzYmVpTGQyejJCbDkxT2NFTnJmRjRhRTFhT2xZ?=
+ =?utf-8?B?WFE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
+	4WVs2YduwC4D7p1F2yCJp1XAM/DC2EUtlRIA30jYt4qll5G85HfkS8Vkil804917hK9TzRqIOFsn/4txx30pCRioTzPzNsEKKlmvrFFdDhHjiBguVihIpbMweT/3kWP97QdnlBNjcksJWhutssUZCJL71JF1tzmiEEOhY74uuREvbhEWogWtDHOpKFI4PxhGpODjGjrwzFKvN89IO6620cmlyQrVdZRj4dP5/g0H9gqVPD1bZKXIQJQj/0yTQwe5imbFs1Pwsr1ZfMmajWFwIBhjKrXAPFVPJx2L8bMUkGEUDk8lrUeTrRSTOeYaXohC2lfH+a5sF/OW8kSaOQP7tHFE2fm3UoYEySLfjLh6AWNvN8upZZw+fm4SCIqdq7XtjKH45YNZzUx3gIKWZi7ZXbqDyC62qaiamoXes861XfB1a4JYbP/ujP7Na5rXMZmLpXGYv3Dcu6ANCJsSSxONHk+yM4NxEn+Cspo2uFRtNg3+cyXPIe+UrigRm0Y+YRwlS+b+yx5cVGs1b1/QDjxeliCXlazlyzAJjsyd9ZQTEzQLo80hnWelOwRLSq8ISE89RVLtmmQW98Li89C7i+mvQZArxpuznZ6DqY/aRFSuAS4=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 16fed12a-5e59-45ee-fd10-08dc31f74631
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2024 09:35:28.6120
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Tuvjv94QQxAjRbpLItJ4dYpYaGW5UzrL+7jalN+96Ety+5KKLkvbIE8cR7B1ijt7X2xVnxAJHoUqx2GwWkBRVA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB6349
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-20_06,2024-02-19_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 suspectscore=0
+ mlxscore=0 spamscore=0 mlxlogscore=999 phishscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402200067
+X-Proofpoint-GUID: ApoltNzY954qP1He8e0bDl9s5XV0K5Yt
+X-Proofpoint-ORIG-GUID: ApoltNzY954qP1He8e0bDl9s5XV0K5Yt
 
-Adapt the existing test_d_path test suite to cover the operability of
-the newly added trusted d_path() based BPF kfunc bpf_path_d_path().
+On 20/02/2024 08:29, Christoph Hellwig wrote:
+>> +#define BDEV_STATX_SUPPORTED_MASK (STATX_DIOALIGN | STATX_WRITE_ATOMIC)
+> 
+>> +	if (!(request_mask & BDEV_STATX_SUPPORTED_MASK))
+>> +		return;
+> 
+> BDEV_STATX_SUPPORTED_MASK is misleading here.  bdevs support a lot more
+> fields, these are just the ones needing special attention.  I'd do away
+> with the extra define and just open code it.
 
-Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
----
- .../testing/selftests/bpf/prog_tests/d_path.c | 106 ++++++++++++++++--
- .../selftests/bpf/progs/d_path_common.h       |  34 ++++++
- .../bpf/progs/d_path_kfunc_failure.c          |  66 +++++++++++
- .../bpf/progs/d_path_kfunc_success.c          |  25 +++++
- .../testing/selftests/bpf/progs/test_d_path.c |  20 +---
- .../bpf/progs/test_d_path_check_rdonly_mem.c  |   6 +-
- .../bpf/progs/test_d_path_check_types.c       |   6 +-
- 7 files changed, 222 insertions(+), 41 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/progs/d_path_common.h
- create mode 100644 tools/testing/selftests/bpf/progs/d_path_kfunc_failure.c
- create mode 100644 tools/testing/selftests/bpf/progs/d_path_kfunc_success.c
+ok, fine
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/d_path.c b/tools/testing/selftests/bpf/prog_tests/d_path.c
-index d77ae1b1e6ba..893324d4d59f 100644
---- a/tools/testing/selftests/bpf/prog_tests/d_path.c
-+++ b/tools/testing/selftests/bpf/prog_tests/d_path.c
-@@ -11,6 +11,8 @@
- #include "test_d_path.skel.h"
- #include "test_d_path_check_rdonly_mem.skel.h"
- #include "test_d_path_check_types.skel.h"
-+#include "d_path_kfunc_failure.skel.h"
-+#include "d_path_kfunc_success.skel.h"
- 
- /* sys_close_range is not around for long time, so let's
-  * make sure we can call it on systems with older glibc
-@@ -44,7 +46,7 @@ static int set_pathname(int fd, pid_t pid)
- 	return readlink(buf, src.want[src.cnt++].path, MAX_PATH_LEN);
- }
- 
--static int trigger_fstat_events(pid_t pid)
-+static int trigger_fstat_events(pid_t pid, bool want_error)
- {
- 	int sockfd = -1, procfd = -1, devfd = -1, mntnsfd = -1;
- 	int localfd = -1, indicatorfd = -1;
-@@ -85,25 +87,25 @@ static int trigger_fstat_events(pid_t pid)
- 	 * safely resolve paths that are comprised of dentries that make use of
- 	 * dynamic names. We expect to return -EOPNOTSUPP for such paths.
- 	 */
--	src.want[src.cnt].err = true;
-+	src.want[src.cnt].err = want_error;
- 	src.want[src.cnt].err_code = -EOPNOTSUPP;
- 	ret = set_pathname(pipefd[0], pid);
- 	if (CHECK(ret < 0, "trigger", "set_pathname failed for pipe[0]\n"))
- 		goto out_close;
- 
--	src.want[src.cnt].err = true;
-+	src.want[src.cnt].err = want_error;
- 	src.want[src.cnt].err_code = -EOPNOTSUPP;
- 	ret = set_pathname(pipefd[1], pid);
- 	if (CHECK(ret < 0, "trigger", "set_pathname failed for pipe[1]\n"))
- 		goto out_close;
- 
--	src.want[src.cnt].err = true;
-+	src.want[src.cnt].err = want_error;
- 	src.want[src.cnt].err_code = -EOPNOTSUPP;
- 	ret = set_pathname(sockfd, pid);
- 	if (CHECK(ret < 0, "trigger", "set_pathname failed for socket\n"))
- 		goto out_close;
- 
--	src.want[src.cnt].err = true;
-+	src.want[src.cnt].err = want_error;
- 	src.want[src.cnt].err_code = -EOPNOTSUPP;
- 	ret = set_pathname(mntnsfd, pid);
- 	if (CHECK(ret < 0, "trigger", "set_pathname failed for mntnsfd\n"))
-@@ -151,12 +153,19 @@ static int trigger_fstat_events(pid_t pid)
- 	return ret;
- }
- 
--static void test_d_path_basic(void)
-+static void test_bpf_d_path_basic(void)
- {
- 	struct test_d_path__bss *bss;
- 	struct test_d_path *skel;
- 	int err;
- 
-+	/*
-+	 * Carrying global state across test function invocations is super
-+	 * gross, but it was late and I was tired and I just wanted to get the
-+	 * darn test working. Zero'ing this out was a simple no brainer.
-+	 */
-+	memset(&src, 0, sizeof(src));
-+
- 	skel = test_d_path__open_and_load();
- 	if (CHECK(!skel, "setup", "d_path skeleton failed\n"))
- 		goto cleanup;
-@@ -168,7 +177,7 @@ static void test_d_path_basic(void)
- 	bss = skel->bss;
- 	bss->my_pid = getpid();
- 
--	err = trigger_fstat_events(bss->my_pid);
-+	err = trigger_fstat_events(bss->my_pid, /*want_error=*/true);
- 	if (err < 0)
- 		goto cleanup;
- 
-@@ -225,7 +234,7 @@ static void test_d_path_basic(void)
- 	test_d_path__destroy(skel);
- }
- 
--static void test_d_path_check_rdonly_mem(void)
-+static void test_bpf_d_path_check_rdonly_mem(void)
- {
- 	struct test_d_path_check_rdonly_mem *skel;
- 
-@@ -235,7 +244,7 @@ static void test_d_path_check_rdonly_mem(void)
- 	test_d_path_check_rdonly_mem__destroy(skel);
- }
- 
--static void test_d_path_check_types(void)
-+static void test_bpf_d_path_check_types(void)
- {
- 	struct test_d_path_check_types *skel;
- 
-@@ -245,14 +254,87 @@ static void test_d_path_check_types(void)
- 	test_d_path_check_types__destroy(skel);
- }
- 
-+static struct bpf_path_d_path_t {
-+	const char *prog_name;
-+} success_test_cases[] = {
-+	{
-+		.prog_name = "path_d_path_from_path_argument",
-+	},
-+};
-+
-+static void test_bpf_path_d_path(struct bpf_path_d_path_t *t)
-+{
-+	int i, ret;
-+	struct bpf_link *link;
-+	struct bpf_program *prog;
-+	struct d_path_kfunc_success__bss *bss;
-+	struct d_path_kfunc_success *skel;
-+
-+	/*
-+	 * Carrying global state across function invocations is super gross, but
-+	 * it was late and I was tired and I just wanted to get the darn test
-+	 * working. Zero'ing this out was a simple no brainer.
-+	 */
-+	memset(&src, 0, sizeof(src));
-+
-+	skel = d_path_kfunc_success__open();
-+	if (!ASSERT_OK_PTR(skel, "d_path_kfunc_success__open"))
-+		return;
-+
-+	bss = skel->bss;
-+	bss->my_pid = getpid();
-+
-+	ret = d_path_kfunc_success__load(skel);
-+	if (CHECK(ret, "setup", "d_path_kfunc_success__load\n"))
-+		goto cleanup;
-+
-+	link = NULL;
-+	prog = bpf_object__find_program_by_name(skel->obj, t->prog_name);
-+	if (!ASSERT_OK_PTR(prog, "bpf_object__find_program_by_name"))
-+		goto cleanup;
-+
-+	link = bpf_program__attach(prog);
-+	if (!ASSERT_OK_PTR(link, "bpf_program__attach"))
-+		goto cleanup;
-+
-+	ret = trigger_fstat_events(bss->my_pid, /*want_error=*/false);
-+	if (ret < 0)
-+		goto cleanup;
-+
-+	for (i = 0; i < MAX_FILES; i++) {
-+		struct want want = src.want[i];
-+		CHECK(strncmp(want.path, bss->paths_stat[i], MAX_PATH_LEN),
-+		      "check", "failed to get stat path[%d]: %s vs %s\n", i,
-+		      want.path, bss->paths_stat[i]);
-+		CHECK(bss->rets_stat[i] != strlen(bss->paths_stat[i]) + 1,
-+		      "check",
-+		      "failed to match stat return [%d]: %d vs %zd [%s]\n",
-+		      i, bss->rets_stat[i], strlen(bss->paths_stat[i]) + 1,
-+		      bss->paths_stat[i]);
-+	}
-+cleanup:
-+	bpf_link__destroy(link);
-+	d_path_kfunc_success__destroy(skel);
-+}
-+
- void test_d_path(void)
- {
-+	int i = 0;
-+
- 	if (test__start_subtest("basic"))
--		test_d_path_basic();
-+		test_bpf_d_path_basic();
- 
- 	if (test__start_subtest("check_rdonly_mem"))
--		test_d_path_check_rdonly_mem();
-+		test_bpf_d_path_check_rdonly_mem();
- 
- 	if (test__start_subtest("check_alloc_mem"))
--		test_d_path_check_types();
-+		test_bpf_d_path_check_types();
-+
-+	for (; i < ARRAY_SIZE(success_test_cases); i++) {
-+		if (!test__start_subtest(success_test_cases[i].prog_name))
-+			continue;
-+		test_bpf_path_d_path(&success_test_cases[i]);
-+	}
-+
-+	RUN_TESTS(d_path_kfunc_failure);
- }
-diff --git a/tools/testing/selftests/bpf/progs/d_path_common.h b/tools/testing/selftests/bpf/progs/d_path_common.h
-new file mode 100644
-index 000000000000..42d0a28a94ea
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/d_path_common.h
-@@ -0,0 +1,34 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Google LLC. */
-+
-+#ifndef _D_PATH_COMMON_H
-+#define _D_PATH_COMMON_H
-+
-+#include <vmlinux.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+#include "bpf_misc.h"
-+
-+#define MAX_PATH_LEN 128
-+#define MAX_FILES 8
-+
-+int bpf_path_d_path(struct path *path, char *buf, int buflen) __ksym;
-+
-+pid_t my_pid = 0;
-+
-+__u32 cnt_stat = 0;
-+__u32 cnt_close = 0;
-+
-+char paths_stat[MAX_FILES][MAX_PATH_LEN] = {};
-+char paths_close[MAX_FILES][MAX_PATH_LEN] = {};
-+
-+int rets_stat[MAX_FILES] = {};
-+int rets_close[MAX_FILES] = {};
-+
-+int called_stat = 0;
-+int called_close = 0;
-+
-+char _license[] SEC("license") = "GPL";
-+
-+#endif /* _D_PATH_COMMON_H */
-diff --git a/tools/testing/selftests/bpf/progs/d_path_kfunc_failure.c b/tools/testing/selftests/bpf/progs/d_path_kfunc_failure.c
-new file mode 100644
-index 000000000000..9da5f0d395c9
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/d_path_kfunc_failure.c
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Google LLC. */
-+
-+#include "d_path_common.h"
-+
-+char buf[MAX_PATH_LEN] = {};
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("Possibly NULL pointer passed to trusted arg0")
-+int BPF_PROG(path_d_path_kfunc_null)
-+{
-+	/* Can't pass NULL value to bpf_path_d_path() kfunc. */
-+	bpf_path_d_path(NULL, buf, sizeof(buf));
-+	return 0;
-+}
-+
-+SEC("fentry/vfs_open")
-+__failure __msg("calling kernel function bpf_path_d_path is not allowed")
-+int BPF_PROG(path_d_path_kfunc_non_lsm, struct path *path, struct file *f)
-+{
-+	/* Calling bpf_path_d_path() kfunc from a non-sleepable and non-LSM
-+	 * based program isn't permitted.
-+	 */
-+	bpf_path_d_path(path, buf, sizeof(buf));
-+	return 0;
-+}
-+
-+SEC("lsm.s/task_alloc")
-+__failure __msg("R1 must be referenced or trusted")
-+int BPF_PROG(path_d_path_kfunc_untrusted_from_argument, struct task_struct *task)
-+{
-+	struct path *root;
-+
-+	/* Walking a trusted argument yields an untrusted pointer. */
-+	root = &task->fs->root;
-+	bpf_path_d_path(root, buf, sizeof(buf));
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("R1 must be referenced or trusted")
-+int BPF_PROG(path_d_path_kfunc_untrusted_from_current)
-+{
-+	struct path *pwd;
-+	struct task_struct *current;
-+
-+	current = bpf_get_current_task_btf();
-+	/* Walking a trusted pointer returned from bpf_get_current_task_btf()
-+	 * yields and untrusted pointer. */
-+	pwd = &current->fs->pwd;
-+	bpf_path_d_path(pwd, buf, sizeof(buf));
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("R1 must have zero offset when passed to release func or trusted arg to kfunc")
-+int BPF_PROG(path_d_path_kfunc_trusted_variable_offset, struct file *file)
-+{
-+	/* Passing variable offsets from a trusted aren't supported just yet,
-+	 * despite being perfectly OK i.e. file->f_path. Once the BPF verifier
-+	 * has been updated to handle this case, this test can be removed. For
-+	 * now, ensure we reject the BPF program upon load if this is attempted.
-+	 */
-+	bpf_path_d_path(&file->f_path, buf, sizeof(buf));
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/d_path_kfunc_success.c b/tools/testing/selftests/bpf/progs/d_path_kfunc_success.c
-new file mode 100644
-index 000000000000..72d1a64618d1
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/d_path_kfunc_success.c
-@@ -0,0 +1,25 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Google LLC. */
-+
-+#include "d_path_common.h"
-+
-+SEC("lsm.s/inode_getattr")
-+int BPF_PROG(path_d_path_from_path_argument, struct path *path)
-+{
-+	u32 cnt = cnt_stat;
-+	int ret;
-+	pid_t pid;
-+
-+	pid = bpf_get_current_pid_tgid() >> 32;
-+	if (pid != my_pid)
-+		return 0;
-+
-+	if (cnt >= MAX_FILES)
-+		return 0;
-+
-+	ret = bpf_path_d_path(path, paths_stat[cnt], MAX_PATH_LEN);
-+	rets_stat[cnt] = ret;
-+	cnt_stat++;
-+
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_d_path.c b/tools/testing/selftests/bpf/progs/test_d_path.c
-index fc2754f166ec..5bdfa4abb5f6 100644
---- a/tools/testing/selftests/bpf/progs/test_d_path.c
-+++ b/tools/testing/selftests/bpf/progs/test_d_path.c
-@@ -1,22 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- 
--#include "vmlinux.h"
--#include <bpf/bpf_helpers.h>
--#include <bpf/bpf_tracing.h>
--
--#define MAX_PATH_LEN		128
--#define MAX_FILES		8
--
--pid_t my_pid = 0;
--__u32 cnt_stat = 0;
--__u32 cnt_close = 0;
--char paths_stat[MAX_FILES][MAX_PATH_LEN] = {};
--char paths_close[MAX_FILES][MAX_PATH_LEN] = {};
--int rets_stat[MAX_FILES] = {};
--int rets_close[MAX_FILES] = {};
--
--int called_stat = 0;
--int called_close = 0;
-+#include "d_path_common.h"
- 
- SEC("fentry/security_inode_getattr")
- int BPF_PROG(prog_stat, struct path *path, struct kstat *stat,
-@@ -61,5 +45,3 @@ int BPF_PROG(prog_close, struct file *file, void *id)
- 	cnt_close++;
- 	return 0;
- }
--
--char _license[] SEC("license") = "GPL";
-diff --git a/tools/testing/selftests/bpf/progs/test_d_path_check_rdonly_mem.c b/tools/testing/selftests/bpf/progs/test_d_path_check_rdonly_mem.c
-index 27c27cff6a3a..76654dbf637e 100644
---- a/tools/testing/selftests/bpf/progs/test_d_path_check_rdonly_mem.c
-+++ b/tools/testing/selftests/bpf/progs/test_d_path_check_rdonly_mem.c
-@@ -1,9 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /* Copyright (c) 2022 Google */
- 
--#include "vmlinux.h"
--#include <bpf/bpf_helpers.h>
--#include <bpf/bpf_tracing.h>
-+#include "d_path_common.h"
- 
- extern const int bpf_prog_active __ksym;
- 
-@@ -24,5 +22,3 @@ int BPF_PROG(d_path_check_rdonly_mem, struct path *path, struct kstat *stat,
- 	}
- 	return 0;
- }
--
--char _license[] SEC("license") = "GPL";
-diff --git a/tools/testing/selftests/bpf/progs/test_d_path_check_types.c b/tools/testing/selftests/bpf/progs/test_d_path_check_types.c
-index 7e02b7361307..c722754aedb0 100644
---- a/tools/testing/selftests/bpf/progs/test_d_path_check_types.c
-+++ b/tools/testing/selftests/bpf/progs/test_d_path_check_types.c
-@@ -1,8 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- 
--#include "vmlinux.h"
--#include <bpf/bpf_helpers.h>
--#include <bpf/bpf_tracing.h>
-+#include "d_path_common.h"
- 
- extern const int bpf_prog_active __ksym;
- 
-@@ -28,5 +26,3 @@ int BPF_PROG(d_path_check_rdonly_mem, struct path *path, struct kstat *stat,
- 	}
- 	return 0;
- }
--
--char _license[] SEC("license") = "GPL";
--- 
-2.44.0.rc0.258.g7320e95886-goog
+> 
+>> +	/* If this is a block device inode, override the filesystem
+>> +	 * attributes with the block device specific parameters
+>> +	 * that need to be obtained from the bdev backing inode
+>> +	 */
+> 
+> This is not the normal kernel multi-line comment format.
+> 
 
-/M
+will fix
+
+>> +	if (S_ISBLK(d_backing_inode(path.dentry)->i_mode))
+>> +		bdev_statx(path.dentry, stat, request_mask);
+> 
+> I know I touched this last, but does anyone remember why we have
+> various random fixups in vfs_statx and not in vfs_getattr_nosec, where
+> they we have more of them and also the inode at hand?
+
 
