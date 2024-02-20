@@ -1,56 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-12071-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12072-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF0A85B020
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 01:46:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E113B85B021
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 01:48:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDC252842E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 00:46:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FAE61F2145B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 00:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D0F1754C;
-	Tue, 20 Feb 2024 00:46:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA2E8F5A;
+	Tue, 20 Feb 2024 00:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y9Znxt13"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OuycNWj2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3908B168B7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 00:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4766B3C24
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 00:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708390000; cv=none; b=bGPBMsx3y8dcuSM1i9WKtHkrtVEOUU4OaXfjsUb2uGcVXv9kQJu16Rc3dT7HfEEWLYv+QWF5GnjkggN9UGCPNBiBDCju3pev9QeAZ1e6KSgFIkammGfkZKrVwRmLxTy4ZHObXs5VFhGOSeU4hbdIiljNb/EuI1VPjp9GR6T5BrY=
+	t=1708390107; cv=none; b=owh1d4btzjv0eYn8SbqZRt4jDEIky3z+o7eZZIhhkAJJ2eI9oquHpqnXdNNV7Yz24WRj5RmwJihMq1GXDgb1srtwGs14Fs+w1dAJbBohRnOlEPvPoj1IuTomfDsUFfsaGBrSeQmlD+4NbJpTFQY5ypEc6jIOQw6V+o8tz7xlEwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708390000; c=relaxed/simple;
-	bh=IHq7xXBfR4eGA3DLcLa0eHo9G45hHpAI14URLOxAASA=;
+	s=arc-20240116; t=1708390107; c=relaxed/simple;
+	bh=cHHpzZ1dCm8DvbVFkXtkHNQbnTRJAprvYMMTP0RFhJs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rz4ZhO/MUloykzgPB+7YnV1KBBLu7BIhevIEQHurNYia85b6OIs0GlhE6cFiWy8RwPit4nfoVSvpqPG+iDY7HSTjIl5k4xHzR9Mq/HWAvFiHFs/jv+PuQOHkPVW4tnYFxg5BdnjagwPeZGq8bRRolbvmiGK4CWG+OrbQHexcujc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Y9Znxt13; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mv9ZQ//F10IDMLybAVzm4q32cQ0QAh2PFfBRtBR3SF8=; b=Y9Znxt13RY1mxKIodvRTyUzAOE
-	lQ001UIphglXE1tBGwWA/BmA0halGcYeQ4DLRlzNEERb1AztWMmkOHzb/22FgoBRk6Y7G9XR657+m
-	ClSP/bgVpJbOsVGSbmNKlZ0R+OCVLstmriNvFED7JxINGwBXrErLNEKWZXsdG6Af+6Vbi+Je9lVOu
-	vjdhtyQc8sCqtIdwIWQtREfknmwbjSMOlJK99Q8vDKRMjIrAnbmF/kdvIUli4OT+VCKDTrz5WWqHi
-	r+DnrqelC4vDLmz2bQJYoYuHh9k/X1i0NZ/yRai4K3ORPI2jKSTe7qZ9W+B/Ojsx4X3d4nSMJcrDa
-	82oLbFRQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rcEHL-0000000EDJE-3bve;
-	Tue, 20 Feb 2024 00:46:35 +0000
-Date: Tue, 20 Feb 2024 00:46:35 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Bill O'Donnell <bodonnel@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hqM5EsnxDodmvoADNL569xM8ume9PvvzrosYuv6Xu6f3T74WKc7Oe9Khk3gZhWwULCRyk9BVFG2feW650bNaF15DrSL8D2vuvH8xEfVs7cItn61MfgXAqdaOuRzCg3qpDc2D1q2NJVORKeBxwSI8Ntci8xy0W1kKZ/htMmWOVgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OuycNWj2; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1708390103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pDrxmnjvMkurOVEmHNcVzZPFQliOI9ywQHl3efXv/b0=;
+	b=OuycNWj2c/afdcHRm4LmSock8BO2fMDPwOsw1JfqlgWxgDU/bVw2NMg9NbAMfDFeqXL4At
+	0j+GVLJoTbhQHQXckh/9kUq8ERl2p4DVMYxqd57w04Zk8jg7rO08cSlECsEhN3Vnkngux6
+	eUZaURLN9EytAXlJ3T12n+h909a1lq0=
+Received: from mimecast-mx02.redhat.com (mx-ext.redhat.com [66.187.233.73])
+ by relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-79-e35beYICMViVkVK1ONYJiw-1; Mon,
+ 19 Feb 2024 19:48:21 -0500
+X-MC-Unique: e35beYICMViVkVK1ONYJiw-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id DCE9328C976D;
+	Tue, 20 Feb 2024 00:48:20 +0000 (UTC)
+Received: from redhat.com (unknown [10.22.33.227])
+	by smtp.corp.redhat.com (Postfix) with ESMTPS id 9F5A64038F2F;
+	Tue, 20 Feb 2024 00:48:20 +0000 (UTC)
+Date: Mon, 19 Feb 2024 18:48:19 -0600
+From: Bill O'Donnell <bodonnel@redhat.com>
+To: Matthew Wilcox <willy@infradead.org>
 Cc: linux-fsdevel@vger.kernel.org, brauner@kernel.org
 Subject: Re: [PATCH] efs: convert efs to use the new mount api
-Message-ID: <ZdP2a9VZ_GOcABY6@casper.infradead.org>
+Message-ID: <ZdP209Z3C_Qqw5PP@redhat.com>
 References: <20240220003318.166143-1-bodonnel@redhat.com>
+ <ZdP2a9VZ_GOcABY6@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,13 +70,18 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240220003318.166143-1-bodonnel@redhat.com>
+In-Reply-To: <ZdP2a9VZ_GOcABY6@casper.infradead.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.2
 
-On Mon, Feb 19, 2024 at 06:33:18PM -0600, Bill O'Donnell wrote:
-> Convert the efs filesystem to use the new mount API.
+On Tue, Feb 20, 2024 at 12:46:35AM +0000, Matthew Wilcox wrote:
+> On Mon, Feb 19, 2024 at 06:33:18PM -0600, Bill O'Donnell wrote:
+> > Convert the efs filesystem to use the new mount API.
+> 
+> Hey Bill, what testing were you able to do for this?  I found some EFS
+> images, but they didn't have any symlinks in them, so I wasn't able to
+> test my rewrite of the symlink handling code.  Do you have a source of
+> EFS images?
+> 
+https://archive.org/details/indigo-irix-4-0-5-datapartition.-7z
 
-Hey Bill, what testing were you able to do for this?  I found some EFS
-images, but they didn't have any symlinks in them, so I wasn't able to
-test my rewrite of the symlink handling code.  Do you have a source of
-EFS images?
 
