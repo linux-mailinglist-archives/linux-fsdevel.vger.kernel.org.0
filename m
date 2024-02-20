@@ -1,128 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-12176-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12177-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3326A85C4DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 20:32:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C94085C595
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 21:14:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC460B230C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 19:32:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 808ED1C222B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 20:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1563914A0A3;
-	Tue, 20 Feb 2024 19:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E3814AD19;
+	Tue, 20 Feb 2024 20:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="M5fNXZ02"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="livCMehg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CA676C89;
-	Tue, 20 Feb 2024 19:32:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B5D612D7;
+	Tue, 20 Feb 2024 20:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708457549; cv=none; b=YvwX0qWxpqFL+lM4cXroPQcbA4oyhZxbJbk5ooQyDl11HU20rPukBQV99nLG1jjnM5s6PaIwcrROCTFMhnwT/HDVdDoofH83zzsUCo+3wBb0BWxX/HtzfpYrj0FC5SwBjqlamhHqYApjGg+VPZlsLk/NML/dYF0v9SWfGMVweJM=
+	t=1708460080; cv=none; b=V+RgeqmbZOdw5GIABJWkdQAT8pyA+gWeDxYdPgX6dqFN3xVNz7DdLgjevFYUn8oxwuq1Adn3smUa/vKejyu+P/w4OnKW35qw71iSqgNFIvMmX4/RQeKuVKfUosNbnFfTJLCokaBg44Yw/waceA5UzZwkzzafCphzXhcV+lm9gtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708457549; c=relaxed/simple;
-	bh=IdvaFvhm79uZiC83q8Okzw3yGRUceDjDYvrDd2qCOyA=;
+	s=arc-20240116; t=1708460080; c=relaxed/simple;
+	bh=PhnmgydTViRe3a3Z0MeKX2O9Z2j/9jkmyt+EI/YkIDg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pvTTqp0gcGbxtXom+MgZOUEkep9YxCuGWSiDxJKVMgcyt5eHiwyAnRrZJh2Hpo5k8iKjJUHrlmkoUEsQsabXX8SPgWHKENpkTRl+t6W73QJQx3dkXFoRyq1M5uRcyFivZlBrzzfPj3GC6tFweEcovIpKgP0Kexem7hvYmzHQqww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=M5fNXZ02; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9EeLMmuj2gBRx3tMUzCZ8WVsu/6ToXUdH4WzDVXZTQ4=; b=M5fNXZ02w/eoM/RRtl9bP2IekM
-	rKkZ6vbrC9qUlnqWk3B3OdAF0FLLpopzPx/6AJUHm0aEe8bO7NGr9sx1IYFYusx74M9gXy+ldsLLc
-	cry8b4XY66mE+sk4cFcukfSdX80v0FPktd/Gxi/vZopLYq+TfXJ1eIF+R15SOTAU29so/3AYZRGPH
-	x5HokIHk0Gi8uofz+qWSO0NU8zYwRH/JiAlvGvt2l/QCC1s4SBSyyYfBp3dYt6zuOu2Egn7GZUzv2
-	HPzlq618z9fG1e8kFv21sA1nAreJqS53N+I8kJgGX1gK6eMFfV842aA7mcN32JgHdrIVaw9dkjw+Y
-	2+FjgfEg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rcVqq-0000000GOLF-3443;
-	Tue, 20 Feb 2024 19:32:24 +0000
-Date: Tue, 20 Feb 2024 19:32:24 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Steve French <smfrench@gmail.com>
-Cc: David Howells <dhowells@redhat.com>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	CIFS <linux-cifs@vger.kernel.org>
-Subject: Re: folio oops
-Message-ID: <ZdT-SOlTdrDoFqnX@casper.infradead.org>
-References: <CAH2r5ms2Hn1cmYEmmbGXTpCo2DY8FY8mfMewcvzEe2S-vjV0pQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ID6zwQuReBnMNNu0dPh6ZWExaNgbYRR0qg100OFq0tY3iAJED/4xvjW5ccAX7cnJUtjq0YCpCL8ztMWclYjVYsZwXA57DNNHpqXga9x+/co98Y97y2z22ymrSXdCY/TbjtBSP8MEITvap+5ubwoTZz1V8yUvCtnRaU64WzWuHpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=livCMehg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0852DC433C7;
+	Tue, 20 Feb 2024 20:14:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708460079;
+	bh=PhnmgydTViRe3a3Z0MeKX2O9Z2j/9jkmyt+EI/YkIDg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=livCMehgZsyylqxmsXVj6i8xUdU6xpehFod2AwCiN5tpwFKJ1EI6uVpnpUk1SD1pP
+	 GAOlkj14vHO/qPvkX0d2id7JAYJfmORLe28tPRQkxNkQE6Rd+nls0vM8PGBKwrFQaU
+	 Z6Hn1f36OwFyKU9OKK+mfymo53Iz1gvB0Pk8YA6mTWUndRC5NI4pVkVYdWAFBH06HP
+	 wpOkoK5yJIv0PkCR2AWd/nyXrwJz1hOuoOPB1/Rw7cDtv6Mla+4AxXh12qp+hhLjEp
+	 yd71FoqwR1k2BDtT0dWYNV11Xg/QhMr2farOiz7zqwo8yti2+//d2OrlM8Ac/4z8v3
+	 SQyYG8IyDqVJw==
+Date: Tue, 20 Feb 2024 20:14:30 +0000
+From: Mark Brown <broonie@kernel.org>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+Cc: "corbet@lwn.net" <corbet@lwn.net>, "ardb@kernel.org" <ardb@kernel.org>,
+	"maz@kernel.org" <maz@kernel.org>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
+	"keescook@chromium.org" <keescook@chromium.org>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"debug@rivosinc.com" <debug@rivosinc.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"oleg@redhat.com" <oleg@redhat.com>,
+	"arnd@arndb.de" <arnd@arndb.de>,
+	"ebiederm@xmission.com" <ebiederm@xmission.com>,
+	"will@kernel.org" <will@kernel.org>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"sorear@fastmail.com" <sorear@fastmail.com>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"fweimer@redhat.com" <fweimer@redhat.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"thiago.bauermann@linaro.org" <thiago.bauermann@linaro.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"musl@lists.openwall.com" <musl@lists.openwall.com>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH v8 00/38] arm64/gcs: Provide support for GCS in userspace
+Message-ID: <527e2b4d-5d2b-4993-a30a-834e77a23a40@sirena.org.uk>
+References: <20240203-arm64-gcs-v8-0-c9fec77673ef@kernel.org>
+ <22a53b78-10d7-4a5a-a01e-b2f3a8c22e94@app.fastmail.com>
+ <4c7bdf8fde9cc45174f10b9221fa58ffb450b755.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="LFlVuq7xn7hg1UEJ"
 Content-Disposition: inline
-In-Reply-To: <CAH2r5ms2Hn1cmYEmmbGXTpCo2DY8FY8mfMewcvzEe2S-vjV0pQ@mail.gmail.com>
+In-Reply-To: <4c7bdf8fde9cc45174f10b9221fa58ffb450b755.camel@intel.com>
+X-Cookie: E = MC ** 2 +- 3db
 
-On Tue, Feb 20, 2024 at 12:09:17PM -0600, Steve French wrote:
-> FYI - I hit this oops in xfstests (around generic/048) today.  This is
-> with 6.8-rc5
-> 
-> Any thoughts?
 
-Umm, this isn't an oops, it's just a backtrace.  Do you have anything
-that was printed before the backtrace?  I'd expect to see something
-complaining about sleeping for too long, since this is where we wait for
-writeback to finish ... the bug is probably something not calling
-folio_end_writeback() when it should.
+--LFlVuq7xn7hg1UEJ
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 125545.834971] task:xfs_io          state:D stack:0     pid:1697299
-> tgid:1697299 ppid:1692194 flags:0x00004002
-> [125545.834987] Call Trace:
-> [125545.834992]  <TASK>
-> [125545.835002]  __schedule+0x2cb/0x760
-> [125545.835022]  schedule+0x33/0x110
-> [125545.835031]  io_schedule+0x46/0x80
-> [125545.835039]  folio_wait_bit_common+0x136/0x330
-> [125545.835052]  ? __pfx_wake_page_function+0x10/0x10
-> [125545.835069]  folio_wait_bit+0x18/0x30
-> [125545.835076]  folio_wait_writeback+0x2b/0xa0
-> [125545.835087]  __filemap_fdatawait_range+0x93/0x110
-> [125545.835104]  filemap_write_and_wait_range+0x94/0xc0
-> [125545.835120]  cifs_flush+0x9a/0x140 [cifs]
-> [125545.835315]  filp_flush+0x35/0x90
-> [125545.835329]  filp_close+0x14/0x30
-> [125545.835341]  put_files_struct+0x85/0xf0
-> [125545.835354]  exit_files+0x47/0x60
-> [125545.835365]  do_exit+0x295/0x530
-> [125545.835377]  ? wake_up_state+0x10/0x20
-> [125545.835391]  do_group_exit+0x35/0x90
-> [125545.835403]  __x64_sys_exit_group+0x18/0x20
-> [125545.835414]  do_syscall_64+0x74/0x140
-> [125545.835424]  ? handle_mm_fault+0xad/0x380
-> [125545.835437]  ? do_user_addr_fault+0x338/0x6b0
-> [125545.835446]  ? irqentry_exit_to_user_mode+0x6b/0x1a0
-> [125545.835458]  ? irqentry_exit+0x43/0x50
-> [125545.835467]  ? exc_page_fault+0x94/0x1b0
-> [125545.835478]  entry_SYSCALL_64_after_hwframe+0x6e/0x76
-> [125545.835490] RIP: 0033:0x7f9b67eea36d
-> [125545.835549] RSP: 002b:00007ffde6442cd8 EFLAGS: 00000202 ORIG_RAX:
-> 00000000000000e7
-> [125545.835560] RAX: ffffffffffffffda RBX: 00007f9b68000188 RCX:
-> 00007f9b67eea36d
-> [125545.835566] RDX: 00000000000000e7 RSI: ffffffffffffff28 RDI:
-> 0000000000000000
-> [125545.835572] RBP: 0000000000000001 R08: 0000000000000000 R09:
-> 0000000000000000
-> [125545.835576] R10: 00005b88e60ec720 R11: 0000000000000202 R12:
-> 0000000000000000
-> [125545.835582] R13: 0000000000000000 R14: 00007f9b67ffe860 R15:
-> 00007f9b680001a0
-> [125545.835597]  </TASK>
-> 
-> 
-> -- 
-> Thanks,
-> 
-> Steve
-> 
+On Tue, Feb 20, 2024 at 06:41:05PM +0000, Edgecombe, Rick P wrote:
+> On Tue, 2024-02-20 at 11:36 -0500, Stefan O'Rear wrote:
+
+> > 2. Shadow stack faults on non-shadow stack pages, if flexible shadow
+> > stack
+> > =A0=A0 handling is in effect, cause the affected page to become a shadow
+> > stack
+> > =A0=A0 page.=A0 When this happens, the page filled with invalid address
+> > tokens.
+
+> Hmm, could the shadow stack underflow onto the real stack then? Not
+> sure how bad that is. INCSSP (incrementing the SSP register on x86)
+> loops are not rare so it seems like something that could happen.
+
+Yes, they'd trash any pages of normal stack they touch as they do so but
+otherwise seems similar to overflow.
+
+> The situation (for arm and riscv too I think?) is that some
+> applications will just not work automatically due to custom stack
+> switching implementations. (user level threading libraries, JITs, etc).
+> So=A0I think it should be ok to ask for apps to change to enable shadow
+> stack and we should avoid doing anything too awkward in pursuit of
+> getting it to work completely transparently.
+
+Yes, on arm64 anything that rewrites or is otherwise clever with the
+stack is going to have to understand that the GCS exists on arm64 and do
+matching rewrites/updates for the GCS.  This includes anything that
+switches stacks, it will need to use GCS specific instructions to change
+the current shadow stack pointer.
+
+> > MAP_SHARED; I consider this sufficiently perverse application
+> > behavior that
+> > it is not necessary to ensure exclusive use of the underlying pages
+> > while
+> > a shadow stack pte exists.=A0 (Applications that use MAP_SHARED for
+> > stacks
+> > do not get the full benefit of the shadow stack but they keep
+> > POSIX.1-2004
+> > conformance, applications that allocate stacks exclusively in
+> > MAP_PRIVATE
+> > memory lose no security.)
+
+> On x86 we don't support MAP_SHARED shadow stacks. There is a whole
+> snarl around the dirty bit in the PTE. I'm not sure it's impossible but
+> it was gladly avoided. There is also a benefit in avoiding having them
+> get mapped as writable in a different context.
+
+Similarly for arm64, I think we can physically do it IIRC but between
+having to map via map_shadow_stack() for security reasons and it just
+generally not seeming like a clever idea the implementation shouldn't
+actually let you get a MAP_SHARED GCS it's not something that's been
+considered.
+
+> > I am substantially less familiar with GCS and SHSTK than with
+> > Zicfiss.
+> > It is likely that a syscall or other mechanism is needed to
+> > initialize the
+> > shadow stack in flexible memory for makecontext.
+
+> The ucontext stacks (and alt shadow stacks is the plan) need to have a
+> "restore token". So, yea, you would probably need some syscall to
+> "convert" the normal stack memory into shadow stack with a restore
+> token.
+
+Similar considerations for GCS, we need tokens and we don't want
+userspace to be able to write by itself in the normal case.
+
+--LFlVuq7xn7hg1UEJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmXVCCUACgkQJNaLcl1U
+h9CH3gf+IJkDKy0uUAtsKGOEXiHDZs6dgXAT43RbQM/ofajONSRA7nEWsZHy7IWP
+Tcz0hVz2/ellXMMRHdtDCKYxE3ugSuE8UQSOLGt2B3R1TDmgkXPW8GWOtV/eIUYS
+rJEPCtPF35R3ezGjIYnLBQvSoFNjD4TNyygIvjh6d3Wc8m+aXtiC/whvINTuzOVv
+SnYa3aFliCl153Ck0/3GzAiFCbGFUY3qVhKBwbk6MLITlRf9mF5bLp8e5Zzf49yj
+9qGcHcDETmpcxDVRJ7oAzh8gqQqein8FOyFDkREnT59O7DdNNTx8m/K29UOnBuLF
+z/qP3IZSjbKlJ3d/XfSVG0mTnYnohw==
+=e50G
+-----END PGP SIGNATURE-----
+
+--LFlVuq7xn7hg1UEJ--
 
