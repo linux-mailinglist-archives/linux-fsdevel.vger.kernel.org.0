@@ -1,196 +1,274 @@
-Return-Path: <linux-fsdevel+bounces-12069-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12070-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BA7085AFFE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 01:22:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D8F85B00B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 01:33:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 911BE1C22626
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 00:22:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 906EA1C21A18
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 00:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D621259B;
-	Tue, 20 Feb 2024 00:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65A823D2;
+	Tue, 20 Feb 2024 00:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eHEgPEMA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AqAbl95u";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eHEgPEMA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="AqAbl95u"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E51+tE9R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD1815BB;
-	Tue, 20 Feb 2024 00:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6948015B1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 00:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708388505; cv=none; b=uBD11+qh9T4ZwpYYbQf+DPHOH94Ex6vtrjCfpVCF4kgCJIVJ6+A9UELq84KdboD9ukxo2TwDIlOcB43xLxjTyEgEqJGbG/5RDripNr5d/gb9QSeWQaeDrZd2EV3MyIQqLvGV9oEiBU6gwIG5QxeZVjtR1RRyCLwAZQCUpBP/2GI=
+	t=1708389219; cv=none; b=O5Bc+w5HuHbSW9KwDj8rKcEqpfrFpyDaQoDpYkau5HjYagvMVwHNrM08CwlLf6liKsMBVd/pPP4EwgjeTqg/5tR+nO0DtYRBKYt5khZt5G9Cl3oM7lPRKPXsPpEXJUDp3LvFz2+KaxXHjfPLbT5ffBBkoDNsWVUBPnkq4AKIn6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708388505; c=relaxed/simple;
-	bh=HoYfSU1LERQNtThH9A+NVMysOQp+ECNTZweM8N3vBII=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=dDgi9j2Xo+jdf/NCW2A/A/og6h8BPLG9nMQGl5ghtiro1aitLJAvA66DDKLz8ephvo89BIA9IANMhQiF/oe++7VmdRMiG0FqwUvQNBGnNLPxRZorVmmPrpVtJtIpjh8KJdr737J64DeqgUiogod2I0tg/N+I83SYP3HTSJu9U3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eHEgPEMA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AqAbl95u; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eHEgPEMA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=AqAbl95u; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1708389219; c=relaxed/simple;
+	bh=RlGqRyXu9wmsdgqmV9YDmX3C72qMBdAe3ahpf5xB4aw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XT63c31ZHs5FafEMgj8PQ+W2GdftXRH+MAOj2A9LEnNkZBr8i2s+b3MZWDxFduUrS+gT+I4kfHhJ/7dbG6cyuPCPgVZzGSf7C2KZssPa7Y7CNinYSnWbcXFYLvl8t9NM63gb4sfb+aBRRtdVVDHDM4cRyuL5PxdeuOFRDQNGH0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E51+tE9R; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1708389216;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QSifiBfzkgC76qBkzHeYPykzEpl7X6oVGeEXCKPiqFk=;
+	b=E51+tE9Rjg09j1Z8/G+H3MUQZzWnjfoGnWjVsXUDuEte/gR0hJvsvOnX+WKvtsva+4Ui+I
+	JLvqa7Qu4NDTK4t+ArMpE5vJn2S4LyS0Vxy/9uz4qQXgtENDgIZXiU3208AUkWwk85asU1
+	aR6Noto9LK9bdQMRcGrPpf+svcW/ebI=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-600-tDHkkJ1gNS2pMQsim1wvnA-1; Mon, 19 Feb 2024 19:33:32 -0500
+X-MC-Unique: tDHkkJ1gNS2pMQsim1wvnA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A9F2121EAD;
-	Tue, 20 Feb 2024 00:21:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1708388501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCStDtcRffeU4jURBHp/euC2Vn/pS2u4zscwEUzLt+k=;
-	b=eHEgPEMAEvAjhowMWVtD1L45v2+oTmGs40a7GZOJ1Ov9Jb9s5RNEuhdI/LqkTAnSckTKAJ
-	xfUbQrIRGupq65EmcwwUqT+dl/wp3Vn/I5B1feDMhJv4MQfRlAcEH77ONSSW6Ocsj9HK2+
-	lGA0/CFkumnx/sZEaFmPNPhFZu0ydRY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1708388501;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCStDtcRffeU4jURBHp/euC2Vn/pS2u4zscwEUzLt+k=;
-	b=AqAbl95uLUKL7GTueZQ3qWuww7EqxAm3/78Jlrz4vkGAoFUdNbY3/TvYsv215SIX5ySpk0
-	4UPPxuSKOkij04Dw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1708388501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCStDtcRffeU4jURBHp/euC2Vn/pS2u4zscwEUzLt+k=;
-	b=eHEgPEMAEvAjhowMWVtD1L45v2+oTmGs40a7GZOJ1Ov9Jb9s5RNEuhdI/LqkTAnSckTKAJ
-	xfUbQrIRGupq65EmcwwUqT+dl/wp3Vn/I5B1feDMhJv4MQfRlAcEH77ONSSW6Ocsj9HK2+
-	lGA0/CFkumnx/sZEaFmPNPhFZu0ydRY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1708388501;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aCStDtcRffeU4jURBHp/euC2Vn/pS2u4zscwEUzLt+k=;
-	b=AqAbl95uLUKL7GTueZQ3qWuww7EqxAm3/78Jlrz4vkGAoFUdNbY3/TvYsv215SIX5ySpk0
-	4UPPxuSKOkij04Dw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 657EF139D0;
-	Tue, 20 Feb 2024 00:21:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id KtjvBpLw02UVagAAD6G6ig
-	(envelope-from <neilb@suse.de>); Tue, 20 Feb 2024 00:21:38 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7B869185A780;
+	Tue, 20 Feb 2024 00:33:32 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.22.33.227])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id 383FFC185C0;
+	Tue, 20 Feb 2024 00:33:32 +0000 (UTC)
+From: Bill O'Donnell <bodonnel@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: brauner@kernel.org,
+	Bill O'Donnell <bodonnel@redhat.com>
+Subject: [PATCH] efs: convert efs to use the new mount api
+Date: Mon, 19 Feb 2024 18:33:18 -0600
+Message-ID: <20240220003318.166143-1-bodonnel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Matthew Wilcox" <willy@infradead.org>
-Cc: "Mike Rapoport" <rppt@kernel.org>, lsf-pc@lists.linux-foundation.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org,
- bpf@vger.kernel.org
-Subject: Re: [LSF/MM/BPF TOPIC] Reclaiming & documenting page flags
-In-reply-to: <ZdPkWsxKZN8CvQTN@casper.infradead.org>
-References: <Zbcn-P4QKgBhyxdO@casper.infradead.org>,
- <Zb9pZTmyb0lPMQs8@kernel.org>, <ZcACya-MJr_fNRSH@casper.infradead.org>,
- <ZcOnEGyr6y3jei68@kernel.org>, <ZdO2eABfGoPNnR07@casper.infradead.org>,
- <170838273655.1530.946393725104206593@noble.neil.brown.name>,
- <ZdPkWsxKZN8CvQTN@casper.infradead.org>
-Date: Tue, 20 Feb 2024 11:21:35 +1100
-Message-id: <170838849545.1530.13553329646368488958@noble.neil.brown.name>
-X-Spam-Level: 
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=eHEgPEMA;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=AqAbl95u
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-1.43 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 MIME_GOOD(-0.10)[text/plain];
-	 DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[10];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 NEURAL_HAM_SHORT(-0.10)[-0.487];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.02)[54.65%]
-X-Spam-Score: -1.43
-X-Rspamd-Queue-Id: A9F2121EAD
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.8
 
-On Tue, 20 Feb 2024, Matthew Wilcox wrote:
-> On Tue, Feb 20, 2024 at 09:45:36AM +1100, NeilBrown wrote:
-> > On Tue, 20 Feb 2024, Matthew Wilcox wrote:
-> > > The example is filemap_range_has_writeback().  It's EXPORT_SYMBOL_GPL()
-> > > and it's a helper function for filemap_range_needs_writeback().
-> > > filemap_range_needs_writeback() has kernel-doc, but nobody should be
-> > > calling filemap_range_has_writeback() directly, so it shouldn't even
-> > > exist in the htmldocs.  But we should have a comment on it saying
-> > > "Use filemap_range_needs_writeback(), don't use this", in case anyone
-> > > discovers it.  And the existance of that comment should be enough to
-> > > tell our tools to not flag this as a function that needs kernel-doc.
-> > > 
-> > 
-> > Don't we use a __prefix for internal stuff that shouldn't be used?
-> 
-> No?  Or if we do, we are inconsistent with that convention.  Let's
-> consider some examples.
-> 
-> __SetPageReferenced -- non-atomic version of SetPageReferenced.
-> Akin to __set_bit.
-> 
-> __filemap_fdatawrite_range() -- like filemap_fdatawrite_range but
-> allows the specification of sync_mode
-> 
-> __page_cache_alloc() -- like page_cache_alloc() but takes the gfp mask
-> directly instead of inferring it from mapping_gfp_mask()
-> 
-> __folio_lock() -- This does fit the "don't call this pattern"!
-> 
-> __set_page_dirty() -- Like set_page_dirty() but allows warn to be
-> specified.
-> 
-> __filemap_remove_folio() -- Like filemap_remove_folio() but allows it
-> to be replaced with a shadow entry.
-> 
-> __readahead_folio() -- Another internal one
-> 
-> I mostly confined myself to pagemap.h for this survey, but if you've
-> conducted a different survey that shows your assertion is generally true
-> and I've hit on the exceptions to the rule ... ?
-> 
+Convert the efs filesystem to use the new mount API.
 
-Yes, __ is used for other things too.
-It would be nice to have some consistency with naming, but probably
-impossible.
+Signed-off-by: Bill O'Donnell <bodonnel@redhat.com>
+---
+ fs/efs/super.c | 114 ++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 84 insertions(+), 30 deletions(-)
 
-And with 1074 functions named __foo having kernel doc already, it is too
-late to close that gate.
-:-(
+diff --git a/fs/efs/super.c b/fs/efs/super.c
+index f17fdac76b2e..c837ac89b384 100644
+--- a/fs/efs/super.c
++++ b/fs/efs/super.c
+@@ -14,19 +14,14 @@
+ #include <linux/buffer_head.h>
+ #include <linux/vfs.h>
+ #include <linux/blkdev.h>
+-
++#include <linux/fs_context.h>
++#include <linux/fs_parser.h>
+ #include "efs.h"
+ #include <linux/efs_vh.h>
+ #include <linux/efs_fs_sb.h>
+ 
+ static int efs_statfs(struct dentry *dentry, struct kstatfs *buf);
+-static int efs_fill_super(struct super_block *s, void *d, int silent);
+-
+-static struct dentry *efs_mount(struct file_system_type *fs_type,
+-	int flags, const char *dev_name, void *data)
+-{
+-	return mount_bdev(fs_type, flags, dev_name, data, efs_fill_super);
+-}
++static int efs_init_fs_context(struct fs_context *fc);
+ 
+ static void efs_kill_sb(struct super_block *s)
+ {
+@@ -35,15 +30,6 @@ static void efs_kill_sb(struct super_block *s)
+ 	kfree(sbi);
+ }
+ 
+-static struct file_system_type efs_fs_type = {
+-	.owner		= THIS_MODULE,
+-	.name		= "efs",
+-	.mount		= efs_mount,
+-	.kill_sb	= efs_kill_sb,
+-	.fs_flags	= FS_REQUIRES_DEV,
+-};
+-MODULE_ALIAS_FS("efs");
+-
+ static struct pt_types sgi_pt_types[] = {
+ 	{0x00,		"SGI vh"},
+ 	{0x01,		"SGI trkrepl"},
+@@ -63,6 +49,27 @@ static struct pt_types sgi_pt_types[] = {
+ 	{0,		NULL}
+ };
+ 
++enum {
++	Opt_explicit_open,
++};
++
++static const struct fs_parameter_spec efs_param_spec[] = {
++	fsparam_flag    ("explicit-open",       Opt_explicit_open),
++	{}
++};
++
++/*
++ * File system definition and registration.
++ */
++static struct file_system_type efs_fs_type = {
++	.owner			= THIS_MODULE,
++	.name			= "efs",
++	.kill_sb		= efs_kill_sb,
++	.fs_flags		= FS_REQUIRES_DEV,
++	.init_fs_context	= efs_init_fs_context,
++	.parameters		= efs_param_spec,
++};
++MODULE_ALIAS_FS("efs");
+ 
+ static struct kmem_cache * efs_inode_cachep;
+ 
+@@ -108,18 +115,10 @@ static void destroy_inodecache(void)
+ 	kmem_cache_destroy(efs_inode_cachep);
+ }
+ 
+-static int efs_remount(struct super_block *sb, int *flags, char *data)
+-{
+-	sync_filesystem(sb);
+-	*flags |= SB_RDONLY;
+-	return 0;
+-}
+-
+ static const struct super_operations efs_superblock_operations = {
+ 	.alloc_inode	= efs_alloc_inode,
+ 	.free_inode	= efs_free_inode,
+ 	.statfs		= efs_statfs,
+-	.remount_fs	= efs_remount,
+ };
+ 
+ static const struct export_operations efs_export_ops = {
+@@ -249,26 +248,26 @@ static int efs_validate_super(struct efs_sb_info *sb, struct efs_super *super) {
+ 	return 0;    
+ }
+ 
+-static int efs_fill_super(struct super_block *s, void *d, int silent)
++static int efs_fill_super(struct super_block *s, struct fs_context *fc)
+ {
+ 	struct efs_sb_info *sb;
+ 	struct buffer_head *bh;
+ 	struct inode *root;
+ 
+- 	sb = kzalloc(sizeof(struct efs_sb_info), GFP_KERNEL);
++	sb = kzalloc(sizeof(struct efs_sb_info), GFP_KERNEL);
+ 	if (!sb)
+ 		return -ENOMEM;
+ 	s->s_fs_info = sb;
+ 	s->s_time_min = 0;
+ 	s->s_time_max = U32_MAX;
+- 
++
+ 	s->s_magic		= EFS_SUPER_MAGIC;
+ 	if (!sb_set_blocksize(s, EFS_BLOCKSIZE)) {
+ 		pr_err("device does not support %d byte blocks\n",
+ 			EFS_BLOCKSIZE);
+ 		return -EINVAL;
+ 	}
+-  
++
+ 	/* read the vh (volume header) block */
+ 	bh = sb_bread(s, 0);
+ 
+@@ -294,7 +293,7 @@ static int efs_fill_super(struct super_block *s, void *d, int silent)
+ 		pr_err("cannot read superblock\n");
+ 		return -EIO;
+ 	}
+-		
++
+ 	if (efs_validate_super(sb, (struct efs_super *) bh->b_data)) {
+ #ifdef DEBUG
+ 		pr_warn("invalid superblock at block %u\n",
+@@ -328,6 +327,61 @@ static int efs_fill_super(struct super_block *s, void *d, int silent)
+ 	return 0;
+ }
+ 
++static void efs_free_fc(struct fs_context *fc)
++{
++	kfree(fc->fs_private);
++}
++
++static int efs_get_tree(struct fs_context *fc)
++{
++	return get_tree_bdev(fc, efs_fill_super);
++}
++
++static int efs_parse_param(struct fs_context *fc, struct fs_parameter *param)
++{
++	int token;
++	struct fs_parse_result result;
++
++	token = fs_parse(fc, efs_param_spec, param, &result);
++	if (token < 0)
++		return token;
++	return 0;
++}
++
++static int efs_reconfigure(struct fs_context *fc)
++{
++	sync_filesystem(fc->root->d_sb);
++
++	return 0;
++}
++
++struct efs_context {
++	unsigned long s_mount_opts;
++};
++
++static const struct fs_context_operations efs_context_opts = {
++	.parse_param	= efs_parse_param,
++	.get_tree	= efs_get_tree,
++	.reconfigure	= efs_reconfigure,
++	.free		= efs_free_fc,
++};
++
++/*
++ * Set up the filesystem mount context.
++ */
++static int efs_init_fs_context(struct fs_context *fc)
++{
++	struct efs_context *ctx;
++
++	ctx = kzalloc(sizeof(struct efs_context), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++	fc->fs_private = ctx;
++	fc->ops = &efs_context_opts;
++
++	return 0;
++}
++
+ static int efs_statfs(struct dentry *dentry, struct kstatfs *buf) {
+ 	struct super_block *sb = dentry->d_sb;
+ 	struct efs_sb_info *sbi = SUPER_INFO(sb);
+-- 
+2.43.2
 
-Thanks,
-NeilBrown
 
