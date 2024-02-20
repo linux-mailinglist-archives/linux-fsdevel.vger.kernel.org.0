@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-12132-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12133-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB3985B757
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 10:27:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E0E85B75E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 10:28:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F84E1C2427B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 09:27:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96B751C244E2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 09:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CE65FDD3;
-	Tue, 20 Feb 2024 09:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9DB60DE7;
+	Tue, 20 Feb 2024 09:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PhlLTzP2"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eXKAvtsT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0825FDC9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 09:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EC360DC2
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 09:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708421257; cv=none; b=MqjWuA04OwieE7svelnKt8M+B6htJAb+2Cft890+IccL4VZkVIjycSA83lr8KH0h4WQKYyJnjGTi7X6/1b2/R7OiDKz42x615nwHa1JJsF51FOrqiHnBvtGZlxzLjKePSzfLeRZg790rdQe0y1Yr78UIbo+ONqJ0wP2/ouZGJxI=
+	t=1708421264; cv=none; b=dTb7eehMe+N2iByzrgcJqfe0R+gtsUHQoic+K6utuHHPUcXuMxCchbYYMfFnejsUXAzHkBgS5tCVTcoq4BfWMY4tAFLJHXpkz0138otqI0jL3yUYz5wAaeVoeHrSGdH+8Qfl9DGuyRpgHiD98IfDDTlWLRiWNmYAWAywPMgV3oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708421257; c=relaxed/simple;
-	bh=MNS3Wenvd3CPGUa+1nbec3ZhkxNw0IUv2scXSvBHWGU=;
+	s=arc-20240116; t=1708421264; c=relaxed/simple;
+	bh=I+cErYdSLg0Qn/bGnm+p1n2X9JUNSmT0do5tne6EpyI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hD4oN2LBF9JsE6zqzPe6FHba1Eeg2QJZU/rPzBUtoTCxwmw2OzH1po6rF3PtdYfnYzUrUseGJzoDHDbYKhPjMlulUjCtvQKnM4j8docbdyQLKnJbev6llcBI5iEUvCAqfzofovUO/co4cH+jGcEPUarwvgqQQDiXRB1EefxMWM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PhlLTzP2; arc=none smtp.client-ip=209.85.218.41
+	 Content-Type:Content-Disposition:In-Reply-To; b=NFKtVyv1hF5y5gOdB/bOV1VDhF2lwckGK1fk8Yer4/0iZ15dCdIoWNwmApi2gfrKdL8z/bzNFVRpZiKgHaR4DCXFzJPTSCSWFhQUBMMXeh2q0KQ8aaOoaSbF76A7VrDXC7yLkKcZxoMreFVolvQ7E+rSIBni8oo5ORawC7diNqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eXKAvtsT; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a3e87b2de41so183743066b.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 01:27:35 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a3d01a9a9a2so499010766b.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 01:27:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1708421254; x=1709026054; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1708421261; x=1709026061; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qUIZj7JHZQQzmuJwxcBCYLLycwgoQrzQW0HfSgl0F2M=;
-        b=PhlLTzP2F6cx9IyZsRJ+dug7XWbpM2pDUeHK321i44qpUVqxep8ALb3u17wLemUtek
-         c3a+OObF2cfZ6BywWuyAJcNxTdHMOnvpuVsjuwHE4mxzsqD5wVglKejHFkOYFxdiMx9S
-         duNW/uHYdoDp58xrBsnAAHlFXkbfTfICmlWkL5UeU72bwNiuWNaed7NA+tNe5M8g94Fm
-         dcOe1PIWAlTZXs++afMaidfSZLImu13D1UDEBb8Zd9ceQXZBM4Uflc4X0/RM+lv0NtaF
-         2wSjfN70Xk4daFHsv9agSHFED7r0szhMPEjheET+DFa1lqegbf5XlafDQyLtmfc6JzkY
-         BilA==
+        bh=Yos5PcM7VN/krEtPgbbzLqvu9MhyDgmtJVHiLz+77YI=;
+        b=eXKAvtsTfT0cChu9u22g354APUtzVRduTiRJvxR9x6as1s4NS4n7/SpYnVEOv0dJPN
+         jBcHeoP4LWqYxW0ecJzbVvQDKpz/8TeAviCbwXWioEFMS68aYPQSgl2LMWr5VDBfvIwl
+         nlnI0UVLFLurmeaHEwCzM+cIfJ3+xZ8N/dipyOAGT16sI8bJui8feNcPteGdu4vuaBLi
+         t6LYUp60aOXAElJET3Fr6z8dcrhA/cA52AAaUfT1PFWVhwiRwgNqg46tUUTcZmc9J8WD
+         45OwqFAQrt5HhuLVzq+KSC4Kdmai0jkshPu9ZRtD0JCzobrv5XajmqjRr/2IIE8eT1zm
+         LKnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708421254; x=1709026054;
+        d=1e100.net; s=20230601; t=1708421261; x=1709026061;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qUIZj7JHZQQzmuJwxcBCYLLycwgoQrzQW0HfSgl0F2M=;
-        b=bhnUG8KXhIZangTqXGsoSqVO6aX8G++Lr6FogTf+ug6oS2WJVRC8A8k8/+5mcH6pJp
-         iQSQukvXmKFqmgFU813wCV/S/pfanaV1mEsPS/4J8A3tZvHnylDxiddM9bPVtObxrEEh
-         ZhoCL1Wr76E9wyuyTIVpa5iEhwwyG8LQagoO8VrjSpgyHWnSZas2DS0CkiFDeQ+XT0UK
-         fM+Ri7I/N3zeaNmfBaxAhUYCCIIpjpH4V9gDNxaLZA80i3+wEfV7W+yUQgDisWX8CCmy
-         rt9a2HHqbjat/p/Tk1FSA78d/aC6rYAFd2wvoYJGb7sbONv5tVo3JvlptaE1a9CbHOUF
-         6v7g==
-X-Forwarded-Encrypted: i=1; AJvYcCX2mC252TjV1VhhLZ5lFM4H+TlRfrUkKQp7pBw+3KjnlEJ4of7qNjfdr1LUnn/6/Uyp6jYbIP9kTyCMfnaJwCUW51AVfshoGD1aKFpg6w==
-X-Gm-Message-State: AOJu0Yy2nQBif2KDf3BHQFo/iFHu7sTT3dY59S1FBWbYiMfCrkWHV1u4
-	3v/2IMYCjBsY1VI9dGzRMYKtWRRhtpM4m3yMpwkDMbxzaG3h9NjqLMOAdQJw3w==
-X-Google-Smtp-Source: AGHT+IFdqEPrvw/m+2sSbOg1414dzXcYlw64hSpUftYqChu8q15/lbYfZWLZr3xxHjkOIFkPX+CszQ==
-X-Received: by 2002:a17:906:3d41:b0:a3d:b7e1:2670 with SMTP id q1-20020a1709063d4100b00a3db7e12670mr8275844ejf.14.1708421254341;
-        Tue, 20 Feb 2024 01:27:34 -0800 (PST)
+        bh=Yos5PcM7VN/krEtPgbbzLqvu9MhyDgmtJVHiLz+77YI=;
+        b=EVJOshalpnEB8EgeCA77b/UnswpWv0BhvsqzMHSld9wWrLizqlxegyMI06MPNkHaZ2
+         w1EuhCTDaOYG4xKO94Cwnz/9H5GyAj6Ko1i0KQSXOGQXtE5CzQqaVBqiPs5ByGk1NiZS
+         fZimByksjMLLjOpmRj17HrNLXBCm538ySq+B/YxlFWWsvNZQwUCtE3jgty8YASN9nYpv
+         V0z3ESANJNWr4qBenz7iDn3eo28Al3wQjCb1is66wDmAZvUPQIkwE/pmZUjlpS6KToaJ
+         MpnEG+mpYWoHvmAckcmg+OXbDOZEJLyWZaWHSNhvWK0Xkzaie8NzBdm68hnZyxA9EGrN
+         wZkA==
+X-Forwarded-Encrypted: i=1; AJvYcCVjfL1IE1j/UDC6D9DnwNqGf7Fm9iUN937QZUKYPgf8Xobxtqys6dvt2z2AX3tIHz/Xw66fCt2G5sWLizFGAUHVtzAQ+h2x1FNt5RXLoQ==
+X-Gm-Message-State: AOJu0YwNcXfVEwhQ7+dXXGaAk07SF6JDF/2ruS+MeGRGJtb7Z/DzH8Ik
+	zWvoU3zOMwn7Xah8PdiDDwBeJ9UbAm1OJt2YGjzo/Eu8V3qvsTcYOotvJYIlcg==
+X-Google-Smtp-Source: AGHT+IGUQRG8YW9LkcPuNFdTNNz7X5KvC++SADFb6lY6crmb2y8Eu/FZHEmtLzaGcgZ/g/7aBkRn0A==
+X-Received: by 2002:a17:906:ac5:b0:a3e:ab9f:4129 with SMTP id z5-20020a1709060ac500b00a3eab9f4129mr2833910ejf.75.1708421260817;
+        Tue, 20 Feb 2024 01:27:40 -0800 (PST)
 Received: from google.com (229.112.91.34.bc.googleusercontent.com. [34.91.112.229])
-        by smtp.gmail.com with ESMTPSA id r18-20020a1709060d5200b00a3d12d84cffsm3752352ejh.167.2024.02.20.01.27.33
+        by smtp.gmail.com with ESMTPSA id i18-20020a1709063c5200b00a3d5d8ff745sm3800284ejg.144.2024.02.20.01.27.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Feb 2024 01:27:33 -0800 (PST)
-Date: Tue, 20 Feb 2024 09:27:30 +0000
+        Tue, 20 Feb 2024 01:27:40 -0800 (PST)
+Date: Tue, 20 Feb 2024 09:27:36 +0000
 From: Matt Bobrowski <mattbobrowski@google.com>
 To: bpf@vger.kernel.org
 Cc: ast@kernel.org, andrii@kernel.org, kpsingh@google.com, jannh@google.com,
 	jolsa@kernel.org, daniel@iogearbox.net, brauner@kernel.org,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH bpf-next 02/11] bpf/selftests: adjust selftests for BPF
- helper bpf_d_path()
-Message-ID: <18c7b587d43bbc7e80593bf51ea9d3eb99e47bc1.1708377880.git.mattbobrowski@google.com>
+Subject: [PATCH bpf-next 03/11] bpf: rename fs_kfunc_set_ids to
+ lsm_kfunc_set_ids
+Message-ID: <effc76c6df208ec8e13f08c49faeec51b61f05d1.1708377880.git.mattbobrowski@google.com>
 References: <cover.1708377880.git.mattbobrowski@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -86,205 +86,74 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 In-Reply-To: <cover.1708377880.git.mattbobrowski@google.com>
 
-The BPF helper bpf_d_path() has been modified such that it makes use
-of probe-read semantics. In turn, the behaviour of the BPF helper
-bpf_d_path() has slightly changed under certain circumstances,
-therefore needing to also adjust the backing test suite to account for
-this.
-
-The probe-read based d_path() implementation cannot handle dentries
-that have their name backed by d_op->d_dname(). For paths containing
-such dentries, the probe-read based implementation returns
--EOPNOTSUPP, so the test suite has been updated to assert this
-behaviour.
+fs_kfunc_set_ids is rather specific to a single kfunc at the
+moment. Rename it to something a little more generic such that other
+future kfuncs restricted to BPF LSM programs can reside in the same
+set and make use of the same filter.
 
 Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
 ---
- .../testing/selftests/bpf/prog_tests/d_path.c | 84 +++++++++++++++----
- .../testing/selftests/bpf/progs/test_d_path.c |  2 +-
- 2 files changed, 68 insertions(+), 18 deletions(-)
+ kernel/trace/bpf_trace.c | 26 ++++++++++++++------------
+ 1 file changed, 14 insertions(+), 12 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/d_path.c b/tools/testing/selftests/bpf/prog_tests/d_path.c
-index ccc768592e66..d77ae1b1e6ba 100644
---- a/tools/testing/selftests/bpf/prog_tests/d_path.c
-+++ b/tools/testing/selftests/bpf/prog_tests/d_path.c
-@@ -6,7 +6,7 @@
- #include <sys/syscall.h>
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 12dbd9cef1fa..c45c8d42316c 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -1434,7 +1434,7 @@ static int __init bpf_key_sig_kfuncs_init(void)
+ late_initcall(bpf_key_sig_kfuncs_init);
+ #endif /* CONFIG_KEYS */
  
- #define MAX_PATH_LEN		128
--#define MAX_FILES		7
-+#define MAX_FILES		8
+-/* filesystem kfuncs */
++/* A set of kfuncs that may only be called from BPF LSM programs. */
+ __bpf_kfunc_start_defs();
  
- #include "test_d_path.skel.h"
- #include "test_d_path_check_rdonly_mem.skel.h"
-@@ -25,9 +25,15 @@
+ /**
+@@ -1474,31 +1474,33 @@ __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
  
- static int duration;
+ __bpf_kfunc_end_defs();
  
-+struct want {
-+	bool err;
-+	long err_code;
-+	char path[MAX_PATH_LEN];
-+};
-+
- static struct {
- 	__u32 cnt;
--	char paths[MAX_FILES][MAX_PATH_LEN];
-+	struct want want[MAX_FILES];
- } src;
+-BTF_KFUNCS_START(fs_kfunc_set_ids)
++BTF_KFUNCS_START(lsm_kfunc_set_ids)
+ BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
+-BTF_KFUNCS_END(fs_kfunc_set_ids)
++BTF_KFUNCS_END(lsm_kfunc_set_ids)
  
- static int set_pathname(int fd, pid_t pid)
-@@ -35,12 +41,12 @@ static int set_pathname(int fd, pid_t pid)
- 	char buf[MAX_PATH_LEN];
+-static int bpf_get_file_xattr_filter(const struct bpf_prog *prog, u32 kfunc_id)
++static int bpf_lsm_kfunc_filter(const struct bpf_prog *prog, u32 kfunc_id)
+ {
+-	if (!btf_id_set8_contains(&fs_kfunc_set_ids, kfunc_id))
++	if (!btf_id_set8_contains(&lsm_kfunc_set_ids, kfunc_id))
+ 		return 0;
  
- 	snprintf(buf, MAX_PATH_LEN, "/proc/%d/fd/%d", pid, fd);
--	return readlink(buf, src.paths[src.cnt++], MAX_PATH_LEN);
-+	return readlink(buf, src.want[src.cnt++].path, MAX_PATH_LEN);
+-	/* Only allow to attach from LSM hooks, to avoid recursion */
++	/* To avoid recursion, only permit kfuncs included within
++	 * lsm_kfunc_set_ids to be called from BPF LSM programs.
++	 */
+ 	return prog->type != BPF_PROG_TYPE_LSM ? -EACCES : 0;
  }
  
- static int trigger_fstat_events(pid_t pid)
+-static const struct btf_kfunc_id_set bpf_fs_kfunc_set = {
++static const struct btf_kfunc_id_set bpf_lsm_kfunc_set = {
+ 	.owner = THIS_MODULE,
+-	.set = &fs_kfunc_set_ids,
+-	.filter = bpf_get_file_xattr_filter,
++	.set = &lsm_kfunc_set_ids,
++	.filter = bpf_lsm_kfunc_filter,
+ };
+ 
+-static int __init bpf_fs_kfuncs_init(void)
++static int __init bpf_lsm_kfuncs_init(void)
  {
--	int sockfd = -1, procfd = -1, devfd = -1;
-+	int sockfd = -1, procfd = -1, devfd = -1, mntnsfd = -1;
- 	int localfd = -1, indicatorfd = -1;
- 	int pipefd[2] = { -1, -1 };
- 	struct stat fileStat;
-@@ -49,10 +55,15 @@ static int trigger_fstat_events(pid_t pid)
- 	/* unmountable pseudo-filesystems */
- 	if (CHECK(pipe(pipefd) < 0, "trigger", "pipe failed\n"))
- 		return ret;
--	/* unmountable pseudo-filesystems */
-+
- 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
- 	if (CHECK(sockfd < 0, "trigger", "socket failed\n"))
- 		goto out_close;
-+
-+	mntnsfd = open("/proc/self/ns/mnt", O_RDONLY);
-+	if (CHECK(mntnsfd < 0, "trigger", "mntnsfd failed"))
-+		goto out_close;
-+
- 	/* mountable pseudo-filesystems */
- 	procfd = open("/proc/self/comm", O_RDONLY);
- 	if (CHECK(procfd < 0, "trigger", "open /proc/self/comm failed\n"))
-@@ -69,15 +80,35 @@ static int trigger_fstat_events(pid_t pid)
- 	if (CHECK(indicatorfd < 0, "trigger", "open /tmp/ failed\n"))
- 		goto out_close;
+-	return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc_set);
++	return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_lsm_kfunc_set);
+ }
  
-+	/*
-+	 * With bpf_d_path() being backed by probe-read semantics, we cannot
-+	 * safely resolve paths that are comprised of dentries that make use of
-+	 * dynamic names. We expect to return -EOPNOTSUPP for such paths.
-+	 */
-+	src.want[src.cnt].err = true;
-+	src.want[src.cnt].err_code = -EOPNOTSUPP;
- 	ret = set_pathname(pipefd[0], pid);
- 	if (CHECK(ret < 0, "trigger", "set_pathname failed for pipe[0]\n"))
- 		goto out_close;
-+
-+	src.want[src.cnt].err = true;
-+	src.want[src.cnt].err_code = -EOPNOTSUPP;
- 	ret = set_pathname(pipefd[1], pid);
- 	if (CHECK(ret < 0, "trigger", "set_pathname failed for pipe[1]\n"))
- 		goto out_close;
-+
-+	src.want[src.cnt].err = true;
-+	src.want[src.cnt].err_code = -EOPNOTSUPP;
- 	ret = set_pathname(sockfd, pid);
- 	if (CHECK(ret < 0, "trigger", "set_pathname failed for socket\n"))
- 		goto out_close;
-+
-+	src.want[src.cnt].err = true;
-+	src.want[src.cnt].err_code = -EOPNOTSUPP;
-+	ret = set_pathname(mntnsfd, pid);
-+	if (CHECK(ret < 0, "trigger", "set_pathname failed for mntnsfd\n"))
-+		goto out_close;
-+
- 	ret = set_pathname(procfd, pid);
- 	if (CHECK(ret < 0, "trigger", "set_pathname failed for proc\n"))
- 		goto out_close;
-@@ -95,6 +126,7 @@ static int trigger_fstat_events(pid_t pid)
- 	fstat(pipefd[0], &fileStat);
- 	fstat(pipefd[1], &fileStat);
- 	fstat(sockfd, &fileStat);
-+	fstat(mntnsfd, &fileStat);
- 	fstat(procfd, &fileStat);
- 	fstat(devfd, &fileStat);
- 	fstat(localfd, &fileStat);
-@@ -109,6 +141,7 @@ static int trigger_fstat_events(pid_t pid)
- 	close(pipefd[0]);
- 	close(pipefd[1]);
- 	close(sockfd);
-+	close(mntnsfd);
- 	close(procfd);
- 	close(devfd);
- 	close(localfd);
-@@ -150,24 +183,41 @@ static void test_d_path_basic(void)
- 		goto cleanup;
+-late_initcall(bpf_fs_kfuncs_init);
++late_initcall(bpf_lsm_kfuncs_init);
  
- 	for (int i = 0; i < MAX_FILES; i++) {
--		CHECK(strncmp(src.paths[i], bss->paths_stat[i], MAX_PATH_LEN),
--		      "check",
--		      "failed to get stat path[%d]: %s vs %s\n",
--		      i, src.paths[i], bss->paths_stat[i]);
--		CHECK(strncmp(src.paths[i], bss->paths_close[i], MAX_PATH_LEN),
--		      "check",
--		      "failed to get close path[%d]: %s vs %s\n",
--		      i, src.paths[i], bss->paths_close[i]);
-+		struct want want = src.want[i];
-+
-+		/*
-+		 * Assert that we get the correct error code from bpf_d_path()
-+		 * when the underlying path contains a dentry that is backed by
-+		 * a dynamic name.
-+		 */
-+		if (want.err) {
-+			CHECK(want.err_code != bss->rets_stat[i], "check",
-+			      "failed to match stat return[%d]: got=%d, want=%ld [%s]\n",
-+			      i, bss->rets_stat[i], want.err_code,
-+			      bss->paths_stat[i]);
-+			CHECK(want.err_code != bss->rets_close[i], "check",
-+			      "failed to match close return[%d]: got=%d, want=%ld [%s]\n",
-+			      i, bss->rets_close[i], want.err_code,
-+			      bss->paths_close[i]);
-+			continue;
-+		}
-+
-+		CHECK(strncmp(want.path, bss->paths_stat[i], MAX_PATH_LEN),
-+		      "check", "failed to get stat path[%d]: %s vs %s\n", i,
-+		      want.path, bss->paths_stat[i]);
-+		CHECK(strncmp(want.path, bss->paths_close[i], MAX_PATH_LEN),
-+		      "check", "failed to get close path[%d]: %s vs %s\n", i,
-+		      want.path, bss->paths_close[i]);
- 		/* The d_path helper returns size plus NUL char, hence + 1 */
- 		CHECK(bss->rets_stat[i] != strlen(bss->paths_stat[i]) + 1,
- 		      "check",
--		      "failed to match stat return [%d]: %d vs %zd [%s]\n",
--		      i, bss->rets_stat[i], strlen(bss->paths_stat[i]) + 1,
-+		      "failed to match stat return [%d]: %d vs %zd [%s]\n", i,
-+		      bss->rets_stat[i], strlen(bss->paths_stat[i]) + 1,
- 		      bss->paths_stat[i]);
- 		CHECK(bss->rets_close[i] != strlen(bss->paths_stat[i]) + 1,
- 		      "check",
--		      "failed to match stat return [%d]: %d vs %zd [%s]\n",
--		      i, bss->rets_close[i], strlen(bss->paths_close[i]) + 1,
-+		      "failed to match stat return [%d]: %d vs %zd [%s]\n", i,
-+		      bss->rets_close[i], strlen(bss->paths_close[i]) + 1,
- 		      bss->paths_stat[i]);
- 	}
- 
-diff --git a/tools/testing/selftests/bpf/progs/test_d_path.c b/tools/testing/selftests/bpf/progs/test_d_path.c
-index 84e1f883f97b..fc2754f166ec 100644
---- a/tools/testing/selftests/bpf/progs/test_d_path.c
-+++ b/tools/testing/selftests/bpf/progs/test_d_path.c
-@@ -5,7 +5,7 @@
- #include <bpf/bpf_tracing.h>
- 
- #define MAX_PATH_LEN		128
--#define MAX_FILES		7
-+#define MAX_FILES		8
- 
- pid_t my_pid = 0;
- __u32 cnt_stat = 0;
+ static const struct bpf_func_proto *
+ bpf_tracing_func_proto(enum bpf_func_id func_id, const struct bpf_prog *prog)
 -- 
 2.44.0.rc0.258.g7320e95886-goog
 
