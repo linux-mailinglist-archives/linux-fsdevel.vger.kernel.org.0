@@ -1,210 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-12094-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DE9785B3B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 08:13:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 979E385B3C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 08:17:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0D591F23F2A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 07:13:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC94F1C2230C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 07:17:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2384A5A4E2;
-	Tue, 20 Feb 2024 07:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E8E5A4E2;
+	Tue, 20 Feb 2024 07:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gGD2tCA1"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2ZP2VMC6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yZBmTjiY";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2ZP2VMC6";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yZBmTjiY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DA02D79D;
-	Tue, 20 Feb 2024 07:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8113E5A11D;
+	Tue, 20 Feb 2024 07:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708413207; cv=none; b=apUiZyO8VEQBA7p9QahNZlBu4LesZbjo2sCgUBG0iyRNdsQl1KkZJ6ddklzRFYVZFkMUN5fMwKBSw2AQmJeMkb6+ooyAbGdkfZnBewXv7puxL4IHtQIePBTdcxmYKy9JUFWQpyV2U/hbLAvLmgNdQhTl9lwYY3VOLx4oQvwKhUI=
+	t=1708413413; cv=none; b=u5BZWhwxNklYOg/GOtlnPnuWBYWFH0pWSssNIuLjlT0rIijMccfRK7eBNStHaqaIE5+dwfEXSqgzUySHF0O6d+Yq92QHYzaV4v+nJ7W0m0d+RRc1YpdFP13aEkQmQdIVVPU30OQuErRJu+sBmQQi7gJABmwR3d8mOQySpupPJDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708413207; c=relaxed/simple;
-	bh=A0boLwLblavqe/cHPOM/gNgcEK/SXPYRkW4EUOY/Lng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksU4aw7YJ/CbNwXa7JuYKS78MC9SfQ9bs/AEj00qUw1EWqdydKBLYW/VN3XaPFDJWkEbPUYxJL/e7Oeh1o0/IU2XGPos3gj94uz0jY5+UOXIXx5P5H+q2UaXegxs+lDfUmCmA4wtB4SYwBGpzNE2ebBru45UxvUxEoC52+CkJ20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gGD2tCA1; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41K62vJq024757;
-	Tue, 20 Feb 2024 07:13:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=j4VxHQFYcFBNB7oDKLQRRi47zN0dSg9mJIy1fi2ZhwA=;
- b=gGD2tCA1xPLN9mKLq1YcGN2gFn2heO0+LNK7LLoX0Ymtm+6NjONDCxREBfZq6GrkA+AV
- Bq7XyigjgTxEXkhJOhtLTZt26A5VZ7U3ekIXrBqcPI+oQiKAubUqQqsW55F5TpSsftGZ
- GAtHbfLD0F/wNa425Tuxwu6bXaIkCQjqlXl8nkmWkAiA97cCw4scYDwiBD5NnD9Ipc/X
- lmnkE6KaZIFxDi3KVFZ9MsDXUOTIjPjFQoK+EZAOaZPBnpsPs32lVVmPIHVSSW+hIEtz
- +81HE898IPK/nkbZ7gEf3WgKTx6JP8pQ5oWkcnFxlyXWRahx+7jGRXVIvkssw2Zd6XSj kg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wcpf7sjg5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Feb 2024 07:13:04 +0000
-Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 41K6FUKx032580;
-	Tue, 20 Feb 2024 07:13:03 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3wcpf7sjfu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Feb 2024 07:13:03 +0000
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41K6ifYt014343;
-	Tue, 20 Feb 2024 07:13:02 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3wb9u2e1uu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Feb 2024 07:13:01 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41K7CuCt35258846
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 Feb 2024 07:12:58 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 493572004D;
-	Tue, 20 Feb 2024 07:12:56 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6864720040;
-	Tue, 20 Feb 2024 07:12:52 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 20 Feb 2024 07:12:52 +0000 (GMT)
-Date: Tue, 20 Feb 2024 12:42:50 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        jack@suse.cz, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-scsi@vger.kernel.org, linux-aio@kvack.org,
-        linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org,
-        nilay@linux.ibm.com, ritesh.list@gmail.com
-Subject: Re: [PATCH v4 09/11] scsi: scsi_debug: Atomic write support
-Message-ID: <ZdRQ8mPGRVidvjQI@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20240219130109.341523-1-john.g.garry@oracle.com>
- <20240219130109.341523-10-john.g.garry@oracle.com>
+	s=arc-20240116; t=1708413413; c=relaxed/simple;
+	bh=sVEvf81HYL71592XjYLXKdVLfIgi4fW83G+GimHMgu4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o6nZJFdhPt+ZfRc8NOa0Hg88l+tZA7qs/gIKeqPBbJMR6TqkIjHOFPdzjbSi3T4DD8pRT5QB03oDVlfhkYO9095kDAFwqi0s4UHp4gFRCaeNuAgOlbfWXbMQH4ina9vu1d3SPCWE7fMerjLtDPa70zMsuCmDzux4xJtq9bsdAkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2ZP2VMC6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yZBmTjiY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2ZP2VMC6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yZBmTjiY; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 335122203C;
+	Tue, 20 Feb 2024 07:16:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1708413409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mRahtuQSFMxt05TGxYHbI48NSmxiy73yXCx+h0UNDqg=;
+	b=2ZP2VMC6DM1eu/RhehDHocjEQiLkCkLr4elj8T43K1MbOVsvwtXgmu4qm/wUJNXejvvR1i
+	EMRmls/ryG0ZwiXXwcxJN8Yw5BChSCPnHHhm2zWN5bzvU0W2fOdBxfvnWR0Qp98QQbKZai
+	R4iVacnIqXx8DLu16oTtnv8ZgLJIdLY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1708413409;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mRahtuQSFMxt05TGxYHbI48NSmxiy73yXCx+h0UNDqg=;
+	b=yZBmTjiY3bD9EYX0Pm7MQzWKCke58cJGugOtYVp3LfJ2fYt+kfzoSQ97B0l0VWnQV9bZTy
+	8w1TBNsXbk6niEAg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1708413409; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mRahtuQSFMxt05TGxYHbI48NSmxiy73yXCx+h0UNDqg=;
+	b=2ZP2VMC6DM1eu/RhehDHocjEQiLkCkLr4elj8T43K1MbOVsvwtXgmu4qm/wUJNXejvvR1i
+	EMRmls/ryG0ZwiXXwcxJN8Yw5BChSCPnHHhm2zWN5bzvU0W2fOdBxfvnWR0Qp98QQbKZai
+	R4iVacnIqXx8DLu16oTtnv8ZgLJIdLY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1708413409;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mRahtuQSFMxt05TGxYHbI48NSmxiy73yXCx+h0UNDqg=;
+	b=yZBmTjiY3bD9EYX0Pm7MQzWKCke58cJGugOtYVp3LfJ2fYt+kfzoSQ97B0l0VWnQV9bZTy
+	8w1TBNsXbk6niEAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 29582134E4;
+	Tue, 20 Feb 2024 07:16:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id A8MCCOBR1GUmRAAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 20 Feb 2024 07:16:48 +0000
+Message-ID: <427e3fdb-5be2-4ff3-9bad-a21c49d0aab4@suse.de>
+Date: Tue, 20 Feb 2024 08:16:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240219130109.341523-10-john.g.garry@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: nFEswPML7UDUeZc6IcJW6G9J9Ms5rekK
-X-Proofpoint-GUID: rG-L3TMM-_MNtREwhvieoiF2hLiR4_1f
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-20_06,2024-02-19_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 spamscore=0
- mlxlogscore=999 phishscore=0 lowpriorityscore=0 bulkscore=0
- impostorscore=0 malwarescore=0 priorityscore=1501 suspectscore=0
- mlxscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2402200050
+User-Agent: Mozilla Thunderbird
+Subject: Re: [LSF/MM/BPF TOPIC] Reclaiming & documenting page flags
+Content-Language: en-US
+To: Matthew Wilcox <willy@infradead.org>, Mike Rapoport <rppt@kernel.org>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-block@vger.kernel.org, linux-ide@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-nvme@lists.infradead.org,
+ bpf@vger.kernel.org
+References: <Zbcn-P4QKgBhyxdO@casper.infradead.org>
+ <Zb9pZTmyb0lPMQs8@kernel.org> <ZcACya-MJr_fNRSH@casper.infradead.org>
+ <ZcOnEGyr6y3jei68@kernel.org> <ZdO2eABfGoPNnR07@casper.infradead.org>
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <ZdO2eABfGoPNnR07@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=2ZP2VMC6;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=yZBmTjiY
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 XM_UA_NO_VERSION(0.01)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%];
+	 MIME_GOOD(-0.10)[text/plain];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 DKIM_TRACE(0.00)[suse.de:+];
+	 MX_GOOD(-0.01)[];
+	 RCPT_COUNT_SEVEN(0.00)[10];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCVD_TLS_ALL(0.00)[];
+	 MID_RHS_MATCH_FROM(0.00)[]
+X-Spam-Score: -4.50
+X-Rspamd-Queue-Id: 335122203C
+X-Spam-Flag: NO
 
-On Mon, Feb 19, 2024 at 01:01:07PM +0000, John Garry wrote:
-> Add initial support for atomic writes.
+On 2/19/24 21:13, Matthew Wilcox wrote:
+> On Wed, Feb 07, 2024 at 05:51:44PM +0200, Mike Rapoport wrote:
+>> On Sun, Feb 04, 2024 at 09:34:01PM +0000, Matthew Wilcox wrote:
+>>> I'm doing my best to write documentation as I go.  I think we're a bit
+>>> better off than we were last year.  Do we have scripts to tell us which
+>>> public functions (ie EXPORT_SYMBOL and static inline functions in header
+>>> files) have kernel-doc?  And could we run them against kernels from, say,
+>>> April 2023, 2022, 2021, 2020, 2019 (and in two months against April 2024)
+>>> and see how we're doing in terms of percentage undocumented functions?
+>>
+>> We didn't have such script, but it was easy to compare "grep
+>> EXPORT_SYMBOL\|static inline" with ".. c:function" in kernel-doc.
+>> We do improve slowly, but we are still below 50% with kernel-doc for
+>> EXPORT_SYMBOL functions and slightly above 10% for static inlines.
 > 
-> As is standard method, feed device properties via modules param, those
-> being:
-> - atomic_max_size_blks
-> - atomic_alignment_blks
-> - atomic_granularity_blks
-> - atomic_max_size_with_boundary_blks
-> - atomic_max_boundary_blks
+> Thanks for doing this!  Data is good ;-)
 > 
-> These just match sbc4r22 section 6.6.4 - Block limits VPD page.
+> I just came across an interesting example of a function which I believe
+> should NOT have kernel-doc.  But it should have documentation for why it
+> doesn't have kernel-doc!  Any thoughts about how we might accomplish that?
 > 
-> We just support ATOMIC WRITE (16).
+> The example is filemap_range_has_writeback().  It's EXPORT_SYMBOL_GPL()
+> and it's a helper function for filemap_range_needs_writeback().
+> filemap_range_needs_writeback() has kernel-doc, but nobody should be
+> calling filemap_range_has_writeback() directly, so it shouldn't even
+> exist in the htmldocs.  But we should have a comment on it saying
+> "Use filemap_range_needs_writeback(), don't use this", in case anyone
+> discovers it.  And the existance of that comment should be enough to
+> tell our tools to not flag this as a function that needs kernel-doc.
 > 
-> The major change in the driver is how we lock the device for RW accesses.
 > 
-> Currently the driver uses a per-device lock for accessing device metadata
-> and "media" data (calls to do_device_access()) atomically for the duration
-> of the whole read/write command.
-> 
-> This should not suit verifying atomic writes. Reason being that currently
-> all reads/writes are atomic, so using atomic writes does not prove
-> anything.
-> 
-> Change device access model to basis that regular writes only atomic on a
-> per-sector basis, while reads and atomic writes are fully atomic.
-> 
-> As mentioned, since accessing metadata and device media is atomic,
-> continue to have regular writes involving metadata - like discard or PI -
-> as atomic. We can improve this later.
-> 
-> Currently we only support model where overlapping going reads or writes
-> wait for current access to complete before commencing an atomic write.
-> This is described in 4.29.3.2 section of the SBC. However, we simplify,
-> things and wait for all accesses to complete (when issuing an atomic
-> write).
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
+Or, indeed, coming up with a method of signalling "this is an internal
+function for a specific need, don't use otherwise".
 
-<snip>
+EXPORT_SYMBOL_INTERNAL?
 
-> +#define DEF_ATOMIC_WR 0
+I would love to have it; it would solve _so_ many problems we're having
+wrt kABI...
 
-<snip>
+Cheers,
 
-> +static unsigned int sdebug_atomic_wr = DEF_ATOMIC_WR;
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
-<snip>
-
-> +MODULE_PARM_DESC(atomic_write, "enable ATOMIC WRITE support, support WRITE ATOMIC(16) (def=1)");
-Hi John,
-
-The default value here seems to be 0 and not 1. Got me a bit confused
-while testing :) 
-
-Regards,
-ojaswin
-
->  MODULE_PARM_DESC(lowest_aligned, "lowest aligned lba (def=0)");
->  MODULE_PARM_DESC(lun_format, "LUN format: 0->peripheral (def); 1 --> flat address method");
->  MODULE_PARM_DESC(max_luns, "number of LUNs per target to simulate(def=1)");
-> @@ -6260,6 +6575,11 @@ MODULE_PARM_DESC(unmap_alignment, "lowest aligned thin provisioning lba (def=0)"
->  MODULE_PARM_DESC(unmap_granularity, "thin provisioning granularity in blocks (def=1)");
->  MODULE_PARM_DESC(unmap_max_blocks, "max # of blocks can be unmapped in one cmd (def=0xffffffff)");
->  MODULE_PARM_DESC(unmap_max_desc, "max # of ranges that can be unmapped in one cmd (def=256)");
-> +MODULE_PARM_DESC(atomic_wr_max_length, "max # of blocks can be atomically written in one cmd (def=8192)");
-> +MODULE_PARM_DESC(atomic_wr_align, "minimum alignment of atomic write in blocks (def=2)");
-> +MODULE_PARM_DESC(atomic_wr_gran, "minimum granularity of atomic write in blocks (def=2)");
-> +MODULE_PARM_DESC(atomic_wr_max_length_bndry, "max # of blocks can be atomically written in one cmd with boundary set (def=8192)");
-> +MODULE_PARM_DESC(atomic_wr_max_bndry, "max # boundaries per atomic write (def=128)");
->  MODULE_PARM_DESC(uuid_ctl,
->  		 "1->use uuid for lu name, 0->don't, 2->all use same (def=0)");
->  MODULE_PARM_DESC(virtual_gb, "virtual gigabyte (GiB) size (def=0 -> use dev_size_mb)");
-> @@ -7406,6 +7726,7 @@ static int __init scsi_debug_init(void)
->  			return -EINVAL;
->  		}
->  	}
-> +
->  	xa_init_flags(per_store_ap, XA_FLAGS_ALLOC | XA_FLAGS_LOCK_IRQ);
->  	if (want_store) {
->  		idx = sdebug_add_store();
-> @@ -7613,7 +7934,9 @@ static int sdebug_add_store(void)
->  			map_region(sip, 0, 2);
->  	}
->  
-> -	rwlock_init(&sip->macc_lck);
-> +	rwlock_init(&sip->macc_data_lck);
-> +	rwlock_init(&sip->macc_meta_lck);
-> +	rwlock_init(&sip->macc_sector_lck);
->  	return (int)n_idx;
->  err:
->  	sdebug_erase_store((int)n_idx, sip);
-> -- 
-> 2.31.1
-> 
 
