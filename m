@@ -1,103 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-12103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C681A85B4F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 09:23:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F376E85B4F8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 09:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 048C41C210A0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 08:23:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3223E1C22301
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 08:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5515C916;
-	Tue, 20 Feb 2024 08:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 745925C61D;
+	Tue, 20 Feb 2024 08:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9M93ogO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECD45BAE4;
-	Tue, 20 Feb 2024 08:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE46A5C022;
+	Tue, 20 Feb 2024 08:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708417373; cv=none; b=LNozJekuQbv625gKsv+FTCUBvvApBJBZKC+8/c8iSM49kK+djBb+BHgjyJdsFmWDZKHLIytXJ6CAQ1uwpixAL1ClrN3SwcMjBPhM82XLtPBL+xQ0LcX/NToXh1rm1eGprymcV1cw66S+OM+e/swCcSFA5nnISUl8BlnV/0wg8/8=
+	t=1708417484; cv=none; b=Eyl66Fisabfm8hNhyBvYoSW8cS52mA6oHsvW0cq7EBjr0MdmqwcZ7yU5/6ZyEIkjNiKzZeSfHxjxujySX8G3Au4evv5Rny1lXMinEkbX7I3B3oNNe6AXfda31kFNF9BGrjf2KS8ucT3a0n+f1LhR46oGBxlE5yJyJZxXnHBsXaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708417373; c=relaxed/simple;
-	bh=xcBFurX3UmQ0rxHVywfl4AduS/GQVMII1hz9dAXtgO0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GmCZH/1h5H+kIFE71LVL6WnvgW9723FtZDVNzMP2TXt26quG/S5WGkxbG8OSqSkwebJzJgjQw11BUks0rqvpeT2GpLcyGgh33KuGPS4dmbZtzdEimCY5li65BbgdzNsLSYBRrGV1YaaE0v9esyJ8RvJo5VnxKvc+3KaEOFHeo2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id B616D68CFE; Tue, 20 Feb 2024 09:22:45 +0100 (CET)
-Date: Tue, 20 Feb 2024 09:22:45 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Dave Chinner <david@fromorbit.com>
-Cc: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk,
-	kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com,
-	martin.petersen@oracle.com, djwong@kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-	jack@suse.cz, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com,
-	linux-aio@kvack.org, linux-btrfs@vger.kernel.org,
-	io-uring@vger.kernel.org, nilay@linux.ibm.com,
-	ritesh.list@gmail.com
-Subject: Re: [PATCH v4 05/11] block: Add core atomic write support
-Message-ID: <20240220082245.GB13785@lst.de>
-References: <20240219130109.341523-1-john.g.garry@oracle.com> <20240219130109.341523-6-john.g.garry@oracle.com> <ZdPdHzNAVb5hqlkY@dread.disaster.area>
+	s=arc-20240116; t=1708417484; c=relaxed/simple;
+	bh=3hVYHf7Y4dd6cy7p1+tAVMfMvbeuxapCRgGgam5sYQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LUokyuR2sWt7diwOgiABaIGIdMjlTR+95gZllz5yVf3LWGm7mkyZ8lqwmgXpndM0cr6HdY+KBLPcev/kYJOYCv1HdE7mmiSsRAALRh1TZytJSwyZUZweuk7Q8rNf8DdFBsEyrpWq+r/n+E7FvljmyyH42zTo+VtNnRjJQ7JjBSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9M93ogO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FE73C433C7;
+	Tue, 20 Feb 2024 08:24:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708417484;
+	bh=3hVYHf7Y4dd6cy7p1+tAVMfMvbeuxapCRgGgam5sYQc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=D9M93ogOKn3KBccye1S4fOuvNKvmKo0j2HvsvZQkA7VQAdWkIi0go7PFCbqyBZP9l
+	 7rWt75MK73lSg+Z/g+BVVIA0llRqZmcxMuzp4ppa/wHiihrUxOpDRPVi8RkCdrJnX7
+	 5I7TdRuraVqxyCjoB00sZRtjs6IxdU4/o7zPFBjQn5jJshenkgBfA36ZTkY4bNwZvr
+	 unQ0N2gWQE9WXk6QLa19CMzFFqbeFtmWDWj3gSRG/8ULNHFCtivRB5w5dyrogeh1vy
+	 WpxKCU0N9biDkOxn6OnjJ5WfrP21cY4BSk5vaWf5Tt+oKr/YYTWY/xiX4xG84FDe8A
+	 TJ2dxuGDkglVw==
+From: Christian Brauner <brauner@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Jan Kara <jack@suse.cz>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Kees Cook <keescook@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andi Kleen <ak@linux.intel.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs/select: rework stack allocation hack for clang
+Date: Tue, 20 Feb 2024 09:24:35 +0100
+Message-ID: <20240220-geortet-nordlicht-0abe19f356e7@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240216202352.2492798-1-arnd@kernel.org>
+References: <20240216202352.2492798-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZdPdHzNAVb5hqlkY@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1298; i=brauner@kernel.org; h=from:subject:message-id; bh=3hVYHf7Y4dd6cy7p1+tAVMfMvbeuxapCRgGgam5sYQc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaReSTyiUHLVcH3Gk4+8t2Zf/8FT5b7yRfvGCYUZS4LYT j6tfPjaoqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiv5QZ/rs3Os//opi96M5a /r3lVRfTX259334n77+m9u5faXaf7tsz/E/rb3RdyqJcc5hnibL6M6EW+TclKTsTElZftp3D+pJ hLRcA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Feb 20, 2024 at 09:58:39AM +1100, Dave Chinner wrote:
-> > +	lim->atomic_write_hw_max_sectors = 0;
-> > +	lim->atomic_write_max_sectors = 0;
-> > +	lim->atomic_write_hw_boundary_sectors = 0;
-> > +	lim->atomic_write_hw_unit_min_sectors = 0;
-> > +	lim->atomic_write_unit_min_sectors = 0;
-> > +	lim->atomic_write_hw_unit_max_sectors = 0;
-> > +	lim->atomic_write_unit_max_sectors = 0;
-> >  }
+On Fri, 16 Feb 2024 21:23:34 +0100, Arnd Bergmann wrote:
+> A while ago, we changed the way that select() and poll() preallocate
+> a temporary buffer just under the size of the static warning limit of
+> 1024 bytes, as clang was frequently going slightly above that limit.
 > 
-> Seems to me this function would do better to just
+> The warnings have recently returned and I took another look. As it turns
+> out, clang is not actually inherently worse at reserving stack space,
+> it just happens to inline do_select() into core_sys_select(), while gcc
+> never inlines it.
 > 
-> 	memset(lim, 0, sizeof(*lim));
-> 
-> and then set all the non-zero fields.
+> [...]
 
-.. which the caller already has done :)  In the block tree this
-function looks completely different now and relies on the caller
-provided zeroing.
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
 
-> > +void blk_queue_atomic_write_max_bytes(struct request_queue *q,
-> > +				      unsigned int bytes)
-> > +{
-> > +	q->limits.atomic_write_hw_max_sectors = bytes >> SECTOR_SHIFT;
-> > +	blk_atomic_writes_update_limits(q);
-> > +}
-> > +EXPORT_SYMBOL(blk_queue_atomic_write_max_bytes);
-> 
-> Ok, so this can silently set a limit that is different to what the
-> caller asked to have set?
-> 
-> How is the caller supposed to find this out if the smaller limit
-> that was set is not compatible with their configuration?
-> 
-> i.e. shouldn't this return an error if the requested size cannot
-> be set exactly as specified?
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-That's how the blk limits all work.  The driver provides the hardware
-capabilities for a given value, and the block layer ensures it
-works with other limits imposed by the block layer or other parts
-of the device limits.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[1/1] fs/select: rework stack allocation hack for clang
+      https://git.kernel.org/vfs/vfs/c/f3dd8c812c24
 
