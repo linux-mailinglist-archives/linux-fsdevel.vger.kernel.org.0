@@ -1,228 +1,383 @@
-Return-Path: <linux-fsdevel+bounces-12143-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2358E85B806
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 10:47:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A3D85B82B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 10:51:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 902111F26CF2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 09:47:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0795B248E7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Feb 2024 09:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126C262178;
-	Tue, 20 Feb 2024 09:43:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252D762162;
+	Tue, 20 Feb 2024 09:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dA3NL+KO";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="kq1q6rQk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L/NMLa1k"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B57626B2;
-	Tue, 20 Feb 2024 09:43:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708422216; cv=fail; b=MZVGgxh6+OMQKbRE/bSZ91bQNUi1ZHNqlTD0MtbQ9UVTbm21OaSt/NAlSmuT004hpYc+jWfbWxbuEkibxrfUlGGV+88Ny/w/iySmnM/8hifg73jtzwk4QACWpM/Q/w9a4M6MZRpkHGOK07z6LxEWQmn1CTsFTwhdaOwdNsAJv+4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708422216; c=relaxed/simple;
-	bh=lY7p5/tfEbPYHXnq4Ev4CPrP5KFhhrwaNLTsPbsfWnw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bfIzihAdrB/lvA5OeqMNynuAQfhD8XI/X+5Q8kN9yB4Z3+N6VGvUBetPREBWuaRlLdpDGo9HHdA78igBxKyI2yTfDYHXiXmwGYsSlheqle5Jy4basnEmhHuK+MtB1AGBA7LtuEuNnNDhnQA+mmiyw6Fd+CI+lygBLF2tJAEOx6o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dA3NL+KO; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=kq1q6rQk; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41K8wvl4031432;
-	Tue, 20 Feb 2024 09:40:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=corp-2023-11-20;
- bh=j5oWtjN/9um51w9D/Q6KHh894pi5FsLj4B61IHxevYo=;
- b=dA3NL+KOyKSvjwM0eCbOyxNxu6gBfm9+TPF7ihqSpYw14ITicbsIC5D7d16s2bqmYQI9
- c34QmH7lIGRSmcWH71et2JBWznOS61d6hjrvZpVDf4VLYv61DDewS0z6WiOe8WHMCmg0
- DRxGl6IULtQxD95ehxZI/3mumyyxWhHNNWCufyXy0QRe3MIYJ2HYI7L9W8vWtJVXh20S
- 3nfMldlNoq3J/XDQ9FOI4k0908S7fZ3/3rbsG+VStVl10bFE1Z4BHHBqebF0GP80wew3
- 8V5NO6ycLsAXC8YbMnIXnRm2GgKm3ys6q8ZbGu+neOwS4XinY7/JyoLL0Xkjqek86lG/ IA== 
-Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3wamdtx6c3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 Feb 2024 09:40:26 +0000
-Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.19/8.17.1.19) with ESMTP id 41K87TAr037866;
-	Tue, 20 Feb 2024 09:40:25 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
-	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3wak86yqvx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 20 Feb 2024 09:40:25 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FdFkTsKsDXZf4jK656tf9n9xK6Uqa3bvj2nb+RNe7oKVPF8ShbnaumJdzUY39E81InKAavO782pLr4QGChXIgf2+wogKYe2ZEyGc1LRJmR39wEbpGHIyf+i3Fo7JwpeNt9NNg/lPZjcGS2vVMEmtYajIiHvIIC/w0AnbpZLDTZpI+889vLZFRqzpWf8bIia1UkELRaGWDIcY6xt98zB3mliiYbjPG34gRyiLi5E0nJATSR+eo/CvC4AVxWvIPUa+WgpV4t4UXVjAOReqtOMQ0bBSW8sb3ayJOnrMagTnPe0QVhDFf3KMGDxhFet/KTxrRUKym6t/wbQuRjwgrvlIcg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=j5oWtjN/9um51w9D/Q6KHh894pi5FsLj4B61IHxevYo=;
- b=RMkcRl1I7KY6nvXtWxWzkdpqdAvRfe6MQ/1J8uWtDX6zRQURMFwB6fn7tFdfA4QpLQ5EE/uOczYweUNeim2LUGDTuOiZ58991v7ORORvY/1dnf0auBGsFL3t1qauGo7IuQOG8F/hCsizWrdaw5zq+M6iT4DIyOL+18QfvourxIsTH0VYOH0ZFVJ8GXgzGklL9YLP4HI7b30fTJjqhGlxgSnASOJDdKFmSDJUxjhTdI0hPs1tcakRSyKo+9nuG/Q9bCIZ5UWheuu0DkUV82uHBjaG+l5QDsb7Zlzs3oJ21IMPYsOsSjaH9TuduRVyUzNeohOaKMLyxUeUDJeet2fRzg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=j5oWtjN/9um51w9D/Q6KHh894pi5FsLj4B61IHxevYo=;
- b=kq1q6rQkvDAstm95gtxBroj3PMmi6XGSODpMHWr71UiSt0MLqcPV8UoeaPiCs3h6us5ZSVX6lmwYQ4rPx5VnodLazchwHixIl9AwRl1EC1DQeeu9ujZwsI3PU0bjEB8H1+rtOY7sTbzLor4D/Y0h4VnS6jzizzNzu8qMJ890wH8=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by SJ0PR10MB6349.namprd10.prod.outlook.com (2603:10b6:a03:477::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.39; Tue, 20 Feb
- 2024 09:40:23 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::56f9:2210:db18:61c4]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::56f9:2210:db18:61c4%4]) with mapi id 15.20.7292.036; Tue, 20 Feb 2024
- 09:40:23 +0000
-Message-ID: <bbe9e4a6-c206-45b8-bf5a-8d19a00740c1@oracle.com>
-Date: Tue, 20 Feb 2024 09:40:17 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/11] fs: Add initial atomic write support info to
- statx
-Content-Language: en-US
-To: Dave Chinner <david@fromorbit.com>
-Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org,
-        viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com,
-        jack@suse.cz, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-        linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org,
-        linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org,
-        nilay@linux.ibm.com, ritesh.list@gmail.com,
-        Prasad Singamsetty <prasad.singamsetty@oracle.com>
-References: <20240219130109.341523-1-john.g.garry@oracle.com>
- <20240219130109.341523-5-john.g.garry@oracle.com>
- <ZdPWGwntYMvstbpc@dread.disaster.area>
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <ZdPWGwntYMvstbpc@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P265CA0246.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:350::9) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F52361699;
+	Tue, 20 Feb 2024 09:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708422496; cv=none; b=MS0nxEUO8okpLVHaU/oTAp204X2tUmrCyJP7lzfmY5sVVs/LT6ZEPZI9oMiArjI34zEyvLk5YlgCeWI0G0tqsFrktZ49sL/oemRvGwdrHC03zyHH66z1O/Ds3IclF96Yo0F8W1pTwBIl46BUyS88YF6zxKJexeZcXjn1mla+0Yg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708422496; c=relaxed/simple;
+	bh=ycB7feGoMgOOYRRk2SzQ5E4UrY1BK6VU1Ai3KyHgdwg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rPe3Pgc+757n9SQsL6P77czTmA/y11nHAXEXE480cPIKe3f1aCnjXklDGD9NQQPD70bmPrnVvWUvtrziJydM5BpVa+FwOlOUDlseL5EGJVZmaLNrXZMCPttT5KoZhkGbxLvZkGayB4z7GNUtFRWU98NA6ctDYfLyUCpTXbeJyxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L/NMLa1k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D0A8C43390;
+	Tue, 20 Feb 2024 09:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708422496;
+	bh=ycB7feGoMgOOYRRk2SzQ5E4UrY1BK6VU1Ai3KyHgdwg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L/NMLa1kkSbZ8oURln4ckWxg/R6k55qYd+S4NfVFKFpKG7ehZkUGvHM0PaPkMHELJ
+	 oCBHUAKWwxdG1AWLHSdcOVnTbokPWA7Gioq/ur1/cj6kIQXT7PgwQNR30bwdq4H9wL
+	 GEnrX39HYFsUrV9VpdKbhfmHIOsdM5p7b2n8tGEVKdu9qDRmoXEwfGy0I4U/YWhuUy
+	 8L4yY4wtj4N+55irvd8Y++Etwiuxm0yb23W97D1m0gmfjoH7z5NIGMtELxfriztXyk
+	 uQRwjFgr+f5WQuhhXtF19njEoP7IhwkwEATuTZ8Utc1imxsuLGEpt7Us6kRLV2r1E6
+	 gUZ6CUlI+W/AA==
+Date: Tue, 20 Feb 2024 10:48:10 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Matt Bobrowski <mattbobrowski@google.com>
+Cc: bpf@vger.kernel.org, ast@kernel.org, andrii@kernel.org, 
+	kpsingh@google.com, jannh@google.com, jolsa@kernel.org, daniel@iogearbox.net, 
+	linux-fsdevel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH bpf-next 01/11] bpf: make bpf_d_path() helper use
+ probe-read semantics
+Message-ID: <20240220-erstochen-notwehr-755dbd0a02b3@brauner>
+References: <cover.1708377880.git.mattbobrowski@google.com>
+ <5643840bd57d0c2345635552ae228dfb2ed3428c.1708377880.git.mattbobrowski@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|SJ0PR10MB6349:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6db946c6-8e95-4dbf-d6bb-08dc31f7f5de
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 
-	8Qlj20ED+iwO+rUv1RdWB5C4K2ylakOfoEzUeibvmVL77TPNif8UJxsMo/btBTNMjHYE1XWeFdWqgasm7W1fdKYVcUVkh98JBYA5Z08ZSv3NTiKzzpXzlJwdg2aXpOGtPktjTLe++iFi2ATEbqn4UBpHNvk4cV8dy/11U7eDB5Z0ijwYB2EwCJT9U1S+UHfeW1bc7IekgOHX+acUNdSK0lxyp4d1bOnKPNgP1HpqMs5jM+7DMj5JnL6q/EjY1wXnfCeWx06+X2t3Wun8BRzpLFcmv5dQDd0jIBiTw7c4E+V9m3VQAPxuD/QUNbRYQCvxY0F0Q2tw1YsTvzQzCLLwRzxNnfu7Q8oED+RxP5Ofrp++as+3R1yB3cINOQLMj4T9QB8xFOt0qzd/E353/G2Z2JL9A7Nx8K2jBWiBEVSBZ6hLwtL90M3F9B6cqj3emUyO/NFvxVJZTpU4VQXozkK67ecPveTSFzcqsOQl3QjAzRWLILjlNgfDib5x69HFOE93yzuCkBWwCuP7fjgYSSYoPg==
-X-Forefront-Antispam-Report: 
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: 
-	=?utf-8?B?eUk0ZXZsZHFnNGNIeG9GWmtUeTFicFNpdlZsbDlYVW5UK3ExQ0M3a3FtUmFR?=
- =?utf-8?B?OWJ5T0tLaXVvSlJqbTByc2hHYW1VWUZiT1Q3cnZ6NnFOUG1JOGl2bXZqMEVR?=
- =?utf-8?B?OFVXRk5yWGF4T0JpdzBMWCtsQjMwTmlsTVdtaUlOWnVXZ25UTnJKa0ovM1RO?=
- =?utf-8?B?MlFobytVSXc4WEJMcjZUbFlXK21OYzJjRGMzZDhZUU94emtWWUF5UDlpY25k?=
- =?utf-8?B?QW40L2pxQk8rd0lwNEl4ZllKRW1tOWZDMHFxWWFDczZtcGk0bVBabVBaYmNn?=
- =?utf-8?B?N3oxZ0ZUU3VTVXNZUHlzMkVZRS9ITWpDbEFyZ3ZpMTRNcWc5Q2dDQXNhSXhI?=
- =?utf-8?B?NklhQTRQSEFwS1BSOGhwK2h1aVpWVVNaejJKNHozenl6NlR0OXJIQzg1L1dp?=
- =?utf-8?B?MnlEd1ZlelF5NGU4YW44WkJkRGtEcE5ETGRlWWM4elljVm51RXZKbWZaaDZO?=
- =?utf-8?B?U2ZoRXQvRXk4VndmbVJtL2tTYjNDcWZrVFVFMExqSTdId01jMXJFaE5SN3Fo?=
- =?utf-8?B?cWRYaHlWSnhxbkNVWEx6eE51Zy9jZW9ESVNidUNYMjJBdXhDSFFFZzN3dUQ5?=
- =?utf-8?B?ZzZpNm5leXpUR0RBMjQ4bXl0a3NjR3h3dThtdlk4c0NGN0g5OXlHa1U0QXBl?=
- =?utf-8?B?TTNBVTJtcWw2Ukx5RnpNTDNCdmt5WjhUKzI1V0xVZDNXMitzSStUV2VQZWJV?=
- =?utf-8?B?NHhOQUdNWnArS1BybW52aWR2NjN5S0FkbkJCM255SHJybE9hcGEySmNUT2lO?=
- =?utf-8?B?T0JuVFdyZFltaWZvb0xkYTN0VW9lcGhtTVRoZHh0dElZU3NsMGJNR3RSN01V?=
- =?utf-8?B?byt3ZUxYSEJ5V1Z6dTgxcWRtQ3N6VENVSU9EQ0pGaGt1aXcraDdvWkZYWDlJ?=
- =?utf-8?B?bkNNaWhRT29nek9VeUJBTnVRV0RKSWVMNzdJajcwb2k0dkRKZ2VjS3hPN213?=
- =?utf-8?B?ampZb1BKaE5mN1dQTStQMVhZUlhQYmJXUmRrUXU4YVQ2bTR2aXcrMktpT01S?=
- =?utf-8?B?ZFRMdG5TSmNlb3F4NTZOb3NGdkRPUUE4Qy9tdkNhNUpsM1M1MXAvWDNyRzRV?=
- =?utf-8?B?aEY4eFFiQmVVNmdTK1hrbUxzdXg0SnkwajVubzlEcFBpV3FIbVdxem1uQkpK?=
- =?utf-8?B?V04wbTB3Nm51SHFFQWtuMFpkU0pMOG5xYVRYaHEwR21QditkWVVnenp3R3Jh?=
- =?utf-8?B?S3M2azRMdWxMbVV0d3YzNjdpZkVJZ2RxSVZtaFFVTG9ST2d2cWJOQ1kwUzdj?=
- =?utf-8?B?NmU3NG04Zko0T2hlWmdNOVRHWFFIZE9BVEZFV1pabmNnM1A0YUdwNHBOWllK?=
- =?utf-8?B?TkNGdkJTelpUbDZOUzNxZXZLRVZkS3pWWXJSY212b1lnNnlSZmRrMzlyTmtC?=
- =?utf-8?B?MTRwRGgxNFhTOGx4OWVZaEhpUnJmaVFGdGZHQnoxd1h1dXk1ZlgyNEpEcDNs?=
- =?utf-8?B?dGRmcldqczUyL0RFdmJVR29lblY3dGQxU1BxTW16dzRlQ1pzTDgrbnFJR2tZ?=
- =?utf-8?B?S1FQL3hQS2JHWTY5MWxHUW0yaUI1V1d0Z2owclN3Zk45bTVDV2VIdHQwampl?=
- =?utf-8?B?Q3pIdU9mZUU0V1RuM29rZXRrT1hkczhSSzQ4MkpaMUt2N1pvSGFnRHRtcC8y?=
- =?utf-8?B?Uk12TkpKWFdhRTJ5YmVWc3pFbC8vcDBoWXlnajdsbmRSTWRDRkFiMjQ1SmU4?=
- =?utf-8?B?OFYvRFo0Mk5BV3IwakhxelI1ZURaaHpHYS9aVU1hY3lFNFowRmcrMTNKMTkx?=
- =?utf-8?B?Q1ZqVnNvU1BQeFM5TGlPUXFLT3lsSy8veWNINzNOTFQ1bWVJcE5OZEkvdWsw?=
- =?utf-8?B?SkFVZjlrMkRtS3FUWCt2eWt4R3Rib0xiYWdtTkxLUVh0dmhoS3BYMzErZ2ZX?=
- =?utf-8?B?bEFldk9hTjNtSXZJVmhWdlhlZzRSdFJXZENLc3h6UU5jbDJlRDdDMng1aVc0?=
- =?utf-8?B?b2V6MnN1R3M4cVhrblZ0RW1VN2E3cklUZWdDT1ZOWUxrcnFKQmlvS2d4K010?=
- =?utf-8?B?c0pqOVZDdWNGUUkvQ1E3Z1U1KzVKZ2RnOEM0R1VVWEtwcFpIVmtEbHJTeGFY?=
- =?utf-8?B?dXdERVlXL0xGQ1RxWHVUNnVyMVVibUFRMW9LaTR5VlpHQ3E3TEdVWUY3OWhC?=
- =?utf-8?B?NEVNeEdoSjVRd0pVaFBuUkg0UlJ0UE9QMnhSM0FOSmI2OVh5WFBmUzdEZ3RD?=
- =?utf-8?B?MUE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 
-	yoZDVX0psfKeDABPAv+RrGgZ38rf/wYHgYnCA0uMAT7JXkkEd3reNJERblo1d+GwFFK1EPdEchGJ6A0uEgIREnTXtqkff7eyFI7Ma/BUcRUoCuxEbV+vliZfQ+m737fuHZgskSI0uUXotwXshv6FrUVgelp48/ViNA2/tAkccE+rx3FwuiH6jleD3BqW2q3yk2u+J0ZRh2YvzkqnpnGR/qSXP36kn35dJ4+86Agco0jb4XN+dPaJXzJTKqwPuE7fD8XdSESE4Hqj1d5vtG4UY3lkTnOloB7t9F7HKKLmZpnxntU40JDnxk1rqMj5DMKHzJK/hdcRfnpCh685WJFWjp1q9s6xv7IduqBq+CvlS8xGszP47VGBPBwoL8WAUX38Q+62nEdfIEjcnv9rU2ytNiPk18ez1QyGVdVK1dtnWRgtocO+kNxIjFanXJHQW4TP8Ykj+3IiO+Pw5DZNlOSJfV0lZhvdkdHW4AM6mOLAwtY5vLcc6IEunIY8NPzrB0DpN7a+UvhfUww/V2j/oU8/viWDzHNhyk1ZmTloMdB+kC5RRIISnGIVzkL7Pk8RXpvzziQM7gFS6AvIPfgjqQ3I0v6IgcUtBQeA+5f/gLdO/m4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6db946c6-8e95-4dbf-d6bb-08dc31f7f5de
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Feb 2024 09:40:23.3510
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XXywVdRun9BFeB4YJ0LLYiZAo2vMayKt5xkh0IocWQ6uz1ITp0DwQf2wuI5yQT8iTs+PAL93wl5O1u+B+d76WQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB6349
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-20_06,2024-02-19_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 phishscore=0
- adultscore=0 mlxlogscore=999 mlxscore=0 bulkscore=0 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2402200068
-X-Proofpoint-GUID: MP8VTbLtJw16V6jTv26tnEEDWRw7sPAJ
-X-Proofpoint-ORIG-GUID: MP8VTbLtJw16V6jTv26tnEEDWRw7sPAJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <5643840bd57d0c2345635552ae228dfb2ed3428c.1708377880.git.mattbobrowski@google.com>
 
-On 19/02/2024 22:28, Dave Chinner wrote:
->>   
->> +/**
->> + * generic_fill_statx_atomic_writes - Fill in the atomic writes statx attributes
->> + * @stat:	Where to fill in the attribute flags
->> + * @unit_min:	Minimum supported atomic write length
->> + * @unit_max:	Maximum supported atomic write length
->> + *
->> + * Fill in the STATX{_ATTR}_WRITE_ATOMIC flags in the kstat structure from
->> + * atomic write unit_min and unit_max values.
->> + */
->> +void generic_fill_statx_atomic_writes(struct kstat *stat,
->> +				      unsigned int unit_min,
->> +				      unsigned int unit_max)
->> +{
->> +	/* Confirm that the request type is known */
->> +	stat->result_mask |= STATX_WRITE_ATOMIC;
->> +
->> +	/* Confirm that the file attribute type is known */
->> +	stat->attributes_mask |= STATX_ATTR_WRITE_ATOMIC;
->> +
->> +	if (unit_min) {
->> +		stat->atomic_write_unit_min = unit_min;
->> +		stat->atomic_write_unit_max = unit_max;
->> +		/* Initially only allow 1x segment */
->> +		stat->atomic_write_segments_max = 1;
->> +
->> +		/* Confirm atomic writes are actually supported */
->> +		stat->attributes |= STATX_ATTR_WRITE_ATOMIC;
->> +	}
->> +}
->> +EXPORT_SYMBOL(generic_fill_statx_atomic_writes);
-> What units are these in? Nothing in the patch or commit description
-> tells us....
+On Tue, Feb 20, 2024 at 09:27:23AM +0000, Matt Bobrowski wrote:
+> There has now been several reported instances [0, 1, 2] where the
+> usage of the BPF helper bpf_d_path() has led to some form of memory
+> corruption issue.
+> 
+> The fundamental reason behind why we repeatedly see bpf_d_path() being
+> susceptible to such memory corruption issues is because it only
+> enforces ARG_PTR_TO_BTF_ID constraints onto it's struct path
+> argument. This essentially means that it only requires an in-kernel
+> pointer of type struct path to be provided to it. Depending on the
+> underlying context and where the supplied struct path was obtained
+> from and when, depends on whether the struct path is fully intact or
+> not when calling bpf_d_path(). It's certainly possible to call
+> bpf_d_path() and subsequently d_path() from contexts where the
+> supplied struct path to bpf_d_path() has already started being torn
+> down by __fput() and such. An example of this is perfectly illustrated
+> in [0].
+> 
+> Moving forward, we simply cannot enforce KF_TRUSTED_ARGS semantics
+> onto struct path of bpf_d_path(), as this approach would presumably
+> lead to some pretty wide scale and highly undesirable BPF program
+> breakage. To avoid breaking any pre-existing BPF program that is
+> dependent on bpf_d_path(), I propose that we take a different path and
+> re-implement an incredibly minimalistic and bare bone version of
+> d_path() which is entirely backed by kernel probe-read semantics. IOW,
+> a version of d_path() that is backed by
+> copy_from_kernel_nofault(). This ensures that any reads performed
+> against the supplied struct path to bpf_d_path() which may end up
+> faulting for whatever reason end up being gracefully handled and fixed
+> up.
+> 
+> The caveats with such an approach is that we can't fully uphold all of
+> d_path()'s path resolution capabilities. Resolving a path which is
+> comprised of a dentry that make use of dynamic names via isn't
+> possible as we can't enforce probe-read semantics onto indirect
+> function calls performed via d_op as they're implementation
+> dependent. For such cases, we just return -EOPNOTSUPP. This might be a
+> little surprising to some users, especially those that are interested
+> in resolving paths that involve a dentry that resides on some
+> non-mountable pseudo-filesystem, being pipefs/sockfs/nsfs, but it's
+> arguably better than enforcing KF_TRUSTED_ARGS onto bpf_d_path() and
+> causing an unnecessary shemozzle for users. Additionally, we don't
 
-I can append the current comments to mention that the unit is bytes.
+NAK. We're not going to add a semi-functional reimplementation of
+d_path() for bpf. This relied on VFS internals and guarantees that were
+never given. Restrict it to KF_TRUSTED_ARGS as it was suggested when
+this originally came up or fix it another way. But we're not adding a
+bunch of kfuncs to even more sensitive VFS machinery and then build a
+d_path() clone just so we can retroactively justify broken behavior.
 
-Thanks,
-John
+> make use of all the locking semantics, or handle all the erroneous
+> cases in which d_path() naturally would. This is fine however, as
+> we're only looking to provide users with a rather acceptable version
+> of a reconstructed path, whilst they eventually migrate over to the
+> trusted bpf_path_d_path() BPF kfunc variant.
+> 
+> Note that the selftests that go with this change to bpf_d_path() have
+> been purposely split out into a completely separate patch. This is so
+> that the reviewers attention is not torn by noise and can remain
+> focused on reviewing the implementation details contained within this
+> patch.
+> 
+> [0] https://lore.kernel.org/bpf/CAG48ez0ppjcT=QxU-jtCUfb5xQb3mLr=5FcwddF_VKfEBPs_Dg@mail.gmail.com/
+> [1] https://lore.kernel.org/bpf/20230606181714.532998-1-jolsa@kernel.org/
+> [2] https://lore.kernel.org/bpf/20220219113744.1852259-1-memxor@gmail.com/
+> 
+> Signed-off-by: Matt Bobrowski <mattbobrowski@google.com>
+> ---
+>  fs/Makefile                       |   6 +-
+>  fs/probe_read_d_path.c            | 150 ++++++++++++++++++++++++++++++
+>  include/linux/probe_read_d_path.h |  13 +++
+>  kernel/trace/bpf_trace.c          |  13 ++-
+>  4 files changed, 172 insertions(+), 10 deletions(-)
+>  create mode 100644 fs/probe_read_d_path.c
+>  create mode 100644 include/linux/probe_read_d_path.h
+> 
+> diff --git a/fs/Makefile b/fs/Makefile
+> index c09016257f05..945c9c84d35d 100644
+> --- a/fs/Makefile
+> +++ b/fs/Makefile
+> @@ -4,7 +4,7 @@
+>  #
+>  # 14 Sep 2000, Christoph Hellwig <hch@infradead.org>
+>  # Rewritten to use lists instead of if-statements.
+> -# 
+> +#
+>  
+>  
+>  obj-y :=	open.o read_write.o file_table.o super.o \
+> @@ -12,7 +12,7 @@ obj-y :=	open.o read_write.o file_table.o super.o \
+>  		ioctl.o readdir.o select.o dcache.o inode.o \
+>  		attr.o bad_inode.o file.o filesystems.o namespace.o \
+>  		seq_file.o xattr.o libfs.o fs-writeback.o \
+> -		pnode.o splice.o sync.o utimes.o d_path.o \
+> +		pnode.o splice.o sync.o utimes.o d_path.o probe_read_d_path.o \
+>  		stack.o fs_struct.o statfs.o fs_pin.o nsfs.o \
+>  		fs_types.o fs_context.o fs_parser.o fsopen.o init.o \
+>  		kernel_read_file.o mnt_idmapping.o remap_range.o
+> @@ -58,7 +58,7 @@ obj-$(CONFIG_CONFIGFS_FS)	+= configfs/
+>  obj-y				+= devpts/
+>  
+>  obj-$(CONFIG_DLM)		+= dlm/
+> - 
+> +
+>  # Do not add any filesystems before this line
+>  obj-$(CONFIG_NETFS_SUPPORT)	+= netfs/
+>  obj-$(CONFIG_REISERFS_FS)	+= reiserfs/
+> diff --git a/fs/probe_read_d_path.c b/fs/probe_read_d_path.c
+> new file mode 100644
+> index 000000000000..8d0db902f836
+> --- /dev/null
+> +++ b/fs/probe_read_d_path.c
+> @@ -0,0 +1,150 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2024 Google LLC.
+> + */
+> +
+> +#include "asm/ptrace.h"
+> +#include <linux/container_of.h>
+> +#include <linux/dcache.h>
+> +#include <linux/fs_struct.h>
+> +#include <linux/uaccess.h>
+> +#include <linux/path.h>
+> +#include <linux/probe_read_d_path.h>
+> +
+> +#include "mount.h"
+> +
+> +#define PROBE_READ(src)                                              \
+> +	({                                                           \
+> +		typeof(src) __r;                                     \
+> +		if (copy_from_kernel_nofault((void *)(&__r), (&src), \
+> +					     sizeof((__r))))         \
+> +			memset((void *)(&__r), 0, sizeof((__r)));    \
+> +		__r;                                                 \
+> +	})
+> +
+> +static inline bool probe_read_d_unlinked(const struct dentry *dentry)
+> +{
+> +	return !PROBE_READ(dentry->d_hash.pprev) &&
+> +	       !(dentry == PROBE_READ(dentry->d_parent));
+> +}
+> +
+> +static long probe_read_prepend(const char *s, int len, char *buf, int *buflen)
+> +{
+> +	/*
+> +	 * The supplied len that is to be copied into the buffer will result in
+> +	 * an overflow. The true implementation of d_path() already returns an
+> +	 * error for such overflow cases, so the semantics with regards to the
+> +	 * bpf_d_path() helper returning the same error value for overflow cases
+> +	 * remain the same.
+> +	 */
+> +	if (len > *buflen)
+> +		return -ENAMETOOLONG;
+> +
+> +	/*
+> +	 * The supplied string fits completely into the remaining buffer
+> +	 * space. Attempt to make the copy.
+> +	 */
+> +	*buflen -= len;
+> +	buf += *buflen;
+> +	return copy_from_kernel_nofault(buf, s, len);
+> +}
+> +
+> +static bool use_dname(const struct path *path)
+> +{
+> +	const struct dentry_operations *d_op;
+> +	char *(*d_dname)(struct dentry *, char *, int);
+> +
+> +	d_op = PROBE_READ(path->dentry->d_op);
+> +	d_dname = PROBE_READ(d_op->d_dname);
+> +
+> +	return d_op && d_dname &&
+> +	       (!(path->dentry == PROBE_READ(path->dentry->d_parent)) ||
+> +		path->dentry != PROBE_READ(path->mnt->mnt_root));
+> +}
+> +
+> +char *probe_read_d_path(const struct path *path, char *buf, int buflen)
+> +{
+> +	int len;
+> +	long err;
+> +	struct path root;
+> +	struct mount *mnt;
+> +	struct dentry *dentry;
+> +
+> +	dentry = path->dentry;
+> +	mnt = container_of(path->mnt, struct mount, mnt);
+> +
+> +	/*
+> +	 * We cannot back dentry->d_op->d_dname() with probe-read semantics, so
+> +	 * just return an error to the caller when the supplied path contains a
+> +	 * dentry component that makes use of a dynamic name.
+> +	 */
+> +	if (use_dname(path))
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +
+> +	err = probe_read_prepend("\0", 1, buf, &buflen);
+> +	if (err)
+> +		return ERR_PTR(err);
+> +
+> +	if (probe_read_d_unlinked(dentry)) {
+> +		err = probe_read_prepend(" (deleted)", 10, buf, &buflen);
+> +		if (err)
+> +			return ERR_PTR(err);
+> +	}
+> +
+> +	len = buflen;
+> +	root = PROBE_READ(current->fs->root);
+> +	while (dentry != root.dentry || &mnt->mnt != root.mnt) {
+> +		struct dentry *parent;
+> +		if (dentry == PROBE_READ(mnt->mnt.mnt_root)) {
+> +			struct mount *m;
+> +
+> +			m = PROBE_READ(mnt->mnt_parent);
+> +			if (mnt != m) {
+> +				dentry = PROBE_READ(mnt->mnt_mountpoint);
+> +				mnt = m;
+> +				continue;
+> +			}
+> +
+> +			/*
+> +			 * If we've reached the global root, then there's
+> +			 * nothing we can really do but bail.
+> +			 */
+> +			break;
+> +		}
+> +
+> +		parent = PROBE_READ(dentry->d_parent);
+> +		if (dentry == parent) {
+> +			/*
+> +			 * Escaped? We return an ECANCELED error here to signify
+> +			 * that we've prematurely terminated pathname
+> +			 * reconstruction. We've potentially hit a root dentry
+> +			 * that isn't associated with any roots from the mounted
+> +			 * filesystems that we've jumped through, so it's not
+> +			 * clear where we are in the VFS exactly.
+> +			 */
+> +			err = -ECANCELED;
+> +			break;
+> +		}
+> +
+> +		err = probe_read_prepend(dentry->d_name.name,
+> +					 PROBE_READ(dentry->d_name.len), buf,
+> +					 &buflen);
+> +		if (err)
+> +			break;
+> +
+> +		err = probe_read_prepend("/", 1, buf, &buflen);
+> +		if (err)
+> +			break;
+> +		dentry = parent;
+> +	}
+> +
+> +	if (err)
+> +		return ERR_PTR(err);
+> +
+> +	if (len == buflen) {
+> +		err = probe_read_prepend("/", 1, buf, &buflen);
+> +		if (err)
+> +			return ERR_PTR(err);
+> +	}
+> +	return buf + buflen;
+> +}
+> diff --git a/include/linux/probe_read_d_path.h b/include/linux/probe_read_d_path.h
+> new file mode 100644
+> index 000000000000..9b3908746657
+> --- /dev/null
+> +++ b/include/linux/probe_read_d_path.h
+> @@ -0,0 +1,13 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2024 Google LLC.
+> + */
+> +
+> +#ifndef _LINUX_PROBE_READ_D_PATH_H
+> +#define _LINUX_PROBE_READ_D_PATH_H
+> +
+> +#include <linux/path.h>
+> +
+> +extern char *probe_read_d_path(const struct path *path, char *buf, int buflen);
+> +
+> +#endif /* _LINUX_PROBE_READ_D_PATH_H */
+> diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+> index 241ddf5e3895..12dbd9cef1fa 100644
+> --- a/kernel/trace/bpf_trace.c
+> +++ b/kernel/trace/bpf_trace.c
+> @@ -25,6 +25,7 @@
+>  #include <linux/verification.h>
+>  #include <linux/namei.h>
+>  #include <linux/fileattr.h>
+> +#include <linux/probe_read_d_path.h>
+>  
+>  #include <net/bpf_sk_storage.h>
+>  
+> @@ -923,14 +924,12 @@ BPF_CALL_3(bpf_d_path, struct path *, path, char *, buf, u32, sz)
+>  	if (len < 0)
+>  		return len;
+>  
+> -	p = d_path(&copy, buf, sz);
+> -	if (IS_ERR(p)) {
+> -		len = PTR_ERR(p);
+> -	} else {
+> -		len = buf + sz - p;
+> -		memmove(buf, p, len);
+> -	}
+> +	p = probe_read_d_path(&copy, buf, sz);
+> +	if (IS_ERR(p))
+> +		return PTR_ERR(p);
+>  
+> +	len = buf + sz - p;
+> +	memmove(buf, p, len);
+>  	return len;
+>  }
+>  
+> -- 
+> 2.44.0.rc0.258.g7320e95886-goog
+> 
+> /M
 
