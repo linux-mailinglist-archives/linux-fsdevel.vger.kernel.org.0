@@ -1,111 +1,352 @@
-Return-Path: <linux-fsdevel+bounces-12275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3C8A85E140
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 16:33:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E2B85E186
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 16:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31A4D1C22AE5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 15:33:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B97A01C208DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 15:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F66380BFE;
-	Wed, 21 Feb 2024 15:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E5CF8063A;
+	Wed, 21 Feb 2024 15:40:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4tne/0o"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WEGoJtq8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C7E80BEB;
-	Wed, 21 Feb 2024 15:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E24C8060A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 15:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708529573; cv=none; b=gAWsoWpmE29LFqoUcTupjnbbEirRSkpXpVudwwC8KVNJBUfLE/+11hWqOQo6jmU2n/BhkYrB3plSpN01pPf4ZZATIu8mntpP8g+dTyGU5ka+A80VgXPrnvL6/iCma9L52Dp3AJ1y+gKe0XgO9L4kY8G4+5mUDHyS//lrH2/Iy9g=
+	t=1708530024; cv=none; b=FKugKg/KesREy9uHioudrOPdBe/OMvN260mq/rodknPx473fssiWufj4IPqcyO/h0YCaS7jB7Vfp0Yuk+mg2ddBCKi/TfIms4+A2YFyUK7vNwOBcd1rSiNdFm/u4KKm6G4LKw44R6H9fJJl7xXqyjFxoFjiwoOJ3MkS91YchgZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708529573; c=relaxed/simple;
-	bh=ini15tE19mitrKkG+HJLkGZ4AXHSX+Bhi6ca/Nfuh/0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZEwfBc6vaCEgYkGbPBKPNI5MMkJKoRNVp8q914Bn/ejdE7NN+ClfsryDii38R5E7Nl7JDyOWvqvBEfIK63jtsCpJxLIOpnkCdrIvkwZ7ZErk1gA29FbbrJVNIyA67BiNKVY5jt0sCLLDECnw3ysxWl/w4mTG5Mhf6FX5/8w3rw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4tne/0o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF3E9C43390;
-	Wed, 21 Feb 2024 15:32:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708529573;
-	bh=ini15tE19mitrKkG+HJLkGZ4AXHSX+Bhi6ca/Nfuh/0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=K4tne/0o3ReHxJpYIG981esY1f85ra9Flh/637W4yf8qYLkVxCP3vVmGuAPCZE3e1
-	 d23jzgdy2MOsW0HaeTnOExIW4sEH6fbsa9F5sLkAlLxiGhgqijGL/Vs6SjZ46YsqGz
-	 p/dlhP1gnkuhKYG19eCZlUFpwr+zdjBVlQw2l56g9t4YJ8UnLSgXha2jMgcUorotG/
-	 1BER956nu3JXKrFHWsMlVceoWrepBJ1m+setcDEVljJwLahZV4bq8DeBQBHxGNK3cK
-	 F0l07N17Hkiboqw+p6EMVDJ2etau/kwDGGZogJYnvtPwf614d7GMkw9NnW+o9NISAc
-	 jk4LjWAG1AUDA==
-From: Christian Brauner <brauner@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Avi Kivity <avi@scylladb.com>,
-	Sandeep Dhavale <dhavale@google.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	stable@vger.kernel.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: (subset) [PATCH v4 1/2] fs/aio: Restrict kiocb_set_cancel_fn() to I/O submitted via libaio
-Date: Wed, 21 Feb 2024 16:32:19 +0100
-Message-ID: <20240221-postleitzahl-flanieren-799c28d3ad95@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240215204739.2677806-2-bvanassche@acm.org>
-References: <20240215204739.2677806-1-bvanassche@acm.org> <20240215204739.2677806-2-bvanassche@acm.org>
+	s=arc-20240116; t=1708530024; c=relaxed/simple;
+	bh=11BfD+MCY6Y+9SESMnYBe/3YCvfkPbA1sUVkHSpW/Cg=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=sQMRoGxqWDlsPISm8vP0V7SxKLk4GUsGmwxTpjpfH2dKeJ12zHccgnGRl262lky5YPqEghMwLUMoQVamojOqWCh+SqDFa2DlucsNGdD699dldvlBlMlKku8LBV1ES6bfBbP1CHDg0Wmz/x+0CfWYaBSirauU0Y5csPIXb3QfzRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WEGoJtq8; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1708530021;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/wI6a6AhnjPcQiRlAb6glD4TWiIKDjy5BpYxe+G0O8w=;
+	b=WEGoJtq8jD+RNlceXAbC1sNWAMi0cMmJsVjZPJRre3xbIuaSQ2QxGqcMIJXAuIzxIeXbz5
+	QSkI/OFUS9vtq/ZEHC40AuHg5Jh3QGkn7GiCVUDaRFm0f47nHYG8KhuEoY+pTmGY2CxmBh
+	j0Lhhq5RcUbl+5lwkuR49b2OZweyr1I=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-659-pp0ci5rVPcmVrm2rXHwwPw-1; Wed, 21 Feb 2024 10:40:08 -0500
+X-MC-Unique: pp0ci5rVPcmVrm2rXHwwPw-1
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7c0001148c3so575662039f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 07:40:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708530006; x=1709134806;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/wI6a6AhnjPcQiRlAb6glD4TWiIKDjy5BpYxe+G0O8w=;
+        b=B4BAvBKDxAyL7y43XyzlFMJNXbJOD1DOK1JbNu7+38ymQf+9x73dOvK5ZlXIRCgU5g
+         ga+OCmFJkFN5ZY9tcwZvdNdsWhth+K8O/wrvkPha8mo1xAKR/vD8N9J+l8XoICSgRkU/
+         oKyGVvm4OLTka21ep2iXWdi3ipvMeL0m2in3hL4YiGRCTyeVIJd32nT+aGMJKuWDItzi
+         pu0++EjZEikbMiZyJVAssuWIfbmXPOuEvAOjYGJvfpBdtEy6qfepY3TZiWMLvkRi2f7a
+         L1LMukszMg/ISU4i68kcUbBoFAbfApQrK+v/aRw8eoJNodPIcQQpjpeJihwItbrihBWQ
+         Phqg==
+X-Gm-Message-State: AOJu0YyD1CzyRJOQzzA3EGAMalgNuub4G1m2S62WBPqrX06zDg4nESPn
+	iw53kDW1QKzrRMgACM0EHDbxDsIYISYhoRBDJ9yT8JarODXg1ys5ZRM8rKNpqO/c5lhkhTFCWEk
+	8fIz60bXps2cFVZZSiEDbo+kr3llj/0RphypOrze4UlXNEaWX4WuVUnlvW/91CMVgyQ6WVFDMVA
+	YlJRRRuOnL5c4HaJbCY3Htq0Kf/pi9scl7Ro3uP8XZXBwh+Q==
+X-Received: by 2002:a92:c80f:0:b0:365:2230:b2e4 with SMTP id v15-20020a92c80f000000b003652230b2e4mr11931672iln.14.1708530006566;
+        Wed, 21 Feb 2024 07:40:06 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGWDr9LbCpj3LzvDYuvQI2bXzKbP7QlVn4lHx/lU25nhKMk+BzuE6iDSzGKANRKiSzGW3xljw==
+X-Received: by 2002:a92:c80f:0:b0:365:2230:b2e4 with SMTP id v15-20020a92c80f000000b003652230b2e4mr11931656iln.14.1708530006161;
+        Wed, 21 Feb 2024 07:40:06 -0800 (PST)
+Received: from [10.0.0.71] (sandeen.net. [63.231.237.45])
+        by smtp.gmail.com with ESMTPSA id j7-20020a05663822c700b004742adef7a1sm1582211jat.112.2024.02.21.07.40.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Feb 2024 07:40:05 -0800 (PST)
+Message-ID: <97650eeb-94c7-4041-b58c-90e81e76b699@redhat.com>
+Date: Wed, 21 Feb 2024 09:40:03 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1426; i=brauner@kernel.org; h=from:subject:message-id; bh=ini15tE19mitrKkG+HJLkGZ4AXHSX+Bhi6ca/Nfuh/0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaReE5/7gaHDuGIbMyOTeuQaGTnlZ4/WSvFIF6aev2+yc +/Tg8+FOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbSs5LhN1tdzvr97M/rj959 4atT93117vEri6KFlSo5pXILXaRl/jEybJ7FbCAduU+o+qrVR9mvXr5ru6x8rLdmJPxs+hgsVl/ DBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH V2] Convert coda to use the new mount API
+Content-Language: en-US
+From: Eric Sandeen <sandeen@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>, Jan Harkes <jaharkes@cs.cmu.edu>,
+ Bill O'Donnell <billodo@redhat.com>, Christian Brauner <brauner@kernel.org>
+References: <2d1374cc-6b52-49ff-97d5-670709f54eae@redhat.com>
+In-Reply-To: <2d1374cc-6b52-49ff-97d5-670709f54eae@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 15 Feb 2024 12:47:38 -0800, Bart Van Assche wrote:
-> If kiocb_set_cancel_fn() is called for I/O submitted via io_uring, the
-> following kernel warning appears:
-> 
-> WARNING: CPU: 3 PID: 368 at fs/aio.c:598 kiocb_set_cancel_fn+0x9c/0xa8
-> Call trace:
->  kiocb_set_cancel_fn+0x9c/0xa8
->  ffs_epfile_read_iter+0x144/0x1d0
->  io_read+0x19c/0x498
->  io_issue_sqe+0x118/0x27c
->  io_submit_sqes+0x25c/0x5fc
->  __arm64_sys_io_uring_enter+0x104/0xab0
->  invoke_syscall+0x58/0x11c
->  el0_svc_common+0xb4/0xf4
->  do_el0_svc+0x2c/0xb0
->  el0_svc+0x2c/0xa4
->  el0t_64_sync_handler+0x68/0xb4
->  el0t_64_sync+0x1a4/0x1a8
-> 
-> [...]
+From: David Howells <dhowells@redhat.com>
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Convert the coda filesystem to the new internal mount API as the old
+one will be obsoleted and removed.  This allows greater flexibility in
+communication of mount parameters between userspace, the VFS and the
+filesystem.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+See Documentation/filesystems/mount_api.rst for more information.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Note this is slightly tricky as coda currently only has a binary mount data
+interface.  This is handled through the parse_monolithic hook.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Also add a more conventional interface with a parameter named "fd" that
+takes an fd that refers to a coda psdev, thereby specifying the index to
+use.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+Signed-off-by: David Howells <dhowells@redhat.com>
+Co-developed-by: Eric Sandeen <sandeen@redhat.com>
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+[sandeen: forward port to current upstream mount API interfaces]
+Tested-by: Jan Harkes <jaharkes@cs.cmu.edu>
+cc: coda@cs.cmu.edu
+---
 
-[1/2] fs/aio: Restrict kiocb_set_cancel_fn() to I/O submitted via libaio
-      https://git.kernel.org/vfs/vfs/c/b820de741ae4
+V2: Remove extra task_active_pid_ns check from fill_super() that I missed
+(note that Jan did not test with this change)
+
+NB: This updated patch is based on 
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=mount-api-viro&id=4aec2ba3ca543e39944604774b8cab9c4d592651
+
+hence the From: David above.
+
+ fs/coda/inode.c | 143 +++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 98 insertions(+), 45 deletions(-)
+
+diff --git a/fs/coda/inode.c b/fs/coda/inode.c
+index 0c7c2528791e..a50356c541f6 100644
+--- a/fs/coda/inode.c
++++ b/fs/coda/inode.c
+@@ -24,6 +24,8 @@
+ #include <linux/pid_namespace.h>
+ #include <linux/uaccess.h>
+ #include <linux/fs.h>
++#include <linux/fs_context.h>
++#include <linux/fs_parser.h>
+ #include <linux/vmalloc.h>
+ 
+ #include <linux/coda.h>
+@@ -87,10 +89,10 @@ void coda_destroy_inodecache(void)
+ 	kmem_cache_destroy(coda_inode_cachep);
+ }
+ 
+-static int coda_remount(struct super_block *sb, int *flags, char *data)
++static int coda_reconfigure(struct fs_context *fc)
+ {
+-	sync_filesystem(sb);
+-	*flags |= SB_NOATIME;
++	sync_filesystem(fc->root->d_sb);
++	fc->sb_flags |= SB_NOATIME;
+ 	return 0;
+ }
+ 
+@@ -102,78 +104,102 @@ static const struct super_operations coda_super_operations =
+ 	.evict_inode	= coda_evict_inode,
+ 	.put_super	= coda_put_super,
+ 	.statfs		= coda_statfs,
+-	.remount_fs	= coda_remount,
+ };
+ 
+-static int get_device_index(struct coda_mount_data *data)
++struct coda_fs_context {
++	int	idx;
++};
++
++enum {
++	Opt_fd,
++};
++
++static const struct fs_parameter_spec coda_param_specs[] = {
++	fsparam_fd	("fd",	Opt_fd),
++	{}
++};
++
++static int coda_parse_fd(struct fs_context *fc, int fd)
+ {
++	struct coda_fs_context *ctx = fc->fs_private;
+ 	struct fd f;
+ 	struct inode *inode;
+ 	int idx;
+ 
+-	if (data == NULL) {
+-		pr_warn("%s: Bad mount data\n", __func__);
+-		return -1;
+-	}
+-
+-	if (data->version != CODA_MOUNT_VERSION) {
+-		pr_warn("%s: Bad mount version\n", __func__);
+-		return -1;
+-	}
+-
+-	f = fdget(data->fd);
++	f = fdget(fd);
+ 	if (!f.file)
+-		goto Ebadf;
++		return -EBADF;
+ 	inode = file_inode(f.file);
+ 	if (!S_ISCHR(inode->i_mode) || imajor(inode) != CODA_PSDEV_MAJOR) {
+ 		fdput(f);
+-		goto Ebadf;
++		return invalf(fc, "code: Not coda psdev");
+ 	}
+ 
+ 	idx = iminor(inode);
+ 	fdput(f);
+ 
+-	if (idx < 0 || idx >= MAX_CODADEVS) {
+-		pr_warn("%s: Bad minor number\n", __func__);
+-		return -1;
++	if (idx < 0 || idx >= MAX_CODADEVS)
++		return invalf(fc, "coda: Bad minor number");
++	ctx->idx = idx;
++	return 0;
++}
++
++static int coda_parse_param(struct fs_context *fc, struct fs_parameter *param)
++{
++	struct fs_parse_result result;
++	int opt;
++
++	opt = fs_parse(fc, coda_param_specs, param, &result);
++	if (opt < 0)
++		return opt;
++
++	switch (opt) {
++	case Opt_fd:
++		return coda_parse_fd(fc, result.uint_32);
+ 	}
+ 
+-	return idx;
+-Ebadf:
+-	pr_warn("%s: Bad file\n", __func__);
+-	return -1;
++	return 0;
++}
++
++/*
++ * Parse coda's binary mount data form.  We ignore any errors and go with index
++ * 0 if we get one for backward compatibility.
++ */
++static int coda_parse_monolithic(struct fs_context *fc, void *_data)
++{
++	struct coda_mount_data *data = _data;
++
++	if (!data)
++		return invalf(fc, "coda: Bad mount data");
++
++	if (data->version != CODA_MOUNT_VERSION)
++		return invalf(fc, "coda: Bad mount version");
++
++	coda_parse_fd(fc, data->fd);
++	return 0;
+ }
+ 
+-static int coda_fill_super(struct super_block *sb, void *data, int silent)
++static int coda_fill_super(struct super_block *sb, struct fs_context *fc)
+ {
++	struct coda_fs_context *ctx = fc->fs_private;
+ 	struct inode *root = NULL;
+ 	struct venus_comm *vc;
+ 	struct CodaFid fid;
+ 	int error;
+-	int idx;
+-
+-	if (task_active_pid_ns(current) != &init_pid_ns)
+-		return -EINVAL;
+-
+-	idx = get_device_index((struct coda_mount_data *) data);
+ 
+-	/* Ignore errors in data, for backward compatibility */
+-	if(idx == -1)
+-		idx = 0;
+-	
+-	pr_info("%s: device index: %i\n", __func__,  idx);
++	infof(fc, "coda: device index: %i\n", ctx->idx);
+ 
+-	vc = &coda_comms[idx];
++	vc = &coda_comms[ctx->idx];
+ 	mutex_lock(&vc->vc_mutex);
+ 
+ 	if (!vc->vc_inuse) {
+-		pr_warn("%s: No pseudo device\n", __func__);
++		errorf(fc, "coda: No pseudo device");
+ 		error = -EINVAL;
+ 		goto unlock_out;
+ 	}
+ 
+ 	if (vc->vc_sb) {
+-		pr_warn("%s: Device already mounted\n", __func__);
++		errorf(fc, "coda: Device already mounted");
+ 		error = -EBUSY;
+ 		goto unlock_out;
+ 	}
+@@ -313,18 +339,45 @@ static int coda_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	return 0; 
+ }
+ 
+-/* init_coda: used by filesystems.c to register coda */
++static int coda_get_tree(struct fs_context *fc)
++{
++	if (task_active_pid_ns(current) != &init_pid_ns)
++		return -EINVAL;
+ 
+-static struct dentry *coda_mount(struct file_system_type *fs_type,
+-	int flags, const char *dev_name, void *data)
++	return get_tree_nodev(fc, coda_fill_super);
++}
++
++static void coda_free_fc(struct fs_context *fc)
+ {
+-	return mount_nodev(fs_type, flags, data, coda_fill_super);
++	kfree(fc->fs_private);
++}
++
++static const struct fs_context_operations coda_context_ops = {
++	.free		= coda_free_fc,
++	.parse_param	= coda_parse_param,
++	.parse_monolithic = coda_parse_monolithic,
++	.get_tree	= coda_get_tree,
++	.reconfigure	= coda_reconfigure,
++};
++
++static int coda_init_fs_context(struct fs_context *fc)
++{
++	struct coda_fs_context *ctx;
++
++	ctx = kzalloc(sizeof(struct coda_fs_context), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++
++	fc->fs_private = ctx;
++	fc->ops = &coda_context_ops;
++	return 0;
+ }
+ 
+ struct file_system_type coda_fs_type = {
+ 	.owner		= THIS_MODULE,
+ 	.name		= "coda",
+-	.mount		= coda_mount,
++	.init_fs_context = coda_init_fs_context,
++	.parameters	= coda_param_specs,
+ 	.kill_sb	= kill_anon_super,
+ 	.fs_flags	= FS_BINARY_MOUNTDATA,
+ };
+-- 
+2.43.0
+
 
