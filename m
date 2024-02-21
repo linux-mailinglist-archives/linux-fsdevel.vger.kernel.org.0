@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-12375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04CC85EAA8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 22:28:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4BE085EAA6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 22:28:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62D7BB278AE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 21:28:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F9F9B2789F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 21:28:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774FC13664C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B69135A7F;
 	Wed, 21 Feb 2024 21:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDKdLcLA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzqK00wH"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C577212AACD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D598712AAE2;
 	Wed, 21 Feb 2024 21:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708550706; cv=none; b=IHNZD6d39L87TCy94cWelc33WtjygsZ0xr1PBrYKxK7if0yUx4JyzPKrinCJd4vh1l8IAw50RWqvPAb4L5wtGGLojCpv/g8881Qts1rXwR01C84mKsVJsJ+wCAdUXGKB+RQu3gNzokSxI7NIXSBTFKWkDvTTBzw+LfLaS6tlO6E=
+	t=1708550707; cv=none; b=bxM94GCzQ6Qi8Oqgyl3TXv3uJYZ9iMhg/RGGlvSPa+TAp14XczAA2Ous2lD0nBlkzGMnR497dyekF3NdkT/FhSNMTs6NzHzN9r8izkAS/bWt3W0IPYYHdjlUCecZV/BorsvcGPMMLAXfAPTxnRi9GDSowapVC60YNn9Y/qDM0V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708550706; c=relaxed/simple;
-	bh=YiCWnmvB8338QqWiqSd4eJ/jOoBDPxjCWf8ETipJD0I=;
+	s=arc-20240116; t=1708550707; c=relaxed/simple;
+	bh=Yr3ph0XCYOXrp9CXWdQMd7IWQbhJjbtCnaMZrcY53gY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=akAcypcQxT6ZiaFrOTP/g/cWCqiY7eFXCr5a5oNEHRT8HM99wRgr66l/vsepBhDAN+NtIAOROtw0RDx/l9IAPgBIz0R0ms5PzrXzMqRz0Wciw0QmaOBgBIxn+KRvTbzdZqyvqyzfVBcsblmDRsKBlsD69oHKKSOM0VI7leJTdg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDKdLcLA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9CD28C3278C;
+	 In-Reply-To:To:Cc; b=bw/i2eZcirMgisYTFexaGG9ezqUkiUYSYFEU+WtPovHo4VU8V3IqA05fTFXLS+DN4TvL2cEnJLSvjX0TOWdEzpSuz5fHhCvBZaJx7MfK8b9lM00FIad3Jy99EUTXQrsRps9bBdoc4YQaaye80Lw9V9zYqnj0ga/oJN3aFUq5ljw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzqK00wH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B5D8FC32790;
 	Wed, 21 Feb 2024 21:25:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1708550706;
-	bh=YiCWnmvB8338QqWiqSd4eJ/jOoBDPxjCWf8ETipJD0I=;
+	bh=Yr3ph0XCYOXrp9CXWdQMd7IWQbhJjbtCnaMZrcY53gY=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=PDKdLcLANpifEiadIoWlJMyghRFtRhfHhPnLCDlmoF9CpDfb3TjWhrTzGIU/Wpz9U
-	 lIrdLZr+Zm1PHC17yDX79paaM5tsJ7NiwiBNfLdHj1o94zBqB4JBXHMVMqPZagmkRE
-	 X5T5YIA58J1NPm32Q19UguByGYvoS31Pif76BDl/jJgbUKjljzVqzDwEWuGIj7z0JE
-	 Q0uYK7UhKkAuFddDuuBrsjjZ+xRqcN+64ggZh8XRl7Fk/Nxuu0foiy8jn8w/+M89CX
-	 Uc+8vcTLrl7Ws+2GJAyH9cgg4J2tFXM0JkhaJAQ97zLf495Cb/p2ioXvFr8VjIocKu
-	 DE4eLm26q/HyA==
+	b=lzqK00wHaspxkj8s4YixHYBHO5uRXAEZjNOy9Tt0Z+zVFhBNoRvYu/G86zief0nKx
+	 DOC8vrh8C8IjEHbdu7wwreh1NNB3LwwbqMH0XaZWH+IykU6H5BTj1w/GUbwEY07O5Z
+	 pvwC+B2b6olS/XcTYKLHEbL6kmg/L1ovWhiGt+wN7z3/EUgIDJm5CNvALRd0UvLCPr
+	 YN7WDcK0FDtDVAfriM9B0F3WsZlZvlWdTcQPII7bNMfNd41fGQdq/VjOUrAZzeTnvH
+	 ZJaeZRN5maBuF9hI2NOJ5ijYh2cBqpS/xIahdqiP82EiiWzznvttVF2LXIWeD/RRi7
+	 EhxIDDDI3G5bw==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89496C48BEB;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1A0C54791;
 	Wed, 21 Feb 2024 21:25:06 +0000 (UTC)
 From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Date: Wed, 21 Feb 2024 15:24:44 -0600
-Subject: [PATCH v2 13/25] smack: add hooks for fscaps operations
+Date: Wed, 21 Feb 2024 15:24:45 -0600
+Subject: [PATCH v2 14/25] evm: add support for fscaps security hooks
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240221-idmap-fscap-refactor-v2-13-3039364623bd@kernel.org>
+Message-Id: <20240221-idmap-fscap-refactor-v2-14-3039364623bd@kernel.org>
 References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
 In-Reply-To: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -76,118 +76,158 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
  linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3419; i=sforshee@kernel.org;
- h=from:subject:message-id; bh=YiCWnmvB8338QqWiqSd4eJ/jOoBDPxjCWf8ETipJD0I=; 
- =?utf-8?q?b=3DowEBbQGS/pANAwAKAVMDma7l9DHJAcsmYgBl1mokwpT6Wd5LYVT0NdW4vUmGJ?=
- =?utf-8?q?H9U+1d+cLjm5vxy_ILld6IGJATMEAAEKAB0WIQSQnt+rKAvnETy4Hc9TA5mu5fQxy?=
- =?utf-8?q?QUCZdZqJAAKCRBTA5mu5fQxyRbFB/_99rEgJl1COtBpH35uJRkwXLKAW2bI3ehYcq?=
- =?utf-8?q?wDZaWHYMV9allq0ZPBy2JON08GqXpiydvLVO/Ln9mCh_rrBTyNabTPZ5+6inOHWHz?=
- =?utf-8?q?Yen+5m4e//T+aD3C35Iu+fYOp1VWDMreKV9CBPDc+o7smjDrcwTT5U3HU_T+MiwUE?=
- =?utf-8?q?lmV0hrCl9mx1x6ZQ+OZDxR0wxJWjByWHuSobI8LpfwHLfOtNvETMAFmzDNRcoKxdH?=
- =?utf-8?q?lFIdgb_mLUONM0sKkjjuohgodnMIV64F6StQ4LkZuRqT/sMkNOSOPTPg69udW4Cj0?=
- =?utf-8?q?fS+JLVxodaQqo5+IAO07?= HkN+gK7eFDKtfF0Q+djswLOfkjsTiZ
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4327; i=sforshee@kernel.org;
+ h=from:subject:message-id; bh=Yr3ph0XCYOXrp9CXWdQMd7IWQbhJjbtCnaMZrcY53gY=; 
+ =?utf-8?q?b=3DowEBbQGS/pANAwAKAVMDma7l9DHJAcsmYgBl1mol25TRgD1iHEn0O+Lzt/PUv?=
+ =?utf-8?q?oaNtWltRiGhhXzf_m3QV75SJATMEAAEKAB0WIQSQnt+rKAvnETy4Hc9TA5mu5fQxy?=
+ =?utf-8?q?QUCZdZqJQAKCRBTA5mu5fQxyS9CB/_9kSIwlWp/cTH5n9oXEiY7IRY7QctvMWegFy?=
+ =?utf-8?q?imx7di5G0HHXG0GkFzYw+GCyZNDCVL5R5AuZIagZMKH_cytRQKwJZdn+UxoBt7VxR?=
+ =?utf-8?q?cVA0NXxcM5vRXXYDzuNpVQNmbfH5HvHaFvaIDzOEYFmJqsIW/jaxzfWVB_RjglGLz?=
+ =?utf-8?q?pDryq2M/ZCsQx9KBTGmEwTBnxzalQNyrtvXgG4UHhg2ZBqBAWhD3SNXDCf7Ii95JG?=
+ =?utf-8?q?mya1vE_xyBqVMzbjM3/l+t7NBgQWvLHaHz7A3od4uGdwyYRfroyU95TFJcCTgcv4b?=
+ =?utf-8?q?gK682Ja2e9Zo3X4dw5Wp?= Ka5r0Q2dpUgYDHMm+pijpjRjRaNrcP
 X-Developer-Key: i=sforshee@kernel.org; a=openpgp;
  fpr=2ABCA7498D83E1D32D51D3B5AB4800A62DB9F73A
 X-Endpoint-Received:
  by B4 Relay for sforshee@kernel.org/default with auth_id=103
 
-Add hooks for set/get/remove fscaps operations which perform the same
-checks as the xattr hooks would have done for XATTR_NAME_CAPS.
+Support the new fscaps security hooks by converting the vfs_caps to raw
+xattr data and then handling them the same as other xattrs.
 
 Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
 ---
- security/smack/smack_lsm.c | 71 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 71 insertions(+)
+ include/linux/evm.h               | 39 +++++++++++++++++++++++++
+ security/integrity/evm/evm_main.c | 60 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 99 insertions(+)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 0fdbf04cc258..1eaa89dede6b 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -1530,6 +1530,74 @@ static int smack_inode_remove_acl(struct mnt_idmap *idmap,
- 	return rc;
+diff --git a/include/linux/evm.h b/include/linux/evm.h
+index 36ec884320d9..aeb9ff52ad22 100644
+--- a/include/linux/evm.h
++++ b/include/linux/evm.h
+@@ -57,6 +57,20 @@ static inline void evm_inode_post_set_acl(struct dentry *dentry,
+ {
+ 	return evm_inode_post_setxattr(dentry, acl_name, NULL, 0);
+ }
++extern int evm_inode_set_fscaps(struct mnt_idmap *idmap,
++				struct dentry *dentry,
++				const struct vfs_caps *caps, int flags);
++static inline int evm_inode_remove_fscaps(struct dentry *dentry)
++{
++	return evm_inode_set_fscaps(&nop_mnt_idmap, dentry, NULL, XATTR_REPLACE);
++}
++extern void evm_inode_post_set_fscaps(struct mnt_idmap *idmap,
++				      struct dentry *dentry,
++				      const struct vfs_caps *caps, int flags);
++static inline void evm_inode_post_remove_fscaps(struct dentry *dentry)
++{
++	return evm_inode_post_set_fscaps(&nop_mnt_idmap, dentry, NULL, 0);
++}
+ 
+ int evm_inode_init_security(struct inode *inode, struct inode *dir,
+ 			    const struct qstr *qstr, struct xattr *xattrs,
+@@ -164,6 +178,31 @@ static inline void evm_inode_post_set_acl(struct dentry *dentry,
+ 	return;
  }
  
-+/**
-+ * smack_inode_set_fscaps - Smack check for setting file capabilities
-+ * @mnt_userns: the userns attached to the source mnt for this request
-+ * @detry: the object
-+ * @caps: the file capabilities
-+ * @flags: unused
-+ *
-+ * Returns 0 if the access is permitted, or an error code otherwise.
-+ */
-+static int smack_inode_set_fscaps(struct mnt_idmap *idmap,
-+				  struct dentry *dentry,
-+				  const struct vfs_caps *caps, int flags)
++static inline int evm_inode_set_fscaps(struct mnt_idmap *idmap,
++				       struct dentry *dentry,
++				       const struct vfs_caps *caps, int flags)
 +{
-+	struct smk_audit_info ad;
-+	int rc;
-+
-+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
-+	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
-+	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_WRITE, &ad);
-+	rc = smk_bu_inode(d_backing_inode(dentry), MAY_WRITE, rc);
-+	return rc;
++	return 0;
 +}
 +
-+/**
-+ * smack_inode_get_fscaps - Smack check for getting file capabilities
-+ * @dentry: the object
-+ *
-+ * Returns 0 if access is permitted, an error code otherwise
-+ */
-+static int smack_inode_get_fscaps(struct mnt_idmap *idmap,
-+				  struct dentry *dentry)
++static inline int evm_inode_remove_fscaps(struct dentry *dentry)
 +{
-+	struct smk_audit_info ad;
-+	int rc;
-+
-+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
-+	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
-+
-+	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_READ, &ad);
-+	rc = smk_bu_inode(d_backing_inode(dentry), MAY_READ, rc);
-+	return rc;
++	return 0;
 +}
 +
-+/**
-+ * smack_inode_remove_acl - Smack check for removing file capabilities
-+ * @idmap: idmap of the mnt this request came from
-+ * @dentry: the object
-+ *
-+ * Returns 0 if access is permitted, an error code otherwise
-+ */
-+static int smack_inode_remove_fscaps(struct mnt_idmap *idmap,
-+				     struct dentry *dentry)
++static inline void evm_inode_post_set_fscaps(struct mnt_idmap *idmap,
++					     struct dentry *dentry,
++					     const struct vfs_caps *caps,
++					     int flags)
 +{
-+	struct smk_audit_info ad;
-+	int rc;
-+
-+	rc = cap_inode_removexattr(idmap, dentry, XATTR_NAME_CAPS);
-+	if (rc != 0)
-+		return rc;
-+
-+	smk_ad_init(&ad, __func__, LSM_AUDIT_DATA_DENTRY);
-+	smk_ad_setfield_u_fs_path_dentry(&ad, dentry);
-+
-+	rc = smk_curacc(smk_of_inode(d_backing_inode(dentry)), MAY_WRITE, &ad);
-+	rc = smk_bu_inode(d_backing_inode(dentry), MAY_WRITE, rc);
-+	return rc;
++	return;
 +}
 +
- /**
-  * smack_inode_getsecurity - get smack xattrs
-  * @idmap: idmap of the mount
-@@ -5045,6 +5113,9 @@ static struct security_hook_list smack_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(inode_set_acl, smack_inode_set_acl),
- 	LSM_HOOK_INIT(inode_get_acl, smack_inode_get_acl),
- 	LSM_HOOK_INIT(inode_remove_acl, smack_inode_remove_acl),
-+	LSM_HOOK_INIT(inode_set_fscaps, smack_inode_set_fscaps),
-+	LSM_HOOK_INIT(inode_get_fscaps, smack_inode_get_fscaps),
-+	LSM_HOOK_INIT(inode_remove_fscaps, smack_inode_remove_fscaps),
- 	LSM_HOOK_INIT(inode_getsecurity, smack_inode_getsecurity),
- 	LSM_HOOK_INIT(inode_setsecurity, smack_inode_setsecurity),
- 	LSM_HOOK_INIT(inode_listsecurity, smack_inode_listsecurity),
++static inline void evm_inode_post_remove_fscaps(struct dentry *dentry)
++{
++	return;
++}
++
+ static inline int evm_inode_init_security(struct inode *inode, struct inode *dir,
+ 					  const struct qstr *qstr,
+ 					  struct xattr *xattrs,
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index cc7956d7878b..ecf4634a921a 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -805,6 +805,66 @@ void evm_inode_post_removexattr(struct dentry *dentry, const char *xattr_name)
+ 	evm_update_evmxattr(dentry, xattr_name, NULL, 0);
+ }
+ 
++int evm_inode_set_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
++			 const struct vfs_caps *caps, int flags)
++{
++	struct inode *inode = d_inode(dentry);
++	struct vfs_ns_cap_data nscaps;
++	const void *xattr_data = NULL;
++	int size = 0;
++
++	/* Policy permits modification of the protected xattrs even though
++	 * there's no HMAC key loaded
++	 */
++	if (evm_initialized & EVM_ALLOW_METADATA_WRITES)
++		return 0;
++
++	if (caps) {
++		size = vfs_caps_to_xattr(idmap, i_user_ns(inode), caps, &nscaps,
++					 sizeof(nscaps));
++		if (size < 0)
++			return size;
++		xattr_data = &nscaps;
++	}
++
++	return evm_protect_xattr(idmap, dentry, XATTR_NAME_CAPS, xattr_data, size);
++}
++
++void evm_inode_post_set_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
++			       const struct vfs_caps *caps, int flags)
++{
++	struct inode *inode = d_inode(dentry);
++	struct vfs_ns_cap_data nscaps;
++	const void *xattr_data = NULL;
++	int size = 0;
++
++	if (!evm_revalidate_status(XATTR_NAME_CAPS))
++		return;
++
++	evm_reset_status(dentry->d_inode);
++
++	if (!(evm_initialized & EVM_INIT_HMAC))
++		return;
++
++	if (is_unsupported_fs(dentry))
++		return;
++
++	if (caps) {
++		size = vfs_caps_to_xattr(idmap, i_user_ns(inode), caps, &nscaps,
++					 sizeof(nscaps));
++		/*
++		 * The fscaps here should have been converted to an xattr by
++		 * evm_inode_set_fscaps() already, so a failure to convert
++		 * here is a bug.
++		 */
++		if (WARN_ON_ONCE(size < 0))
++			return;
++		xattr_data = &nscaps;
++	}
++
++	evm_update_evmxattr(dentry, XATTR_NAME_CAPS, xattr_data, size);
++}
++
+ static int evm_attr_change(struct mnt_idmap *idmap,
+ 			   struct dentry *dentry, struct iattr *attr)
+ {
 
 -- 
 2.43.0
