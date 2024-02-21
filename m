@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-12250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B6A885D4E0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 10:58:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A381685D4E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 10:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2469028CA0A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 09:58:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AC8128CA37
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 09:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B649163120;
-	Wed, 21 Feb 2024 09:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033E864CE6;
+	Wed, 21 Feb 2024 09:50:13 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB11958ACA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABD35823C;
 	Wed, 21 Feb 2024 09:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708509012; cv=none; b=r5HYY2+3duY9oSKibGEW5rG74GMumuHCaq+kwr/jpL2vcZe7ILm/U0ovLBE1cpyn9CYxauxDUaHFAoasBgAZ3oYn8UGRb8oRzALhc+AX+bYIhY+IxlH8AY/Q7+HLcMYLXJ2hPwxjhMyNVmppiRHkoBI7FtjQ5lMcPiHh05+UUK4=
+	t=1708509012; cv=none; b=fKhI1kznNddmLqpfHop+N4q99eDpL6ti3EWnWWVqlvZxwEBuSSBgKMg+Y+v/d90eKr5sxnnFbE0sUtUXBqn28cRTif5DHhIp4pvgtBJWvAiZMTUkD8H2Ofxr5AKwzaRpNvBPW7ip680XuraIR2d2s4TMVolJ2g/9eg2gjG55f+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1708509012; c=relaxed/simple;
-	bh=5yRKL/D4WKMUyz5KF4LYQmab3vQapC/hAllcpi+yp24=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=jlICJBlAq/vClzL5JKYSRePEwWReElQkTCJLXaXr42WLPRlrWlMKePOOgfXnhg3whwPhx4b5dI0ABZVNIcYWKGeCthRU+fGM3ENf2sMKbSz47Z6+FGJsvwc24Ivc3LQuVMQ/gJl1JAizFyGAS5zrk9Sm8S2D36BnDYJsym/Be7E=
+	bh=1CF3fT+0y7rY0XzqAKz8iCCaEnPZ1j3P7N8n5p5eJns=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=UjKn5dBPkqjWzWosd3qQ3Z35QmJazWgKpQUkD0AKLlxAtI1VYpdMVPnw/9EeXqsWvgH0mhPirrOxCn93jTTCrydl7N8E8gN8KF73iqnYJLEVZv10PeLJhOQ/DTG7R5T9fV10e6QtnxjoA7r084Jk/W91Do/mGAcNVpYikuIdREQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-d85ff70000001748-28-65d5c73b30c9
+X-AuditID: a67dfc5b-d85ff70000001748-39-65d5c73b28e7
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org
 Cc: kernel_team@skhynix.com,
@@ -87,44 +87,44 @@ Cc: kernel_team@skhynix.com,
 	longman@redhat.com,
 	hdanton@sina.com,
 	her0gyugyu@gmail.com
-Subject: [PATCH v12 26/27] fs/jbd2: Use a weaker annotation in journal handling
-Date: Wed, 21 Feb 2024 18:49:32 +0900
-Message-Id: <20240221094933.36348-27-byungchul@sk.com>
+Subject: [PATCH v12 27/27] dept: Add 'Dept' documentation
+Date: Wed, 21 Feb 2024 18:49:33 +0900
+Message-Id: <20240221094933.36348-28-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20240221094933.36348-1-byungchul@sk.com>
 References: <20240221094933.36348-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0xTZxjHfd9zzntOC5WTzoSDxmhqdEYD6qLkiSGbX+aOS+ZM/MaySzdO
-	pFmprJWbCYRLtYhAuASqQlxBUzvoQAsGBMq4hEtVoGhlWAEFUSTcNlg7uexSJH558sv/+T3/
-	Tw9HKZuYrZxGd07S69RaFZHT8rngivConifSwUu9QVCYexB8f2XTUF5rJ+CuqUZgr8/AMN31
-	Gfzun0Ww2jdAgbnEjaBifJSC+u4xBE5bJoHHk5vB41sg4Cq5TCDrRi2BwZk1DCOlRRiqHV/A
-	g4JKDG3LUzSYpwmUmbNwYLzBsGytYsGavhsmbNdYWBs/BK6xIQac3v1w9foIgRani4buxgkM
-	j5vKCYzZ/2PgQXcvDe7CPAZ+na8kMOO3UmD1LbDwqM2C4bYxUHRx6V8GevLaMFy8eQeD52kz
-	gtbsFxgc9iECnb5ZDHWOEgpWbnUhmMifY+FC7jILZRn5CC5fKKVh4J8eBowjR2D1bTk5dlTs
-	nF2gRGNdkuj0W2jxfqUg3rs2yorGVi8rWhwJYp1tn3ijZRqLFYs+RnRUXSKiY7GIFXPmPFic
-	7+9nxd4rq7Q46THjU9ui5VExklaTKOkPfPydPLbm1SMq3h+UfL/rN5SOVmQ5SMYJ/GGhtKSd
-	vOf0wSJ2nQn/oTA8vEyt8xZ+p1CX95rJQXKO4k1Bgu2PvncHH/BfCvWuDYnmdwvN3mm8zgo+
-	Uhhv+JndKN0hVN9ue+fIAvkvZbPMOiv5I8KTwbvUhpMlEx5mh29wmNBuG6YLkMKCNlUhpUaX
-	GKfWaA9HxKboNMkRP5yNc6DAR1lT175qRIvu0x2I55AqWBHb4JGUjDrRkBLXgQSOUm1R0EmB
-	SBGjTjkv6c9+q0/QSoYOtI2jVaGKj/xJMUr+jPqc9KMkxUv691vMybamI+4n4+cnJ7Yzx72k
-	2GIq3OUMyQxVFWqrTJ+0762fmcv//u/iowlNhrcRac3PoyPnw/pS/5wcGtcMtLzMcoVGrCQd
-	O3Cr+ps7e55ZQvbklge1nF7aaTaNfpqme505ZE/VTeECU/TUQ3138QjjjTlRbLkSHK6oOfX1
-	plr33pClHhJ+XUUbYtWH9lF6g/p/OE3gK00DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTcRzF+/3uvb87Z4ubSV0qykYWGb4g4wtGVBRdgp5/VESUo245fLbp
-	yqLQXFaWQw1bpZVarKXLbBr20obiY9pj6iwTs7Tn0LSsjebM2or+OXw453D+OhIq4DIzU6JM
-	TBFViYp4OZHS0g3RmaHRzV1ixCuHHPLORoDzxykaim6bCNgqyhGYqjMwOBrXwkvXEALP0+cU
-	6AtsCEr6X1NQ3dSHoNZ4nEDn+ylgd44QsBacIZB57TaB9sFxDL3n8zGUm9dDW24pBov7Ew16
-	B4FCfSb2ymcMbkMZC4b0YBgwXmJhvD8SrH0vGGi4bGWgtmcxXLzSS+BRrZWGpnsDGDofFBHo
-	M/1moK2phQZbXg4Dt4ZLCQy6DBQYnCMsdFiKMVRqvWtZ3ycYaM6xYMi6fgeD/dVDBHWn3mIw
-	m14QaHAOYagyF1AwdqMRwYDuCwsnzrpZKMzQIThz4jwNz381M6DtjQLPzyKyIlpoGBqhBG3V
-	QaHWVUwLraW8cP/Sa1bQ1vWwQrE5VagyhgjXHjmwUDLqZARz2WkimEfzWSH7ix0Lw8+esULL
-	BQ8tvLfr8abZO6TL9orxSo2oCl8eI42t+NBBJbv8D7U2PkbpaMwvG/lJeG4Jn96ez/qYcAv5
-	7m435eNALoivyvnIZCOphOJO+vPGr0+JL5jGbeSrrf9KNBfMP+xxYB/LuKV8f81V9t/oXL68
-	0vK34+f1bxYOMT4O4KL4rva7VC6SFqNJZShQmahJUCjjo8LUcbFpicpDYXuSEszIexrD0fG8
-	e+hH59p6xEmQfLIstsYuBjAKjTotoR7xEkoeKKMPei3ZXkXaYVGVtFuVGi+q69EsCS2fIVu3
-	TYwJ4PYrUsQ4UUwWVf9TLPGbmY6SybEDMR9HXStX9OvwytSk+efcs/T3k1Z7NAnaeUFvDovB
-	Gvg0HD6Y8i2iaF/JV83W3DVbbLYHllWVdaYP05a3VXcuzjqS98aQrJk3RTeYkb3AX7Vol95T
-	gza3TYRO/ZxvDMLKA98ypxrHpm9/NzF7Z0cJ6/9kTpruWEi3hlSkNMlpdawiMoRSqRV/AAj7
-	mKAwAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0yTZxTHfZ73SrX4ppr4Tkw0TRSnUUFBj4aZGW+PRqOJyT64LVrlVRoL
+	aLlZEw1qqaUV4yUFFdQCpnaFTXyLERQMQgCRqKDlogGizKjEIhfXuo46bDF+Ofnl/z/n9+nw
+	lKqamclrU9IlfYpGp2YVtGJwSvGihOYOKSZQo4Bzp2PA94+ZhqKb5Sy0/VWGoLzyOIaBxo3Q
+	5fciGHv8lIICWxuC4te9FFQ29SGodZ5g4fmbSPD4hlhosVlZOFl6k4X2D0EMPfnnMZTJW6H1
+	bAmGusA7GgoGWCgsOIlD4z2GgMPFgSN7LvQ7L3MQfB0LLX2dDNS+XAiXrvawUFPbQkNTVT+G
+	53eLWOgrH2egtekhDW3n8hj482MJCx/8DgocviEOntXZMVQYQyLTp/8ZaM6rw2C6fguD58U9
+	BPfNrzDI5Z0sNPi8GNyyjYL/bjQi6D8zyEHO6QAHhcfPILDm5NPw9EszA8aeeBj7t4j9eRVp
+	8A5RxOjOIrV+O00elYik+nIvR4z3X3LELmcQt3MBKa0ZwKR41McQ2ZXLEnn0PEcsgx5MPj55
+	wpGHF8do8sZTgLdH7VQkJEo6baakX7J6tyLJbsvhDl5JOFz2aYzKRv75FhTBi0Kc+O5EF2tB
+	/AT33tgVjlkhWuzuDlBhni7MEd15bxkLUvCUcGqy6Bx+zIaLacJKsaG7kQkzLcwV3WYbFfYo
+	heXiSNDwTT9bLKuom/BEhOI/Cr0T6yohXuxov02FnaJgjRCDX4LMt4MfxAfObvosUtrRJBdS
+	aVMykzVaXdziJEOK9vDivanJMgo9lONo8NcqNNq2ox4JPFJPUSbd8UgqRpOZZkiuRyJPqacr
+	6axQpEzUGI5I+tRd+gydlFaPonhaPUO51J+VqBL2a9KlA5J0UNJ/bzEfMTMbWa3pOuO63MgX
+	yzrhWK7DZP5pXqTBFF3zi4tq31waG1c1Lm8iK9S/Y8ucuGXT/OmpFZptJRuK46fuyV+zNnl9
+	QsaI9UhFx7PhWzuv7Zv/+ULPYGrr+G8xZmZ0+Me/7V3qjspFs2YsbdZbho9dz66WmY2ZnUf3
+	ZXk/LxyZbDrkitqSqKbTkjSxCyh9muYrda9QDUwDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTcRjG+5/L/xxXi8M0PHShGEplZUZab2jXD3WIjAgqsg866uCW17ay
+	DALzUmZZai0tLTarZWqlm91TlkvnutjMeUnU0qQSV+u2kWmXLejLy8Pvefh9ellSVkpPZVXJ
+	e0V1siJRjiWUZGNk1oJIa4cYVtAdAoUnwsD9PZeCspvVGOw3qhBU1x0mYLhpHXR5nAjGnr8g
+	oVhrR6Af6COhrrkfQX1FJob2ocngcLsw2LTHMWRduomhbWScgN6zRQRUGaPhaUE5AebR9xQU
+	D2MoLc4ivOcDAaOGSgYMGcEwWHGegfGBRWDr76TBcsFGQ33PPDh3sRfDw3obBc13Bwlov1+G
+	ob/6Dw1Pm1sosBfm03D9UzmGEY+BBIPbxcBLs46Ammyv7ci33zRY880EHLlcS4Dj1QMEDblv
+	CDBWd2KwuJ0EmIxaEn5ebUIwePIjAzknRhkoPXwSwfGcsxS8+GWlIbs3AsZ+lOFVkYLF6SKF
+	bNN+od6jo4Qn5bxw73wfI2Q39DCCzrhPMFWECJceDhOC/qubFoyVx7Bg/FrECHkfHYTwqbWV
+	EVpKxihhyFFMbJoeI4naJSaq0kT1whVxEqVOm8OkXog6UPVtjMxAnjl5iGV5Lpzvuxqbh/xY
+	zM3mu7tHSV8O4Gbxpvx3dB6SsCR3dCJf8fk59hX+3DLe0t1E+zLFBfOmXC3p80i5JfyX8XQf
+	5rmZfFWN+Z/Hz4uvlTr/zWVcBN/RdossQBIdmlCJAlTJaUkKVWJEqCZBmZ6sOhC6MyXJiLwv
+	Yzg0XngXfW9f14g4FsknSZV3HKKMVqRp0pMaEc+S8gAptd+LpLsU6QdFdUqsel+iqGlE01hK
+	Hihdv02Mk3Hxir1igiimiur/LcH6Tc1At/ccTIr3hEWx5dH2GF2tNefU0pYdrctbn1Hro+ML
+	uWDnmgHuypTw0BlKw7z78wNjUiKCFk/yo3dbA7Uul/6aJXBD0Gv/npIZNtPcrCsjAz+3rDwz
+	f1rDlu2bM1eTRTsrgx6/HXqvV5q/RIfiTP3prV11a2NluCShJffBoyZ7nP8POaVRKhaFkGqN
+	4i+4H0qqLgMAAA==
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -132,42 +132,303 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-jbd2 journal handling code doesn't want jbd2_might_wait_for_commit()
-to be placed between start_this_handle() and stop_this_handle(). So it
-marks the region with rwsem_acquire_read() and rwsem_release().
-
-However, the annotation is too strong for that purpose. We don't have to
-use more than try lock annotation for that.
-
-rwsem_acquire_read() implies:
-
-   1. might be a waiter on contention of the lock.
-   2. enter to the critical section of the lock.
-
-All we need in here is to act 2, not 1. So trylock version of annotation
-is sufficient for that purpose. Now that dept partially relies on
-lockdep annotaions, dept interpets rwsem_acquire_read() as a potential
-wait and might report a deadlock by the wait. So replaced it with
-trylock version of annotation.
+This document describes the concept of Dept.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- fs/jbd2/transaction.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/dependency/dept.txt | 283 ++++++++++++++++++++++++++++++
+ 1 file changed, 283 insertions(+)
+ create mode 100644 Documentation/dependency/dept.txt
 
-diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
-index 5f08b5fd105a..2c159a547e15 100644
---- a/fs/jbd2/transaction.c
-+++ b/fs/jbd2/transaction.c
-@@ -460,7 +460,7 @@ static int start_this_handle(journal_t *journal, handle_t *handle,
- 	read_unlock(&journal->j_state_lock);
- 	current->journal_info = handle;
- 
--	rwsem_acquire_read(&journal->j_trans_commit_map, 0, 0, _THIS_IP_);
-+	rwsem_acquire_read(&journal->j_trans_commit_map, 0, 1, _THIS_IP_);
- 	jbd2_journal_free_transaction(new_transaction);
- 	/*
- 	 * Ensure that no allocations done while the transaction is open are
+diff --git a/Documentation/dependency/dept.txt b/Documentation/dependency/dept.txt
+new file mode 100644
+index 000000000000..7efe3bc59b2d
+--- /dev/null
++++ b/Documentation/dependency/dept.txt
+@@ -0,0 +1,283 @@
++DEPT(DEPendency Tracker)
++========================
++
++Started by Byungchul Park <max.byungchul.park@sk.com>
++
++How lockdep works
++-----------------
++
++Lockdep tries to detect a deadlock by checking lock acquisition order.
++For example, consider a graph built by lockdep like:
++
++   A -> B -
++           \
++            -> E
++           /
++   C -> D -
++
++   where 'A -> B' means that acquisition A is prior to acquisition B
++   with A still held.
++
++Lockdep keeps adding each new acquisition order into the graph in
++runtime. For example, 'E -> C' will be added when it's recognized that
++the two locks have been acquired in that order like:
++
++       A -> B -
++               \
++                -> E -
++               /      \
++    -> C -> D -        \
++   /                   /
++   \                  /
++    ------------------
++
++   where 'A -> B' means that acquisition A is prior to acquisition B
++   with A still held.
++
++This graph contains a subgraph that demonstrates a loop like:
++
++                -> E -
++               /      \
++    -> C -> D -        \
++   /                   /
++   \                  /
++    ------------------
++
++   where 'A -> B' means that acquisition A is prior to acquisition B
++   with A still held.
++
++Lockdep reports it as a deadlock on detection of a loop.
++
++CONCLUSION
++
++Lockdep detects a deadlock by checking if a loop has been created after
++expanding the graph.
++
++
++Limitation of lockdep
++---------------------
++
++Lockdep works on typical lock e.g. spinlock and mutex, that are supposed
++to be released within the acquisition context. However, a deadlock by
++folio lock or other synchronization mechanisms cannot be detected by
++lockdep that basically tracks lock acquisition order.
++
++Can we detect the following deadlock?
++
++   CONTEXT X	   CONTEXT Y	   CONTEXT Z
++
++		   mutex_lock A
++   folio_lock B
++		   folio_lock B
++				   mutex_lock A /* DEADLOCK */
++				   folio_unlock B
++		   folio_unlock B
++		   mutex_unlock A
++				   mutex_unlock A
++
++No, we can't. What about the following?
++
++   CONTEXT X		   CONTEXT Y
++
++			   mutex_lock A
++   mutex_lock A
++			   wait_for_complete B /* DEADLOCK */
++   complete B
++			   mutex_unlock A
++   mutex_unlock A
++
++No, we can't.
++
++CONCLUSION
++
++Given the limitation, lockdep cannot detect a deadlock by folio lock or
++other synchronization mechanisms.
++
++
++What leads a deadlock
++---------------------
++
++A deadlock occurs when one or multi contexts are waiting for events that
++will never happen. For example:
++
++   CONTEXT X	   CONTEXT Y	   CONTEXT Z
++
++   |		   |		   |
++   v		   |		   |
++   (1) wait for A  v		   |
++   .		   (2) wait for C  v
++   event C	   .		   (3) wait for B
++		   event B	   .
++				   event A
++
++Event C cannot be triggered because context X is stuck at (1), event B
++cannot be triggered because context Y is stuck at (2), and event A
++cannot be triggered because context Z is stuck at (3). All the contexts
++are stuck. We call the situation a *deadlock*.
++
++If an event occurrence is a prerequisite to reaching another event, we
++call it *dependency*. In the example above:
++
++   Event A occurrence is a prerequisite to reaching event C.
++   Event C occurrence is a prerequisite to reaching event B.
++   Event B occurrence is a prerequisite to reaching event A.
++
++In terms of dependency:
++
++   Event C depends on event A.
++   Event B depends on event C.
++   Event A depends on event B.
++
++Dependencies in a graph look like:
++
++    -> C -> A -> B -
++   /                \
++   \                /
++    ----------------
++
++   where 'A -> B' means that event A depends on event B.
++
++A circular dependency exists. Such a circular dependency leads a
++deadlock since no waiters can have desired events triggered.
++
++CONCLUSION
++
++A circular dependency leads a deadlock.
++
++
++Introduce DEPT
++--------------
++
++DEPT(DEPendency Tracker) tracks wait and event instead of lock
++acquisition order so as to recognize the following situation:
++
++   CONTEXT X	   CONTEXT Y	   CONTEXT Z
++
++   |		   |		   |
++   v		   |		   |
++   wait for A	   v		   |
++   .		   wait for C	   v
++   event C	   .		   wait for B
++		   event B	   .
++				   event A
++
++and builds up a dependency graph in runtime, similar to lockdep. The
++graph would look like:
++
++    -> C -> A -> B -
++   /                \
++   \                /
++    ----------------
++
++   where 'A -> B' means that event A depends on event B.
++
++DEPT keeps adding each new dependency into the graph in runtime. For
++example, 'B -> D' will be added when it's recognized that event D
++occurrence is a prerequisite to reaching event B, in other words, event
++B depends on event D like:
++
++   |
++   v
++   wait for D
++   .
++   event B
++
++After adding 'B -> D' dependency into the graph, the graph would look
++like:
++
++                     -> D
++                    /
++    -> C -> A -> B -
++   /                \
++   \                /
++    ----------------
++
++   where 'A -> B' means that event A depends on event B.
++
++DEPT is going to report a deadlock on detection of a new loop.
++
++CONCLUSION
++
++DEPT works on wait and event so as to theoretically detect all the
++potential deadlocks.
++
++
++How DEPT works
++--------------
++
++Let's take a look how DEPT works with an example that was mentioned in
++the section 'Limitation of lockdep'.
++
++   CONTEXT X	   CONTEXT Y	   CONTEXT Z
++
++		   mutex_lock A
++   folio_lock B
++		   folio_lock B
++				   mutex_lock A /* DEADLOCK */
++				   folio_unlock B
++		   folio_unlock B
++		   mutex_unlock A
++				   mutex_unlock A
++
++Add comments to describe DEPT's view using terms of wait and event.
++
++   CONTEXT X	   CONTEXT Y	   CONTEXT Z
++
++		   mutex_lock A
++		   /* start to take into account event A context */
++   folio_lock B
++   /* start to take into account event B context */
++
++		   folio_lock B
++		   /* wait for B */
++		   (1)
++				   mutex_lock A /* DEADLOCK */
++				   /* wait for A */
++				   (2)
++
++				   folio_unlock B
++				   /* event B */
++		   folio_unlock B
++		   /* not interest until reaching (1) */
++
++		   mutex_unlock A
++		   /* event A */
++				   mutex_unlock A
++				   /* not interest until reaching (2) */
++
++Focusing on wait and event, the example can be simplified like:
++
++   CONTEXT X	   CONTEXT Y	   CONTEXT Z
++
++		   |		   |
++		   |		   |
++		   v		   |
++		   wait for B	   v
++		   .		   wait for A
++		   .		   .
++		   .		   event B
++		   event A
++
++Event A occurrence is a prerequisite to reaching event B, and event B
++occurrence is a prerequisite to reaching event A.
++
++In terms of dependency:
++
++   Event B depends on event A.
++   Event A depends on event B.
++
++Dependencies in the dependency graph look like:
++
++    -> A -> B -
++   /           \
++   \           /
++    -----------
++
++   where 'A -> B' means that event A depends on event B.
++
++A loop has been created. So DEPT can report it as a deadlock.
++
++CONCLUSION
++
++DEPT works well with any synchronization mechanisms by focusing on wait
++and event.
 -- 
 2.17.1
 
