@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-12388-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12389-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71B8185EB00
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 22:36:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED93185EB10
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 22:37:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BF7328A004
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 21:36:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8DC428B236
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 21:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB1F128385;
-	Wed, 21 Feb 2024 21:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946F112E1D6;
+	Wed, 21 Feb 2024 21:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="twlEEf1y"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="TvKM5Qjm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6FB127B63
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 21:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CD512DDA5
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 21:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708550773; cv=none; b=ssnm74bJ5oFbatQOAbUl/ZdVxKxv1N3XQz+4BpWKsmhABRLLb9ics5PjLfg6Ka94IjM4aagmdLIHeSMQMAMJX7zXUerf4mdjNIySgC7WWx7fJwL3z2GLmjUF8gM0X0ZOWaMwEty8ctgL1IgaBar6lsAXHldN/9L75kTiRcvW9gI=
+	t=1708551079; cv=none; b=M+wW95KbchxGjvUPanonNPnkfTlaZ8ctWHM0+QXkex7rszSc75CG0ApY/QclfP4ZdjlokIqL1nbwiucjdHHH9Gjn1LEWbSPWVAlSxR1l6GnyGBog/GgqfLjgfYpqbAqXVm5DwfloqYwu08uskfOfIYpHytSHjq87kOsvbhzZ9pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708550773; c=relaxed/simple;
-	bh=1oEaHzezRAll9SQ0JkGYVz7chMh/UI28PlbGaomS6oA=;
+	s=arc-20240116; t=1708551079; c=relaxed/simple;
+	bh=gFsioKErNguGb0UXfpCehO3mOIaCj+gYffuxZggc6lc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NpHjlrdPm9C2xt5ASgwStSAtfeTXiTlAppUeb9zYyJhc+i+FJESn6sWThLSd77mkQQrGDE5x8UD3jvVnqJbMbRNrKFjMEqB4wgkcIF9AOl+AhUJo3ociulTqImtzf8jxfdkejJ6/EDKekBbSyrTjiA4g7LzTAA6Kx0oIqprIDR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=twlEEf1y; arc=none smtp.client-ip=209.85.167.180
+	 To:Cc:Content-Type; b=G4bxjdRhUaUcvQHYAAoZNu4qacuQVjN+giKaIfILccqatokikYydYkHzZJxeMUyafKUtFaLfZYEp6KTPNzR5U0AvBDuyzECC6sWwt1yEBr2q7bwScmfaAt8OXVjTgRzZrddAhXER+cmr16ppWEGocJETlcNp1UIB4xBn1YainaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=TvKM5Qjm; arc=none smtp.client-ip=209.85.160.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-3c15dd2a1fdso2682681b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 13:26:10 -0800 (PST)
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-42e323a2e39so1644651cf.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 13:31:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708550770; x=1709155570; darn=vger.kernel.org;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708551076; x=1709155876; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1oEaHzezRAll9SQ0JkGYVz7chMh/UI28PlbGaomS6oA=;
-        b=twlEEf1yUUSQY4M7jcQpxVobd+dWC5ezggwrEwNE60AZ8QeMObLxP14XTPx38VQ2eQ
-         TyrB4dnaVh7ipn13+vKwt6sJKS491Skg4KAMlL9NyxSI8HytAsFXSzZSk+umh+bpebcW
-         YHwErdKYko8+z7QnDr0g9jOg0w3y7Juvk+0CXSSikE8fwrDLZhKCz4YDBKFAX8UfBeYy
-         jUTHfw76ke8UM5rMB3x0u8xRuKsnecR7d8tvj0OaUwXWM9ceEuSwr94Fi6j2NKkbOyG0
-         vuocKoz75fJUtkV5Hsf7vnXoE01wfziYx61d427gMjkLIq2cHgMjI++ZqF99CfNbPmnQ
-         VnhQ==
+        bh=gFsioKErNguGb0UXfpCehO3mOIaCj+gYffuxZggc6lc=;
+        b=TvKM5QjmE9xrfDQJ0zweQnLEld1ypTjdep3yzcgaY30WwpzHdpmS5OdggDnbCVaKgl
+         1JI/zHkJI7W6/zh4E+3JMqzlHbFQqqjxdhIdIhzoFfy9vEkG0Ut4sFjJAWQIxQfVcLLI
+         ugE17rbvStlLf4KlWm7GZ4w0Y23sSuKIgk/Gp0ewW1tpB1IW3EUUNBOK2S0IvZMhQBAV
+         Fljy92n/Wd4jpdvCPDYvSWZFTUCreb0Gt1ia9PFfu8yiO4DmpffOnJASQG1dxoO8YQMc
+         KUK3XFt3/8JyqXNqZ/Q+U1IaLjSKpwN+bGASvPMOF6g+KRYRa0s4joCrPuQI+G3jREI1
+         +i+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708550770; x=1709155570;
+        d=1e100.net; s=20230601; t=1708551076; x=1709155876;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1oEaHzezRAll9SQ0JkGYVz7chMh/UI28PlbGaomS6oA=;
-        b=E8XAOJmwavtJKfhR0tweSjQClkTzmni9zJetWAiA5OOKaF9zYX0F9E2TA11pHHeQyE
-         l6U2q3nKPd14B+xrwKwQ68H58WxeFoCMaAyfO+WtcwEA665oLO+/8VunuGVY3Li1SVpo
-         DNtuLWiOTyooZlL4btgVAd8SEBMR87+r+nvEqICHVM+eJhFNBQBF3BXdXUku/nhzlvDs
-         M3qhDWpOy/CHJHWT6ri7IuhueWUEY0BaRRJAgxrOQ3gLQbBJzQ2850/r0OY//D77J+dm
-         YtkyZlcYUB5COwZkcxoQe1wWcfYa/ebDLrmNoTmkJSIUEDreoJ4DU7AOJeeYR/+0BYrz
-         MNDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVokY3JrCP/QxIE6hPNdluxGnO2Zq4xNprFEtB7ktyBvI4mBG/zQ3tIz9ae9ZgKy9AL0zGzovEC9G2RMbJq8+q6dABKEfM0S6qCMOVbvA==
-X-Gm-Message-State: AOJu0Yxg/HQu+lKWN/L0GoJkii7NC3/GMqCPbDlcP4nhEi88pnG/jGKE
-	81IroACTEuH4HQ7mg0Ox5NU8AgzligHTGHdoQEX62wmYwMyI11FIkYfb+k9bLWkaTM5kwjBwZYn
-	SchXpk90cERxc3ZTug/shialwuMm3H3gLdVhdhg==
-X-Google-Smtp-Source: AGHT+IFZSNXNYlAy0AiXEzXx4upknBW0nGNBljw/bbiwmtTqAeSgHzhF6z+ApQTHTR9DUqPj2ju2fMwMSbPw53G4Luo=
-X-Received: by 2002:a05:6808:1208:b0:3c0:3d12:2002 with SMTP id
- a8-20020a056808120800b003c03d122002mr24802049oil.13.1708550769929; Wed, 21
- Feb 2024 13:26:09 -0800 (PST)
+        bh=gFsioKErNguGb0UXfpCehO3mOIaCj+gYffuxZggc6lc=;
+        b=iSGkJeIm3PQ7JUotHOf638qtWvf9Ftow5fFMsEL2Xn5BFSg3yIB63OOv5O2WpdNH+w
+         LifTx2+YaVN8tMbvwjicQIJuIy7QGoNXxCVstjrMu+cjfseTONdb1ucYF9cJXwLIPfB6
+         w/qyOLMFqz5NQzPPzSO3RrV/wLhxZAn2JWUFatd40+Xg6WTpR9fgH7Ed7TIq//QOXB5/
+         vPR4OUOPx9uqUl02+b37dCh6Y27IW7PWrGcohqA+JZ8XiFTOcNXnivPyMwUl5mKk4Uuc
+         AIkxauECKU36M1Bnke9XygZY/I+NWJcw59uTCpjRDKIHloOlDWdIZ0JDgKgF8vo0aLCL
+         YywA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5oLOMt27+A01yTWM1LIc59FzZ1bRNgrfS1Zr52tS96/asl3ugsEs7bZRG6rYdFW32w0kUwGnFXqXeli8IzngWvEZddAgFRNAxlTFiDA==
+X-Gm-Message-State: AOJu0Yz+Z2F5+wffdeMCTk+L3V/I8bIp0F3muIqslCL8I4YVuSqQIw65
+	ynx1DaUJ0IxMZROwvBjqqQlHoqlDEYAjOlFP0IQdW0efk2Pm5jqPoOrfDPaAkHFzYOPGjg5dMSA
+	GwGvir9OCn57KsCxocgVwGpi1hrGzL+lfuX8UIw==
+X-Google-Smtp-Source: AGHT+IFO5Z7BsmHAefImdCXlOf9v/A1DymY9rKzrFG6F8X6fIh9MpYHyGC/yHJX92pP0BH/FzDecR0AIIxui9aAjnNM=
+X-Received: by 2002:ac8:570f:0:b0:42c:78fd:e4fa with SMTP id
+ 15-20020ac8570f000000b0042c78fde4famr1316065qtw.32.1708551075946; Wed, 21 Feb
+ 2024 13:31:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240221194052.927623-1-surenb@google.com> <20240221194052.927623-7-surenb@google.com>
-In-Reply-To: <20240221194052.927623-7-surenb@google.com>
+References: <20240221194052.927623-1-surenb@google.com> <20240221194052.927623-8-surenb@google.com>
+In-Reply-To: <20240221194052.927623-8-surenb@google.com>
 From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Wed, 21 Feb 2024 16:25:33 -0500
-Message-ID: <CA+CK2bDX7v8+NHi2ioxQ4KF+vBYA0JhR3=Sj6ZxBS0jD7i2Gmw@mail.gmail.com>
-Subject: Re: [PATCH v4 06/36] mm: enumerate all gfp flags
+Date: Wed, 21 Feb 2024 16:30:39 -0500
+Message-ID: <CA+CK2bDOiV8xwig1pDdTVjkO4KhK+jJ0wXAtNon1ZXQGviih4A@mail.gmail.com>
+Subject: Re: [PATCH v4 07/36] mm: introduce slabobj_ext to support slab object extensions
 To: Suren Baghdasaryan <surenb@google.com>
 Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
 	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
@@ -101,20 +101,20 @@ Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
 	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
 	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
 	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
-	cgroups@vger.kernel.org, =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <petr@tesarici.cz>
+	cgroups@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 On Wed, Feb 21, 2024 at 2:41=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
 om> wrote:
 >
-> Introduce GFP bits enumeration to let compiler track the number of used
-> bits (which depends on the config options) instead of hardcoding them.
-> That simplifies __GFP_BITS_SHIFT calculation.
+> Currently slab pages can store only vectors of obj_cgroup pointers in
+> page->memcg_data. Introduce slabobj_ext structure to allow more data
+> to be stored for each slab object. Wrap obj_cgroup into slabobj_ext
+> to support current functionality while allowing to extend slabobj_ext
+> in the future.
 >
-> Suggested-by: Petr Tesa=C5=99=C3=ADk <petr@tesarici.cz>
 > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
 
 Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
