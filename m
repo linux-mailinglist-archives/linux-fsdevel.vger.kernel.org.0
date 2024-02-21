@@ -1,167 +1,406 @@
-Return-Path: <linux-fsdevel+bounces-12396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A678385ED53
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 00:44:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C67E285ED5D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 00:48:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B429B20F55
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 23:44:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D069B21D51
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 23:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507D112D779;
-	Wed, 21 Feb 2024 23:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1ED12C802;
+	Wed, 21 Feb 2024 23:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DMYN6N90"
+	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="JHjUbj8x";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="C9EycoJr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from wout4-smtp.messagingengine.com (wout4-smtp.messagingengine.com [64.147.123.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FF712B170
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 23:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534BAA35
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 23:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708559037; cv=none; b=GI65JadDVZEHTR7ZkpLd5BIEgofQ4jWrifA5xmNP6T3C65sPs1DzTaqFjQZLP3hriaugkREU8SzObNwBhRGrde6YPoadEYUXYMSpd3OZPB0QJsQPvduz/bHe5vz4rTc4E5vmuIesb/y5DuqmpdgsRIXFjGTm93OqXG71MK740lQ=
+	t=1708559308; cv=none; b=sv/HMKKbplGbJbSVhmwnXi5duH0k9dLDcd8F1ngAy25qaW6qtbS3Z6m5D+GQ4CXvuxqbwrZ6Bz11yyt3Wr5MNtlmNyxlY/boU/PzvPsnjV+73zsfHar32sCqdSFD9+3GsiJHEzRxJjuc/7wIjrWxOult4lcNM9tjgKHf56KLq04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708559037; c=relaxed/simple;
-	bh=jXUi7DaHH/tYkfvmdZwdL5O6ldHOILbUbl8SwoK93vk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rdVik8P8vUeda72Lne9ccyQM6mRWuEL9320JBFdOe974boAWLTOtv6k02K9nx0HH6o+L1pg/pxEdXF0ks+kixWvPRsC6tpK9o8srC+G7AjoIKWmh/oyd6keT6m9oMOB9sj218+oABgl69EAZAEYR5qzYpWUdrRr8LA4O+ipmG70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DMYN6N90; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dcc73148611so8238595276.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 15:43:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1708559034; x=1709163834; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ozpdHgEMJtLxc8z0f/xCObDDvWnU+f1l4TdamibeEB0=;
-        b=DMYN6N90YpElzCrVcquPcjL+68ZSO5M7iyX1Ysv42qTiwp/rotMVr8o6Mewie3EVWH
-         6VkCYIDs9OZsceV8eT/715SqP5vipSQq8BJm53ev7Jak8bqLfejNRGC60ZEdngFaBjHD
-         yR2Xa+KweEdyCQ1U/IYiFUyc+gff3XevcnQRwIclqaZGPbO7+Gyh/N2bDhHANboRBTfA
-         F/SqCwaEdM3e7maAwCzEolx3GWicHLwuXvWGnzGIKmfCUrRrES38YR7gNI3H2wQklfPE
-         31p2G69/JMdWuV0Uo5dNqkjAX0N7C3gMXqT723vE4AIFKOiqlqkWwlveEk0rhSpt0vd3
-         esLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708559034; x=1709163834;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ozpdHgEMJtLxc8z0f/xCObDDvWnU+f1l4TdamibeEB0=;
-        b=sqL3jv3/TTiYViuUZH+0L5EBa20S3yU3pHv1/4kaY9Vqx+FlL99lOirFnuKQCsrexm
-         unnMFz7zofCJKBz855K8jl8c2mLtS7bQsBEwQ2hZ5CylSoOpJ9Byv5+zG0KHzN+VngJM
-         ojzdei4EjUvRsfD2esH29RM5rfOpyEibvY5YPHWOYAmiJuUTfv5hTMfUlX6uACZWism9
-         7MvnLqGCyvaomPpproLVdhvjh231golk5MRhOKAD+cLocwMnCFybCmdkIO0Js6/VZPMl
-         xliFhvrkKp/To4iSeic7Edcat5ig3k3wCXNpnenkUd8IC662D8Po5jxdswXNb+7lXZEP
-         r7kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV13GPMqAyIwmtyb0k1lovLcGyKAFGRJmZ9IHQ1c6z8LXU3s10Yawud0/buweDzcAOMBx5/NPyeAjqh0C3/DaUmeQk4q5BF36+6IVZczA==
-X-Gm-Message-State: AOJu0Yy7x85cQszltShCRjKGsnvH76/arSK1ugs60C+ODXeT/0PnWfo2
-	zn/m61iLlbyTjQ0npjkayo9K7r0xTvXWWvCT4ctPv6TVnrNy1trEC6gxsyf6K0EHCmsYYzs5LAB
-	7VQwlRuQwVxgmRkEgMClsvqGE2kkm50AUWRcW
-X-Google-Smtp-Source: AGHT+IGHrH5g+9KgtuY77JnAmJfeyj21kEZdzhwPpy55HJt0kZAi28H0jeAtPv8SyPEbdcHCUbHgVHOylR1JMSl3Amo=
-X-Received: by 2002:a25:a285:0:b0:dc6:db0c:4ff0 with SMTP id
- c5-20020a25a285000000b00dc6db0c4ff0mr912234ybi.32.1708559033944; Wed, 21 Feb
- 2024 15:43:53 -0800 (PST)
+	s=arc-20240116; t=1708559308; c=relaxed/simple;
+	bh=0tO+2Ld+AS3h4b/shAYfoCBnYOnGPctpuWep6gmzmic=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nxleN3yMBQhwmG4FZQLsNToEb1fyljJl5zafZT/GIHnDAzv04tubnSQkyyWEfWEtpstsUqHXjt/9XuRgWpwuJbA9J7IRvLApWF1o+x8xaDAxAOdzd0Al18Ht7f9XgK+Jrcul+2XYfL1UrZiVoKrgPtDHqgv/u3um+/CqdtIxm+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net; spf=none smtp.mailfrom=themaw.net; dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b=JHjUbj8x; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=C9EycoJr; arc=none smtp.client-ip=64.147.123.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=themaw.net
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailout.west.internal (Postfix) with ESMTP id E740E3200B36;
+	Wed, 21 Feb 2024 18:48:23 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Wed, 21 Feb 2024 18:48:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1708559303;
+	 x=1708645703; bh=KzG5RHyHAxqqbL5cy3CC9mfUP+0W7mDbbj7xVmk4J8w=; b=
+	JHjUbj8xqdsKMohAGZSVSGoVoIrEOWb0MSaBtCq0bTr2O1jdeCLpLjs4rSixzi8c
+	LbR76c0UoCnyuhf18L6KazCq9Wcj3IAfHaBOMTC1ZCL+KgQxta0dv5guSefgsjDU
+	xiUDoQ6lCLmJ5VNGgn2mfT76tguOV9YWZqafmFJgp1xMTnslkvPiIq3uMKl0LAi5
+	/M5qALysaJ9azJCDTSmyOOV5Z/X4+ydUa72PrcHM7cZbG1rIxACgQMtKU1fmHYX5
+	4tRZJt2Tko/hTqRP6itBLRxlF6lBNNRBR3nEnbrleBxafuCCvD/igbb5PnAWvliY
+	JrSURyh+u4IPdjWO1PGgVA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1708559303; x=
+	1708645703; bh=KzG5RHyHAxqqbL5cy3CC9mfUP+0W7mDbbj7xVmk4J8w=; b=C
+	9EycoJrMSICvfw/yawVtkV3xK4Ep1RMO92VpMPuDez56L09RZ+b7lUE40+elBDOd
+	R4xJLPwzlZqhTfMWJ+bE3fzVunFGWJiTVZNH1+zUBa4iBBLjPZbXYzGf3wMBDCpw
+	anNDxW04MW/zF3HuGBksPbo5aW1FtHWFyaxWoSippcnc+zlqffBgRpBWvoYG8Pkq
+	cg/wAy9xiq3WiVAHNU3Gw4GhbCv3WvktCuY1argSZXdZvPi9cJamm8+zb7MU8O3W
+	fCSfRfSiTrnqWEum+KqxcsIA2Yc6sWKGK8NiVtFUuqO5aSNsyHin65uZHrcaL5/C
+	cYMyKiQtKsyw+aOiySKiQ==
+X-ME-Sender: <xms:x4vWZYC7PIVfm9CiFOP71xjUpTSOi8yiDYew0FsezGMfkIotkwnHPQ>
+    <xme:x4vWZajxRm2UKtFcODmS6Gvh8G8tIWhip26fNUJnHy5tBAF3naa5mzb6Zg5NT3erS
+    2SXo0j_5y9R>
+X-ME-Received: <xmr:x4vWZbkskrLERZwoj189oSK5C1iArHKHTaIIz0sWMTUuZBjMjtA_gvzq4808zeYT9U4iQuil_jCw1XTmxtTlMt5Zyu4ft_IwAIsNo-3DwGQPVoEytihXWCd8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefgddugecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddvjeenucfhrhhomhepkfgrnhcu
+    mfgvnhhtuceorhgrvhgvnhesthhhvghmrgifrdhnvghtqeenucggtffrrghtthgvrhhnpe
+    eigffgveffvdejtdetuddtfeehhefgjeeiudeuffevleeufeefueffudffvdekveenucff
+    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheprhgrvhgvnhesthhhvghmrgifrdhnvght
+X-ME-Proxy: <xmx:x4vWZeys2knmtXzUZxQhl_AxmpAwDKyeUCSM9fLq_06XEtgFOFcWdA>
+    <xmx:x4vWZdRsSzcQZx2qjUCc1qCref3BDRYGn32riU9tR4pj4MK8zUPYpg>
+    <xmx:x4vWZZZqOvvf0IEGHvbisKN5mknCCuQi0AWmrt-dkSvKgGzt2SV98A>
+    <xmx:x4vWZfdMESKc2ZETCn4T2_ST96oQJ91Tc6bFTyOlf9wDLp3shsjVZA>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 21 Feb 2024 18:48:20 -0500 (EST)
+Message-ID: <8c576360-692d-4395-8877-4444674c31e6@themaw.net>
+Date: Thu, 22 Feb 2024 07:48:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org> <20240221-idmap-fscap-refactor-v2-15-3039364623bd@kernel.org>
-In-Reply-To: <20240221-idmap-fscap-refactor-v2-15-3039364623bd@kernel.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 21 Feb 2024 18:43:43 -0500
-Message-ID: <CAHC9VhRQ7Xa2_rAjKYA_nkpmfUd9jn2D0SNcb6SjQFg=k8rn=w@mail.gmail.com>
-Subject: Re: [PATCH v2 15/25] security: call evm fscaps hooks from generic
- security hooks
-To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, Eric Paris <eparis@redhat.com>, 
-	James Morris <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] Convert coda to use the new mount API
+Content-Language: en-US
+To: Eric Sandeen <sandeen@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>, Jan Harkes <jaharkes@cs.cmu.edu>,
+ Bill O'Donnell <billodo@redhat.com>, Christian Brauner <brauner@kernel.org>
+References: <2d1374cc-6b52-49ff-97d5-670709f54eae@redhat.com>
+ <97650eeb-94c7-4041-b58c-90e81e76b699@redhat.com>
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net;
+ keydata= xsFNBE6c/ycBEADdYbAI5BKjE+yw+dOE+xucCEYiGyRhOI9JiZLUBh+PDz8cDnNxcCspH44o
+ E7oTH0XPn9f7Zh0TkXWA8G6BZVCNifG7mM9K8Ecp3NheQYCk488ucSV/dz6DJ8BqX4psd4TI
+ gpcs2iDQlg5CmuXDhc5z1ztNubv8hElSlFX/4l/U18OfrdTbbcjF/fivBkzkVobtltiL+msN
+ bDq5S0K2KOxRxuXGaDShvfbz6DnajoVLEkNgEnGpSLxQNlJXdQBTE509MA30Q2aGk6oqHBQv
+ zxjVyOu+WLGPSj7hF8SdYOjizVKIARGJzDy8qT4v/TLdVqPa2d0rx7DFvBRzOqYQL13/Zvie
+ kuGbj3XvFibVt2ecS87WCJ/nlQxCa0KjGy0eb3i4XObtcU23fnd0ieZsQs4uDhZgzYB8LNud
+ WXx9/Q0qsWfvZw7hEdPdPRBmwRmt2O1fbfk5CQN1EtNgS372PbOjQHaIV6n+QQP2ELIa3X5Z
+ RnyaXyzwaCt6ETUHTslEaR9nOG6N3sIohIwlIywGK6WQmRBPyz5X1oF2Ld9E0crlaZYFPMRH
+ hQtFxdycIBpTlc59g7uIXzwRx65HJcyBflj72YoTzwchN6Wf2rKq9xmtkV2Eihwo8WH3XkL9
+ cjVKjg8rKRmqIMSRCpqFBWJpT1FzecQ8EMV0fk18Q5MLj441yQARAQABzRtJYW4gS2VudCA8
+ cmF2ZW5AdGhlbWF3Lm5ldD7CwXsEEwECACUCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheA
+ BQJOnjOcAhkBAAoJEOdnc4D1T9iphrYQALHK3J5rjzy4qPiLJ0EE9eJkyV1rqtzct5Ah9pu6
+ LSkqxgQCfN3NmKOoj+TpbXGagg28qTGjkFvJSlpNY7zAj+fA11UVCxERgQBOJcPrbgaeYZua
+ E4ST+w/inOdatNZRnNWGugqvez80QGuxFRQl1ttMaky7VxgwNTXcFNjClW3ifdD75gHlrU0V
+ ZUULa1a0UVip0rNc7mFUKxhEUk+8NhowRZUk0nt1JUwezlyIYPysaN7ToVeYE4W0VgpWczmA
+ tHtkRGIAgwL7DCNNJ6a+H50FEsyixmyr/pMuNswWbr3+d2MiJ1IYreZLhkGfNq9nG/+YK/0L
+ Q2/OkIsz8bOrkYLTw8WwzfTz2RXV1N2NtsMKB/APMcuuodkSI5bzzgyu1cDrGLz43faFFmB9
+ xAmKjibRLk6ChbmrZhuCYL0nn+RkL036jMLw5F1xiu2ltEgK2/gNJhm29iBhvScUKOqUnbPw
+ DSMZ2NipMqj7Xy3hjw1CStEy3pCXp8/muaB8KRnf92VvjO79VEls29KuX6rz32bcBM4qxsVn
+ cOqyghSE69H3q4SY7EbhdIfacUSEUV+m/pZK5gnJIl6n1Rh6u0MFXWttvu0j9JEl92Ayj8u8
+ J/tYvFMpag3nTeC3I+arPSKpeWDX08oisrEp0Yw15r+6jbPjZNz7LvrYZ2fa3Am6KRn0zsFN
+ BE6c/ycBEADZzcb88XlSiooYoEt3vuGkYoSkz7potX864MSNGekek1cwUrXeUdHUlw5zwPoC
+ 4H5JF7D8q7lYoelBYJ+Mf0vdLzJLbbEtN5+v+s2UEbkDlnUQS1yRo1LxyNhJiXsQVr7WVA/c
+ 8qcDWUYX7q/4Ckg77UO4l/eHCWNnHu7GkvKLVEgRjKPKroIEnjI0HMK3f6ABDReoc741RF5X
+ X3qwmCgKZx0AkLjObXE3W769dtbNbWmW0lgFKe6dxlYrlZbq25Aubhcu2qTdQ/okx6uQ41+v
+ QDxgYtocsT/CG1u0PpbtMeIm3mVQRXmjDFKjKAx9WOX/BHpk7VEtsNQUEp1lZo6hH7jeo5me
+ CYFzgIbXdsMA9TjpzPpiWK9GetbD5KhnDId4ANMrWPNuGC/uPHDjtEJyf0cwknsRFLhL4/NJ
+ KvqAuiXQ57x6qxrkuuinBQ3S9RR3JY7R7c3rqpWyaTuNNGPkIrRNyePky/ZTgTMA5of8Wioy
+ z06XNhr6mG5xT+MHztKAQddV3xFy9f3Jrvtd6UvFbQPwG7Lv+/UztY5vPAzp7aJGz2pDbb0Q
+ BC9u1mrHICB4awPlja/ljn+uuIb8Ow3jSy+Sx58VFEK7ctIOULdmnHXMFEihnOZO3NlNa6q+
+ XZOK7J00Ne6y0IBAaNTM+xMF+JRc7Gx6bChES9vxMyMbXwARAQABwsFfBBgBAgAJBQJOnP8n
+ AhsMAAoJEOdnc4D1T9iphf4QAJuR1jVyLLSkBDOPCa3ejvEqp4H5QUogl1ASkEboMiWcQJQd
+ LaH6zHNySMnsN6g/UVhuviANBxtW2DFfANPiydox85CdH71gLkcOE1J7J6Fnxgjpc1Dq5kxh
+ imBSqa2hlsKUt3MLXbjEYL5OTSV2RtNP04KwlGS/xMfNwQf2O2aJoC4mSs4OeZwsHJFVF8rK
+ XDvL/NzMCnysWCwjVIDhHBBIOC3mecYtXrasv9nl77LgffyyaAAQZz7yZcvn8puj9jH9h+mr
+ L02W+gd+Sh6Grvo5Kk4ngzfT/FtscVGv9zFWxfyoQHRyuhk0SOsoTNYN8XIWhosp9GViyDtE
+ FXmrhiazz7XHc32u+o9+WugpTBZktYpORxLVwf9h1PY7CPDNX4EaIO64oyy9O3/huhOTOGha
+ nVvqlYHyEYCFY7pIfaSNhgZs2aV0oP13XV6PGb5xir5ah+NW9gQk/obnvY5TAVtgTjAte5tZ
+ +coCSBkOU1xMiW5Td7QwkNmtXKHyEF6dxCAMK1KHIqxrBaZO27PEDSHaIPHePi7y4KKq9C9U
+ 8k5V5dFA0mqH/st9Sw6tFbqPkqjvvMLETDPVxOzinpU2VBGhce4wufSIoVLOjQnbIo1FIqWg
+ Dx24eHv235mnNuGHrG+EapIh7g/67K0uAzwp17eyUYlE5BMcwRlaHMuKTil6
+In-Reply-To: <97650eeb-94c7-4041-b58c-90e81e76b699@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Feb 21, 2024 at 4:25=E2=80=AFPM Seth Forshee (DigitalOcean)
-<sforshee@kernel.org> wrote:
+On 21/2/24 23:40, Eric Sandeen wrote:
+> From: David Howells <dhowells@redhat.com>
 >
-> Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> Convert the coda filesystem to the new internal mount API as the old
+> one will be obsoleted and removed.  This allows greater flexibility in
+> communication of mount parameters between userspace, the VFS and the
+> filesystem.
+>
+> See Documentation/filesystems/mount_api.rst for more information.
+>
+> Note this is slightly tricky as coda currently only has a binary mount data
+> interface.  This is handled through the parse_monolithic hook.
+>
+> Also add a more conventional interface with a parameter named "fd" that
+> takes an fd that refers to a coda psdev, thereby specifying the index to
+> use.
+>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Co-developed-by: Eric Sandeen <sandeen@redhat.com>
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> [sandeen: forward port to current upstream mount API interfaces]
+> Tested-by: Jan Harkes <jaharkes@cs.cmu.edu>
+> cc: coda@cs.cmu.edu
 > ---
->  security/security.c | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
-
-First off, you've got to write *something* for the commit description,
-even if it is just a single sentence.
-
-> diff --git a/security/security.c b/security/security.c
-> index 0d210da9862c..f515d8430318 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2365,9 +2365,14 @@ int security_inode_remove_acl(struct mnt_idmap *id=
-map,
->  int security_inode_set_fscaps(struct mnt_idmap *idmap, struct dentry *de=
-ntry,
->                               const struct vfs_caps *caps, int flags)
->  {
-> +       int ret;
-> +
->         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->                 return 0;
-> -       return call_int_hook(inode_set_fscaps, 0, idmap, dentry, caps, fl=
-ags);
-> +       ret =3D call_int_hook(inode_set_fscaps, 0, idmap, dentry, caps, f=
-lags);
-> +       if (ret)
-> +               return ret;
-> +       return evm_inode_set_fscaps(idmap, dentry, caps, flags);
->  }
 >
->  /**
-> @@ -2387,6 +2392,7 @@ void security_inode_post_set_fscaps(struct mnt_idma=
-p *idmap,
->         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->                 return;
->         call_void_hook(inode_post_set_fscaps, idmap, dentry, caps, flags)=
-;
-> +       evm_inode_post_set_fscaps(idmap, dentry, caps, flags);
->  }
+> V2: Remove extra task_active_pid_ns check from fill_super() that I missed
+> (note that Jan did not test with this change)
 >
->  /**
-> @@ -2415,9 +2421,14 @@ int security_inode_get_fscaps(struct mnt_idmap *id=
-map, struct dentry *dentry)
->   */
->  int security_inode_remove_fscaps(struct mnt_idmap *idmap, struct dentry =
-*dentry)
->  {
-> +       int ret;
+> NB: This updated patch is based on
+> https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=mount-api-viro&id=4aec2ba3ca543e39944604774b8cab9c4d592651
+>
+> hence the From: David above.
+>
+>   fs/coda/inode.c | 143 +++++++++++++++++++++++++++++++++---------------
+>   1 file changed, 98 insertions(+), 45 deletions(-)
+>
+> diff --git a/fs/coda/inode.c b/fs/coda/inode.c
+> index 0c7c2528791e..a50356c541f6 100644
+> --- a/fs/coda/inode.c
+> +++ b/fs/coda/inode.c
+> @@ -24,6 +24,8 @@
+>   #include <linux/pid_namespace.h>
+>   #include <linux/uaccess.h>
+>   #include <linux/fs.h>
+> +#include <linux/fs_context.h>
+> +#include <linux/fs_parser.h>
+>   #include <linux/vmalloc.h>
+>   
+>   #include <linux/coda.h>
+> @@ -87,10 +89,10 @@ void coda_destroy_inodecache(void)
+>   	kmem_cache_destroy(coda_inode_cachep);
+>   }
+>   
+> -static int coda_remount(struct super_block *sb, int *flags, char *data)
+> +static int coda_reconfigure(struct fs_context *fc)
+>   {
+> -	sync_filesystem(sb);
+> -	*flags |= SB_NOATIME;
+> +	sync_filesystem(fc->root->d_sb);
+> +	fc->sb_flags |= SB_NOATIME;
+>   	return 0;
+>   }
+>   
+> @@ -102,78 +104,102 @@ static const struct super_operations coda_super_operations =
+>   	.evict_inode	= coda_evict_inode,
+>   	.put_super	= coda_put_super,
+>   	.statfs		= coda_statfs,
+> -	.remount_fs	= coda_remount,
+>   };
+>   
+> -static int get_device_index(struct coda_mount_data *data)
+> +struct coda_fs_context {
+> +	int	idx;
+> +};
 > +
->         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
->                 return 0;
-> -       return call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
-> +       ret =3D call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
-> +       if (ret)
-> +               return ret;
-> +       return evm_inode_remove_fscaps(dentry);
->  }
+> +enum {
+> +	Opt_fd,
+> +};
+> +
+> +static const struct fs_parameter_spec coda_param_specs[] = {
+> +	fsparam_fd	("fd",	Opt_fd),
+> +	{}
+> +};
+> +
+> +static int coda_parse_fd(struct fs_context *fc, int fd)
+>   {
+> +	struct coda_fs_context *ctx = fc->fs_private;
+>   	struct fd f;
+>   	struct inode *inode;
+>   	int idx;
+>   
+> -	if (data == NULL) {
+> -		pr_warn("%s: Bad mount data\n", __func__);
+> -		return -1;
+> -	}
+> -
+> -	if (data->version != CODA_MOUNT_VERSION) {
+> -		pr_warn("%s: Bad mount version\n", __func__);
+> -		return -1;
+> -	}
+> -
+> -	f = fdget(data->fd);
+> +	f = fdget(fd);
+>   	if (!f.file)
+> -		goto Ebadf;
+> +		return -EBADF;
+>   	inode = file_inode(f.file);
+>   	if (!S_ISCHR(inode->i_mode) || imajor(inode) != CODA_PSDEV_MAJOR) {
+>   		fdput(f);
+> -		goto Ebadf;
+> +		return invalf(fc, "code: Not coda psdev");
+>   	}
+>   
+>   	idx = iminor(inode);
+>   	fdput(f);
+>   
+> -	if (idx < 0 || idx >= MAX_CODADEVS) {
+> -		pr_warn("%s: Bad minor number\n", __func__);
+> -		return -1;
+> +	if (idx < 0 || idx >= MAX_CODADEVS)
+> +		return invalf(fc, "coda: Bad minor number");
+> +	ctx->idx = idx;
+> +	return 0;
+> +}
+> +
+> +static int coda_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> +{
+> +	struct fs_parse_result result;
+> +	int opt;
+> +
+> +	opt = fs_parse(fc, coda_param_specs, param, &result);
+> +	if (opt < 0)
+> +		return opt;
+> +
+> +	switch (opt) {
+> +	case Opt_fd:
+> +		return coda_parse_fd(fc, result.uint_32);
+>   	}
+>   
+> -	return idx;
+> -Ebadf:
+> -	pr_warn("%s: Bad file\n", __func__);
+> -	return -1;
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Parse coda's binary mount data form.  We ignore any errors and go with index
+> + * 0 if we get one for backward compatibility.
+> + */
+> +static int coda_parse_monolithic(struct fs_context *fc, void *_data)
+> +{
+> +	struct coda_mount_data *data = _data;
+> +
+> +	if (!data)
+> +		return invalf(fc, "coda: Bad mount data");
+> +
+> +	if (data->version != CODA_MOUNT_VERSION)
+> +		return invalf(fc, "coda: Bad mount version");
+> +
+> +	coda_parse_fd(fc, data->fd);
+> +	return 0;
+>   }
+>   
+> -static int coda_fill_super(struct super_block *sb, void *data, int silent)
+> +static int coda_fill_super(struct super_block *sb, struct fs_context *fc)
+>   {
+> +	struct coda_fs_context *ctx = fc->fs_private;
+>   	struct inode *root = NULL;
+>   	struct venus_comm *vc;
+>   	struct CodaFid fid;
+>   	int error;
+> -	int idx;
+> -
+> -	if (task_active_pid_ns(current) != &init_pid_ns)
+> -		return -EINVAL;
+> -
+> -	idx = get_device_index((struct coda_mount_data *) data);
+>   
+> -	/* Ignore errors in data, for backward compatibility */
+> -	if(idx == -1)
+> -		idx = 0;
+> -	
+> -	pr_info("%s: device index: %i\n", __func__,  idx);
+> +	infof(fc, "coda: device index: %i\n", ctx->idx);
+>   
+> -	vc = &coda_comms[idx];
+> +	vc = &coda_comms[ctx->idx];
+>   	mutex_lock(&vc->vc_mutex);
+>   
+>   	if (!vc->vc_inuse) {
+> -		pr_warn("%s: No pseudo device\n", __func__);
+> +		errorf(fc, "coda: No pseudo device");
+>   		error = -EINVAL;
+>   		goto unlock_out;
+>   	}
+>   
+>   	if (vc->vc_sb) {
+> -		pr_warn("%s: Device already mounted\n", __func__);
+> +		errorf(fc, "coda: Device already mounted");
+>   		error = -EBUSY;
+>   		goto unlock_out;
+>   	}
+> @@ -313,18 +339,45 @@ static int coda_statfs(struct dentry *dentry, struct kstatfs *buf)
+>   	return 0;
+>   }
+>   
+> -/* init_coda: used by filesystems.c to register coda */
+> +static int coda_get_tree(struct fs_context *fc)
+> +{
+> +	if (task_active_pid_ns(current) != &init_pid_ns)
+> +		return -EINVAL;
+>   
+> -static struct dentry *coda_mount(struct file_system_type *fs_type,
+> -	int flags, const char *dev_name, void *data)
+> +	return get_tree_nodev(fc, coda_fill_super);
+> +}
+> +
+> +static void coda_free_fc(struct fs_context *fc)
+>   {
+> -	return mount_nodev(fs_type, flags, data, coda_fill_super);
+> +	kfree(fc->fs_private);
+> +}
+> +
+> +static const struct fs_context_operations coda_context_ops = {
+> +	.free		= coda_free_fc,
+> +	.parse_param	= coda_parse_param,
+> +	.parse_monolithic = coda_parse_monolithic,
+> +	.get_tree	= coda_get_tree,
+> +	.reconfigure	= coda_reconfigure,
+> +};
+> +
+> +static int coda_init_fs_context(struct fs_context *fc)
+> +{
+> +	struct coda_fs_context *ctx;
+> +
+> +	ctx = kzalloc(sizeof(struct coda_fs_context), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	fc->fs_private = ctx;
+> +	fc->ops = &coda_context_ops;
+> +	return 0;
+>   }
+>   
+>   struct file_system_type coda_fs_type = {
+>   	.owner		= THIS_MODULE,
+>   	.name		= "coda",
+> -	.mount		= coda_mount,
+> +	.init_fs_context = coda_init_fs_context,
+> +	.parameters	= coda_param_specs,
+>   	.kill_sb	= kill_anon_super,
+>   	.fs_flags	= FS_BINARY_MOUNTDATA,
+>   };
 
-If you take a look at linux-next or the LSM tree's dev branch you'll
-see that we've gotten rid of the dedicated IMA and EVM hooks,
-promoting both IMA and EVM to "proper" LSMs that leverage the existing
-LSM hook infrastructure.  In this patchset, and moving forward, please
-don't add dedicated IMA/EVM hooks like this, instead register them as
-LSM hook implementations with LSM_HOOK_INIT().
 
---=20
-paul-moore.com
+Looks good to me.
+
+Reviewed-by: Ian Kent <raven@themaw.net>
+
 
