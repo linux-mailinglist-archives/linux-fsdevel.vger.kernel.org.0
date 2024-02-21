@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-12267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0539F85DB92
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 14:42:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C7A85DDA3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 15:08:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71BC21F20FEE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 13:42:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A941B240E2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 14:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68E77BAFE;
-	Wed, 21 Feb 2024 13:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361CB7F7ED;
+	Wed, 21 Feb 2024 14:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Zdwi5uCJ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FBNVdQKY"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E38C7992D;
-	Wed, 21 Feb 2024 13:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804B078B5E;
+	Wed, 21 Feb 2024 14:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708522961; cv=none; b=pO8HFMEisGQrkuek93IuYG4eFlluKEwd7GI2rzpqTd6yAwhSL7jIJ+ZSPh1n7VVvabB32cX6fyCKUKi3ir4hFLmqjWo4DyVrXri6dVMBO6Mn31TwDxJ0UvAHIG+bNkCpefSMDK/VKqMkbmWSJrpXufzbCaYlZVo/JA9LBYv7IJM=
+	t=1708524385; cv=none; b=MHqxqMeYnp01dWZuf0ocdEkfGyunzXDBbyiGMureT4flfl4aaPxVM0MIC4Ia3Zhsh6yww6xPztBS/DeIp+bj95buRD0lEB9gEX6L7V4eaiMG4BqkJejkVxBgxIjFmMvjfAvgIhiTCINTBQKgvd9WE8wAi+8EJlKpiKjE/vFLoKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708522961; c=relaxed/simple;
-	bh=/PhKVqBBab9/8Pdz9j7fI5UGCa8x2shcUT4iVVDdsu8=;
+	s=arc-20240116; t=1708524385; c=relaxed/simple;
+	bh=DgrFixTKZQn221nGb6XkHjka4PMsl+0Q6Oo+xUGlIQQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EV5mn3WhM4nJoafvfDzggcawXxhsDHFC7w/yc2tZNSar08GWKy4taD2rcCsKfYS6kkbcfykO0zsgeddok5zvIAK8Ay1S1jydD4PAD9JsQng/dhGZT7v17DRmdzkWY023SvdrZeRJG6wsve64zyqIsqDkApAWadoI3LqmeDbUZAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Zdwi5uCJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98306C433C7;
-	Wed, 21 Feb 2024 13:42:40 +0000 (UTC)
+	 MIME-Version; b=X2j7vsB5jn+E8Ud6LlDZYSnP9eXQs/BO8P39wdRwpWrRLWNKtmt/jYT0+YH6Cl9cySlJHKozb+M8X5bUafjQS33fdy/P3pQBnrAlTUVknJ5tvKhXaSFZTXJmP8G9HNasOs9haTeUe0Kcl3C+xnodrUlXBlVWJh5Qfjsd6QTe+s8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FBNVdQKY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05269C43390;
+	Wed, 21 Feb 2024 14:06:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1708522961;
-	bh=/PhKVqBBab9/8Pdz9j7fI5UGCa8x2shcUT4iVVDdsu8=;
+	s=korg; t=1708524385;
+	bh=DgrFixTKZQn221nGb6XkHjka4PMsl+0Q6Oo+xUGlIQQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Zdwi5uCJ+yI0XSUPK4J5/MMvgBx0jCUA474lICBMTzS+L/NsN6E8gWNaic8JQHM3J
-	 VEEj59ORhzOpttculJ1znYD85q6uocAmm7sDrp4M56H85T6p5PvHt29c6JpImWTFxv
-	 WRxeRbgeuKsyTmdtuNtBBHmorGMZDuktRuQ4V9V0=
+	b=FBNVdQKY3xCou+Gl3FE8lDjnl1UPUegA+ZZb67hut77E0kNhQvRziUAY923b5+0QF
+	 3BnIF1FFpLGjQq86yIIzQwjyUiEC/A8QIrPlorlI5tte9V8fxBK0w8hDROvatqb49T
+	 42ara9ujfAoKOMdvKsl5GbbsO0CWgAMmDYs5pDgM=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -51,12 +51,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"David S. Miller" <davem@davemloft.net>,
 	Sasha Levin <sashal@kernel.org>,
 	ZhangPeng <zhangpeng362@huawei.com>
-Subject: [PATCH 5.15 275/476] tcp: add sanity checks to rx zerocopy
-Date: Wed, 21 Feb 2024 14:05:26 +0100
-Message-ID: <20240221130018.132969026@linuxfoundation.org>
+Subject: [PATCH 5.10 229/379] tcp: add sanity checks to rx zerocopy
+Date: Wed, 21 Feb 2024 14:06:48 +0100
+Message-ID: <20240221130001.670878818@linuxfoundation.org>
 X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240221130007.738356493@linuxfoundation.org>
-References: <20240221130007.738356493@linuxfoundation.org>
+In-Reply-To: <20240221125954.917878865@linuxfoundation.org>
+References: <20240221125954.917878865@linuxfoundation.org>
 User-Agent: quilt/0.67
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-5.15-stable review patch.  If anyone has any objections, please let me know.
+5.10-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -120,10 +120,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index 0659f0d9414d..626cef75afe7 100644
+index 18541527abce..a5c15e2d193f 100644
 --- a/net/ipv4/tcp.c
 +++ b/net/ipv4/tcp.c
-@@ -1798,7 +1798,17 @@ static skb_frag_t *skb_advance_to_frag(struct sk_buff *skb, u32 offset_skb,
+@@ -1780,7 +1780,17 @@ static skb_frag_t *skb_advance_to_frag(struct sk_buff *skb, u32 offset_skb,
  
  static bool can_map_frag(const skb_frag_t *frag)
  {
