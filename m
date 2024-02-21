@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-12378-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DF785EAC4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 22:29:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 660DA85EAC6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 22:29:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC5FEB27CED
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 21:29:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C107FB27CA7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 21:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5783214A088;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B11114A08F;
 	Wed, 21 Feb 2024 21:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uqHKBP3J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EZqTenVf"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C3112DD91;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB6512E1DF;
 	Wed, 21 Feb 2024 21:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708550707; cv=none; b=KBrQYCzsHdOYqYU4eWLWaZOFrqcy/Pk5s92zfKWQ/36X3QtA2ruGu6RJxaaHn4e4kEmBTnJ8adhdY2e7RrIMbjTirsvME/vE95WR3n4lCBqr5DLMA1IFuOwnVJ1GWEJCs6TLJAo5EiO/JSFnZrhsgUHH1T0m+sfRJ6polOxLZjA=
+	t=1708550707; cv=none; b=T8C5TPl4zhOxwfGQSJyTtViA5Q9VIk3mdKsUoADRqMHqFQz8fFjTp4Gd9Logi3hRR06zr/ZkPiX1LZnrqpXFUy/fSXwN/HgXxJj5LU3Lb29+uNe9rBcXk9QHkJSh4RV9SJ/5kqxxc/ZVII49/EbqzOzpSHsmLDHail5+xPBnSj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1708550707; c=relaxed/simple;
-	bh=ttWdljGV2VOOVlmLs8ch4F+B9OPu/3AJrV4l738gSBE=;
+	bh=zODK8f1Oy6szXpHeADRTdhogMg3GAwHuizUWMJpE3DE=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pw2v80WMhiGpLtqu9x5KB0I6HV5bC3+f6CIL7sKWUZlOQcY5EHaoPXuUx4Rfl/QvAjXVPuWSFB3OTZleUDoj0s/14Ah5RACKokbSzY7tKF2hWDnVrOQbokj+/lxK51PURSP0Ji+YSMGOTNuBX8bEmzbvxmh2dbT3oRjwJUyp9Z0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uqHKBP3J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 2E595C36AEE;
+	 In-Reply-To:To:Cc; b=QruHK1h+evfwFcpkYp0fAKRp5bLv5ksY5MUhVuu5Q7O591me5f+3UGo6ZuZEmRtJc25C38C9WIid9iOECUiBjhRl4+zLUQd1r9lNKNLZf4xAcNGyTj511GjHB/zAAosQFifCLyf1A/F+KdDvQkoOPQqy8YwGy04u/MSPXWWvHes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EZqTenVf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 3AB51C4AF75;
 	Wed, 21 Feb 2024 21:25:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1708550707;
-	bh=ttWdljGV2VOOVlmLs8ch4F+B9OPu/3AJrV4l738gSBE=;
+	bh=zODK8f1Oy6szXpHeADRTdhogMg3GAwHuizUWMJpE3DE=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=uqHKBP3J4IPMX2ack7XXoakPLKGIQWPInhHuqQcEsbokp77sYp+0fBwH7WFmzz1X2
-	 ero9AJeBQJrkHPwe/FaDYck/ACfEJoZgUAzc+Op7aBaIdJVi+6Lzw4u8juhNq9HlAI
-	 d5uFcA29Z3Co9rw30F5W2vCC/31QIThKoHnAnPAm6qF/9vI23uOeyQzIUwbAy5b9yS
-	 8ED4KrNbstsfd3mEjSxKkKHw8kexLcNnGqaCFJr0SLSHC5JmdRu8KmLnpjcEU9XLIB
-	 nLmaJqBWTTb8vtExN0sZ3E47+JhPHp+5Y064Qlix3nBNp+LkLqh5ccHEWk5KuYwf5V
-	 wGjCyip2arhWg==
+	b=EZqTenVf4PLgedTk1rJ753Y6K4Dpv0W+PXOQ+O6XztyKcvNh1FE7lHIrpUjKps0FB
+	 BE8fgzu2nqU0fm1hvmeCWrNIJXyeigiIA6CJtIBy0CeExigttHfIPUNoIReHEj91rS
+	 n8dSratBFnSdVJt4+CPzym1SwMREEyF9g1MKfOPrU/LrBhfXNWZMyADs12eTMKAnZn
+	 JPBthukiLEhLl/cAkGrEOwLc2PLLboFdudLK5fawpg3Lx45Wnw0Ji1YrBH7/j5jjsS
+	 Hyay/OR1tYUESoA6X/0MZ4CH4+tgI4RMh75woXvMMb8jM9tQz/5WP5m4qdMQTxyAgZ
+	 FWCPpe1pXmGIQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B9FC5478C;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A073C54791;
 	Wed, 21 Feb 2024 21:25:07 +0000 (UTC)
 From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Date: Wed, 21 Feb 2024 15:24:51 -0600
-Subject: [PATCH v2 20/25] ovl: add fscaps handlers
+Date: Wed, 21 Feb 2024 15:24:52 -0600
+Subject: [PATCH v2 21/25] ovl: use vfs_{get,set}_fscaps() for copy-up
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240221-idmap-fscap-refactor-v2-20-3039364623bd@kernel.org>
+Message-Id: <20240221-idmap-fscap-refactor-v2-21-3039364623bd@kernel.org>
 References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
 In-Reply-To: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -76,170 +76,162 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
  linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4817; i=sforshee@kernel.org;
- h=from:subject:message-id; bh=ttWdljGV2VOOVlmLs8ch4F+B9OPu/3AJrV4l738gSBE=; 
- =?utf-8?q?b=3DowEBbQGS/pANAwAKAVMDma7l9DHJAcsmYgBl1moqr1C0o66vju1JEhWEhxdjP?=
- =?utf-8?q?9MjLsg75RZLdJMz_EGbaqxmJATMEAAEKAB0WIQSQnt+rKAvnETy4Hc9TA5mu5fQxy?=
- =?utf-8?q?QUCZdZqKgAKCRBTA5mu5fQxyasXB/_0ck2MmFB/6xo9OUk9n0uU1WV1hFMVoAQcMt?=
- =?utf-8?q?qmhIQz/2o92A+LSQK3qhijWqisOM+8FwP0mq2qJxzMN_vIR8aLOcS0thGDP0hfR39?=
- =?utf-8?q?KgwnIBaHRd/nB/r7IdYiRO+hJmxzhiWNUp1IIYYbAlGvxeD7YKcQaPI6w_ujDpQ/1?=
- =?utf-8?q?BRMFLG/aUZlWxGKGWcvTaun5znDQgPzJy2O4WmnYgB0YdN+3H+qKej3XIqL5cxd9t?=
- =?utf-8?q?pymr8a_HVtkrcMynShyHq7SIhQ1Hshd+ebeNCgKfG4XE3neYdZrCQjNHAcwys74za?=
- =?utf-8?q?Z8osEiqTuT5wf1p4sORt?= V1GcnFZzEQHrTdJSCnsZ7y7llnM8zr
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4041; i=sforshee@kernel.org;
+ h=from:subject:message-id; bh=zODK8f1Oy6szXpHeADRTdhogMg3GAwHuizUWMJpE3DE=; 
+ =?utf-8?q?b=3DowEBbQGS/pANAwAKAVMDma7l9DHJAcsmYgBl1moryy7rWCDyCKYhTErtw9reV?=
+ =?utf-8?q?BQghynbKThrJ7UB_cXmkPrOJATMEAAEKAB0WIQSQnt+rKAvnETy4Hc9TA5mu5fQxy?=
+ =?utf-8?q?QUCZdZqKwAKCRBTA5mu5fQxyVGuB/_98YVYzC3rmVA+s5SJScrnZ4Y5tk6TMC1IC3?=
+ =?utf-8?q?m8QqEF/wR9kN8x37EMkdEPDIonp4yWwKAp6jK5PHooi_f/TDfrw9dyMvPoFu1mtHO?=
+ =?utf-8?q?k7vcZiK+5YhYlIWrGhaRNAhn89fEQAq8U0XJc0QZMBWZX3zC/JjGALUIe_AXfYqoT?=
+ =?utf-8?q?kymSa8cturCezE9r8NumhzW5fw2Xeam38vDff9hJEQnZdTqoORMKGVWyvWlcy0o7g?=
+ =?utf-8?q?1kEuga_GwQcCqZY7BooJEggxTGYotp66PNUyX0oamXw/4QROT9Cldpj8wp9PrlATv?=
+ =?utf-8?q?F94aP27wamFYLAmAwztP?= 1sjZ5ZJP6nJXzabi+skNTzn9983WmN
 X-Developer-Key: i=sforshee@kernel.org; a=openpgp;
  fpr=2ABCA7498D83E1D32D51D3B5AB4800A62DB9F73A
 X-Endpoint-Received:
  by B4 Relay for sforshee@kernel.org/default with auth_id=103
 
-Add handlers which read fs caps from the lower or upper filesystem and
-write/remove fs caps to the upper filesystem, performing copy-up as
-necessary.
+Using vfs_{get,set}xattr() for fscaps will be blocked in a future
+commit, so convert ovl to use the new interfaces. Also remove the now
+unused ovl_getxattr_value().
 
-While fscaps only really make sense on regular files, the general policy
-is to allow most xattr namespaces on all different inode types, so
-fscaps handlers are installed in the inode operations for all types of
-inodes.
-
+Reviewed-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
 ---
- fs/overlayfs/dir.c       |  2 ++
- fs/overlayfs/inode.c     | 72 ++++++++++++++++++++++++++++++++++++++++++++++++
- fs/overlayfs/overlayfs.h |  5 ++++
- 3 files changed, 79 insertions(+)
+ fs/overlayfs/copy_up.c | 72 ++++++++++++++++++++++++++------------------------
+ 1 file changed, 37 insertions(+), 35 deletions(-)
 
-diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
-index 0f8b4a719237..4ff360fe10c9 100644
---- a/fs/overlayfs/dir.c
-+++ b/fs/overlayfs/dir.c
-@@ -1307,6 +1307,8 @@ const struct inode_operations ovl_dir_inode_operations = {
- 	.get_inode_acl	= ovl_get_inode_acl,
- 	.get_acl	= ovl_get_acl,
- 	.set_acl	= ovl_set_acl,
-+	.get_fscaps	= ovl_get_fscaps,
-+	.set_fscaps	= ovl_set_fscaps,
- 	.update_time	= ovl_update_time,
- 	.fileattr_get	= ovl_fileattr_get,
- 	.fileattr_set	= ovl_fileattr_set,
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index c63b31a460be..7a8978ea6fe1 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -568,6 +568,72 @@ int ovl_set_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+diff --git a/fs/overlayfs/copy_up.c b/fs/overlayfs/copy_up.c
+index b8e25ca51016..d7c8d76e2394 100644
+--- a/fs/overlayfs/copy_up.c
++++ b/fs/overlayfs/copy_up.c
+@@ -73,6 +73,23 @@ static int ovl_copy_acl(struct ovl_fs *ofs, const struct path *path,
+ 	return err;
  }
- #endif
  
-+int ovl_get_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
-+		   struct vfs_caps *caps)
++static int ovl_copy_fscaps(struct ovl_fs *ofs, const struct path *oldpath,
++			   struct dentry *new)
 +{
++	struct vfs_caps capability;
 +	int err;
-+	const struct cred *old_cred;
-+	struct path realpath;
 +
-+	ovl_path_real(dentry, &realpath);
-+	old_cred = ovl_override_creds(dentry->d_sb);
-+	err = vfs_get_fscaps(mnt_idmap(realpath.mnt), realpath.dentry, caps);
-+	revert_creds(old_cred);
-+	return err;
-+}
-+
-+int ovl_set_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
-+		   const struct vfs_caps *caps, int setxattr_flags)
-+{
-+	int err;
-+	struct ovl_fs *ofs = OVL_FS(dentry->d_sb);
-+	struct dentry *upperdentry = ovl_dentry_upper(dentry);
-+	struct dentry *realdentry = upperdentry ?: ovl_dentry_lower(dentry);
-+	const struct cred *old_cred;
-+
-+	/*
-+	 * If the fscaps are to be remove from a lower file, check that they
-+	 * exist before copying up.
-+	 */
-+	if (!caps && !upperdentry) {
-+		struct path realpath;
-+		struct vfs_caps lower_caps;
-+
-+		ovl_path_lower(dentry, &realpath);
-+		old_cred = ovl_override_creds(dentry->d_sb);
-+		err = vfs_get_fscaps(mnt_idmap(realpath.mnt), realdentry,
-+				     &lower_caps);
-+		revert_creds(old_cred);
-+		if (err)
-+			goto out;
++	err = vfs_get_fscaps(mnt_idmap(oldpath->mnt), oldpath->dentry,
++			     &capability);
++	if (err) {
++		if (err == -ENODATA || err == -EOPNOTSUPP)
++			return 0;
++		return err;
 +	}
 +
-+	err = ovl_want_write(dentry);
-+	if (err)
-+		goto out;
-+
-+	err = ovl_copy_up(dentry);
-+	if (err)
-+		goto out_drop_write;
-+	upperdentry = ovl_dentry_upper(dentry);
-+
-+	old_cred = ovl_override_creds(dentry->d_sb);
-+	if (!caps)
-+		err = vfs_remove_fscaps(ovl_upper_mnt_idmap(ofs), upperdentry);
-+	else
-+		err = vfs_set_fscaps(ovl_upper_mnt_idmap(ofs), upperdentry,
-+				     caps, setxattr_flags);
-+	revert_creds(old_cred);
-+
-+	/* copy c/mtime */
-+	ovl_copyattr(d_inode(dentry));
-+
-+out_drop_write:
-+	ovl_drop_write(dentry);
-+out:
-+	return err;
++	return vfs_set_fscaps(ovl_upper_mnt_idmap(ofs), new, &capability, 0);
 +}
 +
- int ovl_update_time(struct inode *inode, int flags)
+ int ovl_copy_xattr(struct super_block *sb, const struct path *oldpath, struct dentry *new)
  {
- 	if (flags & S_ATIME) {
-@@ -747,6 +813,8 @@ static const struct inode_operations ovl_file_inode_operations = {
- 	.get_inode_acl	= ovl_get_inode_acl,
- 	.get_acl	= ovl_get_acl,
- 	.set_acl	= ovl_set_acl,
-+	.get_fscaps	= ovl_get_fscaps,
-+	.set_fscaps	= ovl_set_fscaps,
- 	.update_time	= ovl_update_time,
- 	.fiemap		= ovl_fiemap,
- 	.fileattr_get	= ovl_fileattr_get,
-@@ -758,6 +826,8 @@ static const struct inode_operations ovl_symlink_inode_operations = {
- 	.get_link	= ovl_get_link,
- 	.getattr	= ovl_getattr,
- 	.listxattr	= ovl_listxattr,
-+	.get_fscaps	= ovl_get_fscaps,
-+	.set_fscaps	= ovl_set_fscaps,
- 	.update_time	= ovl_update_time,
- };
+ 	struct dentry *old = oldpath->dentry;
+@@ -130,6 +147,14 @@ int ovl_copy_xattr(struct super_block *sb, const struct path *oldpath, struct de
+ 			break;
+ 		}
  
-@@ -769,6 +839,8 @@ static const struct inode_operations ovl_special_inode_operations = {
- 	.get_inode_acl	= ovl_get_inode_acl,
- 	.get_acl	= ovl_get_acl,
- 	.set_acl	= ovl_set_acl,
-+	.get_fscaps	= ovl_get_fscaps,
-+	.set_fscaps	= ovl_set_fscaps,
- 	.update_time	= ovl_update_time,
- };
- 
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index ee949f3e7c77..4f948749ee02 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -781,6 +781,11 @@ static inline struct posix_acl *ovl_get_acl_path(const struct path *path,
- }
- #endif
- 
-+int ovl_get_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
-+		   struct vfs_caps *caps);
-+int ovl_set_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
-+		   const struct vfs_caps *caps, int setxattr_flags);
++		if (is_fscaps_xattr(name)) {
++			error = ovl_copy_fscaps(OVL_FS(sb), oldpath, new);
++			if (!error)
++				continue;
++			/* fs capabilities must be copied */
++			break;
++		}
 +
- int ovl_update_time(struct inode *inode, int flags);
- bool ovl_is_private_xattr(struct super_block *sb, const char *name);
+ retry:
+ 		size = ovl_do_getxattr(oldpath, name, value, value_size);
+ 		if (size == -ERANGE)
+@@ -1039,61 +1064,40 @@ static bool ovl_need_meta_copy_up(struct dentry *dentry, umode_t mode,
+ 	return true;
+ }
  
+-static ssize_t ovl_getxattr_value(const struct path *path, char *name, char **value)
+-{
+-	ssize_t res;
+-	char *buf;
+-
+-	res = ovl_do_getxattr(path, name, NULL, 0);
+-	if (res == -ENODATA || res == -EOPNOTSUPP)
+-		res = 0;
+-
+-	if (res > 0) {
+-		buf = kzalloc(res, GFP_KERNEL);
+-		if (!buf)
+-			return -ENOMEM;
+-
+-		res = ovl_do_getxattr(path, name, buf, res);
+-		if (res < 0)
+-			kfree(buf);
+-		else
+-			*value = buf;
+-	}
+-	return res;
+-}
+-
+ /* Copy up data of an inode which was copied up metadata only in the past. */
+ static int ovl_copy_up_meta_inode_data(struct ovl_copy_up_ctx *c)
+ {
+ 	struct ovl_fs *ofs = OVL_FS(c->dentry->d_sb);
+ 	struct path upperpath;
+ 	int err;
+-	char *capability = NULL;
+-	ssize_t cap_size;
++	struct vfs_caps capability;
++	bool has_capability = false;
+ 
+ 	ovl_path_upper(c->dentry, &upperpath);
+ 	if (WARN_ON(upperpath.dentry == NULL))
+ 		return -EIO;
+ 
+ 	if (c->stat.size) {
+-		err = cap_size = ovl_getxattr_value(&upperpath, XATTR_NAME_CAPS,
+-						    &capability);
+-		if (cap_size < 0)
++		err = vfs_get_fscaps(mnt_idmap(upperpath.mnt), upperpath.dentry,
++				     &capability);
++		if (!err)
++			has_capability = 1;
++		else if (err != -ENODATA && err != EOPNOTSUPP)
+ 			goto out;
+ 	}
+ 
+ 	err = ovl_copy_up_data(c, &upperpath);
+ 	if (err)
+-		goto out_free;
++		goto out;
+ 
+ 	/*
+ 	 * Writing to upper file will clear security.capability xattr. We
+ 	 * don't want that to happen for normal copy-up operation.
+ 	 */
+ 	ovl_start_write(c->dentry);
+-	if (capability) {
+-		err = ovl_do_setxattr(ofs, upperpath.dentry, XATTR_NAME_CAPS,
+-				      capability, cap_size, 0);
++	if (has_capability) {
++		err = vfs_set_fscaps(mnt_idmap(upperpath.mnt), upperpath.dentry,
++				     &capability, 0);
+ 	}
+ 	if (!err) {
+ 		err = ovl_removexattr(ofs, upperpath.dentry,
+@@ -1101,13 +1105,11 @@ static int ovl_copy_up_meta_inode_data(struct ovl_copy_up_ctx *c)
+ 	}
+ 	ovl_end_write(c->dentry);
+ 	if (err)
+-		goto out_free;
++		goto out;
+ 
+ 	ovl_clear_flag(OVL_HAS_DIGEST, d_inode(c->dentry));
+ 	ovl_clear_flag(OVL_VERIFIED_DIGEST, d_inode(c->dentry));
+ 	ovl_set_upperdata(d_inode(c->dentry));
+-out_free:
+-	kfree(capability);
+ out:
+ 	return err;
+ }
 
 -- 
 2.43.0
