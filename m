@@ -1,61 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-12282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658E685E3CE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 17:56:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66DF585E3E9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 18:00:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F19283387
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 16:56:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CB701F22D8C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 17:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39BF839F6;
-	Wed, 21 Feb 2024 16:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B92983A0C;
+	Wed, 21 Feb 2024 17:00:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4Bb5jCP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U0LQ+lQN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2E880613;
-	Wed, 21 Feb 2024 16:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED508120C;
+	Wed, 21 Feb 2024 17:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708534577; cv=none; b=A7fhrLpDgE72D+7Yjm+FdmQH0jEJVDvddxzqeNc3I6+TNqYbZpcWjCZtNEs0+P3MmScB35gHVVsXMYpDozqC3EbMugMYy5N4kWHuLgD5Bz/QfckNvK/zAWeNrnLCuVDp5fqT1GL5Iq7gHVEGVOuFDFg2PRO7An4oswrCksQUBU8=
+	t=1708534832; cv=none; b=qutG271cqNDb3tJrUIEhsIumxWmzD9n3pwnZ8ggkk9yKDtV2vlLtIcxiygpfxPGQOH5VGlNAYGKEMb6jXuCoH4SSmbjsXOtMt5kelQT8vDJo7ZDVESoGq2AH6qlbWiorClIAZ+Tp7AaMg26l/c6ENoeEgUC9of/y4R2yunC3dFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708534577; c=relaxed/simple;
-	bh=JvU0tQfghs9ivP7wwVrY8yM2tvT8Ba8a984fQlx+zQ4=;
+	s=arc-20240116; t=1708534832; c=relaxed/simple;
+	bh=iGVZ/N3krdQEpR2YIqJ2azORXnLZSoYtAOSEv6DTkVM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZcI74BSxkG0JVhQlmFNPR5fRlDBu76gv/OvbSlXgxX0n3eW9U97oSjdRqAQtUx7NymbDZ3cfwZdh6OcuxARxFL+ePmLpgTsZa3DgQop0ZV89uY3xPjs/5S/5QZIwRo23c0s0fbPxxww6CpKp0MFRb8Ns4jk5QUcmwj/MIwcC2xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4Bb5jCP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B36DC433C7;
-	Wed, 21 Feb 2024 16:56:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GUwghT5xLXhSPD9LV0Ulu3CrsTKNn2ray94E7PNzvRWP+1kwX9HHvneOPgX4e4uF/GK6zuYik7egD8KJJI/S5N0fkONSkRae6rDi3p1ZbXrD0rldTz5eYaeNuVtrKD+JOPtNYTigNo04rl/iGaC6KHrRL3uQpTewphKSK46sQ9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U0LQ+lQN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38187C433F1;
+	Wed, 21 Feb 2024 17:00:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708534576;
-	bh=JvU0tQfghs9ivP7wwVrY8yM2tvT8Ba8a984fQlx+zQ4=;
+	s=k20201202; t=1708534832;
+	bh=iGVZ/N3krdQEpR2YIqJ2azORXnLZSoYtAOSEv6DTkVM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=a4Bb5jCPAd5fYX0Ux3wZTHtsK2kKfPBlut+e/Wp4xxv0kaaK+cCnVb7B/qLuWUNl0
-	 2QfxdpL1/Ly4+rvEiITOSeHCqFjGFfo8pMrDfoMV5q668EMKxh7ngwyuwVvVUq2aZU
-	 /m8+R9RBffGExL2ZOUed+Du/qUyExN9aFhHwYxBs+qOCyYDwFz94QI/lfi6RK7EQTq
-	 QLv9gnThvx3eIOvV0HKLO9e8G25xK6IsPHmJn+lJs8lJrubqwdVdX8kVY6Yeog6rJ8
-	 fAFMbdmxkKM2hFw8+YKnQsy8tu8qQbegZvgIwAYDoE8dJD+89nGN/enhTUwASyUBQ7
-	 afIzc5RzN9Fwg==
-Date: Wed, 21 Feb 2024 08:56:15 -0800
+	b=U0LQ+lQNyUBqL3xZxjWQwXIYmMJ4Mc61P182iU00QTi9UpVH4rUWh/I8wtg4/ZqRK
+	 blVj+fKKQ25YyDt1zWlvxqQywOM+LKbrkox8kN0n0gnsxFmUdOai6aJsyWgITJBQoK
+	 nJuMm6+a+GSjbYPTRlnbx1fJhge5k1nFG6g87v6CCUjBZc3345UD+R+0o4cZzqSZDc
+	 TyaLFg889IY/i64SNfTSJXc8Y//sI0e6gymKeCB9bYsh/aL1cWbj6zhV58/D+xn4NB
+	 1NVef/M6RfDMaELFPHF/IWDBsO16gWf11Jcl86DSY+vThpY+eSfvxMdGRKG5d5ICXZ
+	 qIPyCDKxcU1pQ==
+Date: Wed, 21 Feb 2024 09:00:31 -0800
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: John Garry <john.g.garry@oracle.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
-	chandan.babu@oracle.com, martin.petersen@oracle.com,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
-	ojaswin@linux.ibm.com
-Subject: Re: [PATCH 0/6] block atomic writes for XFS
-Message-ID: <20240221165615.GH6184@frogsfrogsfrogs>
+To: John Garry <john.g.garry@oracle.com>
+Cc: hch@lst.de, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	dchinner@redhat.com, jack@suse.cz, chandan.babu@oracle.com,
+	martin.petersen@oracle.com, linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	tytso@mit.edu, jbongio@google.com, ojaswin@linux.ibm.com
+Subject: Re: [PATCH 6/6] fs: xfs: Set FMODE_CAN_ATOMIC_WRITE for
+ FS_XFLAG_ATOMICWRITES set
+Message-ID: <20240221170031.GI6184@frogsfrogsfrogs>
 References: <20240124142645.9334-1-john.g.garry@oracle.com>
- <20240213072237.GA24218@lst.de>
- <20240213175549.GU616564@frogsfrogsfrogs>
- <20240214074559.GB10006@lst.de>
+ <20240124142645.9334-7-john.g.garry@oracle.com>
+ <20240202180619.GK6184@frogsfrogsfrogs>
+ <7e3b9556-f083-4c14-a48f-46242d1c744b@oracle.com>
+ <20240213175954.GV616564@frogsfrogsfrogs>
+ <b902bee1-fcfd-4542-8a4e-c6b9861828c9@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,83 +66,61 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240214074559.GB10006@lst.de>
+In-Reply-To: <b902bee1-fcfd-4542-8a4e-c6b9861828c9@oracle.com>
 
-On Wed, Feb 14, 2024 at 08:45:59AM +0100, Christoph Hellwig wrote:
-> On Tue, Feb 13, 2024 at 09:55:49AM -0800, Darrick J. Wong wrote:
-> > On Tue, Feb 13, 2024 at 08:22:37AM +0100, Christoph Hellwig wrote:
-> > > From reading the series and the discussions with Darrick and Dave
-> > > I'm coming more and more back to my initial position that tying this
-> > > user visible feature to hardware limits is wrong and will just keep
-> > > on creating ever more painpoints in the future.
+On Wed, Feb 14, 2024 at 12:36:40PM +0000, John Garry wrote:
+> On 13/02/2024 17:59, Darrick J. Wong wrote:
+> > > > Shouldn't we check that the device supports AWU at all before turning on
+> > > > the FMODE flag?
+> > > Can we easily get this sort of bdev info here?
 > > > 
-> > > Based on that I suspect that doing proper software only atomic writes
-> > > using the swapext log item and selective always COW mode
-> > 
-> > Er, what are you thinking w.r.t. swapext and sometimescow?
+> > > Currently if we do try to issue an atomic write and AWU for the bdev is
+> > > zero, then XFS iomap code will reject it.
+> > Hmm.  Well, if we move towards pushing all the hardware checks out of
+> > xfs/iomap and into whatever goes on underneath submit_bio then I guess
+> > we don't need to check device support here at all.
 > 
-> What do you mean with sometimescow?  Just normal reflinked inodes?
+> Yeah, I have been thinking about this. But I was still planning on putting a
+> "bdev on atomic write" check here, as you mentioned.
 > 
-> > swapext
-> > doesn't currently handle COW forks at all, and it can only exchange
-> > between two of the same type of fork (e.g. both data forks or both attr
-> > forks, no mixing).
-> > 
-> > Or will that be your next suggestion whenever I get back to fiddling
-> > with the online fsck patches? ;)
+> But is this a proper method to access the bdev for an xfs inode:
 > 
-> Let's take a step back.  If we want atomic write semantics without
-> hardware offload, what we need is to allocate new blocks and atomically
-> swap them into the data fork.  Basicall an atomic version of
-> xfs_reflink_end_cow.  But yes, the details of the current swapext
-> item might not be an exact fit, maybe it's just shared infrastructure
-> and concepts.
-
-Hmm.  For rt reflink (whenever I get back to that, ha) I've been
-starting to think that yes, we actually /do/ want to have a log item
-that tracks the progress of remap and cow operations.  That would solve
-the problem of someone wanting to reflink a semi-written rtx.
-
-That said, it might complicate the reflink code quite a bit since right
-now it writes zeroes to the unwritten parts of an rt file's rtx so that
-there's only one mapping record for the whole rtx, and then it remaps
-them.  That's most of why I haven't bothered to implement that solution.
-
-> I'm not planning to make you do it, because such a log item would
-> generally be pretty useful for always COW mode.
-
-One other thing -- while I was refactoring the swapext code into
-exch{range,maps}, it occurred to me that doing an exchange between the
-cow and data forks isn't possible because log recovery won't be able to
-do anything.  There's no ondisk metadata to map a cow staging extent
-back to the file it came from, which means we can't generally resume an
-exchange operation.
-
-However for a small write I guess you could simply queue all the log
-intent items for all the changes needed and commit that.
-
-> > > and making that
-> > > work should be the first step.  We can then avoid that overhead for
-> > > properly aligned writs if the hardware supports it.  For your Oracle
-> > > DB loads you'll set the alignment hints and maybe even check with
-> > > fiemap that everything is fine and will get the offload, but we also
-> > > provide a nice and useful API for less performance critical applications
-> > > that don't have to care about all these details.
-> > 
-> > I suspect they might want to fail-fast (back to standard WAL mode or
-> > whatever) if the hardware support isn't available.
+> STATIC bool
+> xfs_file_can_atomic_write(
+> struct xfs_inode *inode)
+> {
+> 	struct xfs_buftarg *target = xfs_inode_buftarg(inode);
+> 	struct block_device *bdev = target->bt_bdev;
 > 
-> Maybe for your particular DB use case.  But there's plenty of
-> applications that just want atomic writes without building their
-> own infrastruture, including some that want pretty large chunks.
+> 	if (!xfs_inode_atomicwrites(inode))
+> 		return false;
 > 
-> Also if a file system supports logging data (which I have an
-> XFS early prototype for that I plan to finish), we can even do
-> the small double writes more efficiently than the application,
-> all through the same interface.
+> 	return bdev_can_atomic_write(bdev);
+> }
 
-Heh.  Ted's been trying to kill data=journal.  Now we've found a use for
-it after all. :)
+There's still a TOCTOU race problem if the bdev gets reconfigured
+between xfs_file_can_atomic_write and submit_bio.
+
+However, if you're only using this to advertise the capability via statx
+then I suppose that's fine -- userspace has to have some means of
+discovering the ability at all.  Userspace is also inherently racy.
+
+> I do notice the dax check in xfs_bmbt_to_iomap() when assigning iomap->bdev,
+> which is creating some doubt?
+
+Do you mean this?
+
+	if (mapping_flags & IOMAP_DAX)
+		iomap->dax_dev = target->bt_daxdev;
+	else
+		iomap->bdev = target->bt_bdev;
+
+The dax path wants dax_dev set so that it can do the glorified memcpy
+operation, and it doesn't need (or want) a block device.
 
 --D
+
+> Thanks,
+> John
+> 
 
