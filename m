@@ -1,91 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-12290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91D3185E43C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 18:15:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98D8385E43F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 18:15:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 094CE1F2582C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 17:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B90BB1C20AF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 17:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5694083CC1;
-	Wed, 21 Feb 2024 17:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1024884A31;
+	Wed, 21 Feb 2024 17:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vroX+M9e";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LC4YD44f";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vroX+M9e";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LC4YD44f"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MZn+Uo9n";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LJcTbZ/f";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MZn+Uo9n";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LJcTbZ/f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 383561DA32;
-	Wed, 21 Feb 2024 17:14:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF57983CAE;
+	Wed, 21 Feb 2024 17:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708535683; cv=none; b=HPMpKHOZxGEMVhvpWr0NgElDFy0qx1xoNyK6ek+K3PcuVMFId5EZjbMYu4fvBW/4hTF8g/IZjfh1dGrvSWAnspvUTmYO9vycAZ/NR4RRdJx5p5zSngDFG0R91NXbDxHyj5AF2imenHa+KTNRWlF/o2mBPZSHiACdpAaXUMBTVcA=
+	t=1708535685; cv=none; b=HCBPaSXuUDwsflE7xZIQTDtOXpyz3y+C6kcBYtkut1/MzvgipeQdgMoh3G2HNNfCRbLUx3Whv1Y7Cdh+DGqVIHFp3CF3WLa/m1gjBU1D/f/4dG2P6hYQSbLo7lRs3ipMx8OeiknAivsVLYJXPaQCoiyOGNhZeqUSm2VCqLzX83c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708535683; c=relaxed/simple;
-	bh=8KvF2pTb3E+igBwE1A5eAT6de1YY3lOPRIH1gV1BZRM=;
+	s=arc-20240116; t=1708535685; c=relaxed/simple;
+	bh=YSq2jkFW7hjiLtpR74KFKwNmniOT+cj5vvdZvcq/S0g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sVlzNdhmISjRjNjUgiRj1Jb43XhGBPICQzMCUUOjvYPcq1WDrMJFA+lRGOPeYitiuGGtb/77yeBhPGuSkjk/5LOJ+9Bp/IHkmY7Mu0RnonT7B35gwm3YDdaTXS/Ojvy3KcX2W2RAINxtG/RCt7coZmZg0FMc+tevA3s/2ZXyNBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vroX+M9e; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LC4YD44f; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vroX+M9e; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LC4YD44f; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=aJJLXsCNJEMzJCX5NjxYnDuVmkt77e3vNh5l5vXgy6kTPo6uHtXaoLjU88Ax5ByxNDfCWNrVASSywZVo64RKYacjKiGOe0mkBPtsuzTb4l8n0kOkPa/ZbM7bX9oTmLXeFSkLZN+HLmxJRdA7qWVyCo8gKSMJS0o8sfU7+zaQmlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MZn+Uo9n; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LJcTbZ/f; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MZn+Uo9n; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LJcTbZ/f; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8CC1A21DC8;
-	Wed, 21 Feb 2024 17:14:40 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 361961FB71;
+	Wed, 21 Feb 2024 17:14:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1708535680; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1708535682; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=S7ZNiObuWDS9LBRJ78fuLAlJGd+uQndWdyw51G7pKEU=;
-	b=vroX+M9eWVEC+BMI4lef7/fkcVx3XMMbAfBv4K5jTSwXOxiZCoHYjbqeNARYtZIjLKKE31
-	9PkXrg2yeljAY1Ss+V/dt5Fe+bfIqAea1Xl/1J89TaEypqt5PQcEF6BMKw+LUHyx9xN5Rc
-	Yjo9m4xTt2FLG76XlY89lkfTeEBa8lo=
+	bh=hi5jtsblHY1BOgkoB3I3CrylBb57gl+1FT3PsX85sGM=;
+	b=MZn+Uo9n8lU/zJ19j+4W7XM4Fjar/rLSwjeUl1dDtQteRDiNTcjAbXe6JMyOLMbEUx4zQj
+	KW2k+z3XzCDC5iC8YdOfqA8THQU/KFCZkvfYcc6DeGtJqaV9Z04OHgxRUCyqiGQdII+WVi
+	zjx+zgJTnO7CtquX6CMey12IbiDay/s=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1708535680;
+	s=susede2_ed25519; t=1708535682;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=S7ZNiObuWDS9LBRJ78fuLAlJGd+uQndWdyw51G7pKEU=;
-	b=LC4YD44f750zHoezml6rAHh9Ug+undgo8yI5X9vqtnbkfOWR4e6MllBOQS4MkgnrXdvSyJ
-	JYY1tJkGT5JHcODg==
+	bh=hi5jtsblHY1BOgkoB3I3CrylBb57gl+1FT3PsX85sGM=;
+	b=LJcTbZ/fvkD8/JPuvGBxgoj6IBcOFNMc9CZ4/LLVkRuhfRaRRKDkxT43X8yWUqZmeuvgfG
+	Dw29StcDn4wb+DDw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1708535680; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1708535682; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=S7ZNiObuWDS9LBRJ78fuLAlJGd+uQndWdyw51G7pKEU=;
-	b=vroX+M9eWVEC+BMI4lef7/fkcVx3XMMbAfBv4K5jTSwXOxiZCoHYjbqeNARYtZIjLKKE31
-	9PkXrg2yeljAY1Ss+V/dt5Fe+bfIqAea1Xl/1J89TaEypqt5PQcEF6BMKw+LUHyx9xN5Rc
-	Yjo9m4xTt2FLG76XlY89lkfTeEBa8lo=
+	bh=hi5jtsblHY1BOgkoB3I3CrylBb57gl+1FT3PsX85sGM=;
+	b=MZn+Uo9n8lU/zJ19j+4W7XM4Fjar/rLSwjeUl1dDtQteRDiNTcjAbXe6JMyOLMbEUx4zQj
+	KW2k+z3XzCDC5iC8YdOfqA8THQU/KFCZkvfYcc6DeGtJqaV9Z04OHgxRUCyqiGQdII+WVi
+	zjx+zgJTnO7CtquX6CMey12IbiDay/s=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1708535680;
+	s=susede2_ed25519; t=1708535682;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=S7ZNiObuWDS9LBRJ78fuLAlJGd+uQndWdyw51G7pKEU=;
-	b=LC4YD44f750zHoezml6rAHh9Ug+undgo8yI5X9vqtnbkfOWR4e6MllBOQS4MkgnrXdvSyJ
-	JYY1tJkGT5JHcODg==
+	bh=hi5jtsblHY1BOgkoB3I3CrylBb57gl+1FT3PsX85sGM=;
+	b=LJcTbZ/fvkD8/JPuvGBxgoj6IBcOFNMc9CZ4/LLVkRuhfRaRRKDkxT43X8yWUqZmeuvgfG
+	Dw29StcDn4wb+DDw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 534DF139D0;
-	Wed, 21 Feb 2024 17:14:40 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EEB02139D0;
+	Wed, 21 Feb 2024 17:14:41 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id JFRgDoAv1mVyKgAAD6G6ig
-	(envelope-from <krisman@suse.de>); Wed, 21 Feb 2024 17:14:40 +0000
+	id yUyVM4Ev1mV0KgAAD6G6ig
+	(envelope-from <krisman@suse.de>); Wed, 21 Feb 2024 17:14:41 +0000
 From: Gabriel Krisman Bertazi <krisman@suse.de>
 To: ebiggers@kernel.org,
 	viro@zeniv.linux.org.uk,
@@ -97,9 +97,9 @@ Cc: tytso@mit.edu,
 	linux-fsdevel@vger.kernel.org,
 	brauner@kernel.org,
 	Gabriel Krisman Bertazi <krisman@suse.de>
-Subject: [PATCH v7 06/10] libfs: Add helper to choose dentry operations at mount-time
-Date: Wed, 21 Feb 2024 12:14:08 -0500
-Message-ID: <20240221171412.10710-7-krisman@suse.de>
+Subject: [PATCH v7 07/10] ext4: Configure dentry operations at dentry-creation time
+Date: Wed, 21 Feb 2024 12:14:09 -0500
+Message-ID: <20240221171412.10710-8-krisman@suse.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240221171412.10710-1-krisman@suse.de>
 References: <20240221171412.10710-1-krisman@suse.de>
@@ -110,21 +110,26 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Authentication-Results: smtp-out1.suse.de;
+Authentication-Results: smtp-out2.suse.de;
 	none
-X-Spamd-Result: default: False [0.86 / 50.00];
+X-Spam-Level: 
+X-Spam-Score: -0.30
+X-Spamd-Result: default: False [-0.30 / 50.00];
 	 ARC_NA(0.00)[];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
 	 FROM_HAS_DN(0.00)[];
 	 TO_DN_SOME(0.00)[];
-	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	 R_MISSING_CHARSET(2.50)[];
+	 FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	 MIME_GOOD(-0.10)[text/plain];
 	 TO_MATCH_ENVRCPT_ALL(0.00)[];
 	 REPLY(-4.00)[];
 	 BROKEN_CONTENT_TYPE(1.50)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 R_RATELIMIT(0.00)[to_ip_from(RLzk7q5dcbbphp39zi8hi5jhbt)];
 	 RCVD_COUNT_THREE(0.00)[3];
 	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
 	 RCPT_COUNT_SEVEN(0.00)[10];
 	 MID_CONTAINS_FROM(1.00)[];
 	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email];
@@ -133,78 +138,50 @@ X-Spamd-Result: default: False [0.86 / 50.00];
 	 MIME_TRACE(0.00)[0:+];
 	 FREEMAIL_CC(0.00)[mit.edu,gmail.com,vger.kernel.org,lists.sourceforge.net,kernel.org,suse.de];
 	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.04)[57.87%]
-X-Spam-Level: 
+	 BAYES_HAM(-0.00)[14.47%]
 X-Spam-Flag: NO
-X-Spam-Score: 0.86
 
-In preparation to drop the similar helper that sets d_op at lookup time,
-add a version to set the right d_op filesystem-wide, through sb->s_d_op.
-The operations structures are shared across filesystems supporting
-fscrypt and/or casefolding, therefore we can keep it in common libfs
-code.
+This was already the case for case-insensitive before commit
+bb9cd9106b22 ("fscrypt: Have filesystems handle their d_ops"), but it
+was changed to set at lookup-time to facilitate the integration with
+fscrypt.  But it's a problem because dentries that don't get created
+through ->lookup() won't have any visibility of the operations.
+
+Since fscrypt now also supports configuring dentry operations at
+creation-time, do it for any encrypted and/or casefold volume,
+simplifying the implementation across these features.
 
 Signed-off-by: Gabriel Krisman Bertazi <krisman@suse.de>
-
+Acked-by: Theodore Ts'o <tytso@mit.edu>
 ---
-changes since v3:
-  - Fix typo in comment (Eric)
----
- fs/libfs.c         | 28 ++++++++++++++++++++++++++++
- include/linux/fs.h |  1 +
- 2 files changed, 29 insertions(+)
+ fs/ext4/namei.c | 1 -
+ fs/ext4/super.c | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/libfs.c b/fs/libfs.c
-index c4be0961faf0..0aa388ee82ff 100644
---- a/fs/libfs.c
-+++ b/fs/libfs.c
-@@ -1822,6 +1822,34 @@ void generic_set_encrypted_ci_d_ops(struct dentry *dentry)
- }
- EXPORT_SYMBOL(generic_set_encrypted_ci_d_ops);
+diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
+index d252935f9c8a..3f0b853a371e 100644
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -1762,7 +1762,6 @@ static struct buffer_head *ext4_lookup_entry(struct inode *dir,
+ 	struct buffer_head *bh;
  
-+/**
-+ * generic_set_sb_d_ops - helper for choosing the set of
-+ * filesystem-wide dentry operations for the enabled features
-+ * @sb: superblock to be configured
-+ *
-+ * Filesystems supporting casefolding and/or fscrypt can call this
-+ * helper at mount-time to configure sb->s_d_op to best set of dentry
-+ * operations required for the enabled features. The helper must be
-+ * called after these have been configured, but before the root dentry
-+ * is created.
-+ */
-+void generic_set_sb_d_ops(struct super_block *sb)
-+{
-+#if IS_ENABLED(CONFIG_UNICODE)
-+	if (sb->s_encoding) {
-+		sb->s_d_op = &generic_ci_dentry_ops;
-+		return;
-+	}
-+#endif
-+#ifdef CONFIG_FS_ENCRYPTION
-+	if (sb->s_cop) {
-+		sb->s_d_op = &generic_encrypted_dentry_ops;
-+		return;
-+	}
-+#endif
-+}
-+EXPORT_SYMBOL(generic_set_sb_d_ops);
-+
- /**
-  * inode_maybe_inc_iversion - increments i_version
-  * @inode: inode with the i_version that should be updated
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e6667ece5e64..c985d9392b61 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3202,6 +3202,7 @@ extern int generic_file_fsync(struct file *, loff_t, loff_t, int);
- extern int generic_check_addressable(unsigned, u64);
+ 	err = ext4_fname_prepare_lookup(dir, dentry, &fname);
+-	generic_set_encrypted_ci_d_ops(dentry);
+ 	if (err == -ENOENT)
+ 		return NULL;
+ 	if (err)
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index c5fcf377ab1f..de80a9cc699a 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -5493,6 +5493,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+ 		goto failed_mount4;
+ 	}
  
- extern void generic_set_encrypted_ci_d_ops(struct dentry *dentry);
-+extern void generic_set_sb_d_ops(struct super_block *sb);
- 
- static inline bool sb_has_encoding(const struct super_block *sb)
- {
++	generic_set_sb_d_ops(sb);
+ 	sb->s_root = d_make_root(root);
+ 	if (!sb->s_root) {
+ 		ext4_msg(sb, KERN_ERR, "get root dentry failed");
 -- 
 2.43.0
 
