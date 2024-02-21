@@ -1,186 +1,164 @@
-Return-Path: <linux-fsdevel+bounces-12391-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12392-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D074885EC6F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 00:01:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B2685EC7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 00:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BDC32820FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 23:01:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08A441F23A4C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 23:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981EE85280;
-	Wed, 21 Feb 2024 23:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC85128835;
+	Wed, 21 Feb 2024 23:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FXEM6FUC"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YaN0kVu6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB8DA35
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 23:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AED81ABA
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 23:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708556480; cv=none; b=C3+yKwaFAUZGh24F+dpfu0ZVBEU4JUAGjmU3UEIZIVh4OCpWyOmz/hhwuCxaWBWp0Jv9v2ObHPr2mghU6Zhd+pGEFE79QIbqEiKIfszjNDwQbXFyxomZl2qeOm9X2WnCGNbK8f1P3PQRuIVCf4C8RV96ZGyu/bG8tN9qrdxPdb0=
+	t=1708556736; cv=none; b=RpAC2D+TZpz+qgriCsbOiyinpN5WSy81PDBwO99yTNAPaLPr/RTuyZFpAGx2v5Nh4Pnn8xfwagBeLDiC8WbnvY65krFpt+fcsgdw7hHzBlMqsm3YBnWM80WV2RoLHszNKNe/fCUZxyd1dbXuzSoGnxIoumWskamYCXlhBuKKtQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708556480; c=relaxed/simple;
-	bh=xY/Q2mBkbBKa5CFOxirwIa5WmSu4fXaq9GtG7v3jCm0=;
+	s=arc-20240116; t=1708556736; c=relaxed/simple;
+	bh=zssxqx37knagHcWIMKikX95cYC9xskvO7oxvfidP8XA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C4VwykwUheG6vwwdfbShSqi8AM4TGUWaYP1AUU0FmlECRgWKPSz2oQ+3WyVsEh4Z8pbGaY63mCyRJJPu5UvAB2SxweDTcbMS9P5t46pYGorNCh+MoLBSGwz8j1X1Bcr/C04/IaNqYpTYR7poFGL2h+gwU2Qu5lviVwMd6lwLTq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FXEM6FUC; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 21 Feb 2024 18:01:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1708556475;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GgSWjNCOfSwz9+ic8rJ5Yj/J6D6jiLMFHSWfS1V2Z0w=;
-	b=FXEM6FUCVqr88KFZwmGnu8MiSzSNbOnTkBvM29waR72pV4J3yvR7GcZudiXuVALk6egEyA
-	TeGc2wIhqlKhXx5a7x/AYsOtMhA3S+KtOMw24AS4k89Zr2v8DRar5IZ5tjnCrzIqp2Tfpb
-	ML6uT79tsLl0K5hYkjJgscVoFG1czmA=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lsf-pc@lists.linux-foundation.org, Christian Brauner <christian@brauner.io>, 
-	=?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@stgraber.org>
-Subject: Re: [LSF TOPIC] beyond uidmapping, & towards a better security model
-Message-ID: <4ub23tni5bwxthqzsn2uvfs5hwr6gd3oitbckd5xwxdbgci4lj@xddn3dh6y23x>
-References: <tixdzlcmitz2kvyamswcpnydeypunkify5aifsmfihpecvat7d@pmgcepiilpi6>
- <141b4c7ecda2a8c064586d064b8d1476d8de3617.camel@HansenPartnership.com>
- <qlmv2hjwzgnkmtvjpyn6zdnnmja3a35tx4nh6ldl23tkzh5reb@r3dseusgs3x6>
- <bfbb1e9b521811b234f4f603c2616a9840da9ece.camel@HansenPartnership.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqiHcwCExBcc4806C3oscm3wHo1MlUlmUW/sZDVv4YSd6167ilkykBmO9Ad4umMk/Po/oB/lmVyCNOHq0nf16y/dmFfYlEgCCjEJahQ9zAhAYZYBJiX2iuopGDGT1SsBqKCRHf+IFs1ekcpZ7F3unnW7r4k/qh4oGYGZjTyfE3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=YaN0kVu6; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1dc49b00bdbso1423125ad.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 15:05:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1708556733; x=1709161533; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IaQv6IYiHqQsQRwxagN42nrCoy2L36X/io0NIlSKpEE=;
+        b=YaN0kVu68tjoY2VWfrn+E6uvbAVTphdtX2sn1L28iRKphMDLBI9svC4bsq2VmT/eR8
+         rwRvkCCtNjWgHofEkG8E7Fa9EScJZEtSHQyWJ/LpBDz2lqo6oxVVa3zIO1ynxdFuk3sE
+         2H4E1XYMIw5Mwkk//ZqWOw1PorI89LsVlxO/A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708556733; x=1709161533;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IaQv6IYiHqQsQRwxagN42nrCoy2L36X/io0NIlSKpEE=;
+        b=DjjFVGpoZ/UXfZG5g/aMsPkNA2YE051DR2DeGBZoQXnmmrIYurURimhSzuyAeoj+D4
+         sXnP/Yty/Jn6nWoqdaiBS08hid3rTzCNljshZoQ2nPDoZhFabd+Aqg7UkJhOav4Nmkhl
+         U522xPby+x7PYY/JYzr7H9Tm+Y13iqft4q4DRD56WmTSNTa9eQTMJSkJfruiFag1muK3
+         eSJMMWqBd8EbqUHJoGolvpEq5tcFoexeuE/zBuJc2300/8LKtNTYPM39QjgcY/KeByO0
+         COuCdfRpK9Sde73iNYJiTTDz5mJ6OPd0In12CJYyJdvstVcxG1jIfwco23bgNTLErE0u
+         Az9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXtIS0zogFYElM2h6xvdCXUtthp5TISuvskhb2HOFwI3GHMYiVefb+SUxU1IIxljmyC9cOM+4aj0J3eSCjQmS0OppqvxzCExGQq/hBhXQ==
+X-Gm-Message-State: AOJu0Yyfm+lc4ZfHd47sHBgn9Eb2mE83vNN2dDuq4M9/J6BuUYEuPWzQ
+	AbJTlLau7pTGDFJHxFsWE049HdrNx7JB/BfifKCDW8UvKfAs3P/wFyszP78fUg==
+X-Google-Smtp-Source: AGHT+IH1309ck0C/2D22VOAASZNUEEf4x9Q57P9Qvk9iAKdRznvrywgHAh+2sanfhM2Axko6bAh9XQ==
+X-Received: by 2002:a17:902:c086:b0:1dc:7b6:867a with SMTP id j6-20020a170902c08600b001dc07b6867amr6026373pld.21.1708556733655;
+        Wed, 21 Feb 2024 15:05:33 -0800 (PST)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id h18-20020a170902f2d200b001d913992d8csm8631586plc.242.2024.02.21.15.05.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Feb 2024 15:05:33 -0800 (PST)
+Date: Wed, 21 Feb 2024 15:05:32 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev,
+	mgorman@suse.de, dave@stgolabs.net, willy@infradead.org,
+	liam.howlett@oracle.com, penguin-kernel@i-love.sakura.ne.jp,
+	corbet@lwn.net, void@manifault.com, peterz@infradead.org,
+	juri.lelli@redhat.com, catalin.marinas@arm.com, will@kernel.org,
+	arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org,
+	masahiroy@kernel.org, nathan@kernel.org, dennis@kernel.org,
+	tj@kernel.org, muchun.song@linux.dev, rppt@kernel.org,
+	paulmck@kernel.org, pasha.tatashin@soleen.com,
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+	hughd@google.com, andreyknvl@gmail.com, ndesaulniers@google.com,
+	vvvvvv@google.com, gregkh@linuxfoundation.org, ebiggers@google.com,
+	ytcoode@gmail.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	bristot@redhat.com, vschneid@redhat.com, cl@linux.com,
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com,
+	glider@google.com, elver@google.com, dvyukov@google.com,
+	shakeelb@google.com, songmuchun@bytedance.com, jbaron@akamai.com,
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com,
+	kernel-team@android.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arch@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-modules@vger.kernel.org,
+	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
+Subject: Re: [PATCH v4 14/36] lib: add allocation tagging support for memory
+ allocation profiling
+Message-ID: <202402211449.401382D2AF@keescook>
+References: <20240221194052.927623-1-surenb@google.com>
+ <20240221194052.927623-15-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bfbb1e9b521811b234f4f603c2616a9840da9ece.camel@HansenPartnership.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240221194052.927623-15-surenb@google.com>
 
-On Tue, Feb 20, 2024 at 10:53:58PM -0500, James Bottomley wrote:
-> On Tue, 2024-02-20 at 19:25 -0500, Kent Overstreet wrote:
-> > On Mon, Feb 19, 2024 at 09:26:25AM -0500, James Bottomley wrote:
-> > > I would have to say that changing kuid for a string doesn't really
-> > > buy us anything except a load of complexity for no very real gain. 
-> > > However, since the current kuid is u32 and exposed uid is u16 and
-> > > there is already a proposal to make use of this somewhat in the way
-> > > you envision,
-> > 
-> > Got a link to that proposal?
-> 
-> I think this is the latest presentation on it:
-> 
-> https://fosdem.org/2024/schedule/event/fosdem-2024-3217-converting-filesystems-to-support-idmapped-mounts/
-> 
-> > 
-> > > there might be a possibility to re-express kuid as an array
-> > > of u16s without much disruption.  Each adjacent pair could
-> > > represent the owner at the top and the userns assigned uid
-> > > underneath.  That would neatly solve the nesting problem the
-> > > current upper 16 bits proposal has.
-> > 
-> > At a high level, there's no real difference between a variable length
-> > integer, or a variable length array of integers, or a string.
-> 
-> Right, so the advantage is the kernel already does an integer
-> comparison all over the place.
-> 
-> > But there's real advantages to getting rid of the string <-> integer
-> > identifier mapping and plumbing strings all the way through:
-> > 
-> >  - creating a new sub-user can be done with nothing more than the new
-> >    username version of setuid(); IOW, we can start a new named
-> > subuser
-> >    for e.g. firefox without mucking with _any_ system state or tables
-> > 
-> >  - sharing filesystems between machines is always a pita because
-> >    usernames might be the same but uids never are - let's kill that
-> > off,
-> >    please
-> > 
-> > Doing anything as big as an array of integers is going to be a major
-> > compatibiltiy break anyways, so we might as well do it right.
-> 
-> I'm not really convinced it's right.  Strings are trickier to handle
-> and compare than integer arrays and all of the above can be done by
-> either.
+On Wed, Feb 21, 2024 at 11:40:27AM -0800, Suren Baghdasaryan wrote:
+> [...]
+> +struct alloc_tag {
+> +	struct codetag			ct;
+> +	struct alloc_tag_counters __percpu	*counters;
+> +} __aligned(8);
+> [...]
+> +#define DEFINE_ALLOC_TAG(_alloc_tag)						\
+> +	static DEFINE_PER_CPU(struct alloc_tag_counters, _alloc_tag_cntr);	\
+> +	static struct alloc_tag _alloc_tag __used __aligned(8)			\
+> +	__section("alloc_tags") = {						\
+> +		.ct = CODE_TAG_INIT,						\
+> +		.counters = &_alloc_tag_cntr };
+> [...]
+> +static inline struct alloc_tag *alloc_tag_save(struct alloc_tag *tag)
+> +{
+> +	swap(current->alloc_tag, tag);
+> +	return tag;
+> +}
 
-Strings are just arrays of integers, and anyways this stuff would be
-within helpers.
+Future security hardening improvement idea based on this infrastructure:
+it should be possible to implement per-allocation-site kmem caches. For
+example, we could create:
 
-But what you're not seeing is the beauty and simplicity of killing the
-mapping layer.
+struct alloc_details {
+	u32 flags;
+	union {
+		u32 size; /* not valid after __init completes */
+		struct kmem_cache *cache;
+	};
+};
 
-When usernames are strings all the way into the kernel, creating and
-switching to a new user is a single syscall. You can't do that if users
-are small integer identifiers to the kernel; you have to create a new
-entry in /etc/passwd or some equivalent, and that is strictly required
-in order to avoid collisions. Users also can't be ephemeral.
+- add struct alloc_details to struct alloc_tag
+- move the tags section into .ro_after_init
+- extend alloc_hooks() to populate flags and size:
+	.flags = __builtin_constant_p(size) ? KMALLOC_ALLOCATE_FIXED
+					    : KMALLOC_ALLOCATE_BUCKETS;
+	.size = __builtin_constant_p(size) ? size : SIZE_MAX;
+- during kernel start or module init, walk the alloc_tag list
+  and create either a fixed-size kmem_cache or to allocate a
+  full set of kmalloc-buckets, and update the "cache" member.
+- adjust kmalloc core routines to use current->alloc_tag->cache instead
+  of using the global buckets.
 
-To sketch out an example of how this would work, say we've got a new
-set_subuser() syscall and the username equivalent of chown().
+This would get us fully separated allocations, producing better than
+type-based levels of granularity, exceeding what we have currently with
+CONFIG_RANDOM_KMALLOC_CACHES.
 
-Now if we want to run firefox as a subuser, giving it access only
-.local/state/firefox, we'd do the following sequence of syscalls within
-the start of the new firefox process:
+Does this look possible, or am I misunderstanding something in the
+infrastructure being created here?
 
-mkdir(".local/state/firefox");
-chown_subuser(".local/state/firefox", "firefox"); /* now owned by $USER.firefox */
-set_subuser("firefox");
-
-If we want to guarantee uniqueness, we'd append a UUID to the
-subusername for the chown_subuser() call, and then for subsequent
-invocations read it with statx() (or subuser enabled equivalent) for the
-set_subuser() call.
-
-Now firefox is running in a sandbox, where it has no access to the rest
-of your home directory - unless explicitly granted with normal ACLs. And
-the sandbox requires no system configuration; rm -rfing the
-.local/state/firefox directory cleans everything up.
-
-And these trivially nest: Firefox itself wants to sandbox individual
-tabs from each other, so firefox could run each sub-process as a
-different subuser.
-
-This is dead easy compared to what we've been doing.
-
-> > > However, neither proposal would get us out of the problem of mount
-> > > mapping because we'd have to keep the filesystem permission check
-> > > on the owning uid unless told otherwise.
-> > 
-> > Not sure I follow?
-> 
-> Mounting a filesystem inside a userns can cause huge security problems
-> if we map fs root to inner root without the admin blessing it.  Think
-> of binding /bin into the userns and then altering one of the root owned
-> binaries as inner root: if the permission check passes, the change
-> appears in system /bin.
-
-So with this proposal mount mapping becomes "map all users on this
-filesystem to subusers of username x". That's a much simpler mapping
-than mapping integer ranges to integer ranges, much easier to verify
-that there aren't accidental root escpes.
-
-> > And it wouldn't have to be administrator assigned. Some administrator
-> > assignment might be required for the username <-> 16 bit uid mapping,
-> > but if those mappings are ephemeral (i.e. if we get filesystems
-> > persistently storing usernames, which is easy enough with xattrs)
-> > then that just becomes "reserve x range of the 16 bit uid space for
-> > ephemeral translations".
-> 
-> *if* the user names you're dealing with are all unprivileged.  When we
-> have a mix of privileged and unprivileged users owning the files, the
-> problems begin.
-
-Yes, all subusers are unprivilidged - only one username, the empty
-username (which we'd probably map to root) maps to existing uid 0.
+-- 
+Kees Cook
 
