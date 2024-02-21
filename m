@@ -1,53 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-12383-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E4F85EAC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 22:29:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F36C85EAC9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 22:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 443A2285CD5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 21:29:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B10651C22CE0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 21:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1B614A09C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7188F14A0A6;
 	Wed, 21 Feb 2024 21:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ScFEMz6F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P7RtPOwF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBFF12B176;
-	Wed, 21 Feb 2024 21:25:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3AD12BF0F;
+	Wed, 21 Feb 2024 21:25:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708550707; cv=none; b=nvK7NW0t3P35Ozc+byRM6qG0k1I5fm0Mx+SAORJbtZu31DwFeafs+K0A3k5hf3825pWO0QKtLMuwGqP/EU+sLopTb7FncyGKPcSdNUDhdB/KC5KKA1ygK7Wf7lh0Wx3uSQFPFzS8NuybOHRChlGlcFB38LLSSMIJsjJglr1BZC0=
+	t=1708550707; cv=none; b=pdajl6wYkBzPyiMzyffaAdo2a2g4HoGH4SggB5dArf1PsR5hnZvRwNkMLBMYOV55ZMMSx4C+q3X2qMRMxcT6Ww/32YCpZczYGKDIhjXYl7evJb2IWhlgnaSUuorSzEjvBGlXO2MN2LNTBMk1orMmf7B2gCf48hYsx9qLueksybk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1708550707; c=relaxed/simple;
-	bh=CJx4jVGIRqQ1qdmTj2y9zLMKH38BdGpPQGSp5yBCQqY=;
+	bh=yjTkC6GQSOdkd/yofwHxTRqqG6BMoKBOmSs9mRH3lD0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RsSjfPSZE4aHzTEE1oVRx7CuTu3dE7UH05dTc66Nh9j45hHpH8G3mnn3MC0dnM1hDJnxQhgR0IsJcCDjD2vVyAGXoUZK/zbVpptTfPypISd4uoVcayc5zsIu8xRSJ+DdI4QGc2wUWoEPgYrZktaZD8ZaX122lO8gwihHQJ1NUJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ScFEMz6F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id CB04AC32795;
+	 In-Reply-To:To:Cc; b=XTpGiLNixfm/+/KN9pL+Qc6kLBPkX7Ro9C22ZGcFlN+FuPBr2G6xm7SNzTlu6l6t7BalBmU4Je9ZVnEezJR8QUUyjyKDQdNqAFeOPC8H2V7pDjZOT9zDaYaUP45YrGEkT6lwdm04uHT/W246SLhO/VGgq3PqKyuBOAPWfM8h3LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P7RtPOwF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id DF4CFC32794;
 	Wed, 21 Feb 2024 21:25:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1708550706;
-	bh=CJx4jVGIRqQ1qdmTj2y9zLMKH38BdGpPQGSp5yBCQqY=;
+	bh=yjTkC6GQSOdkd/yofwHxTRqqG6BMoKBOmSs9mRH3lD0=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ScFEMz6FlokZomeuAvsLqnXQTflRHEh6BIQBe96Ib9pULn8Wj4+DpC7Xfs8aTexs7
-	 qTiVdQUGtX+RU3zggTNkWmIrVpcMUO6N+cwr43fGo9nWV/a5PLS4ItLlRmU9FbrqIB
-	 5Fqw36ofvD0sLbq9fFeIkUSaRu2bFetOjiQk+SpXaVH/bo3+jCjulvqWK0vKRULblx
-	 2LRZiCwub+3/tki2vXE72U2ySzZt7yQa0Fh+FnnVf6+9pIJpgArXMkOTlvYnR1Yx2p
-	 pMyEmo3Yf/KuwhCrM2ulibMDJ6mZDj1XgQCNFQHu4B3b7bRKxg/Rx4wNmsitGS/MvI
-	 AzKnC3SypEVcw==
+	b=P7RtPOwFXQfE4KiawGw7UD+AwPubpqVY0iIJcNPerSUBJL36yOifCmQi+HqGF16Cp
+	 A8ZpZ/BFTcBqXIpcRIh7IFE+n9k72v3i2I00Un+TNBvYxin8X7EwdZJogNd0QQqMed
+	 WOMMpToeKNHRSt6dAAHWUWllAjzc9dEGVP2P3TzYw+HIps3qPMPCs7VJ6MQ+Fb3Moi
+	 OBtqAV/6HFxUjipd3IewCctX792BSLaICcJijN/K3cYuNOSR8rJekeaofXqNh+qrJI
+	 B6f8RWwZX+YIXmYzLi0QFAkgzTE44Wji71wP7ulDPF6PXLzGKTTrJkLnWJlQSLwaTn
+	 au2a08gbKlnPQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7938C48BEB;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FD7C5478C;
 	Wed, 21 Feb 2024 21:25:06 +0000 (UTC)
 From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Date: Wed, 21 Feb 2024 15:24:46 -0600
-Subject: [PATCH v2 15/25] security: call evm fscaps hooks from generic
- security hooks
+Date: Wed, 21 Feb 2024 15:24:47 -0600
+Subject: [PATCH v2 16/25] fs: add inode operations to get/set/remove fscaps
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240221-idmap-fscap-refactor-v2-15-3039364623bd@kernel.org>
+Message-Id: <20240221-idmap-fscap-refactor-v2-16-3039364623bd@kernel.org>
 References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
 In-Reply-To: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -77,70 +76,104 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
  linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1658; i=sforshee@kernel.org;
- h=from:subject:message-id; bh=CJx4jVGIRqQ1qdmTj2y9zLMKH38BdGpPQGSp5yBCQqY=; 
- =?utf-8?q?b=3DowEBbQGS/pANAwAKAVMDma7l9DHJAcsmYgBl1molI6sVtDD31t+ZdHf1WoPke?=
- =?utf-8?q?0imykwNoYOzlcEa_MLxxYsqJATMEAAEKAB0WIQSQnt+rKAvnETy4Hc9TA5mu5fQxy?=
- =?utf-8?q?QUCZdZqJQAKCRBTA5mu5fQxyUmKB/_sG1SON2b9GiN9agwuQ8lNxw2IHmhmbxgz33?=
- =?utf-8?q?hhQ2tViUIItDAJSIkNy5i0HyqiJgPzP/w1VR+NSBYZ3_rze6gn/V7wNsI6T4BHcLg?=
- =?utf-8?q?Xfr/PP7enV45rcBxOGWDoeBgrvhVY2RIIRwv0+5nKw+ZUUoxMJyIXsguH_AQe19vJ?=
- =?utf-8?q?zujrIFbKdZ5VySsugJ5uN9keqsl3z8Qth5BpJ4cml1+ab/U3rPxAwFa/t2OH6DxBK?=
- =?utf-8?q?RvYF0c_GVb+YvhlZ+LDNcy1vbiuUqcuEeEatxNwdefLfn1dBPKNGW6/nY86XhjMB6?=
- =?utf-8?q?6KBqJqPp/VEC20A/hPcB?= ne6Sf/61X39xbpD+uZnRFwaVm9Ag8L
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3842; i=sforshee@kernel.org;
+ h=from:subject:message-id; bh=yjTkC6GQSOdkd/yofwHxTRqqG6BMoKBOmSs9mRH3lD0=; 
+ =?utf-8?q?b=3DowEBbQGS/pANAwAKAVMDma7l9DHJAcsmYgBl1momcOrJrmhhvfSlvseUc5Zkz?=
+ =?utf-8?q?jX47oXe/xbCoMiA_8Fhev46JATMEAAEKAB0WIQSQnt+rKAvnETy4Hc9TA5mu5fQxy?=
+ =?utf-8?q?QUCZdZqJgAKCRBTA5mu5fQxyTg8B/_4pdFVXDzplj+s5uQiNwRqie7BpHWe3tIOvD?=
+ =?utf-8?q?iVGDv576tfzBZUMOtKIm4/hiistj+rni3+bxxxwy1bZ_h2v2QzDZVJACen4oBtiHh?=
+ =?utf-8?q?n0ushKMMxAvjSU7gdjX2S93lwm7Zohpkq/zf/lVpj4tqQyk0Y8m+qcThW_YSWAFw6?=
+ =?utf-8?q?66PemdoaOc3QKfeORxCuCimtGEScFebmaQXGK/fwUz6wQxVfIG+BzsMs4ZMK32RRt?=
+ =?utf-8?q?T8y+cI_uKeQCrUVe1DzsTGff5EIdRfwgo5m+3LEV/8lmR4ZceA2pKeEJfJ0OuFbvh?=
+ =?utf-8?q?f3JV0P3lbi/mcCDdcZdT?= SZkQ1U89qyGJRlXpcGom2dKvclDCVV
 X-Developer-Key: i=sforshee@kernel.org; a=openpgp;
  fpr=2ABCA7498D83E1D32D51D3B5AB4800A62DB9F73A
 X-Endpoint-Received:
  by B4 Relay for sforshee@kernel.org/default with auth_id=103
 
+Add inode operations for getting, setting and removing filesystem
+capabilities rather than passing around raw xattr data. This provides
+better type safety for ids contained within xattrs.
+
 Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
 ---
- security/security.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ Documentation/filesystems/locking.rst |  4 ++++
+ Documentation/filesystems/vfs.rst     | 17 +++++++++++++++++
+ include/linux/fs.h                    |  4 ++++
+ 3 files changed, 25 insertions(+)
 
-diff --git a/security/security.c b/security/security.c
-index 0d210da9862c..f515d8430318 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2365,9 +2365,14 @@ int security_inode_remove_acl(struct mnt_idmap *idmap,
- int security_inode_set_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
- 			      const struct vfs_caps *caps, int flags)
- {
-+	int ret;
+diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
+index d5bf4b6b7509..d208dd9f75ae 100644
+--- a/Documentation/filesystems/locking.rst
++++ b/Documentation/filesystems/locking.rst
+@@ -81,6 +81,8 @@ prototypes::
+ 				umode_t create_mode);
+ 	int (*tmpfile) (struct mnt_idmap *, struct inode *,
+ 			struct file *, umode_t);
++	int (*get_fscaps)(struct mnt_idmap *, struct dentry *, struct vfs_caps *);
++	int (*set_fscaps)(struct mnt_idmap *, struct dentry *, const struct vfs_caps *, int setxattr_flags);
+ 	int (*fileattr_set)(struct mnt_idmap *idmap,
+ 			    struct dentry *dentry, struct fileattr *fa);
+ 	int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
+@@ -114,6 +116,8 @@ fiemap:		no
+ update_time:	no
+ atomic_open:	shared (exclusive if O_CREAT is set in open flags)
+ tmpfile:	no
++get_fscaps:     no
++set_fscaps:     exclusive
+ fileattr_get:	no or exclusive
+ fileattr_set:	exclusive
+ get_offset_ctx  no
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index eebcc0f9e2bc..ed1cb03f271e 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -514,6 +514,8 @@ As of kernel 2.6.22, the following members are defined:
+ 		int (*tmpfile) (struct mnt_idmap *, struct inode *, struct file *, umode_t);
+ 		struct posix_acl * (*get_acl)(struct mnt_idmap *, struct dentry *, int);
+ 	        int (*set_acl)(struct mnt_idmap *, struct dentry *, struct posix_acl *, int);
++		int (*get_fscaps)(struct mnt_idmap *, struct dentry *, struct vfs_caps *);
++		int (*set_fscaps)(struct mnt_idmap *, struct dentry *, const struct vfs_caps *, int setxattr_flags);
+ 		int (*fileattr_set)(struct mnt_idmap *idmap,
+ 				    struct dentry *dentry, struct fileattr *fa);
+ 		int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
+@@ -667,6 +669,21 @@ otherwise noted.
+ 	open; this can be done by calling finish_open_simple() right at
+ 	the end.
+ 
++``get_fscaps``
 +
- 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return 0;
--	return call_int_hook(inode_set_fscaps, 0, idmap, dentry, caps, flags);
-+	ret = call_int_hook(inode_set_fscaps, 0, idmap, dentry, caps, flags);
-+	if (ret)
-+		return ret;
-+	return evm_inode_set_fscaps(idmap, dentry, caps, flags);
- }
- 
- /**
-@@ -2387,6 +2392,7 @@ void security_inode_post_set_fscaps(struct mnt_idmap *idmap,
- 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return;
- 	call_void_hook(inode_post_set_fscaps, idmap, dentry, caps, flags);
-+	evm_inode_post_set_fscaps(idmap, dentry, caps, flags);
- }
- 
- /**
-@@ -2415,9 +2421,14 @@ int security_inode_get_fscaps(struct mnt_idmap *idmap, struct dentry *dentry)
-  */
- int security_inode_remove_fscaps(struct mnt_idmap *idmap, struct dentry *dentry)
- {
-+	int ret;
++        called to get filesystem capabilites of an inode.  If unset,
++        xattr handlers will be used to get the raw xattr data.  Most
++        filesystems can rely on the generic handler.
 +
- 	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
- 		return 0;
--	return call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
-+	ret = call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
-+	if (ret)
-+		return ret;
-+	return evm_inode_remove_fscaps(dentry);
- }
- 
- /**
++``set_fscaps``
++
++        called to set filesystem capabilites of an inode.  If unset,
++        xattr handlers will be used to set the raw xattr data.  Most
++        filesystems can rely on the generic handler.
++
++        If the new fscaps value is NULL the filesystem must remove any
++        fscaps from the inode.
++
+ ``fileattr_get``
+ 	called on ioctl(FS_IOC_GETFLAGS) and ioctl(FS_IOC_FSGETXATTR) to
+ 	retrieve miscellaneous file flags and attributes.  Also called
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index ed5966a70495..89163e0f7aad 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2067,6 +2067,10 @@ struct inode_operations {
+ 				     int);
+ 	int (*set_acl)(struct mnt_idmap *, struct dentry *,
+ 		       struct posix_acl *, int);
++	int (*get_fscaps)(struct mnt_idmap *, struct dentry *,
++			  struct vfs_caps *);
++	int (*set_fscaps)(struct mnt_idmap *, struct dentry *,
++			  const struct vfs_caps *, int setxattr_flags);
+ 	int (*fileattr_set)(struct mnt_idmap *idmap,
+ 			    struct dentry *dentry, struct fileattr *fa);
+ 	int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
 
 -- 
 2.43.0
