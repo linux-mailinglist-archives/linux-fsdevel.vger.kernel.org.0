@@ -1,181 +1,224 @@
-Return-Path: <linux-fsdevel+bounces-12206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A944D85CF29
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 04:54:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E0AD85CF45
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 05:18:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2057E1F25533
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 03:54:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6237284499
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 04:18:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11DA38DE8;
-	Wed, 21 Feb 2024 03:54:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A9739861;
+	Wed, 21 Feb 2024 04:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="YfX3c0Tn";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="VqUWuhgt"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kn3PvkVa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91888460;
-	Wed, 21 Feb 2024 03:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708487646; cv=none; b=eCSI35Um2Ai8plr2ocmfXO7bRt6EBefW7oIp07ASGfbgJM3E6lDNh/BElqhxQVl6Fnem8kwhMHKddXu/f/xSTtCM10uO9TpepX4NA7qp4KuTQan6GILY3/Y8VVOdzZ+07K5zfESOJ+w3tfAkXKET3YSq2gmlqqLp0GFM74E54UU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708487646; c=relaxed/simple;
-	bh=0r2eJcR8uv882dJ9kLZyiUPHOvlr5JnQiM8ZYXv2ZJc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hhWI2bnkAZzO2+wUpzgbuIJ4px01eF+AVGhJ/hrvg59v9J0SLPg6RZU9AKps4Q6+HFDe4Gcd6ZXL303nMaI2ApUY67YnRkIQedI1SCp7TuJMHu1zNBD4dReteTxlNO94yYYea5GilnbmNUum01FNkYKhDh8uolHB54aAy9c2CC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=YfX3c0Tn; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=VqUWuhgt; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A96D38FA3;
+	Wed, 21 Feb 2024 04:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1708489094; cv=fail; b=CWdhk4W7OQJ2EkQhDdnUPkNC+5qXm3ThhCa5nw15QgzLk+g+h6zjy+bl9UTz5PabGeTPUJBgQU6dnFnK4oCi5zurw5XjAoI5n5mTjulKiwZ5M0vXn4hXvNmwhqjBBHC3ozbJ9Rqbe2aI3gLJvRzHzBbnvoOZCEV29c/1AZB5mqU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1708489094; c=relaxed/simple;
+	bh=AtrkrqX68O98zyA7Neh9JSYjurH/H6HubiPaLloNeIQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Gxi0fauJ4In3wE5TK9XSORxrGYbEZLzZVVlbsjX2t9JBBQHxXMRvlwodjqVFbZ955CiC5ZwGa3Ik0D+zecQciIJZrDbtfnpU5+C1V/JF2bjfPtBSo72LYJDet1m2j5R+8N61mHDxf0qbWlJXbMF/qIF7XmC+Fk/rsy7zUOML7BM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kn3PvkVa; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1708487643;
-	bh=0r2eJcR8uv882dJ9kLZyiUPHOvlr5JnQiM8ZYXv2ZJc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=YfX3c0TntyHI8jdtoxPpk+ZYgyUGFb8Gh6wRlHJTXpgr/R9lpu0ABt/o7hC94caTT
-	 5HwenwvpBlhjEsuqFV70peOrhbtZP9xPEUx1P032BvJjrTvSgd5oG+YIW3ewbWAs0W
-	 dkVvOHRPErqJtOIxqEINQHuAhsMtsffho4ucQnXI=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 0668D1285D5F;
-	Tue, 20 Feb 2024 22:54:03 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id vxWwJu1JQ3zD; Tue, 20 Feb 2024 22:54:02 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1708487642;
-	bh=0r2eJcR8uv882dJ9kLZyiUPHOvlr5JnQiM8ZYXv2ZJc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=VqUWuhgtJPh4hzKc/KzZn+SA7lmOu65DUWsBKXmk9looUKGW8ku3QC7WXOHOmYwQ6
-	 ziQ51aFNCyBdfVevey8YdvrW+iTNIVlJp3M+BaEsFfNNpZ/zz4okCKdoXnc13Jxm+1
-	 /c8+jjbKMnDeKDe0Bz5SD440NezZJaqoR/v84hcI=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id B6DAA1281C36;
-	Tue, 20 Feb 2024 22:54:01 -0500 (EST)
-Message-ID: <bfbb1e9b521811b234f4f603c2616a9840da9ece.camel@HansenPartnership.com>
-Subject: Re: [LSF TOPIC] beyond uidmapping, & towards a better security model
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- lsf-pc@lists.linux-foundation.org, Christian Brauner
- <christian@brauner.io>,  =?ISO-8859-1?Q?St=E9phane?= Graber
- <stgraber@stgraber.org>
-Date: Tue, 20 Feb 2024 22:53:58 -0500
-In-Reply-To: <qlmv2hjwzgnkmtvjpyn6zdnnmja3a35tx4nh6ldl23tkzh5reb@r3dseusgs3x6>
-References: 
-	<tixdzlcmitz2kvyamswcpnydeypunkify5aifsmfihpecvat7d@pmgcepiilpi6>
-	 <141b4c7ecda2a8c064586d064b8d1476d8de3617.camel@HansenPartnership.com>
-	 <qlmv2hjwzgnkmtvjpyn6zdnnmja3a35tx4nh6ldl23tkzh5reb@r3dseusgs3x6>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1708489092; x=1740025092;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=AtrkrqX68O98zyA7Neh9JSYjurH/H6HubiPaLloNeIQ=;
+  b=Kn3PvkVaj7YAwIncaTXoh6iQ0XCEm6+T8JLDlzaLLlBhTOH44BYJQlzH
+   zMShdj1GUSiEnHeqQKNQOvM6006GUxio2I8lA9cs8O30PX85V+y5mw0+k
+   NBbeEy7FGL0lac1q4AFTzViBp32lF9WBEWvyYEoAj0khuFbqprecqeBH3
+   UKTdYX6KvHgiJgiY0SS2FxEdMAFIFyTicClPxNeNWRSBrHDm9Yn+ms3x3
+   fgKW7nzfULyUSaXgNVj79JkLaSgRHEpkrDptLh8o5NoZWxwHCgvj2RXxr
+   rlZrte0NRUH/aIxmCBSc6DvUfCIyo/vzCnV+QPBlMo3IZGv7Z2IVci49p
+   A==;
+X-IronPort-AV: E=McAfee;i="6600,9927,10990"; a="2500437"
+X-IronPort-AV: E=Sophos;i="6.06,174,1705392000"; 
+   d="scan'208";a="2500437"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Feb 2024 20:18:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.06,174,1705392000"; 
+   d="scan'208";a="5349897"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 20 Feb 2024 20:18:10 -0800
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 20 Feb 2024 20:18:09 -0800
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35 via Frontend Transport; Tue, 20 Feb 2024 20:18:09 -0800
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 20 Feb 2024 20:18:08 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UBwly99FpLrp9921GJxXMItPIMZyHLf5ip5y76LtpTAFscMY3j4fazip+CZPXSpL3lL9pcUGBav2Dasv55yumIjqHZwPm/i0uUcUj8QvQk8Qc/wtFq9AoPliYmcdioOq9E+JCnyhIbus6cEtDnBnlgZpUn1PPSjMFrcPHHqo2sY7WzOMcMs1rcg9XkmXX9FhVukS2n+COmGSrHx4bL3gN2oqGlY7+FJROqPWonFVj3QdlHzoWt27B+QtWvkemWuYI+gTWX0Pe3B5JraZTz4uZaSlNKESu7OQS5F1mk7+jgtS0msecHP8nVO+X6CiwgWVHkygCcM8FM4mRXVc6VLPAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AtrkrqX68O98zyA7Neh9JSYjurH/H6HubiPaLloNeIQ=;
+ b=jTni16n0TKZp+ZbwfsOHsncs7Ow4iuVTJfwgnNu3u7J28lawPGVDEDJ9YhegRSmgTMxxlFoukHcwZpa4ApY+JKlGnuab24a5V5oAfRAVj43VJ3mqBEwls5dpkTYx4WB8yDnrDrfskYL4rxX3WWAsGZOAAzwK5WMfEk+a8YzzI8bN1PExW3ByB26x3tG1LPzgltv/PHDdrAv6fid75NZ6gaGbXb1hxD7l1sgxtY0OUROO8mu63dBjWHMKCKqaO7jHKygad439YQFDvfSeozTRtQnMcH+f+r0clNOIKNQ4IsBC0qsB5EIKtmN4jWwT+I+3taU8d+D3+uHdaCR0IA1A4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
+ by IA1PR11MB8100.namprd11.prod.outlook.com (2603:10b6:208:445::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7292.38; Wed, 21 Feb
+ 2024 04:18:02 +0000
+Received: from MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::5d40:83fd:94ac:d409]) by MN0PR11MB5963.namprd11.prod.outlook.com
+ ([fe80::5d40:83fd:94ac:d409%7]) with mapi id 15.20.7316.018; Wed, 21 Feb 2024
+ 04:18:02 +0000
+From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To: "dalias@libc.org" <dalias@libc.org>
+CC: "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "Szabolcs.Nagy@arm.com"
+	<Szabolcs.Nagy@arm.com>, "musl@lists.openwall.com" <musl@lists.openwall.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, "corbet@lwn.net"
+	<corbet@lwn.net>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "broonie@kernel.org" <broonie@kernel.org>,
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, "palmer@dabbelt.com"
+	<palmer@dabbelt.com>, "debug@rivosinc.com" <debug@rivosinc.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "shuah@kernel.org"
+	<shuah@kernel.org>, "arnd@arndb.de" <arnd@arndb.de>, "maz@kernel.org"
+	<maz@kernel.org>, "oleg@redhat.com" <oleg@redhat.com>, "fweimer@redhat.com"
+	<fweimer@redhat.com>, "keescook@chromium.org" <keescook@chromium.org>,
+	"james.morse@arm.com" <james.morse@arm.com>, "ebiederm@xmission.com"
+	<ebiederm@xmission.com>, "will@kernel.org" <will@kernel.org>,
+	"brauner@kernel.org" <brauner@kernel.org>, "hjl.tools@gmail.com"
+	<hjl.tools@gmail.com>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "paul.walmsley@sifive.com"
+	<paul.walmsley@sifive.com>, "ardb@kernel.org" <ardb@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>, "thiago.bauermann@linaro.org"
+	<thiago.bauermann@linaro.org>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "sorear@fastmail.com" <sorear@fastmail.com>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [musl] Re: [PATCH v8 00/38] arm64/gcs: Provide support for GCS in
+ userspace
+Thread-Topic: [musl] Re: [PATCH v8 00/38] arm64/gcs: Provide support for GCS
+ in userspace
+Thread-Index: AQHaVpxQxL7eT1mQek6VcjPJOSVEZ7ETiLSAgAAiyYCAAASHgIAATE8AgAAGrQCAAAuagIAADnuAgAAMOQCAACNjgA==
+Date: Wed, 21 Feb 2024 04:18:02 +0000
+Message-ID: <41b401d59b3846f44cee33f1d680b2534b7c0dea.camel@intel.com>
+References: <20240203-arm64-gcs-v8-0-c9fec77673ef@kernel.org>
+	 <22a53b78-10d7-4a5a-a01e-b2f3a8c22e94@app.fastmail.com>
+	 <4c7bdf8fde9cc45174f10b9221fa58ffb450b755.camel@intel.com>
+	 <20240220185714.GO4163@brightrain.aerifal.cx>
+	 <9fc9c45ff6e14df80ad023e66ff7a978bd4ec91c.camel@intel.com>
+	 <20240220235415.GP4163@brightrain.aerifal.cx>
+	 <a57d6c7eada4b9a7c35addbc8556f5b53a0c3e6f.camel@intel.com>
+	 <20240221012736.GQ4163@brightrain.aerifal.cx>
+	 <6332963a828d247ef935b7d3352fa1fbd83b11b0.camel@intel.com>
+In-Reply-To: <6332963a828d247ef935b7d3352fa1fbd83b11b0.camel@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.44.4-0ubuntu2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|IA1PR11MB8100:EE_
+x-ms-office365-filtering-correlation-id: 9caed3a2-545a-4e4c-ae6c-08dc3294185a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: q2dr+0y0PeBpJqqp8CmHJtSYjPJ8p8yP2kxWBDJ7CYbGWYVpPoM1taZ0/pHSWTU17z211nBJYrpoa6SfupN1kNew3makZkh+RYjp/fzEvCZ6wk1qfNctPJWCRZu9fX14Dc3PwnAOHNZEte3ZYSsCTc+KpObUedHNNC/5oQ/Jp7IqoEeTXezXT0noyvf1NvKxjolRN4duCNHDqeEKx0SuF7FfEDybRPkwQp1UM4vWmh+A5qxAXbSTdaoM0dYjD0Fw5h9QuaJU081Pzlnwn39hXyP2c4VsBdkvIEY9/SyQlEiz1mZXucf7INaexFICgYdBwfSFpELSBLhk710zfU95/oUgH9fZiAB23HAEx4/FFkiFPp4xby9C+398KFTScdXlfMtHe71nk2nNvHyGiV68cqhqW9ci0hUHlibYTDjnomElbH35bjnxVd1tWWBFOV7yJNG6X28pfO1S0YQxmiVUBTzqVDfd0E4tSSUtVpYedBpCIhQ5LJsntx/ChNZWXnohATABTrfTsUUR37XNKwujETRn85Q4zYJXxcrzQYAHhmP5ys1cHoaPhKpI5dIQHmK2SlnDfnbnoAtxRpYHbnMkDQgFvcCRYcQNt9uXrzsJutQKUuNWn/0xKQak1bVbq8aO
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(38070700009);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SDh4NEYyeHdXdXZxT0kvRHpucExJcnpUVFZXMDJGVkVURWlRdk4vMWYzTHcr?=
+ =?utf-8?B?LzVuMmcxOGdvOUl2bTFYL3dwTk96cmRKcEl4WjV1dksvMkYyRkRLYUxDYWxL?=
+ =?utf-8?B?Z1dFMmlRK0N1UGxvRzRuZkFwMUdtai9QYU50akdkb1A2UGtHQmJZMktrRGhX?=
+ =?utf-8?B?Wkh5bnNoZHFJQW9oSmt6aEZUTWxLTDAwOStld1hHTmVpdVNzZDU4eTlzSEJV?=
+ =?utf-8?B?aTlDdlNIWFIyTHMzV1dRRmRCWExBMlhZbUJBWWZlWk9VU0l3RWoyT2FZVDRP?=
+ =?utf-8?B?dzJ0MzVIQXR6cm50TWNYY3U0cTJEL2g0VG5rMGRPTnVyVFJzSHpDenVGc0p2?=
+ =?utf-8?B?S2FZMFJMWGZ3ZUo0STZJNnpJY25lR3RaTlB2TzBBVTBLMmI3d2VuUE9GbC96?=
+ =?utf-8?B?MkxQUjF4azBsalN1T1M0T2h4a2dwdHRMc2dpdENSanluSlRqSTc4ZVRRQ00w?=
+ =?utf-8?B?MnB0WUczVlh5NzRuallCUVpMUWhEVEprRjJzUis2aW15eXJ2ekNQOU1yS2V0?=
+ =?utf-8?B?WW13RU9kNm92V1BzVUwxVUN5TXdjekwwaEgzdTU2YzNNdXBWaGVlalhaWEZj?=
+ =?utf-8?B?dkZnNFVZWEpiUFAwZ1UzbGZGbll6OWtMMDNZc0hxSy9lRHBDak16N1ErTDl1?=
+ =?utf-8?B?aUI3U1kxVW5KT1FHQkpBamRiMWpDWGk5NWg5dkUwcXM0UmxqRFJBamI5Q3Fa?=
+ =?utf-8?B?bTU2RUNBVmwvY1hNWFpnL0NhRGJMSFA2NHFqbU5QR1REV3psNWFHOTJ0K0lo?=
+ =?utf-8?B?dzE4QWVKbXhnWVFrWHpGamtFV1hWcFpySm1XUFFFMTljZWk5V2xjVGFUZXNx?=
+ =?utf-8?B?cXBtYStvNE9zbnFRUlFQT01EYUxaY0o3QlRVdGQ0d3pJSlJ6ci8wRi9kSHR5?=
+ =?utf-8?B?M3VaMTdxSmRibCtXeWF5WXZwRkYzaUxsaHJvb1hVQzY2Z0JTc2xGVG9scUU4?=
+ =?utf-8?B?VHloVTd6WnA5ajVsUGRLUUhRZnhaN0d2MVB2RllyeEIvL2hOUHVPcnkxMFg1?=
+ =?utf-8?B?cjVVZVJENUZpT3N5WGFWejJDcGltM1pxdE5NM1NzdklrWkZtWDZnSHVjTG1V?=
+ =?utf-8?B?TVRSNXByTnV1M3c3NzBvdGtRNnhGV3F1ZHBpNmVIVDgyN1l4QitTM1ZzeFJD?=
+ =?utf-8?B?SE5IMithYTBZclo2QWVUd3lERWJRUVBqQk9aV1pVRzY2bTRSUU9zSit4Qlgy?=
+ =?utf-8?B?NzRjSDBiREZVcld6MU53eDh3T1BBSHp3ZkcxYWdEOWNPZWdVVUN3NFhMSnVU?=
+ =?utf-8?B?elVEcmkyODQxZ1U2MlhpbWNkVG4venViaURrRGxtemtRSVREMDBLdm1Eb25p?=
+ =?utf-8?B?MXdpZmVlVWlwaWxUdEx5UmtUTkZvejlpdXlUcVdZTjJxT21PR3BRR29UaG9G?=
+ =?utf-8?B?SEFkUCtkTElHejZlbUxsUk0zNythblBYbGFMTFBBMFdYcU9iZ282R2Zwcjdn?=
+ =?utf-8?B?dGt6MStaa2hKcVFaYkVlb3FsVDdLWS8wYm0yNjV2TjdpODZoR2UrNzNSZXRS?=
+ =?utf-8?B?QW1RSktWYUFOM05yVnpkN3V1eXJ4ZnFXcGlES1pWRmJKSGc3MHVrUEhkaGhj?=
+ =?utf-8?B?MGpRdTZZcTBGMVA2amVRUUYraXlJNE5aM24vb2ZSUEFXcVppQllmNDVkeCtR?=
+ =?utf-8?B?bTFaZFllUjA1OTVUT0xkdW9nbWl4RmRldnoxZXA5VEFZS3NsL1ZpUTFFbDRq?=
+ =?utf-8?B?NnVyQ1VRZGxYYWltNHhtemtyWlhidzVvcjlzK3F3QmRtclo3dVNEeXRtOGNn?=
+ =?utf-8?B?NHpTMXA0YU1DUDdiTEZhbUxHQlJ4dWp5MVBOaXg1V0tlY1NYZjU0YjdhZUZT?=
+ =?utf-8?B?RTFzb1ZFNDVYazVMZ1ZyL3VFcDJYREN1aVRtNFV6R2t1TUhTY05RK3NFTUV1?=
+ =?utf-8?B?NmdLdHQyVWtsVHlseXFYUW04WjV1Qlg0bStDMHVuOHozbFN2MEltd29KMUtL?=
+ =?utf-8?B?VGxFeFE5SnBRTGgyYkdYYlZKUGVjSnl6TnAraXFJL1JISDZiQ01NTkhoUm90?=
+ =?utf-8?B?Y29DT1o1cW1haVZsbzhuRGNCR29xUSs2amdYMGoyS08xM1dXc1ZPOVplVWsz?=
+ =?utf-8?B?YXBHTFl0MWVnVUxnem9zZk5MdmZITmloaXJLV1JrYlJqSk9ZL1VrRUpjRkc0?=
+ =?utf-8?B?N1NYWWJLNXpoRU5QZU5TVHNhYmVCMXVOVGhBN1Btd3FkOWZjdktxRHczSEZs?=
+ =?utf-8?Q?4n7gWWmgbxY4TTy3Cp9PeSU=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C5ABC9A534BFC942AF9732629CA297C7@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9caed3a2-545a-4e4c-ae6c-08dc3294185a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Feb 2024 04:18:02.4351
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 2a1K4pjY9e1W4n/MBIe2zxxDUzdLNzOhL0Y9lUQ3t22yoaNaw5s5ERW2kTsVZZ88i/Y2sJfZs86JP7eXaBOeI56EQQuKGUvr5HSzyHEd/Ww=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8100
+X-OriginatorOrg: intel.com
 
-On Tue, 2024-02-20 at 19:25 -0500, Kent Overstreet wrote:
-> On Mon, Feb 19, 2024 at 09:26:25AM -0500, James Bottomley wrote:
-> > I would have to say that changing kuid for a string doesn't really
-> > buy us anything except a load of complexity for no very real gain. 
-> > However, since the current kuid is u32 and exposed uid is u16 and
-> > there is already a proposal to make use of this somewhat in the way
-> > you envision,
-> 
-> Got a link to that proposal?
-
-I think this is the latest presentation on it:
-
-https://fosdem.org/2024/schedule/event/fosdem-2024-3217-converting-filesystems-to-support-idmapped-mounts/
-
-> 
-> > there might be a possibility to re-express kuid as an array
-> > of u16s without much disruption.  Each adjacent pair could
-> > represent the owner at the top and the userns assigned uid
-> > underneath.  That would neatly solve the nesting problem the
-> > current upper 16 bits proposal has.
-> 
-> At a high level, there's no real difference between a variable length
-> integer, or a variable length array of integers, or a string.
-
-Right, so the advantage is the kernel already does an integer
-comparison all over the place.
-
-> But there's real advantages to getting rid of the string <-> integer
-> identifier mapping and plumbing strings all the way through:
-> 
->  - creating a new sub-user can be done with nothing more than the new
->    username version of setuid(); IOW, we can start a new named
-> subuser
->    for e.g. firefox without mucking with _any_ system state or tables
-> 
->  - sharing filesystems between machines is always a pita because
->    usernames might be the same but uids never are - let's kill that
-> off,
->    please
-> 
-> Doing anything as big as an array of integers is going to be a major
-> compatibiltiy break anyways, so we might as well do it right.
-
-I'm not really convinced it's right.  Strings are trickier to handle
-and compare than integer arrays and all of the above can be done by
-either.
-
-> Either way we're going to need a mapping to 16 bit uids for
-> compatibility; doing this right gives userspace an incentive to get
-> _off_ that compatibility layer so we're not dealing with that
-> impedence mismatch forever.
-
-Fundamentally we have a load of integer to pretty name things we use in
-the kernel (protocol, port, ...).  The point though is the kernel
-doesn't need to know the pretty name, it deals with integers and user
-space does the conversion.
-
-> > However, neither proposal would get us out of the problem of mount
-> > mapping because we'd have to keep the filesystem permission check
-> > on the owning uid unless told otherwise.
-> 
-> Not sure I follow?
-
-Mounting a filesystem inside a userns can cause huge security problems
-if we map fs root to inner root without the admin blessing it.  Think
-of binding /bin into the userns and then altering one of the root owned
-binaries as inner root: if the permission check passes, the change
-appears in system /bin.
-
-> We're always going to need mount mapping, but if the mount mapping is
-> just "usernames here get mapped to this subtree of the system
-> username namespace", then that potentially simplifies things quite a
-> bit - the mount mapping is no longer a _table_.
-
-But what then is it?  If you allow the user arbitrarily to assign
-subuids, you can't trust them for the mapping to the fs uid.  The
-current newidmap/newgidmap are somewhat nasty but at least they're
-controlled.
-
-I did try a prototype where all we cared about was the root<->root
-mapping, but a unix system has other uids that are privileged as well,
-so it didn't solve the security problem.
-
-> And it wouldn't have to be administrator assigned. Some administrator
-> assignment might be required for the username <-> 16 bit uid mapping,
-> but if those mappings are ephemeral (i.e. if we get filesystems
-> persistently storing usernames, which is easy enough with xattrs)
-> then that just becomes "reserve x range of the 16 bit uid space for
-> ephemeral translations".
-
-*if* the user names you're dealing with are all unprivileged.  When we
-have a mix of privileged and unprivileged users owning the files, the
-problems begin.
-
-James
-
+T24gVHVlLCAyMDI0LTAyLTIwIGF0IDE4OjExIC0wODAwLCBSaWNrIEVkZ2Vjb21iZSB3cm90ZToN
+Cj4gU29tZSBzcGVjaWZpYyBjYXNlcyB0aGF0IHdlcmUgc3RpbGwgb3BlbiB3ZXJlIGxvbmdqbXAo
+KWluZyBvZmYgb2YgYQ0KPiBjdXN0b20gdXNlcnNwYWNlIHRocmVhZGluZyBsaWJyYXJ5IHN0YWNr
+LCB3aGljaCBtYXkgbm90IGhhdmUgbGVmdCBhDQo+IHRva2VuIGJlaGluZCB3aGVuIGl0IGp1bXBl
+ZCB0byBhIG5ldyBzdGFjay4gQW5kIGFsc28sIHBvdGVudGlhbGx5IG9mZg0KPiBvZiBhbiBhbHQg
+c2hhZG93IHN0YWNrIGluIHRoZSBmdXR1cmUsIGRlcGVuZGluZyBvbiB3aGV0aGVyIGl0IGxlYXZl
+cw0KPiBhDQo+IHJlc3RvcmUgdG9rZW4gd2hlbiBoYW5kbGluZyBhIHNpZ25hbC4gKHRoZSBwcm9i
+bGVtIHRoZXJlLCBpcyBpZiB0aGVyZQ0KPiBpcyBubyByb29tIHRvIGxlYXZlIGl0KS4NCg0KQWgs
+IEkgcmVtZW1iZXIgdGhlIG90aGVyIG9uZS4gSWYgdGhlIHRva2VuIG9uIHRoZSB0YXJnZXQgc2hh
+ZG93IHN0YWNrDQppcyBhdCB0aGUgZW5kIG9mIHRoZSBzaGFkb3cgc3RhY2ssIGl0IG1heSBub3Qg
+YmUgYWJsZSB0byBoYW5kbGUgcHVzaGluZw0KYSBzaGFkb3cgc3RhY2sgc2lnbmFsIGZyYW1lIGlm
+IGEgc2lnbmFsIGhpdHMgd2hpbGUgaXMgdW53aW5kaW5nIHRocm91Z2gNCnRoZSB0b2tlbi4gQXMg
+aW4sIHdoZXJlIG5vcm1hbCBsb25nam1wKCkgaXMgZGlyZWN0IHRyYW5zaXRpb24sIGluIHRoaXMN
+CmNhc2UgdGhlIGxvbmdqbXAoKSBvcGVyYXRpb24gY2FuIGJlIHRlbXBvcmFyaWx5IGluIGEgcGxh
+Y2Ugd2hlcmUgYQ0Kc2lnbmFsIGNhbm5vdCBiZSBoYW5kbGVkLg0K
 
