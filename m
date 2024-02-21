@@ -1,52 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-12370-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F2D85EA99
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 22:27:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D071085EAA3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 22:28:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73DEAB26FA0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 21:27:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60B9AB27642
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 21:27:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C753133420;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6051350D6;
 	Wed, 21 Feb 2024 21:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G+32nzQs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4NDZ9Yn"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95A761292F2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDC9129A66;
 	Wed, 21 Feb 2024 21:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708550706; cv=none; b=OUhjUqUp9GAagDE/p+8QTS7s6gMyuGFOZT58Kp08OSIDhHok3xTJPp07e0nedtkrVzyCp6V7Fh5U1P9Ekq8CaD7XetOwP2knhK3aVundWbkH/KRGrF4JvnjmEs7KwRbW+FtGa+qwQN0lKS7GgRi+wGMDM48l+HWKYfVenduRtOI=
+	t=1708550706; cv=none; b=PW9yPz5xZBz4e/8ZDHG/QhwWbmae9CMKl7ZJgv+I227ztFV24o4Gs3V7kWX7qepelMoaf7QobYEIiykOPw0EHbEBZLDvnl6LirdejzZUipxatoMkoUUd4pz/zFV7MqAH3ESgDW5AXovfUl19RviveDOeJ4HHw5oWF1GiG6Q83kY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1708550706; c=relaxed/simple;
-	bh=MjPDmuGYxTwVV3XD9s9x96VSdlRd13Fx8UY16afoWLI=;
+	bh=4t7VYe2pfzhO0kZ+94iPfJDYCD1vDaacDt9TOtFcBjg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dHBnN2FQAk/IZKQ+qavkZvjRz2BAu24srcaL3wQqWxH5JT0sxHYWSrkndUr/TFV9BK4d83pUBHACMm6VNHLi36D1l7oLePl+Uo8UrgvM4IvEs0Y5QeYjxTjCJbr47vlXPiBCke8XZl3kjBTE3yX1poXeih9vfVbyFRMkGAyNUEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G+32nzQs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4790EC43390;
+	 In-Reply-To:To:Cc; b=ZiN6/S4x5rCfz5ZDSdocvpHcrRS8Utix04RHxBfIV8QF5e1b1/48XanMunTdHIiUXYqmRh6aCQLsCPLZbrYXkKm2LYa+YTB1NXSs6qD53ABOPobqvqQiExl5x0sjoJBptMPadRvPl9xzm1dBwtSNIy0WFuUfr0qAl0ZoIQiJSXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4NDZ9Yn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 56CF4C32781;
 	Wed, 21 Feb 2024 21:25:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1708550706;
-	bh=MjPDmuGYxTwVV3XD9s9x96VSdlRd13Fx8UY16afoWLI=;
+	bh=4t7VYe2pfzhO0kZ+94iPfJDYCD1vDaacDt9TOtFcBjg=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=G+32nzQsv2yA6coHTy2HUa1t9RBiDR2AasBhQofnI4QyW/IVAwvXXtib5syKL9VI1
-	 XYeuJazXkEnUDWxhHFfB30px/QQ4SZ/lM2CQjtlruAVC7gHMI5V339a0r19mU3WKr7
-	 pxQFGREc7DUro23NFpTz4WpsaaqIhWsbSeSqXDix962HqnmSMg38nn8fZcH+cp4GpR
-	 y8cRFE8J63EdITcOIkUI6OFpmlgs0znPBuyzPWB2OFW4RKCYY32zWkqnziQ+o0/LDA
-	 mFAYc2ntRvNmb8wPKZXXv+G9IziYus6/LQ1MFu9rb5vtZr1bAxNPAGvKYyTt3yocWG
-	 RUyg3VTXWCdwA==
+	b=H4NDZ9Yn8LguadXM61Cv/+vC8MjNfXRmyxgNTVcyElmxvP+ZVw35iZ9BJ7IdwcyOr
+	 klDsbyltojrU0OZIrg8apY3dBD2mSdC9xU4iNyYTVOU+M7zy9hRPndMTn9IsdtNmGd
+	 +NGF0WBfpQ/oslQMoZB282va2ZI//vz8DD+t6UG5UTpaoI7rIHvvb7jfcDYEcaa+Mb
+	 giTO54jW/xYtFV4hilLZPOJpxEgkHYGZnrNk0IHVgTmsWiPXt0ryuHgHBoBoVoQ3bT
+	 oqSiQ+KhKGX5vi4s7hXECA+uIRFLqgZfgsuBoIokLmn0KsVR1p8kXZYZqesP1XLXpj
+	 NjPpJnOPGKXBg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F87C5478B;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A39C48BEB;
 	Wed, 21 Feb 2024 21:25:06 +0000 (UTC)
 From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Date: Wed, 21 Feb 2024 15:24:39 -0600
-Subject: [PATCH v2 08/25] xattr: add is_fscaps_xattr() helper
+Date: Wed, 21 Feb 2024 15:24:40 -0600
+Subject: [PATCH v2 09/25] commoncap: use is_fscaps_xattr()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240221-idmap-fscap-refactor-v2-8-3039364623bd@kernel.org>
+Message-Id: <20240221-idmap-fscap-refactor-v2-9-3039364623bd@kernel.org>
 References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
 In-Reply-To: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
 To: Christian Brauner <brauner@kernel.org>, 
@@ -76,46 +76,48 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
  linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
 X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=898; i=sforshee@kernel.org;
- h=from:subject:message-id; bh=MjPDmuGYxTwVV3XD9s9x96VSdlRd13Fx8UY16afoWLI=; 
- =?utf-8?q?b=3DowEBbQGS/pANAwAKAVMDma7l9DHJAcsmYgBl1mofpeDW0VRFpT+qzsFdS/fHW?=
- =?utf-8?q?j5IKuhck4JZotJG_3ni+RRWJATMEAAEKAB0WIQSQnt+rKAvnETy4Hc9TA5mu5fQxy?=
- =?utf-8?q?QUCZdZqHwAKCRBTA5mu5fQxyRAAB/_9E0ZBYKot+MRKSR27p0Kv0vDG4b1T8VUYNX?=
- =?utf-8?q?dxn7GTVrucCBGVtpVtqSyN8mJcxmFFj6dgjcjWE/8Fq_5ZjeTdXL+YyPRBKcf0KBr?=
- =?utf-8?q?bLryipvjsqSujzheGkbqC8maXAS3ScS4R+vuzpQuiMRBhwd432RWhFkRu_ALGbz9F?=
- =?utf-8?q?zAX6BGGK/+JaabY7XD/jynxRjg5i8POSN19q0OJlsOqUpYJrmjTusaT4lCzgC+6ix?=
- =?utf-8?q?XcwFzw_+z6fBZXxwGNAJ/G0yohMDqfv4/nS298M7iKZhieHyKr5Hz/dZ+rOFIiwoG?=
- =?utf-8?q?WzyRw8ccnmGTkNSWT3Dq?= Yxtsflp7R+yVNxyPqIPgRpugwoXtdA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=972; i=sforshee@kernel.org;
+ h=from:subject:message-id; bh=4t7VYe2pfzhO0kZ+94iPfJDYCD1vDaacDt9TOtFcBjg=; 
+ =?utf-8?q?b=3DowEBbQGS/pANAwAKAVMDma7l9DHJAcsmYgBl1mogZOFLFrTJHOsqMGqEXCfSc?=
+ =?utf-8?q?BiIf9AXwC8KoSVV_frhhLcCJATMEAAEKAB0WIQSQnt+rKAvnETy4Hc9TA5mu5fQxy?=
+ =?utf-8?q?QUCZdZqIAAKCRBTA5mu5fQxyQbxCA_CB/noEJJlpI9g151/fViGjdeWOgiQrNeYPr?=
+ =?utf-8?q?agty6p9bGZUks5yPjNApObB+aefC+H5tKHvGXzIrbEB_n9MzhIumjZYNHrsibS1d5?=
+ =?utf-8?q?sAG1Bwqgggfi9Sx3VOvIsDip4pg6NtDhmVtW5+Yt20+5GnTd/jGezJryP_a1EhXCI?=
+ =?utf-8?q?xhToqhCm8BjKwufrx88FED6FORWo9DmD92IwhJWEvf6SQrnn5DKY/aXw9kF7Fzdce?=
+ =?utf-8?q?VCDrAw_kxY/MZXXVqwEedLkAlP4Q3sx8JCqZPzpoVZj2Q7z9g1oNDJDGWXr/KWOlB?=
+ =?utf-8?q?YRxWFr5V1dFQ0WXy9iP4?= Ig0HUzkQv1L68QjY8iH4SVVE9ldej/
 X-Developer-Key: i=sforshee@kernel.org; a=openpgp;
  fpr=2ABCA7498D83E1D32D51D3B5AB4800A62DB9F73A
 X-Endpoint-Received:
  by B4 Relay for sforshee@kernel.org/default with auth_id=103
 
-Add a helper to determine if an xattr time is XATTR_NAME_CAPS instead of
-open-coding a string comparision.
-
-Suggested-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
 ---
- include/linux/xattr.h | 5 +++++
- 1 file changed, 5 insertions(+)
+ security/commoncap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/xattr.h b/include/linux/xattr.h
-index d20051865800..cbacfb4d74fa 100644
---- a/include/linux/xattr.h
-+++ b/include/linux/xattr.h
-@@ -28,6 +28,11 @@ static inline bool is_posix_acl_xattr(const char *name)
- 	       (strcmp(name, XATTR_NAME_POSIX_ACL_DEFAULT) == 0);
- }
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 289530e58c37..19affcfa3126 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -1205,7 +1205,7 @@ int cap_inode_setxattr(struct dentry *dentry, const char *name,
+ 	 * For XATTR_NAME_CAPS the check will be done in
+ 	 * cap_convert_nscap(), called by setxattr()
+ 	 */
+-	if (strcmp(name, XATTR_NAME_CAPS) == 0)
++	if (is_fscaps_xattr(name))
+ 		return 0;
  
-+static inline bool is_fscaps_xattr(const char *name)
-+{
-+	return strcmp(name, XATTR_NAME_CAPS) == 0;
-+}
-+
- /*
-  * struct xattr_handler: When @name is set, match attributes with exactly that
-  * name.  When @prefix is set instead, match attributes with that prefix and
+ 	if (!ns_capable(user_ns, CAP_SYS_ADMIN))
+@@ -1242,7 +1242,7 @@ int cap_inode_removexattr(struct mnt_idmap *idmap,
+ 			XATTR_SECURITY_PREFIX_LEN) != 0)
+ 		return 0;
+ 
+-	if (strcmp(name, XATTR_NAME_CAPS) == 0) {
++	if (is_fscaps_xattr(name)) {
+ 		/* security.capability gets namespaced */
+ 		struct inode *inode = d_backing_inode(dentry);
+ 		if (!inode)
 
 -- 
 2.43.0
