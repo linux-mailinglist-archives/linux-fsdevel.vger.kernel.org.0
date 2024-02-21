@@ -1,157 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-12260-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12267-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9310185D883
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 13:58:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0539F85DB92
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 14:42:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C44DE1C22C9B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 12:58:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71BC21F20FEE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 13:42:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF7753816;
-	Wed, 21 Feb 2024 12:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68E77BAFE;
+	Wed, 21 Feb 2024 13:42:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ikkpFEOF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YmVZzqrw";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ikkpFEOF";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YmVZzqrw"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Zdwi5uCJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D353B794
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 12:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E38C7992D;
+	Wed, 21 Feb 2024 13:42:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708520326; cv=none; b=u6JwmHZICWZPX3qDO8SiFbwMAP4m2DhxEK0wpa6JuMqDWiyuizNoDmHCg7F3NwmRh9lkjewAMm8kAIfXMJYHgkgA35HMiHxpYahwCdEKazdKPY5fxC+DU0QmH8qBJr91XLLPeUnPayyZ1MQFsB4iRMg/ahGFZ8Nqzh70PZzKAqY=
+	t=1708522961; cv=none; b=pO8HFMEisGQrkuek93IuYG4eFlluKEwd7GI2rzpqTd6yAwhSL7jIJ+ZSPh1n7VVvabB32cX6fyCKUKi3ir4hFLmqjWo4DyVrXri6dVMBO6Mn31TwDxJ0UvAHIG+bNkCpefSMDK/VKqMkbmWSJrpXufzbCaYlZVo/JA9LBYv7IJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708520326; c=relaxed/simple;
-	bh=gdaTcCL33Q8j8CTa5q5OxjkgZ8HEO4AK4fYHHg/alfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rXj+maSR4wuLzqQzPh9/dgMJcScWh8vfx8JdL6Yx5AgtX+JD82Uk+q3TxiA+m54wMZkoyFdFSsrLyEsxdPAcQQNKw3/92nK5ISgYxTohtXlIEzbpmQPKSApeU7Q30JKK2xhm1OTUCgMDvp0+lHoUpZLfuyMz5WDd1Kh/+YUCnfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ikkpFEOF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YmVZzqrw; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ikkpFEOF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YmVZzqrw; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0B7081FB5A;
-	Wed, 21 Feb 2024 12:58:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1708520323; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iOSPh9X9+ea+lHz0m1irfS2e3kA6Y27fXyWmeAEM6T4=;
-	b=ikkpFEOFDQBPAlaBveN7RZu2FSpsJkoV/HgH7Ocx9AqXyXZe099/5HHt0OsFhmaD+p+TZr
-	nzzVu1aTjDlm9g4f523Ak+6Nf9/StryiRYrA09PBDbNGGgL/hLI61Z+hEEOO2OqAV7exnR
-	Mi56GuzaCStXDnN8A+4aE/voEaAqlCs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1708520323;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iOSPh9X9+ea+lHz0m1irfS2e3kA6Y27fXyWmeAEM6T4=;
-	b=YmVZzqrwqrrO7YrZfhPdRTavs5y1by3YIuZd0WkbzDx1XwF3k+PVXOFjiIGWufi9IA9gAI
-	ymqUtsubmEZV5QCQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1708520323; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iOSPh9X9+ea+lHz0m1irfS2e3kA6Y27fXyWmeAEM6T4=;
-	b=ikkpFEOFDQBPAlaBveN7RZu2FSpsJkoV/HgH7Ocx9AqXyXZe099/5HHt0OsFhmaD+p+TZr
-	nzzVu1aTjDlm9g4f523Ak+6Nf9/StryiRYrA09PBDbNGGgL/hLI61Z+hEEOO2OqAV7exnR
-	Mi56GuzaCStXDnN8A+4aE/voEaAqlCs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1708520323;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iOSPh9X9+ea+lHz0m1irfS2e3kA6Y27fXyWmeAEM6T4=;
-	b=YmVZzqrwqrrO7YrZfhPdRTavs5y1by3YIuZd0WkbzDx1XwF3k+PVXOFjiIGWufi9IA9gAI
-	ymqUtsubmEZV5QCQ==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 01E39139D1;
-	Wed, 21 Feb 2024 12:58:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id V4F0AIPz1WUmNwAAn2gu4w
-	(envelope-from <jack@suse.cz>); Wed, 21 Feb 2024 12:58:43 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AAF65A0807; Wed, 21 Feb 2024 13:58:38 +0100 (CET)
-Date: Wed, 21 Feb 2024 13:58:38 +0100
-From: Jan Kara <jack@suse.cz>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-	David Howells <dhowells@redhat.com>,
-	Bill O'Donnell <billodo@redhat.com>
-Subject: Re: [PATCH 0/2] udf: convert to new mount API
-Message-ID: <20240221125838.t25pcsje33y576jz@quack3>
-References: <ecf5bc91-69fc-45ce-a70c-c0cd84c42766@redhat.com>
+	s=arc-20240116; t=1708522961; c=relaxed/simple;
+	bh=/PhKVqBBab9/8Pdz9j7fI5UGCa8x2shcUT4iVVDdsu8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EV5mn3WhM4nJoafvfDzggcawXxhsDHFC7w/yc2tZNSar08GWKy4taD2rcCsKfYS6kkbcfykO0zsgeddok5zvIAK8Ay1S1jydD4PAD9JsQng/dhGZT7v17DRmdzkWY023SvdrZeRJG6wsve64zyqIsqDkApAWadoI3LqmeDbUZAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Zdwi5uCJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98306C433C7;
+	Wed, 21 Feb 2024 13:42:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1708522961;
+	bh=/PhKVqBBab9/8Pdz9j7fI5UGCa8x2shcUT4iVVDdsu8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Zdwi5uCJ+yI0XSUPK4J5/MMvgBx0jCUA474lICBMTzS+L/NsN6E8gWNaic8JQHM3J
+	 VEEj59ORhzOpttculJ1znYD85q6uocAmm7sDrp4M56H85T6p5PvHt29c6JpImWTFxv
+	 WRxeRbgeuKsyTmdtuNtBBHmorGMZDuktRuQ4V9V0=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	Eric Dumazet <edumazet@google.com>,
+	Arjun Roy <arjunroy@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-mm@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Sasha Levin <sashal@kernel.org>,
+	ZhangPeng <zhangpeng362@huawei.com>
+Subject: [PATCH 5.15 275/476] tcp: add sanity checks to rx zerocopy
+Date: Wed, 21 Feb 2024 14:05:26 +0100
+Message-ID: <20240221130018.132969026@linuxfoundation.org>
+X-Mailer: git-send-email 2.43.2
+In-Reply-To: <20240221130007.738356493@linuxfoundation.org>
+References: <20240221130007.738356493@linuxfoundation.org>
+User-Agent: quilt/0.67
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ecf5bc91-69fc-45ce-a70c-c0cd84c42766@redhat.com>
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ikkpFEOF;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=YmVZzqrw
-X-Spamd-Result: default: False [-0.99 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:98:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCPT_COUNT_FIVE(0.00)[5];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.cz:+];
-	 MX_GOOD(-0.01)[];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-1.18)[88.97%]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -0.99
-X-Rspamd-Queue-Id: 0B7081FB5A
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Bar: /
+Content-Transfer-Encoding: 8bit
 
-On Tue 20-02-24 15:42:00, Eric Sandeen wrote:
-> 2nd version of UDF mount API conversion patch(es)
-> 
-> Patch one changes novrs to a flag like other options as Jan
-> requested.
-> 
-> Patch two converts to new mount API; changes since V1:
-> 
-> * Fix long lines
-> * Remove double semicolon
-> * Ensure we free nls_map as needed in udf_free_fc()
-> * Use fsparam_flag_no for "adinicb" option
-> * remove stray/uninitialized char *p; in udf_parse_param()
-> * avoid assigning invalid [ug]ids to the uopt structure
+5.15-stable review patch.  If anyone has any objections, please let me know.
 
-Thanks! Everything looks good to me now. I've added the patches to my tree.
+------------------
 
-								Honza
+From: Eric Dumazet <edumazet@google.com>
+
+[ Upstream commit 577e4432f3ac810049cb7e6b71f4d96ec7c6e894 ]
+
+TCP rx zerocopy intent is to map pages initially allocated
+from NIC drivers, not pages owned by a fs.
+
+This patch adds to can_map_frag() these additional checks:
+
+- Page must not be a compound one.
+- page->mapping must be NULL.
+
+This fixes the panic reported by ZhangPeng.
+
+syzbot was able to loopback packets built with sendfile(),
+mapping pages owned by an ext4 file to TCP rx zerocopy.
+
+r3 = socket$inet_tcp(0x2, 0x1, 0x0)
+mmap(&(0x7f0000ff9000/0x4000)=nil, 0x4000, 0x0, 0x12, r3, 0x0)
+r4 = socket$inet_tcp(0x2, 0x1, 0x0)
+bind$inet(r4, &(0x7f0000000000)={0x2, 0x4e24, @multicast1}, 0x10)
+connect$inet(r4, &(0x7f00000006c0)={0x2, 0x4e24, @empty}, 0x10)
+r5 = openat$dir(0xffffffffffffff9c, &(0x7f00000000c0)='./file0\x00',
+    0x181e42, 0x0)
+fallocate(r5, 0x0, 0x0, 0x85b8)
+sendfile(r4, r5, 0x0, 0x8ba0)
+getsockopt$inet_tcp_TCP_ZEROCOPY_RECEIVE(r4, 0x6, 0x23,
+    &(0x7f00000001c0)={&(0x7f0000ffb000/0x3000)=nil, 0x3000, 0x0, 0x0, 0x0,
+    0x0, 0x0, 0x0, 0x0}, &(0x7f0000000440)=0x40)
+r6 = openat$dir(0xffffffffffffff9c, &(0x7f00000000c0)='./file0\x00',
+    0x181e42, 0x0)
+
+Fixes: 93ab6cc69162 ("tcp: implement mmap() for zero copy receive")
+Link: https://lore.kernel.org/netdev/5106a58e-04da-372a-b836-9d3d0bd2507b@huawei.com/T/
+Reported-and-bisected-by: ZhangPeng <zhangpeng362@huawei.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Arjun Roy <arjunroy@google.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: linux-mm@vger.kernel.org
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/ipv4/tcp.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index 0659f0d9414d..626cef75afe7 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -1798,7 +1798,17 @@ static skb_frag_t *skb_advance_to_frag(struct sk_buff *skb, u32 offset_skb,
+ 
+ static bool can_map_frag(const skb_frag_t *frag)
+ {
+-	return skb_frag_size(frag) == PAGE_SIZE && !skb_frag_off(frag);
++	struct page *page;
++
++	if (skb_frag_size(frag) != PAGE_SIZE || skb_frag_off(frag))
++		return false;
++
++	page = skb_frag_page(frag);
++
++	if (PageCompound(page) || page->mapping)
++		return false;
++
++	return true;
+ }
+ 
+ static int find_next_mappable_frag(const skb_frag_t *frag,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
+
+
 
