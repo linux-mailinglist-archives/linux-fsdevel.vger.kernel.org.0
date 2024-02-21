@@ -1,124 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-12274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D773785E08A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 16:07:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C8A85E140
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 16:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91F3828AC2D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 15:07:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31A4D1C22AE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 15:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C449680609;
-	Wed, 21 Feb 2024 15:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F66380BFE;
+	Wed, 21 Feb 2024 15:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="cBpNq+AE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4tne/0o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C9780038
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 15:06:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C7E80BEB;
+	Wed, 21 Feb 2024 15:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708528010; cv=none; b=E5wKbZzWZCTiDApt68Hjr0/UlC0r9kJ6L95GtPyCNggK4zAmGuGuwteFyMOTI4IfEx6Zb3KRWCHrx/tcufDbydc92IcD90o3kEZEMc3Ez04b0732BNAFy6RRSA7EbTeZsVZ0ksLiozFhCTCwxvebDE8EnBqo9+qbQsTNQf+IQ+I=
+	t=1708529573; cv=none; b=gAWsoWpmE29LFqoUcTupjnbbEirRSkpXpVudwwC8KVNJBUfLE/+11hWqOQo6jmU2n/BhkYrB3plSpN01pPf4ZZATIu8mntpP8g+dTyGU5ka+A80VgXPrnvL6/iCma9L52Dp3AJ1y+gKe0XgO9L4kY8G4+5mUDHyS//lrH2/Iy9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708528010; c=relaxed/simple;
-	bh=IfJatG9lRhZKsYbgCREitFJU8OpCGpoZT8OQPAcVahk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GTUXal+Hlm+BILDb5wq4e5oTXO5GFyJ7ldNZUNQwbVs/1TdHBSiwMcd8ULt0mZpLEKdyw8yU5E5yywuADgAbSrGWriYw97VAbItwZZN5BiFnTvNXmPp550a2NlxDt59mFa9AxZt162j+mQkc8mbmEIQ0BZFJ36cZF3Xc0vWKqXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=cBpNq+AE; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-563c0f13cabso8570346a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 07:06:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1708528006; x=1709132806; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jIv9PGtlgXOsnlHNE4Tcy9JvBcQ7HLVWrvu11qJkS/c=;
-        b=cBpNq+AE9Yg4EOhFD+7XEsO7TU5XVOlX8SrcXQIiduRyd9nYXGB7G3uWK4MAOsLM97
-         14ek3N7AUgGmTh6xD5kMj9s3JSGsZugvwb7Igy/nVl4dVEBNiPr/lGXzlizXJzh2krUC
-         p1K1WPbeAi6qDoq79XdDIXsLf2oc8T7fIhf5E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708528006; x=1709132806;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jIv9PGtlgXOsnlHNE4Tcy9JvBcQ7HLVWrvu11qJkS/c=;
-        b=FvsH4/DMJEUaki/JNQ4zhlAXU7vwXk5ixZrtjExVv83s/G68XSot5HZHjwWQlrHPgF
-         nRnqfjNPFFBUJGfv7QtKLztJARGcEap0/MG0MESCK9CUEHwjQ90pC5zYkJYabil1oTQT
-         417dhPA14t0/7J28dGq0xV3+UgfrUnUI04QpiUk/uzzgKcGGr36kB/yQWb00bGHjz6Q3
-         3hoZ0bijjiUy4fOas94ZOn/v1+H16VBdZHamchxYTuYJ7aAmY7f07L0+BnY9wfasYUm1
-         gEfVYz9PGUWlAjHUb6yKnHLvQcn3km4DSEWegoxH/LFc2vskcl+41H92Zv7JpYHljqJ3
-         hW/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVoD77f+/B3jszmlUYoSOgxuhvkpt9ygODgFNpgN7HhZVTfsxEkTrA10ati2pPbdIJRqKIMMXum0iqbJUKJ27zrCZ9/Ih762kEaYLPc2Q==
-X-Gm-Message-State: AOJu0YxjBWJL2UjNRV4wOkl2i1T0rrtGSa8LcCrFfitHacNSUxfjeiGH
-	bNKCrJVuxHbyDKKL7d00hLZUiKbmbhSRG9O143YK14CGEkRyJ5FEFVpBLFznfmcIktzMMmIOccp
-	GzKAonITfWaFc+IcXnG1lRzlsMzSz3p9vDlKJ1Q==
-X-Google-Smtp-Source: AGHT+IERxnqIikhmylu4cOJ75RfiT2FYUV0rib82c7+t48H2eRYLuPnPyIEpvl+01PQoj6symStM8+Yyyt3FTnnwVaU=
-X-Received: by 2002:a17:906:fccd:b0:a3f:816:1e29 with SMTP id
- qx13-20020a170906fccd00b00a3f08161e29mr3428600ejb.39.1708528005923; Wed, 21
- Feb 2024 07:06:45 -0800 (PST)
+	s=arc-20240116; t=1708529573; c=relaxed/simple;
+	bh=ini15tE19mitrKkG+HJLkGZ4AXHSX+Bhi6ca/Nfuh/0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZEwfBc6vaCEgYkGbPBKPNI5MMkJKoRNVp8q914Bn/ejdE7NN+ClfsryDii38R5E7Nl7JDyOWvqvBEfIK63jtsCpJxLIOpnkCdrIvkwZ7ZErk1gA29FbbrJVNIyA67BiNKVY5jt0sCLLDECnw3ysxWl/w4mTG5Mhf6FX5/8w3rw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4tne/0o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF3E9C43390;
+	Wed, 21 Feb 2024 15:32:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708529573;
+	bh=ini15tE19mitrKkG+HJLkGZ4AXHSX+Bhi6ca/Nfuh/0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=K4tne/0o3ReHxJpYIG981esY1f85ra9Flh/637W4yf8qYLkVxCP3vVmGuAPCZE3e1
+	 d23jzgdy2MOsW0HaeTnOExIW4sEH6fbsa9F5sLkAlLxiGhgqijGL/Vs6SjZ46YsqGz
+	 p/dlhP1gnkuhKYG19eCZlUFpwr+zdjBVlQw2l56g9t4YJ8UnLSgXha2jMgcUorotG/
+	 1BER956nu3JXKrFHWsMlVceoWrepBJ1m+setcDEVljJwLahZV4bq8DeBQBHxGNK3cK
+	 F0l07N17Hkiboqw+p6EMVDJ2etau/kwDGGZogJYnvtPwf614d7GMkw9NnW+o9NISAc
+	 jk4LjWAG1AUDA==
+From: Christian Brauner <brauner@kernel.org>
+To: Bart Van Assche <bvanassche@acm.org>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>,
+	Avi Kivity <avi@scylladb.com>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	stable@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: (subset) [PATCH v4 1/2] fs/aio: Restrict kiocb_set_cancel_fn() to I/O submitted via libaio
+Date: Wed, 21 Feb 2024 16:32:19 +0100
+Message-ID: <20240221-postleitzahl-flanieren-799c28d3ad95@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240215204739.2677806-2-bvanassche@acm.org>
+References: <20240215204739.2677806-1-bvanassche@acm.org> <20240215204739.2677806-2-bvanassche@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2uvhm6gweyl7iyyp2xpfryvcu2g3padagaeqcbiavjyiis6prl@yjm725bizncq>
-In-Reply-To: <2uvhm6gweyl7iyyp2xpfryvcu2g3padagaeqcbiavjyiis6prl@yjm725bizncq>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 21 Feb 2024 16:06:34 +0100
-Message-ID: <CAJfpeguBzbhdcknLG4CjFr12_PdGo460FSRONzsYBKmT9uaSMA@mail.gmail.com>
-Subject: Re: [LSF TOPIC] statx extensions for subvol/snapshot filesystems & more
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-btrfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lsf-pc@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1426; i=brauner@kernel.org; h=from:subject:message-id; bh=ini15tE19mitrKkG+HJLkGZ4AXHSX+Bhi6ca/Nfuh/0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaReE5/7gaHDuGIbMyOTeuQaGTnlZ4/WSvFIF6aev2+yc +/Tg8+FOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbSs5LhN1tdzvr97M/rj959 4atT93117vEri6KFlSo5pXILXaRl/jEybJ7FbCAduU+o+qrVR9mvXr5ru6x8rLdmJPxs+hgsVl/ DBwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, 21 Feb 2024 at 01:51, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->
-> Recently we had a pretty long discussion on statx extensions, which
-> eventually got a bit offtopic but nevertheless hashed out all the major
-> issues.
->
-> To summarize:
->  - guaranteeing inode number uniqueness is becoming increasingly
->    infeasible, we need a bit to tell userspace "inode number is not
->    unique, use filehandle instead"
+On Thu, 15 Feb 2024 12:47:38 -0800, Bart Van Assche wrote:
+> If kiocb_set_cancel_fn() is called for I/O submitted via io_uring, the
+> following kernel warning appears:
+> 
+> WARNING: CPU: 3 PID: 368 at fs/aio.c:598 kiocb_set_cancel_fn+0x9c/0xa8
+> Call trace:
+>  kiocb_set_cancel_fn+0x9c/0xa8
+>  ffs_epfile_read_iter+0x144/0x1d0
+>  io_read+0x19c/0x498
+>  io_issue_sqe+0x118/0x27c
+>  io_submit_sqes+0x25c/0x5fc
+>  __arm64_sys_io_uring_enter+0x104/0xab0
+>  invoke_syscall+0x58/0x11c
+>  el0_svc_common+0xb4/0xf4
+>  do_el0_svc+0x2c/0xb0
+>  el0_svc+0x2c/0xa4
+>  el0t_64_sync_handler+0x68/0xb4
+>  el0t_64_sync+0x1a4/0x1a8
+> 
+> [...]
 
-This is a tough one.   POSIX says "The st_ino and st_dev fields taken
-together uniquely identify the file within the system."
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-Adding a bit that says "from now the above POSIX rule is invalid"
-doesn't instantly fix all the existing applications that rely on it.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Linux did manage to extend st_ino from 32 to 64 bits, but even in that
-case it's not clear how many instances of
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-    stat(path1, &st);
-    unsigned int ino = st.st_ino;
-    stat(path2, &st);
-    if (ino == st.st_ino)
-        ...
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-are waiting to blow up one fine day.  Of course the code should have
-used ino_t, but I think this pattern is not that uncommon.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-All in all, I don't think adding a flag to statx is the right answer.
-It entitles filesystem developers to be sloppy about st_ino
-uniqueness, which is not a good idea.   I think what overlayfs is
-doing (see documentation) is generally the right direction.  It makes
-various compromises but not to uniqueness, and we haven't had
-complaints (fingers crossed).
-
-Nudging userspace developers to use file handles would also be good,
-but they should do so unconditionally, not based on a flag that has no
-well defined meaning.
-
-Thanks,
-Miklos
+[1/2] fs/aio: Restrict kiocb_set_cancel_fn() to I/O submitted via libaio
+      https://git.kernel.org/vfs/vfs/c/b820de741ae4
 
