@@ -1,165 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-12268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98A7E85DC78
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 14:53:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8894285DF56
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 15:27:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 001B9B269B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 13:53:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4178F2854E1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 14:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E17A7C6D5;
-	Wed, 21 Feb 2024 13:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 552D27CF08;
+	Wed, 21 Feb 2024 14:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XYWFYY21"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="KuM6aCiH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6532676C99;
-	Wed, 21 Feb 2024 13:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD71469962
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 14:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708523600; cv=none; b=mv8H7iIi5f50H62oEtHw1Izhf5rR7mCA0fXRd6YmDPVEIa/+9lqyZx7SOyOXiQzhNSdp5yn2VG0YmH0vOJ+dbj5U1wifqTyKLiI6DW0NTVjZecbYjUine0sFmx5AYUZ0OQK0s0h0ptLkG6tMIPjXipXDzsJFDNyRb1BuMhnWCRY=
+	t=1708525617; cv=none; b=KJt+HKeV9UVdoMRC7XTImo+luXCoPXKm9vNJpka1GtXF/568AZ0XKov6daAky5T/cYs/uijhDF8QqZOxOxXdZnVrIU7HNGBWhit3JEZzji5uG5QzuNOLc3MvQSeiJZjYAkGP78lO2pIEma5eXhRvGh89Y03hy2UJpSiRvPu5GFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708523600; c=relaxed/simple;
-	bh=2qDB6aCchFqvsRrIZrlOnBUWRusFLsK6a7t86lO4/kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=myu69FE7P+NnX/+X6Qtt7TxnZjPsU1wcAz28khjxoE0gcTRqTiE51tjsPQbh6YrXQR/b6OYitj6wX1XlKBVf88Vfc2gXXh2pj2BXzjphcj6venRC0FFyyMU+PU9FO1voszbr5LL2dZ7x849d9+oJjdHKKXkdPpqAXUb4c7NTL1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XYWFYY21; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E8B9C433F1;
-	Wed, 21 Feb 2024 13:53:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708523600;
-	bh=2qDB6aCchFqvsRrIZrlOnBUWRusFLsK6a7t86lO4/kc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XYWFYY21ChMcDnqRafHBvRB0QxejjlT/bZHLI49dgPa5dRacaD3UN0LLMesLDhEVK
-	 FQALDj09HDwKPE6W4jj/Eh1jqbUH+H+QnFzr8lEIlZA/imkC3dRk/JOQvq/V/1qmnf
-	 AKtPOLPebGuFFRe5xPIXDbSmUtlL944IsVvIA7rGpLNSg/1AcaSk659q46C8HRHywn
-	 bhl8FLesEaZJjbv9GARHL60svpyiaFNTpyRdOuK9i5QgdctkDvVHFN/fMwhmSVZRSB
-	 /NtzQjotaqwXeqdsZ0ePVwa6GV0m+bjLd5HQ/Rwg6sMIIZRNIfrgzJfc4uR31QEOgk
-	 nbyq6X4Uq/GjQ==
-Date: Wed, 21 Feb 2024 13:53:10 +0000
-From: Mark Brown <broonie@kernel.org>
-To: "dalias@libc.org" <dalias@libc.org>
-Cc: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"Szabolcs.Nagy@arm.com" <Szabolcs.Nagy@arm.com>,
-	"musl@lists.openwall.com" <musl@lists.openwall.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"debug@rivosinc.com" <debug@rivosinc.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"arnd@arndb.de" <arnd@arndb.de>, "maz@kernel.org" <maz@kernel.org>,
-	"oleg@redhat.com" <oleg@redhat.com>,
-	"fweimer@redhat.com" <fweimer@redhat.com>,
-	"keescook@chromium.org" <keescook@chromium.org>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"ebiederm@xmission.com" <ebiederm@xmission.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"brauner@kernel.org" <brauner@kernel.org>,
-	"hjl.tools@gmail.com" <hjl.tools@gmail.com>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"thiago.bauermann@linaro.org" <thiago.bauermann@linaro.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"sorear@fastmail.com" <sorear@fastmail.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [musl] Re: [PATCH v8 00/38] arm64/gcs: Provide support for GCS
- in userspace
-Message-ID: <d18f060d-37ac-48b1-9f67-a5c5db79b34e@sirena.org.uk>
-References: <20240203-arm64-gcs-v8-0-c9fec77673ef@kernel.org>
- <22a53b78-10d7-4a5a-a01e-b2f3a8c22e94@app.fastmail.com>
- <4c7bdf8fde9cc45174f10b9221fa58ffb450b755.camel@intel.com>
- <20240220185714.GO4163@brightrain.aerifal.cx>
- <9fc9c45ff6e14df80ad023e66ff7a978bd4ec91c.camel@intel.com>
- <20240220235415.GP4163@brightrain.aerifal.cx>
- <a57d6c7eada4b9a7c35addbc8556f5b53a0c3e6f.camel@intel.com>
- <20240221012736.GQ4163@brightrain.aerifal.cx>
+	s=arc-20240116; t=1708525617; c=relaxed/simple;
+	bh=5oWkD2FaqkD0kYMxDZ3B3sb6F6lGwW+CZXsdNRCDKWY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BcnwdcRK7E9bCiMviyj49ngLUaLzw67K9sZGBfwXyCYvZ94Ve1XTbBCXgpvSFNSY5a2YFGdH9k224NhSF6DiZzyyrkVG+FTgnQ6RZH6zLDm46/7TAgQfuZfTsQTzLtMRTdLzPX4fWSZ0wTu024TcLdrkIEy0b2JHyTMHH5sk1OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=KuM6aCiH; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6e33db9118cso1015248b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 06:26:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1708525615; x=1709130415; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=SVGUs8JFv1/V93TlaR+90LP3Y6ZwxPBuwr1HDt3LFuw=;
+        b=KuM6aCiHvR8PUxA968/qSHOnfTh6waVcXLVnHkF2NEmYq1eI0qmKWDfdhynDa5MxiL
+         1KSfIJOsmSlixHwXWQ+53LN/U3cL5kTLk9aUep0FFezASMrLUI/sPkxFDzwVBCcy56T5
+         ZfNht8yW/ZfUAk/vzm2f0jG5cf9RkrmFtKH//SasFmpDLZJy3Y8rV7OzybpmEOJ0uBfI
+         O2Tzi9VtRXgvknyGEMFMJbWeNPZlxSxmkhtWjPvNcQlLTOUdIR41wak0SDoVoB2Cl20q
+         PWoYm4nLwnNQVvEl1ZXN4sStFzXCitX0HqKtDLq+gkUjfksrZI5a4LsOjXnPqIvw2GnR
+         ak4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708525615; x=1709130415;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SVGUs8JFv1/V93TlaR+90LP3Y6ZwxPBuwr1HDt3LFuw=;
+        b=sVCcdUuTItQUC7alXY6OcrrCiPCwtt4AlhC0vJB8GJ2pDvEVUmU4hrRoCq7sBXV49Z
+         kvyJDxAdU9OkKR3YFYVE/5MCg6tHaJ9OVwheeI8zdYmLru//U/m/mjIeKrMfuiRwigWG
+         2c2awDQHGlwV9YIm9esDeKKoBn7gE3V7VT4eYfvVPJOTM6JX1xjgNJTH22wpoK5qR16v
+         GvQnDZgj1aG6CyH0hTnXtZI15Fri64Xh1/9oD7xQmee5lz3/fZKEx65OeeDpxULpqOKs
+         Enmu6kkUcS32Ldm6l2j346mQUiP18Mv1p1QToiu4ysGADctm+UnM4EfJmpSbnPY/1Ekq
+         /v8g==
+X-Gm-Message-State: AOJu0YzCCMP4Q3OC93Qh2USIf61U+XxUASaTmv4AqBvW0Sj8s0ceLylt
+	44rvsvsFjvUWcrLrajMDs54JVOBz02NAFKB6ut1y3VkqBQ/SKoUlUZPcQC0PuGQ=
+X-Google-Smtp-Source: AGHT+IGWtrBI3YcMOy3hERvUjq7oUiTByRTeZL9iWcm9qeoPtIw2BqLDWLvNmt+3oej+p28dGt1SMA==
+X-Received: by 2002:a05:6a20:6a22:b0:1a0:c207:808c with SMTP id p34-20020a056a206a2200b001a0c207808cmr1763297pzk.0.1708525614866;
+        Wed, 21 Feb 2024 06:26:54 -0800 (PST)
+Received: from ?IPV6:2600:380:7677:4d94:4513:899f:6e45:a331? ([2600:380:7677:4d94:4513:899f:6e45:a331])
+        by smtp.gmail.com with ESMTPSA id h5-20020aa786c5000000b006e4452bd4c6sm6949123pfo.157.2024.02.21.06.26.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Feb 2024 06:26:54 -0800 (PST)
+Message-ID: <b70345f6-f371-48b0-ad15-ca6d09d1365e@kernel.dk>
+Date: Wed, 21 Feb 2024 07:26:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cNQgfjDz+IAKI+aZ"
-Content-Disposition: inline
-In-Reply-To: <20240221012736.GQ4163@brightrain.aerifal.cx>
-X-Cookie: The second best policy is dishonesty.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] fs/aio: Restrict kiocb_set_cancel_fn() to I/O
+ submitted via libaio
+Content-Language: en-US
+To: Bart Van Assche <bvanassche@acm.org>,
+ Christian Brauner <brauner@kernel.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+ Avi Kivity <avi@scylladb.com>, Sandeep Dhavale <dhavale@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>, stable@vger.kernel.org
+References: <20240215204739.2677806-1-bvanassche@acm.org>
+ <20240215204739.2677806-2-bvanassche@acm.org>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20240215204739.2677806-2-bvanassche@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 2/15/24 1:47 PM, Bart Van Assche wrote:
+> If kiocb_set_cancel_fn() is called for I/O submitted via io_uring, the
+> following kernel warning appears:
+> 
+> WARNING: CPU: 3 PID: 368 at fs/aio.c:598 kiocb_set_cancel_fn+0x9c/0xa8
+> Call trace:
+>  kiocb_set_cancel_fn+0x9c/0xa8
+>  ffs_epfile_read_iter+0x144/0x1d0
+>  io_read+0x19c/0x498
+>  io_issue_sqe+0x118/0x27c
+>  io_submit_sqes+0x25c/0x5fc
+>  __arm64_sys_io_uring_enter+0x104/0xab0
+>  invoke_syscall+0x58/0x11c
+>  el0_svc_common+0xb4/0xf4
+>  do_el0_svc+0x2c/0xb0
+>  el0_svc+0x2c/0xa4
+>  el0t_64_sync_handler+0x68/0xb4
+>  el0t_64_sync+0x1a4/0x1a8
+> 
+> Fix this by setting the IOCB_AIO_RW flag for read and write I/O that is
+> submitted by libaio.
 
---cNQgfjDz+IAKI+aZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Like I said weeks ago, let's please get this fix in NOW and we can
+debate what to do about cancelations in general for aio separately. This
+patch 1 is a real fix, and it'd be silly to keep this stalled while
+the other stuff is ongoing.
 
-On Tue, Feb 20, 2024 at 08:27:37PM -0500, dalias@libc.org wrote:
-> On Wed, Feb 21, 2024 at 12:35:48AM +0000, Edgecombe, Rick P wrote:
+This isn't a critique at at you Bart, really just wanted to reply to teh
+cover letter but there isn't one.
 
-> > (INCSSP, RSTORSSP, etc). These are a collection of instructions that
-> > allow limited control of the SSP. When shadow stack gets disabled,
-> > these suddenly turn into #UD generating instructions. So any other
-> > threads executing those instructions when shadow stack got disabled
-> > would be in for a nasty surprise.
+Christian, can you queue this up for 6.8 and mark it for stable?
 
-> This is the kernel's problem if that's happening. It should be
-> trapping these and returning immediately like a NOP if shadow stack
-> has been disabled, not generating SIGILL.
+-- 
+Jens Axboe
 
-I'm not sure that's going to work out well, all it takes is some code
-that's looking at the shadow stack and expecting something to happen as
-a result of the instructions it's executing and we run into trouble.  A
-lot of things won't notice and will just happily carry on but I expect
-there are going to be things that care.  We also end up with an
-additional state for threads that have had shadow stacks transparently
-disabled, that's managable but still.
-
-> > > The place where it's really needed to be able to allocate the shadow
-> > > stack synchronously under userspace control, in order to harden
-> > > normal
-> > > applications that aren't doing funny things, is in pthread_create
-> > > without a caller-provided stack.
-
-> > Yea most apps don't do anything too tricky. Mostly shadow stack "just
-> > works". But it's no excuse to just crash for the others.
-
-> One thing to note here is that, to enable this, we're going to need
-> some way to detect "new enough kernel that shadow stack semantics are
-> all right". If there are kernels that have shadow stack support but
-> with problems that make it unsafe to use (this sounds like the case),
-> we can't turn it on without a way to avoid trying to use it on those.
-
-If we have this automatic conversion of pages to shadow stack then we
-should have an API for enabling it, userspace should be able to use the
-presence of that API to determine if the feature is there.
-
---cNQgfjDz+IAKI+aZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmXWAEUACgkQJNaLcl1U
-h9BTcAf+MujJo/pNOGU2neBJWmbVKrnAz60+j+uAD98t6m1YXtFChsz+YR6gQOA1
-7FEah97yBTtTiSGpgeKnKCJZMVaWEYHF0Oal7bU/cO0uO6DshP7BIWygF/xyL6/r
-AiFhQ5IAhgRYlGKzShiXTP3rx7ITjIS/1ejalkQ4vHwCOA/N0rsnZwJadUytQjJv
-bHJxu0pC95Sb9lZG3yrrOqZJdljkMsnb7ThBwPRENX0XmGz/Y8l0/FjQwiyWc+Bv
-i4HuekjDwxdxIknpEI/kciFlk8gjthTCrAloZNN/PGNExBEppzAMUg44bTcUkuuu
-CReIkIoN/x1s3gztzAkcLF2nu1EF6w==
-=wfib
------END PGP SIGNATURE-----
-
---cNQgfjDz+IAKI+aZ--
 
