@@ -1,60 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-12281-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12282-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504A285E3AF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 17:46:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658E685E3CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 17:56:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFA6DB238AB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 16:46:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20F19283387
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 16:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4C082D8F;
-	Wed, 21 Feb 2024 16:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39BF839F6;
+	Wed, 21 Feb 2024 16:56:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LIZnfZSb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a4Bb5jCP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BB180C08;
-	Wed, 21 Feb 2024 16:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2E880613;
+	Wed, 21 Feb 2024 16:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708534001; cv=none; b=uB8ka+SukxwHzYORKBytl/5YSvTJnkZw4Uox1ljR2oZvalFitCk/5Q0bnv73n4Wnyu6BkTr8Yhh7uZY6TNxhYHlH/x3LjpX4UWObJP2PrzlKKNZSoD6Zy2Ym6PsHTF7gWeGvO5PF/1ZzD5wfCA6QTG6wfTrlMhAzvfr4OP0LjkI=
+	t=1708534577; cv=none; b=A7fhrLpDgE72D+7Yjm+FdmQH0jEJVDvddxzqeNc3I6+TNqYbZpcWjCZtNEs0+P3MmScB35gHVVsXMYpDozqC3EbMugMYy5N4kWHuLgD5Bz/QfckNvK/zAWeNrnLCuVDp5fqT1GL5Iq7gHVEGVOuFDFg2PRO7An4oswrCksQUBU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708534001; c=relaxed/simple;
-	bh=luA14+I6agAb3WN5vu4hfd77tv/XVl+XGCXKT2dSywU=;
+	s=arc-20240116; t=1708534577; c=relaxed/simple;
+	bh=JvU0tQfghs9ivP7wwVrY8yM2tvT8Ba8a984fQlx+zQ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O/NmuNjUalKQQ9GbCKeErKmSEinBOsaGhZnalqu49yWAq/EV6WwvT3A8EZYtNA9+BlT+DQDUD24QYd1skzGhDaREB4R7alm5HkUk262rbaviajeCkL7Sk5deueKZyZyw9h13i2KSfbN482ky8g2KM6fJi4/aMGVcLxnzpNU2mZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LIZnfZSb; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=vF4GgIZYKuqOR3J0iKSalWbeQz2cXnj9J6PDCw6QbdU=; b=LIZnfZSbF8BBDRZJKgm/dANAND
-	Pj5o4ch1ijcAdKTXqu/PHyN4BOjz1UNbWo1yfvHfhYqeXS6vqlD4XhzL3NCKSrLF0v7JHy88R4UEw
-	QRgJD7w8D5BaTHlGn8746lF9PdG+6aGkkMFsJvRikkCymDHmAbB+cia5F+khV1bPMoP0X09cgj449
-	1Srv9rvO2zVLgGiT0eeXimbsxdTohA5aAEoCet6oTs93rs54pifPdkYHS7sitdSkuy5o0Fq7c1E8E
-	dPzMzf8bMT3XAlxyFznlWVhE/Jo0T5CIRvFbx2yEx9OOpG5sbo0hL3QaOGT1yx/y0VDn4bLFVEucB
-	XZfobmgQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rcpjz-00000001miw-0uED;
-	Wed, 21 Feb 2024 16:46:39 +0000
-Date: Wed, 21 Feb 2024 08:46:39 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: fstests@vger.kernel.org, anand.jain@oracle.com, aalbersh@redhat.com,
-	djwong@kernel.org, linux-fsdevel@vger.kernel.org,
-	kdevops@lists.linux.dev, patches@lists.linux.dev
-Subject: Re: [PATCH 3/3] check: add --print-start-done to enhance watchdogs
-Message-ID: <ZdYo7zjD_lDlOdia@bombadil.infradead.org>
-References: <20240216181859.788521-1-mcgrof@kernel.org>
- <20240216181859.788521-4-mcgrof@kernel.org>
- <ZdLOKCYnM3XybqQp@dread.disaster.area>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZcI74BSxkG0JVhQlmFNPR5fRlDBu76gv/OvbSlXgxX0n3eW9U97oSjdRqAQtUx7NymbDZ3cfwZdh6OcuxARxFL+ePmLpgTsZa3DgQop0ZV89uY3xPjs/5S/5QZIwRo23c0s0fbPxxww6CpKp0MFRb8Ns4jk5QUcmwj/MIwcC2xQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a4Bb5jCP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B36DC433C7;
+	Wed, 21 Feb 2024 16:56:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708534576;
+	bh=JvU0tQfghs9ivP7wwVrY8yM2tvT8Ba8a984fQlx+zQ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a4Bb5jCPAd5fYX0Ux3wZTHtsK2kKfPBlut+e/Wp4xxv0kaaK+cCnVb7B/qLuWUNl0
+	 2QfxdpL1/Ly4+rvEiITOSeHCqFjGFfo8pMrDfoMV5q668EMKxh7ngwyuwVvVUq2aZU
+	 /m8+R9RBffGExL2ZOUed+Du/qUyExN9aFhHwYxBs+qOCyYDwFz94QI/lfi6RK7EQTq
+	 QLv9gnThvx3eIOvV0HKLO9e8G25xK6IsPHmJn+lJs8lJrubqwdVdX8kVY6Yeog6rJ8
+	 fAFMbdmxkKM2hFw8+YKnQsy8tu8qQbegZvgIwAYDoE8dJD+89nGN/enhTUwASyUBQ7
+	 afIzc5RzN9Fwg==
+Date: Wed, 21 Feb 2024 08:56:15 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: John Garry <john.g.garry@oracle.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, dchinner@redhat.com, jack@suse.cz,
+	chandan.babu@oracle.com, martin.petersen@oracle.com,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com,
+	ojaswin@linux.ibm.com
+Subject: Re: [PATCH 0/6] block atomic writes for XFS
+Message-ID: <20240221165615.GH6184@frogsfrogsfrogs>
+References: <20240124142645.9334-1-john.g.garry@oracle.com>
+ <20240213072237.GA24218@lst.de>
+ <20240213175549.GU616564@frogsfrogsfrogs>
+ <20240214074559.GB10006@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,39 +64,83 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZdLOKCYnM3XybqQp@dread.disaster.area>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <20240214074559.GB10006@lst.de>
 
-On Mon, Feb 19, 2024 at 02:42:32PM +1100, Dave Chinner wrote:
-> On Fri, Feb 16, 2024 at 10:18:59AM -0800, Luis Chamberlain wrote:
-> > fstests specific watchdogs want to know when the full test suite will
-> > start and end. Right now the kernel ring buffer can get augmented but we
-> > can't know for sure if it was due to a test or some odd hardware issue
-> > after fstests ran. This is specially true for systems left running tests in
-> > loops in automation where we are not running things ourselves but rather just
-> > get access to kernel logs, or for filesystem runner watdogs such as the one
-> > in kdevops [0]. It is also often not easy to determine for sure based on
-> > just logs when fstests check really has completed unless we have a
-> > matching log of who spawned that test runner. Although we could keep track of
-> > this ourselves by an annotation locally on the test runner, it is useful to
-> > have independent tools which are not attached to the process which spawned
-> > check to just peak into a system and verify the system's progress with
-> > fstests by just using the kernel log. Keeping this in the test target kernel
-> > ring buffer enables these use cases.
+On Wed, Feb 14, 2024 at 08:45:59AM +0100, Christoph Hellwig wrote:
+> On Tue, Feb 13, 2024 at 09:55:49AM -0800, Darrick J. Wong wrote:
+> > On Tue, Feb 13, 2024 at 08:22:37AM +0100, Christoph Hellwig wrote:
+> > > From reading the series and the discussions with Darrick and Dave
+> > > I'm coming more and more back to my initial position that tying this
+> > > user visible feature to hardware limits is wrong and will just keep
+> > > on creating ever more painpoints in the future.
+> > > 
+> > > Based on that I suspect that doing proper software only atomic writes
+> > > using the swapext log item and selective always COW mode
 > > 
-> > This is useful for example for filesyste checker specific watchdogs like the
-> > one in kdevops so that the watchdog knows when to start hunting for crashes
-> > based just on the kernel ring buffer, and so it also knows when the show is
-> > over.
+> > Er, what are you thinking w.r.t. swapext and sometimescow?
 > 
-> Why can't the runner that requires timing information in the
-> kernel log just emit a message to the kernel log before it
-> runs check and again immediately after completion of the check
-> script?
+> What do you mean with sometimescow?  Just normal reflinked inodes?
+> 
+> > swapext
+> > doesn't currently handle COW forks at all, and it can only exchange
+> > between two of the same type of fork (e.g. both data forks or both attr
+> > forks, no mixing).
+> > 
+> > Or will that be your next suggestion whenever I get back to fiddling
+> > with the online fsck patches? ;)
+> 
+> Let's take a step back.  If we want atomic write semantics without
+> hardware offload, what we need is to allocate new blocks and atomically
+> swap them into the data fork.  Basicall an atomic version of
+> xfs_reflink_end_cow.  But yes, the details of the current swapext
+> item might not be an exact fit, maybe it's just shared infrastructure
+> and concepts.
 
-That's exactly what is done today, it just seemed to me that since this
-has been useful to a test runner now for years, it might make sense to
-generalize this.
- 
-  Luis
+Hmm.  For rt reflink (whenever I get back to that, ha) I've been
+starting to think that yes, we actually /do/ want to have a log item
+that tracks the progress of remap and cow operations.  That would solve
+the problem of someone wanting to reflink a semi-written rtx.
+
+That said, it might complicate the reflink code quite a bit since right
+now it writes zeroes to the unwritten parts of an rt file's rtx so that
+there's only one mapping record for the whole rtx, and then it remaps
+them.  That's most of why I haven't bothered to implement that solution.
+
+> I'm not planning to make you do it, because such a log item would
+> generally be pretty useful for always COW mode.
+
+One other thing -- while I was refactoring the swapext code into
+exch{range,maps}, it occurred to me that doing an exchange between the
+cow and data forks isn't possible because log recovery won't be able to
+do anything.  There's no ondisk metadata to map a cow staging extent
+back to the file it came from, which means we can't generally resume an
+exchange operation.
+
+However for a small write I guess you could simply queue all the log
+intent items for all the changes needed and commit that.
+
+> > > and making that
+> > > work should be the first step.  We can then avoid that overhead for
+> > > properly aligned writs if the hardware supports it.  For your Oracle
+> > > DB loads you'll set the alignment hints and maybe even check with
+> > > fiemap that everything is fine and will get the offload, but we also
+> > > provide a nice and useful API for less performance critical applications
+> > > that don't have to care about all these details.
+> > 
+> > I suspect they might want to fail-fast (back to standard WAL mode or
+> > whatever) if the hardware support isn't available.
+> 
+> Maybe for your particular DB use case.  But there's plenty of
+> applications that just want atomic writes without building their
+> own infrastruture, including some that want pretty large chunks.
+> 
+> Also if a file system supports logging data (which I have an
+> XFS early prototype for that I plan to finish), we can even do
+> the small double writes more efficiently than the application,
+> all through the same interface.
+
+Heh.  Ted's been trying to kill data=journal.  Now we've found a use for
+it after all. :)
+
+--D
 
