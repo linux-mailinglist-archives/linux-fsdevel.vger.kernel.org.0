@@ -1,191 +1,240 @@
-Return-Path: <linux-fsdevel+bounces-12204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A35E85CDCB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 03:15:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AF385CDE3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 03:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF0F21F2676E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 02:15:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78FD41C22643
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Feb 2024 02:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9054D5CA1;
-	Wed, 21 Feb 2024 02:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C780FBF5;
+	Wed, 21 Feb 2024 02:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nuOyfaD1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nSCnqiZo";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nuOyfaD1";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="nSCnqiZo"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="GRJOmKG+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287DA4C8A;
-	Wed, 21 Feb 2024 02:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB1679C6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 02:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708481726; cv=none; b=YheMwqHxkbYf+8nXduSfMiIwjc1U4BX/pOwYaeXviybY6xiy5RiSb2VKrF47kZMD7e84+A2ECE7gS0A0Lo/ZaJ63yzGjEW+eIYI7ZshHGTHYs3wgVy4CpyBIaLpkVl6ry15BCenmYz2ZAG+ZZNsoQj9OY3i6l+nJSPXhItX6xBI=
+	t=1708482070; cv=none; b=uYVfa6waYQ00+cnc6wwq3OczBC4RncEohGvOkN/gXV1Uusb5E3DkYd8QQMh9hD5YbK+B47u+RRzTqfMb2fHX98GWYognxHKctjbQ9r99OuaSqtlkh9rkZsEF7ysPtAGszA5GFpk8DVDkx8OsatXIu4SbOtRfBZNeQLhBHMEmNa8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708481726; c=relaxed/simple;
-	bh=q5LTf7mdfsCVsV/WDnsC313bKj8Juks5lEPrZD/cjcM=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=FqifROdc+udU04CgN/J4iu9wBiXrJ9LxXj5TsoB/5hIrbj1Q0KOESTqn/LgwPm5V761l0ZyOC0jrC/icAjLMoSx4QmGkgrHGjLucEdqRpfkAkg0VhgJevIyAhvkU7IkOBuf4M2CEV+SD+TVe9dKLoWvo/t+f49YQ1Hgj4CAfwEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nuOyfaD1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nSCnqiZo; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nuOyfaD1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=nSCnqiZo; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3BD4B1F889;
-	Wed, 21 Feb 2024 02:15:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1708481722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OsV9jHwuIWpVRNglZYRAxztbyndApUNiw5FdxICdsok=;
-	b=nuOyfaD1GdXkG0edoeq9YGbRXPIzHgIPCa50tQZYnRTiuiQXUogvyys2HAPwDl+Y5qCq//
-	j+6gmNjcQWLVw2kRfkDXCvRh5j2Hxr/lVlxHI4bj9sfyFy2RupLXRQziFYYQff+KVtyzV2
-	MDDfhRi6CXt8Ve1AabM1rv1NL1U8zBc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1708481722;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OsV9jHwuIWpVRNglZYRAxztbyndApUNiw5FdxICdsok=;
-	b=nSCnqiZop5Q2SjDAcmGPdZCWVteYOl2OO+3zHFa/bpK8I8p1U1PXhPVBY8dwEPz8MoSW44
-	iNjEvQiDID3pIeAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1708481722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OsV9jHwuIWpVRNglZYRAxztbyndApUNiw5FdxICdsok=;
-	b=nuOyfaD1GdXkG0edoeq9YGbRXPIzHgIPCa50tQZYnRTiuiQXUogvyys2HAPwDl+Y5qCq//
-	j+6gmNjcQWLVw2kRfkDXCvRh5j2Hxr/lVlxHI4bj9sfyFy2RupLXRQziFYYQff+KVtyzV2
-	MDDfhRi6CXt8Ve1AabM1rv1NL1U8zBc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1708481722;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OsV9jHwuIWpVRNglZYRAxztbyndApUNiw5FdxICdsok=;
-	b=nSCnqiZop5Q2SjDAcmGPdZCWVteYOl2OO+3zHFa/bpK8I8p1U1PXhPVBY8dwEPz8MoSW44
-	iNjEvQiDID3pIeAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8554B13A76;
-	Wed, 21 Feb 2024 02:15:19 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id tljQDrdc1WWJWAAAD6G6ig
-	(envelope-from <neilb@suse.de>); Wed, 21 Feb 2024 02:15:19 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1708482070; c=relaxed/simple;
+	bh=Y+0FnZUf2IjxkyMaZORz2P4JzBZ3C5j9BQT3XkwWWxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BAcwJy2cMZSxHQIHhfqtW3Svew15r4gx2iPd/hKPM+6K7IjB1Ysq8v1pjpvz6kJDnK4q1+YpAuDPw/b3ZhTKS5K6wm1jDmqby/VhxB0GhMggKHCzhTBn+GHh3n0FKB9OuB24chcsJRQLv9b3AMJdL4PMUEMV3H7w8fZHJRRX2cE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=GRJOmKG+; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-517ab9a4a13so81554a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Feb 2024 18:21:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1708482066; x=1709086866; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l1R6afuU9qtN5hIRvEmeA6FfNqFs/docJ+nZZc128Tk=;
+        b=GRJOmKG+tsgrhmKquEEH+nwbW190jvayWmLDIGe7jwm3jvXzZ3xEo2jjk/+IIPNWom
+         PhVyZNT6w4wVP6dt6EOjUTbppY6qzf/h0R+3vEzY5G8Bbp0NdurxATQqc+E1nuJPsooc
+         vLgP0H78aU4Hjf+Kl+3RQMumduUbUl41FB0Ik7iwUoL9BplQHq2lL0W9Fsi8YEDNwMRn
+         m+2RAvGISobICHoIHFKLU1ZH0cxCpbkYTMI0b0XT4Ay2ZMDAaDpx3gl+xqzLkpdFZVB4
+         45wf2PIyHTLn5sj3VNc2/6IpytVTM2P8bunF/bb2Z8wr+8DPubK2G9XP6ggT7sUM7MHH
+         AnNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708482066; x=1709086866;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=l1R6afuU9qtN5hIRvEmeA6FfNqFs/docJ+nZZc128Tk=;
+        b=RkfO/z8s00NH/tJVZW1iK6Oa/4GDsLtnJUOluJejRYQU50Nlsb6yaofBmMGGBUqf6U
+         ZL0zl58TItp/p0kzQHDMZUq8eVfeetjQV5qgkZIr5k8gMBBel03ayMQLLq0SM7Ll7tk7
+         buXPpRCmmUWaY2hmjLy3rwmmNLIb9mIOLTx8wCBXRLNwd4Y+HgZWu8ELCPMe9lLMACpB
+         NqSOwN+QUH2rT9RWkgAjMSRCKKVsLOyJ5Sinb4lv8IzC4BWwhb5qHzE8BU7zPRIBD3Fc
+         8TiOkDrNG09IW/yzRl+lMgUH1758IpSaP+fbAhAm1ybqy6ZGvMlyBlvaviTScFm5bmEV
+         tRdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVO7R/HIFcqoRXYo93N4aM5KtlQ3aSry5SYvVJIlooGaAwiaMSNS2XbqYWBL4r38w8D88tr9lXho8APW1MGozzsgfLSdLO1xjuwsiEU2A==
+X-Gm-Message-State: AOJu0YywfUA8Qr/v72LRqNq2lN0wQaEa47Ktz+qirwGJLTW+bgk82koL
+	IxekyQee+GqUu22R3FGLbkUjTag9LHYxWq6Nnal9wcPh7TIaY6TYyEdLHC23XmM=
+X-Google-Smtp-Source: AGHT+IEO5o3QuZQacGlqYRaf8RZYwatPw3qTBMwsPeyn8POJuDm6UYyWHFwJTW83lpUYBJt3hHx5Bw==
+X-Received: by 2002:a05:6a21:3482:b0:1a0:c3e6:314f with SMTP id yo2-20020a056a21348200b001a0c3e6314fmr64380pzb.18.1708482066592;
+        Tue, 20 Feb 2024 18:21:06 -0800 (PST)
+Received: from [10.84.145.15] ([203.208.167.152])
+        by smtp.gmail.com with ESMTPSA id jd20-20020a170903261400b001d94a3f3987sm6907230plb.184.2024.02.20.18.21.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Feb 2024 18:21:06 -0800 (PST)
+Message-ID: <aa266a51-678d-45b7-a23f-ac18549b383c@bytedance.com>
+Date: Wed, 21 Feb 2024 10:20:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Matthew Wilcox" <willy@infradead.org>
-Cc: "Kent Overstreet" <kent.overstreet@linux.dev>,
- "James Bottomley" <James.Bottomley@hansenpartnership.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- lsf-pc@lists.linux-foundation.org, "Christian Brauner" <christian@brauner.io>
- =?utf-8?q?=2C?= =?utf-8?q?St=C3=A9phane?= Graber <stgraber@stgraber.org>
-Subject: Re: [LSF TOPIC] beyond uidmapping, & towards a better security model
-In-reply-to: <ZdVQb9KoVqKJlsbD@casper.infradead.org>
-References: <tixdzlcmitz2kvyamswcpnydeypunkify5aifsmfihpecvat7d@pmgcepiilpi6>,
- <141b4c7ecda2a8c064586d064b8d1476d8de3617.camel@HansenPartnership.com>,
- <qlmv2hjwzgnkmtvjpyn6zdnnmja3a35tx4nh6ldl23tkzh5reb@r3dseusgs3x6>,
- <ZdVQb9KoVqKJlsbD@casper.infradead.org>
-Date: Wed, 21 Feb 2024 13:15:12 +1100
-Message-id: <170848171227.1530.1796367124497204056@noble.neil.brown.name>
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=nuOyfaD1;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=nSCnqiZo
-X-Spamd-Result: default: False [-3.31 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	 DKIM_TRACE(0.00)[suse.de:+];
-	 MX_GOOD(-0.01)[];
-	 RCPT_COUNT_SEVEN(0.00)[8];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-3.00)[100.00%]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 3BD4B1F889
-X-Spam-Level: 
-X-Spam-Score: -3.31
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 10/10] fork: Use __mt_dup() to duplicate maple tree in
+ dup_mmap()
+To: David Hildenbrand <david@redhat.com>
+Cc: maple-tree@lists.infradead.org, linux-mm@kvack.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, brauner@kernel.org,
+ michael.christie@oracle.com, npiggin@gmail.com,
+ Peng Zhang <zhangpeng.00@bytedance.com>, corbet@lwn.net,
+ Liam.Howlett@oracle.com, willy@infradead.org, surenb@google.com,
+ mjguzik@gmail.com, mathieu.desnoyers@efficios.com, peterz@infradead.org,
+ oliver.sang@intel.com, akpm@linux-foundation.org, mst@redhat.com
+References: <20231027033845.90608-1-zhangpeng.00@bytedance.com>
+ <20231027033845.90608-11-zhangpeng.00@bytedance.com>
+ <6058742c-26e5-4600-85ad-0a21d8fd2e42@redhat.com>
+ <bc7d1702-315f-4e10-899d-491a0cee8cee@redhat.com>
+From: Peng Zhang <zhangpeng.00@bytedance.com>
+In-Reply-To: <bc7d1702-315f-4e10-899d-491a0cee8cee@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, 21 Feb 2024, Matthew Wilcox wrote:
-> On Tue, Feb 20, 2024 at 07:25:58PM -0500, Kent Overstreet wrote:
-> > But there's real advantages to getting rid of the string <-> integer
-> > identifier mapping and plumbing strings all the way through:
-> > 
-> >  - creating a new sub-user can be done with nothing more than the new
-> >    username version of setuid(); IOW, we can start a new named subuser
-> >    for e.g. firefox without mucking with _any_ system state or tables
-> > 
-> >  - sharing filesystems between machines is always a pita because
-> >    usernames might be the same but uids never are - let's kill that off,
-> >    please
+
+
+在 2024/2/21 01:31, David Hildenbrand 写道:
+> On 20.02.24 18:24, David Hildenbrand wrote:
+>> On 27.10.23 05:38, Peng Zhang wrote:
+>>> In dup_mmap(), using __mt_dup() to duplicate the old maple tree and then
+>>> directly replacing the entries of VMAs in the new maple tree can result
+>>> in better performance. __mt_dup() uses DFS pre-order to duplicate the
+>>> maple tree, so it is efficient.
+>>>
+>>> The average time complexity of __mt_dup() is O(n), where n is the number
+>>> of VMAs. The proof of the time complexity is provided in the commit log
+>>> that introduces __mt_dup(). After duplicating the maple tree, each element
+>>> is traversed and replaced (ignoring the cases of deletion, which are rare).
+>>> Since it is only a replacement operation for each element, this process is
+>>> also O(n).
+>>>
+>>> Analyzing the exact time complexity of the previous algorithm is
+>>> challenging because each insertion can involve appending to a node, pushing
+>>> data to adjacent nodes, or even splitting nodes. The frequency of each
+>>> action is difficult to calculate. The worst-case scenario for a single
+>>> insertion is when the tree undergoes splitting at every level. If we
+>>> consider each insertion as the worst-case scenario, we can determine that
+>>> the upper bound of the time complexity is O(n*log(n)), although this is a
+>>> loose upper bound. However, based on the test data, it appears that the
+>>> actual time complexity is likely to be O(n).
+>>>
+>>> As the entire maple tree is duplicated using __mt_dup(), if dup_mmap()
+>>> fails, there will be a portion of VMAs that have not been duplicated in
+>>> the maple tree. To handle this, we mark the failure point with
+>>> XA_ZERO_ENTRY. In exit_mmap(), if this marker is encountered, stop
+>>> releasing VMAs that have not been duplicated after this point.
+>>>
+>>> There is a "spawn" in byte-unixbench[1], which can be used to test the
+>>> performance of fork(). I modified it slightly to make it work with
+>>> different number of VMAs.
+>>>
+>>> Below are the test results. The first row shows the number of VMAs.
+>>> The second and third rows show the number of fork() calls per ten seconds,
+>>> corresponding to next-20231006 and the this patchset, respectively. The
+>>> test results were obtained with CPU binding to avoid scheduler load
+>>> balancing that could cause unstable results. There are still some
+>>> fluctuations in the test results, but at least they are better than the
+>>> original performance.
+>>>
+>>> 21     121   221    421    821    1621   3221   6421   12821  25621  51221
+>>> 112100 76261 54227  34035  20195  11112  6017   3161   1606   802    393
+>>> 114558 83067 65008  45824  28751  16072  8922   4747   2436   1233   599
+>>> 2.19%  8.92% 19.88% 34.64% 42.37% 44.64% 48.28% 50.17% 51.68% 53.74% 52.42%
+>>>
+>>> [1] https://github.com/kdlucas/byte-unixbench/tree/master
+>>>
+>>> Signed-off-by: Peng Zhang <zhangpeng.00@bytedance.com>
+>>> Suggested-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+>>> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+>>> ---
+>>>    include/linux/mm.h | 11 +++++++++++
+>>>    kernel/fork.c      | 40 +++++++++++++++++++++++++++++-----------
+>>>    mm/internal.h      | 11 -----------
+>>>    mm/memory.c        |  7 ++++++-
+>>>    mm/mmap.c          |  9 ++++++---
+>>>    5 files changed, 52 insertions(+), 26 deletions(-)
+>>>
+>>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>>> index 14d5aaff96d0..e9111ec5808c 100644
+>>> --- a/include/linux/mm.h
+>>> +++ b/include/linux/mm.h
+>>> @@ -996,6 +996,17 @@ static inline int vma_iter_bulk_alloc(struct vma_iterator *vmi,
+>>>        return mas_expected_entries(&vmi->mas, count);
+>>>    }
+>>> +static inline int vma_iter_clear_gfp(struct vma_iterator *vmi,
+>>> +            unsigned long start, unsigned long end, gfp_t gfp)
+>>> +{
+>>> +    __mas_set_range(&vmi->mas, start, end - 1);
+>>> +    mas_store_gfp(&vmi->mas, NULL, gfp);
+>>> +    if (unlikely(mas_is_err(&vmi->mas)))
+>>> +        return -ENOMEM;
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +
+>>>    /* Free any unused preallocations */
+>>>    static inline void vma_iter_free(struct vma_iterator *vmi)
+>>>    {
+>>> diff --git a/kernel/fork.c b/kernel/fork.c
+>>> index 1e6c656e0857..1552ee66517b 100644
+>>> --- a/kernel/fork.c
+>>> +++ b/kernel/fork.c
+>>> @@ -650,7 +650,6 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+>>>        int retval;
+>>>        unsigned long charge = 0;
+>>>        LIST_HEAD(uf);
+>>> -    VMA_ITERATOR(old_vmi, oldmm, 0);
+>>>        VMA_ITERATOR(vmi, mm, 0);
+>>>        uprobe_start_dup_mmap();
+>>> @@ -678,16 +677,22 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
+>>>            goto out;
+>>>        khugepaged_fork(mm, oldmm);
+>>> -    retval = vma_iter_bulk_alloc(&vmi, oldmm->map_count);
+>>> -    if (retval)
+>>> +    /* Use __mt_dup() to efficiently build an identical maple tree. */
+>>> +    retval = __mt_dup(&oldmm->mm_mt, &mm->mm_mt, GFP_KERNEL);
+>>> +    if (unlikely(retval))
+>>>            goto out;
+>>>        mt_clear_in_rcu(vmi.mas.tree);
+>>> -    for_each_vma(old_vmi, mpnt) {
+>>> +    for_each_vma(vmi, mpnt) {
+>>>            struct file *file;
+>>>            vma_start_write(mpnt);
+>>
+>> We used to call vma_start_write() on the *old* VMA, to prevent any kind of page faults in
+>> the old MM while we are duplicating PTEs (and COW-share pages).
+>>
+>> See
+>>
+>> commit fb49c455323ff8319a123dd312be9082c49a23a5
+>> Author: Suren Baghdasaryan <surenb@google.com>
+>> Date:   Sat Jul 8 12:12:12 2023 -0700
+>>
+>>       fork: lock VMAs of the parent process when forking
+>>       When forking a child process, the parent write-protects anonymous pages
+>>       and COW-shares them with the child being forked using copy_present_pte().
+>>       We must not take any concurrent page faults on the source vma's as they
+>>       are being processed, as we expect both the vma and the pte's behind it
+>>       to be stable.  For example, the anon_vma_fork() expects the parents
+>>       vma->anon_vma to not change during the vma copy.
+>>
+>>
+>> Unless I am missing something, we now call vma_start_write() on the *new* VMA?
+>>
+>> If that is the case, this is broken and needs fixing; likely, going over all
+>> VMAs in the old_mm and calling vma_start_write().
+>>
+>> But maybe there is some magic going on that I am missing :)
 > 
-> I feel like we need a bit of a survey of filesystems to see what is
-> already supported and what are desirable properties.  Block filesystems
-> are one thing, but network filesystems have been dealing with crap like
-> this for decades.  I don't have a good handle on who supports what at
-> this point.
-
-NFSv4 uses textual user and group names.  With have an "idmap" service
-which maps between name and number on each end.
-This is needed when krb5 is used as kerberos identities are names, not
-numbers.
-
-But in my (admittedly limited) experience, when krb5 isn't used (and
-probably also when it is), uids do match across the network. 
-While the original NFSv4 didn't support it, and addendum allows
-usernames made entirely of digits to be treated as numerical uids, and
-that is what (almost) everyone uses.
-
-It is certainly useful to mount "my" files from some other machine and
-have them appear to have "my" uid locally which might be different from
-the remote uid.  I think when two different machines both have two or
-more particular users, it is extremely likely that a central uid data
-base will be in use (ldap?) and so all uids will match.  No mapping
-needed. 
-
-(happy to be prove wrong...)
-
-NeilBrown
-
-
+> ... likely the magic is that the new tree links the same VMAs (we are not duplicating the VMAs before vm_area_dup()), so we are indeed locking the MM in the old_mm (that is temporarily linked into the new MM).
+Thanks for reminding. Yes, the VMAs in the tree built via __mt_dup() are the
+same as those in the old tree, so there won't be a problem here.
 > 
-> As far as usernames being the same ... well, maybe.  I've been willy,
-> mrw103, wilma (twice!), mawilc01 and probably a bunch of others I don't
-> remember.  I don't think we'll ever get away from having a mapping
-> between different naming authorities.
+> If that's the case, all good :)
 > 
-> 
-
 
