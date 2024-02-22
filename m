@@ -1,115 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-12453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CE3085F815
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 13:24:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E8A85F852
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 13:37:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC92D28B8CE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:24:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76005B25DD1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61062612E1;
-	Thu, 22 Feb 2024 12:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC4512DDA5;
+	Thu, 22 Feb 2024 12:36:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="EUAlNGrf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D1xO5VRo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bee.tesarici.cz (bee.tesarici.cz [77.93.223.253])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5420960879;
-	Thu, 22 Feb 2024 12:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.93.223.253
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5E0112C809;
+	Thu, 22 Feb 2024 12:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708604659; cv=none; b=ePxy7uIi7iQ7cKyMmGQWM+24c96c9ThS1XvFG1/6J0HKVUbl4BbSiVNiIILHhWcidGIsL6IH0q+fxKAldb+oJsuBwsYLYPEzsUt34Fg+bTNQwj1xmRk4N6k3duHVkVoO1sKaW20HbVz1WD+DwJDGE7rb3RyyBp0779PnHrXYvvM=
+	t=1708605416; cv=none; b=slRcGEn7UHLkbtmeLkH6dWWKe7WGl8mNs1FZ/rXCumhO9E/dbllnoZ3u4Tdz/Jd3uTWm9IdG/5dTF/EB7+i7c/aiJPJvSmru6X9OGP0GGMCkejBzp3H4H0uNPu+BDnDi0KQpDXO+aVWppcSrtymC3thYHnT7vXu+rVbdSrlxexM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708604659; c=relaxed/simple;
-	bh=SzkRLezEcoWqN5XMk5IQjv+zaBzCE6hGL4TlzpzvRx8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jqq4cIuBMIuT1LY29CoWzB3VSng2OipdaLLoCvlXV8qIzVgBNRA2k5Lgof1pOLUBq76zDChdPRGjhccMqpSs9+oR2ddBlDgRRDYkBadcrUKBX4GX62+JfzcS0sLS69GVzlW7niJSEdXI0tB4zbCa0ugK/s73jZOLCJYZwcwAs6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=EUAlNGrf; arc=none smtp.client-ip=77.93.223.253
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id 49C831B3C16;
-	Thu, 22 Feb 2024 13:24:12 +0100 (CET)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1708604653; bh=SzkRLezEcoWqN5XMk5IQjv+zaBzCE6hGL4TlzpzvRx8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EUAlNGrf23R8w4oEXhdN8ZTdwZg1H7M4/emZPySrk6K9Tl0SxhgdNcc+GVXJzkF3K
-	 jhjEkvp7rH7EDvKJP8N1WoE10a3c92Pf6/xWI/KNQXgf4YwqDhpDsD2Sz7vm2z7Lxu
-	 QrFdVlvJFDd25mDM+o2lNSY2HQW6+zwnWeoZrkjI/dzsAj1ADwvpfvp+aYsPDhk7+s
-	 +uJNHsQG4WSVKSkZg/cEwEkmeqqHv63GsosLISth1I21E6qnsVSxAZUr46A8h1ti5w
-	 8xB2a1phVtvV+YvhVd8sMVHnIsWVImqVlHlq4wr1kEZ6CyLBGnCxeEbIFEyPI2fo5P
-	 PuGFeTj8+894w==
-Date: Thu, 22 Feb 2024 13:24:10 +0100
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
- kent.overstreet@linux.dev, vbabka@suse.cz, hannes@cmpxchg.org,
- roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
- willy@infradead.org, liam.howlett@oracle.com,
- penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com,
- peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
- david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
- nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
- rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
- yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
- hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
- ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
- ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
- iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
- elver@google.com, dvyukov@google.com, shakeelb@google.com,
- songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
- minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-arch@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
- cgroups@vger.kernel.org
-Subject: Re: [PATCH v4 06/36] mm: enumerate all gfp flags
-Message-ID: <20240222132410.6e1a2599@meshulam.tesarici.cz>
-In-Reply-To: <Zdc6LUWnPOBRmtZH@tiehlicka>
-References: <20240221194052.927623-1-surenb@google.com>
-	<20240221194052.927623-7-surenb@google.com>
-	<Zdc6LUWnPOBRmtZH@tiehlicka>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.39; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1708605416; c=relaxed/simple;
+	bh=5JMBWnzvOQc2q9DWqlLSJhqyKMkqobNiRXLfi0gNSkw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GMZ9+NTEbnWf0I8lhNnaricC745y7og6+dp6b11AVC4wdHxXPHuZ+qQf497jmOEjPWjftuubhkNycUrveDAIOUMaIRrayWRV1tgA1QdGybgVYf/QglMuUnd3OTq+KVF/mbmtsbv0mW+1GoOc2xKmM4peg0NtIE3o72phB6q6Rb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D1xO5VRo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D8BCC433F1;
+	Thu, 22 Feb 2024 12:36:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708605416;
+	bh=5JMBWnzvOQc2q9DWqlLSJhqyKMkqobNiRXLfi0gNSkw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D1xO5VRoWXbIbpcnOhY/uLVhsXx/2oRZ2xD235yMjQklY/wimmoooLrtFXjW9Jd2Z
+	 4Nj1KxVN1DvLIa1/KLDUWTU+wbSCz1KQ8tj6JDssXczs9h0SpBTrx+KDnzmj78TzPK
+	 0B5HvJD/XEpCogvsZ+B+MdxKl9ZrlYE/ljxwDSq0reRjMdhHSTtcFSdPy3LfF4PqlJ
+	 Ywlx5zj+OqnDsEhvPpU4WlBXF1IExGnDeQL0nS7vBvAnXO6Wed5aQEoMhaVfghyMV/
+	 sODhTLvWPinMcOY35mJfngLaWw4vzUTgQwd63hFrGlFol3IW7K8oYunizs4JzskfHg
+	 6m0ipcTYDF3nw==
+Date: Thu, 22 Feb 2024 07:36:56 -0500
+From: Sasha Levin <sashal@kernel.org>
+To: Pavel Machek <pavel@denx.de>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Kees Cook <keescook@chromium.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, surenb@google.com,
+	michael.christie@oracle.com, mst@redhat.com, mjguzik@gmail.com,
+	npiggin@gmail.com, zhangpeng.00@bytedance.com, hca@linux.ibm.com
+Subject: Re: [PATCH AUTOSEL 5.10 7/8] exec: Distinguish in_execve from in_exec
+Message-ID: <Zdc_6Jx93folkK6B@sashalap>
+References: <20240202184156.541981-1-sashal@kernel.org>
+ <20240202184156.541981-7-sashal@kernel.org>
+ <ZdJWuMifIiNnrLbZ@duo.ucw.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <ZdJWuMifIiNnrLbZ@duo.ucw.cz>
 
-On Thu, 22 Feb 2024 13:12:29 +0100
-Michal Hocko <mhocko@suse.com> wrote:
+On Sun, Feb 18, 2024 at 08:12:56PM +0100, Pavel Machek wrote:
+>Hi!
+>
+>> From: Kees Cook <keescook@chromium.org>
+>>
+>> [ Upstream commit 90383cc07895183c75a0db2460301c2ffd912359 ]
+>>
+>> Just to help distinguish the fs->in_exec flag from the current->in_execve
+>> flag, add comments in check_unsafe_exec() and copy_fs() for more
+>> context. Also note that in_execve is only used by TOMOYO now.
+>
+>These are just a whitespace changes, we should not need them.
 
-> On Wed 21-02-24 11:40:19, Suren Baghdasaryan wrote:
-> > Introduce GFP bits enumeration to let compiler track the number of used
-> > bits (which depends on the config options) instead of hardcoding them.
-> > That simplifies __GFP_BITS_SHIFT calculation.
-> >=20
-> > Suggested-by: Petr Tesa=C5=99=C3=ADk <petr@tesarici.cz>
-> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > Reviewed-by: Kees Cook <keescook@chromium.org> =20
->=20
-> I thought I have responded to this patch but obviously not the case.
-> I like this change. Makes sense even without the rest of the series.
-> Acked-by: Michal Hocko <mhocko@suse.com>
+Dropped, thanks!
 
-Thank you, Michal. I also hope it can be merged without waiting for the
-rest of the series.
-
-Petr T
+-- 
+Thanks,
+Sasha
 
