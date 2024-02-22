@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-12458-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12457-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A9485F8B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 13:52:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA5185F8AF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 13:52:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 541631F22011
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:52:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5B1F286771
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55162134CFA;
-	Thu, 22 Feb 2024 12:51:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26C478B52;
+	Thu, 22 Feb 2024 12:51:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FF812E1DB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D997560B90;
 	Thu, 22 Feb 2024 12:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708606300; cv=none; b=sSy2pfxKRH6Rl2bwMdUjdcGHmrp5oSpwrx9g+E6Gbp7SjcCoz0remLjupbnRZDQ5XHWYh7BrlgOMNAnExw456OaF1aGRv2WiG0LLZcuShIsxuyfejA7E5ojOPrwrwOgHl3h1/F2IkQqZzzvqw517tpCyKKv40lz5Xfd15jZUoXk=
+	t=1708606300; cv=none; b=kYYhlUCSqd9dMcxJ4gJFb43+v1tdaWQUSe9Mn+3/wqzmnCLsBA/CGU5tXZXuTLSuUH9LuV4PV2GK4b31G4hqFW2hvexEnLQ9fhL3eI+sICyEtQYvTcsNq0ZhHIXF2CFpfVN8+G7cBocoEmpxAE9zkDPiGP424MyoRSbFZk/03Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1708606300; c=relaxed/simple;
-	bh=MtUkDFYx5n2XNdciUUYtBWVksOOTShK5x/pRDnUqQ20=;
+	bh=07HTBNK+5nbyijzoFRPQLaQJkNcSWcs6crnJi8osP7M=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rLTjkq5VEdPSCSpdnGZlSPIfGqDIDjRIllIftoIIufu57ZXcCpOc27+zww4k7AK962gfG88oyiXcyAB+bDK1MrkL1kghEF5i/qhwQUvsF49ejotqCD5PohLjrvN/FVwqoUVUtPMJ7PSY2begHpSneBK3ioLT80mgOO9otsaKwJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=Q3BxOnQqqfXlz7wA0GZb/FfTrSn5ZqcGFO4fIi856T/+K18Quy6bcZuiJP9+RuA+gse2gOvui1SeZbFT10KBTLeLgHuBOLnS1g8KPKvqYb7XUVmegi/hsfTLs/b5zA52USsOBMEBCt2s1J13zMXpGLRD17DiDct9fb4X8oGfZ2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TgY195YXmz4f3lVm;
-	Thu, 22 Feb 2024 20:51:25 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TgY1D2RCSz4f3kFH;
+	Thu, 22 Feb 2024 20:51:28 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id E8AD51A09FA;
-	Thu, 22 Feb 2024 20:51:32 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 5DC341A0232;
+	Thu, 22 Feb 2024 20:51:33 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBHGBFSQ9dlQ382Ew--.47909S5;
-	Thu, 22 Feb 2024 20:51:32 +0800 (CST)
+	by APP1 (Coremail) with SMTP id cCh0CgBHGBFSQ9dlQ382Ew--.47909S6;
+	Thu, 22 Feb 2024 20:51:33 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: jack@suse.cz,
 	hch@lst.de,
@@ -49,9 +49,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [RFC v4 linux-next 01/19] block: move two helpers into bdev.c
-Date: Thu, 22 Feb 2024 20:45:37 +0800
-Message-Id: <20240222124555.2049140-2-yukuai1@huaweicloud.com>
+Subject: [RFC v4 linux-next 02/19] block: remove sync_blockdev_nowait()
+Date: Thu, 22 Feb 2024 20:45:38 +0800
+Message-Id: <20240222124555.2049140-3-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
 References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
@@ -62,13 +62,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHGBFSQ9dlQ382Ew--.47909S5
-X-Coremail-Antispam: 1UD129KBjvJXoW7WF45CFy3KF4rKFWkCrW5trb_yoW8KryfpF
-	ZxGFW8G3yUCFyjgF4jva1fZr1agw4kK34fJa43u34rKryDtr4IgF1kJryrZrWSqrZ7uFsx
-	ZF45JrW0kry0k3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBE14x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
-	x26xkF7I0E14v26r1I6r4UM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+X-CM-TRANSID:cCh0CgBHGBFSQ9dlQ382Ew--.47909S6
+X-Coremail-Antispam: 1UD129KBjvJXoWxuryfJr13CF1xGryUZw48Xrb_yoW5Cw4rpF
+	nxAFZ7GrW8WF18WFs2vw4DZrySg3Wvk3yxCFySvw1YvFWqqrs2gF9YyFyrAFW0vrZ7ArW2
+	qFWxuFy5uFy5C3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBE14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
+	x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
 	Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM2
 	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
 	xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
@@ -78,82 +78,112 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7WF45CFy3KF4rKFWkCrW5trb_yoW8KryfpF
 	Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x
 	0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8
 	JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIx
-	AIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUqAp5UUUUU
+	AIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUc6pPUUUUU
 	=
 X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Yu Kuai <yukuai3@huawei.com>
 
-disk_live() and block_size() access bd_inode directly, prepare to remove
-the field bd_inode from block_device, and only access bd_inode in block
-layer.
+Now that all filesystems stash the bdev file, it's ok to flush the file
+mapping directly.
 
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- block/bdev.c           | 12 ++++++++++++
- include/linux/blkdev.h | 12 ++----------
- 2 files changed, 14 insertions(+), 10 deletions(-)
+ block/bdev.c           | 8 --------
+ fs/fat/inode.c         | 2 +-
+ fs/ntfs3/inode.c       | 2 +-
+ fs/sync.c              | 9 ++++++---
+ include/linux/blkdev.h | 5 -----
+ 5 files changed, 8 insertions(+), 18 deletions(-)
 
 diff --git a/block/bdev.c b/block/bdev.c
-index 140093c99bdc..726a2805a1ce 100644
+index 726a2805a1ce..49dcff483289 100644
 --- a/block/bdev.c
 +++ b/block/bdev.c
-@@ -1196,6 +1196,18 @@ void bdev_statx_dioalign(struct inode *inode, struct kstat *stat)
- 	blkdev_put_no_open(bdev);
+@@ -188,14 +188,6 @@ int sb_min_blocksize(struct super_block *sb, int size)
+ 
+ EXPORT_SYMBOL(sb_min_blocksize);
+ 
+-int sync_blockdev_nowait(struct block_device *bdev)
+-{
+-	if (!bdev)
+-		return 0;
+-	return filemap_flush(bdev->bd_inode->i_mapping);
+-}
+-EXPORT_SYMBOL_GPL(sync_blockdev_nowait);
+-
+ /*
+  * Write out and wait upon all the dirty data associated with a block
+  * device via its mapping.  Does not take the superblock lock.
+diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+index 5c813696d1ff..8527aef51841 100644
+--- a/fs/fat/inode.c
++++ b/fs/fat/inode.c
+@@ -1945,7 +1945,7 @@ int fat_flush_inodes(struct super_block *sb, struct inode *i1, struct inode *i2)
+ 	if (!ret && i2)
+ 		ret = writeback_inode(i2);
+ 	if (!ret)
+-		ret = sync_blockdev_nowait(sb->s_bdev);
++		ret = filemap_flush(sb->s_bdev_file->f_mapping);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(fat_flush_inodes);
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index eb7a8c9fba01..3c4c878f6d77 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -1081,7 +1081,7 @@ int ntfs_flush_inodes(struct super_block *sb, struct inode *i1,
+ 	if (!ret && i2)
+ 		ret = writeback_inode(i2);
+ 	if (!ret)
+-		ret = sync_blockdev_nowait(sb->s_bdev);
++		ret = filemap_flush(sb->s_bdev_file->f_mapping);
+ 	return ret;
  }
  
-+bool disk_live(struct gendisk *disk)
-+{
-+	return !inode_unhashed(disk->part0->bd_inode);
-+}
-+EXPORT_SYMBOL_GPL(disk_live);
+diff --git a/fs/sync.c b/fs/sync.c
+index dc725914e1ed..3a43062790d9 100644
+--- a/fs/sync.c
++++ b/fs/sync.c
+@@ -57,9 +57,12 @@ int sync_filesystem(struct super_block *sb)
+ 		if (ret)
+ 			return ret;
+ 	}
+-	ret = sync_blockdev_nowait(sb->s_bdev);
+-	if (ret)
+-		return ret;
 +
-+unsigned int block_size(struct block_device *bdev)
-+{
-+	return 1 << bdev->bd_inode->i_blkbits;
-+}
-+EXPORT_SYMBOL_GPL(block_size);
-+
- static int __init setup_bdev_allow_write_mounted(char *str)
- {
- 	if (kstrtobool(str, &bdev_allow_write_mounted))
++	if (sb->s_bdev_file) {
++		ret = filemap_flush(sb->s_bdev_file->f_mapping);
++		if (ret)
++			return ret;
++	}
+ 
+ 	sync_inodes_sb(sb);
+ 	if (sb->s_op->sync_fs) {
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 06e854186947..eb1f6eeaddc5 100644
+index eb1f6eeaddc5..9e96811c8915 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
-@@ -211,11 +211,6 @@ struct gendisk {
- 	struct blk_independent_access_ranges *ia_ranges;
- };
- 
--static inline bool disk_live(struct gendisk *disk)
--{
--	return !inode_unhashed(disk->part0->bd_inode);
--}
--
- /**
-  * disk_openers - returns how many openers are there for a disk
-  * @disk: disk to check
-@@ -1359,11 +1354,6 @@ static inline unsigned int blksize_bits(unsigned int size)
- 	return order_base_2(size >> SECTOR_SHIFT) + SECTOR_SHIFT;
- }
- 
--static inline unsigned int block_size(struct block_device *bdev)
--{
--	return 1 << bdev->bd_inode->i_blkbits;
--}
--
- int kblockd_schedule_work(struct work_struct *work);
- int kblockd_mod_delayed_work_on(int cpu, struct delayed_work *dwork, unsigned long delay);
- 
-@@ -1531,6 +1521,8 @@ void blkdev_put_no_open(struct block_device *bdev);
- 
- struct block_device *I_BDEV(struct inode *inode);
- struct block_device *file_bdev(struct file *bdev_file);
-+bool disk_live(struct gendisk *disk);
-+unsigned int block_size(struct block_device *bdev);
- 
- #ifdef CONFIG_BLOCK
+@@ -1528,7 +1528,6 @@ unsigned int block_size(struct block_device *bdev);
  void invalidate_bdev(struct block_device *bdev);
+ int sync_blockdev(struct block_device *bdev);
+ int sync_blockdev_range(struct block_device *bdev, loff_t lstart, loff_t lend);
+-int sync_blockdev_nowait(struct block_device *bdev);
+ void sync_bdevs(bool wait);
+ void bdev_statx_dioalign(struct inode *inode, struct kstat *stat);
+ void printk_all_partitions(void);
+@@ -1541,10 +1540,6 @@ static inline int sync_blockdev(struct block_device *bdev)
+ {
+ 	return 0;
+ }
+-static inline int sync_blockdev_nowait(struct block_device *bdev)
+-{
+-	return 0;
+-}
+ static inline void sync_bdevs(bool wait)
+ {
+ }
 -- 
 2.39.2
 
