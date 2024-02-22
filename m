@@ -1,132 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-12514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E4B860347
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 20:54:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9CA5860270
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 20:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81719B2FF73
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 19:11:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B999282E7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 19:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDF4548E9;
-	Thu, 22 Feb 2024 19:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24FD1EA95;
+	Thu, 22 Feb 2024 19:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtyLjiQP"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yU/YvvKW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E12A14B806;
-	Thu, 22 Feb 2024 19:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA55614B83E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 19:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708629073; cv=none; b=qzYhGGzXT5I/lkRWhQMYhSedYZ2Ea5qfY2F5+F+aAl3Cxo0SOuNQbatURdB7a8MG4blKLD249YBDT6V4ybMVkfYuBFvd0qaEw/jqtxxtKz/f3mjE+Ayen+xNjJXVzEbnPudL9jTO5YwXLBNGhYTB5Bk+C0ejRkYRqyB6fym2n0U=
+	t=1708629366; cv=none; b=ZYQs3HDRVwzVRcuKscVHEHP256TCEdZF6mtkh8N2KlCG8Y4kcFM/bpwJAzGr/6lGB52VFlrwPHsUQvV0BgC9ksrpakUSiUw4LhaUu25EAGt8SIB0bVjU0gIZLZSGayjCrmT4NV1aweag0yMs/OSNmO2+3XWVloBo2H1nvMuUelU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708629073; c=relaxed/simple;
-	bh=8nrfNIHr+Eb25TRq75f4NF1/J8WEqatyymrtaLx6QLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TRxvJ5DGdITMNMNUMtFn8ihph7M0ZtPjbfI6UreXfh86kIFgVJN9ozmbVwt/ZK3tLnln9AWaJlIMgqH48SzjBHdB+9a8tbdU34/1zsaaS/tc+yTgaooq/+cPRMIPtn5S/hGclEOSGASGuCmR2H1tm0mcUqvGKtlhUvxvy+4ZUx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qtyLjiQP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0452C433C7;
-	Thu, 22 Feb 2024 19:11:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708629073;
-	bh=8nrfNIHr+Eb25TRq75f4NF1/J8WEqatyymrtaLx6QLM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qtyLjiQPSFvaJ9M7rV182imqkcwMJbcYO+r+dMGBtOYxSYpBaVnRvNZ11XJBROR9e
-	 sFol8k1v+wYlFvUyUBro/7AQx2+kDhj5NNqwRD48ht2iA7YBv6eSnjKNmaHOBzNY49
-	 rCeBnV+yiSRZ9mKiMtIIEvMu8x1IIfnswGl/xXqSXqac+W3bzu7M/y7q2JSc3d+Esh
-	 ud72RE65wIOLdDAYaE/5y0Ovalrhl4By/n4OFtjms2QwzNoKpCgzpJBTr/WkDAs+28
-	 qka5RHZp4Vb35lhxNepvftYRS6jQtzsIH6LXS5xsnjOXHpO0swqcwz1+VYW/6fI51S
-	 2PJtnLCwdBOSQ==
-Date: Thu, 22 Feb 2024 19:11:04 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>, Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Kees Cook <keescook@chromium.org>, Shuah Khan <shuah@kernel.org>,
-	"Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
-	Deepak Gupta <debug@rivosinc.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-	"H.J. Lu" <hjl.tools@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Florian Weimer <fweimer@redhat.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v8 33/38] kselftest/arm64: Add a GCS test program built
- with the system libc
-Message-ID: <9b899b4e-7410-4c3b-967b-7794dac742e4@sirena.org.uk>
-References: <20240203-arm64-gcs-v8-0-c9fec77673ef@kernel.org>
- <20240203-arm64-gcs-v8-33-c9fec77673ef@kernel.org>
- <87sf1n7uea.fsf@linaro.org>
+	s=arc-20240116; t=1708629366; c=relaxed/simple;
+	bh=5Brm7cYLz1WncvBj6DTMuWNmXDrJrz/GLli2N2sCO2k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=fI2577eeZ/v8R+gtZulR8iSHQRjVIOSJsBScsLP+AsVh1yMZuFvJIjW/ZuIl+5Q5LGDtz/NafGSvlsug9rHIqrLrrM+Obc8ZUmbq46r/8A/XLr5NUXu/WEOCa2WU1T/QQls0P/Dum1cDnOHaCtRs9oC6+asVBIYp+X8pHV4h9p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yU/YvvKW; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yosryahmed.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dc6b267bf11so27323276.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 11:16:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1708629363; x=1709234163; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yMUm3t0lorhkF3irlFp+ZHb+WnWzsj32jWcajitTJIk=;
+        b=yU/YvvKWcPq/8ls1t9XJtLKh1ZoFIaJJEp8nS6IdfY5E5K504L1xynHPW7KIpNIQTU
+         wWDMxgOfInxZ9OjC1SALfsS4UkSx4N9gcs7PdPZ1d20wDNLTgog1EoNG1xVyZlU6RT7e
+         ZXK+x0Pgp8zJn4iXqOUIAPHJ7zkyUvVa96wuLCYUGjMuRHIlqNrDZ2piU9UfTC3yGcPB
+         3m/dBZAAUSmTj4oxFjVGBmW3pxtKTFunSrwpzVBz0BzZSy4nIuUKvln38KL5pEcFbfGc
+         gtyn8O+rwZeQxISjaSgZpnTr/8vy+kDn+qmbzt1ec84tdZPDqoIyRsxsSDsfGsBXzbNr
+         83tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708629363; x=1709234163;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yMUm3t0lorhkF3irlFp+ZHb+WnWzsj32jWcajitTJIk=;
+        b=FZ0L2RdeAwlayyFw39huJefUjs8DD0cDt+LUUljwdAGvxOhMpym+gnHZWRzvDM61wE
+         AAxPkMnP6dZadjD9SIg8Q0C15IUYBTJSxqYR/AIaZQ70+0DsXTjc5s8yHxB62OBOe1nn
+         6FbAX8Mt/zWsPBpvPc8KDYrBDlJ4nE6xYmvkgBZTlrwxzMNe5Vm/cjN+hobV8rsom+ZP
+         2I+FMdiGB4nYOpaK0eRTTFjpthParobgmOqi7QRR7EWCX3i6Wqpd1nSXsQkAXeTXt4Ro
+         G4BgxfoEh4T4MRfrS0UKdNSe+Gdv5TjO7x8G8ZGVk28RE2JgWIBFYBFUsUgzeEA1a69Y
+         2ZtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNfcA8WNIfDsM4ojWKGZbDSh4toulNd/m60xFmdnILTsqqXhNznPUt1WBuISOqKVjuZi7jf8qmW0Sn4ySj7UoxCVhyWpiqdhz258iQ2Q==
+X-Gm-Message-State: AOJu0YyMeGuSLyW8RR/6SspeXKGnAs9WJ/WIqym0SNJOuYY7VsugQmKI
+	Q3SOOmzczDQR238XL8Up2I1W9vcVJWi+tvAYx33KbHF3ngsdLGyguJUibT3PV6OdTUf1PFqUMTk
+	nxk3Cny6xqN77tVIJWw==
+X-Google-Smtp-Source: AGHT+IErsJKDN7B0tFhqzkw22OBlmNI2VCFCW5jr+ldBfGgfOTaIcEOTFZlyakeEI7zsf/NVho1iuq1vdkwNZv3S
+X-Received: from yosry.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:29b4])
+ (user=yosryahmed job=sendgmr) by 2002:a05:6902:10c3:b0:dcc:8927:7496 with
+ SMTP id w3-20020a05690210c300b00dcc89277496mr795ybu.5.1708629363699; Thu, 22
+ Feb 2024 11:16:03 -0800 (PST)
+Date: Thu, 22 Feb 2024 19:16:01 +0000
+In-Reply-To: <ZdeaQMDjsSmIRXHB@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ZHq996jFPNViQlH3"
-Content-Disposition: inline
-In-Reply-To: <87sf1n7uea.fsf@linaro.org>
-X-Cookie: I have accepted Provolone into my life!
+Mime-Version: 1.0
+References: <2701740.1706864989@warthog.procyon.org.uk> <Zbz8VAKcO56rBh6b@casper.infradead.org>
+ <ZdeaQMDjsSmIRXHB@bombadil.infradead.org>
+Message-ID: <ZdedcU9NRJ8-ws33@google.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Large folios, swap and fscache
+From: Yosry Ahmed <yosryahmed@google.com>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Chris Li <chrisl@kernel.org>, 
+	Daniel Gomez <da.gomez@samsung.com>, Pankaj Raghav <p.raghav@samsung.com>, 
+	Hugh Dickins <hughd@google.com>, David Howells <dhowells@redhat.com>, Nhat Pham <nphamcs@gmail.com>, 
+	lsf-pc@lists.linux-foundation.org, netfs@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="us-ascii"
 
+On Thu, Feb 22, 2024 at 11:02:24AM -0800, Luis Chamberlain wrote:
+> On Fri, Feb 02, 2024 at 02:29:40PM +0000, Matthew Wilcox wrote:
+> > So my modest proposal is that we completely rearchitect how we handle
+> > swap.  Instead of putting swp entries in the page tables (and in shmem's
+> > case in the page cache), we turn swap into an (object, offset) lookup
+> > (just like a filesystem).  That means that each anon_vma becomes its
+> > own swap object and each shmem inode becomes its own swap object.
+> > The swap system can then borrow techniques from whichever filesystem
+> > it likes to do (object, offset, length) -> n x (device, block) mappings.
+> 
+> What happened to Yosry or Chris's last year's pony [0]? In order to try
 
---ZHq996jFPNViQlH3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+For me, I unfortunately got occuppied with other projects and don't have
+the bandwidth to work on it for now :/
 
-On Mon, Feb 19, 2024 at 11:15:57PM -0300, Thiago Jung Bauermann wrote:
+I don't want to put anyone on the spot, but I think Nhat may have been
+thinking about pursuing a version of this at some point.
 
-> The only issue as can be seen above is that the can_call_function test
-> is failing. The child is getting a GCS Segmentation fault when returning
-> from fork().
-
-> I tried debugging it with GDB, but I don't see what's wrong since the
-> address in LR matches the first entry in GCSPR. Here is the
-> debug session:
-
-I believe based on prior discussions that you're running this using
-shrinkwrap - can you confirm exactly how please, including things like
-which firmware configuration you're using?  I'm using current git with
-
-  shrinkwrap run \
-        --rtvar KERNEL=arch/arm64/boot/Image \
-        --rtvar ROOTFS=${ROOTFS} \
-        --rtvar CMDLINE="${CMDLINE}" \
-        --overlay=arch/v9.4.yaml ns-edk2.yaml
-
-and a locally built yocto and everything seems perfectly happy.
-
---ZHq996jFPNViQlH3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmXXnEcACgkQJNaLcl1U
-h9A9hgf+IJIWILnaAT0TG0s4fwHDFwBgAEwmbr/85IsiE58YLlQn3tHAkAETsExB
-EtAk73IgOoaGfvFDcKF9Zq3PjE2iQ3r+Lh1A6/nyUdQBcMaZSES4ioXx5cwwjqFX
-m6lWkAiAzHxqFN++5z9gfq4lT3HjZQ3TFVE8y4Ij6vmmOeTIINFEGovAi330xkEZ
-prLXALb7+ONnUB3jG7VDY7Gx7HF+jt2Qd9gAz1KNNrBCEJT2fImUVEI1P/15iww7
-Xxm2Udbwd52h580B1x1sa7tMEFRi34tvmKx+2HHSgGFQ/a10LFpE4VnsW1vHUzGn
-2k8W5X8LkpXaHbgoXUGBMqDMFlKkWw==
-=owiX
------END PGP SIGNATURE-----
-
---ZHq996jFPNViQlH3--
+> to take a stab at this we started with adding large folios to tmpfs,
+> which Daniel Gomez has taken on, as its a simple filesystem and with
+> large folios can enable us to easily test large folio swap support too.
+> Daniel first tried fixing lseek issue with huge pages [1] and on top of
+> that he has patches (a new RFC not posted yet) which do add large folios
+> support to tmpfs. Hugh has noted the lskeek changes are incorrect and
+> suggested instead a fix for the failed tests in fstests. If we get
+> agreement on Hugh's approach then we have a step forward with tmpfs and
+> later we hope this will make it easier to test swap changes.
+> 
+> Its probably then a good time to ask, do we have a list of tests for
+> swap to ensure we don't break things if we add large folio support?
+> We can at least start with a good baseline of tests for that.
+> 
+> [0] https://lwn.net/Articles/932077/
+> [1] https://lkml.kernel.org/r/20240209142901.126894-1-da.gomez@samsung.com
+> 
+>   Luis
 
