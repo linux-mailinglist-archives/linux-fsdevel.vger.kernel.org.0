@@ -1,94 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-12418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12419-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A2485F05C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 05:10:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC9285F169
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 07:19:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78251F2116F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 04:10:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA4F1F23652
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 06:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B88A4182D2;
-	Thu, 22 Feb 2024 04:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A28171AF;
+	Thu, 22 Feb 2024 06:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bY8abVoT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90DD1799D
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 04:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95EB1111B2;
+	Thu, 22 Feb 2024 06:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708575006; cv=none; b=QJd0d0ByLjc0/fq/GYTkAHLn2vG0OB2D/Ct3GesRFs4tl3BQLvPb3o6Qw1G0olI0MGE4qXQVDKfArJ+nJ+v4JRblCXkUxYuQ7p8btuNYrUki/vmFm+K8AxRjug/Q70S0sjAhLlEBHC7VIey10Lr/Ukcpq4DR/2mv90raFdG7FyM=
+	t=1708582755; cv=none; b=ZyZyIeUx9PAMWj9SBLcoWiIkI3d+humvhwH4C1j34EYoLwpaCWlRiPY4KvJ+ryPIEA9gyudWW7vHYmXtisJv0a/prz9uFZ0JbjEhCv56eh9xITgec51MgLXaDJzjKjjHur6WkmbmKjhIlFhfyYubAhJvvNtFJxEZrxolmhzMfOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708575006; c=relaxed/simple;
-	bh=RpQ78JYbCr4J0IzFxUwj79GxLUE+cJykeDGaMHfIkw0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=J/PwlCNo9FjugYkNIEMUffsg/bvRL5F5V5T2BaRz2pcnKZVhMDrPd0CPxNJ1KGBoXYIoV0GO2hxtUm30QMBIeNJ8aTB8Z2m9El26WKudgBohvwfG3fZDmRL1USUCBaMS3Zbgb5KczgCf6gbdKXO2zY0Og/FyRyGQYJjj+i1rtW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3651ea5170cso34001525ab.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 20:10:04 -0800 (PST)
+	s=arc-20240116; t=1708582755; c=relaxed/simple;
+	bh=0Lr5AX7FpO/aXj6qVayv8ofx1ZqBAzWpFrAwAcDTM6k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=VAw9jBpJ2/H8cTCleC6Dn+/ypP7+e/9ddq9eYCfk00R6ds+3cuuq7vTgQshHMlgMJ6iOn6IePaSmoCaYWBGLhXm1pPEQrvQXpJKwyiRifid8rOQG4P8Ooli6mbjBVYks3AfNSHUPFitXk3kI7SAjT2YIdmRPTq1Te/ee+7Ag9Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bY8abVoT; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a3e82664d53so549331066b.3;
+        Wed, 21 Feb 2024 22:19:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708582743; x=1709187543; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xPC3HI8Z845qLz3kUsWszBQiV6ZgNOYEP7Ob0HaDyNQ=;
+        b=bY8abVoTBCBoh5P/7A7HQzn/06lVrts8WEeLpOTkHwnyR+WeUh8h4RAJSTI022XGYO
+         LxoXJzkTGqiCpdLiE3nrTYUizCDEvn5XRedSz7+YIM/Jvw7fALZdt2tJLSTUH7F3qQrJ
+         E9EXhuknD/GsYjO9cUjf5GJs6RS/miEUPz4DlIJKwMyqjtxn44G7Xt4tyx1jKlzQFnSH
+         DFMDeDFoszAvsyeurZWw/CNyBDiCFZ0VW+Zlp40U6akbgbDcZT8F+9i0crk7MNsVHx/u
+         +dHTRdhaPL/1XZd2mK/CaoPkEZMuh5bOR3bQc48ar3dCu91i5xprmEuOb4E3rM0QsIof
+         xLQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708575004; x=1709179804;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+iq4hD270Un3mb1S2S/CLZ/PalovGVFLyqwhhhDvqF8=;
-        b=gAy8nKvJlWrR1W4szROexqvimLlevGe7anYwS2+6SKWt2rIbLL0BCAsPgP5BnmXLiW
-         87zm67fQH4qQKoSnq4CZ88ov2/+i5WN+7K+hojS/dHuogqqNS0B17ygEvwRHd3gRFSuu
-         Q1OO2uSAQY4BXMiWzc7fFrEbXHaPmfkfv40sXEaiyWclXUW2idG22hRQAkqnil25/GzB
-         2cVoZpF2hxEiZc3R8Yucsq4G/VBpwI4TdfUf1fEhZk09R6zuMaZoBl56fYmn8ywOzTX8
-         keiP5BDpfo43/1aV8aKz+LRb+r4o4yJQHk44SQx8/FgfJN46A0DxZTROM+RbsOOTzo3T
-         j2Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWiotIkrfQ100SwXTMmZtmlYC4MWg3P841LIi9Gmch4gG8pgDPHqxSBAOH1FfWUdFhmENFbGdlFMy6/4wmHlwug8Cu2CWEY2EL2Qp/EDQ==
-X-Gm-Message-State: AOJu0YwHO+XvkBINOCdQrDZz0wrqTvHIKmkSIQbaf4oTsqk/uVlHSFTv
-	cr4s2rTv6VAbm53a6yfDFgadwVwwoMBddYoOiPYXjuBHO3hPK6CXhgVuKhf7XfDfuzx5rMd/+3t
-	SRE9Nvfv+ZCyaFxfRxJTRpUketjOrhahh5R8qdo+v0UM3QPCbtfzqGNY=
-X-Google-Smtp-Source: AGHT+IG61ns0G8RU8y6WMxKCq+IFGk1UNtxZtxko0fYt3DwzURs5w91m7q7WiJKNdj6SzTHzJQSQWvQXQwXQ1HmwwJ/W736AhhMr
+        d=1e100.net; s=20230601; t=1708582743; x=1709187543;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=xPC3HI8Z845qLz3kUsWszBQiV6ZgNOYEP7Ob0HaDyNQ=;
+        b=hTEuzPfyAKC2IA7EHxAq77lqxXZSh/d1vKFGvWG2G+MpKLXBbLfvwB8oZMZVkdWsg5
+         er6UsE1k/u0t+XF8hZTayJFun9yMSi8fEwQo2XYiw5toiHCA6+UN8r4JBQz+qKLhqhLW
+         cN+RrRUVo7qsCe9N6VZ2MuxSnyr1NUaSLAID2roSKXvEycq9YldaU0DoaJZ8sq5B4N6W
+         KFdFru8QE0QZ6qmF6HUKq0uqh3ZP4489ltbUjDSNpP5nGuICMGnChn75wROubTs4vbK3
+         /CJs4SXLTN7xd2CA0HQ3rRgQuCHNPNfJB6MiI+P6T+N6VEfw4hgRUmOSY4gkGPFAm4a8
+         Neog==
+X-Forwarded-Encrypted: i=1; AJvYcCXJTsoQ/IxeBvVZQG4dnTE+4l4dzIX7LEE1dZv9izj0mh53qkG9g2izP0zJKrHLvPo0KkScTo/2N5NvX8+hkjQPUjm2EABNtSsk0ZR4oA==
+X-Gm-Message-State: AOJu0Yzvu1Qu8w13222bAOCp3pPaOQZmKA3B2Y+/g4N74lB9KYQSvhwM
+	OcalLCftzmMGiwyAxC4PqJlsYEpfKdHNVfXrl/NC5RWAA5C3yf6R
+X-Google-Smtp-Source: AGHT+IEG7HibaMSVR4WszoJmFurHvTqqfwmJavSGmz3ZBGgDGYfemtVbvvksLmQ36jWwvqQIQpKaFA==
+X-Received: by 2002:a17:906:3b12:b0:a3e:59e5:a38f with SMTP id g18-20020a1709063b1200b00a3e59e5a38fmr8255861ejf.11.1708582742617;
+        Wed, 21 Feb 2024 22:19:02 -0800 (PST)
+Received: from [192.168.26.149] (031011218106.poznan.vectranet.pl. [31.11.218.106])
+        by smtp.googlemail.com with ESMTPSA id vk7-20020a170907cbc700b00a3efba5543csm2268945ejc.13.2024.02.21.22.19.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 21 Feb 2024 22:19:02 -0800 (PST)
+Message-ID: <67bb0571-a6e0-44ea-9ab6-91c267d0642f@gmail.com>
+Date: Thu, 22 Feb 2024 07:19:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1be3:b0:365:1f8b:d103 with SMTP id
- y3-20020a056e021be300b003651f8bd103mr1236519ilv.6.1708575004142; Wed, 21 Feb
- 2024 20:10:04 -0800 (PST)
-Date: Wed, 21 Feb 2024 20:10:04 -0800
-In-Reply-To: <000000000000d95cf9060c5038e3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000031b4140611f09e02@google.com>
-Subject: Re: [syzbot] [hfs?] possible deadlock in hfs_extend_file (2)
-From: syzbot <syzbot+41a88b825a315aac2254@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org, 
-	eadavis@qq.com, ernesto.mnd.fernandez@gmail.com, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	slava@dubeyko.com, syzkaller-bugs@googlegroups.com, 
-	torvalds@linux-foundation.org, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
+Subject: Can overlayfs follow mounts in lowerdir?
+To: Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>,
+ Christian Brauner <brauner@kernel.org>, Vivek Goyal <vgoyal@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+ linux-unionfs@vger.kernel.org, Luiz Angelo Daros de Luca <luizluca@gmail.com>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-syzbot suspects this issue was fixed by commit:
+Hi,
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+I'm trying to use overlay to create temporary virtual root filesystem.
+I need a copy of / with custom files on top of it.
 
-    fs: Block writes to mounted block devices
+To achieve that I used a simple mount like this:
+mount -t overlay overlay -o lowerdir=/,upperdir=/tmp/ov/upper,workdir=/tmp/ov/work /tmp/ov/virtual
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12bedb0c180000
-start commit:   610a9b8f49fb Linux 6.7-rc8
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=247b5a935d307ee5
-dashboard link: https://syzkaller.appspot.com/bug?extid=41a88b825a315aac2254
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1552fe19e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1419bcade80000
+In /tmp/ov/virtual/ I can see my main filesystem and I can make temporary
+changes to it. Almost perfect!
 
-If the result looks correct, please mark the issue as fixed by replying with:
+The problem are mounts. I have some standard ones:
+proc on /proc type proc (rw,nosuid,nodev,noexec,noatime)
+sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,noatime)
+tmpfs on /tmp type tmpfs (rw,nosuid,nodev,noatime)
 
-#syz fix: fs: Block writes to mounted block devices
+They are not visible in my virtual root:
+# ls -l /tmp/ov/proc/
+# ls -l /tmp/ov/sys/
+# ls -l /tmp/ov/tmp/
+(all empty)
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Would that be possible to make overlayfs follow such mounts in lowerdir?
+
+-- 
+Rafał
 
