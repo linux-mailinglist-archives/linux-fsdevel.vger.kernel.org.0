@@ -1,171 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-12449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB1885F776
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:51:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 478B285F78C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:54:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914F12857AA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 11:51:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADD34B22CB5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 11:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6576B381B8;
-	Thu, 22 Feb 2024 11:50:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4019F47A5C;
+	Thu, 22 Feb 2024 11:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OQ9WENxL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KTjgGJO9";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OQ9WENxL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="KTjgGJO9"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="drqElOnw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A6F208A2;
-	Thu, 22 Feb 2024 11:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E64646521
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 11:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708602645; cv=none; b=W286EtR+tytwa4n/8e1f8THEl7/BHafn1qsaZB75dM2hldZNinXK7Ln5o7srWG92+I3o4G1MRQDhO25OF2HbUwBsIpIZDP99apwOceapaIpAIqLhRUN3U7pkJOhM45AzdIf+ysuTyZ/knMMbhQBjRA8K5mZW7Xke3wGM6XcSXWw=
+	t=1708602831; cv=none; b=tHHmTeNbcb/UgHvObwKKgQRAzErXw6FCiWKLyCvGnSiZOrDXDQLHNEY3USoB28rKRJdn807veuvesuPY2jgUf7VXN3d/1cUQnkixA56WB1de+NPUlF8P7LpPZj7cB4noKqBnB42iWrhlHqvKmNKSA2/IL5i+LwxHU3mDe4R8YMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708602645; c=relaxed/simple;
-	bh=HgRKsDY0PLOGMDAasKMEGBLFqk2ft8ubOfJfMmQV5N8=;
+	s=arc-20240116; t=1708602831; c=relaxed/simple;
+	bh=/GZnl1bApZlEPKB/0OjNOdfWl1yXpoyVVjwgwuxpGQ4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WyvijNzmzbTZXOlRww/VEJEZ91pGIJ9G9LgTjbUgpQGm/7ELrQPeMBJDtutcj3zSqOO5vgFPbA6l5EnZLomNjhpujgJZ24UeoQ3vu+jZRlwxjO1bK6NK+0f9WNMGnw4KByVJlRDpql1hk/k4qFmeTDP1c9cBiyLYDH4vH9HfZ8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OQ9WENxL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KTjgGJO9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OQ9WENxL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=KTjgGJO9; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap2.dmz-prg2.suse.org (imap2.dmz-prg2.suse.org [10.150.64.98])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 36555222B5;
-	Thu, 22 Feb 2024 11:50:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1708602641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+hXVyx+tW3Q0JFZGrtaLXhwzGpje3jfje3pkeuhUtDvMlO5SerWynHYl9INBUZfxLUtkFivyZx3uOUp+Fo9733pnpLX6yknCBlregXygz53bCoYo2LFAI9NVKS9KBRAwT/oFEFAHKH1mDw4eEc9kDRuiK0WA4Pa4EMyB2p6I/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=drqElOnw; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 22 Feb 2024 06:53:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1708602827;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=liUtPNlK9kyLGztd5stD/0r54k1A7gG6pWsCn6Vb0e0=;
-	b=OQ9WENxLJThQnmKrDmZe1chLMzOPrUbrUEsnGFbRdYTDxD58soTl6ZgUGxOHmG8FAzZatV
-	4C4waoX+yHTn87c+gfwbhRmeejfVvhgkrx5fwHC2qPF8wjIWl6crPYMBDP9a1zVF2Ib5ZZ
-	G5at/OK0iLTwQDGs8gTo5EPKi29S7aU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1708602641;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=liUtPNlK9kyLGztd5stD/0r54k1A7gG6pWsCn6Vb0e0=;
-	b=KTjgGJO9gucsDYuF8huMNLLkVx+dd1XuU5vwqpAGnq57bT98ATwNnY58Gub9QH/XYEYLON
-	e8dQCy4lQg30zbCg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1708602641; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=liUtPNlK9kyLGztd5stD/0r54k1A7gG6pWsCn6Vb0e0=;
-	b=OQ9WENxLJThQnmKrDmZe1chLMzOPrUbrUEsnGFbRdYTDxD58soTl6ZgUGxOHmG8FAzZatV
-	4C4waoX+yHTn87c+gfwbhRmeejfVvhgkrx5fwHC2qPF8wjIWl6crPYMBDP9a1zVF2Ib5ZZ
-	G5at/OK0iLTwQDGs8gTo5EPKi29S7aU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1708602641;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=liUtPNlK9kyLGztd5stD/0r54k1A7gG6pWsCn6Vb0e0=;
-	b=KTjgGJO9gucsDYuF8huMNLLkVx+dd1XuU5vwqpAGnq57bT98ATwNnY58Gub9QH/XYEYLON
-	e8dQCy4lQg30zbCg==
-Received: from imap2.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap2.dmz-prg2.suse.org (Postfix) with ESMTPS id 293E513A6B;
-	Thu, 22 Feb 2024 11:50:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([10.150.64.162])
-	by imap2.dmz-prg2.suse.org with ESMTPSA
-	id B8QKChE112ViQAAAn2gu4w
-	(envelope-from <jack@suse.cz>); Thu, 22 Feb 2024 11:50:41 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C9950A0807; Thu, 22 Feb 2024 12:50:32 +0100 (CET)
-Date: Thu, 22 Feb 2024 12:50:32 +0100
-From: Jan Kara <jack@suse.cz>
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: Jan Kara <jack@suse.cz>, oe-lkp@lists.linux.dev, lkp@intel.com,
-	linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Guo Xuenan <guoxuenan@huawei.com>, linux-fsdevel@vger.kernel.org,
-	ying.huang@intel.com, feng.tang@intel.com, fengwei.yin@intel.com
-Subject: Re: [linus:master] [readahead]  ab4443fe3c:
- vm-scalability.throughput -21.4% regression
-Message-ID: <20240222115032.u5h2phfxpn77lu5a@quack3>
-References: <202402201642.c8d6bbc3-oliver.sang@intel.com>
- <20240221111425.ozdozcbl3konmkov@quack3>
- <ZdakRFhEouIF5o6D@xsang-OptiPlex-9020>
+	bh=1oV0lp1K4Ub7tESvDeFqVDjAAwFBAw9Dokd5x1fT4D0=;
+	b=drqElOnwL3FwHj1AMzKxLETAoI5EamXZIjhfyV0ps8yqhsMnbw8hmnguls1XP3MXWFfwmP
+	Hs/PZOSzbbZtnYkLWR4clg1W6XFaNomccWlPYLiIDu4gIbcbGQ+lA8+YclNzl4JrC9QnZU
+	QPvkzbsPkVgeL1M06zYMpKhmhk8JnHg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lsf-pc@lists.linux-foundation.org, Christian Brauner <christian@brauner.io>, 
+	=?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@stgraber.org>
+Subject: Re: [LSF TOPIC] beyond uidmapping, & towards a better security model
+Message-ID: <lgsh46klnmhaqsgzguoces452gbuzpzpg6jqr3cndblhpq34ez@jm2kobculj2p>
+References: <tixdzlcmitz2kvyamswcpnydeypunkify5aifsmfihpecvat7d@pmgcepiilpi6>
+ <141b4c7ecda2a8c064586d064b8d1476d8de3617.camel@HansenPartnership.com>
+ <qlmv2hjwzgnkmtvjpyn6zdnnmja3a35tx4nh6ldl23tkzh5reb@r3dseusgs3x6>
+ <bfbb1e9b521811b234f4f603c2616a9840da9ece.camel@HansenPartnership.com>
+ <4ub23tni5bwxthqzsn2uvfs5hwr6gd3oitbckd5xwxdbgci4lj@xddn3dh6y23x>
+ <c0d77327b15e84df19a019300347063a0b74e1a5.camel@HansenPartnership.com>
+ <giojfztuhxc5ilv24htcyhlerc6otajpa32cjtze4gghevg2jr@vwykmx7526ae>
+ <67a0b68946d39928502ce2d3e3ad834aa8d73d02.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZdakRFhEouIF5o6D@xsang-OptiPlex-9020>
-Authentication-Results: smtp-out1.suse.de;
-	none
-X-Spamd-Result: default: False [0.40 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 TO_MATCH_ENVRCPT_ALL(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 RCPT_COUNT_TWELVE(0.00)[12];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 MID_RHS_NOT_FQDN(0.50)[];
-	 RCVD_TLS_ALL(0.00)[];
-	 BAYES_HAM(-0.00)[31.24%]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: 0.40
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <67a0b68946d39928502ce2d3e3ad834aa8d73d02.camel@HansenPartnership.com>
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
-
-On Thu 22-02-24 09:32:52, Oliver Sang wrote:
-> On Wed, Feb 21, 2024 at 12:14:25PM +0100, Jan Kara wrote:
-> > On Tue 20-02-24 16:25:37, kernel test robot wrote:
-> > > kernel test robot noticed a -21.4% regression of vm-scalability.throughput on:
+On Thu, Feb 22, 2024 at 09:45:32AM +0100, James Bottomley wrote:
+> On Wed, 2024-02-21 at 22:37 -0500, Kent Overstreet wrote:
+> > On Thu, Feb 22, 2024 at 01:33:14AM +0100, James Bottomley wrote:
+> > > On Wed, 2024-02-21 at 18:01 -0500, Kent Overstreet wrote:
+> > > > Strings are just arrays of integers, and anyways this stuff would
+> > > > be within helpers.
 > > > 
-> > > commit: ab4443fe3ca6298663a55c4a70efc6c3ce913ca6 ("readahead: avoid multiple marked readahead pages")
-> > > https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
-> > > 
-> > > testcase: vm-scalability
-> > > test machine: 224 threads 2 sockets Intel(R) Xeon(R) Platinum 8480CTDX (Sapphire Rapids) with 512G memory
-> > > parameters:
-> > > 
-> > > 	runtime: 300s
-> > > 	test: lru-file-readtwice
-> > > 	cpufreq_governor: performance
+> > > Length limits and comparisons are the problem
 > > 
-> > JFYI I had a look into this. What the test seems to do is that it creates
-> > image files on tmpfs, loopmounts XFS there, and does reads over file on
-> > XFS. But I was not able to find what lru-file-readtwice exactly does,
-> > neither I was able to reproduce it because I got stuck on some missing Ruby
-> > dependencies on my test system yesterday.
+> > We'd be using qstrs for this, not c strings, so they really are
+> > equivalent to arrays for this purpose.
+> > 
+> > > 
+> > > > 
+> > > > But what you're not seeing is the beauty and simplicity of
+> > > > killing
+> > > > the mapping layer.
+> > > 
+> > > Well, that's the problem: you don't for certain use cases.  That's
+> > > what I've been trying to explain.  For the fully unprivileged use
+> > > case, sure, it all works (as does the upper 32 bits proposal or the
+> > > integer array ... equally well.
+> > > 
+> > > Once you're representing to the userns contained entity they have a
+> > > privileged admin that can write to the fsimage as an apparently
+> > > privileged user then the problems begin.
+> > 
+> > In what sense?
+> > 
+> > If they're in a userns and all their mounts are username mapped,
+> > that's completely fine from a userns POV; they can put a suid root
+> > binary into the fs image but when they mount that suid root will be
+> > suid to the root user of their userns.
 > 
-> what's your OS?
+> if userns root can alter a suid root binary that's bind mounted from
+> the root namespace then that's a security violation because a user in
+> the root ns could use the altered binary to do a privilege escalation
+> attack.
 
-I have SLES15-SP4 installed in my VM. What was missing was 'git' rubygem
-which apparently is not packaged at all and when I manually installed it, I
-was still hitting other problems so I rather went ahead and checked the
-vm-scalability source and wrote my own reproducer based on that.
+That's a completely different situation; now you're talking about suid
+root, where root is _outside_ the userns, and if you're playing tricks
+to make something from a user from outside the ns that is not
+representable in the ns visible in that ns, and now you're making that
+something suid, of course you're going to have trouble defining self
+consistent behaviour.
 
-I'm now able to reproduce the regression in my VM so I'm investigating...
+So I'm not sure what point you were trying to make, but it does
+illustrate some key points.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Any time you're creating a system where different agents can have
+different but overlapping views of the world, you're going to have some
+really fun corner cases and it's going to be hard to reason about.
+
+(if you buy me a really nice scotch somitem I'll tell you about fsck for
+a snapshotting filesystem, where for performance reasons fsck has to
+process keys from all snapshots simultaneously).
+
+So such things are best avoided, if we can. For another example, see if
+you know anyone who's had to track down what's keeping a mount alive,
+then the something was a systemd service running in a private namespace.
+
+Systems where we can recursively enumerate the world are much nicer to
+work with.
+
+Now, back to user namespaces: they shouldn't exist.
+
+And they wouldn't exist, if usernames had started out as a recursive
+structure instead of a flat namespace. But since they started out as a
+flat namespace, and only _later_ we realized they actually needed to be
+a tree structure - but we have to preserve for compatibility the _view_
+of the world as a flat namespace! - that's why we have user namespaces.
+
+And you get all sorts of super weird corner cases like you just
+described.
+
+So let's take a step back from all that, and instead of reasoning from
+"what weird corner cases from our current system do we have to support"
+- instead, just seem what we can do with a cleaner model and get that
+properly specified. A good model helps you make sense of the world even
+in crazy situations.
+
+With that in mind, back to your bind mount thing: if you chroot(), and
+you try to access a symlink that points outside the chroot, what
+happens?
 
