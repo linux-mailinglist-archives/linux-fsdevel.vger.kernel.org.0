@@ -1,95 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-12421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FD285F1C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 08:08:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C9385F31B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 09:36:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F65228327D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 07:08:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E1CEB23A30
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 08:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F87117BA2;
-	Thu, 22 Feb 2024 07:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E12724A11;
+	Thu, 22 Feb 2024 08:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="kfpfrpSn"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aRcOHS/r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536F4FBF4;
-	Thu, 22 Feb 2024 07:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF9517583;
+	Thu, 22 Feb 2024 08:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708585705; cv=none; b=fmU1zrJOudW0bPtaMZadLdgkSLprR7tYKkge/XFmqPcput0cnbjEDYfogjI+u+04OC10zvEhU0uLQJ2kzwLEiK8KmkRjgH5Cp/R5id6zryxy2v6l793trWN/SRGCPn3hNlGHS8UgxkXeMTA73p/BULKfg9ViIKwhqaxBIvYeedw=
+	t=1708590985; cv=none; b=UnvW8r0ao0m3hwlsl3FNSbGNIrlzJq3ogdewHlQI5CvumSwR94wTGrzVC9cgTd4MYrSUJ6MihyghLvNCwsZ4AJ+olxieZ1UV1dOsK/rGelOoW8hsG6Fb6k3DFKbeVAME3BQnH5B9HrCY4FJXZWpC0Lk103xJNH0uB1mld2ZbdWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708585705; c=relaxed/simple;
-	bh=4zCBJsh7fJS40bmuhRJsZyTvqmWDnPyWNdh+rXA5TBE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PNN/hJkXbVU+9gzBgDnwsGZAaUVn+lWvqGhd9R4hhbjNX/Wk5m27/ATumhNgd0ki7tnzeZYB8WIXORPaqWMD/GYjHS+Ufx4uZwHxnl1lDuXKqE4y6maCZv+4wdM+QhSVfAW48uSBjDn7PY0SyECc/wAhm80XfP37aSboSWc9qJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=kfpfrpSn; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1708585697;
-	bh=4zCBJsh7fJS40bmuhRJsZyTvqmWDnPyWNdh+rXA5TBE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=kfpfrpSn5Sosahn9w0/N4Hwunvz/qC0SqCcA70XH9LYfF11Y1Bvyz/e2FzgXTVI80
-	 D89tkTexwvJib32t8Nl+fWegmBEnjtoxweReaKb2iXzisfkAraIAMuHBgU9eAfTww1
-	 u7QLIfFaam4nk6FIYvVD656XrP7G0Uta9mIg2B0Y=
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Date: Thu, 22 Feb 2024 08:07:39 +0100
-Subject: [PATCH 4/4] sysctl: remove unnecessary sentinel element
+	s=arc-20240116; t=1708590985; c=relaxed/simple;
+	bh=35o1s17GEgTofroVACV50mopTUDx11285gHuW9ReeHc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N5zcJ/xOkKHkOy6hLLhlnsd4v22Z8XRQoX45rcuG9U5D0GwR7uRxmzlFxpkh5IEervnNSx/QIuRipXDXOVm52sSs1c1MVz91kUSRri2Iqa+hZQYUsV56JC2sd+WAVnI/UMx4/9Bw+KdX/ZfzdA1IS0ZqJvbXWv0v1cIEcbRm5uA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aRcOHS/r; arc=none smtp.client-ip=115.124.30.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1708590977; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=X9yz07D9w8yMy5Y7IPBs0+pEkB7vyXUOF8tVyxWbAGg=;
+	b=aRcOHS/ryawRguaMzeoX1EZy6J9O3pMn81rVoRha0GmUmsTPwQ+YNjoH8aKraWjiWdTrtPFy2PYbscwsuzQK+JNwqFua3yQhfPaP5KGKaGo8ky4Gz5KkfyHYAl8SPBWppQGJaSrpjRKwAg8XUDJOOVc2mic1fIFnVgK5dHVwiKg=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R561e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W10YCEV_1708590966;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W10YCEV_1708590966)
+          by smtp.aliyun-inc.com;
+          Thu, 22 Feb 2024 16:36:16 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH] pidfd: make pidfs_dentry_operations static
+Date: Thu, 22 Feb 2024 16:36:04 +0800
+Message-Id: <20240222083604.11280-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240222-sysctl-empty-dir-v1-4-45ba9a6352e8@weissschuh.net>
-References: <20240222-sysctl-empty-dir-v1-0-45ba9a6352e8@weissschuh.net>
-In-Reply-To: <20240222-sysctl-empty-dir-v1-0-45ba9a6352e8@weissschuh.net>
-To: "Eric W. Biederman" <ebiederm@xmission.com>, 
- Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
- Joel Granados <j.granados@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1708585698; l=791;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=4zCBJsh7fJS40bmuhRJsZyTvqmWDnPyWNdh+rXA5TBE=;
- b=WV3z1hGVhUXi4muzHz37oKOsSKmI58FcQqf5wS6HJGnQ+1+6bAHJbYjCw1dcDstuNx872V0W9
- QP2m1pZzqyFBT/bAmcNoZ6/2Z3Nv6g6kx4zPCXWQul/wG9igeJlNI6V
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-The previous commits made this sentinel element unnecessary, remove it.
+The pidfs_dentry_operations are not used outside the file pidfs.c, so the
+modification is defined as static.
 
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+fs/pidfs.c:175:32: warning: symbol 'pidfs_dentry_operations' was not declared. Should it be static?
+
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=8284
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 ---
- fs/proc/proc_sysctl.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ fs/pidfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 4cdf98c6a9a4..7c0e27dc3d9d 100644
---- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -30,9 +30,7 @@ static const struct file_operations proc_sys_dir_file_operations;
- static const struct inode_operations proc_sys_dir_operations;
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index c33501c9cd8b..85e9617f0aee 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -172,7 +172,7 @@ static void pidfdfs_prune_dentry(struct dentry *dentry)
+ 	}
+ }
  
- /* Support for permanently empty directories */
--static struct ctl_table sysctl_mount_point[] = {
--	{ }
--};
-+static struct ctl_table sysctl_mount_point[] = { };
- 
- /**
-  * register_sysctl_mount_point() - registers a sysctl mount point
-
+-const struct dentry_operations pidfs_dentry_operations = {
++static const struct dentry_operations pidfs_dentry_operations = {
+ 	.d_delete	= always_delete_dentry,
+ 	.d_dname	= pidfs_dname,
+ 	.d_prune	= pidfdfs_prune_dentry,
 -- 
-2.43.2
+2.20.1.7.g153144c
 
 
