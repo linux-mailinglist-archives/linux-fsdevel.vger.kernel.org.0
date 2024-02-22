@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-12474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12464-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A5E085F8D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 13:54:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A947485F8BE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 13:53:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40587B260D5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:54:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59D411F246C2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE6714A083;
-	Thu, 22 Feb 2024 12:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105EB1468E9;
+	Thu, 22 Feb 2024 12:51:44 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50026137C3B;
-	Thu, 22 Feb 2024 12:51:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774A612FF60;
+	Thu, 22 Feb 2024 12:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708606306; cv=none; b=D3WZ/vxQL9kmj6H3uz+Smb0vL7UytOkn+D28OQrRS6wsAVZdZ+b0FrbErRwfv27M/LZYmq8Npods5BkDjOpMclmKWu4j/AtpGnkRw5aBzf+44w6z56gUYJz7WvfgGBk1kC5KOiuDnEltgAMWzohrijCLLEBjchgOA1F8j6Zr5tw=
+	t=1708606303; cv=none; b=S+R+v41T+LnOFpgOQdmEGyhohw8cTLjakmY3HVnJsIvFC/JeXPn7/Vjr7+GRJ5CKej8VW6zYgZn1PQ530iqIY6j/6jfaxjWyv46u/I6PXddGTpS+cNBph2Y8lb9X8vi0B2lFOLJI2ayl8sqdLDml928OZT6tf3Bm01n6QXf/TCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708606306; c=relaxed/simple;
-	bh=2AyS9xWODVDrP7RTwAtArfZw2cxIdVjOpPcLsDrpFcU=;
+	s=arc-20240116; t=1708606303; c=relaxed/simple;
+	bh=/CDu+7gVV8uktwKlCCSmA+xIKRNTNm0Kl1wXR19U5pw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rHSrDagrK9I/E8hfuIO1dyOtPMKmBKfVoXyLPJrnK8835OFdeoXz54RlkIjsX659Da6XqylSJ/fgC52KcQeY/9FLSHFvmhUr37FN8vVNMY5VOjBhWoSqIABKNuRv7Ne59dthWfIwuOwRWjgdO6T+1sZvXPhq3ONaB/dVP264YY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=GdrbYMIfbubrFBXO/Pf/U0DzxXCTtWEF6sMYKoic8i+o4bQxNKZ83pJRlGttEXHTq+v2oufHMVgUqgcRA9yqu7WAiadQoAO9HrAACOO2UZxMFPoWzFA8WbRDohsVKgo/Z+DMxk3aBFJTIjTXTYLcgZlpKzZ/6BewiQ8uvE1rA9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TgY1G1ht7z4f3mHK;
-	Thu, 22 Feb 2024 20:51:30 +0800 (CST)
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TgY1J5j5Vz4f3kFP;
+	Thu, 22 Feb 2024 20:51:32 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 625351A0232;
+	by mail.maildlp.com (Postfix) with ESMTP id CCCE71A0232;
 	Thu, 22 Feb 2024 20:51:37 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBHGBFSQ9dlQ382Ew--.47909S15;
+	by APP1 (Coremail) with SMTP id cCh0CgBHGBFSQ9dlQ382Ew--.47909S16;
 	Thu, 22 Feb 2024 20:51:37 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: jack@suse.cz,
@@ -49,9 +49,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [RFC v4 linux-next 11/19] btrfs: prevent direct access of bd_inode
-Date: Thu, 22 Feb 2024 20:45:47 +0800
-Message-Id: <20240222124555.2049140-12-yukuai1@huaweicloud.com>
+Subject: [RFC v4 linux-next 12/19] ext4: remove block_device_ejected()
+Date: Thu, 22 Feb 2024 20:45:48 +0800
+Message-Id: <20240222124555.2049140-13-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
 References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
@@ -62,10 +62,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHGBFSQ9dlQ382Ew--.47909S15
-X-Coremail-Antispam: 1UD129KBjvJXoW3CrWrCF1rKr1DCF4UWr1ftFb_yoWkurWfpr
-	98Aas5JrWUJr1DWayDWa1kAw1Sgw1vkayxCF93J3ySg39rtr90qF90yr17AryrtrWkJr17
-	ZF4UKa47Cr1IkF7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgBHGBFSQ9dlQ382Ew--.47909S16
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr4UGw1xJF1fWr48KFy3urg_yoW8tF1Up3
+	y3uw1xJrW8urn29ayxJr4xW340qa92kay0gFyxur1Fgrn3Jry0vF4ktr4Iya40vrZ3uw4F
+	qF1UCrWxCr18CrDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -84,296 +84,63 @@ X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Yu Kuai <yukuai3@huawei.com>
 
-Now that all filesystems stash the bdev file, it's ok to get inode or
-mapping from the file.
+block_device_ejected() is added by commit bdfe0cbd746a ("Revert
+"ext4: remove block_device_ejected"") in 2015. At that time 'bdi->wb'
+is destroyed synchronized from del_gendisk(), hence if ext4 is still
+mounted, and then mark_buffer_dirty() will reference destroyed 'wb'.
+However, such problem doesn't exist anymore:
+
+- commit d03f6cdc1fc4 ("block: Dynamically allocate and refcount
+backing_dev_info") switch bdi to use refcounting;
+- commit 13eec2363ef0 ("fs: Get proper reference for s_bdi"), will grab
+additional reference of bdi while mounting, so that 'bdi->wb' will not
+be destroyed until generic_shutdown_super().
+
+Hence remove this dead function block_device_ejected().
 
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/disk-io.c | 17 +++++++++--------
- fs/btrfs/disk-io.h |  4 ++--
- fs/btrfs/super.c   |  2 +-
- fs/btrfs/volumes.c | 15 +++++++--------
- fs/btrfs/zoned.c   | 20 +++++++++++---------
- fs/btrfs/zoned.h   |  4 ++--
- 6 files changed, 32 insertions(+), 30 deletions(-)
+ fs/ext4/super.c | 18 ------------------
+ 1 file changed, 18 deletions(-)
 
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index bececdd63b4d..344955765f3e 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -3235,7 +3235,7 @@ int __cold open_ctree(struct super_block *sb, struct btrfs_fs_devices *fs_device
- 	/*
- 	 * Read super block and check the signature bytes only
- 	 */
--	disk_super = btrfs_read_dev_super(fs_devices->latest_dev->bdev);
-+	disk_super = btrfs_read_dev_super(fs_devices->latest_dev->bdev_file);
- 	if (IS_ERR(disk_super)) {
- 		ret = PTR_ERR(disk_super);
- 		goto fail_alloc;
-@@ -3656,17 +3656,18 @@ static void btrfs_end_super_write(struct bio *bio)
- 	bio_put(bio);
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index e487623f9456..2d82b9d4b079 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -492,22 +492,6 @@ static void ext4_maybe_update_superblock(struct super_block *sb)
+ 		schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
  }
  
--struct btrfs_super_block *btrfs_read_dev_one_super(struct block_device *bdev,
-+struct btrfs_super_block *btrfs_read_dev_one_super(struct file *bdev_file,
- 						   int copy_num, bool drop_cache)
+-/*
+- * The del_gendisk() function uninitializes the disk-specific data
+- * structures, including the bdi structure, without telling anyone
+- * else.  Once this happens, any attempt to call mark_buffer_dirty()
+- * (for example, by ext4_commit_super), will cause a kernel OOPS.
+- * This is a kludge to prevent these oops until we can put in a proper
+- * hook in del_gendisk() to inform the VFS and file system layers.
+- */
+-static int block_device_ejected(struct super_block *sb)
+-{
+-	struct inode *bd_inode = sb->s_bdev->bd_inode;
+-	struct backing_dev_info *bdi = inode_to_bdi(bd_inode);
+-
+-	return bdi->dev == NULL;
+-}
+-
+ static void ext4_journal_commit_callback(journal_t *journal, transaction_t *txn)
  {
- 	struct btrfs_super_block *super;
- 	struct page *page;
- 	u64 bytenr, bytenr_orig;
--	struct address_space *mapping = bdev->bd_inode->i_mapping;
-+	struct block_device *bdev = file_bdev(bdev_file);
-+	struct address_space *mapping = bdev_file->f_mapping;
- 	int ret;
+ 	struct super_block		*sb = journal->j_private;
+@@ -6176,8 +6160,6 @@ static int ext4_commit_super(struct super_block *sb)
  
- 	bytenr_orig = btrfs_sb_offset(copy_num);
--	ret = btrfs_sb_log_location_bdev(bdev, copy_num, READ, &bytenr);
-+	ret = btrfs_sb_log_location_bdev(bdev_file, copy_num, READ, &bytenr);
- 	if (ret == -ENOENT)
- 		return ERR_PTR(-EINVAL);
- 	else if (ret)
-@@ -3707,7 +3708,7 @@ struct btrfs_super_block *btrfs_read_dev_one_super(struct block_device *bdev,
- }
+ 	if (!sbh)
+ 		return -EINVAL;
+-	if (block_device_ejected(sb))
+-		return -ENODEV;
  
+ 	ext4_update_super(sb);
  
--struct btrfs_super_block *btrfs_read_dev_super(struct block_device *bdev)
-+struct btrfs_super_block *btrfs_read_dev_super(struct file *bdev_file)
- {
- 	struct btrfs_super_block *super, *latest = NULL;
- 	int i;
-@@ -3719,7 +3720,7 @@ struct btrfs_super_block *btrfs_read_dev_super(struct block_device *bdev)
- 	 * later supers, using BTRFS_SUPER_MIRROR_MAX instead
- 	 */
- 	for (i = 0; i < 1; i++) {
--		super = btrfs_read_dev_one_super(bdev, i, false);
-+		super = btrfs_read_dev_one_super(bdev_file, i, false);
- 		if (IS_ERR(super))
- 			continue;
- 
-@@ -3749,7 +3750,7 @@ static int write_dev_supers(struct btrfs_device *device,
- 			    struct btrfs_super_block *sb, int max_mirrors)
- {
- 	struct btrfs_fs_info *fs_info = device->fs_info;
--	struct address_space *mapping = device->bdev->bd_inode->i_mapping;
-+	struct address_space *mapping = device->bdev_file->f_mapping;
- 	SHASH_DESC_ON_STACK(shash, fs_info->csum_shash);
- 	int i;
- 	int errors = 0;
-@@ -3866,7 +3867,7 @@ static int wait_dev_supers(struct btrfs_device *device, int max_mirrors)
- 		    device->commit_total_bytes)
- 			break;
- 
--		page = find_get_page(device->bdev->bd_inode->i_mapping,
-+		page = find_get_page(device->bdev_file->f_mapping,
- 				     bytenr >> PAGE_SHIFT);
- 		if (!page) {
- 			errors++;
-diff --git a/fs/btrfs/disk-io.h b/fs/btrfs/disk-io.h
-index 375f62ae3709..2c627885d8d1 100644
---- a/fs/btrfs/disk-io.h
-+++ b/fs/btrfs/disk-io.h
-@@ -60,8 +60,8 @@ int btrfs_validate_super(struct btrfs_fs_info *fs_info,
- 			 struct btrfs_super_block *sb, int mirror_num);
- int btrfs_check_features(struct btrfs_fs_info *fs_info, bool is_rw_mount);
- int write_all_supers(struct btrfs_fs_info *fs_info, int max_mirrors);
--struct btrfs_super_block *btrfs_read_dev_super(struct block_device *bdev);
--struct btrfs_super_block *btrfs_read_dev_one_super(struct block_device *bdev,
-+struct btrfs_super_block *btrfs_read_dev_super(struct file *bdev_file);
-+struct btrfs_super_block *btrfs_read_dev_one_super(struct file *bdev_file,
- 						   int copy_num, bool drop_cache);
- int btrfs_commit_super(struct btrfs_fs_info *fs_info);
- struct btrfs_root *btrfs_read_tree_root(struct btrfs_root *tree_root,
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 40ae264fd3ed..9f50f20a1ba4 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2286,7 +2286,7 @@ static int check_dev_super(struct btrfs_device *dev)
- 		return 0;
- 
- 	/* Only need to check the primary super block. */
--	sb = btrfs_read_dev_one_super(dev->bdev, 0, true);
-+	sb = btrfs_read_dev_one_super(dev->bdev_file, 0, true);
- 	if (IS_ERR(sb))
- 		return PTR_ERR(sb);
- 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index e12451ff911a..9fccfb156bd2 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -488,7 +488,7 @@ btrfs_get_bdev_and_sb(const char *device_path, blk_mode_t flags, void *holder,
- 		goto error;
- 	}
- 	invalidate_bdev(bdev);
--	*disk_super = btrfs_read_dev_super(bdev);
-+	*disk_super = btrfs_read_dev_super(*bdev_file);
- 	if (IS_ERR(*disk_super)) {
- 		ret = PTR_ERR(*disk_super);
- 		fput(*bdev_file);
-@@ -1244,7 +1244,7 @@ void btrfs_release_disk_super(struct btrfs_super_block *super)
- 	put_page(page);
- }
- 
--static struct btrfs_super_block *btrfs_read_disk_super(struct block_device *bdev,
-+static struct btrfs_super_block *btrfs_read_disk_super(struct file *bdev_file,
- 						       u64 bytenr, u64 bytenr_orig)
- {
- 	struct btrfs_super_block *disk_super;
-@@ -1253,7 +1253,7 @@ static struct btrfs_super_block *btrfs_read_disk_super(struct block_device *bdev
- 	pgoff_t index;
- 
- 	/* make sure our super fits in the device */
--	if (bytenr + PAGE_SIZE >= bdev_nr_bytes(bdev))
-+	if (bytenr + PAGE_SIZE >= bdev_nr_bytes(file_bdev(bdev_file)))
- 		return ERR_PTR(-EINVAL);
- 
- 	/* make sure our super fits in the page */
-@@ -1266,7 +1266,7 @@ static struct btrfs_super_block *btrfs_read_disk_super(struct block_device *bdev
- 		return ERR_PTR(-EINVAL);
- 
- 	/* pull in the page with our super */
--	page = read_cache_page_gfp(bdev->bd_inode->i_mapping, index, GFP_KERNEL);
-+	page = read_cache_page_gfp(bdev_file->f_mapping, index, GFP_KERNEL);
- 
- 	if (IS_ERR(page))
- 		return ERR_CAST(page);
-@@ -1368,14 +1368,13 @@ struct btrfs_device *btrfs_scan_one_device(const char *path, blk_mode_t flags,
- 		return ERR_CAST(bdev_file);
- 
- 	bytenr_orig = btrfs_sb_offset(0);
--	ret = btrfs_sb_log_location_bdev(file_bdev(bdev_file), 0, READ, &bytenr);
-+	ret = btrfs_sb_log_location_bdev(bdev_file, 0, READ, &bytenr);
- 	if (ret) {
- 		device = ERR_PTR(ret);
- 		goto error_bdev_put;
- 	}
- 
--	disk_super = btrfs_read_disk_super(file_bdev(bdev_file), bytenr,
--					   bytenr_orig);
-+	disk_super = btrfs_read_disk_super(bdev_file, bytenr, bytenr_orig);
- 	if (IS_ERR(disk_super)) {
- 		device = ERR_CAST(disk_super);
- 		goto error_bdev_put;
-@@ -2040,7 +2039,7 @@ static void btrfs_scratch_superblock(struct btrfs_fs_info *fs_info,
- 	const u64 bytenr = btrfs_sb_offset(copy_num);
- 	int ret;
- 
--	disk_super = btrfs_read_disk_super(file_bdev(bdev_file), bytenr, bytenr);
-+	disk_super = btrfs_read_disk_super(bdev_file, bytenr, bytenr);
- 	if (IS_ERR(disk_super))
- 		return;
- 
-diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
-index 12d77aba0148..9e4e2951cdf5 100644
---- a/fs/btrfs/zoned.c
-+++ b/fs/btrfs/zoned.c
-@@ -81,7 +81,7 @@ static int copy_zone_info_cb(struct blk_zone *zone, unsigned int idx, void *data
- 	return 0;
- }
- 
--static int sb_write_pointer(struct block_device *bdev, struct blk_zone *zones,
-+static int sb_write_pointer(struct file *bdev_file, struct blk_zone *zones,
- 			    u64 *wp_ret)
- {
- 	bool empty[BTRFS_NR_SB_LOG_ZONES];
-@@ -118,7 +118,7 @@ static int sb_write_pointer(struct block_device *bdev, struct blk_zone *zones,
- 		return -ENOENT;
- 	} else if (full[0] && full[1]) {
- 		/* Compare two super blocks */
--		struct address_space *mapping = bdev->bd_inode->i_mapping;
-+		struct address_space *mapping = bdev_file->f_mapping;
- 		struct page *page[BTRFS_NR_SB_LOG_ZONES];
- 		struct btrfs_super_block *super[BTRFS_NR_SB_LOG_ZONES];
- 		int i;
-@@ -562,7 +562,7 @@ int btrfs_get_dev_zone_info(struct btrfs_device *device, bool populate_cache)
- 		    BLK_ZONE_TYPE_CONVENTIONAL)
- 			continue;
- 
--		ret = sb_write_pointer(device->bdev,
-+		ret = sb_write_pointer(device->bdev_file,
- 				       &zone_info->sb_zones[sb_pos], &sb_wp);
- 		if (ret != -ENOENT && ret) {
- 			btrfs_err_in_rcu(device->fs_info,
-@@ -798,7 +798,7 @@ int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info, unsigned long *mount
- 	return 0;
- }
- 
--static int sb_log_location(struct block_device *bdev, struct blk_zone *zones,
-+static int sb_log_location(struct file *bdev_file, struct blk_zone *zones,
- 			   int rw, u64 *bytenr_ret)
- {
- 	u64 wp;
-@@ -809,7 +809,7 @@ static int sb_log_location(struct block_device *bdev, struct blk_zone *zones,
- 		return 0;
- 	}
- 
--	ret = sb_write_pointer(bdev, zones, &wp);
-+	ret = sb_write_pointer(bdev_file, zones, &wp);
- 	if (ret != -ENOENT && ret < 0)
- 		return ret;
- 
-@@ -827,7 +827,8 @@ static int sb_log_location(struct block_device *bdev, struct blk_zone *zones,
- 			ASSERT(sb_zone_is_full(reset));
- 
- 			nofs_flags = memalloc_nofs_save();
--			ret = blkdev_zone_mgmt(bdev, REQ_OP_ZONE_RESET,
-+			ret = blkdev_zone_mgmt(file_bdev(bdev_file),
-+					       REQ_OP_ZONE_RESET,
- 					       reset->start, reset->len);
- 			memalloc_nofs_restore(nofs_flags);
- 			if (ret)
-@@ -859,10 +860,11 @@ static int sb_log_location(struct block_device *bdev, struct blk_zone *zones,
- 
- }
- 
--int btrfs_sb_log_location_bdev(struct block_device *bdev, int mirror, int rw,
-+int btrfs_sb_log_location_bdev(struct file *bdev_file, int mirror, int rw,
- 			       u64 *bytenr_ret)
- {
- 	struct blk_zone zones[BTRFS_NR_SB_LOG_ZONES];
-+	struct block_device *bdev = file_bdev(bdev_file);
- 	sector_t zone_sectors;
- 	u32 sb_zone;
- 	int ret;
-@@ -896,7 +898,7 @@ int btrfs_sb_log_location_bdev(struct block_device *bdev, int mirror, int rw,
- 	if (ret != BTRFS_NR_SB_LOG_ZONES)
- 		return -EIO;
- 
--	return sb_log_location(bdev, zones, rw, bytenr_ret);
-+	return sb_log_location(bdev_file, zones, rw, bytenr_ret);
- }
- 
- int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int rw,
-@@ -920,7 +922,7 @@ int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int rw,
- 	if (zone_num + 1 >= zinfo->nr_zones)
- 		return -ENOENT;
- 
--	return sb_log_location(device->bdev,
-+	return sb_log_location(device->bdev_file,
- 			       &zinfo->sb_zones[BTRFS_NR_SB_LOG_ZONES * mirror],
- 			       rw, bytenr_ret);
- }
-diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
-index 77c4321e331f..32680a04aa1f 100644
---- a/fs/btrfs/zoned.h
-+++ b/fs/btrfs/zoned.h
-@@ -61,7 +61,7 @@ void btrfs_destroy_dev_zone_info(struct btrfs_device *device);
- struct btrfs_zoned_device_info *btrfs_clone_dev_zone_info(struct btrfs_device *orig_dev);
- int btrfs_check_zoned_mode(struct btrfs_fs_info *fs_info);
- int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info, unsigned long *mount_opt);
--int btrfs_sb_log_location_bdev(struct block_device *bdev, int mirror, int rw,
-+int btrfs_sb_log_location_bdev(struct file *bdev_file, int mirror, int rw,
- 			       u64 *bytenr_ret);
- int btrfs_sb_log_location(struct btrfs_device *device, int mirror, int rw,
- 			  u64 *bytenr_ret);
-@@ -142,7 +142,7 @@ static inline int btrfs_check_mountopts_zoned(struct btrfs_fs_info *info,
- 	return 0;
- }
- 
--static inline int btrfs_sb_log_location_bdev(struct block_device *bdev,
-+static inline int btrfs_sb_log_location_bdev(struct file *bdev_file,
- 					     int mirror, int rw, u64 *bytenr_ret)
- {
- 	*bytenr_ret = btrfs_sb_offset(mirror);
 -- 
 2.39.2
 
