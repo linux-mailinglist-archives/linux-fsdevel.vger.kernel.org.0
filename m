@@ -1,185 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-12412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 419FF85EE1F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 01:37:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66C4885EE5F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 01:58:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6D1EB23D8E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 00:37:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8DE5B2460B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 00:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF86D10A1A;
-	Thu, 22 Feb 2024 00:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1E512E59;
+	Thu, 22 Feb 2024 00:58:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AWuD0seQ"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FQI3yFBo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A2EF512
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 00:37:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526AE10A23
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 00:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708562238; cv=none; b=k703FNZviTfgyuZtMQOgAR+K3BTtw0yDo9CdDGAzK/LPjwtbApA4oXNbaueT3P3OmDt5u3ODMdF1kJymY4L7KZq1kUNHluweLB7x8F7bCzr9fuxJ24n/UjSWBiGvawPrqH62ZD/vGNuFKk0mwrYwe0oNb9qAJIKiacpi3mErI5k=
+	t=1708563482; cv=none; b=mbsZFJSka1D6XE9irNSVxRWP5Lq61/towGQ262z1pmh7Jcm2TJRMD+k4al9zB/krSBOTu7STQ2WyE86EbfSCSGFQDTk84v8aWgX6JNdA0CaH1UXuuLgcwW9vZMedm8ZtjIagIy9NS034bYRR2RIiyxx+30M4aDqucWzjdsIm2is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708562238; c=relaxed/simple;
-	bh=7DLu0D8bl4lB3TJjeIvbjOxLuBH7rI9+0zdimRyeniw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C+FLJ8MdPi5NSzMVaB0WIs2f8Xol7d8RSXID0DeOIU1kS2f4zRS5rAiUrN14R4/avPjXymV+qcOWHN/NtHmB8NamswPN1Md5JEY0r0c+r5dJZ58m/dORCr92jdVr+S0KxX989XMbpRNoocXNlNA0kx+DYJYC/FY3mA62lHIop+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AWuD0seQ; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dc6dcd9124bso1315360276.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 16:37:15 -0800 (PST)
+	s=arc-20240116; t=1708563482; c=relaxed/simple;
+	bh=bspwEmj9ztDC3prfWzHxoOOULFAJ2sC2HzPuV2/nx/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lBQt2+VUMz+vB8N3JqEiGaJhIQU1U1sNXJnr9Lw22OHkFPJGy8yVdPmOdZUbHTj0XZ+2BajVkH10QfK/892aKPqUebdf4PK0TQGR0y3mrs54agC+lZWg+EzlnVcEPWymlnNhl1eYT+76fMd19akuu73dxGnmGUSz6sPLwlYWius=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FQI3yFBo; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1d7431e702dso72230245ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 16:58:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1708562235; x=1709167035; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jwPQ5FFRE9HZKwgqe28p5vX79kU4E42ICEiVSyqmmE4=;
-        b=AWuD0seQuxSM2pg0KIzolmz4hQH1C41vVmswetXZTFhY3U9URmpE2Pgb7noqrjhFS0
-         VJk3Sl6DDsdf6yJRWe6gnSmX7JEYNgaVCjwPIvzOOdSCm56/FDqMunkl3DljsKWg3pcF
-         I0z2wtASZJeVNgrB8l6qlNHv1CKzgv7O6GGe8c9usAFQGmJGvXuolkvHh8EtXq+6VFJp
-         /1H2mU21yxv0IShaoj69664uEYmfuDXQTPysbdZeyzHmPZe+H89Zuzk/lLgGlTUBOW1R
-         5PV2VZZtF11n/6oLieojmDAtTLBF2pYFzJxIXlczJcHYGaxDe1x5Yy6r/ufCQWwGqQxT
-         jxew==
+        d=chromium.org; s=google; t=1708563480; x=1709168280; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ulpOkHFvivSSE+e2M3yzbCAjenVPYV9xC3Luo/BV0yQ=;
+        b=FQI3yFBo2hSzyL+RI9F4txpxG1nXYoWK0F5XiZbchbvgJ1FKLK0Mqb6g2vfPmuPY0o
+         jxMpNMiNXVAQmeZs+EChJ1bIf7LCaMYzzzFxcpEPD7N+wHS3MVYxsdyNMJnazAsNlsAN
+         DGp/CHy4Nf+K/MMUextxwk4Ryy1z05JEJV0Ec=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708562235; x=1709167035;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jwPQ5FFRE9HZKwgqe28p5vX79kU4E42ICEiVSyqmmE4=;
-        b=GjQTL2QhMSWYvgyn1C9v2ialrLchPiueI8Bw642AvYQqdIhwH8ZnlGHknNpICssm/f
-         u8r0wAtQ3EzhNCEzsZ0FVgKeuvsrMHpKwfVmEVfHcCD9rlEc6bahQbYtr7fahe5BAHKK
-         +37M8uukj3vSct618y4aHUXKxizoU6DSTIxcXjYqvLcqgMZmm48t787TfbTw+sosoTdH
-         UwsnBD651pP2nBJ6n/l+DR7QqrdOh3VTQ4pjEREe1pAV+C9SnrS0kay28ZZxCh3X1823
-         DnhGVbWBGUIQUYxjTOuV/8faOgXZSSY8kxnbRw+atcoffYs1lPDVQWy12TiHNsrgXZnZ
-         vNug==
-X-Forwarded-Encrypted: i=1; AJvYcCVOOnjxYw647yVfRD9Mv8/fT6uJ3eTE45MHu8D1pik2roVYzXoUKoLHl/h77cPpEZ/GJenaFzvpOhuOFxykGRQsfkuJz2eQLaUbwQAUMg==
-X-Gm-Message-State: AOJu0YxPEhtc9o6EGrJf/VN34xu1Snr/un10a3R7IgV6kx4y5WWZ1i2z
-	wweuuiqDLOGAawX3nEV+1jxe4mwpfzot5r9uTEu3NWnYqIvQw+NmRUdho0sB7rHgKG+X66m6Xvr
-	1m/B6cVODwbupMUs1/oE9zEZ6+syeKZ+3k1pp
-X-Google-Smtp-Source: AGHT+IGAQ7Reayqcx5n6/kxK9gU1bvXz8FuxziZlj261BGCiV7fv0a2bbFUmVeZ6atHIXCyxpJlOV4CfjUbIVyi2enc=
-X-Received: by 2002:a25:cec1:0:b0:dcc:eb38:199c with SMTP id
- x184-20020a25cec1000000b00dcceb38199cmr971381ybe.56.1708562235099; Wed, 21
- Feb 2024 16:37:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708563480; x=1709168280;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ulpOkHFvivSSE+e2M3yzbCAjenVPYV9xC3Luo/BV0yQ=;
+        b=lxqkpowS2eQUpuhtYx6FjO92dlpwv3NKBZlf5BOAhTefj/bIxIDbiCxCPzez2GONCS
+         Dmli8GVoH4rSGLSa9+eErTTB8XiSRjqTz984Vmh3Yh5DLS0LOf+SLin3zkLR8xIUfEQB
+         kxHbep5z9LD3KE3X/orR3cVSFhwe3XIs86DuYCYS9mRYapYzFKK3zaKepWARtTy/Rpu3
+         21PFQr4D7IZob+ZKKa72SSaE83lJfOtoP1occaRt9n4zuq0JN53OYhp9PtQ5BiAJWDEF
+         Zp4D14opGbnRQGmtjja8GvfM8qlqRJKz5po/g5ss8pQP7moEU9ag4m/Q7Sum0Z1Qklr4
+         WF/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWeCXf8ijw+AGsTawvn9FWdYWIaE/Min08qzRgL+J4PITyhEM2mTdbomwWMPaWBIpYAl+b8/HosCreoyiFSw0pt6BrWgvGOZgLm33PH5g==
+X-Gm-Message-State: AOJu0YzYWhiuXbxlDSAR9MhIaACB3reAmyi/P5A/i7ljjHLBYk9LdN7G
+	p8uk2EQvJA9+UVK52lWt+BBxd1irM4V3GkecKbxXhe+Z+Xja5Q66IVMmd7FT5Q==
+X-Google-Smtp-Source: AGHT+IE07ndtCmucLw+AwElpuaWlFxCXEKAdQ2SXPUsu8K/z1cEru3443BCr7LS4IH8cJcRmaUmXqA==
+X-Received: by 2002:a17:902:7ed0:b0:1d9:a4bb:29f2 with SMTP id p16-20020a1709027ed000b001d9a4bb29f2mr15732121plb.46.1708563479697;
+        Wed, 21 Feb 2024 16:57:59 -0800 (PST)
+Received: from www.outflux.net ([198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id 17-20020a170902c21100b001dc23e877c9sm2736280pll.106.2024.02.21.16.57.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Feb 2024 16:57:59 -0800 (PST)
+Date: Wed, 21 Feb 2024 16:57:58 -0800
+From: Kees Cook <keescook@chromium.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org,
+	mhocko@suse.com, vbabka@suse.cz, hannes@cmpxchg.org,
+	roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
+	willy@infradead.org, liam.howlett@oracle.com,
+	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net,
+	void@manifault.com, peterz@infradead.org, juri.lelli@redhat.com,
+	catalin.marinas@arm.com, will@kernel.org, arnd@arndb.de,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, peterx@redhat.com, david@redhat.com,
+	axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+	nathan@kernel.org, dennis@kernel.org, tj@kernel.org,
+	muchun.song@linux.dev, rppt@kernel.org, paulmck@kernel.org,
+	pasha.tatashin@soleen.com, yosryahmed@google.com, yuzhao@google.com,
+	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com,
+	ndesaulniers@google.com, vvvvvv@google.com,
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, bristot@redhat.com,
+	vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+	elver@google.com, dvyukov@google.com, shakeelb@google.com,
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+	cgroups@vger.kernel.org
+Subject: Re: [PATCH v4 14/36] lib: add allocation tagging support for memory
+ allocation profiling
+Message-ID: <202402211656.C3644FB@keescook>
+References: <20240221194052.927623-1-surenb@google.com>
+ <20240221194052.927623-15-surenb@google.com>
+ <202402211449.401382D2AF@keescook>
+ <4vwiwgsemga7vmahgwsikbsawjq5xfskdsssmjsfe5hn7k2alk@b6ig5v2pxe5i>
+ <202402211608.41AD94094@keescook>
+ <vxx2o2wdcqjkxauglu7ul52mygu4tti2i3yc2dvmcbzydvgvu2@knujflwtakni>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
- <20240221-idmap-fscap-refactor-v2-15-3039364623bd@kernel.org>
- <CAHC9VhRQ7Xa2_rAjKYA_nkpmfUd9jn2D0SNcb6SjQFg=k8rn=w@mail.gmail.com> <ZdaTPV/Ngd8ed/p5@do-x1extreme>
-In-Reply-To: <ZdaTPV/Ngd8ed/p5@do-x1extreme>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 21 Feb 2024 19:37:04 -0500
-Message-ID: <CAHC9VhS8h-A61b8DzbOBSxSH6WBDZkHBQGuT=DVq1n5gHfx6jA@mail.gmail.com>
-Subject: Re: [PATCH v2 15/25] security: call evm fscaps hooks from generic
- security hooks
-To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>, Eric Paris <eparis@redhat.com>, 
-	James Morris <jmorris@namei.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <vxx2o2wdcqjkxauglu7ul52mygu4tti2i3yc2dvmcbzydvgvu2@knujflwtakni>
 
-On Wed, Feb 21, 2024 at 7:20=E2=80=AFPM Seth Forshee (DigitalOcean)
-<sforshee@kernel.org> wrote:
-> On Wed, Feb 21, 2024 at 06:43:43PM -0500, Paul Moore wrote:
-> > On Wed, Feb 21, 2024 at 4:25=E2=80=AFPM Seth Forshee (DigitalOcean)
-> > <sforshee@kernel.org> wrote:
-> > >
-> > > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> > > ---
-> > >  security/security.c | 15 +++++++++++++--
-> > >  1 file changed, 13 insertions(+), 2 deletions(-)
-> >
-> > First off, you've got to write *something* for the commit description,
-> > even if it is just a single sentence.
-> >
-> > > diff --git a/security/security.c b/security/security.c
-> > > index 0d210da9862c..f515d8430318 100644
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
-> > > @@ -2365,9 +2365,14 @@ int security_inode_remove_acl(struct mnt_idmap=
- *idmap,
-> > >  int security_inode_set_fscaps(struct mnt_idmap *idmap, struct dentry=
- *dentry,
-> > >                               const struct vfs_caps *caps, int flags)
-> > >  {
-> > > +       int ret;
-> > > +
-> > >         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> > >                 return 0;
-> > > -       return call_int_hook(inode_set_fscaps, 0, idmap, dentry, caps=
-, flags);
-> > > +       ret =3D call_int_hook(inode_set_fscaps, 0, idmap, dentry, cap=
-s, flags);
-> > > +       if (ret)
-> > > +               return ret;
-> > > +       return evm_inode_set_fscaps(idmap, dentry, caps, flags);
-> > >  }
-> > >
-> > >  /**
-> > > @@ -2387,6 +2392,7 @@ void security_inode_post_set_fscaps(struct mnt_=
-idmap *idmap,
-> > >         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> > >                 return;
-> > >         call_void_hook(inode_post_set_fscaps, idmap, dentry, caps, fl=
-ags);
-> > > +       evm_inode_post_set_fscaps(idmap, dentry, caps, flags);
-> > >  }
-> > >
-> > >  /**
-> > > @@ -2415,9 +2421,14 @@ int security_inode_get_fscaps(struct mnt_idmap=
- *idmap, struct dentry *dentry)
-> > >   */
-> > >  int security_inode_remove_fscaps(struct mnt_idmap *idmap, struct den=
-try *dentry)
-> > >  {
-> > > +       int ret;
-> > > +
-> > >         if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-> > >                 return 0;
-> > > -       return call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
-> > > +       ret =3D call_int_hook(inode_remove_fscaps, 0, idmap, dentry);
-> > > +       if (ret)
-> > > +               return ret;
-> > > +       return evm_inode_remove_fscaps(dentry);
-> > >  }
-> >
-> > If you take a look at linux-next or the LSM tree's dev branch you'll
-> > see that we've gotten rid of the dedicated IMA and EVM hooks,
-> > promoting both IMA and EVM to "proper" LSMs that leverage the existing
-> > LSM hook infrastructure.  In this patchset, and moving forward, please
-> > don't add dedicated IMA/EVM hooks like this, instead register them as
-> > LSM hook implementations with LSM_HOOK_INIT().
->
-> Yeah, I'm aware that work was going on and got applied recently. I've
-> been assuming this change will go in through the vfs tree though, and I
-> wasn't sure how you and Al/Christian would want to handle that
-> dependency between your trees, so I held off on updating based off the
-> LSM tree. I'm happy to update this for the next round though.
+On Wed, Feb 21, 2024 at 07:34:44PM -0500, Kent Overstreet wrote:
+> On Wed, Feb 21, 2024 at 04:25:02PM -0800, Kees Cook wrote:
+> > On Wed, Feb 21, 2024 at 06:29:17PM -0500, Kent Overstreet wrote:
+> > > On Wed, Feb 21, 2024 at 03:05:32PM -0800, Kees Cook wrote:
+> > > > On Wed, Feb 21, 2024 at 11:40:27AM -0800, Suren Baghdasaryan wrote:
+> > > > > [...]
+> > > > > +struct alloc_tag {
+> > > > > +	struct codetag			ct;
+> > > > > +	struct alloc_tag_counters __percpu	*counters;
+> > > > > +} __aligned(8);
+> > > > > [...]
+> > > > > +#define DEFINE_ALLOC_TAG(_alloc_tag)						\
+> > > > > +	static DEFINE_PER_CPU(struct alloc_tag_counters, _alloc_tag_cntr);	\
+> > > > > +	static struct alloc_tag _alloc_tag __used __aligned(8)			\
+> > > > > +	__section("alloc_tags") = {						\
+> > > > > +		.ct = CODE_TAG_INIT,						\
+> > > > > +		.counters = &_alloc_tag_cntr };
+> > > > > [...]
+> > > > > +static inline struct alloc_tag *alloc_tag_save(struct alloc_tag *tag)
+> > > > > +{
+> > > > > +	swap(current->alloc_tag, tag);
+> > > > > +	return tag;
+> > > > > +}
+> > > > 
+> > > > Future security hardening improvement idea based on this infrastructure:
+> > > > it should be possible to implement per-allocation-site kmem caches. For
+> > > > example, we could create:
+> > > > 
+> > > > struct alloc_details {
+> > > > 	u32 flags;
+> > > > 	union {
+> > > > 		u32 size; /* not valid after __init completes */
+> > > > 		struct kmem_cache *cache;
+> > > > 	};
+> > > > };
+> > > > 
+> > > > - add struct alloc_details to struct alloc_tag
+> > > > - move the tags section into .ro_after_init
+> > > > - extend alloc_hooks() to populate flags and size:
+> > > > 	.flags = __builtin_constant_p(size) ? KMALLOC_ALLOCATE_FIXED
+> > > > 					    : KMALLOC_ALLOCATE_BUCKETS;
+> > > > 	.size = __builtin_constant_p(size) ? size : SIZE_MAX;
+> > > > - during kernel start or module init, walk the alloc_tag list
+> > > >   and create either a fixed-size kmem_cache or to allocate a
+> > > >   full set of kmalloc-buckets, and update the "cache" member.
+> > > > - adjust kmalloc core routines to use current->alloc_tag->cache instead
+> > > >   of using the global buckets.
+> > > > 
+> > > > This would get us fully separated allocations, producing better than
+> > > > type-based levels of granularity, exceeding what we have currently with
+> > > > CONFIG_RANDOM_KMALLOC_CACHES.
+> > > > 
+> > > > Does this look possible, or am I misunderstanding something in the
+> > > > infrastructure being created here?
+> > > 
+> > > Definitely possible, but... would we want this?
+> > 
+> > Yes, very very much. One of the worst and mostly unaddressed weaknesses
+> > with the kernel right now is use-after-free based type confusion[0], which
+> > depends on merged caches (or cache reuse).
+> > 
+> > This doesn't solve cross-allocator (kmalloc/page_alloc) type confusion
+> > (as terrifyingly demonstrated[1] by Jann Horn), but it does help with
+> > what has been a very common case of "use msg_msg to impersonate your
+> > target object"[2] exploitation.
+> 
+> We have a ton of code that references PAGE_SIZE and uses the page
+> allocator completely unnecessarily - that's something worth harping
+> about at conferences; if we could motivate people to clean that stuff up
+> it'd have a lot of positive effects.
+> 
+> > > That would produce a _lot_ of kmem caches
+> > 
+> > Fewer than you'd expect, but yes, there is some overhead. However,
+> > out-of-tree forks of Linux have successfully experimented with this
+> > already and seen good results[3].
+> 
+> So in that case - I don't think there's any need for a separate
+> alloc_details; we'd just add a kmem_cache * to alloc_tag and then hook
+> into the codetag init/unload path to create and destroy the kmem caches.
 
-Okay, good, I just wanted to make sure you were aware of the changes.
-Since the merge window is only a couple of weeks away I'm guessing
-this isn't something we'll need to worry about in Linus' tree as the
-LSM/IMA/EVM changes are slated to go up during the next merge window
-and I'm guessing this will likely go in after that, targeting the
-following merge window at the earliest.
+Okay, sounds good. There needs to be a place to track "is this a fixed
+size or a run-time size" choice.
 
---=20
-paul-moore.com
+> No need to adjust the slab code either; alloc_hooks() itself could
+> dispatch to kmem_cache_alloc() instead of kmalloc() if this is in use.
+
+Right, it'd go to either kmem_cache_alloc() directly, or to a modified
+kmalloc() that used the passed-in cache is the base for an array of sized
+buckets, rather than the global (or 16-way global) buckets.
+
+Yay for the future!
+
+-- 
+Kees Cook
 
