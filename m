@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-12465-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9B8085F8BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 13:53:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F49F85F8CD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 13:53:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD8881C2311B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:53:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D2C41C24BEC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26E60134CEA;
-	Thu, 22 Feb 2024 12:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A2D1487E1;
+	Thu, 22 Feb 2024 12:51:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout12.his.huawei.com (unknown [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849BF1350E8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DB812DDBA;
 	Thu, 22 Feb 2024 12:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708606303; cv=none; b=aNEq0rODxXbyL6Qs2zUCJR+tXnIHOg8Tzk4DU+JYOfju03Bos3vlL6mb6xmLnE38HuNFzlppV8AevzMkztOTVqWaF+tknz3fh79laSW/ivnm8zBv2ifu0Jfka7t4WRlwaSTTX7coaIbkqSaf56Wod5Lj/M++Mzn7lgyj19hhLB4=
+	t=1708606305; cv=none; b=jOqbedanQQ5sZz7kNtpfq6eeQPTxr8P35oPnBkf8HJC0cWRw0XF/58jm89gbKWtPUrX8JyX3QTkMFDhKsC5fbIVcqqFrb7W0XpjxpYDL2stOTsHSZLXpsQjK8kfDOe7AmokZ0U/oYBlUfhOttHmjw/RIDxpS8XzN08oI8E8JKa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708606303; c=relaxed/simple;
-	bh=U3bqHDFFwwPkYnyC7/NpA5LIH+dNInFlzB/J3Kx4CnM=;
+	s=arc-20240116; t=1708606305; c=relaxed/simple;
+	bh=zunERTv3W4LcU7+CFI6zdD2a6SGNkJeQA1vdXJ7+4BI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hbGyt/o4xPnSrFAXz3etK9+lisn7WLOSBzlfvH2BrTQG1cxBhjGLx0ojpyDvjuQvTUGSuaCxITlnf4YIYMWcKX+CDA7vFR8qJRapu6RQ0/jfurZ4wcrnSB8AyY6pFMy738SawhwkM0vcF6sZ55/gPXXllIOnGBXDvVZxlnhd+Z8=
+	 MIME-Version; b=dU7zVPjX84kUtX/ylmdBFyTPL5FuUINL0QoEOvKwkCDXMFz10D05A35N+8HaV0OvP1s3sX5XnnEtb8SzAAaI/mMCK8fgWhUMbrL274bp/dJ+/woWd1A1gXEukEK1JYt88LwvrIqFKznO+WfSeeiJ9USBnSFLED9z8wQmpdlYuzc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TgY1K4YXfz4f3kFF;
-	Thu, 22 Feb 2024 20:51:33 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4TgY1L0fHWz4f3jsc;
+	Thu, 22 Feb 2024 20:51:34 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id A914D1A0DD6;
-	Thu, 22 Feb 2024 20:51:38 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 2045E1A0172;
+	Thu, 22 Feb 2024 20:51:39 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBHGBFSQ9dlQ382Ew--.47909S18;
+	by APP1 (Coremail) with SMTP id cCh0CgBHGBFSQ9dlQ382Ew--.47909S19;
 	Thu, 22 Feb 2024 20:51:38 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: jack@suse.cz,
@@ -49,9 +49,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [RFC v4 linux-next 14/19] jbd2: prevent direct access of bd_inode
-Date: Thu, 22 Feb 2024 20:45:50 +0800
-Message-Id: <20240222124555.2049140-15-yukuai1@huaweicloud.com>
+Subject: [RFC v4 linux-next 15/19] bcache: prevent direct access of bd_inode
+Date: Thu, 22 Feb 2024 20:45:51 +0800
+Message-Id: <20240222124555.2049140-16-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
 References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
@@ -62,10 +62,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHGBFSQ9dlQ382Ew--.47909S18
-X-Coremail-Antispam: 1UD129KBjvJXoW3GF1rJFWrWr4xAF13Zw4kCrg_yoWxXr1rpF
-	98Ga45ArWUZryjgrWxXrWUJrWYqa40ka4UWr9ru3sYy3yqyr97KF1kKr1UJFWUtFWrGan5
-	XF1DC3y7Gw1UKw7anT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:cCh0CgBHGBFSQ9dlQ382Ew--.47909S19
+X-Coremail-Antispam: 1UD129KBjvJXoW7uFWrJF4rCw4kZFW3JFyUGFg_yoW8Gw17pF
+	ZxCa90qrW8Ww4093yDXr4DuFyrt3sIyayIk34xu34ava9Fqr9Y9FW5GFyUuryFqry8Wwsr
+	XF47Kry7Cr1kC3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -84,165 +84,46 @@ X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 From: Yu Kuai <yukuai3@huawei.com>
 
-Now that all filesystems stash the bdev file, it's ok to get mapping
-from the file.
+Now that all bcache stash the file of opened bdev, it's ok to get
+mapping from the file.
 
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- fs/ext4/super.c      |  2 +-
- fs/jbd2/journal.c    | 26 +++++++++++++++-----------
- include/linux/jbd2.h | 18 ++++++++++++++----
- 3 files changed, 30 insertions(+), 16 deletions(-)
+ drivers/md/bcache/super.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 55b3df71bf5e..4df1a5cfe0a5 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5918,7 +5918,7 @@ static journal_t *ext4_open_dev_journal(struct super_block *sb,
- 	if (IS_ERR(bdev_file))
- 		return ERR_CAST(bdev_file);
+diff --git a/drivers/md/bcache/super.c b/drivers/md/bcache/super.c
+index 4153c9ddbe0b..ec9efa79d5a8 100644
+--- a/drivers/md/bcache/super.c
++++ b/drivers/md/bcache/super.c
+@@ -163,15 +163,16 @@ static const char *read_super_common(struct cache_sb *sb,  struct block_device *
+ }
  
--	journal = jbd2_journal_init_dev(file_bdev(bdev_file), sb->s_bdev, j_start,
-+	journal = jbd2_journal_init_dev(bdev_file, sb->s_bdev_file, j_start,
- 					j_len, sb->s_blocksize);
- 	if (IS_ERR(journal)) {
- 		ext4_msg(sb, KERN_ERR, "failed to create device journal");
-diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
-index b6c114c11b97..abd42a6ccd0e 100644
---- a/fs/jbd2/journal.c
-+++ b/fs/jbd2/journal.c
-@@ -1516,11 +1516,12 @@ static int journal_load_superblock(journal_t *journal)
-  * very few fields yet: that has to wait until we have created the
-  * journal structures from from scratch, or loaded them from disk. */
  
--static journal_t *journal_init_common(struct block_device *bdev,
--			struct block_device *fs_dev,
-+static journal_t *journal_init_common(struct file *bdev_file,
-+			struct file *fs_dev_file,
- 			unsigned long long start, int len, int blocksize)
+-static const char *read_super(struct cache_sb *sb, struct block_device *bdev,
++static const char *read_super(struct cache_sb *sb, struct file *bdev_file,
+ 			      struct cache_sb_disk **res)
  {
- 	static struct lock_class_key jbd2_trans_commit_key;
+ 	const char *err;
 +	struct block_device *bdev = file_bdev(bdev_file);
- 	journal_t *journal;
- 	int err;
- 	int n;
-@@ -1531,7 +1532,9 @@ static journal_t *journal_init_common(struct block_device *bdev,
+ 	struct cache_sb_disk *s;
+ 	struct page *page;
+ 	unsigned int i;
  
- 	journal->j_blocksize = blocksize;
- 	journal->j_dev = bdev;
--	journal->j_fs_dev = fs_dev;
-+	journal->j_dev_file = bdev_file;
-+	journal->j_fs_dev = file_bdev(fs_dev_file);
-+	journal->j_fs_dev_file = fs_dev_file;
- 	journal->j_blk_offset = start;
- 	journal->j_total_len = len;
- 	jbd2_init_fs_dev_write_error(journal);
-@@ -1628,8 +1631,8 @@ static journal_t *journal_init_common(struct block_device *bdev,
+-	page = read_cache_page_gfp(bdev->bd_inode->i_mapping,
++	page = read_cache_page_gfp(bdev_file->f_mapping,
+ 				   SB_OFFSET >> PAGE_SHIFT, GFP_KERNEL);
+ 	if (IS_ERR(page))
+ 		return "IO error";
+@@ -2564,7 +2565,7 @@ static ssize_t register_bcache(struct kobject *k, struct kobj_attribute *attr,
+ 	if (set_blocksize(file_bdev(bdev_file), 4096))
+ 		goto out_blkdev_put;
  
- /**
-  *  journal_t * jbd2_journal_init_dev() - creates and initialises a journal structure
-- *  @bdev: Block device on which to create the journal
-- *  @fs_dev: Device which hold journalled filesystem for this journal.
-+ *  @bdev_file: Opened block device on which to create the journal
-+ *  @fs_dev_file: Opened device which hold journalled filesystem for this journal.
-  *  @start: Block nr Start of journal.
-  *  @len:  Length of the journal in blocks.
-  *  @blocksize: blocksize of journalling device
-@@ -1640,13 +1643,13 @@ static journal_t *journal_init_common(struct block_device *bdev,
-  *  range of blocks on an arbitrary block device.
-  *
-  */
--journal_t *jbd2_journal_init_dev(struct block_device *bdev,
--			struct block_device *fs_dev,
-+journal_t *jbd2_journal_init_dev(struct file *bdev_file,
-+			struct file *fs_dev_file,
- 			unsigned long long start, int len, int blocksize)
- {
- 	journal_t *journal;
+-	err = read_super(sb, file_bdev(bdev_file), &sb_disk);
++	err = read_super(sb, bdev_file, &sb_disk);
+ 	if (err)
+ 		goto out_blkdev_put;
  
--	journal = journal_init_common(bdev, fs_dev, start, len, blocksize);
-+	journal = journal_init_common(bdev_file, fs_dev_file, start, len, blocksize);
- 	if (IS_ERR(journal))
- 		return ERR_CAST(journal);
- 
-@@ -1683,8 +1686,9 @@ journal_t *jbd2_journal_init_inode(struct inode *inode)
- 		  inode->i_sb->s_id, inode->i_ino, (long long) inode->i_size,
- 		  inode->i_sb->s_blocksize_bits, inode->i_sb->s_blocksize);
- 
--	journal = journal_init_common(inode->i_sb->s_bdev, inode->i_sb->s_bdev,
--			blocknr, inode->i_size >> inode->i_sb->s_blocksize_bits,
-+	journal = journal_init_common(inode->i_sb->s_bdev_file,
-+			inode->i_sb->s_bdev_file, blocknr,
-+			inode->i_size >> inode->i_sb->s_blocksize_bits,
- 			inode->i_sb->s_blocksize);
- 	if (IS_ERR(journal))
- 		return ERR_CAST(journal);
-@@ -2009,7 +2013,7 @@ static int __jbd2_journal_erase(journal_t *journal, unsigned int flags)
- 		byte_count = (block_stop - block_start + 1) *
- 				journal->j_blocksize;
- 
--		truncate_inode_pages_range(journal->j_dev->bd_inode->i_mapping,
-+		truncate_inode_pages_range(journal->j_dev_file->f_mapping,
- 				byte_start, byte_stop);
- 
- 		if (flags & JBD2_JOURNAL_FLUSH_DISCARD) {
-diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-index 971f3e826e15..fc26730ae8ef 100644
---- a/include/linux/jbd2.h
-+++ b/include/linux/jbd2.h
-@@ -968,6 +968,11 @@ struct journal_s
- 	 */
- 	struct block_device	*j_dev;
- 
-+	/**
-+	 * @j_dev_file: Opended device @j_dev.
-+	 */
-+	struct file		*j_dev_file;
-+
- 	/**
- 	 * @j_blocksize: Block size for the location where we store the journal.
- 	 */
-@@ -993,6 +998,11 @@ struct journal_s
- 	 */
- 	struct block_device	*j_fs_dev;
- 
-+	/**
-+	 * @j_fs_dev_file: Opened device @j_fs_dev.
-+	 */
-+	struct file		*j_fs_dev_file;
-+
- 	/**
- 	 * @j_fs_dev_wb_err:
- 	 *
-@@ -1533,8 +1543,8 @@ extern void	 jbd2_journal_unlock_updates (journal_t *);
- 
- void jbd2_journal_wait_updates(journal_t *);
- 
--extern journal_t * jbd2_journal_init_dev(struct block_device *bdev,
--				struct block_device *fs_dev,
-+extern journal_t *jbd2_journal_init_dev(struct file *bdev_file,
-+				struct file *fs_dev_file,
- 				unsigned long long start, int len, int bsize);
- extern journal_t * jbd2_journal_init_inode (struct inode *);
- extern int	   jbd2_journal_update_format (journal_t *);
-@@ -1696,7 +1706,7 @@ static inline void jbd2_journal_abort_handle(handle_t *handle)
- 
- static inline void jbd2_init_fs_dev_write_error(journal_t *journal)
- {
--	struct address_space *mapping = journal->j_fs_dev->bd_inode->i_mapping;
-+	struct address_space *mapping = journal->j_fs_dev_file->f_mapping;
- 
- 	/*
- 	 * Save the original wb_err value of client fs's bdev mapping which
-@@ -1707,7 +1717,7 @@ static inline void jbd2_init_fs_dev_write_error(journal_t *journal)
- 
- static inline int jbd2_check_fs_dev_write_error(journal_t *journal)
- {
--	struct address_space *mapping = journal->j_fs_dev->bd_inode->i_mapping;
-+	struct address_space *mapping = journal->j_fs_dev_file->f_mapping;
- 
- 	return errseq_check(&mapping->wb_err,
- 			    READ_ONCE(journal->j_fs_dev_wb_err));
 -- 
 2.39.2
 
