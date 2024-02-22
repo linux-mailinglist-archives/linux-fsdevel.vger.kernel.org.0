@@ -1,90 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-12426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07C9385F31B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 09:36:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B337285F35C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 09:45:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E1CEB23A30
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 08:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69628281B9B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 08:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E12724A11;
-	Thu, 22 Feb 2024 08:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D252BD01;
+	Thu, 22 Feb 2024 08:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aRcOHS/r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVA7AOrr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF9517583;
-	Thu, 22 Feb 2024 08:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC2423754;
+	Thu, 22 Feb 2024 08:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708590985; cv=none; b=UnvW8r0ao0m3hwlsl3FNSbGNIrlzJq3ogdewHlQI5CvumSwR94wTGrzVC9cgTd4MYrSUJ6MihyghLvNCwsZ4AJ+olxieZ1UV1dOsK/rGelOoW8hsG6Fb6k3DFKbeVAME3BQnH5B9HrCY4FJXZWpC0Lk103xJNH0uB1mld2ZbdWk=
+	t=1708591520; cv=none; b=eU1DaUA0ufLuVuYCrURvQxGATaFy4U7mVhn16G3b8t/PCns8r/k3xKHt/HAOGJxRMmVsB410AH+tJqKw9HgzQmAttht+tPkNGxluHgiAnwLG/tjCYy9ehNvm38SHqTeVoeUsxQwwMS/5SESkl1IwyQQ1xVexW7agt7DTWIZuA68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708590985; c=relaxed/simple;
-	bh=35o1s17GEgTofroVACV50mopTUDx11285gHuW9ReeHc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N5zcJ/xOkKHkOy6hLLhlnsd4v22Z8XRQoX45rcuG9U5D0GwR7uRxmzlFxpkh5IEervnNSx/QIuRipXDXOVm52sSs1c1MVz91kUSRri2Iqa+hZQYUsV56JC2sd+WAVnI/UMx4/9Bw+KdX/ZfzdA1IS0ZqJvbXWv0v1cIEcbRm5uA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aRcOHS/r; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1708590977; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=X9yz07D9w8yMy5Y7IPBs0+pEkB7vyXUOF8tVyxWbAGg=;
-	b=aRcOHS/ryawRguaMzeoX1EZy6J9O3pMn81rVoRha0GmUmsTPwQ+YNjoH8aKraWjiWdTrtPFy2PYbscwsuzQK+JNwqFua3yQhfPaP5KGKaGo8ky4Gz5KkfyHYAl8SPBWppQGJaSrpjRKwAg8XUDJOOVc2mic1fIFnVgK5dHVwiKg=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R561e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0W10YCEV_1708590966;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W10YCEV_1708590966)
-          by smtp.aliyun-inc.com;
-          Thu, 22 Feb 2024 16:36:16 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] pidfd: make pidfs_dentry_operations static
-Date: Thu, 22 Feb 2024 16:36:04 +0800
-Message-Id: <20240222083604.11280-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	s=arc-20240116; t=1708591520; c=relaxed/simple;
+	bh=YlNKIwFTPZOJF27McRRhZyY+cPAVqwgESlnlds8SH30=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KlkvuyiOwm5fQYw4oWTqOqhCoIPodUflrAIUEKKBodaJSXRxWVgRcCSsXn4fwCZtf1PlQ7hX1p89DvdQr8NqhIdA8JUAoI2NjftVufziIIWzZbytqlrzcg/G7/+beqm3oQbnDAFrR1KwflnbSewp2u7CP7aS/TSrsP7wzA3h+YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVA7AOrr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 849D7C433C7;
+	Thu, 22 Feb 2024 08:45:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708591520;
+	bh=YlNKIwFTPZOJF27McRRhZyY+cPAVqwgESlnlds8SH30=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TVA7AOrrjg45gz1Rc+1ywpUuS3xKQyR+onxIGn6CR8JvLctTUNWNsKTHKqK5ZO4JL
+	 w/Kp/CUilPNvOiZPpz/ccANAuYXXp9DZzWyxS2g0/OdUgnYZNbPiP9299aMgXaSNGW
+	 gM5iigsSy1YhGWkYbR2Ui0XcChxsuiTTsw0WGCV0UHpzVDuVtTibwxD/MIhxwSIxFz
+	 IVFc6hhdqIwqImC1dU63eOghP2coRAk6jPIj0Y7ua9N5MQQvhTI9yixF9Qity2Po11
+	 FAAYFc4e13AsXVHEMW+Mx9YlokgjsbOwM2Xn931plUz8sKgokZ03oUnM4JETBG/fn6
+	 pviNr8niQHFsQ==
+Date: Thu, 22 Feb 2024 09:45:15 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH] pidfd: make pidfs_dentry_operations static
+Message-ID: <20240222-badeanstalt-belustigen-f7a6e44f4b0b@brauner>
+References: <20240222083604.11280-1-jiapeng.chong@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240222083604.11280-1-jiapeng.chong@linux.alibaba.com>
 
-The pidfs_dentry_operations are not used outside the file pidfs.c, so the
-modification is defined as static.
-
-fs/pidfs.c:175:32: warning: symbol 'pidfs_dentry_operations' was not declared. Should it be static?
-
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=8284
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- fs/pidfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index c33501c9cd8b..85e9617f0aee 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -172,7 +172,7 @@ static void pidfdfs_prune_dentry(struct dentry *dentry)
- 	}
- }
- 
--const struct dentry_operations pidfs_dentry_operations = {
-+static const struct dentry_operations pidfs_dentry_operations = {
- 	.d_delete	= always_delete_dentry,
- 	.d_dname	= pidfs_dname,
- 	.d_prune	= pidfdfs_prune_dentry,
--- 
-2.20.1.7.g153144c
-
+Already fixed. Thanks.
 
