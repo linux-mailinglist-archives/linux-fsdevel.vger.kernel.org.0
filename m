@@ -1,116 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-12398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8848785ED91
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 01:08:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ADA285EDA4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 01:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8AF7B23C39
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 00:08:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A44BBB20CC6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 00:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8685D6FC7;
-	Thu, 22 Feb 2024 00:08:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E69A927;
+	Thu, 22 Feb 2024 00:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y42VscKr"
+	dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b="V4v3q5zW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27331854;
-	Thu, 22 Feb 2024 00:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AD131878
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 00:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708560481; cv=none; b=bighMFvtnxScIe9blMRrySrupue9zM9x8WAQFRP4nB3hIbadegZ4hk9Ia3jG0UFuRjMJrJ/Qgn/8dDrAHetzaF/bNYo9v+6o5DVEfS26t377BRgBa/1TPWh6MqWOfAxt1QG/C8OenzmFHLfVi6sMfDVeQ3eWsvTMCwiLoxkZuow=
+	t=1708560550; cv=none; b=EsHIueCRUy6D9TCVkj+cUCngYcy5ICPzTYMN6sVdcxtzp6GGl0x93p77EK5Fm6naaVJq2MCSmbTtzT0nUHPmMZ4APWMQG6Rgtb5CvPHOALghqKO7vzxxHPwtSsc8bOKX37Pi/+GC0ECyuFFC39Jjt645SWqP0vD9BubF02nBTTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708560481; c=relaxed/simple;
-	bh=vE8G0tEnjCDvKYtM1hAj6g+Z7bZNowrFZogG32m/K70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FDpZvRKAXUTBXQBGwzd9zjJ7Y1eK3EPr2OpFFuReeIZ3TIkqLVUpTuoCPJxPq0i8twmEF3uvEi+2XKtUB4/3LK5mM0gXXSqpe3mbw22l8ggW07DuzgjzOVYzAzBCCFED8m92YK9mhUvhw47yiQ27b7wPXgF7JF8ZgezhG4YOo5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y42VscKr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DF65C433C7;
-	Thu, 22 Feb 2024 00:08:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708560480;
-	bh=vE8G0tEnjCDvKYtM1hAj6g+Z7bZNowrFZogG32m/K70=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y42VscKrvxtAeYusTRWD6nCdHe83JpVE4gTfo6qOWzSr35vqn+d3jY7Zw5IcL0vnB
-	 PakgDEDQ6OPmTo0AK9gFPD6TJx3p4/8JJPJFk4lV1V5VLRgjczH0cX15H6dfnlWs19
-	 w9A5I0t+DccGyh5nE/w3d3RJxsfu3btoZCd1VpBOA8jebEHWFizMP5AWg0So7quzxy
-	 QjGE4Tti8547FKVzZGuTljGQDc+MGukbKyomzjNKeJn1tK8sY/PgOiEivvyH+Ww0bn
-	 a6KlSCCFCx5aeAWxlgoHf4bXLz8WtZSNJ8rbHPmwW6S9h1/qML7j6TvG6WBPb5Dara
-	 Fq6dZETVqsoFw==
-Date: Wed, 21 Feb 2024 18:07:59 -0600
-From: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Christian Brauner <brauner@kernel.org>, Serge Hallyn <serge@hallyn.com>,
-	Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org,
-	selinux@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v2 11/25] security: add hooks for set/get/remove of fscaps
-Message-ID: <ZdaQX9385Sq3VmMZ@do-x1extreme>
-References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
- <20240221-idmap-fscap-refactor-v2-11-3039364623bd@kernel.org>
- <CAHC9VhQ5QK_4BaHCj9SEvW9M_suWa9edDXrbw2MiNcn56eoWPg@mail.gmail.com>
+	s=arc-20240116; t=1708560550; c=relaxed/simple;
+	bh=aiZ2wjkXdUeF2DZJw2oBIl8u+9EyfQfZ9ycNkF8fAgk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hEx7aiD864CqywevAYXtKgTc2jr/XXZ42P1XYqpiF1jiSLr67GDHsS2fvQTTintSmoDuUK2ZpWNj6V8vWVgqa59mqkhHHfKV+JD9Z8+X7GCMpRaIRWFWTLpz8GqElo3NWY/aUZDPd8l57fmg1E2L5wDSO4v1uEWgSp/olMNuwRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen-com.20230601.gappssmtp.com header.i=@soleen-com.20230601.gappssmtp.com header.b=V4v3q5zW; arc=none smtp.client-ip=209.85.222.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-7d5fce59261so4629624241.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Feb 2024 16:09:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen-com.20230601.gappssmtp.com; s=20230601; t=1708560547; x=1709165347; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aiZ2wjkXdUeF2DZJw2oBIl8u+9EyfQfZ9ycNkF8fAgk=;
+        b=V4v3q5zWy6TRguaajZ4nQ7fJK1qziegRcyc2f4uuaXkZgb4nKEsRZW5usZn2/WC6UG
+         2HWxXkyggg+HnHBE4LSYDAV3qlSVSEAJ7vgj3MpYcNlVANNi82gJyKs3TGO95H7vQQs3
+         P+mjK3bnK/Tsa/y3lgPnoCSvSJbs2j87+GMbVDg3j9OYX0gZdOAxTTKJHTxjoXOw0Gwx
+         0DKKNqPgam6bcmtKcoMyNXiATqMuN8yiT32970gwjqs7o9zipOX4DhXrYhTml3lKxizt
+         +ishB81w04QpeSmjviwcPT5P0aChisMAKE13nexWROtuY9dinTAdSxKj6PHKgtTQO6OK
+         fdXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708560547; x=1709165347;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aiZ2wjkXdUeF2DZJw2oBIl8u+9EyfQfZ9ycNkF8fAgk=;
+        b=enMSGxtCyd2ZJatrfpw7mmHFshIyWQdmv6D9YuAabbWA1Nu4OHBzlj4Q0Hf5scw6Yp
+         Gkt92kctRDll0k0ta8anpvn+viXPajiaDuhDJPbEv+t+3Un1v5TNc2tdrireHo99iYjN
+         9ERrIXH/cFUZWYjTUrpz0uX2iSuFpX96EZEui44S01N5XSBISz4oi3Tm73kcPoyx+WIG
+         53xr0V+ZdGAT0Ajy+oTZXolkMS4vHlYULaLSKmX0U8NXqMsYkD8y/pAVlAMPdEedPLfs
+         sPHNGF2WtrC2XEIXi4RQ8L4mIWUKR56VFV5bLpTuBp4+g/QKJiVG4/7M/KiUmGcFakqX
+         zglw==
+X-Forwarded-Encrypted: i=1; AJvYcCWppk3l4HyS+x/E3xZxPCQNHhceJZ48DC7k3QvRCpz457vTWj2yX9bWE6dmgxRAMJSEF3jw521RBNYFntcjXRbDrxK89G+7Y3oeK52V7Q==
+X-Gm-Message-State: AOJu0Yx74HERQyBH8l3sKTk624Z7nMKBAJUoV5oGSq4V9nSrAoVexpoQ
+	hKX60Z8d94P8+wjnkZMwC8D6tDcBC1W9fICDQPf+xfZr18NyUZdIqxtKPwpNwhRPTv3O2UKveRY
+	BJgab6JN7V3xBE2FksU+3AKOGryDn3cskRv1Z/g==
+X-Google-Smtp-Source: AGHT+IE8YdNcoy9yHPyWH3FSVi3grCuLLJ8fT8RNUBKoMQxE9UzcTUruywG2qiU3pKHX1/up6wOF6uOUyIuOPTAbvgM=
+X-Received: by 2002:a05:6102:953:b0:470:605a:6a4 with SMTP id
+ a19-20020a056102095300b00470605a06a4mr10156813vsi.21.1708560547208; Wed, 21
+ Feb 2024 16:09:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQ5QK_4BaHCj9SEvW9M_suWa9edDXrbw2MiNcn56eoWPg@mail.gmail.com>
+References: <20240221194052.927623-1-surenb@google.com> <20240221194052.927623-9-surenb@google.com>
+In-Reply-To: <20240221194052.927623-9-surenb@google.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Wed, 21 Feb 2024 19:08:30 -0500
+Message-ID: <CA+CK2bD-AvHR45zWrLOGA7Y=HQeFf=Ty4vCB5bWxbX7XyMsYRw@mail.gmail.com>
+Subject: Re: [PATCH v4 08/36] mm: introduce __GFP_NO_OBJ_EXT flag to
+ selectively prevent slabobj_ext creation
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
+	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
+	rppt@kernel.org, paulmck@kernel.org, yosryahmed@google.com, yuzhao@google.com, 
+	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
+	glider@google.com, elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 21, 2024 at 06:31:42PM -0500, Paul Moore wrote:
-> On Wed, Feb 21, 2024 at 4:26 PM Seth Forshee (DigitalOcean)
-> <sforshee@kernel.org> wrote:
-> >
-> > In preparation for moving fscaps out of the xattr code paths, add new
-> > security hooks. These hooks are largely needed because common kernel
-> > code will pass around struct vfs_caps pointers, which EVM will need to
-> > convert to raw xattr data for verification and updates of its hashes.
-> >
-> > Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
-> > ---
-> >  include/linux/lsm_hook_defs.h |  7 +++++
-> >  include/linux/security.h      | 33 +++++++++++++++++++++
-> >  security/security.c           | 69 +++++++++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 109 insertions(+)
-> 
-> One minor problem below, but assuming you fix that, this looks okay to me.
-> 
-> Acked-by: Paul Moore <paul@paul-moore.com>
-> 
-> > diff --git a/security/security.c b/security/security.c
-> > index 3aaad75c9ce8..0d210da9862c 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -2351,6 +2351,75 @@ int security_inode_remove_acl(struct mnt_idmap *idmap,
-> 
-> ...
-> 
-> > +/**
-> > + * security_inode_get_fscaps() - Check if reading fscaps is allowed
-> > + * @dentry: file
-> 
-> You are missing an entry for the @idmap parameter.
+On Wed, Feb 21, 2024 at 2:41=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> Introduce __GFP_NO_OBJ_EXT flag in order to prevent recursive allocations
+> when allocating slabobj_ext on a slab.
+>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Fixed, thanks!
+Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
