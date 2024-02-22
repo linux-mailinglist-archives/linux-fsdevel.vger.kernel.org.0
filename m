@@ -1,157 +1,137 @@
-Return-Path: <linux-fsdevel+bounces-12450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 478B285F78C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:54:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55AD885F791
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:55:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADD34B22CB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 11:54:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D43B1C24207
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 11:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4019F47A5C;
-	Thu, 22 Feb 2024 11:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57A904655D;
+	Thu, 22 Feb 2024 11:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="drqElOnw"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lRDl0nHn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E64646521
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 11:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F9545BF9
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 11:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708602831; cv=none; b=tHHmTeNbcb/UgHvObwKKgQRAzErXw6FCiWKLyCvGnSiZOrDXDQLHNEY3USoB28rKRJdn807veuvesuPY2jgUf7VXN3d/1cUQnkixA56WB1de+NPUlF8P7LpPZj7cB4noKqBnB42iWrhlHqvKmNKSA2/IL5i+LwxHU3mDe4R8YMM=
+	t=1708602933; cv=none; b=tbd/B6GxGAJeQ5fEZMuxLrgqeLvWO3yTHLxgVeyLAsb5mFH8NOhGTFNXoOO/2n9d8q4amNUdiIeYLSdG7AmMf+6sAAvu4JElTK3vXtlZlbW1I/GPHFlNoKzmtDfLMNRu/CncejeG9vG/lXv+q5bcOv29oB1BIffcqX75fisuJUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708602831; c=relaxed/simple;
-	bh=/GZnl1bApZlEPKB/0OjNOdfWl1yXpoyVVjwgwuxpGQ4=;
+	s=arc-20240116; t=1708602933; c=relaxed/simple;
+	bh=0CJpr26zan7TdkdLzjJcZGBNSSb45N51xiEhwd3+uaw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M+hXVyx+tW3Q0JFZGrtaLXhwzGpje3jfje3pkeuhUtDvMlO5SerWynHYl9INBUZfxLUtkFivyZx3uOUp+Fo9733pnpLX6yknCBlregXygz53bCoYo2LFAI9NVKS9KBRAwT/oFEFAHKH1mDw4eEc9kDRuiK0WA4Pa4EMyB2p6I/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=drqElOnw; arc=none smtp.client-ip=91.218.175.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=eiqHIpb0ae666MZBeT3PfheoNXqCEOgaV4yCvkGpHhC4Cg9xiVxeo8Dce8fOyVE2Bh38M+SchV86px6z4I8P0wTLTfycFBBBqjICfBczk+dXqcBn7D13g6GSQ1xslEdqtFBoeiUFTT9aIJoAgMW5OZhpGuOmY7HICZKnLC06FCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lRDl0nHn; arc=none smtp.client-ip=91.218.175.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 22 Feb 2024 06:53:44 -0500
+Date: Thu, 22 Feb 2024 06:55:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1708602827;
+	t=1708602930;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1oV0lp1K4Ub7tESvDeFqVDjAAwFBAw9Dokd5x1fT4D0=;
-	b=drqElOnwL3FwHj1AMzKxLETAoI5EamXZIjhfyV0ps8yqhsMnbw8hmnguls1XP3MXWFfwmP
-	Hs/PZOSzbbZtnYkLWR4clg1W6XFaNomccWlPYLiIDu4gIbcbGQ+lA8+YclNzl4JrC9QnZU
-	QPvkzbsPkVgeL1M06zYMpKhmhk8JnHg=
+	bh=ZOSNF//i8qwwUlDAqBjDcUQ68DsRV1xIVPVD8Mb3zPM=;
+	b=lRDl0nHnJJsSXURYD+j4aDEP5upGN1kgw5NWTCfYi+JVsZEyXn78qm2NmO8/+ePcYaOOIB
+	XlFrD8tQcHtTeRssf1+3QzUcCWLKu1/iNUq03e3Ehdu/wB04e1Htiua1y9wVPWYvuE1znI
+	gkxm21v3AaWlXjatwcNzTsKJaHhyumk=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Kent Overstreet <kent.overstreet@linux.dev>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lsf-pc@lists.linux-foundation.org, Christian Brauner <christian@brauner.io>, 
-	=?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@stgraber.org>
-Subject: Re: [LSF TOPIC] beyond uidmapping, & towards a better security model
-Message-ID: <lgsh46klnmhaqsgzguoces452gbuzpzpg6jqr3cndblhpq34ez@jm2kobculj2p>
-References: <tixdzlcmitz2kvyamswcpnydeypunkify5aifsmfihpecvat7d@pmgcepiilpi6>
- <141b4c7ecda2a8c064586d064b8d1476d8de3617.camel@HansenPartnership.com>
- <qlmv2hjwzgnkmtvjpyn6zdnnmja3a35tx4nh6ldl23tkzh5reb@r3dseusgs3x6>
- <bfbb1e9b521811b234f4f603c2616a9840da9ece.camel@HansenPartnership.com>
- <4ub23tni5bwxthqzsn2uvfs5hwr6gd3oitbckd5xwxdbgci4lj@xddn3dh6y23x>
- <c0d77327b15e84df19a019300347063a0b74e1a5.camel@HansenPartnership.com>
- <giojfztuhxc5ilv24htcyhlerc6otajpa32cjtze4gghevg2jr@vwykmx7526ae>
- <67a0b68946d39928502ce2d3e3ad834aa8d73d02.camel@HansenPartnership.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Josef Bacik <josef@toxicpanda.com>, 
+	linux-kernel@vger.kernel.org, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	lsf-pc@lists.linux-foundation.org, linux-btrfs@vger.kernel.org
+Subject: Re: [Lsf-pc] [LSF TOPIC] statx extensions for subvol/snapshot
+ filesystems & more
+Message-ID: <2tsfxaf2blhcxlkfcagfavz3mnuga3qsjgpytbstvykmcq2prj@icc7vub55i3p>
+References: <2uvhm6gweyl7iyyp2xpfryvcu2g3padagaeqcbiavjyiis6prl@yjm725bizncq>
+ <CAJfpeguBzbhdcknLG4CjFr12_PdGo460FSRONzsYBKmT9uaSMA@mail.gmail.com>
+ <20240221210811.GA1161565@perftesting>
+ <CAJfpegucM5R_pi_EeDkg9yPNTj_esWYrFd6vG178_asram0=Ew@mail.gmail.com>
+ <w534uujga5pqcbhbc5wad7bdt5lchxu6gcmwvkg6tdnkhnkujs@wjqrhv5uqxyx>
+ <20240222110138.ckai4sxiin3a74ku@quack3>
+ <u4btyvpsohnf77r5rm43tz426u3advjc4goea4obt2wtv6xyog@7bukhgoyumed>
+ <20240222114417.wpcdkgsed7wklv3h@quack3>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <67a0b68946d39928502ce2d3e3ad834aa8d73d02.camel@HansenPartnership.com>
+In-Reply-To: <20240222114417.wpcdkgsed7wklv3h@quack3>
 X-Migadu-Flow: FLOW_OUT
 
-On Thu, Feb 22, 2024 at 09:45:32AM +0100, James Bottomley wrote:
-> On Wed, 2024-02-21 at 22:37 -0500, Kent Overstreet wrote:
-> > On Thu, Feb 22, 2024 at 01:33:14AM +0100, James Bottomley wrote:
-> > > On Wed, 2024-02-21 at 18:01 -0500, Kent Overstreet wrote:
-> > > > Strings are just arrays of integers, and anyways this stuff would
-> > > > be within helpers.
-> > > 
-> > > Length limits and comparisons are the problem
-> > 
-> > We'd be using qstrs for this, not c strings, so they really are
-> > equivalent to arrays for this purpose.
-> > 
-> > > 
+On Thu, Feb 22, 2024 at 12:44:17PM +0100, Jan Kara wrote:
+> On Thu 22-02-24 06:27:14, Kent Overstreet wrote:
+> > On Thu, Feb 22, 2024 at 12:01:38PM +0100, Jan Kara wrote:
+> > > On Thu 22-02-24 04:42:07, Kent Overstreet wrote:
+> > > > On Thu, Feb 22, 2024 at 10:14:20AM +0100, Miklos Szeredi wrote:
+> > > > > On Wed, 21 Feb 2024 at 22:08, Josef Bacik <josef@toxicpanda.com> wrote:
+> > > > > >
+> > > > > > On Wed, Feb 21, 2024 at 04:06:34PM +0100, Miklos Szeredi wrote:
+> > > > > > > On Wed, 21 Feb 2024 at 01:51, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > > > > > > >
+> > > > > > > > Recently we had a pretty long discussion on statx extensions, which
+> > > > > > > > eventually got a bit offtopic but nevertheless hashed out all the major
+> > > > > > > > issues.
+> > > > > > > >
+> > > > > > > > To summarize:
+> > > > > > > >  - guaranteeing inode number uniqueness is becoming increasingly
+> > > > > > > >    infeasible, we need a bit to tell userspace "inode number is not
+> > > > > > > >    unique, use filehandle instead"
+> > > > > > >
+> > > > > > > This is a tough one.   POSIX says "The st_ino and st_dev fields taken
+> > > > > > > together uniquely identify the file within the system."
+> > > > > > >
+> > > > > >
+> > > > > > Which is what btrfs has done forever, and we've gotten yelled at forever for
+> > > > > > doing it.  We have a compromise and a way forward, but it's not a widely held
+> > > > > > view that changing st_dev to give uniqueness is an acceptable solution.  It may
+> > > > > > have been for overlayfs because you guys are already doing something special,
+> > > > > > but it's not an option that is afforded the rest of us.
+> > > > > 
+> > > > > Overlayfs tries hard not to use st_dev to give uniqueness and instead
+> > > > > partitions the 64bit st_ino space within the same st_dev.  There are
+> > > > > various fallback cases, some involve switching st_dev and some using
+> > > > > non-persistent st_ino.
 > > > > 
-> > > > But what you're not seeing is the beauty and simplicity of
-> > > > killing
-> > > > the mapping layer.
+> > > > Yeah no, you can't crap multiple 64 bit inode number spaces into 64
+> > > > bits: pigeonhole principle.
+> > > > 
+> > > > We need something better than "hacks".
 > > > 
-> > > Well, that's the problem: you don't for certain use cases.  That's
-> > > what I've been trying to explain.  For the fully unprivileged use
-> > > case, sure, it all works (as does the upper 32 bits proposal or the
-> > > integer array ... equally well.
+> > > I agree we should have a better long-term plan than finding ways how to
+> > > cram things into 64-bits inos. However I don't see a realistic short-term
+> > > solution other than that.
 > > > 
-> > > Once you're representing to the userns contained entity they have a
-> > > privileged admin that can write to the fsimage as an apparently
-> > > privileged user then the problems begin.
+> > > To explicit: Currently, tar and patch and very likely other less well-known
+> > > tools are broken on bcachefs due to non-unique inode numbers. If you want
+> > > ot fix them, either you find ways how bcachefs can cram things into 64-bit
+> > > ino_t or you go and modify these tools (or prod maintainers or whatever) to
+> > > not depend on ino_t for uniqueness. The application side of things isn't
+> > > going to magically fix itself by us telling "bad luck, ino_t isn't unique
+> > > anymore".
 > > 
-> > In what sense?
-> > 
-> > If they're in a userns and all their mounts are username mapped,
-> > that's completely fine from a userns POV; they can put a suid root
-> > binary into the fs image but when they mount that suid root will be
-> > suid to the root user of their userns.
+> > My intent is to make a real effort towards getting better interfaces
+> > going, prod those maintainers, _then_ look at adding those hacks (that
+> > will necessarily be short term solutions since 64 bits is already
+> > looking cramped).
 > 
-> if userns root can alter a suid root binary that's bind mounted from
-> the root namespace then that's a security violation because a user in
-> the root ns could use the altered binary to do a privilege escalation
-> attack.
+> OK, fine by me :) So one thing is still not quite clear to me - how do you
+> expect the INO_NOT_UNIQUE flag to be used by these apps? Do you expect them
+> to use st_dev + st_ino by default and fall back to fsid + fhandle only when
+> INO_NOT_UNIQUE is set?
 
-That's a completely different situation; now you're talking about suid
-root, where root is _outside_ the userns, and if you're playing tricks
-to make something from a user from outside the ns that is not
-representable in the ns visible in that ns, and now you're making that
-something suid, of course you're going to have trouble defining self
-consistent behaviour.
-
-So I'm not sure what point you were trying to make, but it does
-illustrate some key points.
-
-Any time you're creating a system where different agents can have
-different but overlapping views of the world, you're going to have some
-really fun corner cases and it's going to be hard to reason about.
-
-(if you buy me a really nice scotch somitem I'll tell you about fsck for
-a snapshotting filesystem, where for performance reasons fsck has to
-process keys from all snapshots simultaneously).
-
-So such things are best avoided, if we can. For another example, see if
-you know anyone who's had to track down what's keeping a mount alive,
-then the something was a systemd service running in a private namespace.
-
-Systems where we can recursively enumerate the world are much nicer to
-work with.
-
-Now, back to user namespaces: they shouldn't exist.
-
-And they wouldn't exist, if usernames had started out as a recursive
-structure instead of a flat namespace. But since they started out as a
-flat namespace, and only _later_ we realized they actually needed to be
-a tree structure - but we have to preserve for compatibility the _view_
-of the world as a flat namespace! - that's why we have user namespaces.
-
-And you get all sorts of super weird corner cases like you just
-described.
-
-So let's take a step back from all that, and instead of reasoning from
-"what weird corner cases from our current system do we have to support"
-- instead, just seem what we can do with a cleaner model and get that
-properly specified. A good model helps you make sense of the world even
-in crazy situations.
-
-With that in mind, back to your bind mount thing: if you chroot(), and
-you try to access a symlink that points outside the chroot, what
-happens?
+Shouldn't matter. If they care about performance and they're in some
+strange situation where the syscal overhead matters, they can use
+fhandle only when the bit is set, but I'd personally prefer to see
+everyone on the same codepath and just always using fh.
 
