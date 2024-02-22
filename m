@@ -1,42 +1,42 @@
-Return-Path: <linux-fsdevel+bounces-12469-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12468-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C29285F8C8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 13:53:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D130B85F8C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 13:53:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E4BE1C24BA5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:53:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C4DB2848C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2771474D0;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C4C1474BE;
 	Thu, 22 Feb 2024 12:51:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC3D136995;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBF3131722;
 	Thu, 22 Feb 2024 12:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708606304; cv=none; b=A7u7yYji3TB2wiZNt3wP4RmbMYYV9zvIHiHYDLr8r31hwWY7sYlIYq8alSAC6HkS5yC7Byer1fInjJO/apur9gI3+7EGzQsA9/KNg4/LkgsFG4+WfBEGnh9ANudWa2fgHiEK+0DhTyrumFr6+PJVwMgi7jtyMNZs25WernefRCM=
+	t=1708606304; cv=none; b=CJu+qk2tpCn0sOQQg/mjxbEIGnwz2dH900mhYTtobAdzKcyivvQReCqqTVOCSB51zbRaFWH6uz4jGlGJkmOGrQTniJV7EhrZcGGPFiIqjgHHMCLOeYPf24k3i6LjzGnIRluUyNttSqArhWhvWAiJJVx0bE5x9003FTI1ygIsnEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1708606304; c=relaxed/simple;
-	bh=iof+4ZVDwG4KIOz/TBbRiUr+PFy35FDOGG549ov2RAE=;
+	bh=WSHwFEtjJ7bm0b6m77A5y0OPzqIykv+swdfnbLvtp2k=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qdHpC+iHalMc0puCQARagz4m65htPc3/fuqySgs3vXcyrGEOwISrmc9ZdjiwEykCT3EpsMllbvt81XqfqcUOKuxvTjLUJZdrulleBenyZzWLh6HUn3YPcX6wyTvQRI6bthhlVaxt4tmXB8gnGPv6Spf3jZXGnCQ06Z4StF1aAOw=
+	 MIME-Version; b=eyjM7a1I+MGFlJKqnhSFsCrQFsaQQmHbkQjgqfR6nhmlUalFYXt8pjtZMyD+0/P0hSmN4PHsra555X68Wvkr9kIxsLlYGvtDqadDXryEDqA1HZjdWO16k4E0z4nJ+L4yr1SEPbgWG9LdmalYy2KGoYlAtKXQU9bhzSbyP7XzJAQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TgY1D3QhBz4f3m7P;
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TgY1D6nm5z4f3m7Z;
 	Thu, 22 Feb 2024 20:51:28 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 9F4051A0FED;
-	Thu, 22 Feb 2024 20:51:35 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 1DDFA1A0568;
+	Thu, 22 Feb 2024 20:51:36 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP1 (Coremail) with SMTP id cCh0CgBHGBFSQ9dlQ382Ew--.47909S11;
+	by APP1 (Coremail) with SMTP id cCh0CgBHGBFSQ9dlQ382Ew--.47909S12;
 	Thu, 22 Feb 2024 20:51:35 +0800 (CST)
 From: Yu Kuai <yukuai1@huaweicloud.com>
 To: jack@suse.cz,
@@ -49,9 +49,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	yukuai1@huaweicloud.com,
 	yi.zhang@huawei.com,
 	yangerkun@huawei.com
-Subject: [RFC v4 linux-next 07/19] erofs: prevent direct access of bd_inode
-Date: Thu, 22 Feb 2024 20:45:43 +0800
-Message-Id: <20240222124555.2049140-8-yukuai1@huaweicloud.com>
+Subject: [RFC v4 linux-next 08/19] nilfs2: prevent direct access of bd_inode
+Date: Thu, 22 Feb 2024 20:45:44 +0800
+Message-Id: <20240222124555.2049140-9-yukuai1@huaweicloud.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
 References: <20240222124555.2049140-1-yukuai1@huaweicloud.com>
@@ -62,10 +62,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgBHGBFSQ9dlQ382Ew--.47909S11
-X-Coremail-Antispam: 1UD129KBjvdXoW7XFW8CryfJry3Aw4UZr43Wrg_yoW3GFX_XF
-	yxJr48W3y3X34ftFs8G3WUZrsFgw4YkF4F9FW7JrZxWF1UXr95ZrZrJ3W8Jr4DWw4kGFZ8
-	AFs3Wr17tr4rXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+X-CM-TRANSID:cCh0CgBHGBFSQ9dlQ382Ew--.47909S12
+X-Coremail-Antispam: 1UD129KBjvdXoW7XFW8Cry3Kw4kGF1ruF47XFb_yoW3AFbEqr
+	95GrykX3yYqFWfua1DurWYyryrJ3WFk3WrXryrGFyUKF40y395ur1DXr4UAayUury7X3Zx
+	Jw1DXrn8Jw1UWjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
 	9fnUUIcSsGvfJTRUUUbq8FF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
 	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2
 	IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28E
@@ -85,26 +85,26 @@ X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 From: Yu Kuai <yukuai3@huawei.com>
 
 Now that all filesystems stash the bdev file, it's ok to get inode
-for the file.
+from the file.
 
 Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- fs/erofs/data.c | 2 +-
+ fs/nilfs2/segment.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 433fc39ba423..dc2d43abe8c5 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -70,7 +70,7 @@ void erofs_init_metabuf(struct erofs_buf *buf, struct super_block *sb)
- 	if (erofs_is_fscache_mode(sb))
- 		buf->inode = EROFS_SB(sb)->s_fscache->inode;
- 	else
--		buf->inode = sb->s_bdev->bd_inode;
-+		buf->inode = file_inode(sb->s_bdev_file);
- }
+diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
+index aa5290cb7467..2940e8ef88f4 100644
+--- a/fs/nilfs2/segment.c
++++ b/fs/nilfs2/segment.c
+@@ -2790,7 +2790,7 @@ int nilfs_attach_log_writer(struct super_block *sb, struct nilfs_root *root)
+ 	if (!nilfs->ns_writer)
+ 		return -ENOMEM;
  
- void *erofs_read_metabuf(struct erofs_buf *buf, struct super_block *sb,
+-	inode_attach_wb(nilfs->ns_bdev->bd_inode, NULL);
++	inode_attach_wb(file_inode(nilfs->ns_sb->s_bdev_file), NULL);
+ 
+ 	err = nilfs_segctor_start_thread(nilfs->ns_writer);
+ 	if (unlikely(err))
 -- 
 2.39.2
 
