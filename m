@@ -1,100 +1,214 @@
-Return-Path: <linux-fsdevel+bounces-12512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B29686020C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 20:02:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C72C8860212
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 20:03:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA8D62841EB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 19:02:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA94A1C25995
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 19:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09C9214B824;
-	Thu, 22 Feb 2024 19:02:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A0BE14B817;
+	Thu, 22 Feb 2024 19:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Wi0guPry"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oj4RWKg3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FA114B803;
-	Thu, 22 Feb 2024 19:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7126523D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 19:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708628551; cv=none; b=aI535r4x1Rzn1D5oZ+a0lt1zLVueg8xl9jpVGLwuOeb9vh13b/R8fsdiVG3UxhekzuUsbh0Cw+6j8Ee7pjIv80XhkIEZjhrCLOl8k/kQuBMQPjpSsL6IehcrzrDwbBjhA6L0M8YI0oKh0NX/lcCWdnV+0OAhHxkWh075QWCyLhQ=
+	t=1708628616; cv=none; b=kmIqnKvT705zjEoJkCEfrlAWuMAVSlAvGcWVmMAkcDamoPt9m86NiEBewHal3jz7G/3adwuOQzqsOcMdgmZYgpNQsXHKnoVm9QYS2dbXShI3C68bjtQqlWgS80B2Xdzz9ZteccOILDPgq2etXWv0qBNrdmdny4qlML37707kNII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708628551; c=relaxed/simple;
-	bh=CyWrNEJOTduaLsfp/afgLhkUStrKX3T8j5ETszeVwW8=;
+	s=arc-20240116; t=1708628616; c=relaxed/simple;
+	bh=6dCKFUCaPK3s9NlKR5EvQHYB2Jb2Ua3pARQMtG7h8OU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GFhtTqXs4loSrnao/fMbqGQzzA4O/f1aZsW130uK8n5XMt5IDElFZ1fqs9lE16XZIEd9BBhcs6k4+Fh9E//MX62yAAa3Ngphr79aDMDYLh/gkIRQmcUJLsk3VOZuGZ12o0JzzVEaLp1AUoWkmdJWDgMQ1Z6k+G0GCV2OHePA7qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Wi0guPry; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=YCzvJZi0MIn/MC1Y9lAaG+iLw9IpGIZIgpDw63icD0g=; b=Wi0guPrypagKM5AyWUB9394kF3
-	CFB6bUbQSvfLxajhjcmCeu7UuZP02tVovaF3blNETNVDWhHF+6o/5c6+RjokHzeL8mv5Nr7uEOfSm
-	XQ+3BY6ac9/YkBaS7CF9NID8/0v5/vtnQtXaNTcFPb9JXScoKHZw4GD6coUUZ4WXOPkWG3K198JGu
-	DjaUQAkdYCWmuQHJxPccl5Azh4D2YDIyqgrLfYUhsuadTX8E3y04HYjgisRh8Yop7+45G+O1wPQT9
-	iCCW3QDg85QlcHZwCrwopX8rSc0jWaZvzYpUqoat0iH6KwLuPBQ1KL6kQo5E7Qv7pbWnWtTtHp61t
-	XPpjjwOw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rdEKu-00000006Ejv-0bd2;
-	Thu, 22 Feb 2024 19:02:24 +0000
-Date: Thu, 22 Feb 2024 11:02:24 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>,
-	Yosry Ahmed <yosryahmed@google.com>, Chris Li <chrisl@kernel.org>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Hugh Dickins <hughd@google.com>
-Cc: David Howells <dhowells@redhat.com>, lsf-pc@lists.linux-foundation.org,
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [LSF/MM/BPF TOPIC] Large folios, swap and fscache
-Message-ID: <ZdeaQMDjsSmIRXHB@bombadil.infradead.org>
-References: <2701740.1706864989@warthog.procyon.org.uk>
- <Zbz8VAKcO56rBh6b@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gHCHfy8njA3ppsO6kS48k6qAzbwFunv0chVr0jKWbo5d26B3dII4nL4BNkKJpi00vfmJsL5HhlUX3MlyjlEvIm9p/0y316hkFlynyYt9mGjLCcSFkJ+iotsP6SxzytqMDDglboQ5qZ1LqeqCO3mF+2Uw9leNpubEUQq9LjMIw74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oj4RWKg3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6A65C433F1;
+	Thu, 22 Feb 2024 19:03:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708628616;
+	bh=6dCKFUCaPK3s9NlKR5EvQHYB2Jb2Ua3pARQMtG7h8OU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oj4RWKg3Fd3r5dvtDlOmeS7z2k5xGkBAY95eDdvX1yA6O1LtsmRcmdJMfz/yYiWOw
+	 +IxZVXKqq93ZErw6y4aaIDv75hFBAiahgo8ArIT/EzRgpvNMi30qC1rbYNhuXW0BpN
+	 mc1+M5qzfXOwgyq+LtMDHhvnwc7Bo74AS0mSMxZuEAxZfeTc3ZexyS0d2x1PTk635F
+	 gQeATt/gGYJOGzTBwf+1Ecrr6u+CwJ+xGcGhXk/QZBFIrrGboYN9PRhoT+YduLr+Y+
+	 cei8DLqOsPizyknVOQoYJK2inwhy3ajqRSxrhqeAdGSXXi3pzIn8388sgvsHg/bEFX
+	 QgU8fAfurxhKA==
+Date: Thu, 22 Feb 2024 12:03:34 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Seth Forshee <sforshee@kernel.org>,
+	Tycho Andersen <tycho@tycho.pizza>
+Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
+Message-ID: <20240222190334.GA412503@dev-arch.thelio-3990X>
+References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org>
+ <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zbz8VAKcO56rBh6b@casper.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
 
-On Fri, Feb 02, 2024 at 02:29:40PM +0000, Matthew Wilcox wrote:
-> So my modest proposal is that we completely rearchitect how we handle
-> swap.  Instead of putting swp entries in the page tables (and in shmem's
-> case in the page cache), we turn swap into an (object, offset) lookup
-> (just like a filesystem).  That means that each anon_vma becomes its
-> own swap object and each shmem inode becomes its own swap object.
-> The swap system can then borrow techniques from whichever filesystem
-> it likes to do (object, offset, length) -> n x (device, block) mappings.
+Hi Christian,
 
-What happened to Yosry or Chris's last year's pony [0]? In order to try
-to take a stab at this we started with adding large folios to tmpfs,
-which Daniel Gomez has taken on, as its a simple filesystem and with
-large folios can enable us to easily test large folio swap support too.
-Daniel first tried fixing lseek issue with huge pages [1] and on top of
-that he has patches (a new RFC not posted yet) which do add large folios
-support to tmpfs. Hugh has noted the lskeek changes are incorrect and
-suggested instead a fix for the failed tests in fstests. If we get
-agreement on Hugh's approach then we have a step forward with tmpfs and
-later we hope this will make it easier to test swap changes.
+On Tue, Feb 13, 2024 at 05:45:47PM +0100, Christian Brauner wrote:
+> This moves pidfds from the anonymous inode infrastructure to a tiny
+> pseudo filesystem. This has been on my todo for quite a while as it will
+> unblock further work that we weren't able to do simply because of the
+> very justified limitations of anonymous inodes. Moving pidfds to a tiny
+> pseudo filesystem allows:
+> 
+> * statx() on pidfds becomes useful for the first time.
+> * pidfds can be compared simply via statx() and then comparing inode
+>   numbers.
+> * pidfds have unique inode numbers for the system lifetime.
+> * struct pid is now stashed in inode->i_private instead of
+>   file->private_data. This means it is now possible to introduce
+>   concepts that operate on a process once all file descriptors have been
+>   closed. A concrete example is kill-on-last-close.
+> * file->private_data is freed up for per-file options for pidfds.
+> * Each struct pid will refer to a different inode but the same struct
+>   pid will refer to the same inode if it's opened multiple times. In
+>   contrast to now where each struct pid refers to the same inode. Even
+>   if we were to move to anon_inode_create_getfile() which creates new
+>   inodes we'd still be associating the same struct pid with multiple
+>   different inodes.
+> * Pidfds now go through the regular dentry_open() path which means that
+>   all security hooks are called unblocking proper LSM management for
+>   pidfds. In addition fsnotify hooks are called and allow for listening
+>   to open events on pidfds.
+> 
+> The tiny pseudo filesystem is not visible anywhere in userspace exactly
+> like e.g., pipefs and sockfs. There's no lookup, there's no complex
+> inode operations, nothing. Dentries and inodes are always deleted when
+> the last pidfd is closed.
+> 
+> The code is entirely optional and fairly small. If it's not selected we
+> fallback to anonymous inodes. Heavily inspired by nsfs which uses a
+> similar stashing mechanism just for namespaces.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-Its probably then a good time to ask, do we have a list of tests for
-swap to ensure we don't break things if we add large folio support?
-We can at least start with a good baseline of tests for that.
+Apologies if this has already been reported or fixed but I did not see
+anything on the mailing list.
 
-[0] https://lwn.net/Articles/932077/
-[1] https://lkml.kernel.org/r/20240209142901.126894-1-da.gomez@samsung.com
+On next-20240221 and next-20240222, with CONFIG_FS_PID=y, some of my
+services such as abrtd, dbus, and polkit fail to start on my Fedora
+machines, which causes further isssues like failing to start network
+interfaces with NetworkManager. I can easily reproduce this in a Fedora
+39 QEMU virtual machine, which has:
 
-  Luis
+  # systemctl --version
+  systemd 254 (254.9-1.fc39)
+  +PAM +AUDIT +SELINUX -APPARMOR +IMA +SMACK +SECCOMP -GCRYPT +GNUTLS +OPENSSL +ACL +BLKID +CURL +ELFUTILS +FIDO2 +IDN2 -IDN -IPTC +KMOD +LIBCRYPTSETUP +LIBFDISK +PCRE2 +PWQUALITY +P11KIT +QRENCODE +TPM2 +BZIP2 +LZ4 +XZ +ZLIB +ZSTD +BPF_FRAMEWORK +XKBCOMMON +UTMP +SYSVINIT
+   default-hierarchy=unified
+
+Unfortunately, there does not really appear to be much information to
+provide off bat but I am more than happy to try and gather whatever
+information would be helpful if you are not able to reproduce locally.
+
+  # uname -r
+  6.8.0-rc1-00017-ga1a466d5af6c
+
+  # zgrep CONFIG_FS_PID /proc/config.gz
+  CONFIG_FS_PID=y
+
+  # systemctl status polkit.service
+  × polkit.service - Authorization Manager
+       Loaded: loaded (/usr/lib/systemd/system/polkit.service; static)
+      Drop-In: /usr/lib/systemd/system/service.d
+               └─10-timeout-abort.conf
+       Active: failed (Result: timeout) since Thu 2024-02-22 11:35:52 MST; 11min ago
+         Docs: man:polkit(8)
+      Process: 844 ExecStart=/usr/lib/polkit-1/polkitd --no-debug (code=killed, signal=TERM)
+     Main PID: 844 (code=killed, signal=TERM)
+          CPU: 116ms
+
+  Feb 22 11:34:22 qemu systemd[1]: Starting polkit.service - Authorization Manager...
+  Feb 22 11:34:22 qemu polkitd[844]: Started polkitd version 123
+  Feb 22 11:34:22 qemu polkitd[844]: Loading rules from directory /etc/polkit-1/rules.d
+  Feb 22 11:34:22 qemu polkitd[844]: Loading rules from directory /usr/share/polkit-1/rules.d
+  Feb 22 11:34:22 qemu polkitd[844]: Finished loading, compiling and executing 5 rules
+  Feb 22 11:34:22 qemu polkitd[844]: Acquired the name org.freedesktop.PolicyKit1 on the system bus
+  Feb 22 11:35:52 qemu systemd[1]: polkit.service: start operation timed out. Terminating.
+  Feb 22 11:35:52 qemu systemd[1]: polkit.service: Failed with result 'timeout'.
+  Feb 22 11:35:52 qemu systemd[1]: Failed to start polkit.service - Authorization Manager.
+
+vs.
+
+  # uname -r
+  6.8.0-rc1-00016-gd68c1231c030
+
+  # systemctl status polkit.service
+  ● polkit.service - Authorization Manager
+       Loaded: loaded (/usr/lib/systemd/system/polkit.service; static)
+      Drop-In: /usr/lib/systemd/system/service.d
+               └─10-timeout-abort.conf
+       Active: active (running) since Thu 2024-02-22 11:30:38 MST; 21s ago
+         Docs: man:polkit(8)
+     Main PID: 843 (polkitd)
+        Tasks: 4 (limit: 19010)
+       Memory: 5.0M
+          CPU: 169ms
+       CGroup: /system.slice/polkit.service
+               └─843 /usr/lib/polkit-1/polkitd --no-debug
+
+  Feb 22 11:30:38 qemu systemd[1]: Starting polkit.service - Authorization Manager...
+  Feb 22 11:30:38 qemu polkitd[843]: Started polkitd version 123
+  Feb 22 11:30:38 qemu polkitd[843]: Loading rules from directory /etc/polkit-1/rules.d
+  Feb 22 11:30:38 qemu polkitd[843]: Loading rules from directory /usr/share/polkit-1/rules.d
+  Feb 22 11:30:38 qemu polkitd[843]: Finished loading, compiling and executing 5 rules
+  Feb 22 11:30:38 qemu polkitd[843]: Acquired the name org.freedesktop.PolicyKit1 on the system bus
+  Feb 22 11:30:38 qemu systemd[1]: Started polkit.service - Authorization Manager.
+
+or
+
+  # uname -r
+  6.8.0-rc1-00017-ga1a466d5af6c
+
+  # zgrep CONFIG_FS_PID /proc/config.gz
+  # CONFIG_FS_PID is not set
+
+  # systemctl status polkit.service
+  ● polkit.service - Authorization Manager
+       Loaded: loaded (/usr/lib/systemd/system/polkit.service; static)
+      Drop-In: /usr/lib/systemd/system/service.d
+               └─10-timeout-abort.conf
+       Active: active (running) since Thu 2024-02-22 11:52:41 MST; 5min ago
+         Docs: man:polkit(8)
+     Main PID: 845 (polkitd)
+        Tasks: 4 (limit: 19010)
+       Memory: 5.0M
+          CPU: 177ms
+       CGroup: /system.slice/polkit.service
+               └─845 /usr/lib/polkit-1/polkitd --no-debug
+
+  Feb 22 11:52:41 qemu systemd[1]: Starting polkit.service - Authorization Manager...
+  Feb 22 11:52:41 qemu polkitd[845]: Started polkitd version 123
+  Feb 22 11:52:41 qemu polkitd[845]: Loading rules from directory /etc/polkit-1/rules.d
+  Feb 22 11:52:41 qemu polkitd[845]: Loading rules from directory /usr/share/polkit-1/rules.d
+  Feb 22 11:52:41 qemu polkitd[845]: Finished loading, compiling and executing 5 rules
+  Feb 22 11:52:41 qemu polkitd[845]: Acquired the name org.freedesktop.PolicyKit1 on the system bus
+  Feb 22 11:52:41 qemu systemd[1]: Started polkit.service - Authorization Manager.
+
+I looked your most recent push of vfs.pidfd but I did not see anything
+that would have appeared to fix this, so I did not test it.
+
+Cheers,
+Nathan
 
