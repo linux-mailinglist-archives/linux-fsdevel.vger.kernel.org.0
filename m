@@ -1,114 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-12436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CFF785F4CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 10:44:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 374D085F525
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 11:00:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB28F2871AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 09:44:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AF391C244F6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 10:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3417345C08;
-	Thu, 22 Feb 2024 09:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2232339AEE;
+	Thu, 22 Feb 2024 10:00:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Lft8I9ui"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fl7s6ciS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com [209.85.217.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3A623EA93
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 09:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B873D381B8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 10:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708594936; cv=none; b=NU/i3j46gIQxmYimhT4H4//B/BluKMARGoNyBT5u7Ee2uR+YAuNkwnjuOeTtR/fZgtuttdNnGQWwAx3N4LQwFTWpaUwdmVG5F14bZSVFHiqCRJiGcN1OrfPwrXHIo+8b6UZ/C/sHA5FdPNdA8nXzs9hGbSyayaN7Uf5FohEIwDs=
+	t=1708596013; cv=none; b=UWdqvo6mvxvLIN0hVyO4+28h+vkRHZBow5MgzW6WOH7QUAnhvLuGcrUboxcsjuu3AdjE/EHa2N9LeIzHcvpc/F73/qt/o9yKK+uj+RZsCAa2Ox0LQQmANfTy5p9b7Z3xX7zwX7LtVl1Ybm3+j5h4PAvZSLqqOzxs4SWrZ6Gukqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708594936; c=relaxed/simple;
-	bh=ah58RzzFtf/QZ8WIKwVSkToS/angBk2sZBegYkjTVKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s7h2Mp9n9Kh6Ihg4bkI8UDrrwFT6wlgYl18gBLBaDLj98DwJSspaSHIdEyTfDsy/jZDlRN5OPWH7r+chJgAFcUJVsBIxku/rFs6FHtBQEYD5oWtmPDYuSW9Yewk3G6XWhvDVSInVDYlqrMJKxd44vSkFCZqQCPcG/cHB1drU0Vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Lft8I9ui; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 22 Feb 2024 04:42:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1708594932;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/9kSiEtJHUHHWQj1wTEcJDePb3j+S/ewbxUGuLw4+wU=;
-	b=Lft8I9uiOXcqQyQUai0lrAf6AWR+BEusn/kEOxS4KQ/YRPf+u2kR8lTm8+w6Hxw8lcycqj
-	OHZYThCXDF2HbAmefuOk1nd1osIE3VqPGwtz0z0+4XuPpYkbcsZTfyRroLUlqqMJC2ZC8j
-	3uOHqHu8Gbf55pMA7CF+quTSZ1NxCJw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Josef Bacik <josef@toxicpanda.com>, linux-bcachefs@vger.kernel.org, 
-	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lsf-pc@lists.linux-foundation.org
-Subject: Re: [LSF TOPIC] statx extensions for subvol/snapshot filesystems &
- more
-Message-ID: <w534uujga5pqcbhbc5wad7bdt5lchxu6gcmwvkg6tdnkhnkujs@wjqrhv5uqxyx>
-References: <2uvhm6gweyl7iyyp2xpfryvcu2g3padagaeqcbiavjyiis6prl@yjm725bizncq>
- <CAJfpeguBzbhdcknLG4CjFr12_PdGo460FSRONzsYBKmT9uaSMA@mail.gmail.com>
- <20240221210811.GA1161565@perftesting>
- <CAJfpegucM5R_pi_EeDkg9yPNTj_esWYrFd6vG178_asram0=Ew@mail.gmail.com>
+	s=arc-20240116; t=1708596013; c=relaxed/simple;
+	bh=xY3a5A8TczyzS4EQy7YnxSv2e9KYZLcka7tIrv2ih1k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nqbd31aa19VdmqdeXdPW4sZR2UV0KjkPXWZCrhPc1knETFjSLaZ5RjKyLIq6bsp4BluM6bcUk63C3XnyeRp64osc4tf2boapCbjObOMJebQ38AxVjmunKHo+8e/eiJPn3W07ojlZucZlW6y+dBPG2XdzRNFV8jmqCmbCG24qvPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fl7s6ciS; arc=none smtp.client-ip=209.85.217.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4704c69a3d9so1093321137.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 02:00:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1708596009; x=1709200809; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xY3a5A8TczyzS4EQy7YnxSv2e9KYZLcka7tIrv2ih1k=;
+        b=Fl7s6ciS+4en1deeuOU1AB9WFgIiGeW1f4XEAekJTZ75iq/9K0zrmPX8NhW9X9AUuT
+         rIQ1bhTNP1/ArqGkQo6HiNaG0lvbiRuCiwjxV8zRR931e/kxKipH+1tXcxSwhCciQD9F
+         swg16CJUpxbze9NfoejW0g7KuioJZM3daXgKi0E2vxseSMc6+r2+y6uYd8LipL/9aPf2
+         yuz7aJTTtJDtHnmyioZxhaQphffvs3V0hrDSGHVrhPHJRUziBd/e2Rkt1xZwqbP9HYzY
+         u1ipZpJD+g7DjFIyZZEWx98Hu+sWJfypdUg9c0mxSGGmqpL7L2EcLXkzklunvFDnY198
+         jCXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708596009; x=1709200809;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xY3a5A8TczyzS4EQy7YnxSv2e9KYZLcka7tIrv2ih1k=;
+        b=G2oftNmpNtR6ye1+afuVFNNerK/b9BSKwNt9kewAenCXcDOwTWpjCiNZypkEYOOVyt
+         N6seEArtZNv4FEbLe55+0CNQe0cCPNS+uU9OSlxCkyr6XnMOFNazn47MevnRus4mTQv3
+         qTwIGTINKgWmmrNBroaDBQaoYHE3aHH9R/8F1EhyGBf9dhDPbVZhLJ8nZ8/VxcIUxXhi
+         lEBh0xOLB5FVBZ1rCSYsLileHEPUDTE29PTJfQ7oru84hxGVaA6f9hKnszySXI+TTQ2O
+         8Y8TEltpY7YC/9LVcnYpdYlLew4aVYtUDst8mecKVjrHZdCSanpiTKf0Xi7BzEdugaiz
+         F+BA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhbSOaCG/iQN4pPw9mvppe1GZTWVT//nkpoKVrIDnP1EIjo+3VPo7vKWjy0YU90FKFsln2zLCDd2vDY/5y7WzLeybwW7w3CiATBZKR4g==
+X-Gm-Message-State: AOJu0YyXG0ON9v3dl+VsL3iYHIMMtrQPdo61IdqeegNZRCd8cKiKBxLj
+	0bLdJwkwBl3gELpFjRRVG/LX4Rt+aKUh7g+ilO/98W7WuDfncd2+QCS6BfDSl7/lKb8+dJJli5n
+	2N3NEp/IQj0dWZDWF0ncPM8b8HYF2zk80lF9H
+X-Google-Smtp-Source: AGHT+IHtNH9SG5kviHG0Zp4ObgcElY0QaPwq/WKIrJZZn0CRZo740etRowxrv/bo9NQSJHSXY5Ib9q+PDO3ajLn3tTQ=
+X-Received: by 2002:a05:6102:1626:b0:470:4a6e:4a4e with SMTP id
+ cu38-20020a056102162600b004704a6e4a4emr14352031vsb.29.1708596009136; Thu, 22
+ Feb 2024 02:00:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegucM5R_pi_EeDkg9yPNTj_esWYrFd6vG178_asram0=Ew@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20240221194052.927623-1-surenb@google.com> <20240221194052.927623-25-surenb@google.com>
+In-Reply-To: <20240221194052.927623-25-surenb@google.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Thu, 22 Feb 2024 10:59:57 +0100
+Message-ID: <CAH5fLgiyouEuDGkbm3fB6WTOxAnTiDx=z6ADx7HN3BTMAO851g@mail.gmail.com>
+Subject: Re: [PATCH v4 24/36] rust: Add a rust helper for krealloc()
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
+	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
+	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
+	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org, 
+	ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org, 
+	ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org, 
+	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
+	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 22, 2024 at 10:14:20AM +0100, Miklos Szeredi wrote:
-> On Wed, 21 Feb 2024 at 22:08, Josef Bacik <josef@toxicpanda.com> wrote:
-> >
-> > On Wed, Feb 21, 2024 at 04:06:34PM +0100, Miklos Szeredi wrote:
-> > > On Wed, 21 Feb 2024 at 01:51, Kent Overstreet <kent.overstreet@linux.dev> wrote:
-> > > >
-> > > > Recently we had a pretty long discussion on statx extensions, which
-> > > > eventually got a bit offtopic but nevertheless hashed out all the major
-> > > > issues.
-> > > >
-> > > > To summarize:
-> > > >  - guaranteeing inode number uniqueness is becoming increasingly
-> > > >    infeasible, we need a bit to tell userspace "inode number is not
-> > > >    unique, use filehandle instead"
-> > >
-> > > This is a tough one.   POSIX says "The st_ino and st_dev fields taken
-> > > together uniquely identify the file within the system."
-> > >
-> >
-> > Which is what btrfs has done forever, and we've gotten yelled at forever for
-> > doing it.  We have a compromise and a way forward, but it's not a widely held
-> > view that changing st_dev to give uniqueness is an acceptable solution.  It may
-> > have been for overlayfs because you guys are already doing something special,
-> > but it's not an option that is afforded the rest of us.
-> 
-> Overlayfs tries hard not to use st_dev to give uniqueness and instead
-> partitions the 64bit st_ino space within the same st_dev.  There are
-> various fallback cases, some involve switching st_dev and some using
-> non-persistent st_ino.
+On Wed, Feb 21, 2024 at 8:41=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> From: Kent Overstreet <kent.overstreet@linux.dev>
+>
+> Memory allocation profiling is turning krealloc() into a nontrivial
+> macro - so for now, we need a helper for it.
+>
+> Until we have proper support on the rust side for memory allocation
+> profiling this does mean that all Rust allocations will be accounted to
+> the helper.
+>
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Cc: Miguel Ojeda <ojeda@kernel.org>
+> Cc: Alex Gaynor <alex.gaynor@gmail.com>
+> Cc: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Gary Guo <gary@garyguo.net>
+> Cc: "Bj=C3=B6rn Roy Baron" <bjorn3_gh@protonmail.com>
+> Cc: Benno Lossin <benno.lossin@proton.me>
+> Cc: Andreas Hindborg <a.hindborg@samsung.com>
+> Cc: Alice Ryhl <aliceryhl@google.com>
+> Cc: rust-for-linux@vger.kernel.org
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
-Yeah no, you can't crap multiple 64 bit inode number spaces into 64
-bits: pigeonhole principle.
+Currently, the Rust build doesn't work throughout the entire series
+since there are some commits where krealloc is missing before you
+introduce the helper. If you introduce the helper first before
+krealloc stops being an exported function, then the Rust build should
+work throughout the entire series. (Having both the helper and the
+exported function at the same time is not a problem.)
 
-We need something better than "hacks".
+With the patch reordered:
 
-> What overlayfs does may or may not be applicable to btrfs/bcachefs,
-> but that's not my point.  My point is that adding a flag to statx does
-> not solve anything.   You can't just say that from now on btrfs
-> doesn't have use unique st_ino/st_dev because we've just indicated
-> that in statx and everything is fine.   That will trigger the
-> no-regressions rule and then it's game over.  At least I would expect
-> that to happen.
-> 
-> What we can do instead is introduce a new API that is better,
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-This isn't a serious proposal.
+Alice
 
