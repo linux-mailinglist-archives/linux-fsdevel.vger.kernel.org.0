@@ -1,111 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-12444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE1685F68E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:10:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BBBB85F69F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 12:19:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D93D7284167
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 11:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 396631C22BD7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 11:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48C023FE2A;
-	Thu, 22 Feb 2024 11:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1164D446D5;
+	Thu, 22 Feb 2024 11:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Sr7jgVvT"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xRwnfgWB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB98F17597
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 11:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B1AD3E49E
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 11:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708600205; cv=none; b=p3OBPZ2vTDvIlau/7OhodGbw2X8meL970FD3q71kFHMNuMhBarerk6mfw7BcumF0udIsgNfUNSASaVBJeYxQR/8rqTStKssiAnWW3803fnhlDwqTD+KXp8yPQ4Xj78bHA86igbBRbk/56ZZ9nmF/AyOlNVqLyP+jrr/Vur30Pzg=
+	t=1708600770; cv=none; b=LDJBdIJDnHiFywyTWgpluhjpehiLDVImQ6r+ici98Sys5K5MGAaL3yh8mBK47FFc/rpxlC8kLz3bzSdbVKs/3+yS7D9Ho82OCYyMYvx8oVAv6gyl60cYHK4NxUCsonv9DCMd/MaI0HsHewd2hPmLu+xu3GS7ZUSeUjTAbh8W5Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708600205; c=relaxed/simple;
-	bh=Bu7lvofasTW9d5Bh4CSqrChZUdm21wNt51NcCaR0PH8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gIqgVPeF5AkM7Avcsoj3dBJ19VyLihELF66htfHYwYec16ChtbWjB2AjUGjflPAxCBfEEqsWBaoMKoRqCgdGHhHl5+KeK3Ukea3T/T73z7c7PrrjRNqTbhB42yl0MvmMnZl4deE1Z2d9m4n38ZW0zFUVqP+iHnPIk2nBGTVKxJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Sr7jgVvT; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a3e8c1e4aa7so204772366b.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 03:10:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1708600202; x=1709205002; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fxkD4d19CdTWZhnnGtoPS2DW1jSoJCTR/Pok21JwV2U=;
-        b=Sr7jgVvTuvD/mTGK+wXDCx46fkSDgLAKhq57LKl3nZjW5IEMfwpH2w0v9BUFTdCZiI
-         zNcvWVAwJz5W4DAH5Bo2wwrk7iK+ByzrOAaBEk7cjCmEHcKjQBh1x9YtZEo7oi8IjtEf
-         GRc8Cx06j6eV8OQa1KDFnFS6rbooe7pVzyMng=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708600202; x=1709205002;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fxkD4d19CdTWZhnnGtoPS2DW1jSoJCTR/Pok21JwV2U=;
-        b=D41skoZhZmPxzL6XaETaPVSl35TS1FlbDMw46CEwylzvPJdzg0xe0bSOWhQtj4Kzcy
-         W44OwRJAxq9Vr7T+2a+3XfCO4Five/cRMHuN//r4BSpgNK/UCU63pLCgCBxZIDF/6Hs8
-         5stoDdjWyuyjl/UKSXarzN3h+a4qGSuyKDxLITxsRserH0wpnKrDTJiAOH7s94e7AiG0
-         AEwyLBGpCM58AwofA6ETxXPaFFGGkh80XCl4Qj91AlCvdvrUE8x/5nadcvAueG6j5EYt
-         JhUofpFvFv1Rn1IvWz6T6Hy/x0+GafOY/BO6FyPIlBN8vk+m9y3t6AbxTj3U1DHKEHd6
-         F+Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVwQ00BStIeeY5JoTVcwKfjb5bVrSQo3xbSs1e+2kE4bclm/LTo2SosN7CE0bznyV0WOtuoLXYhG73Q+t/WsWMcDkDk562NPyp/h5JSUw==
-X-Gm-Message-State: AOJu0YxzXuwbAwanXRw3j9xA7c34b3cUPnOD+hUjoRP2UteT2OIe9bqa
-	gYvtbyY4CgM71muIUUEdfHPoI1XkPrBFx2u4xdxzW9Y6rYIcDc2WDcRTBPCFglaTn3O0l2F1jkX
-	is5hflthSovpEoO0rvk+MVYWLTizAD8lYcL211g==
-X-Google-Smtp-Source: AGHT+IHsvOCX4ayg9b6VZxHjaOakGaF6gj23Si5x85CarUnVRpuCrMncvrHtXLv1jkyxyqc+jPa61eTG7gGMINk4q+I=
-X-Received: by 2002:a17:906:3e15:b0:a3e:d450:d3e2 with SMTP id
- k21-20020a1709063e1500b00a3ed450d3e2mr6619029eji.47.1708600201092; Thu, 22
- Feb 2024 03:10:01 -0800 (PST)
+	s=arc-20240116; t=1708600770; c=relaxed/simple;
+	bh=/Ljrr6CJk+mIUZ+I8p47GxKWHfPQCKx+XO5pmkj2Zdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QpEG0lHiONHGqMl0ndL1AOyGqHWMBG1MERqlu+7Rkt0cfxAWV5C+Om4DbJANpgrjDMB9pzQIApK4Da9rhJBZP72JHNKqKTxn2ZjNTjHBv4PNmV9fwZ8qPfJqyUpTCdfJcP4QFdKPSDAg10Z90KMlrsWDytnERE9O3VyAuW/Cn9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xRwnfgWB; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 22 Feb 2024 06:19:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1708600766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SLtXP+zArhGcaGCh9YToDwJ5gVLqg/X2spMjxvpVolE=;
+	b=xRwnfgWBwskIO9s8RehDD2wEevpdAGb31vUwSCo5owmykKEtrkxGUWhsToPDvKrJIMX6IE
+	InRMHGnQcTltMb7RlsvY4dnPxWwExlCuk9of76Y8Fmnl7z7EowHUqukB4ToGLfrPzmfeuU
+	ukkv9popOugyzjK0PAJ78Bi1TNRQhPg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-bcachefs@vger.kernel.org, 
+	linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lsf-pc@lists.linux-foundation.org
+Subject: Re: [LSF TOPIC] statx extensions for subvol/snapshot filesystems &
+ more
+Message-ID: <yaq7zpqe3x67igm6kvzbs4jczgd7pqhx733jha4fmzihr6e67c@pm5nfkpabtk7>
+References: <2uvhm6gweyl7iyyp2xpfryvcu2g3padagaeqcbiavjyiis6prl@yjm725bizncq>
+ <CAJfpeguBzbhdcknLG4CjFr12_PdGo460FSRONzsYBKmT9uaSMA@mail.gmail.com>
+ <20240221210811.GA1161565@perftesting>
+ <CAJfpegucM5R_pi_EeDkg9yPNTj_esWYrFd6vG178_asram0=Ew@mail.gmail.com>
+ <w534uujga5pqcbhbc5wad7bdt5lchxu6gcmwvkg6tdnkhnkujs@wjqrhv5uqxyx>
+ <CAJfpegtxv3Omm3227c-1vprHYVTd1n3WoOxDKUSioNSP5pdeGw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d997c02b-d5ef-41f8-92b6-8c6775899388@spawn.link>
- <CAOQ4uxgZR4OtCkdrpcDGCK-MqZEHcrx+RY4G94saqaXVkL4cKA@mail.gmail.com>
- <23a6120a-e417-4ba8-9988-19304d4bd229@spawn.link> <93b170b4-9892-4a32-b4f1-6a18b67eb359@fastmail.fm>
- <BAQ4wsbXlrpVWedBrk1ij49tru5E6jxB11oY2VoWH5C7scO9FgmKRkQIsVekwRNgfxxxwWwWapZlBGSGQFSjSVhMs01urB1nLE4-_o5OOiU=@spawn.link>
- <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com>
- <5b7139d5-52fd-4fd0-8fa0-df0a38d96a33@spawn.link> <CAJfpeguvX1W2M9kY-4Tx9oJhSYE2+nHQuGXDNPw+1_9jtMO7zA@mail.gmail.com>
- <CAJfpegssrySj4Yssu4roFHZn1jSPZ-FLfb=HX4VDsTP2jY5BLA@mail.gmail.com> <6fb38202-4017-4acd-8fb8-673eee7182b9@spawn.link>
-In-Reply-To: <6fb38202-4017-4acd-8fb8-673eee7182b9@spawn.link>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 22 Feb 2024 12:09:49 +0100
-Message-ID: <CAJfpegscxYn9drVRkbVhRztL-+V0+oge8ZqPhgt4BAnvzaPzwQ@mail.gmail.com>
-Subject: Re: [fuse-devel] Proxmox + NFS w/ exported FUSE = EIO
-To: Antonio SJ Musumeci <trapexit@spawn.link>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Amir Goldstein <amir73il@gmail.com>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	fuse-devel <fuse-devel@lists.sourceforge.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtxv3Omm3227c-1vprHYVTd1n3WoOxDKUSioNSP5pdeGw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 22 Feb 2024 at 02:26, Antonio SJ Musumeci <trapexit@spawn.link> wrote:
+On Thu, Feb 22, 2024 at 11:25:12AM +0100, Miklos Szeredi wrote:
+> On Thu, 22 Feb 2024 at 10:42, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> 
+> > Yeah no, you can't crap multiple 64 bit inode number spaces into 64
+> > bits: pigeonhole principle.
+> 
+> Obviously not.  And I have no idea about the inode number allocation
+> strategy of bcachefs and how many bits would be needed for subvolumes,
+> etc..   I was just telling what overlayfs does and why.  It's a
+> pragmatic solution that works.  I'd very much like to move to better
+> interfaces, but creating good interfaces is never easy.
 
-> I'll try it when I get some cycles in the next week or so but... I'm not
-> sure I see how this would address it.  Is this not still marking the
-> inode bad. So while it won't forget it perhaps it will still error out.
-> How does this keep ".." of root being looked up?
->
-> I don't know the code well but I'd have thought the reason for the
-> forget was because the lookup of the parent fails.
+You say "creating good interfaces is never easy" - but we've got a
+proposal, that's bounced around a fair bit, and you aren't saying
+anything concrete.
 
-It shouldn't be looking up the parent of root.   Root should always be
-there, and the only way I see root disappearing is by marking it bad.
+> > We need something better than "hacks".
+> 
+> That's the end goal, obviously.   But we also need to take care of
+> legacy.  Always have.
 
-If the patch makes a difference, then you need to find out why the
-root is marked bad, since the filesystem will still fail in that case.
-But at least the kernel won't do stupid things.
+So what are you proposing?
 
-I think the patch is correct and is needed regardless of the outcome
-of your test.  But there might be other kernel bugs involved, so
-definitely need to see what happens.
+> > This isn't a serious proposal.
+> 
+> If not, then what is?
+> 
+> BTW to expand on the st_dev_v2 idea, it can be done by adding a
+> STATX_DEV_V2 query mask.
 
-Thanks,
-Miklos
+Didn't you see Josef just say they're trying to get away from st_dev?
+
+> The other issue is adding subvolume ID.  You seem to think that it's
+> okay to add that to statx and let userspace use (st_ino, st_subvoid)
+> to identify the inode.  I'm saying this is wrong, because it doesn't
+> work in the general case.
+
+No, I explicitly said that when INO_NOT_UNIQUE is set the _filehandle_
+would be the means to identify the file.
 
