@@ -1,93 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-12526-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12527-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84A6A860873
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 02:45:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22BC08608A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 03:01:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4C9F1C21F4C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 01:45:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 536381C222A3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 02:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34500B66C;
-	Fri, 23 Feb 2024 01:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B84A5BA34;
+	Fri, 23 Feb 2024 02:01:00 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01ABAD53;
-	Fri, 23 Feb 2024 01:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F72B65F;
+	Fri, 23 Feb 2024 02:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708652712; cv=none; b=cQgycTtw5w7fMyH80AD+0P8SguxmDZn6eirE0EaTVUZ26fRv9nLHKXJA04uUyO8KJVBSqK8kt0grthnvZ0bUp88L+PZ/fqAeHCiBfRRHZDykZicuIEGnZ9Q8GhGdzvQ3EsZ374k6k574lfN6TMwHEZrJU2a3yF33qCMoPwh6Vn8=
+	t=1708653660; cv=none; b=mNwnNQXMNY+w5xFHjsMPy5GxK35xh0QpAxH3tsvpGtxiBMmG6X1kef3jFoVdxbwVrc4WgN2qqtCaHzXwBFkq45ZwqMXGe+4SgLmkKpuMRWNaiQBcS8knFO3xt7zCsKwunxktXhVa8yq+SsaXZPRW78/wGRueGi32Mq6+wPMcQqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708652712; c=relaxed/simple;
-	bh=n6RPnC6yufWY3n3pn0vWSMZ9igCtwEYuAlgxz4yas28=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pnqhgnz1FFbs/Gt/Px/+2ZrSoWvMQh7e2wdf3hsBOeoBZM+EbdFmxnaAPOnh6fjgJN6ievapZ1JC/aWhXzgvswbr9vCj9HUck8/v2ECVemLJhda2X/hvnIvhMqlrcSKG791Ep8fGs0+YprOtq4scPGZR8wuzOzARrHeTCth2tVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F8AFC433C7;
-	Fri, 23 Feb 2024 01:45:10 +0000 (UTC)
-Date: Thu, 22 Feb 2024 20:47:01 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Huang Yiwei <quic_hyiwei@quicinc.com>
-Cc: <mhiramat@kernel.org>, <mark.rutland@arm.com>, <mcgrof@kernel.org>,
- <keescook@chromium.org>, <j.granados@samsung.com>,
- <mathieu.desnoyers@efficios.com>, <corbet@lwn.net>,
- <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <quic_bjorande@quicinc.com>, <quic_tsoni@quicinc.com>,
- <quic_satyap@quicinc.com>, <quic_aiquny@quicinc.com>, <kernel@quicinc.com>,
- Ross Zwisler <zwisler@google.com>, Joel Fernandes <joel@joelfernandes.org>
-Subject: Re: [PATCH v5] tracing: Support to dump instance traces by
- ftrace_dump_on_oops
-Message-ID: <20240222204701.6b9de71e@gandalf.local.home>
-In-Reply-To: <20240208131814.614691-1-quic_hyiwei@quicinc.com>
-References: <20240208131814.614691-1-quic_hyiwei@quicinc.com>
-X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1708653660; c=relaxed/simple;
+	bh=tJiSDAP6ww9IEiLJBdFQMRvh+Pqs9jlbiF9Qlg7Fqa0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FDjMQtNb8EjQChZlWcE8GUO/Ge+thYGRVH1cZbYWkCBIQdLdPPyFtq3DeZa78pMqDAmQtJPfvsO5n4iZXqpz0q8DiZXvu2QH/zqr1Tj5j6V73veNlVaHay8maP1KRgArvm1jO9AwN62HuDtq4C9QeosbRLJFE8YdauY42Sq7vEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
+Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
+	by mail.parknet.co.jp (Postfix) with ESMTPSA id C7B95233BA7E;
+	Fri, 23 Feb 2024 10:52:14 +0900 (JST)
+Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
+	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-1) with ESMTPS id 41N1qDIW204627
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 23 Feb 2024 10:52:14 +0900
+Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
+	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-1) with ESMTPS id 41N1qDo8963449
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Fri, 23 Feb 2024 10:52:13 +0900
+Received: (from hirofumi@localhost)
+	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 41N1qCr5963448;
+	Fri, 23 Feb 2024 10:52:12 +0900
+From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Gwendal
+ Grignou <gwendal@chromium.org>, dlunev@chromium.org
+Subject: Re: [PATCH] fat: ignore .. subdir and always add a link to dirs
+In-Reply-To: <20240222203013.2649457-1-cascardo@igalia.com> (Thadeu Lima de
+	Souza Cascardo's message of "Thu, 22 Feb 2024 17:30:13 -0300")
+References: <20240222203013.2649457-1-cascardo@igalia.com>
+Date: Fri, 23 Feb 2024 10:52:12 +0900
+Message-ID: <87bk88oskz.fsf@mail.parknet.co.jp>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Thu, 8 Feb 2024 21:18:14 +0800
-Huang Yiwei <quic_hyiwei@quicinc.com> wrote:
+Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
 
-> Currently ftrace only dumps the global trace buffer on an OOPs. For
-> debugging a production usecase, instance trace will be helpful to
-> check specific problems since global trace buffer may be used for
-> other purposes.
->=20
-> This patch extend the ftrace_dump_on_oops parameter to dump a specific
-> or multiple trace instances:
->=20
->   - ftrace_dump_on_oops=3D0: as before -- don't dump
->   - ftrace_dump_on_oops[=3D1]: as before -- dump the global trace buffer
->   on all CPUs
->   - ftrace_dump_on_oops=3D2 or =3Dorig_cpu: as before -- dump the global
->   trace buffer on CPU that triggered the oops
->   - ftrace_dump_on_oops=3D<instance_name>: new behavior -- dump the
->   tracing instance matching <instance_name>
->   - ftrace_dump_on_oops[=3D2/orig_cpu],<instance1_name>[=3D2/orig_cpu],
->   <instrance2_name>[=3D2/orig_cpu]: new behavior -- dump the global trace
->   buffer and multiple instance buffer on all CPUs, or only dump on CPU
->   that triggered the oops if =3D2 or =3Dorig_cpu is given
->=20
-> Also, the sysctl node can handle the input accordingly.
->=20
-> Cc: Ross Zwisler <zwisler@google.com>
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> Signed-off-by: Huang Yiwei <quic_hyiwei@quicinc.com>
+> The tools used for creating images for the Lego Mindstrom EV3 are not
+> adding '.' and '..' entry in the 'Projects' directory.
+>
+> Without this fix, the kernel can not fill the inode structure for
+> 'Projects' directory.
+>
+> See https://github.com/microsoft/pxt-ev3/issues/980
+> And https://github.com/microsoft/uf2-linux/issues/6
+>
+> When counting the number of subdirs, ignore .. subdir and add one when
+> setting the initial link count for directories. This way, when .. is
+> present, it is still accounted for, and when neither . or .. are present, a
+> single link is still done, as it should, since this link would be the one
+> from the parent directory.
+>
+> With this fix applied, we can mount an image with such empty directories,
+> access them, create subdirectories and remove them.
 
-This patch failed with the following warning:
+This looks like the bug of those tools, isn't it?
 
-  kernel/trace/trace.c:10029:6: warning: no previous prototype for =E2=80=
-=98ftrace_dump_one=E2=80=99 [-Wmissing-prototypes]
-
--- Steve
+Thanks.
+-- 
+OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
