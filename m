@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-12541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A7C860BBE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 09:08:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BD85860BD0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 09:10:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E83121F25412
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 08:08:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD2631C2161B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 08:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B06F17583;
-	Fri, 23 Feb 2024 08:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E550A17583;
+	Fri, 23 Feb 2024 08:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jg3XufS0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cq5xWvjW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA79171A3;
-	Fri, 23 Feb 2024 08:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F015168CE;
+	Fri, 23 Feb 2024 08:10:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708675694; cv=none; b=gYQJYZKALYYDrvjYOmPb6PsZ4naS5uvKkWADeIEiS/Dsav4kbCWWak/e1mi4Nij9cuUNJ+/+6BspzbhHOyaJX+GPlLBJAsx1FDFDAUBeAMXc9PRs2cjPXlT96NGC+tsbPknmar/5wzVlymKMZCuN0nPRJ8ITBvEfhoHwmxjsmIw=
+	t=1708675803; cv=none; b=OARIarYbU1/R9ZAtYhfUhZCpDQ0uQjxemVFEHNPh+9Mq7YXmpyGVLyWLVrpvjJkEKiY52enWnZjYQzmQCD7b3EF45zq/KO9rFPC/sNpfesQioWAFCMJ/R/zt/gcEji030Py1pTAsTw7SL/udT+esYDXB5vurMhpsYxH8k5zrtb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708675694; c=relaxed/simple;
-	bh=sHWn05MJttavUBMB12+GNMdadLjZiLx3RXhhBDrmsJ4=;
+	s=arc-20240116; t=1708675803; c=relaxed/simple;
+	bh=cG0bbfNplqrjhHWLt+sMedW2m9unaNdtzKj/bQQrOFU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FLVFLbFuiY4m7qiPVRJVvHHFNzBwV8sfTr3nTdbAL0LNvfpLSxyrTJ7cQxlFinIES8g2kSoHS9Y40pxvG1iWcrVys0DZP6SdJfgo7f5WcbI+Zqjd9AAlguMT0KwYXuyRJXKrutKhQ1MOr04lXn2gJdjaeA2kWOgT5Xbzqfbr2gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jg3XufS0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B05A8C433C7;
-	Fri, 23 Feb 2024 08:08:08 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=eoqhHPnxCZSt/69JWF6YfanmhvXlgYHbYREgLp8OQpgoTpEy9sN5IDKzxf8Bio6yU+L83PWg2DCFTX45sgDb5yFGVCq+pTGYMuD2OenW/avnPCP+2WZqV3tGXX9ahclE0L4vkWVcZK8o+eR9wygC7wGvHVm3peRDbcj/ON//wbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cq5xWvjW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C3E9C433F1;
+	Fri, 23 Feb 2024 08:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708675694;
-	bh=sHWn05MJttavUBMB12+GNMdadLjZiLx3RXhhBDrmsJ4=;
+	s=k20201202; t=1708675802;
+	bh=cG0bbfNplqrjhHWLt+sMedW2m9unaNdtzKj/bQQrOFU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jg3XufS0q2T0sNHkSOrBEvEFenHkbXULgGhZWIT/XqOkumh1aj0AiFgeSUL7Z6Hyf
-	 5Bty9R6AcZFx0YaW121AcFq+dSWQMWU8RrZy3vqXKB/NyVtOeIaOBmRcs1zzLDjiKY
-	 uJIS2kyqqlK5TlhAMzk/j/70dR0J5sICT2U4aWIroXzev3OEltfWpNjQ3uN/PhJZY/
-	 Ss3LBviK+JcQf4ucWSVTPNaVDQevgquBsc8UzNJSLe/UTPBiqC6QxkmZE18KgHBwKQ
-	 tZz6Yz0TLQD1ogAfVNnqygGlx7NnzU9hEiD0oyA7ZFDlfo6bUNETAb7lVpxzM7ka0h
-	 6/mVZwFzxICOg==
-Date: Fri, 23 Feb 2024 09:08:05 +0100
+	b=Cq5xWvjWUSza+XxqmuGHogSYI1HWEyU6ocGaMvQLD05z7421fMO2oTxHc9DvFsyXC
+	 nRnQfi0eTUSCxzyfSwBYAATxQsS+U3lN/+g9hBNqolwcYb3XJsWWfy3thv2c5GrWFW
+	 QDiJVWV3jNMmjuQPwPcuVxywwRV2zAIfWhB6h8yZT0ela73NOiSJmO6j5KMRQoclUq
+	 Le6rcBh+/AHzr6QpXQknsCx22HjSoAomoEIp1uRaPkZdAnP95AJ9G5ezDEBDSvm8aO
+	 iRfcKdLByBF6EU00he7RaoLu1heVlD/C6jK1EpHW0smvwsGaahWyJnb6+cXL2tCqUW
+	 5uo8BcnauJJYw==
+Date: Fri, 23 Feb 2024 09:09:54 +0100
 From: Christian Brauner <brauner@kernel.org>
 To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
 Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, 
@@ -55,13 +55,10 @@ Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
 	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	linux-security-module@vger.kernel.org, audit@vger.kernel.org, selinux@vger.kernel.org, 
 	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
-Subject: Re: [PATCH v2 06/25] capability: provide helpers for converting
- between xattrs and vfs_caps
-Message-ID: <20240223-beilhieb-nagetiere-83d9488f05f8@brauner>
+Subject: Re: [PATCH v2 08/25] xattr: add is_fscaps_xattr() helper
+Message-ID: <20240223-bussard-einfliegen-0e04fd945921@brauner>
 References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
- <20240221-idmap-fscap-refactor-v2-6-3039364623bd@kernel.org>
- <20240222-wieweit-eiskunstlauf-0dbab2007754@brauner>
- <ZddqXN51+8UaKVTC@do-x1extreme>
+ <20240221-idmap-fscap-refactor-v2-8-3039364623bd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,17 +67,16 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZddqXN51+8UaKVTC@do-x1extreme>
+In-Reply-To: <20240221-idmap-fscap-refactor-v2-8-3039364623bd@kernel.org>
 
-On Thu, Feb 22, 2024 at 09:38:04AM -0600, Seth Forshee (DigitalOcean) wrote:
-> On Thu, Feb 22, 2024 at 04:20:08PM +0100, Christian Brauner wrote:
-> > > +	if ((magic_etc & VFS_CAP_REVISION_MASK) != VFS_CAP_REVISION_1) {
-> > > +		vfs_caps->permitted.val += (u64)le32_to_cpu(caps->data[1].permitted) << 32;
-> > > +		vfs_caps->inheritable.val += (u64)le32_to_cpu(caps->data[1].inheritable) << 32;
-> > 
-> > That + makes this even more difficult to read. This should be rewritten.
+On Wed, Feb 21, 2024 at 03:24:39PM -0600, Seth Forshee (DigitalOcean) wrote:
+> Add a helper to determine if an xattr time is XATTR_NAME_CAPS instead of
+> open-coding a string comparision.
 > 
-> Do you meant that you would prefer |= to +=, or do you have something
+> Suggested-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> ---
 
-Yes.
+Looks good,
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
