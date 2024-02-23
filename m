@@ -1,111 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-12587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E2ED8615FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 16:36:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 171B7861626
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 16:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FC071C2197C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 15:36:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10CB11C24030
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 15:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BEE081759;
-	Fri, 23 Feb 2024 15:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08E5839FE;
+	Fri, 23 Feb 2024 15:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZcRlwVq8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fz80AxU0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E88D6E618;
-	Fri, 23 Feb 2024 15:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328EB82C8D;
+	Fri, 23 Feb 2024 15:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708702597; cv=none; b=O1Z6j6iWPi0z7pPJBTB9hC+QY6QGfdw8IzAqQUnwSFukHU22p9ucoN/Kdj26tY8HwL7ZKunWuxFg2qftcMfFLG1bO5kPBASuh9DmzOylBwj8enNM0DFGZjtSwaYjKld9GPM2idJQtrMYIEaKA5yZpgwW+V0zVg6WODaqpIYcdGk=
+	t=1708703067; cv=none; b=pIiAEhA9oS9NPRC4DIOk1MHB84NfhKrY7mqcSvtcEgkJxiTfjgt7dMaJ96p/Il4HB8hVtffRStX5sVOWXoUX9WRQr3SaYxV+d0gYSA0F1htsaGaEfbSp5J8Rf9Ik1zgWBlMbe+wkWIXCYofUl02+Vm556vCOugrKXjx9/rlyIvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708702597; c=relaxed/simple;
-	bh=alVWIUk3BEu3xPVTyvD6WzPjZSlnEFhpX1T223Yfp7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MoIuqvm+j87Oocv4uAByyAHbR3kklJu1oW7x6/irU7WRkHxy4ZCX3HBkA9C7FKrMo9ckwEdo41wjqqLUaKNCp8Nhz7YcYNLl65w4FCFAY8b3eLvckms2OWf5B9xtdoXHBTdsi/Ys0gTmcJxqjpMEpbNEYYDoxkUOPt7aV+Ditvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ZcRlwVq8; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3GdX6imMvbRIm6fINSz0BafY57HFCVJylihVpHjCpIk=; b=ZcRlwVq8wpjvVDN9MmRm9NWh1Q
-	/ZPcygYeTsH+OlQwivGsM3rT0tFj1C8ZSZOhn+6SzlZnd/Lnug/5+CkW4p548drHl2AfQFRi2mjjy
-	t9DelpK5oNDQHD865DXFn8bCeCaduWmSHeVy/FcF64QDuXrAkg3OsQv6nv50lePYzUJ3LrDgyQwjv
-	EW+2pjjS1HFzfcrDd4AQ8Atz1XsJ0BuzcIm1rmAk8dLlpuLHBBAbvFwH5ozfd8xt9qZWTMuqs0EbM
-	mGQe5nrzFoSJ+l7OmJ/NraO++3s2H/KvefGpMjG/f1ahOiVAqGFOz1aeioVkC4XZnxjF5PjBN1VFK
-	fZkj0X4g==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rdXbE-00000007VwD-3yPS;
-	Fri, 23 Feb 2024 15:36:33 +0000
-Date: Fri, 23 Feb 2024 15:36:32 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-	torvalds@linux-foundation.org, npiggin@gmail.com
-Subject: Re: [PATCH v2 03/17] mm: Add folio_end_read()
-Message-ID: <Zdi7gCrsbSNhQTC8@casper.infradead.org>
-References: <20231004165317.1061855-1-willy@infradead.org>
- <20231004165317.1061855-4-willy@infradead.org>
- <564df866-e874-400e-aff3-54d75295187b@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1708703067; c=relaxed/simple;
+	bh=R6iH4ESTC3Kq6YCVIhRC6TmpqBJtDbDbnX0oGo22lW4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=L9S9cQoIhexXQrikOVerdmYtfJZWux0k3Bjm84PrSrll3Sn8TMDNwuKUIyz4Nx1rWhbfacvI08EdOEE22eXS/pPjNSkq6agHdZdwJPBR/9VWHlwdFIei54VS6USfRIOU3LFTQl2lTU5JbrgTm5sV5n5lJW2Rz67IL8hcASk2dV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fz80AxU0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF91C433C7;
+	Fri, 23 Feb 2024 15:44:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708703066;
+	bh=R6iH4ESTC3Kq6YCVIhRC6TmpqBJtDbDbnX0oGo22lW4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Fz80AxU0PIbRBe6Oi0+AgajU+alOCo/lnsxfIosuXr6AhyZIO+R7SSWdrgymDCodo
+	 oU2/45HJv1O3Vs7z0Ao4e7pVVSyGmij29lnsP5ichRm4/Yw7QWPnzW4LBI+4IMniGX
+	 LMx8zZPUhDmhoapwoxDfHvybUaEG187wbagfRSsV/UBvmYIF6LTSbmG5+PX6EpI0Hd
+	 I+IRQZ4ONQLBbNLTdz4eiR4FegJIYHkcr35r3wRFzhBpIPpeEZTLsc/+zdJtnaPJum
+	 EmV0OC03mo2fw/JtyQ2i3WJWBJXmBwWTB2iW3+wrATDzw3C+gHqhlmvaLRsVClC51z
+	 9XaVxtIjV5FOA==
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-412895f726dso3516895e9.3;
+        Fri, 23 Feb 2024 07:44:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUaAYUCog10uVfihte42vUEjtq4d2qg9JCbZIirxZMZpD2rgxUA3oNOVV0Py2aRzfBezY/+XCK5Owx6Hil5dD+9Oeg/SerkrqezQwyf9J/ktlkE69Yfp0ckY6G9BS5O9fm4DSzRvSwUbU6GdeY=
+X-Gm-Message-State: AOJu0YxNjvgDBrrEnVWKnyppb+ehSQ09Y+bY/HXuRRNu8Ct487zJfcxb
+	mctTC/wT0c0z+9mEtAQZjsyAoXYIrSZXaVGc3n7HX4JgC3AfHnUphrM9068YrjTkZeKTnBpDZ/U
+	SVTerMp4zuUQ4A8WRoI2Be3QZD/o=
+X-Google-Smtp-Source: AGHT+IFAHU2DYSVpLtUN+AuuXLIgrjxuGtjU3lFiTDM+GvGPfNBe13UhGy4lkxk7QbANNafrthVxif/lQp+LyNB+Ewg=
+X-Received: by 2002:a05:600c:1d1a:b0:412:6c30:59ff with SMTP id
+ l26-20020a05600c1d1a00b004126c3059ffmr177767wms.0.1708703065283; Fri, 23 Feb
+ 2024 07:44:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <564df866-e874-400e-aff3-54d75295187b@I-love.SAKURA.ne.jp>
+From: Luis Chamberlain <mcgrof@kernel.org>
+Date: Fri, 23 Feb 2024 07:44:12 -0800
+X-Gmail-Original-Message-ID: <CAB=NE6VRZFn+jxmxADGb3j7fLzBG9rAJ-9RCddEwz0HtwvtHxg@mail.gmail.com>
+Message-ID: <CAB=NE6VRZFn+jxmxADGb3j7fLzBG9rAJ-9RCddEwz0HtwvtHxg@mail.gmail.com>
+Subject: Automation with 0-day & kdevops
+To: 0day robot <lkp@intel.com>, kdevops@lists.linux.dev
+Cc: Joel Granados <j.granados@samsung.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Christian Brauner <brauner@kernel.org>, Hugh Dickins <hughd@google.com>, 
+	Gustavo Padovan <gustavo.padovan@collabora.com>, linux-modules@vger.kernel.org, 
+	Kees Cook <keescook@chromium.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Feb 24, 2024 at 12:26:41AM +0900, Tetsuo Handa wrote:
-> During a bisection of a different problem, I noticed that
-> commit 0b237047d5a7 ("mm: add folio_end_read()") added folio_end_read() as
-> 
-> ----------------------------------------
-> +void folio_end_read(struct folio *folio, bool success)
-> +{
-> +       if (likely(success))
-> +               folio_mark_uptodate(folio);
-> +       folio_unlock(folio);
-> +}
-> ----------------------------------------
-> 
-> but commit f8174a118122 ("ext4: use folio_end_read()") for unknown reason
-> removed folio_clear_uptodate() call when bio->bi_status != 0.
-> 
-> ----------------------------------------
-> -       bio_for_each_folio_all(fi, bio) {
-> -               struct folio *folio = fi.folio;
-> -
-> -               if (bio->bi_status)
-> -                       folio_clear_uptodate(folio);
-> -               else
-> -                       folio_mark_uptodate(folio);
-> -               folio_unlock(folio);
-> -       }
-> +       bio_for_each_folio_all(fi, bio)
-> +               folio_end_read(fi.folio, bio->bi_status == 0);
-> ----------------------------------------
-> 
-> Why
-> 
-> 	else
-> 		folio_clear_uptodate(folio);
-> 
-> part is missing in folio_end_read() ?
+Dear 0-day developers,
 
-Because the folio already has its uptodate flag clear.  We don't re-read
-folios which have the uptodate flag set.  This was always dead code.
-Now we assert it's true in folio_end_read():
+kdevops [0] has evolved over the years now to a full automation suite
+for kernel development and testing. As for the later aspects of it, we
+use it to enable complicated subsystem tests such as filesystems
+testing. Our automated filesystem coverage has been rather reduced
+given the complexity, and so one of its goals was to tackle this. It
+also has support to automate testing complex subsystems involving
+custom non-upstream yet for things like qemu as well.
 
-        VM_BUG_ON_FOLIO(folio_test_uptodate(folio), folio);
+While long term we'd like to aim towards automating most of the things
+tested under kdevops, it makes sense to start slow with a few simpler
+targets. Since kdevops supports kselftests as well, my recommendation
+is we start with a few selftests for components we have kernel
+maintainers willing to help with either review or help tune up. The
+same applies to filesystems. While we have support to test most
+popular filesystems it makes sense to start with something simple.
 
+To this end I'd like to see if we can collaborate with 0-day so enable
+automation of testing for the following components, the first 3 of
+which I help maintain:
+
+With kdevops using its kernel selftests support:
+
+  * Linux kernel modules: using kernel selftests and userspace kmod tests
+  * Linux firmware loader: firmware selftests
+  * Linux sysctl
+
+As for filesystems I'd like to start with tmpfs as we have a developer
+who already has a good baseline for it, and is helping to fix some
+fstests bugs found, Daniel Gomez. We also have created different
+target profiles to test tmpfs for the different mount options it
+supports.
+
+What would this collaboration consist of? Using 0-day's automated to
+git clone kdevops, spawn some resouces and run a series of make
+commands. If git diff returns non-empty we have a new failure.
+
+[0] https://github.com/linux-kdevops/kdevops
+
+ Luis
 
