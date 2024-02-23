@@ -1,135 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-12555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0668D860E5F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 10:43:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13208860ECB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 10:59:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63DC72820C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 09:43:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C148F286E0C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 09:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87F55C91A;
-	Fri, 23 Feb 2024 09:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE83D5CDDA;
+	Fri, 23 Feb 2024 09:59:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="ctF37O+S"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="VYm1icMT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A02C5BAC0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 09:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2C45C912;
+	Fri, 23 Feb 2024 09:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708681374; cv=none; b=nXLvYj2z5zlamkZULKxYNJRsNTe7rtFFlWi1JGB4k2nuuWiothNGJ/GyDKaMuwOxddmvZVtMtL0PYRytGZuzszxSes3TkFzSel4MS0JIencMBhWlmhqP7d283I7HzzjJOQbRH5Khyv2C+ZgkciX/+VAJP/MimnRMnBKnbq7J6o0=
+	t=1708682360; cv=none; b=UYaOhJZkTOD0U7GwJewFAHhJPrGjfvd/qWU7EpmMadLtkQn+Os9hHi6y0IHIMCoaJja7kRujWo8rwGylqondMTLTV3HzWSqiHSYRfvxiYllCjtB0XVNMVctEK8gIGMetZp/QVuC+S5K12av1TxpHk7gJJCsp/u2ds8pINk5fYq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708681374; c=relaxed/simple;
-	bh=LfBvV5ftt5p5wwwqFBLDPSUdEXzAXS6aKdqDAKHrVSs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uEfz8jBACRwbirDTH8BpLSrEwgNFcbng/eVvOJoFtH7+bHczBGIbmvPd3XxR/kcB0K1P2ESMRn6xghvWO8icfWclhLeo3xHf0OigN2IA+QRLVTSQXRSTfvfsn/u0+rlfN0oneC65RL3czft+ehRxaXal653ot9Vn+fhO9KcCl8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=ctF37O+S; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a36126ee41eso25094866b.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 01:42:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1708681369; x=1709286169; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JeGMCdaCDD7BHdfywFTOPLnwnnbru3LEGQbmIcb6KjM=;
-        b=ctF37O+SZJgXwBeugiM4QNX6w9VnBA045mr79QHUILjGrlf0fJfMO87dDlFoFpuQCO
-         v5auaWeVSkdnCnnxkgT6Tw++3brlH8BC7bp0kaxsVr55NmZQyru9hU8loJ6fUGVO59ky
-         Qm1jplEVJagW9t1rFv0xZPArYiZ7yVLSOJ4Bo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708681369; x=1709286169;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JeGMCdaCDD7BHdfywFTOPLnwnnbru3LEGQbmIcb6KjM=;
-        b=hfSJuYpZefS+IXkcMrc2h/2DrZqSO7i/HomstgfQZC2SqoaKcYjCBHi/oo8EEUbI8K
-         XZDb6D0ZaO2i3g3q8kXTN6osHXCjWtQ/HbqxTMQN007tH9I4439G9DFLSZbyvEp6ICQO
-         0aeh1dRN6HY1A2jq/uJz6gRE6so51IWnx02v40L6tf5vvEko/7SddssA0eS1dtIj29cd
-         1587lW9PQiWy/lDI3Ggz8wedTWnh6M8J3x5ZIW42KFNHQmEYkgBYVVOjtwC2bBmeHrjI
-         vHS5Ti5UuNA95Q759Zx8CwqL7JccX26yd6LCZZoBuza4LT5aS7xvqQtqHwYVxqZX2cBp
-         vgrw==
-X-Gm-Message-State: AOJu0YzPsHSek0eHGLOuM/16mUA/MCCLI5dEJlSgtNUOp88TnoF4+ypG
-	8he6cPfRwOyAeJqnuNDjP3GcSXvG19MvUp+AZ+yg9hukyi8MHOneqSbYjmiCmxFm9ubc7ywRf8h
-	GmOAaW3b0g4YnhnFY7j0/KkS8Q15+T9ZSCh+DlA==
-X-Google-Smtp-Source: AGHT+IG7sHUBZkp5FIyZ3wKIve695rZrZC0DwB1Cw2bOizO+7Yv+Nfpx1UfnCXqAJF48GUxGUtu/0dlNY6sUXDf7XwM=
-X-Received: by 2002:a17:906:cb94:b0:a3e:c818:b7f with SMTP id
- mf20-20020a170906cb9400b00a3ec8180b7fmr815276ejb.29.1708681369617; Fri, 23
- Feb 2024 01:42:49 -0800 (PST)
+	s=arc-20240116; t=1708682360; c=relaxed/simple;
+	bh=ypp+li3WDyr1XgKdhqQo23FL0DmPh0rbnUd3jDfC1xU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IZ1VPz/3ItPnZXz7sogVprMKscOwdL3hPhpu/EfivK3I9c5nr76uSI7oxZsRLVGWzc1kuQHPaZTdAlLLEySxjDeI4cTSHSub6M2v7UEEFuO0P00JjyaOoUsjLVP3oZd4HiRRvTP7fy9yNHsT6fYqpiw7yd9ZPKII8XPXqgceC1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=VYm1icMT; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=91eZlYfF9t9UL1ZmDb9X25hoe2Z5HivbHvwbCpyCGw4=; b=VYm1icMTpRUDkVeYgkbJCXKUQw
+	cR0yZF3bVBb1mzgntwWkCPUwzSAE8JzPfQk4hOjx5AiOEA5yzXuwDVHvhLXujudoL1VSzFi4i7xh2
+	2BnP1FURZ4m7qr8wgb2agi8i0r1flcWBMbMvF64RdxjiT0WocoshTQmsELZB7jxbZcbpQq6VVTN9a
+	8VY6cJ4MUUzrZxqJJFlR12P9EBINqujBb7FMfYeK702oX9olAHlbxNJHjtMHT22hs1cPjMOiHZ2Cj
+	HDN5231t0bwcD0kGZJ5dc3HllzlC5SyZpmCdfyrT+czn0t96FPCdgoTKuwLMDbC+/fLzQrXZsxORb
+	XYI17aDQ==;
+Received: from [179.93.188.12] (helo=quatroqueijos.cascardo.eti.br)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1rdSKd-002dNb-Tv; Fri, 23 Feb 2024 10:59:04 +0100
+Date: Fri, 23 Feb 2024 06:58:56 -0300
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Gwendal Grignou <gwendal@chromium.org>, dlunev@chromium.org
+Subject: Re: [PATCH] fat: ignore .. subdir and always add a link to dirs
+Message-ID: <ZdhsYAUCe9GVMnYE@quatroqueijos.cascardo.eti.br>
+References: <20240222203013.2649457-1-cascardo@igalia.com>
+ <87bk88oskz.fsf@mail.parknet.co.jp>
+ <Zdf8qPN5h74MzCQh@quatroqueijos.cascardo.eti.br>
+ <874jdzpov7.fsf@mail.parknet.co.jp>
+ <87zfvroa1c.fsf@mail.parknet.co.jp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240103105929.1902658-1-houtao@huaweicloud.com>
-In-Reply-To: <20240103105929.1902658-1-houtao@huaweicloud.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 23 Feb 2024 10:42:37 +0100
-Message-ID: <CAJfpegsM2ViQb1A2HNMJLsgVDs1UScd7p04MOLSkSMRNeshm0A@mail.gmail.com>
-Subject: Re: [PATCH] virtiofs: limit the length of ITER_KVEC dio by max_nopage_rw
-To: Hou Tao <houtao@huaweicloud.com>
-Cc: linux-fsdevel@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>, 
-	Stefan Hajnoczi <stefanha@redhat.com>, "Michael S . Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org, 
-	virtualization@lists.linux.dev, houtao1@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zfvroa1c.fsf@mail.parknet.co.jp>
 
-On Wed, 3 Jan 2024 at 11:58, Hou Tao <houtao@huaweicloud.com> wrote:
->
-> From: Hou Tao <houtao1@huawei.com>
->
-> When trying to insert a 10MB kernel module kept in a virtiofs with cache
-> disabled, the following warning was reported:
->
->   ------------[ cut here ]------------
->   WARNING: CPU: 2 PID: 439 at mm/page_alloc.c:4544 ......
->   Modules linked in:
->   CPU: 2 PID: 439 Comm: insmod Not tainted 6.7.0-rc7+ #33
->   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), ......
->   RIP: 0010:__alloc_pages+0x2c4/0x360
->   ......
->   Call Trace:
->    <TASK>
->    ? __warn+0x8f/0x150
->    ? __alloc_pages+0x2c4/0x360
->    __kmalloc_large_node+0x86/0x160
->    __kmalloc+0xcd/0x140
->    virtio_fs_enqueue_req+0x240/0x6d0
->    virtio_fs_wake_pending_and_unlock+0x7f/0x190
->    queue_request_and_unlock+0x58/0x70
->    fuse_simple_request+0x18b/0x2e0
->    fuse_direct_io+0x58a/0x850
->    fuse_file_read_iter+0xdb/0x130
->    __kernel_read+0xf3/0x260
->    kernel_read+0x45/0x60
->    kernel_read_file+0x1ad/0x2b0
->    init_module_from_file+0x6a/0xe0
->    idempotent_init_module+0x179/0x230
->    __x64_sys_finit_module+0x5d/0xb0
->    do_syscall_64+0x36/0xb0
->    entry_SYSCALL_64_after_hwframe+0x6e/0x76
->    ......
->    </TASK>
->   ---[ end trace 0000000000000000 ]---
->
-> The warning happened as follow. In copy_args_to_argbuf(), virtiofs uses
-> kmalloc-ed memory as bound buffer for fuse args, but
+On Fri, Feb 23, 2024 at 05:32:47PM +0900, OGAWA Hirofumi wrote:
+> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp> writes:
+> 
+> > OK.
+> >
+> > If you want to add the workaround for this, it must emulate the correct
+> > format. I.e. sane link count even if without "."/"..". And furthermore
+> > it works for any operations.
+> 
+> Of course, it must not affect the correct format. And it should not
+> accept the other really corrupted format.
+> -- 
+> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
 
-So this seems to be the special case in fuse_get_user_pages() when the
-read/write requests get a piece of kernel memory.
+So far, I have only seen expected correct behavior here: mkdir/rmdir inside the
+"bogus" directory works. rmdir of the "bogus" directory works.
 
-I don't really understand the comment in virtio_fs_enqueue_req():  /*
-Use a bounce buffer since stack args cannot be mapped */
+The only idiosyncrasies I can think of is that if neither "." or ".." are
+present, the directory will have a link of 1, instead of 2. And when listing
+the directory, those entries will not show up.
 
-Stefan, can you explain?  What's special about the arg being on the stack?
+Do you expect any of these to be corrected? It will require a more convoluted
+change.
 
-What if the arg is not on the stack (as is probably the case for big
-args like this)?   Do we need the bounce buffer in that case?
+Right now, I think accepting the idiosyncratic behavior for the bogus
+filesystems is fine, as long as the correct filesystems continue to behave as
+before. Which seems to be the case here as far as my testing has shown.
 
-Thanks,
-Miklos
+Thank you.
+Cascardo.
 
