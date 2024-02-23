@@ -1,113 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-12588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171B7861626
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 16:44:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB13861649
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 16:50:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10CB11C24030
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 15:44:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58D33282E87
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 15:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08E5839FE;
-	Fri, 23 Feb 2024 15:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 682BA839E9;
+	Fri, 23 Feb 2024 15:50:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fz80AxU0"
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="uCXeGtEZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328EB82C8D;
-	Fri, 23 Feb 2024 15:44:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2D425D750;
+	Fri, 23 Feb 2024 15:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708703067; cv=none; b=pIiAEhA9oS9NPRC4DIOk1MHB84NfhKrY7mqcSvtcEgkJxiTfjgt7dMaJ96p/Il4HB8hVtffRStX5sVOWXoUX9WRQr3SaYxV+d0gYSA0F1htsaGaEfbSp5J8Rf9Ik1zgWBlMbe+wkWIXCYofUl02+Vm556vCOugrKXjx9/rlyIvQ=
+	t=1708703410; cv=none; b=PPA/ahZ6HIIkrO0rhv+KMdTFuIva2TvwNpox4Ob0QDYFB/rosNdznCO5STc3jjacq5HBqweKxE/gyIiN6r/BCIBZJAH8fcydTRDOT7LRTVXfG2fv6vm2p0qYnQe5yG5bGbXTARTP+i+SYI6VUYfWe2davHh9kiLX1ihM40Ht5ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708703067; c=relaxed/simple;
-	bh=R6iH4ESTC3Kq6YCVIhRC6TmpqBJtDbDbnX0oGo22lW4=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=L9S9cQoIhexXQrikOVerdmYtfJZWux0k3Bjm84PrSrll3Sn8TMDNwuKUIyz4Nx1rWhbfacvI08EdOEE22eXS/pPjNSkq6agHdZdwJPBR/9VWHlwdFIei54VS6USfRIOU3LFTQl2lTU5JbrgTm5sV5n5lJW2Rz67IL8hcASk2dV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fz80AxU0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFF91C433C7;
-	Fri, 23 Feb 2024 15:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708703066;
-	bh=R6iH4ESTC3Kq6YCVIhRC6TmpqBJtDbDbnX0oGo22lW4=;
+	s=arc-20240116; t=1708703410; c=relaxed/simple;
+	bh=tyETEbR7y+fCOoobG2K+nu8VTcN0oxz5rQtx8OA5KUk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jyDSQ4vbDl6u/xuWNYIcJcH7zEOyb+YM9133W6N+vFGfqmAxn4gcEWlHu4qTN2KqA4Su2Ne17Il2au/HoJ8VTfkOZzqKLnceEytPZvWxHa8P3KzHE+1mkHyjen4Aer5TdKvnT85dQSYp0mYmDgBRrITzNishbowT7yK+/a9Axo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=uCXeGtEZ; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1708703403;
+	bh=tyETEbR7y+fCOoobG2K+nu8VTcN0oxz5rQtx8OA5KUk=;
 	h=From:Date:Subject:To:Cc:From;
-	b=Fz80AxU0PIbRBe6Oi0+AgajU+alOCo/lnsxfIosuXr6AhyZIO+R7SSWdrgymDCodo
-	 oU2/45HJv1O3Vs7z0Ao4e7pVVSyGmij29lnsP5ichRm4/Yw7QWPnzW4LBI+4IMniGX
-	 LMx8zZPUhDmhoapwoxDfHvybUaEG187wbagfRSsV/UBvmYIF6LTSbmG5+PX6EpI0Hd
-	 I+IRQZ4ONQLBbNLTdz4eiR4FegJIYHkcr35r3wRFzhBpIPpeEZTLsc/+zdJtnaPJum
-	 EmV0OC03mo2fw/JtyQ2i3WJWBJXmBwWTB2iW3+wrATDzw3C+gHqhlmvaLRsVClC51z
-	 9XaVxtIjV5FOA==
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-412895f726dso3516895e9.3;
-        Fri, 23 Feb 2024 07:44:26 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUaAYUCog10uVfihte42vUEjtq4d2qg9JCbZIirxZMZpD2rgxUA3oNOVV0Py2aRzfBezY/+XCK5Owx6Hil5dD+9Oeg/SerkrqezQwyf9J/ktlkE69Yfp0ckY6G9BS5O9fm4DSzRvSwUbU6GdeY=
-X-Gm-Message-State: AOJu0YxNjvgDBrrEnVWKnyppb+ehSQ09Y+bY/HXuRRNu8Ct487zJfcxb
-	mctTC/wT0c0z+9mEtAQZjsyAoXYIrSZXaVGc3n7HX4JgC3AfHnUphrM9068YrjTkZeKTnBpDZ/U
-	SVTerMp4zuUQ4A8WRoI2Be3QZD/o=
-X-Google-Smtp-Source: AGHT+IFAHU2DYSVpLtUN+AuuXLIgrjxuGtjU3lFiTDM+GvGPfNBe13UhGy4lkxk7QbANNafrthVxif/lQp+LyNB+Ewg=
-X-Received: by 2002:a05:600c:1d1a:b0:412:6c30:59ff with SMTP id
- l26-20020a05600c1d1a00b004126c3059ffmr177767wms.0.1708703065283; Fri, 23 Feb
- 2024 07:44:25 -0800 (PST)
+	b=uCXeGtEZzroTdP5F3EgwnV/9r5jb3mECsYnkrkoiVPFfk5dX309CR/ZFKVaFleYhl
+	 3Bc2tP6plSprHaHfy77ExL6bALxxQnHRCzxsqigHn8I1Ln5eeMPAG/EWWqS6g0DkJ7
+	 Q1PuD6hwL1rB3n92v/WgoHgUZ5Uc+dZ6DMm7sAtA=
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Date: Fri, 23 Feb 2024 16:50:00 +0100
+Subject: [PATCH v2] sysctl: drop unused argument set_ownership()::table
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Luis Chamberlain <mcgrof@kernel.org>
-Date: Fri, 23 Feb 2024 07:44:12 -0800
-X-Gmail-Original-Message-ID: <CAB=NE6VRZFn+jxmxADGb3j7fLzBG9rAJ-9RCddEwz0HtwvtHxg@mail.gmail.com>
-Message-ID: <CAB=NE6VRZFn+jxmxADGb3j7fLzBG9rAJ-9RCddEwz0HtwvtHxg@mail.gmail.com>
-Subject: Automation with 0-day & kdevops
-To: 0day robot <lkp@intel.com>, kdevops@lists.linux.dev
-Cc: Joel Granados <j.granados@samsung.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Christian Brauner <brauner@kernel.org>, Hugh Dickins <hughd@google.com>, 
-	Gustavo Padovan <gustavo.padovan@collabora.com>, linux-modules@vger.kernel.org, 
-	Kees Cook <keescook@chromium.org>, Linux FS Devel <linux-fsdevel@vger.kernel.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240223-sysctl-const-ownership-v2-1-f9ba1795aaf2@weissschuh.net>
+X-B4-Tracking: v=1; b=H4sIAKe+2GUC/4WNQQ7CIBBFr9KwdoxgLcaV9zBdtDDIJAYaBlubh
+ ruLvYDL95L//iYYEyGLW7OJhDMxxVBBHRph/BCeCGQrC3VSZ6lUB7yyyS8wMXCGuARM7GkC5/Q
+ FOz22iIOo4ymho88efvSVPXGOad1/Zvmzf5OzBAlWX521um3HQd4XJGY2/u2PAbPoSylf1Cg1r
+ sEAAAA=
+To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>, 
+ Joel Granados <j.granados@samsung.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1708703403; l=2870;
+ i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
+ bh=tyETEbR7y+fCOoobG2K+nu8VTcN0oxz5rQtx8OA5KUk=;
+ b=55T87RfeQlY2dMtq34biKke5IZh5vjxkIusRfnsZtUvEAalULFoFQ19w3FnAO9YXnrp1B3JTe
+ L/WtK/lIM8fBsw5sX3tT0iy7Rtk3IZyJ+0huJuGHcFt5iRzdJbHF6jj
+X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
+ pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
 
-Dear 0-day developers,
+The argument is never used and can be removed.
 
-kdevops [0] has evolved over the years now to a full automation suite
-for kernel development and testing. As for the later aspects of it, we
-use it to enable complicated subsystem tests such as filesystems
-testing. Our automated filesystem coverage has been rather reduced
-given the complexity, and so one of its goals was to tackle this. It
-also has support to automate testing complex subsystems involving
-custom non-upstream yet for things like qemu as well.
+In a future commit the sysctl core will only use
+"const struct ctl_table". Removing it here is a preparation for this
+consitifcation.
 
-While long term we'd like to aim towards automating most of the things
-tested under kdevops, it makes sense to start slow with a few simpler
-targets. Since kdevops supports kselftests as well, my recommendation
-is we start with a few selftests for components we have kernel
-maintainers willing to help with either review or help tune up. The
-same applies to filesystems. While we have support to test most
-popular filesystems it makes sense to start with something simple.
+The patch was created with the following coccinelle script:
 
-To this end I'd like to see if we can collaborate with 0-day so enable
-automation of testing for the following components, the first 3 of
-which I help maintain:
+  @@
+  identifier func, head, table, uid, gid;
+  @@
 
-With kdevops using its kernel selftests support:
+  void func(
+    struct ctl_table_header *head,
+  - struct ctl_table *table,
+    kuid_t *uid, kgid_t *gid)
+  { ... }
 
-  * Linux kernel modules: using kernel selftests and userspace kmod tests
-  * Linux firmware loader: firmware selftests
-  * Linux sysctl
+The single changed location was validate through manual inspection and
+compilation.
 
-As for filesystems I'd like to start with tmpfs as we have a developer
-who already has a good baseline for it, and is helping to fix some
-fstests bugs found, Daniel Gomez. We also have created different
-target profiles to test tmpfs for the different mount options it
-supports.
+In addition, a search for 'set_ownership' was done over the full tree to
+look for places that were missed by coccinelle.
+None were found.
 
-What would this collaboration consist of? Using 0-day's automated to
-git clone kdevops, spawn some resouces and run a series of make
-commands. If git diff returns non-empty we have a new failure.
+Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
+---
+Changes in v2:
+- Rework commit message
+- Mention potential conflict with upcoming per-namespace kernel.pid_max
+  sysctl
+- Delete unused parameter table
+- Link to v1: https://lore.kernel.org/r/20231226-sysctl-const-ownership-v1-1-d78fdd744ba1@weissschuh.net
+---
+The patch is meant to be merged via the sysctl tree.
 
-[0] https://github.com/linux-kdevops/kdevops
+There is an upcoming series that will introduce a new implementation of
+.set_ownership which would need to be adapted [0].
+The adaption would be trivial as the 'table' parameter also unused
+there.
 
- Luis
+This change was originally part of the sysctl-const series [1].
+To slim down that series and reduce the message load on other
+maintainers to a minimumble, submit this patch on its own.
+
+[0] https://lore.kernel.org/lkml/20240222160915.315255-1-aleksandr.mikhalitsyn@canonical.com/
+[1] https://lore.kernel.org/lkml/20231204-const-sysctl-v2-2-7a5060b11447@weissschuh.net/
+---
+ include/linux/sysctl.h | 1 -
+ net/sysctl_net.c       | 1 -
+ 2 files changed, 2 deletions(-)
+
+diff --git a/include/linux/sysctl.h b/include/linux/sysctl.h
+index ee7d33b89e9e..60333a6b9370 100644
+--- a/include/linux/sysctl.h
++++ b/include/linux/sysctl.h
+@@ -205,7 +205,6 @@ struct ctl_table_root {
+ 	struct ctl_table_set default_set;
+ 	struct ctl_table_set *(*lookup)(struct ctl_table_root *root);
+ 	void (*set_ownership)(struct ctl_table_header *head,
+-			      struct ctl_table *table,
+ 			      kuid_t *uid, kgid_t *gid);
+ 	int (*permissions)(struct ctl_table_header *head, struct ctl_table *table);
+ };
+diff --git a/net/sysctl_net.c b/net/sysctl_net.c
+index 051ed5f6fc93..a0a7a79991f9 100644
+--- a/net/sysctl_net.c
++++ b/net/sysctl_net.c
+@@ -54,7 +54,6 @@ static int net_ctl_permissions(struct ctl_table_header *head,
+ }
+ 
+ static void net_ctl_set_ownership(struct ctl_table_header *head,
+-				  struct ctl_table *table,
+ 				  kuid_t *uid, kgid_t *gid)
+ {
+ 	struct net *net = container_of(head->set, struct net, sysctls);
+
+---
+base-commit: ffd2cb6b718e189e7e2d5d0c19c25611f92e061a
+change-id: 20231226-sysctl-const-ownership-ff75e67b4eea
+
+Best regards,
+-- 
+Thomas Weißschuh <linux@weissschuh.net>
+
 
