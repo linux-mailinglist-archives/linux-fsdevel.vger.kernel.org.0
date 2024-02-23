@@ -1,100 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-12585-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12586-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5097E86155E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 16:18:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0B48615C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 16:28:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A47A286FD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 15:18:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273CA1C234F0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 15:28:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B137823AC;
-	Fri, 23 Feb 2024 15:18:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MgzcAiwp"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28648286E;
+	Fri, 23 Feb 2024 15:27:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8A21DFF9;
-	Fri, 23 Feb 2024 15:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC0B6E618;
+	Fri, 23 Feb 2024 15:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708701484; cv=none; b=aUYAHmxtUOtuHzdLAT6NnYvUQBfH1YpewNGzM6/U4INcHz7sXccVFtF3cmqMY3Cr3OmA877I6XdIuIVJSigyuH+0Rj9U1zGVSPZVm/zg9mgwZZkR1RlLcj/MNxS0wUluN4hzXxu2ITgzakwiaBaJ0DaQxbJZoIldsguILDnd/6U=
+	t=1708702045; cv=none; b=gMR/XtDnMKuUsfHACHfwW0gm8Gv1nKumcQcBmQ8uRlinoyCS9xTf/tCOUR40MyVt1Zv6oTeptTARoS/xcIIemE/0nfpHM0JSlXVjERYTtVxCsi7rMDslInh1VRnw6D9G2SM4hwq0M3thAGFeQ3pZT6L/bOMdq+uhzGaq+S/wJG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708701484; c=relaxed/simple;
-	bh=snju8i8I0RUYEXzKnwVKNgI1aVi68jifWTXjYWifv94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hbxnSOtq9Ey/uMkZmGgR8qofhC07LaXtNu+I+dwuaxrEza0vYOUs8wYf2V5lsolIKYWIDrUs3FAd4caxsIN7HSSyp3081e64jSiCoY5N89RBZeMwnKHEYx9Wx0Szz3cJeZUZGxUqwuobxUb2Grq3SYvexjvR7NcfFHKfyqvMEBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MgzcAiwp; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=MF3Qgk7knpbBl0mbT42qZNN0FOGek89e7NBszsKaFPE=; b=MgzcAiwp1JBNPUtRGATGvBwx+M
-	CStp1G0L26HISpEujYZl8RH7p6ABrTnlmhGF3oUfZlMGyGMEf4TwTa9fIjM34FKpNQie3gi/ITMJW
-	zb2dvQnScrw2SYhq1KFB7xafji1jJ0GB3zwbOup+k59cRgqWuCkXQyB5mHTytDVgDxEA5P7KwkeeK
-	NtjodihCG9x1D4+aYPwsKl7luGw7UkBp00vu4bKQslPDyEXZKQWKr0XObJB3OVXOYmKv6ksSMs7wO
-	Bq4eigHgYsN6ovmdfSxJjMexA3n1R91EfB/jWyhanDUW8sbmu4L8LHj4gBkcNCp36oIVGG2bt8gBv
-	xQ/pnzJQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rdXJ8-00000009wbh-16HU;
-	Fri, 23 Feb 2024 15:17:52 +0000
-Date: Fri, 23 Feb 2024 07:17:50 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Kees Cook <keescook@chromium.org>,
-	Joel Granados <j.granados@samsung.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH] sysctl: treewide: constify ctl_table_root::set_ownership
-Message-ID: <Zdi3HsFzG-p81CjG@bombadil.infradead.org>
-References: <20231226-sysctl-const-ownership-v1-1-d78fdd744ba1@weissschuh.net>
- <ZY12sLZYlQ09zU6D@bombadil.infradead.org>
- <23edfaea-fcee-4151-bfa8-d71d11a24401@t-8ch.de>
+	s=arc-20240116; t=1708702045; c=relaxed/simple;
+	bh=qhYHyHTtGNXQyLwz6WLctgJcV/a1/yFXRXeviXKuHEc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V56RJgAultmPHH7ri8u86VMz0W6Hd1qy6o9/t+EL3SSYETaqdUslodcJVlToY8+KDytKlqIIheS5yIwshYR+2yNbTS1/ml1SaOyLA7IR3QlJC5KGhVwjoPDMgUjJei0BS8xXbY+Xehtjeel2++yU1DzAUw4KMWoiEEuwTcEn82w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav415.sakura.ne.jp (fsav415.sakura.ne.jp [133.242.250.114])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 41NFQieM066165;
+	Sat, 24 Feb 2024 00:26:44 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav415.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp);
+ Sat, 24 Feb 2024 00:26:44 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav415.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 41NFQhOx066161
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 24 Feb 2024 00:26:43 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <564df866-e874-400e-aff3-54d75295187b@I-love.SAKURA.ne.jp>
+Date: Sat, 24 Feb 2024 00:26:41 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <23edfaea-fcee-4151-bfa8-d71d11a24401@t-8ch.de>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/17] mm: Add folio_end_read()
+Content-Language: en-US
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, torvalds@linux-foundation.org,
+        npiggin@gmail.com
+References: <20231004165317.1061855-1-willy@infradead.org>
+ <20231004165317.1061855-4-willy@infradead.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20231004165317.1061855-4-willy@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 23, 2024 at 02:16:15PM +0100, Thomas Weißschuh wrote:
-> On 2023-12-28 05:22:56-0800, Luis Chamberlain wrote:
-> > On Tue, Dec 26, 2023 at 01:32:42PM +0100, Thomas Weißschuh wrote:
-> > > The set_ownership callback is not supposed to modify the ctl_table.
-> > > Enforce this expectation via the typesystem.
-> > > 
-> > > The patch was created with the following coccinelle script:
-> > > 
-> > >   virtual patch
-> > >   virtual context
-> > >   virtual report
-> > 
-> > If you remove this virtual stuff and mention how we verify manually
-> > through the build how users do not exits which rely on modifying the the
-> > table I thinkt these two patches are ready, thanks for doing this in
-> > Coccinelle it helps me review this faster!
-> 
-> Actually the 'table' parameter is never even used.
+During a bisection of a different problem, I noticed that
+commit 0b237047d5a7 ("mm: add folio_end_read()") added folio_end_read() as
 
-Oh wow.
+----------------------------------------
++void folio_end_read(struct folio *folio, bool success)
++{
++       if (likely(success))
++               folio_mark_uptodate(folio);
++       folio_unlock(folio);
++}
+----------------------------------------
 
-> Do you prefer to drop it completely?
+but commit f8174a118122 ("ext4: use folio_end_read()") for unknown reason
+removed folio_clear_uptodate() call when bio->bi_status != 0.
 
-Absolutely.
+----------------------------------------
+-       bio_for_each_folio_all(fi, bio) {
+-               struct folio *folio = fi.folio;
+-
+-               if (bio->bi_status)
+-                       folio_clear_uptodate(folio);
+-               else
+-                       folio_mark_uptodate(folio);
+-               folio_unlock(folio);
+-       }
++       bio_for_each_folio_all(fi, bio)
++               folio_end_read(fi.folio, bio->bi_status == 0);
+----------------------------------------
 
-  Luis
+Why
+
+	else
+		folio_clear_uptodate(folio);
+
+part is missing in folio_end_read() ?
+
 
