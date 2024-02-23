@@ -1,144 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-12524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D865F8605D4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 23:45:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E119B8607ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 01:59:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69196284540
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Feb 2024 22:45:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82CF21F23690
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 00:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C6717C74;
-	Thu, 22 Feb 2024 22:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZvjLeczf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E956947B;
+	Fri, 23 Feb 2024 00:58:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87483FBF4
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 22:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AFBE57B;
+	Fri, 23 Feb 2024 00:58:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708641944; cv=none; b=ghbQIkan9chiMsk1dyfg8TJM4+meP2XqsoY6MJuL7bRRnTlEnwQR93T0GzHPxPLqtcfhzCWykVCLIPfYvK5OTDsnLga1/yJioftMPKlqcso5mpf8OknBFTzaCIXXC7xvHGUUhVH1ieaWGUZGDh1+xxk+neW+2rU/vhs/EII0XGQ=
+	t=1708649922; cv=none; b=rw5/sx7bQCfqZYuR9PJCj3ItJ9gXcbsFF8tfHvqTm4rYM1aM8he9ZdBctq9WV8BM8wGnLGuKs8ZGKrexcYlzrkco90jTOw1nvCpiaANMrDjpUSIjwwfrltAAJl0dhHfG+TUZi2M3UmTez8o7JR6W83hX43HQ9dZ0RwYztC9A97o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708641944; c=relaxed/simple;
-	bh=kmJAjR+7ZTgtiQN/s7z+cBHgMau140oHAN6WUoLV83A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eaMXMDSbsqVpf7aolTMPjWA4eU+mxwZsflE5AFwaDr63WQSJrWb0nofk4AV73aLDof1u7WskD3A/WcWjQ/v3A1T7M6hzSVStDDkkUfsqEhO4fiUSKxLSgCSvabABMuQBIyjB2ZUIZu24wDLMuDnKI43OPRa0M3+Z0Cr0TyVy1g0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZvjLeczf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5D8C433A6
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 22:45:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708641944;
-	bh=kmJAjR+7ZTgtiQN/s7z+cBHgMau140oHAN6WUoLV83A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZvjLeczfaD+ARQ8sOt/1pzJbwDndoezg6YvfHkTFYpPvzhp3J3p/+OBfPmACWy7ws
-	 EumZY9U8710GY16/4CUlxfZh2WA4Lg2dFqAwkiCDDzYBpYBfI/h27AcLUGGaofO1rz
-	 oIxoKJXiSBW+thtGEtw8NG8zz1nrWMKDeCyXhqQJAf4GA3Bef6szc6TCFBpZDaOB1+
-	 YTcZ4HCqGU+cWFQhi9ykBUYJU6XWpFEKqTp/TLiITg4A9zy6dzrBnvD9H46Ltocj/x
-	 IKIj3evzw7Ik9bbBMS5kuPBaDnoW7/8HOUNJfQnDfSIXFnt7aO6Rj8BWMi3epgpvsO
-	 iysiTER08D7Ig==
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7bc32b0fdadso9202839f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Feb 2024 14:45:44 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUpQWJ2kz8ox3OSG4wjHv1E9LI/h4AZ6vVZE94Jibsc8R/rCyUpeZBW1DUBxTdIwY3CdT8UykjlnCA25ckUhYZN+LlOk+TFbjYWAM8XyA==
-X-Gm-Message-State: AOJu0YzH3B7E/NtHIaB0ncAdGyDnalU7Y+SVvCRrm4TUJciVkFVczN8o
-	iwnQZ7zVhVzO6OBSkYRQ4/oiDnVZlEx9Km87D2aug6NW7OP5BJ25dEqxRxmEw9VIR2LI23/WkiL
-	tijC6I4uL+GP9OETNEUTE6IdqlJFZLqn7QevL
-X-Google-Smtp-Source: AGHT+IH/pp2pGlKmyFGqyB7/Jec48p2xPhDOGpbe89kkOgM/DKmGX79GlR+z+BxAPG4u9xYopEFeJcXMcXT0vtDqSEQ=
-X-Received: by 2002:a92:d58d:0:b0:365:41b5:b3c4 with SMTP id
- a13-20020a92d58d000000b0036541b5b3c4mr376244iln.18.1708641943304; Thu, 22 Feb
- 2024 14:45:43 -0800 (PST)
+	s=arc-20240116; t=1708649922; c=relaxed/simple;
+	bh=NgbZ0ZCYtqtUCmcF+ysC/YN7+ja6KIyXTxwEmVEIUc4=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=AaSdfqBdyVkDn74WkTU6RfEC4Xh1CbH65xTD2ViTfUgc70ghYGyUC0hm4jMnKIovwLBIhtZkuTXQMbO+pg8oO75AVKEriN2zZ2JXRy4OxOuurtBz57eePhhUr/nqIAVE7lAljWr4WVnsV96ZJ6HlhPQnMMeOAxE8GPle8yCBVLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Tgs872WGvz4f3kKN;
+	Fri, 23 Feb 2024 08:58:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 911FA1A0C11;
+	Fri, 23 Feb 2024 08:58:34 +0800 (CST)
+Received: from [10.174.176.117] (unknown [10.174.176.117])
+	by APP2 (Coremail) with SMTP id Syh0CgB3mQy27ddl69zGEw--.6075S2;
+	Fri, 23 Feb 2024 08:58:34 +0800 (CST)
+Subject: Re: [PATCH] virtiofs: limit the length of ITER_KVEC dio by
+ max_nopage_rw
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+ Vivek Goyal <vgoyal@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>,
+ linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ houtao1@huawei.com, Bernd Schubert <bernd.schubert@fastmail.fm>
+References: <20240103105929.1902658-1-houtao@huaweicloud.com>
+ <20240222144828-mutt-send-email-mst@kernel.org>
+From: Hou Tao <houtao@huaweicloud.com>
+Message-ID: <2fe9376d-27a6-d502-9acb-3890b3d3946f@huaweicloud.com>
+Date: Fri, 23 Feb 2024 08:58:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <2701740.1706864989@warthog.procyon.org.uk>
-In-Reply-To: <2701740.1706864989@warthog.procyon.org.uk>
-From: Chris Li <chrisl@kernel.org>
-Date: Thu, 22 Feb 2024 14:45:30 -0800
-X-Gmail-Original-Message-ID: <CAF8kJuNt2Vqk0yGkuz7qHAui7tb9B1W6U+SLyTmc6N2ngCU53A@mail.gmail.com>
-Message-ID: <CAF8kJuNt2Vqk0yGkuz7qHAui7tb9B1W6U+SLyTmc6N2ngCU53A@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Large folios, swap and fscache
-To: David Howells <dhowells@redhat.com>
-Cc: lsf-pc@lists.linux-foundation.org, Matthew Wilcox <willy@infradead.org>, 
-	netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240222144828-mutt-send-email-mst@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-CM-TRANSID:Syh0CgB3mQy27ddl69zGEw--.6075S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ary8Gw1fGF4furW7CFW3ZFb_yoW8JFy5pF
+	WaqayqgFn2qF47Aw12ya1UZry0vws5Gr13tr18Wr1UZ3sFk3s2k3ZIq3yUXF17ZrWfKw4I
+	qr4qv34jqw4qvaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWrZr1j6s0DMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
+	c7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-Hi David,
+Hi,
 
-On Fri, Feb 2, 2024 at 1:10=E2=80=AFAM David Howells <dhowells@redhat.com> =
-wrote:
+On 2/23/2024 3:49 AM, Michael S. Tsirkin wrote:
+> On Wed, Jan 03, 2024 at 06:59:29PM +0800, Hou Tao wrote:
+>> From: Hou Tao <houtao1@huawei.com>
+>>
+>> When trying to insert a 10MB kernel module kept in a virtiofs with cache
+>> disabled, the following warning was reported:
+>>
+
+SNIP
+
+>>
+>> A feasible solution is to limit the value of max_read for virtiofs, so
+>> the length passed to kmalloc() will be limited. However it will affects
+>> the max read size for ITER_IOVEC io and the value of max_write also needs
+>> limitation. So instead of limiting the values of max_read and max_write,
+>> introducing max_nopage_rw to cap both the values of max_read and
+>> max_write when the fuse dio read/write request is initiated from kernel.
+>>
+>> Considering that fuse read/write request from kernel is uncommon and to
+>> decrease the demand for large contiguous pages, set max_nopage_rw as
+>> 256KB instead of KMALLOC_MAX_SIZE - 4096 or similar.
+>>
+>> Fixes: a62a8ef9d97d ("virtio-fs: add virtiofs filesystem")
+>> Signed-off-by: Hou Tao <houtao1@huawei.com>
 >
-> Hi,
->
-> The topic came up in a recent discussion about how to deal with large fol=
-ios
-> when it comes to swap as a swap device is normally considered a simple ar=
-ray
-> of PAGE_SIZE-sized elements that can be indexed by a single integer.
+> So what should I do with this patch? It includes fuse changes
+> but of course I can merge too if no one wants to bother either way...
 
-Sorry for being late for the party. I think I was the one that brought
-this topic up in the online discussion with Will and You. Let me know
-if you are referring to a different discussion.
+The patch had got some feedback from Bernd Schubert . And I will post v2
+before next Thursday.
 
->
-> With the advent of large folios, however, we might need to change this in
-> order to be better able to swap out a compound page efficiently.  Swap
-> fragmentation raises its head, as does the need to potentially save multi=
-ple
-> indices per folio.  Does swap need to grow more filesystem features?
-
-Yes, with a large folio, it is harder to allocate continuous swap
-entries where 4K swap entries are allocated and free all the time. The
-fragmentation will likely make the swap file have very little
-continuous swap entries.
-
-We can change that assumption, allow large folio reading and writing
-of discontinued blocks on the block device level. We will likely need
-a file system like kind of the indirection layer to store the location
-of those blocks. In other words, the folio needs to read/write a list
-of io vectors, not just one block.
-
->
-> Further to this, we have at least two ways to cache data on disk/flash/et=
-c. -
-> swap and fscache - and both want to set aside disk space for their operat=
-ion.
-> Might it be possible to combine the two?
->
-> One thing I want to look at for fscache is the possibility of switching f=
-rom a
-> file-per-object-based approach to a tagged cache more akin to the way Ope=
-nAFS
-> does things.  In OpenAFS, you have a whole bunch of small files, each
-> containing a single block (e.g. 256K) of data, and an index that maps a
-> particular {volume,file,version,block} to one of these files in the cache=
-.
->
-> Now, I could also consider holding all the data blocks in a single file (=
-or
-> blockdev) - and this might work for swap.  For fscache, I do, however, ne=
-ed to
-> have some sort of integrity across reboots that swap does not require.
-
-The main trade off is the memory usage for the meta data and latency
-of reading and writing.
-The file system has typically a different IO pattern than swap, e.g.
-file reads can be batched and have good locality.
-Where swap is a lot of random location read/write.
-
-Current swap using array like swap entry, one of the pros of that is
-just one IO required for one folio.
-The performance gets worse when swap needs to read the metadata first
-to locate the block, then read the block of data in.
-Page fault latency will get longer. That is one of the trade-offs we
-need to consider.
-
-Chris
 
