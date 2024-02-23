@@ -1,111 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-12548-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12549-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C523860C46
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 09:27:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E51860CDD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 09:33:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD9E91C24AA8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 08:27:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B9D287016
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 08:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD5118EB1;
-	Fri, 23 Feb 2024 08:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5644EB45;
+	Fri, 23 Feb 2024 08:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hu0xdDe4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.parknet.co.jp (mail.parknet.co.jp [210.171.160.6])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F414F17C9E;
-	Fri, 23 Feb 2024 08:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.171.160.6
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B54199B0;
+	Fri, 23 Feb 2024 08:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708676834; cv=none; b=ldFQYvBtyqG8Z/iRM/RaPwvjzw3dYW2qWbDmSOb/6J6ilcvUq3EdOK6jH51emM5W/nW5cXeWIlOr/gkVfypWXp3/EBKYxwYtU5pHBRIqEGcJ8Q60yy0TkSl1oum3FN5tk/JPGi7tO2yjQiniFSMfgie0jCaXYn9lKVLmgxQ0Dos=
+	t=1708676890; cv=none; b=R1j1IOL826qHlEYtoAhv3d+CsGJlQjFlRIDmixmioBjIqmsHlltjEzRRNNq4nfDE4d5Pl/E8tsWc3xjPJy5y3JVU9nHUCudRb7nelXsqqLJ41m/WQnrOjrQ+DTY3yZCC2uK2blSa6WFtvdgnxxvHDn//LokzZmgGIQEN69QjEBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708676834; c=relaxed/simple;
-	bh=1ndl2jwEP/nNUP8s6SSUqM2otyCLFT+mXsleq3UHp4Q=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=U7Lw5rBQpkyiEhRxVjbNhK779ehHAGSsmBEzCDa8QRT/Z0/LZ3uAN8fut+5+MrLqnE61jjm3ULsZcFMuo4kJ0KjvaYnN4T2vQ8XKBTrZDgMHHJPf8v4lLXmPDNXn7l4Uer7mW9E55YIiFRmxn2H4GGL3gUfydOeaXBMrAgMrgmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp; spf=pass smtp.mailfrom=parknet.co.jp; arc=none smtp.client-ip=210.171.160.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mail.parknet.co.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=parknet.co.jp
-Received: from ibmpc.myhome.or.jp (server.parknet.ne.jp [210.171.168.39])
-	by mail.parknet.co.jp (Postfix) with ESMTPSA id ABF63233CCB7;
-	Fri, 23 Feb 2024 17:27:10 +0900 (JST)
-Received: from devron.myhome.or.jp (foobar@devron.myhome.or.jp [192.168.0.3])
-	by ibmpc.myhome.or.jp (8.18.1/8.18.1/Debian-1) with ESMTPS id 41N8R9O9212176
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 23 Feb 2024 17:27:10 +0900
-Received: from devron.myhome.or.jp (foobar@localhost [127.0.0.1])
-	by devron.myhome.or.jp (8.18.1/8.18.1/Debian-1) with ESMTPS id 41N8R9KO1007742
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Fri, 23 Feb 2024 17:27:09 +0900
-Received: (from hirofumi@localhost)
-	by devron.myhome.or.jp (8.18.1/8.18.1/Submit) id 41N8R8u71007741;
-	Fri, 23 Feb 2024 17:27:08 +0900
-From: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Gwendal
- Grignou <gwendal@chromium.org>, dlunev@chromium.org
-Subject: Re: [PATCH] fat: ignore .. subdir and always add a link to dirs
-In-Reply-To: <Zdf8qPN5h74MzCQh@quatroqueijos.cascardo.eti.br> (Thadeu Lima de
-	Souza Cascardo's message of "Thu, 22 Feb 2024 23:02:16 -0300")
-References: <20240222203013.2649457-1-cascardo@igalia.com>
-	<87bk88oskz.fsf@mail.parknet.co.jp>
-	<Zdf8qPN5h74MzCQh@quatroqueijos.cascardo.eti.br>
-Date: Fri, 23 Feb 2024 17:27:08 +0900
-Message-ID: <874jdzpov7.fsf@mail.parknet.co.jp>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1708676890; c=relaxed/simple;
+	bh=q6V2H4gtFXsWFNKk56zPdodpY1DcPJdBBy776jbpCfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xb7JDjoSZHK6b0Ur0nYhufq7A2C9LST3zN5BkIfc+EJrf0GrPi9r/rwqpUgcpxAJccjC7a+8nbU667IBo+BfjeHfOGH+ZBc1OIEKi0fc7Oaiw+WLuSMSGxL9fLKKr6Oh9kmoN+/gB3f6DBX2ZK6d7Neqye8dtOWWWhH+fvmRslg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hu0xdDe4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0AD0C433F1;
+	Fri, 23 Feb 2024 08:28:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708676889;
+	bh=q6V2H4gtFXsWFNKk56zPdodpY1DcPJdBBy776jbpCfQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hu0xdDe4xcBEAVwr6eKhMBXxJbpLZgi9Bpm6xVwg0Uo1fwUlu5WUAnkGqOitKmGq1
+	 tZ6lUtbEZwJ6++CltYmiYny6cfi1Z7WHDaOrsW6nqzRjTohYV2l/pleu2FK3tlJQ9u
+	 RiDhf2akStqYEi99gM2+W8bb5quxSvd9vsxhvl9InnFpC1I35omMGlD8EzAmHEUPSm
+	 6wEycOQLd20xkQ0qaCTprFSKep8ZGEDDtu20dmBvLQGZBn+JoBoI4SElAhDemNURx9
+	 iNG/GkSFY+VEjOtVtWQsvP3W3x3T+tIdQ1G1NyCYnbSkf6e8NZup1qc32EHSMuLSrU
+	 /0T6ZkyLaWK3Q==
+Date: Fri, 23 Feb 2024 09:28:01 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: "Seth Forshee (DigitalOcean)" <sforshee@kernel.org>
+Cc: Serge Hallyn <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, 
+	Eric Paris <eparis@redhat.com>, James Morris <jmorris@namei.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, audit@vger.kernel.org, selinux@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org, linux-unionfs@vger.kernel.org
+Subject: Re: [PATCH v2 17/25] fs: add vfs_get_fscaps()
+Message-ID: <20240223-unzutreffend-streng-40cc6bcbc222@brauner>
+References: <20240221-idmap-fscap-refactor-v2-0-3039364623bd@kernel.org>
+ <20240221-idmap-fscap-refactor-v2-17-3039364623bd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240221-idmap-fscap-refactor-v2-17-3039364623bd@kernel.org>
 
-Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
+On Wed, Feb 21, 2024 at 03:24:48PM -0600, Seth Forshee (DigitalOcean) wrote:
+> Provide a type-safe interface for retrieving filesystem capabilities and
+> a generic implementation suitable for most filesystems. Also add an
+> internal interface, vfs_get_fscaps_nosec(), which skips security checks
+> for later use from the capability code.
+> 
+> Signed-off-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+> ---
+>  fs/xattr.c         | 64 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/fs.h |  4 ++++
+>  2 files changed, 68 insertions(+)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 06290e4ebc03..10d1b1f78fc2 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -181,6 +181,70 @@ xattr_supports_user_prefix(struct inode *inode)
+>  }
+>  EXPORT_SYMBOL(xattr_supports_user_prefix);
+>  
+> +static int generic_get_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
+> +			      struct vfs_caps *caps)
+> +{
+> +	struct inode *inode = d_inode(dentry);
+> +	struct vfs_ns_cap_data nscaps;
+> +	int ret;
+> +
+> +	ret = __vfs_getxattr(dentry, inode, XATTR_NAME_CAPS, &nscaps, sizeof(nscaps));
+> +
+> +	if (ret >= 0)
+> +		ret = vfs_caps_from_xattr(idmap, i_user_ns(inode), caps, &nscaps, ret);
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+> + * vfs_get_fscaps_nosec - get filesystem capabilities without security checks
+> + * @idmap: idmap of the mount the inode was found from
+> + * @dentry: the dentry from which to get filesystem capabilities
+> + * @caps: storage in which to return the filesystem capabilities
+> + *
+> + * This function gets the filesystem capabilities for the dentry and returns
+> + * them in @caps. It does not perform security checks.
+> + *
+> + * Return: 0 on success, a negative errno on error.
+> + */
+> +int vfs_get_fscaps_nosec(struct mnt_idmap *idmap, struct dentry *dentry,
+> +			 struct vfs_caps *caps)
+> +{
+> +	struct inode *inode = d_inode(dentry);
+> +
+> +	if (inode->i_op->get_fscaps)
+> +		return inode->i_op->get_fscaps(idmap, dentry, caps);
+> +	return generic_get_fscaps(idmap, dentry, caps);
+> +}
+> +
+> +/**
+> + * vfs_get_fscaps - get filesystem capabilities
+> + * @idmap: idmap of the mount the inode was found from
+> + * @dentry: the dentry from which to get filesystem capabilities
+> + * @caps: storage in which to return the filesystem capabilities
+> + *
+> + * This function gets the filesystem capabilities for the dentry and returns
+> + * them in @caps.
+> + *
+> + * Return: 0 on success, a negative errno on error.
+> + */
+> +int vfs_get_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
+> +		   struct vfs_caps *caps)
+> +{
+> +	int error;
+> +
+> +	/*
+> +	 * The VFS has no restrictions on reading security.* xattrs, so
+> +	 * xattr_permission() isn't needed. Only LSMs get a say.
+> +	 */
+> +	error = security_inode_get_fscaps(idmap, dentry);
+> +	if (error)
+> +		return error;
+> +
+> +	return vfs_get_fscaps_nosec(idmap, dentry, caps);
+> +}
+> +EXPORT_SYMBOL(vfs_get_fscaps);
+> +
+>  int
+>  __vfs_setxattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>  	       struct inode *inode, const char *name, const void *value,
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 89163e0f7aad..d7cd2467e1ea 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2116,6 +2116,10 @@ extern int vfs_dedupe_file_range(struct file *file,
+>  extern loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
+>  					struct file *dst_file, loff_t dst_pos,
+>  					loff_t len, unsigned int remap_flags);
+> +extern int vfs_get_fscaps_nosec(struct mnt_idmap *idmap, struct dentry *dentry,
+> +				struct vfs_caps *caps);
+> +extern int vfs_get_fscaps(struct mnt_idmap *idmap, struct dentry *dentry,
+> +			  struct vfs_caps *caps);
 
-> On Fri, Feb 23, 2024 at 10:52:12AM +0900, OGAWA Hirofumi wrote:
->> Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
->> 
->> > The tools used for creating images for the Lego Mindstrom EV3 are not
->> > adding '.' and '..' entry in the 'Projects' directory.
->> >
->> > Without this fix, the kernel can not fill the inode structure for
->> > 'Projects' directory.
->> >
->> > See https://github.com/microsoft/pxt-ev3/issues/980
->> > And https://github.com/microsoft/uf2-linux/issues/6
->> >
->> > When counting the number of subdirs, ignore .. subdir and add one when
->> > setting the initial link count for directories. This way, when .. is
->> > present, it is still accounted for, and when neither . or .. are present, a
->> > single link is still done, as it should, since this link would be the one
->> > from the parent directory.
->> >
->> > With this fix applied, we can mount an image with such empty directories,
->> > access them, create subdirectories and remove them.
->> 
->> This looks like the bug of those tools, isn't it?
->> 
->> Thanks.
->> -- 
->> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
->
-> Which they refused to fix, arguing that there are already filesystems out there
-> in the world like that. Also, there is argument that this works on Windows,
-> though I haven't been able to test this.
->
-> https://github.com/microsoft/pxt-ev3/issues/980
-> https://github.com/microsoft/uf2-linux/issues/6
-
-OK.
-
-If you want to add the workaround for this, it must emulate the correct
-format. I.e. sane link count even if without "."/"..". And furthermore
-it works for any operations.
-
-Thanks.
--- 
-OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Please drop the externs. Other than my usual complaing about this
+falling back to the legacy vfs_*xattr() interfaces,
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
