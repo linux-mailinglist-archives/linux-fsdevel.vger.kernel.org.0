@@ -1,96 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-12631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12632-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B7E0861F70
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 23:14:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0743F861F80
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 23:18:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0FE51F2499E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 22:14:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6165CB22ACF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 22:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C3F1448D8;
-	Fri, 23 Feb 2024 22:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D2914DFD1;
+	Fri, 23 Feb 2024 22:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VdEii+wV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0505D143C6A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 22:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 890C914CAC8
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 22:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708726446; cv=none; b=Ks+ono2LNwRxZL31pT+lv7R5cHQnjuhKGsIyXpORHjl7NHXAJ3c9+SWaZ0IjXlz8Rk5zNnKRuO9RDJgOu/BjQe5/JBHYpWDq1LRKKEaHcl8yNwJf1LAupT3ht3vlrw+ej7mAetjynej23lnXOje0WPJ7TTHD85sBjaRwzibumls=
+	t=1708726681; cv=none; b=Wj0KbwI+C3SmBszugNFPFhEXaZJkBGZLkUm/tqKx6GaZHInJ6wiUuC/QG9/JujYb9wAPkS8MrvKDepYV4kha/WRle0Tx4I6LWL4iFeK94yzg8cUzS2Qm+QaLOrOYt1njVqXZhI9DSBe86AW33rbOMM6fKd7sokmzanvCmQwrJX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708726446; c=relaxed/simple;
-	bh=+Ctr0KrDwCeMkU+RQ454ERPkbKZTfFHQEeCdfQoA6YY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=QFwVCxHnYcHSurh+GmBLqk6+JJfqopgtAsz/hs2m9EVPlx1c+7zttGXUACCQ0aGGXH4lf0tpRoTwTSmJV9AsyBCLJXou+uvC1AVy2RnWregsmRVPYwr6BW5PcN0DRbvkWnW5xJAjK3oto7CVhuaQrNTsjCNcOYT8ihBPsyWapQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3652d6907a1so12376735ab.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 14:14:04 -0800 (PST)
+	s=arc-20240116; t=1708726681; c=relaxed/simple;
+	bh=mr+d1THQdIOXLBHXtZjKUSDXbb7TH7vTqrSqao2j71w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F2cKTG8lMXn/JMqyKXldlXavrF/Aoq2kcJjuxZ0SyX/UM0An66PPw/1xUwdHCwKiNlOFHg/DpboiRm0/fBcwQGWAJRK8LV/CCNdaptbXghTopDaj20Ju04sjD79V0RZ7KzOS0K5aX6e35M1guSYwf1/0UyBgtiWT/2bx8zFjV9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VdEii+wV; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dcc80d6004bso1373673276.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 14:17:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1708726677; x=1709331477; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mr+d1THQdIOXLBHXtZjKUSDXbb7TH7vTqrSqao2j71w=;
+        b=VdEii+wVRnJp1mt3DLFbLstJLZ/qohvz+uwS06r5/nk3fYwfMxW+/vdbORHgEMfQ6V
+         //+/+IhByApeXKiHe8wSxfYEuEZYIUPOnqOQZs/vLMV8SWswH8kbRMouhgqB75Ssf/uE
+         9wzrB8/2WIi0puq4JAx0PnY9sMr3J/BpLlubAEBBrGUIz0LYmGSTC6ovFKL/TaZ2FTAJ
+         WR9c2RUwFoRHwqV7zoI6oijiyxTF6+ZGSqnwBQo20sbR2jP6ux0HC+h2PwG3qMs7sKSd
+         R0qd+leXxrawGLgwD1vKL0dy24+1d1jG4QB4Vav+gUykapzedxDSuQOBul5mVndE2dZg
+         TFTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708726444; x=1709331244;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+yKIsiHPc5N6utt+zlCMndtWwFz/JR5HuS2RY9FPzik=;
-        b=YbUS504IcvIQe2UoTp4iW+i4Y74fMB/0T9xLi/UXhezG0FqVlbsdcURViM+2ECcStn
-         owu4CLbyI1Mk4DSkhCKGWN+HX1sV/5HirxKLIyPoLSTWqOcSbS7fU0dgTtg1hXGD4l6s
-         QAD0uH7NWjlLLo7wXgRKVIe7K9qp8VktOyLoNVpAMdxPDzHcWAgbn9FimhhdYwKtWuxz
-         CkxzgBa96QYwE7clAr3cyDry7q6kuO+H9iEmyfBWv0GCuaKJ5F6N+NtQ0VVKtbTRdRhs
-         Yh5uyPndxXT7ZQFMJoSUui3cg30zfV684yOFytmvVz3SOtko1Px5r8Ge4gMOR/HIPvwB
-         dqug==
-X-Forwarded-Encrypted: i=1; AJvYcCVMlPJ9F4v3LRltAgHazFpejMAQowNreb9IdnvxlrlpH6lGstT4RE6nqHFkx+y3G+kRqmIg+JSJkV8HILV6axBa8NDsF5pFskgYLXcoCA==
-X-Gm-Message-State: AOJu0Yyt5mX2r5NUyBLNZgHn7BEjGz3w1sBxyCwjYLd/IaaL+H8sQKKU
-	K6z76ezZCDRLnYtSw8nlaokWP7bwnYhvNR+YbzBo+0yUIJcHsJMRQnItDCvdx8BIxSuxXcQigJ2
-	nYdKgj3mMfPyA+RCOLIS4ZhK5gmTKDeIYxrP06ouqgopkdwwi4AcwOjM=
-X-Google-Smtp-Source: AGHT+IH9hsxeN8JWcRHnUAnRF2nUKmQ8AUA2BXRL7xlSUOURky4FyCkAe+nisCjnW4nN3TEdoItNoQFcFlvbBrsaaY6y7PJ7QRDd
+        d=1e100.net; s=20230601; t=1708726677; x=1709331477;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mr+d1THQdIOXLBHXtZjKUSDXbb7TH7vTqrSqao2j71w=;
+        b=witdIhoHGz+xboSkRWBtgavxSoEZScofMr59ipvsQnT4fNz031MmJDaiQxo9roZMPp
+         XLQ+7lVM5MFDihm3a0wwPzi1V79kwnbYy8fRUaK1CAHht01PqrSOJAPdRGTQ0rBe9qoo
+         C4VJsyPg0yFyL0GDejN/kOKLHv+0HalOp0YWcLmj4DVgsvGzpoDY9V047Y3UPcrTaDIc
+         zWWjNdPJQMLIFhuo+l7pQEiqj3qTd5UnP3xZdeZ96R5OK7m8Cg58WjwORJ8jgHIKNWi8
+         XyR5Drs4PdhI/MCFsm0ZpAUDma5+BsqJMGNTY/bIIIhVA4h7UZaQWKW9ahHq9APgWNpV
+         hRTA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDVL2xNOOodBTkvoY782eeAkgrX5WxibsK0a8sJneRDjZJ+tLs3I5TZXuuBdWUFas4Cy7aoZjAOhfTB2VzpeM03/Z/ebqth5wtgxkpow==
+X-Gm-Message-State: AOJu0Yy/FAlHWgmIf0kxHSeeUtDKOzMkLaazzavGBByyr7DmpAWX9drg
+	G77yAOAQL9lPaYkSXQtVwZFie32YOV7+CSbAUhV1kC1ICQLa1SqjIFiWw7ZGTFR8DgJ/lEAD3He
+	22pGJNheVjV46Cwov+1hOkpJlqOcrHX33pu/E
+X-Google-Smtp-Source: AGHT+IFvVslf3S11aDqNfvq204R/MIDJZtFxjw2mS4TXD0XUNA43SeY457VF5UW1NHR7Lcxr2CpVLic3B31+1rRIW2U=
+X-Received: by 2002:a25:a427:0:b0:dc7:47b7:9053 with SMTP id
+ f36-20020a25a427000000b00dc747b79053mr1214318ybi.15.1708726677063; Fri, 23
+ Feb 2024 14:17:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20ee:b0:365:1c10:9cfa with SMTP id
- q14-20020a056e0220ee00b003651c109cfamr50005ilv.5.1708726444282; Fri, 23 Feb
- 2024 14:14:04 -0800 (PST)
-Date: Fri, 23 Feb 2024 14:14:04 -0800
-In-Reply-To: <00000000000091ce6f06013df598@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000badb45061213e0c0@google.com>
-Subject: Re: [syzbot] [kernfs?] [net?] [mm?] stack segment fault in __stack_depot_save
-From: syzbot <syzbot+1f564413055af2023f17@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, bpf@vger.kernel.org, brauner@kernel.org, 
-	davem@davemloft.net, edumazet@google.com, gregkh@linuxfoundation.org, 
-	jack@suse.cz, kuba@kernel.org, linkinjeon@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, netdev@vger.kernel.org, pabeni@redhat.com, 
-	reiserfs-devel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org
+References: <20240221194052.927623-1-surenb@google.com> <20240221194052.927623-25-surenb@google.com>
+ <CAH5fLgiyouEuDGkbm3fB6WTOxAnTiDx=z6ADx7HN3BTMAO851g@mail.gmail.com>
+In-Reply-To: <CAH5fLgiyouEuDGkbm3fB6WTOxAnTiDx=z6ADx7HN3BTMAO851g@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 23 Feb 2024 14:17:44 -0800
+Message-ID: <CAJuCfpHBEX27ThkdMBag-rOwir0Aaie-EeAUgF6bem=3OX4EdA@mail.gmail.com>
+Subject: Re: [PATCH v4 24/36] rust: Add a rust helper for krealloc()
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
+	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
+	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
+	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
+	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org, 
+	ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org, 
+	ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org, 
+	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
+	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot suspects this issue was fixed by commit:
+On Thu, Feb 22, 2024 at 2:00=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> On Wed, Feb 21, 2024 at 8:41=E2=80=AFPM Suren Baghdasaryan <surenb@google=
+.com> wrote:
+> >
+> > From: Kent Overstreet <kent.overstreet@linux.dev>
+> >
+> > Memory allocation profiling is turning krealloc() into a nontrivial
+> > macro - so for now, we need a helper for it.
+> >
+> > Until we have proper support on the rust side for memory allocation
+> > profiling this does mean that all Rust allocations will be accounted to
+> > the helper.
+> >
+> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> > Cc: Miguel Ojeda <ojeda@kernel.org>
+> > Cc: Alex Gaynor <alex.gaynor@gmail.com>
+> > Cc: Wedson Almeida Filho <wedsonaf@gmail.com>
+> > Cc: Boqun Feng <boqun.feng@gmail.com>
+> > Cc: Gary Guo <gary@garyguo.net>
+> > Cc: "Bj=C3=B6rn Roy Baron" <bjorn3_gh@protonmail.com>
+> > Cc: Benno Lossin <benno.lossin@proton.me>
+> > Cc: Andreas Hindborg <a.hindborg@samsung.com>
+> > Cc: Alice Ryhl <aliceryhl@google.com>
+> > Cc: rust-for-linux@vger.kernel.org
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>
+> Currently, the Rust build doesn't work throughout the entire series
+> since there are some commits where krealloc is missing before you
+> introduce the helper. If you introduce the helper first before
+> krealloc stops being an exported function, then the Rust build should
+> work throughout the entire series. (Having both the helper and the
+> exported function at the same time is not a problem.)
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+Ack. I'll move it up in the series.
 
-    fs: Block writes to mounted block devices
+>
+> With the patch reordered:
+>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14a58254180000
-start commit:   815fb87b7530 Merge tag 'pm-6.7-rc4' of git://git.kernel.or..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1101277e240af3b9
-dashboard link: https://syzkaller.appspot.com/bug?extid=1f564413055af2023f17
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=166bcf64e80000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111a00d2e80000
+Thanks Alice!
 
-If the result looks correct, please mark the issue as fixed by replying with:
-
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+>
+> Alice
 
