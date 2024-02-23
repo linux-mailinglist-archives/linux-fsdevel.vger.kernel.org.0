@@ -1,122 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-12573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12574-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE3F8612CA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 14:35:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0B5861306
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 14:43:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB21D28332A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 13:35:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA2072867F0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 13:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F987EF07;
-	Fri, 23 Feb 2024 13:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78CA27FBBD;
+	Fri, 23 Feb 2024 13:41:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I3Da3PYI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YpzC9HiL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B02C7AE6E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 13:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB34080033
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 13:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708695348; cv=none; b=Z3r0uW7g88dkfWHYqpvs7trm/yJgHVsVNLMwQmh4UXCX6NfBTL8BbKK7Kr+IArpBL46TPlYpTJq2q16w8BrDM6odKy3OWLusH9wTpOXc8HKhDf6kN0B/eVfR6wX0B+LHvle+VFylkxiuHTQNtq9kMjbsBxTPix46Z1LKKhgEaB8=
+	t=1708695708; cv=none; b=WGhpbtvrfgacDrKr0zUkQG8oNvE0Cmt1DXkh/mckA8jvGURotuJNVyNILtdCa6TChtbeYyGJbiU58BkqA8mn22mA3bA7WCRX82YHU3DOC282JJggZNCny176iOaNHOenuJ1EkzZC75lKmWzyS3OMYXuUmxQe6uhjq+6KwDbDC/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708695348; c=relaxed/simple;
-	bh=OTJ7Xt7rrRT0h51MxKNk6INxdt2O58CNFDXKF9XQAeE=;
+	s=arc-20240116; t=1708695708; c=relaxed/simple;
+	bh=ZeEgrHFNZ1UZPQ6r77BJ34V0W6ar1DD3XMO4AcqB124=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+QdP5pYqjoc2TQlrvRNZ0WhVhkyIyFAagia9wtszk6/Aox4Cyk7HB95p9WBCzJq6K/a3dju9F+ckWaxaHqb2QLM3m7/ZAcfIgQDjjRncgDNisuX+CnKp/amq35UkpJ7Ut9sUrIib0+GKm5bLIyKn/Grp3TwMMQbmtPtnw5DpI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I3Da3PYI; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41NDCDex018700;
-	Fri, 23 Feb 2024 13:35:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : mime-version : content-type :
- in-reply-to; s=pp1; bh=phLbPYszYOhRwI5w00p7YYEeuvJ8zl+7D8r/87UrSnI=;
- b=I3Da3PYIf4qMfuPp1hEYLV1SSDL4TYFKXiS4aKuH6Sw8444s2wQ7sGcaG84wFIEwvQ20
- 1oZgHL5o/LhreO3On6eAklK/Wqws9QXyXU0wacyYn0Hogm/oqSmrFzYT9u0UJAj3IGV/
- DdbCKH4EZ+iZDpCmSzDrqZa5MB6Rhz2fMo1503CqPE6BOPwfLdlJ4vTU/pc+OoEOrvx+
- FfSu22YTJevnNlhwqW2WmD+JlK5B6EBQCQqDc93fh+FNCa7m3UIYk2FiJSXx22UudUqV
- ifhyfN6Lom2PS2zwhWd2pbozbPzTCs6PU/pRDhwE2yaP1hIk4OmSWtJehOEq5TCP7J6Y EA== 
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3weukuh6uv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Feb 2024 13:35:39 +0000
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41NAd5QN013470;
-	Fri, 23 Feb 2024 13:35:38 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3wb7h0wug2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Feb 2024 13:35:38 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41NDZYkY40370576
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 23 Feb 2024 13:35:36 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6A7F62005A;
-	Fri, 23 Feb 2024 13:35:34 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ECEB02004F;
-	Fri, 23 Feb 2024 13:35:33 +0000 (GMT)
-Received: from osiris (unknown [9.171.74.183])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 23 Feb 2024 13:35:33 +0000 (GMT)
-Date: Fri, 23 Feb 2024 14:35:32 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, linux-fsdevel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Seth Forshee <sforshee@kernel.org>, Tycho Andersen <tycho@tycho.pizza>
+	 Content-Type:Content-Disposition:In-Reply-To; b=phruMY2dT6vldhX1iGnDwV0SDrkmLuhg5gA7SVrNhahnmpti65bcq4gSVcXDuU4nxdBAgKUlkQaS4h6PcYK5QLX/Wje7tqMBf82kupbwVTcAfXonLyMDgjY/KQEb8GOd8Rt6bwzpZWBGh2GyPeSgRN1tbU0rvXnXwpQfi8tog8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YpzC9HiL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5FF6C433C7;
+	Fri, 23 Feb 2024 13:41:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708695708;
+	bh=ZeEgrHFNZ1UZPQ6r77BJ34V0W6ar1DD3XMO4AcqB124=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YpzC9HiLLtCn92/oI6tPlJHTj0eUMYX1f6cqpOhyfsDOgGy/Jf4+BSSahhLgaGwfg
+	 ezdDgzB1lMaOsbAP603YLM1zKcP4EUbsjbGZWd4BGmJEyURM+FwNi5e5yr/yuxkjq8
+	 1o6V3NxhbFW5VQykYh9XgIqfX1CIz0eK7o6kvwd6Fu1Q/Husne0x6KV6PqmXkajnva
+	 rL5v6+SIidBU7Mg17ry8hu9pQiD10eLDBdb4xb/4iUioXi0gofwVHFqhXPBg/LDrAS
+	 aoFtqRy70r13Sl2RHtKc8ASl/CZKUBfyrWs6ujTmhc8KUbve1W93wJDRyTZEdEx1zo
+	 pf5Wm74W8dNcg==
+Date: Fri, 23 Feb 2024 14:41:44 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Seth Forshee <sforshee@kernel.org>, Tycho Andersen <tycho@tycho.pizza>, 
+	Heiko Carstens <hca@linux.ibm.com>
 Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
-Message-ID: <20240223133532.25637-A-hca@linux.ibm.com>
+Message-ID: <20240223-ortseinfahrt-verkabeln-a69a70229ea0@brauner>
 References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org>
  <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
  <20240222190334.GA412503@dev-arch.thelio-3990X>
  <20240223-delfin-achtlos-e03fd4276a34@brauner>
- <20240223125706.23760-A-hca@linux.ibm.com>
- <20240223-ansammeln-raven-df0ae086ff4a@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240223-ansammeln-raven-df0ae086ff4a@brauner>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: -GbyAZmVhNeBCsCM6KPV0MUW5PJD4WEn
-X-Proofpoint-GUID: -GbyAZmVhNeBCsCM6KPV0MUW5PJD4WEn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
- definitions=2024-02-22_15,2024-02-23_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=506 spamscore=0
- priorityscore=1501 phishscore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 mlxscore=0 bulkscore=0 clxscore=1015 suspectscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2311290000 definitions=main-2402230098
+In-Reply-To: <20240223-delfin-achtlos-e03fd4276a34@brauner>
 
-On Fri, Feb 23, 2024 at 02:27:23PM +0100, Christian Brauner wrote:
-> > So you are basically saying that for now it is ok to break everybody's
-> > system who tries linux-next and let them bisect, just to figure out they
-> > have to disable a config option?
-> 
-> Let me fix that suggestive phrasing for you. You seem to struggle a bit:
+> default to N for a while until everything's updated but I'd like to
 
-Thanks for helping!
+Ok, updated vfs.pidfd with a patch to flip this to n as the default for
+now until the LSM learns to deal with this. Should show up in -next
+tomorrow.
 
-> > I think we should flip the default because this is breaking people who
-> > are trying linux-next and making them bisect which can be annoying.
-> 
-> Yes, that was the intent. I probably should've made that clear. What I
-> was trying to do is to flip the default to N and fix the policy. When
-> that is done we should aim to flip back to y.
+---
 
-Ok, thanks.
+From 57a220844820980f8e3de1c1cd9d112e6e73da83 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Fri, 23 Feb 2024 14:17:21 +0100
+Subject: [PATCH] pidfs: default to n for now
+
+Moving pidfds from the anonymous inode infrastructure to a separate tiny
+in-kernel filesystem similar to sockfs, pipefs, and anon_inodefs causes
+Selinux denials and thus various userspace components that make heavy
+use of pidfds to fail.
+
+Feb 23 12:09:58 fed1 audit[353]: AVC avc:  denied  { read write open } for  pid=353 comm="systemd-userdbd" path="pidfd:[709]" dev="pidfs" ino=709 scontext=system_u:system_r:systemd_userdbd_t:>
+
+So far pidfds weren't able to be mediated by selinux which was requested
+multiple times. Now that pidfs exists it is actually possible to medite
+pidfds because they go through the regular open path that calls the
+security_file_open() hook. This is a huge advantage.
+
+Until the Selinux policy is fixed we need to default to n to avoid
+breaking people. That process is under way in [1] and [2].
+
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=2265630 [1]
+Link: https://github.com/fedora-selinux/selinux-policy/pull/2050 [2]
+Reported-by: Nathan Chancellor <nathan@kernel.org>
+Link: https://lore.kernel.org/r/20240222190334.GA412503@dev-arch.thelio-3990X
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/Kconfig b/fs/Kconfig
+index f3dbd84a0e40..eea2582fd4af 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -177,7 +177,7 @@ source "fs/sysfs/Kconfig"
+ config FS_PID
+ 	bool "Pseudo filesystem for process file descriptors"
+ 	depends on 64BIT
+-	default y
++	default n
+ 	help
+ 	  Pidfs implements advanced features for process file descriptors.
+ 
+-- 
+2.43.0
+
 
