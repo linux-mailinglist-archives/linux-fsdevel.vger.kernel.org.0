@@ -1,99 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-12629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 151FE861F0A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 22:27:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C46D7861F4B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 22:59:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9869D283F71
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 21:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DB84287649
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 21:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0981C1493A9;
-	Fri, 23 Feb 2024 21:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0F514CAA3;
+	Fri, 23 Feb 2024 21:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KPNTnF+O"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56485149382
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 21:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B10146E81
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 21:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708723647; cv=none; b=fkfDlMLX15h0BwLrBbfBNjhPpvJTSEjV3fRiWlAhoni6kHb9VUtFkaQh4xT31jij6QkIp1uexRB1X+yQD1JTdU3YGJEnsK4OOohNcaZPCAPJVL7SXhSPEkvBYL9pudIBpB49WWeE1h/P60UvMzc2xeK1KJ9kJoz28ePFwrKbXOU=
+	t=1708725538; cv=none; b=tfQA7EQ6mivyIP7xsmOHvt1nAXDKoEDBsXldwNxq7obn4wGbUrPUAeka0CZRHqNxykiiTJE3gD16M/Qd4+hXFRoupdwS0TW4MZt872JoYYzWxfEPUz16jtlrItWdq+1A17YAP6xvnWk6NTU8inScUuwv0X9mo1nb3Pvc6jIXdp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708723647; c=relaxed/simple;
-	bh=VLMGcoKqB8lRoDP0aswhFqwwhXnudyVIBfdJQmMCSS4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tw4KPr8oMJuZ5c+Mn1M3Wk7+qssQUEwTQn2zDeDRzr4huIcXM0e1i3TQUnKYE1GkkFyoakXvVXrsq3Mi1cjAaSLgklu+YARtanqtc/uDfkdtNA0dLFZKHFnBaLa4rb/7hE6AMIzvUkQrMUqlp7Bu8u0ikiUhBmVWVupZXlpEAcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3657ae3e87fso9340115ab.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 13:27:26 -0800 (PST)
+	s=arc-20240116; t=1708725538; c=relaxed/simple;
+	bh=mQuV0yZjIft1JmIQDi8GCAAwiFtPYfz53mkFU3S20es=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qSG6t7fwkBucGbRb/FWO3up5uw+uvqV+C0B+wUSJBzC9CMvapMI5j5F2HXk+i5xTfRZaqC9QwBhAMknZLNuqDmLa7XjPUQAmglQz4l+qReo08LOGDtaDyOanOMp5p+eQDKhEHQCZpqRmSlX4Q8ewEYd0tl8Br93FlTCgJyFqqWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KPNTnF+O; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-512b4388dafso1039273e87.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 13:58:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1708725534; x=1709330334; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cluO4hOihZqbJTGxEk+KwHeb/qJVX5aJw8x5hFc4fQs=;
+        b=KPNTnF+OkLX22856pMi2/yDnpABzBLknVrGGvXZr6V5WPNuAUSh4d9n1eSPrfBhiDm
+         aS7gicmUqj1SlNO1AQ/GbDs/LbInYfh/y6T099BZ2o9HWhcBl5S/IX19mQHXAusVl4bM
+         5wKtfEFEipx2Dqnf+fjoxLbtMntMVG5w2vp6k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708723645; x=1709328445;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=044LH8cJATSgHllL+X3xvCtVZ2tnyTB+fC4voAuIDv4=;
-        b=HGxjN1y40mx9jJocmd9a4Wfm3O49qrbaNNsIjf+nKoI7+t3aRFDW2WMZ2F+Nm3o0KU
-         OI9xX49SwcTKUHZZTFHtIZzkVaZQM4PKGkOIcOPQpH5qjEkF1A8qRjelf/DhrbMojHYp
-         bVCIzyNgQ83EIC2xn4xt6nEgANk3zpJ9BnBhh9W5LMcIuz0j4pAHBEfbvpI9U3YLJ8KS
-         PazuRrf+NPbnLXIVr6IbTjTWJPHSEUXoU6pOh4OEZ8BxT5jVEchpu+jKSd5/BoeiGHi0
-         SrgrYvJOPq5HjZm/SSqCzD7lOptwkeSiQX+93I4+BkpGLh5EOZdCWxln4BIqa+JZwD6V
-         r8KA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQNn6Iu8sEdFsZNq371js8jIKB55FsNf9q7s0zr73pMOI0aNBRJ4M/QXZuyqHvoBh+fQSfRF3cgnNEg0Q/oeT0v26zpDkTmXMRgQ6nYQ==
-X-Gm-Message-State: AOJu0Yx/+0GJR9NDHKZdZR8sAg/pisxoDLaKHm71q6o4CSJ0FNgS/8Nc
-	dEPwcpiXm70W449/3oGdU5UvND2Tx+/9szDiVPcZCJPXCVpFHFMO8X+hPPJk0PmiTssPCU1xtpz
-	DSOdR41oztWpEZ3A9brsCTNRW5lVrZLYTXpQ1y8SHf1NUf9M4yDMTXdU=
-X-Google-Smtp-Source: AGHT+IEmu9pZ71VokjjsFo+IJZvhbi2GgLkE2nE4NjmMnazl1hkHlv+sO/TWslddmfx2T7/pAl2sJLeumUQjPljJFUW5MPVJAyUz
+        d=1e100.net; s=20230601; t=1708725534; x=1709330334;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cluO4hOihZqbJTGxEk+KwHeb/qJVX5aJw8x5hFc4fQs=;
+        b=RjpmeOtRlKXFKakXPYelpuktmzUM6+kZj4ca/BSvwfp87zt1s5MU+YssP71TcJw31u
+         CQ+Ggs3vdZDxyRTin1j4G9PweIUdWY1LnpjV6rhzscYB3WBpL9iW8fSPtlxKzuN3YKoP
+         FrOa5I6RHIqSO638tcjTpuCAdZlGpaSJZjnQWB/3LvFP9k33ST1JGyDmHsH0wuN8FXuw
+         EhSP+ZGXFO0yCOSUarwRcjsKkcvenqRKjjDcvWVCZ+F3NacRNbNDIAUw5z+gYSWjqj0e
+         YVUwgE7lia9eImRh12rDna/YW2T7UG+0lht0fz+7S0lKCMxX1fXQWNLcUTdPc7mkZjTW
+         GDyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIufQRqkiGUihuifSGZ0g7FbDg93HsyQq1ROEp0A/x8vA9eX92Bh9v/+ljP4XvJXljj05v7uUdbq8HrQk/G4UMUq4ud0vCg9UmuAuzYg==
+X-Gm-Message-State: AOJu0YzfH5Q5QvDU6W92rk/yFGMCPZWXqrwaSLSGTJWXHAAGdj93ZCuW
+	WX3i2P5GJUeCrnui6fKfDDEiMLw7FQAxjNDVzhu+7NuAbJC6GsisyqbRTLR+tn+BNVGiGfCV1Eg
+	dFUU=
+X-Google-Smtp-Source: AGHT+IF0COwHHP+4D2KEPlgE6D7h+R65DT/EruC/uFOk/RowVqLWCPOLSQgt1gOzbV9+IKWolubmVA==
+X-Received: by 2002:a05:6512:3143:b0:512:b374:ec67 with SMTP id s3-20020a056512314300b00512b374ec67mr580331lfi.58.1708725534459;
+        Fri, 23 Feb 2024 13:58:54 -0800 (PST)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id se7-20020a170906ce4700b00a3d26a25cbasm7199972ejb.37.2024.02.23.13.58.53
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Feb 2024 13:58:53 -0800 (PST)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-564fd9eea75so1195932a12.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 13:58:53 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVvHzIA3TrkhOz/Yfs4s8PTh3JLWc8j9pDI7Wyt1fy5ljJxK1KExp8+VhWRs1tWJ9pE9qYWcRIcDhtpc/YWrz/dWv9s8ATfDVaxp3GlTQ==
+X-Received: by 2002:a17:906:3397:b0:a3f:d797:e6e2 with SMTP id
+ v23-20020a170906339700b00a3fd797e6e2mr596297eja.28.1708725533385; Fri, 23 Feb
+ 2024 13:58:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c08:b0:365:5dbd:b956 with SMTP id
- l8-20020a056e021c0800b003655dbdb956mr52445ilh.3.1708723645570; Fri, 23 Feb
- 2024 13:27:25 -0800 (PST)
-Date: Fri, 23 Feb 2024 13:27:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000e9e80e061213394a@google.com>
-Subject: [syzbot] Monthly gfs2 report (Feb 2024)
-From: syzbot <syzbot+list72751ee4e1b31b4ea4be@syzkaller.appspotmail.com>
-To: gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org>
+ <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org> <20240222190334.GA412503@dev-arch.thelio-3990X>
+ <20240223-delfin-achtlos-e03fd4276a34@brauner> <20240223-schusselig-windschatten-a108c9034c5b@brauner>
+In-Reply-To: <20240223-schusselig-windschatten-a108c9034c5b@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 23 Feb 2024 13:58:36 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg0D8g_97_pakX-tC2DnANE-=6ZNY5bz=-hP+uHYyh4=g@mail.gmail.com>
+Message-ID: <CAHk-=wg0D8g_97_pakX-tC2DnANE-=6ZNY5bz=-hP+uHYyh4=g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
+To: Christian Brauner <brauner@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Seth Forshee <sforshee@kernel.org>, Tycho Andersen <tycho@tycho.pizza>, 
+	Heiko Carstens <hca@linux.ibm.com>, Al Viro <viro@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Hello gfs2 maintainers/developers,
+On Fri, 23 Feb 2024 at 13:26, Christian Brauner <brauner@kernel.org> wrote:
+>
+> So, the immediate fix separate from the selinux policy update is to fix
+> dbus-broker which we've done now:
+>
+> https://github.com/bus1/dbus-broker/pull/343
 
-This is a 31-day syzbot report for the gfs2 subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/gfs2
+Why is that code then continuing the idiocy of doing different things
+for different error conditions?
 
-During the period, 2 new issues were detected and 0 were fixed.
-In total, 13 issues are still open and 29 have been fixed so far.
+IOW, it causes user space failure when that code doesn't fall back to
+"don't do pidfd", but then it continues the crazy habit of treating
+*some* error returns as "fallback to not use pidfd" and other errors
+as "fail user space".
 
-Some of the still happening issues:
+That was the fundamental bug with special-casing EINVAL in the first
+place, and the above "fix" continues the braindamage.
 
-Ref Crashes Repro Title
-<1> 5640    Yes   WARNING in __folio_mark_dirty (2)
-                  https://syzkaller.appspot.com/bug?extid=e14d6cd6ec241f507ba7
-<2> 697     Yes   kernel BUG in gfs2_glock_nq (2)
-                  https://syzkaller.appspot.com/bug?extid=70f4e455dee59ab40c80
-<3> 2       Yes   general protection fault in gfs2_rindex_update
-                  https://syzkaller.appspot.com/bug?extid=74edb1a3ea8f1c65a086
+Did nobody learn anything?
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Also, honestly, if this breaks existing setups, then we should fix the
+kernel anyway. Changing things from the old anonymous inodes to the
+new pidfs inodes should *not* have caused any LSM denial issues.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+You used the same pointer to dbus-broker for the LSM changes, but I
+really don't think this should have required LSM changes in the first
+place. Your reaction to "my kernel change caused LSM to barf" should
+have made you go "let's fix the kernel so that LSM _doesn't_ barf".
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+Maybe by making pidfs look exactly like anonfs to LSM. Since I don't
+see the LSM change, I'm not actually sure exactly what LSM even
+reacted to in that switch-over.
 
-You may send multiple commands in a single email message.
+           Linus
 
