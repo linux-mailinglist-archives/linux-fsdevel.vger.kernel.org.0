@@ -1,146 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-12618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12619-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44C71861B81
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 19:23:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E50861B93
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 19:27:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9560DB21E76
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 18:23:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A3AD1F24B50
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 18:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB574143C6E;
-	Fri, 23 Feb 2024 18:23:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF0C142634;
+	Fri, 23 Feb 2024 18:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="daV3PcJz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLcX593i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EB21420B8;
-	Fri, 23 Feb 2024 18:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF0912AAE0;
+	Fri, 23 Feb 2024 18:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708712607; cv=none; b=n2vO6Rb034yXvXNu4dn0Q3G1maqUpncdLyW50+XyzgGqlkCXwSgJBlZp6tPqiGa1Y1uCZpdrwFFIy/Oc56P2gqRwSx527Vu+7QUNpLgICrxaE7yiuTyPdcRczM+gdY+HhnOAoGiF8fyYnvsYQ9MHUTEXafDqd5guBFUmzuqZD0w=
+	t=1708712857; cv=none; b=Y3v9TkY4/GdRwa6MrOamhVr4jYE5V0ron1mcctIB1B/rMeYambpVyfAEypKT0AG/q+0U5ltuKMITyGWIC1HnN0F6d/DtfG0Tki/Ulr/cf6MsYWKg+ze+pGq0ZpOX19xHzeoo/G4Shp4wIfSIsuH8ZP5X0kEuEk0rM1gggfrYkSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708712607; c=relaxed/simple;
-	bh=u/5mSMo2jLoil9eBiGjHmK9Nu9VBvSjMm+BdCSwUGC8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VgrIGxb0J6BmH9K8nB6THvvFpjAuOUJ584vh5WYPyWWUy1Poec15kFLp5XnZSoXNSj+e+ltxPmlzQ+NVHvQksTwtToTBTzSUdB2AZ0XcTRp3I/mQRe0xZ/L5sMMnNF5ey+QwaOlBT0lRFfYVRZpy0rqToSKE/wuFnJalyCtVjCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=daV3PcJz; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1708712606; x=1740248606;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=u/5mSMo2jLoil9eBiGjHmK9Nu9VBvSjMm+BdCSwUGC8=;
-  b=daV3PcJzAWnBQiz0HzMFqKiZK3sxGCKWBhLC5MnpIaWABTyrvPK+mS4s
-   3xl/srchp5AP+lK0mGAlL8/fP8YqYts1hVpf2RbGsV67YXgw4iFVA2gaW
-   /tS9Ixira8HT6X45kH+kQgchBFLjHeit2TJB6utP9j5guNSYJlhtFv8vb
-   LL6w62hlu926Lbdo1MALqZLtJBD5HnROGKY0toGeKrRP3r2uDNHpOrVe+
-   U7VF7aHPP1fHNwHELln+HcomYuChK3UI+CLOi8YawbqhpX/F6MmomoEr5
-   DSLwjsgXL5q0Pni+KhvrwktUXgAlOjBAyV3tjHx58oG1XTQSKl9L7KEnv
-   A==;
-X-IronPort-AV: E=McAfee;i="6600,9927,10993"; a="6858582"
-X-IronPort-AV: E=Sophos;i="6.06,180,1705392000"; 
-   d="scan'208";a="6858582"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2024 10:23:26 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.06,180,1705392000"; 
-   d="scan'208";a="10584169"
-Received: from gtkramer-mobl1.amr.corp.intel.com (HELO [10.209.82.163]) ([10.209.82.163])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Feb 2024 10:23:23 -0800
-Message-ID: <05a12c0b-e3e3-4549-b02e-442e4b48a86d@intel.com>
-Date: Fri, 23 Feb 2024 10:23:21 -0800
+	s=arc-20240116; t=1708712857; c=relaxed/simple;
+	bh=QRdiuhTMR16m4fIPAyssErxzQ5LISwQQGfoCj2IS59c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IiSnGGonox9Vb1L6QaR1dg8WeU0xTP+MdNJvIFsiMalqJ9Tp4480xDpXVrDRB23V5O+pOLhIGaawx7bVOfMvE1yaZqnoRIze9Ze98yi+F1OEUXVgYbRbTse73yjvy2YTNfdTV2qAPhTF4goUWoa/XeFsbkKm15beHITtyk5OivM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLcX593i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9D78C433C7;
+	Fri, 23 Feb 2024 18:27:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708712857;
+	bh=QRdiuhTMR16m4fIPAyssErxzQ5LISwQQGfoCj2IS59c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hLcX593iwdJgniejHOsCm2TrV+5iXQqtHCQuIjvRyCwbmBjutfCnwd0SPEe+V2Tyf
+	 nqlsOpp+uKKfEB3dLy8IhzklgKM8L36WR2+Mn7mMqpsri1fgRRgPcqfxx6eXneF0tZ
+	 gN/PjUJC7oK5nOMRmNkq9rfeESbTvj2c5bztmf04mj4ob8ijsqC6OjLS8O6dA/yCGt
+	 QfmoYzvG1LSbocfSnR3JtjLupmLIf+OiiXCHN6DFVp25BvDRyje3UVQNMTgiWRFkI7
+	 Sx4qqfBqicK+5qtF7DgC2I/USTfYy2Mpx+FYulljDDLT6G5ER548xcvBrdvFNA+0Un
+	 sM/abViQzNqjA==
+Date: Fri, 23 Feb 2024 10:27:35 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, chandan.babu@oracle.com,
+	djwong@kernel.org
+Subject: Re: [PATCH v4 09/25] fsverity: add tracepoints
+Message-ID: <20240223182735.GD1112@sol.localdomain>
+References: <20240212165821.1901300-1-aalbersh@redhat.com>
+ <20240212165821.1901300-10-aalbersh@redhat.com>
+ <20240223053156.GE25631@sol.localdomain>
+ <copvwl7uhxj7iqlms2tv6shk4ky7lce54jqugg7uiuxgbv34am@3x6pelescjlb>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 16/20] famfs: Add fault counters
-Content-Language: en-US
-To: John Groves <John@Groves.net>, John Groves <jgroves@micron.com>,
- Jonathan Corbet <corbet@lwn.net>, Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matthew Wilcox <willy@infradead.org>, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev
-Cc: john@jagalactic.com, Dave Chinner <david@fromorbit.com>,
- Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com,
- gregory.price@memverge.com
-References: <cover.1708709155.git.john@groves.net>
- <43245b463f00506016b8c39c0252faf62bd73e35.1708709155.git.john@groves.net>
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <43245b463f00506016b8c39c0252faf62bd73e35.1708709155.git.john@groves.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <copvwl7uhxj7iqlms2tv6shk4ky7lce54jqugg7uiuxgbv34am@3x6pelescjlb>
 
-On 2/23/24 09:42, John Groves wrote:
-> One of the key requirements for famfs is that it service vma faults
-> efficiently. Our metadata helps - the search order is n for n extents,
-> and n is usually 1. But we can still observe gnarly lock contention
-> in mm if PTE faults are happening. This commit introduces fault counters
-> that can be enabled and read via /sys/fs/famfs/...
+On Fri, Feb 23, 2024 at 02:23:52PM +0100, Andrey Albershteyn wrote:
+> On 2024-02-22 21:31:56, Eric Biggers wrote:
+> > On Mon, Feb 12, 2024 at 05:58:06PM +0100, Andrey Albershteyn wrote:
+> > > fs-verity previously had debug printk but it was removed. This patch
+> > > adds trace points to the same places where printk were used (with a
+> > > few additional ones).
+> > 
+> > Are all of these actually useful?  There's a maintenance cost to adding all of
+> > these.
+> > 
 > 
-> These counters have proved useful in troubleshooting situations where
-> PTE faults were happening instead of PMD. No performance impact when
-> disabled.
+> Well, they were useful for me while testing/working on this
+> patchset. Especially combining -e xfs -e fsverity was quite good for
+> checking correctness and debugging with xfstests tests. They're
+> probably could be handy if something breaks.
+> 
+> Or you mean if each of them is useful? The ones which I added to
+> signature verification probably aren't as useful as other; my
+> intention adding them was to also cover these code paths.
 
-This seems kinda wonky.  Why does _this_ specific filesystem need its
-own fault counters.  Seems like something we'd want to do much more
-generically, if it is needed at all.
+Well, I'll have to maintain all of these, including reviewing them, keeping them
+working as code gets refactored, and fixing any bugs that exist or may get
+introduced later in them.  They also increase the icache footprint of the code.
+I'd like to make sure that it will be worthwhile.  The pr_debug messages that I
+had put in fs/verity/ originally were slightly useful when writing fs/verity/
+originally, but after that I never really used them.  Instead I found they
+actually made patching fs/verity/ a bit harder, since I had to make sure to keep
+all the pr_debug statements updated as code changed around them.
 
-Was the issue here just that vm_ops->fault() was getting called instead
-of ->huge_fault()?  Or something more subtle?
+Maybe I am an outlier and other people really do like having these tracepoints
+around.  But I'd like to see a bit more feedback along those lines first.  If we
+could keep them to a more minimal set, that would also be helpful.
+
+- Eric
 
