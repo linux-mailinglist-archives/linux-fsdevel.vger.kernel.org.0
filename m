@@ -1,146 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-12563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12564-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EED6861203
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 13:55:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19AE9861228
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 14:01:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D8486B22C0D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 12:55:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49FB61C228B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 13:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0E37D41D;
-	Fri, 23 Feb 2024 12:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC37A7CF21;
+	Fri, 23 Feb 2024 13:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CAn5uSyT"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hvDavKdV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744177CF1D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 12:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789A1651A2
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 13:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708692928; cv=none; b=trgJvYVPourttTjw9ma9Ei8WI0JZcJce/OrsB/ff9etXS165RO8dgLxCiq8zi+kZXGIJE38/fos/FVN67orK3hjNUXkaN6kC5YP+MRG9OmTWl3BSK562MMs5oviQIxeJrvjV60Vg3vM1KRygeyke9OpnpZ5WtP/CfiKk9Gsbu1A=
+	t=1708693284; cv=none; b=GPs1/e/UUqOhwqjbwZLfuFO/iGtCGJQfwaNHOzXy4C68ZXYil+ErbBeKIktT7Pm04izyDkc8jrWgiVqYAF9H6BeCmEpctFe44FBuY3pF4t2N06utxfowDlV0NanX4C81qFi7f4wVP+4GIIdj6GZLzBtSzAswc4sjNr95Phn5FpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708692928; c=relaxed/simple;
-	bh=aVFT9EQp7q7JonJdV47KeTLSynCJZvyp7XBYXfrWLoc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ir15B04Tc/9/1X6GlrHbGTCPONUNu8Y6pO9gqL3oZAFNF4V/jeliZgFggWjMxbA/Z34WxEUOneEDIj+YoTEvItQ3mmmFKf+zV5GrkmWfnapdcf6m2sk+73lyB63CehFfhRYT3HlL+V7YSZIpkhEeRe9t4Eg+7RNJvkRLWhvwWbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CAn5uSyT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1708692925;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W+w29RIGjR3n8ArJXrNp/EUd5heRIsgahlaJ2sqHGvU=;
-	b=CAn5uSyTB+eJszhSSS7IFDSAAebn/2m9325Dr1cyVBLmrtc6RvTdPS/g6Wjwy+n3NO2o35
-	RkbgomplSDLn66mcHdvHQWPDbWQ1u0lUOwcToxnug1xmK4ykTknALgOCzlMbT/0bvUhgCk
-	YTzH0wJYI1gzb6U3IzCTZSrpG+aCGZI=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-70-fJ0GLLfaOY2AktcIB4g5Fw-1; Fri, 23 Feb 2024 07:55:24 -0500
-X-MC-Unique: fJ0GLLfaOY2AktcIB4g5Fw-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-33d9f425eaaso118382f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 04:55:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708692923; x=1709297723;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W+w29RIGjR3n8ArJXrNp/EUd5heRIsgahlaJ2sqHGvU=;
-        b=vphnkN7oz7qCQGCYiyIu/QFQfDG8elTLr+f4+NGCI4kqXy915iK1jIWiCBbkMDUqx7
-         obwQa7nLSnPw+1tOGDxyY0329+AlA6oiQyYN4N2etCPPkQnbmvO+v7F54TnXveWGXR49
-         DnHKeVwc5fpgSR8HXUnBtxfzMVb7dEPaJIslR6DeIYFIivvj5ABM0eaBdZbcNemUHzth
-         AlbzputQ/LoFRkyLhtw2RCaC6W8u/W1ZCrNQvd4PH1KtRZZCFpBOTnkagUU6pFXzFR7C
-         lCaX761cNY4fOR3ZAfQnIib2iDDYLA/gNUJQ+89uVz+tk6jBZsalr2qLaJRyRIb6tDjY
-         w+0w==
-X-Forwarded-Encrypted: i=1; AJvYcCVg3aonxSYceMODbPTtXvmNioCH0YpbY4oCSQQojWQsC6jVgvtOLZHD9YE5RlvYB7ugdRDbxlEEIdYnmEvDuP7pTQbEmORRqat14t2/2g==
-X-Gm-Message-State: AOJu0YyX0MTntW1YhaR0eMiQ1AlDEvZk4VlcyjDquy4GWtoDLXtRhecS
-	VDYbmfOUUIROcD4rzvv9KG+XAypdrinrN4YaosMx2GLVXFyNRMBFULhLG8BXU9TxeHxWZcuAJg6
-	rSuUkLJ7Ud5x1zq7UvazocuhSrdmu7fQy/pin/ysmzzaJ4aGpF3usTBO+DiTJeQ==
-X-Received: by 2002:adf:f887:0:b0:33d:282c:af48 with SMTP id u7-20020adff887000000b0033d282caf48mr1328745wrp.69.1708692922932;
-        Fri, 23 Feb 2024 04:55:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEzOl5wggUxVEAyYw4DG2qkmOXnqF8Ch6/f5lpfvycnx7OLTSTxLLFHYWaS+EMxDphokC898g==
-X-Received: by 2002:adf:f887:0:b0:33d:282c:af48 with SMTP id u7-20020adff887000000b0033d282caf48mr1328721wrp.69.1708692922521;
-        Fri, 23 Feb 2024 04:55:22 -0800 (PST)
-Received: from thinky ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id x3-20020adff643000000b0033b278cf5fesm2674349wrp.102.2024.02.23.04.55.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Feb 2024 04:55:21 -0800 (PST)
-Date: Fri, 23 Feb 2024 13:55:21 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: fsverity@lists.linux.dev, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, chandan.babu@oracle.com, djwong@kernel.org
-Subject: Re: [PATCH v4 05/25] fs: add FS_XFLAG_VERITY for verity files
-Message-ID: <ck7uzvtsfxikgpvdxw5mwvds5gq2errja7qhru7liy5akijcdg@rlodrbskdprz>
-References: <20240212165821.1901300-1-aalbersh@redhat.com>
- <20240212165821.1901300-6-aalbersh@redhat.com>
- <20240223042304.GA25631@sol.localdomain>
+	s=arc-20240116; t=1708693284; c=relaxed/simple;
+	bh=/D015y6if6AAwdlcuR+SzGgx8YNUzdhZjrFMgHx2dRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=LkBx/+iLS/pv9RGNZRunqJMJQWiD1ZKjNO4S2MjXBm9sxfvChm8n1D8x3IVbtrBIFDWRT+JuHEQUg4Mry0G6LndvW1pwYlFM0SYZ3pccuhmljp0Yw956TvXu7/lRjjRPLp57hs+GsmUJ/2ZUQLGT3L6+0iT4Av1M9IySuHCFtyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hvDavKdV; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 41NCtlhI009956;
+	Fri, 23 Feb 2024 13:01:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : content-type : in-reply-to :
+ mime-version; s=pp1; bh=CnHm7igyUzTnSaVCGkCzuNVgK4Jc1Hx4s9EKAAgXmSo=;
+ b=hvDavKdVxR6LBDlmyFqZBiRLXK0r2UDwZaF0BcyphNgjg7NcRpZYdYwLNFTt34B7GPkl
+ LFEf3po2sX3Jr9YRxRvNI7n7ec09C5cvvde4v8zcHPa8U4aoaDsPPyaww4WH0uyPV2MC
+ gPMNkiry96jcB6cOMm9Ru/U5xQ3VnqLq0rQau3pY4oQldJ8M7xyNyb+Lgu5NCzQitkJd
+ VhRk8MJj6NTf1riYpClX/M5GjbJ+6j+ITnqwfqsYXIvN5Q0f3hvqv3Ag+b3LUbqr1gau
+ 1hvzmOClEjaN7Rwbp/WwlAgmybcJ8SKDER2TceBxpJwuayg1UBrdmZSwWL7Nu5Rp64qA dA== 
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3weukugfdx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Feb 2024 13:01:13 +0000
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 41NC7ADt017278;
+	Fri, 23 Feb 2024 12:57:12 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3wb8mmw8uw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 Feb 2024 12:57:11 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 41NCv7bI39715118
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 23 Feb 2024 12:57:09 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D1D8B20040;
+	Fri, 23 Feb 2024 12:57:07 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6E1C420043;
+	Fri, 23 Feb 2024 12:57:07 +0000 (GMT)
+Received: from osiris (unknown [9.171.74.183])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 23 Feb 2024 12:57:07 +0000 (GMT)
+Date: Fri, 23 Feb 2024 13:57:06 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, linux-fsdevel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Seth Forshee <sforshee@kernel.org>, Tycho Andersen <tycho@tycho.pizza>
+Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
+Message-ID: <20240223125706.23760-A-hca@linux.ibm.com>
+References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org>
+ <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
+ <20240222190334.GA412503@dev-arch.thelio-3990X>
+ <20240223-delfin-achtlos-e03fd4276a34@brauner>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240223-delfin-achtlos-e03fd4276a34@brauner>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: lYLqezVHgJiDAdqqwvORWm9sawkhuWun
+X-Proofpoint-GUID: lYLqezVHgJiDAdqqwvORWm9sawkhuWun
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240223042304.GA25631@sol.localdomain>
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1011,Hydra:6.0.619,FMLib:17.11.176.26
+ definitions=2024-02-22_15,2024-02-23_01,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=853 spamscore=0
+ priorityscore=1501 phishscore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 mlxscore=0 bulkscore=0 clxscore=1015 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2311290000 definitions=main-2402230094
 
-On 2024-02-22 20:23:04, Eric Biggers wrote:
-> On Mon, Feb 12, 2024 at 05:58:02PM +0100, Andrey Albershteyn wrote:
-> > +FS_IOC_FSGETXATTR
-> > +-----------------
-> > +
-> > +Since Linux v6.9, FS_XFLAG_VERITY (0x00020000) file attribute is set for verity
-> > +files. The attribute can be observed via lsattr.
-> > +
-> > +    [root@vm:~]# lsattr /mnt/test/foo
-> > +    --------------------V- /mnt/test/foo
-> > +
-> > +Note that this attribute cannot be set with FS_IOC_FSSETXATTR as enabling verity
-> > +requires input parameters. See FS_IOC_ENABLE_VERITY.
+On Fri, Feb 23, 2024 at 12:55:07PM +0100, Christian Brauner wrote:
+> In short, we have to update the selinux policy for Fedora. (Fwiw, went
+> through the same excercise with nsfs back then.)
 > 
-> The lsattr example is irrelevant and misleading because lsattr uses
-> FS_IOC_GETFLAGS, not FS_IOC_FSGETXATTR.
+> I've created a pull-request here:
 > 
-> Also, I know that you titled the subsection "FS_IOC_FSGETXATTR", but the text
-> itself should make it super clear that FS_XFLAG_VERITY is only for
-> FS_IOC_FSGETXATTR, not FS_IOC_GETFLAGS.
-
-Sure, I will remove the example. Would something like this be clear
-enough?
-
-    FS_IOC_FSGETXATTR
-    -----------------
-
-    Since Linux v6.9, FS_XFLAG_VERITY (0x00020000) file attribute is set for verity
-    files. This attribute can be checked with FS_IOC_FSGETXATTR ioctl. Note that
-    this attribute cannot be set with FS_IOC_FSSETXATTR as enabling verity requires
-    input parameters. See FS_IOC_ENABLE_VERITY.
-
-> > diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> > index 48ad69f7722e..6e63ea832d4f 100644
-> > --- a/include/uapi/linux/fs.h
-> > +++ b/include/uapi/linux/fs.h
-> > @@ -140,6 +140,7 @@ struct fsxattr {
-> >  #define FS_XFLAG_FILESTREAM	0x00004000	/* use filestream allocator */
-> >  #define FS_XFLAG_DAX		0x00008000	/* use DAX for IO */
-> >  #define FS_XFLAG_COWEXTSIZE	0x00010000	/* CoW extent size allocator hint */
-> > +#define FS_XFLAG_VERITY		0x00020000	/* fs-verity sealed inode */
+> https://github.com/fedora-selinux/selinux-policy/pull/2050
 > 
-> There's currently nowhere in the documentation or code that uses the phrase
-> "fs-verity sealed inode".  It's instead called a verity file, or a file that has
-> fs-verity enabled.  We should try to avoid inconsistent terminology.
+> and filed an issue here:
+> 
+> https://bugzilla.redhat.com/show_bug.cgi?id=2265630
+> 
+> We have sufficient time to get this resolved and I was assured that this
+> would be resolved. If we can't get it resolved in a timely manner we'll
+> default to N for a while until everything's updated but I'd like to
+> avoid that. I'll track that issue.
 
-Oops, missed this one. Thanks!
+So you are basically saying that for now it is ok to break everybody's
+system who tries linux-next and let them bisect, just to figure out they
+have to disable a config option?
 
--- 
-- Andrey
-
+To me this is a clear indication that the default is wrong already now.
 
