@@ -1,148 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-12628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8187B861F08
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 22:26:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 151FE861F0A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 22:27:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A43B71C223B2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 21:26:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9869D283F71
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Feb 2024 21:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CB2E14AD04;
-	Fri, 23 Feb 2024 21:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fc9fMdJW"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0981C1493A9;
+	Fri, 23 Feb 2024 21:27:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C064B1493B6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 21:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56485149382
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 21:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708723586; cv=none; b=RgQDk604l3Lzgj/Tk4Hlf8HvjkaVseSxMCcl28y8Emv5tV9a2hAU9+OYRY6PdqpgGXYytiHuNEerBPJ9Os8Jlh6vz2J9hhkxtf1aSpQgD9Q+oSa8DIjGiG0VH4MJi8vTo2LHR3HEYvXgssT2LZSQznblqaZ4Rm56ZpF8nLlVUw8=
+	t=1708723647; cv=none; b=fkfDlMLX15h0BwLrBbfBNjhPpvJTSEjV3fRiWlAhoni6kHb9VUtFkaQh4xT31jij6QkIp1uexRB1X+yQD1JTdU3YGJEnsK4OOohNcaZPCAPJVL7SXhSPEkvBYL9pudIBpB49WWeE1h/P60UvMzc2xeK1KJ9kJoz28ePFwrKbXOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708723586; c=relaxed/simple;
-	bh=/UMBBO4plUyUH4SOp7YIoGKcqlyGlmv4B19OS+xAN98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fHMMKDU8mCMheESOQjMRohFW7m7JeVz8LCnw+ru4vZwu2QQQ3uBH5vM1u0oLSMzkySMg26xS84Q54KjsWvt1FjhuU7/++WOIaVUS4PRfWVeeg1M+EXysErEtwEkfpqDm+jQI54OTg22raEcXOuUzkHrIuGl8gsS34xXPqld49HE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fc9fMdJW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C20C433C7;
-	Fri, 23 Feb 2024 21:26:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708723586;
-	bh=/UMBBO4plUyUH4SOp7YIoGKcqlyGlmv4B19OS+xAN98=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fc9fMdJW17jvW159gS8Br9ltki1AdzF1dfOsewIa+ZZU8pbxeyGUdBqQuKQ/6869K
-	 dEzw4IrB/d0xxmT8peD9hI81/BRhnkunagQd8D2TvmiodelG2LNsRLwO4Jwmq6l1ql
-	 T7btuJ+4vtZ4HtQzxwYkbJ9qdES4JKADpyI3IsfrcuVoMZJmdunVg3uJAoiE9kw07H
-	 +y03zyV5x6e2qDKAzFHaKTTDOEwm1oQdAANaXBbOyjjxK6fYBGqxFSZcf5yduEErzz
-	 pd5py87HqogXy6ggzDvFoGLAsmGtFBSsQTsyOl7XPi1jReMFe/c9GHrv1TUKvi22ba
-	 QgSkViWuX/qzw==
-Date: Fri, 23 Feb 2024 22:26:21 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Seth Forshee <sforshee@kernel.org>, Tycho Andersen <tycho@tycho.pizza>, 
-	Heiko Carstens <hca@linux.ibm.com>
-Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
-Message-ID: <20240223-schusselig-windschatten-a108c9034c5b@brauner>
-References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org>
- <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
- <20240222190334.GA412503@dev-arch.thelio-3990X>
- <20240223-delfin-achtlos-e03fd4276a34@brauner>
+	s=arc-20240116; t=1708723647; c=relaxed/simple;
+	bh=VLMGcoKqB8lRoDP0aswhFqwwhXnudyVIBfdJQmMCSS4=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tw4KPr8oMJuZ5c+Mn1M3Wk7+qssQUEwTQn2zDeDRzr4huIcXM0e1i3TQUnKYE1GkkFyoakXvVXrsq3Mi1cjAaSLgklu+YARtanqtc/uDfkdtNA0dLFZKHFnBaLa4rb/7hE6AMIzvUkQrMUqlp7Bu8u0ikiUhBmVWVupZXlpEAcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3657ae3e87fso9340115ab.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 13:27:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708723645; x=1709328445;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=044LH8cJATSgHllL+X3xvCtVZ2tnyTB+fC4voAuIDv4=;
+        b=HGxjN1y40mx9jJocmd9a4Wfm3O49qrbaNNsIjf+nKoI7+t3aRFDW2WMZ2F+Nm3o0KU
+         OI9xX49SwcTKUHZZTFHtIZzkVaZQM4PKGkOIcOPQpH5qjEkF1A8qRjelf/DhrbMojHYp
+         bVCIzyNgQ83EIC2xn4xt6nEgANk3zpJ9BnBhh9W5LMcIuz0j4pAHBEfbvpI9U3YLJ8KS
+         PazuRrf+NPbnLXIVr6IbTjTWJPHSEUXoU6pOh4OEZ8BxT5jVEchpu+jKSd5/BoeiGHi0
+         SrgrYvJOPq5HjZm/SSqCzD7lOptwkeSiQX+93I4+BkpGLh5EOZdCWxln4BIqa+JZwD6V
+         r8KA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQNn6Iu8sEdFsZNq371js8jIKB55FsNf9q7s0zr73pMOI0aNBRJ4M/QXZuyqHvoBh+fQSfRF3cgnNEg0Q/oeT0v26zpDkTmXMRgQ6nYQ==
+X-Gm-Message-State: AOJu0Yx/+0GJR9NDHKZdZR8sAg/pisxoDLaKHm71q6o4CSJ0FNgS/8Nc
+	dEPwcpiXm70W449/3oGdU5UvND2Tx+/9szDiVPcZCJPXCVpFHFMO8X+hPPJk0PmiTssPCU1xtpz
+	DSOdR41oztWpEZ3A9brsCTNRW5lVrZLYTXpQ1y8SHf1NUf9M4yDMTXdU=
+X-Google-Smtp-Source: AGHT+IEmu9pZ71VokjjsFo+IJZvhbi2GgLkE2nE4NjmMnazl1hkHlv+sO/TWslddmfx2T7/pAl2sJLeumUQjPljJFUW5MPVJAyUz
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240223-delfin-achtlos-e03fd4276a34@brauner>
+X-Received: by 2002:a05:6e02:1c08:b0:365:5dbd:b956 with SMTP id
+ l8-20020a056e021c0800b003655dbdb956mr52445ilh.3.1708723645570; Fri, 23 Feb
+ 2024 13:27:25 -0800 (PST)
+Date: Fri, 23 Feb 2024 13:27:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000e9e80e061213394a@google.com>
+Subject: [syzbot] Monthly gfs2 report (Feb 2024)
+From: syzbot <syzbot+list72751ee4e1b31b4ea4be@syzkaller.appspotmail.com>
+To: gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Feb 23, 2024 at 12:55:07PM +0100, Christian Brauner wrote:
-> > Apologies if this has already been reported or fixed but I did not see
-> > anything on the mailing list.
-> > 
-> > On next-20240221 and next-20240222, with CONFIG_FS_PID=y, some of my
-> > services such as abrtd, dbus, and polkit fail to start on my Fedora
-> > machines, which causes further isssues like failing to start network
-> > interfaces with NetworkManager. I can easily reproduce this in a Fedora
-> > 39 QEMU virtual machine, which has:
-> > 
-> >   # systemctl --version
-> >   systemd 254 (254.9-1.fc39)
-> 
-> If something fails for completely inexplicable reasons:
-> 
-> Feb 23 12:09:58 fed1 audit[353]: AVC avc:  denied  { read write open } for  pid=353 comm="systemd-userdbd" path="pidfd:[709]" dev="pidfs" ino=709 scontext=system_u:system_r:systemd_userdbd_t:>
-> 
-> >   +SELINUX
-> 
-> pidfd creation can now be mediated by LSMs since we can finally go
-> through the regular open path. That wasn't possible before but LSM
-> mediation ability had been requested a few times.
-> 
-> In short, we have to update the selinux policy for Fedora. (Fwiw, went
-> through the same excercise with nsfs back then.)
-> 
-> I've created a pull-request here:
-> 
-> https://github.com/fedora-selinux/selinux-policy/pull/2050
-> 
-> and filed an issue here:
-> 
-> https://bugzilla.redhat.com/show_bug.cgi?id=2265630
-> 
-> We have sufficient time to get this resolved and I was assured that this
-> would be resolved. If we can't get it resolved in a timely manner we'll
-> default to N for a while until everything's updated but I'd like to
-> avoid that. I'll track that issue.
+Hello gfs2 maintainers/developers,
 
-So I want to provide more context since I took the time to track this
-all down in detail.
+This is a 31-day syzbot report for the gfs2 subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/gfs2
 
-The failure you are seeing is indeed an selinux denial as I've pointed
-out. The core failure is dbus-broker. That cascades into all the other
-services failing. When dbus-broker fails to start polkit and all the
-others won't be able to work because they depend on dbus-broker.
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 13 issues are still open and 29 have been fixed so far.
 
-The reason for dbus-broker failing is because it doesn't handle failures
-for SO_PEERPIDFD correctly. Last kernel release (either v6.7 or v6.6,
-I'm not completely sure right now) we introduced SO_PEERPIDFD (and
-SCM_PIDFD). SO_PEERPIDFD allows dbus-broker and polkit and others to
-receive a pidfd for the peer of an AF_UNIX socket. This is the first
-time in the history of Linux that we can safely authenticate clients in
-a race-free manner. :)
+Some of the still happening issues:
 
-dbus-broker immediately made use of this but messed up the error
-checking. It only allowed EINVAL as a valid failure for SO_PEERPIDFD.
-That's obviously problematic not just because of LSM denials but because
-of seccomp denials that would prevent SO_PEERPIDFD from working; or any
-other new error code from there.
+Ref Crashes Repro Title
+<1> 5640    Yes   WARNING in __folio_mark_dirty (2)
+                  https://syzkaller.appspot.com/bug?extid=e14d6cd6ec241f507ba7
+<2> 697     Yes   kernel BUG in gfs2_glock_nq (2)
+                  https://syzkaller.appspot.com/bug?extid=70f4e455dee59ab40c80
+<3> 2       Yes   general protection fault in gfs2_rindex_update
+                  https://syzkaller.appspot.com/bug?extid=74edb1a3ea8f1c65a086
 
-So this is catching a flawed implementation in dbus-broker as well. It
-_has_ to fallback to the old pid-based authentication when SO_PEERPIDFD
-doesn't work no matter the reasons otherwise it'll always risk such
-failures.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-So, the immediate fix separate from the selinux policy update is to fix
-dbus-broker which we've done now:
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
 
-https://github.com/bus1/dbus-broker/pull/343
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
 
-That should make it into Fedora asap as well.
-
-The selinux reference policy is also updated in addition to the Fedora
-policy:
-
-https://github.com/bus1/dbus-broker/pull/343
-
-So overall that LSM denial should not have caused dbus-broker to fail.
-It can never assume that a feature released one kernel ago like
-SO_PEERPIDFD can be assumed to be available.
+You may send multiple commands in a single email message.
 
