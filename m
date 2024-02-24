@@ -1,116 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-12681-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12682-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D03DC8627DE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 22:46:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8815B8627EB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 23:10:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 648771F21937
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 21:46:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8B711C20B59
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 22:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D654CE0F;
-	Sat, 24 Feb 2024 21:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="DtSu/MfT"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06874D9E1;
+	Sat, 24 Feb 2024 22:10:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661632CCA0
-	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 21:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88617C2D0
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 22:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708811182; cv=none; b=skUmdDWZbO6XAE+KQqOlzttz6ShyS7LuXHn02f/xTD6eY4zf2JvBPE6KXKlSqOsk3fl64PduW6O72UeiDTJ2guPeqvli1SW6fKMpbEKAPLodVItTiNgye8f1Lr/IZn2PUN2gFM+oFa0j/5mDJ+7w6TIIzhqbTtkvb4yyUTnfYCk=
+	t=1708812640; cv=none; b=spC+rWerabZUgXVLgrNhSTvcVyIiA937RmV6zRcC9K6KiST77zf/gdG312KvwXoQcmN+TdL/7AZdL3DstrGcHOPbM3d3VXZIR1lmTRkX02jqNh0cWGgatsnuLh2kOGShmS6jAULSjp3j+3ShytC2C1BFJbb5gk+Xx4nHfSvn6/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708811182; c=relaxed/simple;
-	bh=5F0rcS9DYrTXqleqGPUgaaK+MIubBHpV9eO9qScM2Qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMp6I8oKYvWguebAeE5r577MwO7ljTsC9oXL057zB3E3YFaM1fvEy2Aaxf1Vvaam7imkwiS646WKfCOb8sc6g1FD8iFIXCbFpXJ+aEOXGUgU66jTpAxYJk87A4TFEVfkc85J2iemvMjQRXWiFBfgbbjQrAwc/PJUtqC6wS2Pzu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=DtSu/MfT; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-102-198.bstnma.fios.verizon.net [173.48.102.198])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 41OLgjGc025054
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 24 Feb 2024 16:42:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1708810973; bh=EKDV6a7hz2m5AcuSayKUV1WIGuXUwrIk+koBmqoNks8=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=DtSu/MfTv3syWdsKwGcgTlyiPDa5omJ24Jahuy3wlnGQgF6nHBHWNP7TIKGeFmw9a
-	 3LfWldtW0adrLfY+Xcsc3vxTQkZO29YLZpvrWX6cCdw9gB/P5rLZ6/6JlK2NQMXlQl
-	 Frw0TFMYzylICQa+Anv9NscYzkI/TN5OM++XZrD5dhMVKcRPU1JUwLvmr+IS+fGB6h
-	 bUYDZL5vVMCReryr/0uKbxlKD7NIGGjIKTKqCHer0mun1aOQDlsuyayfkkhkRo37K+
-	 SRcPgDTwggpwrP2NDieVQWYa2A531TPrgD5Dd12sSROCdT85PwK0SQfBEBvlfmMQy7
-	 QVYP37e+Nbb9A==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id A279915C0336; Sat, 24 Feb 2024 16:42:45 -0500 (EST)
-Date: Sat, 24 Feb 2024 16:42:45 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>,
-        lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>,
-        Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-        Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-        Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <20240224214245.GB744192@mit.edu>
-References: <Zdkxfspq3urnrM6I@bombadil.infradead.org>
- <Zdlsr88A6AAlJpcc@casper.infradead.org>
- <CAHk-=wjUkYLv23KtF=EyCrQcmf9NGwE8Yo1cuxdaLF8gqx5zWw@mail.gmail.com>
- <CAHk-=wj0_eGczsoTJska24Lf9Sk6VXUGrfHymcDZF_Q5ExQdxQ@mail.gmail.com>
- <CAHk-=wintzU7i5NCVAUY_es6_eo8Zpt=mD0PAyhFd0aCu65WfA@mail.gmail.com>
+	s=arc-20240116; t=1708812640; c=relaxed/simple;
+	bh=3ptU5r2TNQLqAXFUNm3uyWN2DrpdKyRJ6+9DsuJYWIM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=Y+kir8CJEsVCY9jeOSXaa4aSAG3b/BgUOy9sL+eTEuoZigT2joUWJrijVimGzT5bcW0yXkIfANH7OEFy1WHaJvFh/iLVRD+f1w2vKoycb04jHDM5n92V8hWQdKKX/J1SKAJ9rGwHKX+W1K1N5LN92vFXF2HdM4gMZ/le16+/mDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-209-K7PK0T93M2GOk-Vn9vdHcA-1; Sat, 24 Feb 2024 22:10:28 +0000
+X-MC-Unique: K7PK0T93M2GOk-Vn9vdHcA-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 24 Feb
+ 2024 22:10:27 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 24 Feb 2024 22:10:27 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Herbert Xu' <herbert@gondor.apana.org.au>, "Matthew Wilcox (Oracle)"
+	<willy@infradead.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Thomas Graf
+	<tgraf@suug.ch>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
+	"rcu@vger.kernel.org" <rcu@vger.kernel.org>
+Subject: RE: [PATCH 0/1] Rosebush, a new hash table
+Thread-Topic: [PATCH 0/1] Rosebush, a new hash table
+Thread-Index: AQHaZrdg3OPv1gzlbEiBbQpUz0xlprEaCpvw
+Date: Sat, 24 Feb 2024 22:10:27 +0000
+Message-ID: <4a1416fcb3c547eb9612ce07da6a77ed@AcuMS.aculab.com>
+References: <20240222203726.1101861-1-willy@infradead.org>
+ <Zdk2YgIoAGOEvcJi@gondor.apana.org.au>
+In-Reply-To: <Zdk2YgIoAGOEvcJi@gondor.apana.org.au>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wintzU7i5NCVAUY_es6_eo8Zpt=mD0PAyhFd0aCu65WfA@mail.gmail.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Feb 24, 2024 at 11:11:28AM -0800, Linus Torvalds wrote:
-> But it is possible that this work never went anywhere exactly because
-> this is such a rare case. That kind of "write so much that you want to
-> do something special" is often such a special thing that using
-> O_DIRECT is generally the trivial solution.
+From: Herbert Xu
+> Sent: 24 February 2024 00:21
+>=20
+> On Thu, Feb 22, 2024 at 08:37:23PM +0000, Matthew Wilcox (Oracle) wrote:
+> >
+> > Where I expect rosebush to shine is on dependent cache misses.
+> > I've assumed an average chain length of 10 for rhashtable in the above
+> > memory calculations.  That means on average a lookup would take five ca=
+che
+> > misses that can't be speculated.  Rosebush does a linear walk of 4-byte
+>=20
+> Normally an rhashtable gets resized when it reaches 75% capacity
+> so the average chain length should always be one.
 
-Well, actually there's a relatively common workload where we do this
-exact same thing --- and that's when we run mkfs.ext[234] / mke2fs.
-We issue a huge number of buffered writes (at least, if the device
-doesn't support a zeroing discard operation) to zero out the inode
-table.  We rely on the mm subsystem putting mke2fs "into the penalty
-box", or else some process (usually mke2fs) will get OOM-killed.
+The average length of non-empty hash chains is more interesting.
+You don't usually search for items in empty chains.
+The only way you'll get all the chains of length one is if you've
+carefully picked the data so that it hashed that way.
 
-I don't consider it a "penalty" --- in fact, when write throttling
-doesn't work, I've complained that it's an mm bug.  (Sometimes this
-has broken when the mke2fs process runs out of physical memory, and
-sometimes it has broken when the mke2fs runs into the memory cgroup
-limit; it's one of those things that's seems to break every 3-5
-years.)  But still, it's something which *must* work, because it's
-really not reasonable for userspace to know what is a reasonable rate
-to self-throttling buffered writes --- it's something the kernel
-should do for the userspace process.
+I remember playing around with the elf symbol table for a browser
+and all its shared libraries.
+While the hash function is pretty trivial, it really didn't matter
+whether you divided 2^n, 2^n-1 or 'the prime below 2^n' some hash
+chains were always long.
 
-Because this is something that has broken more than once, we have two
-workarounds in mke2fs; one is that we can call fsync(2) every N block
-group's worth of inode tables, which is kind of a hack, and the other
-is that we can use Direct I/O.  But using DIO has a worse user
-experience (well, unless the alternative is mke2fs getting OOM-killed;
-admittedly that's worse) than just using buffered I/O, since we
-generally don't need to synchronously wait for the write requests to
-complete.  Neither is enabled by default, because in my view, this is
-something the mm should just get right, darn it.
+=09David
 
-In any case, I definitely don't consider write throttled to be a
-performance "problem" --- it's actually a far worse problem when the
-throttling doesn't happen, because it generally means someone is
-getting OOM-killed.
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
-						- Ted
 
