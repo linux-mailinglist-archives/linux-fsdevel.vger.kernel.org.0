@@ -1,166 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-12685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12686-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95FC86287D
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 00:40:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CACB86287E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 00:41:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49AE5B213C8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 23:40:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FFCB1C21111
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 23:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54C0F4EB31;
-	Sat, 24 Feb 2024 23:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D524E1CE;
+	Sat, 24 Feb 2024 23:41:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FuL6Ae3f"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F0pdNO3D"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2CD12B82;
-	Sat, 24 Feb 2024 23:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C948C4DA0C
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 23:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708818031; cv=none; b=M+O4T4ZKfNjOE+3sXLKg+L8jvCksWillT+SUmsmQ9HMHTLrjcCoPZbvgNeePOhr9MSyWkes+mj2q6fyxFpdF+oP+WvYcz/0Rgi5arxpCk/mqGO+OSbt2Lhfk9ecNIKiaCpWJnzdOVovpGhaali94CN/+iQFCoHMaff0ppQUQSeo=
+	t=1708818071; cv=none; b=jVRvb1BhnucKfweyjGWZz0tzksopdKldL7HqCVx57hHwgJ1BmcB1qxnPE8IK5OgqHAJv9jnzdu39IiGIm5sjaa5ZJ9L4Y1T+teAcWGmLdkWqrpZMzVHDhS2XIsjTetvA9Vk8BQtloBWZ8VW1tkKhiKOBc6dRwaIVKiY6bwsZbtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708818031; c=relaxed/simple;
-	bh=OYw2ByYVVHvBoCVIfIWdB7pG17J1LlNmfxFwVKBACEQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L+s62MbiainDs+6BxUyl1tIW0pinDMqdwLa1JrX1KpVPkN8VePoEhwmXi2//i7U+Z0Z3VGSzvivN/FX3MzUEsZYcFByqMKU90vcfWvFuQzeLZprI06T9Z2sqdaV5GK5VHRQaCyx3rWKX1h6FCKUQu5hSx08m4mnlUL9Dvj9FhwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FuL6Ae3f; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=TI5u+hB8IqJPV1NXXXiHCj1H8nEjuxpLgMV7QWNQhGk=; b=FuL6Ae3fH6sehiIobvIeA2t2bf
-	cncxTnJTyw0IHXpzN8sufwgSnKg2jUMaDxJ0hATMrjfW+0n6NwP/pO6T0gtaGujbERbYn+u+0i6X+
-	8MLtw8e5wY7Z3YYlPzos+/xQI4CECLE80kci01A0Uk1UR++i8zKHKujjDrmM5Ddt51en5El5gYEaL
-	3cr5WzXhu7hPDrGl5hLexOaE+fhvj4RGicHqYE5LyUWSncZn16pQQ8yUZy6KXiJ9yIdClDhx5VQHG
-	VQFVgO1VV4VSL+xI5ENAlFWjM5j6CqRZuTu7BpygZ4y7SqTb4TUH70Li9sgiZ0pMyaXFZSyN8LZ0/
-	t57Bv54Q==;
-Received: from [50.53.50.0] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1re1cs-0000000DrjE-1TMs;
-	Sat, 24 Feb 2024 23:40:14 +0000
-Message-ID: <121d0ce8-e542-4a1c-85e9-0d1863f36741@infradead.org>
-Date: Sat, 24 Feb 2024 15:40:11 -0800
+	s=arc-20240116; t=1708818071; c=relaxed/simple;
+	bh=PSLEwwMVsxlk70ELrB28bL6Y6Xv4vZ04E3Bix5/9bgE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WtOemLZpdTNyvj2GxbL+ArzKY6BRpGfRPEy7y0K8f5olmf9s2DpDUl7BRpauFbSEQ0gXgv42HprplO7+WMWwCFtmwntWwsNVdbS4L/e6Z2I9KbSkbMV7+wg8vF6+TS/P+RfzKh71dKvsVa9FKFoDbeAuY8kf9CxsVmA2FM7Pwq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=F0pdNO3D; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-512b3b04995so2092662e87.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 15:41:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1708818067; x=1709422867; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tn6hnRSUzCG2W9ifUDxK+evyzdzo2d3iCpPIutte+dk=;
+        b=F0pdNO3Dv1i02ByDjtBH2SxSbF9AW8h2NGLjcVN3nyYTZrbQ0yBN687CmHIcaYHEfe
+         9zORgktmK3RPLUFFNy2a4SoYOUKa+qwqI7J+llRgKuKwTZAfo8ad2CVy7Jd9GItYfIqf
+         jYzDNsQLYcYQiJr6Osff0QH6zZzMXxDadptr4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708818067; x=1709422867;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tn6hnRSUzCG2W9ifUDxK+evyzdzo2d3iCpPIutte+dk=;
+        b=CuhJkKrKnviG8ONWEyXfqYTjGX8MSrOmufDVpwZbhgHxYo3ycFh9j8HX35I0Sk3Y0M
+         APSUgBM0L6MnkJVPJ/4Mtdz171kPrg+CHK6Jmi0MtsKCWBqeHBATDRkGJi9OajpRWICa
+         qVTTQxQvsmiR1TzW/zjxvSNgu+CN8V31e5sslcwko2gPnr3ankKC4VV9lm+O7pcTg755
+         w8T0sihlV8lHIDUoo8340bJsIE7r269p4JtIvCEyP6CWAFKSZKJTeislVK2go1S8UvN8
+         p8ata9JzwBk8XsRA9O9xS31X/DhNx9yrGRmldNYSOnXnyExzA54iBOeRbMuE8/TBUBmh
+         kLPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOIHlEzC0QzNkn84YUG+5/aAXR7mX0ZbvMcML3t1ayilCGXfJbMGe5uIcnwcIbApH4YbexTfyZ+9V2MTAO+NbVaauL3mwG/D7AWyVMZQ==
+X-Gm-Message-State: AOJu0YwYwNKOU/c2X8uSMSWunw8GsLgiwGTUO6zx/vDVOAO9h6SPiius
+	oQS7GKX5/hKhJxQ0tH1hfY2L1CJoKnEza+TVp8Tpa527s/ALDQ6cZ3R2yWKA8ema/qWWVWRy9GO
+	5wsU=
+X-Google-Smtp-Source: AGHT+IH/ueycfG01DmrmKAdhYAvpLehb+ghEBCq6rFuZEg/5rJ9gBkxafqjxeeJ0p2MmYxjDyJf+MA==
+X-Received: by 2002:a19:4307:0:b0:511:6a0b:1035 with SMTP id q7-20020a194307000000b005116a0b1035mr1881433lfa.17.1708818066717;
+        Sat, 24 Feb 2024 15:41:06 -0800 (PST)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id cx7-20020a170907168700b00a4316384159sm261277ejd.224.2024.02.24.15.41.05
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Feb 2024 15:41:05 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a3e72ec566aso255449766b.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 15:41:05 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVfzbqJCxx15A/uqWgNkcFR14NTCUr0xb90VgfEICEzl+OvkCzuhWWvgKA6nM/NOVPmwY0Fva2CG+KyIxwy3MUF5ZRQAreNZM2q/yn9zQ==
+X-Received: by 2002:a17:906:3593:b0:a3f:10e8:ae2b with SMTP id
+ o19-20020a170906359300b00a3f10e8ae2bmr2172770ejb.54.1708818065004; Sat, 24
+ Feb 2024 15:41:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 07/20] famfs: Add include/linux/famfs_ioctl.h
-Content-Language: en-US
-To: John Groves <John@groves.net>
-Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
- Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matthew Wilcox <willy@infradead.org>, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, john@jagalactic.com,
- Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>,
- dave.hansen@linux.intel.com, gregory.price@memverge.com
-References: <cover.1708709155.git.john@groves.net>
- <b40ca30e4bf689249a8c237909d9a7aaca9861e4.1708709155.git.john@groves.net>
- <8f62b688-6c14-4eab-b039-7d9a112893f8@infradead.org>
- <7onhdq4spd7mnkr5c443sbvnr7l4n34amtterg4soiey2qubyl@r2ppa6fsohnk>
- <97cde8f6-21ed-45b9-9618-568933102f05@infradead.org>
- <7rkmolss5vkdljnh6uksfkepklwofe3bkdsf36qhokyltjoxlx@xqgef734pidg>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <7rkmolss5vkdljnh6uksfkepklwofe3bkdsf36qhokyltjoxlx@xqgef734pidg>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <Zdkxfspq3urnrM6I@bombadil.infradead.org> <Zdlsr88A6AAlJpcc@casper.infradead.org>
+ <CAHk-=wjUkYLv23KtF=EyCrQcmf9NGwE8Yo1cuxdaLF8gqx5zWw@mail.gmail.com>
+ <CAHk-=wj0_eGczsoTJska24Lf9Sk6VXUGrfHymcDZF_Q5ExQdxQ@mail.gmail.com>
+ <CAHk-=wintzU7i5NCVAUY_es6_eo8Zpt=mD0PAyhFd0aCu65WfA@mail.gmail.com> <bb2e87d7-a706-4dc8-9c09-9257b69ebd5c@meta.com>
+In-Reply-To: <bb2e87d7-a706-4dc8-9c09-9257b69ebd5c@meta.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 24 Feb 2024 15:40:48 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgeaMU_zY95QM+KUO1RmiuykbKgKVyBi9G1pH_kPgO9kQ@mail.gmail.com>
+Message-ID: <CAHk-=wgeaMU_zY95QM+KUO1RmiuykbKgKVyBi9G1pH_kPgO9kQ@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+To: Chris Mason <clm@meta.com>
+Cc: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>, 
+	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>, 
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
 
+On Sat, 24 Feb 2024 at 14:58, Chris Mason <clm@meta.com> wrote:
+>
+> For teams that really more control over dirty pages with existing APIs,
+> I've suggested using sync_file_range periodically.  It seems to work
+> pretty well, and they can adjust the sizes and frequency as needed.
 
+Yes. I've written code like that myself.
 
-On 2/24/24 15:32, John Groves wrote:
-> On 24/02/23 07:27PM, Randy Dunlap wrote:
->> Hi John,
->>
->> On 2/23/24 18:23, John Groves wrote:
->>>>> +
->>>>> +#define FAMFSIOC_MAGIC 'u'
->>>> This 'u' value should be documented in
->>>> Documentation/userspace-api/ioctl/ioctl-number.rst.
->>>>
->>>> and if possible, you might want to use values like 0x5x or 0x8x
->>>> that don't conflict with the ioctl numbers that are already used
->>>> in the 'u' space.
->>> Will do. I was trying to be too clever there, invoking "mu" for
->>> micron. 
->>
->> I might have been unclear about this one.
->> It's OK to use 'u' but the values 1-4 below conflict in the 'u' space:
->>
->> 'u'   00-1F  linux/smb_fs.h                                          gone
->> 'u'   20-3F  linux/uvcvideo.h                                        USB video class host driver
->> 'u'   40-4f  linux/udmabuf.h
->>
->> so if you could use
->> 'u'   50-5f
->> or
->> 'u'   80-8f
->>
->> then those conflicts wouldn't be there.
->> HTH.
->>
->>>>> +
->>>>> +/* famfs file ioctl opcodes */
->>>>> +#define FAMFSIOC_MAP_CREATE    _IOW(FAMFSIOC_MAGIC, 1, struct famfs_ioc_map)
->>>>> +#define FAMFSIOC_MAP_GET       _IOR(FAMFSIOC_MAGIC, 2, struct famfs_ioc_map)
->>>>> +#define FAMFSIOC_MAP_GETEXT    _IOR(FAMFSIOC_MAGIC, 3, struct famfs_extent)
->>>>> +#define FAMFSIOC_NOP           _IO(FAMFSIOC_MAGIC,  4)
->>
->> -- 
->> #Randy
-> 
-> Thanks Randy; I think I'm the one that didn't read carefully enough.
-> 
-> Does this look right?
-> 
-> diff --git a/Documentation/userspace-api/ioctl/ioctl-number.rst b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> index 457e16f06e04..44a44809657b 100644
-> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> @@ -288,6 +288,7 @@ Code  Seq#    Include File                                           Comments
->  'u'   00-1F  linux/smb_fs.h                                          gone
->  'u'   20-3F  linux/uvcvideo.h                                        USB video class host driver
->  'u'   40-4f  linux/udmabuf.h                                         userspace dma-buf misc device
-> +'u'   50-5F  linux/famfs_ioctl.h                                     famfs shared memory file system
->  'v'   00-1F  linux/ext2_fs.h                                         conflict!
->  'v'   00-1F  linux/fs.h                                              conflict!
->  'v'   00-0F  linux/sonypi.h                                          conflict!
-> diff --git a/include/uapi/linux/famfs_ioctl.h b/include/uapi/linux/famfs_ioctl.h
-> index 6b3e6452d02f..57521898ed57 100644
-> --- a/include/uapi/linux/famfs_ioctl.h
-> +++ b/include/uapi/linux/famfs_ioctl.h
-> @@ -48,9 +48,9 @@ struct famfs_ioc_map {
->  #define FAMFSIOC_MAGIC 'u'
-> 
->  /* famfs file ioctl opcodes */
-> -#define FAMFSIOC_MAP_CREATE    _IOW(FAMFSIOC_MAGIC, 1, struct famfs_ioc_map)
-> -#define FAMFSIOC_MAP_GET       _IOR(FAMFSIOC_MAGIC, 2, struct famfs_ioc_map)
-> -#define FAMFSIOC_MAP_GETEXT    _IOR(FAMFSIOC_MAGIC, 3, struct famfs_extent)
-> -#define FAMFSIOC_NOP           _IO(FAMFSIOC_MAGIC,  4)
-> +#define FAMFSIOC_MAP_CREATE    _IOW(FAMFSIOC_MAGIC, 0x50, struct famfs_ioc_map)
-> +#define FAMFSIOC_MAP_GET       _IOR(FAMFSIOC_MAGIC, 0x51, struct famfs_ioc_map)
-> +#define FAMFSIOC_MAP_GETEXT    _IOR(FAMFSIOC_MAGIC, 0x52, struct famfs_extent)
-> +#define FAMFSIOC_NOP           _IO(FAMFSIOC_MAGIC,  0x53)
-> 
-> Thank you!
-> John
-> 
+That said, that is also fairly close to what the write-behind patches
+I pointed at did.
 
-Yes, that looks good.
-Thanks.
+One issue (and maybe that was what killed that write-behind patch) is
+that there are *other* benchmarks that are actually slightly more
+realistic that do things like "untar a tar-file, do something with it,
+and them 'rm -rf' it all again".
 
--- 
-#Randy
+And *those* benchmarks behave best when the IO is never ever actually
+done at all. And unlike the "write a terabyte with random IO", those
+benchmarks actually approximate a few somewhat real loads (I'm not
+claiming they are good, but the "create files, do something, then
+remove them" pattern at least _exists_ in real life).
+
+For things like block device write for a 'mkfs' run, the whole "this
+file may be deleted soon, so let's not even start the write in the
+first place" behavior doesn't exist, of course. Starting writeback
+much more aggressively for those is probably not a bad idea.
+
+> From time to time, our random crud that maintains the system will need a
+> lot of memory and kswapd will saturate a core, but this tends to resolve
+> itself after 10-20 seconds.  Our ultra sensitive workloads would
+> complain, but they manage the page cache more explicitly to avoid these
+> situations.
+
+You can see these things with slow USB devices with much more obvious
+results. Including long spikes of total inactivity if some system
+piece ends up doing a "sync" for some reason. It happens. It's very
+annoying.
+
+My gut feel is that it happens a lot less these days than it used to,
+but I suspect that's at least partly because I don't see the slow USB
+devices very much any more.
+
+> Ignoring widly slow devices, the dirty limits seem to work well enough
+> on both big and small systems that I haven't needed to investigate
+> issues there as often.
+
+One particular problem point used to be backing devices with wildly
+different IO throughput, because I think the speed heuristics don't
+necessarily always work all that well at least initially.
+
+And things like that may partly explain your "filesystems work better
+than block devices".  It doesn't necessarily have to be about
+filesystems vs block devices per se, and be instead about things like
+"on a filesystem, the bdi throughput numbers have had time to
+stabilize".
+
+In contrast, a benchmark that uses soem other random device that
+doesn't look like a regular disk (whether it's really slow like a bad
+USB device, or really fast like pmem), you might see more issues. And
+I wouldn't be in the least surprised if that is part of the situation
+Luis sees.
+
+              Linus
 
