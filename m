@@ -1,122 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-12672-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BDF98626B6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 19:20:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7BFC8626C0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 19:24:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA73C281CD9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 18:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C82AD1C20FC6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 18:24:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDF564C61F;
-	Sat, 24 Feb 2024 18:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83802495E0;
+	Sat, 24 Feb 2024 18:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YcH25fuP"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MKI26+5r"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D311311701;
-	Sat, 24 Feb 2024 18:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1816716429
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 18:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708798826; cv=none; b=TO1lHHKf7mbDeNpytJ7fmj/abK6lMDUE6zPiMd32W8yxj/u96LSyV1Ji5JJDFEAubYrgBTpXcttLqc9V9qxMc1N8q9wuzKU9B1DGMK4UcS5s/KW6Vb2H8kqeC9Ro2Q3QkbPS0rgGbomriAYhEEXABvCWfmdYoycae5gWVfXFeFU=
+	t=1708799078; cv=none; b=ukXsQbR00gPL8buKe+F4EVVn7J8VbjlYynJz8zIMqWZngZr7zFWSlPVsUlwSdOlkf9dLBzu7z4lhXmusBxC0R++7rqzjkayYL3xWnNiuhLV+ls9QiEYgRThlzaHdHv9SRK0EHCV4ElkziBYueRC5wbDJGSxrBx8NpN/ssOMgGno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708798826; c=relaxed/simple;
-	bh=wcDBodcg+t6zV2TdVa+A97rNAPiwo4viJqElc/m+rF0=;
-	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=fsFztj8QVbYYXlvUwkFrDXmp+g0COAwoOhFyEkGJedqeAIsw7LK1USVZjxdDESmFK72xJnxOt+fvpjc+knYiDOrWpwCiYHg44UIflhXLJbWGjVlGgwxDz9r2bC31Uc5o2kQA4wrMHtUZifuchdsXA27Rcp8YwcLEeK2oOfkWk7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YcH25fuP; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1dbd32cff0bso11389245ad.0;
-        Sat, 24 Feb 2024 10:20:24 -0800 (PST)
+	s=arc-20240116; t=1708799078; c=relaxed/simple;
+	bh=4lm+SXPYpKy7RtJw7DWowMP0E17RWk/j+nPg7bklRI8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R4VA6gj5NQ60y1vYCZCiuhd5iddvjqz1wGNft9O9g0t1HyDXJCNWZYOxUd0YZm4QyZzlEZodd1skLoobGLveTtv15OJDjClKRIJDHOIH6S+KojMnDfzvCq5jRQrsn4aP0IcdY5V1At6tXhynxpF6uiEb3JEfujprSoqE63kYCiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MKI26+5r; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a3e6f79e83dso178398366b.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 10:24:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708798824; x=1709403624; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=u8CYf+uZ9YH86t+xERuTMGB2gPG/8kNfKskED5Hz07I=;
-        b=YcH25fuPMQA2/7Wadqsn45YeF5WZtOLIcY3i5+FILZD+dT2dhfRhHO5/vNQcykhasr
-         CnPy7JrJtGNQY/+4IVy14TJRHtlsA2GC4enEHiwKbz+6MU4AIEvuOP4gwEQHfpdayd+0
-         eo5AL+ITcWYDcLowm62ZwKv1GEGQSLiTgk70dyiIlMFaOMSj6ftR6ri/HZ+H/K4ckJTP
-         s/eSG1AMxaMvpGsO1DDR+C9aQhX7UN0Iq93VxtFDw4S6hwNwwKoVY1xeAFjik/pjgGEk
-         j6ZamWA7NnJk+l68cjJU6TrXYaqxoYfMDx2k8PBDyK9TIMkHthJA/calLHueFvuvufBN
-         Y/oA==
+        d=linux-foundation.org; s=google; t=1708799075; x=1709403875; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=EY+g2x/uu130bGhBO2NnzZ5mIwdVPUKzDp7TTIbbJ6o=;
+        b=MKI26+5rg7CAfpBri6iIazTosFjDhD4+d25ef740XFMxUEySZsMHKg0HYX+kqQLmSP
+         x6dLx1s6VyDVpyi4hI/BArHkWjNT7R0SPNkCMfHyWDbay5NlcCeii3ozR47Kqm5XpsOB
+         Cxkf71Qobx1peuh7gqb9UhY0eVVxM5pNzxkKk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708798824; x=1709403624;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=u8CYf+uZ9YH86t+xERuTMGB2gPG/8kNfKskED5Hz07I=;
-        b=AZ/u+EayoeIp/FzXM5SR09YSIZ/+uLQ6ipZkBFTtWC86z0wvuD83906SSGtNIC4nZE
-         hulfNOLEz5FEtqVXoyOadKUWmA2fEYIC003jlNsj8cbrMj81CfSMBAQ9WCI3KdwDsLpK
-         89z6ZLywhKQPJJjP/M3o9dRO6UCb+WCAonAyKVexSTZko4WJAF6jMahe/HCz0jgzKjy8
-         B7hS93DSasOrlysoFPEU5Z7tN8l+zvVYSCFzuy1l0dGGUeOwZj6uGZDpNEkKtCoPRt1v
-         +5iZpx1AKmCSq7EOyiD3B/+ecFA27Y509609GqCkoyvlw9rqDdhz4eNOxyET9FslDsCm
-         PWzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwhT+xKVyb3cjqD8hiQsxcXdKzyK7IBVj5buo8p5MpyFKm0R+f9J4c64qtAXzEOkWW1XaSoOqLCr8E6I4pOJ13yjskltMt6OozEihV6dOLHReqAAiTWE3vjHw6f4c95Y2cRGOjt4thJSMY67lCz77y/0VJwhfmH6cnZrmpFYrqgmFz5cdCg37xrkNyPt2GxPBjBf8oK1ILGYyAqmLX85q20PSm92am+MLvgs9d1zMazcbwZcN2Xr7HgnWsWbjn
-X-Gm-Message-State: AOJu0Yx6tz1ZqYWLQr1+IBc3Sw4bw+MFgmvQPsbMCh6zlsNmN+HAko1H
-	6f44o7HpAPeXuM9fzcLb7QOhHH11ydF2rtuAiJyHRH1pfum/fiNr
-X-Google-Smtp-Source: AGHT+IEWtpD6myPgKLDzuAWT+he2KacsEUL8k60CFxfg0quwBYfzNP4UtrxXc/p0r7aXaWfevFWhPQ==
-X-Received: by 2002:a17:903:2281:b0:1d9:ce46:6ebd with SMTP id b1-20020a170903228100b001d9ce466ebdmr3808331plh.16.1708798824035;
-        Sat, 24 Feb 2024 10:20:24 -0800 (PST)
-Received: from dw-tp ([171.76.80.106])
-        by smtp.gmail.com with ESMTPSA id g2-20020a170902740200b001d9537cf238sm1264709pll.295.2024.02.24.10.20.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Feb 2024 10:20:23 -0800 (PST)
-Date: Sat, 24 Feb 2024 23:50:15 +0530
-Message-Id: <87r0h12080.fsf@doe.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, jack@suse.cz
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org, linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org, nilay@linux.ibm.com, Prasad Singamsetty <prasad.singamsetty@oracle.com>, John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH v4 03/11] fs: Initial atomic write support
-In-Reply-To: <87v86d20ek.fsf@doe.com>
+        d=1e100.net; s=20230601; t=1708799075; x=1709403875;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EY+g2x/uu130bGhBO2NnzZ5mIwdVPUKzDp7TTIbbJ6o=;
+        b=vQfywjJ0xvOrX+eDqL9QlChtTaLE5r5npp+0n7kgQMBi/TuWR1Zz0xVAqLEzWnlhso
+         ZR2BqrNN+H1hFhNDdm5Uds2kK36otGlQhY6PSj3m76o0ezWJGca18nA9AhvmIWEIj2yq
+         2pOuU4fG6hn/s7+LasxUl8DRsckk61uPQUMTKx9auJhDt9ibQQcRygfZByiObf6n93gg
+         oEcYDDZR1ZCPRERJx/5YXDA0UmigwION6HjBnS5iYn2Y/zAoNb/xCoG3dpMxRxsvPJ/b
+         +VGj3qNCBg7TINcovxLqLVSRZL9HUp3YJbO6LeSI4tBIaV5rXKWk2qqh+2uGyAh4WQGj
+         NzvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcrLljAglLGhzdq5CMT6WJJ6lEVb8yzhaaOfn+PGuDmi8o1feAHrzxso8i3INyAK74i/nEL617uDAP7S6PD3o/3WxYAZ2I4DOdUkdnRQ==
+X-Gm-Message-State: AOJu0Yyntz4GoWNYTsd3/vGYujjGSbSOnnUM/fB6WPrwBAYsgZBGP0h8
+	DA2qjlbg84HmAB82AjTR6IfEK/+ioT230SYqrPZ5tuedT1Qf3Qde2kdsnFCLfq0SAdswMEMmThk
+	BZOY=
+X-Google-Smtp-Source: AGHT+IEtbUSDewrIimxFPwzFNjpBe4RD7v2Z3Za0od553ofU3DOAmDR/b9Q4CP9fEe2VZYAfQZZ6nA==
+X-Received: by 2002:a17:906:f2c8:b0:a43:14db:343 with SMTP id gz8-20020a170906f2c800b00a4314db0343mr144773ejb.38.1708799075104;
+        Sat, 24 Feb 2024 10:24:35 -0800 (PST)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id h4-20020a1709062dc400b00a3f355aeb0bsm792127eji.131.2024.02.24.10.24.34
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Feb 2024 10:24:34 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a293f2280c7so231760366b.1
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 10:24:34 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVRDF0Ae3x6h8O8rsY6yZ9t53cAGIl0wU+YkrVPLfYxBOU8MWXzccmdwv3nIzoAVVyVhc+Nwndba4adZNAVlysYJJL+v4LYlNZT09UyBQ==
+X-Received: by 2002:a17:906:6701:b0:a3f:6717:37ae with SMTP id
+ a1-20020a170906670100b00a3f671737aemr2030241ejp.69.1708799073809; Sat, 24 Feb
+ 2024 10:24:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <Zdkxfspq3urnrM6I@bombadil.infradead.org> <Zdlsr88A6AAlJpcc@casper.infradead.org>
+ <CAHk-=wjUkYLv23KtF=EyCrQcmf9NGwE8Yo1cuxdaLF8gqx5zWw@mail.gmail.com> <ZdoxuNx0Tt0E-Lzy@casper.infradead.org>
+In-Reply-To: <ZdoxuNx0Tt0E-Lzy@casper.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 24 Feb 2024 10:24:17 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgPakm89vC-phnNOQsDWRn24ODFNFUhkiuZ0Wks9aWsSw@mail.gmail.com>
+Message-ID: <CAHk-=wgPakm89vC-phnNOQsDWRn24ODFNFUhkiuZ0Wks9aWsSw@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, lsf-pc@lists.linux-foundation.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
+	Daniel Gomez <da.gomez@samsung.com>, Pankaj Raghav <p.raghav@samsung.com>, 
+	Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>, 
+	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
-
-> John Garry <john.g.garry@oracle.com> writes:
+On Sat, 24 Feb 2024 at 10:13, Matthew Wilcox <willy@infradead.org> wrote:
 >
->> From: Prasad Singamsetty <prasad.singamsetty@oracle.com>
->>
->> An atomic write is a write issued with torn-write protection, meaning
->> that for a power failure or any other hardware failure, all or none of the
->> data from the write will be stored, but never a mix of old and new data.
->>
->> Userspace may add flag RWF_ATOMIC to pwritev2() to indicate that the
->> write is to be issued with torn-write prevention, according to special
->> alignment and length rules.
->>
->> For any syscall interface utilizing struct iocb, add IOCB_ATOMIC for
->> iocb->ki_flags field to indicate the same.
->>
->> A call to statx will give the relevant atomic write info for a file:
->> - atomic_write_unit_min
->> - atomic_write_unit_max
->> - atomic_write_segments_max
->>
->> Both min and max values must be a power-of-2.
->>
->> Applications can avail of atomic write feature by ensuring that the total
->> length of a write is a power-of-2 in size and also sized between
->> atomic_write_unit_min and atomic_write_unit_max, inclusive. Applications
->> must ensure that the write is at a naturally-aligned offset in the file
->> wrt the total write length. The value in atomic_write_segments_max
->> indicates the upper limit for IOV_ITER iovcnt.
->>
->> Add file mode flag FMODE_CAN_ATOMIC_WRITE, so files which do not have the
->> flag set will have RWF_ATOMIC rejected and not just ignored.
->>
->> Add a type argument to kiocb_set_rw_flags() to allows reads which have
->> RWF_ATOMIC set to be rejected.
->>
->> Helper function atomic_write_valid() can be used by FSes to verify
->> compliant writes.
+> > Ask yourself when you have last *really* sat there waiting for writes,
+> > unless it's some dog-slow USB device that writes at 100kB/s?
+>
+> You picked a bad day to send this email ;-)
+>
+> $ sudo dd if=Downloads/debian-testing-amd64-netinst.iso of=/dev/sda
 
-Minor nit. 
-maybe generic_atomic_write_valid()? 
+What? No. I literally picked the example you then did.
+
+And you in fact were being clueless, and the kernel damn well should
+tell you that you are being an ass, and should slow your writes down
+so that you don't hurt others.
+
+Which is what it did.
+
+You should have damn well used oflag=direct, and if you didn't do
+that, then the onus is all on YOU.
+
+The kernel really isn't there to fix your stupid errors for you. You
+do something stupid, the kernel will give you rope and happily say "do
+you want more?"
+
+                 Linus
 
