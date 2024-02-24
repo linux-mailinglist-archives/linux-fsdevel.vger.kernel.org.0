@@ -1,74 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-12649-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12650-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E536862293
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 04:59:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D13862294
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 05:12:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03FBFB21CFC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 03:59:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD8E4B24037
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 04:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1D714017;
-	Sat, 24 Feb 2024 03:59:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC5014014;
+	Sat, 24 Feb 2024 04:12:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HAgUEvxj"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LfZunUKe"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A28151FAA;
-	Sat, 24 Feb 2024 03:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E9014005
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 04:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708747173; cv=none; b=Hk5j4FlCMNfoQsqjgU6zZXKr/pQDvBvkI4IZca5XGbfS+tkT7L+PloUcAk5n29SD9Q3sm6+r+YNY/ay4WqRG9ua3N2bjO94hZWpIAJrbCHQwrZYTWGMZbfBF4Lwkhs4fRm+8eW+IMoM7sLlQ/HOjBjze3o/moEgpzldSCVSt7G0=
+	t=1708747958; cv=none; b=CsTIU9wUarpYy5iD4WZihHHbl5PuVcc1+ASO85AIoVWpufcFr9DAPux8w0+14Uw4jyEXTQjNWpUhl4JH/xNKkcPw8DzD4l1t7jUnlVkCCOnhdkbhbbpOcFZVo9IEZ3slwFvtr+JDq4u/pFl54pGzlFQJcDi8eNLpFV72FizlLGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708747173; c=relaxed/simple;
-	bh=rbGyRrzI5Zzax0WXkXpgbEmPCzjOn1B4JAPKpQIVtfI=;
+	s=arc-20240116; t=1708747958; c=relaxed/simple;
+	bh=mJnqsHTlNvDBuNXq/GoCgXXCnB7QOAGs6+kqJMB6Tq4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ktedcFgk0VtbjuLegQIwVu2ib0IWWeKjZklkMxVqmkXy460Ome588mUaXuMKAbZrI+su5qQJnefWiBj6IqoecDCfd2GrkjqFOTEOJPqscfvwdmgwGR1d4Aqkq8wt56ifkxfDPsfje0uY+wFF9UjFEHxEr2p8OClZxu0lZ4+hcnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HAgUEvxj; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=aoHTI1JkkKnf64YYSgN2wSGdDeGwaoV3pD70fqT6unw1ak9/qz86hq5SDhZtf48aAqVhEb83olXnB0PcoK7+Qm6GrHdvCmWYj2sGa65lWRUX8YkdwrjBvSVrA5qKk8o/Dv49ZFCLxqY2husPIojoJcvfobDDCOi2fd98YLxJWug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LfZunUKe; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9Q7xjM4y4fPUpaXOwztAM/evw0GuePSPAyYG73fUcOc=; b=HAgUEvxjqGsxmCjPf/mM0BhF3J
-	42ZExS+8AcRSrdBjctLVTmhRvuRjDCRO6+DyUW77Dhw7pytNsZ6B3jAFGVr57QkLGA3r9lkA0NcuE
-	YWieIiKjPNZTzM0D6in+3cQOClgJEO9LsAFUdvLa9oEPW9xKLza1VKqcIWx087rvP0HxIIOJZf5k6
-	+X4xBTVnUlUUSQAawSmdmrNXSUWlcDxLo6/a43B3UnWrQ55JtdWWtPGJUcImhHKpRRaM+9dzUwuFK
-	R6shKlaTicH7HYc+FZIAMjpwoMscmRTA0LU9nH+9xVZCjf70bzI7PsG5ee+JSVfdDXG+F6kEzuXjI
-	9HSDoSRw==;
+	bh=tR7eV9V1q7EsfOqu+JiqJ3BN2VxYXVsdegtSQkqGBns=; b=LfZunUKe9v6IXx3vUAzZFTYsJ6
+	0XoKbZtJp+4yeL+1vq8+mP05cFSDmYrxsPWppgK2RZPeXhAiy1BGfYB46UidlHFa1xxWLjrx3Xif6
+	YOvI4YO37nxRq0O5HCoY87f0vnb76e+vBcnivqkLh6E/G8neipB45pUx2ADWtKc2qiDm3SZZ+GmXY
+	ddcMxh9bej1J4ihXDnVKehpTQjxzGa39Zqyb/F3Un4f511ZtiqHqBRw7XVvmRQFDtb5i31crRfNH3
+	tiVIBWYOmWpVWhrKu9WlgbEO5zBlWMC1ipdiGmjTjeaU+Z8sw7uyt4swmaw6vS5SHDazKkNN/0xHK
+	TGUpFZFg==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rdjBv-00000009SrZ-1ayo;
-	Sat, 24 Feb 2024 03:59:11 +0000
-Date: Sat, 24 Feb 2024 03:59:11 +0000
+	id 1rdjOp-00000009UgB-2RmN;
+	Sat, 24 Feb 2024 04:12:31 +0000
+Date: Sat, 24 Feb 2024 04:12:31 +0000
 From: Matthew Wilcox <willy@infradead.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, John Groves <John@groves.net>,
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev, john@jagalactic.com,
-	Dave Chinner <david@fromorbit.com>,
-	Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com,
-	gregory.price@memverge.com
-Subject: Re: [RFC PATCH 16/20] famfs: Add fault counters
-Message-ID: <Zdlpj3hW8mUfPv_L@casper.infradead.org>
-References: <cover.1708709155.git.john@groves.net>
- <43245b463f00506016b8c39c0252faf62bd73e35.1708709155.git.john@groves.net>
- <05a12c0b-e3e3-4549-b02e-442e4b48a86d@intel.com>
- <l66vdkefx4ut73jis52wvn4j6hzj5omvrtpsoda6gbl27d4uwg@yolm6jx4yitn>
- <65d8fa6736a18_2509b29410@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <ytyzwnrpxrc4pakw763qytiz2uft66qynwbjqhuuxrs376xiik@iazam6xcqbhv>
- <b26fc2d6-207c-4d93-b9a3-1fa81fd89f6c@intel.com>
- <65d92f49ee454_1711029468@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>,
+	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+Message-ID: <Zdlsr88A6AAlJpcc@casper.infradead.org>
+References: <Zdkxfspq3urnrM6I@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -77,18 +64,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <65d92f49ee454_1711029468@dwillia2-mobl3.amr.corp.intel.com.notmuch>
+In-Reply-To: <Zdkxfspq3urnrM6I@bombadil.infradead.org>
 
-On Fri, Feb 23, 2024 at 03:50:33PM -0800, Dan Williams wrote:
-> Certainly something like that would have satisified this sanity test use
-> case. I will note that mm_account_fault() would need some help to figure
-> out the size of the page table entry that got installed. Maybe
-> extensions to vm_fault_reason to add VM_FAULT_P*D? That compliments
-> VM_FAULT_FALLBACK to indicate whether, for example, the fallback went
-> from PUD to PMD, or all the way back to PTE.
+On Fri, Feb 23, 2024 at 03:59:58PM -0800, Luis Chamberlain wrote:
+> Part of the testing we have done with LBS was to do some performance
+> tests on XFS to ensure things are not regressing. Building linux is a
+> fine decent test and we did some random cloud instance tests on that and
+> presented that at Plumbers, but it doesn't really cut it if we want to
+> push things to the limit though. What are the limits to buffered IO
+> and how do we test that? Who keeps track of it?
 
-ugh, no, it's more complicated than that.  look at the recent changes to
-set_ptes().  we can now install PTEs of many different sizes, depending
-on the architecture.  someday i look forward to supporting all the page
-sizes on parisc (4k, 16k, 64k, 256k, ... 4G)
+TLDR: Why does the pagecache suck?
+
+>   ~86 GiB/s on pmem DIO on xfs with 64k block size, 1024 XFS agcount on x86_64
+>      Vs
+>  ~ 7,000 MiB/s with buffered IO
+
+Profile?  My guess is that you're bottlenecked on the xa_lock between
+memory reclaim removing folios from the page cache and the various
+threads adding folios to the page cache.
+
+If each thread has its own file, that would help.  If the threads do
+their own reclaim that would help the page cache ... but then they'd
+contend on the node's lru lock instead, so just trading one pain for
+another.
 
