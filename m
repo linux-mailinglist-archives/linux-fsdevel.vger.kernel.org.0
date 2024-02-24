@@ -1,67 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-12636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FCE88620FC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 01:07:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A75C086211E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 01:21:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C56C1B23C8F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 00:07:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47DE31F25F28
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 00:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC528EC7;
-	Sat, 24 Feb 2024 00:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JMNC8ZBC"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED33ECF;
+	Sat, 24 Feb 2024 00:21:04 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9F8182;
-	Sat, 24 Feb 2024 00:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCE919A;
+	Sat, 24 Feb 2024 00:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708733228; cv=none; b=gIw1o0NZfQVKpazyYA7bkruQesUGtzBhXQZ3rf3JN95+ohgGWD9JDXV+ji86s4cMKfVc747WK9ITwJjcTLF7J2JCxfSel/iDJFsbZezDFDYjsR1XvxLz9VRnUG/gSBBP3NgoH/N2DnNOwtTsRXW8AL/aEqrCL10GBP0eXpMh9fI=
+	t=1708734064; cv=none; b=c/PG1GJMUFFBNLT5yHCA6Pn4L6MkaUM3Q+bIvT4k5Are2611LPkr+zFrX9QR8CzS8gMdpOo0RvGdqmSvNet/aHD9vJsvrxf1qC+kI+xjThejZkAH8Rne6H5r3rXvrtMetQH8BQ8dVt6URLvoOiT5M2b4AG1AxIdk9s1bPNNmDX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708733228; c=relaxed/simple;
-	bh=qiyDaquhNDRAD1bYDTLfWk1m9ilGG/A8+ouVFaiFqpU=;
+	s=arc-20240116; t=1708734064; c=relaxed/simple;
+	bh=aKvxed/I9m8KBzl5cPZ2gMhHmhpX6/QrLsQZfD2oYvU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r+u7w/LOJTVtV+6cW7HdNaEFzZQXVsRVosLU759wO6n4nRcdJ/n4XARuuV6hFjfWESJnFGqmS45lqiLEWxy0C6/1tepYIfcCmAeiSkSda9pke9a3YDXHl4lvwOFBRW/OAp/LX8pDzBfnspsWfbKkt9BsivwMnTHcJxLty+KxKwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=JMNC8ZBC; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RLXEC5G8zhOhURItJOCbBXesZ2wGukLrzFwY7ETSkMI=; b=JMNC8ZBC5npFRya4vizIt421Eo
-	ohsVaPKre0JMqxNQ5HzWUFhhQsj5ugPe6sGbwLSr5gwRiQlVAPIRt7y6Ut1VGhCXzeKQPdEXgLhAi
-	2frsNgx9A7EtvYTXfxh140Wf6Hxeyb5qEZjTxbcI6O000chegytsaOh9Q/5Le0jFYnI7U2dcJVgyY
-	dZSbIqoaBjiODzFG8jyo/3TTl3dZWgSyBQV1ZLkLmSFIgqkcIJfkcx0AVprz5f0vULXIHYDorH26q
-	t4MULcYnZ3kcXgZgzig4+LBYkCLINsoOoNmDqY9fz+sPR17dal6kO/0yyuCd8WOMiaWqIpzDxz0Pc
-	j9LevlwA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rdfZE-0000000Bdrq-0xdy;
-	Sat, 24 Feb 2024 00:07:00 +0000
-Date: Fri, 23 Feb 2024 16:07:00 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: John Groves <John@groves.net>
-Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
-	john@jagalactic.com, Dave Chinner <david@fromorbit.com>,
-	Christoph Hellwig <hch@infradead.org>, dave.hansen@linux.intel.com,
-	gregory.price@memverge.com
-Subject: Re: [RFC PATCH 00/20] Introduce the famfs shared-memory file system
-Message-ID: <ZdkzJM6sze-p3EWP@bombadil.infradead.org>
-References: <cover.1708709155.git.john@groves.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pyS3dK95W3kTG2AoGJu79+vciX66TgPkPMiGxxjYcXK66m7AmkaAEU3MJyb8gVkSbqXY5a981rcRopdfF7Bzk9gO0F6J6DhKBx7N8mRIevh37UX0yOwb/wMxdRoR18XO6zILamwUY3Zx9SjEBXP9iV8/WhBnC3J/+FeZ3KwRaL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+	id 1rdfmO-00HDXA-9c; Sat, 24 Feb 2024 08:20:37 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sat, 24 Feb 2024 08:20:50 +0800
+Date: Sat, 24 Feb 2024 08:20:50 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Graf <tgraf@suug.ch>,
+	netdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	maple-tree@lists.infradead.org, rcu@vger.kernel.org
+Subject: Re: [PATCH 0/1] Rosebush, a new hash table
+Message-ID: <Zdk2YgIoAGOEvcJi@gondor.apana.org.au>
+References: <20240222203726.1101861-1-willy@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,53 +50,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1708709155.git.john@groves.net>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
+In-Reply-To: <20240222203726.1101861-1-willy@infradead.org>
 
-On Fri, Feb 23, 2024 at 11:41:44AM -0600, John Groves wrote:
-> This patch set introduces famfs[1] - a special-purpose fs-dax file system
-> for sharable disaggregated or fabric-attached memory (FAM). Famfs is not
-> CXL-specific in anyway way.
-> 
-> * Famfs creates a simple access method for storing and sharing data in
->   sharable memory. The memory is exposed and accessed as memory-mappable
->   dax files.
-> * Famfs supports multiple hosts mounting the same file system from the
->   same memory (something existing fs-dax file systems don't do).
-> * A famfs file system can be created on either a /dev/pmem device in fs-dax
->   mode, or a /dev/dax device in devdax mode (the latter depending on
->   patches 2-6 of this series).
-> 
-> The famfs kernel file system is part the famfs framework; additional
-> components in user space[2] handle metadata and direct the famfs kernel
-> module to instantiate files that map to specific memory. The famfs user
-> space has documentation and a reasonably thorough test suite.
-> 
-> The famfs kernel module never accesses the shared memory directly (either
-> data or metadata). Because of this, shared memory managed by the famfs
-> framework does not create a RAS "blast radius" problem that should be able
-> to crash or de-stabilize the kernel. Poison or timeouts in famfs memory
-> can be expected to kill apps via SIGBUS and cause mounts to be disabled
-> due to memory failure notifications.
-> 
-> Famfs does not attempt to solve concurrency or coherency problems for apps,
-> although it does solve these problems in regard to its own data structures.
-> Apps may encounter hard concurrency problems, but there are use cases that
-> are imminently useful and uncomplicated from a concurrency perspective:
-> serial sharing is one (only one host at a time has access), and read-only
-> concurrent sharing is another (all hosts can read-cache without worry).
+On Thu, Feb 22, 2024 at 08:37:23PM +0000, Matthew Wilcox (Oracle) wrote:
+>
+> Where I expect rosebush to shine is on dependent cache misses.
+> I've assumed an average chain length of 10 for rhashtable in the above
+> memory calculations.  That means on average a lookup would take five cache
+> misses that can't be speculated.  Rosebush does a linear walk of 4-byte
 
-Can you do me a favor, curious if you can run a test like this:
+Normally an rhashtable gets resized when it reaches 75% capacity
+so the average chain length should always be one.
 
-fio -name=ten-1g-per-thread --nrfiles=10 -bs=2M -ioengine=io_uring                                                                                                                            
--direct=1                                                                                                                                                                                    
---group_reporting=1 --alloc-size=1048576 --filesize=1GiB                                                                                                                                      
---readwrite=write --fallocate=none --numjobs=$(nproc) --create_on_open=1                                                                                                                      
---directory=/mnt 
-
-What do you get for throughput?
-
-The absolute large the system an capacity the better.
-
-  Luis
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
