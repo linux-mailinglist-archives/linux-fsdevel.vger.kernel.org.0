@@ -1,159 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-12646-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34F6186224D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 03:24:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D075862281
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 04:27:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A030B1F245B6
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 02:24:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE2B91C22A9B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 03:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F93611190;
-	Sat, 24 Feb 2024 02:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C36134D9;
+	Sat, 24 Feb 2024 03:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZEwnLgT"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W9fJ6Bc+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F70863DF;
-	Sat, 24 Feb 2024 02:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D51D2E0;
+	Sat, 24 Feb 2024 03:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708741454; cv=none; b=kOPnYG601edh0c40CqkELRz3SWAXEJhrihhj5n1qgOLfCTzujCcTQGwnNp/ba7fUoBbPOURPHLd1uy2M7RzOkLnQ1ao+b+C+VxWqgeT6jX8OpREJT5bx1lc2BVCLg3OpS3iLlm//PPrmv0Gf+mF4oSRH5NXjtskv5jgZbSpLlWI=
+	t=1708745253; cv=none; b=LhoT2K42OZwjbtI8w6etIi/QhdRHGSWxBqStI1hxjYjh75czsgvqHc0AsGxfa+J6ccqUU2hFxGe7jz+pSYRgoewWcrzpbpQdcgdrlmsPt55K+95XN9s7jVq0ho3Q1FfcFNgeXMa6oPvXvxuqNWp2wFsx5+USwIirEOO6UbykyPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708741454; c=relaxed/simple;
-	bh=96/hYmvsl6lJNB2fS6l4UYShHAt/iwzhUf86OQUpLDk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eIovhuBy41QozAXD7CmW313fPib9k+MpL+Pb90Jpp2hIVkS6ZdxJwnHWpC+aYglVI/5L8mKswM5IE0nwu3qASTqweHcaKKQBKgW+15AjKCfOwOvQ8nCCM8Q6QK2WZFUoEBjRfZmzQiPffXsP5fhsGuxtwTMN7Z0f2jA4Tw1V6Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZEwnLgT; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-21e5fa2f7efso681199fac.0;
-        Fri, 23 Feb 2024 18:24:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708741450; x=1709346250; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bOuv/zCxApvTn7JI2PSH32UWjQlemun/rMcaip0qb0o=;
-        b=eZEwnLgTtZqaxDvM3Qti3LK1ZNRjl90JauSaqjdbo7XNcXMIdimBWgFpO29ZljBZlY
-         MLjYOnCgsjXGvq5b0Unmp4lm70CJmBpHwweyioXsWkoss+OfbjcqF406OsA17oadIfyN
-         Qjw9VxcVWoa9wqkPfcDw3JggeUynRF18KoqQazVitzVskScUgPX+0lM2D+Lf72t7B6ta
-         e36U06+91dmYilIeYw3L5rSCVYWxEoPRvhcOllTIDwjyCZ4levChDXGS8qM3M0MIQbwm
-         f/jjUNmo1j+u5ora9LFXdqel6/TjknESypW8g+dcLCAiRLjF5ikS8PQ6Su0BIvgfkgvR
-         OcHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708741450; x=1709346250;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bOuv/zCxApvTn7JI2PSH32UWjQlemun/rMcaip0qb0o=;
-        b=VHl7gyzEj1TxiFl3RFmE2if0kVZ05GhojlnUdkbpzbmljrqqDfIHYOFv89g/Cu5fbD
-         IGiglFQfrTVLAASY5DWg1ESivUqSlIAksMSs5vgcXCz7bGNX5I/HN0+BhmKbxTZRDyLS
-         Ji7VcxlIWrEvDderuXXA+tbfy2QK0P19lZTIJNdjfvpyqP6/IsG38q8J0Jq8eEW9WQ8+
-         3uJNqskcUpDXWkIynBxfXr09OHGXz1FrytiOmAR4Iebw4HwQ9LDfk26L2doDSR2yIwTo
-         Y+51sfzfq6EQ8kly5NPmx2tPa2LeYgBUV3oiN1QsymBTcllXWZs/3DukSwchPIuNfp37
-         Y8vw==
-X-Forwarded-Encrypted: i=1; AJvYcCVaGVeMyJcyD30X1Dimy1e9iHVmS9XFKZFi/IOoIoBhvUHWNn5q65x2nQXDPuntvvysTmZofPy259hmxsRZ3I7RZzVjSb1+yAeYLbBLAVg19zXIHv1qTLKuovG5aZ5XjpkCHwryHKYZHoGCE3FsZGVsAN1U8kjY14l6TtTHoN5ivztmk8uggYzWCI2MYXcce2R0tdhM7ABd366s//o8zH3yVg==
-X-Gm-Message-State: AOJu0Yw3zqWMlqNxS66gXusufJ/ZlsaYJewOkCmJ7ruN5dlV4Pj4Htzw
-	ju/BA5sG4CEymAqsykd6ZJG2QMIgd0PEvvwdpPOnb52hFSBXqgy7
-X-Google-Smtp-Source: AGHT+IHSwDehYa6qmK5HSq895V5y1nwMHTQrmOJ+xptsqjtflER37IUrDa4cTZzMA3WP0zG9JHmiDA==
-X-Received: by 2002:a05:6870:4214:b0:21e:231e:a63 with SMTP id u20-20020a056870421400b0021e231e0a63mr1690531oac.11.1708741447364;
-        Fri, 23 Feb 2024 18:24:07 -0800 (PST)
-Received: from Borg-9.local (070-114-203-196.res.spectrum.com. [70.114.203.196])
-        by smtp.gmail.com with ESMTPSA id gk27-20020a0568703c1b00b0021edaa6e35asm123256oab.21.2024.02.23.18.24.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Feb 2024 18:24:07 -0800 (PST)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Fri, 23 Feb 2024 20:24:05 -0600
-From: John Groves <John@groves.net>
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, john@jagalactic.com, 
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, 
-	dave.hansen@linux.intel.com, gregory.price@memverge.com
-Subject: Re: [RFC PATCH 20/20] famfs: Add Kconfig and Makefile plumbing
-Message-ID: <kujd277lutkvpafgkstyh4opm7bwlbvv2gerwab7rutfwwsuzh@j5zdvx2brz3m>
-References: <cover.1708709155.git.john@groves.net>
- <1225d42bc8756c016bb73f8a43095a384b08524a.1708709155.git.john@groves.net>
- <161f53c9-65ba-422d-b08e-2e5d88a208a2@infradead.org>
+	s=arc-20240116; t=1708745253; c=relaxed/simple;
+	bh=qhDNlIMq5CO7aNNTqnWBMffCMqCKzQlbjb1J1+ZjR6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SmEHb1MmpH1KPQpHrZyky9LmVzAzLk4i7kmftceIuDS2d+h1GdKZGZB96dsDOhEGoSB3sigy6RpOGH3DfKYuCZDKtD+F/N4x0UG+GURmJPsJt3o9siqA5gHcgy40C9KqosawKUdLqkC6jz9ai4ydiOATGuOhl433wtNMYqnJpeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W9fJ6Bc+; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=0VCkszg+LKLjIPkU+C6CKrRV3Fp8J43nYtNQiylBN10=; b=W9fJ6Bc+K8wkC50wnuBCuysytl
+	BtgBPCcY1O3Zj0LxNhyI1VpNJ1aPrnobfR/MYuEuS8SX8J2NFq81W7iICYNaGNEs00/WbO/rf3Rpl
+	rXu1GmA/7Gv2iMXWOaFGY+healOF8T0q2ZlWiH5L6FIJsYejY1YG42QfvtkQJ12Blv4ZzgnuBoq7L
+	Vhx6QIp93YVyxtoBXrwJ2IAZ40MU8IDO5S2zvkpfyGPDdZw81LNF9Y7Aog++JYbWJ+nhsuhifiM6M
+	hayGF+PsoqHCrNH1RA3CDbSj9XVaAnz4Q1Ro76/XJ0YinBM/q+PTpLNC9FSWWnYntvPFgLw4zdLIj
+	JHt0flNw==;
+Received: from [50.53.50.0] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rdih9-0000000Bwos-10f0;
+	Sat, 24 Feb 2024 03:27:23 +0000
+Message-ID: <97cde8f6-21ed-45b9-9618-568933102f05@infradead.org>
+Date: Fri, 23 Feb 2024 19:27:22 -0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <161f53c9-65ba-422d-b08e-2e5d88a208a2@infradead.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 07/20] famfs: Add include/linux/famfs_ioctl.h
+Content-Language: en-US
+To: John Groves <John@groves.net>
+Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Matthew Wilcox <willy@infradead.org>, linux-cxl@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, john@jagalactic.com,
+ Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>,
+ dave.hansen@linux.intel.com, gregory.price@memverge.com
+References: <cover.1708709155.git.john@groves.net>
+ <b40ca30e4bf689249a8c237909d9a7aaca9861e4.1708709155.git.john@groves.net>
+ <8f62b688-6c14-4eab-b039-7d9a112893f8@infradead.org>
+ <7onhdq4spd7mnkr5c443sbvnr7l4n34amtterg4soiey2qubyl@r2ppa6fsohnk>
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <7onhdq4spd7mnkr5c443sbvnr7l4n34amtterg4soiey2qubyl@r2ppa6fsohnk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 24/02/23 05:50PM, Randy Dunlap wrote:
-> Hi,
-> 
-> On 2/23/24 09:42, John Groves wrote:
-> > Add famfs Kconfig and Makefile, and hook into fs/Kconfig and fs/Makefile
-> > 
-> > Signed-off-by: John Groves <john@groves.net>
-> > ---
-> >  fs/Kconfig        |  2 ++
-> >  fs/Makefile       |  1 +
-> >  fs/famfs/Kconfig  | 10 ++++++++++
-> >  fs/famfs/Makefile |  5 +++++
-> >  4 files changed, 18 insertions(+)
-> >  create mode 100644 fs/famfs/Kconfig
-> >  create mode 100644 fs/famfs/Makefile
-> > 
-> > diff --git a/fs/Kconfig b/fs/Kconfig
-> > index 89fdbefd1075..8a11625a54a2 100644
-> > --- a/fs/Kconfig
-> > +++ b/fs/Kconfig
-> > @@ -141,6 +141,8 @@ source "fs/autofs/Kconfig"
-> >  source "fs/fuse/Kconfig"
-> >  source "fs/overlayfs/Kconfig"
-> >  
-> > +source "fs/famfs/Kconfig"
-> > +
-> >  menu "Caches"
-> >  
-> >  source "fs/netfs/Kconfig"
-> > diff --git a/fs/Makefile b/fs/Makefile
-> > index c09016257f05..382c1ea4f4c3 100644
-> > --- a/fs/Makefile
-> > +++ b/fs/Makefile
-> > @@ -130,3 +130,4 @@ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
-> >  obj-$(CONFIG_EROFS_FS)		+= erofs/
-> >  obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
-> >  obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
-> > +obj-$(CONFIG_FAMFS)             += famfs/
-> > diff --git a/fs/famfs/Kconfig b/fs/famfs/Kconfig
-> > new file mode 100644
-> > index 000000000000..e450928d8912
-> > --- /dev/null
-> > +++ b/fs/famfs/Kconfig
-> > @@ -0,0 +1,10 @@
-> > +
-> > +
-> > +config FAMFS
-> > +       tristate "famfs: shared memory file system"
-> > +       depends on DEV_DAX && FS_DAX
-> > +       help
-> > +         Support for the famfs file system. Famfs is a dax file system that
-> > +	 can support scale-out shared access to fabric-attached memory
-> > +	 (e.g. CXL shared memory). Famfs is not a general purpose file system;
-> > +	 it is an enabler for data sets in shared memory.
-> 
-> Please use one tab + 2 spaces to indent help text (below the "help" keyword)
-> as documented in Documentation/process/coding-style.rst.
+Hi John,
 
-Will do, thank you!
+On 2/23/24 18:23, John Groves wrote:
+>>> +
+>>> +#define FAMFSIOC_MAGIC 'u'
+>> This 'u' value should be documented in
+>> Documentation/userspace-api/ioctl/ioctl-number.rst.
+>>
+>> and if possible, you might want to use values like 0x5x or 0x8x
+>> that don't conflict with the ioctl numbers that are already used
+>> in the 'u' space.
+> Will do. I was trying to be too clever there, invoking "mu" for
+> micron. 
 
-John
+I might have been unclear about this one.
+It's OK to use 'u' but the values 1-4 below conflict in the 'u' space:
 
+'u'   00-1F  linux/smb_fs.h                                          gone
+'u'   20-3F  linux/uvcvideo.h                                        USB video class host driver
+'u'   40-4f  linux/udmabuf.h
+
+so if you could use
+'u'   50-5f
+or
+'u'   80-8f
+
+then those conflicts wouldn't be there.
+HTH.
+
+>>> +
+>>> +/* famfs file ioctl opcodes */
+>>> +#define FAMFSIOC_MAP_CREATE    _IOW(FAMFSIOC_MAGIC, 1, struct famfs_ioc_map)
+>>> +#define FAMFSIOC_MAP_GET       _IOR(FAMFSIOC_MAGIC, 2, struct famfs_ioc_map)
+>>> +#define FAMFSIOC_MAP_GETEXT    _IOR(FAMFSIOC_MAGIC, 3, struct famfs_extent)
+>>> +#define FAMFSIOC_NOP           _IO(FAMFSIOC_MAGIC,  4)
+
+-- 
+#Randy
 
