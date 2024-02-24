@@ -1,348 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-12671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4613A8626AE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 19:17:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3F18626BC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 19:21:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 690DA1C20E06
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 18:17:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EA1C1C21011
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 18:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685844CE04;
-	Sat, 24 Feb 2024 18:16:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0CE64D5B0;
+	Sat, 24 Feb 2024 18:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yym7rF4+"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Din/4q/j"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D16C4C601;
-	Sat, 24 Feb 2024 18:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2271B4CE05
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 18:20:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708798591; cv=none; b=l6SFnuNwAOxtQ7csihS1Mh+cd47lpaWA0T/mAcQ0wvc3Rz7i3q8Kcr1RzM4jC2axDmWA3BiDCZLhWoLPRkltDA31NnyofQGcDxECipK0cvUte+jq+N7/4YinK3Z9BDyu2uCUy9os50yQnxgr3yzgzuskVUqafZiA7kbsoA/+Yoc=
+	t=1708798836; cv=none; b=JHwRrphGsloWUjzSfMn+IaYx4zijBxnu//8gfJYMCWMz2OzzqZwn270tJJYy1Q0RyBQoRbGbeN4+TKWU6AJaZYemGH8+zvai2GleswKwM/liqxlmg8meKZvsuxGM7HT778KZbig337Kb1AEFymSIehK0UxZvWKNt88snCG4aCi4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708798591; c=relaxed/simple;
-	bh=dIfv8qMop+kGsMCDN0K2VzJu+N6ZIcYeM1OBQyb46MY=;
-	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=JKIjsxdvwNKOxuINcYDzaduZwg88zdJNVZOzdenxvWgCox6dlWStqbxD2m5eAGHatneg/ZKM6JMHKkXRdysRKDTNatERiJZPfR383ia9t3ezkx8q6h6rFZJSHeSINiqFm+ke/bk6Z0wGykhjwajWHS2E22W/sxLjaH8HyXtiCwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yym7rF4+; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1dbae7b8ff2so8168665ad.3;
-        Sat, 24 Feb 2024 10:16:29 -0800 (PST)
+	s=arc-20240116; t=1708798836; c=relaxed/simple;
+	bh=daqlDQREQputqykkVYjF3ZpUbGhkQqmJQbSypjZ+ZG4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sh9Gg5LQ0X/ahgZgUxlwOkXQQHYGxa/ZDgrveLTTXBT5SrQUxpbGs8k+b6+e7l5jpiyPKLtzETe4RQ1Z2Zf3QeUsCubnjLmXnwNMOQlMBOlXCd96YI5QQJLypmZXKbgNdJiJyKZdqR4MGuvW4FC7QmamTu3Shr6Yg0TNzg0Rr00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Din/4q/j; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a3e706f50beso239209066b.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 10:20:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708798589; x=1709403389; darn=vger.kernel.org;
-        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wnu+Meyv/9BP7YNzzpJcTuolqRDU8rmnNUjfmWPj+9A=;
-        b=Yym7rF4+YBjHR0iPbmkebjrYBTQP30vPR50WyNBoZaCPKNFOTE9nakZBk8xG9PkeiD
-         H7xiHLMf4vbFH6kSJDpvkRvI3lhZhPMb8+c22i5/5fkrT7Z1X9+xLA0zRF5j4tXLYZit
-         c9qTZl53L58NgihS14XWGl8moFR6o7mAtwuTbdAX/lIi6UeeRm6PAuOuZHeopCUA8u24
-         DNEQdtJlDzsXtl7lZlzCWZrk2oukV/D/eoiHM7RKogqU1e5iBwZ32VFcIvheVJ+QPTx0
-         EICWm+gNtk10/PQq0NnrcCG/pbJkkNEk61otxxH9VrUWwXHe54+ali6Qi1lVXS+iPO4G
-         /BuQ==
+        d=linux-foundation.org; s=google; t=1708798832; x=1709403632; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=N3+t/XZyLVyYIW4d3qvzXnQMDuQBRtLknCNAnrQ0BaQ=;
+        b=Din/4q/ji9chWOLp91r9urFMS0QiI2ZW+rm/qOx7VI25y5LftDpD1twdRR6rDFzy+8
+         NCkOMISy5VOpKExUyiN/DYXPoYrcDvpHW9xhXI1aveSX3W4CYxEkXUFmaR/y93Cha1Rc
+         2pX5VR+YWsZherdvMBAdobrGNbUPjvGjz0DxI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708798589; x=1709403389;
-        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wnu+Meyv/9BP7YNzzpJcTuolqRDU8rmnNUjfmWPj+9A=;
-        b=bLTLUTeOisPoZLVBPgPBAegwzs6qMZYZYSfJ2TD8LuW8/Ia9PPyPwI7lfxqXpTIHjM
-         h6fev7WrT/orUitWM9MJyiMjVEBsBVsCwSPSDtzwk64Q/BZv1zXzLzUdvPXBq63sorzp
-         WDLLEj76qjuhY768aSjKSuNyOVXxIF45nx8FtGrMeM+4m3En9KrVYp2b9mQJF3dESsqr
-         doXLfQ/bZad7udmEQRqWxKHlD9NWEZTK0/XH+ukhYUD29uVn5VK958CFbZ1yod2OyQ0V
-         xm6THLd8RBWx3cD/OnZGHK39bY4wbuBfOMsxdpLjmK1+IuU43JnwuQHvP+Hyi39T2MJH
-         H+Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCEIBtqglmI2TXr0YbKEGu5FdGk4/p5uPzl4KNi+hjf1Ob6KSIlQBUUmj0JyLmMdsKR8Z4ruq6LLKl5FX40GiUDbVrzuEaWeRakbuzs17i8qhssSYsCW2fKKIAWN5sBHKRLOgFs3i2n2Y8wuJr3En8BMZv+sOnOi/I1d/GwvkS8CAbkWePl5wL3mwchwTG9fCUABv/kzoWfokwMsPbDl7fBb2+1nIE23bl5wtM8k30t2p9aAFrSl3dU7riSfYO
-X-Gm-Message-State: AOJu0YzNYvaehCgUf/+aM46pPwRY9GyFe8al8U1LyQwu3RdyX6KNIfw+
-	07ae+ttV/886T8LLTDyY7LYdRy2ufaczX8wFiY+v1q3peTFMSnKr
-X-Google-Smtp-Source: AGHT+IEhIRn378wt+gFfTyZVVHdy0OnAOhjAUqJcKoAdAEpOzjhracPgpW4cwIY9SoPSruGG3Ym2nQ==
-X-Received: by 2002:a17:902:d891:b0:1dc:6fec:15d8 with SMTP id b17-20020a170902d89100b001dc6fec15d8mr2875267plz.47.1708798589107;
-        Sat, 24 Feb 2024 10:16:29 -0800 (PST)
-Received: from dw-tp ([171.76.80.106])
-        by smtp.gmail.com with ESMTPSA id ci7-20020a17090afc8700b0029996fd70e2sm1511031pjb.45.2024.02.24.10.16.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 24 Feb 2024 10:16:28 -0800 (PST)
-Date: Sat, 24 Feb 2024 23:46:19 +0530
-Message-Id: <87v86d20ek.fsf@doe.com>
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, jack@suse.cz
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org, linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org, nilay@linux.ibm.com, Prasad Singamsetty <prasad.singamsetty@oracle.com>, John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH v4 03/11] fs: Initial atomic write support
-In-Reply-To: <20240219130109.341523-4-john.g.garry@oracle.com>
+        d=1e100.net; s=20230601; t=1708798832; x=1709403632;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N3+t/XZyLVyYIW4d3qvzXnQMDuQBRtLknCNAnrQ0BaQ=;
+        b=fOBYZ43Ih/uGN8JOZ4jc9y8Wg3mxMmybIP4fOkXlqnNLqHGAuxifVwe8JtkXHp2JgK
+         EUAxZoB0gCbFARzjcmYHLGO0SMWrmoTGixy0GbS0YhL8qvX770fz6Jt4ajNwh6TTbrR7
+         Xo2DbwyuT+LKjLkj0smDEXsTg7r/ZnqH7u+sw/T0Os2zpxTQ4YbXz1Dv0ou8HYfvL7Jr
+         2anbuDlReIoyzqrQyqIwybUdoezwpjNNq02drPChgs2x3rWnw6+OCkUYCgpf1uQrbSJG
+         X37IlWeXz6MKOArKkIKyu3ym1Wo6DncuU6Eg1AUATvLFQFC6zNmO0+kk/4YD12JsLyg9
+         otxw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7TVZ3YOrK7hCmxM60pjNDioI1GippBrM+wlrqsKnFD5Swiop2qZHQrf5xEMcldW3gJG2y8mUpllhExVUf110Q2LNB2nca/mjkBWluaA==
+X-Gm-Message-State: AOJu0YywxjurGnhg5qaRXVDEspj0aJlYmjmCb7hvi09KV3xSrPrei+lk
+	iRk3eljueqhDTI4ap0aof1M29YWfGWlqYCC0qUaHKahJRlGWwPeFZeGtWgWXZ9RcQxJrtB8OiTa
+	vvFI=
+X-Google-Smtp-Source: AGHT+IH39df+PXRcDLjGhzao6bxwA90Y8a94BHQ48cd9cz4BxPtqOsoI0ZudpGbKBvJDmZi57NsFlg==
+X-Received: by 2002:a17:906:1ece:b0:a3e:a3c3:9658 with SMTP id m14-20020a1709061ece00b00a3ea3c39658mr1958423ejj.22.1708798832241;
+        Sat, 24 Feb 2024 10:20:32 -0800 (PST)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
+        by smtp.gmail.com with ESMTPSA id ju21-20020a170906e91500b00a3d5d8ff745sm794720ejb.144.2024.02.24.10.20.31
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Feb 2024 10:20:31 -0800 (PST)
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a3e706f50beso239206666b.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 10:20:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXpm+mqdupiyYCStUVIX3INojLtwYRDLHx+Uh7JNhiu6ESU51Q7U3aWV+yeM/jtNi8ECHTqfLuz97sNexDi6aYdfrBIQC1+3detjq/+ag==
+X-Received: by 2002:a17:906:565a:b0:a3e:6a25:2603 with SMTP id
+ v26-20020a170906565a00b00a3e6a252603mr1930750ejr.33.1708798830732; Sat, 24
+ Feb 2024 10:20:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <Zdkxfspq3urnrM6I@bombadil.infradead.org> <Zdlsr88A6AAlJpcc@casper.infradead.org>
+ <CAHk-=wjUkYLv23KtF=EyCrQcmf9NGwE8Yo1cuxdaLF8gqx5zWw@mail.gmail.com>
+In-Reply-To: <CAHk-=wjUkYLv23KtF=EyCrQcmf9NGwE8Yo1cuxdaLF8gqx5zWw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 24 Feb 2024 10:20:14 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj0_eGczsoTJska24Lf9Sk6VXUGrfHymcDZF_Q5ExQdxQ@mail.gmail.com>
+Message-ID: <CAHk-=wj0_eGczsoTJska24Lf9Sk6VXUGrfHymcDZF_Q5ExQdxQ@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, lsf-pc@lists.linux-foundation.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
+	Daniel Gomez <da.gomez@samsung.com>, Pankaj Raghav <p.raghav@samsung.com>, 
+	Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>, 
+	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
 
-John Garry <john.g.garry@oracle.com> writes:
-
-> From: Prasad Singamsetty <prasad.singamsetty@oracle.com>
+On Sat, 24 Feb 2024 at 09:31, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> An atomic write is a write issued with torn-write protection, meaning
-> that for a power failure or any other hardware failure, all or none of the
-> data from the write will be stored, but never a mix of old and new data.
->
-> Userspace may add flag RWF_ATOMIC to pwritev2() to indicate that the
-> write is to be issued with torn-write prevention, according to special
-> alignment and length rules.
->
-> For any syscall interface utilizing struct iocb, add IOCB_ATOMIC for
-> iocb->ki_flags field to indicate the same.
->
-> A call to statx will give the relevant atomic write info for a file:
-> - atomic_write_unit_min
-> - atomic_write_unit_max
-> - atomic_write_segments_max
->
-> Both min and max values must be a power-of-2.
->
-> Applications can avail of atomic write feature by ensuring that the total
-> length of a write is a power-of-2 in size and also sized between
-> atomic_write_unit_min and atomic_write_unit_max, inclusive. Applications
-> must ensure that the write is at a naturally-aligned offset in the file
-> wrt the total write length. The value in atomic_write_segments_max
-> indicates the upper limit for IOV_ITER iovcnt.
->
-> Add file mode flag FMODE_CAN_ATOMIC_WRITE, so files which do not have the
-> flag set will have RWF_ATOMIC rejected and not just ignored.
->
-> Add a type argument to kiocb_set_rw_flags() to allows reads which have
-> RWF_ATOMIC set to be rejected.
->
-> Helper function atomic_write_valid() can be used by FSes to verify
-> compliant writes.
->
-> Signed-off-by: Prasad Singamsetty <prasad.singamsetty@oracle.com>
-> #jpg: merge into single patch and much rewrite
+> And (one) important part here is "nobody sane does that".  So
+> benchmarking this is a bit crazy. The code is literally meant for bad
+> actors, and what you are benchmarking is the kernel telling you "don't
+> do that then".
 
-^^^ this might be a miss I guess.
+Side note: one reason why the big hammer approach of "don't do that"
+has worked so well is that the few loads that *do* want to do this and
+have a valid reason to write large amounts of data in one go are
+generally trivially translated to O_DIRECT.
 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
-> ---
->  fs/aio.c                |  8 ++++----
->  fs/btrfs/ioctl.c        |  2 +-
->  fs/read_write.c         |  2 +-
->  include/linux/fs.h      | 36 +++++++++++++++++++++++++++++++++++-
->  include/uapi/linux/fs.h |  5 ++++-
->  io_uring/rw.c           |  4 ++--
->  6 files changed, 47 insertions(+), 10 deletions(-)
->
-> diff --git a/fs/aio.c b/fs/aio.c
-> index bb2ff48991f3..21bcbc076fd0 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -1502,7 +1502,7 @@ static void aio_complete_rw(struct kiocb *kiocb, long res)
->  	iocb_put(iocb);
->  }
->  
-> -static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb)
-> +static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb, int type)
+For example, if you actually do things like write disk images etc,
+O_DIRECT is lovely and easy - even trivial - to use. You don't even
+have to write code for it, you can (and people do) just use 'dd' with
+'oflag=direct'. So even trivial shell scripting has access to the
+"don't do that then" flag.
 
-maybe rw_type?
+In other words, I really think that Luis' benchmark triggers that
+kernel "you are doing something actively wrong and stupid" logic. It's
+not the kernel trying to optimize writeback. It's the kernel trying to
+protect others from stupid loads.
 
->  {
->  	int ret;
->  
-> @@ -1528,7 +1528,7 @@ static int aio_prep_rw(struct kiocb *req, const struct iocb *iocb)
->  	} else
->  		req->ki_ioprio = get_current_ioprio();
->  
-> -	ret = kiocb_set_rw_flags(req, iocb->aio_rw_flags);
-> +	ret = kiocb_set_rw_flags(req, iocb->aio_rw_flags, type);
->  	if (unlikely(ret))
->  		return ret;
->  
-> @@ -1580,7 +1580,7 @@ static int aio_read(struct kiocb *req, const struct iocb *iocb,
->  	struct file *file;
->  	int ret;
->  
-> -	ret = aio_prep_rw(req, iocb);
-> +	ret = aio_prep_rw(req, iocb, READ);
->  	if (ret)
->  		return ret;
->  	file = req->ki_filp;
-> @@ -1607,7 +1607,7 @@ static int aio_write(struct kiocb *req, const struct iocb *iocb,
->  	struct file *file;
->  	int ret;
->  
-> -	ret = aio_prep_rw(req, iocb);
-> +	ret = aio_prep_rw(req, iocb, WRITE);
->  	if (ret)
->  		return ret;
->  	file = req->ki_filp;
-> diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
-> index ac3316e0d11c..455f06d94b11 100644
-> --- a/fs/btrfs/ioctl.c
-> +++ b/fs/btrfs/ioctl.c
-> @@ -4555,7 +4555,7 @@ static int btrfs_ioctl_encoded_write(struct file *file, void __user *argp, bool
->  		goto out_iov;
->  
->  	init_sync_kiocb(&kiocb, file);
-> -	ret = kiocb_set_rw_flags(&kiocb, 0);
-> +	ret = kiocb_set_rw_flags(&kiocb, 0, WRITE);
->  	if (ret)
->  		goto out_iov;
->  	kiocb.ki_pos = pos;
-> diff --git a/fs/read_write.c b/fs/read_write.c
-> index d4c036e82b6c..a7dc1819192d 100644
-> --- a/fs/read_write.c
-> +++ b/fs/read_write.c
-> @@ -730,7 +730,7 @@ static ssize_t do_iter_readv_writev(struct file *filp, struct iov_iter *iter,
->  	ssize_t ret;
->  
->  	init_sync_kiocb(&kiocb, filp);
-> -	ret = kiocb_set_rw_flags(&kiocb, flags);
-> +	ret = kiocb_set_rw_flags(&kiocb, flags, type);
->  	if (ret)
->  		return ret;
->  	kiocb.ki_pos = (ppos ? *ppos : 0);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 023f37c60709..7271640fd600 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -43,6 +43,7 @@
->  #include <linux/cred.h>
->  #include <linux/mnt_idmapping.h>
->  #include <linux/slab.h>
-> +#include <linux/uio.h>
->  
->  #include <asm/byteorder.h>
->  #include <uapi/linux/fs.h>
-> @@ -119,6 +120,10 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
->  #define FMODE_PWRITE		((__force fmode_t)0x10)
->  /* File is opened for execution with sys_execve / sys_uselib */
->  #define FMODE_EXEC		((__force fmode_t)0x20)
-> +
-> +/* File supports atomic writes */
-> +#define FMODE_CAN_ATOMIC_WRITE	((__force fmode_t)0x40)
-> +
->  /* 32bit hashes as llseek() offset (for directories) */
->  #define FMODE_32BITHASH         ((__force fmode_t)0x200)
->  /* 64bit hashes as llseek() offset (for directories) */
-> @@ -328,6 +333,7 @@ enum rw_hint {
->  #define IOCB_SYNC		(__force int) RWF_SYNC
->  #define IOCB_NOWAIT		(__force int) RWF_NOWAIT
->  #define IOCB_APPEND		(__force int) RWF_APPEND
-> +#define IOCB_ATOMIC		(__force int) RWF_ATOMIC
->  
+Now, I'm also not saying that you should benchmark this with our
+"vm_dirty_bytes" logic disabled. That may indeed help performance on
+that benchmark, but you'll just hit other problem spots instead. Once
+you fill up lots of memory, other problems become really big and
+nasty, so you would then need *other* fixes for those issues.
 
-You might also want to add this definition in here too
+If somebody really cares about this kind of load, and cannot use
+O_DIRECT for some reason ("I actually do want caches 99% of the
+time"), I suspect the solution is to have some slightly gentler way to
+say "instead of the throttling logic, I want you to start my writeouts
+much more synchronously".
 
-#define TRACE_IOCB_STRINGS \
-<...>
-<...>
-{ IOCB_ATOMIC, "ATOMIC" }
+IOW, we could have a writer flag that still uses the page cache, but
+that instead of that
 
+                balance_dirty_pages_ratelimited(mapping);
 
->  /* non-RWF related bits - start at 16 */
->  #define IOCB_EVENTFD		(1 << 16)
-> @@ -3321,7 +3327,7 @@ static inline int iocb_flags(struct file *file)
->  	return res;
->  }
->  
-> -static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
-> +static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags, int type)
+in generic_perform_write(), it would actually synchronously *start*
+the write, that might work a whole lot better for any load that still
+wants to do big streaming writes, but wants to also keep the page
+cache component.
 
-maybe rw_type? 
-
->  {
->  	int kiocb_flags = 0;
->  
-> @@ -3338,6 +3344,12 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags)
->  			return -EOPNOTSUPP;
->  		kiocb_flags |= IOCB_NOIO;
->  	}
-> +	if (flags & RWF_ATOMIC) {
-> +		if (type == READ)
-> +			return -EOPNOTSUPP;
-> +		if (!(ki->ki_filp->f_mode & FMODE_CAN_ATOMIC_WRITE))
-> +			return -EOPNOTSUPP;
-> +	}
->  	kiocb_flags |= (__force int) (flags & RWF_SUPPORTED);
->  	if (flags & RWF_SYNC)
->  		kiocb_flags |= IOCB_DSYNC;
-> @@ -3523,4 +3535,26 @@ extern int vfs_fadvise(struct file *file, loff_t offset, loff_t len,
->  extern int generic_fadvise(struct file *file, loff_t offset, loff_t len,
->  			   int advice);
->  
-> +static inline bool atomic_write_valid(loff_t pos, struct iov_iter *iter,
-> +			   unsigned int unit_min, unsigned int unit_max)
-> +{
-> +	size_t len = iov_iter_count(iter);
-> +
-> +	if (!iter_is_ubuf(iter))
-> +		return false;
-
-There is no mention about this limitation in the commit message of this
-patch. Maybe it will be good to capture why this limitation to only
-support ubuf and/or any plans to lift this restriction in future
-in the commit message?
-
-
-> +
-> +	if (len == unit_min || len == unit_max) {
-> +		/* ok if exactly min or max */
-> +	} else if (len < unit_min || len > unit_max) {
-> +		return false;
-> +	} else if (!is_power_of_2(len)) {
-> +		return false;
-> +	}
-
-Checking for len == unit_min || len == unit_max is redundant when
-unit_min and unit_max are already power of 2.
-
-
-> +
-> +	if (pos & (len - 1))
-> +		return false;
-> +
-> +	return true;
-> +}
-> +
->  #endif /* _LINUX_FS_H */
-> diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-> index 48ad69f7722e..a0975ae81e64 100644
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -301,9 +301,12 @@ typedef int __bitwise __kernel_rwf_t;
->  /* per-IO O_APPEND */
->  #define RWF_APPEND	((__force __kernel_rwf_t)0x00000010)
->  
-> +/* Atomic Write */
-> +#define RWF_ATOMIC	((__force __kernel_rwf_t)0x00000040)
-> +
->  /* mask of flags supported by the kernel */
->  #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
-> -			 RWF_APPEND)
-> +			 RWF_APPEND | RWF_ATOMIC)
->  
->  /* Pagemap ioctl */
->  #define PAGEMAP_SCAN	_IOWR('f', 16, struct pm_scan_arg)
-> diff --git a/io_uring/rw.c b/io_uring/rw.c
-> index d5e79d9bdc71..f8c022301cf4 100644
-> --- a/io_uring/rw.c
-> +++ b/io_uring/rw.c
-> @@ -719,7 +719,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
->  	struct kiocb *kiocb = &rw->kiocb;
->  	struct io_ring_ctx *ctx = req->ctx;
->  	struct file *file = req->file;
-> -	int ret;
-> +	int ret, type = (mode == FMODE_WRITE) ? WRITE : READ;
->  
->  	if (unlikely(!file || !(file->f_mode & mode)))
->  		return -EBADF;
-> @@ -728,7 +728,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
->  		req->flags |= io_file_get_flags(file);
->  
->  	kiocb->ki_flags = file->f_iocb_flags;
-> -	ret = kiocb_set_rw_flags(kiocb, rw->flags);
-> +	ret = kiocb_set_rw_flags(kiocb, rw->flags, type);
->  	if (unlikely(ret))
->  		return ret;
->  	kiocb->ki_flags |= IOCB_ALLOC_CACHE;
-> -- 
-> 2.31.1
+                Linus
 
