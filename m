@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-12643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5D4862220
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 02:59:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E885C86222D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 03:02:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE1371F26EE8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 01:59:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E96A287E71
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 02:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1986DF60;
-	Sat, 24 Feb 2024 01:59:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FF81118A;
+	Sat, 24 Feb 2024 02:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zntyXLY0"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YClsuH4q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6AAD52A
-	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 01:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10259DDA2
+	for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 02:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708739982; cv=none; b=leHIXho/06BfQJrmjQbmdlZHRRbRjYVlbbvzUusjl6M1hmomHbix8cqHBRX2DVUBmG14RkngUGJZ6wUMCqlgr7EnowaWOMXZNWAUA98Lq8GQ6oMr8RpBApnSAJsHwNUv3GKXspSQH3s8nV6IyEsupDOLXGku64xw69N0sQx1KE0=
+	t=1708740159; cv=none; b=XVohOoKWccYl43bfzdO33pUHLpDLIQi3Kzf69wXQbAx6lUcNQlg9rPBZuMRLvjyDsaJqcSl5zT1xOqhbUOND7Odd2S3skveavtta+p0M801RYTqOl/h1IxfGh7RG9nZMjQ+K06iZjA9aGr+CVgrgyIEsEVXnWfKB2CF5pykmI/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708739982; c=relaxed/simple;
-	bh=T+a2SRS9CYU21NdR/LXMyfpfOaFxGBggdHbbvAXJGNw=;
+	s=arc-20240116; t=1708740159; c=relaxed/simple;
+	bh=aU9FbwN1S9//HRHbhdmeF+fyYNkS7K9J/zpvYfRP3hA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cqaZ52BV4sBSXRt4S4XPObhZv3hggS82LB6faSQ5urPudKNeB78xXjbIhpjfGb7VmR/lizdwnZ9Kl4ePg3UHQwuwwo4OivsjllhliGkLkui/MrP7LmNYfbOS+Mj7Uev+yn209/CiZTgRy3/ot6L4jwC1BH6NyB5nMDVTRWwU4+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zntyXLY0; arc=none smtp.client-ip=209.85.219.172
+	 To:Cc:Content-Type; b=o5XOWduYyXd2MwbAwoJ6CbogNQ2FOxb2WRspgltU0V3gGPNRYHg+krLLjgzjSA/pxDBzR1ja3cAY2GXTnnb8HO7qOG+PysgnDTppKOS8bUWRoCJnE6m9tWidxZVY29kWz7ZEnXO8GhMhgHC+q4O24vyp/ShH6Wajl7CBd/oVfiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YClsuH4q; arc=none smtp.client-ip=209.85.219.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dc6e080c1f0so1007423276.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 17:59:40 -0800 (PST)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dcc73148611so1567539276.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 23 Feb 2024 18:02:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1708739979; x=1709344779; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1708740156; x=1709344956; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=T+a2SRS9CYU21NdR/LXMyfpfOaFxGBggdHbbvAXJGNw=;
-        b=zntyXLY0prDLuWUAhvw7ixaIAkbzjzN//FBBd3O1inJndHdJNJMleIJeV7pmILIE3j
-         H1sZwAVtjmK4UL17vQLGrErXQgtH9PEo56eebJxhiRdq5oKHMvaMmWnyndxXsxaPDXpP
-         B0G+/TPLtQdYA+tqWpY1HLN0IUBPlHROJ6oEHXFr4bBEs5NbLPiYkVxGTthTCwdI89AD
-         BsSQ+baqISaQvSdgEpLz+sjf7DYzOqk9VgIBOYVwAc0IiEDMsCy1yTyDzz4GGOko2bpL
-         LXdoK1umc4qmBuz/eYU/H3495v3656CSywMDPyRHm/YcM7FljiuX4s/TNoB7YqCFRu8+
-         lwmA==
+        bh=9PYgxetUjHOrEBE3OyfXnw/V4oH+FzaVrAptzS8yqHg=;
+        b=YClsuH4qi+9Hbah7mEVNCxqPVcCh1T8fgiGQbuJcRakQfLjheg2rmtv16S3OI6V4sQ
+         nlaUliNA1qA63z6vOZ6V7JomJp43uouyQOdEgd2pkPDnyJDjRgZcN66pvWp2GruffhWc
+         CIBRI1tO6ZfFH2Z60sHRNNqlE06wOVp9jAkvkKMlc9QY2DSOKmGD75kn7V2D5MAg4Jia
+         fausVUyE1OVR7gE3WJ1wOZM6I1dbiS3GSUPM0S3Ap+vHIhOrkHl16fOaXSGmE5XfDxg+
+         +MYYpw01Ar1XB+euQdjKPPl7Xfo62jG9xoAT4Tn9iqq81a8td3y9txJl6eLlnqiy+wlz
+         8DKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708739979; x=1709344779;
+        d=1e100.net; s=20230601; t=1708740156; x=1709344956;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T+a2SRS9CYU21NdR/LXMyfpfOaFxGBggdHbbvAXJGNw=;
-        b=CkvliSlJvA1BvLhTRQh54jNzdGwT1VXOpyFhYsNosGdqe/rbf/Z0CVo6/BCb3NqkWR
-         O7twt48zkPuoy10HXwvQVpxCfYSLG77VZ+OwhyHfeyfBJMG+44LCAdFOg4BJztVxXN+1
-         AzUWzvZcC1RemRL8lkb6lHK9hGB05JPXliUorHDLGbXqBe3WuI1SdyExJmaxO8oT8PnK
-         QdVcTuiPOOwn+dGtXKRq+KOHM3GpEJeqcCs8BGKbA9Vy6+8SiaYHaoGTHVFnuO0McJ1x
-         hAiFhL5P6PuNvJZHWuNeBUITHJG0jNJG56cWCNb8oN73B7d9P7PEiqbV3dOeQpL3AySI
-         Ixow==
-X-Forwarded-Encrypted: i=1; AJvYcCXJohAo3Q4ylmL/pqTztpt1sx5KWzUSI1me2IZtAtBECisfi2G9MhE496OTStU5OjcdOBWfV5YiETFpzeNe7UA1WAir0hy7Eq9nHXYl+g==
-X-Gm-Message-State: AOJu0YyrmpbzMBrIWHNeC8tTZmKqOuYa2jbtiyyI5Bin85pGI8aiFghd
-	iR43NAuA2VZdz2cViKNFC/k1Yq920O4g+jqOvQDd7x445uekO9y8mRjDs2+kcRwBidYw0Mk9oYj
-	2Dh7VgdkV/WV/zNtjyc+zFl7MurSjjAbedhG0
-X-Google-Smtp-Source: AGHT+IE96gofthBIDY1zcxV1fCC6ZYb0ubhfQdxrWxQDA5xXy9sf7lsJXU+uVwoyJAnzh9d/485wU5tc9VrVgvYEwvY=
-X-Received: by 2002:a25:aa67:0:b0:dcc:b69c:12e1 with SMTP id
- s94-20020a25aa67000000b00dccb69c12e1mr1515692ybi.59.1708739979162; Fri, 23
- Feb 2024 17:59:39 -0800 (PST)
+        bh=9PYgxetUjHOrEBE3OyfXnw/V4oH+FzaVrAptzS8yqHg=;
+        b=iAPAm72nfCWkiVx9fiCouMxg5HP8zxG/5d14IAaW527hvEVfnSHFU8poDf5CZ7m3hZ
+         wMZY9hWSEH0SVhBIMJw/zWu3aL73ALFmqpumRQ8ppZhKJWa6XW9LAINRtgvk9QhsRBBb
+         uSBsnZXwVY8LyOyFNuVOI5tRh93XMZh0Mhk1pHAaogaDGyJXUFh2MuE+iTvx/LI7o6Yz
+         rVmkgfAiGuO/tvVvaOvujqGL1QuY4Y6L80NtDegECJ19mis1Hqafoj57GMhhZ3DSUIqP
+         E7b0RQnD0kMg/99etSzYe/+jpACmHFZlwnKi7BGe8gmh/6B6tDxHjibjZ5A4/hvNpINf
+         ph+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVDS9SY+9VOOlyzyUv8W38frgbPcWeclPHBRuyadIFWc4JkuRSQuhj4HQKBATIkqP3A8g0Vw8hZrwR6FF6uZotDizkjJ+UqglzCUxwdjA==
+X-Gm-Message-State: AOJu0YwYvIUgBeI6d9CoiySWDc7AcnfumW6lVOaXOwTTrX54nJuMRmS+
+	xXATRvUtzH6yHY7bvRdr6cclecgDSdLcCNDZXQa9tVNqLAXOcaeDmlFyoL8G3l7oVfCKH9PpdnB
+	GBQnz5N/SQWxntvzoV6q85guCrafSr8hAFB/+
+X-Google-Smtp-Source: AGHT+IHeD7s1jl7nDLOSZG0y9kCuKTd3u0TtUWQK/hX08wsrnwTSQEZdy4JG7wuGlK1ABvMhJVtPl8BOIpukOXAnbmk=
+X-Received: by 2002:a25:9986:0:b0:dc7:4758:7802 with SMTP id
+ p6-20020a259986000000b00dc747587802mr1258940ybo.48.1708740155772; Fri, 23 Feb
+ 2024 18:02:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240221194052.927623-1-surenb@google.com> <20240221194052.927623-7-surenb@google.com>
- <Zdc6LUWnPOBRmtZH@tiehlicka> <20240222132410.6e1a2599@meshulam.tesarici.cz> <CAJuCfpGNoMa4G3o_us+Pn2wvAKxA2L=7WEif2xHT7tR76Mbw5g@mail.gmail.com>
-In-Reply-To: <CAJuCfpGNoMa4G3o_us+Pn2wvAKxA2L=7WEif2xHT7tR76Mbw5g@mail.gmail.com>
+References: <20240221194052.927623-1-surenb@google.com> <20240221194052.927623-4-surenb@google.com>
+ <CA+CK2bD8Cr1V2=PWAsf6CwDnakZ54Qaf_q5t4aVYV-jXQPtPbg@mail.gmail.com>
+In-Reply-To: <CA+CK2bD8Cr1V2=PWAsf6CwDnakZ54Qaf_q5t4aVYV-jXQPtPbg@mail.gmail.com>
 From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 23 Feb 2024 17:59:26 -0800
-Message-ID: <CAJuCfpHY1T2jCCitt7cufKSeXP7zhh_f9gVN0UNZoOQz1cNBjw@mail.gmail.com>
-Subject: Re: [PATCH v4 06/36] mm: enumerate all gfp flags
-To: =?UTF-8?B?UGV0ciBUZXNhxZnDrWs=?= <petr@tesarici.cz>
-Cc: Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org, kent.overstreet@linux.dev, 
+Date: Fri, 23 Feb 2024 18:02:24 -0800
+Message-ID: <CAJuCfpHBgZeJN_O1ZQg_oLbAXc-Y+jmUpB02jznkEySpd4rzvw@mail.gmail.com>
+Subject: Re: [PATCH v4 03/36] mm/slub: Mark slab_free_freelist_hook() __always_inline
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
 	vbabka@suse.cz, hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
 	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
 	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com, 
@@ -88,15 +88,14 @@ Cc: Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org, kent.overstreet@l
 	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
 	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
 	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
-	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
-	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
-	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org, 
-	ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org, 
-	ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org, 
-	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
-	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	rppt@kernel.org, paulmck@kernel.org, yosryahmed@google.com, yuzhao@google.com, 
+	dhowells@redhat.com, hughd@google.com, andreyknvl@gmail.com, 
+	keescook@chromium.org, ndesaulniers@google.com, vvvvvv@google.com, 
+	gregkh@linuxfoundation.org, ebiggers@google.com, ytcoode@gmail.com, 
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, bristot@redhat.com, vschneid@redhat.com, cl@linux.com, 
+	penberg@kernel.org, iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, 
+	glider@google.com, elver@google.com, dvyukov@google.com, shakeelb@google.com, 
 	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
 	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
 	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -107,48 +106,49 @@ Cc: Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org, kent.overstreet@l
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 23, 2024 at 11:26=E2=80=AFAM Suren Baghdasaryan <surenb@google.=
-com> wrote:
+On Wed, Feb 21, 2024 at 1:16=E2=80=AFPM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
 >
-> On Thu, Feb 22, 2024 at 4:24=E2=80=AFAM 'Petr Tesa=C5=99=C3=ADk' via kern=
-el-team
-> <kernel-team@android.com> wrote:
+> On Wed, Feb 21, 2024 at 2:41=E2=80=AFPM Suren Baghdasaryan <surenb@google=
+.com> wrote:
 > >
-> > On Thu, 22 Feb 2024 13:12:29 +0100
-> > Michal Hocko <mhocko@suse.com> wrote:
+> > From: Kent Overstreet <kent.overstreet@linux.dev>
 > >
-> > > On Wed 21-02-24 11:40:19, Suren Baghdasaryan wrote:
-> > > > Introduce GFP bits enumeration to let compiler track the number of =
-used
-> > > > bits (which depends on the config options) instead of hardcoding th=
-em.
-> > > > That simplifies __GFP_BITS_SHIFT calculation.
-> > > >
-> > > > Suggested-by: Petr Tesa=C5=99=C3=ADk <petr@tesarici.cz>
-> > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > >
-> > > I thought I have responded to this patch but obviously not the case.
-> > > I like this change. Makes sense even without the rest of the series.
-> > > Acked-by: Michal Hocko <mhocko@suse.com>
+> > It seems we need to be more forceful with the compiler on this one.
+> > This is done for performance reasons only.
 > >
-> > Thank you, Michal. I also hope it can be merged without waiting for the
-> > rest of the series.
+> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > Reviewed-by: Kees Cook <keescook@chromium.org>
+> > ---
+> >  mm/slub.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index 2ef88bbf56a3..d31b03a8d9d5 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -2121,7 +2121,7 @@ bool slab_free_hook(struct kmem_cache *s, void *x=
+, bool init)
+> >         return !kasan_slab_free(s, x, init);
+> >  }
+> >
+> > -static inline bool slab_free_freelist_hook(struct kmem_cache *s,
+> > +static __always_inline bool slab_free_freelist_hook(struct kmem_cache =
+*s,
 >
-> Thanks Michal! I can post it separately. With the Ack I don't think it
-> will delay the rest of the series.
+> __fastpath_inline seems to me more appropriate here. It prioritizes
+> memory vs performance.
 
-Stand-alone version is posted as v5 here:
-https://lore.kernel.org/all/20240224015800.2569851-1-surenb@google.com/
+Hmm. AFAIKT this function is used only in one place and we do not add
+any additional users, so I don't think changing to __fastpath_inline
+here would gain us anything.
 
-> Thanks,
-> Suren.
 >
-> >
-> > Petr T
-> >
+> >                                            void **head, void **tail,
+> >                                            int *cnt)
+> >  {
 > > --
-> > To unsubscribe from this group and stop receiving emails from it, send =
-an email to kernel-team+unsubscribe@android.com.
+> > 2.44.0.rc0.258.g7320e95886-goog
 > >
 
