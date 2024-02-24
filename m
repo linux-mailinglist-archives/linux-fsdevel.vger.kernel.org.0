@@ -1,117 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-12647-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12648-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D075862281
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 04:27:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B6886228A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 04:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE2B91C22A9B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 03:27:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B0DF1F258EC
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Feb 2024 03:42:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C36134D9;
-	Sat, 24 Feb 2024 03:27:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C3614006;
+	Sat, 24 Feb 2024 03:42:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W9fJ6Bc+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXl7xbeR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D51D2E0;
-	Sat, 24 Feb 2024 03:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4E86FA9;
+	Sat, 24 Feb 2024 03:42:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708745253; cv=none; b=LhoT2K42OZwjbtI8w6etIi/QhdRHGSWxBqStI1hxjYjh75czsgvqHc0AsGxfa+J6ccqUU2hFxGe7jz+pSYRgoewWcrzpbpQdcgdrlmsPt55K+95XN9s7jVq0ho3Q1FfcFNgeXMa6oPvXvxuqNWp2wFsx5+USwIirEOO6UbykyPU=
+	t=1708746147; cv=none; b=UFg58CWXwWv5a4alSLqQ8VIwfgb6dYxZuqimhxv1BAjjpKixc2lcDSxwxLgJiAeBf+jeR+pZpIozPh6QgQiyLOEUO3L/KLS6Okcbt0W0Oj6S/+18aoT0spkCvDwv6kYh/w26XP+F5zQzflQrTdp46q88zV2H3jaIrZ95kerM3+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708745253; c=relaxed/simple;
-	bh=qhDNlIMq5CO7aNNTqnWBMffCMqCKzQlbjb1J1+ZjR6s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SmEHb1MmpH1KPQpHrZyky9LmVzAzLk4i7kmftceIuDS2d+h1GdKZGZB96dsDOhEGoSB3sigy6RpOGH3DfKYuCZDKtD+F/N4x0UG+GURmJPsJt3o9siqA5gHcgy40C9KqosawKUdLqkC6jz9ai4ydiOATGuOhl433wtNMYqnJpeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W9fJ6Bc+; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=0VCkszg+LKLjIPkU+C6CKrRV3Fp8J43nYtNQiylBN10=; b=W9fJ6Bc+K8wkC50wnuBCuysytl
-	BtgBPCcY1O3Zj0LxNhyI1VpNJ1aPrnobfR/MYuEuS8SX8J2NFq81W7iICYNaGNEs00/WbO/rf3Rpl
-	rXu1GmA/7Gv2iMXWOaFGY+healOF8T0q2ZlWiH5L6FIJsYejY1YG42QfvtkQJ12Blv4ZzgnuBoq7L
-	Vhx6QIp93YVyxtoBXrwJ2IAZ40MU8IDO5S2zvkpfyGPDdZw81LNF9Y7Aog++JYbWJ+nhsuhifiM6M
-	hayGF+PsoqHCrNH1RA3CDbSj9XVaAnz4Q1Ro76/XJ0YinBM/q+PTpLNC9FSWWnYntvPFgLw4zdLIj
-	JHt0flNw==;
-Received: from [50.53.50.0] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rdih9-0000000Bwos-10f0;
-	Sat, 24 Feb 2024 03:27:23 +0000
-Message-ID: <97cde8f6-21ed-45b9-9618-568933102f05@infradead.org>
-Date: Fri, 23 Feb 2024 19:27:22 -0800
+	s=arc-20240116; t=1708746147; c=relaxed/simple;
+	bh=Mo84iZeMq5RPlHJjNVe7KdcGc2x7QyIrCKrw9vG9RqA=;
+	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=S6GQ3t3fsnh5ixvb7OoHR/WoML0iC7EbyAGvIs9TBJIh/hEmIHdvf3Kal7HsZmnaGtyYS35OWiA+BwrUtVBSy767QTwwRtJIKYVOBCeCGPj9YAjdyVQSMTmiB5bLfPWx9Nqmn8UFJtmYYUBVZQo4+JiJdwftsB0OHKDIUPjdk7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eXl7xbeR; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1db6e0996ceso11972805ad.2;
+        Fri, 23 Feb 2024 19:42:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708746145; x=1709350945; darn=vger.kernel.org;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=82ndwq1r8iJGcKxdTGgyHwEUSv2EnlJPfsRhslovu74=;
+        b=eXl7xbeRtfvcXZ5XZHa2mQL29BnEzu/7k6rTZoSFonpJRwBrJLjSSKZHIqZLEhz/Aj
+         FZ2/1EqJxljlox+BM6tfU04IoDGdDppfLHibNN8oKZZevq3MAyasfj7k8LgFWuUTlXMb
+         zgnbslmi/dZe5bfC4pmbk6FPLDjduHvuU51TP1neSds6cqD0cGenfXXaSCWCw5HGp3xS
+         8uOk+GGzOm+rjncTeACcHgA8b120U3vFGlEok9EZjEIbiUsCi65eQ7UU2LfNp9YOEEyK
+         +O014YScd7enER+FC6m9c7ZXSyKozYIHzmgBQBE6H7RM2XKsWP6nLmy49L7UM1a4y7ro
+         e2Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708746145; x=1709350945;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=82ndwq1r8iJGcKxdTGgyHwEUSv2EnlJPfsRhslovu74=;
+        b=KtKRseaXgK/zHolKuqzGfgcAopHtUViHIK6kpyCJCEbcaX4pdKMrsusnxUCif2kvnv
+         daDhGebXbev/svyQ1LnSbh9Nk2zT8/dGQ6dx707wXdRw+MhCT5P3cTYkyekEX49/6ofF
+         g9rXs6/0+SSGU5AYrXV8UUkPCcaZErJ9o2GRwcef+0CavDp1LBoydOzYTXQuvN3e3zuS
+         XNU3eaaJq4HRVizi1Ufd/9GhKBDed8i0M35q+2kRGfKyBZ1O76U/QwHq1Phq/fJjpojS
+         KHnPEs5j0ecunxw3L9UguRwm8WSnCgSuT7QtKjbV+hp5guMYkfivM80aefLOollj9B0w
+         6/kg==
+X-Forwarded-Encrypted: i=1; AJvYcCVjdiL5VLm44gLsM0Z8kAfgVT+eR/npzawBE81x6ogO6SoCuIHjiy8L/IAxT7Uld1XS78J7qFisacSw3C2/Fd2HU/x/JGB0D/4G3B0G4FN5a+94KBZFWCwTqgE+g+nZG1BSi/r35jV3s/rdln6WTmDUnDjXxS1X1rK5pOeEGjPv7+xX5MzgLIs0uxRcGOZE0jwSVKfF+Q17MjNoqXuB5VFqIG5G
+X-Gm-Message-State: AOJu0YwJt/QYFfsPp0QuAIwvVx1eJ755MmOZYH0iJzWfJYUPk5qBfdyX
+	Imwoybke7bNrV7hly1qjccjKkCBI3OhiDnklqfa4gB7CXnXwh5/p
+X-Google-Smtp-Source: AGHT+IEQrDRKH+35dgIZBo9SO/pJ8MqThZb69DMu/QCthz0U4Ww5MeKnFffLUMrgfFg6rI1MgU0MVA==
+X-Received: by 2002:a05:6a21:3403:b0:1a0:e19c:9631 with SMTP id yn3-20020a056a21340300b001a0e19c9631mr1437071pzb.59.1708746145125;
+        Fri, 23 Feb 2024 19:42:25 -0800 (PST)
+Received: from dw-tp ([49.205.218.89])
+        by smtp.gmail.com with ESMTPSA id pv6-20020a17090b3c8600b0029732fc0154sm2368207pjb.3.2024.02.23.19.42.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Feb 2024 19:42:24 -0800 (PST)
+Date: Sat, 24 Feb 2024 09:12:11 +0530
+Message-Id: <878r3acyuk.fsf@doe.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Luis Chamberlain <mcgrof@kernel.org>, lsf-pc@lists.linux-foundation.org, John Garry <john.g.garry@oracle.com>, Tso Ted <tytso@mit.edu>, "Martin K. Petersen" <martin.petersen@oracle.com>, Pankaj Raghav <p.raghav@samsung.com>, Daniel Gomez <da.gomez@samsung.com>, Matthew Wilcox <willy@infradead.org>, "kbus >> Keith Busch" <kbusch@kernel.org>, Bart Van Assche <bvanassche@acm.org>, Dave Chinner <david@fromorbit.com>, hch@lst.de, mcgrof@kernel.org
+Cc: djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, chandan.babu@oracle.com, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, jbongio@google.com, ojaswin@linux.ibm.com
+Subject: Re: [LSF/MM/BPF TOPIC] no tears atomics & LBS
+In-Reply-To: <ZdfDxN26VOFaT_Tv@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 07/20] famfs: Add include/linux/famfs_ioctl.h
-Content-Language: en-US
-To: John Groves <John@groves.net>
-Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
- Dan Williams <dan.j.williams@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matthew Wilcox <willy@infradead.org>, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, john@jagalactic.com,
- Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>,
- dave.hansen@linux.intel.com, gregory.price@memverge.com
-References: <cover.1708709155.git.john@groves.net>
- <b40ca30e4bf689249a8c237909d9a7aaca9861e4.1708709155.git.john@groves.net>
- <8f62b688-6c14-4eab-b039-7d9a112893f8@infradead.org>
- <7onhdq4spd7mnkr5c443sbvnr7l4n34amtterg4soiey2qubyl@r2ppa6fsohnk>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <7onhdq4spd7mnkr5c443sbvnr7l4n34amtterg4soiey2qubyl@r2ppa6fsohnk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi John,
+Luis Chamberlain <mcgrof@kernel.org> writes:
 
-On 2/23/24 18:23, John Groves wrote:
->>> +
->>> +#define FAMFSIOC_MAGIC 'u'
->> This 'u' value should be documented in
->> Documentation/userspace-api/ioctl/ioctl-number.rst.
->>
->> and if possible, you might want to use values like 0x5x or 0x8x
->> that don't conflict with the ioctl numbers that are already used
->> in the 'u' space.
-> Will do. I was trying to be too clever there, invoking "mu" for
-> micron. 
+> At last year's LSFMM we learned through Ted Ts'o about the interest by
+> cloud providers in large atomics [0]. It is a good example where cloud
+> providers innovated in an area perhaps before storage vendors were
+> providing hardware support for such features. An example use case was
+> databases. In short, with large atomics databases can disable their own version
+> of journaling so to increase TPS. Large atomics lets you  disabling things like
+> MySQL innodb_doublewrite. The feature to allow you to disable this and use
+> large atomcis is known as torn write prevention [1]. At least for MySQL the
+> default page size for the database (used for columns) is 16k, and so enabling
+> for example a 16k atomic can allow you to take advantage of this. It was also
+> mentioned how PostgreSQL only supports buffered-IO and so it would be desirable
+> for a solution to support buffered-IO with large atomics as well. The way
+> cloud providers enable torn write protection, is by using direct IO.
+>
+> John Garry has been working on adding an API for atomic writes, it would
+> seem some folks refer to this as the no-tears atomic API. It consists of
+> two parts, one for the block layer [2] and another set of changes for
+> XFS [3]. It enables Direct IO support with large atomics.  It includes
+> a userspace API which lets you peg a FS_XFLAG_ATOMICWRITES flag onto a
+> file, and you then create an XFS filesystem using the XFS realtime
+> subvolume with with an extent alignment. The current users of this API
+> seems to be SCSI, but obviously this can grow to support others. A neat
+> feature of this effort is you can have two separate directories with
+> separate aligment requirements. There is no generic filesystem solution
+> yet.
+>
+> Meanwhile we're now at a v2 RFC for LBS support [4]. Although the LBS
+> effort originally was a completely orthogonal effort to large atomics, it
+> would seem there is a direct relationship here now worth discussing.
+> In short LBS enables buffered-IO large atomic support if the hardware
+> support its.
+> We get both alignment constraints gauranteed and now ensure
+> we use contigous memory for the IOs for DMA too it is built on using large
+> folios. We expect NVMe drives which support support large atomics can
+> easily profit from this without any userspace modification other than
+> when you create the filesystem.
+>
+> We reviewed the possible intersection of both efforts at our last LBS cabal
+> with LBS interested folks and Martin Peterson and John Garry. It is somewhat
+> unclear exactly how to follow up on some aspects of the no-tear API [5]
+> but there was agreement about the possible intersection of both efforts,
+> and that we should discuss this at LSFMM. The goal would be to try to reach
+> consensus on how no-tear API and how LBS could help with those
+> interested in leveraging large atomics.
+>
+> Some things to evaluate or for us to discuss:
+>
+>  * no-tear API:
+>    - allows directories to have separate alignment requirements
+>      - this might be useful for folks who want to use large IOs with
+>        large atomics for some workloads but smaller IOs for another
+>        directory on the same drive. It this a viable option to some
+>        users for large atomics with concerns of being forced to use
+>        only large writes with LBS?
+>    - statx is modified so to display new alignment considerations
+>    - atomics are power of 2
+>    - there seems to be some interest in supporting no-hardware-accel atomic
+>      solution, so a software implemented atomic solution, could someone
+>      clarify if that's accurate? How is the double write avoided? What are
+>      the use cases? Do databases use that today?
+>    - How do we generalize a solution per file? Would extending a min
+>      order per file be desirable? Is that even tenable?
 
-I might have been unclear about this one.
-It's OK to use 'u' but the values 1-4 below conflict in the 'u' space:
+I would also be interested in this discussion. For e.g. let's also try
+and bring below points in the agenda -
 
-'u'   00-1F  linux/smb_fs.h                                          gone
-'u'   20-3F  linux/uvcvideo.h                                        USB video class host driver
-'u'   40-4f  linux/udmabuf.h
+1. Like LBS, for systems with large page size 64k (PowerPC and ARM), we should
+already be able to utilize the untorn/atomic writes if they format the
+filesystem with a given blocksize (for DIO atleast).
+I think we need not even use bigalloc in such case for ext4.
+So what does it takes from Linux Filesystems to expose an interface
+to user such that they can start utilizing it?
+(Now this has a catch that the FS still needs to be formatted with a
+given blocksize to utilize untorn writes.)
 
-so if you could use
-'u'   50-5f
-or
-'u'   80-8f
+2. What others think on adding O_ATOMIC interface similar to O_DIRECT
+such that applications don't need much changes? We should still have
+RWF_ATOMIC for pwrites, but for open/read/write calls an O_ATOMIC will
+be useful too.
 
-then those conflicts wouldn't be there.
-HTH.
+3. Buffered-io is important for Postgres and I have been looking into it
+from the perspective of supporting untorn writes for buffered-io as
+well. It will be again easier maybe to start off with 64k pagesize
+systems or by utilizing large folio support. This way we have less work
+in managing multiple pages which needs to be written atomically.
 
->>> +
->>> +/* famfs file ioctl opcodes */
->>> +#define FAMFSIOC_MAP_CREATE    _IOW(FAMFSIOC_MAGIC, 1, struct famfs_ioc_map)
->>> +#define FAMFSIOC_MAP_GET       _IOR(FAMFSIOC_MAGIC, 2, struct famfs_ioc_map)
->>> +#define FAMFSIOC_MAP_GETEXT    _IOR(FAMFSIOC_MAGIC, 3, struct famfs_extent)
->>> +#define FAMFSIOC_NOP           _IO(FAMFSIOC_MAGIC,  4)
+4. We already have RFC for ext4 multiblock code to support aligned
+allocations which can be used to plug in untorn Direct-io write support
+to ext4 [1]
 
--- 
-#Randy
+[1]: https://lore.kernel.org/linux-ext4/cover.1701339358.git.ojaswin@linux.ibm.com/
+
+
+>
+>   * LBS:
+>     - stat will return the block size set, so userspace applications
+>       using stat / statx will use the larger block size to ensure
+>       alignment
+>     - a drive with support for a large atomic but supporting smaller
+>       logical block sizes will still allow writes to the logical block
+>       size. If a block driver has a "preference" (in NVMe this would
+>       be the NPWG for the IU) to write above the logical block size,
+>       do we want the option to lift the logical block size? In
+>       retrospect I don't think this is needed given Jan Kara's patches
+>       to prevent allowing writes to to mounted devices [4], that should
+>       ensure that if a filesystem takes advantage of a larger physical
+>       block size and creates a filesystem with it as the sector size,
+>       userspace won't be mucking around with lower IOs to the drive
+>       while it is mounted. But, are there any applications which would
+>       get the block device logical block size instead for DIO?
+>     - LBS is transparent to to userspace applications
+>     - We've verified *most* IOs are aligned if you use a 16k block size
+>       but a smaller sector size, the lower IOs were verified to come
+>       from the XFS buffer cache. If your drive supports a large atomic
+>       you can avoid these as you can lift the sector size set as the
+>       physical block size will be larger than the logical block size.
+>       For NVMe today this is possible for drives with a large
+>       NPWG (the IU) and NAWUFP (the large atomic), for example.
+>
+> Tooling:
+>
+>   - Both efforts stand to gain from a shared verification set of tools
+>     for alignment and atomic use
+>   - We have a block layer eBPF alignent tool written by Daniel Gomez [6]
+>     however there is lack of interested parties to help review a simpler
+>     version of this tool this tool so we merge it [7], we can benefit from more
+>     eyeablls from experienced eBPF / block layer folks.
+>   - More advanced tools are typically not encouraged, and this leaves us
+>     wondering what a better home would be other than side forks
+>   - Other than preventing torn writes, do users of the no-tear API care
+>     about WAF? While we have one for NVMe for WAF [8] would
+>     collaborating on a generic tool be of interest ?
+>
+> Any other things folks want to get out of this as a session, provided
+> there is interest?
+>
+> [0] https://lwn.net/Articles/932900/
+> [1] https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/storage-twp.html
+> [2] https://lore.kernel.org/linux-nvme/20240124113841.31824-1-john.g.garry@oracle.com/T/#m4ad28b480a8e12eb51467e17208d98ca50041ff2
+> [3] https://lore.kernel.org/all/20240124142645.9334-1-john.g.garry@oracle.com/
+> [4] https://lore.kernel.org/all/20240213093713.1753368-1-kernel@pankajraghav.com/T/#u
+> [5] https://lkml.kernel.org/r/20231101173542.23597-1-jack@suse.cz
+> [6] https://github.com/dagmcr/bcc/tree/blkalgn-dump
+> [7] https://github.com/iovisor/bcc/pull/4813
+> [8] https://github.com/dagmcr/bcc/tree/nvmeiuwaf
+>
+>   Luis
 
