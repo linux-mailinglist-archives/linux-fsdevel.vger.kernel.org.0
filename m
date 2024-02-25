@@ -1,126 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-12723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB538862BAE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 17:23:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E178C862BB6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 17:27:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17A4BB20EBC
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 16:23:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0FF01F2163E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 16:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D62517BBD;
-	Sun, 25 Feb 2024 16:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32271179A7;
+	Sun, 25 Feb 2024 16:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K5A6bt1y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iogBR9kG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5213717BA3
-	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 16:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B1E12B71;
+	Sun, 25 Feb 2024 16:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708878220; cv=none; b=nxYZtFXbQ00W96m5caoZSTlrTeW6HXk94bNvXqs4yhzsOrzXp+tu7kbdx5vBTYcT6cJpfyHcmWL6swW1NQtsXkCLpHCoNgkYl0ZG7lxldy+WTEmG9ly1gR/7DFZEM543n9KzAFPzTLDc9X3iAsFo7l9TR20GaL1BY6pro73WguM=
+	t=1708878461; cv=none; b=d7RzV6hkweEPkup3xup5o+wLIWmD0AGzAvO96gnxFDtpPssP4ph4oqNsBaJarxay2zPKsW90TSX6gGMhbhfrUV4X6jp3eGfvjiKAW3LGkMtUgxISavYmPJYGv+GCg5G6gY34vBUpsr7nXn+CM2b2RXQRfvtyp1gWLXYE3gvqRbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708878220; c=relaxed/simple;
-	bh=LaigAbcADJ+dK0KzyX1kDd8eEpJpqVoPfgc/erPe1mM=;
+	s=arc-20240116; t=1708878461; c=relaxed/simple;
+	bh=gb5bJtceNND73BjHmlyG5x/sd65hla0KFc09jMWSpVA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ncnLr3UTB++hmjZ1aQqqgWwDrE+cW46SCKctF0L6ucKJfPhvfnTh1Hiw2AkdxgvHIBnpIk+y3dwTHving47ZtFh8vVVlNMbW2gsbTi3g+Da672+a/8BFQVufOIqUUVLenqddUyfMx7mi2k9McurgMETt5+33Ip3W6sAVvnLnX98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K5A6bt1y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1708878217;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=gEvjBAUJeAAT4LjTg60EE6mIK+bI32dp7aAGjL49dA4=;
-	b=K5A6bt1yCs17MgxHXXR8ClkIgRcfJ6S10KqVUpdAAoroMzMaAfyU9sIiuO+99d3t0XQtNq
-	fl2l4wtSkGMYrW+FU5hxX+bP75QdgJIZ0hqZ1sIsS4HQ77cLwGqrc48g20e4Bgh38TnDYa
-	GFneuyYOJTXS8Po80vJXRtxOPzuZgA4=
-Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com
- [209.85.161.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-ufnfEl6wNHea8awXFN8MGg-1; Sun, 25 Feb 2024 11:23:35 -0500
-X-MC-Unique: ufnfEl6wNHea8awXFN8MGg-1
-Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5a037bd2346so2535896eaf.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 08:23:35 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TL0q8gUvnFuC8EcLD5+V5MhITpsJ6qvr2d2yVHQw4A9yFSN7hd7u3J+JoRMWkMmXgOsHHrgbqoTKtxdfEARCerUFEi3i/QUL9WnKuOTyyofTPmC/bAXY8NZ4OyItSs6/Ppyuk5Z6FlEne8902ejm+O60AbFXI8SyS8YXCWs2xeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iogBR9kG; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a3ed9cae56fso352034166b.1;
+        Sun, 25 Feb 2024 08:27:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708878458; x=1709483258; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ghE9UsVsRsht5B+PMQ24QOGWHn/KsoHJpuMVm6m8Dp4=;
+        b=iogBR9kGlhcx1/ZaEBqSgdrb+xoCbfeQbr5zMrpVOK70yoZx0h5/h0jmpVZSziDpBe
+         VrEkDzP5esCrs9xtRwOH+nNPGuXvcYK4Gtt69e3rZAWMQbR6Mn4H5McQLuvn50jPqNlC
+         iX/RMivTM+l3R9JR+JBjnXsHLNr5z3g+OcYcI4O9/bDpLm6Jl4djbO/R1U4g6YVl6MCt
+         dBw1HVO6KYPEUTdXhACnF+SZmO2Z8Dn8BS6nGaP9yVehNDZ4DAvySQQNY4zXnAdYKlIY
+         NhRfdVVBcrJ4M9r7RtRTBDxC+2VycpDMM9V8PAaUdB87Pd0z8nGKKQVzDG4V9Cb2MPrk
+         JiRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708878214; x=1709483014;
+        d=1e100.net; s=20230601; t=1708878458; x=1709483258;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gEvjBAUJeAAT4LjTg60EE6mIK+bI32dp7aAGjL49dA4=;
-        b=PJ0wKpOzPH3yxA0krhE1KQZeItKTM0KET46h7sXr0xUubHp/xWTX8UgtntqgeyXgs5
-         SHHIDQcoo6xOEzskZuvjIJ9ek8qJEBZvZP9vh/HARUp18PjE59hEDC9KNGyYxURJGRog
-         y0UyqGKo+DNoA1y4XjKiv6boHfy/IoRRyFxAsJLdX5dvi/sH+f2Uo3i4JoX4i8Ndq62Q
-         9w04u1ammg3C+0NIepH75+7SU5pnbLdmPWYNyHNc3jJmts043de+vCZtwXKBfjL4md98
-         MdyzZ+WQRCevnwxpL6s9rVgR4Ywt90eTOwwDuOpTRf/39pVN8o1W+iWizaGBlOB3nubh
-         hfgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlg78eHQI210CT85QE3juoNMHlwXxd52sblIn90xyOfpb5B+v7KcBq+0U0J9B8hWUO0fnllnPbP2didrqeFqLdQ3YajX5sNQOnAMiyQw==
-X-Gm-Message-State: AOJu0Yxh4LW0a0XfS76c8UQpOIOCcd1K3ACUUXFjDJWLnEe5AkB41yqA
-	JM99lUvm+KzCIJYtcbxxwSNXaD0tA9M4dpn93tolZ6zxZpRJmexwn5nNfXkD1MO7A0H21+adwJ9
-	u1xgsBTN9vFz2QaohSN5NgauFRPI9+XwoU7iXiebpfayOyVN5f1VAMmG1QJovbLc=
-X-Received: by 2002:a05:6358:89f:b0:17b:6171:adab with SMTP id m31-20020a056358089f00b0017b6171adabmr6105380rwj.1.1708878214729;
-        Sun, 25 Feb 2024 08:23:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFLWqbRFV/lo5uRx+niwsDYaf3gj/dBLpYEFSQ6YUzFAmNj+KTGCNSHzPLbH22v7CIDVz38gA==
-X-Received: by 2002:a05:6358:89f:b0:17b:6171:adab with SMTP id m31-20020a056358089f00b0017b6171adabmr6105363rwj.1.1708878214412;
-        Sun, 25 Feb 2024 08:23:34 -0800 (PST)
-Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9-20020a631d09000000b005df58c83e89sm2523823pgd.84.2024.02.25.08.23.31
+        bh=ghE9UsVsRsht5B+PMQ24QOGWHn/KsoHJpuMVm6m8Dp4=;
+        b=tS88AZZvxoS0LWXog9VGceCF1HXLkoCh0PCLpSoSc+OTmtgIDAnhnSqonoqBMwX7Hg
+         WF8K5DwaxKl8Fst1G6Fnl8P2AyF8KP8s/Qqk8m9dPxkkhhOsX3URB30YITg2jPNq0XYG
+         rL9AJY/IppvL5KH9q3Vy+c2RPt66VxzwEi4/nesQUxIE2ecPhXRL7pxxm3xCrh+9MdW5
+         eWQs4n3eo16Fcbjt7yruddC1qAIRZCJAabfYVS4D7wkEPrPKdaaezV6QLWj+jPMB81kU
+         mJ2B9YS1bsi83qzweQOodqUZLzPWkCoTC80BfS+hrGm3sXgv4olPcw+c56qtB9SQOKZI
+         dVxA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4+CEvemtedzyp4quQh7tSHhI+0njEG3N5CwyBtPsBd6/rGV9FZa6G0MwN7ppMX1ZbB4P4ABG9rllVrhHqEkvwGWFZs+pVdOY113sYVF4VwjScPpW5J+4pr/p+rO3Zd3b//zmbIEo4tf5rnBvPE6Du2PLOOKjHLC13FUIUFiGdfwo8NBIBYjM=
+X-Gm-Message-State: AOJu0YxfEXkBZYYtB3emM9ohxno8AfQXTbDOBhaFdgIoH7TjJIeChQtN
+	hRZOB2II0Lzt4Z3BSpTnmM0GTVYJRWj2RBE+E58OGWbEnvncAhs=
+X-Google-Smtp-Source: AGHT+IF6qtjt1TQl8ufgEE/ZnsMaI0DH+4cDDo62prPueo40PGvMvPsZECLMJg21tbqPccNwbPbY0A==
+X-Received: by 2002:a17:907:20b4:b0:a3e:599:ae86 with SMTP id pw20-20020a17090720b400b00a3e0599ae86mr4230693ejb.9.1708878458166;
+        Sun, 25 Feb 2024 08:27:38 -0800 (PST)
+Received: from p183 ([46.53.252.131])
+        by smtp.gmail.com with ESMTPSA id un6-20020a170907cb8600b00a433f470cf1sm376549ejc.138.2024.02.25.08.27.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Feb 2024 08:23:34 -0800 (PST)
-Date: Mon, 26 Feb 2024 00:23:29 +0800
-From: Zorro Lang <zlang@redhat.com>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: David Disseldorp <ddiss@suse.de>, Zorro Lang <zlang@kernel.org>,
-	fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH fstests] common/config: fix CANON_DEVS=yes when file does
- not exist
-Message-ID: <20240225162329.ax3zvbs3c3fgrqcg@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-References: <20240214174209.3284958-1-mcgrof@kernel.org>
- <20240215145422.2e12bb9b@echidna>
- <Zc5O07ug7e4HVmKD@bombadil.infradead.org>
+        Sun, 25 Feb 2024 08:27:37 -0800 (PST)
+Date: Sun, 25 Feb 2024 19:27:35 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Linux Kernel <linux-kernel@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: WARNING: fs/proc/generic.c:173 __xlate_proc_name
+Message-ID: <fe33dcf1-79c0-4f56-8848-474caa014c10@p183>
+References: <CACVxJT8T8u+XK7GnyCus19KDVqfquGbAM-0x8bSFgKTeqhD2Ug@mail.gmail.com>
+ <c51a282a-bdbf-4ced-9fcf-e38a33152761@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zc5O07ug7e4HVmKD@bombadil.infradead.org>
+In-Reply-To: <c51a282a-bdbf-4ced-9fcf-e38a33152761@gmx.net>
 
-On Thu, Feb 15, 2024 at 09:50:11AM -0800, Luis Chamberlain wrote:
-> On Thu, Feb 15, 2024 at 02:54:22PM +1100, David Disseldorp wrote:
-> > On Wed, 14 Feb 2024 09:42:08 -0800, Luis Chamberlain wrote:
+On Sun, Feb 25, 2024 at 11:47:30AM +0100, Stefan Wahren wrote:
+> Hi Alexey,
+> 
+> Am 25.02.24 um 11:37 schrieb Alexey Dobriyan:
+> > > WARNING: CPU: 0 PID: 429 at fs/proc/generic.c:173
+> > > __xlate_proc_name+0x78/0x98 name 'R1/S1'
+> > proc_mkdir() didn't find 'R1' directory.
 > > 
-> > > CANON_DEVS=yes allows you to use symlinks for devices, so fstests
-> > > resolves them back to the real backind device. The iteration for
-> > > resolving the backind device works obviously if you have the file
-> > 
-> > s/backind/backing
-> 
-> Zorro, can you do the minor edit?
+> > In other words, you can't have slashes in irq names.
+> we already came to the point in the discussion before (link in my last
+> mail). The problem is no libgpiod user (userspace) is aware of this.
 
-Sure, will do that.
+Changing '/' to '-' or '.' should be OK. Whatever you do, don't change
+to '!' because it will make these paths annoying to use in bash.
 
-> 
-> > > present, but if one was not present there is a parsing error. Fix
-> > > this parsing error introduced by a0c36009103b8 ("fstests: add helper
-> > > to canonicalize devices used to enable persistent disks").
-> > > 
-> > > Fixes: a0c36009103b8 ("fstests: add helper to canonicalize devices used to enable persistent disks"
-> > > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > 
-> > Reviewed-by: David Disseldorp <ddiss@suse.de>
-> 
-> Thanks!
-> 
->   Luis
-> 
+> So the next question is where it should be fixed?
 
+libgpiod silently weren't getting directory inside /proc/irq/${irq}
+and nobody noticed until now.
+
+I think returning error may be too harsh but replacing characters is not.
+
+> Sorry, i took my original message because posting the last message to
+> linux-fsdevel without context would be pointless.
 
