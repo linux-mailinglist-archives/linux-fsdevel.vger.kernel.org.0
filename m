@@ -1,60 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-12704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99D1F86293F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 07:04:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF7F862946
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 07:14:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43CC1C20A19
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 06:04:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB7C1C20BE3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 06:14:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7461F9460;
-	Sun, 25 Feb 2024 06:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F3CD271;
+	Sun, 25 Feb 2024 06:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V43mQgOl"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="WQf5+p03"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1249944C
-	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 06:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13ED49454
+	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 06:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708841065; cv=none; b=PvZ8LdBEWMis6oHdYKgAGZywjMSbQf/YbaKzM8oFrL2NmsXZeSjdTEv1eoC5cLmx8Vek4DHe1xKwXpr357ryRRHzM6qqHE0lyKcwZhqiIhfnyGajhvCBNZOPPrdOujQIUvA3KlS4Cn7JJpJOW7u3c+lKbgX3mrXu6panqDIsyOg=
+	t=1708841685; cv=none; b=altwyl0fJSN03HCMVOg+QJhRK0HY2q+U1j7AMQR9CHxyXIp2p0q7+Ba+C5kM/v5K0uov3895ChTZ7wSUIbSm0EQ5siFwN02fA7eHHsCmILeCLn4u+ihG77AxHQ6QCflHtaVoYSE6yz3KsLQu9KUoUxCwtWS+SnhsycYhkqMTkzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708841065; c=relaxed/simple;
-	bh=JJvyQZjrGpov012p9DTG2WtVXwJguDkoEQmwGFHIs3U=;
+	s=arc-20240116; t=1708841685; c=relaxed/simple;
+	bh=Thhad8bOoqBfWRyLRqhOVbSKV7YzETTjZwmrfCBuc+w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LPW47Ib4K5/NjDpELTkmiahLL10T7MftKIbv4XnZ7SjQ0ukeoI4mCl30dsfUOfSY/C+ffdBtG5CJMm9S8RcbtDYrOcagGZZIEwLuyKPZHVBDp4/3zh04F9g1SoLuL/SE+pZnod58lVQM+SDGkmU7ulY4GTCxnrAUNjzz4YMNrk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V43mQgOl; arc=none smtp.client-ip=91.218.175.180
+	 Content-Type:Content-Disposition:In-Reply-To; b=JgbwImpTJABef3V1B+f1+bxyWFXpNACiMCHKgehWpoUAZh5+GUG45A1NsRofTpjfJBGy/6+2ctjsTj5Va46GymO0wPWYWpumpGctULAwqLgvaVf33lckfN+zDmZrcTwhP0o+5GAS32U2+Nhqt2d4px/HQhWLKH5tMBAVMLeTbHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=WQf5+p03; arc=none smtp.client-ip=91.218.175.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 25 Feb 2024 01:04:16 -0500
+Date: Sun, 25 Feb 2024 01:14:39 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1708841061;
+	t=1708841682;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=EU36V1tQnx8vg/C/vT87h1j5srV/PUH7jtLIv7q7Y8c=;
-	b=V43mQgOl/1kcRNScKdPzTjfI1RWxuVr3a/tvexOgqRTZWPAIhGs+V4YBcFfKrCeYf8CgWI
-	bChE1KDA27Xd0vTX6/2sgk9hGj9PaSYpXAULgD4vCdEZXQop5IsyRk3ugszrPTRjb0b0On
-	xDfFwzScN9ipv/ibN0O1Oq5HGGX/eEo=
+	bh=fUUif9KcYlLFn7lITsjP4DXv1Tc/bfc10B0pakN5FX0=;
+	b=WQf5+p03sTi/0WL/y9jKjAJvaQTUQiPIImuFYpcY5QqD/vQIjhCnXfZfAdTODQ4DnIxPz0
+	0IejpthyZSx3chxfUEWymAtMRGpn0FI6lWZnp29OGxEODUkmWyNYK0hvBRvlvBs7ragNM6
+	9kyb9LoPtTgc/zu4+l5LOHw78ysYvO4=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Herbert Xu <herbert@gondor.apana.org.au>
 Cc: Matthew Wilcox <willy@infradead.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>, 
-	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, 
-	Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <vtbdx77a7kzibpi543abxmu3jjhpztuhna6epzleu4e5wmkrrf@roejpebs23cm>
-References: <Zdkxfspq3urnrM6I@bombadil.infradead.org>
- <Zdlsr88A6AAlJpcc@casper.infradead.org>
- <CAHk-=wjUkYLv23KtF=EyCrQcmf9NGwE8Yo1cuxdaLF8gqx5zWw@mail.gmail.com>
- <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb>
+	David Laight <David.Laight@aculab.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	Thomas Graf <tgraf@suug.ch>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>, "rcu@vger.kernel.org" <rcu@vger.kernel.org>
+Subject: Re: [PATCH 0/1] Rosebush, a new hash table
+Message-ID: <awtiorxst6k5skhzzvrrt5kfhz67cqza2x5acuc7xiejo4sasw@vd6ohpsx76fd>
+References: <20240222203726.1101861-1-willy@infradead.org>
+ <Zdk2YgIoAGOEvcJi@gondor.apana.org.au>
+ <4a1416fcb3c547eb9612ce07da6a77ed@AcuMS.aculab.com>
+ <2s73sed5n6kxg42xqceenjtcwxys4j2r5dc5x4fdtwkmhkw3go@7viy7qli43wd>
+ <ZdrJn0lkFeYGuYIC@casper.infradead.org>
+ <5p5sypt3y643rr7kp66lhmgksgtuvdgijrryh53mqiiqkrgyty@d4zcnya22owg>
+ <ZdrV3+kNz/ez4iai@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,56 +66,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb>
+In-Reply-To: <ZdrV3+kNz/ez4iai@gondor.apana.org.au>
 X-Migadu-Flow: FLOW_OUT
 
-On Sun, Feb 25, 2024 at 12:18:23AM -0500, Kent Overstreet wrote:
-> On Sat, Feb 24, 2024 at 09:31:44AM -0800, Linus Torvalds wrote:
-> Before large folios, we had people very much bottlenecked by 4k page
-> overhead on sequential IO; my customer/sponsor was one of them.
+On Sun, Feb 25, 2024 at 01:53:35PM +0800, Herbert Xu wrote:
+> On Sun, Feb 25, 2024 at 12:51:06AM -0500, Kent Overstreet wrote:
+> >
+> > but your distribution actually is accurate in general, golden ratio hash
+> > is relly nice for sequential integers. the actual problem with your test
+> > is that you're testing 100% occupancy - no one does that.
+> > 
+> > 75% occupancy, siphash:
+> > 0: 933
+> > 1: 60
+> > 2: 6
+> > 3: 1
+> > 4: 0
+> > 
+> > that looks about right to me.
 > 
-> Factor of 2 or 3, IIRC; it was _bad_. And when you looked at the
-> profiles and looked at the filemap.c code it wasn't hard to see why;
-> we'd walk a radix tree, do an atomic op (get the page), then do a 4k
-> usercopy... hence the work I did to break up
-> generic_file_buffered_read() and vectorize it, which was a huge
-> improvement.
-> 
-> It's definitely less of a factor when post large folios and when we're
-> talking about workloads that don't fit in cache, but I always wanted to
-> do a generic version of the vectorized write path that brfs and bcachefs
-> have.
+> The point is that the worst-case length grows with the size of
+> the table so it won't always be 3.  You need to take into account
+> the largest table size that you will support.
 
-to expound further, our buffered io performance really is crap vs.
-direct in lots of real world scenarios, and what was going on in
-generic_file_buffered_read() was just one instance of a larger theme -
-walking data structures, taking locks/atomics/barriers, then doing work
-on the page/folio with cacheline bounces, in a loop - lots of places
-where batching/vectorizing would help a lot but it tends to be
-insufficient.
+ok, but - one million entries, siphash, 75% fill factor
 
-i had patches that went further than the generic_file_buffered_read()
-rework to vectorize add_to_page_cache_lru(), and that was another
-significant improvement.
+0: 472053
+1: 354786
+2: 132663
+3: 33267
+4: 6218
+5: 884
+6: 110
+7: 17
+8: 2
+9: 0
 
-the pagecache lru operations were another hot spot... willy and I at one
-point were spitballing getting rid of the linked list for a dequeue,
-more for getting rid of the list_head in struct page/folio and replacing
-it with a single size_t index, but it'd open up more vectorizing
-possibilities
+100 million:
 
-i give willy crap about the .readahead interface... the way we make the
-filesystem code walk the xarray to get the folios instead of just
-passing it a vector is stupid
+0: 51342703
+1: 34224025
+2: 11413241
+3: 2534946
+4: 421816
+5: 56271
+6: 6346
+7: 593
+8: 56
+9: 3
+10: 0
 
-folio_batch is stupid, it shouldn't be fixed size. there's no reason for
-that to be a small fixed size array on the stack, the slub fastpath has
-no atomic ops and doesn't disable preemption or interrupts - it's
-_fast_. just use a darray and vectorize the whole operation
-
-but that wouldn't be the big gains, bigger would be hunting down all the
-places that aren't vectorized and should be.
-
-i haven't reviewed the recent .writepages work christoph et all are
-doing, if that's properly vectorized now that'll help
+it's a log curve - chain length of 16 means you picked a bad hash
+function.
 
