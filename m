@@ -1,116 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-12724-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12725-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E178C862BB6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 17:27:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4566862C31
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 18:04:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0FF01F2163E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 16:27:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37C2B28197C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 17:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32271179A7;
-	Sun, 25 Feb 2024 16:27:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00A3917C7F;
+	Sun, 25 Feb 2024 17:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iogBR9kG"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AdALb5Kd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10B1E12B71;
-	Sun, 25 Feb 2024 16:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0833C16415
+	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 17:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708878461; cv=none; b=d7RzV6hkweEPkup3xup5o+wLIWmD0AGzAvO96gnxFDtpPssP4ph4oqNsBaJarxay2zPKsW90TSX6gGMhbhfrUV4X6jp3eGfvjiKAW3LGkMtUgxISavYmPJYGv+GCg5G6gY34vBUpsr7nXn+CM2b2RXQRfvtyp1gWLXYE3gvqRbo=
+	t=1708880635; cv=none; b=PRNtDFGl9HICKNLmsQnjvh2J7NPnxB+58xgHQa/xSnnW3bTDQ/SuUvDRRONBIYp8aQ+tB9iIIG4uBiARp9yIfWa1g/OAaaIbbuRJWqCHd90T0NO4yhPl2GM6tNdS2fTDVmWmNXI0IOOZ0cqIA37so2T9twyXZrVzkH67N1bCFKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708878461; c=relaxed/simple;
-	bh=gb5bJtceNND73BjHmlyG5x/sd65hla0KFc09jMWSpVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TL0q8gUvnFuC8EcLD5+V5MhITpsJ6qvr2d2yVHQw4A9yFSN7hd7u3J+JoRMWkMmXgOsHHrgbqoTKtxdfEARCerUFEi3i/QUL9WnKuOTyyofTPmC/bAXY8NZ4OyItSs6/Ppyuk5Z6FlEne8902ejm+O60AbFXI8SyS8YXCWs2xeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iogBR9kG; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a3ed9cae56fso352034166b.1;
-        Sun, 25 Feb 2024 08:27:39 -0800 (PST)
+	s=arc-20240116; t=1708880635; c=relaxed/simple;
+	bh=hC1suwtfs13TGM2QRbOP89aHwLY8sDHmvzVfueFvIV0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fcfVLgnJvTfLsgUF4PgoWHakUk1AHRTHj1DwFbe9bbXh7RPBgFZPbMvUPYrcoHIbKjsznmdruwwhAfoVpAj4D+QBxBDSFpjQaBLSOb+T1p+0kIhh1gUcexTHluCXg6iAr/m3zDveUOMQvgeHwKLyittnCFPscq3l7GsxD+bXNWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AdALb5Kd; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2d2305589a2so34257931fa.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 09:03:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708878458; x=1709483258; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ghE9UsVsRsht5B+PMQ24QOGWHn/KsoHJpuMVm6m8Dp4=;
-        b=iogBR9kGlhcx1/ZaEBqSgdrb+xoCbfeQbr5zMrpVOK70yoZx0h5/h0jmpVZSziDpBe
-         VrEkDzP5esCrs9xtRwOH+nNPGuXvcYK4Gtt69e3rZAWMQbR6Mn4H5McQLuvn50jPqNlC
-         iX/RMivTM+l3R9JR+JBjnXsHLNr5z3g+OcYcI4O9/bDpLm6Jl4djbO/R1U4g6YVl6MCt
-         dBw1HVO6KYPEUTdXhACnF+SZmO2Z8Dn8BS6nGaP9yVehNDZ4DAvySQQNY4zXnAdYKlIY
-         NhRfdVVBcrJ4M9r7RtRTBDxC+2VycpDMM9V8PAaUdB87Pd0z8nGKKQVzDG4V9Cb2MPrk
-         JiRA==
+        d=linux-foundation.org; s=google; t=1708880631; x=1709485431; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SYy3wOmbUatqMC0tUK+yhnIuh+GGp0MIfopsKx9GQbw=;
+        b=AdALb5KdOWvo4Zc2eBo04YlawwXiut64JgpGud16MLdPJ8zIdEiun+m9hb0c2x2QvT
+         Wvcu/b/R4OW8l4Bnp0Y+sPct3zvI+bqjTNEuJ22Ux/H3vfdD3gQAlG/SB/C8jYdarqlj
+         NCc3yt+Yd4uV/9FDCDYk7vdPzLzIuZu9y33YY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708878458; x=1709483258;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ghE9UsVsRsht5B+PMQ24QOGWHn/KsoHJpuMVm6m8Dp4=;
-        b=tS88AZZvxoS0LWXog9VGceCF1HXLkoCh0PCLpSoSc+OTmtgIDAnhnSqonoqBMwX7Hg
-         WF8K5DwaxKl8Fst1G6Fnl8P2AyF8KP8s/Qqk8m9dPxkkhhOsX3URB30YITg2jPNq0XYG
-         rL9AJY/IppvL5KH9q3Vy+c2RPt66VxzwEi4/nesQUxIE2ecPhXRL7pxxm3xCrh+9MdW5
-         eWQs4n3eo16Fcbjt7yruddC1qAIRZCJAabfYVS4D7wkEPrPKdaaezV6QLWj+jPMB81kU
-         mJ2B9YS1bsi83qzweQOodqUZLzPWkCoTC80BfS+hrGm3sXgv4olPcw+c56qtB9SQOKZI
-         dVxA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4+CEvemtedzyp4quQh7tSHhI+0njEG3N5CwyBtPsBd6/rGV9FZa6G0MwN7ppMX1ZbB4P4ABG9rllVrhHqEkvwGWFZs+pVdOY113sYVF4VwjScPpW5J+4pr/p+rO3Zd3b//zmbIEo4tf5rnBvPE6Du2PLOOKjHLC13FUIUFiGdfwo8NBIBYjM=
-X-Gm-Message-State: AOJu0YxfEXkBZYYtB3emM9ohxno8AfQXTbDOBhaFdgIoH7TjJIeChQtN
-	hRZOB2II0Lzt4Z3BSpTnmM0GTVYJRWj2RBE+E58OGWbEnvncAhs=
-X-Google-Smtp-Source: AGHT+IF6qtjt1TQl8ufgEE/ZnsMaI0DH+4cDDo62prPueo40PGvMvPsZECLMJg21tbqPccNwbPbY0A==
-X-Received: by 2002:a17:907:20b4:b0:a3e:599:ae86 with SMTP id pw20-20020a17090720b400b00a3e0599ae86mr4230693ejb.9.1708878458166;
-        Sun, 25 Feb 2024 08:27:38 -0800 (PST)
-Received: from p183 ([46.53.252.131])
-        by smtp.gmail.com with ESMTPSA id un6-20020a170907cb8600b00a433f470cf1sm376549ejc.138.2024.02.25.08.27.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Feb 2024 08:27:37 -0800 (PST)
-Date: Sun, 25 Feb 2024 19:27:35 +0300
-From: Alexey Dobriyan <adobriyan@gmail.com>
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Linux Kernel <linux-kernel@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: WARNING: fs/proc/generic.c:173 __xlate_proc_name
-Message-ID: <fe33dcf1-79c0-4f56-8848-474caa014c10@p183>
-References: <CACVxJT8T8u+XK7GnyCus19KDVqfquGbAM-0x8bSFgKTeqhD2Ug@mail.gmail.com>
- <c51a282a-bdbf-4ced-9fcf-e38a33152761@gmx.net>
+        d=1e100.net; s=20230601; t=1708880631; x=1709485431;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SYy3wOmbUatqMC0tUK+yhnIuh+GGp0MIfopsKx9GQbw=;
+        b=l3HqJMRAvZys5+0Gmu/xrsma8ZN4rDOTEjXRAyvhteNdcPRYGHfv1NhFLUj1jnXGwz
+         tGKMGJUYIE9BEOTG4Z11+4DPgGPSy3h0lcFiFcdrXUf96gl0QRIjjz3mNDwaHB5lPt/9
+         1o28JFlfFxiDJz4oJmW5mrf/MNshXT4FoRl+XlO/O/ryQVmEEgqs8q0nxo958qODFseZ
+         P5sT0PmybVoqTfpnuufjO+BLYnVShhnk71R0QGZtpsg/99luAPN6jR0uDFLow+uNozFc
+         ENJiexF7j+Zq8AIylx9g6PgdxORI8xyd6lqlNcWp2huoMeuKenN+FZ8dnHpxmyHO0WnI
+         CKtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWivQQk30JZzuCigqMX2wBeO9RNwf7dM64sqHA3nZl3wFA3ywFh2epnPR5HOLqgjxyGO+9sgrjnh3HID6pYJRjolnqKG6j0sAZ8VrAI/Q==
+X-Gm-Message-State: AOJu0Yy4hvTJeeqF1N/j1Rxd972R6Nqx3X7876dsQ/le8GP6Js86w9/C
+	ci/o62vvY2FhukPwqCNnovcohZdfW3m+KeS5Zj5KUCTaVxIWePX7/g5PyC+acLVyP0Mk+Vpgl2t
+	NqO4=
+X-Google-Smtp-Source: AGHT+IGmMonEdQFP+7TRWcf6niFaTiNpbZ8TKLvfAiRU+Bvm1x767wr/+3jp4lSo2bqmoTFslmiRtQ==
+X-Received: by 2002:a2e:6a0f:0:b0:2d2:7bda:ce29 with SMTP id f15-20020a2e6a0f000000b002d27bdace29mr2567925ljc.19.1708880631046;
+        Sun, 25 Feb 2024 09:03:51 -0800 (PST)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id l16-20020a2e99d0000000b002d0c8fa072asm599089ljj.20.2024.02.25.09.03.49
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Feb 2024 09:03:49 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-512fd840142so259872e87.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 09:03:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVB9gMAQgV2YGlFPSEGpLuBOsK96cGDk/V6FaGl+0id31r82utbHYPlYIYLxRPagpBDOb2jW9oXkl/heUeQ+2Zs+dS4TkPIknIOAjV4nA==
+X-Received: by 2002:a19:7419:0:b0:512:b344:774e with SMTP id
+ v25-20020a197419000000b00512b344774emr2771001lfe.22.1708880629372; Sun, 25
+ Feb 2024 09:03:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c51a282a-bdbf-4ced-9fcf-e38a33152761@gmx.net>
+References: <Zdkxfspq3urnrM6I@bombadil.infradead.org> <Zdlsr88A6AAlJpcc@casper.infradead.org>
+ <CAHk-=wjUkYLv23KtF=EyCrQcmf9NGwE8Yo1cuxdaLF8gqx5zWw@mail.gmail.com>
+ <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb> <Zds8T9O4AYAmdS9d@casper.infradead.org>
+In-Reply-To: <Zds8T9O4AYAmdS9d@casper.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 25 Feb 2024 09:03:32 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgVPHPPjZPoV8E_q59L7i8zFjHo_5hHo_+qECYuy7FF6g@mail.gmail.com>
+Message-ID: <CAHk-=wgVPHPPjZPoV8E_q59L7i8zFjHo_5hHo_+qECYuy7FF6g@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, Luis Chamberlain <mcgrof@kernel.org>, 
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>, 
+	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>, 
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Feb 25, 2024 at 11:47:30AM +0100, Stefan Wahren wrote:
-> Hi Alexey,
-> 
-> Am 25.02.24 um 11:37 schrieb Alexey Dobriyan:
-> > > WARNING: CPU: 0 PID: 429 at fs/proc/generic.c:173
-> > > __xlate_proc_name+0x78/0x98 name 'R1/S1'
-> > proc_mkdir() didn't find 'R1' directory.
-> > 
-> > In other words, you can't have slashes in irq names.
-> we already came to the point in the discussion before (link in my last
-> mail). The problem is no libgpiod user (userspace) is aware of this.
+On Sun, 25 Feb 2024 at 05:10, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> There's also the small random 64 byte read case that we haven't optimised
+> for yet.  That also bottlenecks on the page refcount atomic op.
+>
+> The proposed solution to that was double-copy; look up the page without
+> bumping its refcount, copy to a buffer, look up the page again to be
+> sure it's still there, copy from the buffer to userspace.
 
-Changing '/' to '-' or '.' should be OK. Whatever you do, don't change
-to '!' because it will make these paths annoying to use in bash.
+Please stop the cray-cray.
 
-> So the next question is where it should be fixed?
+Yes, cache dirtying is expensive. But you don't actually have
+cacheline ping-pong, because you don't have lots of different CPU's
+hammering the same page cache page in any normal circumstances. So the
+really expensive stuff just doesn't exist.
 
-libgpiod silently weren't getting directory inside /proc/irq/${irq}
-and nobody noticed until now.
+I think you've been staring at profiles too much. In instruction-level
+profiles, the atomic ops stand out a lot. But that's at least partly
+artificial - they are a serialization point on x86, so things get
+accounted to them. So they tend to be the collection point for
+everything around them in an OoO CPU.
 
-I think returning error may be too harsh but replacing characters is not.
+Yes, atomics are bad. But double buffering is worse, and only looks
+good if you have some artificial benchmark that does some single-byte
+hot-cache read in a loop.
 
-> Sorry, i took my original message because posting the last message to
-> linux-fsdevel without context would be pointless.
+In fact, I get the strong feeling that the complaints come from people
+who have looked at bad microbenchmarks a bit too much. People who have
+artificially removed the *real* costs by putting their data on a
+ramdisk, and then run a microbenchmark on this artificial setup.
+
+So you have a make-believe benchmark on a make-believe platform, and
+you may have started out with the best of intentions ("what are the
+limits"), but at some point you took a wrong turn, and turned that
+"what are the limits of performance" and turned that into an
+instruction-level profile and tried to mis-optimize the limits,
+instead of realizing that that is NOT THE POINT of a "what are the
+limits" question.
+
+The point of doing limit analysis is not to optimize the limit. It's
+to see how close you are to that limit in real loads.
+
+And I pretty much guarantee that you aren't close to those limits on
+any real loads.
+
+Before filesystem people start doing crazy things like double
+buffering to do RCU reading of the page cache, you need to look
+yourself in the mirror.
+
+Fior example, the fact that Kent complains about the page cache and
+talks about large folios is completely ludicrous. I've seen the
+benchmarks of real loads. Kent - you're not close to any limits, you
+are often a factor of two to five off other filesystems. We're not
+talking "a few percent", and we're not talking "the atomics are
+hurting".
+
+So people: wake up and smell the coffee.  Don't optimize based off
+profiles of micro-benchmarks on made up platforms. That's for seeing
+where the limits are. And YOU ARE NOT EVEN CLOSE.
+
+                  Linus
 
