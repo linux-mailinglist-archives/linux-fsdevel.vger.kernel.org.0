@@ -1,90 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-12722-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12723-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 932F9862B6E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 17:09:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB538862BAE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 17:23:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 331BF1F218EE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 16:09:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17A4BB20EBC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 16:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FDD179B2;
-	Sun, 25 Feb 2024 16:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D62517BBD;
+	Sun, 25 Feb 2024 16:23:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g1jWYfzZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K5A6bt1y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE0D17984
-	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 16:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5213717BA3
+	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 16:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708877351; cv=none; b=iAhxKNlRBg524EHImiLsSV5ImRxjPZjMV7Kwy2vOQ+LAH+j000VzVC0XmqcoOCUpXQgjtuRJRZ8Gno+e38d5o1tmguXqwNrdtTkY34CfoRYogxhm6nRPjFuli4Ol60+UlzEalKx7fSb4PNSRMHjvnz0YNQHr1XowWZceR/v49ls=
+	t=1708878220; cv=none; b=nxYZtFXbQ00W96m5caoZSTlrTeW6HXk94bNvXqs4yhzsOrzXp+tu7kbdx5vBTYcT6cJpfyHcmWL6swW1NQtsXkCLpHCoNgkYl0ZG7lxldy+WTEmG9ly1gR/7DFZEM543n9KzAFPzTLDc9X3iAsFo7l9TR20GaL1BY6pro73WguM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708877351; c=relaxed/simple;
-	bh=bWVyG4ooUn4bG6bWqWfbJrqunJLdeEr0h0UomtvKp+A=;
+	s=arc-20240116; t=1708878220; c=relaxed/simple;
+	bh=LaigAbcADJ+dK0KzyX1kDd8eEpJpqVoPfgc/erPe1mM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PtirGFqAiD8IdykHtcIqKsFwHEVnOpSfQy1X5rnkwCoA01CEhes9PYfADoehruGhkeH8la1fTHuPsJdLcnoyi+wWpXwVyR8WG5AU177l14ISX77jJBhThRQxMKbNVlR6+0euoxesSitKZgUfJvYut6Rd5nwkubrZUEmgj1Haj8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g1jWYfzZ; arc=none smtp.client-ip=170.10.133.124
+	 Content-Type:Content-Disposition:In-Reply-To; b=ncnLr3UTB++hmjZ1aQqqgWwDrE+cW46SCKctF0L6ucKJfPhvfnTh1Hiw2AkdxgvHIBnpIk+y3dwTHving47ZtFh8vVVlNMbW2gsbTi3g+Da672+a/8BFQVufOIqUUVLenqddUyfMx7mi2k9McurgMETt5+33Ip3W6sAVvnLnX98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K5A6bt1y; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1708877348;
+	s=mimecast20190719; t=1708878217;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=4M+DNtT1zWFOoFWAPUy1ymTQkIScq55vkJSM4JvyW08=;
-	b=g1jWYfzZzoR6EVZtrwwLdL6FO8/sRy8/qHrAdPpyvgofZnap84qu42UxJ0DFN8w2D1PF3B
-	g6W0VlqXvpzKJx63/yhEpA9bNCDHT7Bln1maIlXMKGxkmRnmra/Ohik1Nt4p1J5BcTtPpY
-	D/xmC0C6l6VSIVwgxvULoDMJOSQic7Y=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=gEvjBAUJeAAT4LjTg60EE6mIK+bI32dp7aAGjL49dA4=;
+	b=K5A6bt1yCs17MgxHXXR8ClkIgRcfJ6S10KqVUpdAAoroMzMaAfyU9sIiuO+99d3t0XQtNq
+	fl2l4wtSkGMYrW+FU5hxX+bP75QdgJIZ0hqZ1sIsS4HQ77cLwGqrc48g20e4Bgh38TnDYa
+	GFneuyYOJTXS8Po80vJXRtxOPzuZgA4=
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com
+ [209.85.161.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-124-nWGgw3sIMNywWoH2HsC3xA-1; Sun, 25 Feb 2024 11:09:06 -0500
-X-MC-Unique: nWGgw3sIMNywWoH2HsC3xA-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-6e4d20632c3so1093459b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 08:09:06 -0800 (PST)
+ us-mta-589-ufnfEl6wNHea8awXFN8MGg-1; Sun, 25 Feb 2024 11:23:35 -0500
+X-MC-Unique: ufnfEl6wNHea8awXFN8MGg-1
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5a037bd2346so2535896eaf.2
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 08:23:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708877345; x=1709482145;
+        d=1e100.net; s=20230601; t=1708878214; x=1709483014;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4M+DNtT1zWFOoFWAPUy1ymTQkIScq55vkJSM4JvyW08=;
-        b=arACCGhaGaIf8OmJl4WF/wVNqEU6bhyq9Rt93iTegTTxnb/F86B1+GqlwONzQFxddu
-         pRilzQxWQDZbKDwBkEHcZYBYKPIQn0FxmvqNW+kuvJwvYDmystPUHEa+TJ3fVQ7eJAzS
-         91SMNAnvJ06MLJepiVYEHqQXiecmHdq2AOPHUUVYFhZgHL8ckLeEnRziNoujFsWsrkEK
-         GqLaEcQgfRWRIAbrsTP+Vkq3SBGzM95GPcEL43lV8izs0I2EEsIyCpOJi52B0rX883jH
-         EHKqJlj6fMNChmJHkrcCTk4rTVEw3KtbZ2XKMlA27XjoeEyEyvlMa6n+3c0LZfZlGZhD
-         xHzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6XSlMxIkNr/ks5i8eXM79U8HbrfytCJgyXOC1zQ7Vse/DosBk0xFXt2MJ8P0Fx//gP5YUHf7e4pdr/s44B5utwOXRUKrWbPYfuUWRFw==
-X-Gm-Message-State: AOJu0YxoIuCOS6cB6ulJmMBn9nY/wgbo/cvogesezgfjQL+brcMDlZUu
-	fYxda2FfXeWgr7eHLGcyjMesIrp10WSOCChluVxpWn7LqO6GFYjDWaaKBcIMdIxXRJsKuaN5+I3
-	WeZ2HRgwNzVv9uZHCrbcK3XY+9s/7qeaDT0zgMdMEu6jrKh518gPnfFXl+AOvi20=
-X-Received: by 2002:aa7:8693:0:b0:6e4:59b3:928c with SMTP id d19-20020aa78693000000b006e459b3928cmr3576542pfo.10.1708877345554;
-        Sun, 25 Feb 2024 08:09:05 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IELhdpuksSCkCVmptASRnZV0pLXZtX48KEkxUmfLHWYV0Z7mnKZWeD/8mPjgbAgBqUzUgyzRw==
-X-Received: by 2002:aa7:8693:0:b0:6e4:59b3:928c with SMTP id d19-20020aa78693000000b006e459b3928cmr3576528pfo.10.1708877345170;
-        Sun, 25 Feb 2024 08:09:05 -0800 (PST)
+        bh=gEvjBAUJeAAT4LjTg60EE6mIK+bI32dp7aAGjL49dA4=;
+        b=PJ0wKpOzPH3yxA0krhE1KQZeItKTM0KET46h7sXr0xUubHp/xWTX8UgtntqgeyXgs5
+         SHHIDQcoo6xOEzskZuvjIJ9ek8qJEBZvZP9vh/HARUp18PjE59hEDC9KNGyYxURJGRog
+         y0UyqGKo+DNoA1y4XjKiv6boHfy/IoRRyFxAsJLdX5dvi/sH+f2Uo3i4JoX4i8Ndq62Q
+         9w04u1ammg3C+0NIepH75+7SU5pnbLdmPWYNyHNc3jJmts043de+vCZtwXKBfjL4md98
+         MdyzZ+WQRCevnwxpL6s9rVgR4Ywt90eTOwwDuOpTRf/39pVN8o1W+iWizaGBlOB3nubh
+         hfgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUlg78eHQI210CT85QE3juoNMHlwXxd52sblIn90xyOfpb5B+v7KcBq+0U0J9B8hWUO0fnllnPbP2didrqeFqLdQ3YajX5sNQOnAMiyQw==
+X-Gm-Message-State: AOJu0Yxh4LW0a0XfS76c8UQpOIOCcd1K3ACUUXFjDJWLnEe5AkB41yqA
+	JM99lUvm+KzCIJYtcbxxwSNXaD0tA9M4dpn93tolZ6zxZpRJmexwn5nNfXkD1MO7A0H21+adwJ9
+	u1xgsBTN9vFz2QaohSN5NgauFRPI9+XwoU7iXiebpfayOyVN5f1VAMmG1QJovbLc=
+X-Received: by 2002:a05:6358:89f:b0:17b:6171:adab with SMTP id m31-20020a056358089f00b0017b6171adabmr6105380rwj.1.1708878214729;
+        Sun, 25 Feb 2024 08:23:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFLWqbRFV/lo5uRx+niwsDYaf3gj/dBLpYEFSQ6YUzFAmNj+KTGCNSHzPLbH22v7CIDVz38gA==
+X-Received: by 2002:a05:6358:89f:b0:17b:6171:adab with SMTP id m31-20020a056358089f00b0017b6171adabmr6105363rwj.1.1708878214412;
+        Sun, 25 Feb 2024 08:23:34 -0800 (PST)
 Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id f6-20020a056a00238600b006e0dd50b0d0sm2485386pfc.8.2024.02.25.08.09.02
+        by smtp.gmail.com with ESMTPSA id d9-20020a631d09000000b005df58c83e89sm2523823pgd.84.2024.02.25.08.23.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Feb 2024 08:09:04 -0800 (PST)
-Date: Mon, 26 Feb 2024 00:08:59 +0800
+        Sun, 25 Feb 2024 08:23:34 -0800 (PST)
+Date: Mon, 26 Feb 2024 00:23:29 +0800
 From: Zorro Lang <zlang@redhat.com>
 To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Dave Chinner <david@fromorbit.com>, fstests@vger.kernel.org,
-	anand.jain@oracle.com, aalbersh@redhat.com, djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org, kdevops@lists.linux.dev,
+Cc: David Disseldorp <ddiss@suse.de>, Zorro Lang <zlang@kernel.org>,
+	fstests@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	patches@lists.linux.dev
-Subject: Re: [PATCH 2/3] check: add support for --list-group-tests
-Message-ID: <20240225160859.tqbs2ltiqcj72ozj@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-References: <20240216181859.788521-1-mcgrof@kernel.org>
- <20240216181859.788521-3-mcgrof@kernel.org>
- <ZdLNJD5pYaK84w3r@dread.disaster.area>
- <ZdYosXHe9ec04kBr@bombadil.infradead.org>
+Subject: Re: [PATCH fstests] common/config: fix CANON_DEVS=yes when file does
+ not exist
+Message-ID: <20240225162329.ax3zvbs3c3fgrqcg@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20240214174209.3284958-1-mcgrof@kernel.org>
+ <20240215145422.2e12bb9b@echidna>
+ <Zc5O07ug7e4HVmKD@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,42 +92,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZdYosXHe9ec04kBr@bombadil.infradead.org>
+In-Reply-To: <Zc5O07ug7e4HVmKD@bombadil.infradead.org>
 
-On Wed, Feb 21, 2024 at 08:45:37AM -0800, Luis Chamberlain wrote:
-> On Mon, Feb 19, 2024 at 02:38:12PM +1100, Dave Chinner wrote:
-> > On Fri, Feb 16, 2024 at 10:18:58AM -0800, Luis Chamberlain wrote:
-> > > Since the prior commit adds the ability to list groups but is used
-> > > only when we use --start-after, let's add an option which leverages this
-> > > to also allow us to easily query which tests are part of the groups
-> > > specified.
-> > > 
-> > > This can be used for dynamic test configuration suites such as kdevops
-> > > which may want to take advantage of this information to deterministically
-> > > determine if a test falls part of a specific group.
-> > > Demo:
-> > > 
-> > > root@demo-xfs-reflink /var/lib/xfstests # ./check --list-group-tests -g soak
-> > > 
-> > > generic/019 generic/388 generic/475 generic/476 generic/521 generic/522 generic/616 generic/617 generic/642 generic/648 generic/650 xfs/285 xfs/517 xfs/560 xfs/561 xfs/562 xfs/565 xfs/570 xfs/571 xfs/572 xfs/573 xfs/574 xfs/575 xfs/576 xfs/577 xfs/578 xfs/579 xfs/580 xfs/581 xfs/582 xfs/583 xfs/584 xfs/585 xfs/586 xfs/587 xfs/588 xfs/589 xfs/590 xfs/591 xfs/592 xfs/593 xfs/594 xfs/595 xfs/727 xfs/729 xfs/800
+On Thu, Feb 15, 2024 at 09:50:11AM -0800, Luis Chamberlain wrote:
+> On Thu, Feb 15, 2024 at 02:54:22PM +1100, David Disseldorp wrote:
+> > On Wed, 14 Feb 2024 09:42:08 -0800, Luis Chamberlain wrote:
 > > 
-> > So how is this different to ./check -n -g soak?
+> > > CANON_DEVS=yes allows you to use symlinks for devices, so fstests
+> > > resolves them back to the real backind device. The iteration for
+> > > resolving the backind device works obviously if you have the file
 > > 
-> > '-n' is supposed to show you want tests are going to be run
-> > without actually running them, so why can't you use that?
+> > s/backind/backing
 > 
-> '-n' will replicate as if you are running all tests but just skip while
-> --list-group-tests will just look for the tests for the group and bail right
-> away, and it is machine readable.
+> Zorro, can you do the minor edit?
 
-What do you mean "replicate as if you are running all tests but just skip"?
-Sorry I don't understand this explanation 100%, can you show us some examples
-to explain what kind of job you hope "--list-group-tests" to do, but the "-n"
-is helpless?
+Sure, will do that.
 
-Thanks,
-Zorro
-
+> 
+> > > present, but if one was not present there is a parsing error. Fix
+> > > this parsing error introduced by a0c36009103b8 ("fstests: add helper
+> > > to canonicalize devices used to enable persistent disks").
+> > > 
+> > > Fixes: a0c36009103b8 ("fstests: add helper to canonicalize devices used to enable persistent disks"
+> > > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > 
+> > Reviewed-by: David Disseldorp <ddiss@suse.de>
+> 
+> Thanks!
 > 
 >   Luis
 > 
