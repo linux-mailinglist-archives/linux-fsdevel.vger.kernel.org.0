@@ -1,88 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-12713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F3B8629F7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 11:37:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B54B862A03
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 11:47:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92593281CDB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 10:37:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BACF1F21314
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 10:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4D2FBE9;
-	Sun, 25 Feb 2024 10:37:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8CCFC0B;
+	Sun, 25 Feb 2024 10:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GoGJljOH"
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="PPkO4O+u"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61E2EED9;
-	Sun, 25 Feb 2024 10:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5242CFBE5;
+	Sun, 25 Feb 2024 10:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708857454; cv=none; b=TxRD2Rpcjb4RoihGjZ75gnYHF4IL5ev3Q7S1SF5hNSX0YFDlgECB+x/v23cb9tZG6GxwTjYXG2XP53IXll6s4XNbQSNypBIDpefSxR4b/X24Fs3gy0dvhNW6dc0z5ja8P5k26Ab0EkE9UXsWHNfCTXDn/XVZ9x+xa1is0YiPS0A=
+	t=1708858058; cv=none; b=QlF7q9XaEQtmwyx5pYuHYAyhiqXnUefC0qzsqKAJEDeiCQCqZR0Uk7OHFM++0R4nU4aGwSJmc9Mn52IzKkX2jPpTdst+hbnWYSs/jto0Bhb38IzZ8WAKN0Hfjo34J54ZxeCFCgRzBxGcgOOb7x/UBAUviL5yQUJnzf3NEXSU5D8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708857454; c=relaxed/simple;
-	bh=8XceSC4XiQUGjHtYGKw/HJe1WVYOdwDDvvEmr9+sP4M=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=jPyeuX9X7324woGeCYVyQML1HFE3/ezkpDYRTtbbCkPCxTS0LlGd8VdNp5PT9AOFvyD6mzR1ClwxdldZ8w3c2iUq/kEfgRddLp5qi/aloGGJ50CMufisy8NEmZ4vrRPerPEWoZh71iQR3Bj8SfE10KXcDq3+FqQhEULnpUU1L0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GoGJljOH; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5640fef9fa6so2776707a12.0;
-        Sun, 25 Feb 2024 02:37:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708857451; x=1709462251; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8XceSC4XiQUGjHtYGKw/HJe1WVYOdwDDvvEmr9+sP4M=;
-        b=GoGJljOHLclDyJi4K3Y8ai8XYNg4jN1dGsEL1lSeS57iz0BT+nUEfO+ODDvO2eJlxe
-         i1GUii+7A8sYi7CpBP1MQOJxRFFWJgpkTjU3+k9MR9kxP1/bj7Tc08/RfGInULmpu9ma
-         eeiDJefogfpSf9+M8UyF7uSgM/RONapMXThsA+GmOYKxSSsc0nxsCD3h/sXCtCi40Z9E
-         UvNMnenkZAEUfNn/dIibXy6IlqKJsIbBe8/n21gzGEbCGNSsslILqOqZ/xaPTxYlWPa5
-         8sxfEJUsDYERUIVzFKqLz1JNVVKtESJe35bQ1trlcapXwdR/zIZmKIfAUu1XaLpcWdei
-         e+Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708857451; x=1709462251;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8XceSC4XiQUGjHtYGKw/HJe1WVYOdwDDvvEmr9+sP4M=;
-        b=qVlIiVhaSz8WUNRlfi3Vfj2czHaoUWLgJRW44UAfUWmFjP+kzB25UCRppMP2Vem/cz
-         lNAK0A1Joaz+7LCCVthpy85O/02C6H97s+rVQW/UDXFxZrRLKLeourUREGq+iAcRQ2t4
-         xy/jFnYFaeXkt9INcdR7eqcqsEQEMBya9DpQCEwSwXM2YU3HXQUZICru+7iIECWq0rS1
-         1Jaj9Swx1Yn72tEO2hO80TaIvuRRs0lk27U8LEkjIfQEPQ4jxU4+DAf4xXVRLUTqYTAk
-         jxC77HlX7ghJCSus3DLu5COSrlFAlGnIi3svcOIrW8mJo18bRxlXdkWNynsV9+SKw3Um
-         ggFw==
-X-Forwarded-Encrypted: i=1; AJvYcCVg1ml1M0+GMLPIJFH0gH/w2BSt9FkfPuj50RqhH1G+2uihNu4S0visGFHw/m99yht8WgBqNq37x/eQKXg178CXuDZ9zl4fr25tPz9aLcJa9kvZq7VBgzsUyULl5z0EXoqGZp550SdzINorX57t+5kkR02rr9VAvpCu55Dpe6yU0k8yom2/m9g=
-X-Gm-Message-State: AOJu0YzsJzukwJ4ZkMEqofp3ZN147VN89hnxoJx8BkqruADSNJTXt9WW
-	WAky91cjI5Ye7tygYRZRxTtqFzAsdf1KkM5vBwTUhuqJdgzEPsns0HLBLS1OAcEYBlHpLUv4n2z
-	sJoLWshr/Ybj9kJ2bVM5nzGxoFg==
-X-Google-Smtp-Source: AGHT+IHJZR2wD5h5B3N8I5CHHJ9KO3tgNlwvjXn0nXNnar074d3BlB5jN34vc79PlKK3aBA4SyrSImPGpG1wG8CRJUk=
-X-Received: by 2002:aa7:ccd8:0:b0:565:7bca:eec0 with SMTP id
- y24-20020aa7ccd8000000b005657bcaeec0mr2993509edt.23.1708857450979; Sun, 25
- Feb 2024 02:37:30 -0800 (PST)
+	s=arc-20240116; t=1708858058; c=relaxed/simple;
+	bh=uUcuYqjCTeb1ugX+riKAIX3o7pOCGZNVL9mvJt1yjDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Je57WNhJL1e1i9E8rdnvxtYfua8nDb9Ro9xvu9/3E+QTaQqkTBKqqYfUIibUOz8v+7cs0lJel/2jH8xpdg33+EkpXYseNrJNvwA1C1c13W3jYvtPA/CfNL4ijXgEf6J/pmzyIdMuNsvgNn0L9CRROpX1mzIompeEKS+m7kXZxy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=PPkO4O+u; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+	s=s31663417; t=1708858051; x=1709462851; i=wahrenst@gmx.net;
+	bh=uUcuYqjCTeb1ugX+riKAIX3o7pOCGZNVL9mvJt1yjDs=;
+	h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:
+	 In-Reply-To;
+	b=PPkO4O+uKo8zQag0O6zBB6Out/TIIk/rrJg8YQmev3m3kfubM0ZyZVUz6h109q6S
+	 4a1Ka5oR9uUMjU9RUisJAlXd6bSp9oIXLd83+kVIFoZMOb+lYBXmcve2x3HQ3OQs4
+	 sSIs2eJWFE7IT2p1XotyK780CKJDpjFQZa/RI+d5wPPTRChEJHEdqeVf4wiSlwDF7
+	 S2ySEYeBgvwfsle7Oa/DGEyDoy7nsq7vInt2MNQgLyMK4R2yR21t1siGURtos/7mF
+	 scYXKbWRT9A5muJx+Y+Be6vUHJkmXdeiBtGItQIfhKJgMaKzOsr+LA8dV2vwlF7SO
+	 JITpz+YVRxlGDFeYCg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.167] ([37.4.248.43]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MiacH-1r0zg42jvb-00fn1d; Sun, 25
+ Feb 2024 11:47:31 +0100
+Message-ID: <c51a282a-bdbf-4ced-9fcf-e38a33152761@gmx.net>
+Date: Sun, 25 Feb 2024 11:47:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Alexey Dobriyan <adobriyan@gmail.com>
-Date: Sun, 25 Feb 2024 13:37:19 +0300
-Message-ID: <CACVxJT8T8u+XK7GnyCus19KDVqfquGbAM-0x8bSFgKTeqhD2Ug@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
 Subject: Re: WARNING: fs/proc/generic.c:173 __xlate_proc_name
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Linux Kernel <linux-kernel@vger.kernel.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Language: en-US
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>,
+ linux-gpio@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>,
+ Linux Kernel <linux-kernel@vger.kernel.org>,
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <CACVxJT8T8u+XK7GnyCus19KDVqfquGbAM-0x8bSFgKTeqhD2Ug@mail.gmail.com>
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <CACVxJT8T8u+XK7GnyCus19KDVqfquGbAM-0x8bSFgKTeqhD2Ug@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:IELdsSLR+NFbCh9yElhseAfVmWhYyoixGwwFKPVHbwC7CS25RTd
+ EQUQRRm1ltniT0f+XBOoVf0Uqx1dfnQPo+dZrYwE58dMDEVMQp7yxkarOkpBBQIwGXEvHVe
+ iyu/vf13RZ1pObgJW8K1hPepoon/HbzChGemI/3rW9Eo2z+vwETfGci90aTYGhG0ykwhFjx
+ IkIvwnZlsk01yyNHXyRug==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:dhkRUMWhQwg=;HrQL903rxlwldUPHEusVgq4ZtMd
+ cvyEys01wUHFTZlq34ZVuiJHbUwgG9lS+1Ql4RfdczGlIYaQQFaHzTauHt7bS7JFDkhtjkKFT
+ WEo/bxt/i/Hqau9wettFXQwq6THQjcfI4Tv4GJYIZvCBHb0EZ80hQXBofLPIrnSCQAI9QZX6o
+ qEJ7ghCrHzhnWARY3D2maxTFGvCTrYezvqjfQyD1Yvf6fvjOJvH5imBDvuqzO6nLwP+wwokdp
+ 2F/kT4UGNSTzt8e2Nt8vBrcrPCcY/S9lSP6pc2r/62oY+XzbzIrZgibS6iFlqfoCltXCxVSDP
+ 9EYzJTfgfEhvWQmS4nSnI8Edege+OBPyWJxY3GLEihTUv5nlGFIhvvSsaObfncT/8DDeCSOcg
+ elpj8+v4NWft+lOhDL9zNf4Z5nXcNATtJC3fCTJkFIoG7K4qv/fDBVT1pDHYd/TClD0C7luVX
+ nMxjEIsgXIqbERIkkivmYF7Orv4nrXenoID5qnbXpHn/paJgypwebIy//7kAjV4AHh9CenElG
+ T2bik2RJUWvKe9GHHhijNSZ53WkD2sy8qzzzGZFz0a5DQzs4RzLM54Af93JsIkEMw7Op1AkaK
+ kovp05bllgQb4rJ4KZm/fIVQ0PewImI4vSiqbp/K3s3ipw3MQX9QT1EgyXFszmmaaBPwyqisa
+ vjSpHFqpUm5A36wk3yKLBQRf5U1ohW9CcVGMZbY/bvBDwKM/YaNi/8/bVgOtGyuyMHajU8XVy
+ tkxzaUO23QYMsf7HMV5iCHhHhoP/r3hxNZ5FwDJEmj5VuYYCUo7WEvfNL6miXIEz/icPiQn0T
+ tWfjSp8JQ05vjQmLthfC7oWzmXi7LzeWgSTSiZSw89YDw=
 
-> WARNING: CPU: 0 PID: 429 at fs/proc/generic.c:173
-> __xlate_proc_name+0x78/0x98 name 'R1/S1'
+Hi Alexey,
 
-proc_mkdir() didn't find 'R1' directory.
+Am 25.02.24 um 11:37 schrieb Alexey Dobriyan:
+>> WARNING: CPU: 0 PID: 429 at fs/proc/generic.c:173
+>> __xlate_proc_name+0x78/0x98 name 'R1/S1'
+> proc_mkdir() didn't find 'R1' directory.
+>
+> In other words, you can't have slashes in irq names.
+we already came to the point in the discussion before (link in my last
+mail). The problem is no libgpiod user (userspace) is aware of this. So
+the next question is where it should be fixed?
 
-In other words, you can't have slashes in irq names.
+Sorry, i took my original message because posting the last message to
+linux-fsdevel without context would be pointless.
+
+Regards
+
 
