@@ -1,96 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-12718-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12719-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36FD1862A69
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 14:10:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F86A862AAC
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 15:20:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FD031C209F6
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 13:10:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D99FF1F21583
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 14:20:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D678312E5D;
-	Sun, 25 Feb 2024 13:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4334413FFC;
+	Sun, 25 Feb 2024 14:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pLkNRu//"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wwii20G7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F7C12B82
-	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 13:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245E0134A6;
+	Sun, 25 Feb 2024 14:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708866651; cv=none; b=SALd9xV3pEXD3BrMdoXpPQXVbntvSxTgKusEqR9cP2hBsGSeRHaZoL1AVIyvSKBrY7hIrGcGEaD/BW+vSCqxsbDN81j2NvU3G1VWPYB7Q/z2KIisCwHComPOzJdTBNU3iDzcilgixT0iVVSCDehfdQ1lOKS3vsu2ILFhxhiS3+o=
+	t=1708870816; cv=none; b=d0SzZxIWmPytVPI3dqZi5ITSSyVN4otHkF11vb1+Ov67cwjFFV902AZgiSJ0fsb+0GpQ/wogiY/kO1RXchjVsXf7X6wGNn2dvKS0RFuMdlyPC21cKFT6+jnsHgs3TKc9hdyh2H615vcMP2JzH2ZvYNgxBK+yU0Wb9J8z3vJHOFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708866651; c=relaxed/simple;
-	bh=eaQQRa9SHoFJC5BamvA3EhSNfTDm+myRbrcAkH/aybA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XjArouug9qTojmG7RBP0bw+0JEU47i9IIbRfBeAkOeq4RdYOP1yJXlq3figH+jIck0t08NGRz/JCCCHTOKiML8RdjRG+p0f8wwTikQxoRPECXPsuNHaZQkLGvEndHvpDYLT8cVcCrrKvx8QY3+c/x+5+UpRzFfcvp1nzv2yJCA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=pLkNRu//; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ZL8fhrvIsNWTDsH4Kkh9UJzj1Oneol0JDNfT7yC0CiY=; b=pLkNRu//xEeB+T99nwHZaNSTra
-	YADuHVtLOrHqC3aPy+kOxW5/2hvFj8lnZ74fjDZDsuWiXQMenMmWovOiPWNqfj6BVGZ0wGGWJ0Gn+
-	la+VKvmrHJmIuJfsdLXwnusCmL6gnPQLfULJuN9tXl85X7Si3daS6U02mqOGL5zULCcsXV5bHZFvg
-	6UfTXa9Kot+no5Mg6Fi2g3ENcr4JGKijEPtnsKYjxM0BF/fKfsDY2XNQSgctXnFdS9XWLCxuBBerT
-	OKmXMLWlnRaSwibr8vdHl//XP1JjA0rmTA3lJRZI6I0oVz7/toseJ/+RUHW/k4+hWOeP6kmk6+xMN
-	WLDGFffA==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1reEH9-0000000E7be-1wgr;
-	Sun, 25 Feb 2024 13:10:39 +0000
-Date: Sun, 25 Feb 2024 13:10:39 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>,
-	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <Zds8T9O4AYAmdS9d@casper.infradead.org>
-References: <Zdkxfspq3urnrM6I@bombadil.infradead.org>
- <Zdlsr88A6AAlJpcc@casper.infradead.org>
- <CAHk-=wjUkYLv23KtF=EyCrQcmf9NGwE8Yo1cuxdaLF8gqx5zWw@mail.gmail.com>
- <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb>
+	s=arc-20240116; t=1708870816; c=relaxed/simple;
+	bh=SVrYJdflN3YpptlopCMkC3cRmo84eXHVu7J/dp0JY0U=;
+	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=t39Bt4vmr2ZxLSXrpghijIkJRghG0xxQmqAlctWOWQC6LiQ7qxKF63QFkfmvV1LBIgnDc7L/fPi6pHVvUJepIAKCjfzeec+4ZFD1aBKpD4L4TwRFJdZGN9h5UTcVLjijCezgLQL70ydaLQEeM3SNZ8lHVnMGy04RnPBJXbka1fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Wwii20G7; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1dc0e5b223eso18005965ad.1;
+        Sun, 25 Feb 2024 06:20:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708870814; x=1709475614; darn=vger.kernel.org;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dYKBi+Kx0kph0B/S8oQqjrPvt1FVU1da3rN7thqVsdg=;
+        b=Wwii20G7q7BsTHlpCMgtKrSxc0vRE6vT/0ltXPfNsO/d/ekyisRuMu6F9Qa5Dkuv++
+         dnZuLHUjZtb9OQt9muD6hH4zPH3qMocdEikRGCgI2awJzj5Pkj82EYrAMk+e7v/RulYV
+         xyDEJD9LTMpdPYByDzQazZ4+qsvsnrZhOWamO9gM0mTb/Cnbm1V/nf5CaUBx408J6kUL
+         WwNyWEE6YMhnDZSCZYH3/LzQ52+1GkdH7iAzLunx83edm8qgvXdD4vLBXx78rSIc6IQX
+         iqzijEOMyb/OSvH2PrjCWagCGLf2vr/9dMg1jjvvIgAkvAN+Ar/gGpAgj9CpryNznUU0
+         LWEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708870814; x=1709475614;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dYKBi+Kx0kph0B/S8oQqjrPvt1FVU1da3rN7thqVsdg=;
+        b=bTVpone86Nj2FlFrGTNRWA8rwh/NLQsh7JYN0s4xqfiKoIlDkrR0keK0rUR7Q0IGd4
+         6/yANebeByKlGIz948hQoPGfW+23P2kbHVSvVbfRJEF6YxpVjM8/gnNjnC9iqz5Vad+L
+         sdvu/bJgrKv4T796btpP/2OtD+twfG/H6+xFLZIbqEHQr9iNYn2ArZ4cgXV4lCyAQA4g
+         IWRriA1JJYIAa3d5TETT2l6DCCYNxH5CQwtKbMEQuX/ShZILJyALz4egVDFcabj6sDva
+         6jZu9VvF/P9pEZwLR/Scvcqrs4qsheq52Q2j0ojocCoOV+ozLndufxWcyua2nWEBmpxC
+         v89w==
+X-Forwarded-Encrypted: i=1; AJvYcCXmvFPLZBdOsCA7XrvxhKk66trh9UYx6dMF5gxzXn4ucWZpAZ095CGqeGY11rTTyCBUXoM4FYBGQpBoih9aQtv7D91TerG2fNmUD3jTtU+TvjIWido6R86PDKHDCEn41xOa8LS70ejK3AiUOI25m7NvfO4AegHOd4E50Lzj5wEAP9xihN60Ph3IL73tJSeP7lY7NLLXSSsCDfYhem3JktpaJERq2UI1EYnaLeuUsw/mKIgmtdr7UCu2d7fDxpbw
+X-Gm-Message-State: AOJu0YzDVYWNEH+wabco7w8+Fo/A9ztDcwMSfLwBZBYAOx0/sEiurpX2
+	DyD0jkd7C811Dva9kOVSjt6LQ+ny52z0K5QcVfJneyoIjAUVDiXsmn2CQEIN
+X-Google-Smtp-Source: AGHT+IEXYxsOr0QSU3u6gD+WhXD9eZzTG9jlMHzB6YlRK1F6+maANbBs6nKGmmS0D2Yf2XVZrvmbdA==
+X-Received: by 2002:a17:902:6506:b0:1dc:8fb0:2b9e with SMTP id b6-20020a170902650600b001dc8fb02b9emr1407177plk.34.1708870814349;
+        Sun, 25 Feb 2024 06:20:14 -0800 (PST)
+Received: from dw-tp ([171.76.80.106])
+        by smtp.gmail.com with ESMTPSA id x6-20020a170902a38600b001d7252fef6bsm2357872pla.299.2024.02.25.06.20.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Feb 2024 06:20:13 -0800 (PST)
+Date: Sun, 25 Feb 2024 19:50:06 +0530
+Message-Id: <87frxg1v8p.fsf@doe.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, jack@suse.cz
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org, linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org, nilay@linux.ibm.com, Prasad Singamsetty <prasad.singamsetty@oracle.com>, John Garry <john.g.garry@oracle.com>
+Subject: Re: [PATCH v4 06/11] block: Add atomic write support for statx
+In-Reply-To: <20240219130109.341523-7-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb>
 
-On Sun, Feb 25, 2024 at 12:18:23AM -0500, Kent Overstreet wrote:
-> Before large folios, we had people very much bottlenecked by 4k page
-> overhead on sequential IO; my customer/sponsor was one of them.
-> 
-> Factor of 2 or 3, IIRC; it was _bad_. And when you looked at the
-> profiles and looked at the filemap.c code it wasn't hard to see why;
-> we'd walk a radix tree, do an atomic op (get the page), then do a 4k
-> usercopy... hence the work I did to break up
-> generic_file_buffered_read() and vectorize it, which was a huge
-> improvement.
+John Garry <john.g.garry@oracle.com> writes:
 
-There's also the small random 64 byte read case that we haven't optimised
-for yet.  That also bottlenecks on the page refcount atomic op.
+> From: Prasad Singamsetty <prasad.singamsetty@oracle.com>
+>
+> Extend statx system call to return additional info for atomic write support
+> support if the specified file is a block device.
+>
+> Signed-off-by: Prasad Singamsetty <prasad.singamsetty@oracle.com>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> ---
+>  block/bdev.c           | 37 +++++++++++++++++++++++++++----------
+>  fs/stat.c              | 13 ++++++-------
+>  include/linux/blkdev.h |  5 +++--
+>  3 files changed, 36 insertions(+), 19 deletions(-)
+>
+> diff --git a/block/bdev.c b/block/bdev.c
+> index e9f1b12bd75c..0dada9902bd4 100644
+> --- a/block/bdev.c
+> +++ b/block/bdev.c
+> @@ -1116,24 +1116,41 @@ void sync_bdevs(bool wait)
+>  	iput(old_inode);
+>  }
+>  
+> +#define BDEV_STATX_SUPPORTED_MASK (STATX_DIOALIGN | STATX_WRITE_ATOMIC)
+> +
+>  /*
+> - * Handle STATX_DIOALIGN for block devices.
+> - *
+> - * Note that the inode passed to this is the inode of a block device node file,
+> - * not the block device's internal inode.  Therefore it is *not* valid to use
+> - * I_BDEV() here; the block device has to be looked up by i_rdev instead.
+> + * Handle STATX_{DIOALIGN, WRITE_ATOMIC} for block devices.
+>   */
+> -void bdev_statx_dioalign(struct inode *inode, struct kstat *stat)
+> +void bdev_statx(struct dentry *dentry, struct kstat *stat, u32 request_mask)
 
-The proposed solution to that was double-copy; look up the page without
-bumping its refcount, copy to a buffer, look up the page again to be
-sure it's still there, copy from the buffer to userspace.
+why change this to dentry? Why not keep it as inode itself?
 
-Except that can go wrong under really unlikely circumstances.  Look up the
-page, page gets freed, page gets reallocated to slab, we copy sensitive
-data from it, page gets freed again, page gets reallocated to the same
-spot in the file (!), lookup says "yup the same page is there".
-We'd need a seqcount or something to be sure the page hasn't moved.
+-ritesh
+
+>  {
+>  	struct block_device *bdev;
+>  
+> -	bdev = blkdev_get_no_open(inode->i_rdev);
+> +	if (!(request_mask & BDEV_STATX_SUPPORTED_MASK))
+> +		return;
+> +
+> +	/*
+> +	 * Note that d_backing_inode() returns the inode of a block device node
+> +	 * file, not the block device's internal inode.  Therefore it is *not*
+> +	 * valid to use I_BDEV() here; the block device has to be looked up by
+> +	 * i_rdev instead.
+> +	 */
+> +	bdev = blkdev_get_no_open(d_backing_inode(dentry)->i_rdev);
+>  	if (!bdev)
+>  		return;
+>  
+> -	stat->dio_mem_align = bdev_dma_alignment(bdev) + 1;
+> -	stat->dio_offset_align = bdev_logical_block_size(bdev);
+> -	stat->result_mask |= STATX_DIOALIGN;
+> +	if (request_mask & STATX_DIOALIGN) {
+> +		stat->dio_mem_align = bdev_dma_alignment(bdev) + 1;
+> +		stat->dio_offset_align = bdev_logical_block_size(bdev);
+> +		stat->result_mask |= STATX_DIOALIGN;
+> +	}
+> +
+> +	if (request_mask & STATX_WRITE_ATOMIC && bdev_can_atomic_write(bdev)) {
+> +		struct request_queue *bd_queue = bdev->bd_queue;
+> +
+> +		generic_fill_statx_atomic_writes(stat,
+> +			queue_atomic_write_unit_min_bytes(bd_queue),
+> +			queue_atomic_write_unit_max_bytes(bd_queue));
+> +	}
+>  
+>  	blkdev_put_no_open(bdev);
+>  }
+> diff --git a/fs/stat.c b/fs/stat.c
+> index 522787a4ab6a..bd0618477702 100644
+> --- a/fs/stat.c
+> +++ b/fs/stat.c
+> @@ -290,13 +290,12 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
+>  		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
+>  	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
+>  
+> -	/* Handle STATX_DIOALIGN for block devices. */
+> -	if (request_mask & STATX_DIOALIGN) {
+> -		struct inode *inode = d_backing_inode(path.dentry);
+> -
+> -		if (S_ISBLK(inode->i_mode))
+> -			bdev_statx_dioalign(inode, stat);
+> -	}
+> +	/* If this is a block device inode, override the filesystem
+> +	 * attributes with the block device specific parameters
+> +	 * that need to be obtained from the bdev backing inode
+> +	 */
+> +	if (S_ISBLK(d_backing_inode(path.dentry)->i_mode))
+> +		bdev_statx(path.dentry, stat, request_mask);
+>  
+>  	path_put(&path);
+>  	if (retry_estale(error, lookup_flags)) {
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 40ed56ef4937..4f04456f1250 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -1541,7 +1541,7 @@ int sync_blockdev(struct block_device *bdev);
+>  int sync_blockdev_range(struct block_device *bdev, loff_t lstart, loff_t lend);
+>  int sync_blockdev_nowait(struct block_device *bdev);
+>  void sync_bdevs(bool wait);
+> -void bdev_statx_dioalign(struct inode *inode, struct kstat *stat);
+> +void bdev_statx(struct dentry *dentry, struct kstat *stat, u32 request_mask);
+>  void printk_all_partitions(void);
+>  int __init early_lookup_bdev(const char *pathname, dev_t *dev);
+>  #else
+> @@ -1559,7 +1559,8 @@ static inline int sync_blockdev_nowait(struct block_device *bdev)
+>  static inline void sync_bdevs(bool wait)
+>  {
+>  }
+> -static inline void bdev_statx_dioalign(struct inode *inode, struct kstat *stat)
+> +static inline void bdev_statx(struct dentry *dentry, struct kstat *stat,
+> +				u32 request_mask)
+>  {
+>  }
+>  static inline void printk_all_partitions(void)
+> -- 
+> 2.31.1
 
