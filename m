@@ -1,110 +1,118 @@
-Return-Path: <linux-fsdevel+bounces-12703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D211786293E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 06:57:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99D1F86293F
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 07:04:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D854B21585
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 05:57:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C43CC1C20A19
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 06:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EFDBBE5E;
-	Sun, 25 Feb 2024 05:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7461F9460;
+	Sun, 25 Feb 2024 06:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="XtVGY8p+"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="V43mQgOl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519B39443;
-	Sun, 25 Feb 2024 05:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1249944C
+	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 06:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708840652; cv=none; b=bfOynNLa3iVIjDKR+NFiOXvMBIoiAxX5fz3ClvGJH/cZka5nwhgnnGpEsFRtyyi+bWd9b/yTd5QmCdW0OyiPKMPIlCNSvS8gY8jr7ctauFBKR4Bz6joupGj42CF4uClmnolK56rqYEDL3QooLwXHAAAEHQDng0k3HBhGwUFef04=
+	t=1708841065; cv=none; b=PvZ8LdBEWMis6oHdYKgAGZywjMSbQf/YbaKzM8oFrL2NmsXZeSjdTEv1eoC5cLmx8Vek4DHe1xKwXpr357ryRRHzM6qqHE0lyKcwZhqiIhfnyGajhvCBNZOPPrdOujQIUvA3KlS4Cn7JJpJOW7u3c+lKbgX3mrXu6panqDIsyOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708840652; c=relaxed/simple;
-	bh=QpPrkM0hEknnX9z72cr5X4Rw6BoHmRfdBG6lB27sycw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V/anwuwg27rgecC/WIReylC05SU448YJKzT+jXzAJWRIK8VYSqbDY2i895hPX3RuXl+TFfcQAxD2Urj6saM5WNxwG/YsW7do0BGEtkoUCgQ/x5lNt64nS+N7byJGLYXwbh3OJIyxcvuu4LnVz14NZqwsSpJRLZrehrgMiHx5+uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=XtVGY8p+; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=5tyQLvMNT9E4Tr/AbhbZm9ixo5fjkwiuVvjkmXED5iE=;
-	t=1708840650; x=1709272650; b=XtVGY8p+effF1uS+uC43CF3IHdFhk/H1r2SiZiEGRS9088L
-	3GYR/amv3y4tWVxfbduSwXoRYXo2uMt59MjM5Nw7IfuW1sRto9MnJ8YKhfETHvXBpDoKl/zI59iSS
-	dKlDQppV324nD1HMaX9Ddfx01uqasC4vrgEBkZoxccDnNU2JsE3HmE7dJWjWUCcugX1zZyjzF++Ep
-	YxZqTm1DUGp351MrI9s+aHfeatcl/3JBv2qPOf4UXqYF8gA8tJEG7gEdboHy80xkVpdiWGGXEnou0
-	zZZSQJHPQb5t04P7ADSMpiTXuy9/XXTSBQt7ZJvfIpk+FNXbjVtzp1l1aytSPfWw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1re7Vv-0008GL-J5; Sun, 25 Feb 2024 06:57:27 +0100
-Message-ID: <5b67d22f-ddd6-4b9d-9c86-00976d6b53ca@leemhuis.info>
-Date: Sun, 25 Feb 2024 06:57:26 +0100
+	s=arc-20240116; t=1708841065; c=relaxed/simple;
+	bh=JJvyQZjrGpov012p9DTG2WtVXwJguDkoEQmwGFHIs3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LPW47Ib4K5/NjDpELTkmiahLL10T7MftKIbv4XnZ7SjQ0ukeoI4mCl30dsfUOfSY/C+ffdBtG5CJMm9S8RcbtDYrOcagGZZIEwLuyKPZHVBDp4/3zh04F9g1SoLuL/SE+pZnod58lVQM+SDGkmU7ulY4GTCxnrAUNjzz4YMNrk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=V43mQgOl; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 25 Feb 2024 01:04:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1708841061;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EU36V1tQnx8vg/C/vT87h1j5srV/PUH7jtLIv7q7Y8c=;
+	b=V43mQgOl/1kcRNScKdPzTjfI1RWxuVr3a/tvexOgqRTZWPAIhGs+V4YBcFfKrCeYf8CgWI
+	bChE1KDA27Xd0vTX6/2sgk9hGj9PaSYpXAULgD4vCdEZXQop5IsyRk3ugszrPTRjb0b0On
+	xDfFwzScN9ipv/ibN0O1Oq5HGGX/eEo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>, 
+	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, 
+	Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+Message-ID: <vtbdx77a7kzibpi543abxmu3jjhpztuhna6epzleu4e5wmkrrf@roejpebs23cm>
+References: <Zdkxfspq3urnrM6I@bombadil.infradead.org>
+ <Zdlsr88A6AAlJpcc@casper.infradead.org>
+ <CAHk-=wjUkYLv23KtF=EyCrQcmf9NGwE8Yo1cuxdaLF8gqx5zWw@mail.gmail.com>
+ <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] 6.8-rc process is unable to exit and consumes a lot
- of cpu
-Content-Language: en-US, de-DE
-To: Al Viro <viro@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
- "Christian Brauner (Microsoft)" <brauner@kernel.org>,
- Matt Heon <mheon@redhat.com>, Ed Santiago <santiago@redhat.com>,
- Linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Paul Holzinger <pholzing@redhat.com>, LKML <linux-kernel@vger.kernel.org>
-References: <6a150ddd-3267-4f89-81bd-6807700c57c1@redhat.com>
- <652928aa-0fb8-425e-87b0-d65176dd2cfa@redhat.com>
- <9b92706b-14c2-4761-95fb-7dbbaede57f4@leemhuis.info>
- <e733c14e-0bdd-41b2-82aa-90c0449aff25@redhat.com>
- <f15ee051-2cfe-461f-991d-d09fd53bad4f@leemhuis.info>
- <c0cbf518-c6d4-4792-ad04-f8b535d41f4e@leemhuis.info>
- <CAHk-=wg9nqLqxr7bPFt4CUzb+w4TqENb+0G1-yJfZbwvRhi29A@mail.gmail.com>
- <ZdqWYplgbHL7xSch@duke.home>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <ZdqWYplgbHL7xSch@duke.home>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1708840650;e30ad12f;
-X-HE-SMSGID: 1re7Vv-0008GL-J5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb>
+X-Migadu-Flow: FLOW_OUT
 
-On 25.02.24 02:22, Al Viro wrote:
-> On Sat, Feb 24, 2024 at 03:43:43PM -0800, Linus Torvalds wrote:
->> On Fri, 23 Feb 2024 at 23:00, Thorsten Leemhuis
->> <regressions@leemhuis.info> wrote:
->>>
->>> TWIMC, the quoted mail apparently did not get delivered to Al (I got a
->>> "48 hours on the queue" warning from my hoster's MTA ~10 hours ago).
->>
->> Al's email has been broken for the last almost two weeks - the machine
->> went belly-up in a major way.
->>
->> I bounced the email to his kernel.org email that seems to work,
-
-Thx!
-
->> but I
->> also think Al ends up being busy trying to get through everything else
->> he missed, in addition to trying to get the machine working again...
+On Sun, Feb 25, 2024 at 12:18:23AM -0500, Kent Overstreet wrote:
+> On Sat, Feb 24, 2024 at 09:31:44AM -0800, Linus Torvalds wrote:
+> Before large folios, we had people very much bottlenecked by 4k page
+> overhead on sequential IO; my customer/sponsor was one of them.
 > 
-> FWIW, I'm pretty sure that it's fixed by #fixes^ (7e4a205fe56b) in
-> my tree; I'll send a pull request, both for #fixes and #fixes.pathwalk.rcu
+> Factor of 2 or 3, IIRC; it was _bad_. And when you looked at the
+> profiles and looked at the filemap.c code it wasn't hard to see why;
+> we'd walk a radix tree, do an atomic op (get the page), then do a 4k
+> usercopy... hence the work I did to break up
+> generic_file_buffered_read() and vectorize it, which was a huge
+> improvement.
+> 
+> It's definitely less of a factor when post large folios and when we're
+> talking about workloads that don't fit in cache, but I always wanted to
+> do a generic version of the vectorized write path that brfs and bcachefs
+> have.
 
-Great, thank you, too!
+to expound further, our buffered io performance really is crap vs.
+direct in lots of real world scenarios, and what was going on in
+generic_file_buffered_read() was just one instance of a larger theme -
+walking data structures, taking locks/atomics/barriers, then doing work
+on the page/folio with cacheline bounces, in a loop - lots of places
+where batching/vectorizing would help a lot but it tends to be
+insufficient.
 
-Ciao, Thorsten
+i had patches that went further than the generic_file_buffered_read()
+rework to vectorize add_to_page_cache_lru(), and that was another
+significant improvement.
 
+the pagecache lru operations were another hot spot... willy and I at one
+point were spitballing getting rid of the linked list for a dequeue,
+more for getting rid of the list_head in struct page/folio and replacing
+it with a single size_t index, but it'd open up more vectorizing
+possibilities
 
+i give willy crap about the .readahead interface... the way we make the
+filesystem code walk the xarray to get the folios instead of just
+passing it a vector is stupid
+
+folio_batch is stupid, it shouldn't be fixed size. there's no reason for
+that to be a small fixed size array on the stack, the slub fastpath has
+no atomic ops and doesn't disable preemption or interrupts - it's
+_fast_. just use a darray and vectorize the whole operation
+
+but that wouldn't be the big gains, bigger would be hunting down all the
+places that aren't vectorized and should be.
+
+i haven't reviewed the recent .writepages work christoph et all are
+doing, if that's properly vectorized now that'll help
 
