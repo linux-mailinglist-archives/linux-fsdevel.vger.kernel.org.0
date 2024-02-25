@@ -1,95 +1,166 @@
-Return-Path: <linux-fsdevel+bounces-12710-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12711-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052D68629A2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 08:28:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 652308629C6
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 09:46:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BCBC1F21C62
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 07:28:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 894E41C20B4D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 08:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8C6DDDA;
-	Sun, 25 Feb 2024 07:28:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA5FEEDC;
+	Sun, 25 Feb 2024 08:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XnhWfra0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BBEFD520
-	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 07:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F6D1DF46
+	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 08:46:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708846085; cv=none; b=uVnDnOW14eyVkJmgS/KM8XHFVpnldcC10uyvqaoo9d35TT0snv2RKImWMSsJI9UxBSj5W7Q80aaxwevtg81TBZmgwoiKGrRQ5cv9T3ZX935V18Wq1hAj+UaFf9KDDQiQoeYWXfjZL3Q9jjk8Zo5OaXh9v6YvLC//Vk+KTZHNLvU=
+	t=1708850786; cv=none; b=P1Zj7wuEdjV1TVzWUKNdUyBfWoTpYu6CnnP8owyp8nE74GAw8f6qT4UcJq8xmgVuoaaij1TPctbGmJzfs5aPJ99Uj764CZ7txFSXZmn3JnuTtkMmEPvX8W+DqNVsh1c8/HWD8V3JItRL72nxA1BzYFebLNQU87U+JYwEm03rxPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708846085; c=relaxed/simple;
-	bh=unoUZHnNLWo85kVwRNGfukzNpxB9UQvc6x3BLRWDZdI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hX2I3fP2pUB7exXtahiEjnjUx2uXvrjXFuwTFvuBYphSLzJ/T18aOtgZC/umKeDBcuajG9nzmB/84qoUad8SO7OOcruJ0A7+qjwXntbr23wdvnTq9XuAr/GLQXpuC/U5B2dGDtTpFUwnQC11O7mrnwDvFlSCgFAXB+n3pJ2uT8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-363b161279aso21237025ab.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 24 Feb 2024 23:28:03 -0800 (PST)
+	s=arc-20240116; t=1708850786; c=relaxed/simple;
+	bh=qRBGx5Eui1Rg0T17s7xynohjX+P8XO5mBOcrisme1bg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tJUwV61wJOBQptWk9XKCKnDiCsP5hW7zEqsipHCsxOjnppiXUGlKhB765F1HCDnkcucxXpFO/xB12HLW/DwoY455WlWmj+xmYRduzlH6ljv+HXW6gqa7/vOrldTuCPZqhKIJ91OmH+qjRde/7rBe67ecLoKdqGPObmGl72C8FhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XnhWfra0; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1708850783;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Rfe0ULI+yf/mlID853QRO5tR+jdkdt5ribt0vShWIFo=;
+	b=XnhWfra0/iKw8ZpqdmRsgQ46sO9lz60VHqR4hkp6aDflAy6HoEztIVFTDWsXR6VPI6Ab8h
+	u1weulGyNZN9kw9YHgmfjpLoTB0J+SwIHUPGUStrZGahqeaVPUe9oFajb65ylctFSk/yeQ
+	sZHMpyYfjxG+Cl6Ag8T4rTBbV5HfX+M=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-467-mL8C-abFNWaMsPcjruxIXg-1; Sun, 25 Feb 2024 03:46:21 -0500
+X-MC-Unique: mL8C-abFNWaMsPcjruxIXg-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-33dcd5d117fso73498f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 00:46:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708846083; x=1709450883;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TzsFQMYU8YtNGOBZjM6fd0mO1h4UtTBUtieIA5+iT0w=;
-        b=CokPVjl9DKi9XLzvuYgD9nYYHfHrc1Zj2mbmFoflB8Fln3j4e7hVuvy4EclL5VvN57
-         Fs2C2yakIpKe99Jxr8+KlgntEw8LwZrZ9gMupJUvfIHIvYG3bPGK0gAhUB/62aoKn6Uv
-         i0ddhot00WCrXjlYCRU2+L6841S70hPnzPCHn+RIFzHmCphygFfkLs52e+asXvKc3d6b
-         Y1dn4jzWAyT6TJKwQEptNxB+gJrSB/j5drI2fuavDQqcHKdSd5D/BLVttDQw0hbi9lXk
-         Ncqy829EWVBoCejylYunDuxkTUnLZM47UCPOeS/wpBrQqIA1auZ8WWbka5G7NUa+LrGt
-         eJIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlYeDNM/NA4cRdJCoCtJUcOqLmV3NkxBKW/ZWgBKNE1AIbusXAJf2HZGuUcnVfr/llZ1QwiHTbWmbXqQtQcqaXDYxZqG9d0DNC9eQfbw==
-X-Gm-Message-State: AOJu0Yzkxbh9FsbpKj/cwAWLrcCiHyyFePCuwuh+9VKIpedbk7r+ZHu3
-	61wvzBQf/LOieKCpeThvERc7f/l2ke6M+CD+RRy/MsVmHgTa0xWbjUExvoXufkxYe093g6p7a7h
-	uSs6GqkjeSy0UcSYzlqzLIpszQsXs6ynfNAXUBHlE17s5GEM9o7QayQs=
-X-Google-Smtp-Source: AGHT+IHMzsSTbqyGkWMdz6rESKzE7k0hvpJkoDrMjtx+4rAEl5iPtoYZeEnv9sgMQieN4CN0vwu7qeu/Lc7SMTpoBQs9YEgIvxul
+        d=1e100.net; s=20230601; t=1708850780; x=1709455580;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rfe0ULI+yf/mlID853QRO5tR+jdkdt5ribt0vShWIFo=;
+        b=qaieMsEq+ilXdewjbnIhWp78gKdAM3x78TavQMXTYBpd4FWo1WWzFFjlD6LU+oZPc5
+         iMq7rIKohJsLt2Qb6fkNPo18dkCZ18/KxzkpEYB5vJnetDVeeJbhFSCz/S6IRt3Wf9H/
+         PYu6hiLp3gO01g+YPVmm767JcmJTrQN/rrBQH1JoKkJuDzzYI4SYYO0L2jSMnRy4CNC3
+         2SPekU+2YqkGMZpTVwarmCaxDbKS0lEDQoOTfLQpt8vx7eTE41GZe0poPyOAoQtzWApY
+         jd0sbaSl0wRaavC75US+WJsV9eWmLr87QXblaMmQ1Jz/UA6/g9WrzPlVKywLka9GQQXX
+         FOew==
+X-Forwarded-Encrypted: i=1; AJvYcCXDgMXUiq81CbW7FKA6IaUanoBV/4Qe7imawpvpnzcCQAJmUdnlViC9vhFdkJ8zauBsAc/Be5uzoAbEXeq7yrS/SGrs8cNl4D4jyBIVlg==
+X-Gm-Message-State: AOJu0Yy3m+nKugURM0bmwpwQatijIlrAw4p3TH4iHidi+8gJBLw7Etz7
+	M7nk3UYqLH5XFweJn9x8i9dbYDxm6cVPlBID/7ryFnwIJbuskHxmrhJe8sux2zL6XpZuSaG4LX/
+	gF0TloMONZ0EQGwNzNRkp9D1Ht4jykmZm2rt22I/27e3CRzz6F1r0lDVOxWbfqeI=
+X-Received: by 2002:a5d:59ac:0:b0:33d:d2d0:acb6 with SMTP id p12-20020a5d59ac000000b0033dd2d0acb6mr476370wrr.28.1708850780477;
+        Sun, 25 Feb 2024 00:46:20 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEmJCF/RtfKMVJuqXHI/65+QRM1LmffyF/iU7ToqPLCzqEL1wzs0AI/dPXKJoA+CgVrkS38eg==
+X-Received: by 2002:a5d:59ac:0:b0:33d:d2d0:acb6 with SMTP id p12-20020a5d59ac000000b0033dd2d0acb6mr476351wrr.28.1708850780163;
+        Sun, 25 Feb 2024 00:46:20 -0800 (PST)
+Received: from redhat.com ([2.52.10.44])
+        by smtp.gmail.com with ESMTPSA id bw11-20020a0560001f8b00b0033da4b06632sm4602412wrb.6.2024.02.25.00.46.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 25 Feb 2024 00:46:19 -0800 (PST)
+Date: Sun, 25 Feb 2024 03:46:16 -0500
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Hou Tao <houtao@huaweicloud.com>, linux-fsdevel@vger.kernel.org,
+	Vivek Goyal <vgoyal@redhat.com>,
+	Stefan Hajnoczi <stefanha@redhat.com>, linux-kernel@vger.kernel.org,
+	virtualization@lists.linux.dev, houtao1@huawei.com
+Subject: Re: [PATCH] virtiofs: limit the length of ITER_KVEC dio by
+ max_nopage_rw
+Message-ID: <20240225034356-mutt-send-email-mst@kernel.org>
+References: <20240103105929.1902658-1-houtao@huaweicloud.com>
+ <CAJfpegsM2ViQb1A2HNMJLsgVDs1UScd7p04MOLSkSMRNeshm0A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d0a:b0:365:4d61:fe6 with SMTP id
- i10-20020a056e021d0a00b003654d610fe6mr251453ila.1.1708846082942; Sat, 24 Feb
- 2024 23:28:02 -0800 (PST)
-Date: Sat, 24 Feb 2024 23:28:02 -0800
-In-Reply-To: <0000000000006c9d500608b2c62b@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000bfed0206122fbb7c@google.com>
-Subject: Re: [syzbot] [x25?] [reiserfs?] general protection fault in lapbeth_data_transmit
-From: syzbot <syzbot+6062afbf92a14f75d88b@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, brauner@kernel.org, davem@davemloft.net, 
-	edumazet@google.com, jack@suse.cz, kuba@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-x25@vger.kernel.org, ms@dev.tdt.de, netdev@vger.kernel.org, 
-	pabeni@redhat.com, reiserfs-devel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegsM2ViQb1A2HNMJLsgVDs1UScd7p04MOLSkSMRNeshm0A@mail.gmail.com>
 
-syzbot suspects this issue was fixed by commit:
+On Fri, Feb 23, 2024 at 10:42:37AM +0100, Miklos Szeredi wrote:
+> On Wed, 3 Jan 2024 at 11:58, Hou Tao <houtao@huaweicloud.com> wrote:
+> >
+> > From: Hou Tao <houtao1@huawei.com>
+> >
+> > When trying to insert a 10MB kernel module kept in a virtiofs with cache
+> > disabled, the following warning was reported:
+> >
+> >   ------------[ cut here ]------------
+> >   WARNING: CPU: 2 PID: 439 at mm/page_alloc.c:4544 ......
+> >   Modules linked in:
+> >   CPU: 2 PID: 439 Comm: insmod Not tainted 6.7.0-rc7+ #33
+> >   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), ......
+> >   RIP: 0010:__alloc_pages+0x2c4/0x360
+> >   ......
+> >   Call Trace:
+> >    <TASK>
+> >    ? __warn+0x8f/0x150
+> >    ? __alloc_pages+0x2c4/0x360
+> >    __kmalloc_large_node+0x86/0x160
+> >    __kmalloc+0xcd/0x140
+> >    virtio_fs_enqueue_req+0x240/0x6d0
+> >    virtio_fs_wake_pending_and_unlock+0x7f/0x190
+> >    queue_request_and_unlock+0x58/0x70
+> >    fuse_simple_request+0x18b/0x2e0
+> >    fuse_direct_io+0x58a/0x850
+> >    fuse_file_read_iter+0xdb/0x130
+> >    __kernel_read+0xf3/0x260
+> >    kernel_read+0x45/0x60
+> >    kernel_read_file+0x1ad/0x2b0
+> >    init_module_from_file+0x6a/0xe0
+> >    idempotent_init_module+0x179/0x230
+> >    __x64_sys_finit_module+0x5d/0xb0
+> >    do_syscall_64+0x36/0xb0
+> >    entry_SYSCALL_64_after_hwframe+0x6e/0x76
+> >    ......
+> >    </TASK>
+> >   ---[ end trace 0000000000000000 ]---
+> >
+> > The warning happened as follow. In copy_args_to_argbuf(), virtiofs uses
+> > kmalloc-ed memory as bound buffer for fuse args, but
+> 
+> So this seems to be the special case in fuse_get_user_pages() when the
+> read/write requests get a piece of kernel memory.
+> 
+> I don't really understand the comment in virtio_fs_enqueue_req():  /*
+> Use a bounce buffer since stack args cannot be mapped */
+> 
+> Stefan, can you explain?  What's special about the arg being on the stack?
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+virtio core wants DMA'able addresses.
 
-    fs: Block writes to mounted block devices
+See Documentation/core-api/dma-api-howto.rst :
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12dcaac4180000
-start commit:   1b29d271614a Merge tag 'staging-6.4-rc7' of git://git.kern..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ac246111fb601aec
-dashboard link: https://syzkaller.appspot.com/bug?extid=6062afbf92a14f75d88b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=150a0f73280000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107fcaff280000
+...
 
-If the result looks correct, please mark the issue as fixed by replying with:
 
-#syz fix: fs: Block writes to mounted block devices
+This rule also means that you may use neither kernel image addresses
+(items in data/text/bss segments), nor module image addresses, nor
+stack addresses for DMA.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+
+> What if the arg is not on the stack (as is probably the case for big
+> args like this)?   Do we need the bounce buffer in that case?
+> 
+> Thanks,
+> Miklos
+
 
