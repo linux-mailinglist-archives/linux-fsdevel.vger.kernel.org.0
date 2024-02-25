@@ -1,120 +1,94 @@
-Return-Path: <linux-fsdevel+bounces-12688-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6EA86288C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 01:18:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D21118628BD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 02:22:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5A4E1C21060
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 00:18:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406C0282211
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 01:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67F9E28EC;
-	Sun, 25 Feb 2024 00:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b="qZUwava2"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858D14C94;
+	Sun, 25 Feb 2024 01:22:20 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-4018.proton.ch (mail-4018.proton.ch [185.70.40.18])
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC4871C01
-	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 00:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5DF10E4;
+	Sun, 25 Feb 2024 01:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708820329; cv=none; b=MLzG+D+FQ4nyC3oug/ovVApoZ/XOkOd9EzlUzdVUG0uxjhJsiTIB6zvwxwCpW6BcVA05QBwzwLxqVJu5l+FAswSvEHJVevrdFCQBja8QKF50OBpdOzJp2ZKfyNTdoorzG9SLvP1yfF4mx9wLZeEjIeOevtOLiCpW6NLd2cCIMUw=
+	t=1708824140; cv=none; b=KHU3sOVhBiUH/JVQf0qq2MSW6GiWyYSwv9vnBtY5KTucuOwDZdYviMx0SFxfl37qkqezTO292Ykg++WrO6C6iiGB3RvJvAoR9514U80geQgg58J2cxrpM0NFio7up8Vs7R58/jIOl0p/ds8um6wbpz1MdFJOwzL9I2ST/wH/blQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708820329; c=relaxed/simple;
-	bh=t0Whknsd1rGK9WjcBPJS2L+1+d1bj/rB5MlxkCLpJD0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uU/7BicMLwohv8sxW4ST+SdJ7LltrEB6Qi1H5zfVN9aibn4bRkAiegXWYlZOmqRMuqrSptpOv99yjLB1UVsqoTTXp9NKbwI9EYyX/DBDFVs7tNWJgbyDw+fh+u2ULdCqFFvJBEeicufW4zPEZdjne0WQNfs8BvaYhb0/ZouVvyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link; spf=pass smtp.mailfrom=spawn.link; dkim=pass (2048-bit key) header.d=spawn.link header.i=@spawn.link header.b=qZUwava2; arc=none smtp.client-ip=185.70.40.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=spawn.link
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=spawn.link
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=spawn.link;
-	s=protonmail3; t=1708820317; x=1709079517;
-	bh=BahbE5CKCTdmjXFR2X7BjIhEsp3u+hubVspL4UCDtP8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=qZUwava2T9473lT+lmu2sgFJYbp2WeswytrlrRx3GCLTdIS6v7Q8BTPOSzTVZdwaR
-	 uwyeiIPjRpeaNYTt+UXZYhF/YVClP2LFc8UwDo0YK/l4BIEE/f3CGmyNMp38AvPcsM
-	 BXuBCT3Uv5XNSG1dfUPSYIY5VXCxRredUbNxLXfz2BJB9h5cF95fpJ02+gUL912ORk
-	 9URiriGCfUMu/IVdqSnLXabpl66hZ8fTmacJLUQ6FmouxqXU5YYBOaOtl2A8zgIkvt
-	 9rIM09WEvZ7gaJYsh/S2PmvMzqeey7RBvzL36o598xHhqkv7+BdvW2la+TmpP5IWpL
-	 fyDPGwIxnOOLA==
-Date: Sun, 25 Feb 2024 00:18:11 +0000
-To: Miklos Szeredi <miklos@szeredi.hu>
-From: Antonio SJ Musumeci <trapexit@spawn.link>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, Amir Goldstein <amir73il@gmail.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, fuse-devel <fuse-devel@lists.sourceforge.net>
-Subject: Re: [fuse-devel] Proxmox + NFS w/ exported FUSE = EIO
-Message-ID: <f70732f8-4d67-474a-a4b8-320f78c3394d@spawn.link>
-In-Reply-To: <CAJfpegscxYn9drVRkbVhRztL-+V0+oge8ZqPhgt4BAnvzaPzwQ@mail.gmail.com>
-References: <d997c02b-d5ef-41f8-92b6-8c6775899388@spawn.link> <93b170b4-9892-4a32-b4f1-6a18b67eb359@fastmail.fm> <BAQ4wsbXlrpVWedBrk1ij49tru5E6jxB11oY2VoWH5C7scO9FgmKRkQIsVekwRNgfxxxwWwWapZlBGSGQFSjSVhMs01urB1nLE4-_o5OOiU=@spawn.link> <CAJfpegvSuYPm-oZz8D3Vn-ovA6GXesXEiwvHTPeG5CzXQPQWDg@mail.gmail.com> <5b7139d5-52fd-4fd0-8fa0-df0a38d96a33@spawn.link> <CAJfpeguvX1W2M9kY-4Tx9oJhSYE2+nHQuGXDNPw+1_9jtMO7zA@mail.gmail.com> <CAJfpegssrySj4Yssu4roFHZn1jSPZ-FLfb=HX4VDsTP2jY5BLA@mail.gmail.com> <6fb38202-4017-4acd-8fb8-673eee7182b9@spawn.link> <CAJfpegscxYn9drVRkbVhRztL-+V0+oge8ZqPhgt4BAnvzaPzwQ@mail.gmail.com>
-Feedback-ID: 55718373:user:proton
+	s=arc-20240116; t=1708824140; c=relaxed/simple;
+	bh=8MxMrxDjatcZ9KrlHxfNOi3v9JyPHdQJ3JtwZyYIXhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zt77nqfgl2MyzI0N3+BgYEVMenMMHKWX3WVO66WI4FHHUqqf33306BdiuM+KOJqKth5jobvfM+zjQQkda0BYEWkkKHUNvyxYk69XpXFkH0Ek4KuybcAcRsY0Z8xCEaFf9eZi4p/IUilPmvuuJNw2eT4rxZUqviiJHPXrphuQ0lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.94.2 #2 (Debian))
+	id 1re2ij-00HTZ9-Uf; Sun, 25 Feb 2024 08:50:23 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Sun, 25 Feb 2024 08:50:36 +0800
+Date: Sun, 25 Feb 2024 08:50:36 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: David Laight <David.Laight@aculab.com>
+Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Thomas Graf <tgraf@suug.ch>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
+	"rcu@vger.kernel.org" <rcu@vger.kernel.org>
+Subject: Re: [PATCH 0/1] Rosebush, a new hash table
+Message-ID: <ZdqO3G6Fb4wYhVEj@gondor.apana.org.au>
+References: <20240222203726.1101861-1-willy@infradead.org>
+ <Zdk2YgIoAGOEvcJi@gondor.apana.org.au>
+ <4a1416fcb3c547eb9612ce07da6a77ed@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4a1416fcb3c547eb9612ce07da6a77ed@AcuMS.aculab.com>
 
-On 2/22/24 05:09, Miklos Szeredi wrote:
-> On Thu, 22 Feb 2024 at 02:26, Antonio SJ Musumeci <trapexit@spawn.link> w=
-rote:
->=20
->> I'll try it when I get some cycles in the next week or so but... I'm not
->> sure I see how this would address it.  Is this not still marking the
->> inode bad. So while it won't forget it perhaps it will still error out.
->> How does this keep ".." of root being looked up?
->>
->> I don't know the code well but I'd have thought the reason for the
->> forget was because the lookup of the parent fails.
->=20
-> It shouldn't be looking up the parent of root.   Root should always be
-> there, and the only way I see root disappearing is by marking it bad.
->=20
-> If the patch makes a difference, then you need to find out why the
-> root is marked bad, since the filesystem will still fail in that case.
-> But at least the kernel won't do stupid things.
->=20
-> I think the patch is correct and is needed regardless of the outcome
-> of your test.  But there might be other kernel bugs involved, so
-> definitely need to see what happens.
->=20
-> Thanks,
-> Miklos
+On Sat, Feb 24, 2024 at 10:10:27PM +0000, David Laight wrote:
+>
+> > Normally an rhashtable gets resized when it reaches 75% capacity
+> > so the average chain length should always be one.
+> 
+> The average length of non-empty hash chains is more interesting.
+> You don't usually search for items in empty chains.
+> The only way you'll get all the chains of length one is if you've
+> carefully picked the data so that it hashed that way.
 
-With the patch it doesn't issue forget(nodeid=3D1) anymore. Nor requesting=
-=20
-parent of nodeid=3D1.
+Sure.  But given the 75% capacity, you'd need a really bad hash
+function to get an *average* (not worst-case) chain length of
+10.
 
-However, I'm seeing different issues.
+> I remember playing around with the elf symbol table for a browser
+> and all its shared libraries.
+> While the hash function is pretty trivial, it really didn't matter
+> whether you divided 2^n, 2^n-1 or 'the prime below 2^n' some hash
+> chains were always long.
 
-I instrumented FUSE to print when it tags an inode bad.
+Even in the unlikely event of bad luck and everything bunches up
+together, we change theh hash function (through hash_rnd) every
+time we resize so you would expect things to even out after the
+resize event.
 
-After it gets into the bad state I'm seeing nfsd hammering the mount=20
-even when I've umounted the nfs share and killed the FUSE server. nfsd=20
-is pegging a CPU core and the kernel log is filled with=20
-fuse_stale_inode(nodeid=3D1) fuse_make_bad(nodeid=3D1) calls. Have to reboo=
-t.
+A rehash is also automatically triggered if the worst-case chain
+length exceeds 16.
 
-What's triggering the flagging the inode as bad seems to be in=20
-fuse_iget() at fuse_stale_inode() check. inode->i_generation is 0 while=20
-the generation value is as I set it originally.
-
- From the FUSE server I see:
-
-lookup(nodeid=3D3,name=3D".")
-lookup(nodeid=3D3,name=3D"..") which returns ino=3D1 gen=3Dexpected_val
-getattr(nodeid=3D2) inodeid=3D2 is the file I'm reading in a loop
-forget(nodeid=3D2)
-
-after which point it's no longer functional.
-
-
-
-
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
