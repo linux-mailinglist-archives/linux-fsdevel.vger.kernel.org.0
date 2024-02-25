@@ -1,85 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-12696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F819862907
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 04:53:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D602086291E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 06:01:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC1AF281FFA
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 03:53:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B184281FB2
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 05:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B656AA0;
-	Sun, 25 Feb 2024 03:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B23F9450;
+	Sun, 25 Feb 2024 05:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qyzi2t2l"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rFDRrDPf"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00A328F1;
-	Sun, 25 Feb 2024 03:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C5F8BF7;
+	Sun, 25 Feb 2024 05:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708833201; cv=none; b=QAsApYLTfc5BPEsPQwMIgFgO4FDvbPhNV7c88sGSsNeRoVisaX1/qIgjRM5FWtMNX7VcfQY3BTU53BEPqDg1oNqhqGYp+Ay698mskLrJ16PYUsO0JBB0Dg9uujMnDmqEDUK6IZjI4corZSQO+R+9dkbUpjbfGICFbjscYrBiNE4=
+	t=1708837287; cv=none; b=lxUfIIvK0sI6/YZ8HWRO9wJXs5hkrEAJOO76zTvhAdUfb0VygLCIXMOEb83v3Qwnl7J9M+mezWK2+H1rZAi4XJVUwjhbu5uOVpCZQcI+syFO4uWzlmLRCYdAIcco6VfLMnfX7IQoHPDtR6hEOir8GjbL3IRFIyBXR/mQXLt46pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708833201; c=relaxed/simple;
-	bh=F6vftM2HPJ8p+RYO+nyfuI65MLY2TTCXZc5JFILU3xA=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TYR8guvWQ8dGhRDQ3BvRaP3DoIu8rnUSnGuW7cFyE9CxOzgk1oDrhOLhuRZtrhAM5n/X1ot8FdifoV1islxVxr+QLq/nZE/Lf8Q8KGzdn2YbKMy/XcW3ncHZ8a/wFGXuVuzcjdwz36crFfijUOSaSbZ1gNLll8EB6zTfTRKxgDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qyzi2t2l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4247EC433A6;
-	Sun, 25 Feb 2024 03:53:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708833201;
-	bh=F6vftM2HPJ8p+RYO+nyfuI65MLY2TTCXZc5JFILU3xA=;
-	h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-	b=Qyzi2t2lulHWB6gJY3MezHuJm/VDo8E4YOQqMEh+hjeEyzA5CsO2zHO/wgHB9LF5s
-	 bME1HQVl56eCmNuHsL4V9I4SJTCe61/3iowpb5LSx3RVcnZeNrmpLVdVrOO325WXDm
-	 fZyZoVELt6Vs9GvyUYhBUnEHNsATLJBkBQ533WI63IDh09s+xdQHcc814Q7MDvziKo
-	 Rm5lhwdYlGCsnPcj33ENnqfzx/KAXI+57uzyjsB9kCUVAsqL2O7JFVhfC1AQ9/Y0PK
-	 pV+Y/2tvR3cIt5ORPbmygQ8t9P8mGHvu26Q0NiyVgZmHbSMYmw6Toqfwf69+u/4I71
-	 VBB3TzMUv2+6g==
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-6e49332d014so316109a34.3;
-        Sat, 24 Feb 2024 19:53:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWFX48qac5d8CY/Ue+wElKMyF8KgGoK94ulddqTCQ5GqYT6YNOf/vUrGB3mnjvdb2asYDPUdhy6snaTlpMTrpu59pmb8GMV78ewkaCP4THvqRHVWyfavwxLJo72rECKtWOn81BgZtvjkaK/Nw==
-X-Gm-Message-State: AOJu0YxJ6UL03QZ4MW3xvo/cJ/NoG7XeDKlnxu7nu6gNB2s08ONfTYdS
-	1O6iNR16Y2fJRGalQeHtCOVBrwuidnLRs18FDrxikgM3cgaPygIojaGvAvHqnDS3M9D+tfcOiG3
-	cY55wO/F21Nck17aaihnzWzuPwmQ=
-X-Google-Smtp-Source: AGHT+IEY8bmu/ADERIYfcAcW72NKdjxEWQ1Xl7Q6LIrlQ9QtIuS0T/ius1jFVisYmAhFYie1O04ctUoGI1mPj66IHMw=
-X-Received: by 2002:a9d:6955:0:b0:6e4:92a8:1fae with SMTP id
- p21-20020a9d6955000000b006e492a81faemr2392454oto.0.1708833200511; Sat, 24 Feb
- 2024 19:53:20 -0800 (PST)
+	s=arc-20240116; t=1708837287; c=relaxed/simple;
+	bh=fGZltGZNoJBL0qVbGmPCoIkPh0GK+3Eoei2TVfZIXgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o6Yb3/FAX7waF5yK+tgKGcOTY+lcPrIZouUGPTWDkY3xXVHVmCGarSHmwbub89tp15x1ckiwewHeVTbDUn0HNV5MuCsAmZM/ulp2hOJXB0ff50lyYVGHWUkfg62V7COVW6oeio5o5hG8KOwC1YhJNPrXWBGCjoI5w/FXlgHju+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rFDRrDPf; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=s5ZqZD7A6lH7mWMZnVXwTZc0c5NMrcq/moxPl8tGVLs=; b=rFDRrDPf8tWfYxe+lK4UGzVEDL
+	xGoCs8oYxMni+++XQVt4UltsjPu0WZMp8RJe/6YA9aYCak6FucCUSy4cfUFniup07o59MJccPJ/4Z
+	BSdCt/BWIET2vV8cjvdujdTd5kNLenAeV09P/GhWOMIe6numy2xPzJiUkmY3PR6lbAP0TP0LrfU/a
+	/MbKWjMgIbJPjiPr9sQVymuuKBa1VCnTpxY2ohh0hvN964qDY9+3/y7IYiDTrGAArbhrhm3MNhOWU
+	AyqViMWne7YOY3o8h9uy90VlFWFdflh5HuK4syEpROrKEdRYpq5cvhCOhtbpMoLva2+2rstZ9jgBF
+	KH5dEY9g==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1re6db-0000000D1Ox-0Pfe;
+	Sun, 25 Feb 2024 05:01:19 +0000
+Date: Sun, 25 Feb 2024 05:01:19 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: David Laight <David.Laight@aculab.com>,
+	'Herbert Xu' <herbert@gondor.apana.org.au>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Thomas Graf <tgraf@suug.ch>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"maple-tree@lists.infradead.org" <maple-tree@lists.infradead.org>,
+	"rcu@vger.kernel.org" <rcu@vger.kernel.org>
+Subject: Re: [PATCH 0/1] Rosebush, a new hash table
+Message-ID: <ZdrJn0lkFeYGuYIC@casper.infradead.org>
+References: <20240222203726.1101861-1-willy@infradead.org>
+ <Zdk2YgIoAGOEvcJi@gondor.apana.org.au>
+ <4a1416fcb3c547eb9612ce07da6a77ed@AcuMS.aculab.com>
+ <2s73sed5n6kxg42xqceenjtcwxys4j2r5dc5x4fdtwkmhkw3go@7viy7qli43wd>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Received: by 2002:a8a:c10:0:b0:51d:7041:beda with HTTP; Sat, 24 Feb 2024
- 19:53:19 -0800 (PST)
-In-Reply-To: <20240224134803.829394-1-chengming.zhou@linux.dev>
-References: <20240224134803.829394-1-chengming.zhou@linux.dev>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Sun, 25 Feb 2024 12:53:19 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd_HUcSrFv1q6HvPkOBdENkK+Hjih-KiwZMc97mPaiGPHA@mail.gmail.com>
-Message-ID: <CAKYAXd_HUcSrFv1q6HvPkOBdENkK+Hjih-KiwZMc97mPaiGPHA@mail.gmail.com>
-Subject: Re: [PATCH] exfat: remove SLAB_MEM_SPREAD flag usage
-To: chengming.zhou@linux.dev
-Cc: sj1557.seo@samsung.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, vbabka@suse.cz, 
-	roman.gushchin@linux.dev, Xiongwei.Song@windriver.com, 
-	Chengming Zhou <zhouchengming@bytedance.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2s73sed5n6kxg42xqceenjtcwxys4j2r5dc5x4fdtwkmhkw3go@7viy7qli43wd>
 
-2024-02-24 22:48 GMT+09:00, chengming.zhou@linux.dev <chengming.zhou@linux.dev>:
-> From: Chengming Zhou <zhouchengming@bytedance.com>
->
-> The SLAB_MEM_SPREAD flag is already a no-op as of 6.8-rc1, remove
-> its usage so we can delete it from slab. No functional change.
->
-> Signed-off-by: Chengming Zhou <zhouchengming@bytedance.com>
-Applied it to #dev.
-Thanks for your patch!
+On Sat, Feb 24, 2024 at 10:18:31PM -0500, Kent Overstreet wrote:
+> On Sat, Feb 24, 2024 at 10:10:27PM +0000, David Laight wrote:
+> > I remember playing around with the elf symbol table for a browser
+> > and all its shared libraries.
+> > While the hash function is pretty trivial, it really didn't matter
+> > whether you divided 2^n, 2^n-1 or 'the prime below 2^n' some hash
+> > chains were always long.
+> 
+> that's a pretty bad hash, even golden ratio hash would be better, but
+> still bad; you really should be using at least jhash.
+
+There's a "fun" effect; essentially the "biased observer" effect which
+leads students to erroneously conclude that the majority of classes are
+oversubscribed.  As somebody observed in this thread, for some usecases
+you only look up hashes which actually exist.
+
+Task a trivial example where you have four entries unevenly distributed
+between two buckets, three in one bucket and one in the other.  Now 3/4
+of your lookups hit in one bucket and 1/4 in the other bucket.
+Obviously it's not as pronounced if you have 1000 buckets with 1000
+entries randomly distributed between the buckets.  But that distribution
+is not nearly as even as you might expect:
+
+$ ./distrib
+0: 362
+1: 371
+2: 193
+3: 57
+4: 13
+5: 4
+
+That's using lrand48() to decide which bucket to use, so not even a
+"quality of hash" problem, just a "your mathematical intuition may not
+be right here".
+
+To put this data another way, 371 entries are in a bucket with a single
+entry, 384 are in a bucket with two entries, 171 are in a 3-entry
+bucket, 52 are in a 4-entry bucket and 20 are in a 5-entry bucket.
+
+$ cat distrib.c
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+
+int bucket[1000];
+int freq[10];
+
+int main(int argc, char **argv)
+{
+	int i;
+
+	for (i = 0; i < 1000; i++)
+		bucket[lrand48() % 1000]++;
+
+	for (i = 0; i < 1000; i++)
+		freq[bucket[i]]++;
+
+	for (i = 0; i < 10; i++)
+		printf("%d: %d\n", i, freq[i]);
+
+	return 0;
+}
+
+(ok, quibble about "well, 1000 doesn't divide INT_MAX evenly so your
+random number generation is biased", but i maintain that will not
+materially affect these results due to it affecting only 0.00003% of
+numbers generated)
 
