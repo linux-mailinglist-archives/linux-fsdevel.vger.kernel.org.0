@@ -1,96 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-12726-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE04862C45
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 18:32:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17240862C6C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 18:58:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3CDAB20FA4
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 17:32:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18AA61C20AFE
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 Feb 2024 17:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453BA1862E;
-	Sun, 25 Feb 2024 17:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEB6F1B800;
+	Sun, 25 Feb 2024 17:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="sYfZStVJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1Tc6/0f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D179217C7F
-	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 17:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB431AAA5
+	for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 17:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708882366; cv=none; b=FuVqLEZ/1Jbcjpd5j/AP6mra6R1xjTFYddQoH30D3gLhHZmnABc+tM/NeiE4N5Ylv2wqhDvxAOzgeTBaNkrhB/nPW95VED03xtpOuKEBvdbrtCqun51AwE0j6XfdRTE9fkOvmsStJZULcqQntRpk4iPPONNVkSRRI1rjAB/z5+I=
+	t=1708883890; cv=none; b=htmYe81DF7Ruhv8SwIJwgGSFU0wUV5FAYnq9AiPzYaru2FvA+9qABjK+YVnzLvimFoFbmQDhKGu3/gJNSNg/AyVFPXVHlPVm2TMfCBMbkxuNe7uigMBra5ErgjM0kkjXtbmCaVQaU2UNB/6MzfwVx40gsy1NQhW7b9CNgqs2YiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708882366; c=relaxed/simple;
-	bh=Lj1ttRp5N51ASzgMUZRMLAcAAdD/2FW5n4fJl72U7y4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PkWwb5uHkmj9NvHBCCdx9jp8eNfviMGS0i6iG9CKfwgai8UwCM2pwzBoBMNFoNl+EKJF0Mkuz2wL3aIbExTpbk9/4dz01nVcFAR5ahZvemOBsVyjpiJGlPWx1CS1C91FUeNqtZjX0GM2uo8G1hnSB4XCFXyE5AD5cprwd3Bduzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=sYfZStVJ; arc=none smtp.client-ip=95.215.58.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 25 Feb 2024 12:32:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1708882361;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=48kxm1i6cHsIkepVpM1ROlIBeKHmlm9Uv4gXRmTJ3LM=;
-	b=sYfZStVJ55kmFRBLPasdaCrFUnTHQ786jA3sSk4ys8XnRkmo6P3BUnlD4dk+1AoLLbM4cA
-	hvRfsndXdCe4ExffmLTmBefPQjNbbzisfhd26yLqPYIkEfOFagi4Siqf6OxgMtoDvAI+Nh
-	Nl2fHAIYj1lTlkQUqZvf1Uan2RIqZjw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>, 
-	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, 
-	Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <2impeknscqi2dg3ik6woohow26wjlfnv4oaevuqa7o2uyc3ppz@pwpnppp54jnh>
-References: <Zdkxfspq3urnrM6I@bombadil.infradead.org>
- <Zdlsr88A6AAlJpcc@casper.infradead.org>
- <CAHk-=wjUkYLv23KtF=EyCrQcmf9NGwE8Yo1cuxdaLF8gqx5zWw@mail.gmail.com>
- <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb>
- <Zds8T9O4AYAmdS9d@casper.infradead.org>
+	s=arc-20240116; t=1708883890; c=relaxed/simple;
+	bh=f2wccudOq6Dn3le89jcettlTkriP9aJ1nxHNETB4VE8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=af//oyrJDL4F69pITwK53s0KKDQmoXOmIvyhsd17LMpkFGHiz40CMqPkdkdti/r14Ov2ZFZwSfAdEtlOICL5wL6rTant2l0CnWzThGwY1yTkLCHL6ifhLBSV9Y0taXqimAL9/JxuNG/0JDU998JzSabYS4a7WsU0hE8Y9TCvh5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1Tc6/0f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 106DDC43390;
+	Sun, 25 Feb 2024 17:58:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1708883890;
+	bh=f2wccudOq6Dn3le89jcettlTkriP9aJ1nxHNETB4VE8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=G1Tc6/0fJNoB7YhzYy2b6ldRf4/lAucrumLovi7dEj2VJZa67RuO07us/CkuMOjf9
+	 HCemnDRR486fgz6jqvLqMKePJnKtvp7AqXy+vPSclqYZetT56d/XLb62xpVBiadnyN
+	 tlHWTTHdRd723mBz4K9lVG1l+5dxTONZHJKgd67lPHbX6ovATiqEqbMJWSZ9a8LAsx
+	 ggsx/8l/pSyFuj1I5NAXc9Uetn3uAnChBrgS+Qfcw29n4AQbsfB9swb62A+OdEYBeX
+	 x4zuVY9pGBrCY058smghoz6vHdXp3XI4+oG98sbZmxXb0EXa46EYF0qa6Jn5l3QUzS
+	 8qhGVNUkmBsMg==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E9103D84BB9;
+	Sun, 25 Feb 2024 17:58:09 +0000 (UTC)
+Subject: Re: [git pull] rcu pathwalk fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ZdrpXmWQYzExV5m3@duke.home>
+References: <ZdrpXmWQYzExV5m3@duke.home>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ZdrpXmWQYzExV5m3@duke.home>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes.pathwalk-rcu-2
+X-PR-Tracked-Commit-Id: 9fa8e282c2bfe93338e81a620a49f5903a745231
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 66a97c2ec95359550987078648cf069bdd3e0f53
+Message-Id: <170888388995.1439.11115354457629108460.pr-tracker-bot@kernel.org>
+Date: Sun, 25 Feb 2024 17:58:09 +0000
+To: Al Viro <viro@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zds8T9O4AYAmdS9d@casper.infradead.org>
-X-Migadu-Flow: FLOW_OUT
 
-On Sun, Feb 25, 2024 at 01:10:39PM +0000, Matthew Wilcox wrote:
-> On Sun, Feb 25, 2024 at 12:18:23AM -0500, Kent Overstreet wrote:
-> > Before large folios, we had people very much bottlenecked by 4k page
-> > overhead on sequential IO; my customer/sponsor was one of them.
-> > 
-> > Factor of 2 or 3, IIRC; it was _bad_. And when you looked at the
-> > profiles and looked at the filemap.c code it wasn't hard to see why;
-> > we'd walk a radix tree, do an atomic op (get the page), then do a 4k
-> > usercopy... hence the work I did to break up
-> > generic_file_buffered_read() and vectorize it, which was a huge
-> > improvement.
-> 
-> There's also the small random 64 byte read case that we haven't optimised
-> for yet.  That also bottlenecks on the page refcount atomic op.
-> 
-> The proposed solution to that was double-copy; look up the page without
-> bumping its refcount, copy to a buffer, look up the page again to be
-> sure it's still there, copy from the buffer to userspace.
-> 
-> Except that can go wrong under really unlikely circumstances.  Look up the
-> page, page gets freed, page gets reallocated to slab, we copy sensitive
-> data from it, page gets freed again, page gets reallocated to the same
-> spot in the file (!), lookup says "yup the same page is there".
-> We'd need a seqcount or something to be sure the page hasn't moved.
+The pull request you sent on Sun, 25 Feb 2024 02:16:46 -0500:
 
-yes, generation numbers are the standard solution to ABA...
+> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes.pathwalk-rcu-2
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/66a97c2ec95359550987078648cf069bdd3e0f53
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
