@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-12777-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A440E86703C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 11:14:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07838867038
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 11:13:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A6D51F29DA9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 10:14:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ADB41C2723C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 10:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86F36BFAC;
-	Mon, 26 Feb 2024 09:50:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3124A6A8B0;
+	Mon, 26 Feb 2024 09:50:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="KD2XCj9V"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="lioYz3tH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87BBD6AF99;
-	Mon, 26 Feb 2024 09:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C05E6A32A;
+	Mon, 26 Feb 2024 09:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708941029; cv=none; b=DLIjrDVOf6ua7iT635cNmqhs8sV7h9mqStBF1v0h1BS9T5frf4MwYjXXdpOS0JUYD6Egn8CNRw8FehJWcTwHfZN0UdvmNu3+z+Axp9uIuEdBLZQ9CpyH3f28Hz202FGPcv8gaT1BcpxTxAZGz6QBUHs8L84ampTyjVa+52EIJPQ=
+	t=1708941026; cv=none; b=SZJoHzQyFmszj29uQRFLwfaRoB0whUZuewvNEUlw03mmlTuIo/dhbrWzucpOiLC/W33hvAV3LmzMvFhw61apKj8NpRclYBO2UJ90hUinvJeSqWcF7fg6CvrXTDUtyqkOfMh0k5jzvhfT86sPzhvEOfKXshnE8Kq4aprfhXASAmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708941029; c=relaxed/simple;
-	bh=OkZ5Z/dMHgJgyvo1QDUn1hTxnoRLA1+g9AD18CeopuA=;
+	s=arc-20240116; t=1708941026; c=relaxed/simple;
+	bh=RpGDv7xjt1Tn0NAFmnUJ4dRChi0PW0zUu2AGhx/ey2I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QeNx/Qt7kdIHG6V7WXz/Fte/Zp8tlokRbyReQ7pNf5Wd7aYRn+CaquV0ABCXabSdSwjEe2rFhqJbyOtv1Veqz+fBqHoWjqc3hrW0T6SibeV3U6E9v0lxiLb3iyyyJ/TUGSM/dpiTb9qMgfSzciUGIcCjGtcdI3M+fcNYefZN6dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=KD2XCj9V; arc=none smtp.client-ip=80.241.56.171
+	 MIME-Version; b=CPjqPBxIJ5p1cFzjzqy+zmx1RXKe0fFseIEJNmsa5St3wfZrpmahGSPdSUej1xrHIPdDn/WKSnncbzVo1zPq7Q0QHZ+xFiF5HywWBD+SSlwahESjf1vVyAiKFVkSbDUT/SftSnl7KQhqKS6P4R24zEP7LykgXovsQ5EOC3Aj42o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=lioYz3tH; arc=none smtp.client-ip=80.241.56.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4TjwpK6z92z9sZG;
-	Mon, 26 Feb 2024 10:50:17 +0100 (CET)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4TjwpP5mYxz9sTv;
+	Mon, 26 Feb 2024 10:50:21 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1708941018;
+	s=MBO0001; t=1708941021;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iQD+U8fQrLibnL7zMC26FszgKpFB3C91GewFjdSXc68=;
-	b=KD2XCj9VwH1Vmpc+ALJcr0/VQKCCQPTIil6owvpnHMNdIMgpDQ5W7a/HRkd3U4cOUjMCX0
-	I4cJnFFlwHSCV4Gbv2el17sDjgFvxM7cdzOZPo6QJ8vgcX2taBay3wltwWNxNcF3U5fNAJ
-	L8WPmXdMxUgfXsQGWdlIcNLiYx0iBLpwGhhhEwubhYtDui7L8T/F+UPO5HJSx9SAcTtUtj
-	FTQyNmAv5jqbNtdJ8Jzm5aGVJPAxwFkT36Nxj00z87HVHNTkqX+nYD5rBwtUg1Tiwon+Z2
-	YDfHCR6EtjB97Z3JdcRcZz++fzTQZzvFdjIDjH+KLPVowAREtTyhjqfTTaSEJA==
+	bh=F3Xg5bE7lOUEiWrLgvJkawBGempm7FqinU/8gfujPB8=;
+	b=lioYz3tHK8mjB7lKM1lOktEID4fLFlKa66xI9EIqMo9+mkBUeo8GueQEQuC6zRm8ZamQP7
+	YK5fiGlW4NBkooEUgInJLZGSECi/OX9C9RUl0wh7Uw+csnMhp4o1l1O/k7whwdYIjgCop2
+	G84nRQMuLf03YLlcgRix64u5MIviQ4C/cbo97lzDga4/0uiYD16VdRZByvCGW9ojfUJhEw
+	ZfZvn0h4fRtSSxdNeA2wX+DyJIue/KNcckCgmlUXE54kwz+qVZKW26w+EIO37eSWQ2RTTj
+	VvnAkngviyrXkfpus7MhYeIbM9ltg0nQQ8kub4GjpwHQPENVApoQGJJDkw8Q4w==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
@@ -64,9 +64,9 @@ Cc: linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	willy@infradead.org,
 	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH 08/13] readahead: allocate folios with mapping_min_order in ra_(unbounded|order)
-Date: Mon, 26 Feb 2024 10:49:31 +0100
-Message-ID: <20240226094936.2677493-9-kernel@pankajraghav.com>
+Subject: [PATCH 09/13] mm: do not split a folio if it has minimum folio order requirement
+Date: Mon, 26 Feb 2024 10:49:32 +0100
+Message-ID: <20240226094936.2677493-10-kernel@pankajraghav.com>
 In-Reply-To: <20240226094936.2677493-1-kernel@pankajraghav.com>
 References: <20240226094936.2677493-1-kernel@pankajraghav.com>
 Precedence: bulk
@@ -79,97 +79,41 @@ Content-Transfer-Encoding: 8bit
 
 From: Pankaj Raghav <p.raghav@samsung.com>
 
-Allocate folios with at least mapping_min_order in
-page_cache_ra_unbounded() and page_cache_ra_order() as we need to
-guarantee a minimum order in the page cache.
+As we don't have a way to split a folio to a any given lower folio
+order yet, avoid splitting the folio in split_huge_page_to_list() if it
+has a minimum folio order requirement.
 
 Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Acked-by: Darrick J. Wong <djwong@kernel.org>
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 ---
- mm/readahead.c | 29 +++++++++++++++++++++++++----
- 1 file changed, 25 insertions(+), 4 deletions(-)
+ mm/huge_memory.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/mm/readahead.c b/mm/readahead.c
-index ef0004147952..73aef3f080ba 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -213,6 +213,7 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
- 	unsigned long index = readahead_index(ractl);
- 	gfp_t gfp_mask = readahead_gfp_mask(mapping);
- 	unsigned long i = 0;
-+	unsigned int min_nrpages = mapping_min_folio_nrpages(mapping);
- 
- 	/*
- 	 * Partway through the readahead operation, we will have added
-@@ -234,6 +235,8 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
- 		struct folio *folio = xa_load(&mapping->i_pages, index + i);
- 
- 		if (folio && !xa_is_value(folio)) {
-+			long nr_pages = folio_nr_pages(folio);
-+
- 			/*
- 			 * Page already present?  Kick off the current batch
- 			 * of contiguous pages before continuing with the
-@@ -243,19 +246,31 @@ void page_cache_ra_unbounded(struct readahead_control *ractl,
- 			 * not worth getting one just for that.
- 			 */
- 			read_pages(ractl);
--			ractl->_index += folio_nr_pages(folio);
-+
-+			/*
-+			 * Move the ractl->_index by at least min_pages
-+			 * if the folio got truncated to respect the
-+			 * alignment constraint in the page cache.
-+			 *
-+			 */
-+			if (mapping != folio->mapping)
-+				nr_pages = min_nrpages;
-+
-+			VM_BUG_ON_FOLIO(nr_pages < min_nrpages, folio);
-+			ractl->_index += nr_pages;
- 			i = ractl->_index + ractl->_nr_pages - index;
- 			continue;
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 81fd1ba57088..6ec3417638a1 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3030,6 +3030,19 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+ 			goto out;
  		}
  
--		folio = filemap_alloc_folio(gfp_mask, 0);
-+		folio = filemap_alloc_folio(gfp_mask,
-+					    mapping_min_folio_order(mapping));
- 		if (!folio)
- 			break;
- 		if (filemap_add_folio(mapping, folio, index + i,
- 					gfp_mask) < 0) {
- 			folio_put(folio);
- 			read_pages(ractl);
--			ractl->_index++;
-+			ractl->_index += min_nrpages;
- 			i = ractl->_index + ractl->_nr_pages - index;
- 			continue;
- 		}
-@@ -503,6 +518,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
- {
- 	struct address_space *mapping = ractl->mapping;
- 	pgoff_t index = readahead_index(ractl);
-+	unsigned int min_order = mapping_min_folio_order(mapping);
- 	pgoff_t limit = (i_size_read(mapping->host) - 1) >> PAGE_SHIFT;
- 	pgoff_t mark = index + ra->size - ra->async_size;
- 	int err = 0;
-@@ -529,8 +545,13 @@ void page_cache_ra_order(struct readahead_control *ractl,
- 		if (index & ((1UL << order) - 1))
- 			order = __ffs(index);
- 		/* Don't allocate pages past EOF */
--		while (index + (1UL << order) - 1 > limit)
-+		while (order > min_order && index + (1UL << order) - 1 > limit)
- 			order--;
++		/*
++		 * Do not split if mapping has minimum folio order
++		 * requirement.
++		 *
++		 * XXX: Once we have support for splitting to any lower
++		 * folio order, then it could be split based on the
++		 * min_folio_order.
++		 */
++		if (mapping_min_folio_order(mapping)) {
++			ret = -EAGAIN;
++			goto out;
++		}
 +
-+		if (order < min_order)
-+			order = min_order;
-+
-+		VM_BUG_ON(index & ((1UL << order) - 1));
- 		err = ra_alloc_folio(ractl, index, mark, order, gfp);
- 		if (err)
- 			break;
+ 		gfp = current_gfp_context(mapping_gfp_mask(mapping) &
+ 							GFP_RECLAIM_MASK);
+ 
 -- 
 2.43.0
 
