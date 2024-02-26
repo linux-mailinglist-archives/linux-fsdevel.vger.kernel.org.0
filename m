@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-12875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2741868233
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 21:56:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F01868237
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 21:57:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7F4289AF2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 20:56:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D0801C23609
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 20:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2622813246A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DEB132496;
 	Mon, 26 Feb 2024 20:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="YuhI4fCt";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="glx5DJxV"
+	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="PsGtgEud";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MXQaLIK2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6F213172E;
-	Mon, 26 Feb 2024 20:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8207113173A;
+	Mon, 26 Feb 2024 20:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.111.4.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708980974; cv=none; b=a1yJ+ONs5k1wa1PR6FCTBMvHB6bQQKX1LXq4HkCApcUMR2ImG5h8DoeNwALd9Q8eyuqN0wauYHtdp6XjDHpnnjmwe6tqRCdfhLtOzd1oDaybDm8vvDMT3gE+Y6mcrnXWAkrZpYRdYK4gad36yDKJX+1w4Fm21EzYTz7zFX8Jyyk=
+	t=1708980975; cv=none; b=adio0bnwDO7zp9R+ZmuCsQ/KdMWV6jjod1IuwIV+zKJxgMM1rCZhe1zb7bz2JYl4oEcvmT0ze9uGu7aQXJZxjgICezpqueMDQ6eiQc1TomjOtAKkLnWOW8DshKdS+Z1zzBNzKuRz+d6XkT4wkaOXI1LPSE0Pc1Hpn4XOu6NLfME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708980974; c=relaxed/simple;
-	bh=gkVdN6Ju83sqaexnUoOXBzO/NLvcTIiVWHWKKnGtjD0=;
+	s=arc-20240116; t=1708980975; c=relaxed/simple;
+	bh=HbrSwnkkjzgDPr9Qqs/XsufXHKtUIzBk6wsYMI1kzqY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g7rhxbKoXo+rx0VZMrZc5IznObuAw6E2TSsxHri3NItTrx3lsBU2+/zABDEVKneCuv7ekNIhPJrRAkO/NEGP1A111FquXFttqapFveKIHvoQifMZX6ikT3cb4Bm77PJ7ivWDOjFLgR+J84g5vNtkGYQ/SQZHSmrHNxjBeYsBw44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com; spf=pass smtp.mailfrom=sent.com; dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b=YuhI4fCt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=glx5DJxV; arc=none smtp.client-ip=66.111.4.29
+	 MIME-Version:Content-Type; b=OZFTAulElikRLo8Aaybe96XnzAE8A7B/OZRPl6QkejgnPKADrxKakUA3iWIZCa8HtIENNhx6HoDnZcfEQ+r2/dOWORhcnLaelkPzdwoImPrOD12rlK+zUQSTsxkUcGDCGzNJ+FMhqi52w1EyGlMOwn6hjnGzpCwoBLYIfWo7qPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com; spf=pass smtp.mailfrom=sent.com; dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b=PsGtgEud; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MXQaLIK2; arc=none smtp.client-ip=66.111.4.29
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sent.com
 Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailout.nyi.internal (Postfix) with ESMTP id B3D865C0048;
-	Mon, 26 Feb 2024 15:56:11 -0500 (EST)
+	by mailout.nyi.internal (Postfix) with ESMTP id 845035C0083;
+	Mon, 26 Feb 2024 15:56:12 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Mon, 26 Feb 2024 15:56:11 -0500
+  by compute2.internal (MEProxy); Mon, 26 Feb 2024 15:56:12 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1708980971; x=1709067371; bh=M9xzwbyGsmIoI4XohAUvU/zFDUrkDEXSeps
-	On39+bAw=; b=YuhI4fCtxyT7k5hVmSOEXMQbymAhui8JNegspEpvv/VYXQL41Ft
-	pj6ydaFD0U8iL9cudlW457UYRQv8fEQ15V4gtUgJTlULXYCw1W+oHH7tpowniDfd
-	72lYDV66Ftv8Dihhg5hNlSrvNKyVSES3im67x3NJFo9TOSe5pkEVgSN0kxnXz9iS
-	a2jmX5OXUupg8j2TZ0Wn/rQuxuqFPctJ3PsIQ2HiU53bTckPiZG5ROcg/fK+r2rp
-	J4N6AHpbL4atGUiQ8tXxdfMqi+gal2Qc5fnKvro8o51nEGdfoFOOE+iuAKvvsSRv
-	7s4EaXf/bQ1fq/pkTQTq+ZndUEfxw8ypyqw==
+	1708980972; x=1709067372; bh=k4tW1Ix2BuSNkN1WHXYSmN5X0ZeSMgYeZ0g
+	G0yp9vIY=; b=PsGtgEudtl5OWZIMN/QmYcFTzFIwskYJv2SShnXgHjfbIBRHd6c
+	tLFxkANerh0TDSw0aIJ+BRFw3TtwrtnEWmHqtjReaka5XRT4kCVu+/JxTHJUARVP
+	TTaS/ervzETdMoGvlOvQkGU5Vr8k5tDe2HWq4O22UqWyxXceqtEs8oF4xp6w3ILj
+	E+Nn7cDMv2KP+WObR1wfXgZt4SVjLn62IgkbUTVyraMDgD4LC0tnPeSgCrhiQXlI
+	dpijTzey8JMArvsD76watmwYOLbgBoLoa6lmS0djEggreXdhpxLkoa+zAeqDTiVh
+	XpV3/H7xUFtWwTsw2W+RLI8tAthTa0kVP7w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
 	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1708980971; x=1709067371; bh=M9xzwbyGsmIoI4XohAUvU/zFDUrkDEXSeps
-	On39+bAw=; b=glx5DJxVZIKumkxaIHAXIDP5YXKd5Im2fQ/t9CFv2OmBqMUwTJS
-	SnpR5h2I0Ej/cY1kh6BRa4tCtDUgFzifVy7a/5qEul1MiRrxi9sq7VEewBj2bGwE
-	dl13XHV1xbfKMBo+3KRdI7QlYUMK59X0qZ9IVut7HFp7dV5/IoM/cAxgFwQFdVgm
-	Z77LLs9kJU8sYOmfV9Zm8ZvyR7hriEWUq3flyWvA0MM8r3mveLfT/qRIzqOHuvau
-	llFl9HkR6kH1cToAl2JyeQsEJvO7f92ZErYrt3vo0FlHbsQmiSfga0yHN7qGhXbd
-	lq6rkbeM3LiWAQWYeyS6T1JVDO69Ksg7fzw==
-X-ME-Sender: <xms:6_rcZR9jk4SAPb6k8eRjSso_MIVsT5ynp7Cfz7ZOmbNEOilXKIiLZw>
-    <xme:6_rcZVsqWWjy7ohwlerWF0HARe7Sq5Dz_Wsfdx1wBOAcJhHVe6193i3U9g6Ikffq6
-    JWrtOwfql3LOwe6xQ>
-X-ME-Received: <xmr:6_rcZfAiSXdKgUtIkaPCjzLq2cHWNxVNSLstZrfGuuZHeq8oLwSkYeJwjif63fmWBTNkXIM6MecZQM5w_RLpDclPBD-j6m-KP2IOVg5i42COTJ0H5dSAGZdG>
+	1708980972; x=1709067372; bh=k4tW1Ix2BuSNkN1WHXYSmN5X0ZeSMgYeZ0g
+	G0yp9vIY=; b=MXQaLIK2tOLWX7tSDG9quAtyz0XtE5uEWLvjXAt6WWz4fuCtIq+
+	iW5V2mlkR6XtmBDh4IXp0NZH4C8YwuqKervIeM/9EVpHBYcPoWcIkSre/3nQS4z4
+	deN9QC9eqGj98qO7roEFIt9SV8tO7akXARi4gsDw06jxzAwz5zubvukbV7i4gDO/
+	zRNBPrfZQzljXqj9vbHt0+V2dLDxewtoVWSQgxCBKRL013TC1g1nj0dxzgkun57/
+	ZLz8/iUoCZO+anVVQtkHxMUVyw526I4oYS5ikt412Vg+KTvUHxFRAI9uUJp+t7bp
+	th0cOJ+ulQTE92LtOYFZ9c3xS3VyDo9UjLA==
+X-ME-Sender: <xms:7PrcZU0ifJ4I5pZNbW2NZYN6H3I9UUxki66zGT02yaSocSopZ4iSLA>
+    <xme:7PrcZfHkna47spKk2MIVO1mvaOBBGLMfDrKusGknW4XaomOCJNBAZBZ5ouIOszQok
+    iH_B-1rg4EzsF4Cmg>
+X-ME-Received: <xmr:7PrcZc5YdzjJkD6nMCavHOZ-pRPMLO6wqZd_qEVMsJ-mwUYIjW_wYLF1O9joVoD1fvyG2mD_LC7dHZ4c5BsshCULb0RlezzHIbaFZZ5DH1faQNue3fOt26XU>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrgedvgddugedtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvvefufffkofgjfhhrgggtgfesthekredtredtjeenucfhrhhomhepkghi
     ucgjrghnuceoiihirdihrghnsehsvghnthdrtghomheqnecuggftrfgrthhtvghrnhepje
     ekteekffelleekudfftdefvddtjeejuedtuedtteegjefgvedtfedujeekieevnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepiihirdihrghnse
+    uhhsthgvrhfuihiivgepvdenucfrrghrrghmpehmrghilhhfrhhomhepiihirdihrghnse
     hsvghnthdrtghomh
-X-ME-Proxy: <xmx:6_rcZVfsqhmn2SL_dVbzPs5MmRfIav2Ol_labDQnmABP8B9tISYnOQ>
-    <xmx:6_rcZWOPlAyZ-GpkbhCqeq--PFCqetp5lAvHbL6zS0UvNBvCK6TWYA>
-    <xmx:6_rcZXmbPl7_1mpMjHR_OLYdlPKe0Vk4Le2dZ7-JFdR9ltE-ZBWpmQ>
-    <xmx:6_rcZbytBVtTkNh8e14VcSdGq_xBiB98Y30tH-cHnJoPwLWfQb2nsw>
+X-ME-Proxy: <xmx:7PrcZd1PZQtwQ2j6frYdjibybcNgIfA-565Sop4WbwdFCI61-BIdUQ>
+    <xmx:7PrcZXFT42FNg6FwhBuzIn6aqcWYCHPiMJTvJ9n7b5I8_1cvLH6Wcw>
+    <xmx:7PrcZW-p1FUxAGvmuOwNcIWKZZL8piXgbbrsRcrmtmbuEUUFFZ__jA>
+    <xmx:7PrcZYLZUlOSFD3Sa2LBosbwe86fzuUF9nEUYN4V2WeOmPik1pCPWA>
 Feedback-ID: iccd040f4:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 26 Feb 2024 15:56:10 -0500 (EST)
+ 26 Feb 2024 15:56:11 -0500 (EST)
 From: Zi Yan <zi.yan@sent.com>
 To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
 	linux-mm@kvack.org
@@ -100,9 +100,9 @@ Cc: Zi Yan <ziy@nvidia.com>,
 	cgroups@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org
-Subject: [PATCH v5 3/8] mm/memcg: use order instead of nr in split_page_memcg()
-Date: Mon, 26 Feb 2024 15:55:29 -0500
-Message-ID: <20240226205534.1603748-4-zi.yan@sent.com>
+Subject: [PATCH v5 4/8] mm/page_owner: use order instead of nr in split_page_owner()
+Date: Mon, 26 Feb 2024 15:55:30 -0500
+Message-ID: <20240226205534.1603748-5-zi.yan@sent.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240226205534.1603748-1-zi.yan@sent.com>
 References: <20240226205534.1603748-1-zi.yan@sent.com>
@@ -124,93 +124,101 @@ is not power-of-two. Use page order instead.
 Signed-off-by: Zi Yan <ziy@nvidia.com>
 Acked-by: David Hildenbrand <david@redhat.com>
 ---
- include/linux/memcontrol.h | 4 ++--
- mm/huge_memory.c           | 5 +++--
- mm/memcontrol.c            | 3 ++-
+ include/linux/page_owner.h | 9 ++++-----
+ mm/huge_memory.c           | 2 +-
  mm/page_alloc.c            | 4 ++--
- 4 files changed, 9 insertions(+), 7 deletions(-)
+ mm/page_owner.c            | 3 ++-
+ 4 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 4e4caeaea404..173bbb53c1ec 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -1163,7 +1163,7 @@ static inline void memcg_memory_event_mm(struct mm_struct *mm,
- 	rcu_read_unlock();
+diff --git a/include/linux/page_owner.h b/include/linux/page_owner.h
+index 119a0c9d2a8b..2b39c8e19d98 100644
+--- a/include/linux/page_owner.h
++++ b/include/linux/page_owner.h
+@@ -11,7 +11,7 @@ extern struct page_ext_operations page_owner_ops;
+ extern void __reset_page_owner(struct page *page, unsigned short order);
+ extern void __set_page_owner(struct page *page,
+ 			unsigned short order, gfp_t gfp_mask);
+-extern void __split_page_owner(struct page *page, unsigned int nr);
++extern void __split_page_owner(struct page *page, int order);
+ extern void __folio_copy_owner(struct folio *newfolio, struct folio *old);
+ extern void __set_page_owner_migrate_reason(struct page *page, int reason);
+ extern void __dump_page_owner(const struct page *page);
+@@ -31,10 +31,10 @@ static inline void set_page_owner(struct page *page,
+ 		__set_page_owner(page, order, gfp_mask);
  }
  
--void split_page_memcg(struct page *head, unsigned int nr);
-+void split_page_memcg(struct page *head, int order);
- 
- unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
- 						gfp_t gfp_mask,
-@@ -1621,7 +1621,7 @@ void count_memcg_event_mm(struct mm_struct *mm, enum vm_event_item idx)
+-static inline void split_page_owner(struct page *page, unsigned int nr)
++static inline void split_page_owner(struct page *page, int order)
+ {
+ 	if (static_branch_unlikely(&page_owner_inited))
+-		__split_page_owner(page, nr);
++		__split_page_owner(page, order);
+ }
+ static inline void folio_copy_owner(struct folio *newfolio, struct folio *old)
+ {
+@@ -59,8 +59,7 @@ static inline void set_page_owner(struct page *page,
+ 			unsigned int order, gfp_t gfp_mask)
  {
  }
- 
--static inline void split_page_memcg(struct page *head, unsigned int nr)
-+static inline void split_page_memcg(struct page *head, int order)
+-static inline void split_page_owner(struct page *page,
+-			unsigned short order)
++static inline void split_page_owner(struct page *page, int order)
  {
  }
- 
+ static inline void folio_copy_owner(struct folio *newfolio, struct folio *folio)
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 9840f312c08f..96ac7c62c375 100644
+index 96ac7c62c375..2b95dbc95fae 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -2889,11 +2889,12 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 	struct lruvec *lruvec;
- 	struct address_space *swap_cache = NULL;
- 	unsigned long offset = 0;
--	unsigned int nr = thp_nr_pages(head);
- 	int i, nr_dropped = 0;
-+	int order = folio_order(folio);
-+	unsigned int nr = 1 << order;
+@@ -2933,7 +2933,7 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+ 	unlock_page_lruvec(lruvec);
+ 	/* Caller disabled irqs, so they are still disabled here */
  
- 	/* complete memcg works before add pages to LRU */
--	split_page_memcg(head, nr);
-+	split_page_memcg(head, order);
+-	split_page_owner(head, nr);
++	split_page_owner(head, order);
  
- 	if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
- 		offset = swp_offset(folio->swap);
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 95c3fccb321b..1a09f0e77c44 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3608,11 +3608,12 @@ void obj_cgroup_uncharge(struct obj_cgroup *objcg, size_t size)
- /*
-  * Because page_memcg(head) is not set on tails, set it now.
-  */
--void split_page_memcg(struct page *head, unsigned int nr)
-+void split_page_memcg(struct page *head, int order)
- {
- 	struct folio *folio = page_folio(head);
- 	struct mem_cgroup *memcg = folio_memcg(folio);
- 	int i;
-+	unsigned int nr = 1 << order;
- 
- 	if (mem_cgroup_disabled() || !memcg)
- 		return;
+ 	/* See comment in __split_huge_page_tail() */
+ 	if (PageAnon(head)) {
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 96839b210abe..a7a96bc97e0b 100644
+index a7a96bc97e0b..eae77e76a671 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -2653,7 +2653,7 @@ void split_page(struct page *page, unsigned int order)
+@@ -2652,7 +2652,7 @@ void split_page(struct page *page, unsigned int order)
+ 
  	for (i = 1; i < (1 << order); i++)
  		set_page_refcounted(page + i);
- 	split_page_owner(page, 1 << order);
--	split_page_memcg(page, 1 << order);
-+	split_page_memcg(page, order);
+-	split_page_owner(page, 1 << order);
++	split_page_owner(page, order);
+ 	split_page_memcg(page, order);
  }
  EXPORT_SYMBOL_GPL(split_page);
- 
-@@ -4840,7 +4840,7 @@ static void *make_alloc_exact(unsigned long addr, unsigned int order,
+@@ -4839,7 +4839,7 @@ static void *make_alloc_exact(unsigned long addr, unsigned int order,
+ 		struct page *page = virt_to_page((void *)addr);
  		struct page *last = page + nr;
  
- 		split_page_owner(page, 1 << order);
--		split_page_memcg(page, 1 << order);
-+		split_page_memcg(page, order);
+-		split_page_owner(page, 1 << order);
++		split_page_owner(page, order);
+ 		split_page_memcg(page, order);
  		while (page < --last)
  			set_page_refcounted(last);
+diff --git a/mm/page_owner.c b/mm/page_owner.c
+index e56c1e92eccf..b678f7a6e702 100644
+--- a/mm/page_owner.c
++++ b/mm/page_owner.c
+@@ -306,11 +306,12 @@ void __set_page_owner_migrate_reason(struct page *page, int reason)
+ 	page_ext_put(page_ext);
+ }
  
+-void __split_page_owner(struct page *page, unsigned int nr)
++void __split_page_owner(struct page *page, int order)
+ {
+ 	int i;
+ 	struct page_ext *page_ext = page_ext_get(page);
+ 	struct page_owner *page_owner;
++	unsigned int nr = 1 << order;
+ 
+ 	if (unlikely(!page_ext))
+ 		return;
 -- 
 2.43.0
 
