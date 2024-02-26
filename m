@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-12879-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E79ED868243
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 21:58:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF324868246
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 21:58:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4219CB20E93
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 20:57:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 857A628A5BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 20:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF80133435;
-	Mon, 26 Feb 2024 20:56:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74671339AA;
+	Mon, 26 Feb 2024 20:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="Gn40UuZA";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="S45x2fml"
+	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="OhmXJsbj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="HkcqTlDi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183D913249D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23C1D133282;
 	Mon, 26 Feb 2024 20:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.111.4.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708980978; cv=none; b=GT0nnU7WRpRalx3bLxos2scg7SPjgchUL9ZWbmramT+YjqeHnSipaaY9F3Ar/qnHvhOzkzVTj7UuKwQcIi/ptmohOrOjNZCrri1cXH0HLvKtBF/H8UFglfWHM9Mqkq+9LfUjxanuP7w+pJ992zhB0vdIpq1eufubIsYyPpmSYJQ=
+	t=1708980979; cv=none; b=M/1sCxn5BpDIo2dm6ltmG+K1AUN+ccOVBcjkNXWFmsXzRH1ZgVnSB44/9YaCIXhmc2wpD/bhyVE5ipu391vv4IYM31MIql+MCJa+2mVgbMRwojbu4kknOjuvOCMtMdON/cEEaVry6uTm5YlTPyFHGTnYOsxdl8+5ylxGvdn9VrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708980978; c=relaxed/simple;
-	bh=Gj4etBysvHmpgeUpCQUjRlhkDluUaFmpO3rvp/CVp+I=;
+	s=arc-20240116; t=1708980979; c=relaxed/simple;
+	bh=vgsm4k7rgVedH8rRB2J8JRli9rUrF9iO5L/lbj+auXA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MW6O9/zYnkEPXnOp4sziYwU1/aWorA7PQyQB1WwL6BMbZcdTDwDNmQhT2/SsixkKdcwqnA9yknH92nktPVdD/H8UXdSKBFw4/keFPrRSMWAzcJK1vBPsYyD7AvJ98wgf9slUFfwyvzai+IA5p/q4y+q2nfpXQoQRvzIbpM5duaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com; spf=pass smtp.mailfrom=sent.com; dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b=Gn40UuZA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=S45x2fml; arc=none smtp.client-ip=66.111.4.29
+	 MIME-Version:Content-Type; b=q9HNsnAa1n8lVGFt+jnf0rNWvSzwboN8hz8Oguo3ZMAi9WyBBNYkw+OPuh5IsUCAotje4b+6BVMgiVhoEKSQRdkJMloLvVrsXSq7LE6eDXxgU2RWyr6Mu5EUAU/dNafUz8eXb+JPWX0xOHTgt0s84KKvb7+M/elt35oRDTccsfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com; spf=pass smtp.mailfrom=sent.com; dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b=OhmXJsbj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=HkcqTlDi; arc=none smtp.client-ip=66.111.4.29
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sent.com
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailout.nyi.internal (Postfix) with ESMTP id 604935C00AB;
-	Mon, 26 Feb 2024 15:56:15 -0500 (EST)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailout.nyi.internal (Postfix) with ESMTP id 3F4E95C00A8;
+	Mon, 26 Feb 2024 15:56:16 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Mon, 26 Feb 2024 15:56:15 -0500
+  by compute4.internal (MEProxy); Mon, 26 Feb 2024 15:56:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1708980975; x=1709067375; bh=GUAsk26iYl7MhG3zj5r2ZNKBhryTNauvcp1
-	OLHy1WRg=; b=Gn40UuZAhb5ftJv5LRfJMIhXiq3QdWSx1my35TaUWUEu5ycpFVl
-	IS1nKksLaE2+5rqFt9FR61yW0wY7XwvHpf+SUo6qhQhShH+A+FcTOS9wAX2fsPau
-	QoKk6zAp8765ulvAvY4C71FS+BcIRJdBJRNnNSQD4waUHzdg8UlfzS/xhYVMLy2p
-	dkB2jOv9CG5Z5h42xNOoWRnOU4RvVZVDRLQzoiAfcAOXfCUnRv2mdsFTxDwlh33U
-	gUD26EzxwbG+UnchZ/ABk3WgslLi3yyVXLaovONMbYb0pPySoO/QTltve1MhUD/X
-	gI4tSKb+k2mm4W8u+DOD7nRY3ZYLSQfV//Q==
+	1708980976; x=1709067376; bh=eBpC8nLmV3t+tILOOyF9MHkmmffIcEidaEQ
+	0IucvPX4=; b=OhmXJsbjvWBU33DO8vx9Sxyp+wXJmzSpaj6+LDBZDG49O+6ffyx
+	ZSUltZ/7nhkEFqVsCc3a2BUJ4ZoVi67suV+jcrt7L2a41KVnXgGz7u5C2OQ4vK7Q
+	qe5mbw7Dyw200uoLqf7Y25BxkdETjX2nq02CXm4lZAplslb24g51eTMqbeA1CC0j
+	JE5a5N7H2DfGnr/RAYJJKK13TFEmJ+gq91rNp8+BSLK9z/0fwejQT7dLIWMMKkFA
+	9cIxCDfrLy93emdUnHrFQdAslKi55y1LFDxW3rqJjzeiJY6ZHYZX2EqCL80oxiim
+	9LB/ULPPKQBWQm0HacSUH3o3KmmnjeUpoiQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
 	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1708980975; x=1709067375; bh=GUAsk26iYl7MhG3zj5r2ZNKBhryTNauvcp1
-	OLHy1WRg=; b=S45x2fml7gmhnMQ2+nlEIwKLi14mFfBfranhr0+4tnF/Zhmlgn4
-	v0LkmfYJ3ECXF2pAUUe9H3JchTGeWe490haeAxfAt3SlvZhZlHfM1A7oTcxhBtep
-	gsNUSoNiP4Rcf//o9VuNy1gCeFikjL4vGqD66vb/XXztiiuSW+gBQMDMJFSmiaas
-	CUM3gCOiUd8fO8BTNnOWhbwjaAl7dGTRqMum3DwmP2exFekMylhIgyMrK/Rsq3HK
-	CvpHvOvZtc/1ICI47XPcP9xuVAj+cXKgYn3fVBO+C40csgJ7gEAsz1vTC5idS+4F
-	reG2E0mSnFLt4C9LVmZTuCWggrywN5smi5Q==
-X-ME-Sender: <xms:7vrcZYf3bm5K2vo7LCw6w4bGJdF6s2_1WGQ8Mq9vu29efnFpGpdhcw>
-    <xme:7vrcZaPKDEIlk60tZmwEYXAllPdVNeV806n4E70Jzmx2TEW2fNlUOaWIlwOcF57AH
-    HlSVU477DEwZZTBMQ>
-X-ME-Received: <xmr:7vrcZZgRJb0Nf7KU7mVJx984C-3-ACwRnUbDsR-InS_dk9sBoS53FEuFSl13PrVkAPX7Pa4z15prkn56D3sMTvaV88o2h5jLRDDRCEVgpckRJVYSlwse93lB>
+	1708980976; x=1709067376; bh=eBpC8nLmV3t+tILOOyF9MHkmmffIcEidaEQ
+	0IucvPX4=; b=HkcqTlDiLWonV5rP8T2a91tyNh3gzcRKAFCXLT+izkUiGmAM2tV
+	EqGPzyq9qIzXV+qS6IOEglz7RnR9WR0gQ+/KQDzJjaLsW2j4MS2zASpXMwSEtkeE
+	/8IPpT7yvoXVSdApLjEfvcMxPf2UTtOX04hE40u5hQntCFfKyfCsyZmmoUrsP2gC
+	1RSn1NOuSDsx9lVkwKOeusqYV2xuixW1d+E8Q1YSZQULNpCZYWHCxKKwFicO2vyo
+	FllPcUGrYbTwUOhkLuvDr0qN88nRM6skelfHLgdoJ30SY7ohg5V9/inmL0zv/t1S
+	4yDU6cQaB100xO5B1Ub2UmNrWOYZKr6DWPA==
+X-ME-Sender: <xms:8PrcZUewksT6eqyNS7elE5kUUAdWRXCzH7xywK_SUrKPBFpWhXhfuw>
+    <xme:8PrcZWP0PtiwmnaNZPNfqnU4sK89rmYhENbAdpP0l-VvsRLlSSOVD_L891SBu0V0a
+    k1Zr0vDRgVCsydgaA>
+X-ME-Received: <xmr:8PrcZVhYA7-ppK29uG0CMfFDb8Pr9eZUOkg-YBX32OWLsOnVuiWVGx9oHIsf6yt0DO_bU6b-NhN1xybPwTADkczzElSsU1IFQctxYkkMwEL8l6vQ33SJbaRl>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrgedvgddugedtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
@@ -73,13 +73,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrgedvgddugedtucetufdoteggod
     ekteekffelleekudfftdefvddtjeejuedtuedtteegjefgvedtfedujeekieevnecuvehl
     uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepiihirdihrghnse
     hsvghnthdrtghomh
-X-ME-Proxy: <xmx:7vrcZd95miOhrGcnyqyHx9TCrR7KqThSwrI7CM6C5MSxN0KNLivkgQ>
-    <xmx:7vrcZUsCHOrPrU8-ESRuLTHuhAxmjc2gLQxlaKDVkoU_Qxs1gZFZCg>
-    <xmx:7vrcZUH4BoBQjm0ZFZ4f8PmzHu390-q4czTis3xSmWd0QkMOPItbbw>
-    <xmx:7_rcZUQWsUsOIsgBiFr8Mn9vnr7XcO_yRUH9vzoHqmBfnQroMQAryA>
+X-ME-Proxy: <xmx:8PrcZZ8Zz1vu__5NAipN1mDTs2mPn97R70iKk57iJrL9QBOADG3Rrw>
+    <xmx:8PrcZQuHCuWFZk2iGprfnIAy680TzAsWjXWlE9985OgeHx3ETMxz9A>
+    <xmx:8PrcZQH-2YM2DCXXdhSEqh-17IkCN-5JfAydAN3IWi6jnwi3Lc8U8A>
+    <xmx:8PrcZQReVwXQhAcM5XrHHkWf5VD9k509qekqHlS1UK_SkDXzdy70tg>
 Feedback-ID: iccd040f4:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 26 Feb 2024 15:56:14 -0500 (EST)
+ 26 Feb 2024 15:56:15 -0500 (EST)
 From: Zi Yan <zi.yan@sent.com>
 To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
 	linux-mm@kvack.org
@@ -100,9 +100,9 @@ Cc: Zi Yan <ziy@nvidia.com>,
 	cgroups@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org
-Subject: [PATCH v5 7/8] mm: thp: split huge page to any lower order pages
-Date: Mon, 26 Feb 2024 15:55:33 -0500
-Message-ID: <20240226205534.1603748-8-zi.yan@sent.com>
+Subject: [PATCH v5 8/8] mm: huge_memory: enable debugfs to split huge pages to any order.
+Date: Mon, 26 Feb 2024 15:55:34 -0500
+Message-ID: <20240226205534.1603748-9-zi.yan@sent.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240226205534.1603748-1-zi.yan@sent.com>
 References: <20240226205534.1603748-1-zi.yan@sent.com>
@@ -118,316 +118,303 @@ Content-Transfer-Encoding: 8bit
 
 From: Zi Yan <ziy@nvidia.com>
 
-To split a THP to any lower order pages, we need to reform THPs on
-subpages at given order and add page refcount based on the new page
-order. Also we need to reinitialize page_deferred_list after removing
-the page from the split_queue, otherwise a subsequent split will
-see list corruption when checking the page_deferred_list again.
-
-Note: Anonymous order-1 folio is not supported because _deferred_list,
-which is used by partially mapped folios, is stored in subpage 2 and an
-order-1 folio only has subpage 0 and 1. File-backed order-1 folios are
-fine, since they do not use _deferred_list.
+It is used to test split_huge_page_to_list_to_order for pagecache THPs.
+Also add test cases for split_huge_page_to_list_to_order via both
+debugfs.
 
 Signed-off-by: Zi Yan <ziy@nvidia.com>
 ---
- include/linux/huge_mm.h |  21 +++++---
- mm/huge_memory.c        | 110 +++++++++++++++++++++++++++++++---------
- 2 files changed, 99 insertions(+), 32 deletions(-)
+ mm/huge_memory.c                              |  34 ++++--
+ .../selftests/mm/split_huge_page_test.c       | 115 +++++++++++++++++-
+ 2 files changed, 131 insertions(+), 18 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 5adb86af35fc..de0c89105076 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -265,10 +265,11 @@ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
- 
- void folio_prep_large_rmappable(struct folio *folio);
- bool can_split_folio(struct folio *folio, int *pextra_pins);
--int split_huge_page_to_list(struct page *page, struct list_head *list);
-+int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-+		unsigned int new_order);
- static inline int split_huge_page(struct page *page)
- {
--	return split_huge_page_to_list(page, NULL);
-+	return split_huge_page_to_list_to_order(page, NULL, 0);
- }
- void deferred_split_folio(struct folio *folio);
- 
-@@ -422,7 +423,8 @@ can_split_folio(struct folio *folio, int *pextra_pins)
- 	return false;
- }
- static inline int
--split_huge_page_to_list(struct page *page, struct list_head *list)
-+split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-+		unsigned int new_order)
- {
- 	return 0;
- }
-@@ -519,17 +521,20 @@ static inline bool thp_migration_supported(void)
- }
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
- 
--static inline int split_folio_to_list(struct folio *folio,
--		struct list_head *list)
-+static inline int split_folio_to_list_to_order(struct folio *folio,
-+		struct list_head *list, int new_order)
- {
--	return split_huge_page_to_list(&folio->page, list);
-+	return split_huge_page_to_list_to_order(&folio->page, list, new_order);
- }
- 
--static inline int split_folio(struct folio *folio)
-+static inline int split_folio_to_order(struct folio *folio, int new_order)
- {
--	return split_folio_to_list(folio, NULL);
-+	return split_folio_to_list_to_order(folio, NULL, new_order);
- }
- 
-+#define split_folio_to_list(f, l) split_folio_to_list_to_order(f, l, 0)
-+#define split_folio(f) split_folio_to_order(f, 0)
-+
- /*
-  * archs that select ARCH_WANTS_THP_SWAP but don't support THP_SWP due to
-  * limitations in the implementation like arm64 MTE can override this to
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index b2df788c11fa..8b47a96a28f9 100644
+index 8b47a96a28f9..50d146eb248f 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -2770,7 +2770,6 @@ static void lru_add_page_tail(struct page *head, struct page *tail,
- 		struct lruvec *lruvec, struct list_head *list)
- {
- 	VM_BUG_ON_PAGE(!PageHead(head), head);
--	VM_BUG_ON_PAGE(PageCompound(tail), head);
- 	VM_BUG_ON_PAGE(PageLRU(tail), head);
- 	lockdep_assert_held(&lruvec->lru_lock);
- 
-@@ -2791,7 +2790,8 @@ static void lru_add_page_tail(struct page *head, struct page *tail,
+@@ -3422,7 +3422,7 @@ static inline bool vma_not_suitable_for_thp_split(struct vm_area_struct *vma)
  }
  
- static void __split_huge_page_tail(struct folio *folio, int tail,
--		struct lruvec *lruvec, struct list_head *list)
-+		struct lruvec *lruvec, struct list_head *list,
-+		unsigned int new_order)
+ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
+-				unsigned long vaddr_end)
++				unsigned long vaddr_end, unsigned int new_order)
  {
- 	struct page *head = &folio->page;
- 	struct page *page_tail = head + tail;
-@@ -2861,10 +2861,15 @@ static void __split_huge_page_tail(struct folio *folio, int tail,
- 	 * which needs correct compound_head().
- 	 */
- 	clear_compound_head(page_tail);
-+	if (new_order) {
-+		prep_compound_page(page_tail, new_order);
-+		folio_prep_large_rmappable(new_folio);
-+	}
+ 	int ret = 0;
+ 	struct task_struct *task;
+@@ -3486,13 +3486,19 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
+ 			goto next;
  
- 	/* Finally unfreeze refcount. Additional reference from page cache. */
--	page_ref_unfreeze(page_tail, 1 + (!folio_test_anon(folio) ||
--					  folio_test_swapcache(folio)));
-+	page_ref_unfreeze(page_tail,
-+		1 + ((!folio_test_anon(folio) || folio_test_swapcache(folio)) ?
-+			     folio_nr_pages(new_folio) : 0));
+ 		total++;
+-		if (!can_split_folio(folio, NULL))
++		/*
++		 * For folios with private, split_huge_page_to_list_to_order()
++		 * will try to drop it before split and then check if the folio
++		 * can be split or not. So skip the check here.
++		 */
++		if (!folio_test_private(folio) &&
++		    !can_split_folio(folio, NULL))
+ 			goto next;
  
- 	if (folio_test_young(folio))
- 		folio_set_young(new_folio);
-@@ -2882,7 +2887,7 @@ static void __split_huge_page_tail(struct folio *folio, int tail,
+ 		if (!folio_trylock(folio))
+ 			goto next;
+ 
+-		if (!split_folio(folio))
++		if (!split_folio_to_order(folio, new_order))
+ 			split++;
+ 
+ 		folio_unlock(folio);
+@@ -3510,7 +3516,7 @@ static int split_huge_pages_pid(int pid, unsigned long vaddr_start,
  }
  
- static void __split_huge_page(struct page *page, struct list_head *list,
--		pgoff_t end)
-+		pgoff_t end, unsigned int new_order)
+ static int split_huge_pages_in_file(const char *file_path, pgoff_t off_start,
+-				pgoff_t off_end)
++				pgoff_t off_end, unsigned int new_order)
  {
- 	struct folio *folio = page_folio(page);
- 	struct page *head = &folio->page;
-@@ -2890,11 +2895,12 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 	struct address_space *swap_cache = NULL;
- 	unsigned long offset = 0;
- 	int i, nr_dropped = 0;
-+	unsigned int new_nr = 1 << new_order;
- 	int order = folio_order(folio);
- 	unsigned int nr = 1 << order;
+ 	struct filename *file;
+ 	struct file *candidate;
+@@ -3549,7 +3555,7 @@ static int split_huge_pages_in_file(const char *file_path, pgoff_t off_start,
+ 		if (!folio_trylock(folio))
+ 			goto next;
  
- 	/* complete memcg works before add pages to LRU */
--	split_page_memcg(head, order, 0);
-+	split_page_memcg(head, order, new_order);
+-		if (!split_folio(folio))
++		if (!split_folio_to_order(folio, new_order))
+ 			split++;
  
- 	if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
- 		offset = swp_offset(folio->swap);
-@@ -2907,8 +2913,8 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 
- 	ClearPageHasHWPoisoned(head);
- 
--	for (i = nr - 1; i >= 1; i--) {
--		__split_huge_page_tail(folio, i, lruvec, list);
-+	for (i = nr - new_nr; i >= new_nr; i -= new_nr) {
-+		__split_huge_page_tail(folio, i, lruvec, list, new_order);
- 		/* Some pages can be beyond EOF: drop them from page cache */
- 		if (head[i].index >= end) {
- 			struct folio *tail = page_folio(head + i);
-@@ -2929,24 +2935,30 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 		}
- 	}
- 
--	ClearPageCompound(head);
-+	if (!new_order)
-+		ClearPageCompound(head);
-+	else {
-+		struct folio *new_folio = (struct folio *)head;
-+
-+		folio_set_order(new_folio, new_order);
-+	}
- 	unlock_page_lruvec(lruvec);
- 	/* Caller disabled irqs, so they are still disabled here */
- 
--	split_page_owner(head, order, 0);
-+	split_page_owner(head, order, new_order);
- 
- 	/* See comment in __split_huge_page_tail() */
- 	if (PageAnon(head)) {
- 		/* Additional pin to swap cache */
- 		if (PageSwapCache(head)) {
--			page_ref_add(head, 2);
-+			page_ref_add(head, 1 + new_nr);
- 			xa_unlock(&swap_cache->i_pages);
- 		} else {
- 			page_ref_inc(head);
- 		}
- 	} else {
- 		/* Additional pin to page cache */
--		page_ref_add(head, 2);
-+		page_ref_add(head, 1 + new_nr);
- 		xa_unlock(&head->mapping->i_pages);
- 	}
- 	local_irq_enable();
-@@ -2958,7 +2970,15 @@ static void __split_huge_page(struct page *page, struct list_head *list,
- 	if (folio_test_swapcache(folio))
- 		split_swap_cluster(folio->swap);
- 
--	for (i = 0; i < nr; i++) {
+ 		folio_unlock(folio);
+@@ -3574,10 +3580,14 @@ static ssize_t split_huge_pages_write(struct file *file, const char __user *buf,
+ {
+ 	static DEFINE_MUTEX(split_debug_mutex);
+ 	ssize_t ret;
+-	/* hold pid, start_vaddr, end_vaddr or file_path, off_start, off_end */
 +	/*
-+	 * set page to its compound_head when split to non order-0 pages, so
-+	 * we can skip unlocking it below, since PG_locked is transferred to
-+	 * the compound_head of the page and the caller will unlock it.
++	 * hold pid, start_vaddr, end_vaddr, new_order or
++	 * file_path, off_start, off_end, new_order
 +	 */
-+	if (new_order)
-+		page = compound_head(page);
-+
-+	for (i = 0; i < nr; i += new_nr) {
- 		struct page *subpage = head + i;
- 		if (subpage == page)
- 			continue;
-@@ -2992,29 +3012,36 @@ bool can_split_folio(struct folio *folio, int *pextra_pins)
+ 	char input_buf[MAX_INPUT_BUF_SZ];
+ 	int pid;
+ 	unsigned long vaddr_start, vaddr_end;
++	unsigned int new_order = 0;
+ 
+ 	ret = mutex_lock_interruptible(&split_debug_mutex);
+ 	if (ret)
+@@ -3606,29 +3616,29 @@ static ssize_t split_huge_pages_write(struct file *file, const char __user *buf,
+ 			goto out;
+ 		}
+ 
+-		ret = sscanf(buf, "0x%lx,0x%lx", &off_start, &off_end);
+-		if (ret != 2) {
++		ret = sscanf(buf, "0x%lx,0x%lx,%d", &off_start, &off_end, &new_order);
++		if (ret != 2 && ret != 3) {
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+-		ret = split_huge_pages_in_file(file_path, off_start, off_end);
++		ret = split_huge_pages_in_file(file_path, off_start, off_end, new_order);
+ 		if (!ret)
+ 			ret = input_len;
+ 
+ 		goto out;
+ 	}
+ 
+-	ret = sscanf(input_buf, "%d,0x%lx,0x%lx", &pid, &vaddr_start, &vaddr_end);
++	ret = sscanf(input_buf, "%d,0x%lx,0x%lx,%d", &pid, &vaddr_start, &vaddr_end, &new_order);
+ 	if (ret == 1 && pid == 1) {
+ 		split_huge_pages_all();
+ 		ret = strlen(input_buf);
+ 		goto out;
+-	} else if (ret != 3) {
++	} else if (ret != 3 && ret != 4) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+ 
+-	ret = split_huge_pages_pid(pid, vaddr_start, vaddr_end);
++	ret = split_huge_pages_pid(pid, vaddr_start, vaddr_end, new_order);
+ 	if (!ret)
+ 		ret = strlen(input_buf);
+ out:
+diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+index 7b698a848bab..cf09fdc9ef22 100644
+--- a/tools/testing/selftests/mm/split_huge_page_test.c
++++ b/tools/testing/selftests/mm/split_huge_page_test.c
+@@ -16,6 +16,7 @@
+ #include <sys/mount.h>
+ #include <malloc.h>
+ #include <stdbool.h>
++#include <time.h>
+ #include "vm_util.h"
+ #include "../kselftest.h"
+ 
+@@ -24,10 +25,12 @@ unsigned int pageshift;
+ uint64_t pmd_pagesize;
+ 
+ #define SPLIT_DEBUGFS "/sys/kernel/debug/split_huge_pages"
++#define SMAP_PATH "/proc/self/smaps"
++#define THP_FS_PATH "/mnt/thp_fs"
+ #define INPUT_MAX 80
+ 
+-#define PID_FMT "%d,0x%lx,0x%lx"
+-#define PATH_FMT "%s,0x%lx,0x%lx"
++#define PID_FMT "%d,0x%lx,0x%lx,%d"
++#define PATH_FMT "%s,0x%lx,0x%lx,%d"
+ 
+ #define PFN_MASK     ((1UL<<55)-1)
+ #define KPF_THP      (1UL<<22)
+@@ -102,7 +105,7 @@ void split_pmd_thp(void)
+ 
+ 	/* split all THPs */
+ 	write_debugfs(PID_FMT, getpid(), (uint64_t)one_page,
+-		(uint64_t)one_page + len);
++		(uint64_t)one_page + len, 0);
+ 
+ 	for (i = 0; i < len; i++)
+ 		if (one_page[i] != (char)i)
+@@ -177,7 +180,7 @@ void split_pte_mapped_thp(void)
+ 
+ 	/* split all remapped THPs */
+ 	write_debugfs(PID_FMT, getpid(), (uint64_t)pte_mapped,
+-		      (uint64_t)pte_mapped + pagesize * 4);
++		      (uint64_t)pte_mapped + pagesize * 4, 0);
+ 
+ 	/* smap does not show THPs after mremap, use kpageflags instead */
+ 	thp_size = 0;
+@@ -237,7 +240,7 @@ void split_file_backed_thp(void)
+ 	}
+ 
+ 	/* split the file-backed THP */
+-	write_debugfs(PATH_FMT, testfile, pgoff_start, pgoff_end);
++	write_debugfs(PATH_FMT, testfile, pgoff_start, pgoff_end, 0);
+ 
+ 	status = unlink(testfile);
+ 	if (status) {
+@@ -265,8 +268,101 @@ void split_file_backed_thp(void)
+ 	ksft_exit_fail_msg("Error occurred\n");
  }
  
- /*
-- * This function splits huge page into normal pages. @page can point to any
-- * subpage of huge page to split. Split doesn't change the position of @page.
-+ * This function splits huge page into pages in @new_order. @page can point to
-+ * any subpage of huge page to split. Split doesn't change the position of
-+ * @page.
-+ *
-+ * NOTE: order-1 anonymous folio is not supported because _deferred_list,
-+ * which is used by partially mapped folios, is stored in subpage 2 and an
-+ * order-1 folio only has subpage 0 and 1. File-backed order-1 folios are OK,
-+ * since they do not use _deferred_list.
-  *
-  * Only caller must hold pin on the @page, otherwise split fails with -EBUSY.
-  * The huge page must be locked.
-  *
-  * If @list is null, tail pages will be added to LRU list, otherwise, to @list.
-  *
-- * Both head page and tail pages will inherit mapping, flags, and so on from
-- * the hugepage.
-+ * Pages in new_order will inherit mapping, flags, and so on from the hugepage.
-  *
-- * GUP pin and PG_locked transferred to @page. Rest subpages can be freed if
-- * they are not mapped.
-+ * GUP pin and PG_locked transferred to @page or the compound page @page belongs
-+ * to. Rest subpages can be freed if they are not mapped.
-  *
-  * Returns 0 if the hugepage is split successfully.
-  * Returns -EBUSY if the page is pinned or if anon_vma disappeared from under
-  * us.
-  */
--int split_huge_page_to_list(struct page *page, struct list_head *list)
-+int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
-+				     unsigned int new_order)
++void create_pagecache_thp_and_fd(const char *testfile, size_t fd_size, int *fd, char **addr)
++{
++	size_t i;
++	int dummy;
++
++	srand(time(NULL));
++
++	*fd = open(testfile, O_CREAT | O_RDWR, 0664);
++	if (*fd == -1)
++		ksft_exit_fail_msg("Failed to create a file at "THP_FS_PATH);
++
++	for (i = 0; i < fd_size; i++) {
++		unsigned char byte = (unsigned char)i;
++
++		write(*fd, &byte, sizeof(byte));
++	}
++	close(*fd);
++	sync();
++	*fd = open("/proc/sys/vm/drop_caches", O_WRONLY);
++	if (*fd == -1) {
++		ksft_perror("open drop_caches");
++		goto err_out_unlink;
++	}
++	if (write(*fd, "3", 1) != 1) {
++		ksft_perror("write to drop_caches");
++		goto err_out_unlink;
++	}
++	close(*fd);
++
++	*fd = open(testfile, O_RDWR);
++	if (*fd == -1) {
++		ksft_perror("Failed to open a file at "THP_FS_PATH);
++		goto err_out_unlink;
++	}
++
++	*addr = mmap(NULL, fd_size, PROT_READ|PROT_WRITE, MAP_SHARED, *fd, 0);
++	if (*addr == (char *)-1) {
++		ksft_perror("cannot mmap");
++		goto err_out_close;
++	}
++	madvise(*addr, fd_size, MADV_HUGEPAGE);
++
++	for (size_t i = 0; i < fd_size; i++)
++		dummy += *(*addr + i);
++
++	if (!check_huge_file(*addr, fd_size / pmd_pagesize, pmd_pagesize)) {
++		ksft_print_msg("No large pagecache folio generated, please mount a filesystem supporting large folio at "THP_FS_PATH"\n");
++		goto err_out_close;
++	}
++	return;
++err_out_close:
++	close(*fd);
++err_out_unlink:
++	unlink(testfile);
++	ksft_exit_fail_msg("Failed to create large pagecache folios\n");
++}
++
++void split_thp_in_pagecache_to_order(size_t fd_size, int order)
++{
++	int fd;
++	char *addr;
++	size_t i;
++	const char testfile[] = THP_FS_PATH "/test";
++	int err = 0;
++
++	create_pagecache_thp_and_fd(testfile, fd_size, &fd, &addr);
++
++	write_debugfs(PID_FMT, getpid(), (uint64_t)addr, (uint64_t)addr + fd_size, order);
++
++	for (i = 0; i < fd_size; i++)
++		if (*(addr + i) != (char)i) {
++			ksft_print_msg("%lu byte corrupted in the file\n", i);
++			err = EXIT_FAILURE;
++			goto out;
++		}
++
++	if (!check_huge_file(addr, 0, pmd_pagesize)) {
++		ksft_print_msg("Still FilePmdMapped not split\n");
++		err = EXIT_FAILURE;
++		goto out;
++	}
++
++out:
++	close(fd);
++	unlink(testfile);
++	if (err)
++		ksft_exit_fail_msg("Split PMD-mapped pagecache folio to order %d failed\n", order);
++	ksft_test_result_pass("Split PMD-mapped pagecache folio to order %d passed\n", order);
++}
++
+ int main(int argc, char **argv)
  {
- 	struct folio *folio = page_folio(page);
- 	struct deferred_split *ds_queue = get_deferred_split_queue(folio);
--	XA_STATE(xas, &folio->mapping->i_pages, folio->index);
-+	/* reset xarray order to new order after split */
-+	XA_STATE_ORDER(xas, &folio->mapping->i_pages, folio->index, new_order);
- 	struct anon_vma *anon_vma = NULL;
- 	struct address_space *mapping = NULL;
- 	int extra_pins, ret;
-@@ -3024,6 +3051,34 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 	VM_BUG_ON_FOLIO(!folio_test_large(folio), folio);
- 
-+	/* Cannot split anonymous THP to order-1 */
-+	if (new_order == 1 && folio_test_anon(folio)) {
-+		VM_WARN_ONCE(1, "Cannot split to order-1 folio");
-+		return -EINVAL;
-+	}
++	int i;
++	size_t fd_size;
 +
-+	if (new_order) {
-+		/* Only swapping a whole PMD-mapped folio is supported */
-+		if (folio_test_swapcache(folio)) {
-+			VM_WARN_ONCE(1,
-+				"Cannot split swap-cached folio to non-0 order");
-+			return -EINVAL;
-+		}
-+		/* Split shmem folio to non-zero order not supported */
-+		if (shmem_mapping(folio->mapping)) {
-+			VM_WARN_ONCE(1,
-+				"Cannot split shmem folio to non-0 order");
-+			return -EINVAL;
-+		}
-+		/* No split if the file system does not support large folio */
-+		if (!mapping_large_folio_support(folio->mapping)) {
-+			VM_WARN_ONCE(1,
-+				"Cannot split file folio to non-0 order");
-+			return -EINVAL;
-+		}
-+	}
-+
-+
- 	is_hzp = is_huge_zero_page(&folio->page);
- 	if (is_hzp) {
- 		pr_warn_ratelimited("Called split_huge_page for huge zero page\n");
-@@ -3120,14 +3175,21 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 		if (folio_order(folio) > 1 &&
- 		    !list_empty(&folio->_deferred_list)) {
- 			ds_queue->split_queue_len--;
--			list_del(&folio->_deferred_list);
-+			/*
-+			 * Reinitialize page_deferred_list after removing the
-+			 * page from the split_queue, otherwise a subsequent
-+			 * split will see list corruption when checking the
-+			 * page_deferred_list.
-+			 */
-+			list_del_init(&folio->_deferred_list);
- 		}
- 		spin_unlock(&ds_queue->split_queue_lock);
- 		if (mapping) {
- 			int nr = folio_nr_pages(folio);
+ 	ksft_print_header();
  
- 			xas_split(&xas, folio, folio_order(folio));
--			if (folio_test_pmd_mappable(folio)) {
-+			if (folio_test_pmd_mappable(folio) &&
-+			    new_order < HPAGE_PMD_ORDER) {
- 				if (folio_test_swapbacked(folio)) {
- 					__lruvec_stat_mod_folio(folio,
- 							NR_SHMEM_THPS, -nr);
-@@ -3139,7 +3201,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 			}
- 		}
+ 	if (geteuid() != 0) {
+@@ -274,7 +370,7 @@ int main(int argc, char **argv)
+ 		ksft_finished();
+ 	}
  
--		__split_huge_page(page, list, end);
-+		__split_huge_page(page, list, end, new_order);
- 		ret = 0;
- 	} else {
- 		spin_unlock(&ds_queue->split_queue_lock);
+-	ksft_set_plan(3);
++	ksft_set_plan(3+9);
+ 
+ 	pagesize = getpagesize();
+ 	pageshift = ffs(pagesize) - 1;
+@@ -282,9 +378,16 @@ int main(int argc, char **argv)
+ 	if (!pmd_pagesize)
+ 		ksft_exit_fail_msg("Reading PMD pagesize failed\n");
+ 
++	fd_size = 2 * pmd_pagesize;
++
+ 	split_pmd_thp();
+ 	split_pte_mapped_thp();
+ 	split_file_backed_thp();
+ 
++	for (i = 8; i >= 0; i--)
++		split_thp_in_pagecache_to_order(fd_size, i);
++
+ 	ksft_finished();
++
++	return 0;
+ }
 -- 
 2.43.0
 
