@@ -1,143 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-12791-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE538673DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 12:50:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0C6986744B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 13:06:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959C51C2854D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 11:50:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3902EB23D26
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 12:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924B11EB27;
-	Mon, 26 Feb 2024 11:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90A95FDA5;
+	Mon, 26 Feb 2024 12:05:43 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (unknown [45.249.212.51])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83CB1F604;
-	Mon, 26 Feb 2024 11:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172315FF0B;
+	Mon, 26 Feb 2024 12:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708948231; cv=none; b=ZKupTAgvjg68pTwP2tsz/zKVpl0bIyNz2FFW7AVvEHNg11PnLSUrTN3TR1/WepvTPZ9x5O5REwdXqQ5iu1DN/BcUS7Se9+WuYg4iYrk86IfP34UxyFeaA1odhquyPd58qPPfE+pwnbDjOH0RrakYuC4DE/M9s4hDlirqbLxzg5A=
+	t=1708949143; cv=none; b=aBo0VsSBdkpM6ymB/aADC8vTcKHD5Q2JeMpghHsIB8ROQhI5OmUrJdquoNGVUuTUCGXc1jaJr0+v/v/UW8EZA/a/xD36cAbE7Wy/tTzaURVnRa+EKVnJKiP1e9fDVMuNGK8+3QnyVTgnrw0XzBp2DVr0R9XF75G3yAA+d8wSyfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708948231; c=relaxed/simple;
-	bh=o2zP6qkBFJWPP/SsY/iJWKDrUYVt/AOBRXL4yt1J6yQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=WBavtv93b1jtIgb41XmiUuR/JkSz7htHpsaU3xN2UsM6FLuSrdqGeJi20iS3CrVMkfuf8NcAHbmsc59Wb7oTsOWX4+aXSesfQqweXQY7piYR9ylt/sPJOKqLIxLnn+Cc4Ncz2/tQRbjwPCI+4M+HJW4nYDDmHbVum+kOyBQ65Wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4TjzSn5ZSJz4f3lVm;
-	Mon, 26 Feb 2024 19:50:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 138A11A0283;
-	Mon, 26 Feb 2024 19:50:25 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP4 (Coremail) with SMTP id gCh0CgCHjG4Ae9xl5k8nFQ--.25370S2;
-	Mon, 26 Feb 2024 19:50:25 +0800 (CST)
-Subject: Re: [PATCH 5/7] fs/writeback: only calculate dirtied_before when b_io
- is empty
-To: Jan Kara <jack@suse.cz>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240208172024.23625-1-shikemeng@huaweicloud.com>
- <20240208172024.23625-6-shikemeng@huaweicloud.com>
- <20240223135809.5bvyl7ex3zm6bnta@quack3>
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-Message-ID: <115755e5-9c4f-8aea-1bc0-41868926c527@huaweicloud.com>
-Date: Mon, 26 Feb 2024 19:50:24 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+	s=arc-20240116; t=1708949143; c=relaxed/simple;
+	bh=X6Bosa0A2A1es99TJJ26f3cbulaCTZndrqN6NEOItkU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Yj+bVNfWIHijVi+tjUQn4YQBFUS+sWU5QrvfUtpPDPoobcwid8nrc+wzWkpfB2oMEjfh082+ggmKIvpumN33j5L+mAUmMv4XNOOsVw+DU0HG6am2zyRBQyTI6gUMMKq5LgHRpROiurTVNiGq8/vHY2S7Rc3eY3gGINDT8V7csyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4TjzjC6Ckfz6JBM0;
+	Mon, 26 Feb 2024 20:01:03 +0800 (CST)
+Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
+	by mail.maildlp.com (Postfix) with ESMTPS id 74AA21410C8;
+	Mon, 26 Feb 2024 20:05:37 +0800 (CST)
+Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
+ (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 26 Feb
+ 2024 12:05:36 +0000
+Date: Mon, 26 Feb 2024 12:05:35 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: John Groves <John@Groves.net>
+CC: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, "Dan
+ Williams" <dan.j.williams@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Alexander
+ Viro" <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, "Jan
+ Kara" <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
+	<linux-cxl@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <john@jagalactic.com>, Dave Chinner
+	<david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>,
+	<dave.hansen@linux.intel.com>, <gregory.price@memverge.com>
+Subject: Re: [RFC PATCH 02/20] dev_dax_iomap: Add fs_dax_get() func to
+ prepare dax for fs-dax usage
+Message-ID: <20240226120535.00007a36@Huawei.com>
+In-Reply-To: <69ed4a3064bd9b48fd0593941038dd111fcfb8f3.1708709155.git.john@groves.net>
+References: <cover.1708709155.git.john@groves.net>
+	<69ed4a3064bd9b48fd0593941038dd111fcfb8f3.1708709155.git.john@groves.net>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20240223135809.5bvyl7ex3zm6bnta@quack3>
-Content-Type: text/plain; charset=gbk
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCHjG4Ae9xl5k8nFQ--.25370S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZrWrJw1kWFyfZFykZw1rXrb_yoW8Cry8pF
-	93t3WfKr4jyw1IgrnrC3W7XF45Ww4xKF4UAw1xXFyrZrnxZF10gFyvq348Kw1kAw1xZryI
-	vw4DJFWxC34jyaDanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyCb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCF04k20xvY0x0E
-	wIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E74
-	80Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0
-	I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04
-	k26cxKx2IYs7xG6Fyj6rWUJwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-	7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UWHqcUUUUU=
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ lhrpeml500005.china.huawei.com (7.191.163.240)
+
+On Fri, 23 Feb 2024 11:41:46 -0600
+John Groves <John@Groves.net> wrote:
+
+> This function should be called by fs-dax file systems after opening the
+> devdax device. This adds holder_operations.
+> 
+> This function serves the same role as fs_dax_get_by_bdev(), which dax
+> file systems call after opening the pmem block device.
+> 
+> Signed-off-by: John Groves <john@groves.net>
+
+A few trivial comments form a first read to get my head around this.
+
+Yeah, it is only an RFC, but who doesn't like tidy code? :)
 
 
+> ---
+>  drivers/dax/super.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  include/linux/dax.h |  5 +++++
+>  2 files changed, 43 insertions(+)
+> 
+> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
+> index f4b635526345..fc96362de237 100644
+> --- a/drivers/dax/super.c
+> +++ b/drivers/dax/super.c
+> @@ -121,6 +121,44 @@ void fs_put_dax(struct dax_device *dax_dev, void *holder)
+>  EXPORT_SYMBOL_GPL(fs_put_dax);
+>  #endif /* CONFIG_BLOCK && CONFIG_FS_DAX */
+>  
+> +#if IS_ENABLED(CONFIG_DEV_DAX_IOMAP)
+> +
+> +/**
+> + * fs_dax_get()
 
-on 2/23/2024 9:58 PM, Jan Kara wrote:
-> On Fri 09-02-24 01:20:22, Kemeng Shi wrote:
->> The dirtied_before is only used when b_io is not empty, so only calculate
->> when b_io is not empty.
->>
->> Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
->> ---
->>  fs/fs-writeback.c | 25 +++++++++++++------------
->>  1 file changed, 13 insertions(+), 12 deletions(-)
-> 
-> OK, but please wrap the comment at 80 columns as well.
-Sorry for missing this as I rely too much on checkpatch.pl to report this
-while the script didn't catch it. Will fix it in next version. Thanks for
-review.
-> 
-> 								Honza
-> 
->>
->> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
->> index b61bf2075931..e8868e814e0a 100644
->> --- a/fs/fs-writeback.c
->> +++ b/fs/fs-writeback.c
->> @@ -2118,20 +2118,21 @@ static long wb_writeback(struct bdi_writeback *wb,
->>  
->>  		spin_lock(&wb->list_lock);
->>  
->> -		/*
->> -		 * Kupdate and background works are special and we want to
->> -		 * include all inodes that need writing. Livelock avoidance is
->> -		 * handled by these works yielding to any other work so we are
->> -		 * safe.
->> -		 */
->> -		if (work->for_kupdate) {
->> -			dirtied_before = jiffies -
->> -				msecs_to_jiffies(dirty_expire_interval * 10);
->> -		} else if (work->for_background)
->> -			dirtied_before = jiffies;
->> -
->>  		trace_writeback_start(wb, work);
->>  		if (list_empty(&wb->b_io)) {
->> +			/*
->> +			 * Kupdate and background works are special and we want to
->> +			 * include all inodes that need writing. Livelock avoidance is
->> +			 * handled by these works yielding to any other work so we are
->> +			 * safe.
->> +			 */
->> +			if (work->for_kupdate) {
->> +				dirtied_before = jiffies -
->> +					msecs_to_jiffies(dirty_expire_interval *
->> +							 10);
->> +			} else if (work->for_background)
->> +				dirtied_before = jiffies;
->> +
->>  			queue_io(wb, work, dirtied_before);
->>  			queued = true;
->>  		}
->> -- 
->> 2.30.0
->>
+Smells like kernel doc but fairly sure it needs a short description.
+Have you sanity checked for warnings when running scripts/kerneldoc on it?
+
+> + *
+> + * fs-dax file systems call this function to prepare to use a devdax device for fsdax.
+Trivial but lines too long. Keep under 80 chars unless there is a strong
+readability arguement for not doing so.
+
+
+> + * This is like fs_dax_get_by_bdev(), but the caller already has struct dev_dax (and there
+> + * is no bdev). The holder makes this exclusive.
+
+Not familiar with this area: what does exclusive mean here?
+
+> + *
+> + * @dax_dev: dev to be prepared for fs-dax usage
+> + * @holder: filesystem or mapped device inside the dax_device
+> + * @hops: operations for the inner holder
+> + *
+> + * Returns: 0 on success, -1 on failure
+
+Why not return < 0 and use somewhat useful return values?
+
+> + */
+> +int fs_dax_get(
+> +	struct dax_device *dax_dev,
+> +	void *holder,
+> +	const struct dax_holder_operations *hops)
+
+Match local style for indents - it's a bit inconsistent but probably...
+
+int fs_dax_get(struct dad_device *dev_dax, void *holder,
+	       const struct dax_holder_operations *hops)
+
+> +{
+> +	/* dax_dev->ops should have been populated by devm_create_dev_dax() */
+> +	if (WARN_ON(!dax_dev->ops))
+> +		return -1;
+> +
+> +	if (!dax_dev || !dax_alive(dax_dev) || !igrab(&dax_dev->inode))
+
+You dereferenced dax_dev on the line above so check is too late or
+unnecessary
+
+> +		return -1;
+> +
+> +	if (cmpxchg(&dax_dev->holder_data, NULL, holder)) {
+> +		pr_warn("%s: holder_data already set\n", __func__);
+
+Perhaps nicer to use a pr_fmt() deal with the func name if you need it.
+or make it pr_debug and let dynamic debug control formatting if anyone
+wants the function name.
+
+> +		return -1;
+> +	}
+> +	dax_dev->holder_ops = hops;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(fs_dax_get);
+> +#endif /* DEV_DAX_IOMAP */
+> +
+>  enum dax_device_flags {
+>  	/* !alive + rcu grace period == no new operations / mappings */
+>  	DAXDEV_ALIVE,
+> diff --git a/include/linux/dax.h b/include/linux/dax.h
+> index b463502b16e1..e973289bfde3 100644
+> --- a/include/linux/dax.h
+> +++ b/include/linux/dax.h
+> @@ -57,7 +57,12 @@ struct dax_holder_operations {
+>  
+>  #if IS_ENABLED(CONFIG_DAX)
+>  struct dax_device *alloc_dax(void *private, const struct dax_operations *ops);
+> +
+> +#if IS_ENABLED(CONFIG_DEV_DAX_IOMAP)
+> +int fs_dax_get(struct dax_device *dax_dev, void *holder, const struct dax_holder_operations *hops);
+line wrap < 80 chars
+
+> +#endif
+>  void *dax_holder(struct dax_device *dax_dev);
+> +struct dax_device *inode_dax(struct inode *inode);
+
+Unrelated change?
+
+>  void put_dax(struct dax_device *dax_dev);
+>  void kill_dax(struct dax_device *dax_dev);
+>  void dax_write_cache(struct dax_device *dax_dev, bool wc);
 
 
