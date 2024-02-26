@@ -1,180 +1,276 @@
-Return-Path: <linux-fsdevel+bounces-12846-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12847-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8713D867E17
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 18:21:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F07867E3E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 18:23:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 141271F2D11E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 17:21:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B59328E30A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 17:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B550612EBFA;
-	Mon, 26 Feb 2024 17:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B66412DDAB;
+	Mon, 26 Feb 2024 17:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ItR2wiFC"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UtEdZPQI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D1012C800
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 17:17:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1020112D775
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 17:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708967876; cv=none; b=kpuGsrhCw6L86XEzYOuASaqDM7HaR7Z2FhzGQRcO2BWcGp+lEKxHBzq87jLuzy4+5pbGC6WWzMa6KPE1NlfhQ+xM1+bff28tLt8cRln6vHCNHuUcjUV0sNVGSK4nEYN03DjOeaECF0NzGDHK1wVJS383DnT+DiC/zTBkIwk3LWA=
+	t=1708968166; cv=none; b=c/g9dPOHkxaNdnFsQTFl9yX2+t15a+r+H0mPXyI+fvlCRSGIbkv4MUnc08Chx6KKWDYFnFw158+1zIq4WS7J3xcP1qhflIgOViSW5BrmYl0iFLnRo6r2prGRNHWM9K8SFc0OHwbV/np5yx3XLDYsaEOTQgOOoZbePpSPoAmgR4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708967876; c=relaxed/simple;
-	bh=r8EBnLNTiWB1b5wyzBJTF/g42NOpy0uknOtcjVUxuKQ=;
+	s=arc-20240116; t=1708968166; c=relaxed/simple;
+	bh=EqmeweN9yJbHN4ZOPQ4NNULOO0mEliqSsTTtiukx5Xg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tzMsiXNa4Dxz8FaoNKRJvthD+4Q40oeRB+goalh/HI5s9gED63rduID1xpLa8aiiK+RKZx7ZFjrYEcmDEqfyIBrvaBwwMJsDWB5QV3ACy7mWjMelUP81gvrLoNAHH17Sj4NzqPp2r31Sw5d7UsDJMOvPMct2i4XHFjOQAMxeurQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ItR2wiFC; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a3f3d0d2787so327376566b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 09:17:53 -0800 (PST)
+	 To:Cc:Content-Type; b=KyfryK67sEGGuyzC1cPWmT/wBgEy+eJscgRof5TwhyQxKI7B1CMXUSQfm7yNfB/SUQpA7WhPdtU3rAmpsTECGlPxcMl9Wd/wuvi9KUw/7j3mR2lW/FymPCcXfr7qaed398Y/kBAUzsBaaj23ugw8C7zJPvmC6W8j5m2MlPCLZ6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UtEdZPQI; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2d2509c66daso48848181fa.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 09:22:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1708967872; x=1709572672; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tWVtevA9wXVF2B05HUcL+aeuhxeDRR1ZXitsqO3GeN0=;
-        b=ItR2wiFC6Mp6kgXPboHiC9JIhk7zCGjOauki1rZAYQaBxffB24Yi7bInPgidDLU/8T
-         TvegrXtPyyJmlYG1TTpu1m1bZrbzV2/uhvL9pjxw94On/bs105ZLqrzP0sjlQCoZ2GGe
-         5E/bsv6kMthOatyxAn8IrxCe0lAYY2EUjEsE0=
+        d=google.com; s=20230601; t=1708968161; x=1709572961; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dv1MR8FFyIVeo2kD5/jRtw1zZdBqiDH8uTYdJ7duKRA=;
+        b=UtEdZPQIZQ3QnohdxOrVw8t21VecFDMJ22AYc8M3h/OLTcWQGmofC5i2wHNfp5etvd
+         IxycCl+BPuxdiJPETX3fYYBIVegZY/vN+xUCEaifNbAmwLrnCi97dSL+u/624e0iVsDD
+         TkEcuEPlhDJPrEhQW3tw6AxiK0wnEC7A0OhZEP3hOXEWT/UH3N5czcorAcpJUMueHs7I
+         XmuqjWvOUm+mpWtOeHegPpxOGo7lxpf9TXhZWzP+WZUnQHy4D9MSMTnWOpNgnZjhkvHe
+         S5lswx19Inj0FaKiPePkX0oICzcdVKrWe/4KjFm0v49JRYDrlDdD2Gk21rsxbVbmQEf/
+         3tew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708967872; x=1709572672;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tWVtevA9wXVF2B05HUcL+aeuhxeDRR1ZXitsqO3GeN0=;
-        b=tldZxDcCXshY51OkXDZ0QPLuIbvlTG1O5vIlSMEWhTMtSxJ/OZy/6dVDcruRyzKhaz
-         u2rQ7YJu5PL0CrzPMpQd1h1tbg/uttO8BAjjXUYELFLPi9F9wmqYqJpIESowh9hTQrX9
-         l/FlJU1BVptfrlViWqFXZMY4AyFUx7H98JpWbB4T9HaMH8Pge/mLYR1r60oPhIafFeH5
-         bqXhR4Q8Z7YsI97P2DerakOAhVhsxbswrWyvKX/DqpFSXXi4LXV2KRpjRGYZO2EjjigK
-         +K6Ac8wKImGF3VGQWoTSHojkp8Y3/H6TKH7Ts6KXTWCljsuRfo/Jmh/aV1KJzbUeG21w
-         a/3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXOH0QGTPkaVJe78ZzAHremfhIAGr25Qd2UbVvQZCI2QBG3dGArBpcMXWaVicDHxXQKqYKAhLLObwSs4l3H43U3VArqVVfdr7VqOZFaHg==
-X-Gm-Message-State: AOJu0Yzrem8vnA0WBnNVyVYQQ0alblYP7JVJyb/MDtcjH7VSyWztzPVP
-	nUR5xdRbo+IfUbqdULbl8taeaWVWte4/Vt8GMFCz67ZbHGGTGLnTnCV9K+5KvbyUc8GbFCQZMrl
-	/gBodbA==
-X-Google-Smtp-Source: AGHT+IEvATD4zvSgG3WdUth2a5hEOvh+NOpyk7qiY/Qb9oCTl2womrNncXOgcti0gSzFnV7/OrELSw==
-X-Received: by 2002:a17:906:318d:b0:a40:4711:da21 with SMTP id 13-20020a170906318d00b00a404711da21mr4662009ejy.37.1708967871972;
-        Mon, 26 Feb 2024 09:17:51 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id gs8-20020a170906f18800b00a3f8f0ab293sm2632357ejb.147.2024.02.26.09.17.51
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Feb 2024 09:17:51 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a3f3d0d2787so327372166b.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 09:17:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV1vRn7YPYcA4sZWB7mY6KklipVzxZfIiyEkhpu4PJ74HC551iQeGuvhfWbVKV094IhYCh7zxTRjcIIry9xtfGkEapUFogcGSbGDVurZQ==
-X-Received: by 2002:a17:906:c350:b0:a43:82d0:38f4 with SMTP id
- ci16-20020a170906c35000b00a4382d038f4mr1318140ejb.11.1708967870938; Mon, 26
- Feb 2024 09:17:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1708968161; x=1709572961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dv1MR8FFyIVeo2kD5/jRtw1zZdBqiDH8uTYdJ7duKRA=;
+        b=QGNcOK/QZ8xjDo9w/ob5NsqaT1z87DxD1mt5QQF4HHSz+khoUgWl0n5d1NkAI1mMmD
+         MLgwjUDZ4okchpYXy8RyCSPsH0+ue1OCdZJsbJ75khN0ISIgbquVmSj7DnU2reg38J4+
+         IwvfI4r7ofY5faEk+LTGd0q++dghYjBgSPnOS2ytRQcL3BbJgp8QQnsHcUt6J7sypbUB
+         rHHqJqrPIB66LZz+k85TRylS9HxGVMeM30DR3SoxhoIb7PwTxxWgm8+rTaLILlolhnZP
+         GOX8robydhaVKtZ6+Vm9VKxX5urCO13uchezPYqhO0jTVhFgE16VwgvLmRDNKyJvIcKh
+         PlFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcz7yABakW6mspannTROa7ApE0OTvEQRJwlDmZjRMCM2hSQ4BIP7H2ljb0eaxtWbmbT0KtBcAg0qnBBz9JFImVTjCNrSZ+K8BwJIBaDw==
+X-Gm-Message-State: AOJu0YwcMZ/Y8Ktz6u2MxRiKA1keloBf3M0mMIjxqkEmRlFFV6fNYRPY
+	aFw66sUEhUX7bbwnKxZSK16d55jN3+I6FiCCbNqEYguYvKbhreTG2lHy26lPNAdQNBxuYRHOEIY
+	JuDrgq9m1LSboguELvaiLGt5b0UScpEzGAEzL
+X-Google-Smtp-Source: AGHT+IHRxxQsMQSRpnlCaAS8PflYsK1iTOiKydsmAuE0utC3AXspYUhCmo2l3tTpb+Dmf3/YMDJ4hjbxrgCTIuiY2OA=
+X-Received: by 2002:a2e:990b:0:b0:2d2:7164:c6ba with SMTP id
+ v11-20020a2e990b000000b002d27164c6bamr4367139lji.43.1708968160893; Mon, 26
+ Feb 2024 09:22:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zdkxfspq3urnrM6I@bombadil.infradead.org> <Zdlsr88A6AAlJpcc@casper.infradead.org>
- <CAHk-=wjUkYLv23KtF=EyCrQcmf9NGwE8Yo1cuxdaLF8gqx5zWw@mail.gmail.com>
- <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb>
- <Zds8T9O4AYAmdS9d@casper.infradead.org> <CAHk-=wgVPHPPjZPoV8E_q59L7i8zFjHo_5hHo_+qECYuy7FF6g@mail.gmail.com>
- <Zduto30LUEqIHg4h@casper.infradead.org> <CAHk-=wibYaWYqs5A30a7ywJdsW5LDT1LYysjcCmzjzkK=uh+tQ@mail.gmail.com>
- <bk45mgxpdbm5gfa6wl37nhecttnb5bxh6wo3slixsray77azu5@pi3bblfn3c5u>
- <CAHk-=wjnW96+oP0zhEd1zjPNqOHvrddKkwp0+CuS5HpZavfmMQ@mail.gmail.com> <Zdv8dujdOg0dD53k@duke.home>
-In-Reply-To: <Zdv8dujdOg0dD53k@duke.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 26 Feb 2024 09:17:33 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
-Message-ID: <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-To: Al Viro <viro@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, Matthew Wilcox <willy@infradead.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, lsf-pc@lists.linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
-	Daniel Gomez <da.gomez@samsung.com>, Pankaj Raghav <p.raghav@samsung.com>, 
-	Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>, 
-	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
+References: <20240221194052.927623-1-surenb@google.com> <20240221194052.927623-8-surenb@google.com>
+ <6851f8a0-e5d2-4b79-9cee-cff0fdec2970@suse.cz>
+In-Reply-To: <6851f8a0-e5d2-4b79-9cee-cff0fdec2970@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 26 Feb 2024 17:22:21 +0000
+Message-ID: <CAJuCfpHA-0PsQcNMcJVniVyUo4+nUYaioQSS7ZnXO_TGxgumqA@mail.gmail.com>
+Subject: Re: [PATCH v4 07/36] mm: introduce slabobj_ext to support slab object extensions
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com, 
+	peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com, 
+	will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com, 
+	dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com, 
+	david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org, 
+	nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev, 
+	rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com, 
+	yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com, 
+	hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org, 
+	ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org, 
+	ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org, 
+	iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com, 
+	elver@google.com, dvyukov@google.com, shakeelb@google.com, 
+	songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com, 
+	minchan@google.com, kaleshsingh@google.com, kernel-team@android.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arch@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-modules@vger.kernel.org, kasan-dev@googlegroups.com, 
+	cgroups@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 25 Feb 2024 at 18:49, Al Viro <viro@kernel.org> wrote:
+On Mon, Feb 26, 2024 at 8:26=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
 >
-> Uh?  __generic_file_write_iter() doesn't take inode lock, but
-> generic_file_write_iter() does.
+> On 2/21/24 20:40, Suren Baghdasaryan wrote:
+> > Currently slab pages can store only vectors of obj_cgroup pointers in
+> > page->memcg_data. Introduce slabobj_ext structure to allow more data
+> > to be stored for each slab object. Wrap obj_cgroup into slabobj_ext
+> > to support current functionality while allowing to extend slabobj_ext
+> > in the future.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>
+> Hi, mostly good from slab perspective, just some fixups:
+>
+> > --- a/mm/slab.h
+> > +++ b/mm/slab.h
+> > -int memcg_alloc_slab_cgroups(struct slab *slab, struct kmem_cache *s,
+> > -                              gfp_t gfp, bool new_slab);
+> > -void mod_objcg_state(struct obj_cgroup *objcg, struct pglist_data *pgd=
+at,
+> > -                  enum node_stat_item idx, int nr);
+> > -#else /* CONFIG_MEMCG_KMEM */
+> > -static inline struct obj_cgroup **slab_objcgs(struct slab *slab)
+> > +int alloc_slab_obj_exts(struct slab *slab, struct kmem_cache *s,
+> > +                     gfp_t gfp, bool new_slab);
+> >
+>
+> We could remove this declaration and make the function static in mm/slub.=
+c.
 
-Yes, as I replied to Kent later, I mis-remembered the details
-(together with a too-quick grep). It's the reading side that just
-doesn't care, and which causes us to not actually give the POSIX
-guarantees anyway.
+Ack.
 
->  O_APPEND handling aside, there's
-> also file_remove_privs() in there and it does need that lock.
+>
+> > +#else /* CONFIG_SLAB_OBJ_EXT */
+> > +
+> > +static inline struct slabobj_ext *slab_obj_exts(struct slab *slab)
+> >  {
+> >       return NULL;
+> >  }
+> >
+> > -static inline int memcg_alloc_slab_cgroups(struct slab *slab,
+> > -                                            struct kmem_cache *s, gfp_=
+t gfp,
+> > -                                            bool new_slab)
+> > +static inline int alloc_slab_obj_exts(struct slab *slab,
+> > +                                   struct kmem_cache *s, gfp_t gfp,
+> > +                                   bool new_slab)
+> >  {
+> >       return 0;
+> >  }
+>
+> Ditto
 
-Fair enough, but that's such a rare special case that it really
-doesn't merit the lock on every write.
+Ack.
 
-What at least the ext4 the DIO code does is something like "look at
-the write position and the inode size, and decide optimistically
-whether to take the lock shared or not". Then it re-checks it after
-potentially taking it for a read (in case the inode size has changed),
-and might decide to go for a write lock after all..
+>
+> > -#endif /* CONFIG_MEMCG_KMEM */
+> > +
+> > +static inline struct slabobj_ext *
+> > +prepare_slab_obj_exts_hook(struct kmem_cache *s, gfp_t flags, void *p)
+> > +{
+> > +     return NULL;
+> > +}
+>
+> Same here (and the definition and usage even happens in later patch).
 
-And I think we could fairly trivially do something similar on the
-regular write side. Yes, it needs to check SUID/SGID bits in addition
-to the inode size change, I guess (I don't think the ext4 dio code
-does, but my quick grepping might once again be incomplete).
+Ack.
 
-Anyway, DaveC is obviously also right that for the "actually need to
-do writeback" case, our writeback is currently intentionally
-throttled, which is why the benchmark by Luis shows that "almost two
-orders of magnitude" slowdown with buffered writeback. That's probably
-mainly an effect of having a backing store with no delays, but still..
+>
+> > +#endif /* CONFIG_SLAB_OBJ_EXT */
+> > +
+> > +#ifdef CONFIG_MEMCG_KMEM
+> > +void mod_objcg_state(struct obj_cgroup *objcg, struct pglist_data *pgd=
+at,
+> > +                  enum node_stat_item idx, int nr);
+> > +#endif
+> >
+> >  size_t __ksize(const void *objp);
+> >
+> > diff --git a/mm/slub.c b/mm/slub.c
+> > index d31b03a8d9d5..76fb600fbc80 100644
+> > --- a/mm/slub.c
+> > +++ b/mm/slub.c
+> > @@ -683,10 +683,10 @@ static inline bool __slab_update_freelist(struct =
+kmem_cache *s, struct slab *sla
+> >
+> >       if (s->flags & __CMPXCHG_DOUBLE) {
+> >               ret =3D __update_freelist_fast(slab, freelist_old, counte=
+rs_old,
+> > -                                         freelist_new, counters_new);
+> > +                                         freelist_new, counters_new);
+> >       } else {
+> >               ret =3D __update_freelist_slow(slab, freelist_old, counte=
+rs_old,
+> > -                                         freelist_new, counters_new);
+> > +                                         freelist_new, counters_new);
+> >       }
+> >       if (likely(ret))
+> >               return true;
+> > @@ -710,13 +710,13 @@ static inline bool slab_update_freelist(struct km=
+em_cache *s, struct slab *slab,
+> >
+> >       if (s->flags & __CMPXCHG_DOUBLE) {
+> >               ret =3D __update_freelist_fast(slab, freelist_old, counte=
+rs_old,
+> > -                                         freelist_new, counters_new);
+> > +                                         freelist_new, counters_new);
+> >       } else {
+> >               unsigned long flags;
+> >
+> >               local_irq_save(flags);
+> >               ret =3D __update_freelist_slow(slab, freelist_old, counte=
+rs_old,
+> > -                                         freelist_new, counters_new);
+> > +                                          freelist_new, counters_new);
+>
+> Please no drive-by fixups of whitespace in code you're not actually
+> changing. I thought you agreed in v3?
 
-However, the reason I dislike our write-side locking is that it
-actually serializes even the entirely cached case.
+Sorry, I must have misunderstood your previous comment. I thought you
+were saying that the alignment I changed to was incorrect. I'll keep
+them untouched.
 
-Now, writing concurrently to the same inode is obviously strange, but
-it's a common thing for databases. And while all the *serious* ones
-use DIO, I think the buffered case really should do better.
 
-Willy - tangential side note: I looked closer at the issue that you
-reported (indirectly) with the small reads during heavy write
-activity.
+>
+> >  static inline bool memcg_slab_pre_alloc_hook(struct kmem_cache *s,
+> >                                            struct list_lru *lru,
+> >                                            struct obj_cgroup **objcgp,
+> > @@ -2314,7 +2364,7 @@ static __always_inline void account_slab(struct s=
+lab *slab, int order,
+> >                                        struct kmem_cache *s, gfp_t gfp)
+> >  {
+> >       if (memcg_kmem_online() && (s->flags & SLAB_ACCOUNT))
+> > -             memcg_alloc_slab_cgroups(slab, s, gfp, true);
+> > +             alloc_slab_obj_exts(slab, s, gfp, true);
+>
+> This is still guarded by the memcg_kmem_online() static key, which is goo=
+d.
+>
+> >
+> >       mod_node_page_state(slab_pgdat(slab), cache_vmstat_idx(s),
+> >                           PAGE_SIZE << order);
+> > @@ -2323,8 +2373,7 @@ static __always_inline void account_slab(struct s=
+lab *slab, int order,
+> >  static __always_inline void unaccount_slab(struct slab *slab, int orde=
+r,
+> >                                          struct kmem_cache *s)
+> >  {
+> > -     if (memcg_kmem_online())
+> > -             memcg_free_slab_cgroups(slab);
+> > +     free_slab_obj_exts(slab);
+>
+> But this no longer is, yet it still could be?
 
-Our _reading_ side is very optimized and has none of the write-side
-oddities that I can see, and we just have
+Yes, I missed that, it seems. free_slab_obj_exts() would bail out but
+still checking the static key is more efficient. I'll revive this
+check.
 
-  filemap_read ->
-    filemap_get_pages ->
-        filemap_get_read_batch ->
-          folio_try_get_rcu()
+Thanks for the review!
+Suren.
 
-and there is no page locking or other locking involved (assuming the
-page is cached and marked uptodate etc, of course).
-
-So afaik, it really is just that *one* atomic access (and the matching
-page ref decrement afterwards).
-
-We could easily do all of this without getting any ref to the page at
-all if we did the page cache release with RCU (and the user copy with
-"copy_to_user_atomic()").  Honestly, anything else looks like a
-complete disaster. For tiny reads, a temporary buffer sounds ok, but
-really *only* for tiny reads where we could have that buffer on the
-stack.
-
-Are tiny reads (handwaving: 100 bytes or less) really worth optimizing
-for to that degree?
-
-In contrast, the RCU-delaying of the page cache might be a good idea
-in general. We've had other situations where that would have been
-nice. The main worry would be low-memory situations, I suspect.
-
-The "tiny read" optimization smells like a benchmark thing to me. Even
-with the cacheline possibly bouncing, the system call overhead for
-tiny reads (particularly with all the mitigations) should be orders of
-magnitude higher than two atomic accesses.
-
-           Linus
+>
+> >
+> >       mod_node_page_state(slab_pgdat(slab), cache_vmstat_idx(s),
+> >                           -(PAGE_SIZE << order));
+>
 
