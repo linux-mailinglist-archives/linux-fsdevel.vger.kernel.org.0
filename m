@@ -1,148 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-12761-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA1F8866F35
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 10:50:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB28F866F20
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 10:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 414A0B2755B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 09:46:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 266181C24B0C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 09:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C7C87F7C0;
-	Mon, 26 Feb 2024 09:11:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC891272A9;
+	Mon, 26 Feb 2024 09:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="azttXLZK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7mFYZa5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0B57F463;
-	Mon, 26 Feb 2024 09:11:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCBA8595D;
+	Mon, 26 Feb 2024 09:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708938710; cv=none; b=PUixXIVIV5+nKCRwK+hZMCogUO3Ajqu5nIV7vipmNnayPefTpXQIFoq4Tvup8uwlWfjM0WphZXi6UwyGPiIkfi2IuaAzXyyZt6KqBbuT33QWzL56bU70aUsq1F4zPymh8iFD6uYdr9wAC579+sOMCGmfCgw0GA0XYhtaN82ooXw=
+	t=1708938812; cv=none; b=LA0oId/eqIJkrFqggjxECQ1CEs1YG1GueEpG7tZvhku/Ti2ouP9HBMbazkETWwbkTiDjzK9TEMutzEjkuAktYCT+m6XCDnXZz4ISgwt9vczi2n/u40NVMx6efK2yzwsCz7m/cALLleL/9JyYroFvLR6s4/TWDjht6f7JYGfE9/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708938710; c=relaxed/simple;
-	bh=HmQtwuVTdmVLT7OgJWjjNCGSFahCKuzF399EFnjzcZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pJLjHVj6qvo0qpoPR2WO2EteQl4JQhsW5qYedhuHZlFtv9fN+BHP4tH0+O6t7kYx5jPnTwhFOkEEiQBd95onsxO4x3PWNsKzQ7bFy6CcCLdkReMRvU9fnvmv7uhIS5u5yGHAWvz0X9gG+DHl24iQ+vOj1+V6oWIiuSeuyvmJPFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=azttXLZK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2857BC433C7;
-	Mon, 26 Feb 2024 09:11:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708938709;
-	bh=HmQtwuVTdmVLT7OgJWjjNCGSFahCKuzF399EFnjzcZ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=azttXLZK2HR58ht4UAz6hDNX2DSwFY9VjTwzFm1/lVrxMUjehHSq32+rHOdRbgxLj
-	 ftTU7zjUGmdSpdsbuxrTyHU98xvnC1B33Ep1kAWvkW1v/GKSxNX82Pkpw6vrTID9Ed
-	 YWZCvHNPkyi2U90jgrUxJ+zjI5OfbCp6M50ZqEIIxvqWYuXmO2U9lXzS00L0BgHUwv
-	 E4Sh7z1x+GlENyyd3Vm3MgfmJRvdfXj4BJvbBUH4ScQgER4hwe6Z5lUNAAr92Ppdlz
-	 nUCoRWxlRJe7ITKvYOUw32tby++UOAk6gsEwlX0bBtZ5X7xBvrDIoWm4yVqbc5HTUn
-	 6Kzk+k549KZ3w==
-Date: Mon, 26 Feb 2024 04:13:03 -0500
-From: Al Viro <viro@kernel.org>
-To: Vegard Nossum <vegard.nossum@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC] documentation on filesystem exposure to RCU pathwalk from
- fs maintainers' POV
-Message-ID: <ZdxWH4uNfwcftWYI@duke.home>
-References: <Zdu58Jevui1ySBqa@duke.home>
- <5879f44e-1c28-4be1-a684-9bf4fbf6966b@oracle.com>
+	s=arc-20240116; t=1708938812; c=relaxed/simple;
+	bh=pBx7QtVTQeysuDVR/d9EaEwj6txM0TCtiMfoxBmnmgw=;
+	h=Date:Message-Id:From:To:Cc:Subject:In-Reply-To; b=hmR0E4MQDLNGjnD14lA6BQizbFziD6k1FBlQHBIKHBQHqrfxUuhIOQ2bhYhTYbdrEhqcBwo/BeY0yiHFahe+OinpW5/jGPf0/lPtwMsZvZDTOruKRNXgGM1/HEU8iyy65TW0VHSR6y197NsdUlgIWQMlUQhyq+RFjCPXJiUcRZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7mFYZa5; arc=none smtp.client-ip=209.85.215.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-5cedfc32250so2753635a12.0;
+        Mon, 26 Feb 2024 01:13:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708938810; x=1709543610; darn=vger.kernel.org;
+        h=in-reply-to:subject:cc:to:from:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bkZF/uhLnyt4FCiUuL6SqgUagZoNjH2YpVQluDRw2FI=;
+        b=U7mFYZa56jx+0arU0VPd/7I9FWm0bVpjTD3Bl2xUnmZrBnfVFX8gPYc0YOQ5FSxZYe
+         XQmZI07fCaimsye7JQnLu6bk0dbFCESLlp+Fyo0uec4tpxe4G6d71LKsu9L//w30x/O4
+         +7z7iAwgvTiP4PxHcg1u7JnTEEIyAQzhtMv4DkED5/zCVHxDQ1nZVrVZzwXasdoL8pZB
+         AcP7D1JOw5HpQkatu8zA8QBo1xGdjXZcLjRF68M2QXj2eQEuQWLv/67rcZ+zIpUP2lvG
+         xp9TPJAyOXbEWeKmofSDGFP/qIwxXXPew/kLAtji/QT8hhZC8rRVAGBP5JWJxrkNJN/O
+         hioA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708938810; x=1709543610;
+        h=in-reply-to:subject:cc:to:from:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bkZF/uhLnyt4FCiUuL6SqgUagZoNjH2YpVQluDRw2FI=;
+        b=Yu94GRuJjGF54FMbWQEMkqbAkqidXyApgn0kVZMCovu9G78NMEfYK9yR0/YHRArCS0
+         jPRS3LgNHP2et+kTu2NjQqScxhizdEyhmEmeiNMPcHwekf0fLTn8rGMbpT5yHbmSPhy+
+         5NtQn7DAWeiToexUra4MLaHnCSGWP7kIlSqYoMrXIDjIRChv186I0CZzCEqvx+3O05IQ
+         PnP4OyL3NnpYVixSTYw+mbwfI1/v+lnQ+bIA0wpwSO6j7YpnwxmaTVM7i2gRPsLHZlwM
+         c8fleIR2xXgcjwDqxmSIR9rKaz8R+PAxyC1AdBOzk0I/VFNlK6uqnzlsP2+THTJeU7kT
+         WxQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhNwMxxoYF+Z9m/caDQ0UY8nP5aYjPllXi8a7Rzt7eXmGahoFabq+wLLz8gBWF4XiVZsWUT/LvwHQ3Ax88ct9WLKkCv/UuFF7VUewOeucH/YFyXGvyH+3pE2UF+8AYBe7MHjM3L/rDFDWXrFRdLySDVye013RgM3vCveH5ag9fiLTn+YUFYSSseivnTTxo+Qrbd2O2eNZ1HRNx0LESRcVO7vhFoemZk+lqvMtVabspq9xSro/B6uQG8QppX0mw
+X-Gm-Message-State: AOJu0YzbID3Y0jIwmBie/snANu8eTabg9QFQfVwTRbYKzO5yvCIWjsjv
+	titGk0PMvSQbvM+uglBxmm+mgCwu+tx/R1leVPaCYX1mtLQHf0G8
+X-Google-Smtp-Source: AGHT+IFgXhWF9MbgjGJkxXDKVwsDxRx81p91HlsItwhw0tBZDu43SLV4vOCp4BHWcv/zSvBpEWa16w==
+X-Received: by 2002:a17:90a:6f01:b0:299:75aa:8949 with SMTP id d1-20020a17090a6f0100b0029975aa8949mr3725385pjk.22.1708938810286;
+        Mon, 26 Feb 2024 01:13:30 -0800 (PST)
+Received: from dw-tp ([129.41.58.19])
+        by smtp.gmail.com with ESMTPSA id r2-20020a170902c60200b001dc8f8730f3sm2491163plr.285.2024.02.26.01.13.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Feb 2024 01:13:29 -0800 (PST)
+Date: Mon, 26 Feb 2024 14:43:21 +0530
+Message-Id: <878r371tce.fsf@doe.com>
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, sagi@grimberg.me, jejb@linux.ibm.com, martin.petersen@oracle.com, djwong@kernel.org, viro@zeniv.linux.org.uk, brauner@kernel.org, dchinner@redhat.com, jack@suse.cz
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org, tytso@mit.edu, jbongio@google.com, linux-scsi@vger.kernel.org, ojaswin@linux.ibm.com, linux-aio@kvack.org, linux-btrfs@vger.kernel.org, io-uring@vger.kernel.org, nilay@linux.ibm.com, Prasad Singamsetty <prasad.singamsetty@oracle.com>
+Subject: Re: [PATCH v4 03/11] fs: Initial atomic write support
+In-Reply-To: <07537871-ab4e-4629-86ff-5559aa88ad17@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5879f44e-1c28-4be1-a684-9bf4fbf6966b@oracle.com>
 
-On Mon, Feb 26, 2024 at 07:35:17AM +0100, Vegard Nossum wrote:
+John Garry <john.g.garry@oracle.com> writes:
 
-> There is a slight apparent contradiction here between "at the very
-> least, they can expect [...] to remain live throughout the operation" in
-> the first paragraph (which sounds like they _do_ have these guarantees)
-> and most of the second paragraph (which says they _don't_ have these
-> guarantees).
-> 
-> I *think* what you are saying is that dentries/inodes/sbs involved will
-> indeed stay live (i.e. allocated), but that there are OTHER warranties
-> you might usually expect that are not there, such as objects not being
-> locked and potentially changing underneath your filesystem's VFS
-> callback or being in a partial state or other indirectly pointed-to
-> objects not being safe to access.
+> On 24/02/2024 18:20, Ritesh Harjani (IBM) wrote:
+>>>> Helper function atomic_write_valid() can be used by FSes to verify
+>>>> compliant writes.
+>> Minor nit.
+>> maybe generic_atomic_write_valid()?
+>
+> Having "generic" in the name implies that there are other ways in which 
+> we can check if an atomic write is valid, but really this function 
+> should be good to use in scenarios so far considered.
 
-Live != memory object hasn't been freed yet.  It's a lot stronger than
-that.  And most of the filesystem methods get those stronger warranties;
-life would be very hard if we did not have those.
+It means individual FS can call in a generic atomic write validation
+helper instead of implementing of their own. Hence generic_atomic_write_valid(). 
 
-E.g. when you are in the middle of ->read(), you know that struct file
-passed to you won't reach ->release() until after your ->read() returns,
-that the filesystem it's on hasn't even started to be shut down, that
-its in-core inode won't get to ->evict_inode(), that its dentry is
-still associated with the same inode and will stay that way until you are
-done, etc.
+So for e.g. blkdev_atomic_write_valid() function and maybe iomap (or
+ext4 or xfs) can use a generic_atomic_write_valid() helper routine to
+validate an atomic write request.
 
-Normally we do get that kind of warranties - caller holds references
-to the objects we are asked to operate upon.  However, the fast
-path of pathname resolution (everything's in the VFS caches, no IO
-or blocking operations needed, etc.) is an exception.  Several filesystem
-methods (the ones involved in the fast path) may be called with
-the warranties that are weaker than what they (and the rest of the
-methods) normally get.  Note that e.g.  ->lookup() does not need to worry -
-it's off the fast path pretty much by definition and VFS switches to
-pinning objects before calling anything of that sort.
-
-"Unsafe call" refers to the method calls made by RCU pathwalk with
-weaker warranties.  Part of the objects passed to those might have
-already started on the way through their destructors.
-
-> Filesystem methods can usually count upon a number of VFS-provided
-> warranties regarding the stability of the dentries/inodes/superblocks
-> they are called to act upon. For example, they always can expect these
-> objects to remain live throughout the operation; life would be much more
-> painful without that.
-> 
-> However, such warranties do not come for free and other warranties may
-> not always be provided. [...]
-> """
-
-Maybe...
-
-> (As a side note, you may also want to actually link the docs we have for
-> RCU lookup where you say "details are described elsewhere".)
-> 
-> > What methods are affected?
-> > ==========================
-> > 
-> > 	The list of the methods that could run into that fun:
-> > 
-> > ========================	==================================	=================
-> > 	method			indication that the call is unsafe	unstable objects
-> > ========================	==================================	=================
-> 
-> I'd wish for explicit definitions of "unsafe" (which is a terminology
-> you do use more or less consistently in this doc) and "unstable". The
-> definitions don't need mathematical precision, but there should be a
-> quick one-line explanation of each.
- 
-See above.
-
-> I think "the call is unsafe" means that it doesn't have all the usual
-> safety warranties (as detailed above).
-> 
-> I think "unstable" means "not locked, can change underneath the
-> function" (but not that it can be freed), but it would be good to have
-> it spelled out.
-
-Nope.  "Locked" is not an issue.  "Might be hit by a destructor called by
-another thread right under your nose" is.  It's _that_ unpleasant.  Fortunately,
-most of the nastiness is on the VFS side, but there's a good reason why
-quite a few filesystems simply bail out and tell VFS to piss off and not
-come back without having grabbed the references, so that nothing of that
-sort would have to be dealt with.
+-ritesh
 
