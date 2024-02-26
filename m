@@ -1,194 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-12809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A76BD86766C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 14:25:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87441867673
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 14:26:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DC4E1F27C7E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 13:25:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8CA01C27793
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 13:26:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DFE128389;
-	Mon, 26 Feb 2024 13:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF8E128379;
+	Mon, 26 Feb 2024 13:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eeBcRC4Y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C0D127B6E;
-	Mon, 26 Feb 2024 13:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B55D127B61;
+	Mon, 26 Feb 2024 13:26:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708953945; cv=none; b=og+EwdHTjy5DreTBNxvFAfNc8B80XYU/3VGRf4XLXfKeJ2sjsbzzyGBwFaVKoxO8p1xfdgc3MHVHpmvSq9YPwu6iAM6Js9Taw5U7VKeEilPxh+ymp5IhltKby8DA06vpMunUlZ18vvtdXZVmwmSHz7x/h444YFJc4TFeTgTtXHI=
+	t=1708953994; cv=none; b=LrOOH+uCKjxREhGuwtNw3Tsw5d61OhQzI1sB2M2Ik5QODejixeJubBHIrUlLDUEQ5ONbexsOYu4tvYBjam5RSqTdgZ1b85H9+gxSt6MmzKtb/5vFUaSlPEoFyGn/JCQLeIHWgSLjbchxAnBpjvs97A0JYOU+Hr7kADGsvDb7/Wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708953945; c=relaxed/simple;
-	bh=u2OYFseBDBv+gj6x9L887oAOOsq7PZaQa4/b9bbukLo=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ib7NnJFlt+vTIgXtUttI02IDMd3A3bD+ptFyueuOyN1ZLzjMKInogxsMCfZQK1O9O8F6o8SR9cQKrOZevs5HYpCfK5LozC5/+vfoQ/BTUUc8fb16qxm2H9nH6DEa+GBLgaX1sogkGaAB9RhekDptir0Eb6UxY2Zk3ORTm0ihFBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Tk1Ts4xsjz6K5xc;
-	Mon, 26 Feb 2024 21:21:21 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 503B8140CB9;
-	Mon, 26 Feb 2024 21:25:40 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 26 Feb
- 2024 13:25:39 +0000
-Date: Mon, 26 Feb 2024 13:25:38 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: John Groves <John@Groves.net>
-CC: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, "Dan
- Williams" <dan.j.williams@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Alexander
- Viro" <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, "Jan
- Kara" <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-	<linux-cxl@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <john@jagalactic.com>, Dave Chinner
-	<david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>,
-	<dave.hansen@linux.intel.com>, <gregory.price@memverge.com>
-Subject: Re: [RFC PATCH 12/20] famfs: Add inode_operations and
- file_system_type
-Message-ID: <20240226132538.00002656@Huawei.com>
-In-Reply-To: <bd2bbdd7523d1c74ca559d8912984e7facabe5c6.1708709155.git.john@groves.net>
-References: <cover.1708709155.git.john@groves.net>
-	<bd2bbdd7523d1c74ca559d8912984e7facabe5c6.1708709155.git.john@groves.net>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1708953994; c=relaxed/simple;
+	bh=rULkbO3lv9VzQqjPXfntDdnRWFC3fHDArj2MtMhmDIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eBd147tb2zhmuho1XF1XUN20o5RvoiQpmwwh8I+50ASqLwrAx5+eArUdp4cDxw6ieDeTi5MtpCzxiQ72ZY4dRda1KpGQfNX1tLGBtZ6cLCofBmvK1qbruGcqcrgFCA7M79hWrylBsdTeCg8jwZL6jbCLmfyZbnMSESbZXuFpT5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eeBcRC4Y; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=+cq3hzUEhbXThrvu7ftbcKy0Wd8FG0mI00L77ictR6s=; b=eeBcRC4YHIM1lXSFhfDDRxapuW
+	PdGoIztV67c2/pSrO1a13bqEIjN9KeeAornjhwyu+YHYNXvGnwfG9EZ0lM3RtED5g76Xn4S6HaGp4
+	aX75OImTQXT7D7NrOVljjlxaCOoqN/Z8MaOQFzULiELU6uFzc0LKf/6xtcHppDdp0XhZSEce2ny0r
+	hTVK2GBpe0vdSvJYjEwLmA/zz6MdqV+L//IhNuurwa8vVzs+E36cL3FbWicohSuDTWy87kzTSI1kw
+	8zrAPIeBUxYBIVTkuK0HNFpz0sy1crOvU+DW8Q+eExiII0j/vmFCTkZ9Xt2EnFhknLZueT4CEL91L
+	IY4m3JwA==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1reb02-0000000HFGx-3ek1;
+	Mon, 26 Feb 2024 13:26:30 +0000
+Date: Mon, 26 Feb 2024 13:26:30 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, david@fromorbit.com,
+	chandan.babu@oracle.com, akpm@linux-foundation.org,
+	mcgrof@kernel.org, ziy@nvidia.com, hare@suse.de, djwong@kernel.org,
+	gost.dev@samsung.com, linux-mm@kvack.org,
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH 13/13] xfs: enable block size larger than page size
+ support
+Message-ID: <ZdyRhpViddO9TKDs@casper.infradead.org>
+References: <20240226094936.2677493-1-kernel@pankajraghav.com>
+ <20240226094936.2677493-14-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240226094936.2677493-14-kernel@pankajraghav.com>
 
-On Fri, 23 Feb 2024 11:41:56 -0600
-John Groves <John@Groves.net> wrote:
+On Mon, Feb 26, 2024 at 10:49:36AM +0100, Pankaj Raghav (Samsung) wrote:
+> @@ -1625,16 +1625,10 @@ xfs_fs_fill_super(
+>  		goto out_free_sb;
+>  	}
+>  
+> -	/*
+> -	 * Until this is fixed only page-sized or smaller data blocks work.
+> -	 */
+>  	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
+>  		xfs_warn(mp,
+> -		"File system with blocksize %d bytes. "
+> -		"Only pagesize (%ld) or less will currently work.",
+> -				mp->m_sb.sb_blocksize, PAGE_SIZE);
+> -		error = -ENOSYS;
+> -		goto out_free_sb;
+> +"EXPERIMENTAL: Filesystem with Large Block Size (%d bytes) enabled.",
+> +			mp->m_sb.sb_blocksize);
 
-> This commit introduces the famfs inode_operations. There is nothing really
-> unique to famfs here in the inode_operations..
-> 
-> This commit also introduces the famfs_file_system_type struct and the
-> famfs_kill_sb() function.
-> 
-> Signed-off-by: John Groves <john@groves.net>
+WARN seems a little high for this.  xfs_notice() or xfs_info() would
+seem more appropriate:
 
-Trivial comments only.
-
-> +
-> +/*
-> + * File creation. Allocate an inode, and we're done..
-> + */
-> +/* SMP-safe */
-> +static int
-> +famfs_mknod(
-> +	struct mnt_idmap *idmap,
-> +	struct inode     *dir,
-> +	struct dentry    *dentry,
-> +	umode_t           mode,
-> +	dev_t             dev)
-> +{
-> +	struct inode *inode = famfs_get_inode(dir->i_sb, dir, mode, dev);
-> +	int error           = -ENOSPC;
-> +
-> +	if (inode) {
-
-As below. I would flip it for cleaner code/ shorter indent etc.
-
-> +		struct timespec64       tv;
-> +
-> +		d_instantiate(dentry, inode);
-> +		dget(dentry);	/* Extra count - pin the dentry in core */
-> +		error = 0;
-> +		tv = inode_set_ctime_current(inode);
-> +		inode_set_mtime_to_ts(inode, tv);
-> +		inode_set_atime_to_ts(inode, tv);
-> +	}
-> +	return error;
-> +}
-> +
-> +static int famfs_mkdir(
-> +	struct mnt_idmap *idmap,
-> +	struct inode     *dir,
-> +	struct dentry    *dentry,
-> +	umode_t           mode)
-> +{
-> +	int retval = famfs_mknod(&nop_mnt_idmap, dir, dentry, mode | S_IFDIR, 0);
-> +
-> +	if (!retval)
-> +		inc_nlink(dir);
-
-Copy local style, so fine if this is common pattern, otherwise I'd go for
-consistent error cases out of line as easier for us sleepy caffeine 
-deprived reviewers.
-
-
-	if (retval)
-		return retval;
-
-	inc_nlink(dir);
-
-	return 0;
-> +
-> +	return retval;
-> +}
-> +
-> +static int famfs_create(
-> +	struct mnt_idmap *idmap,
-> +	struct inode     *dir,
-> +	struct dentry    *dentry,
-> +	umode_t           mode,
-> +	bool              excl)
-> +{
-> +	return famfs_mknod(&nop_mnt_idmap, dir, dentry, mode | S_IFREG, 0);
-> +}
-> +
-> +static int famfs_symlink(
-> +	struct mnt_idmap *idmap,
-> +	struct inode     *dir,
-> +	struct dentry    *dentry,
-> +	const char       *symname)
-> +{
-> +	struct inode *inode;
-> +	int error = -ENOSPC;
-> +
-> +	inode = famfs_get_inode(dir->i_sb, dir, S_IFLNK | 0777, 0);
-	if (!inode)
-		return -ENOSPC;
-
-> +	if (inode) {
-> +		int l = strlen(symname)+1;
-> +
-> +		error = page_symlink(inode, symname, l);
-	if (error) {
-		iput(inode);
-		return error;
-	}
-	
-	...
-
-> +		if (!error) {
-> +			struct timespec64       tv;
-> +
-> +			d_instantiate(dentry, inode);
-> +			dget(dentry);
-> +			tv = inode_set_ctime_current(inode);
-> +			inode_set_mtime_to_ts(inode, tv);
-> +			inode_set_atime_to_ts(inode, tv);
-> +		} else
-> +			iput(inode);
-> +	}
-> +	return error;
-> +}
-
+#define KERN_WARNING    KERN_SOH "4"    /* warning conditions */
+#define KERN_NOTICE     KERN_SOH "5"    /* normal but significant condition */
+#define KERN_INFO       KERN_SOH "6"    /* informational */
 
 
