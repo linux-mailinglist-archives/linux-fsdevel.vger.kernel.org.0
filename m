@@ -1,90 +1,68 @@
-Return-Path: <linux-fsdevel+bounces-12884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43558682D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 22:18:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B77D78682D9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 22:19:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B28071C257C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 21:18:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8EA91C2588A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 21:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46BC131E36;
-	Mon, 26 Feb 2024 21:18:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B24BA130E5E;
+	Mon, 26 Feb 2024 21:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="a/5yuU3X"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iQ5PbwGp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2FE1E878
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 21:18:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C2EE1E878
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 21:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708982305; cv=none; b=u1a02UsTa/IKCR/VTU09eo4CxC8/NM/Z6mYOUtUBK8GM3ee51efOHNP7dVS3piRZorbHCf5daFj3FL4dAjp6eDrDfGoIjLflUcX3yP4jc9oym+qgATbYNmShZmbpUvXnjBMqoyxpeCpXri2718Cdu7WIrLauInO8zsdg+eSiD7w=
+	t=1708982367; cv=none; b=H3ZM6mEvbSXUXg7ILi2XMao0HHE93by+LO7gJtT8vandxBWyFIrFFXzwHGVPTKT3q2U2hvOsn3dtrku5jCZLqvZmBB82k2GJqR0cBUv5lWfpnRBATtqIdeDOQCZoNYiJp2BniKqZum4VbFjrnj5LPrxjUPnWm/bcrgdpEsKW9MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708982305; c=relaxed/simple;
-	bh=eaIp+fx10BWGs+4xS6PS0LUQ/7o+RRQRSzDpSW83ah4=;
+	s=arc-20240116; t=1708982367; c=relaxed/simple;
+	bh=P0Ro7QknTx0Bk88xYFHQHS6Ah+3fPms+n3ak7cOqW3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzZbiUXYoPPmGA1sCIGJoUIGn3szCyczBDoyvO0W6iiO50J8JS+rN8RuTcRjrdN2gardZHNlocxbS1tjW8toga3RmID4E7jvIiPCa/nrSsLWZq5cnRjd3oI8HzpSrp/9s6a3PPl+ZeppA1Y3mWDQAZ9W9DUaqwSC+vGNt0V+49g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=a/5yuU3X; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1dca3951ad9so12933595ad.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 13:18:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1708982302; x=1709587102; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I9bpXPsVA2dblkxjM286LakoqzaJhRDzLGBOQQdyQhQ=;
-        b=a/5yuU3XTKNhRHnA1h5/96avhI9D7bcCM+PMtBGSEoo6fkYz9n7pN+iVQtN9yqMRWB
-         t2gJc2NlJ0Tcnsjjupc6g7qIatR52QxiPDLqk+zyslJKPV+N/eKS1OLhUrOawQcuZHFv
-         eWxm08Sk2F9ulhVVMpbVXhS4ge6O+PEvREgr7Qmof302Jh0ocq/ye9I74yL7cagphs9p
-         44IhjO/udqgVt1vygaciNe7QMSJjAcjkLX1znxvt2AA8tB7JT9fLTekq1dHES70Cbh4J
-         4RX1V3T22NcbUJmZqqDW/on3MmpF9tjtgzi66jfLk+u/5mUQZpd4838i1D5TOtOR3rrl
-         3WZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708982302; x=1709587102;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I9bpXPsVA2dblkxjM286LakoqzaJhRDzLGBOQQdyQhQ=;
-        b=C0HogZNP5LSYaWE7AKCKOfOHGYrBm0fHKQtT2Cm3iVXqYRbocNasneHk/4Yt0NQJ0k
-         hJAlpZZSoyjuxRUWZr4BjaFNsCP5jKZ5CYS47C/Ukx+JzfyRNOLV4T4lhoOq9x5Gi+n7
-         taLXnYchtq/4UNmELQFro4rHtebAcKQaYtE7qxEBm/PYXrcK2WZrVLQNXSSnnYtFpu4U
-         PqXE0kgDu3x5zcjpAc71hkUsnhyC6Lc+4gnrgCid91QVqRVSJ1T20/027Z6wMzyRKvnM
-         2LCu7861fqWzhf690vC0yQk4SZqknNTC5MiDsj5uiQVMn+u+iAy/aw7U/tkwgq9JQwP7
-         GgwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVU8XGAFVsNfcQs8zobgRDCLYbEcbor7ouX/3qMq6UsDmyrm5bOL5Ht/9FfjKWm8XT9J3JnWkBAtogygdk7mGDo5Uz4OUupxJwsXGb10A==
-X-Gm-Message-State: AOJu0YxR/2Haz3Efoq3gRi3Tbh+n7CrIOkKp1aaksgn3r7rcH10ZxaQG
-	yzIrjpAtHf2+5+2IjhVMEBHWEoPzTiTfZ2lPiAi6c/m9WFAYL6zWPj6kRvgPoyM=
-X-Google-Smtp-Source: AGHT+IEaS3503yij5SnTzXRX9ma5fz0nrIGs9M8iQXzfkpIF9Fk1rga0qUb/2ASG3WoYZeBci0kbFg==
-X-Received: by 2002:a17:903:32c6:b0:1dc:b3bb:480a with SMTP id i6-20020a17090332c600b001dcb3bb480amr1448955plr.49.1708982301931;
-        Mon, 26 Feb 2024 13:18:21 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-247-196.pa.nsw.optusnet.com.au. [49.181.247.196])
-        by smtp.gmail.com with ESMTPSA id y11-20020a170902d64b00b001db94bead0asm127599plh.193.2024.02.26.13.18.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Feb 2024 13:18:21 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1reiMc-00Bv0s-2p;
-	Tue, 27 Feb 2024 08:18:18 +1100
-Date: Tue, 27 Feb 2024 08:18:18 +1100
-From: Dave Chinner <david@fromorbit.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QhzXtL1YNmpyUCdAZAfbNRVEVLAjGZyu2Q1IKGuHI/s9yNvG7iQWU9gy0AGMF2shWZIyTe9pESupI4DymvciEod2OH7Yy8oQJG3+oPzwX/SUNaceWKD0ns3281MxLJRzfIoOGgxPQfOzPxbSzyvBZ4Wc+m6uSjENzYRi9czxqrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iQ5PbwGp; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 26 Feb 2024 16:19:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1708982362;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ReMmygJwuxWQaBs4diTFEfeTguIkUzvr+cMcMk+rSXI=;
+	b=iQ5PbwGpCr1MM+tPehko5rndLZu3lcWfc1vJWxG7gHy0fR9wl5WjlwuH6j8U+AOuH5TUZb
+	sjJlqvcPBIchvFdGM5KpB8xlxuFdrTpwPHAVKwdCVwI8SU8EqnLct7uRT1GWnX8youbKYF
+	x/nDupLvn5nv2pk3nx34B+e9yFlyDxg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
 To: Matthew Wilcox <willy@infradead.org>
-Cc: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, chandan.babu@oracle.com,
-	akpm@linux-foundation.org, mcgrof@kernel.org, ziy@nvidia.com,
-	hare@suse.de, djwong@kernel.org, gost.dev@samsung.com,
-	linux-mm@kvack.org, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH 13/13] xfs: enable block size larger than page size
- support
-Message-ID: <Zd0AGgE6nP9BUS5O@dread.disaster.area>
-References: <20240226094936.2677493-1-kernel@pankajraghav.com>
- <20240226094936.2677493-14-kernel@pankajraghav.com>
- <ZdyRhpViddO9TKDs@casper.infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Al Viro <viro@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
+	Daniel Gomez <da.gomez@samsung.com>, Pankaj Raghav <p.raghav@samsung.com>, 
+	Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, 
+	Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+Message-ID: <upnvhnqaitifuwwbxcpa4zgf2hribfrtqzxtcrv5djbyjs2ond@axetql2wrwnt>
+References: <Zds8T9O4AYAmdS9d@casper.infradead.org>
+ <CAHk-=wgVPHPPjZPoV8E_q59L7i8zFjHo_5hHo_+qECYuy7FF6g@mail.gmail.com>
+ <Zduto30LUEqIHg4h@casper.infradead.org>
+ <CAHk-=wibYaWYqs5A30a7ywJdsW5LDT1LYysjcCmzjzkK=uh+tQ@mail.gmail.com>
+ <bk45mgxpdbm5gfa6wl37nhecttnb5bxh6wo3slixsray77azu5@pi3bblfn3c5u>
+ <CAHk-=wjnW96+oP0zhEd1zjPNqOHvrddKkwp0+CuS5HpZavfmMQ@mail.gmail.com>
+ <Zdv8dujdOg0dD53k@duke.home>
+ <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
+ <Zdz9p_Kn0puI1KEL@casper.infradead.org>
+ <znixgiqxzoksfwwzggmzsu6hwpqfszigjh5k6hx273qil7dx5t@5dxcovjdaypk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,40 +71,70 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZdyRhpViddO9TKDs@casper.infradead.org>
+In-Reply-To: <znixgiqxzoksfwwzggmzsu6hwpqfszigjh5k6hx273qil7dx5t@5dxcovjdaypk>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Feb 26, 2024 at 01:26:30PM +0000, Matthew Wilcox wrote:
-> On Mon, Feb 26, 2024 at 10:49:36AM +0100, Pankaj Raghav (Samsung) wrote:
-> > @@ -1625,16 +1625,10 @@ xfs_fs_fill_super(
-> >  		goto out_free_sb;
-> >  	}
-> >  
-> > -	/*
-> > -	 * Until this is fixed only page-sized or smaller data blocks work.
-> > -	 */
-> >  	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
-> >  		xfs_warn(mp,
-> > -		"File system with blocksize %d bytes. "
-> > -		"Only pagesize (%ld) or less will currently work.",
-> > -				mp->m_sb.sb_blocksize, PAGE_SIZE);
-> > -		error = -ENOSYS;
-> > -		goto out_free_sb;
-> > +"EXPERIMENTAL: Filesystem with Large Block Size (%d bytes) enabled.",
-> > +			mp->m_sb.sb_blocksize);
++cc Paul
+
+On Mon, Feb 26, 2024 at 04:17:19PM -0500, Kent Overstreet wrote:
+> On Mon, Feb 26, 2024 at 09:07:51PM +0000, Matthew Wilcox wrote:
+> > On Mon, Feb 26, 2024 at 09:17:33AM -0800, Linus Torvalds wrote:
+> > > Willy - tangential side note: I looked closer at the issue that you
+> > > reported (indirectly) with the small reads during heavy write
+> > > activity.
+> > > 
+> > > Our _reading_ side is very optimized and has none of the write-side
+> > > oddities that I can see, and we just have
+> > > 
+> > >   filemap_read ->
+> > >     filemap_get_pages ->
+> > >         filemap_get_read_batch ->
+> > >           folio_try_get_rcu()
+> > > 
+> > > and there is no page locking or other locking involved (assuming the
+> > > page is cached and marked uptodate etc, of course).
+> > > 
+> > > So afaik, it really is just that *one* atomic access (and the matching
+> > > page ref decrement afterwards).
+> > 
+> > Yep, that was what the customer reported on their ancient kernel, and
+> > we at least didn't make that worse ...
+> > 
+> > > We could easily do all of this without getting any ref to the page at
+> > > all if we did the page cache release with RCU (and the user copy with
+> > > "copy_to_user_atomic()").  Honestly, anything else looks like a
+> > > complete disaster. For tiny reads, a temporary buffer sounds ok, but
+> > > really *only* for tiny reads where we could have that buffer on the
+> > > stack.
+> > > 
+> > > Are tiny reads (handwaving: 100 bytes or less) really worth optimizing
+> > > for to that degree?
+> > > 
+> > > In contrast, the RCU-delaying of the page cache might be a good idea
+> > > in general. We've had other situations where that would have been
+> > > nice. The main worry would be low-memory situations, I suspect.
+> > > 
+> > > The "tiny read" optimization smells like a benchmark thing to me. Even
+> > > with the cacheline possibly bouncing, the system call overhead for
+> > > tiny reads (particularly with all the mitigations) should be orders of
+> > > magnitude higher than two atomic accesses.
+> > 
+> > Ah, good point about the $%^&^*^ mitigations.  This was pre mitigations.
+> > I suspect that this customer would simply disable them; afaik the machine
+> > is an appliance and one interacts with it purely by sending transactions
+> > to it (it's not even an SQL system, much less a "run arbitrary javascript"
+> > kind of system).  But that makes it even more special case, inapplicable
+> > to the majority of workloads and closer to smelling like a benchmark.
+> > 
+> > I've thought about and rejected RCU delaying of the page cache in the
+> > past.  With the majority of memory in anon memory & file memory, it just
+> > feels too risky to have so much memory waiting to be reused.  We could
+> > also improve gup-fast if we could rely on RCU freeing of anon memory.
+> > Not sure what workloads might benefit from that, though.
 > 
-> WARN seems a little high for this.  xfs_notice() or xfs_info() would
-> seem more appropriate:
-
-Nope, warning level is correct and consistent with what we've used
-for these experimental warnings.
-
-	xfs_warn(mp, "DAX enabled. Warning: EXPERIMENTAL, use at your own risk");
-
-i.e. A message that says "Expect things not to work correctly in
-your filesystem" is definitely worth warning level meddaging.
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> RCU allocating and freeing of memory can already be fairly significant
+> depending on workload, and I'd expect that to grow - we really just need
+> a way for reclaim to kick RCU when needed (and probably add a percpu
+> counter for "amount of memory stranded until the next RCU grace
+> period").
 
