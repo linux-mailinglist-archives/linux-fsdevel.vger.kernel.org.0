@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-12794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90769867472
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 13:10:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC048674AA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 13:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BB9C287848
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 12:10:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD8631C232CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 12:21:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991B86024F;
-	Mon, 26 Feb 2024 12:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6C93604DE;
+	Mon, 26 Feb 2024 12:21:47 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C865FF15;
-	Mon, 26 Feb 2024 12:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF891B27D;
+	Mon, 26 Feb 2024 12:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708949441; cv=none; b=eFNV8+JmQlkEYLhjEga1zAwWtD7DAga+3Cc0pqCsLSjM7JKVyYqFGpcoP7v32pdAZTFuNr64pP6zWcIUHBwuOj2Cdn4OO03Hn4IFm+Kd+8uvchiOfRm/b9QZzdDLJmp7s3UXyHywfJY0Ub3ZQTZ5SqoTu4kN0K9u1Wm42ocjNuE=
+	t=1708950107; cv=none; b=eA3JodmapVfBbQJZgvQ0iBRHpJIxmvlwWLmhOgBOx5XSvGsR1lw1o+FitHhktCO8w0bpUsB9fFs7uJhHX+8zupx94Pl9Q9iEoyr1Cg5t4QIunczEsuU7wM+5OWk7b3gJWxXYWSl5Kh/4N0gkSKe/Z1RMVkC+mBvqfqsk4/4YoDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708949441; c=relaxed/simple;
-	bh=ghthQB9VdSgFeOK/mgD0fV9zUBPGih/cqEwrsOB0Wyk=;
+	s=arc-20240116; t=1708950107; c=relaxed/simple;
+	bh=pi3BrUr3ur1vJpL7LOfjfmoG+suaosBkg1tWLQHk5BU=;
 	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=svfR0FZsoNIDLDU6AXpRGbQdjbPcdOWKTcsvmuIRUs6/W3GPHl0YcuVKxqvgR9YbWBIBh2MPj0m7jcXFO9jARjafmsgqJrekMueQ9mgBlo7jBeADINyBLBtZMpWjhq/67cMBh8vdkUGIcy13x5e4wIcIDudAU6qwhc/rO3pJ/KU=
+	 MIME-Version:Content-Type; b=eDJypdXrTtigFt3O3M8nJYLrQhB8Y0L6mgB7jMdvXtMyZ7rNJRVOxdBQOPOjVj1v1W5tyx9TmzeRfiztpf0j0mdqzTFdh4+YeTcFBAtr6VXKejCpsHWSTnDruzsaEd/in4C7Ldktiz3KB87zFZim1XrskglFQ2IPdV0g0DpPBwo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Tjzpz1h6rz6JBSD;
-	Mon, 26 Feb 2024 20:06:03 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Tk04k1G1Pz6K9M8;
+	Mon, 26 Feb 2024 20:17:58 +0800 (CST)
 Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id D2255141388;
-	Mon, 26 Feb 2024 20:10:36 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 5C7CA1400DB;
+	Mon, 26 Feb 2024 20:21:41 +0800 (CST)
 Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
  (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 26 Feb
- 2024 12:10:36 +0000
-Date: Mon, 26 Feb 2024 12:10:35 +0000
+ 2024 12:21:40 +0000
+Date: Mon, 26 Feb 2024 12:21:39 +0000
 From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
 To: John Groves <John@Groves.net>
 CC: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, "Dan
@@ -52,12 +52,11 @@ CC: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, "Dan
 	<nvdimm@lists.linux.dev>, <john@jagalactic.com>, Dave Chinner
 	<david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>,
 	<dave.hansen@linux.intel.com>, <gregory.price@memverge.com>
-Subject: Re: [RFC PATCH 03/20] dev_dax_iomap: Move dax_pgoff_to_phys from
- device.c to bus.c since both need it now
-Message-ID: <20240226121035.00007ca4@Huawei.com>
-In-Reply-To: <8d062903cded81cba05cc703f61160a0edb4578a.1708709155.git.john@groves.net>
+Subject: Re: [RFC PATCH 04/20] dev_dax_iomap: Save the kva from memremap
+Message-ID: <20240226122139.0000135b@Huawei.com>
+In-Reply-To: <66620f69fa3f3664d955649eba7da63fdf8d65ad.1708709155.git.john@groves.net>
 References: <cover.1708709155.git.john@groves.net>
-	<8d062903cded81cba05cc703f61160a0edb4578a.1708709155.git.john@groves.net>
+	<66620f69fa3f3664d955649eba7da63fdf8d65ad.1708709155.git.john@groves.net>
 Organization: Huawei Technologies Research and Development (UK) Ltd.
 X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
@@ -68,100 +67,87 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
  lhrpeml500005.china.huawei.com (7.191.163.240)
 
-On Fri, 23 Feb 2024 11:41:47 -0600
+On Fri, 23 Feb 2024 11:41:48 -0600
 John Groves <John@Groves.net> wrote:
 
-> bus.c can't call functions in device.c - that creates a circular linkage
-> dependency.
+> Save the kva from memremap because we need it for iomap rw support
+> 
+> Prior to famfs, there were no iomap users of /dev/dax - so the virtual
+> address from memremap was not needed.
+> 
+> Also: in some cases dev_dax_probe() is called with the first
+> dev_dax->range offset past pgmap[0].range. In those cases we need to
+> add the difference to virt_addr in order to have the physaddr's in
+> dev_dax->ranges match dev_dax->virt_addr.
+
+Probably good to have info on when this happens and preferably why
+this dragon is there.
+
+> 
+> Dragons...
 > 
 > Signed-off-by: John Groves <john@groves.net>
-
-This also adds the export which you should mention!
-
-Do they need it already? Seems like tense of patch title
-may be wrong.
-
 > ---
->  drivers/dax/bus.c    | 24 ++++++++++++++++++++++++
->  drivers/dax/device.c | 23 -----------------------
->  2 files changed, 24 insertions(+), 23 deletions(-)
+>  drivers/dax/dax-private.h |  1 +
+>  drivers/dax/device.c      | 15 +++++++++++++++
+>  2 files changed, 16 insertions(+)
 > 
-> diff --git a/drivers/dax/bus.c b/drivers/dax/bus.c
-> index 1ff1ab5fa105..664e8c1b9930 100644
-> --- a/drivers/dax/bus.c
-> +++ b/drivers/dax/bus.c
-> @@ -1325,6 +1325,30 @@ static const struct device_type dev_dax_type = {
->  	.groups = dax_attribute_groups,
->  };
->  
-> +/* see "strong" declaration in tools/testing/nvdimm/dax-dev.c  */
-> +__weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
-> +			      unsigned long size)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < dev_dax->nr_range; i++) {
-> +		struct dev_dax_range *dax_range = &dev_dax->ranges[i];
-> +		struct range *range = &dax_range->range;
-> +		unsigned long long pgoff_end;
-> +		phys_addr_t phys;
-> +
-> +		pgoff_end = dax_range->pgoff + PHYS_PFN(range_len(range)) - 1;
-> +		if (pgoff < dax_range->pgoff || pgoff > pgoff_end)
-> +			continue;
-> +		phys = PFN_PHYS(pgoff - dax_range->pgoff) + range->start;
-> +		if (phys + size - 1 <= range->end)
-> +			return phys;
-> +		break;
-> +	}
-> +	return -1;
+> diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
+> index 446617b73aea..894eb1c66b4a 100644
+> --- a/drivers/dax/dax-private.h
+> +++ b/drivers/dax/dax-private.h
+> @@ -63,6 +63,7 @@ struct dax_mapping {
+>  struct dev_dax {
+>  	struct dax_region *region;
+>  	struct dax_device *dax_dev;
+> +	u64 virt_addr;
 
-Not related to your patch but returning -1 in a phys_addr_t isn't ideal.
-I assume aim is all bits set as a marker, in which case
-PHYS_ADDR_MAX from limits.h would make things clearer.
+Why as a u64? If it's a virt address why not just void *?
 
-> +}
-> +EXPORT_SYMBOL_GPL(dax_pgoff_to_phys);
-> +
->  struct dev_dax *devm_create_dev_dax(struct dev_dax_data *data)
->  {
->  	struct dax_region *dax_region = data->dax_region;
+>  	unsigned int align;
+>  	int target_node;
+>  	bool dyn_id;
 > diff --git a/drivers/dax/device.c b/drivers/dax/device.c
-> index 93ebedc5ec8c..40ba660013cf 100644
+> index 40ba660013cf..6cd79d00fe1b 100644
 > --- a/drivers/dax/device.c
 > +++ b/drivers/dax/device.c
-> @@ -50,29 +50,6 @@ static int check_vma(struct dev_dax *dev_dax, struct vm_area_struct *vma,
->  	return 0;
->  }
+> @@ -372,6 +372,7 @@ static int dev_dax_probe(struct dev_dax *dev_dax)
+>  	struct dax_device *dax_dev = dev_dax->dax_dev;
+>  	struct device *dev = &dev_dax->dev;
+>  	struct dev_pagemap *pgmap;
+> +	u64 data_offset = 0;
+>  	struct inode *inode;
+>  	struct cdev *cdev;
+>  	void *addr;
+> @@ -426,6 +427,20 @@ static int dev_dax_probe(struct dev_dax *dev_dax)
+>  	if (IS_ERR(addr))
+>  		return PTR_ERR(addr);
 >  
-> -/* see "strong" declaration in tools/testing/nvdimm/dax-dev.c */
-> -__weak phys_addr_t dax_pgoff_to_phys(struct dev_dax *dev_dax, pgoff_t pgoff,
-> -		unsigned long size)
-> -{
-> -	int i;
-> -
-> -	for (i = 0; i < dev_dax->nr_range; i++) {
-> -		struct dev_dax_range *dax_range = &dev_dax->ranges[i];
-> -		struct range *range = &dax_range->range;
-> -		unsigned long long pgoff_end;
-> -		phys_addr_t phys;
-> -
-> -		pgoff_end = dax_range->pgoff + PHYS_PFN(range_len(range)) - 1;
-> -		if (pgoff < dax_range->pgoff || pgoff > pgoff_end)
-> -			continue;
-> -		phys = PFN_PHYS(pgoff - dax_range->pgoff) + range->start;
-> -		if (phys + size - 1 <= range->end)
-> -			return phys;
-> -		break;
-> -	}
-> -	return -1;
-> -}
-> -
->  static void dax_set_mapping(struct vm_fault *vmf, pfn_t pfn,
->  			      unsigned long fault_size)
->  {
+> +	/* Detect whether the data is at a non-zero offset into the memory */
+> +	if (pgmap->range.start != dev_dax->ranges[0].range.start) {
+> +		u64 phys = (u64)dev_dax->ranges[0].range.start;
+
+Why the cast? Ranges use u64s internally.
+
+> +		u64 pgmap_phys = (u64)dev_dax->pgmap[0].range.start;
+> +		u64 vmemmap_shift = (u64)dev_dax->pgmap[0].vmemmap_shift;
+> +
+> +		if (!WARN_ON(pgmap_phys > phys))
+> +			data_offset = phys - pgmap_phys;
+> +
+> +		pr_notice("%s: offset detected phys=%llx pgmap_phys=%llx offset=%llx shift=%llx\n",
+> +		       __func__, phys, pgmap_phys, data_offset, vmemmap_shift);
+
+pr_debug() + dynamic debug will then deal with __func__ for you.
+
+> +	}
+> +	dev_dax->virt_addr = (u64)addr + data_offset;
+> +
+>  	inode = dax_inode(dax_dev);
+>  	cdev = inode->i_cdev;
+>  	cdev_init(cdev, &dax_fops);
 
 
