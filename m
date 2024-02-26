@@ -1,232 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-12818-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12819-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1B2686773F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 14:52:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E1D867762
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 14:58:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01FD4B24867
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 13:52:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2767E1F289DD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 13:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688621292E5;
-	Mon, 26 Feb 2024 13:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB511292FF;
+	Mon, 26 Feb 2024 13:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bO1Bkx6Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33212126F3B;
-	Mon, 26 Feb 2024 13:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D65B128363
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 13:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708955555; cv=none; b=eV9ugEz4qZ8MQ1dO03cV+Do1O6re7O1AXfV8g93r9HqsAcUiA6YojqTUzhDhIiG+FEl2+wrHah0u+Xyq2p4ZqheGl4/x+ckVCdlio1EFZRPIBSFWHdv92QYotkI9s1ls1R55ulRkmRXEfp8YOjNSNUS0B82i1urgnempgYXBh2M=
+	t=1708955839; cv=none; b=efjXvA+I1krBxIT6dhfzv2RwSTvtI7gXX+ga27SHbovyUgj5feFjhvsbGJIX/ipPlm7Vej/sHQkhksH/uxaeWdgtGN+zMAmk9tGy4T/u59OejQPk5lh1LEUE5MIGuiGP2c0CYVVZKXx7CmDEnPmrDWtAMz+rE1k6xTgXVUILLk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708955555; c=relaxed/simple;
-	bh=Xsm/8R6Mlt6gOOz8zdM11uszjNbgmxwBzqPat5Py7Xw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Oa23mBpzrJrbZO3eE9zpPG9BrbOIGoVVJWb2edX6GgVGG9Qs9rcX34G4DHq4M2oyp2ZwudvIHH36UAPqCCMocx8cFiiurrA1sTExFGhXOaTcLjagzPZyiYC3sJGW+8k2jtv0oKKEVAl2Bw6XY7JF5rrzUOvJjeDea619kwdbR24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Tk24r0YY0z67PcT;
-	Mon, 26 Feb 2024 21:48:12 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id BB3CE140A70;
-	Mon, 26 Feb 2024 21:52:30 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 26 Feb
- 2024 13:52:30 +0000
-Date: Mon, 26 Feb 2024 13:52:28 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: John Groves <John@Groves.net>
-CC: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, "Dan
- Williams" <dan.j.williams@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Alexander
- Viro" <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, "Jan
- Kara" <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-	<linux-cxl@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <john@jagalactic.com>, Dave Chinner
-	<david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>,
-	<dave.hansen@linux.intel.com>, <gregory.price@memverge.com>
-Subject: Re: [RFC PATCH 18/20] famfs: Support character dax via the
- dev_dax_iomap patch
-Message-ID: <20240226135228.00007714@Huawei.com>
-In-Reply-To: <fa06095b6a05a26a0a016768b2e2b70663163eeb.1708709155.git.john@groves.net>
-References: <cover.1708709155.git.john@groves.net>
-	<fa06095b6a05a26a0a016768b2e2b70663163eeb.1708709155.git.john@groves.net>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1708955839; c=relaxed/simple;
+	bh=9wI9c7a/f2/wOVyOUxJJiWp617ttV+LbNc1EnySHGKU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VUzTPaCEfaM4ZajZwn3mt4TAuWmoioWVwqHAu+DUt+lVRcDvWn1gL9SvS8fnH+2p6zNf/lpfvS3l+n2nFxxsfxRUY5FOIWlP1dHW6oHfwzDTlgkBNTsvpVZ1O03lRVnCi/lKG4gIfXFiQEUHK4fUfgYM+Jdj0U4sK0U8MRMZx0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bO1Bkx6Q; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3c199237eaeso1504113b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 05:57:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708955836; x=1709560636; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qC451XfJl7DfgQqR5U2znK3IUgGVHljKK8SbXgGF/nA=;
+        b=bO1Bkx6Q+BogIi8lQukbjSuA6OwIg/ob+fcYbNog0/6BbhUz5aB/YBG7auuMUvMCXO
+         8jR0cj6ruIN96s/EYRrIFo/5i8Dccb4XaOBvGOHiJKVrTULd7GrXdXTy24yVXq2zQPdq
+         G2EQw+sp2EKGN4Q1XJBVVFOGvhqNTIDOwUQ7/lCla5AR7uZjsAV/pGVG3hCAB2WDVMdV
+         tOCavFyk7F1J2bqalHKeFXyMe8awQf+BXXM6tX78KxSABq1XCPY/OfN1OFRQcw3Ga0DB
+         1N+CbQXaPfcldIDpX6ElU7dTK8kaxWdSSamVgg3epdhqUGHT5lnjhRaxsIvssbBqwEyI
+         unGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708955836; x=1709560636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qC451XfJl7DfgQqR5U2znK3IUgGVHljKK8SbXgGF/nA=;
+        b=VTSE19F20HcVm9Pp24ZQQCJwKVYeH0kfMOCHdaonvOT4jXlY+tGyjzVGgFm38rzk9v
+         88EOARQRlO//Vhp5ksUG0yr3XAHllSzE72i/2rO8rBLNU9Q2Y9LNsQHEh56eLxM5q1l8
+         PKQjqWM0P0Csg7z+dqKhoXBHjiXOE1UaylBeDpi8+howZWjJGm3D01Ieh64L6h3pJRL2
+         F3zoSD7aD8F9Ix3wRpRApE5hxkoi3HE5Gl7PoY2B4lG3Q/qY5M2lQ3Rc4kD3R3fdMD9K
+         wAaWXL5SN24lUKqQe2LyagK2BSgx4LnhndgL6egGoj4vbfxqq3rf+y60+H8Gqt5ecti6
+         Jbig==
+X-Forwarded-Encrypted: i=1; AJvYcCXioPIacTkJ1rsN5YzVrw9jRlp9JltZ1ydH1Zrpq9jSnI1i6rCHY3SXbkCjgW5l4MJyXvugOVtM0/g/YWRD22yvXwYh/ygT6th0etvneA==
+X-Gm-Message-State: AOJu0YyUjfatYhe7D9y8J0JCFO5oW2Zs8xriFGCgN7dHQ8uJCllesMqg
+	77K2UDBYNANeL2pl3+IJKpAPPHkOmvcZvsVx7no2wTSb7l2rF4jDHL0+Mc/OfNV9igFe//6qmW5
+	QweyujFe/bfgd0W3NbRTLq1ErYfjARPBmS0eyP4cgBPE=
+X-Google-Smtp-Source: AGHT+IEb4olJlN3OryR6Ex8+sM35mLGt60RHqCeCdEOTSqfJIPl0G8NxRtFP6YAVMJ/L+CJCz+Dt6hYZdHe8e9IyDBU=
+X-Received: by 2002:a05:6808:988:b0:3c1:381a:f89c with SMTP id
+ a8-20020a056808098800b003c1381af89cmr7161468oic.43.1708955836299; Mon, 26 Feb
+ 2024 05:57:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+References: <20240225114204.50459-1-laoar.shao@gmail.com> <ZdwQ0JXPG4aFHxeg@casper.infradead.org>
+ <CALOAHbCaBkqZ1Z9WJ_FqjTkzvCOv2X0iBv9D=M2hkuEO4-8AeQ@mail.gmail.com> <ZdyPPiEykhffDEJZ@casper.infradead.org>
+In-Reply-To: <ZdyPPiEykhffDEJZ@casper.infradead.org>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Mon, 26 Feb 2024 21:56:39 +0800
+Message-ID: <CALOAHbB2UiZ_XCPzhsHJF1HqOcDPjoJi+bA9yi7MnAgdEvNkUA@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm: Add reclaim type to memory.reclaim
+To: Matthew Wilcox <willy@infradead.org>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, shakeelb@google.com, muchun.song@linux.dev, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 23 Feb 2024 11:42:02 -0600
-John Groves <John@Groves.net> wrote:
+On Mon, Feb 26, 2024 at 9:16=E2=80=AFPM Matthew Wilcox <willy@infradead.org=
+> wrote:
+>
+> On Mon, Feb 26, 2024 at 08:34:07PM +0800, Yafang Shao wrote:
+> > Additionally, since this patch offers a straightforward solution to
+> > address the issue in container environments, would it be feasible to
+> > apply this patch initially?
+>
+> There are lot sof other problems with this patch, but since I disagree
+> with the idea of this patch, I didn't enumerate them.
 
-> This commit introduces the ability to open a character /dev/dax device
-> instead of a block /dev/pmem device. This rests on the dev_dax_iomap
-> patches earlier in this series.
+Could you please provide an enumeration of the issues you've
+identified?  One issue is that the reclaimed bytes may not be optimal
+for slab shrinking, particularly because many dentries are freed
+deferredly.
 
-Not sure the back reference is needed given it's in the series.
-
-> 
-> Signed-off-by: John Groves <john@groves.net>
-> ---
->  fs/famfs/famfs_inode.c | 97 +++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 87 insertions(+), 10 deletions(-)
-> 
-> diff --git a/fs/famfs/famfs_inode.c b/fs/famfs/famfs_inode.c
-> index 0d659820e8ff..7d65ac497147 100644
-> --- a/fs/famfs/famfs_inode.c
-> +++ b/fs/famfs/famfs_inode.c
-> @@ -215,6 +215,93 @@ static const struct super_operations famfs_ops = {
->  	.show_options	= famfs_show_options,
->  };
->  
-> +/*****************************************************************************/
-> +
-> +#if defined(CONFIG_DEV_DAX_IOMAP)
-> +
-> +/*
-> + * famfs dax_operations  (for char dax)
-> + */
-> +static int
-> +famfs_dax_notify_failure(struct dax_device *dax_dev, u64 offset,
-> +			u64 len, int mf_flags)
-> +{
-> +	pr_err("%s: offset %lld len %llu flags %x\n", __func__,
-> +	       offset, len, mf_flags);
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static const struct dax_holder_operations famfs_dax_holder_ops = {
-> +	.notify_failure		= famfs_dax_notify_failure,
-> +};
-> +
-> +/*****************************************************************************/
-> +
-> +/**
-> + * famfs_open_char_device()
-> + *
-> + * Open a /dev/dax device. This only works in kernels with the dev_dax_iomap patch
-
-That comment you definitely don't need as this won't get merged without
-that patch being in place.
-
-
-> + */
-> +static int
-> +famfs_open_char_device(
-> +	struct super_block *sb,
-> +	struct fs_context  *fc)
-> +{
-> +	struct famfs_fs_info *fsi = sb->s_fs_info;
-> +	struct dax_device    *dax_devp;
-> +	struct inode         *daxdev_inode;
-> +
-> +	int rc = 0;
-set in all paths where it's used.
-
-> +
-> +	pr_notice("%s: Opening character dax device %s\n", __func__, fc->source);
-
-pr_debug
-
-> +
-> +	fsi->dax_filp = filp_open(fc->source, O_RDWR, 0);
-> +	if (IS_ERR(fsi->dax_filp)) {
-> +		pr_err("%s: failed to open dax device %s\n",
-> +		       __func__, fc->source);
-> +		fsi->dax_filp = NULL;
-Better to use a local variable
-
-	fp = filp_open(fc->source, O_RDWR, 0);
-	if (IS_ERR(fp)) {
-		pr_err.
-		return;
-	}
-	fsi->dax_filp = fp;
-or similar.
-
-> +		return PTR_ERR(fsi->dax_filp);
-> +	}
-> +
-> +	daxdev_inode = file_inode(fsi->dax_filp);
-> +	dax_devp     = inode_dax(daxdev_inode);
-> +	if (IS_ERR(dax_devp)) {
-> +		pr_err("%s: unable to get daxdev from inode for %s\n",
-> +		       __func__, fc->source);
-> +		rc = -ENODEV;
-> +		goto char_err;
-> +	}
-> +
-> +	rc = fs_dax_get(dax_devp, fsi, &famfs_dax_holder_ops);
-> +	if (rc) {
-> +		pr_info("%s: err attaching famfs_dax_holder_ops\n", __func__);
-> +		goto char_err;
-> +	}
-> +
-> +	fsi->bdev_handle = NULL;
-> +	fsi->dax_devp = dax_devp;
-> +
-> +	return 0;
-> +
-> +char_err:
-> +	filp_close(fsi->dax_filp, NULL);
-
-You carefully set fsi->dax_filp to null in other other error paths.
-Why there and not here?
-
-> +	return rc;
-> +}
-> +
-> +#else /* CONFIG_DEV_DAX_IOMAP */
-> +static int
-> +famfs_open_char_device(
-> +	struct super_block *sb,
-> +	struct fs_context  *fc)
-> +{
-> +	pr_err("%s: Root device is %s, but your kernel does not support famfs on /dev/dax\n",
-> +	       __func__, fc->source);
-> +	return -ENODEV;
-> +}
-> +
-> +
-> +#endif /* CONFIG_DEV_DAX_IOMAP */
-> +
->  /***************************************************************************************
->   * dax_holder_operations for block dax
->   */
-> @@ -236,16 +323,6 @@ const struct dax_holder_operations famfs_blk_dax_holder_ops = {
->  	.notify_failure		= famfs_blk_dax_notify_failure,
->  };
->  
-
-Put it in right place earlier! Makes this less noisy.
-
-> -static int
-> -famfs_open_char_device(
-> -	struct super_block *sb,
-> -	struct fs_context  *fc)
-> -{
-> -	pr_err("%s: Root device is %s, but your kernel does not support famfs on /dev/dax\n",
-> -	       __func__, fc->source);
-> -	return -ENODEV;
-> -}
-> -
->  /**
->   * famfs_open_device()
->   *
-
+--=20
+Regards
+Yafang
 
