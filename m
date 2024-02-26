@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-12821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96BE0867968
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 16:04:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB3DC86797D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 16:08:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 377131F255E1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 15:04:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6592D29B1AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 15:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D02B12BEA7;
-	Mon, 26 Feb 2024 14:40:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D9F132C08;
+	Mon, 26 Feb 2024 14:47:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EZCVljQj"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L/tRy2rX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C275C128379;
-	Mon, 26 Feb 2024 14:40:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCC012C533;
+	Mon, 26 Feb 2024 14:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708958448; cv=none; b=DeK0RbUonks/NN1d1CjSmaT24Dfc4DxLMn9P0R6TsKDbEAxYzwuN4mdT5CPMQLg2r7v0y5s1QaTU7zzUTh8YxhW6dYfBfC/ZdZ52YYvZXMbaRMGBQ19fA08Ydi30ZEzg61pDFcSg5p3M5qYLXLq1nOdLDtuF6OVgxOIWxxJBoNk=
+	t=1708958859; cv=none; b=ZSowzjpuZqSFE4K5vtMhVdBdg3glFFox0/vSMOQVMbj70aUQ2Me0q9UG+jF3E9F3HH/qF3930Mtwak7vCU+wBoebn4rRCSqS4CnpZaOSLw7a+XSMSWkRqxxkJCfljzkP6DW9qPHT5phsAMX98Cd5LzyRolm7RcGzCAlTjxnZcWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708958448; c=relaxed/simple;
-	bh=SKSApeOruZLSq1n9l0Dfe1EJrrxjXRO2Y+aMmgRnG+Y=;
+	s=arc-20240116; t=1708958859; c=relaxed/simple;
+	bh=Vsn8pIp7vt+bUR9MZs+/TiYMnBtUQAaqJD1uA8+MiBY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Px5lWHJ2Oelt3ueLAS8mjkpOJu8YF166iT6FqgDgswqrFSG/XwoOKRgZaNeaEdk0v+c9+rENNKJyAFodQ1qdqsRzAeQk+BXygSN4raQNyYRnO1cGgaJC6ov7fVTKMKrQkCLYa7ktBZ0MpeRyBJznd7eLofHo4Uu2/FoGmKoDlPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EZCVljQj; arc=none smtp.client-ip=90.155.50.34
+	 Content-Type:Content-Disposition:In-Reply-To; b=t96YBnAPJFx9+ulXdIJvbErGqu7KQ0qLSmxNNcG5w/jU9rrzVZQ0mtyceI7iM7bEMlalX/pU3D84+TfTPdykyRxd8C+FaZhjGWGVR3PVtPpM5xozk20froIlZ34C5VXKslN7TjsDSMPQrF7g6itbPp3WGP+Lz3qDqrdp+DnMJ78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L/tRy2rX; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
 	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gauGe8/AuKWwXE/zVAiOKHD6lBDudnyYUkAdQbw+0Q0=; b=EZCVljQjaZUEOkxlB+8PNfeRt1
-	NQviA1U1m56nvCuj1UZ3e4AkjgDnJFn5grtISYLOThlXZv6PlZaXJpjNypivPEdhPh0mVxz25+8Ay
-	opXth4lNOhcTliN3vGJm+HTt8x5Y4NWs0WCYjUVeLzUKY/9vMQnLZt9CPMREiWiuo0PbjUnxdU3gA
-	WvwTOKGtNsMpFEQOVpxCRG+9m2rDsPqcKCq89jMOkBTMMTlR794MeF10UDwtGhwZzUaIisCKzdxRy
-	yTcksGLDQC+gAMQw/TX7Y2Qn3BRd1rIbv607lZ+3BhHITyihcI/MXS5izrfwSc67yA0OcaWulzIhF
-	3gWCr3Mw==;
+	bh=yza63Q+E0MQPCYS+BMi7MSICGP+bYwaIfeMJZhSmHAE=; b=L/tRy2rXVkixtFmv5H9i8Qe5nM
+	Rkutf9gUoZz55MoYgGdoS2SLSelhnx5JIy6iVW9qOmBQwDO97pFD0E6gFMz+j/5zakLyUBbdjxKtd
+	0f7tR03m2a/31EnhM9wx122E7iYxVtO6DqesPtXlMfvsd8drPWY3a4GhY+ZUUkupNqwJ7J9zD/uQj
+	YGUkzB+jpyB8gLppfcIacfTh/cULtqx5UXA1wS4Wflt/BC0T/wGbFoJVtBPLINgK4+qVXv8nGt0l3
+	Dpl4cGVzMdnG56AI4qqdd6rbuQpsRIGVFLF5Gs9uCTcDY3MN93UQoHIiiR/q8JRYAJqUiZ942gv8q
+	ELe8gzUw==;
 Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rec9q-0000000HPeI-0VQI;
-	Mon, 26 Feb 2024 14:40:42 +0000
-Date: Mon, 26 Feb 2024 14:40:42 +0000
+	id 1recGT-0000000HQ83-33XC;
+	Mon, 26 Feb 2024 14:47:33 +0000
+Date: Mon, 26 Feb 2024 14:47:33 +0000
 From: Matthew Wilcox <willy@infradead.org>
 To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
@@ -53,11 +53,11 @@ Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	mcgrof@kernel.org, ziy@nvidia.com, hare@suse.de, djwong@kernel.org,
 	gost.dev@samsung.com, linux-mm@kvack.org,
 	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH 03/13] filemap: align the index to mapping_min_order in
- the page cache
-Message-ID: <Zdyi6lFDAHXi8GPz@casper.infradead.org>
+Subject: Re: [PATCH 04/13] filemap: use mapping_min_order while allocating
+ folios
+Message-ID: <ZdykhSuPbe6knu89@casper.infradead.org>
 References: <20240226094936.2677493-1-kernel@pankajraghav.com>
- <20240226094936.2677493-4-kernel@pankajraghav.com>
+ <20240226094936.2677493-5-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,53 +66,62 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240226094936.2677493-4-kernel@pankajraghav.com>
+In-Reply-To: <20240226094936.2677493-5-kernel@pankajraghav.com>
 
-On Mon, Feb 26, 2024 at 10:49:26AM +0100, Pankaj Raghav (Samsung) wrote:
-> From: Luis Chamberlain <mcgrof@kernel.org>
-> 
-> Supporting mapping_min_order implies that we guarantee each folio in the
-> page cache has at least an order of mapping_min_order. So when adding new
-> folios to the page cache we must ensure the index used is aligned to the
-> mapping_min_order as the page cache requires the index to be aligned to
-> the order of the folio.
+On Mon, Feb 26, 2024 at 10:49:27AM +0100, Pankaj Raghav (Samsung) wrote:
+> Add some additional VM_BUG_ON() in page_cache_delete[batch] and
+> __filemap_add_folio to catch errors where we delete or add folios that
+> has order less than min_order.
 
-This seems like a remarkably complicated way of achieving:
+I don't understand why we need these checks in the deletion path.  The
+add path, yes, absolutely.  But the delete path?
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 5603ced05fb7..36105dad4440 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2427,9 +2427,11 @@ static int filemap_update_page(struct kiocb *iocb,
- }
- 
- static int filemap_create_folio(struct file *file,
--		struct address_space *mapping, pgoff_t index,
-+		struct address_space *mapping, loff_t pos,
- 		struct folio_batch *fbatch)
- {
-+	pgoff_t index;
-+	unsigned int min_order;
- 	struct folio *folio;
- 	int error;
- 
-@@ -2451,6 +2453,8 @@ static int filemap_create_folio(struct file *file,
- 	 * well to keep locking rules simple.
- 	 */
- 	filemap_invalidate_lock_shared(mapping);
-+	min_order = mapping_min_folio_order(mapping);
-+	index = (pos >> (min_order + PAGE_SHIFT)) << min_order;
- 	error = filemap_add_folio(mapping, folio, index,
- 			mapping_gfp_constraint(mapping, GFP_KERNEL));
- 	if (error == -EEXIST)
-@@ -2511,8 +2515,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
- 	if (!folio_batch_count(fbatch)) {
- 		if (iocb->ki_flags & (IOCB_NOWAIT | IOCB_WAITQ))
- 			return -EAGAIN;
--		err = filemap_create_folio(filp, mapping,
--				iocb->ki_pos >> PAGE_SHIFT, fbatch);
-+		err = filemap_create_folio(filp, mapping, iocb->ki_pos, fbatch);
- 		if (err == AOP_TRUNCATED_PAGE)
- 			goto retry;
- 		return err;
+> @@ -896,6 +900,8 @@ noinline int __filemap_add_folio(struct address_space *mapping,
+>  			}
+>  		}
+>  
+> +		VM_BUG_ON_FOLIO(folio_order(folio) < mapping_min_folio_order(mapping),
+> +				folio);
+
+But I don't understand why you put it here, while we're holding the
+xa_lock.  That seems designed to cause maximum disruption.  Why not put
+it at the beginning of the function with all the other VM_BUG_ON_FOLIO?
+
+> @@ -1847,6 +1853,9 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  		fgf_t fgp_flags, gfp_t gfp)
+>  {
+>  	struct folio *folio;
+> +	unsigned int min_order = mapping_min_folio_order(mapping);
+> +
+> +	index = mapping_align_start_index(mapping, index);
+
+I would not do this here.
+
+>  repeat:
+>  	folio = filemap_get_entry(mapping, index);
+> @@ -1886,7 +1895,7 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  		folio_wait_stable(folio);
+>  no_page:
+>  	if (!folio && (fgp_flags & FGP_CREAT)) {
+> -		unsigned order = FGF_GET_ORDER(fgp_flags);
+> +		unsigned int order = max(min_order, FGF_GET_ORDER(fgp_flags));
+>  		int err;
+
+Put it here instead.
+
+>  		if ((fgp_flags & FGP_WRITE) && mapping_can_writeback(mapping))
+> @@ -1912,8 +1921,13 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+>  			gfp_t alloc_gfp = gfp;
+>  
+>  			err = -ENOMEM;
+> +			if (order < min_order)
+> +				order = min_order;
+>  			if (order > 0)
+>  				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
+> +
+> +			VM_BUG_ON(index & ((1UL << order) - 1));
+
+Then you don't need this BUG_ON because it's obvious you just did it.
+And the one in filemap_add_folio() would catch it anyway.
+
 
