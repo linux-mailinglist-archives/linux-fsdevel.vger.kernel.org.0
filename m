@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-12874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AFFD868230
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 21:56:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2741868233
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 21:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E445A28994F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 20:56:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A7F4289AF2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 20:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD98131E50;
-	Mon, 26 Feb 2024 20:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2622813246A;
+	Mon, 26 Feb 2024 20:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="T5xeqRqY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bp4JhDO6"
+	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="YuhI4fCt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="glx5DJxV"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from out5-smtp.messagingengine.com (out5-smtp.messagingengine.com [66.111.4.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1223130E3E;
-	Mon, 26 Feb 2024 20:56:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6F213172E;
+	Mon, 26 Feb 2024 20:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.111.4.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708980973; cv=none; b=kYmAGOTe7d4JbKWZfhjQwrkKef55gXew71DavrRWFJIjG6fgNy7SyktUS7A17KxB0wSP6zduxKZHTWg7IWyqb7ia+TSIMVCpIUD/CBIXKSqd5sBc60080gd0cEFwQfdBkbMQuoVnUVIdli6R/Et91ireEw4EWi9xZGOmFJjmQ54=
+	t=1708980974; cv=none; b=a1yJ+ONs5k1wa1PR6FCTBMvHB6bQQKX1LXq4HkCApcUMR2ImG5h8DoeNwALd9Q8eyuqN0wauYHtdp6XjDHpnnjmwe6tqRCdfhLtOzd1oDaybDm8vvDMT3gE+Y6mcrnXWAkrZpYRdYK4gad36yDKJX+1w4Fm21EzYTz7zFX8Jyyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708980973; c=relaxed/simple;
-	bh=6UZCu34iqxVetVOw3hYJVWt8DkK1Q3+qX0MxlTlzkTA=;
+	s=arc-20240116; t=1708980974; c=relaxed/simple;
+	bh=gkVdN6Ju83sqaexnUoOXBzO/NLvcTIiVWHWKKnGtjD0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mVLYRZpiSJ0mc0HCbsA+DjYr397x0l+v2shA9Qn0KyguF5HahBNCQWTGean2fpgHj085kBoheAo3Ce7WMeRnF4QkCRP9MOOokGBfy/abZzNJ11K3oT+5Okf3NzLUEHIOq+nvMHfheMUVMnW5rjIflZfDPhe+c+ZwfzYWF5ST9+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com; spf=pass smtp.mailfrom=sent.com; dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b=T5xeqRqY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bp4JhDO6; arc=none smtp.client-ip=66.111.4.29
+	 MIME-Version:Content-Type; b=g7rhxbKoXo+rx0VZMrZc5IznObuAw6E2TSsxHri3NItTrx3lsBU2+/zABDEVKneCuv7ekNIhPJrRAkO/NEGP1A111FquXFttqapFveKIHvoQifMZX6ikT3cb4Bm77PJ7ivWDOjFLgR+J84g5vNtkGYQ/SQZHSmrHNxjBeYsBw44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com; spf=pass smtp.mailfrom=sent.com; dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b=YuhI4fCt; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=glx5DJxV; arc=none smtp.client-ip=66.111.4.29
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sent.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sent.com
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailout.nyi.internal (Postfix) with ESMTP id CE54C5C00A4;
-	Mon, 26 Feb 2024 15:56:10 -0500 (EST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailout.nyi.internal (Postfix) with ESMTP id B3D865C0048;
+	Mon, 26 Feb 2024 15:56:11 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 26 Feb 2024 15:56:10 -0500
+  by compute2.internal (MEProxy); Mon, 26 Feb 2024 15:56:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to; s=fm1; t=
-	1708980970; x=1709067370; bh=ODE0ROICHsjD0yZP7iLxwoRZvmdJZzbZs1w
-	Z6FX7X9k=; b=T5xeqRqYOCyBPMLYOa3Br+G8KABMxRYqzZHOqItB1AZrzBWc5++
-	v+Y7er2Z+fEtOY1M/UnNBzfbkuRk6ewQ6+GDS0M+g8TVhKmRbqYnUvTSSYENgpdl
-	12S7nVi060wPvZWE00vlxyzNriF+sFFCE/S+KC5feMd22qZNmgdU3fy5tMtsHfvV
-	HT2RBYHADtA7sl/kk2Myd4K/s/xtjY5JP3jJkKGHEW4wIWZnQzJzlBw4hVValEJI
-	pF1ogC001UIVIud1NFAAmMHBXEFLAMxinZXdOZVBdBQDgReZA/38hv+a2tRczoQt
-	LOte/EUa97kieD8yiSWrp9rgQ2oOOQERj3A==
+	1708980971; x=1709067371; bh=M9xzwbyGsmIoI4XohAUvU/zFDUrkDEXSeps
+	On39+bAw=; b=YuhI4fCtxyT7k5hVmSOEXMQbymAhui8JNegspEpvv/VYXQL41Ft
+	pj6ydaFD0U8iL9cudlW457UYRQv8fEQ15V4gtUgJTlULXYCw1W+oHH7tpowniDfd
+	72lYDV66Ftv8Dihhg5hNlSrvNKyVSES3im67x3NJFo9TOSe5pkEVgSN0kxnXz9iS
+	a2jmX5OXUupg8j2TZ0Wn/rQuxuqFPctJ3PsIQ2HiU53bTckPiZG5ROcg/fK+r2rp
+	J4N6AHpbL4atGUiQ8tXxdfMqi+gal2Qc5fnKvro8o51nEGdfoFOOE+iuAKvvsSRv
+	7s4EaXf/bQ1fq/pkTQTq+ZndUEfxw8ypyqw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:reply-to:subject:subject:to:to:x-me-proxy
 	:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1708980970; x=1709067370; bh=ODE0ROICHsjD0yZP7iLxwoRZvmdJZzbZs1w
-	Z6FX7X9k=; b=bp4JhDO6+sHuaMDjp3R19HRVAcTJ3cT1Z+YMXxBHek2OtVWeSIe
-	bSoGWccfFZxHU/vp1hRV/Wx+/NGe2Nwi5VqPnD17ZmX+OO0h9nYYxtd5cYNsJpSZ
-	k6g2gwk3TgcZZC/YqlkL5NwFr75VwxrFdHv/h4jJiey1C3KamfbEuZhqUTmIB1gT
-	VqM+UEkjuQX2hgvT083qH5JYaQ5FeWxw3SNFXooaEzMoAAkw/w+VQ0Z7HSqLEbl8
-	wYgwWMCVwHlAZFQ5egIrbRKFj6xvh9Sln31XLTY/XDq2FTFETb5D5nn822mnX2BK
-	oyJKkW5yKnszzEI9XSdKRE0NE9iNtLkdlEA==
-X-ME-Sender: <xms:6vrcZYFe3Yldi8VGj0J4j3_AyJog8Xt4uM8pk47LtuaNCmgnLCCZkg>
-    <xme:6vrcZRU_C9uWLmPZ2YLCqxAScXt7L-kAARU3P3t3rqLRKrC3Kchy-P6X5BEbLYNl7
-    27JTyq_YrB__BukKg>
-X-ME-Received: <xmr:6vrcZSISM7Oo1Nu1BWqOAEWKOU35anBm1KoWmoRwzVDXJJYEis60M1K9UmOP7WBsqpIoxpcGGn55CPM2Y3-_JdxFhcxl3Y3dUNYQtlInUqNHow_Cs-JL2QaF>
+	1708980971; x=1709067371; bh=M9xzwbyGsmIoI4XohAUvU/zFDUrkDEXSeps
+	On39+bAw=; b=glx5DJxVZIKumkxaIHAXIDP5YXKd5Im2fQ/t9CFv2OmBqMUwTJS
+	SnpR5h2I0Ej/cY1kh6BRa4tCtDUgFzifVy7a/5qEul1MiRrxi9sq7VEewBj2bGwE
+	dl13XHV1xbfKMBo+3KRdI7QlYUMK59X0qZ9IVut7HFp7dV5/IoM/cAxgFwQFdVgm
+	Z77LLs9kJU8sYOmfV9Zm8ZvyR7hriEWUq3flyWvA0MM8r3mveLfT/qRIzqOHuvau
+	llFl9HkR6kH1cToAl2JyeQsEJvO7f92ZErYrt3vo0FlHbsQmiSfga0yHN7qGhXbd
+	lq6rkbeM3LiWAQWYeyS6T1JVDO69Ksg7fzw==
+X-ME-Sender: <xms:6_rcZR9jk4SAPb6k8eRjSso_MIVsT5ynp7Cfz7ZOmbNEOilXKIiLZw>
+    <xme:6_rcZVsqWWjy7ohwlerWF0HARe7Sq5Dz_Wsfdx1wBOAcJhHVe6193i3U9g6Ikffq6
+    JWrtOwfql3LOwe6xQ>
+X-ME-Received: <xmr:6_rcZfAiSXdKgUtIkaPCjzLq2cHWNxVNSLstZrfGuuZHeq8oLwSkYeJwjif63fmWBTNkXIM6MecZQM5w_RLpDclPBD-j6m-KP2IOVg5i42COTJ0H5dSAGZdG>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrgedvgddugedtucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucdnrfhurhgthhgrshgvucdluddtmdenucfjughrpe
-    fhvfevufffkffojghfrhggtgfgsehtkeertdertdejnecuhfhrohhmpegkihcujggrnhcu
-    oeiiihdrhigrnhesshgvnhhtrdgtohhmqeenucggtffrrghtthgvrhhnpeettdekjeffke
-    ejudelhfeuteekieejieehjeefvdefiefhteevgeejheegkefggfenucffohhmrghinhep
-    khgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepiihirdihrghnsehsvghnthdrtghomh
-X-ME-Proxy: <xmx:6vrcZaGwRKf_w5frOA90i49CKbEsl0SxHYzObzwCMSR7l9tkBinF-g>
-    <xmx:6vrcZeWen53UAhkbLRBIdDsW0EA_0-caYMUKPYkR98WRMLZATdE5Qg>
-    <xmx:6vrcZdMBuxdwv0JEFAMua9q9Hw62vJ_8C9ZzdjlYi6hwi2AMvEM66nqxBnsY2s0>
-    <xmx:6vrcZcbnE0TO7PBM6HhyDsWaWCKMerbh1APMOOhAN1YGtAcOanz-1g>
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvvefufffkofgjfhhrgggtgfesthekredtredtjeenucfhrhhomhepkghi
+    ucgjrghnuceoiihirdihrghnsehsvghnthdrtghomheqnecuggftrfgrthhtvghrnhepje
+    ekteekffelleekudfftdefvddtjeejuedtuedtteegjefgvedtfedujeekieevnecuvehl
+    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepiihirdihrghnse
+    hsvghnthdrtghomh
+X-ME-Proxy: <xmx:6_rcZVfsqhmn2SL_dVbzPs5MmRfIav2Ol_labDQnmABP8B9tISYnOQ>
+    <xmx:6_rcZWOPlAyZ-GpkbhCqeq--PFCqetp5lAvHbL6zS0UvNBvCK6TWYA>
+    <xmx:6_rcZXmbPl7_1mpMjHR_OLYdlPKe0Vk4Le2dZ7-JFdR9ltE-ZBWpmQ>
+    <xmx:6_rcZbytBVtTkNh8e14VcSdGq_xBiB98Y30tH-cHnJoPwLWfQb2nsw>
 Feedback-ID: iccd040f4:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
  26 Feb 2024 15:56:10 -0500 (EST)
@@ -100,9 +100,9 @@ Cc: Zi Yan <ziy@nvidia.com>,
 	cgroups@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-kselftest@vger.kernel.org
-Subject: [PATCH v5 2/8] mm: Support order-1 folios in the page cache
-Date: Mon, 26 Feb 2024 15:55:28 -0500
-Message-ID: <20240226205534.1603748-3-zi.yan@sent.com>
+Subject: [PATCH v5 3/8] mm/memcg: use order instead of nr in split_page_memcg()
+Date: Mon, 26 Feb 2024 15:55:29 -0500
+Message-ID: <20240226205534.1603748-4-zi.yan@sent.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240226205534.1603748-1-zi.yan@sent.com>
 References: <20240226205534.1603748-1-zi.yan@sent.com>
@@ -116,116 +116,101 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+From: Zi Yan <ziy@nvidia.com>
 
-Folios of order 1 have no space to store the deferred list.  This is
-not a problem for the page cache as file-backed folios are never
-placed on the deferred list.  All we need to do is prevent the core
-MM from touching the deferred list for order 1 folios and remove the
-code which prevented us from allocating order 1 folios.
+We do not have non power of two pages, using nr is error prone if nr
+is not power-of-two. Use page order instead.
 
-Link: https://lore.kernel.org/linux-mm/90344ea7-4eec-47ee-5996-0c22f42d6a6a@google.com/
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 Signed-off-by: Zi Yan <ziy@nvidia.com>
+Acked-by: David Hildenbrand <david@redhat.com>
 ---
- mm/filemap.c     |  2 --
- mm/huge_memory.c | 19 +++++++++++++++----
- mm/internal.h    |  3 +--
- mm/readahead.c   |  3 ---
- 4 files changed, 16 insertions(+), 11 deletions(-)
+ include/linux/memcontrol.h | 4 ++--
+ mm/huge_memory.c           | 5 +++--
+ mm/memcontrol.c            | 3 ++-
+ mm/page_alloc.c            | 4 ++--
+ 4 files changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index b7a21551fbc7..b4858d89f1b1 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1912,8 +1912,6 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 			gfp_t alloc_gfp = gfp;
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 4e4caeaea404..173bbb53c1ec 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1163,7 +1163,7 @@ static inline void memcg_memory_event_mm(struct mm_struct *mm,
+ 	rcu_read_unlock();
+ }
  
- 			err = -ENOMEM;
--			if (order == 1)
--				order = 0;
- 			if (order > 0)
- 				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
- 			folio = filemap_alloc_folio(alloc_gfp, order);
+-void split_page_memcg(struct page *head, unsigned int nr);
++void split_page_memcg(struct page *head, int order);
+ 
+ unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
+ 						gfp_t gfp_mask,
+@@ -1621,7 +1621,7 @@ void count_memcg_event_mm(struct mm_struct *mm, enum vm_event_item idx)
+ {
+ }
+ 
+-static inline void split_page_memcg(struct page *head, unsigned int nr)
++static inline void split_page_memcg(struct page *head, int order)
+ {
+ }
+ 
 diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index b20e535e874c..9840f312c08f 100644
+index 9840f312c08f..96ac7c62c375 100644
 --- a/mm/huge_memory.c
 +++ b/mm/huge_memory.c
-@@ -790,8 +790,10 @@ struct deferred_split *get_deferred_split_queue(struct folio *folio)
+@@ -2889,11 +2889,12 @@ static void __split_huge_page(struct page *page, struct list_head *list,
+ 	struct lruvec *lruvec;
+ 	struct address_space *swap_cache = NULL;
+ 	unsigned long offset = 0;
+-	unsigned int nr = thp_nr_pages(head);
+ 	int i, nr_dropped = 0;
++	int order = folio_order(folio);
++	unsigned int nr = 1 << order;
  
- void folio_prep_large_rmappable(struct folio *folio)
+ 	/* complete memcg works before add pages to LRU */
+-	split_page_memcg(head, nr);
++	split_page_memcg(head, order);
+ 
+ 	if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
+ 		offset = swp_offset(folio->swap);
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 95c3fccb321b..1a09f0e77c44 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -3608,11 +3608,12 @@ void obj_cgroup_uncharge(struct obj_cgroup *objcg, size_t size)
+ /*
+  * Because page_memcg(head) is not set on tails, set it now.
+  */
+-void split_page_memcg(struct page *head, unsigned int nr)
++void split_page_memcg(struct page *head, int order)
  {
--	VM_BUG_ON_FOLIO(folio_order(folio) < 2, folio);
--	INIT_LIST_HEAD(&folio->_deferred_list);
-+	if (!folio || !folio_test_large(folio))
-+		return;
-+	if (folio_order(folio) > 1)
-+		INIT_LIST_HEAD(&folio->_deferred_list);
- 	folio_set_large_rmappable(folio);
+ 	struct folio *folio = page_folio(head);
+ 	struct mem_cgroup *memcg = folio_memcg(folio);
+ 	int i;
++	unsigned int nr = 1 << order;
+ 
+ 	if (mem_cgroup_disabled() || !memcg)
+ 		return;
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 96839b210abe..a7a96bc97e0b 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2653,7 +2653,7 @@ void split_page(struct page *page, unsigned int order)
+ 	for (i = 1; i < (1 << order); i++)
+ 		set_page_refcounted(page + i);
+ 	split_page_owner(page, 1 << order);
+-	split_page_memcg(page, 1 << order);
++	split_page_memcg(page, order);
  }
+ EXPORT_SYMBOL_GPL(split_page);
  
-@@ -3114,7 +3116,8 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 	/* Prevent deferred_split_scan() touching ->_refcount */
- 	spin_lock(&ds_queue->split_queue_lock);
- 	if (folio_ref_freeze(folio, 1 + extra_pins)) {
--		if (!list_empty(&folio->_deferred_list)) {
-+		if (folio_order(folio) > 1 &&
-+		    !list_empty(&folio->_deferred_list)) {
- 			ds_queue->split_queue_len--;
- 			list_del(&folio->_deferred_list);
- 		}
-@@ -3165,6 +3168,9 @@ void folio_undo_large_rmappable(struct folio *folio)
- 	struct deferred_split *ds_queue;
- 	unsigned long flags;
+@@ -4840,7 +4840,7 @@ static void *make_alloc_exact(unsigned long addr, unsigned int order,
+ 		struct page *last = page + nr;
  
-+	if (folio_order(folio) <= 1)
-+		return;
-+
- 	/*
- 	 * At this point, there is no one trying to add the folio to
- 	 * deferred_list. If folio is not in deferred_list, it's safe
-@@ -3190,7 +3196,12 @@ void deferred_split_folio(struct folio *folio)
- #endif
- 	unsigned long flags;
+ 		split_page_owner(page, 1 << order);
+-		split_page_memcg(page, 1 << order);
++		split_page_memcg(page, order);
+ 		while (page < --last)
+ 			set_page_refcounted(last);
  
--	VM_BUG_ON_FOLIO(folio_order(folio) < 2, folio);
-+	/*
-+	 * Order 1 folios have no space for a deferred list, but we also
-+	 * won't waste much memory by not adding them to the deferred list.
-+	 */
-+	if (folio_order(folio) <= 1)
-+		return;
- 
- 	/*
- 	 * The try_to_unmap() in page reclaim path might reach here too,
-diff --git a/mm/internal.h b/mm/internal.h
-index 2b7efffbe4d7..c4853ebfa030 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -420,8 +420,7 @@ static inline struct folio *page_rmappable_folio(struct page *page)
- {
- 	struct folio *folio = (struct folio *)page;
- 
--	if (folio && folio_order(folio) > 1)
--		folio_prep_large_rmappable(folio);
-+	folio_prep_large_rmappable(folio);
- 	return folio;
- }
- 
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 1e74455f908e..130c0e7df99f 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -514,9 +514,6 @@ void page_cache_ra_order(struct readahead_control *ractl,
- 		/* Don't allocate pages past EOF */
- 		while (index + (1UL << order) - 1 > limit)
- 			order--;
--		/* THP machinery does not support order-1 */
--		if (order == 1)
--			order = 0;
- 		err = ra_alloc_folio(ractl, index, mark, order, gfp);
- 		if (err)
- 			break;
 -- 
 2.43.0
 
