@@ -1,159 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-12742-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12743-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB063866820
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 03:24:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C7D866844
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 03:34:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEEFB1C20D25
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 02:24:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0710FB20CDA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 02:34:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3FF9EAC7;
-	Mon, 26 Feb 2024 02:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF41EED4;
+	Mon, 26 Feb 2024 02:34:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="pU/X0DBG"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Sw1u7eqj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD71EAC2
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 02:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CBA817
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 02:34:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708914279; cv=none; b=FQ9vCUn2pZYWKQfWCbFZZOOPf38qbrpFLed1z0zMsdxaAD2mZgBksLXN78BkXFDw52FahmnR3Bi/+nWo0NGN5OvFkFmH8YV1SX/qcG5FFfUWJUX+2eL2mgFiu1k9uSU0nsM+fV2dbwXirVY9gNV+UgPtAqHS9VrKH5HCb0ZKudU=
+	t=1708914889; cv=none; b=SZmPdDEp+tyD9HIa+ZuGypIBtf2MxHspS96cW0gP/21PccEK8fwNl86uV3HfKc6yOK3huswPSB273vvxJ0dvAQQau0mMY10pFjxGQdG5R4Mj+VTMUdbp18FIqTODZa80x2abdloIwtCrQj83/omu8R0nEGNlju55FDNk9EZGQWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708914279; c=relaxed/simple;
-	bh=X3AP6Bp6b6ancxowuXLy3iTRG7qx8UMTyerNezwbvHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k3LOnOVR3MbPrbci8yO+gIZRRQEML8yUFhP7ktyyd6gxkZHjVhHM1/vFZ3WRBi+jLRqdTN8clnBXOCwn0Alpc7feBBfD97UBV4euIAiUsHVVMmTVb4Uqo6EqDivqbddAs1AE98+/KF69FNDez3aPjA19AJrme8+GKzOogvThfJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=pU/X0DBG; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-21e45ece781so2099978fac.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 18:24:37 -0800 (PST)
+	s=arc-20240116; t=1708914889; c=relaxed/simple;
+	bh=vMtEpnklzu+sHY1WYzRE932e4cLQ2NSmSa7KYZmvp4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lPSGtS7WCk5uEf3AqHIbgP9wi0qvlJSV4fSXvc+k9KOw+6xkQ/ggoS94T3yrnvZBIpXdBHhBL+HFqMBSVzeGSqLZmMNwtsJmwBKFACWFM+sWY9sgI+iQxSc/X/42xE1P81pkcKpHsVBWaC9xNYfuyOrsOk0jY8QWcGjCi9LMAfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Sw1u7eqj; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a3ed9cae56fso398496766b.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 18:34:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1708914276; x=1709519076; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=keFZRzXSEtuuqVK1R31f2mV75CisjCkl0caiItfXYno=;
-        b=pU/X0DBGr5nzKRbhfuS1HdMnXOC2UAgUnm+Fd7JIT3Yxvdwd6RaK+IBjxbPFVi32jt
-         h0HJHoUBO3wGcjh9ylf7dqJnR40HzMmSlhER7g6TKWUEgnEZpQb7aWAofCSwVykmdPeB
-         hcNAGXXQxlrFEDCJBXH7kufKyiDsXOM/IIQbuhV3nSv/ZVPwt51PBMrvnQILP0Qbhq78
-         rXoEVlg/gh23lhLXe8F2kvxpVfifRt3ChUW01FzLbaRa1Bl29BTx+BpTCFSF9AnQRygv
-         zBXsFNdUuXIMYncRG6XIISzbTXBAPzN8Ulm8M5gl67qpCM+MxRdpdMmqcuPPbrMGIVeq
-         vsXQ==
+        d=linux-foundation.org; s=google; t=1708914885; x=1709519685; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OqNRWTy0P8CmYFL5DyLB1MrNOJdjhuOOEAc3K/VmsrE=;
+        b=Sw1u7eqjGDH1FYmxhPv0wodavIt8G3dgIxemH9lsJWvKUkeClODk23dBY+YHppHFo5
+         bPSqbTDJkcJxRirO4yruArsuZJQy6MtY6JsQZPkR5unuhWJpYULtpRmxyK2QJoqlQVUi
+         tdihIqORZkMniuSsUKZ5t5hkCHfBQ6D6a4L1M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708914276; x=1709519076;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=keFZRzXSEtuuqVK1R31f2mV75CisjCkl0caiItfXYno=;
-        b=NQXHMyqUCA8mfqxpEbBTj2G3vbR1D0gcY8Xi3JGvW/UUmdYxR3Y0Q6fyCV2YoS6bVr
-         EI1YuJxXLBxX7tZ/+1a15UpF3f5HVOcUPnEejBwBn/6NolhTl7eJCUoHTNEyS1CBTNbQ
-         w3zLF2AtfLAHoiyCarV37xqm+MjXDmF8kH91qgVAZ2B8uBDE9ekljQeaSKNrPC+F3f2T
-         ayUwklsSiLAqAIyLZeV7ECmlEYpGCkkz7+9Wo351H+q6fG2+B9FNmzuO+ruLrusPhj9N
-         VuCUF1Uc7WxAX72I8HOEztj+qzmG8ekDD9tm9xNLfVk7lfvjQ9gD+K1Jvqox6nkXrxNN
-         f6zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUHVIDrX3zvo5bweG11if9tpkSyoO2SMW94F09s6dJ48+FBOK+v1rKhRpLmPjaw9vJ+si0os7Uy5y0q5lE3HRJOxm4a8mSy8CqfROX38g==
-X-Gm-Message-State: AOJu0YxK6m07WpqDj1xlsrtVvOfo6aFUt6Lsn5UaDdC/OfcdfNytFutj
-	wekBInqaRJZJtkqzkcaDUQUOvjApRYe4fENmcBPeYcu/DMLEJY+tXCJvmhzw9sI=
-X-Google-Smtp-Source: AGHT+IEtjhVGkg7sspmH17FkZdrCNpnZ3s/M4MIQx1Fz9aip/f8ld7pswsn1rXp6cfSHQpxNfDG3WQ==
-X-Received: by 2002:a05:6871:14a:b0:21e:8fb4:966a with SMTP id z10-20020a056871014a00b0021e8fb4966amr7455096oab.43.1708914276509;
-        Sun, 25 Feb 2024 18:24:36 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-247-196.pa.nsw.optusnet.com.au. [49.181.247.196])
-        by smtp.gmail.com with ESMTPSA id o7-20020a63f147000000b005dc9439c56bsm2913980pgk.13.2024.02.25.18.24.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 25 Feb 2024 18:24:36 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1reQfR-00BYvq-0r;
-	Mon, 26 Feb 2024 13:24:33 +1100
-Date: Mon, 26 Feb 2024 13:24:33 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, fsverity@lists.linux.dev,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	chandan.babu@oracle.com, djwong@kernel.org
-Subject: Re: [PATCH v4 09/25] fsverity: add tracepoints
-Message-ID: <Zdv2YZP0sIzDA5UT@dread.disaster.area>
-References: <20240212165821.1901300-1-aalbersh@redhat.com>
- <20240212165821.1901300-10-aalbersh@redhat.com>
- <20240223053156.GE25631@sol.localdomain>
- <copvwl7uhxj7iqlms2tv6shk4ky7lce54jqugg7uiuxgbv34am@3x6pelescjlb>
- <20240223182735.GD1112@sol.localdomain>
+        d=1e100.net; s=20230601; t=1708914885; x=1709519685;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OqNRWTy0P8CmYFL5DyLB1MrNOJdjhuOOEAc3K/VmsrE=;
+        b=KaWe54Pxg8WohW4803EyZhDL/9XrFwpyAYKbLPkfLIkhqy9I+i58NTvy58W6wtPFpA
+         fTTJzQVeiF8c2lkNnr4TNlU9hDnyQl/29M8BYgR4Gp/RwgwXi6pu2hdXlmouanjgy94L
+         n7g4HU0SYU3gdPbvqFHmT8Pmi6Gf4JD1ul5toVTco0Y86ifr3vtGT0fGVJHZnlVys3ok
+         aVaadUKL6Srecbu2m5b3Y+q/OtkXruPwmLnBWMPzjIIs/DE0HbiubZwl7zMr1+irRihT
+         bTgYF42pY671AcwBtVSzPgytpJCAdvGzZX4q3m6ox/SHe3binhrXFvaMydLwjjvfcUB3
+         iwog==
+X-Forwarded-Encrypted: i=1; AJvYcCU6bieek3xsd/Mm+kKTD4EgqH3SlDKAPQU0mnKPxHjovbjnuCrda5m5QCeM00i75bJVvMBY66vP/aGPl1xc8V+NAE/XS2XkpwAXuou5lw==
+X-Gm-Message-State: AOJu0Yz48mdHUMBppGhrES585KRTTni8PXo7sCNtsdbLpf0OTjcxMJr1
+	MWfesbeu0dSlJwO6kG6keLU1r08cfe6BHU+s3d1GXQ42blarH8qRVCXyAkxaTP3m2Z7J08xqhnO
+	hQcoqFg==
+X-Google-Smtp-Source: AGHT+IFyXsHtEW2nL5S3HFeJenhZ/XozC2YkZc0/3lWh4YvuCHPqNJdm0g0F5UVSNXyAF3sndcWGQg==
+X-Received: by 2002:a17:906:4685:b0:a43:5ec9:cd48 with SMTP id a5-20020a170906468500b00a435ec9cd48mr633102ejr.18.1708914885632;
+        Sun, 25 Feb 2024 18:34:45 -0800 (PST)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id vh6-20020a170907d38600b00a42f7e08e9asm1772192ejc.222.2024.02.25.18.34.44
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 Feb 2024 18:34:44 -0800 (PST)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-565c6cf4819so1382153a12.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 18:34:44 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW4KuCRf4+RN19YLJgRoUALxETydthFpEg/799EuZ1QuO9RaFPDIWfkXbqLhCT0Yg55In+KU9qlcnthTuEDkqujEBpgT+PCQBVCRgwxhQ==
+X-Received: by 2002:a17:906:b798:b0:a41:3d8b:80d with SMTP id
+ dt24-20020a170906b79800b00a413d8b080dmr4244517ejb.37.1708914883747; Sun, 25
+ Feb 2024 18:34:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240223182735.GD1112@sol.localdomain>
+References: <Zdkxfspq3urnrM6I@bombadil.infradead.org> <Zdlsr88A6AAlJpcc@casper.infradead.org>
+ <CAHk-=wjUkYLv23KtF=EyCrQcmf9NGwE8Yo1cuxdaLF8gqx5zWw@mail.gmail.com>
+ <o4a6577t2z5xytjwmixqkl33h23vfnjypwbx7jaaldtldpvjf5@dzbzkhrzyobb>
+ <Zds8T9O4AYAmdS9d@casper.infradead.org> <CAHk-=wgVPHPPjZPoV8E_q59L7i8zFjHo_5hHo_+qECYuy7FF6g@mail.gmail.com>
+ <Zduto30LUEqIHg4h@casper.infradead.org> <CAHk-=wibYaWYqs5A30a7ywJdsW5LDT1LYysjcCmzjzkK=uh+tQ@mail.gmail.com>
+ <bk45mgxpdbm5gfa6wl37nhecttnb5bxh6wo3slixsray77azu5@pi3bblfn3c5u>
+ <CAHk-=wjnW96+oP0zhEd1zjPNqOHvrddKkwp0+CuS5HpZavfmMQ@mail.gmail.com> <sfh6bvpihpbtwb7tgdkrhfd333qcxrqmvl52s5v5gbdpd2hvwl@p7aoxxndqk75>
+In-Reply-To: <sfh6bvpihpbtwb7tgdkrhfd333qcxrqmvl52s5v5gbdpd2hvwl@p7aoxxndqk75>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 25 Feb 2024 18:34:26 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjmUQN4vZJAotcHHPcoEMV7OutKWJc1dtrDXErdxTMgcA@mail.gmail.com>
+Message-ID: <CAHk-=wjmUQN4vZJAotcHHPcoEMV7OutKWJc1dtrDXErdxTMgcA@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Matthew Wilcox <willy@infradead.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>, 
+	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>, 
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Feb 23, 2024 at 10:27:35AM -0800, Eric Biggers wrote:
-> On Fri, Feb 23, 2024 at 02:23:52PM +0100, Andrey Albershteyn wrote:
-> > On 2024-02-22 21:31:56, Eric Biggers wrote:
-> > > On Mon, Feb 12, 2024 at 05:58:06PM +0100, Andrey Albershteyn wrote:
-> > > > fs-verity previously had debug printk but it was removed. This patch
-> > > > adds trace points to the same places where printk were used (with a
-> > > > few additional ones).
-> > > 
-> > > Are all of these actually useful?  There's a maintenance cost to adding all of
-> > > these.
-> > > 
-> > 
-> > Well, they were useful for me while testing/working on this
-> > patchset. Especially combining -e xfs -e fsverity was quite good for
-> > checking correctness and debugging with xfstests tests. They're
-> > probably could be handy if something breaks.
-> > 
-> > Or you mean if each of them is useful? The ones which I added to
-> > signature verification probably aren't as useful as other; my
-> > intention adding them was to also cover these code paths.
-> 
-> Well, I'll have to maintain all of these, including reviewing them, keeping them
-> working as code gets refactored, and fixing any bugs that exist or may get
-> introduced later in them.  They also increase the icache footprint of the code.
-> I'd like to make sure that it will be worthwhile.  The pr_debug messages that I
-> had put in fs/verity/ originally were slightly useful when writing fs/verity/
-> originally, but after that I never really used them.  Instead I found they
-> actually made patching fs/verity/ a bit harder, since I had to make sure to keep
-> all the pr_debug statements updated as code changed around them.
+On Sun, 25 Feb 2024 at 17:58, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>
+> According to my reading just now, ext4 and btrfs (as well as bcachefs)
+> also don't take the inode lock in the read path - xfs is the only one
+> that does.
 
-pr_debug is largely useless outside of code development purposes.
+Yeah, I should have remembered that detail - DaveC has pointed it out
+at some point how other filesystems don't actually honor the whole
+"all or nothing visible to read".
 
-The value in tracepoints is that they are available for diagnosing
-problems on production systems and should be thought of as such.
-Yes, you can also use them to debug development code, but in that
-environment they are no substitute for custom trace_printk() debug
-output.
+And I was actually wrong about the common cases like ext2 - they use
+generic_file_write_iter(), which does take that inode lock, and I was
+confused with generic_perform_write() (which does not).
 
-However, when you have extensive tracepoints coverage, the amount of
-custom trace_printk() stuff you need to add to a kernel to debug an
-issue ends up being limited, because most of the key state and
-object changes in the code are already covered by tracepoints.
+It was always the read side that didn't care, as you point out. It's
+been some time since I looked at that.
 
-> Maybe I am an outlier and other people really do like having these tracepoints
-> around.  But I'd like to see a bit more feedback along those lines first.  If we
-> could keep them to a more minimal set, that would also be helpful.
+But as mentioned, nobody has actually ever shown any real interest in
+caring about the lack of POSIX technicality.
 
-For people who are used to subsystems with extensive tracepoint
-coverage (like XFS), the lack of tracepoints in all the surrounding
-code is jarring. It makes the rest of the system feel like a black
-hole where detailed runtime introspection is almost completely
-impossible without a *lot* of work.
+> I think write vs. write consistency is the more interesting case; the
+> question there is does falling back to the inode lock when we can't lock
+> all the folios simultaneously work.
 
-Extensive tracepoints help everyone in the production support
-and diagnosis chain understand what is going on by providing easy to
-access runtime introspection for the code. i.e. they provide
-benefit to far more people than just the one kernel developer who
-enables pr_debug on the subsystem when developing new code...
+I really don't think the write-write consistency is all that
+interesting either, and it really does hurt.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+If you're some toy database that would love to use buffered writes on
+just a DB file, that "no concurrent writes" can hurt a lot. So then
+people say "use DIO", but that has its own issues...
+
+There is one obvious special case, and I think it's the primary one
+why we end up having that inode_lock: O_APPEND or any other write
+extending the size of the file.
+
+THAT one obviously has to work right, and that's the case when
+multiple writers actually do want to get write-write consistency, and
+where it makes total sense to serialize them all.
+
+That's the one case that even DIO cares about.
+
+In the other cases, it's hard to argue that "one or the other wins the
+whole range" is seriously hugely better than "one or the other wins at
+some granularity". What the hell are you doing overlapping write
+ranges for if you have a "one or the other" mentality?
+
+Of course, maybe in practice it would be fine to do the "lock all the
+folios, with the fallback being the inode lock" - and we could even
+start with "all" being a pretty small number (perhaps starting with
+"one" ;^).
+
+                Linus
 
