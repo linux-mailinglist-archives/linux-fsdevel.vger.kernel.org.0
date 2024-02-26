@@ -1,205 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-12889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BB98683C7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 23:33:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B8F38683D7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 23:38:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 614F41F24B03
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 22:33:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4AC2B23772
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 22:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E47A134752;
-	Mon, 26 Feb 2024 22:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4771A1350F5;
+	Mon, 26 Feb 2024 22:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="URxK7Ovq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2C61DDD7;
-	Mon, 26 Feb 2024 22:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7121350E4
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 22:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708986814; cv=none; b=pFy292831mnBljUmzDXnYle3fEHugdXHDRUhnwekAGQXecseW/hEaLoiSss8wlW2Rw7Y7i2xYi+z8RrdEpO+jMFFil0l2GTR3DCn3fH6sYUf/daJUMF+W71V6M8Ptfxsc24pJyf7/doZsFGnPDEJy013Y14wf8Jknr29GSLqQSs=
+	t=1708987072; cv=none; b=ACqlGTi0XAZ0BiThYb8qBtUdZr10CZ6Hm2tulK1bYVcg0rTGe5UdpIQXjqMpZSzFjsxQduCv85peAk1/x6bvAB3KYpmeE2Mnw0V2hj+dgTTRxyQXeFjU6Fiv8VWMVpvJ/Ugnh8a94j/oeXWysLqsK3YAh3hcR2irnruMfUcI8A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708986814; c=relaxed/simple;
-	bh=XzkLglHncfPugzyDyH7vIDjIn0LxhOMGEOoaYlwJ2m8=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=nyxKze1Kn0R9dYh8JEmaQf03zAlX8y4ug1BSd7VXpN6Gn6fXyk39/OmN5v5uoTRE5XF3MgIoxW2B/k4tnV6PPEsJo0kweSSa8tcNNmGTBU0Mv8xVlaTe/cC9nfg0s0lse+U6P+QWJPu7e4RQ2/K9XRCpDGxeeFVJkZIcqLWjNWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
-	by madrid.collaboradmins.com (Postfix) with ESMTP id 5514B3780016;
-	Mon, 26 Feb 2024 22:33:29 +0000 (UTC)
-From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
-In-Reply-To: <202402261123.B2A1D0DE@keescook>
-Content-Type: text/plain; charset="utf-8"
-X-Forward: 127.0.0.1
-References: <20240221210626.155534-1-adrian.ratiu@collabora.com>
- <CAD=FV=WR51_HJA0teHhBKvr90ufzZePVcxdA+iVZqXUK=cYJng@mail.gmail.com>
- <202402261110.B8129C002@keescook> <202402261123.B2A1D0DE@keescook>
-Date: Mon, 26 Feb 2024 22:33:29 +0000
-Cc: jannh@google.com, "Doug Anderson" <dianders@chromium.org>, linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com, "Guenter Roeck" <groeck@chromium.org>, "Mike Frysinger" <vapier@chromium.org>, linux-hardening@vger.kernel.org
-To: "Kees Cook" <keescook@chromium.org>
+	s=arc-20240116; t=1708987072; c=relaxed/simple;
+	bh=9wln76VnEaWfDZRkMs2O/OEsQHa33RJYn0rGYikz1nM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LtAfH9DLZqSFC5l7rj7JvCuMyC+IF1qglKjA1mrIHMY1pkZ01YSMZ73HcOEHSb4ZruWiK2KBAw+eNLRsR24jtkzHWBerAyb/zih89b6YD8fqixFAtQub3jYX90cfaM7GqpoF6WAfTQ4BLpDd7DOjPwMhgU7ptw6r1iUIgwmsTIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=URxK7Ovq; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2d26227d508so40734431fa.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 14:37:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1708987066; x=1709591866; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9wln76VnEaWfDZRkMs2O/OEsQHa33RJYn0rGYikz1nM=;
+        b=URxK7Ovq6mgCNT0pAEqBb/3M/wjnmM/LSxXpmCakoJ1ePWBWfexAdkcuSxDKu8qmrw
+         wnZfWZ5v8j38ev4wD9Zz2QxRZsrZveUstPE5T2J+pr21rnoxIcx01LeSJWlF8Wyq8amw
+         5pNEpFVJPmJG9/uQTS6blToY7w/7Uk2TQ949U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708987066; x=1709591866;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9wln76VnEaWfDZRkMs2O/OEsQHa33RJYn0rGYikz1nM=;
+        b=Ap5OB8GdZ1zC6/GT837a5MMZuW0JdW3BBcT151NgbT2HY5c16SxIF2W1XiOj3qjhQW
+         DKyWkQdaip3kY0FRUuyUm0COq7MBp8uuYEBpbBiOsC9M5jo/IZ9dC6dhFFxaULrJsqL7
+         qb9Xpq3OoWvW3jLVvc2JqStmPShAwdDXH/iGzQzxvvbV9d8Dd+gM35iBWg39Hj13A0ic
+         kt2MqwqyV/Ls+if5sONOjnyicPxG+O1HSiqZmhPB5qqM1GuloAquci2UmpOUqzkVVIBu
+         kqQ9LWF9LPTz8Sqh6kEeTBoE/+PBPtw6yAUd445hTLF8XKQaU0s3j7Xdom6F5oUDJDCM
+         A1Lw==
+X-Forwarded-Encrypted: i=1; AJvYcCVHMcOzSH2ScN2byIVTT0p2z3fZWna3iB/zCYWo57CGiUSuHL0IuQsq8XCDnkLzW4syEUgPa4gaHzMi0hp/DVdT0cDkC+sFnT0qEW+5Qw==
+X-Gm-Message-State: AOJu0YyA/LkAAKcAxkpj70Hi662KYgbpo8W1cz10szA6HWCp/pd6A2Tx
+	PXl4rb7IuAdk6jrAqyd5obZzel/gokJWowQQ4DQihv3CYyBzcaNXm9Y1GdelV478wl/gFRRSSyM
+	JyDbB
+X-Google-Smtp-Source: AGHT+IF6MSLn0ujiizP/4jvt3hcXlElW8mNQmJZsCVSIc9a6RFE6JLAJeDg9B26cBHf4WWtvCTFJUA==
+X-Received: by 2002:a2e:9dd2:0:b0:2d2:3ec0:29d9 with SMTP id x18-20020a2e9dd2000000b002d23ec029d9mr4650087ljj.38.1708987066572;
+        Mon, 26 Feb 2024 14:37:46 -0800 (PST)
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com. [209.85.128.53])
+        by smtp.gmail.com with ESMTPSA id j8-20020aa7c408000000b0056200715130sm170095edq.54.2024.02.26.14.37.45
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Feb 2024 14:37:46 -0800 (PST)
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-412a2c2ce88so5265e9.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 14:37:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW65Fc1lVspUCbB0H1GuZx91siC2TaHxXMKMeippKXbXItsaSkcnujSiauUdrYek05RagupgT26SfzZVkwZajiAByVoxZpyPYkpMnJgvw==
+X-Received: by 2002:a05:600c:1d8b:b0:412:a80e:a5cc with SMTP id
+ p11-20020a05600c1d8b00b00412a80ea5ccmr30242wms.1.1708987065108; Mon, 26 Feb
+ 2024 14:37:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1405e4-65dd1180-3-7a785380@32026879>
-Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?proc=3A?= allow restricting 
- /proc/pid/mem writes
-User-Agent: SOGoMail 5.9.1
+References: <20240221210626.155534-1-adrian.ratiu@collabora.com>
+ <CAD=FV=WR51_HJA0teHhBKvr90ufzZePVcxdA+iVZqXUK=cYJng@mail.gmail.com>
+ <202402261110.B8129C002@keescook> <202402261123.B2A1D0DE@keescook> <1405e4-65dd1180-3-7a785380@32026879>
+In-Reply-To: <1405e4-65dd1180-3-7a785380@32026879>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 26 Feb 2024 14:37:29 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Vh7Ctaj6N_k9gdkrqpb687zJqQN19qTZXMyDw6TujvLQ@mail.gmail.com>
+Message-ID: <CAD=FV=Vh7Ctaj6N_k9gdkrqpb687zJqQN19qTZXMyDw6TujvLQ@mail.gmail.com>
+Subject: Re: [PATCH] proc: allow restricting /proc/pid/mem writes
+To: Adrian Ratiu <adrian.ratiu@collabora.com>
+Cc: Kees Cook <keescook@chromium.org>, jannh@google.com, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel@collabora.com, 
+	Guenter Roeck <groeck@chromium.org>, Mike Frysinger <vapier@chromium.org>, 
+	linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello
+Hi,
 
-On Monday, February 26, 2024 21:24 EET, Kees Cook <keescook@chromium.or=
-g> wrote:
+On Mon, Feb 26, 2024 at 2:33=E2=80=AFPM Adrian Ratiu <adrian.ratiu@collabor=
+a.com> wrote:
+>
+> > > [...]
+> > > +config SECURITY_PROC_MEM_RESTRICT_WRITES
+> >
+> > Instead of a build-time CONFIG, I'd prefer a boot-time config (or a
+> > sysctl, but that's be harder given the perms). That this is selectable
+> > by distro users, etc, and they don't need to rebuild their kernel to
+> > benefit from it.
+>
+> Ack, I'll implement a cmdline arg in v2.
 
-> [sorry for the duplicate, fixing Jann's email address]
->=20
-> On Mon, Feb 26, 2024 at 09:10:54AM -0800, Doug Anderson wrote:
-> > Hi,
-> >=20
-> > On Wed, Feb 21, 2024 at 1:06=E2=80=AFPM Adrian Ratiu <adrian.ratiu@=
-collabora.com> wrote:
-> > >
-> > > Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
-> > > after which it got allowed in commit 198214a7ee50 ("proc: enable
-> > > writing to /proc/pid/mem"). Famous last words from that patch:
-> > > "no longer a security hazard". :)
-> > >
-> > > Afterwards exploits appeared started causing drama like [1]. The
-> > > /proc/*/mem exploits can be rather sophisticated like [2] which
-> > > installed an arbitrary payload from noexec storage into a running
-> > > process then exec'd it, which itself could include an ELF loader
-> > > to run arbitrary code off noexec storage.
-> > >
-> > > As part of hardening against these types of attacks, distrbutions
-> > > can restrict /proc/*/mem to only allow writes when they makes sen=
-se,
-> > > like in case of debuggers which have ptrace permissions, as they
-> > > are able to access memory anyway via PTRACE=5FPOKEDATA and friend=
-s.
-> > >
-> > > Dropping the mode bits disables write access for non-root users.
-> > > Trying to `chmod` the paths back fails as the kernel rejects it.
-> > >
-> > > For users with CAP=5FDAC=5FOVERRIDE (usually just root) we have t=
-o
-> > > disable the mem=5Fwrite callback to avoid bypassing the mode bits=
-.
-> > >
-> > > Writes can be used to bypass permissions on memory maps, even if =
-a
-> > > memory region is mapped r-x (as is a program's executable pages),
-> > > the process can open its own /proc/self/mem file and write to the
-> > > pages directly.
-> > >
-> > > Even if seccomp filters block mmap/mprotect calls with W|X perms,
-> > > they often cannot block open calls as daemons want to read/write
-> > > their own runtime state and seccomp filters cannot check file pat=
-hs.
-> > > Write calls also can't be blocked in general via seccomp.
-> > >
-> > > Since the mem file is part of the dynamic /proc/<pid>/ space, we
-> > > can't run chmod once at boot to restrict it (and trying to react
-> > > to every process and run chmod doesn't scale, and the kernel no
-> > > longer allows chmod on any of these paths).
-> > >
-> > > SELinux could be used with a rule to cover all /proc/*/mem files,
-> > > but even then having multiple ways to deny an attack is useful in
-> > > case on layer fails.
-> > >
-> > > [1] https://lwn.net/Articles/476947/
-> > > [2] https://issues.chromium.org/issues/40089045
-> > >
-> > > Based on an initial patch by Mike Frysinger <vapier@chromium.org>=
-.
-> > >
-> > > Cc: Guenter Roeck <groeck@chromium.org>
-> > > Cc: Doug Anderson <dianders@chromium.org>
-> > > Signed-off-by: Mike Frysinger <vapier@chromium.org>
->=20
-> This should have a "Co-developed-by: Mike..." tag, since you're makin=
-g
-> changes and not just passing it along directly.
+Any objections to doing both? Have a CONFIG option for a default and a
+cmdline to override it? This way if a distro wants to restrict writes
+by default then don't need to jam more stuff into the kernel command
+line.
 
-Thanks, I'll address this in v2.
-
->=20
-> > > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-> > > ---
-> > > Tested on next-20240220.
-> > >
-> > > I would really like to avoid depending on CONFIG=5FMEMCG which is
-> > > required for the struct mm=5Fstryct "owner" pointer.
-> > >
-> > > Any suggestions how check the ptrace owner without MEMCG?
-> > > ---
-> > >  fs/proc/base.c   | 26 ++++++++++++++++++++++++--
-> > >  security/Kconfig | 13 +++++++++++++
-> > >  2 files changed, 37 insertions(+), 2 deletions(-)
-> >=20
-> > Thanks for posting this! This looks reasonable to me, but I'm nowhe=
-re
-> > near an expert on this so I won't add a Reviewed-by tag.
-> >=20
-> > This feels like the kind of thing that Kees might be interested in
-> > reviewing, so adding him to the "To" list.
->=20
-> I'd love to make /proc/$pid/mem more strict. A few comments:
->=20
-> > [...]
-> > +	if (ptracer=5Fcapable(current, mm->user=5Fns) &&
->=20
-> It really looks like you're trying to do a form of ptrace=5Fmay=5Facc=
-ess(),
-> but =5Fwithout=5F the introspection exception?
->=20
-> Also, using "current" in the write path can lead to problems[1], so t=
-his
-> should somehow use file->f=5Fcred, or limit write access during the o=
-pen()
-> instead?
-
-I think Mike explained pretty well why we need to check if current alre=
-ady
-is a ptracer. The point you raise is valid (thanks again) so we need to=
- check
-a bit earlier, during open().
-
->=20
-> > [...]
-> > +config SECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITES
->=20
-> Instead of a build-time CONFIG, I'd prefer a boot-time config (or a
-> sysctl, but that's be harder given the perms). That this is selectabl=
-e
-> by distro users, etc, and they don't need to rebuild their kernel to
-> benefit from it.
-
-Ack, I'll implement a cmdline arg in v2.
-
->=20
-> Jann Horn has tried to restrict access to this file in the past as we=
-ll,
-> so he may have some additional advice about it.
-
-I'll leave this a few more days in case others have more ideas, then wi=
-ll
-send v2 and also add Jann to the "To:" list.
-
->=20
-> -Kees
->=20
-> [1] https://docs.kernel.org/security/credentials.html#open-file-crede=
-ntials
->=20
-> --=20
-> Kees Cook
-
+-Doug
 
