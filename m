@@ -1,96 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-12747-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12748-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 005D186692A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 05:09:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDDF586694D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 05:17:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA7681F20F4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 04:09:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6196DB22F4C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 04:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56111B94C;
-	Mon, 26 Feb 2024 04:09:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA5B91B299;
+	Mon, 26 Feb 2024 04:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ffjvstIF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E826419BA5
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 04:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19505199DC
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 04:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708920545; cv=none; b=oKmf9BpiKleEL8889pFKISkMWGUkcbXq43MMkrUAO+TeuRiJkWUB73sJP4jfRCmeHRFdMCvpr0w9Zh8W7VdtIHu6s+Sbm3yANUQFCgUioipJWDE2LclkrWIHbsfSyOOIhUtkyc4iM7O1X3a4SwiUBjcYNGiJsc4vKm/yNMbEHps=
+	t=1708921050; cv=none; b=gChlm6Kc01MZKzuM2FYlebYnbaYTn/GsxetqzvD2oObtyyjd3Orvwa43DCnfKJm0gDygtr+UPPNE2yiEsdBOLk5KbxCNJAe2J5+vdn7f7Q7odQ7Sk+B8tLkJtZPPFixuU3u6f2f98OB8viF4gEUbu6ATmqoNx51CKxhOYx+sjjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708920545; c=relaxed/simple;
-	bh=sVf87IQzTzV0aVFiMywfSmA3BksnTd1FHjfXa6C0bbk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WwiQAtlkuRj/EEr+B1+l/flTxF4rucmNHJo0fh/N1A1zOmuepnJrqGK7XJmnz85Xq/biaDycDT3z1ChfjIK8aCnWjFgpZyCbCI0G0h80NOqMWIoOgYVELI4Q+Elo0y5InO07FIMWREvQJRzhB1DBwAFKMqDYqYNBonTbXyfD87Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7bc32b2226aso264480539f.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 Feb 2024 20:09:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708920543; x=1709525343;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZNDjEj3dO41B6yHWj0vKf07JfaPf4wfX68sy+dsc0cc=;
-        b=iglHjJYUNyfBnRNGCl5ilWlf5qeOnujkVKrnuoGu/YkCOctXCjWsG/BFgd6aFm0+80
-         ZZ9ejk9qnFyK0nwPT6Das9TBTW60NtPV33EkL0PNf+Bli6D6i1+luyJ7O9VTdokaOBHA
-         tQO27bsaJ5doTIKHa7ujtkzrbfDaGBAwuXF2DkqiqYrmQ9UrnWXsNv23pd818Kaj9hLP
-         Jxtr5sd5vthzHKdgosgzCroaQjC2ooLuMlEsdcj/l7gCpOE10YfKO4LQhy3wsDdWDBfG
-         jZIGaJ83Cu9BteL2A3g73s+uAHlSnx79zP4yQ8gzg6PTGg4g5wJAehMaGg5E27t6aCuQ
-         loow==
-X-Forwarded-Encrypted: i=1; AJvYcCWkDaZmzVG5a2wKWXN+iSXNtnrE3+1oHlBcASyCqFJk2oWmuO9LU4vniWUKlwirahFZCBwf8Z+CGxk4tSMZEAlx4DV4ieMfyT7aGCypUQ==
-X-Gm-Message-State: AOJu0Yxe2zcv4k2fCsiGt6ibWfcU8rWs4ay+Zl0Xp1HrXepHltpW+kE3
-	fRaDRkNlgB6LmewdfdPEj45F9nae5Ng314GiMVvMz8XkqzgJToGiWRm+vXFlRI0W+n2tFFT8S4k
-	Ci66/cgjRQ86a5EQbllLdZTfxUAv5AKVrFll2WxTefevoZ911YrVjQb4=
-X-Google-Smtp-Source: AGHT+IHGIB6xFgTBe8rarTPKRKsWIcHLb2B4v1XZJ1w4HhxteEbNfAkQ533BJ23mhdcAFx0a27dCQeZQZTB4NpfTSSMAAxlsZQQQ
+	s=arc-20240116; t=1708921050; c=relaxed/simple;
+	bh=ziwH+pCDyxYjIjzxKHTTOC6YVZoo9ph8PGei9tUW5js=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jXycfyLJTL5ckq2gFndFfWYhLbSBOVZn1vUNoFXX7D3g5K7rwTz0DHbE2Th4bi8tcaZVbFPa8R3fZuuBelJd5aq7tJzl9oXUbD8nwx54EiCEo2ZvvV2ac93uZDBUmLmVkZu+CcXLdwFtSwUgXbVCe5M+5mfE1iO79iYNHQfvKR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ffjvstIF; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=AfPdFaaO0ss9W2FTGy/OIpGc9dhnW6C4bijmtKmUVl4=; b=ffjvstIFEwMPH6JF1oTEJp/Qnx
+	k/b7TV/HQxF5wyheY1z//ZlmmX99XLgRtg+oTOVJYRNW925+DNFFLFW68O4DCJLBt1ziA4AZBcdBB
+	Kp0UMmsITJBz0zwdn0eqN9oi3tt/mT9xH7z9AFu9YKOn5v5J4GryiNX7tqDf+vXvl3+3CrUR6FmdQ
+	1ZEPcO6XVnSgV77YqpILDFX8o3aYdYq3h4krqIWwzJdflPbTYZnu35CwDR/99wRU2vm8ffgam88X6
+	DlYTBXvMHushLxfLI/jaTY1hVlYmh6WiFqOivDCHL7yv9uKW+sXsBnN4qlmc8js36sDfrGFO2psvg
+	tn1x/64g==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1reSQa-0000000G6VL-13FM;
+	Mon, 26 Feb 2024 04:17:20 +0000
+Date: Mon, 26 Feb 2024 04:17:20 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeelb@google.com,
+	muchun.song@linux.dev, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] mm: Add reclaim type to memory.reclaim
+Message-ID: <ZdwQ0JXPG4aFHxeg@casper.infradead.org>
+References: <20240225114204.50459-1-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1d13:b0:365:2f19:e597 with SMTP id
- i19-20020a056e021d1300b003652f19e597mr470242ila.5.1708920543138; Sun, 25 Feb
- 2024 20:09:03 -0800 (PST)
-Date: Sun, 25 Feb 2024 20:09:03 -0800
-In-Reply-To: <001a113eba282f2ffc0568b76123@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ec5a2f0612411136@google.com>
-Subject: Re: [syzbot] [reiserfs?] kernel BUG at fs/reiserfs/journal.c:LINE!
-From: syzbot <syzbot+6820505ae5978f4f8f2f@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, alaaemadhossney.ae@gmail.com, 
-	alex.shi@linux.alibaba.com, axboe@kernel.dk, baijiaju1990@gmail.com, 
-	brauner@kernel.org, colin.king@canonical.com, dhowells@redhat.com, 
-	gregkh@linuxfoundation.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mingo@kernel.org, rdunlap@infradead.org, 
-	reiserfs-devel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	yanaijie@huawei.com, zhengbin13@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240225114204.50459-1-laoar.shao@gmail.com>
 
-syzbot suspects this issue was fixed by commit:
+On Sun, Feb 25, 2024 at 07:42:04PM +0800, Yafang Shao wrote:
+> In our container environment, we've observed that certain containers may
+> accumulate more than 40GB of slabs, predominantly negative dentries. These
+> negative dentries remain unreclaimed unless there is memory pressure. Even
+> after the containers exit, these negative dentries persist. To manage disk
+> storage efficiently, we employ an agent that identifies container images
+> eligible for destruction once all instances of that image exit.
 
-commit 6f861765464f43a71462d52026fbddfc858239a5
-Author: Jan Kara <jack@suse.cz>
-Date:   Wed Nov 1 17:43:10 2023 +0000
+I understand why you've written this patch, but we really do need to fix
+this for non-container workloads.  See also:
 
-    fs: Block writes to mounted block devices
+https://lore.kernel.org/all/20220402072103.5140-1-hdanton@sina.com/
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16fcca02180000
-start commit:   b85ea95d0864 Linux 6.7-rc1
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b5bf1661f609e7f0
-dashboard link: https://syzkaller.appspot.com/bug?extid=6820505ae5978f4f8f2f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1728c947680000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1079c598e80000
+https://lore.kernel.org/linux-fsdevel/1611235185-1685-1-git-send-email-gautham.ananthakrishna@oracle.com/
 
-If the result looks correct, please mark the issue as fixed by replying with:
+https://lore.kernel.org/all/YjDvRPuxPN0GsxLB@casper.infradead.org/
 
-#syz fix: fs: Block writes to mounted block devices
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+I'm sure theer have been many other threads on this over the years.
 
