@@ -1,197 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-12828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AFA8867A98
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 16:45:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF68867AAD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 16:49:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E1EA28AE01
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 15:45:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D1A11C216CC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 15:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEEC12C553;
-	Mon, 26 Feb 2024 15:44:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DD512BF1C;
+	Mon, 26 Feb 2024 15:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NOETsR1/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="y1kEO+FP";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q25SrPtC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PG2cmVLD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFxebVyZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC5812B153;
-	Mon, 26 Feb 2024 15:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79FFD12BEB6;
+	Mon, 26 Feb 2024 15:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708962297; cv=none; b=fyKn8f7wLo+AU/m9XIvbHCGtrkdI6zS6GCfeAFk5xakA5fHnQL9n1hzcX2Zusjx1qLyiWYe2pI/jN7tY9ThI+dsakFOghGvJbtKaym3opEz9MBMgCrK+NQPzYDvKOW54ws3+4cJWgS/36al7E+JRCZ45lavLx9wOKdXQeVSfxe0=
+	t=1708962533; cv=none; b=jNwcS9xlCbZf6b0V/MIPZMZC92FjVH/G08fuenLioPBOrXc3m0K2K25Wus1vQl9ZyftP17QKwDMwapmG6TXuyrzTgP5Lab+ZCHsPT8+5oWukmZqNBvthSZSjYDzWAbF3PQXaVmFfC4C2jpnqQCZ0070Kr1CNlIpgfBKi/8SWJPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708962297; c=relaxed/simple;
-	bh=RLBFNkzP9GqTjvndlIET/xlLk5CJRmEdNX0X75l4ank=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fii1U14fTLN6EdW5c0UVJtn0C9N1eoZg3qWXHhN4WsISIzxj0YluXfUKGayAeNDfx0Zk7CnMtRwHfblrulK6rXWlDn/xoi/9VHVHXzfetI6qTzPkEu7zKxUU6MoYs/Z5X1b7BNbeDSK6Wm6mvzI4S/7fcUxYIq4Yg49d2yRFp0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NOETsR1/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=y1kEO+FP; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q25SrPtC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PG2cmVLD; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id DB67A1FD17;
-	Mon, 26 Feb 2024 15:44:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1708962293; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uO6nFRXFkR5BenyCu2zdHy6TynY7FaB2n2EEfF5vWuc=;
-	b=NOETsR1/coQP/da0HBqaD0qjl4DgUf+en6xj+srfFF+1uXTOn4+58dhn2yprDpczaFiAQr
-	2p7piU7RIh4Du1TBu8haQtMzsJDWm+HwEqQQDP6rAqmBMZpKbHd7OycRp1MVjfCZ/f1MPC
-	geFKKe27a31O8OQPpjlMDlB9/6f+yWw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1708962293;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uO6nFRXFkR5BenyCu2zdHy6TynY7FaB2n2EEfF5vWuc=;
-	b=y1kEO+FPjFYcUBvJzauKLGMk+sf/NPUgzw8djkI0nt/EWKAIW/8hiTzV37R/6gZlhB9sSS
-	dN0FoMwSj4d4cDCw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1708962292; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uO6nFRXFkR5BenyCu2zdHy6TynY7FaB2n2EEfF5vWuc=;
-	b=Q25SrPtCCHf76Rh616VtmtaJKZ8H33R+tYn4wpxCU1VSWMijjvei5aC5qPuEV4uLfS/6F1
-	TkD2vldaYqHVTh0wW3y2F45Bc53hkZd3ob2Tc1nWw1t+B2msiATKRtYg5stCDTzFlOnuVM
-	S4clmKoEGWAto1Re5Obt6f4HxlU92E0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1708962292;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uO6nFRXFkR5BenyCu2zdHy6TynY7FaB2n2EEfF5vWuc=;
-	b=PG2cmVLDF6FPZ1ud+0JyiNBt6cG/oYI4OaGXlS9u3C5MWNnPp+NYekSYA9fOaUxEM2Z2wZ
-	2h9o/cDJcA8f2xAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E9C213A3A;
-	Mon, 26 Feb 2024 15:44:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Da2gDvSx3GU+BAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 26 Feb 2024 15:44:52 +0000
-Message-ID: <f68e7f17-c288-4dc9-9ae9-78015983f99c@suse.cz>
-Date: Mon, 26 Feb 2024 16:44:51 +0100
+	s=arc-20240116; t=1708962533; c=relaxed/simple;
+	bh=HAFBj8+lhYpdZl1QneCB2GMGS+XvqJF/SW95VkhrC5w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9tb/YM685M853pViKKLN8FigBk564cUNWyYHntdRQQtAHdatdKbPpPHm2evDDhyMikbhGd6gk92Y+YHDDZNi9J4TY6GKK3ANw14T5Cvhtt1zKQlMe6Bqy4zA6a8YBZoXb4TQhMsrTFnb7Pf3+jdhkUbeGQvQJQnofICfXTXIO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFxebVyZ; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-21ffac15528so743182fac.0;
+        Mon, 26 Feb 2024 07:48:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708962529; x=1709567329; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g1Ef7Zrtq6omQnQLjTPEQeB7WpA4VjRn7DjZ66gvGyg=;
+        b=QFxebVyZl4IhedVrAmqd7K77MgBzAN/98UUwpllIEAbDX3ivC4+/31vkpwmf0GQKy2
+         dHcYKnng1vuaNJTS4lkvZPlw1iAydPdhDwBxFPyLaphblEiE540vT5Lp0lrM4qhBFlEk
+         84XGKkFQ+heP1e4+bHHfKAr/7ZT/TgntWbig3mvOQnNlRBpsJW7Fx+HXxtGGc9LReeIp
+         Gck0d8p3q6/Zxgu5wwlp2vxckjAvEBGcxTEM4uoR3y/Ufo1fzIH1ASQ7ddpxp5yDEimq
+         0JuQTSxGRgL3phK/dMHRhGyzk5nhk/Yg+mvWydRPXeZMHEFR53m847jfNK4vardnLj4E
+         etdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708962529; x=1709567329;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g1Ef7Zrtq6omQnQLjTPEQeB7WpA4VjRn7DjZ66gvGyg=;
+        b=VKDlwicOzkmU96nyT28OAuKx9GnXeTCcHHSa8cjbS0Ih8+pOpA5gRsbFAhmzn5rfy8
+         E/eS46rpPgGkXv9wv7OtcEHyIoekNQ9BalMqaJMWJx7Ehyz75PaAL0n0CoteHtXAH14G
+         nlwEcbctBKBS45tJvPxaqaXZQNDSepE4bdtmBG5wNjBvd6tND2+EJudeAjYdJyp11Gb2
+         RVwvYoAt+/0LWHjJ7iPkE0I1xpY2rLNWhAAcllrrueRCS6lMZNNLJFp6UgMfMA1DowP/
+         vRVpJxE3+9Wz5RN4lKDGMqH+N0wPTp5Yg2lwW67ihF+xgOe0sbBr/dxGm4MpSPKT7LL8
+         toew==
+X-Forwarded-Encrypted: i=1; AJvYcCXwa2PDNWfwcoztp6/XVeYGIdqer2RgeDP+mqC471jxr7lUPrBkFwRuCmydpfA0Mar/OYWYBrJD5Y7YEQegajocRa3/luI8qSHpsc64F3HgVyZWnhGs59S2ahEWhau5YEIk/D6hq1Dx3dOSg64bToRcCcd+JziHfu9zwRhyqSGOrvAKGCYz7mp5MHWWuGiaNs8VEt3+oWkSb+GRTQmLDmpPLg==
+X-Gm-Message-State: AOJu0YxVr4+WueQLZZOJY3rap0eRYoNpG7dokIUeUn3SJz/RFv3MSj/Q
+	pYEQiBv06VdOKWpDXj11Q/KepQPIslOdecdLsxAMcM0WvLACyRxP
+X-Google-Smtp-Source: AGHT+IHBnk/ikDk3sUqAcZtkdVfd8nz2HPMuab3RRIOBE3LZkSw4ZFujEh+N/1KdTo/PHgEe82UeRw==
+X-Received: by 2002:a05:6870:709f:b0:21e:8797:95ca with SMTP id v31-20020a056870709f00b0021e879795camr9411219oae.23.1708962529545;
+        Mon, 26 Feb 2024 07:48:49 -0800 (PST)
+Received: from Borg-9.local (070-114-203-196.res.spectrum.com. [70.114.203.196])
+        by smtp.gmail.com with ESMTPSA id d7-20020a9d4f07000000b006e42884bad9sm1147569otl.1.2024.02.26.07.48.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Feb 2024 07:48:48 -0800 (PST)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Mon, 26 Feb 2024 09:48:46 -0600
+From: John Groves <John@groves.net>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, john@jagalactic.com, 
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, 
+	dave.hansen@linux.intel.com, gregory.price@memverge.com
+Subject: Re: [RFC PATCH 04/20] dev_dax_iomap: Save the kva from memremap
+Message-ID: <tngofq33j2uk7cixkiicvy73n67dkx3aqzypdrkgd6bbuusgjc@jugpgbcvgzvx>
+References: <cover.1708709155.git.john@groves.net>
+ <66620f69fa3f3664d955649eba7da63fdf8d65ad.1708709155.git.john@groves.net>
+ <20240226122139.0000135b@Huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/36] fs: Convert alloc_inode_sb() to a macro
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, mhocko@suse.com, hannes@cmpxchg.org,
- roman.gushchin@linux.dev, mgorman@suse.de, dave@stgolabs.net,
- willy@infradead.org, liam.howlett@oracle.com,
- penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com,
- peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
- dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
- david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
- nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
- rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
- yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
- hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
- ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
- ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
- dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
- bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
- iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
- elver@google.com, dvyukov@google.com, shakeelb@google.com,
- songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
- minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- iommu@lists.linux.dev, linux-arch@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
- cgroups@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>
-References: <20240221194052.927623-1-surenb@google.com>
- <20240221194052.927623-6-surenb@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20240221194052.927623-6-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Authentication-Results: smtp-out2.suse.de;
-	none
-X-Spam-Level: 
-X-Spam-Score: 0.18
-X-Spamd-Result: default: False [0.18 / 50.00];
-	 ARC_NA(0.00)[];
-	 RCVD_VIA_SMTP_AUTH(0.00)[];
-	 XM_UA_NO_VERSION(0.01)[];
-	 FROM_HAS_DN(0.00)[];
-	 TO_DN_SOME(0.00)[];
-	 MID_RHS_MATCH_FROM(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 BAYES_HAM(-0.03)[55.68%];
-	 RCVD_COUNT_THREE(0.00)[3];
-	 TO_MATCH_ENVRCPT_SOME(0.00)[];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
-	 RCPT_COUNT_GT_50(0.00)[75];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
-	 FROM_EQ_ENVFROM(0.00)[];
-	 MIME_TRACE(0.00)[0:+];
-	 FREEMAIL_CC(0.00)[linux.dev,suse.com,cmpxchg.org,suse.de,stgolabs.net,infradead.org,oracle.com,i-love.sakura.ne.jp,lwn.net,manifault.com,redhat.com,arm.com,kernel.org,arndb.de,linutronix.de,linux.intel.com,kernel.dk,soleen.com,google.com,gmail.com,chromium.org,linuxfoundation.org,linaro.org,goodmis.org,linux.com,lge.com,bytedance.com,akamai.com,android.com,vger.kernel.org,lists.linux.dev,kvack.org,googlegroups.com,zeniv.linux.org.uk];
-	 RCVD_TLS_ALL(0.00)[];
-	 SUSPICIOUS_RECIPS(1.50)[]
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240226122139.0000135b@Huawei.com>
 
-On 2/21/24 20:40, Suren Baghdasaryan wrote:
-> From: Kent Overstreet <kent.overstreet@linux.dev>
+On 24/02/26 12:21PM, Jonathan Cameron wrote:
+> On Fri, 23 Feb 2024 11:41:48 -0600
+> John Groves <John@Groves.net> wrote:
 > 
-> We're introducing alloc tagging, which tracks memory allocations by
-> callsite. Converting alloc_inode_sb() to a macro means allocations will
-> be tracked by its caller, which is a bit more useful.
+> > Save the kva from memremap because we need it for iomap rw support
+> > 
+> > Prior to famfs, there were no iomap users of /dev/dax - so the virtual
+> > address from memremap was not needed.
+> > 
+> > Also: in some cases dev_dax_probe() is called with the first
+> > dev_dax->range offset past pgmap[0].range. In those cases we need to
+> > add the difference to virt_addr in order to have the physaddr's in
+> > dev_dax->ranges match dev_dax->virt_addr.
 > 
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> ---
->  include/linux/fs.h | 6 +-----
->  1 file changed, 1 insertion(+), 5 deletions(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 023f37c60709..08d8246399c3 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3010,11 +3010,7 @@ int setattr_should_drop_sgid(struct mnt_idmap *idmap,
->   * This must be used for allocating filesystems specific inodes to set
->   * up the inode reclaim context correctly.
->   */
-> -static inline void *
-> -alloc_inode_sb(struct super_block *sb, struct kmem_cache *cache, gfp_t gfp)
+> Probably good to have info on when this happens and preferably why
+> this dragon is there.
 
-A __always_inline wouldn't have the same effect? Just wondering.
+I added this paragraph:
 
-> -{
-> -	return kmem_cache_alloc_lru(cache, &sb->s_inode_lru, gfp);
-> -}
-> +#define alloc_inode_sb(_sb, _cache, _gfp) kmem_cache_alloc_lru(_cache, &_sb->s_inode_lru, _gfp)
->  
->  extern void __insert_inode_hash(struct inode *, unsigned long hashval);
->  static inline void insert_inode_hash(struct inode *inode)
+  This happens with devdax devices that started as pmem and got converted
+  to devdax. I'm not sure whether the offset is due to label storage, or
+  page tables. Dan?
+
+...which is also insufficient, but perhaps Dan or somebody else from the
+dax side can correct this.
+
+> 
+> > 
+> > Dragons...
+> > 
+> > Signed-off-by: John Groves <john@groves.net>
+> > ---
+> >  drivers/dax/dax-private.h |  1 +
+> >  drivers/dax/device.c      | 15 +++++++++++++++
+> >  2 files changed, 16 insertions(+)
+> > 
+> > diff --git a/drivers/dax/dax-private.h b/drivers/dax/dax-private.h
+> > index 446617b73aea..894eb1c66b4a 100644
+> > --- a/drivers/dax/dax-private.h
+> > +++ b/drivers/dax/dax-private.h
+> > @@ -63,6 +63,7 @@ struct dax_mapping {
+> >  struct dev_dax {
+> >  	struct dax_region *region;
+> >  	struct dax_device *dax_dev;
+> > +	u64 virt_addr;
+> 
+> Why as a u64? If it's a virt address why not just void *?
+
+Changed to void * - thanks
+
+> 
+> >  	unsigned int align;
+> >  	int target_node;
+> >  	bool dyn_id;
+> > diff --git a/drivers/dax/device.c b/drivers/dax/device.c
+> > index 40ba660013cf..6cd79d00fe1b 100644
+> > --- a/drivers/dax/device.c
+> > +++ b/drivers/dax/device.c
+> > @@ -372,6 +372,7 @@ static int dev_dax_probe(struct dev_dax *dev_dax)
+> >  	struct dax_device *dax_dev = dev_dax->dax_dev;
+> >  	struct device *dev = &dev_dax->dev;
+> >  	struct dev_pagemap *pgmap;
+> > +	u64 data_offset = 0;
+> >  	struct inode *inode;
+> >  	struct cdev *cdev;
+> >  	void *addr;
+> > @@ -426,6 +427,20 @@ static int dev_dax_probe(struct dev_dax *dev_dax)
+> >  	if (IS_ERR(addr))
+> >  		return PTR_ERR(addr);
+> >  
+> > +	/* Detect whether the data is at a non-zero offset into the memory */
+> > +	if (pgmap->range.start != dev_dax->ranges[0].range.start) {
+> > +		u64 phys = (u64)dev_dax->ranges[0].range.start;
+> 
+> Why the cast? Ranges use u64s internally.
+
+I've removed all the unnecessary casts in this function - thanks
+for the catch
+
+> 
+> > +		u64 pgmap_phys = (u64)dev_dax->pgmap[0].range.start;
+> > +		u64 vmemmap_shift = (u64)dev_dax->pgmap[0].vmemmap_shift;
+> > +
+> > +		if (!WARN_ON(pgmap_phys > phys))
+> > +			data_offset = phys - pgmap_phys;
+> > +
+> > +		pr_notice("%s: offset detected phys=%llx pgmap_phys=%llx offset=%llx shift=%llx\n",
+> > +		       __func__, phys, pgmap_phys, data_offset, vmemmap_shift);
+> 
+> pr_debug() + dynamic debug will then deal with __func__ for you.
+
+Thanks - yeah that would be better than just taking it out...
+
+> 
+> > +	}
+> > +	dev_dax->virt_addr = (u64)addr + data_offset;
+> > +
+> >  	inode = dax_inode(dax_dev);
+> >  	cdev = inode->i_cdev;
+> >  	cdev_init(cdev, &dax_fops);
+> 
+
+Thanks,
+John
 
 
