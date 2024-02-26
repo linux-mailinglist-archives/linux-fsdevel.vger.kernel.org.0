@@ -1,160 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-12800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F18867599
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 13:50:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BCAF867572
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 13:44:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA19DB2770D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 12:42:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 347CD287064
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 12:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC9380024;
-	Mon, 26 Feb 2024 12:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663C180021;
+	Mon, 26 Feb 2024 12:44:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="XG8c2qGw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CAF7F7F8;
-	Mon, 26 Feb 2024 12:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 602907F7DE
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 12:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708951186; cv=none; b=hq5NbC8CvQawrrDphX1szf9w2wGfOZTduX76Nsf0atTcwgPM3XPALwEUITUvxksgj82EEEa5P9Y2BWYB319EWbHXHvJDPf9Y/tCxfrrvjE4EMXx03HmfluhAfSelW2rTMzJSFt1qWBwi/hUnmHPMXOuuN0/+KbybuWBsEuKZeGA=
+	t=1708951461; cv=none; b=CqlwcrfdCed/VxKxrjdqSrOgM8EpfLhnjYyTz+CQUgC340V4v+h6HYHlVLoKT1VsUhOTZZ72G6oqMHt6xOK9Hf8HqYbCHZklELigv8UX8nLK+jJG/kNRy44035mgtDVpZ6Ji3nWUDYab/s0aUN5sSsnxNQ8wcrPB082TEw+iweU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708951186; c=relaxed/simple;
-	bh=NGYp5BWIWj8SFQWbwPzlkAlkYMl5l0bOr2xtSsI6jtQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WyRnSvZqtQjSEbTtLmIruq/1m5NGxrU/wnswZyFDI20BAsd4HOHZQ1pHZUoseHlBfYlV6KZUsmaZRg0E2Xw2mKezMePgihO37JW8Y6oh754MlnXgGH+JBWTI9WJ+o3JC4WoERRo9UjD01ZTH7iinNzI7TLghQJlMr23mXC7z1eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Tk0Sq6gLRz6K6jp;
-	Mon, 26 Feb 2024 20:35:23 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 715421400DB;
-	Mon, 26 Feb 2024 20:39:42 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.35; Mon, 26 Feb
- 2024 12:39:41 +0000
-Date: Mon, 26 Feb 2024 12:39:40 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: John Groves <John@Groves.net>
-CC: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, "Dan
- Williams" <dan.j.williams@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, "Alexander
- Viro" <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, "Jan
- Kara" <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-	<linux-cxl@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <john@jagalactic.com>, Dave Chinner
-	<david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>,
-	<dave.hansen@linux.intel.com>, <gregory.price@memverge.com>
-Subject: Re: [RFC PATCH 07/20] famfs: Add include/linux/famfs_ioctl.h
-Message-ID: <20240226123940.0000692c@Huawei.com>
-In-Reply-To: <b40ca30e4bf689249a8c237909d9a7aaca9861e4.1708709155.git.john@groves.net>
-References: <cover.1708709155.git.john@groves.net>
-	<b40ca30e4bf689249a8c237909d9a7aaca9861e4.1708709155.git.john@groves.net>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1708951461; c=relaxed/simple;
+	bh=uDBv6eovvwNdT+3GaN9kzuRnFK1pxbxDzvh1+/xK5Pc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LTkOFWT3NnEqxiZT5dljiUzRMEApNknMpyRKo35BYISpzb1A9FjFumdtXd39ufA2RIAJIIBNuTOPl9HKdk9Lrt6+RxqbW132AndaRFvdvBmP2hN5fN/bpCH10m4QGs6/iGwz6vbAgLjCAi3IDYSxB2Hy/krTs9MYtxGuJDkeLCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=XG8c2qGw; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-6e4560664b5so2405301b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 04:44:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1708951459; x=1709556259; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=V9GRrB7FsQKdoO/mCKPDN/I5gsB0+aF7FI7yJuEpIP4=;
+        b=XG8c2qGwwog5aCdlYX22/9iHp1fPnl1zSe8AdP372N4BQhGeyQmhNl2lfBfviQaLUo
+         HzJ1egMGO13VCCXpDg7QTGDNHMhlyHeC0xEv8ANxIZDIqru/U4SsESDGyeKlMKDNHJS2
+         3AwzKJ8Irf2fp+X6BE28hZ6N3cUCovGHG+EtZFfgHYwX5JirOTu4B4pEruuMUiaxsBpA
+         Xq7hz+dAte7cIJ0TX4t9GN4zeWzd1ZetN1houW4wQ0TesMNg7GQeRrvh95kIVU/bRsWw
+         j+HAs9msJTgQplj8kkiW+nzjGgzXK3GsZtcwBVSBVdNKwjWiPb8DH6YuMRjU7CRoltUA
+         z+rA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708951459; x=1709556259;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V9GRrB7FsQKdoO/mCKPDN/I5gsB0+aF7FI7yJuEpIP4=;
+        b=lYQeoiPOb5no3ZuxT4gxuvZQGuKklGilM6Vr5Fy9qVP4V8RpmkJrG8xiJnbZIQR64h
+         JLnnd8xTL8ztWmcF5XqURSeckD+OIAtCxBCq/KHF4jetRNBnX2+3ACYZQS9PsOh9An9F
+         liRHSDUs4GATmnc2rbJijViApxVvAoqkL42nZI6xsI/GHJMoo/3YrkYxvkSM0HW50KXP
+         7ivQuWx2neYPGav4F4vcuEWBSY42mDjPfpiwG4f+28c6Lg/NImWYCJO3uEStbk34Q15B
+         JumY2WXweMK8yq7+gzbnvcaByFEC+XHC3dQEBVc2BqACMRqQqBeOf7g5PqrI+aZamzC+
+         MxOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXmIfZ76yuIXmVDnU1/hjKdGhBI88wlsXY+VJcPfexS6RJAoKLo5cMdi4cBwbsfSnoDO/b62Cz5g/TutFl8K/hS99ZxA2SDkPJLMeIgWg==
+X-Gm-Message-State: AOJu0YzRmEVRQAgJKEPFzqp/KtU9aN/p1A7J6EBSXehgTHQnfWyJjxS3
+	bT6vt6oh1d3lNO4nmUJifHm80ZkIFHiVV6iy8dm2Sh0m6sN2RI2JjXZf9wWecJU=
+X-Google-Smtp-Source: AGHT+IGVIPYZ6gPZ6GL6KlSqg0tncDkt7FDH+J+n2o4zbqRm8gNCsIbUHWADIPqxmkwXqGjloP0o5A==
+X-Received: by 2002:aa7:9d9a:0:b0:6e4:59b7:1dd4 with SMTP id f26-20020aa79d9a000000b006e459b71dd4mr7434462pfq.31.1708951459543;
+        Mon, 26 Feb 2024 04:44:19 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-247-196.pa.nsw.optusnet.com.au. [49.181.247.196])
+        by smtp.gmail.com with ESMTPSA id b27-20020aa78edb000000b006e4195cccb5sm1385769pfr.133.2024.02.26.04.44.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Feb 2024 04:44:19 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1reaLA-00Bkux-1O;
+	Mon, 26 Feb 2024 23:44:16 +1100
+Date: Mon, 26 Feb 2024 23:44:16 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chandan.babu@oracle.com,
+	akpm@linux-foundation.org, mcgrof@kernel.org, ziy@nvidia.com,
+	hare@suse.de, djwong@kernel.org, gost.dev@samsung.com,
+	linux-mm@kvack.org, willy@infradead.org,
+	Dave Chinner <dchinner@redhat.com>
+Subject: Re: [PATCH 11/13] xfs: expose block size in stat
+Message-ID: <ZdyHoOHBQ19JJap2@dread.disaster.area>
+References: <20240226094936.2677493-1-kernel@pankajraghav.com>
+ <20240226094936.2677493-12-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240226094936.2677493-12-kernel@pankajraghav.com>
 
-On Fri, 23 Feb 2024 11:41:51 -0600
-John Groves <John@Groves.net> wrote:
-
-> Add uapi include file for famfs. The famfs user space uses ioctl on
-> individual files to pass in mapping information and file size. This
-> would be hard to do via sysfs or other means, since it's
-> file-specific.
+On Mon, Feb 26, 2024 at 10:49:34AM +0100, Pankaj Raghav (Samsung) wrote:
+> From: Dave Chinner <dchinner@redhat.com>
 > 
-> Signed-off-by: John Groves <john@groves.net>
+> For block size larger than page size, the unit of efficient IO is
+> the block size, not the page size. Leaving stat() to report
+> PAGE_SIZE as the block size causes test programs like fsx to issue
+> illegal ranges for operations that require block size alignment
+> (e.g. fallocate() insert range). Hence update the preferred IO size
+> to reflect the block size in this case.
+> 
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> dd2d535e3fb29d ("xfs: cleanup calculating the stat optimal I/O size")]
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+
+Something screwed up there, and you haven't put your own SOB on
+this.
+
 > ---
->  include/uapi/linux/famfs_ioctl.h | 56 ++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 include/uapi/linux/famfs_ioctl.h
+>  fs/xfs/xfs_iops.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/include/uapi/linux/famfs_ioctl.h b/include/uapi/linux/famfs_ioctl.h
-> new file mode 100644
-> index 000000000000..6b3e6452d02f
-> --- /dev/null
-> +++ b/include/uapi/linux/famfs_ioctl.h
-> @@ -0,0 +1,56 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +/*
-> + * famfs - dax file system for shared fabric-attached memory
-> + *
-> + * Copyright 2023-2024 Micron Technology, Inc.
-> + *
-> + * This file system, originally based on ramfs the dax support from xfs,
-> + * is intended to allow multiple host systems to mount a common file system
-> + * view of dax files that map to shared memory.
-> + */
-> +#ifndef FAMFS_IOCTL_H
-> +#define FAMFS_IOCTL_H
-> +
-> +#include <linux/ioctl.h>
-> +#include <linux/uuid.h>
-> +
-> +#define FAMFS_MAX_EXTENTS 2
-Why 2?
-> +
-> +enum extent_type {
-> +	SIMPLE_DAX_EXTENT = 13,
+> diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> index a0d77f5f512e..1b4edfad464f 100644
+> --- a/fs/xfs/xfs_iops.c
+> +++ b/fs/xfs/xfs_iops.c
+> @@ -543,7 +543,7 @@ xfs_stat_blksize(
+>  			return 1U << mp->m_allocsize_log;
+>  	}
+>  
+> -	return PAGE_SIZE;
+> +	return max_t(unsigned long, PAGE_SIZE, mp->m_sb.sb_blocksize);
+>  }
 
-Comment on this would be good to have
+This function returns a uint32_t, same type as
+mp->m_sb.sb_blocksize. The comparision should use uint32_t casts,
+not unsigned long.
 
-> +	INVALID_EXTENT_TYPE,
-> +};
-> +
-> +struct famfs_extent {
-> +	__u64              offset;
-> +	__u64              len;
-> +};
-> +
-> +enum famfs_file_type {
-> +	FAMFS_REG,
-> +	FAMFS_SUPERBLOCK,
-> +	FAMFS_LOG,
-> +};
-> +
-> +/**
-> + * struct famfs_ioc_map
-> + *
-> + * This is the metadata that indicates where the memory is for a famfs file
-> + */
-> +struct famfs_ioc_map {
-> +	enum extent_type          extent_type;
-> +	enum famfs_file_type      file_type;
+ALso, this bears no resemblence to the original patch I wrote back in
+2018. Please remove my SOB from it - you can state that "this change
+is based on a patch originally from Dave Chinner" to credit the
+history of it, but it's certainly not the patch I wrote 6 years ago
+and so my SOB does not belong on it.
 
-These are going to be potentially varying in size depending on arch, compiler
-settings etc.  Been a while, but I though best practice for uapi was always
-fixed size elements even though we lose the typing.
-
-
-> +	__u64                     file_size;
-> +	__u64                     ext_list_count;
-> +	struct famfs_extent       ext_list[FAMFS_MAX_EXTENTS];
-> +};
-> +
-> +#define FAMFSIOC_MAGIC 'u'
-> +
-> +/* famfs file ioctl opcodes */
-> +#define FAMFSIOC_MAP_CREATE    _IOW(FAMFSIOC_MAGIC, 1, struct famfs_ioc_map)
-> +#define FAMFSIOC_MAP_GET       _IOR(FAMFSIOC_MAGIC, 2, struct famfs_ioc_map)
-> +#define FAMFSIOC_MAP_GETEXT    _IOR(FAMFSIOC_MAGIC, 3, struct famfs_extent)
-> +#define FAMFSIOC_NOP           _IO(FAMFSIOC_MAGIC,  4)
-> +
-> +#endif /* FAMFS_IOCTL_H */
-
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
