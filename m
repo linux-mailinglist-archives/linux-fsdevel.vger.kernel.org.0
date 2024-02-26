@@ -1,187 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-12832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA60867C08
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 17:31:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2327867B4A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 17:13:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F918B2929B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 16:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F3111C2A36E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 16:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431AA12CD89;
-	Mon, 26 Feb 2024 16:09:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A3812CDB9;
+	Mon, 26 Feb 2024 16:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IeKh5YG0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NdXL7ZpN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21DD412C7E0
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 16:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB5E12CDA2;
+	Mon, 26 Feb 2024 16:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708963797; cv=none; b=tQcJEI6HZjtYNiFtatjF7aEPNSn7QfzqmT4HouwfcwU7fiH/bGyifnIfeKwnBC98wz3X0O1eqlJ1tmCCzuYs6VxqZdv7SaQTparHv/pHwP04kNg/7iID8hOQ7op6vk6Xg/Nm4WagpdsGSHlDIBedJFvhgMP57R+bSRYKGB1hAwQ=
+	t=1708963948; cv=none; b=Aniutkgnj/Pfv6bUFo7JPEtvQENQ4kOvgrGC9Iqff0w1URJD8i8ttOleHoyNy3ejaRXC7dht39THyHmwlUz1N5ItFx1mFVmdGSKU1ym35/N57NRr2hP/FXzL8K2XEe8P2FRUAOiFCEKyx2FtEdzXjp667gKrNAU5Xiv2K2IulcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708963797; c=relaxed/simple;
-	bh=PG9T0E4ZcsWjvdpfHUOgdfPJ9G3s6+OiDx3FL9PDAwM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hR/VNDTjag5NY3xfnzRb66cr0Jg1Tbhtd1lZLOkQRiAy62d8l6EqOZxAREMiu4BPflEqBZmY4TXyB8ElJ/Fz4XLwXHwDV99GXeo9qtqhLl+5zc5QpP1Ga9tQBBicArYKJzUH1uJtSTYEuNlQcUd+NVHD/43xcP3irD6CraNdYLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IeKh5YG0; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-dc742543119so3342045276.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 08:09:54 -0800 (PST)
+	s=arc-20240116; t=1708963948; c=relaxed/simple;
+	bh=tQNiq/mgSFz2PUfr0gE59I6IY0MHAe5YR/fIFXdocZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tvCgcKrvgZ0y0xd+FrFdwkJGx9LVZgNfTybn+ZK4xNIr32ZnjyHw1k9gNgJrkROrRgu6YtUxg1i6m8STu1fHwhi5Rng/H7msuVoNdsQxzQGRzNXNwI5p+eNWptor/wB3gCFoZAK7poLIK+XIan6XiG3EUwgXT6H3HXdlUSKXlPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NdXL7ZpN; arc=none smtp.client-ip=209.85.160.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-21fed501addso1102786fac.2;
+        Mon, 26 Feb 2024 08:12:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1708963794; x=1709568594; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q2i9nu0Yj7jZAbH4EMUTPvr2EXed0SrW18ZEoR5sBFQ=;
-        b=IeKh5YG0zG4QERv9OQmrbe53HbIMQJBWFJgDUjkuYrDQu3Pqoo6CI9Ih3XSXBvEnYs
-         0FEGEwMRrfRUvaAqMDAi/A8z4Y3x/vBes2nRxkZ9ZuWyrxEC+GHUKsGZLm5IEz8DgH1x
-         XeIgBHkciWSrGcb9Vmcf9M6/9K9hTpMXbb32I9TORsVFJU0kNzJIdkwsDzTTmaLdnunU
-         /wFIrevrF6GtW65Kub+qU5kr0EIuZpFUePKPgI3XdDimaO24aLTLTn6ILiYicTP2tzvb
-         vgbOELcE6WdrW1nnzBu2zFr5XymqaZziUszPvM2TvaD2YJKWnaJV9+0jVipbTWxKg+nT
-         pQWw==
+        d=gmail.com; s=20230601; t=1708963946; x=1709568746; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3G9TdB9RDZyiGXRBXvJ+nwad2XnEGLHfMJJdqndI5mg=;
+        b=NdXL7ZpNfZwNgvOZRMYu0juBam/1KL5TWe637tCz2P2ZyVtCPAPZTRtRHHBfrXKMRU
+         TZPzYjLJxox2wSzXRbQRSnbpqgT3pf6WzzRbXHcw8yR+mYD4diIifaFFL1y7++UkeAxv
+         dg1x7hFPYhqCE/Kgp49HJdRzO1SZo58EqHf8xDuYS617NekBgWSWfb0xdPFJ6AyNArTh
+         +QTv18RJgzFKePj7r6qsyfDFo0WC+r2UTNcxMtOOtIyjBmW28apJsVkbYTN8tEvW9N1M
+         Cl/TDi9Ej7LE0qYZHkCBg+ek/WRwjYn/Ng2/n4NfoOphmQJHItSYOIrQ4JiWsfGcYAew
+         YQzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708963794; x=1709568594;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1708963946; x=1709568746;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Q2i9nu0Yj7jZAbH4EMUTPvr2EXed0SrW18ZEoR5sBFQ=;
-        b=mMv39wkV5SVqpAfMSjT2ignp0hf2lKI6+L1GJoFxx0gj2jKkjYUy5UYJiyrffOs50V
-         JDQxRQOgu8pwvYvTbp8+V+NqMIeHyrVa18wf0oksEB/fkupAbJQEF8heU1K9gGG63E4Y
-         ONqvEfucyEE8M57tUvoR+o8F6bbFy/zs2OaJ9UacEq7b/66y4rUH/QTDipVZCkJULpaV
-         z0lD2dvD/arx2bpZlZJYQMjIMYuC00vMWsVicGzg6gp0HIMJm+honWCUxiIX1SweMKLm
-         xFFwxKGqt+YrFYDfCzfPnHFB1MtvAMeUvTVZmY1xvvVvRiZaOAqsxzt6p64FIGIdWdO7
-         5FvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsqq9EbCUcDSuUcdd6sv0Ag/K+7VaEDauiaYfSbNMrKHy1KGFkb0ThRd4S+Ri2YdhD0iJSNRGFh++dgZNVQ07clDG7GS/fZtqkAGeQVQ==
-X-Gm-Message-State: AOJu0YxPUsXmG1o3YG3iM91jU4xWcRQO5VpQAk4tp0KYGM+Z6DGi7uNp
-	bfgVu8ROEO6FZg6vnCpaDnQ0s6c8gLpCRoSx6WDrwCmQgy37Ao1vrt/+lJLVdsGW3EpozmidRPI
-	aLK9ht7DywIj07Cz3tlh1v68smIX0/lYZxyyb
-X-Google-Smtp-Source: AGHT+IFiv+y72N/mXVEJcRlho2bUNXrJYvtkNjNCkqw5WfMbaDfjXaMlMUIsggVwW64saHx2yjHtEvViFdZhB2+giI8=
-X-Received: by 2002:a25:ef4a:0:b0:dcd:3575:db79 with SMTP id
- w10-20020a25ef4a000000b00dcd3575db79mr4289171ybm.6.1708963793723; Mon, 26 Feb
- 2024 08:09:53 -0800 (PST)
+        bh=3G9TdB9RDZyiGXRBXvJ+nwad2XnEGLHfMJJdqndI5mg=;
+        b=kIXnTe8ynV5uWzGaC4kto+643SOiFTy9vJg861ZBmNzDFbQwCSj34cRmu0nUUl0+V+
+         JBetcDUP81hUM/B72KQ6E1uJwc6qShoUSC9JsZgeb+Za17Sny5+eq1R+0rbdz4s58p8N
+         1pEZvHilq4euqa8DB1A3vKpBtZGgNa5qSKtLfpoapRA5lFejTAngzt8hVsmovqdnnBuY
+         rMZp2ANNflD52gS+b/tfhCP5eUcAfWNcCSeIgQ2Xu6FCkm/mu+1f1hMRpBEAp98NLpR/
+         u263+s43zE1oFn/r78vpFM+q27/y4h9ZSK8DG1gFLcAGSGGtBWSYol8jXn791eb5W6sT
+         Px1A==
+X-Forwarded-Encrypted: i=1; AJvYcCXTguJdLjT1x7SNWAnR4TgR35ZTM9//KMRPktKSD1+IPKKDa+EClvBQtz3+UfkX6wWQFJMHorJ0Fxre7nPqONMS6tgc13en2hv2Mz2GSRiRasbDCdoklfxvNiA8T4RJDfYBrWunwlDyRc/EQxahxFv3phXyB7mUwS5oE/KH9+mLKh1U6BkJ+302xzJriS7YhP1FZiHyXq2xWd53lSWPISuVRQ==
+X-Gm-Message-State: AOJu0YxC1fq81hXL1Nbgqz8fIiAWCjjFkSzlDla6ubOWL9b3/PkQClaX
+	Fp+omQgAQ0MSulCtgEvmeysyWKfJZTEZRrIAzWgzT9KiP8c4tTlGhMclqVg3XPs=
+X-Google-Smtp-Source: AGHT+IF7XFSvjH18bFGEx9CdpnvASYnU/JfYs8/rfFLnUGwRoKon7Rt5YnfmRZ/vr9pQMg4VgCwROQ==
+X-Received: by 2002:a05:6870:e413:b0:21f:ca80:52c5 with SMTP id n19-20020a056870e41300b0021fca8052c5mr7306817oag.4.1708963946299;
+        Mon, 26 Feb 2024 08:12:26 -0800 (PST)
+Received: from Borg-9.local (070-114-203-196.res.spectrum.com. [70.114.203.196])
+        by smtp.gmail.com with ESMTPSA id xd12-20020a056870ce4c00b0021f86169b99sm1583576oab.43.2024.02.26.08.12.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Feb 2024 08:12:25 -0800 (PST)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Mon, 26 Feb 2024 10:12:23 -0600
+From: John Groves <John@groves.net>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, john@jagalactic.com, 
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, 
+	dave.hansen@linux.intel.com, gregory.price@memverge.com
+Subject: Re: [RFC PATCH 06/20] dev_dax_iomap: Add CONFIG_DEV_DAX_IOMAP kernel
+ build parameter
+Message-ID: <52dovqfrfdvtwa2l5oiujxoe2e7asbz2qpslq7fb3axf5hdoem@m4j32p6ttrrf>
+References: <cover.1708709155.git.john@groves.net>
+ <13365680ad42ba718c36b90165c56c3db43e8fdf.1708709155.git.john@groves.net>
+ <20240226123416.0000200f@Huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240221194052.927623-1-surenb@google.com> <20240221194052.927623-4-surenb@google.com>
- <CA+CK2bD8Cr1V2=PWAsf6CwDnakZ54Qaf_q5t4aVYV-jXQPtPbg@mail.gmail.com>
- <CAJuCfpHBgZeJN_O1ZQg_oLbAXc-Y+jmUpB02jznkEySpd4rzvw@mail.gmail.com>
- <d8a7ed49-f7d1-44bf-b0e5-64969e816057@suse.cz> <CA+CK2bBggtq6M96Pu49BmG_j01Sv6p_84Go++9APuvVPXHMwvQ@mail.gmail.com>
-In-Reply-To: <CA+CK2bBggtq6M96Pu49BmG_j01Sv6p_84Go++9APuvVPXHMwvQ@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 26 Feb 2024 08:09:40 -0800
-Message-ID: <CAJuCfpE_=A3H+FKwHeu-XLX5rDCqrV8dUT40=EVm4w_q8A=EwQ@mail.gmail.com>
-Subject: Re: [PATCH v4 03/36] mm/slub: Mark slab_free_freelist_hook() __always_inline
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Michal Hocko <mhocko@suse.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Mel Gorman <mgorman@suse.de>, dave@stgolabs.net, Matthew Wilcox <willy@infradead.org>, 
-	"Liam R. Howlett" <liam.howlett@oracle.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Jonathan Corbet <corbet@lwn.net>, void@manifault.com, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>, 
-	Jens Axboe <axboe@kernel.dk>, mcgrof@kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, dennis@kernel.org, Tejun Heo <tj@kernel.org>, 
-	Muchun Song <muchun.song@linux.dev>, Mike Rapoport <rppt@kernel.org>, paulmck@kernel.org, 
-	Yosry Ahmed <yosryahmed@google.com>, Yu Zhao <yuzhao@google.com>, dhowells@redhat.com, 
-	Hugh Dickins <hughd@google.com>, andreyknvl@gmail.com, Kees Cook <keescook@chromium.org>, 
-	ndesaulniers@google.com, vvvvvv@google.com, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ebiggers@google.com, ytcoode@gmail.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, 
-	Steven Rostedt <rostedt@goodmis.org>, bsegall@google.com, bristot@redhat.com, 
-	vschneid@redhat.com, Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Alexander Potapenko <glider@google.com>, elver@google.com, dvyukov@google.com, 
-	Shakeel Butt <shakeelb@google.com>, Muchun Song <songmuchun@bytedance.com>, jbaron@akamai.com, 
-	David Rientjes <rientjes@google.com>, minchan@google.com, kaleshsingh@google.com, 
-	kernel-team@android.com, Linux Doc Mailing List <linux-doc@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, iommu@lists.linux.dev, 
-	"open list:GENERIC INCLUDE/ASM HEADER FILES" <linux-arch@vger.kernel.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	linux-mm <linux-mm@kvack.org>, linux-modules@vger.kernel.org, 
-	kasan-dev@googlegroups.com, cgroups@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240226123416.0000200f@Huawei.com>
 
-On Mon, Feb 26, 2024 at 7:21=E2=80=AFAM Pasha Tatashin
-<pasha.tatashin@soleen.com> wrote:
->
->
->
-> On Mon, Feb 26, 2024, 9:31=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->>
->> On 2/24/24 03:02, Suren Baghdasaryan wrote:
->> > On Wed, Feb 21, 2024 at 1:16=E2=80=AFPM Pasha Tatashin
->> > <pasha.tatashin@soleen.com> wrote:
->> >>
->> >> On Wed, Feb 21, 2024 at 2:41=E2=80=AFPM Suren Baghdasaryan <surenb@go=
-ogle.com> wrote:
->> >> >
->> >> > From: Kent Overstreet <kent.overstreet@linux.dev>
->> >> >
->> >> > It seems we need to be more forceful with the compiler on this one.
->> >> > This is done for performance reasons only.
->> >> >
->> >> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
->> >> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
->> >> > Reviewed-by: Kees Cook <keescook@chromium.org>
->> >> > ---
->> >> >  mm/slub.c | 2 +-
->> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >> >
->> >> > diff --git a/mm/slub.c b/mm/slub.c
->> >> > index 2ef88bbf56a3..d31b03a8d9d5 100644
->> >> > --- a/mm/slub.c
->> >> > +++ b/mm/slub.c
->> >> > @@ -2121,7 +2121,7 @@ bool slab_free_hook(struct kmem_cache *s, voi=
-d *x, bool init)
->> >> >         return !kasan_slab_free(s, x, init);
->> >> >  }
->> >> >
->> >> > -static inline bool slab_free_freelist_hook(struct kmem_cache *s,
->> >> > +static __always_inline bool slab_free_freelist_hook(struct kmem_ca=
-che *s,
->> >>
->> >> __fastpath_inline seems to me more appropriate here. It prioritizes
->> >> memory vs performance.
->> >
->> > Hmm. AFAIKT this function is used only in one place and we do not add
->> > any additional users, so I don't think changing to __fastpath_inline
->> > here would gain us anything.
->
->
-> For consistency __fastpath_inline makes more sense, but I am ok with or w=
-ithout this change.
+On 24/02/26 12:34PM, Jonathan Cameron wrote:
+> On Fri, 23 Feb 2024 11:41:50 -0600
+> John Groves <John@Groves.net> wrote:
+> 
+> > Add the CONFIG_DEV_DAX_IOMAP kernel config parameter to control building
+> > of the iomap functionality to support fsdax on devdax.
+> 
+> I would squash with previous patch.
+> 
+> Only reason I ever see for separate Kconfig patches is when there is something
+> complex in the dependencies and you want to talk about it in depth in the
+> patch description. That's not true here so no need for separate patch.
 
-Ok, I'll update in the next revision. Thanks!
+Done
 
->
-> Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->
->>
->> It would have been more future-proof and self-documenting. But I don't i=
-nsist.
->>
->> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
->>
->> >>
->> >> >                                            void **head, void **tail=
-,
->> >> >                                            int *cnt)
->> >> >  {
->> >> > --
->> >> > 2.44.0.rc0.258.g7320e95886-goog
->> >> >
->>
+Thanks,
+John
+
 
