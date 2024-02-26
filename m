@@ -1,52 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-12768-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12770-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EABA386701A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 11:10:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E8E867021
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 11:11:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96EF228A403
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 10:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B31C28B42B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 10:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6355762A1A;
-	Mon, 26 Feb 2024 09:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0512364CDC;
+	Mon, 26 Feb 2024 09:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="S3AGLgpI"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="fFQkG18o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889BD62A16;
-	Mon, 26 Feb 2024 09:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90461634F3;
+	Mon, 26 Feb 2024 09:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708940989; cv=none; b=TOjCGtlb/XVIhmOOab4B9LOOZumKtfB0FJEmKixrvD9ztkXkQQ1rXzmpE//f2a09K3YtBvWeJZoa54rLFDgpodBPpnx4uQmYLJ+rr7GfIAUpKjkGQ/MYA7pxN9VLMVWe1iFoJJNr2YPjQit06oINKpTA0Hb9OXE37GxRFPyyJ/s=
+	t=1708940998; cv=none; b=bQVawrXTRA/c8vZVw/mvd9435sT4tJSeEC+Pfh6ozgVg8IgzXhn297nLEJcDh4upLhTBZF1UHzdVuVRW0daaEtcRxlXGusPfjNYUW/Z1ca5efWz4jsWMuqvjzNVLkz4Fr8JIawfon36E4CRqp8GhoRuHyNZalEtsVMPypkUfdQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708940989; c=relaxed/simple;
-	bh=OJY78OpesueWAjk/1o1SOcU1QBh6YJtiAhd/eFP8P8U=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=oznyGKErLjOTEaJl+ELLIkh1qWxhd10YGOaR2pbi4amOA8+iCGeBtrTtB5T5BHJFri0EWNq2QF9YEikaaTwSpQ+75W0G0B2Xs9T4dtLK4D/aMi7qp/umuR/AA8RdaAGltqH8xZ1NxbKGx5cBmXWtHUawIGRMhnb2ZZ/18YAgvoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=S3AGLgpI; arc=none smtp.client-ip=80.241.56.172
+	s=arc-20240116; t=1708940998; c=relaxed/simple;
+	bh=BY0+lJrnKbexBUzETPtFYZ+OJuge9ZodiUfVOjc2hK8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RyISfggWyD+U1hNDMvF8KZK4r82AmGAAAHoZglpA6OwnAXsgvyVxP3xd42fZ89fhUuBg2R3C3VN9WznUMWfipqodrssO5mL2pkRGDfwH0w0ffxd027lkdxV2Je32SoOjEtqqA7CSMUBJT1MTLuLrRjuoKnJS3RXLLLnOcRyc9iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=fFQkG18o; arc=none smtp.client-ip=80.241.56.161
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Tjwng2wSlz9sQ6;
-	Mon, 26 Feb 2024 10:49:43 +0100 (CET)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Tjwnk5kDgz9sT6;
+	Mon, 26 Feb 2024 10:49:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1708940983;
+	s=MBO0001; t=1708940986;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=tmcxRgQrgikqUmGiWud6EjwhzhebLvaHxb8lOPproZk=;
-	b=S3AGLgpItA0Uhbu1dopT9xOXQu8rfZMFECkdvS8T6HuS3MUKgraJqsHYBKFjtMRrOl8BJe
-	/uxvU+InJsRtD3rWVOXdspyqvMEMMxRsCufXJpmcz+qpm2HgnUA7Or8br9ttuzj1q3kDYH
-	BTcEC4YS3A2H5BNFugtQKlWBM5K/1VqipCtIsKTrveo6gK8ENZ81dMQuN6FNdXydgmqUiw
-	+E/wNwujEAE3crrP3JOSaYciBwYZHsEGABlT86BFVZqvPkYcSzGT+nlsB/K7DGQieFJnpH
-	D6rXfyNKcdhDIEasozRYT14p1ajzq/6CsmqaYbZh7+XyOrKuHfpZ77OFKAI2MA==
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O82T73AIK6qGhlYorGzOupTzei7wEk6+FPA8o3URJUE=;
+	b=fFQkG18oqQYxyzAvUU/y6Xu/XNWxZbMy3Hto7NjxLMdpH4n7PnYGdCLyHr4oXKUWbXSdbt
+	3kIMgsOe+HNJi2CzUuOzIN8/o3Hwj48BF9JSpk1ELMgKLrxDpkLn7dQHexpKbAy6k3on3h
+	tAY9LeXQaVX3Z0icnnr5KaXGnxzwdyT+lKKy4CYh251ECjLnS+cXrDxGEVm36OGNJwQwRd
+	47PB4v+rzOClutu21cDUGzMEc1J6st9TU1ML2CZo9yDdBjMu2qdfyN76b5tzCIv54RiQR8
+	MMZn9aLw+WeROCUn9RtgqMYpFq+RNdlieT4wk3ZhHKWPj+rdmiFDG5WMdnHFZg==
 From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
 To: linux-xfs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org
@@ -60,12 +62,12 @@ Cc: linux-kernel@vger.kernel.org,
 	djwong@kernel.org,
 	gost.dev@samsung.com,
 	linux-mm@kvack.org,
-	willy@infradead.org,
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: [PATCH 00/13] enable bs > ps in XFS
-Date: Mon, 26 Feb 2024 10:49:23 +0100
-Message-ID: <20240226094936.2677493-1-kernel@pankajraghav.com>
-Content-Type: text/plain; charset="utf-8"
+	willy@infradead.org
+Subject: [PATCH 01/13] mm: Support order-1 folios in the page cache
+Date: Mon, 26 Feb 2024 10:49:24 +0100
+Message-ID: <20240226094936.2677493-2-kernel@pankajraghav.com>
+In-Reply-To: <20240226094936.2677493-1-kernel@pankajraghav.com>
+References: <20240226094936.2677493-1-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -73,143 +75,149 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 4Tjwng2wSlz9sQ6
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 
-This is the first version of the series(2 RFCs posted before) that enables
-block size > page size(Large Block Size) in XFS. This version has various
-bug fixes and suggestion collected from previous RFCs[1][2]. The context
-and motivation can be seen in cover letter of the RFC v1[1]. We also
-recorded a talk about this effort at LPC [3], if someone would like more
-context on this effort.
+Folios of order 1 have no space to store the deferred list.  This is
+not a problem for the page cache as file-backed folios are never
+placed on the deferred list.  All we need to do is prevent the core
+MM from touching the deferred list for order 1 folios and remove the
+code which prevented us from allocating order 1 folios.
 
-A lot of emphasis has been put on testing using kdevops. The testing has
-been split into regression and progression.
+Link: https://lore.kernel.org/linux-mm/90344ea7-4eec-47ee-5996-0c22f42d6a6a@google.com/
+Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+---
+ include/linux/huge_mm.h |  7 +++++--
+ mm/filemap.c            |  2 --
+ mm/huge_memory.c        | 23 ++++++++++++++++++-----
+ mm/internal.h           |  4 +---
+ mm/readahead.c          |  3 ---
+ 5 files changed, 24 insertions(+), 15 deletions(-)
 
-Regression testing:
-In regression testing, we ran the whole test suite with SOAK_DURATION=2.5
-hours to check for *regression on existing profiles due to the page cache
-changes.
-
-No regression was found with the patches added on top.
-
-*Baseline for regression was created using SOAK_DURATION of 2.5 hours
-and having used about 7-8 XFS test clusters to test loop fstests over
-70 times. We then scraped for critical failures (crashes, XFS or page
-cache asserts, or hung tasks) and have reported these to the community
-as well.[5]
-
-Progression testing:
-For progression testing, we tested for 8k, 16k, 32k and 64k block sizes.
-To compare it with existing support, an ARM VM with 64k base page system
-(without our patches) was used as a reference to check for actual failures
-due to LBS support in a 4k base page size system.
-
-There are some common failures upstream for bs=64k that needs to be fixed[4].
-There are also some tests that assumes block size < page size that needs to
-be fixed. I have a tree with fixes for xfstests here [6], which I will be
-sending soon to the list.
-
-No new failures were found with LBS support.
-
-We've done some preliminary performance tests with fio on XFS on 4k block
-size against pmem and NVMe with buffered IO and Direct IO on vanilla
-v6.8-rc4 Vs v6.8-rc4 + these patches applied, and detected no regressions.
-
-We also wrote an eBPF tool called blkalgn [7] to see if IO sent to the device
-is aligned and at least filesystem block size in length.
-
-I have also started the discussion with Zi Yan to upstream truncation
-with lower folio order that will improve the memory utilization when
-partial truncate happens with LBS support(Patch 9).[8]
-
-The series has been greatly improved (and simplified) since the previous
-version. Thanks to Chinner, Darrick, Hannes and willy for your comments.
-
-[1] https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
-[2] https://lore.kernel.org/linux-xfs/20240213093713.1753368-1-kernel@pankajraghav.com/
-[3] https://www.youtube.com/watch?v=ar72r5Xf7x4
-[4] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
-489 non-critical issues and 55 critical issues. We've determined and reported
-that the 55 critical issues have all fall into 5 common  XFS asserts or hung
-tasks  and 2 memory management asserts.
-[5] https://lore.kernel.org/linux-xfs/fe7fec1c-3b08-430f-9c95-ea76b237acf4@samsung.com/
-[6] https://github.com/Panky-codes/xfstests/tree/lbs-fixes
-[7] https://github.com/iovisor/bcc/pull/4813
-[8] https://lore.kernel.org/all/dvamjmlss62p5pf4das7nu5q35ftf4jlk3viwzyyvzasv4qjns@h3omqs7ecstd/
-
-Changes since RFC v2:
-- Move order 1 patch above the 1st patch
-- Remove order == 1 conditional in `fs: Allow fine-grained control of
-folio sizes`. This fixed generic/630 that was reported in the previous version.
-- Hide the max order and expose `mapping_set_folio_min_order` instead.
-- Add new helper mapping_start_index_align and DEFINE_READAHEAD_ALIGN
-- don't call `page_cache_ra_order` with min order in do_mmap_sync_readahead
-- simplify ondemand readahead with only aligning the start index at the end
-- Don't cap ra_pages based on bdi->io_pages
-- use `checked_mul_overflow` while calculating bytes in validate_fsb
-- Remove config lbs option
-- Add a warning while mounting a LBS kernel
-- Add Acked-by and Reviewed-by from Hannes and Darrick.
-
-Changes since RFC v1:
-- Added willy's patch to enable order-1 folios.
-- Unified common page cache effort from Hannes LBS work.
-- Added a new helper min_nrpages and added CONFIG_THP for enabling mapping_large_folio_support
-- Don't split a folio if it has minorder set. Remove the old code where we set extra pins if it has that requirement.
-- Split the code in XFS between the validation of mapping count. Put the icache code changes with enabling bs > ps.
-- Added CONFIG_XFS_LBS option
-- align the index in do_read_cache_folio()
-- Removed truncate changes
-- Fixed generic/091 with iomap changes to iomap_dio_zero function.
-- Took care of folio truncation scenario in page_cache_ra_unbounded() that happens after read_pages if a folio was found.
-- Sqaushed and moved commits around
-- Rebased on top of v6.8-rc4
-
-Dave Chinner (1):
-  xfs: expose block size in stat
-
-Hannes Reinecke (1):
-  readahead: rework loop in page_cache_ra_unbounded()
-
-Luis Chamberlain (3):
-  filemap: align the index to mapping_min_order in the page cache
-  readahead: set file_ra_state->ra_pages to be at least
-    mapping_min_order
-  readahead: align index to mapping_min_order in ondemand_ra and
-    force_ra
-
-Matthew Wilcox (Oracle) (2):
-  mm: Support order-1 folios in the page cache
-  fs: Allow fine-grained control of folio sizes
-
-Pankaj Raghav (6):
-  filemap: use mapping_min_order while allocating folios
-  readahead: allocate folios with mapping_min_order in
-    ra_(unbounded|order)
-  mm: do not split a folio if it has minimum folio order requirement
-  iomap: fix iomap_dio_zero() for fs bs > system page size
-  xfs: make the calculation generic in xfs_sb_validate_fsb_count()
-  xfs: enable block size larger than page size support
-
- fs/iomap/direct-io.c       |  13 ++++-
- fs/xfs/libxfs/xfs_ialloc.c |   5 ++
- fs/xfs/libxfs/xfs_shared.h |   3 ++
- fs/xfs/xfs_icache.c        |   6 ++-
- fs/xfs/xfs_iops.c          |   2 +-
- fs/xfs/xfs_mount.c         |   9 +++-
- fs/xfs/xfs_super.c         |  10 +---
- include/linux/huge_mm.h    |   7 ++-
- include/linux/pagemap.h    | 108 ++++++++++++++++++++++++++++++-------
- mm/filemap.c               |  48 +++++++++++------
- mm/huge_memory.c           |  36 +++++++++++--
- mm/internal.h              |   4 +-
- mm/readahead.c             |  74 ++++++++++++++++++-------
- 13 files changed, 246 insertions(+), 79 deletions(-)
-
-
-base-commit: b401b621758e46812da61fa58a67c3fd8d91de0d
+diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+index 5adb86af35fc..916a2a539517 100644
+--- a/include/linux/huge_mm.h
++++ b/include/linux/huge_mm.h
+@@ -263,7 +263,7 @@ unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+ unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+ 		unsigned long len, unsigned long pgoff, unsigned long flags);
+ 
+-void folio_prep_large_rmappable(struct folio *folio);
++struct folio *folio_prep_large_rmappable(struct folio *folio);
+ bool can_split_folio(struct folio *folio, int *pextra_pins);
+ int split_huge_page_to_list(struct page *page, struct list_head *list);
+ static inline int split_huge_page(struct page *page)
+@@ -410,7 +410,10 @@ static inline unsigned long thp_vma_allowable_orders(struct vm_area_struct *vma,
+ 	return 0;
+ }
+ 
+-static inline void folio_prep_large_rmappable(struct folio *folio) {}
++static inline struct folio *folio_prep_large_rmappable(struct folio *folio)
++{
++	return folio;
++}
+ 
+ #define transparent_hugepage_flags 0UL
+ 
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 750e779c23db..2b00442b9d19 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1912,8 +1912,6 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
+ 			gfp_t alloc_gfp = gfp;
+ 
+ 			err = -ENOMEM;
+-			if (order == 1)
+-				order = 0;
+ 			if (order > 0)
+ 				alloc_gfp |= __GFP_NORETRY | __GFP_NOWARN;
+ 			folio = filemap_alloc_folio(alloc_gfp, order);
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 94c958f7ebb5..81fd1ba57088 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -788,11 +788,15 @@ struct deferred_split *get_deferred_split_queue(struct folio *folio)
+ }
+ #endif
+ 
+-void folio_prep_large_rmappable(struct folio *folio)
++struct folio *folio_prep_large_rmappable(struct folio *folio)
+ {
+-	VM_BUG_ON_FOLIO(folio_order(folio) < 2, folio);
+-	INIT_LIST_HEAD(&folio->_deferred_list);
++	if (!folio || !folio_test_large(folio))
++		return folio;
++	if (folio_order(folio) > 1)
++		INIT_LIST_HEAD(&folio->_deferred_list);
+ 	folio_set_large_rmappable(folio);
++
++	return folio;
+ }
+ 
+ static inline bool is_transparent_hugepage(struct folio *folio)
+@@ -3082,7 +3086,8 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+ 	/* Prevent deferred_split_scan() touching ->_refcount */
+ 	spin_lock(&ds_queue->split_queue_lock);
+ 	if (folio_ref_freeze(folio, 1 + extra_pins)) {
+-		if (!list_empty(&folio->_deferred_list)) {
++		if (folio_order(folio) > 1 &&
++		    !list_empty(&folio->_deferred_list)) {
+ 			ds_queue->split_queue_len--;
+ 			list_del(&folio->_deferred_list);
+ 		}
+@@ -3133,6 +3138,9 @@ void folio_undo_large_rmappable(struct folio *folio)
+ 	struct deferred_split *ds_queue;
+ 	unsigned long flags;
+ 
++	if (folio_order(folio) <= 1)
++		return;
++
+ 	/*
+ 	 * At this point, there is no one trying to add the folio to
+ 	 * deferred_list. If folio is not in deferred_list, it's safe
+@@ -3158,7 +3166,12 @@ void deferred_split_folio(struct folio *folio)
+ #endif
+ 	unsigned long flags;
+ 
+-	VM_BUG_ON_FOLIO(folio_order(folio) < 2, folio);
++	/*
++	 * Order 1 folios have no space for a deferred list, but we also
++	 * won't waste much memory by not adding them to the deferred list.
++	 */
++	if (folio_order(folio) <= 1)
++		return;
+ 
+ 	/*
+ 	 * The try_to_unmap() in page reclaim path might reach here too,
+diff --git a/mm/internal.h b/mm/internal.h
+index f309a010d50f..5174b5b0c344 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -419,9 +419,7 @@ static inline struct folio *page_rmappable_folio(struct page *page)
+ {
+ 	struct folio *folio = (struct folio *)page;
+ 
+-	if (folio && folio_order(folio) > 1)
+-		folio_prep_large_rmappable(folio);
+-	return folio;
++	return folio_prep_large_rmappable(folio);
+ }
+ 
+ static inline void prep_compound_head(struct page *page, unsigned int order)
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 2648ec4f0494..369c70e2be42 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -516,9 +516,6 @@ void page_cache_ra_order(struct readahead_control *ractl,
+ 		/* Don't allocate pages past EOF */
+ 		while (index + (1UL << order) - 1 > limit)
+ 			order--;
+-		/* THP machinery does not support order-1 */
+-		if (order == 1)
+-			order = 0;
+ 		err = ra_alloc_folio(ractl, index, mark, order, gfp);
+ 		if (err)
+ 			break;
 -- 
 2.43.0
 
