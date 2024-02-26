@@ -1,236 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-12888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B95C386838D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 23:22:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BB98683C7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 23:33:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2E8285F05
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 22:22:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 614F41F24B03
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 22:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E19131E5B;
-	Mon, 26 Feb 2024 22:22:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMeBzee4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E47A134752;
+	Mon, 26 Feb 2024 22:33:35 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15084131E3F;
-	Mon, 26 Feb 2024 22:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF2C61DDD7;
+	Mon, 26 Feb 2024 22:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708986135; cv=none; b=GNhMbt3VgyaKzf3tpNE8JcMBR8K2VdyA0hLHWTf2sVgyWvALMD/iwtvbDlAu6kkBxyk2DibG5gkjQ3dUI5DQlR5gb2FtV6uLCyP1IRQzaCnnYTFIqIGokl8t2SEpkGulHtoZfSmgMbSuIN+oK5ejuM2B3z8ZAZrCfXc3g0ya5hw=
+	t=1708986814; cv=none; b=pFy292831mnBljUmzDXnYle3fEHugdXHDRUhnwekAGQXecseW/hEaLoiSss8wlW2Rw7Y7i2xYi+z8RrdEpO+jMFFil0l2GTR3DCn3fH6sYUf/daJUMF+W71V6M8Ptfxsc24pJyf7/doZsFGnPDEJy013Y14wf8Jknr29GSLqQSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708986135; c=relaxed/simple;
-	bh=9B9sVk95/X6RVwf+p1Qn/KhyyBM6EhLa8TimasuHcWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pp4BMSMpdcf95S9tA9BPQ7bjpi4oX6XRTkkWi1K0dcnAps4kaBTTgT7z+pjX9VxIXenypbr1VsysxWRJycsRHLJKN7apsr5P1GHUdnRLR0Wsqhjc4h7qpSBjjFIRykNalCgsAqxXM7L1FlJPsV8E4WhSNFfSeb0fQF26yJuPFBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMeBzee4; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c19bc08f96so1752168b6e.2;
-        Mon, 26 Feb 2024 14:22:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1708986133; x=1709590933; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uCljusvDbpC85XBVMK3c5kvPOrdu09iyxvjz7pu6Gtk=;
-        b=fMeBzee4rdGqRf++KZpHwK7fHc2KRak3BUg2XDr3gOIp1HTm4uKJhiOT13ukFACDBM
-         CBh3Z6QSKr4UjoYxztmAUvdsvnyJG6B9Rp1B1VdCA9SxWIQASYb6y4gl11PcufsYGTrO
-         xUhzTwlTdkJtDS2HL+CVIJiaeXDRTSChPHhTcHFj5ql5PaPwxt2OOqlaftJ7REsNwiWN
-         TxzTXcmNAq+x/xv7BKV4m+ZxGAoUr92ltlUgj0LchQP/SfqW7ladtmkvU2ABsYqvM5vK
-         m4nNhTJFOHN3dNyjWqKZ1NSfm/vQkxjjU0yjQYXDVPH44zhAFQHnQnUuJ8t1WRmNnkrI
-         f8HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708986133; x=1709590933;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uCljusvDbpC85XBVMK3c5kvPOrdu09iyxvjz7pu6Gtk=;
-        b=dZ3FcY8n8YULEBQ7+deg+QT5m6E/R+7rBaSTGHKm3QP8UvRctVkB8c1RW8t6JOEAJm
-         ncju6Pfidtt2L2UAKJ/DCsQdjfz1H78LwJGKw73Pkq5yne4DoC0Qt46bq04wvxzgQDSQ
-         Bc7l2novsCR+RKeNLI7Lzz6M9UrN4AGUho5G1mxFEwNjae0MEtcxLeiaMcBhvj8/fTMe
-         tqYlneV1BkVuazZRjqIfP1N+YvGGlahujqVRZp1IAWqNaGdOC0iCBKa5ONdfFMOWmJ2G
-         +bSS5UGvB1l9LTrMAJUJK84HPaZpABYm7d5sjAmNIsWxPrFvm8YhNxiIJk6KKR1iwbLM
-         6f/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWI2vmopXK3UjJyM3SzokcPDBUXKySdHHe5GhHync58JDBo/zpVD3uPhZV60H6IOc75cm4TOwBLrCyuDhcPw5u2PAIhniVDcZPn5oMWUEzwN9cbx4NrBUhF0q9kZacXWMCDlr3mOBVfNDE/HsDWlwVjBKifrn0Z/O0Afn+Dh6qSgWXnppG/StLzrrfzByd5h4lijWc40zNuyuXawt+8xbkx1w==
-X-Gm-Message-State: AOJu0YwEuNwUwsF1kJU3Q2CWRQFYfGwLUVnDQkAMP92khA94Xw+yndnO
-	O2Qa+09Pfsy/HxlGIqN2m8sFc8H6gRKVREp5ckKedblU4F10JfBC
-X-Google-Smtp-Source: AGHT+IH9/ZHMOlN9m2pQ3tNxm4b1iBEwlbsa1DLKOeAJmdm28kiQkwzlw6kslYe8H3uqCwJle03KrA==
-X-Received: by 2002:a05:6808:168e:b0:3c0:3752:626f with SMTP id bb14-20020a056808168e00b003c03752626fmr434507oib.58.1708986133186;
-        Mon, 26 Feb 2024 14:22:13 -0800 (PST)
-Received: from Borg-9.local (070-114-203-196.res.spectrum.com. [70.114.203.196])
-        by smtp.gmail.com with ESMTPSA id d17-20020a05680805d100b003c1ad351e43sm50022oij.1.2024.02.26.14.22.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Feb 2024 14:22:12 -0800 (PST)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Mon, 26 Feb 2024 16:22:11 -0600
-From: John Groves <John@groves.net>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, john@jagalactic.com, 
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, 
-	dave.hansen@linux.intel.com, gregory.price@memverge.com
-Subject: Re: [RFC PATCH 10/20] famfs: famfs_open_device() &
- dax_holder_operations
-Message-ID: <xslmwjulygnvrqvzevrzj5clalxwhqnmv5p2k2yvrp56bkqdn6@bbdmfeb24axf>
-References: <cover.1708709155.git.john@groves.net>
- <74359fdc83688fb1aac1cb2c336fbd725590a131.1708709155.git.john@groves.net>
- <20240226125642.000076d2@Huawei.com>
+	s=arc-20240116; t=1708986814; c=relaxed/simple;
+	bh=XzkLglHncfPugzyDyH7vIDjIn0LxhOMGEOoaYlwJ2m8=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=nyxKze1Kn0R9dYh8JEmaQf03zAlX8y4ug1BSd7VXpN6Gn6fXyk39/OmN5v5uoTRE5XF3MgIoxW2B/k4tnV6PPEsJo0kweSSa8tcNNmGTBU0Mv8xVlaTe/cC9nfg0s0lse+U6P+QWJPu7e4RQ2/K9XRCpDGxeeFVJkZIcqLWjNWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Received: from harlem.collaboradmins.com (harlem.collaboradmins.com [IPv6:2a01:4f8:1c0c:5936::1])
+	by madrid.collaboradmins.com (Postfix) with ESMTP id 5514B3780016;
+	Mon, 26 Feb 2024 22:33:29 +0000 (UTC)
+From: "Adrian Ratiu" <adrian.ratiu@collabora.com>
+In-Reply-To: <202402261123.B2A1D0DE@keescook>
+Content-Type: text/plain; charset="utf-8"
+X-Forward: 127.0.0.1
+References: <20240221210626.155534-1-adrian.ratiu@collabora.com>
+ <CAD=FV=WR51_HJA0teHhBKvr90ufzZePVcxdA+iVZqXUK=cYJng@mail.gmail.com>
+ <202402261110.B8129C002@keescook> <202402261123.B2A1D0DE@keescook>
+Date: Mon, 26 Feb 2024 22:33:29 +0000
+Cc: jannh@google.com, "Doug Anderson" <dianders@chromium.org>, linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@collabora.com, "Guenter Roeck" <groeck@chromium.org>, "Mike Frysinger" <vapier@chromium.org>, linux-hardening@vger.kernel.org
+To: "Kees Cook" <keescook@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240226125642.000076d2@Huawei.com>
+Message-ID: <1405e4-65dd1180-3-7a785380@32026879>
+Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?proc=3A?= allow restricting 
+ /proc/pid/mem writes
+User-Agent: SOGoMail 5.9.1
+Content-Transfer-Encoding: quoted-printable
 
-On 24/02/26 12:56PM, Jonathan Cameron wrote:
-> On Fri, 23 Feb 2024 11:41:54 -0600
-> John Groves <John@Groves.net> wrote:
-> 
-> > Famfs works on both /dev/pmem and /dev/dax devices. This commit introduces
-> > the function that opens a block (pmem) device and the struct
-> > dax_holder_operations that are needed for that ABI.
-> > 
-> > In this commit, support for opening character /dev/dax is stubbed. A
-> > later commit introduces this capability.
-> > 
-> > Signed-off-by: John Groves <john@groves.net>
-> 
-> Formatting comments mostly same as previous patches, so I'll stop repeating them.
+Hello
 
-I tried to bulk apply those recommendations.
+On Monday, February 26, 2024 21:24 EET, Kees Cook <keescook@chromium.or=
+g> wrote:
 
-> 
-> > ---
-> >  fs/famfs/famfs_inode.c | 83 ++++++++++++++++++++++++++++++++++++++++++
-> >  1 file changed, 83 insertions(+)
-> > 
-> > diff --git a/fs/famfs/famfs_inode.c b/fs/famfs/famfs_inode.c
-> > index 3329aff000d1..82c861998093 100644
-> > --- a/fs/famfs/famfs_inode.c
-> > +++ b/fs/famfs/famfs_inode.c
-> > @@ -68,5 +68,88 @@ static const struct super_operations famfs_ops = {
-> >  	.show_options	= famfs_show_options,
-> >  };
-> >  
-> > +/***************************************************************************************
-> > + * dax_holder_operations for block dax
-> > + */
-> > +
-> > +static int
-> > +famfs_blk_dax_notify_failure(
-> > +	struct dax_device	*dax_devp,
-> > +	u64			offset,
-> > +	u64			len,
-> > +	int			mf_flags)
-> > +{
-> > +
-> > +	pr_err("%s: dax_devp %llx offset %llx len %lld mf_flags %x\n",
-> > +	       __func__, (u64)dax_devp, (u64)offset, (u64)len, mf_flags);
-> > +	return -EOPNOTSUPP;
-> > +}
-> > +
-> > +const struct dax_holder_operations famfs_blk_dax_holder_ops = {
-> > +	.notify_failure		= famfs_blk_dax_notify_failure,
-> > +};
-> > +
-> > +static int
-> > +famfs_open_char_device(
-> > +	struct super_block *sb,
-> > +	struct fs_context  *fc)
-> > +{
-> > +	pr_err("%s: Root device is %s, but your kernel does not support famfs on /dev/dax\n",
-> > +	       __func__, fc->source);
-> > +	return -ENODEV;
-> > +}
-> > +
-> > +/**
-> > + * famfs_open_device()
-> > + *
-> > + * Open the memory device. If it looks like /dev/dax, call famfs_open_char_device().
-> > + * Otherwise try to open it as a block/pmem device.
-> > + */
-> > +static int
-> > +famfs_open_device(
-> > +	struct super_block *sb,
-> > +	struct fs_context  *fc)
-> > +{
-> > +	struct famfs_fs_info *fsi = sb->s_fs_info;
-> > +	struct dax_device    *dax_devp;
-> > +	u64 start_off = 0;
-> > +	struct bdev_handle   *handlep;
-> Definitely don't force alignment in local parameter definitions.
-> Always goes wrong and makes for unreadable mess in patches!
+> [sorry for the duplicate, fixing Jann's email address]
+>=20
+> On Mon, Feb 26, 2024 at 09:10:54AM -0800, Doug Anderson wrote:
+> > Hi,
+> >=20
+> > On Wed, Feb 21, 2024 at 1:06=E2=80=AFPM Adrian Ratiu <adrian.ratiu@=
+collabora.com> wrote:
+> > >
+> > > Prior to v2.6.39 write access to /proc/<pid>/mem was restricted,
+> > > after which it got allowed in commit 198214a7ee50 ("proc: enable
+> > > writing to /proc/pid/mem"). Famous last words from that patch:
+> > > "no longer a security hazard". :)
+> > >
+> > > Afterwards exploits appeared started causing drama like [1]. The
+> > > /proc/*/mem exploits can be rather sophisticated like [2] which
+> > > installed an arbitrary payload from noexec storage into a running
+> > > process then exec'd it, which itself could include an ELF loader
+> > > to run arbitrary code off noexec storage.
+> > >
+> > > As part of hardening against these types of attacks, distrbutions
+> > > can restrict /proc/*/mem to only allow writes when they makes sen=
+se,
+> > > like in case of debuggers which have ptrace permissions, as they
+> > > are able to access memory anyway via PTRACE=5FPOKEDATA and friend=
+s.
+> > >
+> > > Dropping the mode bits disables write access for non-root users.
+> > > Trying to `chmod` the paths back fails as the kernel rejects it.
+> > >
+> > > For users with CAP=5FDAC=5FOVERRIDE (usually just root) we have t=
+o
+> > > disable the mem=5Fwrite callback to avoid bypassing the mode bits=
+.
+> > >
+> > > Writes can be used to bypass permissions on memory maps, even if =
+a
+> > > memory region is mapped r-x (as is a program's executable pages),
+> > > the process can open its own /proc/self/mem file and write to the
+> > > pages directly.
+> > >
+> > > Even if seccomp filters block mmap/mprotect calls with W|X perms,
+> > > they often cannot block open calls as daemons want to read/write
+> > > their own runtime state and seccomp filters cannot check file pat=
+hs.
+> > > Write calls also can't be blocked in general via seccomp.
+> > >
+> > > Since the mem file is part of the dynamic /proc/<pid>/ space, we
+> > > can't run chmod once at boot to restrict it (and trying to react
+> > > to every process and run chmod doesn't scale, and the kernel no
+> > > longer allows chmod on any of these paths).
+> > >
+> > > SELinux could be used with a rule to cover all /proc/*/mem files,
+> > > but even then having multiple ways to deny an attack is useful in
+> > > case on layer fails.
+> > >
+> > > [1] https://lwn.net/Articles/476947/
+> > > [2] https://issues.chromium.org/issues/40089045
+> > >
+> > > Based on an initial patch by Mike Frysinger <vapier@chromium.org>=
+.
+> > >
+> > > Cc: Guenter Roeck <groeck@chromium.org>
+> > > Cc: Doug Anderson <dianders@chromium.org>
+> > > Signed-off-by: Mike Frysinger <vapier@chromium.org>
+>=20
+> This should have a "Co-developed-by: Mike..." tag, since you're makin=
+g
+> changes and not just passing it along directly.
 
-Okay, undone. Everywhere.
+Thanks, I'll address this in v2.
 
-> 
-> > +
-> > +	if (fsi->dax_devp) {
-> > +		pr_err("%s: already mounted\n", __func__);
-> Fine to fail but worth a error message? Not sure on convention on this but seems noisy
-> and maybe in userspace control which isn't good.
+>=20
+> > > Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+> > > ---
+> > > Tested on next-20240220.
+> > >
+> > > I would really like to avoid depending on CONFIG=5FMEMCG which is
+> > > required for the struct mm=5Fstryct "owner" pointer.
+> > >
+> > > Any suggestions how check the ptrace owner without MEMCG?
+> > > ---
+> > >  fs/proc/base.c   | 26 ++++++++++++++++++++++++--
+> > >  security/Kconfig | 13 +++++++++++++
+> > >  2 files changed, 37 insertions(+), 2 deletions(-)
+> >=20
+> > Thanks for posting this! This looks reasonable to me, but I'm nowhe=
+re
+> > near an expert on this so I won't add a Reviewed-by tag.
+> >=20
+> > This feels like the kind of thing that Kees might be interested in
+> > reviewing, so adding him to the "To" list.
+>=20
+> I'd love to make /proc/$pid/mem more strict. A few comments:
+>=20
+> > [...]
+> > +	if (ptracer=5Fcapable(current, mm->user=5Fns) &&
+>=20
+> It really looks like you're trying to do a form of ptrace=5Fmay=5Facc=
+ess(),
+> but =5Fwithout=5F the introspection exception?
+>=20
+> Also, using "current" in the write path can lead to problems[1], so t=
+his
+> should somehow use file->f=5Fcred, or limit write access during the o=
+pen()
+> instead?
 
-Changing to pr_debug. Would be good to have access to it in that way
+I think Mike explained pretty well why we need to check if current alre=
+ady
+is a ptracer. The point you raise is valid (thanks again) so we need to=
+ check
+a bit earlier, during open().
 
-> > +		return -EALREADY;
-> > +	}
-> > +
-> > +	if (strstr(fc->source, "/dev/dax")) /* There is probably a better way to check this */
-> > +		return famfs_open_char_device(sb, fc);
-> > +
-> > +	if (!strstr(fc->source, "/dev/pmem")) { /* There is probably a better way to check this */
-> > +		pr_err("%s: primary backing dev (%s) is not pmem\n",
-> > +		       __func__, fc->source);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	handlep = bdev_open_by_path(fc->source, FAMFS_BLKDEV_MODE, fsi, &fs_holder_ops);
-> > +	if (IS_ERR(handlep->bdev)) {
-> > +		pr_err("%s: failed blkdev_get_by_path(%s)\n", __func__, fc->source);
-> > +		return PTR_ERR(handlep->bdev);
-> > +	}
-> > +
-> > +	dax_devp = fs_dax_get_by_bdev(handlep->bdev, &start_off,
-> > +				      fsi  /* holder */,
-> > +				      &famfs_blk_dax_holder_ops);
-> > +	if (IS_ERR(dax_devp)) {
-> > +		pr_err("%s: unable to get daxdev from handlep->bdev\n", __func__);
-> > +		bdev_release(handlep);
-> > +		return -ENODEV;
-> > +	}
-> > +	fsi->bdev_handle = handlep;
-> > +	fsi->dax_devp    = dax_devp;
-> > +
-> > +	pr_notice("%s: root device is block dax (%s)\n", __func__, fc->source);
-> 
-> pr_debug()  Kernel log is too noisy anyway! + I'd assume we can tell this succeeded
-> in lots of other ways.
+>=20
+> > [...]
+> > +config SECURITY=5FPROC=5FMEM=5FRESTRICT=5FWRITES
+>=20
+> Instead of a build-time CONFIG, I'd prefer a boot-time config (or a
+> sysctl, but that's be harder given the perms). That this is selectabl=
+e
+> by distro users, etc, and they don't need to rebuild their kernel to
+> benefit from it.
 
-Done
+Ack, I'll implement a cmdline arg in v2.
 
-> 
-> 
-> > +	return 0;
-> > +}
-> > +
-> > +
-> >  
-> >  MODULE_LICENSE("GPL");
+>=20
+> Jann Horn has tried to restrict access to this file in the past as we=
+ll,
+> so he may have some additional advice about it.
 
-Thanks,
-John
-> 
+I'll leave this a few more days in case others have more ideas, then wi=
+ll
+send v2 and also add Jann to the "To:" list.
+
+>=20
+> -Kees
+>=20
+> [1] https://docs.kernel.org/security/credentials.html#open-file-crede=
+ntials
+>=20
+> --=20
+> Kees Cook
+
 
