@@ -1,120 +1,283 @@
-Return-Path: <linux-fsdevel+bounces-12890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B8F38683D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 23:38:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CEDC8683EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 23:43:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4AC2B23772
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 22:38:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 405881C2487B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 22:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4771A1350F5;
-	Mon, 26 Feb 2024 22:37:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE517135418;
+	Mon, 26 Feb 2024 22:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="URxK7Ovq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZOco68Oc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7121350E4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 22:37:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515DD132C09;
+	Mon, 26 Feb 2024 22:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708987072; cv=none; b=ACqlGTi0XAZ0BiThYb8qBtUdZr10CZ6Hm2tulK1bYVcg0rTGe5UdpIQXjqMpZSzFjsxQduCv85peAk1/x6bvAB3KYpmeE2Mnw0V2hj+dgTTRxyQXeFjU6Fiv8VWMVpvJ/Ugnh8a94j/oeXWysLqsK3YAh3hcR2irnruMfUcI8A0=
+	t=1708987410; cv=none; b=IC8Turo5vvUAxKH3twGNbypcgLC89YPnx2eeQo05P3ImV0G8ZQsLdx6RXBGH9QSPtPKISzv0zGD0WqVTTC//VdzTrEu0Y7uQLlyH3YhTNRoZkNkQm+QuYT3M3fLCc6ahNnCJsioWvebUm8ABfWvz7auMvelLft9k6ANHRSiJ6eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708987072; c=relaxed/simple;
-	bh=9wln76VnEaWfDZRkMs2O/OEsQHa33RJYn0rGYikz1nM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LtAfH9DLZqSFC5l7rj7JvCuMyC+IF1qglKjA1mrIHMY1pkZ01YSMZ73HcOEHSb4ZruWiK2KBAw+eNLRsR24jtkzHWBerAyb/zih89b6YD8fqixFAtQub3jYX90cfaM7GqpoF6WAfTQ4BLpDd7DOjPwMhgU7ptw6r1iUIgwmsTIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=URxK7Ovq; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2d26227d508so40734431fa.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 14:37:50 -0800 (PST)
+	s=arc-20240116; t=1708987410; c=relaxed/simple;
+	bh=lZO496usxRZc4uLXOrLSsGfI9A7Y3eJcpNSY/9wvdTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hIKb+paP5Z/RQLdElswcW3HHmfUn8knPe+YbjsvgGEbLVTQTxnkqvBtqdJokNbqEPktgENyEbiQyX5UKb8p2V83kQUXpZJiIf4kBcMLGaBTq9Fr2C32TLRvd6LQv/74Pw5N3sgGb+Utgago52NGNotseOgN3tzlABzd9dkz1Ctc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZOco68Oc; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-22007fe465bso926033fac.1;
+        Mon, 26 Feb 2024 14:43:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1708987066; x=1709591866; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9wln76VnEaWfDZRkMs2O/OEsQHa33RJYn0rGYikz1nM=;
-        b=URxK7Ovq6mgCNT0pAEqBb/3M/wjnmM/LSxXpmCakoJ1ePWBWfexAdkcuSxDKu8qmrw
-         wnZfWZ5v8j38ev4wD9Zz2QxRZsrZveUstPE5T2J+pr21rnoxIcx01LeSJWlF8Wyq8amw
-         5pNEpFVJPmJG9/uQTS6blToY7w/7Uk2TQ949U=
+        d=gmail.com; s=20230601; t=1708987407; x=1709592207; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DUPmDk09/sTy9Hx2AnE6xr34od72PSugc7feC6111Fo=;
+        b=ZOco68Ocod7WdLh1iUd5Q5MtS5M0djusP4y+mrSP7VEubqe9EJdeuLucBiPgRceeTj
+         WQKIwARzmaguugZDwZLtt+Vj5181JGb9XzZcpmj7wr3+1XndV6KUI/UeKEU+n91xAd+j
+         Z43W43wLE7cM62lSiBF/93syQU+zko6vitVR0F4ItoJ9+EORHKxC5JMKUaJbHFNXLv1b
+         a4MGhLT+SoUgtxLtSPlFZT/uMnUZuQx834Tkn+mxUKNks5CB0GREnqG4H7jl2adzXnXY
+         +/lZg8Mgu7niI696eGNb1+MI6McfQSLgjEmy8QwA8/0A32J48AlZyCA+qShFp9jdClxB
+         lfhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708987066; x=1709591866;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1708987407; x=1709592207;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9wln76VnEaWfDZRkMs2O/OEsQHa33RJYn0rGYikz1nM=;
-        b=Ap5OB8GdZ1zC6/GT837a5MMZuW0JdW3BBcT151NgbT2HY5c16SxIF2W1XiOj3qjhQW
-         DKyWkQdaip3kY0FRUuyUm0COq7MBp8uuYEBpbBiOsC9M5jo/IZ9dC6dhFFxaULrJsqL7
-         qb9Xpq3OoWvW3jLVvc2JqStmPShAwdDXH/iGzQzxvvbV9d8Dd+gM35iBWg39Hj13A0ic
-         kt2MqwqyV/Ls+if5sONOjnyicPxG+O1HSiqZmhPB5qqM1GuloAquci2UmpOUqzkVVIBu
-         kqQ9LWF9LPTz8Sqh6kEeTBoE/+PBPtw6yAUd445hTLF8XKQaU0s3j7Xdom6F5oUDJDCM
-         A1Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHMcOzSH2ScN2byIVTT0p2z3fZWna3iB/zCYWo57CGiUSuHL0IuQsq8XCDnkLzW4syEUgPa4gaHzMi0hp/DVdT0cDkC+sFnT0qEW+5Qw==
-X-Gm-Message-State: AOJu0YyA/LkAAKcAxkpj70Hi662KYgbpo8W1cz10szA6HWCp/pd6A2Tx
-	PXl4rb7IuAdk6jrAqyd5obZzel/gokJWowQQ4DQihv3CYyBzcaNXm9Y1GdelV478wl/gFRRSSyM
-	JyDbB
-X-Google-Smtp-Source: AGHT+IF6MSLn0ujiizP/4jvt3hcXlElW8mNQmJZsCVSIc9a6RFE6JLAJeDg9B26cBHf4WWtvCTFJUA==
-X-Received: by 2002:a2e:9dd2:0:b0:2d2:3ec0:29d9 with SMTP id x18-20020a2e9dd2000000b002d23ec029d9mr4650087ljj.38.1708987066572;
-        Mon, 26 Feb 2024 14:37:46 -0800 (PST)
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com. [209.85.128.53])
-        by smtp.gmail.com with ESMTPSA id j8-20020aa7c408000000b0056200715130sm170095edq.54.2024.02.26.14.37.45
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Feb 2024 14:37:46 -0800 (PST)
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-412a2c2ce88so5265e9.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 14:37:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCW65Fc1lVspUCbB0H1GuZx91siC2TaHxXMKMeippKXbXItsaSkcnujSiauUdrYek05RagupgT26SfzZVkwZajiAByVoxZpyPYkpMnJgvw==
-X-Received: by 2002:a05:600c:1d8b:b0:412:a80e:a5cc with SMTP id
- p11-20020a05600c1d8b00b00412a80ea5ccmr30242wms.1.1708987065108; Mon, 26 Feb
- 2024 14:37:45 -0800 (PST)
+        bh=DUPmDk09/sTy9Hx2AnE6xr34od72PSugc7feC6111Fo=;
+        b=LsFjt9rn7mxzsva4GZYJV9gtrQ6HQlbg9JuvcBNWDdui5BruAi3K0bbmjE+KHT55dz
+         y/ztMZff3t1t6gKifKgz6RByRW5iYvs8+rjwSBmm07mLgMtSsOxseRra1EczcMyxKiYl
+         citA/uZF6AoWhhUGUFSKRAEDQTDpO8//M2GoqFXLxo0tVrrTv335Wi6wvVDw3tRgVKRo
+         krD1DdTtSLN6GF0HyJVYlML/jAk2IA4twMatx7c++waNmCWG16519rNeZLq/6OhGJuoN
+         8BgwF7sq2E70pdNzbChxBwZA/ibV7dMVqLldv4atVL8DyigDgbYvMr6ga0RPl1d/qvR5
+         Krmg==
+X-Forwarded-Encrypted: i=1; AJvYcCUXRplfXdZPuMSyLqA6fiWAODZwreFFGEK4rABkIubKlUub4NJaEe54JbBziGSoxzuIXMzjRi0qJtW6Zpeg1qfmPj4WfDTcZB4CgxRm/h/mmA3JhUdBnoegq9mLOjKd/sP1H0SLVYPEmX2QHXtVlBqdkbDv711JvaFZvgM45GVsGeM4BPjfcyhHdPHjRRutp16XSd2bDy6K090cvBFS7MKcCA==
+X-Gm-Message-State: AOJu0YxLxI+Heme8OFFd9aikCjx5jf5hh7K1Cp6kEs8KhlK4Honf4D4B
+	kGbHOQ7PGhWbyLdr+xAiaO+uV7fQI7SS+F4eDtXn1i/qUAu7+Wnv9PbXp19ixdM=
+X-Google-Smtp-Source: AGHT+IEoZRM885tJ3SKMed/vEAVoJO38AS5Hl87/35VAcOvt6F3arFNSsmi3/j7xjKGIzHYaoLT4dg==
+X-Received: by 2002:a05:6870:b253:b0:21f:642:5240 with SMTP id b19-20020a056870b25300b0021f06425240mr9200382oam.31.1708987407360;
+        Mon, 26 Feb 2024 14:43:27 -0800 (PST)
+Received: from Borg-9.local (070-114-203-196.res.spectrum.com. [70.114.203.196])
+        by smtp.gmail.com with ESMTPSA id er1-20020a0568303c0100b006e34506c5e5sm1280715otb.57.2024.02.26.14.43.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Feb 2024 14:43:27 -0800 (PST)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Mon, 26 Feb 2024 16:43:25 -0600
+From: John Groves <John@groves.net>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, john@jagalactic.com, 
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, 
+	dave.hansen@linux.intel.com, gregory.price@memverge.com
+Subject: Re: [RFC PATCH 11/20] famfs: Add fs_context_operations
+Message-ID: <5aw6k6rcnpj7ukps7jcjlj2creqa4aalnesukgdi4nmjqccfg7@7l7rvtzwpjha>
+References: <cover.1708709155.git.john@groves.net>
+ <a645646f071e7baa30ef37ea46ea1330ac2eb63f.1708709155.git.john@groves.net>
+ <20240226132019.00007b8c@Huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240221210626.155534-1-adrian.ratiu@collabora.com>
- <CAD=FV=WR51_HJA0teHhBKvr90ufzZePVcxdA+iVZqXUK=cYJng@mail.gmail.com>
- <202402261110.B8129C002@keescook> <202402261123.B2A1D0DE@keescook> <1405e4-65dd1180-3-7a785380@32026879>
-In-Reply-To: <1405e4-65dd1180-3-7a785380@32026879>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 26 Feb 2024 14:37:29 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=Vh7Ctaj6N_k9gdkrqpb687zJqQN19qTZXMyDw6TujvLQ@mail.gmail.com>
-Message-ID: <CAD=FV=Vh7Ctaj6N_k9gdkrqpb687zJqQN19qTZXMyDw6TujvLQ@mail.gmail.com>
-Subject: Re: [PATCH] proc: allow restricting /proc/pid/mem writes
-To: Adrian Ratiu <adrian.ratiu@collabora.com>
-Cc: Kees Cook <keescook@chromium.org>, jannh@google.com, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel@collabora.com, 
-	Guenter Roeck <groeck@chromium.org>, Mike Frysinger <vapier@chromium.org>, 
-	linux-hardening@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240226132019.00007b8c@Huawei.com>
 
-Hi,
+On 24/02/26 01:20PM, Jonathan Cameron wrote:
+> On Fri, 23 Feb 2024 11:41:55 -0600
+> John Groves <John@Groves.net> wrote:
+> 
+> > This commit introduces the famfs fs_context_operations and
+> > famfs_get_inode() which is used by the context operations.
+> > 
+> > Signed-off-by: John Groves <john@groves.net>
+> Trivial comments inline.
+> 
+> > ---
+> >  fs/famfs/famfs_inode.c | 178 +++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 178 insertions(+)
+> > 
+> > diff --git a/fs/famfs/famfs_inode.c b/fs/famfs/famfs_inode.c
+> > index 82c861998093..f98f82962d7b 100644
+> > --- a/fs/famfs/famfs_inode.c
+> > +++ b/fs/famfs/famfs_inode.c
+> > @@ -41,6 +41,50 @@ static const struct super_operations famfs_ops;
+> >  static const struct inode_operations famfs_file_inode_operations;
+> >  static const struct inode_operations famfs_dir_inode_operations;
+> >  
+> > +static struct inode *famfs_get_inode(
+> > +	struct super_block *sb,
+> > +	const struct inode *dir,
+> > +	umode_t             mode,
+> > +	dev_t               dev)
+> > +{
+> > +	struct inode *inode = new_inode(sb);
+> > +
+> > +	if (inode) {
+> reverse logic would be simpler and reduce indent.
+> 
+> 	if (!inode)
+> 		return NULL;
+> 
 
-On Mon, Feb 26, 2024 at 2:33=E2=80=AFPM Adrian Ratiu <adrian.ratiu@collabor=
-a.com> wrote:
->
-> > > [...]
-> > > +config SECURITY_PROC_MEM_RESTRICT_WRITES
-> >
-> > Instead of a build-time CONFIG, I'd prefer a boot-time config (or a
-> > sysctl, but that's be harder given the perms). That this is selectable
-> > by distro users, etc, and they don't need to rebuild their kernel to
-> > benefit from it.
->
-> Ack, I'll implement a cmdline arg in v2.
+Good one - I can be derpy this way. Although I'd bet I just copied that
+from ramfs...
 
-Any objections to doing both? Have a CONFIG option for a default and a
-cmdline to override it? This way if a distro wants to restrict writes
-by default then don't need to jam more stuff into the kernel command
-line.
+> 
+> > +		struct timespec64       tv;
+> > +
+> > +		inode->i_ino = get_next_ino();
+> > +		inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
+> > +		inode->i_mapping->a_ops = &ram_aops;
+> > +		mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+> > +		mapping_set_unevictable(inode->i_mapping);
+> > +		tv = inode_set_ctime_current(inode);
+> > +		inode_set_mtime_to_ts(inode, tv);
+> > +		inode_set_atime_to_ts(inode, tv);
+> > +
+> > +		switch (mode & S_IFMT) {
+> > +		default:
+> > +			init_special_inode(inode, mode, dev);
+> > +			break;
+> > +		case S_IFREG:
+> > +			inode->i_op = &famfs_file_inode_operations;
+> > +			inode->i_fop = &famfs_file_operations;
+> > +			break;
+> > +		case S_IFDIR:
+> > +			inode->i_op = &famfs_dir_inode_operations;
+> > +			inode->i_fop = &simple_dir_operations;
+> > +
+> > +			/* Directory inodes start off with i_nlink == 2 (for "." entry) */
+> > +			inc_nlink(inode);
+> > +			break;
+> > +		case S_IFLNK:
+> > +			inode->i_op = &page_symlink_inode_operations;
+> > +			inode_nohighmem(inode);
+> > +			break;
+> > +		}
+> > +	}
+> > +	return inode;
+> > +}
+> > +
+> >  /**********************************************************************************
+> >   * famfs super_operations
+> >   *
+> > @@ -150,6 +194,140 @@ famfs_open_device(
+> >  	return 0;
+> >  }
+> >  
+> > +/*****************************************************************************************
+> > + * fs_context_operations
+> > + */
+> > +static int
+> > +famfs_fill_super(
+> > +	struct super_block *sb,
+> > +	struct fs_context  *fc)
+> > +{
+> > +	struct famfs_fs_info *fsi = sb->s_fs_info;
+> > +	struct inode *inode;
+> > +	int rc = 0;
+> Always initialized so no need to do it here.
 
--Doug
+Fixed in more than one place.
+
+> 
+> > +
+> > +	sb->s_maxbytes		= MAX_LFS_FILESIZE;
+> > +	sb->s_blocksize		= PAGE_SIZE;
+> > +	sb->s_blocksize_bits	= PAGE_SHIFT;
+> > +	sb->s_magic		= FAMFS_MAGIC;
+> > +	sb->s_op		= &famfs_ops;
+> > +	sb->s_time_gran		= 1;
+> > +
+> > +	rc = famfs_open_device(sb, fc);
+> > +	if (rc)
+> > +		goto out;
+> 		return rc; //unless you need to do more in out in later patch..
+
+Done
+
+> 
+> > +
+> > +	inode = famfs_get_inode(sb, NULL, S_IFDIR | fsi->mount_opts.mode, 0);
+> > +	sb->s_root = d_make_root(inode);
+> > +	if (!sb->s_root)
+> > +		rc = -ENOMEM;
+> 		return -ENOMEM;
+
+Done
+
+> 
+> 	return 0;
+
+Done
+
+> 
+> > +
+> > +out:
+> > +	return rc;
+> > +}
+> > +
+> > +enum famfs_param {
+> > +	Opt_mode,
+> > +	Opt_dax,
+> Why capital O?
+
+Direct copy from ramfs
+
+> 
+> > +};
+> > +
+> 
+> ...
+> 
+> > +
+> > +static DEFINE_MUTEX(famfs_context_mutex);
+> > +static LIST_HEAD(famfs_context_list);
+> > +
+> > +static int famfs_get_tree(struct fs_context *fc)
+> > +{
+> > +	struct famfs_fs_info *fsi_entry;
+> > +	struct famfs_fs_info *fsi = fc->s_fs_info;
+> > +
+> > +	fsi->rootdev = kstrdup(fc->source, GFP_KERNEL);
+> > +	if (!fsi->rootdev)
+> > +		return -ENOMEM;
+> > +
+> > +	/* Fail if famfs is already mounted from the same device */
+> > +	mutex_lock(&famfs_context_mutex);
+> 
+> New toys might be good to use from start to avoid need for explicit
+> unlocks in error paths.
+> 
+> 	scoped_guard(mutex, &famfs_context_mutex) {
+> 		list_for_each_entry(fsi_entry, &famfs_context_list, fsi_list) {
+> 			if (strcmp(fsi_entry->rootdev, cs_source) == 0) {
+> 			//could invert with a continue to reduce indent
+> 			// or factor this out as a little helper.
+> 			// famfs_check_not_mounted()
+> 				pr_err();
+> 				return -EALREADY;
+> 			}
+> 		}	
+> 		list_add(&fsi->fs_list, &famfs_context_list);
+> 	}
+> 
+> 	return get_tree_nodev(...
+
+Hey, I like this one. Thanks!
+
+John
+
 
