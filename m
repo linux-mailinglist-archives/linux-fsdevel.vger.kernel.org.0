@@ -1,72 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-12887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6710186835B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 22:55:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B95C386838D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 23:22:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 199841F227BC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 21:55:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2E8285F05
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 22:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0FB131E28;
-	Mon, 26 Feb 2024 21:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50E19131E5B;
+	Mon, 26 Feb 2024 22:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NfNJyr1c"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fMeBzee4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708B612F388
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 21:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15084131E3F;
+	Mon, 26 Feb 2024 22:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708984511; cv=none; b=GejFW1yT+keZ52JZH2J+B5Seomci+Z4KFQAL6lQT+KOccTIaoitrXmsGbp4w074qJk7kImhVZD4edjmwoNzJbm2cDj5lO0K+39NUtjRB5OsIVvi567OMr13dSXqCLfQ167KDmGOBBS3ageKmxbCpUSIG+S36RwWYPhOxSBn+Wd8=
+	t=1708986135; cv=none; b=GNhMbt3VgyaKzf3tpNE8JcMBR8K2VdyA0hLHWTf2sVgyWvALMD/iwtvbDlAu6kkBxyk2DibG5gkjQ3dUI5DQlR5gb2FtV6uLCyP1IRQzaCnnYTFIqIGokl8t2SEpkGulHtoZfSmgMbSuIN+oK5ejuM2B3z8ZAZrCfXc3g0ya5hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708984511; c=relaxed/simple;
-	bh=QSYRZy9FUoynzy1lLrNSLVKDLhKHxKpJtpQ/pB5dh7s=;
+	s=arc-20240116; t=1708986135; c=relaxed/simple;
+	bh=9B9sVk95/X6RVwf+p1Qn/KhyyBM6EhLa8TimasuHcWM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FYb10n7OvWXcCbCcLc5f0B4Jw4MCIaqw3jleXcDJ4FwKeOTZbR26ipvwEo6M5S2FRMmpPlMyzmkHKhYOPn508HeecVVzlBPJNmeReNIvaK23ESgvrxSpfu1Nx0zZGhCX+JQya4YHmisOAc75xiG8ZxECRRDH0etBI2Cd0TJTh8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NfNJyr1c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6AEAC433F1;
-	Mon, 26 Feb 2024 21:55:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708984511;
-	bh=QSYRZy9FUoynzy1lLrNSLVKDLhKHxKpJtpQ/pB5dh7s=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=NfNJyr1ca61qNnElH4a4LKcqC9/Uvmept7lOTssDeHjaW6SXTNjDYpP39n51VkntJ
-	 54Wu6Hc4t7+P13aAaBF6XHuGTBUYAI7WUQqMfmk5SRix8yH2xPiXHfO1sPykmI/hQw
-	 q/x6lw58BYkBA96dx7UERNmO3ATWUNyuWSi0sZug6zu3KvsETjnKMapjVGKFiEWToD
-	 IgcsdIrp6ItY/983qAj7GtcXf05RfIodQaBNqJq85FxkhvlHqJKKvBjrRPeqAf7EC6
-	 0LJoZ/Es9G+FwwixfpefXajRi1Dy0pyU4xyA5ZmEhn6FQaoKq8nJb6c9CeQbeJiUo9
-	 HdQbfpuzKw0aw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 8F33ECE0E27; Mon, 26 Feb 2024 13:55:10 -0800 (PST)
-Date: Mon, 26 Feb 2024 13:55:10 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Al Viro <viro@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>,
-	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <fb4d944e-fde7-423b-a376-25db0b317398@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <CAHk-=wgVPHPPjZPoV8E_q59L7i8zFjHo_5hHo_+qECYuy7FF6g@mail.gmail.com>
- <Zduto30LUEqIHg4h@casper.infradead.org>
- <CAHk-=wibYaWYqs5A30a7ywJdsW5LDT1LYysjcCmzjzkK=uh+tQ@mail.gmail.com>
- <bk45mgxpdbm5gfa6wl37nhecttnb5bxh6wo3slixsray77azu5@pi3bblfn3c5u>
- <CAHk-=wjnW96+oP0zhEd1zjPNqOHvrddKkwp0+CuS5HpZavfmMQ@mail.gmail.com>
- <Zdv8dujdOg0dD53k@duke.home>
- <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
- <Zdz9p_Kn0puI1KEL@casper.infradead.org>
- <znixgiqxzoksfwwzggmzsu6hwpqfszigjh5k6hx273qil7dx5t@5dxcovjdaypk>
- <upnvhnqaitifuwwbxcpa4zgf2hribfrtqzxtcrv5djbyjs2ond@axetql2wrwnt>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pp4BMSMpdcf95S9tA9BPQ7bjpi4oX6XRTkkWi1K0dcnAps4kaBTTgT7z+pjX9VxIXenypbr1VsysxWRJycsRHLJKN7apsr5P1GHUdnRLR0Wsqhjc4h7qpSBjjFIRykNalCgsAqxXM7L1FlJPsV8E4WhSNFfSeb0fQF26yJuPFBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fMeBzee4; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c19bc08f96so1752168b6e.2;
+        Mon, 26 Feb 2024 14:22:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1708986133; x=1709590933; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uCljusvDbpC85XBVMK3c5kvPOrdu09iyxvjz7pu6Gtk=;
+        b=fMeBzee4rdGqRf++KZpHwK7fHc2KRak3BUg2XDr3gOIp1HTm4uKJhiOT13ukFACDBM
+         CBh3Z6QSKr4UjoYxztmAUvdsvnyJG6B9Rp1B1VdCA9SxWIQASYb6y4gl11PcufsYGTrO
+         xUhzTwlTdkJtDS2HL+CVIJiaeXDRTSChPHhTcHFj5ql5PaPwxt2OOqlaftJ7REsNwiWN
+         TxzTXcmNAq+x/xv7BKV4m+ZxGAoUr92ltlUgj0LchQP/SfqW7ladtmkvU2ABsYqvM5vK
+         m4nNhTJFOHN3dNyjWqKZ1NSfm/vQkxjjU0yjQYXDVPH44zhAFQHnQnUuJ8t1WRmNnkrI
+         f8HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1708986133; x=1709590933;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uCljusvDbpC85XBVMK3c5kvPOrdu09iyxvjz7pu6Gtk=;
+        b=dZ3FcY8n8YULEBQ7+deg+QT5m6E/R+7rBaSTGHKm3QP8UvRctVkB8c1RW8t6JOEAJm
+         ncju6Pfidtt2L2UAKJ/DCsQdjfz1H78LwJGKw73Pkq5yne4DoC0Qt46bq04wvxzgQDSQ
+         Bc7l2novsCR+RKeNLI7Lzz6M9UrN4AGUho5G1mxFEwNjae0MEtcxLeiaMcBhvj8/fTMe
+         tqYlneV1BkVuazZRjqIfP1N+YvGGlahujqVRZp1IAWqNaGdOC0iCBKa5ONdfFMOWmJ2G
+         +bSS5UGvB1l9LTrMAJUJK84HPaZpABYm7d5sjAmNIsWxPrFvm8YhNxiIJk6KKR1iwbLM
+         6f/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWI2vmopXK3UjJyM3SzokcPDBUXKySdHHe5GhHync58JDBo/zpVD3uPhZV60H6IOc75cm4TOwBLrCyuDhcPw5u2PAIhniVDcZPn5oMWUEzwN9cbx4NrBUhF0q9kZacXWMCDlr3mOBVfNDE/HsDWlwVjBKifrn0Z/O0Afn+Dh6qSgWXnppG/StLzrrfzByd5h4lijWc40zNuyuXawt+8xbkx1w==
+X-Gm-Message-State: AOJu0YwEuNwUwsF1kJU3Q2CWRQFYfGwLUVnDQkAMP92khA94Xw+yndnO
+	O2Qa+09Pfsy/HxlGIqN2m8sFc8H6gRKVREp5ckKedblU4F10JfBC
+X-Google-Smtp-Source: AGHT+IH9/ZHMOlN9m2pQ3tNxm4b1iBEwlbsa1DLKOeAJmdm28kiQkwzlw6kslYe8H3uqCwJle03KrA==
+X-Received: by 2002:a05:6808:168e:b0:3c0:3752:626f with SMTP id bb14-20020a056808168e00b003c03752626fmr434507oib.58.1708986133186;
+        Mon, 26 Feb 2024 14:22:13 -0800 (PST)
+Received: from Borg-9.local (070-114-203-196.res.spectrum.com. [70.114.203.196])
+        by smtp.gmail.com with ESMTPSA id d17-20020a05680805d100b003c1ad351e43sm50022oij.1.2024.02.26.14.22.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Feb 2024 14:22:12 -0800 (PST)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Mon, 26 Feb 2024 16:22:11 -0600
+From: John Groves <John@groves.net>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Dan Williams <dan.j.williams@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, john@jagalactic.com, 
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@infradead.org>, 
+	dave.hansen@linux.intel.com, gregory.price@memverge.com
+Subject: Re: [RFC PATCH 10/20] famfs: famfs_open_device() &
+ dax_holder_operations
+Message-ID: <xslmwjulygnvrqvzevrzj5clalxwhqnmv5p2k2yvrp56bkqdn6@bbdmfeb24axf>
+References: <cover.1708709155.git.john@groves.net>
+ <74359fdc83688fb1aac1cb2c336fbd725590a131.1708709155.git.john@groves.net>
+ <20240226125642.000076d2@Huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,90 +93,144 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <upnvhnqaitifuwwbxcpa4zgf2hribfrtqzxtcrv5djbyjs2ond@axetql2wrwnt>
+In-Reply-To: <20240226125642.000076d2@Huawei.com>
 
-On Mon, Feb 26, 2024 at 04:19:14PM -0500, Kent Overstreet wrote:
-> +cc Paul
+On 24/02/26 12:56PM, Jonathan Cameron wrote:
+> On Fri, 23 Feb 2024 11:41:54 -0600
+> John Groves <John@Groves.net> wrote:
 > 
-> On Mon, Feb 26, 2024 at 04:17:19PM -0500, Kent Overstreet wrote:
-> > On Mon, Feb 26, 2024 at 09:07:51PM +0000, Matthew Wilcox wrote:
-> > > On Mon, Feb 26, 2024 at 09:17:33AM -0800, Linus Torvalds wrote:
-> > > > Willy - tangential side note: I looked closer at the issue that you
-> > > > reported (indirectly) with the small reads during heavy write
-> > > > activity.
-> > > > 
-> > > > Our _reading_ side is very optimized and has none of the write-side
-> > > > oddities that I can see, and we just have
-> > > > 
-> > > >   filemap_read ->
-> > > >     filemap_get_pages ->
-> > > >         filemap_get_read_batch ->
-> > > >           folio_try_get_rcu()
-> > > > 
-> > > > and there is no page locking or other locking involved (assuming the
-> > > > page is cached and marked uptodate etc, of course).
-> > > > 
-> > > > So afaik, it really is just that *one* atomic access (and the matching
-> > > > page ref decrement afterwards).
-> > > 
-> > > Yep, that was what the customer reported on their ancient kernel, and
-> > > we at least didn't make that worse ...
-> > > 
-> > > > We could easily do all of this without getting any ref to the page at
-> > > > all if we did the page cache release with RCU (and the user copy with
-> > > > "copy_to_user_atomic()").  Honestly, anything else looks like a
-> > > > complete disaster. For tiny reads, a temporary buffer sounds ok, but
-> > > > really *only* for tiny reads where we could have that buffer on the
-> > > > stack.
-> > > > 
-> > > > Are tiny reads (handwaving: 100 bytes or less) really worth optimizing
-> > > > for to that degree?
-> > > > 
-> > > > In contrast, the RCU-delaying of the page cache might be a good idea
-> > > > in general. We've had other situations where that would have been
-> > > > nice. The main worry would be low-memory situations, I suspect.
-> > > > 
-> > > > The "tiny read" optimization smells like a benchmark thing to me. Even
-> > > > with the cacheline possibly bouncing, the system call overhead for
-> > > > tiny reads (particularly with all the mitigations) should be orders of
-> > > > magnitude higher than two atomic accesses.
-> > > 
-> > > Ah, good point about the $%^&^*^ mitigations.  This was pre mitigations.
-> > > I suspect that this customer would simply disable them; afaik the machine
-> > > is an appliance and one interacts with it purely by sending transactions
-> > > to it (it's not even an SQL system, much less a "run arbitrary javascript"
-> > > kind of system).  But that makes it even more special case, inapplicable
-> > > to the majority of workloads and closer to smelling like a benchmark.
-> > > 
-> > > I've thought about and rejected RCU delaying of the page cache in the
-> > > past.  With the majority of memory in anon memory & file memory, it just
-> > > feels too risky to have so much memory waiting to be reused.  We could
-> > > also improve gup-fast if we could rely on RCU freeing of anon memory.
-> > > Not sure what workloads might benefit from that, though.
+> > Famfs works on both /dev/pmem and /dev/dax devices. This commit introduces
+> > the function that opens a block (pmem) device and the struct
+> > dax_holder_operations that are needed for that ABI.
 > > 
-> > RCU allocating and freeing of memory can already be fairly significant
-> > depending on workload, and I'd expect that to grow - we really just need
-> > a way for reclaim to kick RCU when needed (and probably add a percpu
-> > counter for "amount of memory stranded until the next RCU grace
-> > period").
+> > In this commit, support for opening character /dev/dax is stubbed. A
+> > later commit introduces this capability.
+> > 
+> > Signed-off-by: John Groves <john@groves.net>
+> 
+> Formatting comments mostly same as previous patches, so I'll stop repeating them.
 
-There are some APIs for that, though the are sharp-edged and mainly
-intended for rcutorture, and there are some hooks for a CI Kconfig
-option called RCU_STRICT_GRACE_PERIOD that could be organized into
-something useful.
+I tried to bulk apply those recommendations.
 
-Of course, if there is a long-running RCU reader, there is nothing
-RCU can do.  By definition, it must wait on all pre-existing readers,
-no exceptions.
+> 
+> > ---
+> >  fs/famfs/famfs_inode.c | 83 ++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 83 insertions(+)
+> > 
+> > diff --git a/fs/famfs/famfs_inode.c b/fs/famfs/famfs_inode.c
+> > index 3329aff000d1..82c861998093 100644
+> > --- a/fs/famfs/famfs_inode.c
+> > +++ b/fs/famfs/famfs_inode.c
+> > @@ -68,5 +68,88 @@ static const struct super_operations famfs_ops = {
+> >  	.show_options	= famfs_show_options,
+> >  };
+> >  
+> > +/***************************************************************************************
+> > + * dax_holder_operations for block dax
+> > + */
+> > +
+> > +static int
+> > +famfs_blk_dax_notify_failure(
+> > +	struct dax_device	*dax_devp,
+> > +	u64			offset,
+> > +	u64			len,
+> > +	int			mf_flags)
+> > +{
+> > +
+> > +	pr_err("%s: dax_devp %llx offset %llx len %lld mf_flags %x\n",
+> > +	       __func__, (u64)dax_devp, (u64)offset, (u64)len, mf_flags);
+> > +	return -EOPNOTSUPP;
+> > +}
+> > +
+> > +const struct dax_holder_operations famfs_blk_dax_holder_ops = {
+> > +	.notify_failure		= famfs_blk_dax_notify_failure,
+> > +};
+> > +
+> > +static int
+> > +famfs_open_char_device(
+> > +	struct super_block *sb,
+> > +	struct fs_context  *fc)
+> > +{
+> > +	pr_err("%s: Root device is %s, but your kernel does not support famfs on /dev/dax\n",
+> > +	       __func__, fc->source);
+> > +	return -ENODEV;
+> > +}
+> > +
+> > +/**
+> > + * famfs_open_device()
+> > + *
+> > + * Open the memory device. If it looks like /dev/dax, call famfs_open_char_device().
+> > + * Otherwise try to open it as a block/pmem device.
+> > + */
+> > +static int
+> > +famfs_open_device(
+> > +	struct super_block *sb,
+> > +	struct fs_context  *fc)
+> > +{
+> > +	struct famfs_fs_info *fsi = sb->s_fs_info;
+> > +	struct dax_device    *dax_devp;
+> > +	u64 start_off = 0;
+> > +	struct bdev_handle   *handlep;
+> Definitely don't force alignment in local parameter definitions.
+> Always goes wrong and makes for unreadable mess in patches!
 
-But my guess is that you instead are thinking of memory-exhaustion
-emergencies where you would like RCU to burn more CPU than usual to
-reduce grace-period latency, there are definitely things that can be done.
+Okay, undone. Everywhere.
 
-I am sure that there are more questions that I should ask, but the one
-that comes immediately to mind is "Is this API call an occasional thing,
-or does RCU need to tolerate many CPUs hammering it frequently?"
-Either answer is fine, I just need to know.  ;-)
+> 
+> > +
+> > +	if (fsi->dax_devp) {
+> > +		pr_err("%s: already mounted\n", __func__);
+> Fine to fail but worth a error message? Not sure on convention on this but seems noisy
+> and maybe in userspace control which isn't good.
 
-							Thanx, Paul
+Changing to pr_debug. Would be good to have access to it in that way
+
+> > +		return -EALREADY;
+> > +	}
+> > +
+> > +	if (strstr(fc->source, "/dev/dax")) /* There is probably a better way to check this */
+> > +		return famfs_open_char_device(sb, fc);
+> > +
+> > +	if (!strstr(fc->source, "/dev/pmem")) { /* There is probably a better way to check this */
+> > +		pr_err("%s: primary backing dev (%s) is not pmem\n",
+> > +		       __func__, fc->source);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	handlep = bdev_open_by_path(fc->source, FAMFS_BLKDEV_MODE, fsi, &fs_holder_ops);
+> > +	if (IS_ERR(handlep->bdev)) {
+> > +		pr_err("%s: failed blkdev_get_by_path(%s)\n", __func__, fc->source);
+> > +		return PTR_ERR(handlep->bdev);
+> > +	}
+> > +
+> > +	dax_devp = fs_dax_get_by_bdev(handlep->bdev, &start_off,
+> > +				      fsi  /* holder */,
+> > +				      &famfs_blk_dax_holder_ops);
+> > +	if (IS_ERR(dax_devp)) {
+> > +		pr_err("%s: unable to get daxdev from handlep->bdev\n", __func__);
+> > +		bdev_release(handlep);
+> > +		return -ENODEV;
+> > +	}
+> > +	fsi->bdev_handle = handlep;
+> > +	fsi->dax_devp    = dax_devp;
+> > +
+> > +	pr_notice("%s: root device is block dax (%s)\n", __func__, fc->source);
+> 
+> pr_debug()  Kernel log is too noisy anyway! + I'd assume we can tell this succeeded
+> in lots of other ways.
+
+Done
+
+> 
+> 
+> > +	return 0;
+> > +}
+> > +
+> > +
+> >  
+> >  MODULE_LICENSE("GPL");
+
+Thanks,
+John
+> 
 
