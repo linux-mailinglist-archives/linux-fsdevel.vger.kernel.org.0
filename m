@@ -1,72 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-12866-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12867-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68C2786810A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 20:32:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6202D86810E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 20:33:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 287EEB27502
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 19:23:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F9A8B233A6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Feb 2024 19:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EAF130AFF;
-	Mon, 26 Feb 2024 19:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4C312FF61;
+	Mon, 26 Feb 2024 19:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SuUEgLZv"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IDawg6Dh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FD7130AE8
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 19:22:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D46B12F361
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 19:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708975359; cv=none; b=KrB8op6MC0SaYMU/c33Ef4oivpKc8T0c738OOOczkqsRb5M+F8gRSms1HjxCXVfqlhXSdlISc8kb7ICryu3KZ0gKPSFDeDwUpTs/agjPfOtkll+Q0ReLmIFrUEQ6ECxbGcTiPXqDGIg8htCVcZoo+znxnrpmPcsGJyYEztDL+3E=
+	t=1708975477; cv=none; b=YuT6OEnw8cl8duNsgbwZMe8e2pbqPF7Z0tdP5ZuBuMv7N+yTrKgcUSOE4gTHmgJNpVmHUJ8O56Flhldys6RHgXRUYC0Ad7BK6wAOiU3HvfNsIExZxt6uKLOoJQwqC9440O9ikf322vWBnLD5XLfmey+1t8GO3FbDIzhc48U6zjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708975359; c=relaxed/simple;
-	bh=MCDjtaRWEF67bT1IdABaJO8kKhnAH/vfBzzPU+hrTKk=;
+	s=arc-20240116; t=1708975477; c=relaxed/simple;
+	bh=THgm6rGLpzdRlqCmuQGYCh3G2e2uZuhgn1thuX7TM28=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J44JMWp3hYNNtI/oDFR/qd77mDKaJlZJNAK/9bjyilwZbSWP0pYMtAAvRR2LADpET1Tf3Lu8DkY9rjB5maShTnAViloS+thRNF+oF1jUqMeMP1G5L6yx8EMt7ymyGhenOsMDBM078UuO1gCLMRZL8zt/8JzbnaG8QGiAHjbLxSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SuUEgLZv; arc=none smtp.client-ip=209.85.214.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=jdQ+FeFUZcdBEhJe3GMxtPhpg8+TzIEgr1QrHFzpwWhOJ4ZctqV4WB9AE7V72FE23vo8PdL5whvjjS6UdXNLNbLfXh0V5vAR5sG3OJogqxOzlhenooC5lB71xT4YLsE6zsPjrUaFtpIpUftXIuxBgf0zOSuC3jJPSvTiryP/IZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IDawg6Dh; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1dc3b4b9b62so29734885ad.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 11:22:36 -0800 (PST)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1dc0e5b223eso28772695ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Feb 2024 11:24:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1708975355; x=1709580155; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1708975474; x=1709580274; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=82wd+SSaRsguFcZt+U0NWaZAuP5LxkM0aZkdE6Hnh5c=;
-        b=SuUEgLZvpDNR1cbi6DQiXEsCpA3fNrg6t9rUUEdWz86OkXxeuRvzI5j8UE0mf1x2uH
-         VEpTGnz2tml+LdYLDJduDpfCPM57iKHc7fOe8x2zrEin+x1dn5XqNRvMjvk9opwZSaGP
-         +hjZkxLOrFNMSFwDMashvLPNPlSkSyQeN7kYo=
+        bh=InMne0CIdEUH5H66AFxEIsfbiaQhDQQyahGGSNpAGCM=;
+        b=IDawg6DhM0XUTrV9XNtDtxehkJZRJwGpvO5ptOOXE9onzexPKtwIc1EQvwTOiYXXIu
+         S8+A3bnPp5HmicrtSCh+6mmZ7MeMB+WA/0WQvsTlVdIAruUkqYkfSTxVc4HJMrySEMFp
+         dCIo/mHxl8iSUS620NEsHqSX9wr6vpT6/mQcc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1708975355; x=1709580155;
+        d=1e100.net; s=20230601; t=1708975474; x=1709580274;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=82wd+SSaRsguFcZt+U0NWaZAuP5LxkM0aZkdE6Hnh5c=;
-        b=Bu6wlhYgVnuH0eW+OAo2G/xQ+KGFDyEmpLojTuxHVwMo+hivAze6s0BycdBMVKgkmU
-         PMk3e5Y8G/7hhPXeswipfJB4CvlAZGAXmI+Ayu0ttks4hmchvibF4ubsyqaeqjErLz+T
-         QyJXLPyn1Nbf9DqIhKXsD8m0orhCprQ3hXv87p0izLcHJ3NmUeueYk93fjqW2RBAZX3D
-         BZtrrIAQ0yabLuZR6Lxhmqmh8lrW983FOxVIspaTPfWfnt+9zbcMalopfi6N8pL9qfAu
-         f+WUdTgVK3+DXf3RjEUvnM0LWFoVTjIzfYHCiiGShbmHW93gVFAoEu+UzMIRA6hEgsqE
-         sd4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWVvyeChKZjgBJTBmbgyHDoZ5P9mxjXgQKmGlEIZ01Asy60LCTPYfGEV1QmaFOOVgXJHSVJV+YkdA7pxa30wbhu4BaE9NJazKiRGOTkPQ==
-X-Gm-Message-State: AOJu0YxGHtoEAm06cb839eWYPstfglLgEgQZryukauD+0i1iATPS+lAQ
-	fZl4nay1r5GJP4EFf/t/+8CyA2JH56BPLQS6a4swavcESk/11OJHQpsA6DfV2Q==
-X-Google-Smtp-Source: AGHT+IGm/d0iXIJdlYC6aDqTkJ0Dek+SnpLbHY0CpSp5qMDbjbKlyiINkhqdePy0H1Q5g6gTwUTYcA==
-X-Received: by 2002:a17:903:4303:b0:1db:9ff1:b59b with SMTP id jz3-20020a170903430300b001db9ff1b59bmr7578787plb.23.1708975355588;
-        Mon, 26 Feb 2024 11:22:35 -0800 (PST)
+        bh=InMne0CIdEUH5H66AFxEIsfbiaQhDQQyahGGSNpAGCM=;
+        b=gYGGLrE8gmWj1AHoUtb5u7V4EkhGjnQO968VMrgCcmV26Zjtrwzu5ejZYabrT271sF
+         hC9+NJy2ScWL3tJEij7zgdTo0x4S0aUDGvIZA5sIEeWsix9fK1lixEri9hkYeo6FoQkp
+         BJYSm0NEtkkKwuBwu/shGtvcxwOKjoxlbBUnZnCp10ESmOKsEatEDXpL2rVtK+mTL10S
+         3z4MaEmuoKvOTpatfOClNzSzF2YKdFyVS7rCTfbLwnNlFwDQeinRt6bymoxltKN3LEBo
+         IbZhBXft4XdioNJASVGEKnq7vwftHjipXe/3eEFNuYoV081PH619IQnyXI8+T/7jgBRE
+         Jqzw==
+X-Forwarded-Encrypted: i=1; AJvYcCXnpweRrIoGzEayzCTKDca9l7WKvmFxCHWdfA9wNKjKe4v05uSscHQsojCESlsMQEbF8+ZJphwo2YP/+25BaOCt2AOkN2+84Y8Dsejfhg==
+X-Gm-Message-State: AOJu0Yy1X7u7X47a7ifJkhofCI/JxUTg6oKOE7KPtwsskE4xI0gQe3py
+	4BF3ymdbRAvVIwxl5erkl0aPBGwVchKFdk3M7eqgbl1+Ot2aCsoYW5PTzvo1Zw==
+X-Google-Smtp-Source: AGHT+IGuKJW5UHzRannH3J/uDHtHCTUjnDGiC7Kw9nAZoWU+O3ZdeIO5FhWpusWjRzPLtJW8pjElAA==
+X-Received: by 2002:a17:902:e94c:b0:1dc:ada9:bceb with SMTP id b12-20020a170902e94c00b001dcada9bcebmr1895063pll.5.1708975473701;
+        Mon, 26 Feb 2024 11:24:33 -0800 (PST)
 Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id h2-20020a170902748200b001db8f7720e2sm38549pll.288.2024.02.26.11.22.35
+        by smtp.gmail.com with ESMTPSA id u13-20020a170903308d00b001dc2d1bd4d6sm51088plc.77.2024.02.26.11.24.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Feb 2024 11:22:35 -0800 (PST)
-Date: Mon, 26 Feb 2024 11:22:34 -0800
+        Mon, 26 Feb 2024 11:24:33 -0800 (PST)
+Date: Mon, 26 Feb 2024 11:24:32 -0800
 From: Kees Cook <keescook@chromium.org>
-To: Adrian Ratiu <adrian.ratiu@collabora.com>, jannhorn@google.com
+To: Adrian Ratiu <adrian.ratiu@collabora.com>, jannh@google.com
 Cc: Doug Anderson <dianders@chromium.org>,
 	linux-security-module@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -74,9 +74,10 @@ Cc: Doug Anderson <dianders@chromium.org>,
 	Mike Frysinger <vapier@chromium.org>,
 	linux-hardening@vger.kernel.org
 Subject: Re: [PATCH] proc: allow restricting /proc/pid/mem writes
-Message-ID: <202402261110.B8129C002@keescook>
+Message-ID: <202402261123.B2A1D0DE@keescook>
 References: <20240221210626.155534-1-adrian.ratiu@collabora.com>
  <CAD=FV=WR51_HJA0teHhBKvr90ufzZePVcxdA+iVZqXUK=cYJng@mail.gmail.com>
+ <202402261110.B8129C002@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,7 +87,9 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=WR51_HJA0teHhBKvr90ufzZePVcxdA+iVZqXUK=cYJng@mail.gmail.com>
+In-Reply-To: <202402261110.B8129C002@keescook>
+
+[sorry for the duplicate, fixing Jann's email address]
 
 On Mon, Feb 26, 2024 at 09:10:54AM -0800, Doug Anderson wrote:
 > Hi,
