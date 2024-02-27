@@ -1,367 +1,153 @@
-Return-Path: <linux-fsdevel+bounces-12956-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12957-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0356A869353
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 14:44:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF8B86962F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 15:09:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 809651F22BEA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 13:44:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45A9D1F2D139
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 14:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A930913B791;
-	Tue, 27 Feb 2024 13:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A0813DBBC;
+	Tue, 27 Feb 2024 14:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKlYDKM4"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="40opcWTL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0647813B2B4;
-	Tue, 27 Feb 2024 13:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015B713A26F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 14:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709041433; cv=none; b=CodKn2dtHVavKbT8JDpEff1jqVoR93h2KPz2MJz7+t/pNTYtevl1h7Da16d0iHud5jI7hZ+7hJLCiRhoOcYv050lQaI6IqoNlB2/LY5stT5JJH/fEg2ntKvmaClIwU/9r+iVPy5wbKqqyKI03hpuhK65D5qUlJyTqmykj4PV6qU=
+	t=1709042941; cv=none; b=XinIJXKqRW+qLU0GqMSfb3YUcOW4Ecmw9UdLjFL0Nx+Hn6EImD7Lsg16t4S75jjjs3ELuLEn5qM92IRHfre5qWt3MnCL3GtQwhB1BEiJS8ZTBLPy71oD0PyEnZ2XTfus7ZoDi0H/lZfbRrOVMPqqCM268ZXU4lLOYrKHdu3un2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709041433; c=relaxed/simple;
-	bh=n+sWKaLJY675WI200sbvcsNtX5pExAoPLJuSEeVd/mw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s7etgIwXRZL0HW6AERB5/pSywOEtjfOJjhPXemrN5e9XfBiOyl4Z7XJ4BpWLPaGaOmOSMGaJpOXWha2yLshlpwg53wAsPqwXY0jdM1XC1cRiGYJ1apaNVo+bbhBVCOShQCgZ8g1AZR4Wt3RfHd5F+Y+tzYCRxCk4jYV5+wyPEdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKlYDKM4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51564C433F1;
-	Tue, 27 Feb 2024 13:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709041432;
-	bh=n+sWKaLJY675WI200sbvcsNtX5pExAoPLJuSEeVd/mw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lKlYDKM4QyX2+1hqzVO+A7DqDkyNi4syNZdmOc8x+feEUEnoC4Gcoy7KA9tjMv8Um
-	 HqhFffK1OisZcZbKeUfM2t44ZGUTxC035WlriXYOK+g13iiKadadcauLFsAAol1Avo
-	 imfpK0U8/UFbpnYFMwGnuvxmJMS4U6vEQcsETm3UI8SbDk9l76fBytmDsAVIy48qPA
-	 uB/XzsDm3F+B8sLp/DhxDswItVslliu614fifi7M+Inlv/JtBzd+/Ns9yQdqdcGuay
-	 Ue8XtGFoytVwlI69wHj4/+EXF+ZjDDfn/3NZLv+1Gbw9jmUyfopViBnZi3FwDeh0bq
-	 3/qIh6zQaDJSA==
-From: Christian Brauner <brauner@kernel.org>
-To: John Groves <John@groves.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	John Groves <jgroves@micron.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
+	s=arc-20240116; t=1709042941; c=relaxed/simple;
+	bh=TreBfZry1ty8WfWUBLXFWH22SGT7WU2oPgKGNMFBgBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tl1CuRsfIC0Zz7Ewhv78HqMjl30Yc8WUqlBcDy7deRRfuRfmmP9xMbmufBNnTZ5ujgowjzYIkJN5YrBlTydIsq5oOgYnaXCHx/up5bYvcXcZHG9fRfRKTCKjVG3/xESul43N92snF2jQNDRHiQ+7kUsF59MZihxIhnqHGA/cMyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=40opcWTL; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Mfwl7kv+G9+gYG+E2kVWVOA4HLmODjdhMkg6/H53NvM=; b=40opcWTLbsEkDk0LDDQHajs/g6
+	PmtHOAyWLGCVNOUQWt13SZywI268U2rGO6OGtGNPVQ0K7fPd0q6rgqOcWkIeJPqRaNokkkAqC00L6
+	ItRaoBmUz/2A41L9ybu93OdKClrhyKLgqipUpGTa5jEWLLn6zou44/kSAcTyNmpet4qw15Jp4gN0K
+	jMYXi5T8I+pPkQyQPjZLAzZrJSn51Nsm3NJ6wF8SqEETOBe8fvY8Nq9VLTqWe4wOeaTW8bMHZqoTb
+	dYzki+XKreOaXdTZCa4qfrxDn4YBJTZUObImB4LoYaDNWZAWb/vv1aUvXjmnqJwXuRN9Iz7GH6B5T
+	kCPxZi3w==;
+Received: from mcgrof by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1rey8f-00000005WSH-3lEd;
+	Tue, 27 Feb 2024 14:08:57 +0000
+Date: Tue, 27 Feb 2024 06:08:57 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>,
+	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>,
+	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
+	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
 	Matthew Wilcox <willy@infradead.org>,
-	linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	john@jagalactic.com,
-	Dave Chinner <david@fromorbit.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	dave.hansen@linux.intel.com,
-	gregory.price@memverge.com
-Subject: Re: [RFC PATCH 11/20] famfs: Add fs_context_operations
-Date: Tue, 27 Feb 2024 14:41:44 +0100
-Message-ID: <20240227-mammut-tastatur-d791ca2f556b@brauner>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To:  <a645646f071e7baa30ef37ea46ea1330ac2eb63f.1708709155.git.john@groves.net>
-References: 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+Message-ID: <Zd3s-SPx_EnDXJzs@bombadil.infradead.org>
+References: <Zdkxfspq3urnrM6I@bombadil.infradead.org>
+ <xhymmlbragegxvgykhaddrkkhc7qn7soapca22ogbjlegjri35@ffqmquunkvxw>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8704; i=brauner@kernel.org; h=from:subject:message-id; bh=n+sWKaLJY675WI200sbvcsNtX5pExAoPLJuSEeVd/mw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTefc4nJW+35q+SSdiLc5dyC1Vkks02uC76P0HMuthws xY/426njlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk0rGH4K+Fx+NWclvU5y6aW 1oi/4uH6Mdn24r0n6/4UMPdKf3774Cgjw7o5q/4UiFRdVpjxdNZPnxMbLl4Xijkc+PKoWt+l208 T2LkB
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xhymmlbragegxvgykhaddrkkhc7qn7soapca22ogbjlegjri35@ffqmquunkvxw>
+Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-On Fri, Feb 23, 2024 at 11:41:55AM -0600, John Groves wrote:
-> This commit introduces the famfs fs_context_operations and
-> famfs_get_inode() which is used by the context operations.
+On Tue, Feb 27, 2024 at 05:07:30AM -0500, Kent Overstreet wrote:
+> On Fri, Feb 23, 2024 at 03:59:58PM -0800, Luis Chamberlain wrote:
+> > Part of the testing we have done with LBS was to do some performance
+> > tests on XFS to ensure things are not regressing. Building linux is a
+> > fine decent test and we did some random cloud instance tests on that and
+> > presented that at Plumbers, but it doesn't really cut it if we want to
+> > push things to the limit though. What are the limits to buffered IO
+> > and how do we test that? Who keeps track of it?
+> > 
+> > The obvious recurring tension is that for really high performance folks
+> > just recommend to use birect IO. But if you are stress testing changes
+> > to a filesystem and want to push buffered IO to its limits it makes
+> > sense to stick to buffered IO, otherwise how else do we test it?
+> > 
+> > It is good to know limits to buffered IO too because some workloads
+> > cannot use direct IO.  For instance PostgreSQL doesn't have direct IO
+> > support and even as late as the end of last year we learned that adding
+> > direct IO to PostgreSQL would be difficult.  Chris Mason has noted also
+> > that direct IO can also force writes during reads (?)... Anyway, testing
+> > the limits of buffered IO limits to ensure you are not creating
+> > regressions when doing some page cache surgery seems like it might be
+> > useful and a sensible thing to do .... The good news is we have not found
+> > regressions with LBS but all the testing seems to beg the question, of what
+> > are the limits of buffered IO anyway, and how does it scale? Do we know, do
+> > we care? Do we keep track of it? How does it compare to direct IO for some
+> > workloads? How big is the delta? How do we best test that? How do we
+> > automate all that? Do we want to automatically test this to avoid regressions?
+> > 
+> > The obvious issues with some workloads for buffered IO is having a
+> > possible penality if you are not really re-using folios added to the
+> > page cache. Jens Axboe reported a while ago issues with workloads with
+> > random reads over a data set 10x the size of RAM and also proposed
+> > RWF_UNCACHED as a way to help [0]. As Chinner put it, this seemed more
+> > like direct IO with kernel pages and a memcpy(), and it requires
+> > further serialization to be implemented that we already do for
+> > direct IO for writes. There at least seems to be agreement that if we're
+> > going to provide an enhancement or alternative that we should strive to not
+> > make the same mistakes we've done with direct IO. The rationale for some
+> > workloads to use buffered IO is it helps reduce some tail latencies, so
+> > that's something to live up to.
+> > 
+> > On that same thread Christoph also mentioned the possibility of a direct
+> > IO variant which can leverage the cache. Is that something we want to
+> > move forward with?
+> > 
+> > Chris Mason also listed a few other desirables if we do:
+> > 
+> > - Allowing concurrent writes (xfs DIO does this now)
 > 
-> Signed-off-by: John Groves <john@groves.net>
-> ---
->  fs/famfs/famfs_inode.c | 178 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 178 insertions(+)
+> AFAIK every filesystem allows concurrent direct writes, not just xfs,
+> it's _buffered_ writes that we care about here.
+
+The context above was a possible direct IO variant, that's why direct IO
+was mentioned and that XFS at least had support.
+
+> I just pushed a patch to my CI for buffered writes without taking the
+> inode lock - for bcachefs. It'll be straightforward, but a decent amount
+> of work, to lift this to the VFS, if people are interested in
+> collaborating.
 > 
-> diff --git a/fs/famfs/famfs_inode.c b/fs/famfs/famfs_inode.c
-> index 82c861998093..f98f82962d7b 100644
-> --- a/fs/famfs/famfs_inode.c
-> +++ b/fs/famfs/famfs_inode.c
-> @@ -41,6 +41,50 @@ static const struct super_operations famfs_ops;
->  static const struct inode_operations famfs_file_inode_operations;
->  static const struct inode_operations famfs_dir_inode_operations;
->  
-> +static struct inode *famfs_get_inode(
-> +	struct super_block *sb,
-> +	const struct inode *dir,
-> +	umode_t             mode,
-> +	dev_t               dev)
-> +{
-> +	struct inode *inode = new_inode(sb);
-> +
-> +	if (inode) {
-> +		struct timespec64       tv;
-> +
-> +		inode->i_ino = get_next_ino();
-> +		inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
-> +		inode->i_mapping->a_ops = &ram_aops;
-> +		mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
-> +		mapping_set_unevictable(inode->i_mapping);
-> +		tv = inode_set_ctime_current(inode);
-> +		inode_set_mtime_to_ts(inode, tv);
-> +		inode_set_atime_to_ts(inode, tv);
-> +
-> +		switch (mode & S_IFMT) {
-> +		default:
-> +			init_special_inode(inode, mode, dev);
-> +			break;
-> +		case S_IFREG:
-> +			inode->i_op = &famfs_file_inode_operations;
-> +			inode->i_fop = &famfs_file_operations;
-> +			break;
-> +		case S_IFDIR:
-> +			inode->i_op = &famfs_dir_inode_operations;
-> +			inode->i_fop = &simple_dir_operations;
-> +
-> +			/* Directory inodes start off with i_nlink == 2 (for "." entry) */
-> +			inc_nlink(inode);
-> +			break;
-> +		case S_IFLNK:
-> +			inode->i_op = &page_symlink_inode_operations;
-> +			inode_nohighmem(inode);
-> +			break;
-> +		}
-> +	}
-> +	return inode;
-> +}
-> +
->  /**********************************************************************************
->   * famfs super_operations
->   *
-> @@ -150,6 +194,140 @@ famfs_open_device(
->  	return 0;
->  }
->  
-> +/*****************************************************************************************
-> + * fs_context_operations
-> + */
-> +static int
-> +famfs_fill_super(
-> +	struct super_block *sb,
-> +	struct fs_context  *fc)
-> +{
-> +	struct famfs_fs_info *fsi = sb->s_fs_info;
-> +	struct inode *inode;
-> +	int rc = 0;
-> +
-> +	sb->s_maxbytes		= MAX_LFS_FILESIZE;
-> +	sb->s_blocksize		= PAGE_SIZE;
-> +	sb->s_blocksize_bits	= PAGE_SHIFT;
-> +	sb->s_magic		= FAMFS_MAGIC;
-> +	sb->s_op		= &famfs_ops;
-> +	sb->s_time_gran		= 1;
-> +
-> +	rc = famfs_open_device(sb, fc);
-> +	if (rc)
-> +		goto out;
-> +
-> +	inode = famfs_get_inode(sb, NULL, S_IFDIR | fsi->mount_opts.mode, 0);
-> +	sb->s_root = d_make_root(inode);
-> +	if (!sb->s_root)
-> +		rc = -ENOMEM;
-> +
-> +out:
-> +	return rc;
-> +}
-> +
-> +enum famfs_param {
-> +	Opt_mode,
-> +	Opt_dax,
-> +};
-> +
-> +const struct fs_parameter_spec famfs_fs_parameters[] = {
-> +	fsparam_u32oct("mode",	  Opt_mode),
-> +	fsparam_string("dax",     Opt_dax),
-> +	{}
-> +};
-> +
-> +static int famfs_parse_param(
-> +	struct fs_context   *fc,
-> +	struct fs_parameter *param)
-> +{
-> +	struct famfs_fs_info *fsi = fc->s_fs_info;
-> +	struct fs_parse_result result;
-> +	int opt;
-> +
-> +	opt = fs_parse(fc, famfs_fs_parameters, param, &result);
-> +	if (opt == -ENOPARAM) {
-> +		opt = vfs_parse_fs_param_source(fc, param);
-> +		if (opt != -ENOPARAM)
-> +			return opt;
+> https://evilpiepirate.org/git/bcachefs.git/log/?h=bcachefs-buffered-write-locking
 
-I'm not sure I understand this. But in any case add, you should add
-Opt_source to enum famfs_param and then add
+Neat, this is sort of what I wanted to get a sense for, if this sort of
+topic was worth discussing at LSFMM.
 
-        fsparam_string("source",        Opt_source),
+> The approach is: for non extending, non appending writes, see if we can
+> pin the entire range of the pagecache we're writing to; fall back to
+> taking the inode lock if we can't.
 
-to famfs_fs_parameters. Then you can add:
+Perhaps a silly thought... but initial reaction is, would it make sense
+for the page cache to make this easier for us, so we have this be
+easier? It is not clear to me but my first reaction to seeing some of
+these deltas was what if we had something like the space split up, as we
+do with XFS agcounts, and so each group deals with its own ranges. I
+considered this before profiling, and as with Matthew I figured it might
+be lock contenton.  It very likely is not for my test case, and as Linus
+and Dave has clarified we are both penalized and also have a
+singlthreaded writeback.  If we had a group split we'd have locks per
+group and perhaps a writeback a dedicated thread per group.
 
-famfs_parse_source(fc, param);
-
-You might want to consider validating your devices right away. So think
-about:
-
-fd_fs = fsopen("famfs", ...);
-ret = fsconfig(fd_fs, FSCONFIG_SET_STRING, "source", "/definitely/not/valid/device", ...) // succeeds
-ret = fsconfig(fd_fs, FSCONFIG_SET_FLAG, "OPTION_1", ...) // succeeds
-ret = fsconfig(fd_fs, FSCONFIG_SET_FLAG, "OPTION_2", ...) // succeeds 
-ret = fsconfig(fd_fs, FSCONFIG_SET_FLAG, "OPTION_3", ...) // succeeds 
-ret = fsconfig(fd_fs, FSCONFIG_SET_FLAG, "OPTION_N", ...) // succeeds 
-ret = fsconfig(fd_fs, FSCONFIG_CMD_CREATE, ...) // superblock creation failed
-
-So what failed exactly? Yes, you can log into the fscontext and dmesg
-that it's @source that's the issue but it's annoying for userspace to
-setup a whole mount context only to figure out that some option was
-wrong at the end of it.
-
-So validating
-
-famfs_parse_source(...)
-{
-	if (fc->source)
-		return invalfc(fc, "Uhm, we already have a source....
-	
-       lookup_bdev(fc->source, &dev)
-       // validate it's a device you're actually happy to use
-
-       fc->source = param->string;
-       param->string = NULL;
-}
-
-Your ->get_tree implementation that actually creates/finds the
-superblock will validate fc->source again and yes, there's a race here
-in so far as the path that fc->source points to could change in between
-validating this in famfs_parse_source() and ->get_tree() superblock
-creation. This is fixable even right now but then you couldn't reuse
-common infrastrucute so I would just accept that race for now and we
-should provide a nicer mechanism on the vfs layer.
-
-> +
-> +		return 0;
-> +	}
-> +	if (opt < 0)
-> +		return opt;
-> +
-> +	switch (opt) {
-> +	case Opt_mode:
-> +		fsi->mount_opts.mode = result.uint_32 & S_IALLUGO;
-> +		break;
-> +	case Opt_dax:
-> +		if (strcmp(param->string, "always"))
-> +			pr_notice("%s: invalid dax mode %s\n",
-> +				  __func__, param->string);
-> +		break;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static DEFINE_MUTEX(famfs_context_mutex);
-> +static LIST_HEAD(famfs_context_list);
-> +
-> +static int famfs_get_tree(struct fs_context *fc)
-> +{
-> +	struct famfs_fs_info *fsi_entry;
-> +	struct famfs_fs_info *fsi = fc->s_fs_info;
-> +
-> +	fsi->rootdev = kstrdup(fc->source, GFP_KERNEL);
-> +	if (!fsi->rootdev)
-> +		return -ENOMEM;
-> +
-> +	/* Fail if famfs is already mounted from the same device */
-> +	mutex_lock(&famfs_context_mutex);
-> +	list_for_each_entry(fsi_entry, &famfs_context_list, fsi_list) {
-> +		if (strcmp(fsi_entry->rootdev, fc->source) == 0) {
-> +			mutex_unlock(&famfs_context_mutex);
-> +			pr_err("%s: already mounted from rootdev %s\n", __func__, fc->source);
-> +			return -EALREADY;
-
-What errno is EALREADY? Isn't that socket stuff. In any case, it seems
-you want EBUSY?
-
-But bigger picture I'm lost. And why do you keep that list based on
-strings? What if I do:
-
-mount -t famfs /dev/pmem1234 /mnt # succeeds
-
-mount -t famfs /dev/pmem1234 /opt # ah, fsck me, this fails.. But wait a minute....
-
-mount --bind /dev/pmem1234 /evil-masterplan
-
-mount -t famfs /evil-masterplan /opt # succeeds. YAY
-
-I believe that would trivially defeat your check.
-
-> +		}
-> +	}
-> +
-> +	list_add(&fsi->fsi_list, &famfs_context_list);
-> +	mutex_unlock(&famfs_context_mutex);
-> +
-> +	return get_tree_nodev(fc, famfs_fill_super);
-
-So why isn't this using get_tree_bdev()? Note that a while ago I
-added FSCONFIG_CMD_CREAT_EXCL which prevents silent superblock reuse. To
-implement that I added fs_context->exclusive. If you unconditionally set
-fc->exclusive = 1 in your famfs_init_fs_context() and use
-get_tree_bdev() it will give you EBUSY if fc->source is already in use -
-including other famfs instances.
-
-I also fail to yet understand how that function which actually opens the block
-device and gets the dax device figures into this. It's a bit hard to follow
-what's going on since you add all those unused functions and types so there's
-never a wider context to see that stuff in.
-
-> +
-> +}
-> +
-> +static void famfs_free_fc(struct fs_context *fc)
-> +{
-> +	struct famfs_fs_info *fsi = fc->s_fs_info;
-> +
-> +	if (fsi && fsi->rootdev)
-> +		kfree(fsi->rootdev);
-> +
-> +	kfree(fsi);
-> +}
-> +
-> +static const struct fs_context_operations famfs_context_ops = {
-> +	.free		= famfs_free_fc,
-> +	.parse_param	= famfs_parse_param,
-> +	.get_tree	= famfs_get_tree,
-> +};
-> +
-> +static int famfs_init_fs_context(struct fs_context *fc)
-> +{
-> +	struct famfs_fs_info *fsi;
-> +
-> +	fsi = kzalloc(sizeof(*fsi), GFP_KERNEL);
-> +	if (!fsi)
-> +		return -ENOMEM;
-> +
-> +	fsi->mount_opts.mode = FAMFS_DEFAULT_MODE;
-> +	fc->s_fs_info        = fsi;
-> +	fc->ops              = &famfs_context_ops;
-> +	return 0;
-> +}
->  
->  
->  MODULE_LICENSE("GPL");
-> -- 
-> 2.43.0
-> 
+  Luis
 
