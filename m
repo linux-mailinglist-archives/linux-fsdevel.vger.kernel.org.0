@@ -1,406 +1,203 @@
-Return-Path: <linux-fsdevel+bounces-12929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12930-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68D9A868C16
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 10:24:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F03868C4A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 10:30:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9A251F21AD2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 09:24:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6EBAB28735
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 09:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75711136658;
-	Tue, 27 Feb 2024 09:23:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95819136997;
+	Tue, 27 Feb 2024 09:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jYIp6su9"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0+Xj01Kk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a5suGYZ0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0+Xj01Kk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="a5suGYZ0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E169136648;
-	Tue, 27 Feb 2024 09:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC49A13666C;
+	Tue, 27 Feb 2024 09:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709025833; cv=none; b=Zb7Uc7uOV2FOhCZSEm4PEhriU8ofv7t8+lTA0cPatY1lpcsBVejspN9nA/EGe5yTfk6ax3vhyj+GPWAZ3480kzU+nyyfhUJzwQnm76pFpkNcABlEnyN4g3ijA3z11Xp0hgyCLwpZ3Ob5qZ2FMTZ5J6Ss9HQPPQXdyowkCrEx/Ug=
+	t=1709026226; cv=none; b=drXh6wcpussbbufYADZA/iRclTTL582kwyj54XwIrb+HGF1X7co2qACs1Ol/PLYU4O33F6KhRHrMV/EjAKSx93JUiNlBjGINV2uEl21JUvlWWDORW9+PZs6GpBTXOepLvSik6Dprz7mJ9tWKBEQn6aGkvmjlSSvNUWC6q5/bUeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709025833; c=relaxed/simple;
-	bh=5XZVLo/2hJlwkQK3vexJ0RKlVvUzSfwyIlaRuHNXpMs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z1Efe+AD6v1g4gt6VIxCUh1mNh3uEjwq2A45k3IAubGJlto8NKaPbcLsLw7pFF3WgwnTb3Or4JjHySGeUQJpt/JQnJGFx6boCSN1Mw8LVvzJcMjDQBiah8ozbgu6O7jUlrtmfXSRk61sFl2dpUuMEr4pnsMGw/dKatYJ6LRd2Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jYIp6su9; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-607cd210962so36475987b3.2;
-        Tue, 27 Feb 2024 01:23:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1709025831; x=1709630631; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OUmNgfXMh4BT14Bhora2ejr31JWyme77iZVtpTzl7Vw=;
-        b=jYIp6su9YIJ2UGGnbgwiiK7NEvh1fEfZ0sqkWcaIbKy4kJINbmuqeZ0pdzPLujtIm3
-         4rBi1/j6E0yEsJbsaf3dBbmJg+7BIypPbHG9sgMO5AxYEIrPpMJBihLljnKfD6YBAwmG
-         rzufArLu48+6C390gp8FQ5C4ZRIblGmkB7oxIya/F77IRTqK6u7ABH4h/5sA34jo2u4U
-         weEbtZD6Q+3sWmStQeUfVru2tsh9JNjDDErvGngj50G5oXHCu4L6Ap5sNOc/vwzAY8u2
-         Jsr/WzaxLb3zISKgFApu8Q1P9wn/jn1ZkB+8e4DZf2Ub4VULSeOoTHO32lDk1iWaaCZx
-         /d8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709025831; x=1709630631;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OUmNgfXMh4BT14Bhora2ejr31JWyme77iZVtpTzl7Vw=;
-        b=h/hlHaTN0911Qjk6jG0Vz7ytUPEgKju2DWyQt9ATjS5D4XygqapueCD6epx7jEIrgJ
-         NHjeWwEgT60VkoXO0AUxwGOuS5zySkswL0NLuEB2y050Or5Tw/Eejl4Vvw1MbmFiuqBZ
-         5254bDs2OVvzuLCA8bKSwIvUj3xJMwKlkNf/SaS0GGuLFrkMslPp+Jf81qFGOLSCy/tl
-         h5GebZ4RJ3fXUC17pO6KaUvxnSVcyj9UOhgwoWstpswcpVR1cmnoYjunLcs5uTb6R8kX
-         VS9P1VQAtPteqI158oWE0LCOMfD/pZ0iah9LqY/rSVY+aySIUjTkt2hrYf16gvQJHfkK
-         vINw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrs9F0SBEKYB9aZU7Sej5/eKsENpqHosCYHfoSyoAD63tqqTENKfhyP5GkgMvLGuHE4+dpxYll9RYIZJIMctyW+rKxKaVqnnZK
-X-Gm-Message-State: AOJu0YyaYH1494xWKJPpow175NtAGL46vbdqCIHW4GbVqM9wQIUEMs1S
-	Yuti0aDBGVvDPexpoU28HcK3umH0ffyKA2RCYNU+IFqwSCFT0wFjGA0aA3aKnW59yFc8OlDv6dN
-	0BflhRpsqWIK17g0Re/R69YyZZ+EFubMWmOo=
-X-Google-Smtp-Source: AGHT+IHIMbmNWBMf5SlCGU3bXVWaa3gvGwBJ1J5AC6XHlTjSkTdqmDKlJeMbQ5NWOflqX5/trEcFOzSNlfN27BFCKFA=
-X-Received: by 2002:a81:ef09:0:b0:604:a9c2:2a17 with SMTP id
- o9-20020a81ef09000000b00604a9c22a17mr1596483ywm.45.1709025830940; Tue, 27 Feb
- 2024 01:23:50 -0800 (PST)
+	s=arc-20240116; t=1709026226; c=relaxed/simple;
+	bh=V8bBaiplfc/wVHe6wlfGo3JD6VOdJZwSExMn/u7zeBA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lJ+U0v/ydk0CPSIrlTHKn0xrLx7LZnNN83Tut8NEJ8QN5Bl4anATE3EzLdjGiN7Pu23TDDstUJZG+lhtCqEi6liVtRMSFHX40Tn+JMn8IuzzN/B+mZ4KCUck6NPvvhBJo/owIS7vvMEssNEgCSmARSOsJ8fuVgWKXoBhU0JClb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0+Xj01Kk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a5suGYZ0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0+Xj01Kk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=a5suGYZ0; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0888121F39;
+	Tue, 27 Feb 2024 09:30:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1709026222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2tfyNx8Ewzx9RhyM+EFV+xT647ehMQIa9lFPRNlyECQ=;
+	b=0+Xj01KkKvhGJdcjtMAWzvJi7m2CYOxjq5YrvrR72FrAbBnNksgWTG3mO/sjQJxliG0g07
+	y5XsdIYk5XIw4V9w/uFGbV+ho5g2Z79tZZHX9Z5MisAFZaNbg0ho00u47ApDjRWrG0I7x9
+	LSiAQEtP8rShQ5r3WMB7RTCprO6zAnM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1709026222;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2tfyNx8Ewzx9RhyM+EFV+xT647ehMQIa9lFPRNlyECQ=;
+	b=a5suGYZ0cgpf5Gj/Tn3aV8oNvMw4mA2P70HXJT8NNRif7MsKFvRRBqOmJe+FSffjbyvyAG
+	BTUMPoP/9cEiW9CQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1709026222; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2tfyNx8Ewzx9RhyM+EFV+xT647ehMQIa9lFPRNlyECQ=;
+	b=0+Xj01KkKvhGJdcjtMAWzvJi7m2CYOxjq5YrvrR72FrAbBnNksgWTG3mO/sjQJxliG0g07
+	y5XsdIYk5XIw4V9w/uFGbV+ho5g2Z79tZZHX9Z5MisAFZaNbg0ho00u47ApDjRWrG0I7x9
+	LSiAQEtP8rShQ5r3WMB7RTCprO6zAnM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1709026222;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2tfyNx8Ewzx9RhyM+EFV+xT647ehMQIa9lFPRNlyECQ=;
+	b=a5suGYZ0cgpf5Gj/Tn3aV8oNvMw4mA2P70HXJT8NNRif7MsKFvRRBqOmJe+FSffjbyvyAG
+	BTUMPoP/9cEiW9CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B04E513A58;
+	Tue, 27 Feb 2024 09:30:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([10.150.64.162])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QuGyKq2r3WW8cgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 27 Feb 2024 09:30:21 +0000
+Message-ID: <72cc5f0b-90cc-48a8-a026-412fa1186acd@suse.cz>
+Date: Tue, 27 Feb 2024 10:30:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <170900011604.938268.9876750689883987904.stgit@frogsfrogsfrogs>
-In-Reply-To: <170900011604.938268.9876750689883987904.stgit@frogsfrogsfrogs>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 27 Feb 2024 11:23:39 +0200
-Message-ID: <CAOQ4uxh-gKGuwrvuQnWKcKLKQe2j9s__Yx2T-gCrDJMUbm5ZYA@mail.gmail.com>
-Subject: Re: [PATCHSET v29.4 03/13] xfs: atomic file content exchanges
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, hch@lst.de, 
-	Jeff Layton <jlayton@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 15/36] lib: introduce support for page allocation
+ tagging
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, mhocko@suse.com,
+ hannes@cmpxchg.org, roman.gushchin@linux.dev, mgorman@suse.de,
+ dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com,
+ penguin-kernel@i-love.sakura.ne.jp, corbet@lwn.net, void@manifault.com,
+ peterz@infradead.org, juri.lelli@redhat.com, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, x86@kernel.org, peterx@redhat.com,
+ david@redhat.com, axboe@kernel.dk, mcgrof@kernel.org, masahiroy@kernel.org,
+ nathan@kernel.org, dennis@kernel.org, tj@kernel.org, muchun.song@linux.dev,
+ rppt@kernel.org, paulmck@kernel.org, pasha.tatashin@soleen.com,
+ yosryahmed@google.com, yuzhao@google.com, dhowells@redhat.com,
+ hughd@google.com, andreyknvl@gmail.com, keescook@chromium.org,
+ ndesaulniers@google.com, vvvvvv@google.com, gregkh@linuxfoundation.org,
+ ebiggers@google.com, ytcoode@gmail.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ bristot@redhat.com, vschneid@redhat.com, cl@linux.com, penberg@kernel.org,
+ iamjoonsoo.kim@lge.com, 42.hyeyoo@gmail.com, glider@google.com,
+ elver@google.com, dvyukov@google.com, shakeelb@google.com,
+ songmuchun@bytedance.com, jbaron@akamai.com, rientjes@google.com,
+ minchan@google.com, kaleshsingh@google.com, kernel-team@android.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ iommu@lists.linux.dev, linux-arch@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
+ cgroups@vger.kernel.org
+References: <20240221194052.927623-1-surenb@google.com>
+ <20240221194052.927623-16-surenb@google.com>
+ <d6141a99-3409-447b-88ac-16c24b0a892e@suse.cz>
+ <CAJuCfpGZ6W-vjby=hWd5F3BOCLjdeda2iQx_Tz-HcyjCAsmKVg@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <CAJuCfpGZ6W-vjby=hWd5F3BOCLjdeda2iQx_Tz-HcyjCAsmKVg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spamd-Result: default: False [1.39 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 XM_UA_NO_VERSION(0.01)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 BAYES_HAM(-0.02)[52.97%];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 TO_MATCH_ENVRCPT_SOME(0.00)[];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 RCPT_COUNT_GT_50(0.00)[74];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 FREEMAIL_CC(0.00)[linux-foundation.org,linux.dev,suse.com,cmpxchg.org,suse.de,stgolabs.net,infradead.org,oracle.com,i-love.sakura.ne.jp,lwn.net,manifault.com,redhat.com,arm.com,kernel.org,arndb.de,linutronix.de,linux.intel.com,kernel.dk,soleen.com,google.com,gmail.com,chromium.org,linuxfoundation.org,linaro.org,goodmis.org,linux.com,lge.com,bytedance.com,akamai.com,android.com,vger.kernel.org,lists.linux.dev,kvack.org,googlegroups.com];
+	 RCVD_TLS_ALL(0.00)[];
+	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Level: *
+X-Spam-Score: 1.39
+X-Spam-Flag: NO
 
-On Tue, Feb 27, 2024 at 4:18=E2=80=AFAM Darrick J. Wong <djwong@kernel.org>=
- wrote:
->
-> Hi all,
->
-> This series creates a new FIEXCHANGE_RANGE system call to exchange
-> ranges of bytes between two files atomically.  This new functionality
-> enables data storage programs to stage and commit file updates such that
-> reader programs will see either the old contents or the new contents in
-> their entirety, with no chance of torn writes.  A successful call
-> completion guarantees that the new contents will be seen even if the
-> system fails.
->
-> The ability to exchange file fork mappings between files in this manner
-> is critical to supporting online filesystem repair, which is built upon
-> the strategy of constructing a clean copy of a damaged structure and
-> committing the new structure into the metadata file atomically.
->
-> User programs will be able to update files atomically by opening an
-> O_TMPFILE, reflinking the source file to it, making whatever updates
-> they want to make, and exchange the relevant ranges of the temp file
-> with the original file.  If the updates are aligned with the file block
-> size, a new (since v2) flag provides for exchanging only the written
-> areas.  Callers can arrange for the update to be rejected if the
-> original file has been changed.
->
-> The intent behind this new userspace functionality is to enable atomic
-> rewrites of arbitrary parts of individual files.  For years, application
-> programmers wanting to ensure the atomicity of a file update had to
-> write the changes to a new file in the same directory, fsync the new
-> file, rename the new file on top of the old filename, and then fsync the
-> directory.  People get it wrong all the time, and $fs hacks abound.
-> Here are the proposed manual pages:
->
-> IOCTL-XFS-EXCHANGE-RANGE(2System Calls ManuIOCTL-XFS-EXCHANGE-RANGE(2)
->
-> NAME
->        ioctl_xfs_exchange_range  -  exchange  the contents of parts of
->        two files
->
-> SYNOPSIS
->        #include <sys/ioctl.h>
->        #include <xfs/xfs_fs_staging.h>
->
->        int   ioctl(int   file2_fd,   XFS_IOC_EXCHANGE_RANGE,    struct
->        xfs_exch_range *arg);
->
-> DESCRIPTION
->        Given  a  range  of bytes in a first file file1_fd and a second
->        range of bytes in a second file  file2_fd,  this  ioctl(2)  ex=E2=
-=80=90
->        changes the contents of the two ranges.
->
->        Exchanges  are  atomic  with  regards to concurrent file opera=E2=
-=80=90
->        tions, so no userspace-level locks need to be taken  to  obtain
->        consistent  results.  Implementations must guarantee that read=E2=
-=80=90
->        ers see either the old contents or the new  contents  in  their
->        entirety, even if the system fails.
->
->        The  system  call  parameters are conveyed in structures of the
->        following form:
->
->            struct xfs_exch_range {
->                __s64    file1_fd;
->                __s64    file1_offset;
->                __s64    file2_offset;
->                __s64    length;
->                __u64    flags;
->
->                __u64    pad;
->            };
->
->        The field pad must be zero.
->
->        The fields file1_fd, file1_offset, and length define the  first
->        range of bytes to be exchanged.
->
->        The fields file2_fd, file2_offset, and length define the second
->        range of bytes to be exchanged.
->
->        Both files must be from the same filesystem mount.  If the  two
->        file  descriptors represent the same file, the byte ranges must
->        not overlap.  Most  disk-based  filesystems  require  that  the
->        starts  of  both ranges must be aligned to the file block size.
->        If this is the case, the ends of the ranges  must  also  be  so
->        aligned unless the XFS_EXCHRANGE_TO_EOF flag is set.
->
->        The field flags control the behavior of the exchange operation.
->
->            XFS_EXCHRANGE_TO_EOF
->                   Ignore  the length parameter.  All bytes in file1_fd
->                   from file1_offset to EOF are moved to file2_fd,  and
->                   file2's  size is set to (file2_offset+(file1_length-
->                   file1_offset)).  Meanwhile, all bytes in file2  from
->                   file2_offset  to  EOF are moved to file1 and file1's
->                   size   is   set   to    (file1_offset+(file2_length-
->                   file2_offset)).
->
->            XFS_EXCHRANGE_DSYNC
->                   Ensure  that  all modified in-core data in both file
->                   ranges and all metadata updates  pertaining  to  the
->                   exchange operation are flushed to persistent storage
->                   before the call returns.  Opening  either  file  de=E2=
-=80=90
->                   scriptor  with  O_SYNC or O_DSYNC will have the same
->                   effect.
->
->            XFS_EXCHRANGE_FILE1_WRITTEN
->                   Only exchange sub-ranges of file1_fd that are  known
->                   to  contain  data  written  by application software.
->                   Each sub-range may be  expanded  (both  upwards  and
->                   downwards)  to  align with the file allocation unit.
->                   For files on the data device, this is one filesystem
->                   block.   For  files  on the realtime device, this is
->                   the realtime extent size.  This facility can be used
->                   to  implement  fast  atomic scatter-gather writes of
->                   any complexity for software-defined storage  targets
->                   if  all  writes  are  aligned to the file allocation
->                   unit.
->
->            XFS_EXCHRANGE_DRY_RUN
->                   Check the parameters and the feasibility of the  op=E2=
-=80=90
->                   eration, but do not change anything.
->
-> RETURN VALUE
->        On  error, -1 is returned, and errno is set to indicate the er=E2=
-=80=90
->        ror.
->
-> ERRORS
->        Error codes can be one of, but are not limited to, the  follow=E2=
-=80=90
->        ing:
->
->        EBADF  file1_fd  is not open for reading and writing or is open
->               for append-only writes; or  file2_fd  is  not  open  for
->               reading and writing or is open for append-only writes.
->
->        EINVAL The  parameters  are  not correct for these files.  This
->               error can also appear if either file  descriptor  repre=E2=
-=80=90
->               sents  a device, FIFO, or socket.  Disk filesystems gen=E2=
-=80=90
->               erally require the offset and  length  arguments  to  be
->               aligned to the fundamental block sizes of both files.
->
->        EIO    An I/O error occurred.
->
->        EISDIR One of the files is a directory.
->
->        ENOMEM The  kernel  was unable to allocate sufficient memory to
->               perform the operation.
->
->        ENOSPC There is not enough free space  in  the  filesystem  ex=E2=
-=80=90
->               change the contents safely.
->
->        EOPNOTSUPP
->               The filesystem does not support exchanging bytes between
->               the two files.
->
->        EPERM  file1_fd or file2_fd are immutable.
->
->        ETXTBSY
->               One of the files is a swap file.
->
->        EUCLEAN
->               The filesystem is corrupt.
->
->        EXDEV  file1_fd and  file2_fd  are  not  on  the  same  mounted
->               filesystem.
->
-> CONFORMING TO
->        This API is XFS-specific.
->
-> USE CASES
->        Several  use  cases  are imagined for this system call.  In all
->        cases, application software must coordinate updates to the file
->        because the exchange is performed unconditionally.
->
->        The  first  is a data storage program that wants to commit non-
->        contiguous updates to a file atomically and  coordinates  write
->        access  to that file.  This can be done by creating a temporary
->        file, calling FICLONE(2) to share the contents, and staging the
->        updates into the temporary file.  The FULL_FILES flag is recom=E2=
-=80=90
->        mended for this purpose.  The temporary file can be deleted  or
->        punched out afterwards.
->
->        An example program might look like this:
->
->            int fd =3D open("/some/file", O_RDWR);
->            int temp_fd =3D open("/some", O_TMPFILE | O_RDWR);
->
->            ioctl(temp_fd, FICLONE, fd);
->
->            /* append 1MB of records */
->            lseek(temp_fd, 0, SEEK_END);
->            write(temp_fd, data1, 1000000);
->
->            /* update record index */
->            pwrite(temp_fd, data1, 600, 98765);
->            pwrite(temp_fd, data2, 320, 54321);
->            pwrite(temp_fd, data2, 15, 0);
->
->            /* commit the entire update */
->            struct xfs_exch_range args =3D {
->                .file1_fd =3D temp_fd,
->                .flags =3D XFS_EXCHRANGE_TO_EOF,
->            };
->
->            ioctl(fd, XFS_IOC_EXCHANGE_RANGE, &args);
->
->        The  second  is  a  software-defined  storage host (e.g. a disk
->        jukebox) which implements an atomic scatter-gather  write  com=E2=
-=80=90
->        mand.   Provided the exported disk's logical block size matches
->        the file's allocation unit size, this can be done by creating a
->        temporary file and writing the data at the appropriate offsets.
->        It is recommended that the temporary file be truncated  to  the
->        size  of  the  regular file before any writes are staged to the
->        temporary file to avoid issues with zeroing during  EOF  exten=E2=
-=80=90
->        sion.   Use  this  call with the FILE1_WRITTEN flag to exchange
->        only the file allocation units involved  in  the  emulated  de=E2=
-=80=90
->        vice's  write  command.  The temporary file should be truncated
->        or punched out completely before being reused to stage  another
->        write.
->
->        An example program might look like this:
->
->            int fd =3D open("/some/file", O_RDWR);
->            int temp_fd =3D open("/some", O_TMPFILE | O_RDWR);
->            struct stat sb;
->            int blksz;
->
->            fstat(fd, &sb);
->            blksz =3D sb.st_blksize;
->
->            /* land scatter gather writes between 100fsb and 500fsb */
->            pwrite(temp_fd, data1, blksz * 2, blksz * 100);
->            pwrite(temp_fd, data2, blksz * 20, blksz * 480);
->            pwrite(temp_fd, data3, blksz * 7, blksz * 257);
->
->            /* commit the entire update */
->            struct xfs_exch_range args =3D {
->                .file1_fd =3D temp_fd,
->                .file1_offset =3D blksz * 100,
->                .file2_offset =3D blksz * 100,
->                .length       =3D blksz * 400,
->                .flags        =3D XFS_EXCHRANGE_FILE1_WRITTEN |
->                                XFS_EXCHRANGE_FILE1_DSYNC,
->            };
->
->            ioctl(fd, XFS_IOC_EXCHANGE_RANGE, &args);
->
-> NOTES
->        Some  filesystems may limit the amount of data or the number of
->        extents that can be exchanged in a single call.
->
-> SEE ALSO
->        ioctl(2)
->
-> XFS                           2024-02-10   IOCTL-XFS-EXCHANGE-RANGE(2)
-> IOCTL-XFS-COMMIT-RANGE(2) System Calls ManualIOCTL-XFS-COMMIT-RANGE(2)
->
-> NAME
->        ioctl_xfs_commit_range - conditionally exchange the contents of
->        parts of two files
->
-> SYNOPSIS
->        #include <sys/ioctl.h>
->        #include <xfs/xfs_fs_staging.h>
->
->        int ioctl(int file2_fd, XFS_IOC_COMMIT_RANGE,  struct  xfs_com=E2=
-=80=90
->        mit_range *arg);
->
-> DESCRIPTION
->        Given  a  range  of bytes in a first file file1_fd and a second
->        range of bytes in a second file  file2_fd,  this  ioctl(2)  ex=E2=
-=80=90
->        changes  the contents of the two ranges if file2_fd passes cer=E2=
-=80=90
->        tain freshness criteria.
->
->        After locking both files but before  exchanging  the  contents,
->        the  supplied  file2_ino field must match file2_fd's inode num=E2=
-=80=90
->        ber,   and   the   supplied   file2_mtime,    file2_mtime_nsec,
->        file2_ctime, and file2_ctime_nsec fields must match the modifi=E2=
-=80=90
->        cation time and change time of file2.  If they  do  not  match,
->        EBUSY will be returned.
->
 
-Maybe a stupid question, but under which circumstances would mtime
-change and ctime not change? Why are both needed?
 
-And for a new API, wouldn't it be better to use change_cookie (a.k.a i_vers=
-ion)?
-Even if this API is designed to be hoisted out of XFS at some future time,
-Is there a real need to support it on filesystems that do not support
-i_version(?)
+On 2/26/24 18:11, Suren Baghdasaryan wrote:
+> On Mon, Feb 26, 2024 at 9:07 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>
+>> On 2/21/24 20:40, Suren Baghdasaryan wrote:
+>>> Introduce helper functions to easily instrument page allocators by
+>>> storing a pointer to the allocation tag associated with the code that
+>>> allocated the page in a page_ext field.
+>>>
+>>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>>> Co-developed-by: Kent Overstreet <kent.overstreet@linux.dev>
+>>> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+>>
+>> The static key usage seems fine now. Even if the page_ext overhead is still
+>> always paid when compiled in, you mention in the cover letter there's a plan
+>> for boot-time toggle later, so
+> 
+> Yes, I already have a simple patch for that to be included in the next
+> revision: https://github.com/torvalds/linux/commit/7ca367e80232345f471b77b3ea71cf82faf50954
 
-Not to mention the fact that POSIX does not explicitly define how ctime sho=
-uld
-behave with changes to fiemap (uninitialized extent and all), so who knows
-how other filesystems may update ctime in those cases.
+This opt-out logic would require a distro kernel with allocation
+profiling compiled-in to ship together with something that modifies
+kernel command line to disable it by default, so it's not very
+practical. Could the CONFIG_MEM_ALLOC_PROFILING_ENABLED_BY_DEFAULT be
+turned into having 3 possible choices, where one of them would
+initialize mem_profiling_enabled to false?
 
-I realize that STATX_CHANGE_COOKIE is currently kernel internal, but
-it seems that XFS_IOC_EXCHANGE_RANGE is a case where userspace
-really explicitly requests a bump of i_version on the next change.
+Or, taking a step back, is it going to be a common usecase to pay the
+memory overhead unconditionally, but only enable the profiling later
+during runtime? Also what happens if someone would enable and disable it
+multiple times during one boot? Would the statistics get all skewed
+because some frees would be not accounted while it's disabled?
 
-Thanks,
-Amir.
+>>
+>> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+> 
+> Thanks!
+> 
+>>
+>>
 
