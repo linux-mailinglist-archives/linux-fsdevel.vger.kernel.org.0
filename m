@@ -1,64 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-12901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9DD8684D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 01:05:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15B6B868500
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 01:30:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DC0E1C21D1F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 00:05:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84A5AB212A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 00:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14622641;
-	Tue, 27 Feb 2024 00:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DDFE1847;
+	Tue, 27 Feb 2024 00:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EFwjYlkX"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jwUiiVI7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F2036E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 00:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9450A81F
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 00:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708992338; cv=none; b=BBeeLDdg1SCFBrhp/8P509CtYo2r0F3v8rI4GWYYtjDQkuvhN19oV56ekrIa1pECrq6SXOgKazsS2lgs94gCuqv8r4Qqt8IBOcTvGdTjs6LLZejdvOTZXrSu3NyFR79DBv2I8DFBpd4LrzPgwWlK4U5SNdrNZwds58UGDspxEV4=
+	t=1708993804; cv=none; b=NTRVWxpPeC7jekqYmpwN++IrPGn0Ew24ZRRRIorMALdXBCjThIYFAMM7Oj/IkG4fMmpO3Ny/X8qnbvN6PMD0lKx4i5SlFTD3A1iXOSLL9q5vaAMTyIc+UlHn7wEAWN7k9fWYrfllGcYLA+3BXdOfkLz+B7qETe4Y+WOdB6IFeIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708992338; c=relaxed/simple;
-	bh=uZAUfeDeYjXvYFMuuU+6QykzFfW+1MdoQowQgG6Q+BA=;
+	s=arc-20240116; t=1708993804; c=relaxed/simple;
+	bh=s0P1626ZVcvwNhAm22+dweGvnxzZrIQtqLyaE+C8ycE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oCTguiNq5jNQGBP90HIeV5AH+c/EaXgioCv1p8IZ2Kqb+Yhn0CkqtOOokxE49KUIoUyPtBnwphODlpJIH0Zk4OdIQq9UoLPjBKxtv72lnM2wlxAfpcHjV2RvbkEbCLRu53z13F6AA9s8S59V5txtAsN8i4e1dkWzLQQeWOw8Dcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EFwjYlkX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2B22C433C7;
-	Tue, 27 Feb 2024 00:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1708992337;
-	bh=uZAUfeDeYjXvYFMuuU+6QykzFfW+1MdoQowQgG6Q+BA=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=EFwjYlkX+y7TrXDex+Gb+6NTgOPclhut2C9eFtRk4GdfAIFJlbHKBifKFgnOjSUFv
-	 nyUufzncsLlWhNnVCdNFDjv0AicqL7R8/BgNW5lchiElxQ6qZR7ELEzgulQVHn5PCO
-	 10ppgdZwr2Xse79G/4ddA9b0lO4HoLfFMkihXjOs1dEU3ZdwP9Icrd2Jgo9hHN8C88
-	 drEKlJ0JttosTQa4RqpJv9v6yYrrs/TOt4+R9pvGC4jeLBRAE0gZy722jtwe/gQCZV
-	 vLdra8OyhoLGecsgLJyuOZKqF2OXDgbMXUxb39Y8OBodP4pYX8VmtdmeF4vZHPBpAI
-	 vE88WTNBbgjqQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 73EE1CE098C; Mon, 26 Feb 2024 16:05:37 -0800 (PST)
-Date: Mon, 26 Feb 2024 16:05:37 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Al Viro <viro@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>,
-	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qjDygIqqm0A2wRZY6Dpa4Cr1oyzGCc6VLa+z8TZt5nWO49dE/Ei3eJl9Gjfd9Z76xwVZpQY49FIZWPMzMVh2CILgXz+y9/SnJ0nODbbuOlmgUTYTwapginhXfAVFCgwtF79AQ1AM8IYafhSlRkrON0CT4PCqg21PN0v595Tos4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jwUiiVI7; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 26 Feb 2024 19:29:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1708993799;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cMAF2+RO/i9jccfOlie00oTKoBCg2uxgQRQWz3UieL4=;
+	b=jwUiiVI77v0gv4YJyGN19qrocyA+5zTk9pNVydUoUKl6g5+fomjOXrGbFP0V5qZ6oazBzr
+	vNb5iZlepSDvVzC7vpLaa1J6eK57dM9pP2n/E3CXIxREHZ3pmR8Ne+Jv2xNwv7VtY+Y6J5
+	K9VEiXlqi7bT3jXvblEeiuhfyzwEGcs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
+	Daniel Gomez <da.gomez@samsung.com>, Pankaj Raghav <p.raghav@samsung.com>, 
+	Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, 
+	Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
 Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <efb40e53-dae5-44c8-9e15-3cbf3a0cf537@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <CAHk-=wibYaWYqs5A30a7ywJdsW5LDT1LYysjcCmzjzkK=uh+tQ@mail.gmail.com>
- <bk45mgxpdbm5gfa6wl37nhecttnb5bxh6wo3slixsray77azu5@pi3bblfn3c5u>
+Message-ID: <oraht3mt3iu7u6q22pvb3du3xjpgei5cncbu4a22mz5scamsq5@fooyqelkfy6u>
+References: <bk45mgxpdbm5gfa6wl37nhecttnb5bxh6wo3slixsray77azu5@pi3bblfn3c5u>
  <CAHk-=wjnW96+oP0zhEd1zjPNqOHvrddKkwp0+CuS5HpZavfmMQ@mail.gmail.com>
  <Zdv8dujdOg0dD53k@duke.home>
  <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
@@ -67,6 +61,7 @@ References: <CAHk-=wibYaWYqs5A30a7ywJdsW5LDT1LYysjcCmzjzkK=uh+tQ@mail.gmail.com>
  <upnvhnqaitifuwwbxcpa4zgf2hribfrtqzxtcrv5djbyjs2ond@axetql2wrwnt>
  <fb4d944e-fde7-423b-a376-25db0b317398@paulmck-laptop>
  <5c6ueuv5vlyir76yssuwmfmfuof3ukxz6h5hkyzfvsm2wkncrl@7wvkfpmvy2gp>
+ <efb40e53-dae5-44c8-9e15-3cbf3a0cf537@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,113 +70,39 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5c6ueuv5vlyir76yssuwmfmfuof3ukxz6h5hkyzfvsm2wkncrl@7wvkfpmvy2gp>
+In-Reply-To: <efb40e53-dae5-44c8-9e15-3cbf3a0cf537@paulmck-laptop>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Feb 26, 2024 at 06:29:43PM -0500, Kent Overstreet wrote:
-> On Mon, Feb 26, 2024 at 01:55:10PM -0800, Paul E. McKenney wrote:
-> > On Mon, Feb 26, 2024 at 04:19:14PM -0500, Kent Overstreet wrote:
-> > > +cc Paul
-> > > 
-> > > On Mon, Feb 26, 2024 at 04:17:19PM -0500, Kent Overstreet wrote:
-> > > > On Mon, Feb 26, 2024 at 09:07:51PM +0000, Matthew Wilcox wrote:
-> > > > > On Mon, Feb 26, 2024 at 09:17:33AM -0800, Linus Torvalds wrote:
-> > > > > > Willy - tangential side note: I looked closer at the issue that you
-> > > > > > reported (indirectly) with the small reads during heavy write
-> > > > > > activity.
-> > > > > > 
-> > > > > > Our _reading_ side is very optimized and has none of the write-side
-> > > > > > oddities that I can see, and we just have
-> > > > > > 
-> > > > > >   filemap_read ->
-> > > > > >     filemap_get_pages ->
-> > > > > >         filemap_get_read_batch ->
-> > > > > >           folio_try_get_rcu()
-> > > > > > 
-> > > > > > and there is no page locking or other locking involved (assuming the
-> > > > > > page is cached and marked uptodate etc, of course).
-> > > > > > 
-> > > > > > So afaik, it really is just that *one* atomic access (and the matching
-> > > > > > page ref decrement afterwards).
-> > > > > 
-> > > > > Yep, that was what the customer reported on their ancient kernel, and
-> > > > > we at least didn't make that worse ...
-> > > > > 
-> > > > > > We could easily do all of this without getting any ref to the page at
-> > > > > > all if we did the page cache release with RCU (and the user copy with
-> > > > > > "copy_to_user_atomic()").  Honestly, anything else looks like a
-> > > > > > complete disaster. For tiny reads, a temporary buffer sounds ok, but
-> > > > > > really *only* for tiny reads where we could have that buffer on the
-> > > > > > stack.
-> > > > > > 
-> > > > > > Are tiny reads (handwaving: 100 bytes or less) really worth optimizing
-> > > > > > for to that degree?
-> > > > > > 
-> > > > > > In contrast, the RCU-delaying of the page cache might be a good idea
-> > > > > > in general. We've had other situations where that would have been
-> > > > > > nice. The main worry would be low-memory situations, I suspect.
-> > > > > > 
-> > > > > > The "tiny read" optimization smells like a benchmark thing to me. Even
-> > > > > > with the cacheline possibly bouncing, the system call overhead for
-> > > > > > tiny reads (particularly with all the mitigations) should be orders of
-> > > > > > magnitude higher than two atomic accesses.
-> > > > > 
-> > > > > Ah, good point about the $%^&^*^ mitigations.  This was pre mitigations.
-> > > > > I suspect that this customer would simply disable them; afaik the machine
-> > > > > is an appliance and one interacts with it purely by sending transactions
-> > > > > to it (it's not even an SQL system, much less a "run arbitrary javascript"
-> > > > > kind of system).  But that makes it even more special case, inapplicable
-> > > > > to the majority of workloads and closer to smelling like a benchmark.
-> > > > > 
-> > > > > I've thought about and rejected RCU delaying of the page cache in the
-> > > > > past.  With the majority of memory in anon memory & file memory, it just
-> > > > > feels too risky to have so much memory waiting to be reused.  We could
-> > > > > also improve gup-fast if we could rely on RCU freeing of anon memory.
-> > > > > Not sure what workloads might benefit from that, though.
-> > > > 
-> > > > RCU allocating and freeing of memory can already be fairly significant
-> > > > depending on workload, and I'd expect that to grow - we really just need
-> > > > a way for reclaim to kick RCU when needed (and probably add a percpu
-> > > > counter for "amount of memory stranded until the next RCU grace
-> > > > period").
+On Mon, Feb 26, 2024 at 04:05:37PM -0800, Paul E. McKenney wrote:
+> On Mon, Feb 26, 2024 at 06:29:43PM -0500, Kent Overstreet wrote:
+> > Well, we won't want it getting hammered on continuously - we should be
+> > able to tune reclaim so that doesn't happen.
 > > 
-> > There are some APIs for that, though the are sharp-edged and mainly
-> > intended for rcutorture, and there are some hooks for a CI Kconfig
-> > option called RCU_STRICT_GRACE_PERIOD that could be organized into
-> > something useful.
-> > 
-> > Of course, if there is a long-running RCU reader, there is nothing
-> > RCU can do.  By definition, it must wait on all pre-existing readers,
-> > no exceptions.
-> > 
-> > But my guess is that you instead are thinking of memory-exhaustion
-> > emergencies where you would like RCU to burn more CPU than usual to
-> > reduce grace-period latency, there are definitely things that can be done.
-> > 
-> > I am sure that there are more questions that I should ask, but the one
-> > that comes immediately to mind is "Is this API call an occasional thing,
-> > or does RCU need to tolerate many CPUs hammering it frequently?"
-> > Either answer is fine, I just need to know.  ;-)
+> > I think getting numbers on the amount of memory stranded waiting for RCU
+> > is probably first order of business - minor tweak to kfree_rcu() et all
+> > for that; there's APIs they can query to maintain that counter.
 > 
-> Well, we won't want it getting hammered on continuously - we should be
-> able to tune reclaim so that doesn't happen.
+> We can easily tell you the number of blocks of memory waiting to be freed.
+> But RCU does not know their size.  Yes, we could ferret this on each
+> call to kmem_free_rcu(), but that might not be great for performance.
+> We could traverse the lists at runtime, but such traversal must be done
+> with interrupts disabled, which is also not great.
 > 
-> I think getting numbers on the amount of memory stranded waiting for RCU
-> is probably first order of business - minor tweak to kfree_rcu() et all
-> for that; there's APIs they can query to maintain that counter.
-
-We can easily tell you the number of blocks of memory waiting to be freed.
-But RCU does not know their size.  Yes, we could ferret this on each
-call to kmem_free_rcu(), but that might not be great for performance.
-We could traverse the lists at runtime, but such traversal must be done
-with interrupts disabled, which is also not great.
-
-> then, we can add a heuristic threshhold somewhere, something like 
+> > then, we can add a heuristic threshhold somewhere, something like 
+> > 
+> > if (rcu_stranded * multiplier > reclaimable_memory)
+> > 	kick_rcu()
 > 
-> if (rcu_stranded * multiplier > reclaimable_memory)
-> 	kick_rcu()
+> If it is a heuristic anyway, it sounds best to base the heuristic on
+> the number of objects rather than their aggregate size.
 
-If it is a heuristic anyway, it sounds best to base the heuristic on
-the number of objects rather than their aggregate size.
+I don't think that'll really work given that object size can very from <
+100 bytes all the way up to 2MB hugepages. The shrinker API works that
+way and I positively hate it; it's really helpful for introspection and
+debugability later to give good human understandable units to this
+stuff.
 
-							Thanx, Paul
+And __ksize() is pretty cheap, and I think there might be room in struct
+slab to stick the object size there instead of getting it from the slab
+cache - and folio_size() is cheaper still.
 
