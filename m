@@ -1,147 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-13022-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13023-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB43986A3EE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 00:47:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74BB686A3F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Feb 2024 00:49:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1A00B249D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 23:46:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068B81F246B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 23:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024B25645C;
-	Tue, 27 Feb 2024 23:46:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4641256761;
+	Tue, 27 Feb 2024 23:49:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="aOhuGBIQ"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KK8acMoU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2cN0mEgy";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KK8acMoU";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2cN0mEgy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7DA955E48
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 23:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C2D56442;
+	Tue, 27 Feb 2024 23:48:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709077572; cv=none; b=MuUluRIH65lPUWT8Z0NF8guiuPu0VuuKOaQeXTgnQYvU2mFLK8XoOZ99ma607S4Q2eVaf6sXyd7ebeIYxx5ZHoJ8EzW9tSEYdkuHS+1f8XoiUMrjQebh5W8ai7aBe4OoHpjt0c6BGDOWBnvqHP4fpEB1CUYDg6yJ++Lo2IZBkN0=
+	t=1709077741; cv=none; b=lI9uUmOcK9IseT0qo7dbmi5jG1/eOl+BhPgCMMJjWLJORzz+tPlI1AnmNzstTXjr2hXB4ycD3NEXg5Z8BrCOym5MINcbHX2KDNe6HvBpmOr35u9Op4/kIDDDm3TAfSm6Odj9jpFNmKOwwsJve6uQ1vhTa89t25mPwcm3Ef8WE9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709077572; c=relaxed/simple;
-	bh=05y20ylw63Jp1XqpyS0hDAMF7jD069gsedUHFYisPC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cv1YeJYm/NB2psm9Ov5pnBvZw7JKOhqbDATTWWzda0/GOPvxNloYSrw2yEPMLt9aw2F6erYurX51fVRSNVb6Xgrb5/OpC5GlHt207nO326L2gLwMroUL/DGBhAg8sJSVLjuNyJpf/SRC0B71J2cYcjjgUVWT1xcsuLd0fyb3BMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=aOhuGBIQ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1dcafff3c50so19330295ad.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 15:46:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1709077570; x=1709682370; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2J0nG5bx4RWetieNgdHsq0BhUr6Alc5BaFD0GmCSBJo=;
-        b=aOhuGBIQuPV5Cs3yAMIKBc9OUtkAiAsR5pCdlixqbhqpC41z/FQFWVNeiKdqgE+wh/
-         zBV+g2LLQ3AKHc1rC22P0KHdeXsi3thn7ao0Ns52kBne8HdPSYtm49dpA6V5SXBkTA7r
-         RTgBdy5t4NT576MIMWKrRec2dNb1haedG4Qdg+EXuYKKfbFBOz2j37eyZUUkf0DMR/OK
-         mKHY1gScrTrl48jSvFsXKtfUHrIvCCwtoiGQgrkmBiU0o1VtbVTcAhi1Q/qxy2E0S9YZ
-         h1euWDL9YmdVh9/q0/sCHY7bOhOn0sJ58gy83KPABTXQANTwOvppoIHEsj4MpNYMvXAd
-         I2HQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709077570; x=1709682370;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2J0nG5bx4RWetieNgdHsq0BhUr6Alc5BaFD0GmCSBJo=;
-        b=F6Xi+hBcRveUJBKJsCRaPLUbOCKH4INDL6R5KUBmNK8+Poa2y6wao6AUY7++E9DWyv
-         x4Mq6e2e6PzLRAcK6H3e8Hwv+iKYei5O92RAjlrR8cSvsrzU6fQkrdFltFjAXLZJN+9a
-         jcj0R7rad6V4PednGiDLo13UtZs3/yrCKEPNS4lxycmIouC6HHKr3nCGMDWSUsyQcQ9L
-         q7FunI+D1XP3bw2hCwpOmPPFPYfM2oF1W694nUKeIdnPtO3/pwcxuSW/GFhqtuPwuA0I
-         iVy7/YD2NbxsP66LcHql8uUNecNOLxOnojjwgaRwBWW7nJcmut9Y+Ym6DTDciY6Hcm3Q
-         dAFA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2/ARt+jdGy/GsUQinyojorlJReHTqjUcqBAPphD9OJ2AjGE/R1sdmCiMSznsGv2sqbwsHSzfFh2xaUecOTjZ4AoojYl7FNzBYNM24UQ==
-X-Gm-Message-State: AOJu0Yw4y9j4b1byn6RNxbNPouPrJGBRxaJviShJ2idSwo2H4Rw7RFVK
-	GLIe5IBoIWceC1C0PcSv6TJUx9xBCfWUcWdrrfklSVdnYhEm2YDUF+gHjJGosUw=
-X-Google-Smtp-Source: AGHT+IEQgyeIOKDvQf9gUz/EKh5crZ2gQ6znIYOA6BpSh1GdmClgFwwK28Z95oRnqBXCWyNwbsQk9Q==
-X-Received: by 2002:a17:902:6806:b0:1dc:8508:8e35 with SMTP id h6-20020a170902680600b001dc85088e35mr665302plk.68.1709077570175;
-        Tue, 27 Feb 2024 15:46:10 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-247-196.pa.nsw.optusnet.com.au. [49.181.247.196])
-        by smtp.gmail.com with ESMTPSA id jg3-20020a17090326c300b001d9a41daf85sm2054477plb.256.2024.02.27.15.46.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Feb 2024 15:46:09 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1rf79D-00CPwL-0R;
-	Wed, 28 Feb 2024 10:46:07 +1100
-Date: Wed, 28 Feb 2024 10:46:07 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	hch@lst.de
-Subject: Re: [PATCHSET v29.4 03/13] xfs: atomic file content exchanges
-Message-ID: <Zd50P9TH5TAdqFyU@dread.disaster.area>
-References: <170900011604.938268.9876750689883987904.stgit@frogsfrogsfrogs>
- <CAOQ4uxh-gKGuwrvuQnWKcKLKQe2j9s__Yx2T-gCrDJMUbm5ZYA@mail.gmail.com>
- <4e29a0395b3963e6a48f916baaf16394acd017ca.camel@kernel.org>
+	s=arc-20240116; t=1709077741; c=relaxed/simple;
+	bh=Y+/rFevpzvhdvuWiKxENTvkTi0r9cvuGobLI8jzXRS4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=YVFpKwh9v+TQ+p1VCTP/FzE5kfA0KM5Us/PPEbRuyMmDhOAqcqkFiYjERrbG/8XyxVrJQN/o0RpeLmc9tB9gEuQ/418KDbhcxL0FH/WXEjoHwHsLaChCqvqK7Yblj+QLu8OXXEFrFKqBru25DodRmVqr/c0bH0PJQqRJ0OC/PeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KK8acMoU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2cN0mEgy; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KK8acMoU; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2cN0mEgy; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 10AB72280F;
+	Tue, 27 Feb 2024 23:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709077738; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M15oWz8K/quZkZ3iAaKhipWnksYJwmCDDGkA7L4LZ0E=;
+	b=KK8acMoUR0AjvMtcekxBOz3P1kONZ68wdHPOpT25umpGKSP/8GQU+w7zr45xgr5Aa2Jrqs
+	ZibILliWKdwCWqzrtN8Wjgd4BFFCi4qE6i3sQdXY5O2qmHFfAEJ2AWatTKNY+4sjkP4YYI
+	tvBE63uXD2AOc+kAksuf1/s8f16bvlM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709077738;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M15oWz8K/quZkZ3iAaKhipWnksYJwmCDDGkA7L4LZ0E=;
+	b=2cN0mEgyIxHnuVoRqLmvobEJxkpbPFxvJ5MoFqUajy4zDFLuRS94mXa4yKKdoYr6a34nNn
+	KgckqqnWIC1WBKAw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1709077738; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M15oWz8K/quZkZ3iAaKhipWnksYJwmCDDGkA7L4LZ0E=;
+	b=KK8acMoUR0AjvMtcekxBOz3P1kONZ68wdHPOpT25umpGKSP/8GQU+w7zr45xgr5Aa2Jrqs
+	ZibILliWKdwCWqzrtN8Wjgd4BFFCi4qE6i3sQdXY5O2qmHFfAEJ2AWatTKNY+4sjkP4YYI
+	tvBE63uXD2AOc+kAksuf1/s8f16bvlM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1709077738;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M15oWz8K/quZkZ3iAaKhipWnksYJwmCDDGkA7L4LZ0E=;
+	b=2cN0mEgyIxHnuVoRqLmvobEJxkpbPFxvJ5MoFqUajy4zDFLuRS94mXa4yKKdoYr6a34nNn
+	KgckqqnWIC1WBKAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BE61113ABA;
+	Tue, 27 Feb 2024 23:48:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xBoaKOl03mVJOQAAD6G6ig
+	(envelope-from <krisman@suse.de>); Tue, 27 Feb 2024 23:48:57 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: Eugen Hristev <eugen.hristev@collabora.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, tytso@mit.edu,
+  adilger.kernel@dilger.ca,  linux-ext4@vger.kernel.org,
+  jaegeuk@kernel.org,  chao@kernel.org,
+  linux-f2fs-devel@lists.sourceforge.net,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  kernel@collabora.com,
+  viro@zeniv.linux.org.uk,  brauner@kernel.org,  jack@suse.cz
+Subject: Re: [PATCH v12 0/8] Cache insensitive cleanup for ext4/f2fs
+In-Reply-To: <20240220085235.71132-1-eugen.hristev@collabora.com> (Eugen
+	Hristev's message of "Tue, 20 Feb 2024 10:52:27 +0200")
+Organization: SUSE
+References: <20240220085235.71132-1-eugen.hristev@collabora.com>
+Date: Tue, 27 Feb 2024 18:48:56 -0500
+Message-ID: <87r0gx4gev.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4e29a0395b3963e6a48f916baaf16394acd017ca.camel@kernel.org>
+Content-Type: text/plain
+Authentication-Results: smtp-out1.suse.de;
+	none
+X-Spam-Level: 
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	 ARC_NA(0.00)[];
+	 RCVD_VIA_SMTP_AUTH(0.00)[];
+	 FROM_HAS_DN(0.00)[];
+	 TO_DN_SOME(0.00)[];
+	 TO_MATCH_ENVRCPT_ALL(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 MIME_GOOD(-0.10)[text/plain];
+	 HAS_ORG_HEADER(0.00)[];
+	 RCVD_COUNT_THREE(0.00)[3];
+	 DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 RCPT_COUNT_TWELVE(0.00)[14];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 FROM_EQ_ENVFROM(0.00)[];
+	 MIME_TRACE(0.00)[0:+];
+	 RCVD_TLS_ALL(0.00)[];
+	 BAYES_HAM(-3.00)[100.00%]
+X-Spam-Flag: NO
 
-On Tue, Feb 27, 2024 at 05:53:46AM -0500, Jeff Layton wrote:
-> On Tue, 2024-02-27 at 11:23 +0200, Amir Goldstein wrote:
-> > On Tue, Feb 27, 2024 at 4:18 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> > And for a new API, wouldn't it be better to use change_cookie (a.k.a i_version)?
+Eugen Hristev <eugen.hristev@collabora.com> writes:
 
-Like xfs_fsr doing online defrag, we really only care about explicit
-user data changes here, not internal layout and metadata changes to
-the files...
+> Hello,
+>
+> I am trying to respin the series here :
+> https://www.spinics.net/lists/linux-ext4/msg85081.html
 
-> > Even if this API is designed to be hoisted out of XFS at some future time,
-> > Is there a real need to support it on filesystems that do not support
-> > i_version(?)
-> > 
-> > Not to mention the fact that POSIX does not explicitly define how ctime should
-> > behave with changes to fiemap (uninitialized extent and all), so who knows
-> > how other filesystems may update ctime in those cases.
-> > 
-> > I realize that STATX_CHANGE_COOKIE is currently kernel internal, but
-> > it seems that XFS_IOC_EXCHANGE_RANGE is a case where userspace
-> > really explicitly requests a bump of i_version on the next change.
-> > 
-> 
-> 
-> I agree. Using an opaque change cookie would be a lot nicer from an API
-> standpoint, and shouldn't be subject to timestamp granularity issues.
-> 
-> That said, XFS's change cookie is currently broken. Dave C. said he had
-> some patches in progress to fix that however.
+This has a reviewed-by tag from Eric, but since its been years and we've
+been going through more changes now, I'd ask you to drop the r-b until
+Eric has had a chance to review it and give a new tag.
 
-By "fix", I meant "remove".
+Thanks,
 
-i.e. the patches I was proposing were to remove SB_I_VERSION support
-from XFS so NFS just uses the ctime on XFS because the recent
-changes to i_version make it a ctime change counter, not an inode
-change counter.
+> I resent some of the v9 patches and got some reviews from Gabriel,
+> I did changes as requested and here is v12.
+>
+> Changes in v12:
+> - revert to v10 comparison with propagating the error code from utf comparison
+>
+> Changes in v11:
+> - revert to the original v9 implementation for the comparison helper.
+>
+> Changes in v10:
+> - reworked a bit the comparison helper to improve performance by
+> first performing the exact lookup.
+>
+>
+> * Original commit letter
+>
+> The case-insensitive implementations in f2fs and ext4 have quite a bit
+> of duplicated code.  This series simplifies the ext4 version, with the
+> goal of extracting ext4_ci_compare into a helper library that can be
+> used by both filesystems.  It also reduces the clutter from many
+> codeguards for CONFIG_UNICODE; as requested by Linus, they are part of
+> the codeflow now.
+>
+> While there, I noticed we can leverage the utf8 functions to detect
+> encoded names that are corrupted in the filesystem. Therefore, it also
+> adds an ext4 error on that scenario, to mark the filesystem as
+> corrupted.
+>
+> This series survived passes of xfstests -g quick.
+>
+>
+> Gabriel Krisman Bertazi (8):
+>   ext4: Simplify the handling of cached insensitive names
+>   f2fs: Simplify the handling of cached insensitive names
+>   libfs: Introduce case-insensitive string comparison helper
+>   ext4: Reuse generic_ci_match for ci comparisons
+>   f2fs: Reuse generic_ci_match for ci comparisons
+>   ext4: Log error when lookup of encoded dentry fails
+>   ext4: Move CONFIG_UNICODE defguards into the code flow
+>   f2fs: Move CONFIG_UNICODE defguards into the code flow
+>
+>  fs/ext4/crypto.c   |  19 ++-----
+>  fs/ext4/ext4.h     |  35 +++++++-----
+>  fs/ext4/namei.c    | 129 ++++++++++++++++-----------------------------
+>  fs/ext4/super.c    |   4 +-
+>  fs/f2fs/dir.c      | 105 +++++++++++-------------------------
+>  fs/f2fs/f2fs.h     |  17 +++++-
+>  fs/f2fs/namei.c    |  10 ++--
+>  fs/f2fs/recovery.c |   5 +-
+>  fs/f2fs/super.c    |   8 +--
+>  fs/libfs.c         |  85 +++++++++++++++++++++++++++++
+>  include/linux/fs.h |   4 ++
+>  11 files changed, 216 insertions(+), 205 deletions(-)
 
-Then patches were posted for finer grained inode timestamps to allow
-everything to use ctime instead of i_version, and with that I
-thought NFS was just going to change to ctime for everyone with that
-the whole change cookie issue was going away.
-
-It now sounds like that isn't happening, so I'll just ressurect the
-patch to remove published SB_I_VERSION and STATX_CHANGE_COOKIE
-support from XFS for now and us XFS people can just go back to
-ignoring this problem again.
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Gabriel Krisman Bertazi
 
