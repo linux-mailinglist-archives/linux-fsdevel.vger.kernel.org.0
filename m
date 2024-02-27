@@ -1,93 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-12936-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12937-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E1A868D22
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 11:17:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F166E868D2E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 11:19:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1198285128
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 10:17:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B2771F27675
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 10:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9722A13849E;
-	Tue, 27 Feb 2024 10:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D2781384A7;
+	Tue, 27 Feb 2024 10:18:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YYsNtmEp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2SXuPYm8";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YYsNtmEp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2SXuPYm8"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cpyVIP79";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UuxALrSs";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cpyVIP79";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UuxALrSs"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CFC0137C4D;
-	Tue, 27 Feb 2024 10:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C0E138484;
+	Tue, 27 Feb 2024 10:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709029054; cv=none; b=MH2rAUbnnLFDJeGWicsWypl47ExQJFrR9qHNdpwHYt9v6j/0KLsA3mb18tZjpsXQRHDrstFsHJZCtnGo9PwlD0ywwxUg+AJ+IoCwmC9wWq3JeBIWTwprA4P/V6ABiahd6MFX5jeu9L+/1s9gHGO58HdMCYxT50ec5FR3gHZ1O/s=
+	t=1709029134; cv=none; b=faLOVWTGVn8KJ/9dMrbr2iWhdyWhMVVTXpNr2TYyO1NlappalXJBSXuz0n6vrUahLQ3YiTRG8BvQwaw0Qi8mubAKCAeMU7s2pPdBv0l1mz4JruaWNheGIYPNc47NcPobp82hHQQBc8I7tP5Z/Cktm81M9FyD7Zu22Di2V6KaRGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709029054; c=relaxed/simple;
-	bh=uAT8fOjHimP1s8p52C/iiBFIjHSNXhLdNgmVkCGq/SM=;
+	s=arc-20240116; t=1709029134; c=relaxed/simple;
+	bh=1kT4IadTcD9s8wVa7TvXCimMRyY5zCB8d4SK3JfJKpI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fab0nSI6baoxsnA61c8VS4+Ha5fAz8vazIgc+7wtxItlJv6fewEGlQJVF0LYEr5m3DHIPHj9Mr86txP2ncy/ASAmJ1KRg2mCrAHmrZdstr5YnMwxkqt6VkvDm8GDtUd1Tbw5jbmPNZ3t4yN3ULu0/np7kV2jracaXCLI4ECF1nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YYsNtmEp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2SXuPYm8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YYsNtmEp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2SXuPYm8; arc=none smtp.client-ip=195.135.223.130
+	 In-Reply-To:Content-Type; b=qgKJ2Fm289+Puk/7nac/sGMJuaegQ8skLupDzr47ksHrGhQIS/WQeUD973FLkW51H3dRglAf+/y6/fk3KiQiH5A+Yqo/HAfdbbcdpObIkUWcwRT/Cd7CLDqZ9tMGxl4gCJsmbenq+vFxkgc5iTwhnIawoSu03xXn0vWe8OhkR+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cpyVIP79; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UuxALrSs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cpyVIP79; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UuxALrSs; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 7A41F22722;
-	Tue, 27 Feb 2024 10:17:30 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 5FBE01F44F;
+	Tue, 27 Feb 2024 10:18:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1709029050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1709029129; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CWojS/ZBMHmeYzh+o2egixF9yHAOBC8s1LHQ5pVRk5E=;
-	b=YYsNtmEpB6yRtMeGZZynoZ9Gj6zOZN0ULuXprkdjnd3ebaDESlEU2nLaRURpU8A+daBzAj
-	q5qsf17lVyVqjSa9FjAf9H7PJ0EsGhR3WKCEVnnJptbgqi/r1Loqr9T7gw3THvUs+fzbz/
-	VcQDuFxYk7woWEtGLS3UcznYheAjCKY=
+	bh=Q4pT87ICIgMrimfBYIsFt4403+jQ655os57F8M8rAV0=;
+	b=cpyVIP79rj0/sBrJvpdZDSi/YWGaVzMxOeOUTFZkxXRW5dBBpVG2nrSet3ziaxNcNhCRul
+	fsn2i6ZDMFIR8vZKMy1rHahvaELrlR9TdV1JOh9wud8P37gKHfMGsbCuw8Lz1zGjf4dOM9
+	gotsrvN12NpBYdL5ELH484nyYHkPZRY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1709029050;
+	s=susede2_ed25519; t=1709029129;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CWojS/ZBMHmeYzh+o2egixF9yHAOBC8s1LHQ5pVRk5E=;
-	b=2SXuPYm80fYChAQrn/4DmTfrCVV9IvIAJ/vSXwLtFn07gSD61WET7VJEU8BHJ+hWwQda1g
-	PUlKDb6Vwsq+CuAg==
+	bh=Q4pT87ICIgMrimfBYIsFt4403+jQ655os57F8M8rAV0=;
+	b=UuxALrSs0P8mLarP5bjo/PfJ0N2IwYv6LH6qdRMTKIyww8fRC4dOnMwu5xagQtZCCFsHZf
+	6lKfIVVRnWShjTBw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1709029050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1709029129; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CWojS/ZBMHmeYzh+o2egixF9yHAOBC8s1LHQ5pVRk5E=;
-	b=YYsNtmEpB6yRtMeGZZynoZ9Gj6zOZN0ULuXprkdjnd3ebaDESlEU2nLaRURpU8A+daBzAj
-	q5qsf17lVyVqjSa9FjAf9H7PJ0EsGhR3WKCEVnnJptbgqi/r1Loqr9T7gw3THvUs+fzbz/
-	VcQDuFxYk7woWEtGLS3UcznYheAjCKY=
+	bh=Q4pT87ICIgMrimfBYIsFt4403+jQ655os57F8M8rAV0=;
+	b=cpyVIP79rj0/sBrJvpdZDSi/YWGaVzMxOeOUTFZkxXRW5dBBpVG2nrSet3ziaxNcNhCRul
+	fsn2i6ZDMFIR8vZKMy1rHahvaELrlR9TdV1JOh9wud8P37gKHfMGsbCuw8Lz1zGjf4dOM9
+	gotsrvN12NpBYdL5ELH484nyYHkPZRY=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1709029050;
+	s=susede2_ed25519; t=1709029129;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=CWojS/ZBMHmeYzh+o2egixF9yHAOBC8s1LHQ5pVRk5E=;
-	b=2SXuPYm80fYChAQrn/4DmTfrCVV9IvIAJ/vSXwLtFn07gSD61WET7VJEU8BHJ+hWwQda1g
-	PUlKDb6Vwsq+CuAg==
+	bh=Q4pT87ICIgMrimfBYIsFt4403+jQ655os57F8M8rAV0=;
+	b=UuxALrSs0P8mLarP5bjo/PfJ0N2IwYv6LH6qdRMTKIyww8fRC4dOnMwu5xagQtZCCFsHZf
+	6lKfIVVRnWShjTBw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2F5E913A65;
-	Tue, 27 Feb 2024 10:17:30 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B14DF13A65;
+	Tue, 27 Feb 2024 10:18:48 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([10.150.64.162])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oUVMCrq23WXqfQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 27 Feb 2024 10:17:30 +0000
-Message-ID: <49c33680-2a08-4d59-86ba-72f8850099a5@suse.cz>
-Date: Tue, 27 Feb 2024 11:18:02 +0100
+	id UH3gKQi33WXqfQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 27 Feb 2024 10:18:48 +0000
+Message-ID: <4e648451-31a8-4293-bc14-e7ea01c889b1@suse.cz>
+Date: Tue, 27 Feb 2024 11:19:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,8 +95,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 20/36] mm/page_ext: enable early_page_ext when
- CONFIG_MEM_ALLOC_PROFILING_DEBUG=y
+Subject: Re: [PATCH v4 21/36] lib: add codetag reference into slabobj_ext
 Content-Language: en-US
 To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
 Cc: kent.overstreet@linux.dev, mhocko@suse.com, hannes@cmpxchg.org,
@@ -125,80 +124,90 @@ Cc: kent.overstreet@linux.dev, mhocko@suse.com, hannes@cmpxchg.org,
  linux-modules@vger.kernel.org, kasan-dev@googlegroups.com,
  cgroups@vger.kernel.org
 References: <20240221194052.927623-1-surenb@google.com>
- <20240221194052.927623-21-surenb@google.com>
+ <20240221194052.927623-22-surenb@google.com>
 From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20240221194052.927623-21-surenb@google.com>
+In-Reply-To: <20240221194052.927623-22-surenb@google.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Authentication-Results: smtp-out1.suse.de;
-	none
 X-Spam-Level: 
-X-Spam-Score: -0.09
-X-Spamd-Result: default: False [-0.09 / 50.00];
-	 ARC_NA(0.00)[];
+X-Spamd-Bar: /
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=cpyVIP79;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UuxALrSs
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.02 / 50.00];
 	 RCVD_VIA_SMTP_AUTH(0.00)[];
 	 XM_UA_NO_VERSION(0.01)[];
-	 FROM_HAS_DN(0.00)[];
+	 SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	 TO_DN_SOME(0.00)[];
-	 MID_RHS_MATCH_FROM(0.00)[];
-	 TAGGED_RCPT(0.00)[];
-	 MIME_GOOD(-0.10)[text/plain];
-	 NEURAL_HAM_LONG(-1.00)[-1.000];
-	 BAYES_HAM(-0.30)[75.07%];
 	 RCVD_COUNT_THREE(0.00)[3];
-	 TO_MATCH_ENVRCPT_SOME(0.00)[];
-	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	 NEURAL_HAM_SHORT(-0.20)[-1.000];
+	 DKIM_TRACE(0.00)[suse.cz:+];
+	 MX_GOOD(-0.01)[];
 	 RCPT_COUNT_GT_50(0.00)[74];
-	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email];
-	 FUZZY_BLOCKED(0.00)[rspamd.com];
+	 NEURAL_HAM_SHORT(-0.20)[-1.000];
 	 FROM_EQ_ENVFROM(0.00)[];
 	 MIME_TRACE(0.00)[0:+];
+	 MID_RHS_MATCH_FROM(0.00)[];
+	 BAYES_HAM(-0.02)[51.67%];
+	 ARC_NA(0.00)[];
+	 R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 FROM_HAS_DN(0.00)[];
+	 NEURAL_HAM_LONG(-1.00)[-1.000];
+	 TAGGED_RCPT(0.00)[];
+	 MIME_GOOD(-0.10)[text/plain];
+	 TO_MATCH_ENVRCPT_SOME(0.00)[];
+	 DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	 DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,linux.dev:email];
+	 FUZZY_BLOCKED(0.00)[rspamd.com];
 	 FREEMAIL_CC(0.00)[linux.dev,suse.com,cmpxchg.org,suse.de,stgolabs.net,infradead.org,oracle.com,i-love.sakura.ne.jp,lwn.net,manifault.com,redhat.com,arm.com,kernel.org,arndb.de,linutronix.de,linux.intel.com,kernel.dk,soleen.com,google.com,gmail.com,chromium.org,linuxfoundation.org,linaro.org,goodmis.org,linux.com,lge.com,bytedance.com,akamai.com,android.com,vger.kernel.org,lists.linux.dev,kvack.org,googlegroups.com];
 	 RCVD_TLS_ALL(0.00)[];
 	 SUSPICIOUS_RECIPS(1.50)[]
+X-Spam-Score: -0.02
+X-Rspamd-Queue-Id: 5FBE01F44F
 X-Spam-Flag: NO
 
 On 2/21/24 20:40, Suren Baghdasaryan wrote:
-> For all page allocations to be tagged, page_ext has to be initialized
-> before the first page allocation. Early tasks allocate their stacks
-> using page allocator before alloc_node_page_ext() initializes page_ext
-> area, unless early_page_ext is enabled. Therefore these allocations will
-> generate a warning when CONFIG_MEM_ALLOC_PROFILING_DEBUG is enabled.
-> Enable early_page_ext whenever CONFIG_MEM_ALLOC_PROFILING_DEBUG=y to
-> ensure page_ext initialization prior to any page allocation. This will
-> have all the negative effects associated with early_page_ext, such as
-> possible longer boot time, therefore we enable it only when debugging
-> with CONFIG_MEM_ALLOC_PROFILING_DEBUG enabled and not universally for
-> CONFIG_MEM_ALLOC_PROFILING.
+> To store code tag for every slab object, a codetag reference is embedded
+> into slabobj_ext when CONFIG_MEM_ALLOC_PROFILING=y.
 > 
 > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Co-developed-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
 > ---
->  mm/page_ext.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+>  include/linux/memcontrol.h | 5 +++++
+>  lib/Kconfig.debug          | 1 +
+>  2 files changed, 6 insertions(+)
 > 
-> diff --git a/mm/page_ext.c b/mm/page_ext.c
-> index 3c58fe8a24df..e7d8f1a5589e 100644
-> --- a/mm/page_ext.c
-> +++ b/mm/page_ext.c
-> @@ -95,7 +95,16 @@ unsigned long page_ext_size;
->  
->  static unsigned long total_usage;
->  
-> +#ifdef CONFIG_MEM_ALLOC_PROFILING_DEBUG
-> +/*
-> + * To ensure correct allocation tagging for pages, page_ext should be available
-> + * before the first page allocation. Otherwise early task stacks will be
-> + * allocated before page_ext initialization and missing tags will be flagged.
-> + */
-> +bool early_page_ext __meminitdata = true;
-> +#else
->  bool early_page_ext __meminitdata;
+> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+> index f3584e98b640..2b010316016c 100644
+> --- a/include/linux/memcontrol.h
+> +++ b/include/linux/memcontrol.h
+> @@ -1653,7 +1653,12 @@ unsigned long mem_cgroup_soft_limit_reclaim(pg_data_t *pgdat, int order,
+>   * if MEMCG_DATA_OBJEXTS is set.
+>   */
+>  struct slabobj_ext {
+> +#ifdef CONFIG_MEMCG_KMEM
+>  	struct obj_cgroup *objcg;
 > +#endif
->  static int __init setup_early_page_ext(char *str)
->  {
->  	early_page_ext = true;
+> +#ifdef CONFIG_MEM_ALLOC_PROFILING
+> +	union codetag_ref ref;
+> +#endif
+>  } __aligned(8);
+>  
+>  static inline void __inc_lruvec_kmem_state(void *p, enum node_stat_item idx)
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 7bbdb0ddb011..9ecfcdb54417 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -979,6 +979,7 @@ config MEM_ALLOC_PROFILING
+>  	depends on !DEBUG_FORCE_WEAK_PER_CPU
+>  	select CODE_TAGGING
+>  	select PAGE_EXTENSION
+> +	select SLAB_OBJ_EXT
+>  	help
+>  	  Track allocation source code and record total allocation size
+>  	  initiated at that code location. The mechanism can be used to track
 
