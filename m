@@ -1,106 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-12968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E7B869B5D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 16:56:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E32869B96
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 17:07:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8404A28BD12
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 15:56:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94E27B2E10E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 15:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE3C1487C6;
-	Tue, 27 Feb 2024 15:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BEA0146007;
+	Tue, 27 Feb 2024 15:56:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sUlIYkzL"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QLv0SXmU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958681EEE6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 15:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC881EEE6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 15:56:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709049271; cv=none; b=JBskDklY6KExtlgtE7WRmY8JgylDx68YAM8qi8gsQHzf6Mri+dlw/evMY72dXYdeBHorKug776Rl4Lu2QfThcQzO1mAE0O5cO1UroW37hViQfNDu5T+gWIkvQ3/LWohBdtrxybSWBVthEMnhaq2euR6l4TsWxVggeaeMSFNfpLg=
+	t=1709049368; cv=none; b=s6q3lL2sGyFeK3AVP6PG8BW5fnCGGNezQD9Z40o1jUA8kTDJkGRRG59N2usX8HQL2wDi2UFjp7auGSNfIJmU9OceoCUZ7vuw15pjULMEg7HRung8f2U0KeidqWpiZJ5+XGgwidS07cV5oMYBV/Ya943gHFQhJCsgmHF3JL+MYNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709049271; c=relaxed/simple;
-	bh=5wRaU3YKhDUsLsIBPsgOkmo0CTfRA/SgSuW4xviYFIY=;
+	s=arc-20240116; t=1709049368; c=relaxed/simple;
+	bh=s3wlEquGysXZAaufy+BZCB9S+atZVvdmjHpRk6wPMeo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eSTxOoKoFfhtv63QIW1B2le4rBjOTWRG/M7fZDvo9NEYrqN9OYcqEyFpzxQFd+EoJ3L4vS67+o2c9maO6P2WZ2Bh4tGS1OrRMcSr9xU5and0UMkQ04RFelUd7taKAR47wZOh0/HMBK6vns65W9G/osa6bod6eLJPBI/xe/Gi2AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sUlIYkzL; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ehaBaelOcxQhJl05ZpX3EeYgZv5VWBUnDUYHSnkxWkI=; b=sUlIYkzLLkeRznviQQlcnak9ex
-	TkUEF+nHZee72xTK0JZj5RLmPUllfltWRWr/0Qz7Tpgkanfcy3IWIWLJZfZH5S1Vmd7Rk9auyD+lW
-	qaKf/7K4r2hCJhCA1ugdog1tgIwMoSBxRPzFdYzXoudU5ay7nvR/ZQxC4yyS+OmuIThZ09jJbsanJ
-	f1o5v8ZsUMwKLiyq5uABiB5Rq8Lbvfg5iDZ67DnUbm3rVDQOKCWrdqouxjhTw6H318kZIxSxZkQp9
-	svVWM48YWw55/uP22VXkFFiS/3RWbuotE+voZybTAFh8J3EW+vxSNt2V+eWcoQA8ZFfILlXtmI3Ba
-	6SsYTuCg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1rezmh-00000002lth-1UPC;
-	Tue, 27 Feb 2024 15:54:23 +0000
-Date: Tue, 27 Feb 2024 15:54:23 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Al Viro <viro@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>,
-	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <Zd4FrwE8D7m31c66@casper.infradead.org>
-References: <upnvhnqaitifuwwbxcpa4zgf2hribfrtqzxtcrv5djbyjs2ond@axetql2wrwnt>
- <fb4d944e-fde7-423b-a376-25db0b317398@paulmck-laptop>
- <5c6ueuv5vlyir76yssuwmfmfuof3ukxz6h5hkyzfvsm2wkncrl@7wvkfpmvy2gp>
- <efb40e53-dae5-44c8-9e15-3cbf3a0cf537@paulmck-laptop>
- <oraht3mt3iu7u6q22pvb3du3xjpgei5cncbu4a22mz5scamsq5@fooyqelkfy6u>
- <49354148-4dea-4c89-b591-76b21ed4a5d1@paulmck-laptop>
- <ldpltrnfmf4a3xs43hfjnhrfidrbd7t5k6i5i3ysuzken2zeql@wm2ivk45hitj>
- <df68c44e-1ab3-485d-a0d6-0c37a06ab4ff@paulmck-laptop>
- <6xpyltamnbd7q7nesntqspyfjfq3jexkmfyj2fekrk2mrhktcr@73vij67d5vne>
- <ff8c0f56-6778-47e4-b365-d9c1ef75bbae@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CdT/3EeAz/uQcfMGhLr2VtChigKrA+hw6+QKb3qNxH02RAZ/fcfPTTbWkN5r76BINmFQXJYoJq18RhM7HTcyNrkztte41SXljzzJSixCyaEmr09i8A5XyV6yE3EOCS0Hk5fvUl193pMlAL3xCVQjEpUxsJkx/ysTILPhsGiGYQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QLv0SXmU; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1709049365;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s3wlEquGysXZAaufy+BZCB9S+atZVvdmjHpRk6wPMeo=;
+	b=QLv0SXmUxh31XP+9xLnc/PNjzM2TGNgWsAjv5J9N39+tWXFN7oh3fKlB773G8/Zsr1vTVc
+	tb6BtTNqt0p5OiBaCp1CTGE2cQj5Eo0FpaKgr7wpempDrHd0cIlh8VjIix5APmdMCZ+t6f
+	/D75bB6Pi+7O8QVTV+4lyCs8eK7Dl94=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-320-Z9UyeypHOFWe3T3UrO0UeQ-1; Tue, 27 Feb 2024 10:55:57 -0500
+X-MC-Unique: Z9UyeypHOFWe3T3UrO0UeQ-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D1082185A782;
+	Tue, 27 Feb 2024 15:55:56 +0000 (UTC)
+Received: from localhost (unknown [10.39.192.3])
+	by smtp.corp.redhat.com (Postfix) with ESMTP id CE0F3492BE2;
+	Tue, 27 Feb 2024 15:55:55 +0000 (UTC)
+Date: Tue, 27 Feb 2024 10:55:54 -0500
+From: Stefan Hajnoczi <stefanha@redhat.com>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
+	Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: linux-next: Tree for Feb 26 (fs/fuse/virtio_fs.c)
+Message-ID: <20240227155554.GD386283@fedora>
+References: <20240226175509.37fa57da@canb.auug.org.au>
+ <81c5b68d-90ca-4599-9cc8-a1d737750aaa@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="P7SwKHF8daUBXYQU"
+Content-Disposition: inline
+In-Reply-To: <81c5b68d-90ca-4599-9cc8-a1d737750aaa@infradead.org>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.10
+
+
+--P7SwKHF8daUBXYQU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ff8c0f56-6778-47e4-b365-d9c1ef75bbae@paulmck-laptop>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 27, 2024 at 07:32:32AM -0800, Paul E. McKenney wrote:
-> At a ridiculously high level, reclaim is looking for memory to free.
-> Some read-only memory can often be dropped immediately on the grounds
-> that its data can be read back in if needed.  Other memory can only be
-> dropped after being written out, which involves a delay.  There are of
-> course many other complications, but this will do for a start.
+On Mon, Feb 26, 2024 at 05:01:33PM -0800, Randy Dunlap wrote:
+>=20
+>=20
+> On 2/25/24 22:55, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > Changes since 20240223:
+> >=20
+>=20
+> on 20 randconfig builds (arm64, loongarch, riscv32, riscv64, i386, and x8=
+6_64):
+>=20
+> WARNING: modpost: fs/fuse/virtiofs: section mismatch in reference: virtio=
+_fs_init+0xf9 (section: .init.text) -> virtio_fs_sysfs_exit (section: .exit=
+=2Etext)
+>=20
+> For
+> static void __exit virtio_fs_sysfs_exit(void)
+>=20
+> probably just s/__exit// since it is called from both
+> __init and __ext code.
 
-Hi Paul,
+Thanks, Randy. I am sending a fix.
 
-I appreciate the necessity of describing what's going on at a very high
-level, but there's a wrinkle that I'm not sure you're aware of which
-may substantially change your argument.
+Stefan
 
-For anonymous memory, we do indeed wait until reclaim to start writing it
-to swap.  That may or may not be the right approach given how anonymous
-memory is used (and could be the topic of an interesting discussion
-at LSFMM).
+>=20
+>=20
+> --=20
+> #Randy
+>=20
 
-For file-backed memory, we do not write back memory in reclaim.  If it
-has got to the point of calling ->writepage in vmscan, things have gone
-horribly wrong to the point where calling ->writepage will make things
-worse.  This is why we're currently removing ->writepage from every
-filesystem (only ->writepages will remain).  Instead, the page cache
-is written back much earlier, once we get to balance_dirty_pages().
-That lets us write pages in filesystem-friendly ways instead of in MM
-LRU order.
+--P7SwKHF8daUBXYQU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhpWov9P5fNqsNXdanKSrs4Grc8gFAmXeBgoACgkQnKSrs4Gr
+c8ixNggAug/rstk7tDL114D+Pvuc4VMmv9y4avToZ/AnAUhGuHymMB76nvVGpmnw
+fvxQiTO7esRLuVXEdJ9MZHStvl6TP/dAP6ZgwHwew4WjAVG7lg369lgFn/QluZ1R
+B4Fh6bkUVSETnvZRYL+7RwctDS0fcVQTg781QuMx2JP7GsBXUd7P9FFDTFTs1nYy
+4EXJVXS/H0t5l9l6lQS1RZ70Qx+ozB3wlaU4pa5tQGxNH59fvJEu2UjtckQConqQ
+nDFkn0O/9aqtImsKCXEKoqYKbk5WdxQyLPOhblTWxEqu7eUzWLQFLqMb3FfPxMgQ
+GhSfVKjxQ8iIATRWfLl7qcSdnjJ3CQ==
+=mGX0
+-----END PGP SIGNATURE-----
+
+--P7SwKHF8daUBXYQU--
+
 
