@@ -1,67 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-12918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8559F8688EA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 07:21:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95CD9868902
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 07:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98061C21DD8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 06:21:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFB10B237B7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 06:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F9753375;
-	Tue, 27 Feb 2024 06:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A59D41C6A;
+	Tue, 27 Feb 2024 06:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q+wpQAr/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAON0pAS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB992D04E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 06:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C443B256A;
+	Tue, 27 Feb 2024 06:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709014883; cv=none; b=cM74i14UBkrAaZ5A8wnQ36Hi7Siq2dPkuF5q1lHvz5XNRjB0Kju4AUmvC2nL1l5p+4Tn+dCiGNkE6k7r9b4t0NlMD6RYrJWpvLnUakCuSbgRpFDeygVtt8QNkaoxWR7rdbe0Zy2ji98CCkbfhfpMm1dsSfVGFe3rAzyL3vb2UjM=
+	t=1709015776; cv=none; b=RZvLjTOmmXN7l3vp76yBzZcuuqSoI7/h277gHpbLs6xc7rJ6wd3mottmqzdTtHqhLbfqJ+e7uR2cXRPdX64yDe+tRMdXOBA8tQE/vNTLVcHU/wcE+VqJeyYgb1DdnG7ls1qLyw9fctLP0BxCzFFs4OZDuAXbWNO4QDQnt4LaNXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709014883; c=relaxed/simple;
-	bh=14M0PDFCLSg8r/XD6jtzzk2wPJN52iBiTeF026/wRic=;
+	s=arc-20240116; t=1709015776; c=relaxed/simple;
+	bh=BnWI1QlWvLT8QiqmYWbI9nYOFqfqKjduJfF+ni+ECWU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FsqfJ/EoANKDQOAMuB1S/lqri83naLqsrE5gZHLz7GXWGxZ5xDKXcnQifm90OqzmXb5hEL9elk4YdCu33JKLM/QJc9r8of/pXhmLA0EOCmZ4Er0uXWjv6r9oLnutQPTWQ1ZY1t9n9rat0v965KJxTggnlvXgu2QmjroexZtOdEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q+wpQAr/; arc=none smtp.client-ip=91.218.175.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 27 Feb 2024 01:21:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1709014874;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0GSq7+i8kqkYZe31UVWQlh2crqMmMhxEGm5D2e74FWM=;
-	b=q+wpQAr/wKRDCeFvxG8VegbD/UXQkLTkXiSjdML7AT/xs8//hjv+wvp3q1fXFI+hTRKoC3
-	2MwNw8AU477SlGNCO/v8H5+Xd1VzsTzso7sqwTbWgmX26oMvCVgE6lhv26Mlkisb02ACFK
-	7KKqYDATvEmgtCfeVdX9KEDJ0sJ3Ako=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
-	Daniel Gomez <da.gomez@samsung.com>, Pankaj Raghav <p.raghav@samsung.com>, 
-	Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, 
-	Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <6xpyltamnbd7q7nesntqspyfjfq3jexkmfyj2fekrk2mrhktcr@73vij67d5vne>
-References: <Zdz9p_Kn0puI1KEL@casper.infradead.org>
- <znixgiqxzoksfwwzggmzsu6hwpqfszigjh5k6hx273qil7dx5t@5dxcovjdaypk>
- <upnvhnqaitifuwwbxcpa4zgf2hribfrtqzxtcrv5djbyjs2ond@axetql2wrwnt>
- <fb4d944e-fde7-423b-a376-25db0b317398@paulmck-laptop>
- <5c6ueuv5vlyir76yssuwmfmfuof3ukxz6h5hkyzfvsm2wkncrl@7wvkfpmvy2gp>
- <efb40e53-dae5-44c8-9e15-3cbf3a0cf537@paulmck-laptop>
- <oraht3mt3iu7u6q22pvb3du3xjpgei5cncbu4a22mz5scamsq5@fooyqelkfy6u>
- <49354148-4dea-4c89-b591-76b21ed4a5d1@paulmck-laptop>
- <ldpltrnfmf4a3xs43hfjnhrfidrbd7t5k6i5i3ysuzken2zeql@wm2ivk45hitj>
- <df68c44e-1ab3-485d-a0d6-0c37a06ab4ff@paulmck-laptop>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kqlQCdHjIsgkIGJelIUmEt98ajOScQfyZjc0HBKvXHE0r9lP0A+zM6p+LybYXlH3UyHA1zG/KIjOXdMz+hSLDmG4Xbgcckg/B2JRHIf7aYSKIJ1gLAVo5RC6+ZIstZYPwDiXBNhwmU3SO0rZ+hdbEwzGWYYPpHUNjRHZLmcmMf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAON0pAS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B0E8C433C7;
+	Tue, 27 Feb 2024 06:36:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709015776;
+	bh=BnWI1QlWvLT8QiqmYWbI9nYOFqfqKjduJfF+ni+ECWU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TAON0pASJNwPRPdlYDWOlNy5thVAd1zfXGGDMD9tvgdhVDaM5MNasI2hsJeAog4tq
+	 7CTK3YUoVpDtoSiwjBCcs1j8vsWNtuNltYFB2rpX5BA8lpn/ER+fi+uVYOiaslWRaB
+	 XPj3t5FLRAz5a4gWlqFvqfHWQNMawq6j6zD6CqvUGJ5fmaW9ltX7XUqs0garIZvcAE
+	 r/1CDWmMln2ZZ5SQzUh1yg3TkgSgQvG07KDx7Dn5Yr5UCvCMi2QH8Z/wIrLCX2XwrE
+	 F9TjgMeBF2H5Lxr7j46Wnvh/8W/qUtLTUWQRcH3QLnYc5/msk+7Cw58aZIFQhiiARk
+	 tYei7ksoL52xQ==
+Date: Mon, 26 Feb 2024 22:36:14 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: viro@zeniv.linux.org.uk, jaegeuk@kernel.org, tytso@mit.edu,
+	amir73il@gmail.com, linux-ext4@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org
+Subject: Re: [PATCH v7 00/10] Set casefold/fscrypt dentry operations through
+ sb->s_d_op
+Message-ID: <20240227063614.GB1126@sol.localdomain>
+References: <20240221171412.10710-1-krisman@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,79 +60,63 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <df68c44e-1ab3-485d-a0d6-0c37a06ab4ff@paulmck-laptop>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20240221171412.10710-1-krisman@suse.de>
 
-On Mon, Feb 26, 2024 at 09:17:41PM -0800, Paul E. McKenney wrote:
-> On Mon, Feb 26, 2024 at 08:08:17PM -0500, Kent Overstreet wrote:
-> > On Mon, Feb 26, 2024 at 04:55:29PM -0800, Paul E. McKenney wrote:
-> > > On Mon, Feb 26, 2024 at 07:29:04PM -0500, Kent Overstreet wrote:
-> > > > On Mon, Feb 26, 2024 at 04:05:37PM -0800, Paul E. McKenney wrote:
-> > > > > On Mon, Feb 26, 2024 at 06:29:43PM -0500, Kent Overstreet wrote:
-> > > > > > Well, we won't want it getting hammered on continuously - we should be
-> > > > > > able to tune reclaim so that doesn't happen.
-> > > > > > 
-> > > > > > I think getting numbers on the amount of memory stranded waiting for RCU
-> > > > > > is probably first order of business - minor tweak to kfree_rcu() et all
-> > > > > > for that; there's APIs they can query to maintain that counter.
-> > > > > 
-> > > > > We can easily tell you the number of blocks of memory waiting to be freed.
-> > > > > But RCU does not know their size.  Yes, we could ferret this on each
-> > > > > call to kmem_free_rcu(), but that might not be great for performance.
-> > > > > We could traverse the lists at runtime, but such traversal must be done
-> > > > > with interrupts disabled, which is also not great.
-> > > > > 
-> > > > > > then, we can add a heuristic threshhold somewhere, something like 
-> > > > > > 
-> > > > > > if (rcu_stranded * multiplier > reclaimable_memory)
-> > > > > > 	kick_rcu()
-> > > > > 
-> > > > > If it is a heuristic anyway, it sounds best to base the heuristic on
-> > > > > the number of objects rather than their aggregate size.
-> > > > 
-> > > > I don't think that'll really work given that object size can very from <
-> > > > 100 bytes all the way up to 2MB hugepages. The shrinker API works that
-> > > > way and I positively hate it; it's really helpful for introspection and
-> > > > debugability later to give good human understandable units to this
-> > > > stuff.
-> > > 
-> > > You might well be right, but let's please try it before adding overhead to
-> > > kfree_rcu() and friends.  I bet it will prove to be good and sufficient.
-> > > 
-> > > > And __ksize() is pretty cheap, and I think there might be room in struct
-> > > > slab to stick the object size there instead of getting it from the slab
-> > > > cache - and folio_size() is cheaper still.
-> > > 
-> > > On __ksize():
-> > > 
-> > >  * This should only be used internally to query the true size of allocations.
-> > >  * It is not meant to be a way to discover the usable size of an allocation
-> > >  * after the fact. Instead, use kmalloc_size_roundup().
-> > > 
-> > > Except that kmalloc_size_roundup() doesn't look like it is meant for
-> > > this use case.  On __ksize() being used only internally, I would not be
-> > > at all averse to kfree_rcu() and friends moving to mm.
-> > 
-> > __ksize() is the right helper to use for this; ksize() is "how much
-> > usable memory", __ksize() is "how much does this occupy".
-> > 
-> > > The idea is for kfree_rcu() to invoke __ksize() when given slab memory
-> > > and folio_size() when given vmalloc() memory?
-> > 
-> > __ksize() for slab memory, but folio_size() would be for page
-> > allocations - actually, I think compound_order() is more appropriate
-> > here, but that's willy's area. IOW, for free_pages_rcu(), which AFAIK we
-> > don't have yet but it looks like we're going to need.
-> > 
-> > I'm scanning through vmalloc.c and I don't think we have a helper yet to
-> > query the allocation size - I can write one tomorrow, giving my brain a
-> > rest today :)
+On Wed, Feb 21, 2024 at 12:14:02PM -0500, Gabriel Krisman Bertazi wrote:
 > 
-> Again, let's give the straight count of blocks a try first.  I do see
-> that you feel that the added overhead is negligible, but zero added
-> overhead is even better.
+> When case-insensitive and fscrypt were adapted to work together, we moved the
+> code that sets the dentry operations for case-insensitive dentries(d_hash and
+> d_compare) to happen from a helper inside ->lookup.  This is because fscrypt
+> wants to set d_revalidate only on some dentries, so it does it only for them in
+> d_revalidate.
+> 
+> But, case-insensitive hooks are actually set on all dentries in the filesystem,
+> so the natural place to do it is through s_d_op and let d_alloc handle it [1].
+> In addition, doing it inside the ->lookup is a problem for case-insensitive
+> dentries that are not created through ->lookup, like those coming
+> open-by-fhandle[2], which will not see the required d_ops.
+> 
+> This patchset therefore reverts to using sb->s_d_op to set the dentry operations
+> for case-insensitive filesystems.  In order to set case-insensitive hooks early
+> and not require every dentry to have d_revalidate in case-insensitive
+> filesystems, it introduces a patch suggested by Al Viro to disable d_revalidate
+> on some dentries on the fly.
+> 
+> It survives fstests encrypt and quick groups without regressions.  Based on
+> v6.7-rc1.
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20231123195327.GP38156@ZenIV/
+> [2] https://lore.kernel.org/linux-fsdevel/20231123171255.GN38156@ZenIV/
+> 
+> Gabriel Krisman Bertazi (10):
+>   ovl: Always reject mounting over case-insensitive directories
+>   fscrypt: Factor out a helper to configure the lookup dentry
+>   fscrypt: Drop d_revalidate for valid dentries during lookup
+>   fscrypt: Drop d_revalidate once the key is added
+>   libfs: Merge encrypted_ci_dentry_ops and ci_dentry_ops
+>   libfs: Add helper to choose dentry operations at mount-time
+>   ext4: Configure dentry operations at dentry-creation time
+>   f2fs: Configure dentry operations at dentry-creation time
+>   ubifs: Configure dentry operations at dentry-creation time
+>   libfs: Drop generic_set_encrypted_ci_d_ops
+> 
+>  fs/crypto/hooks.c       | 15 ++++------
+>  fs/ext4/namei.c         |  1 -
+>  fs/ext4/super.c         |  1 +
+>  fs/f2fs/namei.c         |  1 -
+>  fs/f2fs/super.c         |  1 +
+>  fs/libfs.c              | 62 +++++++++++---------------------------
+>  fs/overlayfs/params.c   | 14 +++++++--
+>  fs/ubifs/dir.c          |  1 -
+>  fs/ubifs/super.c        |  1 +
+>  include/linux/fs.h      | 11 ++++++-
+>  include/linux/fscrypt.h | 66 ++++++++++++++++++++++++++++++++++++-----
+>  11 files changed, 105 insertions(+), 69 deletions(-)
+> 
 
-How are you going to write a heuristic that works correctly both when
-the system is cycling through nothing but 2M hugepages, and nothing but
-128 byte whatevers?
+Looks good,
+
+Reviewed-by: Eric Biggers <ebiggers@google.com>
+
+- Eric
 
