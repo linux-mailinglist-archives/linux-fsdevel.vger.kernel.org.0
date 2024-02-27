@@ -1,174 +1,238 @@
-Return-Path: <linux-fsdevel+bounces-12993-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12994-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98FCC869D87
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 18:27:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5AA869E36
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 18:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD01B1C2199E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 17:27:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9EEC2913A4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 17:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC4A152E14;
-	Tue, 27 Feb 2024 17:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D12FF4F88E;
+	Tue, 27 Feb 2024 17:46:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nCcUC0pG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8KOYJYG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D404153393
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 17:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399FB4F219;
+	Tue, 27 Feb 2024 17:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709054559; cv=none; b=r1OMFXmfxxYIigiqCVKokp0jS8sGIvgI32IBTx1FzvgW+OpvbLv52lJUEZmSre2iP/ZWLIwWJOzY3Kar/H/KcOssTEBIInJGkSXRv2POrQu0W11q9OP3b7MjeKX26ZFZW49gPsH7NUP0oiXLErs0xwKqbGEHsT8ek2aHu6l/c6s=
+	t=1709056010; cv=none; b=XNnElG5+pEqudjwPnRihzI43gCjylvcawwq2i62xV861Mudyzw+Ob26HoaatsNQtpdfv1F2xM6B+Dn5sveNjkWH5u17C23dWthb8+4YgDYNiQsUSKC23CUC4FrtbJqRxxVZxCDrehf8HzhBqfuLW8StRUwqZiBYM/LyplZBVH1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709054559; c=relaxed/simple;
-	bh=ZdYSOcXMrGX3m2+orVkqUmLPJ7u+bym3zBa/753fpK4=;
+	s=arc-20240116; t=1709056010; c=relaxed/simple;
+	bh=AnsiBkQ+52OyPvCPOo4rfbzn1dHC4MPnqG/4AgznKUA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eWov1H2eysWdVV4veo78RcBzx2tnLMkZmJFL6hOYJ2mv3pYkq/JeRqCE/pB2KJdDUgYjm+SQGh0V5qvFCgqVryaE9KDhaHcXbhfUBEyg640HGGcDD7+uOqTLM2qG3UzXAgFnQfxnv0+m+dn7hn6x9d2kqICwxVqYhbgzmjXSHBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nCcUC0pG; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2998950e951so3143092a91.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 09:22:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1709054557; x=1709659357; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IUVk9tfv2/TEKzQQvdgVWT/1BpblCVMDABxz0woItG4=;
-        b=nCcUC0pGVAHyXX1Lqi0sIdd5eB4yOJHatGI35TAURJ5FJgJxZNViQZkiUevMrcef5w
-         8CSu64042KapO/HfA4A6YiV+vdUBT3gXB3697VE2U8GwmGYisAj0p/ULzTYkhpYrKG3T
-         bA89zJR5pDXSadakbvnO23D1AWUFWk0+zEBo4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1709054557; x=1709659357;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IUVk9tfv2/TEKzQQvdgVWT/1BpblCVMDABxz0woItG4=;
-        b=lbIfWAmxQL72IF1n3+aPJpsUgCiYAmGkr+q9AQlb2G1xN7kIz5mmGtdNmkP6Jpxv9i
-         5peYqnmNUTo+xhXagNPdikSPGRqPETfMXuNoU38VMPltm1MNGg8YVdiJyHtFevjfilWb
-         YhwEgQHgiWy2BLSFDN2QCtkhC/8dBRskDDK4YYec7UgVC5cZIBSHupLRnSepVikP5hqs
-         +l2PK+/XGrkitjHSEm6oMfgNRONghsbfp9JOeZbTdC6pQweCc+Nw1hOvCCLFLnuMwcFr
-         xNg/7Lt2NU0VFguVNSAzzEOhpitbTlRJe6p9Xzuu4XRZRQ/mcyt2krT2jtU5yD1PN05T
-         BbRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUp1eJ4KHvbP176Cuh/JBR2icjmywU4H9EcqCJNCalZQX4XzOxAIvbbty2o7c03Ej4nFNZhovL6b6JV5ohS3KL3n1NwAyvobpvzUcSz/A==
-X-Gm-Message-State: AOJu0Ywg/ulyX1mwdOTGsgALviaZim3S9P9d/Yx9D12lcqS06+6xyDrQ
-	+4dVnZgej2cWcjcpuMp/FYS1NOYrek2wcfxqE7whE07lKKYpYFAzZXQdU8bcjg==
-X-Google-Smtp-Source: AGHT+IFJl/Kx/RszupPCRJKfaJbO35UqIx2NyIF5Jao1TcmzBVFuX2aec/PdN2rwgRMAQpvLp7NtlQ==
-X-Received: by 2002:a17:90a:8c0b:b0:29a:be15:9c90 with SMTP id a11-20020a17090a8c0b00b0029abe159c90mr6250776pjo.34.1709054557201;
-        Tue, 27 Feb 2024 09:22:37 -0800 (PST)
-Received: from www.outflux.net ([198.0.35.241])
-        by smtp.gmail.com with ESMTPSA id x92-20020a17090a6c6500b00298d8804ba8sm9585587pjj.46.2024.02.27.09.22.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Feb 2024 09:22:36 -0800 (PST)
-Date: Tue, 27 Feb 2024 09:22:35 -0800
-From: Kees Cook <keescook@chromium.org>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Jan Bujak <j@exia.io>, Pedro Falcato <pedro.falcato@gmail.com>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: Recent-ish changes in binfmt_elf made my program segfault
-Message-ID: <202402270911.961702D7D6@keescook>
-References: <c7209e19-89c4-446a-b364-83100e30cc00@exia.io>
- <CAKbZUD2=W0Ng=rFVDn3UwSxtGQ5c13tRwkpqm54pPCJO0BraWA@mail.gmail.com>
- <f2ee9602-0a32-4f0c-a69b-274916abe27f@exia.io>
- <202402261821.F2812C9475@keescook>
- <878r35rkc4.fsf@email.froward.int.ebiederm.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fpG+Qyne5g6yXRoyrpm+pGukc5ngVeSCUP1TOgJ7nkqvqNcLP99F4ew9HtNOGJID6MNN/yxIzF9mnM4DzFIXGsxmdvjrzWn5bt6MQuMkP9aQ86y/Q1xNuzm6/7o5fGBBsY1ZcT6CKjYwgyE/nDw5UnzTtp0jRpJ3FWkuyt0OZ2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8KOYJYG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0104C433C7;
+	Tue, 27 Feb 2024 17:46:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709056009;
+	bh=AnsiBkQ+52OyPvCPOo4rfbzn1dHC4MPnqG/4AgznKUA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t8KOYJYGA+xzjX4ZGRgylJd5VQBRnr5X9Vd8k6uFSjm4W+KTYPOq/gs04htBB38O6
+	 HWYqORj2kVZ81g8J2gvn9Y/0OXams6o2jFKMd+PsQobQKBRmzKVZm4AZltcMDpYenN
+	 DlJPsbQp3TSdKiBcZtm7tzRhSP806V25xYX7vijwR9eiya51U8jnAUQTBtyBr++WQd
+	 0p1KEffiBVGaX0N6zLIRnd2wMESmfrxbtwmyl1kC/gQ4915si0Zv6fcLls5cLqCOFR
+	 IA7GM62bFco53R645z9L8fyVCS7+PBLxdmRWmfnMLFXNeNZ9uQSZvwB0Xw5mqtM9Ak
+	 AEjqoDJkya4AQ==
+Date: Tue, 27 Feb 2024 09:46:49 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, hch@lst.de
+Cc: Amir Goldstein <amir73il@gmail.com>, jlayton@kernel.org
+Subject: [PATCH 14/13] xfs: make XFS_IOC_COMMIT_RANGE freshness data opaque
+Message-ID: <20240227174649.GL6184@frogsfrogsfrogs>
+References: <170900011604.938268.9876750689883987904.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <878r35rkc4.fsf@email.froward.int.ebiederm.org>
+In-Reply-To: <170900011604.938268.9876750689883987904.stgit@frogsfrogsfrogs>
 
-On Tue, Feb 27, 2024 at 09:35:39AM -0600, Eric W. Biederman wrote:
-> Kees Cook <keescook@chromium.org> writes:
-> 
-> > On Tue, Jan 23, 2024 at 12:23:27AM +0900, Jan Bujak wrote:
-> >> On 1/22/24 23:54, Pedro Falcato wrote:
-> >> > Hi!
-> >> > 
-> >> > Where did you get that linker script?
-> >> > 
-> >> > FWIW, I catched this possible issue in review, and this was already
-> >> > discussed (see my email and Eric's reply):
-> >> > https://lore.kernel.org/all/CAKbZUD3E2if8Sncy+M2YKncc_Zh08-86W6U5wR0ZMazShxbHHA@mail.gmail.com/
-> >> > 
-> >> > This was my original testcase
-> >> > (https://github.com/heatd/elf-bug-questionmark), which convinced the
-> >> > loader to map .data over a cleared .bss. Your bug seems similar, but
-> >> > does the inverse: maps .bss over .data.
-> >> > 
-> >> 
-> >> I wrote the linker script myself from scratch.
-> >
-> > Do you still need this addressed, or have you been able to adjust the
-> > linker script? (I ask to try to assess the priority of needing to fix
-> > this behavior change...)
-> 
-> Kees, I haven't had a chance to test this yet but it occurred to me
-> that there is an easy way to handle this.  In our in-memory copy
-> of the elf program headers we can just merge the two segments
-> together.
-> 
-> I believe the diff below accomplishes that, and should fix issue.
-> 
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 5397b552fbeb..01df7dd1f3b4 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -924,6 +926,31 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  	elf_ppnt = elf_phdata;
->  	for (i = 0; i < elf_ex->e_phnum; i++, elf_ppnt++)
->  		switch (elf_ppnt->p_type) {
-> +		case PT_LOAD:
-> +		{
-> +			/*
-> +			 * Historically linux ignored all but the
-> +			 * final .bss segment.  Now that linux honors
-> +			 * all .bss segments, a .bss segment that
-> +			 * logically is not overlapping but is
-> +			 * overlapping when it's edges are rounded up
-> +			 * to page size causes programs to fail.
-> +			 *
-> +			 * Handle that case by merging .bss segments
-> +			 * into the segment they follow.
-> +			 */
-> +			if (((i + 1) >= elf_ex->e_phnum) ||
-> +			    (elf_ppnt[1].p_type != PT_LOAD) ||
-> +			    (elf_ppnt[1].p_filesz != 0))
-> +				continue;
-> +			unsigned long end =
-> +				elf_ppnt[0].p_vaddr + elf_ppnt[0].p_memsz;
-> +			if (elf_ppnt[1].p_vaddr != end)
-> +				continue;
-> +			elf_ppnt[0].p_memsz += elf_ppnt[1].p_memsz;
-> +			elf_ppnt[1].p_type = PT_NULL;
-> +			break;
-> +		}
->  		case PT_GNU_STACK:
->  			if (elf_ppnt->p_flags & PF_X)
->  				executable_stack = EXSTACK_ENABLE_X;
+From: Darrick J. Wong <djwong@kernel.org>
 
-I don't think this is safe -- it isn't looking at flags, etc. e.g.,
-something like this could break:
+To head off bikeshedding about the fields in xfs_commit_range, let's
+make it an opaque u64 array and require the userspace program to call
+a third ioctl to sample the freshness data for us.  If we ever converge
+on a definition for i_version then we can use that; for now we'll just
+use mtime/ctime like the old swapext ioctl.
 
-  Type  Offset   VirtAddr  PhysAddr  FileSiz  MemSiz   Flg Align
-  LOAD  0x003000 0x12000   0x12000   0x001000 0x001000 R E 0x1000
-  LOAD  0x004000 0x13000   0x13000   0x000000 0x001000 RW  0x1000
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+---
+ fs/xfs/libxfs/xfs_fs.h |   13 +++--------
+ fs/xfs/xfs_exchrange.c |   15 ++++++++++++
+ fs/xfs/xfs_exchrange.h |    1 +
+ fs/xfs/xfs_ioctl.c     |   58 +++++++++++++++++++++++++++++++++++++++++++-----
+ 4 files changed, 72 insertions(+), 15 deletions(-)
 
-Hmm
-
--- 
-Kees Cook
+diff --git a/fs/xfs/libxfs/xfs_fs.h b/fs/xfs/libxfs/xfs_fs.h
+index 01b3553adfc55..4019a78ee3ea5 100644
+--- a/fs/xfs/libxfs/xfs_fs.h
++++ b/fs/xfs/libxfs/xfs_fs.h
+@@ -860,14 +860,8 @@ struct xfs_commit_range {
+ 
+ 	__u64		flags;		/* see XFS_EXCHRANGE_* below */
+ 
+-	/* file2 metadata for freshness checks */
+-	__u64		file2_ino;	/* inode number */
+-	__s64		file2_mtime;	/* modification time */
+-	__s64		file2_ctime;	/* change time */
+-	__s32		file2_mtime_nsec; /* mod time, nsec */
+-	__s32		file2_ctime_nsec; /* change time, nsec */
+-
+-	__u64		pad;		/* must be zeroes */
++	/* opaque file2 metadata for freshness checks */
++	__u64		file2_freshness[5];
+ };
+ 
+ /*
+@@ -973,7 +967,8 @@ struct xfs_commit_range {
+ #define XFS_IOC_BULKSTAT	     _IOR ('X', 127, struct xfs_bulkstat_req)
+ #define XFS_IOC_INUMBERS	     _IOR ('X', 128, struct xfs_inumbers_req)
+ #define XFS_IOC_EXCHANGE_RANGE	     _IOWR('X', 129, struct xfs_exch_range)
+-#define XFS_IOC_COMMIT_RANGE	     _IOWR('X', 129, struct xfs_commit_range)
++#define XFS_IOC_START_COMMIT	     _IOWR('X', 130, struct xfs_commit_range)
++#define XFS_IOC_COMMIT_RANGE	     _IOWR('X', 131, struct xfs_commit_range)
+ /*	XFS_IOC_GETFSUUID ---------- deprecated 140	 */
+ 
+ 
+diff --git a/fs/xfs/xfs_exchrange.c b/fs/xfs/xfs_exchrange.c
+index e55ae06f1a32c..dae855515c3c4 100644
+--- a/fs/xfs/xfs_exchrange.c
++++ b/fs/xfs/xfs_exchrange.c
+@@ -863,3 +863,18 @@ xfs_exchange_range(
+ 		fsnotify_modify(fxr->file2);
+ 	return 0;
+ }
++
++/* Sample freshness data from fxr->file2 for a commit range operation. */
++void
++xfs_exchrange_freshness(
++	struct xfs_exchrange	*fxr)
++{
++	struct inode		*inode2 = file_inode(fxr->file2);
++	struct xfs_inode	*ip2 = XFS_I(inode2);
++
++	xfs_ilock(ip2, XFS_IOLOCK_SHARED | XFS_MMAPLOCK_SHARED | XFS_ILOCK_SHARED);
++	fxr->file2_ino = ip2->i_ino;
++	fxr->file2_ctime = inode_get_ctime(inode2);
++	fxr->file2_mtime = inode_get_mtime(inode2);
++	xfs_iunlock(ip2, XFS_IOLOCK_SHARED | XFS_MMAPLOCK_SHARED | XFS_ILOCK_SHARED);
++}
+diff --git a/fs/xfs/xfs_exchrange.h b/fs/xfs/xfs_exchrange.h
+index 2dd9ab7d76828..942283a7f75f5 100644
+--- a/fs/xfs/xfs_exchrange.h
++++ b/fs/xfs/xfs_exchrange.h
+@@ -36,6 +36,7 @@ struct xfs_exchrange {
+ 	struct timespec64	file2_ctime;
+ };
+ 
++void xfs_exchrange_freshness(struct xfs_exchrange *fxr);
+ int xfs_exchange_range(struct xfs_exchrange *fxr);
+ 
+ /* XFS-specific parts of file exchanges */
+diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+index ee26ac2028da1..1940da72a1da7 100644
+--- a/fs/xfs/xfs_ioctl.c
++++ b/fs/xfs/xfs_ioctl.c
+@@ -2402,6 +2402,47 @@ xfs_ioc_exchange_range(
+ 	return error;
+ }
+ 
++/* Opaque freshness blob for XFS_IOC_COMMIT_RANGE */
++struct xfs_commit_range_fresh {
++	__u64		file2_ino;	/* inode number */
++	__s64		file2_mtime;	/* modification time */
++	__s64		file2_ctime;	/* change time */
++	__s32		file2_mtime_nsec; /* mod time, nsec */
++	__s32		file2_ctime_nsec; /* change time, nsec */
++	__u64		pad;		/* zero */
++};
++
++static long
++xfs_ioc_start_commit(
++	struct file			*file,
++	struct xfs_commit_range __user	*argp)
++{
++	struct xfs_exchrange		fxr = {
++		.file2			= file,
++	};
++	struct xfs_commit_range		args;
++	struct xfs_commit_range_fresh	*kern_f;
++	struct xfs_commit_range_fresh	__user *user_f;
++
++	BUILD_BUG_ON(sizeof(struct xfs_commit_range_fresh) !=
++		     sizeof(args.file2_freshness));
++
++	xfs_exchrange_freshness(&fxr);
++
++	kern_f = (struct xfs_commit_range_fresh *)&args.file2_freshness;
++	kern_f->file2_ino		= fxr.file2_ino;
++	kern_f->file2_mtime		= fxr.file2_mtime.tv_sec;
++	kern_f->file2_mtime_nsec	= fxr.file2_mtime.tv_nsec;
++	kern_f->file2_ctime		= fxr.file2_ctime.tv_sec;
++	kern_f->file2_ctime_nsec	= fxr.file2_ctime.tv_nsec;
++
++	user_f = (struct xfs_commit_range_fresh *)&argp->file2_freshness;
++	if (copy_to_user(user_f, kern_f, sizeof(*kern_f)))
++		return -EFAULT;
++
++	return 0;
++}
++
+ static long
+ xfs_ioc_commit_range(
+ 	struct file			*file,
+@@ -2411,12 +2452,15 @@ xfs_ioc_commit_range(
+ 		.file2			= file,
+ 	};
+ 	struct xfs_commit_range		args;
++	struct xfs_commit_range_fresh	*kern_f;
+ 	struct fd			file1;
+ 	int				error;
+ 
++	kern_f = (struct xfs_commit_range_fresh *)&args.file2_freshness;
++
+ 	if (copy_from_user(&args, argp, sizeof(args)))
+ 		return -EFAULT;
+-	if (memchr_inv(&args.pad, 0, sizeof(args.pad)))
++	if (memchr_inv(&kern_f->pad, 0, sizeof(kern_f->pad)))
+ 		return -EINVAL;
+ 	if (args.flags & ~XFS_EXCHRANGE_ALL_FLAGS)
+ 		return -EINVAL;
+@@ -2425,11 +2469,11 @@ xfs_ioc_commit_range(
+ 	fxr.file2_offset	= args.file2_offset;
+ 	fxr.length		= args.length;
+ 	fxr.flags		= args.flags | __XFS_EXCHRANGE_CHECK_FRESH2;
+-	fxr.file2_ino		= args.file2_ino;
+-	fxr.file2_mtime.tv_sec	= args.file2_mtime;
+-	fxr.file2_mtime.tv_nsec	= args.file2_mtime_nsec;
+-	fxr.file2_ctime.tv_sec	= args.file2_ctime;
+-	fxr.file2_ctime.tv_nsec	= args.file2_ctime_nsec;
++	fxr.file2_ino		= kern_f->file2_ino;
++	fxr.file2_mtime.tv_sec	= kern_f->file2_mtime;
++	fxr.file2_mtime.tv_nsec	= kern_f->file2_mtime_nsec;
++	fxr.file2_ctime.tv_sec	= kern_f->file2_ctime;
++	fxr.file2_ctime.tv_nsec	= kern_f->file2_ctime_nsec;
+ 
+ 	file1 = fdget(args.file1_fd);
+ 	if (!file1.file)
+@@ -2782,6 +2826,8 @@ xfs_file_ioctl(
+ 
+ 	case XFS_IOC_EXCHANGE_RANGE:
+ 		return xfs_ioc_exchange_range(filp, arg);
++	case XFS_IOC_START_COMMIT:
++		return xfs_ioc_start_commit(filp, arg);
+ 	case XFS_IOC_COMMIT_RANGE:
+ 		return xfs_ioc_commit_range(filp, arg);
+ 
 
