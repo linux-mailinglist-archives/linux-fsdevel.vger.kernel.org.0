@@ -1,72 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-12978-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12979-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B63869BF2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 17:21:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66FC0869BFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 17:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77F60285FC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 16:21:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D998B2C4F7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 16:22:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAB814831E;
-	Tue, 27 Feb 2024 16:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CC51487DE;
+	Tue, 27 Feb 2024 16:22:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kdv0Elu8"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bwO859o9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE6414830E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 16:21:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97BAD1474B0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 16:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709050889; cv=none; b=DSzDmMY58Q/kYvKl1B7eY7GRSFS9aAXMLN8FuHPFQiQcdNATdpDwXWe29YMVaD85m26+qr2Pfg8P8ADKy708PxhRhyA7A/X5IEwrXBZqXsyjgNh2JzKbu+l0Qx/7PkzTstgC9Q+1YvKMm195tcFjc26OLvsvZuMa9vouC5lT6jc=
+	t=1709050955; cv=none; b=NAY1tle4TBM3Fo/CBKcTxh7OLTgXPW3+NgSiw/94rOiEqbSZ8wR6Rv7EOPmNSDMbJkWCgLuVychLu4dUXlqnbnaL56Ya8nZZC1LUGpXRYqy5EQzMQOPRaqZ5XoSKAUDxpuVUInzpKyxcNXvvs5QknVsa/UptpOx01DBKCV6TDJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709050889; c=relaxed/simple;
-	bh=Hzg6zefAGU5YFBT8ZyU0GJNb+Waa5u+eZRrV8mqCzvY=;
+	s=arc-20240116; t=1709050955; c=relaxed/simple;
+	bh=mpaHnrQXVxhzTPAmuA5VRi7J9LYcCMPR3gS0wa9laMA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uw3aIS9mvy2rYBjqUrv+vqxq667C9SPA7e4/V+5MneihCu1OuynR0fzVn2CqXW7GreBXgIieYx7FShyKidorgAX/UKaqj6DA8qnWDGSWLFHX8RFIjX8Jxumbn9fkf4aY8dBTCwID4SRJjtr1bS7vfexPeK/U8bqpsdxzYO2bo/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kdv0Elu8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C8C9C433C7;
-	Tue, 27 Feb 2024 16:21:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709050889;
-	bh=Hzg6zefAGU5YFBT8ZyU0GJNb+Waa5u+eZRrV8mqCzvY=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=kdv0Elu8z2EC15UsAezT6BWoezSHq5bGjRQ7d7TbhaAQggXcgRpu/BjIHQiLX6DrY
-	 WjBoWHxqOSKvieJHw8EGHlkIzEvdP3H0zo355eiivFQFT848J1TRgAm/vf51lDYZU+
-	 AgZkjMRUrRfdLgctP9dPkKB+fcTPnoSGEhlvzV4hqAjM8SsFHE4sF808+fk+Stvki3
-	 /BR6VQDGlCI9IaCIvpqfR0DAgMicEbnakhVNIrrLhJVefOmoaXbD4ppdSRe+PYGdqP
-	 d0BiomBHQKQPUiu7prrZud84e6LyidITFxhuRl7N9qZGDJ9GnISy0qRhaPA5Po9jCk
-	 HTUJf7bgiEpnQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 391B0CE0F12; Tue, 27 Feb 2024 08:21:29 -0800 (PST)
-Date: Tue, 27 Feb 2024 08:21:29 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Al Viro <viro@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
-	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>,
-	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>,
-	Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>,
-	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <1f0d0536-c35b-46f9-9dfb-c8bc29e6956a@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <fb4d944e-fde7-423b-a376-25db0b317398@paulmck-laptop>
- <5c6ueuv5vlyir76yssuwmfmfuof3ukxz6h5hkyzfvsm2wkncrl@7wvkfpmvy2gp>
- <efb40e53-dae5-44c8-9e15-3cbf3a0cf537@paulmck-laptop>
- <oraht3mt3iu7u6q22pvb3du3xjpgei5cncbu4a22mz5scamsq5@fooyqelkfy6u>
- <49354148-4dea-4c89-b591-76b21ed4a5d1@paulmck-laptop>
- <ldpltrnfmf4a3xs43hfjnhrfidrbd7t5k6i5i3ysuzken2zeql@wm2ivk45hitj>
- <df68c44e-1ab3-485d-a0d6-0c37a06ab4ff@paulmck-laptop>
- <6xpyltamnbd7q7nesntqspyfjfq3jexkmfyj2fekrk2mrhktcr@73vij67d5vne>
- <ff8c0f56-6778-47e4-b365-d9c1ef75bbae@paulmck-laptop>
- <Zd4FrwE8D7m31c66@casper.infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tAa3+6W23HYRPImU4cueW9C+u28P7PMytvLvalq2pGrMwpCbSsLF7+WJnCbAmdqenzsmfNhUuB7O5HARpbdNroLW48Vr0H03EjKzFeenvQpWgCYd88ztxVcJ30GHH5nQBmZ1zOhbGAhQOAezpGLwaOm+GHq3vP96p5ogFTRdkNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bwO859o9; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 27 Feb 2024 11:22:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1709050950;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ZpwdoTPDbBoPf3QYWjOhHZc19Xb5Er/Lboo1nmZhqcA=;
+	b=bwO859o9nXk2p9RatAo3p5C1/sszAl7urqmVyqYIj76c/O++eLQ2fFVcxbPxk+/xgYiBF1
+	d/ZtnwEjP6Tl3Ey6WYdXoJAHfQ682oQonvYCCwO5IXX8NTU2/eiI2L2EhFkFB+aWXpZbUi
+	pNflFYXlz5yMYfcD+4N3ENtkARdq5p4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, david@fromorbit.com, 
+	chandan.babu@oracle.com, akpm@linux-foundation.org, mcgrof@kernel.org, ziy@nvidia.com, 
+	hare@suse.de, djwong@kernel.org, gost.dev@samsung.com, linux-mm@kvack.org, 
+	Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [PATCH 03/13] filemap: align the index to mapping_min_order in
+ the page cache
+Message-ID: <hjrsbb34ghop4qbb6owmg3wqkxu4l42yrekshwfleeqattscqp@z2epeibc67lt>
+References: <20240226094936.2677493-1-kernel@pankajraghav.com>
+ <20240226094936.2677493-4-kernel@pankajraghav.com>
+ <Zdyi6lFDAHXi8GPz@casper.infradead.org>
+ <37kubwweih4zwvxzvjbhnhxunrafawdqaqggzcw6xayd6vtrfl@dllnk6n53akf>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -75,54 +64,48 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zd4FrwE8D7m31c66@casper.infradead.org>
+In-Reply-To: <37kubwweih4zwvxzvjbhnhxunrafawdqaqggzcw6xayd6vtrfl@dllnk6n53akf>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Feb 27, 2024 at 03:54:23PM +0000, Matthew Wilcox wrote:
-> On Tue, Feb 27, 2024 at 07:32:32AM -0800, Paul E. McKenney wrote:
-> > At a ridiculously high level, reclaim is looking for memory to free.
-> > Some read-only memory can often be dropped immediately on the grounds
-> > that its data can be read back in if needed.  Other memory can only be
-> > dropped after being written out, which involves a delay.  There are of
-> > course many other complications, but this will do for a start.
+On Tue, Feb 27, 2024 at 11:06:37AM +0100, Pankaj Raghav (Samsung) wrote:
+> On Mon, Feb 26, 2024 at 02:40:42PM +0000, Matthew Wilcox wrote:
+> > On Mon, Feb 26, 2024 at 10:49:26AM +0100, Pankaj Raghav (Samsung) wrote:
+> > > From: Luis Chamberlain <mcgrof@kernel.org>
+> > > 
+> > > Supporting mapping_min_order implies that we guarantee each folio in the
+> > > page cache has at least an order of mapping_min_order. So when adding new
+> > > folios to the page cache we must ensure the index used is aligned to the
+> > > mapping_min_order as the page cache requires the index to be aligned to
+> > > the order of the folio.
+> > 
+> > This seems like a remarkably complicated way of achieving:
+> > 
+> > diff --git a/mm/filemap.c b/mm/filemap.c
+> > index 5603ced05fb7..36105dad4440 100644
+> > --- a/mm/filemap.c
+> > +++ b/mm/filemap.c
+> > @@ -2427,9 +2427,11 @@ static int filemap_update_page(struct kiocb *iocb,
+> >  }
+> >  
+> >  static int filemap_create_folio(struct file *file,
+> > -		struct address_space *mapping, pgoff_t index,
+> > +		struct address_space *mapping, loff_t pos,
+> >  		struct folio_batch *fbatch)
+> >  {
+> > +	pgoff_t index;
+> > +	unsigned int min_order;
+> >  	struct folio *folio;
+> >  	int error;
+> >  
+> > @@ -2451,6 +2453,8 @@ static int filemap_create_folio(struct file *file,
+> >  	 * well to keep locking rules simple.
+> >  	 */
+> >  	filemap_invalidate_lock_shared(mapping);
+> > +	min_order = mapping_min_folio_order(mapping);
+> > +	index = (pos >> (min_order + PAGE_SHIFT)) << min_order;
 > 
-> Hi Paul,
-> 
-> I appreciate the necessity of describing what's going on at a very high
-> level, but there's a wrinkle that I'm not sure you're aware of which
-> may substantially change your argument.
-> 
-> For anonymous memory, we do indeed wait until reclaim to start writing it
-> to swap.  That may or may not be the right approach given how anonymous
-> memory is used (and could be the topic of an interesting discussion
-> at LSFMM).
-> 
-> For file-backed memory, we do not write back memory in reclaim.  If it
-> has got to the point of calling ->writepage in vmscan, things have gone
-> horribly wrong to the point where calling ->writepage will make things
-> worse.  This is why we're currently removing ->writepage from every
-> filesystem (only ->writepages will remain).  Instead, the page cache
-> is written back much earlier, once we get to balance_dirty_pages().
-> That lets us write pages in filesystem-friendly ways instead of in MM
-> LRU order.
+> That is some cool mathfu. I will add a comment here as it might not be
+> that obvious to some people (i.e me).
 
-Thank you for the additional details.
-
-But please allow me to further summarize the point of my prior email
-that seems to be getting lost:
-
-1.	RCU already does significant work prodding grace periods.
-
-2.	There is no reasonable way to provide estimates of the
-	memory sent to RCU via call_rcu(), and in many cases
-	the bulk of the waiting memory will be call_rcu() memory.
-
-Therefore, if we cannot come up with a heuristic that does not need to
-know the bytes of memory waiting, we are stuck anyway.
-
-So perhaps the proper heuristic for RCU speeding things up is simply
-"Hey RCU, we are in reclaim!".
-
-Or do you have hard data showing that this is insufficient?
-
-							Thanx, Paul
+you guys are both wrong, just use rounddown()
 
