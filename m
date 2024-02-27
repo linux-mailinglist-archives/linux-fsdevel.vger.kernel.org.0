@@ -1,136 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-12980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342BD869CB1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 17:47:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B759869C3C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 17:35:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C930FB279B7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 16:34:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEF611F2467A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 16:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C9D1EB39;
-	Tue, 27 Feb 2024 16:34:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B21E200A0;
+	Tue, 27 Feb 2024 16:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="OMEI6pvD"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WKSH+jb/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F961CD3E
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 16:34:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66101F61C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 16:34:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709051656; cv=none; b=o8eRV287B4XUCKwsOcLUFqKqerzsgKlgio/vYxBO7UFP9x8kyluDVMSQvBiUvuiepsMg3FdPkbuN8AxSt2vHfkuXrjioC0ODH0G3zttQVXzijgASz6vsFeLPxNJ0wtXBEojsKqfBCc2xx/1qlIMl/U/594/hDUqiDJw19KV3cZs=
+	t=1709051701; cv=none; b=N/B8Ql5PEhKFEzYukCPFHBsz4WGEKP+Q7bZ6eE2G+CsZSpYnyCqoaVG7yFxX23ZLADORs600R/Kl7++jIjI4J5Uhl2aZi4DbFLGzwpywSKWpm1q5juYnbUoK0vq+AFmKMQ/t1BLWINt7jObBg/s76X01nWQxs+FH29zlu8RLGgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709051656; c=relaxed/simple;
-	bh=dL4CekRfhWrXPM3OoSgr9VZHe0lxBGUXglunloRrwdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DTL49n+m0yWg4uMJ4pYcVxQCroNuzl/sg8K7EHIu6hqI18pqFvFmau9PZqBk7lnj5dBk3o/8KM6DejvNO6mzpiyyCh3YwLKhqcgEdWdUQ2DW2XAvYR65E1rYH2VIjmWVIi2ddB2jT4feUuLSdctJcRiIfvRKvU1bK2w4Ai6yowE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=OMEI6pvD; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 27 Feb 2024 11:34:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1709051652;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MtgrO6HfgDBspUmBO8A8V2lYH0C5Az89B+6E1HS2XoY=;
-	b=OMEI6pvDazZJhBGLztBSvzYmoeC097k3eEm7TxwgiEqXxsl8bWOJ5pYlKoifuZA5kFkbhx
-	zbT7G0u5dZAabWuYNicluQCdjuMcEktSpCv58eVEcKFno9zcRulGxy9pKZim9Np+ta12JN
-	dud7rauI8N+HH+8Y14TFoFYGtU5Oc2o=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Matthew Wilcox <willy@infradead.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
-	Daniel Gomez <da.gomez@samsung.com>, Pankaj Raghav <p.raghav@samsung.com>, 
-	Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, 
-	Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
-Message-ID: <4eibprmeehxnavkbjwvqdxecqk3b4l6lkc3hslbf3ggmxv5vxw@gprjhbny5rue>
-References: <5c6ueuv5vlyir76yssuwmfmfuof3ukxz6h5hkyzfvsm2wkncrl@7wvkfpmvy2gp>
- <efb40e53-dae5-44c8-9e15-3cbf3a0cf537@paulmck-laptop>
- <oraht3mt3iu7u6q22pvb3du3xjpgei5cncbu4a22mz5scamsq5@fooyqelkfy6u>
- <49354148-4dea-4c89-b591-76b21ed4a5d1@paulmck-laptop>
- <ldpltrnfmf4a3xs43hfjnhrfidrbd7t5k6i5i3ysuzken2zeql@wm2ivk45hitj>
- <df68c44e-1ab3-485d-a0d6-0c37a06ab4ff@paulmck-laptop>
- <6xpyltamnbd7q7nesntqspyfjfq3jexkmfyj2fekrk2mrhktcr@73vij67d5vne>
- <ff8c0f56-6778-47e4-b365-d9c1ef75bbae@paulmck-laptop>
- <Zd4FrwE8D7m31c66@casper.infradead.org>
- <1f0d0536-c35b-46f9-9dfb-c8bc29e6956a@paulmck-laptop>
+	s=arc-20240116; t=1709051701; c=relaxed/simple;
+	bh=lPQa5RxpigNzA71YnzPbRX2zgaSmJ6QbBBpf0Jj1b8o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ScH4a5hIiqWdnm4WSJgI06RthV5XQJ2bxwCzGJOjGwM4av88cuU91/zC2Cj2PcQMsRaRXZgf9SLaxUG7aJsiy4UX9t6w00fyCyClbrZfGOzHVIKcu+eUH5S7/71Ct7efAXVIeNYgKX2Fg9NEkynaTJ549hSkheHDXMJAWG9Ai6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WKSH+jb/; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2d269b2ff48so53858421fa.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 08:34:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1709051698; x=1709656498; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=X4CCC7HPr1xJPYsLBko3V43q/xPr3hyjE8Q6yCF6mfM=;
+        b=WKSH+jb/ymSeWZwUt0KMhZNWBS7Cm4RNacrzYi40b9cCy9zwKdpQfV2DPAzryfn0gf
+         /xJCcnMStvKBylPbYg7Jt3N1WK7+jSA3om+3D/OkHrLL8qSUWgrSDimdWZW5x0Yoy/eX
+         uCgKc8/UtcsgL489pzAzMXxBiyg7ZcsXFiuQU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709051698; x=1709656498;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X4CCC7HPr1xJPYsLBko3V43q/xPr3hyjE8Q6yCF6mfM=;
+        b=kHzexP2rDru6h4O5c/5d+cVhPVc4jIsOAxGjpsM9TWfx3ed60BuBZ+B9/lG6BNRzQe
+         NE1+sEHGxgUoOOjqWtUDFRpPn5g0CMWRpWmsUi9yWC/FQ36uVCJkpA/DJnpvfLbMQNDP
+         hGkaW8NqiziqOIYdrg7qIONna7ErKG/sD/L/otcNFXDCW2cK5LOYzvuRHjSkX24iheoO
+         KNHwBN7aDIVZIcWz/QHTkGYnp7QVXNrSnNFTnT+Ue5gY/DeUp6wOfVxsFvvL4RgqRBqw
+         1y6kItQO0ElKqIUKGqLIBh1FJ6qkz0hO9Ct/YANoIPVH/Pd/GDgKno28J7Pb2btWP+3L
+         lDFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXPTH4t8EFL4UqHpmNybuQOePSUyUf+54nUuUajj9CEBkL7mtMsHsQ8dqMvqELPHHPC+NeaUNcagh7oBAH38fbHCKnQ0RON0t8bham78g==
+X-Gm-Message-State: AOJu0YwnPK/5ETzPL9D+4vuDhLEos9Q+0nTSMDJOWuJ57KLX1VoJFWao
+	t1xDgaPoQhLWKSvC2FFfc2jZjw0Oxw+meFiFXLdn6XNTOOR0IoG7xbtr9br2fAYEgmHKjh4InA5
+	CN70=
+X-Google-Smtp-Source: AGHT+IGs/CB8Lwx6wQDBcvsOUi+p8du+oLlMs4Fhh6pJACTTcx1ibAEihBhEVD3Ajb7oq/YzeFINVw==
+X-Received: by 2002:a2e:820b:0:b0:2d2:4c6d:e08d with SMTP id w11-20020a2e820b000000b002d24c6de08dmr6435762ljg.21.1709051697650;
+        Tue, 27 Feb 2024 08:34:57 -0800 (PST)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id a38-20020a2ebea6000000b002d28c2b238csm699128ljr.57.2024.02.27.08.34.56
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Feb 2024 08:34:56 -0800 (PST)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-512b29f82d1so6123374e87.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 08:34:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWAufpXgD5ryc+r8gEQmlmPiBLswVDBnh7ckMPLxFMen7sn8cAEPWKmygwqZCCu2/RyiiTfiUjfTa+S4p0UjrDJjfgl/F8UaWONV3kkTw==
+X-Received: by 2002:a05:6512:3d10:b0:513:3b3:e6f9 with SMTP id
+ d16-20020a0565123d1000b0051303b3e6f9mr2440207lfv.26.1709051696282; Tue, 27
+ Feb 2024 08:34:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1f0d0536-c35b-46f9-9dfb-c8bc29e6956a@paulmck-laptop>
-X-Migadu-Flow: FLOW_OUT
+References: <Zds8T9O4AYAmdS9d@casper.infradead.org> <CAHk-=wgVPHPPjZPoV8E_q59L7i8zFjHo_5hHo_+qECYuy7FF6g@mail.gmail.com>
+ <Zduto30LUEqIHg4h@casper.infradead.org> <CAHk-=wibYaWYqs5A30a7ywJdsW5LDT1LYysjcCmzjzkK=uh+tQ@mail.gmail.com>
+ <bk45mgxpdbm5gfa6wl37nhecttnb5bxh6wo3slixsray77azu5@pi3bblfn3c5u>
+ <CAHk-=wjnW96+oP0zhEd1zjPNqOHvrddKkwp0+CuS5HpZavfmMQ@mail.gmail.com>
+ <Zdv8dujdOg0dD53k@duke.home> <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
+ <CAHk-=wjOogaW0yLoUqQ0WfQ=etPA4cOFLy56VYCnHVU_DOMLrg@mail.gmail.com>
+ <CAHk-=whFzKO+Vx2f8h72m7ysiEP2Thubp3EaZPa7kuoJb0k=ig@mail.gmail.com> <yfzkhghkh36ww5nzmkdrdpcjy6w5v6us55ccmnh2phjla25mmz@xomuheona22l>
+In-Reply-To: <yfzkhghkh36ww5nzmkdrdpcjy6w5v6us55ccmnh2phjla25mmz@xomuheona22l>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 27 Feb 2024 08:34:39 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjRXSvwq70=G3gDPoaxd3R0PDOnYj7fxOhZ=esiNjFvrA@mail.gmail.com>
+Message-ID: <CAHk-=wjRXSvwq70=G3gDPoaxd3R0PDOnYj7fxOhZ=esiNjFvrA@mail.gmail.com>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Al Viro <viro@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, lsf-pc@lists.linux-foundation.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
+	Daniel Gomez <da.gomez@samsung.com>, Pankaj Raghav <p.raghav@samsung.com>, 
+	Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, Christoph Hellwig <hch@lst.de>, 
+	Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Feb 27, 2024 at 08:21:29AM -0800, Paul E. McKenney wrote:
-> On Tue, Feb 27, 2024 at 03:54:23PM +0000, Matthew Wilcox wrote:
-> > On Tue, Feb 27, 2024 at 07:32:32AM -0800, Paul E. McKenney wrote:
-> > > At a ridiculously high level, reclaim is looking for memory to free.
-> > > Some read-only memory can often be dropped immediately on the grounds
-> > > that its data can be read back in if needed.  Other memory can only be
-> > > dropped after being written out, which involves a delay.  There are of
-> > > course many other complications, but this will do for a start.
-> > 
-> > Hi Paul,
-> > 
-> > I appreciate the necessity of describing what's going on at a very high
-> > level, but there's a wrinkle that I'm not sure you're aware of which
-> > may substantially change your argument.
-> > 
-> > For anonymous memory, we do indeed wait until reclaim to start writing it
-> > to swap.  That may or may not be the right approach given how anonymous
-> > memory is used (and could be the topic of an interesting discussion
-> > at LSFMM).
-> > 
-> > For file-backed memory, we do not write back memory in reclaim.  If it
-> > has got to the point of calling ->writepage in vmscan, things have gone
-> > horribly wrong to the point where calling ->writepage will make things
-> > worse.  This is why we're currently removing ->writepage from every
-> > filesystem (only ->writepages will remain).  Instead, the page cache
-> > is written back much earlier, once we get to balance_dirty_pages().
-> > That lets us write pages in filesystem-friendly ways instead of in MM
-> > LRU order.
-> 
-> Thank you for the additional details.
-> 
-> But please allow me to further summarize the point of my prior email
-> that seems to be getting lost:
-> 
-> 1.	RCU already does significant work prodding grace periods.
-> 
-> 2.	There is no reasonable way to provide estimates of the
-> 	memory sent to RCU via call_rcu(), and in many cases
-> 	the bulk of the waiting memory will be call_rcu() memory.
-> 
-> Therefore, if we cannot come up with a heuristic that does not need to
-> know the bytes of memory waiting, we are stuck anyway.
+On Mon, 26 Feb 2024 at 23:22, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+>
+> Only rough testing, but  this is looking like around a 25% performance
+> increase doing 4k random reads on a 1G file with fio, 8 jobs, on my
+> Ryzen 5950x - 16.7M -> 21.4M iops, very roughly. fio's a pig and we're
+> only spending half our cpu time in the kernel, so the buffered read path
+> is actually getting 40% or 50% faster.
+>
+> So I'd say that's substantial.
 
-That is a completely asinine argument.
+No,  you're doing something wrong. The new fastread logic only
+triggers for reads <= 128 bytes, so you must have done some other
+major change (like built a kernel without the mitigations, and
+compared it to one with mitigations - that would easily be 25%
+depending on hardware).
 
-> So perhaps the proper heuristic for RCU speeding things up is simply
-> "Hey RCU, we are in reclaim!".
-
-Because that's the wrong heuristic. There are important workloads for
-which  we're _always_ in reclaim, but as long as RCU grace periods are
-happening at some steady rate, the amount of memory stranded will be
-bounded and there's no reason to expedite grace periods.
-
-If we start RCU freeing all pagecache folios we're going to be cycling
-memory through RCU freeing at the rate of gigabytes per second, tens of
-gigabytes per second on high end systems.
-
-Do you put hard limits on how long we can go before an RCU grace period
-that will limit the amount of memory stranded to something acceptable?
-Yes or no?
+                  Linus
 
