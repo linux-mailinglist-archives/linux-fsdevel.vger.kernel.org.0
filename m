@@ -1,91 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-12907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81795868567
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 02:01:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4474A86858A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 02:08:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B257D1C223CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 01:01:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1238287AEF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 01:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 097E44A28;
-	Tue, 27 Feb 2024 01:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D5F4A1E;
+	Tue, 27 Feb 2024 01:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="VVr8QJQl"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bdE0yncu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1384431;
-	Tue, 27 Feb 2024 01:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF2B23B1
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 01:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708995701; cv=none; b=hWHunrvyf0KXnbhBdbqVW5LAmzX8fxjAmifmBE2TirHO/GGzeDBwO++ktcoU/LyTCe6R9c86nFpTyieIJuzYjIVdGRJJW5GYlMeTWL/Y46focaHhKAEPFArGcCVkHsBZ8ajB45dVEVL758hjO2cAjfkwWzfizEtaa6eMwbpP73I=
+	t=1708996107; cv=none; b=NaYMt8/K8SxdWzw8KF10x2wc57CrOu5BXnrCdkje2NGPmA0sPXyfbB2JJ28yAj1BxEscVIK1FeVZLDEPGsx4E5TPs6O7cHBIbBJjTLeQ8FaqyZuswBBGqGu3oZgxpsUsY1tV/PWnBzQgibAkEDbCcCnSnQdcxYOcA3EoTrc+9Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708995701; c=relaxed/simple;
-	bh=chz2G2oYg/GX+LoMzJsjN1GkgXA/I1MuwZnEeKWl34M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pMB2akXdlOfIfbDAJtG0YpOsIUSOnVotMeGvDXv7y+Py4sz4zvibQEm1PJ41467tahNfevtRXbOMUKp9w3ksmI8eGGwQLCfnHfYLDQ8NINA4TEC9MK5rxJL6i8UQ2k8hlq3tmLreVnQJQBlriafXC46E5JGnnN70+k3i+iUVfOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=VVr8QJQl; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=aLQRtORwn4Z81DREHqNz24hlSef2b4j4QvU3yCEIhKY=; b=VVr8QJQlihNLmjOT/2km2vBGWa
-	R3JnIR4ZWoGdicDd5fkRXfUOmmxc1eO6sCOprGxy7tI5AbwR4AkAvzR1lRTc5Jb1j+5DnxMdDMF3E
-	e+ii78DqCuy2e2vBI+M855cU8j/tg4YzwofgnL89c4YfnzS3Jwy6ehBsMyRHjOBO3SYXZPrz12HnI
-	C2vo9aac8yojLOm7vjg5EOF8XXs4nDzp323afGeRuKkkwGW+ExA0jaZgbbxVrk963I8lW1qyD72hK
-	8EsvRpRxepJ+F/SWbwKlb1tpL3ky35AmGEWWvJkbIJybTIL9c953EWE71N/P01zRPZR99wd4EUAdu
-	A6A/F9Pw==;
-Received: from [50.53.50.0] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1relqg-00000003CFy-1MIV;
-	Tue, 27 Feb 2024 01:01:34 +0000
-Message-ID: <81c5b68d-90ca-4599-9cc8-a1d737750aaa@infradead.org>
-Date: Mon, 26 Feb 2024 17:01:33 -0800
+	s=arc-20240116; t=1708996107; c=relaxed/simple;
+	bh=NflAfhdHKW+PtBOiWx8oS0ttGZ3mUGpfK5gTK9aLZ6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J9ePCr7paLngoq3Qg7+45tQo7yDwIp880x7slpdgZB3fep8YjphbNvIlHGLP/9rgspza31GEQLcKxNHRBgmtcKZFSUvSza4xPGq/VsmflM0bW4ZUZtJpM5Wo7uYoqNiRwrB9Wey1rkzm4c9HzgBgNMfNsFIkgXPH4FwIp+oU6fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bdE0yncu; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 26 Feb 2024 20:08:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1708996103;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LDqTcIZQa3Py6GKquioM//Kg1mkaTH/E6XkLDhhVkKA=;
+	b=bdE0yncuc7HxxM4Jlh2IsKA/P41J/BHIakFTP9fe3EbJEfWD3lWcaNP0YpNT1nhBXSBMym
+	FJaTltOEZ80h8T35T1nxpEP2+WT53DjHCaGoXNfnGCSvnhfkBfFDigAXDD4OYP0emAY0Cd
+	p4TF/x13QfiYhshHe7c0dMiNVOcqlHo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Al Viro <viro@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm <linux-mm@kvack.org>, 
+	Daniel Gomez <da.gomez@samsung.com>, Pankaj Raghav <p.raghav@samsung.com>, 
+	Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, 
+	Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+Message-ID: <ldpltrnfmf4a3xs43hfjnhrfidrbd7t5k6i5i3ysuzken2zeql@wm2ivk45hitj>
+References: <Zdv8dujdOg0dD53k@duke.home>
+ <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
+ <Zdz9p_Kn0puI1KEL@casper.infradead.org>
+ <znixgiqxzoksfwwzggmzsu6hwpqfszigjh5k6hx273qil7dx5t@5dxcovjdaypk>
+ <upnvhnqaitifuwwbxcpa4zgf2hribfrtqzxtcrv5djbyjs2ond@axetql2wrwnt>
+ <fb4d944e-fde7-423b-a376-25db0b317398@paulmck-laptop>
+ <5c6ueuv5vlyir76yssuwmfmfuof3ukxz6h5hkyzfvsm2wkncrl@7wvkfpmvy2gp>
+ <efb40e53-dae5-44c8-9e15-3cbf3a0cf537@paulmck-laptop>
+ <oraht3mt3iu7u6q22pvb3du3xjpgei5cncbu4a22mz5scamsq5@fooyqelkfy6u>
+ <49354148-4dea-4c89-b591-76b21ed4a5d1@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Feb 26 (fs/fuse/virtio_fs.c)
-Content-Language: en-US
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
- Stefan Hajnoczi <stefanha@redhat.com>, Miklos Szeredi <miklos@szeredi.hu>
-References: <20240226175509.37fa57da@canb.auug.org.au>
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240226175509.37fa57da@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <49354148-4dea-4c89-b591-76b21ed4a5d1@paulmck-laptop>
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 2/25/24 22:55, Stephen Rothwell wrote:
-> Hi all,
+On Mon, Feb 26, 2024 at 04:55:29PM -0800, Paul E. McKenney wrote:
+> On Mon, Feb 26, 2024 at 07:29:04PM -0500, Kent Overstreet wrote:
+> > On Mon, Feb 26, 2024 at 04:05:37PM -0800, Paul E. McKenney wrote:
+> > > On Mon, Feb 26, 2024 at 06:29:43PM -0500, Kent Overstreet wrote:
+> > > > Well, we won't want it getting hammered on continuously - we should be
+> > > > able to tune reclaim so that doesn't happen.
+> > > > 
+> > > > I think getting numbers on the amount of memory stranded waiting for RCU
+> > > > is probably first order of business - minor tweak to kfree_rcu() et all
+> > > > for that; there's APIs they can query to maintain that counter.
+> > > 
+> > > We can easily tell you the number of blocks of memory waiting to be freed.
+> > > But RCU does not know their size.  Yes, we could ferret this on each
+> > > call to kmem_free_rcu(), but that might not be great for performance.
+> > > We could traverse the lists at runtime, but such traversal must be done
+> > > with interrupts disabled, which is also not great.
+> > > 
+> > > > then, we can add a heuristic threshhold somewhere, something like 
+> > > > 
+> > > > if (rcu_stranded * multiplier > reclaimable_memory)
+> > > > 	kick_rcu()
+> > > 
+> > > If it is a heuristic anyway, it sounds best to base the heuristic on
+> > > the number of objects rather than their aggregate size.
+> > 
+> > I don't think that'll really work given that object size can very from <
+> > 100 bytes all the way up to 2MB hugepages. The shrinker API works that
+> > way and I positively hate it; it's really helpful for introspection and
+> > debugability later to give good human understandable units to this
+> > stuff.
 > 
-> Changes since 20240223:
+> You might well be right, but let's please try it before adding overhead to
+> kfree_rcu() and friends.  I bet it will prove to be good and sufficient.
 > 
+> > And __ksize() is pretty cheap, and I think there might be room in struct
+> > slab to stick the object size there instead of getting it from the slab
+> > cache - and folio_size() is cheaper still.
+> 
+> On __ksize():
+> 
+>  * This should only be used internally to query the true size of allocations.
+>  * It is not meant to be a way to discover the usable size of an allocation
+>  * after the fact. Instead, use kmalloc_size_roundup().
+> 
+> Except that kmalloc_size_roundup() doesn't look like it is meant for
+> this use case.  On __ksize() being used only internally, I would not be
+> at all averse to kfree_rcu() and friends moving to mm.
 
-on 20 randconfig builds (arm64, loongarch, riscv32, riscv64, i386, and x86_64):
+__ksize() is the right helper to use for this; ksize() is "how much
+usable memory", __ksize() is "how much does this occupy".
 
-WARNING: modpost: fs/fuse/virtiofs: section mismatch in reference: virtio_fs_init+0xf9 (section: .init.text) -> virtio_fs_sysfs_exit (section: .exit.text)
+> The idea is for kfree_rcu() to invoke __ksize() when given slab memory
+> and folio_size() when given vmalloc() memory?
 
-For
-static void __exit virtio_fs_sysfs_exit(void)
+__ksize() for slab memory, but folio_size() would be for page
+allocations - actually, I think compound_order() is more appropriate
+here, but that's willy's area. IOW, for free_pages_rcu(), which AFAIK we
+don't have yet but it looks like we're going to need.
 
-probably just s/__exit// since it is called from both
-__init and __ext code.
-
-
--- 
-#Randy
+I'm scanning through vmalloc.c and I don't think we have a helper yet to
+query the allocation size - I can write one tomorrow, giving my brain a
+rest today :)
 
