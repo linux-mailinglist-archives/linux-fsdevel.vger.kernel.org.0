@@ -1,73 +1,66 @@
-Return-Path: <linux-fsdevel+bounces-12991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5458B869D3E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 18:10:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B035869D5C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 18:20:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7F261F2855A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 17:10:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C8F91C22FB6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 17:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7264EB5D;
-	Tue, 27 Feb 2024 17:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA90487BF;
+	Tue, 27 Feb 2024 17:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="Bp8e/1d+"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Sr8k9iRd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B5A94EB21;
-	Tue, 27 Feb 2024 17:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94286481BD
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 17:20:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709053810; cv=none; b=p+g8QwHXmJW0bqHUpUKTR7pVKjPHnMS/KYqsJG7B8KtujZ/wXGDKfRNQK3OJOcBmNpaR5N6jpc/KEHu6gvatO7Abk8o4+waXENFTrWbPNjt1IcJT42gAxmbpXbzwSPvi+Qi34J1aduwtUeDQKe3EogXe/VM/UvlZg1Zm/2ZDqVc=
+	t=1709054414; cv=none; b=haYSs3O6F5DjGp7qxpQ7TsBJ50CjlZLiQFRPffZHb9jVN5XpkowHEH+Dkxm1AZFDNmYeGVZrPfCEwKzBaV0Tq13Iug31BQsGrtY8ikMPLCVcshXpOS1sREfWA2LryupWd7V49tphXnkWwdD9ynqHU0KbLIDJi2bSifae51bFpOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709053810; c=relaxed/simple;
-	bh=gyuDS9EtEKaZucQGaEB4KRJYUmQ89m4Q+KTR4RAwEKU=;
+	s=arc-20240116; t=1709054414; c=relaxed/simple;
+	bh=shSRsUrM1e+4Tl8NZT0m9A4HFFrbju3zRUUPX6BDqLs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t6BTxxmsK3KUGg2PIBjIE55lgm4jDpGLfNtJ7IqS8dXigWUIPdfKwWtKf8m7vXnowD3V+TtmEuK2JVig6f71AO4vHTVkWvysqSAEEG4xevAfqk+wlXR+qLsIqi8fhc0oGr2lTZoPnZz1mhaoz0ONpkiV22r5vY/cqJEWqkFdiNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=Bp8e/1d+; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4TkkWF4lXLz9stn;
-	Tue, 27 Feb 2024 18:10:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1709053801;
+	 Content-Type:Content-Disposition:In-Reply-To; b=YiogQlYfAeIHGTB57Xf+O8peVA+pnJNkJ/Wvn5Brk13XsBwHsdOhMrHS4yWbKOQy87+RCms5F2wrTDv8F+Kc2SV8yD/gasneFK4AlyRRSFrfthKZAxSgM6qgwKa/B+QOuiZwwEPhFLxzjYBgRh6vv+J1jyThUFITS9kj6yfmliI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Sr8k9iRd; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 27 Feb 2024 12:20:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1709054410;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=L3rbyqVBPDOPP9EM6vMSpLtzZtbMxF8srL9v40G0eMw=;
-	b=Bp8e/1d+0s6eBqZSdp+nDUYyWX1I3kndK4tVYRukCkdA303SiPrLBul3QkDt5kyngCAxCH
-	CclK+qmQimTSdZ37SJNF9ZyYlxC93pioBZL4JBPcXSnaSjNn4wsAlRppgX5jrhwJxVS9NX
-	rk+zeg2BZoiI5WjnQfuFp9jTA9Fdr8Fuk9FkmCwPZzIFW+auxXD6VRyLQMgnSl02jeT8oe
-	LaWL0DWKVVRHCLtwmfY2MAoo0lGBlMy6M774uvUCrgTYrqzgVjPMSNZ53L/bAQIBVmkAem
-	RnWbBaahhuYcPF6ChRUiqlfzXlCRTxqpmuqKCms8KauMe4oQE/CatYUOSDAc9Q==
-Date: Tue, 27 Feb 2024 18:09:57 +0100
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, david@fromorbit.com, 
-	chandan.babu@oracle.com, akpm@linux-foundation.org, mcgrof@kernel.org, ziy@nvidia.com, 
-	hare@suse.de, djwong@kernel.org, gost.dev@samsung.com, linux-mm@kvack.org, 
-	Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH 03/13] filemap: align the index to mapping_min_order in
- the page cache
-Message-ID: <mm47tgwkrk3glymx6hzgp5bshnzqwqt26ja46xckfzzbjuwzic@oupjlfibn4nm>
-References: <20240226094936.2677493-1-kernel@pankajraghav.com>
- <20240226094936.2677493-4-kernel@pankajraghav.com>
- <Zdyi6lFDAHXi8GPz@casper.infradead.org>
- <37kubwweih4zwvxzvjbhnhxunrafawdqaqggzcw6xayd6vtrfl@dllnk6n53akf>
- <hjrsbb34ghop4qbb6owmg3wqkxu4l42yrekshwfleeqattscqp@z2epeibc67lt>
- <aajarho6xwi4sphqirwvukofvqy3cl6llpe5fetomj5sz7rgzp@xo2iqdwingtf>
- <vsy43j4pwgh4thcqbhmotap7rgzg5dnet42gd5z6x4yt3zwnu4@5w4ousyue36m>
- <4zpsfvy3e4hkc4avvjjr34rgo7ggpd6hpflptmiauvxwm3dpvk@5wulihwpwbyp>
- <na2k4nnvkseh2yh27eqkbfyouf7vnerd6i7pt4z7f7xsjsm6pu@ry5tvdcr2ggw>
+	bh=M47XJuoQtfybzUrIAXoBTW9aD5NlE3aY+d3Xw/1LzFI=;
+	b=Sr8k9iRdStKLQBVhBlbR3osCe/PMJjMNaN1XTFv4XebzsegUutl1uvkD17cRRQicU+BfzI
+	UlmfKcJrKEL6mRVtlNkzuebdhB0MUesGRJ0vT4VhGgbx3crklNwOyXuOVZquyCcHbZ91kF
+	H41aRsnaQKGjdNWA9328d/C4gm6rkuw=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Al Viro <viro@kernel.org>, Matthew Wilcox <willy@infradead.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm <linux-mm@kvack.org>, Daniel Gomez <da.gomez@samsung.com>, 
+	Pankaj Raghav <p.raghav@samsung.com>, Jens Axboe <axboe@kernel.dk>, Dave Chinner <david@fromorbit.com>, 
+	Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>, Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [LSF/MM/BPF TOPIC] Measuring limits and enhancing buffered IO
+Message-ID: <ti5zair3y4v66udgaqsvswl26t3wygdlwnfpyliuwgtdvpnjl2@f2f22qositjr>
+References: <bk45mgxpdbm5gfa6wl37nhecttnb5bxh6wo3slixsray77azu5@pi3bblfn3c5u>
+ <CAHk-=wjnW96+oP0zhEd1zjPNqOHvrddKkwp0+CuS5HpZavfmMQ@mail.gmail.com>
+ <Zdv8dujdOg0dD53k@duke.home>
+ <CAHk-=wiEVcqTU1oQPSjaJvxj5NReg3GzkBO8zpL1tXFG1UVyvg@mail.gmail.com>
+ <CAHk-=wjOogaW0yLoUqQ0WfQ=etPA4cOFLy56VYCnHVU_DOMLrg@mail.gmail.com>
+ <CAHk-=whFzKO+Vx2f8h72m7ysiEP2Thubp3EaZPa7kuoJb0k=ig@mail.gmail.com>
+ <yfzkhghkh36ww5nzmkdrdpcjy6w5v6us55ccmnh2phjla25mmz@xomuheona22l>
+ <CAHk-=wjRXSvwq70=G3gDPoaxd3R0PDOnYj7fxOhZ=esiNjFvrA@mail.gmail.com>
+ <hnmf36wwh3yahmcyqlbgnhidcsgmfg4jnat2n6m2dxz655cxt7@gm7qddu2cshm>
+ <CAHk-=wii2MLd3kE1jqoH1BcwBBiFURqzhAXCACgr+FBjT6kM6w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,27 +69,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <na2k4nnvkseh2yh27eqkbfyouf7vnerd6i7pt4z7f7xsjsm6pu@ry5tvdcr2ggw>
-X-Rspamd-Queue-Id: 4TkkWF4lXLz9stn
+In-Reply-To: <CAHk-=wii2MLd3kE1jqoH1BcwBBiFURqzhAXCACgr+FBjT6kM6w@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-> > 
-> > I have one question while I have you here. 
-> > 
-> > When we have this support in the page cache, do you think bcachefs can make
-> > use of this support to enable bs > ps in bcachefs as it already makes use 
-> > of large folios? 
+On Tue, Feb 27, 2024 at 09:07:01AM -0800, Linus Torvalds wrote:
+> On Tue, 27 Feb 2024 at 08:47, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> >
+> > Like I replied to willy - the "4k" was a typo from force of habit, I was
+> > doing 64 byte random reads.
 > 
-> Yes, of course.
+> Ok, can you send the exact fio command? I'll do some testing here too.
 > 
-> > Do you think it is just a simple mapping_set_large_folios ->
-> > mapping_set_folio_min_order(.., block_size order) or it requires more
-> > effort?
-> 
-> I think that's all that would be required. There's very little in the
-> way of references to PAGE_SIZE in bcachefs.
+>                   Linus
 
-Sweet. I will take a look at it once we get this upstream.
-
---
-Pankaj
+fio					\
+	--group_reporting		\
+	--gtod_reduce=1			\
+	--norandommap			\
+	--runtime=60s			\
+	--exitall_on_error=1		\
+	--filename=/root/foo		\
+	--name=read			\
+	--rw=randread			\
+	--loops=100			\
+	--numjobs=8			\
+	--filesize=1G			\
+	--bs=64b			\
+	--io_size=10G
 
