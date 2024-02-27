@@ -1,131 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-12925-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A114868B4B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 09:53:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D00868B61
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 09:55:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC9B01C22B3A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 08:53:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C48392873C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 08:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC4E133413;
-	Tue, 27 Feb 2024 08:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54688136669;
+	Tue, 27 Feb 2024 08:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="bwkd6Fsd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTgPVEKg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88A4130AF8;
-	Tue, 27 Feb 2024 08:53:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A928055E78
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 08:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709024020; cv=none; b=X4GnoTZGQYl9EwZWL97NuO8UEh2DJn8pyA6xFTyVu66BLnhqEluMG8VH8kXUifxnxq/C309xpSVvxLQOZ0el5X29mCllHslSiOsjS5eMep6EgxNGTz9X2CoFR4RTALsuIpYaZKdcV7BhGsFDBbJyWvlfTughcDyZw8YrAFLAOQs=
+	t=1709024109; cv=none; b=QLbD/y396KNbgCno/dDlgJkW93weu+ceDll5HP0K2BJKJJbSxyvi8f+MoBOmekspYGtNRr2F0m5B6XnnK8Dtyc+LKj1qRSruZQ20zKZRgwNs2NmB8a6g+sillJkNLunaUoxwN5d11cF4RuT4qQooqLeyICfm2wANkQa3ES/NzHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709024020; c=relaxed/simple;
-	bh=lzCwQyJEpw1qZT/9M5wpgWtO9LJVM/qhBJBKrIpwRL4=;
+	s=arc-20240116; t=1709024109; c=relaxed/simple;
+	bh=Ezprr0ceJP+fX30x2rCCzplmuePgShwUwAfr1x1H/3E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rbc77wNoq4K0a2DsomzqTx8TIHrBrbAOKK6ZnKwVvIhvh2W5r+9+uTypLWolg2OV2YGMA224/w3JtGaznXWp9qLmryA2WE8byp+ZT7+vkYHpgmuxxmGD+8IEnA3x7uyNMCdLsZV0Ius22JkRRBuO1TziNZ8XpoGxmicpa/iq3XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=bwkd6Fsd; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4TkWVR1BWbz9sq8;
-	Tue, 27 Feb 2024 09:53:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1709024015;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xG7fSz4uiTp34cw0D1g4RsXUHnXCjcPMxUY/Xls6pRo=;
-	b=bwkd6Fsd51NLXnw7/z4WN4Vs9Rq95oo0ECbijUAdGiZjRV8oRKfHkJ+OlRoEwAYUgii4pS
-	MJ6N8K30jVn6Q2b2nLufYhRyspVwGc571+3xnbsWTGqyQylWKNt3/WAB4+3jj22X+uXNGp
-	er7tF/crJ2UnX2wo0x2jAtNDMop+kVMFZZoocmy0PIlDCVAHiGHsq6Xj4hsygm0AemiHN5
-	81IoGf4NY68rYwbeGrdPcrCypTL6kXf9Aq/uHW/fN7QnjwTfj2ooIhy0VjwxMNpP0fLB15
-	6sEDSjk7gxfDiRshE2FVkzv1AJ6fy03HKMgo+Ks7Ky8MNax3pJbMCjpHC+WUYw==
-Date: Tue, 27 Feb 2024 09:53:31 +0100
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, chandan.babu@oracle.com, akpm@linux-foundation.org, 
-	mcgrof@kernel.org, ziy@nvidia.com, hare@suse.de, djwong@kernel.org, 
-	gost.dev@samsung.com, linux-mm@kvack.org, willy@infradead.org, 
-	Dave Chinner <dchinner@redhat.com>
-Subject: Re: [PATCH 11/13] xfs: expose block size in stat
-Message-ID: <4ojxfvnqw6d5dytkcw55olpbdcbwy2pgs7d6mchg6nmgt3icbi@rvzrifqb5x3k>
-References: <20240226094936.2677493-1-kernel@pankajraghav.com>
- <20240226094936.2677493-12-kernel@pankajraghav.com>
- <ZdyHoOHBQ19JJap2@dread.disaster.area>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GlrMtqImEm9CzFCmEDiexPIVqsr/i1zyRMemL5vqQksD9JdsfEOSwWxkiMpqPP44VdpyBLJREURkjYyFbcTYcZHVxRCpc/EPEUiC8nnuCpatat0LoMj2Q42ELOvfPk5ohEa5UQphHuUHG9J6x+6g0QzWctARBwUJSi6ZEO26Zso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTgPVEKg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91229C433C7;
+	Tue, 27 Feb 2024 08:55:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1709024109;
+	bh=Ezprr0ceJP+fX30x2rCCzplmuePgShwUwAfr1x1H/3E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aTgPVEKgq1K4760fxd5MX5zvYiunqKP8/YhPdn3xcLzPK+rodardm2A8R42QEO9VG
+	 yCSQENLJmv/XwLpjZB4QhwGF5ofKOFC0kzR+IuR5gTjhA6fwCV446bCdMDKlq/xu70
+	 dbdCu8jc0shLsWfsfZUiuNdkBZLcz6pXc7a+QW8Ya460XKrFryRhK50FlxBkKTz4+6
+	 QZHW23IZQDMilR0TpeT0BtEMc/mwISF0S/U2gcMjigfKXrRWawt9YVC2b573bUy2mG
+	 VePb6lPgcW5iI8a5Tmihz9HSHUpY1IooJZ6vdot74akFEEWbON4BaIOlAVLqtZxi3k
+	 ziBjHtZs5DL4w==
+Date: Tue, 27 Feb 2024 09:55:04 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v4 0/2] Fix libaio cancellation support
+Message-ID: <20240227-setzlinge-pochen-ef901577b541@brauner>
+References: <20240215204739.2677806-1-bvanassche@acm.org>
+ <20240221-hautnah-besonderen-e66d60bae4e6@brauner>
+ <9a0f534d-0251-492d-b7f9-30926e037c57@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ZdyHoOHBQ19JJap2@dread.disaster.area>
-X-Rspamd-Queue-Id: 4TkWVR1BWbz9sq8
+In-Reply-To: <9a0f534d-0251-492d-b7f9-30926e037c57@acm.org>
 
-On Mon, Feb 26, 2024 at 11:44:16PM +1100, Dave Chinner wrote:
-> On Mon, Feb 26, 2024 at 10:49:34AM +0100, Pankaj Raghav (Samsung) wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
+On Mon, Feb 26, 2024 at 12:50:46PM -0800, Bart Van Assche wrote:
+> On 2/21/24 01:26, Christian Brauner wrote:
+> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+> > branch: vfs.misc
 > > 
-> > For block size larger than page size, the unit of efficient IO is
-> > the block size, not the page size. Leaving stat() to report
-> > PAGE_SIZE as the block size causes test programs like fsx to issue
-> > illegal ranges for operations that require block size alignment
-> > (e.g. fallocate() insert range). Hence update the preferred IO size
-> > to reflect the block size in this case.
-> > 
-> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > dd2d535e3fb29d ("xfs: cleanup calculating the stat optimal I/O size")]
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > [1/2] fs/aio: Restrict kiocb_set_cancel_fn() to I/O submitted via libaio
+> >        https://git.kernel.org/vfs/vfs/c/34c6ea2e3aea
+> > [2/2] fs/aio: Make io_cancel() generate completions again
+> >        https://git.kernel.org/vfs/vfs/c/ee347c5af5be
 > 
-> Something screwed up there, and you haven't put your own SOB on
-> this.
-Oops. I will add it.
+> Patch [1/2] ended up in Linus' tree as commit b820de741ae4, which is
+> great. However, I can't find patch [2/2] in any vfs branch nor in
+> linux-next. Did I perhaps overlook something?
 
-> 
-> > ---
-> >  fs/xfs/xfs_iops.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-> > index a0d77f5f512e..1b4edfad464f 100644
-> > --- a/fs/xfs/xfs_iops.c
-> > +++ b/fs/xfs/xfs_iops.c
-> > @@ -543,7 +543,7 @@ xfs_stat_blksize(
-> >  			return 1U << mp->m_allocsize_log;
-> >  	}
-> >  
-> > -	return PAGE_SIZE;
-> > +	return max_t(unsigned long, PAGE_SIZE, mp->m_sb.sb_blocksize);
-> >  }
-> 
-> This function returns a uint32_t, same type as
-> mp->m_sb.sb_blocksize. The comparision should use uint32_t casts,
-> not unsigned long.
-> 
-Yeah. Something like this instead of using unsigned long:
-
-return max_t(uint32_t, PAGE_SIZE, mp->m_sb.sb_blocksize);
-
-> ALso, this bears no resemblence to the original patch I wrote back in
-> 2018. Please remove my SOB from it - you can state that "this change
-> is based on a patch originally from Dave Chinner" to credit the
-> history of it, but it's certainly not the patch I wrote 6 years ago
-> and so my SOB does not belong on it.
-Ok.
-
-> 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+1/2 was supposed to be a bugfix that we had to do right away while 2/2
+wasn't that urgent iirc. @Jens, can I get an Ack on the second patch?
 
