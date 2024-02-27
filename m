@@ -1,87 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-12911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D008685BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 02:27:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECFD868640
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 02:46:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A40B3284F37
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 01:27:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 999AF2848DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 01:46:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB8FD4C8B;
-	Tue, 27 Feb 2024 01:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NlFVz9jq"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92C50CA6B;
+	Tue, 27 Feb 2024 01:45:59 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99FF34C6F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 01:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3BC2916;
+	Tue, 27 Feb 2024 01:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1708997268; cv=none; b=htOnuVlua15ZJ5PSU2q15QScCNp1MshVDArFFRxpe2VGqdj8MWl1X6fDPt9+0eOCZKyxd0c9LCGTeXlmVADQi0ibusANZiuS2EfLEI5T80pnWjT/GCkqr+uCl9khTR1aZwj4YxIevgjlHU4HZ7oK+gK0dz9zG6wZf4DyF7qnqfI=
+	t=1708998359; cv=none; b=qaNfWJtHf/M9o9HJXZnDpl0QwsnBwz4FUy1zMZJV/ITIaWeFpqLKyIORATpwbPO6IfiP98qPz2kiqlDLefIm8pZFZiY4gbWq/PiFU12f1ayt7cOKE14wi2VY82c3oStYPB7n+mz2SHmGMff9U7SMEpX2V0pDmNN04QHeOjgmcH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1708997268; c=relaxed/simple;
-	bh=z087l6hQkJGoRMgoD8JQ8fv0QSMskIjmtAjI3IVwQU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JyEhpNkFMVsane9hts/AE0FNelSaLHGO122S2Pe4bl3LPrQAhmEqQjU7ykm1WPw0viE4YNmmFO+xk/m1sDBoSem9b3TRHK/9ikXtCT2g39ZJ5QpoICwomFcCRF3npCWp+eU1AoCNYUW7Y35+EaBMMWdvHLs9f3dm5qfYayr9nF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NlFVz9jq; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 26 Feb 2024 20:27:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1708997263;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCK/NQhBoPr81ElFtD9qUO3bzHMkQYrIvvTQEfD4gpE=;
-	b=NlFVz9jqeDN/b68Vm3ZNO23eXtexuoRYiuxteYWlihUaOeHzk3ctb8cK3Gk3oE0f8jKq7j
-	Y5TYGJUn4YpkSMGQMp6LX+ZACoZNhdQ2C1k4ULxaW/aVSgmOCcjH+MQKWvLUjo3LkieRy1
-	z78/na8HwD5La2CEat5JpTcf/p4Za8s=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Eric Sandeen <sandeen@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	David Howells <dhowells@redhat.com>, Alexander Viro <aviro@redhat.com>, 
-	Bill O'Donnell <billodo@redhat.com>, Karel Zak <kzak@redhat.com>
-Subject: Re: [PATCH RFC] vfs: always log mount API fs context messages to
- dmesg
-Message-ID: <rzgt47eohuiuattzg7avpsnk4zci7avpwd4p7viiuec3s7t75k@q2rp2hjastzq>
-References: <9934ed50-5760-4326-a921-cee0239355b0@redhat.com>
- <20240223-beraten-pilzbefall-6ca15beab35b@brauner>
+	s=arc-20240116; t=1708998359; c=relaxed/simple;
+	bh=LuyC8MIBSY/6X2DV9kyguJMcgXgow64FfJ55DNaRInI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O+i56kCQXs5W5iL0+lwW2FrMlDhSxL0YgIUNKqQ6MmEAlG+ZY/76u4yYuJGamB3OjmmiGYhogclfPzRPcZue4sTK01ptkdgZClNhXjRfhiSFKJHrjbuQqmqPjPtzSciRCH+SbcC2SwNmI5/MUr1FbleT6GxQSXyUOwJH8PyX8Q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6A64C43390;
+	Tue, 27 Feb 2024 01:45:56 +0000 (UTC)
+Date: Mon, 26 Feb 2024 20:47:57 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Huang Yiwei <quic_hyiwei@quicinc.com>
+Cc: <mhiramat@kernel.org>, <mark.rutland@arm.com>, <mcgrof@kernel.org>,
+ <keescook@chromium.org>, <j.granados@samsung.com>,
+ <mathieu.desnoyers@efficios.com>, <corbet@lwn.net>,
+ <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>,
+ <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+ <quic_bjorande@quicinc.com>, <quic_tsoni@quicinc.com>,
+ <quic_satyap@quicinc.com>, <quic_aiquny@quicinc.com>, <kernel@quicinc.com>,
+ Ross Zwisler <zwisler@google.com>, Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [PATCH v5] tracing: Support to dump instance traces by
+ ftrace_dump_on_oops
+Message-ID: <20240226204757.1a968a10@gandalf.local.home>
+In-Reply-To: <20240208131814.614691-1-quic_hyiwei@quicinc.com>
+References: <20240208131814.614691-1-quic_hyiwei@quicinc.com>
+X-Mailer: Claws Mail 3.19.1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240223-beraten-pilzbefall-6ca15beab35b@brauner>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 23, 2024 at 04:06:29PM +0100, Christian Brauner wrote:
-> On Thu, Feb 22, 2024 at 09:22:52AM -0600, Eric Sandeen wrote:
-> > As filesystems are converted to the new mount API, informational messages,
-> > errors, and warnings are being routed through infof, errorf, and warnf
-> > type functions provided by the mount API, which places these messages in
-> > the log buffer associated with the filesystem context rather than
-> > in the kernel log / dmesg.
-> > 
-> > However, userspace is not yet extracting these messages, so they are
-> > essentially getting lost. mount(8) still refers the user to dmesg(1)
-> > on failure.
-> 
-> I mean sure we can do this. But we should try without a Kconfig option
-> for this.
-> 
-> But mount(8) and util-linux have been switched to the new mount api in
-> v2.39 and libmount already has the code to read and print the error
-> messages:
+On Thu, 8 Feb 2024 21:18:14 +0800
+Huang Yiwei <quic_hyiwei@quicinc.com> wrote:
 
-Why was there not an API flag to indicate when userspace is listening
-for these?
+> Currently ftrace only dumps the global trace buffer on an OOPs. For
+> debugging a production usecase, instance trace will be helpful to
+> check specific problems since global trace buffer may be used for
+> other purposes.
+> 
+> This patch extend the ftrace_dump_on_oops parameter to dump a specific
+> or multiple trace instances:
+> 
+>   - ftrace_dump_on_oops=0: as before -- don't dump
+>   - ftrace_dump_on_oops[=1]: as before -- dump the global trace buffer
+>   on all CPUs
+>   - ftrace_dump_on_oops=2 or =orig_cpu: as before -- dump the global
+>   trace buffer on CPU that triggered the oops
+>   - ftrace_dump_on_oops=<instance_name>: new behavior -- dump the
+>   tracing instance matching <instance_name>
+>   - ftrace_dump_on_oops[=2/orig_cpu],<instance1_name>[=2/orig_cpu],
+>   <instrance2_name>[=2/orig_cpu]: new behavior -- dump the global trace
+>   buffer and multiple instance buffer on all CPUs, or only dump on CPU
+>   that triggered the oops if =2 or =orig_cpu is given
+
+So we need to add that the syntax is:
+
+ ftrace_dump_on_oops[=[<0|1|2|orig_cpu>,][<instance_name>[=<1|2|orig_cpu>][,...]]
+
+> 
+> Also, the sysctl node can handle the input accordingly.
+> 
+> Cc: Ross Zwisler <zwisler@google.com>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> Signed-off-by: Huang Yiwei <quic_hyiwei@quicinc.com>
+> ---
+>  .../admin-guide/kernel-parameters.txt         |  26 ++-
+>  Documentation/admin-guide/sysctl/kernel.rst   |  30 +++-
+>  include/linux/ftrace.h                        |   4 +-
+>  include/linux/kernel.h                        |   1 +
+>  kernel/sysctl.c                               |   4 +-
+>  kernel/trace/trace.c                          | 156 +++++++++++++-----
+>  kernel/trace/trace_selftest.c                 |   2 +-
+>  7 files changed, 168 insertions(+), 55 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 31b3a25680d0..3d6ea8e80c2f 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1561,12 +1561,28 @@
+>  			The above will cause the "foo" tracing instance to trigger
+>  			a snapshot at the end of boot up.
+>  
+> -	ftrace_dump_on_oops[=orig_cpu]
+> +	ftrace_dump_on_oops[=2(orig_cpu) | =<instance>][,<instance> |
+> +			  ,<instance>=2(orig_cpu)]
+>  			[FTRACE] will dump the trace buffers on oops.
+> -			If no parameter is passed, ftrace will dump
+> -			buffers of all CPUs, but if you pass orig_cpu, it will
+> -			dump only the buffer of the CPU that triggered the
+> -			oops.
+> +			If no parameter is passed, ftrace will dump global
+> +			buffers of all CPUs, if you pass 2 or orig_cpu, it
+> +			will dump only the buffer of the CPU that triggered
+> +			the oops, or the specific instance will be dumped if
+> +			its name is passed. Multiple instance dump is also
+> +			supported, and instances are separated by commas. Each
+> +			instance supports only dump on CPU that triggered the
+> +			oops by passing 2 or orig_cpu to it.
+> +
+> +			ftrace_dump_on_oops=foo=orig_cpu
+> +
+> +			The above will dump only the buffer of "foo" instance
+> +			on CPU that triggered the oops.
+> +
+> +			ftrace_dump_on_oops,foo,bar=orig_cpu
+
+I believe the above is incorrect. It should be:
+
+			ftrace_dump_on_oops=foo,bar=orig_cpu
+
+And you can add here as well:
+
+  ftrace_dump_on_oops[=[<0|1|2|orig_cpu>,][<instance_name>[=<1|2|orig_cpu>][,...]]
+
+
+Thanks,
+
+--Steve
+
+> +
+> +			The above will dump global buffer on all CPUs, the
+> +			buffer of "foo" instance on all CPUs and the buffer
+> +			of "bar" instance on CPU that triggered the oops.
+>  
+>  	ftrace_filter=[function-list]
 
