@@ -1,80 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-12926-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-12927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D00868B61
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 09:55:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 902EB868B67
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 09:56:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C48392873C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 08:55:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47B3D2825A1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 08:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54688136669;
-	Tue, 27 Feb 2024 08:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CEA1332AA;
+	Tue, 27 Feb 2024 08:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTgPVEKg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Atf59c7A"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A928055E78
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 08:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409A17BAE7;
+	Tue, 27 Feb 2024 08:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709024109; cv=none; b=QLbD/y396KNbgCno/dDlgJkW93weu+ceDll5HP0K2BJKJJbSxyvi8f+MoBOmekspYGtNRr2F0m5B6XnnK8Dtyc+LKj1qRSruZQ20zKZRgwNs2NmB8a6g+sillJkNLunaUoxwN5d11cF4RuT4qQooqLeyICfm2wANkQa3ES/NzHE=
+	t=1709024158; cv=none; b=qkLLcN6s/ix3feQ0y12SpybxfBUgUo/J8jog+2NIR39ZX45dZR4Gz0TDCFMegoV0Q5c+EA/nW09njTTTe/px43f+SEG38k05dIFAbP739ASe1e6Z+oApPPQdz/5qQtJXagPSpd3g31KygtdZtj6Twmhwm/XZyrxcfFQJFJeMHgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709024109; c=relaxed/simple;
-	bh=Ezprr0ceJP+fX30x2rCCzplmuePgShwUwAfr1x1H/3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GlrMtqImEm9CzFCmEDiexPIVqsr/i1zyRMemL5vqQksD9JdsfEOSwWxkiMpqPP44VdpyBLJREURkjYyFbcTYcZHVxRCpc/EPEUiC8nnuCpatat0LoMj2Q42ELOvfPk5ohEa5UQphHuUHG9J6x+6g0QzWctARBwUJSi6ZEO26Zso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTgPVEKg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91229C433C7;
-	Tue, 27 Feb 2024 08:55:07 +0000 (UTC)
+	s=arc-20240116; t=1709024158; c=relaxed/simple;
+	bh=5G55jJ37yALWJA3Flq+WvEdMPXWpcjNUm7qt5e07zjM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jybwn+CZPq2SYzMBkM2xn/rrf0SSsPDnX4JXvmk441CzqR6g/DJM9XCrR2+OGyAfrvkX+VXsVQWxt5SKvBiGr6ivrhmknyXOTi9yRrC2T1+ld2YtXQJjq8wAI6FFIpEW4zEuxm1A2T+CdO8REWXafKHUIzbvYmRvO22bFpjDDsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Atf59c7A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53987C433C7;
+	Tue, 27 Feb 2024 08:55:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709024109;
-	bh=Ezprr0ceJP+fX30x2rCCzplmuePgShwUwAfr1x1H/3E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aTgPVEKgq1K4760fxd5MX5zvYiunqKP8/YhPdn3xcLzPK+rodardm2A8R42QEO9VG
-	 yCSQENLJmv/XwLpjZB4QhwGF5ofKOFC0kzR+IuR5gTjhA6fwCV446bCdMDKlq/xu70
-	 dbdCu8jc0shLsWfsfZUiuNdkBZLcz6pXc7a+QW8Ya460XKrFryRhK50FlxBkKTz4+6
-	 QZHW23IZQDMilR0TpeT0BtEMc/mwISF0S/U2gcMjigfKXrRWawt9YVC2b573bUy2mG
-	 VePb6lPgcW5iI8a5Tmihz9HSHUpY1IooJZ6vdot74akFEEWbON4BaIOlAVLqtZxi3k
-	 ziBjHtZs5DL4w==
-Date: Tue, 27 Feb 2024 09:55:04 +0100
+	s=k20201202; t=1709024158;
+	bh=5G55jJ37yALWJA3Flq+WvEdMPXWpcjNUm7qt5e07zjM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Atf59c7AojkRaAezxeXkTBddWmqVYEMpSVUixZRLuOjEHENfviEcMjLSwalrOCpoc
+	 acf8jx9tPSPoNHPo447tkiyWUxwBHQHOjWXK0Ppq0QQA/mIgZ4RE8Un0gcmnwgLDDS
+	 XoOU4JL7rMQMFTAVCCGJ+z5BCeoWSUcf3jJY1hBzG0LUR0tLErSiEPMmvr7C8tSdEJ
+	 HqlJipaTmwspWwoUoRe2fO5uz7JTTPFR6h+8V+g0FvNDUIRrcyiBBg02tjOhDnUWYw
+	 GydX/0bU1zUzyko2UBeOOEwTA4tMe/O7HZHdp9lWsBWRwK0iLl9t8ZRcwvXKpeAyDG
+	 wDmjqEK4T3rRA==
 From: Christian Brauner <brauner@kernel.org>
-To: Bart Van Assche <bvanassche@acm.org>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, 
+To: Bart Van Assche <bvanassche@acm.org>,
+	Jens Axboe <axboe@kernel.dk>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>,
+	Avi Kivity <avi@scylladb.com>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	stable@vger.kernel.org,
 	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v4 0/2] Fix libaio cancellation support
-Message-ID: <20240227-setzlinge-pochen-ef901577b541@brauner>
-References: <20240215204739.2677806-1-bvanassche@acm.org>
- <20240221-hautnah-besonderen-e66d60bae4e6@brauner>
- <9a0f534d-0251-492d-b7f9-30926e037c57@acm.org>
+Subject: Re: (subset) [PATCH v4 2/2] fs/aio: Make io_cancel() generate completions again
+Date: Tue, 27 Feb 2024 09:55:49 +0100
+Message-ID: <20240227-kostenlos-handwagen-e8dbe564375c@brauner>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240215204739.2677806-3-bvanassche@acm.org>
+References: <20240215204739.2677806-1-bvanassche@acm.org> <20240215204739.2677806-3-bvanassche@acm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <9a0f534d-0251-492d-b7f9-30926e037c57@acm.org>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1339; i=brauner@kernel.org; h=from:subject:message-id; bh=5G55jJ37yALWJA3Flq+WvEdMPXWpcjNUm7qt5e07zjM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTeXTyNW3TbX7tlRnysjje+FEl9vKTBoaa6ob/+ToRvR u/tBOuLHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOJSmVk+B99TKD6nptiTNpN 38Qw5+f5ScaVziLzGLofiLCamc9NZmTonzf5g/Wso50f14jtYY+fUL1p9UK3n289O5f09u9Ue3K OGwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 26, 2024 at 12:50:46PM -0800, Bart Van Assche wrote:
-> On 2/21/24 01:26, Christian Brauner wrote:
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-> > branch: vfs.misc
-> > 
-> > [1/2] fs/aio: Restrict kiocb_set_cancel_fn() to I/O submitted via libaio
-> >        https://git.kernel.org/vfs/vfs/c/34c6ea2e3aea
-> > [2/2] fs/aio: Make io_cancel() generate completions again
-> >        https://git.kernel.org/vfs/vfs/c/ee347c5af5be
+On Thu, 15 Feb 2024 12:47:39 -0800, Bart Van Assche wrote:
+> The following patch accidentally removed the code for delivering
+> completions for cancelled reads and writes to user space: "[PATCH 04/33]
+> aio: remove retry-based AIO"
+> (https://lore.kernel.org/all/1363883754-27966-5-git-send-email-koverstreet@google.com/)
+> >From that patch:
 > 
-> Patch [1/2] ended up in Linus' tree as commit b820de741ae4, which is
-> great. However, I can't find patch [2/2] in any vfs branch nor in
-> linux-next. Did I perhaps overlook something?
+> -	if (kiocbIsCancelled(iocb)) {
+> -		ret = -EINTR;
+> -		aio_complete(iocb, ret, 0);
+> -		/* must not access the iocb after this */
+> -		goto out;
+> -	}
+> 
+> [...]
 
-1/2 was supposed to be a bugfix that we had to do right away while 2/2
-wasn't that urgent iirc. @Jens, can I get an Ack on the second patch?
+@Jens, please take another look at this.
+
+---
+
+Applied to the vfs.misc branch of the vfs/vfs.git tree.
+Patches in the vfs.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.misc
+
+[2/2] fs/aio: Make io_cancel() generate completions again
+      https://git.kernel.org/vfs/vfs/c/ff365e6bc31c
 
