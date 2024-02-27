@@ -1,142 +1,264 @@
-Return-Path: <linux-fsdevel+bounces-13002-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-13003-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF79686A028
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 20:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4983486A066
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 20:42:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A0662904A5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 19:27:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C954628C7EA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Feb 2024 19:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A1C51C47;
-	Tue, 27 Feb 2024 19:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D39143C48;
+	Tue, 27 Feb 2024 19:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p7X2+NGM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6C83evW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172A5EEDD
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 19:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C1348CFC
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 19:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1709062011; cv=none; b=qilmdNUBPRDlHurpCkb77Q60lny8bJHJEfJ5qcsv75Svvib8ggmTzewqOQicR0lGOWtRjTZSJoRXjAIeiszgpCdt0xj3D4D2YhHV/1ZVnGYMg3pcwX0n8QK1ySxNnyN3awU3ndzpzKObxan0mKf65qcKpgDHNCh5UCNkbWF+YyU=
+	t=1709062972; cv=none; b=jmDr/+SM67+Xca7cgQn+0YGStIOSHdy5vgYZSvjhds1poQzqMPG00NtlJbP+6ElKz5gZ/W/pQtXSiGcxsFP5a0oJ6xFDpwsRpIqr40Z8azzuDMe0Q1qM34BthmOGgCvV+iEHnjUgnLsQlvHpPFHGyfEyttNHMgG99ILdHXt75UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1709062011; c=relaxed/simple;
-	bh=2sIIUWvrAA2FokwRivP4G5Hk/ZClBdrBalfpm1v2iHU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gMWk73LJXUM9TieFOYwh/vEzuotTdEP2Q/yFihgWqNmbMkZCItPGwm97rDcpaMPYKnKuRatvixYQerfKzeWrD5p0H8u7nZ9Bjo74Z99Wy6rOWuTFPSjZ6jCJCMdT7RwNii1CeGsh6TjpVmndTkKjZDKrMuORwvlMA4HrcLxyZyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p7X2+NGM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B546C433C7;
-	Tue, 27 Feb 2024 19:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1709062010;
-	bh=2sIIUWvrAA2FokwRivP4G5Hk/ZClBdrBalfpm1v2iHU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p7X2+NGMEz6U3VH4eZ7MAy94xI3cCPw8UvWPIfZzXQwBFSjlMTeIybRMzkPvPItVY
-	 mT8yuCKdsVe9fFg+xH/gfvT48wBwn+eUXDbHhmRLEITVs9j/nx9AOMeoYZwZiXro4z
-	 H2GI+ygIIIkOLQdAjzEQ21vKr/hJ5+8ikcEBLipjiR02wcNb/rGXCLKnEtTFN7diuj
-	 Krc+yIGidaKzboPfNj13XdO4Mn+7XCqMsGOraNP/o0SDfM/kTeUEx6EiihKl5SQYaq
-	 QYVf5qG5sll1Qm3IsFT6R4aDMTzMnWK5HXDkkueq3tey8NrHAOFmkO2YGoR7hlBRDm
-	 SWf16fhyeicoA==
-Date: Tue, 27 Feb 2024 12:26:48 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-	Tycho Andersen <tycho@tycho.pizza>,
-	Heiko Carstens <hca@linux.ibm.com>, Al Viro <viro@kernel.org>
-Subject: Re: [PATCH 2/2] pidfd: add pidfdfs
-Message-ID: <20240227192648.GA2621994@dev-arch.thelio-3990X>
-References: <20240213-vfs-pidfd_fs-v1-0-f863f58cfce1@kernel.org>
- <20240213-vfs-pidfd_fs-v1-2-f863f58cfce1@kernel.org>
- <20240222190334.GA412503@dev-arch.thelio-3990X>
- <20240223-delfin-achtlos-e03fd4276a34@brauner>
- <20240223-schusselig-windschatten-a108c9034c5b@brauner>
- <CAHk-=wg0D8g_97_pakX-tC2DnANE-=6ZNY5bz=-hP+uHYyh4=g@mail.gmail.com>
- <20240224-westseite-haftzeit-721640a8700b@brauner>
- <CAHk-=wguw2UsVREQ8uR7gA1KF4satf2d+J9S1J6jJFngxM30rw@mail.gmail.com>
- <20240224-altgedienten-meerwasser-1fb9de8f4050@brauner>
+	s=arc-20240116; t=1709062972; c=relaxed/simple;
+	bh=RPUIGzhINGl6BpDsI73yII+EuG9ygI8IZoJIbVo3Dkc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PBhgM4HvgWKC3ptmsEgjzVphPT2Wnqk2NnvIeRqozPl53IZKGk4QjuuJN4ibWwAsX6qOm9XXtG7/ytPpXsNDsb/xpczBkd0ROZtsu3xuGHzjGo6L10SjqDUtlfVugRt3xTPW+/CZIX0OyPhYZOn3zu5syomWRC1JschpoCk5Le8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O6C83evW; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-42e885c8885so8744831cf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Feb 2024 11:42:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1709062969; x=1709667769; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8v1Ly1YaAgunUVG8+Va8Bz9BbGxc7Gq+aSFJLhr9uUc=;
+        b=O6C83evWhUn/p8Prp12HfsGVn74/zBEaJd7xVHCryOAULD+9bwn6oAcht/Agj+440w
+         DZCi98/36Nl+zp11kYj00irOTEFnEeRrIdlSgDC466qHowuu5inwl4yEeLh2hyNPdUBM
+         5tkIok/DWZo2vNNBQWlf2lJgK98mr2YWHM2+8LOoY0R6aM5hi/u9M5hWuZE/C9TADMjL
+         VRLzJbpf6kT1rYUNVZZQY8Y7MDae2w9EDXZfyhJ2z8YWGxhY21kp4sqeNV6hm7SrenVC
+         gqz2ZLe6FAjNVwPHKA6Ll8THxOzD21GOJXGwa1T08T2i19TxaDhqoYijupOwyRBMJtuq
+         Q0qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1709062969; x=1709667769;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8v1Ly1YaAgunUVG8+Va8Bz9BbGxc7Gq+aSFJLhr9uUc=;
+        b=bV5BXwbqFbMJF6LYpBE+OgVjHVdSugE8VrF0fy78S8Ez3Hi85xuwRVYzFtzCTP3xUy
+         IuDEypFRB+EE9nMoGi5EFtBS3meHLi//u4khdtpAd8qxyP/lQIEZFThiB8e+E+5TErPF
+         7IQB6E5Clr/W1RjOZN7WdjuDXTYaIgQkBISA1H1xC+UMe8pwSHW836ieMDpl0dEyUFgX
+         kgrYDVX+8EgSzHo/j9BIBkLorBFLw8/mNe/2yGD235qtDq9hSxyPLo1vGC1wpWkn4gdX
+         mPLjhe2Yu0wVumezjNsrWLTW1EXC45b1AceeWmj7ZXZRhvYMV95iBZXXFcgr2BlDOuVm
+         PtJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlXzWmzjsJqyg+ub75UtxNv+J6209gSM9uijrqo0pPA1dLXPgR13iiKelZyYLepjQpBU2piVJ6Xx9N0isdFdCZol6rb8XTPSjcq3sHwQ==
+X-Gm-Message-State: AOJu0Yz/ge5PRbNTZQKDA67cnvFnLE452y5xfWljRXes/Wve2ZT0J1TJ
+	LqVKBobg+AdadokJ5xFNXOBR/vN3Wsc+uueEUpQ01yteezXTM7yRX1q22InRQFYl6wyHGMrNuhd
+	NUJuUzMB117Y9qbacyJukKzKCyDc=
+X-Google-Smtp-Source: AGHT+IEJks7rWY0hudvFdBGda9EO3pUoZYqLS/sX9JkJo751x3ljU03ifkpAq4QIP8+mThLz4phyR/eQFa8HhZlDC40=
+X-Received: by 2002:ac8:5715:0:b0:42e:5db4:2f8d with SMTP id
+ 21-20020ac85715000000b0042e5db42f8dmr13037679qtw.13.1709062969379; Tue, 27
+ Feb 2024 11:42:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240224-altgedienten-meerwasser-1fb9de8f4050@brauner>
+References: <CAOQ4uxgxCRoqwCs7mr+7YP4mmW7JXxRB20r-fsrFe2y5d3wDqQ@mail.gmail.com>
+ <20240205182718.lvtgfsxcd6htbqyy@quack3> <CAOQ4uxgMKjEMjPP5HBk0kiZTfkqGU-ezkVpeS22wxL=JmUqhuQ@mail.gmail.com>
+ <CAOQ4uxhvCbhvdP4BiLmOw5UR2xjk19LdvXZox1kTk-xzrU_Sfw@mail.gmail.com>
+ <20240208183127.5onh65vyho4ds7o7@quack3> <CAOQ4uxiwpe2E3LZHweKB+HhkYaAKT5y_mYkxkL=0ybT+g5oUMA@mail.gmail.com>
+ <20240212120157.y5d5h2dptgjvme5c@quack3> <CAOQ4uxi45Ci=3d62prFoKjNQanbUXiCP4ULtUOrQtFNqkLA8Hw@mail.gmail.com>
+ <20240215115139.rq6resdfgqiezw4t@quack3> <CAOQ4uxh-zYN_gok2mp8jK6BysgDb+BModw+uixvwoHB6ZpiGww@mail.gmail.com>
+ <20240219110121.moeds3khqgnghuj2@quack3>
+In-Reply-To: <20240219110121.moeds3khqgnghuj2@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 27 Feb 2024 21:42:37 +0200
+Message-ID: <CAOQ4uxizF_=PK9N9A8i8Q_QhpXe7MNrfUTRwR5jCVzgfSBm1dw@mail.gmail.com>
+Subject: Re: [RFC][PATCH] fanotify: allow to set errno in FAN_DENY permission response
+To: Jan Kara <jack@suse.cz>
+Cc: Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, Sargun Dhillon <sargun@sargun.me>, 
+	Sweet Tea Dorminy <thesweettea@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Christian,
-
-On Sat, Feb 24, 2024 at 08:15:53PM +0100, Christian Brauner wrote:
-> On Sat, Feb 24, 2024 at 10:48:11AM -0800, Linus Torvalds wrote:
-> > On Fri, 23 Feb 2024 at 21:52, Christian Brauner <brauner@kernel.org> wrote:
+On Mon, Feb 19, 2024 at 1:01=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Thu 15-02-24 17:40:07, Amir Goldstein wrote:
+> > > > Last time we discussed this the conclusion was an API of a group-le=
+ss
+> > > > default mask, for example:
+> > > >
+> > > > 1. fanotify_mark(FAN_GROUP_DEFAULT,
+> > > >                            FAN_MARK_ADD | FAN_MARK_MOUNT,
+> > > >                            FAN_PRE_ACCESS, AT_FDCWD, path);
+> > > > 2. this returns -EPERM for access until some group handles FAN_PRE_=
+ACCESS
+> > > > 3. then HSM is started and subscribes to FAN_PRE_ACCESS
+> > > > 4. and then the mount is moved or bind mounted into a path exported=
+ to users
 > > >
-> > > This is selinux. So I think this is a misunderstanding. This isn't
-> > > something we can fix in the kernel.
-> > 
-> > Sure it is. SELinux just goes by what the kernel tells it anyway.
-> > 
-> > Presumably this is purely about the fact that the inode in question
-> > *used* to be that magical 'anon_inode_inode' that is shared when you
-> > don't want or need a separate inode allocation. I assume it doesn't
-> > even look at that, it just looks at the 'anon_inode_fs_type' thing (or
-> > maybe at the anon_inode_mnt->mnt_sb that is created by kern_mount in
-> > anon_inode_init?)
-> > 
-> > IOW, isn't the *only* difference that selinux can actually see just
-> > the inode allocation? It used to be that
-> > 
-> >        inode = anon_inode_getfile();
-> > 
-> > now it is
-> > 
-> >         inode = new_inode_pseudo(pidfdfs_sb);
-> > 
-> > and instead of sharing one single inode (like anon_inode_getfile()
-> > does unless you ask for separate inodes), it now shares the dentry
-> > instead (for the same pid).
-> > 
-> > Would selinux be happy if the inode allocation just used the
-> > anon_inode superblock instead of pidfdfs_sb?
-> 
-> No, unfortunately not. The core issue is that anon_inode_getfile() isn't
-> subject to any LSM hooks which is what pidfds used. But dentry_open() is
-> via security_file_open(). LSMs wanted to have a say in pidfd mediation
-> which is now possible. So the switch to dentry_open() is what is causing
-> the issue.
-> 
-> But here's a straightforward fix appended. We let pidfs.c use that fix
-> as and then we introduce a new LSM hook for pidfds that allows mediation
-> of pidfds and selinux can implement it when they're ready. This is
-> regression free and future proof. I actually tested this already today.
-> 
-> How does that sounds?
+> > > Yes, this was the process I was talking about.
+> > >
+> > > > It is a simple solution that should be easy to implement.
+> > > > But it does not involve "register the HSM app with the filesystem",
+> > > > unless you mean that a process that opens an HSM group
+> > > > (FAN_REPORT_FID|FAN_CLASS_PRE_CONTENT) should automatically
+> > > > be given FMODE_NONOTIFY files?
+> > >
+> > > Two ideas: What you describe above seems like what the new mount API =
+was
+> > > intended for? What if we introduced something like an "hsm" mount opt=
+ion
+> > > which would basically enable calling into pre-content event handlers
+> >
+> > I like that.
+> > I forgot that with my suggestion we'd need a path to setup
+> > the default mask.
+> >
+> > > (for sb without this flag handlers wouldn't be called and you cannot =
+place
+> > > pre-content marks on such sb).
+> >
+> > IMO, that limitation (i.e. inside brackets) is too restrictive.
+> > In many cases, the user running HSM may not have control over the
+> > mount of the filesystem (inside containers?).
+> > It is true that HSM without anti-crash protection is less reliable,
+> > but I think that it is still useful enough that users will want the
+> > option to run it (?).
+> >
+> > Think of my HttpDirFS demo - it's just a simple lazy mirroring
+> > of a website. Even with low reliability I think it is useful (?).
+>
+> Yeah, ok, makes sense. But for such "unpriviledged" usecases we don't hav=
+e
+> a deadlock-free way to fill in the file contents because that requires a
+> special mountpoint?
+>
 
-I see a patch similar to this change in your vfs.pidfs branch as
-commit 47a1fbce74c3 ("pidfs: convert to path_from_stashed() helper"),
-which also appears to be in next-20240227. However, I still seem to be
-having similar issues (although I cannot reproduce them every single
-boot like I used to). I do see some SELinux denials for pidfs, although
-it seems like it is only write that is being denied, rather than open,
-read, and write?
+True, unless we also keep the FMODE_NONOTIFY event->fd
+for the simple cases. I'll need to think about this some more.
 
-  # uname -r
-  6.8.0-rc6-next-20240227
+> > > These handlers would return EACCESS unless
+> > > there's somebody handling events and returning something else.
+> > >
+> > > You could then do:
+> > >
+> > > fan_fd =3D fanotify_init()
+> > > ffd =3D fsopen()
+> > > fsconfig(ffd, FSCONFIG_SET_STRING, "source", device, 0)
+> > > fsconfig(ffd, FSCONFIG_SET_FLAG, "hsm", NULL, 0)
+> > > rootfd =3D fsconfig(ffd, FSCONFIG_CMD_CREATE, NULL, NULL, 0)
+> > > fanotify_mark(fan_fd, FAN_MARK_ADD, ... , rootfd, NULL)
+> > > <now you can move the superblock into the mount hierarchy>
+> >
+> > Not too bad.
+> > I think that "hsm_deny_mask=3D" mount options would give more flexibili=
+ty,
+> > but I could be convinced otherwise.
+> >
+> > It's probably not a great idea to be running two different HSMs on the =
+same
+> > fs anyway, but if user has an old HSM version installed that handles on=
+ly
+> > pre-content events, I don't think that we want this old version if it h=
+appens
+> > to be run by mistake, to allow for unsupervised create,rename,delete if=
+ the
+> > admin wanted to atomically mount a fs that SHOULD be supervised by a
+> > v2 HSM that knows how to handle pre-path events.
+> >
+> > IOW, and "HSM bit" on sb is too broad IMO.
+>
+> OK. So "hsm_deny_mask=3D" would esentially express events that we require=
+ HSM
+> to handle, the rest would just be accepted by default. That makes sense.
 
-  # systemctl --failed --no-legend --plain
-  fwupd-refresh.service loaded failed failed Refresh fwupd metadata and update motd
-  mcelog.service        loaded failed failed Machine Check Exception Logging Daemon
-  polkit.service        loaded failed failed Authorization Manager
+Yes.
 
-  # journalctl -b 0 -g denied -t audit | head -3
-  Feb 27 10:49:20 qemu audit[1]: AVC avc:  denied  { write } for  pid=1 comm="systemd" path="pidfd:[1547]" dev="pidfs" ino=1547 scontext=system_u:system_r:init_t:s0 tcontext=system_u:object_r:unlabeled_t:s0 tclass=file permissive=0
-  Feb 27 10:49:21 qemu audit[1]: AVC avc:  denied  { write } for  pid=1 comm="systemd" path="pidfd:[1564]" dev="pidfs" ino=1564 scontext=system_u:system_r:init_t:s0 tcontext=system_u:object_r:unlabeled_t:s0 tclass=file permissive=0
-  Feb 27 10:50:50 qemu audit[1]: AVC avc:  denied  { write } for  pid=1 comm="systemd" path="pidfd:[1547]" dev="pidfs" ino=1547 scontext=system_u:system_r:init_t:s0 tcontext=system_u:object_r:unlabeled_t:s0 tclass=file permissive=0
+> The only thing I kind of dislike is that this ties fanotify API with moun=
+t
+> API. So perhaps hsm_deny_mask should be specified as a string? Like
+> preaccess,premodify,prelookup,... and transformed into a bitmask only
+> inside the kernel? It gives us more maneuvering space for the future.
+>
 
-Cheers,
-Nathan
+Urgh. I see what you are saying, but this seems so ugly to me.
+I have a strong feeling that we are trying to reinvent something
+and that we are going to reinvent it badly.
+I need to look for precedents, maybe in other OS.
+I believe that in Windows, there is an API to register as a
+Cloud Engine Provider, so there is probably a way to have multiple HSMs
+working on different sections of the filesystem in some reliable
+crash safe manner.
+
+> > > This would elegantly solve the "what if HSM handler dies" problem as =
+well
+> > > as cleanly handle the setup. And we don't have to come up with a conc=
+ept of
+> > > "default mask".
+> >
+> > We can still have a mask, it's just about the API to set it up.
+> >
+> > > Now we still have the problem how to fill in the filesystem
+> > > on pre-content event without deadlocking. As I was thinking about it =
+the
+> > > most elegant solution would IMHO be if the HSM handler could have a p=
+rivate
+> > > mount flagged so that HSM is excluded from there (or it could place i=
+gnore
+> > > mark on this mount for HSM events).
+> >
+> > My HttpDirFS demo does it the other way around - HSM uses a mount
+> > without a mark mount - but ignore mark works too.
+>
+> Yes, the HSM handler is free to setup whatever works for it. I was just
+> thinking to make sure there is at least one sane way how to do it :)
+>
+
+Yeh, we need to write "best practice" guidelines.
+
+> > > I think we've discarded similar ideas
+> > > in the past because this is problematic with directory pre-content ev=
+ents
+> > > because security hooks don't get the mountpoint. But what if we used
+> > > security_path_* hooks for directory pre-content events?
+> >
+> > No need for security_path_ * hooks.
+> > In my POC, the pre-path hooks have the path argument.
+> > For people who are not familiar with the term, here is man page draft
+> > for "pre-path" events:
+> > https://github.com/amir73il/man-pages/commits/fan_pre_path/
+> >
+> > This is an out of date branch from the time that I called them
+> > FAN_PRE_{CREATE,DELETE,MOVE_*} events:
+> > https://github.com/amir73il/linux/commit/29c60e4db3068ff2cd7b2c5a73108a=
+fb2c19b868
+> >
+> > They are implemented by replacing the mnt_want_write() calls
+> > with mnt_want_write_{path,parent,parents}() calls.
+> >
+> > This was done to make sure that they take the sb write srcu and call
+> > the pre-path hook before taking sb writers freeze protection.
+>
+> Ok, so AFAIU you agree we don't need to rely on FMODE_NONOTIFY for HSM an=
+d
+> can just use access through dedicated mount for filling in the filesystem=
+?
+>
+
+It seems like a decent and simple way to avoid difficult questions,
+so I will try to start with that...
+whenever I manage to context switch back ;)
+
+Thanks,
+Amir.
 
